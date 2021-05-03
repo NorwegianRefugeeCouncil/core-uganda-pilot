@@ -19,12 +19,12 @@
     }
   },
   "projects": {
-    "core": {
+    "web-app": {
       "tags": []
     },
-    "core-e2e": {
+    "web-app-e2e": {
       "tags": [],
-      "implicitDependencies": ["core"]
+      "implicitDependencies": ["web-app"]
     }
   }
 }
