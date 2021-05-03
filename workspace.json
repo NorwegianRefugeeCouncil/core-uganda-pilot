@@ -145,7 +145,12 @@
           "options": {
             "uiFramework": "@storybook/react",
             "port": 4400,
-            "config": { "configFolder": "libs/shared/ui-toolkit/.storybook" }
+            "staticDir": [
+              "dist/libs/shared/bootstrap"
+            ],
+            "config": {
+              "configFolder": "libs/shared/ui-toolkit/.storybook"
+            }
           },
           "configurations": { "ci": { "quiet": true } }
         },
