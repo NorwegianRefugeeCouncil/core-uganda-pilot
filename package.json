@@ -27,6 +27,7 @@
   },
   "private": true,
   "dependencies": {
+    "bootstrap": "^5.0.0-beta3",
     "core-js": "^3.6.5",
     "document-register-element": "1.13.1",
     "react": "17.0.2",

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './shared-bootstrap.module.css';
+import './shared-bootstrap.module.scss';
 
 /* eslint-disable-next-line */
 export interface SharedBootstrapProps {}
