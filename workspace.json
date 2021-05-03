@@ -146,7 +146,7 @@
             "uiFramework": "@storybook/react",
             "port": 4400,
             "staticDir": [
-              "dist/libs/shared/bootstrap"
+              "dist/libs/shared/bootstrap/assets/css"
             ],
             "config": {
               "configFolder": "libs/shared/ui-toolkit/.storybook"
@@ -172,6 +172,34 @@
       "projectType": "library",
       "targets": {
         "build": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "cp -r node_modules/bootstrap/dist/js libs/shared/bootstrap/assets/"
+              },
+              {
+                "command": "node-sass libs/shared/bootstrap/assets/scss -o libs/shared/bootstrap/assets/css --source-map true"
+              },
+              {
+                "command": "node-sass libs/shared/bootstrap/assets/scss -o libs/shared/bootstrap/assets/css-min --output-style compressed --source-map true"
+              },
+              {
+                "command": "sleep 1 && mv libs/shared/bootstrap/assets/css-min/bootstrap.css libs/shared/bootstrap/assets/css/bootstrap.min.css"
+              },
+              {
+                "command": "sleep 1 && mv libs/shared/bootstrap/assets/css-min/bootstrap.css.map libs/shared/bootstrap/assets/css/bootstrap.min.css.map"
+              },
+              {
+                "command": "sleep 1 && rm -rf libs/shared/bootstrap/assets/css-min"
+              },
+              {
+                "command": "nx run shared-bootstrap:package"
+              }
+            ]
+          }
+        },
+        "package": {
           "executor": "@nrwl/web:package",
           "outputs": ["{options.outputPath}"],
           "options": {
@@ -184,6 +212,10 @@
             "assets": [
               {
                 "glob": "libs/shared/bootstrap/README.md",
+                "input": ".",
+                "output": "."
+              },{
+                "glob": "libs/shared/bootstrap/assets",
                 "input": ".",
                 "output": "."
               }

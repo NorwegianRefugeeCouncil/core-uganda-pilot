@@ -1,0 +1,123 @@
+info:
+  description: Hello
+  title: Core OpenAPI definition
+  version: 0.0.1
+openapi: "3.0.0"
+components:
+  schemas:
+    hasTypeMeta:
+      description: Represents an entity that has an apiVersion
+      properties:
+        apiVersion:
+          type: string
+        kind:
+          type: string
+    hasTimestamps:
+      description: Represents an entity that has creation and deletion timestamps
+      properties:
+        metadata:
+          type: object
+          properties:
+            creationTimestamp:
+              type: string
+              format: date-time
+            deletionTimestamp:
+              type: string
+              format: date-time
+    hasResourceVersion:
+      description: Represents a versioned entity
+      properties:
+        metadata:
+          type: object
+          properties:
+            resourceVersion:
+              type: integer
+    runtimeObject:
+      description: Represents a standard entity
+      allOf:
+        - $ref: "#/components/schemas/hasTypeMeta"
+        - $ref: "#/components/schemas/hasUid"
+        - $ref: "#/components/schemas/hasMeta"
+        - $ref: "#/components/schemas/hasTimestamps"
+        - $ref: "#/components/schemas/hasResourceVersion"
+    hasMeta:
+      description: Represents an entity that has metadata
+      properties:
+        metadata:
+          type: object
+          properties:
+            name:
+              type: string
+    hasUid:
+      description: Represents an entity that has an UID
+      properties:
+        metadata:
+          type: object
+          properties:
+            uid:
+              type: string
+    formelementtype:
+      description: The type of a form element
+      type: string
+      enum:
+        - section
+        - text
+        - checkbox
+        - radio
+    formelement:
+      description: Represents a form element
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/formelementtype"
+        children:
+          type: array
+          items:
+            allOf:
+              - $ref: "#/components/schemas/formelement"
+    formschema:
+      description: Represents the schema of a form
+      type: object
+      properties:
+        root:
+          $ref: "#/components/schemas/formelement"
+    formdefinition:
+      description: Form definition
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/runtimeObject"
+      properties:
+        spec:
+          type: object
+          properties:
+            schema:
+              $ref: "#/components/schemas/formschema"
+
+paths:
+  "/apis":
+    get:
+      responses:
+        '200':
+          description: List of available apis
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties: { }
+  "/apis/v1/formdefinitions":
+    parameters:
+      - name: version
+        in: query
+        required: false
+        description: The version of the form definition to retrieve. Otherwise defaults to latest version
+        schema:
+          type: string
+    get:
+      responses:
+        '200':
+          description: List of available form definitions
+          content:
+            "application/json":
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/formdefinition"

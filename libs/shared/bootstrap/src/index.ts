@@ -1,1 +1,1 @@
-export * from './lib/shared-bootstrap';
+const a = ""
