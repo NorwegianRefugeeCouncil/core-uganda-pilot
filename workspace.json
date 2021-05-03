@@ -1,23 +1,12 @@
 {
   "version": 2,
-  "cli": {
-    "defaultCollection": "@nrwl/react"
-  },
+  "cli": { "defaultCollection": "@nrwl/react" },
   "defaultProject": "web-app",
   "generators": {
     "@nrwl/react": {
-      "application": {
-        "style": "css",
-        "linter": "eslint",
-        "babel": true
-      },
-      "component": {
-        "style": "css"
-      },
-      "library": {
-        "style": "css",
-        "linter": "eslint"
-      }
+      "application": { "style": "css", "linter": "eslint", "babel": true },
+      "component": { "style": "css" },
+      "library": { "style": "css", "linter": "eslint" }
     }
   },
   "projects": {
@@ -70,13 +59,9 @@
         },
         "serve": {
           "executor": "@nrwl/web:dev-server",
-          "options": {
-            "buildTarget": "web-app:build"
-          },
+          "options": { "buildTarget": "web-app:build" },
           "configurations": {
-            "production": {
-              "buildTarget": "web-app:build:production"
-            }
+            "production": { "buildTarget": "web-app:build:production" }
           }
         },
         "lint": {
@@ -108,15 +93,91 @@
             "devServerTarget": "web-app:serve"
           },
           "configurations": {
-            "production": {
-              "devServerTarget": "web-app:serve:production"
-            }
+            "production": { "devServerTarget": "web-app:serve:production" }
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": { "lintFilePatterns": ["apps/web-app-e2e/**/*.{js,ts}"] }
+        }
+      }
+    },
+    "shared-ui-toolkit": {
+      "root": "libs/shared/ui-toolkit",
+      "sourceRoot": "libs/shared/ui-toolkit/src",
+      "projectType": "library",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/web:package",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/libs/shared/ui-toolkit",
+            "tsConfig": "libs/shared/ui-toolkit/tsconfig.lib.json",
+            "project": "libs/shared/ui-toolkit/package.json",
+            "entryFile": "libs/shared/ui-toolkit/src/index.ts",
+            "external": ["react", "react-dom"],
+            "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+            "assets": [
+              {
+                "glob": "libs/shared/ui-toolkit/README.md",
+                "input": ".",
+                "output": "."
+              }
+            ]
           }
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/web-app-e2e/**/*.{js,ts}"]
+            "lintFilePatterns": ["libs/shared/ui-toolkit/**/*.{ts,tsx,js,jsx}"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/shared/ui-toolkit"],
+          "options": {
+            "jestConfig": "libs/shared/ui-toolkit/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "shared-bootstrap": {
+      "root": "libs/shared/bootstrap",
+      "sourceRoot": "libs/shared/bootstrap/src",
+      "projectType": "library",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/web:package",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/libs/shared/bootstrap",
+            "tsConfig": "libs/shared/bootstrap/tsconfig.lib.json",
+            "project": "libs/shared/bootstrap/package.json",
+            "entryFile": "libs/shared/bootstrap/src/index.ts",
+            "external": ["react", "react-dom"],
+            "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+            "assets": [
+              {
+                "glob": "libs/shared/bootstrap/README.md",
+                "input": ".",
+                "output": "."
+              }
+            ]
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/shared/bootstrap/**/*.{ts,tsx,js,jsx}"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/shared/bootstrap"],
+          "options": {
+            "jestConfig": "libs/shared/bootstrap/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }
