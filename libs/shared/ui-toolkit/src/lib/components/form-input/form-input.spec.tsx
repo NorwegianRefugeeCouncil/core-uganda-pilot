@@ -1,20 +1,30 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import React, { forwardRef, Fragment, FunctionComponent, ReactFragment } from 'react';
+import { FunctionComponent } from 'react';
 import { FormInput, FormInputProps, FormLabel } from '@nrc.no/ui';
-import { useForm, FormProvider, useFormContext, SubmitHandler, SubmitErrorHandler } from 'react-hook-form';
+import {
+  useForm,
+  FormProvider,
+  useFormContext,
+  SubmitHandler,
+  SubmitErrorHandler,
+} from 'react-hook-form';
 
 type ContextProps = {
-  onValid: SubmitHandler<any>
-  onInvalid: SubmitErrorHandler<any>
-}
+  onValid: SubmitHandler<any>;
+  onInvalid: SubmitErrorHandler<any>;
+};
 
-const Context: FunctionComponent<ContextProps> = ({ onValid, onInvalid, children }) => {
+const Context: FunctionComponent<ContextProps> = ({
+  onValid,
+  onInvalid,
+  children,
+}) => {
   const methods = useForm();
   methods.watch((a) => {
     console.log(a);
   });
   return (
-    <FormProvider {...methods} >
+    <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onValid, onInvalid)}>
         {children}
       </form>
@@ -23,17 +33,20 @@ const Context: FunctionComponent<ContextProps> = ({ onValid, onInvalid, children
 };
 
 type TestCase = {
-  name: string
-  input: any,
-  expected: any,
-  props: Partial<FormInputProps>,
-}
+  name: string;
+  input: any;
+  expected: any;
+  props: Partial<FormInputProps>;
+};
 
 type TestCaseProps = {
-  testCase: TestCase
-}
+  testCase: TestCase;
+};
 
-const FormField: FunctionComponent<TestCaseProps> = ({ testCase, ...props }) => {
+const FormField: FunctionComponent<TestCaseProps> = ({
+  testCase,
+  ...props
+}) => {
   const { register } = useFormContext();
   return (
     <div>
@@ -41,7 +54,7 @@ const FormField: FunctionComponent<TestCaseProps> = ({ testCase, ...props }) => 
       <FormInput
         id={'id'}
         {...register('test')}
-        type='number'
+        type="number"
         {...testCase.props}
       />
     </div>
@@ -51,28 +64,91 @@ const FormField: FunctionComponent<TestCaseProps> = ({ testCase, ...props }) => 
 describe('form-input', () => {
   describe('number', () => {
     describe('test cases', () => {
-
       const testCases: TestCase[] = [
         { name: 'regular', input: '2', expected: 2, props: { type: 'number' } },
-        { name: 'min', input: '-3', expected: 2, props: { type: 'number', min: 2 } },
-        { name: 'max', input: '4', expected: 3, props: { type: 'number', max: 3 } },
-        { name: 'maxStr', input: '4', expected: 3, props: { type: 'number', max: '3' as any } },
-        { name: 'minStr', input: '1', expected: 2, props: { type: 'number', min: '2' as any } },
-        { name: 'step', input: '3', expected: 4, props: { type: 'number', step: '4' as any } },
-        { name: 'decimalStep', input: '3.33', expected: 3.5, props: { type: 'number', step: '0.5' as any } },
-        { name: 'null', input: null, expected: undefined, props: { type: 'number' } },
-        { name: 'undefined', input: undefined, expected: undefined, props: { type: 'number' } },
-        { name: 'badNumber', input: 'abc', expected: undefined, props: { type: 'number' } },
-        { name: 'emptyString', input: '', expected: undefined, props: { type: 'number' } },
-        { name: 'spaces', input: '  ', expected: undefined, props: { type: 'number' } },
-        { name: 'hex', input: '0xFFF', expected: undefined, props: { type: 'number' } },
+        {
+          name: 'min',
+          input: '-3',
+          expected: 2,
+          props: { type: 'number', min: 2 },
+        },
+        {
+          name: 'max',
+          input: '4',
+          expected: 3,
+          props: { type: 'number', max: 3 },
+        },
+        {
+          name: 'maxStr',
+          input: '4',
+          expected: 3,
+          props: { type: 'number', max: '3' as any },
+        },
+        {
+          name: 'minStr',
+          input: '1',
+          expected: 2,
+          props: { type: 'number', min: '2' as any },
+        },
+        {
+          name: 'step',
+          input: '3',
+          expected: 4,
+          props: { type: 'number', step: '4' as any },
+        },
+        {
+          name: 'decimalStep',
+          input: '3.33',
+          expected: 3.5,
+          props: { type: 'number', step: '0.5' as any },
+        },
+        {
+          name: 'null',
+          input: null,
+          expected: undefined,
+          props: { type: 'number' },
+        },
+        {
+          name: 'undefined',
+          input: undefined,
+          expected: undefined,
+          props: { type: 'number' },
+        },
+        {
+          name: 'badNumber',
+          input: 'abc',
+          expected: undefined,
+          props: { type: 'number' },
+        },
+        {
+          name: 'emptyString',
+          input: '',
+          expected: undefined,
+          props: { type: 'number' },
+        },
+        {
+          name: 'spaces',
+          input: '  ',
+          expected: undefined,
+          props: { type: 'number' },
+        },
+        {
+          name: 'hex',
+          input: '0xFFF',
+          expected: undefined,
+          props: { type: 'number' },
+        },
         { name: 'zeros', input: '000', expected: 0, props: { type: 'number' } },
-        { name: 'zeros', input: '010', expected: 10, props: { type: 'number' } }
+        {
+          name: 'zeros',
+          input: '010',
+          expected: 10,
+          props: { type: 'number' },
+        },
       ];
 
-      testCases.forEach(testCase => {
-        it(testCase.name, function() {
-
+      testCases.forEach((testCase) => {
+        it(testCase.name, function () {
           let value = testCase.props.value;
           const setValue = (e: any) => {
             value = e;
@@ -84,10 +160,11 @@ describe('form-input', () => {
             </Context>
           );
 
-          fireEvent.input(screen.getByLabelText('Label'), { target: { value: testCase.input } });
+          fireEvent.input(screen.getByLabelText('Label'), {
+            target: { value: testCase.input },
+          });
 
           expect(value).toBe(testCase.expected);
-
         });
       });
     });

@@ -16,10 +16,7 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   outline?: boolean;
 };
 
-export const Button: FunctionComponent<ButtonProps> = (
-  props: ButtonProps,
-  ref
-) => {
+export const Button: FunctionComponent<ButtonProps> = (props: ButtonProps) => {
   const { kind, size, outline, className, children, ...otherProps } = props;
   const classes: string[] = [];
   classes.push('btn');
@@ -31,7 +28,7 @@ export const Button: FunctionComponent<ButtonProps> = (
   }
   const btnClass = classNames(className, classes);
   return (
-    <button ref={ref} {...otherProps} className={btnClass}>
+    <button {...otherProps} className={btnClass}>
       {children}
     </button>
   );
@@ -42,20 +39,20 @@ type CloseButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 export const CloseButton = (() => {
-  const cmp: FunctionComponent<CloseButtonProps> = (
-    { size, className, children, ...props }: ButtonProps,
-    ref
-  ) => {
+  const cmp: FunctionComponent<CloseButtonProps> = ({
+    size,
+    className,
+    children,
+    ...props
+  }: ButtonProps) => {
     className = classNames(className, {
       btn: true,
       'btn-close': true,
-      'btn-size': size,
+      'btn-sm': size === 'sm',
+      'btn-lg': size === 'lg',
     });
-    // if (size) {
-    //   className = classNames(className, 'btn-' + size);
-    // }
     return (
-      <button ref={ref} className={className} {...props}>
+      <button className={className} {...props}>
         {children}
       </button>
     );
