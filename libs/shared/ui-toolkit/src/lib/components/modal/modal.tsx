@@ -5,7 +5,7 @@ import {
   useCallback,
   useMemo,
   useRef,
-  useState
+  useState,
 } from 'react';
 import classNames from 'classnames';
 import BaseModal, { ModalProps as BaseModalProps } from 'react-overlays/Modal';
@@ -19,65 +19,61 @@ import getScrollbarSize from 'dom-helpers/scrollbarSize';
 import useWillUnmount from '@restart/hooks/useWillUnmount';
 
 interface ModalContextProps {
-  onHide: () => void
+  onHide: () => void;
 }
 
 const ModalContext = createContext<ModalContextProps>({
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  onHide: () => {
-  }
+  onHide: () => {},
 });
 
 type ModalProps = {
-  size?: 'lg' | 'sm' | 'xl'
-  backdrop?: 'static' | true | false
-  fade?: boolean
-  handleHide?: () => void
-  scrollable?: boolean
-  show?: boolean
-  verticallyCentered?: boolean
-  fullscreen?: boolean
-  fullscreenBelow?: 'sm' | 'md' | 'lg' | 'xl' | 'xxl'
-} & BaseModalProps
+  size?: 'lg' | 'sm' | 'xl';
+  backdrop?: 'static' | true | false;
+  fade?: boolean;
+  handleHide?: () => void;
+  scrollable?: boolean;
+  show?: boolean;
+  verticallyCentered?: boolean;
+  fullscreen?: boolean;
+  fullscreenBelow?: 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
+} & BaseModalProps;
 
-export const Modal: FunctionComponent<ModalProps>
-  = ({
+export const Modal: FunctionComponent<ModalProps> = ({
+  style,
+  size,
+  fullscreen,
+  fullscreenBelow,
 
-       style,
-       size,
-       fullscreen,
-       fullscreenBelow,
+  fade,
+  scrollable,
+  verticallyCentered,
+  className,
+  children,
 
-       fade,
-       scrollable,
-       verticallyCentered,
-       className,
-       children,
+  /* BaseModal props*/
+  show,
+  animation,
+  backdrop,
+  keyboard,
+  onEscapeKeyDown,
+  onShow,
+  onHide,
+  container,
+  autoFocus,
+  enforceFocus,
+  restoreFocus,
+  restoreFocusOptions,
+  onEntered,
+  onExit,
+  onExiting,
+  onEnter,
+  onEntering,
+  onExited,
+  backdropClassName,
 
-       /* BaseModal props*/
-       show,
-       animation,
-       backdrop,
-       keyboard,
-       onEscapeKeyDown,
-       onShow,
-       onHide,
-       container,
-       autoFocus,
-       enforceFocus,
-       restoreFocus,
-       restoreFocusOptions,
-       onEntered,
-       onExit,
-       onExiting,
-       onEnter,
-       onEntering,
-       onExited,
-       backdropClassName,
-
-       ...props
-     }, ref) => {
-
+  ...props
+}) => {
   // We use a react context to wrap the Modal.
 
   const [modalStyle, setStyle] = useState({});
@@ -96,13 +92,15 @@ export const Modal: FunctionComponent<ModalProps>
   }
 
   function updateDialogStyle(node) {
-
     if (!canUseDOM) {
       return;
     }
 
-    const containerIsOverflowing = getModalManager().isContainerOverflowing(modal as any);
-    const modalIsOverflowing = node.scrollHeight > ownerDocument(node).documentElement.clientHeight;
+    const containerIsOverflowing = getModalManager().isContainerOverflowing(
+      modal as any
+    );
+    const modalIsOverflowing =
+      node.scrollHeight > ownerDocument(node).documentElement.clientHeight;
 
     setStyle({
       paddingRight:
@@ -112,7 +110,7 @@ export const Modal: FunctionComponent<ModalProps>
       paddingLeft:
         !containerIsOverflowing && modalIsOverflowing
           ? getScrollbarSize()
-          : undefined
+          : undefined,
     });
   }
 
@@ -142,12 +140,9 @@ export const Modal: FunctionComponent<ModalProps>
 
   const handleStaticModalAnimation = () => {
     setAnimateStaticModal(true);
-    removeStaticModalAnimationRef.current = transitionEnd(
-      modal?.dialog,
-      () => {
-        setAnimateStaticModal(false);
-      }
-    );
+    removeStaticModalAnimationRef.current = transitionEnd(modal?.dialog, () => {
+      setAnimateStaticModal(false);
+    });
   };
 
   const handleStaticBackdropClick = (e) => {
@@ -170,7 +165,6 @@ export const Modal: FunctionComponent<ModalProps>
     if (onHide) {
       onHide();
     }
-
   };
 
   const handleEscapeKeyDown = (e) => {
@@ -219,11 +213,7 @@ export const Modal: FunctionComponent<ModalProps>
     removeEventListener(window as any, 'resize', handleWindowResize);
   };
 
-  className = classNames(
-    className,
-    'modal',
-    { fade: fade }
-  );
+  className = classNames(className, 'modal', { fade: fade });
 
   if (scrollable) {
     className = classNames(className, 'modal-dialog-scrollable');
@@ -232,14 +222,21 @@ export const Modal: FunctionComponent<ModalProps>
     className = classNames(className, 'modal-dialog-centered');
   }
 
-  const renderBackdrop = useCallback((backdropProps) => {
-
-    return <div
-      {...backdropProps}
-      className={classNames('modal-backdrop', backdropClassName, !animation && 'show')}
-    />;
-
-  }, [animation, backdropClassName]);
+  const renderBackdrop = useCallback(
+    (backdropProps) => {
+      return (
+        <div
+          {...backdropProps}
+          className={classNames(
+            'modal-backdrop',
+            backdropClassName,
+            !animation && 'show'
+          )}
+        />
+      );
+    },
+    [animation, backdropClassName]
+  );
 
   const baseModalStyle = { ...style, ...modalStyle };
 
@@ -248,27 +245,28 @@ export const Modal: FunctionComponent<ModalProps>
   }
 
   const renderDialog = (dialogProps) => {
-
-    return <div
-      role='dialog'
-      {...dialogProps}
-      style={baseModalStyle}
-      className={classNames(className, 'modal')}
-      onClick={backdrop ? handleClick : undefined}
-      onMouseUp={handleMouseUp}
-    >
-      <ModalDialog
-        size={size}
-        className={classNames(
-          animateStaticModal && 'modal-static',
-          fullscreen && 'modal-fullscreen',
-          fullscreenBelow && 'modal-fullscreen-' + fullscreenBelow + '-down'
-        )}
-        onMouseDown={handleDialogMouseDown}
+    return (
+      <div
+        role="dialog"
+        {...dialogProps}
+        style={baseModalStyle}
+        className={classNames(className, 'modal')}
+        onClick={backdrop ? handleClick : undefined}
+        onMouseUp={handleMouseUp}
       >
-        {children}
-      </ModalDialog>
-    </div>;
+        <ModalDialog
+          size={size}
+          className={classNames(
+            animateStaticModal && 'modal-static',
+            fullscreen && 'modal-fullscreen',
+            fullscreenBelow && 'modal-fullscreen-' + fullscreenBelow + '-down'
+          )}
+          onMouseDown={handleDialogMouseDown}
+        >
+          {children}
+        </ModalDialog>
+      </div>
+    );
   };
 
   return (
@@ -296,11 +294,12 @@ export const Modal: FunctionComponent<ModalProps>
         renderBackdrop={renderBackdrop}
         renderDialog={renderDialog}
       >
-        <div{...props} className={className}>
+        <div {...props} className={className}>
           {children}
         </div>
       </BaseModal>
-    </ModalContext.Provider>);
+    </ModalContext.Provider>
+  );
 };
 
 Modal.defaultProps = {
@@ -310,44 +309,76 @@ Modal.defaultProps = {
   autoFocus: true,
   enforceFocus: true,
   restoreFocus: true,
-  animation: false
+  animation: false,
 };
 
 type ModalDialogProps = HTMLAttributes<HTMLDivElement> & {
-  size?: 'lg' | 'sm' | 'xl'
-}
-
-export const ModalDialog: FunctionComponent<ModalDialogProps> = ({ size, ...props }) => {
-  return <div {...props} className={classNames(props.className, 'modal-dialog', size && 'modal-' + size)}>
-    {props.children}
-  </div>;
+  size?: 'lg' | 'sm' | 'xl';
 };
 
-export const ModalContent: FunctionComponent<HTMLAttributes<HTMLDivElement>> = props => {
-  return <div {...props} className={classNames(props.className, 'modal-content')}>
-    {props.children}
-  </div>;
+export const ModalDialog: FunctionComponent<ModalDialogProps> = ({
+  size,
+  ...props
+}) => {
+  return (
+    <div
+      {...props}
+      className={classNames(
+        props.className,
+        'modal-dialog',
+        size && 'modal-' + size
+      )}
+    >
+      {props.children}
+    </div>
+  );
 };
 
-export const ModalHeader: FunctionComponent<HTMLAttributes<HTMLDivElement>> = props => {
-  return <div {...props} className={classNames(props.className, 'modal-header')}>
-    {props.children}
-  </div>;
+export const ModalContent: FunctionComponent<HTMLAttributes<HTMLDivElement>> = (
+  props
+) => {
+  return (
+    <div {...props} className={classNames(props.className, 'modal-content')}>
+      {props.children}
+    </div>
+  );
 };
 
-export const ModalTitle: FunctionComponent<HTMLAttributes<HTMLDivElement>> = props => {
-  return <h5 {...props} className={classNames(props.className, 'modal-title')}>
-    {props.children}
-  </h5>;
+export const ModalHeader: FunctionComponent<HTMLAttributes<HTMLDivElement>> = (
+  props
+) => {
+  return (
+    <div {...props} className={classNames(props.className, 'modal-header')}>
+      {props.children}
+    </div>
+  );
 };
 
-export const ModalBody: FunctionComponent<HTMLAttributes<HTMLDivElement>> = props => {
-  return <h5 {...props} className={classNames(props.className, 'modal-body')}>
-    {props.children}
-  </h5>;
+export const ModalTitle: FunctionComponent<HTMLAttributes<HTMLDivElement>> = (
+  props
+) => {
+  return (
+    <h5 {...props} className={classNames(props.className, 'modal-title')}>
+      {props.children}
+    </h5>
+  );
 };
-export const ModalFooter: FunctionComponent<HTMLAttributes<HTMLDivElement>> = props => {
-  return <h5 {...props} className={classNames(props.className, 'modal-footer')}>
-    {props.children}
-  </h5>;
+
+export const ModalBody: FunctionComponent<HTMLAttributes<HTMLDivElement>> = (
+  props
+) => {
+  return (
+    <h5 {...props} className={classNames(props.className, 'modal-body')}>
+      {props.children}
+    </h5>
+  );
+};
+export const ModalFooter: FunctionComponent<HTMLAttributes<HTMLDivElement>> = (
+  props
+) => {
+  return (
+    <h5 {...props} className={classNames(props.className, 'modal-footer')}>
+      {props.children}
+    </h5>
+  );
 };

@@ -1,24 +1,17 @@
-import {
-  forwardRef,
-  FunctionComponent,
-  HTMLAttributes,
-  LabelHTMLAttributes,
-} from 'react';
+import { FunctionComponent, HTMLAttributes } from 'react';
 import classNames from 'classnames';
 
 export type CollapseProps = HTMLAttributes<HTMLDivElement> & {
   show?: boolean;
 };
 
-export const Collapse = forwardRef<HTMLDivElement, CollapseProps>(
-  (props, ref) => {
-    const classes = classNames(props.className, 'collapse', {
-      show: props.show,
-    });
-    return (
-      <div {...props} ref={ref} className={classes}>
-        {props.children}
-      </div>
-    );
-  }
-);
+export const Collapse: FunctionComponent<CollapseProps> = (props) => {
+  const classes = classNames(props.className, 'collapse', {
+    show: props.show,
+  });
+  return (
+    <div {...props} className={classes}>
+      {props.children}
+    </div>
+  );
+};

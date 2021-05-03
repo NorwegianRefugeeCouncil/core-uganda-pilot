@@ -1,17 +1,12 @@
-import {
-  AnchorHTMLAttributes,
-  forwardRef,
-  FunctionComponent,
-  HTMLAttributes,
-} from 'react';
+import { AnchorHTMLAttributes, FunctionComponent, HTMLAttributes } from 'react';
 import classNames from 'classnames';
 
 type CardProps = HTMLAttributes<HTMLDivElement>;
 
-export const Card: FunctionComponent<CardProps> = (props, ref) => {
+export const Card: FunctionComponent<CardProps> = (props) => {
   const className = classNames('card', props.className);
   return (
-    <div ref={ref} {...props} className={className}>
+    <div {...props} className={className}>
       {props.children}
     </div>
   );
@@ -19,13 +14,9 @@ export const Card: FunctionComponent<CardProps> = (props, ref) => {
 
 type CardBodyProps = HTMLAttributes<HTMLDivElement>;
 
-export const CardBody: FunctionComponent<CardBodyProps> = (props, ref) => {
+export const CardBody: FunctionComponent<CardBodyProps> = (props) => {
   return (
-    <div
-      {...props}
-      ref={ref}
-      className={classNames(props.className, 'card-body')}
-    >
+    <div {...props} className={classNames(props.className, 'card-body')}>
       {props.children}
     </div>
   );
@@ -33,13 +24,9 @@ export const CardBody: FunctionComponent<CardBodyProps> = (props, ref) => {
 
 type CardTextProps = HTMLAttributes<HTMLParagraphElement>;
 
-export const CardText: FunctionComponent<CardTextProps> = (props, ref) => {
+export const CardText: FunctionComponent<CardTextProps> = (props) => {
   return (
-    <p
-      {...props}
-      ref={ref}
-      className={classNames(props.className, 'card-text')}
-    >
+    <p {...props} className={classNames(props.className, 'card-text')}>
       {props.children}
     </p>
   );
@@ -47,13 +34,9 @@ export const CardText: FunctionComponent<CardTextProps> = (props, ref) => {
 
 type CardTitleProps = HTMLAttributes<HTMLHeadingElement>;
 
-export const CardTitle: FunctionComponent<CardTitleProps> = (props, ref) => {
+export const CardTitle: FunctionComponent<CardTitleProps> = (props) => {
   return (
-    <h5
-      {...props}
-      ref={ref}
-      className={classNames(props.className, 'card-title')}
-    >
+    <h5 {...props} className={classNames(props.className, 'card-title')}>
       {props.children}
     </h5>
   );
@@ -61,14 +44,10 @@ export const CardTitle: FunctionComponent<CardTitleProps> = (props, ref) => {
 
 type CardSubTitleProps = HTMLAttributes<HTMLHeadingElement>;
 
-export const CardSubTitle: FunctionComponent<CardSubTitleProps> = forwardRef<
-  HTMLHeadingElement,
-  CardSubTitleProps
->((props, ref) => {
+export const CardSubTitle: FunctionComponent<CardSubTitleProps> = (props) => {
   return (
     <h6
       {...props}
-      ref={ref}
       className={classNames(
         props.className,
         'card-subtitle',
@@ -79,91 +58,58 @@ export const CardSubTitle: FunctionComponent<CardSubTitleProps> = forwardRef<
       {props.children}
     </h6>
   );
-});
+};
 
 type CardLinkProps = AnchorHTMLAttributes<HTMLAnchorElement>;
 
-export const CardLink: FunctionComponent<CardLinkProps> = forwardRef<
-  HTMLAnchorElement,
-  CardLinkProps
->((props, ref) => {
+export const CardLink: FunctionComponent<CardLinkProps> = (props) => {
   return (
-    <a
-      {...props}
-      ref={ref}
-      className={classNames(props.className, 'card-link')}
-    >
+    <a {...props} className={classNames(props.className, 'card-link')}>
       {props.children}
     </a>
   );
-});
+};
 
 type CardTopImageProps = HTMLAttributes<HTMLImageElement>;
 
-export const CardTopImage: FunctionComponent<CardTopImageProps> = forwardRef<
-  HTMLImageElement,
-  CardTopImageProps
->((props, ref) => {
+export const CardTopImage: FunctionComponent<CardTopImageProps> = (props) => {
   // 'alt' attribute would be in props
   // eslint-disable-next-line jsx-a11y/alt-text
   return (
-    <img
-      {...props}
-      ref={ref}
-      className={classNames(props.className, 'card-img-top')}
-    >
+    <img {...props} className={classNames(props.className, 'card-img-top')}>
       {props.children}
     </img>
   );
-});
+};
 
 type CardHeaderProps = HTMLAttributes<HTMLDivElement>;
 
-export const CardHeader: FunctionComponent<CardHeaderProps> = forwardRef<
-  HTMLDivElement,
-  CardHeaderProps
->((props, ref) => {
+export const CardHeader: FunctionComponent<CardHeaderProps> = (props) => {
   return (
-    <div
-      {...props}
-      ref={ref}
-      className={classNames(props.className, 'card-header')}
-    >
+    <div {...props} className={classNames(props.className, 'card-header')}>
       {props.children}
     </div>
   );
-});
+};
 
 type CardHeaderFeaturedProps = HTMLAttributes<HTMLHeadingElement>;
 
-export const CardHeaderFeatured: FunctionComponent<CardHeaderFeaturedProps> = forwardRef<
-  HTMLDivElement,
-  CardHeaderFeaturedProps
->((props, ref) => {
+export const CardHeaderFeatured: FunctionComponent<CardHeaderFeaturedProps> = (
+  props
+) => {
   return (
-    <h5
-      {...props}
-      ref={ref}
-      className={classNames(props.className, 'card-header')}
-    >
+    <h5 {...props} className={classNames(props.className, 'card-header')}>
       {props.children}
     </h5>
   );
-});
+};
 
 type CardFooterProps = HTMLAttributes<HTMLDivElement>;
 
-export const CardFooter: FunctionComponent<CardFooterProps> = forwardRef<
-  HTMLDivElement,
-  CardFooterProps
->((props, ref) => {
+export const CardFooter: FunctionComponent<CardFooterProps> = (props) => {
   return (
-    <div
-      {...props}
-      ref={ref}
-      className={classNames(props.className, 'card-footer')}
-    >
+    <div {...props} className={classNames(props.className, 'card-footer')}>
       {props.children}
     </div>
   );
-});
+};

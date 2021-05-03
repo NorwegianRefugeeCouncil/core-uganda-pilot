@@ -54,7 +54,7 @@ const transformInputValue = (props: FormInputProps, value: any) => {
   return value;
 };
 
-export const FormInput: FunctionComponent<FormInputProps> = (props, ref) => {
+export const FormInput: FunctionComponent<FormInputProps> = (props) => {
   const {
     plaintext,
     colorInput,
@@ -85,7 +85,6 @@ export const FormInput: FunctionComponent<FormInputProps> = (props, ref) => {
   return (
     <input
       {...otherProps}
-      ref={ref}
       onChange={handleOnChange}
       className={classNames(props.className, ...classes)}
     />
@@ -157,14 +156,15 @@ export const FormCheckLabel: FunctionComponent<
 };
 
 type ValidFeedbackProps = HTMLAttributes<HTMLDivElement> & { show: boolean };
-export const ValidFeedback: FunctionComponent<ValidFeedbackProps> = (
-  { className, children, show, ...props },
-  ref
-) => {
+export const ValidFeedback: FunctionComponent<ValidFeedbackProps> = ({
+  className,
+  children,
+  show,
+  ...props
+}) => {
   return (
     <div
       {...props}
-      ref={ref}
       className={classNames(className, 'valid-feedback')}
       style={{ display: show ? 'block' : '' }}
     >
