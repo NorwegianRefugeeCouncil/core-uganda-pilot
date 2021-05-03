@@ -1,48 +1,52 @@
 import Transition, {
   ENTERED,
-  ENTERING, TransitionProps
+  ENTERING,
+  TransitionProps,
 } from 'react-transition-group/Transition';
-import React, { cloneElement, useCallback } from 'react';
-import { triggerBrowserReflow, transitionEndListener } from '../../utils/utils';
+import React, { cloneElement, FunctionComponent, useCallback } from 'react';
+// import { triggerBrowserReflow, transitionEndListener } from '../../utils/utils'; TODO
 import classNames from 'classnames';
 
 const fadeStyles = {
   [ENTERING]: 'show',
-  [ENTERED]: 'show'
+  [ENTERED]: 'show',
 };
 
-const Fade = React.forwardRef<Transition<any>, TransitionProps<undefined>>(
-  ({ className, children, ...props }, ref) => {
+const Fade: FunctionComponent<TransitionProps> = (
+  { className, children, ...props },
+  ref
+) => {
+  const handleEnter = useCallback(
+    (args) => {
+      // triggerBrowserReflow(args); TODO
+      if (props.onEnter) {
+        props.onEnter(args, false);
+      }
+    },
+    [props]
+  );
 
-    const handleEnter = useCallback(
-      args => {
-        triggerBrowserReflow(args);
-        if (props.onEnter) {
-          props.onEnter(args, false);
-        }
-      }, [props]
-    );
-
-    return <Transition
+  return (
+    <Transition
       ref={ref}
       onEnter={handleEnter}
-      addEndListener={transitionEndListener}
+      // addEndListener={transitionEndListener} TODO
       {...props}
     >
       {(status, innerProps) =>
-        cloneElement((children as any), {
+        cloneElement(children as any, {
           ...innerProps,
           className: classNames(
             'fade',
             className,
             (children as any).props.className,
             fadeStyles[status]
-          )
+          ),
         })
       }
-    </Transition>;
-  }
-);
+    </Transition>
+  );
+};
 
 function wrapper<RefElement extends undefined | HTMLElement = undefined>() {
   return <Fade></Fade>;
@@ -56,7 +60,7 @@ const defaultProps: Partial<TransitionProps> = {
   in: false,
   timeout: 300,
   mountOnEnter: false,
-  unmountOnExit: false
+  unmountOnExit: false,
 };
 
 Fade.defaultProps = defaultProps;
