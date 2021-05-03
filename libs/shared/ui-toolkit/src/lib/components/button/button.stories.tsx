@@ -8,7 +8,7 @@ storiesOf('Buttons', module).add('default', () => (
     <Card>
       <CardBody>
         <CardTitle>Buttons</CardTitle>
-        <Button>Primary</Button>
+        <Button kind="primary">Primary</Button>
         <Button kind="secondary">Secondary</Button>
         <Button kind="danger">Danger</Button>
         <Button kind="success">Success</Button>
