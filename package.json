@@ -24,7 +24,7 @@
     "workspace-generator": "nx workspace-generator",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
-    "ui-toolkit:storybook": "nx start shared-ui-toolkit:storybook"
+    "ui-toolkit:storybook": "nx start shared-ui-toolkit:storybook -s ./dist"
   },
   "private": true,
   "dependencies": {
