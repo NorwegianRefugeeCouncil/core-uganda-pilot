@@ -11,6 +11,7 @@ type FieldTypeProps = {
 }
 
 export enum FieldType {
+    date = "Date",
     text = "Text",
     textarea = "Textarea",
     integer = "Integer",

@@ -8,6 +8,7 @@ import {
 storiesOf('Field Builder', module).add('default', () => (
   <>
     <Card>
+      <br></br>
       <FieldBuilder />
     </Card>
   </>

@@ -1,11 +1,11 @@
 import { storiesOf } from '@storybook/react';
 import React from 'react';
 import { FieldTypePicker } from './fieldtype.component'
-import {
-    Card
-} from '@nrc.no/ui-toolkit'
+import { withKnobs, text } from '@storybook/addon-knobs';
 
-storiesOf('Field Type Picker', module).add('default', () => (
+storiesOf('Field Type Picker', module)
+.addDecorator(withKnobs)
+.add('default', () => (
   <>
     <FieldTypePicker value={undefined} />
   </>

@@ -1,30 +1,42 @@
 import React, { useState, Fragment, FunctionComponent } from 'react';
-import {
-    Card,
-    FormLabel,
-    FormSelect
-} from '@nrc.no/ui-toolkit';
 import { FieldTypePicker, FieldType } from '../fieldtype/fieldtype.component';
+import { FieldInfo } from '../fieldinfo/fieldinfo.component';
+import { FieldConfig, GenericFieldConfig } from '../fieldconfig/fieldconfig.component';
 
 type FieldBuilderProps = {
 }
 
 enum Tab {
-    type = "Field Type",
-    config = "Field Config"
+    info = "Information",
+    type = "Type",
+    config = "Config"
 }
 
-const buildTab = (tab: Tab, currentTab: Tab, setCurrentTab: (React.Dispatch<React.SetStateAction<Tab>>)) => {
+const buildTabLink = (tab: Tab, currentTab: Tab, setCurrentTab: (React.Dispatch<React.SetStateAction<Tab>>), disabled=false) => {
     if (tab == currentTab){
-        return <a className="nav-link active" aria-current="page" onClick={(event) => {setCurrentTab(tab)}}>{tab}</a>
+        return disabled ? 
+            <a className="nav-link disabled" aria-disabled="true" aria-current="page" onClick={(event) => {setCurrentTab(tab)}}>{tab}</a> :
+            <a className="nav-link active" aria-current="page" onClick={(event) => {setCurrentTab(tab)}}>{tab}</a>
     } else {
-        return <a className="nav-link" onClick={(event) => {setCurrentTab(tab)}}>{tab}</a>
+        return disabled ? 
+            <a className="nav-link disabled" aria-disabled="true" onClick={(event) => {setCurrentTab(tab)}}>{tab}</a> :
+            <a className="nav-link" onClick={(event) => {setCurrentTab(tab)}}>{tab}</a>
     }
 }
 
 export const FieldBuilder: FunctionComponent<FieldBuilderProps> = (props) => {
-    const [currentTab, setCurrentTab] = useState<Tab>(Tab.type)
-    const [fieldType, setFieldType] = useState<FieldType | undefined>()    
+    const [currentTab, setCurrentTab] = useState<Tab>(Tab.info)
+    const [fieldType, setFieldType] = useState<FieldType | undefined>()
+    const [name, setName] = useState("")
+    const [description, setDescription] = useState("")
+    const [fieldConfig, setFieldConfig] = useState<GenericFieldConfig>({} as GenericFieldConfig)
+
+    const patchFieldConfig = (key: string, value: any) => {
+        const tempFieldConfig = fieldConfig
+        tempFieldConfig[key] = value
+        setFieldConfig(tempFieldConfig)
+    }
+    
     return (
         <Fragment>
             <div className={'container'}>
@@ -33,16 +45,53 @@ export const FieldBuilder: FunctionComponent<FieldBuilderProps> = (props) => {
                         <ul className="nav nav-tabs">
                             <li className="nav-item">
                                 {
-                                    buildTab(Tab.type, currentTab, setCurrentTab)
+                                    buildTabLink(Tab.info, currentTab, setCurrentTab)
                                 }
                             </li>
                             <li className="nav-item">
                                 {
-                                    buildTab(Tab.config, currentTab, setCurrentTab)
+                                    buildTabLink(Tab.type, currentTab, setCurrentTab)
                                 }
                             </li>
+                            {
+                                fieldType === undefined ? 
+                                <li className="nav-item">
+                                    {
+                                        buildTabLink(Tab.config, currentTab, setCurrentTab, true)
+                                    }
+                                </li> :
+                                    <li className="nav-item">
+                                    {
+                                        buildTabLink(Tab.config, currentTab, setCurrentTab)
+                                    }
+                                </li>
+                            }
+                            
                         </ul>
                         <br/>
+                        {
+                            currentTab == Tab.info &&
+                            <form onChange={
+                                (event) => {
+                                    console.log(event.target["name"])
+                                    console.log(event.target["value"])
+                                    switch (event.target["name"]) {
+                                        case "name":
+                                            setName(event.target["value"])
+                                            break;
+
+                                        case "description":
+                                            setDescription(event.target["value"])
+                                            break;
+                                    
+                                        default:
+                                            break;
+                                    }
+                                }
+                            }>
+                                <FieldInfo name={name} description={description} />
+                            </form>
+                        }
                         {   
                             currentTab == Tab.type &&
                             <form onChange={
@@ -55,7 +104,13 @@ export const FieldBuilder: FunctionComponent<FieldBuilderProps> = (props) => {
                         }
                         {
                             currentTab == Tab.config &&
-                            "Current type " + fieldType 
+                            <form onChange={
+                                (event) => {
+                                    patchFieldConfig(event.target["name"], event.target["value"])
+                                }
+                            }>
+                                <FieldConfig fieldType={fieldType} fieldProps={fieldConfig} />
+                            </form>
                         }
                     </div>
                 </div>
