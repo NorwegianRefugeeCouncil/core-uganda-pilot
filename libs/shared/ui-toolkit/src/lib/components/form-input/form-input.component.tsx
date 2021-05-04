@@ -95,9 +95,7 @@ export interface Inliner {
   inline?: boolean;
 }
 
-export const FormCheck: FunctionComponent<
-  HTMLAttributes<HTMLDivElement> & Inliner
-> = ({ className, inline, ...props }) => {
+export const FormCheck: FunctionComponent<HTMLAttributes<HTMLDivElement> & Inliner> = ({ className, inline, ...props }) => {
   const classes = classNames(className, 'form-check', { inline: inline });
   return (
     <div className={classes} {...props}>
@@ -132,9 +130,7 @@ export const FormCheckInput: FunctionComponent<
   );
 };
 
-export const FormRadioInput: FunctionComponent<
-  InputHTMLAttributes<HTMLInputElement>
-> = (props) => {
+export const FormRadioInput: FunctionComponent<InputHTMLAttributes<HTMLInputElement>> = (props) => {
   return (
     <input
       {...props}
@@ -155,7 +151,9 @@ export const FormCheckLabel: FunctionComponent<
   );
 };
 
+
 type ValidFeedbackProps = HTMLAttributes<HTMLDivElement> & { show: boolean };
+
 export const ValidFeedback: FunctionComponent<ValidFeedbackProps> = ({
   className,
   children,
@@ -166,14 +164,16 @@ export const ValidFeedback: FunctionComponent<ValidFeedbackProps> = ({
     <div
       {...props}
       className={classNames(className, 'valid-feedback')}
-      style={{ display: show ? 'block' : '' }}
+      style={{ display: show ? 'block' : 'none' }}
     >
       {children}
     </div>
   );
 };
 
+
 type InvalidFeedbackProps = HTMLAttributes<HTMLDivElement> & { show: boolean };
+
 export const InvalidFeedback: FunctionComponent<InvalidFeedbackProps> = (
   { className, children, show, ...props },
   ref
@@ -183,14 +183,16 @@ export const InvalidFeedback: FunctionComponent<InvalidFeedbackProps> = (
       {...props}
       ref={ref}
       className={classNames(className, 'invalid-feedback')}
-      style={{ display: show ? 'block' : '' }}
+      style={{ display: show ? 'block' : 'none' }}
     >
       {children}
     </div>
   );
 };
 
+
 type FormHelpProps = HTMLAttributes<HTMLDivElement>;
+
 export const FormHelp: FunctionComponent<FormHelpProps> = (
   { className, children, ...props },
   ref
