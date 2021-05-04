@@ -1,6 +1,6 @@
 import { storiesOf } from '@storybook/react';
 import React from 'react';
-import { Test } from './test'
+import { FieldBuilder } from './fieldbuilder.component'
 import {
     Card
 } from '@nrc.no/ui-toolkit'
@@ -8,7 +8,7 @@ import {
 storiesOf('Test', module).add('default', () => (
   <>
     <Card>
-      <Test />
+      <FieldBuilder />
     </Card>
   </>
 ));

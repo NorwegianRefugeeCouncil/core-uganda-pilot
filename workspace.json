@@ -276,6 +276,7 @@
           "options": {
             "uiFramework": "@storybook/react",
             "port": 4400,
+            "staticDir": ["dist/libs/shared/bootstrap/assets"],
             "config": { "configFolder": "libs/formbuilder/.storybook" }
           },
           "configurations": { "ci": { "quiet": true } }
