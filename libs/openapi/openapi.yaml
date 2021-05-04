@@ -10,8 +10,10 @@ components:
       properties:
         apiVersion:
           type: string
+          example: "core.nrc.no/v1"
         kind:
           type: string
+          example: "Model"
     hasTimestamps:
       description: Represents an entity that has creation and deletion timestamps
       properties:
@@ -22,6 +24,9 @@ components:
               type: string
               format: date-time
             deletionTimestamp:
+              type: string
+              format: date-time
+            updateTimestamp:
               type: string
               format: date-time
     HasResourceVersion:
@@ -44,12 +49,20 @@ components:
         - $ref: "#/components/schemas/HasMeta"
         - $ref: "#/components/schemas/hasTimestamps"
         - $ref: "#/components/schemas/HasResourceVersion"
+    RuntimeObjectList:
+      description: Represents a list of RuntimeObjects
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/RuntimeObject"
     CreateRuntimeObject:
       description: Represents a payload to create a runtimeObject
       allOf:
         - $ref: "#/components/schemas/HasTypeMeta"
         - $ref: "#/components/schemas/HasMeta"
-    updateRuntimeObject:
+    UpdateRuntimeObject:
       description: Represents a payload to update a runtimeObject
       allOf:
         - $ref: "#/components/schemas/HasTypeMeta"
@@ -63,14 +76,21 @@ components:
           properties:
             name:
               type: string
+              example: mycustomresources.core.nrc.no
             labels:
               type: object
               additionalProperties:
                 type: string
+              example:
+                "rbac.core.nrc.no/co": "uganda"
+                "rbac.core.nrc.no/cc": "ucla"
             annotations:
               type: object
               additionalProperties:
                 type: string
+              example:
+                "description": "Example annotation description"
+                "notes": "Some helpful notes"
     HasUid:
       description: Represents an entity that has an UID
       properties:
@@ -114,8 +134,34 @@ components:
         spec:
           type: object
           properties:
-            schema:
-              $ref: "#/components/schemas/FormSchema"
+            group:
+              type: string
+              example: core.nrc.no
+            names:
+              type: object
+              properties:
+                singular:
+                  type: string
+                  example: mycustomtype
+                plural:
+                  type: string
+                  example: mycustomtypes
+                kind:
+                  type: string
+                  example: MyCustomType
+            versions:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: v1
+                  schema:
+                    type: object
+                    properties:
+                      formSchema:
+                        $ref: "#/components/schemas/FormSchema"
 paths:
   "/apis":
     get:
@@ -127,7 +173,7 @@ paths:
               schema:
                 type: object
                 properties: { }
-  "/apis/v1/modeldefinitions":
+  "/apis/core.nrc.no/v1/models":
     post:
       requestBody:
         required: true
@@ -162,7 +208,7 @@ paths:
                       allOf:
                         - $ref: "#/components/schemas/RuntimeObject"
                         - $ref: "#/components/schemas/ModelDefinition"
-  "/apis/v1/modeldefinitions/{uid}":
+  "/apis/core.nrc.no/v1/models/{uid}":
     parameters:
       - name: version
         in: query
@@ -199,7 +245,7 @@ paths:
           "application/json":
             schema:
               allOf:
-                - $ref: "#/components/schemas/updateRuntimeObject"
+                - $ref: "#/components/schemas/UpdateRuntimeObject"
                 - $ref: "#/components/schemas/ModelDefinition"
       responses:
         '201':
@@ -243,6 +289,62 @@ paths:
           content:
             "application/json":
               schema:
+                $ref: "#/components/schemas/RuntimeObjectList"
+    post:
+      responses:
+        200:
+          description: Creates a resource
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/CreateRuntimeObject"
 
+  "/apis/{group}/{version}/{resourceName}/{uid}":
+    parameters:
+      - name: group
+        in: path
+        description: The name of the api group
+        required: true
+        schema:
+          type: string
+      - name: version
+        in: path
+        description: The version of the api group
+        required: true
+        schema:
+          type: string
+      - name: resourceName
+        in: path
+        description: The name of the api resource
+        required: true
+        schema:
+          type: string
+      - name: uid
+        in: path
+        description: The uid of the api resource
+        required: true
+        schema:
+          type: string
+    get:
+      description: Gets a resource
+      responses:
+        200:
+          description: Successful GET resource
+          content:
+            "application/json":
+              schema:
                 $ref: "#/components/schemas/RuntimeObject"
-
+    put:
+      description: Updates a resource
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/UpdateRuntimeObject"
+      responses:
+        200:
+          description: Successful PUT resource
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/RuntimeObject"
