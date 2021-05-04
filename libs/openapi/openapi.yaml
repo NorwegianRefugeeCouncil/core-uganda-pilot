@@ -52,11 +52,15 @@ components:
     RuntimeObjectList:
       description: Represents a list of RuntimeObjects
       type: object
-      properties:
-        items:
-          type: array
-          items:
-            $ref: "#/components/schemas/RuntimeObject"
+      allOf:
+        - $ref: "#/components/schemas/HasTypeMeta"
+        - $ref: "#/components/schemas/HasMeta"
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/RuntimeObject"
     CreateRuntimeObject:
       description: Represents a payload to create a runtimeObject
       allOf:
@@ -196,18 +200,11 @@ paths:
     get:
       responses:
         '200':
-          description: List of available form definitions
+          description: List of available resources
           content:
             "application/json":
               schema:
-                type: object
-                properties:
-                  items:
-                    type: array
-                    items:
-                      allOf:
-                        - $ref: "#/components/schemas/RuntimeObject"
-                        - $ref: "#/components/schemas/ModelDefinition"
+                $ref: "#/components/schemas/RuntimeObjectList"
   "/apis/core.nrc.no/v1/models/{uid}":
     parameters:
       - name: version
@@ -230,6 +227,8 @@ paths:
             "application/json":
               schema:
                 type: object
+                allOf:
+                  - $ref: "#/components/schemas/RuntimeObjectList"
                 properties:
                   items:
                     type: array
