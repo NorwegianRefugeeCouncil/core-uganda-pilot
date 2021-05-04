@@ -5,7 +5,7 @@ import {
     Card
 } from '@nrc.no/ui-toolkit'
 
-storiesOf('Test', module).add('default', () => (
+storiesOf('Field Builder', module).add('default', () => (
   <>
     <Card>
       <FieldBuilder />
