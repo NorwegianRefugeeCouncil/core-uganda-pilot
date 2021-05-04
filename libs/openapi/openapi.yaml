@@ -5,7 +5,7 @@ info:
 openapi: "3.0.0"
 components:
   schemas:
-    hasTypeMeta:
+    HasTypeMeta:
       description: Represents an entity that has an apiVersion
       properties:
         apiVersion:
@@ -24,7 +24,7 @@ components:
             deletionTimestamp:
               type: string
               format: date-time
-    hasResourceVersion:
+    HasResourceVersion:
       description: Represents a versioned entity
       properties:
         metadata:
@@ -32,15 +32,30 @@ components:
           properties:
             resourceVersion:
               type: integer
-    runtimeObject:
+    RuntimeObjectBase:
+      description: Represents the base of a RuntimeObject
+      allOf:
+        - $ref: "#/components/schemas/HasTypeMeta"
+    RuntimeObject:
       description: Represents a standard entity
       allOf:
-        - $ref: "#/components/schemas/hasTypeMeta"
-        - $ref: "#/components/schemas/hasUid"
-        - $ref: "#/components/schemas/hasMeta"
+        - $ref: "#/components/schemas/HasTypeMeta"
+        - $ref: "#/components/schemas/HasUid"
+        - $ref: "#/components/schemas/HasMeta"
         - $ref: "#/components/schemas/hasTimestamps"
-        - $ref: "#/components/schemas/hasResourceVersion"
-    hasMeta:
+        - $ref: "#/components/schemas/HasResourceVersion"
+    CreateRuntimeObject:
+      description: Represents a payload to create a runtimeObject
+      allOf:
+        - $ref: "#/components/schemas/HasTypeMeta"
+        - $ref: "#/components/schemas/HasMeta"
+    updateRuntimeObject:
+      description: Represents a payload to update a runtimeObject
+      allOf:
+        - $ref: "#/components/schemas/HasTypeMeta"
+        - $ref: "#/components/schemas/HasMeta"
+        - $ref: "#/components/schemas/HasResourceVersion"
+    HasMeta:
       description: Represents an entity that has metadata
       properties:
         metadata:
@@ -48,7 +63,15 @@ components:
           properties:
             name:
               type: string
-    hasUid:
+            labels:
+              type: object
+              additionalProperties:
+                type: string
+            annotations:
+              type: object
+              additionalProperties:
+                type: string
+    HasUid:
       description: Represents an entity that has an UID
       properties:
         metadata:
@@ -56,7 +79,8 @@ components:
           properties:
             uid:
               type: string
-    formelementtype:
+              format: uuid
+    FormElementType:
       description: The type of a form element
       type: string
       enum:
@@ -64,35 +88,34 @@ components:
         - text
         - checkbox
         - radio
-    formelement:
+    FormElement:
       description: Represents a form element
       type: object
       properties:
         type:
-          $ref: "#/components/schemas/formelementtype"
+          $ref: "#/components/schemas/FormElementType"
         children:
           type: array
           items:
             allOf:
-              - $ref: "#/components/schemas/formelement"
-    formschema:
+              - $ref: "#/components/schemas/FormElement"
+    FormSchema:
       description: Represents the schema of a form
       type: object
       properties:
         root:
-          $ref: "#/components/schemas/formelement"
-    formdefinition:
+          $ref: "#/components/schemas/FormElement"
+    ModelDefinition:
       description: Form definition
       type: object
       allOf:
-        - $ref: "#/components/schemas/runtimeObject"
+        - $ref: "#/components/schemas/RuntimeObjectBase"
       properties:
         spec:
           type: object
           properties:
             schema:
-              $ref: "#/components/schemas/formschema"
-
+              $ref: "#/components/schemas/FormSchema"
 paths:
   "/apis":
     get:
@@ -104,12 +127,53 @@ paths:
               schema:
                 type: object
                 properties: { }
-  "/apis/v1/formdefinitions":
+  "/apis/v1/modeldefinitions":
+    post:
+      requestBody:
+        required: true
+        description: "The model definition to create"
+        content:
+          "application/json":
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/CreateRuntimeObject"
+                - $ref: "#/components/schemas/ModelDefinition"
+      responses:
+        '201':
+          description: Successful creation of form definition
+          content:
+            "application/json":
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/RuntimeObject"
+                  - $ref: "#/components/schemas/ModelDefinition"
+    get:
+      responses:
+        '200':
+          description: List of available form definitions
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: "#/components/schemas/RuntimeObject"
+                        - $ref: "#/components/schemas/ModelDefinition"
+  "/apis/v1/modeldefinitions/{uid}":
     parameters:
       - name: version
         in: query
         required: false
         description: The version of the form definition to retrieve. Otherwise defaults to latest version
+        schema:
+          type: string
+      - name: uid
+        in: path
+        required: true
+        description: The id of the model definition
         schema:
           type: string
     get:
@@ -119,5 +183,66 @@ paths:
           content:
             "application/json":
               schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: "#/components/schemas/RuntimeObject"
+                        - $ref: "#/components/schemas/ModelDefinition"
+    put:
+      requestBody:
+        required: true
+        description: "The model definition to update"
+        content:
+          "application/json":
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/updateRuntimeObject"
+                - $ref: "#/components/schemas/ModelDefinition"
+      responses:
+        '201':
+          description: Successful creation of form definition
+          content:
+            "application/json":
+              schema:
                 allOf:
-                  - $ref: "#/components/schemas/formdefinition"
+                  - $ref: "#/components/schemas/RuntimeObject"
+                  - $ref: "#/components/schemas/ModelDefinition"
+  "/apis/{group}/{version}/{resourceName}":
+    parameters:
+      - name: group
+        in: path
+        description: The name of the api group
+        required: true
+        schema:
+          type: string
+      - name: version
+        in: path
+        description: The version of the api group
+        required: true
+        schema:
+          type: string
+      - name: resourceName
+        in: path
+        description: The name of the api resource
+        required: true
+        schema:
+          type: string
+      - name: selector
+        in: query
+        description: queyr selector
+        required: false
+        schema:
+          type: string
+    get:
+      responses:
+        200:
+          description: Gets the list of resources
+          content:
+            "application/json":
+              schema:
+
+                $ref: "#/components/schemas/RuntimeObject"
+
