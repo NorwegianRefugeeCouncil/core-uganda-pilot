@@ -145,12 +145,8 @@
           "options": {
             "uiFramework": "@storybook/react",
             "port": 4400,
-            "staticDir": [
-              "dist/libs/shared/bootstrap/assets"
-            ],
-            "config": {
-              "configFolder": "libs/shared/ui-toolkit/.storybook"
-            }
+            "staticDir": ["dist/libs/shared/bootstrap/assets"],
+            "config": { "configFolder": "libs/shared/ui-toolkit/.storybook" }
           },
           "configurations": { "ci": { "quiet": true } }
         },
@@ -193,9 +189,7 @@
               {
                 "command": "sleep 1 && rm -rf libs/shared/bootstrap/assets/css-min"
               },
-              {
-                "command": "nx run shared-bootstrap:package"
-              }
+              { "command": "nx run shared-bootstrap:package" }
             ]
           }
         },
@@ -214,7 +208,8 @@
                 "glob": "libs/shared/bootstrap/README.md",
                 "input": ".",
                 "output": "."
-              },{
+              },
+              {
                 "glob": "libs/shared/bootstrap/assets",
                 "input": ".",
                 "output": "."
@@ -233,6 +228,46 @@
           "outputs": ["coverage/libs/shared/bootstrap"],
           "options": {
             "jestConfig": "libs/shared/bootstrap/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "formbuilder": {
+      "root": "libs/formbuilder",
+      "sourceRoot": "libs/formbuilder/src",
+      "projectType": "library",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/web:package",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/libs/formbuilder",
+            "tsConfig": "libs/formbuilder/tsconfig.lib.json",
+            "project": "libs/formbuilder/package.json",
+            "entryFile": "libs/formbuilder/src/index.ts",
+            "external": ["react", "react-dom"],
+            "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+            "assets": [
+              {
+                "glob": "libs/formbuilder/README.md",
+                "input": ".",
+                "output": "."
+              }
+            ]
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/formbuilder/**/*.{ts,tsx,js,jsx}"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/formbuilder"],
+          "options": {
+            "jestConfig": "libs/formbuilder/jest.config.js",
             "passWithNoTests": true
           }
         }

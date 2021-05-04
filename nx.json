@@ -23,6 +23,7 @@
     "web-app": { "tags": [] },
     "web-app-e2e": { "tags": [], "implicitDependencies": ["web-app"] },
     "shared-ui-toolkit": { "tags": [] },
-    "shared-bootstrap": { "tags": [] }
+    "shared-bootstrap": { "tags": [] },
+    "formbuilder": { "tags": [] }
   }
 }
