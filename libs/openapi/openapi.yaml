@@ -116,6 +116,18 @@ components:
       description: Represents a form element
       type: object
       properties:
+        id:
+          type: string
+        key:
+          type: string
+        labels:
+          type: object
+          additionalProperties:
+            type: string
+        annotations:
+          type: object
+          additionalProperties:
+            type: string
         type:
           $ref: "#/components/schemas/FormElementType"
         children:
