@@ -7,9 +7,10 @@ import {
 } from '@nrc.no/ui-toolkit';
 
 type FieldTypeProps = {
+    value: FieldType | undefined
 }
 
-export enum FieldTypes {
+export enum FieldType {
     text = "Text",
     textarea = "Textarea",
     integer = "Integer",
@@ -18,24 +19,33 @@ export enum FieldTypes {
     multidropdown = "Dropdown (multi)"
 }
 
-const makeFieldTypeRadios = () => {
+const makeFieldTypeRadios = (selected: FieldType | undefined) => {
     const returnList = []
-    for (const option in FieldTypes){
-        returnList.push(
-            <FormCheck>
-                <FormCheckLabel>{FieldTypes[option]}</FormCheckLabel>
-                <FormRadioInput name={'fieldtype'} value={FieldTypes[option]}/>
-            </FormCheck>
-        )
+    for (const option in FieldType){
+        if (selected == FieldType[option]) {
+            returnList.push(
+                <FormCheck>
+                    <FormCheckLabel>{FieldType[option]}</FormCheckLabel>
+                    <FormRadioInput name={'fieldtype'} value={FieldType[option]} checked={true}/>
+                </FormCheck>
+            )
+        } else {
+            returnList.push(
+                <FormCheck>
+                    <FormCheckLabel>{FieldType[option]}</FormCheckLabel>
+                    <FormRadioInput name={'fieldtype'} value={FieldType[option]}/>
+                </FormCheck>
+            )
+        }
     }
     return returnList
 }
 
-export const FieldType: FunctionComponent<FieldTypeProps> = (props) => {
+export const FieldTypePicker: FunctionComponent<FieldTypeProps> = (props) => {
     return (
         <Fragment>
             {
-                makeFieldTypeRadios().map((radio) => radio)
+                makeFieldTypeRadios(props.value).map((radio) => radio)
             }
         </Fragment>
     )

@@ -4,19 +4,27 @@ import {
     FormLabel,
     FormSelect
 } from '@nrc.no/ui-toolkit';
-import { FieldType, FieldTypes } from '../fieldtype/fieldtype.component';
+import { FieldTypePicker, FieldType } from '../fieldtype/fieldtype.component';
 
 type FieldBuilderProps = {
 }
 
-enum Tabs {
+enum Tab {
     type = "Field Type",
     config = "Field Config"
 }
 
+const buildTab = (tab: Tab, currentTab: Tab, setCurrentTab: (React.Dispatch<React.SetStateAction<Tab>>)) => {
+    if (tab == currentTab){
+        return <a className="nav-link active" aria-current="page" onClick={(event) => {setCurrentTab(tab)}}>{tab}</a>
+    } else {
+        return <a className="nav-link" onClick={(event) => {setCurrentTab(tab)}}>{tab}</a>
+    }
+}
+
 export const FieldBuilder: FunctionComponent<FieldBuilderProps> = (props) => {
-    const [tab, setTab] = useState<Tabs>(Tabs.type)
-    const [fieldType, setFieldType] = useState("Text")    
+    const [currentTab, setCurrentTab] = useState<Tab>(Tab.type)
+    const [fieldType, setFieldType] = useState<FieldType | undefined>()    
     return (
         <Fragment>
             <div className={'container'}>
@@ -24,25 +32,29 @@ export const FieldBuilder: FunctionComponent<FieldBuilderProps> = (props) => {
                     <div className={'col-12 mb-5'}>
                         <ul className="nav nav-tabs">
                             <li className="nav-item">
-                                <a className="nav-link active" aria-current="page" onClick={(event) => {setTab(Tabs.type)}}>{Tabs.type}</a>
+                                {
+                                    buildTab(Tab.type, currentTab, setCurrentTab)
+                                }
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link active" aria-current="page" onClick={(event) => {setTab(Tabs.config)}}>{Tabs.config}</a>
+                                {
+                                    buildTab(Tab.config, currentTab, setCurrentTab)
+                                }
                             </li>
                         </ul>
                         <br/>
                         {   
-                            tab == Tabs.type &&
+                            currentTab == Tab.type &&
                             <form onChange={
                                 (event) => {
                                     setFieldType(event.target["value"])
                                 }
                             }>
-                                <FieldType />
+                                <FieldTypePicker value={fieldType} />
                             </form>
                         }
                         {
-                            tab == Tabs.config &&
+                            currentTab == Tab.config &&
                             "Current type " + fieldType 
                         }
                     </div>

@@ -130,7 +130,7 @@ export const FormCheckInput: FunctionComponent<
   );
 };
 
-export const FormRadioInput: FunctionComponent<InputHTMLAttributes<HTMLInputElement>> = (props) => {
+export const FormRadioInput: FunctionComponent<InputHTMLAttributes<HTMLInputElement> & { checked?: boolean }> = (props) => {
   return (
     <input
       {...props}
