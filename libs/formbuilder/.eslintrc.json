@@ -5,7 +5,10 @@
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "parserOptions": {
-        "project": ["libs/formbuilder/tsconfig.*?.json"]
+        "project": [
+          "libs/formbuilder/tsconfig.*?.json",
+          "libs/formbuilder/.storybook/tsconfig.json"
+        ]
       },
       "rules": {}
     },
