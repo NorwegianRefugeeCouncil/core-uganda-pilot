@@ -1,3 +1,8 @@
+// function stubs
+function tintColor() {}
+function shadeColor() {}
+
+
 const vars = {}
 
 class BsVanilla {
@@ -53,19 +58,19 @@ public cyan = "#0dcaf0";
 
 // scssDocsStart colorsMap
 public colors = {
-  "blue":       blue,
-  "indigo":     indigo,
-  "purple":     purple,
-  "pink":       pink,
-  "red":        red,
-  "orange":     orange,
-  "yellow":     yellow,
-  "green":      green,
-  "teal":       teal,
-  "cyan":       cyan,
-  "white":      white,
-  "gray":       gray600,
-  "grayDark":  gray800
+  "blue":       this.blue,
+  "indigo":     this.indigo,
+  "purple":     this.purple,
+  "pink":       this.pink,
+  "red":        this.red,
+  "orange":     this.orange,
+  "yellow":     this.yellow,
+  "green":      this.green,
+  "teal":       this.teal,
+  "cyan":       this.cyan,
+  "white":      this.white,
+  "gray":       this.gray600,
+  "grayDark":   this.gray800
 };
 // scssDocsEnd colorsMap
 
@@ -82,14 +87,14 @@ public dark = this.gray900;
 
 // scssDocsStart themeColorsMap
 public themeColors = {
-  "primary":    primary,
-  "secondary":  secondary,
-  "success":    success,
-  "info":       info,
-  "warning":    warning,
-  "danger":     danger,
-  "light":      light,
-  "dark":       dark
+  "primary":    this.primary,
+  "secondary":  this.secondary,
+  "success":    this.success,
+  "info":       this.info,
+  "warning":    this.warning,
+  "danger":     this.danger,
+  "light":      this.light,
+  "dark":       this.dark
 };
 // scssDocsEnd themeColorsMap
 
@@ -102,105 +107,105 @@ public colorContrastDark = this.black;
 public colorContrastLight = this.white;
 
 // fusvDisable
-public blue100 = this.tintColor(this.blue, "80%");
-public blue200 = this.tintColor(this.blue, "60%");
-public blue300 = this.tintColor(this.blue, "40%");
-public blue400 = this.tintColor(this.blue, "20%");
+public blue100 = tintColor(this.blue, "80%");
+public blue200 = tintColor(this.blue, "60%");
+public blue300 = tintColor(this.blue, "40%");
+public blue400 = tintColor(this.blue, "20%");
 public blue500 = this.blue;
-public blue600 = this.shadeColor(this.blue, "20%");
-public blue700 = this.shadeColor(this.blue, "40%");
-public blue800 = this.shadeColor(this.blue, "60%");
-public blue900 = this.shadeColor(this.blue, "80%");
+public blue600 = shadeColor(this.blue, "20%");
+public blue700 = shadeColor(this.blue, "40%");
+public blue800 = shadeColor(this.blue, "60%");
+public blue900 = shadeColor(this.blue, "80%");
 
-public indigo100 = this.tintColor(this.indigo, "80%");
-public indigo200 = this.tintColor(this.indigo, "60%");
-public indigo300 = this.tintColor(this.indigo, "40%");
-public indigo400 = this.tintColor(this.indigo, "20%");
+public indigo100 = tintColor(this.indigo, "80%");
+public indigo200 = tintColor(this.indigo, "60%");
+public indigo300 = tintColor(this.indigo, "40%");
+public indigo400 = tintColor(this.indigo, "20%");
 public indigo500 = this.indigo;
-public indigo600 = this.shadeColor(this.indigo, "20%");
-public indigo700 = this.shadeColor(this.indigo, "40%");
-public indigo800 = this.shadeColor(this.indigo, "60%");
-public indigo900 = this.shadeColor(this.indigo, "80%");
+public indigo600 = shadeColor(this.indigo, "20%");
+public indigo700 = shadeColor(this.indigo, "40%");
+public indigo800 = shadeColor(this.indigo, "60%");
+public indigo900 = shadeColor(this.indigo, "80%");
 
-public purple100 = this.tintColor(this.purple, "80%");
-public purple200 = this.tintColor(this.purple, "60%");
-public purple300 = this.tintColor(this.purple, "40%");
-public purple400 = this.tintColor(this.purple, "20%");
+public purple100 = tintColor(this.purple, "80%");
+public purple200 = tintColor(this.purple, "60%");
+public purple300 = tintColor(this.purple, "40%");
+public purple400 = tintColor(this.purple, "20%");
 public purple500 = this.purple;
-public purple600 = this.shadeColor(this.purple, "20%");
-public purple700 = this.shadeColor(this.purple, "40%");
-public purple800 = this.shadeColor(this.purple, "60%");
-public purple900 = this.shadeColor(this.purple, "80%");
+public purple600 = shadeColor(this.purple, "20%");
+public purple700 = shadeColor(this.purple, "40%");
+public purple800 = shadeColor(this.purple, "60%");
+public purple900 = shadeColor(this.purple, "80%");
 
-public pink100 = this.tintColor(this.pink, "80%");
-public pink200 = this.tintColor(this.pink, "60%");
-public pink300 = this.tintColor(this.pink, "40%");
-public pink400 = this.tintColor(this.pink, "20%");
+public pink100 = tintColor(this.pink, "80%");
+public pink200 = tintColor(this.pink, "60%");
+public pink300 = tintColor(this.pink, "40%");
+public pink400 = tintColor(this.pink, "20%");
 public pink500 = this.pink;
-public pink600 = this.shadeColor(this.pink, "20%");
-public pink700 = this.shadeColor(this.pink, "40%");
-public pink800 = this.shadeColor(this.pink, "60%");
-public pink900 = this.shadeColor(this.pink, "80%");
+public pink600 = shadeColor(this.pink, "20%");
+public pink700 = shadeColor(this.pink, "40%");
+public pink800 = shadeColor(this.pink, "60%");
+public pink900 = shadeColor(this.pink, "80%");
 
-public red100 = this.tintColor(this.red, "80%");
-public red200 = this.tintColor(this.red, "60%");
-public red300 = this.tintColor(this.red, "40%");
-public red400 = this.tintColor(this.red, "20%");
+public red100 = tintColor(this.red, "80%");
+public red200 = tintColor(this.red, "60%");
+public red300 = tintColor(this.red, "40%");
+public red400 = tintColor(this.red, "20%");
 public red500 = this.red;
-public red600 = this.shadeColor(this.red, "20%");
-public red700 = this.shadeColor(this.red, "40%");
-public red800 = this.shadeColor(this.red, "60%");
-public red900 = this.shadeColor(this.red, "80%");
+public red600 = shadeColor(this.red, "20%");
+public red700 = shadeColor(this.red, "40%");
+public red800 = shadeColor(this.red, "60%");
+public red900 = shadeColor(this.red, "80%");
 
-public orange100 = this.tintColor(this.orange, "80%");
-public orange200 = this.tintColor(this.orange, "60%");
-public orange300 = this.tintColor(this.orange, "40%");
-public orange400 = this.tintColor(this.orange, "20%");
+public orange100 = tintColor(this.orange, "80%");
+public orange200 = tintColor(this.orange, "60%");
+public orange300 = tintColor(this.orange, "40%");
+public orange400 = tintColor(this.orange, "20%");
 public orange500 = this.orange;
-public orange600 = this.shadeColor(this.orange, "20%");
-public orange700 = this.shadeColor(this.orange, "40%");
-public orange800 = this.shadeColor(this.orange, "60%");
-public orange900 = this.shadeColor(this.orange, "80%");
+public orange600 = shadeColor(this.orange, "20%");
+public orange700 = shadeColor(this.orange, "40%");
+public orange800 = shadeColor(this.orange, "60%");
+public orange900 = shadeColor(this.orange, "80%");
 
-public yellow100 = this.tintColor(this.yellow, "80%");
-public yellow200 = this.tintColor(this.yellow, "60%");
-public yellow300 = this.tintColor(this.yellow, "40%");
-public yellow400 = this.tintColor(this.yellow, "20%");
+public yellow100 = tintColor(this.yellow, "80%");
+public yellow200 = tintColor(this.yellow, "60%");
+public yellow300 = tintColor(this.yellow, "40%");
+public yellow400 = tintColor(this.yellow, "20%");
 public yellow500 = this.yellow;
-public yellow600 = this.shadeColor(this.yellow, "20%");
-public yellow700 = this.shadeColor(this.yellow, "40%");
-public yellow800 = this.shadeColor(this.yellow, "60%");
-public yellow900 = this.shadeColor(this.yellow, "80%");
+public yellow600 = shadeColor(this.yellow, "20%");
+public yellow700 = shadeColor(this.yellow, "40%");
+public yellow800 = shadeColor(this.yellow, "60%");
+public yellow900 = shadeColor(this.yellow, "80%");
 
-public green100 = this.tintColor(this.green, "80%");
-public green200 = this.tintColor(this.green, "60%");
-public green300 = this.tintColor(this.green, "40%");
-public green400 = this.tintColor(this.green, "20%");
+public green100 = tintColor(this.green, "80%");
+public green200 = tintColor(this.green, "60%");
+public green300 = tintColor(this.green, "40%");
+public green400 = tintColor(this.green, "20%");
 public green500 = this.green;
-public green600 = this.shadeColor(this.green, "20%");
-public green700 = this.shadeColor(this.green, "40%");
-public green800 = this.shadeColor(this.green, "60%");
-public green900 = this.shadeColor(this.green, "80%");
+public green600 = shadeColor(this.green, "20%");
+public green700 = shadeColor(this.green, "40%");
+public green800 = shadeColor(this.green, "60%");
+public green900 = shadeColor(this.green, "80%");
 
-public teal100 = this.tintColor(this.teal, "80%");
-public teal200 = this.tintColor(this.teal, "60%");
-public teal300 = this.tintColor(this.teal, "40%");
-public teal400 = this.tintColor(this.teal, "20%");
+public teal100 = tintColor(this.teal, "80%");
+public teal200 = tintColor(this.teal, "60%");
+public teal300 = tintColor(this.teal, "40%");
+public teal400 = tintColor(this.teal, "20%");
 public teal500 = this.teal;
-public teal600 = this.shadeColor(this.teal, "20%");
-public teal700 = this.shadeColor(this.teal, "40%");
-public teal800 = this.shadeColor(this.teal, "60%");
-public teal900 = this.shadeColor(this.teal, "80%");
+public teal600 = shadeColor(this.teal, "20%");
+public teal700 = shadeColor(this.teal, "40%");
+public teal800 = shadeColor(this.teal, "60%");
+public teal900 = shadeColor(this.teal, "80%");
 
-public cyan100 = this.tintColor(this.cyan, "80%");
-public cyan200 = this.tintColor(this.cyan, "60%");
-public cyan300 = this.tintColor(this.cyan, "40%");
-public cyan400 = this.tintColor(this.cyan, "20%");
+public cyan100 = tintColor(this.cyan, "80%");
+public cyan200 = tintColor(this.cyan, "60%");
+public cyan300 = tintColor(this.cyan, "40%");
+public cyan400 = tintColor(this.cyan, "20%");
 public cyan500 = this.cyan;
-public cyan600 = this.shadeColor(this.cyan, "20%");
-public cyan700 = this.shadeColor(this.cyan, "40%");
-public cyan800 = this.shadeColor(this.cyan, "60%");
-public cyan900 = this.shadeColor(this.cyan, "80%");
+public cyan600 = shadeColor(this.cyan, "20%");
+public cyan700 = shadeColor(this.cyan, "40%");
+public cyan800 = shadeColor(this.cyan, "60%");
+public cyan900 = shadeColor(this.cyan, "80%");
 // fusvEnable
 
 
@@ -218,31 +223,31 @@ public cyan900 = this.shadeColor(this.cyan, "80%");
 //
 // Quickly modify global styling by enabling or disabling optional features.
 
-public enableCaret = this.true;
-public enableRounded = this.true;
-public enableShadows = this.false;
-public enableGradients = this.false;
-public enableTransitions = this.true;
-public enableReducedMotion = this.true;
-public enableSmoothScroll = this.true;
-public enableGridClasses = this.true;
-public enableButtonPointers = this.true;
-public enableRfs = this.true;
-public enableValidationIcons = this.true;
-public enableNegativeMargins = this.false;
-public enableDeprecationMessages = this.true;
-public enableImportantUtilities = this.true;
+public enableCaret = true;
+public enableRounded = true;
+public enableShadows = false;
+public enableGradients = false;
+public enableTransitions = true;
+public enableReducedMotion = true;
+public enableSmoothScroll = true;
+public enableGridClasses = true;
+public enableButtonPointers = true;
+public enableRfs = true;
+public enableValidationIcons = true;
+public enableNegativeMargins = false;
+public enableDeprecationMessages = true;
+public enableImportantUtilities = true;
 
 // Prefix for :root CSS variables
 
-public variablePrefix = this.bs-;
+public variablePrefix = "bs-";
 
 // Gradient
 //
 // The gradient which is added to components if `enableGradients` is `true`
 // This gradient is also added to elements with `.bgGradient`
 // scssDocsStart variableGradient
-public gradient = this.linearGradient("180deg", rgba(this.white, .15), rgba(this.white, 0));
+public gradient = linearGradient("180deg", rgba(this.white, .15), rgba(this.white, 0));
 // scssDocsEnd variableGradient
 
 // Spacing
@@ -262,7 +267,8 @@ public spacers = {
   5:  this.spacer * 3,
 };
 
-public negativeSpacers = this.if(this.enableNegativeMargins, negativifyMap(this.spacers), null);
+// !!!
+public negativeSpacers = this.enableNegativeMargins ? negativifyMap(this.spacers) : null;
 // scssDocsEnd spacerVariablesMaps
 
 // Position
@@ -291,12 +297,12 @@ public bodyTextAlign = null;
 // Style anchor elements.
 
 public linkColor = this.primary;
-public linkDecoration = this.underline;
+public linkDecoration = "underline";
 public linkShadePercentage = "20%";
-public linkHoverColor = this.shiftColor(this.linkColor, linkShadePercentage);
+public linkHoverColor = shiftColor(this.linkColor, this.linkShadePercentage);
 public linkHoverDecoration = null;
 
-public stretchedLinkPseudoElement = this.after;
+public stretchedLinkPseudoElement = "after";
 public stretchedLinkZIndex:                  1;
 
 // Paragraphs
@@ -548,15 +554,15 @@ public tableThFontWeight = null;
 
 public tableStripedColor = this.tableColor;
 public tableStripedBgFactor = .05;
-public tableStripedBg = this.rgba(this.black, tableStripedBgFactor);
+public tableStripedBg = rgba(this.black, tableStripedBgFactor);
 
 public tableActiveColor = this.tableColor;
 public tableActiveBgFactor = .1;
-public tableActiveBg = this.rgba(this.black, tableActiveBgFactor);
+public tableActiveBg = rgba(this.black, tableActiveBgFactor);
 
 public tableHoverColor = this.tableColor;
 public tableHoverBgFactor = .075;
-public tableHoverBg = this.rgba(this.black, tableHoverBgFactor);
+public tableHoverBg = rgba(this.black, tableHoverBgFactor);
 
 public tableBorderFactor = .1;
 public tableBorderWidth = this.borderWidth;
@@ -598,7 +604,7 @@ public inputBtnLineHeight = this.lineHeightBase;
 
 public inputBtnFocusWidth = ".25rem";
 public inputBtnFocusColorOpacity = .25;
-public inputBtnFocusColor = this.rgba(this.componentActiveBg, inputBtnFocusColorOpacity);
+public inputBtnFocusColor = rgba(this.componentActiveBg, inputBtnFocusColorOpacity);
 public inputBtnFocusBlur = 0;
 public inputBtnFocusBoxShadow = `0 0 ${this.inputBtnFocusBlur} ${this.inputBtnFocusWidth} ${this.inputBtnFocusColor}`;
 
@@ -652,7 +658,7 @@ public btnBorderRadius = this.borderRadius;
 public btnBorderRadiusSm = this.borderRadiusSm;
 public btnBorderRadiusLg = this.borderRadiusLg;
 
-public btnTransition = `${this.color} .15s ease-in-out, backgroundColor .15s ease-in-out, borderColor .15s ease-in-out, boxShadow .15s ease-in-out`;
+public btnTransition = `color .15s ease-in-out, backgroundColor .15s ease-in-out, borderColor .15s ease-in-out, boxShadow .15s ease-in-out`;
 
 public btnHoverBgShadeAmount = "15%";
 public btnHoverBgTintAmount = "15%";
@@ -713,7 +719,7 @@ public inputBorderRadiusSm = this.borderRadiusSm;
 public inputBorderRadiusLg = this.borderRadiusLg;
 
 public inputFocusBg = this.inputBg;
-public inputFocusBorderColor = this.tintColor(this.componentActiveBg, "50%");
+public inputFocusBorderColor = tintColor(this.componentActiveBg, "50%");
 public inputFocusColor = this.inputColor;
 public inputFocusWidth = this.inputBtnFocusWidth;
 public inputFocusBoxShadow = this.inputBtnFocusBoxShadow;
@@ -755,13 +761,13 @@ public formCheckInputFocusBoxShadow = this.inputBtnFocusBoxShadow;
 public formCheckInputCheckedColor = this.componentActiveColor;
 public formCheckInputCheckedBgColor = this.componentActiveBg;
 public formCheckInputCheckedBorderColor = this.formCheckInputCheckedBgColor;
-public formCheckInputCheckedBgImage = this.url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path fill='none' stroke='#{formCheckInputCheckedColor}' strokeLinecap='round' strokeLinejoin='round' strokeWidth='3' d='M6 10l3 3l66'/></svg>");
-public formCheckRadioCheckedBgImage = this.url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='2' fill='#{formCheckInputCheckedColor}'/></svg>");
+public formCheckInputCheckedBgImage = url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path fill='none' stroke='#{formCheckInputCheckedColor}' strokeLinecap='round' strokeLinejoin='round' strokeWidth='3' d='M6 10l3 3l66'/></svg>");
+public formCheckRadioCheckedBgImage = url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='2' fill='#{formCheckInputCheckedColor}'/></svg>");
 
 public formCheckInputIndeterminateColor = this.componentActiveColor;
 public formCheckInputIndeterminateBgColor = this.componentActiveBg;
 public formCheckInputIndeterminateBorderColor = this.formCheckInputIndeterminateBgColor;
-public formCheckInputIndeterminateBgImage = this.url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path fill='none' stroke='#{formCheckInputIndeterminateColor}' strokeLinecap='round' strokeLinejoin='round' strokeWidth='3' d='M6 10h8'/></svg>");
+public formCheckInputIndeterminateBgImage = url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path fill='none' stroke='#{formCheckInputIndeterminateColor}' strokeLinecap='round' strokeLinejoin='round' strokeWidth='3' d='M6 10h8'/></svg>");
 
 public formCheckInputDisabledOpacity = .5;
 public formCheckLabelDisabledOpacity = this.formCheckInputDisabledOpacity;
@@ -771,18 +777,18 @@ public formCheckInlineMarginEnd = "1rem";
 // scssDocsEnd formCheckVariables
 
 // scssDocsStart formSwitchVariables
-public formSwitchColor = this.rgba(0, 0, 0, .25);
+public formSwitchColor = rgba(0, 0, 0, .25);
 public formSwitchWidth = "2em"
 public formSwitchPaddingStart = this.formSwitchWidth + ".5em"
-public formSwitchBgImage = this.url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{formSwitchColor}'/></svg>");
+public formSwitchBgImage = url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{formSwitchColor}'/></svg>");
 public formSwitchBorderRadius = this.formSwitchWidth;
 public formSwitchTransition = `${this.backgroundPosition} .15s ease-in-out`;
 
 public formSwitchFocusColor = this.inputFocusBorderColor;
-public formSwitchFocusBgImage = this.url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{formSwitchFocusColor}'/></svg>");
+public formSwitchFocusBgImage = url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{formSwitchFocusColor}'/></svg>");
 
 public formSwitchCheckedColor = this.componentActiveColor;
-public formSwitchCheckedBgImage = this.url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{formSwitchCheckedColor}'/></svg>");
+public formSwitchCheckedBgImage = url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{formSwitchCheckedColor}'/></svg>");
 public formSwitchCheckedBgPosition = "right center";
 // scssDocsEnd formSwitchVariables
 
@@ -811,7 +817,7 @@ public formSelectDisabledBorderColor = this.inputDisabledBorderColor;
 public formSelectBgPosition = `this.right formSelectPaddingX center`;
 public formSelectBgSize = "16px 12px"; // In pixels because image dimensions
 public formSelectIndicatorColor = this.gray800;
-public formSelectIndicator = this.url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='#{formSelectIndicatorColor}' strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M2 5l6 6 66'/></svg>");
+public formSelectIndicator = url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='#{formSelectIndicatorColor}' strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M2 5l6 6 66'/></svg>");
 
 public formSelectFeedbackIconPaddingEnd = `${this.formSelectPaddingX} * 2.5 + ${this.formSelectIndicatorPadding}`;
 public formSelectFeedbackIconPosition = "center right ${this.formSelectIndicatorPadding}";
@@ -851,7 +857,7 @@ public formRangeThumbBorderRadius = "1rem";
 public formRangeThumbBoxShadow = `0 .1rem .25rem ${rgba(this.black, .1)}`;
 public formRangeThumbFocusBoxShadow = `0 0 0 1px ${this.bodyBg}, ${this.inputFocusBoxShadow}`;
 public formRangeThumbFocusBoxShadowWidth = this.inputFocusWidth; // For focus box shadow issue in Edge
-public formRangeThumbActiveBg = this.tintColor(this.componentActiveBg, "70%");
+public formRangeThumbActiveBg = tintColor(this.componentActiveBg, "70%");
 public formRangeThumbDisabledBg = this.gray500;
 public formRangeThumbTransition = `${this.backgroundColor} .15s ease-in-out, borderColor .15s ease-in-out, boxShadow .15s ease-in-out`;
 // scssDocsEnd formRangeVariables
@@ -859,7 +865,7 @@ public formRangeThumbTransition = `${this.backgroundColor} .15s ease-in-out, bor
 // scssDocsStart formFileVariables
 public formFileButtonColor = this.inputColor;
 public formFileButtonBg = this.inputGroupAddonBg;
-public formFileButtonHoverBg = this.shadeColor(this.formFileButtonBg, "5%");
+public formFileButtonHoverBg = shadeColor(this.formFileButtonBg, "5%");
 // scssDocsEnd formFileVariables
 
 // scssDocsStart formFloatingVariables
@@ -869,7 +875,7 @@ public formFloatingPaddingY = "1rem";
 public formFloatingInputPaddingT = "1.625rem";
 public formFloatingInputPaddingB = ".625rem";
 public formFloatingLabelOpacity = .65;
-public formFloatingLabelTransform = `${scale(.85)} ${translateY(-.5rem)} ${translateX(.15rem)}`;
+public formFloatingLabelTransform = `${scale(.85)} ${translateY("-.5rem")} ${translateX(.15rem)}`;
 public formFloatingTransition = `${this.opacity} .1s ease-in-out, transform .1s ease-in-out`;
 // scssDocsEnd formFloatingVariables
 
@@ -883,9 +889,9 @@ public formFeedbackValidColor = this.success;
 public formFeedbackInvalidColor = this.danger;
 
 public formFeedbackIconValidColor = this.formFeedbackValidColor;
-public formFeedbackIconValid = this.url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'><path fill='#{formFeedbackIconValidColor}' d='M2.3 6.73L.6 4.53c-.41.04.461.4 1.1-.8l1.1 1.4 3.43.8c.6-.63 1.6-.27 1.2.7l4 4.6c-.43.5-.8.41.1.1z'/></svg>");
+public formFeedbackIconValid = url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'><path fill='#{formFeedbackIconValidColor}' d='M2.3 6.73L.6 4.53c-.41.04.461.4 1.1-.8l1.1 1.4 3.43.8c.6-.63 1.6-.27 1.2.7l4 4.6c-.43.5-.8.41.1.1z'/></svg>");
 public formFeedbackIconInvalidColor = this.formFeedbackInvalidColor;
-public formFeedbackIconInvalid = this.url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='#{formFeedbackIconInvalidColor}'><circle cx='6' cy='6' r='4.5'/><path strokeLinejoin='round' d='M5.8 3.6h.4L6 6.5z'/><circle cx='6' cy='8.2' r='.6' fill='#{formFeedbackIconInvalidColor}' stroke='none'/></svg>");
+public formFeedbackIconInvalid = url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='#{formFeedbackIconInvalidColor}'><circle cx='6' cy='6' r='4.5'/><path strokeLinejoin='round' d='M5.8 3.6h.4L6 6.5z'/><circle cx='6' cy='8.2' r='.6' fill='#{formFeedbackIconInvalidColor}' stroke='none'/></svg>");
 // scssDocsEnd formFeedbackVariables
 
 // scssDocsStart formValidationStates
@@ -968,19 +974,19 @@ public navbarTogglerTransition = 'box-shadow .15s ease-in-out';
 // scssDocsEnd navbarVariables
 
 // scssDocsStart navbarThemeVariables
-public navbarDarkColor = this.rgba(this.white, .55);
-public navbarDarkHoverColor = this.rgba(this.white, .75);
+public navbarDarkColor = rgba(this.white, .55);
+public navbarDarkHoverColor = rgba(this.white, .75);
 public navbarDarkActiveColor = this.white;
-public navbarDarkDisabledColor = this.rgba(this.white, .25);
-public navbarDarkTogglerIconBg = this.url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke='#{navbarDarkColor}' strokeLinecap='round' strokeMiterlimit='10' strokeWidth='2' d='M4 7h22M4 15h22M4 23h22'/></svg>");
-public navbarDarkTogglerBorderColor = this.rgba(this.white, .1);
+public navbarDarkDisabledColor = rgba(this.white, .25);
+public navbarDarkTogglerIconBg = url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke='#{navbarDarkColor}' strokeLinecap='round' strokeMiterlimit='10' strokeWidth='2' d='M4 7h22M4 15h22M4 23h22'/></svg>");
+public navbarDarkTogglerBorderColor = rgba(this.white, .1);
 
-public navbarLightColor = this.rgba(this.black, .55);
-public navbarLightHoverColor = this.rgba(this.black, .7);
-public navbarLightActiveColor = this.rgba(this.black, .9);
-public navbarLightDisabledColor = this.rgba(this.black, .3);
-public navbarLightTogglerIconBg = this.url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke='#{navbarLightColor}' strokeLinecap='round' strokeMiterlimit='10' strokeWidth='2' d='M4 7h22M4 15h22M4 23h22'/></svg>");
-public navbarLightTogglerBorderColor = this.rgba(this.black, .1);
+public navbarLightColor = rgba(this.black, .55);
+public navbarLightHoverColor = rgba(this.black, .7);
+public navbarLightActiveColor = rgba(this.black, .9);
+public navbarLightDisabledColor = rgba(this.black, .3);
+public navbarLightTogglerIconBg = url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke='#{navbarLightColor}' strokeLinecap='round' strokeMiterlimit='10' strokeWidth='2' d='M4 7h22M4 15h22M4 23h22'/></svg>");
+public navbarLightTogglerBorderColor = rgba(this.black, .1);
 
 public navbarLightBrandColor = this.navbarLightActiveColor;
 public navbarLightBrandHoverColor = this.navbarLightActiveColor;
@@ -1001,16 +1007,16 @@ public dropdownSpacer = ".125rem";
 public dropdownFontSize = this.fontSizeBase;
 public dropdownColor = this.bodyColor;
 public dropdownBg = this.white;
-public dropdownBorderColor = this.rgba(this.black, .15);
+public dropdownBorderColor = rgba(this.black, .15);
 public dropdownBorderRadius = this.borderRadius;
 public dropdownBorderWidth = this.borderWidth;
-public dropdownInnerBorderRadius = this.subtract(this.dropdownBorderRadius, dropdownBorderWidth);
+public dropdownInnerBorderRadius = subtract(this.dropdownBorderRadius, dropdownBorderWidth);
 public dropdownDividerBg = this.dropdownBorderColor;
 public dropdownDividerMarginY = this.spacer / 2;
 public dropdownBoxShadow = this.boxShadow;
 
 public dropdownLinkColor = this.gray900;
-public dropdownLinkHoverColor = this.shadeColor(this.gray900, "10%");
+public dropdownLinkHoverColor = shadeColor(this.gray900, "10%");
 public dropdownLinkHoverBg = this.gray200;
 
 public dropdownLinkActiveColor = this.componentActiveColor;
@@ -1033,7 +1039,7 @@ public dropdownDarkDividerBg = this.dropdownDividerBg;
 public dropdownDarkBoxShadow = null;
 public dropdownDarkLinkColor = this.dropdownDarkColor;
 public dropdownDarkLinkHoverColor = this.white;
-public dropdownDarkLinkHoverBg = this.rgba(this.white, .15);
+public dropdownDarkLinkHoverBg = rgba(this.white, .15);
 public dropdownDarkLinkActiveColor = this.dropdownLinkActiveColor;
 public dropdownDarkLinkActiveBg = this.dropdownLinkActiveBg;
 public dropdownDarkLinkDisabledColor = this.gray500;
@@ -1090,11 +1096,11 @@ public cardSpacerX = this.spacer;
 public cardTitleSpacerY = this.spacer / 2;
 public cardBorderWidth = this.borderWidth;
 public cardBorderRadius = this.borderRadius;
-public cardBorderColor = this.rgba(this.black, .125);
-public cardInnerBorderRadius = this.subtract(this.cardBorderRadius, cardBorderWidth);
+public cardBorderColor = rgba(this.black, .125);
+public cardInnerBorderRadius = subtract(this.cardBorderRadius, cardBorderWidth);
 public cardCapPaddingY = this.cardSpacerY / 2;
 public cardCapPaddingX = this.cardSpacerX;
-public cardCapBg = this.rgba(this.black, .03);
+public cardCapBg = rgba(this.black, .03);
 public cardCapColor = null;
 public cardHeight = null;
 public cardColor = null;
@@ -1111,9 +1117,9 @@ public accordionPaddingX = "1.25rem";
 public accordionColor = this.bodyColor;
 public accordionBg = this.bodyBg;
 public accordionBorderWidth = this.borderWidth;
-public accordionBorderColor = this.rgba(this.black, .125);
+public accordionBorderColor = rgba(this.black, .125);
 public accordionBorderRadius = this.borderRadius;
-public accordionInnerBorderRadius = this.subtract(this.accordionBorderRadius, accordionBorderWidth);
+public accordionInnerBorderRadius = subtract(this.accordionBorderRadius, accordionBorderWidth);
 
 public accordionBodyPaddingY = this.accordionPaddingY;
 public accordionBodyPaddingX = this.accordionPaddingX;
@@ -1123,8 +1129,8 @@ public accordionButtonPaddingX = this.accordionPaddingX;
 public accordionButtonColor = this.accordionColor;
 public accordionButtonBg = this.accordionBg;
 public accordionTransition = `${this.btnTransition}, borde-radius .15s ease`;
-public accordionButtonActiveBg = this.tintColor(this.componentActiveBg, "90%");
-public accordionButtonActiveColor = this.shadeColor(this.primary, "10%");
+public accordionButtonActiveBg = tintColor(this.componentActiveBg, "90%");
+public accordionButtonActiveColor = shadeColor(this.primary, "10%");
 
 public accordionButtonFocusBorderColor = this.inputFocusBorderColor;
 public accordionButtonFocusBoxShadow = this.btnFocusBoxShadow;
@@ -1132,11 +1138,11 @@ public accordionButtonFocusBoxShadow = this.btnFocusBoxShadow;
 public accordionIconWidth = "1.25rem";
 public accordionIconColor = this.accordionColor;
 public accordionIconActiveColor = this.accordionButtonActiveColor;
-public accordionIconTransition = this.transform .2s ease-in-out;
-public accordionIconTransform = this.rotate(180deg);
+public accordionIconTransition = 'transform .2s ease-in-out';
+public accordionIconTransform = rotate("180deg");
 
-public accordionButtonIcon = this.url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='#{accordionIconColor}'><path fillRule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.6465.647a.5.5 0 0 1 .708.708l6 6a.5.5 0 0 1-.708 0l66a.5.5 0 0 1 0-.708z'/></svg>");
-public accordionButtonActiveIcon = this.url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='#{accordionIconActiveColor}'><path fillRule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.6465.647a.5.5 0 0 1 .708.708l6 6a.5.5 0 0 1-.708 0l66a.5.5 0 0 1 0-.708z'/></svg>");
+public accordionButtonIcon = url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='#{accordionIconColor}'><path fillRule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.6465.647a.5.5 0 0 1 .708.708l6 6a.5.5 0 0 1-.708 0l66a.5.5 0 0 1 0-.708z'/></svg>");
+public accordionButtonActiveIcon = url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='#{accordionIconActiveColor}'><path fillRule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.6465.647a.5.5 0 0 1 .708.708l6 6a.5.5 0 0 1-.708 0l66a.5.5 0 0 1 0-.708z'/></svg>");
 // scssDocsEnd accordionVariables
 
 // Tooltips
@@ -1175,12 +1181,12 @@ public popoverFontSize = this.fontSizeSm;
 public popoverBg = this.white;
 public popoverMaxWidth = "276px";
 public popoverBorderWidth = this.borderWidth;
-public popoverBorderColor = this.rgba(this.black, .2);
+public popoverBorderColor = rgba(this.black, .2);
 public popoverBorderRadius = this.borderRadiusLg;
-public popoverInnerBorderRadius = this.subtract(this.popoverBorderRadius, popoverBorderWidth);
+public popoverInnerBorderRadius = subtract(this.popoverBorderRadius, popoverBorderWidth);
 public popoverBoxShadow = this.boxShadow;
 
-public popoverHeaderBg = this.shadeColor(this.popoverBg, "6%");
+public popoverHeaderBg = shadeColor(this.popoverBg, "6%");
 public popoverHeaderColor = this.headingsColor;
 public popoverHeaderPaddingY = ".5rem";
 public popoverHeaderPaddingX = this.spacer;
@@ -1205,16 +1211,16 @@ public toastPaddingX = ".75rem";
 public toastPaddingY = ".5rem";
 public toastFontSize = ".875rem";
 public toastColor = null;
-public toastBackgroundColor = this.rgba(this.white, .85);
+public toastBackgroundColor = rgba(this.white, .85);
 public toastBorderWidth = "1px";
-public toastBorderColor = this.rgba(0, 0, 0, .1);
+public toastBorderColor = rgba(0, 0, 0, .1);
 public toastBorderRadius = this.borderRadius;
 public toastBoxShadow = this.boxShadow;
 public toastSpacing = this.containerPaddingX;
 
 public toastHeaderColor = this.gray600;
-public toastHeaderBackgroundColor = this.rgba(this.white, .85);
-public toastHeaderBorderColor = this.rgba(0, 0, 0, .05);
+public toastHeaderBackgroundColor = rgba(this.white, .85);
+public toastHeaderBorderColor = rgba(0, 0, 0, .05);
 // scssDocsEnd toastVariables
 
 
@@ -1244,10 +1250,10 @@ public modalTitleLineHeight = this.lineHeightBase;
 
 public modalContentColor = null;
 public modalContentBg = this.white;
-public modalContentBorderColor = this.rgba(this.black, .2);
+public modalContentBorderColor = rgba(this.black, .2);
 public modalContentBorderWidth = this.borderWidth;
 public modalContentBorderRadius = this.borderRadiusLg;
-public modalContentInnerBorderRadius = this.subtract(this.modalContentBorderRadius, modalContentBorderWidth);
+public modalContentInnerBorderRadius = subtract(this.modalContentBorderRadius, modalContentBorderWidth);
 public modalContentBoxShadowXs = this.boxShadowSm;
 public modalContentBoxShadowSmUp = this.boxShadow;
 
@@ -1259,17 +1265,17 @@ public modalHeaderBorderWidth = this.modalContentBorderWidth;
 public modalFooterBorderWidth = this.modalHeaderBorderWidth;
 public modalHeaderPaddingY = this.modalInnerPadding;
 public modalHeaderPaddingX = this.modalInnerPadding;
-public modalHeaderPadding = this.modalHeaderPaddingY modalHeaderPaddingX; // Keep this for backwards compatibility
+public modalHeaderPadding = `${this.modalHeaderPaddingY} ${this.modalHeaderPaddingX}`; // Keep this for backwards compatibility
 
 public modalSm = "300px";
 public modalMd = "500px";
 public modalLg = "800px";
 public modalXl = "1140px";
 
-public modalFadeTransform = this.translate(0, -50px);
-public modalShowTransform = this.none;
-public modalTransition = this.transform .3s easeOut;
-public modalScaleTransform = this.scale(1.02);
+public modalFadeTransform = translate(0, "-50px");
+public modalShowTransform = "none";
+public modalTransition = 'transform .3s ease-out';
+public modalScaleTransform = scale(1.02);
 // scssDocsEnd modalVariables
 
 
@@ -1301,8 +1307,8 @@ public progressBorderRadius = this.borderRadius;
 public progressBoxShadow = this.boxShadowInset;
 public progressBarColor = this.white;
 public progressBarBg = this.primary;
-public progressBarAnimationTiming = 1s linear infinite;
-public progressBarTransition = this.width .6s ease;
+public progressBarAnimationTiming = '1s linear infinite';
+public progressBarTransition = 'width .6s ease';
 // scssDocsEnd progressVariables
 
 
@@ -1311,7 +1317,7 @@ public progressBarTransition = this.width .6s ease;
 // scssDocsStart listGroupVariables
 public listGroupColor = this.gray900;
 public listGroupBg = this.white;
-public listGroupBorderColor = this.rgba(this.black, .125);
+public listGroupBorderColor = rgba(this.black, .125);
 public listGroupBorderWidth = this.borderWidth;
 public listGroupBorderRadius = this.borderRadius;
 
@@ -1379,7 +1385,7 @@ public carouselControlColor = this.white;
 public carouselControlWidth = "15%";
 public carouselControlOpacity = .5;
 public carouselControlHoverOpacity = .9;
-public carouselControlTransition = this.opacity .15s ease;
+public carouselControlTransition = 'opacity .15s ease';
 
 public carouselIndicatorWidth = "30px";
 public carouselIndicatorHeight = "3px";
@@ -1388,7 +1394,7 @@ public carouselIndicatorSpacer = "3px";
 public carouselIndicatorOpacity = .5;
 public carouselIndicatorActiveBg = this.white;
 public carouselIndicatorActiveOpacity = 1;
-public carouselIndicatorTransition = this.opacity .6s ease;
+public carouselIndicatorTransition = 'opacity .6s ease';
 
 public carouselCaptionWidth = "70%";
 public carouselCaptionColor = this.white;
@@ -1397,15 +1403,15 @@ public carouselCaptionSpacer = "1.25rem";
 
 public carouselControlIconWidth = "2rem";
 
-public carouselControlPrevIconBg = this.url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='#{carouselControlColor}'><path d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l66a.5.5 0 0 1 0-.708l66a.5.5 0 0 1 .708 0z'/></svg>");
-public carouselControlNextIconBg = this.url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='#{carouselControlColor}'><path d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/></svg>");
+public carouselControlPrevIconBg = url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='#{carouselControlColor}'><path d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l66a.5.5 0 0 1 0-.708l66a.5.5 0 0 1 .708 0z'/></svg>");
+public carouselControlNextIconBg = url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='#{carouselControlColor}'><path d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/></svg>");
 
 public carouselTransitionDuration = ".6s";
-public carouselTransition = this.transform carouselTransitionDuration ease-in-out; // Define transform transition first if using multiple transitions (this.e.g., `transform 2s ease, opacity .5s easeOut`)
+public carouselTransition = `transform ${this.carouselTransitionDuration} ease-in-out`; // Define transform transition first if using multiple transitions (this.e.g., `transform 2s ease, opacity .5s ease-out`)
 
 public carouselDarkIndicatorActiveBg = this.black;
 public carouselDarkCaptionColor = this.black;
-public carouselDarkControlIconFilter = this.invert(1) grayscale(100);
+public carouselDarkControlIconFilter = `${invert(1)} ${grayscale(100)}`;
 // scssDocsEnd carouselVariables
 
 
@@ -1431,13 +1437,13 @@ public btnCloseHeight = this.btnCloseWidth;
 public btnClosePaddingX = ".25em"
 public btnClosePaddingY = this.btnClosePaddingX;
 public btnCloseColor = this.black;
-public btnCloseBg = this.url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='#{btnCloseColor}'><path d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 011.414 1.414L8 9.414l6.293 6.293a1 1 0 011.4141.414L6.586 8 .293 1.707a1 1 0 0101.414z'/></svg>");
+public btnCloseBg = url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='#{btnCloseColor}'><path d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 011.414 1.414L8 9.414l6.293 6.293a1 1 0 011.4141.414L6.586 8 .293 1.707a1 1 0 0101.414z'/></svg>");
 public btnCloseFocusShadow = this.inputBtnFocusBoxShadow;
 public btnCloseOpacity = .5;
 public btnCloseHoverOpacity = .75;
 public btnCloseFocusOpacity = 1;
 public btnCloseDisabledOpacity = .25;
-public btnCloseWhiteFilter = this.invert(1) grayscale(100%) brightness(200%);
+public btnCloseWhiteFilter = `${invert(1)} ${grayscale('100%')} ${brightness('200%')}`;
 // scssDocsEnd closeVariables
 
 
@@ -1454,7 +1460,7 @@ public offcanvasBorderWidth = this.modalContentBorderWidth;
 public offcanvasTitleLineHeight = this.modalTitleLineHeight;
 public offcanvasBgColor = this.modalContentBg;
 public offcanvasColor = this.modalContentColor;
-public offcanvasBodyBackdropColor = this.rgba(this.modalBackdropBg, modalBackdropOpacity);
+public offcanvasBodyBackdropColor = rgba(this.modalBackdropBg, modalBackdropOpacity);
 public offcanvasBoxShadow = this.modalContentBoxShadowXs;
 // scssDocsEnd offcanvasVariables
 
@@ -1473,10 +1479,6 @@ public preColor = null;
 
 }
 
-
-vars['modalWidth'] = 10;
-
-vars['modalHeight'] = vars.moda + 10
 
 const bsVanillaInstance = new BsVanilla()
 export default bsVanillaInstance

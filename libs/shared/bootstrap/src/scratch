@@ -237,7 +237,7 @@ public variablePrefix = this.bs-;
 // The gradient which is added to components if `enableGradients` is `true`
 // This gradient is also added to elements with `.bgGradient`
 // scssDocsStart variableGradient
-public gradient = this.linearGradient(this.180deg, rgba(this.white, .15), rgba(this.white, 0));
+public gradient = linearGradient(this.180deg, rgba(this.white, .15), rgba(this.white, 0));
 // scssDocsEnd variableGradient
 
 // Spacing
