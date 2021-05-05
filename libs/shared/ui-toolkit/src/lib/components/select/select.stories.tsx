@@ -21,8 +21,14 @@ storiesOf('Select', module).add('default', () => {
       </div>
       <div className={'container'}>
         <div className={'col-12 mb-4'}>
+          <h3>Disabled Select</h3>
+          <SingleSelect options={options} isDisabled />
+        </div>
+      </div>
+      <div className={'container'}>
+        <div className={'col-12 mb-4'}>
           <h3>Multi Select</h3>
-          <MultiSelect options={options} disabled />
+          <MultiSelect options={options} />
         </div>
       </div>
     </>
