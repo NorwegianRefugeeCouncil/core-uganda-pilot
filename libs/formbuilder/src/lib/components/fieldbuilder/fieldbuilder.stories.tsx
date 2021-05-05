@@ -2,14 +2,13 @@ import { storiesOf } from '@storybook/react';
 import React from 'react';
 import { FieldBuilder } from './fieldbuilder.component'
 import {
-    Card
+  Card, CardBody
 } from '@nrc.no/ui-toolkit'
 
 storiesOf('Field Builder', module).add('default', () => (
-  <>
-    <Card>
-      <br></br>
+  <Card>
+    <CardBody>
       <FieldBuilder />
-    </Card>
-  </>
+    </CardBody>
+  </Card>
 ));

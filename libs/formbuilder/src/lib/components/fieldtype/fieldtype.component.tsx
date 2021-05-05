@@ -23,7 +23,7 @@ export enum FieldType {
 const makeFieldTypeRadios = (selected: FieldType | undefined) => {
     const returnList = []
     for (const option in FieldType){
-        if (selected == FieldType[option]) {
+        if (selected === FieldType[option]) {
             returnList.push(
                 <FormCheck>
                     <FormCheckLabel>{FieldType[option]}</FormCheckLabel>

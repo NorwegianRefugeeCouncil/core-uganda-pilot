@@ -25,7 +25,9 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help",
     "bootstrap:build": "nx build shared-bootstrap",
-    "ui-toolkit:storybook": "nx start shared-ui-toolkit:storybook"
+    "ui-toolkit:storybook": "nx start shared-ui-toolkit:storybook",
+    "formbuilder:build": "nx build formbuilder:storybook",
+    "formbuilder:storybook": "nx start formbuilder:storybook"
   },
   "private": true,
   "dependencies": {
