@@ -1,6 +1,7 @@
 package testing
 
 import (
+	"context"
 	"github.com/nrc-no/core/apps/api/pkg/apis"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
@@ -9,6 +10,22 @@ import (
 
 func (s *MainTestSuite) TestFormDefinitionCRUD() {
 	t := s.T()
+
+	watchCtx, watchCancel := context.WithCancel(s.ctx)
+	defer watchCancel()
+
+	watch, err := s.nrcClient.FormDefinitions().Watch(watchCtx)
+	if err != nil {
+		s.T().Errorf("cannot start watch: %v", err)
+		return
+	}
+
+	go func() {
+		for event := range watch.ResultChan() {
+			s.T().Logf("%#v", event)
+			watchCancel()
+		}
+	}()
 
 	var formDefinition = apis.FormDefinition{
 		TypeMeta: apis.TypeMeta{
@@ -94,4 +111,5 @@ func (s *MainTestSuite) TestFormDefinitionCRUD() {
 
 	t.Logf("\n%v", updated)
 
+	time.Sleep(2 * time.Second)
 }

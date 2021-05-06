@@ -5,12 +5,16 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/websocket"
+	"github.com/nrc-no/core/apps/api/pkg/runtime"
+	"github.com/nrc-no/core/apps/api/pkg/watch"
 	"github.com/sirupsen/logrus"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"path"
+	"reflect"
 	"strings"
 	"time"
 )
@@ -312,6 +316,36 @@ func (r *Request) URL() *url.URL {
 
 	finalUrl.RawQuery = query.Encode()
 	return finalUrl
+
+}
+
+func (r *Request) Watch(ctx context.Context, objPtr runtime.Object) (watch.Interface, error) {
+	if r.err != nil {
+		return nil, r.err
+	}
+
+	reqURL := r.URL().String()
+
+	reqURL = strings.Replace(reqURL, "https", "wss", -1)
+	reqURL = strings.Replace(reqURL, "http", "ws", -1)
+
+	c, _, err := websocket.DefaultDialer.DialContext(ctx, reqURL, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	objType := reflect.TypeOf(objPtr).Elem()
+
+	watcher := watch.NewWatcher(ctx, func() ([]byte, error) {
+		_, message, err := c.ReadMessage()
+		return message, err
+	}, func(payload []byte) (runtime.Object, error) {
+		out := reflect.New(objType).Interface().(runtime.Object)
+		err := json.Unmarshal(payload, &out)
+		return out, err
+	})
+
+	return watcher, nil
 
 }
 

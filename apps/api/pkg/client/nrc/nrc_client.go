@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/nrc-no/core/apps/api/pkg/apis"
 	"github.com/nrc-no/core/apps/api/pkg/client/rest"
+	"github.com/nrc-no/core/apps/api/pkg/watch"
 )
 
 type NrcCoreClient struct {
@@ -37,6 +38,7 @@ type FormDefinitionsInterface interface {
 	Get(ctx context.Context, id string) (*apis.FormDefinition, error)
 	List(ctx context.Context) (*apis.FormDefinitionList, error)
 	Update(ctx context.Context, formDefinition *apis.FormDefinition) (result *apis.FormDefinition, err error)
+	Watch(ctx context.Context) (p watch.Interface, err error)
 }
 
 type formDefinitionsClient struct {
@@ -81,4 +83,10 @@ func (c *formDefinitionsClient) Update(ctx context.Context, formDefinition *apis
 		Do(ctx).
 		Into(result)
 	return
+}
+
+func (c *formDefinitionsClient) Watch(ctx context.Context) (w watch.Interface, err error) {
+	return c.client.Get().
+		Resource("formdefinitions").
+		Watch(ctx, &apis.FormDefinition{})
 }

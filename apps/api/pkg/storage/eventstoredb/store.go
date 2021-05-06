@@ -154,7 +154,7 @@ func (s *Store) Watch(ctx context.Context, key string, objPtr runtime.Object, wa
 
 	keyParts := strings.Split(key, "/")
 	group := keyParts[0]
-	resource := keyParts[2]
+	resource := keyParts[1]
 
 	stream, err := s.mongoClient.Database("core").Collection(group+"/"+resource).Watch(ctx, mongo.Pipeline{})
 	if err != nil {

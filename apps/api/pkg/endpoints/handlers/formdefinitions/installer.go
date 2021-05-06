@@ -17,7 +17,7 @@ func Install(container *restful.Container, storage storage.Interface) {
 	}
 
 	ws.Route(ws.GET("/").To(func(request *restful.Request, response *restful.Response) {
-		handler.Get(response.ResponseWriter, request.Request)
+		handler.List(response.ResponseWriter, request.Request)
 	}).
 		Operation("getFormDefinitions").
 		Produces("application/json").
@@ -37,6 +37,15 @@ func Install(container *restful.Container, storage storage.Interface) {
 		handler.Update(response.ResponseWriter, request.Request)
 	}).
 		Operation("updateFormDefinition").
+		Produces("application/json").
+		Consumes("application/json").
+		Writes(&apis.FormDefinition{}).
+		Reads(&apis.FormDefinition{}))
+
+	ws.Route(ws.GET("/watch").To(func(request *restful.Request, response *restful.Response) {
+		handler.Watch(response.ResponseWriter, request.Request)
+	}).
+		Operation("watchFormDefinition").
 		Produces("application/json").
 		Consumes("application/json").
 		Writes(&apis.FormDefinition{}).
