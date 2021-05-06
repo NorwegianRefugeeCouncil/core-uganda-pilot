@@ -1,7 +1,7 @@
-import React, { ButtonHTMLAttributes, FunctionComponent } from 'react';
+import * as React from 'react';
 import classNames from 'classnames';
 
-type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+type ButtonProps = React.ComponentPropsWithRef<'button'> & {
   kind?:
     | 'primary'
     | 'secondary'
@@ -16,7 +16,7 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   outline?: boolean;
 };
 
-export const Button: FunctionComponent<ButtonProps> = (props: ButtonProps) => {
+export const Button: React.FC<ButtonProps> = (props: ButtonProps) => {
   const { kind, size, outline, className, children, ...otherProps } = props;
   const classes: string[] = [];
   classes.push('btn');
@@ -34,12 +34,12 @@ export const Button: FunctionComponent<ButtonProps> = (props: ButtonProps) => {
   );
 };
 
-type CloseButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+type CloseButtonProps = ButtonProps & {
   size?: 'sm' | 'lg';
 };
 
 export const CloseButton = (() => {
-  const cmp: FunctionComponent<CloseButtonProps> = ({
+  const cmp: React.FC<CloseButtonProps> = ({
     size,
     className,
     children,
@@ -52,7 +52,7 @@ export const CloseButton = (() => {
       'btn-lg': size === 'lg',
     });
     return (
-      <button className={className} {...props}>
+      <button {...props} className={className} {...props}>
         {children}
       </button>
     );

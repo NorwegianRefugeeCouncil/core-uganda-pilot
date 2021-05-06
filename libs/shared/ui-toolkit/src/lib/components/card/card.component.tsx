@@ -1,9 +1,9 @@
-import { AnchorHTMLAttributes, FunctionComponent, HTMLAttributes } from 'react';
+import * as React from 'react';
 import classNames from 'classnames';
 
-type CardProps = HTMLAttributes<HTMLDivElement>;
+type CardProps = React.ComponentPropsWithRef<'div'>;
 
-export const Card: FunctionComponent<CardProps> = (props) => {
+export const Card: React.FC<CardProps> = (props) => {
   const className = classNames('card', props.className);
   return (
     <div {...props} className={className}>
@@ -12,9 +12,9 @@ export const Card: FunctionComponent<CardProps> = (props) => {
   );
 };
 
-type CardBodyProps = HTMLAttributes<HTMLDivElement>;
+type CardBodyProps = React.ComponentPropsWithRef<'div'>;
 
-export const CardBody: FunctionComponent<CardBodyProps> = (props) => {
+export const CardBody: React.FC<CardBodyProps> = (props) => {
   return (
     <div {...props} className={classNames(props.className, 'card-body')}>
       {props.children}
@@ -22,9 +22,9 @@ export const CardBody: FunctionComponent<CardBodyProps> = (props) => {
   );
 };
 
-type CardTextProps = HTMLAttributes<HTMLParagraphElement>;
+type CardTextProps = React.ComponentPropsWithRef<'p'>;
 
-export const CardText: FunctionComponent<CardTextProps> = (props) => {
+export const CardText: React.FC<CardTextProps> = (props) => {
   return (
     <p {...props} className={classNames(props.className, 'card-text')}>
       {props.children}
@@ -32,9 +32,9 @@ export const CardText: FunctionComponent<CardTextProps> = (props) => {
   );
 };
 
-type CardTitleProps = HTMLAttributes<HTMLHeadingElement>;
+type CardTitleProps = React.ComponentPropsWithRef<'h5'>;
 
-export const CardTitle: FunctionComponent<CardTitleProps> = (props) => {
+export const CardTitle: React.FC<CardTitleProps> = (props) => {
   return (
     <h5 {...props} className={classNames(props.className, 'card-title')}>
       {props.children}
@@ -42,9 +42,9 @@ export const CardTitle: FunctionComponent<CardTitleProps> = (props) => {
   );
 };
 
-type CardSubTitleProps = HTMLAttributes<HTMLHeadingElement>;
+type CardSubTitleProps = React.ComponentPropsWithRef<'h6'>;
 
-export const CardSubTitle: FunctionComponent<CardSubTitleProps> = (props) => {
+export const CardSubTitle: React.FC<CardSubTitleProps> = (props) => {
   return (
     <h6
       {...props}
@@ -60,9 +60,9 @@ export const CardSubTitle: FunctionComponent<CardSubTitleProps> = (props) => {
   );
 };
 
-type CardLinkProps = AnchorHTMLAttributes<HTMLAnchorElement>;
+type CardLinkProps = React.ComponentPropsWithRef<'a'>;
 
-export const CardLink: FunctionComponent<CardLinkProps> = (props) => {
+export const CardLink: React.FC<CardLinkProps> = (props) => {
   return (
     <a {...props} className={classNames(props.className, 'card-link')}>
       {props.children}
@@ -70,9 +70,9 @@ export const CardLink: FunctionComponent<CardLinkProps> = (props) => {
   );
 };
 
-type CardTopImageProps = HTMLAttributes<HTMLImageElement>;
+type CardTopImageProps = React.ComponentPropsWithRef<'img'>;
 
-export const CardTopImage: FunctionComponent<CardTopImageProps> = (props) => {
+export const CardTopImage: React.FC<CardTopImageProps> = (props) => {
   // 'alt' attribute would be in props
   // eslint-disable-next-line jsx-a11y/alt-text
   return (
@@ -82,9 +82,9 @@ export const CardTopImage: FunctionComponent<CardTopImageProps> = (props) => {
   );
 };
 
-type CardHeaderProps = HTMLAttributes<HTMLDivElement>;
+type CardHeaderProps = React.ComponentPropsWithRef<'div'>;
 
-export const CardHeader: FunctionComponent<CardHeaderProps> = (props) => {
+export const CardHeader: React.FC<CardHeaderProps> = (props) => {
   return (
     <div {...props} className={classNames(props.className, 'card-header')}>
       {props.children}
@@ -92,9 +92,9 @@ export const CardHeader: FunctionComponent<CardHeaderProps> = (props) => {
   );
 };
 
-type CardHeaderFeaturedProps = HTMLAttributes<HTMLHeadingElement>;
+type CardHeaderFeaturedProps = React.ComponentPropsWithRef<'h5'>;
 
-export const CardHeaderFeatured: FunctionComponent<CardHeaderFeaturedProps> = (
+export const CardHeaderFeatured: React.FC<CardHeaderFeaturedProps> = (
   props
 ) => {
   return (
@@ -104,9 +104,9 @@ export const CardHeaderFeatured: FunctionComponent<CardHeaderFeaturedProps> = (
   );
 };
 
-type CardFooterProps = HTMLAttributes<HTMLDivElement>;
+type CardFooterProps = React.ComponentPropsWithRef<'div'>;
 
-export const CardFooter: FunctionComponent<CardFooterProps> = (props) => {
+export const CardFooter: React.FC<CardFooterProps> = (props) => {
   return (
     <div {...props} className={classNames(props.className, 'card-footer')}>
       {props.children}

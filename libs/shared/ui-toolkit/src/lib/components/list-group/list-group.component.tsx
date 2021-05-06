@@ -1,4 +1,4 @@
-import { AnchorHTMLAttributes, FunctionComponent, HTMLAttributes } from 'react';
+import { AnchorHTMLAttributes, FC, HTMLAttributes } from 'react';
 import classNames from 'classnames';
 export interface ListGroupProps
   extends HTMLAttributes<HTMLDivElement | HTMLUListElement> {
@@ -7,7 +7,7 @@ export interface ListGroupProps
   numbered?: boolean;
 }
 
-const ListGroup: FunctionComponent<ListGroupProps> = ({
+const ListGroup: FC<ListGroupProps> = ({
   flush,
   isActionListGroup,
   numbered,
@@ -47,7 +47,7 @@ export interface ListGroupItemProps {
   isAction?: boolean;
 }
 
-const ListGroupItem: FunctionComponent<
+const ListGroupItem: FC<
   (HTMLAttributes<HTMLLIElement> | AnchorHTMLAttributes<HTMLAnchorElement>) &
     ListGroupItemProps
 > = ({ active, isAction, disabled, ...props }) => {

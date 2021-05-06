@@ -16,7 +16,7 @@ storiesOf('Buttons', module).add('default', () => (
         <Button kind="info">Info</Button>
         <Button kind="dark">Dark</Button>
         <Button kind="light">Light</Button>
-        <Button kind="link">Link</Button>
+        <Button kind="link" type="submit">Link</Button>
       </CardBody>
     </Card>
     <Card>

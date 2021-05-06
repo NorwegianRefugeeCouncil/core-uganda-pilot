@@ -1,4 +1,4 @@
-import React, { Fragment, FunctionComponent } from 'react';
+import React, { Fragment, FC } from 'react';
 import {
     FormLabel,
     FormCheck,
@@ -42,7 +42,7 @@ const makeFieldTypeRadios = (selected: FieldType | undefined) => {
     return returnList
 }
 
-export const FieldTypePicker: FunctionComponent<FieldTypeProps> = (props) => {
+export const FieldTypePicker: FC<FieldTypeProps> = (props) => {
     return (
         <Fragment>
             {

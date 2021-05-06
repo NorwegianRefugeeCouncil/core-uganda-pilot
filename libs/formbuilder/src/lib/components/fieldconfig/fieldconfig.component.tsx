@@ -1,4 +1,4 @@
-import React, { Fragment, FunctionComponent } from 'react';
+import React, { Fragment, FC } from 'react';
 import {
     FormLabel,
     FormCheck,
@@ -11,7 +11,7 @@ import { FieldType } from '../fieldtype/fieldtype.component';
 type FieldConfigProps = {
     fieldType: FieldType
     fieldProps: GenericFieldConfig
-}   
+}
 
 interface DateConfig {
     mindate: string,
@@ -32,7 +32,7 @@ const renderDateConfig = (props: DateConfig) => {
         <FormLabel>Placeholder:</FormLabel>
         <FormInput name="placeholder" value={props.placeholder} />
         {
-            props.required === true ? 
+            props.required === true ?
             <FormCheck>
                 <FormCheckLabel>Required</FormCheckLabel>
                 <FormCheckInput name="required" checked={true} />
@@ -42,7 +42,7 @@ const renderDateConfig = (props: DateConfig) => {
                 <FormCheckInput name="required" />
             </FormCheck>
         }
-        
+
     </Fragment>
 }
 
@@ -66,7 +66,7 @@ const renderTextConfig = (props: TextConfig) => {
             <FormLabel>Placeholder:</FormLabel>
             <FormInput name="placeholder" value={props.placeholder} />
             {
-                props.required === true ? 
+                props.required === true ?
                 <FormCheck>
                     <FormCheckLabel>Required</FormCheckLabel>
                     <FormCheckInput name="required" checked={true} />
@@ -103,7 +103,7 @@ const renderIntegerConfig = (props: IntegerConfig) => {
             <FormLabel>Placeholder:</FormLabel>
             <FormInput name="placeholder" value={props.placeholder} />
             {
-                props.required === true ? 
+                props.required === true ?
                 <FormCheck>
                     <FormCheckLabel>Required</FormCheckLabel>
                     <FormCheckInput name="required" checked={true} />
@@ -149,7 +149,7 @@ const renderDropdownConfig = (props: DropdownConfig) => {
             <FormLabel>Placeholder:</FormLabel>
             <FormInput name="placeholder" value={props.placeholder} />
             {
-                props.required === true ? 
+                props.required === true ?
                 <FormCheck>
                     <FormCheckLabel>Required</FormCheckLabel>
                     <FormCheckInput name="required" checked={true} />
@@ -181,7 +181,7 @@ const renderConfig = (fieldType: FieldType, fieldProps: GenericFieldConfig) => {
             return renderDropdownConfig(fieldProps as DropdownConfig)
         case FieldType.multidropdown:
             return renderMultiDropdownConfig(fieldProps as DropdownConfig)
-    
+
         default:
             return (
                 <p>No render function found</p>
@@ -191,7 +191,7 @@ const renderConfig = (fieldType: FieldType, fieldProps: GenericFieldConfig) => {
 
 export type GenericFieldConfig = DateConfig | TextConfig | IntegerConfig | CheckboxConfig | DropdownConfig
 
-export const FieldConfig: FunctionComponent<FieldConfigProps> = (props) => {
+export const FieldConfig: FC<FieldConfigProps> = (props) => {
     return (
         <Fragment>
             {

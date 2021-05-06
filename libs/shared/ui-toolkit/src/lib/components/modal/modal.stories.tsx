@@ -1,4 +1,4 @@
-import { Fragment, PropsWithChildren, useState } from 'react';
+import * as React from 'react'
 import { storiesOf } from '@storybook/react';
 import { Modal, ModalBody, ModalContent, ModalDialog, ModalFooter, ModalHeader, ModalTitle } from './modal';
 import { Button } from '../button/button.component';
@@ -22,9 +22,9 @@ type StoryProps = {
   storyName: string
 } & ModalProps
 
-const ModalStory = (props: PropsWithChildren<StoryProps>) => {
+const ModalStory = (props: React.PropsWithChildren<StoryProps>) => {
   const { storyName, children, ...otherProps } = props;
-  const [show, setShow] = useState(false);
+  const [show, setShow] = React.useState(false);
   return (
 
     <div className={"mb-2 border p-3"}>
@@ -44,7 +44,7 @@ const ModalStory = (props: PropsWithChildren<StoryProps>) => {
 storiesOf('Modal', module)
   .add('default', () => {
     return (
-      <Fragment>
+      <>
         <ModalStory storyName={'Default'}>
           <p>Just a basic, default modal</p>
         </ModalStory>
@@ -66,6 +66,6 @@ storiesOf('Modal', module)
         <ModalStory storyName={'Small'} size={'sm'}>
           <p>A small modal</p>
         </ModalStory>
-      </Fragment>
+      </>
     );
   });

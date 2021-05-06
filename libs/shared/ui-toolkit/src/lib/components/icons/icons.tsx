@@ -1,8 +1,8 @@
-import { FunctionComponent } from 'react';
+import * as React from 'react';
 
-const bootstrapIcon: (className: string) => FunctionComponent = className => {
-  return props => {
-    return <i className={'bi bi-' + className}>{props.children}</i>;
+const bootstrapIcon: (className: string) => React.FC<React.ComponentPropsWithoutRef<'i'>> = className => {
+  return ({ children, ...props }) => {
+    return <i {...props} className={'bi bi-' + className}>{children}</i>;
   };
 };
 
