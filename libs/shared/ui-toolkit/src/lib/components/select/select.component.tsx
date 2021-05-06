@@ -7,7 +7,7 @@ import Select, {
   Props
 } from 'react-select';
 import classNames from 'classnames';
-import { CloseButton } from '@nrc.no/ui-toolkit';
+import { CloseButton, XIcon } from '@nrc.no/ui-toolkit';
 import StateManager from 'react-select';
 
 // a thin wrapper over react-select applying our own bootstrap styles
@@ -42,7 +42,7 @@ const MultiValueRemove: FunctionComponent<MultiValueProps<any>> = ({
   const classes = classNames(props.className, '', {});
   return (
     <components.MultiValueRemove {...innerProps}>
-      <CloseButton className={classes} size={'sm'} />
+      <XIcon />
     </components.MultiValueRemove>
   )
 }
