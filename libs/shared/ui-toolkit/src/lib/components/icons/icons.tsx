@@ -10,3 +10,4 @@ export const ThreeDotsIcon = bootstrapIcon('three-dots');
 export const PencilFillIcon = bootstrapIcon('pencil-fill');
 export const PencilIcon = bootstrapIcon('pencil');
 export const PlusIcon = bootstrapIcon('plus');
+export const XIcon = bootstrapIcon('x')
