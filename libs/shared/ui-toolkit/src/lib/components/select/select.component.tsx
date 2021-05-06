@@ -42,7 +42,7 @@ const MultiValueRemove: FunctionComponent<MultiValueProps<any>> = ({
   const classes = classNames(props.className, '', {});
   return (
     <components.MultiValueRemove {...innerProps}>
-      <XIcon />
+      <div><XIcon /></div>
     </components.MultiValueRemove>
   )
 }
