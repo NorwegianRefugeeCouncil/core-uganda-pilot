@@ -1,52 +1,53 @@
-import React, { FunctionComponent, MouseEventHandler, ReactNode } from 'react';
-import Select, { components } from 'react-select';
-import type { Ref } from 'react';
+import React, { FunctionComponent } from 'react';
+import Select, {
+  components,
+  ControlProps,
+  MultiValueProps,
+  OptionProps,
+  Props
+} from 'react-select';
 import classNames from 'classnames';
+import { CloseButton } from '@nrc.no/ui-toolkit';
+import StateManager from 'react-select';
 
 // a thin wrapper over react-select applying our own bootstrap styles
-/* 
-The following components are customisable and switchable:
-    ClearIndicator
-    Control
-    DropdownIndicator
-    DownChevron
-    CrossIcon
-    Group
-    GroupHeading
-    IndicatorsContainer
-    IndicatorSeparator
-    Input
-    LoadingIndicator
-    Menu
-    MenuList
-    MenuPortal
-    LoadingMessage
-    NoOptionsMessage
-    MultiValue
-    MultiValueContainer
-    MultiValueLabel
-    MultiValueRemove
-    Option
-    Placeholder
-    SelectContainer
-    SingleValue
-    ValueContainer
- */
 
-const MultiValueLabel: FunctionComponent<MultiValueGenericProps> = ({
+
+const MultiValue: FunctionComponent<MultiValueProps<any>> = (props) => {
+  const classes = classNames('bg-primary text-light', props.className, {})
+  return (
+    <components.MultiValue {...props} className={classes}>
+        {props.children}
+    </components.MultiValue>
+  )
+}
+
+const MultiValueLabel: FunctionComponent<MultiValueProps<any>> = ({
   children,
   innerProps,
   ...props
 }) => {
-  const classes = classNames('badge bg-primary', props.className, {});
+  const classes = classNames('bg-primary', props.className, {});
   return (
-    <div {...innerProps} className={classes}>
+    <components.MultiValueLabel {...innerProps} className={classes}>
       {children}
-    </div>
+    </components.MultiValueLabel>
   );
 };
 
-const Control: FunctionComponent<CommonProps> = ({ children, ...props }) => {
+const MultiValueRemove: FunctionComponent<MultiValueProps<any>> = ({
+  innerProps,
+  ...props
+}) => {
+  const classes = classNames(props.className, '', {});
+  return (
+    <components.MultiValueRemove {...innerProps}>
+      <CloseButton className={classes} size={'sm'} />
+    </components.MultiValueRemove>
+  )
+}
+
+const Control: FunctionComponent<ControlProps<any, any>> = ({ children, ...props }) => {
   const classes = classNames('dropdown', props.className, {});
   return (
     <components.Control {...props} className={classes}>
@@ -55,7 +56,7 @@ const Control: FunctionComponent<CommonProps> = ({ children, ...props }) => {
   );
 };
 
-const Option: FunctionComponent<OptionProps> = ({
+const Option: FunctionComponent<OptionProps<any, any>> = ({
   innerRef,
   innerProps,
   ...props
@@ -71,106 +72,11 @@ const Option: FunctionComponent<OptionProps> = ({
   );
 };
 
-const SingleSelect: FunctionComponent<SelectProps> = (props) => {
-  return <Select {...props} components={{ Control, Option }} />;
-};
+type SelectProps = Props
 
-const MultiSelect: FunctionComponent<SelectProps> = (props) => {
-  return (
-    <Select
-      {...props}
-      components={{ Control, Option, MultiValueLabel }}
-      isMulti
-    />
-  );
-};
+const CustomSelect: FunctionComponent<SelectProps> = (props) => {
+  return <Select {...props} components={{ Control, Option, MultiValue, MultiValueLabel, MultiValueRemove }} />
+}
 
-export { SingleSelect, MultiSelect };
-
-/* TYPE DEFINITIONS */
-
-type SelectProps = {
-  autoFocus?: boolean;
-  className?: string;
-  classNamePrefix?: string;
-  isDisabled?: boolean;
-  isMulti?: boolean;
-  isSearchable?: boolean;
-  name?: string;
-  onChange?: (
-    val:
-      | Record<string, unknown>
-      | Array<Record<string, unknown>>
-      | null
-      | undefined,
-    opt: {
-      action: ActionTypes;
-      option?: OptionType;
-      removedValue?: Record<string, unknown>;
-      name?: string;
-    }
-  ) => undefined;
-  options?: OptionsType;
-  placeholder?: ReactNode;
-  noOptionsMessage?: () => undefined;
-  value?: ValueType;
-};
-
-export type MultiValueGenericProps = {
-  children?: Node;
-  data?: any;
-  innerProps?: { className?: string };
-  selectProps?: any;
-};
-
-type OptionType = { [key: string]: string };
-type OptionsType = Array<OptionType>;
-
-type GroupType = {
-  [key: string]: any; // group label
-  options: OptionsType;
-};
-
-type ValueType = OptionType | OptionsType | null | void;
-
-type CommonProps = {
-  clearValue?: () => void;
-  getStyles?: (string, any) => Record<string, unknown>;
-  getValue?: () => ValueType;
-  hasValue?: boolean;
-  isMulti?: boolean;
-  options?: OptionsType;
-  selectOption?: (val: OptionType) => void;
-  selectProps?: any;
-  setValue?: (ValueType, ActionTypes) => void;
-  emotion?: any;
-};
-
-// passed as the second argument to `onChange`
-type ActionTypes =
-  | 'clear'
-  | 'create-option'
-  | 'deselect-option'
-  | 'pop-value'
-  | 'remove-value'
-  | 'select-option'
-  | 'set-value';
-
-type PropsWithInnerRef = {
-  /** The inner reference. */
-  innerRef: Ref<any>;
-};
-
-type OptionProps = CommonProps &
-  PropsWithInnerRef & {
-    data: any;
-    id: number;
-    index: number;
-    isDisabled: boolean;
-    isFocused: boolean;
-    isSelected: boolean;
-    label: string;
-    onClick: MouseEventHandler;
-    onMouseOver: MouseEventHandler;
-    value: any;
-  };
+export { Control, Option, MultiValue, MultiValueLabel, MultiValueRemove, }
+export default CustomSelect

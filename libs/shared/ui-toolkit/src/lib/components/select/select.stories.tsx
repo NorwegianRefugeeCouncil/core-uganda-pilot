@@ -1,5 +1,6 @@
 import { storiesOf } from '@storybook/react';
-import { SingleSelect, MultiSelect } from './select.component';
+import Select from './select.component';
+import VanillaSelect from 'react-select';
 
 const options = [
   { value: 'A', label: 'Dingle' },
@@ -16,19 +17,25 @@ storiesOf('Select', module).add('default', () => {
       <div className={'container'}>
         <div className={'col-12 mb-4'}>
           <h3>Single Select</h3>
-          <SingleSelect options={options} />
+          <Select options={options} />
         </div>
       </div>
       <div className={'container'}>
         <div className={'col-12 mb-4'}>
           <h3>Disabled Select</h3>
-          <SingleSelect options={options} isDisabled />
+          <Select options={options} isDisabled />
         </div>
       </div>
       <div className={'container'}>
         <div className={'col-12 mb-4'}>
           <h3>Multi Select</h3>
-          <MultiSelect options={options} />
+          <Select options={options} isMulti />
+        </div>
+      </div>
+      <div className={'container'}>
+        <div className={'col-12 mb-4'}>
+          <h3>Multi Select</h3>
+          <VanillaSelect options={options} isMulti />
         </div>
       </div>
     </>
