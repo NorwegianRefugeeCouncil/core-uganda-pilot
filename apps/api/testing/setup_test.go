@@ -3,11 +3,14 @@ package testing
 import (
 	"context"
 	"github.com/EventStore/EventStore-Client-Go/client"
+	"github.com/nrc-no/core/apps/api/pkg/apis/core/v1"
 	"github.com/nrc-no/core/apps/api/pkg/client/nrc"
 	"github.com/nrc-no/core/apps/api/pkg/client/rest"
 	"github.com/nrc-no/core/apps/api/pkg/endpoints/handlers/formdefinitions"
+	"github.com/nrc-no/core/apps/api/pkg/runtime"
+	"github.com/nrc-no/core/apps/api/pkg/runtime/serializer/json"
 	"github.com/nrc-no/core/apps/api/pkg/server"
-	"github.com/nrc-no/core/apps/api/pkg/storage/eventstoredb"
+	mongostorage "github.com/nrc-no/core/apps/api/pkg/storage/mongo"
 	"github.com/stretchr/testify/suite"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -23,7 +26,7 @@ type MainTestSuite struct {
 	nrcClient          *nrc.NrcCoreClient
 	mongoClient        *mongo.Client
 	eventStoreDBClient *client.Client
-	store              *eventstoredb.Store
+	store              *mongostorage.Store
 }
 
 func TestMainSuite(t *testing.T) {
@@ -75,12 +78,33 @@ func (s *MainTestSuite) SetupSuite() {
 	}
 	s.mongoClient = mongoClient
 
+	scheme := runtime.NewScheme()
+	if err := v1.AddToScheme(scheme); err != nil {
+		s.T().Errorf("unable to register scheme: %v", err)
+		return
+	}
+
+	serializer := json.NewSerializer(json.DefaultMetaFactory, scheme, scheme)
+
 	// Create storage
-	store := eventstoredb.NewStore(eventStoreDBClient, mongoClient)
-	s.store = store
+	formDefinitionsStore := mongostorage.NewStore(
+		eventStoreDBClient,
+		mongoClient,
+		"core",
+		"core.nrc.no/formdefinitions",
+		func() runtime.Object { return &v1.FormDefinition{} })
+	s.store = formDefinitionsStore
 
 	// Install FormDefinitions api
-	formdefinitions.Install(apiServer.Container, store)
+	formdefinitions.Install(
+		apiServer.Container,
+		formDefinitionsStore,
+		v1.SchemeGroupVersion.WithKind("FormDefinition"),
+		v1.SchemeGroupVersion.WithResource("formdefinitions"),
+		scheme,
+		scheme,
+		serializer,
+	)
 
 }
 

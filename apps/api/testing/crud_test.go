@@ -2,7 +2,8 @@ package testing
 
 import (
 	"context"
-	"github.com/nrc-no/core/apps/api/pkg/apis"
+	v12 "github.com/nrc-no/core/apps/api/pkg/apis/core/v1"
+	"github.com/nrc-no/core/apps/api/pkg/apis/meta/v1"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
 	"time"
@@ -27,34 +28,34 @@ func (s *MainTestSuite) TestFormDefinitionCRUD() {
 		}
 	}()
 
-	var formDefinition = apis.FormDefinition{
-		TypeMeta: apis.TypeMeta{
+	var formDefinition = v12.FormDefinition{
+		TypeMeta: v1.TypeMeta{
 			Kind:       "FormDefinition",
 			APIVersion: "core.nrc.no/v1",
 		},
-		Spec: apis.FormDefinitionSpec{
+		Spec: v12.FormDefinitionSpec{
 			Group: "core.nrc.no",
-			Names: apis.CustomResourceNames{
+			Names: v12.CustomResourceNames{
 				Plural:   "customresources",
 				Singular: "customresource",
 				Kind:     "CustomResource",
 			},
-			Versions: []apis.FormDefinitionVersion{
+			Versions: []v12.FormDefinitionVersion{
 				{
 					Name: "v1",
-					Schema: apis.FormSchema{
-						FormSchema: apis.FormSchemaDefinition{
-							Root: apis.FormElement{
+					Schema: v12.FormSchema{
+						FormSchema: v12.FormSchemaDefinition{
+							Root: v12.FormElement{
 								Type: "text",
 								ID:   uuid.NewV4().String(),
 								Key:  "key",
-								Description: []apis.TranslatedString{
+								Description: []v12.TranslatedString{
 									{
 										Locale: "en",
 										Value:  "Description",
 									},
 								},
-								Name: []apis.TranslatedString{
+								Name: []v12.TranslatedString{
 									{
 										Locale: "en",
 										Value:  "Name",

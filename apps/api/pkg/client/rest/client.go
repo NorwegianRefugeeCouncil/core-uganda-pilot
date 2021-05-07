@@ -6,7 +6,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/websocket"
+	v1 "github.com/nrc-no/core/apps/api/pkg/apis/core/v1"
+	metav1 "github.com/nrc-no/core/apps/api/pkg/apis/meta/v1"
 	"github.com/nrc-no/core/apps/api/pkg/runtime"
+	"github.com/nrc-no/core/apps/api/pkg/runtime/schema"
+	"github.com/nrc-no/core/apps/api/pkg/util/exceptions"
 	"github.com/nrc-no/core/apps/api/pkg/watch"
 	"github.com/sirupsen/logrus"
 	"io"
@@ -45,15 +49,13 @@ type RESTClient struct {
 type ContentConfig struct {
 	ContentType       string
 	AcceptContentType string
-	Group             string
-	Version           string
+	GroupVersion      schema.GroupVersion
+	Serializer        runtime.Serializer
 }
 
 var DefaultContentConfig = ContentConfig{
 	ContentType:       "application/json",
 	AcceptContentType: "application/json",
-	Group:             "",
-	Version:           "",
 }
 
 type Config struct {
@@ -83,14 +85,14 @@ func NewRESTClient(baseURL *url.URL, versionedAPIPath string, config ContentConf
 
 func RESTClientFor(config *Config) (*RESTClient, error) {
 
-	if len(config.Group) == 0 {
+	if len(config.GroupVersion.Group) == 0 {
 		return nil, fmt.Errorf("group is required")
 	}
-	if len(config.Version) == 0 {
+	if len(config.GroupVersion.Version) == 0 {
 		return nil, fmt.Errorf("group is required")
 	}
 
-	versionedAPIPath := path.Join(config.APIPath, config.Group, config.Version)
+	versionedAPIPath := path.Join(config.APIPath, config.GroupVersion.Group, config.GroupVersion.Version)
 	hostURL, err := url.Parse(config.Host)
 	if err != nil {
 		return nil, err
@@ -278,6 +280,17 @@ func (r *Request) Body(obj interface{}) *Request {
 		r.body = bytes.NewReader(t)
 	case io.Reader:
 		r.body = t
+	case runtime.Object:
+		if reflect.ValueOf(t).IsNil() {
+			return r
+		}
+		data, err := runtime.Encode(r.c.content.Serializer, t)
+		if err != nil {
+			r.err = err
+			return r
+		}
+		r.body = bytes.NewReader(data)
+		r.SetHeader("Content-Type", "application/json")
 	default:
 		bodyBytes, err := json.Marshal(obj)
 		if err != nil {
@@ -412,9 +425,17 @@ func (r *Request) transformResponse(req *http.Request, res *http.Response) Resul
 		contentType = r.c.content.ContentType
 	}
 
+	if len(body) != 0 {
+		logrus.Info(string(body))
+	}
+
 	if res.StatusCode < http.StatusOK || res.StatusCode > http.StatusPartialContent {
 		return Result{
-			err: fmt.Errorf("unexpected server response with status code %d and content type %v", res.StatusCode, res.Header.Get("Content-Type")),
+			body:        body,
+			contentType: contentType,
+			statusCode:  res.StatusCode,
+			decoder:     r.c.content.Serializer,
+			err:         fmt.Errorf("unexpected server response with status code %d and content type %v", res.StatusCode, res.Header.Get("Content-Type")),
 		}
 	}
 
@@ -422,6 +443,7 @@ func (r *Request) transformResponse(req *http.Request, res *http.Response) Resul
 		body:        body,
 		contentType: contentType,
 		statusCode:  res.StatusCode,
+		decoder:     r.c.content.Serializer,
 	}
 
 }
@@ -431,6 +453,7 @@ type Result struct {
 	contentType string
 	err         error
 	statusCode  int
+	decoder     runtime.Decoder
 }
 
 func (r Result) Raw() ([]byte, error) {
@@ -438,6 +461,25 @@ func (r Result) Raw() ([]byte, error) {
 }
 
 func (r Result) Error() error {
+
+	if r.err == nil || len(r.body) == 0 || r.decoder == nil {
+		return r.err
+	}
+
+	gvk := v1.SchemeGroupVersion.WithKind("")
+	out, _, err := r.decoder.Decode(r.body, &gvk, nil)
+	if err != nil {
+		logrus.Infof("body was not decodable (unable to check for Status): %v", err)
+		return r.err
+	}
+
+	switch t := out.(type) {
+	case *metav1.Status:
+		if t.Status == metav1.StatusFailure {
+			return exceptions.FromObject(t)
+		}
+	}
+
 	return r.err
 }
 
@@ -463,13 +505,18 @@ func IsValidPathSegmentName(name string) []string {
 
 func (r Result) Into(obj interface{}) error {
 	if r.err != nil {
-		return r.Error()
+		err := r.Error()
+
+		return err
 	}
+
 	if len(r.body) == 0 {
 		return fmt.Errorf("0-length response with status code: %d and content-type %s", r.statusCode, r.contentType)
 	}
+
 	if err := json.Unmarshal(r.body, obj); err != nil {
 		return err
 	}
+
 	return nil
 }

@@ -38,14 +38,14 @@ export const FieldTranslation: FunctionComponent<FieldTranslationProps> = (props
         if (!("ar" in temp)) {temp["ar"] = ""}
         setTranslation(temp)
     }
-    
+
     return (
         <Fragment>
-            <FormInput name={`${props.name}-lang`} value={currentLang} placeholder="Language Code" 
+            <FormInput name={`${props.name}-lang`} value={currentLang} placeholder="Language Code"
                 onChange={(event) => {
                     setCurrentLang(event.target["value"])
                 }}
-            /> 
+            />
             <br />
             <Button kind="primary"
                 onClick={(event) => {
