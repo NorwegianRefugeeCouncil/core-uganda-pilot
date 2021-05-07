@@ -1,7 +1,7 @@
 import * as React from 'react';
 import classNames from 'classnames';
 
-type ButtonProps = React.ComponentPropsWithRef<'button'> & {
+interface ButtonProps extends React.ComponentPropsWithRef<'button'> {
   kind?:
     | 'primary'
     | 'secondary'
@@ -13,54 +13,57 @@ type ButtonProps = React.ComponentPropsWithRef<'button'> & {
     | 'dark'
     | 'link';
   size?: 'sm' | 'lg';
+  type?: 'submit' | 'button';
   outline?: boolean;
-};
+}
 
-export const Button: React.FC<ButtonProps> = (props: ButtonProps) => {
-  const { kind, size, outline, className, children, ...otherProps } = props;
-  const classes: string[] = [];
-  classes.push('btn');
-  if (kind) {
-    classes.push('btn-' + (outline ? 'outline-' : '') + kind);
-  }
-  if (size) {
-    classes.push('btn-' + size);
-  }
-  const btnClass = classNames(className, classes);
-  return (
-    <button {...otherProps} className={btnClass}>
-      {children}
-    </button>
-  );
-};
-
-type CloseButtonProps = ButtonProps & {
-  size?: 'sm' | 'lg';
-};
-
-export const CloseButton = (() => {
-  const cmp: React.FC<CloseButtonProps> = ({
-    size,
-    className,
-    children,
-    ...props
-  }: ButtonProps) => {
-    className = classNames(className, {
-      btn: true,
-      'btn-close': true,
-      'btn-sm': size === 'sm',
-      'btn-lg': size === 'lg',
-    });
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  (
+    {
+      type = 'submit',
+      kind = 'primary',
+      outline = false,
+      size,
+      className,
+      children,
+      ...baseProps
+    },
+    ref
+  ) => {
+    const classes: string[] = [];
+    classes.push('btn');
+    if (kind) {
+      classes.push('btn-' + (outline ? 'outline-' : '') + kind);
+    }
+    if (size) {
+      classes.push('btn-' + size);
+    }
+    const btnClass = classNames(className, classes);
     return (
-      <button {...props} className={className} {...props}>
+      <button ref={ref} type={type} {...baseProps} className={btnClass}>
         {children}
       </button>
     );
-  };
-  cmp.defaultProps = {
-    type: 'button',
-    'aria-label': 'Close',
-  };
-  cmp.displayName = 'CloseButton';
-  return cmp;
-})();
+  }
+);
+
+export const CloseButton = React.forwardRef<
+  HTMLButtonElement,
+  ButtonProps & { white?: boolean }
+>(({ size, white = false, className, ...baseProps }, ref) => {
+  const classes = classNames(className, {
+    'btn-close': true,
+    'btn-close-white': white,
+    'btn-sm': size === 'sm',
+    'btn-lg': size === 'lg',
+  });
+  return (
+    <button
+      ref={ref}
+      {...baseProps}
+      type="button"
+      aria-label="Close"
+      className={classes}
+    />
+  );
+});
