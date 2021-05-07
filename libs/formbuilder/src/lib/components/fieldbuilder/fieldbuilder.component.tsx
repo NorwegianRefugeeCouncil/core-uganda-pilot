@@ -4,9 +4,14 @@ import { FieldInfo } from '../fieldinfo/fieldinfo.component';
 import { FieldConfig, GenericFieldConfig } from '../fieldconfig/fieldconfig.component';
 
 type FieldBuilderProps = {
+    tab?: Tab,
+    fieldType: FieldType | undefined,
+    name: string,
+    description: string,
+    fieldConfig: GenericFieldConfig
 }
 
-enum Tab {
+export enum Tab {
     info = "Information",
     type = "Type",
     config = "Config"
@@ -29,6 +34,7 @@ export const FieldBuilder: FunctionComponent<FieldBuilderProps> = (props) => {
     const [fieldType, setFieldType] = useState<FieldType | undefined>()
     const [name, setName] = useState("")
     const [description, setDescription] = useState("")
+    const [tooltip, setTooltip] = useState("")
     const [fieldConfig, setFieldConfig] = useState<GenericFieldConfig>({} as GenericFieldConfig)
 
     const patchFieldConfig = (key: string, value: any) => {
@@ -83,13 +89,17 @@ export const FieldBuilder: FunctionComponent<FieldBuilderProps> = (props) => {
                                         case "description":
                                             setDescription(event.target["value"])
                                             break;
+
+                                        case "tooltip":
+                                            setTooltip(event.target["value"])
+                                            break;
                                     
                                         default:
                                             break;
                                     }
                                 }
                             }>
-                                <FieldInfo name={name} description={description} />
+                                <FieldInfo name={name} description={description} tooltip={tooltip} />
                             </form>
                         }
                         {   

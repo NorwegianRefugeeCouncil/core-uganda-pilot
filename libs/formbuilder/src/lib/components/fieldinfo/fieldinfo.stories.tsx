@@ -5,6 +5,6 @@ import { FieldInfo } from './fieldinfo.component'
 storiesOf('Field Info', module)
 .add('default', () => (
   <>
-    <FieldInfo name={""} description={""}/>
+    <FieldInfo name="" description="" tooltip=""/>
   </>
 ));
