@@ -1,4 +1,12 @@
-import * as React from 'react';
+import {
+  createContext,
+  FunctionComponent,
+  HTMLAttributes,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import classNames from 'classnames';
 import BaseModal, { ModalProps as BaseModalProps } from 'react-overlays/Modal';
 import useCallbackRef from '@restart/hooks/useCallbackRef';
@@ -14,10 +22,9 @@ interface ModalContextProps {
   onHide: () => void;
 }
 
-const ModalContext = React.createContext<ModalContextProps>({
+const ModalContext = createContext<ModalContextProps>({
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  onHide: () => {
-  }
+  onHide: () => {},
 });
 
 type ModalProps = {
@@ -32,53 +39,53 @@ type ModalProps = {
   fullscreenBelow?: 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 } & BaseModalProps;
 
-export const Modal: React.FC<ModalProps> = ({
-                                              style,
-                                              size,
-                                              fullscreen,
-                                              fullscreenBelow,
+export const Modal: FunctionComponent<ModalProps> = ({
+  style,
+  size,
+  fullscreen,
+  fullscreenBelow,
 
-                                              fade,
-                                              scrollable,
-                                              verticallyCentered,
-                                              className,
-                                              children,
+  fade,
+  scrollable,
+  verticallyCentered,
+  className,
+  children,
 
-                                              /* BaseModal props*/
-                                              show,
-                                              animation,
-                                              backdrop,
-                                              keyboard,
-                                              onEscapeKeyDown,
-                                              onShow,
-                                              onHide,
-                                              container,
-                                              autoFocus,
-                                              enforceFocus,
-                                              restoreFocus,
-                                              restoreFocusOptions,
-                                              onEntered,
-                                              onExit,
-                                              onExiting,
-                                              onEnter,
-                                              onEntering,
-                                              onExited,
-                                              backdropClassName,
+  /* BaseModal props*/
+  show,
+  animation,
+  backdrop,
+  keyboard,
+  onEscapeKeyDown,
+  onShow,
+  onHide,
+  container,
+  autoFocus,
+  enforceFocus,
+  restoreFocus,
+  restoreFocusOptions,
+  onEntered,
+  onExit,
+  onExiting,
+  onEnter,
+  onEntering,
+  onExited,
+  backdropClassName,
 
-                                              ...props
-                                            }) => {
+  ...props
+}) => {
   // We use a react context to wrap the Modal.
 
-  const [modalStyle, setStyle] = React.useState({});
-  const [animateStaticModal, setAnimateStaticModal] = React.useState(false);
-  const waitingForMouseUpRef = React.useRef(false);
-  const ignoreBackdropClickRef = React.useRef(false);
-  const removeStaticModalAnimationRef = React.useRef<(() => void) | null>(null);
+  const [modalStyle, setStyle] = useState({});
+  const [animateStaticModal, setAnimateStaticModal] = useState(false);
+  const waitingForMouseUpRef = useRef(false);
+  const ignoreBackdropClickRef = useRef(false);
+  const removeStaticModalAnimationRef = useRef<(() => void) | null>(null);
 
   const [modal, setModalRef] = useCallbackRef<{ dialog: any }>();
   const handleHide = useEventCallback(onHide);
 
-  const modalContext = React.useMemo(() => ({ onHide: handleHide }), [handleHide]);
+  const modalContext = useMemo(() => ({ onHide: handleHide }), [handleHide]);
 
   function getModalManager() {
     return new ModalManager();
@@ -103,7 +110,7 @@ export const Modal: React.FC<ModalProps> = ({
       paddingLeft:
         !containerIsOverflowing && modalIsOverflowing
           ? getScrollbarSize()
-          : undefined
+          : undefined,
     });
   }
 
@@ -215,7 +222,7 @@ export const Modal: React.FC<ModalProps> = ({
     className = classNames(className, 'modal-dialog-centered');
   }
 
-  const renderBackdrop = React.useCallback(
+  const renderBackdrop = useCallback(
     (backdropProps) => {
       return (
         <div
@@ -240,7 +247,7 @@ export const Modal: React.FC<ModalProps> = ({
   const renderDialog = (dialogProps) => {
     return (
       <div
-        role='dialog'
+        role="dialog"
         {...dialogProps}
         style={baseModalStyle}
         className={classNames(className, 'modal')}
@@ -302,17 +309,17 @@ Modal.defaultProps = {
   autoFocus: true,
   enforceFocus: true,
   restoreFocus: true,
-  animation: false
+  animation: false,
 };
 
-type ModalDialogProps = React.ComponentPropsWithRef<'div'> & {
+type ModalDialogProps = HTMLAttributes<HTMLDivElement> & {
   size?: 'lg' | 'sm' | 'xl';
 };
 
-export const ModalDialog: React.FC<ModalDialogProps> = ({
-                                                          size,
-                                                          ...props
-                                                        }) => {
+export const ModalDialog: FunctionComponent<ModalDialogProps> = ({
+  size,
+  ...props
+}) => {
   return (
     <div
       {...props}
@@ -327,7 +334,7 @@ export const ModalDialog: React.FC<ModalDialogProps> = ({
   );
 };
 
-export const ModalContent: React.FC<React.ComponentPropsWithRef<'div'>> = (
+export const ModalContent: FunctionComponent<HTMLAttributes<HTMLDivElement>> = (
   props
 ) => {
   return (
@@ -337,7 +344,7 @@ export const ModalContent: React.FC<React.ComponentPropsWithRef<'div'>> = (
   );
 };
 
-export const ModalHeader: React.FC<React.ComponentPropsWithRef<'div'>> = (
+export const ModalHeader: FunctionComponent<HTMLAttributes<HTMLDivElement>> = (
   props
 ) => {
   return (
@@ -347,7 +354,7 @@ export const ModalHeader: React.FC<React.ComponentPropsWithRef<'div'>> = (
   );
 };
 
-export const ModalTitle: React.FC<React.ComponentPropsWithRef<'div'>> = (
+export const ModalTitle: FunctionComponent<HTMLAttributes<HTMLDivElement>> = (
   props
 ) => {
   return (
@@ -357,7 +364,7 @@ export const ModalTitle: React.FC<React.ComponentPropsWithRef<'div'>> = (
   );
 };
 
-export const ModalBody: React.FC<React.ComponentPropsWithRef<'div'>> = (
+export const ModalBody: FunctionComponent<HTMLAttributes<HTMLDivElement>> = (
   props
 ) => {
   return (
@@ -366,7 +373,7 @@ export const ModalBody: React.FC<React.ComponentPropsWithRef<'div'>> = (
     </h5>
   );
 };
-export const ModalFooter: React.FC<React.ComponentPropsWithRef<'div'>> = (
+export const ModalFooter: FunctionComponent<HTMLAttributes<HTMLDivElement>> = (
   props
 ) => {
   return (

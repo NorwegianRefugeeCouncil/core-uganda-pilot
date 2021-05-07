@@ -1,9 +1,9 @@
-import * as React from 'react';
+import { FunctionComponent, HTMLAttributes } from 'react';
 
-type ProgessBarProps =  React.ComponentPropsWithRef<'div'> & {
+type ProgessBarProps = {
   labels : string[],
   progress : number
-};
+} &  HTMLAttributes<HTMLDivElement>;
 
 const renderProgressColumn = (i:number, numberOfColumns: number) => {
   if (i === 0 || i === numberOfColumns -1 ){
@@ -20,7 +20,7 @@ const renderTextColumn = (i : number, labels: string[]) => {
   }
 }
 
-export const ProgressBar: React.FC<ProgessBarProps> = ({labels, progress, ...props}) => {
+export const ProgressBar: FunctionComponent<ProgessBarProps> = ({labels, progress, ...props}) => {
 
   const numberOfColumns = (labels.length * 2) + (labels.length - 1)
   const progressColumns = []
@@ -43,3 +43,25 @@ export const ProgressBar: React.FC<ProgessBarProps> = ({labels, progress, ...pro
       </tr>
   </table>;
 };
+
+//
+//  +-----+-flex-grow:1-+-----+------------------+   ---------+
+//XX|  |--|-------------|--|--|---------------|  |            |
+//  |TEXT1|             |TEXT2|             TEXT3|            |
+//  +-----+-------------+-----+------------------+   ---------+
+//
+// n-1 "bars"
+
+// FLEX ROW
+// <div class="minigrid">
+//   <div class="progress-row">
+//     <div class="border-bottom" style="margin-top:0.5rem"></div>
+//     <div>TICKER</div>
+//     <div class="border-bottom"  style="margin-top:0.5rem"></div>
+//   <div>
+//   <div class="text-row">
+//     <div>TEXT</div>
+//   </div>
+// </div> 
+// 
+//

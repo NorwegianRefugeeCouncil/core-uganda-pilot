@@ -1,4 +1,4 @@
-import React, { Fragment, FC } from 'react';
+import React, { Fragment, FunctionComponent } from 'react';
 import {
     FormLabel,
     FormInput
@@ -9,7 +9,7 @@ type FieldInfoProps = {
     description: string;
 }
 
-export const FieldInfo: FC<FieldInfoProps> = (props) => {
+export const FieldInfo: FunctionComponent<FieldInfoProps> = (props) => {
     return (
         <Fragment>
             <FormLabel>Name:</FormLabel>

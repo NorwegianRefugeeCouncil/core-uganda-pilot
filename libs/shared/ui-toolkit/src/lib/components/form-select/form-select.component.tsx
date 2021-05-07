@@ -1,9 +1,9 @@
-import * as React from 'react'
+import { FunctionComponent, SelectHTMLAttributes } from 'react';
 import classNames from 'classnames';
 
-type SelectProps = React.ComponentPropsWithRef<'select'>;
+type SelectProps = SelectHTMLAttributes<HTMLSelectElement>;
 
-export const FormSelect: React.FC<SelectProps> = (props) => {
+export const FormSelect: FunctionComponent<SelectProps> = (props) => {
   return (
     <select {...props} className={classNames(props.className, 'form-select')} />
   );

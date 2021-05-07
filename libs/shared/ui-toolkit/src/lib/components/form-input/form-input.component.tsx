@@ -1,4 +1,12 @@
-import * as React from 'react';
+import {
+  ChangeEvent,
+  CSSProperties,
+  FunctionComponent,
+  HTMLAttributes,
+  InputHTMLAttributes,
+  LabelHTMLAttributes,
+  useCallback,
+} from 'react';
 import { FormLabel, FormLabelProps } from '../form-label/label.component';
 import classNames from 'classnames';
 
@@ -9,7 +17,7 @@ export enum InputType {
   DateTime = 'datetimelocal',
 }
 
-export interface FormInputProps extends React.ComponentPropsWithRef<'input'> {
+export interface FormInputProps extends InputHTMLAttributes<HTMLInputElement> {
   plaintext?: boolean;
   colorInput?: boolean;
   onValueChanged?: (value: any) => void;
@@ -46,7 +54,7 @@ const transformInputValue = (props: FormInputProps, value: any) => {
   return value;
 };
 
-export const FormInput: React.FC<FormInputProps> = (props) => {
+export const FormInput: FunctionComponent<FormInputProps> = (props) => {
   const {
     plaintext,
     colorInput,
@@ -64,7 +72,7 @@ export const FormInput: React.FC<FormInputProps> = (props) => {
     }
   }
 
-  const handleOnChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+  const handleOnChange = (ev: ChangeEvent<HTMLInputElement>) => {
     const value = transformInputValue(props, ev?.target?.value);
     if (onValueChanged) {
       onValueChanged(value);
@@ -87,7 +95,7 @@ export interface Inliner {
   inline?: boolean;
 }
 
-export const FormCheck: React.FC<React.ComponentPropsWithRef<'div'> & Inliner> = ({ className, inline, ...props }) => {
+export const FormCheck: FunctionComponent<HTMLAttributes<HTMLDivElement> & Inliner> = ({ className, inline, ...props }) => {
   const classes = classNames(className, 'form-check', { inline: inline });
   return (
     <div className={classes} {...props}>
@@ -96,7 +104,7 @@ export const FormCheck: React.FC<React.ComponentPropsWithRef<'div'> & Inliner> =
   );
 };
 
-export const FormSwitch: React.FC<React.ComponentPropsWithRef<'div'>> = ({
+export const FormSwitch: FunctionComponent<HTMLAttributes<HTMLDivElement>> = ({
   className,
   ...props
 }) => {
@@ -110,7 +118,8 @@ export const FormSwitch: React.FC<React.ComponentPropsWithRef<'div'>> = ({
   );
 };
 
-export const FormCheckInput: React.FC<React.ComponentPropsWithRef<'input'>
+export const FormCheckInput: FunctionComponent<
+  InputHTMLAttributes<HTMLInputElement>
 > = (props) => {
   return (
     <input
@@ -121,7 +130,7 @@ export const FormCheckInput: React.FC<React.ComponentPropsWithRef<'input'>
   );
 };
 
-export const FormRadioInput: React.FC<React.ComponentPropsWithRef<'input'> & { checked?: boolean }> = (props) => {
+export const FormRadioInput: FunctionComponent<InputHTMLAttributes<HTMLInputElement> & { checked?: boolean }> = (props) => {
   return (
     <input
       {...props}
@@ -131,8 +140,8 @@ export const FormRadioInput: React.FC<React.ComponentPropsWithRef<'input'> & { c
   );
 };
 
-export const FormCheckLabel: React.FC<
-  React.ComponentPropsWithRef<'label'>
+export const FormCheckLabel: FunctionComponent<
+  LabelHTMLAttributes<HTMLLabelElement>
 > = (props) => {
   return (
     <label
@@ -143,9 +152,9 @@ export const FormCheckLabel: React.FC<
 };
 
 
-type ValidFeedbackProps = React.ComponentPropsWithRef<'div'> & { show: boolean };
+type ValidFeedbackProps = HTMLAttributes<HTMLDivElement> & { show: boolean };
 
-export const ValidFeedback: React.FC<ValidFeedbackProps> = ({
+export const ValidFeedback: FunctionComponent<ValidFeedbackProps> = ({
   className,
   children,
   show,
@@ -163,9 +172,9 @@ export const ValidFeedback: React.FC<ValidFeedbackProps> = ({
 };
 
 
-type InvalidFeedbackProps = React.ComponentPropsWithRef<'div'> & { show: boolean };
+type InvalidFeedbackProps = HTMLAttributes<HTMLDivElement> & { show: boolean };
 
-export const InvalidFeedback: React.FC<InvalidFeedbackProps> = (
+export const InvalidFeedback: FunctionComponent<InvalidFeedbackProps> = (
   { className, children, show, ...props },
   ref
 ) => {
@@ -182,9 +191,9 @@ export const InvalidFeedback: React.FC<InvalidFeedbackProps> = (
 };
 
 
-type FormHelpProps = React.ComponentPropsWithRef<'div'>;
+type FormHelpProps = HTMLAttributes<HTMLDivElement>;
 
-export const FormHelp: React.FC<FormHelpProps> = (
+export const FormHelp: FunctionComponent<FormHelpProps> = (
   { className, children, ...props },
   ref
 ) => {
@@ -199,15 +208,15 @@ type FormControlProps = {
   label?: string;
   description?: string;
   containerClassName?: string;
-  containerStyle?: React.CSSProperties;
-  containerProps?: React.ComponentPropsWithRef<'div'>;
+  containerStyle?: CSSProperties;
+  containerProps?: HTMLAttributes<HTMLDivElement>;
   labelProps?: FormLabelProps;
-  descriptionProps?: React.ComponentPropsWithRef<'div'>;
+  descriptionProps?: HTMLAttributes<HTMLDivElement>;
   validFeedback?: string;
   invalidFeedback?: string;
 } & FormInputProps;
 
-export const FormControl: React.FC<FormControlProps> = (
+export const FormControl: FunctionComponent<FormControlProps> = (
   {
     label,
     description,

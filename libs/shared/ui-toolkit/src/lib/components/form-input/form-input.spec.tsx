@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { FC } from 'react';
+import { FunctionComponent } from 'react';
 import { FormInput, FormInputProps, FormLabel } from '@nrc.no/ui';
 import {
   useForm,
@@ -14,7 +14,7 @@ type ContextProps = {
   onInvalid: SubmitErrorHandler<any>;
 };
 
-const Context: FC<ContextProps> = ({
+const Context: FunctionComponent<ContextProps> = ({
   onValid,
   onInvalid,
   children,
@@ -43,7 +43,7 @@ type TestCaseProps = {
   testCase: TestCase;
 };
 
-const FormField: FC<TestCaseProps> = ({
+const FormField: FunctionComponent<TestCaseProps> = ({
   testCase,
   ...props
 }) => {
