@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-func (s *MainTestSuite) TestFormDefinitionPost() {
+func (s *MainTestSuite) TestFormDefinitionPostValidationErrors() {
 
 	type testCase struct {
 		name           string
@@ -164,7 +164,7 @@ func (s *MainTestSuite) TestFormDefinitionPost() {
 func testFormDef(group, kind string) *v1.FormDefinition {
 	return &v1.FormDefinition{
 		TypeMeta: metav1.TypeMeta{
-			APIVersion: "core.nrc.no",
+			APIVersion: "core/v1",
 			Kind:       "FormDefinition",
 		},
 		ObjectMeta: metav1.ObjectMeta{},

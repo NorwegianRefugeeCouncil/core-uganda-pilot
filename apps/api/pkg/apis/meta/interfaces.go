@@ -52,7 +52,7 @@ func (r resourceAccessor) Kind(obj runtime.Object) (string, error) {
 }
 
 func (r resourceAccessor) SetKind(obj runtime.Object, kind string) error {
-	objectAccessor{obj}.SetKind(kind)
+	objectAccessor{obj}.SetObjectKind(kind)
 	return nil
 }
 
@@ -132,8 +132,8 @@ func (obj objectAccessor) GetKind() string {
 	return obj.GetKind()
 }
 
-func (obj objectAccessor) SetKind(kind string) {
-	obj.SetKind(kind)
+func (obj objectAccessor) SetObjectKind(kind string) {
+	obj.SetObjectKind(kind)
 }
 
 func (obj objectAccessor) GetAPIVersion() string {

@@ -2,8 +2,9 @@ package runtime
 
 import (
 	"fmt"
+	"github.com/nrc-no/core/apps/api/pkg/conversion"
 	"github.com/nrc-no/core/apps/api/pkg/runtime/schema"
-	"github.com/nrc-no/core/apps/api/pkg/util/conversion"
+	conversionutils "github.com/nrc-no/core/apps/api/pkg/util/conversion"
 	"reflect"
 )
 
@@ -20,18 +21,51 @@ type Scheme struct {
 	typeToGVK        map[reflect.Type][]schema.GroupVersionKind
 	unversionedTypes map[reflect.Type]schema.GroupVersionKind
 	observedVersions []schema.GroupVersion
+	converter        *conversion.Converter
+	// Map from version and resource to the corresponding func to convert
+	// resource field labels in that version to internal version.
+	fieldLabelConversionFuncs map[schema.GroupVersionKind]FieldLabelConversionFunc
 }
 
 var _ ObjectTyper = &Scheme{}
 var _ ObjectCreater = &Scheme{}
+var _ ObjectConvertor = &Scheme{}
+
+// FieldLabelConversionFunc converts a field selector to internal representation.
+type FieldLabelConversionFunc func(label, value string) (internalLabel, internalValue string, err error)
 
 func NewScheme() *Scheme {
-	return &Scheme{
-		gvkToType:        map[schema.GroupVersionKind]reflect.Type{},
-		typeToGVK:        map[reflect.Type][]schema.GroupVersionKind{},
-		unversionedTypes: map[reflect.Type]schema.GroupVersionKind{},
-		observedVersions: []schema.GroupVersion{},
+	s := &Scheme{
+		gvkToType:                 map[schema.GroupVersionKind]reflect.Type{},
+		typeToGVK:                 map[reflect.Type][]schema.GroupVersionKind{},
+		unversionedTypes:          map[reflect.Type]schema.GroupVersionKind{},
+		observedVersions:          []schema.GroupVersion{},
+		fieldLabelConversionFuncs: map[schema.GroupVersionKind]FieldLabelConversionFunc{},
 	}
+	s.converter = conversion.NewConverter(s.nameFunc)
+	return s
+}
+
+// nameFunc returns the name of the type that we wish to use to determine when two types attempt
+// a conversion. Defaults to the go name of the type if the type is not registered.
+func (s *Scheme) nameFunc(t reflect.Type) string {
+	// find the preferred names for this type
+	gvks, ok := s.typeToGVK[t]
+	if !ok {
+		return t.Name()
+	}
+
+	for _, gvk := range gvks {
+		internalGV := gvk.GroupVersion()
+		internalGV.Version = APIVersionInternal // this is hacky and maybe should be passed in
+		internalGVK := internalGV.WithKind(gvk.Kind)
+
+		if internalType, exists := s.gvkToType[internalGVK]; exists {
+			return s.typeToGVK[internalType][0].Kind
+		}
+	}
+
+	return gvks[0].Kind
 }
 
 func (s *Scheme) New(kind schema.GroupVersionKind) (Object, error) {
@@ -48,20 +82,20 @@ func (s *Scheme) New(kind schema.GroupVersionKind) (Object, error) {
 // ObjectKinds returns all possible group,version,kind of the go object, true if the
 // object is considered unversioned, or an error if it's not a pointer or is unregistered.
 func (s *Scheme) ObjectKinds(obj Object) ([]schema.GroupVersionKind, bool, error) {
-	// Unstructured objects are always considered to have their declared GVK
-	//if _, ok := obj.(Unstructured); ok {
-	//  // we require that the GVK be populated in order to recognize the object
-	//  gvk := obj.GetObjectKind().GroupVersionKind()
-	//  if len(gvk.Kind) == 0 {
-	//    return nil, false, NewMissingKindErr("unstructured object has no kind")
-	//  }
-	//  if len(gvk.Version) == 0 {
-	//    return nil, false, NewMissingVersionErr("unstructured object has no version")
-	//  }
-	//  return []schema.GroupVersionKind{gvk}, false, nil
-	//}
+	//Unstructured objects are always considered to have their declared GVK
+	if _, ok := obj.(Unstructured); ok {
+		// we require that the GVK be populated in order to recognize the object
+		gvk := obj.GetObjectKind().GroupVersionKind()
+		if len(gvk.Kind) == 0 {
+			return nil, false, NewMissingKindErr("unstructured object has no kind")
+		}
+		if len(gvk.Version) == 0 {
+			return nil, false, NewMissingVersionErr("unstructured object has no version")
+		}
+		return []schema.GroupVersionKind{gvk}, false, nil
+	}
 
-	v, err := conversion.EnforcePtr(obj)
+	v, err := conversionutils.EnforcePtr(obj)
 	if err != nil {
 		return nil, false, err
 	}
@@ -131,17 +165,17 @@ func (s *Scheme) AddKnownTypeWithName(gvk schema.GroupVersionKind, obj Object) {
 	s.typeToGVK[t] = append(s.typeToGVK[t], gvk)
 
 	// if the type implements DeepCopyInto(<obj>), register a self-conversion
-	//if m := reflect.ValueOf(obj).MethodByName("DeepCopyInto"); m.IsValid() && m.Type().NumIn() == 1 && m.Type().NumOut() == 0 && m.Type().In(0) == reflect.TypeOf(obj) {
-	//  if err := s.AddGeneratedConversionFunc(obj, obj, func(a, b interface{}, scope conversion.Scope) error {
-	//    // copy a to b
-	//    reflect.ValueOf(a).MethodByName("DeepCopyInto").Call([]reflect.Value{reflect.ValueOf(b)})
-	//    // clear TypeMeta to match legacy reflective conversion
-	//    b.(Object).GetObjectKind().SetGroupVersionKind(schema.GroupVersionKind{})
-	//    return nil
-	//  }); err != nil {
-	//    panic(err)
-	//  }
-	//}
+	if m := reflect.ValueOf(obj).MethodByName("DeepCopyInto"); m.IsValid() && m.Type().NumIn() == 1 && m.Type().NumOut() == 0 && m.Type().In(0) == reflect.TypeOf(obj) {
+		if err := s.AddGeneratedConversionFunc(obj, obj, func(a, b interface{}, scope conversion.Scope) error {
+			// copy a to b
+			reflect.ValueOf(a).MethodByName("DeepCopyInto").Call([]reflect.Value{reflect.ValueOf(b)})
+			// clear TypeMeta to match legacy reflective conversion
+			b.(Object).GetObjectKind().SetGroupVersionKind(schema.GroupVersionKind{})
+			return nil
+		}); err != nil {
+			panic(err)
+		}
+	}
 }
 
 func (s *Scheme) addObservedVersion(version schema.GroupVersion) {
@@ -155,4 +189,231 @@ func (s *Scheme) addObservedVersion(version schema.GroupVersion) {
 	}
 
 	s.observedVersions = append(s.observedVersions, version)
+}
+
+// Convert will attempt to convert in into out. Both must be pointers. For easy
+// testing of conversion functions. Returns an error if the conversion isn't
+// possible. You can call this with types that haven't been registered (for example,
+// a to test conversion of types that are nested within registered types). The
+// context interface is passed to the convertor. Convert also supports Unstructured
+// types and will convert them intelligently.
+func (s *Scheme) Convert(in, out interface{}, context interface{}) error {
+	unstructuredIn, okIn := in.(Unstructured)
+	unstructuredOut, okOut := out.(Unstructured)
+	switch {
+	case okIn && okOut:
+		// converting unstructured input to an unstructured output is a straight copy - unstructured
+		// is a "smart holder" and the contents are passed by reference between the two objects
+		unstructuredOut.SetUnstructuredContent(unstructuredIn.UnstructuredContent())
+		return nil
+
+	case okOut:
+		// if the output is an unstructured object, use the standard Go type to unstructured
+		// conversion. The object must not be internal.
+		obj, ok := in.(Object)
+		if !ok {
+			return fmt.Errorf("unable to convert object type %T to Unstructured, must be a runtime.Object", in)
+		}
+		gvks, unversioned, err := s.ObjectKinds(obj)
+		if err != nil {
+			return err
+		}
+		gvk := gvks[0]
+
+		// if no conversion is necessary, convert immediately
+		if unversioned || gvk.Version != APIVersionInternal {
+			content, err := DefaultUnstructuredConverter.ToUnstructured(in)
+			if err != nil {
+				return err
+			}
+			unstructuredOut.SetUnstructuredContent(content)
+			unstructuredOut.GetObjectKind().SetGroupVersionKind(gvk)
+			return nil
+		}
+
+		// attempt to convert the object to an external version first.
+		target, ok := context.(GroupVersioner)
+		if !ok {
+			return fmt.Errorf("unable to convert the internal object type %T to Unstructured without providing a preferred version to convert to", in)
+		}
+		// Convert is implicitly unsafe, so we don't need to perform a safe conversion
+		versioned, err := s.UnsafeConvertToVersion(obj, target)
+		if err != nil {
+			return err
+		}
+		content, err := DefaultUnstructuredConverter.ToUnstructured(versioned)
+		if err != nil {
+			return err
+		}
+		unstructuredOut.SetUnstructuredContent(content)
+		return nil
+
+	case okIn:
+		// converting an unstructured object to any type is modeled by first converting
+		// the input to a versioned type, then running standard conversions
+		typed, err := s.unstructuredToTyped(unstructuredIn)
+		if err != nil {
+			return err
+		}
+		in = typed
+	}
+
+	meta := s.generateConvertMeta(in)
+	meta.Context = context
+	return s.converter.Convert(in, out, meta)
+}
+
+// ConvertFieldLabel alters the given field label and value for an kind field selector from
+// versioned representation to an unversioned one or returns an error.
+func (s *Scheme) ConvertFieldLabel(gvk schema.GroupVersionKind, label, value string) (string, string, error) {
+	conversionFunc, ok := s.fieldLabelConversionFuncs[gvk]
+	if !ok {
+		return DefaultMetaV1FieldSelectorConversion(label, value)
+	}
+	return conversionFunc(label, value)
+}
+
+// ConvertToVersion attempts to convert an input object to its matching Kind in another
+// version within this scheme. Will return an error if the provided version does not
+// contain the inKind (or a mapping by name defined with AddKnownTypeWithName). Will also
+// return an error if the conversion does not result in a valid Object being
+// returned. Passes target down to the conversion methods as the Context on the scope.
+func (s *Scheme) ConvertToVersion(in Object, target GroupVersioner) (Object, error) {
+	return s.convertToVersion(true, in, target)
+}
+
+// UnsafeConvertToVersion will convert in to the provided target if such a conversion is possible,
+// but does not guarantee the output object does not share fields with the input object. It attempts to be as
+// efficient as possible when doing conversion.
+func (s *Scheme) UnsafeConvertToVersion(in Object, target GroupVersioner) (Object, error) {
+	return s.convertToVersion(false, in, target)
+}
+
+// convertToVersion handles conversion with an optional copy.
+func (s *Scheme) convertToVersion(copy bool, in Object, target GroupVersioner) (Object, error) {
+	var t reflect.Type
+
+	if u, ok := in.(Unstructured); ok {
+		typed, err := s.unstructuredToTyped(u)
+		if err != nil {
+			return nil, err
+		}
+
+		in = typed
+		// unstructuredToTyped returns an Object, which must be a pointer to a struct.
+		t = reflect.TypeOf(in).Elem()
+
+	} else {
+		// determine the incoming kinds with as few allocations as possible.
+		t = reflect.TypeOf(in)
+		if t.Kind() != reflect.Ptr {
+			return nil, fmt.Errorf("only pointer types may be converted: %v", t)
+		}
+		t = t.Elem()
+		if t.Kind() != reflect.Struct {
+			return nil, fmt.Errorf("only pointers to struct types may be converted: %v", t)
+		}
+	}
+
+	kinds, ok := s.typeToGVK[t]
+	if !ok || len(kinds) == 0 {
+		return nil, NewNotRegisteredErrForType(s.schemeName, t)
+	}
+
+	gvk, ok := target.KindForGroupVersionKinds(kinds)
+	if !ok {
+		// try to see if this type is listed as unversioned (for legacy support)
+		// TODO: when we move to server API versions, we should completely remove the unversioned concept
+		if unversionedKind, ok := s.unversionedTypes[t]; ok {
+			if gvk, ok := target.KindForGroupVersionKinds([]schema.GroupVersionKind{unversionedKind}); ok {
+				return copyAndSetTargetKind(copy, in, gvk)
+			}
+			return copyAndSetTargetKind(copy, in, unversionedKind)
+		}
+		return nil, NewNotRegisteredErrForTarget(s.schemeName, t, target)
+	}
+
+	// target wants to use the existing type, set kind and return (no conversion necessary)
+	for _, kind := range kinds {
+		if gvk == kind {
+			return copyAndSetTargetKind(copy, in, gvk)
+		}
+	}
+
+	// type is unversioned, no conversion necessary
+	if unversionedKind, ok := s.unversionedTypes[t]; ok {
+		if gvk, ok := target.KindForGroupVersionKinds([]schema.GroupVersionKind{unversionedKind}); ok {
+			return copyAndSetTargetKind(copy, in, gvk)
+		}
+		return copyAndSetTargetKind(copy, in, unversionedKind)
+	}
+
+	out, err := s.New(gvk)
+	if err != nil {
+		return nil, err
+	}
+
+	if copy {
+		in = in.DeepCopyObject()
+	}
+
+	meta := s.generateConvertMeta(in)
+	meta.Context = target
+	if err := s.converter.Convert(in, out, meta); err != nil {
+		return nil, err
+	}
+
+	setTargetKind(out, gvk)
+	return out, nil
+}
+
+// unstructuredToTyped attempts to transform an unstructured object to a typed
+// object if possible. It will return an error if conversion is not possible, or the versioned
+// Go form of the object. Note that this conversion will lose fields.
+func (s *Scheme) unstructuredToTyped(in Unstructured) (Object, error) {
+	// the type must be something we recognize
+	gvks, _, err := s.ObjectKinds(in)
+	if err != nil {
+		return nil, err
+	}
+	typed, err := s.New(gvks[0])
+	if err != nil {
+		return nil, err
+	}
+	if err := DefaultUnstructuredConverter.FromUnstructured(in.UnstructuredContent(), typed); err != nil {
+		return nil, fmt.Errorf("unable to convert unstructured object to %v: %v", gvks[0], err)
+	}
+	return typed, nil
+}
+
+// copyAndSetTargetKind performs a conditional copy before returning the object, or an error if copy was not successful.
+func copyAndSetTargetKind(copy bool, obj Object, kind schema.GroupVersionKind) (Object, error) {
+	if copy {
+		obj = obj.DeepCopyObject()
+	}
+	setTargetKind(obj, kind)
+	return obj, nil
+}
+
+// setTargetKind sets the kind on an object, taking into account whether the target kind is the internal version.
+func setTargetKind(obj Object, kind schema.GroupVersionKind) {
+	if kind.Version == APIVersionInternal {
+		// internal is a special case
+		// TODO: look at removing the need to special case this
+		obj.GetObjectKind().SetGroupVersionKind(schema.GroupVersionKind{})
+		return
+	}
+	obj.GetObjectKind().SetGroupVersionKind(kind)
+}
+
+// generateConvertMeta constructs the meta value we pass to Convert.
+func (s *Scheme) generateConvertMeta(in interface{}) *conversion.Meta {
+	return s.converter.DefaultMeta(reflect.TypeOf(in))
+}
+
+// AddGeneratedConversionFunc registers a function that converts between a and b by passing objects of those
+// types to the provided function. The function *must* accept objects of a and b - this machinery will not enforce
+// any other guarantee.
+func (s *Scheme) AddGeneratedConversionFunc(a, b interface{}, fn conversion.ConversionFunc) error {
+	return s.converter.RegisterGeneratedUntypedConversionFunc(a, b, fn)
 }

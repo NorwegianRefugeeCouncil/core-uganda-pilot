@@ -2,8 +2,7 @@ package testing
 
 import (
 	"context"
-	"github.com/EventStore/EventStore-Client-Go/client"
-	"github.com/nrc-no/core/apps/api/pkg/apis/core/v1"
+	corev1 "github.com/nrc-no/core/apps/api/pkg/apis/core/v1"
 	"github.com/nrc-no/core/apps/api/pkg/client/nrc"
 	"github.com/nrc-no/core/apps/api/pkg/client/rest"
 	"github.com/nrc-no/core/apps/api/pkg/endpoints/handlers/formdefinitions"
@@ -20,13 +19,12 @@ import (
 
 type MainTestSuite struct {
 	suite.Suite
-	ctx                context.Context
-	httpServer         *httptest.Server
-	apiServer          *server.Server
-	nrcClient          *nrc.NrcCoreClient
-	mongoClient        *mongo.Client
-	eventStoreDBClient *client.Client
-	store              *mongostorage.Store
+	ctx         context.Context
+	httpServer  *httptest.Server
+	apiServer   *server.Server
+	nrcClient   *nrc.NrcCoreClient
+	mongoClient *mongo.Client
+	store       *mongostorage.Store
 }
 
 func TestMainSuite(t *testing.T) {
@@ -56,22 +54,10 @@ func (s *MainTestSuite) SetupSuite() {
 	}
 	s.nrcClient = nrcClient
 
-	// Create eventdb client
-	eventStoreDBClient, err := client.NewClient(&client.Configuration{
-		Address:    "localhost:2113",
-		DisableTLS: true,
-	})
-	if err != nil {
-		s.T().Errorf("failed to create eventstoredb client: %v", err)
-		return
-	}
-	if err := eventStoreDBClient.Connect(); err != nil {
-		s.T().Errorf("failed to connect to evenstore: %v", err)
-		return
-	}
-	s.eventStoreDBClient = eventStoreDBClient
-
-	mongoClient, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://localhost:30001"))
+	// Create mongo client
+	mongoClient, err := mongo.Connect(ctx,
+		options.Client().ApplyURI("mongodb://localhost:30001"),
+	)
 	if err != nil {
 		s.T().Errorf("could not connect to mongo: %v", err)
 		return
@@ -79,7 +65,7 @@ func (s *MainTestSuite) SetupSuite() {
 	s.mongoClient = mongoClient
 
 	scheme := runtime.NewScheme()
-	if err := v1.AddToScheme(scheme); err != nil {
+	if err := corev1.AddToScheme(scheme); err != nil {
 		s.T().Errorf("unable to register scheme: %v", err)
 		return
 	}
@@ -88,22 +74,22 @@ func (s *MainTestSuite) SetupSuite() {
 
 	// Create storage
 	formDefinitionsStore := mongostorage.NewStore(
-		eventStoreDBClient,
 		mongoClient,
 		"core",
 		"core.nrc.no/formdefinitions",
-		func() runtime.Object { return &v1.FormDefinition{} })
+		func() runtime.Object { return &corev1.FormDefinition{} })
 	s.store = formDefinitionsStore
 
 	// Install FormDefinitions api
 	formdefinitions.Install(
 		apiServer.Container,
 		formDefinitionsStore,
-		v1.SchemeGroupVersion.WithKind("FormDefinition"),
-		v1.SchemeGroupVersion.WithResource("formdefinitions"),
+		corev1.SchemeGroupVersion.WithKind("FormDefinition"),
+		corev1.SchemeGroupVersion.WithResource("formdefinitions"),
 		scheme,
 		scheme,
 		serializer,
+		scheme,
 	)
 
 }
@@ -111,5 +97,4 @@ func (s *MainTestSuite) SetupSuite() {
 func (s *MainTestSuite) TearDownSuite() {
 	defer s.httpServer.Close()
 	defer s.mongoClient.Disconnect(s.ctx)
-	defer s.eventStoreDBClient.Close()
 }

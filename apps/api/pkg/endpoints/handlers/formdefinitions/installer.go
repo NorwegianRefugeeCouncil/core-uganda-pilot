@@ -18,6 +18,7 @@ func Install(
 	creater runtime.ObjectCreater,
 	typer runtime.ObjectTyper,
 	serializer runtime.Serializer,
+	scheme *runtime.Scheme,
 ) {
 
 	scope := handlers.NewRequestScope(
@@ -26,6 +27,7 @@ func Install(
 		creater,
 		typer,
 		serializer,
+		scheme,
 		func() runtime.Object { return &v1.FormDefinitionList{} },
 	)
 

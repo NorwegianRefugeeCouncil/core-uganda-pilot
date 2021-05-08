@@ -2,8 +2,10 @@ package testing
 
 import (
 	"context"
+	"encoding/json"
 	v12 "github.com/nrc-no/core/apps/api/pkg/apis/core/v1"
 	"github.com/nrc-no/core/apps/api/pkg/apis/meta/v1"
+	"github.com/nrc-no/core/apps/api/pkg/watch"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
 	"time"
@@ -15,23 +17,28 @@ func (s *MainTestSuite) TestFormDefinitionCRUD() {
 	watchCtx, watchCancel := context.WithCancel(s.ctx)
 	defer watchCancel()
 
-	watch, err := s.nrcClient.FormDefinitions().Watch(watchCtx)
+	var events []watch.Event
+
+	watcher, err := s.nrcClient.FormDefinitions().Watch(watchCtx)
 	if err != nil {
 		s.T().Errorf("cannot start watch: %v", err)
 		return
 	}
 
 	go func() {
-		for event := range watch.ResultChan() {
+		for event := range watcher.ResultChan() {
 			s.T().Logf("%#v", event)
-			watchCancel()
+			events = append(events, event)
+			if len(events) == 2 {
+				watchCancel()
+			}
 		}
 	}()
 
 	var formDefinition = v12.FormDefinition{
 		TypeMeta: v1.TypeMeta{
 			Kind:       "FormDefinition",
-			APIVersion: "core.nrc.no/v1",
+			APIVersion: "core/v1",
 		},
 		Spec: v12.FormDefinitionSpec{
 			Group: "core.nrc.no",
@@ -76,7 +83,7 @@ func (s *MainTestSuite) TestFormDefinitionCRUD() {
 	}
 
 	// Asserting equality of input & output
-	assert.Equal(t, "core.nrc.no/v1", out.APIVersion)
+	assert.Equal(t, "core/v1", out.APIVersion)
 	assert.Equal(t, "FormDefinition", out.Kind)
 	assert.Equal(t, "core.nrc.no", out.Spec.Group)
 	assert.Equal(t, "customresources", out.Spec.Names.Plural)
@@ -112,5 +119,30 @@ func (s *MainTestSuite) TestFormDefinitionCRUD() {
 
 	t.Logf("\n%v", updated)
 
-	time.Sleep(2 * time.Second)
+	select {
+	case <-watchCtx.Done():
+	}
+
+	if assert.Len(t, events, 2) {
+		assert.Equal(t, "insert", events[0].Type)
+		assert.Equal(t, "replace", events[1].Type)
+	}
+
+	list, err := s.nrcClient.FormDefinitions().List(s.ctx)
+	if !assert.NoError(t, err) {
+		return
+	}
+	if !assert.NotNil(t, list) {
+		return
+	}
+	if !assert.NotNil(t, list.Items) {
+		return
+	}
+	bytes, err := json.MarshalIndent(list, "", " ")
+	if err == nil {
+		t.Log(string(bytes))
+	}
+
+	assert.GreaterOrEqual(t, len(list.Items), 1)
+
 }

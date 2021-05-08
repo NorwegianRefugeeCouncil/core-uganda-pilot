@@ -13,6 +13,7 @@ type RequestScope struct {
 	Creater    runtime.ObjectCreater
 	Typer      runtime.ObjectTyper
 	Serializer runtime.Serializer
+	Scheme     *runtime.Scheme
 	NewList    func() runtime.Object
 }
 
@@ -22,6 +23,7 @@ func NewRequestScope(
 	creater runtime.ObjectCreater,
 	typer runtime.ObjectTyper,
 	serializer runtime.Serializer,
+	Scheme *runtime.Scheme,
 	newList func() runtime.Object,
 ) *RequestScope {
 	return &RequestScope{
@@ -30,6 +32,8 @@ func NewRequestScope(
 		Creater:    creater,
 		Typer:      typer,
 		Serializer: serializer,
+		Scheme:     Scheme,
+		NewList:    newList,
 	}
 }
 
@@ -42,5 +46,5 @@ func (r *RequestScope) GetObjectTyper() runtime.ObjectTyper {
 }
 
 func (r *RequestScope) Error(err error, w http.ResponseWriter, req *http.Request) {
-	writers.ErrorNegotiated(err, w, req)
+	writers.ErrorNegotiated(err, r.Serializer, w, req)
 }

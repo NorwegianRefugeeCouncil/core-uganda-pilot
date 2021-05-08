@@ -1,8 +1,8 @@
 package writers
 
 import (
-	"encoding/json"
 	metav1 "github.com/nrc-no/core/apps/api/pkg/apis/meta/v1"
+	"github.com/nrc-no/core/apps/api/pkg/runtime"
 	"github.com/sirupsen/logrus"
 	"net/http"
 )
@@ -11,7 +11,7 @@ type statusError interface {
 	Status() metav1.Status
 }
 
-func ErrorNegotiated(err error, w http.ResponseWriter, req *http.Request) int {
+func ErrorNegotiated(err error, serializer runtime.Serializer, w http.ResponseWriter, req *http.Request) int {
 	status := ErrorToApiStatus(err)
 	code := int(status.Code)
 	if code == http.StatusNoContent {
@@ -19,19 +19,12 @@ func ErrorNegotiated(err error, w http.ResponseWriter, req *http.Request) int {
 		return code
 	}
 
-	responseBytes, err := json.Marshal(status)
-	if err != nil {
-		logrus.Errorf("unable to encode error response: %v", err)
-		return code
-	}
-
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 
-	if _, err := w.Write(responseBytes); err != nil {
-		logrus.Errorf("unable to write response error: %v", err)
+	if err := serializer.Encode(status, w); err != nil {
+		logrus.Errorf("unable to encode error response: %v", err)
 	}
-
 	return code
 
 }

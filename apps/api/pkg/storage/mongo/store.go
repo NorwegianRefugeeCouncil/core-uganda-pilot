@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	goes "github.com/EventStore/EventStore-Client-Go/client"
 	"github.com/nrc-no/core/apps/api/pkg/apis/meta"
 	"github.com/nrc-no/core/apps/api/pkg/runtime"
 	"github.com/nrc-no/core/apps/api/pkg/storage"
@@ -18,7 +17,6 @@ import (
 )
 
 type Store struct {
-	esClient    *goes.Client
 	mongoClient *mongo.Client
 	database    string
 	collection  string
@@ -26,14 +24,12 @@ type Store struct {
 }
 
 func NewStore(
-	client *goes.Client,
 	mongoClient *mongo.Client,
 	database string,
 	collection string,
 	create func() runtime.Object,
 ) *Store {
 	return &Store{
-		esClient:    client,
 		mongoClient: mongoClient,
 		database:    database,
 		collection:  collection,
@@ -50,7 +46,8 @@ func (s *Store) Get(ctx context.Context, key string, out runtime.Object) error {
 		return err
 	}
 
-	result := s.mongoClient.Database(s.database).Collection(s.collection).FindOne(ctx, bson.M{"_id": objectID})
+	collection := s.mongoClient.Database(s.database).Collection(s.collection)
+	result := collection.FindOne(ctx, bson.M{"_id": objectID})
 	if result.Err() != nil {
 		return result.Err()
 	}
@@ -146,15 +143,16 @@ func (s *Store) Create(ctx context.Context, in, out runtime.Object) error {
 		return err
 	}
 	accessor.SetResourceVersion(1)
+	gvk := out.GetObjectKind().GroupVersionKind()
 
 	response, err := s.mongoClient.Database(s.database).Collection(s.collection).InsertOne(ctx, bson.M{
 		"currentRevision":   in,
 		"previousRevisions": bson.A{},
 		"resourceVersion":   1,
 		"createdAt":         time.Now().UTC(),
-		"apiVersion":        in.GetAPIVersion(),
-		"group":             in.GetAPIGroup(),
-		"kind":              in.GetKind(),
+		"apiVersion":        gvk.GroupVersion().String(),
+		"apiGroup":          gvk.GroupVersion().Group,
+		"kind":              gvk.Kind,
 	})
 	if err != nil {
 		return err
@@ -173,15 +171,22 @@ func (s *Store) Update(ctx context.Context, key string, in, out runtime.Object) 
 		return err
 	}
 
+	accessor, err := meta.Accessor(in)
+	if err != nil {
+		return err
+	}
+	accessor.SetResourceVersion(1)
+	gvk := out.GetObjectKind().GroupVersionKind()
+
 	_, err = s.mongoClient.Database(s.database).Collection(s.collection).UpdateByID(ctx, objectID, bson.A{
 		bson.M{"$set": bson.M{"previousRevisions": bson.M{"$concatArrays": bson.A{"$previousRevisions", bson.A{"$currentRevision"}}}}},
 		bson.M{"$set": bson.M{"currentRevision": in}},
 		bson.M{"$unset": "currentRevision.metadata.uid"},
 		bson.M{"$set": bson.M{"resourceVersion": bson.M{"$add": bson.A{1, bson.M{"$size": "$previousRevisions"}}}}},
 		bson.M{"$set": bson.M{"updatedAt": "$$NOW"}},
-		bson.M{"$set": bson.M{"apiVersion": in.GetAPIVersion()}},
-		bson.M{"$set": bson.M{"apiGroup": in.GetAPIGroup()}},
-		bson.M{"$set": bson.M{"kind": in.GetKind()}},
+		bson.M{"$set": bson.M{"apiVersion": gvk.GroupVersion().String()}},
+		bson.M{"$set": bson.M{"apiGroup": gvk.GroupVersion().Group}},
+		bson.M{"$set": bson.M{"kind": in.GetObjectKind()}},
 	})
 	if err != nil {
 		return err

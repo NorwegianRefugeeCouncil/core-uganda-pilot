@@ -89,5 +89,5 @@ func (c *formDefinitionsClient) Update(ctx context.Context, formDefinition *v1.F
 func (c *formDefinitionsClient) Watch(ctx context.Context) (w watch.Interface, err error) {
 	return c.client.Get().
 		Resource("formdefinitions").
-		Watch(ctx, &v1.FormDefinition{})
+		Watch(ctx)
 }

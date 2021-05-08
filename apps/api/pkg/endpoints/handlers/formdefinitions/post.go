@@ -1,14 +1,13 @@
 package formdefinitions
 
 import (
-	"encoding/json"
 	"github.com/nrc-no/core/apps/api/pkg/apis/core/v1"
 	"github.com/nrc-no/core/apps/api/pkg/apis/meta"
+	metav1 "github.com/nrc-no/core/apps/api/pkg/apis/meta/v1"
 	"github.com/nrc-no/core/apps/api/pkg/util/exceptions"
 	"github.com/nrc-no/core/apps/api/pkg/util/validation/field"
 	"io/ioutil"
 	"net/http"
-	"time"
 )
 
 // Post formDefinition
@@ -22,7 +21,8 @@ func (h *Handler) Post(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var formDefinition v1.FormDefinition
-	if err := json.Unmarshal(bodyBytes, &formDefinition); err != nil {
+	_, _, err = h.scope.Serializer.Decode(bodyBytes, &h.scope.Kind, &formDefinition)
+	if err != nil {
 		h.scope.Error(err, w, req)
 		return
 	}
@@ -76,9 +76,9 @@ func (h *Handler) Post(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	obj.SetCreationTimestamp(time.Now().UTC())
+	obj.SetCreationTimestamp(metav1.Now())
 	obj.SetDeletionTimestamp(nil)
-	formDefinition.SetAPIVersion(h.scope.Kind.GroupVersion().String())
+	// formDefinition.SetAPIVersion(h.scope.Kind.GroupVersion().String())
 
 	var out v1.FormDefinition
 	if err := h.storage.Create(ctx, &formDefinition, &out); err != nil {
@@ -86,13 +86,5 @@ func (h *Handler) Post(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	responseBytes, err := json.Marshal(&out)
-	if err != nil {
-		h.scope.Error(err, w, req)
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-	w.Write(responseBytes)
-
+	transformResponseObject(ctx, h.scope, req, w, http.StatusCreated, &out)
 }

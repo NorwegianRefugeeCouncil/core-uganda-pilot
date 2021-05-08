@@ -332,7 +332,7 @@ func (r *Request) URL() *url.URL {
 
 }
 
-func (r *Request) Watch(ctx context.Context, objPtr runtime.Object) (watch.Interface, error) {
+func (r *Request) Watch(ctx context.Context) (watch.Interface, error) {
 	if r.err != nil {
 		return nil, r.err
 	}
@@ -347,16 +347,10 @@ func (r *Request) Watch(ctx context.Context, objPtr runtime.Object) (watch.Inter
 		return nil, err
 	}
 
-	objType := reflect.TypeOf(objPtr).Elem()
-
 	watcher := watch.NewWatcher(ctx, func() ([]byte, error) {
 		_, message, err := c.ReadMessage()
 		return message, err
-	}, func(payload []byte) (runtime.Object, error) {
-		out := reflect.New(objType).Interface().(runtime.Object)
-		err := json.Unmarshal(payload, &out)
-		return out, err
-	})
+	}, r.c.content.Serializer)
 
 	return watcher, nil
 
@@ -503,7 +497,7 @@ func IsValidPathSegmentName(name string) []string {
 	return errors
 }
 
-func (r Result) Into(obj interface{}) error {
+func (r Result) Into(obj runtime.Object) error {
 	if r.err != nil {
 		err := r.Error()
 
@@ -513,9 +507,16 @@ func (r Result) Into(obj interface{}) error {
 	if len(r.body) == 0 {
 		return fmt.Errorf("0-length response with status code: %d and content-type %s", r.statusCode, r.contentType)
 	}
-
-	if err := json.Unmarshal(r.body, obj); err != nil {
+	out, _, err := r.decoder.Decode(r.body, nil, obj)
+	if err != nil {
 		return err
+	}
+
+	switch t := out.(type) {
+	case *metav1.Status:
+		if t.Status != metav1.StatusSuccess {
+			return exceptions.FromObject(t)
+		}
 	}
 
 	return nil
