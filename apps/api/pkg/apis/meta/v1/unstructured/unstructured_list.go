@@ -29,8 +29,6 @@ var _ metav1.ListInterface = &UnstructuredList{}
 // UnstructuredList allows lists that do not have Golang structs
 // registered to be manipulated generically. This can be used to deal
 // with the API lists from a plug-in.
-// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-// +k8s:deepcopy-gen=true
 type UnstructuredList struct {
 	Object map[string]interface{}
 

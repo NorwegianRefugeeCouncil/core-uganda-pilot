@@ -8,6 +8,7 @@ type ObjectMetaAccessor interface {
 // ListInterface lets you work with list metadata from any of the versioned or
 // internal API objects. Attempting to set or retrieve a field on an object that does
 // not support that field will be a no-op and return a default value.
+// +k8s:deepcopy-gen=false
 // TODO: move this, and TypeMeta and ListMeta, to a different package
 type ListInterface interface {
 	GetResourceVersion() int

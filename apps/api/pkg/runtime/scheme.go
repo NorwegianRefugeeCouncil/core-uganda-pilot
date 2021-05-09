@@ -417,3 +417,10 @@ func (s *Scheme) generateConvertMeta(in interface{}) *conversion.Meta {
 func (s *Scheme) AddGeneratedConversionFunc(a, b interface{}, fn conversion.ConversionFunc) error {
 	return s.converter.RegisterGeneratedUntypedConversionFunc(a, b, fn)
 }
+
+// AddConversionFunc registers a function that converts between a and b by passing objects of those
+// types to the provided function. The function *must* accept objects of a and b - this machinery will not enforce
+// any other guarantee.
+func (s *Scheme) AddConversionFunc(a, b interface{}, fn conversion.ConversionFunc) error {
+	return s.converter.RegisterUntypedConversionFunc(a, b, fn)
+}
