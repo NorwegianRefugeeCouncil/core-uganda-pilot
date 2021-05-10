@@ -149,6 +149,8 @@ const (
 
 // TypeMeta represents an individual object in an API response or request.
 // It represents the API schema version and kind/type of object
+//
+// +k8s:deepcopy-gen=false
 type TypeMeta struct {
 
 	// APIVersion defines the versioned schema of this representation

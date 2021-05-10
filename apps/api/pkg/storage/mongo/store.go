@@ -13,6 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"reflect"
+	"strings"
 	"time"
 )
 
@@ -21,20 +22,43 @@ type Store struct {
 	database    string
 	collection  string
 	create      func() runtime.Object
+	codec       runtime.Codec
 }
 
 func NewStore(
 	mongoClient *mongo.Client,
-	database string,
-	collection string,
+	codec runtime.Codec,
 	create func() runtime.Object,
-) *Store {
+	prefix string,
+) (*Store, error) {
+
+	if strings.HasPrefix(prefix, "/") {
+		prefix = prefix[1:]
+	}
+	if strings.HasSuffix(prefix, "/") {
+		prefix = prefix[:1]
+	}
+	parts := strings.Split(prefix, "/")
+	if len(parts) != 2 {
+		return nil, fmt.Errorf("expecting format of <database>/<collection> from 'prefix' argument")
+	}
+	database := parts[0]
+	collection := parts[1]
+
+	if len(database) == 0 {
+		return nil, fmt.Errorf("database is required")
+	}
+	if len(collection) == 0 {
+		return nil, fmt.Errorf("collection is required")
+	}
+
 	return &Store{
 		mongoClient: mongoClient,
 		database:    database,
 		collection:  collection,
 		create:      create,
-	}
+		codec:       codec,
+	}, nil
 }
 
 var _ storage.Interface = &Store{}
@@ -104,7 +128,7 @@ func (s *Store) List(ctx context.Context, out runtime.Object) error {
 
 }
 
-func convertDocument(data bson.Raw, out runtime.Object) error {
+func convertDocument(data bson.Raw, into runtime.Object) error {
 
 	var resourceVersion int
 	if err := data.Lookup("resourceVersion").Unmarshal(&resourceVersion); err != nil {
@@ -113,7 +137,7 @@ func convertDocument(data bson.Raw, out runtime.Object) error {
 	}
 
 	raw := data.Lookup("currentRevision")
-	if err := raw.Unmarshal(out); err != nil {
+	if err := raw.Unmarshal(into); err != nil {
 		logrus.Errorf("unable to get currentRevision from document: %v", err)
 		return err
 	}
@@ -124,7 +148,7 @@ func convertDocument(data bson.Raw, out runtime.Object) error {
 		return err
 	}
 
-	accessor, err := meta.Accessor(out)
+	accessor, err := meta.Accessor(into)
 	if err != nil {
 		return err
 	}

@@ -1,4 +1,4 @@
-package testscheme
+package v1
 
 import (
 	metav1 "github.com/nrc-no/core/apps/api/pkg/apis/meta/v1"
@@ -22,6 +22,9 @@ var (
 func addKnownTypes(scheme *runtime.Scheme) error {
 	scheme.AddKnownTypes(SchemeGroupVersion,
 		&TestModel{},
+		&TestModelList{},
+		&TestModel2{},
+		&TestModel2List{},
 		&TestModelUrlValues{},
 	)
 	metav1.AddToGroupVersion(scheme, SchemeGroupVersion)

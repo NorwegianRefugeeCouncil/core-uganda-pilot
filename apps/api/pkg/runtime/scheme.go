@@ -20,6 +20,9 @@ type Scheme struct {
 	gvkToType        map[schema.GroupVersionKind]reflect.Type
 	typeToGVK        map[reflect.Type][]schema.GroupVersionKind
 	unversionedTypes map[reflect.Type]schema.GroupVersionKind
+	// defaulterFuncs is an array of interfaces to be called with an object to provide defaulting
+	// the provided object must be a pointer.
+	defaulterFuncs   map[reflect.Type]func(interface{})
 	observedVersions []schema.GroupVersion
 	converter        *conversion.Converter
 	// Map from version and resource to the corresponding func to convert
@@ -41,6 +44,7 @@ func NewScheme() *Scheme {
 		unversionedTypes:          map[reflect.Type]schema.GroupVersionKind{},
 		observedVersions:          []schema.GroupVersion{},
 		fieldLabelConversionFuncs: map[schema.GroupVersionKind]FieldLabelConversionFunc{},
+		defaulterFuncs:            map[reflect.Type]func(interface{}){},
 	}
 	s.converter = conversion.NewConverter(s.nameFunc)
 	return s
@@ -423,4 +427,20 @@ func (s *Scheme) AddGeneratedConversionFunc(a, b interface{}, fn conversion.Conv
 // any other guarantee.
 func (s *Scheme) AddConversionFunc(a, b interface{}, fn conversion.ConversionFunc) error {
 	return s.converter.RegisterUntypedConversionFunc(a, b, fn)
+}
+
+// Default sets defaults on the provided Object.
+func (s *Scheme) Default(src Object) {
+	if fn, ok := s.defaulterFuncs[reflect.TypeOf(src)]; ok {
+		fn(src)
+	}
+}
+
+// AddTypeDefaultingFunc registers a function that is passed a pointer to an
+// object and can default fields on the object. These functions will be invoked
+// when Default() is called. The function will never be called unless the
+// defaulted object matches srcType. If this function is invoked twice with the
+// same srcType, the fn passed to the later call will be used instead.
+func (s *Scheme) AddTypeDefaultingFunc(srcType Object, fn func(interface{})) {
+	s.defaulterFuncs[reflect.TypeOf(srcType)] = fn
 }

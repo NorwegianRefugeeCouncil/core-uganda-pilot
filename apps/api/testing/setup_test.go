@@ -9,22 +9,20 @@ import (
 	"github.com/nrc-no/core/apps/api/pkg/runtime"
 	"github.com/nrc-no/core/apps/api/pkg/runtime/serializer/json"
 	"github.com/nrc-no/core/apps/api/pkg/server"
-	mongostorage "github.com/nrc-no/core/apps/api/pkg/storage/mongo"
+	"github.com/nrc-no/core/apps/api/pkg/storage/backend"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"net/http/httptest"
 	"testing"
 )
 
 type MainTestSuite struct {
 	suite.Suite
-	ctx         context.Context
-	httpServer  *httptest.Server
-	apiServer   *server.Server
-	nrcClient   *nrc.NrcCoreClient
-	mongoClient *mongo.Client
-	store       *mongostorage.Store
+	ctx            context.Context
+	httpServer     *httptest.Server
+	apiServer      *server.Server
+	nrcClient      *nrc.NrcCoreClient
+	destroyStorage func()
 }
 
 func TestMainSuite(t *testing.T) {
@@ -54,16 +52,6 @@ func (s *MainTestSuite) SetupSuite() {
 	}
 	s.nrcClient = nrcClient
 
-	// Create mongo client
-	mongoClient, err := mongo.Connect(ctx,
-		options.Client().ApplyURI("mongodb://localhost:30001"),
-	)
-	if err != nil {
-		s.T().Errorf("could not connect to mongo: %v", err)
-		return
-	}
-	s.mongoClient = mongoClient
-
 	scheme := runtime.NewScheme()
 	if err := corev1.AddToScheme(scheme); err != nil {
 		s.T().Errorf("unable to register scheme: %v", err)
@@ -72,18 +60,23 @@ func (s *MainTestSuite) SetupSuite() {
 
 	serializer := json.NewSerializer(json.DefaultMetaFactory, scheme, scheme)
 
-	// Create storage
-	formDefinitionsStore := mongostorage.NewStore(
-		mongoClient,
-		"core",
-		"core.nrc.no/formdefinitions",
-		func() runtime.Object { return &corev1.FormDefinition{} })
-	s.store = formDefinitionsStore
+	storageBackend, destroyStorage, err := backend.Create(backend.Config{
+		Codec:           corev1.Codecs,
+		EncodeVersioner: corev1.SchemeGroupVersion,
+		Prefix:          "core_nrc_no/formdefinitions",
+		Transport: backend.TransportConfig{
+			ServerList: []string{"localhost:30001"},
+		},
+	}, func() runtime.Object { return &corev1.FormDefinition{} })
+	if !assert.NoError(s.T(), err) {
+		return
+	}
+	s.destroyStorage = destroyStorage
 
 	// Install FormDefinitions api
 	formdefinitions.Install(
 		apiServer.Container,
-		formDefinitionsStore,
+		storageBackend,
 		corev1.SchemeGroupVersion.WithKind("FormDefinition"),
 		corev1.SchemeGroupVersion.WithResource("formdefinitions"),
 		scheme,
@@ -96,5 +89,7 @@ func (s *MainTestSuite) SetupSuite() {
 
 func (s *MainTestSuite) TearDownSuite() {
 	defer s.httpServer.Close()
-	defer s.mongoClient.Disconnect(s.ctx)
+	if s.destroyStorage != nil {
+		defer s.destroyStorage()
+	}
 }
