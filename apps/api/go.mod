@@ -12,6 +12,7 @@ require (
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.7.0
 	go.mongodb.org/mongo-driver v1.5.2
+	k8s.io/apimachinery v0.21.0 // indirect
 	k8s.io/code-generator v0.21.0
 	sigs.k8s.io/controller-tools v0.5.0
 	sigs.k8s.io/structured-merge-diff/v4 v4.1.1

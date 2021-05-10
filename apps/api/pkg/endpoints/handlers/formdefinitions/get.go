@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/nrc-no/core/apps/api/pkg/apis/core/v1"
+	metav1 "github.com/nrc-no/core/apps/api/pkg/apis/meta/v1"
 	"github.com/nrc-no/core/apps/api/pkg/endpoints"
 	"github.com/nrc-no/core/apps/api/pkg/endpoints/handlers"
 	"github.com/nrc-no/core/apps/api/pkg/endpoints/handlers/writers"
@@ -23,13 +23,13 @@ func (h *Handler) Get(w http.ResponseWriter, req *http.Request) {
 	var requestInfo = ctx.Value("requestInfo").(*endpoints.RequestInfo)
 	key := strings.ToLower(path.Join(requestInfo.APIGroup, requestInfo.APIResource, requestInfo.ResourceID))
 
-	var formDefinition v1.FormDefinition
-	if err := h.storage.Get(ctx, key, &formDefinition); err != nil {
+	obj, err := h.getter.Get(ctx, key, &metav1.GetOptions{})
+	if err != nil {
 		h.scope.Error(err, w, req)
 		return
 	}
 
-	transformResponseObject(ctx, h.scope, req, w, http.StatusOK, &formDefinition)
+	transformResponseObject(ctx, h.scope, req, w, http.StatusOK, obj)
 }
 
 func transformResponseObject(ctx context.Context, scope *handlers.RequestScope, req *http.Request, w http.ResponseWriter, statusCode int, result runtime.Object) {

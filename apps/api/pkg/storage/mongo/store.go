@@ -1,7 +1,9 @@
 package mongo
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/nrc-no/core/apps/api/pkg/apis/meta"
@@ -14,7 +16,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"reflect"
 	"strings"
-	"time"
 )
 
 type Store struct {
@@ -23,6 +24,15 @@ type Store struct {
 	collection  string
 	create      func() runtime.Object
 	codec       runtime.Codec
+	versioner   storage.Versioner
+}
+
+type objState struct {
+	obj   runtime.Object
+	meta  *storage.ResponseMeta
+	rev   int64
+	data  []byte
+	stale bool
 }
 
 func NewStore(
@@ -63,7 +73,7 @@ func NewStore(
 
 var _ storage.Interface = &Store{}
 
-func (s *Store) Get(ctx context.Context, key string, out runtime.Object) error {
+func (s *Store) Get(ctx context.Context, key string, getOptions storage.GetOptions, out runtime.Object) error {
 
 	objectID, err := primitive.ObjectIDFromHex(key)
 	if err != nil {
@@ -85,7 +95,7 @@ func (s *Store) Get(ctx context.Context, key string, out runtime.Object) error {
 
 }
 
-func (s *Store) List(ctx context.Context, out runtime.Object) error {
+func (s *Store) List(ctx context.Context, listOptions storage.ListOptions, out runtime.Object) error {
 
 	listPtr, err := GetItemsPtr(out)
 	if err != nil {
@@ -160,63 +170,147 @@ func convertDocument(data bson.Raw, into runtime.Object) error {
 
 }
 
-func (s *Store) Create(ctx context.Context, in, out runtime.Object) error {
-
-	accessor, err := meta.Accessor(in)
+func (s *Store) Create(ctx context.Context, obj runtime.Object) error {
+	accessor, err := meta.Accessor(obj)
 	if err != nil {
 		return err
 	}
 	accessor.SetResourceVersion(1)
-	gvk := out.GetObjectKind().GroupVersionKind()
 
-	response, err := s.mongoClient.Database(s.database).Collection(s.collection).InsertOne(ctx, bson.M{
-		"currentRevision":   in,
-		"previousRevisions": bson.A{},
-		"resourceVersion":   1,
-		"createdAt":         time.Now().UTC(),
-		"apiVersion":        gvk.GroupVersion().String(),
-		"apiGroup":          gvk.GroupVersion().Group,
-		"kind":              gvk.Kind,
-	})
+	response, err := s.mongoClient.Database(s.database).Collection(s.collection).InsertOne(ctx, obj)
 	if err != nil {
 		return err
 	}
 
 	objectID := response.InsertedID.(primitive.ObjectID)
 	id := objectID.Hex()
-	return s.Get(ctx, id, out)
+	accessor.SetUID(id)
 
+	return nil
 }
 
-func (s *Store) Update(ctx context.Context, key string, in, out runtime.Object) error {
+func (s *Store) Versioner() storage.Versioner {
+	return s.versioner
+}
+
+func (s *Store) Update(ctx context.Context, key string, out runtime.Object, updateFunc storage.UpdateFunc) error {
 
 	objectID, err := primitive.ObjectIDFromHex(key)
 	if err != nil {
 		return err
 	}
 
-	accessor, err := meta.Accessor(in)
-	if err != nil {
-		return err
-	}
-	accessor.SetResourceVersion(1)
-	gvk := out.GetObjectKind().GroupVersionKind()
-
-	_, err = s.mongoClient.Database(s.database).Collection(s.collection).UpdateByID(ctx, objectID, bson.A{
-		bson.M{"$set": bson.M{"previousRevisions": bson.M{"$concatArrays": bson.A{"$previousRevisions", bson.A{"$currentRevision"}}}}},
-		bson.M{"$set": bson.M{"currentRevision": in}},
-		bson.M{"$unset": "currentRevision.metadata.uid"},
-		bson.M{"$set": bson.M{"resourceVersion": bson.M{"$add": bson.A{1, bson.M{"$size": "$previousRevisions"}}}}},
-		bson.M{"$set": bson.M{"updatedAt": "$$NOW"}},
-		bson.M{"$set": bson.M{"apiVersion": gvk.GroupVersion().String()}},
-		bson.M{"$set": bson.M{"apiGroup": gvk.GroupVersion().Group}},
-		bson.M{"$set": bson.M{"kind": in.GetObjectKind()}},
-	})
+	v, err := conversion.EnforcePtr(out)
 	if err != nil {
 		return err
 	}
 
-	return s.Get(ctx, key, out)
+	getCurrentState := func() (*objState, error) {
+		getResp := s.mongoClient.Database(s.database).Collection(s.collection).FindOne(ctx, bson.M{"_id": key})
+		if getResp.Err() != nil {
+			return nil, getResp.Err()
+		}
+		return s.getState(getResp, key, v, false)
+	}
+
+	var origState *objState
+	var origStateIsCurrent bool
+
+	origState, err = getCurrentState()
+	origStateIsCurrent = true
+
+	if err != nil {
+		return err
+	}
+
+	for {
+
+		ret, _, err := s.updateState(origState, updateFunc)
+		if err != nil {
+			// if data is already up to date, return the error
+			if origStateIsCurrent {
+				return err
+			}
+
+			// refresh id data is stale
+			origState, err = getCurrentState()
+			if err != nil {
+				return err
+			}
+			origStateIsCurrent = true
+			//retry
+			continue
+		}
+
+		data, err := runtime.Encode(s.codec, ret)
+		if err != nil {
+			return err
+		}
+
+		if !origState.stale && bytes.Equal(data, origState.data) {
+			// if we skipped the original get in the loop, we must refresh
+			// in order to be sure the data in the store is equivalent
+			// to our desired serialization
+			if !origStateIsCurrent {
+				origState, err := getCurrentState()
+				if err != nil {
+					return err
+				}
+				origStateIsCurrent = true
+				if !bytes.Equal(data, origState.data) {
+					// original data changed, restart loop
+					continue
+				}
+			}
+			// recheck that the data is not stale before short-circuiting a write
+			if !origState.stale {
+				return decode(s.codec, s.versioner, origState.data, out, origState.rev)
+			}
+		}
+
+		var temp = map[string]interface{}{}
+		if err := json.Unmarshal(data, &temp); err != nil {
+			return err
+		}
+		temp["__revision"] = origState.rev
+
+		mongoData, err := bson.Marshal(temp)
+		if err != nil {
+			return err
+		}
+
+		_, err = s.mongoClient.Database(s.database).Collection(s.collection).UpdateOne(
+			ctx,
+			bson.M{
+				"_id":        objectID,
+				"__revision": origState.rev,
+			},
+			mongoData,
+		)
+		if err != nil {
+			return err
+		}
+
+		return decode(s.codec, s.versioner, mongoData, out, origState.rev)
+
+	}
+
+	//
+	//_, err = s.mongoClient.Database(s.database).Collection(s.collection).UpdateByID(ctx, objectID, bson.A{
+	//  bson.M{"$set": bson.M{"previousRevisions": bson.M{"$concatArrays": bson.A{"$previousRevisions", bson.A{"$currentRevision"}}}}},
+	//  bson.M{"$set": bson.M{"currentRevision": in}},
+	//  bson.M{"$unset": "currentRevision.metadata.uid"},
+	//  bson.M{"$set": bson.M{"resourceVersion": bson.M{"$add": bson.A{1, bson.M{"$size": "$previousRevisions"}}}}},
+	//  bson.M{"$set": bson.M{"updatedAt": "$$NOW"}},
+	//  bson.M{"$set": bson.M{"apiVersion": gvk.GroupVersion().String()}},
+	//  bson.M{"$set": bson.M{"apiGroup": gvk.GroupVersion().Group}},
+	//  bson.M{"$set": bson.M{"kind": in.GetObjectKind()}},
+	//})
+	//if err != nil {
+	//  return err
+	//}
+	//
+	//return s.Get(ctx, key, obj)
 
 }
 
@@ -340,4 +434,81 @@ func getItemsPtr(list runtime.Object) (interface{}, error) {
 	default:
 		return nil, errExpectSliceItems
 	}
+}
+
+func (s *Store) getState(getResp *mongo.SingleResult, key string, v reflect.Value, ignoreNotFound bool) (*objState, error) {
+	state := &objState{
+		meta: &storage.ResponseMeta{},
+	}
+
+	if u, ok := v.Addr().Interface().(runtime.Unstructured); ok {
+		state.obj = u.NewEmptyInstance()
+	} else {
+		state.obj = reflect.New(v.Type()).Interface().(runtime.Object)
+	}
+
+	if getResp.Err() != nil {
+		return nil, getResp.Err()
+	}
+
+	//if len(getResp.Kvs) == 0 {
+	//  if !ignoreNotFound {
+	//    return nil, storage.NewKeyNotFoundError(key, 0)
+	//  }
+	//  if err := runtime.SetZeroValue(state.obj); err != nil {
+	//    return nil, err
+	//  }
+	//} else {
+
+	temp := map[string]interface{}{}
+	if err := getResp.Decode(&temp); err != nil {
+		return nil, err
+	}
+
+	bytes, err := json.Marshal(temp)
+	if err != nil {
+		return nil, err
+	}
+
+	state.rev = temp["__revision"].(int64)
+	state.meta.ResourceVersion = uint64(state.rev)
+	state.data = bytes
+	if err := decode(s.codec, s.versioner, bytes, state.obj, state.rev); err != nil {
+		return nil, err
+	}
+	return state, nil
+}
+
+// decode decodes value of bytes into object. It will also set the object resource version to rev.
+// On success, objPtr would be set to the object.
+func decode(codec runtime.Codec, versioner storage.Versioner, value []byte, objPtr runtime.Object, rev int64) error {
+	if _, err := conversion.EnforcePtr(objPtr); err != nil {
+		return fmt.Errorf("unable to convert output object to pointer: %v", err)
+	}
+	_, _, err := codec.Decode(value, nil, objPtr)
+	if err != nil {
+		return err
+	}
+	// being unable to set the version does not prevent the object from being extracted
+	if err := versioner.UpdateObject(objPtr, uint64(rev)); err != nil {
+		logrus.Errorf("failed to update object version: %v", err)
+	}
+	return nil
+}
+
+func (s *Store) updateState(st *objState, userUpdate storage.UpdateFunc) (runtime.Object, uint64, error) {
+	ret, ttlPtr, err := userUpdate(st.obj, *st.meta)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	if err := s.versioner.PrepareObjectForStorage(ret); err != nil {
+		return nil, 0, fmt.Errorf("PrepareObjectForStorage failed: %v", err)
+	}
+
+	var ttl uint64
+	if ttlPtr != nil {
+		ttl = *ttlPtr
+	}
+	return ret, ttl, nil
 }

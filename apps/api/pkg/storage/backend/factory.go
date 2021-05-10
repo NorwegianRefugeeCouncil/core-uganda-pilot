@@ -11,11 +11,13 @@ import (
 	"strings"
 )
 
+type DestroyFunc func()
+
 func Create(c Config, newFunc func() runtime.Object) (storage.Interface, func(), error) {
 	return NewMongoStore(c, newFunc)
 }
 
-func NewMongoStore(c Config, newFunc func() runtime.Object) (storage.Interface, func(), error) {
+func NewMongoStore(c Config, newFunc func() runtime.Object) (storage.Interface, DestroyFunc, error) {
 	clientOptions := mongooptions.Client().ApplyURI("mongodb://" + strings.Join(c.Transport.ServerList, ","))
 	mongoClient, err := mongo.NewClient(clientOptions)
 	if err != nil {

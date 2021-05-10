@@ -55,3 +55,41 @@ func objectMetaAndKind(typer runtime.ObjectTyper, obj runtime.Object) (metav1.Ob
 	}
 	return objectMeta, kinds[0], nil
 }
+
+func BeforeUpdate(strategy RESTUpdateStrategy, ctx context.Context, obj, old runtime.Object) error {
+
+	objectMeta, kind, kerr := objectMetaAndKind(strategy, obj)
+	if kerr != nil {
+		return kerr
+	}
+
+	oldMeta, err := meta.Accessor(old)
+	if err != nil {
+		return err
+	}
+
+	strategy.PrepareForUpdate(ctx, obj, old)
+
+	objectMeta.SetUID(oldMeta.GetUID())
+
+	// Ignore changes to creationTimestamp
+	if oldCreationTime := oldMeta.GetCreationTimestamp(); !oldCreationTime.IsZero() {
+		objectMeta.SetCreationTimestamp(oldMeta.GetCreationTimestamp())
+	}
+
+	// Ignore deletionTimestamps changes
+	if !oldMeta.GetDeletionTimestamp().IsZero() {
+		objectMeta.SetDeletionTimestamp(oldMeta.GetDeletionTimestamp())
+	}
+
+	errs := field.ErrorList{}
+
+	errs = append(errs, strategy.ValidateUpdate(ctx, obj, old)...)
+	if len(errs) > 0 {
+		return exceptions.NewInvalid(kind.GroupKind(), objectMeta.GetUID(), errs)
+	}
+
+	strategy.Canonicalize(obj)
+	return nil
+
+}

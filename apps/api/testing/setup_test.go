@@ -2,12 +2,14 @@ package testing
 
 import (
 	"context"
+	"github.com/nrc-no/core/apps/api/pkg/api/defaultscheme"
+	"github.com/nrc-no/core/apps/api/pkg/registry/core/formdefinitions/storage"
+
 	corev1 "github.com/nrc-no/core/apps/api/pkg/apis/core/v1"
 	"github.com/nrc-no/core/apps/api/pkg/client/nrc"
 	"github.com/nrc-no/core/apps/api/pkg/client/rest"
 	"github.com/nrc-no/core/apps/api/pkg/endpoints/handlers/formdefinitions"
 	"github.com/nrc-no/core/apps/api/pkg/runtime"
-	"github.com/nrc-no/core/apps/api/pkg/runtime/serializer/json"
 	"github.com/nrc-no/core/apps/api/pkg/server"
 	"github.com/nrc-no/core/apps/api/pkg/storage/backend"
 	"github.com/stretchr/testify/assert"
@@ -52,13 +54,22 @@ func (s *MainTestSuite) SetupSuite() {
 	}
 	s.nrcClient = nrcClient
 
-	scheme := runtime.NewScheme()
-	if err := corev1.AddToScheme(scheme); err != nil {
-		s.T().Errorf("unable to register scheme: %v", err)
-		return
+	scheme := defaultscheme.Scheme
+
+	server.Config{
+		RESTOptionsGetter: &server.MongoRestOptionsFactory{
+			Options: server.MongoOptions{
+				StorageConfig: backend.Config{
+					Codec:           defaultscheme.Codecs.LegacyCodec(),
+					EncodeVersioner: runtime.NewMultiGroupVersioner(),
+					Prefix:          "",
+					Transport:       backend.TransportConfig{},
+				},
+			},
+		},
 	}
 
-	serializer := json.NewSerializer(json.DefaultMetaFactory, scheme, scheme)
+	storage.NewREST()
 
 	storageBackend, destroyStorage, err := backend.Create(backend.Config{
 		Codec:           corev1.Codecs,

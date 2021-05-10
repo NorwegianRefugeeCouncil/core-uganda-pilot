@@ -1,6 +1,7 @@
 package endpoints
 
 import (
+	"context"
 	"net/http"
 	"strings"
 )
@@ -12,7 +13,10 @@ type RequestInfo struct {
 	APIResource string
 	Verb        string
 	Path        string
+	Resource    string
 }
+
+const RequestInfoKey = "requestInfo"
 
 type RequestInfoResolver interface {
 	NewRequestInfo(req *http.Request) (*RequestInfo, error)
@@ -52,4 +56,10 @@ func (r *RequestInfoFactory) NewRequestInfo(req *http.Request) (*RequestInfo, er
 
 	return requestInfo, nil
 
+}
+
+// RequestInfoFrom returns the value of the RequestInfo key on the ctx
+func RequestInfoFrom(ctx context.Context) (*RequestInfo, bool) {
+	info, ok := ctx.Value(RequestInfoKey).(*RequestInfo)
+	return info, ok
 }

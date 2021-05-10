@@ -5,7 +5,9 @@ import (
 	"github.com/nrc-no/core/apps/api/pkg/conversion"
 	"github.com/nrc-no/core/apps/api/pkg/runtime/schema"
 	conversionutils "github.com/nrc-no/core/apps/api/pkg/util/conversion"
+	"k8s.io/apimachinery/pkg/util/sets"
 	"reflect"
+	"strings"
 )
 
 const (
@@ -28,6 +30,7 @@ type Scheme struct {
 	// Map from version and resource to the corresponding func to convert
 	// resource field labels in that version to internal version.
 	fieldLabelConversionFuncs map[schema.GroupVersionKind]FieldLabelConversionFunc
+	versionPriority           map[string][]string
 }
 
 var _ ObjectTyper = &Scheme{}
@@ -443,4 +446,121 @@ func (s *Scheme) Default(src Object) {
 // same srcType, the fn passed to the later call will be used instead.
 func (s *Scheme) AddTypeDefaultingFunc(srcType Object, fn func(interface{})) {
 	s.defaulterFuncs[reflect.TypeOf(srcType)] = fn
+}
+
+// SetVersionPriority allows specifying a precise order of priority. All specified versions must be in the same group,
+// and the specified order overwrites any previously specified order for this group
+func (s *Scheme) SetVersionPriority(versions ...schema.GroupVersion) error {
+	groups := sets.String{}
+	order := []string{}
+	for _, version := range versions {
+		if len(version.Version) == 0 || version.Version == APIVersionInternal {
+			return fmt.Errorf("internal versions cannot be prioritized: %v", version)
+		}
+
+		groups.Insert(version.Group)
+		order = append(order, version.Version)
+	}
+	if len(groups) != 1 {
+		return fmt.Errorf("must register versions for exactly one group: %v", strings.Join(groups.List(), ", "))
+	}
+
+	s.versionPriority[groups.List()[0]] = order
+	return nil
+}
+
+// PrioritizedVersionsForGroup returns versions for a single group in priority order
+func (s *Scheme) PrioritizedVersionsForGroup(group string) []schema.GroupVersion {
+	ret := []schema.GroupVersion{}
+	for _, version := range s.versionPriority[group] {
+		ret = append(ret, schema.GroupVersion{Group: group, Version: version})
+	}
+	for _, observedVersion := range s.observedVersions {
+		if observedVersion.Group != group {
+			continue
+		}
+		found := false
+		for _, existing := range ret {
+			if existing == observedVersion {
+				found = true
+				break
+			}
+		}
+		if !found {
+			ret = append(ret, observedVersion)
+		}
+	}
+
+	return ret
+}
+
+// PrioritizedVersionsAllGroups returns all known versions in their priority order.  Groups are random, but
+// versions for a single group are prioritized
+func (s *Scheme) PrioritizedVersionsAllGroups() []schema.GroupVersion {
+	ret := []schema.GroupVersion{}
+	for group, versions := range s.versionPriority {
+		for _, version := range versions {
+			ret = append(ret, schema.GroupVersion{Group: group, Version: version})
+		}
+	}
+	for _, observedVersion := range s.observedVersions {
+		found := false
+		for _, existing := range ret {
+			if existing == observedVersion {
+				found = true
+				break
+			}
+		}
+		if !found {
+			ret = append(ret, observedVersion)
+		}
+	}
+	return ret
+}
+
+// PreferredVersionAllGroups returns the most preferred version for every group.
+// group ordering is random.
+func (s *Scheme) PreferredVersionAllGroups() []schema.GroupVersion {
+	ret := []schema.GroupVersion{}
+	for group, versions := range s.versionPriority {
+		for _, version := range versions {
+			ret = append(ret, schema.GroupVersion{Group: group, Version: version})
+			break
+		}
+	}
+	for _, observedVersion := range s.observedVersions {
+		found := false
+		for _, existing := range ret {
+			if existing.Group == observedVersion.Group {
+				found = true
+				break
+			}
+		}
+		if !found {
+			ret = append(ret, observedVersion)
+		}
+	}
+
+	return ret
+}
+
+// IsGroupRegistered returns true if types for the group have been registered with the scheme
+func (s *Scheme) IsGroupRegistered(group string) bool {
+	for _, observedVersion := range s.observedVersions {
+		if observedVersion.Group == group {
+			return true
+		}
+	}
+	return false
+}
+
+// IsVersionRegistered returns true if types for the version have been registered with the scheme
+func (s *Scheme) IsVersionRegistered(version schema.GroupVersion) bool {
+	for _, observedVersion := range s.observedVersions {
+		if observedVersion == version {
+			return true
+		}
+	}
+
+	return false
 }

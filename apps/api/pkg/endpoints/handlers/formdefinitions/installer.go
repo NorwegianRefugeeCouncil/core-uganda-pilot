@@ -4,6 +4,7 @@ import (
 	"github.com/emicklei/go-restful"
 	"github.com/nrc-no/core/apps/api/pkg/apis/core/v1"
 	"github.com/nrc-no/core/apps/api/pkg/endpoints/handlers"
+	"github.com/nrc-no/core/apps/api/pkg/registry/rest"
 	"github.com/nrc-no/core/apps/api/pkg/runtime"
 	"github.com/nrc-no/core/apps/api/pkg/runtime/schema"
 	"github.com/nrc-no/core/apps/api/pkg/storage"
@@ -13,6 +14,7 @@ import (
 func Install(
 	container *restful.Container,
 	storage storage.Interface,
+	getter rest.Getter,
 	kind schema.GroupVersionKind,
 	resource schema.GroupVersionResource,
 	creater runtime.ObjectCreater,
@@ -39,6 +41,7 @@ func Install(
 	handler := Handler{
 		storage: storage,
 		scope:   scope,
+		getter:  getter,
 	}
 
 	ws.Route(ws.GET("/").To(func(request *restful.Request, response *restful.Response) {

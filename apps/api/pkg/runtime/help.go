@@ -113,3 +113,12 @@ func (d WithoutVersionDecoder) Decode(data []byte, defaults *schema.GroupVersion
 	}
 	return obj, gvk, err
 }
+
+func SetZeroValue(objPtr Object) error {
+	v, err := conversion.EnforcePtr(objPtr)
+	if err != nil {
+		return err
+	}
+	v.Set(reflect.Zero(v.Type()))
+	return nil
+}

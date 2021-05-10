@@ -14,7 +14,7 @@ func WithRequestInfo(handler http.Handler, requestInfoResolver endpoints.Request
 			http.Error(w, "unable to create RequestInfo", http.StatusInternalServerError)
 			return
 		}
-		req = req.WithContext(context.WithValue(ctx, "requestInfo", info))
+		req = req.WithContext(context.WithValue(ctx, endpoints.RequestInfoKey, info))
 		handler.ServeHTTP(w, req)
 	})
 }

@@ -33,3 +33,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }
 
 type HandlerChainBuilderFn func(apiHandler http.Handler) http.Handler
+
+func CreateServerConfig() {
+
+}

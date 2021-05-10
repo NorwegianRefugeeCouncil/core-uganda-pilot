@@ -7,9 +7,8 @@ import (
 	"github.com/nrc-no/core/apps/api/pkg/runtime"
 )
 
-//go:generate controller-gen object paths=$GOFILE
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-// +kubebuilder:object:root=true
 type FormDefinition struct {
 	metav1.TypeMeta   `json:",inline" bson:",inline,omitempty"`
 	metav1.ObjectMeta `json:"metadata,omitempty" bson:"metadata,omitempty"`
@@ -26,7 +25,8 @@ func (f *FormDefinition) String() string {
 	return fmt.Sprintf("%#v", f)
 }
 
-// +kubebuilder:object:root=true
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
 type FormDefinitionList struct {
 	metav1.ListMeta `json:"metadata,omitempty" bson:"metadata,omitempty"`
 	metav1.TypeMeta `json:",inline" bson:",inline,omitempty"`
@@ -35,37 +35,31 @@ type FormDefinitionList struct {
 
 var _ runtime.Object = &FormDefinitionList{}
 
-// +kubebuilder:object:generate=true
 type FormDefinitionSpec struct {
 	Group    string                  `json:"group,omitempty" bson:"group,omitempty"`
 	Names    CustomResourceNames     `json:"names,omitempty" bson:"names,omitempty"`
 	Versions []FormDefinitionVersion `json:"versions" bson:"versions,omitempty"`
 }
 
-// +kubebuilder:object:generate=true
 type FormDefinitionVersion struct {
 	Name   string
 	Schema FormSchema `json:"schema" bson:"schema,omitempty"`
 }
 
-// +kubebuilder:object:generate=true
 type CustomResourceNames struct {
 	Plural   string `json:"plural,omitempty" bson:"plural,omitempty"`
 	Singular string `json:"singular,omitempty" bson:"singular,omitempty"`
 	Kind     string `json:"kind,omitempty" bson:"kind,omitempty"`
 }
 
-// +kubebuilder:object:generate=true
 type FormSchema struct {
 	FormSchema FormSchemaDefinition `json:"formSchema,omitempty" bson:"formSchema,omitempty"`
 }
 
-// +kubebuilder:object:generate=true
 type FormSchemaDefinition struct {
 	Root FormElement `json:"root,omitempty" bson:"root"`
 }
 
-// +kubebuilder:object:generate=true
 type FormElement struct {
 	Key         string             `json:"key,omitempty" bson:"key,omitempty"`
 	ID          string             `json:"id,omitempty" bson:"id,omitempty"`
@@ -75,7 +69,6 @@ type FormElement struct {
 	Children    []FormElement      `json:"children,omitempty" bson:"children,omitempty"`
 }
 
-// +kubebuilder:object:generate=true
 type TranslatedString struct {
 	Locale string `json:"locale,omitempty" bson:"locale,omitempty"`
 	Value  string `json:"value,omitempty" bson:"value,omitempty"`

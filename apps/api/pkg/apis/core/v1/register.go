@@ -7,14 +7,21 @@ import (
 	"github.com/nrc-no/core/apps/api/pkg/runtime/serializer/json"
 )
 
+// GroupName is the group name use in this package
 const GroupName = "core"
 
+// SchemeGroupVersion is group version used to register these objects
+var SchemeGroupVersion = schema.GroupVersion{Group: GroupName, Version: "v1"}
+
 var (
-	SchemeGroupVersion = schema.GroupVersion{Group: GroupName, Version: "v1"}
 	SchemeBuilder      = runtime.NewSchemeBuilder(addKnownTypes)
-	AddToScheme        = SchemeBuilder.AddToScheme
-	Scheme             = runtime.NewScheme()
-	Codecs             = json.NewSerializer(json.DefaultMetaFactory, Scheme, Scheme)
+	localSchemeBuilder = &SchemeBuilder
+	AddToScheme        = localSchemeBuilder.AddToScheme
+)
+
+var (
+	Scheme = runtime.NewScheme()
+	Codecs = json.NewSerializerWithOptions(json.DefaultMetaFactory, Scheme, Scheme, json.SerializerOptions{})
 )
 
 func addKnownTypes(scheme *runtime.Scheme) error {

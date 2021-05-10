@@ -6,6 +6,8 @@ import (
 	"net/url"
 )
 
+type Identifier string
+
 type Object interface {
 	DeepCopyObject() Object
 	GetObjectKind() schema.ObjectKind
@@ -49,6 +51,18 @@ type Decoder interface {
 type Serializer interface {
 	Encoder
 	Decoder
+}
+
+type NegotiatedSerializer interface {
+	// SupportedMediaTypes is the media types supported for reading and writing single objects.
+	SupportedMediaTypes() []SerializerInfo
+
+	// EncoderForVersion returns an encoder that ensures objects being written to the provided
+	// serializer are in the provided group version.
+	EncoderForVersion(serializer Encoder, gv GroupVersioner) Encoder
+	// DecoderForVersion returns a decoder that ensures objects being read by the provided
+	// serializer are in the provided group version by default.
+	DecoderToVersion(serializer Decoder, gv GroupVersioner) Decoder
 }
 
 type Codec Serializer
@@ -111,4 +125,43 @@ type NestedObjectDecoder interface {
 // an opportunity to encode any nested Objects / RawExtensions during serialization.
 type NestedObjectEncoder interface {
 	EncodeNestedObjects(e Encoder) error
+}
+
+// SerializerInfo contains information about a specific serialization format
+type SerializerInfo struct {
+	// MediaType is the value that represents this serializer over the wire.
+	MediaType string
+	// MediaTypeType is the first part of the MediaType ("application" in "application/json").
+	MediaTypeType string
+	// MediaTypeSubType is the second part of the MediaType ("json" in "application/json").
+	MediaTypeSubType string
+	// EncodesAsText indicates this serializer can be encoded to UTF-8 safely.
+	EncodesAsText bool
+	// Serializer is the individual object serializer for this media type.
+	Serializer Serializer
+	// PrettySerializer, if set, can serialize this object in a form biased towards
+	// readability.
+	PrettySerializer Serializer
+	// StreamSerializer, if set, describes the streaming serialization format
+	// for this media type.
+	// StreamSerializer *StreamSerializerInfo
+}
+
+// StorageSerializer is an interface used for obtaining encoders, decoders, and serializers
+// that can read and write data at rest. This would commonly be used by client tools that must
+// read files, or server side storage interfaces that persist restful objects.
+type StorageSerializer interface {
+	// SupportedMediaTypes are the media types supported for reading and writing objects.
+	SupportedMediaTypes() []SerializerInfo
+
+	// UniversalDeserializer returns a Serializer that can read objects in multiple supported formats
+	// by introspecting the data at rest.
+	UniversalDeserializer() Decoder
+
+	// EncoderForVersion returns an encoder that ensures objects being written to the provided
+	// serializer are in the provided group version.
+	EncoderForVersion(serializer Encoder, gv GroupVersioner) Encoder
+	// DecoderForVersion returns a decoder that ensures objects being read by the provided
+	// serializer are in the provided group version by default.
+	DecoderToVersion(serializer Decoder, gv GroupVersioner) Decoder
 }
