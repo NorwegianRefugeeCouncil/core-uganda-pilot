@@ -10,7 +10,8 @@ $yellow:  #ffc107;
 $green:   #198754;
 $teal:    #20c997;
 $cyan:    #0dcaf0;
-$nrc-orange: #FF6600;
+
+
 
 
 $white:    #fff;
@@ -25,15 +26,30 @@ $gray-800: #343a40;
 $gray-900: #212529;
 $black:    #000;
 
+$nrc-primary: #FF6600;
+$nrc-secondary: #fb9f5d;
+$nrc-background: #ffceae;
+$nrc-background-light: #fff0e6;
+$nrc-success: #1bc47d;
+$nrc-success-background: #e9faf2;
+$nrc-danger: #f24e1d;
+$nrc-danger-background: #feeee9;
+$nrc-warning: #ffc700;
+$nrc-warning-background: #fffae6;
+$nrc-info: #5551ff;
+$nrc-info-background: #eef;
+$nrc-light: #f6f6f7;
+$nrc-dark: #24303e;
+$nrc-text-links: #1e4a7d;
 
-$primary:       $nrc-orange;
-$secondary:     $gray-600;
-$success:       $green;
-$info:          $cyan;
-$warning:       $yellow;
-$danger:        $red;
-$light:         $gray-100;
-$dark:          $gray-900;
+$primary:       $nrc-primary;
+$secondary:     $nrc-secondary;
+$success:       $nrc-success;
+$info:          $nrc-info;
+$warning:       $nrc-warning;
+$danger:        $nrc-danger;
+$light:         $nrc-light;
+$dark:          $nrc-dark;
 
 
 @import "../../../../../node_modules/bootstrap/scss/bootstrap";

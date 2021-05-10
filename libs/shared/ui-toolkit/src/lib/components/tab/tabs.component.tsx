@@ -9,21 +9,21 @@ export interface TabsProps extends React.ComponentPropsWithoutRef<'nav'> {
 
 const Tabs: React.FC<TabsProps> = ({
   align = 'start',
-  className,
+  className: customClassName,
   children,
-  ...baseProps
+  ...rest
 }) => {
   const [activeTab, setActiveTab] = React.useState(0);
-  const classes = classNames('nav nav-tabs', className, {});
+  const className = classNames('nav nav-tabs', customClassName, {});
   return (
-    <nav className={classes} {...baseProps}>
-      {/* {React.Children.map(children, (child, idx) =>
-        {
-          const handlePointerDown = () => setActiveTab(idx)
-          return React.cloneElement(child, {handlePointerDown})
-        }
-      )} */}
-      /// TODO just can't get this to work, can't find any helpful docs...
+    <nav className={className} {...rest}>
+      {React.Children.toArray(children).map((child, idx) => {
+        const handlePointerDown = () => setActiveTab(idx);
+        return React.cloneElement(child, {
+          handlePointerDown,
+          isDisabled: idx !== activeTab,
+        });
+      })}
     </nav>
   );
 };
@@ -38,20 +38,20 @@ const TabLink = React.forwardRef<HTMLAnchorElement, TabLinkProps>(
   (
     {
       isDisabled = false,
-      className,
+      className: customClassName,
       handlePointerDown,
       children,
-      ...baseProps
+      ...rest
     },
     ref
   ) => {
-    const tabLinkClass = classNames('nav-link', className);
+    const className = classNames('nav-link', customClassName);
     return (
       <a
         ref={ref}
-        {...baseProps}
+        {...rest}
         onPointerDown={handlePointerDown}
-        className={tabLinkClass}
+        className={className}
       >
         {children}
       </a>
@@ -82,7 +82,7 @@ const Tab = React.forwardRef<HTMLLIElement, TabProps>(
       active: isActive,
       disabled: isDisabled,
     });
-    const handleClic = () => clickCallBack(key);
+    const handlePointerDown = () => clickCallBack(key);
     return (
       <li ref={ref} key={key} className={tabClasses}>
         {children}
