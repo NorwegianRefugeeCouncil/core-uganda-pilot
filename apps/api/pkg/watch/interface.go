@@ -23,15 +23,15 @@ type watcher struct {
 	ctx              context.Context
 	cancel           context.CancelFunc
 	readNext         func() ([]byte, error)
-	decode           func(payload []byte) (runtime.Object, error)
+	decoder          runtime.Decoder
 }
 
-func NewWatcher(ctx context.Context, readNext func() ([]byte, error), decode func(payload []byte) (runtime.Object, error)) *watcher {
+func NewWatcher(ctx context.Context, readNext func() ([]byte, error), decoder runtime.Decoder) *watcher {
 	watcher := &watcher{
 		resultChan: make(chan Event, 100),
 		errChan:    make(chan error, 1),
 		readNext:   readNext,
-		decode:     decode,
+		decoder:    decoder,
 	}
 	watcher.ctx, watcher.cancel = context.WithCancel(ctx)
 	go watcher.run()
@@ -62,13 +62,13 @@ func (w *watcher) run() {
 				break
 			}
 
-			bytes, err := json.Marshal(event.Object)
+			runtimeObjectBytes, err := json.Marshal(event.Object)
 			if err != nil {
 				w.errChan <- err
 				break
 			}
 
-			obj, err := w.decode(bytes)
+			obj, _, err := w.decoder.Decode(runtimeObjectBytes, nil, nil)
 			if err != nil {
 				w.errChan <- err
 				break

@@ -2,18 +2,46 @@ package formdefinitions
 
 import (
 	"github.com/emicklei/go-restful"
-	"github.com/nrc-no/core/apps/api/pkg/apis"
+	"github.com/nrc-no/core/apps/api/pkg/apis/core/v1"
+	"github.com/nrc-no/core/apps/api/pkg/endpoints/handlers"
+	"github.com/nrc-no/core/apps/api/pkg/registry/rest"
+	"github.com/nrc-no/core/apps/api/pkg/runtime"
+	"github.com/nrc-no/core/apps/api/pkg/runtime/schema"
 	"github.com/nrc-no/core/apps/api/pkg/storage"
+	"path"
 )
 
-func Install(container *restful.Container, storage storage.Interface) {
+func Install(
+	container *restful.Container,
+	storage storage.Interface,
+	getter rest.Getter,
+	kind schema.GroupVersionKind,
+	resource schema.GroupVersionResource,
+	creater runtime.ObjectCreater,
+	typer runtime.ObjectTyper,
+	serializer runtime.Serializer,
+	scheme *runtime.Scheme,
+) {
+
+	scope := handlers.NewRequestScope(
+		kind,
+		resource,
+		creater,
+		typer,
+		serializer,
+		scheme,
+		func() runtime.Object { return &v1.FormDefinitionList{} },
+	)
 
 	ws := new(restful.WebService)
-	ws.Path("/apis/core.nrc.no/v1/formdefinitions")
-	ws.Doc("API at /apis/core.nrc.no/v1/formdefinitions")
+	apiPath := path.Join("apis", scope.Resource.GroupVersion().String(), scope.Resource.Resource)
+	ws.Path(apiPath)
+	ws.Doc("API at " + apiPath)
 
 	handler := Handler{
 		storage: storage,
+		scope:   scope,
+		getter:  getter,
 	}
 
 	ws.Route(ws.GET("/").To(func(request *restful.Request, response *restful.Response) {
@@ -21,7 +49,7 @@ func Install(container *restful.Container, storage storage.Interface) {
 	}).
 		Operation("getFormDefinitions").
 		Produces("application/json").
-		Writes(&apis.FormDefinition{}),
+		Writes(&v1.FormDefinition{}),
 	)
 
 	ws.Route(ws.POST("/").To(func(request *restful.Request, response *restful.Response) {
@@ -30,8 +58,8 @@ func Install(container *restful.Container, storage storage.Interface) {
 		Operation("postFormDefinition").
 		Produces("application/json").
 		Consumes("application/json").
-		Writes(&apis.FormDefinition{}).
-		Reads(&apis.FormDefinition{}))
+		Writes(&v1.FormDefinition{}).
+		Reads(&v1.FormDefinition{}))
 
 	ws.Route(ws.PUT("/{id}").To(func(request *restful.Request, response *restful.Response) {
 		handler.Update(response.ResponseWriter, request.Request)
@@ -39,8 +67,8 @@ func Install(container *restful.Container, storage storage.Interface) {
 		Operation("updateFormDefinition").
 		Produces("application/json").
 		Consumes("application/json").
-		Writes(&apis.FormDefinition{}).
-		Reads(&apis.FormDefinition{}))
+		Writes(&v1.FormDefinition{}).
+		Reads(&v1.FormDefinition{}))
 
 	ws.Route(ws.GET("/watch").To(func(request *restful.Request, response *restful.Response) {
 		handler.Watch(response.ResponseWriter, request.Request)
@@ -48,8 +76,8 @@ func Install(container *restful.Container, storage storage.Interface) {
 		Operation("watchFormDefinition").
 		Produces("application/json").
 		Consumes("application/json").
-		Writes(&apis.FormDefinition{}).
-		Reads(&apis.FormDefinition{}))
+		Writes(&v1.FormDefinition{}).
+		Reads(&v1.FormDefinition{}))
 
 	container.Add(ws)
 

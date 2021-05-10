@@ -2,28 +2,29 @@ package testing
 
 import (
 	"context"
-	"github.com/EventStore/EventStore-Client-Go/client"
+	"github.com/nrc-no/core/apps/api/pkg/api/defaultscheme"
+	"github.com/nrc-no/core/apps/api/pkg/registry/core/formdefinitions/storage"
+
+	corev1 "github.com/nrc-no/core/apps/api/pkg/apis/core/v1"
 	"github.com/nrc-no/core/apps/api/pkg/client/nrc"
 	"github.com/nrc-no/core/apps/api/pkg/client/rest"
 	"github.com/nrc-no/core/apps/api/pkg/endpoints/handlers/formdefinitions"
+	"github.com/nrc-no/core/apps/api/pkg/runtime"
 	"github.com/nrc-no/core/apps/api/pkg/server"
-	"github.com/nrc-no/core/apps/api/pkg/storage/eventstoredb"
+	"github.com/nrc-no/core/apps/api/pkg/storage/backend"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"net/http/httptest"
 	"testing"
 )
 
 type MainTestSuite struct {
 	suite.Suite
-	ctx                context.Context
-	httpServer         *httptest.Server
-	apiServer          *server.Server
-	nrcClient          *nrc.NrcCoreClient
-	mongoClient        *mongo.Client
-	eventStoreDBClient *client.Client
-	store              *eventstoredb.Store
+	ctx            context.Context
+	httpServer     *httptest.Server
+	apiServer      *server.Server
+	nrcClient      *nrc.NrcCoreClient
+	destroyStorage func()
 }
 
 func TestMainSuite(t *testing.T) {
@@ -53,39 +54,53 @@ func (s *MainTestSuite) SetupSuite() {
 	}
 	s.nrcClient = nrcClient
 
-	// Create eventdb client
-	eventStoreDBClient, err := client.NewClient(&client.Configuration{
-		Address:    "localhost:2113",
-		DisableTLS: true,
-	})
-	if err != nil {
-		s.T().Errorf("failed to create eventstoredb client: %v", err)
-		return
-	}
-	if err := eventStoreDBClient.Connect(); err != nil {
-		s.T().Errorf("failed to connect to evenstore: %v", err)
-		return
-	}
-	s.eventStoreDBClient = eventStoreDBClient
+	scheme := defaultscheme.Scheme
 
-	mongoClient, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://localhost:30001"))
-	if err != nil {
-		s.T().Errorf("could not connect to mongo: %v", err)
+	server.Config{
+		RESTOptionsGetter: &server.MongoRestOptionsFactory{
+			Options: server.MongoOptions{
+				StorageConfig: backend.Config{
+					Codec:           defaultscheme.Codecs.LegacyCodec(),
+					EncodeVersioner: runtime.NewMultiGroupVersioner(),
+					Prefix:          "",
+					Transport:       backend.TransportConfig{},
+				},
+			},
+		},
+	}
+
+	storage.NewREST()
+
+	storageBackend, destroyStorage, err := backend.Create(backend.Config{
+		Codec:           corev1.Codecs,
+		EncodeVersioner: corev1.SchemeGroupVersion,
+		Prefix:          "core_nrc_no/formdefinitions",
+		Transport: backend.TransportConfig{
+			ServerList: []string{"localhost:30001"},
+		},
+	}, func() runtime.Object { return &corev1.FormDefinition{} })
+	if !assert.NoError(s.T(), err) {
 		return
 	}
-	s.mongoClient = mongoClient
-
-	// Create storage
-	store := eventstoredb.NewStore(eventStoreDBClient, mongoClient)
-	s.store = store
+	s.destroyStorage = destroyStorage
 
 	// Install FormDefinitions api
-	formdefinitions.Install(apiServer.Container, store)
+	formdefinitions.Install(
+		apiServer.Container,
+		storageBackend,
+		corev1.SchemeGroupVersion.WithKind("FormDefinition"),
+		corev1.SchemeGroupVersion.WithResource("formdefinitions"),
+		scheme,
+		scheme,
+		serializer,
+		scheme,
+	)
 
 }
 
 func (s *MainTestSuite) TearDownSuite() {
 	defer s.httpServer.Close()
-	defer s.mongoClient.Disconnect(s.ctx)
-	defer s.eventStoreDBClient.Close()
+	if s.destroyStorage != nil {
+		defer s.destroyStorage()
+	}
 }
