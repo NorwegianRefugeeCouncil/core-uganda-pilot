@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/nrc-no/core/apps/api/pkg/apis/meta"
 	metav1 "github.com/nrc-no/core/apps/api/pkg/apis/meta/v1"
-	"github.com/nrc-no/core/apps/api/pkg/endpoints"
+	"github.com/nrc-no/core/apps/api/pkg/endpoints/request"
 	"github.com/nrc-no/core/apps/api/pkg/registry/generic"
 	"github.com/nrc-no/core/apps/api/pkg/registry/rest"
 	"github.com/nrc-no/core/apps/api/pkg/runtime"
@@ -140,7 +140,7 @@ func (e *Store) Create(ctx context.Context, obj runtime.Object, createValidation
 }
 
 func (e *Store) qualifiedResourceFromContext(ctx context.Context) schema.GroupResource {
-	if info, ok := endpoints.RequestInfoFrom(ctx); ok {
+	if info, ok := request.RequestInfoFrom(ctx); ok {
 		return schema.GroupResource{Group: info.APIGroup, Resource: info.Resource}
 	}
 	return e.DefaultQualifiedResource
@@ -154,8 +154,8 @@ func (e *Store) Update(ctx context.Context, name string, objInfo rest.UpdatedObj
 	}
 
 	var (
-		creatingObj runtime.Object
-		creating    = false
+		// creatingObj runtime.Object
+		creating = false
 	)
 
 	qualifiedResource := e.qualifiedResourceFromContext(ctx)
@@ -197,7 +197,7 @@ func (e *Store) Update(ctx context.Context, name string, objInfo rest.UpdatedObj
 			}
 
 			creating = true
-			creatingObj = obj
+			// creatingObj = obj
 
 			if err := rest.BeforeCreate(e.CreateStrategy, ctx, obj); err != nil {
 				return nil, nil, err
@@ -216,7 +216,7 @@ func (e *Store) Update(ctx context.Context, name string, objInfo rest.UpdatedObj
 		}
 
 		creating = false
-		creatingObj = nil
+		// creatingObj = nil
 
 		if newResourceVersion == 0 {
 			qualifiedKind := schema.GroupKind{Group: qualifiedResource.Group, Kind: qualifiedResource.Resource}

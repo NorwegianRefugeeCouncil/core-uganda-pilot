@@ -17,11 +17,11 @@ func New(rest rest.Interface) *NrcCoreClient {
 
 func NewForConfig(c *rest.Config) (*NrcCoreClient, error) {
 	config := *c
-	config.GroupVersion = v1.SchemeGroupVersion
+	config.GroupVersion = &v1.SchemeGroupVersion
 	config.APIPath = "apis"
 	config.ContentType = "application/json"
 	config.AcceptContentType = "application/json"
-	config.ContentConfig.Serializer = v1.Codecs
+	config.ContentConfig.NegotiatedSerializer = v1.Codecs
 
 	restClient, err := rest.RESTClientFor(&config)
 	if err != nil {

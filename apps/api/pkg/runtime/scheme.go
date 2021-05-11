@@ -22,6 +22,7 @@ type Scheme struct {
 	gvkToType        map[schema.GroupVersionKind]reflect.Type
 	typeToGVK        map[reflect.Type][]schema.GroupVersionKind
 	unversionedTypes map[reflect.Type]schema.GroupVersionKind
+	unversionedKinds map[string]reflect.Type
 	// defaulterFuncs is an array of interfaces to be called with an object to provide defaulting
 	// the provided object must be a pointer.
 	defaulterFuncs   map[reflect.Type]func(interface{})
@@ -31,6 +32,7 @@ type Scheme struct {
 	// resource field labels in that version to internal version.
 	fieldLabelConversionFuncs map[schema.GroupVersionKind]FieldLabelConversionFunc
 	versionPriority           map[string][]string
+	// unversionedTypes are transformed without conversion in ConvertToVersion.
 }
 
 var _ ObjectTyper = &Scheme{}
@@ -48,6 +50,8 @@ func NewScheme() *Scheme {
 		observedVersions:          []schema.GroupVersion{},
 		fieldLabelConversionFuncs: map[schema.GroupVersionKind]FieldLabelConversionFunc{},
 		defaulterFuncs:            map[reflect.Type]func(interface{}){},
+		versionPriority:           map[string][]string{},
+		unversionedKinds:          map[string]reflect.Type{},
 	}
 	s.converter = conversion.NewConverter(s.nameFunc)
 	return s
@@ -182,6 +186,27 @@ func (s *Scheme) AddKnownTypeWithName(gvk schema.GroupVersionKind, obj Object) {
 		}); err != nil {
 			panic(err)
 		}
+	}
+}
+
+// AddUnversionedTypes registers the provided types as "unversioned", which means that they follow special rules.
+// Whenever an object of this type is serialized, it is serialized with the provided group version and is not
+// converted. Thus unversioned objects are expected to remain backwards compatible forever, as if they were in an
+// API group and version that would never be updated.
+//
+// TODO: there is discussion about removing unversioned and replacing it with objects that are manifest into
+//   every version with particular schemas. Resolve this method at that point.
+func (s *Scheme) AddUnversionedTypes(version schema.GroupVersion, types ...Object) {
+	s.addObservedVersion(version)
+	s.AddKnownTypes(version, types...)
+	for _, obj := range types {
+		t := reflect.TypeOf(obj).Elem()
+		gvk := version.WithKind(t.Name())
+		s.unversionedTypes[t] = gvk
+		if old, ok := s.unversionedKinds[gvk.Kind]; ok && t != old {
+			panic(fmt.Sprintf("%v.%v has already been registered as unversioned kind %q - kind name must be unique in scheme %q", old.PkgPath(), old.Name(), gvk, s.schemeName))
+		}
+		s.unversionedKinds[gvk.Kind] = t
 	}
 }
 
@@ -563,4 +588,8 @@ func (s *Scheme) IsVersionRegistered(version schema.GroupVersion) bool {
 	}
 
 	return false
+}
+
+func (s *Scheme) AddIgnoredConversionType(from, to interface{}) error {
+	return s.converter.RegisterIgnoredConversion(from, to)
 }

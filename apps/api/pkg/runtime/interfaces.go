@@ -165,3 +165,55 @@ type StorageSerializer interface {
 	// serializer are in the provided group version by default.
 	DecoderToVersion(serializer Decoder, gv GroupVersioner) Decoder
 }
+
+// EquivalentResourceMapper provides information about resources that address the same underlying data as a specified resource
+type EquivalentResourceMapper interface {
+	// EquivalentResourcesFor returns a list of resources that address the same underlying data as resource.
+	// If subresource is specified, only equivalent resources which also have the same subresource are included.
+	// The specified resource can be included in the returned list.
+	EquivalentResourcesFor(resource schema.GroupVersionResource, subresource string) []schema.GroupVersionResource
+	// KindFor returns the kind expected by the specified resource[/subresource].
+	// A zero value is returned if the kind is unknown.
+	KindFor(resource schema.GroupVersionResource, subresource string) schema.GroupVersionKind
+}
+
+// EquivalentResourceRegistry provides an EquivalentResourceMapper interface,
+// and allows registering known resource[/subresource] -> kind
+type EquivalentResourceRegistry interface {
+	EquivalentResourceMapper
+	// RegisterKindFor registers the existence of the specified resource[/subresource] along with its expected kind.
+	RegisterKindFor(resource schema.GroupVersionResource, subresource string, kind schema.GroupVersionKind)
+}
+
+// SelfLinker provides methods for setting and retrieving the SelfLink field of an API object.
+type SelfLinker interface {
+	SetSelfLink(obj Object, selfLink string) error
+	SelfLink(obj Object) (string, error)
+
+	// Knowing Name is sometimes necessary to use a SelfLinker.
+	Name(obj Object) (string, error)
+	// Knowing Namespace is sometimes necessary to use a SelfLinker
+	Namespace(obj Object) (string, error)
+}
+
+// ClientNegotiator handles turning an HTTP content type into the appropriate encoder.
+// Use NewClientNegotiator or NewVersionedClientNegotiator to create this interface from
+// a NegotiatedSerializer.
+type ClientNegotiator interface {
+	// Encoder returns the appropriate encoder for the provided contentType (e.g. application/json)
+	// and any optional mediaType parameters (e.g. pretty=1), or an error. If no serializer is found
+	// a NegotiateError will be returned. The current client implementations consider params to be
+	// optional modifiers to the contentType and will ignore unrecognized parameters.
+	Encoder(contentType string, params map[string]string) (Encoder, error)
+	// Decoder returns the appropriate decoder for the provided contentType (e.g. application/json)
+	// and any optional mediaType parameters (e.g. pretty=1), or an error. If no serializer is found
+	// a NegotiateError will be returned. The current client implementations consider params to be
+	// optional modifiers to the contentType and will ignore unrecognized parameters.
+	Decoder(contentType string, params map[string]string) (Decoder, error)
+	// StreamDecoder returns the appropriate stream decoder for the provided contentType (e.g.
+	// application/json) and any optional mediaType parameters (e.g. pretty=1), or an error. If no
+	// serializer is found a NegotiateError will be returned. The Serializer and Framer will always
+	// be returned if a Decoder is returned. The current client implementations consider params to be
+	// optional modifiers to the contentType and will ignore unrecognized parameters.
+	// StreamDecoder(contentType string, params map[string]string) (Decoder, Serializer, Framer, error)
+}

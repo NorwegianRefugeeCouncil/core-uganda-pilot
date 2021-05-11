@@ -42,15 +42,15 @@ type Interface interface {
 type RESTClient struct {
 	base             *url.URL
 	client           *http.Client
-	content          ContentConfig
+	content          ClientContentConfig
 	versionedAPIPath string
 }
 
 type ContentConfig struct {
-	ContentType       string
-	AcceptContentType string
-	GroupVersion      schema.GroupVersion
-	Serializer        runtime.Serializer
+	ContentType          string
+	AcceptContentType    string
+	GroupVersion         *schema.GroupVersion
+	NegotiatedSerializer runtime.NegotiatedSerializer
 }
 
 var DefaultContentConfig = ContentConfig{
@@ -59,12 +59,24 @@ var DefaultContentConfig = ContentConfig{
 }
 
 type Config struct {
-	ContentConfig
 	APIPath string
 	Host    string
+	ContentConfig
 }
 
-func NewRESTClient(baseURL *url.URL, versionedAPIPath string, config ContentConfig, httpClient *http.Client) *RESTClient {
+type ClientContentConfig struct {
+	AcceptContentTypes string
+	ContentType        string
+	GroupVersion       schema.GroupVersion
+	Negotiator         runtime.ClientNegotiator
+}
+
+func NewRESTClient(
+	baseURL *url.URL,
+	versionedAPIPath string,
+	config ClientContentConfig,
+	httpClient *http.Client,
+) *RESTClient {
 	if len(config.ContentType) == 0 {
 		config.ContentType = "application/json"
 	}
@@ -91,6 +103,10 @@ func RESTClientFor(config *Config) (*RESTClient, error) {
 	if len(config.GroupVersion.Version) == 0 {
 		return nil, fmt.Errorf("group is required")
 	}
+	var gv schema.GroupVersion
+	if config.GroupVersion != nil {
+		gv = *config.GroupVersion
+	}
 
 	versionedAPIPath := path.Join(config.APIPath, config.GroupVersion.Group, config.GroupVersion.Version)
 	hostURL, err := url.Parse(config.Host)
@@ -100,7 +116,19 @@ func RESTClientFor(config *Config) (*RESTClient, error) {
 
 	httpClient := http.DefaultClient
 
-	restClient := NewRESTClient(hostURL, versionedAPIPath, config.ContentConfig, httpClient)
+	clientContent := ClientContentConfig{
+		AcceptContentTypes: config.AcceptContentType,
+		ContentType:        config.ContentType,
+		GroupVersion:       gv,
+		Negotiator:         runtime.NewClientNegotiator(config.NegotiatedSerializer, gv),
+	}
+
+	restClient := NewRESTClient(
+		hostURL,
+		versionedAPIPath,
+		clientContent,
+		httpClient)
+
 	return restClient, nil
 
 }
@@ -159,8 +187,8 @@ func NewRequest(c *RESTClient) *Request {
 	}
 
 	switch {
-	case len(c.content.AcceptContentType) > 0:
-		r.SetHeader("Accept", c.content.AcceptContentType)
+	case len(c.content.AcceptContentTypes) > 0:
+		r.SetHeader("Accept", c.content.AcceptContentTypes)
 	case len(c.content.ContentType) > 0:
 		r.SetHeader("Accept", c.content.ContentType+", */*")
 	}
@@ -176,7 +204,7 @@ func NewRequest(c *RESTClient) *Request {
 
 }
 
-func NewRequestWithClient(base *url.URL, versionedAPIPath string, config ContentConfig, client *http.Client) *Request {
+func NewRequestWithClient(base *url.URL, versionedAPIPath string, config ClientContentConfig, client *http.Client) *Request {
 	return NewRequest(&RESTClient{
 		base:             base,
 		versionedAPIPath: versionedAPIPath,
@@ -284,7 +312,12 @@ func (r *Request) Body(obj interface{}) *Request {
 		if reflect.ValueOf(t).IsNil() {
 			return r
 		}
-		data, err := runtime.Encode(r.c.content.Serializer, t)
+		encoder, err := r.c.content.Negotiator.Encoder(r.c.content.ContentType, nil)
+		if err != nil {
+			r.err = err
+			return r
+		}
+		data, err := runtime.Encode(encoder, t)
 		if err != nil {
 			r.err = err
 			return r
@@ -342,15 +375,22 @@ func (r *Request) Watch(ctx context.Context) (watch.Interface, error) {
 	reqURL = strings.Replace(reqURL, "https", "wss", -1)
 	reqURL = strings.Replace(reqURL, "http", "ws", -1)
 
-	c, _, err := websocket.DefaultDialer.DialContext(ctx, reqURL, nil)
+	c, resp, err := websocket.DefaultDialer.DialContext(ctx, reqURL, nil)
 	if err != nil {
+		return nil, err
+	}
+
+	contentType := resp.Header.Get("Content-Type")
+	decoder, err := r.c.content.Negotiator.Decoder(contentType, nil)
+	if err != nil {
+		r.err = err
 		return nil, err
 	}
 
 	watcher := watch.NewWatcher(ctx, func() ([]byte, error) {
 		_, message, err := c.ReadMessage()
 		return message, err
-	}, r.c.content.Serializer)
+	}, decoder)
 
 	return watcher, nil
 
@@ -418,6 +458,16 @@ func (r *Request) transformResponse(req *http.Request, res *http.Response) Resul
 	if len(contentType) == 0 {
 		contentType = r.c.content.ContentType
 	}
+	decoder, err := r.c.content.Negotiator.Decoder(contentType, nil)
+	if err != nil {
+		return Result{
+			body:        body,
+			contentType: contentType,
+			err:         fmt.Errorf("unable to get decoder for response: %v", err),
+			statusCode:  res.StatusCode,
+			decoder:     decoder,
+		}
+	}
 
 	if len(body) != 0 {
 		logrus.Info(string(body))
@@ -428,7 +478,7 @@ func (r *Request) transformResponse(req *http.Request, res *http.Response) Resul
 			body:        body,
 			contentType: contentType,
 			statusCode:  res.StatusCode,
-			decoder:     r.c.content.Serializer,
+			decoder:     decoder,
 			err:         fmt.Errorf("unexpected server response with status code %d and content type %v", res.StatusCode, res.Header.Get("Content-Type")),
 		}
 	}
@@ -437,7 +487,7 @@ func (r *Request) transformResponse(req *http.Request, res *http.Response) Resul
 		body:        body,
 		contentType: contentType,
 		statusCode:  res.StatusCode,
-		decoder:     r.c.content.Serializer,
+		decoder:     decoder,
 	}
 
 }

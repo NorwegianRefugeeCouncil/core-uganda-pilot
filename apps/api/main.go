@@ -15,7 +15,7 @@ limitations under the License.
 */
 package main
 
-import cmd "github.com/nrc-no/core/apps/api/cmd"
+import "github.com/nrc-no/core/apps/api/cmd"
 
 func main() {
 	cmd.Execute()

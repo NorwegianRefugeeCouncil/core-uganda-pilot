@@ -4,7 +4,7 @@ import (
 	metav1 "github.com/nrc-no/core/apps/api/pkg/apis/meta/v1"
 	"github.com/nrc-no/core/apps/api/pkg/runtime"
 	"github.com/nrc-no/core/apps/api/pkg/runtime/schema"
-	"github.com/nrc-no/core/apps/api/pkg/runtime/serializer/json"
+	"github.com/nrc-no/core/apps/api/pkg/runtime/serializer"
 )
 
 // GroupName is the group name use in this package
@@ -21,7 +21,7 @@ var (
 
 var (
 	Scheme = runtime.NewScheme()
-	Codecs = json.NewSerializerWithOptions(json.DefaultMetaFactory, Scheme, Scheme, json.SerializerOptions{})
+	Codecs = serializer.NewCodecFactory(Scheme)
 )
 
 func addKnownTypes(scheme *runtime.Scheme) error {

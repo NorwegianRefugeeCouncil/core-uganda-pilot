@@ -14,3 +14,10 @@ type Config struct {
 type TransportConfig struct {
 	ServerList []string
 }
+
+func NewDefaultConfig(prefix string, codec runtime.Codec) *Config {
+	return &Config{
+		Codec:  codec,
+		Prefix: prefix,
+	}
+}

@@ -8,6 +8,7 @@ import (
 	"github.com/nrc-no/core/apps/api/pkg/util/validation/field"
 	"net/http"
 	"reflect"
+	"strings"
 )
 
 type StatusError struct {
@@ -112,4 +113,37 @@ func FromObject(obj runtime.Object) error {
 		return &StatusError{ErrStatus: status}
 	}
 	return &UnexpectedObjectError{obj}
+}
+
+// errNotAcceptable indicates Accept negotiation has failed
+type errNotAcceptable struct {
+	accepted []string
+}
+
+// NewNotAcceptableError returns an error of NotAcceptable which contains specified string
+func NewNotAcceptableError(accepted []string) error {
+	return errNotAcceptable{accepted}
+}
+
+func (e errNotAcceptable) Error() string {
+	return fmt.Sprintf("only the following media types are accepted: %v", strings.Join(e.accepted, ", "))
+}
+
+func (e errNotAcceptable) Status() metav1.Status {
+	return metav1.Status{
+		Status:  metav1.StatusFailure,
+		Code:    http.StatusNotAcceptable,
+		Reason:  metav1.StatusReasonNotAcceptable,
+		Message: e.Error(),
+	}
+}
+
+// NewBadRequest creates an error that indicates that the request is invalid and can not be processed.
+func NewBadRequest(reason string) *StatusError {
+	return &StatusError{metav1.Status{
+		Status:  metav1.StatusFailure,
+		Code:    http.StatusBadRequest,
+		Reason:  metav1.StatusReasonBadRequest,
+		Message: reason,
+	}}
 }

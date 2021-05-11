@@ -15,7 +15,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"reflect"
-	"strings"
 )
 
 type Store struct {
@@ -42,30 +41,10 @@ func NewStore(
 	prefix string,
 ) (*Store, error) {
 
-	if strings.HasPrefix(prefix, "/") {
-		prefix = prefix[1:]
-	}
-	if strings.HasSuffix(prefix, "/") {
-		prefix = prefix[:1]
-	}
-	parts := strings.Split(prefix, "/")
-	if len(parts) != 2 {
-		return nil, fmt.Errorf("expecting format of <database>/<collection> from 'prefix' argument")
-	}
-	database := parts[0]
-	collection := parts[1]
-
-	if len(database) == 0 {
-		return nil, fmt.Errorf("database is required")
-	}
-	if len(collection) == 0 {
-		return nil, fmt.Errorf("collection is required")
-	}
-
 	return &Store{
 		mongoClient: mongoClient,
-		database:    database,
-		collection:  collection,
+		database:    "core",
+		collection:  "",
 		create:      create,
 		codec:       codec,
 	}, nil

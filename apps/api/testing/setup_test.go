@@ -3,15 +3,13 @@ package testing
 import (
 	"context"
 	"github.com/nrc-no/core/apps/api/pkg/api/defaultscheme"
-	"github.com/nrc-no/core/apps/api/pkg/registry/core/formdefinitions/storage"
-
-	corev1 "github.com/nrc-no/core/apps/api/pkg/apis/core/v1"
 	"github.com/nrc-no/core/apps/api/pkg/client/nrc"
 	"github.com/nrc-no/core/apps/api/pkg/client/rest"
-	"github.com/nrc-no/core/apps/api/pkg/endpoints/handlers/formdefinitions"
-	"github.com/nrc-no/core/apps/api/pkg/runtime"
+	"github.com/nrc-no/core/apps/api/pkg/controlplane"
 	"github.com/nrc-no/core/apps/api/pkg/server"
-	"github.com/nrc-no/core/apps/api/pkg/storage/backend"
+	"github.com/nrc-no/core/apps/api/pkg/server/options"
+	serverstorage "github.com/nrc-no/core/apps/api/pkg/server/storage"
+	storagebackend "github.com/nrc-no/core/apps/api/pkg/storage/backend"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"net/http/httptest"
@@ -22,7 +20,7 @@ type MainTestSuite struct {
 	suite.Suite
 	ctx            context.Context
 	httpServer     *httptest.Server
-	apiServer      *server.Server
+	apiServer      *controlplane.Instance
 	nrcClient      *nrc.NrcCoreClient
 	destroyStorage func()
 }
@@ -35,12 +33,49 @@ func (s *MainTestSuite) SetupSuite() {
 	ctx := context.Background()
 	s.ctx = ctx
 
-	// Create API server
-	apiServer := server.NewServer()
+	storageConfig := &storagebackend.Config{
+		Transport: storagebackend.TransportConfig{
+			ServerList: []string{
+				"localhost:30001",
+			},
+		},
+	}
+
+	config := &controlplane.Config{
+		GenericConfig: server.NewConfig(defaultscheme.Codecs),
+		ExtraConfig: controlplane.ExtraConfig{
+			APIResourceConfigSource: controlplane.DefaultAPIResourceConfigSource(),
+		},
+	}
+
+	resourceEncoding := serverstorage.NewDefaultResourceEncodingConfig(defaultscheme.Scheme)
+	storageFactory := serverstorage.NewDefaultStorageFactory(
+		*storageConfig,
+		"application/json",
+		defaultscheme.Codecs,
+		resourceEncoding,
+		controlplane.DefaultAPIResourceConfigSource(),
+	)
+	mongoOptions := options.NewMongoOptions(storageConfig)
+	if !assert.NoError(s.T(), mongoOptions.ApplyWithStorageFactoryTo(storageFactory, config.GenericConfig)) {
+		return
+	}
+
+	config.ExtraConfig.StorageFactory = storageFactory
+	config.GenericConfig.LoopbackClientConfig = &rest.Config{
+		ContentConfig: rest.ContentConfig{
+			NegotiatedSerializer: defaultscheme.Codecs,
+		},
+		APIPath: "/apis",
+	}
+
+	apiServer, err := config.Complete().New(server.NewEmptyDelegate())
+	if !assert.NoError(s.T(), err) {
+		panic(err)
+	}
 	s.apiServer = apiServer
 
-	// Create HTTP server
-	httpServer := httptest.NewServer(apiServer)
+	httpServer := httptest.NewServer(apiServer.GenericAPIServer.Handler.GoRestfulContainer.ServeMux)
 	s.httpServer = httpServer
 
 	// Create client
@@ -48,53 +83,10 @@ func (s *MainTestSuite) SetupSuite() {
 		ContentConfig: rest.DefaultContentConfig,
 		Host:          httpServer.URL,
 	})
-	if err != nil {
-		s.T().Errorf("unable to create rest client: %v", err)
-		return
+	if !assert.NoError(s.T(), err) {
+		panic(err)
 	}
 	s.nrcClient = nrcClient
-
-	scheme := defaultscheme.Scheme
-
-	server.Config{
-		RESTOptionsGetter: &server.MongoRestOptionsFactory{
-			Options: server.MongoOptions{
-				StorageConfig: backend.Config{
-					Codec:           defaultscheme.Codecs.LegacyCodec(),
-					EncodeVersioner: runtime.NewMultiGroupVersioner(),
-					Prefix:          "",
-					Transport:       backend.TransportConfig{},
-				},
-			},
-		},
-	}
-
-	storage.NewREST()
-
-	storageBackend, destroyStorage, err := backend.Create(backend.Config{
-		Codec:           corev1.Codecs,
-		EncodeVersioner: corev1.SchemeGroupVersion,
-		Prefix:          "core_nrc_no/formdefinitions",
-		Transport: backend.TransportConfig{
-			ServerList: []string{"localhost:30001"},
-		},
-	}, func() runtime.Object { return &corev1.FormDefinition{} })
-	if !assert.NoError(s.T(), err) {
-		return
-	}
-	s.destroyStorage = destroyStorage
-
-	// Install FormDefinitions api
-	formdefinitions.Install(
-		apiServer.Container,
-		storageBackend,
-		corev1.SchemeGroupVersion.WithKind("FormDefinition"),
-		corev1.SchemeGroupVersion.WithResource("formdefinitions"),
-		scheme,
-		scheme,
-		serializer,
-		scheme,
-	)
 
 }
 

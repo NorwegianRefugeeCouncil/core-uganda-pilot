@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	metav1 "github.com/nrc-no/core/apps/api/pkg/apis/meta/v1"
-	"github.com/nrc-no/core/apps/api/pkg/endpoints"
 	"github.com/nrc-no/core/apps/api/pkg/endpoints/handlers"
 	"github.com/nrc-no/core/apps/api/pkg/endpoints/handlers/writers"
+	"github.com/nrc-no/core/apps/api/pkg/endpoints/request"
 	"github.com/nrc-no/core/apps/api/pkg/runtime"
 	"github.com/nrc-no/core/apps/api/pkg/runtime/serializer/versioning"
 	"github.com/sirupsen/logrus"
@@ -20,7 +20,7 @@ import (
 func (h *Handler) Get(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	var requestInfo = ctx.Value("requestInfo").(*endpoints.RequestInfo)
+	var requestInfo = ctx.Value("requestInfo").(*request.RequestInfo)
 	key := strings.ToLower(path.Join(requestInfo.APIGroup, requestInfo.APIResource, requestInfo.ResourceID))
 
 	obj, err := h.getter.Get(ctx, key, &metav1.GetOptions{})

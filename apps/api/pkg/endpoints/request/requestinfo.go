@@ -1,4 +1,4 @@
-package endpoints
+package request
 
 import (
 	"context"

@@ -1,4 +1,3 @@
 package server
 
-type ServerRunOptions struct {
-}
+const DefaultMongoPathPrefix = "/registry"

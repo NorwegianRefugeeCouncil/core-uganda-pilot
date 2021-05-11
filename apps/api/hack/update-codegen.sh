@@ -10,7 +10,7 @@ find . -type f -name "zz_generated.deepcopy.go" -print0 | xargs -0 sed -i '' -e 
 
 conversion-gen -v 5 \
   --go-header-file "./hack/boilerplate.go.txt" \
-  --input-dirs "./pkg/apis/meta/v1/,./pkg/apis/example/v1/,./pkg/apis/example/v2/,./pkg/apis/example/,./pkg/apis/core/,./pkg/apis/core/v1/" \
+  --input-dirs "./pkg/apis/meta/v1/,./pkg/apis/example/v1/,./pkg/apis/example/v2/,./pkg/apis/example/,./pkg/apis/core/,./pkg/apis/core/v1/,./pkg/apis/core/internalversion/" \
   --output-base "." \
   --output-file-base="zz_generated.conversion"
 
