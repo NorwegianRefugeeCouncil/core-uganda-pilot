@@ -61,34 +61,6 @@ func (s *MainTestSuite) TestFormDefinitionPostValidationErrors() {
 				AssertCauseField(t, cause, "spec.group")
 			},
 		}, {
-			name:           "MissingAPIVersion",
-			formDefinition: testFormDef("group", "MissingAPIVersion"),
-			customizeFn:    func(fd *v1.FormDefinition) { fd.APIVersion = "" },
-			assert: func(t *testing.T, fd *v1.FormDefinition, err error) {
-				var status = &metav1.Status{}
-				if !defaultAssertErr(t, err, 1, status) {
-					return
-				}
-				cause := status.Details.Causes[0]
-				AssertCauseMessage(t, cause, "Required value: apiVersion is required")
-				AssertCauseType(t, cause, metav1.CauseTypeFieldValueRequired)
-				AssertCauseField(t, cause, "apiVersion")
-			},
-		}, {
-			name:           "MissingKind",
-			formDefinition: testFormDef("group", "kind"),
-			customizeFn:    func(fd *v1.FormDefinition) { fd.Spec.Names.Kind = "" },
-			assert: func(t *testing.T, fd *v1.FormDefinition, err error) {
-				var status = &metav1.Status{}
-				if !defaultAssertErr(t, err, 1, status) {
-					return
-				}
-				cause := status.Details.Causes[0]
-				AssertCauseMessage(t, cause, "Required value: kind name is required")
-				AssertCauseType(t, cause, metav1.CauseTypeFieldValueRequired)
-				AssertCauseField(t, cause, "spec.names.kind")
-			},
-		}, {
 			name:           "MissingPlural",
 			formDefinition: testFormDef("group", "MissingPlural"),
 			customizeFn:    func(fd *v1.FormDefinition) { fd.Spec.Names.Plural = "" },
