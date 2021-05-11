@@ -5,6 +5,7 @@ import (
 	"github.com/nrc-no/core/apps/api/pkg/endpoints/handlers/writers"
 	"github.com/nrc-no/core/apps/api/pkg/runtime"
 	"github.com/nrc-no/core/apps/api/pkg/runtime/schema"
+	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
@@ -45,6 +46,7 @@ func NewRequestScope(
 }
 
 func (r *RequestScope) Error(err error, w http.ResponseWriter, req *http.Request) {
+	logrus.Errorf("request error: %v", err)
 	writers.ErrorNegotiated(err, r.Serializer, r.Kind.GroupVersion(), w, req)
 }
 

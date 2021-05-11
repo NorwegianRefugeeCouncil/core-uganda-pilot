@@ -1,6 +1,9 @@
 package storage
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/nrc-no/core/apps/api/pkg/util/exceptions"
+)
 
 const (
 	ErrCodeKeyNotFound int = iota + 1
@@ -43,4 +46,24 @@ func isErrCode(err error, code int) bool {
 		return e.Code == code
 	}
 	return false
+}
+
+// InvalidError is generated when an error caused by invalid API object occurs
+// in the storage package.
+type InvalidError struct {
+	Errs exceptions.ErrorList
+}
+
+func (e InvalidError) Error() string {
+	return e.Errs.ToAggregate().Error()
+}
+
+// IsInvalidError returns true if and only if err is an InvalidError.
+func IsInvalidError(err error) bool {
+	_, ok := err.(InvalidError)
+	return ok
+}
+
+func NewInvalidError(errors exceptions.ErrorList) InvalidError {
+	return InvalidError{errors}
 }

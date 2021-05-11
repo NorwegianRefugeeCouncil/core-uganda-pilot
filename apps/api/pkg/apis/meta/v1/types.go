@@ -3,9 +3,9 @@ package v1
 import (
 	"fmt"
 	"github.com/nrc-no/core/apps/api/pkg/conversion"
+	"github.com/nrc-no/core/apps/api/pkg/runtime"
 	"github.com/nrc-no/core/apps/api/pkg/runtime/schema"
 	"github.com/nrc-no/core/apps/api/pkg/watch"
-	"k8s.io/apimachinery/pkg/runtime"
 )
 
 type ObjectMeta struct {
@@ -134,6 +134,10 @@ const (
 	StatusReasonInternalError        StatusReason = "InternalError"
 	StatusReasonInvalid              StatusReason = "Invalid"
 	StatusReasonUnsupportedMediaType StatusReason = "UnsupportedMediaType"
+	StatusReasonServiceUnavailable   StatusReason = "ServiceUnavailable"
+	StatusReasonTimeout              StatusReason = "Timeout"
+	StatusReasonTooManyRequests      StatusReason = "TooManyRequests"
+	StatusReasonUnauthorized         StatusReason = "Unauthorized"
 )
 
 type StatusCause struct {
@@ -145,11 +149,12 @@ type StatusCause struct {
 type CauseType string
 
 const (
-	CauseTypeFieldValueNotFound     CauseType = "FieldValueNotFound"
-	CauseTypeFieldValueRequired     CauseType = "FieldValueRequired"
-	CauseTypeFieldValueDuplicate    CauseType = "FieldValueDuplicate"
-	CauseTypeFieldValueInvalid      CauseType = "FieldValueInvalid"
-	CauseTypeFieldValueNotSupported CauseType = "FieldValueNotSupported"
+	CauseTypeFieldValueNotFound       CauseType = "FieldValueNotFound"
+	CauseTypeFieldValueRequired       CauseType = "FieldValueRequired"
+	CauseTypeFieldValueDuplicate      CauseType = "FieldValueDuplicate"
+	CauseTypeFieldValueInvalid        CauseType = "FieldValueInvalid"
+	CauseTypeFieldValueNotSupported   CauseType = "FieldValueNotSupported"
+	CauseTypeUnexpectedServerResponse CauseType = "UnexpectedServerResponse"
 )
 
 // TypeMeta represents an individual object in an API response or request.
@@ -366,8 +371,8 @@ type GroupVersionForDiscovery struct {
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 type WatchEvent struct {
-	Type   string       `json:"type"`
-	Object RawExtension `json:"object"`
+	Type   string               `json:"type"`
+	Object runtime.RawExtension `json:"object"`
 }
 
 func Convert_watch_Event_To_v1_WatchEvent(in *watch.Event, out *WatchEvent, s conversion.Scope) error {

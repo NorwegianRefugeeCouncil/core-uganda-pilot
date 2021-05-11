@@ -1,7 +1,6 @@
 package core
 
 import (
-	metav1 "github.com/nrc-no/core/apps/api/pkg/apis/meta/v1"
 	"github.com/nrc-no/core/apps/api/pkg/runtime"
 	"github.com/nrc-no/core/apps/api/pkg/runtime/schema"
 )
@@ -29,6 +28,6 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 		&FormDefinition{},
 		&FormDefinitionList{},
 	)
-	metav1.AddToGroupVersion(scheme, SchemeGroupVersion)
+	// metav1.AddToGroupVersion(scheme, SchemeGroupVersion)
 	return nil
 }

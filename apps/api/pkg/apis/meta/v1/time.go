@@ -2,6 +2,7 @@ package v1
 
 import (
 	"encoding/json"
+	"strings"
 	"time"
 )
 
@@ -76,6 +77,19 @@ func (t Time) Rfc3339Copy() Time {
 
 // UnmarshalJSON implements the json.Unmarshaller interface.
 func (t *Time) UnmarshalJSON(b []byte) error {
+	toStr := string(b)
+	if strings.HasPrefix(toStr, "{") {
+		type tmp struct {
+			time time.Time
+		}
+		var tempStruct tmp
+		if err := json.Unmarshal(b, &tempStruct); err != nil {
+			return err
+		}
+		t.Time = tempStruct.time
+		return nil
+	}
+
 	if len(b) == 4 && string(b) == "null" {
 		t.Time = time.Time{}
 		return nil

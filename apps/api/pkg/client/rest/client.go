@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/websocket"
 	v1 "github.com/nrc-no/core/apps/api/pkg/apis/core/v1"
 	metav1 "github.com/nrc-no/core/apps/api/pkg/apis/meta/v1"
+	watch2 "github.com/nrc-no/core/apps/api/pkg/client/rest/watch"
 	"github.com/nrc-no/core/apps/api/pkg/runtime"
 	"github.com/nrc-no/core/apps/api/pkg/runtime/schema"
 	"github.com/nrc-no/core/apps/api/pkg/util/exceptions"
@@ -15,6 +16,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"io"
 	"io/ioutil"
+	"mime"
 	"net/http"
 	"net/url"
 	"path"
@@ -409,10 +411,12 @@ func (r *Request) Watch(ctx context.Context) (watch.Interface, error) {
 		return nil, err
 	}
 
-	watcher := watch.NewWatcher(ctx, func() ([]byte, error) {
+	ctx, stop := context.WithCancel(ctx)
+
+	watcher := watch2.NewWebSocketWatcher(ctx, stop, decoder, func() ([]byte, error) {
 		_, message, err := c.ReadMessage()
 		return message, err
-	}, decoder)
+	})
 
 	return watcher, nil
 
@@ -476,10 +480,44 @@ func (r *Request) transformResponse(req *http.Request, res *http.Response) Resul
 		}
 		body = data
 	}
+
+	var decoder runtime.Decoder
 	contentType := res.Header.Get("Content-Type")
 	if len(contentType) == 0 {
 		contentType = r.c.content.ContentType
 	}
+	if len(contentType) > 0 {
+		var err error
+		mediaType, params, err := mime.ParseMediaType(contentType)
+		if err != nil {
+			return Result{err: exceptions.NewInternalError(err)}
+		}
+		decoder, err = r.c.content.Negotiator.Decoder(mediaType, params)
+		if err != nil {
+			switch {
+			case res.StatusCode < http.StatusOK || res.StatusCode > http.StatusPartialContent:
+				return Result{err: r.transformUnstructuredResponseError(res, req, body)}
+			}
+			return Result{
+				body:        body,
+				contentType: contentType,
+				statusCode:  res.StatusCode,
+			}
+		}
+	}
+
+	switch {
+	case res.StatusCode < http.StatusOK || res.StatusCode > http.StatusPartialContent:
+		err := r.newUnstructuredResponseError(body, isTextResponse(res), res.StatusCode, req.Method)
+		return Result{
+			body:        body,
+			contentType: contentType,
+			statusCode:  res.StatusCode,
+			decoder:     decoder,
+			err:         err,
+		}
+	}
+
 	decoder, err := r.c.content.Negotiator.Decoder(contentType, nil)
 	if err != nil {
 		return Result{
@@ -489,10 +527,6 @@ func (r *Request) transformResponse(req *http.Request, res *http.Response) Resul
 			statusCode:  res.StatusCode,
 			decoder:     decoder,
 		}
-	}
-
-	if len(body) != 0 {
-		logrus.Info(string(body))
 	}
 
 	if res.StatusCode < http.StatusOK || res.StatusCode > http.StatusPartialContent {
@@ -579,6 +613,9 @@ func (r Result) Into(obj runtime.Object) error {
 	if len(r.body) == 0 {
 		return fmt.Errorf("0-length response with status code: %d and content-type %s", r.statusCode, r.contentType)
 	}
+
+	fmt.Println(string(r.body))
+
 	out, _, err := r.decoder.Decode(r.body, nil, obj)
 	if err != nil {
 		return err
@@ -592,4 +629,53 @@ func (r Result) Into(obj runtime.Object) error {
 	}
 
 	return nil
+}
+
+const maxUnstructuredResponseTextBytes = 2048
+
+func (r *Request) transformUnstructuredResponseError(resp *http.Response, req *http.Request, body []byte) error {
+	if body == nil && resp.Body != nil {
+		if data, err := ioutil.ReadAll(&io.LimitedReader{R: resp.Body, N: maxUnstructuredResponseTextBytes}); err == nil {
+			body = data
+		}
+	}
+	return r.newUnstructuredResponseError(body, isTextResponse(resp), resp.StatusCode, req.Method)
+}
+
+func (r *Request) newUnstructuredResponseError(body []byte, isTextResponse bool, statusCode int, method string) error {
+	// cap the amount of output we create
+	if len(body) > maxUnstructuredResponseTextBytes {
+		body = body[:maxUnstructuredResponseTextBytes]
+	}
+
+	message := "unknown"
+	if isTextResponse {
+		message = strings.TrimSpace(string(body))
+	}
+	var groupResource schema.GroupResource
+	if len(r.resource) > 0 {
+		groupResource.Group = r.c.content.GroupVersion.Group
+		groupResource.Resource = r.resource
+	}
+	return exceptions.NewGenericServerResponse(
+		statusCode,
+		method,
+		groupResource,
+		r.resourceName,
+		message,
+		true,
+	)
+}
+
+// isTextResponse returns true if the response appears to be a textual media type.
+func isTextResponse(resp *http.Response) bool {
+	contentType := resp.Header.Get("Content-Type")
+	if len(contentType) == 0 {
+		return true
+	}
+	media, _, err := mime.ParseMediaType(contentType)
+	if err != nil {
+		return false
+	}
+	return strings.HasPrefix(media, "text/")
 }

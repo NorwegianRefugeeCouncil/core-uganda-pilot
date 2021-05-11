@@ -14,15 +14,15 @@ done < <(find . -type f -name "zz_generated.deepcopy.go" -print0)
 for item in "${array[@]}"; do
   echo "$item"
   package=$(basename $(dirname "${item}"))
-  expr="s/[[:space:]]+${package} \".*\"//g"
   expr2="s/[[:space:]]+pkg${package} \".*\"//g"
+  expr="s/[[:space:]]+${package} \".*\"//g"
 
   sed -i '' -e 's/\"k8s.io\/apimachinery\/pkg\/runtime\"/\"github.com\/nrc-no\/core\/apps\/api\/pkg\/runtime\"/g' "${item}"
 
-  sed -i -E "${expr}" "${item}"
   sed -i -E "${expr2}" "${item}"
-  sed -i -E "s/${package}.//g" "${item}"
   sed -i -E "s/pkg${package}.//g" "${item}"
+  sed -i -E "${expr}" "${item}"
+  sed -i -E "s/${package}.//g" "${item}"
 done
 
 conversion-gen -v 5 \

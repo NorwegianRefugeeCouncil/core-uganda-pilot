@@ -23,7 +23,7 @@ func NewForConfig(c *rest.Config) (*NrcCoreClient, error) {
 	config.APIPath = "apis"
 	config.ContentType = "application/json"
 	config.AcceptContentType = "application/json"
-	config.ContentConfig.NegotiatedSerializer = v1.Codecs
+	config.ContentConfig.NegotiatedSerializer = defaultscheme.Codecs.WithoutConversion()
 
 	restClient, err := rest.RESTClientFor(&config)
 	if err != nil {

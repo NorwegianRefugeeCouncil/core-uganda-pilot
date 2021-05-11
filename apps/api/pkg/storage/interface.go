@@ -25,7 +25,7 @@ type Interface interface {
 	Versioner() Versioner
 	Get(ctx context.Context, key string, getOptions GetOptions, out runtime.Object) error
 	List(ctx context.Context, listOptions ListOptions, out runtime.Object) error
-	Create(ctx context.Context, obj runtime.Object) error
+	Create(ctx context.Context, obj, out runtime.Object) error
 	Update(ctx context.Context, key string, out runtime.Object, update UpdateFunc) error
 	Watch(ctx context.Context, key string, opts ListOptions) (watch.Interface, error)
 }

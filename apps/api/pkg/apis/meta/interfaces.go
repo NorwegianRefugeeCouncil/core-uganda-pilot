@@ -25,6 +25,10 @@ type MetadataAccessor interface {
 	ResourceVersioner
 }
 
+type ListMetaAccessor interface {
+	GetListMeta() List
+}
+
 func NewAccessor() MetadataAccessor {
 	return resourceAccessor{}
 }
@@ -151,7 +155,10 @@ func Accessor(obj interface{}) (metav1.Object, error) {
 	case metav1.Object:
 		return t, nil
 	case metav1.ObjectMetaAccessor:
-		return t.GetObjectMeta(), nil
+		if m := t.GetObjectMeta(); m != nil {
+			return m, nil
+		}
+		return nil, errNotObject
 	default:
 		return nil, errNotObject
 	}

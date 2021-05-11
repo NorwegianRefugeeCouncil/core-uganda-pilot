@@ -15,7 +15,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"io"
 	"reflect"
 	"strings"
 )
@@ -23,10 +22,11 @@ import (
 type Store struct {
 	mongoClient *mongo.Client
 	database    string
-	collection  string
+	collection  *mongo.Collection
 	create      func() runtime.Object
 	codec       runtime.Codec
 	versioner   storage.Versioner
+	watcher     *watcher
 }
 
 type objState struct {
@@ -51,12 +51,17 @@ func NewStore(
 	collection := parts[1] + "__" + parts[2]
 	collection = strings.Replace(collection, ".", "_", -1)
 
+	mongoCollection := mongoClient.Database(parts[0]).Collection(collection)
+
+	versioner := APIObjectVersioner{}
 	return &Store{
 		mongoClient: mongoClient,
 		database:    parts[0],
-		collection:  collection,
+		collection:  mongoCollection,
 		create:      create,
 		codec:       codec,
+		watcher:     newWatcher(mongoCollection, codec, create, versioner),
+		versioner:   versioner,
 	}, nil
 }
 
@@ -69,8 +74,7 @@ func (s *Store) Get(ctx context.Context, key string, getOptions storage.GetOptio
 		return err
 	}
 
-	collection := s.mongoClient.Database(s.database).Collection(s.collection)
-	result := collection.FindOne(ctx, bson.M{"_id": objectID})
+	result := s.collection.FindOne(ctx, bson.M{"_id": objectID})
 	if result.Err() != nil {
 		return result.Err()
 	}
@@ -98,7 +102,7 @@ func (s *Store) List(ctx context.Context, listOptions storage.ListOptions, out r
 
 	newItemFunc := getNewItemFunc(out, v)
 
-	result, err := s.mongoClient.Database(s.database).Collection(s.collection).Find(ctx, bson.D{})
+	result, err := s.collection.Find(ctx, bson.D{})
 	if err != nil {
 		return err
 	}
@@ -150,14 +154,18 @@ func convertDocument(data bson.Raw, into runtime.Object) error {
 
 }
 
-func (s *Store) Create(ctx context.Context, obj runtime.Object) error {
+func (s *Store) Create(ctx context.Context, obj, out runtime.Object) error {
 	accessor, err := meta.Accessor(obj)
 	if err != nil {
 		return err
 	}
 	accessor.SetResourceVersion(1)
 
-	response, err := s.mongoClient.Database(s.database).Collection(s.collection).InsertOne(ctx, obj)
+	response, err := s.collection.InsertOne(ctx, bson.M{
+		"__revision": int64(1),
+		"current":    obj,
+		"previous":   nil,
+	})
 	if err != nil {
 		return err
 	}
@@ -165,6 +173,20 @@ func (s *Store) Create(ctx context.Context, obj runtime.Object) error {
 	objectID := response.InsertedID.(primitive.ObjectID)
 	id := objectID.Hex()
 	accessor.SetUID(id)
+	accessor.SetResourceVersion(1)
+
+	if err := s.versioner.UpdateObject(obj, 1); err != nil {
+		return err
+	}
+
+	if out != nil {
+		bytes, err := runtime.Encode(s.codec, obj)
+		if err != nil {
+			return err
+		}
+		_, _, err = s.codec.Decode(bytes, nil, out)
+		return err
+	}
 
 	return nil
 }
@@ -186,7 +208,7 @@ func (s *Store) Update(ctx context.Context, key string, out runtime.Object, upda
 	}
 
 	getCurrentState := func() (*objState, error) {
-		getResp := s.mongoClient.Database(s.database).Collection(s.collection).FindOne(ctx, bson.M{"_id": key})
+		getResp := s.collection.FindOne(ctx, bson.M{"_id": objectID})
 		if getResp.Err() != nil {
 			return nil, getResp.Err()
 		}
@@ -252,26 +274,30 @@ func (s *Store) Update(ctx context.Context, key string, out runtime.Object, upda
 		if err := json.Unmarshal(data, &temp); err != nil {
 			return err
 		}
-		temp["__revision"] = origState.rev
 
-		mongoData, err := bson.Marshal(temp)
-		if err != nil {
-			return err
-		}
-
-		_, err = s.mongoClient.Database(s.database).Collection(s.collection).UpdateOne(
+		_, err = s.collection.UpdateOne(
 			ctx,
 			bson.M{
 				"_id":        objectID,
 				"__revision": origState.rev,
 			},
-			mongoData,
+			bson.A{
+				bson.M{"$set": bson.M{
+					"previous":   "$current",
+					"__revision": origState.rev + 1,
+				},
+				},
+				bson.M{"$set": bson.M{
+					"current": temp,
+				},
+				},
+			},
 		)
 		if err != nil {
 			return err
 		}
 
-		return decode(s.codec, s.versioner, mongoData, out, origState.rev)
+		return decode(s.codec, s.versioner, data, out, origState.rev+1)
 
 	}
 
@@ -295,57 +321,7 @@ func (s *Store) Update(ctx context.Context, key string, out runtime.Object, upda
 }
 
 func (s *Store) Watch(ctx context.Context, key string, opts storage.ListOptions) (watch.Interface, error) {
-
-	stream, err := s.mongoClient.Database(s.database).Collection(s.collection).Watch(ctx, mongo.Pipeline{})
-	if err != nil {
-		return nil, err
-	}
-
-	return watch.NewWatcher(ctx, func() ([]byte, error) {
-
-		if stream.Err() != nil {
-			return nil, stream.Err()
-		}
-
-		if stream.Next(ctx) {
-			operationType := stream.Current.Lookup("operationType")
-			operationTypeStr := ""
-			if err := operationType.Unmarshal(&operationTypeStr); err != nil {
-				logrus.Errorf("unable to unmarshal operationType: %v", err)
-				return nil, err
-			}
-
-			document := stream.Current.Lookup("fullDocument")
-			var out = s.create()
-			if err := convertDocument(document.Value, out); err != nil {
-				logrus.Errorf("error converting document: %v", err)
-				return nil, err
-			}
-
-			watchEvent := watch.Event{
-				Type:   operationTypeStr,
-				Object: out,
-			}
-			bodyBytes, err := json.Marshal(watchEvent)
-			if err != nil {
-				return nil, err
-			}
-
-			logrus.Infof("sending event body: %s", string(bodyBytes))
-
-			fmt.Println(string(bodyBytes))
-
-			return bodyBytes, nil
-		}
-
-		if stream.Err() != nil {
-			return nil, stream.Err()
-		}
-
-		return nil, io.EOF
-
-	}, s.codec), nil
-
+	return s.watcher.Watch(ctx, key, 0, false)
 }
 
 var objectSliceType = reflect.TypeOf([]runtime.Object{})
@@ -421,6 +397,14 @@ func (s *Store) getState(getResp *mongo.SingleResult, key string, v reflect.Valu
 	if err != nil {
 		return nil, err
 	}
+
+	accessor, err := meta.Accessor(state.obj)
+	if err != nil {
+		return nil, err
+	}
+
+	id := temp["_id"].(primitive.ObjectID)
+	accessor.SetUID(id.Hex())
 
 	state.rev = temp["__revision"].(int64)
 	state.meta.ResourceVersion = uint64(state.rev)

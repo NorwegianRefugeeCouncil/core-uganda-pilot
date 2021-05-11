@@ -112,7 +112,7 @@ func (e *Store) Create(ctx context.Context, obj runtime.Object, createValidation
 
 	out := e.NewFunc()
 
-	if err := e.Storage.Create(ctx, obj); err != nil {
+	if err := e.Storage.Create(ctx, obj, out); err != nil {
 		if errGet := e.Storage.Get(ctx, key, storage.GetOptions{}, out); errGet != nil {
 			return nil, err
 		}
@@ -164,7 +164,7 @@ func (e *Store) Update(ctx context.Context, name string, objInfo rest.UpdatedObj
 
 	out := e.NewFunc()
 
-	err = e.Storage.Update(ctx, key, out, func(input runtime.Object, res storage.ResponseMeta) (existing runtime.Object, ttl *uint64, err error) {
+	err = e.Storage.Update(ctx, key, out, func(existing runtime.Object, res storage.ResponseMeta) (runtime.Object, *uint64, error) {
 
 		existingResourceVersion, err := e.Storage.Versioner().ObjectResourceVersion(existing)
 		if err != nil {
@@ -222,7 +222,7 @@ func (e *Store) Update(ctx context.Context, name string, objInfo rest.UpdatedObj
 
 		if newResourceVersion == 0 {
 			qualifiedKind := schema.GroupKind{Group: qualifiedResource.Group, Kind: qualifiedResource.Resource}
-			fieldErrList := field.ErrorList{field.Invalid(field.NewPath("metadata").Child("resourceVersion"), newResourceVersion, "must be specified for an update")}
+			fieldErrList := exceptions.ErrorList{exceptions.Invalid(field.NewPath("metadata").Child("resourceVersion"), newResourceVersion, "must be specified for an update")}
 			return nil, nil, exceptions.NewInvalid(qualifiedKind, name, fieldErrList)
 		}
 

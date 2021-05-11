@@ -26,7 +26,15 @@ var optionsTypes = []runtime.Object{
 	&UpdateOptions{},
 }
 
+// WatchEventKind is name reserved for serializing watch events.
+const WatchEventKind = "WatchEvent"
+
 func AddToGroupVersion(scheme *runtime.Scheme, groupVersion schema.GroupVersion) {
+	scheme.AddKnownTypeWithName(groupVersion.WithKind(WatchEventKind), &WatchEvent{})
+	scheme.AddKnownTypeWithName(
+		schema.GroupVersion{Group: groupVersion.Group, Version: runtime.APIVersionInternal}.WithKind(WatchEventKind),
+		&InternalEvent{},
+	)
 	scheme.AddKnownTypes(groupVersion, optionsTypes...)
 	scheme.AddUnversionedTypes(Unversioned,
 		&Status{},

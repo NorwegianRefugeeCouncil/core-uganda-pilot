@@ -1,7 +1,9 @@
-package field
+package exceptions
 
 import (
 	"fmt"
+	"github.com/nrc-no/core/apps/api/pkg/util/validation/field"
+	"k8s.io/apimachinery/pkg/util/sets"
 	"reflect"
 )
 
@@ -91,36 +93,51 @@ func (t ErrorType) String() string {
 	}
 }
 
-func NotFound(field *Path, value interface{}) *Error {
+func NotFound(field *field.Path, value interface{}) *Error {
 	return &Error{ErrTypeNotFound, field.String(), value, ""}
 }
 
-func Duplicate(field *Path, value interface{}) *Error {
+func Duplicate(field *field.Path, value interface{}) *Error {
 	return &Error{ErrTypeDuplicate, field.String(), value, ""}
 }
 
-func Required(field *Path, detail string) *Error {
+func Required(field *field.Path, detail string) *Error {
 	return &Error{ErrTypeRequired, field.String(), nil, detail}
 }
 
-func Invalid(field *Path, value interface{}, detail string) *Error {
+func Invalid(field *field.Path, value interface{}, detail string) *Error {
 	return &Error{ErrTypeInvalid, field.String(), value, detail}
 }
 
-func Forbidden(field *Path, detail string) *Error {
+func Forbidden(field *field.Path, detail string) *Error {
 	return &Error{ErrTypeForbidden, field.String(), "", detail}
 }
 
-func TooLong(field *Path, value interface{}, maxLength int) *Error {
+func TooLong(field *field.Path, value interface{}, maxLength int) *Error {
 	return &Error{ErrTypeTooLong, field.String(), value, fmt.Sprintf("must have at most %d bytes", maxLength)}
 }
 
-func TooMany(field *Path, actualQuantity, maxQuantity int) *Error {
+func TooMany(field *field.Path, actualQuantity, maxQuantity int) *Error {
 	return &Error{ErrTypeTooMany, field.String(), actualQuantity, fmt.Sprintf("must have at most %d items", maxQuantity)}
 }
 
-func InternalError(field *Path, err error) *Error {
+func InternalError(field *field.Path, err error) *Error {
 	return &Error{ErrTypeInternal, field.String(), nil, err.Error()}
 }
 
 type ErrorList []*Error
+
+// ToAggregate converts the ErrorList into an errors.Aggregate.
+func (list ErrorList) ToAggregate() Aggregate {
+	errs := make([]error, 0, len(list))
+	errorMsgs := sets.NewString()
+	for _, err := range list {
+		msg := fmt.Sprintf("%v", err)
+		if errorMsgs.Has(msg) {
+			continue
+		}
+		errorMsgs.Insert(msg)
+		errs = append(errs, err)
+	}
+	return NewAggregate(errs)
+}

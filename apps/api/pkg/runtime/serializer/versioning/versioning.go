@@ -177,8 +177,8 @@ func (c *codec) Encode(obj runtime.Object, w io.Writer) error {
 
 func (c *codec) doEncode(obj runtime.Object, w io.Writer) error {
 	switch obj := obj.(type) {
-	//case *runtime.Unknown:
-	//  return c.encoder.Encode(obj, w)
+	case *runtime.Unknown:
+		return c.encoder.Encode(obj, w)
 	case runtime.Unstructured:
 		// An unstructured list can contain objects of multiple group version kinds. don't short-circuit just
 		// because the top-level type matches our desired destination type. actually send the object to the converter

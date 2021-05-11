@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	v12 "github.com/nrc-no/core/apps/api/pkg/apis/core/v1"
+	"github.com/nrc-no/core/apps/api/pkg/apis/meta"
 	"github.com/nrc-no/core/apps/api/pkg/apis/meta/v1"
 	"github.com/nrc-no/core/apps/api/pkg/watch"
 	uuid "github.com/satori/go.uuid"
@@ -25,12 +26,24 @@ func (s *MainTestSuite) TestFormDefinitionCRUD() {
 		return
 	}
 
+	time.Sleep(time.Second)
+
+	idChan := make(chan string)
+
 	go func() {
+
+		id := <-idChan
+
 		for event := range watcher.ResultChan() {
-			s.T().Logf("event: %#v", event)
-			events = append(events, event)
-			if len(events) == 2 {
-				watchCancel()
+			accessor, err := meta.Accessor(event.Object)
+			if assert.NoError(t, err) {
+				uid := accessor.GetUID()
+				if uid == id {
+					events = append(events, event)
+					if len(events) == 2 {
+						watchCancel()
+					}
+				}
 			}
 		}
 	}()
@@ -82,11 +95,9 @@ func (s *MainTestSuite) TestFormDefinitionCRUD() {
 		return
 	}
 
-	time.Sleep(30 * time.Second)
+	idChan <- out.GetUID()
 
 	// Asserting equality of input & output
-	assert.Equal(t, "core/v1", out.APIVersion)
-	assert.Equal(t, "FormDefinition", out.Kind)
 	assert.Equal(t, "core.nrc.no", out.Spec.Group)
 	assert.Equal(t, "customresources", out.Spec.Names.Plural)
 	assert.Equal(t, "customresource", out.Spec.Names.Singular)
@@ -112,6 +123,7 @@ func (s *MainTestSuite) TestFormDefinitionCRUD() {
 	// Update form definition
 	out.Spec.Names.Plural = "abc"
 	updated, err := s.nrcClient.FormDefinitions().Update(s.ctx, out)
+
 	if err != nil {
 		t.Errorf("unable to update form definition: %v", err)
 		return
@@ -128,8 +140,8 @@ func (s *MainTestSuite) TestFormDefinitionCRUD() {
 	}
 
 	if assert.Len(t, events, 2) {
-		assert.Equal(t, "insert", events[0].Type)
-		assert.Equal(t, "replace", events[1].Type)
+		assert.Equal(t, watch.Added, events[0].Type)
+		assert.Equal(t, watch.Modified, events[1].Type)
 	}
 
 	list, err := s.nrcClient.FormDefinitions().List(s.ctx)

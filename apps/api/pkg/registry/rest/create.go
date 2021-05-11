@@ -15,7 +15,7 @@ import (
 type RESTCreateStrategy interface {
 	runtime.ObjectTyper
 	PrepareForCreate(ctx context.Context, obj runtime.Object)
-	Validate(ctx context.Context, obj runtime.Object) field.ErrorList
+	Validate(ctx context.Context, obj runtime.Object) exceptions.ErrorList
 	Canonicalize(obj runtime.Object)
 }
 
@@ -70,7 +70,8 @@ func BeforeUpdate(strategy RESTUpdateStrategy, ctx context.Context, obj, old run
 
 	strategy.PrepareForUpdate(ctx, obj, old)
 
-	objectMeta.SetUID(oldMeta.GetUID())
+	oldUid := oldMeta.GetUID()
+	objectMeta.SetUID(oldUid)
 
 	// Ignore changes to creationTimestamp
 	if oldCreationTime := oldMeta.GetCreationTimestamp(); !oldCreationTime.IsZero() {
@@ -82,7 +83,7 @@ func BeforeUpdate(strategy RESTUpdateStrategy, ctx context.Context, obj, old run
 		objectMeta.SetDeletionTimestamp(oldMeta.GetDeletionTimestamp())
 	}
 
-	errs := field.ErrorList{}
+	errs := exceptions.ErrorList{}
 
 	errs = append(errs, strategy.ValidateUpdate(ctx, obj, old)...)
 	if len(errs) > 0 {

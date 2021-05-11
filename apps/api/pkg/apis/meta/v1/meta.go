@@ -20,3 +20,17 @@ type ListInterface interface {
 	//GetRemainingItemCount() *int64
 	//SetRemainingItemCount(c *int64)
 }
+
+// Type exposes the type and APIVersion of versioned or internal API objects.
+// TODO: move this, and TypeMeta and ListMeta, to a different package
+type Type interface {
+	GetAPIVersion() string
+	SetAPIVersion(version string)
+	GetKind() string
+	SetKind(kind string)
+}
+
+// ListMetaAccessor retrieves the list interface from an object
+type ListMetaAccessor interface {
+	GetListMeta() ListInterface
+}

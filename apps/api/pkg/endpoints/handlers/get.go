@@ -1,8 +1,8 @@
 package handlers
 
 import (
+	"bytes"
 	"context"
-	"encoding/json"
 	"github.com/gorilla/websocket"
 	"github.com/nrc-no/core/apps/api/pkg/apis/meta/internalversion"
 	metainternalscheme "github.com/nrc-no/core/apps/api/pkg/apis/meta/internalversion/scheme"
@@ -97,9 +97,10 @@ func ListResource(r rest.Lister, rw rest.Watcher, scope *RequestScope) http.Hand
 				return
 			}
 
-			w.Header().Set("Content-Type", serializer.Accepted.MediaType)
+			responseHeader := http.Header{}
+			responseHeader.Set("Content-Type", serializer.Accepted.MediaType)
 			u := websocket.Upgrader{}
-			conn, err := u.Upgrade(w, req, nil)
+			conn, err := u.Upgrade(w, req, responseHeader)
 			if err != nil {
 				scope.Error(err, w, req)
 				return
@@ -109,7 +110,6 @@ func ListResource(r rest.Lister, rw rest.Watcher, scope *RequestScope) http.Hand
 			for {
 				select {
 				case <-ctx.Done():
-					break
 					return
 				case evt := <-watcher.ResultChan():
 					//if !ok {
@@ -117,20 +117,40 @@ func ListResource(r rest.Lister, rw rest.Watcher, scope *RequestScope) http.Hand
 					//  break
 					//}
 
-					evtBytes, err := json.Marshal(evt)
-					if err != nil {
-						break
-					}
-					logrus.Infof("sending json event: %s", string(evtBytes))
+					encoder := scope.Serializer.EncoderForVersion(serializer.Accepted.Serializer, scope.Kind.GroupVersion())
+					embeddedEncoder := scope.Serializer.EncoderForVersion(serializer.Accepted.Serializer, scope.Kind.GroupVersion())
 
-					if err := conn.WriteJSON(evt); err != nil {
-						cancel()
-						break
+					var unknown runtime.Unknown
+					internalEvent := &metav1.InternalEvent{}
+					buf := bytes.NewBuffer(nil)
+					if err := embeddedEncoder.Encode(evt.Object, buf); err != nil {
+						scope.Error(err, w, req)
+						return
 					}
+					unknown.Raw = buf.Bytes()
+					evt.Object = &unknown
+
+					outEvent := &metav1.WatchEvent{}
+					*internalEvent = metav1.InternalEvent(evt)
+
+					err = metav1.Convert_v1_InternalEvent_To_v1_WatchEvent(internalEvent, outEvent, nil)
+					if err != nil {
+						logrus.Errorf("unable to convert internal event to watch event")
+					}
+
+					var outBuf = bytes.NewBuffer(nil)
+					if err := encoder.Encode(outEvent, outBuf); err != nil {
+						logrus.Errorf("unable to serialize out event: %v", err)
+						return
+					}
+
+					if err := conn.WriteMessage(websocket.TextMessage, outBuf.Bytes()); err != nil {
+						logrus.Errorf("failed to write to websocket: %v", err)
+						return
+					}
+
 				}
-				break
 			}
-			return
 		}
 
 		result, err := r.List(ctx, &opts)

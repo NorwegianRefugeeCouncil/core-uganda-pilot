@@ -77,7 +77,9 @@ func (s *Serializer) Encode(obj runtime.Object, w io.Writer) error {
 	return encoder.Encode(obj)
 }
 
-func (s *Serializer) Decode(data []byte, gvk *schema.GroupVersionKind, into runtime.Object) (runtime.Object, *schema.GroupVersionKind, error) {
+func (s *Serializer) Decode(originalData []byte, gvk *schema.GroupVersionKind, into runtime.Object) (runtime.Object, *schema.GroupVersionKind, error) {
+
+	data := originalData
 
 	actualGvk, err := s.meta.Interpret(data)
 	if err != nil {
@@ -87,9 +89,23 @@ func (s *Serializer) Decode(data []byte, gvk *schema.GroupVersionKind, into runt
 		*actualGvk = gvkWithDefaults(*actualGvk, *gvk)
 	}
 
+	if unk, ok := into.(*runtime.Unknown); ok && unk != nil {
+		unk.Raw = originalData
+		unk.ContentType = runtime.ContentTypeJSON
+		unk.GetObjectKind().SetGroupVersionKind(*actualGvk)
+		return unk, actualGvk, nil
+	}
+
 	if into != nil {
+
+		_, isUnstructured := into.(runtime.Unstructured)
 		types, _, err := s.typer.ObjectKinds(into)
 		switch {
+		case runtime.IsNotRegisteredError(err), isUnstructured:
+			if err := json.Unmarshal(data, into); err != nil {
+				return nil, actualGvk, err
+			}
+			return into, actualGvk, nil
 		case err != nil:
 			return nil, actualGvk, err
 		default:

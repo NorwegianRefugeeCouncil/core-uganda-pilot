@@ -36,6 +36,12 @@ func Encode(e Encoder, obj Object) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+// Decode is a convenience wrapper for decoding data into an Object.
+func Decode(d Decoder, data []byte) (Object, error) {
+	obj, _, err := d.Decode(data, nil, nil)
+	return obj, err
+}
+
 // NewParameterCodec creates a ParameterCodec capable of transforming url values into versioned objects and back.
 func NewParameterCodec(scheme *Scheme) ParameterCodec {
 	return &parameterCodec{

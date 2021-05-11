@@ -1,5 +1,7 @@
 package runtime
 
+import "github.com/nrc-no/core/apps/api/pkg/runtime/schema"
+
 // Note that the types provided in this file are not versioned and are intended to be
 // safe to use from within all versions of every API object.
 
@@ -19,10 +21,22 @@ package runtime
 // +k8s:openapi-gen=true
 type TypeMeta struct {
 	// +optional
-	APIVersion string `json:"apiVersion,omitempty" yaml:"apiVersion,omitempty" protobuf:"bytes,1,opt,name=apiVersion"`
+	APIVersion string `json:"apiVersion,omitempty" yaml:"apiVersion,omitempty" bson:"apiVersion"`
 	// +optional
-	Kind string `json:"kind,omitempty" yaml:"kind,omitempty" protobuf:"bytes,2,opt,name=kind"`
+	Kind string `json:"kind,omitempty" yaml:"kind,omitempty" bson:"kind"`
 }
+
+// SetGroupVersionKind satisfies the ObjectKind interface for all objects that embed TypeMeta
+func (obj *TypeMeta) SetGroupVersionKind(gvk schema.GroupVersionKind) {
+	obj.APIVersion, obj.Kind = gvk.ToAPIVersionAndKind()
+}
+
+// GroupVersionKind satisfies the ObjectKind interface for all objects that embed TypeMeta
+func (obj *TypeMeta) GroupVersionKind() schema.GroupVersionKind {
+	return schema.FromAPIVersionAndKind(obj.APIVersion, obj.Kind)
+}
+
+func (obj *TypeMeta) GetObjectKind() schema.ObjectKind { return obj }
 
 const (
 	ContentTypeJSON     string = "application/json"

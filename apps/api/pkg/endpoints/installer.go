@@ -114,7 +114,7 @@ func (a *APIInstaller) registerResourceHandlers(path string, storage rest.Storag
 	watcher, isWatcher := storage.(rest.Watcher)
 	getter, isGetter := storage.(rest.Getter)
 	//deleter, isDeleter := storage.(rest.Deleter)
-	//updater, isUpdater := storage.(rest.Updater)
+	updater, isUpdater := storage.(rest.Updater)
 	storageMeta := defaultStorageMetadata{}
 
 	var versionedList interface{}
@@ -139,10 +139,10 @@ func (a *APIInstaller) registerResourceHandlers(path string, storage rest.Storag
 	if err != nil {
 		return nil, nil, err
 	}
-	//versionedUpdateOptions, err := a.group.Creater.New(optionsExternalVersion.WithKind("UpdateOptions"))
-	//if err != nil {
-	//  return nil, nil, err
-	//}
+	versionedUpdateOptions, err := a.group.Creater.New(optionsExternalVersion.WithKind("UpdateOptions"))
+	if err != nil {
+		return nil, nil, err
+	}
 	//var versionedDeleteOptions runtime.Object
 	// var versionedDeleterObject interface{}
 	//if isDeleter {
@@ -200,7 +200,7 @@ func (a *APIInstaller) registerResourceHandlers(path string, storage rest.Storag
 	actions = appendIf(actions, action{"LIST", resourcePath, resourceParams, namer, false}, isLister)
 	actions = appendIf(actions, action{"POST", resourcePath, resourceParams, namer, false}, isCreater)
 	actions = appendIf(actions, action{"GET", itemPath, idParams, namer, false}, isGetter)
-	//actions = appendIf(actions, action{"PUT", itemPath, idParams, namer, false}, isUpdater)
+	actions = appendIf(actions, action{"PUT", itemPath, idParams, namer, false}, isUpdater)
 	//actions = appendIf(actions, action{"DELETE", itemPath, idParams, namer, false}, isDeleter)
 
 	var resourceInfo *storageversion.ResourceInfo
@@ -279,6 +279,20 @@ func (a *APIInstaller) registerResourceHandlers(path string, storage rest.Storag
 			addParams(route, action.Params)
 			routes = append(routes, route)
 		case "PUT":
+			route := ws.PUT(action.Path).To(restfulUpdateResource(updater, reqScope)).
+				Doc("replace the specified "+kind).
+				Param(ws.QueryParameter("pretty", "if 'true', then the output is pretty-printed.")).
+				Operation("replace"+kind).
+				Produces(append(storageMeta.ProducesMIMETypes(action.Verb), mediaTypes...)...).
+				Returns(http.StatusOK, "OK", producedObject).
+				Returns(http.StatusCreated, "Created", producedObject).
+				Reads(defaultVersionedObject).
+				Writes(producedObject)
+			if err := AddObjectParams(ws, route, versionedUpdateOptions); err != nil {
+				return nil, nil, err
+			}
+			addParams(route, action.Params)
+			routes = append(routes, route)
 		case "PATCH":
 		case "POST":
 			route := ws.POST(action.Path).To(restfulCreateResource(creater, reqScope)).
@@ -526,5 +540,11 @@ func restfulCreateResource(r rest.Creater, scope handlers.RequestScope) restful.
 func restfulListResource(r rest.Lister, rw rest.Watcher, scope handlers.RequestScope) restful.RouteFunction {
 	return func(request *restful.Request, response *restful.Response) {
 		handlers.ListResource(r, rw, &scope)(response.ResponseWriter, request.Request)
+	}
+}
+
+func restfulUpdateResource(r rest.Updater, scope handlers.RequestScope) restful.RouteFunction {
+	return func(request *restful.Request, response *restful.Response) {
+		handlers.UpdateResource(r, &scope)(response.ResponseWriter, request.Request)
 	}
 }
