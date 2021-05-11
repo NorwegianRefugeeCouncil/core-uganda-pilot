@@ -2,7 +2,10 @@ package v1
 
 import (
 	"fmt"
+	"github.com/nrc-no/core/apps/api/pkg/conversion"
 	"github.com/nrc-no/core/apps/api/pkg/runtime/schema"
+	"github.com/nrc-no/core/apps/api/pkg/watch"
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 type ObjectMeta struct {
@@ -120,16 +123,17 @@ type StatusDetails struct {
 type StatusReason string
 
 const (
-	StatusReasonUnknown          StatusReason = "Unknown"
-	StatusReasonForbidden        StatusReason = "Forbidden"
-	StatusReasonNotFound         StatusReason = "NotFound"
-	StatusReasonAlreadyExists    StatusReason = "AlreadyExists"
-	StatusReasonConflict         StatusReason = "Conflict"
-	StatusReasonBadRequest       StatusReason = "BadRequest"
-	StatusReasonMethodNotAllowed StatusReason = "MethodNotAllowed"
-	StatusReasonNotAcceptable    StatusReason = "NotAcceptable"
-	StatusReasonInternalError    StatusReason = "InternalError"
-	StatusReasonInvalid          StatusReason = "Invalid"
+	StatusReasonUnknown              StatusReason = "Unknown"
+	StatusReasonForbidden            StatusReason = "Forbidden"
+	StatusReasonNotFound             StatusReason = "NotFound"
+	StatusReasonAlreadyExists        StatusReason = "AlreadyExists"
+	StatusReasonConflict             StatusReason = "Conflict"
+	StatusReasonBadRequest           StatusReason = "BadRequest"
+	StatusReasonMethodNotAllowed     StatusReason = "MethodNotAllowed"
+	StatusReasonNotAcceptable        StatusReason = "NotAcceptable"
+	StatusReasonInternalError        StatusReason = "InternalError"
+	StatusReasonInvalid              StatusReason = "Invalid"
+	StatusReasonUnsupportedMediaType StatusReason = "UnsupportedMediaType"
 )
 
 type StatusCause struct {
@@ -177,7 +181,9 @@ func (obj *TypeMeta) GroupVersionKind() schema.GroupVersionKind {
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 type ListOptions struct {
-	TypeMeta `json:",inline"`
+	TypeMeta        `json:",inline"`
+	Watch           bool   `json:"watch"`
+	ResourceVersion string `json:"resourceVersion"`
 }
 
 // resourceVersionMatch specifies how the resourceVersion parameter is applied. resourceVersionMatch
@@ -354,4 +360,55 @@ type GroupVersionForDiscovery struct {
 	// version specifies the version in the form of "version". This is to save
 	// the clients the trouble of splitting the GroupVersion.
 	Version string `json:"version" protobuf:"bytes,2,opt,name=version"`
+}
+
+// +k8s:deepcopy-gen=true
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+type WatchEvent struct {
+	Type   string       `json:"type"`
+	Object RawExtension `json:"object"`
+}
+
+func Convert_watch_Event_To_v1_WatchEvent(in *watch.Event, out *WatchEvent, s conversion.Scope) error {
+	out.Type = string(in.Type)
+	switch t := in.Object.(type) {
+	case *runtime.Unknown:
+		// TODO: handle other fields on Unknown and detect type
+		out.Object.Raw = t.Raw
+	case nil:
+	default:
+		out.Object.Object = in.Object
+	}
+	return nil
+}
+
+func Convert_v1_InternalEvent_To_v1_WatchEvent(in *InternalEvent, out *WatchEvent, s conversion.Scope) error {
+	return Convert_watch_Event_To_v1_WatchEvent((*watch.Event)(in), out, s)
+}
+
+func Convert_v1_WatchEvent_To_watch_Event(in *WatchEvent, out *watch.Event, s conversion.Scope) error {
+	out.Type = watch.EventType(in.Type)
+	if in.Object.Object != nil {
+		out.Object = in.Object.Object
+	} else if in.Object.Raw != nil {
+		// TODO: handle other fields on Unknown and detect type
+		out.Object = &runtime.Unknown{
+			Raw:         in.Object.Raw,
+			ContentType: runtime.ContentTypeJSON,
+		}
+	}
+	return nil
+}
+
+type InternalEvent watch.Event
+
+func (e *InternalEvent) GetObjectKind() schema.ObjectKind { return schema.EmptyObjectKind }
+func (e *WatchEvent) GetObjectKind() schema.ObjectKind    { return schema.EmptyObjectKind }
+func (e *InternalEvent) DeepCopyObject() runtime.Object {
+	if c := e.DeepCopy(); c != nil {
+		return c
+	} else {
+		return nil
+	}
 }

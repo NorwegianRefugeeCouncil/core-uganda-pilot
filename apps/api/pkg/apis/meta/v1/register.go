@@ -3,6 +3,7 @@ package v1
 import (
 	"github.com/nrc-no/core/apps/api/pkg/runtime"
 	"github.com/nrc-no/core/apps/api/pkg/runtime/schema"
+	utilruntime "github.com/nrc-no/core/apps/api/pkg/util/runtime"
 )
 
 const GroupName = "meta"
@@ -34,6 +35,7 @@ func AddToGroupVersion(scheme *runtime.Scheme, groupVersion schema.GroupVersion)
 		&APIGroup{},
 		&APIResourceList{},
 	)
+	utilruntime.Must(RegisterConversions(scheme))
 }
 
 // Unlike other API groups, meta internal knows about all meta external versions, but keeps

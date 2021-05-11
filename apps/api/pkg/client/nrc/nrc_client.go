@@ -2,7 +2,9 @@ package nrc
 
 import (
 	"context"
+	"github.com/nrc-no/core/apps/api/pkg/api/defaultscheme"
 	"github.com/nrc-no/core/apps/api/pkg/apis/core/v1"
+	metav1 "github.com/nrc-no/core/apps/api/pkg/apis/meta/v1"
 	"github.com/nrc-no/core/apps/api/pkg/client/rest"
 	"github.com/nrc-no/core/apps/api/pkg/watch"
 )
@@ -39,7 +41,7 @@ type FormDefinitionsInterface interface {
 	Get(ctx context.Context, id string) (*v1.FormDefinition, error)
 	List(ctx context.Context) (*v1.FormDefinitionList, error)
 	Update(ctx context.Context, formDefinition *v1.FormDefinition) (result *v1.FormDefinition, err error)
-	Watch(ctx context.Context) (p watch.Interface, err error)
+	Watch(ctx context.Context, opts metav1.ListOptions) (p watch.Interface, err error)
 }
 
 type formDefinitionsClient struct {
@@ -86,8 +88,10 @@ func (c *formDefinitionsClient) Update(ctx context.Context, formDefinition *v1.F
 	return
 }
 
-func (c *formDefinitionsClient) Watch(ctx context.Context) (w watch.Interface, err error) {
+func (c *formDefinitionsClient) Watch(ctx context.Context, opts metav1.ListOptions) (w watch.Interface, err error) {
+	opts.Watch = true
 	return c.client.Get().
 		Resource("formdefinitions").
+		VersionedParams(&opts, defaultscheme.ParameterCodec).
 		Watch(ctx)
 }

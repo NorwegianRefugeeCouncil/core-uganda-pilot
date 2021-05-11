@@ -3,13 +3,15 @@ package endpoints
 import (
 	"fmt"
 	"github.com/emicklei/go-restful"
-	v1 "github.com/nrc-no/core/apps/api/pkg/apis/meta/v1"
+	metav1 "github.com/nrc-no/core/apps/api/pkg/apis/meta/v1"
 	"github.com/nrc-no/core/apps/api/pkg/endpoints/handlers"
 	"github.com/nrc-no/core/apps/api/pkg/endpoints/handlers/negotiation"
 	"github.com/nrc-no/core/apps/api/pkg/registry/rest"
 	"github.com/nrc-no/core/apps/api/pkg/runtime"
 	"github.com/nrc-no/core/apps/api/pkg/runtime/schema"
 	"github.com/nrc-no/core/apps/api/pkg/storageversion"
+	"github.com/nrc-no/core/apps/api/pkg/util/conversion"
+	"k8s.io/apimachinery/pkg/util/sets"
 	"net/http"
 	path2 "path"
 	"reflect"
@@ -33,9 +35,9 @@ type action struct {
 	AllNamespaces bool // true iff the action is namespaced but works on aggregate result for all namespaces
 }
 
-func (a *APIInstaller) Install() ([]v1.APIResource, []*storageversion.ResourceInfo, *restful.WebService, []error) {
+func (a *APIInstaller) Install() ([]metav1.APIResource, []*storageversion.ResourceInfo, *restful.WebService, []error) {
 
-	var apiResources []v1.APIResource
+	var apiResources []metav1.APIResource
 	var resourceInfos []*storageversion.ResourceInfo
 	var errors []error
 
@@ -82,9 +84,9 @@ func (a *APIInstaller) newWebService() *restful.WebService {
 	return ws
 }
 
-func (a *APIInstaller) registerResourceHandlers(path string, storage rest.Storage, ws *restful.WebService) (*v1.APIResource, *storageversion.ResourceInfo, error) {
+func (a *APIInstaller) registerResourceHandlers(path string, storage rest.Storage, ws *restful.WebService) (*metav1.APIResource, *storageversion.ResourceInfo, error) {
 	//
-	//optionsExternalVersion := a.group.GroupVersion
+	optionsExternalVersion := a.group.GroupVersion
 	//
 	resource, _, err := splitSubresource(path)
 	//if err != nil {
@@ -107,35 +109,36 @@ func (a *APIInstaller) registerResourceHandlers(path string, storage rest.Storag
 	kind := fqKindToRegister.Kind
 	// isSubresource := len(subresource) > 0
 
-	//creater, isCreater := storage.(rest.Creater)
-	//lister, isLister := storage.(rest.Lister)
+	creater, isCreater := storage.(rest.Creater)
+	lister, isLister := storage.(rest.Lister)
+	watcher, isWatcher := storage.(rest.Watcher)
 	getter, isGetter := storage.(rest.Getter)
 	//deleter, isDeleter := storage.(rest.Deleter)
 	//updater, isUpdater := storage.(rest.Updater)
 	storageMeta := defaultStorageMetadata{}
 
-	//var versionedList interface{}
-	//if isLister {
-	//  list := lister.NewList()
-	//  listGVKs, _, err := a.group.Typer.ObjectKinds(list)
-	//  if err != nil {
-	//    return nil, nil, err
-	//  }
-	//  versionedListPtr, err := a.group.Creater.New(a.group.GroupVersion.WithKind(listGVKs[0].Kind))
-	//  if err != nil {
-	//    return nil, nil, err
-	//  }
-	//  versionedList = indirectArbitraryPointer(versionedListPtr)
-	//}
+	var versionedList interface{}
+	if isLister {
+		list := lister.NewList()
+		listGVKs, _, err := a.group.Typer.ObjectKinds(list)
+		if err != nil {
+			return nil, nil, err
+		}
+		versionedListPtr, err := a.group.Creater.New(a.group.GroupVersion.WithKind(listGVKs[0].Kind))
+		if err != nil {
+			return nil, nil, err
+		}
+		versionedList = indirectArbitraryPointer(versionedListPtr)
+	}
 
-	//versionedListOptions, err := a.group.Creater.New(optionsExternalVersion.WithKind("ListOptions"))
-	//if err != nil {
-	//  return nil, nil, err
-	//}
-	//versionedCreateOptions, err := a.group.Creater.New(optionsExternalVersion.WithKind("CreateOptions"))
-	//if err != nil {
-	//  return nil, nil, err
-	//}
+	versionedListOptions, err := a.group.Creater.New(optionsExternalVersion.WithKind("ListOptions"))
+	if err != nil {
+		return nil, nil, err
+	}
+	versionedCreateOptions, err := a.group.Creater.New(optionsExternalVersion.WithKind("CreateOptions"))
+	if err != nil {
+		return nil, nil, err
+	}
 	//versionedUpdateOptions, err := a.group.Creater.New(optionsExternalVersion.WithKind("UpdateOptions"))
 	//if err != nil {
 	//  return nil, nil, err
@@ -177,10 +180,10 @@ func (a *APIInstaller) registerResourceHandlers(path string, storage rest.Storag
 		resourceKind = kind
 	}
 
-	var apiResource v1.APIResource
+	var apiResource metav1.APIResource
 
 	resourcePath := resource
-	//resourceParams := params
+	resourceParams := params
 	itemPath := resourcePath + "/{id}"
 	idParams := append(params, idParam)
 	suffix := ""
@@ -194,8 +197,8 @@ func (a *APIInstaller) registerResourceHandlers(path string, storage rest.Storag
 		SelfLinkPathSuffix: suffix,
 	}
 
-	//actions = appendIf(actions, action{"LIST", resourcePath, resourceParams, namer, false}, isLister)
-	//actions = appendIf(actions, action{"POST", resourcePath, resourceParams, namer, false}, isCreater)
+	actions = appendIf(actions, action{"LIST", resourcePath, resourceParams, namer, false}, isLister)
+	actions = appendIf(actions, action{"POST", resourcePath, resourceParams, namer, false}, isCreater)
 	actions = appendIf(actions, action{"GET", itemPath, idParams, namer, false}, isGetter)
 	//actions = appendIf(actions, action{"PUT", itemPath, idParams, namer, false}, isUpdater)
 	//actions = appendIf(actions, action{"DELETE", itemPath, idParams, namer, false}, isDeleter)
@@ -246,27 +249,61 @@ func (a *APIInstaller) registerResourceHandlers(path string, storage rest.Storag
 
 		switch action.Verb {
 		case "GET":
-
-			handler := restfulGetResource(getter, reqScope)
-
 			doc := "read the specified " + kind
-			route := ws.GET(action.Path).To(handler).
+			route := ws.GET(action.Path).To(restfulGetResource(getter, reqScope)).
 				Doc(doc).
-				Param(ws.QueryParameter("pretty", "If 'true', the output is pretty-printed.")).
+				Param(ws.QueryParameter("pretty", "If 'true', then the output is pretty-printed.")).
 				Operation("read"+kind).
 				Produces(append(storageMeta.ProducesMIMETypes(action.Verb), mediaTypes...)...).
 				Returns(http.StatusOK, "OK", producedObject).
 				Writes(producedObject)
-
 			addParams(route, action.Params)
 			routes = append(routes, route)
-
 		case "LIST":
+			route := ws.GET(action.Path).To(restfulListResource(lister, watcher, reqScope)).
+				Doc("list objects of kind "+kind).
+				Param(ws.QueryParameter("pretty", "if 'true', then the output is pretty-printed")).
+				Operation("list"+kind).
+				Produces(append(storageMeta.ProducesMIMETypes(action.Verb), allMediaTypes...)...).
+				Returns(http.StatusOK, "OK", versionedList).
+				Writes(versionedList)
+			if err := AddObjectParams(ws, route, versionedListOptions); err != nil {
+				return nil, nil, err
+			}
+			switch {
+			case isLister && isWatcher:
+				route.Doc("list or watch objects of kind " + kind)
+			case isWatcher:
+				route.Doc("watch objects of kind " + kind)
+			}
+			addParams(route, action.Params)
+			routes = append(routes, route)
 		case "PUT":
 		case "PATCH":
 		case "POST":
-		case "DELETE":
+			route := ws.POST(action.Path).To(restfulCreateResource(creater, reqScope)).
+				Doc("create "+kind).
+				Param(ws.QueryParameter("pretty", "if 'true', then the output is pretty-printed.")).
+				Operation("create"+kind).
+				Produces(append(storageMeta.ProducesMIMETypes(action.Verb), mediaTypes...)...).
+				Returns(http.StatusOK, "OK", producedObject).
+				Returns(http.StatusCreated, "Created", producedObject).
+				Returns(http.StatusAccepted, "Accepted", producedObject).
+				Reads(defaultVersionedObject).
+				Writes(producedObject)
+			if err := AddObjectParams(ws, route, versionedCreateOptions); err != nil {
+				return nil, nil, err
+			}
+			addParams(route, action.Params)
+			routes = append(routes, route)
 
+		case "DELETE":
+		default:
+			return nil, nil, fmt.Errorf("unrecognized action verb: %s", action.Verb)
+		}
+
+		for _, route := range routes {
+			ws.Route(route)
 		}
 
 	}
@@ -384,8 +421,110 @@ var toDiscoveryKubeVerb = map[string]string{
 	"WATCHLIST":        "watch",
 }
 
+// An interface to see if an object supports swagger documentation as a method
+type documentable interface {
+	SwaggerDoc() map[string]string
+}
+
+// AddObjectParams converts a runtime.Object into a set of go-restful Param() definitions on the route.
+// The object must be a pointer to a struct; only fields at the top level of the struct that are not
+// themselves interfaces or structs are used; only fields with a json tag that is non empty (the standard
+// Go JSON behavior for omitting a field) become query parameters. The name of the query parameter is
+// the JSON field name. If a description struct tag is set on the field, that description is used on the
+// query parameter. In essence, it converts a standard JSON top level object into a query param schema.
+func AddObjectParams(ws *restful.WebService, route *restful.RouteBuilder, obj interface{}, excludedNames ...string) error {
+	sv, err := conversion.EnforcePtr(obj)
+	if err != nil {
+		return err
+	}
+	st := sv.Type()
+	excludedNameSet := sets.NewString(excludedNames...)
+	switch st.Kind() {
+	case reflect.Struct:
+		for i := 0; i < st.NumField(); i++ {
+			name := st.Field(i).Name
+			sf, ok := st.FieldByName(name)
+			if !ok {
+				continue
+			}
+			switch sf.Type.Kind() {
+			case reflect.Interface, reflect.Struct:
+			case reflect.Ptr:
+				// TODO: This is a hack to let metav1.Time through. This needs to be fixed in a more generic way eventually. bug #36191
+				if (sf.Type.Elem().Kind() == reflect.Interface || sf.Type.Elem().Kind() == reflect.Struct) && strings.TrimPrefix(sf.Type.String(), "*") != "metav1.Time" {
+					continue
+				}
+				fallthrough
+			default:
+				jsonTag := sf.Tag.Get("json")
+				if len(jsonTag) == 0 {
+					continue
+				}
+				jsonName := strings.SplitN(jsonTag, ",", 2)[0]
+				if len(jsonName) == 0 {
+					continue
+				}
+				if excludedNameSet.Has(jsonName) {
+					continue
+				}
+				var desc string
+				if docable, ok := obj.(documentable); ok {
+					desc = docable.SwaggerDoc()[jsonName]
+				}
+				route.Param(ws.QueryParameter(jsonName, desc).DataType(typeToJSON(sf.Type.String())))
+			}
+		}
+	}
+	return nil
+}
+
+// TODO: this is incomplete, expand as needed.
+// Convert the name of a golang type to the name of a JSON type
+func typeToJSON(typeName string) string {
+	switch typeName {
+	case "bool", "*bool":
+		return "boolean"
+	case "uint8", "*uint8", "int", "*int", "int32", "*int32", "int64", "*int64", "uint32", "*uint32", "uint64", "*uint64":
+		return "integer"
+	case "float64", "*float64", "float32", "*float32":
+		return "number"
+	case "metav1.Time", "*metav1.Time":
+		return "string"
+	case "byte", "*byte":
+		return "string"
+	case "v1.DeletionPropagation", "*v1.DeletionPropagation":
+		return "string"
+	case "v1.ResourceVersionMatch", "*v1.ResourceVersionMatch":
+		return "string"
+	case "v1.IncludeObjectPolicy", "*v1.IncludeObjectPolicy":
+		return "string"
+
+	// TODO: Fix these when go-restful supports a way to specify an array query param:
+	// https://github.com/emicklei/go-restful/issues/225
+	case "[]string", "[]*string":
+		return "string"
+	case "[]int32", "[]*int32":
+		return "integer"
+
+	default:
+		return typeName
+	}
+}
+
 func restfulGetResource(r rest.Getter, scope handlers.RequestScope) restful.RouteFunction {
 	return func(req *restful.Request, res *restful.Response) {
 		handlers.GetResource(r, &scope)(res.ResponseWriter, req.Request)
+	}
+}
+
+func restfulCreateResource(r rest.Creater, scope handlers.RequestScope) restful.RouteFunction {
+	return func(req *restful.Request, res *restful.Response) {
+		handlers.CreateResource(r, &scope)(res.ResponseWriter, req.Request)
+	}
+}
+
+func restfulListResource(r rest.Lister, rw rest.Watcher, scope handlers.RequestScope) restful.RouteFunction {
+	return func(request *restful.Request, response *restful.Response) {
+		handlers.ListResource(r, rw, &scope)(response.ResponseWriter, request.Request)
 	}
 }

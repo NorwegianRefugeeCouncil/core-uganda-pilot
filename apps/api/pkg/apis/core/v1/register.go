@@ -25,17 +25,15 @@ var (
 )
 
 func addKnownTypes(scheme *runtime.Scheme) error {
-	scheme.AddKnownTypes(
-		SchemeGroupVersion,
+	scheme.AddKnownTypes(SchemeGroupVersion,
 		&FormDefinition{},
 		&FormDefinitionList{},
 	)
-	scheme.AddKnownTypes(SchemeGroupVersion, &metav1.Status{})
+	metav1.AddToGroupVersion(scheme, SchemeGroupVersion)
 	return nil
 }
 
 func init() {
-	metav1.AddToGroupVersion(Scheme, metav1.SchemeGroupVersion)
 	if err := AddToScheme(Scheme); err != nil {
 		panic(err)
 	}

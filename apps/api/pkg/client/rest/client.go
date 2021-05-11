@@ -281,6 +281,28 @@ func (r *Request) Param(paramName, s string) *Request {
 	return r
 }
 
+func (r *Request) VersionedParams(obj runtime.Object, codec runtime.ParameterCodec) *Request {
+	return r.SpecificallyVersionedParams(obj, codec, r.c.content.GroupVersion)
+}
+
+func (r *Request) SpecificallyVersionedParams(obj runtime.Object, codec runtime.ParameterCodec, version schema.GroupVersion) *Request {
+	if r.err != nil {
+		return r
+	}
+	params, err := codec.EncodeParameters(obj, version)
+	if err != nil {
+		r.err = err
+		return r
+	}
+	for k, v := range params {
+		if r.params == nil {
+			r.params = make(url.Values)
+		}
+		r.params[k] = append(r.params[k], v...)
+	}
+	return r
+}
+
 func (r *Request) SetHeader(key string, values ...string) *Request {
 	if r.headers == nil {
 		r.headers = http.Header{}
@@ -372,10 +394,10 @@ func (r *Request) Watch(ctx context.Context) (watch.Interface, error) {
 
 	reqURL := r.URL().String()
 
-	reqURL = strings.Replace(reqURL, "https", "wss", -1)
-	reqURL = strings.Replace(reqURL, "http", "ws", -1)
+	reqURL = strings.Replace(reqURL, "https://", "wss://", -1)
+	reqURL = strings.Replace(reqURL, "http://", "ws://", -1)
 
-	c, resp, err := websocket.DefaultDialer.DialContext(ctx, reqURL, nil)
+	c, resp, err := websocket.DefaultDialer.DialContext(ctx, reqURL, r.headers)
 	if err != nil {
 		return nil, err
 	}

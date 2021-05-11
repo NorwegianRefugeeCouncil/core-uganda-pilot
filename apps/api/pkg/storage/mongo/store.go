@@ -10,11 +10,14 @@ import (
 	"github.com/nrc-no/core/apps/api/pkg/runtime"
 	"github.com/nrc-no/core/apps/api/pkg/storage"
 	"github.com/nrc-no/core/apps/api/pkg/util/conversion"
+	"github.com/nrc-no/core/apps/api/pkg/watch"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"io"
 	"reflect"
+	"strings"
 )
 
 type Store struct {
@@ -41,10 +44,17 @@ func NewStore(
 	prefix string,
 ) (*Store, error) {
 
+	parts := strings.Split(prefix, "/")
+	if len(parts) != 3 {
+		return nil, fmt.Errorf("expected prefix in form <database>/<group>/<resource>")
+	}
+	collection := parts[1] + "__" + parts[2]
+	collection = strings.Replace(collection, ".", "_", -1)
+
 	return &Store{
 		mongoClient: mongoClient,
-		database:    "core",
-		collection:  "",
+		database:    parts[0],
+		collection:  collection,
 		create:      create,
 		codec:       codec,
 	}, nil
@@ -119,15 +129,7 @@ func (s *Store) List(ctx context.Context, listOptions storage.ListOptions, out r
 
 func convertDocument(data bson.Raw, into runtime.Object) error {
 
-	var resourceVersion int
-	if err := data.Lookup("resourceVersion").Unmarshal(&resourceVersion); err != nil {
-		logrus.Errorf("unable to get resourceVersion from document: %v", err)
-		return err
-	}
-
-	raw := data.Lookup("currentRevision")
-	if err := raw.Unmarshal(into); err != nil {
-		logrus.Errorf("unable to get currentRevision from document: %v", err)
+	if err := bson.Unmarshal(data, into); err != nil {
 		return err
 	}
 
@@ -143,7 +145,6 @@ func convertDocument(data bson.Raw, into runtime.Object) error {
 	}
 
 	accessor.SetUID(objectID.Hex())
-	accessor.SetResourceVersion(resourceVersion)
 
 	return nil
 
@@ -293,39 +294,57 @@ func (s *Store) Update(ctx context.Context, key string, out runtime.Object, upda
 
 }
 
-func (s *Store) Watch(ctx context.Context, objPtr runtime.Object, watchFunc func(eventType string, obj runtime.Object)) error {
+func (s *Store) Watch(ctx context.Context, key string, opts storage.ListOptions) (watch.Interface, error) {
 
 	stream, err := s.mongoClient.Database(s.database).Collection(s.collection).Watch(ctx, mongo.Pipeline{})
 	if err != nil {
-		return err
+		return nil, err
 	}
-	defer stream.Close(ctx)
 
-	go func() {
-		for {
-			if stream.Next(ctx) {
-				operationType := stream.Current.Lookup("operationType")
-				operationTypeStr := ""
-				if err := operationType.Unmarshal(&operationTypeStr); err != nil {
-					logrus.Errorf("unable to unmarshal operationType: %v", err)
-					continue
-				}
+	return watch.NewWatcher(ctx, func() ([]byte, error) {
 
-				document := stream.Current.Lookup("fullDocument")
-				out := reflect.New(reflect.TypeOf(objPtr).Elem()).Interface().(runtime.Object)
-				if err := convertDocument(document.Value, out); err != nil {
-					logrus.Errorf("error converting document: %v", err)
-					continue
-				}
-
-				watchFunc(operationTypeStr, out)
-			}
+		if stream.Err() != nil {
+			return nil, stream.Err()
 		}
-	}()
 
-	<-ctx.Done()
+		if stream.Next(ctx) {
+			operationType := stream.Current.Lookup("operationType")
+			operationTypeStr := ""
+			if err := operationType.Unmarshal(&operationTypeStr); err != nil {
+				logrus.Errorf("unable to unmarshal operationType: %v", err)
+				return nil, err
+			}
 
-	return nil
+			document := stream.Current.Lookup("fullDocument")
+			var out = s.create()
+			if err := convertDocument(document.Value, out); err != nil {
+				logrus.Errorf("error converting document: %v", err)
+				return nil, err
+			}
+
+			watchEvent := watch.Event{
+				Type:   operationTypeStr,
+				Object: out,
+			}
+			bodyBytes, err := json.Marshal(watchEvent)
+			if err != nil {
+				return nil, err
+			}
+
+			logrus.Infof("sending event body: %s", string(bodyBytes))
+
+			fmt.Println(string(bodyBytes))
+
+			return bodyBytes, nil
+		}
+
+		if stream.Err() != nil {
+			return nil, stream.Err()
+		}
+
+		return nil, io.EOF
+
+	}, s.codec), nil
 
 }
 
@@ -335,52 +354,6 @@ var (
 	errExpectFieldItems = errors.New("no Items field in this object")
 	errExpectSliceItems = errors.New("Items field must be a slice of objects")
 )
-
-// SetList sets the given list object's Items member have the elements given in
-// objects.
-// Returns an error if list is not a List type (does not have an Items member),
-// or if any of the objects are not of the right type.
-func SetList(list runtime.Object, objects []runtime.Object) error {
-	itemsPtr, err := GetItemsPtr(list)
-	if err != nil {
-		return err
-	}
-	items, err := conversion.EnforcePtr(itemsPtr)
-	if err != nil {
-		return err
-	}
-	if items.Type() == objectSliceType {
-		items.Set(reflect.ValueOf(objects))
-		return nil
-	}
-	slice := reflect.MakeSlice(items.Type(), len(objects), len(objects))
-	for i := range objects {
-		dest := slice.Index(i)
-		//if dest.Type() == reflect.TypeOf(runtime.RawExtension{}) {
-		//  dest = dest.FieldByName("Object")
-		//}
-
-		// check to see if you're directly assignable
-		if reflect.TypeOf(objects[i]).AssignableTo(dest.Type()) {
-			dest.Set(reflect.ValueOf(objects[i]))
-			continue
-		}
-
-		src, err := conversion.EnforcePtr(objects[i])
-		if err != nil {
-			return err
-		}
-		if src.Type().AssignableTo(dest.Type()) {
-			dest.Set(src)
-		} else if src.Type().ConvertibleTo(dest.Type()) {
-			dest.Set(src.Convert(dest.Type()))
-		} else {
-			return fmt.Errorf("item[%d]: can't assign or convert %v into %v", i, src.Type(), dest.Type())
-		}
-	}
-	items.Set(slice)
-	return nil
-}
 
 func GetItemsPtr(list runtime.Object) (interface{}, error) {
 	obj, err := getItemsPtr(list)

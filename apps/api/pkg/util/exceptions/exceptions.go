@@ -147,3 +147,17 @@ func NewBadRequest(reason string) *StatusError {
 		Message: reason,
 	}}
 }
+
+// NewMethodNotSupported returns an error indicating the requested action is not supported on this kind.
+func NewMethodNotSupported(qualifiedResource schema.GroupResource, action string) *StatusError {
+	return &StatusError{metav1.Status{
+		Status: metav1.StatusFailure,
+		Code:   http.StatusMethodNotAllowed,
+		Reason: metav1.StatusReasonMethodNotAllowed,
+		Details: &metav1.StatusDetails{
+			Group: qualifiedResource.Group,
+			Kind:  qualifiedResource.Resource,
+		},
+		Message: fmt.Sprintf("%s is not supported on resources of kind %q", action, qualifiedResource.String()),
+	}}
+}

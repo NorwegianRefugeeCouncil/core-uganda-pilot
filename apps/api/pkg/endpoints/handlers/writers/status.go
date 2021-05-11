@@ -136,6 +136,8 @@ func SerializeObject(mediaType string, encoder runtime.Encoder, hw http.Response
 	//  trace:           trace,
 	//}
 
+	hw.Header().Set("Content-Type", mediaType)
+
 	err := encoder.Encode(object, hw)
 	if err == nil {
 		// err = w.Close()

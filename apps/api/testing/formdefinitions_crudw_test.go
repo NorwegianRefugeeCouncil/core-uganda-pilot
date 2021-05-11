@@ -19,7 +19,7 @@ func (s *MainTestSuite) TestFormDefinitionCRUD() {
 
 	var events []watch.Event
 
-	watcher, err := s.nrcClient.FormDefinitions().Watch(watchCtx)
+	watcher, err := s.nrcClient.FormDefinitions().Watch(watchCtx, v1.ListOptions{})
 	if err != nil {
 		s.T().Errorf("cannot start watch: %v", err)
 		return
@@ -27,7 +27,7 @@ func (s *MainTestSuite) TestFormDefinitionCRUD() {
 
 	go func() {
 		for event := range watcher.ResultChan() {
-			s.T().Logf("%#v", event)
+			s.T().Logf("event: %#v", event)
 			events = append(events, event)
 			if len(events) == 2 {
 				watchCancel()
@@ -82,6 +82,8 @@ func (s *MainTestSuite) TestFormDefinitionCRUD() {
 		return
 	}
 
+	time.Sleep(30 * time.Second)
+
 	// Asserting equality of input & output
 	assert.Equal(t, "core/v1", out.APIVersion)
 	assert.Equal(t, "FormDefinition", out.Kind)
@@ -89,7 +91,9 @@ func (s *MainTestSuite) TestFormDefinitionCRUD() {
 	assert.Equal(t, "customresources", out.Spec.Names.Plural)
 	assert.Equal(t, "customresource", out.Spec.Names.Singular)
 	assert.Equal(t, "CustomResource", out.Spec.Names.Kind)
-	assert.Equal(t, 1, len(out.Spec.Versions))
+	if !assert.Equal(t, 1, len(out.Spec.Versions)) {
+		return
+	}
 	assert.Equal(t, "v1", out.Spec.Versions[0].Name)
 	assert.Equal(t, "key", out.Spec.Versions[0].Schema.FormSchema.Root.Key)
 	assert.NotEmpty(t, out.Spec.Versions[0].Schema.FormSchema.Root.ID)

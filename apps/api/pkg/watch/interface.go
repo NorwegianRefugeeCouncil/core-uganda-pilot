@@ -3,11 +3,25 @@ package watch
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"github.com/nrc-no/core/apps/api/pkg/runtime"
+	"github.com/sirupsen/logrus"
+	"io"
+)
+
+// EventType defines the possible types of events.
+type EventType string
+
+const (
+	Added    EventType = "ADDED"
+	Modified EventType = "MODIFIED"
+	Deleted  EventType = "DELETED"
+	Bookmark EventType = "BOOKMARK"
+	Error    EventType = "ERROR"
 )
 
 type Event struct {
-	Type   string         `json:"type"`
+	Type   EventType      `json:"type"`
 	Object runtime.Object `json:"object"`
 }
 
@@ -52,7 +66,7 @@ func (w *watcher) run() {
 			}
 
 			type tmp struct {
-				Type   string                 `json:"type"`
+				Type   EventType              `json:"type"`
 				Object map[string]interface{} `json:"object"`
 			}
 			var event tmp
@@ -68,8 +82,11 @@ func (w *watcher) run() {
 				break
 			}
 
+			logrus.Infof("received event with type '%s' and content: %s\n", event.Type, string(runtimeObjectBytes))
+
 			obj, _, err := w.decoder.Decode(runtimeObjectBytes, nil, nil)
 			if err != nil {
+				logrus.Errorf("unable to decode event data: %v", err)
 				w.errChan <- err
 				break
 			}
@@ -88,6 +105,9 @@ func (w *watcher) run() {
 
 	select {
 	case err := <-w.errChan:
+		if errors.Is(err, io.EOF) {
+			break
+		}
 		if err == context.Canceled {
 			break
 		}

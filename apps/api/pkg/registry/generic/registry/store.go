@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/nrc-no/core/apps/api/pkg/apis/meta"
+	"github.com/nrc-no/core/apps/api/pkg/apis/meta/internalversion"
 	metav1 "github.com/nrc-no/core/apps/api/pkg/apis/meta/v1"
 	"github.com/nrc-no/core/apps/api/pkg/endpoints/request"
 	"github.com/nrc-no/core/apps/api/pkg/registry/generic"
@@ -14,6 +15,7 @@ import (
 	"github.com/nrc-no/core/apps/api/pkg/storage/backend"
 	"github.com/nrc-no/core/apps/api/pkg/util/exceptions"
 	"github.com/nrc-no/core/apps/api/pkg/util/validation/field"
+	"github.com/nrc-no/core/apps/api/pkg/watch"
 )
 
 const (
@@ -343,6 +345,9 @@ func (e *Store) CompleteWithOptions(options *generic.StoreOptions) error {
 		gvk := obj.GetObjectKind().GroupVersionKind()
 		return gvk.Group + "/" + gvk.Kind + "/" + accessor.GetUID(), nil
 	}
+	e.KeyFunc = func(ctx context.Context, name string) (string, error) {
+		return name, nil
+	}
 
 	if e.Storage == nil {
 		s, destroyFunc, err := opts.Decorator(
@@ -362,4 +367,29 @@ func (e *Store) CompleteWithOptions(options *generic.StoreOptions) error {
 
 	return nil
 
+}
+
+func (e *Store) List(ctx context.Context, options *internalversion.ListOptions) (runtime.Object, error) {
+
+	if options == nil {
+		options = &internalversion.ListOptions{ResourceVersion: ""}
+	}
+	list := e.NewListFunc()
+	// qualifiedResource := e.qualifiedResourceFromContext(ctx)
+	storageOpts := storage.ListOptions{
+		ResourceVersion: options.ResourceVersion,
+	}
+
+	err := e.Storage.List(ctx, storageOpts, list)
+	return list, err
+
+}
+
+func (e *Store) Watch(ctx context.Context, options *internalversion.ListOptions) (watch.Interface, error) {
+	storageOpts := storage.ListOptions{ResourceVersion: options.ResourceVersion}
+	w, err := e.Storage.Watch(ctx, "", storageOpts)
+	if err != nil {
+		return nil, err
+	}
+	return w, nil
 }

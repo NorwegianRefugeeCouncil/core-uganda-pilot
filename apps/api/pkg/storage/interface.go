@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"github.com/nrc-no/core/apps/api/pkg/runtime"
+	"github.com/nrc-no/core/apps/api/pkg/watch"
 )
 
 type ResponseMeta struct {
@@ -26,7 +27,7 @@ type Interface interface {
 	List(ctx context.Context, listOptions ListOptions, out runtime.Object) error
 	Create(ctx context.Context, obj runtime.Object) error
 	Update(ctx context.Context, key string, out runtime.Object, update UpdateFunc) error
-	Watch(ctx context.Context, objPtr runtime.Object, watchFunc func(eventType string, obj runtime.Object)) error
+	Watch(ctx context.Context, key string, opts ListOptions) (watch.Interface, error)
 }
 
 type Versioner interface {

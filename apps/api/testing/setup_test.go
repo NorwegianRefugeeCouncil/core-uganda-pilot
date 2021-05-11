@@ -12,6 +12,7 @@ import (
 	storagebackend "github.com/nrc-no/core/apps/api/pkg/storage/backend"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+	"net/http"
 	"net/http/httptest"
 	"testing"
 )
@@ -39,6 +40,7 @@ func (s *MainTestSuite) SetupSuite() {
 				"localhost:30001",
 			},
 		},
+		Prefix: "test",
 	}
 
 	config := &controlplane.Config{
@@ -75,7 +77,11 @@ func (s *MainTestSuite) SetupSuite() {
 	}
 	s.apiServer = apiServer
 
-	httpServer := httptest.NewServer(apiServer.GenericAPIServer.Handler.GoRestfulContainer.ServeMux)
+	httpServer := httptest.NewServer(&mockHttpServer{
+		delegate: func(writer http.ResponseWriter, request *http.Request) {
+			apiServer.GenericAPIServer.Handler.GoRestfulContainer.Dispatch(writer, request)
+		},
+	})
 	s.httpServer = httpServer
 
 	// Create client
@@ -88,6 +94,14 @@ func (s *MainTestSuite) SetupSuite() {
 	}
 	s.nrcClient = nrcClient
 
+}
+
+type mockHttpServer struct {
+	delegate http.HandlerFunc
+}
+
+func (m *mockHttpServer) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	m.delegate(w, req)
 }
 
 func (s *MainTestSuite) TearDownSuite() {

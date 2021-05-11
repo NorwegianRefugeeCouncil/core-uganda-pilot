@@ -86,6 +86,20 @@ func Convert_url_Values_To__GetOptions(in *url.Values, out *GetOptions, s conver
 func autoConvert_url_Values_To__ListOptions(in *url.Values, out *ListOptions, s conversion.Scope) error {
 	// WARNING: Field TypeMeta does not have json tag, skipping.
 
+	if values, ok := map[string][]string(*in)["watch"]; ok && len(values) > 0 {
+		if err := runtime.Convert_Slice_string_To_bool(&values, &out.Watch, s); err != nil {
+			return err
+		}
+	} else {
+		out.Watch = false
+	}
+	if values, ok := map[string][]string(*in)["resourceVersion"]; ok && len(values) > 0 {
+		if err := runtime.Convert_Slice_string_To_string(&values, &out.ResourceVersion, s); err != nil {
+			return err
+		}
+	} else {
+		out.ResourceVersion = ""
+	}
 	return nil
 }
 

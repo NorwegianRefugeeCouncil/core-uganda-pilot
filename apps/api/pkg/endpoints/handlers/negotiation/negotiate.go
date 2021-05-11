@@ -5,6 +5,7 @@ import (
 	"github.com/nrc-no/core/apps/api/pkg/runtime"
 	"github.com/nrc-no/core/apps/api/pkg/runtime/schema"
 	"github.com/nrc-no/core/apps/api/pkg/util/exceptions"
+	"mime"
 	"net/http"
 	"strconv"
 	"strings"
@@ -207,4 +208,29 @@ func acceptMediaTypeOptions(params map[string]string, accepts *runtime.Serialize
 
 	options.Accepted = *accepts
 	return options, true
+}
+
+// NegotiateInputSerializer returns the input serializer for the provided request.
+func NegotiateInputSerializer(req *http.Request, streaming bool, ns runtime.NegotiatedSerializer) (runtime.SerializerInfo, error) {
+	mediaType := req.Header.Get("Content-Type")
+	return NegotiateInputSerializerForMediaType(mediaType, streaming, ns)
+}
+
+// NegotiateInputSerializerForMediaType returns the appropriate serializer for the given media type or an error.
+func NegotiateInputSerializerForMediaType(mediaType string, streaming bool, ns runtime.NegotiatedSerializer) (runtime.SerializerInfo, error) {
+	mediaTypes := ns.SupportedMediaTypes()
+	if len(mediaType) == 0 {
+		mediaType = mediaTypes[0].MediaType
+	}
+	if mediaType, _, err := mime.ParseMediaType(mediaType); err == nil {
+		if info, ok := runtime.SerializerInfoForMediaType(mediaTypes, mediaType); ok {
+			return info, nil
+		}
+	}
+
+	supported, streamingSupported := MediaTypesForSerializer(ns)
+	if streaming {
+		return runtime.SerializerInfo{}, NewUnsupportedMediaTypeError(streamingSupported)
+	}
+	return runtime.SerializerInfo{}, NewUnsupportedMediaTypeError(supported)
 }

@@ -4,7 +4,7 @@ import (
 	"crypto/tls"
 	"github.com/nrc-no/core/apps/api/pkg/runtime"
 	"github.com/nrc-no/core/apps/api/pkg/runtime/schema"
-	"github.com/nrc-no/core/apps/api/pkg/storage/backend"
+	storagebackend "github.com/nrc-no/core/apps/api/pkg/storage/backend"
 	"github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"strings"
@@ -21,7 +21,7 @@ type Backend struct {
 type StorageFactory interface {
 	// New finds the storage destination for the given group and resource. It will
 	// return an error if the group has no storage destination configured.
-	NewConfig(groupResource schema.GroupResource) (*backend.Config, error)
+	NewConfig(groupResource schema.GroupResource) (*storagebackend.Config, error)
 
 	// ResourcePrefix returns the overridden resource prefix for the GroupResource
 	// This allows for cohabitation of resources with different native types and provides
@@ -36,7 +36,7 @@ type StorageFactory interface {
 type DefaultStorageFactory struct {
 	// StorageConfig describes how to create a storage backend in general.
 	// Its authentication information will be used for every storage.Interface returned.
-	StorageConfig backend.Config
+	StorageConfig storagebackend.Config
 
 	// Overrides map[schema.GroupResource]groupResourceOverrides
 
@@ -61,7 +61,7 @@ type DefaultStorageFactory struct {
 }
 
 func NewDefaultStorageFactory(
-	config backend.Config,
+	config storagebackend.Config,
 	defaultMediaType string,
 	defaultSerializer runtime.StorageSerializer,
 	resourceEncodingCOnfig ResourceEncodingConfig,
@@ -78,7 +78,7 @@ func NewDefaultStorageFactory(
 	}
 }
 
-func (s *DefaultStorageFactory) NewConfig(groupResource schema.GroupResource) (*backend.Config, error) {
+func (s *DefaultStorageFactory) NewConfig(groupResource schema.GroupResource) (*storagebackend.Config, error) {
 	chosenStorageResource := s.getStorageGroupResource(groupResource)
 
 	storageConfig := s.StorageConfig
@@ -97,6 +97,8 @@ func (s *DefaultStorageFactory) NewConfig(groupResource schema.GroupResource) (*
 		return nil, err
 	}
 	codecConfig.Config = storageConfig
+
+	storageConfig.Prefix = storageConfig.Prefix + "/" + groupResource.Group + "/" + groupResource.Resource
 
 	storageConfig.Codec, storageConfig.EncodeVersioner, err = s.newStorageCodecFn(codecConfig)
 	if err != nil {

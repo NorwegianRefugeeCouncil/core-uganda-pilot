@@ -2,9 +2,11 @@ package rest
 
 import (
 	"context"
+	"github.com/nrc-no/core/apps/api/pkg/apis/meta/internalversion"
 	metav1 "github.com/nrc-no/core/apps/api/pkg/apis/meta/v1"
 	"github.com/nrc-no/core/apps/api/pkg/runtime"
 	"github.com/nrc-no/core/apps/api/pkg/runtime/schema"
+	"github.com/nrc-no/core/apps/api/pkg/watch"
 )
 
 type ValidateObjectFunc func(ctx context.Context, obj runtime.Object) error
@@ -28,7 +30,7 @@ type GroupVersionAcceptor interface {
 
 type Lister interface {
 	NewList() runtime.Object
-	List(ctx context.Context) (runtime.Object, error)
+	List(ctx context.Context, options *internalversion.ListOptions) (runtime.Object, error)
 }
 
 type Getter interface {
@@ -51,4 +53,8 @@ type Updater interface {
 
 type UpdatedObjectInfo interface {
 	UpdatedObject(ctx context.Context, oldObj runtime.Object) (newObj runtime.Object, err error)
+}
+
+type Watcher interface {
+	Watch(ctx context.Context, options *internalversion.ListOptions) (watch.Interface, error)
 }

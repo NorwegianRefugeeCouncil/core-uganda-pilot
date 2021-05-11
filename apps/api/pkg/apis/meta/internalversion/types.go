@@ -24,7 +24,7 @@ type ListOptions struct {
 	// If this is not a watch, this field is ignored.
 	// If the feature gate WatchBookmarks is not enabled in apiserver,
 	// this field is ignored.
-	AllowWatchBookmarks bool
+	// AllowWatchBookmarks bool
 	// resourceVersion sets a constraint on what resource versions a request may be served from.
 	// See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for
 	// details.
@@ -34,17 +34,17 @@ type ListOptions struct {
 	// resourceVersion is set.
 	// See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for
 	// details.
-	ResourceVersionMatch metav1.ResourceVersionMatch
+	// ResourceVersionMatch metav1.ResourceVersionMatch
 
 	// Timeout for the list/watch call.
-	TimeoutSeconds *int64
+	// TimeoutSeconds *int64
 	// Limit specifies the maximum number of results to return from the server. The server may
 	// not support this field on all resource types, but if it does and more results remain it
 	// will set the continue field on the returned list object.
-	Limit int64
+	// Limit int64
 	// Continue is a token returned by the server that lets a client retrieve chunks of results
 	// from the server by specifying limit. The server may reject requests for continuation tokens
 	// it does not recognize and will return a 410 error if the token can no longer be used because
 	// it has expired.
-	Continue string
+	// Continue string
 }

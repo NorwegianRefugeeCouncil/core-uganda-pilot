@@ -2,12 +2,15 @@ package handlers
 
 import (
 	"context"
+	"encoding/hex"
+	"fmt"
 	metainternalscheme "github.com/nrc-no/core/apps/api/pkg/apis/meta/internalversion/scheme"
 	metav1 "github.com/nrc-no/core/apps/api/pkg/apis/meta/v1"
 	"github.com/nrc-no/core/apps/api/pkg/endpoints/handlers/negotiation"
 	"github.com/nrc-no/core/apps/api/pkg/endpoints/handlers/writers"
 	"github.com/nrc-no/core/apps/api/pkg/runtime"
 	"github.com/nrc-no/core/apps/api/pkg/runtime/schema"
+	"github.com/nrc-no/core/apps/api/pkg/util/exceptions"
 	"net/http"
 )
 
@@ -112,4 +115,35 @@ func targetEncodingForTransform(scope *RequestScope, mediaType negotiation.Media
 	//  return *target, metainternalversionscheme.Codecs, true
 	//}
 	return scope.Kind, scope.Serializer, false
+}
+
+// transformDecodeError adds additional information into a bad-request api error when a decode fails.
+func transformDecodeError(typer runtime.ObjectTyper, baseErr error, into runtime.Object, gvk *schema.GroupVersionKind, body []byte) error {
+	objGVKs, _, err := typer.ObjectKinds(into)
+	if err != nil {
+		return exceptions.NewBadRequest(err.Error())
+	}
+	objGVK := objGVKs[0]
+	if gvk != nil && len(gvk.Kind) > 0 {
+		return exceptions.NewBadRequest(fmt.Sprintf("%s in version %q cannot be handled as a %s: %v", gvk.Kind, gvk.Version, objGVK.Kind, baseErr))
+	}
+	summary := summarizeData(body, 30)
+	return exceptions.NewBadRequest(fmt.Sprintf("the object provided is unrecognized (must be of type %s): %v (%s)", objGVK.Kind, baseErr, summary))
+}
+
+func summarizeData(data []byte, maxLength int) string {
+	switch {
+	case len(data) == 0:
+		return "<empty>"
+	case data[0] == '{':
+		if len(data) > maxLength {
+			return string(data[:maxLength]) + " ..."
+		}
+		return string(data)
+	default:
+		if len(data) > maxLength {
+			return hex.EncodeToString(data[:maxLength]) + " ..."
+		}
+		return hex.EncodeToString(data)
+	}
 }
