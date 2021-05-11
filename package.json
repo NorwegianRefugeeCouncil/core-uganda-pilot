@@ -84,6 +84,7 @@
     "eslint-plugin-react": "7.23.1",
     "eslint-plugin-react-hooks": "4.2.0",
     "jest": "26.2.2",
+    "lorem-ipsum": "^2.0.3",
     "node-sass": "^5.0.0",
     "prettier": "2.2.1",
     "ts-jest": "26.4.0",
