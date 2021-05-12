@@ -1,89 +1,37 @@
-import React, { ButtonHTMLAttributes, FunctionComponent } from 'react';
+import * as React from 'react';
 import classNames from 'classnames';
+import { ColorTheme, Size } from '../../helpers/types';
+import { color } from '@storybook/addon-knobs';
 
-type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  theme?:
-    | 'primary'
-    | 'secondary'
-    | 'danger'
-    | 'success'
-    | 'warning'
-    | 'info'
-    | 'light'
-    | 'dark'
-    | 'link';
+export interface ButtonProps extends React.ComponentPropsWithRef<'button'> {
+  colorTheme?: ColorTheme | 'link';
   size?: 'sm' | 'lg';
-  type?: 'submit' | 'button';
   outline?: boolean;
 }
 
-export const Button: FunctionComponent<ButtonProps> = (props: ButtonProps) => {
+type Button = React.FC<ButtonProps>;
+
+const Button: Button = (props: ButtonProps) => {
   const {
-    theme = 'primary',
+    colorTheme = 'primary',
     size,
-    outline,
-    className,
+    outline = false,
+    className: customClass,
     children,
-    ...otherProps
+    ...rest
   } = props;
-  const classes: string[] = [];
-  classes.push('btn');
-  if (theme) {
-    classes.push('btn-' + (outline ? 'outline-' : '') + theme);
-  }
-  if (size) {
-    classes.push('btn-' + size);
-  }
-  const btnClass = classNames(className, classes);
+  const className = classNames('btn', customClass, {
+    [`btn-${colorTheme}`]: colorTheme && !outline,
+    [`btn-outline-${colorTheme}`]: outline,
+    [`btn-${size}`]: size != null,
+  });
   return (
-    <button {...otherProps} className={btnClass}>
+    <button {...rest} className={className}>
       {children}
     </button>
   );
 };
 
-type CloseButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  size?: 'sm' | 'lg';
-};
+Button.displayName = 'Button';
 
-export const CloseButton = (() => {
-  const cmp: FunctionComponent<CloseButtonProps> = ({
-    size,
-    className,
-    children,
-    ...props
-  }: ButtonProps) => {
-    className = classNames(className, {
-      btn: true,
-      'btn-close': true,
-      'btn-sm': size === 'sm',
-      'btn-lg': size === 'lg',
-    });
-    return (
-      <button className={className} {...props}>
-        {children}
-      </button>
-    );
-  }
-);
-
-export const CloseButton = React.forwardRef<
-  HTMLButtonElement,
-  ButtonProps & { white?: boolean }
->(({ size, white = false, className, ...baseProps }, ref) => {
-  const classes = classNames(className, {
-    'btn-close': true,
-    'btn-close-white': white,
-    'btn-sm': size === 'sm',
-    'btn-lg': size === 'lg',
-  });
-  return (
-    <button
-      ref={ref}
-      {...baseProps}
-      type="button"
-      aria-label="Close"
-      className={classes}
-    />
-  );
-});
+export default Button;

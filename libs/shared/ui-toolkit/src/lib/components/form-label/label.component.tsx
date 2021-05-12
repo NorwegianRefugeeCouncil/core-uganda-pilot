@@ -1,9 +1,9 @@
-import { FunctionComponent, LabelHTMLAttributes } from 'react';
+import * as React from 'react';
 import classNames from 'classnames';
 
-export type FormLabelProps = LabelHTMLAttributes<HTMLLabelElement>;
+export type FormLabelProps = React.ComponentPropsWithRef<'label'>;
 
-export const FormLabel: FunctionComponent<FormLabelProps> = (props) => {
+export const FormLabel: React.FC<FormLabelProps> = (props) => {
   const { className, ...otherProps } = props;
   return (
     <label {...otherProps} className={classNames(className, 'form-label')}>

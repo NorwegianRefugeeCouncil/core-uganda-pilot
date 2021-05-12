@@ -1,36 +1,14 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { ProgressPlugin } from 'webpack';
+import { uniqueId } from '../../helpers/utils';
 
-interface AccordionProps extends React.ComponentPropsWithoutRef<'div'> {
-  isFlush?: boolean;
-  stayOpen?: boolean;
-}
-
-const Accordion: React.FC<AccordionProps> = ({
-  isFlush = false,
-  stayOpen = false,
-  children,
-  ...baseProps
-}) => {
-  const uniqueId = 'accordion-' + 0; /// TODO
-  const accordionClasses = classNames('accordion', {
-    'accordion-flush': isFlush,
-  });
-  return (
-    <div className={accordionClasses} {...baseProps} id={uniqueId}>
-      {children}
-    </div>
-  );
-};
-
-interface AccordionItemProps extends React.ComponentPropsWithoutRef<'div'> {
+interface ItemProps extends React.ComponentPropsWithoutRef<'div'> {
   title: string;
   body: string | HTMLElement;
   isCollapsed?: boolean;
 }
 
-const AccordionItem: React.FC<AccordionItemProps> = ({
+const Item: React.FC<ItemProps> = ({
   title,
   body,
   isCollapsed = true,
@@ -64,4 +42,28 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   );
 };
 
-export { Accordion, AccordionItem };
+interface AccordionProps extends React.ComponentPropsWithoutRef<'div'> {
+  isFlush?: boolean;
+  stayOpen?: boolean;
+}
+
+const Accordion: React.FC<AccordionProps> = ({
+  isFlush = false,
+  stayOpen = false,
+  className: customClass,
+  children,
+  ...rest
+}) => {
+  const accordionClasses = classNames('accordion', customClass, {
+    'accordion-flush': isFlush,
+  });
+  return (
+    <div className={accordionClasses} {...rest}>
+      {children}
+    </div>
+  );
+};
+
+Accordion.displayName = 'Accordion';
+
+Accordion.Item = Item;

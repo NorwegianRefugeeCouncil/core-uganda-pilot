@@ -1,14 +1,8 @@
-import {
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeaderFeatured,
-  CardLink,
-  CardSubTitle,
-  CardText,
-  CardTitle,
-  CardTopImage,
-} from './card.component';
+import { LoremIpsum } from 'lorem-ipsum';
+import Card from './card.component';
+
+const lorem = new LoremIpsum();
+const fillerText = lorem.generateParagraphs(2);
 
 export default {
   title: 'Card',
@@ -22,9 +16,9 @@ export const basic = () => {
         <div className={'col-12 mb-5'}>
           <p>A simple card with just text</p>
           <Card>
-            <CardBody>
-              <CardText>some text</CardText>
-            </CardBody>
+            <Card.Body>
+              <Card.Text>{fillerText}</Card.Text>
+            </Card.Body>
           </Card>
         </div>
       </div>
@@ -32,10 +26,10 @@ export const basic = () => {
         <div className={'col-12 mb-5'}>
           <p>A card with a title and some text</p>
           <Card>
-            <CardBody>
-              <CardTitle>Title</CardTitle>
-              <CardText>some text</CardText>
-            </CardBody>
+            <Card.Body>
+              <Card.Title>Title</Card.Title>
+              <Card.Text>{fillerText}</Card.Text>
+            </Card.Body>
           </Card>
         </div>
       </div>
@@ -46,18 +40,16 @@ export const basic = () => {
             text, links, shadow and footer
           </p>
           <Card className={'shadow'}>
-            <CardTopImage
-              style={{ backgroundColor: 'gray', height: '200px' }}
-            />
-            <CardHeaderFeatured>Wow</CardHeaderFeatured>
-            <CardBody>
-              <CardTitle>Title</CardTitle>
-              <CardSubTitle>Subtitle</CardSubTitle>
-              <CardText>some text</CardText>
-              <CardLink href={'#'}>link 1</CardLink>
-              <CardLink href={'#'}>link 2</CardLink>
-            </CardBody>
-            <CardFooter>Footer here</CardFooter>
+            <Card.Img style={{ backgroundColor: 'gray', height: '200px' }} />
+            <Card.Header>Header</Card.Header>
+            <Card.Body>
+              <Card.Title>Title</Card.Title>
+              <Card.Subtitle>Subtitle</Card.Subtitle>
+              <Card.Text>{fillerText}</Card.Text>
+              <Card.Link href={'#'}>link 1</Card.Link>
+              <Card.Link href={'#'}>link 2</Card.Link>
+            </Card.Body>
+            <Card.Footer>Footer</Card.Footer>
           </Card>
         </div>
       </div>

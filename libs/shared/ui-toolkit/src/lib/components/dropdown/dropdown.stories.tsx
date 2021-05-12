@@ -1,4 +1,4 @@
-import { Dropdown, DropdownMenu, DropdownMenuItem } from './dropdown.component';
+import Dropdown from './dropdown.component';
 
 export default {
   title: 'Dropdown',
@@ -7,11 +7,11 @@ export default {
 
 export const basic = () => (
   <Dropdown label="Dropdown button">
-    <DropdownMenu>
-      <DropdownMenuItem label="Option 1" />
-      <DropdownMenuItem label="Option 2" />
-      <DropdownMenuItem label="Option 3" />
-      <DropdownMenuItem label="Option 4" />
-    </DropdownMenu>
+    <Dropdown.Menu>
+      <Dropdown.Item label="Option 1" />
+      <Dropdown.Item label="Option 2" />
+      <Dropdown.Item label="Option 4" />
+      <Dropdown.Item label="Option 3" />
+    </Dropdown.Menu>
   </Dropdown>
 );

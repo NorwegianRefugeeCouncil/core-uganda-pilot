@@ -12,13 +12,12 @@ export const DropdownDivider: React.FC<DropdownDividerProps> = (props) => (
   <hr className="dropdown-divider" {...props} />
 );
 
-export interface DropdownMenuItemProps
-  extends React.ComponentPropsWithoutRef<'a'> {
+export interface ItemProps extends React.ComponentPropsWithoutRef<'a'> {
   href?: string;
   label: string;
 }
 
-export const DropdownMenuItem: React.FC<DropdownMenuItemProps> = ({
+export const Item: React.FC<ItemProps> = ({
   href = '#',
   label,
   children,
@@ -29,12 +28,11 @@ export const DropdownMenuItem: React.FC<DropdownMenuItemProps> = ({
   </a>
 );
 
-export interface DropdownMenuProps
-  extends React.ComponentPropsWithoutRef<'ul'> {
+export interface MenuProps extends React.ComponentPropsWithoutRef<'ul'> {
   options?: { type: 'option' | 'divider'; href?: string; label?: string }[];
 }
 
-export const DropdownMenu: React.FC<DropdownMenuProps> = ({
+export const Menu: React.FC<MenuProps> = ({
   options = null,
   className: customClass,
   children,
@@ -48,7 +46,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
           if (option.type === 'option') {
             return (
               <li>
-                <DropdownMenuItem href={option.href} label={option.label} />
+                <Item href={option.href} label={option.label} />
               </li>
             );
           } else if (option.type === 'divider') {
@@ -76,7 +74,10 @@ export interface DropdownProps extends React.ComponentPropsWithoutRef<'div'> {
   isOpenInitially?: boolean;
 }
 
-const Dropdown: React.FC<DropdownProps> = ({
+const Dropdown: React.FC<DropdownProps> & {
+  Menu: typeof Menu;
+  Item: typeof Item;
+} = ({
   colorTheme = 'primary',
   label = 'Dropdown button',
   isOpenInitially = false,
@@ -99,7 +100,13 @@ const Dropdown: React.FC<DropdownProps> = ({
       >
         {label}
       </Button>
-      {children}
+      {isOpen ? children : null}
     </div>
   );
 };
+
+Dropdown.displayName = 'Dropdown';
+Dropdown.Menu = Menu;
+Dropdown.Item = Item;
+
+export default Dropdown;

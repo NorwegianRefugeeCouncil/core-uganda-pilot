@@ -1,7 +1,7 @@
 import * as React from 'react';
 import classNames from 'classnames';
 
-export interface ContainerProps extends React.ComponentProps<'div'> {
+export interface ContainerProps extends React.ComponentPropsWithRef<'div'> {
   /**
    * If `true`, container will center its children
    * regardless of their width.
@@ -18,29 +18,27 @@ export interface ContainerProps extends React.ComponentProps<'div'> {
  *
  * It also sets a default max-width of `60ch` (60 characters).
  */
-export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
+const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
   (
-    {
-      size,
-      centerContent = false,
-      className,
-      children,
-      ...otherProps
-    }: ContainerProps,
+    { size, centerContent = false, className: customClass, children, ...rest },
     ref
   ) => {
-    const containerClass = size ? `container-${size}` : 'container';
+    const className = classNames('container', customClass, {
+      [`container-${size}`]: size != null,
+    });
     return (
       <div
         ref={ref}
-        className={classNames(className, containerClass)}
-        {...otherProps}
+        className={className}
+        {...rest}
         style={
-          centerContent && {
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }
+          centerContent
+            ? {
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }
+            : {}
         }
       >
         {children}
@@ -48,3 +46,5 @@ export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
     );
   }
 );
+
+export default Container;
