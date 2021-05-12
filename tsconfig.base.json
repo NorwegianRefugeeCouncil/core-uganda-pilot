@@ -17,7 +17,8 @@
     "paths": {
       "@nrc.no/ui-toolkit": ["libs/shared/ui-toolkit/src/index.ts"],
       "@nrc.no/bootstrap": ["libs/shared/bootstrap/src/index.ts"],
-      "@nrc.no/formbuilder": ["libs/formbuilder/src/index.ts"]
+      "@nrc.no/formbuilder": ["libs/formbuilder/src/index.ts"],
+      "@nrc.no/core-client": ["libs/shared/core-client/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
