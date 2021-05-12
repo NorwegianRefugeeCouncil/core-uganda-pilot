@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/emicklei/go-restful v2.15.0+incompatible
+	github.com/google/go-cmp v0.5.5 // indirect
 	github.com/gorilla/websocket v1.4.2
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect

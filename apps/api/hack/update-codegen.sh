@@ -31,7 +31,7 @@ done
 
 conversion-gen -v 4 \
   --go-header-file "./hack/boilerplate.go.txt" \
-  --input-dirs "./pkg/apis/runtime/" \
+  --input-dirs "./pkg/apis/runtime/,./pkg/apis/meta/v1/,./pkg/apis/meta/internalversion/,./pkg/apis/example/v1/,./pkg/apis/example/v2/,./pkg/apis/example/,./pkg/apis/core/,./pkg/apis/core/v1/" \
   --output-base "." \
   --output-file-base="zz_generated.conversion"
 

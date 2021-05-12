@@ -20,12 +20,12 @@ import (
 	"bytes"
 	"context"
 	"flag"
+	"github.com/sirupsen/logrus"
+	"k8s.io/klog/v2"
 	"os"
 	"strings"
 	"testing"
 	"time"
-
-	"k8s.io/klog/v2"
 )
 
 func init() {
@@ -182,7 +182,7 @@ func TestLog(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			var buf bytes.Buffer
-			klog.SetOutput(&buf)
+			logrus.SetOutput(&buf)
 			test.sampleTrace.Log()
 			for _, msg := range test.expectedMessages {
 				if !strings.Contains(buf.String(), msg) {
@@ -272,7 +272,7 @@ func TestNestedTraceLog(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			var buf bytes.Buffer
-			klog.SetOutput(&buf)
+			logrus.SetOutput(&buf)
 			test.sampleTrace.Log()
 			for _, msg := range test.expectedMessages {
 				if !strings.Contains(buf.String(), msg) {
@@ -356,7 +356,7 @@ func TestLogIfLong(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var buf bytes.Buffer
-			klog.SetOutput(&buf)
+			logrus.SetOutput(&buf)
 
 			tt.sampleTrace = New("Test trace")
 			for _, mod := range tt.mutateInfo {
@@ -385,7 +385,7 @@ func TestLogNestedTrace(t *testing.T) {
 		expectedMsgs  []string
 		unexpectedMsg []string
 		trace         *Trace
-		verbosity     klog.Level
+		verbosity     logrus.Level
 	}{
 		{
 			name:          "Log nested trace when it surpasses threshold",
@@ -503,7 +503,7 @@ func TestLogNestedTrace(t *testing.T) {
 			},
 		},
 		{
-			name:          "Log all nested traces that surpass threshold and their children if klog verbosity is >= 4",
+			name:          "Log all nested traces that surpass threshold and their children if logrus verbosity is >= 4",
 			expectedMsgs:  []string{"inner1", "inner2"},
 			unexpectedMsg: []string{"msg"},
 			verbosity:     4,
@@ -535,15 +535,15 @@ func TestLogNestedTrace(t *testing.T) {
 			var buf bytes.Buffer
 			klog.SetOutput(&buf)
 
-			if tt.verbosity > 0 {
-				orig := klogV
-				klogV = func(l klog.Level) bool {
-					return l <= tt.verbosity
-				}
-				defer func() {
-					klogV = orig
-				}()
-			}
+			//if tt.verbosity > 0 {
+			//	orig := logrus.GetLevel()
+			//	klogV = func(l klog.Level) bool {
+			//		return l <= tt.verbosity
+			//	}
+			//	defer func() {
+			//		klogV = orig
+			//	}()
+			//}
 
 			tt.trace.LogIfLong(twoHundred)
 

@@ -21,7 +21,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/sirupsen/logrus"
-	"k8s.io/klog/v2"
 	"math/rand"
 	"time"
 )
@@ -198,7 +197,7 @@ func (t *Trace) logTrace() {
 		t.writeTraceSteps(&buffer, fmt.Sprintf("\nTrace[%d]: ", traceNum), stepThreshold)
 		buffer.WriteString(fmt.Sprintf("\nTrace[%d]: [%v] [%v] END\n", traceNum, t.endTime.Sub(t.startTime), totalTime))
 
-		klog.Info(buffer.String())
+		logrus.Info(buffer.String())
 		return
 	}
 

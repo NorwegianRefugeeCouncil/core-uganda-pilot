@@ -1,9 +1,9 @@
 package v1
 
 import (
-  "github.com/nrc-no/core/apps/api/pkg/conversion"
-  "github.com/nrc-no/core/apps/api/pkg/fields"
-  "github.com/nrc-no/core/apps/api/pkg/labels"
+	"github.com/nrc-no/core/apps/api/pkg/conversion"
+	"github.com/nrc-no/core/apps/api/pkg/fields"
+	"github.com/nrc-no/core/apps/api/pkg/labels"
 )
 
 //
@@ -202,37 +202,37 @@ import (
 //}
 
 func Convert_string_To_labels_Selector(in *string, out *labels.Selector, s conversion.Scope) error {
-  selector, err := labels.Parse(*in)
-  if err != nil {
-    return err
-  }
-  *out = selector
-  return nil
+	selector, err := labels.Parse(*in)
+	if err != nil {
+		return err
+	}
+	*out = selector
+	return nil
 }
 
 func Convert_string_To_fields_Selector(in *string, out *fields.Selector, s conversion.Scope) error {
-  selector, err := fields.ParseSelector(*in)
-  if err != nil {
-    return err
-  }
-  *out = selector
-  return nil
+	selector, err := fields.ParseSelector(*in)
+	if err != nil {
+		return err
+	}
+	*out = selector
+	return nil
 }
 
 func Convert_labels_Selector_To_string(in *labels.Selector, out *string, s conversion.Scope) error {
-  if *in == nil {
-    return nil
-  }
-  *out = (*in).String()
-  return nil
+	if *in == nil {
+		return nil
+	}
+	*out = (*in).String()
+	return nil
 }
 
 func Convert_fields_Selector_To_string(in *fields.Selector, out *string, s conversion.Scope) error {
-  if *in == nil {
-    return nil
-  }
-  *out = (*in).String()
-  return nil
+	if *in == nil {
+		return nil
+	}
+	*out = (*in).String()
+	return nil
 }
 
 //
@@ -243,19 +243,19 @@ func Convert_fields_Selector_To_string(in *fields.Selector, out *string, s conve
 //}
 
 func Convert_Map_string_To_string_To__LabelSelector(in *map[string]string, out *LabelSelector, s conversion.Scope) error {
-  if in == nil {
-    return nil
-  }
-  for labelKey, labelValue := range *in {
-    AddLabelToSelector(out, labelKey, labelValue)
-  }
-  return nil
+	if in == nil {
+		return nil
+	}
+	for labelKey, labelValue := range *in {
+		AddLabelToSelector(out, labelKey, labelValue)
+	}
+	return nil
 }
 
 func Convert__LabelSelector_To_Map_string_To_string(in *LabelSelector, out *map[string]string, s conversion.Scope) error {
-  var err error
-  *out, err = LabelSelectorAsMap(in)
-  return err
+	var err error
+	*out, err = LabelSelectorAsMap(in)
+	return err
 }
 
 //
