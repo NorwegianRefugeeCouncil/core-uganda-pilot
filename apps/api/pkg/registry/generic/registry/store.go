@@ -393,3 +393,22 @@ func (e *Store) Watch(ctx context.Context, options *internalversion.ListOptions)
 	}
 	return w, nil
 }
+
+func (e *Store) Delete(ctx context.Context, uid string, validation rest.ValidateObjectFunc) (runtime.Object, bool, error) {
+
+	key, err := e.KeyFunc(ctx, uid)
+	if err != nil {
+		return nil, false, err
+	}
+
+	out := e.NewFunc()
+	err = e.Storage.Delete(ctx, key, out, func(ctx context.Context, obj runtime.Object) error {
+		return nil
+	})
+	if err != nil {
+		return nil, false, err
+	}
+
+	return out, true, nil
+
+}

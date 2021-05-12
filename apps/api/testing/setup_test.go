@@ -79,7 +79,7 @@ func (s *MainTestSuite) SetupSuite() {
 
 	httpServer := httptest.NewServer(&mockHttpServer{
 		delegate: func(writer http.ResponseWriter, request *http.Request) {
-			apiServer.GenericAPIServer.Handler.GoRestfulContainer.Dispatch(writer, request)
+			apiServer.GenericAPIServer.Handler.ServeHTTP(writer, request)
 		},
 	})
 	s.httpServer = httpServer

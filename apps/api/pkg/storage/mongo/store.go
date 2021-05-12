@@ -320,6 +320,64 @@ func (s *Store) Update(ctx context.Context, key string, out runtime.Object, upda
 
 }
 
+func (s *Store) Delete(ctx context.Context, key string, out runtime.Object, validateDeletion storage.ValidateObjectFunc) error {
+
+	v, err := conversion.EnforcePtr(out)
+	if err != nil {
+		return fmt.Errorf("unable to convert output object to pointer: %v", err)
+	}
+
+	objectId, err := primitive.ObjectIDFromHex(key)
+	if err != nil {
+		return fmt.Errorf("could not convert key to objectID: %v", err)
+	}
+
+	getCurrentState := func() (*objState, error) {
+		getResp := s.collection.FindOne(ctx, bson.M{"_id": objectId})
+		if getResp.Err() != nil {
+			return nil, getResp.Err()
+		}
+		return s.getState(getResp, key, v, false)
+	}
+
+	var origState *objState
+	var origStateIsCurrent bool
+
+	origState, err = getCurrentState()
+	origStateIsCurrent = true
+
+	if err != nil {
+		return err
+	}
+
+	for {
+
+		if err := validateDeletion(ctx, origState.obj); err != nil {
+			if origStateIsCurrent {
+				return err
+			}
+			origState, err = getCurrentState()
+			if err != nil {
+				return err
+			}
+			origStateIsCurrent = true
+			continue
+		}
+
+		_, err := s.collection.UpdateOne(ctx, bson.M{
+			"_id": objectId,
+		}, bson.M{
+			"$set": bson.M{"current": nil},
+		})
+
+		if err != nil {
+			return err
+		}
+		return decode(s.codec, s.versioner, origState.data, out, origState.rev)
+	}
+
+}
+
 func (s *Store) Watch(ctx context.Context, key string, opts storage.ListOptions) (watch.Interface, error) {
 	return s.watcher.Watch(ctx, key, 0, false)
 }

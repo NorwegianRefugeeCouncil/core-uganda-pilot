@@ -113,7 +113,7 @@ func (a *APIInstaller) registerResourceHandlers(path string, storage rest.Storag
 	lister, isLister := storage.(rest.Lister)
 	watcher, isWatcher := storage.(rest.Watcher)
 	getter, isGetter := storage.(rest.Getter)
-	//deleter, isDeleter := storage.(rest.Deleter)
+	deleter, isDeleter := storage.(rest.Deleter)
 	updater, isUpdater := storage.(rest.Updater)
 	storageMeta := defaultStorageMetadata{}
 
@@ -153,11 +153,11 @@ func (a *APIInstaller) registerResourceHandlers(path string, storage rest.Storag
 	//versionedDeleterObject = indirectArbitraryPointer(versionedDeleteOptions)
 	//}
 
-	//versionedStatusPtr, err := a.group.Creater.New(optionsExternalVersion.WithKind("Status"))
-	//if err != nil {
-	//  return nil, nil, err
-	//}
-	//versionedStatus := indirectArbitraryPointer(versionedStatusPtr)
+	versionedStatusPtr, err := a.group.Creater.New(optionsExternalVersion.WithKind("Status"))
+	if err != nil {
+		return nil, nil, err
+	}
+	versionedStatus := indirectArbitraryPointer(versionedStatusPtr)
 
 	//var (
 	//  getOptions             runtime.Object
@@ -201,7 +201,7 @@ func (a *APIInstaller) registerResourceHandlers(path string, storage rest.Storag
 	actions = appendIf(actions, action{"POST", resourcePath, resourceParams, namer, false}, isCreater)
 	actions = appendIf(actions, action{"GET", itemPath, idParams, namer, false}, isGetter)
 	actions = appendIf(actions, action{"PUT", itemPath, idParams, namer, false}, isUpdater)
-	//actions = appendIf(actions, action{"DELETE", itemPath, idParams, namer, false}, isDeleter)
+	actions = appendIf(actions, action{"DELETE", itemPath, idParams, namer, false}, isDeleter)
 
 	var resourceInfo *storageversion.ResourceInfo
 
@@ -312,6 +312,16 @@ func (a *APIInstaller) registerResourceHandlers(path string, storage rest.Storag
 			routes = append(routes, route)
 
 		case "DELETE":
+			deleteReturnType := versionedStatus
+			route := ws.DELETE(action.Path).To(restfulDeleteResource(deleter, reqScope)).
+				Param(ws.QueryParameter("pretty", "if 'true', then the output is pretty-printed.")).
+				Operation("delete"+kind).
+				Produces(append(storageMeta.ProducesMIMETypes(action.Verb), mediaTypes...)...).
+				Writes(deleteReturnType).
+				Returns(http.StatusOK, "OK", deleteReturnType).
+				Returns(http.StatusAccepted, "Accepted", deleteReturnType)
+			addParams(route, action.Params)
+			routes = append(routes, route)
 		default:
 			return nil, nil, fmt.Errorf("unrecognized action verb: %s", action.Verb)
 		}
@@ -546,5 +556,11 @@ func restfulListResource(r rest.Lister, rw rest.Watcher, scope handlers.RequestS
 func restfulUpdateResource(r rest.Updater, scope handlers.RequestScope) restful.RouteFunction {
 	return func(request *restful.Request, response *restful.Response) {
 		handlers.UpdateResource(r, &scope)(response.ResponseWriter, request.Request)
+	}
+}
+
+func restfulDeleteResource(r rest.Deleter, scope handlers.RequestScope) restful.RouteFunction {
+	return func(req *restful.Request, res *restful.Response) {
+		handlers.DeleteResource(r, &scope)(res.ResponseWriter, req.Request)
 	}
 }

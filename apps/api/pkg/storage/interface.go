@@ -11,6 +11,7 @@ type ResponseMeta struct {
 }
 
 type UpdateFunc func(input runtime.Object, res ResponseMeta) (output runtime.Object, ttl *uint64, err error)
+type ValidateObjectFunc func(ctx context.Context, obj runtime.Object) error
 
 type GetOptions struct {
 	IgnoreNotFound  bool
@@ -28,6 +29,7 @@ type Interface interface {
 	Create(ctx context.Context, obj, out runtime.Object) error
 	Update(ctx context.Context, key string, out runtime.Object, update UpdateFunc) error
 	Watch(ctx context.Context, key string, opts ListOptions) (watch.Interface, error)
+	Delete(ctx context.Context, key string, out runtime.Object, validateDeletion ValidateObjectFunc) error
 }
 
 type Versioner interface {

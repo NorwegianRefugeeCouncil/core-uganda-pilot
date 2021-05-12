@@ -1,9 +1,10 @@
 package handlers
 
 import (
+	"fmt"
 	"github.com/nrc-no/core/apps/api/pkg/endpoints/request"
 	"github.com/nrc-no/core/apps/api/pkg/runtime"
-	"k8s.io/apimachinery/pkg/api/errors"
+	"github.com/nrc-no/core/apps/api/pkg/util/exceptions"
 	"net/http"
 	"net/url"
 	"strings"
@@ -46,29 +47,28 @@ func (n ContextBasedNaming) SetSelfLink(obj runtime.Object, url string) error {
 }
 
 func (n ContextBasedNaming) Namespace(req *http.Request) (namespace string, err error) {
-	//requestInfo, ok := endpoints.RequestInfoFrom(req.Context())
+	//requestInfo, ok := request.RequestInfoFrom(req.Context())
 	//if !ok {
-	//  return "", fmt.Errorf("missing requestInfo")
+	// return "", fmt.Errorf("missing requestInfo")
 	//}
 	//return requestInfo.Namespace, nil
 	return "", nil
 }
 
 func (n ContextBasedNaming) Name(req *http.Request) (namespace, name string, err error) {
-	//requestInfo, ok := endpoints.RequestInfoFrom(req.Context())
-	//if !ok {
-	//  return "", "", fmt.Errorf("missing requestInfo")
-	//}
-	//ns, err := n.Namespace(req)
-	//if err != nil {
-	//  return "", "", err
-	//}
-	//
-	//if len(requestInfo.Name) == 0 {
-	//  return "", "", errEmptyName
-	//}
-	//return ns, requestInfo.Name, nil
-	return "", "", nil
+	requestInfo, ok := request.RequestInfoFrom(req.Context())
+	if !ok {
+		return "", "", fmt.Errorf("missing requestInfo")
+	}
+	ns, err := n.Namespace(req)
+	if err != nil {
+		return "", "", err
+	}
+
+	if len(requestInfo.ResourceID) == 0 {
+		return "", "", errEmptyName
+	}
+	return ns, requestInfo.ResourceID, nil
 }
 
 // fastURLPathEncode encodes the provided path as a URL path
@@ -139,4 +139,4 @@ func (n ContextBasedNaming) ObjectName(obj runtime.Object) (namespace, name stri
 }
 
 // errEmptyName is returned when API requests do not fill the name section of the path.
-var errEmptyName = errors.NewBadRequest("name must be provided")
+var errEmptyName = exceptions.NewBadRequest("name must be provided")

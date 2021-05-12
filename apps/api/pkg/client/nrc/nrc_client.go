@@ -23,7 +23,7 @@ func NewForConfig(c *rest.Config) (*NrcCoreClient, error) {
 	config.APIPath = "apis"
 	config.ContentType = "application/json"
 	config.AcceptContentType = "application/json"
-	config.ContentConfig.NegotiatedSerializer = defaultscheme.Codecs.WithoutConversion()
+	config.NegotiatedSerializer = defaultscheme.Codecs.WithoutConversion()
 
 	restClient, err := rest.RESTClientFor(&config)
 	if err != nil {
@@ -42,10 +42,20 @@ type FormDefinitionsInterface interface {
 	List(ctx context.Context) (*v1.FormDefinitionList, error)
 	Update(ctx context.Context, formDefinition *v1.FormDefinition) (result *v1.FormDefinition, err error)
 	Watch(ctx context.Context, opts metav1.ListOptions) (p watch.Interface, err error)
+	Delete(ctx context.Context, name string, opts metav1.DeleteOptions) error
 }
 
 type formDefinitionsClient struct {
 	client rest.Interface
+}
+
+func (c *formDefinitionsClient) Delete(ctx context.Context, name string, opts metav1.DeleteOptions) error {
+	return c.client.Delete().
+		Resource("formdefinitions").
+		Name(name).
+		Body(&opts).
+		Do(ctx).
+		Error()
 }
 
 func (c *formDefinitionsClient) Get(ctx context.Context, name string) (result *v1.FormDefinition, err error) {

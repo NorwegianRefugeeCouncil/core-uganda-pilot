@@ -26,8 +26,6 @@ func (s *MainTestSuite) TestFormDefinitionCRUD() {
 		return
 	}
 
-	time.Sleep(time.Second)
-
 	idChan := make(chan string)
 
 	go func() {
@@ -40,7 +38,7 @@ func (s *MainTestSuite) TestFormDefinitionCRUD() {
 				uid := accessor.GetUID()
 				if uid == id {
 					events = append(events, event)
-					if len(events) == 2 {
+					if len(events) == 3 {
 						watchCancel()
 					}
 				}
@@ -133,17 +131,6 @@ func (s *MainTestSuite) TestFormDefinitionCRUD() {
 	// Should update version
 	assert.Equal(t, 2, updated.ResourceVersion)
 
-	t.Logf("\n%v", updated)
-
-	select {
-	case <-watchCtx.Done():
-	}
-
-	if assert.Len(t, events, 2) {
-		assert.Equal(t, watch.Added, events[0].Type)
-		assert.Equal(t, watch.Modified, events[1].Type)
-	}
-
 	list, err := s.nrcClient.FormDefinitions().List(s.ctx)
 	if !assert.NoError(t, err) {
 		return
@@ -160,5 +147,17 @@ func (s *MainTestSuite) TestFormDefinitionCRUD() {
 	}
 
 	assert.GreaterOrEqual(t, len(list.Items), 1)
+
+	assert.NoError(t, s.nrcClient.FormDefinitions().Delete(s.ctx, out.GetUID(), v1.DeleteOptions{}))
+
+	time.Sleep(2 * time.Second)
+
+	<-watchCtx.Done()
+
+	if assert.Len(t, events, 3) {
+		assert.Equal(t, watch.Added, events[0].Type)
+		assert.Equal(t, watch.Modified, events[1].Type)
+		assert.Equal(t, watch.Deleted, events[2].Type)
+	}
 
 }

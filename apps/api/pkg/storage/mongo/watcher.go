@@ -11,6 +11,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"reflect"
 	"sync"
 )
@@ -153,7 +154,7 @@ func (wc *watchChan) startWatching(watchClosedCh chan struct{}) {
 			return
 		}
 	}
-	cs, err := wc.watcher.collection.Watch(wc.ctx, mongo.Pipeline{})
+	cs, err := wc.watcher.collection.Watch(wc.ctx, mongo.Pipeline{}, options.ChangeStream().SetFullDocument(options.UpdateLookup))
 	if err != nil {
 		logrus.Errorf("failed to start mongo change stream: %v", err)
 		wc.sendError(err)
@@ -211,7 +212,8 @@ func parseDoc(e bson.Raw) (*event, error) {
 
 	currentDocument, ok := current.DocumentOK()
 	if !ok {
-		return nil, fmt.Errorf("cannot parse event: 'current' key is not a v")
+		// the "current" key was deleted, which means that the document was deleted.
+		return nil, nil
 	}
 
 	metadata, err := currentDocument.LookupErr("metadata")
@@ -266,14 +268,14 @@ func parseEvent(e bson.Raw) (*event, error) {
 	}
 
 	currentVal := current.Value
-	resourceVersion, err := e.LookupErr("fullDocument", "current", "metadata", "resourceVersion")
+	resourceVersion, err := e.LookupErr("fullDocument", "__revision")
 	if err != nil {
 		return nil, err
 	}
 
 	resourceVersionInt, ok := resourceVersion.AsInt64OK()
 	if !ok {
-		return nil, fmt.Errorf("cannot parse event: 'current.metadata.resourceVersion' key is not an int64")
+		return nil, fmt.Errorf("cannot parse event: '__revision' key is not an int64")
 	}
 
 	ret := &event{
@@ -281,7 +283,7 @@ func parseEvent(e bson.Raw) (*event, error) {
 		value:     currentVal,
 		prevValue: previous.Value,
 		rev:       resourceVersionInt,
-		isDeleted: eType == "delete",
+		isDeleted: eType == "update" && len(currentVal) == 0 && len(previous.Value) > 0,
 		isCreated: eType == "insert",
 	}
 	return ret, nil
@@ -304,6 +306,9 @@ func (wc *watchChan) sync() error {
 		doc, err := parseDoc(cursor.Current)
 		if err != nil {
 			return err
+		}
+		if doc == nil {
+			continue
 		}
 		wc.sendEvent(doc)
 	}

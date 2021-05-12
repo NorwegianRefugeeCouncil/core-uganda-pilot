@@ -84,9 +84,9 @@ func (s *Scheme) New(kind schema.GroupVersionKind) (Object, error) {
 		return reflect.New(t).Interface().(Object), nil
 	}
 
-	//if t, exists := s.unversionedKinds[kind.Kind]; exists {
-	//  return reflect.New(t).Interface().(Object), nil
-	//}
+	if t, exists := s.unversionedKinds[kind.Kind]; exists {
+		return reflect.New(t).Interface().(Object), nil
+	}
 	return nil, NewNotRegisteredErrForKind(s.schemeName, kind)
 }
 

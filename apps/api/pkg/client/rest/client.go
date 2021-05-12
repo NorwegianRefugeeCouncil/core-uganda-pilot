@@ -614,8 +614,6 @@ func (r Result) Into(obj runtime.Object) error {
 		return fmt.Errorf("0-length response with status code: %d and content-type %s", r.statusCode, r.contentType)
 	}
 
-	fmt.Println(string(r.body))
-
 	out, _, err := r.decoder.Decode(r.body, nil, obj)
 	if err != nil {
 		return err
