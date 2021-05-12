@@ -1,6 +1,5 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { ProgressPlugin } from 'webpack';
 
 export interface TabsProps extends React.ComponentPropsWithoutRef<'nav'> {
   align?: 'start' | 'end' | 'center';
@@ -17,13 +16,7 @@ const Tabs: React.FC<TabsProps> = ({
   const className = classNames('nav nav-tabs', customClassName, {});
   return (
     <nav className={className} {...rest}>
-      {React.Children.toArray(children).map((child, idx) => {
-        const handlePointerDown = () => setActiveTab(idx);
-        return React.cloneElement(child, {
-          handlePointerDown,
-          isDisabled: idx !== activeTab,
-        });
-      })}
+      {children}
     </nav>
   );
 };

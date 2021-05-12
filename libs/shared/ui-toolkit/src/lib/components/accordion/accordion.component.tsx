@@ -25,23 +25,20 @@ const Accordion: React.FC<AccordionProps> = ({
 };
 
 interface AccordionItemProps extends React.ComponentPropsWithoutRef<'div'> {
-  parentId: string;
-  uniqueKey: string;
   title: string;
   body: string | HTMLElement;
   isCollapsed?: boolean;
 }
 
 const AccordionItem: React.FC<AccordionItemProps> = ({
-  parentId,
-  uniqueKey,
   title,
   body,
   isCollapsed = true,
   ...baseProps
 }) => {
-  const headerId = 'header-' + uniqueKey;
-  const collapseId = 'collapse-' + uniqueKey;
+  const id = uniqueId(6);
+  const headerId = 'header-' + id;
+  const collapseId = 'collapse-' + id;
   const buttonClass = classNames('accordion-button', {
     collapsed: isCollapsed,
   });
@@ -54,20 +51,13 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
         <button
           className={buttonClass}
           type="button"
-          data-bs-toggle="collapse"
-          data-bs-target={'#' + collapseId}
           aria-expanded={isCollapsed}
           aria-controls={collapseId}
         >
           {title}
         </button>
       </h2>
-      <div
-        id={collapseId}
-        className={collapseClass}
-        aria-labelledby={headerId}
-        data-bs-parent={'#' + parentId}
-      >
+      <div id={collapseId} className={collapseClass} aria-labelledby={headerId}>
         <div className="accordion-body">{body}</div>
       </div>
     </>
