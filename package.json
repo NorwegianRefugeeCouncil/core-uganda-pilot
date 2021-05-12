@@ -38,6 +38,7 @@
     "core-js": "^3.6.5",
     "document-register-element": "1.13.1",
     "icons": "^1.0.0",
+    "nanoid": "^3.1.23",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-overlays": "^5.0.1",

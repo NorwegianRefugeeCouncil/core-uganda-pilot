@@ -1,6 +1,4 @@
-import React from 'react';
 import { Button } from '../button/button.component';
-import { Container } from '../container/container.component';
 import { Badge } from './badge.component';
 
 export default {

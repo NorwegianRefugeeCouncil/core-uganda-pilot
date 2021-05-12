@@ -2,7 +2,7 @@ import React, { ButtonHTMLAttributes, FunctionComponent } from 'react';
 import classNames from 'classnames';
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  kind?:
+  theme?:
     | 'primary'
     | 'secondary'
     | 'danger'
@@ -17,11 +17,18 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 export const Button: FunctionComponent<ButtonProps> = (props: ButtonProps) => {
-  const { kind, size, outline, className, children, ...otherProps } = props;
+  const {
+    theme = 'primary',
+    size,
+    outline,
+    className,
+    children,
+    ...otherProps
+  } = props;
   const classes: string[] = [];
   classes.push('btn');
-  if (kind) {
-    classes.push('btn-' + (outline ? 'outline-' : '') + kind);
+  if (theme) {
+    classes.push('btn-' + (outline ? 'outline-' : '') + theme);
   }
   if (size) {
     classes.push('btn-' + size);
