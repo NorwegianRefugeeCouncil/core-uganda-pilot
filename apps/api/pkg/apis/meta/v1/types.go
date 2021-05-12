@@ -8,6 +8,19 @@ import (
 	"github.com/nrc-no/core/apps/api/pkg/watch"
 )
 
+const (
+	// NamespaceDefault means the object is in the default namespace which is applied when not specified by clients
+	NamespaceDefault = "default"
+	// NamespaceAll is the default argument to specify on a context when you want to list or filter resources across all namespaces
+	NamespaceAll = ""
+	// NamespaceNone is the argument for a context when there is no namespace.
+	NamespaceNone = ""
+	// NamespaceSystem is the system namespace where we place system components.
+	NamespaceSystem = "kube-system"
+	// NamespacePublic is the namespace where we place public info (ConfigMaps)
+	NamespacePublic = "kube-public"
+)
+
 type ObjectMeta struct {
 	Name              string            `json:"name"`
 	Namespace         string            `json:"namespace"`
@@ -92,6 +105,7 @@ func (o *ObjectMeta) GetObjectMeta() Object {
 // ListMeta describes metadata that synthetic resources must have
 type ListMeta struct {
 	ResourceVersion string `json:"resourceVersion,omitempty" bson:"resourceVersion,omitempty"`
+	Continue        string `json:"continue,omitempty" protobuf:"bytes,3,opt,name=continue"`
 }
 
 func (l *ListMeta) GetResourceVersion() string {
@@ -100,6 +114,14 @@ func (l *ListMeta) GetResourceVersion() string {
 
 func (l *ListMeta) SetResourceVersion(version string) {
 	l.ResourceVersion = version
+}
+
+func (l *ListMeta) GetContinue() string {
+	return l.Continue
+}
+
+func (l *ListMeta) SetContinue(continueVal string) {
+	l.Continue = continueVal
 }
 
 type StatusType string

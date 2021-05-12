@@ -3,6 +3,7 @@ package testing
 import (
 	"context"
 	"github.com/nrc-no/core/apps/api/pkg/api/defaultscheme"
+	"github.com/nrc-no/core/apps/api/pkg/client/informers"
 	"github.com/nrc-no/core/apps/api/pkg/client/nrc"
 	"github.com/nrc-no/core/apps/api/pkg/client/rest"
 	"github.com/nrc-no/core/apps/api/pkg/controlplane"
@@ -10,12 +11,13 @@ import (
 	"github.com/nrc-no/core/apps/api/pkg/server/options"
 	serverstorage "github.com/nrc-no/core/apps/api/pkg/server/storage"
 	storagebackend "github.com/nrc-no/core/apps/api/pkg/storage/backend"
-  "github.com/sirupsen/logrus"
-  "github.com/stretchr/testify/assert"
+	"github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 )
 
 type MainTestSuite struct {
@@ -23,8 +25,10 @@ type MainTestSuite struct {
 	ctx            context.Context
 	httpServer     *httptest.Server
 	apiServer      *controlplane.Instance
-	nrcClient      *nrc.NrcCoreClient
+	nrcClient      nrc.Interface
 	destroyStorage func()
+	restConfig     *rest.Config
+	informer       informers.SharedInformerFactory
 }
 
 func TestMainSuite(t *testing.T) {
@@ -33,7 +37,7 @@ func TestMainSuite(t *testing.T) {
 
 func (s *MainTestSuite) SetupSuite() {
 
-  logrus.SetLevel(logrus.TraceLevel)
+	logrus.SetLevel(logrus.TraceLevel)
 
 	ctx := context.Background()
 	s.ctx = ctx
@@ -89,14 +93,20 @@ func (s *MainTestSuite) SetupSuite() {
 	s.httpServer = httpServer
 
 	// Create client
-	nrcClient, err := nrc.NewForConfig(&rest.Config{
+	restConfig := &rest.Config{
 		ContentConfig: rest.DefaultContentConfig,
 		Host:          httpServer.URL,
-	})
+	}
+	s.restConfig = restConfig
+
+	nrcClient, err := nrc.NewForConfig(restConfig)
 	if !assert.NoError(s.T(), err) {
 		panic(err)
 	}
 	s.nrcClient = nrcClient
+
+	informer := informers.NewSharedInformerFactory(s.nrcClient, time.Hour*5)
+	s.informer = informer
 
 }
 

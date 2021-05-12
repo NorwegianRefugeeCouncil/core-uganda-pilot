@@ -20,11 +20,11 @@ func (a APIObjectVersioner) UpdateObject(obj runtime.Object, resourceVersion uin
 	if err != nil {
 		return err
 	}
-	//versionString := ""
-	//if resourceVersion != 0 {
-	//  versionString = strconv.FormatUint(resourceVersion, 10)
-	//}
-	accessor.SetResourceVersion(int(resourceVersion))
+	versionString := ""
+	if resourceVersion != 0 {
+		versionString = strconv.FormatUint(resourceVersion, 10)
+	}
+	accessor.SetResourceVersion(versionString)
 	return nil
 }
 
@@ -37,9 +37,9 @@ func (a APIObjectVersioner) UpdateList(obj runtime.Object, resourceVersion uint6
 	if err != nil || listAccessor == nil {
 		return err
 	}
-	//versionString := strconv.FormatUint(resourceVersion, 10)
-	listAccessor.SetResourceVersion(int(resourceVersion))
-	//listAccessor.SetContinue(nextKey)
+	versionString := strconv.FormatUint(resourceVersion, 10)
+	listAccessor.SetResourceVersion(versionString)
+	listAccessor.SetContinue(nextKey)
 	//listAccessor.SetRemainingItemCount(count)
 	return nil
 }
@@ -50,7 +50,7 @@ func (a APIObjectVersioner) PrepareObjectForStorage(obj runtime.Object) error {
 	//if err != nil {
 	//  return err
 	//}
-	//accessor.SetResourceVersion(0)
+	// accessor.SetResourceVersion(0)
 	// accessor.SetSelfLink("")
 	return nil
 }
@@ -62,11 +62,10 @@ func (a APIObjectVersioner) ObjectResourceVersion(obj runtime.Object) (uint64, e
 		return 0, err
 	}
 	version := accessor.GetResourceVersion()
-	return uint64(version), nil
-	//if len(version) == 0 {
-	//  return 0, nil
-	//}
-	//return strconv.ParseUint(version, 10, 64)
+	if len(version) == 0 {
+		return 0, nil
+	}
+	return strconv.ParseUint(version, 10, 64)
 }
 
 // ParseResourceVersion takes a resource version argument and converts it to

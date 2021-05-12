@@ -1,4 +1,4 @@
-package nrc
+package v1
 
 import (
 	"context"
@@ -11,6 +11,10 @@ import (
 
 type NrcCoreClient struct {
 	restClient rest.Interface
+}
+
+type CoreV1Interface interface {
+	FormDefinitions() FormDefinitionsInterface
 }
 
 func New(rest rest.Interface) *NrcCoreClient {
@@ -39,7 +43,7 @@ func (c *NrcCoreClient) FormDefinitions() FormDefinitionsInterface {
 type FormDefinitionsInterface interface {
 	Create(ctx context.Context, formDefinition *v1.FormDefinition) (*v1.FormDefinition, error)
 	Get(ctx context.Context, id string) (*v1.FormDefinition, error)
-	List(ctx context.Context) (*v1.FormDefinitionList, error)
+	List(ctx context.Context, options metav1.ListOptions) (*v1.FormDefinitionList, error)
 	Update(ctx context.Context, formDefinition *v1.FormDefinition) (result *v1.FormDefinition, err error)
 	Watch(ctx context.Context, opts metav1.ListOptions) (p watch.Interface, err error)
 	Delete(ctx context.Context, name string, opts metav1.DeleteOptions) error
@@ -68,7 +72,7 @@ func (c *formDefinitionsClient) Get(ctx context.Context, name string) (result *v
 	return
 }
 
-func (c *formDefinitionsClient) List(ctx context.Context) (result *v1.FormDefinitionList, err error) {
+func (c *formDefinitionsClient) List(ctx context.Context, options metav1.ListOptions) (result *v1.FormDefinitionList, err error) {
 	result = &v1.FormDefinitionList{}
 	err = c.client.Get().
 		Resource("formdefinitions").
