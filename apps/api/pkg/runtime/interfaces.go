@@ -8,6 +8,8 @@ import (
 
 type Identifier string
 
+// +k8s:deepcopy-gen=false
+
 type Object interface {
 	DeepCopyObject() Object
 	GetObjectKind() schema.ObjectKind

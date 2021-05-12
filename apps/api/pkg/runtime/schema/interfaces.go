@@ -1,5 +1,6 @@
 package schema
 
+// +k8s:deepcopy-gen=false
 type ObjectKind interface {
 	// SetGroupVersionKind sets or clears the intended serialized kind of an object. Passing kind nil
 	// should clear the current setting.

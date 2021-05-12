@@ -22,21 +22,21 @@ import (
 //  return nil
 //}
 //
-//func Convert_Pointer_int32_To_int32(in **int32, out *int32, s conversion.Scope) error {
-//  if *in == nil {
-//    *out = 0
-//    return nil
-//  }
-//  *out = int32(**in)
-//  return nil
-//}
-//
-//func Convert_int32_To_Pointer_int32(in *int32, out **int32, s conversion.Scope) error {
-//  temp := int32(*in)
-//  *out = &temp
-//  return nil
-//}
-//
+func Convert_Pointer_int32_To_int32(in **int32, out *int32, s conversion.Scope) error {
+	if *in == nil {
+		*out = 0
+		return nil
+	}
+	*out = int32(**in)
+	return nil
+}
+
+func Convert_int32_To_Pointer_int32(in *int32, out **int32, s conversion.Scope) error {
+	temp := int32(*in)
+	*out = &temp
+	return nil
+}
+
 //func Convert_Pointer_int64_To_int64(in **int64, out *int64, s conversion.Scope) error {
 //  if *in == nil {
 //    *out = 0
@@ -86,24 +86,25 @@ import (
 //  return nil
 //}
 //
-//func Convert_Pointer_bool_To_bool(in **bool, out *bool, s conversion.Scope) error {
-//  if *in == nil {
-//    *out = false
-//    return nil
-//  }
-//  *out = **in
-//  return nil
-//}
-//
-//func Convert_bool_To_Pointer_bool(in *bool, out **bool, s conversion.Scope) error {
-//  if in == nil {
-//    boolVar := false
-//    *out = &boolVar
-//    return nil
-//  }
-//  *out = in
-//  return nil
-//}
+func Convert_Pointer_bool_To_bool(in **bool, out *bool, s conversion.Scope) error {
+	if *in == nil {
+		*out = false
+		return nil
+	}
+	*out = **in
+	return nil
+}
+
+func Convert_bool_To_Pointer_bool(in *bool, out **bool, s conversion.Scope) error {
+	if in == nil {
+		boolVar := false
+		*out = &boolVar
+		return nil
+	}
+	*out = in
+	return nil
+}
+
 //
 //// +k8s:conversion-fn=drop
 //func Convert_v1_TypeMeta_To_v1_TypeMeta(in, out *TypeMeta, s conversion.Scope) error {

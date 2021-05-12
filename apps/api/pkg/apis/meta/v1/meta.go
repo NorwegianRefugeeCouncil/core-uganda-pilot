@@ -23,6 +23,7 @@ type ListInterface interface {
 
 // Type exposes the type and APIVersion of versioned or internal API objects.
 // TODO: move this, and TypeMeta and ListMeta, to a different package
+// +k8s:deepcopy-gen=false
 type Type interface {
 	GetAPIVersion() string
 	SetAPIVersion(version string)
@@ -31,6 +32,7 @@ type Type interface {
 }
 
 // ListMetaAccessor retrieves the list interface from an object
+// +k8s:deepcopy-gen=false
 type ListMetaAccessor interface {
 	GetListMeta() ListInterface
 }
