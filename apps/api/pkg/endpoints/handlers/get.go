@@ -3,6 +3,7 @@ package handlers
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"github.com/gorilla/websocket"
 	"github.com/nrc-no/core/apps/api/pkg/apis/meta/internalversion"
 	metainternalscheme "github.com/nrc-no/core/apps/api/pkg/apis/meta/internalversion/scheme"
@@ -143,6 +144,8 @@ func ListResource(r rest.Lister, rw rest.Watcher, scope *RequestScope) http.Hand
 						logrus.Errorf("unable to serialize out event: %v", err)
 						return
 					}
+
+					fmt.Println(string(outBuf.Bytes()))
 
 					if err := conn.WriteMessage(websocket.TextMessage, outBuf.Bytes()); err != nil {
 						logrus.Errorf("failed to write to websocket: %v", err)

@@ -118,7 +118,7 @@ func (s *MainTestSuite) TestFormDefinitionCRUD() {
 	assert.NotEmpty(t, out.ObjectMeta.UID)
 	assert.NotEqual(t, time.Time{}, out.ObjectMeta.CreationTimestamp)
 	assert.Nil(t, out.ObjectMeta.DeletionTimestamp)
-	assert.Equal(t, 1, out.ObjectMeta.ResourceVersion)
+	assert.Equal(t, "1", out.ObjectMeta.ResourceVersion)
 
 	// Update form definition
 	out.Spec.Names.Plural = "abc"
@@ -131,7 +131,7 @@ func (s *MainTestSuite) TestFormDefinitionCRUD() {
 	assert.Equal(t, "abc", updated.Spec.Names.Plural)
 
 	// Should update version
-	assert.Equal(t, 2, updated.ResourceVersion)
+	assert.Equal(t, "2", updated.ResourceVersion)
 
 	list, err := s.nrcClient.CoreV1().FormDefinitions().List(s.ctx, v1.ListOptions{})
 	if !assert.NoError(t, err) {

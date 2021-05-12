@@ -2,6 +2,7 @@ package watch
 
 import (
 	"context"
+	"fmt"
 	v1 "github.com/nrc-no/core/apps/api/pkg/apis/meta/v1"
 	"github.com/nrc-no/core/apps/api/pkg/runtime"
 	"github.com/nrc-no/core/apps/api/pkg/watch"
@@ -78,6 +79,8 @@ func (sw *WebSocketWatcher) receive() {
 		if err != nil {
 			break
 		}
+
+		fmt.Println("Received event raw " + string(evt.Object.Raw))
 
 		obj, err := runtime.Decode(sw.decoder, evt.Object.Raw)
 		if err != nil {

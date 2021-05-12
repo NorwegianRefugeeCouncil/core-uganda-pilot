@@ -105,7 +105,7 @@ func (s *MainTestSuite) SetupSuite() {
 	}
 	s.nrcClient = nrcClient
 
-	informer := informers.NewSharedInformerFactory(s.nrcClient, time.Hour*5)
+	informer := informers.NewSharedInformerFactoryWithOptions(s.nrcClient, time.Hour*5)
 	s.informer = informer
 
 }

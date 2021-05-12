@@ -75,6 +75,7 @@ func (c completedConfig) New(delegationTarget server.DelegationTarget) (*Instanc
 	restStorageProviders := []RESTStorageProvider{
 		formdefinitionsstorage.StorageProvider{},
 	}
+
 	if err := m.InstallAPIs(c.ExtraConfig.APIResourceConfigSource, c.GenericConfig.RESTOptionsGetter, restStorageProviders...); err != nil {
 		return nil, err
 	}

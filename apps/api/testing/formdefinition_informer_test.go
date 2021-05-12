@@ -30,7 +30,7 @@ func (s *MainTestSuite) TestInformer() {
 		return
 	}
 
-	time.Sleep(10 * time.Second)
+	time.Sleep(60 * time.Second)
 	stopCh <- struct{}{}
 
 }
