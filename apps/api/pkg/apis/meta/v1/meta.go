@@ -15,8 +15,8 @@ type ListInterface interface {
 	SetResourceVersion(version int)
 	//GetSelfLink() string
 	//SetSelfLink(selfLink string)
-	//GetContinue() string
-	//SetContinue(c string)
+	GetContinue() string
+	SetContinue(c string)
 	//GetRemainingItemCount() *int64
 	//SetRemainingItemCount(c *int64)
 }

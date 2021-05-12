@@ -73,8 +73,13 @@ func Convert_url_Values_To__DeleteOptions(in *url.Values, out *DeleteOptions, s 
 func autoConvert_url_Values_To__GetOptions(in *url.Values, out *GetOptions, s conversion.Scope) error {
 	// WARNING: Field TypeMeta does not have json tag, skipping.
 
-	// WARNING: Field ResourceVersion does not have json tag, skipping.
-
+	if values, ok := map[string][]string(*in)["resourceVersion"]; ok && len(values) > 0 {
+		if err := runtime.Convert_Slice_string_To_string(&values, &out.ResourceVersion, s); err != nil {
+			return err
+		}
+	} else {
+		out.ResourceVersion = ""
+	}
 	return nil
 }
 
@@ -86,6 +91,20 @@ func Convert_url_Values_To__GetOptions(in *url.Values, out *GetOptions, s conver
 func autoConvert_url_Values_To__ListOptions(in *url.Values, out *ListOptions, s conversion.Scope) error {
 	// WARNING: Field TypeMeta does not have json tag, skipping.
 
+	if values, ok := map[string][]string(*in)["labelSelector"]; ok && len(values) > 0 {
+		if err := runtime.Convert_Slice_string_To_string(&values, &out.LabelSelector, s); err != nil {
+			return err
+		}
+	} else {
+		out.LabelSelector = ""
+	}
+	if values, ok := map[string][]string(*in)["fieldSelector"]; ok && len(values) > 0 {
+		if err := runtime.Convert_Slice_string_To_string(&values, &out.FieldSelector, s); err != nil {
+			return err
+		}
+	} else {
+		out.FieldSelector = ""
+	}
 	if values, ok := map[string][]string(*in)["watch"]; ok && len(values) > 0 {
 		if err := runtime.Convert_Slice_string_To_bool(&values, &out.Watch, s); err != nil {
 			return err
@@ -93,12 +112,45 @@ func autoConvert_url_Values_To__ListOptions(in *url.Values, out *ListOptions, s 
 	} else {
 		out.Watch = false
 	}
+	if values, ok := map[string][]string(*in)["allowWatchBookmarks"]; ok && len(values) > 0 {
+		if err := runtime.Convert_Slice_string_To_bool(&values, &out.AllowWatchBookmarks, s); err != nil {
+			return err
+		}
+	} else {
+		out.AllowWatchBookmarks = false
+	}
 	if values, ok := map[string][]string(*in)["resourceVersion"]; ok && len(values) > 0 {
 		if err := runtime.Convert_Slice_string_To_string(&values, &out.ResourceVersion, s); err != nil {
 			return err
 		}
 	} else {
 		out.ResourceVersion = ""
+	}
+	if values, ok := map[string][]string(*in)["resourceVersionMatch"]; ok && len(values) > 0 {
+		// FIXME: out.ResourceVersionMatch is of not yet supported type and requires manual conversion
+	} else {
+		out.ResourceVersionMatch = ""
+	}
+	if values, ok := map[string][]string(*in)["timeoutSeconds"]; ok && len(values) > 0 {
+		if err := runtime.Convert_Slice_string_To_Pointer_int64(&values, &out.TimeoutSeconds, s); err != nil {
+			return err
+		}
+	} else {
+		out.TimeoutSeconds = nil
+	}
+	if values, ok := map[string][]string(*in)["limit"]; ok && len(values) > 0 {
+		if err := runtime.Convert_Slice_string_To_int64(&values, &out.Limit, s); err != nil {
+			return err
+		}
+	} else {
+		out.Limit = 0
+	}
+	if values, ok := map[string][]string(*in)["continue"]; ok && len(values) > 0 {
+		if err := runtime.Convert_Slice_string_To_string(&values, &out.Continue, s); err != nil {
+			return err
+		}
+	} else {
+		out.Continue = ""
 	}
 	return nil
 }

@@ -1,13 +1,12 @@
 package exceptions
 
 import (
-	"fmt"
-	metav1 "github.com/nrc-no/core/apps/api/pkg/apis/meta/v1"
-	"github.com/nrc-no/core/apps/api/pkg/runtime"
-	"github.com/nrc-no/core/apps/api/pkg/runtime/schema"
-	"net/http"
-	"reflect"
-	"strings"
+  "fmt"
+  metav1 "github.com/nrc-no/core/apps/api/pkg/apis/meta/v1"
+  "github.com/nrc-no/core/apps/api/pkg/runtime"
+  "github.com/nrc-no/core/apps/api/pkg/runtime/schema"
+  "net/http"
+  "strings"
 )
 
 type StatusError struct {
@@ -93,26 +92,6 @@ func (u *UnexpectedObjectError) Error() string {
 	return fmt.Sprintf("unexpected object: %v", u.Object)
 }
 
-func FromObject(obj runtime.Object) error {
-	switch t := obj.(type) {
-	case *metav1.Status:
-		return &StatusError{ErrStatus: *t}
-	case runtime.Unstructured:
-		var status metav1.Status
-		obj := t.UnstructuredContent()
-		if !reflect.DeepEqual(obj["kind"], "Status") {
-			break
-		}
-		if err := runtime.DefaultUnstructuredConverter.FromUnstructured(t.UnstructuredContent(), &status); err != nil {
-			return err
-		}
-		if status.APIVersion != "v1" && status.APIVersion != "meta.k8s.io/v1" {
-			break
-		}
-		return &StatusError{ErrStatus: status}
-	}
-	return &UnexpectedObjectError{obj}
-}
 
 // errNotAcceptable indicates Accept negotiation has failed
 type errNotAcceptable struct {

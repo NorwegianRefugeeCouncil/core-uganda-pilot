@@ -4,6 +4,8 @@ ROOT=$(dirname "$(dirname "${BASH_SOURCE[0]}")/../")
 
 cd "${ROOT}/.."
 
+## DEEPCOPY GEN
+
 controller-gen object paths="./pkg/..."
 
 array=()
@@ -25,9 +27,11 @@ for item in "${array[@]}"; do
   sed -i -E "s/${package}.//g" "${item}"
 done
 
-conversion-gen -v 5 \
+#### CONVERSION GEN
+
+conversion-gen -v 4 \
   --go-header-file "./hack/boilerplate.go.txt" \
-  --input-dirs "./pkg/apis/meta/v1/,./pkg/apis/meta/internalversion/,./pkg/apis/example/v1/,./pkg/apis/example/v2/,./pkg/apis/example/,./pkg/apis/core/,./pkg/apis/core/v1/,./pkg/apis/core/" \
+  --input-dirs "./pkg/apis/runtime/" \
   --output-base "." \
   --output-file-base="zz_generated.conversion"
 
@@ -46,4 +50,3 @@ for item in "${array[@]}"; do
   sed -i -E "${expr}" "${item}"
   sed -i -E "s/${package}.//g" "${item}"
 done
-

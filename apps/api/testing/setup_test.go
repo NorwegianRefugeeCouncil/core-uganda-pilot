@@ -10,7 +10,8 @@ import (
 	"github.com/nrc-no/core/apps/api/pkg/server/options"
 	serverstorage "github.com/nrc-no/core/apps/api/pkg/server/storage"
 	storagebackend "github.com/nrc-no/core/apps/api/pkg/storage/backend"
-	"github.com/stretchr/testify/assert"
+  "github.com/sirupsen/logrus"
+  "github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"net/http"
 	"net/http/httptest"
@@ -31,6 +32,9 @@ func TestMainSuite(t *testing.T) {
 }
 
 func (s *MainTestSuite) SetupSuite() {
+
+  logrus.SetLevel(logrus.TraceLevel)
+
 	ctx := context.Background()
 	s.ctx = ctx
 
