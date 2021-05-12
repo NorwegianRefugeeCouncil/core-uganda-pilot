@@ -13,8 +13,9 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
     | 'dark'
     | 'link';
   size?: 'sm' | 'lg';
+  type?: 'submit' | 'button';
   outline?: boolean;
-};
+}
 
 export const Button: FunctionComponent<ButtonProps> = (props: ButtonProps) => {
   const {
@@ -63,11 +64,26 @@ export const CloseButton = (() => {
         {children}
       </button>
     );
-  };
-  cmp.defaultProps = {
-    type: 'button',
-    'aria-label': 'Close',
-  };
-  cmp.displayName = 'CloseButton';
-  return cmp;
-})();
+  }
+);
+
+export const CloseButton = React.forwardRef<
+  HTMLButtonElement,
+  ButtonProps & { white?: boolean }
+>(({ size, white = false, className, ...baseProps }, ref) => {
+  const classes = classNames(className, {
+    'btn-close': true,
+    'btn-close-white': white,
+    'btn-sm': size === 'sm',
+    'btn-lg': size === 'lg',
+  });
+  return (
+    <button
+      ref={ref}
+      {...baseProps}
+      type="button"
+      aria-label="Close"
+      className={classes}
+    />
+  );
+});

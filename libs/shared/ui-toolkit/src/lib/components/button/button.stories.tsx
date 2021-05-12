@@ -1,9 +1,19 @@
-import { Fragment } from 'react';
-import { storiesOf } from '@storybook/react';
 import { Button, CloseButton } from './button.component';
 import { Card, CardBody, CardTitle } from '../card/card.component';
+import { Container } from '../container/container.component';
 
-storiesOf('Buttons', module).add('default', () => (
+export default {
+  title: 'Button',
+  decorators: [
+    (Story: any) => (
+      <Container centerContent>
+        <Story />
+      </Container>
+    ),
+  ],
+};
+
+export const basic = () => (
   <>
     <Card>
       <CardBody>
@@ -28,12 +38,17 @@ storiesOf('Buttons', module).add('default', () => (
       </CardBody>
     </Card>
   </>
-));
+);
 
-// | 'danger'
-//     | 'success'
-//     | 'warning'
-//     | 'info'
-//     | 'light'
-//     | 'dark'
-//     | 'link';
+export const close = () => (
+  <>
+    <CloseButton size="sm" />
+    <CloseButton />
+    <CloseButton size="lg" />
+    <div style={{ background: 'black' }}>
+      <CloseButton white size="sm" />
+      <CloseButton white />
+      <CloseButton white size="lg" />
+    </div>
+  </>
+);
