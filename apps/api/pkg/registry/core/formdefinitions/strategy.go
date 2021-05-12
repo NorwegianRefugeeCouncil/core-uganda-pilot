@@ -4,10 +4,13 @@ import (
 	"context"
 	"github.com/nrc-no/core/apps/api/pkg/api/defaultscheme"
 	"github.com/nrc-no/core/apps/api/pkg/apis/core"
+	"github.com/nrc-no/core/apps/api/pkg/apis/meta"
 	"github.com/nrc-no/core/apps/api/pkg/registry/rest"
 	"github.com/nrc-no/core/apps/api/pkg/runtime"
 	"github.com/nrc-no/core/apps/api/pkg/util/exceptions"
 	"github.com/nrc-no/core/apps/api/pkg/util/validation/field"
+	uuid "github.com/satori/go.uuid"
+	"github.com/sirupsen/logrus"
 )
 
 type strategy struct {
@@ -36,6 +39,13 @@ func (s strategy) AllowCreateOnUpdate() bool {
 }
 
 func (s strategy) PrepareForCreate(ctx context.Context, obj runtime.Object) {
+	accessor, err := meta.Accessor(obj)
+	if err != nil {
+		logrus.Warn("could not get meta accessor for object")
+		return
+	}
+
+	accessor.SetName(uuid.NewV4().String())
 
 }
 
