@@ -34,8 +34,8 @@ func NewAccessor() MetadataAccessor {
 }
 
 type ResourceVersioner interface {
-	ResourceVersion(obj runtime.Object) (int, error)
-	SetResourceVersion(obj runtime.Object, version int) error
+	ResourceVersion(obj runtime.Object) (string, error)
+	SetResourceVersion(obj runtime.Object, version string) error
 }
 
 type resourceAccessor struct{}
@@ -111,15 +111,15 @@ func (r resourceAccessor) SetAnnotations(obj runtime.Object, annotations map[str
 	return nil
 }
 
-func (r resourceAccessor) ResourceVersion(obj runtime.Object) (int, error) {
+func (r resourceAccessor) ResourceVersion(obj runtime.Object) (string, error) {
 	accessor, err := Accessor(obj)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 	return accessor.GetResourceVersion(), nil
 }
 
-func (r resourceAccessor) SetResourceVersion(obj runtime.Object, version int) error {
+func (r resourceAccessor) SetResourceVersion(obj runtime.Object, version string) error {
 	accessor, err := Accessor(obj)
 	if err != nil {
 		return err

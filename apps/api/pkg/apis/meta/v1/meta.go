@@ -11,8 +11,8 @@ type ObjectMetaAccessor interface {
 // +k8s:deepcopy-gen=false
 // TODO: move this, and TypeMeta and ListMeta, to a different package
 type ListInterface interface {
-	GetResourceVersion() int
-	SetResourceVersion(version int)
+	GetResourceVersion() string
+	SetResourceVersion(version string)
 	//GetSelfLink() string
 	//SetSelfLink(selfLink string)
 	GetContinue() string

@@ -149,12 +149,11 @@ func (u *UnstructuredList) SetKind(kind string) {
 	u.setNestedField(kind, "kind")
 }
 
-func (u *UnstructuredList) GetResourceVersion() int {
-	pointer := getNestedInt64Pointer(u.Object, "metadata", "resourceVersion")
-	return int(*pointer)
+func (u *UnstructuredList) GetResourceVersion() string {
+	return getNestedString(u.Object, "metadata", "resourceVersion")
 }
 
-func (u *UnstructuredList) SetResourceVersion(version int) {
+func (u *UnstructuredList) SetResourceVersion(version string) {
 	u.setNestedField(version, "metadata", "resourceVersion")
 }
 

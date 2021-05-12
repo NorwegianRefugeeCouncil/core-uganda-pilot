@@ -19,13 +19,11 @@ package pager
 import (
 	"context"
 	"fmt"
-  "github.com/nrc-no/core/apps/api/pkg/apis/meta"
-  "github.com/nrc-no/core/apps/api/pkg/util/exceptions"
-
-  metainternalversion "github.com/nrc-no/core/apps/api/pkg/apis/meta/internalversion"
+	"github.com/nrc-no/core/apps/api/pkg/apis/meta"
+	metainternalversion "github.com/nrc-no/core/apps/api/pkg/apis/meta/internalversion"
 	metav1 "github.com/nrc-no/core/apps/api/pkg/apis/meta/v1"
 	"github.com/nrc-no/core/apps/api/pkg/runtime"
-	utilruntime "github.com/nrc-no/core/apps/api/pkg/util/runtime"
+	"github.com/nrc-no/core/apps/api/pkg/util/exceptions"
 )
 
 const defaultPageSize = 500
@@ -119,7 +117,7 @@ func (p *ListPager) List(ctx context.Context, options metav1.ListOptions) (runti
 		if list == nil {
 			list = &metainternalversion.List{Items: make([]runtime.Object, 0, options.Limit+1)}
 			list.ResourceVersion = m.GetResourceVersion()
-			list.SelfLink = m.GetSelfLink()
+			// list.SelfLink = m.GetSelfLink()
 		}
 		if err := meta.EachListItem(obj, func(obj runtime.Object) error {
 			list.Items = append(list.Items, obj)
@@ -182,7 +180,7 @@ func (p *ListPager) eachListChunkBuffered(ctx context.Context, options metav1.Li
 	chunkC := make(chan runtime.Object, p.PageBufferSize)
 	bgResultC := make(chan error, 1)
 	go func() {
-		defer utilruntime.HandleCrash()
+		//defer utilruntime.HandleCrash()
 
 		var err error
 		defer func() {

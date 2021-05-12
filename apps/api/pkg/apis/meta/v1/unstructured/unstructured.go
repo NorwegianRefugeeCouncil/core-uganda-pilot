@@ -274,16 +274,15 @@ func (u *Unstructured) SetUID(uid string) {
 	u.setNestedField(uid, "metadata", "uid")
 }
 
-func (u *Unstructured) GetResourceVersion() int {
-	pointer := getNestedInt64Pointer(u.Object, "metadata", "resourceVersion")
-	return int(*pointer)
+func (u *Unstructured) GetResourceVersion() string {
+	return getNestedString(u.Object, "metadata", "resourceVersion")
 }
 
-func (u *Unstructured) SetResourceVersion(resourceVersion int) {
-	//if len(resourceVersion) == 0 {
-	//  RemoveNestedField(u.Object, "metadata", "resourceVersion")
-	//  return
-	//}
+func (u *Unstructured) SetResourceVersion(resourceVersion string) {
+	if len(resourceVersion) == 0 {
+		RemoveNestedField(u.Object, "metadata", "resourceVersion")
+		return
+	}
 	u.setNestedField(resourceVersion, "metadata", "resourceVersion")
 }
 
