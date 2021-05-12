@@ -1,4 +1,3 @@
-import { storiesOf } from '@storybook/react';
 import {
   Card,
   CardBody,
@@ -11,7 +10,12 @@ import {
   CardTopImage,
 } from './card.component';
 
-storiesOf('Input', module).add('default', () => {
+export default {
+  title: 'Card',
+  decorators: [(Story: any) => <Story />],
+};
+
+export const basic = () => {
   return (
     <div className={'container'}>
       <div className={'row'}>
@@ -59,4 +63,4 @@ storiesOf('Input', module).add('default', () => {
       </div>
     </div>
   );
-});
+};

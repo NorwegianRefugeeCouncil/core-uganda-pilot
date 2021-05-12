@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import * as React from 'react';
-import { UniqueID } from '../../helpers/utils';
-import { ThemeColor } from '../../helpers/types';
+import { uniqueId } from '../../helpers/utils';
+import { ColorTheme } from '../../helpers/types';
 import { Button } from '../button/button.component';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -71,13 +71,13 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
 };
 
 export interface DropdownProps extends React.ComponentPropsWithoutRef<'div'> {
-  theme?: ThemeColor;
+  colorTheme?: ColorTheme;
   label?: string;
   isOpenInitially?: boolean;
 }
 
-export const Dropdown: React.FC<DropdownProps> = ({
-  theme = 'primary',
+const Dropdown: React.FC<DropdownProps> = ({
+  colorTheme = 'primary',
   label = 'Dropdown button',
   isOpenInitially = false,
   className: customClass,
@@ -86,12 +86,12 @@ export const Dropdown: React.FC<DropdownProps> = ({
 }) => {
   const [isOpen, setIsOpen] = React.useState(isOpenInitially);
   const className = classNames('dropdown', customClass);
-  const id = UniqueID(10);
+  const id = uniqueId(10);
   return (
     <div className={className} {...rest}>
       <Button
         id={id}
-        theme={theme}
+        colorTheme={colorTheme}
         className="dropdown-toggle"
         data-bs-toggle="dropdown"
         aria-expanded={isOpen}

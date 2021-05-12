@@ -1,9 +1,9 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { ThemeColor } from '../../helpers/types';
+import { ColorTheme } from '../../helpers/types';
 
 export interface BadgeProps extends React.ComponentPropsWithoutRef<'span'> {
-  theme?: ThemeColor;
+  theme?: ColorTheme;
   pill?: boolean;
 }
 
