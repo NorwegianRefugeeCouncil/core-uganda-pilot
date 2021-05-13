@@ -18,7 +18,7 @@ const allIcons = Object.values(Icons)
 export const bootstrap = () => (
   <Card>
     <Card.Body>
-      <Card.Title>Icons</Card.Title>
+      <Card.Title>Bootstrap Icons</Card.Title>
       {allIcons}
     </Card.Body>
   </Card>
