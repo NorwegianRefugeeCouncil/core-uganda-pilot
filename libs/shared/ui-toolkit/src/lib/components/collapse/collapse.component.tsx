@@ -1,17 +1,20 @@
-import { FunctionComponent, HTMLAttributes } from 'react';
+import * as React from 'react';
 import classNames from 'classnames';
 
-export type CollapseProps = HTMLAttributes<HTMLDivElement> & {
+export type CollapseProps = React.ComponentPropsWithRef<'div'> & {
   show?: boolean;
 };
 
-export const Collapse: FunctionComponent<CollapseProps> = (props) => {
-  const classes = classNames(props.className, 'collapse', {
-    show: props.show,
-  });
+export const Collapse: React.FC<CollapseProps> = ({
+  show = true,
+  className: customClass,
+  children,
+  ...rest
+}) => {
+  const classeName = classNames(customClass, 'collapse', { show });
   return (
-    <div {...props} className={classes}>
-      {props.children}
+    <div {...rest} className={classeName}>
+      {children}
     </div>
   );
 };

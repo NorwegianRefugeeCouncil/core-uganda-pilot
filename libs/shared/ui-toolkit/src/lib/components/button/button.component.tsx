@@ -1,66 +1,37 @@
-import React, { ButtonHTMLAttributes, FunctionComponent } from 'react';
+import * as React from 'react';
 import classNames from 'classnames';
+import { ColorTheme, Size } from '../../helpers/types';
+import { color } from '@storybook/addon-knobs';
 
-type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  kind?:
-    | 'primary'
-    | 'secondary'
-    | 'danger'
-    | 'success'
-    | 'warning'
-    | 'info'
-    | 'light'
-    | 'dark'
-    | 'link';
+export interface ButtonProps extends React.ComponentPropsWithRef<'button'> {
+  colorTheme?: ColorTheme | 'link';
   size?: 'sm' | 'lg';
   outline?: boolean;
-};
+}
 
-export const Button: FunctionComponent<ButtonProps> = (props: ButtonProps) => {
-  const { kind, size, outline, className, children, ...otherProps } = props;
-  const classes: string[] = [];
-  classes.push('btn');
-  if (kind) {
-    classes.push('btn-' + (outline ? 'outline-' : '') + kind);
-  }
-  if (size) {
-    classes.push('btn-' + size);
-  }
-  const btnClass = classNames(className, classes);
+type Button = React.FC<ButtonProps>;
+
+const Button: Button = (props: ButtonProps) => {
+  const {
+    colorTheme = 'primary',
+    size,
+    outline = false,
+    className: customClass,
+    children,
+    ...rest
+  } = props;
+  const className = classNames('btn', customClass, {
+    [`btn-${colorTheme}`]: colorTheme && !outline,
+    [`btn-outline-${colorTheme}`]: outline,
+    [`btn-${size}`]: size != null,
+  });
   return (
-    <button {...otherProps} className={btnClass}>
+    <button {...rest} className={className}>
       {children}
     </button>
   );
 };
 
-type CloseButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  size?: 'sm' | 'lg';
-};
+Button.displayName = 'Button';
 
-export const CloseButton = (() => {
-  const cmp: FunctionComponent<CloseButtonProps> = ({
-    size,
-    className,
-    children,
-    ...props
-  }: ButtonProps) => {
-    className = classNames(className, {
-      btn: true,
-      'btn-close': true,
-      'btn-sm': size === 'sm',
-      'btn-lg': size === 'lg',
-    });
-    return (
-      <button className={className} {...props}>
-        {children}
-      </button>
-    );
-  };
-  cmp.defaultProps = {
-    type: 'button',
-    'aria-label': 'Close',
-  };
-  cmp.displayName = 'CloseButton';
-  return cmp;
-})();
+export default Button;

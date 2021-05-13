@@ -1,39 +1,113 @@
-import { Fragment } from 'react';
-import { storiesOf } from '@storybook/react';
-import { Button, CloseButton } from './button.component';
-import { Card, CardBody, CardTitle } from '../card/card.component';
+import Button from './button.component';
+import Card from '../card/card.component';
+import Container from '../container/container.component';
 
-storiesOf('Buttons', module).add('default', () => (
+export default {
+  title: 'Button',
+  decorators: [
+    (Story: any) => (
+      <Container className="mt-2">
+        <Story />
+      </Container>
+    ),
+  ],
+};
+
+export const basic = () => (
   <>
-    <Card>
-      <CardBody>
-        <CardTitle>Buttons</CardTitle>
-        <Button kind="primary">Primary</Button>
-        <Button kind="secondary">Secondary</Button>
-        <Button kind="danger">Danger</Button>
-        <Button kind="success">Success</Button>
-        <Button kind="warning">Warning</Button>
-        <Button kind="info">Info</Button>
-        <Button kind="dark">Dark</Button>
-        <Button kind="light">Light</Button>
-        <Button kind="link">Link</Button>
-      </CardBody>
+    <Card className="mb-2">
+      <Card.Body>
+        <Card.Title>Basic Buttons</Card.Title>
+        <Button className="m-2" colorTheme="primary">
+          Primary
+        </Button>
+        <Button className="m-2" colorTheme="secondary">
+          Secondary
+        </Button>
+        <Button className="m-2" colorTheme="danger">
+          Danger
+        </Button>
+        <Button className="m-2" colorTheme="success">
+          Success
+        </Button>
+        <Button className="m-2" colorTheme="warning">
+          Warning
+        </Button>
+        <Button className="m-2" colorTheme="info">
+          Info
+        </Button>
+        <Button className="m-2" colorTheme="light">
+          Light
+        </Button>
+        <Button className="m-2" colorTheme="dark">
+          Dark
+        </Button>
+        <Button className="m-2" colorTheme="link">
+          Link
+        </Button>
+      </Card.Body>
+    </Card>
+    <Card className="mb-2">
+      <Card.Body>
+        <Card.Title>Outline Style</Card.Title>
+        <Button outline className="m-2" colorTheme="primary">
+          Primary
+        </Button>
+        <Button outline className="m-2" colorTheme="secondary">
+          Secondary
+        </Button>
+        <Button outline className="m-2" colorTheme="danger">
+          Danger
+        </Button>
+        <Button outline className="m-2" colorTheme="success">
+          Success
+        </Button>
+        <Button outline className="m-2" colorTheme="warning">
+          Warning
+        </Button>
+        <Button outline className="m-2" colorTheme="info">
+          Info
+        </Button>
+        <Button outline className="m-2" colorTheme="light">
+          Light
+        </Button>
+        <Button outline className="m-2" colorTheme="dark">
+          Dark
+        </Button>
+        <Button outline className="m-2" colorTheme="link">
+          Link
+        </Button>
+      </Card.Body>
+    </Card>
+    <Card className="mb-2">
+      <Card.Body>
+        <Card.Title>Sizes</Card.Title>
+        <Button className="m-2" colorTheme="primary" size="lg">
+          Large button
+        </Button>
+        <Button className="m-2" colorTheme="secondary" size="lg">
+          Large button
+        </Button>
+      </Card.Body>
+      <Card.Body>
+        <Button className="m-2" colorTheme="primary" size="sm">
+          Small button
+        </Button>
+        <Button className="m-2" colorTheme="secondary" size="sm">
+          Small button
+        </Button>
+      </Card.Body>
     </Card>
     <Card>
-      <CardBody>
-        <CardTitle>Close Buttons</CardTitle>
-        <CloseButton size="sm" />
-        <CloseButton />
-        <CloseButton size="lg" />
-      </CardBody>
+      <Card.Body>
+        <Card.Title>Disabled state</Card.Title>
+        <Button className="m-2" colorTheme="primary" disabled>
+          Disabled button
+        </Button>
+        <Button className="m-2" colorTheme="secondary" disabled>
+          Disabled button
+        </Button>
+      </Card.Body>
     </Card>
   </>
-));
-
-// | 'danger'
-//     | 'success'
-//     | 'warning'
-//     | 'info'
-//     | 'light'
-//     | 'dark'
-//     | 'link';
+);

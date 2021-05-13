@@ -1,13 +1,13 @@
-import { AnchorHTMLAttributes, FunctionComponent, HTMLAttributes } from 'react';
+import * as React from 'react';
 import classNames from 'classnames';
 export interface ListGroupProps
-  extends HTMLAttributes<HTMLDivElement | HTMLUListElement> {
+  extends React.HTMLAttributes<HTMLDivElement | HTMLUListElement> {
   flush?: boolean;
   isActionListGroup?: boolean;
   numbered?: boolean;
 }
 
-const ListGroup: FunctionComponent<ListGroupProps> = ({
+const ListGroup: React.FC<ListGroupProps> = ({
   flush,
   isActionListGroup,
   numbered,
@@ -47,8 +47,11 @@ export interface ListGroupItemProps {
   isAction?: boolean;
 }
 
-const ListGroupItem: FunctionComponent<
-  (HTMLAttributes<HTMLLIElement> | AnchorHTMLAttributes<HTMLAnchorElement>) &
+const ListGroupItem: React.FC<
+  (
+    | React.HTMLAttributes<HTMLLIElement>
+    | React.AnchorHTMLAttributes<HTMLAnchorElement>
+  ) &
     ListGroupItemProps
 > = ({ active, isAction, disabled, ...props }) => {
   const classes = classNames('list-group-item', {
@@ -57,14 +60,14 @@ const ListGroupItem: FunctionComponent<
     'list-group-item-action': isAction,
   });
   if (isAction) {
-    const p = props as AnchorHTMLAttributes<HTMLAnchorElement>;
+    const p = props as React.AnchorHTMLAttributes<HTMLAnchorElement>;
     return (
       <a {...p} className={classNames(props.className, classes)}>
         {props.children}
       </a>
     );
   } else {
-    const p = props as HTMLAttributes<HTMLLIElement>;
+    const p = props as React.HTMLAttributes<HTMLLIElement>;
     return (
       <li {...p} className={classNames(props.className, classes)}>
         {props.children}
