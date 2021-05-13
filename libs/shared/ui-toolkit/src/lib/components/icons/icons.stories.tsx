@@ -7,13 +7,13 @@ export default {
   decorators: [(Story: any) => <Story />],
 };
 
-const allIcons = Object.values(Icons)
-  .filter((icon) => {
-    return {}.toString.call(icon) === '[object Function]';
-  })
-  .map((icon) =>
-    React.createElement(icon, { style: { fontSize: '2em' }, className: 'me-2' })
-  );
+const allIcons = Object.entries(Icons)
+  .filter(
+    ([name, icon]) => Object().toString.call(icon) === '[object Function]'
+  )
+  .map(([name, icon]) => (
+    <div className={'h1 m-4 d-inline-block'}>{React.createElement(icon)}</div>
+  ));
 
 export const bootstrap = () => (
   <Card>
