@@ -14,20 +14,6 @@ const bootstrapIcon: (className: string) => React.FC<IconsProps> = (
   };
 };
 
-// const kebabToCamel = (kebab: string) => {
-//   const words = kebab.match(/\w+/g);
-//   return words
-//     .map((word) => `${word.slice(0, 1).toUpperCase()}${word.slice(1)}`)
-//     .join('');
-// };
-
-// iconNames.forEach((kebab) => {
-//   const camel = kebabToCamel(kebab);
-//   // console.log(`const ${camel} = bootstrapIcon('${kebab}');`);
-//   // console.log(`Icons.${camel} = ${camel};`);
-//   console.log(`${camel}: typeof ${camel};`);
-// });
-
 const Alarm = bootstrapIcon('alarm');
 const AlarmFill = bootstrapIcon('alarm-fill');
 const AlignBottom = bootstrapIcon('align-bottom');
@@ -4149,6 +4135,6 @@ Icons.Youtube = Youtube;
 Icons.ZoomIn = ZoomIn;
 Icons.ZoomOut = ZoomOut;
 
-// Icons.displayName = 'Icons';
+Icons.displayName = 'Icons';
 
 export default Icons;
