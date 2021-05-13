@@ -20,6 +20,7 @@ import (
   "fmt"
   "github.com/emicklei/go-restful"
   "github.com/go-openapi/spec"
+  openapi3 "github.com/nrc-no/core/apps/api/openapi"
   "github.com/nrc-no/core/apps/api/pkg/api/patch"
   "github.com/nrc-no/core/apps/api/pkg/apis/apiextensions"
   apiextensionsv1 "github.com/nrc-no/core/apps/api/pkg/apis/apiextensions/v1"
@@ -90,7 +91,7 @@ func BuildSwagger(crd *apiextensionsv1.CustomResourceDefinition, version string,
 
   if s != nil && s.OpenAPIV3Schema != nil {
     internalCRDSchema := &apiextensions.CustomResourceValidation{}
-    if err := apiextensionsv1.Convert_v1_CustomResourceValidation_To_apiextensions_CustomResourceValidation(s, internalCRDSchema, nil); err != nil {
+    if err := apiextensionsv1.Convert_CustomResourceValidation_To_apiextensions_CustomResourceValidation(s, internalCRDSchema, nil); err != nil {
       return nil, fmt.Errorf("failed converting CRD validation to internal version: %v", err)
     }
     if !validation.SchemaHasInvalidTypes(internalCRDSchema.OpenAPIV3Schema) {
@@ -430,7 +431,7 @@ func withDescription(s spec.Schema, desc string) spec.Schema {
 
 func buildDefinitionsFunc() {
   namer = openapi.NewDefinitionNamer(runtime.NewScheme())
-  definitions = GetOpenAPIDefinitions(func(name string) spec.Ref {
+  definitions = openapi3.GetOpenAPIDefinitions(func(name string) spec.Ref {
     defName, _ := namer.GetDefinitionName(name)
     return spec.MustCreateRef(definitionPrefix + common.EscapeJsonPointer(defName))
   })

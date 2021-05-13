@@ -10,7 +10,7 @@ import (
 	unsafe "unsafe"
 
 	core "github.com/nrc-no/core/apps/api/pkg/apis/core"
-	v1 "github.com/nrc-no/core/apps/api/pkg/apis/core/v1"
+
 	conversion "github.com/nrc-no/core/apps/api/pkg/conversion"
 	runtime "github.com/nrc-no/core/apps/api/pkg/runtime"
 )
@@ -22,230 +22,230 @@ func init() {
 // RegisterConversions adds conversion functions to the given scheme.
 // Public to allow building arbitrary schemes.
 func RegisterConversions(s *runtime.Scheme) error {
-	if err := s.AddGeneratedConversionFunc((*v1.CustomResourceNames)(nil), (*core.CustomResourceNames)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1_CustomResourceNames_To_core_CustomResourceNames(a.(*v1.CustomResourceNames), b.(*core.CustomResourceNames), scope)
+	if err := s.AddGeneratedConversionFunc((*CustomResourceNames)(nil), (*core.CustomResourceNames)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_CustomResourceNames_To_core_CustomResourceNames(a.(*CustomResourceNames), b.(*core.CustomResourceNames), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*core.CustomResourceNames)(nil), (*v1.CustomResourceNames)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_core_CustomResourceNames_To_v1_CustomResourceNames(a.(*core.CustomResourceNames), b.(*v1.CustomResourceNames), scope)
+	if err := s.AddGeneratedConversionFunc((*core.CustomResourceNames)(nil), (*CustomResourceNames)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_CustomResourceNames_To_CustomResourceNames(a.(*core.CustomResourceNames), b.(*CustomResourceNames), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*v1.FormDefinition)(nil), (*core.FormDefinition)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1_FormDefinition_To_core_FormDefinition(a.(*v1.FormDefinition), b.(*core.FormDefinition), scope)
+	if err := s.AddGeneratedConversionFunc((*FormDefinition)(nil), (*core.FormDefinition)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_FormDefinition_To_core_FormDefinition(a.(*FormDefinition), b.(*core.FormDefinition), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*core.FormDefinition)(nil), (*v1.FormDefinition)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_core_FormDefinition_To_v1_FormDefinition(a.(*core.FormDefinition), b.(*v1.FormDefinition), scope)
+	if err := s.AddGeneratedConversionFunc((*core.FormDefinition)(nil), (*FormDefinition)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_FormDefinition_To_FormDefinition(a.(*core.FormDefinition), b.(*FormDefinition), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*v1.FormDefinitionList)(nil), (*core.FormDefinitionList)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1_FormDefinitionList_To_core_FormDefinitionList(a.(*v1.FormDefinitionList), b.(*core.FormDefinitionList), scope)
+	if err := s.AddGeneratedConversionFunc((*FormDefinitionList)(nil), (*core.FormDefinitionList)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_FormDefinitionList_To_core_FormDefinitionList(a.(*FormDefinitionList), b.(*core.FormDefinitionList), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*core.FormDefinitionList)(nil), (*v1.FormDefinitionList)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_core_FormDefinitionList_To_v1_FormDefinitionList(a.(*core.FormDefinitionList), b.(*v1.FormDefinitionList), scope)
+	if err := s.AddGeneratedConversionFunc((*core.FormDefinitionList)(nil), (*FormDefinitionList)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_FormDefinitionList_To_FormDefinitionList(a.(*core.FormDefinitionList), b.(*FormDefinitionList), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*v1.FormDefinitionSpec)(nil), (*core.FormDefinitionSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1_FormDefinitionSpec_To_core_FormDefinitionSpec(a.(*v1.FormDefinitionSpec), b.(*core.FormDefinitionSpec), scope)
+	if err := s.AddGeneratedConversionFunc((*FormDefinitionSpec)(nil), (*core.FormDefinitionSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_FormDefinitionSpec_To_core_FormDefinitionSpec(a.(*FormDefinitionSpec), b.(*core.FormDefinitionSpec), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*core.FormDefinitionSpec)(nil), (*v1.FormDefinitionSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_core_FormDefinitionSpec_To_v1_FormDefinitionSpec(a.(*core.FormDefinitionSpec), b.(*v1.FormDefinitionSpec), scope)
+	if err := s.AddGeneratedConversionFunc((*core.FormDefinitionSpec)(nil), (*FormDefinitionSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_FormDefinitionSpec_To_FormDefinitionSpec(a.(*core.FormDefinitionSpec), b.(*FormDefinitionSpec), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*v1.FormDefinitionVersion)(nil), (*core.FormDefinitionVersion)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1_FormDefinitionVersion_To_core_FormDefinitionVersion(a.(*v1.FormDefinitionVersion), b.(*core.FormDefinitionVersion), scope)
+	if err := s.AddGeneratedConversionFunc((*FormDefinitionVersion)(nil), (*core.FormDefinitionVersion)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_FormDefinitionVersion_To_core_FormDefinitionVersion(a.(*FormDefinitionVersion), b.(*core.FormDefinitionVersion), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*core.FormDefinitionVersion)(nil), (*v1.FormDefinitionVersion)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_core_FormDefinitionVersion_To_v1_FormDefinitionVersion(a.(*core.FormDefinitionVersion), b.(*v1.FormDefinitionVersion), scope)
+	if err := s.AddGeneratedConversionFunc((*core.FormDefinitionVersion)(nil), (*FormDefinitionVersion)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_FormDefinitionVersion_To_FormDefinitionVersion(a.(*core.FormDefinitionVersion), b.(*FormDefinitionVersion), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*v1.FormElement)(nil), (*core.FormElement)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1_FormElement_To_core_FormElement(a.(*v1.FormElement), b.(*core.FormElement), scope)
+	if err := s.AddGeneratedConversionFunc((*FormElement)(nil), (*core.FormElement)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_FormElement_To_core_FormElement(a.(*FormElement), b.(*core.FormElement), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*core.FormElement)(nil), (*v1.FormElement)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_core_FormElement_To_v1_FormElement(a.(*core.FormElement), b.(*v1.FormElement), scope)
+	if err := s.AddGeneratedConversionFunc((*core.FormElement)(nil), (*FormElement)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_FormElement_To_FormElement(a.(*core.FormElement), b.(*FormElement), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*v1.FormSchema)(nil), (*core.FormSchema)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1_FormSchema_To_core_FormSchema(a.(*v1.FormSchema), b.(*core.FormSchema), scope)
+	if err := s.AddGeneratedConversionFunc((*FormSchema)(nil), (*core.FormSchema)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_FormSchema_To_core_FormSchema(a.(*FormSchema), b.(*core.FormSchema), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*core.FormSchema)(nil), (*v1.FormSchema)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_core_FormSchema_To_v1_FormSchema(a.(*core.FormSchema), b.(*v1.FormSchema), scope)
+	if err := s.AddGeneratedConversionFunc((*core.FormSchema)(nil), (*FormSchema)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_FormSchema_To_FormSchema(a.(*core.FormSchema), b.(*FormSchema), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*v1.FormSchemaDefinition)(nil), (*core.FormSchemaDefinition)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1_FormSchemaDefinition_To_core_FormSchemaDefinition(a.(*v1.FormSchemaDefinition), b.(*core.FormSchemaDefinition), scope)
+	if err := s.AddGeneratedConversionFunc((*FormSchemaDefinition)(nil), (*core.FormSchemaDefinition)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_FormSchemaDefinition_To_core_FormSchemaDefinition(a.(*FormSchemaDefinition), b.(*core.FormSchemaDefinition), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*core.FormSchemaDefinition)(nil), (*v1.FormSchemaDefinition)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_core_FormSchemaDefinition_To_v1_FormSchemaDefinition(a.(*core.FormSchemaDefinition), b.(*v1.FormSchemaDefinition), scope)
+	if err := s.AddGeneratedConversionFunc((*core.FormSchemaDefinition)(nil), (*FormSchemaDefinition)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_FormSchemaDefinition_To_FormSchemaDefinition(a.(*core.FormSchemaDefinition), b.(*FormSchemaDefinition), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*v1.TranslatedString)(nil), (*core.TranslatedString)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1_TranslatedString_To_core_TranslatedString(a.(*v1.TranslatedString), b.(*core.TranslatedString), scope)
+	if err := s.AddGeneratedConversionFunc((*TranslatedString)(nil), (*core.TranslatedString)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_TranslatedString_To_core_TranslatedString(a.(*TranslatedString), b.(*core.TranslatedString), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*core.TranslatedString)(nil), (*v1.TranslatedString)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_core_TranslatedString_To_v1_TranslatedString(a.(*core.TranslatedString), b.(*v1.TranslatedString), scope)
+	if err := s.AddGeneratedConversionFunc((*core.TranslatedString)(nil), (*TranslatedString)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_TranslatedString_To_TranslatedString(a.(*core.TranslatedString), b.(*TranslatedString), scope)
 	}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func autoConvert_v1_CustomResourceNames_To_core_CustomResourceNames(in *v1.CustomResourceNames, out *core.CustomResourceNames, s conversion.Scope) error {
+func autoConvert_CustomResourceNames_To_core_CustomResourceNames(in *CustomResourceNames, out *core.CustomResourceNames, s conversion.Scope) error {
 	out.Plural = in.Plural
 	out.Singular = in.Singular
 	out.Kind = in.Kind
 	return nil
 }
 
-// Convert_v1_CustomResourceNames_To_core_CustomResourceNames is an autogenerated conversion function.
-func Convert_v1_CustomResourceNames_To_core_CustomResourceNames(in *v1.CustomResourceNames, out *core.CustomResourceNames, s conversion.Scope) error {
-	return autoConvert_v1_CustomResourceNames_To_core_CustomResourceNames(in, out, s)
+// Convert_CustomResourceNames_To_core_CustomResourceNames is an autogenerated conversion function.
+func Convert_CustomResourceNames_To_core_CustomResourceNames(in *CustomResourceNames, out *core.CustomResourceNames, s conversion.Scope) error {
+	return autoConvert_CustomResourceNames_To_core_CustomResourceNames(in, out, s)
 }
 
-func autoConvert_core_CustomResourceNames_To_v1_CustomResourceNames(in *core.CustomResourceNames, out *v1.CustomResourceNames, s conversion.Scope) error {
+func autoConvert_core_CustomResourceNames_To_CustomResourceNames(in *core.CustomResourceNames, out *CustomResourceNames, s conversion.Scope) error {
 	out.Plural = in.Plural
 	out.Singular = in.Singular
 	out.Kind = in.Kind
 	return nil
 }
 
-// Convert_core_CustomResourceNames_To_v1_CustomResourceNames is an autogenerated conversion function.
-func Convert_core_CustomResourceNames_To_v1_CustomResourceNames(in *core.CustomResourceNames, out *v1.CustomResourceNames, s conversion.Scope) error {
-	return autoConvert_core_CustomResourceNames_To_v1_CustomResourceNames(in, out, s)
+// Convert_core_CustomResourceNames_To_CustomResourceNames is an autogenerated conversion function.
+func Convert_core_CustomResourceNames_To_CustomResourceNames(in *core.CustomResourceNames, out *CustomResourceNames, s conversion.Scope) error {
+	return autoConvert_core_CustomResourceNames_To_CustomResourceNames(in, out, s)
 }
 
-func autoConvert_v1_FormDefinition_To_core_FormDefinition(in *v1.FormDefinition, out *core.FormDefinition, s conversion.Scope) error {
+func autoConvert_FormDefinition_To_core_FormDefinition(in *FormDefinition, out *core.FormDefinition, s conversion.Scope) error {
 	out.TypeMeta = in.TypeMeta
 	out.ObjectMeta = in.ObjectMeta
-	if err := Convert_v1_FormDefinitionSpec_To_core_FormDefinitionSpec(&in.Spec, &out.Spec, s); err != nil {
+	if err := Convert_FormDefinitionSpec_To_core_FormDefinitionSpec(&in.Spec, &out.Spec, s); err != nil {
 		return err
 	}
 	return nil
 }
 
-// Convert_v1_FormDefinition_To_core_FormDefinition is an autogenerated conversion function.
-func Convert_v1_FormDefinition_To_core_FormDefinition(in *v1.FormDefinition, out *core.FormDefinition, s conversion.Scope) error {
-	return autoConvert_v1_FormDefinition_To_core_FormDefinition(in, out, s)
+// Convert_FormDefinition_To_core_FormDefinition is an autogenerated conversion function.
+func Convert_FormDefinition_To_core_FormDefinition(in *FormDefinition, out *core.FormDefinition, s conversion.Scope) error {
+	return autoConvert_FormDefinition_To_core_FormDefinition(in, out, s)
 }
 
-func autoConvert_core_FormDefinition_To_v1_FormDefinition(in *core.FormDefinition, out *v1.FormDefinition, s conversion.Scope) error {
+func autoConvert_core_FormDefinition_To_FormDefinition(in *core.FormDefinition, out *FormDefinition, s conversion.Scope) error {
 	out.TypeMeta = in.TypeMeta
 	out.ObjectMeta = in.ObjectMeta
-	if err := Convert_core_FormDefinitionSpec_To_v1_FormDefinitionSpec(&in.Spec, &out.Spec, s); err != nil {
+	if err := Convert_core_FormDefinitionSpec_To_FormDefinitionSpec(&in.Spec, &out.Spec, s); err != nil {
 		return err
 	}
 	return nil
 }
 
-// Convert_core_FormDefinition_To_v1_FormDefinition is an autogenerated conversion function.
-func Convert_core_FormDefinition_To_v1_FormDefinition(in *core.FormDefinition, out *v1.FormDefinition, s conversion.Scope) error {
-	return autoConvert_core_FormDefinition_To_v1_FormDefinition(in, out, s)
+// Convert_core_FormDefinition_To_FormDefinition is an autogenerated conversion function.
+func Convert_core_FormDefinition_To_FormDefinition(in *core.FormDefinition, out *FormDefinition, s conversion.Scope) error {
+	return autoConvert_core_FormDefinition_To_FormDefinition(in, out, s)
 }
 
-func autoConvert_v1_FormDefinitionList_To_core_FormDefinitionList(in *v1.FormDefinitionList, out *core.FormDefinitionList, s conversion.Scope) error {
+func autoConvert_FormDefinitionList_To_core_FormDefinitionList(in *FormDefinitionList, out *core.FormDefinitionList, s conversion.Scope) error {
 	out.ListMeta = in.ListMeta
 	out.TypeMeta = in.TypeMeta
 	out.Items = *(*[]core.FormDefinition)(unsafe.Pointer(&in.Items))
 	return nil
 }
 
-// Convert_v1_FormDefinitionList_To_core_FormDefinitionList is an autogenerated conversion function.
-func Convert_v1_FormDefinitionList_To_core_FormDefinitionList(in *v1.FormDefinitionList, out *core.FormDefinitionList, s conversion.Scope) error {
-	return autoConvert_v1_FormDefinitionList_To_core_FormDefinitionList(in, out, s)
+// Convert_FormDefinitionList_To_core_FormDefinitionList is an autogenerated conversion function.
+func Convert_FormDefinitionList_To_core_FormDefinitionList(in *FormDefinitionList, out *core.FormDefinitionList, s conversion.Scope) error {
+	return autoConvert_FormDefinitionList_To_core_FormDefinitionList(in, out, s)
 }
 
-func autoConvert_core_FormDefinitionList_To_v1_FormDefinitionList(in *core.FormDefinitionList, out *v1.FormDefinitionList, s conversion.Scope) error {
+func autoConvert_core_FormDefinitionList_To_FormDefinitionList(in *core.FormDefinitionList, out *FormDefinitionList, s conversion.Scope) error {
 	out.ListMeta = in.ListMeta
 	out.TypeMeta = in.TypeMeta
-	out.Items = *(*[]v1.FormDefinition)(unsafe.Pointer(&in.Items))
+	out.Items = *(*[]FormDefinition)(unsafe.Pointer(&in.Items))
 	return nil
 }
 
-// Convert_core_FormDefinitionList_To_v1_FormDefinitionList is an autogenerated conversion function.
-func Convert_core_FormDefinitionList_To_v1_FormDefinitionList(in *core.FormDefinitionList, out *v1.FormDefinitionList, s conversion.Scope) error {
-	return autoConvert_core_FormDefinitionList_To_v1_FormDefinitionList(in, out, s)
+// Convert_core_FormDefinitionList_To_FormDefinitionList is an autogenerated conversion function.
+func Convert_core_FormDefinitionList_To_FormDefinitionList(in *core.FormDefinitionList, out *FormDefinitionList, s conversion.Scope) error {
+	return autoConvert_core_FormDefinitionList_To_FormDefinitionList(in, out, s)
 }
 
-func autoConvert_v1_FormDefinitionSpec_To_core_FormDefinitionSpec(in *v1.FormDefinitionSpec, out *core.FormDefinitionSpec, s conversion.Scope) error {
+func autoConvert_FormDefinitionSpec_To_core_FormDefinitionSpec(in *FormDefinitionSpec, out *core.FormDefinitionSpec, s conversion.Scope) error {
 	out.Group = in.Group
-	if err := Convert_v1_CustomResourceNames_To_core_CustomResourceNames(&in.Names, &out.Names, s); err != nil {
+	if err := Convert_CustomResourceNames_To_core_CustomResourceNames(&in.Names, &out.Names, s); err != nil {
 		return err
 	}
 	out.Versions = *(*[]core.FormDefinitionVersion)(unsafe.Pointer(&in.Versions))
 	return nil
 }
 
-// Convert_v1_FormDefinitionSpec_To_core_FormDefinitionSpec is an autogenerated conversion function.
-func Convert_v1_FormDefinitionSpec_To_core_FormDefinitionSpec(in *v1.FormDefinitionSpec, out *core.FormDefinitionSpec, s conversion.Scope) error {
-	return autoConvert_v1_FormDefinitionSpec_To_core_FormDefinitionSpec(in, out, s)
+// Convert_FormDefinitionSpec_To_core_FormDefinitionSpec is an autogenerated conversion function.
+func Convert_FormDefinitionSpec_To_core_FormDefinitionSpec(in *FormDefinitionSpec, out *core.FormDefinitionSpec, s conversion.Scope) error {
+	return autoConvert_FormDefinitionSpec_To_core_FormDefinitionSpec(in, out, s)
 }
 
-func autoConvert_core_FormDefinitionSpec_To_v1_FormDefinitionSpec(in *core.FormDefinitionSpec, out *v1.FormDefinitionSpec, s conversion.Scope) error {
+func autoConvert_core_FormDefinitionSpec_To_FormDefinitionSpec(in *core.FormDefinitionSpec, out *FormDefinitionSpec, s conversion.Scope) error {
 	out.Group = in.Group
-	if err := Convert_core_CustomResourceNames_To_v1_CustomResourceNames(&in.Names, &out.Names, s); err != nil {
+	if err := Convert_core_CustomResourceNames_To_CustomResourceNames(&in.Names, &out.Names, s); err != nil {
 		return err
 	}
-	out.Versions = *(*[]v1.FormDefinitionVersion)(unsafe.Pointer(&in.Versions))
+	out.Versions = *(*[]FormDefinitionVersion)(unsafe.Pointer(&in.Versions))
 	return nil
 }
 
-// Convert_core_FormDefinitionSpec_To_v1_FormDefinitionSpec is an autogenerated conversion function.
-func Convert_core_FormDefinitionSpec_To_v1_FormDefinitionSpec(in *core.FormDefinitionSpec, out *v1.FormDefinitionSpec, s conversion.Scope) error {
-	return autoConvert_core_FormDefinitionSpec_To_v1_FormDefinitionSpec(in, out, s)
+// Convert_core_FormDefinitionSpec_To_FormDefinitionSpec is an autogenerated conversion function.
+func Convert_core_FormDefinitionSpec_To_FormDefinitionSpec(in *core.FormDefinitionSpec, out *FormDefinitionSpec, s conversion.Scope) error {
+	return autoConvert_core_FormDefinitionSpec_To_FormDefinitionSpec(in, out, s)
 }
 
-func autoConvert_v1_FormDefinitionVersion_To_core_FormDefinitionVersion(in *v1.FormDefinitionVersion, out *core.FormDefinitionVersion, s conversion.Scope) error {
+func autoConvert_FormDefinitionVersion_To_core_FormDefinitionVersion(in *FormDefinitionVersion, out *core.FormDefinitionVersion, s conversion.Scope) error {
 	out.Name = in.Name
-	if err := Convert_v1_FormSchema_To_core_FormSchema(&in.Schema, &out.Schema, s); err != nil {
+	if err := Convert_FormSchema_To_core_FormSchema(&in.Schema, &out.Schema, s); err != nil {
 		return err
 	}
 	return nil
 }
 
-// Convert_v1_FormDefinitionVersion_To_core_FormDefinitionVersion is an autogenerated conversion function.
-func Convert_v1_FormDefinitionVersion_To_core_FormDefinitionVersion(in *v1.FormDefinitionVersion, out *core.FormDefinitionVersion, s conversion.Scope) error {
-	return autoConvert_v1_FormDefinitionVersion_To_core_FormDefinitionVersion(in, out, s)
+// Convert_FormDefinitionVersion_To_core_FormDefinitionVersion is an autogenerated conversion function.
+func Convert_FormDefinitionVersion_To_core_FormDefinitionVersion(in *FormDefinitionVersion, out *core.FormDefinitionVersion, s conversion.Scope) error {
+	return autoConvert_FormDefinitionVersion_To_core_FormDefinitionVersion(in, out, s)
 }
 
-func autoConvert_core_FormDefinitionVersion_To_v1_FormDefinitionVersion(in *core.FormDefinitionVersion, out *v1.FormDefinitionVersion, s conversion.Scope) error {
+func autoConvert_core_FormDefinitionVersion_To_FormDefinitionVersion(in *core.FormDefinitionVersion, out *FormDefinitionVersion, s conversion.Scope) error {
 	out.Name = in.Name
-	if err := Convert_core_FormSchema_To_v1_FormSchema(&in.Schema, &out.Schema, s); err != nil {
+	if err := Convert_core_FormSchema_To_FormSchema(&in.Schema, &out.Schema, s); err != nil {
 		return err
 	}
 	return nil
 }
 
-// Convert_core_FormDefinitionVersion_To_v1_FormDefinitionVersion is an autogenerated conversion function.
-func Convert_core_FormDefinitionVersion_To_v1_FormDefinitionVersion(in *core.FormDefinitionVersion, out *v1.FormDefinitionVersion, s conversion.Scope) error {
-	return autoConvert_core_FormDefinitionVersion_To_v1_FormDefinitionVersion(in, out, s)
+// Convert_core_FormDefinitionVersion_To_FormDefinitionVersion is an autogenerated conversion function.
+func Convert_core_FormDefinitionVersion_To_FormDefinitionVersion(in *core.FormDefinitionVersion, out *FormDefinitionVersion, s conversion.Scope) error {
+	return autoConvert_core_FormDefinitionVersion_To_FormDefinitionVersion(in, out, s)
 }
 
-func autoConvert_v1_FormElement_To_core_FormElement(in *v1.FormElement, out *core.FormElement, s conversion.Scope) error {
+func autoConvert_FormElement_To_core_FormElement(in *FormElement, out *core.FormElement, s conversion.Scope) error {
 	out.Key = in.Key
 	out.ID = in.ID
 	out.Name = *(*[]core.TranslatedString)(unsafe.Pointer(&in.Name))
@@ -255,92 +255,92 @@ func autoConvert_v1_FormElement_To_core_FormElement(in *v1.FormElement, out *cor
 	return nil
 }
 
-// Convert_v1_FormElement_To_core_FormElement is an autogenerated conversion function.
-func Convert_v1_FormElement_To_core_FormElement(in *v1.FormElement, out *core.FormElement, s conversion.Scope) error {
-	return autoConvert_v1_FormElement_To_core_FormElement(in, out, s)
+// Convert_FormElement_To_core_FormElement is an autogenerated conversion function.
+func Convert_FormElement_To_core_FormElement(in *FormElement, out *core.FormElement, s conversion.Scope) error {
+	return autoConvert_FormElement_To_core_FormElement(in, out, s)
 }
 
-func autoConvert_core_FormElement_To_v1_FormElement(in *core.FormElement, out *v1.FormElement, s conversion.Scope) error {
+func autoConvert_core_FormElement_To_FormElement(in *core.FormElement, out *FormElement, s conversion.Scope) error {
 	out.Key = in.Key
 	out.ID = in.ID
-	out.Name = *(*[]v1.TranslatedString)(unsafe.Pointer(&in.Name))
+	out.Name = *(*[]TranslatedString)(unsafe.Pointer(&in.Name))
 	out.Type = in.Type
-	out.Description = *(*[]v1.TranslatedString)(unsafe.Pointer(&in.Description))
-	out.Children = *(*[]v1.FormElement)(unsafe.Pointer(&in.Children))
+	out.Description = *(*[]TranslatedString)(unsafe.Pointer(&in.Description))
+	out.Children = *(*[]FormElement)(unsafe.Pointer(&in.Children))
 	return nil
 }
 
-// Convert_core_FormElement_To_v1_FormElement is an autogenerated conversion function.
-func Convert_core_FormElement_To_v1_FormElement(in *core.FormElement, out *v1.FormElement, s conversion.Scope) error {
-	return autoConvert_core_FormElement_To_v1_FormElement(in, out, s)
+// Convert_core_FormElement_To_FormElement is an autogenerated conversion function.
+func Convert_core_FormElement_To_FormElement(in *core.FormElement, out *FormElement, s conversion.Scope) error {
+	return autoConvert_core_FormElement_To_FormElement(in, out, s)
 }
 
-func autoConvert_v1_FormSchema_To_core_FormSchema(in *v1.FormSchema, out *core.FormSchema, s conversion.Scope) error {
-	if err := Convert_v1_FormSchemaDefinition_To_core_FormSchemaDefinition(&in.FormSchema, &out.FormSchema, s); err != nil {
+func autoConvert_FormSchema_To_core_FormSchema(in *FormSchema, out *core.FormSchema, s conversion.Scope) error {
+	if err := Convert_FormSchemaDefinition_To_core_FormSchemaDefinition(&in.FormSchema, &out.FormSchema, s); err != nil {
 		return err
 	}
 	return nil
 }
 
-// Convert_v1_FormSchema_To_core_FormSchema is an autogenerated conversion function.
-func Convert_v1_FormSchema_To_core_FormSchema(in *v1.FormSchema, out *core.FormSchema, s conversion.Scope) error {
-	return autoConvert_v1_FormSchema_To_core_FormSchema(in, out, s)
+// Convert_FormSchema_To_core_FormSchema is an autogenerated conversion function.
+func Convert_FormSchema_To_core_FormSchema(in *FormSchema, out *core.FormSchema, s conversion.Scope) error {
+	return autoConvert_FormSchema_To_core_FormSchema(in, out, s)
 }
 
-func autoConvert_core_FormSchema_To_v1_FormSchema(in *core.FormSchema, out *v1.FormSchema, s conversion.Scope) error {
-	if err := Convert_core_FormSchemaDefinition_To_v1_FormSchemaDefinition(&in.FormSchema, &out.FormSchema, s); err != nil {
+func autoConvert_core_FormSchema_To_FormSchema(in *core.FormSchema, out *FormSchema, s conversion.Scope) error {
+	if err := Convert_core_FormSchemaDefinition_To_FormSchemaDefinition(&in.FormSchema, &out.FormSchema, s); err != nil {
 		return err
 	}
 	return nil
 }
 
-// Convert_core_FormSchema_To_v1_FormSchema is an autogenerated conversion function.
-func Convert_core_FormSchema_To_v1_FormSchema(in *core.FormSchema, out *v1.FormSchema, s conversion.Scope) error {
-	return autoConvert_core_FormSchema_To_v1_FormSchema(in, out, s)
+// Convert_core_FormSchema_To_FormSchema is an autogenerated conversion function.
+func Convert_core_FormSchema_To_FormSchema(in *core.FormSchema, out *FormSchema, s conversion.Scope) error {
+	return autoConvert_core_FormSchema_To_FormSchema(in, out, s)
 }
 
-func autoConvert_v1_FormSchemaDefinition_To_core_FormSchemaDefinition(in *v1.FormSchemaDefinition, out *core.FormSchemaDefinition, s conversion.Scope) error {
-	if err := Convert_v1_FormElement_To_core_FormElement(&in.Root, &out.Root, s); err != nil {
+func autoConvert_FormSchemaDefinition_To_core_FormSchemaDefinition(in *FormSchemaDefinition, out *core.FormSchemaDefinition, s conversion.Scope) error {
+	if err := Convert_FormElement_To_core_FormElement(&in.Root, &out.Root, s); err != nil {
 		return err
 	}
 	return nil
 }
 
-// Convert_v1_FormSchemaDefinition_To_core_FormSchemaDefinition is an autogenerated conversion function.
-func Convert_v1_FormSchemaDefinition_To_core_FormSchemaDefinition(in *v1.FormSchemaDefinition, out *core.FormSchemaDefinition, s conversion.Scope) error {
-	return autoConvert_v1_FormSchemaDefinition_To_core_FormSchemaDefinition(in, out, s)
+// Convert_FormSchemaDefinition_To_core_FormSchemaDefinition is an autogenerated conversion function.
+func Convert_FormSchemaDefinition_To_core_FormSchemaDefinition(in *FormSchemaDefinition, out *core.FormSchemaDefinition, s conversion.Scope) error {
+	return autoConvert_FormSchemaDefinition_To_core_FormSchemaDefinition(in, out, s)
 }
 
-func autoConvert_core_FormSchemaDefinition_To_v1_FormSchemaDefinition(in *core.FormSchemaDefinition, out *v1.FormSchemaDefinition, s conversion.Scope) error {
-	if err := Convert_core_FormElement_To_v1_FormElement(&in.Root, &out.Root, s); err != nil {
+func autoConvert_core_FormSchemaDefinition_To_FormSchemaDefinition(in *core.FormSchemaDefinition, out *FormSchemaDefinition, s conversion.Scope) error {
+	if err := Convert_core_FormElement_To_FormElement(&in.Root, &out.Root, s); err != nil {
 		return err
 	}
 	return nil
 }
 
-// Convert_core_FormSchemaDefinition_To_v1_FormSchemaDefinition is an autogenerated conversion function.
-func Convert_core_FormSchemaDefinition_To_v1_FormSchemaDefinition(in *core.FormSchemaDefinition, out *v1.FormSchemaDefinition, s conversion.Scope) error {
-	return autoConvert_core_FormSchemaDefinition_To_v1_FormSchemaDefinition(in, out, s)
+// Convert_core_FormSchemaDefinition_To_FormSchemaDefinition is an autogenerated conversion function.
+func Convert_core_FormSchemaDefinition_To_FormSchemaDefinition(in *core.FormSchemaDefinition, out *FormSchemaDefinition, s conversion.Scope) error {
+	return autoConvert_core_FormSchemaDefinition_To_FormSchemaDefinition(in, out, s)
 }
 
-func autoConvert_v1_TranslatedString_To_core_TranslatedString(in *v1.TranslatedString, out *core.TranslatedString, s conversion.Scope) error {
+func autoConvert_TranslatedString_To_core_TranslatedString(in *TranslatedString, out *core.TranslatedString, s conversion.Scope) error {
 	out.Locale = in.Locale
 	out.Value = in.Value
 	return nil
 }
 
-// Convert_v1_TranslatedString_To_core_TranslatedString is an autogenerated conversion function.
-func Convert_v1_TranslatedString_To_core_TranslatedString(in *v1.TranslatedString, out *core.TranslatedString, s conversion.Scope) error {
-	return autoConvert_v1_TranslatedString_To_core_TranslatedString(in, out, s)
+// Convert_TranslatedString_To_core_TranslatedString is an autogenerated conversion function.
+func Convert_TranslatedString_To_core_TranslatedString(in *TranslatedString, out *core.TranslatedString, s conversion.Scope) error {
+	return autoConvert_TranslatedString_To_core_TranslatedString(in, out, s)
 }
 
-func autoConvert_core_TranslatedString_To_v1_TranslatedString(in *core.TranslatedString, out *v1.TranslatedString, s conversion.Scope) error {
+func autoConvert_core_TranslatedString_To_TranslatedString(in *core.TranslatedString, out *TranslatedString, s conversion.Scope) error {
 	out.Locale = in.Locale
 	out.Value = in.Value
 	return nil
 }
 
-// Convert_core_TranslatedString_To_v1_TranslatedString is an autogenerated conversion function.
-func Convert_core_TranslatedString_To_v1_TranslatedString(in *core.TranslatedString, out *v1.TranslatedString, s conversion.Scope) error {
-	return autoConvert_core_TranslatedString_To_v1_TranslatedString(in, out, s)
+// Convert_core_TranslatedString_To_TranslatedString is an autogenerated conversion function.
+func Convert_core_TranslatedString_To_TranslatedString(in *core.TranslatedString, out *TranslatedString, s conversion.Scope) error {
+	return autoConvert_core_TranslatedString_To_TranslatedString(in, out, s)
 }
