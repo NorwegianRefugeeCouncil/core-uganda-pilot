@@ -113,6 +113,24 @@ func IsDNS1123Subdomain(value string) []string {
 	return errs
 }
 
+// DNS1123LabelMaxLength is a label's max length in DNS (RFC 1123)
+const DNS1123LabelMaxLength int = 63
+
+var dns1123LabelRegexp = regexp.MustCompile("^" + dns1123LabelFmt + "$")
+
+// IsDNS1123Label tests for a string that conforms to the definition of a label in
+// DNS (RFC 1123).
+func IsDNS1123Label(value string) []string {
+	var errs []string
+	if len(value) > DNS1123LabelMaxLength {
+		errs = append(errs, MaxLenError(DNS1123LabelMaxLength))
+	}
+	if !dns1123LabelRegexp.MatchString(value) {
+		errs = append(errs, RegexError(dns1123LabelErrMsg, dns1123LabelFmt, "my-name", "123-abc"))
+	}
+	return errs
+}
+
 // IsValidLabelValue tests whether the value passed is a valid label value.  If
 // the value is not valid, a list of error strings is returned.  Otherwise an
 // empty list (or nil) is returned.
@@ -123,6 +141,27 @@ func IsValidLabelValue(value string) []string {
 	}
 	if !labelValueRegexp.MatchString(value) {
 		errs = append(errs, RegexError(labelValueErrMsg, labelValueFmt, "MyValue", "my_value", "12345"))
+	}
+	return errs
+}
+
+const dns1035LabelFmt string = "[a-z]([-a-z0-9]*[a-z0-9])?"
+const dns1035LabelErrMsg string = "a DNS-1035 label must consist of lower case alphanumeric characters or '-', start with an alphabetic character, and end with an alphanumeric character"
+
+// DNS1035LabelMaxLength is a label's max length in DNS (RFC 1035)
+const DNS1035LabelMaxLength int = 63
+
+var dns1035LabelRegexp = regexp.MustCompile("^" + dns1035LabelFmt + "$")
+
+// IsDNS1035Label tests for a string that conforms to the definition of a label in
+// DNS (RFC 1035).
+func IsDNS1035Label(value string) []string {
+	var errs []string
+	if len(value) > DNS1035LabelMaxLength {
+		errs = append(errs, MaxLenError(DNS1035LabelMaxLength))
+	}
+	if !dns1035LabelRegexp.MatchString(value) {
+		errs = append(errs, RegexError(dns1035LabelErrMsg, dns1035LabelFmt, "my-name", "abc-123"))
 	}
 	return errs
 }

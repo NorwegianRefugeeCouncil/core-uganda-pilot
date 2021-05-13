@@ -8,7 +8,7 @@ import (
 )
 
 func Convert_apiextensions_JSONSchemaProps_To_v1_JSONSchemaProps(in *apiextensions.JSONSchemaProps, out *JSONSchemaProps, s conversion.Scope) error {
-	if err := autoConvert_apiextensions_JSONSchemaProps_To_JSONSchemaProps(in, out, s); err != nil {
+	if err := autoConvert_apiextensions_JSONSchemaProps_To_v1_JSONSchemaProps(in, out, s); err != nil {
 		return err
 	}
 	if in.Default != nil && *(in.Default) == nil {
@@ -29,7 +29,7 @@ func Convert_apiextensions_JSON_To_v1_JSON(in *apiextensions.JSON, out *JSON, s 
 	return nil
 }
 
-func Convert_JSON_To_apiextensions_JSON(in *JSON, out *apiextensions.JSON, s conversion.Scope) error {
+func Convert_v1_JSON_To_apiextensions_JSON(in *JSON, out *apiextensions.JSON, s conversion.Scope) error {
 	if in != nil {
 		var i interface{}
 		if err := json.Unmarshal(in.Raw, &i); err != nil {
@@ -42,8 +42,8 @@ func Convert_JSON_To_apiextensions_JSON(in *JSON, out *apiextensions.JSON, s con
 	return nil
 }
 
-func Convert_apiextensions_CustomResourceDefinitionSpec_To_CustomResourceDefinitionSpec(in *apiextensions.CustomResourceDefinitionSpec, out *CustomResourceDefinitionSpec, s conversion.Scope) error {
-	if err := autoConvert_apiextensions_CustomResourceDefinitionSpec_To_CustomResourceDefinitionSpec(in, out, s); err != nil {
+func Convert_apiextensions_CustomResourceDefinitionSpec_To_v1_CustomResourceDefinitionSpec(in *apiextensions.CustomResourceDefinitionSpec, out *CustomResourceDefinitionSpec, s conversion.Scope) error {
+	if err := autoConvert_apiextensions_CustomResourceDefinitionSpec_To_v1_CustomResourceDefinitionSpec(in, out, s); err != nil {
 		return err
 	}
 
@@ -55,7 +55,7 @@ func Convert_apiextensions_CustomResourceDefinitionSpec_To_CustomResourceDefinit
 	// If spec.{subresources,validation,additionalPrinterColumns} exists, move to versions
 	if in.Subresources != nil {
 		subresources := &CustomResourceSubresources{}
-		if err := Convert_apiextensions_CustomResourceSubresources_To_CustomResourceSubresources(in.Subresources, subresources, s); err != nil {
+		if err := Convert_apiextensions_CustomResourceSubresources_To_v1_CustomResourceSubresources(in.Subresources, subresources, s); err != nil {
 			return err
 		}
 		for i := range out.Versions {
@@ -64,7 +64,7 @@ func Convert_apiextensions_CustomResourceDefinitionSpec_To_CustomResourceDefinit
 	}
 	if in.Validation != nil {
 		schema := &CustomResourceValidation{}
-		if err := Convert_apiextensions_CustomResourceValidation_To_CustomResourceValidation(in.Validation, schema, s); err != nil {
+		if err := Convert_apiextensions_CustomResourceValidation_To_v1_CustomResourceValidation(in.Validation, schema, s); err != nil {
 			return err
 		}
 		for i := range out.Versions {
@@ -74,7 +74,7 @@ func Convert_apiextensions_CustomResourceDefinitionSpec_To_CustomResourceDefinit
 	if in.AdditionalPrinterColumns != nil {
 		additionalPrinterColumns := make([]CustomResourceColumnDefinition, len(in.AdditionalPrinterColumns))
 		for i := range in.AdditionalPrinterColumns {
-			if err := Convert_apiextensions_CustomResourceColumnDefinition_To_CustomResourceColumnDefinition(&in.AdditionalPrinterColumns[i], &additionalPrinterColumns[i], s); err != nil {
+			if err := Convert_apiextensions_CustomResourceColumnDefinition_To_v1_CustomResourceColumnDefinition(&in.AdditionalPrinterColumns[i], &additionalPrinterColumns[i], s); err != nil {
 				return err
 			}
 		}
@@ -86,7 +86,7 @@ func Convert_apiextensions_CustomResourceDefinitionSpec_To_CustomResourceDefinit
 }
 
 func Convert_v1_CustomResourceDefinitionSpec_To_apiextensions_CustomResourceDefinitionSpec(in *CustomResourceDefinitionSpec, out *apiextensions.CustomResourceDefinitionSpec, s conversion.Scope) error {
-	if err := autoConvert_CustomResourceDefinitionSpec_To_apiextensions_CustomResourceDefinitionSpec(in, out, s); err != nil {
+	if err := autoConvert_v1_CustomResourceDefinitionSpec_To_apiextensions_CustomResourceDefinitionSpec(in, out, s); err != nil {
 		return nil
 	}
 
@@ -143,8 +143,8 @@ func Convert_v1_CustomResourceDefinitionSpec_To_apiextensions_CustomResourceDefi
 	return nil
 }
 
-func Convert_CustomResourceConversion_To_apiextensions_CustomResourceConversion(in *CustomResourceConversion, out *apiextensions.CustomResourceConversion, s conversion.Scope) error {
-	if err := autoConvert_CustomResourceConversion_To_apiextensions_CustomResourceConversion(in, out, s); err != nil {
+func Convert_v1_CustomResourceConversion_To_apiextensions_CustomResourceConversion(in *CustomResourceConversion, out *apiextensions.CustomResourceConversion, s conversion.Scope) error {
+	if err := autoConvert_v1_CustomResourceConversion_To_apiextensions_CustomResourceConversion(in, out, s); err != nil {
 		return err
 	}
 
@@ -154,7 +154,7 @@ func Convert_CustomResourceConversion_To_apiextensions_CustomResourceConversion(
 		out.ConversionReviewVersions = in.Webhook.ConversionReviewVersions
 		if in.Webhook.ClientConfig != nil {
 			out.WebhookClientConfig = &apiextensions.WebhookClientConfig{}
-			if err := Convert_WebhookClientConfig_To_apiextensions_WebhookClientConfig(in.Webhook.ClientConfig, out.WebhookClientConfig, s); err != nil {
+			if err := Convert_v1_WebhookClientConfig_To_apiextensions_WebhookClientConfig(in.Webhook.ClientConfig, out.WebhookClientConfig, s); err != nil {
 				return err
 			}
 		}
@@ -162,8 +162,8 @@ func Convert_CustomResourceConversion_To_apiextensions_CustomResourceConversion(
 	return nil
 }
 
-func Convert_apiextensions_CustomResourceConversion_To_CustomResourceConversion(in *apiextensions.CustomResourceConversion, out *CustomResourceConversion, s conversion.Scope) error {
-	if err := autoConvert_apiextensions_CustomResourceConversion_To_CustomResourceConversion(in, out, s); err != nil {
+func Convert_apiextensions_CustomResourceConversion_To_v1_CustomResourceConversion(in *apiextensions.CustomResourceConversion, out *CustomResourceConversion, s conversion.Scope) error {
+	if err := autoConvert_apiextensions_CustomResourceConversion_To_v1_CustomResourceConversion(in, out, s); err != nil {
 		return err
 	}
 
@@ -173,7 +173,7 @@ func Convert_apiextensions_CustomResourceConversion_To_CustomResourceConversion(
 		out.Webhook.ConversionReviewVersions = in.ConversionReviewVersions
 		if in.WebhookClientConfig != nil {
 			out.Webhook.ClientConfig = &WebhookClientConfig{}
-			if err := Convert_apiextensions_WebhookClientConfig_To_WebhookClientConfig(in.WebhookClientConfig, out.Webhook.ClientConfig, s); err != nil {
+			if err := Convert_apiextensions_WebhookClientConfig_To_v1_WebhookClientConfig(in.WebhookClientConfig, out.Webhook.ClientConfig, s); err != nil {
 				return err
 			}
 		}

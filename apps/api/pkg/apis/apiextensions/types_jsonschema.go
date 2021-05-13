@@ -108,6 +108,8 @@ type JSONSchemaProps struct {
 	XMapType *string
 }
 
+// +k8s:deepcopy-gen=false
+
 // JSON represents any valid JSON value.
 // These types are supported: bool, int64, float64, string, []interface{}, map[string]interface{} and nil.
 type JSON interface{}

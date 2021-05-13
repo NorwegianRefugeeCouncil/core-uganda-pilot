@@ -5,6 +5,8 @@ import (
 	"github.com/nrc-no/core/apps/api/pkg/util/validation/field"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"reflect"
+	"strconv"
+	"strings"
 )
 
 type Error struct {
@@ -57,15 +59,16 @@ func (e *Error) ErrorBody() string {
 type ErrorType string
 
 const (
-	ErrTypeNotFound     ErrorType = "FieldValueNotFound"
-	ErrTypeRequired     ErrorType = "FieldValueRequired"
-	ErrTypeDuplicate    ErrorType = "FieldValueDuplicate"
-	ErrTypeInvalid      ErrorType = "FieldValueInvalid"
-	ErrTypeNotSupported ErrorType = "FieldValueNotSupported"
-	ErrTypeForbidden    ErrorType = "FieldValueForbidden"
-	ErrTypeTooLong      ErrorType = "FieldValueTooLong"
-	ErrTypeTooMany      ErrorType = "FieldValueTooMany"
-	ErrTypeInternal     ErrorType = "InternalError"
+	ErrTypeNotFound       ErrorType = "FieldValueNotFound"
+	ErrTypeRequired       ErrorType = "FieldValueRequired"
+	ErrTypeDuplicate      ErrorType = "FieldValueDuplicate"
+	ErrTypeInvalid        ErrorType = "FieldValueInvalid"
+	ErrTypeNotSupported   ErrorType = "FieldValueNotSupported"
+	ErrTypeForbidden      ErrorType = "FieldValueForbidden"
+	ErrTypeTooLong        ErrorType = "FieldValueTooLong"
+	ErrTypeTooMany        ErrorType = "FieldValueTooMany"
+	ErrTypeInternal       ErrorType = "InternalError"
+	ErrorTypeNotSupported ErrorType = "FieldValueNotSupported"
 )
 
 func (t ErrorType) String() string {
@@ -123,6 +126,21 @@ func TooMany(field *field.Path, actualQuantity, maxQuantity int) *Error {
 
 func InternalError(field *field.Path, err error) *Error {
 	return &Error{ErrTypeInternal, field.String(), nil, err.Error()}
+}
+
+// NotSupported returns a *Error indicating "unsupported value".
+// This is used to report unknown values for enumerated fields (e.g. a list of
+// valid values).
+func NotSupported(field *field.Path, value interface{}, validValues []string) *Error {
+	detail := ""
+	if len(validValues) > 0 {
+		quotedValues := make([]string, len(validValues))
+		for i, v := range validValues {
+			quotedValues[i] = strconv.Quote(v)
+		}
+		detail = "supported values: " + strings.Join(quotedValues, ", ")
+	}
+	return &Error{ErrorTypeNotSupported, field.String(), value, detail}
 }
 
 type ErrorList []*Error

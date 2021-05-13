@@ -593,3 +593,7 @@ func (s *Scheme) IsVersionRegistered(version schema.GroupVersion) bool {
 func (s *Scheme) AddIgnoredConversionType(from, to interface{}) error {
 	return s.converter.RegisterIgnoredConversion(from, to)
 }
+
+func (s *Scheme) AllKnownTypes() map[schema.GroupVersionKind]reflect.Type {
+	return s.gvkToType
+}

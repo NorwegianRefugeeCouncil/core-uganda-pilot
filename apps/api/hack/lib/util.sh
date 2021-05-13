@@ -36,4 +36,8 @@ util::group-version-to-pkg-path() {
 
 }
 
-
+function codegen::join() {
+  local IFS="$1"
+  shift
+  echo "$*"
+}
