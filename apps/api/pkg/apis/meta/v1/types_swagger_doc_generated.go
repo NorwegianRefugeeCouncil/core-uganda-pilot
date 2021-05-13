@@ -155,6 +155,33 @@ func (ObjectMeta) SwaggerDoc() map[string]string {
 	return map_ObjectMeta
 }
 
+var map_PartialObjectMetadata = map[string]string{
+	"":         "PartialObjectMetadata is a generic representation of any object with ObjectMeta. It allows clients to get access to a particular ObjectMeta schema without knowing the details of the version.",
+	"metadata": "Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata",
+}
+
+func (PartialObjectMetadata) SwaggerDoc() map[string]string {
+	return map_PartialObjectMetadata
+}
+
+var map_PartialObjectMetadataList = map[string]string{
+	"":         "PartialObjectMetadataList contains a list of objects containing only their metadata",
+	"metadata": "Standard list metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+	"items":    "items contains each of the included items.",
+}
+
+func (PartialObjectMetadataList) SwaggerDoc() map[string]string {
+	return map_PartialObjectMetadataList
+}
+
+var map_PatchOptions = map[string]string{
+	"": "PatchOptions may be provided when patching an API object. PatchOptions is meant to be a superset of UpdateOptions.",
+}
+
+func (PatchOptions) SwaggerDoc() map[string]string {
+	return map_PatchOptions
+}
+
 var map_ServerAddressByClientCIDR = map[string]string{
 	"":              "ServerAddressByClientCIDR helps the client to determine the server address that they should use, depending on the clientCIDR that they match.",
 	"clientCIDR":    "The CIDR with which clients can match their IP to figure out the server address that they should use.",

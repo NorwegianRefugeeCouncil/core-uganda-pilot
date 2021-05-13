@@ -54,8 +54,8 @@ const (
 )
 
 var (
-  swaggerPartialObjectMetadataDescriptions     = metav1beta1.PartialObjectMetadata{}.SwaggerDoc()
-  swaggerPartialObjectMetadataListDescriptions = metav1beta1.PartialObjectMetadataList{}.SwaggerDoc()
+  swaggerPartialObjectMetadataDescriptions     = metav1.PartialObjectMetadata{}.SwaggerDoc()
+  swaggerPartialObjectMetadataListDescriptions = metav1.PartialObjectMetadataList{}.SwaggerDoc()
 
   nameToken      = "{name}"
   namespaceToken = "{namespace}"
