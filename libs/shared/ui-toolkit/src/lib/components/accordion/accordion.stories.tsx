@@ -1,18 +1,18 @@
-import { Accordion, AccordionItem } from './accordion.component';
+import Accordion from './accordion.component';
 import { loremIpsum } from 'lorem-ipsum';
 
 const lp = loremIpsum({ count: 5 });
 
 export default {
   title: 'Accordion',
-  decorators: [(Story: any) => <Story />],
+  component: Accordion,
 };
 
 export const basic = () => (
   <Accordion>
-    <AccordionItem title="This doesn't work yet" body={lp} />
-    <AccordionItem title="This doesn't work yet" body={lp} />
-    <AccordionItem title="This doesn't work yet" body={lp} />
-    <AccordionItem title="This doesn't work yet" body={lp} />
+    <Accordion.Item title="This doesn't work yet" body={lp} />
+    <Accordion.Item title="This doesn't work yet" body={lp} />
+    <Accordion.Item title="This doesn't work yet" body={lp} />
+    <Accordion.Item title="This doesn't work yet" body={lp} />
   </Accordion>
 );

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { ColorTheme, Size } from '../../helpers/types';
+import { Color, Size } from '../../helpers/types';
 import { color } from '@storybook/addon-knobs';
 
 export interface ButtonProps extends React.ComponentPropsWithRef<'button'> {
-  colorTheme?: ColorTheme | 'link';
+  colorTheme?: Color | 'link';
   size?: 'sm' | 'lg';
   outline?: boolean;
 }

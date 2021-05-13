@@ -3,7 +3,7 @@ import Badge from './badge.component';
 
 export default {
   title: 'Badge',
-  decorators: [(Story: any) => <Story />],
+  component: Badge,
 };
 
 export const basic = () => (

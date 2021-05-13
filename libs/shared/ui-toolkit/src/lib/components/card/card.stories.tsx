@@ -6,10 +6,10 @@ const fillerText = lorem.generateParagraphs(2);
 
 export default {
   title: 'Card',
-  decorators: [(Story: any) => <Story />],
+  component: Card,
 };
 
-export const basic = () => {
+export const Basic = () => {
   return (
     <div className={'container'}>
       <div className={'row'}>

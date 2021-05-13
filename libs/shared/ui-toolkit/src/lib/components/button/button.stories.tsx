@@ -1,16 +1,9 @@
 import Button from './button.component';
 import Card from '../card/card.component';
-import Container from '../container/container.component';
 
 export default {
   title: 'Button',
-  decorators: [
-    (Story: any) => (
-      <Container className="mt-2">
-        <Story />
-      </Container>
-    ),
-  ],
+  component: Button,
 };
 
 export const basic = () => (

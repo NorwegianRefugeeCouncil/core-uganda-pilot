@@ -1,16 +1,9 @@
 import CloseButton from './close-button.component';
 import Card from '../card/card.component';
-import Container from '../container/container.component';
 
 export default {
   title: 'Close Button',
-  decorators: [
-    (Story: any) => (
-      <Container className="mt-2">
-        <Story />
-      </Container>
-    ),
-  ],
+  component: CloseButton,
 };
 
 export const basic = () => (

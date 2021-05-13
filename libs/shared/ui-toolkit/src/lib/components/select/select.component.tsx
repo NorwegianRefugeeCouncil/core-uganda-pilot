@@ -1,10 +1,15 @@
-import * as  React from 'react';
-import Select, { components, ControlProps, MultiValueProps, OptionProps, Props } from 'react-select';
+import * as React from 'react';
+import Select, {
+  components,
+  ControlProps,
+  MultiValueProps,
+  OptionProps,
+  Props,
+} from 'react-select';
 import classNames from 'classnames';
-import { XIcon } from '@nrc.no/ui-toolkit';
+import Icons from '../icons/icons';
 
 // a thin wrapper over react-select applying our own bootstrap styles
-
 
 const MultiValue: React.FC<MultiValueProps<any>> = (props) => {
   const classes = classNames('bg-primary text-light', props.className, {});
@@ -16,10 +21,10 @@ const MultiValue: React.FC<MultiValueProps<any>> = (props) => {
 };
 
 const MultiValueLabel: React.FC<MultiValueProps<any>> = ({
-                                                           children,
-                                                           innerProps,
-                                                           ...props
-                                                         }) => {
+  children,
+  innerProps,
+  ...props
+}) => {
   const classes = classNames('bg-primary', props.className, {});
   return (
     <components.MultiValueLabel {...innerProps} className={classes}>
@@ -29,13 +34,13 @@ const MultiValueLabel: React.FC<MultiValueProps<any>> = ({
 };
 
 const MultiValueRemove: React.FC<MultiValueProps<any>> = ({
-                                                            innerProps,
-                                                            ...props
-                                                          }) => {
+  innerProps,
+  ...props
+}) => {
   const classes = classNames(props.className, '', {});
   return (
     <components.MultiValueRemove {...innerProps}>
-      <XIcon />
+      <Icons.X />
     </components.MultiValueRemove>
   );
 };
@@ -50,13 +55,13 @@ const Control: React.FC<ControlProps<any, any>> = ({ children, ...props }) => {
 };
 
 const Option: React.FC<OptionProps<any, any>> = ({
-                                                   innerRef,
-                                                   innerProps,
-                                                   ...props
-                                                 }) => {
+  innerRef,
+  innerProps,
+  ...props
+}) => {
   const classes = classNames('list-group-item', props.className, {
     disabled: props.isDisabled,
-    active: props.isSelected
+    active: props.isSelected,
   });
   return (
     <div ref={innerRef} {...innerProps} className={classes}>
@@ -65,10 +70,23 @@ const Option: React.FC<OptionProps<any, any>> = ({
   );
 };
 
-type SelectProps = Props
+type SelectProps = Props & {
+  isMulti?: boolean;
+};
 
 const CustomSelect: React.FC<SelectProps> = (props) => {
-  return <Select {...props} components={{ Control, Option, MultiValue, MultiValueLabel, MultiValueRemove }} />;
+  return (
+    <Select
+      {...props}
+      components={{
+        Control,
+        Option,
+        MultiValue,
+        MultiValueLabel,
+        MultiValueRemove,
+      }}
+    />
+  );
 };
 
 export { Control, Option, MultiValue, MultiValueLabel, MultiValueRemove };

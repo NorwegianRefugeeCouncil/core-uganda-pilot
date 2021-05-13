@@ -9,7 +9,7 @@ import {
   ModalHeader,
   ModalTitle,
 } from './modal';
-import { Button } from '../button/button.component';
+import Button from '../button/button.component';
 import { ModalProps } from 'react-overlays/Modal';
 
 const content: (setShow: (show: boolean) => void) => any = (setShow) => {

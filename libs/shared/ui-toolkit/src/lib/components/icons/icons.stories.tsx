@@ -2,11 +2,6 @@ import * as React from 'react';
 import Card from '../card/card.component';
 import Icons from './icons';
 
-export default {
-  title: 'Icons',
-  decorators: [(Story: any) => <Story />],
-};
-
 const allIcons = Object.entries(Icons)
   .filter(
     ([name, icon]) => Object().toString.call(icon) === '[object Function]'
@@ -15,7 +10,12 @@ const allIcons = Object.entries(Icons)
     <div className={'h1 m-4 d-inline-block'}>{React.createElement(icon)}</div>
   ));
 
-export const bootstrap = () => (
+export default {
+  title: 'Icons',
+  component: Icons,
+};
+
+export const Bootstrap = () => (
   <Card>
     <Card.Body>
       <Card.Title>Bootstrap Icons</Card.Title>

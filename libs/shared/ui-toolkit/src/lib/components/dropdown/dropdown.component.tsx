@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import * as React from 'react';
 import { uniqueId } from '../../helpers/utils';
-import { ColorTheme } from '../../helpers/types';
-import { Button } from '../button/button.component';
+import { Color } from '../../helpers/types';
+import Button from '../button/button.component';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DropdownDividerProps
@@ -69,7 +69,7 @@ export const Menu: React.FC<MenuProps> = ({
 };
 
 export interface DropdownProps extends React.ComponentPropsWithoutRef<'div'> {
-  colorTheme?: ColorTheme;
+  colorTheme?: Color;
   label?: string;
   isOpenInitially?: boolean;
 }

@@ -1,6 +1,8 @@
+import * as React from "react";
+
 export type Theme = 'light' | 'dark';
 
-export type ColorTheme =
+export type Color =
   | 'primary'
   | 'secondary'
   | 'success'
@@ -16,6 +18,11 @@ export type Size =
   | 'lg'
   | 'xl'
   | 'xxl';
+
+export type EventKey = string | number;
+
+export type SelectCallback = (eventKey: EventKey, e: React.SyntheticEvent) => void;
+
 
 // Source: https://github.com/emotion-js/emotion/blob/master/packages/styled-base/types/helper.d.ts
 // A more precise version of just React.ComponentPropsWithRef on its own

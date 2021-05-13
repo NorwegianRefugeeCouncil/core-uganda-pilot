@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import * as React from 'react';
 import { classNames } from '@ui-helpers/utils';
-import CardImg from './cardimg.component';
-import CardBody from './cardbody.component';
-import CardHeader from './cardheader.component';
-import CardFooter from './cardfooter.component';
-import CardText from './cardtext.component';
-import CardTitle from './cardtitle.component';
-import CardSubtitle from './cardsubtitle.component';
-import CardLink from './cardlink.component';
+import CardImg from './card-img.component';
+import CardBody from './card-body.component';
+import CardHeader from './card-header.component';
+import CardFooter from './card-footer.component';
+import CardText from './card-text.component';
+import CardTitle from './card-title.component';
+import CardSubtitle from './card-subtitle.component';
+import CardLink from './card-link.component';
 
 export interface CardProps extends React.ComponentPropsWithoutRef<'div'> {}
 

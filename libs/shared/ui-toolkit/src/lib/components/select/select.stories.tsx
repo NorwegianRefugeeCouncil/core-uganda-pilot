@@ -1,6 +1,4 @@
-import { storiesOf } from '@storybook/react';
 import Select from './select.component';
-import VanillaSelect from 'react-select';
 
 const options = [
   { value: 'A', label: 'Dingle' },
@@ -11,33 +9,30 @@ const options = [
   { value: 'F', label: 'Bibble' },
 ];
 
-storiesOf('Select', module).add('default', () => {
-  return (
-    <>
-      <div className={'container'}>
-        <div className={'col-12 mb-4'}>
-          <h3>Single Select</h3>
-          <Select options={options} />
-        </div>
+export default {
+  title: 'Select',
+  component: Select,
+};
+
+export const Basic = () => (
+  <>
+    <div className={'container'}>
+      <div className={'col-12 mb-4'}>
+        <h3>Single Select</h3>
+        <Select options={options} />
       </div>
-      <div className={'container'}>
-        <div className={'col-12 mb-4'}>
-          <h3>Disabled Select</h3>
-          <Select options={options} isDisabled />
-        </div>
+    </div>
+    <div className={'container'}>
+      <div className={'col-12 mb-4'}>
+        <h3>Disabled Select</h3>
+        <Select options={options} isDisabled />
       </div>
-      <div className={'container'}>
-        <div className={'col-12 mb-4'}>
-          <h3>Multi Select</h3>
-          <Select options={options} isMulti />
-        </div>
+    </div>
+    <div className={'container'}>
+      <div className={'col-12 mb-4'}>
+        <h3>Multi Select</h3>
+        <Select options={options} isMulti />
       </div>
-      <div className={'container'}>
-        <div className={'col-12 mb-4'}>
-          <h3>Multi Select</h3>
-          <VanillaSelect options={options} isMulti />
-        </div>
-      </div>
-    </>
-  );
-});
+    </div>
+  </>
+);

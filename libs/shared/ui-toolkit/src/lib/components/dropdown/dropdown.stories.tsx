@@ -2,11 +2,11 @@ import Dropdown from './dropdown.component';
 
 export default {
   title: 'Dropdown',
-  decorators: [(Story: any) => <Story />],
+  component: Dropdown,
 };
 
 export const basic = () => (
-  <Dropdown label="Dropdown button">
+  <Dropdown label="Dropdown button (todo)">
     <Dropdown.Menu>
       <Dropdown.Item label="Option 1" />
       <Dropdown.Item label="Option 2" />
