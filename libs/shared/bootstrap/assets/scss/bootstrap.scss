@@ -1,20 +1,17 @@
 // Include any default variable overrides here (though functions won't be available)
 
-$blue:    #0d6efd;
-$indigo:  #6610f2;
-$purple:  #6f42c1;
-$pink:    #d63384;
-$red:     #dc3545;
-$orange:  #fd7e14;
-$yellow:  #ffc107;
-$green:   #198754;
-$teal:    #20c997;
-$cyan:    #0dcaf0;
+$blue: #5551ff;
+$indigo: #24303e;
+$purple: #6f42c1;
+$pink: #d63384;
+$red: #f24e1d;
+$orange: #ff6600;
+$yellow: #ffc700;
+$green: #1bc47d;
+$teal: #20c997;
+$cyan: #0dcaf0;
 
-
-
-
-$white:    #fff;
+$white: #fff;
 $gray-100: #f8f9fa;
 $gray-200: #e9ecef;
 $gray-300: #dee2e6;
@@ -24,34 +21,25 @@ $gray-600: #6c757d;
 $gray-700: #495057;
 $gray-800: #343a40;
 $gray-900: #212529;
-$black:    #000;
+$black: #000;
 
-$nrc-primary: #FF6600;
-$nrc-secondary: #fb9f5d;
-$nrc-background: #ffceae;
-$nrc-background-light: #fff0e6;
-$nrc-success: #1bc47d;
-$nrc-success-background: #e9faf2;
-$nrc-danger: #f24e1d;
-$nrc-danger-background: #feeee9;
-$nrc-warning: #ffc700;
-$nrc-warning-background: #fffae6;
-$nrc-info: #5551ff;
-$nrc-info-background: #eef;
-$nrc-light: #f6f6f7;
-$nrc-dark: #24303e;
-$nrc-text-links: #1e4a7d;
+$nrc-primary: $orange;
+$nrc-secondary: #787878;
+$nrc-success: $green;
+$nrc-danger: $red;
+$nrc-warning: $yellow;
+$nrc-info: $blue;
+$nrc-light: $gray-100;
+$nrc-dark: $indigo;
 
-$primary:       $nrc-primary;
-$secondary:     $nrc-secondary;
-$success:       $nrc-success;
-$info:          $nrc-info;
-$warning:       $nrc-warning;
-$danger:        $nrc-danger;
-$light:         $nrc-light;
-$dark:          $nrc-dark;
+$primary: $nrc-primary;
+$secondary: $nrc-secondary;
+$success: $nrc-success;
+$info: $nrc-info;
+$warning: $nrc-warning;
+$danger: $nrc-danger;
+$light: $nrc-light;
+$dark: $nrc-dark;
 
-
-@import "../../../../../node_modules/bootstrap/scss/bootstrap";
-//@import "../../../../../node_modules/bootstrap-icons/font/bootstrap-icons.css";
-
+@import '../../../../../node_modules/bootstrap/scss/bootstrap';
+@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css');

@@ -7,7 +7,7 @@ export interface BadgeProps extends React.ComponentPropsWithoutRef<'span'> {
   pill?: boolean;
 }
 
-export const Badge: React.FC<BadgeProps> = ({
+const Badge: React.FC<BadgeProps> = ({
   className: customClass,
   children,
   theme = 'primary',
