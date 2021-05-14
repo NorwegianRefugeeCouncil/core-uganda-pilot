@@ -6,7 +6,7 @@ export interface ProgessBarProps extends React.ComponentPropsWithRef<'div'> {
   label?: string;
   striped?: boolean;
   animated?: boolean;
-  color?: Color;
+  theme?: Color;
   progress?: number;
 }
 
@@ -14,7 +14,7 @@ const ProgressBar: React.FC<ProgessBarProps> = ({
   label,
   striped = false,
   animated = false,
-  color,
+  theme,
   progress = 0,
   className: customClass,
   children,
@@ -23,8 +23,9 @@ const ProgressBar: React.FC<ProgessBarProps> = ({
   const className = classNames(
     'progress-bar',
     {
-      'progress-bar-striped': striped,
-      'progress-bar-animated': animated,
+      'progress-bar-striped': striped && !animated,
+      'progress-bar-striped progress-bar-animated': animated,
+      [`bg-${theme}`]: theme != null,
     },
     customClass
   );
@@ -35,6 +36,8 @@ const ProgressBar: React.FC<ProgessBarProps> = ({
       style={{ width: progress + '%' }}
       {...rest}
       aria-valuenow={progress}
+      aria-valuemin={0}
+      aria-valuemax={100}
     >
       {children}
     </div>

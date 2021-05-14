@@ -4,42 +4,56 @@ import * as React from 'react';
 import ProgressBar from './progress-bar.component';
 
 export interface ProgessProps extends React.ComponentPropsWithRef<'div'> {
-  labels?: string[];
   showValue?: boolean;
   progress?: number;
-  color?: Color;
+  theme?: Color;
+  striped?: boolean;
+  animated?: boolean;
   height?: number;
   children?: React.ReactText;
 }
 
-const Progress: React.FC<ProgessProps> = ({
-  labels = null,
+type Progress = React.FC<ProgressProps> & {
+  Bar: typeof ProgressBar;
+};
+
+const Progress: Progress = ({
   showValue = false,
   progress = 0,
-  color,
+  theme,
+  striped = false,
+  animated = false,
   height = 20,
   children: label,
   className: customClass,
   children,
   ...rest
 }) => {
-  const className = classNames('progress');
+  if (progress < 0 || progress > 100)
+    throw new RangeError('"progress" prop should be in range 0 to 100');
+  const className = classNames('progress', customClass);
   return (
-    <>
-      <div
-        className={className}
-        style={{ height: height ? height : 'initial' }}
-        {...rest}
-      >
-        <ProgressBar progress={progress} color={color}>
-          {children}
+    <div
+      className={className}
+      style={{ height: height ? height : 'initial' }}
+      {...rest}
+    >
+      {children ?? (
+        <ProgressBar
+          progress={progress}
+          theme={theme}
+          striped={striped}
+          animated={animated}
+        >
+          {showValue ? `${progress}%` : null}
         </ProgressBar>
-      </div>
-      <div className="d-flex justify-content-between">
-        {labels ? labels.map((l) => <span>{l}</span>) : null}
-      </div>
-    </>
+      )}
+    </div>
   );
 };
+
+Progress.displayName = 'Progress';
+
+Progress.Bar = ProgressBar;
 
 export default Progress;
