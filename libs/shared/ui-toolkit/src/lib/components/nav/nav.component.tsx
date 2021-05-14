@@ -9,7 +9,11 @@ export interface NavProps extends React.ComponentPropsWithoutRef<'nav'> {
   variant?: 'tabs' | 'pills';
 }
 
-type Nav = React.FC<NavProps> & {
+type FillProps =
+  | { fill?: true; justified?: never }
+  | { fill?: never; justified?: true };
+
+type Nav = React.FC<NavProps & FillProps> & {
   Item: typeof NavItem;
   Link: typeof NavLink;
 };
@@ -18,11 +22,17 @@ const Nav: Nav = (props) => {
   const {
     as: Component = 'nav',
     variant,
+    fill = false,
+    justified,
     className: customClass,
     children,
     ...rest
   } = props;
-  const className = classNames('nav', customClass);
+  const className = classNames('nav', customClass, {
+    [`nav-${variant}`]: variant != null,
+    'nav-fill': fill,
+    'nav-justified': justified,
+  });
   return (
     <Component className={className} {...rest}>
       {children}

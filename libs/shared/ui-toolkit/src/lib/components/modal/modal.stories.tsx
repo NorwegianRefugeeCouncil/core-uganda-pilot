@@ -39,7 +39,7 @@ const ModalStory = (props: React.PropsWithChildren<StoryProps>) => {
     <div className={'mb-2 border p-3'}>
       <Button
         className={'mb-2'}
-        colorTheme={'primary'}
+        theme={'primary'}
         onClick={() => setShow(true)}
       >
         {props.storyName}

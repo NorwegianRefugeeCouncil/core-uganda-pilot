@@ -11,31 +11,31 @@ export const basic = () => (
     <Card className="mb-2">
       <Card.Body>
         <Card.Title>Basic Buttons</Card.Title>
-        <Button className="m-2" colorTheme="primary">
+        <Button className="m-2" theme="primary">
           Primary
         </Button>
-        <Button className="m-2" colorTheme="secondary">
+        <Button className="m-2" theme="secondary">
           Secondary
         </Button>
-        <Button className="m-2" colorTheme="danger">
+        <Button className="m-2" theme="danger">
           Danger
         </Button>
-        <Button className="m-2" colorTheme="success">
+        <Button className="m-2" theme="success">
           Success
         </Button>
-        <Button className="m-2" colorTheme="warning">
+        <Button className="m-2" theme="warning">
           Warning
         </Button>
-        <Button className="m-2" colorTheme="info">
+        <Button className="m-2" theme="info">
           Info
         </Button>
-        <Button className="m-2" colorTheme="light">
+        <Button className="m-2" theme="light">
           Light
         </Button>
-        <Button className="m-2" colorTheme="dark">
+        <Button className="m-2" theme="dark">
           Dark
         </Button>
-        <Button className="m-2" colorTheme="link">
+        <Button className="m-2" theme="link">
           Link
         </Button>
       </Card.Body>
@@ -43,31 +43,31 @@ export const basic = () => (
     <Card className="mb-2">
       <Card.Body>
         <Card.Title>Outline Style</Card.Title>
-        <Button outline className="m-2" colorTheme="primary">
+        <Button outline className="m-2" theme="primary">
           Primary
         </Button>
-        <Button outline className="m-2" colorTheme="secondary">
+        <Button outline className="m-2" theme="secondary">
           Secondary
         </Button>
-        <Button outline className="m-2" colorTheme="danger">
+        <Button outline className="m-2" theme="danger">
           Danger
         </Button>
-        <Button outline className="m-2" colorTheme="success">
+        <Button outline className="m-2" theme="success">
           Success
         </Button>
-        <Button outline className="m-2" colorTheme="warning">
+        <Button outline className="m-2" theme="warning">
           Warning
         </Button>
-        <Button outline className="m-2" colorTheme="info">
+        <Button outline className="m-2" theme="info">
           Info
         </Button>
-        <Button outline className="m-2" colorTheme="light">
+        <Button outline className="m-2" theme="light">
           Light
         </Button>
-        <Button outline className="m-2" colorTheme="dark">
+        <Button outline className="m-2" theme="dark">
           Dark
         </Button>
-        <Button outline className="m-2" colorTheme="link">
+        <Button outline className="m-2" theme="link">
           Link
         </Button>
       </Card.Body>
@@ -75,18 +75,18 @@ export const basic = () => (
     <Card className="mb-2">
       <Card.Body>
         <Card.Title>Sizes</Card.Title>
-        <Button className="m-2" colorTheme="primary" size="lg">
+        <Button className="m-2" theme="primary" size="lg">
           Large button
         </Button>
-        <Button className="m-2" colorTheme="secondary" size="lg">
+        <Button className="m-2" theme="secondary" size="lg">
           Large button
         </Button>
       </Card.Body>
       <Card.Body>
-        <Button className="m-2" colorTheme="primary" size="sm">
+        <Button className="m-2" theme="primary" size="sm">
           Small button
         </Button>
-        <Button className="m-2" colorTheme="secondary" size="sm">
+        <Button className="m-2" theme="secondary" size="sm">
           Small button
         </Button>
       </Card.Body>
@@ -94,10 +94,10 @@ export const basic = () => (
     <Card>
       <Card.Body>
         <Card.Title>Disabled state</Card.Title>
-        <Button className="m-2" colorTheme="primary" disabled>
+        <Button className="m-2" theme="primary" disabled>
           Disabled button
         </Button>
-        <Button className="m-2" colorTheme="secondary" disabled>
+        <Button className="m-2" theme="secondary" disabled>
           Disabled button
         </Button>
       </Card.Body>

@@ -10,7 +10,6 @@ export interface ProgressProps extends React.ComponentPropsWithRef<'div'> {
   striped?: boolean;
   animated?: boolean;
   height?: number;
-  children?: React.ReactText;
 }
 
 type Progress = React.FC<ProgressProps> & {
@@ -24,7 +23,6 @@ const Progress: Progress = ({
   striped = false,
   animated = false,
   height = 20,
-  children: label,
   className: customClass,
   children,
   ...rest

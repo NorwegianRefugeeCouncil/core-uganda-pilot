@@ -3,11 +3,11 @@ import * as React from 'react';
 import { classNames } from '../../helpers/utils';
 
 export interface NavItemProps extends React.ComponentPropsWithoutRef<'li'> {
-  isDropdown?: boolean;
+  dropdown?: boolean;
 }
 
 const NavItem: React.FC<NavItemProps> = ({
-  isDropdown: dropdown = false,
+  dropdown = false,
   className: customClass,
   children,
   ...rest

@@ -1,112 +1,105 @@
-import classNames from 'classnames';
 import * as React from 'react';
-import { uniqueId } from '../../helpers/utils';
-import { Color } from '../../helpers/types';
+import DropdownToggle from './dropdown-toggle.component';
+import DropdownMenu from './dropdown-menu.component';
+import DropdownItem from './dropdown-item.component';
+import DropdownDivider from './dropdown-divider.component';
 import Button from '../button/button.component';
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface DropdownDividerProps
-  extends React.ComponentPropsWithoutRef<'hr'> {}
-
-export const DropdownDivider: React.FC<DropdownDividerProps> = (props) => (
-  <hr className="dropdown-divider" {...props} />
-);
-
-export interface ItemProps extends React.ComponentPropsWithoutRef<'a'> {
-  href?: string;
-  label: string;
-}
-
-export const Item: React.FC<ItemProps> = ({
-  href = '#',
-  label,
-  children,
-  ...rest
-}) => (
-  <a href={href} className="dropdown-item" {...rest}>
-    {label ?? children}
-  </a>
-);
-
-export interface MenuProps extends React.ComponentPropsWithoutRef<'ul'> {
-  options?: { type: 'option' | 'divider'; href?: string; label?: string }[];
-}
-
-export const Menu: React.FC<MenuProps> = ({
-  options = null,
-  className: customClass,
-  children,
-  ...rest
-}) => {
-  const className = classNames('dropdown-menu', customClass);
-  if (options != null) {
-    return (
-      <ul className={className} {...rest}>
-        {options.map((option) => {
-          if (option.type === 'option') {
-            return (
-              <li>
-                <Item href={option.href} label={option.label} />
-              </li>
-            );
-          } else if (option.type === 'divider') {
-            return (
-              <li>
-                <DropdownDivider />
-              </li>
-            );
-          } else return null;
-        })}
-      </ul>
-    );
-  } else if (children != null) {
-    return (
-      <ul className={className} {...rest}>
-        {children}
-      </ul>
-    );
-  } else return null;
-};
+import ButtonGroup from '../button-group/button-group.component';
+import { classNames } from '@ui-helpers/utils';
+import { Color } from '@ui-helpers/types';
+import { bsDropdown } from '@ui-helpers/bs-modules';
 
 export interface DropdownProps extends React.ComponentPropsWithoutRef<'div'> {
-  colorTheme?: Color;
   label?: string;
-  isOpenInitially?: boolean;
+  theme?: Color;
+  split?: true;
+  dropDir?: 'up' | 'right' | 'left' | 'start' | 'end';
 }
 
-const Dropdown: React.FC<DropdownProps> & {
-  Menu: typeof Menu;
-  Item: typeof Item;
-} = ({
-  colorTheme = 'primary',
-  label = 'Dropdown button',
-  isOpenInitially = false,
+type Dropdown = React.FC<DropdownProps> & {
+  Toggle: typeof DropdownToggle;
+  Menu: typeof DropdownMenu;
+  Item: typeof DropdownItem;
+  Divider: typeof DropdownDivider;
+};
+
+const Dropdown: Dropdown = ({
+  label,
+  theme,
+  split,
+  dropDir,
   className: customClass,
   children,
   ...rest
 }) => {
-  const [isOpen, setIsOpen] = React.useState(isOpenInitially);
-  const className = classNames('dropdown', customClass);
-  const id = uniqueId(10);
-  return (
-    <div className={className} {...rest}>
-      <Button
-        id={id}
-        colorTheme={colorTheme}
-        className="dropdown-toggle"
-        data-bs-toggle="dropdown"
-        aria-expanded={isOpen}
-        onPointerDown={() => setIsOpen(!isOpen)}
-      >
-        {label}
-      </Button>
-      {isOpen ? children : null}
-    </div>
-  );
+  const dropDirClass = {
+    dropup: dropDir === 'up',
+    dropend: dropDir === 'right' || dropDir === 'end',
+    dropstart: dropDir === 'left' || dropDir === 'start',
+  };
+
+  const [showMenu, setShowMenu] = React.useState(false);
+  const toggleMenu = () => setShowMenu(!showMenu);
+
+  const ref = React.useRef();
+
+  React.useEffect(() => {
+    const ele = ref.current;
+    const dd = new bsDropdown(ref.current, {
+      reference: ref.current,
+    });
+    // if (showMenu) {
+    //   dd.show();
+    // } else {
+    //   dd.hide();
+    // }
+    // const hideMenu = () => setShowMenu(false);
+    // ele.addEventListener('hidden.bs.dropdown', hideMenu);
+    // return () => ele.removeEventListener('hidden.bs.dropdown', hideMenu);
+  });
+
+  if (split || dropDir != null) {
+    const className = classNames(customClass, dropDirClass);
+    return (
+      <ButtonGroup className={className} {...rest}>
+        {split ? (
+          <>
+            <Button theme={theme} type="button">
+              {label}
+            </Button>
+            <DropdownToggle
+              ref={ref}
+              split
+              theme={theme}
+              toggleFn={toggleMenu}
+            />
+          </>
+        ) : (
+          <DropdownToggle ref={ref} theme={theme} toggleFn={toggleMenu}>
+            {label}
+          </DropdownToggle>
+        )}
+        {children}
+      </ButtonGroup>
+    );
+  } else {
+    const className = classNames('dropdown', customClass);
+    return (
+      <div className={className} {...rest}>
+        <DropdownToggle ref={ref} theme={theme} toggleFn={toggleMenu}>
+          {label}
+        </DropdownToggle>
+        {children}
+      </div>
+    );
+  }
 };
 
 Dropdown.displayName = 'Dropdown';
-Dropdown.Menu = Menu;
-Dropdown.Item = Item;
+
+Dropdown.Toggle = DropdownToggle;
+Dropdown.Menu = DropdownMenu;
+Dropdown.Item = DropdownItem;
+Dropdown.Divider = DropdownDivider;
 
 export default Dropdown;

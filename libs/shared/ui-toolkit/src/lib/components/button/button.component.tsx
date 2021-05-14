@@ -1,19 +1,16 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import { Color, Size } from '../../helpers/types';
-import { color } from '@storybook/addon-knobs';
 
 export interface ButtonProps extends React.ComponentPropsWithRef<'button'> {
-  colorTheme?: Color | 'link';
+  theme?: Color | 'link';
   size?: 'sm' | 'lg';
   outline?: boolean;
 }
 
-type Button = React.FC<ButtonProps>;
-
-const Button: Button = (props: ButtonProps) => {
+const Button = (props, ref) => {
   const {
-    colorTheme = 'primary',
+    theme = 'primary',
     size,
     outline = false,
     className: customClass,
@@ -21,12 +18,12 @@ const Button: Button = (props: ButtonProps) => {
     ...rest
   } = props;
   const className = classNames('btn', customClass, {
-    [`btn-${colorTheme}`]: colorTheme && !outline,
-    [`btn-outline-${colorTheme}`]: outline,
+    [`btn-${theme}`]: theme && !outline,
+    [`btn-outline-${theme}`]: outline,
     [`btn-${size}`]: size != null,
   });
   return (
-    <button {...rest} className={className}>
+    <button ref={ref} className={className} {...rest}>
       {children}
     </button>
   );
@@ -34,4 +31,4 @@ const Button: Button = (props: ButtonProps) => {
 
 Button.displayName = 'Button';
 
-export default Button;
+export default React.forwardRef<HTMLButtonElement, ButtonProps>(Button);
