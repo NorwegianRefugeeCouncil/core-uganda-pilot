@@ -3,7 +3,7 @@ import { classNames } from '@ui-helpers/utils';
 import * as React from 'react';
 import ProgressBar from './progress-bar.component';
 
-export interface ProgessProps extends React.ComponentPropsWithRef<'div'> {
+export interface ProgressProps extends React.ComponentPropsWithRef<'div'> {
   showValue?: boolean;
   progress?: number;
   theme?: Color;
