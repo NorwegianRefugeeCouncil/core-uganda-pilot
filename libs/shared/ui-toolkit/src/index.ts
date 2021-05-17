@@ -7,3 +7,7 @@ export * from './lib/components/form-select/form-select.component';
 export * from './lib/components/icons/icons';
 export * from './lib/components/list-group/list-group.component';
 export * from './lib/components/modal/modal';
+export * from './lib/components/card/card-body.component'
+export * from './lib/components/card/card-footer.component'
+export * from './lib/components/card/card-header.component'
+export * from './lib/components/icons/icons'

@@ -56,7 +56,7 @@ storiesOf('Field Builder UI', module)
   .add('Demo - Float', () => (
     <>
       <Field
-        id="demo-integer"
+        id="demo-float"
         key="field-type"
         type={FieldType.float}
         children={[]}
@@ -71,7 +71,7 @@ storiesOf('Field Builder UI', module)
             tooltip: {
               en: 'this is a demo float field',
             },
-            value: 0,
+            value: 1.1,
           } as FieldOptions
         }
       />
