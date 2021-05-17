@@ -12,7 +12,9 @@ import {
   FormCheckLabel,
   FormCheckInput,
   FormInput,
+  //   Card,
 } from '@nrc.no/ui-toolkit';
+import './field.css';
 
 export type Translations = {
   [locale: string]: string;
@@ -61,30 +63,77 @@ export interface FieldProps {
   options: FieldOptions;
 }
 
+const renderCheckboxField = (
+  checkedState: boolean,
+  name: string,
+  label: string
+) => {
+  return (
+    <Fragment>
+      {checkedState ? (
+        <FormCheck>
+          <FormCheckLabel>{label}</FormCheckLabel>
+          <FormCheckInput name={name} checked />
+        </FormCheck>
+      ) : (
+        <FormCheck>
+          <FormCheckLabel>{label}</FormCheckLabel>
+          <FormCheckInput name={name} />
+        </FormCheck>
+      )}
+    </Fragment>
+  );
+};
+
+const renderGenericValidationFields = (options: FieldOptions) => {
+  return (
+    <Fragment>
+      {renderCheckboxField(options.required, 'required', 'Required')}
+      {renderCheckboxField(options.disabled, 'disabled', 'Disabled')}
+      {renderCheckboxField(options.hidden, 'hidden', 'Hidden')}
+      <FormLabel>Regex</FormLabel>
+      <FormInput
+        name="regex"
+        defaultValue=""
+        aria-label="regular expression used to validate the field"
+      />
+    </Fragment>
+  );
+};
+
 const renderTranslatableField = (
   name: string,
   fieldTranslation: Translations
 ) => {
-  return Object.keys(fieldTranslation).map((locale) => {
-    return (
-      <Fragment>
-        <FormLabel>{`${locale}:`}</FormLabel>
-        <FormInput
-          name={`${name}-${locale}`}
-          defaultValue={fieldTranslation[locale] || ''}
-          aria-label={`field name for ${locale}`}
-        />
-      </Fragment>
-    );
-  });
+  return (
+    <ul>
+      {Object.keys(fieldTranslation).map((locale) => {
+        return (
+          <li>
+            <i className="bi bi-translate"></i>
+            <FormLabel
+              style={{ marginLeft: 5 + 'px' }}
+            >{`${locale}:`}</FormLabel>
+            <FormInput
+              name={`${name}-${locale}`}
+              defaultValue={fieldTranslation[locale] || ''}
+              aria-label={`field name for ${locale}`}
+            />
+          </li>
+        );
+      })}
+    </ul>
+  );
 };
 
-const renderFieldInformationFields = (options: FieldOptions) => {
+const renderGenericOptionFields = (options: FieldOptions) => {
   return (
     <Fragment>
       <FormLabel>Name:</FormLabel>
       <br />
       {renderTranslatableField('name', options.name)}
+
+      {renderGenericValidationFields(options)}
 
       <FormLabel>Description:</FormLabel>
       <br />
@@ -100,7 +149,7 @@ const renderFieldInformationFields = (options: FieldOptions) => {
 const renderStringOptionFields = (options: FieldOptions) => {
   return (
     <Fragment>
-      {renderFieldInformationFields(options)}
+      {renderGenericOptionFields(options)}
 
       <FormLabel>Max Length:</FormLabel>
       <FormInput
@@ -116,7 +165,7 @@ const renderStringOptionFields = (options: FieldOptions) => {
 const renderNumericOptionFields = (options: FieldOptions) => {
   return (
     <Fragment>
-      {renderFieldInformationFields(options)}
+      {renderGenericOptionFields(options)}
 
       <FormLabel>Max Value:</FormLabel>
       <FormInput
@@ -137,6 +186,18 @@ const renderNumericOptionFields = (options: FieldOptions) => {
   );
 };
 
+const renderCheckboxOptionFields = (options: FieldOptions) => {
+  return <Fragment>{renderGenericOptionFields(options)}</Fragment>;
+};
+
+const renderRadioOptionFields = (options: FieldOptions) => {
+  return <Fragment>{renderGenericOptionFields(options)}</Fragment>;
+};
+
+const renderSelectOptionFields = (options: FieldOptions) => {
+  return <Fragment>{renderGenericOptionFields(options)}</Fragment>;
+};
+
 const renderOptions = (props: FieldProps) => {
   switch (props.type) {
     case FieldType.string:
@@ -144,6 +205,13 @@ const renderOptions = (props: FieldProps) => {
     case FieldType.integer:
     case FieldType.float:
       return renderNumericOptionFields(props.options);
+    case FieldType.checkbox:
+      return renderCheckboxOptionFields(props.options);
+    case FieldType.radio:
+      return renderRadioOptionFields(props.options);
+    case FieldType.select:
+    case FieldType.multiselect:
+      return renderSelectOptionFields(props.options);
     default:
       return <Fragment />;
   }
@@ -168,9 +236,21 @@ const handleChange = (
   } else if (
     event.target['name'] === 'maxLength' ||
     event.target['name'] === 'max' ||
-    event.target['name'] === 'min'
+    event.target['name'] === 'min' ||
+    event.target['name'] === 'regex'
   ) {
     newState.options[event.target['name']] = event.target['value'];
+    setFieldState(newState);
+  } else if (
+    event.target['name'] === 'required' ||
+    event.target['name'] === 'disabled' ||
+    event.target['name'] === 'hidden'
+  ) {
+    if (event.target['value'] === 'on') {
+      newState.options[event.target['name']] = true;
+    } else {
+      newState.options[event.target['name']] = false;
+    }
     setFieldState(newState);
   } else {
     newState[event.target['name']] = event.target['value'];
