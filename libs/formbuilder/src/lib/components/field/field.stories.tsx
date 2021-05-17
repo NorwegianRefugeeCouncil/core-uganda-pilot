@@ -40,9 +40,13 @@ storiesOf('Field Builder UI', module)
           {
             name: {
               en: 'demo integer field',
+              es: 'campo entero demo',
+              fr: 'champ entier de démo',
+              ar: 'العدد الصحيح التجريبي'
             },
             description: {
               en: 'demo integer field description',
+              ar: 'وصف حقل العدد الصحيح'
             },
             tooltip: {
               en: 'this is a demo integer field',

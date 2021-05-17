@@ -91,7 +91,7 @@ const renderGenericValidationFields = (options: FieldOptions) => {
       {renderCheckboxField(options.required, 'required', 'Required')}
       {renderCheckboxField(options.disabled, 'disabled', 'Disabled')}
       {renderCheckboxField(options.hidden, 'hidden', 'Hidden')}
-      <FormLabel>Regex</FormLabel>
+      <FormLabel>Regex:</FormLabel>
       <FormInput
         name="regex"
         defaultValue=""
@@ -114,11 +114,20 @@ const renderTranslatableField = (
             <FormLabel
               style={{ marginLeft: 5 + 'px' }}
             >{`${locale}:`}</FormLabel>
-            <FormInput
-              name={`${name}-${locale}`}
-              defaultValue={fieldTranslation[locale] || ''}
-              aria-label={`field name for ${locale}`}
-            />
+            {
+                locale === 'ar' ?
+                <FormInput
+                    style={{direction: 'rtl'}}
+                    name={`${name}-${locale}`}
+                    defaultValue={fieldTranslation[locale] || ''}
+                    aria-label={`field name for ${locale}`}
+                /> :
+                <FormInput
+                    name={`${name}-${locale}`}
+                    defaultValue={fieldTranslation[locale] || ''}
+                    aria-label={`field name for ${locale}`}
+                /> 
+            }
           </li>
         );
       })}
@@ -246,7 +255,7 @@ const handleChange = (
     event.target['name'] === 'disabled' ||
     event.target['name'] === 'hidden'
   ) {
-    if (event.target['value'] === 'on') {
+    if (event.target['checked'] === true) {
       newState.options[event.target['name']] = true;
     } else {
       newState.options[event.target['name']] = false;
