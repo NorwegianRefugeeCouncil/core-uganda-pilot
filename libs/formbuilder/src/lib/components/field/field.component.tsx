@@ -63,6 +63,47 @@ export interface FieldProps {
   options: FieldOptions;
 }
 
+type ListKind = 'radio' | 'select';
+
+const renderListField = (
+  items: RadioOption[] | SelectOption[],
+  kind: ListKind
+) => {
+  return kind === 'radio' ? (
+    <Fragment>
+      <ul className="list-group">
+        <li className="list-group-item">
+            <FormLabel>Label:</FormLabel>
+            <FormInput
+                name="option-key"
+                defaultValue=''
+                aria-label='a radio option key for the field'
+            />
+        </li>
+      </ul>
+    </Fragment>
+  ) : (
+    <Fragment>
+      <ul className="list-group">
+        <li className="list-group-item">
+            <FormLabel>Label:</FormLabel>
+            <FormInput
+                name="option-key"
+                defaultValue=''
+                aria-label='a radio option key for the field'
+            />
+            <FormLabel>Value:</FormLabel>
+            <FormInput
+                name="option-value"
+                defaultValue=''
+                aria-label='a radio option key for the field'
+            />
+        </li>
+      </ul>
+    </Fragment>
+  );
+};
+
 const renderCheckboxField = (
   checkedState: boolean,
   name: string,
@@ -114,20 +155,20 @@ const renderTranslatableField = (
             <FormLabel
               style={{ marginLeft: 5 + 'px' }}
             >{`${locale}:`}</FormLabel>
-            {
-                locale === 'ar' ?
-                <FormInput
-                    style={{direction: 'rtl'}}
-                    name={`${name}-${locale}`}
-                    defaultValue={fieldTranslation[locale] || ''}
-                    aria-label={`field name for ${locale}`}
-                /> :
-                <FormInput
-                    name={`${name}-${locale}`}
-                    defaultValue={fieldTranslation[locale] || ''}
-                    aria-label={`field name for ${locale}`}
-                /> 
-            }
+            {locale === 'ar' ? (
+              <FormInput
+                style={{ direction: 'rtl' }}
+                name={`${name}-${locale}`}
+                defaultValue={fieldTranslation[locale] || ''}
+                aria-label={`field name for ${locale}`}
+              />
+            ) : (
+              <FormInput
+                name={`${name}-${locale}`}
+                defaultValue={fieldTranslation[locale] || ''}
+                aria-label={`field name for ${locale}`}
+              />
+            )}
           </li>
         );
       })}
@@ -200,11 +241,17 @@ const renderCheckboxOptionFields = (options: FieldOptions) => {
 };
 
 const renderRadioOptionFields = (options: FieldOptions) => {
-  return <Fragment>{renderGenericOptionFields(options)}</Fragment>;
+  return <Fragment>
+      {renderGenericOptionFields(options)}
+      {renderListField([] as RadioOption[], 'radio')}
+    </Fragment>;
 };
 
 const renderSelectOptionFields = (options: FieldOptions) => {
-  return <Fragment>{renderGenericOptionFields(options)}</Fragment>;
+  return <Fragment>
+      {renderGenericOptionFields(options)}
+      {renderListField([] as SelectOption[], 'select')}
+    </Fragment>;
 };
 
 const renderOptions = (props: FieldProps) => {
