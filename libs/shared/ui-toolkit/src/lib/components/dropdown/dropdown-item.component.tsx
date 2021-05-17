@@ -5,7 +5,9 @@ import { classNames, uniqueId } from '@ui-helpers/utils';
 export interface DropdownItemProps
   extends React.ComponentPropsWithoutRef<'li'> {
   href?: string;
-  text?: true;
+  isTextOnly?: true;
+  value?: any;
+  handleChange?: (value: any) => void;
 }
 
 type ActiveProps =
@@ -16,9 +18,11 @@ type DropdownItem = React.FC<DropdownItemProps & ActiveProps>;
 
 const DropdownItem: DropdownItem = ({
   href,
-  text,
+  isTextOnly,
+  value,
   active,
   disabled,
+  handleChange,
   className: customClass,
   children,
   ...rest
@@ -26,11 +30,15 @@ const DropdownItem: DropdownItem = ({
   const className = classNames('dropdown-item', customClass, {
     active,
     disabled,
-    'dropdown-item-text': text,
+    'dropdown-item-text': isTextOnly,
   });
   return (
     <li {...rest}>
-      <a className={className} href={href}>
+      <a
+        className={className}
+        href={href}
+        onPointerDown={(value) => handleChange(value)}
+      >
         {children}
       </a>
     </li>

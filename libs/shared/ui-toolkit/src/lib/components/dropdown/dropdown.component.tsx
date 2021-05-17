@@ -6,14 +6,16 @@ import DropdownDivider from './dropdown-divider.component';
 import Button from '../button/button.component';
 import ButtonGroup from '../button-group/button-group.component';
 import { classNames } from '@ui-helpers/utils';
-import { Color } from '@ui-helpers/types';
-import { bsDropdown } from '@ui-helpers/bs-modules';
+import { Color, Direction } from '@ui-helpers/types';
+import useDropdown from './use-dropdown';
+import { menuPositionFromDir } from './menuPositionFromDir';
 
 export interface DropdownProps extends React.ComponentPropsWithoutRef<'div'> {
   label?: string;
   theme?: Color;
   split?: true;
-  dropDir?: 'up' | 'right' | 'left' | 'start' | 'end';
+  dropDir?: Direction;
+  onChange?: (value: any) => void;
 }
 
 type Dropdown = React.FC<DropdownProps> & {
@@ -27,7 +29,8 @@ const Dropdown: Dropdown = ({
   label,
   theme,
   split,
-  dropDir,
+  dropDir = 'down',
+  onChange,
   className: customClass,
   children,
   ...rest
@@ -38,25 +41,29 @@ const Dropdown: Dropdown = ({
     dropstart: dropDir === 'left' || dropDir === 'start',
   };
 
-  const [showMenu, setShowMenu] = React.useState(false);
-  const toggleMenu = () => setShowMenu(!showMenu);
+  const {
+    menuRef,
+    toggleBtnRef,
+    menuIsOpen,
+    toggleMenu,
+    handleChange,
+  } = useDropdown(onChange);
 
-  const ref = React.useRef();
+  const menuPosition = menuPositionFromDir(dropDir);
 
-  React.useEffect(() => {
-    const ele = ref.current;
-    const dd = new bsDropdown(ref.current, {
-      reference: ref.current,
-    });
-    // if (showMenu) {
-    //   dd.show();
-    // } else {
-    //   dd.hide();
-    // }
-    // const hideMenu = () => setShowMenu(false);
-    // ele.addEventListener('hidden.bs.dropdown', hideMenu);
-    // return () => ele.removeEventListener('hidden.bs.dropdown', hideMenu);
-  });
+  const menu = React.Children.map<React.ReactNode, React.ReactNode>(
+    children,
+    (child) => {
+      if (React.isValidElement(child) && typeof child === typeof DropdownMenu) {
+        return React.cloneElement(child, {
+          ref: menuRef,
+          isVisible: menuIsOpen,
+          handleChange,
+          position: menuPosition,
+        });
+      }
+    }
+  );
 
   if (split || dropDir != null) {
     const className = classNames(customClass, dropDirClass);
@@ -68,28 +75,32 @@ const Dropdown: Dropdown = ({
               {label}
             </Button>
             <DropdownToggle
-              ref={ref}
+              ref={toggleBtnRef}
               split
               theme={theme}
               toggleFn={toggleMenu}
             />
           </>
         ) : (
-          <DropdownToggle ref={ref} theme={theme} toggleFn={toggleMenu}>
+          <DropdownToggle
+            ref={toggleBtnRef}
+            theme={theme}
+            toggleFn={toggleMenu}
+          >
             {label}
           </DropdownToggle>
         )}
-        {children}
+        {menu}
       </ButtonGroup>
     );
   } else {
     const className = classNames('dropdown', customClass);
     return (
       <div className={className} {...rest}>
-        <DropdownToggle ref={ref} theme={theme} toggleFn={toggleMenu}>
+        <DropdownToggle ref={toggleBtnRef} theme={theme} toggleFn={toggleMenu}>
           {label}
         </DropdownToggle>
-        {children}
+        {menu}
       </div>
     );
   }
