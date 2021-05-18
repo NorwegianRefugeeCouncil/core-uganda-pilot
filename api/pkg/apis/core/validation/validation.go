@@ -64,19 +64,21 @@ func ValidateFormDefinitionValidation(f *core.FormDefinitionValidation, fldPath 
 
 func ValidateFormDefinitionSchema(f *core.FormDefinitionSchema, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
-	allErrs = append(allErrs, ValidateFormDefinitionElement(&f.Root, fldPath.Child("root"), true)...)
+	allErrs = append(allErrs, ValidateFormDefinitionElement(&f.Root, fldPath.Child("root"), 0)...)
 	return allErrs
 }
 
-func ValidateFormDefinitionElement(f *core.FormElementDefinition, fldPath *field.Path, isRoot bool) field.ErrorList {
+func ValidateFormDefinitionElement(f *core.FormElementDefinition, fldPath *field.Path, level int) field.ErrorList {
 	allErrs := field.ErrorList{}
 
+	isRoot := level == 0
+
 	if isRoot && len(f.Key) > 0 {
-		allErrs = append(allErrs, field.NotSupported(fldPath.Child("key"), f.Key, []string{}))
+		allErrs = append(allErrs, field.NotSupported(fldPath.Child("key"), f.Key, []string{""}))
 	}
 
 	if !isRoot && f.Type == core.SectionType && len(f.Key) != 0 {
-		allErrs = append(allErrs, field.NotSupported(fldPath.Child("key"), f.Key, []string{}))
+		allErrs = append(allErrs, field.NotSupported(fldPath.Child("key"), f.Key, []string{""}))
 	}
 
 	if !isRoot && f.Type != core.SectionType && len(f.Key) == 0 {
@@ -92,16 +94,18 @@ func ValidateFormDefinitionElement(f *core.FormElementDefinition, fldPath *field
 	}
 
 	for i, child := range f.Children {
-		allErrs = append(allErrs, ValidateFormDefinitionElement(&child, fldPath.Child("children").Index(i), false)...)
+		allErrs = append(allErrs, ValidateFormDefinitionElement(&child, fldPath.Child("children").Index(i), level+1)...)
 	}
 
 	if f.Type != core.IntegerType {
+
 		if len(f.Min) != 0 {
-			allErrs = append(allErrs, field.NotSupported(fldPath.Child("min"), f.Min, []string{}))
+			allErrs = append(allErrs, field.NotSupported(fldPath.Child("min"), f.Min, []string{""}))
 		}
 		if len(f.Max) != 0 {
-			allErrs = append(allErrs, field.NotSupported(fldPath.Child("max"), f.Max, []string{}))
+			allErrs = append(allErrs, field.NotSupported(fldPath.Child("max"), f.Max, []string{""}))
 		}
+
 	} else {
 
 		var min int64
@@ -144,7 +148,8 @@ func ValidateFormDefinitionElement(f *core.FormElementDefinition, fldPath *field
 		}
 
 		if f.MinLength != 0 && f.MaxLength != nil && *f.MaxLength < f.MinLength {
-			allErrs = append(allErrs, field.Invalid(fldPath.Child("maxLength"), f.MaxLength, "maximum length cannot be smaller than minimum length"))
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("maxLength"), *f.MaxLength, "maximum length cannot be smaller than minimum length"))
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("minLength"), f.MinLength, "maximum length cannot be smaller than minimum length"))
 		}
 
 		if len(f.Pattern) != 0 {
@@ -157,13 +162,13 @@ func ValidateFormDefinitionElement(f *core.FormElementDefinition, fldPath *field
 	} else {
 
 		if f.MinLength != 0 {
-			allErrs = append(allErrs, field.NotSupported(fldPath.Child("minLength"), f.MinLength, []string{}))
+			allErrs = append(allErrs, field.NotSupported(fldPath.Child("minLength"), f.MinLength, []string{""}))
 		}
 		if f.MaxLength != nil {
-			allErrs = append(allErrs, field.NotSupported(fldPath.Child("maxLength"), f.MaxLength, []string{}))
+			allErrs = append(allErrs, field.NotSupported(fldPath.Child("maxLength"), f.MaxLength, []string{""}))
 		}
 		if len(f.Pattern) != 0 {
-			allErrs = append(allErrs, field.NotSupported(fldPath.Child("pattern"), f.Pattern, []string{}))
+			allErrs = append(allErrs, field.NotSupported(fldPath.Child("pattern"), f.Pattern, []string{""}))
 		}
 
 	}
