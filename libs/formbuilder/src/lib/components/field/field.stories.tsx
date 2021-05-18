@@ -8,8 +8,7 @@ storiesOf('Field Builder UI', module)
   .add('Demo - String', () => (
     <>
       <Field
-        id="demo-string"
-        key="field-type"
+        key="demo-string"
         type={FieldType.string}
         children={[]}
         options={
@@ -32,8 +31,7 @@ storiesOf('Field Builder UI', module)
   .add('Demo - Integer', () => (
     <>
       <Field
-        id="demo-integer"
-        key="field-type"
+        key="demo-integer"
         type={FieldType.integer}
         children={[]}
         options={
@@ -60,8 +58,7 @@ storiesOf('Field Builder UI', module)
   .add('Demo - Float', () => (
     <>
       <Field
-        id="demo-float"
-        key="field-type"
+        key="demo-float"
         type={FieldType.float}
         children={[]}
         options={
@@ -84,8 +81,7 @@ storiesOf('Field Builder UI', module)
   .add('Demo - Checkbox', () => (
     <>
       <Field
-        id="demo-checkbox"
-        key="field-type"
+        key="demo-checkbox"
         type={FieldType.checkbox}
         children={[]}
         options={
@@ -108,8 +104,7 @@ storiesOf('Field Builder UI', module)
   .add('Demo - Radio', () => (
     <>
       <Field
-        id="demo-radio"
-        key="field-type"
+        key="demo-radio"
         type={FieldType.radio}
         children={[]}
         options={
@@ -132,8 +127,7 @@ storiesOf('Field Builder UI', module)
   .add('Demo - Select', () => (
     <>
       <Field
-        id="demo-select"
-        key="field-type"
+        key="demo-select"
         type={FieldType.select}
         children={[]}
         options={
@@ -156,8 +150,7 @@ storiesOf('Field Builder UI', module)
   .add('Demo - Multiselect', () => (
     <>
       <Field
-        id="demo-multiselect"
-        key="field-type"
+        key="demo-multiselect"
         type={FieldType.multiselect}
         children={[]}
         options={
