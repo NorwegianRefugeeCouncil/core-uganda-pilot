@@ -10,7 +10,7 @@ import (
 
 type FormDefinition struct {
 	metav1.TypeMeta   `json:",inline"`
-	metav1.ObjectMeta `json:"metadata" protobuf:"bytes,1,opt,name=metadata"`
+	metav1.ObjectMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
 	Spec              FormDefinitionSpec `json:"spec" protobuf:"bytes,2,opt,name=spec"`
 }
 
@@ -18,50 +18,61 @@ type FormDefinition struct {
 
 type FormDefinitionList struct {
 	metav1.TypeMeta `json:",inline"`
-	metav1.ListMeta `json:"metadata" protobuf:"bytes,1,opt,name=metadata"`
-	Items           []FormDefinition `json:"items" protobuf:"bytes,2,opt,name=items"`
+	metav1.ListMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
+	Items           []FormDefinition `json:"items,omitempty" protobuf:"bytes,2,opt,name=items"`
 }
 
 type FormDefinitionSpec struct {
-	Group    string                  `json:"group" protobuf:"bytes,1,opt,name=group"`
-	Names    FormDefinitionNames     `json:"names" protobuf:"bytes,2,opt,name=names"`
-	Versions []FormDefinitionVersion `json:"versions" protobuf:"bytes,3,opt,name=versions"`
+	Group    string                  `json:"group,omitempty" protobuf:"bytes,1,opt,name=group"`
+	Names    FormDefinitionNames     `json:"names,omitempty" protobuf:"bytes,2,opt,name=names"`
+	Versions []FormDefinitionVersion `json:"versions,omitempty" protobuf:"bytes,3,opt,name=versions"`
 }
 
 type FormDefinitionNames struct {
-	Plural   string `json:"plural" protobuf:"bytes,1,opt,name=plural"`
-	Singular string `json:"singular" protobuf:"bytes,2,opt,name=singular"`
-	Kind     string `json:"kind" protobuf:"bytes,3,opt,name=kind"`
+	Plural   string `json:"plural,omitempty" protobuf:"bytes,1,opt,name=plural"`
+	Singular string `json:"singular,omitempty" protobuf:"bytes,2,opt,name=singular"`
+	Kind     string `json:"kind,omitempty" protobuf:"bytes,3,opt,name=kind"`
 }
 
 type FormDefinitionVersion struct {
-	Name   string                   `json:"name" protobuf:"bytes,1,opt,name=name"`
-	Schema FormDefinitionValidation `json:"schema" protobuf:"bytes,2,opt,name=schema"`
+	Name   string                   `json:"name,omitempty" protobuf:"bytes,1,opt,name=name"`
+	Schema FormDefinitionValidation `json:"schema,omitempty" protobuf:"bytes,2,opt,name=schema"`
 }
 
 type FormDefinitionValidation struct {
-	FormSchema FormDefinitionSchema `json:"formSchema" protobuf:"bytes,1,opt,name=formSchema"`
+	FormSchema FormDefinitionSchema `json:"formSchema,omitempty" protobuf:"bytes,1,opt,name=formSchema"`
 }
 
 type FormElementType string
 
+const (
+	SectionType   FormElementType = "section"
+	ShortTextType FormElementType = "shortText"
+	LongTextType  FormElementType = "longText"
+	IntegerType   FormElementType = "integer"
+	SelectType    FormElementType = "select"
+	DateType      FormElementType = "date"
+	DateTimeType  FormElementType = "dateTime"
+	TimeType      FormElementType = "time"
+)
+
 type FormDefinitionSchema struct {
-	Root FormElementDefinition `json:"root" protobuf:"bytes,1,opt,name=root"`
+	Root FormElementDefinition `json:"root,omitempty" protobuf:"bytes,1,opt,name=root"`
 }
 
 type TranslatedString struct {
-	Locale string `json:"locale" protobuf:"bytes,1,opt,name=locale"`
-	Value  string `json:"value" protobuf:"bytes,1,opt,name=value"`
+	Locale string `json:"locale,omitempty" protobuf:"bytes,1,opt,name=locale"`
+	Value  string `json:"value,omitempty" protobuf:"bytes,1,opt,name=value"`
 }
 
 type TranslatedStrings []TranslatedString
 
 type FormElementDefinition struct {
-	Key         string                  `json:"key" protobuf:"bytes,1,opt,name=key"`
-	Name        TranslatedStrings       `json:"name" protobuf:"bytes,2,opt,name=name"`
-	Description TranslatedStrings       `json:"description" protobuf:"bytes,3,opt,name=description"`
-	Help        TranslatedStrings       `json:"help" protobuf:"bytes,4,opt,name=help"`
-	Type        FormElementType         `json:"type" protobuf:"bytes,5,opt,name=type"`
-	Required    bool                    `json:"required" protobuf:"bytes,6,opt,name=required"`
-	Children    []FormElementDefinition `json:"children" protobuf:"bytes,7,opt,name=children"`
+	Key         string                  `json:"key,omitempty" protobuf:"bytes,1,opt,name=key"`
+	Label       TranslatedStrings       `json:"label,omitempty" protobuf:"bytes,2,opt,name=label"`
+	Description TranslatedStrings       `json:"description,omitempty" protobuf:"bytes,3,opt,name=description"`
+	Help        TranslatedStrings       `json:"help,omitempty" protobuf:"bytes,4,opt,name=help"`
+	Type        FormElementType         `json:"type,omitempty" protobuf:"bytes,5,opt,name=type"`
+	Required    bool                    `json:"required,omitempty" protobuf:"bytes,6,opt,name=required"`
+	Children    []FormElementDefinition `json:"children,omitempty" protobuf:"bytes,7,opt,name=children"`
 }

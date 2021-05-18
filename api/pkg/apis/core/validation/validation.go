@@ -1,9 +1,12 @@
 package validation
 
 import (
+	"fmt"
 	"github.com/nrc-no/core/api/pkg/apis/core"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/apimachinery/pkg/util/validation/field"
+	"regexp"
+	"strconv"
 )
 
 func ValidateFormDefinition(f *core.FormDefinition) field.ErrorList {
@@ -61,26 +64,110 @@ func ValidateFormDefinitionValidation(f *core.FormDefinitionValidation, fldPath 
 
 func ValidateFormDefinitionSchema(f *core.FormDefinitionSchema, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
-	allErrs = append(allErrs, ValidateFormDefinitionElement(&f.Root, fldPath.Child("root"))...)
+	allErrs = append(allErrs, ValidateFormDefinitionElement(&f.Root, fldPath.Child("root"), true)...)
 	return allErrs
 }
 
-func ValidateFormDefinitionElement(f *core.FormElementDefinition, fldPath *field.Path) field.ErrorList {
+func ValidateFormDefinitionElement(f *core.FormElementDefinition, fldPath *field.Path, isRoot bool) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	if f.Type == core.SectionType {
-		if len(f.Children) == 0 {
-			allErrs = append(allErrs, field.Required(fldPath.Child("children"), "section elements must have at least 1 child"))
-		}
-	} else {
-		if len(f.Children) > 0 {
-			allErrs = append(allErrs, field.TooMany(fldPath.Child("children"), len(f.Children), 0))
-		}
+	if isRoot && len(f.Key) > 0 {
+		allErrs = append(allErrs, field.NotSupported(fldPath.Child("key"), f.Key, []string{}))
+	}
+
+	if !isRoot && f.Type == core.SectionType && len(f.Key) != 0 {
+		allErrs = append(allErrs, field.NotSupported(fldPath.Child("key"), f.Key, []string{}))
+	}
+
+	if !isRoot && f.Type != core.SectionType && len(f.Key) == 0 {
+		allErrs = append(allErrs, field.Required(fldPath.Child("key"), "key is required"))
+	}
+
+	if len(f.Children) > 0 && !core.CanHaveChildren(f.Type) {
+		allErrs = append(allErrs, field.TooMany(fldPath.Child("children"), len(f.Children), 0))
+	}
+
+	if len(f.Children) == 0 && core.MustHaveChildren(f.Type) {
+		allErrs = append(allErrs, field.Required(fldPath.Child("children"), "section elements must have at least 1 child"))
 	}
 
 	for i, child := range f.Children {
-		allErrs = append(allErrs, ValidateFormDefinitionElement(&child, fldPath.Child("children").Index(i))...)
+		allErrs = append(allErrs, ValidateFormDefinitionElement(&child, fldPath.Child("children").Index(i), false)...)
 	}
+
+	if f.Type != core.IntegerType {
+		if len(f.Min) != 0 {
+			allErrs = append(allErrs, field.NotSupported(fldPath.Child("min"), f.Min, []string{}))
+		}
+		if len(f.Max) != 0 {
+			allErrs = append(allErrs, field.NotSupported(fldPath.Child("max"), f.Max, []string{}))
+		}
+	} else {
+
+		var min int64
+		var hasMin bool
+		var err error
+		if len(f.Min) != 0 {
+			min, err = strconv.ParseInt(f.Min, 10, 64)
+			if err != nil {
+				allErrs = append(allErrs, field.Invalid(fldPath.Child("min"), f.Min, "invalid number"))
+			}
+			hasMin = true
+		}
+
+		var max int64
+		var hasMax bool
+		if len(f.Max) != 0 {
+			max, err = strconv.ParseInt(f.Max, 10, 64)
+			if err != nil {
+				allErrs = append(allErrs, field.Invalid(fldPath.Child("max"), f.Max, "invalid number"))
+			}
+			hasMax = true
+		}
+
+		if hasMin && hasMax {
+			if min > max {
+				allErrs = append(allErrs, field.Invalid(fldPath.Child("max"), f.Max, "minimum cannot be greater than maximum"))
+				allErrs = append(allErrs, field.Invalid(fldPath.Child("min"), f.Min, "minimum cannot be greater than maximum"))
+			}
+		}
+	}
+
+	if f.Type == core.LongTextType || f.Type == core.ShortTextType {
+
+		if f.MinLength < 0 {
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("minLength"), f.MinLength, "cannot have negative minimum length"))
+		}
+
+		if f.MaxLength != nil && *f.MaxLength < 0 {
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("minLength"), f.MinLength, "cannot have negative minimum length"))
+		}
+
+		if f.MinLength != 0 && f.MaxLength != nil && *f.MaxLength < f.MinLength {
+			allErrs = append(allErrs, field.Invalid(fldPath.Child("maxLength"), f.MaxLength, "maximum length cannot be smaller than minimum length"))
+		}
+
+		if len(f.Pattern) != 0 {
+			_, err := regexp.Compile(f.Pattern)
+			if err != nil {
+				allErrs = append(allErrs, field.Invalid(fldPath.Child("pattern"), f.Pattern, fmt.Sprintf("invalid pattern: %s", err.Error())))
+			}
+		}
+
+	} else {
+
+		if f.MinLength != 0 {
+			allErrs = append(allErrs, field.NotSupported(fldPath.Child("minLength"), f.MinLength, []string{}))
+		}
+		if f.MaxLength != nil {
+			allErrs = append(allErrs, field.NotSupported(fldPath.Child("maxLength"), f.MaxLength, []string{}))
+		}
+		if len(f.Pattern) != 0 {
+			allErrs = append(allErrs, field.NotSupported(fldPath.Child("pattern"), f.Pattern, []string{}))
+		}
+
+	}
+
 	return allErrs
 }
 

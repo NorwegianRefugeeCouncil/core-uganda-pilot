@@ -304,7 +304,7 @@ func Convert_core_FormDefinitionVersion_To_v1_FormDefinitionVersion(in *core.For
 
 func autoConvert_v1_FormElementDefinition_To_core_FormElementDefinition(in *FormElementDefinition, out *core.FormElementDefinition, s conversion.Scope) error {
 	out.Key = in.Key
-	out.Name = *(*core.TranslatedStrings)(unsafe.Pointer(&in.Name))
+	out.Label = *(*core.TranslatedStrings)(unsafe.Pointer(&in.Label))
 	out.Description = *(*core.TranslatedStrings)(unsafe.Pointer(&in.Description))
 	out.Help = *(*core.TranslatedStrings)(unsafe.Pointer(&in.Help))
 	out.Type = core.FormElementType(in.Type)
@@ -320,7 +320,7 @@ func Convert_v1_FormElementDefinition_To_core_FormElementDefinition(in *FormElem
 
 func autoConvert_core_FormElementDefinition_To_v1_FormElementDefinition(in *core.FormElementDefinition, out *FormElementDefinition, s conversion.Scope) error {
 	out.Key = in.Key
-	out.Name = *(*TranslatedStrings)(unsafe.Pointer(&in.Name))
+	out.Label = *(*TranslatedStrings)(unsafe.Pointer(&in.Label))
 	out.Description = *(*TranslatedStrings)(unsafe.Pointer(&in.Description))
 	out.Help = *(*TranslatedStrings)(unsafe.Pointer(&in.Help))
 	out.Type = FormElementType(in.Type)

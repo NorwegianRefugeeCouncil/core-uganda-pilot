@@ -113,6 +113,18 @@ func (s *Suite) TestCreateFormDefinition() {
 				f.Spec.Versions = append(f.Spec.Versions, versionCopy)
 			},
 			assert: assertStatusCause(metav1.CauseTypeFieldValueDuplicate, "spec.versions[1].name", "Duplicate value: \"v1\""),
+		}, {
+			name: "missing key",
+			customize: func(f *corev1.FormDefinition) {
+				f.Spec.Versions[0].Schema.FormSchema.Root.Children[0].Key = ""
+			},
+			assert: assertStatusCause(metav1.CauseTypeFieldValueRequired, "spec.versions[0].schema.formSchema.root.children[0].key", "Required value: key is required"),
+		}, {
+			name: "root has key defined",
+			customize: func(f *corev1.FormDefinition) {
+				f.Spec.Versions[0].Schema.FormSchema.Root.Key = "shouldNotBeThere"
+			},
+			assert: assertStatusCause(metav1.CauseTypeFieldValueNotSupported, "spec.versions[0].schema.formSchema.root.key", "Unsupported value: \"shouldNotBeThere\": supported values: \"\""),
 		},
 	}
 
@@ -133,13 +145,6 @@ func (s *Suite) TestCreateFormDefinition() {
 
 			out, err := s.client.FormDefinitions().Create(ctx, fd, metav1.CreateOptions{})
 			tc.assert(t, fd, out, err)
-
-			//if err != nil {
-			//	if err := s.client.FormDefinitions().Delete(ctx, fd.Name, metav1.DeleteOptions{}); err != nil && !apierrors.IsNotFound(err) {
-			//		assert.NoError(t, err)
-			//		return
-			//	}
-			//}
 
 		})
 	}
@@ -162,7 +167,58 @@ func aValidFormDefinition() *corev1.FormDefinition {
 					Name: "v1",
 					Schema: corev1.FormDefinitionValidation{
 						FormSchema: corev1.FormDefinitionSchema{
-							Root: corev1.FormElementDefinition{},
+							Root: corev1.FormElementDefinition{
+								Key:  "",
+								Type: corev1.SectionType,
+								Children: []corev1.FormElementDefinition{
+									{
+										Key: "firstName",
+										Label: corev1.TranslatedStrings{
+											{
+												Locale: "en",
+												Value:  "First Name",
+											}, {
+												Locale: "fr",
+												Value:  "Prenom",
+											},
+										},
+										Description: corev1.TranslatedStrings{
+											{
+												Locale: "en",
+												Value:  "Enter the first name of the beneficiary",
+											}, {
+												Locale: "fr",
+												Value:  "Entrez le prénom du bénéficiaire",
+											},
+										},
+										Type:     corev1.ShortTextType,
+										Required: true,
+										Children: nil,
+									}, {
+										Key: "lastName",
+										Label: corev1.TranslatedStrings{
+											{
+												Locale: "en",
+												Value:  "Last Name",
+											}, {
+												Locale: "fr",
+												Value:  "Nom de famille",
+											},
+										},
+										Description: corev1.TranslatedStrings{
+											{
+												Locale: "en",
+												Value:  "Enter the first name of the beneficiary",
+											}, {
+												Locale: "fr",
+												Value:  "Entrez le nom de famille du bénéficiaire",
+											},
+										},
+										Type:     corev1.ShortTextType,
+										Required: true,
+									},
+								},
+							},
 						},
 					},
 				},

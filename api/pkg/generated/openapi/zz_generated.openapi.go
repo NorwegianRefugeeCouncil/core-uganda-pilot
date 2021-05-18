@@ -341,7 +341,7 @@ func schema_pkg_apis_core_v1_FormElementDefinition(ref common.ReferenceCallback)
 							Format:  "",
 						},
 					},
-					"name": {
+					"label": {
 						SchemaProps: spec.SchemaProps{
 							Type: []string{"array"},
 							Items: &spec.SchemaOrArray{
@@ -408,7 +408,7 @@ func schema_pkg_apis_core_v1_FormElementDefinition(ref common.ReferenceCallback)
 						},
 					},
 				},
-				Required: []string{"key", "name", "description", "help", "type", "required", "children"},
+				Required: []string{"key", "label", "description", "help", "type", "required", "children"},
 			},
 		},
 		Dependencies: []string{
