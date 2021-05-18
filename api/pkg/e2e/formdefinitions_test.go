@@ -77,65 +77,65 @@ func (s *Suite) TestCreateFormDefinition() {
 		customize func(f *corev1.FormDefinition)
 		assert    func(t *testing.T, in, out *corev1.FormDefinition, err error)
 	}{
-		{
+		{ // a valid form
 			name:   "valid",
 			assert: assertNoError,
-		}, {
+		}, { // the group is missing
 			name: "missing group",
 			customize: func(f *corev1.FormDefinition) {
 				f.Spec.Group = ""
 			},
 			assert: assertStatusCause(metav1.CauseTypeFieldValueRequired, "spec.group", "Required value: group is required"),
-		}, {
+		}, { // the plural name is missing
 			name: "missing plural name",
 			customize: func(f *corev1.FormDefinition) {
 				f.Spec.Names.Plural = ""
 			},
 			assert: assertStatusCause(metav1.CauseTypeFieldValueRequired, "spec.names.plural", "Required value: plural is required"),
-		}, {
+		}, { // the singular name is missing
 			name: "missing singular name",
 			customize: func(f *corev1.FormDefinition) {
 				f.Spec.Names.Singular = ""
 			},
 			assert: assertStatusCause(metav1.CauseTypeFieldValueRequired, "spec.names.singular", "Required value: singular is required"),
-		}, {
+		}, { // the kind name is missing
 			name: "missing kind name",
 			customize: func(f *corev1.FormDefinition) {
 				f.Spec.Names.Kind = ""
 			},
 			assert: assertStatusCause(metav1.CauseTypeFieldValueRequired, "spec.names.kind", "Required value: kind is required"),
-		}, {
+		}, { // empty versions array. should not allow to post a form definition with no version at all
 			name: "empty versions",
 			customize: func(f *corev1.FormDefinition) {
 				f.Spec.Versions = []corev1.FormDefinitionVersion{}
 			},
 			assert: assertStatusCause(metav1.CauseTypeFieldValueRequired, "spec.versions", "Required value: versions cannot be empty"),
-		}, {
+		}, { // empty version name
 			name: "empty version name",
 			customize: func(f *corev1.FormDefinition) {
 				f.Spec.Versions[0].Name = ""
 			},
 			assert: assertStatusCause(metav1.CauseTypeFieldValueRequired, "spec.versions[0].name", "Required value: version name cannot be empty"),
-		}, {
+		}, { // two versions with the same name
 			name: "duplicate version name",
 			customize: func(f *corev1.FormDefinition) {
 				versionCopy := f.Spec.Versions[0]
 				f.Spec.Versions = append(f.Spec.Versions, versionCopy)
 			},
 			assert: assertStatusCause(metav1.CauseTypeFieldValueDuplicate, "spec.versions[1].name", "Duplicate value: \"v1\""),
-		}, {
+		}, { // missing key on a form element that requires a key
 			name: "missing key",
 			customize: func(f *corev1.FormDefinition) {
 				f.Spec.Versions[0].Schema.FormSchema.Root.Children[0].Key = ""
 			},
 			assert: assertStatusCause(metav1.CauseTypeFieldValueRequired, "spec.versions[0].schema.formSchema.root.children[0].key", "Required value: key is required"),
-		}, {
+		}, { // root key cannot be defined
 			name: "root has key defined",
 			customize: func(f *corev1.FormDefinition) {
 				f.Spec.Versions[0].Schema.FormSchema.Root.Key = "shouldNotBeThere"
 			},
 			assert: assertStatusCause(metav1.CauseTypeFieldValueNotSupported, "spec.versions[0].schema.formSchema.root.key", "Unsupported value: \"shouldNotBeThere\": supported values: \"\""),
-		}, {
+		}, { // text inputs should allow minLength/maxLength validation property
 			name: "textinput should allow minLength/maxLength",
 			customize: func(f *corev1.FormDefinition) {
 				children := f.Spec.Versions[0].Schema.FormSchema.Root.Children
@@ -147,7 +147,7 @@ func (s *Suite) TestCreateFormDefinition() {
 				})
 			},
 			assert: assertNoError,
-		}, {
+		}, { // text inputs should not allow minLength > maxLength
 			name: "textinput should not allow minLength > maxLength",
 			customize: func(f *corev1.FormDefinition) {
 				children := f.Spec.Versions[0].Schema.FormSchema.Root.Children
@@ -168,7 +168,7 @@ func (s *Suite) TestCreateFormDefinition() {
 					"spec.versions[0].schema.formSchema.root.children[2].maxLength",
 					"Invalid value: 4: maximum length cannot be smaller than minimum length"),
 			),
-		}, {
+		}, { // textInput cannot accept min/max parameters
 			name: "textinput should not allow min",
 			customize: func(f *corev1.FormDefinition) {
 				children := f.Spec.Versions[0].Schema.FormSchema.Root.Children
@@ -182,7 +182,7 @@ func (s *Suite) TestCreateFormDefinition() {
 				metav1.CauseTypeFieldValueNotSupported,
 				"spec.versions[0].schema.formSchema.root.children[2].min",
 				"Unsupported value: \"2\": supported values: \"\""),
-		}, {
+		}, { // textInput cannot accept min/max parameters
 			name: "textinput should not allow max",
 			customize: func(f *corev1.FormDefinition) {
 				children := f.Spec.Versions[0].Schema.FormSchema.Root.Children
@@ -196,7 +196,7 @@ func (s *Suite) TestCreateFormDefinition() {
 				metav1.CauseTypeFieldValueNotSupported,
 				"spec.versions[0].schema.formSchema.root.children[2].max",
 				"Unsupported value: \"2\": supported values: \"\""),
-		}, {
+		}, { // integer inputs should allow min/max validation parameters
 			name: "integer input should allow min/max",
 			customize: func(f *corev1.FormDefinition) {
 				children := f.Spec.Versions[0].Schema.FormSchema.Root.Children
@@ -208,7 +208,7 @@ func (s *Suite) TestCreateFormDefinition() {
 				})
 			},
 			assert: assertNoError,
-		}, {
+		}, { // integer inputs should not allow min > max
 			name: "integer input should not allow min > max",
 			customize: func(f *corev1.FormDefinition) {
 				children := f.Spec.Versions[0].Schema.FormSchema.Root.Children
@@ -229,7 +229,7 @@ func (s *Suite) TestCreateFormDefinition() {
 					"spec.versions[0].schema.formSchema.root.children[2].max",
 					"Invalid value: \"0\": minimum cannot be greater than maximum"),
 			),
-		}, {
+		}, { // integer inputs cannot accept invalid numerical values for min/max
 			name: "integer input should not allow invalid min/max",
 			customize: func(f *corev1.FormDefinition) {
 				children := f.Spec.Versions[0].Schema.FormSchema.Root.Children
