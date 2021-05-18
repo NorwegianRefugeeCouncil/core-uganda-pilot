@@ -1,46 +1,52 @@
 import * as React from 'react';
-import FormGroup from './form-group.component';
-import FormLabel from './form-label.component';
-import FormControl from './form-control.component';
-import FormSelect from './form-select.component';
-import { classNames } from '@ui-helpers/utils';
+import { FormGroup } from './form-group.component';
+import { FormLabel } from './form-label.component';
+import { FormControl } from './form-control.component';
+import { FormSelect } from './form-select.component';
+import { FormText } from './form-text.component';
+import { classNames, Box, PolymorphicComponentProps } from '@ui-helpers/utils';
+import { FormCheck } from './form-check.component';
 
-interface Props<C extends React.ElementType> {
-  as?: C;
-  children: React.ReactNode;
+export type FormOwnProps = {
   inline?: true;
-  validated?: boolean;
-}
-
-type FormProps<C extends React.ElementType> = Props<C> &
-  Omit<React.ComponentPropsWithRef<C>, keyof Props<C>> & {
-    Group: typeof FormGroup;
-    Label: typeof FormLabel;
-    Control: typeof FormControl;
-    Select: typeof FormSelect;
-  };
-
-const Form = <C extends React.ElementType = 'form'>({
-  as,
-  inline,
-  validated,
-  className: customClass,
-  ...rest
-}) => {
-  const className = classNames(customClass, {
-    'row row-cols-lg-auto g-3 align-items-center': inline,
-    'was-validated': validated,
-    'needs-validation': !validated,
-  });
-  const Component = as ?? 'form';
-  return <Component className={className} {...rest} />;
+  validated?: true;
 };
 
-Form.displayName = 'Form';
+export type FormProps<E extends React.ElementType> = PolymorphicComponentProps<
+  E,
+  FormOwnProps
+>;
+
+export type FormStatic = {
+  Group?: typeof FormGroup;
+  Label?: typeof FormLabel;
+  Control?: typeof FormControl;
+  Select?: typeof FormSelect;
+  Check?: typeof FormCheck;
+  Text?: typeof FormText;
+};
+
+type Form = <E extends React.ElementType = 'form'>(
+  props: FormProps<E>
+) => React.ReactElement | null;
+
+export const Form: Form & FormStatic = React.forwardRef(
+  <E extends React.ElementType = 'form'>(
+    { as, inline, validated, className: customClass, ...rest }: FormProps<E>,
+    ref: typeof rest.ref
+  ) => {
+    const className = classNames(customClass, {
+      'row row-cols-lg-auto g-3 align-items-center': inline,
+      'was-validated': validated,
+      'needs-validation': !validated,
+    });
+    return <Box ref={ref} className={className} {...rest} />;
+  }
+);
 
 Form.Group = FormGroup;
 Form.Label = FormLabel;
 Form.Control = FormControl;
 Form.Select = FormSelect;
-
-export default Form;
+Form.Check = FormCheck;
+Form.Text = FormText;

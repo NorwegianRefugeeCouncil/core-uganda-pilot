@@ -7,7 +7,7 @@ export interface CloseButtonProps extends ButtonProps {
   white?: boolean;
 }
 
-const CloseButton: React.FC<CloseButtonProps> = ({
+export const CloseButton: React.FC<CloseButtonProps> = ({
   white = false,
   size,
   className: customClass,
@@ -19,5 +19,3 @@ const CloseButton: React.FC<CloseButtonProps> = ({
   });
   return <button type="button" className={className} {...rest} />;
 };
-
-export default CloseButton;

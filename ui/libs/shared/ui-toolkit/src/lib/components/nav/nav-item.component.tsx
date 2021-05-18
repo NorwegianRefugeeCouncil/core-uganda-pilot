@@ -6,7 +6,7 @@ export interface NavItemProps extends React.ComponentPropsWithoutRef<'li'> {
   dropdown?: boolean;
 }
 
-const NavItem: React.FC<NavItemProps> = ({
+export const NavItem: React.FC<NavItemProps> = ({
   dropdown = false,
   className: customClass,
   children,
@@ -19,5 +19,3 @@ const NavItem: React.FC<NavItemProps> = ({
     </li>
   );
 };
-
-export default NavItem;

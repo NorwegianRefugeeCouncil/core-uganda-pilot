@@ -6,7 +6,7 @@ export type CollapseProps = React.ComponentPropsWithRef<'div'> & {
   show?: boolean;
 };
 
-export const Collapse = React.forwardRef<HTMLDivElement, CollapseProps>(
+const Collapse = React.forwardRef<HTMLDivElement, CollapseProps>(
   (props, ref) => {
     const { show = true, className: customClass, children, ...rest } = props;
     const classeName = classNames(customClass, 'collapse', { show });
@@ -17,3 +17,7 @@ export const Collapse = React.forwardRef<HTMLDivElement, CollapseProps>(
     );
   }
 );
+
+Collapse.displayName = 'Collapse';
+
+export { Collapse };

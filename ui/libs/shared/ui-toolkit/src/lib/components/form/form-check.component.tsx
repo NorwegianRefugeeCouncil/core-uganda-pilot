@@ -1,7 +1,7 @@
 import * as React from 'react';
-import FormContext, { FormContextInterface } from './form-context';
-import FormCheckLabel from './form-check-label.component';
-import FormCheckInput from './form-check-input.component';
+import { FormContext, FormContextInterface } from './form-context';
+import { FormCheckLabel } from './form-check-label.component';
+import { FormCheckInput } from './form-check-input.component';
 import { classNames } from '@ui-helpers/utils';
 
 export interface FormCheckProps extends React.ComponentPropsWithRef<'div'> {
@@ -42,9 +42,9 @@ const FormCheck = React.forwardRef<HTMLInputElement, FormCheckProps>(
     },
     ref
   ) => {
-    const { controlId } = React.useContext(FormContext);
+    // const { controlId } = React.useContext(FormContext);
     const innerFormContext: FormContextInterface = {
-      controlId: id + controlId,
+      controlId: id
     };
     const className = classNames(
       'form-check',
@@ -72,7 +72,7 @@ const FormCheck = React.forwardRef<HTMLInputElement, FormCheckProps>(
 
     return (
       <FormContext.Provider value={innerFormContext}>
-        <div ref={ref} id={id ?? controlId} className={className} {...rest}>
+        <div ref={ref} id={id} className={className} {...rest}>
           {children ?? (
             <>
               {labelComponent}
@@ -90,4 +90,4 @@ FormCheck.displayName = 'FormCheck';
 FormCheck.Label = FormCheckLabel;
 FormCheck.Input = FormCheckInput;
 
-export default FormCheck;
+export { FormCheck };

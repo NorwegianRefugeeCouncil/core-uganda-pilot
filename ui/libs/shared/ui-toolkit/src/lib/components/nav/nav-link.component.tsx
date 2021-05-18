@@ -7,7 +7,7 @@ export interface NavLinkProps extends React.ComponentPropsWithoutRef<'a'> {
   isDisabled?: boolean;
 }
 
-const NavLink: React.FC<NavLinkProps> = ({
+export const NavLink: React.FC<NavLinkProps> = ({
   isActive: active = false,
   isDisabled: disabled = false,
   className: customClass,
@@ -21,5 +21,3 @@ const NavLink: React.FC<NavLinkProps> = ({
     </a>
   );
 };
-
-export default NavLink;

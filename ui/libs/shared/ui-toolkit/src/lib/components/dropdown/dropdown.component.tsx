@@ -1,10 +1,10 @@
 import * as React from 'react';
-import DropdownToggle from './dropdown-toggle.component';
-import DropdownMenu from './dropdown-menu.component';
-import DropdownItem from './dropdown-item.component';
-import DropdownDivider from './dropdown-divider.component';
-import Button from '../button/button.component';
-import ButtonGroup from '../button-group/button-group.component';
+import { DropdownToggle } from './dropdown-toggle.component';
+import { DropdownMenu } from './dropdown-menu.component';
+import { DropdownItem } from './dropdown-item.component';
+import { DropdownDivider } from './dropdown-divider.component';
+import { Button } from '../button/button.component';
+import { ButtonGroup } from '../button-group/button-group.component';
 import { classNames } from '@ui-helpers/utils';
 import { Color, Direction } from '@ui-helpers/types';
 import useDropdown from './use-dropdown';
@@ -113,4 +113,4 @@ Dropdown.Menu = DropdownMenu;
 Dropdown.Item = DropdownItem;
 Dropdown.Divider = DropdownDivider;
 
-export default Dropdown;
+export { Dropdown };

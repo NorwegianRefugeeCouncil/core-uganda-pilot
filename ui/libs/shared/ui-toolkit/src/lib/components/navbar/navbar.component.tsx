@@ -38,7 +38,7 @@ export interface NavbarProps extends React.ComponentPropsWithoutRef<'div'> {
   size?: Size;
 }
 
-const Navbar: React.FC<NavbarProps> = ({
+export const Navbar: React.FC<NavbarProps> = ({
   canCollapse = true,
   size,
   theme = 'light',
@@ -61,5 +61,3 @@ const Navbar: React.FC<NavbarProps> = ({
     </nav>
   );
 };
-
-export default Navbar;

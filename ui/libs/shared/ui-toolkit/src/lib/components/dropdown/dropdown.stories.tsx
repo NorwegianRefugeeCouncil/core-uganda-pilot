@@ -1,5 +1,5 @@
-import Card from '../card/card.component';
-import Dropdown from './dropdown.component';
+import { Card } from '../card/card.component';
+import { Dropdown } from './dropdown.component';
 
 export default {
   title: 'Dropdown',

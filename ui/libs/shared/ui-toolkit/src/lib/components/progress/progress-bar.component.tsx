@@ -10,7 +10,7 @@ export interface ProgessBarProps extends React.ComponentPropsWithRef<'div'> {
   progress?: number;
 }
 
-const ProgressBar: React.FC<ProgessBarProps> = ({
+export const ProgressBar: React.FC<ProgessBarProps> = ({
   label,
   striped = false,
   animated = false,
@@ -43,5 +43,3 @@ const ProgressBar: React.FC<ProgessBarProps> = ({
     </div>
   );
 };
-
-export default ProgressBar;

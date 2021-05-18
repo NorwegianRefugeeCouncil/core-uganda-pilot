@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import * as React from 'react';
 import { classNames } from '@ui-helpers/utils';
-import NavItem from './nav-item.component';
-import NavLink from './nav-link.component';
+import { NavItem } from './nav-item.component';
+import { NavLink } from './nav-link.component';
 
 export interface NavProps extends React.ComponentPropsWithoutRef<'nav'> {
   as?: 'nav' | 'ul';
@@ -45,4 +45,4 @@ Nav.displayName = 'Nav';
 Nav.Item = NavItem;
 Nav.Link = NavLink;
 
-export default Nav;
+export { Nav };

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import Card from '../card/card.component';
-import Icons from './icons';
+import { Card } from '../card/card.component';
+import { Icons } from './icons';
 
 const allIcons = Object.entries(Icons)
   .filter(

@@ -1,4 +1,4 @@
-import Select from './select.component';
+import { CustomSelect } from './select.component';
 
 const options = [
   { value: 'A', label: 'Dingle' },
@@ -11,7 +11,7 @@ const options = [
 
 export default {
   title: 'Select',
-  component: Select,
+  component: CustomSelect,
 };
 
 export const Basic = () => (
@@ -19,19 +19,19 @@ export const Basic = () => (
     <div className={'container'}>
       <div className={'col-12 mb-4'}>
         <h3>Single Select</h3>
-        <Select options={options} />
+        <CustomSelect options={options} />
       </div>
     </div>
     <div className={'container'}>
       <div className={'col-12 mb-4'}>
         <h3>Disabled Select</h3>
-        <Select options={options} isDisabled />
+        <CustomSelect options={options} isDisabled />
       </div>
     </div>
     <div className={'container'}>
       <div className={'col-12 mb-4'}>
         <h3>Multi Select</h3>
-        <Select options={options} isMulti />
+        <CustomSelect options={options} isMulti />
       </div>
     </div>
   </>

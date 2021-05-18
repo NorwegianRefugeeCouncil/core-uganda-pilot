@@ -1,13 +1,13 @@
-import { classNames } from '@ui-helpers/utils';
 import * as React from 'react';
-import FormContext from './form-context';
+import { FormContext } from './form-context';
+import { classNames } from '@ui-helpers/utils';
 
 interface FormCheckLabelProps extends React.ComponentPropsWithoutRef<'label'> {
   srOnly?: true;
   htmlFor?: string;
 }
 
-const FormCheckLabel: React.FC<FormCheckLabelProps> = ({
+export const FormCheckLabel: React.FC<FormCheckLabelProps> = ({
   srOnly,
   htmlFor,
   className: customClass,
@@ -21,5 +21,3 @@ const FormCheckLabel: React.FC<FormCheckLabelProps> = ({
     <label htmlFor={htmlFor ?? controlId} className={className} {...rest} />
   );
 };
-
-export default FormCheckLabel;

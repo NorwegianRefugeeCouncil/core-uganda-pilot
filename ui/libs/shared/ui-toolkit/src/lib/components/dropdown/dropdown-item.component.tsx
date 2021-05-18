@@ -16,7 +16,7 @@ type ActiveProps =
 
 type DropdownItem = React.FC<DropdownItemProps & ActiveProps>;
 
-const DropdownItem: DropdownItem = ({
+export const DropdownItem: DropdownItem = ({
   href,
   isTextOnly,
   value,
@@ -44,5 +44,3 @@ const DropdownItem: DropdownItem = ({
     </li>
   );
 };
-
-export default DropdownItem;

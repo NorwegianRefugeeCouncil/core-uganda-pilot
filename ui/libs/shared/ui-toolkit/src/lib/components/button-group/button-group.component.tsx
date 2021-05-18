@@ -8,7 +8,7 @@ export interface ButtonGroupProps
 
 type ButtonGroup = React.FC<ButtonGroupProps>;
 
-const ButtonGroup: ButtonGroup = ({
+export const ButtonGroup: ButtonGroup = ({
   size,
   className: customClass,
   children,
@@ -23,5 +23,3 @@ const ButtonGroup: ButtonGroup = ({
     </div>
   );
 };
-
-export default ButtonGroup;

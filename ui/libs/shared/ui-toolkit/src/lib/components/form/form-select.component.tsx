@@ -7,7 +7,7 @@ export interface FormSelectProps extends React.ComponentPropsWithRef<'select'> {
   displaySize?: 'sm' | 'lg';
 }
 
-const FormSelect = React.forwardRef<HTMLSelectElement, FormSelectProps>(
+export const FormSelect = React.forwardRef<HTMLSelectElement, FormSelectProps>(
   (
     {
       options,
@@ -43,4 +43,4 @@ const FormSelect = React.forwardRef<HTMLSelectElement, FormSelectProps>(
   }
 );
 
-export default FormSelect;
+FormSelect.displayName = 'FormSelect';

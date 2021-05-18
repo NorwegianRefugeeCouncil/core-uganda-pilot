@@ -1,5 +1,5 @@
 import { LoremIpsum } from 'lorem-ipsum';
-import Card from './card.component';
+import { Card } from './card.component';
 
 const lorem = new LoremIpsum();
 const fillerText = lorem.generateParagraphs(2);
