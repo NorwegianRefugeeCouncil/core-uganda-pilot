@@ -200,6 +200,11 @@ func (in *FormElementDefinition) DeepCopyInto(out *FormElementDefinition) {
 			(*in)[i].DeepCopyInto(&(*out)[i])
 		}
 	}
+	if in.MaxLength != nil {
+		in, out := &in.MaxLength, &out.MaxLength
+		*out = new(int64)
+		**out = **in
+	}
 	return
 }
 

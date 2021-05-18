@@ -74,9 +74,9 @@ type FormElementDefinition struct {
 	Type        FormElementType         `json:"type,omitempty" protobuf:"bytes,5,opt,name=type"`
 	Required    bool                    `json:"required,omitempty" protobuf:"bytes,6,opt,name=required"`
 	Children    []FormElementDefinition `json:"children,omitempty" protobuf:"bytes,7,opt,name=children"`
-	MinLength   int64                   `json:"minLength,omitempty" protobuf:"bytes,8,opt,name=minLength"`
-	MaxLength   *int64                  `json:"maxLength,omitempty" protobuf:"bytes,9,opt,name=maxLength"`
-	Min         string                  `json:"min,omitempty" protobuf:"bytes,10,opt,name=min"`
-	Max         string                  `json:"max,omitempty" protobuf:"bytes,11,opt,name=max"`
-	Pattern     string                  `json:"pattern,omitempty" protobuf:"bytes,12,opt,name=pattern"`
+	Min         string                  `json:"min,omitempty" protobuf:"bytes,8,opt,name=min"`
+	Max         string                  `json:"max,omitempty" protobuf:"bytes,9,opt,name=max"`
+	Pattern     string                  `json:"pattern,omitempty" protobuf:"bytes,10,opt,name=pattern"`
+	MinLength   int64                   `json:"minLength,omitempty" protobuf:"bytes,11,opt,name=minLength"`
+	MaxLength   *int64                  `json:"maxLength,omitempty" protobuf:"bytes,12,opt,name=maxLength"`
 }

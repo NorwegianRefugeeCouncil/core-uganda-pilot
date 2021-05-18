@@ -127,7 +127,7 @@ func schema_pkg_apis_core_v1_FormDefinition(ref common.ReferenceCallback) common
 						},
 					},
 				},
-				Required: []string{"metadata", "spec"},
+				Required: []string{"spec"},
 			},
 		},
 		Dependencies: []string{
@@ -175,7 +175,6 @@ func schema_pkg_apis_core_v1_FormDefinitionList(ref common.ReferenceCallback) co
 						},
 					},
 				},
-				Required: []string{"metadata", "items"},
 			},
 		},
 		Dependencies: []string{
@@ -191,27 +190,23 @@ func schema_pkg_apis_core_v1_FormDefinitionNames(ref common.ReferenceCallback) c
 				Properties: map[string]spec.Schema{
 					"plural": {
 						SchemaProps: spec.SchemaProps{
-							Default: "",
-							Type:    []string{"string"},
-							Format:  "",
+							Type:   []string{"string"},
+							Format: "",
 						},
 					},
 					"singular": {
 						SchemaProps: spec.SchemaProps{
-							Default: "",
-							Type:    []string{"string"},
-							Format:  "",
+							Type:   []string{"string"},
+							Format: "",
 						},
 					},
 					"kind": {
 						SchemaProps: spec.SchemaProps{
-							Default: "",
-							Type:    []string{"string"},
-							Format:  "",
+							Type:   []string{"string"},
+							Format: "",
 						},
 					},
 				},
-				Required: []string{"plural", "singular", "kind"},
 			},
 		},
 	}
@@ -230,7 +225,6 @@ func schema_pkg_apis_core_v1_FormDefinitionSchema(ref common.ReferenceCallback) 
 						},
 					},
 				},
-				Required: []string{"root"},
 			},
 		},
 		Dependencies: []string{
@@ -246,9 +240,8 @@ func schema_pkg_apis_core_v1_FormDefinitionSpec(ref common.ReferenceCallback) co
 				Properties: map[string]spec.Schema{
 					"group": {
 						SchemaProps: spec.SchemaProps{
-							Default: "",
-							Type:    []string{"string"},
-							Format:  "",
+							Type:   []string{"string"},
+							Format: "",
 						},
 					},
 					"names": {
@@ -271,7 +264,6 @@ func schema_pkg_apis_core_v1_FormDefinitionSpec(ref common.ReferenceCallback) co
 						},
 					},
 				},
-				Required: []string{"group", "names", "versions"},
 			},
 		},
 		Dependencies: []string{
@@ -292,7 +284,6 @@ func schema_pkg_apis_core_v1_FormDefinitionValidation(ref common.ReferenceCallba
 						},
 					},
 				},
-				Required: []string{"formSchema"},
 			},
 		},
 		Dependencies: []string{
@@ -308,9 +299,8 @@ func schema_pkg_apis_core_v1_FormDefinitionVersion(ref common.ReferenceCallback)
 				Properties: map[string]spec.Schema{
 					"name": {
 						SchemaProps: spec.SchemaProps{
-							Default: "",
-							Type:    []string{"string"},
-							Format:  "",
+							Type:   []string{"string"},
+							Format: "",
 						},
 					},
 					"schema": {
@@ -320,7 +310,6 @@ func schema_pkg_apis_core_v1_FormDefinitionVersion(ref common.ReferenceCallback)
 						},
 					},
 				},
-				Required: []string{"name", "schema"},
 			},
 		},
 		Dependencies: []string{
@@ -336,9 +325,8 @@ func schema_pkg_apis_core_v1_FormElementDefinition(ref common.ReferenceCallback)
 				Properties: map[string]spec.Schema{
 					"key": {
 						SchemaProps: spec.SchemaProps{
-							Default: "",
-							Type:    []string{"string"},
-							Format:  "",
+							Type:   []string{"string"},
+							Format: "",
 						},
 					},
 					"label": {
@@ -382,16 +370,14 @@ func schema_pkg_apis_core_v1_FormElementDefinition(ref common.ReferenceCallback)
 					},
 					"type": {
 						SchemaProps: spec.SchemaProps{
-							Default: "",
-							Type:    []string{"string"},
-							Format:  "",
+							Type:   []string{"string"},
+							Format: "",
 						},
 					},
 					"required": {
 						SchemaProps: spec.SchemaProps{
-							Default: false,
-							Type:    []string{"boolean"},
-							Format:  "",
+							Type:   []string{"boolean"},
+							Format: "",
 						},
 					},
 					"children": {
@@ -407,8 +393,37 @@ func schema_pkg_apis_core_v1_FormElementDefinition(ref common.ReferenceCallback)
 							},
 						},
 					},
+					"minLength": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"integer"},
+							Format: "int64",
+						},
+					},
+					"maxLength": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"integer"},
+							Format: "int64",
+						},
+					},
+					"min": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+					"max": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+					"pattern": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
 				},
-				Required: []string{"key", "label", "description", "help", "type", "required", "children"},
 			},
 		},
 		Dependencies: []string{
@@ -424,20 +439,17 @@ func schema_pkg_apis_core_v1_TranslatedString(ref common.ReferenceCallback) comm
 				Properties: map[string]spec.Schema{
 					"locale": {
 						SchemaProps: spec.SchemaProps{
-							Default: "",
-							Type:    []string{"string"},
-							Format:  "",
+							Type:   []string{"string"},
+							Format: "",
 						},
 					},
 					"value": {
 						SchemaProps: spec.SchemaProps{
-							Default: "",
-							Type:    []string{"string"},
-							Format:  "",
+							Type:   []string{"string"},
+							Format: "",
 						},
 					},
 				},
-				Required: []string{"locale", "value"},
 			},
 		},
 	}

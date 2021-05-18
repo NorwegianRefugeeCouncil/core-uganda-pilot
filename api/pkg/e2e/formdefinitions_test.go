@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"strconv"
 	"testing"
 )
 
@@ -27,19 +28,13 @@ func assertHasStatusCause(t *testing.T, err error, causeType metav1.CauseType, f
 		return
 	}
 
-	var found = false
 	for _, cause := range status.Details.Causes {
-		if cause.Type == causeType {
-			found = true
-			assert.Equal(t, field, cause.Field)
-			assert.Equal(t, message, cause.Message)
-			break
+		if cause.Type == causeType && cause.Field == field && cause.Message == message {
+			return
 		}
 	}
 
-	if !found {
-		t.Fatalf("could not find cause %s in response. Actual response had %v causes", causeType, status.Details.Causes)
-	}
+	t.Errorf("could not find cause %s in response. Actual response had %v causes", causeType, status.Details.Causes)
 
 }
 
@@ -48,18 +43,33 @@ func (s *Suite) TestCreateFormDefinition() {
 
 	ctx := context.TODO()
 
+	type assertionFunc func(t *testing.T, in, out *corev1.FormDefinition, err error)
+
 	// Predefined assertion that ensures that no error is returned
 	var assertNoError = func(t *testing.T, in, out *corev1.FormDefinition, err error) {
 		assert.NoError(t, err)
 	}
 
 	// Predefined assertion that asserts the structure of an error: the type, the involved field path and the message
-	var assertStatusCause = func(cause metav1.CauseType, field, message string) func(t *testing.T, in, out *corev1.FormDefinition, err error) {
+	var assertStatusCause = func(cause metav1.CauseType, field, message string) assertionFunc {
 		return func(t *testing.T, in, out *corev1.FormDefinition, err error) {
 			assert.Error(t, err)
 			assert.True(t, apierrors.IsInvalid(err))
 			assertHasStatusCause(t, err, cause, field, message)
 		}
+	}
+
+	// Predefined assertions to combine multiple assertions together
+	var assertMultiple = func(assertions ...assertionFunc) assertionFunc {
+		return func(t *testing.T, in, out *corev1.FormDefinition, err error) {
+			for _, assertion := range assertions {
+				assertion(t, in, out, err)
+			}
+		}
+	}
+
+	var int64ptr = func(i int64) *int64 {
+		return &i
 	}
 
 	var testCases = []struct {
@@ -125,17 +135,134 @@ func (s *Suite) TestCreateFormDefinition() {
 				f.Spec.Versions[0].Schema.FormSchema.Root.Key = "shouldNotBeThere"
 			},
 			assert: assertStatusCause(metav1.CauseTypeFieldValueNotSupported, "spec.versions[0].schema.formSchema.root.key", "Unsupported value: \"shouldNotBeThere\": supported values: \"\""),
+		}, {
+			name: "textinput should allow minLength/maxLength",
+			customize: func(f *corev1.FormDefinition) {
+				children := f.Spec.Versions[0].Schema.FormSchema.Root.Children
+				f.Spec.Versions[0].Schema.FormSchema.Root.Children = append(children, corev1.FormElementDefinition{
+					Type:      corev1.ShortTextType,
+					Key:       "somekey",
+					MinLength: 3,
+					MaxLength: int64ptr(4),
+				})
+			},
+			assert: assertNoError,
+		}, {
+			name: "textinput should not allow minLength > maxLength",
+			customize: func(f *corev1.FormDefinition) {
+				children := f.Spec.Versions[0].Schema.FormSchema.Root.Children
+				f.Spec.Versions[0].Schema.FormSchema.Root.Children = append(children, corev1.FormElementDefinition{
+					Type:      corev1.ShortTextType,
+					Key:       "somekey",
+					MinLength: 10,
+					MaxLength: int64ptr(4),
+				})
+			},
+			assert: assertMultiple(
+				assertStatusCause(
+					metav1.CauseTypeFieldValueInvalid,
+					"spec.versions[0].schema.formSchema.root.children[2].minLength",
+					"Invalid value: 10: maximum length cannot be smaller than minimum length"),
+				assertStatusCause(
+					metav1.CauseTypeFieldValueInvalid,
+					"spec.versions[0].schema.formSchema.root.children[2].maxLength",
+					"Invalid value: 4: maximum length cannot be smaller than minimum length"),
+			),
+		}, {
+			name: "textinput should not allow min",
+			customize: func(f *corev1.FormDefinition) {
+				children := f.Spec.Versions[0].Schema.FormSchema.Root.Children
+				f.Spec.Versions[0].Schema.FormSchema.Root.Children = append(children, corev1.FormElementDefinition{
+					Type: corev1.ShortTextType,
+					Key:  "somekey",
+					Min:  "2",
+				})
+			},
+			assert: assertStatusCause(
+				metav1.CauseTypeFieldValueNotSupported,
+				"spec.versions[0].schema.formSchema.root.children[2].min",
+				"Unsupported value: \"2\": supported values: \"\""),
+		}, {
+			name: "textinput should not allow max",
+			customize: func(f *corev1.FormDefinition) {
+				children := f.Spec.Versions[0].Schema.FormSchema.Root.Children
+				f.Spec.Versions[0].Schema.FormSchema.Root.Children = append(children, corev1.FormElementDefinition{
+					Type: corev1.ShortTextType,
+					Key:  "somekey",
+					Max:  "2",
+				})
+			},
+			assert: assertStatusCause(
+				metav1.CauseTypeFieldValueNotSupported,
+				"spec.versions[0].schema.formSchema.root.children[2].max",
+				"Unsupported value: \"2\": supported values: \"\""),
+		}, {
+			name: "integer input should allow min/max",
+			customize: func(f *corev1.FormDefinition) {
+				children := f.Spec.Versions[0].Schema.FormSchema.Root.Children
+				f.Spec.Versions[0].Schema.FormSchema.Root.Children = append(children, corev1.FormElementDefinition{
+					Type: corev1.IntegerType,
+					Key:  "somekey",
+					Min:  "0",
+					Max:  "2",
+				})
+			},
+			assert: assertNoError,
+		}, {
+			name: "integer input should not allow min > max",
+			customize: func(f *corev1.FormDefinition) {
+				children := f.Spec.Versions[0].Schema.FormSchema.Root.Children
+				f.Spec.Versions[0].Schema.FormSchema.Root.Children = append(children, corev1.FormElementDefinition{
+					Type: corev1.IntegerType,
+					Key:  "somekey",
+					Min:  "2",
+					Max:  "0",
+				})
+			},
+			assert: assertMultiple(
+				assertStatusCause(
+					metav1.CauseTypeFieldValueInvalid,
+					"spec.versions[0].schema.formSchema.root.children[2].min",
+					"Invalid value: \"2\": minimum cannot be greater than maximum"),
+				assertStatusCause(
+					metav1.CauseTypeFieldValueInvalid,
+					"spec.versions[0].schema.formSchema.root.children[2].max",
+					"Invalid value: \"0\": minimum cannot be greater than maximum"),
+			),
+		}, {
+			name: "integer input should not allow invalid min/max",
+			customize: func(f *corev1.FormDefinition) {
+				children := f.Spec.Versions[0].Schema.FormSchema.Root.Children
+				f.Spec.Versions[0].Schema.FormSchema.Root.Children = append(children, corev1.FormElementDefinition{
+					Type: corev1.IntegerType,
+					Key:  "somekey",
+					Min:  "abc",
+					Max:  "def",
+				})
+			},
+			assert: assertMultiple(
+				assertStatusCause(
+					metav1.CauseTypeFieldValueInvalid,
+					"spec.versions[0].schema.formSchema.root.children[2].min",
+					"Invalid value: \"abc\": invalid number"),
+				assertStatusCause(
+					metav1.CauseTypeFieldValueInvalid,
+					"spec.versions[0].schema.formSchema.root.children[2].max",
+					"Invalid value: \"def\": invalid number"),
+			),
 		},
 	}
 
-	for _, testCase := range testCases {
+	for i, testCase := range testCases {
 		tc := testCase
+		var idx = i
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			fd := aValidFormDefinition()
 			if tc.customize != nil {
 				tc.customize(fd)
 			}
+			fd.Name = "test-" + strconv.Itoa(idx)
 
 			err := s.client.FormDefinitions().Delete(ctx, fd.Name, metav1.DeleteOptions{})
 			if err != nil && !apierrors.IsNotFound(err) {
