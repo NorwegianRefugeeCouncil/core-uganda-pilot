@@ -25,6 +25,7 @@
     "shared-ui-toolkit": { "tags": [] },
     "shared-bootstrap": { "tags": [] },
     "formbuilder": { "tags": [] },
-    "shared-core-client": { "tags": [] }
+    "shared-core-client": { "tags": [] },
+    "formrenderer": { "tags": [] }
   }
 }

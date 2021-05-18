@@ -5,5 +5,6 @@ module.exports = {
     '<rootDir>/libs/shared/bootstrap',
     '<rootDir>/libs/formbuilder',
     '<rootDir>/libs/shared/core-client',
+    '<rootDir>/libs/formrenderer',
   ],
 };
