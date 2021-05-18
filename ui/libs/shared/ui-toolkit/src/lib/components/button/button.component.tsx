@@ -8,7 +8,7 @@ export interface ButtonProps extends React.ComponentPropsWithRef<'button'> {
   outline?: boolean;
 }
 
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (props, ref) => {
     const {
       theme = 'primary',
