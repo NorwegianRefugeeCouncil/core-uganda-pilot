@@ -1,4 +1,4 @@
-module github.com/nrc-no/coreapi
+module github.com/nrc-no/core/api
 
 go 1.16
 
@@ -13,9 +13,9 @@ require (
 	github.com/lib/pq v1.8.0 // indirect
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/pflag v1.0.5
-	github.com/stretchr/testify v1.7.0
-	gorm.io/driver/postgres v1.1.0
-	gorm.io/gorm v1.21.10
+	github.com/stretchr/testify v1.7.0 // indirect
+	gorm.io/driver/postgres v1.1.0 // indirect
+	gorm.io/gorm v1.21.10 // indirect
 	k8s.io/apimachinery v0.21.0
 	k8s.io/apiserver v0.21.0
 	k8s.io/client-go v0.21.0

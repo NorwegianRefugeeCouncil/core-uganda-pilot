@@ -12,11 +12,11 @@ CODEGEN_PKG=${CODEGEN_PKG:-$(
 )}
 
 bash "${CODEGEN_PKG}/generate-groups.sh" all \
-  github.com/nrc-no/coreapi/pkg/generated github.com/nrc-no/coreapi/pkg/apis \
+  github.com/nrc-no/core/api/pkg/generated github.com/nrc-no/core/api/pkg/apis \
   "core:v1" \
   --go-header-file "${SCRIPT_ROOT}"/hack/boilerplate.go.txt
 
 bash "${CODEGEN_PKG}/generate-internal-groups.sh" "deepcopy,defaulter,conversion,openapi" \
-  github.com/nrc-no/coreapi/pkg/generated github.com/nrc-no/coreapi/pkg/apis github.com/nrc-no/coreapi/pkg/apis \
+  github.com/nrc-no/core/api/pkg/generated github.com/nrc-no/core/api/pkg/apis github.com/nrc-no/core/api/pkg/apis \
   "core:v1" \
   --go-header-file "${SCRIPT_ROOT}/hack/boilerplate.go.txt"

@@ -21,7 +21,7 @@ package versioned
 import (
 	"fmt"
 
-	corev1 "github.com/nrc-no/coreapi/pkg/generated/clientset/versioned/typed/core/v1"
+	corev1 "github.com/nrc-no/core/api/pkg/generated/clientset/versioned/typed/core/v1"
 	discovery "k8s.io/client-go/discovery"
 	rest "k8s.io/client-go/rest"
 	flowcontrol "k8s.io/client-go/util/flowcontrol"

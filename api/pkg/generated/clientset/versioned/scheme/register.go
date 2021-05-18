@@ -19,7 +19,7 @@ limitations under the License.
 package scheme
 
 import (
-	corev1 "github.com/nrc-no/coreapi/pkg/apis/core/v1"
+	corev1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"

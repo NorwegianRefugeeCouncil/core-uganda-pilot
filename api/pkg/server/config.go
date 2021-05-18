@@ -1,11 +1,11 @@
 package server
 
 import (
-	"github.com/nrc-no/coreapi/pkg/apis/core"
-	"github.com/nrc-no/coreapi/pkg/apis/core/install"
-	v1 "github.com/nrc-no/coreapi/pkg/apis/core/v1"
-	"github.com/nrc-no/coreapi/pkg/generated/openapi"
-	"github.com/nrc-no/coreapi/pkg/registry/core/formdefinition"
+	"github.com/nrc-no/core/api/pkg/apis/core"
+	"github.com/nrc-no/core/api/pkg/apis/core/install"
+	v1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
+	"github.com/nrc-no/core/api/pkg/generated/openapi"
+	"github.com/nrc-no/core/api/pkg/registry/core/formdefinition"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"

@@ -2,7 +2,7 @@ package fuzzer
 
 import (
 	fuzz "github.com/google/gofuzz"
-	"github.com/nrc-no/coreapi/pkg/apis/core"
+	"github.com/nrc-no/core/api/pkg/apis/core"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
 )
 

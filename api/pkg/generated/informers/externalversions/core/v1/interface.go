@@ -19,7 +19,7 @@ limitations under the License.
 package v1
 
 import (
-	internalinterfaces "github.com/nrc-no/coreapi/pkg/generated/informers/externalversions/internalinterfaces"
+	internalinterfaces "github.com/nrc-no/core/api/pkg/generated/informers/externalversions/internalinterfaces"
 )
 
 // Interface provides access to all the informers in this group version.

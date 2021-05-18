@@ -1,7 +1,7 @@
 package install
 
 import (
-	corefuzzer "github.com/nrc-no/coreapi/pkg/apis/core/fuzzer"
+	corefuzzer "github.com/nrc-no/core/api/pkg/apis/core/fuzzer"
 	"k8s.io/apimachinery/pkg/api/apitesting/roundtrip"
 	"testing"
 )

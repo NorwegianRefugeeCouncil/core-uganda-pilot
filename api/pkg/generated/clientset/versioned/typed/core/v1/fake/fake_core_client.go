@@ -19,7 +19,7 @@ limitations under the License.
 package fake
 
 import (
-	v1 "github.com/nrc-no/coreapi/pkg/generated/clientset/versioned/typed/core/v1"
+	v1 "github.com/nrc-no/core/api/pkg/generated/clientset/versioned/typed/core/v1"
 	rest "k8s.io/client-go/rest"
 	testing "k8s.io/client-go/testing"
 )

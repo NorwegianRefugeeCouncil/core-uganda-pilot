@@ -1,7 +1,7 @@
 package validation
 
 import (
-	"github.com/nrc-no/coreapi/pkg/apis/core"
+	"github.com/nrc-no/core/api/pkg/apis/core"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 )
 

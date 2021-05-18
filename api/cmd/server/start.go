@@ -2,10 +2,10 @@ package main
 
 import (
 	"flag"
-	corev1 "github.com/nrc-no/coreapi/pkg/apis/core/v1"
-	"github.com/nrc-no/coreapi/pkg/generated/openapi"
-	"github.com/nrc-no/coreapi/pkg/server"
-	"github.com/nrc-no/coreapi/pkg/server/options"
+	corev1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
+	"github.com/nrc-no/core/api/pkg/generated/openapi"
+	"github.com/nrc-no/core/api/pkg/server"
+	"github.com/nrc-no/core/api/pkg/server/options"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"k8s.io/apimachinery/pkg/runtime"

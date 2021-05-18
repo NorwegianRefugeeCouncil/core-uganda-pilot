@@ -1,6 +1,6 @@
 // +k8s:openapi-gen=true
 // +k8s:deepcopy-gen=package
-// +k8s:conversion-gen=github.com/nrc-no/coreapi/pkg/apis/core
+// +k8s:conversion-gen=github.com/nrc-no/core/api/pkg/apis/core
 // +k8s:defaulter-gen=TypeMeta
 // +groupName=core.nrc.no
 

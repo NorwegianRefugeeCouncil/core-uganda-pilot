@@ -1,6 +1,6 @@
 package v1
 
-import "github.com/nrc-no/coreapi/pkg/client/rest"
+import "github.com/nrc-no/core/api/pkg/client/rest"
 
 type CoreV1Interface interface {
 	RESTClient() rest.Interface

@@ -2,9 +2,9 @@ package v1
 
 import (
 	"context"
-	v1 "github.com/nrc-no/coreapi/pkg/apis/core/v1"
-	metav1 "github.com/nrc-no/coreapi/pkg/apis/meta/v1"
-	"github.com/nrc-no/coreapi/pkg/client/rest"
+	v1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
+	metav1 "github.com/nrc-no/core/api/pkg/apis/meta/v1"
+	"github.com/nrc-no/core/api/pkg/client/rest"
 )
 
 type FormDefinitionsGetter interface {

@@ -19,8 +19,8 @@ limitations under the License.
 package v1
 
 import (
-	v1 "github.com/nrc-no/coreapi/pkg/apis/core/v1"
-	"github.com/nrc-no/coreapi/pkg/generated/clientset/versioned/scheme"
+	v1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
+	"github.com/nrc-no/core/api/pkg/generated/clientset/versioned/scheme"
 	rest "k8s.io/client-go/rest"
 )
 

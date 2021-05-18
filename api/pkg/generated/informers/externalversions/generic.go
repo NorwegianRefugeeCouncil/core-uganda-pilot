@@ -21,7 +21,7 @@ package externalversions
 import (
 	"fmt"
 
-	v1 "github.com/nrc-no/coreapi/pkg/apis/core/v1"
+	v1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"
 	cache "k8s.io/client-go/tools/cache"
 )

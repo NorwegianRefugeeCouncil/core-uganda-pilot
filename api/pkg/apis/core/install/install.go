@@ -1,8 +1,8 @@
 package install
 
 import (
-	"github.com/nrc-no/coreapi/pkg/apis/core"
-	v1 "github.com/nrc-no/coreapi/pkg/apis/core/v1"
+	"github.com/nrc-no/core/api/pkg/apis/core"
+	v1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 )

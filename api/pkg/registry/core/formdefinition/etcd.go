@@ -1,8 +1,8 @@
 package formdefinition
 
 import (
-	"github.com/nrc-no/coreapi/pkg/apis/core"
-	coreregistry "github.com/nrc-no/coreapi/pkg/registry/core"
+	"github.com/nrc-no/core/api/pkg/apis/core"
+	coreregistry "github.com/nrc-no/core/api/pkg/registry/core"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apiserver/pkg/registry/generic"
 	genericregistry "k8s.io/apiserver/pkg/registry/generic/registry"

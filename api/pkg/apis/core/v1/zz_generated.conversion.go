@@ -23,7 +23,7 @@ package v1
 import (
 	unsafe "unsafe"
 
-	core "github.com/nrc-no/coreapi/pkg/apis/core"
+	core "github.com/nrc-no/core/api/pkg/apis/core"
 	conversion "k8s.io/apimachinery/pkg/conversion"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 )

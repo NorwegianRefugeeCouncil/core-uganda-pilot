@@ -1,6 +1,6 @@
 package exceptions
 
-import v1 "github.com/nrc-no/coreapi/pkg/apis/meta/v1"
+import v1 "github.com/nrc-no/core/api/pkg/apis/meta/v1"
 
 type StatusError struct {
 	ErrStatus v1.Status

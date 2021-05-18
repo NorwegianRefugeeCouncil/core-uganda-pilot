@@ -2,7 +2,7 @@ package core
 
 import (
 	"github.com/emicklei/go-restful/v3"
-	v1 "github.com/nrc-no/coreapi/pkg/apis/core/v1"
+	v1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
 	"net/http"
 )
 

@@ -1,6 +1,6 @@
 package client
 
-import v1 "github.com/nrc-no/coreapi/pkg/client/core/v1"
+import v1 "github.com/nrc-no/core/api/pkg/client/core/v1"
 
 type Interface interface {
 	CoreV1() v1.CoreV1Interface

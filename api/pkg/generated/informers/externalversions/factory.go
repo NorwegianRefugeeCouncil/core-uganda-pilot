@@ -23,9 +23,9 @@ import (
 	sync "sync"
 	time "time"
 
-	versioned "github.com/nrc-no/coreapi/pkg/generated/clientset/versioned"
-	core "github.com/nrc-no/coreapi/pkg/generated/informers/externalversions/core"
-	internalinterfaces "github.com/nrc-no/coreapi/pkg/generated/informers/externalversions/internalinterfaces"
+	versioned "github.com/nrc-no/core/api/pkg/generated/clientset/versioned"
+	core "github.com/nrc-no/core/api/pkg/generated/informers/externalversions/core"
+	internalinterfaces "github.com/nrc-no/core/api/pkg/generated/informers/externalversions/internalinterfaces"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"

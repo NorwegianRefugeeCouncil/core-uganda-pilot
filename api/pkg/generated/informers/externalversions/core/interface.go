@@ -19,8 +19,8 @@ limitations under the License.
 package core
 
 import (
-	v1 "github.com/nrc-no/coreapi/pkg/generated/informers/externalversions/core/v1"
-	internalinterfaces "github.com/nrc-no/coreapi/pkg/generated/informers/externalversions/internalinterfaces"
+	v1 "github.com/nrc-no/core/api/pkg/generated/informers/externalversions/core/v1"
+	internalinterfaces "github.com/nrc-no/core/api/pkg/generated/informers/externalversions/internalinterfaces"
 )
 
 // Interface provides access to each of this group's versions.

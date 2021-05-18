@@ -21,10 +21,10 @@ package v1
 import (
 	time "time"
 
-	corev1 "github.com/nrc-no/coreapi/pkg/apis/core/v1"
-	versioned "github.com/nrc-no/coreapi/pkg/generated/clientset/versioned"
-	internalinterfaces "github.com/nrc-no/coreapi/pkg/generated/informers/externalversions/internalinterfaces"
-	v1 "github.com/nrc-no/coreapi/pkg/generated/listers/core/v1"
+	corev1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
+	versioned "github.com/nrc-no/core/api/pkg/generated/clientset/versioned"
+	internalinterfaces "github.com/nrc-no/core/api/pkg/generated/informers/externalversions/internalinterfaces"
+	v1 "github.com/nrc-no/core/api/pkg/generated/listers/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	watch "k8s.io/apimachinery/pkg/watch"

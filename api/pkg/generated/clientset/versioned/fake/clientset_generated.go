@@ -19,9 +19,9 @@ limitations under the License.
 package fake
 
 import (
-	clientset "github.com/nrc-no/coreapi/pkg/generated/clientset/versioned"
-	corev1 "github.com/nrc-no/coreapi/pkg/generated/clientset/versioned/typed/core/v1"
-	fakecorev1 "github.com/nrc-no/coreapi/pkg/generated/clientset/versioned/typed/core/v1/fake"
+	clientset "github.com/nrc-no/core/api/pkg/generated/clientset/versioned"
+	corev1 "github.com/nrc-no/core/api/pkg/generated/clientset/versioned/typed/core/v1"
+	fakecorev1 "github.com/nrc-no/core/api/pkg/generated/clientset/versioned/typed/core/v1/fake"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/discovery"

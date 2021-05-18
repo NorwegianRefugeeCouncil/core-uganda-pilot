@@ -3,8 +3,8 @@ package formdefinition
 import (
 	"context"
 	"fmt"
-	"github.com/nrc-no/coreapi/pkg/apis/core"
-	"github.com/nrc-no/coreapi/pkg/apis/core/validation"
+	"github.com/nrc-no/core/api/pkg/apis/core"
+	"github.com/nrc-no/core/api/pkg/apis/core/validation"
 	"k8s.io/apimachinery/pkg/fields"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
