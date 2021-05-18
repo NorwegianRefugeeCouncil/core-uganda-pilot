@@ -7,6 +7,7 @@ import React, {
   SetStateAction,
 } from 'react';
 import {
+  Button,
   FormLabel,
   FormCheck,
   FormCheckLabel,
@@ -56,7 +57,6 @@ export enum FieldType {
 }
 
 export interface FieldProps {
-  id: string;
   key: string;
   type: FieldType;
   children: any[];
@@ -71,14 +71,17 @@ const renderListField = (
 ) => {
   return kind === 'radio' ? (
     <Fragment>
+      <Button>
+        <i className="bi bi-plus-circle-fill"></i>
+      </Button>
       <ul className="list-group">
         <li className="list-group-item">
-            <FormLabel>Label:</FormLabel>
-            <FormInput
-                name="option-key"
-                defaultValue=''
-                aria-label='a radio option key for the field'
-            />
+          <FormLabel>Label:</FormLabel>
+          <FormInput
+            name="option-key"
+            defaultValue=""
+            aria-label="a radio option key for the field"
+          />
         </li>
       </ul>
     </Fragment>
@@ -86,18 +89,18 @@ const renderListField = (
     <Fragment>
       <ul className="list-group">
         <li className="list-group-item">
-            <FormLabel>Label:</FormLabel>
-            <FormInput
-                name="option-key"
-                defaultValue=''
-                aria-label='a radio option key for the field'
-            />
-            <FormLabel>Value:</FormLabel>
-            <FormInput
-                name="option-value"
-                defaultValue=''
-                aria-label='a radio option key for the field'
-            />
+          <FormLabel>Label:</FormLabel>
+          <FormInput
+            name="option-key"
+            defaultValue=""
+            aria-label="a radio option key for the field"
+          />
+          <FormLabel>Value:</FormLabel>
+          <FormInput
+            name="option-value"
+            defaultValue=""
+            aria-label="a radio option key for the field"
+          />
         </li>
       </ul>
     </Fragment>
@@ -241,17 +244,21 @@ const renderCheckboxOptionFields = (options: FieldOptions) => {
 };
 
 const renderRadioOptionFields = (options: FieldOptions) => {
-  return <Fragment>
+  return (
+    <Fragment>
       {renderGenericOptionFields(options)}
       {renderListField([] as RadioOption[], 'radio')}
-    </Fragment>;
+    </Fragment>
+  );
 };
 
 const renderSelectOptionFields = (options: FieldOptions) => {
-  return <Fragment>
+  return (
+    <Fragment>
       {renderGenericOptionFields(options)}
       {renderListField([] as SelectOption[], 'select')}
-    </Fragment>;
+    </Fragment>
+  );
 };
 
 const renderOptions = (props: FieldProps) => {
@@ -328,44 +335,48 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
             </p>
           </div>
           <div className={'col-5 mb-5'}>
-            <form
-              onChange={(event) => {
-                handleChange(fieldState, setFieldState, event);
-              }}
-            >
-              <FormLabel>ID:</FormLabel>
-              <FormInput
-                name="id"
-                defaultValue={fieldState.id}
-                aria-label="field id"
-              />
+            {/* <Card>
+              <Card.Body> */}
+                <form
+                  onChange={(event) => {
+                    handleChange(fieldState, setFieldState, event);
+                  }}
+                >
+                  <FormLabel>Key:</FormLabel>
+                  <FormInput
+                    name="key"
+                    defaultValue={fieldState.key}
+                    aria-label="field key"
+                  />
 
-              <FormLabel>Type:</FormLabel>
-              <select
-                name="type"
-                className="form-select"
-                aria-label="select type"
-              >
-                <option>Select Type</option>
-                {Object.keys(FieldType).map((fieldType) => {
-                  return (
-                    <Fragment>
-                      {fieldState.type === fieldType ? (
-                        <option selected value={fieldType}>
-                          {FieldType[fieldType]}
-                        </option>
-                      ) : (
-                        <option value={fieldType}>
-                          {FieldType[fieldType]}
-                        </option>
-                      )}
-                    </Fragment>
-                  );
-                })}
-              </select>
+                  <FormLabel>Type:</FormLabel>
+                  <select
+                    name="type"
+                    className="form-select"
+                    aria-label="select type"
+                  >
+                    <option>Select Type</option>
+                    {Object.keys(FieldType).map((fieldType) => {
+                      return (
+                        <Fragment>
+                          {fieldState.type === fieldType ? (
+                            <option selected value={fieldType}>
+                              {FieldType[fieldType]}
+                            </option>
+                          ) : (
+                            <option value={fieldType}>
+                              {FieldType[fieldType]}
+                            </option>
+                          )}
+                        </Fragment>
+                      );
+                    })}
+                  </select>
 
-              {renderOptions(fieldState)}
-            </form>
+                  {renderOptions(fieldState)}
+                </form>
+              {/* </Card.Body>
+            </Card> */}
           </div>
           <div className={'col-1 mb-5'}></div>
         </div>

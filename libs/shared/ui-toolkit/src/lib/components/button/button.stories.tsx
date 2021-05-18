@@ -1,4 +1,4 @@
-import Button from './button.component';
+import {Button} from './button.component';
 import Card from '../card/card.component';
 
 export default {

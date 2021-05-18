@@ -8,7 +8,7 @@ export interface ButtonProps extends React.ComponentPropsWithRef<'button'> {
   outline?: boolean;
 }
 
-const Button = (props, ref) => {
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   const {
     theme = 'primary',
     size,
@@ -27,8 +27,8 @@ const Button = (props, ref) => {
       {children}
     </button>
   );
-};
+});
 
 Button.displayName = 'Button';
 
-export default React.forwardRef<HTMLButtonElement, ButtonProps>(Button);
+// export default Button;
