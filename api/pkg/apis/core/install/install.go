@@ -1,16 +1,11 @@
 package install
 
 import (
-	"github.com/nrc-no/core/apps/api/pkg/api/defaultscheme"
-	"github.com/nrc-no/core/apps/api/pkg/apis/core"
-	"github.com/nrc-no/core/apps/api/pkg/apis/core/v1"
-	"github.com/nrc-no/core/apps/api/pkg/runtime"
-	utilruntime "github.com/nrc-no/core/apps/api/pkg/util/runtime"
+	"github.com/nrc-no/coreapi/pkg/apis/core"
+	v1 "github.com/nrc-no/coreapi/pkg/apis/core/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 )
-
-func init() {
-	Install(defaultscheme.Scheme)
-}
 
 func Install(scheme *runtime.Scheme) {
 	utilruntime.Must(core.AddToScheme(scheme))

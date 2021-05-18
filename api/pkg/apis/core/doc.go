@@ -1,4 +1,4 @@
 // +k8s:deepcopy-gen=package
-// +groupName=core
+// +groupName=core.nrc.no
 
 package core

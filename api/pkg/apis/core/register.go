@@ -1,33 +1,31 @@
 package core
 
 import (
-	"github.com/nrc-no/core/apps/api/pkg/runtime"
-	"github.com/nrc-no/core/apps/api/pkg/runtime/schema"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
-// GroupName is the group name use in this package
-const GroupName = "core"
+const GroupName = "core.nrc.no"
 
-// SchemeGroupVersion is group version used to register these objects
-var SchemeGroupVersion = schema.GroupVersion{Group: GroupName, Version: runtime.APIVersionInternal}
+var SchemGroupVersion = schema.GroupVersion{Group: GroupName, Version: runtime.APIVersionInternal}
 
-var (
-	SchemeBuilder      = runtime.NewSchemeBuilder(addKnownTypes)
-	localSchemeBuilder = &SchemeBuilder
-	AddToScheme        = localSchemeBuilder.AddToScheme
-)
-
-// Resource takes an unqualified resource and returns a Group qualified GroupResource
-func Resource(resource string) schema.GroupResource {
-	return SchemeGroupVersion.WithResource(resource).GroupResource()
+func Kind(kind string) schema.GroupKind {
+	return SchemGroupVersion.WithKind(kind).GroupKind()
 }
 
-// Adds the list of known types to the given scheme.
+func Resource(resource string) schema.GroupResource {
+	return SchemGroupVersion.WithResource(resource).GroupResource()
+}
+
+var (
+	SchemeBuilder = runtime.NewSchemeBuilder(addKnownTypes)
+	AddToScheme   = SchemeBuilder.AddToScheme
+)
+
 func addKnownTypes(scheme *runtime.Scheme) error {
-	scheme.AddKnownTypes(SchemeGroupVersion,
+	scheme.AddKnownTypes(SchemGroupVersion,
 		&FormDefinition{},
 		&FormDefinitionList{},
 	)
-	// metav1.AddToGroupVersion(scheme, SchemeGroupVersion)
 	return nil
 }
