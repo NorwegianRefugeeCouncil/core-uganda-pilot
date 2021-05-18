@@ -15,70 +15,79 @@ export interface FormCheckProps extends React.ComponentPropsWithRef<'div'> {
   required?: true;
 }
 
-type FormCheck = React.FC<FormCheckProps> & {
+interface FormCheckStatic {
   Label: typeof FormCheckLabel;
   Input: typeof FormCheckInput;
-};
+}
 
-const FormCheck: FormCheck = (
-  {
-    id,
-    label,
-    type = 'checkbox',
-    inline,
-    isValid,
-    isInvalid,
-    disabled,
-    required,
-    className: customClass,
-    children,
-    ...rest
-  },
-  ref
-) => {
-  const { controlId } = React.useContext(FormContext);
-  const innerFormContext: FormContextInterface = { controlId: id + controlId };
-  const className = classNames(
-    'form-check',
+type FormCheckComponent = React.ForwardRefExoticComponent<
+  React.PropsWithRef<FormCheckProps>
+> &
+  Partial<FormCheckStatic>;
+
+const FormCheck = React.forwardRef<HTMLInputElement, FormCheckProps>(
+  (
     {
-      'form-check-inline': inline,
-      'form-check-switch': type === 'switch',
-      'is-invalid': isInvalid,
+      id,
+      label,
+      type = 'checkbox',
+      inline,
+      isValid,
+      isInvalid,
+      disabled,
+      required,
+      className: customClass,
+      children,
+      ...rest
     },
-    customClass
-  );
+    ref
+  ) => {
+    const { controlId } = React.useContext(FormContext);
+    const innerFormContext: FormContextInterface = {
+      controlId: id + controlId,
+    };
+    const className = classNames(
+      'form-check',
+      {
+        'form-check-inline': inline,
+        'form-check-switch': type === 'switch',
+        'is-invalid': isInvalid,
+      },
+      customClass
+    );
 
-  const labelComponent = label ? (
-    <FormCheckLabel>{label}</FormCheckLabel>
-  ) : null;
-  const inputComponent = (
-    <FormCheckInput
-      ref={ref}
-      type={type === 'switch' ? 'checkbox' : type}
-      disabled={disabled}
-      required={required}
-      isValid={isValid}
-      isInvalid={isInvalid}
-    />
-  );
+    const labelComponent = label ? (
+      <FormCheckLabel>{label}</FormCheckLabel>
+    ) : null;
+    const inputComponent = (
+      <FormCheckInput
+        ref={ref}
+        type={type === 'switch' ? 'checkbox' : type}
+        disabled={disabled}
+        required={required}
+        isValid={isValid}
+        isInvalid={isInvalid}
+      />
+    );
 
-  return (
-    <FormContext.Provider value={innerFormContext}>
-      <div ref={ref} id={id ?? controlId} className={className} {...rest}>
-        {children ?? (
-          <>
-            {labelComponent}
-            {inputComponent}
-          </>
-        )}
-      </div>
-    </FormContext.Provider>
-  );
-};
+    return (
+      <FormContext.Provider value={innerFormContext}>
+        <div ref={ref} id={id ?? controlId} className={className} {...rest}>
+          {children ?? (
+            <>
+              {labelComponent}
+              {inputComponent}
+            </>
+          )}
+        </div>
+      </FormContext.Provider>
+    );
+  }
+) as FormCheckComponent;
 
 FormCheck.displayName = 'FormCheck';
 
 FormCheck.Label = FormCheckLabel;
 FormCheck.Input = FormCheckInput;
 
-export default React.forwardRef<HTMLDivElement, FormCheckProps>(FormCheck);
+export default FormCheck;

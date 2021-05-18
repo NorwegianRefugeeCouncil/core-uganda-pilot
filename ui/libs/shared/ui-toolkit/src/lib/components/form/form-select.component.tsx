@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { classNames } from '@ui-helpers/utils';
-import { optionCSS } from 'react-select/src/components/Option';
 
 export interface FormSelectProps extends React.ComponentPropsWithRef<'select'> {
   options?: Array<{ value: any; label?: string; disabled?: true }>;
@@ -31,7 +30,11 @@ const FormSelect = React.forwardRef<HTMLSelectElement, FormSelectProps>(
       <select {...rest}>
         {children ??
           options.map((option, idx) => (
-            <option value={option.value} selected={idx === selectedOptionIdx}>
+            <option
+              value={option.value}
+              selected={idx === selectedOptionIdx}
+              disabled={option.disabled}
+            >
               {option.label ?? option.value ?? `option ${idx}`}
             </option>
           ))}
