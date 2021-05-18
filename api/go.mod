@@ -3,19 +3,19 @@ module github.com/nrc-no/core/api
 go 1.16
 
 require (
-	github.com/Rican7/retry v0.1.0 // indirect
+	github.com/coreos/go-systemd v0.0.0-20190719114852-fd7a80b32e1f // indirect
 	github.com/emicklei/go-restful/v3 v3.5.1
 	github.com/go-openapi/spec v0.19.5
+	github.com/go-sql-driver/mysql v1.5.0 // indirect
 	github.com/google/gofuzz v1.1.0
-	github.com/jinzhu/gorm v1.9.16 // indirect
 	github.com/json-iterator/go v1.1.11 // indirect
 	github.com/k3s-io/kine v0.6.0
-	github.com/lib/pq v1.8.0 // indirect
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.7.0 // indirect
-	gorm.io/driver/postgres v1.1.0 // indirect
-	gorm.io/gorm v1.21.10 // indirect
+	go.uber.org/multierr v1.5.0 // indirect
+	go.uber.org/zap v1.13.0 // indirect
+	golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2 // indirect
 	k8s.io/apimachinery v0.21.0
 	k8s.io/apiserver v0.21.0
 	k8s.io/client-go v0.21.0
