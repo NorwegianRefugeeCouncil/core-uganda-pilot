@@ -21,7 +21,3 @@ package v1
 // FormDefinitionListerExpansion allows custom methods to be added to
 // FormDefinitionLister.
 type FormDefinitionListerExpansion interface{}
-
-// FormDefinitionNamespaceListerExpansion allows custom methods to be added to
-// FormDefinitionNamespaceLister.
-type FormDefinitionNamespaceListerExpansion interface{}

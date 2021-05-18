@@ -19,6 +19,8 @@ limitations under the License.
 package fake
 
 import (
+	"context"
+
 	corev1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	labels "k8s.io/apimachinery/pkg/labels"
@@ -31,7 +33,6 @@ import (
 // FakeFormDefinitions implements FormDefinitionInterface
 type FakeFormDefinitions struct {
 	Fake *FakeCoreV1
-	ns   string
 }
 
 var formdefinitionsResource = schema.GroupVersionResource{Group: "core.nrc.no", Version: "v1", Resource: "formdefinitions"}
@@ -39,10 +40,9 @@ var formdefinitionsResource = schema.GroupVersionResource{Group: "core.nrc.no", 
 var formdefinitionsKind = schema.GroupVersionKind{Group: "core.nrc.no", Version: "v1", Kind: "FormDefinition"}
 
 // Get takes name of the formDefinition, and returns the corresponding formDefinition object, and an error if there is any.
-func (c *FakeFormDefinitions) Get(name string, options v1.GetOptions) (result *corev1.FormDefinition, err error) {
+func (c *FakeFormDefinitions) Get(ctx context.Context, name string, options v1.GetOptions) (result *corev1.FormDefinition, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewGetAction(formdefinitionsResource, c.ns, name), &corev1.FormDefinition{})
-
+		Invokes(testing.NewRootGetAction(formdefinitionsResource, name), &corev1.FormDefinition{})
 	if obj == nil {
 		return nil, err
 	}
@@ -50,10 +50,9 @@ func (c *FakeFormDefinitions) Get(name string, options v1.GetOptions) (result *c
 }
 
 // List takes label and field selectors, and returns the list of FormDefinitions that match those selectors.
-func (c *FakeFormDefinitions) List(opts v1.ListOptions) (result *corev1.FormDefinitionList, err error) {
+func (c *FakeFormDefinitions) List(ctx context.Context, opts v1.ListOptions) (result *corev1.FormDefinitionList, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewListAction(formdefinitionsResource, formdefinitionsKind, c.ns, opts), &corev1.FormDefinitionList{})
-
+		Invokes(testing.NewRootListAction(formdefinitionsResource, formdefinitionsKind, opts), &corev1.FormDefinitionList{})
 	if obj == nil {
 		return nil, err
 	}
@@ -72,17 +71,15 @@ func (c *FakeFormDefinitions) List(opts v1.ListOptions) (result *corev1.FormDefi
 }
 
 // Watch returns a watch.Interface that watches the requested formDefinitions.
-func (c *FakeFormDefinitions) Watch(opts v1.ListOptions) (watch.Interface, error) {
+func (c *FakeFormDefinitions) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewWatchAction(formdefinitionsResource, c.ns, opts))
-
+		InvokesWatch(testing.NewRootWatchAction(formdefinitionsResource, opts))
 }
 
 // Create takes the representation of a formDefinition and creates it.  Returns the server's representation of the formDefinition, and an error, if there is any.
-func (c *FakeFormDefinitions) Create(formDefinition *corev1.FormDefinition) (result *corev1.FormDefinition, err error) {
+func (c *FakeFormDefinitions) Create(ctx context.Context, formDefinition *corev1.FormDefinition, opts v1.CreateOptions) (result *corev1.FormDefinition, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewCreateAction(formdefinitionsResource, c.ns, formDefinition), &corev1.FormDefinition{})
-
+		Invokes(testing.NewRootCreateAction(formdefinitionsResource, formDefinition), &corev1.FormDefinition{})
 	if obj == nil {
 		return nil, err
 	}
@@ -90,10 +87,9 @@ func (c *FakeFormDefinitions) Create(formDefinition *corev1.FormDefinition) (res
 }
 
 // Update takes the representation of a formDefinition and updates it. Returns the server's representation of the formDefinition, and an error, if there is any.
-func (c *FakeFormDefinitions) Update(formDefinition *corev1.FormDefinition) (result *corev1.FormDefinition, err error) {
+func (c *FakeFormDefinitions) Update(ctx context.Context, formDefinition *corev1.FormDefinition, opts v1.UpdateOptions) (result *corev1.FormDefinition, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateAction(formdefinitionsResource, c.ns, formDefinition), &corev1.FormDefinition{})
-
+		Invokes(testing.NewRootUpdateAction(formdefinitionsResource, formDefinition), &corev1.FormDefinition{})
 	if obj == nil {
 		return nil, err
 	}
@@ -101,26 +97,24 @@ func (c *FakeFormDefinitions) Update(formDefinition *corev1.FormDefinition) (res
 }
 
 // Delete takes name of the formDefinition and deletes it. Returns an error if one occurs.
-func (c *FakeFormDefinitions) Delete(name string, options *v1.DeleteOptions) error {
+func (c *FakeFormDefinitions) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
 	_, err := c.Fake.
-		Invokes(testing.NewDeleteAction(formdefinitionsResource, c.ns, name), &corev1.FormDefinition{})
-
+		Invokes(testing.NewRootDeleteAction(formdefinitionsResource, name), &corev1.FormDefinition{})
 	return err
 }
 
 // DeleteCollection deletes a collection of objects.
-func (c *FakeFormDefinitions) DeleteCollection(options *v1.DeleteOptions, listOptions v1.ListOptions) error {
-	action := testing.NewDeleteCollectionAction(formdefinitionsResource, c.ns, listOptions)
+func (c *FakeFormDefinitions) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
+	action := testing.NewRootDeleteCollectionAction(formdefinitionsResource, listOpts)
 
 	_, err := c.Fake.Invokes(action, &corev1.FormDefinitionList{})
 	return err
 }
 
 // Patch applies the patch and returns the patched formDefinition.
-func (c *FakeFormDefinitions) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *corev1.FormDefinition, err error) {
+func (c *FakeFormDefinitions) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *corev1.FormDefinition, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(formdefinitionsResource, c.ns, name, pt, data, subresources...), &corev1.FormDefinition{})
-
+		Invokes(testing.NewRootPatchSubresourceAction(formdefinitionsResource, name, pt, data, subresources...), &corev1.FormDefinition{})
 	if obj == nil {
 		return nil, err
 	}

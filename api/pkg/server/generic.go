@@ -1,7 +1,6 @@
 package server
 
 import (
-	"context"
 	"fmt"
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -250,28 +249,10 @@ type preparedGenericAPIServer struct {
 	*APIServer
 }
 
-func (s preparedGenericAPIServer) Run(stopCh <-chan struct{}) error {
-
+func (s preparedGenericAPIServer) Run(stopCh <-chan struct{}) (*http.Server, error) {
 	httpServer := &http.Server{
 		Addr:    ":8001",
 		Handler: s.Handler,
 	}
-
-	go func() {
-		if err := httpServer.ListenAndServe(); err != nil {
-			panic(err)
-		}
-	}()
-
-	<-stopCh
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	if err := httpServer.Shutdown(ctx); err != nil {
-		return err
-	}
-
-	return nil
-
+	return httpServer, nil
 }

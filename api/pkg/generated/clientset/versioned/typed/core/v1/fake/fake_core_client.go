@@ -28,8 +28,8 @@ type FakeCoreV1 struct {
 	*testing.Fake
 }
 
-func (c *FakeCoreV1) FormDefinitions(namespace string) v1.FormDefinitionInterface {
-	return &FakeFormDefinitions{c, namespace}
+func (c *FakeCoreV1) FormDefinitions() v1.FormDefinitionInterface {
+	return &FakeFormDefinitions{c}
 }
 
 // RESTClient returns a RESTClient that is used to communicate

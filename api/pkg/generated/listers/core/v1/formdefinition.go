@@ -26,11 +26,14 @@ import (
 )
 
 // FormDefinitionLister helps list FormDefinitions.
+// All objects returned here must be treated as read-only.
 type FormDefinitionLister interface {
 	// List lists all FormDefinitions in the indexer.
+	// Objects returned here must be treated as read-only.
 	List(selector labels.Selector) (ret []*v1.FormDefinition, err error)
-	// FormDefinitions returns an object that can list and get FormDefinitions.
-	FormDefinitions(namespace string) FormDefinitionNamespaceLister
+	// Get retrieves the FormDefinition from the index for a given name.
+	// Objects returned here must be treated as read-only.
+	Get(name string) (*v1.FormDefinition, error)
 	FormDefinitionListerExpansion
 }
 
@@ -52,38 +55,9 @@ func (s *formDefinitionLister) List(selector labels.Selector) (ret []*v1.FormDef
 	return ret, err
 }
 
-// FormDefinitions returns an object that can list and get FormDefinitions.
-func (s *formDefinitionLister) FormDefinitions(namespace string) FormDefinitionNamespaceLister {
-	return formDefinitionNamespaceLister{indexer: s.indexer, namespace: namespace}
-}
-
-// FormDefinitionNamespaceLister helps list and get FormDefinitions.
-type FormDefinitionNamespaceLister interface {
-	// List lists all FormDefinitions in the indexer for a given namespace.
-	List(selector labels.Selector) (ret []*v1.FormDefinition, err error)
-	// Get retrieves the FormDefinition from the indexer for a given namespace and name.
-	Get(name string) (*v1.FormDefinition, error)
-	FormDefinitionNamespaceListerExpansion
-}
-
-// formDefinitionNamespaceLister implements the FormDefinitionNamespaceLister
-// interface.
-type formDefinitionNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all FormDefinitions in the indexer for a given namespace.
-func (s formDefinitionNamespaceLister) List(selector labels.Selector) (ret []*v1.FormDefinition, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1.FormDefinition))
-	})
-	return ret, err
-}
-
-// Get retrieves the FormDefinition from the indexer for a given namespace and name.
-func (s formDefinitionNamespaceLister) Get(name string) (*v1.FormDefinition, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
+// Get retrieves the FormDefinition from the index for a given name.
+func (s *formDefinitionLister) Get(name string) (*v1.FormDefinition, error) {
+	obj, exists, err := s.indexer.GetByKey(name)
 	if err != nil {
 		return nil, err
 	}

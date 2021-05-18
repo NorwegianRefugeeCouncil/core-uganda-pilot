@@ -1,7 +1,8 @@
-package main
+package app
 
 import (
-	"flag"
+	"context"
+	"errors"
 	corev1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
 	"github.com/nrc-no/core/api/pkg/generated/openapi"
 	"github.com/nrc-no/core/api/pkg/server"
@@ -14,19 +15,11 @@ import (
 	openapi2 "k8s.io/apiserver/pkg/endpoints/openapi"
 	genericapiserver "k8s.io/apiserver/pkg/server"
 	"k8s.io/klog"
+	"net/http"
+	"time"
 )
 
-const defaultEtcdPathPrefix = "/registry/wardle.example.com"
-
-func main() {
-	stopCh := genericapiserver.SetupSignalHandler()
-	options := NewCoreServerOptions()
-	cmd := NewCommandStartCoreServer(options, stopCh)
-	cmd.Flags().AddGoFlagSet(flag.CommandLine)
-	if err := cmd.Execute(); err != nil {
-		klog.Fatal(err)
-	}
-}
+const defaultEtcdPathPrefix = "/registry"
 
 type CoreServerOptions struct {
 	RecommendedOptions *options.RecommendedOptions
@@ -110,7 +103,32 @@ func (o CoreServerOptions) RunCoreServer(stopCh <-chan struct{}) error {
 		return err
 	}
 
-	return server.PrepareRun().Run(stopCh)
+	httpServer, err := server.PrepareRun().Run(stopCh)
+	if err != nil {
+		return err
+	}
+
+	var httpErr error
+	go func() {
+		if err := httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			httpErr = err
+		}
+	}()
+
+	<-stopCh
+
+	if httpErr != nil {
+		klog.Errorf("server error: %v", err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := httpServer.Shutdown(ctx); err != nil {
+		return err
+	}
+
+	return nil
 
 }
 

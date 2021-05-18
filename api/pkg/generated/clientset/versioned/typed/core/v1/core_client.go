@@ -34,8 +34,8 @@ type CoreV1Client struct {
 	restClient rest.Interface
 }
 
-func (c *CoreV1Client) FormDefinitions(namespace string) FormDefinitionInterface {
-	return newFormDefinitions(c, namespace)
+func (c *CoreV1Client) FormDefinitions() FormDefinitionInterface {
+	return newFormDefinitions(c)
 }
 
 // NewForConfig creates a new CoreV1Client for the given config.

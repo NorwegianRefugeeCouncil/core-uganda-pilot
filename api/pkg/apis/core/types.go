@@ -44,6 +44,10 @@ type FormDefinitionValidation struct {
 
 type FormElementType string
 
+const (
+	SectionType = "section"
+)
+
 type FormDefinitionSchema struct {
 	Root FormElementDefinition `json:"root" protobuf:"bytes,1,opt,name=root"`
 }

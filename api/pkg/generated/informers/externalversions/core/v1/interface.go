@@ -41,5 +41,5 @@ func New(f internalinterfaces.SharedInformerFactory, namespace string, tweakList
 
 // FormDefinitions returns a FormDefinitionInformer.
 func (v *version) FormDefinitions() FormDefinitionInformer {
-	return &formDefinitionInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
+	return &formDefinitionInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
 }
