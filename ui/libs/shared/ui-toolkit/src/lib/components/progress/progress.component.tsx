@@ -1,7 +1,7 @@
-import { Color } from '@ui-helpers/types';
-import { classNames } from '@ui-helpers/utils';
 import * as React from 'react';
-import ProgressBar from './progress-bar.component';
+import { classNames } from '@ui-helpers/utils';
+import { Color } from '@ui-helpers/types';
+import { ProgressBar } from './progress-bar.component';
 
 export interface ProgressProps extends React.ComponentPropsWithRef<'div'> {
   showValue?: boolean;
@@ -54,4 +54,4 @@ Progress.displayName = 'Progress';
 
 Progress.Bar = ProgressBar;
 
-export default Progress;
+export { Progress };

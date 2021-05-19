@@ -42,6 +42,7 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-overlays": "^5.0.1",
+    "react-polymorphic-box": "^3.0.3",
     "react-select": "^4.3.0",
     "regenerator-runtime": "0.13.7",
     "tslib": "^2.0.0"

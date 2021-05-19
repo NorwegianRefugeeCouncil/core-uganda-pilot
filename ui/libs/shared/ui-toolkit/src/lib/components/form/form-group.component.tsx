@@ -1,5 +1,5 @@
 import * as React from 'react';
-import FormContext, { FormContextInterface } from './form-context';
+import { FormContext, FormContextInterface } from './form-context';
 
 interface Props<C extends React.ElementType> {
   as?: C;
@@ -10,19 +10,16 @@ interface Props<C extends React.ElementType> {
 type FormGroupProps<C extends React.ElementType> = Props<C> &
   Omit<React.ComponentPropsWithoutRef<C>, keyof Props<C>>;
 
-const FormGroup = <C extends React.ElementType = 'div'>({
-  as,
+export const FormGroup = <C extends React.ElementType = 'div'>({
+  as = 'div',
   controlId,
-  children,
   ...rest
 }) => {
   const formCtx: FormContextInterface = { controlId };
-  const Component = as ?? 'div';
+  const Component = as;
   return (
     <FormContext.Provider value={formCtx}>
-      <Component {...rest}></Component>
+      <Component {...rest} />
     </FormContext.Provider>
   );
 };
-
-export default FormGroup;

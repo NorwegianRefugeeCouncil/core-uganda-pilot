@@ -7,5 +7,3 @@ export interface DropdownDividerProps
 export const DropdownDivider: React.FC<DropdownDividerProps> = (props) => (
   <hr className="dropdown-divider" {...props} />
 );
-
-export default DropdownDivider;

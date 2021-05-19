@@ -1,6 +1,5 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { uniqueId } from '../../helpers/utils';
 
 export interface AccordionItemProps
   extends React.ComponentPropsWithoutRef<'div'> {
@@ -9,15 +8,12 @@ export interface AccordionItemProps
   isCollapsed?: boolean;
 }
 
-const AccordionItem: React.FC<AccordionItemProps> = ({
+export const AccordionItem: React.FC<AccordionItemProps> = ({
   title,
   body,
   isCollapsed = true,
   ...baseProps
 }) => {
-  const id = uniqueId(6);
-  const headerId = 'header-' + id;
-  const collapseId = 'collapse-' + id;
   const buttonClass = classNames('accordion-button', {
     collapsed: isCollapsed,
   });
@@ -26,21 +22,18 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   });
   return (
     <>
-      <h2 className="accordion-header" id={headerId}>
+      <h2 className="accordion-header">
         <button
           className={buttonClass}
           type="button"
           aria-expanded={isCollapsed}
-          aria-controls={collapseId}
         >
           {title}
         </button>
       </h2>
-      <div id={collapseId} className={collapseClass} aria-labelledby={headerId}>
+      <div className={collapseClass}>
         <div className="accordion-body">{body}</div>
       </div>
     </>
   );
 };
-
-export default AccordionItem;

@@ -1,5 +1,5 @@
-import Card from '../card/card.component';
-import Nav from './nav.component';
+import { Card } from '../card/card.component';
+import { Nav } from './nav.component';
 
 export default {
   title: 'Nav',

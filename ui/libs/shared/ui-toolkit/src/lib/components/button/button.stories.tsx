@@ -1,12 +1,12 @@
-import {Button} from './button.component';
-import Card from '../card/card.component';
+import { Button } from './button.component';
+import { Card } from '../card/card.component';
 
 export default {
   title: 'Button',
   component: Button,
 };
 
-export const basic = () => (
+export const Basic = () => (
   <>
     <Card className="mb-2">
       <Card.Body>

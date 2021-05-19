@@ -1,4 +1,4 @@
-import Accordion from './accordion.component';
+import { Accordion } from './accordion.component';
 import { loremIpsum } from 'lorem-ipsum';
 
 const lp = loremIpsum({ count: 5 });

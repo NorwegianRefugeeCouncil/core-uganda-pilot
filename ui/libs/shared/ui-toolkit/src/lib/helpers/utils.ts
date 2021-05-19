@@ -1,4 +1,3 @@
-import { nanoid } from "nanoid";
-import classNames from "classnames";
-
-export { classNames, nanoid as uniqueId };
+export { nanoid } from 'nanoid';
+export { default as classNames } from 'classnames';
+export * from 'react-polymorphic-box';

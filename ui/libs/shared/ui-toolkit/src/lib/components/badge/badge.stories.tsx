@@ -1,5 +1,5 @@
-import Button from '../button/button.component';
-import Badge from './badge.component';
+import { Button } from '../button/button.component';
+import { Badge } from './badge.component';
 
 export default {
   title: 'Badge',

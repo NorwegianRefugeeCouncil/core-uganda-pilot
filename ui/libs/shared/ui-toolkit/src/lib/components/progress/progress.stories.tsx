@@ -1,5 +1,5 @@
-import Card from '../card/card.component';
-import Progress from './progress.component';
+import { Card } from '../card/card.component';
+import { Progress } from './progress.component';
 
 export default {
   title: 'Progress',

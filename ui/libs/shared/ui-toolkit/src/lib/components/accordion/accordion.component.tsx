@@ -1,6 +1,6 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import AccordionItem from './accordion-item.component';
+import { AccordionItem } from './accordion-item.component';
 
 export interface AccordionProps extends React.ComponentPropsWithoutRef<'div'> {
   isFlush?: boolean;
@@ -11,7 +11,7 @@ type Accordion = React.FC<AccordionProps> & {
   Item: typeof AccordionItem;
 };
 
-const Accordion: Accordion = ({
+export const Accordion: Accordion = ({
   isFlush = false,
   stayOpen = false,
   className: customClass,
@@ -31,5 +31,3 @@ const Accordion: Accordion = ({
 Accordion.displayName = 'Accordion';
 
 Accordion.Item = AccordionItem;
-
-export default Accordion;

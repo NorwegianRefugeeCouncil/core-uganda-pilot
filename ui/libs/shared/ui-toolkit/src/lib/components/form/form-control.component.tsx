@@ -1,30 +1,40 @@
-import { classNames } from '@ui-helpers/utils';
 import * as React from 'react';
-import FormContext from './form-context';
+import { FormContext } from './form-context';
+import { classNames } from '@ui-helpers/utils';
 
-interface Props<C extends React.ElementType> {
+export interface BaseFormControlProps {
   type: 'text' | 'textarea' | 'email' | 'password' | 'file' | 'color';
   displaySize?: 'sm' | 'lg';
   plaintext?: true;
   isValid?: true;
   isInvalid?: true;
-  children: React.ReactNode;
 }
 
-type FormControlProps<C extends React.ElementType> = Props<C> &
-  Omit<React.ComponentPropsWithRef<C>, keyof Props<C>>;
+type InputProps = BaseFormControlProps & JSX.IntrinsicElements['input'];
+type TextareaProps = BaseFormControlProps & JSX.IntrinsicElements['textarea'];
 
-const FormControl = <C extends React.ElementType = 'input'>({
-  id,
-  displaySize,
-  type,
-  plaintext,
-  isValid,
-  isInvalid,
-  className: customClass,
-  ...rest
-}) => {
-  const Component = type === 'textarea' ? 'textarea' : type;
+export type FormControl = {
+  (props: InputProps): JSX.Element;
+  (props: TextareaProps): JSX.Element;
+};
+
+function isPropsForTextarea(
+  props: InputProps | TextareaProps
+): props is TextareaProps {
+  return 'cols' in props;
+}
+
+export const FormControl: FormControl = (props: InputProps | TextareaProps) => {
+  const {
+    id,
+    displaySize,
+    type,
+    plaintext,
+    isValid,
+    isInvalid,
+    className: customClass,
+    ...rest
+  } = props;
   const { controlId } = React.useContext(FormContext);
   const className = classNames(
     'form-control',
@@ -36,6 +46,21 @@ const FormControl = <C extends React.ElementType = 'input'>({
     },
     customClass
   );
-  return <Component id={id ?? controlId} className={className} {...rest} />;
+  if (isPropsForTextarea(props))
+    return (
+      <textarea
+        id={id ?? controlId}
+        className={className}
+        {...(rest as TextareaProps)}
+      />
+    );
+  else
+    return (
+      <input
+        type={type}
+        id={id ?? controlId}
+        className={className}
+        {...(rest as InputProps)}
+      />
+    );
 };
-export default FormControl;

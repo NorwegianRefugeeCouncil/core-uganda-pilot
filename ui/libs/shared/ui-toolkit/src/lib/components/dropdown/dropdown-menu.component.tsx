@@ -22,46 +22,46 @@ type AlignProps =
 
 type DropdownMenuProps = BasicDropdownMenuProps & AlignProps;
 
-const DropdownMenu = (
-  {
-    isVisible = false,
-    dark,
-    breakEnd,
-    breakStart,
-    alignStart,
-    alignEnd,
-    position,
-    handleChange,
-    className: customClass,
-    children,
-    ...rest
-  },
-  ref
-) => {
-  const className = classNames('dropdown-menu', customClass, {
-    'dropdown-menu-dark': dark,
-    [`dropdown-menu-${breakEnd}-end`]: breakEnd,
-    [`dropdown-menu-${breakStart}-start`]: breakStart,
-    'dropdown-menu-end': alignEnd,
-    'dropdown-menu-start': alignStart,
-    show: isVisible,
-  });
-  return (
-    <ul ref={ref} className={className} style={position} {...rest}>
-      {React.Children.map<React.ReactNode, React.ReactNode>(
-        children,
-        (child) => {
-          if (React.isValidElement(child)) {
-            return React.cloneElement(child, { handleChange });
+const DropdownMenu = React.forwardRef<HTMLUListElement, DropdownMenuProps>(
+  (
+    {
+      isVisible = false,
+      dark,
+      breakEnd,
+      breakStart,
+      alignStart,
+      alignEnd,
+      position,
+      handleChange,
+      className: customClass,
+      children,
+      ...rest
+    },
+    ref
+  ) => {
+    const className = classNames('dropdown-menu', customClass, {
+      'dropdown-menu-dark': dark,
+      [`dropdown-menu-${breakEnd}-end`]: breakEnd,
+      [`dropdown-menu-${breakStart}-start`]: breakStart,
+      'dropdown-menu-end': alignEnd,
+      'dropdown-menu-start': alignStart,
+      show: isVisible,
+    });
+    return (
+      <ul ref={ref} className={className} style={position} {...rest}>
+        {React.Children.map<React.ReactNode, React.ReactNode>(
+          children,
+          (child) => {
+            if (React.isValidElement(child)) {
+              return React.cloneElement(child, { handleChange });
+            }
           }
-        }
-      )}
-    </ul>
-  );
-};
+        )}
+      </ul>
+    );
+  }
+);
 
 DropdownMenu.displayName = 'DropdownMenu';
 
-export default React.forwardRef<HTMLUListElement, DropdownMenuProps>(
-  DropdownMenu
-);
+export { DropdownMenu };

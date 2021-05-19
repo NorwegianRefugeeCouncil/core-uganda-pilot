@@ -7,7 +7,7 @@ export interface CardImgProps extends React.ComponentPropsWithoutRef<'img'> {
 
 type CardImg = React.FC<CardImgProps>;
 
-const CardImg: CardImg = ({
+export const CardImg: CardImg = ({
   position = 'top',
   className: customClass,
   children,
@@ -16,5 +16,3 @@ const CardImg: CardImg = ({
   const className = classNames(customClass, `card-img-${position}`);
   return <img className={className} {...rest} />;
 };
-
-export default CardImg;

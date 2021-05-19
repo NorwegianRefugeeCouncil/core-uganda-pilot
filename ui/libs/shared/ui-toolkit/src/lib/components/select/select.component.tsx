@@ -7,7 +7,7 @@ import Select, {
   Props,
 } from 'react-select';
 import classNames from 'classnames';
-import Icons from '../icons/icons';
+import { Icons } from '../icons/icons';
 
 // a thin wrapper over react-select applying our own bootstrap styles
 
@@ -89,5 +89,11 @@ const CustomSelect: React.FC<SelectProps> = (props) => {
   );
 };
 
-export { Control, Option, MultiValue, MultiValueLabel, MultiValueRemove };
-export default CustomSelect;
+export {
+  CustomSelect,
+  Control,
+  Option,
+  MultiValue,
+  MultiValueLabel,
+  MultiValueRemove,
+};

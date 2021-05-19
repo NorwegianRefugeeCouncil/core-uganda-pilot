@@ -4137,4 +4137,4 @@ Icons.ZoomOut = ZoomOut;
 
 Icons.displayName = 'Icons';
 
-export default Icons;
+export { Icons };

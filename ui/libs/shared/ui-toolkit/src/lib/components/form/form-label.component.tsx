@@ -1,13 +1,13 @@
 import { classNames } from '@ui-helpers/utils';
 import * as React from 'react';
-import FormContext from './form-context';
+import { FormContext } from './form-context';
 
 interface FormLabelProps extends React.ComponentPropsWithoutRef<'label'> {
   srOnly?: true;
   htmlFor?: string;
 }
 
-const FormLabel: React.FC<FormLabelProps> = ({
+export const FormLabel: React.FC<FormLabelProps> = ({
   srOnly,
   htmlFor,
   className: customClass,
@@ -21,5 +21,3 @@ const FormLabel: React.FC<FormLabelProps> = ({
     <label htmlFor={htmlFor ?? controlId} className={className} {...rest} />
   );
 };
-
-export default FormLabel;
