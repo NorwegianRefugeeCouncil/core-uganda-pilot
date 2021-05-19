@@ -3,6 +3,7 @@ package validation
 import (
 	"fmt"
 	"github.com/nrc-no/core/api/pkg/apis/core"
+	"k8s.io/apimachinery/pkg/api/validation"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 	"regexp"
@@ -12,6 +13,14 @@ import (
 func ValidateFormDefinition(f *core.FormDefinition) field.ErrorList {
 	allErrs := field.ErrorList{}
 
+	allErrs = validation.ValidateObjectMeta(&f.ObjectMeta, false, func(name string, prefix bool) []string {
+		ret := validation.NameIsDNSSubdomain(name, prefix)
+		requiredName := f.Spec.Names.Plural + "." + f.Spec.Group
+		if name != requiredName {
+			ret = append(ret, fmt.Sprintf(`must be spec.names.plural+"."+spec.names.group`))
+		}
+		return ret
+	}, field.NewPath("metadata"))
 	allErrs = append(allErrs, ValidateFormDefinitionSpec(&f.Spec, field.NewPath("spec"))...)
 
 	return allErrs
@@ -35,13 +44,21 @@ func ValidateFormDefinitionVersions(f []core.FormDefinitionVersion, fldPath *fie
 	}
 
 	seenVersionNames := sets.NewString()
+	foundStored := false
 	for i, version := range f {
+		if version.Storage {
+			foundStored = true
+		}
 		versionField := fldPath.Index(i)
 		if seenVersionNames.Has(version.Name) {
 			allErrs = append(allErrs, field.Duplicate(versionField.Child("name"), version.Name))
 		}
 		seenVersionNames.Insert(version.Name)
 		allErrs = append(allErrs, ValidateFormDefinitionVersion(&version, versionField)...)
+	}
+
+	if !foundStored {
+		allErrs = append(allErrs, field.Invalid(fldPath, f, "must have at least one stored version"))
 	}
 
 	return allErrs

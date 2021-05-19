@@ -34,8 +34,10 @@ type FormDefinitionNames struct {
 }
 
 type FormDefinitionVersion struct {
-	Name   string                   `json:"name,omitempty" protobuf:"bytes,1,opt,name=name"`
-	Schema FormDefinitionValidation `json:"schema,omitempty" protobuf:"bytes,2,opt,name=schema"`
+	Name    string                   `json:"name,omitempty" protobuf:"bytes,1,opt,name=name"`
+	Served  bool                     `json:"served,omitempty" protobuf:"bytes,2,opt,name=served"`
+	Storage bool                     `json:"storage,omitempty" protobuf:"bytes,3,opt,name=storage"`
+	Schema  FormDefinitionValidation `json:"schema,omitempty" protobuf:"bytes,4,opt,name=schema"`
 }
 
 type FormDefinitionValidation struct {

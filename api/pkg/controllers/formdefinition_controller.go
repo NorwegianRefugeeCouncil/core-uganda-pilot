@@ -138,11 +138,11 @@ func createCrdFromFormDefinition(formDefinition *v1.FormDefinition) *apiextensio
 		},
 	}
 
-	for i, version := range formDefinition.Spec.Versions {
+	for _, version := range formDefinition.Spec.Versions {
 		crdVersion := apiextensionsv1.CustomResourceDefinitionVersion{
 			Name:    version.Name,
-			Storage: i == 0,
-			Served:  true,
+			Storage: version.Storage,
+			Served:  version.Served,
 			Schema:  &apiextensionsv1.CustomResourceValidation{},
 		}
 		validation := createCrdValidationFromFormDefinitionVersion(formDefinition, version)
