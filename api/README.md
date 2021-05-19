@@ -290,8 +290,11 @@ curl --data-binary @example.json http://localhost:8001/apis/test.com/v1/formtest
 curl --data-binary @submission.json http://localhost:8001/apis/test.com/v1/formtests -H "Content-Type: application/json"
 ```
 
-#### Get the form submissions
+#### Get the form submission
 
 ```
+# Get
 curl http://localhost:8001/apis/test.com/v1/formtests/example-form-submission | jq
+# List
+curl http://localhost:8001/apis/test.com/v1/formtests/ | jq
 ```
