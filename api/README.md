@@ -109,6 +109,14 @@ the `apimachinery` package. It also uses a [kine](https://github.com/k3s-io/kine
 
 It essentially is a very light version of the kubernetes `apiserver`.
 
+1. The user defines a new form by submitting a `FormDefinition` to the API server
+2. The `FormDefinitionController` detects a new `FormDefinition`, and will create a matching
+   `CustomResourceDefinition`
+3. The `CustomResourceDefinition` controller will expose an API endpoint at the address
+   `apis/{formDefinition.spec.group}/{formDefinition.spec.version[].name}/{formDefinition.spec.names.plural}`
+   For example, the api endpoint could be `apis/acme.org/v1/superforms`. This endpoint allows the usual `GET`, `POST`
+   , `PATCH`, `PUT`
+
 ### How to start this thing
 
 Requirements:
@@ -149,3 +157,141 @@ kubectl get formdefinitions
 
 ```
 
+### Example Form Definition
+
+<details>
+<summary>Example FormDefinition</summary>
+<p>
+
+# example.json
+
+```
+
+{
+  "kind": "FormDefinition",
+  "apiVersion": "core.nrc.no/v1",
+  "metadata": {
+    "name": "formtests.test.com"
+  },
+  "spec": {
+    "group": "test.com",
+    "names": {
+      "plural": "formtests",
+      "singular": "formtest",
+      "kind": "FormTest"
+    },
+    "versions": [
+      {
+        "name": "v1",
+        "storage": true,
+        "served": true,
+        "schema": {
+          "formSchema": {
+            "root": {
+              "type": "section",
+              "children": [
+                {
+                  "key": "firstName",
+                  "label": [
+                    {
+                      "locale": "en",
+                      "value": "First Name"
+                    },
+                    {
+                      "locale": "fr",
+                      "value": "Prenom"
+                    }
+                  ],
+                  "description": [
+                    {
+                      "locale": "en",
+                      "value": "Enter the first name of the beneficiary"
+                    },
+                    {
+                      "locale": "fr",
+                      "value": "Entrez le prénom du bénéficiaire"
+                    }
+                  ],
+                  "type": "shortText",
+                  "required": true
+                },
+                {
+                  "key": "lastName",
+                  "label": [
+                    {
+                      "locale": "en",
+                      "value": "Last Name"
+                    },
+                    {
+                      "locale": "fr",
+                      "value": "Nom de famille"
+                    }
+                  ],
+                  "description": [
+                    {
+                      "locale": "en",
+                      "value": "Enter the first name of the beneficiary"
+                    },
+                    {
+                      "locale": "fr",
+                      "value": "Entrez le nom de famille du bénéficiaire"
+                    }
+                  ],
+                  "type": "shortText",
+                  "required": true
+                }
+              ]
+            }
+          }
+        }
+      }
+    ]
+  }
+}
+
+```
+
+</p>
+</details>  
+
+#### Post the example form definition
+
+```
+curl --data-binary @example.json http://localhost:8001/apis/test.com/v1/formtests -H "Content-Type: application/json"
+```
+
+<details>
+<summary>Example form submission</summary>
+
+<p>
+
+```
+# submission.json
+{
+  "apiVersion": "test.com/v1",
+  "kind": "FormTest",
+  "metadata": {
+    "name": "example-form-submission"
+  },
+  "spec": {
+    "firstName": "Ludovic",
+    "lastName": "Cleroux"
+  }
+}
+```
+
+</p>
+
+</details>
+
+#### Post the form submission
+
+```
+curl --data-binary @submission.json http://localhost:8001/apis/test.com/v1/formtests -H "Content-Type: application/json"
+```
+
+#### Get the form submissions
+
+```
+curl http://localhost:8001/apis/test.com/v1/formtests/example-form-submission | jq
+```
