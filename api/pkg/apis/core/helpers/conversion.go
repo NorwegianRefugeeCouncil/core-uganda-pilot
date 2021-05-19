@@ -16,10 +16,14 @@ func ConvertToFormDefinition(formDefinition *v1.FormDefinition) *v12.CustomResou
 		Spec: v12.CustomResourceDefinitionSpec{
 			Group: formDefinition.Spec.Group,
 			Scope: v12.ClusterScoped,
+			Conversion: &v12.CustomResourceConversion{
+				Strategy: v12.NoneConverter,
+			},
 			Names: v12.CustomResourceDefinitionNames{
 				Plural:   formDefinition.Spec.Names.Plural,
 				Singular: formDefinition.Spec.Names.Singular,
 				Kind:     formDefinition.Spec.Names.Kind,
+				ListKind: formDefinition.Spec.Names.Kind + "List",
 			},
 		},
 	}

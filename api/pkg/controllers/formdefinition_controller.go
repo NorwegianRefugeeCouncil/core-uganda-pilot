@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/nrc-no/core/api/pkg/apis/core/helpers"
 	v1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
@@ -18,6 +19,7 @@ import (
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/client-go/util/workqueue"
 	"k8s.io/klog/v2"
+	"strings"
 	"time"
 )
 
@@ -125,7 +127,32 @@ func (c *FormDefinitionController) syncFormDefinition(formDef *v1.FormDefinition
 
 }
 
-// TODO: Reconcile changes between FormDefinition and CustomResourceDefinition
-func (c *FormDefinitionController) reconcileFormDefinition(formDefinition *v1.FormDefinition, crd *apiextensionsv1.CustomResourceDefinition) error {
+// reconcileFormDefinition Detects and reconciles changes between FormDefinition and CustomResourceDefinition
+func (c *FormDefinitionController) reconcileFormDefinition(formDef *v1.FormDefinition, actualCrd *apiextensionsv1.CustomResourceDefinition) error {
+
+	desiredCrd := helpers.ConvertToFormDefinition(formDef)
+
+	desiredBytes, err := json.Marshal(desiredCrd.Spec)
+	if err != nil {
+		return err
+	}
+	actualBytes, err := json.Marshal(actualCrd.Spec)
+	if err != nil {
+		return err
+	}
+
+	if strings.Compare(string(actualBytes), string(desiredBytes)) == 0 {
+		return nil
+	}
+
+	klog.Infof("detected difference between actual and desired CustomResourceDefinition %v: \nactual:\n%s\ndesired\n%s", formDef.Name, string(actualBytes), string(desiredBytes))
+
+	desiredCrd.ObjectMeta.ResourceVersion = actualCrd.ResourceVersion
+	_, err = c.crdClient.Update(context.TODO(), desiredCrd, metav1.UpdateOptions{})
+	if err != nil {
+		klog.Warningf("error while trying to update CustomResourceDefinition: %v", err)
+		return err
+	}
+
 	return nil
 }
