@@ -27,7 +27,9 @@
     "bootstrap:build": "nx build shared-bootstrap",
     "ui-toolkit:storybook": "nx start shared-ui-toolkit:storybook",
     "formbuilder:build": "nx build formbuilder:storybook",
-    "formbuilder:storybook": "nx start formbuilder:storybook"
+    "formbuilder:storybook": "nx start formbuilder:storybook",
+    "formrenderer:build": "nx build formrenderer:storybook",
+    "formrenderer:storybook": "nx start formrenderer:storybook"
   },
   "private": true,
   "dependencies": {

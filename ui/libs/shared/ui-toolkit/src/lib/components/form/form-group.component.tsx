@@ -1,25 +1,16 @@
 import * as React from 'react';
 import { FormContext, FormContextInterface } from './form-context';
 
-interface Props<C extends React.ElementType> {
-  as?: C;
-  children: React.ReactNode;
-  controlId?: string;
+export interface FormGroupProps extends React.ComponentPropsWithoutRef<'div'> {
+  controlId: string;
 }
 
-type FormGroupProps<C extends React.ElementType> = Props<C> &
-  Omit<React.ComponentPropsWithoutRef<C>, keyof Props<C>>;
-
-export const FormGroup = <C extends React.ElementType = 'div'>({
-  as = 'div',
-  controlId,
-  ...rest
-}) => {
+export const FormGroup: React.FC<FormGroupProps> = ({ controlId, ...rest }) => {
   const formCtx: FormContextInterface = { controlId };
-  const Component = as;
+  const className = 'mb-3';
   return (
     <FormContext.Provider value={formCtx}>
-      <Component {...rest} />
+      <div className={className} {...rest} />
     </FormContext.Provider>
   );
 };

@@ -1,16 +1,14 @@
-import React from 'react';
-
+import * as React from 'react';
 import './formrenderer.module.css';
+import { getSchema } from './get-schema';
+import { parseSchema } from './parse-schema';
 
-/* eslint-disable-next-line */
-export interface FormrendererProps {}
+export const FormRenderer = (props) => {
+  const [schema, setSchema] = React.useState(null);
 
-export function Formrenderer(props: FormrendererProps) {
-  return (
-    <div>
-      <h1>Welcome to formrenderer!</h1>
-    </div>
-  );
-}
+  React.useEffect(() => {
+    getSchema().then((data) => setSchema(data));
+  });
 
-export default Formrenderer;
+  return <form {...props}>{parseSchema(schema)}</form>;
+};
