@@ -137,9 +137,8 @@ go run ./cmd/kine
 go run ./cmd/server --etcd-servers 127.0.0.1:2379
 
 # Try the api a little bit
-curl http://localhost:8001/apis/v1
-curl http://localhost:8001/apis/v1/core.nrc.no
-curl http://localhost:8001/apis/v1/core.nrc.no/formdefinitions
+curl http://localhost:8001/apis/core.nrc.no/v1
+curl http://localhost:8001/apis/core.nrc.no/v1/formdefinitions
 
 # that will **soon** work as well
 kubectl config set-cluster core --server http://localhost:8001
