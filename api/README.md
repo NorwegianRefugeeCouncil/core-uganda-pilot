@@ -74,7 +74,7 @@ Example:
 kind: FormDefinition
 apiGroup: core.nrc.no/v1
 metadata:
-  name: GeneralIntake        // unique name for the definition
+  name: generalintakes.my.custom.group  // must be {pluralName}.{groupName}
 spec:
   group: my.custom.group
   names:
