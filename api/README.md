@@ -298,3 +298,24 @@ curl http://localhost:8001/apis/test.com/v1/formtests/example-form-submission | 
 # List
 curl http://localhost:8001/apis/test.com/v1/formtests/ | jq
 ```
+
+## Code Generation
+
+This app supports code generation for
+
+- Deepcopy funcs
+- Conversion funcs
+- Defaulter funcs
+- OpenAPI definitions
+
+For this though, you **must** put the repository at
+
+```
+${GOPATH}/github.com/nrc-no/core
+```
+
+Then, you can run
+
+```
+./hack/update-codegen.sh
+```
