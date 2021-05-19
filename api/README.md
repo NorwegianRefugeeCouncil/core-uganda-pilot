@@ -115,7 +115,19 @@ Requirements:
 
 ```
 # requires go 1.16
+
+# We depend on code that lives in the kubernetes/kubernetes
+# github repo. It lives under the /staging/src/k8s.io, which
+# is not importable by go modules. We then download it locally,
+# and have the go.mod redirects to point to the correct directory.
+# This will download kubernetes/kubernetes under /third-party 
+
+./hack/update-deps.sh
+
+# Download go modules
 go mod download
+
+# Set up go vendor directory
 go mod vendor
 
 # Starts a kine instance with a local sqlite store 
