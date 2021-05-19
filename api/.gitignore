@@ -18,3 +18,4 @@ cmd/kine/db
 
 # Ignores the vendor directory
 vendor/
+third-party/

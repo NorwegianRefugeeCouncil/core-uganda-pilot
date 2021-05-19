@@ -1,22 +1,15 @@
 package app
 
 import (
-	"context"
-	"errors"
-	corev1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
 	"github.com/nrc-no/core/api/pkg/generated/openapi"
 	"github.com/nrc-no/core/api/pkg/server"
 	"github.com/nrc-no/core/api/pkg/server/options"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/apimachinery/pkg/runtime/schema"
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 	openapi2 "k8s.io/apiserver/pkg/endpoints/openapi"
 	genericapiserver "k8s.io/apiserver/pkg/server"
-	"k8s.io/klog"
-	"net/http"
-	"time"
+	restclient "k8s.io/client-go/rest"
 )
 
 const defaultEtcdPathPrefix = "/registry"
@@ -29,13 +22,9 @@ func NewCoreServerOptions() *CoreServerOptions {
 	o := &CoreServerOptions{
 		RecommendedOptions: options.NewRecommendedOptions(
 			defaultEtcdPathPrefix,
-			server.Codecs.LegacyCodec(corev1.SchemeGroupVersion),
+			nil,
 		),
 	}
-	o.RecommendedOptions.Etcd.StorageConfig.EncodeVersioner = runtime.NewMultiGroupVersioner(
-		corev1.SchemeGroupVersion,
-		schema.GroupKind{Group: corev1.GroupName},
-	)
 	return o
 }
 
@@ -88,6 +77,11 @@ func (o *CoreServerOptions) Config() (*server.Config, error) {
 		return nil, err
 	}
 
+	serverConfig.LoopbackClientConfig = &restclient.Config{
+		QPS:  -1,
+		Host: "http://localhost:8001",
+	}
+
 	return &serverConfig.Config, nil
 
 }
@@ -103,33 +97,7 @@ func (o CoreServerOptions) RunCoreServer(stopCh <-chan struct{}) error {
 		return err
 	}
 
-	httpServer, err := server.PrepareRun().Run(stopCh)
-	if err != nil {
-		return err
-	}
-
-	var httpErr error
-	go func() {
-		if err := httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			httpErr = err
-		}
-	}()
-
-	<-stopCh
-
-	if httpErr != nil {
-		klog.Errorf("server error: %v", err)
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	if err := httpServer.Shutdown(ctx); err != nil {
-		return err
-	}
-
-	return nil
-
+	return server.PrepareRun().Run(stopCh)
 }
 
 func (o CoreServerOptions) AddFlags(flags *pflag.FlagSet) {

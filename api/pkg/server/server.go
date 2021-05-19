@@ -1,11 +1,16 @@
 package server
 
 import (
+	"context"
 	"fmt"
+	apiextensionsinformers "k8s.io/apiextensions-apiserver/pkg/client/informers/externalversions"
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/apimachinery/pkg/util/clock"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
+	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/apiserver/pkg/admission"
 	"k8s.io/apiserver/pkg/authorization/authorizer"
 	genericapi "k8s.io/apiserver/pkg/endpoints"
@@ -15,10 +20,12 @@ import (
 	"k8s.io/apiserver/pkg/registry/generic"
 	"k8s.io/apiserver/pkg/registry/rest"
 	"k8s.io/apiserver/pkg/server"
+	"k8s.io/apiserver/pkg/server/healthz"
 	"k8s.io/apiserver/pkg/server/routes"
 	"k8s.io/apiserver/pkg/storageversion"
 	utilfeature "k8s.io/apiserver/pkg/util/feature"
 	utilopenapi "k8s.io/apiserver/pkg/util/openapi"
+	restclient "k8s.io/client-go/rest"
 	"k8s.io/klog"
 	openapibuilder "k8s.io/kube-openapi/pkg/builder"
 	openapicommon "k8s.io/kube-openapi/pkg/common"
@@ -27,6 +34,7 @@ import (
 	"net/http"
 	gpath "path"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -50,6 +58,34 @@ type APIServer struct {
 	maxRequestBodyBytes        int64
 	minRequestTimeout          time.Duration
 	openAPIConfig              *openapicommon.Config
+	LoopbackClientConfig       *restclient.Config
+	ApiExtensionsInformers     apiextensionsinformers.SharedInformerFactory
+	// PostStartHooks are each called after the server has started listening, in a separate go func for each
+	// with no guarantee of ordering between them.  The map key is a name used for error reporting.
+	// It may kill the process with a panic if it wishes to by returning an error.
+	postStartHookLock      sync.Mutex
+	postStartHooks         map[string]postStartHookEntry
+	postStartHooksCalled   bool
+	disabledPostStartHooks sets.String
+
+	preShutdownHookLock    sync.Mutex
+	preShutdownHooks       map[string]preShutdownHookEntry
+	preShutdownHooksCalled bool
+	// healthz checks
+	healthzLock            sync.Mutex
+	healthzChecks          []healthz.HealthChecker
+	healthzChecksInstalled bool
+	// livez checks
+	livezLock            sync.Mutex
+	livezChecks          []healthz.HealthChecker
+	livezChecksInstalled bool
+	// readyz checks
+	readyzLock            sync.Mutex
+	readyzChecks          []healthz.HealthChecker
+	readyzChecksInstalled bool
+	livezGracePeriod      time.Duration
+	livezClock            clock.Clock
+	readinessStopCh       chan<- struct{}
 }
 
 func (s *APIServer) InstallAPIGroup(apiGroupInfo *server.APIGroupInfo) error {
@@ -249,10 +285,53 @@ type preparedGenericAPIServer struct {
 	*APIServer
 }
 
-func (s preparedGenericAPIServer) Run(stopCh <-chan struct{}) (*http.Server, error) {
+func (s preparedGenericAPIServer) Run(stopCh <-chan struct{}) error {
+
 	httpServer := &http.Server{
 		Addr:    ":8001",
 		Handler: s.Handler,
 	}
-	return httpServer, nil
+
+	delayedStopCh := make(chan struct{})
+	go func() {
+		defer close(delayedStopCh)
+		<-stopCh
+		close(s.readinessStopCh)
+		time.Sleep(5 * time.Second)
+	}()
+
+	stoppedCh := make(chan struct{})
+	go func() {
+		defer close(stoppedCh)
+		<-stopCh
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		httpServer.Shutdown(ctx)
+		cancel()
+	}()
+
+	go func() {
+		defer utilruntime.HandleCrash()
+		err := httpServer.ListenAndServe()
+		msg := fmt.Sprintf("stopped listening")
+		select {
+		case <-stopCh:
+			klog.Info(msg)
+		default:
+			panic(fmt.Sprintf("%s due to %v", msg, err))
+		}
+	}()
+
+	s.RunPostStartHooks(stopCh)
+
+	<-stopCh
+
+	err := s.RunPreShutdownHooks()
+	if err != nil {
+		return err
+	}
+
+	<-delayedStopCh
+	<-stoppedCh
+
+	return nil
 }

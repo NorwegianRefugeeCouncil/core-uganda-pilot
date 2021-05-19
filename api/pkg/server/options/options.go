@@ -5,10 +5,12 @@ import (
 	"github.com/spf13/pflag"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apiserver/pkg/storage/storagebackend"
+	restclient "k8s.io/client-go/rest"
 )
 
 type RecommendedOptions struct {
-	Etcd *server.EtcdOptions
+	Etcd                 *server.EtcdOptions
+	LoopbackClientConfig *restclient.Config
 }
 
 func NewRecommendedOptions(prefix string, codec runtime.Codec) *RecommendedOptions {
@@ -23,7 +25,19 @@ func (o *RecommendedOptions) AddFlags(fs *pflag.FlagSet) {
 }
 
 func (o *RecommendedOptions) ApplyTo(config *server.RecommendedConfig) error {
-	if err := o.Etcd.ApplyTo(&config.Config); err != nil {
+	c := &config.Config
+
+	storageFactoryConfig := server.NewStorageFactoryConfig()
+	completedStorageFactoryConfig, err := storageFactoryConfig.Complete(o.Etcd)
+	if err != nil {
+		return err
+	}
+	storageFactory, err := completedStorageFactoryConfig.New()
+	if err != nil {
+		return err
+	}
+
+	if err := o.Etcd.ApplyWithStorageFactoryTo(c, storageFactory); err != nil {
 		return err
 	}
 	return nil

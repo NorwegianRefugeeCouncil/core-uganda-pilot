@@ -310,11 +310,11 @@ func autoConvert_v1_FormElementDefinition_To_core_FormElementDefinition(in *Form
 	out.Type = core.FormElementType(in.Type)
 	out.Required = in.Required
 	out.Children = *(*[]core.FormElementDefinition)(unsafe.Pointer(&in.Children))
-	out.MinLength = in.MinLength
-	out.MaxLength = (*int64)(unsafe.Pointer(in.MaxLength))
 	out.Min = in.Min
 	out.Max = in.Max
 	out.Pattern = in.Pattern
+	out.MinLength = in.MinLength
+	out.MaxLength = (*int64)(unsafe.Pointer(in.MaxLength))
 	return nil
 }
 
@@ -331,11 +331,11 @@ func autoConvert_core_FormElementDefinition_To_v1_FormElementDefinition(in *core
 	out.Type = FormElementType(in.Type)
 	out.Required = in.Required
 	out.Children = *(*[]FormElementDefinition)(unsafe.Pointer(&in.Children))
-	out.MinLength = in.MinLength
-	out.MaxLength = (*int64)(unsafe.Pointer(in.MaxLength))
 	out.Min = in.Min
 	out.Max = in.Max
 	out.Pattern = in.Pattern
+	out.MinLength = in.MinLength
+	out.MaxLength = (*int64)(unsafe.Pointer(in.MaxLength))
 	return nil
 }
 

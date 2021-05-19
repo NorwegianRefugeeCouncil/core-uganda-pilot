@@ -8,6 +8,7 @@ import (
 	"k8s.io/apiserver/pkg/registry/generic"
 	genericregistry "k8s.io/apiserver/pkg/registry/generic/registry"
 	"k8s.io/apiserver/pkg/server/options/encryptionconfig"
+	"k8s.io/apiserver/pkg/server/storage"
 	"k8s.io/apiserver/pkg/storage/storagebackend"
 	"k8s.io/apiserver/pkg/storage/value"
 	"k8s.io/klog/v2"
@@ -149,13 +150,18 @@ func (s *EtcdOptions) AddFlags(fs *pflag.FlagSet) {
 		"The time in seconds that each lease is reused. A lower value could avoid large number of objects reusing the same lease. Notice that a too small value may cause performance problems at storage layer.")
 }
 
+func (s *EtcdOptions) ApplyWithStorageFactoryTo(c *Config, storageFactory storage.StorageFactory) error {
+	c.RESTOptionsGetter = &StorageFactoryRestOptionsFactory{Options: *s, StorageFactory: storageFactory}
+	return nil
+}
+
 func (s *EtcdOptions) ApplyTo(c *Config) error {
 	if s == nil {
 		return nil
 	}
-	// if err := s.addEtcdHealthEndpoint(c); err != nil {
-	// 	return err
-	// }
+	//if err := s.addEtcdHealthEndpoint(c); err != nil {
+	//	return err
+	//}
 	transformerOverrides := make(map[schema.GroupResource]value.Transformer)
 	if len(s.EncryptionProviderConfigFilepath) > 0 {
 		var err error
@@ -171,6 +177,27 @@ func (s *EtcdOptions) ApplyTo(c *Config) error {
 	}
 	return nil
 }
+
+//
+//func (s *EtcdOptions) addEtcdHealthEndpoint(c *Config) error {
+//	healthCheck, err := factory.CreateHealthCheck(s.StorageConfig)
+//	if err != nil {
+//		return err
+//	}
+//	c.AddHealthChecks(healthz.NamedCheck("etcd", func(r *http.Request) error {
+//		return healthCheck()
+//	}))
+//
+//	if s.EncryptionProviderConfigFilepath != "" {
+//		kmsPluginHealthzChecks, err := encryptionconfig.GetKMSPluginHealthzCheckers(s.EncryptionProviderConfigFilepath)
+//		if err != nil {
+//			return err
+//		}
+//		c.AddHealthChecks(kmsPluginHealthzChecks...)
+//	}
+//
+//	return nil
+//}
 
 type SimpleRestOptionsFactory struct {
 	Options              EtcdOptions
@@ -229,4 +256,42 @@ func ParseWatchCacheSizes(cacheSizes []string) (map[schema.GroupResource]int, er
 		watchCacheSizes[schema.ParseGroupResource(tokens[0])] = size
 	}
 	return watchCacheSizes, nil
+}
+
+type StorageFactoryRestOptionsFactory struct {
+	Options        EtcdOptions
+	StorageFactory storage.StorageFactory
+}
+
+func (f *StorageFactoryRestOptionsFactory) GetRESTOptions(resource schema.GroupResource) (generic.RESTOptions, error) {
+	storageConfig, err := f.StorageFactory.NewConfig(resource)
+	if err != nil {
+		return generic.RESTOptions{}, fmt.Errorf("unable to find storage destination for %v, due to %v", resource, err.Error())
+	}
+
+	ret := generic.RESTOptions{
+		StorageConfig:           storageConfig,
+		Decorator:               generic.UndecoratedStorage,
+		DeleteCollectionWorkers: f.Options.DeleteCollectionWorkers,
+		EnableGarbageCollection: f.Options.EnableGarbageCollection,
+		ResourcePrefix:          f.StorageFactory.ResourcePrefix(resource),
+		CountMetricPollPeriod:   f.Options.StorageConfig.CountMetricPollPeriod,
+	}
+	if f.Options.EnableWatchCache {
+		sizes, err := ParseWatchCacheSizes(f.Options.WatchCacheSizes)
+		if err != nil {
+			return generic.RESTOptions{}, err
+		}
+		size, ok := sizes[resource]
+		if ok && size > 0 {
+			klog.Warningf("Dropping watch-cache-size for %v - watchCache size is now dynamic", resource)
+		}
+		if ok && size <= 0 {
+			ret.Decorator = generic.UndecoratedStorage
+		} else {
+			ret.Decorator = genericregistry.StorageWithCacher()
+		}
+	}
+
+	return ret, nil
 }

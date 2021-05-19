@@ -13,9 +13,10 @@ import (
 
 type Suite struct {
 	suite.Suite
-	cancel context.CancelFunc
-	client *v1.CoreV1Client
-	stopCh chan struct{}
+	cancel    context.CancelFunc
+	client    *v1.CoreV1Client
+	stopCh    chan struct{}
+	stoppedCh chan struct{}
 }
 
 func (s *Suite) SetupSuite() {
@@ -31,11 +32,11 @@ func (s *Suite) SetupSuite() {
 	if err := options.Validate([]string{}); err != nil {
 		t.Fatal(err)
 	}
-	stopCh := make(chan struct{})
-	s.stopCh = stopCh
+	s.stopCh = make(chan struct{})
+	s.stoppedCh = make(chan struct{})
 
 	go func() {
-		if err := options.RunCoreServer(stopCh); err != nil {
+		if err := options.RunCoreServer(s.stopCh); err != nil {
 			t.Fatal(err)
 		}
 	}()
