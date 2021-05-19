@@ -52,7 +52,6 @@ out a form. Each `version` of a `FormDefinition` will have it's own `FormSchema`
 Example:
 
 ```yaml
-
 name: v1
 schema:
   root:
@@ -72,7 +71,6 @@ example, a `FormDefinition` will contain the `v1` `v2` and `v3` versions along w
 Example:
 
 ```yaml
-
 kind: FormDefinition
 apiGroup: core.nrc.no/v1
 metadata:
