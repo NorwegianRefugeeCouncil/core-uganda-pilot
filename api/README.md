@@ -216,101 +216,62 @@ kubectl get formdefinitions
 <summary>Example FormDefinition</summary>
 <p>
 
-# example.json
-
+```yaml
+# example.yaml
+---
+kind: FormDefinition
+apiVersion: core.nrc.no/v1
+metadata:
+  name: formtests.test.com
+spec:
+  group: test.com
+  names:
+    plural: formtests
+    singular: formtest
+    kind: FormTest
+  versions:
+    - name: v1
+      storage: true
+      served: true
+      schema:
+        formSchema:
+          root:
+            type: section
+            children:
+              - key: firstName
+                label:
+                  - locale: en
+                    value: First Name
+                  - locale: fr
+                    value: Prenom
+                description:
+                  - locale: en
+                    value: Enter the first name of the beneficiary
+                  - locale: fr
+                    value: Entrez le prénom du bénéficiaire
+                type: shortText
+                required: true
+              - key: lastName
+                label:
+                  - locale: en
+                    value: Last Name
+                  - locale: fr
+                    value: Nom de famille
+                description:
+                  - locale: en
+                    value: Enter the first name of the beneficiary
+                  - locale: fr
+                    value: Entrez le nom de famille du bénéficiaire
+                type: shortText
+                required: true
 ```
-
-{
-  "kind": "FormDefinition",
-  "apiVersion": "core.nrc.no/v1",
-  "metadata": {
-    "name": "formtests.test.com"
-  },
-  "spec": {
-    "group": "test.com",
-    "names": {
-      "plural": "formtests",
-      "singular": "formtest",
-      "kind": "FormTest"
-    },
-    "versions": [
-      {
-        "name": "v1",
-        "storage": true,
-        "served": true,
-        "schema": {
-          "formSchema": {
-            "root": {
-              "type": "section",
-              "children": [
-                {
-                  "key": "firstName",
-                  "label": [
-                    {
-                      "locale": "en",
-                      "value": "First Name"
-                    },
-                    {
-                      "locale": "fr",
-                      "value": "Prenom"
-                    }
-                  ],
-                  "description": [
-                    {
-                      "locale": "en",
-                      "value": "Enter the first name of the beneficiary"
-                    },
-                    {
-                      "locale": "fr",
-                      "value": "Entrez le prénom du bénéficiaire"
-                    }
-                  ],
-                  "type": "shortText",
-                  "required": true
-                },
-                {
-                  "key": "lastName",
-                  "label": [
-                    {
-                      "locale": "en",
-                      "value": "Last Name"
-                    },
-                    {
-                      "locale": "fr",
-                      "value": "Nom de famille"
-                    }
-                  ],
-                  "description": [
-                    {
-                      "locale": "en",
-                      "value": "Enter the first name of the beneficiary"
-                    },
-                    {
-                      "locale": "fr",
-                      "value": "Entrez le nom de famille du bénéficiaire"
-                    }
-                  ],
-                  "type": "shortText",
-                  "required": true
-                }
-              ]
-            }
-          }
-        }
-      }
-    ]
-  }
-}
-
-```
-
 </p>
 </details>  
 
 #### Post the example form definition
 
 ```
-curl --data-binary @example.json http://localhost:8001/apis/test.com/v1/formtests -H "Content-Type: application/json"
+curl --data-binary @example.yaml http://localhost:8001/apis/test.com/v1/formtests -H "Content-Type: application/yaml"
 ```
 
 <details>
@@ -318,19 +279,16 @@ curl --data-binary @example.json http://localhost:8001/apis/test.com/v1/formtest
 
 <p>
 
-```
-# submission.json
-{
-  "apiVersion": "test.com/v1",
-  "kind": "FormTest",
-  "metadata": {
-    "name": "example-form-submission"
-  },
-  "spec": {
-    "firstName": "Ludovic",
-    "lastName": "Cleroux"
-  }
-}
+```yaml
+# submission.yaml
+---
+apiVersion: test.com/v1
+kind: FormTest
+metadata:
+  name: example-form-submission
+spec:
+  firstName: Ludovic
+  lastName: Cleroux
 ```
 
 </p>
@@ -340,7 +298,7 @@ curl --data-binary @example.json http://localhost:8001/apis/test.com/v1/formtest
 #### Post the form submission
 
 ```
-curl --data-binary @submission.json http://localhost:8001/apis/test.com/v1/formtests -H "Content-Type: application/json"
+curl --data-binary @submission.yaml http://localhost:8001/apis/test.com/v1/formtests -H "Content-Type: application/yaml"
 ```
 
 #### Get the form submission
