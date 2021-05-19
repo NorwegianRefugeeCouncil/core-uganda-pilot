@@ -278,6 +278,8 @@ func Convert_core_FormDefinitionValidation_To_v1_FormDefinitionValidation(in *co
 
 func autoConvert_v1_FormDefinitionVersion_To_core_FormDefinitionVersion(in *FormDefinitionVersion, out *core.FormDefinitionVersion, s conversion.Scope) error {
 	out.Name = in.Name
+	out.Served = in.Served
+	out.Storage = in.Storage
 	if err := Convert_v1_FormDefinitionValidation_To_core_FormDefinitionValidation(&in.Schema, &out.Schema, s); err != nil {
 		return err
 	}
@@ -291,6 +293,8 @@ func Convert_v1_FormDefinitionVersion_To_core_FormDefinitionVersion(in *FormDefi
 
 func autoConvert_core_FormDefinitionVersion_To_v1_FormDefinitionVersion(in *core.FormDefinitionVersion, out *FormDefinitionVersion, s conversion.Scope) error {
 	out.Name = in.Name
+	out.Served = in.Served
+	out.Storage = in.Storage
 	if err := Convert_core_FormDefinitionValidation_To_v1_FormDefinitionValidation(&in.Schema, &out.Schema, s); err != nil {
 		return err
 	}

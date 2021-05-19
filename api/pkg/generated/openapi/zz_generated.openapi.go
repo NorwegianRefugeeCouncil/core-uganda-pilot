@@ -354,6 +354,18 @@ func schema_pkg_apis_core_v1_FormDefinitionVersion(ref common.ReferenceCallback)
 							Format: "",
 						},
 					},
+					"served": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"boolean"},
+							Format: "",
+						},
+					},
+					"storage": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"boolean"},
+							Format: "",
+						},
+					},
 					"schema": {
 						SchemaProps: spec.SchemaProps{
 							Default: map[string]interface{}{},
