@@ -102,6 +102,59 @@ spec:
               key: lastName
 ```
 
+### Ideas for development
+
+#### 1. Related entities
+
+We need to be able to link pieces of data together, and provide an easy way for the user to link data together. For
+example, when filling out a form called `VulnerabilityAssessment`, a user might want to be able to select which
+beneficiary does this assessment relates to. Also, the person in charge of defining the forms should also be able to
+easily add a field that allows the user to do such linkage.
+
+For now, we have a handful of field types available such as `checkbox`, `shorttext` and so on.
+
+We are thinking to introduce a field type `relationship` that would have the following structure
+
+```
+- type: relationship
+  target:
+    apiVersion: models.nrc.no/v1
+    kind: Beneficiary
+  displayValue: {.spec.lastName} {.spec.firstName}
+```
+
+That would allow the ui to easily be able to craft a `select` box that would be able to submit API request to the
+desired `list` endpoint. The request would be in the form `apis/models.nrc.no/v1/beneficiaries`. The `select` control,
+through convention and discovery, would know that the result is a list of type `BeneficiaryList`, and would know in
+advance the json schema for that entity.
+
+On the API side, when the user fills a form that contains a `relationship` field, and posts it to the API, there would
+be a controller that would listen for incoming calls. The controller would walk through the POSTed object, detect the
+relationships, and would append the given relationship to the related entity (in this case the `Beneficiary`). For
+example:
+
+```
+apiVersion: models.nrc.no/v1
+kind: Beneficiary
+spec: 
+ ...
+status:
+  relationships:
+  - apiVersion: models.nrc.no/v1
+    kind: VulnerabilityAssessment
+    name: someform-a3214d-b213baf-231123d-adbawd
+    fieldPath: .spec.beneficiary
+```
+
+When building the Beneficiary case management ui, it would be easy then to retrieve the associated models by simply
+looking up the Beneficiary entity itself.
+
+```
+Beneficiary: John Doe
+Vulerability Assessments:
+- link to vulnerability assessment
+```
+
 ### Implementation details
 
 This API leverages the work by the [kubernetes](https://github.com/kubernetes/kubernetes) team, especially around
@@ -319,3 +372,7 @@ Then, you can run
 ```
 ./hack/update-codegen.sh
 ```
+
+## Swagger docs
+
+Just hit the api at http://localhost:8001/openapi/v2
