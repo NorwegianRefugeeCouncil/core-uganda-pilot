@@ -5,18 +5,23 @@ import (
 	"github.com/nrc-no/core/api/cmd/server/app"
 	v1 "github.com/nrc-no/core/api/pkg/generated/clientset/versioned/typed/core/v1"
 	"github.com/stretchr/testify/suite"
+	apiextensionsclientv1 "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/typed/apiextensions/v1"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/util/flowcontrol"
+	"net/url"
 	"testing"
 	"time"
 )
 
 type Suite struct {
 	suite.Suite
-	cancel    context.CancelFunc
-	client    *v1.CoreV1Client
-	stopCh    chan struct{}
-	stoppedCh chan struct{}
+	cancel     context.CancelFunc
+	client     *v1.CoreV1Client
+	crdClient  *apiextensionsclientv1.ApiextensionsV1Client
+	stopCh     chan struct{}
+	stoppedCh  chan struct{}
+	restConfig *rest.Config
+	baseUrl    *url.URL
 }
 
 func (s *Suite) SetupSuite() {
@@ -43,15 +48,22 @@ func (s *Suite) SetupSuite() {
 
 	time.Sleep(2 * time.Second)
 
-	restConfig := &rest.Config{
-		Host:        "http://localhost:8001",
+	baseUrl, _ := url.Parse("http://localhost:8001")
+	s.baseUrl = baseUrl
+
+	s.restConfig = &rest.Config{
+		Host:        baseUrl.String(),
 		RateLimiter: flowcontrol.NewFakeAlwaysRateLimiter(),
 	}
-	client, err := v1.NewForConfig(restConfig)
+	var err error
+	s.client, err = v1.NewForConfig(s.restConfig)
 	if err != nil {
 		t.Fatalf("could not create rest client: %v", err)
 	}
-	s.client = client
+	s.crdClient, err = apiextensionsclientv1.NewForConfig(s.restConfig)
+	if err != nil {
+		t.Fatalf("could not create rest client: %v", err)
+	}
 }
 
 func (s *Suite) TearDownSuite() {

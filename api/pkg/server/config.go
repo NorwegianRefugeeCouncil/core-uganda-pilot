@@ -48,12 +48,24 @@ import (
 var (
 	Scheme = runtime.NewScheme()
 	Codecs = serializer.NewCodecFactory(Scheme)
+
+	// if you modify this, make sure you update the crEncoder
+	unversionedVersion = schema.GroupVersion{Group: "", Version: "v1"}
+	unversionedTypes   = []runtime.Object{
+		&metav1.Status{},
+		&metav1.WatchEvent{},
+		&metav1.APIVersions{},
+		&metav1.APIGroupList{},
+		&metav1.APIGroup{},
+		&metav1.APIResourceList{},
+	}
 )
 
 func init() {
 	coreinstall.Install(Scheme)
 	apiextensionsinstall.Install(Scheme)
 	metav1.AddToGroupVersion(Scheme, schema.GroupVersion{Version: "v1"})
+	Scheme.AddUnversionedTypes(unversionedVersion, unversionedTypes...)
 }
 
 type RecommendedConfig struct {

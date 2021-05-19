@@ -21,6 +21,10 @@ import (
 	"time"
 )
 
+// FormDefinitionController is supposed to create CustomResourceDefinitions from
+// FormDefinitions. It will create the CustomResourceDefinition if it doesn't exist,
+// or will reconcile it if there is a discrepancy between the FormDefinition
+// and the CustomResourceDefinition.
 type FormDefinitionController struct {
 	lister    corev1.FormDefinitionLister
 	queue     workqueue.RateLimitingInterface
@@ -82,7 +86,7 @@ func (c *FormDefinitionController) worker() {
 		defer c.queue.Done(key)
 
 		formDef := key.(*v1.FormDefinition)
-		err := c.syncFormDefinitionFromKey(formDef)
+		err := c.syncFormDefinition(formDef)
 		if err != nil {
 			c.queue.Forget(key)
 			return false
@@ -97,7 +101,7 @@ func (c *FormDefinitionController) worker() {
 	}
 }
 
-func (c *FormDefinitionController) syncFormDefinitionFromKey(formDef *v1.FormDefinition) error {
+func (c *FormDefinitionController) syncFormDefinition(formDef *v1.FormDefinition) error {
 
 	startTime := time.Now()
 	defer func() {
@@ -121,6 +125,7 @@ func (c *FormDefinitionController) syncFormDefinitionFromKey(formDef *v1.FormDef
 
 }
 
+// TODO: Reconcile changes between FormDefinition and CustomResourceDefinition
 func (c *FormDefinitionController) reconcileFormDefinition(formDefinition *v1.FormDefinition, crd *apiextensionsv1.CustomResourceDefinition) error {
 	return nil
 }

@@ -8,6 +8,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"strconv"
 	"testing"
+	"time"
 )
 
 func (s *Suite) TestListFormDefinitions() {
@@ -277,10 +278,72 @@ func (s *Suite) TestCreateFormDefinition() {
 	}
 }
 
+func (s *Suite) TestCreateNewEndpoint() {
+	t := s.T()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
+	formDef := aValidFormDefinition()
+
+	err := s.client.FormDefinitions().Delete(ctx, formDef.Name, metav1.DeleteOptions{})
+	if err != nil && !apierrors.IsNotFound(err) {
+		assert.NoError(t, err)
+		return
+	}
+
+	w, err := s.crdClient.CustomResourceDefinitions().Watch(ctx, metav1.ListOptions{
+		FieldSelector: "metadata.name=" + formDef.Name,
+	})
+	if !assert.NoError(t, err) {
+		return
+	}
+	defer w.Stop()
+
+	foundChan := make(chan struct{})
+	go func() {
+		for event := range w.ResultChan() {
+			t.Logf("%#v", event)
+			foundChan <- struct{}{}
+		}
+	}()
+
+	_, err = s.client.FormDefinitions().Create(ctx, formDef, metav1.CreateOptions{})
+	if !assert.NoError(t, err) {
+		return
+	}
+
+	<-foundChan
+
+	crd, err := s.crdClient.CustomResourceDefinitions().Get(ctx, formDef.Name, metav1.GetOptions{})
+	if !assert.NoError(t, err) {
+		return
+	}
+
+	assert.Equal(t, formDef.Name, crd.Name)
+
+	// TODO:
+	//cli, err := rest.NewRESTClient(s.baseUrl, "/apis/", rest.ClientContentConfig{
+	//	Negotiator: unstructured.UnstructuredJSONScheme,
+	//	GroupVersion: schema.GroupVersion{
+	//		Group:   formDef.Spec.Group,
+	//		Version: "v1",
+	//	},
+	//}, nil, http.DefaultClient)
+	//if !assert.NoError(t, err) {
+	//	return
+	//}
+	//
+	//us := unstructured.Unstructured{}
+	//if err := cli.Get().Resource(formDef.Spec.Names.Plural).Do(ctx).Into(&us); !assert.NoError(t, err) {
+	//	return
+	//}
+
+}
+
 func aValidFormDefinition() *corev1.FormDefinition {
 	return &corev1.FormDefinition{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "test",
+			Name: "formtests.test.com",
 		},
 		Spec: corev1.FormDefinitionSpec{
 			Group: "test.com",
@@ -291,7 +354,8 @@ func aValidFormDefinition() *corev1.FormDefinition {
 			},
 			Versions: []corev1.FormDefinitionVersion{
 				{
-					Name: "v1",
+					Name:    "v1",
+					Storage: true,
 					Schema: corev1.FormDefinitionValidation{
 						FormSchema: corev1.FormDefinitionSchema{
 							Root: corev1.FormElementDefinition{
