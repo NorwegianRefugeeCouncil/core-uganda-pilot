@@ -8,6 +8,8 @@ export interface FormCheckProps extends React.ComponentPropsWithRef<'div'> {
   id: string;
   label?: string;
   type?: 'radio' | 'checkbox' | 'switch';
+  name?: string;
+  defaultChecked?: true;
   inline?: true;
   isValid?: true;
   isInvalid?: true;
@@ -31,6 +33,8 @@ const FormCheck = React.forwardRef<HTMLInputElement, FormCheckProps>(
       id,
       label,
       type = 'checkbox',
+      name,
+      defaultChecked,
       inline,
       isValid,
       isInvalid,
@@ -44,39 +48,43 @@ const FormCheck = React.forwardRef<HTMLInputElement, FormCheckProps>(
   ) => {
     // const { controlId } = React.useContext(FormContext);
     const innerFormContext: FormContextInterface = {
-      controlId: id
+      controlId: id,
     };
+
     const className = classNames(
       'form-check',
       {
         'form-check-inline': inline,
-        'form-check-switch': type === 'switch',
+        'form-switch': type === 'switch',
         'is-invalid': isInvalid,
       },
       customClass
     );
 
-    const labelComponent = label ? (
-      <FormCheckLabel>{label}</FormCheckLabel>
-    ) : null;
     const inputComponent = (
       <FormCheckInput
-        ref={ref}
+        id={id}
         type={type === 'switch' ? 'checkbox' : type}
+        name={name}
         disabled={disabled}
         required={required}
         isValid={isValid}
         isInvalid={isInvalid}
+        defaultChecked={defaultChecked}
       />
     );
 
+    const labelComponent = label ? (
+      <FormCheckLabel htmlFor={id}>{label}</FormCheckLabel>
+    ) : null;
+
     return (
       <FormContext.Provider value={innerFormContext}>
-        <div ref={ref} id={id} className={className} {...rest}>
+        <div ref={ref} className={className} {...rest}>
           {children ?? (
             <>
-              {labelComponent}
               {inputComponent}
+              {labelComponent}
             </>
           )}
         </div>

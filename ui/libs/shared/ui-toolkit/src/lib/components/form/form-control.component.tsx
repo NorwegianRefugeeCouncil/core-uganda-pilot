@@ -37,16 +37,17 @@ export const FormControl: FormControl = (props: InputProps | TextareaProps) => {
   } = props;
   const { controlId } = React.useContext(FormContext);
   const className = classNames(
-    'form-control',
     {
-      [`form-control-${displaySize}`]: displaySize != null,
+      'form-control': !plaintext,
       'form-control-plaintext': rest.readOnly && plaintext,
+      [`form-control-${displaySize}`]: displaySize != null,
+      [`form-control-color`]: type === 'color',
       'is-valid': isValid,
       'is-invalid': isInvalid,
     },
     customClass
   );
-  if (isPropsForTextarea(props))
+  if (type === 'textarea')
     return (
       <textarea
         id={id ?? controlId}

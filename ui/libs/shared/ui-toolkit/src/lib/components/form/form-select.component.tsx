@@ -27,7 +27,7 @@ export const FormSelect = React.forwardRef<HTMLSelectElement, FormSelectProps>(
       customClass
     );
     return (
-      <select {...rest}>
+      <select className={className} {...rest}>
         {children ??
           options.map((option, idx) => (
             <option

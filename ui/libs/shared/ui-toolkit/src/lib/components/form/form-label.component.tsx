@@ -14,9 +14,13 @@ export const FormLabel: React.FC<FormLabelProps> = ({
   ...rest
 }) => {
   const { controlId } = React.useContext(FormContext);
-  const className = classNames(customClass, {
-    'visually-hidden': srOnly,
-  });
+  const className = classNames(
+    'form-label',
+    {
+      'visually-hidden': srOnly,
+    },
+    customClass
+  );
   return (
     <label htmlFor={htmlFor ?? controlId} className={className} {...rest} />
   );
