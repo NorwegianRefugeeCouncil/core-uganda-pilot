@@ -1,7 +1,0 @@
-{
-  "name": "@nrc.no/bootstrap",
-  "version": "0.0.1",
-  "main": "./shared-bootstrap.umd.js",
-  "module": "./shared-bootstrap.esm.js",
-  "typings": "./index.d.ts"
-}
