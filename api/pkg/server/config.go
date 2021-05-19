@@ -5,12 +5,15 @@ import (
 	"github.com/nrc-no/core/api/pkg/apis/core"
 	coreinstall "github.com/nrc-no/core/api/pkg/apis/core/install"
 	corev1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
+	"github.com/nrc-no/core/api/pkg/controllers"
+	"github.com/nrc-no/core/api/pkg/generated/clientset/versioned"
+	"github.com/nrc-no/core/api/pkg/generated/informers/externalversions"
 	"github.com/nrc-no/core/api/pkg/generated/openapi"
 	"github.com/nrc-no/core/api/pkg/registry/core/formdefinition"
 	"k8s.io/apiextensions-apiserver/pkg/apis/apiextensions"
 	apiextensionsinstall "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/install"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
-	"k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
+	apiextensionclient "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	apiextensionsinformers "k8s.io/apiextensions-apiserver/pkg/client/informers/externalversions"
 	"k8s.io/apiextensions-apiserver/pkg/controller/apiapproval"
 	"k8s.io/apiextensions-apiserver/pkg/controller/establish"
@@ -164,11 +167,19 @@ func (c CompletedConfig) New() (*APIServer, error) {
 	}
 
 	// Create API Extensions Client
-	crdClient, err := clientset.NewForConfig(c.LoopbackClientConfig)
+	crdClient, err := apiextensionclient.NewForConfig(c.LoopbackClientConfig)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create clientset: %v", err)
 	}
-	s.ApiExtensionsInformers = apiextensionsinformers.NewSharedInformerFactory(crdClient, 5*time.Minute)
+	s.ApiExtensionsInformerFactory = apiextensionsinformers.NewSharedInformerFactory(crdClient, 5*time.Minute)
+	s.ApiExtensionsClient = crdClient
+
+	coreClient, err := versioned.NewForConfig(c.LoopbackClientConfig)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create clientset: %v", err)
+	}
+	s.CoreClient = coreClient
+	s.CoreInformerFactory = externalversions.NewSharedInformerFactory(coreClient, 5*time.Minute)
 
 	// Handles CRD version discovery
 	versionDiscoveryHandler := &versionDiscoveryHandler{
@@ -183,13 +194,13 @@ func (c CompletedConfig) New() (*APIServer, error) {
 
 	// EstablishingController controls when CRD are
 	// considered as "established" (it's a runtime.Object condition)
-	establishingController := establish.NewEstablishingController(s.ApiExtensionsInformers.Apiextensions().V1().CustomResourceDefinitions(), crdClient.ApiextensionsV1())
+	establishingController := establish.NewEstablishingController(s.ApiExtensionsInformerFactory.Apiextensions().V1().CustomResourceDefinitions(), crdClient.ApiextensionsV1())
 
 	// HTTP Handler for CRDs
 	crdHandler, err := NewCustomResourceDefinitionHandler(
 		versionDiscoveryHandler,
 		groupDiscoveryHandler,
-		s.ApiExtensionsInformers.Apiextensions().V1().CustomResourceDefinitions(),
+		s.ApiExtensionsInformerFactory.Apiextensions().V1().CustomResourceDefinitions(),
 		delegate,
 		c.RESTOptionsGetter,
 		nil,
@@ -209,20 +220,31 @@ func (c CompletedConfig) New() (*APIServer, error) {
 	s.Handler.NonGoRestfulMux.HandlePrefix("/apis/", crdHandler)
 
 	// Create the CRD controllers
-	discoveryController := NewDiscoveryController(s.ApiExtensionsInformers.Apiextensions().V1().CustomResourceDefinitions(), versionDiscoveryHandler, groupDiscoveryHandler)
-	namingController := status.NewNamingConditionController(s.ApiExtensionsInformers.Apiextensions().V1().CustomResourceDefinitions(), crdClient.ApiextensionsV1())
-	nonStructuralSchemaController := nonstructuralschema.NewConditionController(s.ApiExtensionsInformers.Apiextensions().V1().CustomResourceDefinitions(), crdClient.ApiextensionsV1())
-	apiApprovalController := apiapproval.NewKubernetesAPIApprovalPolicyConformantConditionController(s.ApiExtensionsInformers.Apiextensions().V1().CustomResourceDefinitions(), crdClient.ApiextensionsV1())
+	discoveryController := NewDiscoveryController(s.ApiExtensionsInformerFactory.Apiextensions().V1().CustomResourceDefinitions(), versionDiscoveryHandler, groupDiscoveryHandler)
+	namingController := status.NewNamingConditionController(s.ApiExtensionsInformerFactory.Apiextensions().V1().CustomResourceDefinitions(), crdClient.ApiextensionsV1())
+	nonStructuralSchemaController := nonstructuralschema.NewConditionController(s.ApiExtensionsInformerFactory.Apiextensions().V1().CustomResourceDefinitions(), crdClient.ApiextensionsV1())
+	apiApprovalController := apiapproval.NewKubernetesAPIApprovalPolicyConformantConditionController(s.ApiExtensionsInformerFactory.Apiextensions().V1().CustomResourceDefinitions(), crdClient.ApiextensionsV1())
 	finalizingController := finalizer.NewCRDFinalizer(
-		s.ApiExtensionsInformers.Apiextensions().V1().CustomResourceDefinitions(),
+		s.ApiExtensionsInformerFactory.Apiextensions().V1().CustomResourceDefinitions(),
 		crdClient.ApiextensionsV1(),
 		crdHandler,
 	)
 	// openapiController := openapicontroller.NewController(s.ApiExtensionsInformers.Apiextensions().V1().CustomResourceDefinitions())
 
+	formDefinitionController := controllers.NewFormDefinitionController(
+		s.CoreInformerFactory.Core().V1().FormDefinitions(),
+		crdClient.ApiextensionsV1().CustomResourceDefinitions(),
+		s.ApiExtensionsInformerFactory.Apiextensions().V1().CustomResourceDefinitions())
+
 	// Start the api extension informers
 	s.AddPostStartHookOrDie("start-apiextension-informers", func(context PostStartHookContext) error {
-		s.ApiExtensionsInformers.Start(context.StopCh)
+		s.ApiExtensionsInformerFactory.Start(context.StopCh)
+		return nil
+	})
+
+	// Start the form definitions informers
+	s.AddPostStartHookOrDie("start-formdefinitions-informers", func(context PostStartHookContext) error {
+		s.CoreInformerFactory.Start(context.StopCh)
 		return nil
 	})
 
@@ -245,10 +267,18 @@ func (c CompletedConfig) New() (*APIServer, error) {
 		return nil
 	})
 
+	s.AddPostStartHookOrDie("start-formdefinitions-controllers", func(context PostStartHookContext) error {
+		formDefinitionController.Run(context.StopCh)
+		select {
+		case <-context.StopCh:
+		}
+		return nil
+	})
+
 	// Wait for CRDs to sync
 	s.AddPostStartHookOrDie("crd-informer-synced", func(context PostStartHookContext) error {
 		return wait.PollImmediateUntil(100*time.Millisecond, func() (done bool, err error) {
-			return s.ApiExtensionsInformers.Apiextensions().V1().CustomResourceDefinitions().Informer().HasSynced(), nil
+			return s.ApiExtensionsInformerFactory.Apiextensions().V1().CustomResourceDefinitions().Informer().HasSynced(), nil
 		}, context.StopCh)
 	})
 

@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"github.com/spf13/pflag"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/apiserver/pkg/registry/generic"
@@ -264,9 +265,24 @@ type StorageFactoryRestOptionsFactory struct {
 }
 
 func (f *StorageFactoryRestOptionsFactory) GetRESTOptions(resource schema.GroupResource) (generic.RESTOptions, error) {
+
 	storageConfig, err := f.StorageFactory.NewConfig(resource)
 	if err != nil {
-		return generic.RESTOptions{}, fmt.Errorf("unable to find storage destination for %v, due to %v", resource, err.Error())
+
+		opts := f.Options.StorageConfig
+		opts.Codec = unstructured.UnstructuredJSONScheme
+		ret := generic.RESTOptions{
+			StorageConfig:           &opts,
+			Decorator:               generic.UndecoratedStorage,
+			EnableGarbageCollection: f.Options.EnableGarbageCollection,
+			DeleteCollectionWorkers: f.Options.DeleteCollectionWorkers,
+			ResourcePrefix:          resource.Group + "/" + resource.Resource,
+			// CountMetricPollPeriod:   t.CountMetricPollPeriod,
+		}
+		if f.Options.EnableWatchCache {
+			ret.Decorator = genericregistry.StorageWithCacher()
+		}
+		return ret, nil
 	}
 
 	ret := generic.RESTOptions{

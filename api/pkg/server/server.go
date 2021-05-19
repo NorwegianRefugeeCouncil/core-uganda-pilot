@@ -3,6 +3,9 @@ package server
 import (
 	"context"
 	"fmt"
+	"github.com/nrc-no/core/api/pkg/generated/clientset/versioned"
+	"github.com/nrc-no/core/api/pkg/generated/informers/externalversions"
+	apiextensionclient "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	apiextensionsinformers "k8s.io/apiextensions-apiserver/pkg/client/informers/externalversions"
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -47,19 +50,22 @@ const (
 )
 
 type APIServer struct {
-	Authorizer                 authorizer.Authorizer
-	DiscoveryGroupManager      discovery.GroupManager
-	EquivalentResourceRegistry runtime.EquivalentResourceRegistry
-	Handler                    *server.APIServerHandler
-	Serializer                 runtime.NegotiatedSerializer
-	StorageVersionManager      storageversion.Manager
-	RESTOptionsGetter          generic.RESTOptionsGetter
-	admissionControl           admission.Interface
-	maxRequestBodyBytes        int64
-	minRequestTimeout          time.Duration
-	openAPIConfig              *openapicommon.Config
-	LoopbackClientConfig       *restclient.Config
-	ApiExtensionsInformers     apiextensionsinformers.SharedInformerFactory
+	Authorizer                   authorizer.Authorizer
+	DiscoveryGroupManager        discovery.GroupManager
+	EquivalentResourceRegistry   runtime.EquivalentResourceRegistry
+	Handler                      *server.APIServerHandler
+	Serializer                   runtime.NegotiatedSerializer
+	StorageVersionManager        storageversion.Manager
+	RESTOptionsGetter            generic.RESTOptionsGetter
+	admissionControl             admission.Interface
+	maxRequestBodyBytes          int64
+	minRequestTimeout            time.Duration
+	openAPIConfig                *openapicommon.Config
+	LoopbackClientConfig         *restclient.Config
+	ApiExtensionsInformerFactory apiextensionsinformers.SharedInformerFactory
+	ApiExtensionsClient          apiextensionclient.Interface
+	CoreInformerFactory          externalversions.SharedInformerFactory
+	CoreClient                   versioned.Interface
 	// PostStartHooks are each called after the server has started listening, in a separate go func for each
 	// with no guarantee of ordering between them.  The map key is a name used for error reporting.
 	// It may kill the process with a panic if it wishes to by returning an error.

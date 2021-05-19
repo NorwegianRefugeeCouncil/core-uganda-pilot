@@ -283,7 +283,7 @@ func aValidFormDefinition() *corev1.FormDefinition {
 			Name: "test",
 		},
 		Spec: corev1.FormDefinitionSpec{
-			Group: "test",
+			Group: "test.com",
 			Names: corev1.FormDefinitionNames{
 				Plural:   "formtests",
 				Singular: "formtest",
