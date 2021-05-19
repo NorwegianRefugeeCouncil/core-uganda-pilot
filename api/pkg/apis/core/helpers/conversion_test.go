@@ -1,4 +1,4 @@
-package controllers
+package helpers
 
 import (
 	v1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
@@ -42,7 +42,7 @@ func TestWalkFormSchemeShouldFlattenProperties(t *testing.T) {
 		},
 	}
 	jsonProps := apiextensionsv1.JSONSchemaProps{}
-	walkFormSchema(element, &jsonProps)
+	WalkFormSchema(element, &jsonProps)
 
 	assert.Equal(t, 3, len(jsonProps.Properties))
 	assertHasProperty(t, jsonProps, "prop1")
@@ -259,7 +259,7 @@ Cannot be updated. In CamelCase.`,
 		},
 	}
 
-	crd := createCrdFromFormDefinition(formDef)
+	crd := ConvertToFormDefinition(formDef)
 
 	assert.Equal(t, expected, crd)
 
