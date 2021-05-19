@@ -1,39 +1,32 @@
 import * as React from 'react';
 import classNames from 'classnames';
+import { AccordionHeader } from './accordion-header.component';
+import { AccordionContext } from './accordion-context';
+import { AccordionBody } from './accordion-body.component';
+import { AccordionCollapse } from './accordion-collapse.component';
 
-export interface AccordionItemProps
-  extends React.ComponentPropsWithoutRef<'div'> {
-  title: string;
-  body: string | HTMLElement;
-  isCollapsed?: boolean;
+export interface AccordionItemProps extends React.ComponentPropsWithRef<'div'> {
+  id: string;
+  header: string;
+  body: string | JSX.Element;
+  open?: true;
 }
 
-export const AccordionItem: React.FC<AccordionItemProps> = ({
-  title,
-  body,
-  isCollapsed = true,
-  ...baseProps
-}) => {
-  const buttonClass = classNames('accordion-button', {
-    collapsed: isCollapsed,
-  });
-  const collapseClass = classNames('accordion-collapse collapse', {
-    show: !isCollapsed,
+export const AccordionItem = React.forwardRef<
+  HTMLDivElement,
+  AccordionItemProps
+>(({ id, header, body, open, className: customClass, ...rest }, ref) => {
+  const { activeKey } = React.useContext(AccordionContext);
+  const itemClassName = classNames('accordion-item', customClass);
+  const collapseClassName = classNames('accordion-collapse', 'collapse', {
+    show: open || id === activeKey,
   });
   return (
-    <>
-      <h2 className="accordion-header">
-        <button
-          className={buttonClass}
-          type="button"
-          aria-expanded={isCollapsed}
-        >
-          {title}
-        </button>
-      </h2>
-      <div className={collapseClass}>
-        <div className="accordion-body">{body}</div>
-      </div>
-    </>
+    <div ref={ref} className={itemClassName} {...rest}>
+      <AccordionHeader id={id}>{header}</AccordionHeader>
+      <AccordionCollapse id={id} className={collapseClassName}>
+        <AccordionBody>{body}</AccordionBody>
+      </AccordionCollapse>
+    </div>
   );
-};
+});
