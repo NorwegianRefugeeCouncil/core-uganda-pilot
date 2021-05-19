@@ -257,6 +257,7 @@ spec:
                 type: shortText
                 required: true
 ```
+
 </p>
 </details>  
 
@@ -306,16 +307,35 @@ curl http://localhost:8001/apis/test.com/v1/formtests/ | jq
 
 This app supports code generation for
 
-- Deepcopy funcs
-- Conversion funcs
-- Defaulter funcs
-- OpenAPI definitions
+- Deepcopy funcs => Function that copies an object
+- Conversion funcs => Converts an api object between version
+- Defaulter funcs => Generates functions to apply defaults
+- OpenAPI definitions => OpenAPI definition for api objects
+
+That means that anytime you modify the source code comments for api objects, the `OpenAPI` documentation will be updated
+as well.
+
+For example
+
+```go
+package v1
+
+type FormDefinition struct {
+	// MyField is a field that is a field
+	MyField string
+}
+```
+
+If you change the comment for `MyField`, you should run `./hack/update-codegen.sh` to update the openapi definitions to
+contain the new comments.
 
 For this though, you **must** put the repository at
 
 ```
 ${GOPATH}/github.com/nrc-no/core
 ```
+
+This is a current limitation of the `openapi-gen` package.
 
 Then, you can run
 
