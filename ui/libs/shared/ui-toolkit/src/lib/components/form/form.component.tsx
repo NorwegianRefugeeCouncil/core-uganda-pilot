@@ -4,18 +4,13 @@ import { FormLabel } from './form-label.component';
 import { FormControl } from './form-control.component';
 import { FormSelect } from './form-select.component';
 import { FormText } from './form-text.component';
-import { classNames, Box, PolymorphicComponentProps } from '@ui-helpers/utils';
 import { FormCheck } from './form-check.component';
+import { classNames } from '@ui-helpers/utils';
 
-export type FormOwnProps = {
+export interface FormProps extends React.ComponentPropsWithRef<'form'> {
   inline?: true;
   validated?: true;
-};
-
-export type FormProps<E extends React.ElementType> = PolymorphicComponentProps<
-  E,
-  FormOwnProps
->;
+}
 
 export type FormStatic = {
   Group?: typeof FormGroup;
@@ -26,21 +21,19 @@ export type FormStatic = {
   Text?: typeof FormText;
 };
 
-type Form = <E extends React.ElementType = 'form'>(
-  props: FormProps<E>
-) => React.ReactElement | null;
+export type Form = React.ForwardRefExoticComponent<
+  React.PropsWithRef<FormProps>
+> &
+  FormStatic;
 
-export const Form: Form & FormStatic = React.forwardRef(
-  <E extends React.ElementType = 'form'>(
-    { as, inline, validated, className: customClass, ...rest }: FormProps<E>,
-    ref: typeof rest.ref
-  ) => {
+export const Form: Form = React.forwardRef(
+  ({ inline, validated, className: customClass, ...rest }, ref) => {
     const className = classNames(customClass, {
       'row row-cols-lg-auto g-3 align-items-center': inline,
       'was-validated': validated,
       'needs-validation': !validated,
     });
-    return <Box ref={ref} className={className} {...rest} />;
+    return <form ref={ref} className={className} {...rest} />;
   }
 );
 

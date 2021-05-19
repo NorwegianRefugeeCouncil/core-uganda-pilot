@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { classNames, Box, PolymorphicComponentProps } from '@ui-helpers/utils';
 
-export type FormTextOwnProps = {
-  muted?: true;
-};
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type FormTextOwnProps = {};
 
 export type FormTextProps<
   E extends React.ElementType
@@ -12,16 +11,9 @@ export type FormTextProps<
 const defaultElement = 'div';
 
 export const FormText = <E extends React.ElementType = typeof defaultElement>({
-  muted,
   className: customClass,
   ...rest
 }: FormTextProps<E>) => {
-  const className = classNames(
-    'form-text',
-    {
-      'text-muted': muted,
-    },
-    customClass
-  );
+  const className = classNames('form-text', customClass);
   return <Box as={defaultElement} className={className} {...rest} />;
 };
