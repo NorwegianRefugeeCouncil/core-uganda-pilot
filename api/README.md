@@ -174,7 +174,7 @@ It essentially is a very light version of the kubernetes `apiserver`.
 
 Requirements:
 
-```
+```shell
 # requires go 1.16
 
 # We depend on code that lives in the kubernetes/kubernetes
@@ -200,14 +200,6 @@ go run ./cmd/server --etcd-servers 127.0.0.1:2379
 # Try the api a little bit
 curl http://localhost:8001/apis/core.nrc.no/v1
 curl http://localhost:8001/apis/core.nrc.no/v1/formdefinitions
-
-# that will **soon** work as well
-kubectl config set-cluster core --server http://localhost:8001
-kubectl config set-context core --cluster core
-kubectl config use-context core
-kubectl get formdefinitions
-...
-
 ```
 
 ### Example Form Definition
@@ -270,7 +262,7 @@ spec:
 
 #### Post the example form definition
 
-```
+```shell
 curl --data-binary @example.yaml http://localhost:8001/apis/test.com/v1/formtests -H "Content-Type: application/yaml"
 ```
 
@@ -297,13 +289,13 @@ spec:
 
 #### Post the form submission
 
-```
+```shell
 curl --data-binary @submission.yaml http://localhost:8001/apis/test.com/v1/formtests -H "Content-Type: application/yaml"
 ```
 
 #### Get the form submission
 
-```
+```shell
 # Get
 curl http://localhost:8001/apis/test.com/v1/formtests/example-form-submission | jq
 # List
@@ -327,7 +319,7 @@ ${GOPATH}/github.com/nrc-no/core
 
 Then, you can run
 
-```
+```shell
 ./hack/update-codegen.sh
 ```
 
