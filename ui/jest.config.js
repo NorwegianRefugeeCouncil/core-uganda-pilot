@@ -6,5 +6,6 @@ module.exports = {
     '<rootDir>/libs/formbuilder',
     '<rootDir>/libs/shared/core-client',
     '<rootDir>/libs/formrenderer',
+    '<rootDir>/apps/showcase',
   ],
 };
