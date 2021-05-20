@@ -1,12 +1,16 @@
 package e2e
 
 import (
+	"bytes"
 	"context"
 	corev1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
 	"github.com/stretchr/testify/assert"
+	"io/ioutil"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"net/http"
 	"strconv"
+	"sync"
 	"testing"
 	"time"
 )
@@ -340,6 +344,88 @@ func (s *Suite) TestCreateNewEndpoint() {
 
 }
 
+func (s *Suite) TestCreateLotsOfForms() {
+	wg := sync.WaitGroup{}
+
+	def := aValidFormDefinition()
+	def.Name = "loadtests." + def.Spec.Group
+	def.Spec.Names.Plural = "loadtests"
+	def.Spec.Names.Singular = "loadtest"
+	def.Spec.Names.Kind = "LoadTest"
+	if _, err := s.client.FormDefinitions().Create(context.TODO(), def, metav1.CreateOptions{}); err != nil {
+		if !apierrors.IsAlreadyExists(err) {
+			s.T().Logf("error creating form definition: %v", err)
+			s.T().Fatal(err)
+		} else {
+
+			out, err := s.client.FormDefinitions().Get(context.TODO(), def.Name, metav1.GetOptions{})
+			if err != nil {
+				s.T().Fatal(err)
+			}
+			def.ObjectMeta.ResourceVersion = out.ResourceVersion
+
+			if _, err := s.client.FormDefinitions().Update(context.TODO(), def, metav1.UpdateOptions{}); err != nil {
+				s.T().Fatal(err)
+			}
+		}
+	}
+	workChan := make(chan struct{}, 30)
+	for i := 0; i < 10000; i++ {
+		idx := i
+		wg.Add(1)
+		go func() {
+			workChan <- struct{}{}
+			defer func() {
+				wg.Done()
+				<-workChan
+			}()
+
+			if idx%1000 == 0 {
+				s.T().Logf("%d", idx)
+			}
+
+			body := []byte(`
+{
+	"apiVersion": "test.com/v1",
+	"kind":"LoadTest",
+	"metadata": {
+		"name": "loadtest-` + strconv.Itoa(idx) + `"
+	},
+	"spec":{
+		"firstName": "John",
+		"lastName":"Doe"
+	}
+}`)
+
+			req, err := http.NewRequest("POST", "http://localhost:8001/apis/test.com/v1/loadtests", bytes.NewReader([]byte(body)))
+			if err != nil {
+				s.T().Error(err)
+				return
+			}
+			req.Header.Set("Content-Type", "application/json")
+
+			resp, err := http.DefaultClient.Do(req)
+			if err != nil {
+				s.T().Error(err)
+				return
+			}
+
+			if resp.StatusCode < 200 || resp.StatusCode > 300 {
+				s.T().Errorf("unexpected status code: %d", resp.StatusCode)
+
+				body, err := ioutil.ReadAll(resp.Body)
+				if err == nil {
+					s.T().Logf("%s", string(body))
+				}
+
+				return
+			}
+
+		}()
+	}
+	wg.Wait()
+}
+
 func aValidFormDefinition() *corev1.FormDefinition {
 	return &corev1.FormDefinition{
 		ObjectMeta: metav1.ObjectMeta{
@@ -356,6 +442,7 @@ func aValidFormDefinition() *corev1.FormDefinition {
 				{
 					Name:    "v1",
 					Storage: true,
+					Served:  true,
 					Schema: corev1.FormDefinitionValidation{
 						FormSchema: corev1.FormDefinitionSchema{
 							Root: corev1.FormElementDefinition{

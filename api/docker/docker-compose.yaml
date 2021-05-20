@@ -1,32 +1,50 @@
-version: '3'
+version: "3.8"
 services:
-  postgres:
-    container_name: postgres_container
-    image: postgres
+  mongodb:
+    image: mongo
+    container_name: mongodb
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      PGDATA: /data/postgres
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=pass12345
     volumes:
-      - ./.postgres:/data/postgres
+      - mongodb-data:/data/db
+    networks:
+      - mongodb_network
     ports:
-      - "5432:5432"
+      - 27017:27017
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo 10.10.10.60:27017/test --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 3
     restart: unless-stopped
-
-  pgadmin:
-    container_name: pgadmin_container
-    image: dpage/pgadmin4
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
     environment:
-      PGADMIN_DEFAULT_EMAIL: postgres@pgadmin.org
-      PGADMIN_DEFAULT_PASSWORD: postgres
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=pass12345
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=admin123
     volumes:
-      - ./.pgadmin:/root/.pgadmin
-
+      - mongodb-data
+    depends_on:
+      - mongodb
+    networks:
+      - mongodb_network
     ports:
-      - "5050:80"
+      - 8081:8081
+    healthcheck:
+      test: wget --quiet --tries=3 --spider http://admin:admin123@10.10.10.60:8081 || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
     restart: unless-stopped
-
 volumes:
-  postgres:
-  pgadmin:
+  mongodb-data:
+    name: mongodb-data
+networks:
+  mongodb_network:
+    name: mongodb_network
