@@ -8688,7 +8688,7 @@ function App() {
         }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__["jsxDEV"])(_nrc_no_ui_toolkit__WEBPACK_IMPORTED_MODULE_1__["Card"].Text, {
           children: ["Our custom component library built with React+TS and Bootstrap 5", ' ', /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__["jsxDEV"])("a", {
             href: "assets/shared-ui-toolkit/index.html?path=/story/button--basic",
-            children: "Check it out"
+            children: "Check it out!"
           }, void 0, false, {
             fileName: _jsxFileName,
             lineNumber: 19,
@@ -8707,7 +8707,7 @@ function App() {
         }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__["jsxDEV"])(_nrc_no_ui_toolkit__WEBPACK_IMPORTED_MODULE_1__["Card"].Text, {
           children: ["A tool that transforms forms schemas provided by the server into dynamic forms using the UI toolkit", ' ', /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__["jsxDEV"])("a", {
             href: "assets/formrenderer/index.html?path=/story/formrenderer--demo",
-            children: "Check it out"
+            children: "Check it out!"
           }, void 0, false, {
             fileName: _jsxFileName,
             lineNumber: 27,
