@@ -525,6 +525,23 @@
       "sourceRoot": "apps/showcase/src",
       "projectType": "application",
       "targets": {
+        "copy-bs": {
+          "executor": "./tools/executors/copy-bootstrap-css:copy-bootstrap-css",
+          "options": {
+            "targetPath": "apps/showcase/src/styles.css"
+          }
+        },
+        "prepare-build": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx run showcase:copy-bs",
+              "nx run showcase:build"
+            ],
+            "cwd": "ui",
+            "parallel": false
+          }
+        },
         "build": {
           "executor": "@nrwl/web:build",
           "outputs": [
@@ -538,8 +555,7 @@
             "tsConfig": "apps/showcase/tsconfig.app.json",
             "assets": [
               "apps/showcase/src/favicon.ico",
-              "apps/showcase/src/assets",
-              "dist/libs/shared/bootstrap/assets/css/bootstrap.min.css"
+              "apps/showcase/src/assets"
             ],
             "styles": [
               "apps/showcase/src/styles.css"
