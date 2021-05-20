@@ -2,7 +2,7 @@
 
 # compiled output
 dist/*
-!dist/storybook/formrenderer
+!dist/apps/showcase
 /tmp
 /out-tsc
 
