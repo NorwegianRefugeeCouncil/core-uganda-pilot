@@ -206,7 +206,7 @@
             "staticDir": [
               "dist/libs/shared/bootstrap/assets/css"
             ],
-            "outputPath": "dist/storybook/shared-ui-toolkit",
+            "outputPath": "apps/showcase/src/assets/shared-ui-toolkit",
             "config": {
               "configFolder": "libs/shared/ui-toolkit/.storybook"
             }
@@ -373,7 +373,7 @@
           ],
           "options": {
             "uiFramework": "@storybook/react",
-            "outputPath": "dist/storybook/formbuilder",
+            "outputPath": "apps/showcase/src/assets/formbuilder",
             "staticDir": [
               "dist/libs/shared/bootstrap/assets/css"
             ],
@@ -513,7 +513,7 @@
             "staticDir": [
               "dist/libs/shared/bootstrap/assets/css"
             ],
-            "outputPath": "dist/storybook/formrenderer",
+            "outputPath": "apps/showcase/src/assets/formrenderer",
             "config": {
               "configFolder": "libs/formrenderer/.storybook"
             }
@@ -554,7 +554,7 @@
             "{options.outputPath}"
           ],
           "options": {
-            "outputPath": "dist/apps/showcase",
+            "outputPath": "docs",
             "index": "apps/showcase/src/index.html",
             "main": "apps/showcase/src/main.tsx",
             "polyfills": "apps/showcase/src/polyfills.ts",

@@ -33,10 +33,14 @@ export function App() {
       <div>
         <Nav role="navigation">
           <Nav.Item>
-            <Nav.Link></Nav.Link>
+            <Nav.Link href="assets/shared-ui-toolkit/index.html?path=/story/button--basic">
+              UI Toolkit
+            </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link></Nav.Link>
+            <Nav.Link href="assets/formrenderer/index.html?path=/story/formrenderer--demo">
+              FormRenderer
+            </Nav.Link>
           </Nav.Item>
         </Nav>
       </div>
