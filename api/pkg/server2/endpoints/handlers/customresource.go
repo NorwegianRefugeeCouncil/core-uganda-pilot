@@ -9,9 +9,9 @@ import (
 	"github.com/nrc-no/core/api/pkg/openapi/defaulting"
 	"github.com/nrc-no/core/api/pkg/openapi/objectmeta"
 	"github.com/nrc-no/core/api/pkg/openapi/pruning"
+	customresources "github.com/nrc-no/core/api/pkg/server2/customresource"
 	"github.com/nrc-no/core/api/pkg/server2/customresource/conversion"
 	"github.com/nrc-no/core/api/pkg/server2/endpoints/request"
-	"github.com/nrc-no/core/api/pkg/server2/helpers"
 	"github.com/nrc-no/core/api/pkg/server2/registry/core/customresource"
 	"github.com/nrc-no/core/api/pkg/server2/registry/generic"
 	schemaobjectmeta "k8s.io/apiextensions-apiserver/pkg/apiserver/schema/objectmeta"
@@ -22,7 +22,6 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/runtime/serializer/json"
-	"k8s.io/apimachinery/pkg/runtime/serializer/protobuf"
 	"k8s.io/apimachinery/pkg/runtime/serializer/versioning"
 	"k8s.io/apimachinery/pkg/types"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
@@ -33,15 +32,19 @@ import (
 	"sync/atomic"
 )
 
+// crdHandler is a generic REST handler that is able to dynamically serve CustomResources
+// as they are added to the registry
 type crdHandler struct {
 	customStorageLock sync.Mutex
 	customStorage     atomic.Value
 	restOptionsGetter generic.RESTOptionsGetter
 	crdLister         listers.CustomResourceDefinitionLister
 	codecs            runtime.NegotiatedSerializer
-	converterFactory  conversion.CRConverterFactory
+	converterFactory  *conversion.CRConverterFactory
 }
 
+// crdInfo contains information about a CustomResource (for serving purposes). It is lazily-created
+// as the requests are coming in, and stored in a cache as they are a bit expensive to build
 type crdInfo struct {
 	spec          *v1.CustomResourceDefinitionSpec
 	acceptedNames *v1.CustomResourceDefinitionNames
@@ -51,8 +54,10 @@ type crdInfo struct {
 	waitgroup     *utilwaitgroup.SafeWaitGroup
 }
 
+// Maps a CustomResourceDefinition UID to it's crdInfo
 type crdStorageMap map[types.UID]*crdInfo
 
+// clone clones a crdStorageMap
 func (in crdStorageMap) clone() crdStorageMap {
 	if in == nil {
 		return nil
@@ -64,22 +69,35 @@ func (in crdStorageMap) clone() crdStorageMap {
 	return out
 }
 
+// NewCustomResourceDefinitionHandler Builds a crdHandler
 func NewCustomResourceDefinitionHandler(
 	restOptionsGetter generic.RESTOptionsGetter,
-
+	codecs runtime.NegotiatedSerializer,
+	crdLister listers.CustomResourceDefinitionLister,
 ) (*crdHandler, error) {
 	ret := &crdHandler{
-		customStorage:     atomic.Value{},
 		customStorageLock: sync.Mutex{},
+		customStorage:     atomic.Value{},
 		restOptionsGetter: restOptionsGetter,
+		crdLister:         crdLister,
+		codecs:            codecs,
 	}
 	ret.customStorage.Store(crdStorageMap{})
+	crConverterFactory, err := conversion.NewCRConverterFactory()
+	if err != nil {
+		return nil, err
+	}
+	ret.converterFactory = crConverterFactory
 	return ret, nil
 }
 
+// ServeHTTP implements the http.Handler interface and is able to serve
+// http requests to deliver CustomResources
 func (r *crdHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
+
+	// Retrieves the request info
 	requestInfo, ok := request.RequestInfoFrom(ctx)
 	if !ok {
 		responsewriters.ErrorNegotiated(
@@ -91,7 +109,11 @@ func (r *crdHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	// This is the name of the CRD, as the CRD must have a name
+	// equal to {resource}.{group}
 	crdName := requestInfo.Resource + "." + requestInfo.APIGroup
+
+	// Retrieves the CRD
 	crd, err := r.crdLister.Get(crdName)
 	if err != nil {
 		responsewriters.ErrorNegotiated(
@@ -104,6 +126,7 @@ func (r *crdHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	// gets or build the crdInfo for the request
 	crInfo, err := r.getOrCreateServingInfoFor(crd.UID, crd.Name)
 	if err != nil {
 		responsewriters.ErrorNegotiated(
@@ -116,13 +139,22 @@ func (r *crdHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	// Dynamically serves the custom resource request
 	r.serveResource(w, req, requestInfo, crInfo, crd)
 
 }
 
+// serveResource is a dynamic http handler able to serve http requests that target
+// runtime CustomResources
 func (r *crdHandler) serveResource(w http.ResponseWriter, req *http.Request, requestInf *request.RequestInfo, crdInfo *crdInfo, crd *v1.CustomResourceDefinition) http.HandlerFunc {
+
+	// Retrieves the request scope from the pre-built map
 	scope := crdInfo.requestScopes[requestInf.APIVersion]
+
+	// Retrieves the request storage from the pre-built storage map
 	storage := crdInfo.storages[requestInf.APIVersion].CustomResource
+
+	// Map the request to the appropriate handler
 	switch requestInf.Verb {
 	case "get":
 		return GetResource(scope, storage)
@@ -144,56 +176,70 @@ func (r *crdHandler) serveResource(w http.ResponseWriter, req *http.Request, req
 }
 
 func (r *crdHandler) getOrCreateServingInfoFor(uid types.UID, name string) (*crdInfo, error) {
+
+	// tries to find the storage map if already exists
 	storageMap := r.customStorage.Load().(crdStorageMap)
 	if ret, ok := storageMap[uid]; ok {
 		return ret, nil
 	}
 
+	// lock the storage map because we're accessing this concurrently possibly
 	r.customStorageLock.Lock()
 	defer r.customStorageLock.Unlock()
 
+	// gets the CustomResourceDefinition
 	crd, err := r.crdLister.Get(name)
 	if err != nil {
 		return nil, err
 	}
 
+	// Tries again to find the storage map. Perhaps it was
+	// loaded in the meantime?
 	storageMap = r.customStorage.Load().(crdStorageMap)
 	if ret, ok := storageMap[crd.UID]; ok {
 		return ret, nil
 	}
 
+	// builds objects needed for creating the crdInfo object
 	requestScopes := map[string]*RequestScope{}
 	storages := map[string]*customresource.CustomResourceStore{}
 	structuralSchemes := map[string]*structuralschema.Structural{}
 
+	// loops through all crd versions
 	for _, v := range crd.Spec.Versions {
 
-		val, err := helpers.GetSchemaForVersion(crd, v.Name)
+		// Gets the CustomResourceDefinitionValidation
+		val, err := customresources.GetSchemaForVersion(crd, v.Name)
 		if err != nil {
 			utilruntime.HandleError(err)
 			return nil, fmt.Errorf("the server could not serve the CR schema: %v", err)
 		}
 
+		// Converts the schema to the internal (hub) api version
 		internalValidation := &core.CustomResourceDefinitionValidation{}
 		if err := v1.Convert_v1_CustomResourceDefinitionValidation_To_core_CustomResourceDefinitionValidation(&val, internalValidation, nil); err != nil {
 			return nil, fmt.Errorf("failed converting CRD validation to internal version: %v", err)
 		}
 
+		// Converts the schema to the Structural type
 		s, err := structuralschema.NewStructural(&internalValidation.OpenAPIV3Schema)
 		if err != nil {
 			utilruntime.HandleError(fmt.Errorf("fialed to convert schema to structural: %v", err))
 			return nil, fmt.Errorf("the server could not serve the CR schema: %v", err)
 		}
 
+		// Save the structural schema
 		structuralSchemes[v.Name] = s
 
 	}
 
+	// Retrieves converters for the CRD
 	safeConverter, unsafeConverter, err := r.converterFactory.NewConverter(crd)
 	if err != nil {
 		return nil, err
 	}
 
+	// Finds which version we'll use for storage (to store in the database)
 	var storageVersion string
 	for _, v := range crd.Spec.Versions {
 		if v.Storage {
@@ -204,8 +250,11 @@ func (r *crdHandler) getOrCreateServingInfoFor(uid types.UID, name string) (*crd
 		return nil, fmt.Errorf("no storage version for CR")
 	}
 
+	// Loop through all versions
 	for _, v := range crd.Spec.Versions {
 
+		// We need a parameterScheme to be able to decode ListOptions, GetOptions, etc
+		// from the URL query parameters
 		parameterScheme := runtime.NewScheme()
 		parameterScheme.AddUnversionedTypes(schema.GroupVersion{Group: crd.Spec.Group, Version: v.Name},
 			&metav1.ListOptions{},
@@ -214,18 +263,26 @@ func (r *crdHandler) getOrCreateServingInfoFor(uid types.UID, name string) (*crd
 		)
 		parameterCodec := runtime.NewParameterCodec(parameterScheme)
 
+		// This is the CR resource
 		resource := schema.GroupVersionResource{Group: crd.Spec.Group, Version: v.Name, Resource: crd.Spec.Names.Plural}
+
+		// This is the CR kind
 		kind := schema.GroupVersionKind{Group: crd.Spec.Group, Version: v.Name, Kind: crd.Spec.Names.Kind}
 
+		// The CR typer
 		typer := newUnstructuredObjectTyper(parameterScheme)
+
+		// The CR creator able to create new instances of a CR on the fly
 		creator := unstructuredCreator{}
 
-		validationSchema, err := helpers.GetSchemaForVersion(crd, v.Name)
+		// Gets the v1 validation schema
+		validationSchema, err := customresources.GetSchemaForVersion(crd, v.Name)
 		if err != nil {
 			utilruntime.HandleError(err)
 			return nil, fmt.Errorf("the server could not serve the CR schema")
 		}
 
+		// Converts the v1 validation schema to internal (hub) api version
 		var internalValidationSchema = &core.CustomResourceDefinitionValidation{}
 		if err := v1.Convert_v1_CustomResourceDefinitionValidation_To_core_CustomResourceDefinitionValidation(&validationSchema, internalValidationSchema, nil); err != nil {
 			return nil, fmt.Errorf("failed to convert CRD validation to internal version: %v", err)
@@ -233,6 +290,7 @@ func (r *crdHandler) getOrCreateServingInfoFor(uid types.UID, name string) (*crd
 
 		//TOOD: validator, _, err := NewSchemaVa
 
+		// Builds the CR REST storage interface
 		storage, err := customresource.NewStorage(
 			resource.GroupResource(),
 			kind,
@@ -256,8 +314,11 @@ func (r *crdHandler) getOrCreateServingInfoFor(uid types.UID, name string) (*crd
 		if err != nil {
 			return nil, err
 		}
+
+		// Store the CR storage
 		storages[v.Name] = storage
 
+		// Builds the negotiated serializer for the CR
 		negotiatedSerializer := unstructuredNegotiatedSerializer{
 			typer:                 typer,
 			creator:               creator,
@@ -274,6 +335,7 @@ func (r *crdHandler) getOrCreateServingInfoFor(uid types.UID, name string) (*crd
 			standardSerializers = append(standardSerializers, s)
 		}
 
+		// Builds the RequestScope scope for the CR
 		requestScopes[v.Name] = &RequestScope{
 			Namer:           ContextBasedNaming{},
 			Serializer:      negotiatedSerializer,
@@ -290,6 +352,7 @@ func (r *crdHandler) getOrCreateServingInfoFor(uid types.UID, name string) (*crd
 
 	}
 
+	// Finalize the crdInfo
 	ret := &crdInfo{
 		spec:          &crd.Spec,
 		deprecated:    map[string]bool{},
@@ -299,6 +362,7 @@ func (r *crdHandler) getOrCreateServingInfoFor(uid types.UID, name string) (*crd
 		acceptedNames: &crd.Spec.Names,
 	}
 
+	// Clone the storageMap and store in
 	storageMap2 := storageMap.clone()
 	storageMap2[crd.UID] = ret
 	r.customStorage.Store(storageMap2)
@@ -388,16 +452,17 @@ func (s unstructuredNegotiatedSerializer) SupportedMediaTypes() []runtime.Serial
 			EncodesAsText:    true,
 			Serializer:       json.NewYAMLSerializer(json.DefaultMetaFactory, s.creator, s.typer),
 		},
-		{
-			MediaType:        "application/vnd.kubernetes.protobuf",
-			MediaTypeType:    "application",
-			MediaTypeSubType: "vnd.kubernetes.protobuf",
-			Serializer:       protobuf.NewSerializer(s.creator, s.typer),
-			StreamSerializer: &runtime.StreamSerializerInfo{
-				Serializer: protobuf.NewRawSerializer(s.creator, s.typer),
-				Framer:     protobuf.LengthDelimitedFramer,
-			},
-		},
+		// We're not supporting protobuf for now
+		//{
+		//	MediaType:        "application/vnd.kubernetes.protobuf",
+		//	MediaTypeType:    "application",
+		//	MediaTypeSubType: "vnd.kubernetes.protobuf",
+		//	Serializer:       protobuf.NewSerializer(s.creator, s.typer),
+		//	StreamSerializer: &runtime.StreamSerializerInfo{
+		//		Serializer: protobuf.NewRawSerializer(s.creator, s.typer),
+		//		Framer:     protobuf.LengthDelimitedFramer,
+		//	},
+		//},
 	}
 }
 

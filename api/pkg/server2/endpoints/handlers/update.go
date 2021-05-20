@@ -9,59 +9,68 @@ import (
 	"net/http"
 )
 
+// UpdateResource is a generic REST handler for updating (PUTting) resources
 func UpdateResource(scope *RequestScope, updater rest.Updater) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 
 		ctx := req.Context()
 
+		// Retrieve the resource name
 		name, err := scope.Namer.Name(req)
 		if err != nil {
 			scope.err(err, w, req)
 			return
 		}
 
+		// Negotiate the output media type
 		outputMediaType, _, err := negotiation.NegotiateOutputMediaType(req, scope.Serializer, scope)
 		if err != nil {
 			scope.err(err, w, req)
 			return
 		}
 
+		// Read request body
 		body, err := ioutil.ReadAll(req.Body)
 		if err != nil {
 			scope.err(err, w, req)
 			return
 		}
 
+		// Negotiate output media type
 		s, err := negotiation.NegotiateInputSerializer(req, false, scope.Serializer)
 		if err != nil {
 			scope.err(err, w, req)
 			return
 		}
+
+		// Decode the body to the Hub api version
+		decoder := scope.Serializer.DecoderToVersion(s.Serializer, scope.HubGroupVersion)
 		defaultGVK := scope.Kind
 		original := updater.New()
-
-		decoder := scope.Serializer.DecoderToVersion(s.Serializer, scope.HubGroupVersion)
-		obj, gvk, err := decoder.Decode(body, &defaultGVK, original)
+		inputObj, inputGvk, err := decoder.Decode(body, &defaultGVK, original)
 		if err != nil {
-			err = transformDecodeError(scope.Typer, err, original, gvk, body)
+			err = transformDecodeError(scope.Typer, err, original, inputGvk, body)
 			scope.err(err, w, req)
 			return
 		}
 
-		if !scope.AcceptsGroupVersion(gvk.GroupVersion()) {
-			err = errors.NewBadRequest(fmt.Sprintf("the API version in the data (%s) does not match the expected API version (%s)", gvk.GroupVersion(), defaultGVK.GroupVersion()))
+		// Make sure we accept the input group version
+		if !scope.AcceptsGroupVersion(inputGvk.GroupVersion()) {
+			err = errors.NewBadRequest(fmt.Sprintf("the API version in the data (%s) does not match the expected API version (%s)", inputGvk.GroupVersion(), defaultGVK.GroupVersion()))
 			scope.err(err, w, req)
 			return
 		}
 
-		obj, err = updater.Update(ctx, name, rest.DefaultUpdatedObjectInfo(obj))
+		// Update the resource
+		inputObj, err = updater.Update(ctx, name, rest.DefaultUpdatedObjectInfo(inputObj))
 		if err != nil {
 			scope.err(err, w, req)
 			return
 		}
 
+		// Respond
 		status := http.StatusOK
-		transformResponseObject(ctx, scope, req, w, status, outputMediaType, obj)
+		transformResponseObject(ctx, scope, req, w, status, outputMediaType, inputObj)
 
 	}
 }
