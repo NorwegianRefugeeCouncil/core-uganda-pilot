@@ -184,7 +184,7 @@
             "uiFramework": "@storybook/react",
             "port": 4400,
             "staticDir": [
-              "dist/libs/shared/bootstrap/assets"
+              "dist/libs/shared/bootstrap/assets/css"
             ],
             "config": {
               "configFolder": "libs/shared/ui-toolkit/.storybook"
@@ -203,6 +203,9 @@
           ],
           "options": {
             "uiFramework": "@storybook/react",
+            "staticDir": [
+              "dist/libs/shared/bootstrap/assets/css"
+            ],
             "outputPath": "dist/storybook/shared-ui-toolkit",
             "config": {
               "configFolder": "libs/shared/ui-toolkit/.storybook"
@@ -351,7 +354,7 @@
             "uiFramework": "@storybook/react",
             "port": 4400,
             "staticDir": [
-              "dist/libs/shared/bootstrap/assets"
+              "dist/libs/shared/bootstrap/assets/css"
             ],
             "config": {
               "configFolder": "libs/formbuilder/.storybook"
@@ -371,6 +374,9 @@
           "options": {
             "uiFramework": "@storybook/react",
             "outputPath": "dist/storybook/formbuilder",
+            "staticDir": [
+              "dist/libs/shared/bootstrap/assets/css"
+            ],
             "config": {
               "configFolder": "libs/formbuilder/.storybook"
             }
@@ -485,7 +491,7 @@
             "uiFramework": "@storybook/react",
             "port": 4400,
             "staticDir": [
-              "dist/libs/shared/bootstrap/assets"
+              "dist/libs/shared/bootstrap/assets/css"
             ],
             "config": {
               "configFolder": "libs/formrenderer/.storybook"
@@ -505,7 +511,7 @@
           "options": {
             "uiFramework": "@storybook/react",
             "staticDir": [
-              "dist/libs/shared/bootstrap/assets"
+              "dist/libs/shared/bootstrap/assets/css"
             ],
             "outputPath": "dist/storybook/formrenderer",
             "config": {
