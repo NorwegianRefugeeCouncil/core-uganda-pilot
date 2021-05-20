@@ -2,7 +2,7 @@
 
 # compiled output
 dist/*
-!dist/apps/showcase
+!*/dist/apps/showcase/*
 /tmp
 /out-tsc
 
