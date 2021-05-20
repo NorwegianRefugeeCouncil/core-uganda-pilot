@@ -35,6 +35,76 @@ func init() {
 // RegisterConversions adds conversion functions to the given scheme.
 // Public to allow building arbitrary schemes.
 func RegisterConversions(s *runtime.Scheme) error {
+	if err := s.AddGeneratedConversionFunc((*CustomResourceDefinition)(nil), (*core.CustomResourceDefinition)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_CustomResourceDefinition_To_core_CustomResourceDefinition(a.(*CustomResourceDefinition), b.(*core.CustomResourceDefinition), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*core.CustomResourceDefinition)(nil), (*CustomResourceDefinition)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_CustomResourceDefinition_To_v1_CustomResourceDefinition(a.(*core.CustomResourceDefinition), b.(*CustomResourceDefinition), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*CustomResourceDefinitionList)(nil), (*core.CustomResourceDefinitionList)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_CustomResourceDefinitionList_To_core_CustomResourceDefinitionList(a.(*CustomResourceDefinitionList), b.(*core.CustomResourceDefinitionList), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*core.CustomResourceDefinitionList)(nil), (*CustomResourceDefinitionList)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_CustomResourceDefinitionList_To_v1_CustomResourceDefinitionList(a.(*core.CustomResourceDefinitionList), b.(*CustomResourceDefinitionList), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*CustomResourceDefinitionNames)(nil), (*core.CustomResourceDefinitionNames)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_CustomResourceDefinitionNames_To_core_CustomResourceDefinitionNames(a.(*CustomResourceDefinitionNames), b.(*core.CustomResourceDefinitionNames), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*core.CustomResourceDefinitionNames)(nil), (*CustomResourceDefinitionNames)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_CustomResourceDefinitionNames_To_v1_CustomResourceDefinitionNames(a.(*core.CustomResourceDefinitionNames), b.(*CustomResourceDefinitionNames), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*CustomResourceDefinitionSpec)(nil), (*core.CustomResourceDefinitionSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_CustomResourceDefinitionSpec_To_core_CustomResourceDefinitionSpec(a.(*CustomResourceDefinitionSpec), b.(*core.CustomResourceDefinitionSpec), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*core.CustomResourceDefinitionSpec)(nil), (*CustomResourceDefinitionSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_CustomResourceDefinitionSpec_To_v1_CustomResourceDefinitionSpec(a.(*core.CustomResourceDefinitionSpec), b.(*CustomResourceDefinitionSpec), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*CustomResourceDefinitionValidation)(nil), (*core.CustomResourceDefinitionValidation)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_CustomResourceDefinitionValidation_To_core_CustomResourceDefinitionValidation(a.(*CustomResourceDefinitionValidation), b.(*core.CustomResourceDefinitionValidation), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*core.CustomResourceDefinitionValidation)(nil), (*CustomResourceDefinitionValidation)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_CustomResourceDefinitionValidation_To_v1_CustomResourceDefinitionValidation(a.(*core.CustomResourceDefinitionValidation), b.(*CustomResourceDefinitionValidation), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*CustomResourceDefinitionVersion)(nil), (*core.CustomResourceDefinitionVersion)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_CustomResourceDefinitionVersion_To_core_CustomResourceDefinitionVersion(a.(*CustomResourceDefinitionVersion), b.(*core.CustomResourceDefinitionVersion), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*core.CustomResourceDefinitionVersion)(nil), (*CustomResourceDefinitionVersion)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_CustomResourceDefinitionVersion_To_v1_CustomResourceDefinitionVersion(a.(*core.CustomResourceDefinitionVersion), b.(*CustomResourceDefinitionVersion), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*ExternalDocumentation)(nil), (*core.ExternalDocumentation)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_ExternalDocumentation_To_core_ExternalDocumentation(a.(*ExternalDocumentation), b.(*core.ExternalDocumentation), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*core.ExternalDocumentation)(nil), (*ExternalDocumentation)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_ExternalDocumentation_To_v1_ExternalDocumentation(a.(*core.ExternalDocumentation), b.(*ExternalDocumentation), scope)
+	}); err != nil {
+		return err
+	}
 	if err := s.AddGeneratedConversionFunc((*FormDefinition)(nil), (*core.FormDefinition)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1_FormDefinition_To_core_FormDefinition(a.(*FormDefinition), b.(*core.FormDefinition), scope)
 	}); err != nil {
@@ -115,6 +185,56 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
+	if err := s.AddGeneratedConversionFunc((*JSON)(nil), (*core.JSON)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_JSON_To_core_JSON(a.(*JSON), b.(*core.JSON), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*core.JSON)(nil), (*JSON)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_JSON_To_v1_JSON(a.(*core.JSON), b.(*JSON), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*JSONSchemaProps)(nil), (*core.JSONSchemaProps)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_JSONSchemaProps_To_core_JSONSchemaProps(a.(*JSONSchemaProps), b.(*core.JSONSchemaProps), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*core.JSONSchemaProps)(nil), (*JSONSchemaProps)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_JSONSchemaProps_To_v1_JSONSchemaProps(a.(*core.JSONSchemaProps), b.(*JSONSchemaProps), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*JSONSchemaPropsOrArray)(nil), (*core.JSONSchemaPropsOrArray)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_JSONSchemaPropsOrArray_To_core_JSONSchemaPropsOrArray(a.(*JSONSchemaPropsOrArray), b.(*core.JSONSchemaPropsOrArray), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*core.JSONSchemaPropsOrArray)(nil), (*JSONSchemaPropsOrArray)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_JSONSchemaPropsOrArray_To_v1_JSONSchemaPropsOrArray(a.(*core.JSONSchemaPropsOrArray), b.(*JSONSchemaPropsOrArray), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*JSONSchemaPropsOrBool)(nil), (*core.JSONSchemaPropsOrBool)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_JSONSchemaPropsOrBool_To_core_JSONSchemaPropsOrBool(a.(*JSONSchemaPropsOrBool), b.(*core.JSONSchemaPropsOrBool), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*core.JSONSchemaPropsOrBool)(nil), (*JSONSchemaPropsOrBool)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_JSONSchemaPropsOrBool_To_v1_JSONSchemaPropsOrBool(a.(*core.JSONSchemaPropsOrBool), b.(*JSONSchemaPropsOrBool), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*JSONSchemaPropsOrStringArray)(nil), (*core.JSONSchemaPropsOrStringArray)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_JSONSchemaPropsOrStringArray_To_core_JSONSchemaPropsOrStringArray(a.(*JSONSchemaPropsOrStringArray), b.(*core.JSONSchemaPropsOrStringArray), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*core.JSONSchemaPropsOrStringArray)(nil), (*JSONSchemaPropsOrStringArray)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_JSONSchemaPropsOrStringArray_To_v1_JSONSchemaPropsOrStringArray(a.(*core.JSONSchemaPropsOrStringArray), b.(*JSONSchemaPropsOrStringArray), scope)
+	}); err != nil {
+		return err
+	}
 	if err := s.AddGeneratedConversionFunc((*TranslatedString)(nil), (*core.TranslatedString)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1_TranslatedString_To_core_TranslatedString(a.(*TranslatedString), b.(*core.TranslatedString), scope)
 	}); err != nil {
@@ -126,6 +246,176 @@ func RegisterConversions(s *runtime.Scheme) error {
 		return err
 	}
 	return nil
+}
+
+func autoConvert_v1_CustomResourceDefinition_To_core_CustomResourceDefinition(in *CustomResourceDefinition, out *core.CustomResourceDefinition, s conversion.Scope) error {
+	out.ObjectMeta = in.ObjectMeta
+	if err := Convert_v1_CustomResourceDefinitionSpec_To_core_CustomResourceDefinitionSpec(&in.Spec, &out.Spec, s); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Convert_v1_CustomResourceDefinition_To_core_CustomResourceDefinition is an autogenerated conversion function.
+func Convert_v1_CustomResourceDefinition_To_core_CustomResourceDefinition(in *CustomResourceDefinition, out *core.CustomResourceDefinition, s conversion.Scope) error {
+	return autoConvert_v1_CustomResourceDefinition_To_core_CustomResourceDefinition(in, out, s)
+}
+
+func autoConvert_core_CustomResourceDefinition_To_v1_CustomResourceDefinition(in *core.CustomResourceDefinition, out *CustomResourceDefinition, s conversion.Scope) error {
+	out.ObjectMeta = in.ObjectMeta
+	if err := Convert_core_CustomResourceDefinitionSpec_To_v1_CustomResourceDefinitionSpec(&in.Spec, &out.Spec, s); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Convert_core_CustomResourceDefinition_To_v1_CustomResourceDefinition is an autogenerated conversion function.
+func Convert_core_CustomResourceDefinition_To_v1_CustomResourceDefinition(in *core.CustomResourceDefinition, out *CustomResourceDefinition, s conversion.Scope) error {
+	return autoConvert_core_CustomResourceDefinition_To_v1_CustomResourceDefinition(in, out, s)
+}
+
+func autoConvert_v1_CustomResourceDefinitionList_To_core_CustomResourceDefinitionList(in *CustomResourceDefinitionList, out *core.CustomResourceDefinitionList, s conversion.Scope) error {
+	out.ListMeta = in.ListMeta
+	out.Items = *(*[]core.FormDefinition)(unsafe.Pointer(&in.Items))
+	return nil
+}
+
+// Convert_v1_CustomResourceDefinitionList_To_core_CustomResourceDefinitionList is an autogenerated conversion function.
+func Convert_v1_CustomResourceDefinitionList_To_core_CustomResourceDefinitionList(in *CustomResourceDefinitionList, out *core.CustomResourceDefinitionList, s conversion.Scope) error {
+	return autoConvert_v1_CustomResourceDefinitionList_To_core_CustomResourceDefinitionList(in, out, s)
+}
+
+func autoConvert_core_CustomResourceDefinitionList_To_v1_CustomResourceDefinitionList(in *core.CustomResourceDefinitionList, out *CustomResourceDefinitionList, s conversion.Scope) error {
+	out.ListMeta = in.ListMeta
+	out.Items = *(*[]FormDefinition)(unsafe.Pointer(&in.Items))
+	return nil
+}
+
+// Convert_core_CustomResourceDefinitionList_To_v1_CustomResourceDefinitionList is an autogenerated conversion function.
+func Convert_core_CustomResourceDefinitionList_To_v1_CustomResourceDefinitionList(in *core.CustomResourceDefinitionList, out *CustomResourceDefinitionList, s conversion.Scope) error {
+	return autoConvert_core_CustomResourceDefinitionList_To_v1_CustomResourceDefinitionList(in, out, s)
+}
+
+func autoConvert_v1_CustomResourceDefinitionNames_To_core_CustomResourceDefinitionNames(in *CustomResourceDefinitionNames, out *core.CustomResourceDefinitionNames, s conversion.Scope) error {
+	out.Plural = in.Plural
+	out.Singular = in.Singular
+	out.Kind = in.Kind
+	return nil
+}
+
+// Convert_v1_CustomResourceDefinitionNames_To_core_CustomResourceDefinitionNames is an autogenerated conversion function.
+func Convert_v1_CustomResourceDefinitionNames_To_core_CustomResourceDefinitionNames(in *CustomResourceDefinitionNames, out *core.CustomResourceDefinitionNames, s conversion.Scope) error {
+	return autoConvert_v1_CustomResourceDefinitionNames_To_core_CustomResourceDefinitionNames(in, out, s)
+}
+
+func autoConvert_core_CustomResourceDefinitionNames_To_v1_CustomResourceDefinitionNames(in *core.CustomResourceDefinitionNames, out *CustomResourceDefinitionNames, s conversion.Scope) error {
+	out.Plural = in.Plural
+	out.Singular = in.Singular
+	out.Kind = in.Kind
+	return nil
+}
+
+// Convert_core_CustomResourceDefinitionNames_To_v1_CustomResourceDefinitionNames is an autogenerated conversion function.
+func Convert_core_CustomResourceDefinitionNames_To_v1_CustomResourceDefinitionNames(in *core.CustomResourceDefinitionNames, out *CustomResourceDefinitionNames, s conversion.Scope) error {
+	return autoConvert_core_CustomResourceDefinitionNames_To_v1_CustomResourceDefinitionNames(in, out, s)
+}
+
+func autoConvert_v1_CustomResourceDefinitionSpec_To_core_CustomResourceDefinitionSpec(in *CustomResourceDefinitionSpec, out *core.CustomResourceDefinitionSpec, s conversion.Scope) error {
+	out.Group = in.Group
+	out.Versions = *(*[]core.CustomResourceDefinitionVersion)(unsafe.Pointer(&in.Versions))
+	return nil
+}
+
+// Convert_v1_CustomResourceDefinitionSpec_To_core_CustomResourceDefinitionSpec is an autogenerated conversion function.
+func Convert_v1_CustomResourceDefinitionSpec_To_core_CustomResourceDefinitionSpec(in *CustomResourceDefinitionSpec, out *core.CustomResourceDefinitionSpec, s conversion.Scope) error {
+	return autoConvert_v1_CustomResourceDefinitionSpec_To_core_CustomResourceDefinitionSpec(in, out, s)
+}
+
+func autoConvert_core_CustomResourceDefinitionSpec_To_v1_CustomResourceDefinitionSpec(in *core.CustomResourceDefinitionSpec, out *CustomResourceDefinitionSpec, s conversion.Scope) error {
+	out.Group = in.Group
+	out.Versions = *(*[]CustomResourceDefinitionVersion)(unsafe.Pointer(&in.Versions))
+	return nil
+}
+
+// Convert_core_CustomResourceDefinitionSpec_To_v1_CustomResourceDefinitionSpec is an autogenerated conversion function.
+func Convert_core_CustomResourceDefinitionSpec_To_v1_CustomResourceDefinitionSpec(in *core.CustomResourceDefinitionSpec, out *CustomResourceDefinitionSpec, s conversion.Scope) error {
+	return autoConvert_core_CustomResourceDefinitionSpec_To_v1_CustomResourceDefinitionSpec(in, out, s)
+}
+
+func autoConvert_v1_CustomResourceDefinitionValidation_To_core_CustomResourceDefinitionValidation(in *CustomResourceDefinitionValidation, out *core.CustomResourceDefinitionValidation, s conversion.Scope) error {
+	if err := Convert_v1_JSONSchemaProps_To_core_JSONSchemaProps(&in.OpenAPIV3Schema, &out.OpenAPIV3Schema, s); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Convert_v1_CustomResourceDefinitionValidation_To_core_CustomResourceDefinitionValidation is an autogenerated conversion function.
+func Convert_v1_CustomResourceDefinitionValidation_To_core_CustomResourceDefinitionValidation(in *CustomResourceDefinitionValidation, out *core.CustomResourceDefinitionValidation, s conversion.Scope) error {
+	return autoConvert_v1_CustomResourceDefinitionValidation_To_core_CustomResourceDefinitionValidation(in, out, s)
+}
+
+func autoConvert_core_CustomResourceDefinitionValidation_To_v1_CustomResourceDefinitionValidation(in *core.CustomResourceDefinitionValidation, out *CustomResourceDefinitionValidation, s conversion.Scope) error {
+	if err := Convert_core_JSONSchemaProps_To_v1_JSONSchemaProps(&in.OpenAPIV3Schema, &out.OpenAPIV3Schema, s); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Convert_core_CustomResourceDefinitionValidation_To_v1_CustomResourceDefinitionValidation is an autogenerated conversion function.
+func Convert_core_CustomResourceDefinitionValidation_To_v1_CustomResourceDefinitionValidation(in *core.CustomResourceDefinitionValidation, out *CustomResourceDefinitionValidation, s conversion.Scope) error {
+	return autoConvert_core_CustomResourceDefinitionValidation_To_v1_CustomResourceDefinitionValidation(in, out, s)
+}
+
+func autoConvert_v1_CustomResourceDefinitionVersion_To_core_CustomResourceDefinitionVersion(in *CustomResourceDefinitionVersion, out *core.CustomResourceDefinitionVersion, s conversion.Scope) error {
+	out.Name = in.Name
+	out.Served = in.Served
+	out.Storage = in.Storage
+	if err := Convert_v1_CustomResourceDefinitionValidation_To_core_CustomResourceDefinitionValidation(&in.Schema, &out.Schema, s); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Convert_v1_CustomResourceDefinitionVersion_To_core_CustomResourceDefinitionVersion is an autogenerated conversion function.
+func Convert_v1_CustomResourceDefinitionVersion_To_core_CustomResourceDefinitionVersion(in *CustomResourceDefinitionVersion, out *core.CustomResourceDefinitionVersion, s conversion.Scope) error {
+	return autoConvert_v1_CustomResourceDefinitionVersion_To_core_CustomResourceDefinitionVersion(in, out, s)
+}
+
+func autoConvert_core_CustomResourceDefinitionVersion_To_v1_CustomResourceDefinitionVersion(in *core.CustomResourceDefinitionVersion, out *CustomResourceDefinitionVersion, s conversion.Scope) error {
+	out.Name = in.Name
+	out.Served = in.Served
+	out.Storage = in.Storage
+	if err := Convert_core_CustomResourceDefinitionValidation_To_v1_CustomResourceDefinitionValidation(&in.Schema, &out.Schema, s); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Convert_core_CustomResourceDefinitionVersion_To_v1_CustomResourceDefinitionVersion is an autogenerated conversion function.
+func Convert_core_CustomResourceDefinitionVersion_To_v1_CustomResourceDefinitionVersion(in *core.CustomResourceDefinitionVersion, out *CustomResourceDefinitionVersion, s conversion.Scope) error {
+	return autoConvert_core_CustomResourceDefinitionVersion_To_v1_CustomResourceDefinitionVersion(in, out, s)
+}
+
+func autoConvert_v1_ExternalDocumentation_To_core_ExternalDocumentation(in *ExternalDocumentation, out *core.ExternalDocumentation, s conversion.Scope) error {
+	out.Description = in.Description
+	out.URL = in.URL
+	return nil
+}
+
+// Convert_v1_ExternalDocumentation_To_core_ExternalDocumentation is an autogenerated conversion function.
+func Convert_v1_ExternalDocumentation_To_core_ExternalDocumentation(in *ExternalDocumentation, out *core.ExternalDocumentation, s conversion.Scope) error {
+	return autoConvert_v1_ExternalDocumentation_To_core_ExternalDocumentation(in, out, s)
+}
+
+func autoConvert_core_ExternalDocumentation_To_v1_ExternalDocumentation(in *core.ExternalDocumentation, out *ExternalDocumentation, s conversion.Scope) error {
+	out.Description = in.Description
+	out.URL = in.URL
+	return nil
+}
+
+// Convert_core_ExternalDocumentation_To_v1_ExternalDocumentation is an autogenerated conversion function.
+func Convert_core_ExternalDocumentation_To_v1_ExternalDocumentation(in *core.ExternalDocumentation, out *ExternalDocumentation, s conversion.Scope) error {
+	return autoConvert_core_ExternalDocumentation_To_v1_ExternalDocumentation(in, out, s)
 }
 
 func autoConvert_v1_FormDefinition_To_core_FormDefinition(in *FormDefinition, out *core.FormDefinition, s conversion.Scope) error {
@@ -346,6 +636,196 @@ func autoConvert_core_FormElementDefinition_To_v1_FormElementDefinition(in *core
 // Convert_core_FormElementDefinition_To_v1_FormElementDefinition is an autogenerated conversion function.
 func Convert_core_FormElementDefinition_To_v1_FormElementDefinition(in *core.FormElementDefinition, out *FormElementDefinition, s conversion.Scope) error {
 	return autoConvert_core_FormElementDefinition_To_v1_FormElementDefinition(in, out, s)
+}
+
+func autoConvert_v1_JSON_To_core_JSON(in *JSON, out *core.JSON, s conversion.Scope) error {
+	out.Raw = *(*[]byte)(unsafe.Pointer(&in.Raw))
+	return nil
+}
+
+// Convert_v1_JSON_To_core_JSON is an autogenerated conversion function.
+func Convert_v1_JSON_To_core_JSON(in *JSON, out *core.JSON, s conversion.Scope) error {
+	return autoConvert_v1_JSON_To_core_JSON(in, out, s)
+}
+
+func autoConvert_core_JSON_To_v1_JSON(in *core.JSON, out *JSON, s conversion.Scope) error {
+	out.Raw = *(*[]byte)(unsafe.Pointer(&in.Raw))
+	return nil
+}
+
+// Convert_core_JSON_To_v1_JSON is an autogenerated conversion function.
+func Convert_core_JSON_To_v1_JSON(in *core.JSON, out *JSON, s conversion.Scope) error {
+	return autoConvert_core_JSON_To_v1_JSON(in, out, s)
+}
+
+func autoConvert_v1_JSONSchemaProps_To_core_JSONSchemaProps(in *JSONSchemaProps, out *core.JSONSchemaProps, s conversion.Scope) error {
+	out.ID = in.ID
+	out.Schema = core.JSONSchemaURL(in.Schema)
+	out.Ref = (*string)(unsafe.Pointer(in.Ref))
+	out.Description = in.Description
+	out.Type = in.Type
+	out.Format = in.Format
+	out.Title = in.Title
+	out.Default = (*core.JSON)(unsafe.Pointer(in.Default))
+	out.Maximum = (*float64)(unsafe.Pointer(in.Maximum))
+	out.ExclusiveMaximum = in.ExclusiveMaximum
+	out.Minimum = (*float64)(unsafe.Pointer(in.Minimum))
+	out.ExclusiveMinimum = in.ExclusiveMinimum
+	out.MaxLength = (*int64)(unsafe.Pointer(in.MaxLength))
+	out.MinLength = (*int64)(unsafe.Pointer(in.MinLength))
+	out.Pattern = in.Pattern
+	out.MaxItems = (*int64)(unsafe.Pointer(in.MaxItems))
+	out.MinItems = (*int64)(unsafe.Pointer(in.MinItems))
+	out.UniqueItems = in.UniqueItems
+	out.MultipleOf = (*float64)(unsafe.Pointer(in.MultipleOf))
+	out.Enum = *(*[]core.JSON)(unsafe.Pointer(&in.Enum))
+	out.MaxProperties = (*int64)(unsafe.Pointer(in.MaxProperties))
+	out.MinProperties = (*int64)(unsafe.Pointer(in.MinProperties))
+	out.Required = *(*[]string)(unsafe.Pointer(&in.Required))
+	out.Items = (*core.JSONSchemaPropsOrArray)(unsafe.Pointer(in.Items))
+	out.AllOf = *(*[]core.JSONSchemaProps)(unsafe.Pointer(&in.AllOf))
+	out.OneOf = *(*[]core.JSONSchemaProps)(unsafe.Pointer(&in.OneOf))
+	out.AnyOf = *(*[]core.JSONSchemaProps)(unsafe.Pointer(&in.AnyOf))
+	out.Not = (*core.JSONSchemaProps)(unsafe.Pointer(in.Not))
+	out.Properties = *(*map[string]core.JSONSchemaProps)(unsafe.Pointer(&in.Properties))
+	out.AdditionalProperties = (*core.JSONSchemaPropsOrBool)(unsafe.Pointer(in.AdditionalProperties))
+	out.PatternProperties = *(*map[string]core.JSONSchemaProps)(unsafe.Pointer(&in.PatternProperties))
+	out.Dependencies = *(*core.JSONSchemaDependencies)(unsafe.Pointer(&in.Dependencies))
+	out.AdditionalItems = (*core.JSONSchemaPropsOrBool)(unsafe.Pointer(in.AdditionalItems))
+	out.Definitions = *(*core.JSONSchemaDefinitions)(unsafe.Pointer(&in.Definitions))
+	out.ExternalDocs = (*core.ExternalDocumentation)(unsafe.Pointer(in.ExternalDocs))
+	out.Example = (*core.JSON)(unsafe.Pointer(in.Example))
+	out.Nullable = in.Nullable
+	out.XPreserveUnknownFields = (*bool)(unsafe.Pointer(in.XPreserveUnknownFields))
+	out.XEmbeddedResource = in.XEmbeddedResource
+	out.XIntOrString = in.XIntOrString
+	out.XListMapKeys = *(*[]string)(unsafe.Pointer(&in.XListMapKeys))
+	out.XListType = (*string)(unsafe.Pointer(in.XListType))
+	out.XMapType = (*string)(unsafe.Pointer(in.XMapType))
+	return nil
+}
+
+// Convert_v1_JSONSchemaProps_To_core_JSONSchemaProps is an autogenerated conversion function.
+func Convert_v1_JSONSchemaProps_To_core_JSONSchemaProps(in *JSONSchemaProps, out *core.JSONSchemaProps, s conversion.Scope) error {
+	return autoConvert_v1_JSONSchemaProps_To_core_JSONSchemaProps(in, out, s)
+}
+
+func autoConvert_core_JSONSchemaProps_To_v1_JSONSchemaProps(in *core.JSONSchemaProps, out *JSONSchemaProps, s conversion.Scope) error {
+	out.ID = in.ID
+	out.Schema = JSONSchemaURL(in.Schema)
+	out.Ref = (*string)(unsafe.Pointer(in.Ref))
+	out.Description = in.Description
+	out.Type = in.Type
+	out.Format = in.Format
+	out.Title = in.Title
+	out.Default = (*JSON)(unsafe.Pointer(in.Default))
+	out.Maximum = (*float64)(unsafe.Pointer(in.Maximum))
+	out.ExclusiveMaximum = in.ExclusiveMaximum
+	out.Minimum = (*float64)(unsafe.Pointer(in.Minimum))
+	out.ExclusiveMinimum = in.ExclusiveMinimum
+	out.MaxLength = (*int64)(unsafe.Pointer(in.MaxLength))
+	out.MinLength = (*int64)(unsafe.Pointer(in.MinLength))
+	out.Pattern = in.Pattern
+	out.MaxItems = (*int64)(unsafe.Pointer(in.MaxItems))
+	out.MinItems = (*int64)(unsafe.Pointer(in.MinItems))
+	out.UniqueItems = in.UniqueItems
+	out.MultipleOf = (*float64)(unsafe.Pointer(in.MultipleOf))
+	out.Enum = *(*[]JSON)(unsafe.Pointer(&in.Enum))
+	out.MaxProperties = (*int64)(unsafe.Pointer(in.MaxProperties))
+	out.MinProperties = (*int64)(unsafe.Pointer(in.MinProperties))
+	out.Required = *(*[]string)(unsafe.Pointer(&in.Required))
+	out.Items = (*JSONSchemaPropsOrArray)(unsafe.Pointer(in.Items))
+	out.AllOf = *(*[]JSONSchemaProps)(unsafe.Pointer(&in.AllOf))
+	out.OneOf = *(*[]JSONSchemaProps)(unsafe.Pointer(&in.OneOf))
+	out.AnyOf = *(*[]JSONSchemaProps)(unsafe.Pointer(&in.AnyOf))
+	out.Not = (*JSONSchemaProps)(unsafe.Pointer(in.Not))
+	out.Properties = *(*map[string]JSONSchemaProps)(unsafe.Pointer(&in.Properties))
+	out.AdditionalProperties = (*JSONSchemaPropsOrBool)(unsafe.Pointer(in.AdditionalProperties))
+	out.PatternProperties = *(*map[string]JSONSchemaProps)(unsafe.Pointer(&in.PatternProperties))
+	out.Dependencies = *(*JSONSchemaDependencies)(unsafe.Pointer(&in.Dependencies))
+	out.AdditionalItems = (*JSONSchemaPropsOrBool)(unsafe.Pointer(in.AdditionalItems))
+	out.Definitions = *(*JSONSchemaDefinitions)(unsafe.Pointer(&in.Definitions))
+	out.ExternalDocs = (*ExternalDocumentation)(unsafe.Pointer(in.ExternalDocs))
+	out.Example = (*JSON)(unsafe.Pointer(in.Example))
+	out.Nullable = in.Nullable
+	out.XPreserveUnknownFields = (*bool)(unsafe.Pointer(in.XPreserveUnknownFields))
+	out.XEmbeddedResource = in.XEmbeddedResource
+	out.XIntOrString = in.XIntOrString
+	out.XListMapKeys = *(*[]string)(unsafe.Pointer(&in.XListMapKeys))
+	out.XListType = (*string)(unsafe.Pointer(in.XListType))
+	out.XMapType = (*string)(unsafe.Pointer(in.XMapType))
+	return nil
+}
+
+// Convert_core_JSONSchemaProps_To_v1_JSONSchemaProps is an autogenerated conversion function.
+func Convert_core_JSONSchemaProps_To_v1_JSONSchemaProps(in *core.JSONSchemaProps, out *JSONSchemaProps, s conversion.Scope) error {
+	return autoConvert_core_JSONSchemaProps_To_v1_JSONSchemaProps(in, out, s)
+}
+
+func autoConvert_v1_JSONSchemaPropsOrArray_To_core_JSONSchemaPropsOrArray(in *JSONSchemaPropsOrArray, out *core.JSONSchemaPropsOrArray, s conversion.Scope) error {
+	out.Schema = (*core.JSONSchemaProps)(unsafe.Pointer(in.Schema))
+	out.JSONSchemas = *(*[]core.JSONSchemaProps)(unsafe.Pointer(&in.JSONSchemas))
+	return nil
+}
+
+// Convert_v1_JSONSchemaPropsOrArray_To_core_JSONSchemaPropsOrArray is an autogenerated conversion function.
+func Convert_v1_JSONSchemaPropsOrArray_To_core_JSONSchemaPropsOrArray(in *JSONSchemaPropsOrArray, out *core.JSONSchemaPropsOrArray, s conversion.Scope) error {
+	return autoConvert_v1_JSONSchemaPropsOrArray_To_core_JSONSchemaPropsOrArray(in, out, s)
+}
+
+func autoConvert_core_JSONSchemaPropsOrArray_To_v1_JSONSchemaPropsOrArray(in *core.JSONSchemaPropsOrArray, out *JSONSchemaPropsOrArray, s conversion.Scope) error {
+	out.Schema = (*JSONSchemaProps)(unsafe.Pointer(in.Schema))
+	out.JSONSchemas = *(*[]JSONSchemaProps)(unsafe.Pointer(&in.JSONSchemas))
+	return nil
+}
+
+// Convert_core_JSONSchemaPropsOrArray_To_v1_JSONSchemaPropsOrArray is an autogenerated conversion function.
+func Convert_core_JSONSchemaPropsOrArray_To_v1_JSONSchemaPropsOrArray(in *core.JSONSchemaPropsOrArray, out *JSONSchemaPropsOrArray, s conversion.Scope) error {
+	return autoConvert_core_JSONSchemaPropsOrArray_To_v1_JSONSchemaPropsOrArray(in, out, s)
+}
+
+func autoConvert_v1_JSONSchemaPropsOrBool_To_core_JSONSchemaPropsOrBool(in *JSONSchemaPropsOrBool, out *core.JSONSchemaPropsOrBool, s conversion.Scope) error {
+	out.Allows = in.Allows
+	out.Schema = (*core.JSONSchemaProps)(unsafe.Pointer(in.Schema))
+	return nil
+}
+
+// Convert_v1_JSONSchemaPropsOrBool_To_core_JSONSchemaPropsOrBool is an autogenerated conversion function.
+func Convert_v1_JSONSchemaPropsOrBool_To_core_JSONSchemaPropsOrBool(in *JSONSchemaPropsOrBool, out *core.JSONSchemaPropsOrBool, s conversion.Scope) error {
+	return autoConvert_v1_JSONSchemaPropsOrBool_To_core_JSONSchemaPropsOrBool(in, out, s)
+}
+
+func autoConvert_core_JSONSchemaPropsOrBool_To_v1_JSONSchemaPropsOrBool(in *core.JSONSchemaPropsOrBool, out *JSONSchemaPropsOrBool, s conversion.Scope) error {
+	out.Allows = in.Allows
+	out.Schema = (*JSONSchemaProps)(unsafe.Pointer(in.Schema))
+	return nil
+}
+
+// Convert_core_JSONSchemaPropsOrBool_To_v1_JSONSchemaPropsOrBool is an autogenerated conversion function.
+func Convert_core_JSONSchemaPropsOrBool_To_v1_JSONSchemaPropsOrBool(in *core.JSONSchemaPropsOrBool, out *JSONSchemaPropsOrBool, s conversion.Scope) error {
+	return autoConvert_core_JSONSchemaPropsOrBool_To_v1_JSONSchemaPropsOrBool(in, out, s)
+}
+
+func autoConvert_v1_JSONSchemaPropsOrStringArray_To_core_JSONSchemaPropsOrStringArray(in *JSONSchemaPropsOrStringArray, out *core.JSONSchemaPropsOrStringArray, s conversion.Scope) error {
+	out.Schema = (*core.JSONSchemaProps)(unsafe.Pointer(in.Schema))
+	out.Property = *(*[]string)(unsafe.Pointer(&in.Property))
+	return nil
+}
+
+// Convert_v1_JSONSchemaPropsOrStringArray_To_core_JSONSchemaPropsOrStringArray is an autogenerated conversion function.
+func Convert_v1_JSONSchemaPropsOrStringArray_To_core_JSONSchemaPropsOrStringArray(in *JSONSchemaPropsOrStringArray, out *core.JSONSchemaPropsOrStringArray, s conversion.Scope) error {
+	return autoConvert_v1_JSONSchemaPropsOrStringArray_To_core_JSONSchemaPropsOrStringArray(in, out, s)
+}
+
+func autoConvert_core_JSONSchemaPropsOrStringArray_To_v1_JSONSchemaPropsOrStringArray(in *core.JSONSchemaPropsOrStringArray, out *JSONSchemaPropsOrStringArray, s conversion.Scope) error {
+	out.Schema = (*JSONSchemaProps)(unsafe.Pointer(in.Schema))
+	out.Property = *(*[]string)(unsafe.Pointer(&in.Property))
+	return nil
+}
+
+// Convert_core_JSONSchemaPropsOrStringArray_To_v1_JSONSchemaPropsOrStringArray is an autogenerated conversion function.
+func Convert_core_JSONSchemaPropsOrStringArray_To_v1_JSONSchemaPropsOrStringArray(in *core.JSONSchemaPropsOrStringArray, out *JSONSchemaPropsOrStringArray, s conversion.Scope) error {
+	return autoConvert_core_JSONSchemaPropsOrStringArray_To_v1_JSONSchemaPropsOrStringArray(in, out, s)
 }
 
 func autoConvert_v1_TranslatedString_To_core_TranslatedString(in *TranslatedString, out *core.TranslatedString, s conversion.Scope) error {

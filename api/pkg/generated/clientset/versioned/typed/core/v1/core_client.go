@@ -26,12 +26,17 @@ import (
 
 type CoreV1Interface interface {
 	RESTClient() rest.Interface
+	CustomResourceDefinitionsGetter
 	FormDefinitionsGetter
 }
 
 // CoreV1Client is used to interact with features provided by the core.nrc.no group.
 type CoreV1Client struct {
 	restClient rest.Interface
+}
+
+func (c *CoreV1Client) CustomResourceDefinitions() CustomResourceDefinitionInterface {
+	return newCustomResourceDefinitions(c)
 }
 
 func (c *CoreV1Client) FormDefinitions() FormDefinitionInterface {

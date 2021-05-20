@@ -8,40 +8,40 @@ import (
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 type FormDefinition struct {
-	metav1.TypeMeta   `json:",inline"`
-	metav1.ObjectMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
-	Spec              FormDefinitionSpec `json:"spec,omitempty" protobuf:"bytes,2,opt,name=spec"`
+	metav1.TypeMeta
+	metav1.ObjectMeta
+	Spec FormDefinitionSpec
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 type FormDefinitionList struct {
-	metav1.TypeMeta `json:",inline"`
-	metav1.ListMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
-	Items           []FormDefinition `json:"items,omitempty" protobuf:"bytes,2,opt,name=items"`
+	metav1.TypeMeta
+	metav1.ListMeta
+	Items []FormDefinition
 }
 
 type FormDefinitionSpec struct {
-	Group    string                  `json:"group,omitempty" protobuf:"bytes,1,opt,name=group"`
-	Names    FormDefinitionNames     `json:"names,omitempty" protobuf:"bytes,2,opt,name=names"`
-	Versions []FormDefinitionVersion `json:"versions,omitempty" protobuf:"bytes,3,opt,name=versions"`
+	Group    string
+	Names    FormDefinitionNames
+	Versions []FormDefinitionVersion
 }
 
 type FormDefinitionNames struct {
-	Plural   string `json:"plural,omitempty" protobuf:"bytes,1,opt,name=plural"`
-	Singular string `json:"singular,omitempty" protobuf:"bytes,2,opt,name=singular"`
-	Kind     string `json:"kind,omitempty" protobuf:"bytes,3,opt,name=kind"`
+	Plural   string
+	Singular string
+	Kind     string
 }
 
 type FormDefinitionVersion struct {
-	Name    string                   `json:"name,omitempty" protobuf:"bytes,1,opt,name=name"`
-	Served  bool                     `json:"served,omitempty" protobuf:"bytes,2,opt,name=served"`
-	Storage bool                     `json:"storage,omitempty" protobuf:"bytes,3,opt,name=storage"`
-	Schema  FormDefinitionValidation `json:"schema,omitempty" protobuf:"bytes,4,opt,name=schema"`
+	Name    string
+	Served  bool
+	Storage bool
+	Schema  FormDefinitionValidation
 }
 
 type FormDefinitionValidation struct {
-	FormSchema FormDefinitionSchema `json:"formSchema,omitempty" protobuf:"bytes,1,opt,name=formSchema"`
+	FormSchema FormDefinitionSchema
 }
 
 type FormElementType string
@@ -58,27 +58,103 @@ const (
 )
 
 type FormDefinitionSchema struct {
-	Root FormElementDefinition `json:"root,omitempty" protobuf:"bytes,1,opt,name=root"`
+	Root FormElementDefinition
 }
 
 type TranslatedString struct {
-	Locale string `json:"locale,omitempty" protobuf:"bytes,1,opt,name=locale"`
-	Value  string `json:"value,omitempty" protobuf:"bytes,1,opt,name=value"`
+	Locale string
+	Value  string
 }
 
 type TranslatedStrings []TranslatedString
 
 type FormElementDefinition struct {
-	Key         string                  `json:"key,omitempty" protobuf:"bytes,1,opt,name=key"`
-	Label       TranslatedStrings       `json:"label,omitempty" protobuf:"bytes,2,opt,name=label"`
-	Description TranslatedStrings       `json:"description,omitempty" protobuf:"bytes,3,opt,name=description"`
-	Help        TranslatedStrings       `json:"help,omitempty" protobuf:"bytes,4,opt,name=help"`
-	Type        FormElementType         `json:"type,omitempty" protobuf:"bytes,5,opt,name=type"`
-	Required    bool                    `json:"required,omitempty" protobuf:"bytes,6,opt,name=required"`
-	Children    []FormElementDefinition `json:"children,omitempty" protobuf:"bytes,7,opt,name=children"`
-	Min         string                  `json:"min,omitempty" protobuf:"bytes,8,opt,name=min"`
-	Max         string                  `json:"max,omitempty" protobuf:"bytes,9,opt,name=max"`
-	Pattern     string                  `json:"pattern,omitempty" protobuf:"bytes,10,opt,name=pattern"`
-	MinLength   int64                   `json:"minLength,omitempty" protobuf:"bytes,11,opt,name=minLength"`
-	MaxLength   *int64                  `json:"maxLength,omitempty" protobuf:"bytes,12,opt,name=maxLength"`
+	Key         string
+	Label       TranslatedStrings
+	Description TranslatedStrings
+	Help        TranslatedStrings
+	Type        FormElementType
+	Required    bool
+	Children    []FormElementDefinition
+	Min         string
+	Max         string
+	Pattern     string
+	MinLength   int64
+	MaxLength   *int64
+}
+
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// CustomResourceDefinition represents a custom model registered by the api server.
+// When registered, a CustomResourceDefinition will expose a dedicated api with the
+// usual GET, PUT, POST, DELETE, ...
+type CustomResourceDefinition struct {
+	metav1.TypeMeta
+	metav1.ObjectMeta
+
+	// Spec represents the specification of this FormDefinition
+	Spec CustomResourceDefinitionSpec
+}
+
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// CustomResourceDefinitionList represents a list of CustomResourceDefinition
+type CustomResourceDefinitionList struct {
+	metav1.TypeMeta
+	metav1.ListMeta
+
+	// Items represents the CustomResourceDefinition items contained in this list
+	Items []FormDefinition
+}
+
+// CustomResourceDefinitionSpec represents the specification of a CustomResourceDefinition
+type CustomResourceDefinitionSpec struct {
+	// Group represents the API group that will be exposed by the API server for this
+	// CustomResourceDefinition
+	Group string
+
+	// Names represent the identifiers used to build the API
+	Names CustomResourceDefinitionNames
+
+	// Versions represent the api versions of that CustomResourceDefinition
+	Versions []CustomResourceDefinitionVersion
+}
+
+// CustomResourceDefinitionNames represent the different names used to identify the resources
+// of that CustomResourceDefinition API
+type CustomResourceDefinitionNames struct {
+	// Plural represents the lowercase, pluralized name of the resource
+	// eg. formintakes, generalintakes, vulnerabilityassessments
+	Plural string
+
+	// Singular represents the lowercase, singular name of the resource
+	// eg. formintake, generalintake, vulnerabilityassessment
+	Singular string
+
+	// Kind represents the CamelCased, singular name of the resource
+	// eg. FormIntake, GeneralIntake, VulnerabilityAssessment
+	Kind string
+}
+
+// CustomResourceDefinitionVersion represent a single version of a CustomResourceDefinition
+type CustomResourceDefinitionVersion struct {
+	// Name represents the name of the version
+	// The form definition will then present an API available at
+	// /apis/{group}/{version}/{plural}
+	Name string
+
+	// Served represents wheter or not this version is actually served
+	// by the API
+	Served bool
+
+	// Storage represents whether or not this version of the FormDefinition
+	// is used to persist object in permanent storage
+	Storage bool
+
+	// Schema contains the openAPI schema used to validate the payloads
+	Schema CustomResourceDefinitionValidation
+}
+
+type CustomResourceDefinitionValidation struct {
+	OpenAPIV3Schema JSONSchemaProps
 }

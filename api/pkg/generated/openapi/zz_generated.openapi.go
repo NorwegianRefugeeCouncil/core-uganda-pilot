@@ -23,7 +23,8 @@ limitations under the License.
 package openapi
 
 import (
-	v1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
+	v1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	v1beta1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	common "k8s.io/kube-openapi/pkg/common"
@@ -32,6 +33,13 @@ import (
 
 func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenAPIDefinition {
 	return map[string]common.OpenAPIDefinition{
+		"github.com/nrc-no/core/api/pkg/apis/core/v1.CustomResourceDefinition":                            schema_pkg_apis_core_v1_CustomResourceDefinition(ref),
+		"github.com/nrc-no/core/api/pkg/apis/core/v1.CustomResourceDefinitionList":                        schema_pkg_apis_core_v1_CustomResourceDefinitionList(ref),
+		"github.com/nrc-no/core/api/pkg/apis/core/v1.CustomResourceDefinitionNames":                       schema_pkg_apis_core_v1_CustomResourceDefinitionNames(ref),
+		"github.com/nrc-no/core/api/pkg/apis/core/v1.CustomResourceDefinitionSpec":                        schema_pkg_apis_core_v1_CustomResourceDefinitionSpec(ref),
+		"github.com/nrc-no/core/api/pkg/apis/core/v1.CustomResourceDefinitionValidation":                  schema_pkg_apis_core_v1_CustomResourceDefinitionValidation(ref),
+		"github.com/nrc-no/core/api/pkg/apis/core/v1.CustomResourceDefinitionVersion":                     schema_pkg_apis_core_v1_CustomResourceDefinitionVersion(ref),
+		"github.com/nrc-no/core/api/pkg/apis/core/v1.ExternalDocumentation":                               schema_pkg_apis_core_v1_ExternalDocumentation(ref),
 		"github.com/nrc-no/core/api/pkg/apis/core/v1.FormDefinition":                                      schema_pkg_apis_core_v1_FormDefinition(ref),
 		"github.com/nrc-no/core/api/pkg/apis/core/v1.FormDefinitionList":                                  schema_pkg_apis_core_v1_FormDefinitionList(ref),
 		"github.com/nrc-no/core/api/pkg/apis/core/v1.FormDefinitionNames":                                 schema_pkg_apis_core_v1_FormDefinitionNames(ref),
@@ -40,6 +48,11 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/nrc-no/core/api/pkg/apis/core/v1.FormDefinitionValidation":                            schema_pkg_apis_core_v1_FormDefinitionValidation(ref),
 		"github.com/nrc-no/core/api/pkg/apis/core/v1.FormDefinitionVersion":                               schema_pkg_apis_core_v1_FormDefinitionVersion(ref),
 		"github.com/nrc-no/core/api/pkg/apis/core/v1.FormElementDefinition":                               schema_pkg_apis_core_v1_FormElementDefinition(ref),
+		"github.com/nrc-no/core/api/pkg/apis/core/v1.JSON":                                                schema_pkg_apis_core_v1_JSON(ref),
+		"github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaProps":                                     schema_pkg_apis_core_v1_JSONSchemaProps(ref),
+		"github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaPropsOrArray":                              schema_pkg_apis_core_v1_JSONSchemaPropsOrArray(ref),
+		"github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaPropsOrBool":                               schema_pkg_apis_core_v1_JSONSchemaPropsOrBool(ref),
+		"github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaPropsOrStringArray":                        schema_pkg_apis_core_v1_JSONSchemaPropsOrStringArray(ref),
 		"github.com/nrc-no/core/api/pkg/apis/core/v1.TranslatedString":                                    schema_pkg_apis_core_v1_TranslatedString(ref),
 		"k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1.ConversionRequest":                      schema_pkg_apis_apiextensions_v1_ConversionRequest(ref),
 		"k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1.ConversionResponse":                     schema_pkg_apis_apiextensions_v1_ConversionResponse(ref),
@@ -145,11 +158,12 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 	}
 }
 
-func schema_pkg_apis_core_v1_FormDefinition(ref common.ReferenceCallback) common.OpenAPIDefinition {
+func schema_pkg_apis_core_v1_CustomResourceDefinition(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
-				Type: []string{"object"},
+				Description: "CustomResourceDefinition represents a custom model registered by the api server. When registered, a CustomResourceDefinition will expose a dedicated api with the usual GET, PUT, POST, DELETE, ...",
+				Type:        []string{"object"},
 				Properties: map[string]spec.Schema{
 					"kind": {
 						SchemaProps: spec.SchemaProps{
@@ -173,8 +187,9 @@ func schema_pkg_apis_core_v1_FormDefinition(ref common.ReferenceCallback) common
 					},
 					"spec": {
 						SchemaProps: spec.SchemaProps{
-							Default: map[string]interface{}{},
-							Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.FormDefinitionSpec"),
+							Description: "Spec represents the specification of this FormDefinition",
+							Default:     map[string]interface{}{},
+							Ref:         ref("github.com/nrc-no/core/api/pkg/apis/core/v1.CustomResourceDefinitionSpec"),
 						},
 					},
 				},
@@ -182,15 +197,16 @@ func schema_pkg_apis_core_v1_FormDefinition(ref common.ReferenceCallback) common
 			},
 		},
 		Dependencies: []string{
-			"github.com/nrc-no/core/api/pkg/apis/core/v1.FormDefinitionSpec", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
+			"github.com/nrc-no/core/api/pkg/apis/core/v1.CustomResourceDefinitionSpec", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
 	}
 }
 
-func schema_pkg_apis_core_v1_FormDefinitionList(ref common.ReferenceCallback) common.OpenAPIDefinition {
+func schema_pkg_apis_core_v1_CustomResourceDefinitionList(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
-				Type: []string{"object"},
+				Description: "CustomResourceDefinitionList represents a list of CustomResourceDefinition",
+				Type:        []string{"object"},
 				Properties: map[string]spec.Schema{
 					"kind": {
 						SchemaProps: spec.SchemaProps{
@@ -214,7 +230,261 @@ func schema_pkg_apis_core_v1_FormDefinitionList(ref common.ReferenceCallback) co
 					},
 					"items": {
 						SchemaProps: spec.SchemaProps{
-							Type: []string{"array"},
+							Description: "Items represents the CustomResourceDefinition items contained in this list",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: map[string]interface{}{},
+										Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.FormDefinition"),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		Dependencies: []string{
+			"github.com/nrc-no/core/api/pkg/apis/core/v1.FormDefinition", "k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta"},
+	}
+}
+
+func schema_pkg_apis_core_v1_CustomResourceDefinitionNames(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "CustomResourceDefinitionNames represent the different names used to identify the resources of that CustomResourceDefinition API",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"plural": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Plural represents the lowercase, pluralized name of the resource eg. formintakes, generalintakes, vulnerabilityassessments",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"singular": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Singular represents the lowercase, singular name of the resource eg. formintake, generalintake, vulnerabilityassessment",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"kind": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Kind represents the CamelCased, singular name of the resource eg. FormIntake, GeneralIntake, VulnerabilityAssessment",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+				},
+			},
+		},
+	}
+}
+
+func schema_pkg_apis_core_v1_CustomResourceDefinitionSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "CustomResourceDefinitionSpec represents the specification of a CustomResourceDefinition",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"group": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Group represents the API group that will be exposed by the API server for this CustomResourceDefinition",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"versions": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Versions represents the different available api versions for that custom resource",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: map[string]interface{}{},
+										Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.CustomResourceDefinitionVersion"),
+									},
+								},
+							},
+						},
+					},
+				},
+				Required: []string{"group", "versions"},
+			},
+		},
+		Dependencies: []string{
+			"github.com/nrc-no/core/api/pkg/apis/core/v1.CustomResourceDefinitionVersion"},
+	}
+}
+
+func schema_pkg_apis_core_v1_CustomResourceDefinitionValidation(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"openAPIV3Schema": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaProps"),
+						},
+					},
+				},
+				Required: []string{"openAPIV3Schema"},
+			},
+		},
+		Dependencies: []string{
+			"github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaProps"},
+	}
+}
+
+func schema_pkg_apis_core_v1_CustomResourceDefinitionVersion(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "CustomResourceDefinitionVersion represent a single version of a CustomResourceDefinition",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"name": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Name represents the name of the version The form definition will then present an API available at /apis/{group}/{version}/{plural}",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"served": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Served represents wheter or not this version is actually served by the API",
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
+					"storage": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Storage represents whether or not this version of the FormDefinition is used to persist object in permanent storage",
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
+					"schema": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Schema contains the openAPI schema used to validate the payloads",
+							Default:     map[string]interface{}{},
+							Ref:         ref("github.com/nrc-no/core/api/pkg/apis/core/v1.CustomResourceDefinitionValidation"),
+						},
+					},
+				},
+			},
+		},
+		Dependencies: []string{
+			"github.com/nrc-no/core/api/pkg/apis/core/v1.CustomResourceDefinitionValidation"},
+	}
+}
+
+func schema_pkg_apis_core_v1_ExternalDocumentation(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "ExternalDocumentation allows referencing an external resource for extended documentation.",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"description": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+					"url": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+				},
+			},
+		},
+	}
+}
+
+func schema_pkg_apis_core_v1_FormDefinition(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "FormDefinition represents a user-defined form structure. Users can specify the logical and visual configuration of their forms through this data structure",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"kind": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"apiVersion": {
+						SchemaProps: spec.SchemaProps{
+							Description: "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"metadata": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"),
+						},
+					},
+					"spec": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Spec represents the specification of this FormDefinition",
+							Default:     map[string]interface{}{},
+							Ref:         ref("github.com/nrc-no/core/api/pkg/apis/core/v1.FormDefinitionSpec"),
+						},
+					},
+				},
+				Required: []string{"spec"},
+			},
+		},
+		Dependencies: []string{
+			"github.com/nrc-no/core/api/pkg/apis/core/v1.FormDefinitionSpec", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
+	}
+}
+
+func schema_pkg_apis_core_v1_FormDefinitionList(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "FormDefinitionList Represents a list of FormDefinition",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"kind": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"apiVersion": {
+						SchemaProps: spec.SchemaProps{
+							Description: "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"metadata": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta"),
+						},
+					},
+					"items": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Items represents the FormDefinition items contained in this list",
+							Type:        []string{"array"},
 							Items: &spec.SchemaOrArray{
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
@@ -237,24 +507,28 @@ func schema_pkg_apis_core_v1_FormDefinitionNames(ref common.ReferenceCallback) c
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
-				Type: []string{"object"},
+				Description: "FormDefinitionNames represent the names that the API will then serve. When creating a FormDefinition, an API will be available at the endpoint /apis/{version}/{group}/{plural}",
+				Type:        []string{"object"},
 				Properties: map[string]spec.Schema{
 					"plural": {
 						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
+							Description: "Plural represents the lowercase, pluralized name of the resource eg. formintakes, generalintakes, vulnerabilityassessments",
+							Type:        []string{"string"},
+							Format:      "",
 						},
 					},
 					"singular": {
 						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
+							Description: "Singular represents the lowercase, singular name of the resource eg. formintake, generalintake, vulnerabilityassessment",
+							Type:        []string{"string"},
+							Format:      "",
 						},
 					},
 					"kind": {
 						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
+							Description: "Kind represents the CamelCased, singular name of the resource eg. FormIntake, GeneralIntake, VulnerabilityAssessment",
+							Type:        []string{"string"},
+							Format:      "",
 						},
 					},
 				},
@@ -267,12 +541,14 @@ func schema_pkg_apis_core_v1_FormDefinitionSchema(ref common.ReferenceCallback) 
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
-				Type: []string{"object"},
+				Description: "FormDefinitionSchema represents the root form element of a form This is the root of the AST that contains the presents form elements",
+				Type:        []string{"object"},
 				Properties: map[string]spec.Schema{
 					"root": {
 						SchemaProps: spec.SchemaProps{
-							Default: map[string]interface{}{},
-							Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.FormElementDefinition"),
+							Description: "Root represents the root of the AST that constitutes the form definition A Form definition is a tree of \"Containers\" and \"Nodes\" that represent the different form controls",
+							Default:     map[string]interface{}{},
+							Ref:         ref("github.com/nrc-no/core/api/pkg/apis/core/v1.FormElementDefinition"),
 						},
 					},
 				},
@@ -287,23 +563,27 @@ func schema_pkg_apis_core_v1_FormDefinitionSpec(ref common.ReferenceCallback) co
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
-				Type: []string{"object"},
+				Description: "FormDefinitionSpec represents the specification of a FormDefinition",
+				Type:        []string{"object"},
 				Properties: map[string]spec.Schema{
 					"group": {
 						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
+							Description: "Group represents the name of the group that the API will serve data for this FormDefinition. The API will be available at the path /apis/{version}/{group}/...",
+							Type:        []string{"string"},
+							Format:      "",
 						},
 					},
 					"names": {
 						SchemaProps: spec.SchemaProps{
-							Default: map[string]interface{}{},
-							Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.FormDefinitionNames"),
+							Description: "Names represents the different required names to build the API",
+							Default:     map[string]interface{}{},
+							Ref:         ref("github.com/nrc-no/core/api/pkg/apis/core/v1.FormDefinitionNames"),
 						},
 					},
 					"versions": {
 						SchemaProps: spec.SchemaProps{
-							Type: []string{"array"},
+							Description: "Versions represents the list of versions that this FormDefinition contains a FormDefinition might evolve over time, hence the need to maintain a list of versions",
+							Type:        []string{"array"},
 							Items: &spec.SchemaOrArray{
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
@@ -326,12 +606,14 @@ func schema_pkg_apis_core_v1_FormDefinitionValidation(ref common.ReferenceCallba
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
-				Type: []string{"object"},
+				Description: "FormDefinitionValidation contains the validation schema of the FormDefinition",
+				Type:        []string{"object"},
 				Properties: map[string]spec.Schema{
 					"formSchema": {
 						SchemaProps: spec.SchemaProps{
-							Default: map[string]interface{}{},
-							Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.FormDefinitionSchema"),
+							Description: "FormScheme represents the logical and visual schema of the form",
+							Default:     map[string]interface{}{},
+							Ref:         ref("github.com/nrc-no/core/api/pkg/apis/core/v1.FormDefinitionSchema"),
 						},
 					},
 				},
@@ -346,30 +628,35 @@ func schema_pkg_apis_core_v1_FormDefinitionVersion(ref common.ReferenceCallback)
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
-				Type: []string{"object"},
+				Description: "FormDefinitionVersion represents a single version of a FormDefinition",
+				Type:        []string{"object"},
 				Properties: map[string]spec.Schema{
 					"name": {
 						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
+							Description: "Name represents the name of the version The form definition will then present an API available at /apis/{group}/{version}/{plural}",
+							Type:        []string{"string"},
+							Format:      "",
 						},
 					},
 					"served": {
 						SchemaProps: spec.SchemaProps{
-							Type:   []string{"boolean"},
-							Format: "",
+							Description: "Served represents wheter or not this version is actually served by the API",
+							Type:        []string{"boolean"},
+							Format:      "",
 						},
 					},
 					"storage": {
 						SchemaProps: spec.SchemaProps{
-							Type:   []string{"boolean"},
-							Format: "",
+							Description: "Storage represents whether or not this version of the FormDefinition is used to persist object in permanent storage",
+							Type:        []string{"boolean"},
+							Format:      "",
 						},
 					},
 					"schema": {
 						SchemaProps: spec.SchemaProps{
-							Default: map[string]interface{}{},
-							Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.FormDefinitionValidation"),
+							Description: "Schema represents the validation schema of the FormDefinition",
+							Default:     map[string]interface{}{},
+							Ref:         ref("github.com/nrc-no/core/api/pkg/apis/core/v1.FormDefinitionValidation"),
 						},
 					},
 				},
@@ -384,17 +671,20 @@ func schema_pkg_apis_core_v1_FormElementDefinition(ref common.ReferenceCallback)
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
-				Type: []string{"object"},
+				Description: "FormElementDefinition represents the configuration for a single field type",
+				Type:        []string{"object"},
 				Properties: map[string]spec.Schema{
 					"key": {
 						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
+							Description: "Key represents the name of the property that will be filled with the value entered by the user For example, if the key is \"firstName\", then the payload for the form will contain a property \"firstName\"",
+							Type:        []string{"string"},
+							Format:      "",
 						},
 					},
 					"label": {
 						SchemaProps: spec.SchemaProps{
-							Type: []string{"array"},
+							Description: "Label represents the textual label presented above the field control",
+							Type:        []string{"array"},
 							Items: &spec.SchemaOrArray{
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
@@ -407,7 +697,8 @@ func schema_pkg_apis_core_v1_FormElementDefinition(ref common.ReferenceCallback)
 					},
 					"description": {
 						SchemaProps: spec.SchemaProps{
-							Type: []string{"array"},
+							Description: "Description represents the text shown under the field control",
+							Type:        []string{"array"},
 							Items: &spec.SchemaOrArray{
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
@@ -420,7 +711,8 @@ func schema_pkg_apis_core_v1_FormElementDefinition(ref common.ReferenceCallback)
 					},
 					"help": {
 						SchemaProps: spec.SchemaProps{
-							Type: []string{"array"},
+							Description: "Help represents the tooltip that the user will be able to activate to get contextual help",
+							Type:        []string{"array"},
 							Items: &spec.SchemaOrArray{
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
@@ -433,19 +725,22 @@ func schema_pkg_apis_core_v1_FormElementDefinition(ref common.ReferenceCallback)
 					},
 					"type": {
 						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
+							Description: "Type represents the form element type",
+							Type:        []string{"string"},
+							Format:      "",
 						},
 					},
 					"required": {
 						SchemaProps: spec.SchemaProps{
-							Type:   []string{"boolean"},
-							Format: "",
+							Description: "Required represents whether the value for this property is required or not",
+							Type:        []string{"boolean"},
+							Format:      "",
 						},
 					},
 					"children": {
 						SchemaProps: spec.SchemaProps{
-							Type: []string{"array"},
+							Description: "Children contains the sub-elements of that form control. Only available for container-type elements",
+							Type:        []string{"array"},
 							Items: &spec.SchemaOrArray{
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
@@ -458,32 +753,37 @@ func schema_pkg_apis_core_v1_FormElementDefinition(ref common.ReferenceCallback)
 					},
 					"min": {
 						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
+							Description: "Min represents the minimum numerical value for the user input",
+							Type:        []string{"string"},
+							Format:      "",
 						},
 					},
 					"max": {
 						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
+							Description: "Max represents the maximum numerical value for the user input",
+							Type:        []string{"string"},
+							Format:      "",
 						},
 					},
 					"pattern": {
 						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
+							Description: "Pattern is a regex that will be used to validate the textual user input",
+							Type:        []string{"string"},
+							Format:      "",
 						},
 					},
 					"minLength": {
 						SchemaProps: spec.SchemaProps{
-							Type:   []string{"integer"},
-							Format: "int64",
+							Description: "MinLength represents the minimum text length for the user input",
+							Type:        []string{"integer"},
+							Format:      "int64",
 						},
 					},
 					"maxLength": {
 						SchemaProps: spec.SchemaProps{
-							Type:   []string{"integer"},
-							Format: "int64",
+							Description: "MaxLength represents the maximum text length for the user input",
+							Type:        []string{"integer"},
+							Format:      "int64",
 						},
 					},
 				},
@@ -494,22 +794,423 @@ func schema_pkg_apis_core_v1_FormElementDefinition(ref common.ReferenceCallback)
 	}
 }
 
-func schema_pkg_apis_core_v1_TranslatedString(ref common.ReferenceCallback) common.OpenAPIDefinition {
+func schema_pkg_apis_core_v1_JSON(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
-				Type: []string{"object"},
+				Description: "JSON represents any valid JSON value. These types are supported: bool, int64, float64, string, []interface{}, map[string]interface{} and nil.",
+				Type:        v1.JSON{}.OpenAPISchemaType(),
+				Format:      v1.JSON{}.OpenAPISchemaFormat(),
+			},
+		},
+	}
+}
+
+func schema_pkg_apis_core_v1_JSONSchemaProps(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "JSONSchemaProps is a JSON-Schema following Specification Draft 4 (http://json-schema.org/).",
+				Type:        []string{"object"},
 				Properties: map[string]spec.Schema{
-					"locale": {
+					"id": {
 						SchemaProps: spec.SchemaProps{
 							Type:   []string{"string"},
 							Format: "",
 						},
 					},
-					"value": {
+					"$schema": {
 						SchemaProps: spec.SchemaProps{
 							Type:   []string{"string"},
 							Format: "",
+						},
+					},
+					"$ref": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+					"description": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+					"type": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+					"format": {
+						SchemaProps: spec.SchemaProps{
+							Description: "format is an OpenAPI v3 format string. Unknown formats are ignored. The following formats are validated:\n\n- bsonobjectid: a bson object ID, i.e. a 24 characters hex string - uri: an URI as parsed by Golang net/url.ParseRequestURI - email: an email address as parsed by Golang net/mail.ParseAddress - hostname: a valid representation for an Internet host name, as defined by RFC 1034, section 3.1 [RFC1034]. - ipv4: an IPv4 IP as parsed by Golang net.ParseIP - ipv6: an IPv6 IP as parsed by Golang net.ParseIP - cidr: a CIDR as parsed by Golang net.ParseCIDR - mac: a MAC address as parsed by Golang net.ParseMAC - uuid: an UUID that allows uppercase defined by the regex (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$ - uuid3: an UUID3 that allows uppercase defined by the regex (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?3[0-9a-f]{3}-?[0-9a-f]{4}-?[0-9a-f]{12}$ - uuid4: an UUID4 that allows uppercase defined by the regex (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?4[0-9a-f]{3}-?[89ab][0-9a-f]{3}-?[0-9a-f]{12}$ - uuid5: an UUID5 that allows uppercase defined by the regex (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?5[0-9a-f]{3}-?[89ab][0-9a-f]{3}-?[0-9a-f]{12}$ - isbn: an ISBN10 or ISBN13 number string like \"0321751043\" or \"978-0321751041\" - isbn10: an ISBN10 number string like \"0321751043\" - isbn13: an ISBN13 number string like \"978-0321751041\" - creditcard: a credit card number defined by the regex ^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\\d{3})\\d{11})$ with any non digit characters mixed in - ssn: a U.S. social security number following the regex ^\\d{3}[- ]?\\d{2}[- ]?\\d{4}$ - hexcolor: an hexadecimal color code like \"#FFFFFF: following the regex ^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$ - rgbcolor: an RGB color code like rgb like \"rgb(255,255,2559\" - byte: base64 encoded binary data - password: any kind of string - date: a date string like \"2006-01-02\" as defined by full-date in RFC3339 - duration: a duration string like \"22 ns\" as parsed by Golang time.ParseDuration or compatible with Scala duration format - datetime: a date time string like \"2014-12-15T19:30:20.000Z\" as defined by date-time in RFC3339.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"title": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+					"default": {
+						SchemaProps: spec.SchemaProps{
+							Description: "default is a default value for undefined object fields. Defaulting is a beta feature under the CustomResourceDefaulting feature gate. Defaulting requires spec.preserveUnknownFields to be false.",
+							Ref:         ref("github.com/nrc-no/core/api/pkg/apis/core/v1.JSON"),
+						},
+					},
+					"maximum": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"number"},
+							Format: "double",
+						},
+					},
+					"exclusiveMaximum": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"boolean"},
+							Format: "",
+						},
+					},
+					"minimum": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"number"},
+							Format: "double",
+						},
+					},
+					"exclusiveMinimum": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"boolean"},
+							Format: "",
+						},
+					},
+					"maxLength": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"integer"},
+							Format: "int64",
+						},
+					},
+					"minLength": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"integer"},
+							Format: "int64",
+						},
+					},
+					"pattern": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+					"maxItems": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"integer"},
+							Format: "int64",
+						},
+					},
+					"minItems": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"integer"},
+							Format: "int64",
+						},
+					},
+					"uniqueItems": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"boolean"},
+							Format: "",
+						},
+					},
+					"multipleOf": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"number"},
+							Format: "double",
+						},
+					},
+					"enum": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: map[string]interface{}{},
+										Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.JSON"),
+									},
+								},
+							},
+						},
+					},
+					"maxProperties": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"integer"},
+							Format: "int64",
+						},
+					},
+					"minProperties": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"integer"},
+							Format: "int64",
+						},
+					},
+					"required": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: "",
+										Type:    []string{"string"},
+										Format:  "",
+									},
+								},
+							},
+						},
+					},
+					"items": {
+						SchemaProps: spec.SchemaProps{
+							Ref: ref("github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaPropsOrArray"),
+						},
+					},
+					"allOf": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: map[string]interface{}{},
+										Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaProps"),
+									},
+								},
+							},
+						},
+					},
+					"oneOf": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: map[string]interface{}{},
+										Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaProps"),
+									},
+								},
+							},
+						},
+					},
+					"anyOf": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: map[string]interface{}{},
+										Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaProps"),
+									},
+								},
+							},
+						},
+					},
+					"not": {
+						SchemaProps: spec.SchemaProps{
+							Ref: ref("github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaProps"),
+						},
+					},
+					"properties": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"object"},
+							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: map[string]interface{}{},
+										Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaProps"),
+									},
+								},
+							},
+						},
+					},
+					"additionalProperties": {
+						SchemaProps: spec.SchemaProps{
+							Ref: ref("github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaPropsOrBool"),
+						},
+					},
+					"patternProperties": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"object"},
+							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: map[string]interface{}{},
+										Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaProps"),
+									},
+								},
+							},
+						},
+					},
+					"dependencies": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"object"},
+							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: map[string]interface{}{},
+										Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaPropsOrStringArray"),
+									},
+								},
+							},
+						},
+					},
+					"additionalItems": {
+						SchemaProps: spec.SchemaProps{
+							Ref: ref("github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaPropsOrBool"),
+						},
+					},
+					"definitions": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"object"},
+							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: map[string]interface{}{},
+										Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaProps"),
+									},
+								},
+							},
+						},
+					},
+					"externalDocs": {
+						SchemaProps: spec.SchemaProps{
+							Ref: ref("github.com/nrc-no/core/api/pkg/apis/core/v1.ExternalDocumentation"),
+						},
+					},
+					"example": {
+						SchemaProps: spec.SchemaProps{
+							Ref: ref("github.com/nrc-no/core/api/pkg/apis/core/v1.JSON"),
+						},
+					},
+					"nullable": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"boolean"},
+							Format: "",
+						},
+					},
+					"x-kubernetes-preserve-unknown-fields": {
+						SchemaProps: spec.SchemaProps{
+							Description: "x-kubernetes-preserve-unknown-fields stops the API server decoding step from pruning fields which are not specified in the validation schema. This affects fields recursively, but switches back to normal pruning behaviour if nested properties or additionalProperties are specified in the schema. This can either be true or undefined. False is forbidden.",
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
+					"x-kubernetes-embedded-resource": {
+						SchemaProps: spec.SchemaProps{
+							Description: "x-kubernetes-embedded-resource defines that the value is an embedded Kubernetes runtime.Object, with TypeMeta and ObjectMeta. The type must be object. It is allowed to further restrict the embedded object. kind, apiVersion and metadata are validated automatically. x-kubernetes-preserve-unknown-fields is allowed to be true, but does not have to be if the object is fully specified (up to kind, apiVersion, metadata).",
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
+					"x-kubernetes-int-or-string": {
+						SchemaProps: spec.SchemaProps{
+							Description: "x-kubernetes-int-or-string specifies that this value is either an integer or a string. If this is true, an empty type is allowed and type as child of anyOf is permitted if following one of the following patterns:\n\n1) anyOf:\n   - type: integer\n   - type: string\n2) allOf:\n   - anyOf:\n     - type: integer\n     - type: string\n   - ... zero or more",
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
+					"x-kubernetes-list-map-keys": {
+						SchemaProps: spec.SchemaProps{
+							Description: "x-kubernetes-list-map-keys annotates an array with the x-kubernetes-list-type `map` by specifying the keys used as the index of the map.\n\nThis tag MUST only be used on lists that have the \"x-kubernetes-list-type\" extension set to \"map\". Also, the values specified for this attribute must be a scalar typed field of the child structure (no nesting is supported).\n\nThe properties specified must either be required or have a default value, to ensure those properties are present for all list items.",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: "",
+										Type:    []string{"string"},
+										Format:  "",
+									},
+								},
+							},
+						},
+					},
+					"x-kubernetes-list-type": {
+						SchemaProps: spec.SchemaProps{
+							Description: "x-kubernetes-list-type annotates an array to further describe its topology. This extension must only be used on lists and may have 3 possible values:\n\n1) `atomic`: the list is treated as a single entity, like a scalar.\n     Atomic lists will be entirely replaced when updated. This extension\n     may be used on any type of list (struct, scalar, ...).\n2) `set`:\n     Sets are lists that must not have multiple items with the same value. Each\n     value must be a scalar, an object with x-kubernetes-map-type `atomic` or an\n     array with x-kubernetes-list-type `atomic`.\n3) `map`:\n     These lists are like maps in that their elements have a non-index key\n     used to identify them. Order is preserved upon merge. The map tag\n     must only be used on a list with elements of type object.\nDefaults to atomic for arrays.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"x-kubernetes-map-type": {
+						SchemaProps: spec.SchemaProps{
+							Description: "x-kubernetes-map-type annotates an object to further describe its topology. This extension must only be used when type is object and may have 2 possible values:\n\n1) `granular`:\n     These maps are actual maps (key-value pairs) and each fields are independent\n     from each other (they can each be manipulated by separate actors). This is\n     the default behaviour for all maps.\n2) `atomic`: the list is treated as a single entity, like a scalar.\n     Atomic maps will be entirely replaced when updated.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+				},
+			},
+		},
+		Dependencies: []string{
+			"github.com/nrc-no/core/api/pkg/apis/core/v1.ExternalDocumentation", "github.com/nrc-no/core/api/pkg/apis/core/v1.JSON", "github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaProps", "github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaPropsOrArray", "github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaPropsOrBool", "github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaPropsOrStringArray"},
+	}
+}
+
+func schema_pkg_apis_core_v1_JSONSchemaPropsOrArray(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "JSONSchemaPropsOrArray represents a value that can either be a JSONSchemaProps or an array of JSONSchemaProps. Mainly here for serialization purposes.",
+				Type:        v1.JSONSchemaPropsOrArray{}.OpenAPISchemaType(),
+				Format:      v1.JSONSchemaPropsOrArray{}.OpenAPISchemaFormat(),
+			},
+		},
+	}
+}
+
+func schema_pkg_apis_core_v1_JSONSchemaPropsOrBool(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "JSONSchemaPropsOrBool represents JSONSchemaProps or a boolean value. Defaults to true for the boolean property.",
+				Type:        v1.JSONSchemaPropsOrBool{}.OpenAPISchemaType(),
+				Format:      v1.JSONSchemaPropsOrBool{}.OpenAPISchemaFormat(),
+			},
+		},
+	}
+}
+
+func schema_pkg_apis_core_v1_JSONSchemaPropsOrStringArray(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "JSONSchemaPropsOrStringArray represents a JSONSchemaProps or a string array.",
+				Type:        v1.JSONSchemaPropsOrStringArray{}.OpenAPISchemaType(),
+				Format:      v1.JSONSchemaPropsOrStringArray{}.OpenAPISchemaFormat(),
+			},
+		},
+	}
+}
+
+func schema_pkg_apis_core_v1_TranslatedString(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "TranslatedString represents the localized value of a string",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"locale": {
+						SchemaProps: spec.SchemaProps{
+							Description: "The locale name",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"value": {
+						SchemaProps: spec.SchemaProps{
+							Description: "The translated string in the Locale locale",
+							Type:        []string{"string"},
+							Format:      "",
 						},
 					},
 				},
@@ -1299,8 +2000,8 @@ func schema_pkg_apis_apiextensions_v1_JSON(ref common.ReferenceCallback) common.
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
 				Description: "JSON represents any valid JSON value. These types are supported: bool, int64, float64, string, []interface{}, map[string]interface{} and nil.",
-				Type:        v1.JSON{}.OpenAPISchemaType(),
-				Format:      v1.JSON{}.OpenAPISchemaFormat(),
+				Type:        apiextensionsv1.JSON{}.OpenAPISchemaType(),
+				Format:      apiextensionsv1.JSON{}.OpenAPISchemaFormat(),
 			},
 		},
 	}
@@ -1661,8 +2362,8 @@ func schema_pkg_apis_apiextensions_v1_JSONSchemaPropsOrArray(ref common.Referenc
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
 				Description: "JSONSchemaPropsOrArray represents a value that can either be a JSONSchemaProps or an array of JSONSchemaProps. Mainly here for serialization purposes.",
-				Type:        v1.JSONSchemaPropsOrArray{}.OpenAPISchemaType(),
-				Format:      v1.JSONSchemaPropsOrArray{}.OpenAPISchemaFormat(),
+				Type:        apiextensionsv1.JSONSchemaPropsOrArray{}.OpenAPISchemaType(),
+				Format:      apiextensionsv1.JSONSchemaPropsOrArray{}.OpenAPISchemaFormat(),
 			},
 		},
 	}
@@ -1673,8 +2374,8 @@ func schema_pkg_apis_apiextensions_v1_JSONSchemaPropsOrBool(ref common.Reference
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
 				Description: "JSONSchemaPropsOrBool represents JSONSchemaProps or a boolean value. Defaults to true for the boolean property.",
-				Type:        v1.JSONSchemaPropsOrBool{}.OpenAPISchemaType(),
-				Format:      v1.JSONSchemaPropsOrBool{}.OpenAPISchemaFormat(),
+				Type:        apiextensionsv1.JSONSchemaPropsOrBool{}.OpenAPISchemaType(),
+				Format:      apiextensionsv1.JSONSchemaPropsOrBool{}.OpenAPISchemaFormat(),
 			},
 		},
 	}
@@ -1685,8 +2386,8 @@ func schema_pkg_apis_apiextensions_v1_JSONSchemaPropsOrStringArray(ref common.Re
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
 				Description: "JSONSchemaPropsOrStringArray represents a JSONSchemaProps or a string array.",
-				Type:        v1.JSONSchemaPropsOrStringArray{}.OpenAPISchemaType(),
-				Format:      v1.JSONSchemaPropsOrStringArray{}.OpenAPISchemaFormat(),
+				Type:        apiextensionsv1.JSONSchemaPropsOrStringArray{}.OpenAPISchemaType(),
+				Format:      apiextensionsv1.JSONSchemaPropsOrStringArray{}.OpenAPISchemaFormat(),
 			},
 		},
 	}
