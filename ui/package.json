@@ -30,7 +30,7 @@
     "formbuilder:storybook": "nx start formbuilder:storybook",
     "formrenderer:build-storybook": "nx run formrenderer:build-storybook",
     "formrenderer:storybook": "nx start formrenderer:storybook",
-    "showcase:build": "nx build shared-bootstrap && nx run formrenderer:build-storybook && nx run shared-ui-toolkit:build-storybook && nx run showcase:copy-bs && nx run showcase:build && cp -r docs ../docs"
+    "showcase:build": "nx build shared-bootstrap && nx run formrenderer:build-storybook && nx run shared-ui-toolkit:build-storybook && nx run showcase:copy-bs && nx run showcase:build && rm -rf ../docs && mkdir ../docs/ && sleep 2 && cp -r dist/apps/showcase/ ../docs/"
   },
   "private": true,
   "dependencies": {

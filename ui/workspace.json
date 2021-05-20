@@ -554,7 +554,7 @@
             "{options.outputPath}"
           ],
           "options": {
-            "outputPath": "docs",
+            "outputPath": "dist/apps/showcase",
             "index": "apps/showcase/src/index.html",
             "main": "apps/showcase/src/main.tsx",
             "polyfills": "apps/showcase/src/polyfills.ts",
