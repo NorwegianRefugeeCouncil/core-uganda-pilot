@@ -28,6 +28,10 @@ type FakeCoreV1 struct {
 	*testing.Fake
 }
 
+func (c *FakeCoreV1) CustomResourceDefinitions() v1.CustomResourceDefinitionInterface {
+	return &FakeCustomResourceDefinitions{c}
+}
+
 func (c *FakeCoreV1) FormDefinitions() v1.FormDefinitionInterface {
 	return &FakeFormDefinitions{c}
 }

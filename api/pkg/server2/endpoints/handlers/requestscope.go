@@ -18,6 +18,7 @@ type RequestScope struct {
 	Kind            schema.GroupVersionKind
 	HubGroupVersion schema.GroupVersion
 	Namer           Namer
+	UnsafeConvertor runtime.ObjectConvertor
 }
 
 func (r *RequestScope) err(err error, w http.ResponseWriter, req *http.Request) {
