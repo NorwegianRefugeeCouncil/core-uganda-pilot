@@ -7,6 +7,7 @@ import (
 	"net/http"
 )
 
+// WithRequestInfo retrieves and inserts the RequestInfo in the request context.context
 func WithRequestInfo(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		ctx := req.Context()

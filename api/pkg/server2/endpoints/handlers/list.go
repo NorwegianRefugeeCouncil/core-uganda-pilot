@@ -6,17 +6,11 @@ import (
 	"net/http"
 )
 
-// GetResource is a generic REST handler to get resources (single result)
-func GetResource(scope *RequestScope, getter rest.Getter) http.HandlerFunc {
+// GetResource is a generic REST handler to list resources (multiple result)
+func ListResource(scope *RequestScope, getter rest.Lister) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 
 		ctx := req.Context()
-
-		name, err := scope.Namer.Name(req)
-		if err != nil {
-			scope.err(err, w, req)
-			return
-		}
 
 		outputMediaType, _, err := negotiation.NegotiateOutputMediaType(req, scope.Serializer, scope)
 		if err != nil {
@@ -24,7 +18,7 @@ func GetResource(scope *RequestScope, getter rest.Getter) http.HandlerFunc {
 			return
 		}
 
-		result, err := getter.Get(ctx, name)
+		result, err := getter.List(ctx)
 		if err != nil {
 			scope.err(err, w, req)
 			return

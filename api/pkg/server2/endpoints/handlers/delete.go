@@ -6,6 +6,7 @@ import (
 	"net/http"
 )
 
+// DeleteResource is a generic REST handler to delete resoures
 func DeleteResource(scope *RequestScope, deleter rest.Deleter) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 

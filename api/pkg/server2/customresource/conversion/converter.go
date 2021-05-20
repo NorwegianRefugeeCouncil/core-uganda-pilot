@@ -28,12 +28,9 @@ func (m *CRConverterFactory) NewConverter(crd *corev1.CustomResourceDefinition) 
 	var converter crConverterInterface
 	converter = &nopConverter{}
 
-	// Determine whether we should expect to be asked to "convert" autoscaling/v1 Scale types
-	convertScale := false
-
 	unsafe = &crConverter{
-		convertScale:  convertScale,
 		validVersions: validVersions,
+		// we support only clusterScoped for now (no namespace support)
 		clusterScoped: true,
 		converter:     converter,
 	}
@@ -51,7 +48,6 @@ type crConverterInterface interface {
 // crConverter extends the delegate converter with generic CR conversion behaviour. The delegate will implement the
 // user defined conversion strategy given in the CustomResourceDefinition.
 type crConverter struct {
-	convertScale  bool
 	converter     crConverterInterface
 	validVersions map[schema.GroupVersion]bool
 	clusterScoped bool

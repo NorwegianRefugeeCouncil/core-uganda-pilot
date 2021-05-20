@@ -7,6 +7,8 @@ import (
 	"net/http"
 )
 
+// RequestScope is an object passed to all REST handlers that contain
+// information on the resource being interacted with
 type RequestScope struct {
 	Serializer runtime.NegotiatedSerializer
 	runtime.ParameterCodec

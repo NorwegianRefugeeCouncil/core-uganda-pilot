@@ -5,10 +5,13 @@ import (
 	"net/http"
 )
 
+// Namer is able to retrieve the name of a resource from the http request
 type Namer interface {
 	Name(req *http.Request) (name string, err error)
 }
 
+// ContextBasedNaming is an implementation of Namer and can retrieve
+// the name using the request.NewRequestInfo
 type ContextBasedNaming struct {
 }
 
