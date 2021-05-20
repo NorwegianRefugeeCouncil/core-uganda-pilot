@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { FormContext } from './form-context';
 import { classNames } from '@ui-helpers/utils';
+import { BsInputTypes, NonBsInputTypes } from '@ui-helpers/types';
 
 export interface BaseFormControlProps {
-  type: 'text' | 'textarea' | 'email' | 'password' | 'file' | 'color';
+  type?: BsInputTypes | NonBsInputTypes;
   displaySize?: 'sm' | 'lg';
   plaintext?: true;
   isValid?: true;
@@ -28,7 +29,7 @@ export const FormControl: FormControl = (props: InputProps | TextareaProps) => {
   const {
     id,
     displaySize,
-    type,
+    type = 'text',
     plaintext,
     isValid,
     isInvalid,
@@ -53,6 +54,15 @@ export const FormControl: FormControl = (props: InputProps | TextareaProps) => {
         id={id ?? controlId}
         className={className}
         {...(rest as TextareaProps)}
+      />
+    );
+  else if (type === 'number' || type === 'date')
+    return (
+      <input
+        type={type}
+        id={id ?? controlId}
+        className={customClass}
+        {...(rest as InputProps)}
       />
     );
   else

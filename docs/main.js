@@ -2023,7 +2023,7 @@ const FormControl = props => {
   const {
     id,
     displaySize,
-    type,
+    type = 'text',
     plaintext,
     isValid,
     isInvalid,
@@ -2047,7 +2047,15 @@ const FormControl = props => {
     className: className
   }, rest), void 0, false, {
     fileName: _jsxFileName,
-    lineNumber: 52,
+    lineNumber: 53,
+    columnNumber: 7
+  }, undefined);else if (type === 'number' || type === 'date') return /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5__["jsxDEV"])("input", _objectSpread({
+    type: type,
+    id: id !== null && id !== void 0 ? id : controlId,
+    className: customClass
+  }, rest), void 0, false, {
+    fileName: _jsxFileName,
+    lineNumber: 61,
     columnNumber: 7
   }, undefined);else return /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5__["jsxDEV"])("input", _objectSpread({
     type: type,
@@ -2055,7 +2063,7 @@ const FormControl = props => {
     className: className
   }, rest), void 0, false, {
     fileName: _jsxFileName,
-    lineNumber: 60,
+    lineNumber: 70,
     columnNumber: 7
   }, undefined);
 };
