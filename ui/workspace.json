@@ -555,6 +555,7 @@
           ],
           "options": {
             "outputPath": "dist/apps/showcase",
+            "baseHref": "/core/",
             "index": "apps/showcase/src/index.html",
             "main": "apps/showcase/src/main.tsx",
             "polyfills": "apps/showcase/src/polyfills.ts",
