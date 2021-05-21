@@ -3,7 +3,6 @@ package helpers
 import (
 	v1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
 	"github.com/stretchr/testify/assert"
-	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"testing"
 )
@@ -41,7 +40,7 @@ func TestWalkFormSchemeShouldFlattenProperties(t *testing.T) {
 			},
 		},
 	}
-	jsonProps := apiextensionsv1.JSONSchemaProps{}
+	jsonProps := v1.JSONSchemaProps{}
 	WalkFormSchema(element, &jsonProps)
 
 	assert.Equal(t, 3, len(jsonProps.Properties))
@@ -56,7 +55,7 @@ func TestCreateCrdFromFormDefinition(t *testing.T) {
 
 	formDef := &v1.FormDefinition{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "some-form",
+			Name: "superforms.supergroup",
 		},
 		Spec: v1.FormDefinitionSpec{
 			Group: "supergroup",
@@ -149,25 +148,25 @@ func TestCreateCrdFromFormDefinition(t *testing.T) {
 		},
 	}
 
-	expected := &apiextensionsv1.CustomResourceDefinition{
+	expected := &v1.CustomResourceDefinition{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "some-form",
+			Name: "superforms.supergroup",
 		},
-		Spec: apiextensionsv1.CustomResourceDefinitionSpec{
+		Spec: v1.CustomResourceDefinitionSpec{
 			Group: "supergroup",
-			Names: apiextensionsv1.CustomResourceDefinitionNames{
+			Names: v1.CustomResourceDefinitionNames{
 				Singular: "superform",
 				Plural:   "superforms",
 				Kind:     "SuperForm",
 			},
-			Versions: []apiextensionsv1.CustomResourceDefinitionVersion{
+			Versions: []v1.CustomResourceDefinitionVersion{
 				{
 					Name: "v1",
-					Schema: &apiextensionsv1.CustomResourceValidation{
-						OpenAPIV3Schema: &apiextensionsv1.JSONSchemaProps{
+					Schema: v1.CustomResourceDefinitionValidation{
+						OpenAPIV3Schema: v1.JSONSchemaProps{
 							Description: "Schema for the SuperForm api",
 							Type:        "object",
-							Properties: map[string]apiextensionsv1.JSONSchemaProps{
+							Properties: map[string]v1.JSONSchemaProps{
 								"apiVersion": {
 									Type: "string",
 									Description: `APIVersion defines the versioned schema of this representation
@@ -189,7 +188,7 @@ Cannot be updated. In CamelCase.`,
 									Required: []string{
 										"prop1",
 									},
-									Properties: map[string]apiextensionsv1.JSONSchemaProps{
+									Properties: map[string]v1.JSONSchemaProps{
 										"prop1": {
 											Type:        "string",
 											Description: "Property 1",
@@ -210,11 +209,11 @@ Cannot be updated. In CamelCase.`,
 				},
 				{
 					Name: "v2",
-					Schema: &apiextensionsv1.CustomResourceValidation{
-						OpenAPIV3Schema: &apiextensionsv1.JSONSchemaProps{
+					Schema: v1.CustomResourceDefinitionValidation{
+						OpenAPIV3Schema: v1.JSONSchemaProps{
 							Description: "Schema for the SuperForm api",
 							Type:        "object",
-							Properties: map[string]apiextensionsv1.JSONSchemaProps{
+							Properties: map[string]v1.JSONSchemaProps{
 								"apiVersion": {
 									Type: "string",
 									Description: `APIVersion defines the versioned schema of this representation
@@ -236,7 +235,7 @@ Cannot be updated. In CamelCase.`,
 									Required: []string{
 										"prop1",
 									},
-									Properties: map[string]apiextensionsv1.JSONSchemaProps{
+									Properties: map[string]v1.JSONSchemaProps{
 										"prop1": {
 											Type:        "string",
 											Description: "Property 1",
@@ -267,7 +266,7 @@ Cannot be updated. In CamelCase.`,
 
 }
 
-func assertHasProperty(t *testing.T, schema apiextensionsv1.JSONSchemaProps, key string) {
+func assertHasProperty(t *testing.T, schema v1.JSONSchemaProps, key string) {
 	if !assert.NotNil(t, schema.Properties) {
 		return
 	}

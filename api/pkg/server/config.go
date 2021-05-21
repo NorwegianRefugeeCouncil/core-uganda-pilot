@@ -1,317 +1,156 @@
 package server
 
 import (
-	"fmt"
+	"context"
 	"github.com/nrc-no/core/api/pkg/apis/core"
-	coreinstall "github.com/nrc-no/core/api/pkg/apis/core/install"
+	"github.com/nrc-no/core/api/pkg/apis/core/install"
 	corev1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
-	"github.com/nrc-no/core/api/pkg/controllers"
-	"github.com/nrc-no/core/api/pkg/generated/clientset/versioned"
-	"github.com/nrc-no/core/api/pkg/generated/informers/externalversions"
-	"github.com/nrc-no/core/api/pkg/generated/openapi"
-	"github.com/nrc-no/core/api/pkg/registry/core/formdefinition"
-	"k8s.io/apiextensions-apiserver/pkg/apis/apiextensions"
-	apiextensionsinstall "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/install"
-	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
-	apiextensionclient "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
-	apiextensionsinformers "k8s.io/apiextensions-apiserver/pkg/client/informers/externalversions"
-	"k8s.io/apiextensions-apiserver/pkg/controller/apiapproval"
-	"k8s.io/apiextensions-apiserver/pkg/controller/establish"
-	"k8s.io/apiextensions-apiserver/pkg/controller/finalizer"
-	"k8s.io/apiextensions-apiserver/pkg/controller/nonstructuralschema"
-	"k8s.io/apiextensions-apiserver/pkg/controller/status"
-	"k8s.io/apiextensions-apiserver/pkg/registry/customresourcedefinition"
+	v1 "github.com/nrc-no/core/api/pkg/client/core/v1"
+	restclient "github.com/nrc-no/core/api/pkg/client/rest"
+	formdefinitions3 "github.com/nrc-no/core/api/pkg/controllers/formdefinitions"
+	handlers2 "github.com/nrc-no/core/api/pkg/endpoints/handlers"
+	customresourcedefinition2 "github.com/nrc-no/core/api/pkg/registry/core/customresourcedefinition"
+	formdefinitions2 "github.com/nrc-no/core/api/pkg/registry/core/formdefinitions"
+	generic2 "github.com/nrc-no/core/api/pkg/registry/generic"
+	rest2 "github.com/nrc-no/core/api/pkg/registry/rest"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
-	"k8s.io/apimachinery/pkg/util/clock"
-	"k8s.io/apimachinery/pkg/util/sets"
-	"k8s.io/apimachinery/pkg/util/wait"
-	"k8s.io/apiserver/pkg/endpoints/discovery"
-	"k8s.io/apiserver/pkg/endpoints/filters"
-	openapi2 "k8s.io/apiserver/pkg/endpoints/openapi"
-	"k8s.io/apiserver/pkg/endpoints/request"
-	"k8s.io/apiserver/pkg/registry/generic"
-	"k8s.io/apiserver/pkg/registry/rest"
-	"k8s.io/apiserver/pkg/server"
-	"k8s.io/apiserver/pkg/server/healthz"
-	"k8s.io/apiserver/pkg/storageversion"
-	restclient "k8s.io/client-go/rest"
-	"k8s.io/kube-openapi/pkg/common"
+	"net"
 	"net/http"
-	"strings"
-	"sync"
-	"time"
 )
 
 var (
 	Scheme = runtime.NewScheme()
 	Codecs = serializer.NewCodecFactory(Scheme)
-
-	// if you modify this, make sure you update the crEncoder
-	unversionedVersion = schema.GroupVersion{Group: "", Version: "v1"}
-	unversionedTypes   = []runtime.Object{
-		&metav1.Status{},
-		&metav1.WatchEvent{},
-		&metav1.APIVersions{},
-		&metav1.APIGroupList{},
-		&metav1.APIGroup{},
-		&metav1.APIResourceList{},
-	}
 )
 
 func init() {
-	coreinstall.Install(Scheme)
-	apiextensionsinstall.Install(Scheme)
-	metav1.AddToGroupVersion(Scheme, schema.GroupVersion{Version: "v1"})
-	Scheme.AddUnversionedTypes(unversionedVersion, unversionedTypes...)
+	install.Install(Scheme)
 }
 
-type RecommendedConfig struct {
-	Config
-}
-
-func NewRecommendedConfig(codecs serializer.CodecFactory) *RecommendedConfig {
-	return &RecommendedConfig{
-		Config: *NewConfig(codecs),
-	}
+type MongoConfig struct {
+	Address string
 }
 
 type Config struct {
-	RESTOptionsGetter      generic.RESTOptionsGetter
-	OpenAPIConfig          *common.Config
-	BuildHandlerChainFunc  func(apiHandler http.Handler, c *Config) (secure http.Handler)
-	Serializer             runtime.NegotiatedSerializer
-	ExternalAddress        string
-	RequestInfoResolver    request.RequestInfoResolver
-	LegacyAPIGroupPrefixes sets.String
-	LoopbackClientConfig   *restclient.Config
+	ListenAddress         net.IP
+	RESTOptionsGetter     generic2.RESTOptionsGetter
+	BuildHandlerChainFunc func(handler http.Handler, config *Config) http.Handler
+	CRDRestOptionsGetter  generic2.RESTOptionsGetter
+	LoopbackClientConfig  *restclient.Config
+	Listener              net.Listener
 }
 
-func (c *Config) Complete() CompletedConfig {
-	if c.RequestInfoResolver == nil {
-		c.RequestInfoResolver = NewRequestInfoResolver(c)
+func (c *Config) Complete() *CompletedConfig {
+	completedConfig := &CompletedConfig{
+		Config: c,
 	}
-	return CompletedConfig{
-		*c,
-	}
+	return completedConfig
 }
 
 type CompletedConfig struct {
-	Config
+	*Config
 }
 
-func NewConfig(codecs serializer.CodecFactory) *Config {
-	return &Config{
-		Serializer:             codecs,
-		BuildHandlerChainFunc:  DefaultBuildHandlerChain,
-		LegacyAPIGroupPrefixes: sets.NewString(DefaultLegacyAPIPrefix),
-	}
-}
+// New creates a new Server from the CompletedConfig
+func (c *CompletedConfig) New(ctx context.Context) (*Server, error) {
 
-func (c CompletedConfig) New() (*APIServer, error) {
-
+	// Builds the handler chain. This will register all the filters and middlewares and so on
+	// that need to be ran before the dispatching the request to go-restful or non-go-restful
 	handlerChainBuilder := func(handler http.Handler) http.Handler {
-		return c.BuildHandlerChainFunc(handler, &c.Config)
-	}
-	delegate := http.NotFoundHandler()
-	apiServerHandler := server.NewAPIServerHandler("", c.Serializer, handlerChainBuilder, delegate)
-
-	s := &APIServer{
-		Serializer:                 c.Serializer,
-		DiscoveryGroupManager:      discovery.NewRootAPIsHandler(discovery.DefaultAddresses{DefaultAddress: c.ExternalAddress}, c.Serializer),
-		EquivalentResourceRegistry: runtime.NewEquivalentResourceRegistry(),
-		minRequestTimeout:          time.Duration(1800) * time.Second,
-		maxRequestBodyBytes:        int64(3 * 1024 * 1024),
-		StorageVersionManager:      storageversion.NewDefaultManager(),
-		Handler:                    apiServerHandler,
-		RESTOptionsGetter:          c.RESTOptionsGetter,
-		preShutdownHooks:           map[string]preShutdownHookEntry{},
-		postStartHooks:             map[string]postStartHookEntry{},
-		disabledPostStartHooks:     sets.NewString(),
-		healthzChecks:              []healthz.HealthChecker{},
-		healthzChecksInstalled:     false,
-		healthzLock:                sync.Mutex{},
-		livezChecks:                []healthz.HealthChecker{},
-		livezChecksInstalled:       false,
-		livezClock:                 clock.RealClock{},
-		livezGracePeriod:           10 * time.Second,
-		livezLock:                  sync.Mutex{},
-		postStartHookLock:          sync.Mutex{},
-		postStartHooksCalled:       false,
-		preShutdownHookLock:        sync.Mutex{},
-		preShutdownHooksCalled:     false,
-		readyzChecks:               []healthz.HealthChecker{},
-		readyzChecksInstalled:      false,
-		readyzLock:                 sync.Mutex{},
-		readinessStopCh:            make(chan struct{}),
+		return c.BuildHandlerChainFunc(handler, c.Config)
 	}
 
-	s.openAPIConfig = server.DefaultOpenAPIConfig(openapi.GetOpenAPIDefinitions, openapi2.NewDefinitionNamer(Scheme))
-	s.openAPIConfig.Info.Title = "Core API"
-	s.openAPIConfig.Info.Version = "0.1"
+	// Creates the API server HTTP handler
+	// The API server handler has both a
+	// go-restful container, that tries to match the request first.
+	// it then tries to match the request with a non-go-restful handler.
+	apiServerHandler := NewAPIServerHandler(handlerChainBuilder)
 
-	// Install FormDefinitions
-	apiResourceConfig := server.NewDefaultAPIGroupInfo(core.GroupName, Scheme, metav1.ParameterCodec, Codecs)
-	storage := map[string]rest.Storage{}
-	formDefinitionsStorage, err := formdefinition.NewREST(Scheme, s.RESTOptionsGetter)
+	// Installs the known resource handlers in the API
+	// These include FormDefinitions and CustomResourceDefinitions
+	if err := c.installApiGroups(apiServerHandler); err != nil {
+		return nil, err
+	}
+
+	v1Client, err := v1.NewForConfig(c.LoopbackClientConfig)
 	if err != nil {
 		return nil, err
+	}
+
+	// Installs the CustomResource handler in the API
+	// This is ran after go-restful tries to match the route
+	// The CustomResource handler is able to serve new resources
+	// dynamically (eg. created at runtime)
+	if err := c.installCustomResources(apiServerHandler, v1Client.CustomResourceDefinitions()); err != nil {
+		return nil, err
+	}
+
+	formdefinitions3.NewFormDefinitionController(ctx, v1Client)
+
+	// Create the API server
+	server := &Server{
+		ctx:      ctx,
+		handler:  apiServerHandler,
+		listener: c.Listener,
+	}
+
+	return server, nil
+}
+
+// installCustomResources installs the required handlers to serve dynamic
+// CustomResources from the API
+func (c *CompletedConfig) installCustomResources(apiServerHandler *APIServerHandler, cli v1.CustomResourceDefinitionInterface) error {
+	crdHandler, err := handlers2.NewCustomResourceDefinitionHandler(
+		c.CRDRestOptionsGetter,
+		Codecs,
+		cli)
+	if err != nil {
+		return err
+	}
+	apiServerHandler.NonGoRestfulMux.Handle("/apis", crdHandler)
+	apiServerHandler.NonGoRestfulMux.HandlePrefix("/apis/", crdHandler)
+	return nil
+}
+
+// installApiGroups installs the known API groups in the HTTP handler
+func (c *CompletedConfig) installApiGroups(apiServerHandler *APIServerHandler) error {
+	var apiGroups []*APIGroupInfo
+	coreApiGroup, err := createCoreAPIGroupInfo(c.RESTOptionsGetter)
+	if err != nil {
+		return err
+	}
+	apiGroups = append(apiGroups, &coreApiGroup)
+
+	if err := installApiGroups(apiServerHandler.GoRestfulContainer, "/apis", apiGroups...); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// createCoreAPIGroupInfo creates the APIGroupInfo for the core API
+func createCoreAPIGroupInfo(restOptionsGetter generic2.RESTOptionsGetter) (APIGroupInfo, error) {
+	coreApiGroup := NewDefaultAPIGroup(core.GroupName, Scheme, metav1.ParameterCodec, Codecs)
+	storage := map[string]rest2.Storage{}
+
+	// Storage for FormDefinitions
+	formDefinitionsStorage, err := formdefinitions2.NewREST(Scheme, restOptionsGetter)
+	if err != nil {
+		return APIGroupInfo{}, err
 	}
 	storage["formdefinitions"] = formDefinitionsStorage
-	apiResourceConfig.VersionedResourcesStorageMap[corev1.SchemeGroupVersion.Version] = storage
 
-	// Install CustomResourceDefinitions
-	extensionsGroupInfo := server.NewDefaultAPIGroupInfo(apiextensions.GroupName, Scheme, metav1.ParameterCodec, Codecs)
-	extensionsStorage := map[string]rest.Storage{}
-	customResourceDefinitionStorage, err := customresourcedefinition.NewREST(Scheme, c.RESTOptionsGetter)
+	// Storage for CustomResourceDefinitions
+	customResourceDefinitionsStorage, err := customresourcedefinition2.NewREST(Scheme, restOptionsGetter)
 	if err != nil {
-		return nil, err
+		return APIGroupInfo{}, err
 	}
-	extensionsStorage["customresourcedefinitions"] = customResourceDefinitionStorage
-	extensionsStorage["customresourcedefinitions/status"] = customresourcedefinition.NewStatusREST(Scheme, customResourceDefinitionStorage)
-	extensionsGroupInfo.VersionedResourcesStorageMap[apiextensionsv1.SchemeGroupVersion.Version] = extensionsStorage
+	storage["customresourcedefinitions"] = customResourceDefinitionsStorage
 
-	// Install REST resources
-	if err := s.InstallAPIGroups(&apiResourceConfig, &extensionsGroupInfo); err != nil {
-		return nil, err
-	}
+	// register the storage for the "core v1" version
+	coreApiGroup.VersionedResourcesStorageMap[corev1.SchemeGroupVersion.Version] = storage
 
-	// Create API Extensions Client
-	crdClient, err := apiextensionclient.NewForConfig(c.LoopbackClientConfig)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create clientset: %v", err)
-	}
-	s.ApiExtensionsInformerFactory = apiextensionsinformers.NewSharedInformerFactory(crdClient, 5*time.Minute)
-	s.ApiExtensionsClient = crdClient
-
-	coreClient, err := versioned.NewForConfig(c.LoopbackClientConfig)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create clientset: %v", err)
-	}
-	s.CoreClient = coreClient
-	s.CoreInformerFactory = externalversions.NewSharedInformerFactory(coreClient, 5*time.Minute)
-
-	// Handles CRD version discovery
-	versionDiscoveryHandler := &versionDiscoveryHandler{
-		discovery: map[schema.GroupVersion]*discovery.APIVersionHandler{},
-		delegate:  delegate,
-	}
-	// Handles CRD group discovery
-	groupDiscoveryHandler := &groupDiscoveryHandler{
-		discovery: map[string]*discovery.APIGroupHandler{},
-		delegate:  delegate,
-	}
-
-	// EstablishingController controls when CRD are
-	// considered as "established" (it's a runtime.Object condition)
-	establishingController := establish.NewEstablishingController(s.ApiExtensionsInformerFactory.Apiextensions().V1().CustomResourceDefinitions(), crdClient.ApiextensionsV1())
-
-	// HTTP Handler for CRDs
-	crdHandler, err := NewCustomResourceDefinitionHandler(
-		versionDiscoveryHandler,
-		groupDiscoveryHandler,
-		s.ApiExtensionsInformerFactory.Apiextensions().V1().CustomResourceDefinitions(),
-		delegate,
-		c.RESTOptionsGetter,
-		nil,
-		establishingController,
-		nil,
-		nil,
-		1,
-		nil,
-		5*time.Second,
-		2*time.Second,
-		extensionsGroupInfo.StaticOpenAPISpec,
-		(10 * 1024 * 1024),
-	)
-
-	// Handle the CRDs without go-restful container
-	s.Handler.NonGoRestfulMux.Handle("/apis", crdHandler)
-	s.Handler.NonGoRestfulMux.HandlePrefix("/apis/", crdHandler)
-
-	// Create the CRD controllers
-	discoveryController := NewDiscoveryController(s.ApiExtensionsInformerFactory.Apiextensions().V1().CustomResourceDefinitions(), versionDiscoveryHandler, groupDiscoveryHandler)
-	namingController := status.NewNamingConditionController(s.ApiExtensionsInformerFactory.Apiextensions().V1().CustomResourceDefinitions(), crdClient.ApiextensionsV1())
-	nonStructuralSchemaController := nonstructuralschema.NewConditionController(s.ApiExtensionsInformerFactory.Apiextensions().V1().CustomResourceDefinitions(), crdClient.ApiextensionsV1())
-	apiApprovalController := apiapproval.NewKubernetesAPIApprovalPolicyConformantConditionController(s.ApiExtensionsInformerFactory.Apiextensions().V1().CustomResourceDefinitions(), crdClient.ApiextensionsV1())
-	finalizingController := finalizer.NewCRDFinalizer(
-		s.ApiExtensionsInformerFactory.Apiextensions().V1().CustomResourceDefinitions(),
-		crdClient.ApiextensionsV1(),
-		crdHandler,
-	)
-	// openapiController := openapicontroller.NewController(s.ApiExtensionsInformers.Apiextensions().V1().CustomResourceDefinitions())
-
-	formDefinitionController := controllers.NewFormDefinitionController(
-		s.CoreInformerFactory.Core().V1().FormDefinitions(),
-		crdClient.ApiextensionsV1().CustomResourceDefinitions(),
-		s.ApiExtensionsInformerFactory.Apiextensions().V1().CustomResourceDefinitions())
-
-	// Start the api extension informers
-	s.AddPostStartHookOrDie("start-apiextension-informers", func(context PostStartHookContext) error {
-		s.ApiExtensionsInformerFactory.Start(context.StopCh)
-		return nil
-	})
-
-	// Start the form definitions informers
-	s.AddPostStartHookOrDie("start-formdefinitions-informers", func(context PostStartHookContext) error {
-		s.CoreInformerFactory.Start(context.StopCh)
-		return nil
-	})
-
-	// Start the api extensions controllers
-	s.AddPostStartHookOrDie("start-apiextensions-controllers", func(context PostStartHookContext) error {
-
-		//TODO: openapi
-		go namingController.Run(context.StopCh)
-		go establishingController.Run(context.StopCh)
-		go nonStructuralSchemaController.Run(5, context.StopCh)
-		go apiApprovalController.Run(5, context.StopCh)
-		go finalizingController.Run(5, context.StopCh)
-
-		discoverySyncedCh := make(chan struct{})
-		go discoveryController.Run(context.StopCh, discoverySyncedCh)
-		select {
-		case <-context.StopCh:
-		case <-discoverySyncedCh:
-		}
-		return nil
-	})
-
-	s.AddPostStartHookOrDie("start-formdefinitions-controllers", func(context PostStartHookContext) error {
-		formDefinitionController.Run(context.StopCh)
-		select {
-		case <-context.StopCh:
-		}
-		return nil
-	})
-
-	// Wait for CRDs to sync
-	s.AddPostStartHookOrDie("crd-informer-synced", func(context PostStartHookContext) error {
-		return wait.PollImmediateUntil(100*time.Millisecond, func() (done bool, err error) {
-			return s.ApiExtensionsInformerFactory.Apiextensions().V1().CustomResourceDefinitions().Informer().HasSynced(), nil
-		}, context.StopCh)
-	})
-
-	return s, nil
-
-}
-
-func DefaultBuildHandlerChain(apiHandler http.Handler, config *Config) http.Handler {
-	handler := filters.WithRequestInfo(apiHandler, config.RequestInfoResolver)
-	return handler
-}
-
-func NewRequestInfoResolver(c *Config) *request.RequestInfoFactory {
-	apiPrefixes := sets.NewString(strings.Trim(APIGroupPrefix, "/")) // all possible API prefixes
-	legacyAPIPrefixes := sets.String{}                               // APIPrefixes that won't have groups (legacy)
-	for legacyAPIPrefix := range c.LegacyAPIGroupPrefixes {
-		apiPrefixes.Insert(strings.Trim(legacyAPIPrefix, "/"))
-		legacyAPIPrefixes.Insert(strings.Trim(legacyAPIPrefix, "/"))
-	}
-	return &request.RequestInfoFactory{
-		APIPrefixes:          apiPrefixes,
-		GrouplessAPIPrefixes: legacyAPIPrefixes,
-	}
+	return coreApiGroup, nil
 }

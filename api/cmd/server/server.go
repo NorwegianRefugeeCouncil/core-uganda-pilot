@@ -2,17 +2,16 @@ package main
 
 import (
 	"flag"
-	"github.com/nrc-no/core/api/cmd/server/app"
-	genericapiserver "k8s.io/apiserver/pkg/server"
-	"k8s.io/klog/v2"
+	app2 "github.com/nrc-no/core/api/cmd/server/app"
+	serveroptions "github.com/nrc-no/core/api/pkg/server2/options"
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
-	stopCh := genericapiserver.SetupSignalHandler()
-	options := app.NewCoreServerOptions()
-	cmd := app.NewCommandStartCoreServer(options, stopCh)
+	options := &serveroptions.Options{}
+	cmd := app2.NewStartCoreServer(options)
 	cmd.Flags().AddGoFlagSet(flag.CommandLine)
 	if err := cmd.Execute(); err != nil {
-		klog.Fatal(err)
+		logrus.Fatal(err)
 	}
 }
