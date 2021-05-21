@@ -1,0 +1,33 @@
+{
+  "kind": "FormDefinition",
+  "apiGroup": "core.nrc.no/v1",
+  "metadata": {
+    "name": "generalintakes.nrc.no"
+  },
+  "spec": {
+    "group": "nrc.no",
+    "names": {
+      "plural": "generalintakes",
+      "singular": "generalintake",
+      "kind": "GeneralIntake"
+    },
+    "versions": [
+      {
+        "name": "v1",
+        "served": true,
+        "storage": true,
+        "schema": {
+          "root": {
+            "type": "section",
+            "children": [
+              {
+                "type": "text",
+                "key": "firstName"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

@@ -2,61 +2,55 @@ package helpers
 
 import (
 	"github.com/nrc-no/core/api/pkg/apis/core/v1"
-	v12 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	v13 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"strconv"
 )
 
-func ConvertToFormDefinition(formDefinition *v1.FormDefinition) *v12.CustomResourceDefinition {
+func ConvertToCustomResourceDefinition(formDefinition *v1.FormDefinition) *v1.CustomResourceDefinition {
 
-	crd := &v12.CustomResourceDefinition{
+	crd := &v1.CustomResourceDefinition{
 		ObjectMeta: v13.ObjectMeta{
 			Name: formDefinition.Spec.Names.Plural + "." + formDefinition.Spec.Group,
 		},
-		Spec: v12.CustomResourceDefinitionSpec{
+		Spec: v1.CustomResourceDefinitionSpec{
 			Group: formDefinition.Spec.Group,
-			Scope: v12.ClusterScoped,
-			Conversion: &v12.CustomResourceConversion{
-				Strategy: v12.NoneConverter,
-			},
-			Names: v12.CustomResourceDefinitionNames{
+			Names: v1.CustomResourceDefinitionNames{
 				Plural:   formDefinition.Spec.Names.Plural,
 				Singular: formDefinition.Spec.Names.Singular,
 				Kind:     formDefinition.Spec.Names.Kind,
-				ListKind: formDefinition.Spec.Names.Kind + "List",
 			},
 		},
 	}
 
 	for _, version := range formDefinition.Spec.Versions {
-		crdVersion := v12.CustomResourceDefinitionVersion{
+		crdVersion := v1.CustomResourceDefinitionVersion{
 			Name:    version.Name,
 			Storage: version.Storage,
 			Served:  version.Served,
-			Schema:  &v12.CustomResourceValidation{},
+			Schema:  v1.CustomResourceDefinitionValidation{},
 		}
 		validation := ConvertFormDefinitionVersion(formDefinition, version)
-		crdVersion.Schema = validation
+		crdVersion.Schema = *validation
 		crd.Spec.Versions = append(crd.Spec.Versions, crdVersion)
 	}
 
 	return crd
 }
 
-func ConvertFormDefinitionVersion(fs *v1.FormDefinition, version v1.FormDefinitionVersion) *v12.CustomResourceValidation {
+func ConvertFormDefinitionVersion(fs *v1.FormDefinition, version v1.FormDefinitionVersion) *v1.CustomResourceDefinitionValidation {
 
-	specSchema := &v12.JSONSchemaProps{
+	specSchema := &v1.JSONSchemaProps{
 		Description: `Defines the desired state fo ` + fs.Spec.Names.Kind,
 		Type:        "object",
 	}
 	formSchema := version.Schema.FormSchema.Root
 	WalkFormSchema(formSchema, specSchema)
 
-	return &v12.CustomResourceValidation{
-		OpenAPIV3Schema: &v12.JSONSchemaProps{
+	return &v1.CustomResourceDefinitionValidation{
+		OpenAPIV3Schema: v1.JSONSchemaProps{
 			Description: "Schema for the " + fs.Spec.Names.Kind + " api",
 			Type:        "object",
-			Properties: map[string]v12.JSONSchemaProps{
+			Properties: map[string]v1.JSONSchemaProps{
 				"apiVersion": {
 					Description: `APIVersion defines the versioned schema of this representation
 of an object. Servers should convert recognized schemas to the latest internal value, and may
@@ -78,7 +72,7 @@ Cannot be updated. In CamelCase.`,
 	}
 }
 
-func WalkFormSchema(element v1.FormElementDefinition, jsonProps *v12.JSONSchemaProps) {
+func WalkFormSchema(element v1.FormElementDefinition, jsonProps *v1.JSONSchemaProps) {
 
 	var intMultipleOf float64 = 1
 	switch element.Type {
@@ -128,13 +122,13 @@ func WalkFormSchema(element v1.FormElementDefinition, jsonProps *v12.JSONSchemaP
 	}
 
 	for _, child := range element.Children {
-		childJsonProps := &v12.JSONSchemaProps{}
+		childJsonProps := &v1.JSONSchemaProps{}
 		WalkFormSchema(child, childJsonProps)
 
 		if childJsonProps.Type == "object" {
 			if childJsonProps.Properties != nil {
 				if jsonProps.Properties == nil {
-					jsonProps.Properties = map[string]v12.JSONSchemaProps{}
+					jsonProps.Properties = map[string]v1.JSONSchemaProps{}
 				}
 				for key, props := range childJsonProps.Properties {
 					jsonProps.Properties[key] = props
@@ -145,7 +139,7 @@ func WalkFormSchema(element v1.FormElementDefinition, jsonProps *v12.JSONSchemaP
 			}
 		} else {
 			if jsonProps.Properties == nil {
-				jsonProps.Properties = map[string]v12.JSONSchemaProps{}
+				jsonProps.Properties = map[string]v1.JSONSchemaProps{}
 			}
 			jsonProps.Properties[child.Key] = *childJsonProps
 			if child.Required {
