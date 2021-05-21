@@ -1,4 +1,4 @@
-import { Direction } from '@core/shared/ui-toolkit/util/types';
+import { Direction } from '@core/ui-toolkit/util/types';
 
 export function menuPositionFromDir(direction: Direction) {
   switch (direction) {

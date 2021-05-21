@@ -3,7 +3,7 @@ import {
   classNames,
   Box,
   PolymorphicComponentProps,
-} from '@core/shared/ui-toolkit/util/utils';
+} from '@core/ui-toolkit/util/utils';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type FormTextOwnProps = {};

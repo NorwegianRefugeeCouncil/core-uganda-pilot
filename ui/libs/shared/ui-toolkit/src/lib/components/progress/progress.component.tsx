@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { classNames } from '@core/shared/ui-toolkit/util/utils';
-import { Color } from '@core/shared/ui-toolkit/util/types';
+import { classNames } from '@core/ui-toolkit/util/utils';
+import { Color } from '@core/ui-toolkit/util/types';
 import { ProgressBar } from './progress-bar.component';
 
 export interface ProgressProps extends React.ComponentPropsWithRef<'div'> {

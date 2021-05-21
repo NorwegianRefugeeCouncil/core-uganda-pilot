@@ -10,39 +10,19 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": [
-      "es2017",
-      "dom"
-    ],
+    "lib": ["es2017", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@core/shared/ui-toolkit": [
-        "libs/shared/ui-toolkit/src/index.ts"
-      ],
-      "@core/shared/bootstrap": [
-        "libs/shared/bootstrap/build/*"
-      ],
-      "@core/formbuilder": [
-        "libs/formbuilder/src/index.ts"
-      ],
-      "@core/shared/ui-toolkit/util/*": [
-        "libs/shared/ui-toolkit/src/lib/util/*"
-      ],
-      "@core/formrenderer": [
-        "libs/formrenderer/src/index.ts"
-      ],
-      "@core/core-ui": [
-        "libs/core-ui/src/index.ts"
-      ],
-      "@core/shared/api-client": [
-        "libs/shared/api-client/src/index.ts"
-      ],
+      "@core/ui-toolkit": ["libs/shared/ui-toolkit/src/index.ts"],
+      "@core/bootstrap": ["libs/shared/bootstrap/build/*"],
+      "@core/formbuilder": ["libs/formbuilder/src/index.ts"],
+      "@core/ui-toolkit/util/*": ["libs/shared/ui-toolkit/src/lib/util/*"],
+      "@core/formrenderer": ["libs/formrenderer/src/index.ts"],
+      "@core/core-ui": ["libs/core-ui/src/index.ts"],
+      "@core/api-client": ["libs/shared/api-client/src/index.ts"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "tmp"
-  ]
+  "exclude": ["node_modules", "tmp"]
 }

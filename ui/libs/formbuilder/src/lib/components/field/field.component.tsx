@@ -14,7 +14,7 @@ import {
   FormCheckInput,
   FormInput,
   //   Card,
-} from '@core/shared/ui-toolkit';
+} from '@core/ui-toolkit';
 import './field.css';
 
 export type Translations = {

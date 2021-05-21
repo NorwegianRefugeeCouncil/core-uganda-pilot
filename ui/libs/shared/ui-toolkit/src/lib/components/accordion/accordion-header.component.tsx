@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { AccordionContext } from './accordion-context';
-import { classNames } from '@core/shared/ui-toolkit/util/utils';
+import { classNames } from '@core/ui-toolkit/util/utils';
 
 export interface AccordionHeaderProps
   extends React.ComponentPropsWithRef<'h2'> {

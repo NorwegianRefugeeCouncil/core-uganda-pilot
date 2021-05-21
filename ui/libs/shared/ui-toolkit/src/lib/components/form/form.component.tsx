@@ -5,7 +5,7 @@ import { FormControl } from './form-control.component';
 import { FormSelect } from './form-select.component';
 import { FormText } from './form-text.component';
 import { FormCheck } from './form-check.component';
-import { classNames } from '@core/shared/ui-toolkit/util/utils';
+import { classNames } from '@core/ui-toolkit/util/utils';
 
 export interface FormProps extends React.ComponentPropsWithRef<'form'> {
   inline?: true;

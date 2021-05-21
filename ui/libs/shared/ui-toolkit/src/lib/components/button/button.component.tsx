@@ -1,6 +1,6 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { Color } from '@core/shared/ui-toolkit/util/types';
+import { Color } from '@core/ui-toolkit/util/types';
 
 export interface ButtonProps extends React.ComponentPropsWithRef<'button'> {
   theme?: Color | 'link';

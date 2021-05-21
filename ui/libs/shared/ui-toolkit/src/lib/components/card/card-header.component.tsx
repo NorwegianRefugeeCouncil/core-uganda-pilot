@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { classNames } from '@core/shared/ui-toolkit/util/utils';
+import { classNames } from '@core/ui-toolkit/util/utils';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface CardHeaderProps extends React.ComponentPropsWithRef<'div'> {}
