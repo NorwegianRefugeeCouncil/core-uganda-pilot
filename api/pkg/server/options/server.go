@@ -6,7 +6,7 @@ import (
 	v1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
 	restclient "github.com/nrc-no/core/api/pkg/client/rest"
 	filters2 "github.com/nrc-no/core/api/pkg/endpoints/filters"
-	"github.com/nrc-no/core/api/pkg/server2"
+	"github.com/nrc-no/core/api/pkg/server"
 	"github.com/spf13/pflag"
 	"net"
 	"net/http"

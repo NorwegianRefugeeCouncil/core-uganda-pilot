@@ -2,7 +2,7 @@ package app
 
 import (
 	"context"
-	"github.com/nrc-no/core/api/pkg/server2/options"
+	"github.com/nrc-no/core/api/pkg/server/options"
 	"github.com/spf13/cobra"
 	"k8s.io/apiserver/pkg/server"
 )

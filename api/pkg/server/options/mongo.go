@@ -2,7 +2,7 @@ package options
 
 import (
 	generic2 "github.com/nrc-no/core/api/pkg/registry/generic"
-	"github.com/nrc-no/core/api/pkg/server2"
+	"github.com/nrc-no/core/api/pkg/server"
 	store2 "github.com/nrc-no/core/api/pkg/store"
 	"github.com/spf13/pflag"
 	"k8s.io/apimachinery/pkg/runtime/schema"

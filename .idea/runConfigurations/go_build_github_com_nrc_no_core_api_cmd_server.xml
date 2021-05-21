@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="go build github.com/nrc-no/core/api/pkg/server2/cmd/server" type="GoApplicationRunConfiguration" factoryName="Go Application" nameIsGenerated="true">
+  <configuration default="false" name="go build github.com/nrc-no/core/api/cmd/server" type="GoApplicationRunConfiguration" factoryName="Go Application" nameIsGenerated="true">
     <module name="core" />
     <working_directory value="$PROJECT_DIR$/api" />
     <parameters value="--mongo-servers &quot;mongodb://localhost:27017&quot; --mongo-username root --mongo-database dev --mongo-password pass12345 --bind-address &quot;127.0.0.1&quot; --bind-port 8000" />
@@ -14,7 +14,7 @@
       </ENTRIES>
     </EXTENSION>
     <kind value="PACKAGE" />
-    <package value="github.com/nrc-no/core/api/pkg/server2/cmd/server" />
+    <package value="github.com/nrc-no/core/api/cmd/server" />
     <directory value="$PROJECT_DIR$" />
     <filePath value="$PROJECT_DIR$/api/pkg/server2/cmd/server/server.go" />
     <method v="2" />

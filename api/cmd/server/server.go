@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	app2 "github.com/nrc-no/core/api/cmd/server/app"
-	serveroptions "github.com/nrc-no/core/api/pkg/server2/options"
+	serveroptions "github.com/nrc-no/core/api/pkg/server/options"
 	"github.com/sirupsen/logrus"
 )
 
