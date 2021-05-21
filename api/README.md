@@ -156,7 +156,9 @@ Vulerability Assessments:
 ### Implementation details
 
 This API leverages the work by the [kubernetes](https://github.com/kubernetes/kubernetes) team, especially around
-the `apimachinery` package. It also uses a [kine](https://github.com/k3s-io/kine) etcd3-compatible storage.
+the `apimachinery` package.
+
+The storage is implemented using `mongodb`
 
 It essentially is a very light version of the kubernetes `apiserver`.
 
@@ -189,15 +191,23 @@ go mod download
 # Set up go vendor directory
 go mod vendor
 
-# Starts a kine instance with a local sqlite store 
-go run ./cmd/kine 
+# Starts mongodb
+# Will be available at localhost:27017
+# mongo-express available at localhost:8081
+docker-compose -f ./docker/docker-compose.yaml up
 
 # Starts the actual core api server
-go run ./cmd/server --etcd-servers 127.0.0.1:2379
+go run ./cmd/server \
+  --mongo-servers "mongodb://localhost:27017" \
+  --mongo-username root \
+  --mongo-database dev \
+  --mongo-password pass12345 \
+  --bind-address "127.0.0.1" \
+  --bind-port 8000
 
 # Try the api a little bit
-curl http://localhost:8001/apis/core.nrc.no/v1
-curl http://localhost:8001/apis/core.nrc.no/v1/formdefinitions
+curl http://localhost:8000/apis/core.nrc.no/v1/formdefinitions -H "Accept: application/yaml"
+
 ```
 
 ### Example Form Definition
@@ -262,7 +272,7 @@ spec:
 #### Post the example form definition
 
 ```shell
-curl --data-binary @example.yaml http://localhost:8001/apis/test.com/v1/formtests -H "Content-Type: application/yaml"
+curl --data-binary @example.yaml http://localhost:8000/apis/test.com/v1/formtests -H "Content-Type: application/yaml"
 ```
 
 <details>
@@ -289,16 +299,16 @@ spec:
 #### Post the form submission
 
 ```shell
-curl --data-binary @submission.yaml http://localhost:8001/apis/test.com/v1/formtests -H "Content-Type: application/yaml"
+curl --data-binary @submission.yaml http://localhost:8000/apis/test.com/v1/formtests -H "Content-Type: application/yaml"
 ```
 
 #### Get the form submission
 
 ```shell
 # Get
-curl http://localhost:8001/apis/test.com/v1/formtests/example-form-submission | jq
+curl http://localhost:8000/apis/test.com/v1/formtests/example-form-submission | jq
 # List
-curl http://localhost:8001/apis/test.com/v1/formtests/ | jq
+curl http://localhost:8000/apis/test.com/v1/formtests/ | jq
 ```
 
 ## Code Generation
@@ -340,7 +350,3 @@ Then, you can run
 ```shell
 ./hack/update-codegen.sh
 ```
-
-## Swagger docs
-
-Just hit the api at http://localhost:8001/openapi/v2

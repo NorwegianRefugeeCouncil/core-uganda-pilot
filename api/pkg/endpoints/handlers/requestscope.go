@@ -28,7 +28,7 @@ func (r *RequestScope) err(err error, w http.ResponseWriter, req *http.Request) 
 }
 
 func (r *RequestScope) AllowsMediaTypeTransform(mimeType, mimeSubType string, gvk *schema.GroupVersionKind) bool {
-	return mimeType == "application" && mimeSubType == "json"
+	return mimeType == "application" && (mimeSubType == "json" || mimeSubType == "yaml")
 }
 
 func (r *RequestScope) AllowsServerVersion(version string) bool {

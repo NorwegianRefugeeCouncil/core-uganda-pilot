@@ -97,7 +97,7 @@ func (i *APIInstaller) registerResourceHandlers(path string, storage rest2.Stora
 		route := ws.GET("/"+resource+"/{name}").To(handler).
 			Doc("Gets a "+kind).
 			Operation("read"+kind).
-			Produces("application/json").
+			Produces("application/json", "application/yaml").
 			Returns(http.StatusOK, "OK", defaultVersionedObject).
 			Writes(defaultVersionedObject)
 		routes = append(routes, route)
@@ -108,7 +108,7 @@ func (i *APIInstaller) registerResourceHandlers(path string, storage rest2.Stora
 		route := ws.GET("/"+resource).To(handler).
 			Doc("List object of kind "+kind).
 			Operation("list"+kind).
-			Produces("application/json").
+			Produces("application/json", "application/yaml").
 			Returns(http.StatusOK, "OK", versionedList).
 			Writes(versionedList)
 		routes = append(routes, route)
@@ -119,7 +119,8 @@ func (i *APIInstaller) registerResourceHandlers(path string, storage rest2.Stora
 		route := ws.PUT("/"+resource+"/{name}").To(handler).
 			Doc("Replaces a "+kind).
 			Operation("replace"+kind).
-			Produces("application/json").
+			Consumes("application/json", "application/yaml").
+			Produces("application/json", "application/yaml").
 			Returns(http.StatusOK, "OK", defaultVersionedObject).
 			Reads(defaultVersionedObject).
 			Writes(defaultVersionedObject)
@@ -131,7 +132,8 @@ func (i *APIInstaller) registerResourceHandlers(path string, storage rest2.Stora
 		route := ws.POST("/"+resource+"/").To(handler).
 			Doc("Create a "+kind).
 			Operation("create"+kind).
-			Produces("application/json").
+			Consumes("application/json", "application/yaml").
+			Produces("application/json", "application/yaml").
 			Returns(http.StatusCreated, "OK", defaultVersionedObject).
 			Reads(defaultVersionedObject).
 			Writes(defaultVersionedObject)
@@ -143,7 +145,8 @@ func (i *APIInstaller) registerResourceHandlers(path string, storage rest2.Stora
 		route := ws.DELETE("/"+resource+"/{name}").To(handler).
 			Doc("Delete a "+kind).
 			Operation("delete"+kind).
-			Produces("application/json").
+			Consumes("application/json", "application/yaml").
+			Produces("application/json", "application/yaml").
 			Returns(http.StatusOK, "OK", defaultVersionedObject).
 			Writes(defaultVersionedObject)
 		routes = append(routes, route)
