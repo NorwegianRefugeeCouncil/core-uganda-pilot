@@ -14,6 +14,11 @@ import (
 	"time"
 )
 
+// FormDefinitionController will
+// 1. Create a CustomResourceDefinition for a given FormDefinition
+// 2. Delete a CustomResourceDefinition if the FormDefinition was deleted
+// 3. Update a CustomResourceDefinition if the FormDefinition was updated
+// It will poll every 15 seconds to reconcile the above.
 type FormDefinitionController struct {
 	cli v1.CoreV1Interface
 }
