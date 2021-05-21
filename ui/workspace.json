@@ -28,13 +28,18 @@
       "targets": {
         "build": {
           "executor": "@nrwl/web:package",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/libs/shared/ui-toolkit",
             "tsConfig": "libs/shared/ui-toolkit/tsconfig.lib.json",
             "project": "libs/shared/ui-toolkit/package.json",
             "entryFile": "libs/shared/ui-toolkit/src/index.ts",
-            "external": ["react", "react-dom"],
+            "external": [
+              "react",
+              "react-dom"
+            ],
             "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
             "assets": [
               {
@@ -48,12 +53,16 @@
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/shared/ui-toolkit/**/*.{ts,tsx,js,jsx}"]
+            "lintFilePatterns": [
+              "libs/shared/ui-toolkit/**/*.{ts,tsx,js,jsx}"
+            ]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/shared/ui-toolkit"],
+          "outputs": [
+            "coverage/libs/shared/ui-toolkit"
+          ],
           "options": {
             "jestConfig": "libs/shared/ui-toolkit/jest.config.js",
             "passWithNoTests": true
@@ -64,7 +73,9 @@
           "options": {
             "uiFramework": "@storybook/react",
             "port": 4400,
-            "staticDir": ["dist/libs/shared/bootstrap/assets/css"],
+            "staticDir": [
+              "dist/libs/shared/bootstrap/"
+            ],
             "config": {
               "configFolder": "libs/shared/ui-toolkit/.storybook"
             }
@@ -77,10 +88,14 @@
         },
         "build-storybook": {
           "executor": "@nrwl/storybook:build",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "uiFramework": "@storybook/react",
-            "staticDir": ["dist/libs/shared/bootstrap/assets/css"],
+            "staticDir": [
+              "dist/libs/shared/bootstrap/"
+            ],
             "outputPath": "apps/showcase/src/assets/shared-ui-toolkit",
             "config": {
               "configFolder": "libs/shared/ui-toolkit/.storybook"
@@ -101,13 +116,18 @@
       "targets": {
         "build": {
           "executor": "@nrwl/web:package",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/libs/formbuilder",
             "tsConfig": "libs/formbuilder/tsconfig.lib.json",
             "project": "libs/formbuilder/package.json",
             "entryFile": "libs/formbuilder/src/index.ts",
-            "external": ["react", "react-dom"],
+            "external": [
+              "react",
+              "react-dom"
+            ],
             "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
             "assets": [
               {
@@ -121,12 +141,16 @@
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/formbuilder/**/*.{ts,tsx,js,jsx}"]
+            "lintFilePatterns": [
+              "libs/formbuilder/**/*.{ts,tsx,js,jsx}"
+            ]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/formbuilder"],
+          "outputs": [
+            "coverage/libs/formbuilder"
+          ],
           "options": {
             "jestConfig": "libs/formbuilder/jest.config.js",
             "passWithNoTests": true
@@ -137,7 +161,9 @@
           "options": {
             "uiFramework": "@storybook/react",
             "port": 4400,
-            "staticDir": ["dist/libs/shared/bootstrap/assets/css"],
+            "staticDir": [
+              "dist/libs/shared/bootstrap/"
+            ],
             "config": {
               "configFolder": "libs/formbuilder/.storybook"
             }
@@ -150,11 +176,15 @@
         },
         "build-storybook": {
           "executor": "@nrwl/storybook:build",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "uiFramework": "@storybook/react",
             "outputPath": "apps/showcase/src/assets/formbuilder",
-            "staticDir": ["dist/libs/shared/bootstrap/assets/css"],
+            "staticDir": [
+              "dist/libs/shared/bootstrap/"
+            ],
             "config": {
               "configFolder": "libs/formbuilder/.storybook"
             }
@@ -174,13 +204,18 @@
       "targets": {
         "build": {
           "executor": "@nrwl/web:package",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/libs/formrenderer",
             "tsConfig": "libs/formrenderer/tsconfig.lib.json",
             "project": "libs/formrenderer/package.json",
             "entryFile": "libs/formrenderer/src/index.ts",
-            "external": ["react", "react-dom"],
+            "external": [
+              "react",
+              "react-dom"
+            ],
             "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
             "assets": [
               {
@@ -194,12 +229,16 @@
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/formrenderer/**/*.{ts,tsx,js,jsx}"]
+            "lintFilePatterns": [
+              "libs/formrenderer/**/*.{ts,tsx,js,jsx}"
+            ]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/formrenderer"],
+          "outputs": [
+            "coverage/libs/formrenderer"
+          ],
           "options": {
             "jestConfig": "libs/formrenderer/jest.config.js",
             "passWithNoTests": true
@@ -210,7 +249,9 @@
           "options": {
             "uiFramework": "@storybook/react",
             "port": 4400,
-            "staticDir": ["dist/libs/shared/bootstrap/assets/css"],
+            "staticDir": [
+              "dist/libs/shared/bootstrap/"
+            ],
             "config": {
               "configFolder": "libs/formrenderer/.storybook"
             }
@@ -223,10 +264,14 @@
         },
         "build-storybook": {
           "executor": "@nrwl/storybook:build",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "uiFramework": "@storybook/react",
-            "staticDir": ["dist/libs/shared/bootstrap/assets/css"],
+            "staticDir": [
+              "dist/libs/shared/bootstrap/"
+            ],
             "outputPath": "apps/showcase/src/assets/formrenderer",
             "config": {
               "configFolder": "libs/formrenderer/.storybook"
@@ -254,14 +299,19 @@
         "prepare-build": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": ["nx run showcase:copy-bs", "nx run showcase:build"],
+            "commands": [
+              "nx run showcase:copy-bs",
+              "nx run showcase:build"
+            ],
             "cwd": "ui",
             "parallel": false
           }
         },
         "build": {
           "executor": "@nrwl/web:build",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/apps/showcase",
             "index": "apps/showcase/src/index.html",
@@ -272,7 +322,9 @@
               "apps/showcase/src/favicon.ico",
               "apps/showcase/src/assets"
             ],
-            "styles": ["apps/showcase/src/styles.css"],
+            "styles": [
+              "apps/showcase/src/styles.css"
+            ],
             "scripts": [],
             "webpackConfig": "@nrwl/react/plugins/webpack"
           },
@@ -315,12 +367,16 @@
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/showcase/**/*.{ts,tsx,js,jsx}"]
+            "lintFilePatterns": [
+              "apps/showcase/**/*.{ts,tsx,js,jsx}"
+            ]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/showcase"],
+          "outputs": [
+            "coverage/apps/showcase"
+          ],
           "options": {
             "jestConfig": "apps/showcase/jest.config.js",
             "passWithNoTests": true
@@ -349,7 +405,9 @@
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/showcase-e2e/**/*.{js,ts}"]
+            "lintFilePatterns": [
+              "apps/showcase-e2e/**/*.{js,ts}"
+            ]
           }
         }
       }
@@ -361,7 +419,9 @@
       "targets": {
         "build": {
           "executor": "@nrwl/web:build",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/apps/core-web-app",
             "index": "apps/core-web-app/src/index.html",
@@ -372,7 +432,9 @@
               "apps/core-web-app/src/favicon.ico",
               "apps/core-web-app/src/assets"
             ],
-            "styles": ["apps/core-web-app/src/styles.css"],
+            "styles": [
+              "apps/core-web-app/src/styles.css"
+            ],
             "scripts": [],
             "webpackConfig": "@nrwl/react/plugins/webpack"
           },
@@ -415,12 +477,16 @@
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/core-web-app/**/*.{ts,tsx,js,jsx}"]
+            "lintFilePatterns": [
+              "apps/core-web-app/**/*.{ts,tsx,js,jsx}"
+            ]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/core-web-app"],
+          "outputs": [
+            "coverage/apps/core-web-app"
+          ],
           "options": {
             "jestConfig": "apps/core-web-app/jest.config.js",
             "passWithNoTests": true
@@ -449,7 +515,9 @@
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/core-web-app-e2e/**/*.{js,ts}"]
+            "lintFilePatterns": [
+              "apps/core-web-app-e2e/**/*.{js,ts}"
+            ]
           }
         }
       }
@@ -462,12 +530,16 @@
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/core-ui/**/*.{ts,tsx,js,jsx}"]
+            "lintFilePatterns": [
+              "libs/core-ui/**/*.{ts,tsx,js,jsx}"
+            ]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/core-ui"],
+          "outputs": [
+            "coverage/libs/core-ui"
+          ],
           "options": {
             "jestConfig": "libs/core-ui/jest.config.js",
             "passWithNoTests": true
@@ -483,12 +555,16 @@
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/shared/api-client/**/*.ts"]
+            "lintFilePatterns": [
+              "libs/shared/api-client/**/*.ts"
+            ]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/shared/api-client"],
+          "outputs": [
+            "coverage/libs/shared/api-client"
+          ],
           "options": {
             "jestConfig": "libs/shared/api-client/jest.config.js",
             "passWithNoTests": true
@@ -526,12 +602,16 @@
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/shared/bootstrap/**/*.ts"]
+            "lintFilePatterns": [
+              "libs/shared/bootstrap/**/*.ts"
+            ]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/shared/bootstrap"],
+          "outputs": [
+            "coverage/libs/shared/bootstrap"
+          ],
           "options": {
             "jestConfig": "libs/shared/bootstrap/jest.config.js",
             "passWithNoTests": true
