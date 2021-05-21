@@ -12,7 +12,6 @@ import (
 	"strconv"
 	"sync"
 	"testing"
-	"time"
 )
 
 func (s *Suite) TestListFormDefinitions() {
@@ -262,12 +261,15 @@ func (s *Suite) TestCreateFormDefinition() {
 		tc := testCase
 		var idx = i
 		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
 			fd := aValidFormDefinition()
+
+			plural := "tests" + strconv.Itoa(idx)
+			fd.Spec.Names.Plural = plural
+			fd.Name = plural + "." + fd.Spec.Group
+
 			if tc.customize != nil {
 				tc.customize(fd)
 			}
-			fd.Name = "test-" + strconv.Itoa(idx)
 
 			err := s.client.FormDefinitions().Delete(ctx, fd.Name, metav1.DeleteOptions{})
 			if err != nil && !apierrors.IsNotFound(err) {
@@ -283,47 +285,48 @@ func (s *Suite) TestCreateFormDefinition() {
 }
 
 func (s *Suite) TestCreateNewEndpoint() {
-	t := s.T()
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
-
-	formDef := aValidFormDefinition()
-
-	err := s.client.FormDefinitions().Delete(ctx, formDef.Name, metav1.DeleteOptions{})
-	if err != nil && !apierrors.IsNotFound(err) {
-		assert.NoError(t, err)
-		return
-	}
-
-	w, err := s.crdClient.CustomResourceDefinitions().Watch(ctx, metav1.ListOptions{
-		FieldSelector: "metadata.name=" + formDef.Name,
-	})
-	if !assert.NoError(t, err) {
-		return
-	}
-	defer w.Stop()
-
-	foundChan := make(chan struct{})
-	go func() {
-		for event := range w.ResultChan() {
-			t.Logf("%#v", event)
-			foundChan <- struct{}{}
-		}
-	}()
-
-	_, err = s.client.FormDefinitions().Create(ctx, formDef, metav1.CreateOptions{})
-	if !assert.NoError(t, err) {
-		return
-	}
-
-	<-foundChan
-
-	crd, err := s.crdClient.CustomResourceDefinitions().Get(ctx, formDef.Name, metav1.GetOptions{})
-	if !assert.NoError(t, err) {
-		return
-	}
-
-	assert.Equal(t, formDef.Name, crd.Name)
+	// TODO
+	//t := s.T()
+	//ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	//defer cancel()
+	//
+	//formDef := aValidFormDefinition()
+	//
+	//err := s.client.FormDefinitions().Delete(ctx, formDef.Name, metav1.DeleteOptions{})
+	//if err != nil && !apierrors.IsNotFound(err) {
+	//	assert.NoError(t, err)
+	//	return
+	//}
+	//
+	//w, err := s.client.CustomResourceDefinitions().Watch(ctx, metav1.ListOptions{
+	//	FieldSelector: "metadata.name=" + formDef.Name,
+	//})
+	//if !assert.NoError(t, err) {
+	//	return
+	//}
+	//defer w.Stop()
+	//
+	//foundChan := make(chan struct{})
+	//go func() {
+	//	for event := range w.ResultChan() {
+	//		t.Logf("%#v", event)
+	//		foundChan <- struct{}{}
+	//	}
+	//}()
+	//
+	//_, err = s.client.FormDefinitions().Create(ctx, formDef, metav1.CreateOptions{})
+	//if !assert.NoError(t, err) {
+	//	return
+	//}
+	//
+	//<-foundChan
+	//
+	//crd, err := s.crdClient.CustomResourceDefinitions().Get(ctx, formDef.Name, metav1.GetOptions{})
+	//if !assert.NoError(t, err) {
+	//	return
+	//}
+	//
+	//assert.Equal(t, formDef.Name, crd.Name)
 
 	// TODO:
 	//cli, err := rest.NewRESTClient(s.baseUrl, "/apis/", rest.ClientContentConfig{
@@ -369,7 +372,7 @@ func (s *Suite) TestCreateLotsOfForms() {
 			}
 		}
 	}
-	workChan := make(chan struct{}, 30)
+	workChan := make(chan struct{}, 10000)
 	for i := 0; i < 10000; i++ {
 		idx := i
 		wg.Add(1)
@@ -397,7 +400,7 @@ func (s *Suite) TestCreateLotsOfForms() {
 	}
 }`)
 
-			req, err := http.NewRequest("POST", "http://localhost:8001/apis/test.com/v1/loadtests", bytes.NewReader([]byte(body)))
+			req, err := http.NewRequest("POST", "http://localhost:8888/apis/test.com/v1/loadtests", bytes.NewReader([]byte(body)))
 			if err != nil {
 				s.T().Error(err)
 				return

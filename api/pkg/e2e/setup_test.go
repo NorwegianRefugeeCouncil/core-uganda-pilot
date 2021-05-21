@@ -2,12 +2,12 @@ package e2e
 
 import (
 	"context"
-	"github.com/nrc-no/core/api/cmd/server/app"
-	v1 "github.com/nrc-no/core/api/pkg/generated/clientset/versioned/typed/core/v1"
+	v1 "github.com/nrc-no/core/api/pkg/client/core/v1"
+	"github.com/nrc-no/core/api/pkg/client/rest"
+	serveroptions "github.com/nrc-no/core/api/pkg/server/options"
+	"github.com/nrc-no/core/api/pkg/store"
 	"github.com/stretchr/testify/suite"
-	apiextensionsclientv1 "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/typed/apiextensions/v1"
-	"k8s.io/client-go/rest"
-	"k8s.io/client-go/util/flowcontrol"
+	"net"
 	"net/url"
 	"testing"
 	"time"
@@ -17,9 +17,6 @@ type Suite struct {
 	suite.Suite
 	cancel     context.CancelFunc
 	client     *v1.CoreV1Client
-	crdClient  *apiextensionsclientv1.ApiextensionsV1Client
-	stopCh     chan struct{}
-	stoppedCh  chan struct{}
 	restConfig *rest.Config
 	baseUrl    *url.URL
 }
@@ -27,47 +24,53 @@ type Suite struct {
 func (s *Suite) SetupSuite() {
 	t := s.T()
 
-	options := app.NewCoreServerOptions()
-	options.RecommendedOptions.Etcd.StorageConfig.Transport.ServerList = []string{
-		"localhost:2379",
+	ctx, cancel := context.WithCancel(context.Background())
+	s.cancel = cancel
+
+	opts := &serveroptions.Options{
+		StorageConfig: serveroptions.MongoOptions{
+			StorageConfig: store.Config{
+				Transport: store.TransportConfig{
+					Password: "pass12345",
+					Username: "root",
+					Database: "test",
+					ServerList: []string{
+						"mongodb://127.0.0.1:27017",
+					},
+				},
+			},
+		},
+		BindPort:    8888,
+		BindAddress: net.ParseIP("127.0.0.1"),
 	}
-	if err := options.Complete(); err != nil {
-		t.Fatal(err)
+	if err := opts.Complete(); err != nil {
+		panic(err)
 	}
-	if err := options.Validate([]string{}); err != nil {
-		t.Fatal(err)
+	if err := opts.Validate(); err != nil {
+		panic(err)
 	}
-	s.stopCh = make(chan struct{})
-	s.stoppedCh = make(chan struct{})
 
 	go func() {
-		if err := options.RunCoreServer(s.stopCh); err != nil {
-			t.Fatal(err)
+		if err := opts.Run(ctx); err != nil {
+			cancel()
 		}
 	}()
 
 	time.Sleep(2 * time.Second)
 
-	baseUrl, _ := url.Parse("http://localhost:8001")
-	s.baseUrl = baseUrl
-
 	s.restConfig = &rest.Config{
-		Host:        baseUrl.String(),
-		RateLimiter: flowcontrol.NewFakeAlwaysRateLimiter(),
+		Host: "http://localhost:8888",
 	}
 	var err error
 	s.client, err = v1.NewForConfig(s.restConfig)
 	if err != nil {
 		t.Fatalf("could not create rest client: %v", err)
 	}
-	s.crdClient, err = apiextensionsclientv1.NewForConfig(s.restConfig)
-	if err != nil {
-		t.Fatalf("could not create rest client: %v", err)
-	}
+
 }
 
 func (s *Suite) TearDownSuite() {
-	s.stopCh <- struct{}{}
+	s.cancel()
 }
 
 func TestSuite(t *testing.T) {

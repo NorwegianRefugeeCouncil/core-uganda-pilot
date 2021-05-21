@@ -39,7 +39,7 @@ func NewFormDefinitionController(ctx context.Context, cli v1.CoreV1Interface) *F
 		// TODO: find a way to run this on post startup hooks
 		// this would fail otherwise because the server is not up yet
 		// at this point
-		time.Sleep(5 * time.Second)
+		time.Sleep(1 * time.Second)
 		_, _ = controller.syncFormDefinitions(ctx)
 	}()
 

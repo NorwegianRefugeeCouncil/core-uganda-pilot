@@ -11,14 +11,14 @@ CODEGEN_PKG=${CODEGEN_PKG:-$(
   ls -d -1 ./vendor/k8s.io/code-generator 2>/dev/null || echo ../code-generator
 )}
 
-bash "${CODEGEN_PKG}/generate-groups.sh" all \
+bash "${CODEGEN_PKG}/generate-groups.sh" deepcopy \
   github.com/nrc-no/core/api/pkg/generated github.com/nrc-no/core/api/pkg/apis \
   "core:v1" \
   --go-header-file "${SCRIPT_ROOT}"/hack/boilerplate.go.txt
 
 openapi_xtra_pkgs=()
-openapi_xtra_pkgs+=("k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1")
-openapi_xtra_pkgs+=("k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1")
+#openapi_xtra_pkgs+=("k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1")
+#openapi_xtra_pkgs+=("k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1")
 
 function join_by() {
   local d=${1-} f=${2-}

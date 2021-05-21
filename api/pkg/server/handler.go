@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"github.com/emicklei/go-restful"
 	"github.com/sirupsen/logrus"
 	"k8s.io/apiserver/pkg/server/mux"
@@ -24,6 +25,12 @@ func NewAPIServerHandler(handlerChainBuilder HandlerChainBuilderFn) *APIServerHa
 		GoRestfulContainer: goRestfulContainer,
 		NonGoRestfulMux:    nonGoRestfulMux,
 		FullHandlerChain: handlerChainBuilder(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+
+			defer func() {
+				if r := recover(); r != nil {
+					fmt.Println("Recovered in f", r)
+				}
+			}()
 
 			// At this point, all the filters/middlewares have been ran
 			// through the handlerChain.
