@@ -259,7 +259,7 @@ Cannot be updated. In CamelCase.`,
 		},
 	}
 
-	crd := ConvertToFormDefinition(formDef)
+	crd := ConvertToCustomResourceDefinition(formDef)
 
 	assert.Equal(t, expected, crd)
 

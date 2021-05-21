@@ -113,7 +113,7 @@ func (c *FormDefinitionController) syncFormDefinition(formDef *v1.FormDefinition
 	crdName := formDef.Name
 	crd, err := c.crdLister.Get(crdName)
 	if errors.IsNotFound(err) {
-		crd := helpers.ConvertToFormDefinition(formDef)
+		crd := helpers.ConvertToCustomResourceDefinition(formDef)
 		_, err := c.crdClient.Create(context.TODO(), crd, metav1.CreateOptions{})
 		if err != nil {
 			return err
@@ -130,7 +130,7 @@ func (c *FormDefinitionController) syncFormDefinition(formDef *v1.FormDefinition
 // reconcileFormDefinition Detects and reconciles changes between FormDefinition and CustomResourceDefinition
 func (c *FormDefinitionController) reconcileFormDefinition(formDef *v1.FormDefinition, actualCrd *apiextensionsv1.CustomResourceDefinition) error {
 
-	desiredCrd := helpers.ConvertToFormDefinition(formDef)
+	desiredCrd := helpers.ConvertToCustomResourceDefinition(formDef)
 
 	desiredBytes, err := json.Marshal(desiredCrd.Spec)
 	if err != nil {

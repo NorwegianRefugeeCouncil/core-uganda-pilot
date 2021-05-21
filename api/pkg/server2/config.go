@@ -7,6 +7,7 @@ import (
 	corev1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
 	v1 "github.com/nrc-no/core/api/pkg/client/core/v1"
 	restclient "github.com/nrc-no/core/api/pkg/client/rest"
+	formdefinitions2 "github.com/nrc-no/core/api/pkg/server2/controllers/formdefinitions"
 	"github.com/nrc-no/core/api/pkg/server2/endpoints/handlers"
 	"github.com/nrc-no/core/api/pkg/server2/registry/core/customresourcedefinition"
 	"github.com/nrc-no/core/api/pkg/server2/registry/core/formdefinitions"
@@ -85,6 +86,8 @@ func (c *CompletedConfig) New(ctx context.Context) (*Server, error) {
 	if err := c.installCustomResources(apiServerHandler, v1Client.CustomResourceDefinitions()); err != nil {
 		return nil, err
 	}
+
+	formdefinitions2.NewFormDefinitionController(ctx, v1Client)
 
 	// Create the API server
 	server := &Server{
