@@ -104,7 +104,7 @@ type CustomResourceDefinitionList struct {
 	metav1.ListMeta
 
 	// Items represents the CustomResourceDefinition items contained in this list
-	Items []FormDefinition
+	Items []CustomResourceDefinition
 }
 
 // CustomResourceDefinitionSpec represents the specification of a CustomResourceDefinition

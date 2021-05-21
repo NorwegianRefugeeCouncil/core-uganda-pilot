@@ -206,16 +206,16 @@ func validateCustomResourceDefinitionSpec(spec *core.CustomResourceDefinitionSpe
 	//	opts.requireStructuralSchema = true
 	//}
 
-	if opts.requireOpenAPISchema {
-		// check that either a global schema or versioned schemas are set in all versions
-		//if spec.Validation == nil || spec.Validation.OpenAPIV3Schema == nil {
-		for i, _ := range spec.Versions {
-			//if v.Schema == nil || v.Schema.OpenAPIV3Schema == nil {
-			allErrs = append(allErrs, field.Required(fldPath.Child("versions").Index(i).Child("schema").Child("openAPIV3Schema"), "schemas are required"))
-			//}
-		}
-		//}
-	}
+	//if opts.requireOpenAPISchema {
+	//	// check that either a global schema or versioned schemas are set in all versions
+	//	//if spec.Validation == nil || spec.Validation.OpenAPIV3Schema == nil {
+	//	for i, _ := range spec.Versions {
+	//		//if v.Schema == nil || v.Schema.OpenAPIV3Schema == nil {
+	//		allErrs = append(allErrs, field.Required(fldPath.Child("versions").Index(i).Child("schema").Child("openAPIV3Schema"), "schemas are required))
+	//		//}
+	//	}
+	//	//}
+	//}
 
 	//else if spec.PreserveUnknownFields == nil || *spec.PreserveUnknownFields == false {
 	//	// check that either a global schema or versioned schemas are set in served versions
@@ -518,7 +518,7 @@ func validateCustomResourceDefinitionSpecUpdate(spec, oldSpec *core.CustomResour
 // hasIdenticalPerVersionSchema returns true if a CRD sets identical non-nil values
 // to all per-version schemas
 func hasIdenticalPerVersionSchema(versions []core.CustomResourceDefinitionVersion) bool {
-	if len(versions) == 0 {
+	if len(versions) == 1 {
 		return false
 	}
 	value := versions[0].Schema

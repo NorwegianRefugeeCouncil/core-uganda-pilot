@@ -10,7 +10,7 @@ type REST struct {
 	*generic.Store
 }
 
-func NewRest(schema *runtime.Scheme, optsGetter generic.RESTOptionsGetter) (*REST, error) {
+func NewREST(schema *runtime.Scheme, optsGetter generic.RESTOptionsGetter) (*REST, error) {
 	strategy := NewStrategy(schema)
 
 	store := &generic.Store{

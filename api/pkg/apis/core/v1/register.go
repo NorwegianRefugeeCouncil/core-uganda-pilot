@@ -24,6 +24,8 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 	scheme.AddKnownTypes(SchemeGroupVersion,
 		&FormDefinition{},
 		&FormDefinitionList{},
+		&CustomResourceDefinition{},
+		&CustomResourceDefinitionList{},
 	)
 	metav1.AddToGroupVersion(scheme, SchemeGroupVersion)
 	return nil

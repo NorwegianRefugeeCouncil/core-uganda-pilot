@@ -26,6 +26,8 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 	scheme.AddKnownTypes(SchemGroupVersion,
 		&FormDefinition{},
 		&FormDefinitionList{},
+		&CustomResourceDefinition{},
+		&CustomResourceDefinitionList{},
 	)
 	return nil
 }

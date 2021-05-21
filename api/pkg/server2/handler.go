@@ -19,10 +19,14 @@ type APIServerHandler struct {
 func NewAPIServerHandler(handlerChainBuilder HandlerChainBuilderFn) *APIServerHandler {
 	goRestfulContainer := restful.NewContainer()
 	nonGoRestfulMux := mux.NewPathRecorderMux("")
+	nonGoRestfulMux.NotFoundHandler(http.NotFoundHandler())
 	return &APIServerHandler{
 		GoRestfulContainer: goRestfulContainer,
 		NonGoRestfulMux:    nonGoRestfulMux,
 		FullHandlerChain: handlerChainBuilder(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+
+			// At this point, all the filters/middlewares have been ran
+			// through the handlerChain.
 
 			path := req.URL.Path
 

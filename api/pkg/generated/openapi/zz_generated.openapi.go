@@ -236,7 +236,7 @@ func schema_pkg_apis_core_v1_CustomResourceDefinitionList(ref common.ReferenceCa
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Default: map[string]interface{}{},
-										Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.FormDefinition"),
+										Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.CustomResourceDefinition"),
 									},
 								},
 							},
@@ -246,7 +246,7 @@ func schema_pkg_apis_core_v1_CustomResourceDefinitionList(ref common.ReferenceCa
 			},
 		},
 		Dependencies: []string{
-			"github.com/nrc-no/core/api/pkg/apis/core/v1.FormDefinition", "k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta"},
+			"github.com/nrc-no/core/api/pkg/apis/core/v1.CustomResourceDefinition", "k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta"},
 	}
 }
 
@@ -299,6 +299,13 @@ func schema_pkg_apis_core_v1_CustomResourceDefinitionSpec(ref common.ReferenceCa
 							Format:      "",
 						},
 					},
+					"names": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Names represent the identifiers used to build the API",
+							Default:     map[string]interface{}{},
+							Ref:         ref("github.com/nrc-no/core/api/pkg/apis/core/v1.CustomResourceDefinitionNames"),
+						},
+					},
 					"versions": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Versions represents the different available api versions for that custom resource",
@@ -314,11 +321,11 @@ func schema_pkg_apis_core_v1_CustomResourceDefinitionSpec(ref common.ReferenceCa
 						},
 					},
 				},
-				Required: []string{"group", "versions"},
+				Required: []string{"group", "names", "versions"},
 			},
 		},
 		Dependencies: []string{
-			"github.com/nrc-no/core/api/pkg/apis/core/v1.CustomResourceDefinitionVersion"},
+			"github.com/nrc-no/core/api/pkg/apis/core/v1.CustomResourceDefinitionNames", "github.com/nrc-no/core/api/pkg/apis/core/v1.CustomResourceDefinitionVersion"},
 	}
 }
 

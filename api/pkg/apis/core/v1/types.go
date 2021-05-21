@@ -191,7 +191,7 @@ type CustomResourceDefinitionList struct {
 	metav1.ListMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
 
 	// Items represents the CustomResourceDefinition items contained in this list
-	Items []FormDefinition `json:"items,omitempty" protobuf:"bytes,2,opt,name=items"`
+	Items []CustomResourceDefinition `json:"items,omitempty" protobuf:"bytes,2,opt,name=items"`
 }
 
 // CustomResourceDefinitionSpec represents the specification of a CustomResourceDefinition
@@ -200,6 +200,7 @@ type CustomResourceDefinitionSpec struct {
 	// CustomResourceDefinition
 	Group string `json:"group" protobuf:"bytes,1,opt,name=group"`
 
+	// Names represent the identifiers used to build the API
 	Names CustomResourceDefinitionNames `json:"names" protobuf:"bytes,2,opt,name=names"`
 
 	// Versions represents the different available api versions for that custom resource

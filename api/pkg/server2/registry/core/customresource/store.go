@@ -37,9 +37,10 @@ func newRest(resource schema.GroupResource, kind, listKind schema.GroupVersionKi
 			ret.SetGroupVersionKind(listKind)
 			return ret
 		},
-		CreateStrategy: strategy,
-		UpdateStrategy: strategy,
-		DeleteStrategy: strategy,
+		CreateStrategy:           strategy,
+		UpdateStrategy:           strategy,
+		DeleteStrategy:           strategy,
+		DefaultQualifiedResource: resource,
 	}
 
 	opts := &generic.StoreOptions{RESTOptions: optsGetter}

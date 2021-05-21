@@ -276,7 +276,7 @@ func Convert_core_CustomResourceDefinition_To_v1_CustomResourceDefinition(in *co
 
 func autoConvert_v1_CustomResourceDefinitionList_To_core_CustomResourceDefinitionList(in *CustomResourceDefinitionList, out *core.CustomResourceDefinitionList, s conversion.Scope) error {
 	out.ListMeta = in.ListMeta
-	out.Items = *(*[]core.FormDefinition)(unsafe.Pointer(&in.Items))
+	out.Items = *(*[]core.CustomResourceDefinition)(unsafe.Pointer(&in.Items))
 	return nil
 }
 
@@ -287,7 +287,7 @@ func Convert_v1_CustomResourceDefinitionList_To_core_CustomResourceDefinitionLis
 
 func autoConvert_core_CustomResourceDefinitionList_To_v1_CustomResourceDefinitionList(in *core.CustomResourceDefinitionList, out *CustomResourceDefinitionList, s conversion.Scope) error {
 	out.ListMeta = in.ListMeta
-	out.Items = *(*[]FormDefinition)(unsafe.Pointer(&in.Items))
+	out.Items = *(*[]CustomResourceDefinition)(unsafe.Pointer(&in.Items))
 	return nil
 }
 
@@ -322,6 +322,9 @@ func Convert_core_CustomResourceDefinitionNames_To_v1_CustomResourceDefinitionNa
 
 func autoConvert_v1_CustomResourceDefinitionSpec_To_core_CustomResourceDefinitionSpec(in *CustomResourceDefinitionSpec, out *core.CustomResourceDefinitionSpec, s conversion.Scope) error {
 	out.Group = in.Group
+	if err := Convert_v1_CustomResourceDefinitionNames_To_core_CustomResourceDefinitionNames(&in.Names, &out.Names, s); err != nil {
+		return err
+	}
 	out.Versions = *(*[]core.CustomResourceDefinitionVersion)(unsafe.Pointer(&in.Versions))
 	return nil
 }
@@ -333,6 +336,9 @@ func Convert_v1_CustomResourceDefinitionSpec_To_core_CustomResourceDefinitionSpe
 
 func autoConvert_core_CustomResourceDefinitionSpec_To_v1_CustomResourceDefinitionSpec(in *core.CustomResourceDefinitionSpec, out *CustomResourceDefinitionSpec, s conversion.Scope) error {
 	out.Group = in.Group
+	if err := Convert_core_CustomResourceDefinitionNames_To_v1_CustomResourceDefinitionNames(&in.Names, &out.Names, s); err != nil {
+		return err
+	}
 	out.Versions = *(*[]CustomResourceDefinitionVersion)(unsafe.Pointer(&in.Versions))
 	return nil
 }

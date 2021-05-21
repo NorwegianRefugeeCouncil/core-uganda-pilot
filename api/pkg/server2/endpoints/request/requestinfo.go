@@ -26,6 +26,19 @@ func NewRequestInfo(req *http.Request) (*RequestInfo, error) {
 		Verb:              strings.ToLower(req.Method),
 	}
 
+	switch req.Method {
+	case "POST":
+		requestInfo.Verb = "create"
+	case "GET", "HEAD":
+		requestInfo.Verb = "get"
+	case "PUT":
+		requestInfo.Verb = "update"
+	case "DELETE":
+		requestInfo.Verb = "delete"
+	default:
+		requestInfo.Verb = ""
+	}
+
 	currentParts := splitPath(req.URL.Path)
 	if len(currentParts) < 3 {
 		// return a non-resource request
@@ -49,6 +62,10 @@ func NewRequestInfo(req *http.Request) (*RequestInfo, error) {
 		fallthrough
 	case len(requestInfo.Parts) >= 1:
 		requestInfo.Resource = requestInfo.Parts[0]
+	}
+
+	if len(requestInfo.Name) == 0 && requestInfo.Verb == "get" {
+		requestInfo.Verb = "list"
 	}
 
 	return &requestInfo, nil

@@ -3,27 +3,28 @@ package server2
 import (
 	"context"
 	"errors"
-	"github.com/emicklei/go-restful"
 	"github.com/sirupsen/logrus"
+	"net"
 	"net/http"
 	"time"
 )
 
 type Server struct {
-	listenAddress      string
-	handler            *APIServerHandler
-	goRestfulContainer *restful.Container
+	listener net.Listener
+	handler  *APIServerHandler
+	ctx      context.Context
 }
 
-func (s *Server) Run(stopCh <-chan struct{}) error {
+func (s *Server) Run() error {
 
 	httpServer := http.Server{
-		Addr:    s.listenAddress,
 		Handler: s.handler.FullHandlerChain,
 	}
 
+	var errChan = make(chan error, 1)
 	go func() {
-		err := httpServer.ListenAndServe()
+
+		err := httpServer.Serve(s.listener)
 
 		if errors.Is(err, http.ErrServerClosed) {
 			logrus.Info("server shutting down")
@@ -31,19 +32,23 @@ func (s *Server) Run(stopCh <-chan struct{}) error {
 		}
 
 		select {
-		case <-stopCh:
+		case <-s.ctx.Done():
 			logrus.Info("stopped listening")
 		default:
 			logrus.Errorf("stopped listening because of: %v", err)
+			errChan <- err
 		}
 	}()
 
-	<-stopCh
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	if err := httpServer.Shutdown(ctx); err != nil {
-		logrus.Errorf("server shutdown failed: %v", err)
+	select {
+	case <-s.ctx.Done():
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		if err := httpServer.Shutdown(ctx); err != nil {
+			logrus.Errorf("server shutdown failed: %v", err)
+			return err
+		}
+	case err := <-errChan:
 		return err
 	}
 

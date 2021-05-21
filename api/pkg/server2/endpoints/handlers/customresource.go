@@ -1,10 +1,11 @@
 package handlers
 
 import (
+	"context"
 	"fmt"
 	"github.com/nrc-no/core/api/pkg/apis/core"
 	v1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
-	listers "github.com/nrc-no/core/api/pkg/generated/listers/core/v1"
+	corev1client "github.com/nrc-no/core/api/pkg/client/core/v1"
 	structuralschema "github.com/nrc-no/core/api/pkg/openapi"
 	"github.com/nrc-no/core/api/pkg/openapi/defaulting"
 	"github.com/nrc-no/core/api/pkg/openapi/objectmeta"
@@ -40,7 +41,7 @@ type crdHandler struct {
 	customStorageLock sync.Mutex
 	customStorage     atomic.Value
 	restOptionsGetter generic.RESTOptionsGetter
-	crdLister         listers.CustomResourceDefinitionLister
+	cli               corev1client.CustomResourceDefinitionInterface
 	codecs            runtime.NegotiatedSerializer
 	converterFactory  *conversion.CRConverterFactory
 }
@@ -72,16 +73,12 @@ func (in crdStorageMap) clone() crdStorageMap {
 }
 
 // NewCustomResourceDefinitionHandler Builds a crdHandler
-func NewCustomResourceDefinitionHandler(
-	restOptionsGetter generic.RESTOptionsGetter,
-	codecs runtime.NegotiatedSerializer,
-	crdLister listers.CustomResourceDefinitionLister,
-) (*crdHandler, error) {
+func NewCustomResourceDefinitionHandler(restOptionsGetter generic.RESTOptionsGetter, codecs runtime.NegotiatedSerializer, cli corev1client.CustomResourceDefinitionInterface) (*crdHandler, error) {
 	ret := &crdHandler{
 		customStorageLock: sync.Mutex{},
 		customStorage:     atomic.Value{},
 		restOptionsGetter: restOptionsGetter,
-		crdLister:         crdLister,
+		cli:               cli,
 		codecs:            codecs,
 	}
 	ret.customStorage.Store(crdStorageMap{})
@@ -116,7 +113,7 @@ func (r *crdHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	crdName := requestInfo.Resource + "." + requestInfo.APIGroup
 
 	// Retrieves the CRD
-	crd, err := r.crdLister.Get(crdName)
+	crd, err := r.cli.Get(ctx, crdName, metav1.GetOptions{})
 	if err != nil {
 		responsewriters.ErrorNegotiated(
 			err,
@@ -129,7 +126,7 @@ func (r *crdHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// gets or build the crdInfo for the request
-	crInfo, err := r.getOrCreateServingInfoFor(crd.UID, crd.Name)
+	crInfo, err := r.getOrCreateServingInfoFor(ctx, crd.UID, crd.Name)
 	if err != nil {
 		responsewriters.ErrorNegotiated(
 			err,
@@ -142,7 +139,7 @@ func (r *crdHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Dynamically serves the custom resource request
-	r.serveResource(w, req, requestInfo, crInfo, crd)
+	r.serveResource(w, req, requestInfo, crInfo, crd)(w, req)
 
 }
 
@@ -177,7 +174,7 @@ func (r *crdHandler) serveResource(w http.ResponseWriter, req *http.Request, req
 	}
 }
 
-func (r *crdHandler) getOrCreateServingInfoFor(uid types.UID, name string) (*crdInfo, error) {
+func (r *crdHandler) getOrCreateServingInfoFor(ctx context.Context, uid types.UID, name string) (*crdInfo, error) {
 
 	// tries to find the storage map if already exists
 	storageMap := r.customStorage.Load().(crdStorageMap)
@@ -190,7 +187,7 @@ func (r *crdHandler) getOrCreateServingInfoFor(uid types.UID, name string) (*crd
 	defer r.customStorageLock.Unlock()
 
 	// gets the CustomResourceDefinition
-	crd, err := r.crdLister.Get(name)
+	crd, err := r.cli.Get(ctx, name, metav1.GetOptions{})
 	if err != nil {
 		return nil, err
 	}

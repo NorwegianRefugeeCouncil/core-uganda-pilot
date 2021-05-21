@@ -54,7 +54,7 @@ type APIGroupVersion struct {
 }
 
 func (v *APIGroupVersion) InstallREST(container *restful.Container) error {
-	prefix := path.Join(v.Root, v.GroupVersion.Version, v.GroupVersion.Group)
+	prefix := path.Join(v.Root, v.GroupVersion.Group, v.GroupVersion.Version)
 	installer := &APIInstaller{
 		group:  v,
 		prefix: prefix,

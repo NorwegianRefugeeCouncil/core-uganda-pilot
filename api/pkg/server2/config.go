@@ -1,16 +1,21 @@
 package server2
 
 import (
+	"context"
 	"github.com/nrc-no/core/api/pkg/apis/core"
 	"github.com/nrc-no/core/api/pkg/apis/core/install"
 	corev1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
+	v1 "github.com/nrc-no/core/api/pkg/client/core/v1"
+	restclient "github.com/nrc-no/core/api/pkg/client/rest"
 	"github.com/nrc-no/core/api/pkg/server2/endpoints/handlers"
+	"github.com/nrc-no/core/api/pkg/server2/registry/core/customresourcedefinition"
 	"github.com/nrc-no/core/api/pkg/server2/registry/core/formdefinitions"
 	"github.com/nrc-no/core/api/pkg/server2/registry/generic"
 	"github.com/nrc-no/core/api/pkg/server2/registry/rest"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
+	"net"
 	"net/http"
 )
 
@@ -28,10 +33,12 @@ type MongoConfig struct {
 }
 
 type Config struct {
-	ListenAddress         string
+	ListenAddress         net.IP
 	RESTOptionsGetter     generic.RESTOptionsGetter
 	BuildHandlerChainFunc func(handler http.Handler, config *Config) http.Handler
 	CRDRestOptionsGetter  generic.RESTOptionsGetter
+	LoopbackClientConfig  *restclient.Config
+	Listener              net.Listener
 }
 
 func (c *Config) Complete() *CompletedConfig {
@@ -46,10 +53,10 @@ type CompletedConfig struct {
 }
 
 // New creates a new Server from the CompletedConfig
-func (c *CompletedConfig) New() (*Server, error) {
+func (c *CompletedConfig) New(ctx context.Context) (*Server, error) {
 
-	// Builds the handler chain
-	// This will register all the filters and so on
+	// Builds the handler chain. This will register all the filters and middlewares and so on
+	// that need to be ran before the dispatching the request to go-restful or non-go-restful
 	handlerChainBuilder := func(handler http.Handler) http.Handler {
 		return c.BuildHandlerChainFunc(handler, c.Config)
 	}
@@ -61,20 +68,29 @@ func (c *CompletedConfig) New() (*Server, error) {
 	apiServerHandler := NewAPIServerHandler(handlerChainBuilder)
 
 	// Installs the known resource handlers in the API
+	// These include FormDefinitions and CustomResourceDefinitions
 	if err := c.installApiGroups(apiServerHandler); err != nil {
+		return nil, err
+	}
+
+	v1Client, err := v1.NewForConfig(c.LoopbackClientConfig)
+	if err != nil {
 		return nil, err
 	}
 
 	// Installs the CustomResource handler in the API
 	// This is ran after go-restful tries to match the route
-	if err := c.installCustomResources(apiServerHandler); err != nil {
+	// The CustomResource handler is able to serve new resources
+	// dynamically (eg. created at runtime)
+	if err := c.installCustomResources(apiServerHandler, v1Client.CustomResourceDefinitions()); err != nil {
 		return nil, err
 	}
 
-	// Create the server
+	// Create the API server
 	server := &Server{
-		listenAddress: c.ListenAddress,
-		handler:       apiServerHandler,
+		ctx:      ctx,
+		handler:  apiServerHandler,
+		listener: c.Listener,
 	}
 
 	return server, nil
@@ -82,11 +98,11 @@ func (c *CompletedConfig) New() (*Server, error) {
 
 // installCustomResources installs the required handlers to serve dynamic
 // CustomResources from the API
-func (c *CompletedConfig) installCustomResources(apiServerHandler *APIServerHandler) error {
+func (c *CompletedConfig) installCustomResources(apiServerHandler *APIServerHandler, cli v1.CustomResourceDefinitionInterface) error {
 	crdHandler, err := handlers.NewCustomResourceDefinitionHandler(
 		c.CRDRestOptionsGetter,
 		Codecs,
-		nil)
+		cli)
 	if err != nil {
 		return err
 	}
@@ -115,11 +131,23 @@ func (c *CompletedConfig) installApiGroups(apiServerHandler *APIServerHandler) e
 func createCoreAPIGroupInfo(restOptionsGetter generic.RESTOptionsGetter) (APIGroupInfo, error) {
 	coreApiGroup := NewDefaultAPIGroup(core.GroupName, Scheme, metav1.ParameterCodec, Codecs)
 	storage := map[string]rest.Storage{}
+
+	// Storage for FormDefinitions
 	formDefinitionsStorage, err := formdefinitions.NewREST(Scheme, restOptionsGetter)
 	if err != nil {
 		return APIGroupInfo{}, err
 	}
 	storage["formdefinitions"] = formDefinitionsStorage
+
+	// Storage for CustomResourceDefinitions
+	customResourceDefinitionsStorage, err := customresourcedefinition.NewREST(Scheme, restOptionsGetter)
+	if err != nil {
+		return APIGroupInfo{}, err
+	}
+	storage["customresourcedefinitions"] = customResourceDefinitionsStorage
+
+	// register the storage for the "core v1" version
 	coreApiGroup.VersionedResourcesStorageMap[corev1.SchemeGroupVersion.Version] = storage
+
 	return coreApiGroup, nil
 }

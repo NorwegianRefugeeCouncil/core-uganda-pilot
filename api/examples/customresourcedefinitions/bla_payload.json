@@ -1,0 +1,11 @@
+{
+  "kind": "Bla",
+  "apiVersion": "bla.com/v1",
+  "metadata": {
+    "name": "example-bla"
+  },
+  "spec": {
+    "firstname": "John",
+    "lastName": "Doe"
+  }
+}
