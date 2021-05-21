@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { classNames, Box, PolymorphicComponentProps } from '@ui-helpers/utils';
+import {
+  classNames,
+  Box,
+  PolymorphicComponentProps,
+} from '@core/shared/ui-toolkit/util/utils';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type FormTextOwnProps = {};

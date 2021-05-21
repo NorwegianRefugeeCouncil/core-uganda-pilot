@@ -14,7 +14,7 @@ import {
   FormCheckInput,
   FormInput,
   //   Card,
-} from '@nrc.no/ui-toolkit';
+} from '@core/shared/ui-toolkit';
 import './field.css';
 
 export type Translations = {
@@ -337,45 +337,45 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
           <div className={'col-5 mb-5'}>
             {/* <Card>
               <Card.Body> */}
-                <form
-                  onChange={(event) => {
-                    handleChange(fieldState, setFieldState, event);
-                  }}
-                >
-                  <FormLabel>Key:</FormLabel>
-                  <FormInput
-                    name="key"
-                    defaultValue={fieldState.key}
-                    aria-label="field key"
-                  />
+            <form
+              onChange={(event) => {
+                handleChange(fieldState, setFieldState, event);
+              }}
+            >
+              <FormLabel>Key:</FormLabel>
+              <FormInput
+                name="key"
+                defaultValue={fieldState.key}
+                aria-label="field key"
+              />
 
-                  <FormLabel>Type:</FormLabel>
-                  <select
-                    name="type"
-                    className="form-select"
-                    aria-label="select type"
-                  >
-                    <option>Select Type</option>
-                    {Object.keys(FieldType).map((fieldType) => {
-                      return (
-                        <Fragment>
-                          {fieldState.type === fieldType ? (
-                            <option selected value={fieldType}>
-                              {FieldType[fieldType]}
-                            </option>
-                          ) : (
-                            <option value={fieldType}>
-                              {FieldType[fieldType]}
-                            </option>
-                          )}
-                        </Fragment>
-                      );
-                    })}
-                  </select>
+              <FormLabel>Type:</FormLabel>
+              <select
+                name="type"
+                className="form-select"
+                aria-label="select type"
+              >
+                <option>Select Type</option>
+                {Object.keys(FieldType).map((fieldType) => {
+                  return (
+                    <Fragment>
+                      {fieldState.type === fieldType ? (
+                        <option selected value={fieldType}>
+                          {FieldType[fieldType]}
+                        </option>
+                      ) : (
+                        <option value={fieldType}>
+                          {FieldType[fieldType]}
+                        </option>
+                      )}
+                    </Fragment>
+                  );
+                })}
+              </select>
 
-                  {renderOptions(fieldState)}
-                </form>
-              {/* </Card.Body>
+              {renderOptions(fieldState)}
+            </form>
+            {/* </Card.Body>
             </Card> */}
           </div>
           <div className={'col-1 mb-5'}></div>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { classNames } from '@ui-helpers/utils';
+import { classNames } from '@core/shared/ui-toolkit/util/utils';
 
 export interface ButtonGroupProps
   extends React.ComponentPropsWithoutRef<'div'> {

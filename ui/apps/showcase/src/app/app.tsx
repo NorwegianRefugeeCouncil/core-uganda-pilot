@@ -2,7 +2,13 @@ import { ReactComponent as Logo } from './logo.svg';
 import nrc from './nrc.svg';
 // import { Route, Link } from 'react-router-dom';
 
-import { Accordion, Button, Card, Container, Nav } from '@nrc.no/ui-toolkit';
+import {
+  Accordion,
+  Button,
+  Card,
+  Container,
+  Nav,
+} from '@core/shared/ui-toolkit';
 
 export function App() {
   return (

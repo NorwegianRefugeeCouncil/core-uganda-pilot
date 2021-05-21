@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import * as React from 'react';
-import { classNames } from '@ui-helpers/utils';
+import { classNames } from '@core/shared/ui-toolkit/util/utils';
 import { CardImg } from './card-img.component';
 import { CardBody } from './card-body.component';
 import { CardHeader } from './card-header.component';

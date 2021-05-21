@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { classNames } from '../../helpers/utils';
+import { classNames } from '@core/shared/ui-toolkit/util/utils';
 
 export interface CardImgProps extends React.ComponentPropsWithoutRef<'img'> {
   position?: 'top' | 'bottom';

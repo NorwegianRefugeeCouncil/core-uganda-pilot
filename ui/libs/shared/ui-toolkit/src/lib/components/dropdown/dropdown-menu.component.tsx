@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import * as React from 'react';
-import { Size } from '@ui-helpers/types';
+import { Size } from '@core/shared/ui-toolkit/util/types';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface BasicDropdownMenuProps

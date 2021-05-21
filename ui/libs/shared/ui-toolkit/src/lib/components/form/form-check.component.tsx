@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FormContext, FormContextInterface } from './form-context';
 import { FormCheckLabel } from './form-check-label.component';
 import { FormCheckInput } from './form-check-input.component';
-import { classNames } from '@ui-helpers/utils';
+import { classNames } from '@core/shared/ui-toolkit/util/utils';
 
 export interface FormCheckProps extends React.ComponentPropsWithRef<'div'> {
   id: string;

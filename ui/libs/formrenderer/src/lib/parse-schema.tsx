@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form } from '@nrc.no/ui-toolkit';
+import { Form } from '@core/shared/ui-toolkit';
 import {
   FormDataField,
   FormElementOptions,

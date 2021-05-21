@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { AccordionContext } from './accordion-context';
-import { classNames } from '@ui-helpers/utils';
+import { classNames } from '@core/shared/ui-toolkit/util/utils';
 
 export interface AccordionCollapseProps
   extends React.ComponentPropsWithRef<'div'> {

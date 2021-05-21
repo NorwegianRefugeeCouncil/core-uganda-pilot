@@ -5,8 +5,8 @@ import { DropdownItem } from './dropdown-item.component';
 import { DropdownDivider } from './dropdown-divider.component';
 import { Button } from '../button/button.component';
 import { ButtonGroup } from '../button-group/button-group.component';
-import { classNames } from '@ui-helpers/utils';
-import { Color, Direction } from '@ui-helpers/types';
+import { classNames } from '@core/shared/ui-toolkit/util/utils';
+import { Color, Direction } from '@core/shared/ui-toolkit/util/types';
 import useDropdown from './use-dropdown';
 import { menuPositionFromDir } from './menuPositionFromDir';
 
