@@ -13,26 +13,25 @@ export interface DropdownToggleProps
 
 type DropdownToggle = React.FC<DropdownToggleProps>;
 
-const DropdownToggle = React.forwardRef<HTMLButtonElement, DropdownToggleProps>(
-  ({ theme, split, toggleFn, children, ...rest }, ref) => {
-    const className = classNames('dropdown-toggle', {
-      'dropdown-toggle-split': split,
-    });
-    return (
-      <Button
-        ref={ref}
-        type="button"
-        theme={theme}
-        className={className}
-        onPointerDown={toggleFn}
-        {...rest}
-      >
-        {children}
-      </Button>
-    );
-  }
-);
+export const DropdownToggle = React.forwardRef<
+  HTMLButtonElement,
+  DropdownToggleProps
+>(({ theme, split, toggleFn, children, ...rest }, ref) => {
+  const className = classNames('dropdown-toggle', {
+    'dropdown-toggle-split': split,
+  });
+  return (
+    <Button
+      ref={ref}
+      type="button"
+      theme={theme}
+      className={className}
+      onPointerDown={toggleFn}
+      {...rest}
+    >
+      {children}
+    </Button>
+  );
+});
 
 DropdownToggle.displayName = 'DropdownToggle';
-
-export { DropdownToggle };

@@ -17,7 +17,7 @@ export function App() {
           <Card.Text>
             Our custom component library built with React+TS and Bootstrap 5{' '}
             <a href="assets/shared-ui-toolkit/index.html?path=/story/button--basic">
-              Check it out
+              Check it out!
             </a>
           </Card.Text>
           <Card.Title>FormRenderer</Card.Title>
@@ -25,7 +25,7 @@ export function App() {
             A tool that transforms forms schemas provided by the server into
             dynamic forms using the UI toolkit{' '}
             <a href="assets/formrenderer/index.html?path=/story/formrenderer--demo">
-              Check it out
+              Check it out!
             </a>
           </Card.Text>
         </Card.Body>
@@ -33,10 +33,14 @@ export function App() {
       <div>
         <Nav role="navigation">
           <Nav.Item>
-            <Nav.Link></Nav.Link>
+            <Nav.Link href="assets/shared-ui-toolkit/index.html?path=/story/button--basic">
+              UI Toolkit
+            </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link></Nav.Link>
+            <Nav.Link href="assets/formrenderer/index.html?path=/story/formrenderer--demo">
+              FormRenderer
+            </Nav.Link>
           </Nav.Item>
         </Nav>
       </div>

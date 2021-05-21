@@ -1,3 +1,5 @@
+[live showcase](https://nrc-no.github.io/core/)
+
 # NRC Core
 
 This project delivers the NRC Core Web Application
