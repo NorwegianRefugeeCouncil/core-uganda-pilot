@@ -1,14 +1,9 @@
 {
   "implicitDependencies": {
-    "package.json": {
-      "dependencies": "*",
-      "devDependencies": "*"
-    },
+    "package.json": { "dependencies": "*", "devDependencies": "*" },
     ".eslintrc.json": "*"
   },
-  "affected": {
-    "defaultBase": "master"
-  },
+  "affected": { "defaultBase": "master" },
   "npmScope": "core",
   "tasksRunnerOptions": {
     "default": {
@@ -25,34 +20,18 @@
     }
   },
   "projects": {
-    "web-app": {
-      "tags": []
-    },
-    "web-app-e2e": {
+    "shared-ui-toolkit": { "tags": [] },
+    "shared-bootstrap": { "tags": [] },
+    "formbuilder": { "tags": [] },
+    "shared-core-client": { "tags": [] },
+    "formrenderer": { "tags": [] },
+    "showcase": { "tags": [] },
+    "showcase-e2e": { "tags": [], "implicitDependencies": ["showcase"] },
+    "core-web-app": { "tags": [] },
+    "core-web-app-e2e": {
       "tags": [],
-      "implicitDependencies": ["web-app"]
+      "implicitDependencies": ["core-web-app"]
     },
-    "shared-ui-toolkit": {
-      "tags": []
-    },
-    "shared-bootstrap": {
-      "tags": []
-    },
-    "formbuilder": {
-      "tags": []
-    },
-    "shared-core-client": {
-      "tags": []
-    },
-    "formrenderer": {
-      "tags": []
-    },
-    "showcase": {
-      "tags": []
-    },
-    "showcase-e2e": {
-      "tags": [],
-      "implicitDependencies": ["showcase"]
-    }
+    "core-ui": { "tags": [] }
   }
 }
