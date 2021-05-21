@@ -203,46 +203,6 @@
         }
       }
     },
-    "shared-core-client": {
-      "root": "libs/shared/core-client",
-      "sourceRoot": "libs/shared/core-client/src",
-      "projectType": "library",
-      "targets": {
-        "build": {
-          "executor": "@nrwl/web:package",
-          "outputs": ["{options.outputPath}"],
-          "options": {
-            "outputPath": "dist/libs/shared/core-client",
-            "tsConfig": "libs/shared/core-client/tsconfig.lib.json",
-            "project": "libs/shared/core-client/package.json",
-            "entryFile": "libs/shared/core-client/src/index.ts",
-            "external": ["react", "react-dom"],
-            "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
-            "assets": [
-              {
-                "glob": "libs/shared/core-client/README.md",
-                "input": ".",
-                "output": "."
-              }
-            ]
-          }
-        },
-        "lint": {
-          "executor": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/shared/core-client/**/*.{ts,tsx,js,jsx}"]
-          }
-        },
-        "test": {
-          "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/shared/core-client"],
-          "options": {
-            "jestConfig": "libs/shared/core-client/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "formrenderer": {
       "root": "libs/formrenderer",
       "sourceRoot": "libs/formrenderer/src",
@@ -518,6 +478,25 @@
           "outputs": ["coverage/libs/core-ui"],
           "options": {
             "jestConfig": "libs/core-ui/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "shared-api-client": {
+      "root": "libs/shared/api-client",
+      "sourceRoot": "libs/shared/api-client/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": { "lintFilePatterns": ["libs/shared/api-client/**/*.ts"] }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/shared/api-client"],
+          "options": {
+            "jestConfig": "libs/shared/api-client/jest.config.js",
             "passWithNoTests": true
           }
         }
