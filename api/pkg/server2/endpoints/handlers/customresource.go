@@ -14,6 +14,7 @@ import (
 	"github.com/nrc-no/core/api/pkg/server2/endpoints/request"
 	"github.com/nrc-no/core/api/pkg/server2/registry/core/customresource"
 	"github.com/nrc-no/core/api/pkg/server2/registry/generic"
+	"github.com/nrc-no/core/api/pkg/server2/store"
 	schemaobjectmeta "k8s.io/apiextensions-apiserver/pkg/apiserver/schema/objectmeta"
 	"k8s.io/apiextensions-apiserver/pkg/crdserverscheme"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -30,6 +31,7 @@ import (
 	"net/http"
 	"sync"
 	"sync/atomic"
+	"time"
 )
 
 // crdHandler is a generic REST handler that is able to dynamically serve CustomResources
@@ -657,4 +659,29 @@ func (v *unstructuredSchemaCoercer) apply(u *unstructured.Unstructured) error {
 	}
 
 	return nil
+}
+
+type CRDRESTOptionsGetter struct {
+	StorageConfig           store.Config
+	StoragePrefix           string
+	EnableWatchCache        bool
+	DefaultWatchCacheSize   int
+	EnableGarbageCollection bool
+	DeleteCollectionWorkers int
+	CountMetricPollPeriod   time.Duration
+}
+
+func (t CRDRESTOptionsGetter) GetRESTOptions(resource schema.GroupResource) (generic.RESTOptions, error) {
+	ret := generic.RESTOptions{
+		StorageConfig: &t.StorageConfig,
+		//Decorator:               generic.UndecoratedStorage,
+		//EnableGarbageCollection: t.EnableGarbageCollection,
+		//DeleteCollectionWorkers: t.DeleteCollectionWorkers,
+		//ResourcePrefix:          resource.Group + "/" + resource.Resource,
+		//CountMetricPollPeriod:   t.CountMetricPollPeriod,
+	}
+	//if t.EnableWatchCache {
+	//	ret.Decorator = genericregistry.StorageWithCacher()
+	//}
+	return ret, nil
 }

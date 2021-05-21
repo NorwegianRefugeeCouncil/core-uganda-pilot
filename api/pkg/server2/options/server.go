@@ -49,6 +49,8 @@ func (c *Options) Config() (*server2.Config, error) {
 		return nil, err
 	}
 
+	serverConfig.CRDRestOptionsGetter = NewCRDRESTOptionsGetter(c.StorageConfig)
+
 	return serverConfig, nil
 }
 

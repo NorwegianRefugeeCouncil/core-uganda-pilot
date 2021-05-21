@@ -1,15 +1,13 @@
 package server2
 
 import (
-	"fmt"
-	"github.com/emicklei/go-restful"
 	"github.com/nrc-no/core/api/pkg/apis/core"
 	"github.com/nrc-no/core/api/pkg/apis/core/install"
 	corev1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
+	"github.com/nrc-no/core/api/pkg/server2/endpoints/handlers"
 	"github.com/nrc-no/core/api/pkg/server2/registry/core/formdefinitions"
 	"github.com/nrc-no/core/api/pkg/server2/registry/generic"
 	"github.com/nrc-no/core/api/pkg/server2/registry/rest"
-	"github.com/sirupsen/logrus"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
@@ -33,6 +31,7 @@ type Config struct {
 	ListenAddress         string
 	RESTOptionsGetter     generic.RESTOptionsGetter
 	BuildHandlerChainFunc func(handler http.Handler, config *Config) http.Handler
+	CRDRestOptionsGetter  generic.RESTOptionsGetter
 }
 
 func (c *Config) Complete() *CompletedConfig {
@@ -46,73 +45,70 @@ type CompletedConfig struct {
 	*Config
 }
 
+// New creates a new Server from the CompletedConfig
 func (c *CompletedConfig) New() (*Server, error) {
+
+	// Builds the handler chain
+	// This will register all the filters and so on
 	handlerChainBuilder := func(handler http.Handler) http.Handler {
 		return c.BuildHandlerChainFunc(handler, c.Config)
 	}
+
+	// Creates the API server HTTP handler
+	// The API server handler has both a
+	// go-restful container, that tries to match the request first.
+	// it then tries to match the request with a non-go-restful handler.
 	apiServerHandler := NewAPIServerHandler(handlerChainBuilder)
 
-	var apiGroups []*APIGroupInfo
-	coreApiGroup, err := createCoreAPIGroupInfo(c.RESTOptionsGetter)
-	if err != nil {
-		return nil, err
-	}
-	apiGroups = append(apiGroups, &coreApiGroup)
-
-	if err := installApiGroups(apiServerHandler.GoRestfulContainer, "/apis", apiGroups...); err != nil {
+	// Installs the known resource handlers in the API
+	if err := c.installApiGroups(apiServerHandler); err != nil {
 		return nil, err
 	}
 
+	// Installs the CustomResource handler in the API
+	// This is ran after go-restful tries to match the route
+	if err := c.installCustomResources(apiServerHandler); err != nil {
+		return nil, err
+	}
+
+	// Create the server
 	server := &Server{
 		listenAddress: c.ListenAddress,
 		handler:       apiServerHandler,
 	}
+
 	return server, nil
 }
 
-// installApiGroups registers the API groups into go-restful container
-// this method will register the necessary routes and handlers
-func installApiGroups(goRestfulContainer *restful.Container, apiPrefix string, apiGroupInfos ...*APIGroupInfo) error {
-
-	for _, apiGroupInfo := range apiGroupInfos {
-		if len(apiGroupInfo.PrioritizedVersions[0].Group) == 0 {
-			return fmt.Errorf("cannot register handler with an empty group for %#v", *apiGroupInfo)
-		}
-		if len(apiGroupInfo.PrioritizedVersions[0].Version) == 0 {
-			return fmt.Errorf("cannot register handler with an empty version for %#v", *apiGroupInfo)
-		}
+// installCustomResources installs the required handlers to serve dynamic
+// CustomResources from the API
+func (c *CompletedConfig) installCustomResources(apiServerHandler *APIServerHandler) error {
+	crdHandler, err := handlers.NewCustomResourceDefinitionHandler(
+		c.CRDRestOptionsGetter,
+		Codecs,
+		nil)
+	if err != nil {
+		return err
 	}
-
-	for _, apiGroupInfo := range apiGroupInfos {
-		if err := installApiResources(goRestfulContainer, apiPrefix, apiGroupInfo); err != nil {
-			return err
-		}
-	}
-
+	apiServerHandler.NonGoRestfulMux.Handle("/apis", crdHandler)
+	apiServerHandler.NonGoRestfulMux.HandlePrefix("/apis/", crdHandler)
 	return nil
 }
 
-func installApiResources(goRestfulContainer *restful.Container, apiPrefix string, apiGroupInfo *APIGroupInfo) error {
-	for _, groupVersion := range apiGroupInfo.PrioritizedVersions {
-
-		if len(apiGroupInfo.VersionedResourcesStorageMap[groupVersion.Version]) == 0 {
-			logrus.Warnf("skipping api %v because it has no resources", groupVersion)
-			continue
-		}
-
-		apiGroupVersion := apiGroupInfo.GetAPIGroupVersion(groupVersion, apiPrefix)
-		if err := apiGroupVersion.InstallREST(goRestfulContainer); err != nil {
-			return err
-		}
-
+// installApiGroups installs the known API groups in the HTTP handler
+func (c *CompletedConfig) installApiGroups(apiServerHandler *APIServerHandler) error {
+	var apiGroups []*APIGroupInfo
+	coreApiGroup, err := createCoreAPIGroupInfo(c.RESTOptionsGetter)
+	if err != nil {
+		return err
 	}
-	return nil
-}
+	apiGroups = append(apiGroups, &coreApiGroup)
 
-// installApiGroup registers an API group into the go-restful container.
-// see installApiGroups
-func installApiGroup(goRestfulContainer *restful.Container, apiPrefix string, apiGroupInfo *APIGroupInfo) error {
-	return installApiGroups(goRestfulContainer, apiPrefix, apiGroupInfo)
+	if err := installApiGroups(apiServerHandler.GoRestfulContainer, "/apis", apiGroups...); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // createCoreAPIGroupInfo creates the APIGroupInfo for the core API
