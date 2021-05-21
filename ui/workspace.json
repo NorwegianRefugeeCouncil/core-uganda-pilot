@@ -1,12 +1,23 @@
 {
   "version": 2,
-  "cli": { "defaultCollection": "@nrwl/react" },
+  "cli": {
+    "defaultCollection": "@nrwl/workspace"
+  },
   "defaultProject": "core-web-app",
   "generators": {
     "@nrwl/react": {
-      "application": { "style": "css", "linter": "eslint", "babel": true },
-      "component": { "style": "css" },
-      "library": { "style": "css", "linter": "eslint" }
+      "application": {
+        "style": "css",
+        "linter": "eslint",
+        "babel": true
+      },
+      "component": {
+        "style": "css"
+      },
+      "library": {
+        "style": "css",
+        "linter": "eslint"
+      }
     }
   },
   "projects": {
@@ -54,9 +65,15 @@
             "uiFramework": "@storybook/react",
             "port": 4400,
             "staticDir": ["dist/libs/shared/bootstrap/assets/css"],
-            "config": { "configFolder": "libs/shared/ui-toolkit/.storybook" }
+            "config": {
+              "configFolder": "libs/shared/ui-toolkit/.storybook"
+            }
           },
-          "configurations": { "ci": { "quiet": true } }
+          "configurations": {
+            "ci": {
+              "quiet": true
+            }
+          }
         },
         "build-storybook": {
           "executor": "@nrwl/storybook:build",
@@ -65,79 +82,14 @@
             "uiFramework": "@storybook/react",
             "staticDir": ["dist/libs/shared/bootstrap/assets/css"],
             "outputPath": "apps/showcase/src/assets/shared-ui-toolkit",
-            "config": { "configFolder": "libs/shared/ui-toolkit/.storybook" }
+            "config": {
+              "configFolder": "libs/shared/ui-toolkit/.storybook"
+            }
           },
-          "configurations": { "ci": { "quiet": true } }
-        }
-      }
-    },
-    "shared-bootstrap": {
-      "root": "libs/shared/bootstrap",
-      "sourceRoot": "libs/shared/bootstrap/src",
-      "projectType": "library",
-      "targets": {
-        "build": {
-          "executor": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              {
-                "command": "cp -r node_modules/bootstrap/dist/js libs/shared/bootstrap/assets/"
-              },
-              {
-                "command": "node-sass libs/shared/bootstrap/assets/scss -o libs/shared/bootstrap/assets/css --source-map true"
-              },
-              {
-                "command": "node-sass libs/shared/bootstrap/assets/scss -o libs/shared/bootstrap/assets/css-min --output-style compressed --source-map true"
-              },
-              {
-                "command": "sleep 1 && mv libs/shared/bootstrap/assets/css-min/bootstrap.css libs/shared/bootstrap/assets/css/bootstrap.min.css"
-              },
-              {
-                "command": "sleep 1 && mv libs/shared/bootstrap/assets/css-min/bootstrap.css.map libs/shared/bootstrap/assets/css/bootstrap.min.css.map"
-              },
-              {
-                "command": "sleep 1 && rm -rf libs/shared/bootstrap/assets/css-min"
-              },
-              { "command": "nx run shared-bootstrap:package" }
-            ]
-          }
-        },
-        "package": {
-          "executor": "@nrwl/web:package",
-          "outputs": ["{options.outputPath}"],
-          "options": {
-            "outputPath": "dist/libs/shared/bootstrap",
-            "tsConfig": "libs/shared/bootstrap/tsconfig.lib.json",
-            "project": "libs/shared/bootstrap/package.json",
-            "entryFile": "libs/shared/bootstrap/src/index.ts",
-            "external": ["react", "react-dom"],
-            "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
-            "assets": [
-              {
-                "glob": "libs/shared/bootstrap/README.md",
-                "input": ".",
-                "output": "."
-              },
-              {
-                "glob": "libs/shared/bootstrap/assets",
-                "input": ".",
-                "output": "."
-              }
-            ]
-          }
-        },
-        "lint": {
-          "executor": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/shared/bootstrap/**/*.{ts,tsx,js,jsx}"]
-          }
-        },
-        "test": {
-          "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/shared/bootstrap"],
-          "options": {
-            "jestConfig": "libs/shared/bootstrap/jest.config.js",
-            "passWithNoTests": true
+          "configurations": {
+            "ci": {
+              "quiet": true
+            }
           }
         }
       }
@@ -186,9 +138,15 @@
             "uiFramework": "@storybook/react",
             "port": 4400,
             "staticDir": ["dist/libs/shared/bootstrap/assets/css"],
-            "config": { "configFolder": "libs/formbuilder/.storybook" }
+            "config": {
+              "configFolder": "libs/formbuilder/.storybook"
+            }
           },
-          "configurations": { "ci": { "quiet": true } }
+          "configurations": {
+            "ci": {
+              "quiet": true
+            }
+          }
         },
         "build-storybook": {
           "executor": "@nrwl/storybook:build",
@@ -197,9 +155,15 @@
             "uiFramework": "@storybook/react",
             "outputPath": "apps/showcase/src/assets/formbuilder",
             "staticDir": ["dist/libs/shared/bootstrap/assets/css"],
-            "config": { "configFolder": "libs/formbuilder/.storybook" }
+            "config": {
+              "configFolder": "libs/formbuilder/.storybook"
+            }
           },
-          "configurations": { "ci": { "quiet": true } }
+          "configurations": {
+            "ci": {
+              "quiet": true
+            }
+          }
         }
       }
     },
@@ -247,9 +211,15 @@
             "uiFramework": "@storybook/react",
             "port": 4400,
             "staticDir": ["dist/libs/shared/bootstrap/assets/css"],
-            "config": { "configFolder": "libs/formrenderer/.storybook" }
+            "config": {
+              "configFolder": "libs/formrenderer/.storybook"
+            }
           },
-          "configurations": { "ci": { "quiet": true } }
+          "configurations": {
+            "ci": {
+              "quiet": true
+            }
+          }
         },
         "build-storybook": {
           "executor": "@nrwl/storybook:build",
@@ -258,9 +228,15 @@
             "uiFramework": "@storybook/react",
             "staticDir": ["dist/libs/shared/bootstrap/assets/css"],
             "outputPath": "apps/showcase/src/assets/formrenderer",
-            "config": { "configFolder": "libs/formrenderer/.storybook" }
+            "config": {
+              "configFolder": "libs/formrenderer/.storybook"
+            }
           },
-          "configurations": { "ci": { "quiet": true } }
+          "configurations": {
+            "ci": {
+              "quiet": true
+            }
+          }
         }
       }
     },
@@ -271,7 +247,9 @@
       "targets": {
         "copy-bs": {
           "executor": "./tools/executors/copy-bootstrap-css:copy-bootstrap-css",
-          "options": { "targetPath": "apps/showcase/src/styles.css" }
+          "options": {
+            "targetPath": "apps/showcase/src/styles.css"
+          }
         },
         "prepare-build": {
           "executor": "@nrwl/workspace:run-commands",
@@ -325,9 +303,13 @@
         },
         "serve": {
           "executor": "@nrwl/web:dev-server",
-          "options": { "buildTarget": "showcase:build" },
+          "options": {
+            "buildTarget": "showcase:build"
+          },
           "configurations": {
-            "production": { "buildTarget": "showcase:build:production" }
+            "production": {
+              "buildTarget": "showcase:build:production"
+            }
           }
         },
         "lint": {
@@ -359,12 +341,16 @@
             "devServerTarget": "showcase:serve"
           },
           "configurations": {
-            "production": { "devServerTarget": "showcase:serve:production" }
+            "production": {
+              "devServerTarget": "showcase:serve:production"
+            }
           }
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "options": { "lintFilePatterns": ["apps/showcase-e2e/**/*.{js,ts}"] }
+          "options": {
+            "lintFilePatterns": ["apps/showcase-e2e/**/*.{js,ts}"]
+          }
         }
       }
     },
@@ -417,9 +403,13 @@
         },
         "serve": {
           "executor": "@nrwl/web:dev-server",
-          "options": { "buildTarget": "core-web-app:build" },
+          "options": {
+            "buildTarget": "core-web-app:build"
+          },
           "configurations": {
-            "production": { "buildTarget": "core-web-app:build:production" }
+            "production": {
+              "buildTarget": "core-web-app:build:production"
+            }
           }
         },
         "lint": {
@@ -451,7 +441,9 @@
             "devServerTarget": "core-web-app:serve"
           },
           "configurations": {
-            "production": { "devServerTarget": "core-web-app:serve:production" }
+            "production": {
+              "devServerTarget": "core-web-app:serve:production"
+            }
           }
         },
         "lint": {
@@ -490,13 +482,58 @@
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "options": { "lintFilePatterns": ["libs/shared/api-client/**/*.ts"] }
+          "options": {
+            "lintFilePatterns": ["libs/shared/api-client/**/*.ts"]
+          }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
           "outputs": ["coverage/libs/shared/api-client"],
           "options": {
             "jestConfig": "libs/shared/api-client/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "shared-bootstrap": {
+      "root": "libs/shared/bootstrap",
+      "sourceRoot": "libs/shared/bootstrap/src",
+      "projectType": "library",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "npx sass -q libs/shared/bootstrap/src/bootstrap.scss libs/shared/bootstrap/build/bootstrap.css",
+              "npx sass -q --style=compressed libs/shared/bootstrap/src/bootstrap.scss libs/shared/bootstrap/build/bootstrap.min.css",
+              "nx run shared-bootstrap:package"
+            ],
+            "parallel": false
+          }
+        },
+        "package": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "rm -rf dist/libs/shared/bootstrap",
+              "mkdir -p dist/libs/shared/bootstrap",
+              "cp -r libs/shared/bootstrap/build/. dist/libs/shared/bootstrap/"
+            ],
+            "parallel": false
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/shared/bootstrap/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/shared/bootstrap"],
+          "options": {
+            "jestConfig": "libs/shared/bootstrap/jest.config.js",
             "passWithNoTests": true
           }
         }

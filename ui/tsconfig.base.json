@@ -22,7 +22,8 @@
       "@ui-helpers/*": ["libs/shared/ui-toolkit/src/lib/helpers/*"],
       "@nrc.no/formrenderer": ["libs/formrenderer/src/index.ts"],
       "@core/core-ui": ["libs/core-ui/src/index.ts"],
-      "@core/shared/api-client": ["libs/shared/api-client/src/index.ts"]
+      "@core/shared/api-client": ["libs/shared/api-client/src/index.ts"],
+      "@core/shared/bootstrap": ["libs/shared/bootstrap/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
