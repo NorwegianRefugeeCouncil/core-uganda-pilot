@@ -42,7 +42,7 @@ function default_1(_options) {
         var child;
         return __generator(this, function (_a) {
             child = childProcess.spawn('cp', [
-                'dist/libs/shared/bootstrap/assets/css/bootstrap.css',
+                'dist/libs/shared/bootstrap/bootstrap.css',
                 _options.targetPath,
             ]);
             return [2 /*return*/, new Promise(function (res) {

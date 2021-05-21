@@ -8,7 +8,7 @@ export default async function (
   _options: Options
 ): Promise<{ success: boolean }> {
   const child = childProcess.spawn('cp', [
-    'dist/libs/shared/bootstrap/assets/css/bootstrap.css',
+    'dist/libs/shared/bootstrap/bootstrap.css',
     _options.targetPath,
   ]);
   return new Promise<{ success: boolean }>((res) => {

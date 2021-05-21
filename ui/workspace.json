@@ -303,7 +303,6 @@
               "nx run showcase:copy-bs",
               "nx run showcase:build"
             ],
-            "cwd": "ui",
             "parallel": false
           }
         },
@@ -313,6 +312,7 @@
             "{options.outputPath}"
           ],
           "options": {
+            "baseHref": "/core/",
             "outputPath": "dist/apps/showcase",
             "index": "apps/showcase/src/index.html",
             "main": "apps/showcase/src/main.tsx",
