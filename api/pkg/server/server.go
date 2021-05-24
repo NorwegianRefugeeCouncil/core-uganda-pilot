@@ -3,9 +3,12 @@ package server
 import (
 	"context"
 	"errors"
+	"github.com/nrc-no/core/api/pkg/client/informers"
+	"github.com/nrc-no/core/api/pkg/client/rest"
 	"github.com/sirupsen/logrus"
 	"net"
 	"net/http"
+	"sync"
 	"time"
 )
 
@@ -13,6 +16,12 @@ type Server struct {
 	listener net.Listener
 	handler  *APIServerHandler
 	ctx      context.Context
+
+	postStartHooks       map[string]postStartHookEntry
+	postStartHookLock    sync.Mutex
+	postStartHookCalled  bool
+	coreInformers        informers.SharedInformerFactory
+	LoopbackClientConfig *rest.Config
 }
 
 func (s *Server) Run() error {
@@ -39,6 +48,15 @@ func (s *Server) Run() error {
 			errChan <- err
 		}
 	}()
+
+	stopCh := make(chan struct{})
+	go func() {
+		select {
+		case <-s.ctx.Done():
+			stopCh <- struct{}{}
+		}
+	}()
+	s.RunPostStartHooks(stopCh)
 
 	select {
 	case <-s.ctx.Done():

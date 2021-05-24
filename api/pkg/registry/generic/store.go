@@ -3,11 +3,13 @@ package generic
 import (
 	"context"
 	"fmt"
+	v1 "github.com/nrc-no/core/api/pkg/apis/meta/v1"
 	rest2 "github.com/nrc-no/core/api/pkg/registry/rest"
 	store2 "github.com/nrc-no/core/api/pkg/store"
 	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/apimachinery/pkg/watch"
 	"strings"
 )
 
@@ -113,6 +115,17 @@ func (s *Store) Create(ctx context.Context, name string, obj runtime.Object) (ru
 	return out, nil
 }
 
+func (s *Store) Watch(ctx context.Context, options v1.ListResourcesOptions) (watch.Interface, error) {
+	key, err := s.KeyRootFunc(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return s.Storage.Watch(ctx, key, store2.ListOptions{
+		ResourceVersion: options.ResourceVersion,
+		Limit:           options.Limit,
+	})
+}
+
 func (s *Store) New() runtime.Object {
 	return s.NewFunc()
 }
@@ -170,7 +183,7 @@ func (s *Store) CompleteWithOptions(options *StoreOptions) error {
 	}
 
 	if s.Storage == nil {
-		storage, destroy, err := store2.Create(*opts.StorageConfig)
+		storage, destroy, err := store2.Create(*opts.StorageConfig, s.NewFunc)
 		if err != nil {
 			return err
 		}

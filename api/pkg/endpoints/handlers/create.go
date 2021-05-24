@@ -70,7 +70,7 @@ func CreateResource(scope *RequestScope, creater rest2.Creater) http.HandlerFunc
 
 		// Respond
 		status := http.StatusCreated
-		transformResponseObject(ctx, scope, req, w, status, outputMediaType, inputObj)
+		transformResponseObject(scope, req, w, status, outputMediaType, inputObj)
 
 	}
 }

@@ -4,13 +4,14 @@ import (
 	"context"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"k8s.io/apimachinery/pkg/runtime"
 	"strings"
 	"time"
 )
 
 type DestroyFunc func()
 
-func Create(c Config) (Interface, DestroyFunc, error) {
+func Create(c Config, newFunc func() runtime.Object) (Interface, DestroyFunc, error) {
 
 	uri := strings.Join(c.Transport.ServerList, ",")
 
@@ -36,7 +37,7 @@ func Create(c Config) (Interface, DestroyFunc, error) {
 		return nil, nil, err
 	}
 
-	store := NewMongoStore(client, c.Codec, c.Transport.Database)
+	store := NewMongoStore(client, c.Codec, c.Transport.Database, newFunc)
 
 	return store, func() {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)

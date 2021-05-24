@@ -13,7 +13,7 @@ CODEGEN_PKG=${CODEGEN_PKG:-$(
 
 bash "${CODEGEN_PKG}/generate-groups.sh" deepcopy \
   github.com/nrc-no/core/api/pkg/generated github.com/nrc-no/core/api/pkg/apis \
-  "core:v1" \
+  "core:v1 discovery:v1 meta:v1" \
   --go-header-file "${SCRIPT_ROOT}"/hack/boilerplate.go.txt
 
 openapi_xtra_pkgs=()
@@ -27,5 +27,5 @@ function join_by() {
 
 OPENAPI_EXTRA_PACKAGES=$(join_by , "${openapi_xtra_pkgs[@]}") bash "${CODEGEN_PKG}/generate-internal-groups.sh" "deepcopy,defaulter,conversion,openapi" \
   github.com/nrc-no/core/api/pkg/generated github.com/nrc-no/core/api/pkg/apis github.com/nrc-no/core/api/pkg/apis \
-  "core:v1" \
+  "core:v1 discovery:v1 meta:v1" \
   --go-header-file "${SCRIPT_ROOT}/hack/boilerplate.go.txt"

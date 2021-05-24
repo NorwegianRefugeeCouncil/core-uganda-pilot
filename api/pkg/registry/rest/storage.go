@@ -2,7 +2,9 @@ package rest
 
 import (
 	"context"
+	v1 "github.com/nrc-no/core/api/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/watch"
 )
 
 type Storage interface {
@@ -38,6 +40,10 @@ type UpdatedObjectInfo interface {
 type Updater interface {
 	New() runtime.Object
 	Update(ctx context.Context, name string, objInfo UpdatedObjectInfo) (runtime.Object, error)
+}
+
+type Watcher interface {
+	Watch(ctx context.Context, options v1.ListResourcesOptions) (watch.Interface, error)
 }
 
 type StandardStorage interface {

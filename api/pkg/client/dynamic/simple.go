@@ -197,7 +197,7 @@ func (c *dynamicResourceClient) Delete(ctx context.Context, name string, opts me
 	return result.Error()
 }
 
-//func (c *dynamicResourceClient) DeleteCollection(ctx context.Context, opts metav1.DeleteOptions, listOptions metav1.ListOptions) error {
+//func (c *dynamicResourceClient) DeleteCollection(ctx context.Context, opts metav1.DeleteOptions, listOptions metav1.ListResourcesOptions) error {
 //	deleteOptionsByte, err := runtime.Encode(deleteOptionsCodec.LegacyCodec(schema.GroupVersion{Version: "v1"}), &opts)
 //	if err != nil {
 //		return err
@@ -255,7 +255,7 @@ func (c *dynamicResourceClient) List(ctx context.Context, opts metav1.ListOption
 	return list, nil
 }
 
-//func (c *dynamicResourceClient) Watch(ctx context.Context, opts metav1.ListOptions) (watch.Interface, error) {
+//func (c *dynamicResourceClient) Watch(ctx context.Context, opts metav1.ListResourcesOptions) (watch.Interface, error) {
 //	opts.Watch = true
 //	return c.client.client.Get().AbsPath(c.makeURLSegments("")...).
 //		SpecificallyVersionedParams(&opts, dynamicParameterCodec, versionV1).

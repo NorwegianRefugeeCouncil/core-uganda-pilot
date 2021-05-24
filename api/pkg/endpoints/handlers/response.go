@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"context"
 	"fmt"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metainternalversionscheme "k8s.io/apimachinery/pkg/apis/meta/internalversion/scheme"
@@ -18,7 +17,7 @@ import (
 // transformObject takes the object as returned by storage and ensures it is in
 // the client's desired form, as well as ensuring any API level fields like self-link
 // are properly set.
-func transformObject(ctx context.Context, obj runtime.Object, opts interface{}, mediaType negotiation.MediaTypeOptions, scope *RequestScope, req *http.Request) (runtime.Object, error) {
+func transformObject(obj runtime.Object, mediaType negotiation.MediaTypeOptions) (runtime.Object, error) {
 	if co, ok := obj.(runtime.CacheableObject); ok {
 		if mediaType.Convert != nil {
 			// Non-nil mediaType.Convert means that some conversion of the object
@@ -30,13 +29,13 @@ func transformObject(ctx context.Context, obj runtime.Object, opts interface{}, 
 			//
 			// TODO: Long-term, transformObject should be changed so that it
 			// implements runtime.Encoder interface.
-			return doTransformObject(ctx, co.GetObject(), opts, mediaType, scope, req)
+			return doTransformObject(co.GetObject(), mediaType)
 		}
 	}
-	return doTransformObject(ctx, obj, opts, mediaType, scope, req)
+	return doTransformObject(obj, mediaType)
 }
 
-func doTransformObject(ctx context.Context, obj runtime.Object, opts interface{}, mediaType negotiation.MediaTypeOptions, scope *RequestScope, req *http.Request) (runtime.Object, error) {
+func doTransformObject(obj runtime.Object, mediaType negotiation.MediaTypeOptions) (runtime.Object, error) {
 	if _, ok := obj.(*metav1.Status); ok {
 		return obj, nil
 	}
@@ -70,13 +69,8 @@ func doTransformObject(ctx context.Context, obj runtime.Object, opts interface{}
 
 // transformResponseObject takes an object loaded from storage and performs any necessary transformations.
 // Will write the complete response object.
-func transformResponseObject(ctx context.Context, scope *RequestScope, req *http.Request, w http.ResponseWriter, statusCode int, mediaType negotiation.MediaTypeOptions, result runtime.Object) {
-	options, err := optionsForTransform(mediaType, req)
-	if err != nil {
-		scope.err(err, w, req)
-		return
-	}
-	obj, err := transformObject(ctx, result, options, mediaType, scope, req)
+func transformResponseObject(scope *RequestScope, req *http.Request, w http.ResponseWriter, statusCode int, mediaType negotiation.MediaTypeOptions, result runtime.Object) {
+	obj, err := transformObject(result, mediaType)
 	if err != nil {
 		scope.err(err, w, req)
 		return

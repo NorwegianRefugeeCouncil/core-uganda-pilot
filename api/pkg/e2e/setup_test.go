@@ -2,7 +2,7 @@ package e2e
 
 import (
 	"context"
-	v1 "github.com/nrc-no/core/api/pkg/client/core/v1"
+	"github.com/nrc-no/core/api/pkg/client/core"
 	"github.com/nrc-no/core/api/pkg/client/rest"
 	serveroptions "github.com/nrc-no/core/api/pkg/server/options"
 	"github.com/nrc-no/core/api/pkg/store"
@@ -16,7 +16,7 @@ import (
 type Suite struct {
 	suite.Suite
 	cancel     context.CancelFunc
-	client     *v1.CoreV1Client
+	client     core.Interface
 	restConfig *rest.Config
 	baseUrl    *url.URL
 }
@@ -31,8 +31,8 @@ func (s *Suite) SetupSuite() {
 		StorageConfig: serveroptions.MongoOptions{
 			StorageConfig: store.Config{
 				Transport: store.TransportConfig{
-					Password: "pass12345",
-					Username: "root",
+					// Password: "pass12345",
+					// Username: "root",
 					Database: "test",
 					ServerList: []string{
 						"mongodb://127.0.0.1:27017",
@@ -56,13 +56,13 @@ func (s *Suite) SetupSuite() {
 		}
 	}()
 
-	time.Sleep(2 * time.Second)
+	time.Sleep(5 * time.Second)
 
 	s.restConfig = &rest.Config{
 		Host: "http://localhost:8888",
 	}
 	var err error
-	s.client, err = v1.NewForConfig(s.restConfig)
+	s.client, err = core.NewForConfig(s.restConfig)
 	if err != nil {
 		t.Fatalf("could not create rest client: %v", err)
 	}

@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"github.com/emicklei/go-restful"
+	v1 "github.com/nrc-no/core/api/pkg/apis/discovery/v1"
 	handlers2 "github.com/nrc-no/core/api/pkg/endpoints/handlers"
 	rest2 "github.com/nrc-no/core/api/pkg/registry/rest"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -17,7 +18,7 @@ type APIInstaller struct {
 	prefix string
 }
 
-func (i *APIInstaller) Install() (*restful.WebService, error) {
+func (i *APIInstaller) Install() (*restful.WebService, []v1.APIResource, error) {
 
 	ws := new(restful.WebService)
 	ws.Path(i.prefix)
@@ -34,17 +35,20 @@ func (i *APIInstaller) Install() (*restful.WebService, error) {
 	}
 	sort.Strings(paths)
 
+	var apiResources []v1.APIResource
 	for _, path := range paths {
 		storage := i.group.Storage[path]
-		if err := i.registerResourceHandlers(path, storage, ws); err != nil {
-			return nil, err
+		apiResource, err := i.registerResourceHandlers(path, storage, ws)
+		if err != nil {
+			return nil, nil, err
 		}
+		apiResources = append(apiResources, *apiResource)
 	}
 
-	return ws, nil
+	return ws, apiResources, nil
 }
 
-func (i *APIInstaller) registerResourceHandlers(path string, storage rest2.Storage, ws *restful.WebService) error {
+func (i *APIInstaller) registerResourceHandlers(path string, storage rest2.Storage, ws *restful.WebService) (*v1.APIResource, error) {
 
 	resource := path
 	creater, isCreater := storage.(rest2.Creater)
@@ -52,15 +56,16 @@ func (i *APIInstaller) registerResourceHandlers(path string, storage rest2.Stora
 	updater, isUpdater := storage.(rest2.Updater)
 	getter, isGetter := storage.(rest2.Getter)
 	deleter, isDeleter := storage.(rest2.Deleter)
+	watcher, _ := storage.(rest2.Watcher)
 
 	fqKindToRegister, err := GetResourceKind(i.group.GroupVersion, storage, i.group.Typer)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	kind := fqKindToRegister.Kind
 	versionedPtr, err := i.group.Creater.New(fqKindToRegister)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defaultVersionedObject := indirectArbitraryPointer(versionedPtr)
 
@@ -69,11 +74,11 @@ func (i *APIInstaller) registerResourceHandlers(path string, storage rest2.Stora
 		list := lister.NewList()
 		listGVKs, _, err := i.group.Typer.ObjectKinds(list)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		versionedListPtr, err := i.group.Creater.New(i.group.GroupVersion.WithKind(listGVKs[0].Kind))
 		if err != nil {
-			return err
+			return nil, err
 		}
 		versionedList = indirectArbitraryPointer(versionedListPtr)
 	}
@@ -91,8 +96,11 @@ func (i *APIInstaller) registerResourceHandlers(path string, storage rest2.Stora
 		Namer:           handlers2.ContextBasedNaming{},
 	}
 
+	var verbs []string
+
 	var routes []*restful.RouteBuilder
 	if isGetter {
+		verbs = append(verbs, "get")
 		handler := restfulGetResource(getter, reqScope)
 		route := ws.GET("/"+resource+"/{name}").To(handler).
 			Doc("Gets a "+kind).
@@ -104,7 +112,8 @@ func (i *APIInstaller) registerResourceHandlers(path string, storage rest2.Stora
 	}
 
 	if isLister {
-		handler := restfulListResource(lister, reqScope)
+		verbs = append(verbs, "list")
+		handler := restfulListResource(lister, watcher, reqScope)
 		route := ws.GET("/"+resource).To(handler).
 			Doc("List object of kind "+kind).
 			Operation("list"+kind).
@@ -115,6 +124,7 @@ func (i *APIInstaller) registerResourceHandlers(path string, storage rest2.Stora
 	}
 
 	if isUpdater {
+		verbs = append(verbs, "update")
 		handler := restfulUpdateResource(updater, reqScope)
 		route := ws.PUT("/"+resource+"/{name}").To(handler).
 			Doc("Replaces a "+kind).
@@ -128,6 +138,7 @@ func (i *APIInstaller) registerResourceHandlers(path string, storage rest2.Stora
 	}
 
 	if isCreater {
+		verbs = append(verbs, "create")
 		handler := restfulCreateResource(creater, reqScope)
 		route := ws.POST("/"+resource+"/").To(handler).
 			Doc("Create a "+kind).
@@ -141,6 +152,7 @@ func (i *APIInstaller) registerResourceHandlers(path string, storage rest2.Stora
 	}
 
 	if isDeleter {
+		verbs = append(verbs, "delete")
 		handler := restfulDeleteResource(deleter, reqScope)
 		route := ws.DELETE("/"+resource+"/{name}").To(handler).
 			Doc("Delete a "+kind).
@@ -156,7 +168,16 @@ func (i *APIInstaller) registerResourceHandlers(path string, storage rest2.Stora
 		ws.Route(route)
 	}
 
-	return nil
+	apiResource := &v1.APIResource{
+		Group:      i.group.GroupVersion.Group,
+		Version:    i.group.GroupVersion.Version,
+		Name:       path,
+		Namespaced: false,
+		Kind:       fqKindToRegister.Kind,
+		Verbs:      verbs,
+	}
+
+	return apiResource, nil
 }
 
 // indirectArbitraryPointer returns *ptrToObject for an arbitrary pointer
@@ -205,8 +226,8 @@ func restfulUpdateResource(r rest2.Updater, scope handlers2.RequestScope) restfu
 		handlers2.UpdateResource(&scope, r)(response.ResponseWriter, request.Request)
 	}
 }
-func restfulListResource(r rest2.Lister, scope handlers2.RequestScope) restful.RouteFunction {
+func restfulListResource(r rest2.Lister, watcher rest2.Watcher, scope handlers2.RequestScope) restful.RouteFunction {
 	return func(request *restful.Request, response *restful.Response) {
-		handlers2.ListResource(&scope, r)(response.ResponseWriter, request.Request)
+		handlers2.ListResource(&scope, r, watcher)(response.ResponseWriter, request.Request)
 	}
 }

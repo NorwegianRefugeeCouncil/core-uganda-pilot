@@ -40,7 +40,7 @@ func NewRequestInfo(req *http.Request) (*RequestInfo, error) {
 	}
 
 	currentParts := splitPath(req.URL.Path)
-	if len(currentParts) < 3 {
+	if len(currentParts) < 4 {
 		// return a non-resource request
 		return &requestInfo, nil
 	}

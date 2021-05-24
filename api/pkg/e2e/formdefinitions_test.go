@@ -17,7 +17,7 @@ import (
 func (s *Suite) TestListFormDefinitions() {
 	t := s.T()
 	ctx := context.TODO()
-	_, err := s.client.FormDefinitions().List(ctx, metav1.ListOptions{})
+	_, err := s.client.CoreV1().FormDefinitions().List(ctx, metav1.ListOptions{})
 	assert.NoError(t, err)
 }
 
@@ -42,7 +42,7 @@ func assertHasStatusCause(t *testing.T, err error, causeType metav1.CauseType, f
 
 }
 
-func (s *Suite) TestCreateFormDefinition() {
+func (s *Suite) TestValidateFormDefinition() {
 	t := s.T()
 
 	ctx := context.TODO()
@@ -271,17 +271,22 @@ func (s *Suite) TestCreateFormDefinition() {
 				tc.customize(fd)
 			}
 
-			err := s.client.FormDefinitions().Delete(ctx, fd.Name, metav1.DeleteOptions{})
+			err := s.client.CoreV1().FormDefinitions().Delete(ctx, fd.Name, metav1.DeleteOptions{})
 			if err != nil && !apierrors.IsNotFound(err) {
 				assert.NoError(t, err)
 				return
 			}
 
-			out, err := s.client.FormDefinitions().Create(ctx, fd, metav1.CreateOptions{})
+			out, err := s.client.CoreV1().FormDefinitions().Create(ctx, fd, metav1.CreateOptions{})
 			tc.assert(t, fd, out, err)
+
+			if err != nil {
+				_ = s.client.CoreV1().FormDefinitions().Delete(ctx, fd.Name, metav1.DeleteOptions{})
+			}
 
 		})
 	}
+
 }
 
 func (s *Suite) TestCreateNewEndpoint() {
@@ -298,7 +303,7 @@ func (s *Suite) TestCreateNewEndpoint() {
 	//	return
 	//}
 	//
-	//w, err := s.client.CustomResourceDefinitions().Watch(ctx, metav1.ListOptions{
+	//w, err := s.client.CustomResourceDefinitions().Watch(ctx, metav1.ListResourcesOptions{
 	//	FieldSelector: "metadata.name=" + formDef.Name,
 	//})
 	//if !assert.NoError(t, err) {
@@ -355,24 +360,28 @@ func (s *Suite) TestCreateLotsOfForms() {
 	def.Spec.Names.Plural = "loadtests"
 	def.Spec.Names.Singular = "loadtest"
 	def.Spec.Names.Kind = "LoadTest"
-	if _, err := s.client.FormDefinitions().Create(context.TODO(), def, metav1.CreateOptions{}); err != nil {
+	if _, err := s.client.CoreV1().FormDefinitions().Create(context.TODO(), def, metav1.CreateOptions{}); err != nil {
 		if !apierrors.IsAlreadyExists(err) {
 			s.T().Logf("error creating form definition: %v", err)
 			s.T().Fatal(err)
 		} else {
 
-			out, err := s.client.FormDefinitions().Get(context.TODO(), def.Name, metav1.GetOptions{})
+			out, err := s.client.CoreV1().FormDefinitions().Get(context.TODO(), def.Name, metav1.GetOptions{})
 			if err != nil {
 				s.T().Fatal(err)
 			}
 			def.ObjectMeta.ResourceVersion = out.ResourceVersion
 
-			if _, err := s.client.FormDefinitions().Update(context.TODO(), def, metav1.UpdateOptions{}); err != nil {
+			if _, err := s.client.CoreV1().FormDefinitions().Update(context.TODO(), def, metav1.UpdateOptions{}); err != nil {
 				s.T().Fatal(err)
 			}
 		}
 	}
-	workChan := make(chan struct{}, 10000)
+	http.DefaultTransport.(*http.Transport).MaxIdleConnsPerHost = 100
+	http.DefaultTransport.(*http.Transport).MaxIdleConns = 100
+
+	workChan := make(chan struct{}, 5000)
+
 	for i := 0; i < 10000; i++ {
 		idx := i
 		wg.Add(1)
@@ -406,6 +415,7 @@ func (s *Suite) TestCreateLotsOfForms() {
 				return
 			}
 			req.Header.Set("Content-Type", "application/json")
+			req.Close = true
 
 			resp, err := http.DefaultClient.Do(req)
 			if err != nil {
@@ -419,6 +429,9 @@ func (s *Suite) TestCreateLotsOfForms() {
 				body, err := ioutil.ReadAll(resp.Body)
 				if err == nil {
 					s.T().Logf("%s", string(body))
+				}
+				if err != nil {
+					resp.Body.Close()
 				}
 
 				return

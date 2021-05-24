@@ -1,13 +1,15 @@
-package handlers
+package customresource
 
 import (
 	"context"
 	"fmt"
 	"github.com/nrc-no/core/api/pkg/apis/core"
 	v1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
-	corev1client "github.com/nrc-no/core/api/pkg/client/core/v1"
+	informers "github.com/nrc-no/core/api/pkg/client/informers/core/v1"
+	listers "github.com/nrc-no/core/api/pkg/client/listers/core/v1"
 	customresource2 "github.com/nrc-no/core/api/pkg/customresource"
 	conversion2 "github.com/nrc-no/core/api/pkg/customresource/conversion"
+	"github.com/nrc-no/core/api/pkg/endpoints/handlers"
 	request2 "github.com/nrc-no/core/api/pkg/endpoints/request"
 	structuralschema "github.com/nrc-no/core/api/pkg/openapi"
 	"github.com/nrc-no/core/api/pkg/openapi/defaulting"
@@ -38,12 +40,15 @@ import (
 // crdHandler is a generic REST handler that is able to dynamically serve CustomResources
 // as they are added to the registry
 type crdHandler struct {
-	customStorageLock sync.Mutex
-	customStorage     atomic.Value
-	restOptionsGetter generic2.RESTOptionsGetter
-	cli               corev1client.CustomResourceDefinitionInterface
-	codecs            runtime.NegotiatedSerializer
-	converterFactory  *conversion2.CRConverterFactory
+	customStorageLock       sync.Mutex
+	customStorage           atomic.Value
+	restOptionsGetter       generic2.RESTOptionsGetter
+	codecs                  runtime.NegotiatedSerializer
+	converterFactory        *conversion2.CRConverterFactory
+	versionDiscoveryHandler *CRDVersionDiscoveryHandler
+	groupDiscoveryHandler   *CRDGroupDiscoveryHandler
+	crdLister               listers.CustomResourceDefinitionLister
+	hasSynced               func() bool
 }
 
 // crdInfo contains information about a CustomResource (for serving purposes). It is lazily-created
@@ -53,7 +58,7 @@ type crdInfo struct {
 	acceptedNames *v1.CustomResourceDefinitionNames
 	deprecated    map[string]bool
 	storages      map[string]*customresource3.CustomResourceStore
-	requestScopes map[string]*RequestScope
+	requestScopes map[string]*handlers.RequestScope
 	waitgroup     *utilwaitgroup.SafeWaitGroup
 }
 
@@ -73,13 +78,22 @@ func (in crdStorageMap) clone() crdStorageMap {
 }
 
 // NewCustomResourceDefinitionHandler Builds a crdHandler
-func NewCustomResourceDefinitionHandler(restOptionsGetter generic2.RESTOptionsGetter, codecs runtime.NegotiatedSerializer, cli corev1client.CustomResourceDefinitionInterface) (*crdHandler, error) {
+func NewCustomResourceDefinitionHandler(
+	restOptionsGetter generic2.RESTOptionsGetter,
+	codecs runtime.NegotiatedSerializer,
+	crdInformer informers.CustomResourceDefinitionInformer,
+	versionDiscoveryHandler *CRDVersionDiscoveryHandler,
+	groupDiscoveryHandler *CRDGroupDiscoveryHandler,
+) (*crdHandler, error) {
 	ret := &crdHandler{
-		customStorageLock: sync.Mutex{},
-		customStorage:     atomic.Value{},
-		restOptionsGetter: restOptionsGetter,
-		cli:               cli,
-		codecs:            codecs,
+		customStorageLock:       sync.Mutex{},
+		customStorage:           atomic.Value{},
+		restOptionsGetter:       restOptionsGetter,
+		crdLister:               crdInformer.Lister(),
+		hasSynced:               crdInformer.Informer().HasSynced,
+		codecs:                  codecs,
+		versionDiscoveryHandler: versionDiscoveryHandler,
+		groupDiscoveryHandler:   groupDiscoveryHandler,
 	}
 	ret.customStorage.Store(crdStorageMap{})
 	crConverterFactory, err := conversion2.NewCRConverterFactory()
@@ -108,12 +122,32 @@ func (r *crdHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	if !requestInfo.IsResourceRequest {
+		pathParts := splitPath(requestInfo.Path)
+		if len(pathParts) == 3 {
+			if !r.hasSynced() {
+				responsewriters.ErrorNegotiated(serverStartingError(), r.codecs, schema.GroupVersion{Group: requestInfo.APIGroup, Version: requestInfo.APIVersion}, w, req)
+				return
+			}
+			r.versionDiscoveryHandler.ServeHTTP(w, req)
+			return
+		}
+		if len(pathParts) == 2 {
+			if !r.hasSynced() {
+				responsewriters.ErrorNegotiated(serverStartingError(), r.codecs, schema.GroupVersion{Group: requestInfo.APIGroup, Version: requestInfo.APIVersion}, w, req)
+				return
+			}
+			r.groupDiscoveryHandler.ServeHTTP(w, req)
+			return
+		}
+		http.NotFoundHandler().ServeHTTP(w, req)
+		return
+	}
+
 	// This is the name of the CRD, as the CRD must have a name
 	// equal to {resource}.{group}
 	crdName := requestInfo.Resource + "." + requestInfo.APIGroup
-
-	// Retrieves the CRD
-	crd, err := r.cli.Get(ctx, crdName, metav1.GetOptions{})
+	crd, err := r.crdLister.Get(crdName)
 	if err != nil {
 		responsewriters.ErrorNegotiated(
 			err,
@@ -156,15 +190,15 @@ func (r *crdHandler) serveResource(w http.ResponseWriter, req *http.Request, req
 	// Map the request to the appropriate handler
 	switch requestInf.Verb {
 	case "get":
-		return GetResource(scope, storage)
+		return handlers.GetResource(scope, storage)
 	case "list":
-		return ListResource(scope, storage)
+		return handlers.ListResource(scope, storage, nil)
 	case "create":
-		return CreateResource(scope, storage)
+		return handlers.CreateResource(scope, storage)
 	case "update":
-		return UpdateResource(scope, storage)
+		return handlers.UpdateResource(scope, storage)
 	case "delete":
-		return DeleteResource(scope, storage)
+		return handlers.DeleteResource(scope, storage)
 	default:
 		responsewriters.ErrorNegotiated(
 			errors.NewMethodNotSupported(schema.GroupResource{Group: requestInf.APIGroup, Resource: requestInf.Resource}, requestInf.Verb),
@@ -187,7 +221,7 @@ func (r *crdHandler) getOrCreateServingInfoFor(ctx context.Context, uid types.UI
 	defer r.customStorageLock.Unlock()
 
 	// gets the CustomResourceDefinition
-	crd, err := r.cli.Get(ctx, name, metav1.GetOptions{})
+	crd, err := r.crdLister.Get(name)
 	if err != nil {
 		return nil, err
 	}
@@ -200,7 +234,7 @@ func (r *crdHandler) getOrCreateServingInfoFor(ctx context.Context, uid types.UI
 	}
 
 	// builds objects needed for creating the crdInfo object
-	requestScopes := map[string]*RequestScope{}
+	requestScopes := map[string]*handlers.RequestScope{}
 	storages := map[string]*customresource3.CustomResourceStore{}
 	structuralSchemes := map[string]*structuralschema.Structural{}
 
@@ -252,7 +286,7 @@ func (r *crdHandler) getOrCreateServingInfoFor(ctx context.Context, uid types.UI
 	// Loop through all versions
 	for _, v := range crd.Spec.Versions {
 
-		// We need a parameterScheme to be able to decode ListOptions, GetOptions, etc
+		// We need a parameterScheme to be able to decode ListResourcesOptions, GetOptions, etc
 		// from the URL query parameters
 		parameterScheme := runtime.NewScheme()
 		parameterScheme.AddUnversionedTypes(schema.GroupVersion{Group: crd.Spec.Group, Version: v.Name},
@@ -335,8 +369,8 @@ func (r *crdHandler) getOrCreateServingInfoFor(ctx context.Context, uid types.UI
 		}
 
 		// Builds the RequestScope scope for the CR
-		requestScopes[v.Name] = &RequestScope{
-			Namer:           ContextBasedNaming{},
+		requestScopes[v.Name] = &handlers.RequestScope{
+			Namer:           handlers.ContextBasedNaming{},
 			Serializer:      negotiatedSerializer,
 			ParameterCodec:  parameterCodec,
 			Creater:         creator,
@@ -681,4 +715,16 @@ func (t CRDRESTOptionsGetter) GetRESTOptions(resource schema.GroupResource) (gen
 	//	ret.Decorator = genericregistry.StorageWithCacher()
 	//}
 	return ret, nil
+}
+
+// serverStartingError returns a ServiceUnavailble error with a retry-after time
+func serverStartingError() error {
+	err := errors.NewServiceUnavailable("server is starting")
+	if err.ErrStatus.Details == nil {
+		err.ErrStatus.Details = &metav1.StatusDetails{}
+	}
+	if err.ErrStatus.Details.RetryAfterSeconds == 0 {
+		err.ErrStatus.Details.RetryAfterSeconds = int32(10)
+	}
+	return err
 }

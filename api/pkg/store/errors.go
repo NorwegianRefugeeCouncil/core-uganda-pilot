@@ -9,6 +9,10 @@ func IsNotFound(err error) bool {
 	return err.Error() == "mongo: no documents in result"
 }
 
+func IsAlreadyExists(err error) bool {
+	return err.Error() == "key already exists"
+}
+
 func InterpretGetError(err error, qualifiedResource schema.GroupResource, name string) error {
 	switch {
 	case IsNotFound(err):
@@ -34,7 +38,12 @@ func InterpretUpdateError(err error, qualifiedResource schema.GroupResource, nam
 }
 
 func InterpretCreateError(err error, qualifiedResource schema.GroupResource, name string) error {
-	return err
+	switch {
+	case IsAlreadyExists(err):
+		return errors.NewAlreadyExists(qualifiedResource, name)
+	default:
+		return err
+	}
 }
 
 func InterpretListError(err error, qualifiedResource schema.GroupResource) error {

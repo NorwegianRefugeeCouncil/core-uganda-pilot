@@ -70,7 +70,7 @@ func UpdateResource(scope *RequestScope, updater rest2.Updater) http.HandlerFunc
 
 		// Respond
 		status := http.StatusOK
-		transformResponseObject(ctx, scope, req, w, status, outputMediaType, inputObj)
+		transformResponseObject(scope, req, w, status, outputMediaType, inputObj)
 
 	}
 }

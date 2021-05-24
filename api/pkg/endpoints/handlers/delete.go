@@ -30,7 +30,7 @@ func DeleteResource(scope *RequestScope, deleter rest2.Deleter) http.HandlerFunc
 			return
 		}
 
-		transformResponseObject(ctx, scope, req, w, http.StatusOK, outputMediaType, result)
+		transformResponseObject(scope, req, w, http.StatusOK, outputMediaType, result)
 
 	}
 }

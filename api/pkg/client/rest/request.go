@@ -4,12 +4,16 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"github.com/gorilla/websocket"
+	"github.com/sirupsen/logrus"
 	"io"
 	"io/ioutil"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/apimachinery/pkg/util/net"
+	"k8s.io/apimachinery/pkg/watch"
 	"mime"
 	"net/http"
 	"net/url"
@@ -17,6 +21,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -114,6 +119,42 @@ func (r *Request) Name(resourceName string) *Request {
 	return r
 }
 
+func (r *Request) Param(paramName, s string) *Request {
+	if r.err != nil {
+		return r
+	}
+	return r.setParam(paramName, s)
+}
+
+func (r *Request) VersionedParams(obj runtime.Object, codec runtime.ParameterCodec) *Request {
+	return r.SpecificallyVersionedParam(obj, codec, r.c.content.GroupVersion)
+}
+
+func (r *Request) SpecificallyVersionedParam(obj runtime.Object, codec runtime.ParameterCodec, version schema.GroupVersion) *Request {
+	if r.err != nil {
+		return r
+	}
+	params, err := codec.EncodeParameters(obj, version)
+	if err != nil {
+		r.err = err
+		return r
+	}
+	for k, v := range params {
+		for _, value := range v {
+			r.setParam(k, value)
+		}
+	}
+	return r
+}
+
+func (r *Request) setParam(paramName, value string) *Request {
+	if r.params == nil {
+		r.params = make(url.Values)
+	}
+	r.params[paramName] = append(r.params[paramName], value)
+	return r
+}
+
 func (r *Request) Timeout(d time.Duration) *Request {
 	if r.err != nil {
 		return r
@@ -191,10 +232,141 @@ func (r *Request) URL() *url.URL {
 	return finalUrl
 }
 
+func (r *Request) Watch(ctx context.Context) (watch.Interface, error) {
+	if r.err != nil {
+		return nil, r.err
+	}
+
+	url := r.URL().String()
+
+	url = strings.Replace(url, "https://", "wss://", -1)
+	url = strings.Replace(url, "http://", "ws://", -1)
+
+	req, err := http.NewRequest(r.verb, url, r.body)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	req.Header = r.headers
+	client := r.c.Client
+	if client == nil {
+		client = http.DefaultClient
+	}
+	conn, res, err := websocket.DefaultDialer.DialContext(ctx, url, r.headers)
+	if err != nil {
+		return nil, Result{err: err}.Error()
+	}
+	if res.StatusCode != http.StatusSwitchingProtocols {
+		if result := r.transformResponse(res, r.verb); result.err != nil {
+			return nil, result.Error()
+		}
+		return nil, fmt.Errorf("for request %s, got status: %v", url, res.StatusCode)
+	}
+
+	decoder, err := r.c.content.Negotiator.Decoder(res.Header.Get("Content-Type"), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	ws := NewWebSocketWatcher(conn, decoder)
+	return ws, nil
+}
+
+type WebSocketWatcher struct {
+	conn    *websocket.Conn
+	decoder runtime.Decoder
+	result  chan watch.Event
+	done    chan struct{}
+	lock    sync.Mutex
+}
+
+func NewWebSocketWatcher(conn *websocket.Conn, decoder runtime.Decoder) *WebSocketWatcher {
+	ws := &WebSocketWatcher{
+		conn:    conn,
+		decoder: decoder,
+		result:  make(chan watch.Event),
+		done:    make(chan struct{}),
+	}
+	go ws.receive()
+	return ws
+}
+
+func (ws *WebSocketWatcher) ResultChan() <-chan watch.Event {
+	return ws.result
+}
+
+func (ws *WebSocketWatcher) Stop() {
+	ws.lock.Lock()
+	defer ws.lock.Unlock()
+	select {
+	case <-ws.done:
+	default:
+		close(ws.done)
+		ws.conn.Close()
+	}
+}
+
+func (ws *WebSocketWatcher) receive() {
+	defer close(ws.result)
+	defer ws.Stop()
+	for {
+		_, reader, err := ws.conn.NextReader()
+		if err != nil {
+			switch err {
+			case io.EOF:
+			case io.ErrUnexpectedEOF:
+				logrus.Warnf("unexpected EOF during watch: %v", err)
+			default:
+				if net.IsProbableEOF(err) || net.IsTimeout(err) {
+					logrus.Errorf("unable to decode event from the watch stream: %v", err)
+				} else {
+					select {
+					case <-ws.done:
+					case ws.result <- watch.Event{
+						Type:   watch.Error,
+						Object: &errors.NewInternalError(err).ErrStatus,
+					}:
+					}
+				}
+			}
+			return
+		}
+		var buf []byte
+		if _, err := reader.Read(buf); err != nil {
+			logrus.Errorf("unable to read: %v", err)
+			return
+		}
+		we := metav1.WatchEvent{}
+		decoded, _, err := ws.decoder.Decode(buf, nil, &we)
+		if err != nil {
+			logrus.Errorf("unable to decode event: %v", err)
+			return
+		}
+		if decoded != &we {
+			logrus.Errorf("unable to decode to metav1.Event")
+			return
+		}
+		obj, _, err := ws.decoder.Decode(we.Object.Raw, nil, nil)
+		if err != nil {
+			logrus.Errorf("unable to decode object: %v", err)
+			return
+		}
+		ev := watch.Event{
+			Type:   watch.EventType(we.Type),
+			Object: obj,
+		}
+		select {
+		case <-ws.done:
+		case ws.result <- ev:
+		}
+	}
+}
+
 func (r *Request) Do(ctx context.Context) Result {
 	var result Result
 	err := r.request(ctx, func(req *http.Request, resp *http.Response) {
-		result = r.transformResponse(resp, req)
+		result = r.transformResponse(resp, req.Method)
 	})
 	if err != nil {
 		return Result{err: err}
@@ -235,7 +407,7 @@ func (r *Request) request(ctx context.Context, fn func(*http.Request, *http.Resp
 	return nil
 }
 
-func (r *Request) transformResponse(resp *http.Response, req *http.Request) Result {
+func (r *Request) transformResponse(resp *http.Response, method string) Result {
 	var body []byte
 	if resp.Body != nil {
 		data, err := ioutil.ReadAll(resp.Body)
@@ -264,7 +436,7 @@ func (r *Request) transformResponse(resp *http.Response, req *http.Request) Resu
 		if err != nil {
 			switch {
 			case resp.StatusCode < http.StatusOK || resp.StatusCode > http.StatusPartialContent:
-				return Result{err: r.transformUnstructuredResponseError(resp, req, body)}
+				return Result{err: r.transformUnstructuredResponseError(resp, method, body)}
 			}
 			return Result{
 				body:        body,
@@ -277,7 +449,7 @@ func (r *Request) transformResponse(resp *http.Response, req *http.Request) Resu
 	switch {
 	case resp.StatusCode < http.StatusOK || resp.StatusCode > http.StatusPartialContent:
 		retryAfter, _ := retryAfterSeconds(resp)
-		err := r.newUnstructuredResponseError(body, isTextResponse(resp), resp.StatusCode, req.Method, retryAfter)
+		err := r.newUnstructuredResponseError(body, isTextResponse(resp), resp.StatusCode, method, retryAfter)
 		return Result{
 			body:        body,
 			contentType: contentType,
@@ -349,14 +521,14 @@ func (r Result) Error() error {
 // maxUnstructuredResponseTextBytes is an upper bound on how much output to include in the unstructured error.
 const maxUnstructuredResponseTextBytes = 2048
 
-func (r *Request) transformUnstructuredResponseError(resp *http.Response, req *http.Request, body []byte) error {
+func (r *Request) transformUnstructuredResponseError(resp *http.Response, method string, body []byte) error {
 	if body == nil && resp.Body != nil {
 		if data, err := ioutil.ReadAll(&io.LimitedReader{R: resp.Body, N: maxUnstructuredResponseTextBytes}); err == nil {
 			body = data
 		}
 	}
 	retryAfter, _ := retryAfterSeconds(resp)
-	return r.newUnstructuredResponseError(body, isTextResponse(resp), resp.StatusCode, req.Method, retryAfter)
+	return r.newUnstructuredResponseError(body, isTextResponse(resp), resp.StatusCode, method, retryAfter)
 }
 
 func (r *Request) newUnstructuredResponseError(body []byte, isTextResponse bool, statusCode int, method string, retryAfter int) error {

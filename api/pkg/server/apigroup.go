@@ -3,6 +3,8 @@ package server
 import (
 	"fmt"
 	"github.com/emicklei/go-restful"
+	discoveryv1 "github.com/nrc-no/core/api/pkg/apis/discovery/v1"
+	"github.com/nrc-no/core/api/pkg/endpoints/discovery"
 	rest2 "github.com/nrc-no/core/api/pkg/registry/rest"
 	"github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -59,10 +61,17 @@ func (v *APIGroupVersion) InstallREST(container *restful.Container) error {
 		group:  v,
 		prefix: prefix,
 	}
-	ws, err := installer.Install()
+	ws, apiResources, err := installer.Install()
 	if err != nil {
 		return err
 	}
+
+	versionDiscoveryHandler := discovery.NewAPIVersionHandler(
+		v.Serializer,
+		v.GroupVersion,
+		staticLister{apiResources})
+	versionDiscoveryHandler.AddToWebService(ws)
+
 	container.Add(ws)
 	return nil
 }
@@ -96,6 +105,27 @@ func installApiGroups(goRestfulContainer *restful.Container, apiPrefix string, a
 		if err := installApiResources(goRestfulContainer, apiPrefix, apiGroupInfo); err != nil {
 			return err
 		}
+
+		var apiVersionsForDiscovery []discoveryv1.GroupVersionForDiscovery
+		for _, groupVersion := range apiGroupInfo.PrioritizedVersions {
+			if len(apiGroupInfo.VersionedResourcesStorageMap[groupVersion.Version]) == 0 {
+				continue
+			}
+			apiVersionsForDiscovery = append(apiVersionsForDiscovery, discoveryv1.GroupVersionForDiscovery{
+				GroupVersion: groupVersion.String(),
+				Version:      groupVersion.Version,
+			})
+		}
+		preferredVersionForDiscovery := discoveryv1.GroupVersionForDiscovery{
+			GroupVersion: apiGroupInfo.PrioritizedVersions[0].String(),
+			Version:      apiGroupInfo.PrioritizedVersions[0].Version,
+		}
+		apiGroup := discoveryv1.APIGroup{
+			Name:             apiGroupInfo.PrioritizedVersions[0].Group,
+			Versions:         apiVersionsForDiscovery,
+			PreferredVersion: preferredVersionForDiscovery,
+		}
+		goRestfulContainer.Add(discovery.NewAPIGroupHandler(apiGroupInfo.Serializer, apiGroup).WebService())
 	}
 
 	return nil
@@ -122,4 +152,12 @@ func installApiResources(goRestfulContainer *restful.Container, apiPrefix string
 // see installApiGroups
 func installApiGroup(goRestfulContainer *restful.Container, apiPrefix string, apiGroupInfo *APIGroupInfo) error {
 	return installApiGroups(goRestfulContainer, apiPrefix, apiGroupInfo)
+}
+
+type staticLister struct {
+	list []discoveryv1.APIResource
+}
+
+func (s staticLister) ListAPIResources() []discoveryv1.APIResource {
+	return s.list
 }

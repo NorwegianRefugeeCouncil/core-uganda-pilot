@@ -2,14 +2,19 @@ package formdefinitions
 
 import (
 	"context"
+	"fmt"
 	"github.com/nrc-no/core/api/pkg/apis/core/helpers"
 	corev1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
-	v1 "github.com/nrc-no/core/api/pkg/client/core/v1"
+	"github.com/nrc-no/core/api/pkg/client/core"
+	informers "github.com/nrc-no/core/api/pkg/client/informers/core/v1"
+	listers "github.com/nrc-no/core/api/pkg/client/listers/core/v1"
 	"github.com/sirupsen/logrus"
-	"golang.org/x/sync/errgroup"
+	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/util/sets"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/apimachinery/pkg/util/wait"
+	"k8s.io/client-go/tools/cache"
+	"k8s.io/client-go/util/workqueue"
 	"reflect"
 	"time"
 )
@@ -20,117 +25,151 @@ import (
 // 3. Update a CustomResourceDefinition if the FormDefinition was updated
 // It will poll every 15 seconds to reconcile the above.
 type FormDefinitionController struct {
-	cli v1.CoreV1Interface
+	formDefinitionsLister listers.FormDefinitionLister
+	formDefinitionsSynced cache.InformerSynced
+
+	crdLister listers.CustomResourceDefinitionLister
+	crdSynced cache.InformerSynced
+
+	syncFn func(formDefinition *corev1.FormDefinition) error
+
+	queue workqueue.RateLimitingInterface
+
+	cli core.Interface
 }
 
-func NewFormDefinitionController(ctx context.Context, cli v1.CoreV1Interface) *FormDefinitionController {
+func NewFormDefinitionController(
+	cli core.Interface,
+	formDefinitionsInformer informers.FormDefinitionInformer,
+	crdsInformer informers.CustomResourceDefinitionInformer,
+) *FormDefinitionController {
 	controller := &FormDefinitionController{
-		cli: cli,
+		cli:                   cli,
+		formDefinitionsLister: formDefinitionsInformer.Lister(),
+		formDefinitionsSynced: formDefinitionsInformer.Informer().HasSynced,
+		crdLister:             crdsInformer.Lister(),
+		crdSynced:             crdsInformer.Informer().HasSynced,
+		queue:                 workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "FormDefinitionController"),
 	}
 
-	go func() {
-		if err := wait.PollInfiniteWithContext(ctx, time.Minute, controller.syncFormDefinitions); err != nil {
-			logrus.Errorf("failed to sync form definitions: %v", err)
-			return
-		}
-	}()
-
-	go func() {
-		// TODO: find a way to run this on post startup hooks
-		// this would fail otherwise because the server is not up yet
-		// at this point
-		time.Sleep(1 * time.Second)
-		_, _ = controller.syncFormDefinitions(ctx)
-	}()
+	formDefinitionsInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
+		AddFunc:    controller.addFormDefinition,
+		UpdateFunc: controller.updateFormDefinition,
+		DeleteFunc: controller.deleteFormDefinition,
+	})
+	crdsInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
+		AddFunc:    controller.addCustomResourceDefinition,
+		UpdateFunc: controller.updateCustomResourceDefinition,
+		DeleteFunc: controller.deleteCustomResourceDefinition,
+	})
 
 	return controller
 }
 
-func (c *FormDefinitionController) syncFormDefinitions(ctx context.Context) (done bool, err error) {
+func (c *FormDefinitionController) Run(stopCh <-chan struct{}) {
+	defer utilruntime.HandleCrash()
+	defer c.queue.ShutDown()
 
-	g, ctx1 := errgroup.WithContext(ctx)
+	logrus.Infof("starting FormDefinitionController")
+	defer logrus.Infof("shutting down FormDefinitionController")
 
-	formDefNames := sets.String{}
-	formDefMap := map[string]*corev1.FormDefinition{}
-	g.Go(func() error {
-		// Retrieve form definitions
-		formDefs, err := c.cli.FormDefinitions().List(ctx1, metav1.ListOptions{})
+	if !cache.WaitForCacheSync(stopCh, c.formDefinitionsSynced) {
+		utilruntime.HandleError(fmt.Errorf("timed out waiting for caches to sync"))
+		return
+	}
+
+	if !cache.WaitForCacheSync(stopCh, c.crdSynced) {
+		utilruntime.HandleError(fmt.Errorf("timed out waiting for caches to sync"))
+		return
+	}
+
+	go wait.Until(c.runWorker, time.Second, stopCh)
+
+	<-stopCh
+}
+
+func (c *FormDefinitionController) addFormDefinition(obj interface{}) {
+	castObj := obj.(*corev1.FormDefinition)
+	c.queue.Add(castObj.Name)
+}
+
+func (c *FormDefinitionController) updateFormDefinition(oldObj interface{}, newObj interface{}) {
+	castObj := oldObj.(*corev1.FormDefinition)
+	c.queue.Add(castObj.Name)
+}
+
+func (c *FormDefinitionController) deleteFormDefinition(obj interface{}) {
+	castObj := obj.(*corev1.FormDefinition)
+	c.queue.Add(castObj.Name)
+}
+
+func (c *FormDefinitionController) runWorker() {
+	for c.processNextWorkItem() {
+	}
+}
+
+func (c *FormDefinitionController) processNextWorkItem() bool {
+	key, quit := c.queue.Get()
+	if quit {
+		return false
+	}
+	defer c.queue.Done(key)
+
+	err := c.sync(key.(string))
+	if err == nil {
+		c.queue.Forget(key)
+		return true
+	}
+
+	utilruntime.HandleError(fmt.Errorf("failed to sync formdefinition: %v", err))
+	c.queue.AddRateLimited(key)
+
+	return true
+}
+
+func (c *FormDefinitionController) sync(s string) error {
+
+	formDef, err := c.formDefinitionsLister.Get(s)
+	if errors.IsNotFound(err) {
+		return nil
+	} else if err != nil {
+		return err
+	}
+
+	desiredCrd := helpers.ConvertToCustomResourceDefinition(formDef)
+
+	actualCrd, err := c.crdLister.Get(s)
+	if errors.IsNotFound(err) {
+		_, err := c.cli.CoreV1().CustomResourceDefinitions().Create(context.TODO(), desiredCrd, metav1.CreateOptions{})
 		if err != nil {
 			return err
 		}
+	} else if err != nil {
+		return err
+	}
 
-		// Build map of name -> formDefinition
-		for _, formDef := range formDefs.Items {
-			formDefMap[formDef.Name] = &formDef
-			formDefNames.Insert(formDef.Name)
-		}
-		return nil
-	})
-
-	crdNames := sets.String{}
-	crdMap := map[string]*corev1.CustomResourceDefinition{}
-	g.Go(func() error {
-		// Retrieve CRDs
-		crds, err := c.cli.CustomResourceDefinitions().List(ctx1, metav1.ListOptions{})
+	if !reflect.DeepEqual(actualCrd.Spec, desiredCrd.Spec) {
+		_, err := c.cli.CoreV1().CustomResourceDefinitions().Update(context.TODO(), desiredCrd, metav1.UpdateOptions{})
 		if err != nil {
 			return err
 		}
-
-		// Build map of name -> crd
-		for _, crd := range crds.Items {
-			crdMap[crd.Name] = &crd
-			crdNames.Insert(crd.Name)
-		}
-		return nil
-	})
-
-	if err := g.Wait(); err != nil {
-		logrus.Warnf("errot while retrieving form definitions: %v", err)
-		return false, nil
 	}
 
-	crdsToRemove := crdNames.Difference(formDefNames)
-	crdsToAdd := formDefNames.Difference(crdNames)
-	alreadyPresentCrds := formDefNames.Intersection(crdNames)
+	return nil
 
-	g, ctx2 := errgroup.WithContext(ctx)
-	for crdName, _ := range crdsToRemove {
-		crdNameToRemove := crdName
-		g.Go(func() error {
-			logrus.Infof("deleting custom resource: %s", crdNameToRemove)
-			err := c.cli.CustomResourceDefinitions().Delete(ctx2, crdNameToRemove, metav1.DeleteOptions{})
-			return err
-		})
-	}
-	for crdName, _ := range crdsToAdd {
-		crdNameToAdd := crdName
-		formDef := formDefMap[crdNameToAdd]
-		g.Go(func() error {
-			logrus.Infof("creating custom resource: %s", crdNameToAdd)
-			crd := helpers.ConvertToCustomResourceDefinition(formDef)
-			_, err := c.cli.CustomResourceDefinitions().Create(ctx2, crd, metav1.CreateOptions{})
-			return err
-		})
-	}
-	for crdName, _ := range alreadyPresentCrds {
-		crdNameToAdd := crdName
-		formDef := formDefMap[crdNameToAdd]
-		actualCrd := crdMap[crdNameToAdd]
-		desiredCrd := helpers.ConvertToCustomResourceDefinition(formDef)
-		if reflect.DeepEqual(actualCrd.Spec, desiredCrd.Spec) {
-			continue
-		}
-		g.Go(func() error {
-			logrus.Infof("updating custom resource: %s", crdNameToAdd)
-			_, err := c.cli.CustomResourceDefinitions().Update(ctx2, desiredCrd, metav1.UpdateOptions{})
-			return err
-		})
-	}
+}
 
-	if err := g.Wait(); err != nil {
-		logrus.Warnf("errot while removing/adding custom resource definitions: %v", err)
-		return false, nil
-	}
+func (c *FormDefinitionController) addCustomResourceDefinition(obj interface{}) {
+	castObj := obj.(*corev1.CustomResourceDefinition)
+	c.queue.Add(castObj.Name)
+}
 
-	return false, nil
+func (c *FormDefinitionController) updateCustomResourceDefinition(oldObj interface{}, newObj interface{}) {
+	castObj := oldObj.(*corev1.CustomResourceDefinition)
+	c.queue.Add(castObj.Name)
+}
+
+func (c *FormDefinitionController) deleteCustomResourceDefinition(obj interface{}) {
+	castObj := obj.(*corev1.CustomResourceDefinition)
+	c.queue.Add(castObj.Name)
 }

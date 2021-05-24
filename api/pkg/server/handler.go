@@ -45,7 +45,7 @@ func NewAPIServerHandler(handlerChainBuilder HandlerChainBuilderFn) *APIServerHa
 					// normally these are passed to the nonGoRestfulMux, but if discovery is enabled, it will go directly.
 					// We can't rely on a prefix match since /apis matches everything (see the big comment on Director above)
 					if path == "/apis" || path == "/apis/" {
-						logrus.Infof("%v: %v %q satisfied by gorestful with webservice %v", "", req.Method, path, ws.RootPath())
+						logrus.Tracef("%v: %v %q satisfied by gorestful with webservice %v", "", req.Method, path, ws.RootPath())
 						// don't use servemux here because gorestful servemuxes get messed up when removing webservices
 						// TODO fix gorestful, remove TPRs, or stop using gorestful
 						goRestfulContainer.Dispatch(w, req)
@@ -55,7 +55,7 @@ func NewAPIServerHandler(handlerChainBuilder HandlerChainBuilderFn) *APIServerHa
 				case strings.HasPrefix(path, ws.RootPath()):
 					// ensure an exact match or a path boundary match
 					if len(path) == len(ws.RootPath()) || path[len(ws.RootPath())] == '/' {
-						logrus.Infof("%v: %v %q satisfied by gorestful with webservice %v", "", req.Method, path, ws.RootPath())
+						logrus.Tracef("%v: %v %q satisfied by gorestful with webservice %v", "", req.Method, path, ws.RootPath())
 						// don't use servemux here because gorestful servemuxes get messed up when removing webservices
 						// TODO fix gorestful, remove TPRs, or stop using gorestful
 						goRestfulContainer.Dispatch(w, req)
@@ -65,7 +65,7 @@ func NewAPIServerHandler(handlerChainBuilder HandlerChainBuilderFn) *APIServerHa
 			}
 
 			// if we didn't find a match, then we just skip gorestful altogether
-			logrus.Infof("%v: %v %q satisfied by nonGoRestful", "", req.Method, path)
+			logrus.Tracef("%v: %v %q satisfied by nonGoRestful", "", req.Method, path)
 			nonGoRestfulMux.ServeHTTP(w, req)
 
 		})),

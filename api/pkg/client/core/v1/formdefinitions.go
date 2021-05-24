@@ -3,8 +3,11 @@ package v1
 import (
 	"context"
 	v1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
+	coremetav1 "github.com/nrc-no/core/api/pkg/apis/meta/v1"
+	"github.com/nrc-no/core/api/pkg/client/core/scheme"
 	"github.com/nrc-no/core/api/pkg/client/rest"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/watch"
 	"time"
 )
 
@@ -20,6 +23,7 @@ type FormDefinitionInterface interface {
 	Delete(ctx context.Context, name string, opts metav1.DeleteOptions) error
 	Get(ctx context.Context, name string, opts metav1.GetOptions) (*v1.FormDefinition, error)
 	List(ctx context.Context, opts metav1.ListOptions) (*v1.FormDefinitionList, error)
+	Watch(ctx context.Context, opts coremetav1.ListResourcesOptions) (watch.Interface, error)
 }
 
 // formDefinitions implements FormDefinitionInterface
@@ -40,7 +44,7 @@ func (c *formDefinitions) Get(ctx context.Context, name string, options metav1.G
 	err = c.client.Get().
 		Resource("formdefinitions").
 		Name(name).
-		//VersionedParams(&options, scheme.ParameterCodec).
+		VersionedParams(&options, scheme.ParameterCodec).
 		Do(ctx).
 		Into(result)
 	return
@@ -55,7 +59,7 @@ func (c *formDefinitions) List(ctx context.Context, opts metav1.ListOptions) (re
 	result = &v1.FormDefinitionList{}
 	err = c.client.Get().
 		Resource("formdefinitions").
-		//VersionedParams(&opts, scheme.ParameterCodec).
+		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
 		Do(ctx).
 		Into(result)
@@ -67,7 +71,7 @@ func (c *formDefinitions) Create(ctx context.Context, formDefinition *v1.FormDef
 	result = &v1.FormDefinition{}
 	err = c.client.Post().
 		Resource("formdefinitions").
-		//VersionedParams(&opts, scheme.ParameterCodec).
+		VersionedParams(&opts, scheme.ParameterCodec).
 		Body(formDefinition).
 		Do(ctx).
 		Into(result)
@@ -80,7 +84,7 @@ func (c *formDefinitions) Update(ctx context.Context, formDefinition *v1.FormDef
 	err = c.client.Put().
 		Resource("formdefinitions").
 		Name(formDefinition.Name).
-		//VersionedParams(&opts, scheme.ParameterCodec).
+		VersionedParams(&opts, scheme.ParameterCodec).
 		Body(formDefinition).
 		Do(ctx).
 		Into(result)
@@ -95,4 +99,18 @@ func (c *formDefinitions) Delete(ctx context.Context, name string, opts metav1.D
 		Body(&opts).
 		Do(ctx).
 		Error()
+}
+
+// Watch returns a watch.Interface that watches the requested customResourceDefinitions.
+func (c *formDefinitions) Watch(ctx context.Context, opts coremetav1.ListResourcesOptions) (watch.Interface, error) {
+	var timeout time.Duration
+	if opts.TimeoutSeconds != nil {
+		timeout = time.Duration(*opts.TimeoutSeconds) * time.Second
+	}
+	opts.Watch = true
+	return c.client.Get().
+		Resource("formdefinitions").
+		VersionedParams(&opts, scheme.ParameterCodec).
+		Timeout(timeout).
+		Watch(ctx)
 }

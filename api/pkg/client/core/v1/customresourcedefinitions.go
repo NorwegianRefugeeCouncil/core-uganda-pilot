@@ -3,8 +3,11 @@ package v1
 import (
 	"context"
 	v1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
+	coremetav1 "github.com/nrc-no/core/api/pkg/apis/meta/v1"
+	"github.com/nrc-no/core/api/pkg/client/core/scheme"
 	"github.com/nrc-no/core/api/pkg/client/rest"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/watch"
 	"time"
 )
 
@@ -18,6 +21,7 @@ type CustomResourceDefinitionInterface interface {
 	Delete(ctx context.Context, name string, opts metav1.DeleteOptions) error
 	Get(ctx context.Context, name string, opts metav1.GetOptions) (*v1.CustomResourceDefinition, error)
 	List(ctx context.Context, opts metav1.ListOptions) (*v1.CustomResourceDefinitionList, error)
+	Watch(ctx context.Context, opts coremetav1.ListResourcesOptions) (watch.Interface, error)
 }
 
 // customResourceDefinitions implements CustomResourceDefinitionInterface
@@ -38,7 +42,7 @@ func (c *customResourceDefinitions) Get(ctx context.Context, name string, option
 	err = c.client.Get().
 		Resource("customresourcedefinitions").
 		Name(name).
-		//VersionedParams(&options, scheme.ParameterCodec).
+		VersionedParams(&options, scheme.ParameterCodec).
 		Do(ctx).
 		Into(result)
 	return
@@ -53,7 +57,7 @@ func (c *customResourceDefinitions) List(ctx context.Context, opts metav1.ListOp
 	result = &v1.CustomResourceDefinitionList{}
 	err = c.client.Get().
 		Resource("customresourcedefinitions").
-		//VersionedParams(&opts, scheme.ParameterCodec).
+		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
 		Do(ctx).
 		Into(result)
@@ -65,7 +69,7 @@ func (c *customResourceDefinitions) Create(ctx context.Context, customResourceDe
 	result = &v1.CustomResourceDefinition{}
 	err = c.client.Post().
 		Resource("customresourcedefinitions").
-		//VersionedParams(&opts, scheme.ParameterCodec).
+		VersionedParams(&opts, scheme.ParameterCodec).
 		Body(customResourceDefinition).
 		Do(ctx).
 		Into(result)
@@ -78,7 +82,7 @@ func (c *customResourceDefinitions) Update(ctx context.Context, customResourceDe
 	err = c.client.Put().
 		Resource("customresourcedefinitions").
 		Name(customResourceDefinition.Name).
-		//VersionedParams(&opts, scheme.ParameterCodec).
+		VersionedParams(&opts, scheme.ParameterCodec).
 		Body(customResourceDefinition).
 		Do(ctx).
 		Into(result)
@@ -93,4 +97,18 @@ func (c *customResourceDefinitions) Delete(ctx context.Context, name string, opt
 		Body(&opts).
 		Do(ctx).
 		Error()
+}
+
+// Watch returns a watch.Interface that watches the requested customResourceDefinitions.
+func (c *customResourceDefinitions) Watch(ctx context.Context, opts coremetav1.ListResourcesOptions) (watch.Interface, error) {
+	var timeout time.Duration
+	if opts.TimeoutSeconds != nil {
+		timeout = time.Duration(*opts.TimeoutSeconds) * time.Second
+	}
+	opts.Watch = true
+	return c.client.Get().
+		Resource("customresourcedefinitions").
+		VersionedParams(&opts, scheme.ParameterCodec).
+		Timeout(timeout).
+		Watch(ctx)
 }
