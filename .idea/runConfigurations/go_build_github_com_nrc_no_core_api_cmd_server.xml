@@ -2,7 +2,7 @@
   <configuration default="false" name="go build github.com/nrc-no/core/api/cmd/server" type="GoApplicationRunConfiguration" factoryName="Go Application" nameIsGenerated="true">
     <module name="core" />
     <working_directory value="$PROJECT_DIR$/api" />
-    <parameters value="--mongo-servers &quot;mongodb://localhost:27017&quot; --mongo-database dev --bind-address &quot;127.0.0.1&quot; --bind-port 8000" />
+    <parameters value="--mongo-servers &quot;mongodb://localhost:27017,mongodb://localhost:27018,mongodb://localhost:27019&quot; --mongo-database dev --bind-address &quot;127.0.0.1&quot; --bind-port 8000" />
     <EXTENSION ID="net.ashald.envfile">
       <option name="IS_ENABLED" value="false" />
       <option name="IS_SUBST" value="false" />
@@ -14,9 +14,9 @@
       </ENTRIES>
     </EXTENSION>
     <kind value="PACKAGE" />
+    <filePath value="$PROJECT_DIR$/api/pkg/server2/cmd/server/server.go" />
     <package value="github.com/nrc-no/core/api/cmd/server" />
     <directory value="$PROJECT_DIR$" />
-    <filePath value="$PROJECT_DIR$/api/pkg/server2/cmd/server/server.go" />
     <method v="2" />
   </configuration>
 </component>

@@ -318,6 +318,12 @@ Requirements:
 
 ./hack/update-deps.sh
 
+# Add the following entries in your /etc/hosts
+
+127.0.0.1 mongo1
+127.0.0.1 mongo2
+127.0.0.1 mongo3
+
 # Download go modules
 go mod download
 
@@ -331,7 +337,7 @@ docker-compose -f ./docker/docker-compose.yaml up
 
 # Starts the actual core api server
 go run ./cmd/server \
-  --mongo-servers "mongodb://localhost:27017" \
+  --mongo-servers "mongodb://localhost:27017,mongodb://localhost:27018,mongodb://localhost:27019" \
   --mongo-database dev \
   --bind-address "127.0.0.1" \
   --bind-port 8000

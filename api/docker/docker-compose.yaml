@@ -7,9 +7,9 @@ services:
       - mongo2
       - mongo3
     volumes:
-      - .:/scripts
+      - ./setup.sh:/setup.sh
     restart: "no"
-    entrypoint: [ "bash", "/scripts/mongo_setup.sh" ]
+    entrypoint: [ "bash", "/setup.sh" ]
   mongo1:
     hostname: mongo1
     container_name: localmongo1
