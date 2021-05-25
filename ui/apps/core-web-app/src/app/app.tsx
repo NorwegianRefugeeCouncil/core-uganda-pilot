@@ -1,14 +1,14 @@
-import styles from './app.module.css';
+import './app.css';
 
 import { ReactComponent as Logo } from './logo.svg';
 import star from './star.svg';
 
 export function App() {
   return (
-    <div className={styles.app}>
+    <div className="app">
       <header className="flex">
         <Logo width="75" height="75" />
-        <h1>Welcome to web-app!</h1>
+        <h1>Welcome to core-web-app!</h1>
       </header>
       <main>
         <h2>Resources &amp; Tools</h2>

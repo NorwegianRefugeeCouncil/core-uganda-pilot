@@ -41,13 +41,6 @@
       "tags": [],
       "implicitDependencies": ["showcase"]
     },
-    "core-web-app": {
-      "tags": []
-    },
-    "core-web-app-e2e": {
-      "tags": [],
-      "implicitDependencies": ["core-web-app"]
-    },
     "core-ui": {
       "tags": []
     },
@@ -56,6 +49,13 @@
     },
     "shared-bootstrap": {
       "tags": []
+    },
+    "core-web-app": {
+      "tags": []
+    },
+    "core-web-app-e2e": {
+      "tags": [],
+      "implicitDependencies": ["core-web-app"]
     }
   }
 }
