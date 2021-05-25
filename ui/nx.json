@@ -26,36 +26,39 @@
   },
   "projects": {
     "shared-ui-toolkit": {
-      "tags": []
+      "tags": ["scope:shared"]
     },
     "formbuilder": {
-      "tags": []
+      "tags": ["scope:admin"]
     },
     "formrenderer": {
-      "tags": []
+      "tags": ["scope:client"]
     },
     "showcase": {
-      "tags": []
+      "tags": ["scope:docs"]
     },
     "showcase-e2e": {
-      "tags": [],
+      "tags": ["scope:docs"],
       "implicitDependencies": ["showcase"]
     },
     "core-ui": {
-      "tags": []
+      "tags": ["scope:client"]
     },
     "shared-api-client": {
-      "tags": []
+      "tags": ["scope:shared"]
     },
     "shared-bootstrap": {
-      "tags": []
+      "tags": ["scope:shared"]
     },
     "core-web-app": {
-      "tags": []
+      "tags": ["scope:client"]
     },
     "core-web-app-e2e": {
-      "tags": [],
+      "tags": ["scope:client"],
       "implicitDependencies": ["core-web-app"]
+    },
+    "core-mobile-app": {
+      "tags": ["scope:client"]
     }
   }
 }

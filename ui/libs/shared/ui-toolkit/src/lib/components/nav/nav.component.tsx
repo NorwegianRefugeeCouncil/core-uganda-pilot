@@ -4,8 +4,7 @@ import { classNames } from '@core/ui-toolkit/util/utils';
 import { NavItem } from './nav-item.component';
 import { NavLink } from './nav-link.component';
 
-export interface NavProps extends React.ComponentPropsWithoutRef<'nav'> {
-  as?: 'nav' | 'ul';
+export interface NavProps extends React.ComponentPropsWithoutRef<'ul'> {
   variant?: 'tabs' | 'pills';
 }
 
@@ -20,7 +19,6 @@ type Nav = React.FC<NavProps & FillProps> & {
 
 const Nav: Nav = (props) => {
   const {
-    as: Component = 'nav',
     variant,
     fill = false,
     justified,
@@ -31,12 +29,12 @@ const Nav: Nav = (props) => {
   const className = classNames('nav', customClass, {
     [`nav-${variant}`]: variant != null,
     'nav-fill': fill,
-    'nav-justified': justified,
+    'nav-justified': justified
   });
   return (
-    <Component className={className} {...rest}>
+    <ul className={className} {...rest}>
       {children}
-    </Component>
+    </ul>
   );
 };
 

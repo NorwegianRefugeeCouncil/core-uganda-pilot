@@ -10,11 +10,27 @@
           "error",
           {
             "enforceBuildableLibDependency": true,
-            "allow": [],
+            "allow": ["@core/**"],
             "depConstraints": [
               {
-                "sourceTag": "*",
-                "onlyDependOnLibsWithTags": ["*"]
+                "sourceTag": "scope:shared",
+                "onlyDependOnLibsWithTags": ["scope:shared"]
+              },
+              {
+                "sourceTag": "scope:client",
+                "onlyDependOnLibsWithTags": ["scope:shared", "scope:client"]
+              },
+              {
+                "sourceTag": "scope:docs",
+                "onlyDependOnLibsWithTags": [
+                  "scope:shared",
+                  "scope:client",
+                  "scope:docs"
+                ]
+              },
+              {
+                "sourceTag": "scope:admin",
+                "onlyDependOnLibsWithTags": ["scope:shared", "scope:admin"]
               }
             ]
           }

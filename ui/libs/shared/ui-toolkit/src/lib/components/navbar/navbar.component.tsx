@@ -1,63 +1,47 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import * as React from 'react';
 import { classNames } from '@core/ui-toolkit/util/utils';
-import { Size, Theme } from '@core/ui-toolkit/util/types';
-
-export interface NavProps extends React.ComponentPropsWithoutRef<'ul'> {}
-
-const Nav: React.FC<NavProps> = ({
-  className: customClass,
-  children,
-  ...rest
-}) => {
-  const className = classNames('navbar-nav', customClass);
-  return (
-    <ul className={className} {...rest}>
-      {children}
-    </ul>
-  );
-};
-
-export interface BrandProps extends React.ComponentPropsWithoutRef<'a'> {}
-const Brand: React.FC<BrandProps> = ({
-  className: customClass,
-  children,
-  ...rest
-}) => {
-  const className = classNames('navbar-brand', customClass);
-  return (
-    <a className={className} {...rest}>
-      {children}
-    </a>
-  );
-};
-
-export interface NavbarProps extends React.ComponentPropsWithoutRef<'div'> {
-  canCollapse?: boolean;
+import { Color, Size, Theme } from '@core/ui-toolkit/util/types';
+import { NavbarBrand } from './navbar-brand.component';
+import { NavbarNav } from './navbar-nav.component';
+import { NavbarText } from './navbar-text.component';
+export interface NavbarProps extends React.ComponentPropsWithRef<'nav'> {
   theme?: Theme;
-  size?: Size;
+  color?: Color;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({
-  canCollapse = true,
-  size,
-  theme = 'light',
-  className: customClass,
-  children,
-  ...rest
-}) => {
-  const className = classNames(
-    'navbar',
-    `navbar-${theme}`,
-    `bg-${theme}`,
-    customClass,
-    {
-      [`navbar-expand-${size}`]: canCollapse,
-    }
-  );
-  return (
-    <nav className={className} {...rest}>
-      <div className="container-fluid">{children}</div>
-    </nav>
-  );
+type NavbarStatic = {
+  Brand?: typeof NavbarBrand;
+  Nav?: typeof NavbarNav;
+  Text?: typeof NavbarText;
 };
+
+export type Navbar = React.ForwardRefExoticComponent<
+  React.PropsWithRef<NavbarProps>
+> &
+  NavbarStatic;
+
+export const Navbar: Navbar = React.forwardRef(
+  ({ theme, color, className: customClass, children, ...rest }) => {
+    const className = classNames(
+      'navbar',
+      'navbar-expand-lg',
+      {
+        [`navbar-${theme}`]: theme != null,
+        [`bg-${color}`]: color != null
+      },
+      customClass
+    );
+    return (
+      <nav className={className} {...rest}>
+        {children}
+      </nav>
+    );
+  }
+);
+
+Navbar.displayName = 'Navbar';
+
+Navbar.Brand = NavbarBrand;
+Navbar.Nav = NavbarNav;
+Navbar.Text = NavbarText;

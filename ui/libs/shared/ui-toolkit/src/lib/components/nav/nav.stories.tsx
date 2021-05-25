@@ -3,7 +3,7 @@ import { Nav } from './nav.component';
 
 export default {
   title: 'Nav',
-  component: Nav,
+  component: Nav
 };
 
 export const Basic = () => (
@@ -12,30 +12,30 @@ export const Basic = () => (
     <Card className="mb-4">
       <Card.Body>
         <Nav>
-          <Nav.Link isActive>Active</Nav.Link>
+          <Nav.Link active>Active</Nav.Link>
           <Nav.Link>Link</Nav.Link>
           <Nav.Link>Link</Nav.Link>
-          <Nav.Link isDisabled>Disabled</Nav.Link>
+          <Nav.Link disabled>Disabled</Nav.Link>
         </Nav>
       </Card.Body>
     </Card>
     <Card className="mb-4">
       <Card.Body>
         <Nav className="justify-content-center">
-          <Nav.Link isActive>Active</Nav.Link>
+          <Nav.Link active>Active</Nav.Link>
           <Nav.Link>Link</Nav.Link>
           <Nav.Link>Link</Nav.Link>
-          <Nav.Link isDisabled>Disabled</Nav.Link>
+          <Nav.Link disabled>Disabled</Nav.Link>
         </Nav>
       </Card.Body>
     </Card>
     <Card className="mb-4">
       <Card.Body>
         <Nav className="justify-content-end">
-          <Nav.Link isActive>Active</Nav.Link>
+          <Nav.Link active>Active</Nav.Link>
           <Nav.Link>Link</Nav.Link>
           <Nav.Link>Link</Nav.Link>
-          <Nav.Link isDisabled>Disabled</Nav.Link>
+          <Nav.Link disabled>Disabled</Nav.Link>
         </Nav>
       </Card.Body>
     </Card>
@@ -43,10 +43,10 @@ export const Basic = () => (
     <Card className="mb-4">
       <Card.Body>
         <Nav className="flex-column">
-          <Nav.Link isActive>Active</Nav.Link>
+          <Nav.Link active>Active</Nav.Link>
           <Nav.Link>Link</Nav.Link>
           <Nav.Link>Link</Nav.Link>
-          <Nav.Link isDisabled>Disabled</Nav.Link>
+          <Nav.Link disabled>Disabled</Nav.Link>
         </Nav>
       </Card.Body>
     </Card>
@@ -54,10 +54,10 @@ export const Basic = () => (
     <Card className="mb-4">
       <Card.Body>
         <Nav variant="tabs">
-          <Nav.Link isActive>Active</Nav.Link>
+          <Nav.Link active>Active</Nav.Link>
           <Nav.Link>Link</Nav.Link>
           <Nav.Link>Link</Nav.Link>
-          <Nav.Link isDisabled>Disabled</Nav.Link>
+          <Nav.Link disabled>Disabled</Nav.Link>
         </Nav>
       </Card.Body>
     </Card>
@@ -65,10 +65,10 @@ export const Basic = () => (
     <Card className="mb-4">
       <Card.Body>
         <Nav variant="pills">
-          <Nav.Link isActive>Active</Nav.Link>
+          <Nav.Link active>Active</Nav.Link>
           <Nav.Link>Link</Nav.Link>
           <Nav.Link>Link</Nav.Link>
-          <Nav.Link isDisabled>Disabled</Nav.Link>
+          <Nav.Link disabled>Disabled</Nav.Link>
         </Nav>
       </Card.Body>
     </Card>
@@ -76,10 +76,10 @@ export const Basic = () => (
     <Card className="mb-4">
       <Card.Body>
         <Nav variant="pills" fill>
-          <Nav.Link isActive>Active</Nav.Link>
+          <Nav.Link active>Active</Nav.Link>
           <Nav.Link>Much longer nav link</Nav.Link>
           <Nav.Link>Link</Nav.Link>
-          <Nav.Link isDisabled>Disabled</Nav.Link>
+          <Nav.Link disabled>Disabled</Nav.Link>
         </Nav>
       </Card.Body>
     </Card>
@@ -87,10 +87,10 @@ export const Basic = () => (
     <Card className="mb-4">
       <Card.Body>
         <Nav variant="pills" justified>
-          <Nav.Link isActive>Active</Nav.Link>
+          <Nav.Link active>Active</Nav.Link>
           <Nav.Link>Much longer nav link</Nav.Link>
           <Nav.Link>Link</Nav.Link>
-          <Nav.Link isDisabled>Disabled</Nav.Link>
+          <Nav.Link disabled>Disabled</Nav.Link>
         </Nav>
       </Card.Body>
     </Card>

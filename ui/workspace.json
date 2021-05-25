@@ -542,6 +542,20 @@
           }
         }
       }
+    },
+    "core-mobile-app": {
+      "root": "apps/core-mobile-app",
+      "sourceRoot": "apps/core-mobile-app",
+      "projectType": "application",
+      "targets": {
+        "serve": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": ["npm start"],
+            "cwd": "apps/core-mobile-app"
+          }
+        }
+      }
     }
   }
 }

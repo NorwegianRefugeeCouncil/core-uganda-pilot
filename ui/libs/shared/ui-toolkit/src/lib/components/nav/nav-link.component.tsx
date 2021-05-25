@@ -3,13 +3,13 @@ import * as React from 'react';
 import { classNames } from '@core/ui-toolkit/util/utils';
 
 export interface NavLinkProps extends React.ComponentPropsWithoutRef<'a'> {
-  isActive?: boolean;
-  isDisabled?: boolean;
+  active?: boolean;
+  disabled?: boolean;
 }
 
 export const NavLink: React.FC<NavLinkProps> = ({
-  isActive: active = false,
-  isDisabled: disabled = false,
+  active = false,
+  disabled = false,
   className: customClass,
   children,
   ...rest
