@@ -89,9 +89,9 @@ spec:
 ...
 ```
 
-#### Status
-
 The `spec` property contains the "bulk" of the data, or the "attributes"
+
+#### Status
 
 ```yaml
 ...
