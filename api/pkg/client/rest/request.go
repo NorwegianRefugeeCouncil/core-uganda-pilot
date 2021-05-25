@@ -279,6 +279,7 @@ type WebSocketWatcher struct {
 	result  chan watch.Event
 	done    chan struct{}
 	lock    sync.Mutex
+	closed  bool
 }
 
 func NewWebSocketWatcher(conn *websocket.Conn, decoder runtime.Decoder) *WebSocketWatcher {
@@ -305,13 +306,17 @@ func (ws *WebSocketWatcher) Stop() {
 		close(ws.done)
 		ws.conn.Close()
 	}
+	ws.closed = true
 }
 
 func (ws *WebSocketWatcher) receive() {
 	defer close(ws.result)
 	defer ws.Stop()
 	for {
-		_, reader, err := ws.conn.NextReader()
+		_, bytes, err := ws.conn.ReadMessage()
+		if ws.closed {
+			return
+		}
 		if err != nil {
 			switch err {
 			case io.EOF:
@@ -332,13 +337,8 @@ func (ws *WebSocketWatcher) receive() {
 			}
 			return
 		}
-		var buf []byte
-		if _, err := reader.Read(buf); err != nil {
-			logrus.Errorf("unable to read: %v", err)
-			return
-		}
 		we := metav1.WatchEvent{}
-		decoded, _, err := ws.decoder.Decode(buf, nil, &we)
+		decoded, _, err := ws.decoder.Decode(bytes, nil, &we)
 		if err != nil {
 			logrus.Errorf("unable to decode event: %v", err)
 			return

@@ -2,12 +2,12 @@
   "kind": "FormDefinition",
   "apiGroup": "core.nrc.no/v1",
   "metadata": {
-    "name": "generalintakes.nrc.no"
+    "name": "generalintakes10.nrc.no"
   },
   "spec": {
     "group": "nrc.no",
     "names": {
-      "plural": "generalintakes",
+      "plural": "generalintakes10",
       "singular": "generalintake",
       "kind": "GeneralIntake"
     },

@@ -237,7 +237,7 @@ func (c *CRDDiscoveryController) addCustomResourceDefinition(obj interface{}) {
 func (c *CRDDiscoveryController) updateCustomResourceDefinition(oldObj, newObj interface{}) {
 	castNewObj := newObj.(*corev1.CustomResourceDefinition)
 	castOldObj := oldObj.(*corev1.CustomResourceDefinition)
-	logrus.Infof("updating customresourcedefinition %s", castOldObj.Name)
+	logrus.Tracef("updating customresourcedefinition %s", castOldObj.Name)
 	c.enqueue(castNewObj)
 	c.enqueue(castOldObj)
 }

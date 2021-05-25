@@ -111,6 +111,11 @@ func serveWatch(
 	}
 	defer ws.Close()
 
+	kind, serializer, _ := targetEncodingForTransform(scope, outputMediaType, req)
+
+	_, outSerializerInfo, err := negotiation.NegotiateOutputMediaType(req, scope.Serializer, scope)
+	encoder := serializer.EncoderForVersion(outSerializerInfo.Serializer, kind.GroupVersion())
+
 	// Wait and process watch events
 	for {
 		select {
@@ -118,7 +123,7 @@ func serveWatch(
 
 			// Encode the watch.Event object
 			buf := &bytes.Buffer{}
-			if err := serializerInfo.Serializer.Encode(evt.Object, buf); err != nil {
+			if err := encoder.Encode(evt.Object, buf); err != nil {
 				logrus.Errorf("unable to encode watch object %#v: %v", evt.Object, err)
 				return
 			}

@@ -104,7 +104,7 @@ func (c *CompletedConfig) New(ctx context.Context) (*Server, error) {
 		return nil, err
 	}
 
-	// starts the informers on server startup
+	// starts the core informers on server startup
 	server.coreInformers = informers.NewSharedInformerFactory(cli, time.Minute*5)
 	server.AddPostStartHookOrDie("core-informers", func(context PostStartHookContext) error {
 		server.coreInformers.Start(context.StopCh)
@@ -124,7 +124,12 @@ func (c *CompletedConfig) New(ctx context.Context) (*Server, error) {
 		server.coreInformers.Core().V1().CustomResourceDefinitions(),
 	)
 	server.AddPostStartHookOrDie("formdefinition-controllers", func(context PostStartHookContext) error {
-		formDefController.Run(context.StopCh)
+		syncedCh := make(chan struct{})
+		formDefController.Run(context.StopCh, syncedCh)
+		select {
+		case <-context.StopCh:
+		case <-syncedCh:
+		}
 		return nil
 	})
 

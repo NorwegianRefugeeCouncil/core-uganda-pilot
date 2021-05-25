@@ -11,6 +11,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/tools/cache"
@@ -31,7 +32,7 @@ type FormDefinitionController struct {
 	crdLister listers.CustomResourceDefinitionLister
 	crdSynced cache.InformerSynced
 
-	syncFn func(formDefinition *corev1.FormDefinition) error
+	syncFn func(name string) error
 
 	queue workqueue.RateLimitingInterface
 
@@ -63,10 +64,12 @@ func NewFormDefinitionController(
 		DeleteFunc: controller.deleteCustomResourceDefinition,
 	})
 
+	controller.syncFn = controller.sync
+
 	return controller
 }
 
-func (c *FormDefinitionController) Run(stopCh <-chan struct{}) {
+func (c *FormDefinitionController) Run(stopCh <-chan struct{}, syncedCh chan struct{}) {
 	defer utilruntime.HandleCrash()
 	defer c.queue.ShutDown()
 
@@ -83,6 +86,28 @@ func (c *FormDefinitionController) Run(stopCh <-chan struct{}) {
 		return
 	}
 
+	if err := wait.PollImmediateUntil(time.Second*10, func() (done bool, err error) {
+		formDefinitions, err := c.formDefinitionsLister.List(labels.Everything())
+		if err != nil {
+			utilruntime.HandleError(fmt.Errorf("failed to initially list formdefinitions: %v", err))
+			return false, nil
+		}
+		for _, formDefinition := range formDefinitions {
+			if err := c.syncFn(formDefinition.Name); err != nil {
+				utilruntime.HandleError(fmt.Errorf("failed to initially sync formdefinition %s: %v", formDefinition.Name, err))
+				return false, nil
+			}
+		}
+		return true, nil
+
+	}, stopCh); err == wait.ErrWaitTimeout {
+		utilruntime.HandleError(fmt.Errorf("timed out waiting for formdefinitions to sync: %v", err))
+		return
+	} else if err != nil {
+		panic(fmt.Errorf("unexpected error: %v", err))
+	}
+	close(syncedCh)
+
 	go wait.Until(c.runWorker, time.Second, stopCh)
 
 	<-stopCh
@@ -90,16 +115,19 @@ func (c *FormDefinitionController) Run(stopCh <-chan struct{}) {
 
 func (c *FormDefinitionController) addFormDefinition(obj interface{}) {
 	castObj := obj.(*corev1.FormDefinition)
+	logrus.Infof("adding formdefinition %s", castObj.Name)
 	c.queue.Add(castObj.Name)
 }
 
 func (c *FormDefinitionController) updateFormDefinition(oldObj interface{}, newObj interface{}) {
 	castObj := oldObj.(*corev1.FormDefinition)
+	logrus.Infof("updating formdefinition %s", castObj.Name)
 	c.queue.Add(castObj.Name)
 }
 
 func (c *FormDefinitionController) deleteFormDefinition(obj interface{}) {
 	castObj := obj.(*corev1.FormDefinition)
+	logrus.Infof("deleting formdefinition %s", castObj.Name)
 	c.queue.Add(castObj.Name)
 }
 
@@ -144,6 +172,7 @@ func (c *FormDefinitionController) sync(s string) error {
 		if err != nil {
 			return err
 		}
+		return nil
 	} else if err != nil {
 		return err
 	}

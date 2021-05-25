@@ -53,7 +53,7 @@ func (s *Server) Run() error {
 	go func() {
 		select {
 		case <-s.ctx.Done():
-			stopCh <- struct{}{}
+			close(stopCh)
 		}
 	}()
 	s.RunPostStartHooks(stopCh)
@@ -66,6 +66,7 @@ func (s *Server) Run() error {
 			logrus.Errorf("server shutdown failed: %v", err)
 			return err
 		}
+		time.Sleep(5 * time.Second)
 	case err := <-errChan:
 		return err
 	}
