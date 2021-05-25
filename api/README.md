@@ -340,7 +340,10 @@ go run ./cmd/server \
   --mongo-servers "mongodb://localhost:27017,mongodb://localhost:27018,mongodb://localhost:27019" \
   --mongo-database dev \
   --bind-address "127.0.0.1" \
-  --bind-port 8000
+  --bind-port 8000 \
+  --oidc-issuer-url "http://localhost:8080/auth/realms/Core" \
+  --oidc-client-id api \
+  --oidc-client-secret a9a1b0f8-3920-4a6a-9c5f-2ed9e49e833e 
 
 # Try the api a little bit
 curl http://localhost:8000/apis/core.nrc.no/v1/formdefinitions -H "Accept: application/yaml"
