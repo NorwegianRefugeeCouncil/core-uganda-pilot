@@ -67,6 +67,8 @@ services:
       - 5432:5432
   keycloak:
     image: quay.io/keycloak/keycloak:latest
+    volumes:
+      - ./realm.json:/tmp/realm.json
     environment:
       DB_VENDOR: POSTGRES
       DB_ADDR: postgres
@@ -75,8 +77,17 @@ services:
       DB_SCHEMA: public
       DB_PASSWORD: password
       KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: Pa55w0rd
+      KEYCLOAK_PASSWORD: admin
+      KEYCLOAK_IMPORT: /tmp/realm.json
+    restart: unless-stopped
     ports:
       - 8080:8080
     depends_on:
       - postgres
+  redis:
+    container_name: redis
+    image: bitnami/redis:latest
+    environment:
+      ALLOW_EMPTY_PASSWORD: "yes"
+    ports:
+      - 6379:6379
