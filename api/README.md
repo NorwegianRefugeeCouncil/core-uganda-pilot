@@ -24,6 +24,98 @@ Organizations need to define the structure of the data they will collect. They o
 throughout multiple campaigns. This project aims at providing the users a robust way of **defining** and **versioning**
 data models throughout their lifecycle.
 
+## Introduction
+
+`Core API` is a RESTful API modeled closely on the `Kubernetes` apiserver. This API is designed to handle transparently
+both statically typed data known at compile time, as well as custom data types known only at runtime. It is mainly used
+as a data repository that allows custom RBAC/ABAC permissions, and that is tailored for the humanitarian sector usecase.
+
+The reason for the need of **runtime data types** this is that the humanitarian sector works with various data models
+that evolve over time. We can't realistically hardcode these different models, hence the need for a `generic` API that
+can maintain these different data models. The `Kubernetes` `CustomResourceDefinitions` was a good fit for this.
+
+We reused a lot of the packages published by the `Kubernetes` team, such as `apimachinery` which is used for versioning
+of data models. One of the main differences is that we do not use `etcd`, but rather `mongoDB`. The reason for this is
+that we will be handling potentially a very large amount of data, and we need to take advantage of db-side filtering.
+`etcd` cannot do that, and would crash the server if it had to handle millions of records. We implemented a etcd-like
+store using `MongoDB`, but that allow us to evaluate the filtering predicates on the database side, as well as use the
+`WATCH` functionality using the mongoDB `ChangeStreams`.
+
+## API Model Structure
+
+Since we had to inherit from kubernetes `runtime.Object`, the structure of the API is very much similar to what you
+would expect from a Kubernetes-flavored API.
+
+#### Type Meta
+
+```yaml
+apiVersion: core.nrc.no/v1
+kind: FormDefinition
+...
+```
+
+the `apiVersion` represents the `Group` and `Version` of the endpoint we are interacting with.
+
+The `Kind` if a user-friendly name for the resource
+
+#### Metadata
+
+```yaml
+...
+metadata:
+  name: name-of-the-resource
+  creationTimestamp: 2020-01-02:10:23:11.000Z
+  labels:
+    nrc.no/label1: value1
+  annotations:
+    nrc.no/annotation1: value2
+...
+```
+
+The `metadata` contains additional information about a resource. It contains the `name` of the resource,
+the `creationTimestamp` at which it was created. Additionally, it contains the `labels` and `annotations` which are
+arbitrary key/value pairs used to identify/query resources. Application logic can use `labels` to tag resources for
+various application concerns
+
+#### Spec
+
+```yaml
+...
+spec:
+  someProperty: abc
+  someOtherProperty: def
+  nestedProperty:
+    age: 3
+...
+```
+
+#### Status
+
+The `spec` property contains the "bulk" of the data, or the "attributes"
+
+```yaml
+...
+status:
+  conditions:
+    - type: Approved
+      status: "True"
+      Reason: ...
+      Message: ...
+      LastTransitionTime: ...
+  message: human readable message
+  reason: CamelCaseReason
+  someOtherStatus: true
+```
+
+Some resources implement the `status` property, which contain the current status of the resource. Since multiple
+applications might interact with a single resource, they can use the `status.conditions` as a way to synchronize their
+operations in a distributed way, or to simply implement their application concerns.
+
+For example, if an organization requires that someone must manually approve a certain piece of data before it can get
+processed any further, then it would be a good practice to model this approval in the resource `conditions`. Another
+program might be waiting for that condition to be `True` before it processes the data. In a way, the `conditions` act as
+a generic state machine.
+
 ## Concepts
 
 ### 1. `FormElement`
@@ -63,7 +155,7 @@ schema:
         key: active
 ```
 
-### 1. `FormDefinition`
+### 3. `FormDefinition`
 
 A `FormDefinition` represents a user-defined form definition, along with all the different versions of that form. For
 example, a `FormDefinition` will contain the `v1` `v2` and `v3` versions along with their `FormSchema`.
@@ -100,7 +192,23 @@ spec:
               key: lastName
 ```
 
-### Ideas for development
+### 4. `CustomResourceDefinitions`
+
+When the user registers a new `CustomResourceDefinition`, the `API` will expose a new endpoint corresponding to the
+specifications of that definition.
+
+For example, if a user creates a `CustomResourceDefinition` with group `acme.com` and name `hootnannies`, with one
+version `v1`, then the API will expose the new following endpoints
+
+```
+GET    /apis/acme.com/v1/hootnannies
+POST   /apis/acme.com/v1/hootnannies
+GET    /apis/acme.com/v1/hootnannies/{name}
+PUT    /apis/acme.com/v1/hootnannies/{name}
+DELETE /apis/acme.com/v1/hootnannies/{name}
+```
+
+## Ideas for development
 
 #### 1. Related entities
 
@@ -153,6 +261,31 @@ Vulerability Assessments:
 - link to vulnerability assessment
 ```
 
+### Architecture overview
+
+#### Request path
+
+The API server follows RESTful principles for the design of the API. Each resource **should** be able to be
+created/updated/deleted independently.
+
+![alt text](docs/architecture.jpg)
+
+#### Controllers
+
+The `Controller` is the preferred mechanisms for reconciling application logic. Since they have to maintain a local
+cache, they are suitable for relatively low-volume reconciliations.
+
+Each controller is responsible for a **single resource**, or a **single aspect of a resource** in the API.
+
+An example of such controller is the `FormDefinitionController`, that will
+create/update/delete `CustomResourceDefinition`
+that matches the created/updated/deleted `FormDefinition`.
+
+![alt text](docs/controllers.jpg)
+
+For controllers that are expected to handle a large amount of data, and where the use of a local cache would consume too
+much memory, then an alternative mechanism has to be used.
+
 ### Implementation details
 
 This API leverages the work by the [kubernetes](https://github.com/kubernetes/kubernetes) team, especially around
@@ -199,9 +332,7 @@ docker-compose -f ./docker/docker-compose.yaml up
 # Starts the actual core api server
 go run ./cmd/server \
   --mongo-servers "mongodb://localhost:27017" \
-  --mongo-username root \
   --mongo-database dev \
-  --mongo-password pass12345 \
   --bind-address "127.0.0.1" \
   --bind-port 8000
 

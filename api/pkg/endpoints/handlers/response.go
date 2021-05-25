@@ -39,26 +39,10 @@ func doTransformObject(obj runtime.Object, mediaType negotiation.MediaTypeOption
 	if _, ok := obj.(*metav1.Status); ok {
 		return obj, nil
 	}
-	//if err := setObjectSelfLink(ctx, obj, req, scope.Namer); err != nil {
-	//	return nil, err
-	//}
 
 	switch target := mediaType.Convert; {
 	case target == nil:
 		return obj, nil
-
-	//case target.Kind == "PartialObjectMetadata":
-	//	return asPartialObjectMetadata(obj, target.GroupVersion())
-	//
-	//case target.Kind == "PartialObjectMetadataList":
-	//	return asPartialObjectMetadataList(obj, target.GroupVersion())
-	//
-	//case target.Kind == "Table":
-	//	options, ok := opts.(*metav1.TableOptions)
-	//	if !ok {
-	//		return nil, fmt.Errorf("unexpected TableOptions, got %T", opts)
-	//	}
-	//	return asTable(ctx, obj, options, scope, target.GroupVersion())
 
 	default:
 		accepted, _ := negotiation.MediaTypesForSerializer(metainternalversionscheme.Codecs)
