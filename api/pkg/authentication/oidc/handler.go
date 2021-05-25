@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/base64"
+	"encoding/gob"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -21,6 +22,10 @@ import (
 	"net/http"
 	"net/url"
 )
+
+func init() {
+	gob.Register(map[string]interface{}{})
+}
 
 type OIDCHandler struct {
 	codec      runtime.NegotiatedSerializer
@@ -86,6 +91,7 @@ func NewOIDCHandler(
 					oidc.ScopeOpenID,
 					"profile",
 					"email",
+					"roles",
 				},
 			}
 		},
@@ -292,15 +298,18 @@ func (h *OIDCHandler) ServeCallback(w http.ResponseWriter, req *http.Request) {
 
 	session.Values["id_token"] = rawIDToken
 	session.Values["access_token"] = oauth2Token.AccessToken
+	session.Values["profile"] = profile
 
-	encodedProfile, err := json.Marshal(profile)
+	encodedProfile, err := json.MarshalIndent(profile, "", "  ")
 	if err != nil {
 		logrus.WithError(err).Error("oidc: could not encode profile")
 		h.err(apierrors.NewInternalError(errors.New("unable to encode profile")), w, req)
 		return
 	}
 
-	session.Values["profile"] = string(encodedProfile)
+	logrus.Infof(string(encodedProfile))
+	logrus.Infof(rawIDToken)
+	logrus.Infof(oauth2Token.AccessToken)
 
 	delete(session.Values, "state")
 	delete(session.Values, "nonce")
