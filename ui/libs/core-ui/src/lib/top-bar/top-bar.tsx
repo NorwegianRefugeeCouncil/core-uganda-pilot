@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './top-bar.module.css';
+import './top-bar.css';
 
 /* eslint-disable-next-line */
 export interface TopBarProps {}

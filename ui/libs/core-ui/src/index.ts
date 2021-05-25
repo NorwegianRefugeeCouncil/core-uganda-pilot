@@ -1,3 +1,4 @@
+export * from './lib/top-bar/top-bar';
 export * from './lib/beneficiary-list/beneficiary-list';
 export * from './lib/beneficiary-form/beneficiary-form';
 export * from './lib/beneficiary-profile/beneficiary-profile';
