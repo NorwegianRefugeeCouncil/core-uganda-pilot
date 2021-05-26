@@ -1,4 +1,5 @@
 {
+  "name": "@core/mobile-app",
   "main": "index.js",
   "scripts": {
     "android": "react-native run-android",
