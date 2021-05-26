@@ -1,8 +1,11 @@
 import { CoreClient, CoreInterface } from './core';
-import { RESTClient } from '../shared-api-client';
+import { RESTClient } from '../rest';
+import { DiscoveryClient, DiscoveryInterface } from './discovery';
 
 export interface Interface {
   core(): CoreInterface
+
+  discovery(): DiscoveryInterface
 }
 
 export class ClientSet implements Interface {
@@ -11,5 +14,9 @@ export class ClientSet implements Interface {
 
   core(): CoreInterface {
     return new CoreClient(this.restClient);
+  }
+
+  discovery(): DiscoveryInterface {
+    return new DiscoveryClient(this.restClient);
   }
 }

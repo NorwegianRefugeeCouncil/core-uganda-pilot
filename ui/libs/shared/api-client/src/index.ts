@@ -1,4 +1,5 @@
 export * from './lib/api/core/v1';
+export * from './lib/api/discovery/v1';
 export * from './lib/api/meta/v1';
 export * from './lib/rest';
 export * from './lib/client';

@@ -10,13 +10,14 @@ describe('client', () => {
 
     const cs = new ClientSet(client);
 
-    cs.core().v1().formDefinitions().get('bla').subscribe(r => {
+    cs.discovery().v1().apiGroups().get('core.nrc.no').subscribe(r => {
       console.log(r);
       done();
     }, err => {
       console.error(err);
       done();
     });
+
 
   });
 });
