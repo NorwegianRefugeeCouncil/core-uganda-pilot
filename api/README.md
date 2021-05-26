@@ -451,6 +451,15 @@ curl http://localhost:8000/apis/test.com/v1/formtests/example-form-submission | 
 curl http://localhost:8000/apis/test.com/v1/formtests/ | jq
 ```
 
+### Setup Keycloak User
+1. Go to Keycloak admin console http://localhost:8080/auth/admin/
+2. Login with default credential (Username: admin, Password: admin)
+3. Switch to the "Core" realm (top left menu)
+4. Navigate to Manage -> Users -> Add User
+5. Enter username and email, make sure email is marked as verified and save user
+6. Navigate to Credentials and set password
+7. Try to login as the user http://localhost:8000/auth/login
+
 ## Code Generation
 
 This app supports code generation for
