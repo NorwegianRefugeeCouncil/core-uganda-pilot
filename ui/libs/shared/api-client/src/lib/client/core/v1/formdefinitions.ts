@@ -1,4 +1,4 @@
-import { RESTClient } from '../../../shared-api-client';
+import { RESTClient } from '../../../rest';
 import { FormDefinition, FormDefinitionList } from '../../../api/core/v1';
 import { Observable } from 'rxjs';
 

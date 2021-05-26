@@ -1,6 +1,6 @@
 import { FormDefinitionsV1Client, FormDefinitionsV1Interface } from './formdefinitions';
 import { CustomResourceDefinitionsV1Client, CustomResourceDefinitionsV1Interface } from './customresourcedefinitions';
-import { RESTClient } from '../../../shared-api-client';
+import { RESTClient } from '../../../rest';
 
 export interface CoreV1Interface {
   formDefinitions(): FormDefinitionsV1Interface
@@ -8,7 +8,7 @@ export interface CoreV1Interface {
   customResourceDefinitions(): CustomResourceDefinitionsV1Interface
 }
 
-export class CoreV1Client implements CoreV1Interface{
+export class CoreV1Client implements CoreV1Interface {
   public constructor(private restClient: RESTClient) {
   }
 

@@ -1,5 +1,5 @@
 import { CoreV1Client, CoreV1Interface } from './v1';
-import { RESTClient } from '../../shared-api-client';
+import { RESTClient } from '../../rest';
 
 export interface CoreInterface {
   v1(): CoreV1Interface

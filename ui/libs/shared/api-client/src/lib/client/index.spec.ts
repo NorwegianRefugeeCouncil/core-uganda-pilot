@@ -1,4 +1,4 @@
-import { RESTClient } from '../shared-api-client';
+import { RESTClient } from '../rest';
 import { ClientSet } from './index';
 
 describe('client', () => {

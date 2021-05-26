@@ -1,4 +1,4 @@
-import { RESTClient } from '../../../shared-api-client';
+import { RESTClient } from '../../../rest';
 import { CustomResourceDefinition, CustomResourceDefinitionList } from '../../../api/core/v1';
 import { Observable } from 'rxjs';
 
