@@ -73,7 +73,8 @@ func (c *Options) Config(ctx context.Context) (*server.Config, error) {
 	serverConfig := &server.Config{
 		ListenAddress: c.BindAddress,
 		BuildHandlerChainFunc: func(apiHandler http.Handler, config *server.Config) http.Handler {
-			handler := filters2.WithRequestInfo(apiHandler)
+			handler := filters2.WithCors(apiHandler)
+			handler = filters2.WithRequestInfo(handler)
 			handler = c.WithOidcAuth(handler)
 			return handler
 		},
