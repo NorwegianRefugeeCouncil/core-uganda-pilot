@@ -68,7 +68,7 @@ const renderVersion = (version?: FormDefinitionVersion) => {
       Stored: {version.storage ? 'yes' : 'no'}
     </h5>
     {version.schema.formSchema.root.children?.map(c => {
-      return <Field key={c.key} type={c.type as FieldType} options={c} />;
+      return <Field key={c.key} type={c.type as FieldType} options={c}/>;
     })}
     Version: {JSON.stringify(version)}
   </div>;

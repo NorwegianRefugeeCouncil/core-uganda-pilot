@@ -37,19 +37,30 @@ export interface FormRoot {
   root: FormElement
 }
 
+export enum FieldType {
+  String = 'string',
+  Integer = 'integer',
+  Float = 'float',
+  Checkbox = 'checkbox',
+  Radio = 'radio',
+  Select = 'select',
+  Multiselect = 'multiselect',
+  Section = 'section',
+}
+
 export interface FormElement {
-  key: string
-  name: TranslatedString
-  description: TranslatedString
-  type: string
-  label: TranslatedString
-  tooltip: TranslatedString
-  help: TranslatedString
-  required: boolean
-  min: number
-  max: number
-  minLength: number
-  maxLength: number
+  key?: string
+  name?: TranslatedStrings
+  description?: TranslatedStrings
+  type?: FieldType
+  label?: TranslatedStrings
+  tooltip?: TranslatedStrings
+  help?: TranslatedStrings
+  required?: boolean
+  min?: number
+  max?: number
+  minLength?: number
+  maxLength?: number
   children?: FormElement[]
 }
 
@@ -57,6 +68,8 @@ export interface TranslatedString {
   locale: string
   value: string
 }
+
+export type TranslatedStrings = TranslatedString[]
 
 export interface CustomResourceDefinition extends TypeMeta {
   metadata: ObjectMeta

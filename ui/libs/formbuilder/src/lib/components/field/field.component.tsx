@@ -1,8 +1,7 @@
 import React, { Dispatch, FormEvent, Fragment, FunctionComponent, SetStateAction, useState } from 'react';
-import { Button, FormCheck, FormCheckInput, FormCheckLabel, FormControl, FormLabel } from '@core/ui-toolkit';
+import { Button, FormCheck, FormCheckInput, FormCheckLabel, FormControl, FormGroup, FormLabel } from '@core/ui-toolkit';
 import './field.css';
-
-export type Translations = { locale: string, value: string }[]
+import { TranslatedStrings } from '@core/api-client';
 
 export interface SelectOption {
   key: string;
@@ -11,21 +10,6 @@ export interface SelectOption {
 
 export interface RadioOption {
   key: string;
-}
-
-export interface FieldOptions {
-  name: Translations;
-  description: Translations;
-  tooltip: Translations;
-  min?: number | string;
-  max?: number | string;
-  options?: SelectOption[] | RadioOption[];
-  maxLength?: number;
-  regex?: string;
-  required?: boolean;
-  disabled?: boolean;
-  hidden?: boolean;
-  default?: any;
 }
 
 export enum FieldType {
@@ -42,7 +26,17 @@ export interface FieldProps {
   key: string;
   type: FieldType;
   children: any[];
-  options: FieldOptions;
+  name: TranslatedStrings;
+  description: TranslatedStrings;
+  tooltip: TranslatedStrings;
+  min?: number | string;
+  max?: number | string;
+  maxLength?: number;
+  regex?: string;
+  required?: boolean;
+  disabled?: boolean;
+  hidden?: boolean;
+  default?: any;
 }
 
 type ListKind = 'radio' | 'select';
@@ -111,12 +105,13 @@ const renderCheckboxField = (
   );
 };
 
-const renderGenericValidationFields = (options: FieldOptions) => {
+const renderGenericValidationFields = (props: FieldProps) => {
+  const { required, disabled, hidden } = props;
   return (
     <Fragment>
-      {renderCheckboxField(options.required, 'required', 'Required')}
-      {renderCheckboxField(options.disabled, 'disabled', 'Disabled')}
-      {renderCheckboxField(options.hidden, 'hidden', 'Hidden')}
+      {renderCheckboxField(required, 'required', 'Required')}
+      {renderCheckboxField(disabled, 'disabled', 'Disabled')}
+      {renderCheckboxField(hidden, 'hidden', 'Hidden')}
       <FormLabel>Regex:</FormLabel>
       <FormControl
         name='regex'
@@ -129,16 +124,19 @@ const renderGenericValidationFields = (options: FieldOptions) => {
 
 const renderTranslatableField = (
   name: string,
-  fieldTranslation: Translations
+  fieldTranslation: TranslatedStrings
 ) => {
+  if (!fieldTranslation) {
+    return <div />;
+  }
   return (
     <ul>
       {fieldTranslation.map(translation => {
-        const locale = translation.locale
-        const value = translation.value
+        const locale = translation.locale;
+        const value = translation.value;
         return (
           <li>
-            <i className='bi bi-translate'/>
+            <i className='bi bi-translate' />
             <FormLabel
               style={{ marginLeft: 5 + 'px' }}
             >{`${locale}:`}</FormLabel>
@@ -163,30 +161,31 @@ const renderTranslatableField = (
   );
 };
 
-const renderGenericOptionFields = (options: FieldOptions) => {
+const renderGenericOptionFields = (props: FieldProps) => {
+  const { name, description, tooltip } = props;
   return (
     <Fragment>
       <FormLabel>Name:</FormLabel>
       <br />
-      {renderTranslatableField('name', options.name)}
+      {renderTranslatableField('name', name)}
 
-      {renderGenericValidationFields(options)}
+      {renderGenericValidationFields(props)}
 
       <FormLabel>Description:</FormLabel>
       <br />
-      {renderTranslatableField('description', options.description)}
+      {renderTranslatableField('description', description)}
 
       <FormLabel>Tooltip:</FormLabel>
       <br />
-      {renderTranslatableField('tooltip', options.tooltip)}
+      {renderTranslatableField('tooltip', tooltip)}
     </Fragment>
   );
 };
 
-const renderStringOptionFields = (options: FieldOptions) => {
+const renderStringOptionFields = (props: FieldProps) => {
   return (
     <Fragment>
-      {renderGenericOptionFields(options)}
+      {renderGenericOptionFields(props)}
 
       <FormLabel>Max Length:</FormLabel>
       <FormControl
@@ -199,10 +198,10 @@ const renderStringOptionFields = (options: FieldOptions) => {
   );
 };
 
-const renderNumericOptionFields = (options: FieldOptions) => {
+const renderNumericOptionFields = (props: FieldProps) => {
   return (
     <Fragment>
-      {renderGenericOptionFields(options)}
+      {renderGenericOptionFields(props)}
 
       <FormLabel>Max Value:</FormLabel>
       <FormControl
@@ -223,23 +222,23 @@ const renderNumericOptionFields = (options: FieldOptions) => {
   );
 };
 
-const renderCheckboxOptionFields = (options: FieldOptions) => {
-  return <Fragment>{renderGenericOptionFields(options)}</Fragment>;
+const renderCheckboxOptionFields = (props: FieldProps) => {
+  return <Fragment>{renderGenericOptionFields(props)}</Fragment>;
 };
 
-const renderRadioOptionFields = (options: FieldOptions) => {
+const renderRadioOptionFields = (props: FieldProps) => {
   return (
     <Fragment>
-      {renderGenericOptionFields(options)}
+      {renderGenericOptionFields(props)}
       {renderListField([] as RadioOption[], 'radio')}
     </Fragment>
   );
 };
 
-const renderSelectOptionFields = (options: FieldOptions) => {
+const renderSelectOptionFields = (props: FieldProps) => {
   return (
     <Fragment>
-      {renderGenericOptionFields(options)}
+      {renderGenericOptionFields(props)}
       {renderListField([] as SelectOption[], 'select')}
     </Fragment>
   );
@@ -248,17 +247,17 @@ const renderSelectOptionFields = (options: FieldOptions) => {
 const renderOptions = (props: FieldProps) => {
   switch (props.type) {
     case FieldType.string:
-      return renderStringOptionFields(props.options);
+      return renderStringOptionFields(props);
     case FieldType.integer:
     case FieldType.float:
-      return renderNumericOptionFields(props.options);
+      return renderNumericOptionFields(props);
     case FieldType.checkbox:
-      return renderCheckboxOptionFields(props.options);
+      return renderCheckboxOptionFields(props);
     case FieldType.radio:
-      return renderRadioOptionFields(props.options);
+      return renderRadioOptionFields(props);
     case FieldType.select:
     case FieldType.multiselect:
-      return renderSelectOptionFields(props.options);
+      return renderSelectOptionFields(props);
     default:
       return <Fragment />;
   }
@@ -278,15 +277,20 @@ const handleChange = (
   ) {
     const name = event.target['name'].split('-')[0];
     const locale = event.target['name'].split('-')[1];
-    newState.options[name][locale] = event.target['value'];
-    setFieldState(newState);
+
+    const translatedString = newState[name] as TranslatedStrings;
+    const idx = translatedString.findIndex(s => s.locale === locale);
+    if (idx !== -1) {
+      translatedString[idx].value = event.target['value'];
+    }
+
   } else if (
     event.target['name'] === 'maxLength' ||
     event.target['name'] === 'max' ||
     event.target['name'] === 'min' ||
     event.target['name'] === 'regex'
   ) {
-    newState.options[event.target['name']] = event.target['value'];
+    newState[event.target['name']] = event.target['value'];
     setFieldState(newState);
   } else if (
     event.target['name'] === 'required' ||
@@ -294,9 +298,9 @@ const handleChange = (
     event.target['name'] === 'hidden'
   ) {
     if (event.target['checked'] === true) {
-      newState.options[event.target['name']] = true;
+      newState[event.target['name']] = true;
     } else {
-      newState.options[event.target['name']] = false;
+      newState[event.target['name']] = false;
     }
     setFieldState(newState);
   } else {
@@ -326,14 +330,17 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                 handleChange(fieldState, setFieldState, event);
               }}
             >
-              <FormLabel>Key:</FormLabel>
-              <FormControl
-                name='key'
-                defaultValue={fieldState.key}
-                aria-label='field key'
-              />
 
-              <FormLabel>Type:</FormLabel>
+              <FormGroup controlId={'key'}>
+                <FormLabel>Key</FormLabel>
+                <FormControl
+                  name='key'
+                  defaultValue={fieldState.key}
+                  aria-label='field key'
+                />
+              </FormGroup>
+
+              Type:
               <select
                 name='type'
                 className='form-select'

@@ -382,6 +382,27 @@
       "sourceRoot": "libs/shared/api-client/src",
       "projectType": "library",
       "targets": {
+        "build": {
+          "executor": "@nrwl/web:package",
+          "outputs": [
+            "{options.outputPath}"
+          ],
+          "options": {
+            "outputPath": "dist/libs/shared/api-client",
+            "tsConfig": "libs/shared/api-client/tsconfig.lib.json",
+            "project": "libs/shared/api-client/package.json",
+            "entryFile": "libs/shared/api-client/src/index.ts",
+            "external": [],
+            "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+            "assets": [
+              {
+                "glob": "libs/shared/api-client/README.md",
+                "input": ".",
+                "output": "."
+              }
+            ]
+          }
+        },
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
