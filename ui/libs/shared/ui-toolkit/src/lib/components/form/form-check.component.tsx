@@ -5,7 +5,7 @@ import { FormCheckInput } from './form-check-input.component';
 import { classNames } from '@core/ui-toolkit/util/utils';
 
 export interface FormCheckProps extends React.ComponentPropsWithRef<'div'> {
-  id: string;
+  id?: string;
   label?: string;
   type?: 'radio' | 'checkbox' | 'switch';
   name?: string;

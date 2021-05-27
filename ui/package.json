@@ -30,10 +30,12 @@
     "formbuilder:storybook": "nx start formbuilder:storybook",
     "formrenderer:build-storybook": "nx run formrenderer:build-storybook",
     "formrenderer:storybook": "nx start formrenderer:storybook",
-    "showcase:build": "nx build shared-bootstrap && nx run formrenderer:build-storybook && nx run shared-ui-toolkit:build-storybook && nx run showcase:copy-bs && nx run showcase:build && rm -rf ../docs && mkdir ../docs/ && cp -r dist/apps/showcase/* ../docs/"
+    "showcase:build": "nx build shared-bootstrap && nx run formrenderer:build-storybook && nx run shared-ui-toolkit:build-storybook && nx run showcase:copy-bs && nx run showcase:build && rm -rf ../docs && mkdir ../docs/ && cp -r dist/apps/showcase/* ../docs/",
+    "core-web-app:serve": "nx serve core-web-app"
   },
   "private": true,
   "dependencies": {
+    "@reduxjs/toolkit": "^1.5.1",
     "@restart/hooks": "^0.3.26",
     "bootstrap": "^5.0.0",
     "bootstrap-icons": "^1.4.1",
@@ -46,6 +48,7 @@
     "react-dom": "17.0.2",
     "react-overlays": "^5.0.1",
     "react-polymorphic-box": "^3.0.3",
+    "react-redux": "^7.2.4",
     "react-router-dom": "5.2.0",
     "react-select": "^4.3.0",
     "regenerator-runtime": "0.13.7",

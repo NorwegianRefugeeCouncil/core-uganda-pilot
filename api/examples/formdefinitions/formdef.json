@@ -17,14 +17,16 @@
         "served": true,
         "storage": true,
         "schema": {
-          "root": {
-            "type": "section",
-            "children": [
-              {
-                "type": "text",
-                "key": "firstName"
-              }
-            ]
+          "formSchema": {
+            "root": {
+              "type": "section",
+              "children": [
+                {
+                  "type": "text",
+                  "key": "firstName"
+                }
+              ]
+            }
           }
         }
       }

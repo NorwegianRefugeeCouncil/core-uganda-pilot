@@ -149,7 +149,7 @@ export class Request {
       body: this._body,
       headers: this._headers,
       method: this._verb,
-      responseType: 'response',
+      responseType: '',
       crossDomain: true,
       createXHR: () => {
         return new XMLHttpRequest();
@@ -181,6 +181,7 @@ export class Request {
     if (typeof response === 'string') {
       try {
         obj = JSON.parse(response);
+        return obj
       } catch (e) {
         obj = {
           kind: 'Status',

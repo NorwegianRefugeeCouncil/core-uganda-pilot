@@ -1,25 +1,8 @@
-import React, {
-  useState,
-  Fragment,
-  FunctionComponent,
-  FormEvent,
-  Dispatch,
-  SetStateAction,
-} from 'react';
-import {
-  Button,
-  FormLabel,
-  FormCheck,
-  FormCheckLabel,
-  FormCheckInput,
-  FormInput,
-  //   Card,
-} from '@core/ui-toolkit';
+import React, { Dispatch, FormEvent, Fragment, FunctionComponent, SetStateAction, useState } from 'react';
+import { Button, FormCheck, FormCheckInput, FormCheckLabel, FormControl, FormLabel } from '@core/ui-toolkit';
 import './field.css';
 
-export type Translations = {
-  [locale: string]: string;
-};
+export type Translations = { locale: string, value: string }[]
 
 export interface SelectOption {
   key: string;
@@ -42,7 +25,6 @@ export interface FieldOptions {
   required?: boolean;
   disabled?: boolean;
   hidden?: boolean;
-  value: any;
   default?: any;
 }
 
@@ -72,34 +54,34 @@ const renderListField = (
   return kind === 'radio' ? (
     <Fragment>
       <Button>
-        <i className="bi bi-plus-circle-fill"></i>
+        <i className='bi bi-plus-circle-fill' />
       </Button>
-      <ul className="list-group">
-        <li className="list-group-item">
+      <ul className='list-group'>
+        <li className='list-group-item'>
           <FormLabel>Label:</FormLabel>
-          <FormInput
-            name="option-key"
-            defaultValue=""
-            aria-label="a radio option key for the field"
+          <FormControl
+            name='option-key'
+            defaultValue=''
+            aria-label='a radio option key for the field'
           />
         </li>
       </ul>
     </Fragment>
   ) : (
     <Fragment>
-      <ul className="list-group">
-        <li className="list-group-item">
+      <ul className='list-group'>
+        <li className='list-group-item'>
           <FormLabel>Label:</FormLabel>
-          <FormInput
-            name="option-key"
-            defaultValue=""
-            aria-label="a radio option key for the field"
+          <FormControl
+            name='option-key'
+            defaultValue=''
+            aria-label='a radio option key for the field'
           />
           <FormLabel>Value:</FormLabel>
-          <FormInput
-            name="option-value"
-            defaultValue=""
-            aria-label="a radio option key for the field"
+          <FormControl
+            name='option-value'
+            defaultValue=''
+            aria-label='a radio option key for the field'
           />
         </li>
       </ul>
@@ -117,12 +99,12 @@ const renderCheckboxField = (
       {checkedState ? (
         <FormCheck>
           <FormCheckLabel>{label}</FormCheckLabel>
-          <FormCheckInput name={name} checked />
+          <FormCheckInput type='checkbox' name={name} checked />
         </FormCheck>
       ) : (
         <FormCheck>
           <FormCheckLabel>{label}</FormCheckLabel>
-          <FormCheckInput name={name} />
+          <FormCheckInput type='checkbox' name={name} />
         </FormCheck>
       )}
     </Fragment>
@@ -136,10 +118,10 @@ const renderGenericValidationFields = (options: FieldOptions) => {
       {renderCheckboxField(options.disabled, 'disabled', 'Disabled')}
       {renderCheckboxField(options.hidden, 'hidden', 'Hidden')}
       <FormLabel>Regex:</FormLabel>
-      <FormInput
-        name="regex"
-        defaultValue=""
-        aria-label="regular expression used to validate the field"
+      <FormControl
+        name='regex'
+        defaultValue=''
+        aria-label='regular expression used to validate the field'
       />
     </Fragment>
   );
@@ -151,24 +133,26 @@ const renderTranslatableField = (
 ) => {
   return (
     <ul>
-      {Object.keys(fieldTranslation).map((locale) => {
+      {fieldTranslation.map(translation => {
+        const locale = translation.locale
+        const value = translation.value
         return (
           <li>
-            <i className="bi bi-translate"></i>
+            <i className='bi bi-translate'/>
             <FormLabel
               style={{ marginLeft: 5 + 'px' }}
             >{`${locale}:`}</FormLabel>
             {locale === 'ar' ? (
-              <FormInput
+              <FormControl
                 style={{ direction: 'rtl' }}
                 name={`${name}-${locale}`}
-                defaultValue={fieldTranslation[locale] || ''}
+                defaultValue={value}
                 aria-label={`field name for ${locale}`}
               />
             ) : (
-              <FormInput
+              <FormControl
                 name={`${name}-${locale}`}
-                defaultValue={fieldTranslation[locale] || ''}
+                defaultValue={value}
                 aria-label={`field name for ${locale}`}
               />
             )}
@@ -205,10 +189,10 @@ const renderStringOptionFields = (options: FieldOptions) => {
       {renderGenericOptionFields(options)}
 
       <FormLabel>Max Length:</FormLabel>
-      <FormInput
-        name="maxLength"
+      <FormControl
+        name='maxLength'
         defaultValue={0}
-        type="number"
+        type='number'
         aria-label={`maximum length allowed for the field`}
       />
     </Fragment>
@@ -221,18 +205,18 @@ const renderNumericOptionFields = (options: FieldOptions) => {
       {renderGenericOptionFields(options)}
 
       <FormLabel>Max Value:</FormLabel>
-      <FormInput
-        name="max"
+      <FormControl
+        name='max'
         defaultValue={0}
-        type="number"
+        type='number'
         aria-label={`maximum number allowed for the field`}
       />
 
       <FormLabel>Min Value:</FormLabel>
-      <FormInput
-        name="min"
+      <FormControl
+        name='min'
         defaultValue={0}
-        type="number"
+        type='number'
         aria-label={`minimum number allowed for the field`}
       />
     </Fragment>
@@ -343,17 +327,17 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
               }}
             >
               <FormLabel>Key:</FormLabel>
-              <FormInput
-                name="key"
+              <FormControl
+                name='key'
                 defaultValue={fieldState.key}
-                aria-label="field key"
+                aria-label='field key'
               />
 
               <FormLabel>Type:</FormLabel>
               <select
-                name="type"
-                className="form-select"
-                aria-label="select type"
+                name='type'
+                className='form-select'
+                aria-label='select type'
               >
                 <option>Select Type</option>
                 {Object.keys(FieldType).map((fieldType) => {

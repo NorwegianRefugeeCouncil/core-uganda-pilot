@@ -19,12 +19,18 @@ export interface ContainerProps extends React.ComponentPropsWithRef<'div'> {
  * It also sets a default max-width of `60ch` (60 characters).
  */
 const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
-  ({ size, centerContent, className: customClass, children, ...rest }, ref) => {
+  ({
+     size,
+     centerContent,
+     className: customClass,
+     children,
+     ...rest
+   }, ref) => {
     const className = classNames(
-      'container',
       {
-        [`container-${size}`]: size != null,
-        'd-flex flex-column justify-content-center align-items-center': centerContent,
+        [`container-${size}`]: !!size,
+        container: !size,
+        'd-flex flex-column justify-content-center align-items-center': centerContent
       },
       customClass
     );

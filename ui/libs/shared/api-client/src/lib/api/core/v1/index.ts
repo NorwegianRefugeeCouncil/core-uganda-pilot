@@ -24,6 +24,9 @@ export interface FormDefinitionNames {
 
 export interface FormDefinitionVersion {
   name: string
+  served: boolean
+  storage: boolean
+  schema: FormDefinitionValidation
 }
 
 export interface FormDefinitionValidation {
@@ -36,6 +39,9 @@ export interface FormRoot {
 
 export interface FormElement {
   key: string
+  name: TranslatedString
+  description: TranslatedString
+  type: string
   label: TranslatedString
   tooltip: TranslatedString
   help: TranslatedString
@@ -44,6 +50,7 @@ export interface FormElement {
   max: number
   minLength: number
   maxLength: number
+  children?: FormElement[]
 }
 
 export interface TranslatedString {

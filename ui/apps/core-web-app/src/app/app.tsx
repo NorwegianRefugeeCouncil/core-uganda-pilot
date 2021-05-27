@@ -1,11 +1,24 @@
 import './app.css';
-import { Container } from '@core/ui-toolkit';
-import { TopBar } from '@core/core-ui'
+import { TopNav } from '../components/topnav/topnav.component';
+import { Route, Switch } from 'react-router-dom';
+import FormDefinitions from '../components/formdefinitions';
+import FormDefinitionContainer from '../components/formdefinition';
 
 export function App() {
-  return <Container size="fluid">
-    <TopBar></TopBar>
-  </Container>;
+  return <>
+    <TopNav />
+    <Switch>
+      <Route exact path='/'>
+        Home
+      </Route>
+      <Route exact path='/formdefinitions'>
+        <FormDefinitions />
+      </Route>
+      <Route exact path='/formdefinitions/:id'>
+        <FormDefinitionContainer />
+      </Route>
+    </Switch>
+  </>;
 }
 
 export default App;
