@@ -1,37 +1,169 @@
 import * as React from 'react';
 import {
-  addFormElement,
+  addFormElement, addValue,
   patchFormElement,
-  removeFormElement,
-  removeTranslation,
-  setTranslation,
+  removeFormElement, removeIndexedValue,
+  removeTranslation, removeValue, setFormDefinition, setIndexedValue,
+  setTranslation, setValue,
   StateSlice,
   TranslationType
 } from '../../reducers';
 import { useDispatch, useSelector } from 'react-redux';
-import { FieldType, FormElement, TranslatedString, TranslatedStrings } from '@core/api-client';
+import {
+  FieldType,
+  FormDefinition,
+  FormDefinitionVersion,
+  FormElement,
+  TranslatedString,
+  TranslatedStrings
+} from '@core/api-client';
 import { Button, Card, FormGroup, FormLabel, FormSelect } from '@core/ui-toolkit';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CardBody } from '@core/ui-toolkit';
 
-export const Builder: React.FC = (props, context) => {
-  return <div></div>;
+
+type BuilderProps = {
+  formDefinition: FormDefinition
+}
+
+export const Builder: React.FC<BuilderProps> = (props, context) => {
+
+  const givenFormDefinition = props.formDefinition;
+
+  if (!givenFormDefinition) {
+    return <div />;
+  }
+
+  const dispatch = useDispatch();
+
+  const formDefinition = useSelector<StateSlice, FormDefinition>(state => state.formBuilder.formDefinition);
+
+  const [currentVersionName, setCurrentVersionName] = useState(formDefinition?.spec?.versions[0].name);
+
+  useEffect(() => {
+    dispatch(setFormDefinition({ formDefinition: givenFormDefinition }));
+    setCurrentVersionName(givenFormDefinition.spec.versions[0].name);
+  }, [givenFormDefinition]);
+
+  const currentVersion = useMemo(() => {
+    return formDefinition?.spec?.versions?.find(v => v.name === currentVersionName);
+  }, [formDefinition, currentVersionName]);
+
+  useCallback(args => {
+    console.log(args);
+  }, [currentVersionName]);
+
+  return <>
+
+    <Card>
+      <CardBody>
+
+        <div className={'input-group mb-3'}>
+          <span style={{ width: '5rem' }} className='input-group-text'>Group</span>
+          <input disabled type='text' className='form-control bg-light' value={formDefinition.spec.group} />
+        </div>
+
+        <div className={'input-group mb-3'}>
+          <span style={{ width: '5rem' }} className='input-group-text'>Kind</span>
+          <input disabled type='text' className='form-control bg-light' value={formDefinition.spec.names.kind} />
+        </div>
+
+        <div className={'input-group mb-3'}>
+          <span style={{ width: '5rem' }} className='input-group-text'>Plural</span>
+          <input disabled type='text' className='form-control bg-light' value={formDefinition.spec.names.plural} />
+        </div>
+
+        <div className={'input-group mb-3'}>
+          <span style={{ width: '5rem' }} className='input-group-text'>Singular</span>
+          <input disabled type='text' className='form-control bg-light' value={formDefinition.spec.names.singular} />
+        </div>
+
+        <hr />
+
+        <div className='input-group mb-3'>
+          <span className='input-group-text' id='basic-addon1'>Version</span>
+          <select
+            className={'form-select'}
+            value={currentVersionName}
+            onChange={ev => setCurrentVersionName(ev.target.value)}>
+            {formDefinition.spec.versions.map(v => {
+              return <option
+                key={v.name}
+                value={v.name}
+              >{v.name}</option>;
+            })}
+          </select>
+        </div>
+
+        <div className={'mt-2'}>
+          {renderVersion({
+            path: 'spec.versions[0]',
+            version: currentVersion
+          })}
+        </div>
+
+      </CardBody>
+    </Card>
+
+  </>;
 };
 
 
-type BuilderContainerProps = {
-  root: FormElement
+type renderVersionProps = {
+  path: string,
+  version: FormDefinitionVersion
 }
 
-export const BuilderContainer: React.FC<BuilderContainerProps> = (props, context) => {
+const renderVersion = (props: renderVersionProps) => {
+  const { version, path } = props;
 
-  const { root } = props;
+  if (!version) {
+    return <div />;
+  }
+  return <div>
 
-  // const root = useSelector<StateSlice, FormElement>(state => state.formBuilder.root);
+    <div className='form-check'>
+      <input disabled className='form-check-input' type='checkbox' value='' id='flexCheckDefault'
+             checked={version.served} />
+      <label className='form-check-label text-dark' htmlFor='flexCheckDefault'>
+        Served
+      </label>
+    </div>
+
+    <div className='form-check'>
+      <input disabled className='form-check-input' type='checkbox' value='' id='flexCheckDefault'
+             checked={version.storage} />
+      <label className='form-check-label text-dark' htmlFor='flexCheckDefault'>
+        Storage
+      </label>
+    </div>
+
+    <div className={'mt-3'}>
+      <RootBuilderContainer
+        path={path + '.schema.formSchema.root'}
+        root={version.schema.formSchema.root}
+      />
+    </div>
+  </div>;
+};
+
+type RootBuilderContainerProps = {
+  root: FormElement,
+  path: string
+}
+
+export const RootBuilderContainer: React.FC<RootBuilderContainerProps> = (props, context) => {
+
+  const { root, path } = props;
+
   const dispatch = useDispatch();
 
   const doAddField = () => {
-    dispatch(addFormElement({ path: '/root', field: {} }));
+    dispatch(addValue({
+      path: path + '.children', value: {
+        type: 'shortText'
+      }
+    }));
   };
 
   return <div>
@@ -132,46 +264,40 @@ export const FormElementComponent: React.FC<FormElementProps> = (props, context)
 
 export const FormElementContainer: React.FC<FormContainerProps> = (props, context) => {
 
+  const { path } = props;
+
   const dispatch = useDispatch();
 
   const setKey = (key: string) => {
-    dispatch(patchFormElement({
-      path: props.path, field: { key }
-    }));
+    dispatch(setValue({ path: path + '.key', value: key }));
   };
 
   const setType = (type: FieldType) => {
-    dispatch(patchFormElement({
-      path: props.path, field: { type }
-    }));
+    dispatch(setValue({ path: path + '.type', value: type }));
   };
 
   const setRequired = (required: boolean) => {
-    dispatch(patchFormElement({
-      path: props.path, field: { required }
-    }));
+    dispatch(setValue({ path: path + '.required', value: required }));
   };
 
   const doSetTranslation = (type: TranslationType, locale: string, value: string) => {
-    dispatch(setTranslation({
-      path: props.path,
-      value: value,
-      locale: locale,
-      type: type
+    dispatch(setIndexedValue({
+      path: path + '.' + type, key: 'locale', value: {
+        locale: locale,
+        value: value
+      }
     }));
   };
 
   const doRemoveTranslation = (type: TranslationType, locale: string) => {
-    dispatch(removeTranslation({
-      path: props.path,
-      locale: locale,
-      type: type
+    dispatch(removeIndexedValue({
+      path: path + '.' + type, key: 'locale', keyValue: locale
     }));
   };
 
 
   const doRemoveElement = () => {
-    dispatch(removeFormElement({ path: props.path }));
+    dispatch(removeValue({ path: props.path }));
   };
 
   const [selectedTranslationType, setSelectedTranslationType] = useState<TranslationType | ''>('');

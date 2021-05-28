@@ -58,11 +58,63 @@ type setValuePayload = {
   path: string
   value: any
 }
-export const setValue = createAction<setValuePayload>('formDefinitions/setValue');
+export const setValue = createAction<setValuePayload>('formBuilder/setValue');
 const handleSetValue = (state: State, action: PayloadAction<setValuePayload>) => {
+  state = { ...state };
   const obj = state.formDefinition;
-  const path = pathFrom(action.payload.path)
-  path.getValue()
+  const path = pathFrom(action.payload.path);
+  path.set(obj, action.payload.value);
+  return state;
+};
+
+
+type setIndexedValuePayload = {
+  path: string
+  key: string
+  value: any
+}
+export const setIndexedValue = createAction<setIndexedValuePayload>('formBuilder/setIndexedValue');
+const handleSetIndexedValue = (state: State, action: PayloadAction<setIndexedValuePayload>) => {
+  state = { ...state };
+  const obj = state.formDefinition;
+  const path = pathFrom(action.payload.path);
+  path.setIndexed(obj, action.payload.key, action.payload.value);
+  return state;
+};
+
+type removeIndexedValuePayload = {
+  path: string
+  key: string
+  keyValue: string
+}
+export const removeIndexedValue = createAction<removeIndexedValuePayload>('formBuilder/removeIndexedValue');
+const handleRemoveIndexedValue = (state: State, action: PayloadAction<removeIndexedValuePayload>) => {
+  const obj = state.formDefinition;
+  const path = pathFrom(action.payload.path);
+  path.removeIndexed(obj, action.payload.key, action.payload.keyValue);
+};
+
+
+type removeValuePayload = {
+  path: string
+}
+export const removeValue = createAction<removeValuePayload>('formBuilder/removeValue');
+const handleRemoveValue = (state: State, action: PayloadAction<removeValuePayload>) => {
+  const obj = state.formDefinition;
+  const path = pathFrom(action.payload.path);
+  path.remove(obj);
+};
+
+
+type addValuePayload = {
+  path: string
+  value: any
+}
+export const addValue = createAction<addValuePayload>('formBuilder/addValue');
+const handleAddValue = (state: State, action: PayloadAction<setValuePayload>) => {
+  const obj = state.formDefinition;
+  const path = pathFrom(action.payload.path);
+  path.add(obj, action.payload.value);
 };
 
 
@@ -75,9 +127,11 @@ type setFormDefinitionPayload = {
  * Eg.
  * /root/children/3/children/2
  */
-export const setFormDefinition = createAction<setFormDefinitionPayload>('formDefinitions/setState');
+export const setFormDefinition = createAction<setFormDefinitionPayload>('formBuilder/setFormDefinition');
 const handleSetFormDefinition = (state: State, action: PayloadAction<setFormDefinitionPayload>) => {
+  state = {...state}
   state.formDefinition = action.payload.formDefinition;
+  return state
 };
 
 
@@ -91,7 +145,7 @@ type addFormElementPayload = {
  * Eg.
  * /root/children/3/children/2
  */
-export const addFormElement = createAction<addFormElementPayload>('formDefinitions/addFormElement');
+export const addFormElement = createAction<addFormElementPayload>('formBuilder/addFormElement');
 const handleAddFormElement = (state: State, action: PayloadAction<addFormElementPayload>) => {
   const element = findElement(state, action.payload.path);
   if (!element.children) {
@@ -109,7 +163,7 @@ type removeFormElementPayload = {
  * Path is jsonPointer
  * Eg. /root/children/3
  */
-export const removeFormElement = createAction<removeFormElementPayload>('formDefinitions/removeFormElement');
+export const removeFormElement = createAction<removeFormElementPayload>('formBuilder/removeFormElement');
 const handleRemoveField = (state: State, action: PayloadAction<removeFormElementPayload>) => {
   const path = clearSlashes(action.payload.path);
   const parent = findParentOf(state, path);
@@ -128,7 +182,7 @@ type replaceFormElementPayload = {
  * Path is jsonPointer
  * eg.: /root, /root/children/3
  */
-export const replaceFormElement = createAction<replaceFormElementPayload>('formDefinitions/replaceFormElement');
+export const replaceFormElement = createAction<replaceFormElementPayload>('formBuilder/replaceFormElement');
 const handleReplaceFormElement = (state: State, action: PayloadAction<replaceFormElementPayload>) => {
   const path = clearSlashes(action.payload.path);
   const version = findSelectedVersion(state);
@@ -152,7 +206,7 @@ type patchFormElementPayload = {
  * Path is jsonPointer
  * eg.: /root, /root/children/3
  */
-export const patchFormElement = createAction<patchFormElementPayload>('formDefinitions/patchFormElement');
+export const patchFormElement = createAction<patchFormElementPayload>('formBuilder/patchFormElement');
 const handlePatchFormElement = (state: State, action: PayloadAction<patchFormElementPayload>) => {
   const path = clearSlashes(action.payload.path);
   const root = findCurrentVersionRoot(state);
@@ -183,7 +237,7 @@ type setTranslationPayload = {
  * Path is jsonPointer
  * eg.: /root, /root/children/3
  */
-export const setTranslation = createAction<setTranslationPayload>('formDefinitions/setTranslation');
+export const setTranslation = createAction<setTranslationPayload>('formBuilder/setTranslation');
 const handleSetTranslation = (state: State, action: PayloadAction<setTranslationPayload>) => {
   const element = findElement(state, action.payload.path);
   let translatedStrings: TranslatedStrings;
@@ -224,7 +278,7 @@ type removeTranslationPayload = {
  * Path is jsonPointer
  * eg.: /root, /root/children/3
  */
-export const removeTranslation = createAction<removeTranslationPayload>('formDefinitions/removeTranslation');
+export const removeTranslation = createAction<removeTranslationPayload>('formBuilder/removeTranslation');
 const handleRemoveTranslation = (state, action: PayloadAction<removeTranslationPayload>) => {
   const element = findElement(state, action.payload.path);
   let translatedStrings: TranslatedStrings;
@@ -263,6 +317,11 @@ export const formBuilderSlice = createSlice({
     builder.addCase(setTranslation, handleSetTranslation);
     builder.addCase(removeTranslation, handleRemoveTranslation);
     builder.addCase(setFormDefinition, handleSetFormDefinition);
+    builder.addCase(setValue, handleSetValue);
+    builder.addCase(removeValue, handleRemoveValue);
+    builder.addCase(addValue, handleAddValue);
+    builder.addCase(setIndexedValue, handleSetIndexedValue);
+    builder.addCase(removeIndexedValue, handleRemoveIndexedValue);
   }
 });
 

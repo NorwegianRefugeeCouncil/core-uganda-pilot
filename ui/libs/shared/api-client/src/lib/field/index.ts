@@ -32,15 +32,16 @@ export class Path {
     return new Path({ index: key, parent: this });
   }
 
-  setValue(obj: any, value: any): void {
-    if (!this._parent) {
-      throw 'cannot set value as path does not have parent';
-    }
+  set(obj: any, value: any): void {
     this.ensurePath(obj);
-    const parent = this._parent.getValue(obj);
-    if (!parent) {
-      throw 'cannot set value as parent value is undefined';
+
+    let parent: any;
+    if (!this._parent) {
+      parent = obj;
+    } else {
+      parent = this._parent.get(obj);
     }
+
     let key: string;
     if (this._index) {
       key = this._index;
@@ -49,6 +50,60 @@ export class Path {
     }
     parent[key] = value;
   }
+
+  setIndexed(obj: any, key: string, value: any): void {
+    this.ensurePath(obj);
+
+    let parent = this.get(obj);
+    if (!parent) {
+      parent = [];
+      this.set(obj, parent);
+    }
+    if (!isArray(parent)) {
+      throw 'cannot add value as object at path ' + this.string() + ' is not an array';
+    }
+
+    const arr = parent as any[];
+
+    const keyValue = value[key];
+    let found = false;
+    for (let i = 0; i < arr.length; i++) {
+      const arrElement = arr[i];
+      const elementKeyValue = arrElement[key];
+      if (elementKeyValue === keyValue) {
+        arr[i] = value;
+        found = true;
+      }
+    }
+
+    if (!found) {
+      arr.push(value);
+    }
+  }
+
+  removeIndexed(obj: any, key: string, keyValue: string): void {
+    this.ensurePath(obj);
+
+    let parent = this.get(obj);
+    if (!parent) {
+      return;
+    }
+    if (!isArray(parent)) {
+      throw 'cannot add value as object at path ' + this.string() + ' is not an array';
+    }
+
+    const arr = parent as any[];
+
+    for (let i = 0; i < arr.length; i++) {
+      const arrElement = arr[i];
+      const elementKeyValue = arrElement[key];
+      if (elementKeyValue === keyValue) {
+        arr.splice(i, 1);
+        return;
+      }
+    }
+  }
+
 
   ensurePath(obj: any) {
     let paths: Path[] = [];
@@ -124,10 +179,11 @@ export class Path {
     return this._name;
   }
 
-  addValue(obj: any, elem: any): Path {
-    const value = this.getValue(obj);
+  add(obj: any, elem: any): Path {
+    let value = this.get(obj);
     if (!value) {
-      throw 'cannot add value as object at path ' + this.string() + ' is undefined';
+      value = [];
+      this.set(obj, value);
     }
     if (!isArray(value)) {
       throw 'cannot add value as object at path ' + this.string() + ' is not an array';
@@ -136,13 +192,28 @@ export class Path {
     return this.index(newLength - 1);
   }
 
-  removeValue(obj: any): void {
+
+  insert(obj: any, index: number, elem: any): Path {
+    let value = this.get(obj) as any[];
+    if (!value) {
+      value = [];
+      this.set(obj, value);
+    }
+    if (!isArray(value)) {
+      throw 'cannot add value as object at path ' + this.string() + ' is not an array';
+    }
+
+    value.splice(index, 0, elem);
+    return this.index(index);
+  }
+
+  remove(obj: any): void {
     let value: any;
     if (!this._parent) {
       value = obj;
     } else {
       const parentPath = this._parent;
-      value = parentPath.getValue(obj);
+      value = parentPath.get(obj);
     }
 
     if (isArray(value)) {
@@ -170,7 +241,7 @@ export class Path {
 
   }
 
-  getValue(obj: any): any {
+  get(obj: any): any {
     let paths: Path[] = [];
     let parent = this as Path;
     while (parent) {
