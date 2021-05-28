@@ -37,7 +37,7 @@ export interface FormRoot {
   root: FormElement
 }
 
-export type FieldType = 'text' | 'integer' | 'float' | 'checkbox' | 'radio' | 'select' | 'multiselect' | 'section'
+export type FieldType = 'shortText' | 'longText' | 'integer' | 'float' | 'checkbox' | 'radio' | 'select' | 'multiselect' | 'section'
 
 export interface FormElement {
   key?: string

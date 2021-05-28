@@ -21,6 +21,7 @@ import { Button, Card, FormGroup, FormLabel, FormSelect } from '@core/ui-toolkit
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CardBody } from '@core/ui-toolkit';
 import { Action } from '@reduxjs/toolkit';
+import Select from 'react-select';
 
 
 type BuilderProps = {
@@ -515,11 +516,30 @@ export const FormElementTypeSelector: React.FC<FormElementTypeSelectorProps> = p
 
   return <div className={'input-group mb-3'}>
     <span style={{ width: '8rem' }} className={'input-group-text'}>Type</span>
-    <select className={'form-select'} value={type}
-            onChange={(ev) => setType(ev.target.value as FieldType)}>
-      <option value={'text'}>Text</option>
-      <option value={'checkbox'}>Checkbox</option>
-    </select>
+    <Select
+      styles={{
+        container: () => ({
+          flex: 1
+        }),
+        control: (provided) => ({
+          ...provided,
+          borderTopLeftRadius: 0,
+          borderBottomLeftRadius: 0
+        })
+      }}
+      options={[
+        { value: 'shortText', label: 'Short Text' },
+        { value: 'longText', label: 'Long Text' },
+        { value: 'checkBox', label: 'Checkbox' },
+        { value: 'radio', label: 'Radio Buttons' },
+        { value: 'date', label: 'Date' },
+        { value: 'dateTime', label: 'Date Time' },
+        { value: 'time', label: 'Time' }
+      ]}
+      onChange={(ev) => {
+        console.log(ev);
+      }}
+    />
   </div>;
 };
 
