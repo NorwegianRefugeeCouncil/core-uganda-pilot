@@ -20,6 +20,7 @@ import {
 import { Button, Card, FormGroup, FormLabel, FormSelect } from '@core/ui-toolkit';
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CardBody } from '@core/ui-toolkit';
+import { Action } from '@reduxjs/toolkit';
 
 
 type BuilderProps = {
@@ -264,6 +265,13 @@ export const FormElementComponent: React.FC<FormElementProps> = (props, context)
   </Card>;
 };
 
+const setOrRemoveNumber = (n: any, path: string): Action => {
+  if (typeof n !== 'number') {
+    return removeValue({ path });
+  } else {
+    return setValue({ path, value: n });
+  }
+};
 
 export const FormElementContainer: React.FC<FormContainerProps> = (props, context) => {
 
@@ -284,19 +292,19 @@ export const FormElementContainer: React.FC<FormContainerProps> = (props, contex
   };
 
   const setMinimum = (min: number) => {
-    dispatch(setValue({ path: path + '.minimum', value: min }));
+    dispatch(setOrRemoveNumber(min, path + '.min'));
   };
 
   const setMaximum = (max: number) => {
-    dispatch(setValue({ path: path + '.maximum', value: max }));
+    dispatch(setOrRemoveNumber(max, path + '.max'));
   };
 
   const setMinLength = (minLength: number) => {
-    dispatch(setValue({ path: path + '.minLength', value: minLength }));
+    dispatch(setOrRemoveNumber(minLength, path + '.minLength'));
   };
 
   const setMaxLength = (maxLength: number) => {
-    dispatch(setValue({ path: path + '.maxLength', value: maxLength }));
+    dispatch(setOrRemoveNumber(maxLength, path + '.maxLength'));
   };
 
   const doSetTranslation = (type: TranslationType, locale: string, value: string) => {
@@ -352,6 +360,13 @@ export const renderSelectedView = (selectedView: SelectedView, props: FormElemen
   return null;
 };
 
+const numberOrEmpty = (value: any): number | string => {
+  if (typeof value === 'number') {
+    return value;
+  }
+  return '';
+};
+
 export const OptionsView: React.FC<FormElementProps> = props => {
 
   const { required } = props.element;
@@ -398,7 +413,7 @@ export const OptionsView: React.FC<FormElementProps> = props => {
         <input type='number'
                className='form-control'
                placeholder='Minimum value'
-               value={props.element.minLength}
+               value={numberOrEmpty(props.element.min)}
                onChange={(ev) => setMinimum(parseFloat(ev.target.value))}
         />
         <button
@@ -412,7 +427,7 @@ export const OptionsView: React.FC<FormElementProps> = props => {
         <input type='number'
                className='form-control'
                placeholder='Maximum value'
-               value={props.element.maxLength}
+               value={numberOrEmpty(props.element.max)}
                onChange={(ev) => setMaximum(parseFloat(ev.target.value))}
         />
         <button
@@ -427,7 +442,7 @@ export const OptionsView: React.FC<FormElementProps> = props => {
         <input type='number'
                className='form-control'
                placeholder='Minimum length of the value'
-               value={props.element.minLength}
+               value={numberOrEmpty(props.element.minLength)}
                onChange={(ev) => setMinLength(parseFloat(ev.target.value))}
         />
         <button
@@ -442,7 +457,7 @@ export const OptionsView: React.FC<FormElementProps> = props => {
         <input type='number'
                className='form-control'
                placeholder='Maximum length of the value'
-               value={props.element.minLength}
+               value={numberOrEmpty(props.element.maxLength)}
                onChange={(ev) => setMaxLength(parseFloat(ev.target.value))}
         />
         <button

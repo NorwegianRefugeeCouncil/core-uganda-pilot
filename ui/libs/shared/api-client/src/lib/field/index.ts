@@ -232,7 +232,7 @@ export class Path {
         key = this._index;
       }
       if (!objValue.hasOwnProperty(key)) {
-        throw 'cannot remove value at path ' + this.string() + ' as index is out of bounds';
+        return
       }
       delete objValue[key];
     } else {
