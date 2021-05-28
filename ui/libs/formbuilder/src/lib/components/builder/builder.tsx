@@ -1,10 +1,11 @@
 import * as React from 'react';
 import {
-  addFormElement, addValue,
-  patchFormElement,
-  removeFormElement, removeIndexedValue,
-  removeTranslation, removeValue, setFormDefinition, setIndexedValue,
-  setTranslation, setValue,
+  addValue,
+  removeIndexedValue,
+  removeValue,
+  setFormDefinition,
+  setIndexedValue,
+  setValue,
   StateSlice,
   TranslationType
 } from '../../reducers';
@@ -514,9 +515,20 @@ export const FormElementTypeSelector: React.FC<FormElementTypeSelectorProps> = p
 
   const { type, setType } = props;
 
+  const options = [{ value: 'shortText', label: 'Short Text' },
+    { value: 'longText', label: 'Long Text' },
+    { value: 'checkBox', label: 'Checkbox' },
+    { value: 'radio', label: 'Radio Buttons' },
+    { value: 'date', label: 'Date' },
+    { value: 'dateTime', label: 'Date Time' },
+    { value: 'time', label: 'Time' }];
+
+  const selected = options.find((o) => o.value === type);
+
   return <div className={'input-group mb-3'}>
     <span style={{ width: '8rem' }} className={'input-group-text'}>Type</span>
     <Select
+      value={selected}
       styles={{
         container: () => ({
           flex: 1
@@ -537,7 +549,7 @@ export const FormElementTypeSelector: React.FC<FormElementTypeSelectorProps> = p
         { value: 'time', label: 'Time' }
       ]}
       onChange={(ev) => {
-        console.log(ev);
+        setType(ev.value as FieldType);
       }}
     />
   </div>;
