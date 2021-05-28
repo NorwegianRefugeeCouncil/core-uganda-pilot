@@ -114,7 +114,6 @@ const handleAddValue = (state: State, action: PayloadAction<addValuePayload>) =>
   path.add(obj, action.payload.value);
 };
 
-
 type setFormDefinitionPayload = {
   formDefinition: FormDefinition
 }
