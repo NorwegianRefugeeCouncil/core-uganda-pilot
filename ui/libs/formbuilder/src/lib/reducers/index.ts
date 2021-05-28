@@ -7,6 +7,7 @@ import {
   TranslatedStrings
 } from '@core/api-client';
 import { createAction, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { isArray } from 'util';
 
 export const KEY = 'formBuilder';
 
@@ -60,13 +61,10 @@ type setValuePayload = {
 }
 export const setValue = createAction<setValuePayload>('formBuilder/setValue');
 const handleSetValue = (state: State, action: PayloadAction<setValuePayload>) => {
-  state = { ...state };
   const obj = state.formDefinition;
   const path = pathFrom(action.payload.path);
   path.set(obj, action.payload.value);
-  return state;
 };
-
 
 type setIndexedValuePayload = {
   path: string
@@ -75,11 +73,10 @@ type setIndexedValuePayload = {
 }
 export const setIndexedValue = createAction<setIndexedValuePayload>('formBuilder/setIndexedValue');
 const handleSetIndexedValue = (state: State, action: PayloadAction<setIndexedValuePayload>) => {
-  state = { ...state };
   const obj = state.formDefinition;
   const path = pathFrom(action.payload.path);
   path.setIndexed(obj, action.payload.key, action.payload.value);
-  return state;
+  state.formDefinition = obj;
 };
 
 type removeIndexedValuePayload = {
@@ -111,7 +108,7 @@ type addValuePayload = {
   value: any
 }
 export const addValue = createAction<addValuePayload>('formBuilder/addValue');
-const handleAddValue = (state: State, action: PayloadAction<setValuePayload>) => {
+const handleAddValue = (state: State, action: PayloadAction<addValuePayload>) => {
   const obj = state.formDefinition;
   const path = pathFrom(action.payload.path);
   path.add(obj, action.payload.value);
@@ -129,9 +126,7 @@ type setFormDefinitionPayload = {
  */
 export const setFormDefinition = createAction<setFormDefinitionPayload>('formBuilder/setFormDefinition');
 const handleSetFormDefinition = (state: State, action: PayloadAction<setFormDefinitionPayload>) => {
-  state = {...state}
   state.formDefinition = action.payload.formDefinition;
-  return state
 };
 
 

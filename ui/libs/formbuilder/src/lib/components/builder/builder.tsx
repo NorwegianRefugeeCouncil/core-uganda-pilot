@@ -168,11 +168,10 @@ export const RootBuilderContainer: React.FC<RootBuilderContainerProps> = (props,
 
   return <div>
     {root?.children?.map((c, idx) => {
-      const path = 'root/children/' + idx + '/';
       return <FormElementContainer
         key={idx}
         element={c}
-        path={path}
+        path={path + '.children[' + idx + ']'}
       />;
     })}
 
