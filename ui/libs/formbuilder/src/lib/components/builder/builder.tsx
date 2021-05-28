@@ -199,6 +199,10 @@ type FormElementProps = FormContainerProps & {
   removeTranslation: (type: TranslationType, locale: string) => void
   selectedTranslationType: TranslationType | ''
   setSelectedTranslationType: (t: TranslationType | '') => void
+  setMinimum: (minimum: number) => void
+  setMaximum: (maximum: number) => void
+  setMinLength: (minLength: number) => void
+  setMaxLength: (maxLength: number) => void
 }
 
 type SelectedView = 'edit' | 'options'
@@ -279,6 +283,22 @@ export const FormElementContainer: React.FC<FormContainerProps> = (props, contex
     dispatch(setValue({ path: path + '.required', value: required }));
   };
 
+  const setMinimum = (min: number) => {
+    dispatch(setValue({ path: path + '.minimum', value: min }));
+  };
+
+  const setMaximum = (max: number) => {
+    dispatch(setValue({ path: path + '.maximum', value: max }));
+  };
+
+  const setMinLength = (minLength: number) => {
+    dispatch(setValue({ path: path + '.minLength', value: minLength }));
+  };
+
+  const setMaxLength = (maxLength: number) => {
+    dispatch(setValue({ path: path + '.maxLength', value: maxLength }));
+  };
+
   const doSetTranslation = (type: TranslationType, locale: string, value: string) => {
     dispatch(setIndexedValue({
       path: path + '.' + type, key: 'locale', value: {
@@ -313,6 +333,10 @@ export const FormElementContainer: React.FC<FormContainerProps> = (props, contex
       removeTranslation={doRemoveTranslation}
       selectedTranslationType={selectedTranslationType}
       setSelectedTranslationType={setSelectedTranslationType}
+      setMinimum={setMinimum}
+      setMaximum={setMaximum}
+      setMinLength={setMinLength}
+      setMaxLength={setMaxLength}
     />
   </div>;
 };
@@ -338,7 +362,11 @@ export const OptionsView: React.FC<FormElementProps> = props => {
     selectedTranslationType,
     setSelectedTranslationType,
     setTranslation,
-    removeTranslation
+    removeTranslation,
+    setMinimum,
+    setMaximum,
+    setMinLength,
+    setMaxLength
   } = props;
 
   return (
@@ -364,6 +392,65 @@ export const OptionsView: React.FC<FormElementProps> = props => {
         setTranslation={setTranslation}
         removeTranslation={removeTranslation}
       />
+
+      <div className='input-group mb-3'>
+        <span style={{ width: '8rem' }} className='input-group-text'>Minimum</span>
+        <input type='number'
+               className='form-control'
+               placeholder='Minimum value'
+               value={props.element.minLength}
+               onChange={(ev) => setMinimum(parseFloat(ev.target.value))}
+        />
+        <button
+          className={'btn btn-outline-secondary'}
+          onClick={() => setMinimum(null)}
+        ><span className={'bi bi-x'} /></button>
+      </div>
+
+      <div className='input-group mb-3'>
+        <span style={{ width: '8rem' }} className='input-group-text'>Maximum</span>
+        <input type='number'
+               className='form-control'
+               placeholder='Maximum value'
+               value={props.element.maxLength}
+               onChange={(ev) => setMaximum(parseFloat(ev.target.value))}
+        />
+        <button
+          className={'btn btn-outline-secondary'}
+          onClick={() => setMaximum(null)}
+        ><span className={'bi bi-x'} /></button>
+      </div>
+
+
+      <div className='input-group mb-3'>
+        <span style={{ width: '8rem' }} className='input-group-text'>Minimum Length</span>
+        <input type='number'
+               className='form-control'
+               placeholder='Minimum length of the value'
+               value={props.element.minLength}
+               onChange={(ev) => setMinLength(parseFloat(ev.target.value))}
+        />
+        <button
+          className={'btn btn-outline-secondary'}
+          onClick={() => setMinLength(null)}
+        ><span className={'bi bi-x'} /></button>
+      </div>
+
+
+      <div className='input-group mb-3'>
+        <span style={{ width: '8rem' }} className='input-group-text'>Maximum Length</span>
+        <input type='number'
+               className='form-control'
+               placeholder='Maximum length of the value'
+               value={props.element.minLength}
+               onChange={(ev) => setMaxLength(parseFloat(ev.target.value))}
+        />
+        <button
+          className={'btn btn-outline-secondary'}
+          onClick={() => setMaxLength(null)}
+        ><span className={'bi bi-x'} /></button>
+      </div>
+
 
     </>
   );
