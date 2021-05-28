@@ -4,11 +4,11 @@ export interface TypeMeta {
 }
 
 export interface ObjectMeta {
-  name: string
-  labels: { [key: string]: string }
-  annotations: { [key: string]: string }
-  uid: string
-  creationTimestamp: string
+  name?: string
+  labels?: { [key: string]: string }
+  annotations?: { [key: string]: string }
+  uid?: string
+  creationTimestamp?: string
 }
 
 export interface ListMeta {
@@ -55,25 +55,25 @@ export enum CauseType {
 }
 
 export interface Status extends TypeMeta {
-  metadata: ListMeta
-  status: StatusType
-  message: string
-  reason: StatusReason
-  details: StatusDetails
-  code: number
+  metadata?: ListMeta
+  status?: StatusType
+  message?: string
+  reason?: StatusReason
+  details?: StatusDetails
+  code?: number
 }
 
 export interface StatusCause {
-  type: CauseType
-  message: string
-  field: string
+  type?: CauseType
+  message?: string
+  field?: string
 }
 
 export interface StatusDetails {
-  name: string
-  group: string
-  kind: string
-  uid: string
-  causes: StatusCause[]
-  retryAfterSeconds: number
+  name?: string
+  group?: string
+  kind?: string
+  uid?: string
+  causes?: StatusCause[]
+  retryAfterSeconds?: number
 }

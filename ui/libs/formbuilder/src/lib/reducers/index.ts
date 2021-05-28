@@ -1,10 +1,19 @@
-import { FormElement, TranslatedStrings } from '@core/api-client';
+import {
+  CauseType,
+  FormDefinition,
+  FormDefinitionVersion,
+  FormElement,
+  Status,
+  TranslatedStrings
+} from '@core/api-client';
 import { createAction, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export const KEY = 'formBuilder';
 
 export type State = {
-  root: FormElement
+  error: Partial<Status>,
+  selectedVersion: string,
+  formDefinition: FormDefinition
 }
 
 export type StateSlice = {
@@ -12,37 +21,68 @@ export type StateSlice = {
 }
 
 export const INITIAL_STATE: State = {
-  root: {
-    type: 'float'
+  error: {
+    details: {
+      causes: []
+    }
+  },
+  selectedVersion: '',
+  formDefinition: {
+    kind: 'FormDefinition',
+    apiVersion: 'core.nrc.no/v1',
+    metadata: {},
+    spec: {
+      group: '',
+      names: {
+        kind: '',
+        plural: '',
+        singular: ''
+      },
+      versions: [
+        {
+          name: '',
+          storage: true,
+          served: true,
+          schema: {
+            formSchema: {
+              root: {}
+            }
+          }
+        }
+      ]
+    }
   }
 };
 
 
+type setFormDefinitionPayload = {
+  formDefinition: FormDefinition
+}
 /**
  * Adds a new field to the state at the given path
  * Path is jsonPointer
  * Eg.
  * /root/children/3/children/2
  */
-export const setState = createAction<{
-  state: State
-}>('formDefinitions/setState');
-const handleSetState = (state, action) => {
-  return action.payload.state;
+export const setFormDefinition = createAction<setFormDefinitionPayload>('formDefinitions/setState');
+const handleSetFormDefinition = (state: State, action: PayloadAction<setFormDefinitionPayload>) => {
+  state.formDefinition = action.payload.formDefinition;
 };
 
+
+type addFieldPayload = {
+  path: string,
+  field?: FormElement
+}
 /**
  * Adds a new field to the state at the given path
  * Path is jsonPointer
  * Eg.
  * /root/children/3/children/2
  */
-export const addField = createAction<{
-  path: string,
-  field?: FormElement
-}>('formDefinitions/addField');
+export const addField = createAction<addFieldPayload>('formDefinitions/addField');
 
-const handleAddField = (state, action) => {
+const handleAddField = (state: State, action: PayloadAction<addFieldPayload>) => {
   const element = findElement(state, action.payload.path);
   if (!element.children) {
     element.children = [];
@@ -51,15 +91,16 @@ const handleAddField = (state, action) => {
 };
 
 
+type removeFieldPayload = {
+  path: string
+}
 /**
  * Removes a field from the state at the given path
  * Path is jsonPointer
  * Eg. /root/children/3
  */
-export const removeField = createAction<{
-  path: string
-}>('formDefinitions/removeField');
-const handleRemoveField = (state, action) => {
+export const removeField = createAction<removeFieldPayload>('formDefinitions/removeField');
+const handleRemoveField = (state: State, action: PayloadAction<removeFieldPayload>) => {
   const path = clearSlashes(action.payload.path);
   const parent = findParentOf(state, path);
   const parts = path.split('/');
@@ -77,10 +118,11 @@ export const replaceField = createAction<{
   path: string,
   field: FormElement
 }>('formDefinitions/replaceField');
-const handleReplaceField = (state, action) => {
+const handleReplaceField = (state: State, action) => {
   const path = clearSlashes(action.payload.path);
+  const version = findSelectedVersion(state);
   if (path === 'root') {
-    state.root = action.payload.field;
+    version.schema.formSchema.root = action.payload.field;
     return;
   }
   const parts = path.split('/');
@@ -99,11 +141,12 @@ export const patchField = createAction<{
   path: string,
   field: Partial<FormElement>
 }>('formDefinitions/patchField');
-const handlePatchField = (state, action) => {
+const handlePatchField = (state: State, action) => {
   const path = clearSlashes(action.payload.path);
+  const root = findCurrentVersionRoot(state);
   let element: FormElement;
   if (path === 'root') {
-    element = state.root;
+    element = root;
   } else {
     element = findElement(state, path);
   }
@@ -129,7 +172,7 @@ type setTranslationPayload = {
  * eg.: /root, /root/children/3
  */
 export const setTranslation = createAction<setTranslationPayload>('formDefinitions/setTranslation');
-const handleSetTranslation = (state, action: PayloadAction<setTranslationPayload>) => {
+const handleSetTranslation = (state: State, action: PayloadAction<setTranslationPayload>) => {
   const element = findElement(state, action.payload.path);
   let translatedStrings: TranslatedStrings;
   if (action.payload.type === 'label') {
@@ -207,12 +250,25 @@ export const formBuilderSlice = createSlice({
     builder.addCase(patchField, handlePatchField);
     builder.addCase(setTranslation, handleSetTranslation);
     builder.addCase(removeTranslation, handleRemoveTranslation);
-    builder.addCase(setState, handleSetState);
+    builder.addCase(setFormDefinition, handleSetFormDefinition);
   }
 });
 
 export const reducer = formBuilderSlice.reducer;
 
+
+const validate = (state: State): void => {
+  state.error = undefined;
+  const status: Partial<Status> = {};
+  const formDefinition = state.formDefinition;
+  if (!formDefinition.kind) {
+    status.details.causes.push({
+      type: CauseType.FieldValueInvalid,
+      field: 'kind',
+      message: 'Kind is required'
+    });
+  }
+};
 
 /**
  * Finds the parent of an element at the given path
@@ -235,8 +291,11 @@ const findElement = (state: State, path: string): FormElement => {
 
   path = clearSlashes(path);
 
+  const version = findSelectedVersion(state);
+  const root = version.schema.formSchema.root;
+
   if (path === 'root') {
-    return state.root;
+    return root;
   }
 
   // Path cannot be empty
@@ -255,7 +314,7 @@ const findElement = (state: State, path: string): FormElement => {
   }
 
   // Walk through the fields to find the target
-  let currentField = state.root;
+  let currentField = root;
   parts.splice(0, 1);
   while (parts.length > 0) {
     const currentPart = parts[0];
@@ -272,6 +331,19 @@ const findElement = (state: State, path: string): FormElement => {
 
   return currentField;
 
+};
+
+const findCurrentVersionRoot = (state: State): FormElement => {
+  const version = findSelectedVersion(state);
+  return version?.schema?.formSchema?.root;
+};
+
+const findSelectedVersion = (state: State): FormDefinitionVersion => {
+  return findVersion(state, state.selectedVersion);
+};
+
+const findVersion = (state: State, name: string): FormDefinitionVersion => {
+  return state.formDefinition.spec.versions.find(v => v.name === name);
 };
 
 /**

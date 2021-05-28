@@ -11,3 +11,4 @@ export * from './lib/client/discovery/index';
 export * from './lib/client/discovery/v1/index';
 export * from './lib/client/discovery/v1/apigroups';
 export * from './lib/client/discovery/v1/apiresources';
+export * from './lib/field';
