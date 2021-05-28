@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {
-  addField,
-  patchField,
-  removeField,
+  addFormElement,
+  patchFormElement,
+  removeFormElement,
   removeTranslation,
   setTranslation,
   StateSlice,
@@ -31,7 +31,7 @@ export const BuilderContainer: React.FC<BuilderContainerProps> = (props, context
   const dispatch = useDispatch();
 
   const doAddField = () => {
-    dispatch(addField({ path: '/root', field: {} }));
+    dispatch(addFormElement({ path: '/root', field: {} }));
   };
 
   return <div>
@@ -135,19 +135,19 @@ export const FormElementContainer: React.FC<FormContainerProps> = (props, contex
   const dispatch = useDispatch();
 
   const setKey = (key: string) => {
-    dispatch(patchField({
+    dispatch(patchFormElement({
       path: props.path, field: { key }
     }));
   };
 
   const setType = (type: FieldType) => {
-    dispatch(patchField({
+    dispatch(patchFormElement({
       path: props.path, field: { type }
     }));
   };
 
   const setRequired = (required: boolean) => {
-    dispatch(patchField({
+    dispatch(patchFormElement({
       path: props.path, field: { required }
     }));
   };
@@ -171,7 +171,7 @@ export const FormElementContainer: React.FC<FormContainerProps> = (props, contex
 
 
   const doRemoveElement = () => {
-    dispatch(removeField({ path: props.path }));
+    dispatch(removeFormElement({ path: props.path }));
   };
 
   const [selectedTranslationType, setSelectedTranslationType] = useState<TranslationType | ''>('');

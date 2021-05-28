@@ -6,7 +6,7 @@ import { RootState } from '../../store/store';
 import { FormDefinition, FormDefinitionVersion } from '@core/api-client';
 import { Link, useParams } from 'react-router-dom';
 import { Card, Container } from '@core/ui-toolkit';
-import { BuilderContainer, replaceField } from '@core/formbuilder';
+import { BuilderContainer, replaceFormElement } from '@core/formbuilder';
 import { CardBody } from '@core/ui-toolkit';
 import { CardHeader } from '@core/ui-toolkit';
 
@@ -137,7 +137,7 @@ const FormDefinitionContainer: React.FC<FormDefinitionContainerProps> = (props, 
 
     useEffect(() => {
       if (currentVersion) {
-        dispatch(replaceField({
+        dispatch(replaceFormElement({
           path: '/root',
           field: currentVersion.schema.formSchema.root
         }));

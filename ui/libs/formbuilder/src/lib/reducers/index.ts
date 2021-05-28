@@ -2,7 +2,7 @@ import {
   CauseType,
   FormDefinition,
   FormDefinitionVersion,
-  FormElement,
+  FormElement, Path, pathFrom,
   Status,
   TranslatedStrings
 } from '@core/api-client';
@@ -54,6 +54,17 @@ export const INITIAL_STATE: State = {
   }
 };
 
+type setValuePayload = {
+  path: string
+  value: any
+}
+export const setValue = createAction<setValuePayload>('formDefinitions/setValue');
+const handleSetValue = (state: State, action: PayloadAction<setValuePayload>) => {
+  const obj = state.formDefinition;
+  const path = pathFrom(action.payload.path)
+  path.getValue()
+};
+
 
 type setFormDefinitionPayload = {
   formDefinition: FormDefinition
@@ -70,7 +81,7 @@ const handleSetFormDefinition = (state: State, action: PayloadAction<setFormDefi
 };
 
 
-type addFieldPayload = {
+type addFormElementPayload = {
   path: string,
   field?: FormElement
 }
@@ -80,9 +91,8 @@ type addFieldPayload = {
  * Eg.
  * /root/children/3/children/2
  */
-export const addField = createAction<addFieldPayload>('formDefinitions/addField');
-
-const handleAddField = (state: State, action: PayloadAction<addFieldPayload>) => {
+export const addFormElement = createAction<addFormElementPayload>('formDefinitions/addFormElement');
+const handleAddFormElement = (state: State, action: PayloadAction<addFormElementPayload>) => {
   const element = findElement(state, action.payload.path);
   if (!element.children) {
     element.children = [];
@@ -91,7 +101,7 @@ const handleAddField = (state: State, action: PayloadAction<addFieldPayload>) =>
 };
 
 
-type removeFieldPayload = {
+type removeFormElementPayload = {
   path: string
 }
 /**
@@ -99,8 +109,8 @@ type removeFieldPayload = {
  * Path is jsonPointer
  * Eg. /root/children/3
  */
-export const removeField = createAction<removeFieldPayload>('formDefinitions/removeField');
-const handleRemoveField = (state: State, action: PayloadAction<removeFieldPayload>) => {
+export const removeFormElement = createAction<removeFormElementPayload>('formDefinitions/removeFormElement');
+const handleRemoveField = (state: State, action: PayloadAction<removeFormElementPayload>) => {
   const path = clearSlashes(action.payload.path);
   const parent = findParentOf(state, path);
   const parts = path.split('/');
@@ -109,16 +119,17 @@ const handleRemoveField = (state: State, action: PayloadAction<removeFieldPayloa
 };
 
 
+type replaceFormElementPayload = {
+  path: string,
+  field: FormElement
+}
 /**
  * Replaces a field from the state at the given path
  * Path is jsonPointer
  * eg.: /root, /root/children/3
  */
-export const replaceField = createAction<{
-  path: string,
-  field: FormElement
-}>('formDefinitions/replaceField');
-const handleReplaceField = (state: State, action) => {
+export const replaceFormElement = createAction<replaceFormElementPayload>('formDefinitions/replaceFormElement');
+const handleReplaceFormElement = (state: State, action: PayloadAction<replaceFormElementPayload>) => {
   const path = clearSlashes(action.payload.path);
   const version = findSelectedVersion(state);
   if (path === 'root') {
@@ -132,16 +143,17 @@ const handleReplaceField = (state: State, action) => {
 };
 
 
+type patchFormElementPayload = {
+  path: string,
+  field: Partial<FormElement>
+}
 /**
  * Patches a field from the state at the given path
  * Path is jsonPointer
  * eg.: /root, /root/children/3
  */
-export const patchField = createAction<{
-  path: string,
-  field: Partial<FormElement>
-}>('formDefinitions/patchField');
-const handlePatchField = (state: State, action) => {
+export const patchFormElement = createAction<patchFormElementPayload>('formDefinitions/patchFormElement');
+const handlePatchFormElement = (state: State, action: PayloadAction<patchFormElementPayload>) => {
   const path = clearSlashes(action.payload.path);
   const root = findCurrentVersionRoot(state);
   let element: FormElement;
@@ -244,10 +256,10 @@ export const formBuilderSlice = createSlice({
   initialState: INITIAL_STATE,
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(addField, handleAddField);
-    builder.addCase(removeField, handleRemoveField);
-    builder.addCase(replaceField, handleReplaceField);
-    builder.addCase(patchField, handlePatchField);
+    builder.addCase(addFormElement, handleAddFormElement);
+    builder.addCase(removeFormElement, handleRemoveField);
+    builder.addCase(replaceFormElement, handleReplaceFormElement);
+    builder.addCase(patchFormElement, handlePatchFormElement);
     builder.addCase(setTranslation, handleSetTranslation);
     builder.addCase(removeTranslation, handleRemoveTranslation);
     builder.addCase(setFormDefinition, handleSetFormDefinition);
