@@ -412,7 +412,7 @@ spec:
 #### Post the example form definition
 
 ```shell
-curl --data-binary @example.yaml http://localhost:8000/apis/test.com/v1/formtests -H "Content-Type: application/yaml"
+curl -X POST "http://localhost:8000/apis/core.nrc.no/v1/formdefinitions" --data-binary @examples/formdefinitions/formdef.json -H "Content-Type: application/json"
 ```
 
 <details>
