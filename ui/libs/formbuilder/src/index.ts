@@ -1,1 +1,2 @@
-export * from './lib/components/field/field.component';
+export * from './lib/reducers';
+export * from './lib/components/builder/builder';

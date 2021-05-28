@@ -23,7 +23,22 @@
               "children": [
                 {
                   "type": "text",
-                  "key": "firstName"
+                  "key": "firstName",
+                  "label": [
+                    {
+                      "locale": "en",
+                      "value": "First Name"
+                    }
+                  ]
+                },{
+                  "type": "text",
+                  "key": "lastName",
+                  "label": [
+                    {
+                      "locale": "en",
+                      "value": "Last Name"
+                    }
+                  ]
                 }
               ]
             }

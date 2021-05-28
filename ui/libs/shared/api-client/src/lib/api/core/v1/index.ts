@@ -37,16 +37,7 @@ export interface FormRoot {
   root: FormElement
 }
 
-export enum FieldType {
-  String = 'string',
-  Integer = 'integer',
-  Float = 'float',
-  Checkbox = 'checkbox',
-  Radio = 'radio',
-  Select = 'select',
-  Multiselect = 'multiselect',
-  Section = 'section',
-}
+export type FieldType = 'text' | 'integer' | 'float' | 'checkbox' | 'radio' | 'select' | 'multiselect' | 'section'
 
 export interface FormElement {
   key?: string

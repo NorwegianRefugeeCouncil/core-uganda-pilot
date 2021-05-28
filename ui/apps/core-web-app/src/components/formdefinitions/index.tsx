@@ -13,21 +13,22 @@ const FormDefinitions: React.FC = (props, context) => {
     dispatch(listFormDefinitions());
   }, []);
 
-  return (<Container size='fluid'>
-    <div className='row'>
-      <div className='col'>
-        <ListGroup className='mt-2' isActionListGroup={true}>
+  return (
+    <Container size='fluid'>
+      <div className='row'>
+        <div className='col'>
+          <ListGroup className='mt-2' isActionListGroup={true}>
 
-          {allFormDefinitions.map(f => {
-            return <ListGroupItem key={f.metadata.name} href={'/formdefinitions/' + f.metadata.name} isAction={true}>
-              {f.metadata.name}
-            </ListGroupItem>;
-          })}
+            {allFormDefinitions.map(f => {
+              return <ListGroupItem key={f.metadata.name} href={'/formdefinitions/' + f.metadata.name} isAction={true}>
+                {f.metadata.name}
+              </ListGroupItem>;
+            })}
 
-        </ListGroup>
+          </ListGroup>
+        </div>
       </div>
-    </div>
-  </Container>);
+    </Container>);
 
 };
 
