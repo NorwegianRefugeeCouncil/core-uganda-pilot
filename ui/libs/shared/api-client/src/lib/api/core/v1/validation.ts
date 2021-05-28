@@ -10,14 +10,14 @@ import {
   TranslatedStrings
 } from './index';
 import { Duplicate, ErrorList, Required } from '../../../field/error';
-import { NewPath, Path } from '../../../field';
+import { newPath, Path } from '../../../field';
 import { validateTypeMeta } from '../../meta/v1/validation';
 
 
 export const validateFormDefinition = (formDefinition: FormDefinition): ErrorList => {
   const errorList: ErrorList = [];
-  errorList.push(...validateTypeMeta(formDefinition, NewPath('')));
-  errorList.push(...validateFormDefinitionSpec(formDefinition.spec, NewPath('spec')));
+  errorList.push(...validateTypeMeta(formDefinition, newPath('')));
+  errorList.push(...validateFormDefinitionSpec(formDefinition.spec, newPath('spec')));
   return errorList;
 };
 

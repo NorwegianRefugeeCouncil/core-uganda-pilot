@@ -17,7 +17,7 @@ export class Path {
   }
 
   child(name: string, ...otherNames: string[]): Path {
-    const p = NewPath(name, ...otherNames);
+    const p = newPath(name, ...otherNames);
     p.root()._parent = this;
     return p;
   }
@@ -28,6 +28,34 @@ export class Path {
 
   key(key: string): Path {
     return new Path({ index: key, parent: this });
+  }
+
+  getValue(obj: any): any {
+    let paths: Path[] = [];
+    let parent = this as Path;
+    while (parent) {
+      paths.push(parent);
+      parent = parent._parent;
+    }
+    paths = paths.reverse();
+    let value = obj;
+    for (let i = 0; i < paths.length; i++) {
+      const currentPath = paths[i];
+      let key: string;
+      if (currentPath._index) {
+        key = currentPath._index;
+      } else {
+        key = currentPath._name;
+      }
+      if (!value){
+        return undefined
+      }
+      if (!value.hasOwnProperty(key)){
+        return undefined
+      }
+      value = value[key]
+    }
+    return value
   }
 
   string(): string {
@@ -53,7 +81,7 @@ export class Path {
   }
 }
 
-export const NewPath = (name: string, ...otherNames: string[]): Path => {
+export const newPath = (name: string, ...otherNames: string[]): Path => {
   let path = new Path({ name });
   for (let otherName of otherNames) {
     path = new Path({ name: otherName, parent: path });
@@ -61,7 +89,7 @@ export const NewPath = (name: string, ...otherNames: string[]): Path => {
   return path;
 };
 
-export const PathFrom = (path: string): Path => {
+export const pathFrom = (path: string): Path => {
   let currentPath: Path;
   let indexer = false;
   let j = 0;

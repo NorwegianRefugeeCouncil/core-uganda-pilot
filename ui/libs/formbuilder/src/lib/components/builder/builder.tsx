@@ -18,8 +18,16 @@ export const Builder: React.FC = (props, context) => {
   return <div></div>;
 };
 
-export const BuilderContainer: React.FC = (props, context) => {
-  const root = useSelector<StateSlice, FormElement>(state => state.formBuilder.root);
+
+type BuilderContainerProps = {
+  root: FormElement
+}
+
+export const BuilderContainer: React.FC<BuilderContainerProps> = (props, context) => {
+
+  const { root } = props;
+
+  // const root = useSelector<StateSlice, FormElement>(state => state.formBuilder.root);
   const dispatch = useDispatch();
 
   const doAddField = () => {
@@ -397,8 +405,8 @@ export const EditTranslationInput: React.FC<EditTranslationInputProps> = props =
       }
     }
   }
-  if (!defaultTranslation){
-    defaultTranslation = ''
+  if (!defaultTranslation) {
+    defaultTranslation = '';
   }
 
   return (<div className='input-group mb-3'>

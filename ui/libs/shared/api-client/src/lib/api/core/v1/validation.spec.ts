@@ -1,7 +1,7 @@
 import { FormDefinition } from './index';
 import { validateFormDefinition } from './validation';
 import { Error, ErrorList, Required } from '../../../field/error';
-import { NewPath, PathFrom } from '@core/api-client';
+import { newPath, pathFrom } from '@core/api-client';
 
 const aValidFormDefinition = (): FormDefinition => {
   return {
@@ -58,7 +58,7 @@ describe('formDefinitionValidation', () => {
     const f = aValidFormDefinition();
     f.spec.versions[0].schema.formSchema.root.children[0].key = '';
     const errs = validateFormDefinition(f);
-    const path = PathFrom('spec.versions[0].schema.formSchema.root.children[0].key');
+    const path = pathFrom('spec.versions[0].schema.formSchema.root.children[0].key');
     expect(errs).toContainEqual(Required(path, 'key is required'));
   });
 
@@ -66,7 +66,7 @@ describe('formDefinitionValidation', () => {
     const f = aValidFormDefinition();
     f.spec.versions[0].schema.formSchema.root.children[0].type = '' as any;
     const errs = validateFormDefinition(f);
-    const path = PathFrom('spec.versions[0].schema.formSchema.root.children[0].type');
+    const path = pathFrom('spec.versions[0].schema.formSchema.root.children[0].type');
     expect(errs).toContainEqual(Required(path, 'type is required'));
   });
 
@@ -74,7 +74,7 @@ describe('formDefinitionValidation', () => {
     const f = aValidFormDefinition();
     f.spec.versions[0].schema.formSchema.root.children[0].label[0].value = '';
     const errs = validateFormDefinition(f);
-    const path = PathFrom('spec.versions[0].schema.formSchema.root.children[0].label[0].value');
+    const path = pathFrom('spec.versions[0].schema.formSchema.root.children[0].label[0].value');
     expect(errs).toContainEqual(Required(path, 'value is required'));
   });
 
@@ -82,7 +82,7 @@ describe('formDefinitionValidation', () => {
     const f = aValidFormDefinition();
     f.spec.versions[0].schema.formSchema.root.children[0].label[0].locale = '';
     const errs = validateFormDefinition(f);
-    const path = PathFrom('spec.versions[0].schema.formSchema.root.children[0].label[0].locale');
+    const path = pathFrom('spec.versions[0].schema.formSchema.root.children[0].label[0].locale');
     expect(errs).toContainEqual(Required(path, 'locale is required'));
   });
 
