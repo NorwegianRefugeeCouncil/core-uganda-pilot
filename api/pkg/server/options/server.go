@@ -3,7 +3,8 @@ package options
 import (
 	"context"
 	"fmt"
-	v1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
+	corev1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
+	discoveryv1 "github.com/nrc-no/core/api/pkg/apis/discovery/v1"
 	"github.com/nrc-no/core/api/pkg/authentication/oidc"
 	restclient "github.com/nrc-no/core/api/pkg/client/rest"
 	filters2 "github.com/nrc-no/core/api/pkg/endpoints/filters"
@@ -80,7 +81,10 @@ func (c *Options) Config(ctx context.Context) (*server.Config, error) {
 		},
 	}
 
-	c.StorageConfig.StorageConfig.Codec = server.Codecs.LegacyCodec(v1.SchemeGroupVersion)
+	c.StorageConfig.StorageConfig.Codec = server.Codecs.LegacyCodec(
+		corev1.SchemeGroupVersion,
+		discoveryv1.SchemeGroupVersion,
+	)
 
 	if err := c.StorageConfig.ApplyTo(serverConfig); err != nil {
 		return nil, err

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/nrc-no/core/api/pkg/client/informers"
 	"github.com/nrc-no/core/api/pkg/client/rest"
+	"github.com/nrc-no/core/api/pkg/server/routes"
 	"github.com/sirupsen/logrus"
 	"net"
 	"net/http"
@@ -20,8 +21,9 @@ type Server struct {
 	postStartHooks       map[string]postStartHookEntry
 	postStartHookLock    sync.Mutex
 	postStartHookCalled  bool
-	coreInformers        informers.SharedInformerFactory
+	informers            informers.SharedInformerFactory
 	LoopbackClientConfig *rest.Config
+	listedPathProvider   routes.ListedPathProvider
 }
 
 func (s *Server) Run() error {

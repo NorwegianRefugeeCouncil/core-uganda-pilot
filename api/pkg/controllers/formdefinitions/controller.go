@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/nrc-no/core/api/pkg/apis/core/helpers"
 	corev1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
-	"github.com/nrc-no/core/api/pkg/client/core"
 	informers "github.com/nrc-no/core/api/pkg/client/informers/core/v1"
 	listers "github.com/nrc-no/core/api/pkg/client/listers/core/v1"
+	"github.com/nrc-no/core/api/pkg/client/typed"
 	"github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -36,11 +36,11 @@ type FormDefinitionController struct {
 
 	queue workqueue.RateLimitingInterface
 
-	cli core.Interface
+	cli typed.Interface
 }
 
 func NewFormDefinitionController(
-	cli core.Interface,
+	cli typed.Interface,
 	formDefinitionsInformer informers.FormDefinitionInformer,
 	crdsInformer informers.CustomResourceDefinitionInformer,
 ) *FormDefinitionController {

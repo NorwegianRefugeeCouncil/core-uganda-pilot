@@ -2,7 +2,8 @@ package informers
 
 import (
 	"fmt"
-	v1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
+	corev1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
+	discoveryv1 "github.com/nrc-no/core/api/pkg/apis/discovery/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/tools/cache"
 )
@@ -34,11 +35,12 @@ func (f *genericInformer) Lister() cache.GenericLister {
 func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource) (GenericInformer, error) {
 	switch resource {
 	// Group=core.nrc.no, Version=v1
-	case v1.SchemeGroupVersion.WithResource("customresourcedefinitions"):
+	case corev1.SchemeGroupVersion.WithResource("customresourcedefinitions"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Core().V1().CustomResourceDefinitions().Informer()}, nil
-	case v1.SchemeGroupVersion.WithResource("formdefinitions"):
+	case corev1.SchemeGroupVersion.WithResource("formdefinitions"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Core().V1().FormDefinitions().Informer()}, nil
-
+	case discoveryv1.SchemeGroupVersion.WithResource("apiservices"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Discovery().V1().APIServices().Informer()}, nil
 	}
 
 	return nil, fmt.Errorf("no informer found for %v", resource)

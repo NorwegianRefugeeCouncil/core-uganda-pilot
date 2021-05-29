@@ -6,6 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"k8s.io/apiserver/pkg/server/mux"
 	"net/http"
+	"sort"
 	"strings"
 )
 
@@ -70,4 +71,14 @@ func NewAPIServerHandler(handlerChainBuilder HandlerChainBuilderFn) *APIServerHa
 
 		})),
 	}
+}
+
+func (a *APIServerHandler) ListedPaths() []string {
+	var handledPaths []string
+	for _, webService := range a.GoRestfulContainer.RegisteredWebServices() {
+		handledPaths = append(handledPaths, webService.RootPath())
+	}
+	handledPaths = append(handledPaths, a.NonGoRestfulMux.ListedPaths()...)
+	sort.Strings(handledPaths)
+	return handledPaths
 }

@@ -2,8 +2,8 @@ package e2e
 
 import (
 	"context"
-	"github.com/nrc-no/core/api/pkg/client/core"
 	"github.com/nrc-no/core/api/pkg/client/rest"
+	"github.com/nrc-no/core/api/pkg/client/typed"
 	serveroptions "github.com/nrc-no/core/api/pkg/server/options"
 	"github.com/nrc-no/core/api/pkg/store"
 	"github.com/stretchr/testify/suite"
@@ -16,7 +16,7 @@ import (
 type Suite struct {
 	suite.Suite
 	cancel     context.CancelFunc
-	client     core.Interface
+	client     typed.Interface
 	restConfig *rest.Config
 	baseUrl    *url.URL
 }
@@ -62,7 +62,7 @@ func (s *Suite) SetupSuite() {
 		Host: "http://localhost:8888",
 	}
 	var err error
-	s.client, err = core.NewForConfig(s.restConfig)
+	s.client, err = typed.NewForConfig(s.restConfig)
 	if err != nil {
 		t.Fatalf("could not create rest client: %v", err)
 	}

@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"github.com/nrc-no/core/api/pkg/server/options"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -24,6 +25,7 @@ func NewStartCoreServer(defaults *options.Options, ctx context.Context) *cobra.C
 			return nil
 		},
 	}
+	logrus.SetLevel(logrus.TraceLevel)
 	o.AddFlags(cmd.Flags())
 	return cmd
 }

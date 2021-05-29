@@ -4,9 +4,9 @@ import (
 	"context"
 	corev1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
 	v12 "github.com/nrc-no/core/api/pkg/apis/meta/v1"
-	versionedclient "github.com/nrc-no/core/api/pkg/client/core"
 	"github.com/nrc-no/core/api/pkg/client/informers/internalinterfaces"
 	v1 "github.com/nrc-no/core/api/pkg/client/listers/core/v1"
+	"github.com/nrc-no/core/api/pkg/client/typed"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/watch"
@@ -29,14 +29,14 @@ type customResourceDefinitionInformer struct {
 // NewCustomResourceDefinitionInformer constructs a new informer for CustomResourceDefinition type.
 // Always prefer using an informer factory to get a shared informer instead of getting an independent
 // one. This reduces memory footprint and number of connections to the server.
-func NewCustomResourceDefinitionInformer(client versionedclient.Interface, resyncPeriod time.Duration, indexers cache.Indexers) cache.SharedIndexInformer {
+func NewCustomResourceDefinitionInformer(client typed.Interface, resyncPeriod time.Duration, indexers cache.Indexers) cache.SharedIndexInformer {
 	return NewFilteredCustomResourceDefinitionInformer(client, resyncPeriod, indexers, nil)
 }
 
 // NewFilteredCustomResourceDefinitionInformer constructs a new informer for CustomResourceDefinition type.
 // Always prefer using an informer factory to get a shared informer instead of getting an independent
 // one. This reduces memory footprint and number of connections to the server.
-func NewFilteredCustomResourceDefinitionInformer(client versionedclient.Interface, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc) cache.SharedIndexInformer {
+func NewFilteredCustomResourceDefinitionInformer(client typed.Interface, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc) cache.SharedIndexInformer {
 	return cache.NewSharedIndexInformer(
 		&cache.ListWatch{
 			ListFunc: func(options metav1.ListOptions) (runtime.Object, error) {
@@ -66,7 +66,7 @@ func NewFilteredCustomResourceDefinitionInformer(client versionedclient.Interfac
 	)
 }
 
-func (f *customResourceDefinitionInformer) defaultInformer(client versionedclient.Interface, resyncPeriod time.Duration) cache.SharedIndexInformer {
+func (f *customResourceDefinitionInformer) defaultInformer(client typed.Interface, resyncPeriod time.Duration) cache.SharedIndexInformer {
 	return NewFilteredCustomResourceDefinitionInformer(client, resyncPeriod, cache.Indexers{cache.NamespaceIndex: cache.MetaNamespaceIndexFunc}, f.tweakListOptions)
 }
 

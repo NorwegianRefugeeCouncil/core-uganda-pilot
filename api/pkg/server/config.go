@@ -5,21 +5,28 @@ import (
 	"github.com/nrc-no/core/api/pkg/apis/core"
 	coreinstall "github.com/nrc-no/core/api/pkg/apis/core/install"
 	corev1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
+	"github.com/nrc-no/core/api/pkg/apis/discovery"
 	discoveryinstall "github.com/nrc-no/core/api/pkg/apis/discovery/install"
-	coreclient "github.com/nrc-no/core/api/pkg/client/core"
+	discoveryv1 "github.com/nrc-no/core/api/pkg/apis/discovery/v1"
 	"github.com/nrc-no/core/api/pkg/client/informers"
 	restclient "github.com/nrc-no/core/api/pkg/client/rest"
+	"github.com/nrc-no/core/api/pkg/client/typed"
 	"github.com/nrc-no/core/api/pkg/controllers/customresource"
 	formdefinitions3 "github.com/nrc-no/core/api/pkg/controllers/formdefinitions"
+	"github.com/nrc-no/core/api/pkg/controllers/registration"
+	discoveryhandlers "github.com/nrc-no/core/api/pkg/endpoints/discovery"
 	customresourcedefinition2 "github.com/nrc-no/core/api/pkg/registry/core/customresourcedefinition"
 	formdefinitions2 "github.com/nrc-no/core/api/pkg/registry/core/formdefinitions"
-	generic2 "github.com/nrc-no/core/api/pkg/registry/generic"
-	rest2 "github.com/nrc-no/core/api/pkg/registry/rest"
+	"github.com/nrc-no/core/api/pkg/registry/discovery/apiservice"
+	"github.com/nrc-no/core/api/pkg/registry/generic"
+	"github.com/nrc-no/core/api/pkg/registry/rest"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
 	"net"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -39,9 +46,9 @@ type MongoConfig struct {
 
 type Config struct {
 	ListenAddress         net.IP
-	RESTOptionsGetter     generic2.RESTOptionsGetter
+	RESTOptionsGetter     generic.RESTOptionsGetter
 	BuildHandlerChainFunc func(handler http.Handler, config *Config) http.Handler
-	CRDRestOptionsGetter  generic2.RESTOptionsGetter
+	CRDRestOptionsGetter  generic.RESTOptionsGetter
 	LoopbackClientConfig  *restclient.Config
 	Listener              net.Listener
 }
@@ -88,40 +95,133 @@ func (c *CompletedConfig) New(ctx context.Context) (*Server, error) {
 		listener:             c.Listener,
 		postStartHooks:       map[string]postStartHookEntry{},
 		LoopbackClientConfig: c.LoopbackClientConfig,
+		listedPathProvider:   apiServerHandler,
 	}
 
 	// Installs the known resource handlers in the API (in the go-restful container)
 	// These include FormDefinitions and CustomResourceDefinitions
-	if err := c.installApiGroups(apiServerHandler); err != nil {
-		return nil, err
-	}
+	c.installApiGroupsOrDie(apiServerHandler)
 
 	// Create the core.nrc.no/v1 client that will be used to create
 	// the controllers/informers. It's using the LoopbackClientConfig
 	// so that it can reach localhost
-	cli, err := coreclient.NewForConfig(c.LoopbackClientConfig)
-	if err != nil {
-		return nil, err
-	}
+	cli := c.createClientSetOrDie()
 
 	// starts the core informers on server startup
-	server.coreInformers = informers.NewSharedInformerFactory(cli, time.Minute*5)
-	server.AddPostStartHookOrDie("core-informers", func(context PostStartHookContext) error {
-		server.coreInformers.Start(context.StopCh)
-		return nil
-	})
+	c.startInformersOrDie(server, cli)
 
 	// Installs the CustomResources in the API
-	if err := c.installCustomResources(server, apiServerHandler); err != nil {
-		return nil, err
-	}
+	c.installCustomResourcesOrDie(server, apiServerHandler)
 
 	// Creates the FormDefinitionController that maintains the
 	// CRDs corresponding to the form definitions
+	c.startFormDefinitionControllerOrDie(server, cli)
+
+	// Creates the APIService registration controller
+	// Maintains the list of APIServices registered for the API
+	autoRegisterController := c.createAutoRegisterController(server, cli)
+
+	c.registerApiServices(server, autoRegisterController)
+
+	// Creates the CRDRegistrationController
+	// Registers the APIServices corresponding to the
+	// CustomResourceDefinitions
+	crdRegistrationController := c.createCRDRegistrationController(server, autoRegisterController)
+
+	// Start the CRD and APIService controllers
+	c.startAutoRegistrationControllers(server, crdRegistrationController, autoRegisterController)
+
+	apisHandler := discoveryhandlers.NewApisHandler(
+		Codecs,
+		server.informers.Discovery().V1().APIServices().Lister())
+
+	apiServerHandler.NonGoRestfulMux.Handle("/apis", apisHandler)
+	apiServerHandler.NonGoRestfulMux.UnlistedHandle("/apis/", apisHandler)
+
+	return server, nil
+}
+
+func (c *CompletedConfig) registerApiServices(
+	server *Server,
+	registration registration.AutoAPIServiceRegistration,
+) {
+	for _, curr := range server.listedPathProvider.ListedPaths() {
+		if !strings.HasPrefix(curr, "/apis") {
+			continue
+		}
+		tokens := strings.Split(curr, "/")
+		if len(tokens) != 4 {
+			continue
+		}
+		apiService := makeAPIService(schema.GroupVersion{Group: tokens[2], Version: tokens[3]})
+		if apiService == nil {
+			continue
+		}
+		registration.AddAPIServiceToSyncOnStart(apiService)
+	}
+}
+
+func makeAPIService(gv schema.GroupVersion) *discoveryv1.APIService {
+	return &discoveryv1.APIService{
+		ObjectMeta: metav1.ObjectMeta{Name: gv.Version + "." + gv.Group},
+		Spec: discoveryv1.APIServiceSpec{
+			Group:   gv.Group,
+			Version: gv.Version,
+		},
+	}
+}
+
+func (c *CompletedConfig) startAutoRegistrationControllers(
+	server *Server,
+	crdRegistrationController *customresource.CRDRegistrationController,
+	autoRegistrationController *registration.AutoRegisterController,
+) {
+	server.AddPostStartHookOrDie("autoregistration-controller", func(context PostStartHookContext) error {
+		go crdRegistrationController.Run(context.StopCh)
+		go func() {
+			crdRegistrationController.WaitForInitialSync()
+			autoRegistrationController.Run(context.StopCh)
+		}()
+		return nil
+	})
+}
+
+func (c *CompletedConfig) createCRDRegistrationController(server *Server, autoRegisterController *registration.AutoRegisterController) *customresource.CRDRegistrationController {
+	return customresource.NewCRDRegistrationController(
+		server.informers.Core().V1().CustomResourceDefinitions(),
+		autoRegisterController,
+	)
+}
+
+func (c *CompletedConfig) createAutoRegisterController(server *Server, cli typed.Interface) *registration.AutoRegisterController {
+	return registration.NewAutoRegisterController(
+		server.informers.Discovery().V1().APIServices(),
+		cli.DiscoveryV1(),
+	)
+}
+
+func (c *CompletedConfig) createClientSetOrDie() typed.Interface {
+	cli, err := typed.NewForConfig(c.LoopbackClientConfig)
+	if err != nil {
+		panic(err)
+	}
+	return cli
+}
+
+func (c *CompletedConfig) startInformersOrDie(server *Server, cli typed.Interface) {
+	// starts the core informers on server startup
+	server.informers = informers.NewSharedInformerFactory(cli, time.Minute*5)
+	server.AddPostStartHookOrDie("informers", func(context PostStartHookContext) error {
+		server.informers.Start(context.StopCh)
+		return nil
+	})
+}
+
+func (c *CompletedConfig) startFormDefinitionControllerOrDie(server *Server, cli typed.Interface) {
 	formDefController := formdefinitions3.NewFormDefinitionController(
 		cli,
-		server.coreInformers.Core().V1().FormDefinitions(),
-		server.coreInformers.Core().V1().CustomResourceDefinitions(),
+		server.informers.Core().V1().FormDefinitions(),
+		server.informers.Core().V1().CustomResourceDefinitions(),
 	)
 	server.AddPostStartHookOrDie("formdefinition-controllers", func(context PostStartHookContext) error {
 		syncedCh := make(chan struct{})
@@ -132,14 +232,12 @@ func (c *CompletedConfig) New(ctx context.Context) (*Server, error) {
 		}
 		return nil
 	})
-
-	return server, nil
 }
 
-// installCustomResources installs the required handlers to serve dynamic
+// installCustomResourcesOrDie installs the required handlers to serve dynamic
 // CustomResources from the API
 // This will install the Discovery handlers as well as the regular resource handlers
-func (c *CompletedConfig) installCustomResources(server *Server, apiServerHandler *APIServerHandler) error {
+func (c *CompletedConfig) installCustomResourcesOrDie(server *Server, apiServerHandler *APIServerHandler) {
 
 	// This creates the HTTP handler for custom resource version discovery.
 	// It's able to dynamically serve the different custom resource APIVersions
@@ -155,7 +253,7 @@ func (c *CompletedConfig) installCustomResources(server *Server, apiServerHandle
 		crdVersionDiscoveryHandler,
 		crdGroupDiscoveryHandler,
 		Codecs,
-		server.coreInformers.Core().V1().CustomResourceDefinitions(),
+		server.informers.Core().V1().CustomResourceDefinitions(),
 	)
 
 	// Starts the crdDiscoveryHandler
@@ -176,40 +274,57 @@ func (c *CompletedConfig) installCustomResources(server *Server, apiServerHandle
 	crdHandler, err := customresource.NewCustomResourceDefinitionHandler(
 		c.CRDRestOptionsGetter,
 		Codecs,
-		server.coreInformers.Core().V1().CustomResourceDefinitions(),
+		server.informers.Core().V1().CustomResourceDefinitions(),
 		crdVersionDiscoveryHandler,
 		crdGroupDiscoveryHandler)
 	if err != nil {
-		return err
+		panic(err)
 	}
 
 	// Registers the crdHandler inside of the non-goRestfulMux
 	apiServerHandler.NonGoRestfulMux.Handle("/apis", crdHandler)
 	apiServerHandler.NonGoRestfulMux.HandlePrefix("/apis/", crdHandler)
-
-	return nil
 }
 
 // installApiGroups installs the known API groups in the HTTP handler
-func (c *CompletedConfig) installApiGroups(apiServerHandler *APIServerHandler) error {
+func (c *CompletedConfig) installApiGroupsOrDie(apiServerHandler *APIServerHandler) {
 	var apiGroups []*APIGroupInfo
 	coreApiGroup, err := createCoreAPIGroupInfo(c.RESTOptionsGetter)
 	if err != nil {
-		return err
+		panic(err)
 	}
-	apiGroups = append(apiGroups, &coreApiGroup)
+
+	discoveryApiGroup, err := createDiscoveryAPIGroupInfo(c.RESTOptionsGetter)
+	if err != nil {
+		panic(err)
+	}
+
+	apiGroups = append(apiGroups, &coreApiGroup, &discoveryApiGroup)
 
 	if err := installApiGroups(apiServerHandler.GoRestfulContainer, "/apis", apiGroups...); err != nil {
-		return err
+		panic(err)
 	}
 
-	return nil
+}
+
+func createDiscoveryAPIGroupInfo(restOptionsGetter generic.RESTOptionsGetter) (APIGroupInfo, error) {
+	discoveryApiGroup := NewDefaultAPIGroup(discovery.GroupName, Scheme, metav1.ParameterCodec, Codecs)
+	storage := map[string]rest.Storage{}
+
+	apiServicesStorage, err := apiservice.NewRESTStorage(Scheme, restOptionsGetter)
+	if err != nil {
+		return APIGroupInfo{}, err
+	}
+	storage["apiservices"] = apiServicesStorage
+	discoveryApiGroup.VersionedResourcesStorageMap[discoveryv1.SchemeGroupVersion.Version] = storage
+
+	return discoveryApiGroup, nil
 }
 
 // createCoreAPIGroupInfo creates the APIGroupInfo for the core API
-func createCoreAPIGroupInfo(restOptionsGetter generic2.RESTOptionsGetter) (APIGroupInfo, error) {
+func createCoreAPIGroupInfo(restOptionsGetter generic.RESTOptionsGetter) (APIGroupInfo, error) {
 	coreApiGroup := NewDefaultAPIGroup(core.GroupName, Scheme, metav1.ParameterCodec, Codecs)
-	storage := map[string]rest2.Storage{}
+	storage := map[string]rest.Storage{}
 
 	// Storage for FormDefinitions
 	formDefinitionsStorage, err := formdefinitions2.NewREST(Scheme, restOptionsGetter)

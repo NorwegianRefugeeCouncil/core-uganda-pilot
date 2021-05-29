@@ -8,6 +8,10 @@ import (
 	"sync"
 )
 
+// CRDGroupDiscoveryHandler serves HTTP requests for
+// discovery of the CustomResourceDefinition groups
+// it serves the discoveryv1.APIGroup representing
+// the different versions available for that group
 type CRDGroupDiscoveryHandler struct {
 	discoveryLock sync.RWMutex
 	discovery     map[string]*discovery.APIGroupHandler
@@ -36,6 +40,7 @@ func (h *CRDGroupDiscoveryHandler) ServeHTTP(w http.ResponseWriter, req *http.Re
 	handler.ServeHTTP(w, req)
 }
 
+// getDiscovery safely returns the APIGroupHandler for a group
 func (h *CRDGroupDiscoveryHandler) getDiscovery(group string) (*discovery.APIGroupHandler, bool) {
 	h.discoveryLock.RLock()
 	defer h.discoveryLock.RUnlock()
@@ -43,17 +48,25 @@ func (h *CRDGroupDiscoveryHandler) getDiscovery(group string) (*discovery.APIGro
 	return ret, ok
 }
 
+// setDiscovery safely sets the APIGroupHandler for a group
 func (h *CRDGroupDiscoveryHandler) setDiscovery(group string, handler *discovery.APIGroupHandler) {
 	h.discoveryLock.Lock()
 	defer h.discoveryLock.Unlock()
 	h.discovery[group] = handler
 }
+
+// unsetDiscovery safely removes the APIGroupHandler for a group
 func (h *CRDGroupDiscoveryHandler) unsetDiscovery(group string) {
 	h.discoveryLock.Lock()
 	defer h.discoveryLock.Unlock()
 	delete(h.discovery, group)
 }
 
+// CRDVersionDiscoveryHandler serves HTTP requests for
+// the discovery of CustomResourceDefinition resources
+// It serves discoveryv1.APIResourceList
+// Representing the different types of resources
+// available under this Group/Version
 type CRDVersionDiscoveryHandler struct {
 	discoveryLock sync.RWMutex
 	discovery     map[schema.GroupVersion]*discovery.APIVersionHandler
@@ -82,6 +95,7 @@ func (h *CRDVersionDiscoveryHandler) ServeHTTP(w http.ResponseWriter, req *http.
 	handler.ServeHTTP(w, req)
 }
 
+// getDiscovery safely returns the APIVersionHandler for a schema.GroupVersion
 func (h *CRDVersionDiscoveryHandler) getDiscovery(gv schema.GroupVersion) (*discovery.APIVersionHandler, bool) {
 	h.discoveryLock.RLock()
 	defer h.discoveryLock.RUnlock()
@@ -89,12 +103,14 @@ func (h *CRDVersionDiscoveryHandler) getDiscovery(gv schema.GroupVersion) (*disc
 	return ret, ok
 }
 
+// setDiscovery safely sets the APIVersionHandler for a schema.GroupVersion
 func (h *CRDVersionDiscoveryHandler) setDiscovery(gv schema.GroupVersion, handler *discovery.APIVersionHandler) {
 	h.discoveryLock.Lock()
 	defer h.discoveryLock.Unlock()
 	h.discovery[gv] = handler
 }
 
+// unsetDiscovery safely removes the APIVersionHandler for a schema.GroupVersion
 func (h *CRDVersionDiscoveryHandler) unsetDiscovery(gv schema.GroupVersion) {
 	h.discoveryLock.Lock()
 	defer h.discoveryLock.Unlock()

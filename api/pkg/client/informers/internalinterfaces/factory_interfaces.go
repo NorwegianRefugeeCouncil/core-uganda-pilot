@@ -1,7 +1,7 @@
 package internalinterfaces
 
 import (
-	"github.com/nrc-no/core/api/pkg/client/core"
+	"github.com/nrc-no/core/api/pkg/client/typed"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/tools/cache"
@@ -9,7 +9,7 @@ import (
 )
 
 // NewInformerFunc takes versioned.Interface and time.Duration to return a SharedIndexInformer.
-type NewInformerFunc func(core.Interface, time.Duration) cache.SharedIndexInformer
+type NewInformerFunc func(typed.Interface, time.Duration) cache.SharedIndexInformer
 
 // SharedInformerFactory a small interface to allow for adding an informer without an import cycle
 type SharedInformerFactory interface {

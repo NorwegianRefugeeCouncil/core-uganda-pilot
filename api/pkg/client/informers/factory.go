@@ -1,9 +1,10 @@
 package informers
 
 import (
-	versionedclient "github.com/nrc-no/core/api/pkg/client/core"
 	"github.com/nrc-no/core/api/pkg/client/informers/core"
+	"github.com/nrc-no/core/api/pkg/client/informers/discovery"
 	"github.com/nrc-no/core/api/pkg/client/informers/internalinterfaces"
+	"github.com/nrc-no/core/api/pkg/client/typed"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -17,7 +18,7 @@ import (
 type SharedInformerOption func(*sharedInformerFactory) *sharedInformerFactory
 
 type sharedInformerFactory struct {
-	client           versionedclient.Interface
+	client           typed.Interface
 	namespace        string
 	tweakListOptions internalinterfaces.TweakListOptionsFunc
 	lock             sync.Mutex
@@ -57,7 +58,7 @@ func WithNamespace(namespace string) SharedInformerOption {
 }
 
 // NewSharedInformerFactory constructs a new instance of sharedInformerFactory for all namespaces.
-func NewSharedInformerFactory(client versionedclient.Interface, defaultResync time.Duration) SharedInformerFactory {
+func NewSharedInformerFactory(client typed.Interface, defaultResync time.Duration) SharedInformerFactory {
 	return NewSharedInformerFactoryWithOptions(client, defaultResync)
 }
 
@@ -65,12 +66,12 @@ func NewSharedInformerFactory(client versionedclient.Interface, defaultResync ti
 // Listers obtained via this SharedInformerFactory will be subject to the same filters
 // as specified here.
 // Deprecated: Please use NewSharedInformerFactoryWithOptions instead
-func NewFilteredSharedInformerFactory(client versionedclient.Interface, defaultResync time.Duration, namespace string, tweakListOptions internalinterfaces.TweakListOptionsFunc) SharedInformerFactory {
+func NewFilteredSharedInformerFactory(client typed.Interface, defaultResync time.Duration, namespace string, tweakListOptions internalinterfaces.TweakListOptionsFunc) SharedInformerFactory {
 	return NewSharedInformerFactoryWithOptions(client, defaultResync, WithNamespace(namespace), WithTweakListOptions(tweakListOptions))
 }
 
 // NewSharedInformerFactoryWithOptions constructs a new instance of a SharedInformerFactory with additional options.
-func NewSharedInformerFactoryWithOptions(client versionedclient.Interface, defaultResync time.Duration, options ...SharedInformerOption) SharedInformerFactory {
+func NewSharedInformerFactoryWithOptions(client typed.Interface, defaultResync time.Duration, options ...SharedInformerOption) SharedInformerFactory {
 	factory := &sharedInformerFactory{
 		client:           client,
 		namespace:        v1.NamespaceAll,
@@ -154,8 +155,13 @@ type SharedInformerFactory interface {
 	WaitForCacheSync(stopCh <-chan struct{}) map[reflect.Type]bool
 
 	Core() core.Interface
+	Discovery() discovery.Interface
 }
 
 func (f *sharedInformerFactory) Core() core.Interface {
 	return core.New(f, f.namespace, f.tweakListOptions)
+}
+
+func (f *sharedInformerFactory) Discovery() discovery.Interface {
+	return discovery.New(f, f.namespace, f.tweakListOptions)
 }

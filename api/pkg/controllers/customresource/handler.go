@@ -7,16 +7,16 @@ import (
 	v1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
 	informers "github.com/nrc-no/core/api/pkg/client/informers/core/v1"
 	listers "github.com/nrc-no/core/api/pkg/client/listers/core/v1"
-	customresource2 "github.com/nrc-no/core/api/pkg/customresource"
-	conversion2 "github.com/nrc-no/core/api/pkg/customresource/conversion"
+	"github.com/nrc-no/core/api/pkg/customresource"
+	"github.com/nrc-no/core/api/pkg/customresource/conversion"
 	"github.com/nrc-no/core/api/pkg/endpoints/handlers"
-	request2 "github.com/nrc-no/core/api/pkg/endpoints/request"
+	"github.com/nrc-no/core/api/pkg/endpoints/request"
 	structuralschema "github.com/nrc-no/core/api/pkg/openapi"
 	"github.com/nrc-no/core/api/pkg/openapi/defaulting"
 	"github.com/nrc-no/core/api/pkg/openapi/objectmeta"
 	"github.com/nrc-no/core/api/pkg/openapi/pruning"
-	customresource3 "github.com/nrc-no/core/api/pkg/registry/core/customresource"
-	generic2 "github.com/nrc-no/core/api/pkg/registry/generic"
+	customresourceregistry "github.com/nrc-no/core/api/pkg/registry/core/customresource"
+	"github.com/nrc-no/core/api/pkg/registry/generic"
 	store2 "github.com/nrc-no/core/api/pkg/store"
 	schemaobjectmeta "k8s.io/apiextensions-apiserver/pkg/apiserver/schema/objectmeta"
 	"k8s.io/apiextensions-apiserver/pkg/crdserverscheme"
@@ -42,9 +42,9 @@ import (
 type crdHandler struct {
 	customStorageLock       sync.Mutex
 	customStorage           atomic.Value
-	restOptionsGetter       generic2.RESTOptionsGetter
+	restOptionsGetter       generic.RESTOptionsGetter
 	codecs                  runtime.NegotiatedSerializer
-	converterFactory        *conversion2.CRConverterFactory
+	converterFactory        *conversion.CRConverterFactory
 	versionDiscoveryHandler *CRDVersionDiscoveryHandler
 	groupDiscoveryHandler   *CRDGroupDiscoveryHandler
 	crdLister               listers.CustomResourceDefinitionLister
@@ -57,7 +57,7 @@ type crdInfo struct {
 	spec          *v1.CustomResourceDefinitionSpec
 	acceptedNames *v1.CustomResourceDefinitionNames
 	deprecated    map[string]bool
-	storages      map[string]*customresource3.CustomResourceStore
+	storages      map[string]*customresourceregistry.CustomResourceStore
 	requestScopes map[string]*handlers.RequestScope
 	waitgroup     *utilwaitgroup.SafeWaitGroup
 }
@@ -65,7 +65,7 @@ type crdInfo struct {
 // Maps a CustomResourceDefinition UID to it's crdInfo
 type crdStorageMap map[types.UID]*crdInfo
 
-// clone clones a crdStorageMap
+// clone clones the above crdStorageMap
 func (in crdStorageMap) clone() crdStorageMap {
 	if in == nil {
 		return nil
@@ -79,7 +79,7 @@ func (in crdStorageMap) clone() crdStorageMap {
 
 // NewCustomResourceDefinitionHandler Builds a crdHandler
 func NewCustomResourceDefinitionHandler(
-	restOptionsGetter generic2.RESTOptionsGetter,
+	restOptionsGetter generic.RESTOptionsGetter,
 	codecs runtime.NegotiatedSerializer,
 	crdInformer informers.CustomResourceDefinitionInformer,
 	versionDiscoveryHandler *CRDVersionDiscoveryHandler,
@@ -96,7 +96,7 @@ func NewCustomResourceDefinitionHandler(
 		groupDiscoveryHandler:   groupDiscoveryHandler,
 	}
 	ret.customStorage.Store(crdStorageMap{})
-	crConverterFactory, err := conversion2.NewCRConverterFactory()
+	crConverterFactory, err := conversion.NewCRConverterFactory()
 	if err != nil {
 		return nil, err
 	}
@@ -105,13 +105,14 @@ func NewCustomResourceDefinitionHandler(
 }
 
 // ServeHTTP implements the http.Handler interface and is able to serve
-// http requests to deliver CustomResources
+// http requests to deliver CustomResources. It mimics the mechanisms
+// of the server.APIInstaller, though, is able to do this at runtime.
 func (r *crdHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
-	// Retrieves the request info
-	requestInfo, ok := request2.RequestInfoFrom(ctx)
+	// Retrieves the request.RequestInfo info from the context.
+	requestInfo, ok := request.RequestInfoFrom(ctx)
 	if !ok {
 		responsewriters.ErrorNegotiated(
 			errors.NewInternalError(fmt.Errorf("no RequestInfo found in the context")),
@@ -122,8 +123,14 @@ func (r *crdHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	// If the request is not targeting a resource, then it is either
+	// 1. A group discovery request eg. /apis/{group}
+	// 2. A version discovery request ev. /apis/{group}/{version}
+	// 3. Otherwise, return not found
 	if !requestInfo.IsResourceRequest {
 		pathParts := splitPath(requestInfo.Path)
+
+		// Assumes this is 2. a version discovery request
 		if len(pathParts) == 3 {
 			if !r.hasSynced() {
 				responsewriters.ErrorNegotiated(serverStartingError(), r.codecs, schema.GroupVersion{Group: requestInfo.APIGroup, Version: requestInfo.APIVersion}, w, req)
@@ -132,6 +139,8 @@ func (r *crdHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 			r.versionDiscoveryHandler.ServeHTTP(w, req)
 			return
 		}
+
+		// Assumes this is 1. a group discovery request
 		if len(pathParts) == 2 {
 			if !r.hasSynced() {
 				responsewriters.ErrorNegotiated(serverStartingError(), r.codecs, schema.GroupVersion{Group: requestInfo.APIGroup, Version: requestInfo.APIVersion}, w, req)
@@ -140,13 +149,17 @@ func (r *crdHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 			r.groupDiscoveryHandler.ServeHTTP(w, req)
 			return
 		}
+
+		// not found
 		http.NotFoundHandler().ServeHTTP(w, req)
 		return
 	}
 
-	// This is the name of the CRD, as the CRD must have a name
+	// This is the name of the CRD, as the CRD **must** have a name
 	// equal to {resource}.{group}
 	crdName := requestInfo.Resource + "." + requestInfo.APIGroup
+
+	// retrieve the CustomResourceDefinition for that name
 	crd, err := r.crdLister.Get(crdName)
 	if err != nil {
 		responsewriters.ErrorNegotiated(
@@ -179,7 +192,7 @@ func (r *crdHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 // serveResource is a dynamic http handler able to serve http requests that target
 // runtime CustomResources
-func (r *crdHandler) serveResource(w http.ResponseWriter, req *http.Request, requestInf *request2.RequestInfo, crdInfo *crdInfo, crd *v1.CustomResourceDefinition) http.HandlerFunc {
+func (r *crdHandler) serveResource(w http.ResponseWriter, req *http.Request, requestInf *request.RequestInfo, crdInfo *crdInfo, crd *v1.CustomResourceDefinition) http.HandlerFunc {
 
 	// Retrieves the request scope from the pre-built map
 	scope := crdInfo.requestScopes[requestInf.APIVersion]
@@ -208,6 +221,8 @@ func (r *crdHandler) serveResource(w http.ResponseWriter, req *http.Request, req
 	}
 }
 
+// getOrCreateServingInfoFor will either return an already built crdInfo for the given uid,
+// otherwise it will build it and store it in the crdStorageMap
 func (r *crdHandler) getOrCreateServingInfoFor(ctx context.Context, uid types.UID, name string) (*crdInfo, error) {
 
 	// tries to find the storage map if already exists
@@ -235,14 +250,14 @@ func (r *crdHandler) getOrCreateServingInfoFor(ctx context.Context, uid types.UI
 
 	// builds objects needed for creating the crdInfo object
 	requestScopes := map[string]*handlers.RequestScope{}
-	storages := map[string]*customresource3.CustomResourceStore{}
+	storages := map[string]*customresourceregistry.CustomResourceStore{}
 	structuralSchemes := map[string]*structuralschema.Structural{}
 
 	// loops through all crd versions
 	for _, v := range crd.Spec.Versions {
 
 		// Gets the CustomResourceDefinitionValidation
-		val, err := customresource2.GetSchemaForVersion(crd, v.Name)
+		val, err := customresource.GetSchemaForVersion(crd, v.Name)
 		if err != nil {
 			utilruntime.HandleError(err)
 			return nil, fmt.Errorf("the server could not serve the CR schema: %v", err)
@@ -273,12 +288,15 @@ func (r *crdHandler) getOrCreateServingInfoFor(ctx context.Context, uid types.UI
 	}
 
 	// Finds which version we'll use for storage (to store in the database)
+	// Since a CustomResourceDefinition should define at least one version
+	// that will be the "storage" version (persisted in the database)
 	var storageVersion string
 	for _, v := range crd.Spec.Versions {
 		if v.Storage {
 			storageVersion = v.Name
 		}
 	}
+	// No storageVersion found in this CRD. Should not happen but still.
 	if len(storageVersion) == 0 {
 		return nil, fmt.Errorf("no storage version for CR")
 	}
@@ -309,7 +327,7 @@ func (r *crdHandler) getOrCreateServingInfoFor(ctx context.Context, uid types.UI
 		creator := unstructuredCreator{}
 
 		// Gets the v1 validation schema
-		validationSchema, err := customresource2.GetSchemaForVersion(crd, v.Name)
+		validationSchema, err := customresource.GetSchemaForVersion(crd, v.Name)
 		if err != nil {
 			utilruntime.HandleError(err)
 			return nil, fmt.Errorf("the server could not serve the CR schema")
@@ -324,11 +342,11 @@ func (r *crdHandler) getOrCreateServingInfoFor(ctx context.Context, uid types.UI
 		//TOOD: validator, _, err := NewSchemaVa
 
 		// Builds the CR REST storage interface
-		storage, err := customresource3.NewStorage(
+		storage, err := customresourceregistry.NewStorage(
 			resource.GroupResource(),
 			kind,
 			schema.GroupVersionKind{Group: crd.Spec.Group, Version: v.Name, Kind: crd.Spec.Names.Kind + "List"},
-			customresource3.NewStrategy(
+			customresourceregistry.NewStrategy(
 				typer,
 				false,
 				kind,
@@ -404,10 +422,11 @@ func (r *crdHandler) getOrCreateServingInfoFor(ctx context.Context, uid types.UI
 
 }
 
-// crdConversionRESTOptionsGetter overrides the codec with one using the
-// provided custom converter and custom encoder and decoder version.
+// crdConversionRESTOptionsGetter is an RESTOptionsGetter that
+// uses a custom codec that is suitable to handle runtime
+// objects (not compile time)
 type crdConversionRESTOptionsGetter struct {
-	generic2.RESTOptionsGetter
+	generic.RESTOptionsGetter
 	converter             runtime.ObjectConvertor
 	encoderVersion        schema.GroupVersion
 	decoderVersion        schema.GroupVersion
@@ -417,7 +436,7 @@ type crdConversionRESTOptionsGetter struct {
 	scheme                *runtime.Scheme
 }
 
-func (t crdConversionRESTOptionsGetter) GetRESTOptions(resource schema.GroupResource) (generic2.RESTOptions, error) {
+func (t crdConversionRESTOptionsGetter) GetRESTOptions(resource schema.GroupResource) (generic.RESTOptions, error) {
 	ret, err := t.RESTOptionsGetter.GetRESTOptions(resource)
 	if err == nil {
 		d := schemaCoercingDecoder{delegate: ret.StorageConfig.Codec, validator: unstructuredSchemaCoercer{
@@ -702,8 +721,8 @@ type CRDRESTOptionsGetter struct {
 	CountMetricPollPeriod   time.Duration
 }
 
-func (t CRDRESTOptionsGetter) GetRESTOptions(resource schema.GroupResource) (generic2.RESTOptions, error) {
-	ret := generic2.RESTOptions{
+func (t CRDRESTOptionsGetter) GetRESTOptions(resource schema.GroupResource) (generic.RESTOptions, error) {
+	ret := generic.RESTOptions{
 		StorageConfig: &t.StorageConfig,
 		//Decorator:               generic.UndecoratedStorage,
 		//EnableGarbageCollection: t.EnableGarbageCollection,

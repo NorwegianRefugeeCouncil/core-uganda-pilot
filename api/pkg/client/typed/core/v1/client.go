@@ -1,9 +1,9 @@
 package v1
 
 import (
-	v1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
-	"github.com/nrc-no/core/api/pkg/client/core/scheme"
+	corev1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
 	"github.com/nrc-no/core/api/pkg/client/rest"
+	scheme2 "github.com/nrc-no/core/api/pkg/client/typed/scheme"
 )
 
 type CoreV1Interface interface {
@@ -53,10 +53,10 @@ func New(c rest.Interface) *CoreV1Client {
 }
 
 func setConfigDefaults(config *rest.Config) error {
-	gv := v1.SchemeGroupVersion
+	gv := corev1.SchemeGroupVersion
 	config.GroupVersion = &gv
 	config.APIPath = "/apis"
-	config.NegotiatedSerializer = scheme.Codecs.WithoutConversion()
+	config.NegotiatedSerializer = scheme2.Codecs.WithoutConversion()
 	return nil
 }
 

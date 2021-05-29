@@ -21,6 +21,17 @@ import (
 	"time"
 )
 
+// CRDDiscoveryController manages the discovery endpoints for customResourceDefinitions
+// it allows the consumer to discover 2 things
+// 1. The available versions of a custom resource group, at url /apis/{group}
+//    This endpoint returns a v1.APIGroupList
+// 2. The available resources of a group version, at url /apis/{group}/version
+//    This endpoint returns a v1.APIResourceList
+// The 1. is delegated to the "groupHandler"
+// The 2. is delegated to the "versionHandler"
+//
+// The CRDDiscoveryController will register/unregister discovery as the
+// customResourceDefinitions are added/updated/deleted
 type CRDDiscoveryController struct {
 	versionHandler *CRDVersionDiscoveryHandler
 	groupHandler   *CRDGroupDiscoveryHandler

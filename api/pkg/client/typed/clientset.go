@@ -1,23 +1,31 @@
-package core
+package typed
 
 import (
-	v1 "github.com/nrc-no/core/api/pkg/client/core/v1"
 	"github.com/nrc-no/core/api/pkg/client/rest"
+	corev1client "github.com/nrc-no/core/api/pkg/client/typed/core/v1"
+	discoveryv1 "github.com/nrc-no/core/api/pkg/client/typed/discovery/v1"
 )
 
 type Interface interface {
-	CoreV1() v1.CoreV1Interface
+	DiscoveryV1() discoveryv1.DiscoveryV1Interface
+	CoreV1() corev1client.CoreV1Interface
 }
 
 // Clientset contains the clients for groups. Each group has exactly one
 // version included in a Clientset.
 type Clientset struct {
-	coreV1 *v1.CoreV1Client
+	coreV1      *corev1client.CoreV1Client
+	discoveryV1 *discoveryv1.DiscoveryV1Client
 }
 
-// CoreV1 retrieves the CoreV1Client
-func (c *Clientset) CoreV1() v1.CoreV1Interface {
+// CoreV1 retrieves the DiscoveryV1Client
+func (c *Clientset) CoreV1() corev1client.CoreV1Interface {
 	return c.coreV1
+}
+
+// DiscoveryV1 retrieves the DiscoveryV1Client
+func (c *Clientset) DiscoveryV1() discoveryv1.DiscoveryV1Interface {
+	return c.discoveryV1
 }
 
 // NewForConfig creates a new Clientset for the given config.
@@ -27,7 +35,11 @@ func NewForConfig(c *rest.Config) (*Clientset, error) {
 	configShallowCopy := *c
 	var cs Clientset
 	var err error
-	cs.coreV1, err = v1.NewForConfig(&configShallowCopy)
+	cs.coreV1, err = corev1client.NewForConfig(&configShallowCopy)
+	if err != nil {
+		return nil, err
+	}
+	cs.discoveryV1, err = discoveryv1.NewForConfig(&configShallowCopy)
 	if err != nil {
 		return nil, err
 	}
@@ -38,13 +50,13 @@ func NewForConfig(c *rest.Config) (*Clientset, error) {
 // panics if there is an error in the config.
 func NewForConfigOrDie(c *rest.Config) *Clientset {
 	var cs Clientset
-	cs.coreV1 = v1.NewForConfigOrDie(c)
+	cs.coreV1 = corev1client.NewForConfigOrDie(c)
 	return &cs
 }
 
 // New creates a new Clientset for the given RESTClient.
 func New(c rest.Interface) *Clientset {
 	var cs Clientset
-	cs.coreV1 = v1.New(c)
+	cs.coreV1 = corev1client.New(c)
 	return &cs
 }
