@@ -1,3 +1,5 @@
+export const dummy1 = "a"
+
 export interface TypeMeta {
   apiVersion: string
   kind: string
@@ -17,42 +19,38 @@ export interface ListMeta {
   remainingItemCount: number
 }
 
-export enum StatusType {
-  Failure = 'Failure',
-  Success = 'Success'
-}
+export type StatusType = 'Failure' | 'Success'
 
-export enum StatusReason {
-  Unknown = '',
-  Unauthorized = 'Unauthorized',
-  Forbidden = 'Forbidden',
-  NotFound = 'NotFound',
-  AlreadyExists = 'AlreadyExists',
-  Conflict = 'Conflict',
-  Gone = 'Gone',
-  Invalid = 'Invalid',
-  ServerTimeout = 'ServerTimeout',
-  Timeout = 'Timeout',
-  TooManyRequests = 'TooManyRequests',
-  BadRequest = 'BadRequest',
-  MethodNotAllowed = 'MethodNotAllowed',
-  NotAcceptable = 'NotAcceptable',
-  RequestEntityTooLarge = 'RequestEntityTooLarge',
-  UnsupportedMediaType = 'UnsupportedMediaType',
-  InternalError = 'InternalError',
-  Expired = 'Expired',
-  ServiceUnavailable = 'ServiceUnavailable'
-}
+export type StatusReason =
+  ''
+  | 'Unauthorized'
+  | 'Forbidden'
+  | 'NotFound'
+  | 'AlreadyExists'
+  | 'Conflict'
+  | 'Gone'
+  | 'Invalid'
+  | 'ServerTimeout'
+  | 'Timeout'
+  | 'TooManyRequests'
+  | 'BadRequest'
+  | 'MethodNotAllowed'
+  | 'NotAcceptable'
+  | 'RequestEntityTooLarge'
+  | 'UnsupportedMediaType'
+  | 'InternalError'
+  | 'Expired'
+  | 'ServiceUnavailable';
 
-export enum CauseType {
-  FieldValueNotFound = 'FieldValueNotFound',
-  FieldValueRequired = 'ValueRequired',
-  FieldValueDuplicate = 'FieldValueDuplicate',
-  FieldValueInvalid = 'FieldValueInvalid',
-  FieldValueNotSupported = 'FieldValueNotSupported',
-  UnexpectedServerResponse = 'UnexpectedServerResponse',
-  ResourceVersionTooLarge = 'ResourceVersionTooLarge'
-}
+export type CauseType =
+  'FieldValueNotFound'
+  | 'ValueRequired'
+  | 'FieldValueDuplicate'
+  | 'FieldValueInvalid'
+  | 'FieldValueNotSupported'
+  | 'UnexpectedServerResponse'
+  | 'ResourceVersionTooLarge'
+
 
 export interface Status extends TypeMeta {
   metadata?: ListMeta

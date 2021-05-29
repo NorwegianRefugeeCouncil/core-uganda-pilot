@@ -52,6 +52,13 @@ func autoConvert_url_Values_To_v1_ListResourcesOptions(in *url.Values, out *List
 	} else {
 		out.Watch = false
 	}
+	if values, ok := map[string][]string(*in)["syncOnly"]; ok && len(values) > 0 {
+		if err := runtime.Convert_Slice_string_To_bool(&values, &out.SyncOnly, s); err != nil {
+			return err
+		}
+	} else {
+		out.SyncOnly = false
+	}
 	if values, ok := map[string][]string(*in)["allowWatchBookmarks"]; ok && len(values) > 0 {
 		if err := runtime.Convert_Slice_string_To_bool(&values, &out.AllowWatchBookmarks, s); err != nil {
 			return err

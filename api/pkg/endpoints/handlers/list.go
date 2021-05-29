@@ -121,6 +121,10 @@ func serveWatch(
 		select {
 		case evt := <-wc.ResultChan():
 
+			if evt.Object == nil && len(evt.Type) == 0 {
+				return
+			}
+
 			// Encode the watch.Event object
 			buf := &bytes.Buffer{}
 			if err := encoder.Encode(evt.Object, buf); err != nil {

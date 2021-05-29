@@ -123,6 +123,7 @@ func (s *Store) Watch(ctx context.Context, options v1.ListResourcesOptions) (wat
 	return s.Storage.Watch(ctx, key, store2.ListOptions{
 		ResourceVersion: options.ResourceVersion,
 		Limit:           options.Limit,
+		SyncOnly:        options.SyncOnly,
 	})
 }
 

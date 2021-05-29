@@ -9,9 +9,10 @@ import v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 type ListResourcesOptions struct {
 	v1.TypeMeta         `json:",inline"`
 	Watch               bool   `json:"watch,omitempty" protobuf:"bytes,1,opt,name=watch"`
-	AllowWatchBookmarks bool   `json:"allowWatchBookmarks,omitempty" protobuf:"bytes,1,opt,name=allowWatchBookmarks"`
-	ResourceVersion     string `json:"resourceVersion,omitempty" protobuf:"bytes,1,opt,name=resourceVersion"`
-	TimeoutSeconds      *int64 `json:"timeoutSeconds" protobuf:"bytes,1,opt,name=timeoutSeconds"`
-	Limit               *int64 `json:"limit,omitempty" protobuf:"bytes,1,opt,name=limit"`
-	Continue            string `json:"continue" protobuf:"bytes,1,opt,name=continue"`
+	SyncOnly            bool   `json:"syncOnly" protobuf:"bytes,2,opt,name=syncOnly"`
+	AllowWatchBookmarks bool   `json:"allowWatchBookmarks,omitempty" protobuf:"bytes,3,opt,name=allowWatchBookmarks"`
+	ResourceVersion     string `json:"resourceVersion,omitempty" protobuf:"bytes,4,opt,name=resourceVersion"`
+	TimeoutSeconds      *int64 `json:"timeoutSeconds" protobuf:"bytes,5,opt,name=timeoutSeconds"`
+	Limit               *int64 `json:"limit,omitempty" protobuf:"bytes,6,opt,name=limit"`
+	Continue            string `json:"continue" protobuf:"bytes,7,opt,name=continue"`
 }

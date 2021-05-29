@@ -20,35 +20,6 @@ export const VersionBuilder: React.FC<VersionBuilderProps> = (props: VersionBuil
   }
   return <div>
 
-    {/* Is the version served ? */}
-    <div className='form-check'>
-      <input disabled
-             className='form-check-input'
-             type='checkbox'
-             value=''
-             checked={version.served}
-      />
-
-      <label className='form-check-label text-dark'>
-        Served
-      </label>
-
-    </div>
-
-    {/* Is it a storage version ? */}
-    <div className='form-check'>
-
-      <input disabled
-             className='form-check-input'
-             type='checkbox'
-             value=''
-             checked={version.storage} />
-
-      <label className='form-check-label text-dark'>
-        Storage
-      </label>
-
-    </div>
 
     {/* render the builder for the content of the form version */}
     <div className={'mt-3'}>

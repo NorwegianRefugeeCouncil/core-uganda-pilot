@@ -7,7 +7,7 @@ export interface APIService extends TypeMeta {
 
 export interface APIServiceList extends TypeMeta {
   metadata: ListMeta
-  Items: APIService[]
+  items: APIService[]
 }
 
 export interface APIServiceSpec {

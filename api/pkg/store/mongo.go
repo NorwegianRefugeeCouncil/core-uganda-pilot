@@ -632,7 +632,17 @@ func (m *MongoStore) Watch(ctx context.Context, key string, options ListOptions)
 	if err != nil {
 		return nil, err
 	}
-	watchChan, err := m.watcher.Watch(ctx, key, rev, true, true, options.Selector, options.Limit)
+
+	watchChan, err := m.watcher.Watch(
+		ctx,
+		key,
+		rev,
+		true,
+		true,
+		options.SyncOnly,
+		options.Selector,
+		options.Limit)
+
 	if err != nil {
 		return nil, err
 	}

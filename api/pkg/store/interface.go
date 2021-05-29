@@ -25,9 +25,14 @@ type CreateOptions struct{}
 
 // ListOptions placeholder to put store options for GET requests that return a list result
 type ListOptions struct {
-	Limit           *int64
-	Selector        fields.Selector
+	Limit *int64
+
+	Selector fields.Selector
+
 	ResourceVersion string
+	// SyncOnly will emit events since the given ResourceVersion (or since beginning if not provided)
+	// and will close the channel
+	SyncOnly bool
 }
 
 // UpdateOptions placeholder to put store options for PUT request

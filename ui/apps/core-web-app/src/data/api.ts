@@ -4,5 +4,6 @@ const client = new RESTClient({
   baseUri: 'http://localhost:8000/apis'
 });
 
-export const Api = new ClientSet(client);
+const Api = new ClientSet(client);
 
+export default Api

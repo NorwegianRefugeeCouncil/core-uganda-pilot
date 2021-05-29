@@ -1,5 +1,7 @@
 import { ListMeta, ObjectMeta, TypeMeta } from '../../meta/v1';
 
+export const dummy = "a"
+
 export interface FormDefinition extends TypeMeta {
   metadata: ObjectMeta
   spec: FormDefinitionSpec
@@ -37,7 +39,16 @@ export interface FormRoot {
   root: FormElement
 }
 
-export type FieldType = 'shortText' | 'longText' | 'integer' | 'float' | 'checkbox' | 'radio' | 'select' | 'multiselect' | 'section'
+export type FieldType =
+  'shortText'
+  | 'longText'
+  | 'integer'
+  | 'float'
+  | 'checkbox'
+  | 'radio'
+  | 'select'
+  | 'multiselect'
+  | 'section'
 
 export interface FormElement {
   key?: string
@@ -138,43 +149,36 @@ export interface JSONSchemaProps {
   'x-kubernetes-map-type'?: MapType
 }
 
-export enum Format {
-  BSONObjectID = 'bsonobjectid',
-  URI = 'uri',
-  Email = 'email',
-  Hostname = 'hostname',
-  IPV4 = 'ipv4',
-  IPV6 = 'ipv6',
-  CIDR = 'cidr',
-  MAC = 'mac',
-  UUID = 'uuid',
-  UUID3 = 'uuid3',
-  UUID4 = 'uuid4',
-  UUID5 = 'uuid5',
-  ISBN = 'isbn',
-  ISBN10 = 'isbn10',
-  ISBN13 = 'isbn13',
-  CreditCard = 'creditcard',
-  SSN = 'ssn',
-  HexColor = 'hexcolor',
-  RGBColor = 'rgbcolor',
-  Byte = 'byte',
-  Password = 'password',
-  Date = 'date',
-  Duration = 'duration',
-  DateTime = 'datetime'
-}
+export type Format =
+  | 'bsonobjectid'
+  | 'uri'
+  | 'email'
+  | 'hostname'
+  | 'ipv4'
+  | 'ipv6'
+  | 'cidr'
+  | 'mac'
+  | 'uuid'
+  | 'uuid3'
+  | 'uuid4'
+  | 'uuid5'
+  | 'isbn'
+  | 'isbn10'
+  | 'isbn13'
+  | 'creditcard'
+  | 'ssn'
+  | 'hexcolor'
+  | 'rgbcolor'
+  | 'byte'
+  | 'password'
+  | 'date'
+  | 'duration'
+  | 'datetime'
 
-export enum ListType {
-  Atomic = 'atomic',
-  Set = 'set',
-  Map = 'map'
-}
 
-export enum MapType {
-  Granular = 'granular',
-  Atomic = 'atomic'
-}
+export type ListType = 'atomic' | 'set' | 'map'
+
+export type MapType = 'granular' | 'atomic'
 
 export interface ExternalDocumentation {
   description: string

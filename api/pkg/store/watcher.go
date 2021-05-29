@@ -48,6 +48,7 @@ type watchChan struct {
 	sentCount         int64
 	sentLock          sync.RWMutex
 	limit             *int64
+	syncOnly          bool
 }
 
 type event struct {
@@ -86,14 +87,15 @@ func (w *watcher) Watch(
 	rev int64,
 	recursive,
 	progressNotify bool,
+	syncOnly bool,
 	selector fields.Selector,
 	limit *int64) (*watchChan, error) {
-	wc := w.createWatchChan(ctx, key, rev, recursive, progressNotify, selector, limit)
+	wc := w.createWatchChan(ctx, key, rev, recursive, progressNotify, syncOnly, selector, limit)
 	go wc.run()
 	return wc, nil
 }
 
-func (w *watcher) createWatchChan(ctx context.Context, key string, rev int64, recursive bool, progressNotify bool, selector fields.Selector, limit *int64) *watchChan {
+func (w *watcher) createWatchChan(ctx context.Context, key string, rev int64, recursive bool, progressNotify bool, syncOnly bool, selector fields.Selector, limit *int64) *watchChan {
 	ctx, cancelFunc := context.WithCancel(ctx)
 	wc := &watchChan{
 		watcher:           w,
@@ -106,6 +108,7 @@ func (w *watcher) createWatchChan(ctx context.Context, key string, rev int64, re
 		incomingEventChan: make(chan *event, incomingBufSize),
 		resultChan:        make(chan watch.Event, outgoingBufSize),
 		errChan:           make(chan error, 1),
+		syncOnly:          syncOnly,
 		selector:          selector,
 		limit:             limit,
 	}
@@ -164,7 +167,7 @@ func (wc *watchChan) getMongoCollectionWatchFilter(currentOnly bool, fromRev *in
 	baseFilter := bson.A{}
 
 	if currentOnly {
-		baseFilter = append(baseFilter, bson.M{CurrentValueKey: bson.M{"$eq": true}})
+		baseFilter = append(baseFilter, bson.M{IsCurrentKey: bson.M{"$eq": true}})
 	}
 	if fromRev != nil {
 		fromDate := time.Unix(0, *fromRev)
@@ -189,7 +192,6 @@ func (wc *watchChan) getMongoCollectionWatchFilter(currentOnly bool, fromRev *in
 		}
 		combined = append(combined, baseFilter...)
 		return bson.M{
-
 			"$and": combined,
 		}, nil
 	} else {
@@ -271,7 +273,7 @@ func (wc *watchChan) sync() (int64, error) {
 				cur := findResult.Current
 
 				// Create an ADDED event for each item
-				evt, err := parseMongoDataAsEvt(cur)
+				evt, err := parseMongoDataAsEvt(cur, true)
 				if err != nil {
 					return 0, err
 				}
@@ -318,7 +320,7 @@ func (wc *watchChan) sync() (int64, error) {
 		}
 
 		// Send an ADDED event for that entry
-		evt, err := parseMongoDataAsEvt(raw)
+		evt, err := parseMongoDataAsEvt(raw, false)
 		if err != nil {
 			return 0, err
 		}
@@ -333,7 +335,7 @@ func (wc *watchChan) sync() (int64, error) {
 // and returns an ADDED event corresponding to that object
 // This is used by sync to send the initial ADDED events when
 // the specified watch initialRev=0
-func parseMongoDataAsEvt(res bson.Raw) (*event, error) {
+func parseMongoDataAsEvt(res bson.Raw, forceAddedEvent bool) (*event, error) {
 
 	// We unmarshal the mongo record from the BSON
 	record := MongoRecord{}
@@ -359,6 +361,13 @@ func parseMongoDataAsEvt(res bson.Raw) (*event, error) {
 		return nil, err
 	}
 
+	isDeleted := record.IsDeleted
+	isCreated := record.IsCreated
+	if forceAddedEvent {
+		isDeleted = false
+		isCreated = true
+	}
+
 	// This is the ADDED event we want to build from the current
 	// state of the object
 	evt := &event{
@@ -370,8 +379,8 @@ func parseMongoDataAsEvt(res bson.Raw) (*event, error) {
 		// If anyone has a better idea that doesn't include
 		// global atomic counters, feel free to contribute.
 		rev:              record.Timestamp,
-		isDeleted:        record.IsDeleted,
-		isCreated:        record.IsCreated,
+		isDeleted:        isDeleted,
+		isCreated:        isCreated,
 		isProgressNotify: false,
 	}
 
@@ -428,8 +437,6 @@ func parseMongoDataAsEvt(res bson.Raw) (*event, error) {
 //
 //
 func (wc *watchChan) startWatching(watchClosedCh chan struct{}) {
-	defer close(watchClosedCh)
-
 	var hasInitialRev = true
 
 	// If the initialRev = 0, we first get the current state of the
@@ -545,6 +552,11 @@ func (wc *watchChan) startWatching(watchClosedCh chan struct{}) {
 
 	}
 
+	if wc.syncOnly {
+		close(watchClosedCh)
+		return
+	}
+
 	// If the provided initialRev is not 0, then start watching
 	// events at the given timestamp
 	var watchOptions = []*mongooptions.ChangeStreamOptions{
@@ -626,6 +638,7 @@ func (wc *watchChan) startWatching(watchClosedCh chan struct{}) {
 			return
 		}
 	}
+	close(watchClosedCh)
 }
 
 // processEvents receives events from the incomingEventChan and

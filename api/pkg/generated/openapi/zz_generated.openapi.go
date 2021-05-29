@@ -1580,6 +1580,13 @@ func schema_pkg_apis_meta_v1_ListResourcesOptions(ref common.ReferenceCallback) 
 							Format: "",
 						},
 					},
+					"syncOnly": {
+						SchemaProps: spec.SchemaProps{
+							Default: false,
+							Type:    []string{"boolean"},
+							Format:  "",
+						},
+					},
 					"allowWatchBookmarks": {
 						SchemaProps: spec.SchemaProps{
 							Type:   []string{"boolean"},
@@ -1612,7 +1619,7 @@ func schema_pkg_apis_meta_v1_ListResourcesOptions(ref common.ReferenceCallback) 
 						},
 					},
 				},
-				Required: []string{"timeoutSeconds", "continue"},
+				Required: []string{"syncOnly", "timeoutSeconds", "continue"},
 			},
 		},
 	}

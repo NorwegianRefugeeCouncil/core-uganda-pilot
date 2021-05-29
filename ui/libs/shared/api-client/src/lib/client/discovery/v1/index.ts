@@ -1,11 +1,14 @@
 import { RESTClient } from '../../../rest';
 import { APIGroupsV1Client, APIGroupsV1Interface } from './apigroups';
 import { APIResourcesV1Client, APIResourcesV1Interface } from './apiresources';
+import { APIServicesV1Client, APIServicesV1Interface } from './apiservices';
 
 export interface DiscoveryV1Interface {
   apiGroups(): APIGroupsV1Interface
 
   apiResources(): APIResourcesV1Interface
+
+  apiServices(): APIServicesV1Interface
 }
 
 export class DiscoveryV1Client implements DiscoveryV1Interface {
@@ -18,6 +21,10 @@ export class DiscoveryV1Client implements DiscoveryV1Interface {
 
   apiResources(): APIResourcesV1Interface {
     return new APIResourcesV1Client(this.restClient);
+  }
+
+  apiServices(): APIServicesV1Interface {
+    return new APIServicesV1Client(this.restClient);
   }
 }
 

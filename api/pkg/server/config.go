@@ -136,7 +136,7 @@ func (c *CompletedConfig) New(ctx context.Context) (*Server, error) {
 		server.informers.Discovery().V1().APIServices().Lister())
 
 	apiServerHandler.NonGoRestfulMux.Handle("/apis", apisHandler)
-	apiServerHandler.NonGoRestfulMux.UnlistedHandle("/apis/", apisHandler)
+	// apiServerHandler.NonGoRestfulMux.UnlistedHandle("/apis/", apisHandler)
 
 	return server, nil
 }
@@ -282,7 +282,7 @@ func (c *CompletedConfig) installCustomResourcesOrDie(server *Server, apiServerH
 	}
 
 	// Registers the crdHandler inside of the non-goRestfulMux
-	apiServerHandler.NonGoRestfulMux.Handle("/apis", crdHandler)
+	//apiServerHandler.NonGoRestfulMux.Handle("/apis", crdHandler)
 	apiServerHandler.NonGoRestfulMux.HandlePrefix("/apis/", crdHandler)
 }
 

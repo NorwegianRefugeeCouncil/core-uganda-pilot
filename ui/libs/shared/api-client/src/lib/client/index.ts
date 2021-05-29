@@ -9,14 +9,18 @@ export interface Interface {
 }
 
 export class ClientSet implements Interface {
-  public constructor(private restClient: RESTClient) {
+  public constructor(private _restClient: RESTClient) {
   }
 
   core(): CoreInterface {
-    return new CoreClient(this.restClient);
+    return new CoreClient(this._restClient);
   }
 
   discovery(): DiscoveryInterface {
-    return new DiscoveryClient(this.restClient);
+    return new DiscoveryClient(this._restClient);
+  }
+
+  restClient(): RESTClient {
+    return this._restClient;
   }
 }
