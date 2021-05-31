@@ -8,11 +8,10 @@ import {
   FormRoot,
   TranslatedString,
   TranslatedStrings
-} from './index';
-import { Duplicate, ErrorList, Required } from '../../../field/error';
+} from './types';
+import { Duplicate, ErrorList, Required } from '../../../field';
 import { newPath, Path } from '../../../field';
 import { validateTypeMeta } from '../../meta/v1/validation';
-
 
 export const validateFormDefinition = (formDefinition: FormDefinition): ErrorList => {
   const errorList: ErrorList = [];
@@ -72,7 +71,6 @@ export const validateFormDefinitionVersions = (versions: FormDefinitionVersion[]
   return errorList;
 };
 
-
 export const validateFormDefinitionVersion = (version: FormDefinitionVersion, fieldPath: Path): ErrorList => {
   const errorList: ErrorList = [];
 
@@ -99,7 +97,6 @@ export const validateFormDefinitionSchema = (schema: FormDefinitionValidation, f
   errorList.push(...validateFormRoot(schema.formSchema, fieldPath.child('formSchema')));
   return errorList;
 };
-
 
 export const validateFormRoot = (schema: FormRoot, fieldPath: Path): ErrorList => {
   const errorList: ErrorList = [];
@@ -191,7 +188,6 @@ export const validateTranslatedStrings = (strs: TranslatedStrings, fieldPath: Pa
       seenLocales[translation.locale] = true;
     }
   }
-
 
   return errorList;
 

@@ -1,7 +1,6 @@
-import { FormDefinition } from './index';
+import { FormDefinition } from './types';
 import { validateFormDefinition } from './validation';
-import { Error, ErrorList, Required } from '../../../field/error';
-import { newPath, pathFrom } from '@core/api-client';
+import { pathFrom, Required } from '../../../field';
 
 const aValidFormDefinition = (): FormDefinition => {
   return {
@@ -29,7 +28,7 @@ const aValidFormDefinition = (): FormDefinition => {
                 children: [
                   {
                     key: 'prop1',
-                    type: 'text',
+                    type: 'shortText',
                     label: [
                       {
                         locale: 'en',

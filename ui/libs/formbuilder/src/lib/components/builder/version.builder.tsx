@@ -2,7 +2,7 @@ import { FormDefinitionVersion } from '@core/api-client';
 import * as React from 'react';
 import { RootBuilderContainer } from './root.builder';
 
-type VersionBuilderProps = {
+export type VersionBuilderProps = {
   path: string,
   version: FormDefinitionVersion
 }

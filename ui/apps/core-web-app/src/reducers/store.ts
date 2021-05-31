@@ -3,11 +3,6 @@ import { HasObjectMeta, RuntimeList, RuntimeObject, Status } from '@core/api-cli
 import { Api } from '../data/api';
 
 
-export function useInsertOne(){
-  const db = usePouch()
-}
-
-
 
 type ResourceEnvelope = {
   resource: RuntimeObject & HasObjectMeta
@@ -52,7 +47,6 @@ export const list = createAsyncThunk<RuntimeList, {
         .resource(resource)
         .version(version)
         .do<RuntimeList>()
-        .toPromise();
     } catch (err) {
       return rejectWithValue(err as Status);
     }

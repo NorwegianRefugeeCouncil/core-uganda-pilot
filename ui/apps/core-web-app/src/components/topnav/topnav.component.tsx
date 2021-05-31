@@ -23,6 +23,11 @@ export const TopNav: React.FC = props => {
                 Form Definitions
               </Link>
             </li>
+            <li className='nav-item'>
+              <Link to='/store' className='nav-link'>
+                Store
+              </Link>
+            </li>
           </ul>
         </div>
       </div>

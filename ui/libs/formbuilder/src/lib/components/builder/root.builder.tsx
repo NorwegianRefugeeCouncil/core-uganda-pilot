@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { addValue } from '../../reducers';
 import { FormElementContainer } from './element.container';
 
-type RootBuilderContainerProps = {
+export type RootBuilderContainerProps = {
   root: FormElement,
   path: string
 }
