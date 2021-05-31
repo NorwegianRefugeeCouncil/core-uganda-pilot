@@ -1,7 +1,3 @@
-import { Observable } from 'rxjs';
-import { ajax, AjaxResponse } from 'rxjs/ajax';
-import { catchError, map } from 'rxjs/operators';
-
 export type RESTConfig = {
   baseUri: string;
 }
@@ -43,7 +39,7 @@ export class Request {
   private _version: string;
   private _name: string;
   private _params: { [key: string]: string[] };
-  private _headers: { [key: string]: string };
+  private _headers: Headers;
   private _resource: string;
   private _body: any;
 
@@ -88,9 +84,9 @@ export class Request {
 
   public header(name: string, value: string): Request {
     if (!this._headers) {
-      this._headers = {};
+      this._headers = new Headers();
     }
-    this._headers[name] = value;
+    this._headers.set(name, value);
     return this;
   }
 
@@ -128,52 +124,36 @@ export class Request {
     return url;
   }
 
-  public do<R>(): Observable<R> {
+  public do<R>(): Promise<R> {
 
     const url = this.url();
 
     if (!this._headers) {
-      this._headers = {};
+      this._headers = new Headers();
     }
     if (this._verb == 'POST' || this._verb == 'PUT' || (this._verb == 'DELETE' && this._body)) {
-      if (!this._headers['Content-Type']) {
-        this._headers['Content-Type'] = 'application/json';
+      if (!this._headers.get('Content-Type')) {
+        this._headers.set('Content-Type', 'application/json');
       }
     }
-    if (!this._headers['Accept']) {
-      this._headers['Accept'] = 'application/json';
+    if (!this._headers.get('Accept')) {
+      this._headers.set('Accept', 'application/json');
     }
 
-    return ajax({
-      url: url,
+    return fetch(url, {
       body: this._body,
       headers: this._headers,
-      method: this._verb,
-      responseType: '',
-      crossDomain: true,
-      createXHR: () => {
-        return new XMLHttpRequest();
+      method: this._verb
+    }).then((r) => {
+      // Expect a successful status code from the api
+      if (r.status < 200 || r.status > 299) {
+        throw this.parseError(r.json());
       }
-    }).pipe(
-      map(r => {
+      return r.json() as Promise<R>;
+    }).catch(err => {
+      throw this.parseError(err);
+    });
 
-        // Expect a successful status code from the api
-        if (r.status < 200 || r.status > 299) {
-          throw this.parseError(r.response);
-        }
-
-        // Parse JSON if the response type is application/json
-        if (r.xhr.getResponseHeader('Content-Type') === 'application/json') {
-          return JSON.parse(r.response) as R;
-        }
-
-        // return the response
-        return r.response as R;
-      }),
-      catchError((err: AjaxResponse) => {
-        throw this.parseError(err.response);
-      })
-    );
   }
 
   parseError(response: any): any {
@@ -181,7 +161,7 @@ export class Request {
     if (typeof response === 'string') {
       try {
         obj = JSON.parse(response);
-        return obj
+        return obj;
       } catch (e) {
         obj = {
           kind: 'Status',

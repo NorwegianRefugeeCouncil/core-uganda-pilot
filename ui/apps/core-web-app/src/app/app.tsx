@@ -4,6 +4,7 @@ import { Route, Switch } from 'react-router-dom';
 import FormDefinitions from '../components/formdefinitions';
 import FormDefinitionContainer from '../components/formdefinition';
 import React from 'react';
+import { StoreView } from '../components/store/store';
 
 export function App() {
   return <>
@@ -17,6 +18,9 @@ export function App() {
       </Route>
       <Route exact path='/formdefinitions/:id'>
         <FormDefinitionContainer />
+      </Route>
+      <Route exact path='/store'>
+        <StoreView />
       </Route>
     </Switch>
   </>;

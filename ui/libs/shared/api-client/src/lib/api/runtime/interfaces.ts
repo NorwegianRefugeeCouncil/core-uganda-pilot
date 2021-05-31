@@ -1,4 +1,4 @@
-import { ObjectMeta, TypeMeta } from '../meta/v1';
+import { ObjectMeta, TypeMeta } from '../meta';
 
 export interface RuntimeObject {
   apiVersion: string

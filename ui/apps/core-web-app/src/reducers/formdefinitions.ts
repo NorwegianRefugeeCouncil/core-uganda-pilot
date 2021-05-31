@@ -11,7 +11,7 @@ export const listFormDefinitions = createAsyncThunk<FormDefinitionList, void, { 
   'formDefinitions/list',
   async (_, { rejectWithValue }) => {
     try {
-      return await Api.core().v1().formDefinitions().list().toPromise();
+      return await Api.core().v1().formDefinitions().list();
     } catch (err) {
       return rejectWithValue(err as Status);
     }
@@ -22,7 +22,7 @@ export const getFormDefinition = createAsyncThunk<FormDefinition, string, { reje
   'formDefinitions/get',
   async (id, { rejectWithValue }) => {
     try {
-      return await Api.core().v1().formDefinitions().get(id).toPromise();
+      return await Api.core().v1().formDefinitions().get(id);
     } catch (err) {
       return rejectWithValue(err as Status);
     }
@@ -33,7 +33,7 @@ export const createFormDefinition = createAsyncThunk<FormDefinition, FormDefinit
   'formDefinitions/create',
   async (formDefinition: FormDefinition, { rejectWithValue }) => {
     try {
-      return await Api.core().v1().formDefinitions().create(formDefinition).toPromise();
+      return await Api.core().v1().formDefinitions().create(formDefinition);
     } catch (err) {
       return rejectWithValue(err);
     }
@@ -44,7 +44,7 @@ export const updateFormDefinition = createAsyncThunk<FormDefinition, FormDefinit
   'formDefinitions/update',
   async (formDefinition: FormDefinition, { rejectWithValue }) => {
     try {
-      return await Api.core().v1().formDefinitions().update(formDefinition).toPromise();
+      return await Api.core().v1().formDefinitions().update(formDefinition);
     } catch (err) {
       return rejectWithValue(err);
     }
@@ -55,7 +55,7 @@ export const deleteFormDefinition = createAsyncThunk<void, string>(
   'formDefinitions/update',
   async (id: string, { rejectWithValue }) => {
     try {
-      return await Api.core().v1().formDefinitions().delete(id).toPromise();
+      return await Api.core().v1().formDefinitions().delete(id);
     } catch (err) {
       return rejectWithValue(err);
     }

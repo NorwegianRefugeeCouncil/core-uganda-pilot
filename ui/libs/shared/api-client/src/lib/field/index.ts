@@ -1,5 +1,3 @@
-import { isArray, isObject } from 'rxjs/internal-compatibility';
-
 export class Path {
   private _name: string;
   private _index: string;
@@ -59,7 +57,7 @@ export class Path {
       parent = [];
       this.set(obj, parent);
     }
-    if (!isArray(parent)) {
+    if (!Array.isArray(parent)) {
       throw 'cannot add value as object at path ' + this.string() + ' is not an array';
     }
 
@@ -88,7 +86,7 @@ export class Path {
     if (!parent) {
       return;
     }
-    if (!isArray(parent)) {
+    if (!Array.isArray(parent)) {
       throw 'cannot add value as object at path ' + this.string() + ' is not an array';
     }
 
@@ -103,7 +101,6 @@ export class Path {
       }
     }
   }
-
 
   ensurePath(obj: any) {
     let paths: Path[] = [];
@@ -185,13 +182,12 @@ export class Path {
       value = [];
       this.set(obj, value);
     }
-    if (!isArray(value)) {
+    if (!Array.isArray(value)) {
       throw 'cannot add value as object at path ' + this.string() + ' is not an array';
     }
     const newLength = value.push(elem);
     return this.index(newLength - 1);
   }
-
 
   insert(obj: any, index: number, elem: any): Path {
     let value = this.get(obj) as any[];
@@ -199,7 +195,7 @@ export class Path {
       value = [];
       this.set(obj, value);
     }
-    if (!isArray(value)) {
+    if (!Array.isArray(value)) {
       throw 'cannot add value as object at path ' + this.string() + ' is not an array';
     }
 
@@ -216,7 +212,7 @@ export class Path {
       value = parentPath.get(obj);
     }
 
-    if (isArray(value)) {
+    if (Array.isArray(value)) {
       const idx = parseInt(this._index);
       if (isNaN(idx)) {
         throw 'cannot remove value at path ' + this.string() + ' as index is not a number';
@@ -232,7 +228,7 @@ export class Path {
         key = this._index;
       }
       if (!objValue.hasOwnProperty(key)) {
-        return
+        return;
       }
       delete objValue[key];
     } else {
@@ -360,8 +356,47 @@ export const pathFrom = (path: string): Path => {
       continue;
     }
 
-
   }
 
   return currentPath;
 };
+
+export type ErrorType =
+  'FieldValueNotFound'
+  | 'FieldValueRequired'
+  | 'FieldValueDuplicate'
+  | 'FieldValueInvalid'
+  | 'FieldValueNotSupported'
+  | 'FieldValueForbidden'
+  | 'FieldValueTooLong'
+  | 'FieldValueTooMany'
+  | 'InternalError'
+
+export class Error {
+  public constructor(
+    public type: ErrorType,
+    public field: string,
+    public badValue: any,
+    public detail: string
+  ) {
+  }
+}
+
+export type ErrorList = Error[]
+
+export const NotFound = (field: Path, value: any): Error => {
+  return new Error('FieldValueNotFound', field.string(), value, '');
+};
+
+export const Required = (field: Path, detail: string): Error => {
+  return new Error('FieldValueRequired', field.string(), '', detail);
+};
+
+export const Duplicate = (field: Path, value: any): Error => {
+  return new Error('FieldValueDuplicate', field.string(), value, '');
+};
+
+export const Invalid = (field: Path, value: any, detail: string) => {
+  return new Error('FieldValueInvalid', field.string(), value, detail);
+};
+

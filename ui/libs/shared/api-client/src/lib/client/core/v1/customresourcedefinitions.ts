@@ -1,17 +1,17 @@
 import { RESTClient } from '../../../rest';
-import { CustomResourceDefinition, CustomResourceDefinitionList } from '../../../api/core/v1';
-import { Observable } from 'rxjs';
+import { CustomResourceDefinition, CustomResourceDefinitionList } from '../../../api';
+
 
 export interface CustomResourceDefinitionsV1Interface {
-  get(name): Observable<CustomResourceDefinition>
+  get(name): Promise<CustomResourceDefinition>
 
-  create(customResourceDefinition: CustomResourceDefinition): Observable<CustomResourceDefinition>
+  create(customResourceDefinition: CustomResourceDefinition): Promise<CustomResourceDefinition>
 
-  update(customResourceDefinition: CustomResourceDefinition): Observable<CustomResourceDefinition>
+  update(customResourceDefinition: CustomResourceDefinition): Promise<CustomResourceDefinition>
 
-  delete(name: string): Observable<void>
+  delete(name: string): Promise<void>
 
-  list(): Observable<CustomResourceDefinitionList>
+  list(): Promise<CustomResourceDefinitionList>
 }
 
 
@@ -19,7 +19,7 @@ export class CustomResourceDefinitionsV1Client implements CustomResourceDefiniti
   public constructor(private c: RESTClient) {
   }
 
-  public get(name: string): Observable<CustomResourceDefinition> {
+  public get(name: string): Promise<CustomResourceDefinition> {
     return this.c.get()
       .version('v1')
       .resource('customresourcedefinitions')
@@ -28,7 +28,7 @@ export class CustomResourceDefinitionsV1Client implements CustomResourceDefiniti
       .do<CustomResourceDefinition>();
   }
 
-  public create(formDefinition: CustomResourceDefinition): Observable<CustomResourceDefinition> {
+  public create(formDefinition: CustomResourceDefinition): Promise<CustomResourceDefinition> {
     return this.c.post()
       .group('core.nrc.no')
       .version('v1')
@@ -37,7 +37,7 @@ export class CustomResourceDefinitionsV1Client implements CustomResourceDefiniti
       .do<CustomResourceDefinition>();
   }
 
-  public update(formDefinition: CustomResourceDefinition): Observable<CustomResourceDefinition> {
+  public update(formDefinition: CustomResourceDefinition): Promise<CustomResourceDefinition> {
     return this.c.put()
       .group('core.nrc.no')
       .version('v1')
@@ -47,7 +47,7 @@ export class CustomResourceDefinitionsV1Client implements CustomResourceDefiniti
       .do<CustomResourceDefinition>();
   }
 
-  public delete(name: string): Observable<void> {
+  public delete(name: string): Promise<void> {
     return this.c.delete()
       .group('core.nrc.no')
       .version('v1')
@@ -56,7 +56,7 @@ export class CustomResourceDefinitionsV1Client implements CustomResourceDefiniti
       .do<void>();
   }
 
-  public list(): Observable<CustomResourceDefinitionList> {
+  public list(): Promise<CustomResourceDefinitionList> {
     return this.c.get()
       .version('v1')
       .resource('customresourcedefinitions')

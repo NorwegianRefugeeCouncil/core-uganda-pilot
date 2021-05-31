@@ -1,24 +1,24 @@
 import { RESTClient } from '../../../rest';
-import { FormDefinition, FormDefinitionList } from '../../../api/core/v1';
-import { Observable } from 'rxjs';
+import { FormDefinition, FormDefinitionList } from '../../../api';
+
 
 export interface FormDefinitionsV1Interface {
-  get(name): Observable<FormDefinition>
+  get(name): Promise<FormDefinition>
 
-  create(formDefinition: FormDefinition): Observable<FormDefinition>
+  create(formDefinition: FormDefinition): Promise<FormDefinition>
 
-  update(formDefinition: FormDefinition): Observable<FormDefinition>
+  update(formDefinition: FormDefinition): Promise<FormDefinition>
 
-  delete(name: string): Observable<void>
+  delete(name: string): Promise<void>
 
-  list(): Observable<FormDefinitionList>
+  list(): Promise<FormDefinitionList>
 }
 
 export class FormDefinitionsV1Client implements FormDefinitionsV1Interface {
   public constructor(private c: RESTClient) {
   }
 
-  public get(name: string): Observable<FormDefinition> {
+  public get(name: string): Promise<FormDefinition> {
     return this.c.get()
       .version('v1')
       .resource('formdefinitions')
@@ -27,7 +27,7 @@ export class FormDefinitionsV1Client implements FormDefinitionsV1Interface {
       .do<FormDefinition>();
   }
 
-  public create(formDefinition: FormDefinition): Observable<FormDefinition> {
+  public create(formDefinition: FormDefinition): Promise<FormDefinition> {
     return this.c.post()
       .group('core.nrc.no')
       .version('v1')
@@ -36,7 +36,7 @@ export class FormDefinitionsV1Client implements FormDefinitionsV1Interface {
       .do<FormDefinition>();
   }
 
-  public update(formDefinition: FormDefinition): Observable<FormDefinition> {
+  public update(formDefinition: FormDefinition): Promise<FormDefinition> {
     return this.c.put()
       .group('core.nrc.no')
       .version('v1')
@@ -46,7 +46,7 @@ export class FormDefinitionsV1Client implements FormDefinitionsV1Interface {
       .do<FormDefinition>();
   }
 
-  public delete(name: string): Observable<void> {
+  public delete(name: string): Promise<void> {
     return this.c.delete()
       .group('core.nrc.no')
       .version('v1')
@@ -55,7 +55,7 @@ export class FormDefinitionsV1Client implements FormDefinitionsV1Interface {
       .do<void>();
   }
 
-  public list(): Observable<FormDefinitionList> {
+  public list(): Promise<FormDefinitionList> {
     return this.c.get()
       .version('v1')
       .resource('formdefinitions')

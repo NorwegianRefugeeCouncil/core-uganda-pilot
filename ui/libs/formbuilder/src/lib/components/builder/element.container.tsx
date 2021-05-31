@@ -16,7 +16,7 @@ export type FormElementContainerProps = {
  * @param n the input value
  * @param path the path of the value
  */
-const setOrRemoveNumber = (n: any, path: string): Action => {
+export const setOrRemoveNumber = (n: any, path: string): Action => {
   if (typeof n !== 'number') {
     return removeValue({ path });
   } else {

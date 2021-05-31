@@ -1,6 +1,6 @@
 import { HasObjectMeta, Status, TypeMeta } from '@core/api-client';
 import { useCallback } from 'react';
-import Api from '../data/api';
+import { Api } from '../data/api';
 
 export type Resource = HasObjectMeta & TypeMeta
 
@@ -193,7 +193,7 @@ export const useEntityStore = <T extends Resource>() => {
   }, []);
 
   const syncDiscovery = useCallback(() => {
-    Api.discovery().v1().apiServices().list().toPromise().then(value => {
+    Api.discovery().v1().apiServices().list().then(value => {
       setAllByType((value.items as any) as T[], { apiVersion: value.apiVersion, kind: 'APIService' });
     });
   }, []);
