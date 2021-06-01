@@ -44,9 +44,9 @@ export const BeneficiariesComponent: React.FC = props => {
               <span className='input-group-text border-0 rounded-0'>@</span>
               <input type='text' className={'form-input flex-grow-1 ps-1 border-0 rounded-0'} placeholder={'Search'} />
             </div>
-            <ListGroup>
+            <ListGroup flush={true}>
               {names.map((n, idx) => {
-                let className = 'rounded-0';
+                let className = 'py-3 rounded-0';
                 if (idx === 0) {
                   className += ' border-top-0';
                 }

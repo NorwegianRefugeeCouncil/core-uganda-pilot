@@ -1,15 +1,13 @@
 import * as React from 'react';
-import { Button, Card, CardBody, CardTitle, Container, ListGroup, ListGroupItem } from '@core/ui-toolkit';
+import { Link } from 'react-router-dom';
 
 export const HomeComponent: React.FC = props => {
   return (
-
-    <ListGroup className={'rounded-0'}>
-      <ListGroupItem className={''}>
-        <a href='#' className={"text-link"}>Uganda Intake Form</a>
-      </ListGroupItem>
-    </ListGroup>
-
-
+    <div className={'d-flex p-3 border-bottom'}>
+      <div className={'me-3'}>
+        <i className={'bi bi-pencil'} />
+      </div>
+      <Link to={'/'}>Uganda Intake Form</Link>
+    </div>
   );
 };

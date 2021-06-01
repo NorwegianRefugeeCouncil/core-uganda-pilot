@@ -8,11 +8,13 @@ import { StoreView } from '../components/store/store';
 import { HomeComponent } from '../components/home/home.component';
 import { BeneficiariesComponent } from '../components/beneficiaries/beneficiaries.component';
 import { SettingsComponent } from '../components/settings/settings.component';
+import { IdentificationDocumentComponent } from '../components/identificationdocument/identificationdocument.component';
+import { HouseholdComponent } from '../components/household/household.component';
 
 export function App() {
   return <>
     <TopNav />
-    <div style={{ marginBottom: '6rem' }}>
+    <div style={{ height: 'calc(100vh - 3.5rem)', maxHeight: 'calc(100vh - 3.5rem)', overflowY: 'auto' }}>
       <Switch>
         <Route exact path='/'>
           <HomeComponent />
@@ -28,6 +30,12 @@ export function App() {
         </Route>
         <Route path='/beneficiaries'>
           <BeneficiariesComponent />
+        </Route>
+        <Route path='/identificationdocuments/:id'>
+          <IdentificationDocumentComponent />
+        </Route>
+        <Route path='/households/:id'>
+          <HouseholdComponent />
         </Route>
         <Route path='/settings'>
           <SettingsComponent />
