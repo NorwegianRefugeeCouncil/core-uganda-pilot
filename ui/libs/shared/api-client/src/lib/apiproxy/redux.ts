@@ -56,7 +56,7 @@ export const submit = createAsyncThunk<any,
   async (arg, { getState }): Promise<void> => {
     await new Promise(resolve => {
       setTimeout(() => {
-        resolve();
+        resolve(null);
       }, 300);
     });
   },
