@@ -9,6 +9,7 @@ import (
 type CoreV1Interface interface {
 	CustomResourceDefinitionsGetter
 	FormDefinitionsGetter
+	OperatingScopesGetter
 }
 
 // CoreV1Client is used to interact with features provided by the core.nrc.no group.
@@ -22,6 +23,10 @@ func (c *CoreV1Client) CustomResourceDefinitions() CustomResourceDefinitionInter
 
 func (c *CoreV1Client) FormDefinitions() FormDefinitionInterface {
 	return newFormDefinitions(c)
+}
+
+func (c *CoreV1Client) OperatingScopes() OperatingScopeInterface {
+	return newOperatingScopes(c)
 }
 
 // NewForConfig creates a new CoreV1Client for the given config.

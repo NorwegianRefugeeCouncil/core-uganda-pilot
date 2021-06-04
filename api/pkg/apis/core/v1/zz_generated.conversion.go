@@ -35,6 +35,16 @@ func init() {
 // RegisterConversions adds conversion functions to the given scheme.
 // Public to allow building arbitrary schemes.
 func RegisterConversions(s *runtime.Scheme) error {
+	if err := s.AddGeneratedConversionFunc((*AdditionalBeneficiaryInformation)(nil), (*core.AdditionalBeneficiaryInformation)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_AdditionalBeneficiaryInformation_To_core_AdditionalBeneficiaryInformation(a.(*AdditionalBeneficiaryInformation), b.(*core.AdditionalBeneficiaryInformation), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*core.AdditionalBeneficiaryInformation)(nil), (*AdditionalBeneficiaryInformation)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_AdditionalBeneficiaryInformation_To_v1_AdditionalBeneficiaryInformation(a.(*core.AdditionalBeneficiaryInformation), b.(*AdditionalBeneficiaryInformation), scope)
+	}); err != nil {
+		return err
+	}
 	if err := s.AddGeneratedConversionFunc((*CustomResourceDefinition)(nil), (*core.CustomResourceDefinition)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1_CustomResourceDefinition_To_core_CustomResourceDefinition(a.(*CustomResourceDefinition), b.(*core.CustomResourceDefinition), scope)
 	}); err != nil {
@@ -235,6 +245,36 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
+	if err := s.AddGeneratedConversionFunc((*OperatingScope)(nil), (*core.OperatingScope)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_OperatingScope_To_core_OperatingScope(a.(*OperatingScope), b.(*core.OperatingScope), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*core.OperatingScope)(nil), (*OperatingScope)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_OperatingScope_To_v1_OperatingScope(a.(*core.OperatingScope), b.(*OperatingScope), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*OperatingScopeList)(nil), (*core.OperatingScopeList)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_OperatingScopeList_To_core_OperatingScopeList(a.(*OperatingScopeList), b.(*core.OperatingScopeList), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*core.OperatingScopeList)(nil), (*OperatingScopeList)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_OperatingScopeList_To_v1_OperatingScopeList(a.(*core.OperatingScopeList), b.(*OperatingScopeList), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*OperatingScopeSpec)(nil), (*core.OperatingScopeSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_OperatingScopeSpec_To_core_OperatingScopeSpec(a.(*OperatingScopeSpec), b.(*core.OperatingScopeSpec), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*core.OperatingScopeSpec)(nil), (*OperatingScopeSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_OperatingScopeSpec_To_v1_OperatingScopeSpec(a.(*core.OperatingScopeSpec), b.(*OperatingScopeSpec), scope)
+	}); err != nil {
+		return err
+	}
 	if err := s.AddGeneratedConversionFunc((*TranslatedString)(nil), (*core.TranslatedString)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1_TranslatedString_To_core_TranslatedString(a.(*TranslatedString), b.(*core.TranslatedString), scope)
 	}); err != nil {
@@ -245,7 +285,49 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
+	if err := s.AddGeneratedConversionFunc((*User)(nil), (*core.User)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_User_To_core_User(a.(*User), b.(*core.User), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*core.User)(nil), (*User)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_User_To_v1_User(a.(*core.User), b.(*User), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*UserList)(nil), (*core.UserList)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_UserList_To_core_UserList(a.(*UserList), b.(*core.UserList), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*core.UserList)(nil), (*UserList)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_core_UserList_To_v1_UserList(a.(*core.UserList), b.(*UserList), scope)
+	}); err != nil {
+		return err
+	}
 	return nil
+}
+
+func autoConvert_v1_AdditionalBeneficiaryInformation_To_core_AdditionalBeneficiaryInformation(in *AdditionalBeneficiaryInformation, out *core.AdditionalBeneficiaryInformation, s conversion.Scope) error {
+	out.Key = in.Key
+	out.Type = in.Type
+	return nil
+}
+
+// Convert_v1_AdditionalBeneficiaryInformation_To_core_AdditionalBeneficiaryInformation is an autogenerated conversion function.
+func Convert_v1_AdditionalBeneficiaryInformation_To_core_AdditionalBeneficiaryInformation(in *AdditionalBeneficiaryInformation, out *core.AdditionalBeneficiaryInformation, s conversion.Scope) error {
+	return autoConvert_v1_AdditionalBeneficiaryInformation_To_core_AdditionalBeneficiaryInformation(in, out, s)
+}
+
+func autoConvert_core_AdditionalBeneficiaryInformation_To_v1_AdditionalBeneficiaryInformation(in *core.AdditionalBeneficiaryInformation, out *AdditionalBeneficiaryInformation, s conversion.Scope) error {
+	out.Key = in.Key
+	out.Type = in.Type
+	return nil
+}
+
+// Convert_core_AdditionalBeneficiaryInformation_To_v1_AdditionalBeneficiaryInformation is an autogenerated conversion function.
+func Convert_core_AdditionalBeneficiaryInformation_To_v1_AdditionalBeneficiaryInformation(in *core.AdditionalBeneficiaryInformation, out *AdditionalBeneficiaryInformation, s conversion.Scope) error {
+	return autoConvert_core_AdditionalBeneficiaryInformation_To_v1_AdditionalBeneficiaryInformation(in, out, s)
 }
 
 func autoConvert_v1_CustomResourceDefinition_To_core_CustomResourceDefinition(in *CustomResourceDefinition, out *core.CustomResourceDefinition, s conversion.Scope) error {
@@ -834,6 +916,74 @@ func Convert_core_JSONSchemaPropsOrStringArray_To_v1_JSONSchemaPropsOrStringArra
 	return autoConvert_core_JSONSchemaPropsOrStringArray_To_v1_JSONSchemaPropsOrStringArray(in, out, s)
 }
 
+func autoConvert_v1_OperatingScope_To_core_OperatingScope(in *OperatingScope, out *core.OperatingScope, s conversion.Scope) error {
+	out.ObjectMeta = in.ObjectMeta
+	if err := Convert_v1_OperatingScopeSpec_To_core_OperatingScopeSpec(&in.Spec, &out.Spec, s); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Convert_v1_OperatingScope_To_core_OperatingScope is an autogenerated conversion function.
+func Convert_v1_OperatingScope_To_core_OperatingScope(in *OperatingScope, out *core.OperatingScope, s conversion.Scope) error {
+	return autoConvert_v1_OperatingScope_To_core_OperatingScope(in, out, s)
+}
+
+func autoConvert_core_OperatingScope_To_v1_OperatingScope(in *core.OperatingScope, out *OperatingScope, s conversion.Scope) error {
+	out.ObjectMeta = in.ObjectMeta
+	if err := Convert_core_OperatingScopeSpec_To_v1_OperatingScopeSpec(&in.Spec, &out.Spec, s); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Convert_core_OperatingScope_To_v1_OperatingScope is an autogenerated conversion function.
+func Convert_core_OperatingScope_To_v1_OperatingScope(in *core.OperatingScope, out *OperatingScope, s conversion.Scope) error {
+	return autoConvert_core_OperatingScope_To_v1_OperatingScope(in, out, s)
+}
+
+func autoConvert_v1_OperatingScopeList_To_core_OperatingScopeList(in *OperatingScopeList, out *core.OperatingScopeList, s conversion.Scope) error {
+	out.ListMeta = in.ListMeta
+	out.Items = *(*[]core.OperatingScope)(unsafe.Pointer(&in.Items))
+	return nil
+}
+
+// Convert_v1_OperatingScopeList_To_core_OperatingScopeList is an autogenerated conversion function.
+func Convert_v1_OperatingScopeList_To_core_OperatingScopeList(in *OperatingScopeList, out *core.OperatingScopeList, s conversion.Scope) error {
+	return autoConvert_v1_OperatingScopeList_To_core_OperatingScopeList(in, out, s)
+}
+
+func autoConvert_core_OperatingScopeList_To_v1_OperatingScopeList(in *core.OperatingScopeList, out *OperatingScopeList, s conversion.Scope) error {
+	out.ListMeta = in.ListMeta
+	out.Items = *(*[]OperatingScope)(unsafe.Pointer(&in.Items))
+	return nil
+}
+
+// Convert_core_OperatingScopeList_To_v1_OperatingScopeList is an autogenerated conversion function.
+func Convert_core_OperatingScopeList_To_v1_OperatingScopeList(in *core.OperatingScopeList, out *OperatingScopeList, s conversion.Scope) error {
+	return autoConvert_core_OperatingScopeList_To_v1_OperatingScopeList(in, out, s)
+}
+
+func autoConvert_v1_OperatingScopeSpec_To_core_OperatingScopeSpec(in *OperatingScopeSpec, out *core.OperatingScopeSpec, s conversion.Scope) error {
+	out.AdditionalBeneficiaryInformation = *(*[]core.AdditionalBeneficiaryInformation)(unsafe.Pointer(&in.AdditionalBeneficiaryInformation))
+	return nil
+}
+
+// Convert_v1_OperatingScopeSpec_To_core_OperatingScopeSpec is an autogenerated conversion function.
+func Convert_v1_OperatingScopeSpec_To_core_OperatingScopeSpec(in *OperatingScopeSpec, out *core.OperatingScopeSpec, s conversion.Scope) error {
+	return autoConvert_v1_OperatingScopeSpec_To_core_OperatingScopeSpec(in, out, s)
+}
+
+func autoConvert_core_OperatingScopeSpec_To_v1_OperatingScopeSpec(in *core.OperatingScopeSpec, out *OperatingScopeSpec, s conversion.Scope) error {
+	out.AdditionalBeneficiaryInformation = *(*[]AdditionalBeneficiaryInformation)(unsafe.Pointer(&in.AdditionalBeneficiaryInformation))
+	return nil
+}
+
+// Convert_core_OperatingScopeSpec_To_v1_OperatingScopeSpec is an autogenerated conversion function.
+func Convert_core_OperatingScopeSpec_To_v1_OperatingScopeSpec(in *core.OperatingScopeSpec, out *OperatingScopeSpec, s conversion.Scope) error {
+	return autoConvert_core_OperatingScopeSpec_To_v1_OperatingScopeSpec(in, out, s)
+}
+
 func autoConvert_v1_TranslatedString_To_core_TranslatedString(in *TranslatedString, out *core.TranslatedString, s conversion.Scope) error {
 	out.Locale = in.Locale
 	out.Value = in.Value
@@ -854,4 +1004,48 @@ func autoConvert_core_TranslatedString_To_v1_TranslatedString(in *core.Translate
 // Convert_core_TranslatedString_To_v1_TranslatedString is an autogenerated conversion function.
 func Convert_core_TranslatedString_To_v1_TranslatedString(in *core.TranslatedString, out *TranslatedString, s conversion.Scope) error {
 	return autoConvert_core_TranslatedString_To_v1_TranslatedString(in, out, s)
+}
+
+func autoConvert_v1_User_To_core_User(in *User, out *core.User, s conversion.Scope) error {
+	out.ObjectMeta = in.ObjectMeta
+	out.Attributes = *(*map[string][]string)(unsafe.Pointer(&in.Attributes))
+	return nil
+}
+
+// Convert_v1_User_To_core_User is an autogenerated conversion function.
+func Convert_v1_User_To_core_User(in *User, out *core.User, s conversion.Scope) error {
+	return autoConvert_v1_User_To_core_User(in, out, s)
+}
+
+func autoConvert_core_User_To_v1_User(in *core.User, out *User, s conversion.Scope) error {
+	out.ObjectMeta = in.ObjectMeta
+	out.Attributes = *(*map[string][]string)(unsafe.Pointer(&in.Attributes))
+	return nil
+}
+
+// Convert_core_User_To_v1_User is an autogenerated conversion function.
+func Convert_core_User_To_v1_User(in *core.User, out *User, s conversion.Scope) error {
+	return autoConvert_core_User_To_v1_User(in, out, s)
+}
+
+func autoConvert_v1_UserList_To_core_UserList(in *UserList, out *core.UserList, s conversion.Scope) error {
+	out.ListMeta = in.ListMeta
+	out.Items = *(*[]core.User)(unsafe.Pointer(&in.Items))
+	return nil
+}
+
+// Convert_v1_UserList_To_core_UserList is an autogenerated conversion function.
+func Convert_v1_UserList_To_core_UserList(in *UserList, out *core.UserList, s conversion.Scope) error {
+	return autoConvert_v1_UserList_To_core_UserList(in, out, s)
+}
+
+func autoConvert_core_UserList_To_v1_UserList(in *core.UserList, out *UserList, s conversion.Scope) error {
+	out.ListMeta = in.ListMeta
+	out.Items = *(*[]User)(unsafe.Pointer(&in.Items))
+	return nil
+}
+
+// Convert_core_UserList_To_v1_UserList is an autogenerated conversion function.
+func Convert_core_UserList_To_v1_UserList(in *core.UserList, out *UserList, s conversion.Scope) error {
+	return autoConvert_core_UserList_To_v1_UserList(in, out, s)
 }

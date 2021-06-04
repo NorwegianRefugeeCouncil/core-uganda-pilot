@@ -27,6 +27,10 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 		&FormDefinitionList{},
 		&CustomResourceDefinition{},
 		&CustomResourceDefinitionList{},
+		&OperatingScope{},
+		&OperatingScopeList{},
+		&User{},
+		&UserList{},
 	)
 	metav1.AddToGroupVersion(scheme, SchemeGroupVersion)
 	coremetav1.AddToGroupVersion(scheme, SchemeGroupVersion)

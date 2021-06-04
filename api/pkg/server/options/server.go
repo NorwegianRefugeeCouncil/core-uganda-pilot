@@ -5,7 +5,7 @@ import (
 	"fmt"
 	corev1 "github.com/nrc-no/core/api/pkg/apis/core/v1"
 	discoveryv1 "github.com/nrc-no/core/api/pkg/apis/discovery/v1"
-	"github.com/nrc-no/core/api/pkg/authentication/oidc"
+	"github.com/nrc-no/core/api/pkg/auth/oidc"
 	restclient "github.com/nrc-no/core/api/pkg/client/rest"
 	filters2 "github.com/nrc-no/core/api/pkg/endpoints/filters"
 	"github.com/nrc-no/core/api/pkg/server"
@@ -72,7 +72,9 @@ func (c *Options) WithOidcAuth(handler http.Handler) http.Handler {
 func (c *Options) Config(ctx context.Context) (*server.Config, error) {
 
 	serverConfig := &server.Config{
-		ListenAddress: c.BindAddress,
+		OidcClientID:     c.OidcClientID,
+		OidcClientSecret: c.OidcClientSecret,
+		ListenAddress:    c.BindAddress,
 		BuildHandlerChainFunc: func(apiHandler http.Handler, config *server.Config) http.Handler {
 			handler := filters2.WithCors(apiHandler)
 			handler = filters2.WithRequestInfo(handler)

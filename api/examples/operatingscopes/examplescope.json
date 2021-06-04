@@ -1,0 +1,19 @@
+{
+  "kind": "OperatingScope",
+  "apiGroup": "core.nrc.no/v1",
+  "metadata": {
+    "name": "examplescope"
+  },
+  "spec": {
+    "additionalBeneficiaryInformation": [
+      {
+        "key": "test1",
+        "type": "String"
+      },
+      {
+        "key": "test2",
+        "type": "String"
+      }
+    ]
+  }
+}

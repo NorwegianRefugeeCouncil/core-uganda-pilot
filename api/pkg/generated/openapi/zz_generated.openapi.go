@@ -31,6 +31,7 @@ import (
 
 func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenAPIDefinition {
 	return map[string]common.OpenAPIDefinition{
+		"github.com/nrc-no/core/api/pkg/apis/core/v1.AdditionalBeneficiaryInformation":   schema_pkg_apis_core_v1_AdditionalBeneficiaryInformation(ref),
 		"github.com/nrc-no/core/api/pkg/apis/core/v1.CustomResourceDefinition":           schema_pkg_apis_core_v1_CustomResourceDefinition(ref),
 		"github.com/nrc-no/core/api/pkg/apis/core/v1.CustomResourceDefinitionList":       schema_pkg_apis_core_v1_CustomResourceDefinitionList(ref),
 		"github.com/nrc-no/core/api/pkg/apis/core/v1.CustomResourceDefinitionNames":      schema_pkg_apis_core_v1_CustomResourceDefinitionNames(ref),
@@ -51,7 +52,12 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaPropsOrArray":             schema_pkg_apis_core_v1_JSONSchemaPropsOrArray(ref),
 		"github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaPropsOrBool":              schema_pkg_apis_core_v1_JSONSchemaPropsOrBool(ref),
 		"github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaPropsOrStringArray":       schema_pkg_apis_core_v1_JSONSchemaPropsOrStringArray(ref),
+		"github.com/nrc-no/core/api/pkg/apis/core/v1.OperatingScope":                     schema_pkg_apis_core_v1_OperatingScope(ref),
+		"github.com/nrc-no/core/api/pkg/apis/core/v1.OperatingScopeList":                 schema_pkg_apis_core_v1_OperatingScopeList(ref),
+		"github.com/nrc-no/core/api/pkg/apis/core/v1.OperatingScopeSpec":                 schema_pkg_apis_core_v1_OperatingScopeSpec(ref),
 		"github.com/nrc-no/core/api/pkg/apis/core/v1.TranslatedString":                   schema_pkg_apis_core_v1_TranslatedString(ref),
+		"github.com/nrc-no/core/api/pkg/apis/core/v1.User":                               schema_pkg_apis_core_v1_User(ref),
+		"github.com/nrc-no/core/api/pkg/apis/core/v1.UserList":                           schema_pkg_apis_core_v1_UserList(ref),
 		"github.com/nrc-no/core/api/pkg/apis/discovery/v1.APIGroup":                      schema_pkg_apis_discovery_v1_APIGroup(ref),
 		"github.com/nrc-no/core/api/pkg/apis/discovery/v1.APIGroupList":                  schema_pkg_apis_discovery_v1_APIGroupList(ref),
 		"github.com/nrc-no/core/api/pkg/apis/discovery/v1.APIResource":                   schema_pkg_apis_discovery_v1_APIResource(ref),
@@ -114,6 +120,31 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"k8s.io/apimachinery/pkg/runtime.TypeMeta":                                       schema_k8sio_apimachinery_pkg_runtime_TypeMeta(ref),
 		"k8s.io/apimachinery/pkg/runtime.Unknown":                                        schema_k8sio_apimachinery_pkg_runtime_Unknown(ref),
 		"k8s.io/apimachinery/pkg/version.Info":                                           schema_k8sio_apimachinery_pkg_version_Info(ref),
+	}
+}
+
+func schema_pkg_apis_core_v1_AdditionalBeneficiaryInformation(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "AdditionalBeneficiaryInformation represent an OIDC claim",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"key": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+					"type": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+				},
+			},
+		},
 	}
 }
 
@@ -1158,6 +1189,123 @@ func schema_pkg_apis_core_v1_JSONSchemaPropsOrStringArray(ref common.ReferenceCa
 	}
 }
 
+func schema_pkg_apis_core_v1_OperatingScope(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "OperatingScope represent the operating scope for a country, region or area",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"kind": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"apiVersion": {
+						SchemaProps: spec.SchemaProps{
+							Description: "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"metadata": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"),
+						},
+					},
+					"spec": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.OperatingScopeSpec"),
+						},
+					},
+				},
+			},
+		},
+		Dependencies: []string{
+			"github.com/nrc-no/core/api/pkg/apis/core/v1.OperatingScopeSpec", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
+	}
+}
+
+func schema_pkg_apis_core_v1_OperatingScopeList(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "OperatingScopeList represents a list of OrganizationOperatingScope",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"kind": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"apiVersion": {
+						SchemaProps: spec.SchemaProps{
+							Description: "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"metadata": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta"),
+						},
+					},
+					"items": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Items represents the OperatingScope items contained in this list",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: map[string]interface{}{},
+										Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.OperatingScope"),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		Dependencies: []string{
+			"github.com/nrc-no/core/api/pkg/apis/core/v1.OperatingScope", "k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta"},
+	}
+}
+
+func schema_pkg_apis_core_v1_OperatingScopeSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"additionalBeneficiaryInformation": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: map[string]interface{}{},
+										Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.AdditionalBeneficiaryInformation"),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		Dependencies: []string{
+			"github.com/nrc-no/core/api/pkg/apis/core/v1.AdditionalBeneficiaryInformation"},
+	}
+}
+
 func schema_pkg_apis_core_v1_TranslatedString(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
@@ -1182,6 +1330,110 @@ func schema_pkg_apis_core_v1_TranslatedString(ref common.ReferenceCallback) comm
 				},
 			},
 		},
+	}
+}
+
+func schema_pkg_apis_core_v1_User(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"kind": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"apiVersion": {
+						SchemaProps: spec.SchemaProps{
+							Description: "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"metadata": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"),
+						},
+					},
+					"attributes": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"object"},
+							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Type: []string{"array"},
+										Items: &spec.SchemaOrArray{
+											Schema: &spec.Schema{
+												SchemaProps: spec.SchemaProps{
+													Default: "",
+													Type:    []string{"string"},
+													Format:  "",
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		Dependencies: []string{
+			"k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
+	}
+}
+
+func schema_pkg_apis_core_v1_UserList(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"kind": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"apiVersion": {
+						SchemaProps: spec.SchemaProps{
+							Description: "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"metadata": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta"),
+						},
+					},
+					"items": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Items represents the User items contained in this list",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: map[string]interface{}{},
+										Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.User"),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		Dependencies: []string{
+			"github.com/nrc-no/core/api/pkg/apis/core/v1.User", "k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta"},
 	}
 }
 

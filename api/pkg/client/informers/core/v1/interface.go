@@ -8,6 +8,7 @@ type Interface interface {
 	CustomResourceDefinitions() CustomResourceDefinitionInformer
 	// FormDefinitions returns a FormDefinitionInformer.
 	FormDefinitions() FormDefinitionInformer
+	OperatingScopes() OperatingScopeInformer
 }
 
 type version struct {
@@ -29,4 +30,9 @@ func (v *version) CustomResourceDefinitions() CustomResourceDefinitionInformer {
 // FormDefinitions returns a FormDefinitionInformer.
 func (v *version) FormDefinitions() FormDefinitionInformer {
 	return &formDefinitionInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
+}
+
+// OperatingScopes returns a FormDefinitionInformer.
+func (v *version) OperatingScopes() OperatingScopeInformer {
+	return &operatingScopeInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
 }

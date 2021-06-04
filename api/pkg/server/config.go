@@ -8,15 +8,19 @@ import (
 	"github.com/nrc-no/core/api/pkg/apis/discovery"
 	discoveryinstall "github.com/nrc-no/core/api/pkg/apis/discovery/install"
 	discoveryv1 "github.com/nrc-no/core/api/pkg/apis/discovery/v1"
+	"github.com/nrc-no/core/api/pkg/auth/keycloak"
 	"github.com/nrc-no/core/api/pkg/client/informers"
 	restclient "github.com/nrc-no/core/api/pkg/client/rest"
 	"github.com/nrc-no/core/api/pkg/client/typed"
 	"github.com/nrc-no/core/api/pkg/controllers/customresource"
 	formdefinitions3 "github.com/nrc-no/core/api/pkg/controllers/formdefinitions"
+	"github.com/nrc-no/core/api/pkg/controllers/operatingscope"
 	"github.com/nrc-no/core/api/pkg/controllers/registration"
 	discoveryhandlers "github.com/nrc-no/core/api/pkg/endpoints/discovery"
-	customresourcedefinition2 "github.com/nrc-no/core/api/pkg/registry/core/customresourcedefinition"
-	formdefinitions2 "github.com/nrc-no/core/api/pkg/registry/core/formdefinitions"
+	customresourcedefinitionstorage "github.com/nrc-no/core/api/pkg/registry/core/customresourcedefinition"
+	formdefinitionsstorage "github.com/nrc-no/core/api/pkg/registry/core/formdefinitions"
+	operatingscopestorage "github.com/nrc-no/core/api/pkg/registry/core/operatingscope"
+	"github.com/nrc-no/core/api/pkg/registry/core/users"
 	"github.com/nrc-no/core/api/pkg/registry/discovery/apiservice"
 	"github.com/nrc-no/core/api/pkg/registry/generic"
 	"github.com/nrc-no/core/api/pkg/registry/rest"
@@ -51,6 +55,8 @@ type Config struct {
 	CRDRestOptionsGetter  generic.RESTOptionsGetter
 	LoopbackClientConfig  *restclient.Config
 	Listener              net.Listener
+	OidcClientID          string
+	OidcClientSecret      string
 }
 
 func (c *Config) Complete() *CompletedConfig {
@@ -98,9 +104,14 @@ func (c *CompletedConfig) New(ctx context.Context) (*Server, error) {
 		listedPathProvider:   apiServerHandler,
 	}
 
+	keycloakClient, err := keycloak.NewKeycloakClient("http://localhost:8080", c.OidcClientID, c.OidcClientSecret)
+	if err != nil {
+		return nil, err
+	}
+
 	// Installs the known resource handlers in the API (in the go-restful container)
 	// These include FormDefinitions and CustomResourceDefinitions
-	c.installApiGroupsOrDie(apiServerHandler)
+	c.installApiGroupsOrDie(apiServerHandler, keycloakClient, "Core")
 
 	// Create the core.nrc.no/v1 client that will be used to create
 	// the controllers/informers. It's using the LoopbackClientConfig
@@ -130,6 +141,21 @@ func (c *CompletedConfig) New(ctx context.Context) (*Server, error) {
 
 	// Start the CRD and APIService controllers
 	c.startAutoRegistrationControllers(server, crdRegistrationController, autoRegisterController)
+
+	operatingScopeController := operatingscope.NewOperatingScopeController(
+		server.informers.Core().V1().OperatingScopes(),
+		keycloakClient,
+		"Core")
+
+	server.AddPostStartHookOrDie("operatingscope-controllers", func(context PostStartHookContext) error {
+		syncedCh := make(chan struct{})
+		operatingScopeController.Run(context.StopCh, syncedCh)
+		select {
+		case <-context.StopCh:
+		case <-syncedCh:
+		}
+		return nil
+	})
 
 	apisHandler := discoveryhandlers.NewApisHandler(
 		Codecs,
@@ -287,9 +313,14 @@ func (c *CompletedConfig) installCustomResourcesOrDie(server *Server, apiServerH
 }
 
 // installApiGroups installs the known API groups in the HTTP handler
-func (c *CompletedConfig) installApiGroupsOrDie(apiServerHandler *APIServerHandler) {
+func (c *CompletedConfig) installApiGroupsOrDie(
+	apiServerHandler *APIServerHandler,
+	keycloakClient *keycloak.KeycloakClient,
+	realmName string,
+) {
+
 	var apiGroups []*APIGroupInfo
-	coreApiGroup, err := createCoreAPIGroupInfo(c.RESTOptionsGetter)
+	coreApiGroup, err := createCoreAPIGroupInfo(c.RESTOptionsGetter, keycloakClient, realmName)
 	if err != nil {
 		panic(err)
 	}
@@ -322,23 +353,37 @@ func createDiscoveryAPIGroupInfo(restOptionsGetter generic.RESTOptionsGetter) (A
 }
 
 // createCoreAPIGroupInfo creates the APIGroupInfo for the core API
-func createCoreAPIGroupInfo(restOptionsGetter generic.RESTOptionsGetter) (APIGroupInfo, error) {
+func createCoreAPIGroupInfo(
+	restOptionsGetter generic.RESTOptionsGetter,
+	keycloakClient *keycloak.KeycloakClient,
+	realmName string,
+) (APIGroupInfo, error) {
 	coreApiGroup := NewDefaultAPIGroup(core.GroupName, Scheme, metav1.ParameterCodec, Codecs)
 	storage := map[string]rest.Storage{}
 
 	// Storage for FormDefinitions
-	formDefinitionsStorage, err := formdefinitions2.NewREST(Scheme, restOptionsGetter)
+	formDefinitionsStorage, err := formdefinitionsstorage.NewREST(Scheme, restOptionsGetter)
 	if err != nil {
 		return APIGroupInfo{}, err
 	}
 	storage["formdefinitions"] = formDefinitionsStorage
 
 	// Storage for CustomResourceDefinitions
-	customResourceDefinitionsStorage, err := customresourcedefinition2.NewREST(Scheme, restOptionsGetter)
+	customResourceDefinitionsStorage, err := customresourcedefinitionstorage.NewREST(Scheme, restOptionsGetter)
 	if err != nil {
 		return APIGroupInfo{}, err
 	}
 	storage["customresourcedefinitions"] = customResourceDefinitionsStorage
+
+	// Storage for OperatingScopes
+	operatingScopeStorage, err := operatingscopestorage.NewREST(Scheme, restOptionsGetter)
+	if err != nil {
+		return APIGroupInfo{}, err
+	}
+	storage["operatingscopes"] = operatingScopeStorage
+
+	userStorage := users.NewREST(keycloakClient, realmName)
+	storage["users"] = userStorage
 
 	// register the storage for the "core v1" version
 	coreApiGroup.VersionedResourcesStorageMap[corev1.SchemeGroupVersion.Version] = storage

@@ -10,6 +10,7 @@ import { BeneficiariesComponent } from '../components/beneficiaries/beneficiarie
 import { SettingsComponent } from '../components/settings/settings.component';
 import { IdentificationDocumentComponent } from '../components/identificationdocument/identificationdocument.component';
 import { HouseholdComponent } from '../components/household/household.component';
+import { ServiceCatalogComponent } from '../components/servicecatalog/service-catalog.component';
 
 export function App() {
   return <>
@@ -39,6 +40,9 @@ export function App() {
         </Route>
         <Route path='/settings'>
           <SettingsComponent />
+        </Route>
+        <Route path='/servicecatalog'>
+          <ServiceCatalogComponent />
         </Route>
       </Switch>
     </div>

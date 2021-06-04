@@ -245,3 +245,51 @@ type CustomResourceDefinitionVersion struct {
 type CustomResourceDefinitionValidation struct {
 	OpenAPIV3Schema JSONSchemaProps `json:"openAPIV3Schema" protobuf:"bytes,1,opt,name=openAPIV3Schema"`
 }
+
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// OperatingScope represent the operating scope for
+// a country, region or area
+type OperatingScope struct {
+	metav1.TypeMeta   `json:",inline"`
+	metav1.ObjectMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
+	Spec              OperatingScopeSpec `json:"spec,omitempty" protobuf:"bytes,2,opt,name=spec"`
+}
+
+type OperatingScopeSpec struct {
+	AdditionalBeneficiaryInformation []AdditionalBeneficiaryInformation `json:"additionalBeneficiaryInformation,omitempty" protobuf:"bytes,1,opt,name=metadata"`
+}
+
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// OperatingScopeList represents a list of OrganizationOperatingScope
+type OperatingScopeList struct {
+	metav1.TypeMeta `json:",inline"`
+	metav1.ListMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
+
+	// Items represents the OperatingScope items contained in this list
+	Items []OperatingScope `json:"items,omitempty" protobuf:"bytes,2,opt,name=items"`
+}
+
+// AdditionalBeneficiaryInformation represent an OIDC claim
+type AdditionalBeneficiaryInformation struct {
+	Key  string `json:"key,omitempty" protobuf:"bytes,1,opt,name=key"`
+	Type string `json:"type,omitempty" protobuf:"bytes,2,opt,name=type"`
+}
+
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+type User struct {
+	metav1.TypeMeta   `json:",inline"`
+	metav1.ObjectMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
+	Attributes        map[string][]string `json:"attributes,omitempty" protobuf:"bytes,2,opt,name=attributes"`
+}
+
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+type UserList struct {
+	metav1.TypeMeta `json:",inline"`
+	metav1.ListMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
+	// Items represents the User items contained in this list
+	Items []User `json:"items,omitempty" protobuf:"bytes,2,opt,name=items"`
+}

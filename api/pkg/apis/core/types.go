@@ -158,3 +158,51 @@ type CustomResourceDefinitionVersion struct {
 type CustomResourceDefinitionValidation struct {
 	OpenAPIV3Schema JSONSchemaProps
 }
+
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// OperatingScope represent the operating scope for
+// a country, region or area
+type OperatingScope struct {
+	metav1.TypeMeta
+	metav1.ObjectMeta
+	Spec OperatingScopeSpec
+}
+
+type OperatingScopeSpec struct {
+	AdditionalBeneficiaryInformation []AdditionalBeneficiaryInformation
+}
+
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// OperatingScopeList represents a list of OrganizationOperatingScope
+type OperatingScopeList struct {
+	metav1.TypeMeta
+	metav1.ListMeta
+
+	// Items represents the OrganizationOperatingScope items contained in this list
+	Items []OperatingScope
+}
+
+// AdditionalBeneficiaryInformation represent an OIDC claim
+type AdditionalBeneficiaryInformation struct {
+	Key  string
+	Type string
+}
+
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+type User struct {
+	metav1.TypeMeta
+	metav1.ObjectMeta
+	Attributes map[string][]string
+}
+
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+type UserList struct {
+	metav1.TypeMeta
+	metav1.ListMeta
+	// Items represents the User items contained in this list
+	Items []User
+}
