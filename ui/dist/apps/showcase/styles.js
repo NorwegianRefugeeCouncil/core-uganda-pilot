@@ -1,9 +1,9 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["styles"],{
 
 /***/ "../../../node_modules/@nrwl/web/src/utils/third-party/cli-files/plugins/raw-css-loader.js!../../../node_modules/postcss-loader/dist/cjs.js?!./styles.css":
-/*!*******************************************************************************************************************************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/src/utils/third-party/cli-files/plugins/raw-css-loader.js!/home/nilueps/repos/nrc/core/ui/node_modules/postcss-loader/dist/cjs.js??ref--5-oneOf-8-2!./styles.css ***!
-  \*******************************************************************************************************************************************************************************************************************************/
+/*!*******************************************************************************************************************************************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/src/utils/third-party/cli-files/plugins/raw-css-loader.js!/home/anon/go/src/github.com/nrc-no/core/ui/node_modules/postcss-loader/dist/cjs.js??ref--5-oneOf-8-2!./styles.css ***!
+  \*******************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -12,9 +12,9 @@ module.exports = [[module.i, "@charset \"UTF-8\";\n@import url(\"https://cdn.jsd
 /***/ }),
 
 /***/ "../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js":
-/*!**********************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js ***!
-  \**********************************************************************************************************/
+/*!**********************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js ***!
+  \**********************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -338,7 +338,7 @@ if (content.locals) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/apps/showcase/src/styles.css */"./styles.css");
+module.exports = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/apps/showcase/src/styles.css */"./styles.css");
 
 
 /***/ })

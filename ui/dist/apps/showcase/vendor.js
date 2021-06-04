@@ -1,9 +1,9 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["vendor"],{
 
 /***/ "../../../node_modules/@emotion/cache/dist/emotion-cache.browser.esm.js":
-/*!*****************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@emotion/cache/dist/emotion-cache.browser.esm.js ***!
-  \*****************************************************************************************************/
+/*!*****************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@emotion/cache/dist/emotion-cache.browser.esm.js ***!
+  \*****************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -323,9 +323,9 @@ var createCache = function createCache(options) {
 /***/ }),
 
 /***/ "../../../node_modules/@emotion/hash/dist/hash.browser.esm.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@emotion/hash/dist/hash.browser.esm.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@emotion/hash/dist/hash.browser.esm.js ***!
+  \*******************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -391,9 +391,9 @@ function murmur2(str) {
 /***/ }),
 
 /***/ "../../../node_modules/@emotion/memoize/dist/emotion-memoize.browser.esm.js":
-/*!*********************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@emotion/memoize/dist/emotion-memoize.browser.esm.js ***!
-  \*********************************************************************************************************/
+/*!*********************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@emotion/memoize/dist/emotion-memoize.browser.esm.js ***!
+  \*********************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -413,9 +413,9 @@ function memoize(fn) {
 /***/ }),
 
 /***/ "../../../node_modules/@emotion/react/dist/emotion-element-a8309070.browser.esm.js":
-/*!****************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@emotion/react/dist/emotion-element-a8309070.browser.esm.js ***!
-  \****************************************************************************************************************/
+/*!****************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@emotion/react/dist/emotion-element-a8309070.browser.esm.js ***!
+  \****************************************************************************************************************************/
 /*! exports provided: C, E, T, a, b, c, h, u, w */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -624,9 +624,9 @@ if (true) {
 /***/ }),
 
 /***/ "../../../node_modules/@emotion/react/dist/emotion-react.browser.esm.js":
-/*!*****************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@emotion/react/dist/emotion-react.browser.esm.js ***!
-  \*****************************************************************************************************/
+/*!*****************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@emotion/react/dist/emotion-react.browser.esm.js ***!
+  \*****************************************************************************************************************/
 /*! exports provided: CacheProvider, ThemeContext, ThemeProvider, useTheme, withEmotionCache, withTheme, ClassNames, Global, createElement, css, jsx, keyframes */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1008,9 +1008,9 @@ if (true) {
 /***/ }),
 
 /***/ "../../../node_modules/@emotion/react/isolated-hoist-non-react-statics-do-not-use-this-in-your-code/dist/emotion-react-isolated-hoist-non-react-statics-do-not-use-this-in-your-code.browser.esm.js":
-/*!*********************************************************************************************************************************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@emotion/react/isolated-hoist-non-react-statics-do-not-use-this-in-your-code/dist/emotion-react-isolated-hoist-non-react-statics-do-not-use-this-in-your-code.browser.esm.js ***!
-  \*********************************************************************************************************************************************************************************************************************************/
+/*!*********************************************************************************************************************************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@emotion/react/isolated-hoist-non-react-statics-do-not-use-this-in-your-code/dist/emotion-react-isolated-hoist-non-react-statics-do-not-use-this-in-your-code.browser.esm.js ***!
+  \*********************************************************************************************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1034,9 +1034,9 @@ var hoistNonReactStatics = (function (targetComponent, sourceComponent) {
 /***/ }),
 
 /***/ "../../../node_modules/@emotion/serialize/dist/emotion-serialize.browser.esm.js":
-/*!*************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@emotion/serialize/dist/emotion-serialize.browser.esm.js ***!
-  \*************************************************************************************************************/
+/*!*************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@emotion/serialize/dist/emotion-serialize.browser.esm.js ***!
+  \*************************************************************************************************************************/
 /*! exports provided: serializeStyles */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1365,9 +1365,9 @@ var serializeStyles = function serializeStyles(args, registered, mergedProps) {
 /***/ }),
 
 /***/ "../../../node_modules/@emotion/sheet/dist/emotion-sheet.browser.esm.js":
-/*!*****************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@emotion/sheet/dist/emotion-sheet.browser.esm.js ***!
-  \*****************************************************************************************************/
+/*!*****************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@emotion/sheet/dist/emotion-sheet.browser.esm.js ***!
+  \*****************************************************************************************************************/
 /*! exports provided: StyleSheet */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1525,9 +1525,9 @@ var StyleSheet = /*#__PURE__*/function () {
 /***/ }),
 
 /***/ "../../../node_modules/@emotion/unitless/dist/unitless.browser.esm.js":
-/*!***************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@emotion/unitless/dist/unitless.browser.esm.js ***!
-  \***************************************************************************************************/
+/*!***************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@emotion/unitless/dist/unitless.browser.esm.js ***!
+  \***************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1588,9 +1588,9 @@ var unitlessKeys = {
 /***/ }),
 
 /***/ "../../../node_modules/@emotion/utils/dist/emotion-utils.browser.esm.js":
-/*!*****************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@emotion/utils/dist/emotion-utils.browser.esm.js ***!
-  \*****************************************************************************************************/
+/*!*****************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@emotion/utils/dist/emotion-utils.browser.esm.js ***!
+  \*****************************************************************************************************************/
 /*! exports provided: getRegisteredStyles, insertStyles */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1643,9 +1643,9 @@ var insertStyles = function insertStyles(cache, serialized, isStringTag) {
 /***/ }),
 
 /***/ "../../../node_modules/@emotion/weak-memoize/dist/weak-memoize.browser.esm.js":
-/*!***********************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@emotion/weak-memoize/dist/weak-memoize.browser.esm.js ***!
-  \***********************************************************************************************************/
+/*!***********************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@emotion/weak-memoize/dist/weak-memoize.browser.esm.js ***!
+  \***********************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1672,9 +1672,9 @@ var weakMemoize = function weakMemoize(func) {
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/arrayLikeToArray.js":
-/*!**********************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/arrayLikeToArray.js ***!
-  \**********************************************************************************************************************/
+/*!**********************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/arrayLikeToArray.js ***!
+  \**********************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -1693,9 +1693,9 @@ module.exports = _arrayLikeToArray;
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/arrayWithoutHoles.js":
-/*!***********************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/arrayWithoutHoles.js ***!
-  \***********************************************************************************************************************/
+/*!***********************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/arrayWithoutHoles.js ***!
+  \***********************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1710,9 +1710,9 @@ module.exports = _arrayWithoutHoles;
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/defineProperty.js":
-/*!********************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/defineProperty.js ***!
-  \********************************************************************************************************************/
+/*!********************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/defineProperty.js ***!
+  \********************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -1736,9 +1736,9 @@ module.exports = _defineProperty;
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/arrayLikeToArray.js":
-/*!**************************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/arrayLikeToArray.js ***!
-  \**************************************************************************************************************************/
+/*!**************************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/arrayLikeToArray.js ***!
+  \**************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1758,9 +1758,9 @@ function _arrayLikeToArray(arr, len) {
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/arrayWithoutHoles.js":
-/*!***************************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/arrayWithoutHoles.js ***!
-  \***************************************************************************************************************************/
+/*!***************************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/arrayWithoutHoles.js ***!
+  \***************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1776,9 +1776,9 @@ function _arrayWithoutHoles(arr) {
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/classCallCheck.js":
-/*!************************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/classCallCheck.js ***!
-  \************************************************************************************************************************/
+/*!************************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/classCallCheck.js ***!
+  \************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1794,9 +1794,9 @@ function _classCallCheck(instance, Constructor) {
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/createClass.js":
-/*!*********************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/createClass.js ***!
-  \*********************************************************************************************************************/
+/*!*********************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/createClass.js ***!
+  \*********************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1822,9 +1822,9 @@ function _createClass(Constructor, protoProps, staticProps) {
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js":
-/*!************************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js ***!
-  \************************************************************************************************************************/
+/*!************************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js ***!
+  \************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1849,9 +1849,9 @@ function _defineProperty(obj, key, value) {
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/extends.js":
-/*!*****************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/extends.js ***!
-  \*****************************************************************************************************************/
+/*!*****************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/extends.js ***!
+  \*****************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1879,9 +1879,9 @@ function _extends() {
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/inherits.js":
-/*!******************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/inherits.js ***!
-  \******************************************************************************************************************/
+/*!******************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/inherits.js ***!
+  \******************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1908,9 +1908,9 @@ function _inherits(subClass, superClass) {
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/iterableToArray.js":
-/*!*************************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/iterableToArray.js ***!
-  \*************************************************************************************************************************/
+/*!*************************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/iterableToArray.js ***!
+  \*************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1924,9 +1924,9 @@ function _iterableToArray(iter) {
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/nonIterableSpread.js":
-/*!***************************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/nonIterableSpread.js ***!
-  \***************************************************************************************************************************/
+/*!***************************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/nonIterableSpread.js ***!
+  \***************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1940,9 +1940,9 @@ function _nonIterableSpread() {
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js":
-/*!*********************************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js ***!
-  \*********************************************************************************************************************************/
+/*!*********************************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js ***!
+  \*********************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1973,9 +1973,9 @@ function _objectWithoutProperties(source, excluded) {
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js":
-/*!**************************************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js ***!
-  \**************************************************************************************************************************************/
+/*!**************************************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js ***!
+  \**************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2000,9 +2000,9 @@ function _objectWithoutPropertiesLoose(source, excluded) {
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/setPrototypeOf.js":
-/*!************************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/setPrototypeOf.js ***!
-  \************************************************************************************************************************/
+/*!************************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/setPrototypeOf.js ***!
+  \************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2021,9 +2021,9 @@ function _setPrototypeOf(o, p) {
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/taggedTemplateLiteral.js":
-/*!*******************************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/taggedTemplateLiteral.js ***!
-  \*******************************************************************************************************************************/
+/*!*******************************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/taggedTemplateLiteral.js ***!
+  \*******************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2045,9 +2045,9 @@ function _taggedTemplateLiteral(strings, raw) {
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/toConsumableArray.js":
-/*!***************************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/toConsumableArray.js ***!
-  \***************************************************************************************************************************/
+/*!***************************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/toConsumableArray.js ***!
+  \***************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2069,9 +2069,9 @@ function _toConsumableArray(arr) {
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/typeof.js":
-/*!****************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/typeof.js ***!
-  \****************************************************************************************************************/
+/*!****************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/typeof.js ***!
+  \****************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2097,9 +2097,9 @@ function _typeof(obj) {
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/unsupportedIterableToArray.js":
-/*!************************************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/unsupportedIterableToArray.js ***!
-  \************************************************************************************************************************************/
+/*!************************************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/unsupportedIterableToArray.js ***!
+  \************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2120,9 +2120,9 @@ function _unsupportedIterableToArray(o, minLen) {
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/extends.js":
-/*!*************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/extends.js ***!
-  \*************************************************************************************************************/
+/*!*************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/extends.js ***!
+  \*************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -2149,9 +2149,9 @@ module.exports = _extends;
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/iterableToArray.js":
-/*!*********************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/iterableToArray.js ***!
-  \*********************************************************************************************************************/
+/*!*********************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/iterableToArray.js ***!
+  \*********************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -2164,9 +2164,9 @@ module.exports = _iterableToArray;
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/nonIterableSpread.js":
-/*!***********************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/nonIterableSpread.js ***!
-  \***********************************************************************************************************************/
+/*!***********************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/nonIterableSpread.js ***!
+  \***********************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -2179,9 +2179,9 @@ module.exports = _nonIterableSpread;
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/objectWithoutProperties.js":
-/*!*****************************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/objectWithoutProperties.js ***!
-  \*****************************************************************************************************************************/
+/*!*****************************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/objectWithoutProperties.js ***!
+  \*****************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2211,9 +2211,9 @@ module.exports = _objectWithoutProperties;
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/objectWithoutPropertiesLoose.js":
-/*!**********************************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/objectWithoutPropertiesLoose.js ***!
-  \**********************************************************************************************************************************/
+/*!**********************************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/objectWithoutPropertiesLoose.js ***!
+  \**********************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -2237,9 +2237,9 @@ module.exports = _objectWithoutPropertiesLoose;
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/taggedTemplateLiteral.js":
-/*!***************************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/taggedTemplateLiteral.js ***!
-  \***************************************************************************************************************************/
+/*!***************************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/taggedTemplateLiteral.js ***!
+  \***************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -2260,9 +2260,9 @@ module.exports = _taggedTemplateLiteral;
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/toConsumableArray.js":
-/*!***********************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/toConsumableArray.js ***!
-  \***********************************************************************************************************************/
+/*!***********************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/toConsumableArray.js ***!
+  \***********************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2283,9 +2283,9 @@ module.exports = _toConsumableArray;
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/typeof.js":
-/*!************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/typeof.js ***!
-  \************************************************************************************************************/
+/*!************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/typeof.js ***!
+  \************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -2310,9 +2310,9 @@ module.exports = _typeof;
 /***/ }),
 
 /***/ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/unsupportedIterableToArray.js":
-/*!********************************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/unsupportedIterableToArray.js ***!
-  \********************************************************************************************************************************/
+/*!********************************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/unsupportedIterableToArray.js ***!
+  \********************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2332,9 +2332,9 @@ module.exports = _unsupportedIterableToArray;
 /***/ }),
 
 /***/ "../../../node_modules/@restart/hooks/esm/index.js":
-/*!********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@restart/hooks/esm/index.js ***!
-  \********************************************************************************/
+/*!********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@restart/hooks/esm/index.js ***!
+  \********************************************************************************************/
 /*! exports provided: useCallbackRef, useCommittedRef, useEventCallback, useEventListener, useGlobalListener, useInterval, useRafInterval, useMergeState, useMergeStateFromProps, useMounted, usePrevious, useImage, useResizeObserver */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2397,9 +2397,9 @@ __webpack_require__.r(__webpack_exports__);
 /***/ }),
 
 /***/ "../../../node_modules/@restart/hooks/esm/useCallbackRef.js":
-/*!*****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@restart/hooks/esm/useCallbackRef.js ***!
-  \*****************************************************************************************/
+/*!*****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@restart/hooks/esm/useCallbackRef.js ***!
+  \*****************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2441,9 +2441,9 @@ function useCallbackRef() {
 /***/ }),
 
 /***/ "../../../node_modules/@restart/hooks/esm/useCommittedRef.js":
-/*!******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@restart/hooks/esm/useCommittedRef.js ***!
-  \******************************************************************************************/
+/*!******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@restart/hooks/esm/useCommittedRef.js ***!
+  \******************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2475,9 +2475,9 @@ function useCommittedRef(value) {
 /***/ }),
 
 /***/ "../../../node_modules/@restart/hooks/esm/useEventCallback.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@restart/hooks/esm/useEventCallback.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@restart/hooks/esm/useEventCallback.js ***!
+  \*******************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2499,9 +2499,9 @@ function useEventCallback(fn) {
 /***/ }),
 
 /***/ "../../../node_modules/@restart/hooks/esm/useEventListener.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@restart/hooks/esm/useEventListener.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@restart/hooks/esm/useEventListener.js ***!
+  \*******************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2541,9 +2541,9 @@ function useEventListener(eventTarget, event, listener, capture) {
 /***/ }),
 
 /***/ "../../../node_modules/@restart/hooks/esm/useGlobalListener.js":
-/*!********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@restart/hooks/esm/useGlobalListener.js ***!
-  \********************************************************************************************/
+/*!********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@restart/hooks/esm/useGlobalListener.js ***!
+  \********************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2584,9 +2584,9 @@ function useGlobalListener(event, handler, capture) {
 /***/ }),
 
 /***/ "../../../node_modules/@restart/hooks/esm/useImage.js":
-/*!***********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@restart/hooks/esm/useImage.js ***!
-  \***********************************************************************************/
+/*!***********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@restart/hooks/esm/useImage.js ***!
+  \***********************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2677,9 +2677,9 @@ function useImage(imageOrUrl, crossOrigin) {
 /***/ }),
 
 /***/ "../../../node_modules/@restart/hooks/esm/useInterval.js":
-/*!**************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@restart/hooks/esm/useInterval.js ***!
-  \**************************************************************************************/
+/*!**************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@restart/hooks/esm/useInterval.js ***!
+  \**************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2750,9 +2750,9 @@ function useInterval(fn, ms, paused, runImmediately) {
 /***/ }),
 
 /***/ "../../../node_modules/@restart/hooks/esm/useIsomorphicEffect.js":
-/*!**********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@restart/hooks/esm/useIsomorphicEffect.js ***!
-  \**********************************************************************************************/
+/*!**********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@restart/hooks/esm/useIsomorphicEffect.js ***!
+  \**********************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2779,9 +2779,9 @@ var isDOM = typeof document !== 'undefined';
 /***/ }),
 
 /***/ "../../../node_modules/@restart/hooks/esm/useMergeState.js":
-/*!****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@restart/hooks/esm/useMergeState.js ***!
-  \****************************************************************************************/
+/*!****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@restart/hooks/esm/useMergeState.js ***!
+  \****************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2834,9 +2834,9 @@ function useMergeState(initialState) {
 /***/ }),
 
 /***/ "../../../node_modules/@restart/hooks/esm/useMergeStateFromProps.js":
-/*!*************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@restart/hooks/esm/useMergeStateFromProps.js ***!
-  \*************************************************************************************************/
+/*!*************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@restart/hooks/esm/useMergeStateFromProps.js ***!
+  \*************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2858,9 +2858,9 @@ function useMergeStateFromProps(props, gDSFP, initialState) {
 /***/ }),
 
 /***/ "../../../node_modules/@restart/hooks/esm/useMounted.js":
-/*!*************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@restart/hooks/esm/useMounted.js ***!
-  \*************************************************************************************/
+/*!*************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@restart/hooks/esm/useMounted.js ***!
+  \*************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2907,9 +2907,9 @@ function useMounted() {
 /***/ }),
 
 /***/ "../../../node_modules/@restart/hooks/esm/usePrevious.js":
-/*!**************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@restart/hooks/esm/usePrevious.js ***!
-  \**************************************************************************************/
+/*!**************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@restart/hooks/esm/usePrevious.js ***!
+  \**************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2948,9 +2948,9 @@ function usePrevious(value) {
 /***/ }),
 
 /***/ "../../../node_modules/@restart/hooks/esm/useRafInterval.js":
-/*!*****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@restart/hooks/esm/useRafInterval.js ***!
-  \*****************************************************************************************/
+/*!*****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@restart/hooks/esm/useRafInterval.js ***!
+  \*****************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3001,9 +3001,9 @@ function useRafInterval(fn, ms, paused) {
 /***/ }),
 
 /***/ "../../../node_modules/@restart/hooks/esm/useResizeObserver.js":
-/*!********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@restart/hooks/esm/useResizeObserver.js ***!
-  \********************************************************************************************/
+/*!********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@restart/hooks/esm/useResizeObserver.js ***!
+  \********************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3069,9 +3069,9 @@ function useResizeObserver(element) {
 /***/ }),
 
 /***/ "../../../node_modules/@restart/hooks/esm/useUpdatedRef.js":
-/*!****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@restart/hooks/esm/useUpdatedRef.js ***!
-  \****************************************************************************************/
+/*!****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@restart/hooks/esm/useUpdatedRef.js ***!
+  \****************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3097,9 +3097,9 @@ function useUpdatedRef(value) {
 /***/ }),
 
 /***/ "../../../node_modules/@restart/hooks/esm/useWillUnmount.js":
-/*!*****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/@restart/hooks/esm/useWillUnmount.js ***!
-  \*****************************************************************************************/
+/*!*****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@restart/hooks/esm/useWillUnmount.js ***!
+  \*****************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3130,9 +3130,9 @@ function useWillUnmount(fn) {
 /***/ }),
 
 /***/ "../../../node_modules/classnames/index.js":
-/*!************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/classnames/index.js ***!
-  \************************************************************************/
+/*!************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/classnames/index.js ***!
+  \************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3198,9 +3198,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/activeElement.js":
-/*!*************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/activeElement.js ***!
-  \*************************************************************************************/
+/*!*************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/activeElement.js ***!
+  \*************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3237,9 +3237,9 @@ function activeElement(doc) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/addClass.js":
-/*!********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/addClass.js ***!
-  \********************************************************************************/
+/*!********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/addClass.js ***!
+  \********************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3262,9 +3262,9 @@ function addClass(element, className) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/addEventListener.js":
-/*!****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/addEventListener.js ***!
-  \****************************************************************************************/
+/*!****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/addEventListener.js ***!
+  \****************************************************************************************************/
 /*! exports provided: optionsSupported, onceSupported, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3333,9 +3333,9 @@ function addEventListener(node, eventName, handler, options) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/animate.js":
-/*!*******************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/animate.js ***!
-  \*******************************************************************************/
+/*!*******************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/animate.js ***!
+  \*******************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3439,9 +3439,9 @@ function animate(nodeOrOptions, properties, duration, easing, callback) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/animationFrame.js":
-/*!**************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/animationFrame.js ***!
-  \**************************************************************************************/
+/*!**************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/animationFrame.js ***!
+  \**************************************************************************************************/
 /*! exports provided: cancel, request */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3496,9 +3496,9 @@ var request = rafImpl;
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/attribute.js":
-/*!*********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/attribute.js ***!
-  \*********************************************************************************/
+/*!*********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/attribute.js ***!
+  \*********************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3529,9 +3529,9 @@ function attribute(node, attr, val) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/canUseDOM.js":
-/*!*********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/canUseDOM.js ***!
-  \*********************************************************************************/
+/*!*********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/canUseDOM.js ***!
+  \*********************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3542,9 +3542,9 @@ __webpack_require__.r(__webpack_exports__);
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/childElements.js":
-/*!*************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/childElements.js ***!
-  \*************************************************************************************/
+/*!*************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/childElements.js ***!
+  \*************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3563,9 +3563,9 @@ function childElements(node) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/childNodes.js":
-/*!**********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/childNodes.js ***!
-  \**********************************************************************************/
+/*!**********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/childNodes.js ***!
+  \**********************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3586,9 +3586,9 @@ function childNodes(node) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/clear.js":
-/*!*****************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/clear.js ***!
-  \*****************************************************************************/
+/*!*****************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/clear.js ***!
+  \*****************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3615,9 +3615,9 @@ function clear(node) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/closest.js":
-/*!*******************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/closest.js ***!
-  \*******************************************************************************/
+/*!*******************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/closest.js ***!
+  \*******************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3649,9 +3649,9 @@ function closest(node, selector, stopAt) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/collectElements.js":
-/*!***************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/collectElements.js ***!
-  \***************************************************************************************/
+/*!***************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/collectElements.js ***!
+  \***************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3674,9 +3674,9 @@ function collectElements(node, direction) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/collectSiblings.js":
-/*!***************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/collectSiblings.js ***!
-  \***************************************************************************************/
+/*!***************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/collectSiblings.js ***!
+  \***************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3712,9 +3712,9 @@ function collectSiblings(node, refNode, selector) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/contains.js":
-/*!********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/contains.js ***!
-  \********************************************************************************/
+/*!********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/contains.js ***!
+  \********************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3739,9 +3739,9 @@ function contains(context, node) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/css.js":
-/*!***************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/css.js ***!
-  \***************************************************************************/
+/*!***************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/css.js ***!
+  \***************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3786,9 +3786,9 @@ function style(node, property) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/filterEventHandler.js":
-/*!******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/filterEventHandler.js ***!
-  \******************************************************************************************/
+/*!******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/filterEventHandler.js ***!
+  \******************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3813,9 +3813,9 @@ function filterEvents(selector, handler) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/getComputedStyle.js":
-/*!****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/getComputedStyle.js ***!
-  \****************************************************************************************/
+/*!****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/getComputedStyle.js ***!
+  \****************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3838,9 +3838,9 @@ function getComputedStyle(node, psuedoElement) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/getScrollAccessor.js":
-/*!*****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/getScrollAccessor.js ***!
-  \*****************************************************************************************/
+/*!*****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/getScrollAccessor.js ***!
+  \*****************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3872,9 +3872,9 @@ function getscrollAccessor(offset) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/hasClass.js":
-/*!********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/hasClass.js ***!
-  \********************************************************************************/
+/*!********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/hasClass.js ***!
+  \********************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3895,9 +3895,9 @@ function hasClass(element, className) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/height.js":
-/*!******************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/height.js ***!
-  \******************************************************************************/
+/*!******************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/height.js ***!
+  \******************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3923,9 +3923,9 @@ function height(node, client) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/hyphenate.js":
-/*!*********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/hyphenate.js ***!
-  \*********************************************************************************/
+/*!*********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/hyphenate.js ***!
+  \*********************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3940,9 +3940,9 @@ function hyphenate(string) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/hyphenateStyle.js":
-/*!**************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/hyphenateStyle.js ***!
-  \**************************************************************************************/
+/*!**************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/hyphenateStyle.js ***!
+  \**************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3964,9 +3964,9 @@ function hyphenateStyleName(string) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/index.js":
-/*!*****************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/index.js ***!
-  \*****************************************************************************/
+/*!*****************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/index.js ***!
+  \*****************************************************************************************/
 /*! exports provided: addEventListener, removeEventListener, triggerEvent, animate, filter, listen, style, getComputedStyle, attribute, activeElement, ownerDocument, ownerWindow, requestAnimationFrame, cancelAnimationFrame, matches, height, width, offset, offsetParent, position, contains, scrollbarSize, scrollLeft, scrollParent, scrollTo, scrollTop, querySelectorAll, closest, addClass, removeClass, hasClass, toggleClass, transitionEnd, childNodes, childElements, nextUntil, parents, siblings, clear, insertAfter, isInput, isVisible, prepend, remove, text, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4202,9 +4202,9 @@ __webpack_require__.r(__webpack_exports__);
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/insertAfter.js":
-/*!***********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/insertAfter.js ***!
-  \***********************************************************************************/
+/*!***********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/insertAfter.js ***!
+  \***********************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4234,9 +4234,9 @@ function insertAfter(node, refNode) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/isDocument.js":
-/*!**********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/isDocument.js ***!
-  \**********************************************************************************/
+/*!**********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/isDocument.js ***!
+  \**********************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4250,9 +4250,9 @@ function isDocument(element) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/isInput.js":
-/*!*******************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/isInput.js ***!
-  \*******************************************************************************/
+/*!*******************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/isInput.js ***!
+  \*******************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4273,9 +4273,9 @@ function isInput(node) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/isTransform.js":
-/*!***********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/isTransform.js ***!
-  \***********************************************************************************/
+/*!***********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/isTransform.js ***!
+  \***********************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4290,9 +4290,9 @@ function isTransform(value) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/isVisible.js":
-/*!*********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/isVisible.js ***!
-  \*********************************************************************************/
+/*!*********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/isVisible.js ***!
+  \*********************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4311,9 +4311,9 @@ function isVisible(node) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/isWindow.js":
-/*!********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/isWindow.js ***!
-  \********************************************************************************/
+/*!********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/isWindow.js ***!
+  \********************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4331,9 +4331,9 @@ function isWindow(node) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/listen.js":
-/*!******************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/listen.js ***!
-  \******************************************************************************/
+/*!******************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/listen.js ***!
+  \******************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4356,9 +4356,9 @@ function listen(node, eventName, handler, options) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/matches.js":
-/*!*******************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/matches.js ***!
-  \*******************************************************************************/
+/*!*******************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/matches.js ***!
+  \*******************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4389,9 +4389,9 @@ function matches(node, selector) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/nextUntil.js":
-/*!*********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/nextUntil.js ***!
-  \*********************************************************************************/
+/*!*********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/nextUntil.js ***!
+  \*********************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4414,9 +4414,9 @@ function nextUntil(node, selector) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/offset.js":
-/*!******************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/offset.js ***!
-  \******************************************************************************/
+/*!******************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/offset.js ***!
+  \******************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4461,9 +4461,9 @@ function offset(node) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/offsetParent.js":
-/*!************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/offsetParent.js ***!
-  \************************************************************************************/
+/*!************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/offsetParent.js ***!
+  \************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4493,9 +4493,9 @@ function offsetParent(node) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/ownerDocument.js":
-/*!*************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/ownerDocument.js ***!
-  \*************************************************************************************/
+/*!*************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/ownerDocument.js ***!
+  \*************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4514,9 +4514,9 @@ function ownerDocument(node) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/ownerWindow.js":
-/*!***********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/ownerWindow.js ***!
-  \***********************************************************************************/
+/*!***********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/ownerWindow.js ***!
+  \***********************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4539,9 +4539,9 @@ function ownerWindow(node) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/parents.js":
-/*!*******************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/parents.js ***!
-  \*******************************************************************************/
+/*!*******************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/parents.js ***!
+  \*******************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4563,9 +4563,9 @@ function parents(node) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/position.js":
-/*!********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/position.js ***!
-  \********************************************************************************/
+/*!********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/position.js ***!
+  \********************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4628,9 +4628,9 @@ function position(node, offsetParent) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/prepend.js":
-/*!*******************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/prepend.js ***!
-  \*******************************************************************************/
+/*!*******************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/prepend.js ***!
+  \*******************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4660,9 +4660,9 @@ function prepend(node, parent) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/querySelectorAll.js":
-/*!****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/querySelectorAll.js ***!
-  \****************************************************************************************/
+/*!****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/querySelectorAll.js ***!
+  \****************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4684,9 +4684,9 @@ function qsa(element, selector) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/remove.js":
-/*!******************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/remove.js ***!
-  \******************************************************************************/
+/*!******************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/remove.js ***!
+  \******************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4710,9 +4710,9 @@ function remove(node) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/removeClass.js":
-/*!***********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/removeClass.js ***!
-  \***********************************************************************************/
+/*!***********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/removeClass.js ***!
+  \***********************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4743,9 +4743,9 @@ function removeClass(element, className) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/removeEventListener.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/removeEventListener.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/removeEventListener.js ***!
+  \*******************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4773,9 +4773,9 @@ function removeEventListener(node, eventName, handler, options) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/scrollLeft.js":
-/*!**********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/scrollLeft.js ***!
-  \**********************************************************************************/
+/*!**********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/scrollLeft.js ***!
+  \**********************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4795,9 +4795,9 @@ __webpack_require__.r(__webpack_exports__);
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/scrollParent.js":
-/*!************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/scrollParent.js ***!
-  \************************************************************************************/
+/*!************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/scrollParent.js ***!
+  \************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4840,9 +4840,9 @@ function scrollParent(element, firstPossible) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/scrollTo.js":
-/*!********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/scrollTo.js ***!
-  \********************************************************************************/
+/*!********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/scrollTo.js ***!
+  \********************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4895,9 +4895,9 @@ function scrollTo(selected, scrollParent) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/scrollTop.js":
-/*!*********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/scrollTop.js ***!
-  \*********************************************************************************/
+/*!*********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/scrollTop.js ***!
+  \*********************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4917,9 +4917,9 @@ __webpack_require__.r(__webpack_exports__);
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/scrollbarSize.js":
-/*!*************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/scrollbarSize.js ***!
-  \*************************************************************************************/
+/*!*************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/scrollbarSize.js ***!
+  \*************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4950,9 +4950,9 @@ function scrollbarSize(recalc) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/siblings.js":
-/*!********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/siblings.js ***!
-  \********************************************************************************/
+/*!********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/siblings.js ***!
+  \********************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4974,9 +4974,9 @@ function siblings(node) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/text.js":
-/*!****************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/text.js ***!
-  \****************************************************************************/
+/*!****************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/text.js ***!
+  \****************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -5023,9 +5023,9 @@ function text(node, trim, singleSpaces) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/toggleClass.js":
-/*!***********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/toggleClass.js ***!
-  \***********************************************************************************/
+/*!***********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/toggleClass.js ***!
+  \***********************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -5052,9 +5052,9 @@ function toggleClass(element, className) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/transitionEnd.js":
-/*!*************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/transitionEnd.js ***!
-  \*************************************************************************************/
+/*!*************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/transitionEnd.js ***!
+  \*************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -5107,9 +5107,9 @@ function transitionEnd(element, handler, duration, padding) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/triggerEvent.js":
-/*!************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/triggerEvent.js ***!
-  \************************************************************************************/
+/*!************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/triggerEvent.js ***!
+  \************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -5143,9 +5143,9 @@ function triggerEvent(node, eventName, bubbles, cancelable) {
 /***/ }),
 
 /***/ "../../../node_modules/dom-helpers/esm/width.js":
-/*!*****************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/dom-helpers/esm/width.js ***!
-  \*****************************************************************************/
+/*!*****************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/dom-helpers/esm/width.js ***!
+  \*****************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -5171,9 +5171,9 @@ function getWidth(node, client) {
 /***/ }),
 
 /***/ "../../../node_modules/hoist-non-react-statics/dist/hoist-non-react-statics.cjs.js":
-/*!****************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/hoist-non-react-statics/dist/hoist-non-react-statics.cjs.js ***!
-  \****************************************************************************************************************/
+/*!****************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/hoist-non-react-statics/dist/hoist-non-react-statics.cjs.js ***!
+  \****************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5286,9 +5286,9 @@ module.exports = hoistNonReactStatics;
 /***/ }),
 
 /***/ "../../../node_modules/memoize-one/dist/memoize-one.esm.js":
-/*!****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/memoize-one/dist/memoize-one.esm.js ***!
-  \****************************************************************************************/
+/*!****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/memoize-one/dist/memoize-one.esm.js ***!
+  \****************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -5348,9 +5348,9 @@ function memoizeOne(resultFn, isEqual) {
 /***/ }),
 
 /***/ "../../../node_modules/nanoid/index.browser.js":
-/*!****************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/nanoid/index.browser.js ***!
-  \****************************************************************************/
+/*!****************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/nanoid/index.browser.js ***!
+  \****************************************************************************************/
 /*! exports provided: nanoid, customAlphabet, customRandom, urlAlphabet, random */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -5472,9 +5472,9 @@ let nanoid = (size = 21) => {
 /***/ }),
 
 /***/ "../../../node_modules/nanoid/url-alphabet/index.js":
-/*!*********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/nanoid/url-alphabet/index.js ***!
-  \*********************************************************************************/
+/*!*********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/nanoid/url-alphabet/index.js ***!
+  \*********************************************************************************************/
 /*! exports provided: urlAlphabet */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -5492,9 +5492,9 @@ let urlAlphabet =
 /***/ }),
 
 /***/ "../../../node_modules/object-assign/index.js":
-/*!***************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/object-assign/index.js ***!
-  \***************************************************************************/
+/*!***************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/object-assign/index.js ***!
+  \***************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5594,9 +5594,9 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 /***/ }),
 
 /***/ "../../../node_modules/prop-types/checkPropTypes.js":
-/*!*********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/prop-types/checkPropTypes.js ***!
-  \*********************************************************************************/
+/*!*********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/prop-types/checkPropTypes.js ***!
+  \*********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5708,9 +5708,9 @@ module.exports = checkPropTypes;
 /***/ }),
 
 /***/ "../../../node_modules/prop-types/factoryWithTypeCheckers.js":
-/*!******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/prop-types/factoryWithTypeCheckers.js ***!
-  \******************************************************************************************/
+/*!******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/prop-types/factoryWithTypeCheckers.js ***!
+  \******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6311,9 +6311,9 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
 /***/ }),
 
 /***/ "../../../node_modules/prop-types/index.js":
-/*!************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/prop-types/index.js ***!
-  \************************************************************************/
+/*!************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/prop-types/index.js ***!
+  \************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6337,9 +6337,9 @@ if (true) {
 /***/ }),
 
 /***/ "../../../node_modules/prop-types/lib/ReactPropTypesSecret.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/prop-types/lib/ReactPropTypesSecret.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/prop-types/lib/ReactPropTypesSecret.js ***!
+  \*******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6361,9 +6361,9 @@ module.exports = ReactPropTypesSecret;
 /***/ }),
 
 /***/ "../../../node_modules/react-dom/cjs/react-dom.development.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/react-dom/cjs/react-dom.development.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/react-dom/cjs/react-dom.development.js ***!
+  \*******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -32630,9 +32630,9 @@ exports.version = ReactVersion;
 /***/ }),
 
 /***/ "../../../node_modules/react-dom/index.js":
-/*!***********************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/react-dom/index.js ***!
-  \***********************************************************************/
+/*!***********************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/react-dom/index.js ***!
+  \***********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -32675,9 +32675,9 @@ if (false) {} else {
 /***/ }),
 
 /***/ "../../../node_modules/react-input-autosize/lib/AutosizeInput.js":
-/*!**********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/react-input-autosize/lib/AutosizeInput.js ***!
-  \**********************************************************************************************/
+/*!**********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/react-input-autosize/lib/AutosizeInput.js ***!
+  \**********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -32955,9 +32955,9 @@ exports.default = AutosizeInput;
 /***/ }),
 
 /***/ "../../../node_modules/react-is/cjs/react-is.development.js":
-/*!*****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/react-is/cjs/react-is.development.js ***!
-  \*****************************************************************************************/
+/*!*****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/react-is/cjs/react-is.development.js ***!
+  \*****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -33148,9 +33148,9 @@ exports.typeOf = typeOf;
 /***/ }),
 
 /***/ "../../../node_modules/react-is/index.js":
-/*!**********************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/react-is/index.js ***!
-  \**********************************************************************/
+/*!**********************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/react-is/index.js ***!
+  \**********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -33165,9 +33165,9 @@ if (false) {} else {
 /***/ }),
 
 /***/ "../../../node_modules/react-overlays/esm/Modal.js":
-/*!********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/react-overlays/esm/Modal.js ***!
-  \********************************************************************************/
+/*!********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/react-overlays/esm/Modal.js ***!
+  \********************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -33626,9 +33626,9 @@ Modal.propTypes = propTypes;
 /***/ }),
 
 /***/ "../../../node_modules/react-overlays/esm/ModalManager.js":
-/*!***************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/react-overlays/esm/ModalManager.js ***!
-  \***************************************************************************************/
+/*!***************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/react-overlays/esm/ModalManager.js ***!
+  \***************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -33810,9 +33810,9 @@ var ModalManager = /*#__PURE__*/function () {
 /***/ }),
 
 /***/ "../../../node_modules/react-overlays/esm/isOverflowing.js":
-/*!****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/react-overlays/esm/isOverflowing.js ***!
-  \****************************************************************************************/
+/*!****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/react-overlays/esm/isOverflowing.js ***!
+  \****************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -33842,9 +33842,9 @@ function isOverflowing(container) {
 /***/ }),
 
 /***/ "../../../node_modules/react-overlays/esm/manageAriaHidden.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/react-overlays/esm/manageAriaHidden.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/react-overlays/esm/manageAriaHidden.js ***!
+  \*******************************************************************************************************/
 /*! exports provided: ariaHidden, hideSiblings, showSiblings */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -33896,9 +33896,9 @@ function showSiblings(container, _ref3) {
 /***/ }),
 
 /***/ "../../../node_modules/react-overlays/esm/useWaitForDOMRef.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/react-overlays/esm/useWaitForDOMRef.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/react-overlays/esm/useWaitForDOMRef.js ***!
+  \*******************************************************************************************************/
 /*! exports provided: resolveContainerRef, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -33951,9 +33951,9 @@ function useWaitForDOMRef(ref, onResolved) {
 /***/ }),
 
 /***/ "../../../node_modules/react-polymorphic-box/dist/esm/bundle.min.js":
-/*!*************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/react-polymorphic-box/dist/esm/bundle.min.js ***!
-  \*************************************************************************************************/
+/*!*************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/react-polymorphic-box/dist/esm/bundle.min.js ***!
+  \*************************************************************************************************************/
 /*! exports provided: Box */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -33977,9 +33977,9 @@ const Box = Object(react__WEBPACK_IMPORTED_MODULE_0__["forwardRef"])(function Bo
 /***/ }),
 
 /***/ "../../../node_modules/react-select/dist/Select-dbb12e54.esm.js":
-/*!*********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/react-select/dist/Select-dbb12e54.esm.js ***!
-  \*********************************************************************************************/
+/*!*********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/react-select/dist/Select-dbb12e54.esm.js ***!
+  \*********************************************************************************************************/
 /*! exports provided: S, a, b, c, d, g, m */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -36693,9 +36693,9 @@ Select.defaultProps = defaultProps;
 /***/ }),
 
 /***/ "../../../node_modules/react-select/dist/index-4bd03571.esm.js":
-/*!********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/react-select/dist/index-4bd03571.esm.js ***!
-  \********************************************************************************************/
+/*!********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/react-select/dist/index-4bd03571.esm.js ***!
+  \********************************************************************************************************/
 /*! exports provided: A, B, C, D, E, F, G, H, M, _, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -38271,9 +38271,9 @@ var defaultComponents = function defaultComponents(props) {
 /***/ }),
 
 /***/ "../../../node_modules/react-select/dist/react-select.esm.js":
-/*!******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/react-select/dist/react-select.esm.js ***!
-  \******************************************************************************************/
+/*!******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/react-select/dist/react-select.esm.js ***!
+  \******************************************************************************************************/
 /*! exports provided: createFilter, defaultTheme, mergeStyles, components, default, NonceProvider */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -38381,9 +38381,9 @@ var index = Object(_stateManager_845a3300_esm_js__WEBPACK_IMPORTED_MODULE_1__["m
 /***/ }),
 
 /***/ "../../../node_modules/react-select/dist/stateManager-845a3300.esm.js":
-/*!***************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/react-select/dist/stateManager-845a3300.esm.js ***!
-  \***************************************************************************************************/
+/*!***************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/react-select/dist/stateManager-845a3300.esm.js ***!
+  \***************************************************************************************************************/
 /*! exports provided: m */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -38540,9 +38540,9 @@ var manageState = function manageState(SelectComponent) {
 /***/ }),
 
 /***/ "../../../node_modules/react/cjs/react-jsx-dev-runtime.development.js":
-/*!***************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/react/cjs/react-jsx-dev-runtime.development.js ***!
-  \***************************************************************************************************/
+/*!***************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/react/cjs/react-jsx-dev-runtime.development.js ***!
+  \***************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -39755,9 +39755,9 @@ exports.jsxDEV = jsxDEV$1;
 /***/ }),
 
 /***/ "../../../node_modules/react/cjs/react.development.js":
-/*!***********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/react/cjs/react.development.js ***!
-  \***********************************************************************************/
+/*!***********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/react/cjs/react.development.js ***!
+  \***********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -42100,9 +42100,9 @@ exports.version = ReactVersion;
 /***/ }),
 
 /***/ "../../../node_modules/react/index.js":
-/*!*******************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/react/index.js ***!
-  \*******************************************************************/
+/*!*******************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/react/index.js ***!
+  \*******************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -42117,9 +42117,9 @@ if (false) {} else {
 /***/ }),
 
 /***/ "../../../node_modules/react/jsx-dev-runtime.js":
-/*!*****************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/react/jsx-dev-runtime.js ***!
-  \*****************************************************************************/
+/*!*****************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/react/jsx-dev-runtime.js ***!
+  \*****************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -42134,9 +42134,9 @@ if (false) {} else {
 /***/ }),
 
 /***/ "../../../node_modules/scheduler/cjs/scheduler-tracing.development.js":
-/*!***************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/scheduler/cjs/scheduler-tracing.development.js ***!
-  \***************************************************************************************************/
+/*!***************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/scheduler/cjs/scheduler-tracing.development.js ***!
+  \***************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -42493,9 +42493,9 @@ exports.unstable_wrap = unstable_wrap;
 /***/ }),
 
 /***/ "../../../node_modules/scheduler/cjs/scheduler.development.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/scheduler/cjs/scheduler.development.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/scheduler/cjs/scheduler.development.js ***!
+  \*******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -43151,9 +43151,9 @@ exports.unstable_wrapCallback = unstable_wrapCallback;
 /***/ }),
 
 /***/ "../../../node_modules/scheduler/index.js":
-/*!***********************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/scheduler/index.js ***!
-  \***********************************************************************/
+/*!***********************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/scheduler/index.js ***!
+  \***********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -43168,9 +43168,9 @@ if (false) {} else {
 /***/ }),
 
 /***/ "../../../node_modules/scheduler/tracing.js":
-/*!*************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/scheduler/tracing.js ***!
-  \*************************************************************************/
+/*!*************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/scheduler/tracing.js ***!
+  \*************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -43185,9 +43185,9 @@ if (false) {} else {
 /***/ }),
 
 /***/ "../../../node_modules/stylis/dist/stylis.mjs":
-/*!***************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/stylis/dist/stylis.mjs ***!
-  \***************************************************************************/
+/*!***************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/stylis/dist/stylis.mjs ***!
+  \***************************************************************************************/
 /*! exports provided: CHARSET, COMMENT, COUNTER_STYLE, DECLARATION, DOCUMENT, FONT_FACE, FONT_FEATURE_VALUES, IMPORT, KEYFRAMES, MEDIA, MOZ, MS, NAMESPACE, PAGE, RULESET, SUPPORTS, VIEWPORT, WEBKIT, abs, alloc, append, caret, char, character, characters, charat, column, combine, comment, commenter, compile, copy, dealloc, declaration, delimit, delimiter, escaping, from, hash, identifier, indexof, length, line, match, middleware, namespace, next, node, parse, peek, position, prefix, prefixer, prev, replace, ruleset, rulesheet, serialize, sizeof, slice, stringify, strlen, substr, token, tokenize, tokenizer, trim, whitespace */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 

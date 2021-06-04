@@ -1,9 +1,9 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["polyfills"],{
 
 /***/ "../../../node_modules/core-js/internals/a-function.js":
-/*!************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/a-function.js ***!
-  \************************************************************************************/
+/*!************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/a-function.js ***!
+  \************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -17,9 +17,9 @@ module.exports = function (it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/a-possible-prototype.js":
-/*!**********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/a-possible-prototype.js ***!
-  \**********************************************************************************************/
+/*!**********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/a-possible-prototype.js ***!
+  \**********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -35,9 +35,9 @@ module.exports = function (it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/add-to-unscopables.js":
-/*!********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/add-to-unscopables.js ***!
-  \********************************************************************************************/
+/*!********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/add-to-unscopables.js ***!
+  \********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -66,9 +66,9 @@ module.exports = function (key) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/advance-string-index.js":
-/*!**********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/advance-string-index.js ***!
-  \**********************************************************************************************/
+/*!**********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/advance-string-index.js ***!
+  \**********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -86,9 +86,9 @@ module.exports = function (S, index, unicode) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/an-instance.js":
-/*!*************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/an-instance.js ***!
-  \*************************************************************************************/
+/*!*************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/an-instance.js ***!
+  \*************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -102,9 +102,9 @@ module.exports = function (it, Constructor, name) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/an-object.js":
-/*!***********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/an-object.js ***!
-  \***********************************************************************************/
+/*!***********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/an-object.js ***!
+  \***********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -120,9 +120,9 @@ module.exports = function (it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/array-buffer-native.js":
-/*!*********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/array-buffer-native.js ***!
-  \*********************************************************************************************/
+/*!*********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/array-buffer-native.js ***!
+  \*********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -133,9 +133,9 @@ module.exports = typeof ArrayBuffer !== 'undefined' && typeof DataView !== 'unde
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/array-buffer-view-core.js":
-/*!************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/array-buffer-view-core.js ***!
-  \************************************************************************************************/
+/*!************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/array-buffer-view-core.js ***!
+  \************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -312,9 +312,9 @@ module.exports = {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/array-buffer.js":
-/*!**************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/array-buffer.js ***!
-  \**************************************************************************************/
+/*!**************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/array-buffer.js ***!
+  \**************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -552,9 +552,9 @@ module.exports = {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/array-fill.js":
-/*!************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/array-fill.js ***!
-  \************************************************************************************/
+/*!************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/array-fill.js ***!
+  \************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -581,9 +581,9 @@ module.exports = function fill(value /* , start = 0, end = @length */) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/array-from.js":
-/*!************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/array-from.js ***!
-  \************************************************************************************/
+/*!************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/array-from.js ***!
+  \************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -634,9 +634,9 @@ module.exports = function from(arrayLike /* , mapfn = undefined, thisArg = undef
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/array-includes.js":
-/*!****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/array-includes.js ***!
-  \****************************************************************************************/
+/*!****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/array-includes.js ***!
+  \****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -677,9 +677,9 @@ module.exports = {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/array-iteration.js":
-/*!*****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/array-iteration.js ***!
-  \*****************************************************************************************/
+/*!*****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/array-iteration.js ***!
+  \*****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -760,9 +760,9 @@ module.exports = {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/array-method-is-strict.js":
-/*!************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/array-method-is-strict.js ***!
-  \************************************************************************************************/
+/*!************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/array-method-is-strict.js ***!
+  \************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -782,9 +782,9 @@ module.exports = function (METHOD_NAME, argument) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/array-reduce.js":
-/*!**************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/array-reduce.js ***!
-  \**************************************************************************************/
+/*!**************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/array-reduce.js ***!
+  \**************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -833,9 +833,9 @@ module.exports = {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/array-species-create.js":
-/*!**********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/array-species-create.js ***!
-  \**********************************************************************************************/
+/*!**********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/array-species-create.js ***!
+  \**********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -864,9 +864,9 @@ module.exports = function (originalArray, length) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/call-with-safe-iteration-closing.js":
-/*!**********************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/call-with-safe-iteration-closing.js ***!
-  \**********************************************************************************************************/
+/*!**********************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/call-with-safe-iteration-closing.js ***!
+  \**********************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -888,9 +888,9 @@ module.exports = function (iterator, fn, value, ENTRIES) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/check-correctness-of-iteration.js":
-/*!********************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/check-correctness-of-iteration.js ***!
-  \********************************************************************************************************/
+/*!********************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/check-correctness-of-iteration.js ***!
+  \********************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -937,9 +937,9 @@ module.exports = function (exec, SKIP_CLOSING) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/classof-raw.js":
-/*!*************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/classof-raw.js ***!
-  \*************************************************************************************/
+/*!*************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/classof-raw.js ***!
+  \*************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -953,9 +953,9 @@ module.exports = function (it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/classof.js":
-/*!*********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/classof.js ***!
-  \*********************************************************************************/
+/*!*********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/classof.js ***!
+  \*********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -990,9 +990,9 @@ module.exports = TO_STRING_TAG_SUPPORT ? classofRaw : function (it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/copy-constructor-properties.js":
-/*!*****************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/copy-constructor-properties.js ***!
-  \*****************************************************************************************************/
+/*!*****************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/copy-constructor-properties.js ***!
+  \*****************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1015,9 +1015,9 @@ module.exports = function (target, source) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/correct-is-regexp-logic.js":
-/*!*************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/correct-is-regexp-logic.js ***!
-  \*************************************************************************************************/
+/*!*************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/correct-is-regexp-logic.js ***!
+  \*************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1041,9 +1041,9 @@ module.exports = function (METHOD_NAME) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/correct-prototype-getter.js":
-/*!**************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/correct-prototype-getter.js ***!
-  \**************************************************************************************************/
+/*!**************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/correct-prototype-getter.js ***!
+  \**************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1060,9 +1060,9 @@ module.exports = !fails(function () {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/create-iterator-constructor.js":
-/*!*****************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/create-iterator-constructor.js ***!
-  \*****************************************************************************************************/
+/*!*****************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/create-iterator-constructor.js ***!
+  \*****************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1088,9 +1088,9 @@ module.exports = function (IteratorConstructor, NAME, next) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/create-non-enumerable-property.js":
-/*!********************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/create-non-enumerable-property.js ***!
-  \********************************************************************************************************/
+/*!********************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/create-non-enumerable-property.js ***!
+  \********************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1109,9 +1109,9 @@ module.exports = DESCRIPTORS ? function (object, key, value) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/create-property-descriptor.js":
-/*!****************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/create-property-descriptor.js ***!
-  \****************************************************************************************************/
+/*!****************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/create-property-descriptor.js ***!
+  \****************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -1128,9 +1128,9 @@ module.exports = function (bitmap, value) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/create-property.js":
-/*!*****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/create-property.js ***!
-  \*****************************************************************************************/
+/*!*****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/create-property.js ***!
+  \*****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1150,9 +1150,9 @@ module.exports = function (object, key, value) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/define-iterator.js":
-/*!*****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/define-iterator.js ***!
-  \*****************************************************************************************/
+/*!*****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/define-iterator.js ***!
+  \*****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1252,9 +1252,9 @@ module.exports = function (Iterable, NAME, IteratorConstructor, next, DEFAULT, I
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/define-well-known-symbol.js":
-/*!**************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/define-well-known-symbol.js ***!
-  \**************************************************************************************************/
+/*!**************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/define-well-known-symbol.js ***!
+  \**************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1274,9 +1274,9 @@ module.exports = function (NAME) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/descriptors.js":
-/*!*************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/descriptors.js ***!
-  \*************************************************************************************/
+/*!*************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/descriptors.js ***!
+  \*************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1292,9 +1292,9 @@ module.exports = !fails(function () {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/document-create-element.js":
-/*!*************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/document-create-element.js ***!
-  \*************************************************************************************************/
+/*!*************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/document-create-element.js ***!
+  \*************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1313,9 +1313,9 @@ module.exports = function (it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/dom-iterables.js":
-/*!***************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/dom-iterables.js ***!
-  \***************************************************************************************/
+/*!***************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/dom-iterables.js ***!
+  \***************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -1359,9 +1359,9 @@ module.exports = {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/engine-is-browser.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/engine-is-browser.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/engine-is-browser.js ***!
+  \*******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -1371,9 +1371,9 @@ module.exports = typeof window == 'object';
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/engine-is-ios.js":
-/*!***************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/engine-is-ios.js ***!
-  \***************************************************************************************/
+/*!***************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/engine-is-ios.js ***!
+  \***************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1385,9 +1385,9 @@ module.exports = /(?:iphone|ipod|ipad).*applewebkit/i.test(userAgent);
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/engine-is-node.js":
-/*!****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/engine-is-node.js ***!
-  \****************************************************************************************/
+/*!****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/engine-is-node.js ***!
+  \****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1400,9 +1400,9 @@ module.exports = classof(global.process) == 'process';
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/engine-is-webos-webkit.js":
-/*!************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/engine-is-webos-webkit.js ***!
-  \************************************************************************************************/
+/*!************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/engine-is-webos-webkit.js ***!
+  \************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1414,9 +1414,9 @@ module.exports = /web0s(?!.*chrome)/i.test(userAgent);
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/engine-user-agent.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/engine-user-agent.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/engine-user-agent.js ***!
+  \*******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1428,9 +1428,9 @@ module.exports = getBuiltIn('navigator', 'userAgent') || '';
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/engine-v8-version.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/engine-v8-version.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/engine-v8-version.js ***!
+  \*******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1459,9 +1459,9 @@ module.exports = version && +version;
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/enum-bug-keys.js":
-/*!***************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/enum-bug-keys.js ***!
-  \***************************************************************************************/
+/*!***************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/enum-bug-keys.js ***!
+  \***************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -1480,9 +1480,9 @@ module.exports = [
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/export.js":
-/*!********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/export.js ***!
-  \********************************************************************************/
+/*!********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/export.js ***!
+  \********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1545,9 +1545,9 @@ module.exports = function (options, source) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/fails.js":
-/*!*******************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/fails.js ***!
-  \*******************************************************************************/
+/*!*******************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/fails.js ***!
+  \*******************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -1563,9 +1563,9 @@ module.exports = function (exec) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/fix-regexp-well-known-symbol-logic.js":
-/*!************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/fix-regexp-well-known-symbol-logic.js ***!
-  \************************************************************************************************************/
+/*!************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/fix-regexp-well-known-symbol-logic.js ***!
+  \************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1704,9 +1704,9 @@ module.exports = function (KEY, length, exec, sham) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/flatten-into-array.js":
-/*!********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/flatten-into-array.js ***!
-  \********************************************************************************************/
+/*!********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/flatten-into-array.js ***!
+  \********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1748,9 +1748,9 @@ module.exports = flattenIntoArray;
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/function-bind-context.js":
-/*!***********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/function-bind-context.js ***!
-  \***********************************************************************************************/
+/*!***********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/function-bind-context.js ***!
+  \***********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1783,9 +1783,9 @@ module.exports = function (fn, that, length) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/get-built-in.js":
-/*!**************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/get-built-in.js ***!
-  \**************************************************************************************/
+/*!**************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/get-built-in.js ***!
+  \**************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1805,9 +1805,9 @@ module.exports = function (namespace, method) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/get-iterator-method.js":
-/*!*********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/get-iterator-method.js ***!
-  \*********************************************************************************************/
+/*!*********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/get-iterator-method.js ***!
+  \*********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1827,9 +1827,9 @@ module.exports = function (it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/get-iterator.js":
-/*!**************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/get-iterator.js ***!
-  \**************************************************************************************/
+/*!**************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/get-iterator.js ***!
+  \**************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1847,9 +1847,9 @@ module.exports = function (it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/get-substitution.js":
-/*!******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/get-substitution.js ***!
-  \******************************************************************************************/
+/*!******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/get-substitution.js ***!
+  \******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1898,9 +1898,9 @@ module.exports = function (matched, str, position, captures, namedCaptures, repl
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/global.js":
-/*!********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/global.js ***!
-  \********************************************************************************/
+/*!********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/global.js ***!
+  \********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -1923,9 +1923,9 @@ module.exports =
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/has.js":
-/*!*****************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/has.js ***!
-  \*****************************************************************************/
+/*!*****************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/has.js ***!
+  \*****************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1941,9 +1941,9 @@ module.exports = function hasOwn(it, key) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/hidden-keys.js":
-/*!*************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/hidden-keys.js ***!
-  \*************************************************************************************/
+/*!*************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/hidden-keys.js ***!
+  \*************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -1953,9 +1953,9 @@ module.exports = {};
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/host-report-errors.js":
-/*!********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/host-report-errors.js ***!
-  \********************************************************************************************/
+/*!********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/host-report-errors.js ***!
+  \********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1972,9 +1972,9 @@ module.exports = function (a, b) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/html.js":
-/*!******************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/html.js ***!
-  \******************************************************************************/
+/*!******************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/html.js ***!
+  \******************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1986,9 +1986,9 @@ module.exports = getBuiltIn('document', 'documentElement');
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/ie8-dom-define.js":
-/*!****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/ie8-dom-define.js ***!
-  \****************************************************************************************/
+/*!****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/ie8-dom-define.js ***!
+  \****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2008,9 +2008,9 @@ module.exports = !DESCRIPTORS && !fails(function () {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/ieee754.js":
-/*!*********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/ieee754.js ***!
-  \*********************************************************************************/
+/*!*********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/ieee754.js ***!
+  \*********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -2105,9 +2105,9 @@ module.exports = {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/indexed-object.js":
-/*!****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/indexed-object.js ***!
-  \****************************************************************************************/
+/*!****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/indexed-object.js ***!
+  \****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2129,9 +2129,9 @@ module.exports = fails(function () {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/inherit-if-required.js":
-/*!*********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/inherit-if-required.js ***!
-  \*********************************************************************************************/
+/*!*********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/inherit-if-required.js ***!
+  \*********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2157,9 +2157,9 @@ module.exports = function ($this, dummy, Wrapper) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/inspect-source.js":
-/*!****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/inspect-source.js ***!
-  \****************************************************************************************/
+/*!****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/inspect-source.js ***!
+  \****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2180,9 +2180,9 @@ module.exports = store.inspectSource;
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/internal-state.js":
-/*!****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/internal-state.js ***!
-  \****************************************************************************************/
+/*!****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/internal-state.js ***!
+  \****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2258,9 +2258,9 @@ module.exports = {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/is-array-iterator-method.js":
-/*!**************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/is-array-iterator-method.js ***!
-  \**************************************************************************************************/
+/*!**************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/is-array-iterator-method.js ***!
+  \**************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2279,9 +2279,9 @@ module.exports = function (it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/is-array.js":
-/*!**********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/is-array.js ***!
-  \**********************************************************************************/
+/*!**********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/is-array.js ***!
+  \**********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2298,9 +2298,9 @@ module.exports = Array.isArray || function isArray(arg) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/is-forced.js":
-/*!***********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/is-forced.js ***!
-  \***********************************************************************************/
+/*!***********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/is-forced.js ***!
+  \***********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2330,9 +2330,9 @@ module.exports = isForced;
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/is-object.js":
-/*!***********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/is-object.js ***!
-  \***********************************************************************************/
+/*!***********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/is-object.js ***!
+  \***********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -2344,9 +2344,9 @@ module.exports = function (it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/is-pure.js":
-/*!*********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/is-pure.js ***!
-  \*********************************************************************************/
+/*!*********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/is-pure.js ***!
+  \*********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -2356,9 +2356,9 @@ module.exports = false;
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/is-regexp.js":
-/*!***********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/is-regexp.js ***!
-  \***********************************************************************************/
+/*!***********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/is-regexp.js ***!
+  \***********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2379,9 +2379,9 @@ module.exports = function (it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/iterate.js":
-/*!*********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/iterate.js ***!
-  \*********************************************************************************/
+/*!*********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/iterate.js ***!
+  \*********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2448,9 +2448,9 @@ module.exports = function (iterable, unboundFunction, options) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/iterator-close.js":
-/*!****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/iterator-close.js ***!
-  \****************************************************************************************/
+/*!****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/iterator-close.js ***!
+  \****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2467,9 +2467,9 @@ module.exports = function (iterator) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/iterators-core.js":
-/*!****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/iterators-core.js ***!
-  \****************************************************************************************/
+/*!****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/iterators-core.js ***!
+  \****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2524,9 +2524,9 @@ module.exports = {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/iterators.js":
-/*!***********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/iterators.js ***!
-  \***********************************************************************************/
+/*!***********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/iterators.js ***!
+  \***********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -2536,9 +2536,9 @@ module.exports = {};
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/microtask.js":
-/*!***********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/microtask.js ***!
-  \***********************************************************************************/
+/*!***********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/microtask.js ***!
+  \***********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2629,9 +2629,9 @@ module.exports = queueMicrotask || function (fn) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/native-promise-constructor.js":
-/*!****************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/native-promise-constructor.js ***!
-  \****************************************************************************************************/
+/*!****************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/native-promise-constructor.js ***!
+  \****************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2643,9 +2643,9 @@ module.exports = global.Promise;
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/native-symbol.js":
-/*!***************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/native-symbol.js ***!
-  \***************************************************************************************/
+/*!***************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/native-symbol.js ***!
+  \***************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2665,9 +2665,9 @@ module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/native-url.js":
-/*!************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/native-url.js ***!
-  \************************************************************************************/
+/*!************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/native-url.js ***!
+  \************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2709,9 +2709,9 @@ module.exports = !fails(function () {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/native-weak-map.js":
-/*!*****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/native-weak-map.js ***!
-  \*****************************************************************************************/
+/*!*****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/native-weak-map.js ***!
+  \*****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2726,9 +2726,9 @@ module.exports = typeof WeakMap === 'function' && /native code/.test(inspectSour
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/new-promise-capability.js":
-/*!************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/new-promise-capability.js ***!
-  \************************************************************************************************/
+/*!************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/new-promise-capability.js ***!
+  \************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2756,9 +2756,9 @@ module.exports.f = function (C) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/not-a-regexp.js":
-/*!**************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/not-a-regexp.js ***!
-  \**************************************************************************************/
+/*!**************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/not-a-regexp.js ***!
+  \**************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2774,9 +2774,9 @@ module.exports = function (it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/number-parse-float.js":
-/*!********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/number-parse-float.js ***!
-  \********************************************************************************************/
+/*!********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/number-parse-float.js ***!
+  \********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2799,9 +2799,9 @@ module.exports = FORCED ? function parseFloat(string) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/object-assign.js":
-/*!***************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/object-assign.js ***!
-  \***************************************************************************************/
+/*!***************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/object-assign.js ***!
+  \***************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2865,9 +2865,9 @@ module.exports = !$assign || fails(function () {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/object-create.js":
-/*!***************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/object-create.js ***!
-  \***************************************************************************************/
+/*!***************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/object-create.js ***!
+  \***************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2954,9 +2954,9 @@ module.exports = Object.create || function create(O, Properties) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/object-define-properties.js":
-/*!**************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/object-define-properties.js ***!
-  \**************************************************************************************************/
+/*!**************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/object-define-properties.js ***!
+  \**************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2982,9 +2982,9 @@ module.exports = DESCRIPTORS ? Object.defineProperties : function defineProperti
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/object-define-property.js":
-/*!************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/object-define-property.js ***!
-  \************************************************************************************************/
+/*!************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/object-define-property.js ***!
+  \************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3014,9 +3014,9 @@ exports.f = DESCRIPTORS ? $defineProperty : function defineProperty(O, P, Attrib
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/object-get-own-property-descriptor.js":
-/*!************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/object-get-own-property-descriptor.js ***!
-  \************************************************************************************************************/
+/*!************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/object-get-own-property-descriptor.js ***!
+  \************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3046,9 +3046,9 @@ exports.f = DESCRIPTORS ? $getOwnPropertyDescriptor : function getOwnPropertyDes
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/object-get-own-property-names.js":
-/*!*******************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/object-get-own-property-names.js ***!
-  \*******************************************************************************************************/
+/*!*******************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/object-get-own-property-names.js ***!
+  \*******************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3068,9 +3068,9 @@ exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/object-get-own-property-symbols.js":
-/*!*********************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/object-get-own-property-symbols.js ***!
-  \*********************************************************************************************************/
+/*!*********************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/object-get-own-property-symbols.js ***!
+  \*********************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -3081,9 +3081,9 @@ exports.f = Object.getOwnPropertySymbols;
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/object-get-prototype-of.js":
-/*!*************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/object-get-prototype-of.js ***!
-  \*************************************************************************************************/
+/*!*************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/object-get-prototype-of.js ***!
+  \*************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3110,9 +3110,9 @@ module.exports = CORRECT_PROTOTYPE_GETTER ? Object.getPrototypeOf : function (O)
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/object-keys-internal.js":
-/*!**********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/object-keys-internal.js ***!
-  \**********************************************************************************************/
+/*!**********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/object-keys-internal.js ***!
+  \**********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3138,9 +3138,9 @@ module.exports = function (object, names) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/object-keys.js":
-/*!*************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/object-keys.js ***!
-  \*************************************************************************************/
+/*!*************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/object-keys.js ***!
+  \*************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3158,9 +3158,9 @@ module.exports = Object.keys || function keys(O) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/object-property-is-enumerable.js":
-/*!*******************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/object-property-is-enumerable.js ***!
-  \*******************************************************************************************************/
+/*!*******************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/object-property-is-enumerable.js ***!
+  \*******************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3184,9 +3184,9 @@ exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/object-prototype-accessors-forced.js":
-/*!***********************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/object-prototype-accessors-forced.js ***!
-  \***********************************************************************************************************/
+/*!***********************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/object-prototype-accessors-forced.js ***!
+  \***********************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3209,9 +3209,9 @@ module.exports = IS_PURE || !fails(function () {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/object-set-prototype-of.js":
-/*!*************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/object-set-prototype-of.js ***!
-  \*************************************************************************************************/
+/*!*************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/object-set-prototype-of.js ***!
+  \*************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3246,9 +3246,9 @@ module.exports = Object.setPrototypeOf || ('__proto__' in {} ? function () {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/own-keys.js":
-/*!**********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/own-keys.js ***!
-  \**********************************************************************************/
+/*!**********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/own-keys.js ***!
+  \**********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3268,9 +3268,9 @@ module.exports = getBuiltIn('Reflect', 'ownKeys') || function ownKeys(it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/path.js":
-/*!******************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/path.js ***!
-  \******************************************************************************/
+/*!******************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/path.js ***!
+  \******************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3282,9 +3282,9 @@ module.exports = global;
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/perform.js":
-/*!*********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/perform.js ***!
-  \*********************************************************************************/
+/*!*********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/perform.js ***!
+  \*********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -3300,9 +3300,9 @@ module.exports = function (exec) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/promise-resolve.js":
-/*!*****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/promise-resolve.js ***!
-  \*****************************************************************************************/
+/*!*****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/promise-resolve.js ***!
+  \*****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3323,9 +3323,9 @@ module.exports = function (C, x) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/redefine-all.js":
-/*!**************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/redefine-all.js ***!
-  \**************************************************************************************/
+/*!**************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/redefine-all.js ***!
+  \**************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3340,9 +3340,9 @@ module.exports = function (target, src, options) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/redefine.js":
-/*!**********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/redefine.js ***!
-  \**********************************************************************************/
+/*!**********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/redefine.js ***!
+  \**********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3391,9 +3391,9 @@ var TEMPLATE = String(String).split('String');
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/regexp-exec-abstract.js":
-/*!**********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/regexp-exec-abstract.js ***!
-  \**********************************************************************************************/
+/*!**********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/regexp-exec-abstract.js ***!
+  \**********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3424,9 +3424,9 @@ module.exports = function (R, S) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/regexp-exec.js":
-/*!*************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/regexp-exec.js ***!
-  \*************************************************************************************/
+/*!*************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/regexp-exec.js ***!
+  \*************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3523,9 +3523,9 @@ module.exports = patchedExec;
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/regexp-flags.js":
-/*!**************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/regexp-flags.js ***!
-  \**************************************************************************************/
+/*!**************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/regexp-flags.js ***!
+  \**************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3551,9 +3551,9 @@ module.exports = function () {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/regexp-sticky-helpers.js":
-/*!***********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/regexp-sticky-helpers.js ***!
-  \***********************************************************************************************/
+/*!***********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/regexp-sticky-helpers.js ***!
+  \***********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3586,9 +3586,9 @@ exports.BROKEN_CARET = fails(function () {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/require-object-coercible.js":
-/*!**************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/require-object-coercible.js ***!
-  \**************************************************************************************************/
+/*!**************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/require-object-coercible.js ***!
+  \**************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -3603,9 +3603,9 @@ module.exports = function (it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/same-value.js":
-/*!************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/same-value.js ***!
-  \************************************************************************************/
+/*!************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/same-value.js ***!
+  \************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -3621,9 +3621,9 @@ module.exports = Object.is || function is(x, y) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/set-global.js":
-/*!************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/set-global.js ***!
-  \************************************************************************************/
+/*!************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/set-global.js ***!
+  \************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3642,9 +3642,9 @@ module.exports = function (key, value) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/set-species.js":
-/*!*************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/set-species.js ***!
-  \*************************************************************************************/
+/*!*************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/set-species.js ***!
+  \*************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3673,9 +3673,9 @@ module.exports = function (CONSTRUCTOR_NAME) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/set-to-string-tag.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/set-to-string-tag.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/set-to-string-tag.js ***!
+  \*******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3695,9 +3695,9 @@ module.exports = function (it, TAG, STATIC) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/shared-key.js":
-/*!************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/shared-key.js ***!
-  \************************************************************************************/
+/*!************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/shared-key.js ***!
+  \************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3714,9 +3714,9 @@ module.exports = function (key) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/shared-store.js":
-/*!**************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/shared-store.js ***!
-  \**************************************************************************************/
+/*!**************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/shared-store.js ***!
+  \**************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3732,9 +3732,9 @@ module.exports = store;
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/shared.js":
-/*!********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/shared.js ***!
-  \********************************************************************************/
+/*!********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/shared.js ***!
+  \********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3753,9 +3753,9 @@ var store = __webpack_require__(/*! ../internals/shared-store */ "../../../node_
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/species-constructor.js":
-/*!*********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/species-constructor.js ***!
-  \*********************************************************************************************/
+/*!*********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/species-constructor.js ***!
+  \*********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3777,9 +3777,9 @@ module.exports = function (O, defaultConstructor) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/string-multibyte.js":
-/*!******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/string-multibyte.js ***!
-  \******************************************************************************************/
+/*!******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/string-multibyte.js ***!
+  \******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3815,9 +3815,9 @@ module.exports = {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/string-pad-webkit-bug.js":
-/*!***********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/string-pad-webkit-bug.js ***!
-  \***********************************************************************************************/
+/*!***********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/string-pad-webkit-bug.js ***!
+  \***********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3831,9 +3831,9 @@ module.exports = /Version\/10(?:\.\d+){1,2}(?: [\w./]+)?(?: Mobile\/\w+)? Safari
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/string-pad.js":
-/*!************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/string-pad.js ***!
-  \************************************************************************************/
+/*!************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/string-pad.js ***!
+  \************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3873,9 +3873,9 @@ module.exports = {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/string-punycode-to-ascii.js":
-/*!**************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/string-punycode-to-ascii.js ***!
-  \**************************************************************************************************/
+/*!**************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/string-punycode-to-ascii.js ***!
+  \**************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4053,9 +4053,9 @@ module.exports = function (input) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/string-repeat.js":
-/*!***************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/string-repeat.js ***!
-  \***************************************************************************************/
+/*!***************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/string-repeat.js ***!
+  \***************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4079,9 +4079,9 @@ module.exports = function repeat(count) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/string-trim-forced.js":
-/*!********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/string-trim-forced.js ***!
-  \********************************************************************************************/
+/*!********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/string-trim-forced.js ***!
+  \********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4102,9 +4102,9 @@ module.exports = function (METHOD_NAME) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/string-trim.js":
-/*!*************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/string-trim.js ***!
-  \*************************************************************************************/
+/*!*************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/string-trim.js ***!
+  \*************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4141,9 +4141,9 @@ module.exports = {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/task.js":
-/*!******************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/task.js ***!
-  \******************************************************************************/
+/*!******************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/task.js ***!
+  \******************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4259,9 +4259,9 @@ module.exports = {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/this-number-value.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/this-number-value.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/this-number-value.js ***!
+  \*******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4280,9 +4280,9 @@ module.exports = function (value) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/to-absolute-index.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/to-absolute-index.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/to-absolute-index.js ***!
+  \*******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4303,9 +4303,9 @@ module.exports = function (index, length) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/to-index.js":
-/*!**********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/to-index.js ***!
-  \**********************************************************************************/
+/*!**********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/to-index.js ***!
+  \**********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4326,9 +4326,9 @@ module.exports = function (it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/to-indexed-object.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/to-indexed-object.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/to-indexed-object.js ***!
+  \*******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4344,9 +4344,9 @@ module.exports = function (it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/to-integer.js":
-/*!************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/to-integer.js ***!
-  \************************************************************************************/
+/*!************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/to-integer.js ***!
+  \************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -4363,9 +4363,9 @@ module.exports = function (argument) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/to-length.js":
-/*!***********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/to-length.js ***!
-  \***********************************************************************************/
+/*!***********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/to-length.js ***!
+  \***********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4383,9 +4383,9 @@ module.exports = function (argument) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/to-object.js":
-/*!***********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/to-object.js ***!
-  \***********************************************************************************/
+/*!***********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/to-object.js ***!
+  \***********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4401,9 +4401,9 @@ module.exports = function (argument) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/to-offset.js":
-/*!***********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/to-offset.js ***!
-  \***********************************************************************************/
+/*!***********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/to-offset.js ***!
+  \***********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4419,9 +4419,9 @@ module.exports = function (it, BYTES) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/to-positive-integer.js":
-/*!*********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/to-positive-integer.js ***!
-  \*********************************************************************************************/
+/*!*********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/to-positive-integer.js ***!
+  \*********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4437,9 +4437,9 @@ module.exports = function (it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/to-primitive.js":
-/*!**************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/to-primitive.js ***!
-  \**************************************************************************************/
+/*!**************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/to-primitive.js ***!
+  \**************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4462,9 +4462,9 @@ module.exports = function (input, PREFERRED_STRING) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/to-string-tag-support.js":
-/*!***********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/to-string-tag-support.js ***!
-  \***********************************************************************************************/
+/*!***********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/to-string-tag-support.js ***!
+  \***********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4481,9 +4481,9 @@ module.exports = String(test) === '[object z]';
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/typed-array-constructor.js":
-/*!*************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/typed-array-constructor.js ***!
-  \*************************************************************************************************/
+/*!*************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/typed-array-constructor.js ***!
+  \*************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4723,9 +4723,9 @@ if (DESCRIPTORS) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/typed-array-constructors-require-wrappers.js":
-/*!*******************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/typed-array-constructors-require-wrappers.js ***!
-  \*******************************************************************************************************************/
+/*!*******************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/typed-array-constructors-require-wrappers.js ***!
+  \*******************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4756,9 +4756,9 @@ module.exports = !NATIVE_ARRAY_BUFFER_VIEWS || !fails(function () {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/typed-array-from.js":
-/*!******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/typed-array-from.js ***!
-  \******************************************************************************************/
+/*!******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/typed-array-from.js ***!
+  \******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4799,9 +4799,9 @@ module.exports = function from(source /* , mapfn, thisArg */) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/uid.js":
-/*!*****************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/uid.js ***!
-  \*****************************************************************************/
+/*!*****************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/uid.js ***!
+  \*****************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -4816,9 +4816,9 @@ module.exports = function (key) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/use-symbol-as-uid.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/use-symbol-as-uid.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/use-symbol-as-uid.js ***!
+  \*******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4833,9 +4833,9 @@ module.exports = NATIVE_SYMBOL
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/well-known-symbol-wrapped.js":
-/*!***************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/well-known-symbol-wrapped.js ***!
-  \***************************************************************************************************/
+/*!***************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/well-known-symbol-wrapped.js ***!
+  \***************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4847,9 +4847,9 @@ exports.f = wellKnownSymbol;
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/well-known-symbol.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/well-known-symbol.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/well-known-symbol.js ***!
+  \*******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4878,9 +4878,9 @@ module.exports = function (name) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/whitespaces.js":
-/*!*************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/whitespaces.js ***!
-  \*************************************************************************************/
+/*!*************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/whitespaces.js ***!
+  \*************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -4892,9 +4892,9 @@ module.exports = '\u0009\u000A\u000B\u000C\u000D\u0020\u00A0\u1680\u2000\u2001\u
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.array-buffer.constructor.js":
-/*!***************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.array-buffer.constructor.js ***!
-  \***************************************************************************************************/
+/*!***************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.array-buffer.constructor.js ***!
+  \***************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4921,9 +4921,9 @@ setSpecies(ARRAY_BUFFER);
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.array-buffer.slice.js":
-/*!*********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.array-buffer.slice.js ***!
-  \*********************************************************************************************/
+/*!*********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.array-buffer.slice.js ***!
+  \*********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4969,9 +4969,9 @@ $({ target: 'ArrayBuffer', proto: true, unsafe: true, forced: INCORRECT_SLICE },
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.array.flat-map.js":
-/*!*****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.array.flat-map.js ***!
-  \*****************************************************************************************/
+/*!*****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.array.flat-map.js ***!
+  \*****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5002,9 +5002,9 @@ $({ target: 'Array', proto: true }, {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.array.flat.js":
-/*!*************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.array.flat.js ***!
-  \*************************************************************************************/
+/*!*************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.array.flat.js ***!
+  \*************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5034,9 +5034,9 @@ $({ target: 'Array', proto: true }, {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.array.iterator.js":
-/*!*****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.array.iterator.js ***!
-  \*****************************************************************************************/
+/*!*****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.array.iterator.js ***!
+  \*****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5099,9 +5099,9 @@ addToUnscopables('entries');
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.array.reduce-right.js":
-/*!*********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.array.reduce-right.js ***!
-  \*********************************************************************************************/
+/*!*********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.array.reduce-right.js ***!
+  \*********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5130,9 +5130,9 @@ $({ target: 'Array', proto: true, forced: !STRICT_METHOD || CHROME_BUG }, {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.array.reduce.js":
-/*!***************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.array.reduce.js ***!
-  \***************************************************************************************/
+/*!***************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.array.reduce.js ***!
+  \***************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5161,9 +5161,9 @@ $({ target: 'Array', proto: true, forced: !STRICT_METHOD || CHROME_BUG }, {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.array.reverse.js":
-/*!****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.array.reverse.js ***!
-  \****************************************************************************************/
+/*!****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.array.reverse.js ***!
+  \****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5191,9 +5191,9 @@ $({ target: 'Array', proto: true, forced: String(test) === String(test.reverse()
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.array.sort.js":
-/*!*************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.array.sort.js ***!
-  \*************************************************************************************/
+/*!*************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.array.sort.js ***!
+  \*************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5235,9 +5235,9 @@ $({ target: 'Array', proto: true, forced: FORCED }, {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.array.unscopables.flat-map.js":
-/*!*****************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.array.unscopables.flat-map.js ***!
-  \*****************************************************************************************************/
+/*!*****************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.array.unscopables.flat-map.js ***!
+  \*****************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5252,9 +5252,9 @@ addToUnscopables('flatMap');
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.array.unscopables.flat.js":
-/*!*************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.array.unscopables.flat.js ***!
-  \*************************************************************************************************/
+/*!*************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.array.unscopables.flat.js ***!
+  \*************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5269,9 +5269,9 @@ addToUnscopables('flat');
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.math.hypot.js":
-/*!*************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.math.hypot.js ***!
-  \*************************************************************************************/
+/*!*************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.math.hypot.js ***!
+  \*************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5315,9 +5315,9 @@ $({ target: 'Math', stat: true, forced: BUGGY }, {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.number.parse-float.js":
-/*!*********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.number.parse-float.js ***!
-  \*********************************************************************************************/
+/*!*********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.number.parse-float.js ***!
+  \*********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5335,9 +5335,9 @@ $({ target: 'Number', stat: true, forced: Number.parseFloat != parseFloat }, {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.number.to-fixed.js":
-/*!******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.number.to-fixed.js ***!
-  \******************************************************************************************/
+/*!******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.number.to-fixed.js ***!
+  \******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5472,9 +5472,9 @@ $({ target: 'Number', proto: true, forced: FORCED }, {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.object.assign.js":
-/*!****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.object.assign.js ***!
-  \****************************************************************************************/
+/*!****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.object.assign.js ***!
+  \****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5492,9 +5492,9 @@ $({ target: 'Object', stat: true, forced: Object.assign !== assign }, {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.object.define-getter.js":
-/*!***********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.object.define-getter.js ***!
-  \***********************************************************************************************/
+/*!***********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.object.define-getter.js ***!
+  \***********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5521,9 +5521,9 @@ if (DESCRIPTORS) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.object.define-setter.js":
-/*!***********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.object.define-setter.js ***!
-  \***********************************************************************************************/
+/*!***********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.object.define-setter.js ***!
+  \***********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5550,9 +5550,9 @@ if (DESCRIPTORS) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.object.from-entries.js":
-/*!**********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.object.from-entries.js ***!
-  \**********************************************************************************************/
+/*!**********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.object.from-entries.js ***!
+  \**********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5576,9 +5576,9 @@ $({ target: 'Object', stat: true }, {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.object.lookup-getter.js":
-/*!***********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.object.lookup-getter.js ***!
-  \***********************************************************************************************/
+/*!***********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.object.lookup-getter.js ***!
+  \***********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5611,9 +5611,9 @@ if (DESCRIPTORS) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.object.lookup-setter.js":
-/*!***********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.object.lookup-setter.js ***!
-  \***********************************************************************************************/
+/*!***********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.object.lookup-setter.js ***!
+  \***********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5646,9 +5646,9 @@ if (DESCRIPTORS) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.promise.finally.js":
-/*!******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.promise.finally.js ***!
-  \******************************************************************************************/
+/*!******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.promise.finally.js ***!
+  \******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5697,9 +5697,9 @@ if (!IS_PURE && typeof NativePromise == 'function') {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.promise.js":
-/*!**********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.promise.js ***!
-  \**********************************************************************************/
+/*!**********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.promise.js ***!
+  \**********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6101,9 +6101,9 @@ $({ target: PROMISE, stat: true, forced: INCORRECT_ITERATION }, {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.reflect.set.js":
-/*!**************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.reflect.set.js ***!
-  \**************************************************************************************/
+/*!**************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.reflect.set.js ***!
+  \**************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6158,9 +6158,9 @@ $({ target: 'Reflect', stat: true, forced: MS_EDGE_BUG }, {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.regexp.constructor.js":
-/*!*********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.regexp.constructor.js ***!
-  \*********************************************************************************************/
+/*!*********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.regexp.constructor.js ***!
+  \*********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6256,9 +6256,9 @@ setSpecies('RegExp');
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.regexp.exec.js":
-/*!**************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.regexp.exec.js ***!
-  \**************************************************************************************/
+/*!**************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.regexp.exec.js ***!
+  \**************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6277,9 +6277,9 @@ $({ target: 'RegExp', proto: true, forced: /./.exec !== exec }, {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.regexp.flags.js":
-/*!***************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.regexp.flags.js ***!
-  \***************************************************************************************/
+/*!***************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.regexp.flags.js ***!
+  \***************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6302,9 +6302,9 @@ if (DESCRIPTORS && (/./g.flags != 'g' || UNSUPPORTED_Y)) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.regexp.to-string.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.regexp.to-string.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.regexp.to-string.js ***!
+  \*******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6339,9 +6339,9 @@ if (NOT_GENERIC || INCORRECT_NAME) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.string.ends-with.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.string.ends-with.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.string.ends-with.js ***!
+  \*******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6386,9 +6386,9 @@ $({ target: 'String', proto: true, forced: !MDN_POLYFILL_BUG && !CORRECT_IS_REGE
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.string.includes.js":
-/*!******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.string.includes.js ***!
-  \******************************************************************************************/
+/*!******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.string.includes.js ***!
+  \******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6412,9 +6412,9 @@ $({ target: 'String', proto: true, forced: !correctIsRegExpLogic('includes') }, 
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.string.iterator.js":
-/*!******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.string.iterator.js ***!
-  \******************************************************************************************/
+/*!******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.string.iterator.js ***!
+  \******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6453,9 +6453,9 @@ defineIterator(String, 'String', function (iterated) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.string.match.js":
-/*!***************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.string.match.js ***!
-  \***************************************************************************************/
+/*!***************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.string.match.js ***!
+  \***************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6509,9 +6509,9 @@ fixRegExpWellKnownSymbolLogic('match', 1, function (MATCH, nativeMatch, maybeCal
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.string.pad-end.js":
-/*!*****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.string.pad-end.js ***!
-  \*****************************************************************************************/
+/*!*****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.string.pad-end.js ***!
+  \*****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6533,9 +6533,9 @@ $({ target: 'String', proto: true, forced: WEBKIT_BUG }, {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.string.pad-start.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.string.pad-start.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.string.pad-start.js ***!
+  \*******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6557,9 +6557,9 @@ $({ target: 'String', proto: true, forced: WEBKIT_BUG }, {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.string.replace.js":
-/*!*****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.string.replace.js ***!
-  \*****************************************************************************************/
+/*!*****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.string.replace.js ***!
+  \*****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6667,9 +6667,9 @@ fixRegExpWellKnownSymbolLogic('replace', 2, function (REPLACE, nativeReplace, ma
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.string.search.js":
-/*!****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.string.search.js ***!
-  \****************************************************************************************/
+/*!****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.string.search.js ***!
+  \****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6713,9 +6713,9 @@ fixRegExpWellKnownSymbolLogic('search', 1, function (SEARCH, nativeSearch, maybe
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.string.split.js":
-/*!***************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.string.split.js ***!
-  \***************************************************************************************/
+/*!***************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.string.split.js ***!
+  \***************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6859,9 +6859,9 @@ fixRegExpWellKnownSymbolLogic('split', 2, function (SPLIT, nativeSplit, maybeCal
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.string.starts-with.js":
-/*!*********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.string.starts-with.js ***!
-  \*********************************************************************************************/
+/*!*********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.string.starts-with.js ***!
+  \*********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6904,9 +6904,9 @@ $({ target: 'String', proto: true, forced: !MDN_POLYFILL_BUG && !CORRECT_IS_REGE
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.string.trim-end.js":
-/*!******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.string.trim-end.js ***!
-  \******************************************************************************************/
+/*!******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.string.trim-end.js ***!
+  \******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6935,9 +6935,9 @@ $({ target: 'String', proto: true, forced: FORCED }, {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.string.trim-start.js":
-/*!********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.string.trim-start.js ***!
-  \********************************************************************************************/
+/*!********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.string.trim-start.js ***!
+  \********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6966,9 +6966,9 @@ $({ target: 'String', proto: true, forced: FORCED }, {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.string.trim.js":
-/*!**************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.string.trim.js ***!
-  \**************************************************************************************/
+/*!**************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.string.trim.js ***!
+  \**************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6990,9 +6990,9 @@ $({ target: 'String', proto: true, forced: forcedStringTrimMethod('trim') }, {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.symbol.async-iterator.js":
-/*!************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.symbol.async-iterator.js ***!
-  \************************************************************************************************/
+/*!************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.symbol.async-iterator.js ***!
+  \************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7006,9 +7006,9 @@ defineWellKnownSymbol('asyncIterator');
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.symbol.description.js":
-/*!*********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.symbol.description.js ***!
-  \*********************************************************************************************/
+/*!*********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.symbol.description.js ***!
+  \*********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7068,9 +7068,9 @@ if (DESCRIPTORS && typeof NativeSymbol == 'function' && (!('description' in Nati
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.symbol.match.js":
-/*!***************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.symbol.match.js ***!
-  \***************************************************************************************/
+/*!***************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.symbol.match.js ***!
+  \***************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7084,9 +7084,9 @@ defineWellKnownSymbol('match');
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.symbol.replace.js":
-/*!*****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.symbol.replace.js ***!
-  \*****************************************************************************************/
+/*!*****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.symbol.replace.js ***!
+  \*****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7100,9 +7100,9 @@ defineWellKnownSymbol('replace');
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.symbol.search.js":
-/*!****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.symbol.search.js ***!
-  \****************************************************************************************/
+/*!****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.symbol.search.js ***!
+  \****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7116,9 +7116,9 @@ defineWellKnownSymbol('search');
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.symbol.split.js":
-/*!***************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.symbol.split.js ***!
-  \***************************************************************************************/
+/*!***************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.symbol.split.js ***!
+  \***************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7132,9 +7132,9 @@ defineWellKnownSymbol('split');
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.typed-array.float32-array.js":
-/*!****************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.typed-array.float32-array.js ***!
-  \****************************************************************************************************/
+/*!****************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.typed-array.float32-array.js ***!
+  \****************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7152,9 +7152,9 @@ createTypedArrayConstructor('Float32', function (init) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.typed-array.float64-array.js":
-/*!****************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.typed-array.float64-array.js ***!
-  \****************************************************************************************************/
+/*!****************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.typed-array.float64-array.js ***!
+  \****************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7172,9 +7172,9 @@ createTypedArrayConstructor('Float64', function (init) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.typed-array.from.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.typed-array.from.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.typed-array.from.js ***!
+  \*******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7192,9 +7192,9 @@ exportTypedArrayStaticMethod('from', typedArrayFrom, TYPED_ARRAYS_CONSTRUCTORS_R
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.typed-array.int16-array.js":
-/*!**************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.typed-array.int16-array.js ***!
-  \**************************************************************************************************/
+/*!**************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.typed-array.int16-array.js ***!
+  \**************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7212,9 +7212,9 @@ createTypedArrayConstructor('Int16', function (init) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.typed-array.int32-array.js":
-/*!**************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.typed-array.int32-array.js ***!
-  \**************************************************************************************************/
+/*!**************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.typed-array.int32-array.js ***!
+  \**************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7232,9 +7232,9 @@ createTypedArrayConstructor('Int32', function (init) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.typed-array.int8-array.js":
-/*!*************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.typed-array.int8-array.js ***!
-  \*************************************************************************************************/
+/*!*************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.typed-array.int8-array.js ***!
+  \*************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7252,9 +7252,9 @@ createTypedArrayConstructor('Int8', function (init) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.typed-array.of.js":
-/*!*****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.typed-array.of.js ***!
-  \*****************************************************************************************/
+/*!*****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.typed-array.of.js ***!
+  \*****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7280,9 +7280,9 @@ exportTypedArrayStaticMethod('of', function of(/* ...items */) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.typed-array.to-locale-string.js":
-/*!*******************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.typed-array.to-locale-string.js ***!
-  \*******************************************************************************************************/
+/*!*******************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.typed-array.to-locale-string.js ***!
+  \*******************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7319,9 +7319,9 @@ exportTypedArrayMethod('toLocaleString', function toLocaleString() {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.typed-array.uint16-array.js":
-/*!***************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.typed-array.uint16-array.js ***!
-  \***************************************************************************************************/
+/*!***************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.typed-array.uint16-array.js ***!
+  \***************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7339,9 +7339,9 @@ createTypedArrayConstructor('Uint16', function (init) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.typed-array.uint32-array.js":
-/*!***************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.typed-array.uint32-array.js ***!
-  \***************************************************************************************************/
+/*!***************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.typed-array.uint32-array.js ***!
+  \***************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7359,9 +7359,9 @@ createTypedArrayConstructor('Uint32', function (init) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.typed-array.uint8-array.js":
-/*!**************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.typed-array.uint8-array.js ***!
-  \**************************************************************************************************/
+/*!**************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.typed-array.uint8-array.js ***!
+  \**************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7379,9 +7379,9 @@ createTypedArrayConstructor('Uint8', function (init) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.typed-array.uint8-clamped-array.js":
-/*!**********************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.typed-array.uint8-clamped-array.js ***!
-  \**********************************************************************************************************/
+/*!**********************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.typed-array.uint8-clamped-array.js ***!
+  \**********************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7399,9 +7399,9 @@ createTypedArrayConstructor('Uint8', function (init) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/web.dom-collections.iterator.js":
-/*!****************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/web.dom-collections.iterator.js ***!
-  \****************************************************************************************************/
+/*!****************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/web.dom-collections.iterator.js ***!
+  \****************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7443,9 +7443,9 @@ for (var COLLECTION_NAME in DOMIterables) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/web.immediate.js":
-/*!*************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/web.immediate.js ***!
-  \*************************************************************************************/
+/*!*************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/web.immediate.js ***!
+  \*************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7469,9 +7469,9 @@ $({ global: true, bind: true, enumerable: true, forced: FORCED }, {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/web.queue-microtask.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/web.queue-microtask.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/web.queue-microtask.js ***!
+  \*******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7495,9 +7495,9 @@ $({ global: true, enumerable: true, noTargetGet: true }, {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/web.url-search-params.js":
-/*!*********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/web.url-search-params.js ***!
-  \*********************************************************************************************/
+/*!*********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/web.url-search-params.js ***!
+  \*********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7854,9 +7854,9 @@ module.exports = {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/web.url.js":
-/*!*******************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/web.url.js ***!
-  \*******************************************************************************/
+/*!*******************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/web.url.js ***!
+  \*******************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8872,9 +8872,9 @@ $({ global: true, forced: !USE_NATIVE_URL, sham: !DESCRIPTORS }, {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/web.url.to-json.js":
-/*!***************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/web.url.to-json.js ***!
-  \***************************************************************************************/
+/*!***************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/web.url.to-json.js ***!
+  \***************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -9098,7 +9098,7 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/apps/showcase/src/polyfills.ts */"./polyfills.ts");
+module.exports = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/apps/showcase/src/polyfills.ts */"./polyfills.ts");
 
 
 /***/ })

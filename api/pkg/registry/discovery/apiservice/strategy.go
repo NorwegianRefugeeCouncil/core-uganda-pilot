@@ -18,6 +18,14 @@ type apiServiceStrategy struct {
 	names.NameGenerator
 }
 
+func (a apiServiceStrategy) WarningsOnCreate(ctx context.Context, obj runtime.Object) []string {
+	return []string{}
+}
+
+func (a apiServiceStrategy) WarningsOnUpdate(ctx context.Context, obj, old runtime.Object) []string {
+	return []string{}
+}
+
 var _ rest.RESTCreateUpdateStrategy = apiServiceStrategy{}
 
 func (a apiServiceStrategy) NamespaceScoped() bool {

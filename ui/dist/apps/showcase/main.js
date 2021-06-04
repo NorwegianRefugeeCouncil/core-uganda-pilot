@@ -1,10 +1,10 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["main"],{
 
 /***/ "../../../libs/shared/ui-toolkit/src/index.ts":
-/*!***************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/index.ts ***!
-  \***************************************************************************/
-/*! exports provided: Accordion, Badge, Button, Card, CloseButton, Collapse, Container, Dropdown, Form, Icons, ListGroup, ListGroupItem, Modal, ModalDialog, ModalContent, ModalHeader, ModalTitle, ModalBody, ModalFooter, Nav, Progress, CustomSelect, Control, Option, MultiValue, MultiValueLabel, MultiValueRemove */
+/*!***************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/index.ts ***!
+  \***************************************************************************************/
+/*! exports provided: Accordion, Badge, Button, Card, CardBody, CardFooter, CardHeader, CardImg, CardLink, CardSubtitle, CardText, CardTitle, CloseButton, Collapse, Container, Dropdown, Form, FormCheck, FormCheckInput, FormCheckLabel, FormContext, FormControl, FormGroup, FormLabel, FormSelect, FormText, Icons, ListGroup, ListGroupItem, Modal, ModalDialog, ModalContent, ModalHeader, ModalTitle, ModalBody, ModalFooter, Nav, Progress, CustomSelect, Control, Option, MultiValue, MultiValueLabel, MultiValueRemove */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21,62 +21,130 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _lib_components_card_card_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./lib/components/card/card.component */ "../../../libs/shared/ui-toolkit/src/lib/components/card/card.component.tsx");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Card", function() { return _lib_components_card_card_component__WEBPACK_IMPORTED_MODULE_3__["Card"]; });
 
-/* harmony import */ var _lib_components_close_button_close_button_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./lib/components/close-button/close-button.component */ "../../../libs/shared/ui-toolkit/src/lib/components/close-button/close-button.component.tsx");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CloseButton", function() { return _lib_components_close_button_close_button_component__WEBPACK_IMPORTED_MODULE_4__["CloseButton"]; });
+/* harmony import */ var _lib_components_card_card_body_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./lib/components/card/card-body.component */ "../../../libs/shared/ui-toolkit/src/lib/components/card/card-body.component.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CardBody", function() { return _lib_components_card_card_body_component__WEBPACK_IMPORTED_MODULE_4__["CardBody"]; });
 
-/* harmony import */ var _lib_components_collapse_collapse_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./lib/components/collapse/collapse.component */ "../../../libs/shared/ui-toolkit/src/lib/components/collapse/collapse.component.tsx");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Collapse", function() { return _lib_components_collapse_collapse_component__WEBPACK_IMPORTED_MODULE_5__["Collapse"]; });
+/* harmony import */ var _lib_components_card_card_footer_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./lib/components/card/card-footer.component */ "../../../libs/shared/ui-toolkit/src/lib/components/card/card-footer.component.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CardFooter", function() { return _lib_components_card_card_footer_component__WEBPACK_IMPORTED_MODULE_5__["CardFooter"]; });
 
-/* harmony import */ var _lib_components_container_container_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./lib/components/container/container.component */ "../../../libs/shared/ui-toolkit/src/lib/components/container/container.component.tsx");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Container", function() { return _lib_components_container_container_component__WEBPACK_IMPORTED_MODULE_6__["Container"]; });
+/* harmony import */ var _lib_components_card_card_header_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./lib/components/card/card-header.component */ "../../../libs/shared/ui-toolkit/src/lib/components/card/card-header.component.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CardHeader", function() { return _lib_components_card_card_header_component__WEBPACK_IMPORTED_MODULE_6__["CardHeader"]; });
 
-/* harmony import */ var _lib_components_dropdown_dropdown_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./lib/components/dropdown/dropdown.component */ "../../../libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown.component.tsx");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Dropdown", function() { return _lib_components_dropdown_dropdown_component__WEBPACK_IMPORTED_MODULE_7__["Dropdown"]; });
+/* harmony import */ var _lib_components_card_card_img_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./lib/components/card/card-img.component */ "../../../libs/shared/ui-toolkit/src/lib/components/card/card-img.component.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CardImg", function() { return _lib_components_card_card_img_component__WEBPACK_IMPORTED_MODULE_7__["CardImg"]; });
 
-/* harmony import */ var _lib_components_form_form_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./lib/components/form/form.component */ "../../../libs/shared/ui-toolkit/src/lib/components/form/form.component.tsx");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Form", function() { return _lib_components_form_form_component__WEBPACK_IMPORTED_MODULE_8__["Form"]; });
+/* harmony import */ var _lib_components_card_card_link_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./lib/components/card/card-link.component */ "../../../libs/shared/ui-toolkit/src/lib/components/card/card-link.component.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CardLink", function() { return _lib_components_card_card_link_component__WEBPACK_IMPORTED_MODULE_8__["CardLink"]; });
 
-/* harmony import */ var _lib_components_icons_icons__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./lib/components/icons/icons */ "../../../libs/shared/ui-toolkit/src/lib/components/icons/icons.tsx");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Icons", function() { return _lib_components_icons_icons__WEBPACK_IMPORTED_MODULE_9__["Icons"]; });
+/* harmony import */ var _lib_components_card_card_subtitle_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./lib/components/card/card-subtitle.component */ "../../../libs/shared/ui-toolkit/src/lib/components/card/card-subtitle.component.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CardSubtitle", function() { return _lib_components_card_card_subtitle_component__WEBPACK_IMPORTED_MODULE_9__["CardSubtitle"]; });
 
-/* harmony import */ var _lib_components_list_group_list_group_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./lib/components/list-group/list-group.component */ "../../../libs/shared/ui-toolkit/src/lib/components/list-group/list-group.component.tsx");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ListGroup", function() { return _lib_components_list_group_list_group_component__WEBPACK_IMPORTED_MODULE_10__["ListGroup"]; });
+/* harmony import */ var _lib_components_card_card_text_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./lib/components/card/card-text.component */ "../../../libs/shared/ui-toolkit/src/lib/components/card/card-text.component.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CardText", function() { return _lib_components_card_card_text_component__WEBPACK_IMPORTED_MODULE_10__["CardText"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ListGroupItem", function() { return _lib_components_list_group_list_group_component__WEBPACK_IMPORTED_MODULE_10__["ListGroupItem"]; });
+/* harmony import */ var _lib_components_card_card_title_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./lib/components/card/card-title.component */ "../../../libs/shared/ui-toolkit/src/lib/components/card/card-title.component.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CardTitle", function() { return _lib_components_card_card_title_component__WEBPACK_IMPORTED_MODULE_11__["CardTitle"]; });
 
-/* harmony import */ var _lib_components_modal_modal__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./lib/components/modal/modal */ "../../../libs/shared/ui-toolkit/src/lib/components/modal/modal.tsx");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Modal", function() { return _lib_components_modal_modal__WEBPACK_IMPORTED_MODULE_11__["Modal"]; });
+/* harmony import */ var _lib_components_close_button_close_button_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./lib/components/close-button/close-button.component */ "../../../libs/shared/ui-toolkit/src/lib/components/close-button/close-button.component.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CloseButton", function() { return _lib_components_close_button_close_button_component__WEBPACK_IMPORTED_MODULE_12__["CloseButton"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ModalDialog", function() { return _lib_components_modal_modal__WEBPACK_IMPORTED_MODULE_11__["ModalDialog"]; });
+/* harmony import */ var _lib_components_collapse_collapse_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./lib/components/collapse/collapse.component */ "../../../libs/shared/ui-toolkit/src/lib/components/collapse/collapse.component.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Collapse", function() { return _lib_components_collapse_collapse_component__WEBPACK_IMPORTED_MODULE_13__["Collapse"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ModalContent", function() { return _lib_components_modal_modal__WEBPACK_IMPORTED_MODULE_11__["ModalContent"]; });
+/* harmony import */ var _lib_components_container_container_component__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./lib/components/container/container.component */ "../../../libs/shared/ui-toolkit/src/lib/components/container/container.component.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Container", function() { return _lib_components_container_container_component__WEBPACK_IMPORTED_MODULE_14__["Container"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ModalHeader", function() { return _lib_components_modal_modal__WEBPACK_IMPORTED_MODULE_11__["ModalHeader"]; });
+/* harmony import */ var _lib_components_dropdown_dropdown_component__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./lib/components/dropdown/dropdown.component */ "../../../libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown.component.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Dropdown", function() { return _lib_components_dropdown_dropdown_component__WEBPACK_IMPORTED_MODULE_15__["Dropdown"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ModalTitle", function() { return _lib_components_modal_modal__WEBPACK_IMPORTED_MODULE_11__["ModalTitle"]; });
+/* harmony import */ var _lib_components_form_form_component__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./lib/components/form/form.component */ "../../../libs/shared/ui-toolkit/src/lib/components/form/form.component.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Form", function() { return _lib_components_form_form_component__WEBPACK_IMPORTED_MODULE_16__["Form"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ModalBody", function() { return _lib_components_modal_modal__WEBPACK_IMPORTED_MODULE_11__["ModalBody"]; });
+/* harmony import */ var _lib_components_form_form_check_component__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./lib/components/form/form-check.component */ "../../../libs/shared/ui-toolkit/src/lib/components/form/form-check.component.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FormCheck", function() { return _lib_components_form_form_check_component__WEBPACK_IMPORTED_MODULE_17__["FormCheck"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ModalFooter", function() { return _lib_components_modal_modal__WEBPACK_IMPORTED_MODULE_11__["ModalFooter"]; });
+/* harmony import */ var _lib_components_form_form_check_input_component__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./lib/components/form/form-check-input.component */ "../../../libs/shared/ui-toolkit/src/lib/components/form/form-check-input.component.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FormCheckInput", function() { return _lib_components_form_form_check_input_component__WEBPACK_IMPORTED_MODULE_18__["FormCheckInput"]; });
 
-/* harmony import */ var _lib_components_nav_nav_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./lib/components/nav/nav.component */ "../../../libs/shared/ui-toolkit/src/lib/components/nav/nav.component.tsx");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Nav", function() { return _lib_components_nav_nav_component__WEBPACK_IMPORTED_MODULE_12__["Nav"]; });
+/* harmony import */ var _lib_components_form_form_check_label_component__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./lib/components/form/form-check-label.component */ "../../../libs/shared/ui-toolkit/src/lib/components/form/form-check-label.component.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FormCheckLabel", function() { return _lib_components_form_form_check_label_component__WEBPACK_IMPORTED_MODULE_19__["FormCheckLabel"]; });
 
-/* harmony import */ var _lib_components_progress_progress_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./lib/components/progress/progress.component */ "../../../libs/shared/ui-toolkit/src/lib/components/progress/progress.component.tsx");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Progress", function() { return _lib_components_progress_progress_component__WEBPACK_IMPORTED_MODULE_13__["Progress"]; });
+/* harmony import */ var _lib_components_form_form_context__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./lib/components/form/form-context */ "../../../libs/shared/ui-toolkit/src/lib/components/form/form-context.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FormContext", function() { return _lib_components_form_form_context__WEBPACK_IMPORTED_MODULE_20__["FormContext"]; });
 
-/* harmony import */ var _lib_components_select_select_component__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./lib/components/select/select.component */ "../../../libs/shared/ui-toolkit/src/lib/components/select/select.component.tsx");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CustomSelect", function() { return _lib_components_select_select_component__WEBPACK_IMPORTED_MODULE_14__["CustomSelect"]; });
+/* harmony import */ var _lib_components_form_form_control_component__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./lib/components/form/form-control.component */ "../../../libs/shared/ui-toolkit/src/lib/components/form/form-control.component.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FormControl", function() { return _lib_components_form_form_control_component__WEBPACK_IMPORTED_MODULE_21__["FormControl"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Control", function() { return _lib_components_select_select_component__WEBPACK_IMPORTED_MODULE_14__["Control"]; });
+/* harmony import */ var _lib_components_form_form_group_component__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./lib/components/form/form-group.component */ "../../../libs/shared/ui-toolkit/src/lib/components/form/form-group.component.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FormGroup", function() { return _lib_components_form_form_group_component__WEBPACK_IMPORTED_MODULE_22__["FormGroup"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Option", function() { return _lib_components_select_select_component__WEBPACK_IMPORTED_MODULE_14__["Option"]; });
+/* harmony import */ var _lib_components_form_form_label_component__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./lib/components/form/form-label.component */ "../../../libs/shared/ui-toolkit/src/lib/components/form/form-label.component.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FormLabel", function() { return _lib_components_form_form_label_component__WEBPACK_IMPORTED_MODULE_23__["FormLabel"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MultiValue", function() { return _lib_components_select_select_component__WEBPACK_IMPORTED_MODULE_14__["MultiValue"]; });
+/* harmony import */ var _lib_components_form_form_select_component__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./lib/components/form/form-select.component */ "../../../libs/shared/ui-toolkit/src/lib/components/form/form-select.component.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FormSelect", function() { return _lib_components_form_form_select_component__WEBPACK_IMPORTED_MODULE_24__["FormSelect"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MultiValueLabel", function() { return _lib_components_select_select_component__WEBPACK_IMPORTED_MODULE_14__["MultiValueLabel"]; });
+/* harmony import */ var _lib_components_form_form_text_component__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./lib/components/form/form-text.component */ "../../../libs/shared/ui-toolkit/src/lib/components/form/form-text.component.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FormText", function() { return _lib_components_form_form_text_component__WEBPACK_IMPORTED_MODULE_25__["FormText"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MultiValueRemove", function() { return _lib_components_select_select_component__WEBPACK_IMPORTED_MODULE_14__["MultiValueRemove"]; });
+/* harmony import */ var _lib_components_icons_icons__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./lib/components/icons/icons */ "../../../libs/shared/ui-toolkit/src/lib/components/icons/icons.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Icons", function() { return _lib_components_icons_icons__WEBPACK_IMPORTED_MODULE_26__["Icons"]; });
+
+/* harmony import */ var _lib_components_list_group_list_group_component__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./lib/components/list-group/list-group.component */ "../../../libs/shared/ui-toolkit/src/lib/components/list-group/list-group.component.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ListGroup", function() { return _lib_components_list_group_list_group_component__WEBPACK_IMPORTED_MODULE_27__["ListGroup"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ListGroupItem", function() { return _lib_components_list_group_list_group_component__WEBPACK_IMPORTED_MODULE_27__["ListGroupItem"]; });
+
+/* harmony import */ var _lib_components_modal_modal__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./lib/components/modal/modal */ "../../../libs/shared/ui-toolkit/src/lib/components/modal/modal.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Modal", function() { return _lib_components_modal_modal__WEBPACK_IMPORTED_MODULE_28__["Modal"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ModalDialog", function() { return _lib_components_modal_modal__WEBPACK_IMPORTED_MODULE_28__["ModalDialog"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ModalContent", function() { return _lib_components_modal_modal__WEBPACK_IMPORTED_MODULE_28__["ModalContent"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ModalHeader", function() { return _lib_components_modal_modal__WEBPACK_IMPORTED_MODULE_28__["ModalHeader"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ModalTitle", function() { return _lib_components_modal_modal__WEBPACK_IMPORTED_MODULE_28__["ModalTitle"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ModalBody", function() { return _lib_components_modal_modal__WEBPACK_IMPORTED_MODULE_28__["ModalBody"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ModalFooter", function() { return _lib_components_modal_modal__WEBPACK_IMPORTED_MODULE_28__["ModalFooter"]; });
+
+/* harmony import */ var _lib_components_nav_nav_component__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./lib/components/nav/nav.component */ "../../../libs/shared/ui-toolkit/src/lib/components/nav/nav.component.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Nav", function() { return _lib_components_nav_nav_component__WEBPACK_IMPORTED_MODULE_29__["Nav"]; });
+
+/* harmony import */ var _lib_components_progress_progress_component__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./lib/components/progress/progress.component */ "../../../libs/shared/ui-toolkit/src/lib/components/progress/progress.component.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Progress", function() { return _lib_components_progress_progress_component__WEBPACK_IMPORTED_MODULE_30__["Progress"]; });
+
+/* harmony import */ var _lib_components_select_select_component__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./lib/components/select/select.component */ "../../../libs/shared/ui-toolkit/src/lib/components/select/select.component.tsx");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CustomSelect", function() { return _lib_components_select_select_component__WEBPACK_IMPORTED_MODULE_31__["CustomSelect"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Control", function() { return _lib_components_select_select_component__WEBPACK_IMPORTED_MODULE_31__["Control"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Option", function() { return _lib_components_select_select_component__WEBPACK_IMPORTED_MODULE_31__["Option"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MultiValue", function() { return _lib_components_select_select_component__WEBPACK_IMPORTED_MODULE_31__["MultiValue"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MultiValueLabel", function() { return _lib_components_select_select_component__WEBPACK_IMPORTED_MODULE_31__["MultiValueLabel"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MultiValueRemove", function() { return _lib_components_select_select_component__WEBPACK_IMPORTED_MODULE_31__["MultiValueRemove"]; });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -97,26 +165,26 @@ __webpack_require__.r(__webpack_exports__);
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/accordion/accordion-body.component.tsx":
-/*!************************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/accordion/accordion-body.component.tsx ***!
-  \************************************************************************************************************************/
+/*!************************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/accordion/accordion-body.component.tsx ***!
+  \************************************************************************************************************************************/
 /*! exports provided: AccordionBody */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AccordionBody", function() { return AccordionBody; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-dev-runtime */ "../../../node_modules/react/jsx-dev-runtime.js");
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__);
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/accordion/accordion-body.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/accordion/accordion-body.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -135,17 +203,17 @@ const AccordionBody = props => {
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/accordion/accordion-collapse.component.tsx":
-/*!****************************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/accordion/accordion-collapse.component.tsx ***!
-  \****************************************************************************************************************************/
+/*!****************************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/accordion/accordion-collapse.component.tsx ***!
+  \****************************************************************************************************************************************/
 /*! exports provided: AccordionCollapse */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AccordionCollapse", function() { return AccordionCollapse; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _accordion_context__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./accordion-context */ "../../../libs/shared/ui-toolkit/src/lib/components/accordion/accordion-context.ts");
@@ -154,11 +222,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/accordion/accordion-collapse.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/accordion/accordion-collapse.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -168,7 +236,7 @@ const AccordionCollapse = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__["forwa
   let {
     id
   } = _ref,
-      rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["id"]);
+      rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["id"]);
 
   const {
     activeKey,
@@ -191,9 +259,9 @@ const AccordionCollapse = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__["forwa
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/accordion/accordion-context.ts":
-/*!****************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/accordion/accordion-context.ts ***!
-  \****************************************************************************************************************/
+/*!****************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/accordion/accordion-context.ts ***!
+  \****************************************************************************************************************************/
 /*! exports provided: AccordionContext */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -208,17 +276,17 @@ const AccordionContext = /*#__PURE__*/Object(react__WEBPACK_IMPORTED_MODULE_0__[
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/accordion/accordion-header.component.tsx":
-/*!**************************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/accordion/accordion-header.component.tsx ***!
-  \**************************************************************************************************************************/
+/*!**************************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/accordion/accordion-header.component.tsx ***!
+  \**************************************************************************************************************************************/
 /*! exports provided: AccordionHeader */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AccordionHeader", function() { return AccordionHeader; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _accordion_context__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./accordion-context */ "../../../libs/shared/ui-toolkit/src/lib/components/accordion/accordion-context.ts");
@@ -227,11 +295,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/accordion/accordion-header.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/accordion/accordion-header.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -242,7 +310,7 @@ const AccordionHeader = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__["forward
     id,
     children
   } = _ref,
-      rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["id", "children"]);
+      rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["id", "children"]);
 
   const {
     activeKey,
@@ -276,17 +344,17 @@ const AccordionHeader = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__["forward
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/accordion/accordion-item.component.tsx":
-/*!************************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/accordion/accordion-item.component.tsx ***!
-  \************************************************************************************************************************/
+/*!************************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/accordion/accordion-item.component.tsx ***!
+  \************************************************************************************************************************************/
 /*! exports provided: AccordionItem */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AccordionItem", function() { return AccordionItem; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! classnames */ "../../../node_modules/classnames/index.js");
@@ -299,11 +367,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_8__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/accordion/accordion-item.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/accordion/accordion-item.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -320,7 +388,7 @@ const AccordionItem = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__["forwardRe
     open,
     className: customClass
   } = _ref,
-      rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["id", "header", "body", "open", "className"]);
+      rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["id", "header", "body", "open", "className"]);
 
   const {
     activeKey
@@ -365,17 +433,17 @@ const AccordionItem = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__["forwardRe
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/accordion/accordion.component.tsx":
-/*!*******************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/accordion/accordion.component.tsx ***!
-  \*******************************************************************************************************************/
+/*!*******************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/accordion/accordion.component.tsx ***!
+  \*******************************************************************************************************************************/
 /*! exports provided: Accordion */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Accordion", function() { return Accordion; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! classnames */ "../../../node_modules/classnames/index.js");
@@ -387,11 +455,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_7__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/accordion/accordion.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/accordion/accordion.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -408,7 +476,7 @@ const Accordion = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__["forwardRef"](
     className: customClass,
     children
   } = _ref,
-      rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["activeId", "defaultActiveId", "flush", "onSelection", "className", "children"]);
+      rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["activeId", "defaultActiveId", "flush", "onSelection", "className", "children"]);
 
   const {
     activeKey,
@@ -447,9 +515,9 @@ Accordion.Item = _accordion_item_component__WEBPACK_IMPORTED_MODULE_5__["Accordi
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/accordion/use-accordion.ts":
-/*!************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/accordion/use-accordion.ts ***!
-  \************************************************************************************************************/
+/*!************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/accordion/use-accordion.ts ***!
+  \************************************************************************************************************************/
 /*! exports provided: useAccordion */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -486,17 +554,17 @@ function useAccordion({
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/badge/badge.component.tsx":
-/*!***********************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/badge/badge.component.tsx ***!
-  \***********************************************************************************************************/
+/*!***********************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/badge/badge.component.tsx ***!
+  \***********************************************************************************************************************/
 /*! exports provided: Badge */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Badge", function() { return Badge; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! classnames */ "../../../node_modules/classnames/index.js");
@@ -505,11 +573,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/badge/badge.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/badge/badge.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -521,7 +589,7 @@ const Badge = _ref => {
     theme = 'primary',
     pill = false
   } = _ref,
-      rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["className", "children", "theme", "pill"]);
+      rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["className", "children", "theme", "pill"]);
 
   const className = classnames__WEBPACK_IMPORTED_MODULE_3___default()('badge', `bg-${theme}`, {
     'text-dark': theme === 'light' || theme === 'warning',
@@ -542,17 +610,17 @@ const Badge = _ref => {
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/button-group/button-group.component.tsx":
-/*!*************************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/button-group/button-group.component.tsx ***!
-  \*************************************************************************************************************************/
+/*!*************************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/button-group/button-group.component.tsx ***!
+  \*************************************************************************************************************************************/
 /*! exports provided: ButtonGroup */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ButtonGroup", function() { return ButtonGroup; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @core/ui-toolkit/util/utils */ "../../../libs/shared/ui-toolkit/src/lib/util/utils.ts");
@@ -560,11 +628,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/button-group/button-group.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/button-group/button-group.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -575,7 +643,7 @@ const ButtonGroup = _ref => {
     className: customClass,
     children
   } = _ref,
-      rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["size", "className", "children"]);
+      rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["size", "className", "children"]);
 
   const className = Object(_core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_3__["classNames"])('btn-group', customClass, {
     [`btn-group-${size}`]: size != null
@@ -595,17 +663,17 @@ const ButtonGroup = _ref => {
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/button/button.component.tsx":
-/*!*************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/button/button.component.tsx ***!
-  \*************************************************************************************************************/
+/*!*************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/button/button.component.tsx ***!
+  \*************************************************************************************************************************/
 /*! exports provided: Button */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Button", function() { return Button; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! classnames */ "../../../node_modules/classnames/index.js");
@@ -614,11 +682,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/button/button.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/button/button.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -631,7 +699,7 @@ const Button = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__["forwardRef"]((pr
     className: customClass,
     children
   } = props,
-        rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(props, ["theme", "size", "outline", "className", "children"]);
+        rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(props, ["theme", "size", "outline", "className", "children"]);
 
   const className = classnames__WEBPACK_IMPORTED_MODULE_3___default()('btn', customClass, {
     [`btn-${theme}`]: theme && !outline,
@@ -654,27 +722,27 @@ Button.displayName = 'Button';
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/card/card-body.component.tsx":
-/*!**************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-body.component.tsx ***!
-  \**************************************************************************************************************/
+/*!**************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-body.component.tsx ***!
+  \**************************************************************************************************************************/
 /*! exports provided: CardBody */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CardBody", function() { return CardBody; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @core/ui-toolkit/util/utils */ "../../../libs/shared/ui-toolkit/src/lib/util/utils.ts");
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-dev-runtime */ "../../../node_modules/react/jsx-dev-runtime.js");
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__);
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-body.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-body.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
  // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -694,27 +762,27 @@ const CardBody = props => {
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/card/card-footer.component.tsx":
-/*!****************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-footer.component.tsx ***!
-  \****************************************************************************************************************/
+/*!****************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-footer.component.tsx ***!
+  \****************************************************************************************************************************/
 /*! exports provided: CardFooter */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CardFooter", function() { return CardFooter; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @core/ui-toolkit/util/utils */ "../../../libs/shared/ui-toolkit/src/lib/util/utils.ts");
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-dev-runtime */ "../../../node_modules/react/jsx-dev-runtime.js");
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__);
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-footer.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-footer.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
  // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -734,27 +802,27 @@ const CardFooter = props => {
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/card/card-header.component.tsx":
-/*!****************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-header.component.tsx ***!
-  \****************************************************************************************************************/
+/*!****************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-header.component.tsx ***!
+  \****************************************************************************************************************************/
 /*! exports provided: CardHeader */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CardHeader", function() { return CardHeader; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @core/ui-toolkit/util/utils */ "../../../libs/shared/ui-toolkit/src/lib/util/utils.ts");
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-dev-runtime */ "../../../node_modules/react/jsx-dev-runtime.js");
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__);
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-header.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-header.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
  // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -774,17 +842,17 @@ const CardHeader = props => {
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/card/card-img.component.tsx":
-/*!*************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-img.component.tsx ***!
-  \*************************************************************************************************************/
+/*!*************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-img.component.tsx ***!
+  \*************************************************************************************************************************/
 /*! exports provided: CardImg */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CardImg", function() { return CardImg; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @core/ui-toolkit/util/utils */ "../../../libs/shared/ui-toolkit/src/lib/util/utils.ts");
@@ -792,11 +860,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-img.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-img.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -807,7 +875,7 @@ const CardImg = _ref => {
     className: customClass,
     children
   } = _ref,
-      rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["position", "className", "children"]);
+      rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["position", "className", "children"]);
 
   const className = Object(_core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_3__["classNames"])(customClass, `card-img-${position}`);
   return /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__["jsxDEV"])("img", _objectSpread({
@@ -822,27 +890,27 @@ const CardImg = _ref => {
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/card/card-link.component.tsx":
-/*!**************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-link.component.tsx ***!
-  \**************************************************************************************************************/
+/*!**************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-link.component.tsx ***!
+  \**************************************************************************************************************************/
 /*! exports provided: CardLink */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CardLink", function() { return CardLink; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @core/ui-toolkit/util/utils */ "../../../libs/shared/ui-toolkit/src/lib/util/utils.ts");
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-dev-runtime */ "../../../node_modules/react/jsx-dev-runtime.js");
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__);
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-link.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-link.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
  // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -862,27 +930,27 @@ const CardLink = props => {
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/card/card-subtitle.component.tsx":
-/*!******************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-subtitle.component.tsx ***!
-  \******************************************************************************************************************/
+/*!******************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-subtitle.component.tsx ***!
+  \******************************************************************************************************************************/
 /*! exports provided: CardSubtitle */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CardSubtitle", function() { return CardSubtitle; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @core/ui-toolkit/util/utils */ "../../../libs/shared/ui-toolkit/src/lib/util/utils.ts");
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-dev-runtime */ "../../../node_modules/react/jsx-dev-runtime.js");
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__);
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-subtitle.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-subtitle.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
  // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -902,27 +970,27 @@ const CardSubtitle = props => {
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/card/card-text.component.tsx":
-/*!**************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-text.component.tsx ***!
-  \**************************************************************************************************************/
+/*!**************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-text.component.tsx ***!
+  \**************************************************************************************************************************/
 /*! exports provided: CardText */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CardText", function() { return CardText; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @core/ui-toolkit/util/utils */ "../../../libs/shared/ui-toolkit/src/lib/util/utils.ts");
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-dev-runtime */ "../../../node_modules/react/jsx-dev-runtime.js");
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__);
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-text.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-text.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
  // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -942,27 +1010,27 @@ const CardText = props => {
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/card/card-title.component.tsx":
-/*!***************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-title.component.tsx ***!
-  \***************************************************************************************************************/
+/*!***************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-title.component.tsx ***!
+  \***************************************************************************************************************************/
 /*! exports provided: CardTitle */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CardTitle", function() { return CardTitle; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @core/ui-toolkit/util/utils */ "../../../libs/shared/ui-toolkit/src/lib/util/utils.ts");
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-dev-runtime */ "../../../node_modules/react/jsx-dev-runtime.js");
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__);
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-title.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card-title.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
  // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -982,94 +1050,70 @@ const CardTitle = props => {
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/card/card.component.tsx":
-/*!*********************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card.component.tsx ***!
-  \*********************************************************************************************************/
+/*!*********************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card.component.tsx ***!
+  \*********************************************************************************************************************/
 /*! exports provided: Card */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Card", function() { return Card; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @core/ui-toolkit/util/utils */ "../../../libs/shared/ui-toolkit/src/lib/util/utils.ts");
-/* harmony import */ var _card_img_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./card-img.component */ "../../../libs/shared/ui-toolkit/src/lib/components/card/card-img.component.tsx");
-/* harmony import */ var _card_body_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./card-body.component */ "../../../libs/shared/ui-toolkit/src/lib/components/card/card-body.component.tsx");
-/* harmony import */ var _card_header_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./card-header.component */ "../../../libs/shared/ui-toolkit/src/lib/components/card/card-header.component.tsx");
-/* harmony import */ var _card_footer_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./card-footer.component */ "../../../libs/shared/ui-toolkit/src/lib/components/card/card-footer.component.tsx");
-/* harmony import */ var _card_text_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./card-text.component */ "../../../libs/shared/ui-toolkit/src/lib/components/card/card-text.component.tsx");
-/* harmony import */ var _card_title_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./card-title.component */ "../../../libs/shared/ui-toolkit/src/lib/components/card/card-title.component.tsx");
-/* harmony import */ var _card_subtitle_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./card-subtitle.component */ "../../../libs/shared/ui-toolkit/src/lib/components/card/card-subtitle.component.tsx");
-/* harmony import */ var _card_link_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./card-link.component */ "../../../libs/shared/ui-toolkit/src/lib/components/card/card-link.component.tsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! react/jsx-dev-runtime */ "../../../node_modules/react/jsx-dev-runtime.js");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_12__);
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react/jsx-dev-runtime */ "../../../node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/card/card.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 /* eslint-disable @typescript-eslint/no-empty-interface */
 
 
 
-
-
-
-
-
-
-
-
-
-const Card = _ref => {
+const Card = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__["forwardRef"]((_ref, ref) => {
   let {
     className: customClass,
     children
   } = _ref,
-      rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["className", "children"]);
+      rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["className", "children"]);
 
   const className = Object(_core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_3__["classNames"])('card', customClass);
-  return /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_12__["jsxDEV"])("div", _objectSpread(_objectSpread({}, rest), {}, {
+  return /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__["jsxDEV"])("div", _objectSpread(_objectSpread({
+    ref: ref
+  }, rest), {}, {
     className: className,
     children: children
   }), void 0, false, {
     fileName: _jsxFileName,
-    lineNumber: 29,
+    lineNumber: 19,
     columnNumber: 5
   }, undefined);
-};
-
+});
 Card.displayName = 'Card';
-Card.Img = _card_img_component__WEBPACK_IMPORTED_MODULE_4__["CardImg"];
-Card.Title = _card_title_component__WEBPACK_IMPORTED_MODULE_9__["CardTitle"];
-Card.Subtitle = _card_subtitle_component__WEBPACK_IMPORTED_MODULE_10__["CardSubtitle"];
-Card.Body = _card_body_component__WEBPACK_IMPORTED_MODULE_5__["CardBody"];
-Card.Link = _card_link_component__WEBPACK_IMPORTED_MODULE_11__["CardLink"];
-Card.Text = _card_text_component__WEBPACK_IMPORTED_MODULE_8__["CardText"];
-Card.Header = _card_header_component__WEBPACK_IMPORTED_MODULE_6__["CardHeader"];
-Card.Footer = _card_footer_component__WEBPACK_IMPORTED_MODULE_7__["CardFooter"];
 
 
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/close-button/close-button.component.tsx":
-/*!*************************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/close-button/close-button.component.tsx ***!
-  \*************************************************************************************************************************/
+/*!*************************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/close-button/close-button.component.tsx ***!
+  \*************************************************************************************************************************************/
 /*! exports provided: CloseButton */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CloseButton", function() { return CloseButton; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! classnames */ "../../../node_modules/classnames/index.js");
@@ -1078,11 +1122,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/close-button/close-button.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/close-button/close-button.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -1093,7 +1137,7 @@ const CloseButton = _ref => {
     size,
     className: customClass
   } = _ref,
-      rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["white", "size", "className"]);
+      rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["white", "size", "className"]);
 
   const className = classnames__WEBPACK_IMPORTED_MODULE_3___default()('btn-close', customClass, {
     [`btn-${size}`]: size != null,
@@ -1112,17 +1156,17 @@ const CloseButton = _ref => {
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/collapse/collapse.component.tsx":
-/*!*****************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/collapse/collapse.component.tsx ***!
-  \*****************************************************************************************************************/
+/*!*****************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/collapse/collapse.component.tsx ***!
+  \*****************************************************************************************************************************/
 /*! exports provided: Collapse */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Collapse", function() { return Collapse; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! classnames */ "../../../node_modules/classnames/index.js");
@@ -1131,11 +1175,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/collapse/collapse.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/collapse/collapse.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -1146,7 +1190,7 @@ const Collapse = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__["forwardRef"]((
     className: customClass,
     children
   } = props,
-        rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(props, ["show", "className", "children"]);
+        rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(props, ["show", "className", "children"]);
 
   const classeName = classnames__WEBPACK_IMPORTED_MODULE_3___default()(customClass, 'collapse', {
     show
@@ -1166,17 +1210,17 @@ Collapse.displayName = 'Collapse';
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/container/container.component.tsx":
-/*!*******************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/container/container.component.tsx ***!
-  \*******************************************************************************************************************/
+/*!*******************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/container/container.component.tsx ***!
+  \*******************************************************************************************************************************/
 /*! exports provided: Container */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Container", function() { return Container; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! classnames */ "../../../node_modules/classnames/index.js");
@@ -1185,11 +1229,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/container/container.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/container/container.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -1210,10 +1254,11 @@ const Container = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__["forwardRef"](
     className: customClass,
     children
   } = _ref,
-      rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["size", "centerContent", "className", "children"]);
+      rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["size", "centerContent", "className", "children"]);
 
-  const className = classnames__WEBPACK_IMPORTED_MODULE_3___default()('container', {
-    [`container-${size}`]: size != null,
+  const className = classnames__WEBPACK_IMPORTED_MODULE_3___default()({
+    [`container-${size}`]: !!size,
+    container: !size,
     'd-flex flex-column justify-content-center align-items-center': centerContent
   }, customClass);
   return /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__["jsxDEV"])("div", _objectSpread(_objectSpread({
@@ -1223,7 +1268,7 @@ const Container = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__["forwardRef"](
     children: children
   }), void 0, false, {
     fileName: _jsxFileName,
-    lineNumber: 32,
+    lineNumber: 38,
     columnNumber: 7
   }, undefined);
 });
@@ -1233,26 +1278,26 @@ Container.displayName = 'Container';
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown-divider.component.tsx":
-/*!*************************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown-divider.component.tsx ***!
-  \*************************************************************************************************************************/
+/*!*************************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown-divider.component.tsx ***!
+  \*************************************************************************************************************************************/
 /*! exports provided: DropdownDivider */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DropdownDivider", function() { return DropdownDivider; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-dev-runtime */ "../../../node_modules/react/jsx-dev-runtime.js");
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__);
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown-divider.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown-divider.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
  // eslint-disable-next-line @typescript-eslint/no-empty-interface
 
@@ -1268,17 +1313,17 @@ const DropdownDivider = props => /*#__PURE__*/Object(react_jsx_dev_runtime__WEBP
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown-item.component.tsx":
-/*!**********************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown-item.component.tsx ***!
-  \**********************************************************************************************************************/
+/*!**********************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown-item.component.tsx ***!
+  \**********************************************************************************************************************************/
 /*! exports provided: DropdownItem */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DropdownItem", function() { return DropdownItem; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @core/ui-toolkit/util/utils */ "../../../libs/shared/ui-toolkit/src/lib/util/utils.ts");
@@ -1286,11 +1331,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown-item.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown-item.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
  // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -1307,7 +1352,7 @@ const DropdownItem = _ref => {
     className: customClass,
     children
   } = _ref,
-      rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["href", "isTextOnly", "value", "active", "disabled", "handleChange", "className", "children"]);
+      rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["href", "isTextOnly", "value", "active", "disabled", "handleChange", "className", "children"]);
 
   const className = Object(_core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_3__["classNames"])('dropdown-item', customClass, {
     active,
@@ -1335,17 +1380,17 @@ const DropdownItem = _ref => {
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown-menu.component.tsx":
-/*!**********************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown-menu.component.tsx ***!
-  \**********************************************************************************************************************/
+/*!**********************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown-menu.component.tsx ***!
+  \**********************************************************************************************************************************/
 /*! exports provided: DropdownMenu */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DropdownMenu", function() { return DropdownMenu; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! classnames */ "../../../node_modules/classnames/index.js");
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
@@ -1354,11 +1399,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown-menu.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown-menu.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -1376,7 +1421,7 @@ const DropdownMenu = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_3__["forwardRef
     className: customClass,
     children
   } = _ref,
-      rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["isVisible", "dark", "breakEnd", "breakStart", "alignStart", "alignEnd", "position", "handleChange", "className", "children"]);
+      rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["isVisible", "dark", "breakEnd", "breakStart", "alignStart", "alignEnd", "position", "handleChange", "className", "children"]);
 
   const className = classnames__WEBPACK_IMPORTED_MODULE_2___default()('dropdown-menu', customClass, {
     'dropdown-menu-dark': dark,
@@ -1410,9 +1455,9 @@ DropdownMenu.displayName = 'DropdownMenu';
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown-toggle.component.tsx":
-/*!************************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown-toggle.component.tsx ***!
-  \************************************************************************************************************************/
+/*!************************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown-toggle.component.tsx ***!
+  \************************************************************************************************************************************/
 /*! exports provided: DropdownToggle */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1421,8 +1466,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DropdownToggle", function() { return DropdownToggle; });
 /* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.string.split.js */ "../../../node_modules/core-js/modules/es.string.split.js");
 /* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @core/ui-toolkit/util/utils */ "../../../libs/shared/ui-toolkit/src/lib/util/utils.ts");
@@ -1432,11 +1477,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown-toggle.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown-toggle.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_1__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_1__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -1449,7 +1494,7 @@ const DropdownToggle = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_3__["forwardR
     toggleFn,
     children
   } = _ref,
-      rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_2__["default"])(_ref, ["theme", "split", "toggleFn", "children"]);
+      rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_2__["default"])(_ref, ["theme", "split", "toggleFn", "children"]);
 
   const className = Object(_core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_4__["classNames"])('dropdown-toggle', {
     'dropdown-toggle-split': split
@@ -1473,9 +1518,9 @@ DropdownToggle.displayName = 'DropdownToggle';
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown.component.tsx":
-/*!*****************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown.component.tsx ***!
-  \*****************************************************************************************************************/
+/*!*****************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown.component.tsx ***!
+  \*****************************************************************************************************************************/
 /*! exports provided: Dropdown */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1484,8 +1529,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Dropdown", function() { return Dropdown; });
 /* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.string.split.js */ "../../../node_modules/core-js/modules/es.string.split.js");
 /* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _dropdown_toggle_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./dropdown-toggle.component */ "../../../libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown-toggle.component.tsx");
@@ -1502,11 +1547,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/dropdown/dropdown.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_1__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_1__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -1531,7 +1576,7 @@ const Dropdown = _ref => {
     className: customClass,
     children
   } = _ref,
-      rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_2__["default"])(_ref, ["label", "theme", "split", "dropDir", "onChange", "className", "children"]);
+      rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_2__["default"])(_ref, ["label", "theme", "split", "dropDir", "onChange", "className", "children"]);
 
   const dropDirClass = {
     dropup: dropDir === 'up',
@@ -1629,9 +1674,9 @@ Dropdown.Divider = _dropdown_divider_component__WEBPACK_IMPORTED_MODULE_7__["Dro
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/dropdown/menuPositionFromDir.ts":
-/*!*****************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/dropdown/menuPositionFromDir.ts ***!
-  \*****************************************************************************************************************/
+/*!*****************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/dropdown/menuPositionFromDir.ts ***!
+  \*****************************************************************************************************************************/
 /*! exports provided: menuPositionFromDir */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1676,9 +1721,9 @@ function menuPositionFromDir(direction) {
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/dropdown/use-dropdown.ts":
-/*!**********************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/dropdown/use-dropdown.ts ***!
-  \**********************************************************************************************************/
+/*!**********************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/dropdown/use-dropdown.ts ***!
+  \**********************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1743,17 +1788,17 @@ function useDropdown(onChange) {
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/form/form-check-input.component.tsx":
-/*!*********************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-check-input.component.tsx ***!
-  \*********************************************************************************************************************/
+/*!*********************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-check-input.component.tsx ***!
+  \*********************************************************************************************************************************/
 /*! exports provided: FormCheckInput */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FormCheckInput", function() { return FormCheckInput; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! classnames */ "../../../node_modules/classnames/index.js");
@@ -1763,11 +1808,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-check-input.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-check-input.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -1780,7 +1825,7 @@ const FormCheckInput = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__["forwardR
     isInvalid,
     className: customClass
   } = _ref,
-      rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["id", "isValid", "isInvalid", "className"]);
+      rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["id", "isValid", "isInvalid", "className"]);
 
   const {
     controlId
@@ -1800,17 +1845,17 @@ const FormCheckInput = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__["forwardR
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/form/form-check-label.component.tsx":
-/*!*********************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-check-label.component.tsx ***!
-  \*********************************************************************************************************************/
+/*!*********************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-check-label.component.tsx ***!
+  \*********************************************************************************************************************************/
 /*! exports provided: FormCheckLabel */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FormCheckLabel", function() { return FormCheckLabel; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _form_context__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./form-context */ "../../../libs/shared/ui-toolkit/src/lib/components/form/form-context.ts");
@@ -1819,11 +1864,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-check-label.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-check-label.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -1835,7 +1880,7 @@ const FormCheckLabel = _ref => {
     htmlFor,
     className: customClass
   } = _ref,
-      rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["srOnly", "htmlFor", "className"]);
+      rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["srOnly", "htmlFor", "className"]);
 
   const {
     controlId
@@ -1856,17 +1901,17 @@ const FormCheckLabel = _ref => {
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/form/form-check.component.tsx":
-/*!***************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-check.component.tsx ***!
-  \***************************************************************************************************************/
+/*!***************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-check.component.tsx ***!
+  \***************************************************************************************************************************/
 /*! exports provided: FormCheck */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FormCheck", function() { return FormCheck; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _form_context__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./form-context */ "../../../libs/shared/ui-toolkit/src/lib/components/form/form-context.ts");
@@ -1877,11 +1922,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_7__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-check.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-check.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -1905,7 +1950,7 @@ const FormCheck = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__["forwardRef"](
     className: customClass,
     children
   } = _ref,
-      rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["id", "label", "type", "name", "defaultChecked", "inline", "isValid", "isInvalid", "disabled", "required", "className", "children"]);
+      rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["id", "label", "type", "name", "defaultChecked", "inline", "isValid", "isInvalid", "disabled", "required", "className", "children"]);
 
   // const { controlId } = React.useContext(FormContext);
   const innerFormContext = {
@@ -1968,9 +2013,9 @@ FormCheck.Input = _form_check_input_component__WEBPACK_IMPORTED_MODULE_5__["Form
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/form/form-context.ts":
-/*!******************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-context.ts ***!
-  \******************************************************************************************************/
+/*!******************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-context.ts ***!
+  \******************************************************************************************************************/
 /*! exports provided: FormContext */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1985,17 +2030,17 @@ const FormContext = /*#__PURE__*/Object(react__WEBPACK_IMPORTED_MODULE_0__["crea
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/form/form-control.component.tsx":
-/*!*****************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-control.component.tsx ***!
-  \*****************************************************************************************************************/
+/*!*****************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-control.component.tsx ***!
+  \*****************************************************************************************************************************/
 /*! exports provided: FormControl */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FormControl", function() { return FormControl; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _form_context__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./form-context */ "../../../libs/shared/ui-toolkit/src/lib/components/form/form-context.ts");
@@ -2004,11 +2049,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-control.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-control.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -2029,7 +2074,7 @@ const FormControl = props => {
     isInvalid,
     className: customClass
   } = props,
-        rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(props, ["id", "displaySize", "type", "plaintext", "isValid", "isInvalid", "className"]);
+        rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(props, ["id", "displaySize", "type", "plaintext", "isValid", "isInvalid", "className"]);
 
   const {
     controlId
@@ -2071,17 +2116,17 @@ const FormControl = props => {
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/form/form-group.component.tsx":
-/*!***************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-group.component.tsx ***!
-  \***************************************************************************************************************/
+/*!***************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-group.component.tsx ***!
+  \***************************************************************************************************************************/
 /*! exports provided: FormGroup */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FormGroup", function() { return FormGroup; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _form_context__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./form-context */ "../../../libs/shared/ui-toolkit/src/lib/components/form/form-context.ts");
@@ -2089,11 +2134,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-group.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-group.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -2102,7 +2147,7 @@ const FormGroup = _ref => {
   let {
     controlId
   } = _ref,
-      rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["controlId"]);
+      rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["controlId"]);
 
   const formCtx = {
     controlId
@@ -2127,17 +2172,17 @@ const FormGroup = _ref => {
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/form/form-label.component.tsx":
-/*!***************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-label.component.tsx ***!
-  \***************************************************************************************************************/
+/*!***************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-label.component.tsx ***!
+  \***************************************************************************************************************************/
 /*! exports provided: FormLabel */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FormLabel", function() { return FormLabel; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var _core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @core/ui-toolkit/util/utils */ "../../../libs/shared/ui-toolkit/src/lib/util/utils.ts");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_3__);
@@ -2146,11 +2191,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-label.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-label.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -2162,7 +2207,7 @@ const FormLabel = _ref => {
     htmlFor,
     className: customClass
   } = _ref,
-      rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["srOnly", "htmlFor", "className"]);
+      rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["srOnly", "htmlFor", "className"]);
 
   const {
     controlId
@@ -2183,17 +2228,17 @@ const FormLabel = _ref => {
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/form/form-select.component.tsx":
-/*!****************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-select.component.tsx ***!
-  \****************************************************************************************************************/
+/*!****************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-select.component.tsx ***!
+  \****************************************************************************************************************************/
 /*! exports provided: FormSelect */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FormSelect", function() { return FormSelect; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @core/ui-toolkit/util/utils */ "../../../libs/shared/ui-toolkit/src/lib/util/utils.ts");
@@ -2201,11 +2246,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-select.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-select.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -2218,7 +2263,7 @@ const FormSelect = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__["forwardRef"]
     className: customClass,
     children
   } = _ref,
-      rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["options", "selectedOptionIdx", "displaySize", "className", "children"]);
+      rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["options", "selectedOptionIdx", "displaySize", "className", "children"]);
 
   const className = Object(_core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_3__["classNames"])('form-select', {
     [`form-select-${displaySize}`]: displaySize != null
@@ -2251,17 +2296,17 @@ FormSelect.displayName = 'FormSelect';
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/form/form-text.component.tsx":
-/*!**************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-text.component.tsx ***!
-  \**************************************************************************************************************/
+/*!**************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-text.component.tsx ***!
+  \**************************************************************************************************************************/
 /*! exports provided: FormText */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FormText", function() { return FormText; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @core/ui-toolkit/util/utils */ "../../../libs/shared/ui-toolkit/src/lib/util/utils.ts");
@@ -2269,11 +2314,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-text.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form-text.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
  // eslint-disable-next-line @typescript-eslint/ban-types
@@ -2284,7 +2329,7 @@ const FormText = _ref => {
   let {
     className: customClass
   } = _ref,
-      rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["className"]);
+      rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["className"]);
 
   const className = Object(_core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_3__["classNames"])('form-text', customClass);
   return /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__["jsxDEV"])(_core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_3__["Box"], _objectSpread({
@@ -2300,17 +2345,17 @@ const FormText = _ref => {
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/form/form.component.tsx":
-/*!*********************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form.component.tsx ***!
-  \*********************************************************************************************************/
+/*!*********************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form.component.tsx ***!
+  \*********************************************************************************************************************/
 /*! exports provided: Form */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Form", function() { return Form; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _form_group_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./form-group.component */ "../../../libs/shared/ui-toolkit/src/lib/components/form/form-group.component.tsx");
@@ -2324,11 +2369,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_10__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/form/form.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -2345,7 +2390,7 @@ const Form = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__["forwardRef"]((_ref
     validated,
     className: customClass
   } = _ref,
-      rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["inline", "validated", "className"]);
+      rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["inline", "validated", "className"]);
 
   const className = Object(_core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_9__["classNames"])(customClass, {
     'row row-cols-lg-auto g-3 align-items-center': inline,
@@ -2371,17 +2416,17 @@ Form.Text = _form_text_component__WEBPACK_IMPORTED_MODULE_7__["FormText"];
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/icons/icons.tsx":
-/*!*************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/icons/icons.tsx ***!
-  \*************************************************************************************************/
+/*!*************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/icons/icons.tsx ***!
+  \*************************************************************************************************************/
 /*! exports provided: Icons */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Icons", function() { return Icons; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var _core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @core/ui-toolkit/util/utils */ "../../../libs/shared/ui-toolkit/src/lib/util/utils.ts");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_3__);
@@ -2389,11 +2434,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/icons/icons.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/icons/icons.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -2404,7 +2449,7 @@ const bootstrapIcon = iconName => {
     let {
       className: customClass
     } = _ref,
-        rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["className"]);
+        rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["className"]);
 
     const className = Object(_core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_2__["classNames"])('bi', `bi-${iconName}`, customClass);
     return /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__["jsxDEV"])("i", _objectSpread({
@@ -5172,9 +5217,9 @@ Icons.displayName = 'Icons';
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/list-group/list-group.component.tsx":
-/*!*********************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/list-group/list-group.component.tsx ***!
-  \*********************************************************************************************************************/
+/*!*********************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/list-group/list-group.component.tsx ***!
+  \*********************************************************************************************************************************/
 /*! exports provided: ListGroup, ListGroupItem */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -5182,8 +5227,8 @@ Icons.displayName = 'Icons';
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ListGroup", function() { return ListGroup; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ListGroupItem", function() { return ListGroupItem; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! classnames */ "../../../node_modules/classnames/index.js");
@@ -5192,11 +5237,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/list-group/list-group.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/list-group/list-group.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -5208,7 +5253,7 @@ const ListGroup = _ref => {
     isActionListGroup,
     numbered
   } = _ref,
-      props = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["flush", "isActionListGroup", "numbered"]);
+      props = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["flush", "isActionListGroup", "numbered"]);
 
   const classes = obj => classnames__WEBPACK_IMPORTED_MODULE_3___default()(props.className, 'list-group', obj);
 
@@ -5253,7 +5298,7 @@ const ListGroupItem = _ref2 => {
     isAction,
     disabled
   } = _ref2,
-      props = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref2, ["active", "isAction", "disabled"]);
+      props = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref2, ["active", "isAction", "disabled"]);
 
   const classes = classnames__WEBPACK_IMPORTED_MODULE_3___default()('list-group-item', {
     active,
@@ -5289,9 +5334,9 @@ const ListGroupItem = _ref2 => {
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/modal/modal.tsx":
-/*!*************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/modal/modal.tsx ***!
-  \*************************************************************************************************/
+/*!*************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/modal/modal.tsx ***!
+  \*************************************************************************************************************/
 /*! exports provided: Modal, ModalDialog, ModalContent, ModalHeader, ModalTitle, ModalBody, ModalFooter */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -5308,8 +5353,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "../../../node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! classnames */ "../../../node_modules/classnames/index.js");
@@ -5329,11 +5374,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/modal/modal.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/modal/modal.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_2__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_2__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -5384,7 +5429,7 @@ const Modal = _ref => {
     onExited,
     backdropClassName
   } = _ref,
-      props = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_3__["default"])(_ref, ["style", "size", "fullscreen", "fullscreenBelow", "fade", "scrollable", "verticallyCentered", "className", "children", "show", "animation", "backdrop", "keyboard", "onEscapeKeyDown", "onShow", "onHide", "container", "autoFocus", "enforceFocus", "restoreFocus", "restoreFocusOptions", "onEntered", "onExit", "onExiting", "onEnter", "onEntering", "onExited", "backdropClassName"]);
+      props = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_3__["default"])(_ref, ["style", "size", "fullscreen", "fullscreenBelow", "fade", "scrollable", "verticallyCentered", "className", "children", "show", "animation", "backdrop", "keyboard", "onEscapeKeyDown", "onShow", "onHide", "container", "autoFocus", "enforceFocus", "restoreFocus", "restoreFocusOptions", "onEntered", "onExit", "onExiting", "onEnter", "onEntering", "onExited", "backdropClassName"]);
 
   // We use a react context to wrap the Modal.
   const [modalStyle, setStyle] = react__WEBPACK_IMPORTED_MODULE_4__["useState"]({});
@@ -5631,7 +5676,7 @@ const ModalDialog = _ref2 => {
   let {
     size
   } = _ref2,
-      props = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_3__["default"])(_ref2, ["size"]);
+      props = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_3__["default"])(_ref2, ["size"]);
 
   return /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_15__["jsxDEV"])("div", _objectSpread(_objectSpread({}, props), {}, {
     className: classnames__WEBPACK_IMPORTED_MODULE_5___default()(props.className, 'modal-dialog', size && 'modal-' + size),
@@ -5696,17 +5741,17 @@ const ModalFooter = props => {
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/nav/nav-item.component.tsx":
-/*!************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/nav/nav-item.component.tsx ***!
-  \************************************************************************************************************/
+/*!************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/nav/nav-item.component.tsx ***!
+  \************************************************************************************************************************/
 /*! exports provided: NavItem */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NavItem", function() { return NavItem; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @core/ui-toolkit/util/utils */ "../../../libs/shared/ui-toolkit/src/lib/util/utils.ts");
@@ -5714,11 +5759,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/nav/nav-item.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/nav/nav-item.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 /* eslint-disable @typescript-eslint/no-empty-interface */
 
@@ -5730,7 +5775,7 @@ const NavItem = _ref => {
     className: customClass,
     children
   } = _ref,
-      rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["dropdown", "className", "children"]);
+      rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["dropdown", "className", "children"]);
 
   const className = Object(_core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_3__["classNames"])('nav-item', customClass, {
     dropdown
@@ -5749,17 +5794,17 @@ const NavItem = _ref => {
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/nav/nav-link.component.tsx":
-/*!************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/nav/nav-link.component.tsx ***!
-  \************************************************************************************************************/
+/*!************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/nav/nav-link.component.tsx ***!
+  \************************************************************************************************************************/
 /*! exports provided: NavLink */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NavLink", function() { return NavLink; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @core/ui-toolkit/util/utils */ "../../../libs/shared/ui-toolkit/src/lib/util/utils.ts");
@@ -5767,11 +5812,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/nav/nav-link.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/nav/nav-link.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 /* eslint-disable @typescript-eslint/no-empty-interface */
 
@@ -5779,12 +5824,12 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 const NavLink = _ref => {
   let {
-    isActive: active = false,
-    isDisabled: disabled = false,
+    active = false,
+    disabled = false,
     className: customClass,
     children
   } = _ref,
-      rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["isActive", "isDisabled", "className", "children"]);
+      rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["active", "disabled", "className", "children"]);
 
   const className = Object(_core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_3__["classNames"])('nav-link', customClass, {
     active,
@@ -5804,17 +5849,17 @@ const NavLink = _ref => {
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/nav/nav.component.tsx":
-/*!*******************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/nav/nav.component.tsx ***!
-  \*******************************************************************************************************/
+/*!*******************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/nav/nav.component.tsx ***!
+  \*******************************************************************************************************************/
 /*! exports provided: Nav */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Nav", function() { return Nav; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @core/ui-toolkit/util/utils */ "../../../libs/shared/ui-toolkit/src/lib/util/utils.ts");
@@ -5824,11 +5869,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_6__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/nav/nav.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/nav/nav.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 /* eslint-disable @typescript-eslint/no-empty-interface */
 
@@ -5839,27 +5884,26 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 const Nav = props => {
   const {
-    as: Component = 'nav',
     variant,
     fill = false,
     justified,
     className: customClass,
     children
   } = props,
-        rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(props, ["as", "variant", "fill", "justified", "className", "children"]);
+        rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(props, ["variant", "fill", "justified", "className", "children"]);
 
   const className = Object(_core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_3__["classNames"])('nav', customClass, {
     [`nav-${variant}`]: variant != null,
     'nav-fill': fill,
     'nav-justified': justified
   });
-  return /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_6__["jsxDEV"])(Component, _objectSpread(_objectSpread({
+  return /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_6__["jsxDEV"])("ul", _objectSpread(_objectSpread({
     className: className
   }, rest), {}, {
     children: children
   }), void 0, false, {
     fileName: _jsxFileName,
-    lineNumber: 37,
+    lineNumber: 35,
     columnNumber: 5
   }, undefined);
 };
@@ -5872,17 +5916,17 @@ Nav.Link = _nav_link_component__WEBPACK_IMPORTED_MODULE_5__["NavLink"];
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/progress/progress-bar.component.tsx":
-/*!*********************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/progress/progress-bar.component.tsx ***!
-  \*********************************************************************************************************************/
+/*!*********************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/progress/progress-bar.component.tsx ***!
+  \*********************************************************************************************************************************/
 /*! exports provided: ProgressBar */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProgressBar", function() { return ProgressBar; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var _core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @core/ui-toolkit/util/utils */ "../../../libs/shared/ui-toolkit/src/lib/util/utils.ts");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_3__);
@@ -5890,11 +5934,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_4__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/progress/progress-bar.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/progress/progress-bar.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -5909,7 +5953,7 @@ const ProgressBar = _ref => {
     className: customClass,
     children
   } = _ref,
-      rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["label", "striped", "animated", "theme", "progress", "className", "children"]);
+      rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["label", "striped", "animated", "theme", "progress", "className", "children"]);
 
   const className = Object(_core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_2__["classNames"])('progress-bar', {
     'progress-bar-striped': striped && !animated,
@@ -5937,17 +5981,17 @@ const ProgressBar = _ref => {
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/progress/progress.component.tsx":
-/*!*****************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/progress/progress.component.tsx ***!
-  \*****************************************************************************************************************/
+/*!*****************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/progress/progress.component.tsx ***!
+  \*****************************************************************************************************************************/
 /*! exports provided: Progress */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Progress", function() { return Progress; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @core/ui-toolkit/util/utils */ "../../../libs/shared/ui-toolkit/src/lib/util/utils.ts");
@@ -5956,11 +6000,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/progress/progress.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/progress/progress.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -5978,7 +6022,7 @@ const Progress = _ref => {
     className: customClass,
     children
   } = _ref,
-      rest = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["showValue", "progress", "theme", "striped", "animated", "height", "className", "children"]);
+      rest = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, ["showValue", "progress", "theme", "striped", "animated", "height", "className", "children"]);
 
   if (progress < 0 || progress > 100) throw new RangeError('"progress" prop should be in range 0 to 100');
   const className = Object(_core_ui_toolkit_util_utils__WEBPACK_IMPORTED_MODULE_3__["classNames"])('progress', customClass);
@@ -6013,9 +6057,9 @@ Progress.Bar = _progress_bar_component__WEBPACK_IMPORTED_MODULE_4__["ProgressBar
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/components/select/select.component.tsx":
-/*!*************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/select/select.component.tsx ***!
-  \*************************************************************************************************************/
+/*!*************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/select/select.component.tsx ***!
+  \*************************************************************************************************************************/
 /*! exports provided: CustomSelect, Control, Option, MultiValue, MultiValueLabel, MultiValueRemove */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -6027,8 +6071,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MultiValue", function() { return MultiValue; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MultiValueLabel", function() { return MultiValueLabel; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MultiValueRemove", function() { return MultiValueRemove; });
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
-/* harmony import */ var _home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js");
+/* harmony import */ var _home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty */ "../../../node_modules/@nrwl/web/node_modules/@babel/runtime/helpers/esm/defineProperty.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "../../../node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-select */ "../../../node_modules/react-select/dist/react-select.esm.js");
@@ -6039,11 +6083,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_6__);
 
 
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/components/select/select.component.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/components/select/select.component.tsx";
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_1__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_1__["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 
@@ -6069,7 +6113,7 @@ const MultiValueLabel = _ref => {
     children,
     innerProps
   } = _ref,
-      props = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0__["default"])(_ref, ["children", "innerProps"]);
+      props = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0__["default"])(_ref, ["children", "innerProps"]);
 
   const classes = classnames__WEBPACK_IMPORTED_MODULE_4___default()('bg-primary', props.className, {});
   return /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_6__["jsxDEV"])(react_select__WEBPACK_IMPORTED_MODULE_3__["components"].MultiValueLabel, _objectSpread(_objectSpread({}, innerProps), {}, {
@@ -6086,7 +6130,7 @@ const MultiValueRemove = _ref2 => {
   let {
     innerProps
   } = _ref2,
-      props = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0__["default"])(_ref2, ["innerProps"]);
+      props = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0__["default"])(_ref2, ["innerProps"]);
 
   const classes = classnames__WEBPACK_IMPORTED_MODULE_4___default()(props.className, '', {});
   return /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_6__["jsxDEV"])(react_select__WEBPACK_IMPORTED_MODULE_3__["components"].MultiValueRemove, _objectSpread(_objectSpread({}, innerProps), {}, {
@@ -6106,7 +6150,7 @@ const Control = _ref3 => {
   let {
     children
   } = _ref3,
-      props = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0__["default"])(_ref3, ["children"]);
+      props = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0__["default"])(_ref3, ["children"]);
 
   const classes = classnames__WEBPACK_IMPORTED_MODULE_4___default()('dropdown', props.className, {});
   return /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_6__["jsxDEV"])(react_select__WEBPACK_IMPORTED_MODULE_3__["components"].Control, _objectSpread(_objectSpread({}, props), {}, {
@@ -6124,7 +6168,7 @@ const Option = _ref4 => {
     innerRef,
     innerProps
   } = _ref4,
-      props = Object(_home_nilueps_repos_nrc_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0__["default"])(_ref4, ["innerRef", "innerProps"]);
+      props = Object(_home_anon_go_src_github_com_nrc_no_core_ui_node_modules_nrwl_web_node_modules_babel_runtime_helpers_esm_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0__["default"])(_ref4, ["innerRef", "innerProps"]);
 
   const classes = classnames__WEBPACK_IMPORTED_MODULE_4___default()('list-group-item', props.className, {
     disabled: props.isDisabled,
@@ -6163,9 +6207,9 @@ const CustomSelect = props => {
 /***/ }),
 
 /***/ "../../../libs/shared/ui-toolkit/src/lib/util/utils.ts":
-/*!************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/libs/shared/ui-toolkit/src/lib/util/utils.ts ***!
-  \************************************************************************************/
+/*!************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/libs/shared/ui-toolkit/src/lib/util/utils.ts ***!
+  \************************************************************************************************/
 /*! exports provided: nanoid, classNames, Box */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -6187,9 +6231,9 @@ __webpack_require__.r(__webpack_exports__);
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/a-function.js":
-/*!************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/a-function.js ***!
-  \************************************************************************************/
+/*!************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/a-function.js ***!
+  \************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -6203,9 +6247,9 @@ module.exports = function (it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/a-possible-prototype.js":
-/*!**********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/a-possible-prototype.js ***!
-  \**********************************************************************************************/
+/*!**********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/a-possible-prototype.js ***!
+  \**********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6221,9 +6265,9 @@ module.exports = function (it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/add-to-unscopables.js":
-/*!********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/add-to-unscopables.js ***!
-  \********************************************************************************************/
+/*!********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/add-to-unscopables.js ***!
+  \********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6252,9 +6296,9 @@ module.exports = function (key) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/advance-string-index.js":
-/*!**********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/advance-string-index.js ***!
-  \**********************************************************************************************/
+/*!**********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/advance-string-index.js ***!
+  \**********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6272,9 +6316,9 @@ module.exports = function (S, index, unicode) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/an-object.js":
-/*!***********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/an-object.js ***!
-  \***********************************************************************************/
+/*!***********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/an-object.js ***!
+  \***********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6290,9 +6334,9 @@ module.exports = function (it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/array-includes.js":
-/*!****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/array-includes.js ***!
-  \****************************************************************************************/
+/*!****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/array-includes.js ***!
+  \****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6333,9 +6377,9 @@ module.exports = {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/classof-raw.js":
-/*!*************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/classof-raw.js ***!
-  \*************************************************************************************/
+/*!*************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/classof-raw.js ***!
+  \*************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -6349,9 +6393,9 @@ module.exports = function (it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/copy-constructor-properties.js":
-/*!*****************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/copy-constructor-properties.js ***!
-  \*****************************************************************************************************/
+/*!*****************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/copy-constructor-properties.js ***!
+  \*****************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6374,9 +6418,9 @@ module.exports = function (target, source) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/correct-prototype-getter.js":
-/*!**************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/correct-prototype-getter.js ***!
-  \**************************************************************************************************/
+/*!**************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/correct-prototype-getter.js ***!
+  \**************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6393,9 +6437,9 @@ module.exports = !fails(function () {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/create-iterator-constructor.js":
-/*!*****************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/create-iterator-constructor.js ***!
-  \*****************************************************************************************************/
+/*!*****************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/create-iterator-constructor.js ***!
+  \*****************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6421,9 +6465,9 @@ module.exports = function (IteratorConstructor, NAME, next) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/create-non-enumerable-property.js":
-/*!********************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/create-non-enumerable-property.js ***!
-  \********************************************************************************************************/
+/*!********************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/create-non-enumerable-property.js ***!
+  \********************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6442,9 +6486,9 @@ module.exports = DESCRIPTORS ? function (object, key, value) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/create-property-descriptor.js":
-/*!****************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/create-property-descriptor.js ***!
-  \****************************************************************************************************/
+/*!****************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/create-property-descriptor.js ***!
+  \****************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -6461,9 +6505,9 @@ module.exports = function (bitmap, value) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/define-iterator.js":
-/*!*****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/define-iterator.js ***!
-  \*****************************************************************************************/
+/*!*****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/define-iterator.js ***!
+  \*****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6563,9 +6607,9 @@ module.exports = function (Iterable, NAME, IteratorConstructor, next, DEFAULT, I
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/descriptors.js":
-/*!*************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/descriptors.js ***!
-  \*************************************************************************************/
+/*!*************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/descriptors.js ***!
+  \*************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6581,9 +6625,9 @@ module.exports = !fails(function () {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/document-create-element.js":
-/*!*************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/document-create-element.js ***!
-  \*************************************************************************************************/
+/*!*************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/document-create-element.js ***!
+  \*************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6602,9 +6646,9 @@ module.exports = function (it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/dom-iterables.js":
-/*!***************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/dom-iterables.js ***!
-  \***************************************************************************************/
+/*!***************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/dom-iterables.js ***!
+  \***************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -6648,9 +6692,9 @@ module.exports = {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/engine-user-agent.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/engine-user-agent.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/engine-user-agent.js ***!
+  \*******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6662,9 +6706,9 @@ module.exports = getBuiltIn('navigator', 'userAgent') || '';
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/engine-v8-version.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/engine-v8-version.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/engine-v8-version.js ***!
+  \*******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6693,9 +6737,9 @@ module.exports = version && +version;
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/enum-bug-keys.js":
-/*!***************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/enum-bug-keys.js ***!
-  \***************************************************************************************/
+/*!***************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/enum-bug-keys.js ***!
+  \***************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -6714,9 +6758,9 @@ module.exports = [
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/export.js":
-/*!********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/export.js ***!
-  \********************************************************************************/
+/*!********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/export.js ***!
+  \********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6779,9 +6823,9 @@ module.exports = function (options, source) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/fails.js":
-/*!*******************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/fails.js ***!
-  \*******************************************************************************/
+/*!*******************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/fails.js ***!
+  \*******************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -6797,9 +6841,9 @@ module.exports = function (exec) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/fix-regexp-well-known-symbol-logic.js":
-/*!************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/fix-regexp-well-known-symbol-logic.js ***!
-  \************************************************************************************************************/
+/*!************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/fix-regexp-well-known-symbol-logic.js ***!
+  \************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6938,9 +6982,9 @@ module.exports = function (KEY, length, exec, sham) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/get-built-in.js":
-/*!**************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/get-built-in.js ***!
-  \**************************************************************************************/
+/*!**************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/get-built-in.js ***!
+  \**************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6960,9 +7004,9 @@ module.exports = function (namespace, method) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/global.js":
-/*!********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/global.js ***!
-  \********************************************************************************/
+/*!********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/global.js ***!
+  \********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -6985,9 +7029,9 @@ module.exports =
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/has.js":
-/*!*****************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/has.js ***!
-  \*****************************************************************************/
+/*!*****************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/has.js ***!
+  \*****************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7003,9 +7047,9 @@ module.exports = function hasOwn(it, key) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/hidden-keys.js":
-/*!*************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/hidden-keys.js ***!
-  \*************************************************************************************/
+/*!*************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/hidden-keys.js ***!
+  \*************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -7015,9 +7059,9 @@ module.exports = {};
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/html.js":
-/*!******************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/html.js ***!
-  \******************************************************************************/
+/*!******************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/html.js ***!
+  \******************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7029,9 +7073,9 @@ module.exports = getBuiltIn('document', 'documentElement');
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/ie8-dom-define.js":
-/*!****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/ie8-dom-define.js ***!
-  \****************************************************************************************/
+/*!****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/ie8-dom-define.js ***!
+  \****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7051,9 +7095,9 @@ module.exports = !DESCRIPTORS && !fails(function () {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/indexed-object.js":
-/*!****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/indexed-object.js ***!
-  \****************************************************************************************/
+/*!****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/indexed-object.js ***!
+  \****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7075,9 +7119,9 @@ module.exports = fails(function () {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/inspect-source.js":
-/*!****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/inspect-source.js ***!
-  \****************************************************************************************/
+/*!****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/inspect-source.js ***!
+  \****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7098,9 +7142,9 @@ module.exports = store.inspectSource;
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/internal-state.js":
-/*!****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/internal-state.js ***!
-  \****************************************************************************************/
+/*!****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/internal-state.js ***!
+  \****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7176,9 +7220,9 @@ module.exports = {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/is-forced.js":
-/*!***********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/is-forced.js ***!
-  \***********************************************************************************/
+/*!***********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/is-forced.js ***!
+  \***********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7208,9 +7252,9 @@ module.exports = isForced;
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/is-object.js":
-/*!***********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/is-object.js ***!
-  \***********************************************************************************/
+/*!***********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/is-object.js ***!
+  \***********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -7222,9 +7266,9 @@ module.exports = function (it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/is-pure.js":
-/*!*********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/is-pure.js ***!
-  \*********************************************************************************/
+/*!*********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/is-pure.js ***!
+  \*********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -7234,9 +7278,9 @@ module.exports = false;
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/is-regexp.js":
-/*!***********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/is-regexp.js ***!
-  \***********************************************************************************/
+/*!***********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/is-regexp.js ***!
+  \***********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7257,9 +7301,9 @@ module.exports = function (it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/iterators-core.js":
-/*!****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/iterators-core.js ***!
-  \****************************************************************************************/
+/*!****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/iterators-core.js ***!
+  \****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7314,9 +7358,9 @@ module.exports = {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/iterators.js":
-/*!***********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/iterators.js ***!
-  \***********************************************************************************/
+/*!***********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/iterators.js ***!
+  \***********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -7326,9 +7370,9 @@ module.exports = {};
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/native-symbol.js":
-/*!***************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/native-symbol.js ***!
-  \***************************************************************************************/
+/*!***************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/native-symbol.js ***!
+  \***************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7348,9 +7392,9 @@ module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/native-weak-map.js":
-/*!*****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/native-weak-map.js ***!
-  \*****************************************************************************************/
+/*!*****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/native-weak-map.js ***!
+  \*****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7365,9 +7409,9 @@ module.exports = typeof WeakMap === 'function' && /native code/.test(inspectSour
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/object-create.js":
-/*!***************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/object-create.js ***!
-  \***************************************************************************************/
+/*!***************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/object-create.js ***!
+  \***************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7454,9 +7498,9 @@ module.exports = Object.create || function create(O, Properties) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/object-define-properties.js":
-/*!**************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/object-define-properties.js ***!
-  \**************************************************************************************************/
+/*!**************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/object-define-properties.js ***!
+  \**************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7482,9 +7526,9 @@ module.exports = DESCRIPTORS ? Object.defineProperties : function defineProperti
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/object-define-property.js":
-/*!************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/object-define-property.js ***!
-  \************************************************************************************************/
+/*!************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/object-define-property.js ***!
+  \************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7514,9 +7558,9 @@ exports.f = DESCRIPTORS ? $defineProperty : function defineProperty(O, P, Attrib
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/object-get-own-property-descriptor.js":
-/*!************************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/object-get-own-property-descriptor.js ***!
-  \************************************************************************************************************/
+/*!************************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/object-get-own-property-descriptor.js ***!
+  \************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7546,9 +7590,9 @@ exports.f = DESCRIPTORS ? $getOwnPropertyDescriptor : function getOwnPropertyDes
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/object-get-own-property-names.js":
-/*!*******************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/object-get-own-property-names.js ***!
-  \*******************************************************************************************************/
+/*!*******************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/object-get-own-property-names.js ***!
+  \*******************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7568,9 +7612,9 @@ exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/object-get-own-property-symbols.js":
-/*!*********************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/object-get-own-property-symbols.js ***!
-  \*********************************************************************************************************/
+/*!*********************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/object-get-own-property-symbols.js ***!
+  \*********************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -7581,9 +7625,9 @@ exports.f = Object.getOwnPropertySymbols;
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/object-get-prototype-of.js":
-/*!*************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/object-get-prototype-of.js ***!
-  \*************************************************************************************************/
+/*!*************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/object-get-prototype-of.js ***!
+  \*************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7610,9 +7654,9 @@ module.exports = CORRECT_PROTOTYPE_GETTER ? Object.getPrototypeOf : function (O)
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/object-keys-internal.js":
-/*!**********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/object-keys-internal.js ***!
-  \**********************************************************************************************/
+/*!**********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/object-keys-internal.js ***!
+  \**********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7638,9 +7682,9 @@ module.exports = function (object, names) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/object-keys.js":
-/*!*************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/object-keys.js ***!
-  \*************************************************************************************/
+/*!*************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/object-keys.js ***!
+  \*************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7658,9 +7702,9 @@ module.exports = Object.keys || function keys(O) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/object-property-is-enumerable.js":
-/*!*******************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/object-property-is-enumerable.js ***!
-  \*******************************************************************************************************/
+/*!*******************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/object-property-is-enumerable.js ***!
+  \*******************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7684,9 +7728,9 @@ exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/object-set-prototype-of.js":
-/*!*************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/object-set-prototype-of.js ***!
-  \*************************************************************************************************/
+/*!*************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/object-set-prototype-of.js ***!
+  \*************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7721,9 +7765,9 @@ module.exports = Object.setPrototypeOf || ('__proto__' in {} ? function () {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/own-keys.js":
-/*!**********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/own-keys.js ***!
-  \**********************************************************************************/
+/*!**********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/own-keys.js ***!
+  \**********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7743,9 +7787,9 @@ module.exports = getBuiltIn('Reflect', 'ownKeys') || function ownKeys(it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/path.js":
-/*!******************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/path.js ***!
-  \******************************************************************************/
+/*!******************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/path.js ***!
+  \******************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7757,9 +7801,9 @@ module.exports = global;
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/redefine.js":
-/*!**********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/redefine.js ***!
-  \**********************************************************************************/
+/*!**********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/redefine.js ***!
+  \**********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7808,9 +7852,9 @@ var TEMPLATE = String(String).split('String');
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/regexp-exec-abstract.js":
-/*!**********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/regexp-exec-abstract.js ***!
-  \**********************************************************************************************/
+/*!**********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/regexp-exec-abstract.js ***!
+  \**********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7841,9 +7885,9 @@ module.exports = function (R, S) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/regexp-exec.js":
-/*!*************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/regexp-exec.js ***!
-  \*************************************************************************************/
+/*!*************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/regexp-exec.js ***!
+  \*************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7940,9 +7984,9 @@ module.exports = patchedExec;
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/regexp-flags.js":
-/*!**************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/regexp-flags.js ***!
-  \**************************************************************************************/
+/*!**************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/regexp-flags.js ***!
+  \**************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7968,9 +8012,9 @@ module.exports = function () {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/regexp-sticky-helpers.js":
-/*!***********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/regexp-sticky-helpers.js ***!
-  \***********************************************************************************************/
+/*!***********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/regexp-sticky-helpers.js ***!
+  \***********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8003,9 +8047,9 @@ exports.BROKEN_CARET = fails(function () {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/require-object-coercible.js":
-/*!**************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/require-object-coercible.js ***!
-  \**************************************************************************************************/
+/*!**************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/require-object-coercible.js ***!
+  \**************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -8020,9 +8064,9 @@ module.exports = function (it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/set-global.js":
-/*!************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/set-global.js ***!
-  \************************************************************************************/
+/*!************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/set-global.js ***!
+  \************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8041,9 +8085,9 @@ module.exports = function (key, value) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/set-to-string-tag.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/set-to-string-tag.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/set-to-string-tag.js ***!
+  \*******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8063,9 +8107,9 @@ module.exports = function (it, TAG, STATIC) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/shared-key.js":
-/*!************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/shared-key.js ***!
-  \************************************************************************************/
+/*!************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/shared-key.js ***!
+  \************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8082,9 +8126,9 @@ module.exports = function (key) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/shared-store.js":
-/*!**************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/shared-store.js ***!
-  \**************************************************************************************/
+/*!**************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/shared-store.js ***!
+  \**************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8100,9 +8144,9 @@ module.exports = store;
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/shared.js":
-/*!********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/shared.js ***!
-  \********************************************************************************/
+/*!********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/shared.js ***!
+  \********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8121,9 +8165,9 @@ var store = __webpack_require__(/*! ../internals/shared-store */ "../../../node_
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/species-constructor.js":
-/*!*********************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/species-constructor.js ***!
-  \*********************************************************************************************/
+/*!*********************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/species-constructor.js ***!
+  \*********************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8145,9 +8189,9 @@ module.exports = function (O, defaultConstructor) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/string-multibyte.js":
-/*!******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/string-multibyte.js ***!
-  \******************************************************************************************/
+/*!******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/string-multibyte.js ***!
+  \******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8183,9 +8227,9 @@ module.exports = {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/to-absolute-index.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/to-absolute-index.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/to-absolute-index.js ***!
+  \*******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8206,9 +8250,9 @@ module.exports = function (index, length) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/to-indexed-object.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/to-indexed-object.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/to-indexed-object.js ***!
+  \*******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8224,9 +8268,9 @@ module.exports = function (it) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/to-integer.js":
-/*!************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/to-integer.js ***!
-  \************************************************************************************/
+/*!************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/to-integer.js ***!
+  \************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -8243,9 +8287,9 @@ module.exports = function (argument) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/to-length.js":
-/*!***********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/to-length.js ***!
-  \***********************************************************************************/
+/*!***********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/to-length.js ***!
+  \***********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8263,9 +8307,9 @@ module.exports = function (argument) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/to-object.js":
-/*!***********************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/to-object.js ***!
-  \***********************************************************************************/
+/*!***********************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/to-object.js ***!
+  \***********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8281,9 +8325,9 @@ module.exports = function (argument) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/to-primitive.js":
-/*!**************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/to-primitive.js ***!
-  \**************************************************************************************/
+/*!**************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/to-primitive.js ***!
+  \**************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8306,9 +8350,9 @@ module.exports = function (input, PREFERRED_STRING) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/uid.js":
-/*!*****************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/uid.js ***!
-  \*****************************************************************************/
+/*!*****************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/uid.js ***!
+  \*****************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -8323,9 +8367,9 @@ module.exports = function (key) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/use-symbol-as-uid.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/use-symbol-as-uid.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/use-symbol-as-uid.js ***!
+  \*******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8340,9 +8384,9 @@ module.exports = NATIVE_SYMBOL
 /***/ }),
 
 /***/ "../../../node_modules/core-js/internals/well-known-symbol.js":
-/*!*******************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/internals/well-known-symbol.js ***!
-  \*******************************************************************************************/
+/*!*******************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/internals/well-known-symbol.js ***!
+  \*******************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8371,9 +8415,9 @@ module.exports = function (name) {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.array.iterator.js":
-/*!*****************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.array.iterator.js ***!
-  \*****************************************************************************************/
+/*!*****************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.array.iterator.js ***!
+  \*****************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8436,9 +8480,9 @@ addToUnscopables('entries');
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.regexp.exec.js":
-/*!**************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.regexp.exec.js ***!
-  \**************************************************************************************/
+/*!**************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.regexp.exec.js ***!
+  \**************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8457,9 +8501,9 @@ $({ target: 'RegExp', proto: true, forced: /./.exec !== exec }, {
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/es.string.split.js":
-/*!***************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/es.string.split.js ***!
-  \***************************************************************************************/
+/*!***************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/es.string.split.js ***!
+  \***************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8603,9 +8647,9 @@ fixRegExpWellKnownSymbolLogic('split', 2, function (SPLIT, nativeSplit, maybeCal
 /***/ }),
 
 /***/ "../../../node_modules/core-js/modules/web.dom-collections.iterator.js":
-/*!****************************************************************************************************!*\
-  !*** /home/nilueps/repos/nrc/core/ui/node_modules/core-js/modules/web.dom-collections.iterator.js ***!
-  \****************************************************************************************************/
+/*!****************************************************************************************************************!*\
+  !*** /home/anon/go/src/github.com/nrc-no/core/ui/node_modules/core-js/modules/web.dom-collections.iterator.js ***!
+  \****************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8660,7 +8704,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_ui_toolkit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @core/ui-toolkit */ "../../../libs/shared/ui-toolkit/src/index.ts");
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-dev-runtime */ "../../../node_modules/react/jsx-dev-runtime.js");
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__);
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/apps/showcase/src/app/app.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/apps/showcase/src/app/app.tsx";
  // import { Route, Link } from 'react-router-dom';
 
 
@@ -8670,7 +8714,7 @@ function App() {
     className: "p-4",
     centerContent: true,
     children: [/*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__["jsxDEV"])(_core_ui_toolkit__WEBPACK_IMPORTED_MODULE_1__["Card"], {
-      children: [/*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__["jsxDEV"])(_core_ui_toolkit__WEBPACK_IMPORTED_MODULE_1__["Card"].Img, {
+      children: [/*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__["jsxDEV"])(_core_ui_toolkit__WEBPACK_IMPORTED_MODULE_1__["CardImg"], {
         src: _nrc_svg__WEBPACK_IMPORTED_MODULE_0__["default"],
         style: {
           width: '700px'
@@ -8679,21 +8723,21 @@ function App() {
         fileName: _jsxFileName,
         lineNumber: 11,
         columnNumber: 9
-      }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__["jsxDEV"])(_core_ui_toolkit__WEBPACK_IMPORTED_MODULE_1__["Card"].Header, {
+      }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__["jsxDEV"])(_core_ui_toolkit__WEBPACK_IMPORTED_MODULE_1__["CardHeader"], {
         className: "text-center",
         children: "Welcome to the NRC Core showcase!"
       }, void 0, false, {
         fileName: _jsxFileName,
         lineNumber: 12,
         columnNumber: 9
-      }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__["jsxDEV"])(_core_ui_toolkit__WEBPACK_IMPORTED_MODULE_1__["Card"].Body, {
-        children: [/*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__["jsxDEV"])(_core_ui_toolkit__WEBPACK_IMPORTED_MODULE_1__["Card"].Title, {
+      }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__["jsxDEV"])(_core_ui_toolkit__WEBPACK_IMPORTED_MODULE_1__["CardBody"], {
+        children: [/*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__["jsxDEV"])(_core_ui_toolkit__WEBPACK_IMPORTED_MODULE_1__["CardTitle"], {
           children: "UI Toolkit"
         }, void 0, false, {
           fileName: _jsxFileName,
           lineNumber: 16,
           columnNumber: 11
-        }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__["jsxDEV"])(_core_ui_toolkit__WEBPACK_IMPORTED_MODULE_1__["Card"].Text, {
+        }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__["jsxDEV"])(_core_ui_toolkit__WEBPACK_IMPORTED_MODULE_1__["CardText"], {
           children: ["Our custom component library built with React+TS and Bootstrap 5", ' ', /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__["jsxDEV"])("a", {
             href: "assets/shared-ui-toolkit/index.html?path=/story/button--basic",
             children: "Check it out!"
@@ -8706,13 +8750,13 @@ function App() {
           fileName: _jsxFileName,
           lineNumber: 17,
           columnNumber: 11
-        }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__["jsxDEV"])(_core_ui_toolkit__WEBPACK_IMPORTED_MODULE_1__["Card"].Title, {
+        }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__["jsxDEV"])(_core_ui_toolkit__WEBPACK_IMPORTED_MODULE_1__["CardTitle"], {
           children: "FormRenderer"
         }, void 0, false, {
           fileName: _jsxFileName,
           lineNumber: 23,
           columnNumber: 11
-        }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__["jsxDEV"])(_core_ui_toolkit__WEBPACK_IMPORTED_MODULE_1__["Card"].Text, {
+        }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__["jsxDEV"])(_core_ui_toolkit__WEBPACK_IMPORTED_MODULE_1__["CardText"], {
           children: ["A tool that transforms forms schemas provided by the server into dynamic forms using the UI toolkit", ' ', /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__["jsxDEV"])("a", {
             href: "assets/formrenderer/index.html?path=/story/formrenderer--demo",
             children: "Check it out!"
@@ -8959,7 +9003,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _app_app__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./app/app */ "./app/app.tsx");
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-dev-runtime */ "../../../node_modules/react/jsx-dev-runtime.js");
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_3__);
-var _jsxFileName = "/home/nilueps/repos/nrc/core/ui/apps/showcase/src/main.tsx";
+var _jsxFileName = "/home/anon/go/src/github.com/nrc-no/core/ui/apps/showcase/src/main.tsx";
 
  // import { BrowserRouter } from 'react-router-dom';
 
@@ -8986,7 +9030,7 @@ react_dom__WEBPACK_IMPORTED_MODULE_1__["render"]( /*#__PURE__*/Object(react_jsx_
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /home/nilueps/repos/nrc/core/ui/apps/showcase/src/main.tsx */"./main.tsx");
+module.exports = __webpack_require__(/*! /home/anon/go/src/github.com/nrc-no/core/ui/apps/showcase/src/main.tsx */"./main.tsx");
 
 
 /***/ })
