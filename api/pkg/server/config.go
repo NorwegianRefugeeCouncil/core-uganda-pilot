@@ -302,7 +302,8 @@ func (c *CompletedConfig) installCustomResourcesOrDie(server *Server, apiServerH
 		Codecs,
 		server.informers.Core().V1().CustomResourceDefinitions(),
 		crdVersionDiscoveryHandler,
-		crdGroupDiscoveryHandler)
+		crdGroupDiscoveryHandler,
+		Scheme)
 	if err != nil {
 		panic(err)
 	}

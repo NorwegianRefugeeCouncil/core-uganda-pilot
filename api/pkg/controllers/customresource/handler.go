@@ -49,6 +49,7 @@ type crdHandler struct {
 	groupDiscoveryHandler   *CRDGroupDiscoveryHandler
 	crdLister               listers.CustomResourceDefinitionLister
 	hasSynced               func() bool
+	scheme                  *runtime.Scheme
 }
 
 // crdInfo contains information about a CustomResource (for serving purposes). It is lazily-created
@@ -84,6 +85,7 @@ func NewCustomResourceDefinitionHandler(
 	crdInformer informers.CustomResourceDefinitionInformer,
 	versionDiscoveryHandler *CRDVersionDiscoveryHandler,
 	groupDiscoveryHandler *CRDGroupDiscoveryHandler,
+	scheme *runtime.Scheme,
 ) (*crdHandler, error) {
 	ret := &crdHandler{
 		customStorageLock:       sync.Mutex{},
@@ -94,6 +96,7 @@ func NewCustomResourceDefinitionHandler(
 		codecs:                  codecs,
 		versionDiscoveryHandler: versionDiscoveryHandler,
 		groupDiscoveryHandler:   groupDiscoveryHandler,
+		scheme:                  scheme,
 	}
 	ret.customStorage.Store(crdStorageMap{})
 	crConverterFactory, err := conversion.NewCRConverterFactory()
@@ -361,6 +364,7 @@ func (r *crdHandler) getOrCreateServingInfoFor(ctx context.Context, uid types.UI
 				structuralSchemas:     structuralSchemes,
 				structuralSchemaGK:    kind.GroupKind(),
 				preserveUnknownFields: true,
+				scheme:                r.scheme,
 			})
 		if err != nil {
 			return nil, err
@@ -371,6 +375,7 @@ func (r *crdHandler) getOrCreateServingInfoFor(ctx context.Context, uid types.UI
 
 		// Builds the negotiated serializer for the CR
 		negotiatedSerializer := unstructuredNegotiatedSerializer{
+			scheme:                r.scheme,
 			typer:                 typer,
 			creator:               creator,
 			converter:             safeConverter,
@@ -388,12 +393,15 @@ func (r *crdHandler) getOrCreateServingInfoFor(ctx context.Context, uid types.UI
 
 		// Builds the RequestScope scope for the CR
 		requestScopes[v.Name] = &handlers.RequestScope{
-			Namer:           handlers.ContextBasedNaming{},
-			Serializer:      negotiatedSerializer,
-			ParameterCodec:  parameterCodec,
-			Creater:         creator,
-			Convertor:       safeConverter,
-			Defaulter:       unstructuredDefaulter{parameterScheme, structuralSchemes, kind.GroupKind()},
+			Namer:          handlers.ContextBasedNaming{},
+			Serializer:     negotiatedSerializer,
+			ParameterCodec: parameterCodec,
+			Creater:        creator,
+			Convertor:      safeConverter,
+			Defaulter: unstructuredDefaulter{
+				parameterScheme,
+				structuralSchemes,
+				kind.GroupKind()},
 			Typer:           typer,
 			UnsafeConvertor: unsafeConverter,
 			Resource:        schema.GroupVersionResource{Group: crd.Spec.Group, Version: v.Name, Resource: crd.Spec.Names.Plural},

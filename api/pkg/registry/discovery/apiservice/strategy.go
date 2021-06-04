@@ -3,9 +3,9 @@ package apiservice
 import (
 	"context"
 	"github.com/nrc-no/core/api/pkg/apis/discovery"
+	"github.com/nrc-no/core/api/pkg/registry/rest"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/validation/field"
-	"k8s.io/apiserver/pkg/registry/rest"
 	"k8s.io/apiserver/pkg/storage/names"
 )
 
@@ -18,15 +18,8 @@ type apiServiceStrategy struct {
 	names.NameGenerator
 }
 
-func (a apiServiceStrategy) WarningsOnCreate(ctx context.Context, obj runtime.Object) []string {
-	return []string{}
-}
-
-func (a apiServiceStrategy) WarningsOnUpdate(ctx context.Context, obj, old runtime.Object) []string {
-	return []string{}
-}
-
-var _ rest.RESTCreateUpdateStrategy = apiServiceStrategy{}
+var _ rest.RESTCreateStrategy = apiServiceStrategy{}
+var _ rest.RESTUpdateStrategy = apiServiceStrategy{}
 
 func (a apiServiceStrategy) NamespaceScoped() bool {
 	return false
