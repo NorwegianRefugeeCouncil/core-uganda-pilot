@@ -248,16 +248,30 @@ type CustomResourceDefinitionValidation struct {
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-// OperatingScope represent the operating scope for
+// OrganizationScope represent the operating scope for
 // a country, region or area
+type OrganizationScope struct {
+	metav1.TypeMeta   `json:",inline"`
+	metav1.ObjectMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
+	Spec              OrganizationScopeSpec `json:"spec,omitempty" protobuf:"bytes,2,opt,name=spec"`
+}
+
+type OrganizationScopeSpec struct {
+	AdditionalBeneficiaryInformation []AdditionalBeneficiaryInformation `json:"additionalBeneficiaryInformation,omitempty" protobuf:"bytes,1,opt,name=metadata"`
+}
+
 type OperatingScope struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
-	Spec              OperatingScopeSpec `json:"spec,omitempty" protobuf:"bytes,2,opt,name=spec"`
+	Spec              OrganizationScopeSpec `json:"spec,omitempty" protobuf:"bytes,2,opt,name=spec"`
 }
 
 type OperatingScopeSpec struct {
-	AdditionalBeneficiaryInformation []AdditionalBeneficiaryInformation `json:"additionalBeneficiaryInformation,omitempty" protobuf:"bytes,1,opt,name=metadata"`
+}
+
+type ClaimDefinition struct {
+	Key  string `json:"key,omitempty" protobuf:"bytes,1,opt,name=key"`
+	Type string `json:"type,omitempty" protobuf:"bytes,2,opt,name=type"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
@@ -267,8 +281,8 @@ type OperatingScopeList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
 
-	// Items represents the OperatingScope items contained in this list
-	Items []OperatingScope `json:"items,omitempty" protobuf:"bytes,2,opt,name=items"`
+	// Items represents the OrganizationScope items contained in this list
+	Items []OrganizationScope `json:"items,omitempty" protobuf:"bytes,2,opt,name=items"`
 }
 
 // AdditionalBeneficiaryInformation represent an OIDC claim

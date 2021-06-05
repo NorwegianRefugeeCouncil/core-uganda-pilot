@@ -12,10 +12,10 @@ import (
 type OperatingScopeLister interface {
 	// List lists all OperatingScopes in the indexer.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1.OperatingScope, err error)
-	// Get retrieves the OperatingScope from the index for a given name.
+	List(selector labels.Selector) (ret []*v1.OrganizationScope, err error)
+	// Get retrieves the OrganizationScope from the index for a given name.
 	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1.OperatingScope, error)
+	Get(name string) (*v1.OrganizationScope, error)
 }
 
 // operatingScopeLister implements the OperatingScopeLister interface.
@@ -29,15 +29,15 @@ func NewOperatingScopeLister(indexer cache.Indexer) OperatingScopeLister {
 }
 
 // List lists all OperatingScopes in the indexer.
-func (s *operatingScopeLister) List(selector labels.Selector) (ret []*v1.OperatingScope, err error) {
+func (s *operatingScopeLister) List(selector labels.Selector) (ret []*v1.OrganizationScope, err error) {
 	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1.OperatingScope))
+		ret = append(ret, m.(*v1.OrganizationScope))
 	})
 	return ret, err
 }
 
-// Get retrieves the OperatingScope from the index for a given name.
-func (s *operatingScopeLister) Get(name string) (*v1.OperatingScope, error) {
+// Get retrieves the OrganizationScope from the index for a given name.
+func (s *operatingScopeLister) Get(name string) (*v1.OrganizationScope, error) {
 	obj, exists, err := s.indexer.GetByKey(name)
 	if err != nil {
 		return nil, err
@@ -45,5 +45,5 @@ func (s *operatingScopeLister) Get(name string) (*v1.OperatingScope, error) {
 	if !exists {
 		return nil, errors.NewNotFound(v1.Resource("operatingscope"), name)
 	}
-	return obj.(*v1.OperatingScope), nil
+	return obj.(*v1.OrganizationScope), nil
 }

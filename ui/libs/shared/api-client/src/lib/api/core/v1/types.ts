@@ -1,4 +1,5 @@
 import { ListMeta, ObjectMeta, TypeMeta } from '../../meta';
+import { HasObjectMeta } from '../../runtime';
 
 export const dummy = "a"
 
@@ -183,4 +184,16 @@ export type MapType = 'granular' | 'atomic'
 export interface ExternalDocumentation {
   description: string
   url: string
+}
+
+export interface OperatingScope extends TypeMeta, HasObjectMeta{
+
+}
+
+export interface OperatingScopeSpec {
+
+}
+
+export interface AdditionalBeneficiaryInformation {
+
 }

@@ -31,7 +31,7 @@ import (
 
 func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenAPIDefinition {
 	return map[string]common.OpenAPIDefinition{
-		"github.com/nrc-no/core/api/pkg/apis/core/v1.AdditionalBeneficiaryInformation":   schema_pkg_apis_core_v1_AdditionalBeneficiaryInformation(ref),
+		"github.com/nrc-no/core/api/pkg/apis/core/v1.AdditionalUserInformation":          schema_pkg_apis_core_v1_AdditionalBeneficiaryInformation(ref),
 		"github.com/nrc-no/core/api/pkg/apis/core/v1.CustomResourceDefinition":           schema_pkg_apis_core_v1_CustomResourceDefinition(ref),
 		"github.com/nrc-no/core/api/pkg/apis/core/v1.CustomResourceDefinitionList":       schema_pkg_apis_core_v1_CustomResourceDefinitionList(ref),
 		"github.com/nrc-no/core/api/pkg/apis/core/v1.CustomResourceDefinitionNames":      schema_pkg_apis_core_v1_CustomResourceDefinitionNames(ref),
@@ -52,9 +52,9 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaPropsOrArray":             schema_pkg_apis_core_v1_JSONSchemaPropsOrArray(ref),
 		"github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaPropsOrBool":              schema_pkg_apis_core_v1_JSONSchemaPropsOrBool(ref),
 		"github.com/nrc-no/core/api/pkg/apis/core/v1.JSONSchemaPropsOrStringArray":       schema_pkg_apis_core_v1_JSONSchemaPropsOrStringArray(ref),
-		"github.com/nrc-no/core/api/pkg/apis/core/v1.OperatingScope":                     schema_pkg_apis_core_v1_OperatingScope(ref),
+		"github.com/nrc-no/core/api/pkg/apis/core/v1.OrganizationScope":                  schema_pkg_apis_core_v1_OperatingScope(ref),
 		"github.com/nrc-no/core/api/pkg/apis/core/v1.OperatingScopeList":                 schema_pkg_apis_core_v1_OperatingScopeList(ref),
-		"github.com/nrc-no/core/api/pkg/apis/core/v1.OperatingScopeSpec":                 schema_pkg_apis_core_v1_OperatingScopeSpec(ref),
+		"github.com/nrc-no/core/api/pkg/apis/core/v1.OrganizationScopeSpec":              schema_pkg_apis_core_v1_OperatingScopeSpec(ref),
 		"github.com/nrc-no/core/api/pkg/apis/core/v1.TranslatedString":                   schema_pkg_apis_core_v1_TranslatedString(ref),
 		"github.com/nrc-no/core/api/pkg/apis/core/v1.User":                               schema_pkg_apis_core_v1_User(ref),
 		"github.com/nrc-no/core/api/pkg/apis/core/v1.UserList":                           schema_pkg_apis_core_v1_UserList(ref),
@@ -127,7 +127,7 @@ func schema_pkg_apis_core_v1_AdditionalBeneficiaryInformation(ref common.Referen
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
-				Description: "AdditionalBeneficiaryInformation represent an OIDC claim",
+				Description: "AdditionalUserInformation represent an OIDC claim",
 				Type:        []string{"object"},
 				Properties: map[string]spec.Schema{
 					"key": {
@@ -1193,7 +1193,7 @@ func schema_pkg_apis_core_v1_OperatingScope(ref common.ReferenceCallback) common
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
-				Description: "OperatingScope represent the operating scope for a country, region or area",
+				Description: "OrganizationScope represent the operating scope for a country, region or area",
 				Type:        []string{"object"},
 				Properties: map[string]spec.Schema{
 					"kind": {
@@ -1219,14 +1219,14 @@ func schema_pkg_apis_core_v1_OperatingScope(ref common.ReferenceCallback) common
 					"spec": {
 						SchemaProps: spec.SchemaProps{
 							Default: map[string]interface{}{},
-							Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.OperatingScopeSpec"),
+							Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.OrganizationScopeSpec"),
 						},
 					},
 				},
 			},
 		},
 		Dependencies: []string{
-			"github.com/nrc-no/core/api/pkg/apis/core/v1.OperatingScopeSpec", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
+			"github.com/nrc-no/core/api/pkg/apis/core/v1.OrganizationScopeSpec", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
 	}
 }
 
@@ -1259,13 +1259,13 @@ func schema_pkg_apis_core_v1_OperatingScopeList(ref common.ReferenceCallback) co
 					},
 					"items": {
 						SchemaProps: spec.SchemaProps{
-							Description: "Items represents the OperatingScope items contained in this list",
+							Description: "Items represents the OrganizationScope items contained in this list",
 							Type:        []string{"array"},
 							Items: &spec.SchemaOrArray{
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Default: map[string]interface{}{},
-										Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.OperatingScope"),
+										Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.OrganizationScope"),
 									},
 								},
 							},
@@ -1275,7 +1275,7 @@ func schema_pkg_apis_core_v1_OperatingScopeList(ref common.ReferenceCallback) co
 			},
 		},
 		Dependencies: []string{
-			"github.com/nrc-no/core/api/pkg/apis/core/v1.OperatingScope", "k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta"},
+			"github.com/nrc-no/core/api/pkg/apis/core/v1.OrganizationScope", "k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta"},
 	}
 }
 
@@ -1292,7 +1292,7 @@ func schema_pkg_apis_core_v1_OperatingScopeSpec(ref common.ReferenceCallback) co
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Default: map[string]interface{}{},
-										Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.AdditionalBeneficiaryInformation"),
+										Ref:     ref("github.com/nrc-no/core/api/pkg/apis/core/v1.AdditionalUserInformation"),
 									},
 								},
 							},
@@ -1302,7 +1302,7 @@ func schema_pkg_apis_core_v1_OperatingScopeSpec(ref common.ReferenceCallback) co
 			},
 		},
 		Dependencies: []string{
-			"github.com/nrc-no/core/api/pkg/apis/core/v1.AdditionalBeneficiaryInformation"},
+			"github.com/nrc-no/core/api/pkg/apis/core/v1.AdditionalUserInformation"},
 	}
 }
 

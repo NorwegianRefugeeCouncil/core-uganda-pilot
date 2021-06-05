@@ -38,30 +38,30 @@ func NewOperatingScopeController(
 
 	informer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
-			castObj := obj.(*v1.OperatingScope)
-			logrus.Tracef("creating OperatingScope %s", castObj.Name)
+			castObj := obj.(*v1.OrganizationScope)
+			logrus.Tracef("creating OrganizationScope %s", castObj.Name)
 			c.queue.Add(castObj.Name)
 		},
 		UpdateFunc: func(oldObj, newObj interface{}) {
-			castObj := newObj.(*v1.OperatingScope)
-			logrus.Tracef("updating OperatingScope %s", castObj.Name)
+			castObj := newObj.(*v1.OrganizationScope)
+			logrus.Tracef("updating OrganizationScope %s", castObj.Name)
 			c.queue.Add(castObj.Name)
 		},
 		DeleteFunc: func(obj interface{}) {
-			castObj, ok := obj.(*v1.OperatingScope)
+			castObj, ok := obj.(*v1.OrganizationScope)
 			if !ok {
 				tombStone, ok := obj.(cache.DeletedFinalStateUnknown)
 				if !ok {
 					logrus.Errorf("couldn't get object from tombstone: %#v", obj)
 					return
 				}
-				castObj, ok = tombStone.Obj.(*v1.OperatingScope)
+				castObj, ok = tombStone.Obj.(*v1.OrganizationScope)
 				if !ok {
 					logrus.Errorf("tombstone contained object thtat is not expected: %#v", tombStone.Obj)
 					return
 				}
 			}
-			logrus.Tracef("deleting OperatingScope %s", castObj.Name)
+			logrus.Tracef("deleting OrganizationScope %s", castObj.Name)
 			c.queue.Add(castObj.Name)
 		},
 	})
@@ -308,7 +308,7 @@ func protocolMapperEqual(a, b *keycloak.ProtocolMapper) bool {
 	return true
 }
 
-func mapOperatingScopeToKeycloakClientScope(operatingScope *v1.OperatingScope) *keycloak.ClientScope {
+func mapOperatingScopeToKeycloakClientScope(operatingScope *v1.OrganizationScope) *keycloak.ClientScope {
 	scope := &keycloak.ClientScope{
 		Name:        operatingScope.Name,
 		Protocol:    "openid-connect",

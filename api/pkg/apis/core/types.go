@@ -170,7 +170,11 @@ type OperatingScope struct {
 }
 
 type OperatingScopeSpec struct {
-	AdditionalBeneficiaryInformation []AdditionalBeneficiaryInformation
+	AdditionalUserInformation []ClaimSpecification
+}
+
+type AuthenticationScope struct {
+	Name string
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
@@ -184,8 +188,8 @@ type OperatingScopeList struct {
 	Items []OperatingScope
 }
 
-// AdditionalBeneficiaryInformation represent an OIDC claim
-type AdditionalBeneficiaryInformation struct {
+// ClaimSpecification represent an OIDC claim
+type ClaimSpecification struct {
 	Key  string
 	Type string
 }

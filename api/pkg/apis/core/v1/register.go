@@ -27,7 +27,7 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 		&FormDefinitionList{},
 		&CustomResourceDefinition{},
 		&CustomResourceDefinitionList{},
-		&OperatingScope{},
+		&OrganizationScope{},
 		&OperatingScopeList{},
 		&User{},
 		&UserList{},

@@ -26,14 +26,14 @@ type operatingScopeInformer struct {
 	tweakListOptions internalinterfaces.TweakListOptionsFunc
 }
 
-// NewOperatingScopeInformer constructs a new informer for OperatingScope type.
+// NewOperatingScopeInformer constructs a new informer for OrganizationScope type.
 // Always prefer using an informer factory to get a shared informer instead of getting an independent
 // one. This reduces memory footprint and number of connections to the server.
 func NewOperatingScopeInformer(client typed.Interface, resyncPeriod time.Duration, indexers cache.Indexers) cache.SharedIndexInformer {
 	return NewFilteredOperatingScopeInformer(client, resyncPeriod, indexers, nil)
 }
 
-// NewFilteredOperatingScopeInformer constructs a new informer for OperatingScope type.
+// NewFilteredOperatingScopeInformer constructs a new informer for OrganizationScope type.
 // Always prefer using an informer factory to get a shared informer instead of getting an independent
 // one. This reduces memory footprint and number of connections to the server.
 func NewFilteredOperatingScopeInformer(client typed.Interface, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc) cache.SharedIndexInformer {
@@ -60,7 +60,7 @@ func NewFilteredOperatingScopeInformer(client typed.Interface, resyncPeriod time
 				return client.CoreV1().OperatingScopes().Watch(context.TODO(), opts)
 			},
 		},
-		&corev1.OperatingScope{},
+		&corev1.OrganizationScope{},
 		resyncPeriod,
 		indexers,
 	)
@@ -71,7 +71,7 @@ func (f *operatingScopeInformer) defaultInformer(client typed.Interface, resyncP
 }
 
 func (f *operatingScopeInformer) Informer() cache.SharedIndexInformer {
-	return f.factory.InformerFor(&corev1.OperatingScope{}, f.defaultInformer)
+	return f.factory.InformerFor(&corev1.OrganizationScope{}, f.defaultInformer)
 }
 
 func (f *operatingScopeInformer) Lister() listers.OperatingScopeLister {

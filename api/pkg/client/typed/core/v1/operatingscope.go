@@ -18,10 +18,10 @@ type OperatingScopesGetter interface {
 }
 
 type OperatingScopeInterface interface {
-	Create(ctx context.Context, OperatingScope *corev1.OperatingScope, opts metav1.CreateOptions) (*corev1.OperatingScope, error)
-	Update(ctx context.Context, OperatingScope *corev1.OperatingScope, opts metav1.UpdateOptions) (*corev1.OperatingScope, error)
+	Create(ctx context.Context, OperatingScope *corev1.OrganizationScope, opts metav1.CreateOptions) (*corev1.OrganizationScope, error)
+	Update(ctx context.Context, OperatingScope *corev1.OrganizationScope, opts metav1.UpdateOptions) (*corev1.OrganizationScope, error)
 	Delete(ctx context.Context, name string, opts metav1.DeleteOptions) error
-	Get(ctx context.Context, name string, opts metav1.GetOptions) (*corev1.OperatingScope, error)
+	Get(ctx context.Context, name string, opts metav1.GetOptions) (*corev1.OrganizationScope, error)
 	List(ctx context.Context, opts metav1.ListOptions) (*corev1.OperatingScopeList, error)
 	Watch(ctx context.Context, opts coremetav1.ListResourcesOptions) (watch.Interface, error)
 }
@@ -39,8 +39,8 @@ func newOperatingScopes(c *CoreV1Client) *operatingScopes {
 }
 
 // Get takes name of the operatingScope, and returns the corresponding operatingScope object, and an error if there is any.
-func (c *operatingScopes) Get(ctx context.Context, name string, options metav1.GetOptions) (result *corev1.OperatingScope, err error) {
-	result = &corev1.OperatingScope{}
+func (c *operatingScopes) Get(ctx context.Context, name string, options metav1.GetOptions) (result *corev1.OrganizationScope, err error) {
+	result = &corev1.OrganizationScope{}
 	err = c.client.Get().
 		Resource("operatingscopes").
 		Name(name).
@@ -67,8 +67,8 @@ func (c *operatingScopes) List(ctx context.Context, opts metav1.ListOptions) (re
 }
 
 // Create takes the representation of a operatingScope and creates it.  Returns the server's representation of the operatingScope, and an error, if there is any.
-func (c *operatingScopes) Create(ctx context.Context, operatingScope *corev1.OperatingScope, opts metav1.CreateOptions) (result *corev1.OperatingScope, err error) {
-	result = &corev1.OperatingScope{}
+func (c *operatingScopes) Create(ctx context.Context, operatingScope *corev1.OrganizationScope, opts metav1.CreateOptions) (result *corev1.OrganizationScope, err error) {
+	result = &corev1.OrganizationScope{}
 	err = c.client.Post().
 		Resource("operatingscopes").
 		VersionedParams(&opts, scheme2.ParameterCodec).
@@ -79,8 +79,8 @@ func (c *operatingScopes) Create(ctx context.Context, operatingScope *corev1.Ope
 }
 
 // Update takes the representation of a operatingScope and updates it. Returns the server's representation of the operatingScope, and an error, if there is any.
-func (c *operatingScopes) Update(ctx context.Context, operatingScope *corev1.OperatingScope, opts metav1.UpdateOptions) (result *corev1.OperatingScope, err error) {
-	result = &corev1.OperatingScope{}
+func (c *operatingScopes) Update(ctx context.Context, operatingScope *corev1.OrganizationScope, opts metav1.UpdateOptions) (result *corev1.OrganizationScope, err error) {
+	result = &corev1.OrganizationScope{}
 	err = c.client.Put().
 		Resource("operatingscopes").
 		Name(operatingScope.Name).
