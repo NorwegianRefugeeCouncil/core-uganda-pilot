@@ -1,0 +1,34 @@
+{{define "settings"}}
+    <!doctype html>
+    <html lang="en">
+    {{template "head"}}
+    <body class="bg-light">
+
+    {{template "navbar"}}
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+                <a class="card text-dark text-decoration-none shadow-sm mb-3" href="/settings/attributes">
+                    <div class="card-body">
+                        Attribute Settings
+                        <small class="d-block text-muted">
+                            Manage custom attributes that can be attached to Beneficiaries, Households or Groups
+                        </small>
+                    </div>
+                </a>
+                <a class="card text-dark text-decoration-none shadow-sm mb-3" href="/settings/relationshiptypes">
+                    <div class="card-body">
+                        Relationships Settings
+                        <small class="d-block text-muted">
+                            Manage relationships that Individuals and Groups can have between each other
+                        </small>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    </body>
+    </html>
+{{end}}

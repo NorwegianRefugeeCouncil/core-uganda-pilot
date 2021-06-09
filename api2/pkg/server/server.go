@@ -1,0 +1,207 @@
+package server
+
+import (
+	"context"
+	"github.com/gorilla/mux"
+	"github.com/nrc-no/core-kafka/pkg/intake"
+	"github.com/nrc-no/core-kafka/pkg/services/vulnerability"
+	"github.com/nrc-no/core-kafka/pkg/subjects/attributes"
+	"github.com/nrc-no/core-kafka/pkg/subjects/beneficiaries"
+	"github.com/nrc-no/core-kafka/pkg/subjects/relationships"
+	"github.com/nrc-no/core-kafka/pkg/subjects/relationshiptypes"
+	"github.com/nrc-no/core-kafka/pkg/webapp"
+	"github.com/segmentio/kafka-go"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"net/http"
+	"time"
+)
+
+type Server struct {
+	mongoClient *mongo.Client
+}
+
+func NewServer(
+	ctx context.Context,
+) {
+
+	mongoClient, err := mongo.NewClient(options.Client().SetAuth(
+		options.Credential{
+			Username: "root",
+			Password: "example",
+		}))
+	if err != nil {
+		panic(err)
+	}
+
+	if err := mongoClient.Connect(ctx); err != nil {
+		panic(err)
+	}
+
+	router := mux.NewRouter()
+
+	// Attributes
+	attributeStore := attributes.NewStore(mongoClient)
+	attributeHandler := attributes.NewHandler(attributeStore)
+	router.Path("/apis/v1/attributes").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		attributeHandler.List(w, req)
+	})
+	router.Path("/apis/v1/attributes/{id}").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		attributeHandler.Get(w, req)
+	})
+	router.Path("/apis/v1/attributes/{id}").Methods("PUT").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		attributeHandler.Update(w, req)
+	})
+	router.Path("/apis/v1/attributes").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		attributeHandler.Post(w, req)
+	})
+
+	// Vulnerabilities
+	vulnerabilityStore := vulnerability.NewStore(mongoClient)
+	vulnerabilityHandler := vulnerability.NewHandler(vulnerabilityStore)
+	router.Path("/apis/v1/vulnerabilities").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		vulnerabilityHandler.ListVulnerabilities(w, req)
+	})
+	router.Path("/apis/v1/vulnerabilities/{id}").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		vulnerabilityHandler.GetVulnerability(w, req)
+	})
+	router.Path("/apis/v1/vulnerabilities/{id}").Methods("PUT").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		vulnerabilityHandler.UpdateVulnerability(w, req)
+	})
+	router.Path("/apis/v1/vulnerabilities").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		vulnerabilityHandler.PostVulnerability(w, req)
+	})
+
+	// Beneficiaries
+	beneficiariesStore := beneficiaries.NewStore(mongoClient)
+	beneficiaryReader, err := NewReader(ctx, "beneficiaries", nil)
+	beneficiaryHandler := beneficiaries.NewHandler(beneficiariesStore)
+	if err != nil {
+		panic(err)
+	}
+	beneficiariesListener := beneficiaries.NewListener(beneficiariesStore, beneficiaryReader)
+	go func() {
+		beneficiariesListener.Run(ctx)
+	}()
+	router.Path("/apis/v1/beneficiaries").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		beneficiaryHandler.List(w, req)
+	})
+	router.Path("/apis/v1/beneficiaries/{id}").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		beneficiaryHandler.Get(w, req)
+	})
+	router.Path("/apis/v1/beneficiaries/{id}").Methods("PUT").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		beneficiaryHandler.Update(w, req)
+	})
+	router.Path("/apis/v1/beneficiaries").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		beneficiaryHandler.Create(w, req)
+	})
+
+	// RelationshipTypes
+	relationshipTypeStore := relationshiptypes.NewStore(mongoClient)
+	relationshipTypeHandler := relationshiptypes.NewHandler(relationshipTypeStore)
+	router.Path("/apis/v1/relationshiptypes").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		relationshipTypeHandler.List(w, req)
+	})
+	router.Path("/apis/v1/relationshiptypes/{id}").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		relationshipTypeHandler.Get(w, req)
+	})
+	router.Path("/apis/v1/relationshiptypes/{id}").Methods("PUT").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		relationshipTypeHandler.Put(w, req)
+	})
+	router.Path("/apis/v1/relationshiptypes").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		relationshipTypeHandler.Post(w, req)
+	})
+
+	// Relationships
+	relationshipStore := relationships.NewStore(mongoClient)
+	relationshipHandler := relationships.NewHandler(relationshipStore)
+	router.Path("/apis/v1/relationships").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		relationshipHandler.List(w, req)
+	})
+	router.Path("/apis/v1/relationships/{id}").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		relationshipHandler.Get(w, req)
+	})
+	router.Path("/apis/v1/relationships/{id}").Methods("PUT").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		relationshipHandler.Put(w, req)
+	})
+	router.Path("/apis/v1/relationships").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		relationshipHandler.Post(w, req)
+	})
+
+	// Intake
+	intakeStore := intake.NewStore(mongoClient)
+	intakeWriter, err := NewWriter("intake")
+	if err != nil {
+		panic(err)
+	}
+	intakeHandler := intake.NewHandler(intakeStore, intakeWriter)
+	router.Path("/apis/v1/intake").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		intakeHandler.PostSubmission(w, req)
+	})
+
+	// WebApp
+	webAppHandler, err := webapp.NewHandler()
+	if err != nil {
+		panic(err)
+	}
+	router.Path("/vulnerabilities/{id}").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		webAppHandler.Vulnerability(w, req)
+	})
+	router.Path("/vulnerabilities").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		webAppHandler.Vulnerabilities(w, req)
+	})
+	router.Path("/beneficiaries").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		webAppHandler.Beneficiaries(w, req)
+	})
+	router.Path("/beneficiaries/{id}").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		webAppHandler.Beneficiary(w, req)
+	})
+	router.Path("/settings").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		webAppHandler.Settings(w, req)
+	})
+	router.Path("/settings/attributes").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		webAppHandler.Attributes(w, req)
+	})
+	router.Path("/settings/attributes/new").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		webAppHandler.NewAttribute(w, req)
+	})
+	router.Path("/settings/attributes/{id}").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		webAppHandler.Attribute(w, req)
+	})
+	router.Path("/settings/relationshiptypes").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		webAppHandler.RelationshipTypes(w, req)
+	})
+	router.Path("/settings/relationshiptypes/new").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		webAppHandler.NewRelationshipType(w, req)
+	})
+	router.Path("/settings/relationshiptypes/{id}").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		webAppHandler.RelationshipType(w, req)
+	})
+	http.ListenAndServe(":9000", router)
+}
+
+func NewReader(ctx context.Context, topic string, offset *int64) (*kafka.Reader, error) {
+	reader := kafka.NewReader(kafka.ReaderConfig{
+		Brokers: []string{"localhost:9092"},
+		Topic:   topic,
+	})
+	if offset != nil {
+		if err := reader.SetOffset(*offset); err != nil {
+			return nil, err
+		}
+	} else {
+		if err := reader.SetOffsetAt(ctx, time.Now()); err != nil {
+			return nil, err
+		}
+	}
+	return reader, nil
+}
+
+func NewWriter(topic string) (*kafka.Writer, error) {
+	writer := &kafka.Writer{
+		Addr:     kafka.TCP("localhost:9092"),
+		Balancer: &kafka.LeastBytes{},
+		Topic:    topic,
+	}
+	return writer, nil
+}

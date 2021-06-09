@@ -1,0 +1,49 @@
+{{define "attributes"}}
+    <!doctype html>
+    <html lang="en">
+    {{template "head"}}
+
+    <style>
+        .attribute {
+            transition: all ease-in-out 0.2s;
+        }
+        .attribute:hover{
+            box-shadow: 0 .125rem .25rem rgba(11, 94, 215, 0.2) !important;
+            border-color: rgba(13, 110, 253, 1);
+        }
+    </style>
+
+    <body class="bg-light">
+
+    {{template "navbar"}}
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+
+                    {{if .Attributes.Items}}
+                        {{ range .Attributes.Items }}
+                            <a class="card mb-3 shadow-sm text-dark text-decoration-none attribute" href="/settings/attributes/{{.ID}}">
+                                <div class="card-body">
+                                    <small class="d-block text-muted">{{.SubjectType}}</small>
+                                    {{.Name}}
+                                </div>
+                            </a>
+                        {{end}}
+                    {{else}}
+                        <div class="card">
+                            <div class="card-body shadow-sm">
+                                No Attributes
+                            </div>
+                        </div>
+                    {{end}}
+
+
+                <a class="btn btn-primary" href="/settings/attributes/new">New Attribute</a>
+            </div>
+        </div>
+    </div>
+
+    </body>
+    </html>
+{{end}}

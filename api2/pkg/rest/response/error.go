@@ -1,0 +1,5 @@
+package response
+
+func ErrorResponse() {
+
+}

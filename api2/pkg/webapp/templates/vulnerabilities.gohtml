@@ -1,0 +1,23 @@
+{{define "vulnerabilities"}}
+    <!doctype html>
+    <html lang="en">
+    {{template "head"}}
+    <body>
+
+    {{template "navbar"}}
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+                <div class="list-group">
+                    {{ range .Vulnerabilities.Items }}
+                        <a class="list-group-item" href="/vulnerabilities/{{.ID}}">{{.Name}}</a>
+                    {{end}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </body>
+    </html>
+{{end}}
