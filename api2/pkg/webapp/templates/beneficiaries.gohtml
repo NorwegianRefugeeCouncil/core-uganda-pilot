@@ -23,9 +23,14 @@
     <div class="container mt-4">
         <div class="row">
             <div class="col">
+                <a href='/beneficiaries/new' class='btn btn-primary mb-3'>Register Beneficiary</a>
                 <div class="list-group">
-                    {{ range .Beneficiaries.Items }}
-                        {{template "beneficiary-row" .}}
+                    {{ if .Beneficiaries.Items}}
+                        {{ range .Beneficiaries.Items }}
+                            {{template "beneficiary-row" .}}
+                        {{end}}
+                    {{else}}
+                        <div class='list-group-item disabled'>No beneficiary found</div>
                     {{end}}
                 </div>
             </div>

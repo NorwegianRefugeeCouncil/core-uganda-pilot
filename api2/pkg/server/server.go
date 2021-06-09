@@ -13,7 +13,9 @@ import (
 	"github.com/segmentio/kafka-go"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"net"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -24,6 +26,22 @@ type Server struct {
 func NewServer(
 	ctx context.Context,
 ) {
+
+	if err := CreateTopics(kafka.TopicConfig{
+		Topic:             "submissions",
+		NumPartitions:     1,
+		ReplicationFactor: 1,
+	}, kafka.TopicConfig{
+		Topic:             "beneficiaries",
+		NumPartitions:     1,
+		ReplicationFactor: 1,
+	}, kafka.TopicConfig{
+		Topic:             "intake",
+		NumPartitions:     1,
+		ReplicationFactor: 1,
+	}); err != nil {
+		panic(err)
+	}
 
 	mongoClient, err := mongo.NewClient(options.Client().SetAuth(
 		options.Credential{
@@ -204,4 +222,29 @@ func NewWriter(topic string) (*kafka.Writer, error) {
 		Topic:    topic,
 	}
 	return writer, nil
+}
+
+func CreateTopics(topics ...kafka.TopicConfig) error {
+
+	conn, err := kafka.Dial("tcp", "localhost:9092")
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	controller, err := conn.Controller()
+	if err != nil {
+		return err
+	}
+
+	controllerConn, err := kafka.Dial("tcp", net.JoinHostPort(controller.Host, strconv.Itoa(controller.Port)))
+	if err != nil {
+		return err
+	}
+	defer controllerConn.Close()
+	if err := controllerConn.CreateTopics(topics...); err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -58,6 +58,10 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 	g, waitCtx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
+		if id == "new" {
+			b = &api.Beneficiary{}
+			return nil
+		}
 		var err error
 		b, err = beneficiaryClient.Get(waitCtx, id)
 		return err
@@ -70,6 +74,12 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 	})
 
 	g.Go(func() error {
+		if id == "new" {
+			relationshipsForBeneficiary = &api.RelationshipList{
+				Items: []*api.Relationship{},
+			}
+			return nil
+		}
 		var err error
 		relationshipsForBeneficiary, err = relationshipClient.List(waitCtx, relationships.ListOptions{Party: id})
 		return err
