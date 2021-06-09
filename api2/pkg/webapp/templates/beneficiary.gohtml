@@ -135,16 +135,19 @@
 
       let displayRelationships$ = relationships$.pipe(
         map(r => {
-          let relationshipType = relationshipTypes.find(t => t.id === r.relationshipTypeId);
-          if (!relationshipType){
-            return
-          }
-          return {
-            ...r,
-            firstPartyRole: relationshipType.firstPartyRole,
-            secondPartyRole: relationshipType.secondPartyRole,
-            relationshipTypeName: relationshipType.name
-          };
+          return r.map(elem => {
+            let relationshipType = relationshipTypes.find(t => t.id === elem.relationshipTypeId);
+            console.log(relationshipType);
+            if (!relationshipType) {
+              return;
+            }
+            return {
+              ...elem,
+              firstPartyRole: relationshipType.firstPartyRole,
+              secondPartyRole: relationshipType.secondPartyRole,
+              relationshipTypeName: relationshipType.name
+            };
+          });
         })
       );
 
@@ -158,11 +161,14 @@
       let attributes$ = state$.pipe(map(s => s.attributes));
 
       function addRelationship(relationshipTypeId, secondPartyID) {
-        relationshipsSubject.next({
-          relationshipTypeId,
-          firstParty: {{.Beneficiary.ID}},
-          secondParty: secondPartyID
-        });
+        relationshipsSubject.next([
+          ...relationshipsSubject.value,
+          {
+            relationshipTypeId,
+            firstParty: {{.Beneficiary.ID}},
+            secondParty: secondPartyID
+          }
+        ]);
       }
 
       document.addEventListener('DOMContentLoaded', function() {
