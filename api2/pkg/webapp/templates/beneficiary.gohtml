@@ -135,7 +135,10 @@
 
       let displayRelationships$ = relationships$.pipe(
         map(r => {
-          let relationshipType = relationshipTypes.find(t => t.ID === r.relationshipTypeId);
+          let relationshipType = relationshipTypes.find(t => t.id === r.relationshipTypeId);
+          if (!relationshipType){
+            return
+          }
           return {
             ...r,
             firstPartyRole: relationshipType.firstPartyRole,
