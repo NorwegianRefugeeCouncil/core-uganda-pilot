@@ -11,7 +11,8 @@
             <div class="col">
                 <div class="mt-3">
 
-                    <form action="/beneficiaries{{if .Beneficiary}}{{if .Beneficiary.ID}}/{{.Beneficiary.ID}}{{end}}{{end}}" method="post">
+                    <form action="/beneficiaries{{if .Beneficiary}}{{if .Beneficiary.ID}}/{{.Beneficiary.ID}}{{end}}{{end}}"
+                          method="post">
 
                         <h4 class="display-6">Attributes</h4>
 
@@ -21,34 +22,34 @@
 
                             <!-- attribute[0].id = firstName -->
                             <input type="hidden" name="attribute[{{$index}}].id"
-                                   value="{{$attribute.ID}}"/>
+                                   value="{{$attribute.ID}}" />
 
                             <!-- attribute[0].name = firstName -->
                             <input type="hidden" name="attribute[{{$index}}].name"
-                                   value="{{$attribute.Name}}"/>
+                                   value="{{$attribute.Name}}" />
 
                             <!-- attribute[0].valueType = String -->
                             <input type="hidden" name="attribute[{{$index}}].valueType"
-                                   value="{{$attribute.ValueType}}"/>
+                                   value="{{$attribute.ValueType}}" />
 
                             <!-- attribute[0].subjectType = Beneficiary -->
                             <input type="hidden" name="attribute[{{$index}}].subjectType"
-                                   value="{{$attribute.SubjectType}}"/>
+                                   value="{{$attribute.SubjectType}}" />
 
                             <!-- attribute[0].isPersonallyIdentifiableInfo = true -->
                             <input type="hidden" name="attribute[{{$index}}].isPersonallyIdentifiableInfo"
-                                   value="{{$attribute.IsPersonallyIdentifiableInfo}}"/>
+                                   value="{{$attribute.IsPersonallyIdentifiableInfo}}" />
 
                             {{range $translationIndex, $translation := $attribute.Translations}}
                                 <input type="hidden"
                                        name="attribute[{{$index}}].translations[{{$translationIndex}}].locale"
-                                       value="{{$translation.Locale}}"/>
+                                       value="{{$translation.Locale}}" />
                                 <input type="hidden"
                                        name="attribute[{{$index}}].translations[{{$translationIndex}}].long"
-                                       value="{{$translation.LongFormulation}}"/>
+                                       value="{{$translation.LongFormulation}}" />
                                 <input type="hidden"
                                        name="attribute[{{$index}}].translations[{{$translationIndex}}].short"
-                                       value="{{$translation.ShortFormulation}}"/>
+                                       value="{{$translation.ShortFormulation}}" />
                             {{end}}
 
                             <div class="form-floating mb-3 shadow-sm">
@@ -56,33 +57,41 @@
                                        name="attribute[{{$index}}].value"
                                        id="attribute-{{.Name}}"
                                        type="text"
-                                       value="{{if $attributeValue}}{{$attributeValue.Value}}{{end}}"/>
+                                       value="{{if $attributeValue}}{{$attributeValue.Value}}{{end}}" />
                                 <label for="attribute-{{.Name}}">{{.Name}}</label>
                             </div>
                         {{end}}
 
                         <h4 class="display-6">Relationships</h4>
 
+                        <div id='relationships-container'>
+
+                        </div>
+
                         <div class="d-flex flex-row mb-3">
                             <div class="form-floating shadow-sm me-2">
-                                <select id="newRelationshipSelector" class="form-select pe-5">
+                                <select id="relationshipTypeSelector" class="form-select pe-5">
                                     {{range .RelationshipTypes.Items}}
                                         <option value="{{.ID}}">{{.FirstPartyRole}}</option>
                                     {{end}}
                                 </select>
-                                <label for="newRelationshipSelector">Relationship Type</label>
+                                <label for="relationshipTypeSelector">Relationship Type</label>
                             </div>
                             <div class="form-floating shadow-sm mx-2 flex-grow-1">
-                                <select id="newRelationshipSelector" class="form-select">
+                                <select id="relationshipSecondPartySelector" class="form-select">
                                     <option value="" selected></option>
                                     {{range .Parties.Items}}
                                         <option value="{{.ID}}">{{.}}</option>
                                     {{end}}
                                 </select>
-                                <label for="newRelationshipSelector">Other Party</label>
+                                <label for="relationshipSecondPartySelector">Other Party</label>
                             </div>
 
-                            <button class="btn btn-primary ms-2">Add</button>
+                            <button class="btn btn-primary ms-2"
+                                    id="add-relationship-button"
+                                    type='button'>
+                                Add
+                            </button>
                         </div>
 
                         <button class="btn btn-primary">Save</button>
@@ -92,13 +101,88 @@
             </div>
         </div>
     </div>
+
     </body>
 
     <script type="application/javascript">
-        const {Observable, BehaviorSubject} = rxjs
-        document.addEventListener("DOMContentLoaded", function () {
 
+      let { BehaviorSubject } = rxjs;
+      let { map } = rxjs.operators;
+
+      console.log('...');
+
+      let relationshipTypes = [
+          {{range .RelationshipTypes.Items}}
+        {
+          id: {{.ID}},
+          name: {{.Name}},
+          firstPartyRole: {{.FirstPartyRole}},
+          secondPartyRole: {{.SecondPartyRole}},
+        },
+          {{end}}
+      ];
+
+      let relationshipsSubject = new BehaviorSubject([
+          {{range .Relationships.Items}}
+        {
+          firstParty: {{.FirstParty}},
+          secondParty: {{.SecondParty}},
+          relationshipTypeId: {{.RelationshipTypeID}}
+        },
+          {{end}}
+      ]);
+      let relationships$ = relationshipsSubject.asObservable();
+
+      let displayRelationships$ = relationships$.pipe(
+        map(r => {
+          let relationshipType = relationshipTypes.find(t => t.ID === r.relationshipTypeId);
+          return {
+            ...r,
+            firstPartyRole: relationshipType.firstPartyRole,
+            secondPartyRole: relationshipType.secondPartyRole,
+            relationshipTypeName: relationshipType.name
+          };
         })
+      );
+
+      let stateSubject = new BehaviorSubject({
+        entity: {
+          attributes: [],
+          relationships: []
+        }
+      });
+      let state$ = stateSubject.asObservable();
+      let attributes$ = state$.pipe(map(s => s.attributes));
+
+      function addRelationship(relationshipTypeId, secondPartyID) {
+        relationshipsSubject.next({
+          relationshipTypeId,
+          firstParty: {{.Beneficiary.ID}},
+          secondParty: secondPartyID
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', function() {
+
+        document.getElementById('add-relationship-button').onclick = () => {
+          let typeSelector = document.getElementById('relationshipTypeSelector');
+          let partySelector = document.getElementById('relationshipSecondPartySelector');
+          let relationshipType = typeSelector.value;
+          let party = partySelector.value;
+          addRelationship(relationshipType, party);
+        };
+
+        displayRelationships$.subscribe(s => {
+          let container = document.getElementById('relationships-container');
+          container.innerHTML = '';
+          let r = document.createElement('div');
+          r.innerHTML = JSON.stringify(s);
+          container.appendChild(r);
+        });
+
+      });
+
+
     </script>
 
     </html>

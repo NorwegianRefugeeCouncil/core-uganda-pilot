@@ -42,6 +42,7 @@ type RelationshipTypeList struct {
 
 type Relationship struct {
 	ID                  string     `json:"id"`
+	RelationshipTypeID  string     `json:"relationshipTypeId"`
 	FirstParty          string     `json:"firstParty"`
 	SecondParty         string     `json:"secondParty"`
 	StartOfRelationship time.Time  `json:"startOfRelationship"`
