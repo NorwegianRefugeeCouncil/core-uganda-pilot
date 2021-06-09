@@ -9,6 +9,7 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/subjects/beneficiaries"
 	"github.com/nrc-no/core-kafka/pkg/subjects/relationships"
 	"github.com/nrc-no/core-kafka/pkg/subjects/relationshiptypes"
+	uuid "github.com/satori/go.uuid"
 	"golang.org/x/sync/errgroup"
 	"net/http"
 	"strconv"
@@ -18,8 +19,13 @@ import (
 func (h *Handler) Beneficiaries(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-
 	cli := beneficiaries.NewClient("http://localhost:9000")
+
+	if req.Method == "POST" {
+		h.PostBeneficiary(ctx, cli, "", w, req)
+		return
+	}
+
 	list, err := cli.List(ctx)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -244,13 +250,25 @@ func (h *Handler) PostBeneficiary(ctx context.Context, cli *beneficiaries.Client
 		beneficiaryAttributes[value.Name] = value
 	}
 
-	_, err := cli.Update(ctx, &api.Beneficiary{
-		ID:         id,
-		Attributes: beneficiaryAttributes,
-	})
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	if id == "" {
+		id = uuid.NewV4().String()
+		_, err := cli.Create(ctx, &api.Beneficiary{
+			ID:         id,
+			Attributes: beneficiaryAttributes,
+		})
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	} else {
+		_, err := cli.Update(ctx, &api.Beneficiary{
+			ID:         id,
+			Attributes: beneficiaryAttributes,
+		})
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 
 	w.Header().Set("Location", "/beneficiaries/"+id)

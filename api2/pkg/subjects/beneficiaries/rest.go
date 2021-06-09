@@ -67,6 +67,34 @@ func (h *Handler) List(w http.ResponseWriter, req *http.Request) {
 
 func (h *Handler) Create(w http.ResponseWriter, req *http.Request) {
 
+	ctx := req.Context()
+
+	bodyBytes, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var beneficiary api.Beneficiary
+	if err := json.Unmarshal(bodyBytes, &beneficiary); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := h.store.Create(ctx, &beneficiary); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	responseBytes, err := json.Marshal(beneficiary)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(responseBytes)
+
 }
 
 func (h *Handler) Update(w http.ResponseWriter, req *http.Request) {

@@ -6,7 +6,9 @@
     <a class="list-group-item font-monospace py-3" href="/beneficiaries/{{.ID}}">
         {{.}}
         <span class="d-block text-muted">
-            {{if eq $gender "Male"}}M{{else if eq $gender "Female"}}F{{end}}
+            {{if $gender}}
+                {{if eq $gender "Male"}}M{{else if eq $gender "Female"}}F{{end}}
+            {{end}}
             {{if $age}}{{$age}}{{end}}
         </span>
     </a>
