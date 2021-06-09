@@ -65,7 +65,11 @@
                         <h4 class="display-6">Relationships</h4>
 
                         <div id='relationships-container'>
-
+                            <ul id='relationships-list' class="list-group mb-3">
+                            {{ range .Relationships.Items}}
+                                <li class="list-group-item">{{ .FirstParty }}{{ index $.RelationshipTypes .RelationshipTypeID }} {{ .SecondParty }}</li>
+                            {{ end }}
+                            </ul>
                         </div>
 
                         <div class="d-flex flex-row mb-3">
@@ -121,6 +125,16 @@
         },
           {{end}}
       ];
+
+      const parties = [
+          {{range .Parties.Items}}
+          {
+              id: {{.ID}},
+              name: "{{ . }}",
+          },
+          {{ end }}
+      ];
+
 
       let relationshipsSubject = new BehaviorSubject([
           {{range .Relationships.Items}}
@@ -179,14 +193,25 @@
           let relationshipType = typeSelector.value;
           let party = partySelector.value;
           addRelationship(relationshipType, party);
+          const hiddenInput = document.createElement('input');
+          hiddenInput.type = 'hidden';
+          hiddenInput.value = "TODO"; // TODO;
+            hiddenInput.id = "todo";
+            // document.getElementById('relationships-container).appendChild(hiddenInput);
         };
 
         displayRelationships$.subscribe(s => {
-          let container = document.getElementById('relationships-container');
-          container.innerHTML = '';
-          let r = document.createElement('div');
-          r.innerHTML = JSON.stringify(s);
-          container.appendChild(r);
+            const list = document.getElementById('relationships-list');
+            s.forEach(item => {
+                const li = document.createElement('li');
+                li.className = "list-group-item";
+                const firstPartyName = parties.find(({id}) => id === item.firstParty).name;
+                const firstPartyRole = relationshipTypes.find(({id}) => id === item.relationshipTypeId).firstPartyRole;
+                const secondPartyName = parties.find(({id}) => id === item.secondParty).name;
+                li.innerText = firstPartyName + " " + firstPartyRole + " " + secondPartyName;
+                list.appendChild(li);
+            })
+
         });
 
       });
