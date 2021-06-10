@@ -92,7 +92,7 @@
 
     <script type="application/javascript">
 
-        const {BehaviorSubject, combineLatest} = rxjs
+        const {BehaviorSubject, combineLatest, fromEvent } = rxjs
         const {map} = rxjs.operators
 
         let languages = [
@@ -150,6 +150,20 @@
                 })
             })
         )
+
+
+        const nameInput = document.getElementById("name-input");
+        nameInput.onchange = event => {
+            const state = {
+                ...stateSubject.value,
+                attribute: {
+                    ...stateSubject.value.attribute,
+                    name: event.target.value,
+                }
+            }
+            stateSubject.next(state);
+        }
+
 
         name$.subscribe(n => {
             document.getElementById("name-input").value = n
