@@ -43,6 +43,7 @@ type RelationshipTypeList struct {
 type Party struct {
 	ID         string   `json:"id"`
 	PartyTypes []string `json:"partyTypes"`
+	Attributes map[string]interface{}
 }
 
 type PartyList struct {
