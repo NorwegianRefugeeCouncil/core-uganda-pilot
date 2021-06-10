@@ -6,7 +6,7 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/expressions"
 	i81n "github.com/nrc-no/core-kafka/pkg/i81n/api/v1"
 	"github.com/nrc-no/core-kafka/pkg/intake"
-	"github.com/nrc-no/core-kafka/pkg/subjects/api"
+	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	"github.com/nrc-no/core-kafka/pkg/testhelpers"
 	uuid "github.com/satori/go.uuid"
 	"github.com/segmentio/kafka-go"

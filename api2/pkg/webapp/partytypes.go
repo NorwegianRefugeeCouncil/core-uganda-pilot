@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core-kafka/pkg/subjects/api"
-	"github.com/nrc-no/core-kafka/pkg/subjects/partytypes"
-	"github.com/nrc-no/core-kafka/pkg/subjects/partytypeschemas"
+	"github.com/nrc-no/core-kafka/pkg/parties/api"
+	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
+	"github.com/nrc-no/core-kafka/pkg/parties/partytypeschemas"
 	"net/http"
 )
 

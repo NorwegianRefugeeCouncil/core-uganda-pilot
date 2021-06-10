@@ -3,7 +3,7 @@ package api
 import (
 	"github.com/nrc-no/core-kafka/pkg/expressions"
 	i81n "github.com/nrc-no/core-kafka/pkg/i81n/api/v1"
-	"github.com/nrc-no/core-kafka/pkg/subjects/api"
+	"github.com/nrc-no/core-kafka/pkg/parties/api"
 )
 
 type Vulnerability struct {

@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/nrc-no/core-kafka/pkg/subjects/api"
+	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	"io/ioutil"
 	"net/http"
 )

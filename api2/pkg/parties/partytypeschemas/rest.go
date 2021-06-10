@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core-kafka/pkg/subjects/api"
+	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	uuid "github.com/satori/go.uuid"
 	"io/ioutil"
 	"net/http"

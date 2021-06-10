@@ -1,6 +1,6 @@
 package api
 
-import subjects "github.com/nrc-no/core-kafka/pkg/subjects/api"
+import subjects "github.com/nrc-no/core-kafka/pkg/parties/api"
 
 type ResponseResult struct {
 	Request         ResponseRequest

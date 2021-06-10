@@ -2,7 +2,7 @@ package relationships
 
 import (
 	"context"
-	"github.com/nrc-no/core-kafka/pkg/subjects/api"
+	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )

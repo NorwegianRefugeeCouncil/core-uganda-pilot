@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/nrc-no/core-kafka/pkg/intake"
-	"github.com/nrc-no/core-kafka/pkg/subjects/api"
+	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	"github.com/segmentio/kafka-go"
 	"github.com/sirupsen/logrus"
 )

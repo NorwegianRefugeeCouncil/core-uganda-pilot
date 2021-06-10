@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core-kafka/pkg/subjects/api"
-	"github.com/nrc-no/core-kafka/pkg/subjects/relationshiptypes"
+	"github.com/nrc-no/core-kafka/pkg/parties/api"
+	"github.com/nrc-no/core-kafka/pkg/parties/relationshiptypes"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
 )
