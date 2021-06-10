@@ -40,6 +40,41 @@ type RelationshipTypeList struct {
 	Items []*RelationshipType
 }
 
+type Party struct {
+	ID         string   `json:"id"`
+	PartyTypes []string `json:"partyTypes"`
+}
+
+type PartyList struct {
+	Items []*Party `json:"items"`
+}
+
+type PartyType struct {
+	ID        string `json:"id"`
+	Name      string `json:"name"`
+	IsBuiltIn bool   `json:"isBuiltIn"`
+}
+
+type PartyTypeSchema struct {
+	ID    string                `json:"id"`
+	Name  string                `json:"name"`
+	Nodes []PartyTypeSchemaNode `json:"nodes"`
+}
+
+type PartyTypeSchemaList struct {
+	Items []*PartyTypeSchema `json:"items"`
+}
+
+type PartyTypeSchemaNode struct {
+	ID          string                `json:"id"`
+	PartyTypeID string                `json:"partyTypeID"`
+	Children    []PartyTypeSchemaNode `json:"children"`
+}
+
+type PartyTypeList struct {
+	Items []*PartyType
+}
+
 type Relationship struct {
 	ID                  string     `json:"id"`
 	RelationshipTypeID  string     `json:"relationshipTypeId"`

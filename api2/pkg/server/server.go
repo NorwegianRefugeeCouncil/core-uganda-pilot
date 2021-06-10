@@ -7,6 +7,8 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/services/vulnerability"
 	"github.com/nrc-no/core-kafka/pkg/subjects/attributes"
 	"github.com/nrc-no/core-kafka/pkg/subjects/beneficiaries"
+	"github.com/nrc-no/core-kafka/pkg/subjects/partytypes"
+	"github.com/nrc-no/core-kafka/pkg/subjects/partytypeschemas"
 	"github.com/nrc-no/core-kafka/pkg/subjects/relationships"
 	"github.com/nrc-no/core-kafka/pkg/subjects/relationshiptypes"
 	"github.com/nrc-no/core-kafka/pkg/webapp"
@@ -146,6 +148,38 @@ func NewServer(
 		relationshipHandler.Post(w, req)
 	})
 
+	// Relationships
+	partyTypeStore := partytypes.NewStore(mongoClient)
+	partyTypeHandler := partytypes.NewHandler(partyTypeStore)
+	router.Path("/apis/v1/partytypes").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		partyTypeHandler.List(w, req)
+	})
+	router.Path("/apis/v1/partytypes/{id}").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		partyTypeHandler.Get(w, req)
+	})
+	router.Path("/apis/v1/partytypes/{id}").Methods("PUT").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		partyTypeHandler.Put(w, req)
+	})
+	router.Path("/apis/v1/partytypes").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		partyTypeHandler.Post(w, req)
+	})
+
+	// PartyTypeSchemas
+	partyTypeSchemaStore := partytypeschemas.NewStore(mongoClient)
+	partyTypeSchemaHandler := partytypeschemas.NewHandler(partyTypeSchemaStore)
+	router.Path("/apis/v1/partytypeschemas").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		partyTypeSchemaHandler.List(w, req)
+	})
+	router.Path("/apis/v1/partytypeschemas/{id}").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		partyTypeSchemaHandler.Get(w, req)
+	})
+	router.Path("/apis/v1/partytypeschemas/{id}").Methods("PUT").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		partyTypeSchemaHandler.Put(w, req)
+	})
+	router.Path("/apis/v1/partytypeschemas").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		partyTypeSchemaHandler.Post(w, req)
+	})
+
 	// Intake
 	intakeStore := intake.NewStore(mongoClient)
 	intakeWriter, err := NewWriter("intake")
@@ -194,6 +228,15 @@ func NewServer(
 	})
 	router.Path("/settings/relationshiptypes/{id}").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		webAppHandler.RelationshipType(w, req)
+	})
+	router.Path("/settings/partytypes").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		webAppHandler.PartyTypes(w, req)
+	})
+	router.Path("/settings/partytypes/{id}").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		webAppHandler.PartyType(w, req)
+	})
+	router.Path("/settings/countries").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		webAppHandler.CountrySettings(w, req)
 	})
 	http.ListenAndServe(":9000", router)
 }

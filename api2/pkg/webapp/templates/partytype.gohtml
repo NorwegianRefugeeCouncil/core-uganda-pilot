@@ -1,0 +1,38 @@
+{{define "partytype"}}
+    <!doctype html>
+    <html lang="en">
+    {{template "head"}}
+    <body class="bg-light">
+
+    {{template "navbar"}}
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+                <form method='post' action='/settings/partytypes{{if .PartyType.ID}}/{{.PartyType.ID}}{{end}}'>
+                    <div class='form-floating mb-3'>
+                        <input name='name' id='name' type='text' class='form-control' placeholder='Name'
+                               value='{{.PartyType.Name}}'>
+                        <label for='name'>Name</label>
+                    </div>
+
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input"
+                               name='isBuiltIn'
+                               type="checkbox"
+                               id="isBuiltIn"
+                               value='true'
+                               {{if .PartyType.IsBuiltIn}}checked{{end}}
+                        >
+                        <label class="form-check-label" for="isBuiltIn">Is Built In</label>
+                    </div>
+
+                    <button class='btn btn-primary'>Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    </body>
+    </html>
+{{end}}
