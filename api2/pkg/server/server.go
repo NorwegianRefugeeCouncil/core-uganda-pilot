@@ -259,11 +259,17 @@ func NewServer(
 	router.Path("/cases").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		webAppHandler.Cases(w, req)
 	})
+	router.Path("/cases/new").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		webAppHandler.NewCase(w, req)
+	})
 	router.Path("/cases/{id}").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		webAppHandler.Case(w, req)
 	})
-	router.Path("/cases/newcasetype").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	router.Path("/cases/casetypes/new").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		webAppHandler.NewCaseType(w, req)
+	})
+	router.Path("/cases/casetypes/{id}").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		webAppHandler.CaseType(w, req)
 	})
 
 	http.ListenAndServe(":9000", router)

@@ -4,79 +4,91 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core-kafka/pkg/cases/api"
+	casesapi "github.com/nrc-no/core-kafka/pkg/cases/api"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
+	partiesapi "github.com/nrc-no/core-kafka/pkg/parties/api"
+	"github.com/nrc-no/core-kafka/pkg/parties/parties"
+	"golang.org/x/sync/errgroup"
 	"net/http"
 )
-
-func (h *Handler) CaseTypes(w http.ResponseWriter, req *http.Request) {
-
-	ctx := req.Context()
-	caseTypesCli := casetypes.NewClient("http://localhost:9000")
-
-	if req.Method == "POST" {
-		h.PostCaseType(ctx, caseTypesCli, &api.CaseType{}, w, req)
-		return
-	}
-
-	caseTypes, err := caseTypesCli.List(ctx)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	if err := h.template.ExecuteTemplate(w, "casetypes", map[string]interface{}{
-		"CaseTypes": caseTypes,
-	}); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-}
 
 func (h *Handler) CaseType(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
+
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
-		err := fmt.Errorf("no id found in path")
+		err := fmt.Errorf("no id in path")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	caseTypesCli := casetypes.NewClient("http://localhost:9000")
+	caseTypesClient := casetypes.NewClient("http://localhost:9000")
+	partiesClient := parties.NewClient("http://localhost:9000")
 
-	var caseType = &api.CaseType{}
-	if id != "new" {
+	var caseTypes *casesapi.CaseTypeList
+	var p *partiesapi.PartyList
+
+	g, waitCtx := errgroup.WithContext(ctx)
+
+	g.Go(func() error {
 		var err error
-		caseType, err = caseTypesCli.Get(ctx, id)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-	}
+		caseTypes, err = caseTypesClient.List(waitCtx)
+		return err
+	})
 
 	if req.Method == "POST" {
-		h.PostCaseType(ctx, caseTypesCli, caseType, w, req)
+		h.PostCaseType(ctx, caseTypesClient, id, w, req)
 		return
 	}
+	var listoptions parties.ListOptions
+	listoptions.Party = ""
 
-	if err := h.template.ExecuteTemplate(w, "casetypes", map[string]interface{}{
-		"CaseType": caseType,
+	g.Go(func() error {
+		var err error
+		p, err = partiesClient.List(waitCtx, listoptions)
+		return err
+	})
+
+	if err := h.template.ExecuteTemplate(w, "newcasetype", map[string]interface{}{
+		"CaseTypes": caseTypes,
+		"Parties":   p,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 }
 
 func (h *Handler) NewCaseType(w http.ResponseWriter, req *http.Request) {
-	if err := h.template.ExecuteTemplate(w, "casetype", nil); err != nil {
+
+	ctx := req.Context()
+	caseTypesClient := casetypes.NewClient("http://localhost:9000")
+	partiesClient := parties.NewClient("http://localhost:9000")
+
+	var caseTypes *casesapi.CaseTypeList
+	var p *partiesapi.PartyList
+
+	g, waitCtx := errgroup.WithContext(ctx)
+
+	g.Go(func() error {
+		var err error
+		caseTypes, err = caseTypesClient.List(waitCtx)
+		return err
+	})
+
+	var listoptions parties.ListOptions
+	listoptions.Party = ""
+
+	g.Go(func() error {
+		var err error
+		p, err = partiesClient.List(waitCtx, listoptions)
+		return err
+	})
+
+	if err := h.template.ExecuteTemplate(w, "newcasetype", map[string]interface{}{
+		"CaseTypes": caseTypes,
+		"Parties":   p,
+	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -85,7 +97,7 @@ func (h *Handler) NewCaseType(w http.ResponseWriter, req *http.Request) {
 func (h *Handler) PostCaseType(
 	ctx context.Context,
 	caseTypesCli *casetypes.Client,
-	caseType *api.CaseType,
+	caseType *casesapi.CaseType,
 	w http.ResponseWriter,
 	req *http.Request,
 ) {
@@ -111,7 +123,7 @@ func (h *Handler) PostCaseType(
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		w.Header().Set("Location", "/settings/casetypes/"+out.ID)
+		w.Header().Set("Location", "/cases/settings/casetypes/"+out.ID)
 		w.WriteHeader(http.StatusSeeOther)
 		return
 	} else {
@@ -120,7 +132,7 @@ func (h *Handler) PostCaseType(
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		w.Header().Set("Location", "/settings/casetypes/"+caseType.ID)
+		w.Header().Set("Location", "/cases")
 		w.WriteHeader(http.StatusSeeOther)
 		return
 	}

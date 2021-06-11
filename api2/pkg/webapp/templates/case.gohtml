@@ -14,21 +14,28 @@
                     <div class="form-floating mb-3">
                         <select id="case-type" type="select" class="form-select" name="caseType" value="{{.Name}}">
                             {{$caseTypeId := .Case.CaseTypeID}}
-                            {{range .CaseTypes}}
+                            {{range .CaseTypes.Items}}
                                 <option {{if .ID eq $caseTypeId}}selected{{end}} value="{{.ID}}">{{.Name}}</option>
                             {{end}}
                         </select>
                         <label for="case-type">Type</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <select id="party" type="select" class="form-select" name="caseType" value="{{.Name}}">
+                        <select id="party-type" type="select" class="form-select" name="caseType" value="{{.Name}}">
                             {{$partyId := .Case.PartyID}}
-                            {{range .CaseTypes}}
+                            {{range .Parties.Items}}
                                 <option {{if .ID eq $caseTypeId}}selected{{end}} value="{{.ID}}">{{.Name}}</option>
                             {{end}}
                         </select>
-                        <label for="case-type">Type</label>
+                        <label for="party-type">Party</label>
                     </div>
+                    <div class="form-check">
+                        <input id="done-check" class="form-check-input" type="checkbox" value="{{.Case.Done}}" {{if .Case.Done}}checked{{end}}>
+                        <label class="form-check-label" for="done-check">
+                            Done
+                        </label>
+                    </div>
+                    <a class="btn btn-primary" type="submit">Save</a>
                 </form>
             </div>
         </div>
