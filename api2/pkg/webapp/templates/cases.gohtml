@@ -1,0 +1,31 @@
+
+{{define "cases"}}
+
+    <!doctype html>
+    <html lang="en">
+    {{template "head"}}
+    <body class="bg-light">
+        {{template "casesnavbar"}}
+
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col">
+                    <a href='/cases/new' class='btn btn-primary mb-3'>Open Case</a>
+                    <div class="list-group">
+                        {{ if .Cases.Items}}
+                            {{ range .Cases.Items }}
+                                <a class="list-group-item font-monospace py-3" href="/cases/{{.ID}}">
+                                    {{.}}
+                                </a>
+                            {{end}}
+                        {{else}}
+                            <div class='list-group-item disabled'>No open cases</div>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+
+{{end}}
