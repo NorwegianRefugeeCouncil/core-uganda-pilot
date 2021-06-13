@@ -54,42 +54,26 @@
                             </small><br/>
                             
                             <div class="form-floating mb-3 shadow-sm">
-                                {{/* <input class="form-control"
-                                    type="text"
-                                    id="secondPartyRole"
-                                    name="secondPartyRole"
-                                    placeholder="Second party role"
-                                    value="{{if .RelationshipType}}{{.RelationshipType.SecondPartyRole}}{{end}}"
-                                /> */}}
                                 <select 
                                     class="form-select" 
                                     aria-label="Select the type of the first party"
                                     id="firstPartyType"
                                     name="firstPartyType">
-                                    <option selected>Open this select menu</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                    {{range .PartyTypes.Items}}
+                                        <option value="{{.ID}}">{{.Name}}</option>
+                                    {{end}}
                                 </select>
                                 <label for="firstPartyType">First Party Type</label>
                             </div>
                             <div class="form-floating mb-3 shadow-sm">
-                                {{/* <input class="form-control"
-                                    type="text"
-                                    id="secondPartyRole"
-                                    name="secondPartyRole"
-                                    placeholder="Second party role"
-                                    value="{{if .RelationshipType}}{{.RelationshipType.SecondPartyRole}}{{end}}"
-                                /> */}}
                                 <select 
                                     class="form-select" 
                                     aria-label="Select the type of the second party"
                                     id="secondPartyType"
                                     name="secondPartyType">
-                                    <option selected>Open this select menu</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                    {{range .PartyTypes.Items}}
+                                        <option value="{{.ID}}">{{.Name}}</option>
+                                    {{end}}
                                 </select>
                                 <label for="secondPartyType">Second Party Type</label>
                             </div>
