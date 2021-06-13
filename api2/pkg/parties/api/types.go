@@ -34,16 +34,16 @@ type RelationshipTypeRule struct {
 }
 
 type PartyTypeRule struct {
-	FirstPartyType  string
-	SecondPartyType string
+	FirstPartyType  string `json:"firstPartyType"`
+	SecondPartyType string `json:"secondPartyType"`
 }
 
 type RelationshipType struct {
-	ID              string `json:"id"`
-	Name            string `json:"name"`
-	FirstPartyRole  string `json:"firstPartyRole"`
-	SecondPartyRole string `json:"secondPartyRole"`
-	Rules           []RelationshipTypeRule
+	ID              string                 `json:"id"`
+	Name            string                 `json:"name"`
+	FirstPartyRole  string                 `json:"firstPartyRole"`
+	SecondPartyRole string                 `json:"secondPartyRole"`
+	Rules           []RelationshipTypeRule `json:"rules"`
 }
 
 type RelationshipTypeList struct {
