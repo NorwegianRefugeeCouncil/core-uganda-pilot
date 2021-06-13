@@ -29,11 +29,21 @@ type AttributeTranslation struct {
 	ShortFormulation string `json:"shortFormulation"`
 }
 
+type RelationshipTypeRule struct {
+	PartyTypeRule
+}
+
+type PartyTypeRule struct {
+	FirstPartyType  string
+	SecondPartyType string
+}
+
 type RelationshipType struct {
 	ID              string `json:"id"`
 	Name            string `json:"name"`
 	FirstPartyRole  string `json:"firstPartyRole"`
 	SecondPartyRole string `json:"secondPartyRole"`
+	Rules           []RelationshipTypeRule
 }
 
 type RelationshipTypeList struct {
