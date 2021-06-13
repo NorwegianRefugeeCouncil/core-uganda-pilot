@@ -37,7 +37,19 @@ func (h *Handler) RelationshipTypes(w http.ResponseWriter, req *http.Request) {
 }
 
 func (h *Handler) NewRelationshipType(w http.ResponseWriter, req *http.Request) {
-	if err := h.template.ExecuteTemplate(w, "relationshiptype", nil); err != nil {
+	ctx := req.Context()
+
+	partyTypesCli := partytypes.NewClient("http://localhost:9000")
+
+	p, err := partyTypesCli.List(ctx)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := h.template.ExecuteTemplate(w, "relationshiptype", map[string]interface{}{
+		"PartyTypes": p,
+	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
