@@ -3,11 +3,12 @@ package relationshiptypes
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	uuid "github.com/satori/go.uuid"
-	"io/ioutil"
-	"net/http"
 )
 
 type Handler struct {
@@ -95,6 +96,7 @@ func (h *Handler) Put(w http.ResponseWriter, req *http.Request) {
 	r.FirstPartyRole = payload.FirstPartyRole
 	r.SecondPartyRole = payload.SecondPartyRole
 	r.Name = payload.Name
+	r.Rules = payload.Rules
 
 	if err := h.store.Update(ctx, r); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

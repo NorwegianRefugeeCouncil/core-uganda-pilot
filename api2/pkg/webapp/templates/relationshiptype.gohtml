@@ -64,7 +64,7 @@
                                     class="form-select" 
                                     aria-label="Select the type of the first party"
                                     id="firstPartyType"
-                                    name="firstPartyType">
+                                    name="rules[0].firstPartyType">
                                     {{range .PartyTypes.Items}}
                                         <option value="{{.Name}}">{{.Name}}</option>
                                     {{end}}
@@ -78,7 +78,7 @@
                                     class="form-select" 
                                     aria-label="Select the type of the second party"
                                     id="secondPartyType"
-                                    name="secondPartyType">
+                                    name="rules[0].secondPartyType">
                                     {{range .PartyTypes.Items}}
                                         <option value="{{.Name}}">{{.Name}}</option>
                                     {{end}}
@@ -104,26 +104,6 @@
             let element = document.getElementById(id);
             element.value = valueToSelect;
         }
-
-        form.addEventListener("submit", (event) => {
-            event.preventDefault()
-
-            const urlEncodedSubmissionData = new URLSearchParams({
-                "name": event.target[0].value,
-                "firstPartyRole": event.target[1].value,
-                "secondPartyRole": event.target[2].value,
-                "rules[0].firstPartyType": event.target[3].selectedOptions[0].text,
-                "rules[0].secondPartyType": event.target[4].selectedOptions[0].text,
-            });
-
-            fetch(event.target.action, {
-                method: "POST",
-                body: urlEncodedSubmissionData
-            })
-
-            console.log("POSTED!")
-
-        })
 
         {{if .RelationshipType}}
             document.addEventListener("DOMContentLoaded", (event) => {

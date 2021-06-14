@@ -2,6 +2,7 @@ package relationshiptypes
 
 import (
 	"context"
+
 	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -64,6 +65,7 @@ func (s *Store) Update(ctx context.Context, relationshipType *api.RelationshipTy
 			"firstPartyRole":  relationshipType.FirstPartyRole,
 			"secondPartyRole": relationshipType.SecondPartyRole,
 			"name":            relationshipType.Name,
+			"rules":           relationshipType.Rules,
 		},
 	})
 	if err != nil {
