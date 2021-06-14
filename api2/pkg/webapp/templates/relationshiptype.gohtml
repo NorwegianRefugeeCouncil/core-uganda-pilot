@@ -14,6 +14,7 @@
                       action="/settings/relationshiptypes{{if .RelationshipType}}/{{.RelationshipType.ID}}{{end}}"
                       method="post">
 
+                    <!--  Name -->
                     <div class="form-floating mb-3 shadow-sm">
                         <input autofocus
                                class="form-control"
@@ -26,6 +27,7 @@
                         <label for="name">Name</label>
                     </div>
 
+                    <!--  First Party Role -->
                     <div class="form-floating mb-3 shadow-sm">
                         <input class="form-control"
                                type="text"
@@ -36,6 +38,7 @@
                         <label for="firstPartyRole">First Party Role</label>
                     </div>
 
+                    <!--  Second Party Role -->
                     <div class="form-floating mb-3 shadow-sm">
                         <input class="form-control"
                                type="text"
@@ -47,6 +50,7 @@
                         <label for="secondPartyRole">Second Party Role</label>
                     </div>
 
+                    <!--  Rules -->
                     <div class="card text-dark text-decoration-none shadow-sm mb-3">
                         <div class="card-body">
                             Rules
@@ -54,6 +58,7 @@
                                 Enforce limits on this type of relationship
                             </small><br/>
                             
+                            <!--  First Party Type -->
                             <div class="form-floating mb-3 shadow-sm">
                                 <select 
                                     class="form-select" 
@@ -66,6 +71,8 @@
                                 </select>
                                 <label for="firstPartyType">First Party Type</label>
                             </div>
+
+                            <!--  Second Party Type -->
                             <div class="form-floating mb-3 shadow-sm">
                                 <select 
                                     class="form-select" 

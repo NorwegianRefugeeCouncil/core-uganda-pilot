@@ -119,6 +119,17 @@ func (h *Handler) PostRelationshipType(
 	r.FirstPartyRole = formValues.Get("firstPartyRole")
 	r.SecondPartyRole = formValues.Get("secondPartyRole")
 
+	rules := []api.RelationshipTypeRule{
+		api.RelationshipTypeRule{
+			api.PartyTypeRule{
+				FirstPartyType:  formValues.Get("rules[0].firstPartyType"),
+				SecondPartyType: formValues.Get("rules[0].secondPartyType"),
+			},
+		},
+	}
+
+	r.Rules = rules
+
 	if isNew {
 		out, err := cli.Create(ctx, r)
 		if err != nil {
