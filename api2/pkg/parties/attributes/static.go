@@ -21,7 +21,7 @@ var FirstNameAttribute = api.Attribute{
 	},
 	IsPersonallyIdentifiableInfo: true,
 	PartyTypes: []string{
-		partytypes.BeneficiaryPartyType.ID,
+		partytypes.IndividualPartyType.ID,
 	},
 }
 
@@ -37,7 +37,7 @@ var LastNameAttribute = api.Attribute{
 	},
 	IsPersonallyIdentifiableInfo: true,
 	PartyTypes: []string{
-		partytypes.BeneficiaryPartyType.ID,
+		partytypes.IndividualPartyType.ID,
 	},
 }
 
@@ -53,7 +53,7 @@ var BirthDateAttribute = api.Attribute{
 	},
 	IsPersonallyIdentifiableInfo: true,
 	PartyTypes: []string{
-		partytypes.BeneficiaryPartyType.ID,
+		partytypes.IndividualPartyType.ID,
 	},
 }
 

@@ -124,6 +124,9 @@ func NewServer(
 
 	// RelationshipTypes
 	relationshipTypeStore := relationshiptypes.NewStore(mongoClient)
+	if err := relationshiptypes.Init(ctx, relationshipTypeStore); err != nil {
+		panic(err)
+	}
 	relationshipTypeHandler := relationshiptypes.NewHandler(relationshipTypeStore)
 	router.Path("/apis/v1/relationshiptypes").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		relationshipTypeHandler.List(w, req)

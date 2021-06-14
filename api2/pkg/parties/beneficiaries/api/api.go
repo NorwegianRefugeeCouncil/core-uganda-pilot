@@ -21,7 +21,7 @@ func NewBeneficiary(ID string) *Beneficiary {
 		Party: &api.Party{
 			ID: ID,
 			PartyTypes: []string{
-				partytypes.BeneficiaryPartyType.ID,
+				partytypes.IndividualPartyType.ID,
 			},
 			Attributes: map[string][]string{},
 		},

@@ -7,9 +7,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var BeneficiaryPartyType = PartyType{
+var IndividualPartyType = PartyType{
 	ID:        "a842e7cb-3777-423a-9478-f1348be3b4a5",
-	Name:      "Beneficiary",
+	Name:      "Individual",
 	IsBuiltIn: true,
 }
 
@@ -31,7 +31,7 @@ func Init(ctx context.Context, store *Store) error {
 	}
 
 	for _, partyType := range []PartyType{
-		BeneficiaryPartyType,
+		IndividualPartyType,
 		HouseholdPartyType,
 	} {
 		if err := store.Create(ctx, &partyType); err != nil {
@@ -41,7 +41,6 @@ func Init(ctx context.Context, store *Store) error {
 			if err := store.Update(ctx, &partyType); err != nil {
 				return err
 			}
-			return nil
 		}
 	}
 	return nil
