@@ -6,6 +6,7 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/intake"
 	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
 	"github.com/nrc-no/core-kafka/pkg/parties/beneficiaries"
+	"github.com/nrc-no/core-kafka/pkg/parties/parties"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypeschemas"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationships"
@@ -148,7 +149,23 @@ func NewServer(
 		relationshipHandler.Post(w, req)
 	})
 
-	// Relationships
+	// Parties
+	partyStore := parties.NewStore(mongoClient)
+	partyHandler := parties.NewHandler(partyStore)
+	router.Path("/apis/v1/parties").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		partyHandler.List(w, req)
+	})
+	router.Path("/apis/v1/parties/{id}").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		partyHandler.Get(w, req)
+	})
+	router.Path("/apis/v1/parties/{id}").Methods("PUT").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		partyHandler.Put(w, req)
+	})
+	router.Path("/apis/v1/parties").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		partyHandler.Post(w, req)
+	})
+
+	// Party Types
 	partyTypeStore := partytypes.NewStore(mongoClient)
 	partyTypeHandler := partytypes.NewHandler(partyTypeStore)
 	router.Path("/apis/v1/partytypes").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {

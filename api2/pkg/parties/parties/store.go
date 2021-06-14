@@ -60,6 +60,9 @@ func (s *Store) List(ctx context.Context, listOptions ListOptions) (*api.PartyLi
 	if res.Err() != nil {
 		return nil, res.Err()
 	}
+	if items == nil {
+		items = []*api.Party{}
+	}
 	ret := api.PartyList{
 		Items: items,
 	}
