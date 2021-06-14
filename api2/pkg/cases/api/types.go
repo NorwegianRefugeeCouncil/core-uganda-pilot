@@ -1,17 +1,17 @@
 package api
 
 type CaseType struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	PartyTypeID string `json:"partyTypeId"`
+	ID          string `json:"id" bson:"id"`
+	Name        string `json:"name" bson:"name"`
+	PartyTypeID string `json:"partyTypeId" bson:"partyTypeId"`
 }
 
 type Case struct {
-	ID          string `json:"id"`
-	CaseTypeID  string `json:"caseTypeId"`
-	PartyID     string `json:"partyId"`
-	Description string `json:"description"`
-	Done        bool   `json:"done"`
+	ID          string `json:"id" bson:"id"`
+	CaseTypeID  string `json:"caseTypeId" bson:"caseTypeId"`
+	PartyID     string `json:"partyId" bson:"partyId"`
+	Description string `json:"description" bson:"description"`
+	Done        bool   `json:"done" bson:"done"`
 }
 
 func (c *CaseType) String() string {
@@ -19,9 +19,9 @@ func (c *CaseType) String() string {
 }
 
 type CaseList struct {
-	Items []*Case `json:"items"`
+	Items []*Case `json:"items" bson:"items"`
 }
 
 type CaseTypeList struct {
-	Items []*CaseType `json:"items"`
+	Items []*CaseType `json:"items" bson:"items"`
 }

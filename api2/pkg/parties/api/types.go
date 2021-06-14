@@ -15,25 +15,25 @@ const (
 )
 
 type Attribute struct {
-	ID                           string                 `json:"id"`
-	Name                         string                 `json:"name"`
-	ValueType                    expressions.ValueType  `json:"type"`
-	SubjectType                  SubjectType            `json:"subjectType"`
-	IsPersonallyIdentifiableInfo bool                   `json:"isPii"`
-	Translations                 []AttributeTranslation `json:"translations"`
+	ID                           string                 `json:"id" bson:"id" bson:"id" bson:"id"`
+	Name                         string                 `json:"name" bson:"name" bson:"name" bson:"name"`
+	ValueType                    expressions.ValueType  `json:"type" bson:"type" bson:"type" bson:"type"`
+	SubjectType                  SubjectType            `json:"subjectType" bson:"subjectType" bson:"subjectType" bson:"subjectType"`
+	IsPersonallyIdentifiableInfo bool                   `json:"isPii" bson:"isPii" bson:"isPii" bson:"isPii"`
+	Translations                 []AttributeTranslation `json:"translations" bson:"translations" bson:"translations" bson:"translations"`
 }
 
 type AttributeTranslation struct {
-	Locale           string `json:"locale"`
-	LongFormulation  string `json:"longFormulation"`
-	ShortFormulation string `json:"shortFormulation"`
+	Locale           string `json:"locale" bson:"locale" bson:"locale" bson:"locale"`
+	LongFormulation  string `json:"longFormulation" bson:"longFormulation"`
+	ShortFormulation string `json:"shortFormulation" bson:"shortFormulation"`
 }
 
 type RelationshipType struct {
-	ID              string `json:"id"`
-	Name            string `json:"name"`
-	FirstPartyRole  string `json:"firstPartyRole"`
-	SecondPartyRole string `json:"secondPartyRole"`
+	ID              string `json:"id" bson:"id"`
+	Name            string `json:"name" bson:"name"`
+	FirstPartyRole  string `json:"firstPartyRole" bson:"firstPartyRole"`
+	SecondPartyRole string `json:"secondPartyRole" bson:"secondPartyRole"`
 }
 
 type RelationshipTypeList struct {
@@ -41,35 +41,35 @@ type RelationshipTypeList struct {
 }
 
 type Party struct {
-	ID         string   `json:"id"`
-	PartyTypes []string `json:"partyTypes"`
+	ID         string   `json:"id" bson:"id"`
+	PartyTypes []string `json:"partyTypes" bson:"partyTypes"`
 	Attributes map[string]interface{}
 }
 
 type PartyList struct {
-	Items []*Party `json:"items"`
+	Items []*Party `json:"items" bson:"items"`
 }
 
 type PartyType struct {
-	ID        string `json:"id"`
-	Name      string `json:"name"`
-	IsBuiltIn bool   `json:"isBuiltIn"`
+	ID        string `json:"id" bson:"id"`
+	Name      string `json:"name" bson:"name"`
+	IsBuiltIn bool   `json:"isBuiltIn" bson:"isBuiltIn"`
 }
 
 type PartyTypeSchema struct {
-	ID    string                `json:"id"`
-	Name  string                `json:"name"`
-	Nodes []PartyTypeSchemaNode `json:"nodes"`
+	ID    string                `json:"id" bson:"id"`
+	Name  string                `json:"name" bson:"name"`
+	Nodes []PartyTypeSchemaNode `json:"nodes" bson:"nodes"`
 }
 
 type PartyTypeSchemaList struct {
-	Items []*PartyTypeSchema `json:"items"`
+	Items []*PartyTypeSchema `json:"items" bson:"items"`
 }
 
 type PartyTypeSchemaNode struct {
-	ID          string                `json:"id"`
-	PartyTypeID string                `json:"partyTypeID"`
-	Children    []PartyTypeSchemaNode `json:"children"`
+	ID          string                `json:"id" bson:"id"`
+	PartyTypeID string                `json:"partyTypeID" bson:"partyTypeID"`
+	Children    []PartyTypeSchemaNode `json:"children" bson:"children"`
 }
 
 type PartyTypeList struct {
@@ -77,12 +77,12 @@ type PartyTypeList struct {
 }
 
 type Relationship struct {
-	ID                  string     `json:"id"`
-	RelationshipTypeID  string     `json:"relationshipTypeId"`
-	FirstParty          string     `json:"firstParty"`
-	SecondParty         string     `json:"secondParty"`
-	StartOfRelationship time.Time  `json:"startOfRelationship"`
-	EndOfRelationship   *time.Time `json:"endOfRelationship"`
+	ID                  string     `json:"id" bson:"id"`
+	RelationshipTypeID  string     `json:"relationshipTypeId" bson:"relationshipTypeId"`
+	FirstParty          string     `json:"firstParty" bson:"firstParty"`
+	SecondParty         string     `json:"secondParty" bson:"secondParty"`
+	StartOfRelationship time.Time  `json:"startOfRelationship" bson:"startOfRelationship"`
+	EndOfRelationship   *time.Time `json:"endOfRelationship" bson:"endOfRelationship"`
 }
 
 type RelationshipList struct {
@@ -99,7 +99,7 @@ type AttributeValue struct {
 }
 
 type Beneficiary struct {
-	ID         string `json:"id"`
+	ID         string `json:"id" bson:"id"`
 	Attributes map[string]*AttributeValue
 }
 

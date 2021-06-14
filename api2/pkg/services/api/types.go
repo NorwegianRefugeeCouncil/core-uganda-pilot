@@ -7,13 +7,13 @@ import (
 )
 
 type Vulnerability struct {
-	ID                         string                `json:"id" bson:"id"`
-	Name                       string                `json:"name" bson:"name"`
-	SubjectType                api.SubjectType       `json:"subjectType" bson:"subjectType"`
-	ValueType                  expressions.ValueType `json:"valueType" bson:"valueType"`
-	LongFormulation            i81n.Translations     `json:"longFormulation" bson:"longFormulation"`
-	ShortFormulation           i81n.Translations     `json:"shortFormulation" bson:"shortFormulation"`
-	AttributesForDetermination []string              `json:"attributesForDetermination" bson:"attributesForDetermination"`
+	ID                         string                `json:"id" bson:"id" bson:"id" bson:"id"`
+	Name                       string                `json:"name" bson:"name" bson:"name" bson:"name"`
+	SubjectType                api.SubjectType       `json:"subjectType" bson:"subjectType" bson:"subjectType" bson:"subjectType"`
+	ValueType                  expressions.ValueType `json:"valueType" bson:"valueType" bson:"valueType" bson:"valueType"`
+	LongFormulation            i81n.Translations     `json:"longFormulation" bson:"longFormulation" bson:"longFormulation" bson:"longFormulation"`
+	ShortFormulation           i81n.Translations     `json:"shortFormulation" bson:"shortFormulation" bson:"shortFormulation" bson:"shortFormulation"`
+	AttributesForDetermination []string              `json:"attributesForDetermination" bson:"attributesForDetermination" bson:"attributesForDetermination" bson:"attributesForDetermination"`
 }
 
 type VulnerabilityList struct {
@@ -21,23 +21,23 @@ type VulnerabilityList struct {
 }
 
 type Service struct {
-	Name                string                 `json:"name"`
-	EligibilityCriteria []EligibilityCriterion `json:"eligibilityCriteria"`
+	Name                string                 `json:"name" bson:"name"`
+	EligibilityCriteria []EligibilityCriterion `json:"eligibilityCriteria" bson:"eligibilityCriteria"`
 }
 
 type EligibilityCriterion struct {
-	Vulnerability *string `json:"vulnerability"`
+	Vulnerability *string `json:"vulnerability" bson:"vulnerability"`
 }
 
 type ServiceSubjectRepresentation struct {
-	SubjectType string                 `json:"subjectType"`
-	Subject     string                 `json:"subject"`
-	ServiceName string                 `json:"serviceName"`
-	Attributes  map[string]interface{} `json:"attributes"`
+	SubjectType string                 `json:"subjectType" bson:"subjectType"`
+	Subject     string                 `json:"subject" bson:"subject"`
+	ServiceName string                 `json:"serviceName" bson:"serviceName"`
+	Attributes  map[string]interface{} `json:"attributes" bson:"attributes"`
 }
 
 type ServiceSubjectVulnerabilities struct {
-	SubjectType     string                 `json:"subjectType"`
-	Subject         string                 `json:"subject"`
-	Vulnerabilities map[string]interface{} `json:"vulnerabilities"`
+	SubjectType     string                 `json:"subjectType" bson:"subjectType"`
+	Subject         string                 `json:"subject" bson:"subject"`
+	Vulnerabilities map[string]interface{} `json:"vulnerabilities" bson:"vulnerabilities"`
 }

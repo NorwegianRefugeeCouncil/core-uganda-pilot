@@ -8,7 +8,7 @@ type ResponseResult struct {
 }
 
 type ResponseRequest struct {
-	SubjectType string `json:"subjectType"`
-	Subject     string `json:"subject"`
+	SubjectType string `json:"subjectType" bson:"subjectType"`
+	Subject     string `json:"subject" bson:"subject"`
 	Attributes  map[string]subjects.AttributeValue
 }

@@ -25,6 +25,6 @@ type AnswerToQuestion struct {
 }
 
 type Submission struct {
-	Answers []AnswerToQuestion `json:"answers"`
-	ID      string             `json:"id"`
+	Answers []AnswerToQuestion `json:"answers" bson:"answers"`
+	ID      string             `json:"id" bson:"id"`
 }
