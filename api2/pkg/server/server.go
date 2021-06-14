@@ -159,6 +159,9 @@ func NewServer(
 
 	// Parties
 	partyStore := parties.NewStore(mongoClient)
+	if err := parties.Init(ctx, partyStore); err != nil {
+		panic(err)
+	}
 	partyHandler := parties.NewHandler(partyStore)
 	router.Path("/apis/v1/parties").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		partyHandler.List(w, req)
@@ -313,6 +316,11 @@ func NewServer(
 	router.Path("/cases/casetypes/{id}").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		webAppHandler.CaseType(w, req)
 	})
+
+	// Seed database for development
+	if err := beneficiaries.SeedDatabase(ctx, beneficiariesStore); err != nil {
+		panic(err)
+	}
 
 	http.ListenAndServe(":9000", router)
 }
