@@ -18,47 +18,15 @@
 
                         {{ range $index, $attribute := .Attributes.Items}}
 
-                            {{ $attributeValue := $.Beneficiary.GetAttribute $attribute.Name}}
-
-                            <!-- attribute[0].id = firstName -->
-                            <input type="hidden" name="attribute[{{$index}}].id"
-                                   value="{{$attribute.ID}}" />
-
-                            <!-- attribute[0].name = firstName -->
-                            <input type="hidden" name="attribute[{{$index}}].name"
-                                   value="{{$attribute.Name}}" />
-
-                            <!-- attribute[0].valueType = String -->
-                            <input type="hidden" name="attribute[{{$index}}].valueType"
-                                   value="{{$attribute.ValueType}}" />
-
-                            <!-- attribute[0].subjectType = Beneficiary -->
-                            <input type="hidden" name="attribute[{{$index}}].subjectType"
-                                   value="{{$attribute.SubjectType}}" />
-
-                            <!-- attribute[0].isPersonallyIdentifiableInfo = true -->
-                            <input type="hidden" name="attribute[{{$index}}].isPersonallyIdentifiableInfo"
-                                   value="{{$attribute.IsPersonallyIdentifiableInfo}}" />
-
-                            {{range $translationIndex, $translation := $attribute.Translations}}
-                                <input type="hidden"
-                                       name="attribute[{{$index}}].translations[{{$translationIndex}}].locale"
-                                       value="{{$translation.Locale}}" />
-                                <input type="hidden"
-                                       name="attribute[{{$index}}].translations[{{$translationIndex}}].long"
-                                       value="{{$translation.LongFormulation}}" />
-                                <input type="hidden"
-                                       name="attribute[{{$index}}].translations[{{$translationIndex}}].short"
-                                       value="{{$translation.ShortFormulation}}" />
-                            {{end}}
+                            {{ $attributeValue := $.Beneficiary.GetAttribute $attribute.ID}}
 
                             <div class="form-floating mb-3 shadow-sm">
                                 <input class="form-control"
-                                       name="attribute[{{$index}}].value"
-                                       id="attribute-{{.Name}}"
+                                       name="attribute[{{$attribute.ID}}]"
+                                       id="attribute-{{$attribute.ID}}"
                                        type="text"
-                                       value="{{if $attributeValue}}{{$attributeValue.Value}}{{end}}" />
-                                <label for="attribute-{{.Name}}">{{.Name}}</label>
+                                       value="{{if $attributeValue}}{{$attributeValue.Value}}{{end}}"/>
+                                <label for="attribute-{{$attribute.ID}}">{{.Name}}</label>
                             </div>
                         {{end}}
 
@@ -66,9 +34,9 @@
 
                         <div id='relationships-container'>
                             <ul id='relationships-list' class="list-group mb-3">
-                            {{ range .Relationships.Items}}
-                                <li class="list-group-item">{{ .FirstParty }}{{ index $.RelationshipTypes .RelationshipTypeID }} {{ .SecondParty }}</li>
-                            {{ end }}
+                                {{ range .Relationships.Items}}
+                                    <li class="list-group-item">{{ .FirstParty }}{{ index $.RelationshipTypes .RelationshipTypeID }} {{ .SecondParty }}</li>
+                                {{ end }}
                             </ul>
                         </div>
 
@@ -110,111 +78,111 @@
 
     <script type="application/javascript">
 
-      let { BehaviorSubject } = rxjs;
-      let { map } = rxjs.operators;
+        let {BehaviorSubject} = rxjs;
+        let {map} = rxjs.operators;
 
-      console.log('...');
+        console.log('...');
 
-      let relationshipTypes = [
-          {{range .RelationshipTypes.Items}}
-        {
-          id: {{.ID}},
-          name: {{.Name}},
-          firstPartyRole: {{.FirstPartyRole}},
-          secondPartyRole: {{.SecondPartyRole}},
-        },
-          {{end}}
-      ];
+        let relationshipTypes = [
+            {{range .RelationshipTypes.Items}}
+            {
+                id: {{.ID}},
+                name: {{.Name}},
+                firstPartyRole: {{.FirstPartyRole}},
+                secondPartyRole: {{.SecondPartyRole}},
+            },
+            {{end}}
+        ];
 
-      const parties = [
-          {{range .Parties.Items}}
-          {
-              id: {{.ID}},
-              name: "{{ . }}",
-          },
-          {{ end }}
-      ];
+        const parties = [
+            {{range .Parties.Items}}
+            {
+                id: {{.ID}},
+                name: "{{ . }}",
+            },
+            {{ end }}
+        ];
 
 
-      let relationshipsSubject = new BehaviorSubject([
-          {{range .Relationships.Items}}
-        {
-          firstParty: {{.FirstParty}},
-          secondParty: {{.SecondParty}},
-          relationshipTypeId: {{.RelationshipTypeID}}
-        },
-          {{end}}
-      ]);
-      let relationships$ = relationshipsSubject.asObservable();
-
-      let displayRelationships$ = relationships$.pipe(
-        map(r => {
-          return r.map(elem => {
-            let relationshipType = relationshipTypes.find(t => t.id === elem.relationshipTypeId);
-            console.log(relationshipType);
-            if (!relationshipType) {
-              return;
-            }
-            return {
-              ...elem,
-              firstPartyRole: relationshipType.firstPartyRole,
-              secondPartyRole: relationshipType.secondPartyRole,
-              relationshipTypeName: relationshipType.name
-            };
-          });
-        })
-      );
-
-      let stateSubject = new BehaviorSubject({
-        entity: {
-          attributes: [],
-          relationships: []
-        }
-      });
-      let state$ = stateSubject.asObservable();
-      let attributes$ = state$.pipe(map(s => s.attributes));
-
-      function addRelationship(relationshipTypeId, secondPartyID) {
-        relationshipsSubject.next([
-          ...relationshipsSubject.value,
-          {
-            relationshipTypeId,
-            firstParty: {{.Beneficiary.ID}},
-            secondParty: secondPartyID
-          }
+        let relationshipsSubject = new BehaviorSubject([
+            {{range .Relationships.Items}}
+            {
+                firstParty: {{.FirstParty}},
+                secondParty: {{.SecondParty}},
+                relationshipTypeId: {{.RelationshipTypeID}}
+            },
+            {{end}}
         ]);
-      }
+        let relationships$ = relationshipsSubject.asObservable();
 
-      document.addEventListener('DOMContentLoaded', function() {
-
-        document.getElementById('add-relationship-button').onclick = () => {
-          let typeSelector = document.getElementById('relationshipTypeSelector');
-          let partySelector = document.getElementById('relationshipSecondPartySelector');
-          let relationshipType = typeSelector.value;
-          let party = partySelector.value;
-          addRelationship(relationshipType, party);
-          const hiddenInput = document.createElement('input');
-          hiddenInput.type = 'hidden';
-          hiddenInput.value = "TODO"; // TODO;
-            hiddenInput.id = "todo";
-            // document.getElementById('relationships-container).appendChild(hiddenInput);
-        };
-
-        displayRelationships$.subscribe(s => {
-            const list = document.getElementById('relationships-list');
-            s.forEach(item => {
-                const li = document.createElement('li');
-                li.className = "list-group-item";
-                const firstPartyName = parties.find(({id}) => id === item.firstParty).name;
-                const firstPartyRole = relationshipTypes.find(({id}) => id === item.relationshipTypeId).firstPartyRole;
-                const secondPartyName = parties.find(({id}) => id === item.secondParty).name;
-                li.innerText = firstPartyName + " " + firstPartyRole + " " + secondPartyName;
-                list.appendChild(li);
+        let displayRelationships$ = relationships$.pipe(
+            map(r => {
+                return r.map(elem => {
+                    let relationshipType = relationshipTypes.find(t => t.id === elem.relationshipTypeId);
+                    console.log(relationshipType);
+                    if (!relationshipType) {
+                        return;
+                    }
+                    return {
+                        ...elem,
+                        firstPartyRole: relationshipType.firstPartyRole,
+                        secondPartyRole: relationshipType.secondPartyRole,
+                        relationshipTypeName: relationshipType.name
+                    };
+                });
             })
+        );
+
+        let stateSubject = new BehaviorSubject({
+            entity: {
+                attributes: [],
+                relationships: []
+            }
+        });
+        let state$ = stateSubject.asObservable();
+        let attributes$ = state$.pipe(map(s => s.attributes));
+
+        function addRelationship(relationshipTypeId, secondPartyID) {
+            relationshipsSubject.next([
+                ...relationshipsSubject.value,
+                {
+                    relationshipTypeId,
+                    firstParty: {{.Beneficiary.ID}},
+                    secondParty: secondPartyID
+                }
+            ]);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            document.getElementById('add-relationship-button').onclick = () => {
+                let typeSelector = document.getElementById('relationshipTypeSelector');
+                let partySelector = document.getElementById('relationshipSecondPartySelector');
+                let relationshipType = typeSelector.value;
+                let party = partySelector.value;
+                addRelationship(relationshipType, party);
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.value = "TODO"; // TODO;
+                hiddenInput.id = "todo";
+                // document.getElementById('relationships-container).appendChild(hiddenInput);
+            };
+
+            displayRelationships$.subscribe(s => {
+                const list = document.getElementById('relationships-list');
+                s.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = "list-group-item";
+                    const firstPartyName = parties.find(({id}) => id === item.firstParty).name;
+                    const firstPartyRole = relationshipTypes.find(({id}) => id === item.relationshipTypeId).firstPartyRole;
+                    const secondPartyName = parties.find(({id}) => id === item.secondParty).name;
+                    li.innerText = firstPartyName + " " + firstPartyRole + " " + secondPartyName;
+                    list.appendChild(li);
+                })
+
+            });
 
         });
-
-      });
 
 
     </script>

@@ -5,6 +5,7 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/expressions"
 	i81n "github.com/nrc-no/core-kafka/pkg/i81n/api/v1"
 	"github.com/nrc-no/core-kafka/pkg/parties/api"
+	api2 "github.com/nrc-no/core-kafka/pkg/parties/beneficiaries/api"
 	"github.com/nrc-no/core-kafka/pkg/testhelpers"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
@@ -22,7 +23,7 @@ func TestStore(t *testing.T) {
 	store := NewStore(mongoClient)
 
 	ID := uuid.NewV4().String()
-	beneficiary := &api.Beneficiary{
+	beneficiary := &api2.Beneficiary{
 		ID: ID,
 		Attributes: map[string]api.AttributeValue{
 			"firstName": api.AttributeValue{

@@ -141,7 +141,7 @@ func (h *Handler) PostAttribute(ctx context.Context, cli *attributes.Client, att
 
 	attribute.Name = values.Get("name")
 	attribute.ValueType = expressions.ValueType{}
-	attribute.SubjectType = api.SubjectType(values.Get("subjectType"))
+	attribute.PartyTypes = values["subjectType"]
 	attribute.Translations = translations
 	attribute.IsPersonallyIdentifiableInfo = values.Get("isPersonallyIdentifiableInfo") == "true"
 

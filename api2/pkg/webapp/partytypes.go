@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypeschemas"
 	"net/http"
@@ -17,7 +16,7 @@ func (h *Handler) PartyTypes(w http.ResponseWriter, req *http.Request) {
 	partyTypeSchemasCli := partytypeschemas.NewClient("http://localhost:9000")
 
 	if req.Method == "POST" {
-		h.PostPartyType(ctx, partyTypesCli, &api.PartyType{}, w, req)
+		h.PostPartyType(ctx, partyTypesCli, &partytypes.PartyType{}, w, req)
 		return
 	}
 
@@ -55,7 +54,7 @@ func (h *Handler) PartyType(w http.ResponseWriter, req *http.Request) {
 
 	partyTypesCli := partytypes.NewClient("http://localhost:9000")
 
-	var partyType = &api.PartyType{}
+	var partyType = &partytypes.PartyType{}
 	if id != "new" {
 		var err error
 		partyType, err = partyTypesCli.Get(ctx, id)
@@ -82,7 +81,7 @@ func (h *Handler) PartyType(w http.ResponseWriter, req *http.Request) {
 func (h *Handler) PostPartyType(
 	ctx context.Context,
 	partyTypesCli *partytypes.Client,
-	partyType *api.PartyType,
+	partyType *partytypes.PartyType,
 	w http.ResponseWriter,
 	req *http.Request,
 ) {

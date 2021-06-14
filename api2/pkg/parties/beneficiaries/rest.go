@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core-kafka/pkg/parties/api"
+	"github.com/nrc-no/core-kafka/pkg/parties/beneficiaries/api"
 	"io/ioutil"
 	"net/http"
 )
@@ -48,7 +48,11 @@ func (h *Handler) Get(w http.ResponseWriter, req *http.Request) {
 func (h *Handler) List(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	list, err := h.store.List(ctx)
+	listOptions := ListOptions{
+		PartyTypes: req.URL.Query()["partyTypes"],
+	}
+
+	list, err := h.store.List(ctx, listOptions)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -126,12 +130,7 @@ func (h *Handler) Update(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var attrs []*api.AttributeValue
-	for _, value := range beneficiary.Attributes {
-		attrs = append(attrs, value)
-	}
-
-	if err := h.store.Upsert(ctx, beneficiary.ID, attrs); err != nil {
+	if err := h.store.Upsert(ctx, beneficiary.ID, &beneficiary); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

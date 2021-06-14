@@ -3,13 +3,12 @@ package api
 import (
 	"github.com/nrc-no/core-kafka/pkg/expressions"
 	i81n "github.com/nrc-no/core-kafka/pkg/i81n/api/v1"
-	"github.com/nrc-no/core-kafka/pkg/parties/api"
 )
 
 type Vulnerability struct {
 	ID                         string                `json:"id" bson:"id"`
 	Name                       string                `json:"name" bson:"name"`
-	SubjectType                api.SubjectType       `json:"subjectType" bson:"subjectType"`
+	PartyTypes                 []string              `json:"partyTypes" bson:"partyTypes"`
 	ValueType                  expressions.ValueType `json:"valueType" bson:"valueType"`
 	LongFormulation            i81n.Translations     `json:"longFormulation" bson:"longFormulation"`
 	ShortFormulation           i81n.Translations     `json:"shortFormulation" bson:"shortFormulation"`

@@ -2,7 +2,6 @@ package partytypes
 
 import (
 	"context"
-	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -17,21 +16,21 @@ func NewStore(mongoClient *mongo.Client) *Store {
 	}
 }
 
-func (s *Store) Get(ctx context.Context, id string) (*api.PartyType, error) {
+func (s *Store) Get(ctx context.Context, id string) (*PartyType, error) {
 	res := s.collection.FindOne(ctx, bson.M{
 		"id": id,
 	})
 	if res.Err() != nil {
 		return nil, res.Err()
 	}
-	var r api.PartyType
+	var r PartyType
 	if err := res.Decode(&r); err != nil {
 		return nil, err
 	}
 	return &r, nil
 }
 
-func (s *Store) List(ctx context.Context) (*api.PartyTypeList, error) {
+func (s *Store) List(ctx context.Context) (*PartyTypeList, error) {
 
 	filter := bson.M{}
 
@@ -39,12 +38,12 @@ func (s *Store) List(ctx context.Context) (*api.PartyTypeList, error) {
 	if err != nil {
 		return nil, err
 	}
-	var items []*api.PartyType
+	var items []*PartyType
 	for {
 		if !res.Next(ctx) {
 			break
 		}
-		var r api.PartyType
+		var r PartyType
 		if err := res.Decode(&r); err != nil {
 			return nil, err
 		}
@@ -53,13 +52,13 @@ func (s *Store) List(ctx context.Context) (*api.PartyTypeList, error) {
 	if res.Err() != nil {
 		return nil, res.Err()
 	}
-	ret := api.PartyTypeList{
+	ret := PartyTypeList{
 		Items: items,
 	}
 	return &ret, nil
 }
 
-func (s *Store) Update(ctx context.Context, partyType *api.PartyType) error {
+func (s *Store) Update(ctx context.Context, partyType *PartyType) error {
 	_, err := s.collection.UpdateOne(ctx, bson.M{
 		"id": partyType.ID,
 	}, bson.M{
@@ -74,7 +73,7 @@ func (s *Store) Update(ctx context.Context, partyType *api.PartyType) error {
 	return nil
 }
 
-func (s *Store) Create(ctx context.Context, partyType *api.PartyType) error {
+func (s *Store) Create(ctx context.Context, partyType *PartyType) error {
 	_, err := s.collection.InsertOne(ctx, partyType)
 	if err != nil {
 		return err

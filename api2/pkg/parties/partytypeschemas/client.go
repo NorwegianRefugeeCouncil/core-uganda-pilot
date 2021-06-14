@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/nrc-no/core-kafka/pkg/parties/api"
+	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"io/ioutil"
 	"net/http"
 )
@@ -20,7 +20,7 @@ func NewClient(basePath string) *Client {
 	}
 }
 
-func (c *Client) List(ctx context.Context) (*api.PartyTypeSchemaList, error) {
+func (c *Client) List(ctx context.Context) (*partytypes.PartyTypeSchemaList, error) {
 	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/partytypeschemas", nil)
 	if err != nil {
 		return nil, err
@@ -38,14 +38,14 @@ func (c *Client) List(ctx context.Context) (*api.PartyTypeSchemaList, error) {
 	if err != nil {
 		return nil, err
 	}
-	var list api.PartyTypeSchemaList
+	var list partytypes.PartyTypeSchemaList
 	if err := json.Unmarshal(bodyBytes, &list); err != nil {
 		return nil, err
 	}
 	return &list, nil
 }
 
-func (c *Client) Get(ctx context.Context, id string) (*api.PartyTypeSchema, error) {
+func (c *Client) Get(ctx context.Context, id string) (*partytypes.PartyTypeSchema, error) {
 	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/partytypeschemas/"+id, nil)
 	if err != nil {
 		return nil, err
@@ -62,14 +62,14 @@ func (c *Client) Get(ctx context.Context, id string) (*api.PartyTypeSchema, erro
 	if err != nil {
 		return nil, err
 	}
-	var v api.PartyTypeSchema
+	var v partytypes.PartyTypeSchema
 	if err := json.Unmarshal(bodyBytes, &v); err != nil {
 		return nil, err
 	}
 	return &v, nil
 }
 
-func (c *Client) Update(ctx context.Context, partyTypeSchema *api.PartyTypeSchema) (*api.PartyTypeSchema, error) {
+func (c *Client) Update(ctx context.Context, partyTypeSchema *partytypes.PartyTypeSchema) (*partytypes.PartyTypeSchema, error) {
 	bodyBytes, err := json.Marshal(partyTypeSchema)
 	if err != nil {
 		return nil, err
@@ -92,14 +92,14 @@ func (c *Client) Update(ctx context.Context, partyTypeSchema *api.PartyTypeSchem
 	if err != nil {
 		return nil, err
 	}
-	var v api.PartyTypeSchema
+	var v partytypes.PartyTypeSchema
 	if err := json.Unmarshal(responseBytes, &v); err != nil {
 		return nil, err
 	}
 	return &v, nil
 }
 
-func (c *Client) Create(ctx context.Context, partyTypeSchema *api.PartyTypeSchema) (*api.PartyTypeSchema, error) {
+func (c *Client) Create(ctx context.Context, partyTypeSchema *partytypes.PartyTypeSchema) (*partytypes.PartyTypeSchema, error) {
 	bodyBytes, err := json.Marshal(partyTypeSchema)
 	if err != nil {
 		return nil, err
@@ -122,7 +122,7 @@ func (c *Client) Create(ctx context.Context, partyTypeSchema *api.PartyTypeSchem
 	if err != nil {
 		return nil, err
 	}
-	var v api.PartyTypeSchema
+	var v partytypes.PartyTypeSchema
 	if err := json.Unmarshal(responseBytes, &v); err != nil {
 		return nil, err
 	}
