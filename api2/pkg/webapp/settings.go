@@ -7,6 +7,7 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/expressions"
 	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
+	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
 	"strings"
@@ -35,8 +36,16 @@ func (h *Handler) Attributes(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	partyTypesCli := partytypes.NewClient("http://localhost:9000")
+	partyTypes, err := partyTypesCli.List(ctx)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	if err := h.template.ExecuteTemplate(w, "attributes", map[string]interface{}{
 		"Attributes": list,
+		"PartyTypes": partyTypes,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

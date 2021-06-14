@@ -43,7 +43,7 @@
                             <!-- Subject Type -->
                             <div class="form-floating mb-3 shadow-sm">
                                 <select id="subject-type-input"
-                                        name="subjectType"
+                                        name="partyTypes"
                                         class="form-select">
                                     <option>Beneficiary</option>
                                 </select>
@@ -105,7 +105,7 @@
             attribute: {
                 name: "{{.Attribute.Name}}",
                 valueType: "{{.Attribute.ValueType}}",
-                subjectType: "{{.Attribute.SubjectType}}",
+                partyTypes: "{{.Attribute.PartyTypes}}",
                 isPersonallyIdentifiableInformation: {{.Attribute.IsPersonallyIdentifiableInfo}},
                 translations: [
                     {{range .Attribute.Translations}}
@@ -117,7 +117,7 @@
                     {{end}}
                 ]
             },
-            subjectTypes: [
+            partyTypes: [
                 {value: "beneficiary", name: "Beneficiary"}
             ]
         })
@@ -126,11 +126,11 @@
             attribute: {
                 name: "",
                 valueType: "",
-                subjectType: "beneficiary",
+                partyTypes: "beneficiary",
                 isPersonallyIdentifiableInformation: false,
                 translations: []
             },
-            subjectTypes: [
+            partyTypes: [
                 {value: "beneficiary", name: "Beneficiary"}
             ]
         })
@@ -140,7 +140,7 @@
         let attribute$ = state$.pipe(map(s => s.attribute))
         let name$ = attribute$.pipe(map(a => a.name))
         let valueType$ = attribute$.pipe(map(a => a.valueType))
-        let subjectType$ = attribute$.pipe(map(a => a.subjectType))
+        let partyTypes = attribute$.pipe(map(a => a.partyTypes))
         let isPii$ = attribute$.pipe(map(a => a.isPersonallyIdentifiableInformation))
         let translations$ = attribute$.pipe(map(a => a.translations))
         let availableLanguages$ = translations$.pipe(

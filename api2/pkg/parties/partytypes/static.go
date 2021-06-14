@@ -2,6 +2,9 @@ package partytypes
 
 import (
 	"context"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var BeneficiaryPartyType = PartyType{
@@ -17,12 +20,28 @@ var HouseholdPartyType = PartyType{
 }
 
 func Init(ctx context.Context, store *Store) error {
+
+	if _, err := store.collection.Indexes().CreateOne(ctx, mongo.IndexModel{
+		Keys: bson.M{
+			"id": 1,
+		},
+		Options: options.Index().SetUnique(true),
+	}); err != nil {
+		return err
+	}
+
 	for _, partyType := range []PartyType{
 		BeneficiaryPartyType,
 		HouseholdPartyType,
 	} {
 		if err := store.Create(ctx, &partyType); err != nil {
-			return err
+			if !mongo.IsDuplicateKeyError(err) {
+				return err
+			}
+			if err := store.Update(ctx, &partyType); err != nil {
+				return err
+			}
+			return nil
 		}
 	}
 	return nil
