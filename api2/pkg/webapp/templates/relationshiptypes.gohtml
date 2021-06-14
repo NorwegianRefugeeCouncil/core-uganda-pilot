@@ -28,6 +28,11 @@
                            href="/settings/relationshiptypes/{{.ID}}">
                             <div class="card-body">
                                 {{.Name}}
+                                <small class="d-block text-muted">
+                                    {{if ne (index .Rules 0).FirstPartyType ""}}
+                                        {{(index .Rules 0).FirstPartyType}} ({{.FirstPartyRole}}) ⟷ {{(index .Rules 0).SecondPartyType}} ({{.SecondPartyRole}})
+                                    {{end}}
+                                </small>
                             </div>
                         </a>
                     {{end}}
