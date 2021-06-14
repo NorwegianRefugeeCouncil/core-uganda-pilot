@@ -9,8 +9,6 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
 	partiesapi "github.com/nrc-no/core-kafka/pkg/parties/api"
 	"github.com/nrc-no/core-kafka/pkg/parties/parties"
-	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
-	uuid "github.com/satori/go.uuid"
 	"golang.org/x/sync/errgroup"
 	"net/http"
 )
@@ -18,16 +16,17 @@ import (
 func (h *Handler) Cases(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	cli := cases.NewClient("http://localhost:9000")
 
-	if req.Method == "POST" {
-		h.PostCase(ctx, cli, "", w, req)
+	caseClient := cases.NewClient("http://localhost:9000")
+
+	list, err := caseClient.List(ctx)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	list, err := cli.List(ctx)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if req.Method == "POST" {
+		h.PostCase(ctx, caseClient, "", w, req)
 		return
 	}
 
@@ -53,40 +52,43 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 
 	caseClient := cases.NewClient("http://localhost:9000")
 	caseTypesClient := casetypes.NewClient("http://localhost:9000")
-	partyTypesClient := partytypes.NewClient("http://localhost:9000")
+	partyClient := parties.NewClient("http://localhost:9000")
 
-	var c *casesapi.Case
-	var cList *casesapi.CaseList
-	var cTypes *casesapi.CaseTypeList
-	var pTypes *partytypes.PartyTypeList
+	var kase *casesapi.Case
+	var kaseTypes *casesapi.CaseTypeList
+
+	var party *partiesapi.Party
+	var partyList *partiesapi.PartyList
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
 		if id == "new" {
-			c = &casesapi.Case{}
+			kase = &casesapi.Case{}
 			return nil
 		}
 		var err error
-		c, err = caseClient.Get(waitCtx, id)
+		kase, err = caseClient.Get(waitCtx, id)
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
-		cList, err = caseClient.List(waitCtx)
+		kaseTypes, err = caseTypesClient.List(waitCtx)
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
-		cTypes, err = caseTypesClient.List(waitCtx)
+		party, err = partyClient.Get(waitCtx, id)
 		return err
 	})
 
+	listOptions := &parties.ListOptions{} //TODO
+
 	g.Go(func() error {
 		var err error
-		pTypes, err = partyTypesClient.List(waitCtx)
+		partyList, err = partyClient.List(waitCtx, *listOptions)
 		return err
 	})
 
@@ -101,10 +103,9 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if err := h.template.ExecuteTemplate(w, "case", map[string]interface{}{
-		"Case":       c,
-		"Cases":      cList,
-		"CaseTypes":  cTypes,
-		"PartyTypes": pTypes,
+		"Case":      kase,
+		"CaseTypes": kaseTypes,
+		"Party":     party,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -115,6 +116,7 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
+
 	caseTypesClient := casetypes.NewClient("http://localhost:9000")
 	partiesClient := parties.NewClient("http://localhost:9000")
 
@@ -129,11 +131,17 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 		return err
 	})
 
+	listOptions := &parties.ListOptions{} //TODO
 	g.Go(func() error {
 		var err error
-		p, err = partiesClient.List(waitCtx, parties.ListOptions{})
+		p, err = partiesClient.List(waitCtx, *listOptions)
 		return err
 	})
+
+	if err := g.Wait(); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	if err := h.template.ExecuteTemplate(w, "casenew", map[string]interface{}{
 		"CaseTypes": caseTypes,
@@ -156,7 +164,7 @@ func (h *Handler) PostCase(ctx context.Context, cli *cases.Client, id string, w 
 	f := req.Form
 	for key, value := range f {
 		switch key {
-		case "caseType":
+		case "caseTypeId":
 			kase.CaseTypeID = value[0]
 		case "partyId":
 			kase.PartyID = value[0]
@@ -167,7 +175,6 @@ func (h *Handler) PostCase(ctx context.Context, cli *cases.Client, id string, w 
 
 	if id == "" {
 		_, err := cli.Create(ctx, &casesapi.Case{
-			ID:          uuid.NewV4().String(),
 			CaseTypeID:  kase.CaseTypeID,
 			PartyID:     kase.PartyID,
 			Description: kase.Description,

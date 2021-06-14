@@ -310,10 +310,13 @@ func NewServer(
 	router.Path("/cases/{id}").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		webAppHandler.Case(w, req)
 	})
-	router.Path("/cases/casetypes/new").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	router.Path("/settings/casetypes").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		webAppHandler.CaseTypes(w, req)
+	})
+	router.Path("/settings/casetypes/new").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		webAppHandler.NewCaseType(w, req)
 	})
-	router.Path("/cases/casetypes/{id}").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	router.Path("/settings/casetypes/{id}").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		webAppHandler.CaseType(w, req)
 	})
 
