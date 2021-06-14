@@ -27,7 +27,9 @@
                                     {{if .Parties}}
                                         <option selected></option>
                                         {{range .Parties.Items}}
-                                            <option value="{{.ID}}">{{.Name}}</option>
+                                            {{$lastName := .FindAttributeValue "lastName"}}
+                                            {{$firstName := .FindAttributeValue "firstName"}}
+                                            <option value="{{.ID}}">{{$lastName}}, {{$firstName}}</option>
                                         {{end}}
                                     {{else}}
                                         <option selected disabled>No parties defined</option>

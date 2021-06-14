@@ -1,12 +1,11 @@
 package api
 
 import (
-	"strings"
-	"time"
-
 	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
+	"strings"
+	"time"
 )
 
 type Beneficiary struct {
@@ -24,7 +23,7 @@ func NewBeneficiary(ID string) *Beneficiary {
 			PartyTypes: []string{
 				partytypes.IndividualPartyType.ID,
 			},
-			Attributes: map[string]interface{}{},
+			Attributes: map[string][]string{},
 		},
 	}
 }
