@@ -1,0 +1,35 @@
+
+{{define "casetypes"}}
+
+    <!doctype html>
+    <html lang="en">
+    {{template "head"}}
+    <body class="bg-light">
+    {{template "casesnavbar"}}
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+                <a href='/cases/settings/casetype/new' class='btn btn-primary mb-3'>Define new case type</a>
+                <div class="list-group">
+                    {{ if .CaseTypes}}
+                        {{ range .CaseTypes.Items }}
+                            <div class="input-group">
+                                <span class="input-group-text">{{.Name}}</span>
+                                <a href="/settings/casetype/{{.ID}}"><button class="btn btn-outline-secondary" type="button">Edit</button></a>
+                                <a href="/settings/casetype/{{.ID}}"><button class="btn btn-danger" type="button"><i class="bi-x" /></button></a>
+                            </div>
+                        {{end}}
+                    {{else}}
+                        <div class="input-group">
+                            <span class="input-group-text">No casetypes defined</span>
+                        </div>
+                    {{end}}
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
+    </html>
+
+{{end}}

@@ -24,7 +24,7 @@ func NewBeneficiary(ID string) *Beneficiary {
 			PartyTypes: []string{
 				partytypes.BeneficiaryPartyType.ID,
 			},
-			Attributes: map[string][]string{},
+			Attributes: map[string]interface{}{},
 		},
 	}
 }
