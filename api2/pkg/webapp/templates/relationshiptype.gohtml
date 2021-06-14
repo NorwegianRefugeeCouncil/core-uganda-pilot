@@ -66,7 +66,7 @@
                                     id="firstPartyType"
                                     name="firstPartyType">
                                     {{range .PartyTypes.Items}}
-                                        <option value="{{.ID}}">{{.Name}}</option>
+                                        <option value="{{.Name}}">{{.Name}}</option>
                                     {{end}}
                                 </select>
                                 <label for="firstPartyType">First Party Type</label>
@@ -80,7 +80,7 @@
                                     id="secondPartyType"
                                     name="secondPartyType">
                                     {{range .PartyTypes.Items}}
-                                        <option value="{{.ID}}">{{.Name}}</option>
+                                        <option value="{{.Name}}">{{.Name}}</option>
                                     {{end}}
                                 </select>
                                 <label for="secondPartyType">Second Party Type</label>
@@ -99,6 +99,11 @@
     <script type="application/javascript">
 
         const form = document.getElementById("relationshipTypeForm")
+
+        const setSelected = (id, valueToSelect) => {    
+            let element = document.getElementById(id);
+            element.value = valueToSelect;
+        }
 
         form.addEventListener("submit", (event) => {
             event.preventDefault()
@@ -119,6 +124,11 @@
             console.log("POSTED!")
 
         })
+
+        {{if .RelationshipType}}
+            setSelected("firstPartyType", {{(index .RelationshipType.Rules 0).FirstPartyType}})
+            setSelected("secondPartyType", {{(index .RelationshipType.Rules 0).SecondPartyType}})
+        {{end}}
 
     </script>
 
