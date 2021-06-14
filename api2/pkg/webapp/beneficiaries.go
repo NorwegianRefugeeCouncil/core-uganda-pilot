@@ -189,10 +189,13 @@ func (h *Handler) PostBeneficiary(
 	}
 
 	if id == "" {
-		if _, err := bCli.Create(ctx, b); err != nil {
+		newBenef, err := bCli.Create(ctx, b)
+		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		w.Header().Set("Location", "/beneficiaries/"+newBenef.ID)
+		w.WriteHeader(http.StatusSeeOther)
 	} else {
 		if _, err := bCli.Update(ctx, b); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

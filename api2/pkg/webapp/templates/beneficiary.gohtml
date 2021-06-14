@@ -20,17 +20,26 @@
 
                             {{ $values := index $.Beneficiary.Attributes $attribute.ID }}
 
-                            {{range $idx, $value := $values}}
-
+                            {{ if $values}}
+                                {{range $idx, $value := $values}}
+                                    <div class="form-floating mb-3 shadow-sm">
+                                        <input class="form-control"
+                                               name="attribute[{{$attribute.ID}}]"
+                                               id="attribute-{{$attribute.ID}}-{{$idx}}"
+                                               type="text"
+                                               value="{{$value}}"/>
+                                        <label for="attribute-{{$attribute.ID}}-{{$idx}}">{{$attribute.Name}}</label>
+                                    </div>
+                                {{end}}
+                            {{else}}
                                 <div class="form-floating mb-3 shadow-sm">
                                     <input class="form-control"
                                            name="attribute[{{$attribute.ID}}]"
-                                           id="attribute-{{$attribute.ID}}-{{$idx}}"
+                                           id="attribute-{{$attribute.ID}}-0"
                                            type="text"
-                                           value="{{$value}}"/>
-                                    <label for="attribute-{{$attribute.ID}}-{{$idx}}">{{$attribute.Name}}</label>
+                                           value=""/>
+                                    <label for="attribute-{{$attribute.ID}}-0">{{$attribute.Name}}</label>
                                 </div>
-
                             {{end}}
 
                         {{end}}
