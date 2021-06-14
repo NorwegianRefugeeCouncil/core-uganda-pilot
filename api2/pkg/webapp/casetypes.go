@@ -38,15 +38,13 @@ func (h *Handler) CaseType(w http.ResponseWriter, req *http.Request) {
 	})
 
 	if req.Method == "POST" {
-		h.PostCaseType(ctx, caseTypesClient, id, w, req)
+		h.PostCaseType(ctx, caseTypesClient, &casesapi.CaseType{}, w, req)
 		return
 	}
-	var listoptions parties.ListOptions
-	listoptions.Party = ""
 
 	g.Go(func() error {
 		var err error
-		p, err = partiesClient.List(waitCtx, listoptions)
+		p, err = partiesClient.List(waitCtx, parties.ListOptions{})
 		return err
 	})
 
@@ -76,12 +74,9 @@ func (h *Handler) NewCaseType(w http.ResponseWriter, req *http.Request) {
 		return err
 	})
 
-	var listoptions parties.ListOptions
-	listoptions.Party = ""
-
 	g.Go(func() error {
 		var err error
-		p, err = partiesClient.List(waitCtx, listoptions)
+		p, err = partiesClient.List(waitCtx, parties.ListOptions{})
 		return err
 	})
 

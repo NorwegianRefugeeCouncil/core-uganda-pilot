@@ -25,12 +25,6 @@ func (c *Client) List(ctx context.Context, listOptions ListOptions) (*api.PartyL
 	if err != nil {
 		return nil, err
 	}
-	q := req.URL.Query()
-	if len(listOptions.Party) != 0 {
-		q.Set("party", listOptions.Party)
-	}
-	req.URL.RawQuery = q.Encode()
-
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {

@@ -60,6 +60,9 @@ func (s *Store) List(ctx context.Context, listOptions ListOptions) (*api.CaseLis
 	if res.Err() != nil {
 		return nil, res.Err()
 	}
+	if items == nil {
+		items = []*api.Case{}
+	}
 	ret := api.CaseList{
 		Items: items,
 	}

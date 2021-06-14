@@ -32,16 +32,7 @@ func (s *Store) Get(ctx context.Context, id string) (*api.Party, error) {
 }
 
 func (s *Store) List(ctx context.Context, listOptions ListOptions) (*api.PartyList, error) {
-
 	filter := bson.M{}
-
-	if len(listOptions.Party) != 0 {
-		filter["$or"] = bson.M{
-			"firstParty":  listOptions.Party,
-			"secondParty": listOptions.Party,
-		}
-	}
-
 	res, err := s.collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err

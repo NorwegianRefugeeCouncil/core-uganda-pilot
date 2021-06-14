@@ -19,9 +19,9 @@ func (c *CaseType) String() string {
 }
 
 type CaseList struct {
-	Items []*Case
+	Items []*Case `json:"items"`
 }
 
 type CaseTypeList struct {
-	Items []*CaseType
+	Items []*CaseType `json:"items"`
 }

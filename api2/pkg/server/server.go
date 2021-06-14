@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core-kafka/pkg/cases/cases"
+	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
 	"github.com/nrc-no/core-kafka/pkg/intake"
 	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
 	"github.com/nrc-no/core-kafka/pkg/parties/beneficiaries"
@@ -223,6 +224,21 @@ func NewServer(
 	})
 	router.Path("/apis/v1/cases").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		caseHandler.Post(w, req)
+	})
+	// CaseTypes
+	caseTypeStore := casetypes.NewStore(mongoClient)
+	castTypeHandler := casetypes.NewHandler(caseTypeStore)
+	router.Path("/apis/v1/casetypes").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		castTypeHandler.List(w, req)
+	})
+	router.Path("/apis/v1/casetypes/{id}").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		castTypeHandler.Get(w, req)
+	})
+	router.Path("/apis/v1/casetypes/{id}").Methods("PUT").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		castTypeHandler.Put(w, req)
+	})
+	router.Path("/apis/v1/casetypes").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		castTypeHandler.Post(w, req)
 	})
 
 	// WebApp

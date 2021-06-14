@@ -64,7 +64,7 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 
 	g.Go(func() error {
 		if id == "new" {
-			c = &api.Case{}
+			c = &casesapi.Case{}
 			return nil
 		}
 		var err error
@@ -129,12 +129,9 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 		return err
 	})
 
-	var listoptions parties.ListOptions
-	listoptions.Party = ""
-
 	g.Go(func() error {
 		var err error
-		p, err = partiesClient.List(waitCtx, listoptions)
+		p, err = partiesClient.List(waitCtx, parties.ListOptions{})
 		return err
 	})
 

@@ -53,6 +53,9 @@ func (s *Store) List(ctx context.Context) (*api.CaseTypeList, error) {
 	if res.Err() != nil {
 		return nil, res.Err()
 	}
+	if items == nil {
+		items = []*api.CaseType{}
+	}
 	ret := api.CaseTypeList{
 		Items: items,
 	}
