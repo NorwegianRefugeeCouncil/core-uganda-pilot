@@ -21,12 +21,12 @@ type AttributeTranslation struct {
 }
 
 type RelationshipTypeRule struct {
-	PartyTypeRule
+	PartyTypeRule `json:",inline" bson:",inline"`
 }
 
 type PartyTypeRule struct {
-	FirstPartyType  string `json:"firstPartyType"`
-	SecondPartyType string `json:"secondPartyType"`
+	FirstPartyType  string `json:"firstPartyType" bson:"firstPartyType"`
+	SecondPartyType string `json:"secondPartyType" bson:"secondPartyType"`
 }
 
 type RelationshipType struct {
@@ -38,17 +38,43 @@ type RelationshipType struct {
 }
 
 type RelationshipTypeList struct {
-	Items []*RelationshipType
+	Items []*RelationshipType `json:"items" bson:"items"`
 }
 
 type Party struct {
-	ID         string   `json:"id" bson:"id"`
-	PartyTypes []string `json:"partyTypes" bson:"partyTypes"`
-	Attributes map[string][]string
+	ID         string                 `json:"id" bson:"id"`
+	PartyTypes []string               `json:"partyTypes" bson:"partyTypes"`
+	Attributes map[string]interface{} `json:"attributes" bson:"attributes"`
 }
 
 type PartyList struct {
 	Items []*Party `json:"items" bson:"items"`
+}
+
+type PartyType struct {
+	ID        string `json:"id" bson:"id"`
+	Name      string `json:"name" bson:"name"`
+	IsBuiltIn bool   `json:"isBuiltIn" bson:"isBuiltIn"`
+}
+
+type PartyTypeSchema struct {
+	ID    string                `json:"id" bson:"id"`
+	Name  string                `json:"name" bson:"name"`
+	Nodes []PartyTypeSchemaNode `json:"nodes" bson:"nodes"`
+}
+
+type PartyTypeSchemaList struct {
+	Items []*PartyTypeSchema `json:"items" bson:"items"`
+}
+
+type PartyTypeSchemaNode struct {
+	ID          string                `json:"id" bson:"id"`
+	PartyTypeID string                `json:"partyTypeID" bson:"partyTypeID"`
+	Children    []PartyTypeSchemaNode `json:"children" bson:"children"`
+}
+
+type PartyTypeList struct {
+	Items []*PartyType `json:"items" bson:"items"`
 }
 
 type Relationship struct {
@@ -61,11 +87,11 @@ type Relationship struct {
 }
 
 type RelationshipList struct {
-	Items []*Relationship
+	Items []*Relationship `json:"items" bson:"items"`
 }
 
 type AttributeList struct {
-	Items []*Attribute
+	Items []*Attribute `json:"items" bson:"items"`
 }
 
 type AttributeValue struct {

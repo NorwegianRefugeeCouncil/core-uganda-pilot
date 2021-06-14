@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/nrc-no/core-kafka/pkg/parties/api"
+	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 )
@@ -69,6 +70,9 @@ func (c *Client) Get(ctx context.Context, id string) (*api.RelationshipType, err
 }
 
 func (c *Client) Update(ctx context.Context, relationshipType *api.RelationshipType) (*api.RelationshipType, error) {
+	log.WithFields(log.Fields{
+		"relationshipType": relationshipType,
+	})
 	bodyBytes, err := json.Marshal(relationshipType)
 	if err != nil {
 		return nil, err
