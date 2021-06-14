@@ -1,6 +1,7 @@
 package api
 
 import (
+	"strings"
 	"time"
 
 	"github.com/nrc-no/core-kafka/pkg/parties/api"
@@ -59,5 +60,13 @@ func (b *Beneficiary) FindAge() *int {
 }
 
 func (b *Beneficiary) String() string {
+
+	firstNames, hasFirstNames := b.Attributes[attributes.FirstNameAttribute.ID]
+	lastNames, hasLastNames := b.Attributes[attributes.LastNameAttribute.ID]
+
+	if hasFirstNames && hasLastNames {
+		return strings.ToUpper(lastNames[0]) + ", " + firstNames[0]
+	}
+
 	return b.ID
 }
