@@ -15,16 +15,16 @@ const (
 )
 
 type Attribute struct {
-	ID                           string                 `json:"id" bson:"id" bson:"id" bson:"id"`
-	Name                         string                 `json:"name" bson:"name" bson:"name" bson:"name"`
-	ValueType                    expressions.ValueType  `json:"type" bson:"type" bson:"type" bson:"type"`
-	SubjectType                  SubjectType            `json:"subjectType" bson:"subjectType" bson:"subjectType" bson:"subjectType"`
-	IsPersonallyIdentifiableInfo bool                   `json:"isPii" bson:"isPii" bson:"isPii" bson:"isPii"`
-	Translations                 []AttributeTranslation `json:"translations" bson:"translations" bson:"translations" bson:"translations"`
+	ID                           string                 `json:"id" bson:"id" bson:"id"`
+	Name                         string                 `json:"name" bson:"name" bson:"name"`
+	ValueType                    expressions.ValueType  `json:"type" bson:"type" bson:"type"`
+	SubjectType                  SubjectType            `json:"subjectType" bson:"subjectType" bson:"subjectType"`
+	IsPersonallyIdentifiableInfo bool                   `json:"isPii" bson:"isPii" bson:"isPii"`
+	Translations                 []AttributeTranslation `json:"translations" bson:"translations" bson:"translations"`
 }
 
 type AttributeTranslation struct {
-	Locale           string `json:"locale" bson:"locale" bson:"locale" bson:"locale"`
+	Locale           string `json:"locale" bson:"locale" bson:"locale"`
 	LongFormulation  string `json:"longFormulation" bson:"longFormulation"`
 	ShortFormulation string `json:"shortFormulation" bson:"shortFormulation"`
 }

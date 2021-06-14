@@ -7,13 +7,13 @@ import (
 )
 
 type Vulnerability struct {
-	ID                         string                `json:"id" bson:"id" bson:"id" bson:"id"`
-	Name                       string                `json:"name" bson:"name" bson:"name" bson:"name"`
-	SubjectType                api.SubjectType       `json:"subjectType" bson:"subjectType" bson:"subjectType" bson:"subjectType"`
-	ValueType                  expressions.ValueType `json:"valueType" bson:"valueType" bson:"valueType" bson:"valueType"`
-	LongFormulation            i81n.Translations     `json:"longFormulation" bson:"longFormulation" bson:"longFormulation" bson:"longFormulation"`
-	ShortFormulation           i81n.Translations     `json:"shortFormulation" bson:"shortFormulation" bson:"shortFormulation" bson:"shortFormulation"`
-	AttributesForDetermination []string              `json:"attributesForDetermination" bson:"attributesForDetermination" bson:"attributesForDetermination" bson:"attributesForDetermination"`
+	ID                         string                `json:"id" bson:"id" bson:"id"`
+	Name                       string                `json:"name" bson:"name" bson:"name"`
+	SubjectType                api.SubjectType       `json:"subjectType" bson:"subjectType" bson:"subjectType"`
+	ValueType                  expressions.ValueType `json:"valueType" bson:"valueType" bson:"valueType"`
+	LongFormulation            i81n.Translations     `json:"longFormulation" bson:"longFormulation" bson:"longFormulation"`
+	ShortFormulation           i81n.Translations     `json:"shortFormulation" bson:"shortFormulation" bson:"shortFormulation"`
+	AttributesForDetermination []string              `json:"attributesForDetermination" bson:"attributesForDetermination" bson:"attributesForDetermination"`
 }
 
 type VulnerabilityList struct {
