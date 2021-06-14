@@ -126,8 +126,10 @@
         })
 
         {{if .RelationshipType}}
-            setSelected("firstPartyType", {{(index .RelationshipType.Rules 0).FirstPartyType}})
-            setSelected("secondPartyType", {{(index .RelationshipType.Rules 0).SecondPartyType}})
+            document.addEventListener("DOMContentLoaded", (event) => {
+                setSelected("firstPartyType", {{(index .RelationshipType.Rules 0).FirstPartyType}})
+                setSelected("secondPartyType", {{(index .RelationshipType.Rules 0).SecondPartyType}})
+            })
         {{end}}
 
     </script>
