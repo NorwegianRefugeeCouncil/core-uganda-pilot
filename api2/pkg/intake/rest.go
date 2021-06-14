@@ -35,7 +35,7 @@ func (h *Handler) logError(ctx context.Context, err error, message string, args 
 }
 
 type PostSubmission struct {
-	Answers []AnswerToQuestion `json:"answers"`
+	Answers []AnswerToQuestion `json:"answers" bson:"answers"`
 }
 
 func (h *Handler) PostSubmission(w http.ResponseWriter, req *http.Request) {

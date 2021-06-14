@@ -3,9 +3,12 @@ package server
 import (
 	"context"
 	"github.com/gorilla/mux"
+	"github.com/nrc-no/core-kafka/pkg/cases/cases"
+	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
 	"github.com/nrc-no/core-kafka/pkg/intake"
 	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
 	"github.com/nrc-no/core-kafka/pkg/parties/beneficiaries"
+	"github.com/nrc-no/core-kafka/pkg/parties/parties"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypeschemas"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationships"
@@ -148,7 +151,23 @@ func NewServer(
 		relationshipHandler.Post(w, req)
 	})
 
-	// Relationships
+	// Parties
+	partyStore := parties.NewStore(mongoClient)
+	partyHandler := parties.NewHandler(partyStore)
+	router.Path("/apis/v1/parties").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		partyHandler.List(w, req)
+	})
+	router.Path("/apis/v1/parties/{id}").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		partyHandler.Get(w, req)
+	})
+	router.Path("/apis/v1/parties/{id}").Methods("PUT").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		partyHandler.Put(w, req)
+	})
+	router.Path("/apis/v1/parties").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		partyHandler.Post(w, req)
+	})
+
+	// Party Types
 	partyTypeStore := partytypes.NewStore(mongoClient)
 	partyTypeHandler := partytypes.NewHandler(partyTypeStore)
 	router.Path("/apis/v1/partytypes").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
@@ -189,6 +208,37 @@ func NewServer(
 	intakeHandler := intake.NewHandler(intakeStore, intakeWriter)
 	router.Path("/apis/v1/intake").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		intakeHandler.PostSubmission(w, req)
+	})
+
+	// Cases
+	caseStore := cases.NewStore(mongoClient)
+	caseHandler := cases.NewHandler(caseStore)
+	router.Path("/apis/v1/cases").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		caseHandler.List(w, req)
+	})
+	router.Path("/apis/v1/cases/{id}").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		caseHandler.Get(w, req)
+	})
+	router.Path("/apis/v1/cases/{id}").Methods("PUT").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		caseHandler.Put(w, req)
+	})
+	router.Path("/apis/v1/cases").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		caseHandler.Post(w, req)
+	})
+	// CaseTypes
+	caseTypeStore := casetypes.NewStore(mongoClient)
+	castTypeHandler := casetypes.NewHandler(caseTypeStore)
+	router.Path("/apis/v1/casetypes").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		castTypeHandler.List(w, req)
+	})
+	router.Path("/apis/v1/casetypes/{id}").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		castTypeHandler.Get(w, req)
+	})
+	router.Path("/apis/v1/casetypes/{id}").Methods("PUT").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		castTypeHandler.Put(w, req)
+	})
+	router.Path("/apis/v1/casetypes").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		castTypeHandler.Post(w, req)
 	})
 
 	// WebApp
@@ -238,6 +288,23 @@ func NewServer(
 	router.Path("/settings/countries").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		webAppHandler.CountrySettings(w, req)
 	})
+
+	router.Path("/cases").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		webAppHandler.Cases(w, req)
+	})
+	router.Path("/cases/new").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		webAppHandler.NewCase(w, req)
+	})
+	router.Path("/cases/{id}").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		webAppHandler.Case(w, req)
+	})
+	router.Path("/cases/casetypes/new").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		webAppHandler.NewCaseType(w, req)
+	})
+	router.Path("/cases/casetypes/{id}").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		webAppHandler.CaseType(w, req)
+	})
+
 	http.ListenAndServe(":9000", router)
 }
 

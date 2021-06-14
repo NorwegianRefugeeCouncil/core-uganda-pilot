@@ -75,34 +75,34 @@ type AggregatedBeneficiaryAnswers struct {
 type Topic string
 
 type TopicDescription struct {
-	Topic       Topic            `json:"topic"`
-	DataShape   DataShape        `json:"dataShape"`
-	Formulation TopicFormulation `json:"formulation"`
-	Relevance   []TopicRelevance `json:"relevance"`
+	Topic       Topic            `json:"topic" bson:"topic"`
+	DataShape   DataShape        `json:"dataShape" bson:"dataShape"`
+	Formulation TopicFormulation `json:"formulation" bson:"formulation"`
+	Relevance   []TopicRelevance `json:"relevance" bson:"relevance"`
 }
 
 type DataShape struct {
-	Type string `json:"type"`
+	Type string `json:"type" bson:"type"`
 }
 
 type TopicRelevance struct {
-	OrgContexts []string `json:"orgContexts"`
-	GeoContexts []string `json:"geoContexts"`
-	SvcContexts []string `json:"svcContexts"`
+	OrgContexts []string `json:"orgContexts" bson:"orgContexts"`
+	GeoContexts []string `json:"geoContexts" bson:"geoContexts"`
+	SvcContexts []string `json:"svcContexts" bson:"svcContexts"`
 }
 
 type Subject struct {
-	Type string `json:"type"`
-	ID   string `json:"id"`
+	Type string `json:"type" bson:"type"`
+	ID   string `json:"id" bson:"id"`
 }
 
 type TopicFormulation struct {
-	Long  v1.Translations `json:"long"`
-	Short v1.Translations `json:"short"`
+	Long  v1.Translations `json:"long" bson:"long"`
+	Short v1.Translations `json:"short" bson:"short"`
 }
 
 type Observation struct {
-	ObservedValues map[string]interface{} `json:"observedValues"`
-	Topic          TopicDescription       `json:"topic"`
-	Subject        Subject                `json:"subject"`
+	ObservedValues map[string]interface{} `json:"observedValues" bson:"observedValues"`
+	Topic          TopicDescription       `json:"topic" bson:"topic"`
+	Subject        Subject                `json:"subject" bson:"subject"`
 }

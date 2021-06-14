@@ -1,11 +1,11 @@
-package parties
+package cases
 
 import (
 	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/nrc-no/core-kafka/pkg/parties/api"
+	"github.com/nrc-no/core-kafka/pkg/cases/api"
 	"io/ioutil"
 	"net/http"
 )
@@ -20,8 +20,8 @@ func NewClient(basePath string) *Client {
 	}
 }
 
-func (c *Client) List(ctx context.Context, listOptions ListOptions) (*api.PartyList, error) {
-	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/parties", nil)
+func (c *Client) List(ctx context.Context) (*api.CaseList, error) {
+	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/cases", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -37,15 +37,15 @@ func (c *Client) List(ctx context.Context, listOptions ListOptions) (*api.PartyL
 	if err != nil {
 		return nil, err
 	}
-	var list api.PartyList
+	var list api.CaseList
 	if err := json.Unmarshal(bodyBytes, &list); err != nil {
 		return nil, err
 	}
 	return &list, nil
 }
 
-func (c *Client) Get(ctx context.Context, id string) (*api.Party, error) {
-	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/parties/"+id, nil)
+func (c *Client) Get(ctx context.Context, id string) (*api.Case, error) {
+	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/cases/"+id, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -61,19 +61,19 @@ func (c *Client) Get(ctx context.Context, id string) (*api.Party, error) {
 	if err != nil {
 		return nil, err
 	}
-	var v api.Party
+	var v api.Case
 	if err := json.Unmarshal(bodyBytes, &v); err != nil {
 		return nil, err
 	}
 	return &v, nil
 }
 
-func (c *Client) Update(ctx context.Context, party *api.Party) (*api.Party, error) {
-	bodyBytes, err := json.Marshal(party)
+func (c *Client) Update(ctx context.Context, kase *api.Case) (*api.Case, error) {
+	bodyBytes, err := json.Marshal(kase)
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("PUT", c.basePath+"/apis/v1/parties/"+party.ID, bytes.NewReader(bodyBytes))
+	req, err := http.NewRequest("PUT", c.basePath+"/apis/v1/cases/"+kase.ID, bytes.NewReader(bodyBytes))
 	if err != nil {
 		return nil, err
 	}
@@ -91,19 +91,19 @@ func (c *Client) Update(ctx context.Context, party *api.Party) (*api.Party, erro
 	if err != nil {
 		return nil, err
 	}
-	var v api.Party
+	var v api.Case
 	if err := json.Unmarshal(responseBytes, &v); err != nil {
 		return nil, err
 	}
 	return &v, nil
 }
 
-func (c *Client) Create(ctx context.Context, party *api.Party) (*api.Party, error) {
-	bodyBytes, err := json.Marshal(party)
+func (c *Client) Create(ctx context.Context, kase *api.Case) (*api.Case, error) {
+	bodyBytes, err := json.Marshal(kase)
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("POST", c.basePath+"/apis/v1/parties", bytes.NewReader(bodyBytes))
+	req, err := http.NewRequest("POST", c.basePath+"/apis/v1/cases", bytes.NewReader(bodyBytes))
 	if err != nil {
 		return nil, err
 	}
@@ -121,7 +121,7 @@ func (c *Client) Create(ctx context.Context, party *api.Party) (*api.Party, erro
 	if err != nil {
 		return nil, err
 	}
-	var v api.Party
+	var v api.Case
 	if err := json.Unmarshal(responseBytes, &v); err != nil {
 		return nil, err
 	}

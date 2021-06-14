@@ -1,8 +1,8 @@
-package parties
+package casetypes
 
 import (
 	"context"
-	"github.com/nrc-no/core-kafka/pkg/parties/api"
+	"github.com/nrc-no/core-kafka/pkg/cases/api"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -13,36 +13,38 @@ type Store struct {
 
 func NewStore(mongoClient *mongo.Client) *Store {
 	return &Store{
-		collection: mongoClient.Database("core").Collection("parties"),
+		collection: mongoClient.Database("core").Collection("caseTypes"),
 	}
 }
 
-func (s *Store) Get(ctx context.Context, id string) (*api.Party, error) {
+func (s *Store) Get(ctx context.Context, id string) (*api.CaseType, error) {
 	res := s.collection.FindOne(ctx, bson.M{
 		"id": id,
 	})
 	if res.Err() != nil {
 		return nil, res.Err()
 	}
-	var r api.Party
+	var r api.CaseType
 	if err := res.Decode(&r); err != nil {
 		return nil, err
 	}
 	return &r, nil
 }
 
-func (s *Store) List(ctx context.Context, listOptions ListOptions) (*api.PartyList, error) {
+func (s *Store) List(ctx context.Context) (*api.CaseTypeList, error) {
+
 	filter := bson.M{}
+
 	res, err := s.collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
-	var items []*api.Party
+	var items []*api.CaseType
 	for {
 		if !res.Next(ctx) {
 			break
 		}
-		var r api.Party
+		var r api.CaseType
 		if err := res.Decode(&r); err != nil {
 			return nil, err
 		}
@@ -52,21 +54,21 @@ func (s *Store) List(ctx context.Context, listOptions ListOptions) (*api.PartyLi
 		return nil, res.Err()
 	}
 	if items == nil {
-		items = []*api.Party{}
+		items = []*api.CaseType{}
 	}
-	ret := api.PartyList{
+	ret := api.CaseTypeList{
 		Items: items,
 	}
 	return &ret, nil
 }
 
-func (s *Store) Update(ctx context.Context, party *api.Party) error {
+func (s *Store) Update(ctx context.Context, caseType *api.CaseType) error {
 	_, err := s.collection.UpdateOne(ctx, bson.M{
-		"id": party.ID,
+		"id": caseType.ID,
 	}, bson.M{
 		"$set": bson.M{
-			"attributes": party.Attributes,
-			"partyTypes": party.PartyTypes,
+			"name":        caseType.Name,
+			"partyTypeId": caseType.PartyTypeID,
 		},
 	})
 	if err != nil {
@@ -75,8 +77,8 @@ func (s *Store) Update(ctx context.Context, party *api.Party) error {
 	return nil
 }
 
-func (s *Store) Create(ctx context.Context, party *api.Party) error {
-	_, err := s.collection.InsertOne(ctx, party)
+func (s *Store) Create(ctx context.Context, caseType *api.CaseType) error {
+	_, err := s.collection.InsertOne(ctx, caseType)
 	if err != nil {
 		return err
 	}

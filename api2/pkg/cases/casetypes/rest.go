@@ -1,10 +1,10 @@
-package parties
+package casetypes
 
 import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core-kafka/pkg/parties/api"
+	"github.com/nrc-no/core-kafka/pkg/cases/api"
 	uuid "github.com/satori/go.uuid"
 	"io/ioutil"
 	"net/http"
@@ -45,14 +45,10 @@ func (h *Handler) Get(w http.ResponseWriter, req *http.Request) {
 
 }
 
-type ListOptions struct {
-}
-
 func (h *Handler) List(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	listOptions := &ListOptions{}
 
-	ret, err := h.store.List(ctx, *listOptions)
+	ret, err := h.store.List(ctx)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -90,14 +86,13 @@ func (h *Handler) Put(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var payload api.Party
+	var payload api.CaseType
 	if err := json.Unmarshal(bodyBytes, &payload); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	r.Attributes = payload.Attributes
-	r.PartyTypes = payload.PartyTypes
+	r.Name = payload.Name
 
 	if err := h.store.Update(ctx, r); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -123,7 +118,7 @@ func (h *Handler) Post(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var payload api.Party
+	var payload api.CaseType
 	if err := json.Unmarshal(bodyBytes, &payload); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
