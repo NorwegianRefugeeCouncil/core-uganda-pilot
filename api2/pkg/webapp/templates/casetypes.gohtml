@@ -1,35 +1,26 @@
-
 {{define "casetypes"}}
-
     <!doctype html>
     <html lang="en">
     {{template "head"}}
-    <body class="bg-light">
-    {{template "casesnavbar"}}
-
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col">
-                <a href='/cases/settings/casetype/new' class='btn btn-primary mb-3'>Define new case type</a>
-                <div class="list-group">
+        <body class="bg-light">
+        {{template "navbar"}}
+            <div class="container mt-4">
+                <a href='/settings/casetypes/new' class='btn btn-primary mb-3'>Define new case type</a>
                     {{ if .CaseTypes}}
+                            <ul class="list-group mb-3">
                         {{ range .CaseTypes.Items }}
-                            <div class="input-group">
-                                <span class="input-group-text">{{.Name}}</span>
-                                <a href="/settings/casetype/{{.ID}}"><button class="btn btn-outline-secondary" type="button">Edit</button></a>
-                                <a href="/settings/casetype/{{.ID}}"><button class="btn btn-danger" type="button"><i class="bi-x" /></button></a>
-                            </div>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{.Name}}
+                                    <span>
+                                        <span><a class="badge bg-secondary"href="/settings/casetypes/{{.ID}}">Edit</a></span>
+                                        <span ><a class="badge bg-danger"href="/settings/casetypes/{{.ID}}"><i class="bi-trash"></i></a></span>
+                                    </span>
+                                </li>
                         {{end}}
-                    {{else}}
-                        <div class="input-group">
-                            <span class="input-group-text">No casetypes defined</span>
-                        </div>
+                            </ul>
                     {{end}}
-                </div>
             </div>
-        </div>
-    </div>
-    </body>
+        </body>
     </html>
 
 {{end}}

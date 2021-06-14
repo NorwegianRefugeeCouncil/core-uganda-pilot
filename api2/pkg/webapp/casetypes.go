@@ -11,6 +11,33 @@ import (
 	"net/http"
 )
 
+func (h *Handler) CaseTypes(w http.ResponseWriter, req *http.Request) {
+
+	ctx := req.Context()
+
+	caseTypesClient := casetypes.NewClient("http://localhost:9000")
+
+	var caseTypes *casesapi.CaseTypeList
+
+	caseTypes, err := caseTypesClient.List(ctx)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if req.Method == "POST" {
+		h.PostCaseType(ctx, caseTypesClient, &casesapi.CaseType{}, w, req)
+		return
+	}
+
+	if err := h.template.ExecuteTemplate(w, "casetypes", map[string]interface{}{
+		"CaseTypes": caseTypes,
+	}); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 func (h *Handler) CaseType(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
@@ -31,15 +58,14 @@ func (h *Handler) CaseType(w http.ResponseWriter, req *http.Request) {
 	g, waitCtx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
+		if id == "new" {
+			caseType = &casesapi.CaseType{}
+			return nil
+		}
 		var err error
 		caseType, err = caseTypesClient.Get(waitCtx, id)
 		return err
 	})
-
-	if req.Method == "POST" {
-		h.PostCaseType(ctx, caseTypesClient, &casesapi.CaseType{}, w, req)
-		return
-	}
 
 	g.Go(func() error {
 		var err error
@@ -47,33 +73,19 @@ func (h *Handler) CaseType(w http.ResponseWriter, req *http.Request) {
 		return err
 	})
 
-	if err := h.template.ExecuteTemplate(w, "casetype", map[string]interface{}{
-		"CaseType":   caseType,
-		"PartyTypes": partyTypes,
-	}); err != nil {
+	if err := g.Wait(); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-}
 
-func (h *Handler) CaseTypes(w http.ResponseWriter, req *http.Request) {
+	if req.Method == "POST" {
+		h.PostCaseType(ctx, caseTypesClient, caseType, w, req)
+		return
+	}
 
-	ctx := req.Context()
-
-	caseTypesClient := casetypes.NewClient("http://localhost:9000")
-
-	var caseTypes *casesapi.CaseTypeList
-
-	g, waitCtx := errgroup.WithContext(ctx)
-
-	g.Go(func() error {
-		var err error
-		caseTypes, err = caseTypesClient.List(waitCtx)
-		return err
-	})
-
-	if err := h.template.ExecuteTemplate(w, "casetypes", map[string]interface{}{
-		"CaseTypes": caseTypes,
+	if err := h.template.ExecuteTemplate(w, "casetype", map[string]interface{}{
+		"CaseType":   caseType,
+		"PartyTypes": partyTypes,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -118,9 +130,9 @@ func (h *Handler) PostCaseType(
 	}
 
 	name := req.Form.Get("name")
-	partypeID := req.Form.Get("partyTypeId")
+	partyTypeID := req.Form.Get("partyTypeId")
 	caseType.Name = name
-	caseType.PartyTypeID = partypeID
+	caseType.PartyTypeID = partyTypeID
 
 	if isNew {
 		_, err := caseTypesCli.Create(ctx, caseType)
@@ -128,7 +140,7 @@ func (h *Handler) PostCaseType(
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		w.Header().Set("Location", "/cases")
+		w.Header().Set("Location", "/settings/casetypes")
 		w.WriteHeader(http.StatusSeeOther)
 		return
 	} else {
@@ -137,7 +149,7 @@ func (h *Handler) PostCaseType(
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		w.Header().Set("Location", "/cases")
+		w.Header().Set("Location", "/settings/casetypes")
 		w.WriteHeader(http.StatusSeeOther)
 		return
 	}

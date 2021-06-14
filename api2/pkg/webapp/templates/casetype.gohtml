@@ -3,24 +3,22 @@
     <html lang="en">
         {{template "head"}}
         <body class="bg-light">
-            {{template "casesnavbar"}}
+            {{template "navbar"}}
             <div class="container">
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Case Type</h4>
-                        <form action="/cases/settings/casetype/{{if .CaseType}}/{{.CaseType.ID}}{{end}}" method="post">
+                        <form action="/settings/casetypes{{if .CaseType}}/{{.CaseType.ID}}{{end}}" method="post">
                             <div class="form-floating mb-3">
-                                <input id="name" type="text" class="form-control" name="name" value="{{if .CaseType}}/{{.CaseType.Name}}{{end}}">
+                                <input id="name" type="text" class="form-control" name="name" value="{{if .CaseType}}{{.CaseType.Name}}{{end}}">
                                 <label for="name">Name</label>
                             </div>
                             <div class="form-floating mb-3">
-                                <select id="party-type" type="select" class="form-select" name="partyTypeId ">
+                                <select id="party-type" type="select" class="form-select" name="partyTypeId">
                                     {{if .CaseType}}
-                                        {{range .PartyTypes}}
-                                            <option
-                                                    {{if .CaseType.PartyTypeID eq .ID}}selected{{end}}
-                                                    value="{{.ID}}"
-                                            >
+                                        {{$partyTypeId := .CaseType.PartyTypeID}}
+                                        {{range .PartyTypes.Items}}
+                                            <option {{if eq .ID $partyTypeId}}selected{{end}} value="{{.ID}}">
                                                 {{.Name}}
                                             </option>
                                         {{end}}
