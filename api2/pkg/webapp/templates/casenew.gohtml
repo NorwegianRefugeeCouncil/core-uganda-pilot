@@ -1,0 +1,45 @@
+{{define "casenew"}}
+    <!doctype html>
+    <html lang="en">
+        {{template "head"}}
+        <body class="bg-light">
+            {{template "casesnavbar"}}
+            <div class="container">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Create Case</h4>
+                        <form action="/cases/" method="post">
+                            <div class="form-floating mb-3">
+                                <select id="case-type" type="select" class="form-select" name="caseType" value="{{.Name}}">
+                                    <option selected></option>
+                                    {{if .CaseTypes}}
+                                        {{range .CaseTypes.Items}}
+                                            <option value="{{.ID}}">{{.Name}}</option>
+                                        {{end}}
+                                    {{end}}
+                                </select>
+                                <label for="case-type">Select Case Type</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <select id="party-type" type="select" class="form-select" name="caseType" value="{{.Name}}">
+                                    <option selected></option>
+                                    {{if .Parties}}
+                                        {{range .Parties.Items}}
+                                            <option value="{{.ID}}">{{.Name}}</option>
+                                        {{end}}
+                                    {{end}}
+                                </select>
+                                <label for="party-type">Select Party</label>
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea id="description" class="form-control" rows="3"></textarea>
+                            </div>
+                            <a class="btn btn-primary" type="submit">Save</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </body>
+    </html>
+{{end}}
