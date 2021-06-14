@@ -2,7 +2,7 @@ package beneficiaries
 
 import (
 	"context"
-	"github.com/nrc-no/core-kafka/pkg/parties/api"
+	"github.com/nrc-no/core-kafka/pkg/parties/beneficiaries/api"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -14,7 +14,7 @@ type Store struct {
 
 func NewStore(mongoClient *mongo.Client) *Store {
 	return &Store{
-		collection: mongoClient.Database("core").Collection("beneficiaries"),
+		collection: mongoClient.Database("core").Collection("parties"),
 	}
 }
 
@@ -26,17 +26,14 @@ func (s *Store) Create(ctx context.Context, beneficiary *api.Beneficiary) error 
 	return nil
 }
 
-func (s *Store) Upsert(ctx context.Context, ID string, attributes []*api.AttributeValue) error {
-	bsonAttributes := bson.M{
-		"id": ID,
-	}
-	for _, attribute := range attributes {
-		bsonAttributes["attributes."+attribute.Name] = attribute
-	}
+func (s *Store) Upsert(ctx context.Context, ID string, beneficiary *api.Beneficiary) error {
 	_, err := s.collection.UpdateOne(ctx, bson.M{
 		"id": ID,
 	}, bson.M{
-		"$set": bsonAttributes,
+		"$set": bson.M{
+			"attributes": beneficiary.Attributes,
+			"partyTypes": beneficiary.PartyTypes,
+		},
 	}, options.Update().SetUpsert(true))
 
 	if err != nil {
@@ -57,13 +54,20 @@ func (s *Store) Get(ctx context.Context, ID string) (*api.Beneficiary, error) {
 	return beneficiary, nil
 }
 
-func (s *Store) List(ctx context.Context) (*api.BeneficiaryList, error) {
+func (s *Store) List(ctx context.Context, listOptions ListOptions) (*api.BeneficiaryList, error) {
 
-	cursor, err := s.collection.Find(ctx, bson.M{})
+	filter := bson.M{}
+
+	if len(listOptions.PartyTypes) > 0 {
+		filter["partyTypes"] = bson.M{
+			"$all": listOptions.PartyTypes,
+		}
+	}
+
+	cursor, err := s.collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
-
 	var items []*api.Beneficiary
 	for {
 		if !cursor.Next(ctx) {
@@ -78,9 +82,10 @@ func (s *Store) List(ctx context.Context) (*api.BeneficiaryList, error) {
 	if cursor.Err() != nil {
 		return nil, cursor.Err()
 	}
-
+	if items == nil {
+		items = []*api.Beneficiary{}
+	}
 	return &api.BeneficiaryList{
 		Items: items,
 	}, nil
-
 }

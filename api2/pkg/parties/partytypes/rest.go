@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	uuid "github.com/satori/go.uuid"
 	"io/ioutil"
 	"net/http"
@@ -86,7 +85,7 @@ func (h *Handler) Put(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var payload api.PartyType
+	var payload PartyType
 	if err := json.Unmarshal(bodyBytes, &payload); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -119,7 +118,7 @@ func (h *Handler) Post(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var payload api.PartyType
+	var payload PartyType
 	if err := json.Unmarshal(bodyBytes, &payload); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

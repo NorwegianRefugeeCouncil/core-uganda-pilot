@@ -2,7 +2,7 @@ package partytypeschemas
 
 import (
 	"context"
-	"github.com/nrc-no/core-kafka/pkg/parties/api"
+	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -17,21 +17,21 @@ func NewStore(mongoClient *mongo.Client) *Store {
 	}
 }
 
-func (s *Store) Get(ctx context.Context, id string) (*api.PartyTypeSchema, error) {
+func (s *Store) Get(ctx context.Context, id string) (*partytypes.PartyTypeSchema, error) {
 	res := s.collection.FindOne(ctx, bson.M{
 		"id": id,
 	})
 	if res.Err() != nil {
 		return nil, res.Err()
 	}
-	var r api.PartyTypeSchema
+	var r partytypes.PartyTypeSchema
 	if err := res.Decode(&r); err != nil {
 		return nil, err
 	}
 	return &r, nil
 }
 
-func (s *Store) List(ctx context.Context) (*api.PartyTypeSchemaList, error) {
+func (s *Store) List(ctx context.Context) (*partytypes.PartyTypeSchemaList, error) {
 
 	filter := bson.M{}
 
@@ -39,12 +39,12 @@ func (s *Store) List(ctx context.Context) (*api.PartyTypeSchemaList, error) {
 	if err != nil {
 		return nil, err
 	}
-	var items []*api.PartyTypeSchema
+	var items []*partytypes.PartyTypeSchema
 	for {
 		if !res.Next(ctx) {
 			break
 		}
-		var r api.PartyTypeSchema
+		var r partytypes.PartyTypeSchema
 		if err := res.Decode(&r); err != nil {
 			return nil, err
 		}
@@ -53,13 +53,13 @@ func (s *Store) List(ctx context.Context) (*api.PartyTypeSchemaList, error) {
 	if res.Err() != nil {
 		return nil, res.Err()
 	}
-	ret := api.PartyTypeSchemaList{
+	ret := partytypes.PartyTypeSchemaList{
 		Items: items,
 	}
 	return &ret, nil
 }
 
-func (s *Store) Update(ctx context.Context, partyTypeSchema *api.PartyTypeSchema) error {
+func (s *Store) Update(ctx context.Context, partyTypeSchema *partytypes.PartyTypeSchema) error {
 	_, err := s.collection.UpdateOne(ctx, bson.M{
 		"id": partyTypeSchema.ID,
 	}, bson.M{
@@ -74,7 +74,7 @@ func (s *Store) Update(ctx context.Context, partyTypeSchema *api.PartyTypeSchema
 	return nil
 }
 
-func (s *Store) Create(ctx context.Context, partyTypeSchema *api.PartyTypeSchema) error {
+func (s *Store) Create(ctx context.Context, partyTypeSchema *partytypes.PartyTypeSchema) error {
 	_, err := s.collection.InsertOne(ctx, partyTypeSchema)
 	if err != nil {
 		return err

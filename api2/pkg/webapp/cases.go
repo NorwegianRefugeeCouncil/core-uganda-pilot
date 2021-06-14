@@ -58,7 +58,7 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 	var c *casesapi.Case
 	var cList *casesapi.CaseList
 	var cTypes *casesapi.CaseTypeList
-	var pTypes *partiesapi.PartyTypeList
+	var pTypes *partytypes.PartyTypeList
 
 	g, waitCtx := errgroup.WithContext(ctx)
 

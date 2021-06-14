@@ -7,12 +7,12 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
 	"github.com/nrc-no/core-kafka/pkg/parties/beneficiaries"
+	api2 "github.com/nrc-no/core-kafka/pkg/parties/beneficiaries/api"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationships"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationshiptypes"
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/sync/errgroup"
 	"net/http"
-	"strconv"
 	"strings"
 )
 
@@ -21,12 +21,19 @@ func (h *Handler) Beneficiaries(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	cli := beneficiaries.NewClient("http://localhost:9000")
 
-	if req.Method == "POST" {
-		h.PostBeneficiary(ctx, cli, "", w, req)
+	attributesClient := attributes.NewClient("http://localhost:9000")
+	attrs, err := attributesClient.List(ctx)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	list, err := cli.List(ctx)
+	if req.Method == "POST" {
+		h.PostBeneficiary(ctx, cli, attrs.Items, "", w, req)
+		return
+	}
+
+	list, err := cli.List(ctx, beneficiaries.ListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -55,17 +62,19 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 	beneficiaryClient := beneficiaries.NewClient("http://localhost:9000")
 	relationshipTypeClient := relationshiptypes.NewClient("http://localhost:9000")
 	relationshipClient := relationships.NewClient("http://localhost:9000")
+	attributesClient := attributes.NewClient("http://localhost:9000")
 
-	var b *api.Beneficiary
-	var bList *api.BeneficiaryList
+	var b *api2.Beneficiary
+	var bList *api2.BeneficiaryList
 	var relationshipsForBeneficiary *api.RelationshipList
 	var relationshipTypes *api.RelationshipTypeList
+	var attrs *api.AttributeList
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
 		if id == "new" {
-			b = &api.Beneficiary{}
+			b = api2.NewBeneficiary("")
 			return nil
 		}
 		var err error
@@ -75,7 +84,7 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 
 	g.Go(func() error {
 		var err error
-		bList, err = beneficiaryClient.List(waitCtx)
+		bList, err = beneficiaryClient.List(waitCtx, beneficiaries.ListOptions{})
 		return err
 	})
 
@@ -97,20 +106,19 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 		return err
 	})
 
+	g.Go(func() error {
+		var err error
+		attrs, err = attributesClient.List(waitCtx)
+		return err
+	})
+
 	if err := g.Wait(); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if req.Method == "POST" {
-		h.PostBeneficiary(ctx, beneficiaryClient, id, w, req)
-		return
-	}
-
-	attributesClient := attributes.NewClient("http://localhost:9000")
-	attrs, err := attributesClient.List(ctx)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.PostBeneficiary(ctx, beneficiaryClient, attrs.Items, id, w, req)
 		return
 	}
 
@@ -127,19 +135,25 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 
 }
 
-func (h *Handler) PostBeneficiary(ctx context.Context, cli *beneficiaries.Client, id string, w http.ResponseWriter, req *http.Request) {
+func (h *Handler) PostBeneficiary(
+	ctx context.Context,
+	bCli *beneficiaries.Client,
+	attributes []*api.Attribute,
+	id string,
+	w http.ResponseWriter,
+	req *http.Request) {
 
 	if err := req.ParseForm(); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	_ = &api.Beneficiary{
-		ID:         "",
-		Attributes: map[string]*api.AttributeValue{},
-	}
+	b := api2.NewBeneficiary(id)
 
-	var attrs []*api.AttributeValue
+	attributeMap := map[string]*api.Attribute{}
+	for _, attribute := range attributes {
+		attributeMap[attribute.ID] = attribute
+	}
 
 	f := req.Form
 	for key, vals := range f {
@@ -151,127 +165,40 @@ func (h *Handler) PostBeneficiary(ctx context.Context, cli *beneficiaries.Client
 			return
 		}
 
-		// splitting the attribute key
-		keyParts := strings.Split(key, ".")
-
-		// making sure the first part of the key ends with ]
-		// like in attribute[{index}]
-		if !strings.HasSuffix(keyParts[0], "]") {
+		if !strings.HasSuffix(key, "]") {
 			err := fmt.Errorf("unexpected form value key: %s", key)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		// Retrieve the index of the attribute
-		attributeIndexStr := key[10 : len(keyParts[0])-1]
-
-		// Convert to number
-		attributeIdx, err := strconv.Atoi(attributeIndexStr)
+		attrId, err := uuid.FromString(key[10 : len(key)-1])
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		// Append an element to the attribute slice if needed
-		if attrs == nil {
-			attrs = []*api.AttributeValue{}
-		}
-		for len(attrs)-1 < attributeIdx {
-			attrs = append(attrs, &api.AttributeValue{})
-		}
-
-		// Retrieve the attribute from the slice
-		attr := attrs[attributeIdx]
-
-		if len(keyParts) == 2 {
-
-			// Happens when we are dealing with first level attributes
-			// Key in the format attribute[0].translations[0].locale ..
-
-			if keyParts[1] == "name" {
-				attr.Name = vals[0]
-			} else if keyParts[1] == "valueType" {
-				// TODO: attr.Va = vals[0]
-			} else if keyParts[1] == "subjectType" {
-				attr.SubjectType = api.SubjectType(vals[0])
-			} else if keyParts[1] == "isPersonallyIdentifiableInfo" {
-				attr.IsPersonallyIdentifiableInfo = vals[0] == "true"
-			} else if keyParts[1] == "value" {
-				attr.Value = vals[0]
-			} else if keyParts[1] == "id" {
-				attr.ID = vals[0]
-			}
-
-		} else if len(keyParts) == 3 {
-
-			// Happens when we are dealing with translations
-			// Key in the format attribute[0].translations[0].locale ..
-
-			if !strings.HasPrefix(keyParts[1], "translations[") {
-				err := fmt.Errorf("unexpected form value key: %s", key)
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			if !strings.HasSuffix(keyParts[1], "]") {
-				err := fmt.Errorf("unexpected form value key: %s", key)
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-
-			translationIdxStr := keyParts[1][13 : len(keyParts[1])-1]
-			translationIdx, err := strconv.Atoi(translationIdxStr)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-
-			if attr.Translations == nil {
-				attr.Translations = []api.AttributeTranslation{}
-			}
-			for len(attr.Translations)-1 < translationIdx {
-				attr.Translations = append(attr.Translations, api.AttributeTranslation{})
-			}
-			translation := &attr.Translations[translationIdx]
-
-			if keyParts[2] == "locale" {
-				translation.Locale = vals[0]
-			} else if keyParts[2] == "short" {
-				translation.ShortFormulation = vals[0]
-			} else if keyParts[2] == "long" {
-				translation.LongFormulation = vals[0]
-			}
-
+		attr, ok := attributeMap[attrId.String()]
+		if !ok {
+			err := fmt.Errorf("attribute with id %s not found", attrId)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
-	}
+		b.Attributes[attr.ID] = vals
 
-	beneficiaryAttributes := map[string]*api.AttributeValue{}
-	for _, value := range attrs {
-		beneficiaryAttributes[value.Name] = value
 	}
 
 	if id == "" {
-		id = uuid.NewV4().String()
-		_, err := cli.Create(ctx, &api.Beneficiary{
-			ID:         id,
-			Attributes: beneficiaryAttributes,
-		})
-		if err != nil {
+		if _, err := bCli.Create(ctx, b); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	} else {
-		_, err := cli.Update(ctx, &api.Beneficiary{
-			ID:         id,
-			Attributes: beneficiaryAttributes,
-		})
-		if err != nil {
+		if _, err := bCli.Update(ctx, b); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		w.Header().Set("Location", "/beneficiaries/"+id)
+		w.WriteHeader(http.StatusSeeOther)
 	}
-
-	w.Header().Set("Location", "/beneficiaries/"+id)
-	w.WriteHeader(http.StatusSeeOther)
-
 }

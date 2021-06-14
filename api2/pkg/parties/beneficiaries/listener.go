@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/nrc-no/core-kafka/pkg/intake"
-	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	"github.com/segmentio/kafka-go"
 	"github.com/sirupsen/logrus"
 )
@@ -27,40 +26,40 @@ func NewListener(store *Store, reader *kafka.Reader) *Listener {
 
 func (l *Listener) sync(submission *intake.Submission) error {
 
-	ctx := context.Background()
-	l.log(ctx).Infof("received submission: %#v", submission)
+	// ctx := context.Background()
+	// l.log(ctx).Infof("received submission: %#v", submission)
+	//
+	// bySubject := map[string][]intake.AnswerToQuestion{}
+	//
+	// for _, answer := range submission.Answers {
+	// 	subjectType := answer.SubjectType
+	// 	if subjectType != api.BeneficiaryType {
+	// 		continue
+	// 	}
+	// 	subject := answer.Subject
+	// 	bySubject[subject] = append(bySubject[subject], answer)
+	// }
 
-	bySubject := map[string][]intake.AnswerToQuestion{}
-
-	for _, answer := range submission.Answers {
-		subjectType := answer.SubjectType
-		if subjectType != api.BeneficiaryType {
-			continue
-		}
-		subject := answer.Subject
-		bySubject[subject] = append(bySubject[subject], answer)
-	}
-
-	for beneficiaryID, questions := range bySubject {
-		var attributes []*api.AttributeValue
-		for _, question := range questions {
-			attributes = append(attributes, &api.AttributeValue{
-				Attribute: api.Attribute{
-					Name:        question.Name,
-					ValueType:   question.ValueType,
-					SubjectType: question.SubjectType,
-					// TODO
-					// LongFormulation:              question.LongFormulation,
-					// ShortFormulation:             question.ShortFormulation,
-					IsPersonallyIdentifiableInfo: question.IsPersonallyIdentifiableData,
-				},
-				Value: question.Answer,
-			})
-		}
-		if err := l.store.Upsert(ctx, beneficiaryID, attributes); err != nil {
-			l.logError(ctx, err, "failed to upsert beneficiary")
-		}
-	}
+	// for beneficiaryID, questions := range bySubject {
+	// 	var attributes []*api.AttributeValue
+	// 	for _, question := range questions {
+	// 		attributes = append(attributes, &api.AttributeValue{
+	// 			Attribute: api.Attribute{
+	// 				Name:        question.Name,
+	// 				ValueType:   question.ValueType,
+	// 				PartyTypes: question.PartyTypes,
+	// 				// TODO
+	// 				// LongFormulation:              question.LongFormulation,
+	// 				// ShortFormulation:             question.ShortFormulation,
+	// 				IsPersonallyIdentifiableInfo: question.IsPersonallyIdentifiableData,
+	// 			},
+	// 			Value: question.Answer,
+	// 		})
+	// 	}
+	// 	if err := l.store.Upsert(ctx, beneficiaryID, attributes); err != nil {
+	// 		l.logError(ctx, err, "failed to upsert beneficiary")
+	// 	}
+	// }
 
 	return nil
 }

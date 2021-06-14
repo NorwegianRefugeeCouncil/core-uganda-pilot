@@ -1,24 +1,15 @@
 package api
 
 import (
-	"fmt"
 	"github.com/nrc-no/core-kafka/pkg/expressions"
-	"strings"
 	"time"
-)
-
-type SubjectType string
-
-const (
-	BeneficiaryType SubjectType = "Beneficiary"
-	HouseholdType   SubjectType = "Household"
 )
 
 type Attribute struct {
 	ID                           string                 `json:"id" bson:"id"`
 	Name                         string                 `json:"name" bson:"name"`
 	ValueType                    expressions.ValueType  `json:"type" bson:"type"`
-	SubjectType                  SubjectType            `json:"subjectType" bson:"subjectType"`
+	PartyTypes                   []string               `json:"partyTypes" bson:"partyTypes"`
 	IsPersonallyIdentifiableInfo bool                   `json:"isPii" bson:"isPii"`
 	Translations                 []AttributeTranslation `json:"translations" bson:"translations"`
 }
@@ -108,69 +99,21 @@ type AttributeValue struct {
 	Value interface{}
 }
 
-type Beneficiary struct {
-	ID         string `json:"id" bson:"id"`
-	Attributes map[string]*AttributeValue
-}
-
-func (b *Beneficiary) GetAttribute(name string) *AttributeValue {
+func (b *Party) GetAttribute(name string) interface{} {
 	if v, ok := b.Attributes[name]; ok {
 		return v
 	}
 	return nil
 }
 
-func (b *Beneficiary) HasAttribute(name string) bool {
+func (b *Party) HasAttribute(name string) bool {
 	_, ok := b.Attributes[name]
 	return ok
 }
 
-func (b *Beneficiary) FindAttributeValue(name string) interface{} {
+func (b *Party) FindAttributeValue(name string) interface{} {
 	if v, ok := b.Attributes[name]; ok {
-		return v.Value
+		return v
 	}
 	return nil
-}
-
-func (b *Beneficiary) FindAge() *int {
-
-	birthDate := b.FindAttributeValue("birthDate")
-	if birthDate == nil {
-		return nil
-	}
-
-	parsedDate, err := time.Parse("2006-01-02", birthDate.(string))
-	if err != nil {
-		return nil
-	}
-
-	diff := time.Now().UTC().Sub(parsedDate)
-	years := diff.Hours() / 24 / 365
-	rounded := int(years)
-
-	return &rounded
-
-}
-
-func (b *Beneficiary) String() string {
-	hasFirstName := b.HasAttribute("firstName")
-	hasLastName := b.HasAttribute("lastName")
-
-	if hasFirstName && hasLastName {
-		return fmt.Sprintf("%s, %s",
-			strings.ToUpper(b.GetAttribute("lastName").Value.(string)),
-			b.GetAttribute("firstName").Value.(string),
-		)
-	}
-	if hasFirstName {
-		return b.GetAttribute("firstName").Value.(string)
-	}
-	if hasLastName {
-		return strings.ToUpper(b.GetAttribute("lastName").Value.(string))
-	}
-	return b.ID
-}
-
-type BeneficiaryList struct {
-	Items []*Beneficiary
 }

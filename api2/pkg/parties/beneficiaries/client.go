@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/nrc-no/core-kafka/pkg/parties/api"
+	"github.com/nrc-no/core-kafka/pkg/parties/beneficiaries/api"
 	"io/ioutil"
 	"net/http"
 )
@@ -20,11 +20,23 @@ func NewClient(basePath string) *Client {
 	}
 }
 
-func (c *Client) List(ctx context.Context) (*api.BeneficiaryList, error) {
+type ListOptions struct {
+	PartyTypes []string `json:"partyTypes" bson:"partyTypes"`
+}
+
+func (c *Client) List(ctx context.Context, listOptions ListOptions) (*api.BeneficiaryList, error) {
 	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/beneficiaries", nil)
 	if err != nil {
 		return nil, err
 	}
+	req = req.WithContext(ctx)
+	qry := req.URL.Query()
+	if len(listOptions.PartyTypes) > 0 {
+		for _, partyType := range listOptions.PartyTypes {
+			qry.Add("partyTypes", partyType)
+		}
+	}
+	req.URL.RawQuery = qry.Encode()
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -49,6 +61,7 @@ func (c *Client) Get(ctx context.Context, id string) (*api.Beneficiary, error) {
 	if err != nil {
 		return nil, err
 	}
+	req = req.WithContext(ctx)
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {

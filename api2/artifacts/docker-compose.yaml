@@ -4,7 +4,7 @@ services:
 
   mongo:
     image: mongo
-    restart: always
+    restart: on-failure
     ports:
       - 27017:27017
     environment:
@@ -13,7 +13,7 @@ services:
 
   mongo-express:
     image: mongo-express
-    restart: always
+    restart: on-failure
     ports:
       - 8090:8081
     environment:
@@ -29,6 +29,7 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    restart: on-failure
 
   broker:
     image: confluentinc/cp-server:6.1.1
@@ -39,6 +40,7 @@ services:
     ports:
       - "9092:9092"
       - "9101:9101"
+    restart: on-failure
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
@@ -67,6 +69,7 @@ services:
       - broker
     ports:
       - "8081:8081"
+    restart: on-failure
     environment:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'broker:29092'
@@ -81,6 +84,7 @@ services:
       - schema-registry
     ports:
       - "8083:8083"
+    restart: on-failure
     environment:
       CONNECT_BOOTSTRAP_SERVERS: 'broker:29092'
       CONNECT_REST_ADVERTISED_HOST_NAME: connect
@@ -114,6 +118,7 @@ services:
       - ksqldb-server
     ports:
       - "9021:9021"
+    restart: on-failure
     environment:
       CONTROL_CENTER_BOOTSTRAP_SERVERS: 'broker:29092'
       CONTROL_CENTER_CONNECT_CLUSTER: 'connect:8083'
@@ -135,6 +140,7 @@ services:
       - connect
     ports:
       - "8088:8088"
+    restart: on-failure
     environment:
       KSQL_CONFIG_DIR: "/etc/ksql"
       KSQL_BOOTSTRAP_SERVERS: "broker:29092"
@@ -156,6 +162,7 @@ services:
       - broker
       - connect
       - ksqldb-server
+    restart: on-failure
     entrypoint: /bin/sh
     tty: true
 
@@ -168,6 +175,7 @@ services:
       - broker
       - schema-registry
       - connect
+    restart: on-failure
     command: "bash -c 'echo Waiting for Kafka to be ready... && \
                        cub kafka-ready -b broker:29092 1 40 && \
                        echo Waiting for Confluent Schema Registry to be ready... && \
@@ -190,6 +198,7 @@ services:
       - 8082:8082
     hostname: rest-proxy
     container_name: rest-proxy
+    restart: on-failure
     environment:
       KAFKA_REST_HOST_NAME: rest-proxy
       KAFKA_REST_BOOTSTRAP_SERVERS: 'broker:29092'

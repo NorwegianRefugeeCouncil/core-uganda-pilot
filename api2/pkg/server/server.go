@@ -65,6 +65,9 @@ func NewServer(
 
 	// Attributes
 	attributeStore := attributes.NewStore(mongoClient)
+	if err := attributes.Init(ctx, attributeStore); err != nil {
+		panic(err)
+	}
 	attributeHandler := attributes.NewHandler(attributeStore)
 	router.Path("/apis/v1/attributes").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		attributeHandler.List(w, req)
@@ -169,6 +172,9 @@ func NewServer(
 
 	// Party Types
 	partyTypeStore := partytypes.NewStore(mongoClient)
+	if err := partytypes.Init(ctx, partyTypeStore); err != nil {
+		panic(err)
+	}
 	partyTypeHandler := partytypes.NewHandler(partyTypeStore)
 	router.Path("/apis/v1/partytypes").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		partyTypeHandler.List(w, req)
