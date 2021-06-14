@@ -18,16 +18,21 @@
 
                         {{ range $index, $attribute := .Attributes.Items}}
 
-                            {{ $attributeValue := $.Beneficiary.GetAttribute $attribute.ID}}
+                            {{ $values := index $.Beneficiary.Attributes $attribute.ID }}
 
-                            <div class="form-floating mb-3 shadow-sm">
-                                <input class="form-control"
-                                       name="attribute[{{$attribute.ID}}]"
-                                       id="attribute-{{$attribute.ID}}"
-                                       type="text"
-                                       value="{{if $attributeValue}}{{$attributeValue.Value}}{{end}}"/>
-                                <label for="attribute-{{$attribute.ID}}">{{.Name}}</label>
-                            </div>
+                            {{range $idx, $value := $values}}
+
+                                <div class="form-floating mb-3 shadow-sm">
+                                    <input class="form-control"
+                                           name="attribute[{{$attribute.ID}}]"
+                                           id="attribute-{{$attribute.ID}}-{{$idx}}"
+                                           type="text"
+                                           value="{{$value}}"/>
+                                    <label for="attribute-{{$attribute.ID}}-{{$idx}}">{{$attribute.Name}}</label>
+                                </div>
+
+                            {{end}}
+
                         {{end}}
 
                         <h4 class="display-6">Relationships</h4>

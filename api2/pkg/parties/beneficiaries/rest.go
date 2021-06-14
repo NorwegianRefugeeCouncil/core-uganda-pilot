@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core-kafka/pkg/parties/beneficiaries/api"
+	uuid "github.com/satori/go.uuid"
 	"io/ioutil"
 	"net/http"
 )
@@ -84,6 +85,24 @@ func (h *Handler) Create(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	beneficiary.ID = uuid.NewV4().String()
+
+	attrs := map[string][]string{}
+
+	for key, values := range beneficiary.Attributes {
+		if len(values) == 0 {
+			continue
+		}
+		for _, value := range values {
+			if len(value) == 0 {
+				continue
+			}
+			attrs[key] = append(attrs[key], value)
+		}
+	}
+
+	beneficiary.Attributes = attrs
 
 	if err := h.store.Create(ctx, &beneficiary); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

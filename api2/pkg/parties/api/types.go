@@ -42,9 +42,9 @@ type RelationshipTypeList struct {
 }
 
 type Party struct {
-	ID         string                 `json:"id" bson:"id"`
-	PartyTypes []string               `json:"partyTypes" bson:"partyTypes"`
-	Attributes map[string]interface{} `json:"attributes" bson:"attributes"`
+	ID         string              `json:"id" bson:"id"`
+	PartyTypes []string            `json:"partyTypes" bson:"partyTypes"`
+	Attributes map[string][]string `json:"attributes" bson:"attributes"`
 }
 
 type PartyList struct {
@@ -99,7 +99,7 @@ type AttributeValue struct {
 	Value interface{}
 }
 
-func (b *Party) GetAttribute(name string) interface{} {
+func (b *Party) GetAttribute(name string) []string {
 	if v, ok := b.Attributes[name]; ok {
 		return v
 	}

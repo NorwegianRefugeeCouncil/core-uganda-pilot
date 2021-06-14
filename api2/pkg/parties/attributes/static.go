@@ -4,6 +4,9 @@ import (
 	"context"
 	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var FirstNameAttribute = api.Attribute{
@@ -55,13 +58,28 @@ var BirthDateAttribute = api.Attribute{
 }
 
 func Init(ctx context.Context, store *Store) error {
+
+	if _, err := store.collection.Indexes().CreateOne(ctx,
+		mongo.IndexModel{
+			Keys:    bson.M{"id": 1},
+			Options: options.Index().SetUnique(true),
+		}); err != nil {
+		return err
+	}
+
 	for _, attribute := range []api.Attribute{
 		FirstNameAttribute,
 		LastNameAttribute,
 		BirthDateAttribute,
 	} {
-		if err := store.Create(ctx, &attribute); err != nil {
-			return err
+		err := store.Create(ctx, &attribute)
+		if err == nil {
+			return nil
+		}
+		if mongo.IsDuplicateKeyError(err) {
+			if err := store.Update(ctx, &attribute); err != nil {
+				return err
+			}
 		}
 	}
 	return nil

@@ -1,8 +1,6 @@
 package api
 
 import (
-	"fmt"
-	"strings"
 	"time"
 
 	"github.com/nrc-no/core-kafka/pkg/parties/api"
@@ -11,7 +9,7 @@ import (
 )
 
 type Beneficiary struct {
-	*api.Party `json:",inline"`
+	*api.Party `json:",inline" bson:",inline"`
 }
 
 type BeneficiaryList struct {
@@ -25,7 +23,7 @@ func NewBeneficiary(ID string) *Beneficiary {
 			PartyTypes: []string{
 				partytypes.BeneficiaryPartyType.ID,
 			},
-			Attributes: map[string]interface{}{},
+			Attributes: map[string][]string{},
 		},
 	}
 }
@@ -37,7 +35,17 @@ func (b *Beneficiary) FindAge() *int {
 		return nil
 	}
 
-	parsedDate, err := time.Parse("2006-01-02", birthDate.(string))
+	birthDateStrs, ok := birthDate.([]string)
+	if !ok {
+		return nil
+	}
+
+	if len(birthDateStrs) == 0 {
+		return nil
+	}
+
+	birthDateStr := birthDateStrs[0]
+	parsedDate, err := time.Parse("2006-01-02", birthDateStr)
 	if err != nil {
 		return nil
 	}
@@ -51,42 +59,5 @@ func (b *Beneficiary) FindAge() *int {
 }
 
 func (b *Beneficiary) String() string {
-	var hasFirstName bool
-	var hasLastName bool
-	var firstName string
-	var lastName string
-
-	if b.HasAttribute(attributes.FirstNameAttribute.ID) {
-		v, ok := b.GetAttribute(attributes.FirstNameAttribute.ID).(string)
-		if ok {
-			firstName = v
-			hasFirstName = false
-		} else {
-			hasFirstName = false
-		}
-	}
-
-	if b.HasAttribute(attributes.LastNameAttribute.ID) {
-		v, ok := b.GetAttribute(attributes.LastNameAttribute.ID).(string)
-		if ok {
-			lastName = v
-			hasLastName = false
-		} else {
-			hasLastName = false
-		}
-	}
-
-	if hasFirstName && hasLastName {
-		return fmt.Sprintf("%s, %s",
-			strings.ToUpper(lastName),
-			firstName,
-		)
-	}
-	if hasFirstName {
-		return firstName
-	}
-	if hasLastName {
-		return lastName
-	}
 	return b.ID
 }
