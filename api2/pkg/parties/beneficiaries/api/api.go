@@ -1,12 +1,11 @@
 package api
 
 import (
-	"strings"
-	"time"
-
 	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
+	"strings"
+	"time"
 )
 
 type Beneficiary struct {

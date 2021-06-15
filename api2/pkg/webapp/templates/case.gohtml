@@ -1,44 +1,57 @@
 {{define "case"}}
-
-    <!doctype html>
-    <html lang="en">
+<!doctype html>
+<html lang="en">
     {{template "head"}}
     <body class="bg-light">
-    {{template "casesnavbar"}}
-
-    <div class="container">
-        <div class="card">
-            <div class="card-body">
-                <h1 class="card-title">Case View</h1>
-                <form action="/cases/{{.Case.ID}}" method="post">
-                    <div class="form-floating mb-3">
-                        <select id="case-type" type="select" class="form-select" name="caseType" value="{{.Name}}">
-                            {{$caseTypeId := .Case.CaseTypeID}}
-                            {{range .CaseTypes.Items}}
-                                <option {{if .ID eq $caseTypeId}}selected{{end}} value="{{.ID}}">{{.Name}}</option>
-                            {{end}}
-                        </select>
-                        <label for="case-type">Type</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <select id="party-type" type="select" class="form-select" name="caseType" value="{{.Name}}">
-                            {{$partyId := .Case.PartyID}}
-                            {{range .Parties.Items}}
-                                <option {{if .ID eq $caseTypeId}}selected{{end}} value="{{.ID}}">{{.Name}}</option>
-                            {{end}}
-                        </select>
-                        <label for="party-type">Party</label>
-                    </div>
-                    <div class="form-check">
-                        <input id="done-check" class="form-check-input" type="checkbox" value="{{.Case.Done}}" {{if .Case.Done}}checked{{end}}>
-                        <label class="form-check-label" for="done-check">
-                            Done
-                        </label>
-                    </div>
-                    <a class="btn btn-primary" type="submit">Save</a>
-                </form>
+        {{template "navbar"}}
+        <div class="container">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="card-title">Case View</h1>
+                    <form action="/cases{{if .Case}}/{{.Case.ID}}{{end}}" method="post">
+                        <div class="form-floating mb-3">
+                            <select id="case-type" type="select" class="form-select" name="caseTypeId">
+                                {{if .Case}}
+                                    {{$caseTypeId := .Case.CaseTypeID}}
+                                    {{range .CaseTypes.Items}}
+                                        <option {{if .ID eq $caseTypeId}}selected{{end}} value="{{.ID}}">{{.Name}}</option>
+                                    {{end}}
+                                {{else}}
+                                    <option selected />
+                                    {{range .CaseTypes.Items}}
+                                        <option value="{{.ID}}">{{.Name}}</option>
+                                    {{end}}
+                                {{end}}
+                            </select>
+                            <label for="case-type">Type</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <select id="party-type" type="select" class="form-select" name="party">
+                                {{if .Case}}
+                                    {{$partyId := .Case.PartyID}}
+                                    {{range .Parties.Items}}
+                                        <option {{if .ID eq $partyId}}selected{{end}} value="{{.ID}}">{{.}}</option>
+                                    {{end}}
+                                {{else}}
+                                    <option selected />
+                                    {{range .Parties.Items}}
+                                        <option value="{{.ID}}">{{.}}</option>
+                                    {{end}}
+                                {{end}}
+                            </select>
+                            <label for="party">Party</label>
+                        </div>
+                        <div class="form-check">
+                            <input id="done-check" class="form-check-input" type="checkbox" value="{{.Case.Done}}" {{if .Case.Done}}checked{{end}}>
+                            <label class="form-check-label" for="done-check">
+                                Done
+                            </label>
+                        </div>
+                        <a class="btn btn-primary" type="submit">Save</a>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-
+    </body>
+</html>
 {{end}}

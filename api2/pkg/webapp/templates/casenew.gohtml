@@ -3,37 +3,43 @@
     <html lang="en">
         {{template "head"}}
         <body class="bg-light">
-            {{template "casesnavbar"}}
+            {{template "navbar"}}
             <div class="container">
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Create Case</h4>
-                        <form action="/cases/" method="post">
+                        <form action="/cases" method="post">
                             <div class="form-floating mb-3">
-                                <select id="case-type" type="select" class="form-select" name="caseType" value="{{.Name}}">
-                                    <option selected></option>
+                                <select id="case-type" type="select" class="form-select" name="caseTypeId">
                                     {{if .CaseTypes}}
+                                        <option selected></option>
                                         {{range .CaseTypes.Items}}
                                             <option value="{{.ID}}">{{.Name}}</option>
                                         {{end}}
+                                    {{else}}
+                                        <option selected disabled>No case types defined</option>
                                     {{end}}
                                 </select>
                                 <label for="case-type">Select Case Type</label>
                             </div>
                             <div class="form-floating mb-3">
-                                <select id="party-type" type="select" class="form-select" name="caseType" value="{{.Name}}">
-                                    <option selected></option>
+                                <select id="party" type="select" class="form-select" name="partyId">
                                     {{if .Parties}}
+                                        <option selected></option>
                                         {{range .Parties.Items}}
-                                            <option value="{{.ID}}">{{.Name}}</option>
+                                            {{$lastName := .FindAttributeValue "lastName"}}
+                                            {{$firstName := .FindAttributeValue "firstName"}}
+                                            <option value="{{.ID}}">{{$lastName}}, {{$firstName}}</option>
                                         {{end}}
+                                    {{else}}
+                                        <option selected disabled>No parties defined</option>
                                     {{end}}
                                 </select>
-                                <label for="party-type">Select Party</label>
+                                <label for="party">Select Party</label>
                             </div>
                             <div class="mb-3">
                                 <label for="description" class="form-label">Description</label>
-                                <textarea id="description" class="form-control" rows="3"></textarea>
+                                <textarea id="description" name="description" class="form-control" rows="3"></textarea>
                             </div>
                             <a class="btn btn-primary" type="submit">Save</a>
                         </form>
