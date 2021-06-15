@@ -1,4 +1,7 @@
 {{define "case"}}
+{{$caseId := .Case.ID}}
+{{$partyId := .Case.PartyID}}
+{{$caseTypeId := .Case.CaseTypeID}}
 <!doctype html>
 <html lang="en">
     {{template "head"}}
@@ -8,38 +11,21 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title">Case View</h4>
-                    <form action="/cases{{if .Case}}/{{.Case.ID}}{{end}}" method="post">
+                    <form action="/cases/{{$caseId}}" method="post">
                         <div class="form-floating mb-3">
-                            <select id="case-type" type="select" class="form-select" name="caseTypeId" {{if .Case}}disabled{{end}}>
-                                {{if .Case}}
-                                    {{$caseTypeId := .Case.CaseTypeID}}
-                                    {{range .CaseTypes.Items}}
-                                        <option {{if eq .ID $caseTypeId}}selected{{end}} value="{{.ID}}">{{.Name}}</option>
-                                    {{end}}
-                                {{else}}
-                                    <option selected />
-                                    {{range .CaseTypes.Items}}
-                                        <option value="{{.ID}}">{{.Name}}</option>
-                                    {{end}}
+                            <select id="case-type" type="select" class="form-select" name="caseTypeId" disabled>
+                                {{range .CaseTypes.Items}}
+                                    <option {{if eq .ID $caseTypeId}}selected{{end}} value="{{.ID}}">{{.Name}}</option>
                                 {{end}}
                             </select>
                             <label for="case-type">Type</label>
                         </div>
-                        <div class="form-floating mb-3">
-                                <select id="party-type" type="select" class="form-select" {{if .Case}}disabled{{end}}>
-                                    {{if .Case}}
-                                        {{$partyId := .Case.PartyID}}
-                                        {{range .Parties.Items}}
-                                            <option {{if eq .ID $partyId}}selected{{end}} value="{{.ID}}">{{.}}</option>
-                                        {{end}}
-                                    {{else}}
-                                        <option selected />
-                                        {{range .Parties.Items}}
-                                            <option value="{{.ID}}">{{.}}</option>
-                                        {{end}}
-                                    {{end}}
-                                </select>
-                            <label for="party">Party</label>
+                        <div class="mb-3">
+                            <h6 class="text-muted">Party</h6>
+                            <a class="btn btn-outline-secondary" href="/beneficiaries/{{$partyId}}">
+                                {{$party := .Parties.FindByID $partyId}}
+                                {{$party.String}}
+                            </a>
                         </div>
                         <div class="form-floating mb-3">
                             <textarea id="description" class="form-control" name="description" style="height: 100px">{{if .Case}}{{.Case.Description}}{{end}}</textarea>
