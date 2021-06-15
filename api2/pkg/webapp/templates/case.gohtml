@@ -10,7 +10,7 @@
                     <h4 class="card-title">Case View</h4>
                     <form action="/cases{{if .Case}}/{{.Case.ID}}{{end}}" method="post">
                         <div class="form-floating mb-3">
-                            <select id="case-type" type="select" class="form-select" name="caseTypeId" disabled>
+                            <select id="case-type" type="select" class="form-select" name="caseTypeId" {{if .Case}}disabled{{end}}>
                                 {{if .Case}}
                                     {{$caseTypeId := .Case.CaseTypeID}}
                                     {{range .CaseTypes.Items}}
@@ -26,19 +26,19 @@
                             <label for="case-type">Type</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <select id="party-type" type="select" class="form-select" name="party" disabled>
-                                {{if .Case}}
-                                    {{$partyId := .Case.PartyID}}
-                                    {{range .Parties.Items}}
-                                        <option {{if eq .ID $partyId}}selected{{end}} value="{{.ID}}">{{.}}</option>
+                                <select id="party-type" type="select" class="form-select" {{if .Case}}disabled{{end}}>
+                                    {{if .Case}}
+                                        {{$partyId := .Case.PartyID}}
+                                        {{range .Parties.Items}}
+                                            <option {{if eq .ID $partyId}}selected{{end}} value="{{.ID}}">{{.}}</option>
+                                        {{end}}
+                                    {{else}}
+                                        <option selected />
+                                        {{range .Parties.Items}}
+                                            <option value="{{.ID}}">{{.}}</option>
+                                        {{end}}
                                     {{end}}
-                                {{else}}
-                                    <option selected />
-                                    {{range .Parties.Items}}
-                                        <option value="{{.ID}}">{{.}}</option>
-                                    {{end}}
-                                {{end}}
-                            </select>
+                                </select>
                             <label for="party">Party</label>
                         </div>
                         <div class="form-floating mb-3">
@@ -46,7 +46,7 @@
                             <label for="description">Description</label>
                         </div>
                         <div class="form-check mb-3">
-                            <input id="done-check" class="form-check-input" type="checkbox" value="{{.Case.Done}}" {{if .Case.Done}}checked{{end}}>
+                            <input id="done-check" class="form-check-input" type="checkbox" name="done-check" {{if .Case.Done}}checked{{end}}>
                             <label class="form-check-label" for="done-check">
                                 Done
                             </label>

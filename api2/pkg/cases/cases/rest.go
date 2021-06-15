@@ -102,7 +102,8 @@ func (h *Handler) Put(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	r.CaseTypeID = payload.CaseTypeID
+	r.Description = payload.Description
+	r.Done = payload.Done
 
 	if err := h.store.Update(ctx, r); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -16,6 +16,7 @@
                             <tr>
                                 <th scope="col">Case Type</th>
                                 <th scope="col">Party</th>
+                                <th scope="col">Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -28,6 +29,7 @@
                                         <td>{{$casetype.Name}}</td>
                                         {{$party := $parties.FindByID .PartyID}}
                                         <td>{{$party.String}}</td>
+                                        <td>{{if .Done}}<span class="text-success">Done</span>{{else}}<span class="text-danger">Open</span>{{end}}</td>
                                     </tr>
                             {{end}}
                         {{else}}

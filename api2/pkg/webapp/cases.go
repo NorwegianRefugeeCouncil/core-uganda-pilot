@@ -51,6 +51,11 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	if req.Method == "POST" {
+		h.PostCase(ctx, id, w, req)
+		return
+	}
+
 	var kase *casesapi.Case
 	var kaseTypes *casesapi.CaseTypeList
 
@@ -89,11 +94,6 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 	party, err := h.partyClient.Get(waitCtx, kase.PartyID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	if req.Method == "POST" {
-		h.PostCase(ctx, id, w, req)
 		return
 	}
 
@@ -158,6 +158,7 @@ func (h *Handler) PostCase(ctx context.Context, id string, w http.ResponseWriter
 	caseTypeId := req.Form.Get("caseTypeId")
 	partyId := req.Form.Get("partyId")
 	description := req.Form.Get("description")
+	done := req.Form.Get("done-check")
 
 	if id == "" {
 		_, err := h.caseClient.Create(ctx, &casesapi.Case{
@@ -173,9 +174,8 @@ func (h *Handler) PostCase(ctx context.Context, id string, w http.ResponseWriter
 	} else {
 		_, err := h.caseClient.Update(ctx, &casesapi.Case{
 			ID:          id,
-			CaseTypeID:  caseTypeId,
-			PartyID:     partyId,
 			Description: description,
+			Done:        done == "on",
 		})
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
