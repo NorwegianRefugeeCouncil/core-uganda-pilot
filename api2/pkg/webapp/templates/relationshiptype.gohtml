@@ -145,6 +145,10 @@
         const secondPartyRole = document.getElementById("secondPartyRole")
         const secondPartyRoleLabel = document.getElementById("secondPartyRoleLabel")
 
+        const mirrorPartyRoles = (event) => {
+            secondPartyRole.value = event.target.value
+        }
+
         // handle case where page is loaded and isDirectionalCheckbox is false
         document.addEventListener("DOMContentLoaded", (event) => {
             if (!isDirectionalCheckbox.checked) {
@@ -152,6 +156,8 @@
                 firstPartyRoleLabel.innerHTML = "Role"
                 secondPartyRole.classList.add("visually-hidden")
                 secondPartyRoleLabel.classList.add("visually-hidden")
+
+                firstPartyRole.addEventListener("change", mirrorPartyRoles)
 
             }
         })
@@ -164,10 +170,14 @@
                 secondPartyRole.classList.remove("visually-hidden")
                 secondPartyRoleLabel.classList.remove("visually-hidden")
 
+                firstPartyRole.removeEventListener("change", mirrorPartyRoles)
+
             } else {
                 firstPartyRoleLabel.innerHTML = "Role"
                 secondPartyRole.classList.add("visually-hidden")
                 secondPartyRoleLabel.classList.add("visually-hidden")
+
+                firstPartyRole.addEventListener("change", mirrorPartyRoles)
             }
         })
 
