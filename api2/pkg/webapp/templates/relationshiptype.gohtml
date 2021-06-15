@@ -153,14 +153,20 @@
         const secondPartyType = document.getElementById("secondPartyType")
         const secondPartyTypeLabel = document.getElementById("secondPartyTypeLabel")
 
+        // helper function to duplicate the input from firstPartyRole
+        // onto secondPartyRole
         const mirrorPartyRoles = (event) => {
             secondPartyRole.value = event.target.value
         }
 
+        // helper function to duplicate the selection from firstPartyType
+        // select onto secondPartyType select
         const mirrorPartyTypes = (event) => {
             setSelected("secondPartyType", event.target.value)
         }
 
+        // helper function to modify inputs to present a non-directional relationship
+        // to the user
         const setupNonDirectionalRelationship = () => {
             firstPartyRoleLabel.innerHTML = "Role"
 
@@ -177,6 +183,8 @@
             firstPartyType.addEventListener("change", mirrorPartyTypes)
         }
 
+        // helper function to modify inputs to present a directional relationship
+        // to the user
         const setupDirectionalRelationship = () => {
             firstPartyRoleLabel.innerHTML = "First Party Role"
 
@@ -206,6 +214,8 @@
             setupDirectionalRelationship() :
             setupNonDirectionalRelationship()
         })
+
+        // ----------------------------------------------
 
     </script>
 
