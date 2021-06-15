@@ -1,47 +1,46 @@
-
 {{define "cases"}}
-
     <!doctype html>
     <html lang="en">
     {{template "head"}}
     <body class="bg-light">
-        {{template "navbar"}}
+    {{template "navbar"}}
 
-        <div class="container mt-4">
-            <div class="row">
-                <div class="col">
-                    <a href='/cases/new' class='btn btn-primary mb-3'>Open New Case</a>
-                    <table class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th scope="col">Case Type</th>
-                                <th scope="col">Party</th>
-                                <th scope="col">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {{ if .Cases.Items}}
-                            {{$caseTypes := .CaseTypes}}
-                            {{$parties := .Parties}}
-                            {{ range .Cases.Items }}
-                                    <tr onclick="window.location.href = '/cases/{{.ID}}'" style="cursor: pointer;">
-                                        {{$casetype := $caseTypes.FindByID .CaseTypeID}}
-                                        <td>{{$casetype.Name}}</td>
-                                        {{$party := $parties.FindByID .PartyID}}
-                                        <td>{{$party.String}}</td>
-                                        <td>{{if .Done}}<span class="text-success">Done</span>{{else}}<span class="text-danger">Open</span>{{end}}</td>
-                                    </tr>
-                            {{end}}
-                        {{else}}
-                            <tr>
-                                <td colspan="3">No open cases</td>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+                <a href='/cases/new' class='btn btn-primary mb-3'>Open New Case</a>
+                <table class="table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">Case Type</th>
+                        <th scope="col">Party</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{ if .Cases.Items}}
+                        {{$caseTypes := .CaseTypes}}
+                        {{$parties := .Parties}}
+                        {{ range .Cases.Items }}
+                            <tr onclick="window.location.href = '/cases/{{.ID}}'" style="cursor: pointer;">
+                                {{$casetype := $caseTypes.FindByID .CaseTypeID}}
+                                <td>{{$casetype.Name}}</td>
+                                {{$party := $parties.FindByID .PartyID}}
+                                <td>{{$party.String}}</td>
+                                <td>{{if .Done}}<span class="text-success">Done</span>{{else}}<span class="text-danger">Open</span>{{end}}
+                                </td>
                             </tr>
                         {{end}}
-                        </tbody>
-                    </table>
-                </div>
+                    {{else}}
+                        <tr>
+                            <td colspan="3">No open cases</td>
+                        </tr>
+                    {{end}}
+                    </tbody>
+                </table>
             </div>
         </div>
+    </div>
     </body>
     </html>
 
