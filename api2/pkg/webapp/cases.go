@@ -57,7 +57,7 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 	var kaseTypes *casesapi.CaseTypeList
 
 	var party *parties.Party
-	var partyList *parties.PartyList
+	// var partyList *parties.PartyList
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
@@ -73,7 +73,7 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 
 	g.Go(func() error {
 		var err error
-		kaseTypes, err = caseTypesClient.List(waitCtx)
+		kaseTypes, err = caseTypesClient.List(waitCtx, casetypes.ListOptions{})
 		return err
 	})
 
@@ -83,13 +83,13 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 		return err
 	})
 
-	listOptions := &parties.ListOptions{} //TODO
+	// listOptions := &parties.ListOptions{} //TODO
 
-	g.Go(func() error {
-		var err error
-		partyList, err = partyClient.List(waitCtx, *listOptions)
-		return err
-	})
+	// g.Go(func() error {
+	// 	var err error
+	// partyList, err = partyClient.List(waitCtx, *listOptions)
+	// 	return err
+	// })
 
 	if err := g.Wait(); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -126,11 +126,11 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 
 	g.Go(func() error {
 		var err error
-		caseTypes, err = caseTypesClient.List(waitCtx)
+		caseTypes, err = caseTypesClient.List(waitCtx, casetypes.ListOptions{})
 		return err
 	})
 
-	listOptions := &parties.ListOptions{} //TODO
+	listOptions := &parties.ListOptions{} // TODO
 	g.Go(func() error {
 		var err error
 		p, err = partiesClient.List(waitCtx, *listOptions)

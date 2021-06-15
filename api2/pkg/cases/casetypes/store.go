@@ -31,9 +31,15 @@ func (s *Store) Get(ctx context.Context, id string) (*api.CaseType, error) {
 	return &r, nil
 }
 
-func (s *Store) List(ctx context.Context) (*api.CaseTypeList, error) {
+func (s *Store) List(ctx context.Context, options ListOptions) (*api.CaseTypeList, error) {
 
 	filter := bson.M{}
+
+	if len(options.PartyTypes) > 0 {
+		filter["partyTypeId"] = bson.M{
+			"$in": options.PartyTypes,
+		}
+	}
 
 	res, err := s.collection.Find(ctx, filter)
 	if err != nil {

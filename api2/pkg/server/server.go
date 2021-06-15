@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"errors"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core-kafka/pkg/cases/cases"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
@@ -20,12 +21,32 @@ import (
 )
 
 type Server struct {
-	mongoClient *mongo.Client
+	mongoClient             *mongo.Client
+	attributeStore          *attributes.Store
+	attributeHandler        *attributes.Handler
+	vulnerabilityStore      *vulnerability.Store
+	vulnerabilityHandler    *vulnerability.Handler
+	beneficiaryStore        *beneficiaries.Store
+	beneficiaryHandler      *beneficiaries.Handler
+	relationshipTypeStore   *relationshiptypes.Store
+	relationshipTypeHandler *relationshiptypes.Handler
+	relationshipStore       *relationships.Store
+	relationshipHandler     *relationships.Handler
+	partyStore              *parties.Store
+	partyHandler            *parties.Handler
+	partyTypeStore          *partytypes.Store
+	partyTypeHandler        *partytypes.Handler
+	caseTypeStore           *casetypes.Store
+	caseTypeHandler         *casetypes.Handler
+	caseStore               *cases.Store
+	caseHandler             *cases.Handler
+	webAppHandler           *webapp.Handler
+	httpServer              *http.Server
 }
 
 func NewServer(
 	ctx context.Context,
-) {
+) *Server {
 
 	mongoClient, err := mongo.NewClient(options.Client().SetAuth(
 		options.Credential{
@@ -202,18 +223,18 @@ func NewServer(
 	})
 	// CaseTypes
 	caseTypeStore := casetypes.NewStore(mongoClient)
-	castTypeHandler := casetypes.NewHandler(caseTypeStore)
+	caseTypeHandler := casetypes.NewHandler(caseTypeStore)
 	router.Path("/apis/v1/casetypes").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		castTypeHandler.List(w, req)
+		caseTypeHandler.List(w, req)
 	})
 	router.Path("/apis/v1/casetypes/{id}").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		castTypeHandler.Get(w, req)
+		caseTypeHandler.Get(w, req)
 	})
 	router.Path("/apis/v1/casetypes/{id}").Methods("PUT").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		castTypeHandler.Put(w, req)
+		caseTypeHandler.Put(w, req)
 	})
 	router.Path("/apis/v1/casetypes").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		castTypeHandler.Post(w, req)
+		caseTypeHandler.Post(w, req)
 	})
 
 	// WebApp
@@ -288,5 +309,44 @@ func NewServer(
 		panic(err)
 	}
 
-	http.ListenAndServe(":9000", router)
+	httpServer := &http.Server{
+		Addr:    ":9000",
+		Handler: router,
+	}
+
+	srv := &Server{
+		mongoClient:             mongoClient,
+		attributeStore:          attributeStore,
+		attributeHandler:        attributeHandler,
+		vulnerabilityStore:      vulnerabilityStore,
+		vulnerabilityHandler:    vulnerabilityHandler,
+		beneficiaryStore:        beneficiariesStore,
+		beneficiaryHandler:      beneficiaryHandler,
+		relationshipTypeStore:   relationshipTypeStore,
+		relationshipTypeHandler: relationshipTypeHandler,
+		relationshipStore:       relationshipStore,
+		relationshipHandler:     relationshipHandler,
+		partyStore:              partyStore,
+		partyHandler:            partyHandler,
+		partyTypeStore:          partyTypeStore,
+		partyTypeHandler:        partyTypeHandler,
+		caseTypeStore:           caseTypeStore,
+		caseTypeHandler:         caseTypeHandler,
+		caseStore:               caseStore,
+		caseHandler:             caseHandler,
+		webAppHandler:           webAppHandler,
+		httpServer:              httpServer,
+	}
+
+	go func() {
+		if err := http.ListenAndServe(":9000", router); err != nil {
+			if errors.Is(err, context.Canceled) {
+				return
+			}
+			panic(err)
+		}
+	}()
+
+	return srv
+
 }

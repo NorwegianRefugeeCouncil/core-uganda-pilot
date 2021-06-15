@@ -48,7 +48,17 @@ func (h *Handler) Get(w http.ResponseWriter, req *http.Request) {
 func (h *Handler) List(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	ret, err := h.store.List(ctx)
+	var listOptions ListOptions
+	qry := req.URL.Query()
+	for _, partyType := range qry["partyTypes"] {
+		if _, err := uuid.FromString(partyType); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		listOptions.PartyTypes = append(listOptions.PartyTypes, partyType)
+	}
+
+	ret, err := h.store.List(ctx, listOptions)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

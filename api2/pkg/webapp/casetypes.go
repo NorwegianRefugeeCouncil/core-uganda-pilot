@@ -19,7 +19,7 @@ func (h *Handler) CaseTypes(w http.ResponseWriter, req *http.Request) {
 
 	var caseTypes *casesapi.CaseTypeList
 
-	caseTypes, err := caseTypesClient.List(ctx)
+	caseTypes, err := caseTypesClient.List(ctx, casetypes.ListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/nrc-no/core-kafka/pkg/cases/api"
+	uuid "github.com/satori/go.uuid"
 	"io/ioutil"
 	"net/http"
 )
@@ -20,11 +21,27 @@ func NewClient(basePath string) *Client {
 	}
 }
 
-func (c *Client) List(ctx context.Context) (*api.CaseTypeList, error) {
+type ListOptions struct {
+	PartyTypes []string `json:"partyTypes"`
+}
+
+func (c *Client) List(ctx context.Context, listOptions ListOptions) (*api.CaseTypeList, error) {
 	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/casetypes", nil)
 	if err != nil {
 		return nil, err
 	}
+
+	qry := req.URL.Query()
+	if len(listOptions.PartyTypes) > 0 {
+		for _, partyType := range listOptions.PartyTypes {
+			_, err := uuid.FromString(partyType)
+			if err != nil {
+				return nil, fmt.Errorf("invalid party type: %v", err)
+			}
+			qry.Add("partyTypes", partyType)
+		}
+	}
+	req.URL.RawQuery = qry.Encode()
 
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)
