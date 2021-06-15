@@ -32,11 +32,9 @@
                         <div class="card-body">
                             <div class="form-check">
                                 <input autofocus
-                                    {{if .RelationshipType}}
-                                    {{if .RelationshipType.IsDirectional}}
+                                    {{if .RelationshipType}}{{if .RelationshipType.IsDirectional}}
                                     checked
-                                    {{end}}
-                                    {{end}}
+                                    {{end}}{{end}}
                                     class="form-control form-check-input"
                                     type="checkbox"
                                     id="isDirectional"
