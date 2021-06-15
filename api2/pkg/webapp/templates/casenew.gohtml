@@ -23,13 +23,11 @@
                                 <label for="case-type">Select Case Type</label>
                             </div>
                             <div class="form-floating mb-3">
-                                <select id="party" type="select" class="form-select" name="partyId">
+                                <select id="party" class="form-select" name="partyId">
                                     {{if .Parties}}
                                         <option selected></option>
                                         {{range .Parties.Items}}
-                                            {{$lastName := .FindAttributeValue "lastName"}}
-                                            {{$firstName := .FindAttributeValue "firstName"}}
-                                            <option value="{{.ID}}">{{$lastName}}, {{$firstName}}</option>
+                                            <option value="{{.ID}}">{{.}}</option>
                                         {{end}}
                                     {{else}}
                                         <option selected disabled>No parties defined</option>

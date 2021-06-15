@@ -5,6 +5,7 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/expressions"
 	i81n "github.com/nrc-no/core-kafka/pkg/i81n/api/v1"
 	"github.com/nrc-no/core-kafka/pkg/parties/api"
+	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
 	api2 "github.com/nrc-no/core-kafka/pkg/parties/beneficiaries/api"
 	"github.com/nrc-no/core-kafka/pkg/testhelpers"
 	uuid "github.com/satori/go.uuid"
@@ -27,7 +28,7 @@ func TestStore(t *testing.T) {
 		ID: ID,
 		Attributes: map[string]api.AttributeValue{
 			"firstName": api.AttributeValue{
-				Attribute: api.Attribute{
+				Attribute: attributes.Attribute{
 					Name:        "firstName",
 					ValueType:   expressions.ValueType{},
 					SubjectType: api.BeneficiaryType,

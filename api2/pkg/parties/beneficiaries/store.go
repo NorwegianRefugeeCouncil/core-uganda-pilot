@@ -3,6 +3,7 @@ package beneficiaries
 import (
 	"context"
 	"github.com/nrc-no/core-kafka/pkg/parties/beneficiaries/api"
+	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -19,6 +20,7 @@ func NewStore(mongoClient *mongo.Client) *Store {
 }
 
 func (s *Store) Create(ctx context.Context, beneficiary *api.Beneficiary) error {
+	beneficiary.AddPartyType(partytypes.IndividualPartyType.ID)
 	_, err := s.collection.InsertOne(ctx, beneficiary)
 	if err != nil {
 		return err
@@ -26,9 +28,10 @@ func (s *Store) Create(ctx context.Context, beneficiary *api.Beneficiary) error 
 	return nil
 }
 
-func (s *Store) Upsert(ctx context.Context, ID string, beneficiary *api.Beneficiary) error {
+func (s *Store) Upsert(ctx context.Context, beneficiary *api.Beneficiary) error {
+	beneficiary.AddPartyType(partytypes.IndividualPartyType.ID)
 	_, err := s.collection.UpdateOne(ctx, bson.M{
-		"id": ID,
+		"id": beneficiary.ID,
 	}, bson.M{
 		"$set": bson.M{
 			"attributes": beneficiary.Attributes,

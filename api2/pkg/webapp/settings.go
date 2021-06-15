@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core-kafka/pkg/expressions"
-	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	uuid "github.com/satori/go.uuid"
@@ -26,7 +25,7 @@ func (h *Handler) Attributes(w http.ResponseWriter, req *http.Request) {
 	cli := attributes.NewClient("http://localhost:9000")
 
 	if req.Method == "POST" {
-		h.PostAttribute(ctx, cli, &api.Attribute{}, w, req)
+		h.PostAttribute(ctx, cli, &attributes.Attribute{}, w, req)
 		return
 	}
 
@@ -90,7 +89,7 @@ func (h *Handler) Attribute(w http.ResponseWriter, req *http.Request) {
 
 }
 
-func (h *Handler) PostAttribute(ctx context.Context, cli *attributes.Client, attribute *api.Attribute, w http.ResponseWriter, req *http.Request) {
+func (h *Handler) PostAttribute(ctx context.Context, cli *attributes.Client, attribute *attributes.Attribute, w http.ResponseWriter, req *http.Request) {
 
 	if err := req.ParseForm(); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -99,7 +98,7 @@ func (h *Handler) PostAttribute(ctx context.Context, cli *attributes.Client, att
 
 	values := req.Form
 
-	translationMap := map[string]*api.AttributeTranslation{}
+	translationMap := map[string]*attributes.AttributeTranslation{}
 
 	for key, v := range values {
 		if !strings.HasPrefix(key, "translations.") {
@@ -120,7 +119,7 @@ func (h *Handler) PostAttribute(ctx context.Context, cli *attributes.Client, att
 		}
 
 		if _, ok := translationMap[locale]; !ok {
-			translationMap[locale] = &api.AttributeTranslation{
+			translationMap[locale] = &attributes.AttributeTranslation{
 				Locale: locale,
 			}
 		}
@@ -137,7 +136,7 @@ func (h *Handler) PostAttribute(ctx context.Context, cli *attributes.Client, att
 
 	}
 
-	var translations []api.AttributeTranslation
+	var translations []attributes.AttributeTranslation
 	for _, translation := range translationMap {
 		translations = append(translations, *translation)
 	}
@@ -154,7 +153,7 @@ func (h *Handler) PostAttribute(ctx context.Context, cli *attributes.Client, att
 	attribute.Translations = translations
 	attribute.IsPersonallyIdentifiableInfo = values.Get("isPersonallyIdentifiableInfo") == "true"
 
-	var out *api.Attribute
+	var out *attributes.Attribute
 
 	if isNew {
 		var err error

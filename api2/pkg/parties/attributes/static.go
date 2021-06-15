@@ -2,17 +2,16 @@ package attributes
 
 import (
 	"context"
-	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var FirstNameAttribute = api.Attribute{
+var FirstNameAttribute = Attribute{
 	ID:   "8514da51-aad5-4fb4-a797-8bcc0c969b27",
 	Name: "firstName",
-	Translations: []api.AttributeTranslation{
+	Translations: []AttributeTranslation{
 		{
 			Locale:           "en",
 			LongFormulation:  "First Name",
@@ -25,10 +24,10 @@ var FirstNameAttribute = api.Attribute{
 	},
 }
 
-var LastNameAttribute = api.Attribute{
+var LastNameAttribute = Attribute{
 	ID:   "21079bbc-e04b-4fe8-897f-644d73af0d9e",
 	Name: "lastName",
-	Translations: []api.AttributeTranslation{
+	Translations: []AttributeTranslation{
 		{
 			Locale:           "en",
 			LongFormulation:  "Last Name",
@@ -41,10 +40,10 @@ var LastNameAttribute = api.Attribute{
 	},
 }
 
-var BirthDateAttribute = api.Attribute{
+var BirthDateAttribute = Attribute{
 	ID:   "87fe07d7-e6a7-4428-8086-3842b69f3665",
 	Name: "birthDate",
-	Translations: []api.AttributeTranslation{
+	Translations: []AttributeTranslation{
 		{
 			Locale:           "en",
 			LongFormulation:  "Birth Date",
@@ -67,7 +66,7 @@ func Init(ctx context.Context, store *Store) error {
 		return err
 	}
 
-	for _, attribute := range []api.Attribute{
+	for _, attribute := range []Attribute{
 		FirstNameAttribute,
 		LastNameAttribute,
 		BirthDateAttribute,

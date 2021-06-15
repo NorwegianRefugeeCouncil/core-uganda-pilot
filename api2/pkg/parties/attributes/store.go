@@ -2,7 +2,6 @@ package attributes
 
 import (
 	"context"
-	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -17,18 +16,18 @@ func NewStore(mongoClient *mongo.Client) *Store {
 	}
 }
 
-func (s *Store) List(ctx context.Context) (*api.AttributeList, error) {
+func (s *Store) List(ctx context.Context) (*AttributeList, error) {
 
 	cursor, err := s.collection.Find(ctx, bson.M{})
 	if err != nil {
 		return nil, err
 	}
-	var list []*api.Attribute
+	var list []*Attribute
 	for {
 		if !cursor.Next(ctx) {
 			break
 		}
-		var a api.Attribute
+		var a Attribute
 		if err := cursor.Decode(&a); err != nil {
 			return nil, err
 		}
@@ -38,13 +37,13 @@ func (s *Store) List(ctx context.Context) (*api.AttributeList, error) {
 		return nil, cursor.Err()
 	}
 
-	return &api.AttributeList{
+	return &AttributeList{
 		Items: list,
 	}, nil
 
 }
 
-func (s *Store) Create(ctx context.Context, attribute *api.Attribute) error {
+func (s *Store) Create(ctx context.Context, attribute *Attribute) error {
 	_, err := s.collection.InsertOne(ctx, attribute)
 	if err != nil {
 		return err
@@ -52,21 +51,21 @@ func (s *Store) Create(ctx context.Context, attribute *api.Attribute) error {
 	return nil
 }
 
-func (s *Store) Get(ctx context.Context, id string) (*api.Attribute, error) {
+func (s *Store) Get(ctx context.Context, id string) (*Attribute, error) {
 	result := s.collection.FindOne(ctx, bson.M{
 		"id": id,
 	})
 	if result.Err() != nil {
 		return nil, result.Err()
 	}
-	var a api.Attribute
+	var a Attribute
 	if err := result.Decode(&a); err != nil {
 		return nil, err
 	}
 	return &a, nil
 }
 
-func (s *Store) Update(ctx context.Context, attribute *api.Attribute) error {
+func (s *Store) Update(ctx context.Context, attribute *Attribute) error {
 	_, err := s.collection.UpdateOne(ctx, bson.M{
 		"id": attribute.ID,
 	}, bson.M{

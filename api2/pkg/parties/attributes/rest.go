@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	"io/ioutil"
 	"net/http"
 )
@@ -77,7 +76,7 @@ func (h *Handler) Post(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var a api.Attribute
+	var a Attribute
 	if err := json.Unmarshal(bodyBytes, &a); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -109,7 +108,7 @@ func (h *Handler) Update(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var a api.Attribute
+	var a Attribute
 	if err := json.Unmarshal(bodyBytes, &a); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

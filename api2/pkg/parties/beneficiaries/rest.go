@@ -89,7 +89,6 @@ func (h *Handler) Create(w http.ResponseWriter, req *http.Request) {
 	beneficiary.ID = uuid.NewV4().String()
 
 	attrs := map[string][]string{}
-
 	for key, values := range beneficiary.Attributes {
 		if len(values) == 0 {
 			continue
@@ -149,7 +148,7 @@ func (h *Handler) Update(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := h.store.Upsert(ctx, beneficiary.ID, &beneficiary); err != nil {
+	if err := h.store.Upsert(ctx, &beneficiary); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

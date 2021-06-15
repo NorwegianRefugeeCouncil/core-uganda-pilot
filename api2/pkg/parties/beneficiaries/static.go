@@ -45,6 +45,9 @@ func SeedDatabase(ctx context.Context, store *Store) error {
 			if !mongo.IsDuplicateKeyError(err) {
 				return err
 			}
+			if err := store.Upsert(ctx, beneficiary); err != nil {
+				return err
+			}
 		}
 	}
 	return nil

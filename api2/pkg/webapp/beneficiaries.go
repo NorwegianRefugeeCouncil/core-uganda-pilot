@@ -68,7 +68,7 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 	var bList *api2.BeneficiaryList
 	var relationshipsForBeneficiary *api.RelationshipList
 	var relationshipTypes *api.RelationshipTypeList
-	var attrs *api.AttributeList
+	var attrs *attributes.AttributeList
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
@@ -138,7 +138,7 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 func (h *Handler) PostBeneficiary(
 	ctx context.Context,
 	bCli *beneficiaries.Client,
-	attributes []*api.Attribute,
+	attrs []*attributes.Attribute,
 	id string,
 	w http.ResponseWriter,
 	req *http.Request) {
@@ -150,8 +150,8 @@ func (h *Handler) PostBeneficiary(
 
 	b := api2.NewBeneficiary(id)
 
-	attributeMap := map[string]*api.Attribute{}
-	for _, attribute := range attributes {
+	attributeMap := map[string]*attributes.Attribute{}
+	for _, attribute := range attrs {
 		attributeMap[attribute.ID] = attribute
 	}
 

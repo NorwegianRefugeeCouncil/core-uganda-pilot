@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	"io/ioutil"
 	"net/http"
 )
@@ -20,7 +19,7 @@ func NewClient(basePath string) *Client {
 	}
 }
 
-func (c *Client) List(ctx context.Context) (*api.AttributeList, error) {
+func (c *Client) List(ctx context.Context) (*AttributeList, error) {
 	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/attributes", nil)
 	if err != nil {
 		return nil, err
@@ -41,14 +40,14 @@ func (c *Client) List(ctx context.Context) (*api.AttributeList, error) {
 	if err != nil {
 		return nil, err
 	}
-	var list api.AttributeList
+	var list AttributeList
 	if err := json.Unmarshal(bodyBytes, &list); err != nil {
 		return nil, err
 	}
 	return &list, nil
 }
 
-func (c *Client) Get(ctx context.Context, id string) (*api.Attribute, error) {
+func (c *Client) Get(ctx context.Context, id string) (*Attribute, error) {
 	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/attributes/"+id, nil)
 	if err != nil {
 		return nil, err
@@ -65,14 +64,14 @@ func (c *Client) Get(ctx context.Context, id string) (*api.Attribute, error) {
 	if err != nil {
 		return nil, err
 	}
-	var v api.Attribute
+	var v Attribute
 	if err := json.Unmarshal(bodyBytes, &v); err != nil {
 		return nil, err
 	}
 	return &v, nil
 }
 
-func (c *Client) Update(ctx context.Context, attribute *api.Attribute) (*api.Attribute, error) {
+func (c *Client) Update(ctx context.Context, attribute *Attribute) (*Attribute, error) {
 	bodyBytes, err := json.Marshal(attribute)
 	if err != nil {
 		return nil, err
@@ -95,14 +94,14 @@ func (c *Client) Update(ctx context.Context, attribute *api.Attribute) (*api.Att
 	if err != nil {
 		return nil, err
 	}
-	var v api.Attribute
+	var v Attribute
 	if err := json.Unmarshal(responseBytes, &v); err != nil {
 		return nil, err
 	}
 	return &v, nil
 }
 
-func (c *Client) Create(ctx context.Context, attribute *api.Attribute) (*api.Attribute, error) {
+func (c *Client) Create(ctx context.Context, attribute *Attribute) (*Attribute, error) {
 	bodyBytes, err := json.Marshal(attribute)
 	if err != nil {
 		return nil, err
@@ -125,7 +124,7 @@ func (c *Client) Create(ctx context.Context, attribute *api.Attribute) (*api.Att
 	if err != nil {
 		return nil, err
 	}
-	var v api.Attribute
+	var v Attribute
 	if err := json.Unmarshal(responseBytes, &v); err != nil {
 		return nil, err
 	}

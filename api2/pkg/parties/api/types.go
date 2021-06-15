@@ -1,24 +1,11 @@
 package api
 
 import (
-	"github.com/nrc-no/core-kafka/pkg/expressions"
+	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
+	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
+	"strings"
 	"time"
 )
-
-type Attribute struct {
-	ID                           string                 `json:"id" bson:"id"`
-	Name                         string                 `json:"name" bson:"name"`
-	ValueType                    expressions.ValueType  `json:"type" bson:"type"`
-	PartyTypes                   []string               `json:"partyTypes" bson:"partyTypes"`
-	IsPersonallyIdentifiableInfo bool                   `json:"isPii" bson:"isPii"`
-	Translations                 []AttributeTranslation `json:"translations" bson:"translations"`
-}
-
-type AttributeTranslation struct {
-	Locale           string `json:"locale" bson:"locale"`
-	LongFormulation  string `json:"longFormulation" bson:"longFormulation"`
-	ShortFormulation string `json:"shortFormulation" bson:"shortFormulation"`
-}
 
 type RelationshipTypeRule struct {
 	PartyTypeRule `json:",inline" bson:",inline"`
@@ -41,10 +28,54 @@ type RelationshipTypeList struct {
 	Items []*RelationshipType `json:"items" bson:"items"`
 }
 
+type PartyAttributes map[string][]string
+
+func (a PartyAttributes) Get(key string) string {
+	if values, ok := a[key]; ok {
+		if len(values) > 0 {
+			return values[0]
+		}
+	}
+	return ""
+}
+
+func (a PartyAttributes) Set(key, value string) {
+	a[key] = []string{value}
+}
+
+func (a PartyAttributes) Add(key, value string) {
+	a[key] = append(a[key], value)
+}
+
 type Party struct {
-	ID         string              `json:"id" bson:"id"`
-	PartyTypes []string            `json:"partyTypes" bson:"partyTypes"`
-	Attributes map[string][]string `json:"attributes" bson:"attributes"`
+	ID         string          `json:"id" bson:"id"`
+	PartyTypes []string        `json:"partyTypes" bson:"partyTypes"`
+	Attributes PartyAttributes `json:"attributes" bson:"attributes"`
+}
+
+func (p *Party) HasPartyType(partyType string) bool {
+	for _, p := range p.PartyTypes {
+		if p == partyType {
+			return true
+		}
+	}
+	return false
+}
+
+func (p *Party) AddPartyType(partyType string) {
+	if p.HasPartyType(partyType) {
+		return
+	}
+	p.PartyTypes = append(p.PartyTypes, partyType)
+}
+
+func (p *Party) String() string {
+	if p.HasPartyType(partytypes.IndividualPartyType.ID) {
+		firstName := p.Attributes.Get(attributes.FirstNameAttribute.ID)
+		lastName := p.Attributes.Get(attributes.LastNameAttribute.ID)
+		return strings.ToUpper(lastName) + ", " + firstName
+	}
+	return ""
 }
 
 type PartyList struct {
@@ -90,29 +121,20 @@ type RelationshipList struct {
 	Items []*Relationship `json:"items" bson:"items"`
 }
 
-type AttributeList struct {
-	Items []*Attribute `json:"items" bson:"items"`
-}
-
-type AttributeValue struct {
-	Attribute
-	Value interface{}
-}
-
-func (b *Party) GetAttribute(name string) []string {
-	if v, ok := b.Attributes[name]; ok {
+func (p *Party) GetAttribute(name string) []string {
+	if v, ok := p.Attributes[name]; ok {
 		return v
 	}
 	return nil
 }
 
-func (b *Party) HasAttribute(name string) bool {
-	_, ok := b.Attributes[name]
+func (p *Party) HasAttribute(name string) bool {
+	_, ok := p.Attributes[name]
 	return ok
 }
 
-func (b *Party) FindAttributeValue(name string) interface{} {
-	if v, ok := b.Attributes[name]; ok {
+func (p *Party) FindAttributeValue(name string) interface{} {
+	if v, ok := p.Attributes[name]; ok {
 		return v
 	}
 	return nil
