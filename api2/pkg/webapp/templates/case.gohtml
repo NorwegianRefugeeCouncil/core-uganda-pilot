@@ -13,7 +13,7 @@
                     <h4 class="card-title">Case View</h4>
                     <form action="/cases/{{$caseId}}" method="post">
                         <div class="form-floating mb-3">
-                            <select id="case-type" type="select" class="form-select" name="caseTypeId" disabled>
+                            <select id="case-type" class="form-select" name="caseTypeId" disabled>
                                 {{range .CaseTypes.Items}}
                                     <option {{if eq .ID $caseTypeId}}selected{{end}} value="{{.ID}}">{{.Name}}</option>
                                 {{end}}
