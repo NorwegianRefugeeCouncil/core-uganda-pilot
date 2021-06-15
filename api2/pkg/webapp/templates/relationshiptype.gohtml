@@ -27,6 +27,27 @@
                         <label for="name">Name</label>
                     </div>
 
+                    <!--  IsDirectional -->
+                    <div class="card text-dark text-decoration-none shadow-sm mb-3">
+                        <div class="card-body">
+                            <div class="form-check">
+                                <input autofocus
+                                    {{if .RelationshipType}}
+                                    {{if .RelationshipType.IsDirectional}}
+                                    checked
+                                    {{end}}
+                                    {{end}}
+                                    class="form-control form-check-input"
+                                    type="checkbox"
+                                    id="isDirectional"
+                                    name="isDirectional"
+                                    value="{{if .RelationshipType}}{{.RelationshipType.IsDirectional}}{{end}}"
+                                />
+                                <label class="ms-2 form-check-label" for="isDirectional">Is Directional</label>
+                            </div>
+                        </div>
+                    </div>
+
                     <!--  First Party Role -->
                     <div class="form-floating mb-3 shadow-sm">
                         <input class="form-control"
