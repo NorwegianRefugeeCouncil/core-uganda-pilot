@@ -15,7 +15,7 @@
                         {{ if .Cases.Items}}
                             {{ range .Cases.Items }}
                                 <a class="list-group-item font-monospace py-3" href="/cases/{{.ID}}">
-                                    {{.}}
+                                    {{.Description}}
                                 </a>
                             {{end}}
                         {{else}}

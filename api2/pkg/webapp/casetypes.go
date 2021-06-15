@@ -124,8 +124,8 @@ func (h *Handler) PostCaseType(
 	}
 
 	name := req.Form.Get("name")
-	partyTypeID := req.Form.Get("partyTypeId")
 	caseType.Name = name
+	partyTypeID := req.Form.Get("partyTypeId")
 	caseType.PartyTypeID = partyTypeID
 
 	if isNew {

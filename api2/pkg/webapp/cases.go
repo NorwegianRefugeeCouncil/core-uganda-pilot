@@ -151,25 +151,16 @@ func (h *Handler) PostCase(ctx context.Context, id string, w http.ResponseWriter
 		return
 	}
 
-	var kase *casesapi.Case
-
-	f := req.Form
-	for key, value := range f {
-		switch key {
-		case "caseTypeId":
-			kase.CaseTypeID = value[0]
-		case "partyId":
-			kase.PartyID = value[0]
-		case "description":
-			kase.Description = value[0]
-		}
-	}
+	caseTypeId := req.Form.Get("caseTypeId")
+	partyId := req.Form.Get("partyId")
+	description := req.Form.Get("description")
 
 	if id == "" {
 		_, err := h.caseClient.Create(ctx, &casesapi.Case{
-			CaseTypeID:  kase.CaseTypeID,
-			PartyID:     kase.PartyID,
-			Description: kase.Description,
+			CaseTypeID:  caseTypeId,
+			PartyID:     partyId,
+			Description: description,
+			Done:        false,
 		})
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -178,9 +169,9 @@ func (h *Handler) PostCase(ctx context.Context, id string, w http.ResponseWriter
 	} else {
 		_, err := h.caseClient.Update(ctx, &casesapi.Case{
 			ID:          id,
-			CaseTypeID:  kase.CaseTypeID,
-			PartyID:     kase.PartyID,
-			Description: kase.Description,
+			CaseTypeID:  caseTypeId,
+			PartyID:     partyId,
+			Description: description,
 		})
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
