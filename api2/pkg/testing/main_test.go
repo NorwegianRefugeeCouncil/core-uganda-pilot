@@ -23,7 +23,7 @@ func (s *Suite) SetupSuite() {
 		MongoUsername:     "root",
 		MongoPassword:     "example",
 		MongoDatabase:     "e2e",
-		Address:           "http://localhost:9000",
+		Address:           "http://localhost:9001",
 	}
 
 	completedConfig, err := serverOptions.Complete(s.ctx)
