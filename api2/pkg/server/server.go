@@ -5,7 +5,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core-kafka/pkg/cases/cases"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
-	"github.com/nrc-no/core-kafka/pkg/intake"
 	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
 	"github.com/nrc-no/core-kafka/pkg/parties/beneficiaries"
 	"github.com/nrc-no/core-kafka/pkg/parties/parties"
@@ -15,13 +14,9 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/parties/relationshiptypes"
 	"github.com/nrc-no/core-kafka/pkg/services/vulnerability"
 	"github.com/nrc-no/core-kafka/pkg/webapp"
-	"github.com/segmentio/kafka-go"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"net"
 	"net/http"
-	"strconv"
-	"time"
 )
 
 type Server struct {
@@ -31,22 +26,6 @@ type Server struct {
 func NewServer(
 	ctx context.Context,
 ) {
-
-	if err := CreateTopics(kafka.TopicConfig{
-		Topic:             "submissions",
-		NumPartitions:     1,
-		ReplicationFactor: 1,
-	}, kafka.TopicConfig{
-		Topic:             "beneficiaries",
-		NumPartitions:     1,
-		ReplicationFactor: 1,
-	}, kafka.TopicConfig{
-		Topic:             "intake",
-		NumPartitions:     1,
-		ReplicationFactor: 1,
-	}); err != nil {
-		panic(err)
-	}
 
 	mongoClient, err := mongo.NewClient(options.Client().SetAuth(
 		options.Credential{
@@ -100,15 +79,10 @@ func NewServer(
 
 	// Beneficiaries
 	beneficiariesStore := beneficiaries.NewStore(mongoClient)
-	beneficiaryReader, err := NewReader(ctx, "beneficiaries", nil)
 	beneficiaryHandler := beneficiaries.NewHandler(beneficiariesStore)
 	if err != nil {
 		panic(err)
 	}
-	beneficiariesListener := beneficiaries.NewListener(beneficiariesStore, beneficiaryReader)
-	go func() {
-		beneficiariesListener.Run(ctx)
-	}()
 	router.Path("/apis/v1/beneficiaries").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		beneficiaryHandler.List(w, req)
 	})
@@ -209,17 +183,6 @@ func NewServer(
 	})
 	router.Path("/apis/v1/partytypeschemas").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		partyTypeSchemaHandler.Post(w, req)
-	})
-
-	// Intake
-	intakeStore := intake.NewStore(mongoClient)
-	intakeWriter, err := NewWriter("intake")
-	if err != nil {
-		panic(err)
-	}
-	intakeHandler := intake.NewHandler(intakeStore, intakeWriter)
-	router.Path("/apis/v1/intake").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		intakeHandler.PostSubmission(w, req)
 	})
 
 	// Cases
@@ -323,55 +286,4 @@ func NewServer(
 	}
 
 	http.ListenAndServe(":9000", router)
-}
-
-func NewReader(ctx context.Context, topic string, offset *int64) (*kafka.Reader, error) {
-	reader := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: []string{"localhost:9092"},
-		Topic:   topic,
-	})
-	if offset != nil {
-		if err := reader.SetOffset(*offset); err != nil {
-			return nil, err
-		}
-	} else {
-		if err := reader.SetOffsetAt(ctx, time.Now()); err != nil {
-			return nil, err
-		}
-	}
-	return reader, nil
-}
-
-func NewWriter(topic string) (*kafka.Writer, error) {
-	writer := &kafka.Writer{
-		Addr:     kafka.TCP("localhost:9092"),
-		Balancer: &kafka.LeastBytes{},
-		Topic:    topic,
-	}
-	return writer, nil
-}
-
-func CreateTopics(topics ...kafka.TopicConfig) error {
-
-	conn, err := kafka.Dial("tcp", "localhost:9092")
-	if err != nil {
-		return err
-	}
-	defer conn.Close()
-
-	controller, err := conn.Controller()
-	if err != nil {
-		return err
-	}
-
-	controllerConn, err := kafka.Dial("tcp", net.JoinHostPort(controller.Host, strconv.Itoa(controller.Port)))
-	if err != nil {
-		return err
-	}
-	defer controllerConn.Close()
-	if err := controllerConn.CreateTopics(topics...); err != nil {
-		return err
-	}
-
-	return nil
 }
