@@ -96,6 +96,7 @@ func (h *Handler) Put(w http.ResponseWriter, req *http.Request) {
 	r.SecondPartyRole = payload.SecondPartyRole
 	r.Name = payload.Name
 	r.Rules = payload.Rules
+	r.IsDirectional = payload.IsDirectional
 
 	if err := h.store.Update(ctx, r); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

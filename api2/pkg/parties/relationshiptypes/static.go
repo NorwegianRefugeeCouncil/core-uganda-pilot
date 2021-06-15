@@ -2,6 +2,7 @@ package relationshiptypes
 
 import (
 	"context"
+
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -10,6 +11,7 @@ import (
 
 var HeadOfHouseholdRelationshipType = RelationshipType{
 	ID:              "de887604-9ce9-4fdc-af6b-602091a17913",
+	IsDirectional:   true,
 	Name:            "headOfHousehold",
 	FirstPartyRole:  "Is head of household of",
 	SecondPartyRole: "Has for head of household",
@@ -25,6 +27,7 @@ var HeadOfHouseholdRelationshipType = RelationshipType{
 
 var SpousalRelationshipType = RelationshipType{
 	ID:              "76376c69-ce06-4e06-b603-44c145ddf399",
+	IsDirectional:   false,
 	Name:            "spousal",
 	FirstPartyRole:  "Is spouse of",
 	SecondPartyRole: "Is spouse of",
@@ -40,6 +43,7 @@ var SpousalRelationshipType = RelationshipType{
 
 var FilialRelationshipType = RelationshipType{
 	ID:              "dcebef97-f666-4593-b97e-075ad1890385",
+	IsDirectional:   false,
 	Name:            "filial",
 	FirstPartyRole:  "Is sibling of",
 	SecondPartyRole: "Is sibling of",
@@ -55,6 +59,7 @@ var FilialRelationshipType = RelationshipType{
 
 var ParentalRelationshipType = RelationshipType{
 	ID:              "628b9d26-f85d-44cd-8bed-6c5f692b4494",
+	IsDirectional:   true,
 	Name:            "parental",
 	FirstPartyRole:  "Is parent of",
 	SecondPartyRole: "Is child of",
