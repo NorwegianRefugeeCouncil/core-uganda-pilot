@@ -17,7 +17,6 @@ import (
 func (h *Handler) Beneficiaries(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	cli := beneficiaries.NewClient("http://localhost:9000")
 
 	attributesClient := attributes.NewClient("http://localhost:9000")
 	attrs, err := attributesClient.List(ctx)
@@ -27,11 +26,11 @@ func (h *Handler) Beneficiaries(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if req.Method == "POST" {
-		h.PostBeneficiary(ctx, cli, attrs.Items, "", w, req)
+		h.PostBeneficiary(ctx, attrs.Items, "", w, req)
 		return
 	}
 
-	list, err := cli.List(ctx, beneficiaries.ListOptions{})
+	list, err := h.beneficiaryClient.List(ctx, beneficiaries.ListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -57,11 +56,6 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	beneficiaryClient := beneficiaries.NewClient("http://localhost:9000")
-	relationshipTypeClient := relationshiptypes.NewClient("http://localhost:9000")
-	relationshipClient := relationships.NewClient("http://localhost:9000")
-	attributesClient := attributes.NewClient("http://localhost:9000")
-
 	var b *beneficiaries.Beneficiary
 	var bList *beneficiaries.BeneficiaryList
 	var relationshipsForBeneficiary *relationships.RelationshipList
@@ -76,13 +70,13 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 			return nil
 		}
 		var err error
-		b, err = beneficiaryClient.Get(waitCtx, id)
+		b, err = h.beneficiaryClient.Get(waitCtx, id)
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
-		bList, err = beneficiaryClient.List(waitCtx, beneficiaries.ListOptions{})
+		bList, err = h.beneficiaryClient.List(waitCtx, beneficiaries.ListOptions{})
 		return err
 	})
 
@@ -94,19 +88,19 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 			return nil
 		}
 		var err error
-		relationshipsForBeneficiary, err = relationshipClient.List(waitCtx, relationships.ListOptions{Party: id})
+		relationshipsForBeneficiary, err = h.relationshipClient.List(waitCtx, relationships.ListOptions{Party: id})
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
-		relationshipTypes, err = relationshipTypeClient.List(waitCtx)
+		relationshipTypes, err = h.relationshipTypeClient.List(waitCtx)
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
-		attrs, err = attributesClient.List(waitCtx)
+		attrs, err = h.attributeClient.List(waitCtx)
 		return err
 	})
 
@@ -116,7 +110,7 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if req.Method == "POST" {
-		h.PostBeneficiary(ctx, beneficiaryClient, attrs.Items, id, w, req)
+		h.PostBeneficiary(ctx, attrs.Items, id, w, req)
 		return
 	}
 
@@ -135,7 +129,6 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 
 func (h *Handler) PostBeneficiary(
 	ctx context.Context,
-	bCli *beneficiaries.Client,
 	attrs []*attributes.Attribute,
 	id string,
 	w http.ResponseWriter,
@@ -187,7 +180,7 @@ func (h *Handler) PostBeneficiary(
 	}
 
 	if id == "" {
-		newBenef, err := bCli.Create(ctx, b)
+		newBenef, err := h.beneficiaryClient.Create(ctx, b)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -195,7 +188,7 @@ func (h *Handler) PostBeneficiary(
 		w.Header().Set("Location", "/beneficiaries/"+newBenef.ID)
 		w.WriteHeader(http.StatusSeeOther)
 	} else {
-		if _, err := bCli.Update(ctx, b); err != nil {
+		if _, err := h.beneficiaryClient.Update(ctx, b); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

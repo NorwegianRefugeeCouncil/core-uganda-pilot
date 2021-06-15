@@ -298,12 +298,24 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	})
 
 	// WebApp
-	webAppHandler, err := webapp.NewHandler(webapp.Options{
+	webAppOptions := webapp.Options{
 		TemplateDirectory: c.TemplateDirectory,
-	})
+	}
+	webAppHandler, err := webapp.NewHandler(webAppOptions,
+		attributeClient,
+		vulnerabilityClient,
+		beneficiaryClient,
+		relationshipTypeClient,
+		relationshipClient,
+		partyClient,
+		partyTypeClient,
+		caseTypeClient,
+		caseClient,
+	)
 	if err != nil {
 		panic(err)
 	}
+
 	router.Path("/vulnerabilities/{id}").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		webAppHandler.Vulnerability(w, req)
 	})
