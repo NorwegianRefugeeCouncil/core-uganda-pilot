@@ -55,39 +55,71 @@ type Server struct {
 	HttpServer              *http.Server
 }
 
-type ServerOptions struct {
+type Options struct {
 	TemplateDirectory string
+	Address           string
+	MongoDatabase     string
+	MongoUsername     string
+	MongoPassword     string
 }
 
-func NewServer(
-	ctx context.Context,
-	serverOptions ServerOptions,
-) *Server {
+func (o Options) Complete(ctx context.Context) (CompletedOptions, error) {
 
-	address := "http://localhost:9000"
-
+	// Setup mongo client
 	mongoClient, err := mongo.NewClient(options.Client().SetAuth(
 		options.Credential{
-			Username: "root",
-			Password: "example",
+			Username: o.MongoUsername,
+			Password: o.MongoPassword,
 		}))
 	if err != nil {
-		panic(err)
+		return CompletedOptions{}, err
 	}
 
 	if err := mongoClient.Connect(ctx); err != nil {
-		panic(err)
+		return CompletedOptions{}, err
 	}
+
+	// Setup address
+	if len(o.Address) == 0 {
+		o.Address = "http://localhost:9000"
+	}
+
+	// Setup template directory
+	if len(o.TemplateDirectory) == 0 {
+		o.TemplateDirectory = "pkg/webapp/templates"
+	}
+
+	if len(o.MongoDatabase) == 0 {
+		o.MongoDatabase = "core"
+	}
+
+	completedOptions := CompletedOptions{
+		MongoClient:       mongoClient,
+		TemplateDirectory: o.TemplateDirectory,
+		Address:           o.Address,
+		MongoDatabase:     o.MongoDatabase,
+	}
+	return completedOptions, nil
+}
+
+type CompletedOptions struct {
+	MongoClient       *mongo.Client
+	TemplateDirectory string
+	Address           string
+	MongoDatabase     string
+}
+
+func (c CompletedOptions) New(ctx context.Context) *Server {
 
 	router := mux.NewRouter()
 
 	// Attributes
-	attributeStore := attributes.NewStore(mongoClient)
+	attributeStore := attributes.NewStore(c.MongoClient, c.MongoDatabase)
 	if err := attributes.Init(ctx, attributeStore); err != nil {
 		panic(err)
 	}
 	attributeHandler := attributes.NewHandler(attributeStore)
-	attributeClient := attributes.NewClient(address)
+	attributeClient := attributes.NewClient(c.Address)
 	router.Path("/apis/v1/attributes").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		attributeHandler.List(w, req)
 	})
@@ -102,9 +134,9 @@ func NewServer(
 	})
 
 	// Vulnerabilities
-	vulnerabilityStore := vulnerability.NewStore(mongoClient)
+	vulnerabilityStore := vulnerability.NewStore(c.MongoClient, c.MongoDatabase)
 	vulnerabilityHandler := vulnerability.NewHandler(vulnerabilityStore)
-	vulnerabilityClient := vulnerability.NewClient(address)
+	vulnerabilityClient := vulnerability.NewClient(c.Address)
 	router.Path("/apis/v1/vulnerabilities").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		vulnerabilityHandler.ListVulnerabilities(w, req)
 	})
@@ -119,10 +151,10 @@ func NewServer(
 	})
 
 	// Beneficiaries
-	beneficiariesStore := beneficiaries.NewStore(mongoClient)
+	beneficiariesStore := beneficiaries.NewStore(c.MongoClient, c.MongoDatabase)
 	beneficiaryHandler := beneficiaries.NewHandler(beneficiariesStore)
-	beneficiaryClient := beneficiaries.NewClient(address)
-	if err != nil {
+	beneficiaryClient := beneficiaries.NewClient(c.Address)
+	if err := beneficiaries.SeedDatabase(ctx, beneficiariesStore); err != nil {
 		panic(err)
 	}
 	router.Path("/apis/v1/beneficiaries").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
@@ -139,12 +171,12 @@ func NewServer(
 	})
 
 	// RelationshipTypes
-	relationshipTypeStore := relationshiptypes.NewStore(mongoClient)
+	relationshipTypeStore := relationshiptypes.NewStore(c.MongoClient, c.MongoDatabase)
 	if err := relationshiptypes.Init(ctx, relationshipTypeStore); err != nil {
 		panic(err)
 	}
 	relationshipTypeHandler := relationshiptypes.NewHandler(relationshipTypeStore)
-	relationshipTypeClient := relationshiptypes.NewClient(address)
+	relationshipTypeClient := relationshiptypes.NewClient(c.Address)
 	router.Path("/apis/v1/relationshiptypes").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		relationshipTypeHandler.List(w, req)
 	})
@@ -159,9 +191,9 @@ func NewServer(
 	})
 
 	// Relationships
-	relationshipStore := relationships.NewStore(mongoClient)
+	relationshipStore := relationships.NewStore(c.MongoClient, c.MongoDatabase)
 	relationshipHandler := relationships.NewHandler(relationshipStore)
-	relationshipClient := relationships.NewClient(address)
+	relationshipClient := relationships.NewClient(c.Address)
 	router.Path("/apis/v1/relationships").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		relationshipHandler.List(w, req)
 	})
@@ -176,12 +208,12 @@ func NewServer(
 	})
 
 	// Parties
-	partyStore := parties.NewStore(mongoClient)
+	partyStore := parties.NewStore(c.MongoClient, c.MongoDatabase)
 	if err := parties.Init(ctx, partyStore); err != nil {
 		panic(err)
 	}
 	partyHandler := parties.NewHandler(partyStore)
-	partyClient := parties.NewClient(address)
+	partyClient := parties.NewClient(c.Address)
 	router.Path("/apis/v1/parties").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		partyHandler.List(w, req)
 	})
@@ -196,12 +228,12 @@ func NewServer(
 	})
 
 	// Party Types
-	partyTypeStore := partytypes.NewStore(mongoClient)
+	partyTypeStore := partytypes.NewStore(c.MongoClient, c.MongoDatabase)
 	if err := partytypes.Init(ctx, partyTypeStore); err != nil {
 		panic(err)
 	}
 	partyTypeHandler := partytypes.NewHandler(partyTypeStore)
-	partyTypeClient := partytypes.NewClient(address)
+	partyTypeClient := partytypes.NewClient(c.Address)
 	router.Path("/apis/v1/partytypes").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		partyTypeHandler.List(w, req)
 	})
@@ -216,9 +248,9 @@ func NewServer(
 	})
 
 	// PartyTypeSchemas
-	partyTypeSchemaStore := partytypeschemas.NewStore(mongoClient)
+	partyTypeSchemaStore := partytypeschemas.NewStore(c.MongoClient, c.MongoDatabase)
 	partyTypeSchemaHandler := partytypeschemas.NewHandler(partyTypeSchemaStore)
-	// TOOD: partyTypeSchemaClient := partytypeschemas.NewClient(address)
+	// TOOD: partyTypeSchemaClient := partytypeschemas.NewClient(serverOptions.Address)
 	router.Path("/apis/v1/partytypeschemas").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		partyTypeSchemaHandler.List(w, req)
 	})
@@ -233,9 +265,9 @@ func NewServer(
 	})
 
 	// Cases
-	caseStore := cases.NewStore(mongoClient)
+	caseStore := cases.NewStore(c.MongoClient, c.MongoDatabase)
 	caseHandler := cases.NewHandler(caseStore)
-	caseClient := cases.NewClient(address)
+	caseClient := cases.NewClient(c.Address)
 	router.Path("/apis/v1/cases").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		caseHandler.List(w, req)
 	})
@@ -249,9 +281,9 @@ func NewServer(
 		caseHandler.Post(w, req)
 	})
 	// CaseTypes
-	caseTypeStore := casetypes.NewStore(mongoClient)
+	caseTypeStore := casetypes.NewStore(c.MongoClient, c.MongoDatabase)
 	caseTypeHandler := casetypes.NewHandler(caseTypeStore)
-	caseTypeClient := casetypes.NewClient(address)
+	caseTypeClient := casetypes.NewClient(c.Address)
 	router.Path("/apis/v1/casetypes").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		caseTypeHandler.List(w, req)
 	})
@@ -267,7 +299,7 @@ func NewServer(
 
 	// WebApp
 	webAppHandler, err := webapp.NewHandler(webapp.Options{
-		TemplateDirectory: serverOptions.TemplateDirectory,
+		TemplateDirectory: c.TemplateDirectory,
 	})
 	if err != nil {
 		panic(err)
@@ -345,7 +377,7 @@ func NewServer(
 	}
 
 	srv := &Server{
-		MongoClient:             mongoClient,
+		MongoClient:             c.MongoClient,
 		AttributeStore:          attributeStore,
 		AttributeHandler:        attributeHandler,
 		AttributeClient:         attributeClient,
@@ -378,7 +410,7 @@ func NewServer(
 	}
 
 	go func() {
-		listenAddress := address
+		listenAddress := c.Address
 		listenAddress = strings.Replace(listenAddress, "https://", "", -1)
 		listenAddress = strings.Replace(listenAddress, "http://", "", -1)
 		_, port, err := net.SplitHostPort(listenAddress)

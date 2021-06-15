@@ -11,9 +11,9 @@ type Store struct {
 	collection *mongo.Collection
 }
 
-func NewStore(mongoClient *mongo.Client) *Store {
+func NewStore(mongoClient *mongo.Client, database string) *Store {
 	return &Store{
-		collection: mongoClient.Database("core").Collection("partyTypeSchemas"),
+		collection: mongoClient.Database(database).Collection("partyTypeSchemas"),
 	}
 }
 

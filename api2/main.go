@@ -7,5 +7,15 @@ import (
 
 func main() {
 	ctx := context.Background()
-	server.NewServer(ctx)
+	serverOptions := server.Options{
+		MongoUsername: "root",
+		MongoPassword: "example",
+	}
+	srv, err := serverOptions.Complete(ctx)
+	if err != nil {
+		panic(err)
+	}
+	srv.New(ctx)
+
+	<-ctx.Done()
 }

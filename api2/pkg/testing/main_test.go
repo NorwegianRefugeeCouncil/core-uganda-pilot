@@ -3,6 +3,7 @@ package testing
 import (
 	"context"
 	"github.com/nrc-no/core-kafka/pkg/server"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"os"
 	"testing"
@@ -17,9 +18,24 @@ type Suite struct {
 
 func (s *Suite) SetupSuite() {
 	s.ctx, s.cancel = context.WithCancel(context.Background())
-	s.server = server.NewServer(s.ctx, server.ServerOptions{
+	serverOptions := server.Options{
 		TemplateDirectory: os.Getenv("TEMPLATE_DIRECTORY"),
-	})
+		MongoUsername:     "root",
+		MongoPassword:     "example",
+		MongoDatabase:     "e2e",
+		Address:           "http://localhost:9000",
+	}
+
+	completedConfig, err := serverOptions.Complete(s.ctx)
+	if !assert.NoError(s.T(), err) {
+		return
+	}
+
+	if err := ClearDatabase(s.ctx, completedConfig.MongoClient); !assert.NoError(s.T(), err) {
+		panic(err)
+	}
+
+	s.server = completedConfig.New(s.ctx)
 }
 
 func TestSuite(t *testing.T) {

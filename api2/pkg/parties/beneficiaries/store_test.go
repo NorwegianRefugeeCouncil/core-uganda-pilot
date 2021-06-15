@@ -20,7 +20,7 @@ func TestStore(t *testing.T) {
 	if !assert.NoError(t, err) {
 		return
 	}
-	store := NewStore(mongoClient)
+	store := NewStore(mongoClient, "")
 
 	ID := uuid.NewV4().String()
 	beneficiary := &Beneficiary{
