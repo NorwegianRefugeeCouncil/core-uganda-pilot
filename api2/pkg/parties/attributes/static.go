@@ -71,11 +71,10 @@ func Init(ctx context.Context, store *Store) error {
 		LastNameAttribute,
 		BirthDateAttribute,
 	} {
-		err := store.Create(ctx, &attribute)
-		if err == nil {
-			return nil
-		}
-		if mongo.IsDuplicateKeyError(err) {
+		if err := store.Create(ctx, &attribute); err != nil {
+			if !mongo.IsDuplicateKeyError(err) {
+				return err
+			}
 			if err := store.Update(ctx, &attribute); err != nil {
 				return err
 			}
