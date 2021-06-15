@@ -3,7 +3,6 @@ package relationshiptypes
 import (
 	"context"
 
-	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -18,31 +17,31 @@ func NewStore(mongoClient *mongo.Client) *Store {
 	}
 }
 
-func (s *Store) Get(ctx context.Context, id string) (*api.RelationshipType, error) {
+func (s *Store) Get(ctx context.Context, id string) (*RelationshipType, error) {
 	res := s.collection.FindOne(ctx, bson.M{
 		"id": id,
 	})
 	if res.Err() != nil {
 		return nil, res.Err()
 	}
-	var r api.RelationshipType
+	var r RelationshipType
 	if err := res.Decode(&r); err != nil {
 		return nil, err
 	}
 	return &r, nil
 }
 
-func (s *Store) List(ctx context.Context) (*api.RelationshipTypeList, error) {
+func (s *Store) List(ctx context.Context) (*RelationshipTypeList, error) {
 	res, err := s.collection.Find(ctx, bson.M{})
 	if err != nil {
 		return nil, err
 	}
-	var items []*api.RelationshipType
+	var items []*RelationshipType
 	for {
 		if !res.Next(ctx) {
 			break
 		}
-		var r api.RelationshipType
+		var r RelationshipType
 		if err := res.Decode(&r); err != nil {
 			return nil, err
 		}
@@ -51,13 +50,13 @@ func (s *Store) List(ctx context.Context) (*api.RelationshipTypeList, error) {
 	if res.Err() != nil {
 		return nil, res.Err()
 	}
-	ret := api.RelationshipTypeList{
+	ret := RelationshipTypeList{
 		Items: items,
 	}
 	return &ret, nil
 }
 
-func (s *Store) Update(ctx context.Context, relationshipType *api.RelationshipType) error {
+func (s *Store) Update(ctx context.Context, relationshipType *RelationshipType) error {
 	_, err := s.collection.UpdateOne(ctx, bson.M{
 		"id": relationshipType.ID,
 	}, bson.M{
@@ -74,7 +73,7 @@ func (s *Store) Update(ctx context.Context, relationshipType *api.RelationshipTy
 	return nil
 }
 
-func (s *Store) Create(ctx context.Context, relationshipType *api.RelationshipType) error {
+func (s *Store) Create(ctx context.Context, relationshipType *RelationshipType) error {
 	_, err := s.collection.InsertOne(ctx, relationshipType)
 	if err != nil {
 		return err

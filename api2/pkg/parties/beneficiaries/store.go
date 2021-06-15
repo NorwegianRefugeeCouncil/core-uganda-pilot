@@ -2,7 +2,6 @@ package beneficiaries
 
 import (
 	"context"
-	"github.com/nrc-no/core-kafka/pkg/parties/beneficiaries/api"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -19,7 +18,7 @@ func NewStore(mongoClient *mongo.Client) *Store {
 	}
 }
 
-func (s *Store) Create(ctx context.Context, beneficiary *api.Beneficiary) error {
+func (s *Store) Create(ctx context.Context, beneficiary *Beneficiary) error {
 	beneficiary.AddPartyType(partytypes.IndividualPartyType.ID)
 	_, err := s.collection.InsertOne(ctx, beneficiary)
 	if err != nil {
@@ -28,7 +27,7 @@ func (s *Store) Create(ctx context.Context, beneficiary *api.Beneficiary) error 
 	return nil
 }
 
-func (s *Store) Upsert(ctx context.Context, beneficiary *api.Beneficiary) error {
+func (s *Store) Upsert(ctx context.Context, beneficiary *Beneficiary) error {
 	beneficiary.AddPartyType(partytypes.IndividualPartyType.ID)
 	_, err := s.collection.UpdateOne(ctx, bson.M{
 		"id": beneficiary.ID,
@@ -45,19 +44,19 @@ func (s *Store) Upsert(ctx context.Context, beneficiary *api.Beneficiary) error 
 	return nil
 }
 
-func (s *Store) Get(ctx context.Context, ID string) (*api.Beneficiary, error) {
+func (s *Store) Get(ctx context.Context, ID string) (*Beneficiary, error) {
 	findResult := s.collection.FindOne(ctx, bson.M{"id": ID})
 	if findResult.Err() != nil {
 		return nil, findResult.Err()
 	}
-	var beneficiary *api.Beneficiary
+	var beneficiary *Beneficiary
 	if err := findResult.Decode(&beneficiary); err != nil {
 		return nil, err
 	}
 	return beneficiary, nil
 }
 
-func (s *Store) List(ctx context.Context, listOptions ListOptions) (*api.BeneficiaryList, error) {
+func (s *Store) List(ctx context.Context, listOptions ListOptions) (*BeneficiaryList, error) {
 
 	filter := bson.M{}
 
@@ -71,12 +70,12 @@ func (s *Store) List(ctx context.Context, listOptions ListOptions) (*api.Benefic
 	if err != nil {
 		return nil, err
 	}
-	var items []*api.Beneficiary
+	var items []*Beneficiary
 	for {
 		if !cursor.Next(ctx) {
 			break
 		}
-		var b api.Beneficiary
+		var b Beneficiary
 		if err := cursor.Decode(&b); err != nil {
 			return nil, err
 		}
@@ -86,9 +85,9 @@ func (s *Store) List(ctx context.Context, listOptions ListOptions) (*api.Benefic
 		return nil, cursor.Err()
 	}
 	if items == nil {
-		items = []*api.Beneficiary{}
+		items = []*Beneficiary{}
 	}
-	return &api.BeneficiaryList{
+	return &BeneficiaryList{
 		Items: items,
 	}, nil
 }

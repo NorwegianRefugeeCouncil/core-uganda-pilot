@@ -7,7 +7,6 @@ import (
 	casesapi "github.com/nrc-no/core-kafka/pkg/cases/api"
 	"github.com/nrc-no/core-kafka/pkg/cases/cases"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
-	partiesapi "github.com/nrc-no/core-kafka/pkg/parties/api"
 	"github.com/nrc-no/core-kafka/pkg/parties/parties"
 	"golang.org/x/sync/errgroup"
 	"net/http"
@@ -57,8 +56,8 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 	var kase *casesapi.Case
 	var kaseTypes *casesapi.CaseTypeList
 
-	var party *partiesapi.Party
-	var partyList *partiesapi.PartyList
+	var party *parties.Party
+	var partyList *parties.PartyList
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
@@ -121,7 +120,7 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 	partiesClient := parties.NewClient("http://localhost:9000")
 
 	var caseTypes *casesapi.CaseTypeList
-	var p *partiesapi.PartyList
+	var p *parties.PartyList
 
 	g, waitCtx := errgroup.WithContext(ctx)
 

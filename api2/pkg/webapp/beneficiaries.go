@@ -4,10 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
 	"github.com/nrc-no/core-kafka/pkg/parties/beneficiaries"
-	api2 "github.com/nrc-no/core-kafka/pkg/parties/beneficiaries/api"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationships"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationshiptypes"
 	uuid "github.com/satori/go.uuid"
@@ -64,17 +62,17 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 	relationshipClient := relationships.NewClient("http://localhost:9000")
 	attributesClient := attributes.NewClient("http://localhost:9000")
 
-	var b *api2.Beneficiary
-	var bList *api2.BeneficiaryList
-	var relationshipsForBeneficiary *api.RelationshipList
-	var relationshipTypes *api.RelationshipTypeList
+	var b *beneficiaries.Beneficiary
+	var bList *beneficiaries.BeneficiaryList
+	var relationshipsForBeneficiary *relationships.RelationshipList
+	var relationshipTypes *relationshiptypes.RelationshipTypeList
 	var attrs *attributes.AttributeList
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
 		if id == "new" {
-			b = api2.NewBeneficiary("")
+			b = beneficiaries.NewBeneficiary("")
 			return nil
 		}
 		var err error
@@ -90,8 +88,8 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 
 	g.Go(func() error {
 		if id == "new" {
-			relationshipsForBeneficiary = &api.RelationshipList{
-				Items: []*api.Relationship{},
+			relationshipsForBeneficiary = &relationships.RelationshipList{
+				Items: []*relationships.Relationship{},
 			}
 			return nil
 		}
@@ -148,7 +146,7 @@ func (h *Handler) PostBeneficiary(
 		return
 	}
 
-	b := api2.NewBeneficiary(id)
+	b := beneficiaries.NewBeneficiary(id)
 
 	attributeMap := map[string]*attributes.Attribute{}
 	for _, attribute := range attrs {

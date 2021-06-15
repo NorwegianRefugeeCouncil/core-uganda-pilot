@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationshiptypes"
 	uuid "github.com/satori/go.uuid"
@@ -15,7 +14,7 @@ func (h *Handler) RelationshipTypes(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 	cli := relationshiptypes.NewClient("http://localhost:9000")
-	r := &api.RelationshipType{}
+	r := &relationshiptypes.RelationshipType{}
 
 	if req.Method == "POST" {
 		h.PostRelationshipType(ctx, cli, r, w, req)
@@ -97,7 +96,7 @@ func (h *Handler) RelationshipType(w http.ResponseWriter, req *http.Request) {
 func (h *Handler) PostRelationshipType(
 	ctx context.Context,
 	cli *relationshiptypes.Client,
-	r *api.RelationshipType,
+	r *relationshiptypes.RelationshipType,
 	w http.ResponseWriter,
 	req *http.Request,
 ) {
@@ -119,9 +118,9 @@ func (h *Handler) PostRelationshipType(
 	r.FirstPartyRole = formValues.Get("firstPartyRole")
 	r.SecondPartyRole = formValues.Get("secondPartyRole")
 
-	r.Rules = []api.RelationshipTypeRule{
-		api.RelationshipTypeRule{
-			api.PartyTypeRule{
+	r.Rules = []relationshiptypes.RelationshipTypeRule{
+		relationshiptypes.RelationshipTypeRule{
+			relationshiptypes.PartyTypeRule{
 				FirstPartyType:  formValues.Get("rules[0].firstPartyType"),
 				SecondPartyType: formValues.Get("rules[0].secondPartyType"),
 			},

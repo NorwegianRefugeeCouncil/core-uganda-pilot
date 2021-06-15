@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/nrc-no/core-kafka/pkg/parties/beneficiaries/api"
 	"io/ioutil"
 	"net/http"
 )
@@ -24,7 +23,7 @@ type ListOptions struct {
 	PartyTypes []string `json:"partyTypes" bson:"partyTypes"`
 }
 
-func (c *Client) List(ctx context.Context, listOptions ListOptions) (*api.BeneficiaryList, error) {
+func (c *Client) List(ctx context.Context, listOptions ListOptions) (*BeneficiaryList, error) {
 	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/beneficiaries", nil)
 	if err != nil {
 		return nil, err
@@ -49,14 +48,14 @@ func (c *Client) List(ctx context.Context, listOptions ListOptions) (*api.Benefi
 	if err != nil {
 		return nil, err
 	}
-	var list api.BeneficiaryList
+	var list BeneficiaryList
 	if err := json.Unmarshal(bodyBytes, &list); err != nil {
 		return nil, err
 	}
 	return &list, nil
 }
 
-func (c *Client) Get(ctx context.Context, id string) (*api.Beneficiary, error) {
+func (c *Client) Get(ctx context.Context, id string) (*Beneficiary, error) {
 	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/beneficiaries/"+id, nil)
 	if err != nil {
 		return nil, err
@@ -74,14 +73,14 @@ func (c *Client) Get(ctx context.Context, id string) (*api.Beneficiary, error) {
 	if err != nil {
 		return nil, err
 	}
-	var v api.Beneficiary
+	var v Beneficiary
 	if err := json.Unmarshal(bodyBytes, &v); err != nil {
 		return nil, err
 	}
 	return &v, nil
 }
 
-func (c *Client) Update(ctx context.Context, beneficiary *api.Beneficiary) (*api.Beneficiary, error) {
+func (c *Client) Update(ctx context.Context, beneficiary *Beneficiary) (*Beneficiary, error) {
 	bodyBytes, err := json.Marshal(beneficiary)
 	if err != nil {
 		return nil, err
@@ -104,14 +103,14 @@ func (c *Client) Update(ctx context.Context, beneficiary *api.Beneficiary) (*api
 	if err != nil {
 		return nil, err
 	}
-	var v api.Beneficiary
+	var v Beneficiary
 	if err := json.Unmarshal(responseBytes, &v); err != nil {
 		return nil, err
 	}
 	return &v, nil
 }
 
-func (c *Client) Create(ctx context.Context, beneficiary *api.Beneficiary) (*api.Beneficiary, error) {
+func (c *Client) Create(ctx context.Context, beneficiary *Beneficiary) (*Beneficiary, error) {
 	bodyBytes, err := json.Marshal(beneficiary)
 	if err != nil {
 		return nil, err
@@ -134,7 +133,7 @@ func (c *Client) Create(ctx context.Context, beneficiary *api.Beneficiary) (*api
 	if err != nil {
 		return nil, err
 	}
-	var v api.Beneficiary
+	var v Beneficiary
 	if err := json.Unmarshal(responseBytes, &v); err != nil {
 		return nil, err
 	}

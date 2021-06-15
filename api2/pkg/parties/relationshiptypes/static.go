@@ -2,21 +2,20 @@ package relationshiptypes
 
 import (
 	"context"
-	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var HeadOfHouseholdRelationshipType = api.RelationshipType{
+var HeadOfHouseholdRelationshipType = RelationshipType{
 	ID:              "de887604-9ce9-4fdc-af6b-602091a17913",
 	Name:            "headOfHousehold",
 	FirstPartyRole:  "Is head of household of",
 	SecondPartyRole: "Has for head of household",
-	Rules: []api.RelationshipTypeRule{
+	Rules: []RelationshipTypeRule{
 		{
-			PartyTypeRule: api.PartyTypeRule{
+			PartyTypeRule: PartyTypeRule{
 				FirstPartyType:  partytypes.IndividualPartyType.ID,
 				SecondPartyType: partytypes.HouseholdPartyType.ID,
 			},
@@ -24,14 +23,14 @@ var HeadOfHouseholdRelationshipType = api.RelationshipType{
 	},
 }
 
-var SpousalRelationshipType = api.RelationshipType{
+var SpousalRelationshipType = RelationshipType{
 	ID:              "76376c69-ce06-4e06-b603-44c145ddf399",
 	Name:            "spousal",
 	FirstPartyRole:  "Is spouse of",
 	SecondPartyRole: "Is spouse of",
-	Rules: []api.RelationshipTypeRule{
+	Rules: []RelationshipTypeRule{
 		{
-			PartyTypeRule: api.PartyTypeRule{
+			PartyTypeRule: PartyTypeRule{
 				FirstPartyType:  partytypes.IndividualPartyType.ID,
 				SecondPartyType: partytypes.IndividualPartyType.ID,
 			},
@@ -39,14 +38,14 @@ var SpousalRelationshipType = api.RelationshipType{
 	},
 }
 
-var FilialRelationshipType = api.RelationshipType{
+var FilialRelationshipType = RelationshipType{
 	ID:              "dcebef97-f666-4593-b97e-075ad1890385",
 	Name:            "filial",
 	FirstPartyRole:  "Is sibling of",
 	SecondPartyRole: "Is sibling of",
-	Rules: []api.RelationshipTypeRule{
+	Rules: []RelationshipTypeRule{
 		{
-			PartyTypeRule: api.PartyTypeRule{
+			PartyTypeRule: PartyTypeRule{
 				FirstPartyType:  partytypes.IndividualPartyType.ID,
 				SecondPartyType: partytypes.IndividualPartyType.ID,
 			},
@@ -54,14 +53,14 @@ var FilialRelationshipType = api.RelationshipType{
 	},
 }
 
-var ParentalRelationshipType = api.RelationshipType{
+var ParentalRelationshipType = RelationshipType{
 	ID:              "628b9d26-f85d-44cd-8bed-6c5f692b4494",
 	Name:            "parental",
 	FirstPartyRole:  "Is parent of",
 	SecondPartyRole: "Is child of",
-	Rules: []api.RelationshipTypeRule{
+	Rules: []RelationshipTypeRule{
 		{
-			PartyTypeRule: api.PartyTypeRule{
+			PartyTypeRule: PartyTypeRule{
 				FirstPartyType:  partytypes.IndividualPartyType.ID,
 				SecondPartyType: partytypes.IndividualPartyType.ID,
 			},
@@ -80,7 +79,7 @@ func Init(ctx context.Context, store *Store) error {
 		return err
 	}
 
-	for _, relationshipType := range []api.RelationshipType{
+	for _, relationshipType := range []RelationshipType{
 		HeadOfHouseholdRelationshipType,
 		SpousalRelationshipType,
 		FilialRelationshipType,

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core-kafka/pkg/parties/beneficiaries/api"
 	uuid "github.com/satori/go.uuid"
 	"io/ioutil"
 	"net/http"
@@ -80,7 +79,7 @@ func (h *Handler) Create(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var beneficiary api.Beneficiary
+	var beneficiary Beneficiary
 	if err := json.Unmarshal(bodyBytes, &beneficiary); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -142,7 +141,7 @@ func (h *Handler) Update(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var beneficiary api.Beneficiary
+	var beneficiary Beneficiary
 	if err := json.Unmarshal(bodyBytes, &beneficiary); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

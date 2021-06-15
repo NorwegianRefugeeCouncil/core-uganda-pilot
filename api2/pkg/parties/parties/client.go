@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	"io/ioutil"
 	"net/http"
 )
@@ -20,7 +19,7 @@ func NewClient(basePath string) *Client {
 	}
 }
 
-func (c *Client) List(ctx context.Context, listOptions ListOptions) (*api.PartyList, error) {
+func (c *Client) List(ctx context.Context, listOptions ListOptions) (*PartyList, error) {
 	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/parties", nil)
 	if err != nil {
 		return nil, err
@@ -37,14 +36,14 @@ func (c *Client) List(ctx context.Context, listOptions ListOptions) (*api.PartyL
 	if err != nil {
 		return nil, err
 	}
-	var list api.PartyList
+	var list PartyList
 	if err := json.Unmarshal(bodyBytes, &list); err != nil {
 		return nil, err
 	}
 	return &list, nil
 }
 
-func (c *Client) Get(ctx context.Context, id string) (*api.Party, error) {
+func (c *Client) Get(ctx context.Context, id string) (*Party, error) {
 	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/parties/"+id, nil)
 	if err != nil {
 		return nil, err
@@ -61,14 +60,14 @@ func (c *Client) Get(ctx context.Context, id string) (*api.Party, error) {
 	if err != nil {
 		return nil, err
 	}
-	var v api.Party
+	var v Party
 	if err := json.Unmarshal(bodyBytes, &v); err != nil {
 		return nil, err
 	}
 	return &v, nil
 }
 
-func (c *Client) Update(ctx context.Context, party *api.Party) (*api.Party, error) {
+func (c *Client) Update(ctx context.Context, party *Party) (*Party, error) {
 	bodyBytes, err := json.Marshal(party)
 	if err != nil {
 		return nil, err
@@ -91,14 +90,14 @@ func (c *Client) Update(ctx context.Context, party *api.Party) (*api.Party, erro
 	if err != nil {
 		return nil, err
 	}
-	var v api.Party
+	var v Party
 	if err := json.Unmarshal(responseBytes, &v); err != nil {
 		return nil, err
 	}
 	return &v, nil
 }
 
-func (c *Client) Create(ctx context.Context, party *api.Party) (*api.Party, error) {
+func (c *Client) Create(ctx context.Context, party *Party) (*Party, error) {
 	bodyBytes, err := json.Marshal(party)
 	if err != nil {
 		return nil, err
@@ -121,7 +120,7 @@ func (c *Client) Create(ctx context.Context, party *api.Party) (*api.Party, erro
 	if err != nil {
 		return nil, err
 	}
-	var v api.Party
+	var v Party
 	if err := json.Unmarshal(responseBytes, &v); err != nil {
 		return nil, err
 	}

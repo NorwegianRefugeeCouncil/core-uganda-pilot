@@ -2,7 +2,6 @@ package relationships
 
 import (
 	"context"
-	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -17,21 +16,21 @@ func NewStore(mongoClient *mongo.Client) *Store {
 	}
 }
 
-func (s *Store) Get(ctx context.Context, id string) (*api.Relationship, error) {
+func (s *Store) Get(ctx context.Context, id string) (*Relationship, error) {
 	res := s.collection.FindOne(ctx, bson.M{
 		"id": id,
 	})
 	if res.Err() != nil {
 		return nil, res.Err()
 	}
-	var r api.Relationship
+	var r Relationship
 	if err := res.Decode(&r); err != nil {
 		return nil, err
 	}
 	return &r, nil
 }
 
-func (s *Store) List(ctx context.Context, listOptions ListOptions) (*api.RelationshipList, error) {
+func (s *Store) List(ctx context.Context, listOptions ListOptions) (*RelationshipList, error) {
 
 	filter := bson.M{}
 
@@ -46,12 +45,12 @@ func (s *Store) List(ctx context.Context, listOptions ListOptions) (*api.Relatio
 	if err != nil {
 		return nil, err
 	}
-	var items []*api.Relationship
+	var items []*Relationship
 	for {
 		if !res.Next(ctx) {
 			break
 		}
-		var r api.Relationship
+		var r Relationship
 		if err := res.Decode(&r); err != nil {
 			return nil, err
 		}
@@ -60,13 +59,13 @@ func (s *Store) List(ctx context.Context, listOptions ListOptions) (*api.Relatio
 	if res.Err() != nil {
 		return nil, res.Err()
 	}
-	ret := api.RelationshipList{
+	ret := RelationshipList{
 		Items: items,
 	}
 	return &ret, nil
 }
 
-func (s *Store) Update(ctx context.Context, relationship *api.Relationship) error {
+func (s *Store) Update(ctx context.Context, relationship *Relationship) error {
 	_, err := s.collection.UpdateOne(ctx, bson.M{
 		"id": relationship.ID,
 	}, bson.M{
@@ -83,7 +82,7 @@ func (s *Store) Update(ctx context.Context, relationship *api.Relationship) erro
 	return nil
 }
 
-func (s *Store) Create(ctx context.Context, relationship *api.Relationship) error {
+func (s *Store) Create(ctx context.Context, relationship *Relationship) error {
 	_, err := s.collection.InsertOne(ctx, relationship)
 	if err != nil {
 		return err

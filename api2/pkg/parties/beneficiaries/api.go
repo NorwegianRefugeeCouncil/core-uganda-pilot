@@ -1,15 +1,15 @@
-package api
+package beneficiaries
 
 import (
-	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
+	"github.com/nrc-no/core-kafka/pkg/parties/parties"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"strings"
 	"time"
 )
 
 type Beneficiary struct {
-	*api.Party `json:",inline" bson:",inline"`
+	*parties.Party `json:",inline" bson:",inline"`
 }
 
 type BeneficiaryList struct {
@@ -18,7 +18,7 @@ type BeneficiaryList struct {
 
 func NewBeneficiary(ID string) *Beneficiary {
 	return &Beneficiary{
-		Party: &api.Party{
+		Party: &parties.Party{
 			ID: ID,
 			PartyTypes: []string{
 				partytypes.IndividualPartyType.ID,

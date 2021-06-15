@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/nrc-no/core-kafka/pkg/parties/api"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
@@ -21,7 +20,7 @@ func NewClient(basePath string) *Client {
 	}
 }
 
-func (c *Client) List(ctx context.Context) (*api.RelationshipTypeList, error) {
+func (c *Client) List(ctx context.Context) (*RelationshipTypeList, error) {
 	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/relationshiptypes", nil)
 	if err != nil {
 		return nil, err
@@ -38,14 +37,14 @@ func (c *Client) List(ctx context.Context) (*api.RelationshipTypeList, error) {
 	if err != nil {
 		return nil, err
 	}
-	var list api.RelationshipTypeList
+	var list RelationshipTypeList
 	if err := json.Unmarshal(bodyBytes, &list); err != nil {
 		return nil, err
 	}
 	return &list, nil
 }
 
-func (c *Client) Get(ctx context.Context, id string) (*api.RelationshipType, error) {
+func (c *Client) Get(ctx context.Context, id string) (*RelationshipType, error) {
 	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/relationshiptypes/"+id, nil)
 	if err != nil {
 		return nil, err
@@ -62,14 +61,14 @@ func (c *Client) Get(ctx context.Context, id string) (*api.RelationshipType, err
 	if err != nil {
 		return nil, err
 	}
-	var v api.RelationshipType
+	var v RelationshipType
 	if err := json.Unmarshal(bodyBytes, &v); err != nil {
 		return nil, err
 	}
 	return &v, nil
 }
 
-func (c *Client) Update(ctx context.Context, relationshipType *api.RelationshipType) (*api.RelationshipType, error) {
+func (c *Client) Update(ctx context.Context, relationshipType *RelationshipType) (*RelationshipType, error) {
 	log.WithFields(log.Fields{
 		"relationshipType": relationshipType,
 	})
@@ -95,14 +94,14 @@ func (c *Client) Update(ctx context.Context, relationshipType *api.RelationshipT
 	if err != nil {
 		return nil, err
 	}
-	var v api.RelationshipType
+	var v RelationshipType
 	if err := json.Unmarshal(responseBytes, &v); err != nil {
 		return nil, err
 	}
 	return &v, nil
 }
 
-func (c *Client) Create(ctx context.Context, relationshipType *api.RelationshipType) (*api.RelationshipType, error) {
+func (c *Client) Create(ctx context.Context, relationshipType *RelationshipType) (*RelationshipType, error) {
 	bodyBytes, err := json.Marshal(relationshipType)
 	if err != nil {
 		return nil, err
@@ -125,7 +124,7 @@ func (c *Client) Create(ctx context.Context, relationshipType *api.RelationshipT
 	if err != nil {
 		return nil, err
 	}
-	var v api.RelationshipType
+	var v RelationshipType
 	if err := json.Unmarshal(responseBytes, &v); err != nil {
 		return nil, err
 	}
