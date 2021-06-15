@@ -56,7 +56,7 @@
                                name="firstPartyRole"
                                placeholder="First party role"
                                value="{{if .RelationshipType}}{{.RelationshipType.FirstPartyRole}}{{end}}"/>
-                        <label for="firstPartyRole">First Party Role</label>
+                        <label id="firstPartyRoleLabel" for="firstPartyRole">First Party Role</label>
                     </div>
 
                     <!--  Second Party Role -->
@@ -68,7 +68,7 @@
                                placeholder="Second party role"
                                value="{{if .RelationshipType}}{{.RelationshipType.SecondPartyRole}}{{end}}"
                         />
-                        <label for="secondPartyRole">Second Party Role</label>
+                        <label id="secondPartyRoleLabel" for="secondPartyRole">Second Party Role</label>
                     </div>
 
                     <!--  Rules -->
@@ -119,6 +119,10 @@
 
     <script type="application/javascript">
 
+        // ----------------------------------------------
+
+        // logic to prepopulate selects
+
         const setSelected = (id, valueToSelect) => {    
             let element = document.getElementById(id);
             element.value = valueToSelect;
@@ -130,6 +134,42 @@
                 setSelected("secondPartyType", {{(index .RelationshipType.Rules 0).SecondPartyType}})
             })
         {{end}}
+
+        // ----------------------------------------------
+
+        // logic to handle isDirectional
+
+        const isDirectionalCheckbox = document.getElementById("isDirectional")
+        const firstPartyRole = document.getElementById("firstPartyRole")
+        const firstPartyRoleLabel = document.getElementById("firstPartyRoleLabel")
+        const secondPartyRole = document.getElementById("secondPartyRole")
+        const secondPartyRoleLabel = document.getElementById("secondPartyRoleLabel")
+
+        // handle case where page is loaded and isDirectionalCheckbox is false
+        document.addEventListener("DOMContentLoaded", (event) => {
+            if (!isDirectionalCheckbox.checked) {
+                
+                firstPartyRoleLabel.innerHTML = "Role"
+                secondPartyRole.classList.add("visually-hidden")
+                secondPartyRoleLabel.classList.add("visually-hidden")
+
+            }
+        })
+
+        // handle change of isDirectionalCheckbox
+        isDirectionalCheckbox.addEventListener("change", (event) => {
+            if (event.target.checked) {
+
+                firstPartyRoleLabel.innerHTML = "First Party Role"
+                secondPartyRole.classList.remove("visually-hidden")
+                secondPartyRoleLabel.classList.remove("visually-hidden")
+
+            } else {
+                firstPartyRoleLabel.innerHTML = "Role"
+                secondPartyRole.classList.add("visually-hidden")
+                secondPartyRoleLabel.classList.add("visually-hidden")
+            }
+        })
 
     </script>
 
