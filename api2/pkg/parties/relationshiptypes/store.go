@@ -64,6 +64,7 @@ func (s *Store) Update(ctx context.Context, relationshipType *RelationshipType) 
 			"firstPartyRole":  relationshipType.FirstPartyRole,
 			"secondPartyRole": relationshipType.SecondPartyRole,
 			"name":            relationshipType.Name,
+			"isDirectional":   relationshipType.IsDirectional,
 			"rules":           relationshipType.Rules,
 		},
 	})

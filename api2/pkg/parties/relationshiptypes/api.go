@@ -11,6 +11,7 @@ type PartyTypeRule struct {
 
 type RelationshipType struct {
 	ID              string                 `json:"id" bson:"id"`
+	IsDirectional   bool                   `json:"isDirectional" bson:"isDirectional"`
 	Name            string                 `json:"name" bson:"name"`
 	FirstPartyRole  string                 `json:"firstPartyRole" bson:"firstPartyRole"`
 	SecondPartyRole string                 `json:"secondPartyRole" bson:"secondPartyRole"`

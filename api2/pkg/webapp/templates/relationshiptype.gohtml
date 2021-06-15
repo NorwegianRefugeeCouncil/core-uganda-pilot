@@ -27,6 +27,25 @@
                         <label for="name">Name</label>
                     </div>
 
+                    <!--  IsDirectional -->
+                    <div class="card text-dark text-decoration-none shadow-sm mb-3">
+                        <div class="card-body">
+                            <div class="form-check">
+                                <input autofocus
+                                    {{if .RelationshipType}}{{if .RelationshipType.IsDirectional}}
+                                    checked
+                                    {{end}}{{end}}
+                                    class="form-control form-check-input"
+                                    type="checkbox"
+                                    id="isDirectional"
+                                    name="isDirectional"
+                                    value="true"
+                                />
+                                <label class="ms-2 form-check-label" for="isDirectional">Is Directional</label>
+                            </div>
+                        </div>
+                    </div>
+
                     <!--  First Party Role -->
                     <div class="form-floating mb-3 shadow-sm">
                         <input class="form-control"
@@ -35,7 +54,7 @@
                                name="firstPartyRole"
                                placeholder="First party role"
                                value="{{if .RelationshipType}}{{.RelationshipType.FirstPartyRole}}{{end}}"/>
-                        <label for="firstPartyRole">First Party Role</label>
+                        <label id="firstPartyRoleLabel" for="firstPartyRole">First Party Role</label>
                     </div>
 
                     <!--  Second Party Role -->
@@ -47,7 +66,7 @@
                                placeholder="Second party role"
                                value="{{if .RelationshipType}}{{.RelationshipType.SecondPartyRole}}{{end}}"
                         />
-                        <label for="secondPartyRole">Second Party Role</label>
+                        <label id="secondPartyRoleLabel" for="secondPartyRole">Second Party Role</label>
                     </div>
 
                     <!--  Rules -->
@@ -66,10 +85,10 @@
                                     id="firstPartyType"
                                     name="rules[0].firstPartyType">
                                     {{range .PartyTypes.Items}}
-                                        <option value="{{.Name}}">{{.Name}}</option>
+                                        <option value="{{.ID}}">{{.Name}}</option>
                                     {{end}}
                                 </select>
-                                <label for="firstPartyType">First Party Type</label>
+                                <label id="firstPartyTypeLabel" for="firstPartyType">First Party Type</label>
                             </div>
 
                             <!--  Second Party Type -->
@@ -80,10 +99,10 @@
                                     id="secondPartyType"
                                     name="rules[0].secondPartyType">
                                     {{range .PartyTypes.Items}}
-                                        <option value="{{.Name}}">{{.Name}}</option>
+                                        <option value="{{.ID}}">{{.Name}}</option>
                                     {{end}}
                                 </select>
-                                <label for="secondPartyType">Second Party Type</label>
+                                <label id="secondPartyTypeLabel" for="secondPartyType">Second Party Type</label>
                             </div>
                         </div>
                     </div>
@@ -98,7 +117,9 @@
 
     <script type="application/javascript">
 
-        const form = document.getElementById("relationshipTypeForm")
+        // ----------------------------------------------
+
+        // logic to prepopulate selects
 
         const setSelected = (id, valueToSelect) => {    
             let element = document.getElementById(id);
@@ -111,6 +132,88 @@
                 setSelected("secondPartyType", {{(index .RelationshipType.Rules 0).SecondPartyType}})
             })
         {{end}}
+
+        // ----------------------------------------------
+
+        // logic to handle isDirectional
+
+        const isDirectionalCheckbox = document.getElementById("isDirectional")
+
+        const firstPartyRole = document.getElementById("firstPartyRole")
+        const firstPartyRoleLabel = document.getElementById("firstPartyRoleLabel")
+
+        const secondPartyRole = document.getElementById("secondPartyRole")
+        const secondPartyRoleLabel = document.getElementById("secondPartyRoleLabel")
+
+        const firstPartyType = document.getElementById("firstPartyType")
+        const firstPartyTypeLabel = document.getElementById("firstPartyTypeLabel")
+
+        const secondPartyType = document.getElementById("secondPartyType")
+        const secondPartyTypeLabel = document.getElementById("secondPartyTypeLabel")
+
+        // helper function to duplicate the input from firstPartyRole
+        // onto secondPartyRole
+        const mirrorPartyRoles = (event) => {
+            secondPartyRole.value = event.target.value
+        }
+
+        // helper function to duplicate the selection from firstPartyType
+        // select onto secondPartyType select
+        const mirrorPartyTypes = (event) => {
+            setSelected("secondPartyType", event.target.value)
+        }
+
+        // helper function to modify inputs to present a non-directional relationship
+        // to the user
+        const setupNonDirectionalRelationship = () => {
+            firstPartyRoleLabel.innerHTML = "Role"
+
+            secondPartyRole.classList.add("visually-hidden")
+            secondPartyRoleLabel.classList.add("visually-hidden")
+
+            firstPartyRole.addEventListener("change", mirrorPartyRoles)
+
+            firstPartyTypeLabel.innerHTML = "Party Type"
+
+            secondPartyType.classList.add("visually-hidden")
+            secondPartyTypeLabel.classList.add("visually-hidden")
+
+            firstPartyType.addEventListener("change", mirrorPartyTypes)
+        }
+
+        // helper function to modify inputs to present a directional relationship
+        // to the user
+        const setupDirectionalRelationship = () => {
+            firstPartyRoleLabel.innerHTML = "First Party Role"
+
+            secondPartyRole.classList.remove("visually-hidden")
+            secondPartyRoleLabel.classList.remove("visually-hidden")
+
+            firstPartyRole.removeEventListener("change", mirrorPartyRoles)
+
+            firstPartyTypeLabel.innerHTML = "First Party Type"
+
+            secondPartyType.classList.remove("visually-hidden")
+            secondPartyTypeLabel.classList.remove("visually-hidden")
+
+            firstPartyType.removeEventListener("change", mirrorPartyTypes)
+        }
+
+        // handle case where page is loaded and isDirectionalCheckbox is false
+        document.addEventListener("DOMContentLoaded", (event) => {
+            if (!isDirectionalCheckbox.checked) {
+                setupNonDirectionalRelationship()
+            }
+        })
+
+        // handle change of isDirectionalCheckbox
+        isDirectionalCheckbox.addEventListener("change", (event) => {
+            event.target.checked ?
+            setupDirectionalRelationship() :
+            setupNonDirectionalRelationship()
+        })
+
+        // ----------------------------------------------
 
     </script>
 

@@ -3,11 +3,12 @@ package webapp
 import (
 	"context"
 	"fmt"
+	"net/http"
+
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationshiptypes"
 	uuid "github.com/satori/go.uuid"
-	"net/http"
 )
 
 func (h *Handler) RelationshipTypes(w http.ResponseWriter, req *http.Request) {
@@ -111,6 +112,12 @@ func (h *Handler) PostRelationshipType(
 	}
 
 	r.Name = formValues.Get("name")
+
+	if formValues.Get("isDirectional") == "true" {
+		r.IsDirectional = true
+	} else {
+		r.IsDirectional = false
+	}
 	r.FirstPartyRole = formValues.Get("firstPartyRole")
 	r.SecondPartyRole = formValues.Get("secondPartyRole")
 
