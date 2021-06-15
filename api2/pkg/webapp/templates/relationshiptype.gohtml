@@ -66,7 +66,7 @@
                                     id="firstPartyType"
                                     name="rules[0].firstPartyType">
                                     {{range .PartyTypes.Items}}
-                                        <option value="{{.Name}}">{{.Name}}</option>
+                                        <option value="{{.ID}}">{{.Name}}</option>
                                     {{end}}
                                 </select>
                                 <label for="firstPartyType">First Party Type</label>
@@ -80,7 +80,7 @@
                                     id="secondPartyType"
                                     name="rules[0].secondPartyType">
                                     {{range .PartyTypes.Items}}
-                                        <option value="{{.Name}}">{{.Name}}</option>
+                                        <option value="{{.ID}}">{{.Name}}</option>
                                     {{end}}
                                 </select>
                                 <label for="secondPartyType">Second Party Type</label>

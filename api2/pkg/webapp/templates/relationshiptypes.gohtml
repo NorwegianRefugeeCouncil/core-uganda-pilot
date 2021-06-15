@@ -30,7 +30,7 @@
                                 {{.Name}}
                                 <small class="d-block text-muted">
                                     {{if ne (index .Rules 0).FirstPartyType ""}}
-                                        {{(index .Rules 0).FirstPartyType}} ({{.FirstPartyRole}}) ⟷ {{(index .Rules 0).SecondPartyType}} ({{.SecondPartyRole}})
+                                        {{.FirstPartyRole}} ⟷ {{.SecondPartyRole}}
                                     {{end}}
                                 </small>
                             </div>
