@@ -1,16 +1,32 @@
 package webapp
 
 import (
+	"fmt"
 	"html/template"
+	"os"
 )
 
 type Handler struct {
 	template *template.Template
 }
 
-func NewHandler() (*Handler, error) {
+type Options struct {
+	TemplateDirectory string
+}
 
-	t, err := template.ParseGlob("pkg/webapp/templates/*.gohtml")
+func NewHandler(options Options) (*Handler, error) {
+
+	if len(options.TemplateDirectory) == 0 {
+		options.TemplateDirectory = "pkg/webapp/templates/"
+	}
+
+	e, err := os.Executable()
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println(e)
+
+	t, err := template.ParseGlob(options.TemplateDirectory + "/*.gohtml")
 	if err != nil {
 		return nil, err
 	}

@@ -17,44 +17,51 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/webapp"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"net"
 	"net/http"
+	"strings"
 )
 
 type Server struct {
-	mongoClient             *mongo.Client
-	attributeStore          *attributes.Store
-	attributeHandler        *attributes.Handler
-	attributeClient         *attributes.Client
-	vulnerabilityStore      *vulnerability.Store
-	vulnerabilityHandler    *vulnerability.Handler
-	vulnerabilityClient     *vulnerability.Client
-	beneficiaryStore        *beneficiaries.Store
-	beneficiaryHandler      *beneficiaries.Handler
-	beneficiaryClient       *beneficiaries.Client
-	relationshipTypeStore   *relationshiptypes.Store
-	relationshipTypeHandler *relationshiptypes.Handler
-	relationshipTypeClient  *relationshiptypes.Client
-	relationshipStore       *relationships.Store
-	relationshipHandler     *relationships.Handler
-	relationshipClient      *relationships.Client
-	partyStore              *parties.Store
-	partyHandler            *parties.Handler
-	partyClient             *parties.Client
-	partyTypeStore          *partytypes.Store
-	partyTypeHandler        *partytypes.Handler
-	partyTypeClient         *partytypes.Client
-	caseTypeStore           *casetypes.Store
-	caseTypeHandler         *casetypes.Handler
-	caseTypeClient          *casetypes.Client
-	caseStore               *cases.Store
-	caseHandler             *cases.Handler
-	caseClient              *cases.Client
-	webAppHandler           *webapp.Handler
-	httpServer              *http.Server
+	MongoClient             *mongo.Client
+	AttributeStore          *attributes.Store
+	AttributeHandler        *attributes.Handler
+	AttributeClient         *attributes.Client
+	VulnerabilityStore      *vulnerability.Store
+	VulnerabilityHandler    *vulnerability.Handler
+	VulnerabilityClient     *vulnerability.Client
+	BeneficiaryStore        *beneficiaries.Store
+	BeneficiaryHandler      *beneficiaries.Handler
+	BeneficiaryClient       *beneficiaries.Client
+	RelationshipTypeStore   *relationshiptypes.Store
+	RelationshipTypeHandler *relationshiptypes.Handler
+	RelationshipTypeClient  *relationshiptypes.Client
+	RelationshipStore       *relationships.Store
+	RelationshipHandler     *relationships.Handler
+	RelationshipClient      *relationships.Client
+	PartyStore              *parties.Store
+	PartyHandler            *parties.Handler
+	PartyClient             *parties.Client
+	PartyTypeStore          *partytypes.Store
+	PartyTypeHandler        *partytypes.Handler
+	PartyTypeClient         *partytypes.Client
+	CaseTypeStore           *casetypes.Store
+	CaseTypeHandler         *casetypes.Handler
+	CaseTypeClient          *casetypes.Client
+	CaseStore               *cases.Store
+	CaseHandler             *cases.Handler
+	CaseClient              *cases.Client
+	WebAppHandler           *webapp.Handler
+	HttpServer              *http.Server
+}
+
+type ServerOptions struct {
+	TemplateDirectory string
 }
 
 func NewServer(
 	ctx context.Context,
+	serverOptions ServerOptions,
 ) *Server {
 
 	address := "http://localhost:9000"
@@ -259,7 +266,9 @@ func NewServer(
 	})
 
 	// WebApp
-	webAppHandler, err := webapp.NewHandler()
+	webAppHandler, err := webapp.NewHandler(webapp.Options{
+		TemplateDirectory: serverOptions.TemplateDirectory,
+	})
 	if err != nil {
 		panic(err)
 	}
@@ -336,40 +345,47 @@ func NewServer(
 	}
 
 	srv := &Server{
-		mongoClient:             mongoClient,
-		attributeStore:          attributeStore,
-		attributeHandler:        attributeHandler,
-		attributeClient:         attributeClient,
-		vulnerabilityStore:      vulnerabilityStore,
-		vulnerabilityHandler:    vulnerabilityHandler,
-		vulnerabilityClient:     vulnerabilityClient,
-		beneficiaryStore:        beneficiariesStore,
-		beneficiaryHandler:      beneficiaryHandler,
-		beneficiaryClient:       beneficiaryClient,
-		relationshipTypeStore:   relationshipTypeStore,
-		relationshipTypeHandler: relationshipTypeHandler,
-		relationshipTypeClient:  relationshipTypeClient,
-		relationshipStore:       relationshipStore,
-		relationshipHandler:     relationshipHandler,
-		relationshipClient:      relationshipClient,
-		partyStore:              partyStore,
-		partyHandler:            partyHandler,
-		partyClient:             partyClient,
-		partyTypeStore:          partyTypeStore,
-		partyTypeHandler:        partyTypeHandler,
-		partyTypeClient:         partyTypeClient,
-		caseTypeStore:           caseTypeStore,
-		caseTypeHandler:         caseTypeHandler,
-		caseTypeClient:          caseTypeClient,
-		caseStore:               caseStore,
-		caseHandler:             caseHandler,
-		caseClient:              caseClient,
-		webAppHandler:           webAppHandler,
-		httpServer:              httpServer,
+		MongoClient:             mongoClient,
+		AttributeStore:          attributeStore,
+		AttributeHandler:        attributeHandler,
+		AttributeClient:         attributeClient,
+		VulnerabilityStore:      vulnerabilityStore,
+		VulnerabilityHandler:    vulnerabilityHandler,
+		VulnerabilityClient:     vulnerabilityClient,
+		BeneficiaryStore:        beneficiariesStore,
+		BeneficiaryHandler:      beneficiaryHandler,
+		BeneficiaryClient:       beneficiaryClient,
+		RelationshipTypeStore:   relationshipTypeStore,
+		RelationshipTypeHandler: relationshipTypeHandler,
+		RelationshipTypeClient:  relationshipTypeClient,
+		RelationshipStore:       relationshipStore,
+		RelationshipHandler:     relationshipHandler,
+		RelationshipClient:      relationshipClient,
+		PartyStore:              partyStore,
+		PartyHandler:            partyHandler,
+		PartyClient:             partyClient,
+		PartyTypeStore:          partyTypeStore,
+		PartyTypeHandler:        partyTypeHandler,
+		PartyTypeClient:         partyTypeClient,
+		CaseTypeStore:           caseTypeStore,
+		CaseTypeHandler:         caseTypeHandler,
+		CaseTypeClient:          caseTypeClient,
+		CaseStore:               caseStore,
+		CaseHandler:             caseHandler,
+		CaseClient:              caseClient,
+		WebAppHandler:           webAppHandler,
+		HttpServer:              httpServer,
 	}
 
 	go func() {
-		if err := http.ListenAndServe(address, router); err != nil {
+		listenAddress := address
+		listenAddress = strings.Replace(listenAddress, "https://", "", -1)
+		listenAddress = strings.Replace(listenAddress, "http://", "", -1)
+		_, port, err := net.SplitHostPort(listenAddress)
+		if err != nil {
+			panic(err)
+		}
+		if err := http.ListenAndServe(":"+port, router); err != nil {
 			if errors.Is(err, context.Canceled) {
 				return
 			}
