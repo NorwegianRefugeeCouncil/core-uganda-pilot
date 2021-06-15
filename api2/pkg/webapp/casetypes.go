@@ -15,18 +15,16 @@ func (h *Handler) CaseTypes(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
-	caseTypesClient := casetypes.NewClient("http://localhost:9000")
-
 	var caseTypes *casesapi.CaseTypeList
 
-	caseTypes, err := caseTypesClient.List(ctx, casetypes.ListOptions{})
+	caseTypes, err := h.caseTypeClient.List(ctx, casetypes.ListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if req.Method == "POST" {
-		h.PostCaseType(ctx, caseTypesClient, &casesapi.CaseType{}, w, req)
+		h.PostCaseType(ctx, &casesapi.CaseType{}, w, req)
 		return
 	}
 
@@ -49,9 +47,6 @@ func (h *Handler) CaseType(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	caseTypesClient := casetypes.NewClient("http://localhost:9000")
-	partyTypesClient := partytypes.NewClient("http://localhost:9000")
-
 	var caseType *casesapi.CaseType
 	var partyTypes *partytypes.PartyTypeList
 
@@ -63,13 +58,13 @@ func (h *Handler) CaseType(w http.ResponseWriter, req *http.Request) {
 			return nil
 		}
 		var err error
-		caseType, err = caseTypesClient.Get(waitCtx, id)
+		caseType, err = h.caseTypeClient.Get(waitCtx, id)
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
-		partyTypes, err = partyTypesClient.List(waitCtx)
+		partyTypes, err = h.partyTypeClient.List(waitCtx)
 		return err
 	})
 
@@ -79,7 +74,7 @@ func (h *Handler) CaseType(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if req.Method == "POST" {
-		h.PostCaseType(ctx, caseTypesClient, caseType, w, req)
+		h.PostCaseType(ctx, caseType, w, req)
 		return
 	}
 
@@ -113,7 +108,6 @@ func (h *Handler) NewCaseType(w http.ResponseWriter, req *http.Request) {
 
 func (h *Handler) PostCaseType(
 	ctx context.Context,
-	caseTypesCli *casetypes.Client,
 	caseType *casesapi.CaseType,
 	w http.ResponseWriter,
 	req *http.Request,
@@ -135,7 +129,7 @@ func (h *Handler) PostCaseType(
 	caseType.PartyTypeID = partyTypeID
 
 	if isNew {
-		_, err := caseTypesCli.Create(ctx, caseType)
+		_, err := h.caseTypeClient.Create(ctx, caseType)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -144,7 +138,7 @@ func (h *Handler) PostCaseType(
 		w.WriteHeader(http.StatusSeeOther)
 		return
 	} else {
-		_, err := caseTypesCli.Update(ctx, caseType)
+		_, err := h.caseTypeClient.Update(ctx, caseType)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

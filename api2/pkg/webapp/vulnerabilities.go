@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core-kafka/pkg/services/api"
-	"github.com/nrc-no/core-kafka/pkg/services/vulnerability"
 	"net/http"
 	"net/url"
 	"strings"
@@ -13,8 +12,7 @@ import (
 
 func (h *Handler) Vulnerabilities(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	cli := vulnerability.NewClient("http://localhost:9000")
-	list, err := cli.List(ctx)
+	list, err := h.vulnerabilityClient.List(ctx)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -38,8 +36,7 @@ func (h *Handler) Vulnerability(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	cli := vulnerability.NewClient("http://localhost:9000")
-	v, err := cli.Get(ctx, id)
+	v, err := h.vulnerabilityClient.Get(ctx, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -51,7 +48,7 @@ func (h *Handler) Vulnerability(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 		var err error
-		v, err = h.UpdateVulnerability(ctx, cli, v, req.Form)
+		v, err = h.UpdateVulnerability(ctx, v, req.Form)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -72,7 +69,6 @@ func (h *Handler) Vulnerability(w http.ResponseWriter, req *http.Request) {
 
 func (h *Handler) UpdateVulnerability(
 	ctx context.Context,
-	cli *vulnerability.Client,
 	vulnerability *api.Vulnerability,
 	values url.Values) (*api.Vulnerability, error) {
 
@@ -84,7 +80,7 @@ func (h *Handler) UpdateVulnerability(
 	}
 	vulnerability.AttributesForDetermination = attributes
 
-	out, err := cli.Update(ctx, vulnerability)
+	out, err := h.vulnerabilityClient.Update(ctx, vulnerability)
 	if err != nil {
 		return nil, err
 	}

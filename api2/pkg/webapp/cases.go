@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	casesapi "github.com/nrc-no/core-kafka/pkg/cases/api"
-	"github.com/nrc-no/core-kafka/pkg/cases/cases"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
 	"github.com/nrc-no/core-kafka/pkg/parties/parties"
 	"golang.org/x/sync/errgroup"
@@ -16,16 +15,14 @@ func (h *Handler) Cases(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
-	caseClient := cases.NewClient("http://localhost:9000")
-
-	list, err := caseClient.List(ctx)
+	list, err := h.caseClient.List(ctx)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if req.Method == "POST" {
-		h.PostCase(ctx, caseClient, "", w, req)
+		h.PostCase(ctx, "", w, req)
 		return
 	}
 
@@ -49,10 +46,6 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	caseClient := cases.NewClient("http://localhost:9000")
-	caseTypesClient := casetypes.NewClient("http://localhost:9000")
-	partyClient := parties.NewClient("http://localhost:9000")
-
 	var kase *casesapi.Case
 	var kaseTypes *casesapi.CaseTypeList
 
@@ -67,19 +60,19 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 			return nil
 		}
 		var err error
-		kase, err = caseClient.Get(waitCtx, id)
+		kase, err = h.caseClient.Get(waitCtx, id)
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
-		kaseTypes, err = caseTypesClient.List(waitCtx, casetypes.ListOptions{})
+		kaseTypes, err = h.caseTypeClient.List(waitCtx, casetypes.ListOptions{})
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
-		party, err = partyClient.Get(waitCtx, id)
+		party, err = h.partyClient.Get(waitCtx, id)
 		return err
 	})
 
@@ -97,7 +90,7 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if req.Method == "POST" {
-		h.PostCase(ctx, caseClient, id, w, req)
+		h.PostCase(ctx, id, w, req)
 		return
 	}
 
@@ -151,7 +144,7 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (h *Handler) PostCase(ctx context.Context, cli *cases.Client, id string, w http.ResponseWriter, req *http.Request) {
+func (h *Handler) PostCase(ctx context.Context, id string, w http.ResponseWriter, req *http.Request) {
 
 	if err := req.ParseForm(); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -173,7 +166,7 @@ func (h *Handler) PostCase(ctx context.Context, cli *cases.Client, id string, w 
 	}
 
 	if id == "" {
-		_, err := cli.Create(ctx, &casesapi.Case{
+		_, err := h.caseClient.Create(ctx, &casesapi.Case{
 			CaseTypeID:  kase.CaseTypeID,
 			PartyID:     kase.PartyID,
 			Description: kase.Description,
@@ -183,7 +176,7 @@ func (h *Handler) PostCase(ctx context.Context, cli *cases.Client, id string, w 
 			return
 		}
 	} else {
-		_, err := cli.Update(ctx, &casesapi.Case{
+		_, err := h.caseClient.Update(ctx, &casesapi.Case{
 			ID:          id,
 			CaseTypeID:  kase.CaseTypeID,
 			PartyID:     kase.PartyID,

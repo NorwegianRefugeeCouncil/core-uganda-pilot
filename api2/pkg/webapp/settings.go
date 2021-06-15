@@ -22,14 +22,13 @@ func (h *Handler) Settings(w http.ResponseWriter, req *http.Request) {
 func (h *Handler) Attributes(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	cli := attributes.NewClient("http://localhost:9000")
 
 	if req.Method == "POST" {
-		h.PostAttribute(ctx, cli, &attributes.Attribute{}, w, req)
+		h.PostAttribute(ctx, &attributes.Attribute{}, w, req)
 		return
 	}
 
-	list, err := cli.List(ctx)
+	list, err := h.attributeClient.List(ctx)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -61,7 +60,6 @@ func (h *Handler) NewAttribute(w http.ResponseWriter, req *http.Request) {
 func (h *Handler) Attribute(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	cli := attributes.NewClient("http://localhost:9000")
 
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
@@ -70,14 +68,14 @@ func (h *Handler) Attribute(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	a, err := cli.Get(ctx, id)
+	a, err := h.attributeClient.Get(ctx, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if req.Method == "POST" {
-		h.PostAttribute(ctx, cli, a, w, req)
+		h.PostAttribute(ctx, a, w, req)
 	}
 
 	if err := h.template.ExecuteTemplate(w, "attribute", map[string]interface{}{
@@ -89,7 +87,7 @@ func (h *Handler) Attribute(w http.ResponseWriter, req *http.Request) {
 
 }
 
-func (h *Handler) PostAttribute(ctx context.Context, cli *attributes.Client, attribute *attributes.Attribute, w http.ResponseWriter, req *http.Request) {
+func (h *Handler) PostAttribute(ctx context.Context, attribute *attributes.Attribute, w http.ResponseWriter, req *http.Request) {
 
 	if err := req.ParseForm(); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -157,14 +155,14 @@ func (h *Handler) PostAttribute(ctx context.Context, cli *attributes.Client, att
 
 	if isNew {
 		var err error
-		out, err = cli.Create(ctx, attribute)
+		out, err = h.attributeClient.Create(ctx, attribute)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	} else {
 		var err error
-		out, err = cli.Update(ctx, attribute)
+		out, err = h.attributeClient.Update(ctx, attribute)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

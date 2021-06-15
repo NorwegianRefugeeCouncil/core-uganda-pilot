@@ -5,36 +5,26 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
-	"github.com/nrc-no/core-kafka/pkg/parties/partytypeschemas"
 	"net/http"
 )
 
 func (h *Handler) PartyTypes(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	partyTypesCli := partytypes.NewClient("http://localhost:9000")
-	partyTypeSchemasCli := partytypeschemas.NewClient("http://localhost:9000")
 
 	if req.Method == "POST" {
-		h.PostPartyType(ctx, partyTypesCli, &partytypes.PartyType{}, w, req)
+		h.PostPartyType(ctx, &partytypes.PartyType{}, w, req)
 		return
 	}
 
-	partyTypes, err := partyTypesCli.List(ctx)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	partyTypeSchemas, err := partyTypeSchemasCli.List(ctx)
+	partyTypes, err := h.partyTypeClient.List(ctx)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if err := h.template.ExecuteTemplate(w, "partytypes", map[string]interface{}{
-		"PartyTypes":       partyTypes,
-		"PartyTypeSchemas": partyTypeSchemas,
+		"PartyTypes": partyTypes,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -65,7 +55,7 @@ func (h *Handler) PartyType(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if req.Method == "POST" {
-		h.PostPartyType(ctx, partyTypesCli, partyType, w, req)
+		h.PostPartyType(ctx, partyType, w, req)
 		return
 	}
 
@@ -80,7 +70,6 @@ func (h *Handler) PartyType(w http.ResponseWriter, req *http.Request) {
 
 func (h *Handler) PostPartyType(
 	ctx context.Context,
-	partyTypesCli *partytypes.Client,
 	partyType *partytypes.PartyType,
 	w http.ResponseWriter,
 	req *http.Request,
@@ -101,7 +90,7 @@ func (h *Handler) PostPartyType(
 	partyType.IsBuiltIn = req.Form.Get("isBuiltIn") == "true"
 
 	if isNew {
-		out, err := partyTypesCli.Create(ctx, partyType)
+		out, err := h.partyTypeClient.Create(ctx, partyType)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -110,7 +99,7 @@ func (h *Handler) PostPartyType(
 		w.WriteHeader(http.StatusSeeOther)
 		return
 	} else {
-		_, err := partyTypesCli.Update(ctx, partyType)
+		_, err := h.partyTypeClient.Update(ctx, partyType)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

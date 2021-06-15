@@ -13,15 +13,14 @@ import (
 func (h *Handler) RelationshipTypes(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	cli := relationshiptypes.NewClient("http://localhost:9000")
 	r := &relationshiptypes.RelationshipType{}
 
 	if req.Method == "POST" {
-		h.PostRelationshipType(ctx, cli, r, w, req)
+		h.PostRelationshipType(ctx, r, w, req)
 		return
 	}
 
-	relationshipTypes, err := cli.List(ctx)
+	relationshipTypes, err := h.relationshipTypeClient.List(ctx)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -57,8 +56,6 @@ func (h *Handler) NewRelationshipType(w http.ResponseWriter, req *http.Request) 
 func (h *Handler) RelationshipType(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	relationshipTypesCli := relationshiptypes.NewClient("http://localhost:9000")
-	partyTypesCli := partytypes.NewClient("http://localhost:9000")
 
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
@@ -67,20 +64,20 @@ func (h *Handler) RelationshipType(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	r, err := relationshipTypesCli.Get(ctx, id)
+	r, err := h.relationshipTypeClient.Get(ctx, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	p, err := partyTypesCli.List(ctx)
+	p, err := h.partyTypeClient.List(ctx)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if req.Method == "POST" {
-		h.PostRelationshipType(ctx, relationshipTypesCli, r, w, req)
+		h.PostRelationshipType(ctx, r, w, req)
 		return
 	}
 
@@ -95,7 +92,6 @@ func (h *Handler) RelationshipType(w http.ResponseWriter, req *http.Request) {
 
 func (h *Handler) PostRelationshipType(
 	ctx context.Context,
-	cli *relationshiptypes.Client,
 	r *relationshiptypes.RelationshipType,
 	w http.ResponseWriter,
 	req *http.Request,
@@ -119,7 +115,7 @@ func (h *Handler) PostRelationshipType(
 	r.SecondPartyRole = formValues.Get("secondPartyRole")
 
 	r.Rules = []relationshiptypes.RelationshipTypeRule{
-		relationshiptypes.RelationshipTypeRule{
+		{
 			relationshiptypes.PartyTypeRule{
 				FirstPartyType:  formValues.Get("rules[0].firstPartyType"),
 				SecondPartyType: formValues.Get("rules[0].secondPartyType"),
@@ -128,7 +124,7 @@ func (h *Handler) PostRelationshipType(
 	}
 
 	if isNew {
-		out, err := cli.Create(ctx, r)
+		out, err := h.relationshipTypeClient.Create(ctx, r)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -136,7 +132,7 @@ func (h *Handler) PostRelationshipType(
 		w.Header().Set("Location", "/settings/relationshiptypes/"+out.ID)
 		w.WriteHeader(http.StatusSeeOther)
 	} else {
-		out, err := cli.Update(ctx, r)
+		out, err := h.relationshipTypeClient.Update(ctx, r)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
