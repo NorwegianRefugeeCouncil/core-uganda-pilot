@@ -25,3 +25,12 @@ type CaseList struct {
 type CaseTypeList struct {
 	Items []*CaseType `json:"items" bson:"items"`
 }
+
+func (l *CaseTypeList) FindByID(id string) *CaseType {
+	for _, caseType := range l.Items {
+		if caseType.ID == id {
+			return caseType
+		}
+	}
+	return nil
+}

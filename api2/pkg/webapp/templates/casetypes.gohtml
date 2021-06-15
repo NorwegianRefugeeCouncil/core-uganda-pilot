@@ -9,13 +9,9 @@
                     {{ if .CaseTypes}}
                             <ul class="list-group mb-3">
                         {{ range .CaseTypes.Items }}
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <a class="list-group-item d-flex justify-content-between align-items-center" href="/settings/casetypes/{{.ID}}">
                                     {{.Name}}
-                                    <span>
-                                        <span><a class="badge bg-secondary"href="/settings/casetypes/{{.ID}}">Edit</a></span>
-                                        <span ><a class="badge bg-danger"href="/settings/casetypes/{{.ID}}"><i class="bi-trash"></i></a></span>
-                                    </span>
-                                </li>
+                                </a>
                         {{end}}
                             </ul>
                     {{end}}

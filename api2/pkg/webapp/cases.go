@@ -15,7 +15,10 @@ func (h *Handler) Cases(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
-	list, err := h.caseClient.List(ctx)
+	cases, err := h.caseClient.List(ctx)
+	caseTypes, err := h.caseTypeClient.List(ctx, casetypes.ListOptions{})
+	partyList, err := h.partyClient.List(ctx, parties.ListOptions{})
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -27,7 +30,9 @@ func (h *Handler) Cases(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if err := h.template.ExecuteTemplate(w, "cases", map[string]interface{}{
-		"Cases": list,
+		"Cases":     cases,
+		"CaseTypes": caseTypes,
+		"Parties":   partyList,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -50,7 +55,7 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 	var kaseTypes *casesapi.CaseTypeList
 
 	var party *parties.Party
-	// var partyList *parties.PartyList
+	var partyList *parties.PartyList
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
@@ -72,19 +77,17 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 
 	g.Go(func() error {
 		var err error
-		party, err = h.partyClient.Get(waitCtx, id)
+		partyList, err = h.partyClient.List(waitCtx, parties.ListOptions{})
 		return err
 	})
 
-	// listOptions := &parties.ListOptions{} //TODO
-
-	// g.Go(func() error {
-	// 	var err error
-	// partyList, err = partyClient.List(waitCtx, *listOptions)
-	// 	return err
-	// })
-
 	if err := g.Wait(); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	party, err := h.partyClient.Get(waitCtx, kase.PartyID)
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -98,6 +101,7 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 		"Case":      kase,
 		"CaseTypes": kaseTypes,
 		"Party":     party,
+		"Parties":   partyList,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -78,3 +78,12 @@ func (p *Party) FindAttributeValue(name string) interface{} {
 	}
 	return nil
 }
+
+func (pl *PartyList) FindByID(id string) *Party {
+	for _, v := range pl.Items {
+		if id == v.ID {
+			return v
+		}
+	}
+	return nil
+}

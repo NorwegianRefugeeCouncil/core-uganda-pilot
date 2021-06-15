@@ -11,17 +11,32 @@
             <div class="row">
                 <div class="col">
                     <a href='/cases/new' class='btn btn-primary mb-3'>Open New Case</a>
-                    <div class="list-group">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Case Type</th>
+                                <th scope="col">Party</th>
+                            </tr>
+                        </thead>
+                        <tbody>
                         {{ if .Cases.Items}}
+                            {{$caseTypes := .CaseTypes}}
+                            {{$parties := .Parties}}
                             {{ range .Cases.Items }}
-                                <a class="list-group-item font-monospace py-3" href="/cases/{{.ID}}">
-                                    {{.Description}}
-                                </a>
+                                    <tr onclick="window.location.href = '/cases/{{.ID}}'" style="cursor: pointer;">
+                                        {{$casetype := $caseTypes.FindByID .CaseTypeID}}
+                                        <td>{{$casetype.Name}}</td>
+                                        {{$party := $parties.FindByID .PartyID}}
+                                        <td>{{$party.String}}</td>
+                                    </tr>
                             {{end}}
                         {{else}}
-                            <div class='list-group-item disabled'>No open cases</div>
+                            <tr>
+                                <td colspan="2">No open cases</td>
+                            </tr>
                         {{end}}
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
