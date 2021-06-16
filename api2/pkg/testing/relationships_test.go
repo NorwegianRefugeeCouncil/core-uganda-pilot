@@ -26,9 +26,7 @@ func (s *Suite) TestRelationshipCRUD() {
 	if !assert.NoError(s.T(), err) {
 		return
 	}
-	if !assert.Equal(s.T(), get, created) {
-		return
-	}
+	assert.Equal(s.T(), created, get)
 
 	// UPDATE relationships type
 	updatedMock := "update"
@@ -52,7 +50,7 @@ func (s *Suite) TestRelationshipCRUD() {
 	if !assert.NoError(s.T(), err) {
 		return
 	}
-	if !assert.Equal(s.T(), get, updated) {
+	if !assert.Equal(s.T(), updated, get) {
 		return
 	}
 	// LIST relationships types
