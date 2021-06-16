@@ -19,7 +19,7 @@ func (s *Suite) TestRelationShipTypeCRUD() {
 	if !assert.NoError(s.T(), err) {
 		return
 	}
-	//assert.Equal(s.T(), mock, created.ID)
+	assert.NotEmpty(s.T(), created.ID)
 	assert.True(s.T(), created.IsDirectional)
 	assert.Equal(s.T(), mock, created.Name)
 	assert.Equal(s.T(), mock, created.FirstPartyRole)
