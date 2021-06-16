@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	casesapi "github.com/nrc-no/core-kafka/pkg/cases/api"
+	"github.com/nrc-no/core-kafka/pkg/cases/cases"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
 	"github.com/nrc-no/core-kafka/pkg/parties/parties"
 	"golang.org/x/sync/errgroup"
@@ -15,7 +16,7 @@ func (h *Handler) Cases(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
-	cases, err := h.caseClient.List(ctx)
+	kases, err := h.caseClient.List(ctx, cases.ListOptions{})
 	caseTypes, err := h.caseTypeClient.List(ctx, casetypes.ListOptions{})
 	partyList, err := h.partyClient.List(ctx, parties.ListOptions{})
 
@@ -30,7 +31,7 @@ func (h *Handler) Cases(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if err := h.template.ExecuteTemplate(w, "cases", map[string]interface{}{
-		"Cases":     cases,
+		"Cases":     kases,
 		"CaseTypes": caseTypes,
 		"Parties":   partyList,
 	}); err != nil {
@@ -139,9 +140,13 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	qry := req.URL.Query()
+
 	if err := h.template.ExecuteTemplate(w, "casenew", map[string]interface{}{
-		"CaseTypes": caseTypes,
-		"Parties":   p,
+		"PartyID":    qry.Get("partyId"),
+		"CaseTypeID": qry.Get("caseTypeId"),
+		"CaseTypes":  caseTypes,
+		"Parties":    p,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

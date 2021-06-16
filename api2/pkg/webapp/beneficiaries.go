@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/nrc-no/core-kafka/pkg/cases/api"
+	"github.com/nrc-no/core-kafka/pkg/cases/cases"
+	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
 	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
 	"github.com/nrc-no/core-kafka/pkg/parties/beneficiaries"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationships"
@@ -58,6 +61,8 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 
 	var b *beneficiaries.Beneficiary
 	var bList *beneficiaries.BeneficiaryList
+	var ctList *api.CaseTypeList
+	var cList *api.CaseList
 	var relationshipsForBeneficiary *relationships.RelationshipList
 	var relationshipTypes *relationshiptypes.RelationshipTypeList
 	var attrs *attributes.AttributeList
@@ -104,6 +109,18 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 		return err
 	})
 
+	g.Go(func() error {
+		var err error
+		ctList, err = h.caseTypeClient.List(ctx, casetypes.ListOptions{})
+		return err
+	})
+
+	g.Go(func() error {
+		var err error
+		cList, err = h.caseClient.List(ctx, cases.ListOptions{PartyID: id})
+		return err
+	})
+
 	if err := g.Wait(); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -114,12 +131,33 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	type DisplayCase struct {
+		Case     *api.Case
+		CaseType *api.CaseType
+	}
+
+	ctMap := map[string]*api.CaseType{}
+	for _, item := range ctList.Items {
+		ctMap[item.ID] = item
+	}
+
+	var displayCases []*DisplayCase
+	for _, item := range cList.Items {
+		d := DisplayCase{
+			Case:     item,
+			CaseType: ctMap[item.CaseTypeID],
+		}
+		displayCases = append(displayCases, &d)
+	}
+
 	if err := h.template.ExecuteTemplate(w, "beneficiary", map[string]interface{}{
 		"Beneficiary":       b,
 		"Parties":           bList,
 		"RelationshipTypes": relationshipTypes,
 		"Relationships":     relationshipsForBeneficiary,
 		"Attributes":        attrs,
+		"Cases":             displayCases,
+		"CaseTypes":         ctList,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

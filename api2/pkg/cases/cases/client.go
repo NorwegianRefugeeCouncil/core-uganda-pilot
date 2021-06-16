@@ -20,11 +20,21 @@ func NewClient(basePath string) *Client {
 	}
 }
 
-func (c *Client) List(ctx context.Context) (*api.CaseList, error) {
+func (c *Client) List(ctx context.Context, listOptions ListOptions) (*api.CaseList, error) {
 	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/cases", nil)
 	if err != nil {
 		return nil, err
 	}
+
+	qry := req.URL.Query()
+	if len(listOptions.PartyID) > 0 {
+		qry.Set("partyId", listOptions.PartyID)
+	}
+	if len(listOptions.CaseTypeID) > 0 {
+		qry.Set("caseTypeId", listOptions.CaseTypeID)
+	}
+	req.URL.RawQuery = qry.Encode()
+
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {

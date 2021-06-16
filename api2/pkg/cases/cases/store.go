@@ -35,11 +35,12 @@ func (s *Store) List(ctx context.Context, listOptions ListOptions) (*api.CaseLis
 
 	filter := bson.M{}
 
-	if len(listOptions.Case) != 0 {
-		filter["$or"] = bson.M{
-			"firstCase":  listOptions.Case,
-			"secondCase": listOptions.Case,
-		}
+	if len(listOptions.PartyID) != 0 {
+		filter["partyId"] = listOptions.PartyID
+	}
+
+	if len(listOptions.CaseTypeID) != 0 {
+		filter["caseTypeId"] = listOptions.CaseTypeID
 	}
 
 	res, err := s.collection.Find(ctx, filter)

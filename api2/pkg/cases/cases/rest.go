@@ -46,7 +46,8 @@ func (h *Handler) Get(w http.ResponseWriter, req *http.Request) {
 }
 
 type ListOptions struct {
-	Case string
+	PartyID    string
+	CaseTypeID string
 }
 
 func (h *Handler) List(w http.ResponseWriter, req *http.Request) {
@@ -55,7 +56,8 @@ func (h *Handler) List(w http.ResponseWriter, req *http.Request) {
 	qry := req.URL.Query()
 
 	listOptions := &ListOptions{
-		Case: qry.Get("Case"),
+		PartyID:    qry.Get("partyId"),
+		CaseTypeID: qry.Get("caseTypeId"),
 	}
 
 	ret, err := h.store.List(ctx, *listOptions)
