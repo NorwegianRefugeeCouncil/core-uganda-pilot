@@ -1,45 +1,46 @@
 {{define "casetype"}}
     <!doctype html>
     <html lang="en">
-        {{template "head"}}
-        <body class="bg-light">
-            {{template "navbar"}}
-            <div class="container">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title">Case Type</h4>
-                        <form action="/settings/casetypes{{if .CaseType}}/{{.CaseType.ID}}{{end}}" method="post">
-                            <div class="form-floating mb-3">
-                                <input id="name" type="text" class="form-control" name="name" value="{{if .CaseType}}{{.CaseType.Name}}{{end}}">
-                                <label for="name">Name</label>
-                            </div>
-                            <div class="form-floating mb-3">
-                                <select id="party-type" type="select" class="form-select" name="partyTypeId">
-                                    {{if .CaseType}}
-                                        {{$partyTypeId := .CaseType.PartyTypeID}}
-                                        {{range .PartyTypes.Items}}
-                                            <option {{if eq .ID $partyTypeId}}selected{{end}} value="{{.ID}}">
-                                                {{.Name}}
-                                            </option>
-                                        {{end}}
-                                    {{else}}
-                                        {{if .PartyTypes}}
-                                            <option selected></option>
-                                            {{range .PartyTypes.Items}}
-                                                <option value="{{.ID}}">{{.Name}}</option>
-                                            {{end}}
-                                        {{else}}
-                                            <option disabled selected>No party types defined</option>
-                                        {{end}}
-                                    {{end}}
-                                </select>
-                                <label for="party-type">Select Party Type</label>
-                            </div>
-                            <button class="btn btn-primary" type="submit">Save</button>
-                        </form>
+    {{template "head"}}
+    <body class="bg-light">
+    {{template "navbar"}}
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Case Type</h4>
+                <form action="/settings/casetypes{{if .CaseType}}/{{.CaseType.ID}}{{end}}" method="post">
+                    <div class="form-floating mb-3">
+                        <input id="name" type="text" class="form-control" name="name"
+                               value="{{if .CaseType}}{{.CaseType.Name}}{{end}}">
+                        <label for="name">Name</label>
                     </div>
-                </div>
+                    <div class="form-floating mb-3">
+                        <select id="party-type" type="select" class="form-select" name="partyTypeId">
+                            {{if .CaseType}}
+                                {{$partyTypeId := .CaseType.PartyTypeID}}
+                                {{range .PartyTypes.Items}}
+                                    <option {{if eq .ID $partyTypeId}}selected{{end}} value="{{.ID}}">
+                                        {{.Name}}
+                                    </option>
+                                {{end}}
+                            {{else}}
+                                {{if .PartyTypes}}
+                                    <option selected></option>
+                                    {{range .PartyTypes.Items}}
+                                        <option value="{{.ID}}">{{.Name}}</option>
+                                    {{end}}
+                                {{else}}
+                                    <option disabled selected>No party types defined</option>
+                                {{end}}
+                            {{end}}
+                        </select>
+                        <label for="party-type">Select Party Type</label>
+                    </div>
+                    <button class="btn btn-primary" type="submit">Save</button>
+                </form>
             </div>
-        </body>
+        </div>
+    </div>
+    </body>
     </html>
 {{end}}
