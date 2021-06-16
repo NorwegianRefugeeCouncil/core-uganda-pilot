@@ -3,6 +3,9 @@ package webapp
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"strings"
+
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
 	"github.com/nrc-no/core-kafka/pkg/parties/beneficiaries"
@@ -10,8 +13,6 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/parties/relationshiptypes"
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/sync/errgroup"
-	"net/http"
-	"strings"
 )
 
 func (h *Handler) Beneficiaries(w http.ResponseWriter, req *http.Request) {
@@ -94,7 +95,7 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 
 	g.Go(func() error {
 		var err error
-		relationshipTypes, err = h.relationshipTypeClient.List(waitCtx)
+		relationshipTypes, err = h.relationshipTypeClient.List(waitCtx, relationshipTypes.ListOptions{PartyType: b.PartyTypes[0]})
 		return err
 	})
 
