@@ -162,7 +162,7 @@ func (h *Handler) PostCase(ctx context.Context, id string, w http.ResponseWriter
 	caseTypeId := req.Form.Get("caseTypeId")
 	partyId := req.Form.Get("partyId")
 	description := req.Form.Get("description")
-	done := req.Form.Get("done-check")
+	done := req.Form.Get("done")
 
 	if id == "" {
 		_, err := h.caseClient.Create(ctx, &cases.Case{
@@ -178,6 +178,8 @@ func (h *Handler) PostCase(ctx context.Context, id string, w http.ResponseWriter
 	} else {
 		_, err := h.caseClient.Update(ctx, &cases.Case{
 			ID:          id,
+			CaseTypeID:  caseTypeId,
+			PartyID:     partyId,
 			Description: description,
 			Done:        done == "on",
 		})
