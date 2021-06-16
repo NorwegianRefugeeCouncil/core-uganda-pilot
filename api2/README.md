@@ -1,6 +1,6 @@
 ```
 
-docker-compose -d -f artifacts/docker-compose.yml up
+docker-compose -f artifacts/docker-compose.yml up -d
 
 go run .
 
