@@ -103,6 +103,8 @@ func (h *Handler) Put(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	r.PartyID = payload.PartyID
+	r.CaseTypeID = payload.CaseTypeID
 	r.Description = payload.Description
 	r.Done = payload.Done
 
