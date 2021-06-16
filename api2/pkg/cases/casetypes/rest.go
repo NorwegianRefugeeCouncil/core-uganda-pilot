@@ -102,6 +102,7 @@ func (h *Handler) Put(w http.ResponseWriter, req *http.Request) {
 	}
 
 	r.Name = payload.Name
+	r.PartyTypeID = payload.PartyTypeID
 
 	if err := h.store.Update(ctx, r); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
