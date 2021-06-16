@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
-	casesapi "github.com/nrc-no/core-kafka/pkg/cases/api"
 	"github.com/nrc-no/core-kafka/pkg/cases/cases"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
 	"github.com/nrc-no/core-kafka/pkg/parties/parties"
@@ -57,8 +56,8 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var kase *casesapi.Case
-	var kaseTypes *casesapi.CaseTypeList
+	var kase *cases.Case
+	var kaseTypes *casetypes.CaseTypeList
 
 	var party *parties.Party
 	var partyList *parties.PartyList
@@ -67,7 +66,7 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 
 	g.Go(func() error {
 		if id == "new" {
-			kase = &casesapi.Case{}
+			kase = &cases.Case{}
 			return nil
 		}
 		var err error
@@ -117,7 +116,7 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 	caseTypesClient := casetypes.NewClient("http://localhost:9000")
 	partiesClient := parties.NewClient("http://localhost:9000")
 
-	var caseTypes *casesapi.CaseTypeList
+	var caseTypes *casetypes.CaseTypeList
 	var p *parties.PartyList
 
 	g, waitCtx := errgroup.WithContext(ctx)
@@ -166,7 +165,7 @@ func (h *Handler) PostCase(ctx context.Context, id string, w http.ResponseWriter
 	done := req.Form.Get("done-check")
 
 	if id == "" {
-		_, err := h.caseClient.Create(ctx, &casesapi.Case{
+		_, err := h.caseClient.Create(ctx, &cases.Case{
 			CaseTypeID:  caseTypeId,
 			PartyID:     partyId,
 			Description: description,
@@ -177,7 +176,7 @@ func (h *Handler) PostCase(ctx context.Context, id string, w http.ResponseWriter
 			return
 		}
 	} else {
-		_, err := h.caseClient.Update(ctx, &casesapi.Case{
+		_, err := h.caseClient.Update(ctx, &cases.Case{
 			ID:          id,
 			Description: description,
 			Done:        done == "on",

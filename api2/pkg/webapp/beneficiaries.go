@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core-kafka/pkg/cases/api"
 	"github.com/nrc-no/core-kafka/pkg/cases/cases"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
 	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
@@ -61,8 +60,8 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 
 	var b *beneficiaries.Beneficiary
 	var bList *beneficiaries.BeneficiaryList
-	var ctList *api.CaseTypeList
-	var cList *api.CaseList
+	var ctList *casetypes.CaseTypeList
+	var cList *cases.CaseList
 	var relationshipsForBeneficiary *relationships.RelationshipList
 	var relationshipTypes *relationshiptypes.RelationshipTypeList
 	var attrs *attributes.AttributeList
@@ -132,11 +131,11 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 	}
 
 	type DisplayCase struct {
-		Case     *api.Case
-		CaseType *api.CaseType
+		Case     *cases.Case
+		CaseType *casetypes.CaseType
 	}
 
-	ctMap := map[string]*api.CaseType{}
+	ctMap := map[string]*casetypes.CaseType{}
 	for _, item := range ctList.Items {
 		ctMap[item.ID] = item
 	}
@@ -144,8 +143,8 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 	var displayCases []*DisplayCase
 	for _, item := range cList.Items {
 		d := DisplayCase{
-			Case:     item,
-			CaseType: ctMap[item.CaseTypeID],
+			item,
+			ctMap[item.CaseTypeID],
 		}
 		displayCases = append(displayCases, &d)
 	}

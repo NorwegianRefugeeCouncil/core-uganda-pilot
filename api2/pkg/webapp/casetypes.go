@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
-	casesapi "github.com/nrc-no/core-kafka/pkg/cases/api"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"golang.org/x/sync/errgroup"
@@ -15,7 +14,7 @@ func (h *Handler) CaseTypes(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
-	var caseTypes *casesapi.CaseTypeList
+	var caseTypes *casetypes.CaseTypeList
 
 	caseTypes, err := h.caseTypeClient.List(ctx, casetypes.ListOptions{})
 	if err != nil {
@@ -24,7 +23,7 @@ func (h *Handler) CaseTypes(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if req.Method == "POST" {
-		h.PostCaseType(ctx, &casesapi.CaseType{}, w, req)
+		h.PostCaseType(ctx, &casetypes.CaseType{}, w, req)
 		return
 	}
 
@@ -47,14 +46,14 @@ func (h *Handler) CaseType(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var caseType *casesapi.CaseType
+	var caseType *casetypes.CaseType
 	var partyTypes *partytypes.PartyTypeList
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
 		if id == "new" {
-			caseType = &casesapi.CaseType{}
+			caseType = &casetypes.CaseType{}
 			return nil
 		}
 		var err error
@@ -108,7 +107,7 @@ func (h *Handler) NewCaseType(w http.ResponseWriter, req *http.Request) {
 
 func (h *Handler) PostCaseType(
 	ctx context.Context,
-	caseType *casesapi.CaseType,
+	caseType *casetypes.CaseType,
 	w http.ResponseWriter,
 	req *http.Request,
 ) {
