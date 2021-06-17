@@ -98,6 +98,7 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 		return err
 	})
 
+	// replace channel with hardcoded IndividualType from static
 	g.Go(func() error {
 		<- gotBeneficiary
 		var err error
@@ -116,6 +117,7 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	// extract into method for UI concern
 	for _, relType := range relationshipTypes.Items {
 		if relType.IsDirectional {
 			for _, rule := range relType.Rules {

@@ -35,6 +35,7 @@ func (s *Store) List(ctx context.Context, listOptions ListOptions) (*Relationshi
 
 	filter := bson.M{}
 
+	// simplify with https://docs.mongodb.com/manual/tutorial/query-array-of-documents/#a-single-nested-document-meets-multiple-query-conditions-on-nested-fields
 	if len(listOptions.PartyType) != 0 {
 		filter["$project"] = bson.M{
 			"rules": bson.M{
