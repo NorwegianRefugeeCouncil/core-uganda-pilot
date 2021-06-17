@@ -97,6 +97,7 @@ func (s *Suite) TestRelationshipTypeList() {
 		for _, rt := range list.Items {
 			valid := false
 			for _, r := range rt.Rules {
+				t.Logf("checking rule for type %s \nwith 1st %s \nand 2nd %s \nto see if it contains %s", rt.Name, r.FirstPartyType, r.SecondPartyType, partytypes.IndividualPartyType.ID)
 				if r.FirstPartyType == partytypes.IndividualPartyType.ID || r.SecondPartyType == partytypes.IndividualPartyType.ID {
 					valid = true
 				}
@@ -108,16 +109,17 @@ func (s *Suite) TestRelationshipTypeList() {
 	s.T().Run("test filter by HouseholdPartyType", func(t *testing.T) {
 		t.Logf("listing relationship types with party type: HouseholdPartyType")
 
-		list, err := s.server.RelationshipTypeClient.List(s.ctx, relationshiptypes.ListOptions{
+		list2, err := s.server.RelationshipTypeClient.List(s.ctx, relationshiptypes.ListOptions{
 			PartyType: partytypes.HouseholdPartyType.ID,
 		})
 		if !assert.NoError(t, err) {
 			return
 		}
 
-		for _, rt := range list.Items {
+		for _, rt := range list2.Items {
 			valid := false
 			for _, r := range rt.Rules {
+				t.Logf("checking rule for type %s \nwith 1st %s \nand 2nd %s \nto see if it contains %s", rt.Name, r.FirstPartyType, r.SecondPartyType, partytypes.HouseholdPartyType.ID)
 				if r.FirstPartyType == partytypes.HouseholdPartyType.ID || r.SecondPartyType == partytypes.HouseholdPartyType.ID {
 					valid = true
 				}

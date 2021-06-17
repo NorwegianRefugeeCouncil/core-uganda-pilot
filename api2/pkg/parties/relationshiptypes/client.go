@@ -26,9 +26,10 @@ func (c *Client) List(ctx context.Context, listOptions ListOptions) (*Relationsh
 	if err != nil {
 		return nil, err
 	}
+	req = req.WithContext(ctx)
 	q := req.URL.Query()
 	if len(listOptions.PartyType) != 0 {
-		q.Set("firstPartyType", listOptions.PartyType)
+		q.Set("partyType", listOptions.PartyType)
 	}
 	req.URL.RawQuery = q.Encode()
 
@@ -56,6 +57,7 @@ func (c *Client) Get(ctx context.Context, id string) (*RelationshipType, error) 
 	if err != nil {
 		return nil, err
 	}
+	req = req.WithContext(ctx)
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
