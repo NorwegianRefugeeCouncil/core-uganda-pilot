@@ -63,6 +63,8 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 	var relationshipTypes *relationshiptypes.RelationshipTypeList
 	var attrs *attributes.AttributeList
 
+	gotBeneficiary := make(chan bool)
+
 	g, waitCtx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
@@ -72,6 +74,9 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 		}
 		var err error
 		b, err = h.beneficiaryClient.Get(waitCtx, id)
+		if err == nil {
+			gotBeneficiary <- true
+		}
 		return err
 	})
 
@@ -94,8 +99,9 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 	})
 
 	g.Go(func() error {
+		<- gotBeneficiary
 		var err error
-		relationshipTypes, err = h.relationshipTypeClient.List(waitCtx, relationshipTypes.ListOptions{PartyType: b.PartyTypes[0]})
+		relationshipTypes, err = h.relationshipTypeClient.List(waitCtx, relationshiptypes.ListOptions{PartyType: b.PartyTypes[0]})
 		return err
 	})
 
