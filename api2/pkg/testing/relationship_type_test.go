@@ -1,9 +1,12 @@
 package testing
 
 import (
+	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationshiptypes"
 	"github.com/stretchr/testify/assert"
 )
+
+// add a test to test the filter of relationship types, refer to case_test.go as an example
 
 func (s *Suite) TestRelationShipTypeCRUD() {
 	// CREATE relationship type
@@ -64,8 +67,11 @@ func (s *Suite) TestRelationShipTypeCRUD() {
 	if !assert.Equal(s.T(), get, updated) {
 		return
 	}
+
 	// LIST relationship types
-	list, err := s.server.RelationshipTypeClient.List(s.ctx)
+	list, err := s.server.RelationshipTypeClient.List(s.ctx, relationshiptypes.ListOptions{
+		PartyType: partytypes.IndividualPartyType.ID,
+	})
 	if !assert.NoError(s.T(), err) {
 		return
 	}

@@ -36,19 +36,9 @@ func (s *Store) List(ctx context.Context, listOptions ListOptions) (*Relationshi
 	filter := bson.M{}
 
 	if len(listOptions.PartyType) != 0 {
-		filter["$project"] = bson.M{
-			"rules": bson.M{
-				"$filter": bson.M{
-					"input": "$rules",
-					"as":    "rule",
-					"cond": bson.M{
-						"$or": bson.M{
-							"$$rule.firstPartyType":  listOptions.PartyType,
-							"$$rule.secondPartyType": listOptions.PartyType,
-						},
-					},
-				},
-			},
+		filter["$or"] = bson.M{
+			"rules.firstPartyType": listOptions.PartyType,
+			"rules.secondPartyType": listOptions.PartyType,
 		}
 	}
 

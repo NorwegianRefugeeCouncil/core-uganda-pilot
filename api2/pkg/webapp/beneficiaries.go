@@ -3,6 +3,7 @@ package webapp
 import (
 	"context"
 	"fmt"
+	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"net/http"
 	"strings"
 
@@ -67,8 +68,6 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 	var relationshipTypes *relationshiptypes.RelationshipTypeList
 	var attrs *attributes.AttributeList
 
-	gotBeneficiary := make(chan bool)
-
 	g, waitCtx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
@@ -78,9 +77,6 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 		}
 		var err error
 		b, err = h.beneficiaryClient.Get(waitCtx, id)
-		if err == nil {
-			gotBeneficiary <- true
-		}
 		return err
 	})
 
@@ -103,9 +99,8 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 	})
 
 	g.Go(func() error {
-		<- gotBeneficiary
 		var err error
-		relationshipTypes, err = h.relationshipTypeClient.List(waitCtx, relationshiptypes.ListOptions{PartyType: b.PartyTypes[0]})
+		relationshipTypes, err = h.relationshipTypeClient.List(waitCtx, relationshiptypes.ListOptions{PartyType: partytypes.IndividualPartyType.ID})
 		return err
 	})
 
@@ -132,15 +127,7 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	for _, relType := range relationshipTypes.Items {
-		if relType.IsDirectional {
-			for _, rule := range relType.Rules {
-				if rule.SecondPartyType == b.PartyTypes[0] {
-					relationshipTypes.Items = append(relationshipTypes.Items, relType.Reversed())
-				}
-			}
-		}
-	}
+	relationshipTypes = PrepRelationshipTypeDropdown(relationshipTypes)
 
 	if req.Method == "POST" {
 		h.PostBeneficiary(ctx, attrs.Items, id, w, req)
@@ -179,6 +166,25 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+}
+
+func PrepRelationshipTypeDropdown(relationshipTypes *relationshiptypes.RelationshipTypeList) *relationshiptypes.RelationshipTypeList {
+	var newList = relationshiptypes.RelationshipTypeList{}
+	for _, relType := range relationshipTypes.Items {
+		if relType.IsDirectional {
+			for _, rule := range relType.Rules {
+				if rule.FirstPartyType == partytypes.IndividualPartyType.ID {
+					newList.Items = append(newList.Items, relType)
+				}
+				if rule.SecondPartyType == partytypes.IndividualPartyType.ID {
+					newList.Items = append(newList.Items, relType.Reversed())
+				}
+			}
+		} else {
+			newList.Items = append(newList.Items, relType)
+		}
+	}
+	return &newList
 }
 
 func (h *Handler) PostBeneficiary(
