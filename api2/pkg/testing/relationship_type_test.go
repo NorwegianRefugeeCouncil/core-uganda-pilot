@@ -4,6 +4,7 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationshiptypes"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 // add a test to test the filter of relationship types, refer to case_test.go as an example
@@ -76,4 +77,53 @@ func (s *Suite) TestRelationShipTypeCRUD() {
 		return
 	}
 	assert.Contains(s.T(), list.Items, get)
+}
+
+// TestRelationshipTypeList tests that we can effectively filter relationship types by
+// - PartyType = IndividualPartyType
+// - PartyType = HouseholdPartyType
+func (s *Suite) TestRelationshipTypeList() {
+
+	s.T().Run("test filter by IndividualPartyType", func(t *testing.T) {
+		t.Logf("listing relationship types with party type: IndividualPartyType")
+
+		list, err := s.server.RelationshipTypeClient.List(s.ctx, relationshiptypes.ListOptions{
+			PartyType: partytypes.IndividualPartyType.ID,
+		})
+		if !assert.NoError(t, err) {
+			return
+		}
+
+		for _, rt := range list.Items {
+			valid := false
+			for _, r := range rt.Rules {
+				if r.FirstPartyType == partytypes.IndividualPartyType.ID || r.SecondPartyType == partytypes.IndividualPartyType.ID {
+					valid = true
+				}
+			}
+			assert.True(t, valid, "asserting that there is at least one rule with the beneficiary party type")
+		}
+	})
+
+	s.T().Run("test filter by HouseholdPartyType", func(t *testing.T) {
+		t.Logf("listing relationship types with party type: HouseholdPartyType")
+
+		list, err := s.server.RelationshipTypeClient.List(s.ctx, relationshiptypes.ListOptions{
+			PartyType: partytypes.HouseholdPartyType.ID,
+		})
+		if !assert.NoError(t, err) {
+			return
+		}
+
+		for _, rt := range list.Items {
+			valid := false
+			for _, r := range rt.Rules {
+				if r.FirstPartyType == partytypes.HouseholdPartyType.ID || r.SecondPartyType == partytypes.HouseholdPartyType.ID {
+					valid = true
+				}
+			}
+			assert.True(t, valid, "asserting that there is at least one rule with the beneficiary party type")
+		}
+	})
+
 }
