@@ -1,6 +1,7 @@
 package testing
 
 import (
+	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationshiptypes"
 	"github.com/stretchr/testify/assert"
 )
@@ -68,8 +69,11 @@ func (s *Suite) TestRelationShipTypeCRUD() {
 	if !assert.Equal(s.T(), get, updated) {
 		return
 	}
+
 	// LIST relationship types
-	list, err := s.server.RelationshipTypeClient.List(s.ctx)
+	list, err := s.server.RelationshipTypeClient.List(s.ctx, relationshiptypes.ListOptions{
+		PartyType: partytypes.IndividualPartyType.ID,
+	})
 	if !assert.NoError(s.T(), err) {
 		return
 	}
