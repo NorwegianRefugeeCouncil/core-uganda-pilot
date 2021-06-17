@@ -90,11 +90,11 @@ func (s *Suite) TestCaseList() {
 		},
 	}
 
-	// Holds the number of cases by CaseTypeID
+	// Holds the cases by CaseTypeID
 	byCaseTypeID := map[string][]*cases.Case{}
-	// Holds the number of cases by PartyID
+	// Holds the cases by PartyID
 	byPartyID := map[string][]*cases.Case{}
-	// Holds the number of cases by CaseTypeID + PartyID
+	// Holds the cases by CaseTypeID + PartyID
 	byCaseTypeIdAndPartyId := map[string][]*cases.Case{}
 
 	// Create the cases
@@ -108,23 +108,27 @@ func (s *Suite) TestCaseList() {
 		if !assert.NoError(s.T(), err) {
 			return
 		}
+		kase.kase = k
 
+		// Add the created cases to the relevant maps
 		byCaseTypeID[kase.caseTypeID] = append(byCaseTypeID[kase.caseTypeID], k)
 		byPartyID[kase.partyID] = append(byPartyID[kase.partyID], k)
 		caseAndPartyId := kase.caseTypeID + "-" + kase.partyID
 		byCaseTypeIdAndPartyId[caseAndPartyId] = append(byCaseTypeIdAndPartyId[caseAndPartyId], k)
-		kase.kase = k
 	}
 
 	s.T().Run("test filter by caseTypeId", func(t *testing.T) {
 		for _, kase := range kases {
+
 			t.Logf("listing cases with CaseTypeID: %s", kase.caseTypeID)
+
 			list, err := s.server.CaseClient.List(s.ctx, cases.ListOptions{
 				CaseTypeID: kase.caseTypeID,
 			})
 			if !assert.NoError(t, err) {
 				return
 			}
+
 			t.Logf("received %d items", len(list.Items))
 			assert.Len(t, list.Items, len(byCaseTypeID[kase.caseTypeID]))
 			for _, k := range byCaseTypeID[kase.caseTypeID] {
@@ -135,13 +139,16 @@ func (s *Suite) TestCaseList() {
 
 	s.T().Run("test filter by partyId", func(t *testing.T) {
 		for _, kase := range kases {
+
 			t.Logf("listing cases with PartyID: %s", kase.partyID)
+
 			list, err := s.server.CaseClient.List(s.ctx, cases.ListOptions{
 				PartyID: kase.partyID,
 			})
 			if !assert.NoError(t, err) {
 				return
 			}
+
 			t.Logf("received %d items", len(list.Items))
 			assert.Len(t, list.Items, len(byPartyID[kase.partyID]))
 			for _, k := range byPartyID[kase.partyID] {
@@ -153,7 +160,9 @@ func (s *Suite) TestCaseList() {
 	s.T().Run("test filter by caseTypeId and partyId", func(t *testing.T) {
 
 		for _, kase := range kases {
+
 			t.Logf("listing cases with PartyID: %s and CaseTypeID: %s", kase.partyID, kase.caseTypeID)
+
 			list, err := s.server.CaseClient.List(s.ctx, cases.ListOptions{
 				PartyID:    kase.partyID,
 				CaseTypeID: kase.caseTypeID,
@@ -161,12 +170,14 @@ func (s *Suite) TestCaseList() {
 			if !assert.NoError(t, err) {
 				return
 			}
+
 			t.Logf("received %d items", len(list.Items))
 			caseAndPartyId := kase.caseTypeID + "-" + kase.partyID
 			assert.Len(t, list.Items, len(byCaseTypeIdAndPartyId[caseAndPartyId]))
 			for _, k := range byPartyID[caseAndPartyId] {
 				assert.Contains(t, list.Items, k)
 			}
+
 		}
 
 	})
