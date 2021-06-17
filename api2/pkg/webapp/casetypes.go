@@ -14,8 +14,6 @@ func (h *Handler) CaseTypes(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
-	var caseTypes *casetypes.CaseTypeList
-
 	caseTypes, err := h.caseTypeClient.List(ctx, casetypes.ListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -27,8 +25,15 @@ func (h *Handler) CaseTypes(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	partyTypes, err := h.partyTypeClient.List(ctx)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	if err := h.template.ExecuteTemplate(w, "casetypes", map[string]interface{}{
-		"CaseTypes": caseTypes,
+		"CaseTypes":  caseTypes,
+		"PartyTypes": partyTypes,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
