@@ -54,11 +54,11 @@ func (h *Handler) List(w http.ResponseWriter, req *http.Request) {
 
 	qry := req.URL.Query()
 
-	listOptions := &ListOptions{
-		PartyType: qry.Get("PartyType"),
+	listOptions := ListOptions{
+		PartyType: qry.Get("partyType"),
 	}
 
-	ret, err := h.store.List(ctx, *listOptions)
+	ret, err := h.store.List(ctx, listOptions)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
