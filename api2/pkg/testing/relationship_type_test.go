@@ -8,8 +8,6 @@ import (
 
 // add a test to test the filter of relationship types, refer to case_test.go as an example
 
-// fix existing test case which is missing filter param
-
 func (s *Suite) TestRelationShipTypeCRUD() {
 	// CREATE relationship type
 	mock := "create"
