@@ -127,16 +127,7 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// extract into method for UI concern
-	for _, relType := range relationshipTypes.Items {
-		if relType.IsDirectional {
-			for _, rule := range relType.Rules {
-				if rule.SecondPartyType == b.PartyTypes[0] {
-					relationshipTypes.Items = append(relationshipTypes.Items, relType.Reversed())
-				}
-			}
-		}
-	}
+	RelationShipTypesDropdown(relationshipTypes)
 
 	if req.Method == "POST" {
 		h.PostBeneficiary(ctx, attrs.Items, id, w, req)
@@ -175,6 +166,18 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+}
+
+func RelationShipTypesDropdown(relationshipTypes *relationshiptypes.RelationshipTypeList) {
+	for _, relType := range relationshipTypes.Items {
+		if relType.IsDirectional {
+			for _, rule := range relType.Rules {
+				if rule.SecondPartyType == partytypes.IndividualPartyType.ID {
+					relationshipTypes.Items = append(relationshipTypes.Items, relType.Reversed())
+				}
+			}
+		}
+	}
 }
 
 func (h *Handler) PostBeneficiary(
