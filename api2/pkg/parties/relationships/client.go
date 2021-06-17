@@ -25,8 +25,11 @@ func (c *Client) List(ctx context.Context, listOptions ListOptions) (*Relationsh
 		return nil, err
 	}
 	q := req.URL.Query()
-	if len(listOptions.Party) != 0 {
-		q.Set("party", listOptions.Party)
+	if len(listOptions.FirstParty) != 0 {
+		q.Set("RelationshipTypeID", listOptions.RelationshipTypeID)
+		q.Set("FirstParty", listOptions.FirstParty)
+		q.Set("SecondParty", listOptions.SecondParty)
+		q.Set("EitherParty", listOptions.EitherParty)
 	}
 	req.URL.RawQuery = q.Encode()
 

@@ -94,7 +94,7 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 			return nil
 		}
 		var err error
-		relationshipsForBeneficiary, err = h.relationshipClient.List(waitCtx, relationships.ListOptions{Party: id})
+		relationshipsForBeneficiary, err = h.relationshipClient.List(waitCtx, relationships.ListOptions{EitherParty: id})
 		return err
 	})
 
