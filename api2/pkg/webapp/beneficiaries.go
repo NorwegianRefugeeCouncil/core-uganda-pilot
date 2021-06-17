@@ -116,6 +116,16 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	for _, relType := range relationshipTypes.Items {
+		if relType.IsDirectional {
+			for _, rule := range relType.Rules {
+				if rule.SecondPartyType == b.PartyTypes[0] {
+					relationshipTypes.Items = append(relationshipTypes.Items, relType.Reversed())
+				}
+			}
+		}
+	}
+
 	if req.Method == "POST" {
 		h.PostBeneficiary(ctx, attrs.Items, id, w, req)
 		return

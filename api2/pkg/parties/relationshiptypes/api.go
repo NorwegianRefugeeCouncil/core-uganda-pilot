@@ -22,7 +22,7 @@ type RelationshipTypeList struct {
 	Items []*RelationshipType `json:"items" bson:"items"`
 }
 
-func (r *RelationshipType) reversed() *RelationshipType {
+func (r *RelationshipType) Reversed() *RelationshipType {
 	return &RelationshipType{
 		ID:              r.ID,
 		IsDirectional:   r.IsDirectional,
