@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/nrc-no/core-kafka/pkg/cases/api"
 	uuid "github.com/satori/go.uuid"
 	"io/ioutil"
 	"net/http"
@@ -25,7 +24,7 @@ type ListOptions struct {
 	PartyTypes []string `json:"partyTypes"`
 }
 
-func (c *Client) List(ctx context.Context, listOptions ListOptions) (*api.CaseTypeList, error) {
+func (c *Client) List(ctx context.Context, listOptions ListOptions) (*CaseTypeList, error) {
 	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/casetypes", nil)
 	if err != nil {
 		return nil, err
@@ -55,14 +54,14 @@ func (c *Client) List(ctx context.Context, listOptions ListOptions) (*api.CaseTy
 	if err != nil {
 		return nil, err
 	}
-	var list api.CaseTypeList
+	var list CaseTypeList
 	if err := json.Unmarshal(bodyBytes, &list); err != nil {
 		return nil, err
 	}
 	return &list, nil
 }
 
-func (c *Client) Get(ctx context.Context, id string) (*api.CaseType, error) {
+func (c *Client) Get(ctx context.Context, id string) (*CaseType, error) {
 	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/casetypes/"+id, nil)
 	if err != nil {
 		return nil, err
@@ -79,14 +78,14 @@ func (c *Client) Get(ctx context.Context, id string) (*api.CaseType, error) {
 	if err != nil {
 		return nil, err
 	}
-	var v api.CaseType
+	var v CaseType
 	if err := json.Unmarshal(bodyBytes, &v); err != nil {
 		return nil, err
 	}
 	return &v, nil
 }
 
-func (c *Client) Update(ctx context.Context, caseType *api.CaseType) (*api.CaseType, error) {
+func (c *Client) Update(ctx context.Context, caseType *CaseType) (*CaseType, error) {
 	bodyBytes, err := json.Marshal(caseType)
 	if err != nil {
 		return nil, err
@@ -109,14 +108,14 @@ func (c *Client) Update(ctx context.Context, caseType *api.CaseType) (*api.CaseT
 	if err != nil {
 		return nil, err
 	}
-	var v api.CaseType
+	var v CaseType
 	if err := json.Unmarshal(responseBytes, &v); err != nil {
 		return nil, err
 	}
 	return &v, nil
 }
 
-func (c *Client) Create(ctx context.Context, caseType *api.CaseType) (*api.CaseType, error) {
+func (c *Client) Create(ctx context.Context, caseType *CaseType) (*CaseType, error) {
 	bodyBytes, err := json.Marshal(caseType)
 	if err != nil {
 		return nil, err
@@ -139,7 +138,7 @@ func (c *Client) Create(ctx context.Context, caseType *api.CaseType) (*api.CaseT
 	if err != nil {
 		return nil, err
 	}
-	var v api.CaseType
+	var v CaseType
 	if err := json.Unmarshal(responseBytes, &v); err != nil {
 		return nil, err
 	}

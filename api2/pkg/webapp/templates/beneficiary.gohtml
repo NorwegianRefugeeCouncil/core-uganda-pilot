@@ -22,7 +22,7 @@
 
                             {{ if $values}}
                                 {{range $idx, $value := $values}}
-                                    <div class="form-floating mb-3 shadow-sm">
+                                    <div class="form-floating mb-3">
                                         <input class="form-control"
                                                name="attribute[{{$attribute.ID}}]"
                                                id="attribute-{{$attribute.ID}}-{{$idx}}"
@@ -32,7 +32,7 @@
                                     </div>
                                 {{end}}
                             {{else}}
-                                <div class="form-floating mb-3 shadow-sm">
+                                <div class="form-floating mb-3">
                                     <input class="form-control"
                                            name="attribute[{{$attribute.ID}}]"
                                            id="attribute-{{$attribute.ID}}-0"
@@ -55,7 +55,7 @@
                         </div>
 
                         <div class="d-flex flex-row mb-3">
-                            <div class="form-floating shadow-sm me-2">
+                            <div class="form-floating  me-2">
                                 <select id="relationshipTypeSelector" class="form-select pe-5">
                                     {{range .RelationshipTypes.Items}}
                                         <option value="{{.ID}}">{{.FirstPartyRole}}</option>
@@ -63,7 +63,7 @@
                                 </select>
                                 <label for="relationshipTypeSelector">Relationship Type</label>
                             </div>
-                            <div class="form-floating shadow-sm mx-2 flex-grow-1">
+                            <div class="form-floating  mx-2 flex-grow-1">
                                 <select id="relationshipSecondPartySelector" class="form-select">
                                     <option value="" selected></option>
                                     {{range .Parties.Items}}
@@ -80,7 +80,39 @@
                             </button>
                         </div>
 
-                        <button class="btn btn-primary">Save</button>
+                        <h4 class="display-6">Cases</h4>
+
+                        <table class="table table-hover table-bordered">
+
+                            <thead>
+                            <tr>
+                                <th scope="col">Type</th>
+                                <th scope="col">Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            {{range .Cases}}
+                                <tr>
+                                    <td><a href="/cases/{{.Case.ID}}">{{.CaseType.Name}}</a></td>
+                                    <td>{{if .Case.Done}}Closed{{else}}Open{{end}}</td>
+                                </tr>
+                            {{end}}
+
+                            </tbody>
+                        </table>
+
+                        <h4 class="display-6">Open Case</h4>
+
+                        {{range .CaseTypes.Items}}
+
+                            <div>
+                                <a href="/cases/new?caseTypeId={{.ID}}&partyId={{$.Beneficiary.ID}}">{{.Name}}</a>
+                            </div>
+
+                        {{end}}
+
+                        <button class="btn btn-primary mt-5">Save</button>
                     </form>
 
                 </div>

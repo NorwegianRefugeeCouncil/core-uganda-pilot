@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core-kafka/pkg/cases/api"
 	uuid "github.com/satori/go.uuid"
 	"io/ioutil"
 	"net/http"
@@ -46,7 +45,8 @@ func (h *Handler) Get(w http.ResponseWriter, req *http.Request) {
 }
 
 type ListOptions struct {
-	Case string
+	PartyID    string
+	CaseTypeID string
 }
 
 func (h *Handler) List(w http.ResponseWriter, req *http.Request) {
@@ -55,7 +55,8 @@ func (h *Handler) List(w http.ResponseWriter, req *http.Request) {
 	qry := req.URL.Query()
 
 	listOptions := &ListOptions{
-		Case: qry.Get("Case"),
+		PartyID:    qry.Get("partyId"),
+		CaseTypeID: qry.Get("caseTypeId"),
 	}
 
 	ret, err := h.store.List(ctx, *listOptions)
@@ -96,12 +97,14 @@ func (h *Handler) Put(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var payload api.Case
+	var payload Case
 	if err := json.Unmarshal(bodyBytes, &payload); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	r.PartyID = payload.PartyID
+	r.CaseTypeID = payload.CaseTypeID
 	r.Description = payload.Description
 	r.Done = payload.Done
 
@@ -129,7 +132,7 @@ func (h *Handler) Post(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var payload api.Case
+	var payload Case
 	if err := json.Unmarshal(bodyBytes, &payload); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

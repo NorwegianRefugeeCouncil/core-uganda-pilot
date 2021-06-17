@@ -1,61 +1,52 @@
 {{define "case"}}
-<!doctype html>
-<html lang="en">
+    {{$caseId := .Case.ID}}
+    {{$partyId := .Case.PartyID}}
+    {{$caseTypeId := .Case.CaseTypeID}}
+    <!doctype html>
+    <html lang="en">
     {{template "head"}}
     <body class="bg-light">
-        {{template "navbar"}}
-        <div class="container">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title">Case View</h4>
-                    <form action="/cases{{if .Case}}/{{.Case.ID}}{{end}}" method="post">
-                        <div class="form-floating mb-3">
-                            <select id="case-type" type="select" class="form-select" name="caseTypeId" {{if .Case}}disabled{{end}}>
-                                {{if .Case}}
-                                    {{$caseTypeId := .Case.CaseTypeID}}
-                                    {{range .CaseTypes.Items}}
-                                        <option {{if eq .ID $caseTypeId}}selected{{end}} value="{{.ID}}">{{.Name}}</option>
-                                    {{end}}
-                                {{else}}
-                                    <option selected />
-                                    {{range .CaseTypes.Items}}
-                                        <option value="{{.ID}}">{{.Name}}</option>
-                                    {{end}}
-                                {{end}}
-                            </select>
-                            <label for="case-type">Type</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                                <select id="party-type" type="select" class="form-select" {{if .Case}}disabled{{end}}>
-                                    {{if .Case}}
-                                        {{$partyId := .Case.PartyID}}
-                                        {{range .Parties.Items}}
-                                            <option {{if eq .ID $partyId}}selected{{end}} value="{{.ID}}">{{.}}</option>
-                                        {{end}}
-                                    {{else}}
-                                        <option selected />
-                                        {{range .Parties.Items}}
-                                            <option value="{{.ID}}">{{.}}</option>
-                                        {{end}}
-                                    {{end}}
-                                </select>
-                            <label for="party">Party</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <textarea id="description" class="form-control" name="description" style="height: 100px">{{if .Case}}{{.Case.Description}}{{end}}</textarea>
-                            <label for="description">Description</label>
-                        </div>
-                        <div class="form-check mb-3">
-                            <input id="done-check" class="form-check-input" type="checkbox" name="done-check" {{if .Case.Done}}checked{{end}}>
-                            <label class="form-check-label" for="done-check">
-                                Done
-                            </label>
-                        </div>
-                        <button class="btn btn-primary" type="submit">Save</button>
-                    </form>
-                </div>
+    {{template "navbar"}}
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Case View</h4>
+                <form action="/cases/{{$caseId}}" method="post">
+                    <input type="hidden" name="caseTypeId" value="{{$caseTypeId}}">
+                    <div class="form-floating mb-3">
+                        <select id="case-type" class="form-select" disabled>
+                            {{range .CaseTypes.Items}}
+                                <option {{if eq .ID $caseTypeId}}selected{{end}} value="{{.ID}}">{{.Name}}</option>
+                            {{end}}
+                        </select>
+                        <label for="case-type">Type</label>
+                    </div>
+
+                    <input type="hidden" name="partyId" value="{{$partyId}}">
+                    <div class="mb-3">
+                        <h6 class="text-muted">Party</h6>
+                        <a class="btn btn-outline-secondary" href="/beneficiaries/{{$partyId}}">
+                            {{$party := .Parties.FindByID $partyId}}
+                            {{$party.String}}
+                        </a>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <textarea id="description-textarea" class="form-control" name="description"
+                                  style="height: 100px">{{if .Case}}{{.Case.Description}}{{end}}</textarea>
+                        <label for="description-textarea">Description</label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input id="done-input" class="form-check-input" type="checkbox" name="done"
+                               {{if .Case.Done}}checked{{end}}>
+                        <label class="form-check-label" for="done-input">
+                            Done
+                        </label>
+                    </div>
+                    <button class="btn btn-primary" type="submit">Save</button>
+                </form>
             </div>
         </div>
+    </div>
     </body>
-</html>
+    </html>
 {{end}}

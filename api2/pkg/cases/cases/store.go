@@ -2,7 +2,6 @@ package cases
 
 import (
 	"context"
-	"github.com/nrc-no/core-kafka/pkg/cases/api"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -17,41 +16,42 @@ func NewStore(mongoClient *mongo.Client, database string) *Store {
 	}
 }
 
-func (s *Store) Get(ctx context.Context, id string) (*api.Case, error) {
+func (s *Store) Get(ctx context.Context, id string) (*Case, error) {
 	res := s.collection.FindOne(ctx, bson.M{
 		"id": id,
 	})
 	if res.Err() != nil {
 		return nil, res.Err()
 	}
-	var r api.Case
+	var r Case
 	if err := res.Decode(&r); err != nil {
 		return nil, err
 	}
 	return &r, nil
 }
 
-func (s *Store) List(ctx context.Context, listOptions ListOptions) (*api.CaseList, error) {
+func (s *Store) List(ctx context.Context, listOptions ListOptions) (*CaseList, error) {
 
 	filter := bson.M{}
 
-	if len(listOptions.Case) != 0 {
-		filter["$or"] = bson.M{
-			"firstCase":  listOptions.Case,
-			"secondCase": listOptions.Case,
-		}
+	if len(listOptions.PartyID) != 0 {
+		filter["partyId"] = listOptions.PartyID
+	}
+
+	if len(listOptions.CaseTypeID) != 0 {
+		filter["caseTypeId"] = listOptions.CaseTypeID
 	}
 
 	res, err := s.collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
-	var items []*api.Case
+	var items []*Case
 	for {
 		if !res.Next(ctx) {
 			break
 		}
-		var r api.Case
+		var r Case
 		if err := res.Decode(&r); err != nil {
 			return nil, err
 		}
@@ -61,20 +61,20 @@ func (s *Store) List(ctx context.Context, listOptions ListOptions) (*api.CaseLis
 		return nil, res.Err()
 	}
 	if items == nil {
-		items = []*api.Case{}
+		items = []*Case{}
 	}
-	ret := api.CaseList{
+	ret := CaseList{
 		Items: items,
 	}
 	return &ret, nil
 }
 
-func (s *Store) Update(ctx context.Context, kase *api.Case) error {
+func (s *Store) Update(ctx context.Context, kase *Case) error {
 	_, err := s.collection.UpdateOne(ctx, bson.M{
 		"id": kase.ID,
 	}, bson.M{
 		"$set": bson.M{
-			"caseType":    kase.CaseTypeID,
+			"caseTypeId":  kase.CaseTypeID,
 			"partyId":     kase.PartyID,
 			"description": kase.Description,
 			"done":        kase.Done,
@@ -86,7 +86,7 @@ func (s *Store) Update(ctx context.Context, kase *api.Case) error {
 	return nil
 }
 
-func (s *Store) Create(ctx context.Context, kase *api.Case) error {
+func (s *Store) Create(ctx context.Context, kase *Case) error {
 	_, err := s.collection.InsertOne(ctx, kase)
 	if err != nil {
 		return err

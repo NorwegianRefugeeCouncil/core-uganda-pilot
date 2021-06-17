@@ -74,6 +74,7 @@ func (s *Store) Update(ctx context.Context, relationship *Relationship) error {
 			"endOfRelationship":   relationship.EndOfRelationship,
 			"firstParty":          relationship.FirstParty,
 			"secondParty":         relationship.SecondParty,
+			"relationshipTypeId":  relationship.RelationshipTypeID,
 		},
 	})
 	if err != nil {

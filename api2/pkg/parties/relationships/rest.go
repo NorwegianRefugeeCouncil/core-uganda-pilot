@@ -101,10 +101,11 @@ func (h *Handler) Put(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	r.EndOfRelationship = payload.EndOfRelationship
-	r.StartOfRelationship = payload.StartOfRelationship
+	r.RelationshipTypeID = payload.RelationshipTypeID
 	r.FirstParty = payload.FirstParty
 	r.SecondParty = payload.SecondParty
+	r.EndOfRelationship = payload.EndOfRelationship
+	r.StartOfRelationship = payload.StartOfRelationship
 
 	if err := h.store.Update(ctx, r); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -5,7 +5,6 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/server"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"os"
 	"testing"
 )
 
@@ -19,7 +18,7 @@ type Suite struct {
 func (s *Suite) SetupSuite() {
 	s.ctx, s.cancel = context.WithCancel(context.Background())
 	serverOptions := server.Options{
-		TemplateDirectory: os.Getenv("TEMPLATE_DIRECTORY"),
+		TemplateDirectory: "../../pkg/webapp/templates",
 		MongoUsername:     "root",
 		MongoPassword:     "example",
 		MongoDatabase:     "e2e",

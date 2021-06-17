@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	uuid "github.com/satori/go.uuid"
 	"io/ioutil"
 	"net/http"
 )
@@ -82,6 +83,8 @@ func (h *Handler) Post(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	a.ID = uuid.NewV4().String()
+
 	if err := h.store.Create(ctx, &a); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -102,24 +105,43 @@ func (h *Handler) Update(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
+	id, ok := mux.Vars(req)["id"]
+	if !ok || len(id) == 0 {
+		err := fmt.Errorf("id not found in path")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	a, err := h.store.Get(ctx, id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	bodyBytes, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	var a Attribute
-	if err := json.Unmarshal(bodyBytes, &a); err != nil {
+	var payload Attribute
+	if err := json.Unmarshal(bodyBytes, &payload); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	if err := h.store.Update(ctx, &a); err != nil {
+	a.Name = payload.Name
+	a.Translations = payload.Translations
+	a.ValueType = payload.ValueType
+	a.PartyTypes = payload.PartyTypes
+	a.IsPersonallyIdentifiableInfo = payload.IsPersonallyIdentifiableInfo
+
+	if err := h.store.Update(ctx, a); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	responseBytes, err := json.Marshal(a)
+	responseBytes, err := json.Marshal(payload)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
