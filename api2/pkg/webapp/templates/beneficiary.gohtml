@@ -150,7 +150,7 @@
             switchMap((relationshipTypeId) => {
                 const searchParams = new URLSearchParams({
                     "relationshipTypeId": relationshipTypeId,
-                    "searchParam": "default"
+                    "searchParam": ""
                 })
                 const ajaxUrl = "{{.BasePath}}" + "/apis/v1/relationshipparties/picker?" + searchParams.toString()
                 return ajax(ajaxUrl)
