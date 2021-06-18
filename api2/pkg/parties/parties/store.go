@@ -7,17 +7,17 @@ import (
 )
 
 type Store struct {
-	collection *mongo.Collection
+	Collection *mongo.Collection
 }
 
 func NewStore(mongoClient *mongo.Client, database string) *Store {
 	return &Store{
-		collection: mongoClient.Database(database).Collection("parties"),
+		Collection: mongoClient.Database(database).Collection("parties"),
 	}
 }
 
 func (s *Store) Get(ctx context.Context, id string) (*Party, error) {
-	res := s.collection.FindOne(ctx, bson.M{
+	res := s.Collection.FindOne(ctx, bson.M{
 		"id": id,
 	})
 	if res.Err() != nil {
@@ -32,7 +32,7 @@ func (s *Store) Get(ctx context.Context, id string) (*Party, error) {
 
 func (s *Store) List(ctx context.Context, listOptions ListOptions) (*PartyList, error) {
 	filter := bson.M{}
-	res, err := s.collection.Find(ctx, filter)
+	res, err := s.Collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +60,7 @@ func (s *Store) List(ctx context.Context, listOptions ListOptions) (*PartyList, 
 }
 
 func (s *Store) Update(ctx context.Context, party *Party) error {
-	_, err := s.collection.UpdateOne(ctx, bson.M{
+	_, err := s.Collection.UpdateOne(ctx, bson.M{
 		"id": party.ID,
 	}, bson.M{
 		"$set": bson.M{
@@ -75,7 +75,7 @@ func (s *Store) Update(ctx context.Context, party *Party) error {
 }
 
 func (s *Store) Create(ctx context.Context, party *Party) error {
-	_, err := s.collection.InsertOne(ctx, party)
+	_, err := s.Collection.InsertOne(ctx, party)
 	if err != nil {
 		return err
 	}
