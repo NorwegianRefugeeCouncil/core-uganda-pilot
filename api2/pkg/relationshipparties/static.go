@@ -8,7 +8,7 @@ import (
 
 func Init(ctx context.Context, partiesStore *PartiesStore) error {
 	if _, err := partiesStore.store.Collection.Indexes().CreateOne(ctx, mongo.IndexModel{
-		Keys:    bson.M{"$**": 1},
+		Keys:    bson.M{"$**": "text"},
 	}); err != nil {
 		return err
 	}
