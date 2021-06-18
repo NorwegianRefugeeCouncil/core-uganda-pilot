@@ -32,14 +32,33 @@ func (s *Store) Get(ctx context.Context, id string) (*Relationship, error) {
 
 func (s *Store) List(ctx context.Context, listOptions ListOptions) (*RelationshipList, error) {
 
-	filter := bson.M{}
+	var rules map[string]interface{}
 
-	if len(listOptions.Party) != 0 {
-		filter["$or"] = bson.M{
-			"firstParty":  listOptions.Party,
-			"secondParty": listOptions.Party,
+	if len(listOptions.RelationshipTypeID) != 0 {
+		rules["relationshipTypeId"] = listOptions.RelationshipTypeID
+	}
+
+	if len(listOptions.EitherParty) != 0 {
+		rules["$or"] = []bson.M{
+			{"firstParty": listOptions.EitherParty},
+			{"secondParty": listOptions.EitherParty},
+		}
+	} else {
+		if len(listOptions.FirstParty) != 0 {
+			rules["firstParty"] = listOptions.FirstParty
+
+		}
+		if len(listOptions.SecondParty) != 0 {
+			rules["secondParty"] = listOptions.SecondParty
+
 		}
 	}
+
+	filter := bson.M{}
+
+	//for key, rule := range rules {
+	//	filter // TODO
+	//}
 
 	res, err := s.collection.Find(ctx, filter)
 	if err != nil {

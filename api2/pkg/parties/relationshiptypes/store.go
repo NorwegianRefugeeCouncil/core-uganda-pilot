@@ -31,8 +31,24 @@ func (s *Store) Get(ctx context.Context, id string) (*RelationshipType, error) {
 	return &r, nil
 }
 
-func (s *Store) List(ctx context.Context) (*RelationshipTypeList, error) {
-	res, err := s.collection.Find(ctx, bson.M{})
+func (s *Store) List(ctx context.Context, listOptions ListOptions) (*RelationshipTypeList, error) {
+
+	filter := bson.M{}
+
+	if len(listOptions.PartyType) != 0 {
+		filter = bson.M{
+			"$or": bson.A{
+				bson.M{
+					"rules.firstPartyType": listOptions.PartyType,
+				},
+				bson.M{
+					"rules.secondPartyType": listOptions.PartyType,
+				},
+			},
+		}
+	}
+
+	res, err := s.collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err
 	}

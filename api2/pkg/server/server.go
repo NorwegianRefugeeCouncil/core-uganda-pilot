@@ -203,6 +203,9 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 
 	// Cases
 	caseStore := cases.NewStore(c.MongoClient, c.MongoDatabase)
+	if err := cases.Init(ctx, caseStore); err != nil {
+		panic(err)
+	}
 	caseHandler := cases.NewHandler(caseStore)
 	caseClient := cases.NewClient(c.Address)
 	router.Path("/apis/v1/cases").Methods("GET").HandlerFunc(caseHandler.List)
@@ -211,6 +214,9 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.Path("/apis/v1/cases").Methods("POST").HandlerFunc(caseHandler.Post)
 	// CaseTypes
 	caseTypeStore := casetypes.NewStore(c.MongoClient, c.MongoDatabase)
+	if err := casetypes.Init(ctx, caseTypeStore); err != nil {
+		panic(err)
+	}
 	caseTypeHandler := casetypes.NewHandler(caseTypeStore)
 	caseTypeClient := casetypes.NewClient(c.Address)
 	router.Path("/apis/v1/casetypes").Methods("GET").HandlerFunc(caseTypeHandler.List)

@@ -21,7 +21,7 @@ func (h *Handler) RelationshipTypes(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	relationshipTypes, err := h.relationshipTypeClient.List(ctx)
+	relationshipTypes, err := h.relationshipTypeClient.List(ctx, relationshiptypes.ListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

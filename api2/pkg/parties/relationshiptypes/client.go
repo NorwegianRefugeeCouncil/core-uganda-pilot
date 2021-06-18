@@ -5,9 +5,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type Client struct {
@@ -20,11 +21,18 @@ func NewClient(basePath string) *Client {
 	}
 }
 
-func (c *Client) List(ctx context.Context) (*RelationshipTypeList, error) {
+func (c *Client) List(ctx context.Context, listOptions ListOptions) (*RelationshipTypeList, error) {
 	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/relationshiptypes", nil)
 	if err != nil {
 		return nil, err
 	}
+	req = req.WithContext(ctx)
+	q := req.URL.Query()
+	if len(listOptions.PartyType) != 0 {
+		q.Set("partyType", listOptions.PartyType)
+	}
+	req.URL.RawQuery = q.Encode()
+
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -49,6 +57,7 @@ func (c *Client) Get(ctx context.Context, id string) (*RelationshipType, error) 
 	if err != nil {
 		return nil, err
 	}
+	req = req.WithContext(ctx)
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {

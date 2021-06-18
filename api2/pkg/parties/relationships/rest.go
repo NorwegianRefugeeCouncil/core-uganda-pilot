@@ -45,7 +45,10 @@ func (h *Handler) Get(w http.ResponseWriter, req *http.Request) {
 }
 
 type ListOptions struct {
-	Party string
+	RelationshipTypeID string
+	FirstParty         string
+	SecondParty        string
+	EitherParty        string
 }
 
 func (h *Handler) List(w http.ResponseWriter, req *http.Request) {
@@ -54,7 +57,10 @@ func (h *Handler) List(w http.ResponseWriter, req *http.Request) {
 	qry := req.URL.Query()
 
 	listOptions := &ListOptions{
-		Party: qry.Get("Party"),
+		RelationshipTypeID: qry.Get("RelationshipTypeID"),
+		FirstParty:         qry.Get("FirstParty"),
+		SecondParty:        qry.Get("SecondParty"),
+		EitherParty:        qry.Get("EitherParty"),
 	}
 
 	ret, err := h.store.List(ctx, *listOptions)

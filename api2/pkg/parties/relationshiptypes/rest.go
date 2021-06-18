@@ -45,10 +45,20 @@ func (h *Handler) Get(w http.ResponseWriter, req *http.Request) {
 
 }
 
+type ListOptions struct {
+	PartyType string
+}
+
 func (h *Handler) List(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	ret, err := h.store.List(ctx)
+	qry := req.URL.Query()
+
+	listOptions := ListOptions{
+		PartyType: qry.Get("partyType"),
+	}
+
+	ret, err := h.store.List(ctx, listOptions)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

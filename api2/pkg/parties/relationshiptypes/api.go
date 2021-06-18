@@ -21,3 +21,21 @@ type RelationshipType struct {
 type RelationshipTypeList struct {
 	Items []*RelationshipType `json:"items" bson:"items"`
 }
+
+func (r *RelationshipType) Reversed() *RelationshipType {
+	return &RelationshipType{
+		ID:              r.ID,
+		IsDirectional:   r.IsDirectional,
+		Name:            r.Name,
+		FirstPartyRole:  r.SecondPartyRole,
+		SecondPartyRole: r.FirstPartyRole,
+		Rules: []RelationshipTypeRule{
+			{
+				PartyTypeRule: PartyTypeRule{
+					FirstPartyType:  r.Rules[0].SecondPartyType,
+					SecondPartyType: r.Rules[0].FirstPartyType,
+				},
+			},
+		},
+	}
+}
