@@ -166,6 +166,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.Path("/apis/v1/relationships/{id}").Methods("GET").HandlerFunc(relationshipHandler.Get)
 	router.Path("/apis/v1/relationships/{id}").Methods("PUT").HandlerFunc(relationshipHandler.Put)
 	router.Path("/apis/v1/relationships").Methods("POST").HandlerFunc(relationshipHandler.Post)
+	router.Path("/apis/v1/relationships/{id}").Methods("DELETE").HandlerFunc(relationshipHandler.Delete)
 
 	// Parties
 	partyStore := parties.NewStore(c.MongoClient, c.MongoDatabase)

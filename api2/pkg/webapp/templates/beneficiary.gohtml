@@ -282,6 +282,15 @@
                         containerNode.style.textDecoration = "line-through"
                     }
 
+                    if (!relationship.id) {
+
+                        const plusNode = document.createElement("span")
+                        plusNode.innerHTML = "+ "
+                        containerNode.appendChild(plusNode)
+                        containerNode.classList.add("text-success")
+                        containerNode.classList.add("fw-bold")
+                    }
+
                     containerNode.appendChild(firstPartyLinkNode)
                     containerNode.appendChild(space1Node)
                     containerNode.appendChild(roleSpanNode)
