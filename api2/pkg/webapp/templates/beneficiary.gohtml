@@ -78,35 +78,39 @@
                             </button>
                         </div>
 
-                        <h4 class="display-6">Cases</h4>
+                        {{if not .IsNew}}
 
-                        <table class="table table-hover table-bordered">
+                            <h4 class="display-6">Cases</h4>
 
-                            <thead>
-                            <tr>
-                                <th scope="col">Type</th>
-                                <th scope="col">Status</th>
-                            </tr>
-                            </thead>
-                            <tbody>
+                            <table class="table table-hover table-bordered">
 
-                            {{range .Cases}}
+                                <thead>
                                 <tr>
-                                    <td><a href="/cases/{{.Case.ID}}">{{.CaseType.Name}}</a></td>
-                                    <td>{{if .Case.Done}}Closed{{else}}Open{{end}}</td>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">Status</th>
                                 </tr>
+                                </thead>
+                                <tbody>
+
+                                {{range .Cases}}
+                                    <tr>
+                                        <td><a href="/cases/{{.Case.ID}}">{{.CaseType.Name}}</a></td>
+                                        <td>{{if .Case.Done}}Closed{{else}}Open{{end}}</td>
+                                    </tr>
+                                {{end}}
+
+                                </tbody>
+                            </table>
+
+                            <h4 class="display-6">Open Case</h4>
+
+                            {{range .CaseTypes.Items}}
+
+                                <div>
+                                    <a href="/cases/new?caseTypeId={{.ID}}&partyId={{$.Beneficiary.ID}}">{{.Name}}</a>
+                                </div>
+
                             {{end}}
-
-                            </tbody>
-                        </table>
-
-                        <h4 class="display-6">Open Case</h4>
-
-                        {{range .CaseTypes.Items}}
-
-                            <div>
-                                <a href="/cases/new?caseTypeId={{.ID}}&partyId={{$.Beneficiary.ID}}">{{.Name}}</a>
-                            </div>
 
                         {{end}}
 

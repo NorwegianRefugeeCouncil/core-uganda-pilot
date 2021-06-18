@@ -154,6 +154,7 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if err := h.template.ExecuteTemplate(w, "beneficiary", map[string]interface{}{
+		"IsNew":             id == "new",
 		"Beneficiary":       b,
 		"Parties":           bList,
 		"RelationshipTypes": relationshipTypes,
@@ -345,7 +346,7 @@ func (h *Handler) PostBeneficiary(
 
 	}
 
-	w.Header().Set("Location", "/beneficiaries/"+id)
+	w.Header().Set("Location", "/beneficiaries/"+beneficiary.ID)
 	w.WriteHeader(http.StatusSeeOther)
 
 }

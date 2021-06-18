@@ -32,33 +32,40 @@ func (s *Store) Get(ctx context.Context, id string) (*Relationship, error) {
 
 func (s *Store) List(ctx context.Context, listOptions ListOptions) (*RelationshipList, error) {
 
-	var rules map[string]interface{}
+	var filterExpressions []bson.M
 
 	if len(listOptions.RelationshipTypeID) != 0 {
-		rules["relationshipTypeId"] = listOptions.RelationshipTypeID
+		filterExpressions = append(filterExpressions, bson.M{
+			"relationshipTypeId": listOptions.RelationshipTypeID,
+		})
 	}
 
 	if len(listOptions.EitherParty) != 0 {
-		rules["$or"] = []bson.M{
-			{"firstParty": listOptions.EitherParty},
-			{"secondParty": listOptions.EitherParty},
-		}
+		filterExpressions = append(filterExpressions, bson.M{
+			"$or": bson.A{
+				bson.M{"firstParty": listOptions.EitherParty},
+				bson.M{"secondParty": listOptions.EitherParty},
+			},
+		})
 	} else {
-		if len(listOptions.FirstParty) != 0 {
-			rules["firstParty"] = listOptions.FirstParty
-
+		if len(listOptions.FirstPartyId) != 0 {
+			filterExpressions = append(filterExpressions, bson.M{"firstParty": listOptions.FirstPartyId})
 		}
 		if len(listOptions.SecondParty) != 0 {
-			rules["secondParty"] = listOptions.SecondParty
+			filterExpressions = append(filterExpressions, bson.M{"secondParty": listOptions.SecondParty})
 
 		}
 	}
 
 	filter := bson.M{}
 
-	//for key, rule := range rules {
-	//	filter // TODO
-	//}
+	if len(filterExpressions) > 0 {
+		expressions := bson.A{}
+		for _, filterExpression := range filterExpressions {
+			expressions = append(expressions, filterExpression)
+		}
+		filter["$and"] = expressions
+	}
 
 	res, err := s.collection.Find(ctx, filter)
 	if err != nil {

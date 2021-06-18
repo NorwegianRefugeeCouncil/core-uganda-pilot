@@ -26,11 +26,17 @@ func (c *Client) List(ctx context.Context, listOptions ListOptions) (*Relationsh
 	}
 	req = req.WithContext(ctx)
 	q := req.URL.Query()
-	if len(listOptions.FirstParty) != 0 {
-		q.Set("RelationshipTypeID", listOptions.RelationshipTypeID)
-		q.Set("FirstParty", listOptions.FirstParty)
-		q.Set("SecondParty", listOptions.SecondParty)
-		q.Set("EitherParty", listOptions.EitherParty)
+	if len(listOptions.FirstPartyId) != 0 {
+		q.Set("firstPartyId", listOptions.FirstPartyId)
+	}
+	if len(listOptions.SecondParty) != 0 {
+		q.Set("secondPartyId", listOptions.SecondParty)
+	}
+	if len(listOptions.RelationshipTypeID) != 0 {
+		q.Set("relationshipTypeId", listOptions.RelationshipTypeID)
+	}
+	if len(listOptions.EitherParty) != 0 {
+		q.Set("eitherPartyId", listOptions.EitherParty)
 	}
 	req.URL.RawQuery = q.Encode()
 

@@ -162,7 +162,7 @@ func (s *Suite) TestRelationshipListFilterByListOptions() {
 	s.T().Run("Filter by FirstParty", func(t *testing.T) {
 		for _, mockParty := range mockParties {
 			list, err := s.server.RelationshipClient.List(s.ctx, relationships.ListOptions{
-				FirstParty: mockParty,
+				FirstPartyId: mockParty,
 			})
 			if !assert.NoError(t, err) {
 				return
@@ -237,8 +237,8 @@ func (s *Suite) TestRelationshipListFilterByListOptions() {
 					continue
 				}
 				list, err := s.server.RelationshipClient.List(s.ctx, relationships.ListOptions{
-					FirstParty:  mockParty1,
-					SecondParty: mockParty2,
+					FirstPartyId: mockParty1,
+					SecondParty:  mockParty2,
 				})
 				if !assert.NoError(t, err) {
 					return
@@ -263,7 +263,7 @@ func (s *Suite) TestRelationshipListFilterByListOptions() {
 					}
 					list, err := s.server.RelationshipClient.List(s.ctx, relationships.ListOptions{
 						RelationshipTypeID: mockRTID,
-						FirstParty:         mockParty1,
+						FirstPartyId:       mockParty1,
 						SecondParty:        mockParty2,
 					})
 					if !assert.NoError(t, err) {
