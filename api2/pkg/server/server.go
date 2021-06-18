@@ -207,6 +207,9 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 
 	// Relationship <> Parties
 	relationshipPartiesStore := relationshipparties.NewStore(partyStore)
+	if err := relationshipparties.Init(ctx, relationshipPartiesStore); err != nil {
+		panic(err)
+	}
 	relationshipPartiesHandler := relationshipparties.NewHandler(relationshipPartiesStore)
 	relationshipPartiesClient := relationshipparties.NewClient(c.Address)
 	router.Path("/apis/v1/relationshipparties/picker").Methods("GET").HandlerFunc(relationshipPartiesHandler.PickParty)
