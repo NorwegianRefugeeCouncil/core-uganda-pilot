@@ -128,6 +128,7 @@
 
         let {Subject, BehaviorSubject, pipe, Observable} = rxjs;
         let {map, debounceTime, switchMap} = rxjs.operators;
+        let {ajax} = rxjs.ajax;
 
         // Holds the different relationship types
         const relationshipTypes = [
@@ -144,11 +145,15 @@
         // Holds the different parties (for relationship dropdown select)
         // TODO: use API query to search
         let querySubject = new Subject()
-        let query$ = querySubject.asObservable()
-        query$.pipe(
+        let query$ = querySubject.asObservable().pipe(
             debounceTime(200),
-            switchMap((qry) => {
-                return qry
+            switchMap((relationshipTypeId) => {
+                const searchParams = new URLSearchParams({
+                    "relationshipTypeId": relationshipTypeId,
+                    "searchParam": "default"
+                })
+                const ajaxUrl = "{{.BasePath}}" + "/apis/v1/relationshipparties/picker?" + searchParams.toString()
+                return ajax(ajaxUrl)
             })
         )
         const parties = [
@@ -260,11 +265,16 @@
 
             // Add listener for party filtering on relationship type dropdown
             document.getElementById('relationshipTypeSelector').onchange = (event) => {
-                querySubject.next(event)
+                querySubject.next(event.target.value)
             }
-            query$.subscribe((r) => {
-                console.log("got qry string: ", r)
-            })
+            query$.subscribe(
+                res => {
+                    console.log("got res: ", res)
+                },
+                err => {
+                    console.error("got error: ", err)
+                }
+            )
 
             // Render relationships
             displayRelationships$.subscribe(relationships => {

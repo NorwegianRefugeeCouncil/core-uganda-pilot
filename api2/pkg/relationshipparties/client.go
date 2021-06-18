@@ -10,17 +10,17 @@ import (
 )
 
 type Client struct {
-	basePath string
+	BasePath string
 }
 
 func NewClient(basePath string) *Client {
 	return &Client{
-		basePath: basePath,
+		BasePath: basePath,
 	}
 }
 
 func (c *Client) PickParty(ctx context.Context, pickPartyOptions PickPartyOptions) (*parties.PartyList, error) {
-	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/relationshipparties/picker", nil)
+	req, err := http.NewRequest("GET", c.BasePath+"/apis/v1/relationshipparties/picker", nil)
 	if err != nil {
 		return nil, err
 	}

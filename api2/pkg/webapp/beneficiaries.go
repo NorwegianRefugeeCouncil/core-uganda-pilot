@@ -162,6 +162,7 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 		"Attributes":        attrs,
 		"Cases":             displayCases,
 		"CaseTypes":         ctList,
+		"BasePath": h.relationshipPartiesClient.BasePath,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
