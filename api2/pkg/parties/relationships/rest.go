@@ -101,6 +101,7 @@ func (h *Handler) Put(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	r.ID = id
 	r.RelationshipTypeID = payload.RelationshipTypeID
 	r.FirstParty = payload.FirstParty
 	r.SecondParty = payload.SecondParty
@@ -153,5 +154,23 @@ func (h *Handler) Post(w http.ResponseWriter, req *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(responseBytes)
+
+}
+
+func (h *Handler) Delete(w http.ResponseWriter, req *http.Request) {
+	ctx := req.Context()
+
+	id, ok := mux.Vars(req)["id"]
+	if !ok || len(id) == 0 {
+		err := fmt.Errorf("id not found in path")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err := h.store.Delete(ctx, id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 }

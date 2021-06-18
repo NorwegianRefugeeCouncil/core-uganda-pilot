@@ -90,3 +90,13 @@ func (s *Store) Create(ctx context.Context, relationship *Relationship) error {
 	}
 	return nil
 }
+
+func (s *Store) Delete(ctx context.Context, id string) error {
+	_, err := s.collection.DeleteOne(ctx, bson.M{
+		"id": id,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}

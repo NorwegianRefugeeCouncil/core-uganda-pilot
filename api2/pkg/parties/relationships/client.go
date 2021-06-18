@@ -24,6 +24,7 @@ func (c *Client) List(ctx context.Context, listOptions ListOptions) (*Relationsh
 	if err != nil {
 		return nil, err
 	}
+	req = req.WithContext(ctx)
 	q := req.URL.Query()
 	if len(listOptions.Party) != 0 {
 		q.Set("party", listOptions.Party)
@@ -54,6 +55,7 @@ func (c *Client) Get(ctx context.Context, id string) (*Relationship, error) {
 	if err != nil {
 		return nil, err
 	}
+	req = req.WithContext(ctx)
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -131,4 +133,21 @@ func (c *Client) Create(ctx context.Context, relationship *Relationship) (*Relat
 		return nil, err
 	}
 	return &v, nil
+}
+
+func (c *Client) Delete(ctx context.Context, id string) error {
+	req, err := http.NewRequest("DELETE", c.basePath+"/apis/v1/relationships/"+id, nil)
+	if err != nil {
+		return err
+	}
+	req = req.WithContext(ctx)
+	req.Header.Set("Accept", "application/json")
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return err
+	}
+	if res.StatusCode != http.StatusOK {
+		return fmt.Errorf("unexpected status code: %d", res.StatusCode)
+	}
+	return nil
 }

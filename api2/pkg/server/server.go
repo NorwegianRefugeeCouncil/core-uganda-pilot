@@ -120,35 +120,19 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	}
 	attributeHandler := attributes.NewHandler(attributeStore)
 	attributeClient := attributes.NewClient(c.Address)
-	router.Path("/apis/v1/attributes").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		attributeHandler.List(w, req)
-	})
-	router.Path("/apis/v1/attributes/{id}").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		attributeHandler.Get(w, req)
-	})
-	router.Path("/apis/v1/attributes/{id}").Methods("PUT").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		attributeHandler.Update(w, req)
-	})
-	router.Path("/apis/v1/attributes").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		attributeHandler.Post(w, req)
-	})
+	router.Path("/apis/v1/attributes").Methods("GET").HandlerFunc(attributeHandler.List)
+	router.Path("/apis/v1/attributes/{id}").Methods("GET").HandlerFunc(attributeHandler.Get)
+	router.Path("/apis/v1/attributes/{id}").Methods("PUT").HandlerFunc(attributeHandler.Update)
+	router.Path("/apis/v1/attributes").Methods("POST").HandlerFunc(attributeHandler.Post)
 
 	// Vulnerabilities
 	vulnerabilityStore := vulnerability.NewStore(c.MongoClient, c.MongoDatabase)
 	vulnerabilityHandler := vulnerability.NewHandler(vulnerabilityStore)
 	vulnerabilityClient := vulnerability.NewClient(c.Address)
-	router.Path("/apis/v1/vulnerabilities").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		vulnerabilityHandler.ListVulnerabilities(w, req)
-	})
-	router.Path("/apis/v1/vulnerabilities/{id}").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		vulnerabilityHandler.GetVulnerability(w, req)
-	})
-	router.Path("/apis/v1/vulnerabilities/{id}").Methods("PUT").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		vulnerabilityHandler.UpdateVulnerability(w, req)
-	})
-	router.Path("/apis/v1/vulnerabilities").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		vulnerabilityHandler.PostVulnerability(w, req)
-	})
+	router.Path("/apis/v1/vulnerabilities").Methods("GET").HandlerFunc(vulnerabilityHandler.ListVulnerabilities)
+	router.Path("/apis/v1/vulnerabilities/{id}").Methods("GET").HandlerFunc(vulnerabilityHandler.GetVulnerability)
+	router.Path("/apis/v1/vulnerabilities/{id}").Methods("PUT").HandlerFunc(vulnerabilityHandler.UpdateVulnerability)
+	router.Path("/apis/v1/vulnerabilities").Methods("POST").HandlerFunc(vulnerabilityHandler.PostVulnerability)
 
 	// Beneficiaries
 	beneficiariesStore := beneficiaries.NewStore(c.MongoClient, c.MongoDatabase)
@@ -157,18 +141,10 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	if err := beneficiaries.SeedDatabase(ctx, beneficiariesStore); err != nil {
 		panic(err)
 	}
-	router.Path("/apis/v1/beneficiaries").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		beneficiaryHandler.List(w, req)
-	})
-	router.Path("/apis/v1/beneficiaries/{id}").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		beneficiaryHandler.Get(w, req)
-	})
-	router.Path("/apis/v1/beneficiaries/{id}").Methods("PUT").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		beneficiaryHandler.Update(w, req)
-	})
-	router.Path("/apis/v1/beneficiaries").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		beneficiaryHandler.Create(w, req)
-	})
+	router.Path("/apis/v1/beneficiaries").Methods("GET").HandlerFunc(beneficiaryHandler.List)
+	router.Path("/apis/v1/beneficiaries/{id}").Methods("GET").HandlerFunc(beneficiaryHandler.Get)
+	router.Path("/apis/v1/beneficiaries/{id}").Methods("PUT").HandlerFunc(beneficiaryHandler.Update)
+	router.Path("/apis/v1/beneficiaries").Methods("POST").HandlerFunc(beneficiaryHandler.Create)
 
 	// RelationshipTypes
 	relationshipTypeStore := relationshiptypes.NewStore(c.MongoClient, c.MongoDatabase)
@@ -177,35 +153,19 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	}
 	relationshipTypeHandler := relationshiptypes.NewHandler(relationshipTypeStore)
 	relationshipTypeClient := relationshiptypes.NewClient(c.Address)
-	router.Path("/apis/v1/relationshiptypes").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		relationshipTypeHandler.List(w, req)
-	})
-	router.Path("/apis/v1/relationshiptypes/{id}").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		relationshipTypeHandler.Get(w, req)
-	})
-	router.Path("/apis/v1/relationshiptypes/{id}").Methods("PUT").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		relationshipTypeHandler.Put(w, req)
-	})
-	router.Path("/apis/v1/relationshiptypes").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		relationshipTypeHandler.Post(w, req)
-	})
+	router.Path("/apis/v1/relationshiptypes").Methods("GET").HandlerFunc(relationshipTypeHandler.List)
+	router.Path("/apis/v1/relationshiptypes/{id}").Methods("GET").HandlerFunc(relationshipTypeHandler.Get)
+	router.Path("/apis/v1/relationshiptypes/{id}").Methods("PUT").HandlerFunc(relationshipTypeHandler.Put)
+	router.Path("/apis/v1/relationshiptypes").Methods("POST").HandlerFunc(relationshipTypeHandler.Post)
 
 	// Relationships
 	relationshipStore := relationships.NewStore(c.MongoClient, c.MongoDatabase)
 	relationshipHandler := relationships.NewHandler(relationshipStore)
 	relationshipClient := relationships.NewClient(c.Address)
-	router.Path("/apis/v1/relationships").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		relationshipHandler.List(w, req)
-	})
-	router.Path("/apis/v1/relationships/{id}").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		relationshipHandler.Get(w, req)
-	})
-	router.Path("/apis/v1/relationships/{id}").Methods("PUT").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		relationshipHandler.Put(w, req)
-	})
-	router.Path("/apis/v1/relationships").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		relationshipHandler.Post(w, req)
-	})
+	router.Path("/apis/v1/relationships").Methods("GET").HandlerFunc(relationshipHandler.List)
+	router.Path("/apis/v1/relationships/{id}").Methods("GET").HandlerFunc(relationshipHandler.Get)
+	router.Path("/apis/v1/relationships/{id}").Methods("PUT").HandlerFunc(relationshipHandler.Put)
+	router.Path("/apis/v1/relationships").Methods("POST").HandlerFunc(relationshipHandler.Post)
 
 	// Parties
 	partyStore := parties.NewStore(c.MongoClient, c.MongoDatabase)
@@ -214,18 +174,10 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	}
 	partyHandler := parties.NewHandler(partyStore)
 	partyClient := parties.NewClient(c.Address)
-	router.Path("/apis/v1/parties").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		partyHandler.List(w, req)
-	})
-	router.Path("/apis/v1/parties/{id}").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		partyHandler.Get(w, req)
-	})
-	router.Path("/apis/v1/parties/{id}").Methods("PUT").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		partyHandler.Put(w, req)
-	})
-	router.Path("/apis/v1/parties").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		partyHandler.Post(w, req)
-	})
+	router.Path("/apis/v1/parties").Methods("GET").HandlerFunc(partyHandler.List)
+	router.Path("/apis/v1/parties/{id}").Methods("GET").HandlerFunc(partyHandler.Get)
+	router.Path("/apis/v1/parties/{id}").Methods("PUT").HandlerFunc(partyHandler.Put)
+	router.Path("/apis/v1/parties").Methods("POST").HandlerFunc(partyHandler.Post)
 
 	// Party Types
 	partyTypeStore := partytypes.NewStore(c.MongoClient, c.MongoDatabase)
@@ -234,68 +186,36 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	}
 	partyTypeHandler := partytypes.NewHandler(partyTypeStore)
 	partyTypeClient := partytypes.NewClient(c.Address)
-	router.Path("/apis/v1/partytypes").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		partyTypeHandler.List(w, req)
-	})
-	router.Path("/apis/v1/partytypes/{id}").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		partyTypeHandler.Get(w, req)
-	})
-	router.Path("/apis/v1/partytypes/{id}").Methods("PUT").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		partyTypeHandler.Put(w, req)
-	})
-	router.Path("/apis/v1/partytypes").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		partyTypeHandler.Post(w, req)
-	})
+	router.Path("/apis/v1/partytypes").Methods("GET").HandlerFunc(partyTypeHandler.List)
+	router.Path("/apis/v1/partytypes/{id}").Methods("GET").HandlerFunc(partyTypeHandler.Get)
+	router.Path("/apis/v1/partytypes/{id}").Methods("PUT").HandlerFunc(partyTypeHandler.Put)
+	router.Path("/apis/v1/partytypes").Methods("POST").HandlerFunc(partyTypeHandler.Post)
 
 	// PartyTypeSchemas
 	partyTypeSchemaStore := partytypeschemas.NewStore(c.MongoClient, c.MongoDatabase)
 	partyTypeSchemaHandler := partytypeschemas.NewHandler(partyTypeSchemaStore)
 	// TOOD: partyTypeSchemaClient := partytypeschemas.NewClient(serverOptions.Address)
-	router.Path("/apis/v1/partytypeschemas").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		partyTypeSchemaHandler.List(w, req)
-	})
-	router.Path("/apis/v1/partytypeschemas/{id}").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		partyTypeSchemaHandler.Get(w, req)
-	})
-	router.Path("/apis/v1/partytypeschemas/{id}").Methods("PUT").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		partyTypeSchemaHandler.Put(w, req)
-	})
-	router.Path("/apis/v1/partytypeschemas").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		partyTypeSchemaHandler.Post(w, req)
-	})
+	router.Path("/apis/v1/partytypeschemas").Methods("GET").HandlerFunc(partyTypeSchemaHandler.List)
+	router.Path("/apis/v1/partytypeschemas/{id}").Methods("GET").HandlerFunc(partyTypeSchemaHandler.Get)
+	router.Path("/apis/v1/partytypeschemas/{id}").Methods("PUT").HandlerFunc(partyTypeSchemaHandler.Put)
+	router.Path("/apis/v1/partytypeschemas").Methods("POST").HandlerFunc(partyTypeSchemaHandler.Post)
 
 	// Cases
 	caseStore := cases.NewStore(c.MongoClient, c.MongoDatabase)
 	caseHandler := cases.NewHandler(caseStore)
 	caseClient := cases.NewClient(c.Address)
-	router.Path("/apis/v1/cases").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		caseHandler.List(w, req)
-	})
-	router.Path("/apis/v1/cases/{id}").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		caseHandler.Get(w, req)
-	})
-	router.Path("/apis/v1/cases/{id}").Methods("PUT").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		caseHandler.Put(w, req)
-	})
-	router.Path("/apis/v1/cases").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		caseHandler.Post(w, req)
-	})
+	router.Path("/apis/v1/cases").Methods("GET").HandlerFunc(caseHandler.List)
+	router.Path("/apis/v1/cases/{id}").Methods("GET").HandlerFunc(caseHandler.Get)
+	router.Path("/apis/v1/cases/{id}").Methods("PUT").HandlerFunc(caseHandler.Put)
+	router.Path("/apis/v1/cases").Methods("POST").HandlerFunc(caseHandler.Post)
 	// CaseTypes
 	caseTypeStore := casetypes.NewStore(c.MongoClient, c.MongoDatabase)
 	caseTypeHandler := casetypes.NewHandler(caseTypeStore)
 	caseTypeClient := casetypes.NewClient(c.Address)
-	router.Path("/apis/v1/casetypes").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		caseTypeHandler.List(w, req)
-	})
-	router.Path("/apis/v1/casetypes/{id}").Methods("GET").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		caseTypeHandler.Get(w, req)
-	})
-	router.Path("/apis/v1/casetypes/{id}").Methods("PUT").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		caseTypeHandler.Put(w, req)
-	})
-	router.Path("/apis/v1/casetypes").Methods("POST").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		caseTypeHandler.Post(w, req)
-	})
+	router.Path("/apis/v1/casetypes").Methods("GET").HandlerFunc(caseTypeHandler.List)
+	router.Path("/apis/v1/casetypes/{id}").Methods("GET").HandlerFunc(caseTypeHandler.Get)
+	router.Path("/apis/v1/casetypes/{id}").Methods("PUT").HandlerFunc(caseTypeHandler.Put)
+	router.Path("/apis/v1/casetypes").Methods("POST").HandlerFunc(caseTypeHandler.Post)
 
 	// WebApp
 	webAppOptions := webapp.Options{
@@ -316,67 +236,26 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		panic(err)
 	}
 
-	router.Path("/vulnerabilities/{id}").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		webAppHandler.Vulnerability(w, req)
-	})
-	router.Path("/vulnerabilities").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		webAppHandler.Vulnerabilities(w, req)
-	})
-	router.Path("/beneficiaries").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		webAppHandler.Beneficiaries(w, req)
-	})
-	router.Path("/beneficiaries/{id}").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		webAppHandler.Beneficiary(w, req)
-	})
-	router.Path("/settings").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		webAppHandler.Settings(w, req)
-	})
-	router.Path("/settings/attributes").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		webAppHandler.Attributes(w, req)
-	})
-	router.Path("/settings/attributes/new").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		webAppHandler.NewAttribute(w, req)
-	})
-	router.Path("/settings/attributes/{id}").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		webAppHandler.Attribute(w, req)
-	})
-	router.Path("/settings/relationshiptypes").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		webAppHandler.RelationshipTypes(w, req)
-	})
-	router.Path("/settings/relationshiptypes/new").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		webAppHandler.NewRelationshipType(w, req)
-	})
-	router.Path("/settings/relationshiptypes/{id}").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		webAppHandler.RelationshipType(w, req)
-	})
-	router.Path("/settings/partytypes").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		webAppHandler.PartyTypes(w, req)
-	})
-	router.Path("/settings/partytypes/{id}").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		webAppHandler.PartyType(w, req)
-	})
-	router.Path("/settings/countries").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		webAppHandler.CountrySettings(w, req)
-	})
-
-	router.Path("/cases").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		webAppHandler.Cases(w, req)
-	})
-	router.Path("/cases/new").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		webAppHandler.NewCase(w, req)
-	})
-	router.Path("/cases/{id}").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		webAppHandler.Case(w, req)
-	})
-	router.Path("/settings/casetypes").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		webAppHandler.CaseTypes(w, req)
-	})
-	router.Path("/settings/casetypes/new").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		webAppHandler.NewCaseType(w, req)
-	})
-	router.Path("/settings/casetypes/{id}").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		webAppHandler.CaseType(w, req)
-	})
+	router.Path("/vulnerabilities/{id}").HandlerFunc(webAppHandler.Vulnerability)
+	router.Path("/vulnerabilities").HandlerFunc(webAppHandler.Vulnerabilities)
+	router.Path("/beneficiaries").HandlerFunc(webAppHandler.Beneficiaries)
+	router.Path("/beneficiaries/{id}").HandlerFunc(webAppHandler.Beneficiary)
+	router.Path("/settings").HandlerFunc(webAppHandler.Settings)
+	router.Path("/settings/attributes").HandlerFunc(webAppHandler.Attributes)
+	router.Path("/settings/attributes/new").HandlerFunc(webAppHandler.NewAttribute)
+	router.Path("/settings/attributes/{id}").HandlerFunc(webAppHandler.Attribute)
+	router.Path("/settings/relationshiptypes").HandlerFunc(webAppHandler.RelationshipTypes)
+	router.Path("/settings/relationshiptypes/new").HandlerFunc(webAppHandler.NewRelationshipType)
+	router.Path("/settings/relationshiptypes/{id}").HandlerFunc(webAppHandler.RelationshipType)
+	router.Path("/settings/partytypes").HandlerFunc(webAppHandler.PartyTypes)
+	router.Path("/settings/partytypes/{id}").HandlerFunc(webAppHandler.PartyType)
+	router.Path("/settings/countries").HandlerFunc(webAppHandler.CountrySettings)
+	router.Path("/cases").HandlerFunc(webAppHandler.Cases)
+	router.Path("/cases/new").HandlerFunc(webAppHandler.NewCase)
+	router.Path("/cases/{id}").HandlerFunc(webAppHandler.Case)
+	router.Path("/settings/casetypes").HandlerFunc(webAppHandler.CaseTypes)
+	router.Path("/settings/casetypes/new").HandlerFunc(webAppHandler.NewCaseType)
+	router.Path("/settings/casetypes/{id}").HandlerFunc(webAppHandler.CaseType)
 
 	// Seed database for development
 	if err := beneficiaries.SeedDatabase(ctx, beneficiariesStore); err != nil {

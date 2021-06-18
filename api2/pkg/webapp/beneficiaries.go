@@ -13,6 +13,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/sync/errgroup"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -183,53 +184,146 @@ func (h *Handler) PostBeneficiary(
 		attributeMap[attribute.ID] = attribute
 	}
 
+	type RelationshipEntry struct {
+		*relationships.Relationship
+		MarkedForDeletion bool
+	}
+
+	//goland:noinspection GoPreferNilSlice
+	var rels = []*RelationshipEntry{}
+
 	f := req.Form
 	for key, vals := range f {
 
-		// Making sure the key starts with "attribute[
-		if !strings.HasPrefix(key, "attribute[") {
-			err := fmt.Errorf("unexpected form value key: %s", key)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+		// Populate the Party.attributes
+		if strings.HasPrefix(key, "attribute[") {
+
+			if !strings.HasSuffix(key, "]") {
+				err := fmt.Errorf("unexpected form value key: %s", key)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			attrId, err := uuid.FromString(key[10 : len(key)-1])
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			attr, ok := attributeMap[attrId.String()]
+			if !ok {
+				err := fmt.Errorf("attribute with id %s not found", attrId)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			b.Attributes[attr.ID] = vals
+
 		}
 
-		if !strings.HasSuffix(key, "]") {
-			err := fmt.Errorf("unexpected form value key: %s", key)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+		// Retrieve party relationships
+		if strings.HasPrefix(key, "relationships[") {
+
+			keyParts := strings.Split(key, ".")
+			if len(keyParts) != 2 {
+				err := fmt.Errorf("unexpected form value key: %s", key)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			if !strings.HasSuffix(keyParts[0], "]") {
+				err := fmt.Errorf("unexpected form value key: %s", key)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			relationshipIdxStr := keyParts[0][14 : len(keyParts[0])-1]
+			relationshipIdx, err := strconv.Atoi(relationshipIdxStr)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			var rel *RelationshipEntry
+			for {
+				if (relationshipIdx + 1) > len(rels) {
+					rels = append(rels, &RelationshipEntry{
+						Relationship: &relationships.Relationship{},
+					})
+				} else {
+					rel = rels[relationshipIdx]
+					break
+				}
+			}
+
+			attrName := keyParts[1]
+
+			switch attrName {
+			case "markedForDeletion":
+				rel.MarkedForDeletion = vals[0] == "true"
+			case "id":
+				rel.ID = vals[0]
+			case "secondPartyId":
+				rel.SecondParty = vals[0]
+			case "relationshipTypeId":
+				rel.RelationshipTypeID = vals[0]
+			default:
+				err := fmt.Errorf("unexpected relationship attribute: %s", attrName)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 		}
-
-		attrId, err := uuid.FromString(key[10 : len(key)-1])
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		attr, ok := attributeMap[attrId.String()]
-		if !ok {
-			err := fmt.Errorf("attribute with id %s not found", attrId)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		b.Attributes[attr.ID] = vals
-
 	}
 
+	var beneficiary *beneficiaries.Beneficiary
+
+	// Update or create the beneficiary
 	if id == "" {
-		newBenef, err := h.beneficiaryClient.Create(ctx, b)
+		var err error
+		beneficiary, err = h.beneficiaryClient.Create(ctx, b)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		w.Header().Set("Location", "/beneficiaries/"+newBenef.ID)
-		w.WriteHeader(http.StatusSeeOther)
 	} else {
-		if _, err := h.beneficiaryClient.Update(ctx, b); err != nil {
+		var err error
+		if beneficiary, err = h.beneficiaryClient.Update(ctx, b); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		w.Header().Set("Location", "/beneficiaries/"+id)
-		w.WriteHeader(http.StatusSeeOther)
 	}
+
+	// Update, create or delete the relationships
+
+	for _, rel := range rels {
+
+		if len(rel.ID) == 0 {
+			// Create the relationship
+			relationship := rel.Relationship
+			relationship.FirstParty = beneficiary.ID
+			if _, err := h.relationshipClient.Create(ctx, rel.Relationship); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		} else if !rel.MarkedForDeletion {
+			// Update the relationship
+			relationship := rel.Relationship
+			relationship.FirstParty = beneficiary.ID
+			if _, err := h.relationshipClient.Update(ctx, rel.Relationship); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		} else {
+			// Delete the relationship
+			if err := h.relationshipClient.Delete(ctx, rel.Relationship.ID); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		}
+
+	}
+
+	w.Header().Set("Location", "/beneficiaries/"+id)
+	w.WriteHeader(http.StatusSeeOther)
+
 }

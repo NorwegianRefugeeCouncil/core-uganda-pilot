@@ -48,9 +48,7 @@
 
                         <div id='relationships-container'>
                             <ul id='relationships-list' class="list-group mb-3">
-                                {{ range .Relationships.Items}}
-                                    <li class="list-group-item">{{ .FirstParty }}{{ index $.RelationshipTypes .RelationshipTypeID }} {{ .SecondParty }}</li>
-                                {{ end }}
+                                <!-- Templated -->
                             </ul>
                         </div>
 
@@ -127,9 +125,8 @@
         let {BehaviorSubject} = rxjs;
         let {map} = rxjs.operators;
 
-        console.log('...');
-
-        let relationshipTypes = [
+        // Holds the different relationship types
+        const relationshipTypes = [
             {{range .RelationshipTypes.Items}}
             {
                 id: {{.ID}},
@@ -140,6 +137,8 @@
             {{end}}
         ];
 
+        // Holds the different parties (for relationship dropdown select)
+        // TODO: use API query to search
         const parties = [
             {{range .Parties.Items}}
             {
@@ -149,28 +148,42 @@
             {{ end }}
         ];
 
+        // Holds the display state
+        let stateSubject = new BehaviorSubject({
+            attributes: [],
+            relationships: [
+                {{range .Relationships.Items}}
+                {
+                    id: {{.ID}},
+                    firstParty: {{.FirstParty}},
+                    secondParty: {{.SecondParty}},
+                    relationshipTypeId: {{.RelationshipTypeID}},
+                    isNew: false,
+                    markedForDeletion: false,
+                },
+                {{end}}
+            ]
+        });
 
-        let relationshipsSubject = new BehaviorSubject([
-            {{range .Relationships.Items}}
-            {
-                firstParty: {{.FirstParty}},
-                secondParty: {{.SecondParty}},
-                relationshipTypeId: {{.RelationshipTypeID}}
-            },
-            {{end}}
-        ]);
-        let relationships$ = relationshipsSubject.asObservable();
+        // Display state observable$
+        let state$ = stateSubject.asObservable();
 
+        // Beneficiary attributes observable$
+        let attributes$ = state$.pipe(map(s => s.attributes));
+
+        // Beneficiary relationships observable$
+        let relationships$ = state$.pipe(map(s => s.relationships))
+
+        // aggregate relationship types and relationships for display purposes
         let displayRelationships$ = relationships$.pipe(
             map(r => {
-                return r.map(elem => {
-                    let relationshipType = relationshipTypes.find(t => t.id === elem.relationshipTypeId);
-                    console.log(relationshipType);
+                return r.map(relationship => {
+                    let relationshipType = relationshipTypes.find(t => t.id === relationship.relationshipTypeId);
                     if (!relationshipType) {
                         return;
                     }
                     return {
-                        ...elem,
+                        ...relationship,
                         firstPartyRole: relationshipType.firstPartyRole,
                         secondPartyRole: relationshipType.secondPartyRole,
                         relationshipTypeName: relationshipType.name
@@ -179,50 +192,141 @@
             })
         );
 
-        let stateSubject = new BehaviorSubject({
-            entity: {
-                attributes: [],
-                relationships: []
-            }
-        });
-        let state$ = stateSubject.asObservable();
-        let attributes$ = state$.pipe(map(s => s.attributes));
 
         function addRelationship(relationshipTypeId, secondPartyID) {
-            relationshipsSubject.next([
-                ...relationshipsSubject.value,
-                {
-                    relationshipTypeId,
-                    firstParty: {{.Beneficiary.ID}},
-                    secondParty: secondPartyID
-                }
-            ]);
+            const state = stateSubject.value
+            stateSubject.next({
+                ...state,
+                relationships: [
+                    ...state.relationships,
+                    {
+                        relationshipTypeId,
+                        firstParty: {{.Beneficiary.ID}},
+                        secondParty: secondPartyID
+                    }
+                ]
+            })
         }
 
+        function deleteRelationship(idx) {
+            console.log("ok")
+            const state = stateSubject.value
+            const relationships = state.relationships
+            const relationship = relationships[idx]
+            if (relationship.id) {
+                relationships[idx] = {
+                    ...relationship,
+                    // toggle marked for deletion
+                    markedForDeletion: !relationship.markedForDeletion
+                }
+                stateSubject.next({
+                    ...state,
+                    relationships: [
+                        ...relationships
+                    ]
+                })
+            } else {
+                relationships.splice(idx, 1)
+                stateSubject.next({
+                    ...state,
+                    relationships: [...relationships]
+                })
+            }
+        }
+
+        // On document ready
         document.addEventListener('DOMContentLoaded', function () {
 
+            // Bind add relationship button
             document.getElementById('add-relationship-button').onclick = () => {
                 let typeSelector = document.getElementById('relationshipTypeSelector');
                 let partySelector = document.getElementById('relationshipSecondPartySelector');
                 let relationshipType = typeSelector.value;
                 let party = partySelector.value;
                 addRelationship(relationshipType, party);
-                const hiddenInput = document.createElement('input');
-                hiddenInput.type = 'hidden';
-                hiddenInput.value = "TODO"; // TODO;
-                hiddenInput.id = "todo";
-                // document.getElementById('relationships-container).appendChild(hiddenInput);
             };
 
-            displayRelationships$.subscribe(s => {
+            // Render relationships
+            displayRelationships$.subscribe(relationships => {
                 const list = document.getElementById('relationships-list');
-                s.forEach(item => {
+                list.innerHTML = ""
+                relationships.forEach((relationship, idx) => {
+
                     const li = document.createElement('li');
                     li.className = "list-group-item";
-                    const firstPartyName = parties.find(({id}) => id === item.firstParty).name;
-                    const firstPartyRole = relationshipTypes.find(({id}) => id === item.relationshipTypeId).firstPartyRole;
-                    const secondPartyName = parties.find(({id}) => id === item.secondParty).name;
-                    li.innerText = firstPartyName + " " + firstPartyRole + " " + secondPartyName;
+
+                    const firstPartyName = parties.find(({id}) => id === relationship.firstParty).name;
+                    const firstPartyRole = relationshipTypes.find(({id}) => id === relationship.relationshipTypeId).firstPartyRole;
+                    const secondPartyName = parties.find(({id}) => id === relationship.secondParty).name;
+
+                    const firstPartyLinkNode = document.createElement("a")
+                    firstPartyLinkNode.href = "/beneficiaries/" + firstPartyLinkNode
+                    firstPartyLinkNode.innerText = firstPartyName
+
+                    const roleSpanNode = document.createElement("span")
+                    roleSpanNode.innerText = firstPartyRole.substring(0, 1).toLocaleLowerCase() + firstPartyRole.substring(1)
+
+                    const secondPartyLinkNode = document.createElement("a")
+                    secondPartyLinkNode.href = "/beneficiaries/" + secondPartyLinkNode
+                    secondPartyLinkNode.innerText = secondPartyName
+
+                    const space1Node = document.createElement("span")
+                    space1Node.innerText = " "
+
+                    const space2Node = document.createElement("span")
+                    space2Node.innerText = " "
+
+                    const containerNode = document.createElement("span")
+
+                    if (relationship.markedForDeletion) {
+                        containerNode.style.textDecoration = "line-through"
+                    }
+
+                    containerNode.appendChild(firstPartyLinkNode)
+                    containerNode.appendChild(space1Node)
+                    containerNode.appendChild(roleSpanNode)
+                    containerNode.appendChild(space2Node)
+                    containerNode.appendChild(secondPartyLinkNode)
+
+                    const secondPartyInput = document.createElement("input")
+                    secondPartyInput.name = "relationships[" + idx + "].secondPartyId"
+                    secondPartyInput.setAttribute("value", relationship.secondParty)
+                    secondPartyInput.hidden = true
+
+                    const relationshipTypeIdInput = document.createElement("input")
+                    relationshipTypeIdInput.name = "relationships[" + idx + "].relationshipTypeId"
+                    relationshipTypeIdInput.setAttribute("value", relationship.relationshipTypeId)
+                    relationshipTypeIdInput.hidden = true
+
+                    const closeButton = document.createElement("button")
+                    closeButton.type = "button"
+                    closeButton.classList.add("btn-close")
+                    closeButton.classList.add("float-end")
+                    closeButton.onclick = () => {
+                        deleteRelationship(idx)
+                    }
+                    containerNode.appendChild(closeButton)
+
+                    if (relationship.id) {
+                        const idHiddenInput = document.createElement("input")
+                        idHiddenInput.hidden = true
+                        idHiddenInput.name = `relationships[${idx}].id`
+                        idHiddenInput.setAttribute("value", relationship.id)
+                        li.appendChild(idHiddenInput)
+                    }
+
+                    if (relationship.markedForDeletion) {
+                        const markedForDeletionHiddenInput = document.createElement("input")
+                        markedForDeletionHiddenInput.hidden = true
+                        markedForDeletionHiddenInput.name = `relationships[${idx}].markedForDeletion`
+                        markedForDeletionHiddenInput.setAttribute("value", "true")
+                        li.appendChild(markedForDeletionHiddenInput)
+                    }
+
+                    li.appendChild(secondPartyInput)
+                    li.appendChild(relationshipTypeIdInput)
+                    li.appendChild(containerNode)
+
                     list.appendChild(li);
                 })
 
