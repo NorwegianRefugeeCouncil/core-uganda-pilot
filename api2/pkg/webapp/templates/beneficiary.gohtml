@@ -144,10 +144,11 @@
         // Holds the different parties (for relationship dropdown select)
         // TODO: use API query to search
         let querySubject = new Subject()
-        querySubject.asObservable().pipe(
+        let query$ = querySubject.asObservable()
+        query$.pipe(
             debounceTime(200),
             switchMap((qry) => {
-                console.log(qry)
+                return qry
             })
         )
         const parties = [
@@ -259,8 +260,11 @@
 
             // Add listener for party filtering on relationship type dropdown
             document.getElementById('relationshipTypeSelector').onchange = (event) => {
-                querySubject.next(event.target.value)
+                querySubject.next(event)
             }
+            query$.subscribe((r) => {
+                console.log("got qry string: ", r)
+            })
 
             // Render relationships
             displayRelationships$.subscribe(relationships => {
