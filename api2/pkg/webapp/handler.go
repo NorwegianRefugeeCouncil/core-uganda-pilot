@@ -10,6 +10,7 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationships"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationshiptypes"
+	"github.com/nrc-no/core-kafka/pkg/relationshipparties"
 	"github.com/nrc-no/core-kafka/pkg/services/vulnerability"
 	"html/template"
 	"os"
@@ -26,6 +27,7 @@ type Handler struct {
 	partyTypeClient        *partytypes.Client
 	caseTypeClient         *casetypes.Client
 	caseClient             *cases.Client
+	relationshipPartiesClient *relationshipparties.Client
 }
 
 type Options struct {
@@ -43,6 +45,7 @@ func NewHandler(
 	PartyTypeClient *partytypes.Client,
 	CaseTypeClient *casetypes.Client,
 	CaseClient *cases.Client,
+	RelationshipPartiesClient *relationshipparties.Client,
 ) (*Handler, error) {
 
 	if len(options.TemplateDirectory) == 0 {
@@ -70,6 +73,7 @@ func NewHandler(
 		partyTypeClient:        PartyTypeClient,
 		caseTypeClient:         CaseTypeClient,
 		caseClient:             CaseClient,
+		relationshipPartiesClient: RelationshipPartiesClient,
 	}
 	return h, nil
 }

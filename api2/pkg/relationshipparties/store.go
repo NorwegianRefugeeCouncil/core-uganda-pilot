@@ -7,7 +7,13 @@ import (
 )
 
 type PartiesStore struct {
-	store parties.Store
+	store *parties.Store
+}
+
+func NewStore(partiesStore *parties.Store) *PartiesStore {
+	return &PartiesStore{
+		store: partiesStore,
+	}
 }
 
 func (s *PartiesStore) FilteredList(ctx context.Context, filterOptions PickPartyOptions) (*parties.PartyList, error) {

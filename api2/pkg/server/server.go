@@ -13,6 +13,7 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypeschemas"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationships"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationshiptypes"
+	"github.com/nrc-no/core-kafka/pkg/relationshipparties"
 	"github.com/nrc-no/core-kafka/pkg/services/vulnerability"
 	"github.com/nrc-no/core-kafka/pkg/webapp"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -45,6 +46,9 @@ type Server struct {
 	PartyTypeStore          *partytypes.Store
 	PartyTypeHandler        *partytypes.Handler
 	PartyTypeClient         *partytypes.Client
+	RelationshipPartiesStore *relationshipparties.PartiesStore
+	RelationshipPartiesHandler *relationshipparties.Handler
+	RelationshipPartiesClient *relationshipparties.Client
 	CaseTypeStore           *casetypes.Store
 	CaseTypeHandler         *casetypes.Handler
 	CaseTypeClient          *casetypes.Client
@@ -201,6 +205,12 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.Path("/apis/v1/partytypeschemas/{id}").Methods("PUT").HandlerFunc(partyTypeSchemaHandler.Put)
 	router.Path("/apis/v1/partytypeschemas").Methods("POST").HandlerFunc(partyTypeSchemaHandler.Post)
 
+	// Relationship <> Parties
+	relationshipPartiesStore := relationshipparties.NewStore(partyStore)
+	relationshipPartiesHandler := relationshipparties.NewHandler(relationshipPartiesStore)
+	relationshipPartiesClient := relationshipparties.NewClient(c.Address)
+	router.Path("/apis/v1/relationshipparties/picker").Methods("GET").HandlerFunc(relationshipPartiesHandler.PickParty)
+
 	// Cases
 	caseStore := cases.NewStore(c.MongoClient, c.MongoDatabase)
 	if err := cases.Init(ctx, caseStore); err != nil {
@@ -238,6 +248,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		partyTypeClient,
 		caseTypeClient,
 		caseClient,
+		relationshipPartiesClient,
 	)
 	if err != nil {
 		panic(err)
@@ -297,6 +308,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		PartyTypeStore:          partyTypeStore,
 		PartyTypeHandler:        partyTypeHandler,
 		PartyTypeClient:         partyTypeClient,
+		RelationshipPartiesClient: relationshipPartiesClient,
 		CaseTypeStore:           caseTypeStore,
 		CaseTypeHandler:         caseTypeHandler,
 		CaseTypeClient:          caseTypeClient,
