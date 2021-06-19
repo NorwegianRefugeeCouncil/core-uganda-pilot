@@ -66,6 +66,9 @@ type Server struct {
 	TeamStore               *teams.Store
 	TeamHandler             *teams.Handler
 	TeamClient              *teams.Client
+	MembershipHandler       *memberships.Handler
+	MembershipStore         *memberships.Store
+	membershipsClient       *memberships.Client
 }
 
 type Options struct {
@@ -291,9 +294,14 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 
 	// Memberships
 	membershipStore := memberships.NewStore(relationshipStore)
+	membershipHandler := memberships.NewHandler(membershipStore)
+	membershipClient := memberships.NewClient(c.Address)
 	if err := memberships.Init(ctx, relationshipTypeStore); err != nil {
 		panic(err)
 	}
+	router.Path("/apis/v1/memberships").Methods("GET").HandlerFunc(membershipHandler.List)
+	router.Path("/apis/v1/memberships/{id}").Methods("GET").HandlerFunc(membershipHandler.Get)
+	router.Path("/apis/v1/memberships").Methods("POST").HandlerFunc(membershipHandler.Post)
 
 	// Organizations
 	if err := organizations.Init(ctx, partyTypeStore, attributeStore, partyStore); err != nil {
@@ -324,6 +332,8 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		partyTypeClient,
 		caseTypeClient,
 		caseClient,
+		teamClient,
+		membershipClient,
 	)
 	if err != nil {
 		panic(err)
@@ -343,6 +353,8 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.Path("/settings/partytypes").HandlerFunc(webAppHandler.PartyTypes)
 	router.Path("/settings/partytypes/{id}").HandlerFunc(webAppHandler.PartyType)
 	router.Path("/settings/countries").HandlerFunc(webAppHandler.CountrySettings)
+	router.Path("/teams").HandlerFunc(webAppHandler.Teams)
+	router.Path("/teams/{id}").HandlerFunc(webAppHandler.Team)
 	router.Path("/cases").HandlerFunc(webAppHandler.Cases)
 	router.Path("/cases/new").HandlerFunc(webAppHandler.NewCase)
 	router.Path("/cases/{id}").HandlerFunc(webAppHandler.Case)
@@ -392,6 +404,9 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		TeamStore:               teamStore,
 		TeamHandler:             teamHandler,
 		TeamClient:              teamClient,
+		MembershipStore:         membershipStore,
+		MembershipHandler:       membershipHandler,
+		membershipsClient:       membershipClient,
 		WebAppHandler:           webAppHandler,
 		HttpServer:              httpServer,
 	}

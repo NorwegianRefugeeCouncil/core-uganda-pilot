@@ -15,6 +15,33 @@ func NewStore(relationshipStore *relationships.Store) *Store {
 	return &Store{relationshipStore: relationshipStore}
 }
 
+type ListOptions struct {
+	IndividualID string `json:"individualId"`
+	TeamID       string `json:"teamId"`
+}
+
+func (s *Store) List(ctx context.Context, listOptions ListOptions) (*MembershipList, error) {
+
+	got, err := s.relationshipStore.List(ctx, relationships.ListOptions{
+		RelationshipTypeID: RelationshipType.ID,
+		FirstPartyId:       listOptions.IndividualID,
+		SecondParty:        listOptions.TeamID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	var items = make([]*Membership, len(got.Items))
+	for i, item := range got.Items {
+		items[i] = mapRelationshipToMembership(item)
+	}
+
+	return &MembershipList{
+		Items: items,
+	}, nil
+
+}
+
 func (s *Store) Get(ctx context.Context, id string) (*Membership, error) {
 	got, err := s.relationshipStore.Get(ctx, id)
 	if err != nil {

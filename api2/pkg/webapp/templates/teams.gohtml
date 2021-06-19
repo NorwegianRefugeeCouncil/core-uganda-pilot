@@ -1,0 +1,35 @@
+{{define "team-row"}}
+    <a class="list-group-item font-monospace py-3" href="/teams/{{.ID}}">
+       {{.Name}}
+    </a>
+{{end}}
+
+{{define "teams"}}
+    <!doctype html>
+    <html lang="en">
+    {{template "head"}}
+    <body class="bg-light">
+
+    {{template "navbar"}}
+
+    <div class="container mt-4">
+
+        <div class="row">
+            <div class="col">
+                <h6 class='display-6'>Teams</h6>
+                <div class="list-group">
+                    {{ if .Teams.Items}}
+                        {{ range .Teams.Items }}
+                            {{template "team-row" .}}
+                        {{end}}
+                    {{else}}
+                        <div class='list-group-item disabled'>No team found</div>
+                    {{end}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </body>
+    </html>
+{{end}}

@@ -1,0 +1,30 @@
+{{define "team"}}
+    <!doctype html>
+    <html lang="en">
+    {{template "head"}}
+    <body class="bg-light">
+
+    {{template "navbar"}}
+
+    <div class="container mt-4">
+
+        <div class="row">
+            <div class="col">
+                <h6 class='display-6'>Team: <b>{{.Team.Name}}</b></h6>
+
+                <h5>Members</h5>
+                <div class="list-group">
+                    {{range .Members}}
+                        <div class="list-group-item">
+                            {{.}}
+                        </div>
+                    {{end}}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    </body>
+    </html>
+{{end}}
