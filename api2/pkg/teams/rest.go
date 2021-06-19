@@ -1,4 +1,4 @@
-package parties
+package teams
 
 import (
 	"encoding/json"
@@ -45,14 +45,12 @@ func (h *Handler) Get(w http.ResponseWriter, req *http.Request) {
 }
 
 type ListOptions struct {
-	PartyType string
 }
 
 func (h *Handler) List(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	listOptions := &ListOptions{}
 
-	ret, err := h.store.List(ctx, *listOptions)
+	ret, err := h.store.List(ctx)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -90,14 +88,14 @@ func (h *Handler) Put(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var payload Party
+	var payload Team
 	if err := json.Unmarshal(bodyBytes, &payload); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	r.Attributes = payload.Attributes
-	r.PartyTypes = payload.PartyTypes
+	r.ID = id
+	r.Name = payload.Name
 
 	if err := h.store.Update(ctx, r); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -123,7 +121,7 @@ func (h *Handler) Post(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var payload Party
+	var payload Team
 	if err := json.Unmarshal(bodyBytes, &payload); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -3,9 +3,12 @@ package server
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core-kafka/pkg/cases/cases"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
+	"github.com/nrc-no/core-kafka/pkg/memberships"
+	"github.com/nrc-no/core-kafka/pkg/organizations"
 	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
 	"github.com/nrc-no/core-kafka/pkg/parties/beneficiaries"
 	"github.com/nrc-no/core-kafka/pkg/parties/parties"
@@ -14,12 +17,19 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/parties/relationships"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationshiptypes"
 	"github.com/nrc-no/core-kafka/pkg/services/vulnerability"
+	"github.com/nrc-no/core-kafka/pkg/staff"
+	"github.com/nrc-no/core-kafka/pkg/staffmock"
+	"github.com/nrc-no/core-kafka/pkg/teamorganizations"
+	"github.com/nrc-no/core-kafka/pkg/teams"
 	"github.com/nrc-no/core-kafka/pkg/webapp"
+	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"math"
 	"net"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type Server struct {
@@ -53,6 +63,9 @@ type Server struct {
 	CaseClient              *cases.Client
 	WebAppHandler           *webapp.Handler
 	HttpServer              *http.Server
+	TeamStore               *teams.Store
+	TeamHandler             *teams.Handler
+	TeamClient              *teams.Client
 }
 
 type Options struct {
@@ -112,6 +125,39 @@ type CompletedOptions struct {
 func (c CompletedOptions) New(ctx context.Context) *Server {
 
 	router := mux.NewRouter()
+
+	router.Use(func(handler http.Handler) http.Handler {
+		return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+
+			start := time.Now()
+
+			stWriter := &statusWriter{w: writer}
+			handler.ServeHTTP(stWriter, request)
+
+			end := time.Now()
+
+			statusCode := stWriter.statusCode
+			if stWriter.statusCode == 0 {
+				statusCode = 200
+			}
+
+			fields := logrus.Fields{
+				"method":     request.Method,
+				"statusCode": statusCode,
+				"path":       request.URL.Path,
+				"responseMs": math.Round(float64(end.Sub(start).Nanoseconds())/1000000.0*100.0) / 100.0,
+			}
+
+			if stWriter.statusCode < 400 {
+				logrus.WithFields(fields).Infof("")
+			} else {
+				logrus.WithFields(fields).
+					WithError(fmt.Errorf("inbound request failed with status code: %d", statusCode)).
+					Errorf("")
+			}
+
+		})
+	})
 
 	// Attributes
 	attributeStore := attributes.NewStore(c.MongoClient, c.MongoDatabase)
@@ -212,6 +258,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.Path("/apis/v1/cases/{id}").Methods("GET").HandlerFunc(caseHandler.Get)
 	router.Path("/apis/v1/cases/{id}").Methods("PUT").HandlerFunc(caseHandler.Put)
 	router.Path("/apis/v1/cases").Methods("POST").HandlerFunc(caseHandler.Post)
+
 	// CaseTypes
 	caseTypeStore := casetypes.NewStore(c.MongoClient, c.MongoDatabase)
 	if err := casetypes.Init(ctx, caseTypeStore); err != nil {
@@ -223,6 +270,45 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.Path("/apis/v1/casetypes/{id}").Methods("GET").HandlerFunc(caseTypeHandler.Get)
 	router.Path("/apis/v1/casetypes/{id}").Methods("PUT").HandlerFunc(caseTypeHandler.Put)
 	router.Path("/apis/v1/casetypes").Methods("POST").HandlerFunc(caseTypeHandler.Post)
+
+	// Teams
+	teamStore := teams.NewStore(partyStore)
+	if err := teams.Init(ctx, teamStore, partyTypeStore); err != nil {
+		panic(err)
+	}
+	teamHandler := teams.NewHandler(teamStore)
+	teamClient := teams.NewClient(c.Address)
+	router.Path("/apis/v1/teams").Methods("GET").HandlerFunc(teamHandler.List)
+	router.Path("/apis/v1/teams/{id}").Methods("GET").HandlerFunc(teamHandler.Get)
+	router.Path("/apis/v1/teams/{id}").Methods("PUT").HandlerFunc(teamHandler.Put)
+	router.Path("/apis/v1/teams").Methods("POST").HandlerFunc(teamHandler.Post)
+
+	// Staff
+	staffStore := staff.NewStore(relationshipStore)
+	if err := staff.Init(ctx, relationshipTypeStore); err != nil {
+		panic(err)
+	}
+
+	// Memberships
+	membershipStore := memberships.NewStore(relationshipStore)
+	if err := memberships.Init(ctx, relationshipTypeStore); err != nil {
+		panic(err)
+	}
+
+	// Organizations
+	if err := organizations.Init(ctx, partyTypeStore, attributeStore, partyStore); err != nil {
+		panic(err)
+	}
+
+	// TeamOrganization
+	if err := teamorganizations.Init(ctx, relationshipTypeStore, relationshipStore); err != nil {
+		panic(err)
+	}
+
+	// Mock staff
+	if err := staffmock.Init(ctx, partyStore, staffStore, membershipStore); err != nil {
+		panic(err)
+	}
 
 	// WebApp
 	webAppOptions := webapp.Options{
@@ -303,6 +389,9 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		CaseStore:               caseStore,
 		CaseHandler:             caseHandler,
 		CaseClient:              caseClient,
+		TeamStore:               teamStore,
+		TeamHandler:             teamHandler,
+		TeamClient:              teamClient,
 		WebAppHandler:           webAppHandler,
 		HttpServer:              httpServer,
 	}
