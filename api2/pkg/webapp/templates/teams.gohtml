@@ -1,6 +1,6 @@
 {{define "team-row"}}
     <a class="list-group-item font-monospace py-3" href="/teams/{{.ID}}">
-       {{.Name}}
+        {{.Name}}
     </a>
 {{end}}
 
@@ -8,15 +8,27 @@
     <!doctype html>
     <html lang="en">
     {{template "head"}}
-    <body class="bg-light">
+    <body>
 
     {{template "navbar"}}
 
-    <div class="container mt-4">
+    <div class="container-fluid bg-quite-light border-bottom">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="d-flex flex-row pt-3" style="height: 3.25rem">
+                        <div><i class="bi bi-people"></i> <a href="/teams">Teams</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container mt-5">
 
         <div class="row">
             <div class="col">
-                <h6 class='display-6'>Teams</h6>
                 <div class="list-group">
                     {{ if .Teams.Items}}
                         {{ range .Teams.Items }}
