@@ -23,6 +23,7 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/teams"
 	"github.com/nrc-no/core-kafka/pkg/webapp"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/pflag"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"math"
@@ -72,11 +73,40 @@ type Server struct {
 }
 
 type Options struct {
-	TemplateDirectory string
-	Address           string
-	MongoDatabase     string
-	MongoUsername     string
-	MongoPassword     string
+	TemplateDirectory    string
+	Address              string
+	MongoDatabase        string
+	MongoUsername        string
+	MongoPassword        string
+	KeycloakClientID     string
+	KeycloakClientSecret string
+	KeycloakBaseURL      string
+	KeycloakRealmName    string
+}
+
+func NewOptions() *Options {
+	return &Options{
+		TemplateDirectory:    "pkg/webapp/templates",
+		Address:              "http://localhost:9000",
+		MongoDatabase:        "core",
+		MongoUsername:        "",
+		MongoPassword:        "",
+		KeycloakClientID:     "",
+		KeycloakClientSecret: "",
+		KeycloakBaseURL:      "",
+		KeycloakRealmName:    "",
+	}
+}
+
+func (o *Options) Flags(fs *pflag.FlagSet) {
+	fs.StringVar(&o.Address, "address", o.Address, "Address")
+	fs.StringVar(&o.MongoDatabase, "mongo-database", o.MongoDatabase, "Mongo database name")
+	fs.StringVar(&o.MongoUsername, "mongo-username", o.MongoUsername, "Mongo username")
+	fs.StringVar(&o.MongoPassword, "mongo-password", o.MongoPassword, "Mongo password")
+	fs.StringVar(&o.KeycloakBaseURL, "keycloak-base-url", o.KeycloakBaseURL, "Keycloak base URL")
+	fs.StringVar(&o.KeycloakRealmName, "keycloak-realm-name", o.KeycloakRealmName, "Keycloak realm name")
+	fs.StringVar(&o.KeycloakClientID, "keycloak-client-id", o.KeycloakClientID, "Keycloak client id")
+	fs.StringVar(&o.KeycloakClientSecret, "keycloak-client-secret", o.KeycloakClientSecret, "Keycloak client secret")
 }
 
 func (o Options) Complete(ctx context.Context) (CompletedOptions, error) {
@@ -93,20 +123,6 @@ func (o Options) Complete(ctx context.Context) (CompletedOptions, error) {
 
 	if err := mongoClient.Connect(ctx); err != nil {
 		return CompletedOptions{}, err
-	}
-
-	// Setup address
-	if len(o.Address) == 0 {
-		o.Address = "http://localhost:9000"
-	}
-
-	// Setup template directory
-	if len(o.TemplateDirectory) == 0 {
-		o.TemplateDirectory = "pkg/webapp/templates"
-	}
-
-	if len(o.MongoDatabase) == 0 {
-		o.MongoDatabase = "core"
 	}
 
 	completedOptions := CompletedOptions{
@@ -173,15 +189,6 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.Path("/apis/v1/attributes/{id}").Methods("GET").HandlerFunc(attributeHandler.Get)
 	router.Path("/apis/v1/attributes/{id}").Methods("PUT").HandlerFunc(attributeHandler.Update)
 	router.Path("/apis/v1/attributes").Methods("POST").HandlerFunc(attributeHandler.Post)
-
-	// Vulnerabilities
-	vulnerabilityStore := vulnerability.NewStore(c.MongoClient, c.MongoDatabase)
-	vulnerabilityHandler := vulnerability.NewHandler(vulnerabilityStore)
-	vulnerabilityClient := vulnerability.NewClient(c.Address)
-	router.Path("/apis/v1/vulnerabilities").Methods("GET").HandlerFunc(vulnerabilityHandler.ListVulnerabilities)
-	router.Path("/apis/v1/vulnerabilities/{id}").Methods("GET").HandlerFunc(vulnerabilityHandler.GetVulnerability)
-	router.Path("/apis/v1/vulnerabilities/{id}").Methods("PUT").HandlerFunc(vulnerabilityHandler.UpdateVulnerability)
-	router.Path("/apis/v1/vulnerabilities").Methods("POST").HandlerFunc(vulnerabilityHandler.PostVulnerability)
 
 	// Beneficiaries
 	beneficiariesStore := beneficiaries.NewStore(c.MongoClient, c.MongoDatabase)
@@ -324,7 +331,6 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	}
 	webAppHandler, err := webapp.NewHandler(webAppOptions,
 		attributeClient,
-		vulnerabilityClient,
 		beneficiaryClient,
 		relationshipTypeClient,
 		relationshipClient,
@@ -377,9 +383,6 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		AttributeStore:          attributeStore,
 		AttributeHandler:        attributeHandler,
 		AttributeClient:         attributeClient,
-		VulnerabilityStore:      vulnerabilityStore,
-		VulnerabilityHandler:    vulnerabilityHandler,
-		VulnerabilityClient:     vulnerabilityClient,
 		BeneficiaryStore:        beneficiariesStore,
 		BeneficiaryHandler:      beneficiaryHandler,
 		BeneficiaryClient:       beneficiaryClient,

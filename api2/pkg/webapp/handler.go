@@ -11,7 +11,6 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationships"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationshiptypes"
-	"github.com/nrc-no/core-kafka/pkg/services/vulnerability"
 	"github.com/nrc-no/core-kafka/pkg/teams"
 	"html/template"
 	"os"
@@ -20,7 +19,6 @@ import (
 type Handler struct {
 	template               *template.Template
 	attributeClient        *attributes.Client
-	vulnerabilityClient    *vulnerability.Client
 	beneficiaryClient      *beneficiaries.Client
 	relationshipTypeClient *relationshiptypes.Client
 	relationshipClient     *relationships.Client
@@ -39,7 +37,6 @@ type Options struct {
 func NewHandler(
 	options Options,
 	AttributeClient *attributes.Client,
-	VulnerabilityClient *vulnerability.Client,
 	BeneficiaryClient *beneficiaries.Client,
 	RelationshipTypeClient *relationshiptypes.Client,
 	RelationshipClient *relationships.Client,
@@ -68,7 +65,6 @@ func NewHandler(
 	h := &Handler{
 		template:               t,
 		attributeClient:        AttributeClient,
-		vulnerabilityClient:    VulnerabilityClient,
 		beneficiaryClient:      BeneficiaryClient,
 		relationshipTypeClient: RelationshipTypeClient,
 		relationshipClient:     RelationshipClient,
