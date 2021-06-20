@@ -16,7 +16,6 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypeschemas"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationships"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationshiptypes"
-	"github.com/nrc-no/core-kafka/pkg/services/vulnerability"
 	"github.com/nrc-no/core-kafka/pkg/staff"
 	"github.com/nrc-no/core-kafka/pkg/staffmock"
 	"github.com/nrc-no/core-kafka/pkg/teamorganizations"
@@ -38,9 +37,6 @@ type Server struct {
 	AttributeStore          *attributes.Store
 	AttributeHandler        *attributes.Handler
 	AttributeClient         *attributes.Client
-	VulnerabilityStore      *vulnerability.Store
-	VulnerabilityHandler    *vulnerability.Handler
-	VulnerabilityClient     *vulnerability.Client
 	BeneficiaryStore        *beneficiaries.Store
 	BeneficiaryHandler      *beneficiaries.Handler
 	BeneficiaryClient       *beneficiaries.Client
@@ -345,8 +341,6 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		panic(err)
 	}
 
-	router.Path("/vulnerabilities/{id}").HandlerFunc(webAppHandler.Vulnerability)
-	router.Path("/vulnerabilities").HandlerFunc(webAppHandler.Vulnerabilities)
 	router.Path("/beneficiaries").HandlerFunc(webAppHandler.Beneficiaries)
 	router.Path("/beneficiaries/{id}").HandlerFunc(webAppHandler.Beneficiary)
 	router.Path("/settings").HandlerFunc(webAppHandler.Settings)
