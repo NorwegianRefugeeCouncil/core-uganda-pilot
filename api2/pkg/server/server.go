@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core-kafka/pkg/cases/cases"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
+	"github.com/nrc-no/core-kafka/pkg/keycloak"
 	"github.com/nrc-no/core-kafka/pkg/memberships"
 	"github.com/nrc-no/core-kafka/pkg/organizations"
 	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
@@ -66,6 +67,7 @@ type Server struct {
 	MembershipHandler       *memberships.Handler
 	MembershipStore         *memberships.Store
 	membershipsClient       *memberships.Client
+	KeycloakClient          *keycloak.Client
 }
 
 type Options struct {
@@ -121,16 +123,23 @@ func (o Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		return CompletedOptions{}, err
 	}
 
+	keycloakClient, err := keycloak.NewClient(o.KeycloakBaseURL, o.KeycloakRealmName, o.KeycloakClientID, o.KeycloakClientSecret)
+	if err != nil {
+		return CompletedOptions{}, err
+	}
+
 	completedOptions := CompletedOptions{
 		MongoClient:       mongoClient,
 		TemplateDirectory: o.TemplateDirectory,
 		Address:           o.Address,
 		MongoDatabase:     o.MongoDatabase,
+		KeycloakClient:    keycloakClient,
 	}
 	return completedOptions, nil
 }
 
 type CompletedOptions struct {
+	KeycloakClient    *keycloak.Client
 	MongoClient       *mongo.Client
 	TemplateDirectory string
 	Address           string
@@ -405,6 +414,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		MembershipHandler:       membershipHandler,
 		membershipsClient:       membershipClient,
 		WebAppHandler:           webAppHandler,
+		KeycloakClient:          c.KeycloakClient,
 		HttpServer:              httpServer,
 	}
 
