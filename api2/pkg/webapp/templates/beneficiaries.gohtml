@@ -3,7 +3,7 @@
     {{$gender := .FindAttributeValue "gender"}}
     {{$age := .FindAge}}
 
-    <a class="list-group-item font-monospace py-3" href="/beneficiaries/{{.ID}}">
+    <a class="list-group-item font-monospace py-3 bg-quite-light" href="/beneficiaries/{{.ID}}">
         {{.}}
         <span class="d-block text-muted">
             {{if $gender}}
@@ -18,15 +18,28 @@
     <!doctype html>
     <html lang="en">
     {{template "head"}}
-    <body class="bg-light">
+    <body>
 
     {{template "navbar"}}
+
+    {{template "beneficiaries_nav"}}
 
     <div class="container mt-4">
         <div class="row">
             <div class="col">
                 <a href='/beneficiaries/new' class='btn btn-primary mb-3'>Register Beneficiary</a>
                 <div class="list-group">
+                    <div class="list-group-item bg-light ">
+                        <div class="d-flex align-items-center">
+                            <div class="py-2">Beneficiaries</div>
+                            <div class="flex-grow-1"></div>
+                            <div class="mx-2">
+                            <input class="form-control" type="text" placeholder="Search"/>
+                            </div>
+                            <button class="btn btn-outline-secondary">Search</button>
+                        </div>
+
+                    </div>
                     {{ if .Beneficiaries.Items}}
                         {{ range .Beneficiaries.Items }}
                             {{template "beneficiary-row" .}}
