@@ -50,8 +50,24 @@ var NairobiICLATeam = Team{
 	Name: "Nairobi ICLA Team",
 }
 
-func Init(ctx context.Context, teamStore *Store, partyTypeStore *partytypes.Store) error {
+func Init(
+	ctx context.Context,
+	teamStore *Store,
+	partyTypeStore *partytypes.Store,
+	attributeStore *attributes.Store,
+) error {
 	logger := logrus.WithContext(ctx).WithField("logger", "teams.Init")
+
+	logger.Infof("initializing TeamName attribute")
+	if err := attributeStore.Create(ctx, &TeamNameAttribute); err != nil {
+		if !mongo.IsDuplicateKeyError(err) {
+			return err
+		}
+		if err := attributeStore.Update(ctx, &TeamNameAttribute); err != nil {
+			return err
+		}
+	}
+
 	logger.Infof("initializing Team party type")
 	if err := partyTypeStore.Create(ctx, &PartyType); err != nil {
 		if !mongo.IsDuplicateKeyError(err) {

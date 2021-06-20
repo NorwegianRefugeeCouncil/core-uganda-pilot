@@ -288,7 +288,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 
 	// Teams
 	teamStore := teams.NewStore(partyStore)
-	if err := teams.Init(ctx, teamStore, partyTypeStore); err != nil {
+	if err := teams.Init(ctx, teamStore, partyTypeStore, attributeStore); err != nil {
 		panic(err)
 	}
 	teamHandler := teams.NewHandler(teamStore)
