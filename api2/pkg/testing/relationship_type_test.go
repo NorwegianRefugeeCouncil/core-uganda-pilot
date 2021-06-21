@@ -86,8 +86,8 @@ func (s *Suite) TestRelationShipTypeCRUD() {
 }
 
 // TestRelationshipTypeList tests that we can effectively filter relationship types by
-// - PartyType = IndividualPartyType
-// - PartyType = HouseholdPartyType
+// - PartyTypeID = IndividualPartyType
+// - PartyTypeID = HouseholdPartyType
 func (s *Suite) TestRelationshipTypeList() {
 
 	s.T().Run("test filter by IndividualPartyType", func(t *testing.T) {

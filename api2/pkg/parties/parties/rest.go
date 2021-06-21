@@ -45,7 +45,7 @@ func (h *Handler) Get(w http.ResponseWriter, req *http.Request) {
 }
 
 type ListOptions struct {
-	PartyType string
+	PartyTypeID string
 }
 
 func (h *Handler) List(w http.ResponseWriter, req *http.Request) {

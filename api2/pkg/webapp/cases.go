@@ -91,17 +91,38 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	party, err := h.partyClient.Get(waitCtx, kase.PartyID)
+	party, err := h.partyClient.Get(ctx, kase.PartyID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	qry := req.URL.Query()
+	refCaseTypeID := qry.Get("refCaseTypeId")
+	var refCaseType *casetypes.CaseType
+	var refParties *parties.PartyList
+	if len(refCaseTypeID) > 0 {
+		refCaseType, err = h.caseTypeClient.Get(ctx, refCaseTypeID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		refParties, err = h.partyClient.List(ctx, parties.ListOptions{
+			PartyTypeID: refCaseType.PartyTypeID,
+		})
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
 	if err := h.template.ExecuteTemplate(w, "case", map[string]interface{}{
-		"Case":      kase,
-		"CaseTypes": kaseTypes,
-		"Party":     party,
-		"Parties":   partyList,
+		"Case":        kase,
+		"CaseTypes":   kaseTypes,
+		"Party":       party,
+		"Parties":     partyList,
+		"RefCaseType": refCaseType,
+		"RefParties":  refParties,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

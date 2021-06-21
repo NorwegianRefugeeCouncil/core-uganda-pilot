@@ -60,7 +60,7 @@ func (h *Handler) PartyType(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if err := h.template.ExecuteTemplate(w, "partytype", map[string]interface{}{
-		"PartyType": partyType,
+		"PartyTypeID": partyType,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
