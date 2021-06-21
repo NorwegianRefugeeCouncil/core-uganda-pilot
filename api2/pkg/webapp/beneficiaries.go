@@ -161,16 +161,18 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if err := h.template.ExecuteTemplate(w, "beneficiary", map[string]interface{}{
-		"IsNew":             id == "new",
-		"Beneficiary":       b,
-		"Parties":           bList,
-		"PartyTypes":        partyTypes,
-		"RelationshipTypes": relationshipTypes,
-		"Relationships":     relationshipsForBeneficiary,
-		"Attributes":        attrs,
-		"Cases":             displayCases,
-		"CaseTypes":         ctList,
-		"BasePath":          h.relationshipPartiesClient.BasePath,
+		"IsNew":              id == "new",
+		"Beneficiary":        b,
+		"Parties":            bList,
+		"PartyTypes":         partyTypes,
+		"RelationshipTypes":  relationshipTypes,
+		"Relationships":      relationshipsForBeneficiary,
+		"Attributes":         attrs,
+		"Cases":              displayCases,
+		"CaseTypes":          ctList,
+		"BasePath":           h.relationshipPartiesClient.BasePath,
+		"FirstNameAttribute": attributes.FirstNameAttribute,
+		"LastNameAttribute":  attributes.LastNameAttribute,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

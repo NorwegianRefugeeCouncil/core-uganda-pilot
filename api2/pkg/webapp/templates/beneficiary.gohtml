@@ -69,10 +69,7 @@
                                        data-bs-toggle="dropdown"
                                        aria-expanded="false"/>
 
-                                <ul class="dropdown-menu" aria-labelledby="partySelector">
-                                    {{range .Parties.Items}}
-                                        <li class="dropdown-item partySelectorItem" id="party-dropdown-{{.ID}}">{{.}}</li>
-                                    {{end}}
+                                <ul class="dropdown-menu" id="partySelectorList" aria-labelledby="partySelector">
                                 </ul>
                                 <label for="partySelector" class="form-label">Related Party</label>
                             </div>
@@ -151,13 +148,12 @@
         ];
 
         // Holds the different parties (for relationship dropdown select)
-        // TODO: use API query to search
-        let querySubject = new Subject()
-        let query$ = querySubject.asObservable().pipe(
+        let partySearchSubject = new Subject()
+        let partySearch$ = partySearchSubject.asObservable().pipe(
             debounceTime(200),
             switchMap((searchParam) => {
                 const searchParams = new URLSearchParams({
-                    "partyTypeId": getSecondPartyTypeForRelationshipTypeDropdown(),
+                    "partyTypeId": getSecondPartyType(),
                     "searchParam": searchParam
                 })
                 const ajaxUrl = "{{.BasePath}}" + "/apis/v1/relationshipparties/picker?" + searchParams.toString()
@@ -165,7 +161,7 @@
                 return ajax(ajaxUrl)
             })
         )
-        const parties = [
+        let parties = [
             {{range .Parties.Items}}
             {
                 id: {{.ID}},
@@ -260,7 +256,9 @@
             }
         }
 
-        const getSecondPartyTypeForRelationshipTypeDropdown = () => {
+        // Returns the secondPartyType ID corresponding to the selection of the relationship type
+        // dropdown
+        const getSecondPartyType = () => {
             const relationshipTypeSelector = document.getElementById("relationshipTypeSelector")
             let selectedRelationshipType = relationshipTypes.find(
                 e => e.id === relationshipTypeSelector.value
@@ -269,32 +267,109 @@
             return selectedRelationshipType.secondPartyType
         }
 
+        // Returns the value of the partySelector search box
+        const getSearchParam = () => {
+            const partySelector = document.getElementById("partySelector")
+            return partySelector.textContent
+        }
+
+        // Party List Item click handler - sets the text box value used for searching to the selected item
+        // from the dropdown
+        const onPartyListItemClick = (event) => {
+            document.getElementById("partySelector").value = event.target.textContent
+        }
+
+        // Get First Name from party attribute list, or return blank
+        const firstNameFromAttrs = (attrs) => {
+            let firstName = ""
+            Object.keys(attrs).forEach(
+                k => {
+                    if (k == "{{.FirstNameAttribute.ID}}"){
+                        firstName = attrs[k]
+                    }
+                }
+            )
+            return firstName
+        }
+
+        // Get Last Name from party attribute list, or return blank
+        const lastNameFromAttrs = (attrs) => {
+            let lastName = ""
+            Object.keys(attrs).forEach(
+                k => {
+                    if (k == "{{.LastNameAttribute.ID}}"){
+                        lastName = attrs[k]
+                    }
+                }
+            )
+            return lastName
+        }
+
         // On document ready
         document.addEventListener('DOMContentLoaded', function () {
 
             // Bind add relationship button
             document.getElementById('add-relationship-button').onclick = () => {
                 let typeSelector = document.getElementById('relationshipTypeSelector');
-                let partySelector = document.getElementById('relationshipSecondPartySelector');
+                let partySelector = document.getElementById('partySelector');
                 let relationshipType = typeSelector.value;
-                let party = partySelector.value;
+                let party = partySelector.textContent;
                 addRelationship(relationshipType, party);
             };
 
             // Add listener for party selector item click
             Array.from(document.getElementsByClassName('partySelectorItem')).forEach(e => {
-                e.onclick = (event) => {
-                    console.log(event)
-                }
+                e.onclick = onPartyListItemClick
             })
 
             // Add listener for party search box
             document.getElementById("partySelector").oninput = (event) => {
-                querySubject.next(event.target.value)
+                partySearchSubject.next(event.target.value)
             }
-            query$.subscribe(
+
+            // Add listener for relationship type change
+            document.getElementById("relationshipTypeSelector").onchange = (event) => {
+                partySearchSubject.next(getSearchParam())
+            }
+
+            // Handle party search responses
+            partySearch$.subscribe(
                 res => {
-                    console.log("got res: ", res)
+                    // update parties list
+                    parties = []
+
+                    let partySelectorList = document.getElementById("partySelectorList")
+                    partySelectorList.innerHTML = ''
+                    if (res.response.items.length > 0) {
+                        res.response.items.forEach(party => {
+                            let newListItem = document.createElement('li')
+                            newListItem.classList.add('dropdown-item')
+                            newListItem.classList.add('partySelectorItem')
+                            newListItem.onclick = onPartyListItemClick
+                            let displayText = `${lastNameFromAttrs(party.attributes)}, ${firstNameFromAttrs(party.attributes)}`
+                            newListItem.appendChild(
+                                document.createTextNode(displayText)
+                            )
+                            newListItem.setAttribute('id', party.id)
+                            partySelectorList.appendChild(newListItem)
+
+                            // append party to parties list
+                            parties.push({
+                                id: party.id,
+                                name: displayText
+                            })
+                        })
+                    } else {
+                        // No Parties Found...
+                        let newListItem = document.createElement('li')
+                        newListItem.classList.add('dropdown-item')
+                        newListItem.onclick = onPartyListItemClick
+                        let displayText = `No Parties Found`
+                        newListItem.appendChild(
+                            document.createTextNode(displayText)
+                        )
+                        partySelectorList.appendChild(newListItem)
+                    }
                 },
                 err => {
                     console.error("got error: ", err)
@@ -395,6 +470,9 @@
                 })
 
             });
+
+            // Initial call to populate parties list
+            partySearchSubject.next(getSearchParam())
 
         });
 
