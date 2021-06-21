@@ -100,16 +100,8 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 	qry := req.URL.Query()
 	refCaseTypeID := qry.Get("refCaseTypeId")
 	var refCaseType *casetypes.CaseType
-	var refParties *parties.PartyList
 	if len(refCaseTypeID) > 0 {
 		refCaseType, err = h.caseTypeClient.Get(ctx, refCaseTypeID)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		refParties, err = h.partyClient.List(ctx, parties.ListOptions{
-			PartyTypeID: refCaseType.PartyTypeID,
-		})
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -122,7 +114,6 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 		"Party":       party,
 		"Parties":     partyList,
 		"RefCaseType": refCaseType,
-		"RefParties":  refParties,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

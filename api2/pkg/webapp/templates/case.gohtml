@@ -1,6 +1,7 @@
 {{define "case"}}
     {{$caseId := .Case.ID}}
     {{$partyId := .Case.PartyID}}
+    {{$party := .Parties.FindByID $partyId}}
     {{$caseTypeId := .Case.CaseTypeID}}
     <!doctype html>
     <html lang="en">
@@ -26,7 +27,6 @@
                     <div class="mb-3">
                         <h6 class="text-muted">Party</h6>
                         <a class="btn btn-outline-secondary" href="/individuals/{{$partyId}}">
-                            {{$party := .Parties.FindByID $partyId}}
                             {{$party.String}}
                         </a>
                     </div>
@@ -64,24 +64,17 @@
                 {{ if .RefCaseType}}
                     <form action="/cases" method="post">
                         <div class="form-floating mb-3">
+                            <input type="hidden" name="caseTypeId" value="{{.RefCaseType.ID}}">
                             <select
                                     id="referral-case-type"
                                     class="form-select"
+                                    disabled
                             >
-                                <option selected disabled>{{ .RefCaseType.Name }}</option>
+                                <option>{{ .RefCaseType.Name }}</option>
                             </select>
                             <label for="referral-case-type">Referral Case Type</label>
-                            <input type="hidden" name="caseTypeId" value="{{.RefCaseType.ID}}">
                         </div>
-                        <div class="form-floating mb-3">
-                            <select id="party" class="form-select" name="partyId">
-                                <option selected></option>
-                                {{range .RefParties.Items}}
-                                    <option value="{{.ID}}">{{.}}</option>
-                                {{end}}
-                            </select>
-                            <label for="party">Select Party</label>
-                        </div>
+                        <input type="hidden" name="partyId" value="{{$partyId}}">
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
                             <textarea
