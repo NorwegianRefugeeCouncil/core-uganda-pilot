@@ -147,7 +147,7 @@
             {{end}}
         ];
 
-        // Holds the different parties (for relationship dropdown select)
+        // Handles the search box for the parties dropdown
         let partySearchSubject = new Subject()
         let partySearch$ = partySearchSubject.asObservable().pipe(
             debounceTime(200),
@@ -161,6 +161,8 @@
                 return ajax(ajaxUrl)
             })
         )
+
+        // Holds the different parties (for relationship dropdown select)
         let parties = [
             {{range .Parties.Items}}
             {
