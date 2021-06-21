@@ -14,8 +14,6 @@ import (
 	"net/url"
 )
 
-var SessionKey = "auth-session"
-
 type Profile struct {
 	Email         string `json:"email"`
 	EmailVerified bool   `json:"email_verified"`
