@@ -148,19 +148,28 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 		return err
 	})
 
-	listOptions := &parties.ListOptions{} // TODO
-	g.Go(func() error {
-		var err error
-		p, err = partiesClient.List(waitCtx, *listOptions)
-		return err
-	})
-
 	if err := g.Wait(); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	qry := req.URL.Query()
+	caseTypeID := qry.Get("caseTypeId")
+	partyTypeID := ""
+	for _, caseType := range caseTypes.Items {
+		if caseType.ID == caseTypeID {
+			partyTypeID = caseType.PartyTypeID
+		}
+	}
+
+	listOptions := parties.ListOptions{
+		PartyTypeID: partyTypeID,
+	}
+
+	p, err := partiesClient.List(waitCtx, listOptions)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 
 	if err := h.template.ExecuteTemplate(w, "casenew", map[string]interface{}{
 		"PartyID":    qry.Get("partyId"),
