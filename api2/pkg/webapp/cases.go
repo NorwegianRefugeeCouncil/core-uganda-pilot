@@ -134,8 +134,7 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 
 	qry := req.URL.Query()
 	caseTypeId := qry.Get("caseTypeId")
-	var partyTypeId string
-	partyTypeId = ""
+	partyTypeId := ""
 	for _, caseType := range caseTypes.Items {
 		if caseType.ID == caseTypeId {
 			partyTypeId = caseType.PartyTypeID
@@ -143,7 +142,7 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 	}
 
 	listOptions := parties.ListOptions{
-		PartyType: partyTypeId,
+		PartyTypeID: partyTypeId,
 	}
 
 	p, err := partiesClient.List(waitCtx, listOptions)

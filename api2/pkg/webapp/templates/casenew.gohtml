@@ -31,7 +31,7 @@
                     </div>
                     <div class="form-floating mb-3">
                         <select id="party" class="form-select" name="partyId">
-                            {{if and .Parties}}
+                            {{if .Parties}}
                                 <option {{if not $.PartyID}}selected{{end}}></option>
                                 {{range .Parties.Items}}
                                     <option {{if eq .ID $.PartyID}}selected{{end}} value="{{.ID}}">{{.}}</option>
@@ -60,7 +60,9 @@
         const caseTypeSelect = document.querySelector("#case-type");
         caseTypeSelect.onchange = (event) => {
             const caseTypeId = event.target.value;
-            if (caseTypeId === "") return;
+            if (caseTypeId === "") {
+                return;
+            }
             window.location.href = `/cases/new?caseTypeId=${caseTypeId}`
         }
     </script>

@@ -20,7 +20,7 @@ func NewClient(basePath string) *Client {
 }
 
 type ListOptions struct {
-	PartyType string `json:"partyTypeId" bson:"partyTypeId"`
+	PartyTypeID string `json:"partyTypeId" bson:"partyTypeId"`
 }
 
 func (c *Client) List(ctx context.Context, listOptions ListOptions) (*PartyList, error) {
@@ -28,10 +28,10 @@ func (c *Client) List(ctx context.Context, listOptions ListOptions) (*PartyList,
 	if err != nil {
 		return nil, err
 	}
-	//req = req.WithContext(ctx)
+	req = req.WithContext(ctx)
 	qry := req.URL.Query()
-	if len(listOptions.PartyType) > 0 {
-		qry.Set("partyTypeId", listOptions.PartyType)
+	if len(listOptions.PartyTypeID) > 0 {
+		qry.Set("partyTypeId", listOptions.PartyTypeID)
 	}
 	req.URL.RawQuery = qry.Encode()
 	req.Header.Set("Accept", "application/json")
