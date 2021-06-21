@@ -19,11 +19,21 @@ func NewClient(basePath string) *Client {
 	}
 }
 
+type ListOptions struct {
+	PartyTypeID string `json:"partyTypeId" bson:"partyTypeId"`
+}
+
 func (c *Client) List(ctx context.Context, listOptions ListOptions) (*PartyList, error) {
 	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/parties", nil)
 	if err != nil {
 		return nil, err
 	}
+	req = req.WithContext(ctx)
+	qry := req.URL.Query()
+	if len(listOptions.PartyTypeID) > 0 {
+		qry.Set("partyTypeId", listOptions.PartyTypeID)
+	}
+	req.URL.RawQuery = qry.Encode()
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
