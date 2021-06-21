@@ -48,7 +48,7 @@ func (h *Handler) List(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 	listOptions := &ListOptions{
-		PartyType: req.URL.Query().Get("partyTypeId"),
+		PartyTypeID: req.URL.Query().Get("partyTypeId"),
 	}
 
 	ret, err := h.store.List(ctx, *listOptions)
