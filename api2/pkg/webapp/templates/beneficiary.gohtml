@@ -71,7 +71,7 @@
 
                                 <ul class="dropdown-menu" aria-labelledby="partySelector">
                                     {{range .Parties.Items}}
-                                        <li><a class="dropdown-item" href="{{.ID}}">{{.}}</a></li>
+                                        <li class="dropdown-item partySelectorItem" id="party-dropdown-{{.ID}}">{{.}}</li>
                                     {{end}}
                                 </ul>
                                 <label for="partySelector" class="form-label">Related Party</label>
@@ -155,10 +155,10 @@
         let querySubject = new Subject()
         let query$ = querySubject.asObservable().pipe(
             debounceTime(200),
-            switchMap((secondPartyTypeId) => {
+            switchMap((searchParam) => {
                 const searchParams = new URLSearchParams({
-                    "partyTypeId": secondPartyTypeId,
-                    "searchParam": "John"
+                    "partyTypeId": getSecondPartyTypeForRelationshipTypeDropdown(),
+                    "searchParam": searchParam
                 })
                 const ajaxUrl = "{{.BasePath}}" + "/apis/v1/relationshipparties/picker?" + searchParams.toString()
                 console.log(ajaxUrl)
@@ -260,10 +260,17 @@
             }
         }
 
+        const getSecondPartyTypeForRelationshipTypeDropdown = () => {
+            const relationshipTypeSelector = document.getElementById("relationshipTypeSelector")
+            let selectedRelationshipType = relationshipTypes.find(
+                e => e.id === relationshipTypeSelector.value
+                    && e.firstPartyRole == relationshipTypeSelector.options[relationshipTypeSelector.selectedIndex].text
+            )
+            return selectedRelationshipType.secondPartyType
+        }
+
         // On document ready
         document.addEventListener('DOMContentLoaded', function () {
-
-            console.log(relationshipTypes)
 
             // Bind add relationship button
             document.getElementById('add-relationship-button').onclick = () => {
@@ -274,13 +281,16 @@
                 addRelationship(relationshipType, party);
             };
 
-            // Add listener for party filtering on relationship type dropdown
-            document.getElementById('relationshipTypeSelector').onchange = (event) => {
-                let selectedRelationshipType = relationshipTypes.find(
-                    e => e.id === event.target.value
-                    && e.firstPartyRole == event.target.options[event.target.selectedIndex].text
-                )
-                querySubject.next(selectedRelationshipType.secondPartyType)
+            // Add listener for party selector item click
+            Array.from(document.getElementsByClassName('partySelectorItem')).forEach(e => {
+                e.onclick = (event) => {
+                    console.log(event)
+                }
+            })
+
+            // Add listener for party search box
+            document.getElementById("partySelector").oninput = (event) => {
+                querySubject.next(event.target.value)
             }
             query$.subscribe(
                 res => {
