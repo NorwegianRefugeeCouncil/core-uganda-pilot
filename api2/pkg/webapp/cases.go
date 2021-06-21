@@ -133,16 +133,16 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 	}
 
 	qry := req.URL.Query()
-	caseTypeId := qry.Get("caseTypeId")
-	partyTypeId := ""
+	caseTypeID := qry.Get("caseTypeID")
+	partyTypeID := ""
 	for _, caseType := range caseTypes.Items {
-		if caseType.ID == caseTypeId {
-			partyTypeId = caseType.PartyTypeID
+		if caseType.ID == caseTypeID {
+			partyTypeID = caseType.PartyTypeID
 		}
 	}
 
 	listOptions := parties.ListOptions{
-		PartyTypeID: partyTypeId,
+		PartyTypeID: partyTypeID,
 	}
 
 	p, err := partiesClient.List(waitCtx, listOptions)
@@ -152,7 +152,7 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 
 	if err := h.template.ExecuteTemplate(w, "casenew", map[string]interface{}{
 		"PartyID":    qry.Get("partyId"),
-		"CaseTypeID": qry.Get("caseTypeId"),
+		"CaseTypeID": qry.Get("caseTypeID"),
 		"CaseTypes":  caseTypes,
 		"Parties":    p,
 	}); err != nil {
