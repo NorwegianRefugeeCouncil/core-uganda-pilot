@@ -4,7 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/gomodule/redigo/redis"
 	"github.com/gorilla/mux"
+	"github.com/nrc-no/core-kafka/pkg/auth"
 	"github.com/nrc-no/core-kafka/pkg/cases/cases"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
 	"github.com/nrc-no/core-kafka/pkg/keycloak"
@@ -17,6 +19,7 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypeschemas"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationships"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationshiptypes"
+	"github.com/nrc-no/core-kafka/pkg/sessionmanager"
 	"github.com/nrc-no/core-kafka/pkg/staff"
 	"github.com/nrc-no/core-kafka/pkg/staffmock"
 	"github.com/nrc-no/core-kafka/pkg/teamorganizations"
@@ -68,6 +71,7 @@ type Server struct {
 	MembershipStore         *memberships.Store
 	membershipsClient       *memberships.Client
 	KeycloakClient          *keycloak.Client
+	SessionManager          sessionmanager.Store
 }
 
 type Options struct {
@@ -80,6 +84,11 @@ type Options struct {
 	KeycloakClientSecret string
 	KeycloakBaseURL      string
 	KeycloakRealmName    string
+	RedisMaxIdleConns    int
+	RedisNetwork         string
+	RedisAddress         string
+	RedisPassword        string
+	RedisSecretKey       string
 }
 
 func NewOptions() *Options {
@@ -93,6 +102,11 @@ func NewOptions() *Options {
 		KeycloakClientSecret: "",
 		KeycloakBaseURL:      "",
 		KeycloakRealmName:    "",
+		RedisMaxIdleConns:    10,
+		RedisNetwork:         "tcp",
+		RedisAddress:         "localhost:6379",
+		RedisPassword:        "",
+		RedisSecretKey:       "some-secret",
 	}
 }
 
@@ -105,9 +119,35 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 	fs.StringVar(&o.KeycloakRealmName, "keycloak-realm-name", o.KeycloakRealmName, "Keycloak realm name")
 	fs.StringVar(&o.KeycloakClientID, "keycloak-client-id", o.KeycloakClientID, "Keycloak client id")
 	fs.StringVar(&o.KeycloakClientSecret, "keycloak-client-secret", o.KeycloakClientSecret, "Keycloak client secret")
+	fs.IntVar(&o.RedisMaxIdleConns, "redis-max-idle-conns", o.RedisMaxIdleConns, "Redis maximum number of idle connections")
+	fs.StringVar(&o.RedisNetwork, "redis-network", o.RedisNetwork, "Redis network")
+	fs.StringVar(&o.RedisPassword, "redis-password", o.RedisPassword, "Redis password")
+	fs.StringVar(&o.RedisSecretKey, "redis-secret-key", o.RedisSecretKey, "Redis secret key")
+}
+
+type CompletedOptions struct {
+	KeycloakClient       *keycloak.Client
+	KeycloakClientID     string
+	KeycloakClientSecret string
+	KeycloakBaseURL      string
+	KeycloakRealmName    string
+	MongoClient          *mongo.Client
+	TemplateDirectory    string
+	Address              string
+	MongoDatabase        string
+	SessionManager       sessionmanager.Store
 }
 
 func (o Options) Complete(ctx context.Context) (CompletedOptions, error) {
+
+	pool := &redis.Pool{
+		MaxIdle: o.RedisMaxIdleConns,
+		Dial: func() (redis.Conn, error) {
+			return redis.Dial(o.RedisNetwork, o.RedisAddress)
+		},
+	}
+
+	sm := sessionmanager.New(pool, sessionmanager.Options{})
 
 	// Setup mongo client
 	mongoClient, err := mongo.NewClient(options.Client().SetAuth(
@@ -129,21 +169,18 @@ func (o Options) Complete(ctx context.Context) (CompletedOptions, error) {
 	}
 
 	completedOptions := CompletedOptions{
-		MongoClient:       mongoClient,
-		TemplateDirectory: o.TemplateDirectory,
-		Address:           o.Address,
-		MongoDatabase:     o.MongoDatabase,
-		KeycloakClient:    keycloakClient,
+		MongoClient:          mongoClient,
+		TemplateDirectory:    o.TemplateDirectory,
+		Address:              o.Address,
+		MongoDatabase:        o.MongoDatabase,
+		KeycloakClient:       keycloakClient,
+		KeycloakClientSecret: o.KeycloakClientSecret,
+		KeycloakClientID:     o.KeycloakClientID,
+		KeycloakBaseURL:      o.KeycloakBaseURL,
+		KeycloakRealmName:    o.KeycloakRealmName,
+		SessionManager:       sm,
 	}
 	return completedOptions, nil
-}
-
-type CompletedOptions struct {
-	KeycloakClient    *keycloak.Client
-	MongoClient       *mongo.Client
-	TemplateDirectory string
-	Address           string
-	MongoDatabase     string
 }
 
 func (c CompletedOptions) New(ctx context.Context) *Server {
@@ -182,6 +219,23 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 
 		})
 	})
+
+	router.Use(c.SessionManager.LoadAndSave)
+
+	// Auth
+	authHandler, err := auth.NewHandler(
+		ctx,
+		fmt.Sprintf("%s/auth/realms/%s", c.KeycloakBaseURL, c.KeycloakRealmName),
+		c.KeycloakClientID,
+		c.KeycloakClientSecret,
+		"http://localhost:9000/auth/callback",
+		c.SessionManager)
+	if err != nil {
+		panic(err)
+	}
+	router.Path("/auth/login").Methods("GET").HandlerFunc(authHandler.Login)
+	router.Path("/auth/logout").Methods("GET").HandlerFunc(authHandler.Logout)
+	router.Path("/auth/callback").Methods("GET").HandlerFunc(authHandler.Callback)
 
 	// Attributes
 	attributeStore := attributes.NewStore(c.MongoClient, c.MongoDatabase)
@@ -415,6 +469,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		membershipsClient:       membershipClient,
 		WebAppHandler:           webAppHandler,
 		KeycloakClient:          c.KeycloakClient,
+		SessionManager:          c.SessionManager,
 		HttpServer:              httpServer,
 	}
 
