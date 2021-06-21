@@ -1,4 +1,4 @@
-package beneficiaries
+package individuals
 
 import (
 	"encoding/json"
@@ -79,16 +79,16 @@ func (h *Handler) Create(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var beneficiary Beneficiary
-	if err := json.Unmarshal(bodyBytes, &beneficiary); err != nil {
+	var individual Individual
+	if err := json.Unmarshal(bodyBytes, &individual); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	beneficiary.ID = uuid.NewV4().String()
+	individual.ID = uuid.NewV4().String()
 
 	attrs := map[string][]string{}
-	for key, values := range beneficiary.Attributes {
+	for key, values := range individual.Attributes {
 		if len(values) == 0 {
 			continue
 		}
@@ -100,14 +100,14 @@ func (h *Handler) Create(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	beneficiary.Attributes = attrs
+	individual.Attributes = attrs
 
-	if err := h.store.Create(ctx, &beneficiary); err != nil {
+	if err := h.store.Create(ctx, &individual); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	responseBytes, err := json.Marshal(beneficiary)
+	responseBytes, err := json.Marshal(individual)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -141,13 +141,13 @@ func (h *Handler) Update(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var beneficiary Beneficiary
-	if err := json.Unmarshal(bodyBytes, &beneficiary); err != nil {
+	var individual Individual
+	if err := json.Unmarshal(bodyBytes, &individual); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	if err := h.store.Upsert(ctx, &beneficiary); err != nil {
+	if err := h.store.Upsert(ctx, &individual); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

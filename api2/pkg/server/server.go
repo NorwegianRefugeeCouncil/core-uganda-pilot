@@ -9,11 +9,11 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/auth"
 	"github.com/nrc-no/core-kafka/pkg/cases/cases"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
+	Individuals "github.com/nrc-no/core-kafka/pkg/individuals"
 	"github.com/nrc-no/core-kafka/pkg/keycloak"
 	"github.com/nrc-no/core-kafka/pkg/memberships"
 	"github.com/nrc-no/core-kafka/pkg/organizations"
 	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
-	"github.com/nrc-no/core-kafka/pkg/parties/beneficiaries"
 	"github.com/nrc-no/core-kafka/pkg/parties/parties"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypeschemas"
@@ -41,9 +41,9 @@ type Server struct {
 	AttributeStore          *attributes.Store
 	AttributeHandler        *attributes.Handler
 	AttributeClient         *attributes.Client
-	BeneficiaryStore        *beneficiaries.Store
-	BeneficiaryHandler      *beneficiaries.Handler
-	BeneficiaryClient       *beneficiaries.Client
+	IndividualStore         *Individuals.Store
+	IndividualHandler       *Individuals.Handler
+	IndividualClient        *Individuals.Client
 	RelationshipTypeStore   *relationshiptypes.Store
 	RelationshipTypeHandler *relationshiptypes.Handler
 	RelationshipTypeClient  *relationshiptypes.Client
@@ -249,17 +249,17 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.Path("/apis/v1/attributes/{id}").Methods("PUT").HandlerFunc(attributeHandler.Update)
 	router.Path("/apis/v1/attributes").Methods("POST").HandlerFunc(attributeHandler.Post)
 
-	// Beneficiaries
-	beneficiariesStore := beneficiaries.NewStore(c.MongoClient, c.MongoDatabase)
-	beneficiaryHandler := beneficiaries.NewHandler(beneficiariesStore)
-	beneficiaryClient := beneficiaries.NewClient(c.Address)
-	if err := beneficiaries.SeedDatabase(ctx, beneficiariesStore); err != nil {
+	// Individuals
+	individualsStore := Individuals.NewStore(c.MongoClient, c.MongoDatabase)
+	individualHandler := Individuals.NewHandler(individualsStore)
+	individualClient := Individuals.NewClient(c.Address)
+	if err := Individuals.SeedDatabase(ctx, individualsStore); err != nil {
 		panic(err)
 	}
-	router.Path("/apis/v1/beneficiaries").Methods("GET").HandlerFunc(beneficiaryHandler.List)
-	router.Path("/apis/v1/beneficiaries/{id}").Methods("GET").HandlerFunc(beneficiaryHandler.Get)
-	router.Path("/apis/v1/beneficiaries/{id}").Methods("PUT").HandlerFunc(beneficiaryHandler.Update)
-	router.Path("/apis/v1/beneficiaries").Methods("POST").HandlerFunc(beneficiaryHandler.Create)
+	router.Path("/apis/v1/individuals").Methods("GET").HandlerFunc(individualHandler.List)
+	router.Path("/apis/v1/individuals/{id}").Methods("GET").HandlerFunc(individualHandler.Get)
+	router.Path("/apis/v1/individuals/{id}").Methods("PUT").HandlerFunc(individualHandler.Update)
+	router.Path("/apis/v1/individuals").Methods("POST").HandlerFunc(individualHandler.Create)
 
 	// RelationshipTypes
 	relationshipTypeStore := relationshiptypes.NewStore(c.MongoClient, c.MongoDatabase)
@@ -390,7 +390,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	}
 	webAppHandler, err := webapp.NewHandler(webAppOptions,
 		attributeClient,
-		beneficiaryClient,
+		individualClient,
 		relationshipTypeClient,
 		relationshipClient,
 		partyClient,
@@ -404,8 +404,9 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		panic(err)
 	}
 
-	router.Path("/beneficiaries").HandlerFunc(webAppHandler.Beneficiaries)
-	router.Path("/beneficiaries/{id}").HandlerFunc(webAppHandler.Beneficiary)
+	router.Path("/").HandlerFunc(webAppHandler.Individuals)
+	router.Path("/individuals").HandlerFunc(webAppHandler.Individuals)
+	router.Path("/individuals/{id}").HandlerFunc(webAppHandler.Individual)
 	router.Path("/settings").HandlerFunc(webAppHandler.Settings)
 	router.Path("/settings/attributes").HandlerFunc(webAppHandler.Attributes)
 	router.Path("/settings/attributes/new").HandlerFunc(webAppHandler.NewAttribute)
@@ -426,7 +427,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.Path("/settings/casetypes/{id}").HandlerFunc(webAppHandler.CaseType)
 
 	// Seed database for development
-	if err := beneficiaries.SeedDatabase(ctx, beneficiariesStore); err != nil {
+	if err := Individuals.SeedDatabase(ctx, individualsStore); err != nil {
 		panic(err)
 	}
 
@@ -440,9 +441,9 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		AttributeStore:          attributeStore,
 		AttributeHandler:        attributeHandler,
 		AttributeClient:         attributeClient,
-		BeneficiaryStore:        beneficiariesStore,
-		BeneficiaryHandler:      beneficiaryHandler,
-		BeneficiaryClient:       beneficiaryClient,
+		IndividualStore:         individualsStore,
+		IndividualHandler:       individualHandler,
+		IndividualClient:        individualClient,
 		RelationshipTypeStore:   relationshipTypeStore,
 		RelationshipTypeHandler: relationshipTypeHandler,
 		RelationshipTypeClient:  relationshipTypeClient,

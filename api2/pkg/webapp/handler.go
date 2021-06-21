@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/nrc-no/core-kafka/pkg/cases/cases"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
+	"github.com/nrc-no/core-kafka/pkg/individuals"
 	"github.com/nrc-no/core-kafka/pkg/memberships"
 	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
-	"github.com/nrc-no/core-kafka/pkg/parties/beneficiaries"
 	"github.com/nrc-no/core-kafka/pkg/parties/parties"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationships"
@@ -19,7 +19,7 @@ import (
 type Handler struct {
 	template               *template.Template
 	attributeClient        *attributes.Client
-	beneficiaryClient      *beneficiaries.Client
+	individualClient       *individuals.Client
 	relationshipTypeClient *relationshiptypes.Client
 	relationshipClient     *relationships.Client
 	partyClient            *parties.Client
@@ -37,7 +37,7 @@ type Options struct {
 func NewHandler(
 	options Options,
 	AttributeClient *attributes.Client,
-	BeneficiaryClient *beneficiaries.Client,
+	IndividualClient *individuals.Client,
 	RelationshipTypeClient *relationshiptypes.Client,
 	RelationshipClient *relationships.Client,
 	PartyClient *parties.Client,
@@ -65,7 +65,7 @@ func NewHandler(
 	h := &Handler{
 		template:               t,
 		attributeClient:        AttributeClient,
-		beneficiaryClient:      BeneficiaryClient,
+		individualClient:       IndividualClient,
 		relationshipTypeClient: RelationshipTypeClient,
 		relationshipClient:     RelationshipClient,
 		partyClient:            PartyClient,

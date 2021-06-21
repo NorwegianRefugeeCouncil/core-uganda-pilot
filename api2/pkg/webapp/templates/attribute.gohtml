@@ -45,7 +45,7 @@
                                 <select id="subject-type-input"
                                         name="partyTypes"
                                         class="form-select">
-                                    <option>Beneficiary</option>
+                                    <option>Individual</option>
                                 </select>
                                 <label for="subject-type-input">Subject Type</label>
                             </div>
@@ -118,7 +118,7 @@
                 ]
             },
             partyTypes: [
-                {value: "beneficiary", name: "Beneficiary"}
+                {value: "individual", name: "Individual"}
             ]
         })
         {{else }}
@@ -126,12 +126,12 @@
             attribute: {
                 name: "",
                 valueType: "",
-                partyTypes: "beneficiary",
+                partyTypes: "individual",
                 isPersonallyIdentifiableInformation: false,
                 translations: []
             },
             partyTypes: [
-                {value: "beneficiary", name: "Beneficiary"}
+                {value: "individual", name: "Individual"}
             ]
         })
         {{end}}

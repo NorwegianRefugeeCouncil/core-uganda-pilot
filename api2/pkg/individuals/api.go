@@ -1,4 +1,4 @@
-package beneficiaries
+package individuals
 
 import (
 	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
@@ -8,16 +8,16 @@ import (
 	"time"
 )
 
-type Beneficiary struct {
+type Individual struct {
 	*parties.Party `json:",inline" bson:",inline"`
 }
 
-type BeneficiaryList struct {
-	Items []*Beneficiary `json:"items" bson:"items"`
+type IndividualList struct {
+	Items []*Individual `json:"items" bson:"items"`
 }
 
-func NewBeneficiary(ID string) *Beneficiary {
-	return &Beneficiary{
+func NewIndividual(ID string) *Individual {
+	return &Individual{
 		Party: &parties.Party{
 			ID: ID,
 			PartyTypes: []string{
@@ -28,7 +28,7 @@ func NewBeneficiary(ID string) *Beneficiary {
 	}
 }
 
-func (b *Beneficiary) FindAge() *int {
+func (b *Individual) FindAge() *int {
 
 	birthDate := b.FindAttributeValue(attributes.BirthDateAttribute.ID)
 	if birthDate == nil {
@@ -58,7 +58,7 @@ func (b *Beneficiary) FindAge() *int {
 
 }
 
-func (b *Beneficiary) String() string {
+func (b *Individual) String() string {
 
 	firstNames, hasFirstNames := b.Attributes[attributes.FirstNameAttribute.ID]
 	lastNames, hasLastNames := b.Attributes[attributes.LastNameAttribute.ID]

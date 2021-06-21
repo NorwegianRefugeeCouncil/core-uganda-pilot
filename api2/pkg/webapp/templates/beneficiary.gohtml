@@ -1,4 +1,4 @@
-{{define "beneficiary"}}
+{{define "individual"}}
     <!doctype html>
     <html lang="en">
     {{template "head"}}
@@ -6,21 +6,21 @@
 
     {{template "navbar"}}
 
-    {{template "beneficiaries_nav" .Beneficiary }}
+    {{template "individuals_nav" .Individual }}
 
     <div class="container">
         <div class="row">
             <div class="col">
                 <div class="mt-3">
 
-                    <form action="/beneficiaries{{if .Beneficiary}}{{if .Beneficiary.ID}}/{{.Beneficiary.ID}}{{end}}{{end}}"
+                    <form action="/individuals{{if .Individual}}{{if .Individual.ID}}/{{.Individual.ID}}{{end}}{{end}}"
                           method="post">
 
                         <h4 class="display-6">Attributes</h4>
 
                         {{ range $index, $attribute := .Attributes.Items}}
 
-                            {{ $values := index $.Beneficiary.Attributes $attribute.ID }}
+                            {{ $values := index $.Individual.Attributes $attribute.ID }}
 
                             {{ if $values}}
                                 {{range $idx, $value := $values}}
@@ -109,7 +109,7 @@
                             {{range .CaseTypes.Items}}
 
                                 <div>
-                                    <a href="/cases/new?caseTypeId={{.ID}}&partyId={{$.Beneficiary.ID}}">{{.Name}}</a>
+                                    <a href="/cases/new?caseTypeId={{.ID}}&partyId={{$.Individual.ID}}">{{.Name}}</a>
                                 </div>
 
                             {{end}}
@@ -174,10 +174,10 @@
         // Display state observable$
         let state$ = stateSubject.asObservable();
 
-        // Beneficiary attributes observable$
+        // Individual attributes observable$
         let attributes$ = state$.pipe(map(s => s.attributes));
 
-        // Beneficiary relationships observable$
+        // Individual relationships observable$
         let relationships$ = state$.pipe(map(s => s.relationships))
 
         // aggregate relationship types and relationships for display purposes
@@ -207,7 +207,7 @@
                     ...state.relationships,
                     {
                         relationshipTypeId,
-                        firstParty: {{.Beneficiary.ID}},
+                        firstParty: {{.Individual.ID}},
                         secondParty: secondPartyID
                     }
                 ]
@@ -266,14 +266,14 @@
                     const secondPartyName = parties.find(({id}) => id === relationship.secondParty).name;
 
                     const firstPartyLinkNode = document.createElement("a")
-                    firstPartyLinkNode.href = "/beneficiaries/" + firstPartyLinkNode
+                    firstPartyLinkNode.href = "/individuals/" + firstPartyLinkNode
                     firstPartyLinkNode.innerText = firstPartyName
 
                     const roleSpanNode = document.createElement("span")
                     roleSpanNode.innerText = firstPartyRole.substring(0, 1).toLocaleLowerCase() + firstPartyRole.substring(1)
 
                     const secondPartyLinkNode = document.createElement("a")
-                    secondPartyLinkNode.href = "/beneficiaries/" + secondPartyLinkNode
+                    secondPartyLinkNode.href = "/individuals/" + secondPartyLinkNode
                     secondPartyLinkNode.innerText = secondPartyName
 
                     const space1Node = document.createElement("span")

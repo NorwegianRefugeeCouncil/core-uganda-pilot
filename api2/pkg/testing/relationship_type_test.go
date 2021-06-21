@@ -108,7 +108,7 @@ func (s *Suite) TestRelationshipTypeList() {
 					valid = true
 				}
 			}
-			assert.True(t, valid, "asserting that there is at least one rule with the beneficiary party type")
+			assert.True(t, valid, "asserting that there is at least one rule with the individual party type")
 		}
 	})
 
@@ -130,7 +130,7 @@ func (s *Suite) TestRelationshipTypeList() {
 					valid = true
 				}
 			}
-			assert.True(t, valid, "asserting that there is at least one rule with the beneficiary party type")
+			assert.True(t, valid, "asserting that there is at least one rule with the individual party type")
 		}
 	})
 

@@ -6,8 +6,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core-kafka/pkg/cases/cases"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
+	Individuals "github.com/nrc-no/core-kafka/pkg/individuals"
 	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
-	"github.com/nrc-no/core-kafka/pkg/parties/beneficiaries"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationships"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationshiptypes"
@@ -18,7 +18,7 @@ import (
 	"strings"
 )
 
-func (h *Handler) Beneficiaries(w http.ResponseWriter, req *http.Request) {
+func (h *Handler) Individuals(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
@@ -30,18 +30,18 @@ func (h *Handler) Beneficiaries(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if req.Method == "POST" {
-		h.PostBeneficiary(ctx, attrs.Items, "", w, req)
+		h.PostIndividual(ctx, attrs.Items, "", w, req)
 		return
 	}
 
-	list, err := h.beneficiaryClient.List(ctx, beneficiaries.ListOptions{})
+	list, err := h.individualClient.List(ctx, Individuals.ListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	if err := h.template.ExecuteTemplate(w, "beneficiaries", map[string]interface{}{
-		"Beneficiaries": list,
+	if err := h.template.ExecuteTemplate(w, "individuals", map[string]interface{}{
+		"Individuals": list,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -49,7 +49,7 @@ func (h *Handler) Beneficiaries(w http.ResponseWriter, req *http.Request) {
 
 }
 
-func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
+func (h *Handler) Individual(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
@@ -60,11 +60,11 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var b *beneficiaries.Beneficiary
-	var bList *beneficiaries.BeneficiaryList
+	var b *Individuals.Individual
+	var bList *Individuals.IndividualList
 	var ctList *casetypes.CaseTypeList
 	var cList *cases.CaseList
-	var relationshipsForBeneficiary *relationships.RelationshipList
+	var relationshipsForIndividual *relationships.RelationshipList
 	var relationshipTypes *relationshiptypes.RelationshipTypeList
 	var attrs *attributes.AttributeList
 
@@ -72,29 +72,29 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 
 	g.Go(func() error {
 		if id == "new" {
-			b = beneficiaries.NewBeneficiary("")
+			b = Individuals.NewIndividual("")
 			return nil
 		}
 		var err error
-		b, err = h.beneficiaryClient.Get(waitCtx, id)
+		b, err = h.individualClient.Get(waitCtx, id)
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
-		bList, err = h.beneficiaryClient.List(waitCtx, beneficiaries.ListOptions{})
+		bList, err = h.individualClient.List(waitCtx, Individuals.ListOptions{})
 		return err
 	})
 
 	g.Go(func() error {
 		if id == "new" {
-			relationshipsForBeneficiary = &relationships.RelationshipList{
+			relationshipsForIndividual = &relationships.RelationshipList{
 				Items: []*relationships.Relationship{},
 			}
 			return nil
 		}
 		var err error
-		relationshipsForBeneficiary, err = h.relationshipClient.List(waitCtx, relationships.ListOptions{EitherParty: id})
+		relationshipsForIndividual, err = h.relationshipClient.List(waitCtx, relationships.ListOptions{EitherParty: id})
 		return err
 	})
 
@@ -130,7 +130,7 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 	relationshipTypes = PrepRelationshipTypeDropdown(relationshipTypes)
 
 	if req.Method == "POST" {
-		h.PostBeneficiary(ctx, attrs.Items, id, w, req)
+		h.PostIndividual(ctx, attrs.Items, id, w, req)
 		return
 	}
 
@@ -153,12 +153,12 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 		displayCases = append(displayCases, &d)
 	}
 
-	if err := h.template.ExecuteTemplate(w, "beneficiary", map[string]interface{}{
+	if err := h.template.ExecuteTemplate(w, "individual", map[string]interface{}{
 		"IsNew":             id == "new",
-		"Beneficiary":       b,
+		"Individual":        b,
 		"Parties":           bList,
 		"RelationshipTypes": relationshipTypes,
-		"Relationships":     relationshipsForBeneficiary,
+		"Relationships":     relationshipsForIndividual,
 		"Attributes":        attrs,
 		"Cases":             displayCases,
 		"CaseTypes":         ctList,
@@ -188,7 +188,7 @@ func PrepRelationshipTypeDropdown(relationshipTypes *relationshiptypes.Relations
 	return &newList
 }
 
-func (h *Handler) PostBeneficiary(
+func (h *Handler) PostIndividual(
 	ctx context.Context,
 	attrs []*attributes.Attribute,
 	id string,
@@ -200,7 +200,7 @@ func (h *Handler) PostBeneficiary(
 		return
 	}
 
-	b := beneficiaries.NewBeneficiary(id)
+	b := Individuals.NewIndividual(id)
 
 	attributeMap := map[string]*attributes.Attribute{}
 	for _, attribute := range attrs {
@@ -298,19 +298,19 @@ func (h *Handler) PostBeneficiary(
 		}
 	}
 
-	var beneficiary *beneficiaries.Beneficiary
+	var individual *Individuals.Individual
 
-	// Update or create the beneficiary
+	// Update or create the individual
 	if id == "" {
 		var err error
-		beneficiary, err = h.beneficiaryClient.Create(ctx, b)
+		individual, err = h.individualClient.Create(ctx, b)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	} else {
 		var err error
-		if beneficiary, err = h.beneficiaryClient.Update(ctx, b); err != nil {
+		if individual, err = h.individualClient.Update(ctx, b); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -323,7 +323,7 @@ func (h *Handler) PostBeneficiary(
 		if len(rel.ID) == 0 {
 			// Create the relationship
 			relationship := rel.Relationship
-			relationship.FirstParty = beneficiary.ID
+			relationship.FirstParty = individual.ID
 			if _, err := h.relationshipClient.Create(ctx, rel.Relationship); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
@@ -331,7 +331,7 @@ func (h *Handler) PostBeneficiary(
 		} else if !rel.MarkedForDeletion {
 			// Update the relationship
 			relationship := rel.Relationship
-			relationship.FirstParty = beneficiary.ID
+			relationship.FirstParty = individual.ID
 			if _, err := h.relationshipClient.Update(ctx, rel.Relationship); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
@@ -346,7 +346,7 @@ func (h *Handler) PostBeneficiary(
 
 	}
 
-	w.Header().Set("Location", "/beneficiaries/"+beneficiary.ID)
+	w.Header().Set("Location", "/individuals/"+individual.ID)
 	w.WriteHeader(http.StatusSeeOther)
 
 }

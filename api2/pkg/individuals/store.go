@@ -1,4 +1,4 @@
-package beneficiaries
+package individuals
 
 import (
 	"context"
@@ -18,23 +18,23 @@ func NewStore(mongoClient *mongo.Client, database string) *Store {
 	}
 }
 
-func (s *Store) Create(ctx context.Context, beneficiary *Beneficiary) error {
-	beneficiary.AddPartyType(partytypes.IndividualPartyType.ID)
-	_, err := s.collection.InsertOne(ctx, beneficiary)
+func (s *Store) Create(ctx context.Context, individual *Individual) error {
+	individual.AddPartyType(partytypes.IndividualPartyType.ID)
+	_, err := s.collection.InsertOne(ctx, individual)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (s *Store) Upsert(ctx context.Context, beneficiary *Beneficiary) error {
-	beneficiary.AddPartyType(partytypes.IndividualPartyType.ID)
+func (s *Store) Upsert(ctx context.Context, individual *Individual) error {
+	individual.AddPartyType(partytypes.IndividualPartyType.ID)
 	_, err := s.collection.UpdateOne(ctx, bson.M{
-		"id": beneficiary.ID,
+		"id": individual.ID,
 	}, bson.M{
 		"$set": bson.M{
-			"attributes": beneficiary.Attributes,
-			"partyTypes": beneficiary.PartyTypes,
+			"attributes": individual.Attributes,
+			"partyTypes": individual.PartyTypes,
 		},
 	}, options.Update().SetUpsert(true))
 
@@ -44,19 +44,19 @@ func (s *Store) Upsert(ctx context.Context, beneficiary *Beneficiary) error {
 	return nil
 }
 
-func (s *Store) Get(ctx context.Context, ID string) (*Beneficiary, error) {
+func (s *Store) Get(ctx context.Context, ID string) (*Individual, error) {
 	findResult := s.collection.FindOne(ctx, bson.M{"id": ID})
 	if findResult.Err() != nil {
 		return nil, findResult.Err()
 	}
-	var beneficiary *Beneficiary
-	if err := findResult.Decode(&beneficiary); err != nil {
+	var individual *Individual
+	if err := findResult.Decode(&individual); err != nil {
 		return nil, err
 	}
-	return beneficiary, nil
+	return individual, nil
 }
 
-func (s *Store) List(ctx context.Context, listOptions ListOptions) (*BeneficiaryList, error) {
+func (s *Store) List(ctx context.Context, listOptions ListOptions) (*IndividualList, error) {
 
 	filter := bson.M{}
 
@@ -70,12 +70,12 @@ func (s *Store) List(ctx context.Context, listOptions ListOptions) (*Beneficiary
 	if err != nil {
 		return nil, err
 	}
-	var items []*Beneficiary
+	var items []*Individual
 	for {
 		if !cursor.Next(ctx) {
 			break
 		}
-		var b Beneficiary
+		var b Individual
 		if err := cursor.Decode(&b); err != nil {
 			return nil, err
 		}
@@ -85,9 +85,9 @@ func (s *Store) List(ctx context.Context, listOptions ListOptions) (*Beneficiary
 		return nil, cursor.Err()
 	}
 	if items == nil {
-		items = []*Beneficiary{}
+		items = []*Individual{}
 	}
-	return &BeneficiaryList{
+	return &IndividualList{
 		Items: items,
 	}, nil
 }

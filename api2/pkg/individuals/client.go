@@ -1,4 +1,4 @@
-package beneficiaries
+package individuals
 
 import (
 	"bytes"
@@ -23,8 +23,8 @@ type ListOptions struct {
 	PartyTypes []string `json:"partyTypes" bson:"partyTypes"`
 }
 
-func (c *Client) List(ctx context.Context, listOptions ListOptions) (*BeneficiaryList, error) {
-	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/beneficiaries", nil)
+func (c *Client) List(ctx context.Context, listOptions ListOptions) (*IndividualList, error) {
+	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/individuals", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -48,15 +48,15 @@ func (c *Client) List(ctx context.Context, listOptions ListOptions) (*Beneficiar
 	if err != nil {
 		return nil, err
 	}
-	var list BeneficiaryList
+	var list IndividualList
 	if err := json.Unmarshal(bodyBytes, &list); err != nil {
 		return nil, err
 	}
 	return &list, nil
 }
 
-func (c *Client) Get(ctx context.Context, id string) (*Beneficiary, error) {
-	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/beneficiaries/"+id, nil)
+func (c *Client) Get(ctx context.Context, id string) (*Individual, error) {
+	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/individuals/"+id, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -73,19 +73,19 @@ func (c *Client) Get(ctx context.Context, id string) (*Beneficiary, error) {
 	if err != nil {
 		return nil, err
 	}
-	var v Beneficiary
+	var v Individual
 	if err := json.Unmarshal(bodyBytes, &v); err != nil {
 		return nil, err
 	}
 	return &v, nil
 }
 
-func (c *Client) Update(ctx context.Context, beneficiary *Beneficiary) (*Beneficiary, error) {
-	bodyBytes, err := json.Marshal(beneficiary)
+func (c *Client) Update(ctx context.Context, individual *Individual) (*Individual, error) {
+	bodyBytes, err := json.Marshal(individual)
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("PUT", c.basePath+"/apis/v1/beneficiaries/"+beneficiary.ID, bytes.NewReader(bodyBytes))
+	req, err := http.NewRequest("PUT", c.basePath+"/apis/v1/individuals/"+individual.ID, bytes.NewReader(bodyBytes))
 	if err != nil {
 		return nil, err
 	}
@@ -103,19 +103,19 @@ func (c *Client) Update(ctx context.Context, beneficiary *Beneficiary) (*Benefic
 	if err != nil {
 		return nil, err
 	}
-	var v Beneficiary
+	var v Individual
 	if err := json.Unmarshal(responseBytes, &v); err != nil {
 		return nil, err
 	}
 	return &v, nil
 }
 
-func (c *Client) Create(ctx context.Context, beneficiary *Beneficiary) (*Beneficiary, error) {
-	bodyBytes, err := json.Marshal(beneficiary)
+func (c *Client) Create(ctx context.Context, individual *Individual) (*Individual, error) {
+	bodyBytes, err := json.Marshal(individual)
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("POST", c.basePath+"/apis/v1/beneficiaries", bytes.NewReader(bodyBytes))
+	req, err := http.NewRequest("POST", c.basePath+"/apis/v1/individuals", bytes.NewReader(bodyBytes))
 	if err != nil {
 		return nil, err
 	}
@@ -133,7 +133,7 @@ func (c *Client) Create(ctx context.Context, beneficiary *Beneficiary) (*Benefic
 	if err != nil {
 		return nil, err
 	}
-	var v Beneficiary
+	var v Individual
 	if err := json.Unmarshal(responseBytes, &v); err != nil {
 		return nil, err
 	}

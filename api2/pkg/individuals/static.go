@@ -1,4 +1,4 @@
-package beneficiaries
+package individuals
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var mockBeneficiaries = []*Beneficiary{
+var mockIndividuals = []*Individual{
 	{
 		Party: &parties.Party{
 			ID:         "0bde06f0-5416-4514-9c5a-794a2cc2f1b7",
@@ -39,12 +39,12 @@ var mockBeneficiaries = []*Beneficiary{
 }
 
 func SeedDatabase(ctx context.Context, store *Store) error {
-	for _, beneficiary := range mockBeneficiaries {
-		if err := store.Create(ctx, beneficiary); err != nil {
+	for _, individual := range mockIndividuals {
+		if err := store.Create(ctx, individual); err != nil {
 			if !mongo.IsDuplicateKeyError(err) {
 				return err
 			}
-			if err := store.Upsert(ctx, beneficiary); err != nil {
+			if err := store.Upsert(ctx, individual); err != nil {
 				return err
 			}
 		}
