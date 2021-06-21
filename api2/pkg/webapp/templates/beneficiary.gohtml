@@ -61,14 +61,20 @@
                                 </select>
                                 <label for="relationshipTypeSelector">Relationship Type</label>
                             </div>
-                            <div class="form-floating  mx-2 flex-grow-1">
-                                <select id="relationshipSecondPartySelector" class="form-select">
-                                    <option value="" selected></option>
+                            <div class="form-floating mx-2 flex-grow-1 dropdown">
+                                <input type="text"
+                                       class="form-control dropdown-toggle"
+                                       name="partySelector"
+                                       id="partySelector"
+                                       data-bs-toggle="dropdown"
+                                       aria-expanded="false"/>
+
+                                <ul class="dropdown-menu" aria-labelledby="partySelector">
                                     {{range .Parties.Items}}
-                                        <option value="{{.ID}}">{{.}}</option>
+                                        <li><a class="dropdown-item" href="{{.ID}}">{{.}}</a></li>
                                     {{end}}
-                                </select>
-                                <label for="relationshipSecondPartySelector">Other Party</label>
+                                </ul>
+                                <label for="partySelector" class="form-label">Related Party</label>
                             </div>
 
                             <button class="btn btn-primary ms-2"
@@ -138,6 +144,8 @@
                 name: {{.Name}},
                 firstPartyRole: {{.FirstPartyRole}},
                 secondPartyRole: {{.SecondPartyRole}},
+                firstPartyType: {{(index .Rules 0).FirstPartyType}},
+                secondPartyType: {{(index .Rules 0).SecondPartyType}}
             },
             {{end}}
         ];
@@ -147,12 +155,13 @@
         let querySubject = new Subject()
         let query$ = querySubject.asObservable().pipe(
             debounceTime(200),
-            switchMap((relationshipTypeId) => {
+            switchMap((secondPartyTypeId) => {
                 const searchParams = new URLSearchParams({
-                    "relationshipTypeId": relationshipTypeId,
-                    "searchParam": ""
+                    "partyTypeId": secondPartyTypeId,
+                    "searchParam": "John"
                 })
                 const ajaxUrl = "{{.BasePath}}" + "/apis/v1/relationshipparties/picker?" + searchParams.toString()
+                console.log(ajaxUrl)
                 return ajax(ajaxUrl)
             })
         )
@@ -254,6 +263,8 @@
         // On document ready
         document.addEventListener('DOMContentLoaded', function () {
 
+            console.log(relationshipTypes)
+
             // Bind add relationship button
             document.getElementById('add-relationship-button').onclick = () => {
                 let typeSelector = document.getElementById('relationshipTypeSelector');
@@ -265,7 +276,11 @@
 
             // Add listener for party filtering on relationship type dropdown
             document.getElementById('relationshipTypeSelector').onchange = (event) => {
-                querySubject.next(event.target.value)
+                let selectedRelationshipType = relationshipTypes.find(
+                    e => e.id === event.target.value
+                    && e.firstPartyRole == event.target.options[event.target.selectedIndex].text
+                )
+                querySubject.next(selectedRelationshipType.secondPartyType)
             }
             query$.subscribe(
                 res => {

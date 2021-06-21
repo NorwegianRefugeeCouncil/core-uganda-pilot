@@ -9,14 +9,14 @@ type Handler struct {
 	partiesStore *PartiesStore
 }
 
-func NewHandler(partiesStore *PartiesStore,) *Handler {
+func NewHandler(partiesStore *PartiesStore) *Handler {
 	return &Handler{
 		partiesStore: partiesStore,
 	}
 }
 
 type PickPartyOptions struct {
-	RelationshipTypeID string
+	PartyTypeID string
 	SearchParam string
 }
 
@@ -27,8 +27,8 @@ func (h *Handler) PickParty(w http.ResponseWriter, req *http.Request) {
 	qry := req.URL.Query()
 
 	pickPartyOptions := PickPartyOptions{
-		RelationshipTypeID: qry.Get("relationshipTypeId"),
-		SearchParam:        qry.Get("searchParam"),
+		PartyTypeID: qry.Get("partyTypeId"),
+		SearchParam: qry.Get("searchParam"),
 	}
 
 	ret, err := h.partiesStore.FilteredList(ctx, pickPartyOptions)

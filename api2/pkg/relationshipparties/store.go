@@ -19,17 +19,23 @@ func NewStore(partiesStore *parties.Store) *PartiesStore {
 func (s *PartiesStore) FilteredList(ctx context.Context, filterOptions PickPartyOptions) (*parties.PartyList, error) {
 	filter := bson.M{}
 
-	if len(filterOptions.RelationshipTypeID) != 0 {
+	if len(filterOptions.PartyTypeID) != 0 {
 		if len(filterOptions.SearchParam) != 0 {
 			filter = bson.M{
-				"partyTypes": filterOptions.RelationshipTypeID,
-				"$text": bson.M{
-					"$search": filterOptions.SearchParam,
+				"$and": bson.A{
+					bson.M{
+						"partyTypes": filterOptions.PartyTypeID,
+					},
+					bson.M{
+						"$text": bson.M{
+							"$search": filterOptions.SearchParam,
+						},
+					},
 				},
 			}
 		} else {
 			filter = bson.M{
-				"partyTypes": filterOptions.RelationshipTypeID,
+				"partyTypes": filterOptions.PartyTypeID,
 			}
 		}
 	}

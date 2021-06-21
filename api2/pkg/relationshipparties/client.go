@@ -27,8 +27,8 @@ func (c *Client) PickParty(ctx context.Context, pickPartyOptions PickPartyOption
 	req = req.WithContext(ctx)
 	q := req.URL.Query()
 
-	if len(pickPartyOptions.RelationshipTypeID) != 0 {
-		q.Set("relationshipTypeId", pickPartyOptions.RelationshipTypeID)
+	if len(pickPartyOptions.PartyTypeID) != 0 {
+		q.Set("partyTypeId", pickPartyOptions.PartyTypeID)
 	}
 	if len(pickPartyOptions.SearchParam) != 0 {
 		q.Set("searchParam", pickPartyOptions.SearchParam)
@@ -37,7 +37,7 @@ func (c *Client) PickParty(ctx context.Context, pickPartyOptions PickPartyOption
 
 	req.Header.Set("Accept", "application/json")
 
-	res,err := http.DefaultClient.Do(req)
+	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}

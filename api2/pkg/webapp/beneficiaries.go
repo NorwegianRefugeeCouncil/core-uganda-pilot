@@ -64,6 +64,7 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 	var bList *beneficiaries.BeneficiaryList
 	var ctList *casetypes.CaseTypeList
 	var cList *cases.CaseList
+	var partyTypes *partytypes.PartyTypeList
 	var relationshipsForBeneficiary *relationships.RelationshipList
 	var relationshipTypes *relationshiptypes.RelationshipTypeList
 	var attrs *attributes.AttributeList
@@ -83,6 +84,12 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 	g.Go(func() error {
 		var err error
 		bList, err = h.beneficiaryClient.List(waitCtx, beneficiaries.ListOptions{})
+		return err
+	})
+
+	g.Go(func() error {
+		var err error
+		partyTypes, err = h.partyTypeClient.List(waitCtx)
 		return err
 	})
 
@@ -157,12 +164,13 @@ func (h *Handler) Beneficiary(w http.ResponseWriter, req *http.Request) {
 		"IsNew":             id == "new",
 		"Beneficiary":       b,
 		"Parties":           bList,
+		"PartyTypes":        partyTypes,
 		"RelationshipTypes": relationshipTypes,
 		"Relationships":     relationshipsForBeneficiary,
 		"Attributes":        attrs,
 		"Cases":             displayCases,
 		"CaseTypes":         ctList,
-		"BasePath": h.relationshipPartiesClient.BasePath,
+		"BasePath":          h.relationshipPartiesClient.BasePath,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
