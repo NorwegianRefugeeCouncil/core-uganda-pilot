@@ -234,9 +234,10 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	if err != nil {
 		panic(err)
 	}
-
+	if err := auth.Init(ctx, c.KeycloakClient); err != nil {
+		panic(err)
+	}
 	router.Use(authHandler.Authenticate())
-
 	router.Path("/auth/login").Methods("GET").HandlerFunc(authHandler.Login)
 	router.Path("/auth/logout").Methods("GET").HandlerFunc(authHandler.Logout)
 	router.Path("/auth/callback").Methods("GET").HandlerFunc(authHandler.Callback)
