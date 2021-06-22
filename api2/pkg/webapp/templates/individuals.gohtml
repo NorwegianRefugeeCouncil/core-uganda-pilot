@@ -1,0 +1,57 @@
+{{define "individual-row"}}
+
+    {{$gender := .FindAttributeValue "gender"}}
+    {{$age := .FindAge}}
+
+    <a class="list-group-item font-monospace py-3 bg-quite-light" href="/individuals/{{.ID}}">
+        {{.}}
+        <span class="d-block text-muted">
+            {{if $gender}}
+                {{if eq $gender "Male"}}M{{else if eq $gender "Female"}}F{{end}}
+            {{end}}
+            {{if $age}}{{$age}}{{end}}
+        </span>
+    </a>
+{{end}}
+
+{{define "individuals"}}
+    <!doctype html>
+    <html lang="en">
+    {{template "head"}}
+    <body>
+
+    {{template "navbar"}}
+
+    {{template "individuals_nav"}}
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+                <a href='/individuals/new' class='btn btn-primary mb-3'>Register Individual</a>
+                <div class="list-group">
+                    <div class="list-group-item bg-light ">
+                        <div class="d-flex align-items-center">
+                            <div class="py-2"><b>Individuals</b></div>
+                            <div class="flex-grow-1"></div>
+                            <div class="mx-2">
+                            <input class="form-control" type="text" placeholder="Search"/>
+                            </div>
+                            <button class="btn btn-outline-secondary">Search</button>
+                        </div>
+
+                    </div>
+                    {{ if .Individuals.Items}}
+                        {{ range .Individuals.Items }}
+                            {{template "individual-row" .}}
+                        {{end}}
+                    {{else}}
+                        <div class='list-group-item disabled'>No individual found</div>
+                    {{end}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </body>
+    </html>
+{{end}}

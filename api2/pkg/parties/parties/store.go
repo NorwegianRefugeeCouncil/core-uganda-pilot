@@ -32,6 +32,11 @@ func (s *Store) Get(ctx context.Context, id string) (*Party, error) {
 
 func (s *Store) List(ctx context.Context, listOptions ListOptions) (*PartyList, error) {
 	filter := bson.M{}
+
+	if len(listOptions.PartyTypeID) > 0 {
+		filter["partyTypes"] = listOptions.PartyTypeID
+	}
+
 	res, err := s.Collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err

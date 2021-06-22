@@ -13,7 +13,6 @@ func (s *Suite) TestRelationShipTypeCRUD() {
 	// CREATE relationship type
 	mock := "create"
 	created, err := s.server.RelationshipTypeClient.Create(s.ctx, &relationshiptypes.RelationshipType{
-		//ID:              mock,
 		IsDirectional:   true,
 		Name:            mock,
 		FirstPartyRole:  mock,
@@ -48,7 +47,14 @@ func (s *Suite) TestRelationShipTypeCRUD() {
 		Name:            updatedMock,
 		FirstPartyRole:  updatedMock,
 		SecondPartyRole: updatedMock,
-		Rules:           []relationshiptypes.RelationshipTypeRule{{relationshiptypes.PartyTypeRule{FirstPartyType: updatedMock, SecondPartyType: updatedMock}}},
+		Rules: []relationshiptypes.RelationshipTypeRule{
+			{
+				relationshiptypes.PartyTypeRule{
+					FirstPartyType:  updatedMock,
+					SecondPartyType: updatedMock,
+				},
+			},
+		},
 	})
 	if !assert.NoError(s.T(), err) {
 		return
@@ -71,7 +77,7 @@ func (s *Suite) TestRelationShipTypeCRUD() {
 
 	// LIST relationship types
 	list, err := s.server.RelationshipTypeClient.List(s.ctx, relationshiptypes.ListOptions{
-		PartyType: partytypes.IndividualPartyType.ID,
+		PartyType: updatedMock,
 	})
 	if !assert.NoError(s.T(), err) {
 		return
@@ -102,7 +108,7 @@ func (s *Suite) TestRelationshipTypeList() {
 					valid = true
 				}
 			}
-			assert.True(t, valid, "asserting that there is at least one rule with the beneficiary party type")
+			assert.True(t, valid, "asserting that there is at least one rule with the individual party type")
 		}
 	})
 
@@ -124,7 +130,7 @@ func (s *Suite) TestRelationshipTypeList() {
 					valid = true
 				}
 			}
-			assert.True(t, valid, "asserting that there is at least one rule with the beneficiary party type")
+			assert.True(t, valid, "asserting that there is at least one rule with the individual party type")
 		}
 	})
 

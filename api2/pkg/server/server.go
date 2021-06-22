@@ -3,71 +3,155 @@ package server
 import (
 	"context"
 	"errors"
+	"fmt"
+	"github.com/gomodule/redigo/redis"
 	"github.com/gorilla/mux"
+	"github.com/nrc-no/core-kafka/pkg/auth"
 	"github.com/nrc-no/core-kafka/pkg/cases/cases"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
+	Individuals "github.com/nrc-no/core-kafka/pkg/individuals"
+	"github.com/nrc-no/core-kafka/pkg/keycloak"
+	"github.com/nrc-no/core-kafka/pkg/memberships"
+	"github.com/nrc-no/core-kafka/pkg/organizations"
 	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
-	"github.com/nrc-no/core-kafka/pkg/parties/beneficiaries"
 	"github.com/nrc-no/core-kafka/pkg/parties/parties"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypeschemas"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationships"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationshiptypes"
 	"github.com/nrc-no/core-kafka/pkg/relationshipparties"
-	"github.com/nrc-no/core-kafka/pkg/services/vulnerability"
+	"github.com/nrc-no/core-kafka/pkg/sessionmanager"
+	"github.com/nrc-no/core-kafka/pkg/staff"
+	"github.com/nrc-no/core-kafka/pkg/staffmock"
+	"github.com/nrc-no/core-kafka/pkg/teamorganizations"
+	"github.com/nrc-no/core-kafka/pkg/teams"
 	"github.com/nrc-no/core-kafka/pkg/webapp"
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/pflag"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"math"
 	"net"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type Server struct {
-	MongoClient             *mongo.Client
-	AttributeStore          *attributes.Store
-	AttributeHandler        *attributes.Handler
-	AttributeClient         *attributes.Client
-	VulnerabilityStore      *vulnerability.Store
-	VulnerabilityHandler    *vulnerability.Handler
-	VulnerabilityClient     *vulnerability.Client
-	BeneficiaryStore        *beneficiaries.Store
-	BeneficiaryHandler      *beneficiaries.Handler
-	BeneficiaryClient       *beneficiaries.Client
-	RelationshipTypeStore   *relationshiptypes.Store
-	RelationshipTypeHandler *relationshiptypes.Handler
-	RelationshipTypeClient  *relationshiptypes.Client
-	RelationshipStore       *relationships.Store
-	RelationshipHandler     *relationships.Handler
-	RelationshipClient      *relationships.Client
-	PartyStore              *parties.Store
-	PartyHandler            *parties.Handler
-	PartyClient             *parties.Client
-	PartyTypeStore          *partytypes.Store
-	PartyTypeHandler        *partytypes.Handler
-	PartyTypeClient         *partytypes.Client
-	RelationshipPartiesStore *relationshipparties.PartiesStore
+	MongoClient                *mongo.Client
+	AttributeStore             *attributes.Store
+	AttributeHandler           *attributes.Handler
+	AttributeClient            *attributes.Client
+	IndividualStore            *Individuals.Store
+	IndividualHandler          *Individuals.Handler
+	IndividualClient           *Individuals.Client
+	RelationshipTypeStore      *relationshiptypes.Store
+	RelationshipTypeHandler    *relationshiptypes.Handler
+	RelationshipTypeClient     *relationshiptypes.Client
+	RelationshipStore          *relationships.Store
+	RelationshipHandler        *relationships.Handler
+	RelationshipClient         *relationships.Client
+	PartyStore                 *parties.Store
+	PartyHandler               *parties.Handler
+	PartyClient                *parties.Client
+	PartyTypeStore             *partytypes.Store
+	PartyTypeHandler           *partytypes.Handler
+	PartyTypeClient            *partytypes.Client
+	RelationshipPartiesStore   *relationshipparties.PartiesStore
 	RelationshipPartiesHandler *relationshipparties.Handler
-	RelationshipPartiesClient *relationshipparties.Client
-	CaseTypeStore           *casetypes.Store
-	CaseTypeHandler         *casetypes.Handler
-	CaseTypeClient          *casetypes.Client
-	CaseStore               *cases.Store
-	CaseHandler             *cases.Handler
-	CaseClient              *cases.Client
-	WebAppHandler           *webapp.Handler
-	HttpServer              *http.Server
+	RelationshipPartiesClient  *relationshipparties.Client
+	CaseTypeStore              *casetypes.Store
+	CaseTypeHandler            *casetypes.Handler
+	CaseTypeClient             *casetypes.Client
+	CaseStore                  *cases.Store
+	CaseHandler                *cases.Handler
+	CaseClient                 *cases.Client
+	WebAppHandler              *webapp.Handler
+	HttpServer                 *http.Server
+	TeamStore                  *teams.Store
+	TeamHandler                *teams.Handler
+	TeamClient                 *teams.Client
+	MembershipHandler          *memberships.Handler
+	MembershipStore            *memberships.Store
+	membershipsClient          *memberships.Client
+	KeycloakClient             *keycloak.Client
+	SessionManager             sessionmanager.Store
 }
 
 type Options struct {
-	TemplateDirectory string
-	Address           string
-	MongoDatabase     string
-	MongoUsername     string
-	MongoPassword     string
+	TemplateDirectory    string
+	Address              string
+	MongoDatabase        string
+	MongoUsername        string
+	MongoPassword        string
+	KeycloakClientID     string
+	KeycloakClientSecret string
+	KeycloakBaseURL      string
+	KeycloakRealmName    string
+	RedisMaxIdleConns    int
+	RedisNetwork         string
+	RedisAddress         string
+	RedisPassword        string
+	RedisSecretKey       string
+}
+
+func NewOptions() *Options {
+	return &Options{
+		TemplateDirectory:    "pkg/webapp/templates",
+		Address:              "http://localhost:9000",
+		MongoDatabase:        "core",
+		MongoUsername:        "",
+		MongoPassword:        "",
+		KeycloakClientID:     "",
+		KeycloakClientSecret: "",
+		KeycloakBaseURL:      "",
+		KeycloakRealmName:    "",
+		RedisMaxIdleConns:    10,
+		RedisNetwork:         "tcp",
+		RedisAddress:         "localhost:6379",
+		RedisPassword:        "",
+		RedisSecretKey:       "some-secret",
+	}
+}
+
+func (o *Options) Flags(fs *pflag.FlagSet) {
+	fs.StringVar(&o.Address, "address", o.Address, "Address")
+	fs.StringVar(&o.MongoDatabase, "mongo-database", o.MongoDatabase, "Mongo database name")
+	fs.StringVar(&o.MongoUsername, "mongo-username", o.MongoUsername, "Mongo username")
+	fs.StringVar(&o.MongoPassword, "mongo-password", o.MongoPassword, "Mongo password")
+	fs.StringVar(&o.KeycloakBaseURL, "keycloak-base-url", o.KeycloakBaseURL, "Keycloak base URL")
+	fs.StringVar(&o.KeycloakRealmName, "keycloak-realm-name", o.KeycloakRealmName, "Keycloak realm name")
+	fs.StringVar(&o.KeycloakClientID, "keycloak-client-id", o.KeycloakClientID, "Keycloak client id")
+	fs.StringVar(&o.KeycloakClientSecret, "keycloak-client-secret", o.KeycloakClientSecret, "Keycloak client secret")
+	fs.IntVar(&o.RedisMaxIdleConns, "redis-max-idle-conns", o.RedisMaxIdleConns, "Redis maximum number of idle connections")
+	fs.StringVar(&o.RedisNetwork, "redis-network", o.RedisNetwork, "Redis network")
+	fs.StringVar(&o.RedisPassword, "redis-password", o.RedisPassword, "Redis password")
+	fs.StringVar(&o.RedisSecretKey, "redis-secret-key", o.RedisSecretKey, "Redis secret key")
+}
+
+type CompletedOptions struct {
+	KeycloakClient       *keycloak.Client
+	KeycloakClientID     string
+	KeycloakClientSecret string
+	KeycloakBaseURL      string
+	KeycloakRealmName    string
+	MongoClient          *mongo.Client
+	TemplateDirectory    string
+	Address              string
+	MongoDatabase        string
+	SessionManager       sessionmanager.Store
 }
 
 func (o Options) Complete(ctx context.Context) (CompletedOptions, error) {
+
+	pool := &redis.Pool{
+		MaxIdle: o.RedisMaxIdleConns,
+		Dial: func() (redis.Conn, error) {
+			return redis.Dial(o.RedisNetwork, o.RedisAddress)
+		},
+	}
+
+	sm := sessionmanager.New(pool, sessionmanager.Options{})
 
 	// Setup mongo client
 	mongoClient, err := mongo.NewClient(options.Client().SetAuth(
@@ -83,39 +167,79 @@ func (o Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		return CompletedOptions{}, err
 	}
 
-	// Setup address
-	if len(o.Address) == 0 {
-		o.Address = "http://localhost:9000"
-	}
-
-	// Setup template directory
-	if len(o.TemplateDirectory) == 0 {
-		o.TemplateDirectory = "pkg/webapp/templates"
-	}
-
-	if len(o.MongoDatabase) == 0 {
-		o.MongoDatabase = "core"
+	keycloakClient, err := keycloak.NewClient(o.KeycloakBaseURL, o.KeycloakRealmName, o.KeycloakClientID, o.KeycloakClientSecret)
+	if err != nil {
+		return CompletedOptions{}, err
 	}
 
 	completedOptions := CompletedOptions{
-		MongoClient:       mongoClient,
-		TemplateDirectory: o.TemplateDirectory,
-		Address:           o.Address,
-		MongoDatabase:     o.MongoDatabase,
+		MongoClient:          mongoClient,
+		TemplateDirectory:    o.TemplateDirectory,
+		Address:              o.Address,
+		MongoDatabase:        o.MongoDatabase,
+		KeycloakClient:       keycloakClient,
+		KeycloakClientSecret: o.KeycloakClientSecret,
+		KeycloakClientID:     o.KeycloakClientID,
+		KeycloakBaseURL:      o.KeycloakBaseURL,
+		KeycloakRealmName:    o.KeycloakRealmName,
+		SessionManager:       sm,
 	}
 	return completedOptions, nil
-}
-
-type CompletedOptions struct {
-	MongoClient       *mongo.Client
-	TemplateDirectory string
-	Address           string
-	MongoDatabase     string
 }
 
 func (c CompletedOptions) New(ctx context.Context) *Server {
 
 	router := mux.NewRouter()
+
+	router.Use(func(handler http.Handler) http.Handler {
+		return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+
+			start := time.Now()
+
+			stWriter := &statusWriter{w: writer}
+			handler.ServeHTTP(stWriter, request)
+
+			end := time.Now()
+
+			statusCode := stWriter.statusCode
+			if stWriter.statusCode == 0 {
+				statusCode = 200
+			}
+
+			fields := logrus.Fields{
+				"method":     request.Method,
+				"statusCode": statusCode,
+				"path":       request.URL.Path,
+				"responseMs": math.Round(float64(end.Sub(start).Nanoseconds())/1000000.0*100.0) / 100.0,
+			}
+
+			if stWriter.statusCode < 400 {
+				logrus.WithFields(fields).Infof("")
+			} else {
+				logrus.WithFields(fields).
+					WithError(fmt.Errorf("inbound request failed with status code: %d", statusCode)).
+					Errorf("")
+			}
+
+		})
+	})
+
+	router.Use(c.SessionManager.LoadAndSave)
+
+	// Auth
+	authHandler, err := auth.NewHandler(
+		ctx,
+		fmt.Sprintf("%s/auth/realms/%s", c.KeycloakBaseURL, c.KeycloakRealmName),
+		c.KeycloakClientID,
+		c.KeycloakClientSecret,
+		"http://localhost:9000/auth/callback",
+		c.SessionManager)
+	if err != nil {
+		panic(err)
+	}
+	router.Path("/auth/login").Methods("GET").HandlerFunc(authHandler.Login)
+	router.Path("/auth/logout").Methods("GET").HandlerFunc(authHandler.Logout)
+	router.Path("/auth/callback").Methods("GET").HandlerFunc(authHandler.Callback)
 
 	// Attributes
 	attributeStore := attributes.NewStore(c.MongoClient, c.MongoDatabase)
@@ -129,26 +253,17 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.Path("/apis/v1/attributes/{id}").Methods("PUT").HandlerFunc(attributeHandler.Update)
 	router.Path("/apis/v1/attributes").Methods("POST").HandlerFunc(attributeHandler.Post)
 
-	// Vulnerabilities
-	vulnerabilityStore := vulnerability.NewStore(c.MongoClient, c.MongoDatabase)
-	vulnerabilityHandler := vulnerability.NewHandler(vulnerabilityStore)
-	vulnerabilityClient := vulnerability.NewClient(c.Address)
-	router.Path("/apis/v1/vulnerabilities").Methods("GET").HandlerFunc(vulnerabilityHandler.ListVulnerabilities)
-	router.Path("/apis/v1/vulnerabilities/{id}").Methods("GET").HandlerFunc(vulnerabilityHandler.GetVulnerability)
-	router.Path("/apis/v1/vulnerabilities/{id}").Methods("PUT").HandlerFunc(vulnerabilityHandler.UpdateVulnerability)
-	router.Path("/apis/v1/vulnerabilities").Methods("POST").HandlerFunc(vulnerabilityHandler.PostVulnerability)
-
-	// Beneficiaries
-	beneficiariesStore := beneficiaries.NewStore(c.MongoClient, c.MongoDatabase)
-	beneficiaryHandler := beneficiaries.NewHandler(beneficiariesStore)
-	beneficiaryClient := beneficiaries.NewClient(c.Address)
-	if err := beneficiaries.SeedDatabase(ctx, beneficiariesStore); err != nil {
+	// Individuals
+	individualsStore := Individuals.NewStore(c.MongoClient, c.MongoDatabase)
+	individualHandler := Individuals.NewHandler(individualsStore)
+	individualClient := Individuals.NewClient(c.Address)
+	if err := Individuals.SeedDatabase(ctx, individualsStore); err != nil {
 		panic(err)
 	}
-	router.Path("/apis/v1/beneficiaries").Methods("GET").HandlerFunc(beneficiaryHandler.List)
-	router.Path("/apis/v1/beneficiaries/{id}").Methods("GET").HandlerFunc(beneficiaryHandler.Get)
-	router.Path("/apis/v1/beneficiaries/{id}").Methods("PUT").HandlerFunc(beneficiaryHandler.Update)
-	router.Path("/apis/v1/beneficiaries").Methods("POST").HandlerFunc(beneficiaryHandler.Create)
+	router.Path("/apis/v1/individuals").Methods("GET").HandlerFunc(individualHandler.List)
+	router.Path("/apis/v1/individuals/{id}").Methods("GET").HandlerFunc(individualHandler.Get)
+	router.Path("/apis/v1/individuals/{id}").Methods("PUT").HandlerFunc(individualHandler.Update)
+	router.Path("/apis/v1/individuals").Methods("POST").HandlerFunc(individualHandler.Create)
 
 	// RelationshipTypes
 	relationshipTypeStore := relationshiptypes.NewStore(c.MongoClient, c.MongoDatabase)
@@ -225,6 +340,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.Path("/apis/v1/cases/{id}").Methods("GET").HandlerFunc(caseHandler.Get)
 	router.Path("/apis/v1/cases/{id}").Methods("PUT").HandlerFunc(caseHandler.Put)
 	router.Path("/apis/v1/cases").Methods("POST").HandlerFunc(caseHandler.Post)
+
 	// CaseTypes
 	caseTypeStore := casetypes.NewStore(c.MongoClient, c.MongoDatabase)
 	if err := casetypes.Init(ctx, caseTypeStore); err != nil {
@@ -237,14 +353,57 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.Path("/apis/v1/casetypes/{id}").Methods("PUT").HandlerFunc(caseTypeHandler.Put)
 	router.Path("/apis/v1/casetypes").Methods("POST").HandlerFunc(caseTypeHandler.Post)
 
+	// Teams
+	teamStore := teams.NewStore(partyStore)
+	if err := teams.Init(ctx, teamStore, partyTypeStore, attributeStore); err != nil {
+		panic(err)
+	}
+	teamHandler := teams.NewHandler(teamStore)
+	teamClient := teams.NewClient(c.Address)
+	router.Path("/apis/v1/teams").Methods("GET").HandlerFunc(teamHandler.List)
+	router.Path("/apis/v1/teams/{id}").Methods("GET").HandlerFunc(teamHandler.Get)
+	router.Path("/apis/v1/teams/{id}").Methods("PUT").HandlerFunc(teamHandler.Put)
+	router.Path("/apis/v1/teams").Methods("POST").HandlerFunc(teamHandler.Post)
+
+	// Staff
+	staffStore := staff.NewStore(relationshipStore)
+	if err := staff.Init(ctx, relationshipTypeStore); err != nil {
+		panic(err)
+	}
+
+	// Memberships
+	membershipStore := memberships.NewStore(relationshipStore)
+	membershipHandler := memberships.NewHandler(membershipStore)
+	membershipClient := memberships.NewClient(c.Address)
+	if err := memberships.Init(ctx, relationshipTypeStore); err != nil {
+		panic(err)
+	}
+	router.Path("/apis/v1/memberships").Methods("GET").HandlerFunc(membershipHandler.List)
+	router.Path("/apis/v1/memberships/{id}").Methods("GET").HandlerFunc(membershipHandler.Get)
+	router.Path("/apis/v1/memberships").Methods("POST").HandlerFunc(membershipHandler.Post)
+
+	// Organizations
+	if err := organizations.Init(ctx, partyTypeStore, attributeStore, partyStore); err != nil {
+		panic(err)
+	}
+
+	// TeamOrganization
+	if err := teamorganizations.Init(ctx, relationshipTypeStore, relationshipStore); err != nil {
+		panic(err)
+	}
+
+	// Mock staff
+	if err := staffmock.Init(ctx, partyStore, staffStore, membershipStore); err != nil {
+		panic(err)
+	}
+
 	// WebApp
 	webAppOptions := webapp.Options{
 		TemplateDirectory: c.TemplateDirectory,
 	}
 	webAppHandler, err := webapp.NewHandler(webAppOptions,
 		attributeClient,
-		vulnerabilityClient,
-		beneficiaryClient,
+		individualClient,
 		relationshipTypeClient,
 		relationshipClient,
 		partyClient,
@@ -252,15 +411,16 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		caseTypeClient,
 		caseClient,
 		relationshipPartiesClient,
+		teamClient,
+		membershipClient,
 	)
 	if err != nil {
 		panic(err)
 	}
 
-	router.Path("/vulnerabilities/{id}").HandlerFunc(webAppHandler.Vulnerability)
-	router.Path("/vulnerabilities").HandlerFunc(webAppHandler.Vulnerabilities)
-	router.Path("/beneficiaries").HandlerFunc(webAppHandler.Beneficiaries)
-	router.Path("/beneficiaries/{id}").HandlerFunc(webAppHandler.Beneficiary)
+	router.Path("/").HandlerFunc(webAppHandler.Individuals)
+	router.Path("/individuals").HandlerFunc(webAppHandler.Individuals)
+	router.Path("/individuals/{id}").HandlerFunc(webAppHandler.Individual)
 	router.Path("/settings").HandlerFunc(webAppHandler.Settings)
 	router.Path("/settings/attributes").HandlerFunc(webAppHandler.Attributes)
 	router.Path("/settings/attributes/new").HandlerFunc(webAppHandler.NewAttribute)
@@ -271,6 +431,8 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.Path("/settings/partytypes").HandlerFunc(webAppHandler.PartyTypes)
 	router.Path("/settings/partytypes/{id}").HandlerFunc(webAppHandler.PartyType)
 	router.Path("/settings/countries").HandlerFunc(webAppHandler.CountrySettings)
+	router.Path("/teams").HandlerFunc(webAppHandler.Teams)
+	router.Path("/teams/{id}").HandlerFunc(webAppHandler.Team)
 	router.Path("/cases").HandlerFunc(webAppHandler.Cases)
 	router.Path("/cases/new").HandlerFunc(webAppHandler.NewCase)
 	router.Path("/cases/{id}").HandlerFunc(webAppHandler.Case)
@@ -279,7 +441,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.Path("/settings/casetypes/{id}").HandlerFunc(webAppHandler.CaseType)
 
 	// Seed database for development
-	if err := beneficiaries.SeedDatabase(ctx, beneficiariesStore); err != nil {
+	if err := Individuals.SeedDatabase(ctx, individualsStore); err != nil {
 		panic(err)
 	}
 
@@ -289,37 +451,42 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	}
 
 	srv := &Server{
-		MongoClient:             c.MongoClient,
-		AttributeStore:          attributeStore,
-		AttributeHandler:        attributeHandler,
-		AttributeClient:         attributeClient,
-		VulnerabilityStore:      vulnerabilityStore,
-		VulnerabilityHandler:    vulnerabilityHandler,
-		VulnerabilityClient:     vulnerabilityClient,
-		BeneficiaryStore:        beneficiariesStore,
-		BeneficiaryHandler:      beneficiaryHandler,
-		BeneficiaryClient:       beneficiaryClient,
-		RelationshipTypeStore:   relationshipTypeStore,
-		RelationshipTypeHandler: relationshipTypeHandler,
-		RelationshipTypeClient:  relationshipTypeClient,
-		RelationshipStore:       relationshipStore,
-		RelationshipHandler:     relationshipHandler,
-		RelationshipClient:      relationshipClient,
-		PartyStore:              partyStore,
-		PartyHandler:            partyHandler,
-		PartyClient:             partyClient,
-		PartyTypeStore:          partyTypeStore,
-		PartyTypeHandler:        partyTypeHandler,
-		PartyTypeClient:         partyTypeClient,
+		MongoClient:               c.MongoClient,
+		AttributeStore:            attributeStore,
+		AttributeHandler:          attributeHandler,
+		AttributeClient:           attributeClient,
+		IndividualStore:           individualsStore,
+		IndividualHandler:         individualHandler,
+		IndividualClient:          individualClient,
+		RelationshipTypeStore:     relationshipTypeStore,
+		RelationshipTypeHandler:   relationshipTypeHandler,
+		RelationshipTypeClient:    relationshipTypeClient,
+		RelationshipStore:         relationshipStore,
+		RelationshipHandler:       relationshipHandler,
+		RelationshipClient:        relationshipClient,
+		PartyStore:                partyStore,
+		PartyHandler:              partyHandler,
+		PartyClient:               partyClient,
+		PartyTypeStore:            partyTypeStore,
+		PartyTypeHandler:          partyTypeHandler,
+		PartyTypeClient:           partyTypeClient,
 		RelationshipPartiesClient: relationshipPartiesClient,
-		CaseTypeStore:           caseTypeStore,
-		CaseTypeHandler:         caseTypeHandler,
-		CaseTypeClient:          caseTypeClient,
-		CaseStore:               caseStore,
-		CaseHandler:             caseHandler,
-		CaseClient:              caseClient,
-		WebAppHandler:           webAppHandler,
-		HttpServer:              httpServer,
+		CaseTypeStore:             caseTypeStore,
+		CaseTypeHandler:           caseTypeHandler,
+		CaseTypeClient:            caseTypeClient,
+		CaseStore:                 caseStore,
+		CaseHandler:               caseHandler,
+		CaseClient:                caseClient,
+		TeamStore:                 teamStore,
+		TeamHandler:               teamHandler,
+		TeamClient:                teamClient,
+		MembershipStore:           membershipStore,
+		MembershipHandler:         membershipHandler,
+		membershipsClient:         membershipClient,
+		WebAppHandler:             webAppHandler,
+		KeycloakClient:            c.KeycloakClient,
+		SessionManager:            c.SessionManager,
+		HttpServer:                httpServer,
 	}
 
 	go func() {

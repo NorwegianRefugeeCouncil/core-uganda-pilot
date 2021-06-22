@@ -44,12 +44,12 @@ func (h *Handler) Get(w http.ResponseWriter, req *http.Request) {
 
 }
 
-type ListOptions struct {
-}
-
 func (h *Handler) List(w http.ResponseWriter, req *http.Request) {
+
 	ctx := req.Context()
-	listOptions := &ListOptions{}
+	listOptions := &ListOptions{
+		PartyTypeID: req.URL.Query().Get("partyTypeId"),
+	}
 
 	ret, err := h.store.List(ctx, *listOptions)
 	if err != nil {
