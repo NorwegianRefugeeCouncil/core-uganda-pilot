@@ -167,7 +167,7 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 		PartyTypeID: partyTypeID,
 	}
 
-	p, err := partiesClient.List(waitCtx, listOptions)
+	p, err := partiesClient.List(ctx, listOptions)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
