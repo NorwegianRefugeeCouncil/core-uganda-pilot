@@ -63,14 +63,17 @@
                                 </select>
                                 <label for="relationshipTypeSelector">Relationship Type</label>
                             </div>
-                            <div class="form-floating  mx-2 flex-grow-1">
-                                <select id="relationshipSecondPartySelector" class="form-select">
-                                    <option value="" selected></option>
-                                    {{range .Parties.Items}}
-                                        <option value="{{.ID}}">{{.}}</option>
-                                    {{end}}
-                                </select>
-                                <label for="relationshipSecondPartySelector">Other Party</label>
+                            <div class="form-floating mx-2 flex-grow-1 dropdown">
+                                <input type="text"
+                                       class="form-control dropdown-toggle"
+                                       name="partySelector"
+                                       id="partySelector"
+                                       data-bs-toggle="dropdown"
+                                       aria-expanded="false"/>
+
+                                <ul class="dropdown-menu" id="partySelectorList" aria-labelledby="partySelector">
+                                </ul>
+                                <label for="partySelector" class="form-label">Related Party</label>
                             </div>
 
                             <button class="btn btn-primary ms-2"
@@ -128,8 +131,9 @@
 
     <script type="application/javascript">
 
-        let {BehaviorSubject} = rxjs;
-        let {map} = rxjs.operators;
+        let {Subject, BehaviorSubject, pipe, Observable} = rxjs;
+        let {map, debounceTime, switchMap} = rxjs.operators;
+        let {ajax} = rxjs.ajax;
 
         // Holds the different relationship types
         const relationshipTypes = [
@@ -139,13 +143,28 @@
                 name: {{.Name}},
                 firstPartyRole: {{.FirstPartyRole}},
                 secondPartyRole: {{.SecondPartyRole}},
+                firstPartyType: {{(index .Rules 0).FirstPartyType}},
+                secondPartyType: {{(index .Rules 0).SecondPartyType}}
             },
             {{end}}
         ];
 
+        // Handles the search box for the parties dropdown
+        let partySearchSubject = new Subject()
+        let partySearch$ = partySearchSubject.asObservable().pipe(
+            debounceTime(200),
+            switchMap((searchParam) => {
+                const searchParams = new URLSearchParams({
+                    "partyTypeId": getSecondPartyType(),
+                    "searchParam": searchParam
+                })
+                const ajaxUrl = "/apis/v1/relationshipparties/picker?" + searchParams.toString()
+                return ajax(ajaxUrl)
+            })
+        )
+
         // Holds the different parties (for relationship dropdown select)
-        // TODO: use API query to search
-        const parties = [
+        let parties = [
             {{range .Parties.Items}}
             {
                 id: {{.ID}},
@@ -240,17 +259,126 @@
             }
         }
 
+        // Returns the secondPartyType ID corresponding to the selection of the relationship type
+        // dropdown
+        const getSecondPartyType = () => {
+            const relationshipTypeSelector = document.getElementById("relationshipTypeSelector")
+            let selectedRelationshipType = relationshipTypes.find(
+                e => e.id === relationshipTypeSelector.value
+                    && e.firstPartyRole === relationshipTypeSelector.options[relationshipTypeSelector.selectedIndex].text
+            )
+            return selectedRelationshipType.secondPartyType
+        }
+
+        // Returns the value of the partySelector search box
+        const getSearchParam = () => {
+            const partySelector = document.getElementById("partySelector")
+            return partySelector.textContent
+        }
+
+        // Party List Item click handler - sets the text box value used for searching to the selected item
+        // from the dropdown
+        const onPartyListItemClick = (event) => {
+            document.getElementById("partySelector").value = event.target.textContent
+            document.getElementById("partySelector").setAttribute("data-party-id", event.target.id)
+        }
+
+        // Get First Name from party attribute list, or return blank
+        const firstNameFromAttrs = (attrs) => {
+            let firstName = ""
+            Object.keys(attrs).forEach(
+                k => {
+                    if (k == "{{.FirstNameAttribute.ID}}") {
+                        firstName = attrs[k]
+                    }
+                }
+            )
+            return firstName
+        }
+
+        // Get Last Name from party attribute list, or return blank
+        const lastNameFromAttrs = (attrs) => {
+            let lastName = ""
+            Object.keys(attrs).forEach(
+                k => {
+                    if (k == "{{.LastNameAttribute.ID}}") {
+                        lastName = attrs[k]
+                    }
+                }
+            )
+            return lastName
+        }
+
         // On document ready
         document.addEventListener('DOMContentLoaded', function () {
 
             // Bind add relationship button
             document.getElementById('add-relationship-button').onclick = () => {
                 let typeSelector = document.getElementById('relationshipTypeSelector');
-                let partySelector = document.getElementById('relationshipSecondPartySelector');
+                let partySelector = document.getElementById('partySelector');
                 let relationshipType = typeSelector.value;
-                let party = partySelector.value;
+                let party = partySelector.getAttribute("data-party-id");
                 addRelationship(relationshipType, party);
             };
+
+            // Add listener for party selector item click
+            Array.from(document.getElementsByClassName('partySelectorItem')).forEach(e => {
+                e.onclick = onPartyListItemClick
+            })
+
+            // Add listener for party search box
+            document.getElementById("partySelector").oninput = (event) => {
+                partySearchSubject.next(event.target.value)
+            }
+
+            // Add listener for relationship type change
+            document.getElementById("relationshipTypeSelector").onchange = (event) => {
+                partySearchSubject.next(getSearchParam())
+            }
+
+            // Handle party search responses
+            partySearch$.subscribe(
+                res => {
+                    // update parties list
+                    parties = []
+
+                    let partySelectorList = document.getElementById("partySelectorList")
+                    partySelectorList.innerHTML = ''
+                    if (res.response.items.length > 0) {
+                        res.response.items.forEach(party => {
+                            let newListItem = document.createElement('li')
+                            newListItem.classList.add('dropdown-item')
+                            newListItem.classList.add('partySelectorItem')
+                            newListItem.onclick = onPartyListItemClick
+                            let displayText = `${lastNameFromAttrs(party.attributes)}, ${firstNameFromAttrs(party.attributes)}`
+                            newListItem.appendChild(
+                                document.createTextNode(displayText)
+                            )
+                            newListItem.setAttribute('id', party.id)
+                            partySelectorList.appendChild(newListItem)
+
+                            // append party to parties list
+                            parties.push({
+                                id: party.id,
+                                name: displayText
+                            })
+                        })
+                    } else {
+                        // No Parties Found...
+                        let newListItem = document.createElement('li')
+                        newListItem.classList.add('dropdown-item')
+                        newListItem.onclick = onPartyListItemClick
+                        let displayText = `No Parties Found`
+                        newListItem.appendChild(
+                            document.createTextNode(displayText)
+                        )
+                        partySelectorList.appendChild(newListItem)
+                    }
+                },
+                err => {
+                    console.error("got error: ", err)
+                }
+            )
 
             // Render relationships
             displayRelationships$.subscribe(relationships => {
@@ -260,20 +388,22 @@
 
                     const li = document.createElement('li');
                     li.className = "list-group-item";
+                    const firstPartyName = parties.find(({id}) => id === relationship.firstParty)?.name;
+                    const firstPartyRole = relationshipTypes.find(({id}) => id === relationship.relationshipTypeId)?.firstPartyRole;
+                    const secondPartyName = parties.find(({id}) => id === relationship.secondParty)?.name;
 
-                    const firstPartyName = parties.find(({id}) => id === relationship.firstParty).name;
-                    const firstPartyRole = relationshipTypes.find(({id}) => id === relationship.relationshipTypeId).firstPartyRole;
-                    const secondPartyName = parties.find(({id}) => id === relationship.secondParty).name;
+                    console.log(relationship)
+                    console.log(parties)
 
                     const firstPartyLinkNode = document.createElement("a")
-                    firstPartyLinkNode.href = "/individuals/" + firstPartyLinkNode
+                    firstPartyLinkNode.href = "/individuals/" + relationship.firstParty
                     firstPartyLinkNode.innerText = firstPartyName
 
                     const roleSpanNode = document.createElement("span")
                     roleSpanNode.innerText = firstPartyRole.substring(0, 1).toLocaleLowerCase() + firstPartyRole.substring(1)
 
                     const secondPartyLinkNode = document.createElement("a")
-                    secondPartyLinkNode.href = "/individuals/" + secondPartyLinkNode
+                    secondPartyLinkNode.href = "/individuals/" + relationship.secondParty
                     secondPartyLinkNode.innerText = secondPartyName
 
                     const space1Node = document.createElement("span")
@@ -346,6 +476,9 @@
                 })
 
             });
+
+            // Initial call to populate parties list
+            partySearchSubject.next(getSearchParam())
 
         });
 

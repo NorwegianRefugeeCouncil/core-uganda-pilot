@@ -64,6 +64,7 @@ func (h *Handler) Individual(w http.ResponseWriter, req *http.Request) {
 	var bList *Individuals.IndividualList
 	var ctList *casetypes.CaseTypeList
 	var cList *cases.CaseList
+	var partyTypes *partytypes.PartyTypeList
 	var relationshipsForIndividual *relationships.RelationshipList
 	var relationshipTypes *relationshiptypes.RelationshipTypeList
 	var attrs *attributes.AttributeList
@@ -83,6 +84,12 @@ func (h *Handler) Individual(w http.ResponseWriter, req *http.Request) {
 	g.Go(func() error {
 		var err error
 		bList, err = h.individualClient.List(waitCtx, Individuals.ListOptions{})
+		return err
+	})
+
+	g.Go(func() error {
+		var err error
+		partyTypes, err = h.partyTypeClient.List(waitCtx)
 		return err
 	})
 
@@ -154,14 +161,17 @@ func (h *Handler) Individual(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if err := h.template.ExecuteTemplate(w, "individual", map[string]interface{}{
-		"IsNew":             id == "new",
-		"Individual":        b,
-		"Parties":           bList,
-		"RelationshipTypes": relationshipTypes,
-		"Relationships":     relationshipsForIndividual,
-		"Attributes":        attrs,
-		"Cases":             displayCases,
-		"CaseTypes":         ctList,
+		"IsNew":              id == "new",
+		"Individual":         b,
+		"Parties":            bList,
+		"PartyTypes":         partyTypes,
+		"RelationshipTypes":  relationshipTypes,
+		"Relationships":      relationshipsForIndividual,
+		"Attributes":         attrs,
+		"Cases":              displayCases,
+		"CaseTypes":          ctList,
+		"FirstNameAttribute": Individuals.FirstNameAttribute,
+		"LastNameAttribute":  Individuals.LastNameAttribute,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
