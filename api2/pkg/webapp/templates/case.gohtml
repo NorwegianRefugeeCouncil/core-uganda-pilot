@@ -1,14 +1,15 @@
 {{define "case"}}
     {{$caseId := .Case.ID}}
     {{$partyId := .Case.PartyID}}
+    {{$party := .Parties.FindByID $partyId}}
     {{$caseTypeId := .Case.CaseTypeID}}
     <!doctype html>
     <html lang="en">
     {{template "head"}}
     <body class="bg-light">
     {{template "navbar"}}
-    <div class="container">
-        <div class="card">
+    <div class="container mt-4">
+        <div class="card mb-4">
             <div class="card-body">
                 <h4 class="card-title">Case View</h4>
                 <form action="/cases/{{$caseId}}" method="post">
@@ -26,7 +27,6 @@
                     <div class="mb-3">
                         <h6 class="text-muted">Party</h6>
                         <a class="btn btn-outline-secondary" href="/individuals/{{$partyId}}">
-                            {{$party := .Parties.FindByID $partyId}}
                             {{$party.String}}
                         </a>
                     </div>
@@ -44,6 +44,50 @@
                     </div>
                     <button class="btn btn-primary" type="submit">Save</button>
                 </form>
+            </div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="dropdown mb-3">
+                    <button class="btn btn-outline-secondary btn-lg dropdown-toggle" type="button"
+                            id="referral-dropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        Refer this case
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="referral-dropdown">
+                        {{ range .CaseTypes.Items }}
+                            <li><a class="dropdown-item" href="/cases/{{$caseId}}?referralCaseTypeId={{.ID}}">{{.Name}}</a>
+                            </li>
+                        {{end}}
+                    </ul>
+                </div>
+                {{ if .ReferralCaseType}}
+                    <form action="/cases" method="post">
+                        <div class="form-floating mb-3">
+                            <input type="hidden" name="caseTypeId" value="{{.ReferralCaseType.ID}}">
+                            <select
+                                    id="referral-case-type"
+                                    class="form-select"
+                                    disabled
+                            >
+                                <option>{{ .ReferralCaseType.Name }}</option>
+                            </select>
+                            <label for="referral-case-type">Referral Case Type</label>
+                        </div>
+                        <input type="hidden" name="partyId" value="{{$partyId}}">
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea
+                                    autofocus
+                                    id="description"
+                                    name="description"
+                                    class="form-control"
+                                    rows="3"></textarea>
+                        </div>
+                        <button class="btn btn-primary" type="submit">Save</button>
+                    </form>
+                {{end}}
+
             </div>
         </div>
     </div>
