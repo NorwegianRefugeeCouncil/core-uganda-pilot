@@ -95,9 +95,10 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 	})
 
 	qry := req.URL.Query()
-	refCaseTypeID := qry.Get("refCaseTypeId")
+
+	// The ID of referral case type chosen by the user (if any)
 	var refCaseType *casetypes.CaseType
-	if len(refCaseTypeID) > 0 {
+	if refCaseTypeID := qry.Get("refCaseTypeId"); len(refCaseTypeID) > 0 {
 		refCaseType, err = h.caseTypeClient.Get(ctx, refCaseTypeID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
