@@ -7,17 +7,17 @@ import (
 )
 
 type Store struct {
-	collection *mongo.Collection
+	Collection *mongo.Collection
 }
 
 func NewStore(mongoClient *mongo.Client, database string) *Store {
 	return &Store{
-		collection: mongoClient.Database(database).Collection("parties"),
+		Collection: mongoClient.Database(database).Collection("parties"),
 	}
 }
 
 func (s *Store) Get(ctx context.Context, id string) (*Party, error) {
-	res := s.collection.FindOne(ctx, bson.M{
+	res := s.Collection.FindOne(ctx, bson.M{
 		"id": id,
 	})
 	if res.Err() != nil {
@@ -31,13 +31,30 @@ func (s *Store) Get(ctx context.Context, id string) (*Party, error) {
 }
 
 func (s *Store) List(ctx context.Context, listOptions ListOptions) (*PartyList, error) {
-	filter := bson.M{}
+	filterItems := bson.A{}
 
-	if len(listOptions.PartyTypeID) > 0 {
-		filter["partyTypeIds"] = listOptions.PartyTypeID
+	if len(listOptions.PartyTypeID) != 0 {
+		filterItems = append(filterItems, bson.M{"partyTypeIds": listOptions.PartyTypeID})
 	}
 
-	res, err := s.collection.Find(ctx, filter)
+	if len(listOptions.SearchParam) != 0 {
+		filterItems = append(filterItems, bson.M{
+			"$text": bson.M{
+				"$search": listOptions.SearchParam,
+			},
+		})
+	}
+
+	var filter interface{}
+	if len(filterItems) == 0 {
+		filter = bson.M{}
+	} else if len(filterItems) == 1 {
+		filter = filterItems[0]
+	} else {
+		filter = bson.M{"$and": filterItems}
+	}
+
+	res, err := s.Collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +82,7 @@ func (s *Store) List(ctx context.Context, listOptions ListOptions) (*PartyList, 
 }
 
 func (s *Store) Update(ctx context.Context, party *Party) error {
-	_, err := s.collection.UpdateOne(ctx, bson.M{
+	_, err := s.Collection.UpdateOne(ctx, bson.M{
 		"id": party.ID,
 	}, bson.M{
 		"$set": bson.M{
@@ -80,7 +97,7 @@ func (s *Store) Update(ctx context.Context, party *Party) error {
 }
 
 func (s *Store) Create(ctx context.Context, party *Party) error {
-	_, err := s.collection.InsertOne(ctx, party)
+	_, err := s.Collection.InsertOne(ctx, party)
 	if err != nil {
 		return err
 	}

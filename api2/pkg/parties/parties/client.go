@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/nrc-no/core-kafka/pkg/auth"
 	"io/ioutil"
 	"net/http"
 )
@@ -21,6 +22,7 @@ func NewClient(basePath string) *Client {
 
 type ListOptions struct {
 	PartyTypeID string `json:"partyTypeId" bson:"partyTypeId"`
+	SearchParam string `json:"searchParam" bson:"searchParam"`
 }
 
 func (c *Client) List(ctx context.Context, listOptions ListOptions) (*PartyList, error) {
@@ -29,6 +31,7 @@ func (c *Client) List(ctx context.Context, listOptions ListOptions) (*PartyList,
 		return nil, err
 	}
 	req = req.WithContext(ctx)
+	auth.SetAuthorizationHeader(ctx, req)
 	qry := req.URL.Query()
 	if len(listOptions.PartyTypeID) > 0 {
 		qry.Set("partyTypeId", listOptions.PartyTypeID)
@@ -58,6 +61,8 @@ func (c *Client) Get(ctx context.Context, id string) (*Party, error) {
 	if err != nil {
 		return nil, err
 	}
+	req = req.WithContext(ctx)
+	auth.SetAuthorizationHeader(ctx, req)
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -87,6 +92,7 @@ func (c *Client) Update(ctx context.Context, party *Party) (*Party, error) {
 		return nil, err
 	}
 	req = req.WithContext(ctx)
+	auth.SetAuthorizationHeader(ctx, req)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)
@@ -117,6 +123,7 @@ func (c *Client) Create(ctx context.Context, party *Party) (*Party, error) {
 		return nil, err
 	}
 	req = req.WithContext(ctx)
+	auth.SetAuthorizationHeader(ctx, req)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)

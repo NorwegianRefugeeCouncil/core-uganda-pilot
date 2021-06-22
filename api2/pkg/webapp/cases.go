@@ -62,6 +62,8 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 	var party *parties.Party
 	var partyList *parties.PartyList
 
+	var referrals *cases.CaseList
+
 	g, waitCtx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
@@ -93,7 +95,17 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 	kaseTypes, err = h.caseTypeClient.List(waitCtx, casetypes.ListOptions{
 		PartyTypeIDs: party.PartyTypeIDs,
 	})
-
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	referrals, err = h.caseClient.List(waitCtx, cases.ListOptions{
+		ParentID: kase.ID,
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	qry := req.URL.Query()
 
 	var referralCaseType *casetypes.CaseType
@@ -111,6 +123,7 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 		"Party":            party,
 		"Parties":          partyList,
 		"ReferralCaseType": referralCaseType,
+		"Referrals":        referrals,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -181,6 +194,7 @@ func (h *Handler) PostCase(ctx context.Context, id string, w http.ResponseWriter
 	partyId := req.Form.Get("partyId")
 	description := req.Form.Get("description")
 	done := req.Form.Get("done")
+	parentId := req.Form.Get("parentId")
 
 	if id == "" {
 		_, err := h.caseClient.Create(ctx, &cases.Case{
@@ -188,6 +202,7 @@ func (h *Handler) PostCase(ctx context.Context, id string, w http.ResponseWriter
 			PartyID:     partyId,
 			Description: description,
 			Done:        false,
+			ParentID:    parentId,
 		})
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -200,6 +215,7 @@ func (h *Handler) PostCase(ctx context.Context, id string, w http.ResponseWriter
 			PartyID:     partyId,
 			Description: description,
 			Done:        done == "on",
+			ParentID:    parentId,
 		})
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

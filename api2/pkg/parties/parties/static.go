@@ -8,7 +8,8 @@ import (
 )
 
 func Init(ctx context.Context, store *Store) error {
-	if _, err := store.collection.Indexes().CreateOne(ctx, mongo.IndexModel{
+	// ID index
+	if _, err := store.Collection.Indexes().CreateOne(ctx, mongo.IndexModel{
 		Keys:    bson.M{"id": 1},
 		Options: options.Index().SetUnique(true),
 	}); err != nil {

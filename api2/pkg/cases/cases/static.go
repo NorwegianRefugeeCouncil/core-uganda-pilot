@@ -30,14 +30,6 @@ var ChildCare = Case{
 	Done:        true,
 }
 
-var Eviction = Case{
-	ID:          "1189c79a-e1df-4af8-8f0b-19619970d410",
-	CaseTypeID:  "9a5ee26f-8df3-447c-a4b0-ed7f36710d95",
-	PartyID:     "0bde06f0-5416-4514-9c5a-794a2cc2f1b7",
-	Description: "Support in eviction case",
-	Done:        false,
-}
-
 func Init(ctx context.Context, store *Store) error {
 	if _, err := store.collection.Indexes().CreateOne(ctx,
 		mongo.IndexModel{
@@ -51,7 +43,6 @@ func Init(ctx context.Context, store *Store) error {
 		DomesticAbuse,
 		MonthlyAllowance,
 		ChildCare,
-		Eviction,
 	} {
 		if err := store.Create(ctx, &kase); err != nil {
 			if !mongo.IsDuplicateKeyError(err) {
