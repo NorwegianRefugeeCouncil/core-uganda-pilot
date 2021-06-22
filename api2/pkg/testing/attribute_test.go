@@ -21,7 +21,9 @@ func (s *Suite) TestAttributesCRUD() {
 		},
 		},
 	})
-	assert.NoError(s.T(), err)
+	if !assert.NoError(s.T(), err) {
+		return
+	}
 	assert.NotEmpty(s.T(), created.ID)
 	assert.Equal(s.T(), mock, created.Name)
 	assert.Empty(s.T(), created.ValueType)

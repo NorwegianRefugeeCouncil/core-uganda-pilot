@@ -7,6 +7,7 @@ import (
 	"encoding/gob"
 	"fmt"
 	"github.com/coreos/go-oidc/v3/oidc"
+	"github.com/nrc-no/core-kafka/pkg/keycloak"
 	"github.com/nrc-no/core-kafka/pkg/sessionmanager"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
@@ -14,16 +15,22 @@ import (
 	"net/url"
 )
 
+const IdTokenKey = "id_token"
+const AccessTokenKey = "access_token"
+const ProfileKey = "profile"
+const AuthorizationHeaderKey = "authorization_header"
+
 type Profile struct {
 	Email         string `json:"email"`
 	EmailVerified bool   `json:"email_verified"`
 }
 
 type Handler struct {
-	Store    sessionmanager.Store
-	Provider *oidc.Provider
-	Config   oauth2.Config
-	Verifier *oidc.IDTokenVerifier
+	Store          sessionmanager.Store
+	Provider       *oidc.Provider
+	Config         oauth2.Config
+	Verifier       *oidc.IDTokenVerifier
+	KeycloakClient *keycloak.Client
 }
 
 func init() {
@@ -33,7 +40,12 @@ func init() {
 	gob.Register(&Profile{})
 }
 
-func NewHandler(ctx context.Context, issuerURL, clientID, clientSecret, redirectURL string, store sessionmanager.Store) (*Handler, error) {
+func NewHandler(
+	ctx context.Context,
+	issuerURL, clientID, clientSecret, redirectURL string,
+	store sessionmanager.Store,
+	keycloakClient *keycloak.Client,
+) (*Handler, error) {
 	l := logrus.WithField("logger", "auth.NewHandler")
 	provider, err := oidc.NewProvider(ctx, issuerURL)
 	if err != nil {
@@ -50,16 +62,23 @@ func NewHandler(ctx context.Context, issuerURL, clientID, clientSecret, redirect
 		Scopes:       []string{oidc.ScopeOpenID, "profile", "email"},
 	}
 
-	verifier := provider.Verifier(&oidc.Config{
+	oidcConfig := &oidc.Config{
 		ClientID: clientID,
-	})
+	}
+
+	verifier := provider.Verifier(oidcConfig)
 
 	return &Handler{
-		Provider: provider,
-		Config:   oauth2Config,
-		Verifier: verifier,
-		Store:    store,
+		Provider:       provider,
+		Config:         oauth2Config,
+		Verifier:       verifier,
+		Store:          store,
+		KeycloakClient: keycloakClient,
 	}, nil
+}
+
+func (h *Handler) ClearSession(ctx context.Context) {
+	h.Store.Destroy(ctx)
 }
 
 func (h *Handler) Callback(w http.ResponseWriter, req *http.Request) {
@@ -71,19 +90,22 @@ func (h *Handler) Callback(w http.ResponseWriter, req *http.Request) {
 	// retrieve the state query parameter, compare it to the session
 	// query parameter. The two should match
 
-	if req.URL.Query().Get("state") != h.Store.GetString(ctx, "state") {
+	if req.URL.Query().Get("state") != h.Store.PopString(ctx, "state") {
 		err := fmt.Errorf("invalid state parameter")
 		l.WithError(err).Warnf("")
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		h.ClearSession(ctx)
 		return
 	}
 
 	// Perform code exchange to get oauth token
-	oauth2Token, err := h.Config.Exchange(ctx, req.URL.Query().Get("code"))
+	code := req.URL.Query().Get("code")
+	oauth2Token, err := h.Config.Exchange(ctx, code)
 	if err != nil {
-		err = fmt.Errorf("no token found: %v", err)
+		err = fmt.Errorf("failed to exchange token: %v", err)
 		l.WithError(err).Warnf("")
 		http.Error(w, err.Error(), http.StatusUnauthorized)
+		h.ClearSession(ctx)
 		return
 	}
 
@@ -93,6 +115,7 @@ func (h *Handler) Callback(w http.ResponseWriter, req *http.Request) {
 		err := fmt.Errorf("missing id token")
 		l.WithError(err).Warnf("")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.ClearSession(ctx)
 		return
 	}
 
@@ -102,6 +125,7 @@ func (h *Handler) Callback(w http.ResponseWriter, req *http.Request) {
 		err := fmt.Errorf("failed to verify ID token: %v", err)
 		l.WithError(err).Warnf("")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.ClearSession(ctx)
 		return
 	}
 
@@ -111,18 +135,19 @@ func (h *Handler) Callback(w http.ResponseWriter, req *http.Request) {
 		err := fmt.Errorf("failed to unmarshal id token claims: %v", err)
 		l.WithError(err).Warnf("")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.ClearSession(ctx)
 		return
 	}
 
 	// Populate session with ID & Access tokens, profile
-	h.Store.Put(ctx, "id_token", rawIDToken)
-	h.Store.Put(ctx, "access_token", oauth2Token.AccessToken)
-	h.Store.Put(ctx, "profile", profile)
+	h.Store.Put(ctx, IdTokenKey, rawIDToken)
+	h.Store.Put(ctx, AccessTokenKey, oauth2Token.AccessToken)
+	h.Store.Put(ctx, ProfileKey, profile)
 
 	// Redirect to some page
 	// TODO: perhaps redirect to the initial requested page?
 	w.WriteHeader(http.StatusTemporaryRedirect)
-	w.Header().Set("Location", "/")
+	w.Header().Set("Location", "/individuals")
 
 }
 
@@ -138,6 +163,7 @@ func (h *Handler) Login(w http.ResponseWriter, req *http.Request) {
 		err := fmt.Errorf("failed to create random state: %v", err)
 		l.WithError(err).Errorf("")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.ClearSession(ctx)
 		return
 	}
 
@@ -167,6 +193,7 @@ func (h *Handler) Logout(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		l.WithError(err).Warnf("failed to parse logout url")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.ClearSession(ctx)
 		return
 	}
 
@@ -178,6 +205,7 @@ func (h *Handler) Logout(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		l.WithError(err).Warnf("failed to parse return url")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.ClearSession(ctx)
 		return
 	}
 

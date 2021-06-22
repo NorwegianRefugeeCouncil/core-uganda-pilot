@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"gopkg.in/square/go-jose.v2"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -32,17 +33,73 @@ func NewClient(baseURL, realmName, clientID, clientSecret string) (*Client, erro
 }
 
 type TokenResponse struct {
-	AccessToken string `json:"access_token"`
+	AccessToken  string `json:"access_token"`
+	TokenType    string `json:"token_type"`
+	ExpiresIn    int    `json:"expires_in"`
+	Scope        string `json:"scope"`
+	RefreshToken string `json:"refresh_token"`
+	IDToken      string `json:"id_token"`
 }
 
-func (c *Client) GetToken() (string, error) {
+func (c *Client) GetPublicKeys() (*jose.JSONWebKeySet, error) {
+
+	reqUrl := fmt.Sprintf("%s/auth/realms/%s/protocol/openid-connect/certs", c.baseUrl.String(), c.realmName)
+	req, err := http.NewRequest("GET", reqUrl, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected status code: %d", res.StatusCode)
+	}
+
+	bodyBytes, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	jwks := jose.JSONWebKeySet{}
+	if err := json.Unmarshal(bodyBytes, &jwks); err != nil {
+		return nil, err
+	}
+
+	return &jwks, nil
+
+}
+
+type GetTokenOptions struct {
+	Code         string
+	GrantType    string
+	Password     string
+	Username     string
+	RedirectURI  string
+	RefreshToken string
+	Scope        string
+}
+
+func (c *Client) GetToken(options GetTokenOptions) (string, error) {
 
 	reqUrl := fmt.Sprintf("%s/auth/realms/%s/protocol/openid-connect/token", c.baseUrl.String(), c.realmName)
 
 	data := url.Values{}
+
+	if len(options.Password) > 0 {
+		data.Set("password", options.Password)
+	}
+	if len(options.Username) > 0 {
+		data.Set("username", options.Username)
+	}
+	if len(options.GrantType) > 0 {
+		data.Set("grant_type", options.GrantType)
+	}
+
 	data.Set("client_id", c.clientID)
 	data.Set("client_secret", c.clientSecret)
-	data.Set("grant_type", "client_credentials")
 
 	encoded := data.Encode()
 

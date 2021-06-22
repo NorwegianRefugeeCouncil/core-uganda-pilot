@@ -2,6 +2,9 @@ package testing
 
 import (
 	"context"
+	"fmt"
+	"github.com/nrc-no/core-kafka/pkg/auth"
+	"github.com/nrc-no/core-kafka/pkg/keycloak"
 	"github.com/nrc-no/core-kafka/pkg/server"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -24,7 +27,7 @@ func (s *Suite) SetupSuite() {
 		MongoDatabase:        "e2e",
 		MongoUsername:        "root",
 		MongoPassword:        "example",
-		KeycloakClientID:     "",
+		KeycloakClientID:     "api",
 		KeycloakClientSecret: "e6486272-039d-430f-b3c7-47887aa9e206",
 		KeycloakBaseURL:      "http://localhost:8080",
 		KeycloakRealmName:    "nrc",
@@ -45,6 +48,20 @@ func (s *Suite) SetupSuite() {
 	}
 
 	s.server = completedConfig.New(s.ctx)
+
+	token, err := s.server.KeycloakClient.GetToken(keycloak.GetTokenOptions{
+		GrantType: "password",
+		Password:  "admin",
+		Username:  "admin",
+	})
+	if !assert.NoError(s.T(), err) {
+		return
+	}
+
+	s.ctx = context.WithValue(s.ctx, auth.AccessTokenKey, token)
+
+	fmt.Println(token)
+
 }
 
 func TestSuite(t *testing.T) {
