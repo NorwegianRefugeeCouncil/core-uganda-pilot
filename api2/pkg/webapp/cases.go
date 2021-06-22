@@ -222,7 +222,11 @@ func (h *Handler) PostCase(ctx context.Context, id string, w http.ResponseWriter
 			return
 		}
 	}
-	w.Header().Set("Location", "/cases")
+	if len(parentId) > 0 {
+		w.Header().Set("Location", "/cases/"+parentId)
+	} else {
+		w.Header().Set("Location", "/cases")
+	}
 	w.WriteHeader(http.StatusSeeOther)
 
 }
