@@ -2,42 +2,63 @@
     <!doctype html>
     <html lang="en">
     {{template "head"}}
-    <body class="bg-light">
+    <style>
+        td:first-child, th:first-child {
+            padding-left: 1rem;
+        }
+        td, th {
+            padding-top: 1rem !important;
+            padding-bottom: 1rem !important;
+        }
+    </style>
+    <body>
     {{template "navbar"}}
-
+    {{template "case_nav"}}
     <div class="container mt-4">
         <div class="row">
             <div class="col">
                 <a href='/cases/new' class='btn btn-primary mb-3'>Open New Case</a>
-                <table class="table table-striped table-hover">
-                    <thead>
-                    <tr>
-                        <th scope="col">Case Type</th>
-                        <th scope="col">Party</th>
-                        <th scope="col">Status</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {{ if .Cases.Items}}
-                        {{$caseTypes := .CaseTypes}}
-                        {{$parties := .Parties}}
-                        {{ range .Cases.Items }}
-                            <tr onclick="window.location.href = '/cases/{{.ID}}'" style="cursor: pointer;">
-                                {{$casetype := $caseTypes.FindByID .CaseTypeID}}
-                                <td>{{$casetype.Name}}</td>
-                                {{$party := $parties.FindByID .PartyID}}
-                                <td>{{$party.String}}</td>
-                                <td>{{if .Done}}<span class="text-success">Done</span>{{else}}<span class="text-danger">Open</span>{{end}}
-                                </td>
+                <div class="card">
+                    <div class="card-body p-0">
+
+
+                        <table class="table table-hover">
+                            <thead>
+                            <tr class="border-0 bg-light">
+                                <th class="border-0 fw-normal" scope="col"  style="width: 3rem"><i class="bi bi-record-circle"></i></th>
+                                <th class="border-0 fw-normal" scope="col">Case Type</th>
+                                <th class="border-0 fw-normal"  scope="col">Party</th>
                             </tr>
-                        {{end}}
-                    {{else}}
-                        <tr>
-                            <td colspan="3">No open cases</td>
-                        </tr>
-                    {{end}}
-                    </tbody>
-                </table>
+                            </thead>
+                            <tbody>
+                            {{ if .Cases.Items}}
+                                {{$caseTypes := .CaseTypes}}
+                                {{$parties := .Parties}}
+                                {{ range .Cases.Items }}
+                                    <tr onclick="window.location.href = '/cases/{{.ID}}'" style="cursor: pointer;">
+                                        {{$casetype := $caseTypes.FindByID .CaseTypeID}}
+                                        <td style="width: 3rem">
+                                            {{if .Done}}
+                                                <i class="bi bi-record-circle text-danger"></i>
+                                            {{else}}
+                                                <i class="bi bi-record-circle text-success"></i>
+                                            {{end}}
+                                        </td>
+                                        <td class="fw-bold">{{$casetype.Name}}</td>
+                                        {{$party := $parties.FindByID .PartyID}}
+                                        <td>{{$party.String}}</td>
+
+                                    </tr>
+                                {{end}}
+                            {{else}}
+                                <tr>
+                                    <td colspan="3">No open cases</td>
+                                </tr>
+                            {{end}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
