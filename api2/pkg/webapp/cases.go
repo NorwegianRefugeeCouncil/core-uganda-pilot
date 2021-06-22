@@ -76,12 +76,6 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 
 	g.Go(func() error {
 		var err error
-		kaseTypes, err = h.caseTypeClient.List(waitCtx, casetypes.ListOptions{})
-		return err
-	})
-
-	g.Go(func() error {
-		var err error
 		partyList, err = h.partyClient.List(waitCtx, parties.ListOptions{})
 		return err
 	})
@@ -96,6 +90,9 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	kaseTypes, err = h.caseTypeClient.List(waitCtx, casetypes.ListOptions{
+		PartyTypes: party.PartyTypes,
+	})
 
 	qry := req.URL.Query()
 	refCaseTypeID := qry.Get("refCaseTypeId")
