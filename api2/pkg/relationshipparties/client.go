@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/nrc-no/core-kafka/pkg/auth"
 	"github.com/nrc-no/core-kafka/pkg/parties/parties"
 	"io/ioutil"
 	"net/http"
@@ -25,6 +26,7 @@ func (c *Client) PickParty(ctx context.Context, pickPartyOptions parties.ListOpt
 		return nil, err
 	}
 	req = req.WithContext(ctx)
+	auth.SetAuthorizationHeader(ctx, req)
 	q := req.URL.Query()
 
 	if len(pickPartyOptions.PartyTypeID) != 0 {
