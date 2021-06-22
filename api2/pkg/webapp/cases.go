@@ -92,14 +92,14 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	kaseTypes, err = h.caseTypeClient.List(waitCtx, casetypes.ListOptions{
+	kaseTypes, err = h.caseTypeClient.List(ctx, casetypes.ListOptions{
 		PartyTypeIDs: party.PartyTypeIDs,
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	referrals, err = h.caseClient.List(waitCtx, cases.ListOptions{
+	referrals, err = h.caseClient.List(ctx, cases.ListOptions{
 		ParentID: kase.ID,
 	})
 	if err != nil {
