@@ -266,7 +266,7 @@
             const relationshipTypeSelector = document.getElementById("relationshipTypeSelector")
             let selectedRelationshipType = relationshipTypes.find(
                 e => e.id === relationshipTypeSelector.value
-                    && e.firstPartyRole == relationshipTypeSelector.options[relationshipTypeSelector.selectedIndex].text
+                    && e.firstPartyRole === relationshipTypeSelector.options[relationshipTypeSelector.selectedIndex].text
             )
             return selectedRelationshipType.secondPartyType
         }
@@ -288,7 +288,7 @@
             let firstName = ""
             Object.keys(attrs).forEach(
                 k => {
-                    if (k == "{{.FirstNameAttribute.ID}}"){
+                    if (k == "{{.FirstNameAttribute.ID}}") {
                         firstName = attrs[k]
                     }
                 }
@@ -301,7 +301,7 @@
             let lastName = ""
             Object.keys(attrs).forEach(
                 k => {
-                    if (k == "{{.LastNameAttribute.ID}}"){
+                    if (k == "{{.LastNameAttribute.ID}}") {
                         lastName = attrs[k]
                     }
                 }
@@ -388,10 +388,9 @@
 
                     const li = document.createElement('li');
                     li.className = "list-group-item";
-
-                    const firstPartyName = parties.find(({id}) => id === relationship.firstParty).name;
-                    const firstPartyRole = relationshipTypes.find(({id}) => id === relationship.relationshipTypeId).firstPartyRole;
-                    const secondPartyName = parties.find(({id}) => id === relationship.secondParty).name;
+                    const firstPartyName = parties.find(({id}) => id === relationship.firstParty)?.name;
+                    const firstPartyRole = relationshipTypes.find(({id}) => id === relationship.relationshipTypeId)?.firstPartyRole;
+                    const secondPartyName = parties.find(({id}) => id === relationship.secondParty)?.name;
 
                     const firstPartyLinkNode = document.createElement("a")
                     firstPartyLinkNode.href = "/individuals/" + firstPartyLinkNode
