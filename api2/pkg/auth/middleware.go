@@ -32,6 +32,7 @@ func (h *Handler) Authenticate() func(handler http.Handler) http.Handler {
 					accessToken = strings.TrimPrefix(bearerStr, "Bearer ")
 				} else {
 					doNext(req, false)
+					return
 				}
 
 				jkws, err := h.KeycloakClient.GetPublicKeys()
@@ -53,6 +54,8 @@ func (h *Handler) Authenticate() func(handler http.Handler) http.Handler {
 					doNext(req, false)
 					return
 				}
+
+				h.Store.Put(ctx, AccessTokenKey, accessToken)
 
 			}
 
