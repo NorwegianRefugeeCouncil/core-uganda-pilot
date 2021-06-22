@@ -25,6 +25,18 @@
                         {{$party.String}}
                     </a>
 
+                    {{if .Case.ParentID}}
+                        <div class="mb-3">
+                            <span>Referred from </span>
+                            <a href="/cases/{{.Case.ParentID}}">
+                                {{$caseType := $caseTypes.FindByID $caseTypeId}}
+                                {{$caseType.Name}}
+                            </a>
+                            <span> by </span>
+                            <span>&lt;User&gt;</span>
+                        </div>
+                    {{end}}
+
                     <h3 class="mb-3">
                         {{if .Case.Done}}
                             <span class="badge rounded-pill bg-danger">Closed</span>
