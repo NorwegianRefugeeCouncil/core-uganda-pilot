@@ -32,6 +32,9 @@ func (c *Client) List(ctx context.Context, listOptions ListOptions) (*CaseList, 
 	if len(listOptions.CaseTypeID) > 0 {
 		qry.Set("caseTypeId", listOptions.CaseTypeID)
 	}
+	if len(listOptions.ParentID) > 0 {
+		qry.Set("parentId", listOptions.ParentID)
+	}
 	req.URL.RawQuery = qry.Encode()
 
 	req.Header.Set("Accept", "application/json")

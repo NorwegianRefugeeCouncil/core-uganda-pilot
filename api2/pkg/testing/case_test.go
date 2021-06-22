@@ -18,12 +18,14 @@ func (s *Suite) TestCaseCRUD() {
 		PartyID:     mock,
 		Description: mock,
 		Done:        false,
+		ParentID:    mock,
 	})
 	assert.NoError(s.T(), err)
 	assert.Equal(s.T(), mock, created.CaseTypeID)
 	assert.Equal(s.T(), mock, created.PartyID)
 	assert.Equal(s.T(), mock, created.Description)
 	assert.False(s.T(), created.Done)
+	assert.Equal(s.T(), mock, created.ParentID)
 
 	// GET
 	get, err := s.server.CaseClient.Get(s.ctx, created.ID)
@@ -38,6 +40,7 @@ func (s *Suite) TestCaseCRUD() {
 		PartyID:     updatedMock,
 		Description: updatedMock,
 		Done:        !created.Done,
+		ParentID:    updatedMock,
 	})
 	assert.NoError(s.T(), err)
 	assert.Equal(s.T(), created.ID, updated.ID)
@@ -45,6 +48,7 @@ func (s *Suite) TestCaseCRUD() {
 	assert.Equal(s.T(), updatedMock, updated.PartyID)
 	assert.Equal(s.T(), updatedMock, updated.Description)
 	assert.False(s.T(), created.Done == updated.Done)
+	assert.Equal(s.T(), updatedMock, updated.ParentID)
 
 	// GET
 	get, err = s.server.CaseClient.Get(s.ctx, updated.ID)
@@ -181,4 +185,6 @@ func (s *Suite) TestCaseList() {
 		}
 
 	})
+
+	// TODO test filtering by ParentID
 }

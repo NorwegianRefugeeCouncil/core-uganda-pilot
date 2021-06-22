@@ -47,6 +47,7 @@ func (h *Handler) Get(w http.ResponseWriter, req *http.Request) {
 type ListOptions struct {
 	PartyID    string
 	CaseTypeID string
+	ParentID   string
 }
 
 func (h *Handler) List(w http.ResponseWriter, req *http.Request) {
@@ -57,6 +58,7 @@ func (h *Handler) List(w http.ResponseWriter, req *http.Request) {
 	listOptions := &ListOptions{
 		PartyID:    qry.Get("partyId"),
 		CaseTypeID: qry.Get("caseTypeId"),
+		ParentID:   qry.Get("parentId"),
 	}
 
 	ret, err := h.store.List(ctx, *listOptions)
@@ -107,6 +109,7 @@ func (h *Handler) Put(w http.ResponseWriter, req *http.Request) {
 	r.CaseTypeID = payload.CaseTypeID
 	r.Description = payload.Description
 	r.Done = payload.Done
+	r.ParentID = payload.ParentID
 
 	if err := h.store.Update(ctx, r); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
