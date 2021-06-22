@@ -76,12 +76,6 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 
 	g.Go(func() error {
 		var err error
-		kaseTypes, err = h.caseTypeClient.List(waitCtx, casetypes.ListOptions{})
-		return err
-	})
-
-	g.Go(func() error {
-		var err error
 		partyList, err = h.partyClient.List(waitCtx, parties.ListOptions{})
 		return err
 	})
@@ -91,17 +85,32 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	party, err := h.partyClient.Get(waitCtx, kase.PartyID)
+	party, err := h.partyClient.Get(ctx, kase.PartyID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	kaseTypes, err = h.caseTypeClient.List(waitCtx, casetypes.ListOptions{
+		PartyTypes: party.PartyTypes,
+	})
+
+	qry := req.URL.Query()
+
+	var referralCaseType *casetypes.CaseType
+	if referralCaseTypeID := qry.Get("referralCaseTypeId"); len(referralCaseTypeID) > 0 {
+		referralCaseType, err = h.caseTypeClient.Get(ctx, referralCaseTypeID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
 
 	if err := h.template.ExecuteTemplate(w, "case", map[string]interface{}{
-		"Case":      kase,
-		"CaseTypes": kaseTypes,
-		"Party":     party,
-		"Parties":   partyList,
+		"Case":             kase,
+		"CaseTypes":        kaseTypes,
+		"Party":            party,
+		"Parties":          partyList,
+		"ReferralCaseType": referralCaseType,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -127,19 +136,28 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 		return err
 	})
 
-	listOptions := &parties.ListOptions{} // TODO
-	g.Go(func() error {
-		var err error
-		p, err = partiesClient.List(waitCtx, *listOptions)
-		return err
-	})
-
 	if err := g.Wait(); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	qry := req.URL.Query()
+	caseTypeID := qry.Get("caseTypeId")
+	partyTypeID := ""
+	for _, caseType := range caseTypes.Items {
+		if caseType.ID == caseTypeID {
+			partyTypeID = caseType.PartyTypeID
+		}
+	}
+
+	listOptions := parties.ListOptions{
+		PartyTypeID: partyTypeID,
+	}
+
+	p, err := partiesClient.List(waitCtx, listOptions)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 
 	if err := h.template.ExecuteTemplate(w, "casenew", map[string]interface{}{
 		"PartyID":    qry.Get("partyId"),

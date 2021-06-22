@@ -1,7 +1,6 @@
 package individuals
 
 import (
-	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
 	"github.com/nrc-no/core-kafka/pkg/parties/parties"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"strings"
@@ -30,7 +29,7 @@ func NewIndividual(ID string) *Individual {
 
 func (b *Individual) FindAge() *int {
 
-	birthDate := b.FindAttributeValue(attributes.BirthDateAttribute.ID)
+	birthDate := b.FindAttributeValue(BirthDateAttribute.ID)
 	if birthDate == nil {
 		return nil
 	}
@@ -60,8 +59,8 @@ func (b *Individual) FindAge() *int {
 
 func (b *Individual) String() string {
 
-	firstNames, hasFirstNames := b.Attributes[attributes.FirstNameAttribute.ID]
-	lastNames, hasLastNames := b.Attributes[attributes.LastNameAttribute.ID]
+	firstNames, hasFirstNames := b.Attributes[FirstNameAttribute.ID]
+	lastNames, hasLastNames := b.Attributes[LastNameAttribute.ID]
 
 	if hasFirstNames && hasLastNames {
 		return strings.ToUpper(lastNames[0]) + ", " + firstNames[0]
