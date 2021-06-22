@@ -6,7 +6,7 @@ type Attribute struct {
 	ID                           string                 `json:"id" bson:"id"`
 	Name                         string                 `json:"name" bson:"name"`
 	ValueType                    expressions.ValueType  `json:"type" bson:"type"`
-	PartyTypes                   []string               `json:"partyTypes" bson:"partyTypes"`
+	PartyTypeIDs                 []string               `json:"partyTypeIds" bson:"partyTypeIds"`
 	IsPersonallyIdentifiableInfo bool                   `json:"isPii" bson:"isPii"`
 	Translations                 []AttributeTranslation `json:"translations" bson:"translations"`
 }

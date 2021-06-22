@@ -34,12 +34,14 @@ func (s *Store) List(ctx context.Context, listOptions ListOptions) (*CaseList, e
 
 	filter := bson.M{}
 
-	if len(listOptions.PartyID) != 0 {
+	if len(listOptions.PartyID) > 0 {
 		filter["partyId"] = listOptions.PartyID
 	}
-
-	if len(listOptions.CaseTypeID) != 0 {
+	if len(listOptions.CaseTypeID) > 0 {
 		filter["caseTypeId"] = listOptions.CaseTypeID
+	}
+	if len(listOptions.ParentID) > 0 {
+		filter["parentId"] = listOptions.ParentID
 	}
 
 	res, err := s.collection.Find(ctx, filter)
@@ -78,6 +80,7 @@ func (s *Store) Update(ctx context.Context, kase *Case) error {
 			"partyId":     kase.PartyID,
 			"description": kase.Description,
 			"done":        kase.Done,
+			"parentId":    kase.ParentID,
 		},
 	})
 	if err != nil {

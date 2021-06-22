@@ -34,9 +34,9 @@ func (s *Store) List(ctx context.Context, options ListOptions) (*CaseTypeList, e
 
 	filter := bson.M{}
 
-	if len(options.PartyTypes) > 0 {
+	if len(options.PartyTypeIDs) > 0 {
 		filter["partyTypeId"] = bson.M{
-			"$in": options.PartyTypes,
+			"$in": options.PartyTypeIDs,
 		}
 	}
 

@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/nrc-no/core-kafka/pkg/auth"
 	uuid "github.com/satori/go.uuid"
 	"io/ioutil"
 	"net/http"
@@ -21,7 +22,7 @@ func NewClient(basePath string) *Client {
 }
 
 type ListOptions struct {
-	PartyTypes []string `json:"partyTypes"`
+	PartyTypeIDs []string `json:"partyTypeIds"`
 }
 
 func (c *Client) List(ctx context.Context, listOptions ListOptions) (*CaseTypeList, error) {
@@ -30,14 +31,17 @@ func (c *Client) List(ctx context.Context, listOptions ListOptions) (*CaseTypeLi
 		return nil, err
 	}
 
+	req = req.WithContext(ctx)
+	auth.SetAuthorizationHeader(ctx, req)
+
 	qry := req.URL.Query()
-	if len(listOptions.PartyTypes) > 0 {
-		for _, partyType := range listOptions.PartyTypes {
+	if len(listOptions.PartyTypeIDs) > 0 {
+		for _, partyType := range listOptions.PartyTypeIDs {
 			_, err := uuid.FromString(partyType)
 			if err != nil {
 				return nil, fmt.Errorf("invalid party type: %v", err)
 			}
-			qry.Add("partyTypes", partyType)
+			qry.Add("partyTypeIds", partyType)
 		}
 	}
 	req.URL.RawQuery = qry.Encode()
@@ -66,6 +70,8 @@ func (c *Client) Get(ctx context.Context, id string) (*CaseType, error) {
 	if err != nil {
 		return nil, err
 	}
+	req = req.WithContext(ctx)
+	auth.SetAuthorizationHeader(ctx, req)
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -95,6 +101,7 @@ func (c *Client) Update(ctx context.Context, caseType *CaseType) (*CaseType, err
 		return nil, err
 	}
 	req = req.WithContext(ctx)
+	auth.SetAuthorizationHeader(ctx, req)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)
@@ -125,6 +132,7 @@ func (c *Client) Create(ctx context.Context, caseType *CaseType) (*CaseType, err
 		return nil, err
 	}
 	req = req.WithContext(ctx)
+	auth.SetAuthorizationHeader(ctx, req)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)

@@ -20,7 +20,7 @@ var FirstNameAttribute = attributes.Attribute{
 		},
 	},
 	IsPersonallyIdentifiableInfo: true,
-	PartyTypes: []string{
+	PartyTypeIDs: []string{
 		partytypes.IndividualPartyType.ID,
 	},
 }
@@ -36,7 +36,7 @@ var LastNameAttribute = attributes.Attribute{
 		},
 	},
 	IsPersonallyIdentifiableInfo: true,
-	PartyTypes: []string{
+	PartyTypeIDs: []string{
 		partytypes.IndividualPartyType.ID,
 	},
 }
@@ -52,7 +52,7 @@ var BirthDateAttribute = attributes.Attribute{
 		},
 	},
 	IsPersonallyIdentifiableInfo: true,
-	PartyTypes: []string{
+	PartyTypeIDs: []string{
 		partytypes.IndividualPartyType.ID,
 	},
 }
@@ -66,8 +66,8 @@ var BuiltinIndividualAttributes = []attributes.Attribute{
 var mockIndividuals = []*Individual{
 	{
 		Party: &parties.Party{
-			ID:         "0bde06f0-5416-4514-9c5a-794a2cc2f1b7",
-			PartyTypes: []string{},
+			ID:           "0bde06f0-5416-4514-9c5a-794a2cc2f1b7",
+			PartyTypeIDs: []string{},
 			Attributes: map[string][]string{
 				FirstNameAttribute.ID: {"John"},
 				LastNameAttribute.ID:  {"Doe"},
@@ -75,8 +75,8 @@ var mockIndividuals = []*Individual{
 		},
 	}, {
 		Party: &parties.Party{
-			ID:         "ab7a1620-f34e-4811-8534-853167ed7944",
-			PartyTypes: []string{},
+			ID:           "ab7a1620-f34e-4811-8534-853167ed7944",
+			PartyTypeIDs: []string{},
 			Attributes: map[string][]string{
 				FirstNameAttribute.ID: {"Mary"},
 				LastNameAttribute.ID:  {"Poppins"},
@@ -84,8 +84,8 @@ var mockIndividuals = []*Individual{
 		},
 	}, {
 		Party: &parties.Party{
-			ID:         "40b30fb0-c392-4798-9400-bda3e5837867",
-			PartyTypes: []string{},
+			ID:           "40b30fb0-c392-4798-9400-bda3e5837867",
+			PartyTypeIDs: []string{},
 			Attributes: map[string][]string{
 				FirstNameAttribute.ID: {"Bo"},
 				LastNameAttribute.ID:  {"Diddley"},

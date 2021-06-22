@@ -133,7 +133,7 @@ func (h *Handler) Update(w http.ResponseWriter, req *http.Request) {
 	a.Name = payload.Name
 	a.Translations = payload.Translations
 	a.ValueType = payload.ValueType
-	a.PartyTypes = payload.PartyTypes
+	a.PartyTypeIDs = payload.PartyTypeIDs
 	a.IsPersonallyIdentifiableInfo = payload.IsPersonallyIdentifiableInfo
 
 	if err := h.store.Update(ctx, a); err != nil {

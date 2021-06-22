@@ -19,7 +19,7 @@ var TeamNameAttribute = attributes.Attribute{
 	ID:                           "18f410a3-6fde-45ce-80c7-fc5d92b85870",
 	Name:                         "teamName",
 	ValueType:                    expressions.ValueType{},
-	PartyTypes:                   []string{PartyType.ID},
+	PartyTypeIDs:                 []string{PartyType.ID},
 	IsPersonallyIdentifiableInfo: false,
 	Translations: []attributes.AttributeTranslation{
 		{

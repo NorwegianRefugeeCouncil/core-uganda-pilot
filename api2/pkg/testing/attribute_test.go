@@ -12,7 +12,7 @@ func (s *Suite) TestAttributesCRUD() {
 	created, err := s.server.AttributeClient.Create(s.ctx, &attributes.Attribute{
 		Name:                         mock,
 		ValueType:                    expressions.ValueType{},
-		PartyTypes:                   []string{mock},
+		PartyTypeIDs:                 []string{mock},
 		IsPersonallyIdentifiableInfo: false,
 		Translations: []attributes.AttributeTranslation{{
 			Locale:           mock,
@@ -21,11 +21,13 @@ func (s *Suite) TestAttributesCRUD() {
 		},
 		},
 	})
-	assert.NoError(s.T(), err)
+	if !assert.NoError(s.T(), err) {
+		return
+	}
 	assert.NotEmpty(s.T(), created.ID)
 	assert.Equal(s.T(), mock, created.Name)
 	assert.Empty(s.T(), created.ValueType)
-	assert.Equal(s.T(), []string{mock}, created.PartyTypes)
+	assert.Equal(s.T(), []string{mock}, created.PartyTypeIDs)
 	assert.False(s.T(), created.IsPersonallyIdentifiableInfo)
 	assert.Equal(s.T(), []attributes.AttributeTranslation{{
 		Locale:           mock,
@@ -46,7 +48,7 @@ func (s *Suite) TestAttributesCRUD() {
 		ID:                           created.ID,
 		Name:                         updatedMock,
 		ValueType:                    expressions.ValueType{},
-		PartyTypes:                   []string{updatedMock},
+		PartyTypeIDs:                 []string{updatedMock},
 		IsPersonallyIdentifiableInfo: false,
 		Translations: []attributes.AttributeTranslation{{
 			Locale:           updatedMock,
@@ -59,7 +61,7 @@ func (s *Suite) TestAttributesCRUD() {
 	assert.Equal(s.T(), created.ID, updated.ID)
 	assert.Equal(s.T(), updatedMock, updated.Name)
 	assert.Empty(s.T(), updated.ValueType)
-	assert.Equal(s.T(), []string{updatedMock}, updated.PartyTypes)
+	assert.Equal(s.T(), []string{updatedMock}, updated.PartyTypeIDs)
 	assert.False(s.T(), updated.IsPersonallyIdentifiableInfo)
 	assert.Equal(s.T(), []attributes.AttributeTranslation{{
 		Locale:           updatedMock,
