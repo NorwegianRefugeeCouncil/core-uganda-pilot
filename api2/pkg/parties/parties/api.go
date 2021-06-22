@@ -1,11 +1,5 @@
 package parties
 
-import (
-	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
-	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
-	"strings"
-)
-
 type PartyAttributes map[string][]string
 
 func (a PartyAttributes) Get(key string) string {
@@ -48,12 +42,7 @@ func (p *Party) AddPartyType(partyType string) {
 }
 
 func (p *Party) String() string {
-	if p.HasPartyType(partytypes.IndividualPartyType.ID) {
-		firstName := p.Attributes.Get(attributes.FirstNameAttribute.ID)
-		lastName := p.Attributes.Get(attributes.LastNameAttribute.ID)
-		return strings.ToUpper(lastName) + ", " + firstName
-	}
-	return ""
+	return p.ID
 }
 
 type PartyList struct {
