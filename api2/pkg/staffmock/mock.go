@@ -2,9 +2,9 @@ package staffmock
 
 import (
 	"context"
+	"github.com/nrc-no/core-kafka/pkg/individuals"
 	"github.com/nrc-no/core-kafka/pkg/memberships"
 	"github.com/nrc-no/core-kafka/pkg/organizations"
-	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
 	"github.com/nrc-no/core-kafka/pkg/parties/parties"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"github.com/nrc-no/core-kafka/pkg/staff"
@@ -118,8 +118,8 @@ func individual(id, firstName, lastName string) parties.Party {
 			partytypes.IndividualPartyType.ID,
 		},
 		Attributes: map[string][]string{
-			attributes.FirstNameAttribute.ID: {firstName},
-			attributes.LastNameAttribute.ID:  {lastName},
+			individuals.FirstNameAttribute.ID: {firstName},
+			individuals.LastNameAttribute.ID:  {lastName},
 		},
 	}
 	people = append(people, &party)
