@@ -72,7 +72,7 @@
                                     {{if $caseType}}
                                         <a class="list-group-item list-group-item-action d-flex align-items-center"
                                            href="/cases/{{.ID}}">
-                                            <div>{{$caseType.Name}}</div>
+                                            <div>{{if $caseType}}{{$caseType.Name}}{{end}}</div>
                                             <div style="flex-grow: 1"></div>
                                             {{if .Done}}
                                                 <span class="badge rounded-pill bg-danger">Closed</span>

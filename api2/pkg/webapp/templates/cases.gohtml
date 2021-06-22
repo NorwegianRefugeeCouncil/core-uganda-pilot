@@ -44,9 +44,9 @@
                                                 <i class="bi bi-record-circle text-success"></i>
                                             {{end}}
                                         </td>
-                                        <td class="fw-bold">{{$casetype.Name}}</td>
+                                        <td class="fw-bold">{{if $casetype}}{{$casetype.Name}}{{end}}</td>
                                         {{$party := $parties.FindByID .PartyID}}
-                                        <td>{{$party.String}}</td>
+                                        <td>{{if $party}}{{$party.String}}{{end}}</td>
 
                                     </tr>
                                 {{end}}
