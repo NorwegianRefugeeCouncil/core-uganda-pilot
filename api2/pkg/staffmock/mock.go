@@ -114,7 +114,7 @@ var people []*parties.Party
 func individual(id, firstName, lastName string) parties.Party {
 	var party = parties.Party{
 		ID: id,
-		PartyTypes: []string{
+		PartyTypeIds: []string{
 			partytypes.IndividualPartyType.ID,
 		},
 		Attributes: map[string][]string{

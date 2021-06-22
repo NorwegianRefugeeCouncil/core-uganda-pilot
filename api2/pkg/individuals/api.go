@@ -19,7 +19,7 @@ func NewIndividual(ID string) *Individual {
 	return &Individual{
 		Party: &parties.Party{
 			ID: ID,
-			PartyTypes: []string{
+			PartyTypeIds: []string{
 				partytypes.IndividualPartyType.ID,
 			},
 			Attributes: map[string][]string{},

@@ -41,7 +41,7 @@ func mapPartyToTeam(p *parties.Party) *Team {
 func mapTeamToParty(team *Team) *parties.Party {
 	return &parties.Party{
 		ID: team.ID,
-		PartyTypes: []string{
+		PartyTypeIds: []string{
 			PartyType.ID,
 		},
 		Attributes: map[string][]string{

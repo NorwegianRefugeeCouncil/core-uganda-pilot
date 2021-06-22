@@ -34,7 +34,7 @@ func (s *Store) List(ctx context.Context, listOptions ListOptions) (*PartyList, 
 	filter := bson.M{}
 
 	if len(listOptions.PartyTypeID) > 0 {
-		filter["partyTypes"] = listOptions.PartyTypeID
+		filter["partyTypeIds"] = listOptions.PartyTypeID
 	}
 
 	res, err := s.collection.Find(ctx, filter)
@@ -69,8 +69,8 @@ func (s *Store) Update(ctx context.Context, party *Party) error {
 		"id": party.ID,
 	}, bson.M{
 		"$set": bson.M{
-			"attributes": party.Attributes,
-			"partyTypes": party.PartyTypes,
+			"attributes":   party.Attributes,
+			"partyTypeIds": party.PartyTypeIds,
 		},
 	})
 	if err != nil {

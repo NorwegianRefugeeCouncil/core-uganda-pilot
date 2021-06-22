@@ -91,7 +91,7 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	kaseTypes, err = h.caseTypeClient.List(waitCtx, casetypes.ListOptions{
-		PartyTypes: party.PartyTypes,
+		PartyTypeIDs: party.PartyTypeIds,
 	})
 
 	qry := req.URL.Query()
