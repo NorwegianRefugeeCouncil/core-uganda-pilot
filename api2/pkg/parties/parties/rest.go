@@ -96,7 +96,7 @@ func (h *Handler) Put(w http.ResponseWriter, req *http.Request) {
 	}
 
 	r.Attributes = payload.Attributes
-	r.PartyTypeIds = payload.PartyTypeIds
+	r.PartyTypeIDs = payload.PartyTypeIDs
 
 	if err := h.store.Update(ctx, r); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

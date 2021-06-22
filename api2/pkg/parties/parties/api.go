@@ -21,12 +21,12 @@ func (a PartyAttributes) Add(key, value string) {
 
 type Party struct {
 	ID           string          `json:"id" bson:"id"`
-	PartyTypeIds []string        `json:"partyTypeIds" bson:"partyTypeIds"`
+	PartyTypeIDs []string        `json:"partyTypeIds" bson:"partyTypeIds"`
 	Attributes   PartyAttributes `json:"attributes" bson:"attributes"`
 }
 
 func (p *Party) HasPartyType(partyType string) bool {
-	for _, p := range p.PartyTypeIds {
+	for _, p := range p.PartyTypeIDs {
 		if p == partyType {
 			return true
 		}
@@ -38,7 +38,7 @@ func (p *Party) AddPartyType(partyType string) {
 	if p.HasPartyType(partyType) {
 		return
 	}
-	p.PartyTypeIds = append(p.PartyTypeIds, partyType)
+	p.PartyTypeIDs = append(p.PartyTypeIDs, partyType)
 }
 
 func (p *Party) String() string {

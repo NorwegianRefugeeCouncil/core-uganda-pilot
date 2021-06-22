@@ -70,7 +70,7 @@ func (s *Store) Update(ctx context.Context, party *Party) error {
 	}, bson.M{
 		"$set": bson.M{
 			"attributes":   party.Attributes,
-			"partyTypeIds": party.PartyTypeIds,
+			"partyTypeIds": party.PartyTypeIDs,
 		},
 	})
 	if err != nil {

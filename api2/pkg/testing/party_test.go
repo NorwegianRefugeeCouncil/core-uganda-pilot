@@ -11,11 +11,11 @@ func (s *Suite) TestPartyCRUD() {
 	// CREATE
 	mock := "create"
 	created, err := s.server.PartyClient.Create(s.ctx, &parties.Party{
-		PartyTypeIds: []string{mock},
+		PartyTypeIDs: []string{mock},
 		Attributes:   parties.PartyAttributes{"mock": []string{mock}},
 	})
 	assert.NoError(s.T(), err)
-	assert.Equal(s.T(), []string{mock}, created.PartyTypeIds)
+	assert.Equal(s.T(), []string{mock}, created.PartyTypeIDs)
 	assert.Equal(s.T(), parties.PartyAttributes{"mock": []string{mock}}, created.Attributes)
 
 	// GET
@@ -27,12 +27,12 @@ func (s *Suite) TestPartyCRUD() {
 	updatedMock := "update"
 	updated, err := s.server.PartyClient.Update(s.ctx, &parties.Party{
 		ID:           created.ID,
-		PartyTypeIds: []string{updatedMock},
+		PartyTypeIDs: []string{updatedMock},
 		Attributes:   parties.PartyAttributes{"mock": []string{updatedMock}},
 	})
 	assert.NoError(s.T(), err)
 	assert.Equal(s.T(), created.ID, updated.ID)
-	assert.Equal(s.T(), []string{updatedMock}, updated.PartyTypeIds)
+	assert.Equal(s.T(), []string{updatedMock}, updated.PartyTypeIDs)
 	assert.Equal(s.T(), parties.PartyAttributes{"mock": []string{updatedMock}}, updated.Attributes)
 
 	// GET

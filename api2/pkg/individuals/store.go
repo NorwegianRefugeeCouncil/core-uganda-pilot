@@ -34,7 +34,7 @@ func (s *Store) Upsert(ctx context.Context, individual *Individual) error {
 	}, bson.M{
 		"$set": bson.M{
 			"attributes":   individual.Attributes,
-			"partyTypeIds": individual.PartyTypeIds,
+			"partyTypeIds": individual.PartyTypeIDs,
 		},
 	}, options.Update().SetUpsert(true))
 
@@ -60,9 +60,9 @@ func (s *Store) List(ctx context.Context, listOptions ListOptions) (*IndividualL
 
 	filter := bson.M{}
 
-	if len(listOptions.PartyTypeIds) > 0 {
+	if len(listOptions.PartyTypeIDs) > 0 {
 		filter["partyTypeIds"] = bson.M{
-			"$all": listOptions.PartyTypeIds,
+			"$all": listOptions.PartyTypeIDs,
 		}
 	}
 

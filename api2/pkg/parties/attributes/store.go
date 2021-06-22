@@ -74,7 +74,7 @@ func (s *Store) Update(ctx context.Context, attribute *Attribute) error {
 			"translations":                 attribute.Translations,
 			"valueType":                    attribute.ValueType,
 			"isPersonallyIdentifiableInfo": attribute.IsPersonallyIdentifiableInfo,
-			"partyTypeIds":                 attribute.PartyTypeIds,
+			"partyTypeIds":                 attribute.PartyTypeIDs,
 		},
 	})
 	if err != nil {
