@@ -21,7 +21,7 @@ func NewClient(basePath string) *Client {
 }
 
 type ListOptions struct {
-	PartyTypes []string `json:"partyTypes" bson:"partyTypes"`
+	PartyTypeIDs []string `json:"partyTypeIds" bson:"partyTypeIds"`
 }
 
 func (c *Client) List(ctx context.Context, listOptions ListOptions) (*IndividualList, error) {
@@ -34,9 +34,9 @@ func (c *Client) List(ctx context.Context, listOptions ListOptions) (*Individual
 	auth.SetAuthorizationHeader(ctx, req)
 
 	qry := req.URL.Query()
-	if len(listOptions.PartyTypes) > 0 {
-		for _, partyType := range listOptions.PartyTypes {
-			qry.Add("partyTypes", partyType)
+	if len(listOptions.PartyTypeIDs) > 0 {
+		for _, partyType := range listOptions.PartyTypeIDs {
+			qry.Add("partyTypeIds", partyType)
 		}
 	}
 	req.URL.RawQuery = qry.Encode()

@@ -22,7 +22,7 @@ func NewClient(basePath string) *Client {
 }
 
 type ListOptions struct {
-	PartyTypes []string `json:"partyTypes"`
+	PartyTypeIDs []string `json:"partyTypeIds"`
 }
 
 func (c *Client) List(ctx context.Context, listOptions ListOptions) (*CaseTypeList, error) {
@@ -35,13 +35,13 @@ func (c *Client) List(ctx context.Context, listOptions ListOptions) (*CaseTypeLi
 	auth.SetAuthorizationHeader(ctx, req)
 
 	qry := req.URL.Query()
-	if len(listOptions.PartyTypes) > 0 {
-		for _, partyType := range listOptions.PartyTypes {
+	if len(listOptions.PartyTypeIDs) > 0 {
+		for _, partyType := range listOptions.PartyTypeIDs {
 			_, err := uuid.FromString(partyType)
 			if err != nil {
 				return nil, fmt.Errorf("invalid party type: %v", err)
 			}
-			qry.Add("partyTypes", partyType)
+			qry.Add("partyTypeIds", partyType)
 		}
 	}
 	req.URL.RawQuery = qry.Encode()

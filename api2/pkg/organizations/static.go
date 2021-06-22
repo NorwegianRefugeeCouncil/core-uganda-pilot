@@ -19,7 +19,7 @@ var LegalNameAttribute = attributes.Attribute{
 			ShortFormulation: "Legal Name",
 		},
 	},
-	PartyTypes: []string{
+	PartyTypeIDs: []string{
 		PartyType.ID,
 	},
 }
@@ -27,7 +27,7 @@ var LegalNameAttribute = attributes.Attribute{
 var NRC = Organization{
 	Party: &parties.Party{
 		ID: "d0dc08b4-5e6b-461b-a444-09e02e69a8e1",
-		PartyTypes: []string{
+		PartyTypeIDs: []string{
 			PartyType.ID,
 		},
 		Attributes: map[string][]string{
