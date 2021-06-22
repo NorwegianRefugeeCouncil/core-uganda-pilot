@@ -2,7 +2,6 @@ package auth
 
 import (
 	"context"
-	"fmt"
 	jwt2 "gopkg.in/square/go-jose.v2/jwt"
 	"net/http"
 	"strings"
@@ -54,8 +53,6 @@ func (h *Handler) Authenticate() func(handler http.Handler) http.Handler {
 					doNext(req, false)
 					return
 				}
-
-				fmt.Printf("%#v", jwtToken)
 
 			}
 
