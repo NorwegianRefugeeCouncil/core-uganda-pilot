@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
+	"github.com/nrc-no/core-kafka/pkg/teams"
 	"golang.org/x/sync/errgroup"
 	"net/http"
 )
@@ -53,6 +54,7 @@ func (h *Handler) CaseType(w http.ResponseWriter, req *http.Request) {
 
 	var caseType *casetypes.CaseType
 	var partyTypes *partytypes.PartyTypeList
+	var teamsData *teams.TeamList
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
@@ -72,6 +74,12 @@ func (h *Handler) CaseType(w http.ResponseWriter, req *http.Request) {
 		return err
 	})
 
+	g.Go(func() error {
+		var err error
+		teamsData, err = h.teamClient.List(ctx, teams.ListOptions{})
+		return err
+	})
+
 	if err := g.Wait(); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -85,6 +93,7 @@ func (h *Handler) CaseType(w http.ResponseWriter, req *http.Request) {
 	if err := h.template.ExecuteTemplate(w, "casetype", map[string]interface{}{
 		"CaseType":   caseType,
 		"PartyTypes": partyTypes,
+		"Teams":      teamsData,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -102,8 +111,15 @@ func (h *Handler) NewCaseType(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	teamsData, err := h.teamClient.List(ctx, teams.ListOptions{})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	if err := h.template.ExecuteTemplate(w, "casetype", map[string]interface{}{
 		"PartyTypes": p,
+		"Teams":      teamsData,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
