@@ -26,7 +26,7 @@ func (c *Client) List(ctx context.Context) (*AttributeList, error) {
 		return nil, err
 	}
 	req = req.WithContext(ctx)
-	auth.Forward(ctx, req)
+	auth.SetAuthorizationHeader(ctx, req)
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -56,7 +56,7 @@ func (c *Client) Get(ctx context.Context, id string) (*Attribute, error) {
 		return nil, err
 	}
 	req = req.WithContext(ctx)
-	auth.Forward(ctx, req)
+	auth.SetAuthorizationHeader(ctx, req)
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -86,7 +86,7 @@ func (c *Client) Update(ctx context.Context, attribute *Attribute) (*Attribute, 
 		return nil, err
 	}
 	req = req.WithContext(ctx)
-	auth.Forward(ctx, req)
+	auth.SetAuthorizationHeader(ctx, req)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)
@@ -117,7 +117,7 @@ func (c *Client) Create(ctx context.Context, attribute *Attribute) (*Attribute, 
 		return nil, err
 	}
 	req = req.WithContext(ctx)
-	auth.Forward(ctx, req)
+	auth.SetAuthorizationHeader(ctx, req)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)

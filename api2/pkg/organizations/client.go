@@ -25,7 +25,7 @@ func (c *Client) Get(ctx context.Context, id string) (*Organization, error) {
 		return nil, err
 	}
 	req = req.WithContext(ctx)
-	auth.Forward(ctx, req)
+	auth.SetAuthorizationHeader(ctx, req)
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
