@@ -1,5 +1,6 @@
 {{define "case"}}
     {{$caseId := .Case.ID}}
+    {{$caseTypes := .CaseTypes }}
     {{$partyId := .Case.PartyID}}
     {{$party := .Parties.FindByID $partyId}}
     {{$caseTypeId := .Case.CaseTypeID}}
@@ -13,17 +14,16 @@
             <div class="card-body">
                 <h4 class="card-title">Case View</h4>
                 <form action="/cases/{{$caseId}}" method="post">
-                    <input type="hidden" name="caseTypeId" value="{{$caseTypeId}}">
                     <div class="form-floating mb-3">
                         <select id="case-type" class="form-select" disabled>
-                            {{range .CaseTypes.Items}}
-                                <option {{if eq .ID $caseTypeId}}selected{{end}} value="{{.ID}}">{{.Name}}</option>
+                            {{range $caseTypes.Items}}
+                                {{if eq .ID $caseTypeId}}
+                                    <option selected value="{{.ID}}">{{.Name}}</option>
+                                {{end}}
                             {{end}}
                         </select>
                         <label for="case-type">Type</label>
                     </div>
-
-                    <input type="hidden" name="partyId" value="{{$partyId}}">
                     <div class="mb-3">
                         <h6 class="text-muted">Party</h6>
                         <a class="btn btn-outline-secondary" href="/individuals/{{$partyId}}">
@@ -46,6 +46,22 @@
                 </form>
             </div>
         </div>
+        {{if .Referrals}}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title">Referrals</h4>
+                    <ul class="list-group">
+                        {{ range .Referrals.Items }}
+                            {{$caseType := $caseTypes.FindByID .CaseTypeID}}
+                            {{if $caseType}}
+                                <a class="list-group-item list-group-item-action d-flex"
+                                   href="/cases/{{.ID}}"><div>{{$caseType.Name}}</div><div style="flex-grow: 1"></div>{{if .Done}}<div class="text-success">Done</div>{{else}}<div class="text-danger">Open</div>{{end}}</a>
+                            {{end}}
+                        {{ end }}
+                    </ul>
+                </div>
+            </div>
+        {{end}}
         <div class="card mb-4">
             <div class="card-body">
                 <div class="dropdown mb-3">
@@ -56,7 +72,8 @@
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="referral-dropdown">
                         {{ range .CaseTypes.Items }}
-                            <li><a class="dropdown-item" href="/cases/{{$caseId}}?referralCaseTypeId={{.ID}}">{{.Name}}</a>
+                            <li><a class="dropdown-item"
+                                   href="/cases/{{$caseId}}?referralCaseTypeId={{.ID}}">{{.Name}}</a>
                             </li>
                         {{end}}
                     </ul>
@@ -75,6 +92,7 @@
                             <label for="referral-case-type">Referral Case Type</label>
                         </div>
                         <input type="hidden" name="partyId" value="{{$partyId}}">
+                        <input type="hidden" name="parentId" value="{{.Case.ID}}">
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
                             <textarea

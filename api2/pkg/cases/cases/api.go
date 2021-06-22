@@ -6,6 +6,7 @@ type Case struct {
 	PartyID     string `json:"partyId" bson:"partyId"`
 	Description string `json:"description" bson:"description"`
 	Done        bool   `json:"done" bson:"done"`
+	ParentID    string `json:"parentId" bson:"parentId"`
 }
 
 type CaseList struct {
