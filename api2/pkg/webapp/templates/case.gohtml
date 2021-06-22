@@ -43,17 +43,26 @@
                                   rows="20"
                                   class="form-control"
                                   name="description"
+                                  {{ if .ReferralCaseType}}disabled{{end}}
                                   style="height: 100px">{{if .Case}}{{.Case.Description}}{{end}}</textarea>
                         <label for="description-textarea">Description</label>
                     </div>
                     <div class="form-check mb-3">
-                        <input id="done-input" class="form-check-input" type="checkbox" name="done"
-                               {{if .Case.Done}}checked{{end}}>
+                        <input id="done-input"
+                               class="form-check-input"
+                               type="checkbox"
+                               {{ if .ReferralCaseType}}disabled{{end}}
+                               name="done"
+                                {{if .Case.Done}}checked{{end}}>
                         <label class="form-check-label" for="done-input">
                             Done
                         </label>
                     </div>
-                    <button class="mb-5 btn btn-primary" type="submit">Save</button>
+                    <button class="mb-5 btn btn-primary"
+                            type="submit"
+                            {{ if .ReferralCaseType}}disabled{{end}}>
+                        Save
+                    </button>
                     {{if .Referrals}}
                         <h4>Referrals</h4>
                         <ul class="list-group mb-3">
@@ -79,47 +88,57 @@
                         </ul>
 
                     {{end}}
-                    <div class="dropdown mb-3">
-                        <button class="btn btn-primary dropdown-toggle"
-                                type="button"
-                                id="referral-dropdown"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                            Refer this case
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="referral-dropdown">
-                            {{ range .CaseTypes.Items }}
-                                <li><a class="dropdown-item"
-                                       href="/cases/{{$caseId}}?referralCaseTypeId={{.ID}}">{{.Name}}</a>
-                                </li>
-                            {{end}}
-                        </ul>
-                    </div>
+
                     {{ if .ReferralCaseType}}
-                        <form action="/cases" method="post">
-                            <div class="form-floating mb-3">
-                                <input type="hidden" name="caseTypeId" value="{{.ReferralCaseType.ID}}">
-                                <select
-                                        id="referral-case-type"
-                                        class="form-select"
-                                        disabled
-                                >
-                                    <option>{{ .ReferralCaseType.Name }}</option>
-                                </select>
-                                <label for="referral-case-type">Referral Case Type</label>
+                        <div class="card shadow">
+                            <div class="card-body">
+                                <form action="/cases" method="post">
+                                    <div class="form-floating mb-3">
+                                        <input type="hidden" name="caseTypeId" value="{{.ReferralCaseType.ID}}">
+                                        <select
+                                                id="referral-case-type"
+                                                class="form-select"
+                                                disabled
+                                        >
+                                            <option>{{ .ReferralCaseType.Name }}</option>
+                                        </select>
+                                        <label for="referral-case-type">Referral Case Type</label>
+                                    </div>
+                                    <input type="hidden" name="partyId" value="{{$partyId}}">
+                                    <input type="hidden" name="parentId" value="{{.Case.ID}}">
+                                    <div class="mb-3">
+                                        <label for="description" class="form-label">Description</label>
+                                        <textarea
+                                                autofocus
+                                                id="description"
+                                                name="description"
+                                                class="form-control"
+                                                rows="3"></textarea>
+                                    </div>
+                                    <button class="btn btn-primary" type="submit">Submit referral</button>
+                                    <a href="/cases/{{.Case.ID}}" class="btn btn-outline-secondary"
+                                       type="submit">Cancel</a>
+                                </form>
                             </div>
-                            <input type="hidden" name="partyId" value="{{$partyId}}">
-                            <input type="hidden" name="parentId" value="{{.Case.ID}}">
-                            <div class="mb-3">
-                                <label for="description" class="form-label">Description</label>
-                                <textarea
-                                        autofocus
-                                        id="description"
-                                        name="description"
-                                        class="form-control"
-                                        rows="3"></textarea>
-                            </div>
-                            <button class="btn btn-primary" type="submit">Save</button>
-                        </form>
+                        </div>
+
+                    {{else}}
+                        <div class="dropdown mb-3">
+                            <button class="btn btn-primary dropdown-toggle"
+                                    type="button"
+                                    id="referral-dropdown"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                Refer this case
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="referral-dropdown">
+                                {{ range .CaseTypes.Items }}
+                                    <li><a class="dropdown-item"
+                                           href="/cases/{{$caseId}}?referralCaseTypeId={{.ID}}">{{.Name}}</a>
+                                    </li>
+                                {{end}}
+                            </ul>
+                        </div>
+
                     {{end}}
                 </div>
             </div>
