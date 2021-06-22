@@ -74,6 +74,7 @@ func (s *Store) Update(ctx context.Context, caseType *CaseType) error {
 		"$set": bson.M{
 			"name":        caseType.Name,
 			"partyTypeId": caseType.PartyTypeID,
+			"teamId":      caseType.TeamID,
 		},
 	})
 	if err != nil {
