@@ -397,14 +397,14 @@
                     console.log(parties)
 
                     const firstPartyLinkNode = document.createElement("a")
-                    firstPartyLinkNode.href = "/individuals/" + firstPartyLinkNode
+                    firstPartyLinkNode.href = "/individuals/" + relationship.firstParty
                     firstPartyLinkNode.innerText = firstPartyName
 
                     const roleSpanNode = document.createElement("span")
                     roleSpanNode.innerText = firstPartyRole.substring(0, 1).toLocaleLowerCase() + firstPartyRole.substring(1)
 
                     const secondPartyLinkNode = document.createElement("a")
-                    secondPartyLinkNode.href = "/individuals/" + secondPartyLinkNode
+                    secondPartyLinkNode.href = "/individuals/" + relationship.secondParty
                     secondPartyLinkNode.innerText = secondPartyName
 
                     const space1Node = document.createElement("span")
