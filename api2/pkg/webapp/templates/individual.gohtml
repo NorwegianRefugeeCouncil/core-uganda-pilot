@@ -281,6 +281,7 @@
         // from the dropdown
         const onPartyListItemClick = (event) => {
             document.getElementById("partySelector").value = event.target.textContent
+            document.getElementById("partySelector").setAttribute("data-party-id", event.target.id)
         }
 
         // Get First Name from party attribute list, or return blank
@@ -317,7 +318,7 @@
                 let typeSelector = document.getElementById('relationshipTypeSelector');
                 let partySelector = document.getElementById('partySelector');
                 let relationshipType = typeSelector.value;
-                let party = partySelector.textContent;
+                let party = partySelector.getAttribute("data-party-id");
                 addRelationship(relationshipType, party);
             };
 
@@ -391,6 +392,9 @@
                     const firstPartyName = parties.find(({id}) => id === relationship.firstParty)?.name;
                     const firstPartyRole = relationshipTypes.find(({id}) => id === relationship.relationshipTypeId)?.firstPartyRole;
                     const secondPartyName = parties.find(({id}) => id === relationship.secondParty)?.name;
+
+                    console.log(relationship)
+                    console.log(parties)
 
                     const firstPartyLinkNode = document.createElement("a")
                     firstPartyLinkNode.href = "/individuals/" + firstPartyLinkNode
