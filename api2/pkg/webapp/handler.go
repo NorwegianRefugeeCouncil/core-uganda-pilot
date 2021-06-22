@@ -11,23 +11,25 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationships"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationshiptypes"
+	"github.com/nrc-no/core-kafka/pkg/relationshipparties"
 	"github.com/nrc-no/core-kafka/pkg/teams"
 	"html/template"
 	"os"
 )
 
 type Handler struct {
-	template               *template.Template
-	attributeClient        *attributes.Client
-	individualClient       *individuals.Client
-	relationshipTypeClient *relationshiptypes.Client
-	relationshipClient     *relationships.Client
-	partyClient            *parties.Client
-	partyTypeClient        *partytypes.Client
-	caseTypeClient         *casetypes.Client
-	caseClient             *cases.Client
-	teamClient             *teams.Client
-	membershipClient       *memberships.Client
+	template                  *template.Template
+	attributeClient           *attributes.Client
+	individualClient          *individuals.Client
+	relationshipTypeClient    *relationshiptypes.Client
+	relationshipClient        *relationships.Client
+	partyClient               *parties.Client
+	partyTypeClient           *partytypes.Client
+	caseTypeClient            *casetypes.Client
+	caseClient                *cases.Client
+	relationshipPartiesClient *relationshipparties.Client
+	teamClient                *teams.Client
+	membershipClient          *memberships.Client
 }
 
 type Options struct {
@@ -44,6 +46,7 @@ func NewHandler(
 	PartyTypeClient *partytypes.Client,
 	CaseTypeClient *casetypes.Client,
 	CaseClient *cases.Client,
+	RelationshipPartiesClient *relationshipparties.Client,
 	TeamClient *teams.Client,
 	MembershipClient *memberships.Client,
 ) (*Handler, error) {
@@ -63,17 +66,18 @@ func NewHandler(
 		return nil, err
 	}
 	h := &Handler{
-		template:               t,
-		attributeClient:        AttributeClient,
-		individualClient:       IndividualClient,
-		relationshipTypeClient: RelationshipTypeClient,
-		relationshipClient:     RelationshipClient,
-		partyClient:            PartyClient,
-		partyTypeClient:        PartyTypeClient,
-		caseTypeClient:         CaseTypeClient,
-		caseClient:             CaseClient,
-		teamClient:             TeamClient,
-		membershipClient:       MembershipClient,
+		template:                  t,
+		attributeClient:           AttributeClient,
+		individualClient:          IndividualClient,
+		relationshipTypeClient:    RelationshipTypeClient,
+		relationshipClient:        RelationshipClient,
+		partyClient:               PartyClient,
+		partyTypeClient:           PartyTypeClient,
+		caseTypeClient:            CaseTypeClient,
+		caseClient:                CaseClient,
+		relationshipPartiesClient: RelationshipPartiesClient,
+		teamClient:                TeamClient,
+		membershipClient:          MembershipClient,
 	}
 	return h, nil
 }

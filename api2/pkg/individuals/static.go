@@ -5,6 +5,7 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
 	"github.com/nrc-no/core-kafka/pkg/parties/parties"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -107,7 +108,7 @@ func SeedDatabase(ctx context.Context, store *Store) error {
 	return nil
 }
 
-func Init(ctx context.Context, store *attributes.Store) error {
+func Init(ctx context.Context, store *attributes.Store, partiesStore *parties.Store) error {
 	for _, attribute := range BuiltinIndividualAttributes {
 		if err := store.Create(ctx, &attribute); err != nil {
 			if !mongo.IsDuplicateKeyError(err) {
@@ -117,6 +118,20 @@ func Init(ctx context.Context, store *attributes.Store) error {
 				return err
 			}
 		}
+	}
+
+	// first name and last name full text index
+	if _, err := partiesStore.Collection.Indexes().CreateOne(ctx, mongo.IndexModel{
+		Keys: bson.D{
+			{
+				"attributes." + FirstNameAttribute.ID, "text",
+			},
+			{
+				"attributes." + LastNameAttribute.ID, "text",
+			},
+		},
+	}); err != nil {
+		return err
 	}
 	return nil
 }
