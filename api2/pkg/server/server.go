@@ -229,10 +229,14 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		c.KeycloakClientID,
 		c.KeycloakClientSecret,
 		"http://localhost:9000/auth/callback",
-		c.SessionManager)
+		c.SessionManager,
+		c.KeycloakClient)
 	if err != nil {
 		panic(err)
 	}
+
+	router.Use(authHandler.Authenticate())
+
 	router.Path("/auth/login").Methods("GET").HandlerFunc(authHandler.Login)
 	router.Path("/auth/logout").Methods("GET").HandlerFunc(authHandler.Logout)
 	router.Path("/auth/callback").Methods("GET").HandlerFunc(authHandler.Callback)

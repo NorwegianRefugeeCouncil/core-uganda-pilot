@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/nrc-no/core-kafka/pkg/auth"
 	"io/ioutil"
 	"net/http"
 
@@ -27,6 +28,7 @@ func (c *Client) List(ctx context.Context, listOptions ListOptions) (*Relationsh
 		return nil, err
 	}
 	req = req.WithContext(ctx)
+	auth.Forward(ctx, req)
 	q := req.URL.Query()
 	if len(listOptions.PartyType) != 0 {
 		q.Set("partyType", listOptions.PartyType)
@@ -58,6 +60,7 @@ func (c *Client) Get(ctx context.Context, id string) (*RelationshipType, error) 
 		return nil, err
 	}
 	req = req.WithContext(ctx)
+	auth.Forward(ctx, req)
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -90,6 +93,7 @@ func (c *Client) Update(ctx context.Context, relationshipType *RelationshipType)
 		return nil, err
 	}
 	req = req.WithContext(ctx)
+	auth.Forward(ctx, req)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)
@@ -120,6 +124,7 @@ func (c *Client) Create(ctx context.Context, relationshipType *RelationshipType)
 		return nil, err
 	}
 	req = req.WithContext(ctx)
+	auth.Forward(ctx, req)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)

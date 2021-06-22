@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"gopkg.in/square/go-jose.v2"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -33,6 +34,37 @@ func NewClient(baseURL, realmName, clientID, clientSecret string) (*Client, erro
 
 type TokenResponse struct {
 	AccessToken string `json:"access_token"`
+}
+
+func (c *Client) GetPublicKeys() (*jose.JSONWebKeySet, error) {
+
+	reqUrl := fmt.Sprintf("%s/auth/realms/%s/protocol/openid-connect/certs", c.baseUrl.String(), c.realmName)
+	req, err := http.NewRequest("GET", reqUrl, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected status code: %d", res.StatusCode)
+	}
+
+	bodyBytes, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	jwks := jose.JSONWebKeySet{}
+	if err := json.Unmarshal(bodyBytes, &jwks); err != nil {
+		return nil, err
+	}
+
+	return &jwks, nil
+
 }
 
 func (c *Client) GetToken() (string, error) {

@@ -23,4 +23,5 @@ require (
 	golang.org/x/oauth2 v0.0.0-20210615190721-d04028783cf1 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	gopkg.in/boj/redistore.v1 v1.0.0-20160128113310-fc113767cd6b // indirect
+	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
 )

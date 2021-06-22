@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/nrc-no/core-kafka/pkg/auth"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"io/ioutil"
 	"net/http"
@@ -25,7 +26,8 @@ func (c *Client) List(ctx context.Context) (*partytypes.PartyTypeSchemaList, err
 	if err != nil {
 		return nil, err
 	}
-
+	req = req.WithContext(ctx)
+	auth.Forward(ctx, req)
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -50,6 +52,8 @@ func (c *Client) Get(ctx context.Context, id string) (*partytypes.PartyTypeSchem
 	if err != nil {
 		return nil, err
 	}
+	req = req.WithContext(ctx)
+	auth.Forward(ctx, req)
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -79,6 +83,7 @@ func (c *Client) Update(ctx context.Context, partyTypeSchema *partytypes.PartyTy
 		return nil, err
 	}
 	req = req.WithContext(ctx)
+	auth.Forward(ctx, req)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)
@@ -109,6 +114,7 @@ func (c *Client) Create(ctx context.Context, partyTypeSchema *partytypes.PartyTy
 		return nil, err
 	}
 	req = req.WithContext(ctx)
+	auth.Forward(ctx, req)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)
