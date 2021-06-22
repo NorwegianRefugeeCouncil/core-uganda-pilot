@@ -251,21 +251,6 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.Path("/apis/v1/attributes/{id}").Methods("PUT").HandlerFunc(attributeHandler.Update)
 	router.Path("/apis/v1/attributes").Methods("POST").HandlerFunc(attributeHandler.Post)
 
-	// individuals
-	individualsStore := individuals.NewStore(c.MongoClient, c.MongoDatabase)
-	if err := individuals.Init(ctx, attributeStore); err != nil {
-		panic(err)
-	}
-	individualHandler := individuals.NewHandler(individualsStore)
-	individualClient := individuals.NewClient(c.Address)
-	if err := individuals.SeedDatabase(ctx, individualsStore); err != nil {
-		panic(err)
-	}
-	router.Path("/apis/v1/individuals").Methods("GET").HandlerFunc(individualHandler.List)
-	router.Path("/apis/v1/individuals/{id}").Methods("GET").HandlerFunc(individualHandler.Get)
-	router.Path("/apis/v1/individuals/{id}").Methods("PUT").HandlerFunc(individualHandler.Update)
-	router.Path("/apis/v1/individuals").Methods("POST").HandlerFunc(individualHandler.Create)
-
 	// RelationshipTypes
 	relationshipTypeStore := relationshiptypes.NewStore(c.MongoClient, c.MongoDatabase)
 	if err := relationshiptypes.Init(ctx, relationshipTypeStore); err != nil {
@@ -323,12 +308,24 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 
 	// Relationship <> Parties
 	relationshipPartiesStore := relationshipparties.NewStore(partyStore)
-	if err := relationshipparties.Init(ctx, relationshipPartiesStore); err != nil {
-		panic(err)
-	}
 	relationshipPartiesHandler := relationshipparties.NewHandler(relationshipPartiesStore)
 	relationshipPartiesClient := relationshipparties.NewClient(c.Address)
 	router.Path("/apis/v1/relationshipparties/picker").Methods("GET").HandlerFunc(relationshipPartiesHandler.PickParty)
+
+	// individuals
+	individualsStore := individuals.NewStore(c.MongoClient, c.MongoDatabase)
+	if err := individuals.Init(ctx, attributeStore, partyStore); err != nil {
+		panic(err)
+	}
+	individualHandler := individuals.NewHandler(individualsStore)
+	individualClient := individuals.NewClient(c.Address)
+	if err := individuals.SeedDatabase(ctx, individualsStore); err != nil {
+		panic(err)
+	}
+	router.Path("/apis/v1/individuals").Methods("GET").HandlerFunc(individualHandler.List)
+	router.Path("/apis/v1/individuals/{id}").Methods("GET").HandlerFunc(individualHandler.Get)
+	router.Path("/apis/v1/individuals/{id}").Methods("PUT").HandlerFunc(individualHandler.Update)
+	router.Path("/apis/v1/individuals").Methods("POST").HandlerFunc(individualHandler.Create)
 
 	// Cases
 	caseStore := cases.NewStore(c.MongoClient, c.MongoDatabase)

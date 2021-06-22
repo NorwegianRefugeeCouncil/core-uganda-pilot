@@ -170,9 +170,8 @@ func (h *Handler) Individual(w http.ResponseWriter, req *http.Request) {
 		"Attributes":         attrs,
 		"Cases":              displayCases,
 		"CaseTypes":          ctList,
-		"BasePath":           h.relationshipPartiesClient.BasePath,
-		"FirstNameAttribute": attributes.FirstNameAttribute,
-		"LastNameAttribute":  attributes.LastNameAttribute,
+		"FirstNameAttribute": Individuals.FirstNameAttribute,
+		"LastNameAttribute":  Individuals.LastNameAttribute,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

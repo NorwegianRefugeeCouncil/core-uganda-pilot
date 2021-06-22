@@ -2,6 +2,7 @@ package relationshipparties
 
 import (
 	"encoding/json"
+	"github.com/nrc-no/core-kafka/pkg/parties/parties"
 	"net/http"
 )
 
@@ -15,23 +16,18 @@ func NewHandler(partiesStore *PartiesStore) *Handler {
 	}
 }
 
-type PickPartyOptions struct {
-	PartyTypeID string
-	SearchParam string
-}
-
 func (h *Handler) PickParty(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
 	qry := req.URL.Query()
 
-	pickPartyOptions := PickPartyOptions{
+	pickPartyOptions := parties.ListOptions{
 		PartyTypeID: qry.Get("partyTypeId"),
 		SearchParam: qry.Get("searchParam"),
 	}
 
-	ret, err := h.partiesStore.FilteredList(ctx, pickPartyOptions)
+	ret, err := h.partiesStore.store.List(ctx, pickPartyOptions)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

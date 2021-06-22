@@ -19,7 +19,7 @@ func NewClient(basePath string) *Client {
 	}
 }
 
-func (c *Client) PickParty(ctx context.Context, pickPartyOptions PickPartyOptions) (*parties.PartyList, error) {
+func (c *Client) PickParty(ctx context.Context, pickPartyOptions parties.ListOptions) (*parties.PartyList, error) {
 	req, err := http.NewRequest("GET", c.BasePath+"/apis/v1/relationshipparties/picker", nil)
 	if err != nil {
 		return nil, err

@@ -31,10 +31,27 @@ func (s *Store) Get(ctx context.Context, id string) (*Party, error) {
 }
 
 func (s *Store) List(ctx context.Context, listOptions ListOptions) (*PartyList, error) {
-	filter := bson.M{}
+	filterItems := bson.A{}
 
-	if len(listOptions.PartyTypeID) > 0 {
-		filter["partyTypes"] = listOptions.PartyTypeID
+	if len(listOptions.PartyTypeID) != 0 {
+		filterItems = append(filterItems, bson.M{"partyTypes": listOptions.PartyTypeID})
+	}
+
+	if len(listOptions.SearchParam) != 0 {
+		filterItems = append(filterItems, bson.M{
+			"$text": bson.M{
+				"$search": listOptions.SearchParam,
+			},
+		})
+	}
+
+	var filter interface{}
+	if len(filterItems) == 0 {
+		filter = bson.M{}
+	} else if len(filterItems) == 1 {
+		filter = filterItems[0]
+	} else {
+		filter = bson.M{"$and": filterItems}
 	}
 
 	res, err := s.Collection.Find(ctx, filter)

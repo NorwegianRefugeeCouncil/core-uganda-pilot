@@ -158,8 +158,7 @@
                     "partyTypeId": getSecondPartyType(),
                     "searchParam": searchParam
                 })
-                const ajaxUrl = "{{.BasePath}}" + "/apis/v1/relationshipparties/picker?" + searchParams.toString()
-                console.log(ajaxUrl)
+                const ajaxUrl = "/apis/v1/relationshipparties/picker?" + searchParams.toString()
                 return ajax(ajaxUrl)
             })
         )

@@ -21,6 +21,7 @@ func NewClient(basePath string) *Client {
 
 type ListOptions struct {
 	PartyTypeID string `json:"partyTypeId" bson:"partyTypeId"`
+	SearchParam string `json:"searchParam" bson:"searchParam"`
 }
 
 func (c *Client) List(ctx context.Context, listOptions ListOptions) (*PartyList, error) {

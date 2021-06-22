@@ -1,9 +1,7 @@
 package relationshipparties
 
 import (
-	"context"
 	"github.com/nrc-no/core-kafka/pkg/parties/parties"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 type PartiesStore struct {
@@ -14,55 +12,4 @@ func NewStore(partiesStore *parties.Store) *PartiesStore {
 	return &PartiesStore{
 		store: partiesStore,
 	}
-}
-
-func (s *PartiesStore) FilteredList(ctx context.Context, filterOptions PickPartyOptions) (*parties.PartyList, error) {
-	filter := bson.M{}
-
-	if len(filterOptions.PartyTypeID) != 0 {
-		if len(filterOptions.SearchParam) != 0 {
-			filter = bson.M{
-				"$and": bson.A{
-					bson.M{
-						"partyTypes": filterOptions.PartyTypeID,
-					},
-					bson.M{
-						"$text": bson.M{
-							"$search": filterOptions.SearchParam,
-						},
-					},
-				},
-			}
-		} else {
-			filter = bson.M{
-				"partyTypes": filterOptions.PartyTypeID,
-			}
-		}
-	}
-
-	res, err := s.store.Collection.Find(ctx, filter)
-	if err != nil {
-		return nil, err
-	}
-	var items []*parties.Party
-	for {
-		if !res.Next(ctx) {
-			break
-		}
-		var r parties.Party
-		if err := res.Decode(&r); err != nil {
-			return nil, err
-		}
-		items = append(items, &r)
-	}
-	if res.Err() != nil {
-		return nil, res.Err()
-	}
-	if items == nil {
-		items = []*parties.Party{}
-	}
-	ret := parties.PartyList{
-		Items: items,
-	}
-	return &ret, nil
 }
