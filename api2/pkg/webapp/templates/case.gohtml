@@ -56,21 +56,21 @@
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="referral-dropdown">
                         {{ range .CaseTypes.Items }}
-                            <li><a class="dropdown-item" href="/cases/{{$caseId}}?refCaseTypeId={{.ID}}">{{.Name}}</a>
+                            <li><a class="dropdown-item" href="/cases/{{$caseId}}?referralCaseTypeId={{.ID}}">{{.Name}}</a>
                             </li>
                         {{end}}
                     </ul>
                 </div>
-                {{ if .RefCaseType}}
+                {{ if .ReferralCaseType}}
                     <form action="/cases" method="post">
                         <div class="form-floating mb-3">
-                            <input type="hidden" name="caseTypeId" value="{{.RefCaseType.ID}}">
+                            <input type="hidden" name="caseTypeId" value="{{.ReferralCaseType.ID}}">
                             <select
                                     id="referral-case-type"
                                     class="form-select"
                                     disabled
                             >
-                                <option>{{ .RefCaseType.Name }}</option>
+                                <option>{{ .ReferralCaseType.Name }}</option>
                             </select>
                             <label for="referral-case-type">Referral Case Type</label>
                         </div>

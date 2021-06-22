@@ -95,10 +95,10 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 	})
 
 	qry := req.URL.Query()
-	refCaseTypeID := qry.Get("refCaseTypeId")
-	var refCaseType *casetypes.CaseType
-	if len(refCaseTypeID) > 0 {
-		refCaseType, err = h.caseTypeClient.Get(ctx, refCaseTypeID)
+
+	var referralCaseType *casetypes.CaseType
+	if referralCaseTypeID := qry.Get("referralCaseTypeId"); len(referralCaseTypeID) > 0 {
+		referralCaseType, err = h.caseTypeClient.Get(ctx, referralCaseTypeID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -106,11 +106,11 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if err := h.template.ExecuteTemplate(w, "case", map[string]interface{}{
-		"Case":        kase,
-		"CaseTypes":   kaseTypes,
-		"Party":       party,
-		"Parties":     partyList,
-		"RefCaseType": refCaseType,
+		"Case":             kase,
+		"CaseTypes":        kaseTypes,
+		"Party":            party,
+		"Parties":          partyList,
+		"ReferralCaseType": referralCaseType,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
