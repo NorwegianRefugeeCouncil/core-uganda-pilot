@@ -143,8 +143,8 @@
                 name: {{.Name}},
                 firstPartyRole: {{.FirstPartyRole}},
                 secondPartyRole: {{.SecondPartyRole}},
-                firstPartyType: {{(index .Rules 0).FirstPartyType}},
-                secondPartyType: {{(index .Rules 0).SecondPartyType}}
+                firstPartyType: {{(index .Rules 0).PartyTypeRule.FirstPartyType}},
+                secondPartyType: {{(index .Rules 0).PartyTypeRule.SecondPartyType}}
             },
             {{end}}
         ];
