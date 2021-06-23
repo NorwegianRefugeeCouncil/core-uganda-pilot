@@ -634,7 +634,8 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "e6486272-039d-430f-b3c7-47887aa9e206",
       "redirectUris": [
-        "http://localhost:9000/auth/callback"
+        "http://localhost:9000/auth/callback",
+        "http://localhost:9000"
       ],
       "webOrigins": [],
       "notBefore": 0,

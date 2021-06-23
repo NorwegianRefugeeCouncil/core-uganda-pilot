@@ -40,7 +40,7 @@ func (h *Handler) Individuals(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := h.template.ExecuteTemplate(w, "individuals", map[string]interface{}{
+	if err := h.renderFactory.New(req).ExecuteTemplate(w, "individuals", map[string]interface{}{
 		"Individuals": list,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -160,7 +160,7 @@ func (h *Handler) Individual(w http.ResponseWriter, req *http.Request) {
 		displayCases = append(displayCases, &d)
 	}
 
-	if err := h.template.ExecuteTemplate(w, "individual", map[string]interface{}{
+	if err := h.renderFactory.New(req).ExecuteTemplate(w, "individual", map[string]interface{}{
 		"IsNew":              id == "new",
 		"Individual":         b,
 		"Parties":            bList,

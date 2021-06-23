@@ -18,7 +18,7 @@ import (
 const IdTokenKey = "id_token"
 const AccessTokenKey = "access_token"
 const ProfileKey = "profile"
-const AuthorizationHeaderKey = "authorization_header"
+const IsLoggedInKey = "is_logged_in"
 
 type Profile struct {
 	Email         string `json:"email"`
@@ -179,6 +179,9 @@ func (h *Handler) Logout(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
+	tokenURL := h.Provider.Endpoint().TokenURL
+	logoutURLStr := tokenURL[0:len(tokenURL)-6] + "/logout"
+
 	l := logrus.WithField("logger", "logout")
 
 	if err := h.Store.Destroy(ctx); err != nil {
@@ -187,9 +190,7 @@ func (h *Handler) Logout(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// TODO: set current domain...
-	domain := "http://localhost:9000"
-	logoutURL, err := url.Parse(domain)
+	logoutURL, err := url.Parse(logoutURLStr)
 	if err != nil {
 		l.WithError(err).Warnf("failed to parse logout url")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -212,6 +213,8 @@ func (h *Handler) Logout(w http.ResponseWriter, req *http.Request) {
 	parameters := url.Values{}
 	parameters.Add("returnTo", returnTo.String())
 	parameters.Add("client_id", h.Config.ClientID)
+	parameters.Add("client_secret", h.Config.ClientSecret)
+	parameters.Add("redirect_uri", returnTo.String())
 	logoutURL.RawQuery = parameters.Encode()
 
 	http.Redirect(w, req, logoutURL.String(), http.StatusTemporaryRedirect)

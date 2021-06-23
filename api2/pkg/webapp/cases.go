@@ -29,7 +29,7 @@ func (h *Handler) Cases(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := h.template.ExecuteTemplate(w, "cases", map[string]interface{}{
+	if err := h.renderFactory.New(req).ExecuteTemplate(w, "cases", map[string]interface{}{
 		"Cases":     kases,
 		"CaseTypes": caseTypes,
 		"Parties":   partyList,
@@ -117,7 +117,7 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	if err := h.template.ExecuteTemplate(w, "case", map[string]interface{}{
+	if err := h.renderFactory.New(req).ExecuteTemplate(w, "case", map[string]interface{}{
 		"Case":             kase,
 		"CaseTypes":        kaseTypes,
 		"Party":            party,
@@ -172,7 +172,7 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	if err := h.template.ExecuteTemplate(w, "casenew", map[string]interface{}{
+	if err := h.renderFactory.New(req).ExecuteTemplate(w, "casenew", map[string]interface{}{
 		"PartyID":    qry.Get("partyId"),
 		"CaseTypeID": qry.Get("caseTypeId"),
 		"CaseTypes":  caseTypes,
@@ -181,6 +181,7 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 }
 
 func (h *Handler) PostCase(ctx context.Context, id string, w http.ResponseWriter, req *http.Request) {
