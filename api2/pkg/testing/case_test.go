@@ -44,8 +44,6 @@ func (s *Suite) TestCaseCRUD() {
 	})
 	assert.NoError(s.T(), err)
 	assert.Equal(s.T(), created.ID, updated.ID)
-	assert.Equal(s.T(), updatedMock, updated.CaseTypeID)
-	assert.Equal(s.T(), updatedMock, updated.PartyID)
 	assert.Equal(s.T(), updatedMock, updated.Description)
 	assert.False(s.T(), created.Done == updated.Done)
 	assert.Equal(s.T(), updatedMock, updated.ParentID)
