@@ -11,6 +11,7 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/teams"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
+	"strings"
 )
 
 var (
@@ -120,6 +121,7 @@ func individual(id, firstName, lastName string) parties.Party {
 		Attributes: map[string][]string{
 			individuals.FirstNameAttribute.ID: {firstName},
 			individuals.LastNameAttribute.ID:  {lastName},
+			individuals.EMailAttribute.ID:     {strings.ToLower(firstName) + "." + strings.ToLower(lastName) + "@email.com"},
 		},
 	}
 	people = append(people, &party)
