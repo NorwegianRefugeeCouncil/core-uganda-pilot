@@ -32,7 +32,7 @@ func (h *Handler) CaseTypes(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := h.template.ExecuteTemplate(w, "casetypes", map[string]interface{}{
+	if err := h.renderFactory.New(req).ExecuteTemplate(w, "casetypes", map[string]interface{}{
 		"CaseTypes":  caseTypes,
 		"PartyTypes": partyTypes,
 	}); err != nil {
@@ -90,7 +90,7 @@ func (h *Handler) CaseType(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := h.template.ExecuteTemplate(w, "casetype", map[string]interface{}{
+	if err := h.renderFactory.New(req).ExecuteTemplate(w, "casetype", map[string]interface{}{
 		"CaseType":   caseType,
 		"PartyTypes": partyTypes,
 		"Teams":      teamsData,
@@ -115,9 +115,8 @@ func (h *Handler) NewCaseType(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
-	}
-
-	if err := h.template.ExecuteTemplate(w, "casetype", map[string]interface{}{
+	
+	if err := h.renderFactory.New(req).ExecuteTemplate(w, "casetype", map[string]interface{}{
 		"PartyTypes": p,
 		"Teams":      teamsData,
 	}); err != nil {

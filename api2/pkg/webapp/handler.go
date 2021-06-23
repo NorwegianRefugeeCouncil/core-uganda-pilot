@@ -13,12 +13,10 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/parties/relationshiptypes"
 	"github.com/nrc-no/core-kafka/pkg/relationshipparties"
 	"github.com/nrc-no/core-kafka/pkg/teams"
-	"html/template"
 	"os"
 )
 
 type Handler struct {
-	template                  *template.Template
 	attributeClient           *attributes.Client
 	individualClient          *individuals.Client
 	relationshipTypeClient    *relationshiptypes.Client
@@ -30,6 +28,7 @@ type Handler struct {
 	relationshipPartiesClient *relationshipparties.Client
 	teamClient                *teams.Client
 	membershipClient          *memberships.Client
+	renderFactory             *RendererFactory
 }
 
 type Options struct {
@@ -51,8 +50,9 @@ func NewHandler(
 	MembershipClient *memberships.Client,
 ) (*Handler, error) {
 
-	if len(options.TemplateDirectory) == 0 {
-		options.TemplateDirectory = "pkg/webapp/templates/"
+	renderFactory, err := NewRendererFactory(options.TemplateDirectory)
+	if err != nil {
+		return nil, err
 	}
 
 	e, err := os.Executable()
@@ -61,12 +61,7 @@ func NewHandler(
 	}
 	fmt.Println(e)
 
-	t, err := template.ParseGlob(options.TemplateDirectory + "/*.gohtml")
-	if err != nil {
-		return nil, err
-	}
 	h := &Handler{
-		template:                  t,
 		attributeClient:           AttributeClient,
 		individualClient:          IndividualClient,
 		relationshipTypeClient:    RelationshipTypeClient,
@@ -78,6 +73,7 @@ func NewHandler(
 		relationshipPartiesClient: RelationshipPartiesClient,
 		teamClient:                TeamClient,
 		membershipClient:          MembershipClient,
+		renderFactory:             renderFactory,
 	}
 	return h, nil
 }

@@ -76,8 +76,6 @@ func (s *Store) Update(ctx context.Context, kase *Case) error {
 		"id": kase.ID,
 	}, bson.M{
 		"$set": bson.M{
-			"caseTypeId":  kase.CaseTypeID,
-			"partyId":     kase.PartyID,
 			"description": kase.Description,
 			"done":        kase.Done,
 			"parentId":    kase.ParentID,

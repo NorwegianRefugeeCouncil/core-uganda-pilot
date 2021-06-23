@@ -57,10 +57,27 @@ var BirthDateAttribute = attributes.Attribute{
 	},
 }
 
+var EMailAttribute = attributes.Attribute{
+	ID:   "0ca7fa2b-982b-4fa5-85be-a6ebee8d4912",
+	Name: "email",
+	Translations: []attributes.AttributeTranslation{
+		{
+			Locale:           "en",
+			LongFormulation:  "Email",
+			ShortFormulation: "Email",
+		},
+	},
+	IsPersonallyIdentifiableInfo: true,
+	PartyTypeIDs: []string{
+		partytypes.IndividualPartyType.ID,
+	},
+}
+
 var BuiltinIndividualAttributes = []attributes.Attribute{
 	FirstNameAttribute,
 	LastNameAttribute,
 	BirthDateAttribute,
+	EMailAttribute,
 }
 
 var mockIndividuals = []*Individual{

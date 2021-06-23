@@ -27,7 +27,7 @@ func (h *Handler) RelationshipTypes(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := h.template.ExecuteTemplate(w, "relationshiptypes", map[string]interface{}{
+	if err := h.renderFactory.New(req).ExecuteTemplate(w, "relationshiptypes", map[string]interface{}{
 		"RelationshipTypes": relationshipTypes,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -46,7 +46,7 @@ func (h *Handler) NewRelationshipType(w http.ResponseWriter, req *http.Request) 
 		return
 	}
 
-	if err := h.template.ExecuteTemplate(w, "relationshiptype", map[string]interface{}{
+	if err := h.renderFactory.New(req).ExecuteTemplate(w, "relationshiptype", map[string]interface{}{
 		"PartyTypes": p,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -82,7 +82,7 @@ func (h *Handler) RelationshipType(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := h.template.ExecuteTemplate(w, "relationshiptype", map[string]interface{}{
+	if err := h.renderFactory.New(req).ExecuteTemplate(w, "relationshiptype", map[string]interface{}{
 		"RelationshipType": r,
 		"PartyTypes":       p,
 	}); err != nil {
@@ -123,7 +123,7 @@ func (h *Handler) PostRelationshipType(
 
 	r.Rules = []relationshiptypes.RelationshipTypeRule{
 		{
-			relationshiptypes.PartyTypeRule{
+			PartyTypeRule: &relationshiptypes.PartyTypeRule{
 				FirstPartyType:  formValues.Get("rules[0].firstPartyType"),
 				SecondPartyType: formValues.Get("rules[0].secondPartyType"),
 			},

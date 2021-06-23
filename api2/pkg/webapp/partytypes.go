@@ -23,7 +23,7 @@ func (h *Handler) PartyTypes(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := h.template.ExecuteTemplate(w, "partytypes", map[string]interface{}{
+	if err := h.renderFactory.New(req).ExecuteTemplate(w, "partytypes", map[string]interface{}{
 		"PartyTypes": partyTypes,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -59,7 +59,7 @@ func (h *Handler) PartyType(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := h.template.ExecuteTemplate(w, "partytype", map[string]interface{}{
+	if err := h.renderFactory.New(req).ExecuteTemplate(w, "partytype", map[string]interface{}{
 		"PartyTypeID": partyType,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
