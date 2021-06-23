@@ -17,7 +17,7 @@ var HeadOfHouseholdRelationshipType = RelationshipType{
 	SecondPartyRole: "Has for head of household",
 	Rules: []RelationshipTypeRule{
 		{
-			PartyTypeRule: PartyTypeRule{
+			PartyTypeRule: &PartyTypeRule{
 				FirstPartyType:  partytypes.IndividualPartyType.ID,
 				SecondPartyType: partytypes.HouseholdPartyType.ID,
 			},
@@ -33,7 +33,7 @@ var SpousalRelationshipType = RelationshipType{
 	SecondPartyRole: "Is spouse of",
 	Rules: []RelationshipTypeRule{
 		{
-			PartyTypeRule: PartyTypeRule{
+			PartyTypeRule: &PartyTypeRule{
 				FirstPartyType:  partytypes.IndividualPartyType.ID,
 				SecondPartyType: partytypes.IndividualPartyType.ID,
 			},
@@ -49,7 +49,7 @@ var FilialRelationshipType = RelationshipType{
 	SecondPartyRole: "Is sibling of",
 	Rules: []RelationshipTypeRule{
 		{
-			PartyTypeRule: PartyTypeRule{
+			PartyTypeRule: &PartyTypeRule{
 				FirstPartyType:  partytypes.IndividualPartyType.ID,
 				SecondPartyType: partytypes.IndividualPartyType.ID,
 			},
@@ -65,7 +65,7 @@ var ParentalRelationshipType = RelationshipType{
 	SecondPartyRole: "Is child of",
 	Rules: []RelationshipTypeRule{
 		{
-			PartyTypeRule: PartyTypeRule{
+			PartyTypeRule: &PartyTypeRule{
 				FirstPartyType:  partytypes.IndividualPartyType.ID,
 				SecondPartyType: partytypes.IndividualPartyType.ID,
 			},
