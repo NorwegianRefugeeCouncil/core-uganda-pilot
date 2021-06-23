@@ -196,8 +196,10 @@ func (h *Handler) PostCase(ctx context.Context, id string, w http.ResponseWriter
 	done := req.Form.Get("done")
 	parentId := req.Form.Get("parentId")
 
+	var kase *cases.Case
 	if id == "" {
-		_, err := h.caseClient.Create(ctx, &cases.Case{
+		var err error
+		kase, err = h.caseClient.Create(ctx, &cases.Case{
 			CaseTypeID:  caseTypeId,
 			PartyID:     partyId,
 			Description: description,
@@ -209,7 +211,8 @@ func (h *Handler) PostCase(ctx context.Context, id string, w http.ResponseWriter
 			return
 		}
 	} else {
-		_, err := h.caseClient.Update(ctx, &cases.Case{
+		var err error
+		kase, err = h.caseClient.Update(ctx, &cases.Case{
 			ID:          id,
 			CaseTypeID:  caseTypeId,
 			PartyID:     partyId,
@@ -225,7 +228,7 @@ func (h *Handler) PostCase(ctx context.Context, id string, w http.ResponseWriter
 	if len(parentId) > 0 {
 		w.Header().Set("Location", "/cases/"+parentId)
 	} else {
-		w.Header().Set("Location", "/cases")
+		w.Header().Set("Location", "/cases/"+kase.ID)
 	}
 	w.WriteHeader(http.StatusSeeOther)
 
