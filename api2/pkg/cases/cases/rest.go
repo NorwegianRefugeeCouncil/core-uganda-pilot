@@ -104,9 +104,7 @@ func (h *Handler) Put(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	// r.PartyID = payload.PartyID
-	// r.CaseTypeID = payload.CaseTypeID
+	
 	r.Description = payload.Description
 	r.Done = payload.Done
 	r.ParentID = payload.ParentID
