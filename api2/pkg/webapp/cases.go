@@ -7,6 +7,7 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/cases/cases"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
 	"github.com/nrc-no/core-kafka/pkg/parties/parties"
+	"github.com/nrc-no/core-kafka/pkg/teams"
 	"golang.org/x/sync/errgroup"
 	"net/http"
 )
@@ -64,6 +65,8 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 
 	var referrals *cases.CaseList
 
+	var team *teams.Team
+
 	g, waitCtx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
@@ -85,6 +88,15 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 	if err := g.Wait(); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
+	}
+
+	if id != "new" {
+		teamRes, err := h.teamClient.Get(ctx, kase.TeamID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		team = teamRes
 	}
 
 	party, err := h.partyClient.Get(ctx, kase.PartyID)
@@ -124,6 +136,7 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 		"Parties":          partyList,
 		"ReferralCaseType": referralCaseType,
 		"Referrals":        referrals,
+		"Team":             team,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -140,8 +153,15 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 
 	var caseTypes *casetypes.CaseTypeList
 	var p *parties.PartyList
+	var teamList *teams.TeamList
 
 	g, waitCtx := errgroup.WithContext(ctx)
+
+	g.Go(func() error {
+		var err error
+		teamList, err = h.teamClient.List(waitCtx, teams.ListOptions{})
+		return err
+	})
 
 	g.Go(func() error {
 		var err error
@@ -175,8 +195,10 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 	if err := h.renderFactory.New(req).ExecuteTemplate(w, "casenew", map[string]interface{}{
 		"PartyID":    qry.Get("partyId"),
 		"CaseTypeID": qry.Get("caseTypeId"),
+		"TeamID":     qry.Get("teamId"),
 		"CaseTypes":  caseTypes,
 		"Parties":    p,
+		"TeamList":   teamList,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -196,6 +218,7 @@ func (h *Handler) PostCase(ctx context.Context, id string, w http.ResponseWriter
 	description := req.Form.Get("description")
 	done := req.Form.Get("done")
 	parentId := req.Form.Get("parentId")
+	teamId := req.Form.Get("teamId")
 
 	var kase *cases.Case
 	if id == "" {
@@ -206,6 +229,7 @@ func (h *Handler) PostCase(ctx context.Context, id string, w http.ResponseWriter
 			Description: description,
 			Done:        false,
 			ParentID:    parentId,
+			TeamID:      teamId,
 		})
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -220,6 +244,7 @@ func (h *Handler) PostCase(ctx context.Context, id string, w http.ResponseWriter
 			Description: description,
 			Done:        done == "on",
 			ParentID:    parentId,
+			TeamID:      teamId,
 		})
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
