@@ -17,7 +17,7 @@ func (s *Suite) TestRelationShipTypeCRUD() {
 		Name:            mock,
 		FirstPartyRole:  mock,
 		SecondPartyRole: mock,
-		Rules:           []relationshiptypes.RelationshipTypeRule{{relationshiptypes.PartyTypeRule{FirstPartyType: mock, SecondPartyType: mock}}},
+		Rules:           []relationshiptypes.RelationshipTypeRule{{&relationshiptypes.PartyTypeRule{FirstPartyTypeID: mock, SecondPartyTypeID: mock}}},
 	})
 	if !assert.NoError(s.T(), err) {
 		return
@@ -27,7 +27,7 @@ func (s *Suite) TestRelationShipTypeCRUD() {
 	assert.Equal(s.T(), mock, created.Name)
 	assert.Equal(s.T(), mock, created.FirstPartyRole)
 	assert.Equal(s.T(), mock, created.SecondPartyRole)
-	assert.IsType(s.T(), []relationshiptypes.RelationshipTypeRule{{relationshiptypes.PartyTypeRule{FirstPartyType: mock, SecondPartyType: mock}}}, created.Rules)
+	assert.IsType(s.T(), []relationshiptypes.RelationshipTypeRule{{&relationshiptypes.PartyTypeRule{FirstPartyTypeID: mock, SecondPartyTypeID: mock}}}, created.Rules)
 
 	// GET relationship type
 	get, err := s.server.RelationshipTypeClient.Get(s.ctx, created.ID)
@@ -49,9 +49,9 @@ func (s *Suite) TestRelationShipTypeCRUD() {
 		SecondPartyRole: updatedMock,
 		Rules: []relationshiptypes.RelationshipTypeRule{
 			{
-				relationshiptypes.PartyTypeRule{
-					FirstPartyType:  updatedMock,
-					SecondPartyType: updatedMock,
+				&relationshiptypes.PartyTypeRule{
+					FirstPartyTypeID:  updatedMock,
+					SecondPartyTypeID: updatedMock,
 				},
 			},
 		},
@@ -64,7 +64,7 @@ func (s *Suite) TestRelationShipTypeCRUD() {
 	assert.False(s.T(), created.IsDirectional == updated.IsDirectional)
 	assert.Equal(s.T(), updatedMock, updated.FirstPartyRole)
 	assert.Equal(s.T(), updatedMock, updated.SecondPartyRole)
-	assert.IsType(s.T(), []relationshiptypes.RelationshipTypeRule{{relationshiptypes.PartyTypeRule{FirstPartyType: updatedMock, SecondPartyType: updatedMock}}}, updated.Rules)
+	assert.IsType(s.T(), []relationshiptypes.RelationshipTypeRule{{&relationshiptypes.PartyTypeRule{FirstPartyTypeID: updatedMock, SecondPartyTypeID: updatedMock}}}, updated.Rules)
 
 	// GET relationship type
 	get, err = s.server.RelationshipTypeClient.Get(s.ctx, updated.ID)
@@ -103,8 +103,8 @@ func (s *Suite) TestRelationshipTypeList() {
 		for _, rt := range list.Items {
 			valid := false
 			for _, r := range rt.Rules {
-				t.Logf("checking rule for type %s \nwith 1st %s \nand 2nd %s \nto see if it contains %s", rt.Name, r.FirstPartyType, r.SecondPartyType, partytypes.IndividualPartyType.ID)
-				if r.FirstPartyType == partytypes.IndividualPartyType.ID || r.SecondPartyType == partytypes.IndividualPartyType.ID {
+				t.Logf("checking rule for type %s \nwith 1st %s \nand 2nd %s \nto see if it contains %s", rt.Name, r.PartyTypeRule.FirstPartyTypeID, r.PartyTypeRule.SecondPartyTypeID, partytypes.IndividualPartyType.ID)
+				if r.PartyTypeRule.FirstPartyTypeID == partytypes.IndividualPartyType.ID || r.PartyTypeRule.SecondPartyTypeID == partytypes.IndividualPartyType.ID {
 					valid = true
 				}
 			}
@@ -125,8 +125,8 @@ func (s *Suite) TestRelationshipTypeList() {
 		for _, rt := range list2.Items {
 			valid := false
 			for _, r := range rt.Rules {
-				t.Logf("checking rule for type %s \nwith 1st %s \nand 2nd %s \nto see if it contains %s", rt.Name, r.FirstPartyType, r.SecondPartyType, partytypes.HouseholdPartyType.ID)
-				if r.FirstPartyType == partytypes.HouseholdPartyType.ID || r.SecondPartyType == partytypes.HouseholdPartyType.ID {
+				t.Logf("checking rule for type %s \nwith 1st %s \nand 2nd %s \nto see if it contains %s", rt.Name, r.PartyTypeRule.FirstPartyTypeID, r.PartyTypeRule.SecondPartyTypeID, partytypes.HouseholdPartyType.ID)
+				if r.PartyTypeRule.FirstPartyTypeID == partytypes.HouseholdPartyType.ID || r.PartyTypeRule.SecondPartyTypeID == partytypes.HouseholdPartyType.ID {
 					valid = true
 				}
 			}

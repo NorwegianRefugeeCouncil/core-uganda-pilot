@@ -18,8 +18,8 @@ var HeadOfHouseholdRelationshipType = RelationshipType{
 	Rules: []RelationshipTypeRule{
 		{
 			PartyTypeRule: &PartyTypeRule{
-				FirstPartyType:  partytypes.IndividualPartyType.ID,
-				SecondPartyType: partytypes.HouseholdPartyType.ID,
+				FirstPartyTypeID:  partytypes.IndividualPartyType.ID,
+				SecondPartyTypeID: partytypes.HouseholdPartyType.ID,
 			},
 		},
 	},
@@ -34,8 +34,8 @@ var SpousalRelationshipType = RelationshipType{
 	Rules: []RelationshipTypeRule{
 		{
 			PartyTypeRule: &PartyTypeRule{
-				FirstPartyType:  partytypes.IndividualPartyType.ID,
-				SecondPartyType: partytypes.IndividualPartyType.ID,
+				FirstPartyTypeID:  partytypes.IndividualPartyType.ID,
+				SecondPartyTypeID: partytypes.IndividualPartyType.ID,
 			},
 		},
 	},
@@ -50,8 +50,8 @@ var FilialRelationshipType = RelationshipType{
 	Rules: []RelationshipTypeRule{
 		{
 			PartyTypeRule: &PartyTypeRule{
-				FirstPartyType:  partytypes.IndividualPartyType.ID,
-				SecondPartyType: partytypes.IndividualPartyType.ID,
+				FirstPartyTypeID:  partytypes.IndividualPartyType.ID,
+				SecondPartyTypeID: partytypes.IndividualPartyType.ID,
 			},
 		},
 	},
@@ -66,8 +66,8 @@ var ParentalRelationshipType = RelationshipType{
 	Rules: []RelationshipTypeRule{
 		{
 			PartyTypeRule: &PartyTypeRule{
-				FirstPartyType:  partytypes.IndividualPartyType.ID,
-				SecondPartyType: partytypes.IndividualPartyType.ID,
+				FirstPartyTypeID:  partytypes.IndividualPartyType.ID,
+				SecondPartyTypeID: partytypes.IndividualPartyType.ID,
 			},
 		},
 	},

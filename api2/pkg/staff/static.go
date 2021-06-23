@@ -18,8 +18,8 @@ var RelationshipType = relationshiptypes.RelationshipType{
 	Rules: []relationshiptypes.RelationshipTypeRule{
 		{
 			PartyTypeRule: &relationshiptypes.PartyTypeRule{
-				FirstPartyType:  partytypes.IndividualPartyType.ID,
-				SecondPartyType: organizations.PartyType.ID,
+				FirstPartyTypeID:  partytypes.IndividualPartyType.ID,
+				SecondPartyTypeID: organizations.PartyType.ID,
 			},
 		},
 	},

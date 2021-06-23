@@ -41,6 +41,49 @@ func (h *Handler) CaseTypes(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+func (h *Handler) PostCaseType(
+	ctx context.Context,
+	caseType *casetypes.CaseType,
+	w http.ResponseWriter,
+	req *http.Request,
+) {
+
+	isNew := false
+	if len(caseType.ID) == 0 {
+		isNew = true
+	}
+
+	if err := req.ParseForm(); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	name := req.Form.Get("name")
+	caseType.Name = name
+	partyTypeID := req.Form.Get("partyTypeId")
+	caseType.PartyTypeID = partyTypeID
+
+	if isNew {
+		_, err := h.caseTypeClient.Create(ctx, caseType)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Location", "/settings/casetypes")
+		w.WriteHeader(http.StatusSeeOther)
+		return
+	} else {
+		_, err := h.caseTypeClient.Update(ctx, caseType)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Location", "/settings/casetypes")
+		w.WriteHeader(http.StatusSeeOther)
+		return
+	}
+}
+
 func (h *Handler) CaseType(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
@@ -115,55 +158,13 @@ func (h *Handler) NewCaseType(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
-	
+	}
+
 	if err := h.renderFactory.New(req).ExecuteTemplate(w, "casetype", map[string]interface{}{
 		"PartyTypes": p,
 		"Teams":      teamsData,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
-
-func (h *Handler) PostCaseType(
-	ctx context.Context,
-	caseType *casetypes.CaseType,
-	w http.ResponseWriter,
-	req *http.Request,
-) {
-
-	isNew := false
-	if len(caseType.ID) == 0 {
-		isNew = true
-	}
-
-	if err := req.ParseForm(); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	name := req.Form.Get("name")
-	caseType.Name = name
-	partyTypeID := req.Form.Get("partyTypeId")
-	caseType.PartyTypeID = partyTypeID
-
-	if isNew {
-		_, err := h.caseTypeClient.Create(ctx, caseType)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Location", "/settings/casetypes")
-		w.WriteHeader(http.StatusSeeOther)
-		return
-	} else {
-		_, err := h.caseTypeClient.Update(ctx, caseType)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Location", "/settings/casetypes")
-		w.WriteHeader(http.StatusSeeOther)
 		return
 	}
 }
