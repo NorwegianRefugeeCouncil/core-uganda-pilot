@@ -167,7 +167,7 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 		PartyTypeID: partyTypeID,
 	}
 
-	p, err := partiesClient.List(waitCtx, listOptions)
+	p, err := partiesClient.List(ctx, listOptions)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -222,7 +222,11 @@ func (h *Handler) PostCase(ctx context.Context, id string, w http.ResponseWriter
 			return
 		}
 	}
-	w.Header().Set("Location", "/cases")
+	if len(parentId) > 0 {
+		w.Header().Set("Location", "/cases/"+parentId)
+	} else {
+		w.Header().Set("Location", "/cases")
+	}
 	w.WriteHeader(http.StatusSeeOther)
 
 }
