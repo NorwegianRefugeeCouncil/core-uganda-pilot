@@ -21,7 +21,7 @@ func (h *Handler) Teams(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := h.template.ExecuteTemplate(w, "teams", map[string]interface{}{
+	if err := h.renderFactory.New(req).ExecuteTemplate(w, "teams", map[string]interface{}{
 		"Teams": t,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -79,7 +79,7 @@ func (h *Handler) Team(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := h.template.ExecuteTemplate(w, "team", map[string]interface{}{
+	if err := h.renderFactory.New(req).ExecuteTemplate(w, "team", map[string]interface{}{
 		"Team":    t,
 		"Members": members,
 	}); err != nil {

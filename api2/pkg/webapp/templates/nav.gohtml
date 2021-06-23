@@ -25,9 +25,15 @@
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="/settings">Settings</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/auth/login">Sign in</a>
-                    </li>
+                    {{if IsLoggedIn}}
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="/auth/logout">Sign out</a>
+                        </li>
+                    {{else}}
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="/auth/login">Sign in</a>
+                        </li>
+                    {{end}}
                 </ul>
             </div>
         </div>

@@ -16,6 +16,10 @@ func (h *Handler) Authenticate() func(handler http.Handler) http.Handler {
 
 			shouldRedirect := !strings.HasPrefix(req.URL.Path, "/auth/")
 			doNext := func(req *http.Request, isAuthenticated bool) {
+
+				ctx = context.WithValue(ctx, IsLoggedInKey, isAuthenticated)
+				req = req.WithContext(ctx)
+
 				if !isAuthenticated && shouldRedirect {
 					http.Redirect(w, req, "/auth/login", http.StatusTemporaryRedirect)
 				}
@@ -78,6 +82,7 @@ func (h *Handler) Authenticate() func(handler http.Handler) http.Handler {
 			}
 
 			ctx = context.WithValue(ctx, AccessTokenKey, accessToken)
+			ctx = context.WithValue(ctx, IsLoggedInKey, true)
 			req = req.WithContext(ctx)
 
 			doNext(req, true)

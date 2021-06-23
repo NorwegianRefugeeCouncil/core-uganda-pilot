@@ -13,7 +13,7 @@ import (
 )
 
 func (h *Handler) Settings(w http.ResponseWriter, req *http.Request) {
-	if err := h.template.ExecuteTemplate(w, "settings", nil); err != nil {
+	if err := h.renderFactory.New(req).ExecuteTemplate(w, "settings", nil); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -41,7 +41,7 @@ func (h *Handler) Attributes(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := h.template.ExecuteTemplate(w, "attributes", map[string]interface{}{
+	if err := h.renderFactory.New(req).ExecuteTemplate(w, "attributes", map[string]interface{}{
 		"Attributes": list,
 		"PartyTypes": partyTypes,
 	}); err != nil {
@@ -51,7 +51,7 @@ func (h *Handler) Attributes(w http.ResponseWriter, req *http.Request) {
 }
 
 func (h *Handler) NewAttribute(w http.ResponseWriter, req *http.Request) {
-	if err := h.template.ExecuteTemplate(w, "attribute", map[string]interface{}{}); err != nil {
+	if err := h.renderFactory.New(req).ExecuteTemplate(w, "attribute", map[string]interface{}{}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -78,7 +78,7 @@ func (h *Handler) Attribute(w http.ResponseWriter, req *http.Request) {
 		h.PostAttribute(ctx, a, w, req)
 	}
 
-	if err := h.template.ExecuteTemplate(w, "attribute", map[string]interface{}{
+	if err := h.renderFactory.New(req).ExecuteTemplate(w, "attribute", map[string]interface{}{
 		"Attribute": a,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
