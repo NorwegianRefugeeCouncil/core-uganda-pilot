@@ -184,11 +184,11 @@ func PrepRelationshipTypeDropdown(relationshipTypes *relationshiptypes.Relations
 	for _, relType := range relationshipTypes.Items {
 		if relType.IsDirectional {
 			for _, rule := range relType.Rules {
-				if rule.FirstPartyType == partytypes.IndividualPartyType.ID {
+				if rule.PartyTypeRule.FirstPartyType == partytypes.IndividualPartyType.ID {
 					newList.Items = append(newList.Items, relType)
 				}
-				if rule.SecondPartyType == partytypes.IndividualPartyType.ID {
-					newList.Items = append(newList.Items, relType.Reversed())
+				if rule.PartyTypeRule.SecondPartyType == partytypes.IndividualPartyType.ID {
+					newList.Items = append(newList.Items, relType.Mirror())
 				}
 			}
 		} else {

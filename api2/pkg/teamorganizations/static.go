@@ -15,7 +15,7 @@ var RelationshipType = relationshiptypes.RelationshipType{
 	Name: "TeamOrganization",
 	Rules: []relationshiptypes.RelationshipTypeRule{
 		{
-			PartyTypeRule: relationshiptypes.PartyTypeRule{
+			PartyTypeRule: &relationshiptypes.PartyTypeRule{
 				FirstPartyType:  teams.PartyType.ID,
 				SecondPartyType: organizations.PartyType.ID,
 			},

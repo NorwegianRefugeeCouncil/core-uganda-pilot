@@ -22,7 +22,7 @@ var RelationshipType = relationshiptypes.RelationshipType{
 	SecondPartyRole: "Has team member",
 	Rules: []relationshiptypes.RelationshipTypeRule{
 		{
-			relationshiptypes.PartyTypeRule{
+			&relationshiptypes.PartyTypeRule{
 				FirstPartyType:  partytypes.IndividualPartyType.ID,
 				SecondPartyType: teams.PartyType.ID,
 			},

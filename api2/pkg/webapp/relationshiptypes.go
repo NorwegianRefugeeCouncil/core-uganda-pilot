@@ -123,7 +123,7 @@ func (h *Handler) PostRelationshipType(
 
 	r.Rules = []relationshiptypes.RelationshipTypeRule{
 		{
-			relationshiptypes.PartyTypeRule{
+			PartyTypeRule: &relationshiptypes.PartyTypeRule{
 				FirstPartyType:  formValues.Get("rules[0].firstPartyType"),
 				SecondPartyType: formValues.Get("rules[0].secondPartyType"),
 			},
