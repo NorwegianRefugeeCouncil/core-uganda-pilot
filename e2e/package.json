@@ -1,6 +1,5 @@
 {
   "devDependencies": {
-    "cypress": "^6.5.0",
-    "cypress-keycloak": "^1.7.0"
+    "cypress": "^7.5.0"
   }
 }
