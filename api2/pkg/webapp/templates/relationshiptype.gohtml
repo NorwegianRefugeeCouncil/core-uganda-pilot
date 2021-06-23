@@ -83,7 +83,7 @@
                                     class="form-select" 
                                     aria-label="Select the type of the first party"
                                     id="firstPartyType"
-                                    name="rules[0].firstPartyType">
+                                    name="rules[0].firstPartyTypeId">
                                     {{range .PartyTypes.Items}}
                                         <option value="{{.ID}}">{{.Name}}</option>
                                     {{end}}
@@ -97,7 +97,7 @@
                                     class="form-select" 
                                     aria-label="Select the type of the second party"
                                     id="secondPartyType"
-                                    name="rules[0].secondPartyType">
+                                    name="rules[0].secondPartyTypeId">
                                     {{range .PartyTypes.Items}}
                                         <option value="{{.ID}}">{{.Name}}</option>
                                     {{end}}
@@ -128,8 +128,8 @@
 
         {{if .RelationshipType}}
             document.addEventListener("DOMContentLoaded", (event) => {
-                setSelected("firstPartyType", {{(index .RelationshipType.Rules 0).FirstPartyType}})
-                setSelected("secondPartyType", {{(index .RelationshipType.Rules 0).SecondPartyType}})
+                setSelected("firstPartyType", {{(index .RelationshipType.Rules 0).PartyTypeRule.FirstPartyTypeID}})
+                setSelected("secondPartyType", {{(index .RelationshipType.Rules 0).PartyTypeRule.SecondPartyTypeID}})
             })
         {{end}}
 

@@ -14,14 +14,14 @@ func (r RelationshipTypeRule) Mirror() RelationshipTypeRule {
 }
 
 type PartyTypeRule struct {
-	FirstPartyType  string `json:"firstPartyType" bson:"firstPartyType"`
-	SecondPartyType string `json:"secondPartyType" bson:"secondPartyType"`
+	FirstPartyTypeID  string `json:"firstPartyTypeId" bson:"firstPartyTypeId"`
+	SecondPartyTypeID string `json:"secondPartyTypeId" bson:"secondPartyTypeId"`
 }
 
 func (p PartyTypeRule) Mirror() PartyTypeRule {
 	return PartyTypeRule{
-		FirstPartyType:  p.SecondPartyType,
-		SecondPartyType: p.FirstPartyType,
+		FirstPartyTypeID:  p.SecondPartyTypeID,
+		SecondPartyTypeID: p.FirstPartyTypeID,
 	}
 }
 

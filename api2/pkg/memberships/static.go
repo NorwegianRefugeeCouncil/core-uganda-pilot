@@ -23,8 +23,8 @@ var RelationshipType = relationshiptypes.RelationshipType{
 	Rules: []relationshiptypes.RelationshipTypeRule{
 		{
 			&relationshiptypes.PartyTypeRule{
-				FirstPartyType:  partytypes.IndividualPartyType.ID,
-				SecondPartyType: teams.PartyType.ID,
+				FirstPartyTypeID:  partytypes.IndividualPartyType.ID,
+				SecondPartyTypeID: teams.PartyType.ID,
 			},
 		},
 	},
