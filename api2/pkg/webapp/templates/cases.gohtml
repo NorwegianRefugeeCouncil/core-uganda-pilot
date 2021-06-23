@@ -41,9 +41,9 @@
                                         {{$casetype := $caseTypes.FindByID .CaseTypeID}}
                                         <td style="width: 3rem">
                                             {{if .Done}}
-                                                <i class="bi bi-x-circle text-danger"></i>
-                                            {{else}}
                                                 <i class="bi bi-check-circle text-success"></i>
+                                            {{else}}
+                                                <i class="bi bi-x-circle text-danger"></i>
                                             {{end}}
                                         </td>
                                         <td class="fw-bold">{{if $casetype}}{{$casetype.Name}}{{end}}</td>
