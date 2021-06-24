@@ -28,7 +28,7 @@ func (h *Handler) Attributes(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	list, err := h.attributeClient.List(ctx)
+	list, err := h.attributeClient.List(ctx, attributes.ListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -76,7 +76,7 @@ func (s *Suite) TestAttributesCRUD() {
 	assert.Equal(s.T(), updated, get)
 
 	// LIST
-	list, err := s.server.AttributeClient.List(s.ctx)
+	list, err := s.server.AttributeClient.List(s.ctx, attributes.ListOptions{})
 	assert.NoError(s.T(), err)
 	assert.Contains(s.T(), list.Items, get)
 

@@ -23,7 +23,11 @@ func (h *Handler) List(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
-	list, err := h.store.List(ctx)
+	listOptions := ListOptions{
+		PartyTypeIDs: req.URL.Query()["partyTypeIds"],
+	}
+
+	list, err := h.store.List(ctx, listOptions)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
