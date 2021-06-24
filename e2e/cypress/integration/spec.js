@@ -1,38 +1,65 @@
-let accessToken
-describe("Obtain access token", () => {
-    it("gets an access token", () => {
-        cy.request({
-            method: "POST",
-            url: "http://localhost:8080/auth/realms/nrc/protocol/openid-connect/token",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: "client_id=api&client_secret=e6486272-039d-430f-b3c7-47887aa9e206&grant_type=password&username=admin&password=admin&scope=openid",
-        }).then(response => {
-            accessToken = response.body.access_token
-            console.log(accessToken)
-        })
-    })
-// cy.server({
-//     onAnyRequest: (route, proxy) => {
-//         proxy.xhr.setRequestHeader("Authorization", "Bearer " + response.body.access_token)
-//     }
-// })
-})
-// TODO reset and seed the database before running tests
+let accessToken;
+
 
 beforeEach(() => {
-    cy.intercept(
-        {url: "*"},
-        req => req.headers["Authorization"] = `Bearer ${accessToken}`
-    )
-})
+  cy.login('admin', 'admin');
+});
 
 
-describe("User log in", () => {
-    it('is accessible', () => {
-        cy.visit('/')
-        cy.get("input[name=username]").type("admin")
-        cy.get("input[name=password]").type("admin{enter}")
-    })
-})
+describe('Individuals', () => {
+  it('should show the page', () => {
+    cy.visit('/');
+  });
+});
+
+describe('Individual', () => {
+  it('should show the page', () => {
+    cy.visit('/individuals')
+    cy.get('[data-cy=individual]').first().click()
+  });
+});
+
+describe('Cases', () => {
+  it('should show the page', () => {
+    cy.visit('/cases');
+  });
+});
+
+describe('Teams', () => {
+  it('should show the page', () => {
+    cy.visit('/teams');
+  });
+});
+
+describe('Settings', () => {
+  it('should show the page', () => {
+    cy.visit('/teams');
+  });
+});
+
+describe('Attribute settings', function() {
+  it('should show the page', () => {
+    cy.visit('/settings/attributes');
+  });
+});
+
+describe('Entity Type settings', function() {
+  it('should show the page', () => {
+    cy.visit('/settings/partytypes');
+  });
+});
+
+
+describe('Case Type settings', function() {
+  it('should show the page', () => {
+    cy.visit('/settings/casetypes');
+  });
+});
+
+
+describe('Relationship Type settings', function() {
+  it('should show the page', () => {
+    cy.visit('/settings/relationshiptypes');
+  });
+});
+
