@@ -37,7 +37,7 @@
                                 {{$caseTypes := .CaseTypes}}
                                 {{$parties := .Parties}}
                                 {{ range .Cases.Items }}
-                                    <tr {{if .Done}}class="table-secondary"{{end}}onclick="window.location.href = '/cases/{{.ID}}'" style="cursor: pointer;">
+                                    <tr onclick="window.location.href = '/cases/{{.ID}}'" style="cursor: pointer;">
                                         {{$casetype := $caseTypes.FindByID .CaseTypeID}}
                                         <td style="width: 3rem">
                                             {{if .Done}}
