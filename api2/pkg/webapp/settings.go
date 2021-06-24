@@ -34,8 +34,7 @@ func (h *Handler) Attributes(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	partyTypesCli := partytypes.NewClient("http://localhost:9000")
-	partyTypes, err := partyTypesCli.List(ctx)
+	partyTypes, err := h.partyTypeClient.List(ctx)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -51,7 +50,13 @@ func (h *Handler) Attributes(w http.ResponseWriter, req *http.Request) {
 }
 
 func (h *Handler) NewAttribute(w http.ResponseWriter, req *http.Request) {
-	if err := h.renderFactory.New(req).ExecuteTemplate(w, "attribute", map[string]interface{}{}); err != nil {
+	if err := h.renderFactory.New(req).ExecuteTemplate(w, "attribute", map[string]interface{}{
+		"PartyTypes": partytypes.PartyTypeList{
+			Items: []*partytypes.PartyType{
+				&partytypes.IndividualPartyType,
+			},
+		},
+	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -80,6 +85,11 @@ func (h *Handler) Attribute(w http.ResponseWriter, req *http.Request) {
 
 	if err := h.renderFactory.New(req).ExecuteTemplate(w, "attribute", map[string]interface{}{
 		"Attribute": a,
+		"PartyTypes": partytypes.PartyTypeList{
+			Items: []*partytypes.PartyType{
+				&partytypes.IndividualPartyType,
+			},
+		},
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -147,7 +157,7 @@ func (h *Handler) PostAttribute(ctx context.Context, attribute *attributes.Attri
 
 	attribute.Name = values.Get("name")
 	attribute.ValueType = expressions.ValueType{}
-	attribute.PartyTypeIDs = values["subjectType"]
+	attribute.PartyTypeIDs = values["partyTypes"]
 	attribute.Translations = translations
 	attribute.IsPersonallyIdentifiableInfo = values.Get("isPersonallyIdentifiableInfo") == "true"
 

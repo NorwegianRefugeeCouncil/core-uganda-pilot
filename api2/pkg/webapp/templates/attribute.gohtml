@@ -45,7 +45,9 @@
                                 <select id="subject-type-input"
                                         name="partyTypes"
                                         class="form-select">
-                                    <option>Individual</option>
+                                    {{range .PartyTypes.Items}}
+                                    <option value="{{.ID}}">{{.Name}}</option>
+                                    {{end}}
                                 </select>
                                 <label for="subject-type-input">Subject Type</label>
                             </div>
@@ -118,7 +120,9 @@
                 ]
             },
             partyTypes: [
-                {value: "individual", name: "Individual"}
+                {{range .PartyTypes.Items}}
+                {value: "{{.ID}}", name: "{{.Name}}"}
+                {{end}}
             ]
         })
         {{else }}
@@ -126,12 +130,14 @@
             attribute: {
                 name: "",
                 valueType: "",
-                partyTypes: "individual",
+                partyTypes: ["{{(index .PartyTypes.Items 0).ID}}"],
                 isPersonallyIdentifiableInformation: false,
                 translations: []
             },
             partyTypes: [
-                {value: "individual", name: "Individual"}
+                {{range .PartyTypes.Items}}
+                {value: "{{.ID}}", name: "{{.Name}}"}
+                {{end}}
             ]
         })
         {{end}}
