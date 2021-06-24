@@ -23,7 +23,7 @@ func (h *Handler) Individuals(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	attributesClient := attributes.NewClient("http://localhost:9000")
-	attrs, err := attributesClient.List(ctx)
+	attrs, err := attributesClient.List(ctx, attributes.ListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -113,7 +113,9 @@ func (h *Handler) Individual(w http.ResponseWriter, req *http.Request) {
 
 	g.Go(func() error {
 		var err error
-		attrs, err = h.attributeClient.List(waitCtx)
+		attrs, err = h.attributeClient.List(waitCtx, attributes.ListOptions{
+			PartyTypeIDs: []string{partytypes.IndividualPartyType.ID},
+		})
 		return err
 	})
 

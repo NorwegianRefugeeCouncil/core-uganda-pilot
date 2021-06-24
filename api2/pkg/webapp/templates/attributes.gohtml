@@ -27,8 +27,8 @@
                         <a class="card mb-3 shadow-sm text-dark text-decoration-none attribute"
                            href="/settings/attributes/{{.ID}}">
                             <div class="card-body">
-                                {{ range .PartyTypes}}
-                                    {{$partyType := $.PartyTypes.GetByID .}}
+                                {{ range .PartyTypeIDs}}
+                                    {{$partyType := $.PartyTypeIDs.GetByID .}}
                                     <small class="d-block text-muted">{{$partyType.Name}}</small>
                                 {{end}}
                                 {{.Name}}
