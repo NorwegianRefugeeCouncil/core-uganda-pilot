@@ -19,7 +19,7 @@
                             {{if .CaseType}}
                                 {{$partyTypeId := .CaseType.PartyTypeID}}
                                 {{range .PartyTypes.Items}}
-                                    <option {{if eq .ID $partyTypeId}}selected{{end}} value="{{.ID}}">
+                                    <option {{if eq .ID $partyTypeId}}selected{{end}} value="{{.ID}}" data-cy="partytype-option">
                                         {{.Name}}
                                     </option>
                                 {{end}}
@@ -27,7 +27,7 @@
                                 {{if .PartyTypes}}
                                     <option selected></option>
                                     {{range .PartyTypes.Items}}
-                                        <option value="{{.ID}}">{{.Name}}</option>
+                                        <option value="{{.ID}}" data-cy="partytype-option">{{.Name}}</option>
                                     {{end}}
                                 {{else}}
                                     <option disabled selected>No party types defined</option>
@@ -37,11 +37,12 @@
                         <label for="party-type">Select Party Type</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <select id="team" type="select" class="form-select" name="teamId" {{if .CaseType}}disabled{{end}}>
+                        <select id="team" type="select" class="form-select" name="teamId"
+                                {{if .CaseType}}disabled{{end}}>
                             {{if .CaseType}}
                                 {{$teamId := .CaseType.TeamID}}
                                 {{range .Teams.Items}}
-                                    <option {{if eq .ID $teamId}}selected{{end}} value="{{.ID}}">
+                                    <option {{if eq .ID $teamId}}selected{{end}} value="{{.ID}}" data-cy="team-option">
                                         {{.Name}}
                                     </option>
                                 {{end}}
@@ -49,7 +50,7 @@
                                 {{if .Teams}}
                                     <option selected></option>
                                     {{range .Teams.Items}}
-                                        <option value="{{.ID}}">{{.Name}}</option>
+                                        <option value="{{.ID}}" data-cy="team-option">{{.Name}}</option>
                                     {{end}}
                                 {{else}}
                                     <option disabled selected>No teams defined</option>
@@ -58,7 +59,7 @@
                         </select>
                         <label for="team">Select Team</label>
                     </div>
-                    <button class="btn btn-primary" type="submit">Save</button>
+                    <button class="btn btn-primary">Save</button>
                 </form>
             </div>
         </div>
