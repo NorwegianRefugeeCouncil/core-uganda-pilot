@@ -1,10 +1,3 @@
-let accessToken;
-
-
-beforeEach(() => {
-  cy.login('admin', 'admin');
-});
-
 
 describe('Individuals', () => {
   it('should show the page', () => {
@@ -33,7 +26,7 @@ describe('Teams', () => {
 
 describe('Settings', () => {
   it('should show the page', () => {
-    cy.visit('/teams');
+    cy.visit('/settings');
   });
 });
 
@@ -60,6 +53,12 @@ describe('Case Type settings', function() {
 describe('Relationship Type settings', function() {
   it('should show the page', () => {
     cy.visit('/settings/relationshiptypes');
+  });
+});
+
+describe('Country Type settings', function() {
+  it('should show the page', () => {
+    cy.visit('/settings/countries');
   });
 });
 
