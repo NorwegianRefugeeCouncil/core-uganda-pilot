@@ -1,8 +1,8 @@
 const mockText = "mock"
 const mockUpdatedText = "update"
 
-describe("Individual",function () {
-    describe("Individual registration", () => {
+describe("Create & edit individual",function () {
+    describe("Create", () => {
         it("registers a new individual", () => {
             cy.visit('/individuals/new')
             cy.get("input[data-cy=textAttribute]").each(($el) => {
@@ -18,6 +18,8 @@ describe("Individual",function () {
                 cy.wrap($el).should('have.value', mockText)
             })
         })
+    })
+    describe("Update", () => {
         it ("updates the individual attributes", () => {
             cy.get("input[data-cy=textAttribute]").each($el => {
                 cy.wrap($el).clear().type(mockUpdatedText)

@@ -14,12 +14,13 @@
                                 id="case-type"
                                 class="form-select"
                                 name="caseTypeId"
+                                data-cy="casetype-select"
                         >
 
                             {{if .CaseTypes}}
                                 <option {{if not $.CaseTypeID}}selected{{end}} value="" hidden="hidden">Choose</option>
                                 {{range .CaseTypes.Items}}
-                                    <option value="{{.ID}}" {{if eq .ID $.CaseTypeID}}selected{{end}}>{{.Name}}</option>
+                                    <option value="{{.ID}}" data-cy="casetype-option" {{if eq .ID $.CaseTypeID}}selected{{end}}>{{.Name}}</option>
                                 {{end}}
                             {{else}}
                                 <option selected disabled>No case types defined</option>
@@ -30,11 +31,11 @@
                         <label for="case-type">Select Case Type</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <select id="party" class="form-select" name="partyId">
+                        <select id="party" class="form-select" name="partyId" data-cy="party-select">
                             {{if .Parties}}
                                 <option {{if not $.PartyID}}selected{{end}}></option>
                                 {{range .Parties.Items}}
-                                    <option {{if eq .ID $.PartyID}}selected{{end}} value="{{.ID}}">{{.}}</option>
+                                    <option value="{{.ID}}" data-cy="party-option" {{if eq .ID $.PartyID}}selected{{end}}>{{.}}</option>
                                 {{end}}
                             {{else}}
                                 <option selected disabled>No parties defined</option>
@@ -49,7 +50,9 @@
                                 id="description"
                                 name="description"
                                 class="form-control"
-                                rows="3"></textarea>
+                                rows="3"
+                                data-cy="description"
+                        ></textarea>
                     </div>
                     <button class="btn btn-primary" type="submit">Save</button>
                 </form>
