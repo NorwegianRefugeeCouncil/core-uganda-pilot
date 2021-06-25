@@ -24,7 +24,9 @@
                                        type="text"
                                        class="form-control"
                                        value=""
-                                       placeholder="Name"/>
+                                       placeholder="Name"
+                                       data-cy="name"
+                                >
                                 <label for="name-input">Name</label>
                             </div>
 
@@ -34,7 +36,9 @@
                             <div class="form-floating mb-3 shadow-sm">
                                 <select id="value-type-input"
                                         name="valueType"
-                                        class="form-select">
+                                        class="form-select"
+                                        data-cy="type"
+                                >
                                     <option>String</option>
                                 </select>
                                 <label for="value-type-input">Value Type</label>
@@ -44,7 +48,9 @@
                             <div class="form-floating mb-3 shadow-sm">
                                 <select id="subject-type-input"
                                         name="partyTypes"
-                                        class="form-select">
+                                        class="form-select"
+                                        data-cy="subject"
+                                >
                                     {{range .PartyTypes.Items}}
                                     <option value="{{.ID}}">{{.Name}}</option>
                                     {{end}}
@@ -57,7 +63,9 @@
                                 <input id="is-pii-input"
                                        name="isPersonallyIdentifiableInformation"
                                        type="checkbox"
-                                       class="form-check-input">
+                                       class="form-check-input"
+                                       data-cy="personal-info-chkbx"
+                                >
                                 <label class="form-check-label" for="is-pii-input">
                                     Is Personally Identifiable Information
                                 </label>
@@ -73,7 +81,7 @@
                                 </div>
                                 <div id="language-picker-container" class="card-body border-top">
                                     <div class="form-floating shadow-sm">
-                                        <select id="language-picker" class="form-select">
+                                        <select id="language-picker" class="form-select" data-cy="language">
                                             <!-- Templated -->
                                         </select>
                                         <label for="language-picker">Language</label>
@@ -258,7 +266,9 @@
                                            class="form-control"
                                            type="text"
                                            value="${long}"
-                                           placeholder="Long Description"/>
+                                           placeholder="Long Description"
+                                           data-cy="translation-long"
+                                    >
                                     <label for="i81n-long-${language}">Long</label>
                                 </div>
 
@@ -268,7 +278,9 @@
                                            class="form-control"
                                            type="text"
                                            value="${short}"
-                                           placeholder="Short Description"/>
+                                           placeholder="Short Description"
+                                           data-cy="translation-short"
+                                    >
                                     <label for="i81n-short-${language}">Short</label>
                                 </div>
 

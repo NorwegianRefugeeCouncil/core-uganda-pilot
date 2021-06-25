@@ -11,7 +11,9 @@
                 {{$partyTypes := .PartyTypes}}
                 {{ range .CaseTypes.Items }}
                     <a class="list-group-item d-flex justify-content-between align-items-center"
-                       href="/settings/casetypes/{{.ID}}">
+                       href="/settings/casetypes/{{.ID}}"
+                       data-cy="casetype"
+                    >
                         {{$partyType := $partyTypes.GetByID .PartyTypeID}}
                         {{.Name}} ({{$partyType.Name}})
                     </a>

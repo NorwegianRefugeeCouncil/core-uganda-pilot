@@ -1,5 +1,5 @@
 {{define "partytype-row"}}
-    <a class="list-group-item font-monospace py-3" href="/settings/partytypes/{{.ID}}">
+    <a class="list-group-item font-monospace py-3" data-cy="partytype" href="/settings/partytypes/{{.ID}}">
         {{if .IsBuiltIn}}<span class="badge bg-info text-dark shadow-sm">Built In</span>{{end}} {{.Name}}
     </a>
 {{end}}
