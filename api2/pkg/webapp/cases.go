@@ -148,9 +148,6 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
-	caseTypesClient := casetypes.NewClient("http://localhost:9000")
-	partiesClient := parties.NewClient("http://localhost:9000")
-
 	var caseTypes *casetypes.CaseTypeList
 	var p *parties.PartyList
 	var teamList *teams.TeamList
@@ -165,7 +162,7 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 
 	g.Go(func() error {
 		var err error
-		caseTypes, err = caseTypesClient.List(waitCtx, casetypes.ListOptions{})
+		caseTypes, err = h.caseTypeClient.List(waitCtx, casetypes.ListOptions{})
 		return err
 	})
 
@@ -177,9 +174,11 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 	qry := req.URL.Query()
 	caseTypeID := qry.Get("caseTypeId")
 	partyTypeID := ""
+	teamID := ""
 	for _, caseType := range caseTypes.Items {
 		if caseType.ID == caseTypeID {
 			partyTypeID = caseType.PartyTypeID
+			teamID = caseType.TeamID
 		}
 	}
 
@@ -187,15 +186,23 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 		PartyTypeID: partyTypeID,
 	}
 
-	p, err := partiesClient.List(ctx, listOptions)
+	p, err := h.partyClient.List(ctx, listOptions)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	var team *teams.Team
+	if len(teamID) > 0 {
+		team, err = h.teamClient.Get(ctx, teamID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	}
 
 	if err := h.renderFactory.New(req).ExecuteTemplate(w, "casenew", map[string]interface{}{
 		"PartyID":    qry.Get("partyId"),
 		"CaseTypeID": qry.Get("caseTypeId"),
-		"TeamID":     qry.Get("teamId"),
+		"Team":       team,
 		"CaseTypes":  caseTypes,
 		"Parties":    p,
 		"TeamList":   teamList,
