@@ -3,14 +3,12 @@ package server
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core-kafka/pkg/auth"
 	"github.com/nrc-no/core-kafka/pkg/cases/cases"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
 	"github.com/nrc-no/core-kafka/pkg/individuals"
-	"github.com/nrc-no/core-kafka/pkg/keycloak"
 	"github.com/nrc-no/core-kafka/pkg/memberships"
 	"github.com/nrc-no/core-kafka/pkg/middleware"
 	"github.com/nrc-no/core-kafka/pkg/organizations"
@@ -72,7 +70,6 @@ type Server struct {
 	MembershipHandler         *memberships.Handler
 	MembershipStore           *memberships.Store
 	membershipsClient         *memberships.Client
-	KeycloakClient            *keycloak.Client
 	SessionManager            sessionmanager.Store
 	HydraPublicClient         *client.OryHydra
 	HydraAdminClient          *client.OryHydra
@@ -137,7 +134,6 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 }
 
 type CompletedOptions struct {
-	KeycloakClient       *keycloak.Client
 	KeycloakClientID     string
 	KeycloakClientSecret string
 	KeycloakBaseURL      string
@@ -177,11 +173,6 @@ func (o Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		return CompletedOptions{}, err
 	}
 
-	keycloakClient, err := keycloak.NewClient(o.KeycloakBaseURL, o.KeycloakRealmName, o.KeycloakClientID, o.KeycloakClientSecret)
-	if err != nil {
-		return CompletedOptions{}, err
-	}
-
 	hydraAdminURL, err := url.Parse(o.HydraAdminURL)
 	if err != nil {
 		return CompletedOptions{}, err
@@ -213,7 +204,6 @@ func (o Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		TemplateDirectory:    o.TemplateDirectory,
 		Address:              o.Address,
 		MongoDatabase:        o.MongoDatabase,
-		KeycloakClient:       keycloakClient,
 		KeycloakClientSecret: o.KeycloakClientSecret,
 		KeycloakClientID:     o.KeycloakClientID,
 		KeycloakBaseURL:      o.KeycloakBaseURL,
@@ -365,26 +355,6 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		panic(err)
 	}
 
-	// Auth
-	authHandler, err := auth.NewHandler(
-		ctx,
-		fmt.Sprintf("%s/auth/realms/%s", c.KeycloakBaseURL, c.KeycloakRealmName),
-		c.KeycloakClientID,
-		c.KeycloakClientSecret,
-		"http://localhost:9000/auth/callback",
-		c.SessionManager,
-		c.KeycloakClient)
-	if err != nil {
-		panic(err)
-	}
-	if err := auth.Init(ctx, c.KeycloakClient); err != nil {
-		panic(err)
-	}
-	// router.Use(authHandler.Authenticate())
-	router.Path("/auth/login").Methods("GET").HandlerFunc(authHandler.Login)
-	router.Path("/auth/logout").Methods("GET").HandlerFunc(authHandler.Logout)
-	router.Path("/auth/callback").Methods("GET").HandlerFunc(authHandler.Callback)
-
 	// Cases
 	caseStore := cases.NewStore(c.MongoClient, c.MongoDatabase)
 	if err := cases.Init(ctx, caseStore); err != nil {
@@ -509,7 +479,6 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		MembershipHandler:         membershipHandler,
 		membershipsClient:         membershipClient,
 		WebAppHandler:             webAppHandler,
-		KeycloakClient:            c.KeycloakClient,
 		SessionManager:            c.SessionManager,
 		HydraPublicClient:         c.HydraPublicClient,
 		HydraAdminClient:          c.HydraAdminClient,
