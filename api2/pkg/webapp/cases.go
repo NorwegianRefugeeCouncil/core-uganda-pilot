@@ -150,15 +150,9 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 
 	var caseTypes *casetypes.CaseTypeList
 	var p *parties.PartyList
-	var teamList *teams.TeamList
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
-	g.Go(func() error {
-		var err error
-		teamList, err = h.teamClient.List(waitCtx, teams.ListOptions{})
-		return err
-	})
 
 	g.Go(func() error {
 		var err error
@@ -205,7 +199,6 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 		"Team":       team,
 		"CaseTypes":  caseTypes,
 		"Parties":    p,
-		"TeamList":   teamList,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
