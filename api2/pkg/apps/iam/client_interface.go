@@ -4,7 +4,7 @@ import (
 	"context"
 )
 
-type ClientSet interface {
+type Interface interface {
 	Parties() PartyClient
 	PartyTypes() PartyTypeClient
 	Relationships() RelationshipClient
