@@ -78,11 +78,11 @@ func (s *Store) Update(ctx context.Context, attribute *Attribute) error {
 		"id": attribute.ID,
 	}, bson.M{
 		"$set": bson.M{
-			"name":                         attribute.Name,
-			"translations":                 attribute.Translations,
-			"valueType":                    attribute.ValueType,
-			"isPersonallyIdentifiableInfo": attribute.IsPersonallyIdentifiableInfo,
-			"partyTypeIds":                 attribute.PartyTypeIDs,
+			"name":         attribute.Name,
+			"translations": attribute.Translations,
+			"valueType":    attribute.ValueType,
+			"isPii":        attribute.IsPersonallyIdentifiableInfo,
+			"partyTypeIds": attribute.PartyTypeIDs,
 		},
 	})
 	if err != nil {
