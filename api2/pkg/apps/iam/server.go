@@ -21,6 +21,7 @@ type Server struct {
 	RelationshipTypeStore *RelationshipTypeStore
 	IndividualStore       *IndividualStore
 	StaffStore            *StaffStore
+	OrganizationStore     *OrganizationStore
 }
 
 func NewServer() *Server {
