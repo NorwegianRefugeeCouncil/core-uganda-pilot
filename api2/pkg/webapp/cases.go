@@ -173,6 +173,7 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 		if caseType.ID == caseTypeID {
 			partyTypeID = caseType.PartyTypeID
 			teamID = caseType.TeamID
+			break
 		}
 	}
 
