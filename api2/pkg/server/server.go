@@ -160,11 +160,12 @@ func (o Options) Complete(ctx context.Context) (CompletedOptions, error) {
 	sm := sessionmanager.New(pool, sessionmanager.Options{})
 
 	// Setup mongo client
-	mongoClient, err := mongo.NewClient(options.Client().SetAuth(
-		options.Credential{
-			Username: o.MongoUsername,
-			Password: o.MongoPassword,
-		}))
+	mongoClient, err := mongo.NewClient(options.Client().
+		SetAuth(
+			options.Credential{
+				Username: o.MongoUsername,
+				Password: o.MongoPassword,
+			}))
 	if err != nil {
 		return CompletedOptions{}, err
 	}

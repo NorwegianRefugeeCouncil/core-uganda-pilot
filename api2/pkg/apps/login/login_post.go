@@ -1,0 +1,68 @@
+package login
+
+import (
+	"github.com/ory/hydra-client-go/client/admin"
+	"github.com/ory/hydra-client-go/models"
+	"net/http"
+)
+
+func (s *Server) PostLogin(w http.ResponseWriter, req *http.Request) {
+
+	ctx := req.Context()
+
+	// Parsing the form values
+	if err := req.ParseForm(); err != nil {
+		s.Render(w, req, "login", map[string]interface{}{
+			"Error": err.Error(),
+		})
+		return
+	}
+
+	values := req.Form
+	loginChallenge := values.Get("login_challenge")
+	rememberMe := values.Get("remember_me") == "true"
+	email := values.Get("email")
+	password := values.Get("password")
+
+	defer func() {
+		// Clearing values
+		values.Set("email", "")
+		values.Set("password", "")
+		email = ""
+		password = ""
+	}()
+
+	// Verify password hash
+	isValid := s.VerifyPassword(ctx, email, password)
+	if !isValid {
+		s.Render(w, req, "login", map[string]interface{}{
+			"Challenge": loginChallenge,
+			"Error":     "Invalid credentials",
+		})
+		return
+	}
+
+	// Getting login request
+	_, err := s.HydraAdmin.GetLoginRequest(admin.NewGetLoginRequestParams().WithLoginChallenge(loginChallenge))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Accept login request
+	respLoginAccept, err := s.HydraAdmin.AcceptLoginRequest(
+		admin.NewAcceptLoginRequestParams().
+			WithContext(ctx).
+			WithLoginChallenge(loginChallenge).
+			WithBody(&models.AcceptLoginRequest{
+				Remember: rememberMe,
+				// Subject:  &party.ID, TODO
+			}))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, req, *respLoginAccept.Payload.RedirectTo, http.StatusFound)
+
+}

@@ -14,3 +14,7 @@ var PartyType = partytypes.PartyType{
 type Organization struct {
 	*parties.Party
 }
+
+type OrganizationList struct {
+	Items []*Organization `json:"items" bson:"items"`
+}
