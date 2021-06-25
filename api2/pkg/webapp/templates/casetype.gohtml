@@ -15,14 +15,14 @@
                         <label for="name">Name</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <select id="party-type" type="select" class="form-select" name="partyTypeId">
+                        <select id="party-type" type="select" class="form-select" name="partyTypeId"
+                                {{if .CaseType}}disabled{{end}}>
                             {{if .CaseType}}
-                                {{$partyTypeId := .CaseType.PartyTypeID}}
-                                {{range .PartyTypes.Items}}
-                                    <option {{if eq .ID $partyTypeId}}selected{{end}} value="{{.ID}}" data-cy="partytype-option">
-                                        {{.Name}}
-                                    </option>
-                                {{end}}
+                                {{$partyType := .PartyTypes.FindByID .CaseType.PartyTypeID}}
+                                <option selected value="{{$partyType.ID}}"
+                                        data-cy="partytype-option">
+                                    {{$partyType.Name}}
+                                </option>
                             {{else}}
                                 {{if .PartyTypes}}
                                     <option selected></option>
@@ -40,12 +40,10 @@
                         <select id="team" type="select" class="form-select" name="teamId"
                                 {{if .CaseType}}disabled{{end}}>
                             {{if .CaseType}}
-                                {{$teamId := .CaseType.TeamID}}
-                                {{range .Teams.Items}}
-                                    <option {{if eq .ID $teamId}}selected{{end}} value="{{.ID}}" data-cy="team-option">
-                                        {{.Name}}
-                                    </option>
-                                {{end}}
+                                {{$team := .Teams.FindByID .CaseType.TeamID}}
+                                <option selected value="{{$team.ID}}" data-cy="team-option">
+                                    {{$team.Name}}
+                                </option>
                             {{else}}
                                 {{if .Teams}}
                                     <option selected></option>

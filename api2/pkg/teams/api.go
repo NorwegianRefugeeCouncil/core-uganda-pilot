@@ -8,3 +8,12 @@ type Team struct {
 type TeamList struct {
 	Items []*Team `json:"items"`
 }
+
+func (l *TeamList) FindByID(id string) *Team {
+	for _, team := range l.Items {
+		if team.ID == id {
+			return team
+		}
+	}
+	return nil
+}
