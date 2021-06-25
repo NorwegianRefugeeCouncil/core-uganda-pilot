@@ -22,6 +22,8 @@ type ClientSet interface {
 }
 
 type PartyListOptions struct {
+	PartyTypeID string `json:"partyTypeId" bson:"partyTypeId"`
+	SearchParam string `json:"searchParam" bson:"searchParam"`
 }
 
 type PartyClient interface {
@@ -32,6 +34,10 @@ type PartyClient interface {
 }
 
 type PartyTypeListOptions struct {
+	RelationshipTypeID string
+	FirstPartyId       string
+	SecondParty        string
+	EitherParty        string
 }
 
 type PartyTypeClient interface {
@@ -52,6 +58,7 @@ type RelationshipClient interface {
 }
 
 type RelationshipTypeListOptions struct {
+	PartyType string
 }
 
 type RelationshipTypeClient interface {
@@ -62,6 +69,7 @@ type RelationshipTypeClient interface {
 }
 
 type AttributeListOptions struct {
+	PartyTypeIDs []string
 }
 
 type AttributeClient interface {
