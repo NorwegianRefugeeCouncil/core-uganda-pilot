@@ -4,6 +4,7 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/expressions"
 	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
+	"github.com/nrc-no/core-kafka/pkg/parties/relationshiptypes"
 )
 
 var FirstNameAttribute = Attribute{
@@ -121,6 +122,22 @@ var TeamNameAttribute = attributes.Attribute{
 			Locale:           "en",
 			ShortFormulation: "Team name",
 			LongFormulation:  "Team name",
+		},
+	},
+}
+
+var MembershipRelationshipType = relationshiptypes.RelationshipType{
+	ID:              "69fef57b-b37f-4803-a5fb-47e05282ac84",
+	IsDirectional:   true,
+	Name:            "teamMembership",
+	FirstPartyRole:  "Is member of team",
+	SecondPartyRole: "Has team member",
+	Rules: []relationshiptypes.RelationshipTypeRule{
+		{
+			&relationshiptypes.PartyTypeRule{
+				FirstPartyTypeID:  IndividualPartyType.ID,
+				SecondPartyTypeID: TeamPartyType.ID,
+			},
 		},
 	},
 }

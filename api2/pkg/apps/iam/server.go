@@ -23,6 +23,7 @@ type Server struct {
 	StaffStore            *StaffStore
 	OrganizationStore     *OrganizationStore
 	TeamStore             *TeamStore
+	MembershipStore       *MembershipStore
 }
 
 func NewServer() *Server {

@@ -107,6 +107,17 @@ type StaffClient interface {
 	Update(ctx context.Context, party *Staff) (*Staff, error)
 	List(ctx context.Context, listOptions StaffListOptions) (*StaffList, error)
 }
+type MembershipListOptions struct {
+	IndividualID string
+	TeamID       string
+}
+
+type MembershipClient interface {
+	Get(ctx context.Context, id string) (*Membership, error)
+	Create(ctx context.Context, party *Membership) (*Membership, error)
+	Update(ctx context.Context, party *Membership) (*Membership, error)
+	List(ctx context.Context, listOptions StaffListOptions) (*MembershipList, error)
+}
 
 type IndividualListOptions struct {
 	PartyTypeIDs []string `json:"partyTypeIds" bson:"partyTypeIds"`
