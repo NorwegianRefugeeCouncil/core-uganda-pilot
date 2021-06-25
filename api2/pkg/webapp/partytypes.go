@@ -88,12 +88,12 @@ func (h *Handler) PostPartyType(
 	partyType.IsBuiltIn = req.Form.Get("isBuiltIn") == "true"
 
 	if isNew {
-		out, err := h.partyTypeClient.Create(ctx, partyType)
+		_, err := h.partyTypeClient.Create(ctx, partyType)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		w.Header().Set("Location", "/settings/partytypes/"+out.ID)
+		w.Header().Set("Location", "/settings/partytypes/")
 		w.WriteHeader(http.StatusSeeOther)
 		return
 	} else {
@@ -102,7 +102,7 @@ func (h *Handler) PostPartyType(
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		w.Header().Set("Location", "/settings/partytypes/"+partyType.ID)
+		w.Header().Set("Location", "/settings/partytypes")
 		w.WriteHeader(http.StatusSeeOther)
 		return
 	}
