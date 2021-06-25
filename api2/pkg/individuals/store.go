@@ -58,12 +58,22 @@ func (s *Store) Get(ctx context.Context, ID string) (*Individual, error) {
 
 func (s *Store) List(ctx context.Context, listOptions ListOptions) (*IndividualList, error) {
 
-	filter := bson.M{}
+	includesIndividualPartyType := false
 
-	if len(listOptions.PartyTypeIDs) > 0 {
-		filter["partyTypeIds"] = bson.M{
-			"$all": listOptions.PartyTypeIDs,
+	for _, partyTypeId := range listOptions.PartyTypeIDs {
+		if partyTypeId == partytypes.IndividualPartyType.ID {
+			includesIndividualPartyType = true
 		}
+	}
+
+	if !includesIndividualPartyType {
+		listOptions.PartyTypeIDs = append(listOptions.PartyTypeIDs, partytypes.IndividualPartyType.ID)
+	}
+
+	filter := bson.M{
+		"partyTypeIds": bson.M{
+			"$all": listOptions.PartyTypeIDs,
+		},
 	}
 
 	cursor, err := s.collection.Find(ctx, filter)

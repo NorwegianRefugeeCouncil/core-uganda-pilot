@@ -16,9 +16,17 @@ func NewStore(mongoClient *mongo.Client, database string) *Store {
 	}
 }
 
-func (s *Store) List(ctx context.Context) (*AttributeList, error) {
+func (s *Store) List(ctx context.Context, listOptions ListOptions) (*AttributeList, error) {
 
-	cursor, err := s.collection.Find(ctx, bson.M{})
+	filter := bson.M{}
+
+	if len(listOptions.PartyTypeIDs) > 0 {
+		filter["partyTypeIds"] = bson.M{
+			"$all": listOptions.PartyTypeIDs,
+		}
+	}
+
+	cursor, err := s.collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err
 	}

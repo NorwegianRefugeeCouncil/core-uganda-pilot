@@ -28,7 +28,7 @@
                            href="/settings/attributes/{{.ID}}" data-cy="attribute">
                             <div class="card-body">
                                 {{ range .PartyTypeIDs}}
-                                    {{$partyType := $.PartyTypes.GetByID .}}
+                                    {{$partyType := $.PartyTypeIDs.GetByID .}}
                                     <small class="d-block text-muted">{{$partyType.Name}}</small>
                                 {{end}}
                                 {{.Name}}

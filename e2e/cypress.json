@@ -1,9 +1,3 @@
 {
-  "baseUrl": "http://localhost:9000",
-  "env": {
-    "mockIndividual": {
-      "firstName": "David",
-      "lastName": "Testerfield"
-    }
-  }
+  "baseUrl": "http://localhost:9000"
 }

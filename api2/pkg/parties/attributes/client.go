@@ -20,13 +20,23 @@ func NewClient(basePath string) *Client {
 	}
 }
 
-func (c *Client) List(ctx context.Context) (*AttributeList, error) {
+type ListOptions struct {
+	PartyTypeIDs []string
+}
+
+func (c *Client) List(ctx context.Context, listOptions ListOptions) (*AttributeList, error) {
 	req, err := http.NewRequest("GET", c.basePath+"/apis/v1/attributes", nil)
 	if err != nil {
 		return nil, err
 	}
 	req = req.WithContext(ctx)
 	auth.SetAuthorizationHeader(ctx, req)
+	qry := req.URL.Query()
+	if len(listOptions.PartyTypeIDs) > 0 {
+		for _, partyTypeID := range listOptions.PartyTypeIDs {
+			qry.Add("partyTypeIds", partyTypeID)
+		}
+	}
 	req.Header.Set("Accept", "application/json")
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
