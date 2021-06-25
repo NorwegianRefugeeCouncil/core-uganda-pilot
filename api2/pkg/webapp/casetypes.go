@@ -58,10 +58,10 @@ func (h *Handler) PostCaseType(
 		return
 	}
 
-	name := req.Form.Get("name")
-	caseType.Name = name
-	partyTypeID := req.Form.Get("partyTypeId")
-	caseType.PartyTypeID = partyTypeID
+	values := req.Form
+	caseType.Name = values.Get("name")
+	caseType.PartyTypeID = values.Get("partyTypeId")
+	caseType.TeamID = values.Get("teamId")
 
 	if isNew {
 		_, err := h.caseTypeClient.Create(ctx, caseType)

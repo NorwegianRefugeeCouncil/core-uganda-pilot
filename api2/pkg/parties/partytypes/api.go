@@ -26,7 +26,7 @@ type PartyTypeList struct {
 	Items []*PartyType
 }
 
-func (p *PartyTypeList) GetByID(id string) *PartyType {
+func (p *PartyTypeList) FindByID(id string) *PartyType {
 	for _, item := range p.Items {
 		if item.ID == id {
 			return item
