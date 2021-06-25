@@ -30,7 +30,7 @@ func (s *RelationshipStore) Get(ctx context.Context, id string) (*Relationship, 
 	return &r, nil
 }
 
-func (s *RelationshipStore) List(ctx context.Context, listOptions PartyTypeListOptions) (*RelationshipList, error) {
+func (s *RelationshipStore) List(ctx context.Context, listOptions RelationshipListOptions) (*RelationshipList, error) {
 
 	var filterExpressions []bson.M
 

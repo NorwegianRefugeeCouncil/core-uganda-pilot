@@ -2,27 +2,13 @@ package iam
 
 import (
 	"encoding/json"
-	"fmt"
-	"github.com/gorilla/mux"
+	uuid "github.com/satori/go.uuid"
 	"io/ioutil"
 	"net/http"
 )
 
-func (s *Server) PutPartyType(w http.ResponseWriter, req *http.Request) {
+func (s *Server) PostParty(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-
-	id, ok := mux.Vars(req)["id"]
-	if !ok || len(id) == 0 {
-		err := fmt.Errorf("id not found in path")
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	r, err := s.PartyTypeStore.Get(ctx, id)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
 
 	bodyBytes, err := ioutil.ReadAll(req.Body)
 	if err != nil {
@@ -30,21 +16,21 @@ func (s *Server) PutPartyType(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var payload PartyType
+	var payload Party
 	if err := json.Unmarshal(bodyBytes, &payload); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	r.Name = payload.Name
-	r.IsBuiltIn = payload.IsBuiltIn
+	p := &payload
+	p.ID = uuid.NewV4().String()
 
-	if err := s.PartyTypeStore.Update(ctx, r); err != nil {
+	if err := s.PartyStore.Create(ctx, p); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	responseBytes, err := json.Marshal(r)
+	responseBytes, err := json.Marshal(p)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

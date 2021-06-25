@@ -2,23 +2,30 @@ package iam
 
 import (
 	"encoding/json"
-	"fmt"
-	"github.com/gorilla/mux"
+	uuid "github.com/satori/go.uuid"
+	"io/ioutil"
 	"net/http"
 )
 
-func (s *Server) GetAttribute(w http.ResponseWriter, req *http.Request) {
+func (s *Server) PostAttribute(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	id, ok := mux.Vars(req)["id"]
-	if !ok || len(id) == 0 {
-		err := fmt.Errorf("no id found in path")
+
+	bodyBytes, err := ioutil.ReadAll(req.Body)
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	a, err := s.AttributeStore.Get(ctx, id)
-	if err != nil {
+	var a Attribute
+	if err := json.Unmarshal(bodyBytes, &a); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	a.ID = uuid.NewV4().String()
+
+	if err := s.AttributeStore.Create(ctx, &a); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

@@ -48,6 +48,10 @@ type PartyTypeClient interface {
 }
 
 type RelationshipListOptions struct {
+	RelationshipTypeID string
+	FirstPartyId       string // TODO FirstPartyID
+	SecondParty        string // TODO SecondPartyID
+	EitherParty        string // TODO EitherPartyID
 }
 
 type RelationshipClient interface {

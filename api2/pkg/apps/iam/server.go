@@ -10,7 +10,12 @@ type ServerOptions struct {
 }
 
 type Server struct {
-	router *mux.Router
+	router                *mux.Router
+	AttributeStore        *AttributeStore
+	PartyStore            *PartyStore
+	PartyTypeStore        *PartyTypeStore
+	RelationshipStore     *RelationshipStore
+	RelationshipTypeStore *RelationshipTypeStore
 }
 
 func NewServer() *Server {

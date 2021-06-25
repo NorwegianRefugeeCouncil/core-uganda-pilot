@@ -1,13 +1,12 @@
 package iam
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
 )
 
-func (s *Server) GetPartyType(w http.ResponseWriter, req *http.Request) {
+func (s *Server) DeleteRelationship(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	id, ok := mux.Vars(req)["id"]
@@ -17,18 +16,9 @@ func (s *Server) GetPartyType(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	ret, err := s.PartyTypeStore.Get(ctx, id)
+	err := s.RelationshipStore.Delete(ctx, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	responseBytes, err := json.Marshal(ret)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(responseBytes)
 }
