@@ -4,16 +4,26 @@ import (
 	"context"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type PartyStore struct {
 	Collection *mongo.Collection
 }
 
-func NewPartyStore(mongoClient *mongo.Client, database string) *PartyStore {
-	return &PartyStore{
+func NewPartyStore(ctx context.Context, mongoClient *mongo.Client, database string) (*PartyStore, error) {
+	store := &PartyStore{
 		Collection: mongoClient.Database(database).Collection("parties"),
 	}
+
+	if _, err := store.Collection.Indexes().CreateOne(ctx, mongo.IndexModel{
+		Keys:    bson.M{"id": 1},
+		Options: options.Index().SetUnique(true),
+	}); err != nil {
+		return nil, err
+	}
+
+	return store, nil
 }
 
 func (s *PartyStore) Get(ctx context.Context, id string) (*Party, error) {

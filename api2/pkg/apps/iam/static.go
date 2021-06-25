@@ -1,10 +1,7 @@
 package iam
 
 import (
-	"github.com/nrc-no/core-kafka/pkg/expressions"
-	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
-	"github.com/nrc-no/core-kafka/pkg/parties/relationshiptypes"
 )
 
 var FirstNameAttribute = Attribute{
@@ -99,25 +96,24 @@ var HouseholdPartyType = PartyType{
 	IsBuiltIn: true,
 }
 
-var OrganizationPartyType = partytypes.PartyType{
+var OrganizationPartyType = PartyType{
 	ID:        "09a7eef9-3f23-4c40-86f4-9b9440c56c6f",
 	Name:      "Organization",
 	IsBuiltIn: true,
 }
 
-var TeamPartyType = partytypes.PartyType{
+var TeamPartyType = PartyType{
 	ID:        "dacd6e08-3e3d-495b-8655-ea1d8e822cf3",
 	Name:      "Team",
 	IsBuiltIn: true,
 }
 
-var TeamNameAttribute = attributes.Attribute{
+var TeamNameAttribute = Attribute{
 	ID:                           "18f410a3-6fde-45ce-80c7-fc5d92b85870",
 	Name:                         "teamName",
-	ValueType:                    expressions.ValueType{},
 	PartyTypeIDs:                 []string{TeamPartyType.ID},
 	IsPersonallyIdentifiableInfo: false,
-	Translations: []attributes.AttributeTranslation{
+	Translations: []AttributeTranslation{
 		{
 			Locale:           "en",
 			ShortFormulation: "Team name",
@@ -126,18 +122,97 @@ var TeamNameAttribute = attributes.Attribute{
 	},
 }
 
-var MembershipRelationshipType = relationshiptypes.RelationshipType{
+var MembershipRelationshipType = RelationshipType{
 	ID:              "69fef57b-b37f-4803-a5fb-47e05282ac84",
 	IsDirectional:   true,
 	Name:            "teamMembership",
 	FirstPartyRole:  "Is member of team",
 	SecondPartyRole: "Has team member",
-	Rules: []relationshiptypes.RelationshipTypeRule{
+	Rules: []RelationshipTypeRule{
 		{
-			&relationshiptypes.PartyTypeRule{
+			&PartyTypeRule{
 				FirstPartyTypeID:  IndividualPartyType.ID,
 				SecondPartyTypeID: TeamPartyType.ID,
 			},
 		},
+	},
+}
+
+var HeadOfHouseholdRelationshipType = RelationshipType{
+	ID:              "de887604-9ce9-4fdc-af6b-602091a17913",
+	IsDirectional:   true,
+	Name:            "headOfHousehold",
+	FirstPartyRole:  "Is head of household of",
+	SecondPartyRole: "Has for head of household",
+	Rules: []RelationshipTypeRule{
+		{
+			PartyTypeRule: &PartyTypeRule{
+				FirstPartyTypeID:  partytypes.IndividualPartyType.ID,
+				SecondPartyTypeID: partytypes.HouseholdPartyType.ID,
+			},
+		},
+	},
+}
+
+var SpousalRelationshipType = RelationshipType{
+	ID:              "76376c69-ce06-4e06-b603-44c145ddf399",
+	IsDirectional:   false,
+	Name:            "spousal",
+	FirstPartyRole:  "Is spouse of",
+	SecondPartyRole: "Is spouse of",
+	Rules: []RelationshipTypeRule{
+		{
+			PartyTypeRule: &PartyTypeRule{
+				FirstPartyTypeID:  partytypes.IndividualPartyType.ID,
+				SecondPartyTypeID: partytypes.IndividualPartyType.ID,
+			},
+		},
+	},
+}
+
+var FilialRelationshipType = RelationshipType{
+	ID:              "dcebef97-f666-4593-b97e-075ad1890385",
+	IsDirectional:   false,
+	Name:            "filial",
+	FirstPartyRole:  "Is sibling of",
+	SecondPartyRole: "Is sibling of",
+	Rules: []RelationshipTypeRule{
+		{
+			PartyTypeRule: &PartyTypeRule{
+				FirstPartyTypeID:  partytypes.IndividualPartyType.ID,
+				SecondPartyTypeID: partytypes.IndividualPartyType.ID,
+			},
+		},
+	},
+}
+
+var ParentalRelationshipType = RelationshipType{
+	ID:              "628b9d26-f85d-44cd-8bed-6c5f692b4494",
+	IsDirectional:   true,
+	Name:            "parental",
+	FirstPartyRole:  "Is parent of",
+	SecondPartyRole: "Is child of",
+	Rules: []RelationshipTypeRule{
+		{
+			PartyTypeRule: &PartyTypeRule{
+				FirstPartyTypeID:  partytypes.IndividualPartyType.ID,
+				SecondPartyTypeID: partytypes.IndividualPartyType.ID,
+			},
+		},
+	},
+}
+
+var LegalNameAttribute = Attribute{
+	ID:   "7afb0744-c764-4c5b-9dc6-b341d9b320b4",
+	Name: "legalName",
+	Translations: []AttributeTranslation{
+		{
+			Locale:           "en",
+			LongFormulation:  "Legal Name",
+			ShortFormulation: "Legal Name",
+		},
+	},
+	PartyTypeIDs: []string{
+		OrganizationPartyType.ID,
 	},
 }

@@ -4,16 +4,27 @@ import (
 	"context"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type RelationshipStore struct {
 	collection *mongo.Collection
 }
 
-func NewRelationshipStore(mongoClient *mongo.Client, database string) *RelationshipStore {
-	return &RelationshipStore{
+func NewRelationshipStore(ctx context.Context, mongoClient *mongo.Client, database string) (*RelationshipStore, error) {
+	store := &RelationshipStore{
 		collection: mongoClient.Database(database).Collection("relationships"),
 	}
+
+	if _, err := store.collection.Indexes().CreateOne(ctx, mongo.IndexModel{
+		Keys:    bson.M{"id": 1},
+		Options: options.Index().SetUnique(true),
+	}); err != nil {
+		return nil, err
+	}
+
+	return store, nil
+
 }
 
 func (s *RelationshipStore) Get(ctx context.Context, id string) (*Relationship, error) {

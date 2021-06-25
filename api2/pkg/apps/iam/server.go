@@ -1,6 +1,7 @@
 package iam
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -48,7 +49,8 @@ type Server struct {
 	MembershipStore       *MembershipStore
 }
 
-func NewServer(o *ServerOptions) (*Server, error) {
+func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
+
 	mongoClient, err := mongo.NewClient(
 		options.Client().
 			SetHosts(o.MongoHosts).
@@ -62,21 +64,47 @@ func NewServer(o *ServerOptions) (*Server, error) {
 
 	router := mux.NewRouter()
 
-	relationshipStore := NewRelationshipStore(mongoClient, o.MongoDatabase)
-	partyStore := NewPartyStore(mongoClient, o.MongoDatabase)
+	relationshipStore, err := NewRelationshipStore(ctx, mongoClient, o.MongoDatabase)
+	if err != nil {
+		return nil, err
+	}
+
+	partyStore, err := NewPartyStore(ctx, mongoClient, o.MongoDatabase)
+	if err != nil {
+		return nil, err
+	}
+
+	attributeStore, err := NewAttributeStore(ctx, mongoClient, o.MongoDatabase)
+	if err != nil {
+		return nil, err
+	}
+
+	partyTypeStore, err := NewPartyTypeStore(ctx, mongoClient, o.MongoDatabase)
+	if err != nil {
+		return nil, err
+	}
+
+	relationshipTypeStore, err := NewRelationshipTypeStore(ctx, mongoClient, o.MongoDatabase)
+	if err != nil {
+		return nil, err
+	}
 
 	srv := &Server{
 		router:                router,
-		AttributeStore:        NewAttributeStore(mongoClient, o.MongoDatabase),
+		AttributeStore:        attributeStore,
 		PartyStore:            partyStore,
-		PartyTypeStore:        NewPartyTypeStore(mongoClient, o.MongoDatabase),
+		PartyTypeStore:        partyTypeStore,
 		RelationshipStore:     relationshipStore,
-		RelationshipTypeStore: NewRelationshipTypeStore(mongoClient, o.MongoDatabase),
+		RelationshipTypeStore: relationshipTypeStore,
 		IndividualStore:       NewIndividualStore(mongoClient, o.MongoDatabase),
 		StaffStore:            NewStaffStore(relationshipStore),
 		TeamStore:             NewTeamStore(partyStore),
 		OrganizationStore:     NewOrganizationStore(partyStore),
 		MembershipStore:       NewMembershipStore(relationshipStore),
+	}
+
+	if err := srv.Init(ctx); err != nil {
+		return nil, err
 	}
 
 	attributes := router.Path("/apis/v1/attributes")

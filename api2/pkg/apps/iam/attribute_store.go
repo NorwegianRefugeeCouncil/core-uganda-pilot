@@ -4,16 +4,27 @@ import (
 	"context"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type AttributeStore struct {
 	collection *mongo.Collection
 }
 
-func NewAttributeStore(mongoClient *mongo.Client, database string) *AttributeStore {
-	return &AttributeStore{
+func NewAttributeStore(ctx context.Context, mongoClient *mongo.Client, database string) (*AttributeStore, error) {
+	store := &AttributeStore{
 		collection: mongoClient.Database(database).Collection("attributes"),
 	}
+
+	if _, err := store.collection.Indexes().CreateOne(ctx,
+		mongo.IndexModel{
+			Keys:    bson.M{"id": 1},
+			Options: options.Index().SetUnique(true),
+		}); err != nil {
+		return nil, err
+	}
+
+	return store, nil
 }
 
 func (s *AttributeStore) List(ctx context.Context, listOptions AttributeListOptions) (*AttributeList, error) {
