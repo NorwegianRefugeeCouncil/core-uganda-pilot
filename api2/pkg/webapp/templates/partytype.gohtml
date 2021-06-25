@@ -12,7 +12,7 @@
                 <form method='post' action='/settings/partytypes{{if .PartyType.ID}}/{{.PartyType.ID}}{{end}}'>
                     <div class='form-floating mb-3'>
                         <input name='name' id='name' type='text' class='form-control' placeholder='Name'
-                               value='{{.PartyType.Name}}'>
+                               {{if .PartyType}}value='{{.PartyType.Name}}'{{end}}>
                         <label for='name'>Name</label>
                     </div>
 
@@ -22,7 +22,7 @@
                                type="checkbox"
                                id="isBuiltIn"
                                value='true'
-                               {{if .PartyType.IsBuiltIn}}checked{{end}}
+                              {{if and .PartyType .PartyType.IsBuiltIn}}checked{{end}}
                         >
                         <label class="form-check-label" for="isBuiltIn">Is Built In</label>
                     </div>

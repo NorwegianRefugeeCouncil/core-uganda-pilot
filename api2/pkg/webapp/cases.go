@@ -7,6 +7,7 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/cases/cases"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
 	"github.com/nrc-no/core-kafka/pkg/parties/parties"
+	"github.com/nrc-no/core-kafka/pkg/teams"
 	"golang.org/x/sync/errgroup"
 	"net/http"
 )
@@ -64,6 +65,8 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 
 	var referrals *cases.CaseList
 
+	var team *teams.Team
+
 	g, waitCtx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
@@ -85,6 +88,15 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 	if err := g.Wait(); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
+	}
+
+	if id != "new" {
+		teamRes, err := h.teamClient.Get(ctx, kase.TeamID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		team = teamRes
 	}
 
 	party, err := h.partyClient.Get(ctx, kase.PartyID)
@@ -124,6 +136,7 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 		"Parties":          partyList,
 		"ReferralCaseType": referralCaseType,
 		"Referrals":        referrals,
+		"Team":             team,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -135,17 +148,15 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
-	caseTypesClient := casetypes.NewClient("http://localhost:9000")
-	partiesClient := parties.NewClient("http://localhost:9000")
-
 	var caseTypes *casetypes.CaseTypeList
 	var p *parties.PartyList
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
+
 	g.Go(func() error {
 		var err error
-		caseTypes, err = caseTypesClient.List(waitCtx, casetypes.ListOptions{})
+		caseTypes, err = h.caseTypeClient.List(waitCtx, casetypes.ListOptions{})
 		return err
 	})
 
@@ -157,9 +168,12 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 	qry := req.URL.Query()
 	caseTypeID := qry.Get("caseTypeId")
 	partyTypeID := ""
+	teamID := ""
 	for _, caseType := range caseTypes.Items {
 		if caseType.ID == caseTypeID {
 			partyTypeID = caseType.PartyTypeID
+			teamID = caseType.TeamID
+			break
 		}
 	}
 
@@ -167,14 +181,23 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 		PartyTypeID: partyTypeID,
 	}
 
-	p, err := partiesClient.List(ctx, listOptions)
+	p, err := h.partyClient.List(ctx, listOptions)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	var team *teams.Team
+	if len(teamID) > 0 {
+		team, err = h.teamClient.Get(ctx, teamID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	}
 
 	if err := h.renderFactory.New(req).ExecuteTemplate(w, "casenew", map[string]interface{}{
 		"PartyID":    qry.Get("partyId"),
 		"CaseTypeID": qry.Get("caseTypeId"),
+		"Team":       team,
 		"CaseTypes":  caseTypes,
 		"Parties":    p,
 	}); err != nil {
@@ -196,6 +219,7 @@ func (h *Handler) PostCase(ctx context.Context, id string, w http.ResponseWriter
 	description := req.Form.Get("description")
 	done := req.Form.Get("done")
 	parentId := req.Form.Get("parentId")
+	teamId := req.Form.Get("teamId")
 
 	var kase *cases.Case
 	if id == "" {
@@ -206,6 +230,7 @@ func (h *Handler) PostCase(ctx context.Context, id string, w http.ResponseWriter
 			Description: description,
 			Done:        false,
 			ParentID:    parentId,
+			TeamID:      teamId,
 		})
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -220,6 +245,7 @@ func (h *Handler) PostCase(ctx context.Context, id string, w http.ResponseWriter
 			Description: description,
 			Done:        done == "on",
 			ParentID:    parentId,
+			TeamID:      teamId,
 		})
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

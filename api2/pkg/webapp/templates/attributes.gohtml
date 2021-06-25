@@ -25,14 +25,16 @@
                 {{if .Attributes.Items}}
                     {{ range .Attributes.Items }}
                         <a class="card mb-3 shadow-sm text-dark text-decoration-none attribute"
-                           href="/settings/attributes/{{.ID}}">
+                           href="/settings/attributes/{{.ID}}" data-cy="attribute">
                             <div class="card-body">
-                                {{ range .PartyTypeIDs}}
-                                    {{$partyType := $.PartyTypeIDs.GetByID .}}
-                                    <small class="d-block text-muted">{{$partyType.Name}}</small>
-                                {{end}}
+                                <div>
+                                    {{range $index, $partytypeID := .PartyTypeIDs}}
+                                        {{if gt $index 0 }}, {{end}}
+                                        {{$partyType := $.PartyTypes.FindByID $partytypeID}}
+                                        <small class="text-muted">{{$partyType.Name}}</small>
+                                    {{end}}
+                                </div>
                                 {{.Name}}
-
                             </div>
                         </a>
                     {{end}}

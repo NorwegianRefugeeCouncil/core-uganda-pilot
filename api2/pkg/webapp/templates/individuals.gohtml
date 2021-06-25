@@ -3,7 +3,9 @@
     {{$gender := .FindAttributeValue "gender"}}
     {{$age := .FindAge}}
 
-    <a class="list-group-item font-monospace py-3 bg-quite-light" href="/individuals/{{.ID}}">
+    <a class="list-group-item font-monospace py-3 bg-quite-light"
+       data-cy="individual"
+       href="/individuals/{{.ID}}">
         {{.}}
         <span class="d-block text-muted">
             {{if $gender}}

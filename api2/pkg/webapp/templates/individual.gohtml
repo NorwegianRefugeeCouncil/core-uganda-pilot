@@ -29,7 +29,8 @@
                                                name="attribute[{{$attribute.ID}}]"
                                                id="attribute-{{$attribute.ID}}-{{$idx}}"
                                                type="text"
-                                               value="{{$value}}"/>
+                                               data-cy="text-attribute"
+                                               value="{{$value}}">
                                         <label for="attribute-{{$attribute.ID}}-{{$idx}}">{{$attribute.Name}}</label>
                                     </div>
                                 {{end}}
@@ -39,7 +40,8 @@
                                            name="attribute[{{$attribute.ID}}]"
                                            id="attribute-{{$attribute.ID}}-0"
                                            type="text"
-                                           value=""/>
+                                           data-cy="text-attribute"
+                                           value="">
                                     <label for="attribute-{{$attribute.ID}}-0">{{$attribute.Name}}</label>
                                 </div>
                             {{end}}

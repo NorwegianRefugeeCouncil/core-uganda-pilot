@@ -79,6 +79,7 @@ func (s *Store) Update(ctx context.Context, kase *Case) error {
 			"description": kase.Description,
 			"done":        kase.Done,
 			"parentId":    kase.ParentID,
+			"teamId":      kase.TeamID,
 		},
 	})
 	if err != nil {

@@ -34,9 +34,11 @@
                         <h2>{{.Name}}</h2>
                     {{end}}
                 {{end}}
+                <h4><a class="d-block mb-3" href="/teams/{{.Team.ID}}">Open by {{.Team.Name}}</a></h4>
                 <a class="d-block mb-3" href="/individuals/{{$partyId}}">
                     {{$party.String}}
                 </a>
+
 
                 <h3 class="mb-3">
                     {{if .Case.Done}}
@@ -58,6 +60,7 @@
                                   rows="20"
                                   class="form-control"
                                   name="description"
+                                  data-cy="description"
                                   {{ if .ReferralCaseType}}disabled{{end}}
                                   style="height: 100px">{{if .Case}}{{.Case.Description}}{{end}}</textarea>
                         <label for="description-textarea">Description</label>
@@ -68,6 +71,7 @@
                                type="checkbox"
                                {{ if .ReferralCaseType}}disabled{{end}}
                                name="done"
+                               data-cy="done-check"
                                 {{if .Case.Done}}checked{{end}}>
                         <label class="form-check-label" for="done-input">
                             Done
