@@ -31,7 +31,7 @@
                                     {{range $index, $partytypeID := .PartyTypeIDs}}
                                         {{if gt $index 0 }}, {{end}}
                                         {{$partyType := $.PartyTypes.FindByID $partytypeID}}
-                                        <small class="d-block text-muted">{{$partyType.Name}}</small>
+                                        <small class="text-muted">{{$partyType.Name}}</small>
                                     {{end}}
                                 </div>
                                 {{.Name}}
