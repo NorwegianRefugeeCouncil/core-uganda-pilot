@@ -15,14 +15,14 @@ func (h *Handler) CaseTypes(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
-	caseTypes, err := h.caseTypeClient.List(ctx, casetypes.ListOptions{})
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if req.Method == "POST" {
+		h.PostCaseType(ctx, &casetypes.CaseType{}, w, req)
 		return
 	}
 
-	if req.Method == "POST" {
-		h.PostCaseType(ctx, &casetypes.CaseType{}, w, req)
+	caseTypes, err := h.caseTypeClient.List(ctx, casetypes.ListOptions{})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -32,9 +32,16 @@ func (h *Handler) CaseTypes(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	teams, err := h.teamClient.List(ctx, teams.ListOptions{})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	if err := h.renderFactory.New(req).ExecuteTemplate(w, "casetypes", map[string]interface{}{
 		"CaseTypes":  caseTypes,
 		"PartyTypes": partyTypes,
+		"Teams":      teams,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
