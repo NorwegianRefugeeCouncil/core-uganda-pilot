@@ -1,9 +1,0 @@
-{
-  "builders": {
-    "copy-bootstrap-css": {
-      "implementation": "./impl",
-      "schema": "./schema.json",
-      "description": "Copies bootstrap.css to chosen directory."
-    }
-  }
-}
