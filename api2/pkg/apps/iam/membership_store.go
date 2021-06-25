@@ -3,21 +3,20 @@ package iam
 import (
 	"context"
 	"fmt"
-	"github.com/nrc-no/core-kafka/pkg/parties/relationships"
 	uuid "github.com/satori/go.uuid"
 )
 
 type MembershipStore struct {
-	relationshipStore *relationships.Store
+	relationshipStore *RelationshipStore
 }
 
-func NewMembershipStore(relationshipStore *relationships.Store) *MembershipStore {
+func NewMembershipStore(relationshipStore *RelationshipStore) *MembershipStore {
 	return &MembershipStore{relationshipStore: relationshipStore}
 }
 
 func (s *MembershipStore) List(ctx context.Context, listOptions MembershipListOptions) (*MembershipList, error) {
 
-	got, err := s.relationshipStore.List(ctx, relationships.ListOptions{
+	got, err := s.relationshipStore.List(ctx, RelationshipListOptions{
 		RelationshipTypeID: MembershipRelationshipType.ID,
 		FirstPartyId:       listOptions.IndividualID,
 		SecondParty:        listOptions.TeamID,
@@ -51,7 +50,7 @@ func (s *MembershipStore) Get(ctx context.Context, id string) (*Membership, erro
 }
 
 func (s *MembershipStore) Find(ctx context.Context, individualId, teamId string) (*Membership, error) {
-	got, err := s.relationshipStore.List(ctx, relationships.ListOptions{
+	got, err := s.relationshipStore.List(ctx, RelationshipListOptions{
 		RelationshipTypeID: MembershipRelationshipType.ID,
 		FirstPartyId:       individualId,
 		SecondParty:        teamId,
@@ -78,7 +77,7 @@ func (s *MembershipStore) Create(ctx context.Context, membership *Membership) er
 	return s.relationshipStore.Create(ctx, rel)
 }
 
-func mapRelationshipToMembership(rel *relationships.Relationship) *Membership {
+func mapRelationshipToMembership(rel *Relationship) *Membership {
 	return &Membership{
 		ID:           rel.ID,
 		TeamID:       rel.SecondParty,
@@ -86,8 +85,8 @@ func mapRelationshipToMembership(rel *relationships.Relationship) *Membership {
 	}
 }
 
-func mapMembershipToRelationship(membership *Membership) *relationships.Relationship {
-	return &relationships.Relationship{
+func mapMembershipToRelationship(membership *Membership) *Relationship {
+	return &Relationship{
 		ID:                 membership.ID,
 		RelationshipTypeID: MembershipRelationshipType.ID,
 		FirstParty:         membership.IndividualID,
