@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-func (s *Server) GetIndividual(w http.ResponseWriter, req *http.Request) {
+func (s *Server) GetStaff(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	var id string
 
@@ -12,11 +12,11 @@ func (s *Server) GetIndividual(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	b, err := s.IndividualStore.Get(ctx, id)
+	ret, err := s.StaffStore.Get(ctx, id)
 	if err != nil {
 		s.Error(w, err)
 		return
 	}
 
-	s.JSON(w, http.StatusOK, b)
+	s.JSON(w, http.StatusOK, ret)
 }

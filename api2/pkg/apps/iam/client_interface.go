@@ -97,6 +97,8 @@ type OrganizationClient interface {
 }
 
 type StaffListOptions struct {
+	IndividualID   string
+	OrganizationID string
 }
 
 type StaffClient interface {

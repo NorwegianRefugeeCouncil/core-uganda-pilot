@@ -4,10 +4,10 @@ import (
 	"net/http"
 )
 
-func (s *Server) ListPartyTypes(w http.ResponseWriter, req *http.Request) {
+func (s *Server) ListStaff(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	ret, err := s.PartyTypeStore.List(ctx)
+	ret, err := s.StaffStore.List(ctx, StaffListOptions{})
 	if err != nil {
 		s.Error(w, err)
 		return

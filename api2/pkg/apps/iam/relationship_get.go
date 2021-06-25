@@ -1,34 +1,22 @@
 package iam
 
 import (
-	"encoding/json"
-	"fmt"
-	"github.com/gorilla/mux"
 	"net/http"
 )
 
 func (s *Server) GetRelationship(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
+	var id string
 
-	id, ok := mux.Vars(req)["id"]
-	if !ok || len(id) == 0 {
-		err := fmt.Errorf("id not found in path")
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if !s.GetPathParam("id", w, req, &id) {
 		return
 	}
 
 	ret, err := s.RelationshipStore.Get(ctx, id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
-	responseBytes, err := json.Marshal(ret)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(responseBytes)
+	s.JSON(w, http.StatusOK, ret)
 }

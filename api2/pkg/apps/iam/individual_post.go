@@ -1,24 +1,16 @@
 package iam
 
 import (
-	"encoding/json"
 	uuid "github.com/satori/go.uuid"
-	"io/ioutil"
 	"net/http"
 )
 
 func (s *Server) PostIndividual(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	bodyBytes, err := ioutil.ReadAll(req.Body)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	var individual Individual
-	if err := json.Unmarshal(bodyBytes, &individual); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if err := s.Bind(req, &individual); err != nil {
+		s.Error(w, err)
 		return
 	}
 
@@ -40,16 +32,9 @@ func (s *Server) PostIndividual(w http.ResponseWriter, req *http.Request) {
 	individual.Attributes = attrs
 
 	if err := s.IndividualStore.Create(ctx, &individual); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
-	responseBytes, err := json.Marshal(individual)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(responseBytes)
+	s.JSON(w, http.StatusOK, individual)
 }

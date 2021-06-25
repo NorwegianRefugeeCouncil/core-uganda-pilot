@@ -1,7 +1,6 @@
 package iam
 
 import (
-	"encoding/json"
 	"net/http"
 )
 
@@ -13,16 +12,9 @@ func (s *Server) ListParties(w http.ResponseWriter, req *http.Request) {
 
 	ret, err := s.PartyStore.List(ctx, *listOptions)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
-	responseBytes, err := json.Marshal(ret)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(responseBytes)
+	s.JSON(w, http.StatusOK, ret)
 }
