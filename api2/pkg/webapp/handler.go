@@ -2,6 +2,7 @@ package webapp
 
 import (
 	"fmt"
+	"github.com/nrc-no/core-kafka/pkg/auth"
 	"github.com/nrc-no/core-kafka/pkg/cases/cases"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
 	"github.com/nrc-no/core-kafka/pkg/individuals"
@@ -12,7 +13,9 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/parties/relationships"
 	"github.com/nrc-no/core-kafka/pkg/parties/relationshiptypes"
 	"github.com/nrc-no/core-kafka/pkg/relationshipparties"
+	"github.com/nrc-no/core-kafka/pkg/sessionmanager"
 	"github.com/nrc-no/core-kafka/pkg/teams"
+	"github.com/ory/hydra-client-go/client"
 	"os"
 )
 
@@ -28,7 +31,12 @@ type Handler struct {
 	relationshipPartiesClient *relationshipparties.Client
 	teamClient                *teams.Client
 	membershipClient          *memberships.Client
+	hydraAdminClient          *client.OryHydra
+	hydraPublicClient         *client.OryHydra
 	renderFactory             *RendererFactory
+	sessionManager            sessionmanager.Store
+	credentialsClient         *auth.CredentialsClient
+	partyStore                *parties.Store
 }
 
 type Options struct {
@@ -48,6 +56,11 @@ func NewHandler(
 	RelationshipPartiesClient *relationshipparties.Client,
 	TeamClient *teams.Client,
 	MembershipClient *memberships.Client,
+	hydraAdminClient *client.OryHydra,
+	hydraPublicClient *client.OryHydra,
+	sessionManager sessionmanager.Store,
+	credentialsClient *auth.CredentialsClient,
+	partyStore *parties.Store,
 ) (*Handler, error) {
 
 	renderFactory, err := NewRendererFactory(options.TemplateDirectory)
@@ -74,6 +87,11 @@ func NewHandler(
 		teamClient:                TeamClient,
 		membershipClient:          MembershipClient,
 		renderFactory:             renderFactory,
+		hydraAdminClient:          hydraAdminClient,
+		hydraPublicClient:         hydraPublicClient,
+		sessionManager:            sessionManager,
+		credentialsClient:         credentialsClient,
+		partyStore:                partyStore,
 	}
 	return h, nil
 }

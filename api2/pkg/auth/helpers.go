@@ -4,15 +4,22 @@ import (
 	"net/http"
 )
 
-func IsAuthenticatedRequest(req *http.Request) bool {
+func GetAuthenticationContext(req *http.Request) AuthenticationContext {
 	ctx := req.Context()
-	isLoggedIn := ctx.Value(IsLoggedInKey)
-	if isLoggedIn == nil {
-		return false
+
+	authCtxIntf := ctx.Value(AuthenticationContextKey)
+	if authCtxIntf == nil {
+		return AuthenticationContext{}
 	}
-	isLoggedInBool, ok := isLoggedIn.(bool)
+	authCtx, ok := authCtxIntf.(AuthenticationContext)
 	if !ok {
-		return false
+		return AuthenticationContext{}
 	}
-	return isLoggedInBool
+
+	return authCtx
+
+}
+
+func IsAuthenticatedRequest(req *http.Request) bool {
+	return GetAuthenticationContext(req).IsAuthenticated
 }

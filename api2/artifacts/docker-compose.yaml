@@ -57,6 +57,39 @@ services:
     ports:
       - 6379:6379
 
+  hydra_migrate:
+    image: oryd/hydra:v1.10.2
+    command:
+      - migrate
+      - sql
+      - --yes
+      - postgres://hydra:secret@hydra_db:5432/hydra?sslmode=disable&max_conns=20&max_idle_conns=4
+
+  hydra:
+    image: oryd/hydra:v1.10.2
+    ports:
+      - 4444:4444
+      - 4445:4445
+    command:
+      - serve
+      - all
+      - --dangerous-force-http
+    environment:
+      - DSN=postgres://hydra:secret@hydra_db:5432/hydra?sslmode=disable&max_conns=20&max_idle_conns=4
+      - SECRETS_SYSTEM=fVuJ0N1nFuymQjcnC4OWcIyo15gb0MYe
+      - URLS_SELF_ISSUER=http://localhost:9000/
+      - URLS_CONSENT=http://localhost:9000/consent
+      - URLS_LOGIN=http://localhost:9000/login
+
+  hydra_db:
+    image: postgres:9.6
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=hydra
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=hydra
+
 volumes:
   postgres_data:
     driver: local

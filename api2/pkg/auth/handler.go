@@ -17,8 +17,6 @@ import (
 
 const IdTokenKey = "id_token"
 const AccessTokenKey = "access_token"
-const ProfileKey = "profile"
-const IsLoggedInKey = "is_logged_in"
 
 type Profile struct {
 	Email         string `json:"email"`
@@ -142,7 +140,6 @@ func (h *Handler) Callback(w http.ResponseWriter, req *http.Request) {
 	// Populate session with ID & Access tokens, profile
 	h.Store.Put(ctx, IdTokenKey, rawIDToken)
 	h.Store.Put(ctx, AccessTokenKey, oauth2Token.AccessToken)
-	h.Store.Put(ctx, ProfileKey, profile)
 
 	// Redirect to some page
 	// TODO: perhaps redirect to the initial requested page?

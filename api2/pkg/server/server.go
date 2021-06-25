@@ -12,6 +12,7 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/individuals"
 	"github.com/nrc-no/core-kafka/pkg/keycloak"
 	"github.com/nrc-no/core-kafka/pkg/memberships"
+	"github.com/nrc-no/core-kafka/pkg/middleware"
 	"github.com/nrc-no/core-kafka/pkg/organizations"
 	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
 	"github.com/nrc-no/core-kafka/pkg/parties/parties"
@@ -26,15 +27,14 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/teamorganizations"
 	"github.com/nrc-no/core-kafka/pkg/teams"
 	"github.com/nrc-no/core-kafka/pkg/webapp"
-	"github.com/sirupsen/logrus"
+	"github.com/ory/hydra-client-go/client"
 	"github.com/spf13/pflag"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"math"
 	"net"
 	"net/http"
+	"net/url"
 	"strings"
-	"time"
 )
 
 type Server struct {
@@ -74,6 +74,9 @@ type Server struct {
 	membershipsClient         *memberships.Client
 	KeycloakClient            *keycloak.Client
 	SessionManager            sessionmanager.Store
+	HydraPublicClient         *client.OryHydra
+	HydraAdminClient          *client.OryHydra
+	CredentialsClient         *auth.CredentialsClient
 }
 
 type Options struct {
@@ -91,6 +94,8 @@ type Options struct {
 	RedisAddress         string
 	RedisPassword        string
 	RedisSecretKey       string
+	HydraAdminURL        string
+	HydraPublicURL       string
 }
 
 func NewOptions() *Options {
@@ -109,6 +114,8 @@ func NewOptions() *Options {
 		RedisAddress:         "localhost:6379",
 		RedisPassword:        "",
 		RedisSecretKey:       "some-secret",
+		HydraAdminURL:        "http://localhost:4445",
+		HydraPublicURL:       "http://localhost:4444",
 	}
 }
 
@@ -125,6 +132,8 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 	fs.StringVar(&o.RedisNetwork, "redis-network", o.RedisNetwork, "Redis network")
 	fs.StringVar(&o.RedisPassword, "redis-password", o.RedisPassword, "Redis password")
 	fs.StringVar(&o.RedisSecretKey, "redis-secret-key", o.RedisSecretKey, "Redis secret key")
+	fs.StringVar(&o.HydraAdminURL, "hydra-admin-url", o.HydraAdminURL, "Hydra Admin URL")
+	fs.StringVar(&o.HydraPublicURL, "hydra-public-url", o.HydraPublicURL, "Hydra Public URL")
 }
 
 type CompletedOptions struct {
@@ -138,6 +147,9 @@ type CompletedOptions struct {
 	Address              string
 	MongoDatabase        string
 	SessionManager       sessionmanager.Store
+	HydraAdminClient     *client.OryHydra
+	HydraPublicClient    *client.OryHydra
+	CredentialsClient    *auth.CredentialsClient
 }
 
 func (o Options) Complete(ctx context.Context) (CompletedOptions, error) {
@@ -170,6 +182,32 @@ func (o Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		return CompletedOptions{}, err
 	}
 
+	hydraAdminURL, err := url.Parse(o.HydraAdminURL)
+	if err != nil {
+		return CompletedOptions{}, err
+	}
+	hydraAdminClient := client.NewHTTPClientWithConfig(nil, &client.TransportConfig{
+		Schemes: []string{
+			hydraAdminURL.Scheme,
+		},
+		Host:     hydraAdminURL.Host,
+		BasePath: hydraAdminURL.Path,
+	})
+
+	hydraPublicURL, err := url.Parse(o.HydraPublicURL)
+	if err != nil {
+		return CompletedOptions{}, err
+	}
+	hydraPublicCLient := client.NewHTTPClientWithConfig(nil, &client.TransportConfig{
+		Schemes: []string{
+			hydraPublicURL.Scheme,
+		},
+		Host:     hydraPublicURL.Host,
+		BasePath: hydraPublicURL.Path,
+	})
+
+	credentialsClient := auth.NewCredentialsClient(o.MongoDatabase, mongoClient)
+
 	completedOptions := CompletedOptions{
 		MongoClient:          mongoClient,
 		TemplateDirectory:    o.TemplateDirectory,
@@ -180,6 +218,9 @@ func (o Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		KeycloakClientID:     o.KeycloakClientID,
 		KeycloakBaseURL:      o.KeycloakBaseURL,
 		KeycloakRealmName:    o.KeycloakRealmName,
+		HydraAdminClient:     hydraAdminClient,
+		HydraPublicClient:    hydraPublicCLient,
+		CredentialsClient:    credentialsClient,
 		SessionManager:       sm,
 	}
 	return completedOptions, nil
@@ -189,60 +230,8 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 
 	router := mux.NewRouter()
 
-	router.Use(func(handler http.Handler) http.Handler {
-		return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
-
-			start := time.Now()
-
-			stWriter := &statusWriter{w: writer}
-			handler.ServeHTTP(stWriter, request)
-
-			end := time.Now()
-
-			statusCode := stWriter.statusCode
-			if stWriter.statusCode == 0 {
-				statusCode = 200
-			}
-
-			fields := logrus.Fields{
-				"method":     request.Method,
-				"statusCode": statusCode,
-				"path":       request.URL.Path,
-				"responseMs": math.Round(float64(end.Sub(start).Nanoseconds())/1000000.0*100.0) / 100.0,
-			}
-
-			if stWriter.statusCode < 400 {
-				logrus.WithFields(fields).Infof("")
-			} else {
-				logrus.WithFields(fields).
-					WithError(fmt.Errorf("inbound request failed with status code: %d", statusCode)).
-					Errorf("")
-			}
-
-		})
-	})
-
+	router.Use(middleware.UseLogging())
 	router.Use(c.SessionManager.LoadAndSave)
-
-	// Auth
-	authHandler, err := auth.NewHandler(
-		ctx,
-		fmt.Sprintf("%s/auth/realms/%s", c.KeycloakBaseURL, c.KeycloakRealmName),
-		c.KeycloakClientID,
-		c.KeycloakClientSecret,
-		"http://localhost:9000/auth/callback",
-		c.SessionManager,
-		c.KeycloakClient)
-	if err != nil {
-		panic(err)
-	}
-	if err := auth.Init(ctx, c.KeycloakClient); err != nil {
-		panic(err)
-	}
-	router.Use(authHandler.Authenticate())
-	router.Path("/auth/login").Methods("GET").HandlerFunc(authHandler.Login)
-	router.Path("/auth/logout").Methods("GET").HandlerFunc(authHandler.Logout)
-	router.Path("/auth/callback").Methods("GET").HandlerFunc(authHandler.Callback)
 
 	// Attributes
 	attributeStore := attributes.NewStore(c.MongoClient, c.MongoDatabase)
@@ -332,30 +321,6 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.Path("/apis/v1/individuals/{id}").Methods("PUT").HandlerFunc(individualHandler.Update)
 	router.Path("/apis/v1/individuals").Methods("POST").HandlerFunc(individualHandler.Create)
 
-	// Cases
-	caseStore := cases.NewStore(c.MongoClient, c.MongoDatabase)
-	if err := cases.Init(ctx, caseStore); err != nil {
-		panic(err)
-	}
-	caseHandler := cases.NewHandler(caseStore)
-	caseClient := cases.NewClient(c.Address)
-	router.Path("/apis/v1/cases").Methods("GET").HandlerFunc(caseHandler.List)
-	router.Path("/apis/v1/cases/{id}").Methods("GET").HandlerFunc(caseHandler.Get)
-	router.Path("/apis/v1/cases/{id}").Methods("PUT").HandlerFunc(caseHandler.Put)
-	router.Path("/apis/v1/cases").Methods("POST").HandlerFunc(caseHandler.Post)
-
-	// CaseTypes
-	caseTypeStore := casetypes.NewStore(c.MongoClient, c.MongoDatabase)
-	if err := casetypes.Init(ctx, caseTypeStore); err != nil {
-		panic(err)
-	}
-	caseTypeHandler := casetypes.NewHandler(caseTypeStore)
-	caseTypeClient := casetypes.NewClient(c.Address)
-	router.Path("/apis/v1/casetypes").Methods("GET").HandlerFunc(caseTypeHandler.List)
-	router.Path("/apis/v1/casetypes/{id}").Methods("GET").HandlerFunc(caseTypeHandler.Get)
-	router.Path("/apis/v1/casetypes/{id}").Methods("PUT").HandlerFunc(caseTypeHandler.Put)
-	router.Path("/apis/v1/casetypes").Methods("POST").HandlerFunc(caseTypeHandler.Post)
-
 	// Teams
 	teamStore := teams.NewStore(partyStore)
 	if err := teams.Init(ctx, teamStore, partyTypeStore, attributeStore); err != nil {
@@ -400,11 +365,56 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		panic(err)
 	}
 
+	// Auth
+	authHandler, err := auth.NewHandler(
+		ctx,
+		fmt.Sprintf("%s/auth/realms/%s", c.KeycloakBaseURL, c.KeycloakRealmName),
+		c.KeycloakClientID,
+		c.KeycloakClientSecret,
+		"http://localhost:9000/auth/callback",
+		c.SessionManager,
+		c.KeycloakClient)
+	if err != nil {
+		panic(err)
+	}
+	if err := auth.Init(ctx, c.KeycloakClient); err != nil {
+		panic(err)
+	}
+	// router.Use(authHandler.Authenticate())
+	router.Path("/auth/login").Methods("GET").HandlerFunc(authHandler.Login)
+	router.Path("/auth/logout").Methods("GET").HandlerFunc(authHandler.Logout)
+	router.Path("/auth/callback").Methods("GET").HandlerFunc(authHandler.Callback)
+
+	// Cases
+	caseStore := cases.NewStore(c.MongoClient, c.MongoDatabase)
+	if err := cases.Init(ctx, caseStore); err != nil {
+		panic(err)
+	}
+	caseHandler := cases.NewHandler(caseStore)
+	caseClient := cases.NewClient(c.Address)
+	router.Path("/apis/v1/cases").Methods("GET").HandlerFunc(caseHandler.List)
+	router.Path("/apis/v1/cases/{id}").Methods("GET").HandlerFunc(caseHandler.Get)
+	router.Path("/apis/v1/cases/{id}").Methods("PUT").HandlerFunc(caseHandler.Put)
+	router.Path("/apis/v1/cases").Methods("POST").HandlerFunc(caseHandler.Post)
+
+	// CaseTypes
+	caseTypeStore := casetypes.NewStore(c.MongoClient, c.MongoDatabase)
+	if err := casetypes.Init(ctx, caseTypeStore); err != nil {
+		panic(err)
+	}
+	caseTypeHandler := casetypes.NewHandler(caseTypeStore)
+	caseTypeClient := casetypes.NewClient(c.Address)
+	router.Path("/apis/v1/casetypes").Methods("GET").HandlerFunc(caseTypeHandler.List)
+	router.Path("/apis/v1/casetypes/{id}").Methods("GET").HandlerFunc(caseTypeHandler.Get)
+	router.Path("/apis/v1/casetypes/{id}").Methods("PUT").HandlerFunc(caseTypeHandler.Put)
+	router.Path("/apis/v1/casetypes").Methods("POST").HandlerFunc(caseTypeHandler.Post)
+
 	// WebApp
 	webAppOptions := webapp.Options{
 		TemplateDirectory: c.TemplateDirectory,
 	}
-	webAppHandler, err := webapp.NewHandler(webAppOptions,
+	webAppHandler, err := webapp.NewHandler(
+		webAppOptions,
 		attributeClient,
 		individualClient,
 		relationshipTypeClient,
@@ -416,6 +426,11 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		relationshipPartiesClient,
 		teamClient,
 		membershipClient,
+		c.HydraAdminClient,
+		c.HydraPublicClient,
+		c.SessionManager,
+		c.CredentialsClient,
+		partyStore,
 	)
 	if err != nil {
 		panic(err)
@@ -424,6 +439,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.Path("/").HandlerFunc(webAppHandler.Individuals)
 	router.Path("/individuals").HandlerFunc(webAppHandler.Individuals)
 	router.Path("/individuals/{id}").HandlerFunc(webAppHandler.Individual)
+	router.Path("/individuals/{id}/credentials").HandlerFunc(webAppHandler.IndividualCredentials)
 	router.Path("/settings").HandlerFunc(webAppHandler.Settings)
 	router.Path("/settings/attributes").HandlerFunc(webAppHandler.Attributes)
 	router.Path("/settings/attributes/new").HandlerFunc(webAppHandler.NewAttribute)
@@ -442,6 +458,12 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.Path("/settings/casetypes").HandlerFunc(webAppHandler.CaseTypes)
 	router.Path("/settings/casetypes/new").HandlerFunc(webAppHandler.NewCaseType)
 	router.Path("/settings/casetypes/{id}").HandlerFunc(webAppHandler.CaseType)
+	router.Path("/settings/authclients").HandlerFunc(webAppHandler.AuthClients)
+	router.Path("/settings/authclients/{id}").HandlerFunc(webAppHandler.AuthClient)
+	router.Path("/settings/authclients/{id}/newsecret").HandlerFunc(webAppHandler.AuthClientNewSecret)
+	router.Path("/settings/authclients/{id}/delete").HandlerFunc(webAppHandler.DeleteAuthClient)
+	router.Path("/login").Methods("GET").HandlerFunc(webAppHandler.Login)
+	router.Path("/login").Methods("POST").HandlerFunc(webAppHandler.PostLogin)
 
 	// Seed database for development
 	if err := individuals.SeedDatabase(ctx, individualsStore); err != nil {
@@ -489,6 +511,9 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		WebAppHandler:             webAppHandler,
 		KeycloakClient:            c.KeycloakClient,
 		SessionManager:            c.SessionManager,
+		HydraPublicClient:         c.HydraPublicClient,
+		HydraAdminClient:          c.HydraAdminClient,
+		CredentialsClient:         c.CredentialsClient,
 		HttpServer:                httpServer,
 	}
 

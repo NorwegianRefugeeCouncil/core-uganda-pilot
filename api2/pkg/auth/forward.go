@@ -7,7 +7,8 @@ import (
 
 // SetAuthorizationHeader is a utility method that will add the Access Token to the Authorization header
 func SetAuthorizationHeader(ctx context.Context, req *http.Request) {
-	if accessToken, ok := ctx.Value(AccessTokenKey).(string); ok {
-		req.Header.Set("Authorization", "Bearer "+accessToken)
+	authCtx := GetAuthenticationContext(req)
+	if len(authCtx.AccessToken) > 0 {
+		req.Header.Set("Authorization", "Bearer "+authCtx.AccessToken)
 	}
 }

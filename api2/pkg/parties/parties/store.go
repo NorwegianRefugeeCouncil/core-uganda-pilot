@@ -103,3 +103,23 @@ func (s *Store) Create(ctx context.Context, party *Party) error {
 	}
 	return nil
 }
+
+type FindOptions struct {
+	Attributes map[string]string
+}
+
+func (s *Store) Find(ctx context.Context, options FindOptions) (*Party, error) {
+	filter := bson.M{}
+	for key, value := range options.Attributes {
+		filter["attributes."+key] = value
+	}
+	res := s.Collection.FindOne(ctx, filter)
+	if res.Err() != nil {
+		return nil, res.Err()
+	}
+	var party *Party
+	if err := res.Decode(&party); err != nil {
+		return nil, err
+	}
+	return party, nil
+}

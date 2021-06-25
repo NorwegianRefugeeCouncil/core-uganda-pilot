@@ -42,11 +42,58 @@ func (h *Handler) Individuals(w http.ResponseWriter, req *http.Request) {
 
 	if err := h.renderFactory.New(req).ExecuteTemplate(w, "individuals", map[string]interface{}{
 		"Individuals": list,
+		"Page":        "list",
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+}
+
+func (h *Handler) IndividualCredentials(w http.ResponseWriter, req *http.Request) {
+	ctx := req.Context()
+
+	id, ok := mux.Vars(req)["id"]
+	if !ok || len(id) == 0 {
+		err := fmt.Errorf("no id in path")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	individual, err := h.individualClient.Get(ctx, id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if req.Method == "POST" {
+		h.PostIndividualCredentials(w, req, individual.ID)
+		return
+	}
+
+	if err := h.renderFactory.New(req).ExecuteTemplate(w, "individual_credentials", map[string]interface{}{
+		"Page":       "credentials",
+		"Individual": individual,
+	}); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+}
+
+func (h *Handler) PostIndividualCredentials(w http.ResponseWriter, req *http.Request, partyID string) {
+	ctx := req.Context()
+	if err := req.ParseForm(); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	values := req.Form
+	password := values.Get("password")
+	if err := h.credentialsClient.SetPassword(ctx, partyID, password); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, req, "/individuals/"+partyID+"/credentials", http.StatusSeeOther)
 }
 
 func (h *Handler) Individual(w http.ResponseWriter, req *http.Request) {
@@ -174,6 +221,7 @@ func (h *Handler) Individual(w http.ResponseWriter, req *http.Request) {
 		"CaseTypes":          ctList,
 		"FirstNameAttribute": Individuals.FirstNameAttribute,
 		"LastNameAttribute":  Individuals.LastNameAttribute,
+		"Page":               "general",
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

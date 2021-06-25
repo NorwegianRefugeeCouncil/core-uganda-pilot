@@ -22,7 +22,6 @@ func Init(ctx context.Context, keycloakClient *keycloak.Client) error {
 	}
 
 	if len(users) == 0 {
-
 		_, err := keycloakClient.CreateUser(token, &keycloak.User{
 			Credentials: []keycloak.Credential{
 				{
@@ -33,8 +32,10 @@ func Init(ctx context.Context, keycloakClient *keycloak.Client) error {
 			},
 			EmailVerified: true,
 			Enabled:       true,
-			FirstName:     "Admin",
+			FirstName:     "Super",
+			LastName:      "Administrator",
 			Username:      "admin",
+			Email:         "admin@email.com",
 		})
 		if err != nil {
 			return err
