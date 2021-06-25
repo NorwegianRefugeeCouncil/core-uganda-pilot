@@ -42,12 +42,10 @@ func (h *Handler) PartyType(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	partyTypesCli := partytypes.NewClient("http://localhost:9000")
-
 	var partyType = &partytypes.PartyType{}
 	if id != "new" {
 		var err error
-		partyType, err = partyTypesCli.Get(ctx, id)
+		partyType, err = h.partyTypeClient.Get(ctx, id)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -60,7 +58,7 @@ func (h *Handler) PartyType(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if err := h.renderFactory.New(req).ExecuteTemplate(w, "partytype", map[string]interface{}{
-		"PartyTypeID": partyType,
+		"PartyType": partyType,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -90,12 +88,12 @@ func (h *Handler) PostPartyType(
 	partyType.IsBuiltIn = req.Form.Get("isBuiltIn") == "true"
 
 	if isNew {
-		out, err := h.partyTypeClient.Create(ctx, partyType)
+		_, err := h.partyTypeClient.Create(ctx, partyType)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		w.Header().Set("Location", "/settings/partytypes/"+out.ID)
+		w.Header().Set("Location", "/settings/partytypes/")
 		w.WriteHeader(http.StatusSeeOther)
 		return
 	} else {
@@ -104,7 +102,7 @@ func (h *Handler) PostPartyType(
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		w.Header().Set("Location", "/settings/partytypes/"+partyType.ID)
+		w.Header().Set("Location", "/settings/partytypes")
 		w.WriteHeader(http.StatusSeeOther)
 		return
 	}
