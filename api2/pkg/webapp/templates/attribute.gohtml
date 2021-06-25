@@ -61,10 +61,11 @@
                             <!-- Personally Identifiable Info -->
                             <div class="form-check form-switch mb-3">
                                 <input id="is-pii-input"
-                                       name="isPersonallyIdentifiableInformation"
+                                       name="isPii"
                                        type="checkbox"
                                        class="form-check-input"
                                        data-cy="personal-info-chkbx"
+                                       {{if .Attribute.IsPersonallyIdentifiableInfo}}checked{{end}}
                                 >
                                 <label class="form-check-label" for="is-pii-input">
                                     Is Personally Identifiable Information
@@ -116,7 +117,7 @@
                 name: "{{.Attribute.Name}}",
                 valueType: "{{.Attribute.ValueType}}",
                 partyTypeIds: "{{.Attribute.PartyTypeIDs}}",
-                isPersonallyIdentifiableInformation: {{.Attribute.IsPersonallyIdentifiableInfo}},
+                isPii: {{.Attribute.IsPersonallyIdentifiableInfo}},
                 translations: [
                     {{range .Attribute.Translations}}
                     {
@@ -139,7 +140,7 @@
                 name: "",
                 valueType: "",
                 partyTypes: ["{{(index .PartyTypes.Items 0).ID}}"],
-                isPersonallyIdentifiableInformation: false,
+                isPii: false,
                 translations: []
             },
             partyTypes: [
@@ -155,7 +156,7 @@
         let name$ = attribute$.pipe(map(a => a.name))
         let valueType$ = attribute$.pipe(map(a => a.valueType))
         let partyTypes = attribute$.pipe(map(a => a.partyTypes))
-        let isPii$ = attribute$.pipe(map(a => a.isPersonallyIdentifiableInformation))
+        let isPii$ = attribute$.pipe(map(a => a.isPii))
         let translations$ = attribute$.pipe(map(a => a.translations))
         let availableLanguages$ = translations$.pipe(
             map(translations => {
