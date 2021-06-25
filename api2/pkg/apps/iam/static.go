@@ -1,6 +1,8 @@
 package iam
 
 import (
+	"github.com/nrc-no/core-kafka/pkg/expressions"
+	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 )
 
@@ -100,4 +102,25 @@ var OrganizationPartyType = partytypes.PartyType{
 	ID:        "09a7eef9-3f23-4c40-86f4-9b9440c56c6f",
 	Name:      "Organization",
 	IsBuiltIn: true,
+}
+
+var TeamPartyType = partytypes.PartyType{
+	ID:        "dacd6e08-3e3d-495b-8655-ea1d8e822cf3",
+	Name:      "Team",
+	IsBuiltIn: true,
+}
+
+var TeamNameAttribute = attributes.Attribute{
+	ID:                           "18f410a3-6fde-45ce-80c7-fc5d92b85870",
+	Name:                         "teamName",
+	ValueType:                    expressions.ValueType{},
+	PartyTypeIDs:                 []string{TeamPartyType.ID},
+	IsPersonallyIdentifiableInfo: false,
+	Translations: []attributes.AttributeTranslation{
+		{
+			Locale:           "en",
+			ShortFormulation: "Team name",
+			LongFormulation:  "Team name",
+		},
+	},
 }
