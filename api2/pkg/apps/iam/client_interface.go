@@ -12,6 +12,9 @@ type ClientSet interface {
 	Attributes() AttributeClient
 	Teams() TeamClient
 	Organizations() OrganizationClient
+	Staff() StaffClient
+	Memberships() MembershipClient
+	Individuals() IndividualClient
 }
 
 type PartyListOptions struct {
@@ -62,7 +65,7 @@ type RelationshipTypeClient interface {
 	Get(ctx context.Context, id string) (*RelationshipType, error)
 	Create(ctx context.Context, party *RelationshipType) (*RelationshipType, error)
 	Update(ctx context.Context, party *RelationshipType) (*RelationshipType, error)
-	List(ctx context.Context, listOptions RelationshipListOptions) (*RelationshipTypeList, error)
+	List(ctx context.Context, listOptions RelationshipTypeListOptions) (*RelationshipTypeList, error)
 }
 
 type AttributeListOptions struct {
@@ -71,8 +74,8 @@ type AttributeListOptions struct {
 
 type AttributeClient interface {
 	Get(ctx context.Context, id string) (*Attribute, error)
-	Create(ctx context.Context, party *Attribute) (*Attribute, error)
-	Update(ctx context.Context, party *Attribute) (*Attribute, error)
+	Create(ctx context.Context, create *Attribute) (*Attribute, error)
+	Update(ctx context.Context, update *Attribute) (*Attribute, error)
 	List(ctx context.Context, listOptions AttributeListOptions) (*AttributeList, error)
 }
 
@@ -114,9 +117,9 @@ type MembershipListOptions struct {
 
 type MembershipClient interface {
 	Get(ctx context.Context, id string) (*Membership, error)
-	Create(ctx context.Context, party *Membership) (*Membership, error)
-	Update(ctx context.Context, party *Membership) (*Membership, error)
-	List(ctx context.Context, listOptions StaffListOptions) (*MembershipList, error)
+	Create(ctx context.Context, create *Membership) (*Membership, error)
+	Update(ctx context.Context, update *Membership) (*Membership, error)
+	List(ctx context.Context, listOptions MembershipListOptions) (*MembershipList, error)
 }
 
 type IndividualListOptions struct {

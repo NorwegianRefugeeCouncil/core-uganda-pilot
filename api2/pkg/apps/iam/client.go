@@ -322,33 +322,3 @@ func (r *Response) Into(into interface{}) error {
 	}
 	return nil
 }
-
-type RESTPartyClient struct {
-	c *RESTClient
-}
-
-func (r RESTPartyClient) Get(ctx context.Context, id string) (*Party, error) {
-	var obj Party
-	err := r.c.Get().Path(fmt.Sprintf("/parties/%s", id)).Do(ctx).Into(&obj)
-	return &obj, err
-}
-
-func (r RESTPartyClient) Create(ctx context.Context, party *Party) (*Party, error) {
-	var obj Party
-	err := r.c.Post().Body(party).Path("/parties").Do(ctx).Into(&obj)
-	return &obj, err
-}
-
-func (r RESTPartyClient) Update(ctx context.Context, party *Party) (*Party, error) {
-	var obj Party
-	err := r.c.Put().Body(party).Path(fmt.Sprintf("/parties/%s", party.ID)).Do(ctx).Into(&obj)
-	return &obj, err
-}
-
-func (r RESTPartyClient) List(ctx context.Context, listOptions PartyListOptions) (*PartyList, error) {
-	var obj PartyList
-	err := r.c.Get().Path("/parties").WithParams(listOptions).Do(ctx).Into(&obj)
-	return &obj, err
-}
-
-var _ PartyClient = &RESTPartyClient{}

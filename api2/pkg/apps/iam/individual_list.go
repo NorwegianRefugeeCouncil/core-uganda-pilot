@@ -6,6 +6,7 @@ import (
 
 func (s *Server) ListIndividuals(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
+
 	listOptions := IndividualListOptions{
 		PartyTypeIDs: req.URL.Query()["partyTypeIds"],
 	}
