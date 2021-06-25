@@ -1,6 +1,0 @@
-{
-  "builders": "./builder.json",
-  "devDependencies": {
-    "@types/node": "^15.6.0"
-  }
-}
