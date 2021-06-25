@@ -2,27 +2,13 @@ package iam
 
 import (
 	"encoding/json"
-	"fmt"
-	"github.com/gorilla/mux"
+	uuid "github.com/satori/go.uuid"
 	"io/ioutil"
 	"net/http"
 )
 
-func (s *Server) PutIndividual(w http.ResponseWriter, req *http.Request) {
+func (s *Server) PostIndividual(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-
-	id, ok := mux.Vars(req)["id"]
-	if !ok || len(id) == 0 {
-		err := fmt.Errorf("no id in path")
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	_, err := s.IndividualStore.Get(ctx, id)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
 
 	bodyBytes, err := ioutil.ReadAll(req.Body)
 	if err != nil {
@@ -36,12 +22,29 @@ func (s *Server) PutIndividual(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := s.IndividualStore.Upsert(ctx, &individual); err != nil {
+	individual.ID = uuid.NewV4().String()
+
+	attrs := map[string][]string{}
+	for key, values := range individual.Attributes {
+		if len(values) == 0 {
+			continue
+		}
+		for _, value := range values {
+			if len(value) == 0 {
+				continue
+			}
+			attrs[key] = append(attrs[key], value)
+		}
+	}
+
+	individual.Attributes = attrs
+
+	if err := s.IndividualStore.Create(ctx, &individual); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	responseBytes, err := json.Marshal(&individual)
+	responseBytes, err := json.Marshal(individual)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -49,5 +52,4 @@ func (s *Server) PutIndividual(w http.ResponseWriter, req *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(responseBytes)
-
 }

@@ -1,5 +1,11 @@
 package iam
 
+import (
+	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
+	"strings"
+	"time"
+)
+
 // Attribute represents an attribute that can be attached to a Party
 type Attribute struct {
 	// ID is the unique ID of an attribute
@@ -259,4 +265,105 @@ func (r *RelationshipType) Mirror() *RelationshipType {
 		SecondPartyRole: r.FirstPartyRole,
 		Rules:           rules,
 	}
+}
+
+type Individual struct {
+	*Party `json:",inline" bson:",inline"`
+}
+
+type IndividualList struct {
+	Items []*Individual `json:"items" bson:"items"`
+}
+
+func NewIndividual(ID string) *Individual {
+	return &Individual{
+		Party: &Party{
+			ID: ID,
+			PartyTypeIDs: []string{
+				partytypes.IndividualPartyType.ID,
+			},
+			Attributes: map[string][]string{},
+		},
+	}
+}
+
+func (b *Individual) FindAge() *int {
+
+	birthDate := b.FindAttributeValue(BirthDateAttribute.ID)
+	if birthDate == nil {
+		return nil
+	}
+
+	birthDateStrs, ok := birthDate.([]string)
+	if !ok {
+		return nil
+	}
+
+	if len(birthDateStrs) == 0 {
+		return nil
+	}
+
+	birthDateStr := birthDateStrs[0]
+	parsedDate, err := time.Parse("2006-01-02", birthDateStr)
+	if err != nil {
+		return nil
+	}
+
+	diff := time.Now().UTC().Sub(parsedDate)
+	years := diff.Hours() / 24 / 365
+	rounded := int(years)
+
+	return &rounded
+
+}
+
+func (b *Individual) String() string {
+
+	firstNames, hasFirstNames := b.Attributes[FirstNameAttribute.ID]
+	lastNames, hasLastNames := b.Attributes[LastNameAttribute.ID]
+
+	if hasFirstNames && hasLastNames {
+		return strings.ToUpper(lastNames[0]) + ", " + firstNames[0]
+	}
+
+	return b.ID
+}
+
+type Team struct {
+	ID   string `json:"id" bson:"id"`
+	Name string `json:"name" bson:"name"`
+}
+
+type TeamList struct {
+	Items []*Team `json:"items"`
+}
+
+func (l *TeamList) FindByID(id string) *Team {
+	for _, team := range l.Items {
+		if team.ID == id {
+			return team
+		}
+	}
+	return nil
+}
+
+// Staff is a relationship between an organization and an individual
+// that represents that the individual is working for that organization
+type Staff struct {
+	ID             string `json:"id"`
+	OrganizationID string `json:"organizationId"`
+	IndividualID   string `json:"individualId"`
+}
+
+// StaffList is a list of Staff
+type StaffList struct {
+	Items []*Staff `json:"items"`
+}
+
+type Organization struct {
+	*Party
+}
+
+type OrganizationList struct {
+	Items []*Organization `json:"items" bson:"items"`
 }

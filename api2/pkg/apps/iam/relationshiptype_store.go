@@ -10,7 +10,7 @@ type RelationshipTypeStore struct {
 	collection *mongo.Collection
 }
 
-func NewStore(mongoClient *mongo.Client, database string) *RelationshipTypeStore {
+func NewRelationshipTypeStore(mongoClient *mongo.Client, database string) *RelationshipTypeStore {
 	return &RelationshipTypeStore{
 		collection: mongoClient.Database(database).Collection("relationshipTypes"),
 	}
