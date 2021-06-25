@@ -59,7 +59,3 @@ services:
       - POSTGRES_USER=hydra
       - POSTGRES_PASSWORD=secret
       - POSTGRES_DB=hydra
-
-volumes:
-  postgres_data:
-    driver: local
