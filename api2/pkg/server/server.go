@@ -10,6 +10,7 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/cases/cases"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
 	"github.com/nrc-no/core-kafka/pkg/middleware"
+	"github.com/nrc-no/core-kafka/pkg/rest"
 	"github.com/nrc-no/core-kafka/pkg/sessionmanager"
 	"github.com/nrc-no/core-kafka/pkg/webapp"
 	"github.com/ory/hydra-client-go/client"
@@ -222,7 +223,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.Path("/apis/v1/casetypes/{id}").Methods("PUT").HandlerFunc(caseTypeHandler.Put)
 	router.Path("/apis/v1/casetypes").Methods("POST").HandlerFunc(caseTypeHandler.Post)
 
-	iamClient := iam.NewClientSet(&iam.RESTConfig{
+	iamClient := iam.NewClientSet(&rest.RESTConfig{
 		Scheme: "http",
 		Host:   c.Address,
 	})

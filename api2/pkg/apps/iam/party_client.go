@@ -3,10 +3,11 @@ package iam
 import (
 	"context"
 	"fmt"
+	"github.com/nrc-no/core-kafka/pkg/rest"
 )
 
 type RESTPartyClient struct {
-	c *RESTClient
+	c *rest.Client
 }
 
 func (r RESTPartyClient) Get(ctx context.Context, id string) (*Party, error) {

@@ -3,6 +3,7 @@ package iam
 import (
 	"context"
 	"errors"
+	"github.com/nrc-no/core-kafka/pkg/rest"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"net/http"
@@ -36,7 +37,7 @@ func (s *Suite) SetupSuite() {
 
 	s.ctx = ctx
 	s.server = srv
-	s.client = NewClientSet(&RESTConfig{
+	s.client = NewClientSet(&rest.RESTConfig{
 		Scheme: "http",
 		Host:   "localhost:9001",
 	})

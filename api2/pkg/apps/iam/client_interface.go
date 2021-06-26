@@ -2,6 +2,7 @@ package iam
 
 import (
 	"context"
+	"github.com/nrc-no/core-kafka/pkg/rest"
 	"net/url"
 )
 
@@ -149,7 +150,7 @@ func (a *AttributeListOptions) UnmarshalQueryParameters(values url.Values) error
 	return nil
 }
 
-var _ UrlValuer = &AttributeListOptions{}
+var _ rest.UrlValuer = &AttributeListOptions{}
 
 type AttributeClient interface {
 	Get(ctx context.Context, id string) (*Attribute, error)

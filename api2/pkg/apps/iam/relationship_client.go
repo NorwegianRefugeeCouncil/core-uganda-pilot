@@ -3,10 +3,11 @@ package iam
 import (
 	"context"
 	"fmt"
+	"github.com/nrc-no/core-kafka/pkg/rest"
 )
 
 type RESTRelationshipClient struct {
-	c *RESTClient
+	c *rest.Client
 }
 
 func (r RESTRelationshipClient) Get(ctx context.Context, id string) (*Relationship, error) {
