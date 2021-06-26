@@ -11,9 +11,10 @@ import (
 
 type Suite struct {
 	suite.Suite
-	server *Server
-	ctx    context.Context
-	client *ClientSet
+	server     *Server
+	serverOpts *ServerOptions
+	ctx        context.Context
+	client     *ClientSet
 }
 
 func (s *Suite) SetupSuite() {
@@ -25,17 +26,11 @@ func (s *Suite) SetupSuite() {
 		WithMongoPassword("example").
 		WithListenAddress(":9001")
 
+	s.serverOpts = opts
+
 	ctx := context.Background()
 	srv, err := NewServer(ctx, opts)
 	if !assert.NoError(s.T(), err) {
-		s.T().Fatal()
-	}
-
-	if err := srv.mongoClient.Database(opts.MongoDatabase).Drop(ctx); !assert.NoError(s.T(), err) {
-		s.T().Fatal()
-	}
-
-	if err := srv.Init(ctx); !assert.NoError(s.T(), err) {
 		s.T().Fatal()
 	}
 
@@ -45,6 +40,8 @@ func (s *Suite) SetupSuite() {
 		Scheme: "http",
 		Host:   "localhost:9001",
 	})
+
+	s.ResetDB()
 
 	go func() {
 		if err := http.ListenAndServe(opts.ListenAddress, srv); err != nil {
@@ -56,6 +53,15 @@ func (s *Suite) SetupSuite() {
 		}
 	}()
 
+}
+
+func (s *Suite) ResetDB() {
+	if err := s.server.mongoClient.Database(s.serverOpts.MongoDatabase).Drop(s.ctx); !assert.NoError(s.T(), err) {
+		s.T().Fatal()
+	}
+	if err := s.server.Init(s.ctx); !assert.NoError(s.T(), err) {
+		s.T().Fatal()
+	}
 }
 
 func TestSuite(t *testing.T) {
