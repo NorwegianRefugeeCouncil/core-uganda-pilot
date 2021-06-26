@@ -17,7 +17,8 @@ func (h *Server) Individuals(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
-	attrs, err := h.iam.Attributes().List(ctx, iam.AttributeListOptions{})
+	iamCli := h.IAMClient(ctx)
+	attrs, err := iamCli.Attributes().List(ctx, iam.AttributeListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -28,7 +29,7 @@ func (h *Server) Individuals(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	list, err := h.iam.Individuals().List(ctx, iam.IndividualListOptions{})
+	list, err := iamCli.Individuals().List(ctx, iam.IndividualListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -83,10 +84,12 @@ func (h *Server) PostIndividualCredentials(w http.ResponseWriter, req *http.Requ
 	}
 	values := req.Form
 	password := values.Get("password")
-	if err := h.credentialsClient.SetPassword(ctx, partyID, password); err != nil {
+
+	if err := h.login.Login().SetCredentials(ctx, partyID, password); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	http.Redirect(w, req, "/individuals/"+partyID+"/credentials", http.StatusSeeOther)
 }
 

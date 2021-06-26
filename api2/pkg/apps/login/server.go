@@ -2,6 +2,7 @@ package login
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core-kafka/pkg/apps/iam"
 	"github.com/nrc-no/core-kafka/pkg/rest"
@@ -14,6 +15,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/oauth2/clientcredentials"
 	"html/template"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -120,6 +122,10 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 		return nil, err
 	}
 
+	if err := mongoClient.Connect(ctx); err != nil {
+		return nil, err
+	}
+
 	collection := mongoClient.Database(o.MongoDatabase).Collection("credentials")
 
 	srv := &Server{
@@ -130,8 +136,14 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 	}
 
 	router := mux.NewRouter()
-	router.Path("/auth/login").Methods("GET").HandlerFunc(srv.GetLogin)
-	router.Path("/auth/login").Methods("POST").HandlerFunc(srv.PostLogin)
+	router.Path("/auth/login").Methods("GET").HandlerFunc(srv.GetLoginForm)
+	router.Path("/auth/login").Methods("POST").HandlerFunc(srv.PostLoginForm)
+	router.Path("/auth/consent").Methods("GET").HandlerFunc(srv.GetConsent)
+	router.Path("/auth/consent").Methods("POST").HandlerFunc(srv.PostConsent)
+	router.Path("/apis/login/v1/credentials").
+		Methods("POST").
+		Handler(srv.WithAuth()(http.HandlerFunc(srv.PostLoginForm)))
+
 	srv.router = router
 
 	tpl, err := template.ParseGlob("pkg/apps/login/templates/*.gohtml")
@@ -172,4 +184,19 @@ func createOauthClient(
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	s.router.ServeHTTP(w, req)
+}
+
+func (s *Server) Error(w http.ResponseWriter, err error) {
+	http.Error(w, err.Error(), http.StatusInternalServerError)
+}
+
+func (s *Server) Bind(req *http.Request, into interface{}) error {
+	bodyBytes, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		return err
+	}
+	if err := json.Unmarshal(bodyBytes, &into); err != nil {
+		return err
+	}
+	return nil
 }

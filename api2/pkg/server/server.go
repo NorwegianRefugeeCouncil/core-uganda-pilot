@@ -9,7 +9,6 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/apps/login"
 	"github.com/nrc-no/core-kafka/pkg/apps/seed"
 	webapp2 "github.com/nrc-no/core-kafka/pkg/apps/webapp"
-	"github.com/nrc-no/core-kafka/pkg/auth"
 	"github.com/nrc-no/core-kafka/pkg/middleware"
 	"github.com/nrc-no/core-kafka/pkg/rest"
 	"github.com/ory/hydra-client-go/client"
@@ -28,7 +27,6 @@ type Server struct {
 	HttpServer        *http.Server
 	HydraPublicClient *client.OryHydra
 	HydraAdminClient  *client.OryHydra
-	CredentialsClient *auth.CredentialsClient
 }
 
 type Options struct {
@@ -81,7 +79,6 @@ type CompletedOptions struct {
 	MongoClient       *mongo.Client
 	HydraAdminClient  *client.OryHydra
 	HydraPublicClient *client.OryHydra
-	CredentialsClient *auth.CredentialsClient
 }
 
 func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
@@ -125,14 +122,11 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		BasePath: hydraPublicURL.Path,
 	})
 
-	credentialsClient := auth.NewCredentialsClient(o.MongoDatabase, mongoClient)
-
 	completedOptions := CompletedOptions{
 		Options:           o,
 		MongoClient:       mongoClient,
 		HydraAdminClient:  hydraAdminClient,
 		HydraPublicClient: hydraPublicCLient,
-		CredentialsClient: credentialsClient,
 	}
 	return completedOptions, nil
 }
@@ -184,6 +178,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		panic(err)
 	}
 	router.PathPrefix("/auth").Handler(loginServer)
+	router.PathPrefix("/apis/login").Handler(loginServer)
 
 	// Create CMS Server
 	cmsServer, err := cms.NewServer(ctx, cms.NewServerOptions().
@@ -212,7 +207,6 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		webAppOptions,
 		c.HydraAdminClient,
 		c.HydraPublicClient,
-		c.CredentialsClient,
 		iamClient,
 		cmsClient,
 	)
@@ -231,7 +225,6 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		WebAppHandler:     webAppHandler,
 		HydraPublicClient: c.HydraPublicClient,
 		HydraAdminClient:  c.HydraAdminClient,
-		CredentialsClient: c.CredentialsClient,
 		HttpServer:        httpServer,
 	}
 

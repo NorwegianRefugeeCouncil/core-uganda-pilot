@@ -4,9 +4,12 @@ import (
 	"context"
 	"github.com/nrc-no/core-kafka/pkg/apps/cms"
 	"github.com/nrc-no/core-kafka/pkg/apps/iam"
+	"github.com/nrc-no/core-kafka/pkg/apps/login"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"golang.org/x/crypto/bcrypt"
 	"strings"
 )
 
@@ -144,6 +147,29 @@ func Seed(ctx context.Context, databaseName string, mongoClient *mongo.Client) e
 
 	for _, obj := range teams {
 		if err := seedMongo(ctx, mongoClient, databaseName, "parties", bson.M{"id": obj.ID}, iam.MapTeamToParty(&obj)); err != nil {
+			return err
+		}
+	}
+
+	for _, obj := range staffers {
+		if err := seedMongo(ctx, mongoClient, databaseName, "relationships", bson.M{"id": obj.ID}, iam.MapStaffToRelationship(&obj)); err != nil {
+			return err
+		}
+		hash, err := login.HashAndSalt(bcrypt.MinCost, []byte("password"))
+		if err != nil {
+			return err
+		}
+		if _, err := mongoClient.Database(databaseName).Collection("credentials").UpdateOne(ctx,
+			bson.M{
+				"partyId": obj.IndividualID,
+			},
+			bson.M{
+				"$set": bson.M{
+					"partyId": obj.IndividualID,
+					"hash":    hash,
+				},
+			},
+			options.Update().SetUpsert(true)); err != nil {
 			return err
 		}
 	}

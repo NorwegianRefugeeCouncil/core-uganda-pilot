@@ -10,18 +10,17 @@ import (
 func (s *Server) Callback(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	provider, err := oidc.NewProvider(ctx, "http://localhost:4444")
-	if err != nil {
-		http.Error(w, "code not found", http.StatusInternalServerError)
-		return
-	}
 
 	conf := oauth2.Config{
 		ClientID:     s.OauthClientID,
 		ClientSecret: s.OauthClientSecret,
 		RedirectURL:  "http://localhost:9000/callback",
-		Endpoint:     provider.Endpoint(),
-		Scopes:       []string{oidc.ScopeOpenID, "profile"},
+		Endpoint: oauth2.Endpoint{
+			AuthURL:   "http://localhost:4444/oauth2/auth",
+			TokenURL:  "http://localhost:4444/oauth2/token",
+			AuthStyle: 1,
+		},
+		Scopes: []string{oidc.ScopeOpenID, "profile"},
 	}
 
 	sessionState := s.sessionManager.PopString(ctx, "state")

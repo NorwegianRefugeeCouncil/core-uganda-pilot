@@ -8,7 +8,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (s *Server) VerifyPassword(ctx context.Context, email, password string) bool {
+func (s *Server) VerifyPassword(ctx context.Context, email, password string) (*iam.Individual, bool) {
 
 	individualList, err := s.iam.Individuals().List(ctx, iam.IndividualListOptions{
 		Attributes: map[string]string{
@@ -16,37 +16,42 @@ func (s *Server) VerifyPassword(ctx context.Context, email, password string) boo
 		},
 	})
 	if err != nil {
-		return false
+		return nil, false
 	}
 
 	if len(individualList.Items) == 0 {
-		return false
+		return nil, false
 	}
 
 	res := s.Collection.FindOne(ctx, bson.M{
 		"partyId": individualList.Items[0].ID,
 	})
 	if res.Err() != nil {
-		return false
+		return nil, false
 	}
 
 	raw, err := res.DecodeBytes()
 	if err != nil {
-		return false
+		return nil, false
 	}
 
 	hash, ok := raw.Lookup("hash").StringValueOK()
 	if !ok {
-		return false
+		return nil, false
 	}
 
-	return comparePasswords(hash, []byte(password))
+	match := comparePasswords(hash, []byte(password))
+	if !match {
+		return nil, false
+	}
+
+	return individualList.Items[0], true
 
 }
 
 // SetPassword will set the Party password
 func (s *Server) SetPassword(ctx context.Context, partyID string, password string) error {
-	saltedHash, err := hashAndSalt(s.BCryptCost, []byte(password))
+	saltedHash, err := HashAndSalt(s.BCryptCost, []byte(password))
 	if err != nil {
 		return err
 	}
@@ -64,9 +69,9 @@ func (s *Server) SetPassword(ctx context.Context, partyID string, password strin
 	return nil
 }
 
-// hashAndSalt uses bcrypt algorithm to compute a salt + hash of a password
+// HashAndSalt uses bcrypt algorithm to compute a salt + hash of a password
 // Used to mitigate bruteforce attacks, rainbow tables, etc.
-func hashAndSalt(cost int, pwd []byte) (string, error) {
+func HashAndSalt(cost int, pwd []byte) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword(pwd, cost)
 	if err != nil {
 		return "", err

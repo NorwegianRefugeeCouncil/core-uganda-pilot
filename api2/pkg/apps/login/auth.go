@@ -1,4 +1,4 @@
-package iam
+package login
 
 import (
 	"github.com/nrc-no/core-kafka/pkg/auth"

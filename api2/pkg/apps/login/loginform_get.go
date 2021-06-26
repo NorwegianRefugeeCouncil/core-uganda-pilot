@@ -6,8 +6,8 @@ import (
 	"net/http"
 )
 
-// GetLogin is called when Ory Hydra redirects the user to login
-func (s *Server) GetLogin(w http.ResponseWriter, req *http.Request) {
+// GetLoginForm is called when Ory Hydra redirects the user to login
+func (s *Server) GetLoginForm(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 	qry := req.URL.Query()
