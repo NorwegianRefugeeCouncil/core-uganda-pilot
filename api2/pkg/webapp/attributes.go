@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core-kafka/pkg/apps/iam"
-	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
 	"strings"
@@ -43,9 +42,9 @@ func (h *Handler) Attributes(w http.ResponseWriter, req *http.Request) {
 
 func (h *Handler) NewAttribute(w http.ResponseWriter, req *http.Request) {
 	if err := h.renderFactory.New(req).ExecuteTemplate(w, "attribute", map[string]interface{}{
-		"PartyTypes": partytypes.PartyTypeList{
-			Items: []*partytypes.PartyType{
-				&partytypes.IndividualPartyType,
+		"PartyTypes": iam.PartyTypeList{
+			Items: []*iam.PartyType{
+				&iam.IndividualPartyType,
 			},
 		},
 	}); err != nil {

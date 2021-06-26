@@ -1,7 +1,6 @@
 package iam
 
 import (
-	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"strings"
 	"time"
 )
@@ -280,7 +279,7 @@ func NewIndividual(ID string) *Individual {
 		Party: &Party{
 			ID: ID,
 			PartyTypeIDs: []string{
-				partytypes.IndividualPartyType.ID,
+				IndividualPartyType.ID,
 			},
 			Attributes: map[string][]string{},
 		},

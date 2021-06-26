@@ -2,7 +2,6 @@ package iam
 
 import (
 	"context"
-	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -19,7 +18,7 @@ func NewIndividualStore(mongoClient *mongo.Client, database string) *IndividualS
 }
 
 func (s *IndividualStore) Create(ctx context.Context, individual *Individual) error {
-	individual.AddPartyType(partytypes.IndividualPartyType.ID)
+	individual.AddPartyType(IndividualPartyType.ID)
 	_, err := s.collection.InsertOne(ctx, individual)
 	if err != nil {
 		return err
@@ -28,7 +27,7 @@ func (s *IndividualStore) Create(ctx context.Context, individual *Individual) er
 }
 
 func (s *IndividualStore) Upsert(ctx context.Context, individual *Individual) error {
-	individual.AddPartyType(partytypes.IndividualPartyType.ID)
+	individual.AddPartyType(IndividualPartyType.ID)
 	_, err := s.collection.UpdateOne(ctx, bson.M{
 		"id": individual.ID,
 	}, bson.M{
@@ -61,13 +60,13 @@ func (s *IndividualStore) List(ctx context.Context, listOptions IndividualListOp
 	includesIndividualPartyType := false
 
 	for _, partyTypeId := range listOptions.PartyTypeIDs {
-		if partyTypeId == partytypes.IndividualPartyType.ID {
+		if partyTypeId == IndividualPartyType.ID {
 			includesIndividualPartyType = true
 		}
 	}
 
 	if !includesIndividualPartyType {
-		listOptions.PartyTypeIDs = append(listOptions.PartyTypeIDs, partytypes.IndividualPartyType.ID)
+		listOptions.PartyTypeIDs = append(listOptions.PartyTypeIDs, IndividualPartyType.ID)
 	}
 
 	filter := bson.M{

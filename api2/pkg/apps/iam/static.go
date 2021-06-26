@@ -1,9 +1,5 @@
 package iam
 
-import (
-	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
-)
-
 var FirstNameAttribute = Attribute{
 	ID:   "8514da51-aad5-4fb4-a797-8bcc0c969b27",
 	Name: "firstName",
@@ -16,7 +12,7 @@ var FirstNameAttribute = Attribute{
 	},
 	IsPersonallyIdentifiableInfo: true,
 	PartyTypeIDs: []string{
-		partytypes.IndividualPartyType.ID,
+		IndividualPartyType.ID,
 	},
 }
 
@@ -32,7 +28,7 @@ var LastNameAttribute = Attribute{
 	},
 	IsPersonallyIdentifiableInfo: true,
 	PartyTypeIDs: []string{
-		partytypes.IndividualPartyType.ID,
+		IndividualPartyType.ID,
 	},
 }
 
@@ -48,7 +44,7 @@ var BirthDateAttribute = Attribute{
 	},
 	IsPersonallyIdentifiableInfo: true,
 	PartyTypeIDs: []string{
-		partytypes.IndividualPartyType.ID,
+		IndividualPartyType.ID,
 	},
 }
 
@@ -64,7 +60,7 @@ var EMailAttribute = Attribute{
 	},
 	IsPersonallyIdentifiableInfo: true,
 	PartyTypeIDs: []string{
-		partytypes.IndividualPartyType.ID,
+		IndividualPartyType.ID,
 	},
 }
 
@@ -147,8 +143,8 @@ var HeadOfHouseholdRelationshipType = RelationshipType{
 	Rules: []RelationshipTypeRule{
 		{
 			PartyTypeRule: &PartyTypeRule{
-				FirstPartyTypeID:  partytypes.IndividualPartyType.ID,
-				SecondPartyTypeID: partytypes.HouseholdPartyType.ID,
+				FirstPartyTypeID:  IndividualPartyType.ID,
+				SecondPartyTypeID: HouseholdPartyType.ID,
 			},
 		},
 	},
@@ -163,8 +159,8 @@ var SpousalRelationshipType = RelationshipType{
 	Rules: []RelationshipTypeRule{
 		{
 			PartyTypeRule: &PartyTypeRule{
-				FirstPartyTypeID:  partytypes.IndividualPartyType.ID,
-				SecondPartyTypeID: partytypes.IndividualPartyType.ID,
+				FirstPartyTypeID:  IndividualPartyType.ID,
+				SecondPartyTypeID: IndividualPartyType.ID,
 			},
 		},
 	},
@@ -179,8 +175,8 @@ var FilialRelationshipType = RelationshipType{
 	Rules: []RelationshipTypeRule{
 		{
 			PartyTypeRule: &PartyTypeRule{
-				FirstPartyTypeID:  partytypes.IndividualPartyType.ID,
-				SecondPartyTypeID: partytypes.IndividualPartyType.ID,
+				FirstPartyTypeID:  IndividualPartyType.ID,
+				SecondPartyTypeID: IndividualPartyType.ID,
 			},
 		},
 	},
@@ -195,8 +191,8 @@ var ParentalRelationshipType = RelationshipType{
 	Rules: []RelationshipTypeRule{
 		{
 			PartyTypeRule: &PartyTypeRule{
-				FirstPartyTypeID:  partytypes.IndividualPartyType.ID,
-				SecondPartyTypeID: partytypes.IndividualPartyType.ID,
+				FirstPartyTypeID:  IndividualPartyType.ID,
+				SecondPartyTypeID: IndividualPartyType.ID,
 			},
 		},
 	},

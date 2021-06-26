@@ -6,7 +6,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core-kafka/pkg/apps/cms"
 	"github.com/nrc-no/core-kafka/pkg/apps/iam"
-	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/sync/errgroup"
 	"net/http"
@@ -150,7 +149,7 @@ func (h *Handler) Individual(w http.ResponseWriter, req *http.Request) {
 	g.Go(func() error {
 		var err error
 		relationshipTypes, err = h.iam.RelationshipTypes().List(waitCtx, iam.RelationshipTypeListOptions{
-			PartyTypeID: partytypes.IndividualPartyType.ID,
+			PartyTypeID: iam.IndividualPartyType.ID,
 		})
 		return err
 	})
@@ -158,7 +157,7 @@ func (h *Handler) Individual(w http.ResponseWriter, req *http.Request) {
 	g.Go(func() error {
 		var err error
 		attrs, err = h.iam.Attributes().List(waitCtx, iam.AttributeListOptions{
-			PartyTypeIDs: []string{partytypes.IndividualPartyType.ID},
+			PartyTypeIDs: []string{iam.IndividualPartyType.ID},
 		})
 		return err
 	})
@@ -231,10 +230,10 @@ func PrepRelationshipTypeDropdown(relationshipTypes *iam.RelationshipTypeList) *
 	for _, relType := range relationshipTypes.Items {
 		if relType.IsDirectional {
 			for _, rule := range relType.Rules {
-				if rule.PartyTypeRule.FirstPartyTypeID == partytypes.IndividualPartyType.ID {
+				if rule.PartyTypeRule.FirstPartyTypeID == iam.IndividualPartyType.ID {
 					newList.Items = append(newList.Items, relType)
 				}
-				if rule.PartyTypeRule.SecondPartyTypeID == partytypes.IndividualPartyType.ID {
+				if rule.PartyTypeRule.SecondPartyTypeID == iam.IndividualPartyType.ID {
 					newList.Items = append(newList.Items, relType.Mirror())
 				}
 			}
