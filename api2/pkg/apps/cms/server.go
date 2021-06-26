@@ -98,6 +98,8 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 		caseTypeStore: caseTypeStore,
 	}
 
+	router.Use(srv.WithAuth(ctx))
+
 	router.Path("/apis/cms/v1/cases").Methods("GET").HandlerFunc(srv.ListCases)
 	router.Path("/apis/cms/v1/cases").Methods("POST").HandlerFunc(srv.PostCase)
 	router.Path("/apis/cms/v1/cases/{id}").Methods("GET").HandlerFunc(srv.GetCase)
