@@ -75,6 +75,10 @@ func (s *IndividualStore) List(ctx context.Context, listOptions IndividualListOp
 		},
 	}
 
+	for key, value := range listOptions.Attributes {
+		filter["attributes."+key] = value
+	}
+
 	cursor, err := s.collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err

@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/nrc-no/core-kafka/pkg/rest"
 	"net/url"
+	"strings"
 )
 
 type Interface interface {
@@ -20,8 +21,9 @@ type Interface interface {
 }
 
 type PartyListOptions struct {
-	PartyTypeID string `json:"partyTypeId" bson:"partyTypeId"`
-	SearchParam string `json:"searchParam" bson:"searchParam"`
+	PartyTypeID string            `json:"partyTypeId" bson:"partyTypeId"`
+	SearchParam string            `json:"searchParam" bson:"searchParam"`
+	Attributes  map[string]string `json:"attributes"`
 }
 
 func (a *PartyListOptions) MarshalQueryParameters() (url.Values, error) {
@@ -32,12 +34,29 @@ func (a *PartyListOptions) MarshalQueryParameters() (url.Values, error) {
 	if len(a.SearchParam) > 0 {
 		ret.Set("searchParam", a.SearchParam)
 	}
+	if a.Attributes != nil {
+		for key, value := range a.Attributes {
+			if len(value) == 0 {
+				continue
+			}
+			ret.Set("attributes["+key+"]", value)
+		}
+	}
 	return ret, nil
 }
 
 func (a *PartyListOptions) UnmarshalQueryParameters(values url.Values) error {
 	a.PartyTypeID = values.Get("partyTypeId")
 	a.SearchParam = values.Get("searchParam")
+	for key, values := range values {
+		if strings.HasPrefix(key, "attributes[") && strings.HasSuffix(key, "]") {
+			if a.Attributes == nil {
+				a.Attributes = map[string]string{}
+			}
+			attrKey := key[11 : len(key)-1]
+			a.Attributes[attrKey] = values[0]
+		}
+	}
 	return nil
 }
 
@@ -254,6 +273,7 @@ type MembershipClient interface {
 
 type IndividualListOptions struct {
 	PartyTypeIDs []string
+	Attributes   map[string]string
 }
 
 func (a *IndividualListOptions) MarshalQueryParameters() (url.Values, error) {
@@ -261,11 +281,28 @@ func (a *IndividualListOptions) MarshalQueryParameters() (url.Values, error) {
 	for _, partyTypeID := range a.PartyTypeIDs {
 		values.Add("partyTypeId", partyTypeID)
 	}
+	if a.Attributes != nil {
+		for key, value := range a.Attributes {
+			if len(value) == 0 {
+				continue
+			}
+			values.Set("attributes["+key+"]", value)
+		}
+	}
 	return values, nil
 }
 
 func (a *IndividualListOptions) UnmarshalQueryParameters(values url.Values) error {
 	a.PartyTypeIDs = values["partyTypeId"]
+	for key, values := range values {
+		if strings.HasPrefix(key, "attributes[") && strings.HasSuffix(key, "]") {
+			if a.Attributes == nil {
+				a.Attributes = map[string]string{}
+			}
+			attrKey := key[11 : len(key)-1]
+			a.Attributes[attrKey] = values[0]
+		}
+	}
 	return nil
 }
 
