@@ -26,6 +26,7 @@ services:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
       - 6379:6379
+    restart: on-failure
 
   hydra_migrate:
     image: oryd/hydra:v1.10.2
@@ -34,6 +35,7 @@ services:
       - sql
       - --yes
       - postgres://hydra:secret@hydra_db:5432/hydra?sslmode=disable&max_conns=20&max_idle_conns=4
+    restart: on-failure
 
   hydra:
     image: oryd/hydra:v1.10.2
@@ -48,8 +50,9 @@ services:
       - DSN=postgres://hydra:secret@hydra_db:5432/hydra?sslmode=disable&max_conns=20&max_idle_conns=4
       - SECRETS_SYSTEM=fVuJ0N1nFuymQjcnC4OWcIyo15gb0MYe
       - URLS_SELF_ISSUER=http://localhost:4444
-      - URLS_CONSENT=http://localhost:9000/consent
-      - URLS_LOGIN=http://localhost:9000/login
+      - URLS_CONSENT=http://localhost:9000/auth/consent
+      - URLS_LOGIN=http://localhost:9000/auth/login
+    restart: on-failure
 
   hydra_db:
     image: postgres:9.6
@@ -59,3 +62,4 @@ services:
       - POSTGRES_USER=hydra
       - POSTGRES_PASSWORD=secret
       - POSTGRES_DB=hydra
+    restart: on-failure

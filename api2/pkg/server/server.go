@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core-kafka/pkg/apps/cms"
 	"github.com/nrc-no/core-kafka/pkg/apps/iam"
+	"github.com/nrc-no/core-kafka/pkg/apps/login"
 	"github.com/nrc-no/core-kafka/pkg/apps/seed"
 	webapp2 "github.com/nrc-no/core-kafka/pkg/apps/webapp"
 	"github.com/nrc-no/core-kafka/pkg/auth"
@@ -169,6 +170,20 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		Scheme: addressUrl.Scheme,
 		Host:   addressUrl.Host,
 	})
+
+	loginOptions := login.NewServerOptions()
+	loginOptions.MongoUsername = c.MongoUsername
+	loginOptions.MongoPassword = c.MongoPassword
+	loginOptions.MongoPassword = c.MongoPassword
+	loginOptions.MongoDatabase = c.MongoDatabase
+	loginOptions.MongoHosts = []string{"localhost:27017"}
+	loginOptions.BCryptCost = 15
+	loginOptions.HydraAdminURL = "http://localhost:4445"
+	loginServer, err := login.NewServer(loginOptions)
+	if err != nil {
+		panic(err)
+	}
+	router.PathPrefix("/auth").Handler(loginServer)
 
 	// Create CMS Server
 	cmsServer, err := cms.NewServer(ctx, cms.NewServerOptions().

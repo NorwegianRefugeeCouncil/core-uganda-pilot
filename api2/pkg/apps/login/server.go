@@ -7,6 +7,8 @@ import (
 	"github.com/spf13/pflag"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"html/template"
+	"net/http"
 	"net/url"
 )
 
@@ -43,6 +45,8 @@ type Server struct {
 	HydraAdmin admin.ClientService
 	Collection *mongo.Collection
 	BCryptCost int
+	router     *mux.Router
+	template   *template.Template
 }
 
 func NewServer(o *ServerOptions) (*Server, error) {
@@ -79,9 +83,21 @@ func NewServer(o *ServerOptions) (*Server, error) {
 	}
 
 	router := mux.NewRouter()
-	router.Path("/login").Methods("GET").HandlerFunc(srv.GetLogin)
-	router.Path("/login").Methods("POST").HandlerFunc(srv.PostLogin)
+	router.Path("/auth/login").Methods("GET").HandlerFunc(srv.GetLogin)
+	router.Path("/auth/login").Methods("POST").HandlerFunc(srv.PostLogin)
+	srv.router = router
+
+	tpl, err := template.ParseGlob("pkg/apps/login/templates/*.gohtml")
+	if err != nil {
+		return nil, err
+	}
+
+	srv.template = tpl
 
 	return srv, nil
 
+}
+
+func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	s.router.ServeHTTP(w, req)
 }

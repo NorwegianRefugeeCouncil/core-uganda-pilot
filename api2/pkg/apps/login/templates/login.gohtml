@@ -1,16 +1,15 @@
-{{define "auth_login"}}
+{{define "login"}}
     <!doctype html>
     <html lang="en">
     {{template "head"}}
     <body class="bg-light">
-    {{template "navbar"}}
 
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col col-md-6 col-md-offset-3">
                 <div class="card shadow">
                     <div class="card-body">
-                        <form action="/login" method="post">
+                        <form action="/auth/login" method="post">
                             <input type="hidden" name="login_challenge" value="{{.Challenge}}">
                             <label for="email">Email</label>
                             <input type="text" class="form-control mb-3" id="email" name="email" autofocus/>
