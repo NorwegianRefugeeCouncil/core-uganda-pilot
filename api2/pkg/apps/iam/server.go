@@ -130,6 +130,8 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 		MembershipStore:       NewMembershipStore(relationshipStore),
 	}
 
+	router.Use(srv.WithAuth(ctx))
+
 	router.Path("/apis/iam/v1/attributes").Methods("GET").HandlerFunc(srv.ListAttributes)
 	router.Path("/apis/iam/v1/attributes").Methods("POST").HandlerFunc(srv.PostAttribute)
 	router.Path("/apis/iam/v1/attributes/{id}").Methods("GET").HandlerFunc(srv.GetAttribute)
