@@ -3,9 +3,7 @@ package webapp
 import (
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core-kafka/pkg/memberships"
-	"github.com/nrc-no/core-kafka/pkg/parties/parties"
-	"github.com/nrc-no/core-kafka/pkg/teams"
+	"github.com/nrc-no/core-kafka/pkg/apps/iam"
 	"golang.org/x/sync/errgroup"
 	"net/http"
 	"sync"
@@ -15,7 +13,7 @@ func (h *Handler) Teams(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
-	t, err := h.teamClient.List(ctx, teams.ListOptions{})
+	t, err := h.iam.Teams().List(ctx, iam.TeamListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -41,13 +39,13 @@ func (h *Handler) Team(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	t, err := h.teamClient.Get(ctx, id)
+	t, err := h.iam.Teams().Get(ctx, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	m, err := h.membershipClient.List(ctx, memberships.ListOptions{
+	m, err := h.iam.Memberships().List(ctx, iam.MembershipListOptions{
 		TeamID: id,
 	})
 	if err != nil {
@@ -55,7 +53,7 @@ func (h *Handler) Team(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var members []*parties.Party
+	var members []*iam.Party
 	lock := sync.Mutex{}
 
 	g, ctx := errgroup.WithContext(ctx)
@@ -63,7 +61,7 @@ func (h *Handler) Team(w http.ResponseWriter, req *http.Request) {
 	for _, item := range m.Items {
 		i := item
 		g.Go(func() error {
-			individual, err := h.partyClient.Get(ctx, i.IndividualID)
+			individual, err := h.iam.Parties().Get(ctx, i.IndividualID)
 			if err != nil {
 				return err
 			}

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/gomodule/redigo/redis"
 	"github.com/gorilla/mux"
+	"github.com/nrc-no/core-kafka/pkg/apps/iam"
 	"github.com/nrc-no/core-kafka/pkg/auth"
 	"github.com/nrc-no/core-kafka/pkg/cases/cases"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
@@ -380,28 +381,26 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.Path("/apis/v1/casetypes/{id}").Methods("PUT").HandlerFunc(caseTypeHandler.Put)
 	router.Path("/apis/v1/casetypes").Methods("POST").HandlerFunc(caseTypeHandler.Post)
 
+	iamClient := iam.NewClientSet(&iam.RESTConfig{
+		Scheme: "http",
+		Host:   c.Address,
+	})
+
 	// WebApp
 	webAppOptions := webapp.Options{
 		TemplateDirectory: c.TemplateDirectory,
 	}
 	webAppHandler, err := webapp.NewHandler(
 		webAppOptions,
-		attributeClient,
-		individualClient,
-		relationshipTypeClient,
-		relationshipClient,
-		partyClient,
-		partyTypeClient,
 		caseTypeClient,
 		caseClient,
 		relationshipPartiesClient,
-		teamClient,
-		membershipClient,
 		c.HydraAdminClient,
 		c.HydraPublicClient,
 		c.SessionManager,
 		c.CredentialsClient,
 		partyStore,
+		iamClient,
 	)
 	if err != nil {
 		panic(err)
@@ -425,7 +424,6 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.Path("/settings/relationshiptypes/{id}").HandlerFunc(webAppHandler.RelationshipType)
 	router.Path("/settings/partytypes").HandlerFunc(webAppHandler.PartyTypes)
 	router.Path("/settings/partytypes/{id}").HandlerFunc(webAppHandler.PartyType)
-	router.Path("/settings/countries").HandlerFunc(webAppHandler.CountrySettings)
 	router.Path("/settings/casetypes").HandlerFunc(webAppHandler.CaseTypes)
 	router.Path("/settings/casetypes/new").HandlerFunc(webAppHandler.NewCaseType)
 	router.Path("/settings/casetypes/{id}").HandlerFunc(webAppHandler.CaseType)

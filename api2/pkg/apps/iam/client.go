@@ -338,6 +338,10 @@ func (r *Response) Into(into interface{}) error {
 	return nil
 }
 
+func (r *Response) Error() error {
+	return r.err
+}
+
 type ClientSet struct {
 	c *RESTClient
 }

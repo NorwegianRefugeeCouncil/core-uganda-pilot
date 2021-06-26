@@ -4,8 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core-kafka/pkg/expressions"
-	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
+	"github.com/nrc-no/core-kafka/pkg/apps/iam"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
@@ -17,17 +16,17 @@ func (h *Handler) Attributes(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	if req.Method == "POST" {
-		h.PostAttribute(ctx, &attributes.Attribute{}, w, req)
+		h.PostAttribute(ctx, &iam.Attribute{}, w, req)
 		return
 	}
 
-	list, err := h.attributeClient.List(ctx, attributes.ListOptions{})
+	list, err := h.iam.Attributes().List(ctx, iam.AttributeListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	partyTypes, err := h.partyTypeClient.List(ctx)
+	partyTypes, err := h.iam.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -66,7 +65,7 @@ func (h *Handler) Attribute(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	a, err := h.attributeClient.Get(ctx, id)
+	a, err := h.iam.Attributes().Get(ctx, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -78,9 +77,9 @@ func (h *Handler) Attribute(w http.ResponseWriter, req *http.Request) {
 
 	if err := h.renderFactory.New(req).ExecuteTemplate(w, "attribute", map[string]interface{}{
 		"Attribute": a,
-		"PartyTypes": partytypes.PartyTypeList{
-			Items: []*partytypes.PartyType{
-				&partytypes.IndividualPartyType,
+		"PartyTypes": iam.PartyTypeList{
+			Items: []*iam.PartyType{
+				&iam.IndividualPartyType,
 			},
 		},
 	}); err != nil {
@@ -90,7 +89,7 @@ func (h *Handler) Attribute(w http.ResponseWriter, req *http.Request) {
 
 }
 
-func (h *Handler) PostAttribute(ctx context.Context, attribute *attributes.Attribute, w http.ResponseWriter, req *http.Request) {
+func (h *Handler) PostAttribute(ctx context.Context, attribute *iam.Attribute, w http.ResponseWriter, req *http.Request) {
 
 	if err := req.ParseForm(); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -99,7 +98,7 @@ func (h *Handler) PostAttribute(ctx context.Context, attribute *attributes.Attri
 
 	values := req.Form
 
-	translationMap := map[string]*attributes.AttributeTranslation{}
+	translationMap := map[string]*iam.AttributeTranslation{}
 
 	for key, v := range values {
 		if !strings.HasPrefix(key, "translations.") {
@@ -120,7 +119,7 @@ func (h *Handler) PostAttribute(ctx context.Context, attribute *attributes.Attri
 		}
 
 		if _, ok := translationMap[locale]; !ok {
-			translationMap[locale] = &attributes.AttributeTranslation{
+			translationMap[locale] = &iam.AttributeTranslation{
 				Locale: locale,
 			}
 		}
@@ -137,7 +136,7 @@ func (h *Handler) PostAttribute(ctx context.Context, attribute *attributes.Attri
 
 	}
 
-	var translations []attributes.AttributeTranslation
+	var translations []iam.AttributeTranslation
 	for _, translation := range translationMap {
 		translations = append(translations, *translation)
 	}
@@ -149,23 +148,22 @@ func (h *Handler) PostAttribute(ctx context.Context, attribute *attributes.Attri
 	}
 
 	attribute.Name = values.Get("name")
-	attribute.ValueType = expressions.ValueType{}
 	attribute.PartyTypeIDs = values["partyTypes"]
 	attribute.Translations = translations
 	attribute.IsPersonallyIdentifiableInfo = values.Get("isPii") == "on"
 
-	var out *attributes.Attribute
+	var out *iam.Attribute
 
 	if isNew {
 		var err error
-		out, err = h.attributeClient.Create(ctx, attribute)
+		out, err = h.iam.Attributes().Create(ctx, attribute)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	} else {
 		var err error
-		out, err = h.attributeClient.Update(ctx, attribute)
+		out, err = h.iam.Attributes().Update(ctx, attribute)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

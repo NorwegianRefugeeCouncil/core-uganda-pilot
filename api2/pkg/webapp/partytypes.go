@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
+	"github.com/nrc-no/core-kafka/pkg/apps/iam"
 	"net/http"
 )
 
@@ -13,11 +13,11 @@ func (h *Handler) PartyTypes(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	if req.Method == "POST" {
-		h.PostPartyType(ctx, &partytypes.PartyType{}, w, req)
+		h.PostPartyType(ctx, &iam.PartyType{}, w, req)
 		return
 	}
 
-	partyTypes, err := h.partyTypeClient.List(ctx)
+	partyTypes, err := h.iam.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -42,10 +42,10 @@ func (h *Handler) PartyType(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var partyType = &partytypes.PartyType{}
+	var partyType = &iam.PartyType{}
 	if id != "new" {
 		var err error
-		partyType, err = h.partyTypeClient.Get(ctx, id)
+		partyType, err = h.iam.PartyTypes().Get(ctx, id)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -68,7 +68,7 @@ func (h *Handler) PartyType(w http.ResponseWriter, req *http.Request) {
 
 func (h *Handler) PostPartyType(
 	ctx context.Context,
-	partyType *partytypes.PartyType,
+	partyType *iam.PartyType,
 	w http.ResponseWriter,
 	req *http.Request,
 ) {
@@ -88,7 +88,7 @@ func (h *Handler) PostPartyType(
 	partyType.IsBuiltIn = req.Form.Get("isBuiltIn") == "true"
 
 	if isNew {
-		_, err := h.partyTypeClient.Create(ctx, partyType)
+		_, err := h.iam.PartyTypes().Create(ctx, partyType)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -97,7 +97,7 @@ func (h *Handler) PostPartyType(
 		w.WriteHeader(http.StatusSeeOther)
 		return
 	} else {
-		_, err := h.partyTypeClient.Update(ctx, partyType)
+		_, err := h.iam.PartyTypes().Update(ctx, partyType)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

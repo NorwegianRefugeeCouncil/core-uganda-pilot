@@ -33,4 +33,8 @@ func (r RESTRelationshipClient) List(ctx context.Context, listOptions Relationsh
 	return &obj, err
 }
 
+func (r RESTRelationshipClient) Delete(ctx context.Context, id string) error {
+	return r.c.Delete().Path(fmt.Sprintf("/apis/iam/v1/relationships/%s", id)).Do(ctx).Error()
+}
+
 var _ RelationshipClient = &RESTRelationshipClient{}

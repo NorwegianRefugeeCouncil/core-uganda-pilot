@@ -4,13 +4,11 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/nrc-no/core-kafka/pkg/apps/iam"
 	"github.com/nrc-no/core-kafka/pkg/cases/cases"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
 	Individuals "github.com/nrc-no/core-kafka/pkg/individuals"
-	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
-	"github.com/nrc-no/core-kafka/pkg/parties/relationships"
-	"github.com/nrc-no/core-kafka/pkg/parties/relationshiptypes"
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/sync/errgroup"
 	"net/http"
@@ -22,8 +20,7 @@ func (h *Handler) Individuals(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
-	attributesClient := attributes.NewClient("http://localhost:9000")
-	attrs, err := attributesClient.List(ctx, attributes.ListOptions{})
+	attrs, err := h.iam.Attributes().List(ctx, iam.AttributeListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -34,7 +31,7 @@ func (h *Handler) Individuals(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	list, err := h.individualClient.List(ctx, Individuals.ListOptions{})
+	list, err := h.iam.Individuals().List(ctx, iam.IndividualListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -60,7 +57,7 @@ func (h *Handler) IndividualCredentials(w http.ResponseWriter, req *http.Request
 		return
 	}
 
-	individual, err := h.individualClient.Get(ctx, id)
+	individual, err := h.iam.Individuals().Get(ctx, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -107,60 +104,62 @@ func (h *Handler) Individual(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var b *Individuals.Individual
-	var bList *Individuals.IndividualList
+	var b *iam.Individual
+	var bList *iam.IndividualList
 	var ctList *casetypes.CaseTypeList
 	var cList *cases.CaseList
-	var partyTypes *partytypes.PartyTypeList
-	var relationshipsForIndividual *relationships.RelationshipList
-	var relationshipTypes *relationshiptypes.RelationshipTypeList
-	var attrs *attributes.AttributeList
+	var partyTypes *iam.PartyTypeList
+	var relationshipsForIndividual *iam.RelationshipList
+	var relationshipTypes *iam.RelationshipTypeList
+	var attrs *iam.AttributeList
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
 		if id == "new" {
-			b = Individuals.NewIndividual("")
+			b = iam.NewIndividual("")
 			return nil
 		}
 		var err error
-		b, err = h.individualClient.Get(waitCtx, id)
+		b, err = h.iam.Individuals().Get(waitCtx, id)
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
-		bList, err = h.individualClient.List(waitCtx, Individuals.ListOptions{})
+		bList, err = h.iam.Individuals().List(waitCtx, iam.IndividualListOptions{})
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
-		partyTypes, err = h.partyTypeClient.List(waitCtx)
+		partyTypes, err = h.iam.PartyTypes().List(waitCtx, iam.PartyTypeListOptions{})
 		return err
 	})
 
 	g.Go(func() error {
 		if id == "new" {
-			relationshipsForIndividual = &relationships.RelationshipList{
-				Items: []*relationships.Relationship{},
+			relationshipsForIndividual = &iam.RelationshipList{
+				Items: []*iam.Relationship{},
 			}
 			return nil
 		}
 		var err error
-		relationshipsForIndividual, err = h.relationshipClient.List(waitCtx, relationships.ListOptions{EitherParty: id})
+		relationshipsForIndividual, err = h.iam.Relationships().List(waitCtx, iam.RelationshipListOptions{EitherPartyID: id})
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
-		relationshipTypes, err = h.relationshipTypeClient.List(waitCtx, relationshiptypes.ListOptions{PartyType: partytypes.IndividualPartyType.ID})
+		relationshipTypes, err = h.iam.RelationshipTypes().List(waitCtx, iam.RelationshipTypeListOptions{
+			PartyTypeID: partytypes.IndividualPartyType.ID,
+		})
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
-		attrs, err = h.attributeClient.List(waitCtx, attributes.ListOptions{
+		attrs, err = h.iam.Attributes().List(waitCtx, iam.AttributeListOptions{
 			PartyTypeIDs: []string{partytypes.IndividualPartyType.ID},
 		})
 		return err
@@ -229,8 +228,8 @@ func (h *Handler) Individual(w http.ResponseWriter, req *http.Request) {
 
 }
 
-func PrepRelationshipTypeDropdown(relationshipTypes *relationshiptypes.RelationshipTypeList) *relationshiptypes.RelationshipTypeList {
-	var newList = relationshiptypes.RelationshipTypeList{}
+func PrepRelationshipTypeDropdown(relationshipTypes *iam.RelationshipTypeList) *iam.RelationshipTypeList {
+	var newList = iam.RelationshipTypeList{}
 	for _, relType := range relationshipTypes.Items {
 		if relType.IsDirectional {
 			for _, rule := range relType.Rules {
@@ -250,7 +249,7 @@ func PrepRelationshipTypeDropdown(relationshipTypes *relationshiptypes.Relations
 
 func (h *Handler) PostIndividual(
 	ctx context.Context,
-	attrs []*attributes.Attribute,
+	attrs []*iam.Attribute,
 	id string,
 	w http.ResponseWriter,
 	req *http.Request) {
@@ -260,15 +259,15 @@ func (h *Handler) PostIndividual(
 		return
 	}
 
-	b := Individuals.NewIndividual(id)
+	b := iam.NewIndividual(id)
 
-	attributeMap := map[string]*attributes.Attribute{}
+	attributeMap := map[string]*iam.Attribute{}
 	for _, attribute := range attrs {
 		attributeMap[attribute.ID] = attribute
 	}
 
 	type RelationshipEntry struct {
-		*relationships.Relationship
+		*iam.Relationship
 		MarkedForDeletion bool
 	}
 
@@ -331,7 +330,7 @@ func (h *Handler) PostIndividual(
 			for {
 				if (relationshipIdx + 1) > len(rels) {
 					rels = append(rels, &RelationshipEntry{
-						Relationship: &relationships.Relationship{},
+						Relationship: &iam.Relationship{},
 					})
 				} else {
 					rel = rels[relationshipIdx]
@@ -358,19 +357,19 @@ func (h *Handler) PostIndividual(
 		}
 	}
 
-	var individual *Individuals.Individual
+	var individual *iam.Individual
 
 	// Update or create the individual
 	if id == "" {
 		var err error
-		individual, err = h.individualClient.Create(ctx, b)
+		individual, err = h.iam.Individuals().Create(ctx, b)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	} else {
 		var err error
-		if individual, err = h.individualClient.Update(ctx, b); err != nil {
+		if individual, err = h.iam.Individuals().Update(ctx, b); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -384,7 +383,7 @@ func (h *Handler) PostIndividual(
 			// Create the relationship
 			relationship := rel.Relationship
 			relationship.FirstParty = individual.ID
-			if _, err := h.relationshipClient.Create(ctx, rel.Relationship); err != nil {
+			if _, err := h.iam.Relationships().Create(ctx, rel.Relationship); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
@@ -392,13 +391,13 @@ func (h *Handler) PostIndividual(
 			// Update the relationship
 			relationship := rel.Relationship
 			relationship.FirstParty = individual.ID
-			if _, err := h.relationshipClient.Update(ctx, rel.Relationship); err != nil {
+			if _, err := h.iam.Relationships().Update(ctx, rel.Relationship); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
 		} else {
 			// Delete the relationship
-			if err := h.relationshipClient.Delete(ctx, rel.Relationship.ID); err != nil {
+			if err := h.iam.Relationships().Delete(ctx, rel.Relationship.ID); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}

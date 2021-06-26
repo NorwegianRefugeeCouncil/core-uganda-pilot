@@ -3,25 +3,24 @@ package webapp
 import (
 	"context"
 	"fmt"
+	"github.com/nrc-no/core-kafka/pkg/apps/iam"
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
-	"github.com/nrc-no/core-kafka/pkg/parties/relationshiptypes"
 	uuid "github.com/satori/go.uuid"
 )
 
 func (h *Handler) RelationshipTypes(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	r := &relationshiptypes.RelationshipType{}
+	r := &iam.RelationshipType{}
 
 	if req.Method == "POST" {
 		h.PostRelationshipType(ctx, r, w, req)
 		return
 	}
 
-	relationshipTypes, err := h.relationshipTypeClient.List(ctx, relationshiptypes.ListOptions{})
+	relationshipTypes, err := h.iam.RelationshipTypes().List(ctx, iam.RelationshipTypeListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -38,9 +37,7 @@ func (h *Handler) RelationshipTypes(w http.ResponseWriter, req *http.Request) {
 func (h *Handler) NewRelationshipType(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	partyTypesCli := partytypes.NewClient("http://localhost:9000")
-
-	p, err := partyTypesCli.List(ctx)
+	p, err := h.iam.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -65,13 +62,13 @@ func (h *Handler) RelationshipType(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	r, err := h.relationshipTypeClient.Get(ctx, id)
+	r, err := h.iam.RelationshipTypes().Get(ctx, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	p, err := h.partyTypeClient.List(ctx)
+	p, err := h.iam.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -93,7 +90,7 @@ func (h *Handler) RelationshipType(w http.ResponseWriter, req *http.Request) {
 
 func (h *Handler) PostRelationshipType(
 	ctx context.Context,
-	r *relationshiptypes.RelationshipType,
+	r *iam.RelationshipType,
 	w http.ResponseWriter,
 	req *http.Request,
 ) {
@@ -121,9 +118,9 @@ func (h *Handler) PostRelationshipType(
 	r.FirstPartyRole = formValues.Get("firstPartyRole")
 	r.SecondPartyRole = formValues.Get("secondPartyRole")
 
-	r.Rules = []relationshiptypes.RelationshipTypeRule{
+	r.Rules = []iam.RelationshipTypeRule{
 		{
-			PartyTypeRule: &relationshiptypes.PartyTypeRule{
+			PartyTypeRule: &iam.PartyTypeRule{
 				FirstPartyTypeID:  formValues.Get("rules[0].firstPartyTypeId"),
 				SecondPartyTypeID: formValues.Get("rules[0].secondPartyTypeId"),
 			},
@@ -131,7 +128,7 @@ func (h *Handler) PostRelationshipType(
 	}
 
 	if isNew {
-		out, err := h.relationshipTypeClient.Create(ctx, r)
+		out, err := h.iam.RelationshipTypes().Create(ctx, r)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -139,7 +136,7 @@ func (h *Handler) PostRelationshipType(
 		w.Header().Set("Location", "/settings/relationshiptypes/"+out.ID)
 		w.WriteHeader(http.StatusSeeOther)
 	} else {
-		out, err := h.relationshipTypeClient.Update(ctx, r)
+		out, err := h.iam.RelationshipTypes().Update(ctx, r)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

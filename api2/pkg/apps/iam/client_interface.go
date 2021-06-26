@@ -99,6 +99,7 @@ func (a *RelationshipListOptions) UnmarshalQueryParameters(values url.Values) er
 
 type RelationshipClient interface {
 	Get(ctx context.Context, id string) (*Relationship, error)
+	Delete(ctx context.Context, id string) error
 	Create(ctx context.Context, party *Relationship) (*Relationship, error)
 	Update(ctx context.Context, party *Relationship) (*Relationship, error)
 	List(ctx context.Context, listOptions RelationshipListOptions) (*RelationshipList, error)
@@ -178,6 +179,14 @@ type TeamClient interface {
 type OrganizationListOptions struct {
 }
 
+func (a *OrganizationListOptions) MarshalQueryParameters() (url.Values, error) {
+	return url.Values{}, nil
+}
+
+func (a *OrganizationListOptions) UnmarshalQueryParameters(values url.Values) error {
+	return nil
+}
+
 type OrganizationClient interface {
 	Get(ctx context.Context, id string) (*Organization, error)
 	Create(ctx context.Context, party *Organization) (*Organization, error)
@@ -188,6 +197,23 @@ type OrganizationClient interface {
 type StaffListOptions struct {
 	IndividualID   string
 	OrganizationID string
+}
+
+func (a *StaffListOptions) MarshalQueryParameters() (url.Values, error) {
+	values := url.Values{}
+	if len(a.IndividualID) > 0 {
+		values.Set("individualId", a.IndividualID)
+	}
+	if len(a.OrganizationID) > 0 {
+		values.Set("organizationId", a.OrganizationID)
+	}
+	return values, nil
+}
+
+func (a *StaffListOptions) UnmarshalQueryParameters(values url.Values) error {
+	a.OrganizationID = values.Get("organizationId")
+	a.IndividualID = values.Get("individualId")
+	return nil
 }
 
 type StaffClient interface {
@@ -201,6 +227,23 @@ type MembershipListOptions struct {
 	TeamID       string
 }
 
+func (a *MembershipListOptions) MarshalQueryParameters() (url.Values, error) {
+	values := url.Values{}
+	if len(a.IndividualID) > 0 {
+		values.Set("individualId", a.IndividualID)
+	}
+	if len(a.TeamID) > 0 {
+		values.Set("teamId", a.TeamID)
+	}
+	return values, nil
+}
+
+func (a *MembershipListOptions) UnmarshalQueryParameters(values url.Values) error {
+	a.TeamID = values.Get("teamId")
+	a.IndividualID = values.Get("individualId")
+	return nil
+}
+
 type MembershipClient interface {
 	Get(ctx context.Context, id string) (*Membership, error)
 	Create(ctx context.Context, create *Membership) (*Membership, error)
@@ -209,7 +252,20 @@ type MembershipClient interface {
 }
 
 type IndividualListOptions struct {
-	PartyTypeIDs []string `json:"partyTypeIds" bson:"partyTypeIds"`
+	PartyTypeIDs []string
+}
+
+func (a *IndividualListOptions) MarshalQueryParameters() (url.Values, error) {
+	values := url.Values{}
+	for _, partyTypeID := range a.PartyTypeIDs {
+		values.Add("partyTypeId", partyTypeID)
+	}
+	return values, nil
+}
+
+func (a *IndividualListOptions) UnmarshalQueryParameters(values url.Values) error {
+	a.PartyTypeIDs = values["partyTypeId"]
+	return nil
 }
 
 type IndividualClient interface {

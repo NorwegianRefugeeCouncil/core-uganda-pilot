@@ -4,9 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/nrc-no/core-kafka/pkg/apps/iam"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
-	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
-	"github.com/nrc-no/core-kafka/pkg/teams"
 	"golang.org/x/sync/errgroup"
 	"net/http"
 )
@@ -26,13 +25,13 @@ func (h *Handler) CaseTypes(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	partyTypes, err := h.partyTypeClient.List(ctx)
+	partyTypes, err := h.iam.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	teams, err := h.teamClient.List(ctx, teams.ListOptions{})
+	teams, err := h.iam.Teams().List(ctx, iam.TeamListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -103,8 +102,8 @@ func (h *Handler) CaseType(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var caseType *casetypes.CaseType
-	var partyTypes *partytypes.PartyTypeList
-	var teamsData *teams.TeamList
+	var partyTypes *iam.PartyTypeList
+	var teamsData *iam.TeamList
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
@@ -120,13 +119,13 @@ func (h *Handler) CaseType(w http.ResponseWriter, req *http.Request) {
 
 	g.Go(func() error {
 		var err error
-		partyTypes, err = h.partyTypeClient.List(waitCtx)
+		partyTypes, err = h.iam.PartyTypes().List(waitCtx, iam.PartyTypeListOptions{})
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
-		teamsData, err = h.teamClient.List(ctx, teams.ListOptions{})
+		teamsData, err = h.iam.Teams().List(ctx, iam.TeamListOptions{})
 		return err
 	})
 
@@ -153,15 +152,13 @@ func (h *Handler) CaseType(w http.ResponseWriter, req *http.Request) {
 func (h *Handler) NewCaseType(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	partyTypesClient := partytypes.NewClient("http://localhost:9000")
-
-	p, err := partyTypesClient.List(ctx)
+	p, err := h.iam.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	teamsData, err := h.teamClient.List(ctx, teams.ListOptions{})
+	teamsData, err := h.iam.Teams().List(ctx, iam.TeamListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

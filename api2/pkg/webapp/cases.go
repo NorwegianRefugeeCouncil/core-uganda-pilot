@@ -4,10 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/nrc-no/core-kafka/pkg/apps/iam"
 	"github.com/nrc-no/core-kafka/pkg/cases/cases"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
-	"github.com/nrc-no/core-kafka/pkg/parties/parties"
-	"github.com/nrc-no/core-kafka/pkg/teams"
 	"golang.org/x/sync/errgroup"
 	"net/http"
 )
@@ -18,7 +17,7 @@ func (h *Handler) Cases(w http.ResponseWriter, req *http.Request) {
 
 	kases, err := h.caseClient.List(ctx, cases.ListOptions{})
 	caseTypes, err := h.caseTypeClient.List(ctx, casetypes.ListOptions{})
-	partyList, err := h.partyClient.List(ctx, parties.ListOptions{})
+	partyList, err := h.iam.Parties().List(ctx, iam.PartyListOptions{})
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -57,15 +56,13 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	var party *iam.Party
+	var partyList *iam.PartyList
+	var team *iam.Team
+
 	var kase *cases.Case
 	var kaseTypes *casetypes.CaseTypeList
-
-	var party *parties.Party
-	var partyList *parties.PartyList
-
 	var referrals *cases.CaseList
-
-	var team *teams.Team
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
@@ -81,7 +78,7 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 
 	g.Go(func() error {
 		var err error
-		partyList, err = h.partyClient.List(waitCtx, parties.ListOptions{})
+		partyList, err = h.iam.Parties().List(waitCtx, iam.PartyListOptions{})
 		return err
 	})
 
@@ -91,7 +88,7 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if id != "new" {
-		teamRes, err := h.teamClient.Get(ctx, kase.TeamID)
+		teamRes, err := h.iam.Teams().Get(ctx, kase.TeamID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -99,7 +96,7 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 		team = teamRes
 	}
 
-	party, err := h.partyClient.Get(ctx, kase.PartyID)
+	party, err := h.iam.Parties().Get(ctx, kase.PartyID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -149,10 +146,9 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	var caseTypes *casetypes.CaseTypeList
-	var p *parties.PartyList
+	var p *iam.PartyList
 
 	g, waitCtx := errgroup.WithContext(ctx)
-
 
 	g.Go(func() error {
 		var err error
@@ -177,18 +173,18 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	listOptions := parties.ListOptions{
+	listOptions := iam.PartyListOptions{
 		PartyTypeID: partyTypeID,
 	}
 
-	p, err := h.partyClient.List(ctx, listOptions)
+	p, err := h.iam.Parties().List(ctx, listOptions)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	var team *teams.Team
+	var team *iam.Team
 	if len(teamID) > 0 {
-		team, err = h.teamClient.Get(ctx, teamID)
+		team, err = h.iam.Teams().Get(ctx, teamID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
