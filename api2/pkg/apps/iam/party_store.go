@@ -23,6 +23,20 @@ func NewPartyStore(ctx context.Context, mongoClient *mongo.Client, database stri
 		return nil, err
 	}
 
+	// first name and last name full text index
+	if _, err := store.Collection.Indexes().CreateOne(ctx, mongo.IndexModel{
+		Keys: bson.D{
+			{
+				"attributes." + FirstNameAttribute.ID, "text",
+			},
+			{
+				"attributes." + LastNameAttribute.ID, "text",
+			},
+		},
+	}); err != nil {
+		return nil, err
+	}
+
 	return store, nil
 }
 

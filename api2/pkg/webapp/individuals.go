@@ -343,7 +343,7 @@ func (h *Handler) PostIndividual(
 			case "id":
 				rel.ID = vals[0]
 			case "secondPartyId":
-				rel.SecondParty = vals[0]
+				rel.SecondPartyID = vals[0]
 			case "relationshipTypeId":
 				rel.RelationshipTypeID = vals[0]
 			default:
@@ -379,7 +379,7 @@ func (h *Handler) PostIndividual(
 		if len(rel.ID) == 0 {
 			// Create the relationship
 			relationship := rel.Relationship
-			relationship.FirstParty = individual.ID
+			relationship.FirstPartyID = individual.ID
 			if _, err := h.iam.Relationships().Create(ctx, rel.Relationship); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
@@ -387,7 +387,7 @@ func (h *Handler) PostIndividual(
 		} else if !rel.MarkedForDeletion {
 			// Update the relationship
 			relationship := rel.Relationship
-			relationship.FirstParty = individual.ID
+			relationship.FirstPartyID = individual.ID
 			if _, err := h.iam.Relationships().Update(ctx, rel.Relationship); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return

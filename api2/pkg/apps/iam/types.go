@@ -185,11 +185,11 @@ type Relationship struct {
 	// RelationshipTypeID the RelationshipType of that Relationship
 	RelationshipTypeID string `json:"relationshipTypeId" bson:"relationshipTypeId"`
 
-	// FirstParty the first Party part of that Relationship
-	FirstParty string `json:"firstParty" bson:"firstParty"`
+	// FirstPartyID the first Party part of that Relationship
+	FirstPartyID string `json:"firstParty" bson:"firstParty"`
 
-	// SecondParty the second Party of that relationship
-	SecondParty string `json:"secondParty" bson:"secondParty"`
+	// SecondPartyID the second Party of that relationship
+	SecondPartyID string `json:"secondParty" bson:"secondParty"`
 }
 
 // RelationshipList represents a list of Relationship

@@ -176,11 +176,14 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	iamServer, err := iam.NewServer(
 		ctx,
 		iam.NewServerOptions().
-			WithMongoDatabase("iam").
+			WithMongoDatabase(c.MongoDatabase).
 			WithMongoUsername(c.MongoUsername).
 			WithMongoPassword(c.MongoPassword).
 			WithMongoHosts([]string{"localhost:27017"}))
 	if err != nil {
+		panic(err)
+	}
+	if err := iamServer.Init(ctx); err != nil {
 		panic(err)
 	}
 	router.PathPrefix("/apis/iam").Handler(iamServer)
@@ -190,7 +193,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	})
 
 	cmsServer, err := cms.NewServer(ctx, cms.NewServerOptions().
-		WithMongoDatabase("iam").
+		WithMongoDatabase(c.MongoDatabase).
 		WithMongoUsername(c.MongoUsername).
 		WithMongoPassword(c.MongoPassword).
 		WithMongoHosts([]string{"localhost:27017"}))
@@ -277,7 +280,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		}
 	}()
 
-	if err := seed.Init(ctx, iamClient, cmsClient); err != nil {
+	if err := seed.Seed(ctx, c.MongoDatabase, c.MongoClient); err != nil {
 		panic(err)
 	}
 

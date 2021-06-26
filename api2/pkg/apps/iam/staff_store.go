@@ -75,14 +75,14 @@ func mapStaffToRelationship(staff *Staff) *Relationship {
 	return &Relationship{
 		ID:                 staff.ID,
 		RelationshipTypeID: StaffRelationshipType.ID,
-		FirstParty:         staff.IndividualID,
-		SecondParty:        staff.OrganizationID,
+		FirstPartyID:       staff.IndividualID,
+		SecondPartyID:      staff.OrganizationID,
 	}
 }
 func mapRelationshipToStaff(rel *Relationship) *Staff {
 	return &Staff{
 		ID:             rel.ID,
-		OrganizationID: rel.SecondParty,
-		IndividualID:   rel.FirstParty,
+		OrganizationID: rel.SecondPartyID,
+		IndividualID:   rel.FirstPartyID,
 	}
 }

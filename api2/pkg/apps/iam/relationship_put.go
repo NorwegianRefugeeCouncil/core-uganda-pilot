@@ -26,8 +26,8 @@ func (s *Server) PutRelationship(w http.ResponseWriter, req *http.Request) {
 
 	r.ID = id
 	r.RelationshipTypeID = payload.RelationshipTypeID
-	r.FirstParty = payload.FirstParty
-	r.SecondParty = payload.SecondParty
+	r.FirstPartyID = payload.FirstPartyID
+	r.SecondPartyID = payload.SecondPartyID
 
 	if err := s.RelationshipStore.Update(ctx, r); err != nil {
 		s.Error(w, err)

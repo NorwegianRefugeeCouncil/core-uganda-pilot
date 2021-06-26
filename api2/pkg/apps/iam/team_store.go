@@ -26,10 +26,10 @@ func (s *TeamStore) Get(ctx context.Context, id string) (*Team, error) {
 		return nil, fmt.Errorf("not found")
 	}
 
-	return mapPartyToTeam(p), nil
+	return MapPartyToTeam(p), nil
 }
 
-func mapPartyToTeam(p *Party) *Team {
+func MapPartyToTeam(p *Party) *Team {
 	name := p.Attributes.Get(TeamNameAttribute.ID)
 	return &Team{
 		ID:   p.ID,
@@ -37,7 +37,7 @@ func mapPartyToTeam(p *Party) *Team {
 	}
 }
 
-func mapTeamToParty(team *Team) *Party {
+func MapTeamToParty(team *Team) *Party {
 	return &Party{
 		ID: team.ID,
 		PartyTypeIDs: []string{
@@ -59,7 +59,7 @@ func (s *TeamStore) List(ctx context.Context) (*TeamList, error) {
 
 	teams := make([]*Team, len(ps.Items))
 	for i, item := range ps.Items {
-		teams[i] = mapPartyToTeam(item)
+		teams[i] = MapPartyToTeam(item)
 	}
 
 	return &TeamList{
@@ -68,7 +68,7 @@ func (s *TeamStore) List(ctx context.Context) (*TeamList, error) {
 }
 
 func (s *TeamStore) Update(ctx context.Context, team *Team) error {
-	party := mapTeamToParty(team)
+	party := MapTeamToParty(team)
 	if err := s.partyStore.Update(ctx, party); err != nil {
 		return err
 	}
@@ -76,7 +76,7 @@ func (s *TeamStore) Update(ctx context.Context, team *Team) error {
 }
 
 func (s *TeamStore) Create(ctx context.Context, team *Team) error {
-	party := mapTeamToParty(team)
+	party := MapTeamToParty(team)
 	if err := s.partyStore.Create(ctx, party); err != nil {
 		return err
 	}

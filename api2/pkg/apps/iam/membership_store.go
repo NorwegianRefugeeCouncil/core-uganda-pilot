@@ -27,7 +27,7 @@ func (s *MembershipStore) List(ctx context.Context, listOptions MembershipListOp
 
 	var items = make([]*Membership, len(got.Items))
 	for i, item := range got.Items {
-		items[i] = mapRelationshipToMembership(item)
+		items[i] = MapRelationshipToMembership(item)
 	}
 
 	return &MembershipList{
@@ -45,7 +45,7 @@ func (s *MembershipStore) Get(ctx context.Context, id string) (*Membership, erro
 		return nil, fmt.Errorf("not found")
 	}
 
-	return mapRelationshipToMembership(got), nil
+	return MapRelationshipToMembership(got), nil
 
 }
 
@@ -61,7 +61,7 @@ func (s *MembershipStore) Find(ctx context.Context, individualId, teamId string)
 	if len(got.Items) == 0 {
 		return nil, err
 	}
-	return mapRelationshipToMembership(got.Items[0]), nil
+	return MapRelationshipToMembership(got.Items[0]), nil
 }
 
 func (s *MembershipStore) Create(ctx context.Context, membership *Membership) error {
@@ -72,24 +72,24 @@ func (s *MembershipStore) Create(ctx context.Context, membership *Membership) er
 	if got != nil {
 		return nil
 	}
-	rel := mapMembershipToRelationship(membership)
+	rel := MapMembershipToRelationship(membership)
 	rel.ID = uuid.NewV4().String()
 	return s.relationshipStore.Create(ctx, rel)
 }
 
-func mapRelationshipToMembership(rel *Relationship) *Membership {
+func MapRelationshipToMembership(rel *Relationship) *Membership {
 	return &Membership{
 		ID:           rel.ID,
-		TeamID:       rel.SecondParty,
-		IndividualID: rel.FirstParty,
+		TeamID:       rel.SecondPartyID,
+		IndividualID: rel.FirstPartyID,
 	}
 }
 
-func mapMembershipToRelationship(membership *Membership) *Relationship {
+func MapMembershipToRelationship(membership *Membership) *Relationship {
 	return &Relationship{
 		ID:                 membership.ID,
 		RelationshipTypeID: MembershipRelationshipType.ID,
-		FirstParty:         membership.IndividualID,
-		SecondParty:        membership.TeamID,
+		FirstPartyID:       membership.IndividualID,
+		SecondPartyID:      membership.TeamID,
 	}
 }

@@ -107,8 +107,8 @@ func (s *RelationshipStore) Update(ctx context.Context, relationship *Relationsh
 		"id": relationship.ID,
 	}, bson.M{
 		"$set": bson.M{
-			"firstParty":         relationship.FirstParty,
-			"secondParty":        relationship.SecondParty,
+			"firstParty":         relationship.FirstPartyID,
+			"secondParty":        relationship.SecondPartyID,
 			"relationshipTypeId": relationship.RelationshipTypeID,
 		},
 	})

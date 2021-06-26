@@ -159,7 +159,7 @@ func (s *Suite) TestRelationshipListFilterByListOptions() {
 		}
 	})
 
-	s.T().Run("Filter by FirstParty", func(t *testing.T) {
+	s.T().Run("Filter by FirstPartyID", func(t *testing.T) {
 		for _, mockParty := range mockParties {
 			list, err := s.server.RelationshipClient.List(s.ctx, relationships.ListOptions{
 				FirstPartyId: mockParty,
@@ -176,7 +176,7 @@ func (s *Suite) TestRelationshipListFilterByListOptions() {
 		}
 	})
 
-	s.T().Run("Filter by SecondParty", func(t *testing.T) {
+	s.T().Run("Filter by SecondPartyID", func(t *testing.T) {
 		for _, mockParty := range mockParties {
 			list, err := s.server.RelationshipClient.List(s.ctx, relationships.ListOptions{
 				SecondParty: mockParty,
@@ -230,7 +230,7 @@ func (s *Suite) TestRelationshipListFilterByListOptions() {
 		}
 	})
 
-	s.T().Run("Filter by combinations of First- and SecondParty", func(t *testing.T) {
+	s.T().Run("Filter by combinations of First- and SecondPartyID", func(t *testing.T) {
 		for _, mockParty1 := range mockParties {
 			for _, mockParty2 := range mockParties {
 				if mockParty1 == mockParty2 {
@@ -254,7 +254,7 @@ func (s *Suite) TestRelationshipListFilterByListOptions() {
 		}
 	})
 
-	s.T().Run("Filter by combinations of RTID, First- and SecondParty", func(t *testing.T) {
+	s.T().Run("Filter by combinations of RTID, First- and SecondPartyID", func(t *testing.T) {
 		for _, mockRTID := range mockRelationshipTypeIDs {
 			for _, mockParty1 := range mockParties {
 				for _, mockParty2 := range mockParties {

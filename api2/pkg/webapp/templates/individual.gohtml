@@ -160,7 +160,7 @@
                     "partyTypeId": getSecondPartyType(),
                     "searchParam": searchParam
                 })
-                const ajaxUrl = "/apis/v1/relationshipparties/picker?" + searchParams.toString()
+                const ajaxUrl = "/apis/iam/v1/parties?" + searchParams.toString()
                 return ajax(ajaxUrl)
             })
         )
@@ -182,8 +182,8 @@
                 {{range .Relationships.Items}}
                 {
                     id: {{.ID}},
-                    firstParty: {{.FirstParty}},
-                    secondParty: {{.SecondParty}},
+                    firstParty: {{.FirstPartyID}},
+                    secondParty: {{.SecondPartyID}},
                     relationshipTypeId: {{.RelationshipTypeID}},
                     isNew: false,
                     markedForDeletion: false,
