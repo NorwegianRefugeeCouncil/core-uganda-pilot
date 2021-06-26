@@ -1,15 +1,23 @@
 package login
 
 import (
+	"context"
 	"github.com/gorilla/mux"
+	"github.com/nrc-no/core-kafka/pkg/apps/iam"
+	"github.com/nrc-no/core-kafka/pkg/rest"
 	"github.com/ory/hydra-client-go/client"
 	"github.com/ory/hydra-client-go/client/admin"
+	"github.com/ory/hydra-client-go/models"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"golang.org/x/oauth2/clientcredentials"
 	"html/template"
 	"net/http"
 	"net/url"
+	"strings"
+	"time"
 )
 
 type ServerOptions struct {
@@ -47,20 +55,58 @@ type Server struct {
 	BCryptCost int
 	router     *mux.Router
 	template   *template.Template
+	iam        iam.Interface
 }
 
-func NewServer(o *ServerOptions) (*Server, error) {
+func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 
 	hydraAdminURL, err := url.Parse(o.HydraAdminURL)
 	if err != nil {
 		return nil, err
 	}
 
-	cli := client.NewHTTPClientWithConfig(nil, &client.TransportConfig{
+	hydraClient := client.NewHTTPClientWithConfig(nil, &client.TransportConfig{
 		Host:     hydraAdminURL.Host,
 		BasePath: hydraAdminURL.Path,
 		Schemes:  []string{hydraAdminURL.Scheme},
 	})
+	hydraAdmin := hydraClient.Admin
+
+	cli := &models.OAuth2Client{
+		ClientID:     "login",
+		ClientName:   "Login",
+		ClientSecret: "somesupersecret",
+		GrantTypes: []string{
+			"client_credentials",
+		},
+		ResponseTypes:           []string{"token", "refresh_token"},
+		TokenEndpointAuthMethod: "client_secret_post",
+	}
+
+	if err := createOauthClient(ctx, hydraAdmin, cli); err != nil {
+		return nil, err
+	}
+
+	clientCredsCfg := clientcredentials.Config{
+		ClientID:     cli.ClientID,
+		ClientSecret: cli.ClientSecret,
+		TokenURL:     "http://localhost:4444/oauth2/token",
+	}
+	adminCli := clientCredsCfg.Client(ctx)
+
+	iamCli := iam.NewClientSet(&rest.RESTConfig{
+		Scheme:     "http",
+		Host:       "localhost:9000",
+		HTTPClient: adminCli,
+	})
+
+	go func() {
+		time.Sleep(2 * time.Second)
+		_, err := iamCli.Staff().List(ctx, iam.StaffListOptions{})
+		if err != nil {
+			logrus.WithError(err).Errorf("")
+		}
+	}()
 
 	mongoClient, err := mongo.NewClient(
 		options.Client().
@@ -77,9 +123,10 @@ func NewServer(o *ServerOptions) (*Server, error) {
 	collection := mongoClient.Database(o.MongoDatabase).Collection("credentials")
 
 	srv := &Server{
-		HydraAdmin: cli.Admin,
+		HydraAdmin: hydraAdmin,
 		Collection: collection,
 		BCryptCost: o.BCryptCost,
+		iam:        iamCli,
 	}
 
 	router := mux.NewRouter()
@@ -96,6 +143,31 @@ func NewServer(o *ServerOptions) (*Server, error) {
 
 	return srv, nil
 
+}
+
+func createOauthClient(
+	ctx context.Context,
+	hydraAdmin admin.ClientService,
+	cli *models.OAuth2Client) error {
+	_, err := hydraAdmin.CreateOAuth2Client(&admin.CreateOAuth2ClientParams{
+		Body:    cli,
+		Context: ctx,
+	})
+	if err != nil {
+		if strings.Contains(err.Error(), "createOAuth2ClientConflict") {
+			_, err = hydraAdmin.UpdateOAuth2Client(&admin.UpdateOAuth2ClientParams{
+				ID:      cli.ClientID,
+				Body:    cli,
+				Context: ctx,
+			})
+			if err != nil {
+				return err
+			}
+		} else {
+			return err
+		}
+	}
+	return nil
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {

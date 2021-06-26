@@ -179,7 +179,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	loginOptions.MongoHosts = []string{"localhost:27017"}
 	loginOptions.BCryptCost = 15
 	loginOptions.HydraAdminURL = "http://localhost:4445"
-	loginServer, err := login.NewServer(loginOptions)
+	loginServer, err := login.NewServer(ctx, loginOptions)
 	if err != nil {
 		panic(err)
 	}

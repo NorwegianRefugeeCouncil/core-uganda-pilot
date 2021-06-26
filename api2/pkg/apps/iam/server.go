@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/ory/hydra-client-go/client"
+	"github.com/ory/hydra-client-go/client/admin"
 	"github.com/spf13/pflag"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -68,6 +70,7 @@ type Server struct {
 	OrganizationStore     *OrganizationStore
 	TeamStore             *TeamStore
 	MembershipStore       *MembershipStore
+	HydraAdmin            admin.ClientService
 	mongoClient           *mongo.Client
 }
 
@@ -130,7 +133,12 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 		MembershipStore:       NewMembershipStore(relationshipStore),
 	}
 
-	router.Use(srv.WithAuth(ctx))
+	srv.HydraAdmin = client.NewHTTPClientWithConfig(nil, &client.TransportConfig{
+		Host:    "localhost:4445",
+		Schemes: []string{"http"},
+	}).Admin
+
+	router.Use(srv.WithAuth())
 
 	router.Path("/apis/iam/v1/attributes").Methods("GET").HandlerFunc(srv.ListAttributes)
 	router.Path("/apis/iam/v1/attributes").Methods("POST").HandlerFunc(srv.PostAttribute)

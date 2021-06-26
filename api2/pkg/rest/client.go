@@ -5,31 +5,22 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"gopkg.in/square/go-jose.v2/jwt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"reflect"
 	"strings"
-	"sync"
-	"time"
 )
 
 type RESTConfig struct {
-	Scheme       string
-	Host         string
-	Token        string
-	RefreshToken string
-	IssuerURL    string
-	ClientID     string
-	ClientSecret string
-	tokenLock    sync.Mutex
+	Scheme     string
+	Host       string
+	HTTPClient *http.Client
 }
 
 type Client struct {
-	config     *RESTConfig
-	httpClient *http.Client
+	config *RESTConfig
 }
 
 func NewClient(config *RESTConfig) *Client {
@@ -162,94 +153,49 @@ func (r *Request) WithHeader(key, value string) *Request {
 	return r
 }
 
-func (r *Request) refreshToken() error {
+type TokenIntrospectionResponse struct {
+	Active bool `json:"active"`
+}
 
-	r.c.config.tokenLock.Lock()
-	defer r.c.config.tokenLock.Unlock()
+func (r *Request) introspectToken(token string) (*TokenIntrospectionResponse, error) {
 
-	if len(r.c.config.Token) == 0 {
-		return nil
-	}
+	var payload = url.Values{}
+	payload.Set("token", token)
 
-	refreshToken := r.c.config.RefreshToken
-	if len(refreshToken) == 0 {
-		return nil
-	}
-
-	accessToken, err := jwt.ParseSigned(r.c.config.Token)
+	req, err := http.NewRequest("POST", "http://localhost:4445/oauth2/introspect", strings.NewReader(payload.Encode()))
 	if err != nil {
-		return err
+		return nil, err
 	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Accept", "application/json")
 
-	var claims jwt.Claims
-	if err := accessToken.Claims(&claims); err != nil {
-		return err
-	}
-
-	if err := claims.Validate(jwt.Expected{
-		Time: time.Now(),
-	}); err == nil {
-		return nil
-	}
-
-	issuerURL := r.c.config.IssuerURL
-	tokenURL := fmt.Sprintf("%s/oauth/token", issuerURL)
-
-	payload := url.Values{}
-	payload.Set("grant_type", "refresh_token")
-	payload.Set("refresh_token", r.c.config.RefreshToken)
-	payload.Set("client_id", r.c.config.ClientID)
-	payload.Set("client_secret", r.c.config.ClientSecret)
-
-	req, err := http.NewRequest("POST", tokenURL, strings.NewReader(payload.Encode()))
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	httpClient := r.c.httpClient
-	if httpClient == nil {
-		httpClient = http.DefaultClient
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
-	res, err := httpClient.Do(req)
+	respBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	if res.StatusCode != http.StatusOK {
-		return fmt.Errorf("unexpected status code: %d", res.StatusCode)
+	var tk TokenIntrospectionResponse
+	if err := json.Unmarshal(respBytes, &tk); err != nil {
+		return nil, err
 	}
 
-	bodyBytes, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		return err
-	}
+	return &tk, nil
 
-	var tokenResponse struct {
-		RefreshToken string `json:"refresh_token"`
-		AccessToken  string `json:"access_token"`
-	}
-
-	if err := json.Unmarshal(bodyBytes, &tokenResponse); err != nil {
-		return err
-	}
-
-	r.c.config.Token = tokenResponse.AccessToken
-	if len(tokenResponse.RefreshToken) > 0 {
-		r.c.config.RefreshToken = tokenResponse.AccessToken
-	}
-
-	return nil
 }
 
 func (r *Request) Do(ctx context.Context) *Response {
 
 	if r.err != nil {
 		return &Response{err: r.err}
-	}
-
-	if err := r.refreshToken(); err != nil {
-		return &Response{err: err}
 	}
 
 	u := url.URL{}
@@ -284,11 +230,7 @@ func (r *Request) Do(ctx context.Context) *Response {
 		req.Header.Set("Content-Type", "application/json")
 	}
 
-	if len(req.Header.Get("Authorization")) == 0 && len(r.c.config.Token) > 0 {
-		req.Header.Set("Authorization", "Bearer "+r.c.config.Token)
-	}
-
-	httpClient := r.c.httpClient
+	httpClient := r.c.config.HTTPClient
 	if httpClient == nil {
 		httpClient = http.DefaultClient
 	}
