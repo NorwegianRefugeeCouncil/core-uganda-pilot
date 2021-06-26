@@ -23,7 +23,7 @@ type ServerOptions struct {
 func NewServerOptions() *ServerOptions {
 	return &ServerOptions{
 		HydraAdminURL: "http://localhost:4445",
-		ListenAddress: ":9001",
+		ListenAddress: ":9000",
 		MongoHosts:    []string{"mongo://localhost:27017"},
 		BCryptCost:    15,
 	}

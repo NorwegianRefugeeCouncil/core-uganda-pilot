@@ -16,7 +16,44 @@ type Claimer interface {
 	GetClaims() *jwt2.Claims
 }
 
-func TokenReader(ctx context.Context) func(req *http.Request, into Claimer) error {
+type TokenSource interface {
+	GetToken() (string, error)
+}
+
+type DelegateTokenSource struct {
+	getToken func() (string, error)
+}
+
+func NewDelegateTokenSource(getToken func() (string, error)) *DelegateTokenSource {
+	return &DelegateTokenSource{
+		getToken: getToken,
+	}
+}
+func (d *DelegateTokenSource) GetToken() (string, error) {
+	return d.getToken()
+}
+
+func AuthHeaderTokenSource(req *http.Request) TokenSource {
+	return NewDelegateTokenSource(func() (string, error) {
+		authorization := req.Header.Get("Authorization")
+		if len(authorization) == 0 {
+			return "", fmt.Errorf("authorization header not present")
+		}
+		parts := strings.Split(authorization, " ")
+		if parts[0] != "Bearer" {
+			return "", fmt.Errorf("malformed authorization header")
+		}
+		return parts[1], nil
+	})
+}
+
+func StaticTokenSource(token string) TokenSource {
+	return NewDelegateTokenSource(func() (string, error) {
+		return token, nil
+	})
+}
+
+func TokenReader(ctx context.Context) func(tokenSource TokenSource, into Claimer) error {
 
 	var jwks jose.JSONWebKeySet
 
@@ -42,19 +79,14 @@ func TokenReader(ctx context.Context) func(req *http.Request, into Claimer) erro
 		panic(err)
 	}
 
-	return func(req *http.Request, into Claimer) error {
-		authorization := req.Header.Get("Authorization")
-		if len(authorization) == 0 {
-			return fmt.Errorf("authorization header not present")
+	return func(tokenSource TokenSource, into Claimer) error {
+
+		tokenStr, err := tokenSource.GetToken()
+		if err != nil {
+			return err
 		}
 
-		parts := strings.Split(authorization, " ")
-
-		if parts[0] != "Bearer" {
-			return fmt.Errorf("malformed authorization header")
-		}
-
-		token, err := jwt2.ParseSigned(parts[0])
+		token, err := jwt2.ParseSigned(tokenStr)
 		if err != nil {
 			return fmt.Errorf("could not parse token: %v", err)
 		}

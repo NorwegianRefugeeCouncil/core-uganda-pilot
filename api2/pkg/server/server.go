@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"errors"
-	"github.com/gomodule/redigo/redis"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core-kafka/pkg/apps/cms"
 	"github.com/nrc-no/core-kafka/pkg/apps/iam"
@@ -12,7 +11,6 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/auth"
 	"github.com/nrc-no/core-kafka/pkg/middleware"
 	"github.com/nrc-no/core-kafka/pkg/rest"
-	"github.com/nrc-no/core-kafka/pkg/sessionmanager"
 	"github.com/ory/hydra-client-go/client"
 	"github.com/spf13/pflag"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -27,7 +25,6 @@ type Server struct {
 	MongoClient       *mongo.Client
 	WebAppHandler     *webapp2.Server
 	HttpServer        *http.Server
-	SessionManager    sessionmanager.Store
 	HydraPublicClient *client.OryHydra
 	HydraAdminClient  *client.OryHydra
 	CredentialsClient *auth.CredentialsClient
@@ -50,7 +47,7 @@ type Options struct {
 
 func NewOptions() *Options {
 	return &Options{
-		TemplateDirectory: "pkg/webapp/templates",
+		TemplateDirectory: "pkg/apps/webapp/templates",
 		Address:           "http://localhost:9000",
 		MongoDatabase:     "core",
 		MongoUsername:     "",
@@ -81,22 +78,12 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 type CompletedOptions struct {
 	*Options
 	MongoClient       *mongo.Client
-	SessionManager    sessionmanager.Store
 	HydraAdminClient  *client.OryHydra
 	HydraPublicClient *client.OryHydra
 	CredentialsClient *auth.CredentialsClient
 }
 
 func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
-
-	pool := &redis.Pool{
-		MaxIdle: o.RedisMaxIdleConns,
-		Dial: func() (redis.Conn, error) {
-			return redis.Dial(o.RedisNetwork, o.RedisAddress)
-		},
-	}
-
-	sm := sessionmanager.New(pool, sessionmanager.Options{})
 
 	// Setup mongo client
 	mongoClient, err := mongo.NewClient(options.Client().
@@ -145,7 +132,6 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		HydraAdminClient:  hydraAdminClient,
 		HydraPublicClient: hydraPublicCLient,
 		CredentialsClient: credentialsClient,
-		SessionManager:    sm,
 	}
 	return completedOptions, nil
 }
@@ -157,9 +143,6 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 
 	// Add logging middleware
 	router.Use(middleware.UseLogging())
-
-	// Add session middleware
-	router.Use(c.SessionManager.LoadAndSave)
 
 	// Parse listen address
 	addressUrl, err := url.Parse(c.Address)
@@ -204,14 +187,16 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 
 	// Create Webapp
 	// WebApp
-	webAppOptions := webapp2.Options{
-		TemplateDirectory: c.TemplateDirectory,
+	webAppOptions := webapp2.ServerOptions{
+		TemplateDirectory:       c.TemplateDirectory,
+		RedisMaxIdleConnections: c.RedisMaxIdleConns,
+		RedisAddress:            c.RedisAddress,
+		RedisNetwork:            c.RedisNetwork,
 	}
-	webAppHandler, err := webapp2.NewHandler(
+	webAppHandler, err := webapp2.NewServer(
 		webAppOptions,
 		c.HydraAdminClient,
 		c.HydraPublicClient,
-		c.SessionManager,
 		c.CredentialsClient,
 		iamClient,
 		cmsClient,
@@ -219,32 +204,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	if err != nil {
 		panic(err)
 	}
-
-	router.Path("/").HandlerFunc(webAppHandler.Individuals)
-	router.Path("/individuals").HandlerFunc(webAppHandler.Individuals)
-	router.Path("/individuals/{id}").HandlerFunc(webAppHandler.Individual)
-	router.Path("/individuals/{id}/credentials").HandlerFunc(webAppHandler.IndividualCredentials)
-	router.Path("/teams").HandlerFunc(webAppHandler.Teams)
-	router.Path("/teams/{id}").HandlerFunc(webAppHandler.Team)
-	router.Path("/cases").HandlerFunc(webAppHandler.Cases)
-	router.Path("/cases/new").HandlerFunc(webAppHandler.NewCase)
-	router.Path("/cases/{id}").HandlerFunc(webAppHandler.Case)
-	router.Path("/settings").HandlerFunc(webAppHandler.Settings)
-	router.Path("/settings/attributes").HandlerFunc(webAppHandler.Attributes)
-	router.Path("/settings/attributes/new").HandlerFunc(webAppHandler.NewAttribute)
-	router.Path("/settings/attributes/{id}").HandlerFunc(webAppHandler.Attribute)
-	router.Path("/settings/relationshiptypes").HandlerFunc(webAppHandler.RelationshipTypes)
-	router.Path("/settings/relationshiptypes/new").HandlerFunc(webAppHandler.NewRelationshipType)
-	router.Path("/settings/relationshiptypes/{id}").HandlerFunc(webAppHandler.RelationshipType)
-	router.Path("/settings/partytypes").HandlerFunc(webAppHandler.PartyTypes)
-	router.Path("/settings/partytypes/{id}").HandlerFunc(webAppHandler.PartyType)
-	router.Path("/settings/casetypes").HandlerFunc(webAppHandler.CaseTypes)
-	router.Path("/settings/casetypes/new").HandlerFunc(webAppHandler.NewCaseType)
-	router.Path("/settings/casetypes/{id}").HandlerFunc(webAppHandler.CaseType)
-	router.Path("/settings/authclients").HandlerFunc(webAppHandler.AuthClients)
-	router.Path("/settings/authclients/{id}").HandlerFunc(webAppHandler.AuthClient)
-	router.Path("/settings/authclients/{id}/newsecret").HandlerFunc(webAppHandler.AuthClientNewSecret)
-	router.Path("/settings/authclients/{id}/delete").HandlerFunc(webAppHandler.DeleteAuthClient)
+	router.PathPrefix("/").Handler(webAppHandler)
 
 	httpServer := &http.Server{
 		Addr:    ":9000",
@@ -254,7 +214,6 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	srv := &Server{
 		MongoClient:       c.MongoClient,
 		WebAppHandler:     webAppHandler,
-		SessionManager:    c.SessionManager,
 		HydraPublicClient: c.HydraPublicClient,
 		HydraAdminClient:  c.HydraAdminClient,
 		CredentialsClient: c.CredentialsClient,

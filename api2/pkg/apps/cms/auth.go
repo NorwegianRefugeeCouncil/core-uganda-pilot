@@ -20,7 +20,7 @@ func (s *Server) WithAuth(ctx context.Context) func(handler http.Handler) http.H
 	return func(handler http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 			c := &RequestClaims{}
-			if err := tokenReader(req, c); err != nil {
+			if err := tokenReader(auth.AuthHeaderTokenSource(req), c); err != nil {
 				s.Error(w, err)
 				return
 			}
