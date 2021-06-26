@@ -34,42 +34,34 @@ type Server struct {
 }
 
 type Options struct {
-	TemplateDirectory    string
-	Address              string
-	MongoDatabase        string
-	MongoUsername        string
-	MongoPassword        string
-	KeycloakClientID     string
-	KeycloakClientSecret string
-	KeycloakBaseURL      string
-	KeycloakRealmName    string
-	RedisMaxIdleConns    int
-	RedisNetwork         string
-	RedisAddress         string
-	RedisPassword        string
-	RedisSecretKey       string
-	HydraAdminURL        string
-	HydraPublicURL       string
+	TemplateDirectory string
+	Address           string
+	MongoDatabase     string
+	MongoUsername     string
+	MongoPassword     string
+	RedisMaxIdleConns int
+	RedisNetwork      string
+	RedisAddress      string
+	RedisPassword     string
+	RedisSecretKey    string
+	HydraAdminURL     string
+	HydraPublicURL    string
 }
 
 func NewOptions() *Options {
 	return &Options{
-		TemplateDirectory:    "pkg/webapp/templates",
-		Address:              "http://localhost:9000",
-		MongoDatabase:        "core",
-		MongoUsername:        "",
-		MongoPassword:        "",
-		KeycloakClientID:     "",
-		KeycloakClientSecret: "",
-		KeycloakBaseURL:      "",
-		KeycloakRealmName:    "",
-		RedisMaxIdleConns:    10,
-		RedisNetwork:         "tcp",
-		RedisAddress:         "localhost:6379",
-		RedisPassword:        "",
-		RedisSecretKey:       "some-secret",
-		HydraAdminURL:        "http://localhost:4445",
-		HydraPublicURL:       "http://localhost:4444",
+		TemplateDirectory: "pkg/webapp/templates",
+		Address:           "http://localhost:9000",
+		MongoDatabase:     "core",
+		MongoUsername:     "",
+		MongoPassword:     "",
+		RedisMaxIdleConns: 10,
+		RedisNetwork:      "tcp",
+		RedisAddress:      "localhost:6379",
+		RedisPassword:     "",
+		RedisSecretKey:    "some-secret",
+		HydraAdminURL:     "http://localhost:4445",
+		HydraPublicURL:    "http://localhost:4444",
 	}
 }
 
@@ -78,10 +70,6 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 	fs.StringVar(&o.MongoDatabase, "mongo-database", o.MongoDatabase, "Mongo database name")
 	fs.StringVar(&o.MongoUsername, "mongo-username", o.MongoUsername, "Mongo username")
 	fs.StringVar(&o.MongoPassword, "mongo-password", o.MongoPassword, "Mongo password")
-	fs.StringVar(&o.KeycloakBaseURL, "keycloak-base-url", o.KeycloakBaseURL, "Keycloak base URL")
-	fs.StringVar(&o.KeycloakRealmName, "keycloak-realm-name", o.KeycloakRealmName, "Keycloak realm name")
-	fs.StringVar(&o.KeycloakClientID, "keycloak-client-id", o.KeycloakClientID, "Keycloak client id")
-	fs.StringVar(&o.KeycloakClientSecret, "keycloak-client-secret", o.KeycloakClientSecret, "Keycloak client secret")
 	fs.IntVar(&o.RedisMaxIdleConns, "redis-max-idle-conns", o.RedisMaxIdleConns, "Redis maximum number of idle connections")
 	fs.StringVar(&o.RedisNetwork, "redis-network", o.RedisNetwork, "Redis network")
 	fs.StringVar(&o.RedisPassword, "redis-password", o.RedisPassword, "Redis password")
@@ -164,15 +152,22 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 
 func (c CompletedOptions) New(ctx context.Context) *Server {
 
+	// Create aggregated router
 	router := mux.NewRouter()
+
+	// Add logging middleware
 	router.Use(middleware.UseLogging())
+
+	// Add session middleware
 	router.Use(c.SessionManager.LoadAndSave)
 
+	// Parse listen address
 	addressUrl, err := url.Parse(c.Address)
 	if err != nil {
 		panic(err)
 	}
 
+	// Create IAM Server
 	iamServer, err := iam.NewServer(
 		ctx,
 		iam.NewServerOptions().
@@ -192,6 +187,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		Host:   addressUrl.Host,
 	})
 
+	// Create CMS Server
 	cmsServer, err := cms.NewServer(ctx, cms.NewServerOptions().
 		WithMongoDatabase(c.MongoDatabase).
 		WithMongoUsername(c.MongoUsername).
@@ -206,6 +202,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		Host:   addressUrl.Host,
 	})
 
+	// Create Webapp
 	// WebApp
 	webAppOptions := webapp.Options{
 		TemplateDirectory: c.TemplateDirectory,
