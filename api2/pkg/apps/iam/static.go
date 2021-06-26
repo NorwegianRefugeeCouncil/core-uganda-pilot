@@ -212,3 +212,19 @@ var LegalNameAttribute = Attribute{
 		OrganizationPartyType.ID,
 	},
 }
+
+var TeamOrganizationRelationshipType = RelationshipType{
+	ID:   "ea1f077a-30ba-4ffb-a1c4-a51669f82e37",
+	Name: "TeamOrganization",
+	Rules: []RelationshipTypeRule{
+		{
+			PartyTypeRule: &PartyTypeRule{
+				FirstPartyTypeID:  TeamPartyType.ID,
+				SecondPartyTypeID: OrganizationPartyType.ID,
+			},
+		},
+	},
+	FirstPartyRole:  "Is part of organization",
+	SecondPartyRole: "has team",
+	IsDirectional:   true,
+}
