@@ -8,11 +8,11 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/apps/cms"
 	"github.com/nrc-no/core-kafka/pkg/apps/iam"
 	"github.com/nrc-no/core-kafka/pkg/apps/seed"
+	webapp2 "github.com/nrc-no/core-kafka/pkg/apps/webapp"
 	"github.com/nrc-no/core-kafka/pkg/auth"
 	"github.com/nrc-no/core-kafka/pkg/middleware"
 	"github.com/nrc-no/core-kafka/pkg/rest"
 	"github.com/nrc-no/core-kafka/pkg/sessionmanager"
-	"github.com/nrc-no/core-kafka/pkg/webapp"
 	"github.com/ory/hydra-client-go/client"
 	"github.com/spf13/pflag"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -25,7 +25,7 @@ import (
 
 type Server struct {
 	MongoClient       *mongo.Client
-	WebAppHandler     *webapp.Handler
+	WebAppHandler     *webapp2.Server
 	HttpServer        *http.Server
 	SessionManager    sessionmanager.Store
 	HydraPublicClient *client.OryHydra
@@ -204,10 +204,10 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 
 	// Create Webapp
 	// WebApp
-	webAppOptions := webapp.Options{
+	webAppOptions := webapp2.Options{
 		TemplateDirectory: c.TemplateDirectory,
 	}
-	webAppHandler, err := webapp.NewHandler(
+	webAppHandler, err := webapp2.NewHandler(
 		webAppOptions,
 		c.HydraAdminClient,
 		c.HydraPublicClient,
