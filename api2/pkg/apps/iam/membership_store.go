@@ -18,8 +18,8 @@ func (s *MembershipStore) List(ctx context.Context, listOptions MembershipListOp
 
 	got, err := s.relationshipStore.List(ctx, RelationshipListOptions{
 		RelationshipTypeID: MembershipRelationshipType.ID,
-		FirstPartyId:       listOptions.IndividualID,
-		SecondParty:        listOptions.TeamID,
+		FirstPartyID:       listOptions.IndividualID,
+		SecondPartyID:      listOptions.TeamID,
 	})
 	if err != nil {
 		return nil, err
@@ -52,8 +52,8 @@ func (s *MembershipStore) Get(ctx context.Context, id string) (*Membership, erro
 func (s *MembershipStore) Find(ctx context.Context, individualId, teamId string) (*Membership, error) {
 	got, err := s.relationshipStore.List(ctx, RelationshipListOptions{
 		RelationshipTypeID: MembershipRelationshipType.ID,
-		FirstPartyId:       individualId,
-		SecondParty:        teamId,
+		FirstPartyID:       individualId,
+		SecondPartyID:      teamId,
 	})
 	if err != nil {
 		return nil, err

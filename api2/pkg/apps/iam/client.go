@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"reflect"
 	"strings"
 	"sync"
 	"time"
@@ -29,6 +30,12 @@ type RESTConfig struct {
 type RESTClient struct {
 	config     *RESTConfig
 	httpClient *http.Client
+}
+
+func NewClient(config *RESTConfig) *RESTClient {
+	return &RESTClient{
+		config: config,
+	}
 }
 
 func (r *RESTClient) Verb(verb string) *Request {
@@ -52,7 +59,9 @@ func (r *RESTClient) Delete() *Request {
 }
 
 func (r *RESTClient) NewRequest() *Request {
-	return &Request{}
+	return &Request{
+		c: r,
+	}
 }
 
 type Request struct {
@@ -121,14 +130,20 @@ func (r *Request) WithParams(params interface{}) *Request {
 				r.params.Add(key, value)
 			}
 		}
-	case UrlValuer:
-		values, err := p.MarshalQueryParameters()
-		if err != nil {
-			r.err = err
-			return r
-		}
-		return r.WithParams(values)
 	default:
+		vp := reflect.New(reflect.TypeOf(p))
+		vp.Elem().Set(reflect.ValueOf(p))
+		intf := vp.Interface()
+
+		valuer, ok := intf.(UrlValuer)
+		if ok {
+			values, err := valuer.MarshalQueryParameters()
+			if err != nil {
+				r.err = err
+				return r
+			}
+			return r.WithParams(values)
+		}
 		r.err = fmt.Errorf("invalid params parameter")
 		return r
 	}
@@ -325,6 +340,12 @@ func (r *Response) Into(into interface{}) error {
 
 type ClientSet struct {
 	c *RESTClient
+}
+
+func NewClientSet(restConfig *RESTConfig) *ClientSet {
+	return &ClientSet{
+		c: NewClient(restConfig),
+	}
 }
 
 func (c ClientSet) Parties() PartyClient {

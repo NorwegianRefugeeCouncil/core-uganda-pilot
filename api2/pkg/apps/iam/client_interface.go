@@ -2,6 +2,7 @@ package iam
 
 import (
 	"context"
+	"net/url"
 )
 
 type Interface interface {
@@ -22,6 +23,23 @@ type PartyListOptions struct {
 	SearchParam string `json:"searchParam" bson:"searchParam"`
 }
 
+func (a *PartyListOptions) MarshalQueryParameters() (url.Values, error) {
+	ret := url.Values{}
+	if len(a.PartyTypeID) > 0 {
+		ret.Set("partyTypeId", a.PartyTypeID)
+	}
+	if len(a.SearchParam) > 0 {
+		ret.Set("searchParam", a.SearchParam)
+	}
+	return ret, nil
+}
+
+func (a *PartyListOptions) UnmarshalQueryParameters(values url.Values) error {
+	a.PartyTypeID = values.Get("partyTypeId")
+	a.SearchParam = values.Get("searchParam")
+	return nil
+}
+
 type PartyClient interface {
 	Get(ctx context.Context, id string) (*Party, error)
 	Create(ctx context.Context, party *Party) (*Party, error)
@@ -30,10 +48,14 @@ type PartyClient interface {
 }
 
 type PartyTypeListOptions struct {
-	RelationshipTypeID string
-	FirstPartyId       string
-	SecondParty        string
-	EitherParty        string
+}
+
+func (a *PartyTypeListOptions) MarshalQueryParameters() (url.Values, error) {
+	return url.Values{}, nil
+}
+
+func (a *PartyTypeListOptions) UnmarshalQueryParameters(values url.Values) error {
+	return nil
 }
 
 type PartyTypeClient interface {
@@ -45,9 +67,34 @@ type PartyTypeClient interface {
 
 type RelationshipListOptions struct {
 	RelationshipTypeID string
-	FirstPartyId       string // TODO FirstPartyID
-	SecondParty        string // TODO SecondPartyID
-	EitherParty        string // TODO EitherPartyID
+	FirstPartyID       string
+	SecondPartyID      string
+	EitherPartyID      string
+}
+
+func (a *RelationshipListOptions) MarshalQueryParameters() (url.Values, error) {
+	ret := url.Values{}
+	if len(a.RelationshipTypeID) > 0 {
+		ret.Set("relationshipTypeId", a.RelationshipTypeID)
+	}
+	if len(a.FirstPartyID) > 0 {
+		ret.Set("firstPartyId", a.FirstPartyID)
+	}
+	if len(a.SecondPartyID) > 0 {
+		ret.Set("secondPartyId", a.SecondPartyID)
+	}
+	if len(a.EitherPartyID) > 0 {
+		ret.Set("eitherPartyId", a.EitherPartyID)
+	}
+	return ret, nil
+}
+
+func (a *RelationshipListOptions) UnmarshalQueryParameters(values url.Values) error {
+	a.RelationshipTypeID = values.Get("relationshipTypeId")
+	a.FirstPartyID = values.Get("firstPartyId")
+	a.SecondPartyID = values.Get("secondPartyId")
+	a.EitherPartyID = values.Get("eitherPartyId")
+	return nil
 }
 
 type RelationshipClient interface {
@@ -71,6 +118,24 @@ type RelationshipTypeClient interface {
 type AttributeListOptions struct {
 	PartyTypeIDs []string
 }
+
+func (a *AttributeListOptions) MarshalQueryParameters() (url.Values, error) {
+	ret := url.Values{}
+	for _, partyTypeID := range a.PartyTypeIDs {
+		ret.Add("partyTypeId", partyTypeID)
+	}
+	return ret, nil
+}
+
+func (a *AttributeListOptions) UnmarshalQueryParameters(values url.Values) error {
+	partyTypeIDs := values["partyTypeId"]
+	for _, partyTypeID := range partyTypeIDs {
+		a.PartyTypeIDs = append(a.PartyTypeIDs, partyTypeID)
+	}
+	return nil
+}
+
+var _ UrlValuer = &AttributeListOptions{}
 
 type AttributeClient interface {
 	Get(ctx context.Context, id string) (*Attribute, error)

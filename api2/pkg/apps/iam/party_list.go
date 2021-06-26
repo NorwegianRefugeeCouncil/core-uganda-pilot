@@ -6,8 +6,11 @@ import (
 
 func (s *Server) ListParties(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	listOptions := &PartyListOptions{
-		PartyTypeID: req.URL.Query().Get("partyTypeId"),
+
+	listOptions := &PartyListOptions{}
+	if err := listOptions.UnmarshalQueryParameters(req.URL.Query()); err != nil {
+		s.Error(w, err)
+		return
 	}
 
 	ret, err := s.PartyStore.List(ctx, *listOptions)

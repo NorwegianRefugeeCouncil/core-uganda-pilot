@@ -27,8 +27,8 @@ func (s *StaffStore) Get(ctx context.Context, id string) (*Staff, error) {
 func (s *StaffStore) Find(ctx context.Context, individualId, organizationId string) (*Staff, error) {
 	found, err := s.relationshipStore.List(ctx, RelationshipListOptions{
 		RelationshipTypeID: StaffRelationshipType.ID,
-		FirstPartyId:       individualId,
-		SecondParty:        organizationId,
+		FirstPartyID:       individualId,
+		SecondPartyID:      organizationId,
 	})
 	if err != nil {
 		return nil, err
@@ -56,8 +56,8 @@ func (s *StaffStore) Create(ctx context.Context, staff *Staff) error {
 func (s *StaffStore) List(ctx context.Context, listOptions StaffListOptions) (*StaffList, error) {
 	list, err := s.relationshipStore.List(ctx, RelationshipListOptions{
 		RelationshipTypeID: StaffRelationshipType.ID,
-		FirstPartyId:       listOptions.IndividualID,
-		SecondParty:        listOptions.OrganizationID,
+		FirstPartyID:       listOptions.IndividualID,
+		SecondPartyID:      listOptions.OrganizationID,
 	})
 	if err != nil {
 		return nil, err

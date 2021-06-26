@@ -7,16 +7,13 @@ import (
 func (s *Server) ListRelationships(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	qry := req.URL.Query()
-
-	listOptions := RelationshipListOptions{
-		RelationshipTypeID: qry.Get("relationshipTypeId"),
-		FirstPartyId:       qry.Get("firstPartyId"),
-		SecondParty:        qry.Get("secondPartyId"),
-		EitherParty:        qry.Get("eitherPartyId"),
+	listOptions := &RelationshipListOptions{}
+	if err := listOptions.UnmarshalQueryParameters(req.URL.Query()); err != nil {
+		s.Error(w, err)
+		return
 	}
 
-	ret, err := s.RelationshipStore.List(ctx, listOptions)
+	ret, err := s.RelationshipStore.List(ctx, *listOptions)
 	if err != nil {
 		s.Error(w, err)
 		return

@@ -42,7 +42,7 @@ func (s *PartyTypeStore) Get(ctx context.Context, id string) (*PartyType, error)
 	return &r, nil
 }
 
-func (s *PartyTypeStore) List(ctx context.Context) (*PartyTypeList, error) {
+func (s *PartyTypeStore) List(ctx context.Context, listOptions PartyTypeListOptions) (*PartyTypeList, error) {
 
 	filter := bson.M{}
 

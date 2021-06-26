@@ -27,6 +27,27 @@ func NewServerOptions() *ServerOptions {
 	}
 }
 
+func (o *ServerOptions) WithMongoHosts(hosts []string) *ServerOptions {
+	o.MongoHosts = hosts
+	return o
+}
+func (o *ServerOptions) WithMongoDatabase(mongoDatabase string) *ServerOptions {
+	o.MongoDatabase = mongoDatabase
+	return o
+}
+func (o *ServerOptions) WithMongoUsername(mongoUsername string) *ServerOptions {
+	o.MongoUsername = mongoUsername
+	return o
+}
+func (o *ServerOptions) WithMongoPassword(mongoPassword string) *ServerOptions {
+	o.MongoPassword = mongoPassword
+	return o
+}
+func (o *ServerOptions) WithListenAddress(address string) *ServerOptions {
+	o.ListenAddress = address
+	return o
+}
+
 func (o *ServerOptions) Flags(fs pflag.FlagSet) {
 	fs.StringVar(&o.ListenAddress, "listen-address", o.ListenAddress, "Server listen address")
 	fs.StringSliceVar(&o.MongoHosts, "mongo-url", o.MongoHosts, "Mongo url")
@@ -47,6 +68,7 @@ type Server struct {
 	OrganizationStore     *OrganizationStore
 	TeamStore             *TeamStore
 	MembershipStore       *MembershipStore
+	mongoClient           *mongo.Client
 }
 
 func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
@@ -59,6 +81,10 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 				Password: o.MongoPassword,
 			}))
 	if err != nil {
+		return nil, err
+	}
+
+	if err := mongoClient.Connect(ctx); err != nil {
 		return nil, err
 	}
 
@@ -91,6 +117,7 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 
 	srv := &Server{
 		router:                router,
+		mongoClient:           mongoClient,
 		AttributeStore:        attributeStore,
 		PartyStore:            partyStore,
 		PartyTypeStore:        partyTypeStore,
@@ -103,68 +130,54 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 		MembershipStore:       NewMembershipStore(relationshipStore),
 	}
 
-	if err := srv.Init(ctx); err != nil {
-		return nil, err
-	}
+	router.Path("/apis/iam/v1/attributes").Methods("GET").HandlerFunc(srv.ListAttributes)
+	router.Path("/apis/iam/v1/attributes").Methods("POST").HandlerFunc(srv.PostAttribute)
+	router.Path("/apis/iam/v1/attributes/{id}").Methods("GET").HandlerFunc(srv.GetAttribute)
+	router.Path("/apis/iam/v1/attributes/{id}").Methods("PUT").HandlerFunc(srv.PutAttribute)
 
-	attributes := router.Path("/apis/v1/attributes")
-	attributes.Path("").Methods("GET").HandlerFunc(srv.ListAttributes)
-	attributes.Path("").Methods("POST").HandlerFunc(srv.PostAttribute)
-	attributes.Path("/{id}").Methods("GET").HandlerFunc(srv.GetAttribute)
-	attributes.Path("/{id}").Methods("PUT").HandlerFunc(srv.PutAttribute)
+	router.Path("/apis/iam/v1/individuals").Methods("GET").HandlerFunc(srv.ListIndividuals)
+	router.Path("/apis/iam/v1/individuals").Methods("POST").HandlerFunc(srv.PostIndividual)
+	router.Path("/apis/iam/v1/individuals/{id}").Methods("GET").HandlerFunc(srv.GetIndividual)
+	router.Path("/apis/iam/v1/individuals/{id}").Methods("PUT").HandlerFunc(srv.PutIndividual)
 
-	individuals := router.Path("/apis/v1/individuals")
-	individuals.Path("").Methods("GET").HandlerFunc(srv.ListIndividuals)
-	individuals.Path("").Methods("POST").HandlerFunc(srv.PostIndividual)
-	individuals.Path("/{id}").Methods("GET").HandlerFunc(srv.GetIndividual)
-	individuals.Path("/{id}").Methods("PUT").HandlerFunc(srv.PutIndividual)
+	router.Path("/apis/iam/v1/memberships").Methods("GET").HandlerFunc(srv.ListMemberships)
+	router.Path("/apis/iam/v1/memberships").Methods("POST").HandlerFunc(srv.PostMembership)
+	router.Path("/apis/iam/v1/memberships/{v1}").Methods("GET").HandlerFunc(srv.GetMembership)
 
-	memberships := router.Path("/apis/v1/memberships")
-	memberships.Path("").Methods("GET").HandlerFunc(srv.ListMemberships)
-	memberships.Path("").Methods("POST").HandlerFunc(srv.PostMembership)
-	memberships.Path("/{id}").Methods("GET").HandlerFunc(srv.GetMembership)
+	router.Path("/apis/iam/v1/organizations").Methods("GET").HandlerFunc(srv.ListOrganizations)
+	router.Path("/apis/iam/v1/organizations").Methods("POST").HandlerFunc(srv.PostOrganization)
+	router.Path("/apis/iam/v1/organizations/{id}").Methods("GET").HandlerFunc(srv.GetOrganization)
+	router.Path("/apis/iam/v1/organizations/{id}").Methods("PUT").HandlerFunc(srv.PutOrganization)
 
-	organizations := router.Path("/apis/v1/organizations")
-	organizations.Path("").Methods("GET").HandlerFunc(srv.ListOrganizations)
-	organizations.Path("").Methods("POST").HandlerFunc(srv.PostOrganization)
-	organizations.Path("/{id}").Methods("GET").HandlerFunc(srv.GetOrganization)
-	organizations.Path("/{id}").Methods("PUT").HandlerFunc(srv.PutOrganization)
+	router.Path("/apis/iam/v1/parties").Methods("GET").HandlerFunc(srv.ListParties)
+	router.Path("/apis/iam/v1/parties").Methods("POST").HandlerFunc(srv.PostParty)
+	router.Path("/apis/iam/v1/parties/{id}").Methods("GET").HandlerFunc(srv.GetParty)
+	router.Path("/apis/iam/v1/parties/{id}").Methods("PUT").HandlerFunc(srv.PutParty)
 
-	parties := router.Path("/apis/v1/parties")
-	parties.Path("").Methods("GET").HandlerFunc(srv.ListParties)
-	parties.Path("").Methods("POST").HandlerFunc(srv.PostParty)
-	parties.Path("/{id}").Methods("GET").HandlerFunc(srv.GetParty)
-	parties.Path("/{id}").Methods("PUT").HandlerFunc(srv.PutParty)
+	router.Path("/apis/iam/v1/partytypes").Methods("GET").HandlerFunc(srv.ListPartyTypes)
+	router.Path("/apis/iam/v1/partytypes").Methods("POST").HandlerFunc(srv.PostPartyType)
+	router.Path("/apis/iam/v1/partytypes/{id}").Methods("GET").HandlerFunc(srv.GetPartyType)
+	router.Path("/apis/iam/v1/partytypes/{id}").Methods("PUT").HandlerFunc(srv.PutPartyType)
 
-	partyTypes := router.Path("/apis/v1/partytypes")
-	partyTypes.Path("").Methods("GET").HandlerFunc(srv.ListPartyTypes)
-	partyTypes.Path("").Methods("POST").HandlerFunc(srv.PostPartyType)
-	partyTypes.Path("/{id}").Methods("GET").HandlerFunc(srv.GetPartyType)
-	partyTypes.Path("/{id}").Methods("PUT").HandlerFunc(srv.PutPartyType)
+	router.Path("/apis/iam/v1/relationships").Methods("GET").HandlerFunc(srv.ListRelationships)
+	router.Path("/apis/iam/v1/relationships").Methods("POST").HandlerFunc(srv.PostRelationship)
+	router.Path("/apis/iam/v1/relationships/{id}").Methods("GET").HandlerFunc(srv.GetRelationship)
+	router.Path("/apis/iam/v1/relationships/{id}").Methods("PUT").HandlerFunc(srv.PutRelationship)
+	router.Path("/apis/iam/v1/relationships/{id}").Methods("DELETE").HandlerFunc(srv.DeleteRelationship)
 
-	relationships := router.Path("/apis/v1/relationships")
-	relationships.Path("").Methods("GET").HandlerFunc(srv.ListRelationships)
-	relationships.Path("").Methods("POST").HandlerFunc(srv.PostRelationship)
-	relationships.Path("/{id}").Methods("GET").HandlerFunc(srv.GetRelationship)
-	relationships.Path("/{id}").Methods("PUT").HandlerFunc(srv.PutRelationship)
-	relationships.Path("/{id}").Methods("DELETE").HandlerFunc(srv.DeleteRelationship)
+	router.Path("/apis/iam/v1/relationshiptypes").Methods("GET").HandlerFunc(srv.ListRelationshipTypes)
+	router.Path("/apis/iam/v1/relationshiptypes").Methods("POST").HandlerFunc(srv.PostRelationshipType)
+	router.Path("/apis/iam/v1/relationshiptypes/{id}").Methods("GET").HandlerFunc(srv.GetRelationshipType)
+	router.Path("/apis/iam/v1/relationshiptypes/{id}").Methods("PUT").HandlerFunc(srv.PutRelationshipType)
 
-	relationshipTypes := router.Path("/apis/v1/relationshiptypes")
-	relationshipTypes.Path("").Methods("GET").HandlerFunc(srv.ListRelationshipTypes)
-	relationshipTypes.Path("").Methods("POST").HandlerFunc(srv.PostRelationshipType)
-	relationshipTypes.Path("/{id}").Methods("GET").HandlerFunc(srv.GetRelationshipType)
-	relationshipTypes.Path("/{id}").Methods("PUT").HandlerFunc(srv.PutRelationshipType)
+	router.Path("/apis/iam/v1/staff").Methods("GET").HandlerFunc(srv.ListStaff)
+	router.Path("/apis/iam/v1/staff").Methods("POST").HandlerFunc(srv.PostStaff)
+	router.Path("/apis/iam/v1/staff/{id}").Methods("GET").HandlerFunc(srv.GetStaff)
 
-	staff := router.Path("/apis/v1/staff")
-	staff.Path("").Methods("GET").HandlerFunc(srv.ListStaff)
-	staff.Path("").Methods("POST").HandlerFunc(srv.PostStaff)
-	staff.Path("/{id}").Methods("GET").HandlerFunc(srv.GetStaff)
-
-	teams := router.Path("/apis/v1/teams")
-	teams.Path("").Methods("GET").HandlerFunc(srv.ListTeams)
-	teams.Path("").Methods("POST").HandlerFunc(srv.PostTeam)
-	teams.Path("/{id}").Methods("GET").HandlerFunc(srv.GetTeam)
-	teams.Path("/{id}").Methods("PUT").HandlerFunc(srv.PutTeam)
+	router.Path("/apis/iam/v1/teams").Methods("GET").HandlerFunc(srv.ListTeams)
+	router.Path("/apis/iam/v1/teams").Methods("POST").HandlerFunc(srv.PostTeam)
+	router.Path("/apis/iam/v1/teams/{id}").Methods("GET").HandlerFunc(srv.GetTeam)
+	router.Path("/apis/iam/v1/teams/{id}").Methods("PUT").HandlerFunc(srv.PutTeam)
 
 	return srv, nil
 }

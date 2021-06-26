@@ -51,19 +51,19 @@ func (s *RelationshipStore) List(ctx context.Context, listOptions RelationshipLi
 		})
 	}
 
-	if len(listOptions.EitherParty) != 0 {
+	if len(listOptions.EitherPartyID) != 0 {
 		filterExpressions = append(filterExpressions, bson.M{
 			"$or": bson.A{
-				bson.M{"firstParty": listOptions.EitherParty},
-				bson.M{"secondParty": listOptions.EitherParty},
+				bson.M{"firstParty": listOptions.EitherPartyID},
+				bson.M{"secondParty": listOptions.EitherPartyID},
 			},
 		})
 	} else {
-		if len(listOptions.FirstPartyId) != 0 {
-			filterExpressions = append(filterExpressions, bson.M{"firstParty": listOptions.FirstPartyId})
+		if len(listOptions.FirstPartyID) != 0 {
+			filterExpressions = append(filterExpressions, bson.M{"firstParty": listOptions.FirstPartyID})
 		}
-		if len(listOptions.SecondParty) != 0 {
-			filterExpressions = append(filterExpressions, bson.M{"secondParty": listOptions.SecondParty})
+		if len(listOptions.SecondPartyID) != 0 {
+			filterExpressions = append(filterExpressions, bson.M{"secondParty": listOptions.SecondPartyID})
 
 		}
 	}

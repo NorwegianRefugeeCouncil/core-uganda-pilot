@@ -10,6 +10,8 @@ func (s *Server) Init(ctx context.Context) error {
 	for _, partyType := range []PartyType{
 		IndividualPartyType,
 		HouseholdPartyType,
+		TeamPartyType,
+		OrganizationPartyType,
 	} {
 		if err := s.PartyTypeStore.Create(ctx, &partyType); err != nil {
 			if !mongo.IsDuplicateKeyError(err) {
