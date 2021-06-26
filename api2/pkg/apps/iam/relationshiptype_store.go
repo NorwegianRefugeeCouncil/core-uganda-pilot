@@ -46,14 +46,14 @@ func (s *RelationshipTypeStore) List(ctx context.Context, listOptions Relationsh
 
 	filter := bson.M{}
 
-	if len(listOptions.PartyType) != 0 {
+	if len(listOptions.PartyTypeID) != 0 {
 		filter = bson.M{
 			"$or": bson.A{
 				bson.M{
-					"rules.firstPartyTypeId": listOptions.PartyType,
+					"rules.firstPartyTypeId": listOptions.PartyTypeID,
 				},
 				bson.M{
-					"rules.secondPartyTypeId": listOptions.PartyType,
+					"rules.secondPartyTypeId": listOptions.PartyTypeID,
 				},
 			},
 		}

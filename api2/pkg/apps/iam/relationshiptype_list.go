@@ -6,13 +6,14 @@ import (
 
 func (s *Server) ListRelationshipTypes(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	qry := req.URL.Query()
 
-	listOptions := RelationshipTypeListOptions{
-		PartyType: qry.Get("partyType"),
+	listOptions := &RelationshipTypeListOptions{}
+	if err := listOptions.UnmarshalQueryParameters(req.URL.Query()); err != nil {
+		s.Error(w, err)
+		return
 	}
 
-	ret, err := s.RelationshipTypeStore.List(ctx, listOptions)
+	ret, err := s.RelationshipTypeStore.List(ctx, *listOptions)
 	if err != nil {
 		s.Error(w, err)
 		return

@@ -105,7 +105,20 @@ type RelationshipClient interface {
 }
 
 type RelationshipTypeListOptions struct {
-	PartyType string
+	PartyTypeID string
+}
+
+func (a *RelationshipTypeListOptions) MarshalQueryParameters() (url.Values, error) {
+	urlValues := url.Values{}
+	if len(a.PartyTypeID) > 0 {
+		urlValues.Set("partyTypeId", a.PartyTypeID)
+	}
+	return urlValues, nil
+}
+
+func (a *RelationshipTypeListOptions) UnmarshalQueryParameters(values url.Values) error {
+	a.PartyTypeID = values.Get("partyTypeId")
+	return nil
 }
 
 type RelationshipTypeClient interface {
@@ -145,6 +158,14 @@ type AttributeClient interface {
 }
 
 type TeamListOptions struct {
+}
+
+func (a *TeamListOptions) MarshalQueryParameters() (url.Values, error) {
+	return url.Values{}, nil
+}
+
+func (a *TeamListOptions) UnmarshalQueryParameters(values url.Values) error {
+	return nil
 }
 
 type TeamClient interface {
