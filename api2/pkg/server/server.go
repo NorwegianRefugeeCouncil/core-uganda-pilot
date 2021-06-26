@@ -5,10 +5,9 @@ import (
 	"errors"
 	"github.com/gomodule/redigo/redis"
 	"github.com/gorilla/mux"
+	"github.com/nrc-no/core-kafka/pkg/apps/cms"
 	"github.com/nrc-no/core-kafka/pkg/apps/iam"
 	"github.com/nrc-no/core-kafka/pkg/auth"
-	"github.com/nrc-no/core-kafka/pkg/cases/cases"
-	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
 	"github.com/nrc-no/core-kafka/pkg/middleware"
 	"github.com/nrc-no/core-kafka/pkg/rest"
 	"github.com/nrc-no/core-kafka/pkg/sessionmanager"
@@ -25,12 +24,6 @@ import (
 
 type Server struct {
 	MongoClient       *mongo.Client
-	CaseTypeStore     *casetypes.Store
-	CaseTypeHandler   *casetypes.Handler
-	CaseTypeClient    *casetypes.Client
-	CaseStore         *cases.Store
-	CaseHandler       *cases.Handler
-	CaseClient        *cases.Client
 	WebAppHandler     *webapp.Handler
 	HttpServer        *http.Server
 	SessionManager    sessionmanager.Store
@@ -199,31 +192,12 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	//	panic(err)
 	// }
 
-	// Cases
-	caseStore := cases.NewStore(c.MongoClient, c.MongoDatabase)
-	if err := cases.Init(ctx, caseStore); err != nil {
-		panic(err)
-	}
-	caseHandler := cases.NewHandler(caseStore)
-	caseClient := cases.NewClient(c.Address)
-	router.Path("/apis/v1/cases").Methods("GET").HandlerFunc(caseHandler.List)
-	router.Path("/apis/v1/cases/{id}").Methods("GET").HandlerFunc(caseHandler.Get)
-	router.Path("/apis/v1/cases/{id}").Methods("PUT").HandlerFunc(caseHandler.Put)
-	router.Path("/apis/v1/cases").Methods("POST").HandlerFunc(caseHandler.Post)
-
-	// CaseTypes
-	caseTypeStore := casetypes.NewStore(c.MongoClient, c.MongoDatabase)
-	if err := casetypes.Init(ctx, caseTypeStore); err != nil {
-		panic(err)
-	}
-	caseTypeHandler := casetypes.NewHandler(caseTypeStore)
-	caseTypeClient := casetypes.NewClient(c.Address)
-	router.Path("/apis/v1/casetypes").Methods("GET").HandlerFunc(caseTypeHandler.List)
-	router.Path("/apis/v1/casetypes/{id}").Methods("GET").HandlerFunc(caseTypeHandler.Get)
-	router.Path("/apis/v1/casetypes/{id}").Methods("PUT").HandlerFunc(caseTypeHandler.Put)
-	router.Path("/apis/v1/casetypes").Methods("POST").HandlerFunc(caseTypeHandler.Post)
-
 	iamClient := iam.NewClientSet(&rest.RESTConfig{
+		Scheme: "http",
+		Host:   c.Address,
+	})
+
+	cmsClient := cms.NewClientSet(&rest.RESTConfig{
 		Scheme: "http",
 		Host:   c.Address,
 	})
@@ -234,13 +208,12 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	}
 	webAppHandler, err := webapp.NewHandler(
 		webAppOptions,
-		caseTypeClient,
-		caseClient,
 		c.HydraAdminClient,
 		c.HydraPublicClient,
 		c.SessionManager,
 		c.CredentialsClient,
 		iamClient,
+		cmsClient,
 	)
 	if err != nil {
 		panic(err)
@@ -271,8 +244,6 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.Path("/settings/authclients/{id}").HandlerFunc(webAppHandler.AuthClient)
 	router.Path("/settings/authclients/{id}/newsecret").HandlerFunc(webAppHandler.AuthClientNewSecret)
 	router.Path("/settings/authclients/{id}/delete").HandlerFunc(webAppHandler.DeleteAuthClient)
-	router.Path("/login").Methods("GET").HandlerFunc(webAppHandler.Login)
-	router.Path("/login").Methods("POST").HandlerFunc(webAppHandler.PostLogin)
 
 	// Seed database for development
 	// TODO: if err := individuals.SeedDatabase(ctx, individualsStore); err != nil {
@@ -286,12 +257,6 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 
 	srv := &Server{
 		MongoClient:       c.MongoClient,
-		CaseTypeStore:     caseTypeStore,
-		CaseTypeHandler:   caseTypeHandler,
-		CaseTypeClient:    caseTypeClient,
-		CaseStore:         caseStore,
-		CaseHandler:       caseHandler,
-		CaseClient:        caseClient,
 		WebAppHandler:     webAppHandler,
 		SessionManager:    c.SessionManager,
 		HydraPublicClient: c.HydraPublicClient,

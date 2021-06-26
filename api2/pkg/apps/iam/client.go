@@ -6,6 +6,8 @@ type ClientSet struct {
 	c *rest.Client
 }
 
+var _ Interface = &ClientSet{}
+
 func NewClientSet(restConfig *rest.RESTConfig) *ClientSet {
 	return &ClientSet{
 		c: rest.NewClient(restConfig),
@@ -71,5 +73,3 @@ func (c ClientSet) Individuals() IndividualClient {
 		c: c.c,
 	}
 }
-
-var _ Interface = &ClientSet{}

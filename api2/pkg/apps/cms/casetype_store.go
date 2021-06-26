@@ -1,22 +1,33 @@
-package casetypes
+package cms
 
 import (
 	"context"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type Store struct {
+type CaseTypeStore struct {
 	collection *mongo.Collection
 }
 
-func NewStore(mongoClient *mongo.Client, database string) *Store {
-	return &Store{
+func NewCaseTypeStore(ctx context.Context, mongoClient *mongo.Client, database string) (*CaseTypeStore, error) {
+	store := &CaseTypeStore{
 		collection: mongoClient.Database(database).Collection("caseTypes"),
 	}
+
+	if _, err := store.collection.Indexes().CreateOne(ctx,
+		mongo.IndexModel{
+			Keys:    bson.M{"id": 1},
+			Options: options.Index().SetUnique(true),
+		}); err != nil {
+		return nil, err
+	}
+
+	return store, nil
 }
 
-func (s *Store) Get(ctx context.Context, id string) (*CaseType, error) {
+func (s *CaseTypeStore) Get(ctx context.Context, id string) (*CaseType, error) {
 	res := s.collection.FindOne(ctx, bson.M{
 		"id": id,
 	})
@@ -30,7 +41,7 @@ func (s *Store) Get(ctx context.Context, id string) (*CaseType, error) {
 	return &r, nil
 }
 
-func (s *Store) List(ctx context.Context, options ListOptions) (*CaseTypeList, error) {
+func (s *CaseTypeStore) List(ctx context.Context, options CaseTypeListOptions) (*CaseTypeList, error) {
 
 	filter := bson.M{}
 
@@ -67,7 +78,7 @@ func (s *Store) List(ctx context.Context, options ListOptions) (*CaseTypeList, e
 	return &ret, nil
 }
 
-func (s *Store) Update(ctx context.Context, caseType *CaseType) error {
+func (s *CaseTypeStore) Update(ctx context.Context, caseType *CaseType) error {
 	_, err := s.collection.UpdateOne(ctx, bson.M{
 		"id": caseType.ID,
 	}, bson.M{
@@ -83,7 +94,7 @@ func (s *Store) Update(ctx context.Context, caseType *CaseType) error {
 	return nil
 }
 
-func (s *Store) Create(ctx context.Context, caseType *CaseType) error {
+func (s *CaseTypeStore) Create(ctx context.Context, caseType *CaseType) error {
 	_, err := s.collection.InsertOne(ctx, caseType)
 	if err != nil {
 		return err

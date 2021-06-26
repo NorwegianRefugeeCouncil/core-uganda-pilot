@@ -4,9 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/nrc-no/core-kafka/pkg/apps/cms"
 	"github.com/nrc-no/core-kafka/pkg/apps/iam"
-	"github.com/nrc-no/core-kafka/pkg/cases/cases"
-	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
 	"golang.org/x/sync/errgroup"
 	"net/http"
 )
@@ -15,8 +14,8 @@ func (h *Handler) Cases(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
-	kases, err := h.caseClient.List(ctx, cases.ListOptions{})
-	caseTypes, err := h.caseTypeClient.List(ctx, casetypes.ListOptions{})
+	kases, err := h.cms.Cases().List(ctx, cms.CaseListOptions{})
+	caseTypes, err := h.cms.CaseTypes().List(ctx, cms.CaseTypeListOptions{})
 	partyList, err := h.iam.Parties().List(ctx, iam.PartyListOptions{})
 
 	if err != nil {
@@ -60,19 +59,19 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 	var partyList *iam.PartyList
 	var team *iam.Team
 
-	var kase *cases.Case
-	var kaseTypes *casetypes.CaseTypeList
-	var referrals *cases.CaseList
+	var kase *cms.Case
+	var kaseTypes *cms.CaseTypeList
+	var referrals *cms.CaseList
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
 		if id == "new" {
-			kase = &cases.Case{}
+			kase = &cms.Case{}
 			return nil
 		}
 		var err error
-		kase, err = h.caseClient.Get(waitCtx, id)
+		kase, err = h.cms.Cases().Get(waitCtx, id)
 		return err
 	})
 
@@ -101,14 +100,14 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	kaseTypes, err = h.caseTypeClient.List(ctx, casetypes.ListOptions{
+	kaseTypes, err = h.cms.CaseTypes().List(ctx, cms.CaseTypeListOptions{
 		PartyTypeIDs: party.PartyTypeIDs,
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	referrals, err = h.caseClient.List(ctx, cases.ListOptions{
+	referrals, err = h.cms.Cases().List(ctx, cms.CaseListOptions{
 		ParentID: kase.ID,
 	})
 	if err != nil {
@@ -117,9 +116,9 @@ func (h *Handler) Case(w http.ResponseWriter, req *http.Request) {
 	}
 	qry := req.URL.Query()
 
-	var referralCaseType *casetypes.CaseType
+	var referralCaseType *cms.CaseType
 	if referralCaseTypeID := qry.Get("referralCaseTypeId"); len(referralCaseTypeID) > 0 {
-		referralCaseType, err = h.caseTypeClient.Get(ctx, referralCaseTypeID)
+		referralCaseType, err = h.cms.CaseTypes().Get(ctx, referralCaseTypeID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -145,14 +144,14 @@ func (h *Handler) NewCase(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
-	var caseTypes *casetypes.CaseTypeList
+	var caseTypes *cms.CaseTypeList
 	var p *iam.PartyList
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
 		var err error
-		caseTypes, err = h.caseTypeClient.List(waitCtx, casetypes.ListOptions{})
+		caseTypes, err = h.cms.CaseTypes().List(waitCtx, cms.CaseTypeListOptions{})
 		return err
 	})
 
@@ -217,10 +216,10 @@ func (h *Handler) PostCase(ctx context.Context, id string, w http.ResponseWriter
 	parentId := req.Form.Get("parentId")
 	teamId := req.Form.Get("teamId")
 
-	var kase *cases.Case
+	var kase *cms.Case
 	if id == "" {
 		var err error
-		kase, err = h.caseClient.Create(ctx, &cases.Case{
+		kase, err = h.cms.Cases().Create(ctx, &cms.Case{
 			CaseTypeID:  caseTypeId,
 			PartyID:     partyId,
 			Description: description,
@@ -234,7 +233,7 @@ func (h *Handler) PostCase(ctx context.Context, id string, w http.ResponseWriter
 		}
 	} else {
 		var err error
-		kase, err = h.caseClient.Update(ctx, &cases.Case{
+		kase, err = h.cms.Cases().Update(ctx, &cms.Case{
 			ID:          id,
 			CaseTypeID:  caseTypeId,
 			PartyID:     partyId,

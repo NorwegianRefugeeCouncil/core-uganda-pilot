@@ -1,12 +1,6 @@
-package casetypes
+package cms
 
-import (
-	"context"
-	"github.com/nrc-no/core-kafka/pkg/teams"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-)
+import "github.com/nrc-no/core-kafka/pkg/teams"
 
 var GenderViolence = CaseType{
 	ID:          "2ab2aba2-c18f-4235-9ccd-52161defca5b",
@@ -41,32 +35,4 @@ var FinancialAssistHH = CaseType{
 	Name:        "Financial Assistance",
 	PartyTypeID: "a842e7cb-3777-423a-9478-f1348be3b4a5",
 	TeamID:      teams.NairobiResponseTeam.ID,
-}
-
-func Init(ctx context.Context, store *Store) error {
-	if _, err := store.collection.Indexes().CreateOne(ctx,
-		mongo.IndexModel{
-			Keys:    bson.M{"id": 1},
-			Options: options.Index().SetUnique(true),
-		}); err != nil {
-		return err
-	}
-
-	for _, caseType := range []CaseType{
-		GenderViolence,
-		Childcare,
-		HousingRights,
-		FinancialAssistInd,
-		FinancialAssistHH,
-	} {
-		if err := store.Create(ctx, &caseType); err != nil {
-			if !mongo.IsDuplicateKeyError(err) {
-				return err
-			}
-			if err := store.Update(ctx, &caseType); err != nil {
-				return err
-			}
-		}
-	}
-	return nil
 }

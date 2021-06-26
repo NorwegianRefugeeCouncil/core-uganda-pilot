@@ -1,22 +1,33 @@
-package cases
+package cms
 
 import (
 	"context"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type Store struct {
+type CaseStore struct {
 	collection *mongo.Collection
 }
 
-func NewStore(mongoClient *mongo.Client, database string) *Store {
-	return &Store{
+func NewCaseStore(ctx context.Context, mongoClient *mongo.Client, database string) (*CaseStore, error) {
+	store := &CaseStore{
 		collection: mongoClient.Database(database).Collection("cases"),
 	}
+
+	if _, err := store.collection.Indexes().CreateOne(ctx,
+		mongo.IndexModel{
+			Keys:    bson.M{"id": 1},
+			Options: options.Index().SetUnique(true),
+		}); err != nil {
+		return nil, err
+	}
+
+	return store, nil
 }
 
-func (s *Store) Get(ctx context.Context, id string) (*Case, error) {
+func (s *CaseStore) Get(ctx context.Context, id string) (*Case, error) {
 	res := s.collection.FindOne(ctx, bson.M{
 		"id": id,
 	})
@@ -30,7 +41,7 @@ func (s *Store) Get(ctx context.Context, id string) (*Case, error) {
 	return &r, nil
 }
 
-func (s *Store) List(ctx context.Context, listOptions ListOptions) (*CaseList, error) {
+func (s *CaseStore) List(ctx context.Context, listOptions CaseListOptions) (*CaseList, error) {
 
 	filter := bson.M{}
 
@@ -71,7 +82,7 @@ func (s *Store) List(ctx context.Context, listOptions ListOptions) (*CaseList, e
 	return &ret, nil
 }
 
-func (s *Store) Update(ctx context.Context, kase *Case) error {
+func (s *CaseStore) Update(ctx context.Context, kase *Case) error {
 	_, err := s.collection.UpdateOne(ctx, bson.M{
 		"id": kase.ID,
 	}, bson.M{
@@ -88,7 +99,7 @@ func (s *Store) Update(ctx context.Context, kase *Case) error {
 	return nil
 }
 
-func (s *Store) Create(ctx context.Context, kase *Case) error {
+func (s *CaseStore) Create(ctx context.Context, kase *Case) error {
 	_, err := s.collection.InsertOne(ctx, kase)
 	if err != nil {
 		return err

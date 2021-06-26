@@ -4,10 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/nrc-no/core-kafka/pkg/apps/cms"
 	"github.com/nrc-no/core-kafka/pkg/apps/iam"
-	"github.com/nrc-no/core-kafka/pkg/cases/cases"
-	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
-	Individuals "github.com/nrc-no/core-kafka/pkg/individuals"
 	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/sync/errgroup"
@@ -106,8 +104,8 @@ func (h *Handler) Individual(w http.ResponseWriter, req *http.Request) {
 
 	var b *iam.Individual
 	var bList *iam.IndividualList
-	var ctList *casetypes.CaseTypeList
-	var cList *cases.CaseList
+	var ctList *cms.CaseTypeList
+	var cList *cms.CaseList
 	var partyTypes *iam.PartyTypeList
 	var relationshipsForIndividual *iam.RelationshipList
 	var relationshipTypes *iam.RelationshipTypeList
@@ -167,13 +165,13 @@ func (h *Handler) Individual(w http.ResponseWriter, req *http.Request) {
 
 	g.Go(func() error {
 		var err error
-		ctList, err = h.caseTypeClient.List(ctx, casetypes.ListOptions{})
+		ctList, err = h.cms.CaseTypes().List(ctx, cms.CaseTypeListOptions{})
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
-		cList, err = h.caseClient.List(ctx, cases.ListOptions{PartyID: id})
+		cList, err = h.cms.Cases().List(ctx, cms.CaseListOptions{PartyID: id})
 		return err
 	})
 
@@ -190,11 +188,11 @@ func (h *Handler) Individual(w http.ResponseWriter, req *http.Request) {
 	}
 
 	type DisplayCase struct {
-		Case     *cases.Case
-		CaseType *casetypes.CaseType
+		Case     *cms.Case
+		CaseType *cms.CaseType
 	}
 
-	ctMap := map[string]*casetypes.CaseType{}
+	ctMap := map[string]*cms.CaseType{}
 	for _, item := range ctList.Items {
 		ctMap[item.ID] = item
 	}
@@ -218,8 +216,8 @@ func (h *Handler) Individual(w http.ResponseWriter, req *http.Request) {
 		"Attributes":         attrs,
 		"Cases":              displayCases,
 		"CaseTypes":          ctList,
-		"FirstNameAttribute": Individuals.FirstNameAttribute,
-		"LastNameAttribute":  Individuals.LastNameAttribute,
+		"FirstNameAttribute": iam.FirstNameAttribute,
+		"LastNameAttribute":  iam.LastNameAttribute,
 		"Page":               "general",
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

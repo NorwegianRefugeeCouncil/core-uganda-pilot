@@ -2,28 +2,22 @@ package webapp
 
 import (
 	"fmt"
+	"github.com/nrc-no/core-kafka/pkg/apps/cms"
 	"github.com/nrc-no/core-kafka/pkg/apps/iam"
 	"github.com/nrc-no/core-kafka/pkg/auth"
-	"github.com/nrc-no/core-kafka/pkg/cases/cases"
-	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
-	"github.com/nrc-no/core-kafka/pkg/parties/parties"
-	"github.com/nrc-no/core-kafka/pkg/relationshipparties"
 	"github.com/nrc-no/core-kafka/pkg/sessionmanager"
 	"github.com/ory/hydra-client-go/client"
 	"os"
 )
 
 type Handler struct {
-	caseTypeClient            *casetypes.Client
-	caseClient                *cases.Client
-	relationshipPartiesClient *relationshipparties.Client
-	hydraAdminClient          *client.OryHydra
-	hydraPublicClient         *client.OryHydra
-	renderFactory             *RendererFactory
-	sessionManager            sessionmanager.Store
-	credentialsClient         *auth.CredentialsClient
-	partyStore                *parties.Store
-	iam                       *iam.ClientSet
+	hydraAdminClient  *client.OryHydra
+	hydraPublicClient *client.OryHydra
+	renderFactory     *RendererFactory
+	sessionManager    sessionmanager.Store
+	credentialsClient *auth.CredentialsClient
+	iam               iam.Interface
+	cms               cms.Interface
 }
 
 type Options struct {
@@ -32,13 +26,12 @@ type Options struct {
 
 func NewHandler(
 	options Options,
-	CaseTypeClient *casetypes.Client,
-	CaseClient *cases.Client,
 	hydraAdminClient *client.OryHydra,
 	hydraPublicClient *client.OryHydra,
 	sessionManager sessionmanager.Store,
 	credentialsClient *auth.CredentialsClient,
 	iamClient *iam.ClientSet,
+	cmsClient *cms.ClientSet,
 ) (*Handler, error) {
 
 	renderFactory, err := NewRendererFactory(options.TemplateDirectory)
@@ -53,13 +46,13 @@ func NewHandler(
 	fmt.Println(e)
 
 	h := &Handler{
-		caseTypeClient:    CaseTypeClient,
-		caseClient:        CaseClient,
-		renderFactory:     renderFactory,
 		hydraAdminClient:  hydraAdminClient,
 		hydraPublicClient: hydraPublicClient,
+		renderFactory:     renderFactory,
 		sessionManager:    sessionManager,
 		credentialsClient: credentialsClient,
+		iam:               iamClient,
+		cms:               cmsClient,
 	}
 	return h, nil
 }

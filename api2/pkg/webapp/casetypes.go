@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/nrc-no/core-kafka/pkg/apps/cms"
 	"github.com/nrc-no/core-kafka/pkg/apps/iam"
-	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
 	"golang.org/x/sync/errgroup"
 	"net/http"
 )
@@ -15,11 +15,11 @@ func (h *Handler) CaseTypes(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	if req.Method == "POST" {
-		h.PostCaseType(ctx, &casetypes.CaseType{}, w, req)
+		h.PostCaseType(ctx, &cms.CaseType{}, w, req)
 		return
 	}
 
-	caseTypes, err := h.caseTypeClient.List(ctx, casetypes.ListOptions{})
+	caseTypes, err := h.cms.CaseTypes().List(ctx, cms.CaseTypeListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -49,7 +49,7 @@ func (h *Handler) CaseTypes(w http.ResponseWriter, req *http.Request) {
 
 func (h *Handler) PostCaseType(
 	ctx context.Context,
-	caseType *casetypes.CaseType,
+	caseType *cms.CaseType,
 	w http.ResponseWriter,
 	req *http.Request,
 ) {
@@ -70,7 +70,7 @@ func (h *Handler) PostCaseType(
 	caseType.TeamID = values.Get("teamId")
 
 	if isNew {
-		_, err := h.caseTypeClient.Create(ctx, caseType)
+		_, err := h.cms.CaseTypes().Create(ctx, caseType)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -79,7 +79,7 @@ func (h *Handler) PostCaseType(
 		w.WriteHeader(http.StatusSeeOther)
 		return
 	} else {
-		_, err := h.caseTypeClient.Update(ctx, caseType)
+		_, err := h.cms.CaseTypes().Update(ctx, caseType)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -101,7 +101,7 @@ func (h *Handler) CaseType(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var caseType *casetypes.CaseType
+	var caseType *cms.CaseType
 	var partyTypes *iam.PartyTypeList
 	var teamsData *iam.TeamList
 
@@ -109,11 +109,11 @@ func (h *Handler) CaseType(w http.ResponseWriter, req *http.Request) {
 
 	g.Go(func() error {
 		if id == "new" {
-			caseType = &casetypes.CaseType{}
+			caseType = &cms.CaseType{}
 			return nil
 		}
 		var err error
-		caseType, err = h.caseTypeClient.Get(waitCtx, id)
+		caseType, err = h.cms.CaseTypes().Get(waitCtx, id)
 		return err
 	})
 
