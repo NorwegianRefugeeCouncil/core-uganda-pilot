@@ -15,9 +15,13 @@ func NewClientSet(restConfig *rest.RESTConfig) *ClientSet {
 }
 
 func (c ClientSet) Cases() CaseClient {
-	panic("implement me")
+	return &RESTCaseClient{
+		c: c.c,
+	}
 }
 
 func (c ClientSet) CaseTypes() CaseTypeClient {
-	panic("implement me")
+	return &RESTCaseTypeClient{
+		c: c.c,
+	}
 }

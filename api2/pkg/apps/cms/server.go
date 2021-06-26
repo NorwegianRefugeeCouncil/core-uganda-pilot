@@ -98,15 +98,15 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 		caseTypeStore: caseTypeStore,
 	}
 
-	router.Path("/apis/iam/v1/cases").Methods("GET").HandlerFunc(srv.ListCases)
-	router.Path("/apis/iam/v1/cases").Methods("POST").HandlerFunc(srv.PostCase)
-	router.Path("/apis/iam/v1/cases/{id}").Methods("GET").HandlerFunc(srv.GetCase)
-	router.Path("/apis/iam/v1/cases/{id}").Methods("PUT").HandlerFunc(srv.PutCase)
+	router.Path("/apis/cms/v1/cases").Methods("GET").HandlerFunc(srv.ListCases)
+	router.Path("/apis/cms/v1/cases").Methods("POST").HandlerFunc(srv.PostCase)
+	router.Path("/apis/cms/v1/cases/{id}").Methods("GET").HandlerFunc(srv.GetCase)
+	router.Path("/apis/cms/v1/cases/{id}").Methods("PUT").HandlerFunc(srv.PutCase)
 
-	router.Path("/apis/iam/v1/casetypes").Methods("GET").HandlerFunc(srv.ListCaseTypes)
-	router.Path("/apis/iam/v1/casetypes").Methods("POST").HandlerFunc(srv.PostCaseType)
-	router.Path("/apis/iam/v1/casetypes/{id}").Methods("GET").HandlerFunc(srv.GetCaseType)
-	router.Path("/apis/iam/v1/casetypes/{id}").Methods("PUT").HandlerFunc(srv.PutCaseType)
+	router.Path("/apis/cms/v1/casetypes").Methods("GET").HandlerFunc(srv.ListCaseTypes)
+	router.Path("/apis/cms/v1/casetypes").Methods("POST").HandlerFunc(srv.PostCaseType)
+	router.Path("/apis/cms/v1/casetypes/{id}").Methods("GET").HandlerFunc(srv.GetCaseType)
+	router.Path("/apis/cms/v1/casetypes/{id}").Methods("PUT").HandlerFunc(srv.PutCaseType)
 
 	return srv, nil
 

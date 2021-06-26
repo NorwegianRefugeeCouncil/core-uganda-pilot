@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core-kafka/pkg/apps/cms"
 	"github.com/nrc-no/core-kafka/pkg/apps/iam"
+	"github.com/nrc-no/core-kafka/pkg/apps/seed"
 	"github.com/nrc-no/core-kafka/pkg/auth"
 	"github.com/nrc-no/core-kafka/pkg/middleware"
 	"github.com/nrc-no/core-kafka/pkg/rest"
@@ -164,9 +165,13 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 func (c CompletedOptions) New(ctx context.Context) *Server {
 
 	router := mux.NewRouter()
-
 	router.Use(middleware.UseLogging())
 	router.Use(c.SessionManager.LoadAndSave)
+
+	addressUrl, err := url.Parse(c.Address)
+	if err != nil {
+		panic(err)
+	}
 
 	iamServer, err := iam.NewServer(
 		ctx,
@@ -178,28 +183,24 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	if err != nil {
 		panic(err)
 	}
-
-	router.Path("/apis/iam").Handler(iamServer)
-
-	// TODO
-	// TeamOrganization
-	// if err := teamorganizations.Init(ctx, relationshipTypeStore, relationshipStore); err != nil {
-	//	panic(err)
-	// }
-
-	// Mock staff
-	// TODO: if err := staffmock.Init(ctx, partyStore, staffStore, membershipStore); err != nil {
-	//	panic(err)
-	// }
-
+	router.PathPrefix("/apis/iam").Handler(iamServer)
 	iamClient := iam.NewClientSet(&rest.RESTConfig{
-		Scheme: "http",
-		Host:   c.Address,
+		Scheme: addressUrl.Scheme,
+		Host:   addressUrl.Host,
 	})
 
+	cmsServer, err := cms.NewServer(ctx, cms.NewServerOptions().
+		WithMongoDatabase("iam").
+		WithMongoUsername(c.MongoUsername).
+		WithMongoPassword(c.MongoPassword).
+		WithMongoHosts([]string{"localhost:27017"}))
+	if err != nil {
+		panic(err)
+	}
+	router.PathPrefix("/apis/cms").Handler(cmsServer)
 	cmsClient := cms.NewClientSet(&rest.RESTConfig{
-		Scheme: "http",
-		Host:   c.Address,
+		Scheme: addressUrl.Scheme,
+		Host:   addressUrl.Host,
 	})
 
 	// WebApp
@@ -245,11 +246,6 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.Path("/settings/authclients/{id}/newsecret").HandlerFunc(webAppHandler.AuthClientNewSecret)
 	router.Path("/settings/authclients/{id}/delete").HandlerFunc(webAppHandler.DeleteAuthClient)
 
-	// Seed database for development
-	// TODO: if err := individuals.SeedDatabase(ctx, individualsStore); err != nil {
-	// panic(err)
-	// }
-
 	httpServer := &http.Server{
 		Addr:    ":9000",
 		Handler: router,
@@ -280,6 +276,10 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 			panic(err)
 		}
 	}()
+
+	if err := seed.Init(ctx, iamClient, cmsClient); err != nil {
+		panic(err)
+	}
 
 	return srv
 
