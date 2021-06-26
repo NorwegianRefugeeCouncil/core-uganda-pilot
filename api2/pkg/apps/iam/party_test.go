@@ -80,8 +80,10 @@ func (s *Suite) TestPartyList() {
 
 	// Holds the parties by PartyTypeID
 	byPartyTypeID := map[string][]*Party{}
+
 	// Holds the parties by PartyID
 	byPartyID := map[string][]*Party{}
+
 	// Holds the parties by PartyTypeID + PartyID
 	byPartyTypeIdAndPartyId := map[string][]*Party{}
 
