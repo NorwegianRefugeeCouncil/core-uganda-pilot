@@ -11,13 +11,14 @@ import (
 func (h *Server) PartyTypes(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
+	iamClient := h.IAMClient(ctx)
 
 	if req.Method == "POST" {
 		h.PostPartyType(ctx, &iam.PartyType{}, w, req)
 		return
 	}
 
-	partyTypes, err := h.iam.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
+	partyTypes, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -35,6 +36,8 @@ func (h *Server) PartyTypes(w http.ResponseWriter, req *http.Request) {
 func (h *Server) PartyType(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
+	iamClient := h.IAMClient(ctx)
+
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
 		err := fmt.Errorf("no id found in path")
@@ -45,7 +48,7 @@ func (h *Server) PartyType(w http.ResponseWriter, req *http.Request) {
 	var partyType = &iam.PartyType{}
 	if id != "new" {
 		var err error
-		partyType, err = h.iam.PartyTypes().Get(ctx, id)
+		partyType, err = iamClient.PartyTypes().Get(ctx, id)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -73,6 +76,8 @@ func (h *Server) PostPartyType(
 	req *http.Request,
 ) {
 
+	iamClient := h.IAMClient(ctx)
+
 	isNew := false
 	if len(partyType.ID) == 0 {
 		isNew = true
@@ -88,7 +93,7 @@ func (h *Server) PostPartyType(
 	partyType.IsBuiltIn = req.Form.Get("isBuiltIn") == "true"
 
 	if isNew {
-		created, err := h.iam.PartyTypes().Create(ctx, partyType)
+		created, err := iamClient.PartyTypes().Create(ctx, partyType)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -97,7 +102,7 @@ func (h *Server) PostPartyType(
 		w.WriteHeader(http.StatusSeeOther)
 		return
 	} else {
-		updated, err := h.iam.PartyTypes().Update(ctx, partyType)
+		updated, err := iamClient.PartyTypes().Update(ctx, partyType)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

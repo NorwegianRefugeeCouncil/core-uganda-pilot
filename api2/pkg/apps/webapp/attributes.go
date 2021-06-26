@@ -19,13 +19,15 @@ func (h *Server) Attributes(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	list, err := h.iam.Attributes().List(ctx, iam.AttributeListOptions{})
+	iamClient := h.IAMClient(ctx)
+
+	list, err := iamClient.Attributes().List(ctx, iam.AttributeListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	partyTypes, err := h.iam.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
+	partyTypes, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -56,6 +58,7 @@ func (h *Server) NewAttribute(w http.ResponseWriter, req *http.Request) {
 func (h *Server) Attribute(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
+	iamClient := h.IAMClient(ctx)
 
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
@@ -64,7 +67,7 @@ func (h *Server) Attribute(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	a, err := h.iam.Attributes().Get(ctx, id)
+	a, err := iamClient.Attributes().Get(ctx, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -89,6 +92,7 @@ func (h *Server) Attribute(w http.ResponseWriter, req *http.Request) {
 }
 
 func (h *Server) PostAttribute(ctx context.Context, attribute *iam.Attribute, w http.ResponseWriter, req *http.Request) {
+	iamClient := h.IAMClient(ctx)
 
 	if err := req.ParseForm(); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -155,14 +159,14 @@ func (h *Server) PostAttribute(ctx context.Context, attribute *iam.Attribute, w 
 
 	if isNew {
 		var err error
-		out, err = h.iam.Attributes().Create(ctx, attribute)
+		out, err = iamClient.Attributes().Create(ctx, attribute)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	} else {
 		var err error
-		out, err = h.iam.Attributes().Update(ctx, attribute)
+		out, err = iamClient.Attributes().Update(ctx, attribute)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

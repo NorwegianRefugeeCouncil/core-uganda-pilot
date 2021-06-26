@@ -13,25 +13,27 @@ import (
 func (h *Server) CaseTypes(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
+	cmsClient := h.CMSClient(ctx)
+	iamClient := h.IAMClient(ctx)
 
 	if req.Method == "POST" {
 		h.PostCaseType(ctx, &cms.CaseType{}, w, req)
 		return
 	}
 
-	caseTypes, err := h.cms.CaseTypes().List(ctx, cms.CaseTypeListOptions{})
+	caseTypes, err := cmsClient.CaseTypes().List(ctx, cms.CaseTypeListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	partyTypes, err := h.iam.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
+	partyTypes, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	teams, err := h.iam.Teams().List(ctx, iam.TeamListOptions{})
+	teams, err := iamClient.Teams().List(ctx, iam.TeamListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -53,6 +55,7 @@ func (h *Server) PostCaseType(
 	w http.ResponseWriter,
 	req *http.Request,
 ) {
+	cmsClient := h.CMSClient(ctx)
 
 	isNew := false
 	if len(caseType.ID) == 0 {
@@ -70,7 +73,7 @@ func (h *Server) PostCaseType(
 	caseType.TeamID = values.Get("teamId")
 
 	if isNew {
-		_, err := h.cms.CaseTypes().Create(ctx, caseType)
+		_, err := cmsClient.CaseTypes().Create(ctx, caseType)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -79,7 +82,7 @@ func (h *Server) PostCaseType(
 		w.WriteHeader(http.StatusSeeOther)
 		return
 	} else {
-		_, err := h.cms.CaseTypes().Update(ctx, caseType)
+		_, err := cmsClient.CaseTypes().Update(ctx, caseType)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -93,6 +96,8 @@ func (h *Server) PostCaseType(
 func (h *Server) CaseType(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
+	cmsClient := h.CMSClient(ctx)
+	iamClient := h.IAMClient(ctx)
 
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
@@ -113,19 +118,19 @@ func (h *Server) CaseType(w http.ResponseWriter, req *http.Request) {
 			return nil
 		}
 		var err error
-		caseType, err = h.cms.CaseTypes().Get(waitCtx, id)
+		caseType, err = cmsClient.CaseTypes().Get(waitCtx, id)
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
-		partyTypes, err = h.iam.PartyTypes().List(waitCtx, iam.PartyTypeListOptions{})
+		partyTypes, err = iamClient.PartyTypes().List(waitCtx, iam.PartyTypeListOptions{})
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
-		teamsData, err = h.iam.Teams().List(ctx, iam.TeamListOptions{})
+		teamsData, err = iamClient.Teams().List(ctx, iam.TeamListOptions{})
 		return err
 	})
 
@@ -151,14 +156,15 @@ func (h *Server) CaseType(w http.ResponseWriter, req *http.Request) {
 
 func (h *Server) NewCaseType(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
+	iamClient := h.IAMClient(ctx)
 
-	p, err := h.iam.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
+	p, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	teamsData, err := h.iam.Teams().List(ctx, iam.TeamListOptions{})
+	teamsData, err := iamClient.Teams().List(ctx, iam.TeamListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

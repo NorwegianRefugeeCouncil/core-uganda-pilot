@@ -12,8 +12,9 @@ import (
 func (h *Server) Teams(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
+	iamClient := h.IAMClient(ctx)
 
-	t, err := h.iam.Teams().List(ctx, iam.TeamListOptions{})
+	t, err := iamClient.Teams().List(ctx, iam.TeamListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -31,6 +32,7 @@ func (h *Server) Teams(w http.ResponseWriter, req *http.Request) {
 func (h *Server) Team(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
+	iamClient := h.IAMClient(ctx)
 
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
@@ -39,13 +41,13 @@ func (h *Server) Team(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	t, err := h.iam.Teams().Get(ctx, id)
+	t, err := iamClient.Teams().Get(ctx, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	m, err := h.iam.Memberships().List(ctx, iam.MembershipListOptions{
+	m, err := iamClient.Memberships().List(ctx, iam.MembershipListOptions{
 		TeamID: id,
 	})
 	if err != nil {
@@ -61,7 +63,7 @@ func (h *Server) Team(w http.ResponseWriter, req *http.Request) {
 	for _, item := range m.Items {
 		i := item
 		g.Go(func() error {
-			individual, err := h.iam.Parties().Get(ctx, i.IndividualID)
+			individual, err := iamClient.Parties().Get(ctx, i.IndividualID)
 			if err != nil {
 				return err
 			}

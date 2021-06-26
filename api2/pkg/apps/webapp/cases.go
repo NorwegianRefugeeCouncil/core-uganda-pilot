@@ -13,10 +13,12 @@ import (
 func (h *Server) Cases(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
+	cmsClient := h.CMSClient(ctx)
+	iamClient := h.IAMClient(ctx)
 
-	kases, err := h.cms.Cases().List(ctx, cms.CaseListOptions{})
-	caseTypes, err := h.cms.CaseTypes().List(ctx, cms.CaseTypeListOptions{})
-	partyList, err := h.iam.Parties().List(ctx, iam.PartyListOptions{})
+	kases, err := cmsClient.Cases().List(ctx, cms.CaseListOptions{})
+	caseTypes, err := cmsClient.CaseTypes().List(ctx, cms.CaseTypeListOptions{})
+	partyList, err := iamClient.Parties().List(ctx, iam.PartyListOptions{})
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -42,6 +44,8 @@ func (h *Server) Cases(w http.ResponseWriter, req *http.Request) {
 func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
+	cmsClient := h.CMSClient(ctx)
+	iamClient := h.IAMClient(ctx)
 
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
@@ -71,13 +75,13 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 			return nil
 		}
 		var err error
-		kase, err = h.cms.Cases().Get(waitCtx, id)
+		kase, err = cmsClient.Cases().Get(waitCtx, id)
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
-		partyList, err = h.iam.Parties().List(waitCtx, iam.PartyListOptions{})
+		partyList, err = iamClient.Parties().List(waitCtx, iam.PartyListOptions{})
 		return err
 	})
 
@@ -87,7 +91,7 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if id != "new" {
-		teamRes, err := h.iam.Teams().Get(ctx, kase.TeamID)
+		teamRes, err := iamClient.Teams().Get(ctx, kase.TeamID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -95,19 +99,19 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 		team = teamRes
 	}
 
-	party, err := h.iam.Parties().Get(ctx, kase.PartyID)
+	party, err := iamClient.Parties().Get(ctx, kase.PartyID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	kaseTypes, err = h.cms.CaseTypes().List(ctx, cms.CaseTypeListOptions{
+	kaseTypes, err = cmsClient.CaseTypes().List(ctx, cms.CaseTypeListOptions{
 		PartyTypeIDs: party.PartyTypeIDs,
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	referrals, err = h.cms.Cases().List(ctx, cms.CaseListOptions{
+	referrals, err = cmsClient.Cases().List(ctx, cms.CaseListOptions{
 		ParentID: kase.ID,
 	})
 	if err != nil {
@@ -118,7 +122,7 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 
 	var referralCaseType *cms.CaseType
 	if referralCaseTypeID := qry.Get("referralCaseTypeId"); len(referralCaseTypeID) > 0 {
-		referralCaseType, err = h.cms.CaseTypes().Get(ctx, referralCaseTypeID)
+		referralCaseType, err = cmsClient.CaseTypes().Get(ctx, referralCaseTypeID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -143,6 +147,8 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 func (h *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
+	cmsClient := h.CMSClient(ctx)
+	iamClient := h.IAMClient(ctx)
 
 	var caseTypes *cms.CaseTypeList
 	var p *iam.PartyList
@@ -151,7 +157,7 @@ func (h *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 
 	g.Go(func() error {
 		var err error
-		caseTypes, err = h.cms.CaseTypes().List(waitCtx, cms.CaseTypeListOptions{})
+		caseTypes, err = cmsClient.CaseTypes().List(waitCtx, cms.CaseTypeListOptions{})
 		return err
 	})
 
@@ -176,14 +182,14 @@ func (h *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 		PartyTypeID: partyTypeID,
 	}
 
-	p, err := h.iam.Parties().List(ctx, listOptions)
+	p, err := iamClient.Parties().List(ctx, listOptions)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
 	var team *iam.Team
 	if len(teamID) > 0 {
-		team, err = h.iam.Teams().Get(ctx, teamID)
+		team, err = iamClient.Teams().Get(ctx, teamID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
@@ -204,6 +210,8 @@ func (h *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 
 func (h *Server) PostCase(ctx context.Context, id string, w http.ResponseWriter, req *http.Request) {
 
+	cmsClient := h.CMSClient(ctx)
+
 	if err := req.ParseForm(); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -219,7 +227,7 @@ func (h *Server) PostCase(ctx context.Context, id string, w http.ResponseWriter,
 	var kase *cms.Case
 	if id == "" {
 		var err error
-		kase, err = h.cms.Cases().Create(ctx, &cms.Case{
+		kase, err = cmsClient.Cases().Create(ctx, &cms.Case{
 			CaseTypeID:  caseTypeId,
 			PartyID:     partyId,
 			Description: description,
@@ -233,7 +241,7 @@ func (h *Server) PostCase(ctx context.Context, id string, w http.ResponseWriter,
 		}
 	} else {
 		var err error
-		kase, err = h.cms.Cases().Update(ctx, &cms.Case{
+		kase, err = cmsClient.Cases().Update(ctx, &cms.Case{
 			ID:          id,
 			CaseTypeID:  caseTypeId,
 			PartyID:     partyId,

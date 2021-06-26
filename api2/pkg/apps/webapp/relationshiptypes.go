@@ -13,6 +13,8 @@ import (
 func (h *Server) RelationshipTypes(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
+	iamClient := h.IAMClient(ctx)
+
 	r := &iam.RelationshipType{}
 
 	if req.Method == "POST" {
@@ -20,7 +22,7 @@ func (h *Server) RelationshipTypes(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	relationshipTypes, err := h.iam.RelationshipTypes().List(ctx, iam.RelationshipTypeListOptions{})
+	relationshipTypes, err := iamClient.RelationshipTypes().List(ctx, iam.RelationshipTypeListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -36,8 +38,9 @@ func (h *Server) RelationshipTypes(w http.ResponseWriter, req *http.Request) {
 
 func (h *Server) NewRelationshipType(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
+	iamClient := h.IAMClient(ctx)
 
-	p, err := h.iam.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
+	p, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -54,6 +57,7 @@ func (h *Server) NewRelationshipType(w http.ResponseWriter, req *http.Request) {
 func (h *Server) RelationshipType(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
+	iamClient := h.IAMClient(ctx)
 
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
@@ -62,13 +66,13 @@ func (h *Server) RelationshipType(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	r, err := h.iam.RelationshipTypes().Get(ctx, id)
+	r, err := iamClient.RelationshipTypes().Get(ctx, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	p, err := h.iam.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
+	p, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -94,6 +98,8 @@ func (h *Server) PostRelationshipType(
 	w http.ResponseWriter,
 	req *http.Request,
 ) {
+
+	iamClient := h.IAMClient(ctx)
 
 	if err := req.ParseForm(); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -128,7 +134,7 @@ func (h *Server) PostRelationshipType(
 	}
 
 	if isNew {
-		out, err := h.iam.RelationshipTypes().Create(ctx, r)
+		out, err := iamClient.RelationshipTypes().Create(ctx, r)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -136,7 +142,7 @@ func (h *Server) PostRelationshipType(
 		w.Header().Set("Location", "/settings/relationshiptypes/"+out.ID)
 		w.WriteHeader(http.StatusSeeOther)
 	} else {
-		out, err := h.iam.RelationshipTypes().Update(ctx, r)
+		out, err := iamClient.RelationshipTypes().Update(ctx, r)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
