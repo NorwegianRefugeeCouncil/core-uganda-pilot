@@ -9,22 +9,8 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/auth"
 	"github.com/nrc-no/core-kafka/pkg/cases/cases"
 	"github.com/nrc-no/core-kafka/pkg/cases/casetypes"
-	"github.com/nrc-no/core-kafka/pkg/individuals"
-	"github.com/nrc-no/core-kafka/pkg/memberships"
 	"github.com/nrc-no/core-kafka/pkg/middleware"
-	"github.com/nrc-no/core-kafka/pkg/organizations"
-	"github.com/nrc-no/core-kafka/pkg/parties/attributes"
-	"github.com/nrc-no/core-kafka/pkg/parties/parties"
-	"github.com/nrc-no/core-kafka/pkg/parties/partytypes"
-	"github.com/nrc-no/core-kafka/pkg/parties/partytypeschemas"
-	"github.com/nrc-no/core-kafka/pkg/parties/relationships"
-	"github.com/nrc-no/core-kafka/pkg/parties/relationshiptypes"
-	"github.com/nrc-no/core-kafka/pkg/relationshipparties"
 	"github.com/nrc-no/core-kafka/pkg/sessionmanager"
-	"github.com/nrc-no/core-kafka/pkg/staff"
-	"github.com/nrc-no/core-kafka/pkg/staffmock"
-	"github.com/nrc-no/core-kafka/pkg/teamorganizations"
-	"github.com/nrc-no/core-kafka/pkg/teams"
 	"github.com/nrc-no/core-kafka/pkg/webapp"
 	"github.com/ory/hydra-client-go/client"
 	"github.com/spf13/pflag"
@@ -37,44 +23,19 @@ import (
 )
 
 type Server struct {
-	MongoClient               *mongo.Client
-	AttributeStore            *attributes.Store
-	AttributeHandler          *attributes.Handler
-	AttributeClient           *attributes.Client
-	IndividualStore           *individuals.Store
-	IndividualHandler         *individuals.Handler
-	IndividualClient          *individuals.Client
-	RelationshipTypeStore     *relationshiptypes.Store
-	RelationshipTypeHandler   *relationshiptypes.Handler
-	RelationshipTypeClient    *relationshiptypes.Client
-	RelationshipStore         *relationships.Store
-	RelationshipHandler       *relationships.Handler
-	RelationshipClient        *relationships.Client
-	PartyStore                *parties.Store
-	PartyHandler              *parties.Handler
-	PartyClient               *parties.Client
-	PartyTypeStore            *partytypes.Store
-	PartyTypeHandler          *partytypes.Handler
-	PartyTypeClient           *partytypes.Client
-	RelationshipPartiesClient *relationshipparties.Client
-	CaseTypeStore             *casetypes.Store
-	CaseTypeHandler           *casetypes.Handler
-	CaseTypeClient            *casetypes.Client
-	CaseStore                 *cases.Store
-	CaseHandler               *cases.Handler
-	CaseClient                *cases.Client
-	WebAppHandler             *webapp.Handler
-	HttpServer                *http.Server
-	TeamStore                 *teams.Store
-	TeamHandler               *teams.Handler
-	TeamClient                *teams.Client
-	MembershipHandler         *memberships.Handler
-	MembershipStore           *memberships.Store
-	membershipsClient         *memberships.Client
-	SessionManager            sessionmanager.Store
-	HydraPublicClient         *client.OryHydra
-	HydraAdminClient          *client.OryHydra
-	CredentialsClient         *auth.CredentialsClient
+	MongoClient       *mongo.Client
+	CaseTypeStore     *casetypes.Store
+	CaseTypeHandler   *casetypes.Handler
+	CaseTypeClient    *casetypes.Client
+	CaseStore         *cases.Store
+	CaseHandler       *cases.Handler
+	CaseClient        *cases.Client
+	WebAppHandler     *webapp.Handler
+	HttpServer        *http.Server
+	SessionManager    sessionmanager.Store
+	HydraPublicClient *client.OryHydra
+	HydraAdminClient  *client.OryHydra
+	CredentialsClient *auth.CredentialsClient
 }
 
 type Options struct {
@@ -135,21 +96,15 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 }
 
 type CompletedOptions struct {
-	KeycloakClientID     string
-	KeycloakClientSecret string
-	KeycloakBaseURL      string
-	KeycloakRealmName    string
-	MongoClient          *mongo.Client
-	TemplateDirectory    string
-	Address              string
-	MongoDatabase        string
-	SessionManager       sessionmanager.Store
-	HydraAdminClient     *client.OryHydra
-	HydraPublicClient    *client.OryHydra
-	CredentialsClient    *auth.CredentialsClient
+	*Options
+	MongoClient       *mongo.Client
+	SessionManager    sessionmanager.Store
+	HydraAdminClient  *client.OryHydra
+	HydraPublicClient *client.OryHydra
+	CredentialsClient *auth.CredentialsClient
 }
 
-func (o Options) Complete(ctx context.Context) (CompletedOptions, error) {
+func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 
 	pool := &redis.Pool{
 		MaxIdle: o.RedisMaxIdleConns,
@@ -202,18 +157,12 @@ func (o Options) Complete(ctx context.Context) (CompletedOptions, error) {
 	credentialsClient := auth.NewCredentialsClient(o.MongoDatabase, mongoClient)
 
 	completedOptions := CompletedOptions{
-		MongoClient:          mongoClient,
-		TemplateDirectory:    o.TemplateDirectory,
-		Address:              o.Address,
-		MongoDatabase:        o.MongoDatabase,
-		KeycloakClientSecret: o.KeycloakClientSecret,
-		KeycloakClientID:     o.KeycloakClientID,
-		KeycloakBaseURL:      o.KeycloakBaseURL,
-		KeycloakRealmName:    o.KeycloakRealmName,
-		HydraAdminClient:     hydraAdminClient,
-		HydraPublicClient:    hydraPublicCLient,
-		CredentialsClient:    credentialsClient,
-		SessionManager:       sm,
+		Options:           o,
+		MongoClient:       mongoClient,
+		HydraAdminClient:  hydraAdminClient,
+		HydraPublicClient: hydraPublicCLient,
+		CredentialsClient: credentialsClient,
+		SessionManager:    sm,
 	}
 	return completedOptions, nil
 }
@@ -225,137 +174,29 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.Use(middleware.UseLogging())
 	router.Use(c.SessionManager.LoadAndSave)
 
-	// Attributes
-	attributeStore := attributes.NewStore(c.MongoClient, c.MongoDatabase)
-	if err := attributes.Init(ctx, attributeStore); err != nil {
-		panic(err)
-	}
-	attributeHandler := attributes.NewHandler(attributeStore)
-	attributeClient := attributes.NewClient(c.Address)
-	router.Path("/apis/v1/attributes").Methods("GET").HandlerFunc(attributeHandler.List)
-	router.Path("/apis/v1/attributes/{id}").Methods("GET").HandlerFunc(attributeHandler.Get)
-	router.Path("/apis/v1/attributes/{id}").Methods("PUT").HandlerFunc(attributeHandler.Update)
-	router.Path("/apis/v1/attributes").Methods("POST").HandlerFunc(attributeHandler.Post)
-
-	// RelationshipTypes
-	relationshipTypeStore := relationshiptypes.NewStore(c.MongoClient, c.MongoDatabase)
-	if err := relationshiptypes.Init(ctx, relationshipTypeStore); err != nil {
-		panic(err)
-	}
-	relationshipTypeHandler := relationshiptypes.NewHandler(relationshipTypeStore)
-	relationshipTypeClient := relationshiptypes.NewClient(c.Address)
-	router.Path("/apis/v1/relationshiptypes").Methods("GET").HandlerFunc(relationshipTypeHandler.List)
-	router.Path("/apis/v1/relationshiptypes/{id}").Methods("GET").HandlerFunc(relationshipTypeHandler.Get)
-	router.Path("/apis/v1/relationshiptypes/{id}").Methods("PUT").HandlerFunc(relationshipTypeHandler.Put)
-	router.Path("/apis/v1/relationshiptypes").Methods("POST").HandlerFunc(relationshipTypeHandler.Post)
-
-	// Relationships
-	relationshipStore := relationships.NewStore(c.MongoClient, c.MongoDatabase)
-	relationshipHandler := relationships.NewHandler(relationshipStore)
-	relationshipClient := relationships.NewClient(c.Address)
-	router.Path("/apis/v1/relationships").Methods("GET").HandlerFunc(relationshipHandler.List)
-	router.Path("/apis/v1/relationships/{id}").Methods("GET").HandlerFunc(relationshipHandler.Get)
-	router.Path("/apis/v1/relationships/{id}").Methods("PUT").HandlerFunc(relationshipHandler.Put)
-	router.Path("/apis/v1/relationships").Methods("POST").HandlerFunc(relationshipHandler.Post)
-	router.Path("/apis/v1/relationships/{id}").Methods("DELETE").HandlerFunc(relationshipHandler.Delete)
-
-	// Parties
-	partyStore := parties.NewStore(c.MongoClient, c.MongoDatabase)
-	if err := parties.Init(ctx, partyStore); err != nil {
-		panic(err)
-	}
-	partyHandler := parties.NewHandler(partyStore)
-	partyClient := parties.NewClient(c.Address)
-	router.Path("/apis/v1/parties").Methods("GET").HandlerFunc(partyHandler.List)
-	router.Path("/apis/v1/parties/{id}").Methods("GET").HandlerFunc(partyHandler.Get)
-	router.Path("/apis/v1/parties/{id}").Methods("PUT").HandlerFunc(partyHandler.Put)
-	router.Path("/apis/v1/parties").Methods("POST").HandlerFunc(partyHandler.Post)
-
-	// Party Types
-	partyTypeStore := partytypes.NewStore(c.MongoClient, c.MongoDatabase)
-	if err := partytypes.Init(ctx, partyTypeStore); err != nil {
-		panic(err)
-	}
-	partyTypeHandler := partytypes.NewHandler(partyTypeStore)
-	partyTypeClient := partytypes.NewClient(c.Address)
-	router.Path("/apis/v1/partytypes").Methods("GET").HandlerFunc(partyTypeHandler.List)
-	router.Path("/apis/v1/partytypes/{id}").Methods("GET").HandlerFunc(partyTypeHandler.Get)
-	router.Path("/apis/v1/partytypes/{id}").Methods("PUT").HandlerFunc(partyTypeHandler.Put)
-	router.Path("/apis/v1/partytypes").Methods("POST").HandlerFunc(partyTypeHandler.Post)
-
-	// PartyTypeSchemas
-	partyTypeSchemaStore := partytypeschemas.NewStore(c.MongoClient, c.MongoDatabase)
-	partyTypeSchemaHandler := partytypeschemas.NewHandler(partyTypeSchemaStore)
-	// TOOD: partyTypeSchemaClient := partytypeschemas.NewClient(serverOptions.Address)
-	router.Path("/apis/v1/partytypeschemas").Methods("GET").HandlerFunc(partyTypeSchemaHandler.List)
-	router.Path("/apis/v1/partytypeschemas/{id}").Methods("GET").HandlerFunc(partyTypeSchemaHandler.Get)
-	router.Path("/apis/v1/partytypeschemas/{id}").Methods("PUT").HandlerFunc(partyTypeSchemaHandler.Put)
-	router.Path("/apis/v1/partytypeschemas").Methods("POST").HandlerFunc(partyTypeSchemaHandler.Post)
-
-	// Relationship <> Parties
-	relationshipPartiesStore := relationshipparties.NewStore(partyStore)
-	relationshipPartiesHandler := relationshipparties.NewHandler(relationshipPartiesStore)
-	relationshipPartiesClient := relationshipparties.NewClient(c.Address)
-	router.Path("/apis/v1/relationshipparties/picker").Methods("GET").HandlerFunc(relationshipPartiesHandler.PickParty)
-
-	// individuals
-	individualsStore := individuals.NewStore(c.MongoClient, c.MongoDatabase)
-	if err := individuals.Init(ctx, attributeStore, partyStore); err != nil {
-		panic(err)
-	}
-	individualHandler := individuals.NewHandler(individualsStore)
-	individualClient := individuals.NewClient(c.Address)
-	if err := individuals.SeedDatabase(ctx, individualsStore); err != nil {
-		panic(err)
-	}
-	router.Path("/apis/v1/individuals").Methods("GET").HandlerFunc(individualHandler.List)
-	router.Path("/apis/v1/individuals/{id}").Methods("GET").HandlerFunc(individualHandler.Get)
-	router.Path("/apis/v1/individuals/{id}").Methods("PUT").HandlerFunc(individualHandler.Update)
-	router.Path("/apis/v1/individuals").Methods("POST").HandlerFunc(individualHandler.Create)
-
-	// Teams
-	teamStore := teams.NewStore(partyStore)
-	if err := teams.Init(ctx, teamStore, partyTypeStore, attributeStore); err != nil {
-		panic(err)
-	}
-	teamHandler := teams.NewHandler(teamStore)
-	teamClient := teams.NewClient(c.Address)
-	router.Path("/apis/v1/teams").Methods("GET").HandlerFunc(teamHandler.List)
-	router.Path("/apis/v1/teams/{id}").Methods("GET").HandlerFunc(teamHandler.Get)
-	router.Path("/apis/v1/teams/{id}").Methods("PUT").HandlerFunc(teamHandler.Put)
-	router.Path("/apis/v1/teams").Methods("POST").HandlerFunc(teamHandler.Post)
-
-	// Staff
-	staffStore := staff.NewStore(relationshipStore)
-	if err := staff.Init(ctx, relationshipTypeStore); err != nil {
+	iamServer, err := iam.NewServer(
+		ctx,
+		iam.NewServerOptions().
+			WithMongoDatabase("iam").
+			WithMongoUsername(c.MongoUsername).
+			WithMongoPassword(c.MongoPassword).
+			WithMongoHosts([]string{"localhost:27017"}))
+	if err != nil {
 		panic(err)
 	}
 
-	// Memberships
-	membershipStore := memberships.NewStore(relationshipStore)
-	membershipHandler := memberships.NewHandler(membershipStore)
-	membershipClient := memberships.NewClient(c.Address)
-	if err := memberships.Init(ctx, relationshipTypeStore); err != nil {
-		panic(err)
-	}
-	router.Path("/apis/v1/memberships").Methods("GET").HandlerFunc(membershipHandler.List)
-	router.Path("/apis/v1/memberships/{id}").Methods("GET").HandlerFunc(membershipHandler.Get)
-	router.Path("/apis/v1/memberships").Methods("POST").HandlerFunc(membershipHandler.Post)
+	router.Path("/apis/iam").Handler(iamServer)
 
-	// Organizations
-	if err := organizations.Init(ctx, partyTypeStore, attributeStore, partyStore); err != nil {
-		panic(err)
-	}
-
+	// TODO
 	// TeamOrganization
-	if err := teamorganizations.Init(ctx, relationshipTypeStore, relationshipStore); err != nil {
-		panic(err)
-	}
+	// if err := teamorganizations.Init(ctx, relationshipTypeStore, relationshipStore); err != nil {
+	//	panic(err)
+	// }
 
 	// Mock staff
-	if err := staffmock.Init(ctx, partyStore, staffStore, membershipStore); err != nil {
-		panic(err)
-	}
+	// TODO: if err := staffmock.Init(ctx, partyStore, staffStore, membershipStore); err != nil {
+	//	panic(err)
+	// }
 
 	// Cases
 	caseStore := cases.NewStore(c.MongoClient, c.MongoDatabase)
@@ -394,12 +235,10 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		webAppOptions,
 		caseTypeClient,
 		caseClient,
-		relationshipPartiesClient,
 		c.HydraAdminClient,
 		c.HydraPublicClient,
 		c.SessionManager,
 		c.CredentialsClient,
-		partyStore,
 		iamClient,
 	)
 	if err != nil {
@@ -435,9 +274,9 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.Path("/login").Methods("POST").HandlerFunc(webAppHandler.PostLogin)
 
 	// Seed database for development
-	if err := individuals.SeedDatabase(ctx, individualsStore); err != nil {
-		panic(err)
-	}
+	// TODO: if err := individuals.SeedDatabase(ctx, individualsStore); err != nil {
+	// panic(err)
+	// }
 
 	httpServer := &http.Server{
 		Addr:    ":9000",
@@ -445,44 +284,19 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	}
 
 	srv := &Server{
-		MongoClient:               c.MongoClient,
-		AttributeStore:            attributeStore,
-		AttributeHandler:          attributeHandler,
-		AttributeClient:           attributeClient,
-		IndividualStore:           individualsStore,
-		IndividualHandler:         individualHandler,
-		IndividualClient:          individualClient,
-		RelationshipTypeStore:     relationshipTypeStore,
-		RelationshipTypeHandler:   relationshipTypeHandler,
-		RelationshipTypeClient:    relationshipTypeClient,
-		RelationshipStore:         relationshipStore,
-		RelationshipHandler:       relationshipHandler,
-		RelationshipClient:        relationshipClient,
-		PartyStore:                partyStore,
-		PartyHandler:              partyHandler,
-		PartyClient:               partyClient,
-		PartyTypeStore:            partyTypeStore,
-		PartyTypeHandler:          partyTypeHandler,
-		PartyTypeClient:           partyTypeClient,
-		RelationshipPartiesClient: relationshipPartiesClient,
-		CaseTypeStore:             caseTypeStore,
-		CaseTypeHandler:           caseTypeHandler,
-		CaseTypeClient:            caseTypeClient,
-		CaseStore:                 caseStore,
-		CaseHandler:               caseHandler,
-		CaseClient:                caseClient,
-		TeamStore:                 teamStore,
-		TeamHandler:               teamHandler,
-		TeamClient:                teamClient,
-		MembershipStore:           membershipStore,
-		MembershipHandler:         membershipHandler,
-		membershipsClient:         membershipClient,
-		WebAppHandler:             webAppHandler,
-		SessionManager:            c.SessionManager,
-		HydraPublicClient:         c.HydraPublicClient,
-		HydraAdminClient:          c.HydraAdminClient,
-		CredentialsClient:         c.CredentialsClient,
-		HttpServer:                httpServer,
+		MongoClient:       c.MongoClient,
+		CaseTypeStore:     caseTypeStore,
+		CaseTypeHandler:   caseTypeHandler,
+		CaseTypeClient:    caseTypeClient,
+		CaseStore:         caseStore,
+		CaseHandler:       caseHandler,
+		CaseClient:        caseClient,
+		WebAppHandler:     webAppHandler,
+		SessionManager:    c.SessionManager,
+		HydraPublicClient: c.HydraPublicClient,
+		HydraAdminClient:  c.HydraAdminClient,
+		CredentialsClient: c.CredentialsClient,
+		HttpServer:        httpServer,
 	}
 
 	go func() {

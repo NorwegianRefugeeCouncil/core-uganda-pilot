@@ -34,12 +34,10 @@ func NewHandler(
 	options Options,
 	CaseTypeClient *casetypes.Client,
 	CaseClient *cases.Client,
-	RelationshipPartiesClient *relationshipparties.Client,
 	hydraAdminClient *client.OryHydra,
 	hydraPublicClient *client.OryHydra,
 	sessionManager sessionmanager.Store,
 	credentialsClient *auth.CredentialsClient,
-	partyStore *parties.Store,
 	iamClient *iam.ClientSet,
 ) (*Handler, error) {
 
@@ -55,15 +53,13 @@ func NewHandler(
 	fmt.Println(e)
 
 	h := &Handler{
-		caseTypeClient:            CaseTypeClient,
-		caseClient:                CaseClient,
-		relationshipPartiesClient: RelationshipPartiesClient,
-		renderFactory:             renderFactory,
-		hydraAdminClient:          hydraAdminClient,
-		hydraPublicClient:         hydraPublicClient,
-		sessionManager:            sessionManager,
-		credentialsClient:         credentialsClient,
-		partyStore:                partyStore,
+		caseTypeClient:    CaseTypeClient,
+		caseClient:        CaseClient,
+		renderFactory:     renderFactory,
+		hydraAdminClient:  hydraAdminClient,
+		hydraPublicClient: hydraPublicClient,
+		sessionManager:    sessionManager,
+		credentialsClient: credentialsClient,
 	}
 	return h, nil
 }
