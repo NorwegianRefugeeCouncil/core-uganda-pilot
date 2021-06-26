@@ -35,6 +35,11 @@ func (s *Server) WithAuth(ctx context.Context) func(handler http.Handler) http.H
 
 			token := s.sessionManager.GetString(req.Context(), "access-token")
 
+			if len(token) == 0 {
+				http.Redirect(w, req, "/login", http.StatusTemporaryRedirect)
+				return
+			}
+
 			res, err := s.HydraAdmin.IntrospectOAuth2Token(&admin.IntrospectOAuth2TokenParams{
 				Token:      token,
 				Context:    req.Context(),
