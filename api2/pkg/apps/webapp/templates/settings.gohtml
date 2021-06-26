@@ -1,0 +1,58 @@
+{{define "settings"}}
+    <!doctype html>
+    <html lang="en">
+    {{template "head"}}
+    <body class="bg-light">
+
+    {{template "navbar"}}
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+{{/*                <a class="card text-dark text-decoration-none shadow-sm mb-3" href="/settings/countries">*/}}
+{{/*                    <div class="card-body">*/}}
+{{/*                        Countries, Areas and Offices Settings*/}}
+{{/*                        <small class="d-block text-muted">*/}}
+{{/*                            Manage settings for the served countries and areas*/}}
+{{/*                        </small>*/}}
+{{/*                    </div>*/}}
+{{/*                </a>*/}}
+                <a class="card text-dark text-decoration-none shadow-sm mb-3" href="/settings/attributes">
+                    <div class="card-body">
+                        Attribute Settings
+                        <small class="d-block text-muted">
+                            Manage custom attributes that can be attached to Individuals, Households or Groups
+                        </small>
+                    </div>
+                </a>
+                <a class="card text-dark text-decoration-none shadow-sm mb-3" href="/settings/partytypes">
+                    <div class="card-body">
+                        Entity Types Settings
+                        <small class="d-block text-muted">
+                            Manage and define entity types
+                        </small>
+                    </div>
+                </a>
+                <a class="card text-dark text-decoration-none shadow-sm mb-3" href="/settings/casetypes">
+                    <div class="card-body">
+                        Case Type Settings
+                        <small class="d-block text-muted">
+                            View, edit and define case types
+                        </small>
+                    </div>
+                </a>
+                <a class="card text-dark text-decoration-none shadow-sm mb-3" href="/settings/relationshiptypes">
+                    <div class="card-body">
+                        Relationships Settings
+                        <small class="d-block text-muted">
+                            Manage relationships that Individuals and Groups can have between each other
+                        </small>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    </body>
+    </html>
+{{end}}

@@ -1,0 +1,169 @@
+{{define "case"}}
+    {{$caseId := .Case.ID}}
+    {{$caseTypes := .CaseTypes }}
+    {{$partyId := .Case.PartyID}}
+    {{$party := .Parties.FindByID $partyId}}
+    {{$caseTypeId := .Case.CaseTypeID}}
+    <!doctype html>
+    <html lang="en">
+    {{template "head"}}
+    <body>
+    {{template "navbar"}}
+    {{template "case_nav" .Case }}
+
+    <div class="container mt-4">
+
+        <div class="row">
+            <div class="col">
+
+                {{if .Case.ParentID}}
+                    <div class="p-3 bg-light mb-3 shadow-sm">
+                        <span>Referred from </span>
+                        <a href="/cases/{{.Case.ParentID}}">
+                            {{$caseType := $caseTypes.FindByID $caseTypeId}}
+                            {{$caseType.Name}}
+                        </a>
+                        <span> by </span>
+                        <span>&lt;User&gt;</span>
+                    </div>
+                {{end}}
+
+                {{range $caseTypes.Items}}
+                    {{if eq .ID $caseTypeId}}
+                        <input name="case-type" type="hidden" value="{{.ID}}"/>
+                        <h2>{{.Name}}</h2>
+                    {{end}}
+                {{end}}
+                <h4><a class="d-block mb-3" href="/teams/{{.Team.ID}}">Open by {{.Team.Name}}</a></h4>
+                <a class="d-block mb-3" href="/individuals/{{$partyId}}">
+                    {{$party.String}}
+                </a>
+
+
+                <h3 class="mb-3">
+                    {{if .Case.Done}}
+                        <span class="badge rounded-pill bg-danger">Closed</span>
+                    {{else}}
+                        <span class="badge rounded-pill bg-success">Open</span>
+                    {{end}}
+                </h3>
+
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <form action="/cases/{{$caseId}}" method="post">
+
+                    <div class="form-floating mb-3">
+                        <textarea id="description-textarea"
+                                  rows="20"
+                                  class="form-control"
+                                  name="description"
+                                  data-cy="description"
+                                  {{ if .ReferralCaseType}}disabled{{end}}
+                                  style="height: 100px">{{if .Case}}{{.Case.Description}}{{end}}</textarea>
+                        <label for="description-textarea">Description</label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input id="done-input"
+                               class="form-check-input"
+                               type="checkbox"
+                               {{ if .ReferralCaseType}}disabled{{end}}
+                               name="done"
+                               data-cy="done-check"
+                                {{if .Case.Done}}checked{{end}}>
+                        <label class="form-check-label" for="done-input">
+                            Done
+                        </label>
+                    </div>
+                    <button class="mb-5 btn btn-primary"
+                            type="submit"
+                            {{ if .ReferralCaseType}}disabled{{end}}>
+                        Save
+                    </button>
+                </form>
+                {{if .Referrals}}
+                    <h4>Referrals</h4>
+                    <ul class="list-group mb-3">
+                        {{if .Referrals.Items}}
+                            {{ range .Referrals.Items }}
+                                {{$caseType := $caseTypes.FindByID .CaseTypeID}}
+                                {{if $caseType}}
+                                    <a class="list-group-item list-group-item-action d-flex align-items-center"
+                                       href="/cases/{{.ID}}">
+                                        <div>{{if $caseType}}{{$caseType.Name}}{{end}}</div>
+                                        <div style="flex-grow: 1"></div>
+                                        {{if .Done}}
+                                            <span class="badge rounded-pill bg-danger">Closed</span>
+                                        {{else}}
+                                            <span class="badge rounded-pill bg-success">Open</span>
+                                        {{end}}
+                                    </a>
+                                {{end}}
+                            {{ end }}
+                        {{else}}
+                            <p class="bg-light p-3 text-muted">This case has not been referred</p>
+                        {{end}}
+                    </ul>
+
+                {{end}}
+
+                {{ if .ReferralCaseType}}
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <form action="/cases" method="post">
+                                <div class="form-floating mb-3">
+                                    <input type="hidden" name="caseTypeId" value="{{.ReferralCaseType.ID}}">
+                                    <select
+                                            id="referral-case-type"
+                                            class="form-select"
+                                            disabled
+                                    >
+                                        <option>{{ .ReferralCaseType.Name }}</option>
+                                    </select>
+                                    <label for="referral-case-type">Referral Case Type</label>
+                                </div>
+                                <input type="hidden" name="partyId" value="{{$partyId}}">
+                                <input type="hidden" name="parentId" value="{{.Case.ID}}">
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Description</label>
+                                    <textarea
+                                            autofocus
+                                            id="description"
+                                            name="description"
+                                            class="form-control"
+                                            rows="3"></textarea>
+                                </div>
+                                <button class="btn btn-primary" type="submit">Submit referral</button>
+                                <a href="/cases/{{.Case.ID}}" class="btn btn-outline-secondary"
+                                   type="submit">Cancel</a>
+                            </form>
+                        </div>
+                    </div>
+
+                {{else}}
+                    <div class="dropdown mb-3">
+                        <button class="btn btn-primary dropdown-toggle"
+                                type="button"
+                                id="referral-dropdown"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                            Refer this case
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="referral-dropdown">
+                            {{ range .CaseTypes.Items }}
+                                <li><a class="dropdown-item"
+                                       href="/cases/{{$caseId}}?referralCaseTypeId={{.ID}}">{{.Name}}</a>
+                                </li>
+                            {{end}}
+                        </ul>
+                    </div>
+
+                {{end}}
+            </div>
+        </div>
+    </div>
+
+    </body>
+    </html>
+{{end}}

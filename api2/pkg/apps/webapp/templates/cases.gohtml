@@ -1,0 +1,69 @@
+{{define "cases"}}
+    <!doctype html>
+    <html lang="en">
+    {{template "head"}}
+    <style>
+        td:first-child, th:first-child {
+            padding-left: 1rem;
+        }
+
+        td, th {
+            padding-top: 1rem !important;
+            padding-bottom: 1rem !important;
+        }
+    </style>
+    <body>
+    {{template "navbar"}}
+    {{template "case_nav"}}
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+                <a href='/cases/new' class='btn btn-primary mb-3'>Open New Case</a>
+                <div class="card">
+                    <div class="card-body p-0">
+
+
+                        <table class="table table-hover">
+                            <thead>
+                            <tr class="border-0 bg-light border-bottom">
+                                <th class="border-0 fw-normal" scope="col" style="width: 3rem"><i
+                                            class="bi bi-record-circle"></i></th>
+                                <th class="border-0 fw-normal" scope="col">Case Type</th>
+                                <th class="border-0 fw-normal" scope="col">Party</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{ if .Cases.Items}}
+                                {{$caseTypes := .CaseTypes}}
+                                {{$parties := .Parties}}
+                                {{ range .Cases.Items }}
+                                    <tr onclick="window.location.href = '/cases/{{.ID}}'" style="cursor: pointer;">
+                                        {{$casetype := $caseTypes.FindByID .CaseTypeID}}
+                                        <td style="width: 3rem">
+                                            {{if .Done}}
+                                                <i class="bi bi-check-circle"></i>
+                                            {{else}}
+                                                <i class="bi bi-circle"></i>
+                                            {{end}}
+                                        </td>
+                                        <td class="{{if .Done}}text-muted{{else}}fw-bold{{end}}">{{if $casetype}}{{$casetype.Name}}{{end}}</td>
+                                        {{$party := $parties.FindByID .PartyID}}
+                                        <td class="{{if .Done}}text-muted{{end}}">{{if $party}}{{$party.String}}{{end}}</td>
+                                    </tr>
+                                {{end}}
+                            {{else}}
+                                <tr>
+                                    <td colspan="3">No cases found</td>
+                                </tr>
+                            {{end}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
+    </html>
+
+{{end}}

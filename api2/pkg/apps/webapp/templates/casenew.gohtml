@@ -1,0 +1,90 @@
+{{define "casenew"}}
+    <!doctype html>
+    <html lang="en">
+    {{template "head"}}
+    <body class="bg-light">
+    {{template "navbar"}}
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Create Case</h4>
+                <form id="form" action="/cases" method="post">
+                    <div class="form-floating mb-3">
+                        <select
+                                id="case-type"
+                                class="form-select"
+                                name="caseTypeId"
+                                data-cy="casetype-select"
+                        >
+
+                            {{if .CaseTypes}}
+                                <option {{if not $.CaseTypeID}}selected{{end}} value="" hidden="hidden">Choose</option>
+                                {{range .CaseTypes.Items}}
+                                    <option value="{{.ID}}" data-cy="casetype-option" {{if eq .ID $.CaseTypeID}}selected{{end}}>{{.Name}}</option>
+                                {{end}}
+                            {{else}}
+                                <option selected disabled>No case types defined</option>
+                            {{end}}
+
+
+                        </select>
+                        <label for="case-type">Select Case Type</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <select disabled id="team" class="form-select" name="teamIdSelect">
+                            {{if .Team}}
+                                <option selected value="{{.Team.ID}}">{{.Team.Name}}</option>
+                            {{else}}
+                                <option selected disabled>No parties defined</option>
+                            {{end}}
+                        </select>
+                        <label for="team">Corresponding Team</label>
+                    </div>
+                    {{if .Team}}
+                    <input id="teamId" name="teamId" type="hidden" value="{{.Team.ID}}"/>
+                    {{ end }}
+                    <div class="form-floating mb-3">
+                        <select id="party" class="form-select" name="partyId" data-cy="party-select">
+                            {{if .Parties}}
+                                <option {{if not $.PartyID}}selected{{end}}></option>
+                                {{range .Parties.Items}}
+                                    <option value="{{.ID}}" data-cy="party-option" {{if eq .ID $.PartyID}}selected{{end}}>{{.}}</option>
+                                {{end}}
+                            {{else}}
+                                <option selected disabled>No parties defined</option>
+                            {{end}}
+                        </select>
+                        <label for="party">Select Party</label>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea
+                                {{if and $.PartyID $.CaseTypeID}}autofocus{{end}}
+                                id="description"
+                                name="description"
+                                class="form-control"
+                                rows="3"
+                                data-cy="description"
+                        ></textarea>
+                    </div>
+                    <button class="btn btn-primary" type="submit">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        const caseTypeSelect = document.querySelector("#case-type");
+        caseTypeSelect.onchange = (event) => {
+            const caseTypeId = event.target.value;
+            if (caseTypeId === "") {
+                return;
+            }
+            window.location.href = `/cases/new?caseTypeId=${caseTypeId}`
+        }
+
+    </script>
+    </body>
+    </html>
+{{end}}

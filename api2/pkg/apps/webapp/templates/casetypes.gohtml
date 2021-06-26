@@ -1,0 +1,38 @@
+{{define "casetypes"}}
+    <!doctype html>
+    <html lang="en">
+    {{template "head"}}
+    <style>
+        .card {
+            transition: border ease-in-out 250ms;
+        }
+        .card:hover {
+            border-color: var(--bs-blue);
+        }
+    </style>
+    <body class="bg-light">
+    {{template "navbar"}}
+    <div class="container mt-4">
+        <a href='/settings/casetypes/new' class='btn btn-primary mb-3'>Define new case type</a>
+        {{ if .CaseTypes}}
+            <ul class="list-group mb-3">
+                {{ range .CaseTypes.Items }}
+                    <a class="card mb-3 shadow-sm text-dark text-decoration-none"
+                       href="/settings/casetypes/{{.ID}}"
+                       data-cy="casetype"
+                    >
+                        <div class="card-body">
+                            {{$partyType := $.PartyTypes.FindByID .PartyTypeID}}
+                            {{$team := $.Teams.FindByID .TeamID}}
+                            <div class="text-muted"><small>{{$partyType.Name}} &mdash; {{$team.Name}}</small></div>
+                            {{.Name}}
+                        </div>
+                    </a>
+                {{end}}
+            </ul>
+        {{end}}
+    </div>
+    </body>
+    </html>
+
+{{end}}
