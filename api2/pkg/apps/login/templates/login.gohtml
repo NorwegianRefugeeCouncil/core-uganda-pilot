@@ -1,0 +1,35 @@
+{{define "login"}}
+    <!doctype html>
+    <html lang="en">
+    {{template "head"}}
+    <body class="bg-light">
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col col-md-6 col-md-offset-3">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <form action="/auth/login" method="post">
+                            <input type="hidden" name="login_challenge" value="{{.Challenge}}">
+                            <label for="email">Email</label>
+                            <input type="text" class="form-control mb-3" id="email" name="email" autofocus/>
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control mb-3" id="password" name="password"/>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" name="remember_me"
+                                       value="true"
+                                       id="remember_me">
+                                <label class="form-check-label" for="remember_me">
+                                    Remember me
+                                </label>
+                            </div>
+                            <button class="btn btn-primary">Login</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
+    </html>
+{{end}}

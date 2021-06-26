@@ -1,0 +1,29 @@
+{{define "consent"}}
+    <!doctype html>
+    <html lang="en">
+    {{template "head"}}
+    <body class="bg-light">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col col-md-6 col-md-offset-3">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <form action="/auth/consent" method="post">
+                            <input type="hidden" name="consent_challenge" value="{{.ConsentChallenge}}">
+                            <p>{{.ConsentMessage}}</p>
+                            <ul>
+                                {{range .RequestedScopes}}
+                                    <input type="hidden" name="grant_scope" value="{{.}}">
+                                    <li>{{.}}</li>
+                                {{end}}
+                            </ul>
+                            <button class="btn btn-primary">Login</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
+    </html>
+{{end}}

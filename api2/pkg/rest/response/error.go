@@ -1,5 +1,0 @@
-package response
-
-func ErrorResponse() {
-
-}

@@ -2,9 +2,6 @@ package testing
 
 import (
 	"context"
-	"fmt"
-	"github.com/nrc-no/core-kafka/pkg/auth"
-	"github.com/nrc-no/core-kafka/pkg/keycloak"
 	"github.com/nrc-no/core-kafka/pkg/server"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -48,19 +45,6 @@ func (s *Suite) SetupSuite() {
 	}
 
 	s.server = completedConfig.New(s.ctx)
-
-	token, err := s.server.KeycloakClient.GetToken(keycloak.GetTokenOptions{
-		GrantType: "password",
-		Password:  "admin",
-		Username:  "admin",
-	})
-	if !assert.NoError(s.T(), err) {
-		return
-	}
-
-	s.ctx = context.WithValue(s.ctx, auth.AccessTokenKey, token)
-
-	fmt.Println(token)
 
 }
 

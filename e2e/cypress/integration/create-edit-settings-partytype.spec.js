@@ -9,9 +9,8 @@ describe("Create & edit partytype", function () {
             cy.visit('/settings/partytypes/new')
             cy.get('input[name=name]').type(mockText)
             cy.get('input[name=isBuiltIn]').check()
-
-
             cy.get('button').contains('Save').click()
+            cy.wait(500)
         })
         it("saved the partytype", () => {
             cy.visit('/settings/partytypes')

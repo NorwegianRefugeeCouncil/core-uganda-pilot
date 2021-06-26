@@ -7,4 +7,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="rxjs" level="application" />
   </component>
+  <component name="SonarLintModuleSettings">
+    <option name="sqPathPrefix" value="api2" />
+  </component>
 </module>
