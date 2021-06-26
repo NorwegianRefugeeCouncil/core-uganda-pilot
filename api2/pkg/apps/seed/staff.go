@@ -1,10 +1,7 @@
 package seed
 
 import (
-	"context"
 	"github.com/nrc-no/core-kafka/pkg/apps/iam"
-	"github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/mongo"
 	"strings"
 )
 
@@ -136,7 +133,7 @@ func staf(id string, individual iam.Party) *iam.Staff {
 
 var mbships []*iam.Membership
 
-func mbship(id string, individual iam.Party, team Team) *iam.Membership {
+func mbship(id string, individual iam.Party, team iam.Team) *iam.Membership {
 	m := &iam.Membership{
 		ID:           id,
 		TeamID:       team.ID,
@@ -144,44 +141,4 @@ func mbship(id string, individual iam.Party, team Team) *iam.Membership {
 	}
 	mbships = append(mbships, m)
 	return m
-}
-
-func Init(
-	ctx context.Context,
-	partyStore *parties.Store,
-	staffStore *staff.Store,
-	membershipStore *memberships.Store,
-) error {
-	logger := logrus.WithContext(ctx).WithField("logger", "staffmock.Init")
-	for _, person := range people {
-		logger.Infof("initializing mock party %#v", person)
-		if err := partyStore.Create(ctx, person); err != nil {
-			if !mongo.IsDuplicateKeyError(err) {
-				logger.WithError(err).Errorf("failed to initialize mock party %s", person)
-				return err
-			}
-			if err := partyStore.Update(ctx, person); err != nil {
-				logger.WithError(err).Errorf("failed to update mock party %s", person)
-				return err
-			}
-		}
-	}
-
-	for _, s := range staffs {
-		logger.Infof("initializing mock staff %#v", s)
-		if err := staffStore.Create(ctx, s); err != nil {
-			logger.WithError(err).Errorf("failed to initialize mock staff: %#v", s)
-			return err
-		}
-	}
-
-	for _, membership := range mbships {
-		logger.Infof("initializing mock membership %#v", membership)
-		if err := membershipStore.Create(ctx, membership); err != nil {
-			logger.WithError(err).Errorf("failed to initialize mock membership: %#v", membership)
-			return err
-		}
-	}
-
-	return nil
 }
