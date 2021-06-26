@@ -10,7 +10,6 @@ import (
 	"github.com/nrc-no/core-kafka/pkg/apps/seed"
 	webapp2 "github.com/nrc-no/core-kafka/pkg/apps/webapp"
 	"github.com/nrc-no/core-kafka/pkg/middleware"
-	"github.com/nrc-no/core-kafka/pkg/rest"
 	"github.com/ory/hydra-client-go/client"
 	"github.com/spf13/pflag"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -139,12 +138,6 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	// Add logging middleware
 	router.Use(middleware.UseLogging())
 
-	// Parse listen address
-	addressUrl, err := url.Parse(c.Address)
-	if err != nil {
-		panic(err)
-	}
-
 	// Create IAM Server
 	iamServer, err := iam.NewServer(
 		ctx,
@@ -160,10 +153,6 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		panic(err)
 	}
 	router.PathPrefix("/apis/iam").Handler(iamServer)
-	iamClient := iam.NewClientSet(&rest.RESTConfig{
-		Scheme: addressUrl.Scheme,
-		Host:   addressUrl.Host,
-	})
 
 	loginOptions := login.NewServerOptions()
 	loginOptions.MongoUsername = c.MongoUsername
@@ -190,10 +179,6 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		panic(err)
 	}
 	router.PathPrefix("/apis/cms").Handler(cmsServer)
-	cmsClient := cms.NewClientSet(&rest.RESTConfig{
-		Scheme: addressUrl.Scheme,
-		Host:   addressUrl.Host,
-	})
 
 	// Create Webapp
 	// WebApp
@@ -207,8 +192,6 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		webAppOptions,
 		c.HydraAdminClient,
 		c.HydraPublicClient,
-		iamClient,
-		cmsClient,
 	)
 	if err != nil {
 		panic(err)

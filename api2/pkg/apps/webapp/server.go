@@ -25,8 +25,6 @@ type Server struct {
 	hydraPublicClient *client.OryHydra
 	renderFactory     *RendererFactory
 	sessionManager    sessionmanager.Store
-	iam               iam.Interface
-	cms               cms.Interface
 	OauthClientID     string
 	OauthClientSecret string
 	router            *mux.Router
@@ -45,8 +43,6 @@ func NewServer(
 	options ServerOptions,
 	hydraAdminClient *client.OryHydra,
 	hydraPublicClient *client.OryHydra,
-	iamClient *iam.ClientSet,
-	cmsClient *cms.ClientSet,
 ) (*Server, error) {
 
 	ctx := context.Background()
@@ -130,8 +126,6 @@ func NewServer(
 		hydraPublicClient: hydraPublicClient,
 		renderFactory:     renderFactory,
 		sessionManager:    sm,
-		iam:               iamClient,
-		cms:               cmsClient,
 		login:             loginClient,
 		OauthClientID:     clientId,
 		OauthClientSecret: clientSecret,
