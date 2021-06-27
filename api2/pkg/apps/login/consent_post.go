@@ -1,6 +1,7 @@
 package login
 
 import (
+	"github.com/nrc-no/core-kafka/pkg/apps/iam"
 	"github.com/ory/hydra-client-go/client/admin"
 	"github.com/ory/hydra-client-go/models"
 	"net/http"
@@ -23,12 +24,33 @@ func (s *Server) PostConsent(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	subject := consentGetResp.GetPayload().Subject
+	individual, err := s.iam.Individuals().Get(req.Context(), subject)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	givenName := individual.Get(iam.FirstNameAttribute.ID)
+	familyName := individual.Get(iam.LastNameAttribute.ID)
+
 	consentAcceptResp, err := s.HydraAdmin.AcceptConsentRequest(admin.NewAcceptConsentRequestParams().
 		WithContext(req.Context()).
 		WithConsentChallenge(consentChallenge).
 		WithBody(&models.AcceptConsentRequest{
 			GrantScope:               req.Form["grant_scope"],
 			GrantAccessTokenAudience: consentGetResp.GetPayload().RequestedAccessTokenAudience,
+			Remember:                 true,
+			Session: &models.ConsentRequestSession{
+				AccessToken: map[string]interface{}{
+					"given_name":  givenName,
+					"family_name": familyName,
+				},
+				IDToken: map[string]interface{}{
+					"given_name":  givenName,
+					"family_name": familyName,
+				},
+			},
 		}))
 	if err != nil {
 		s.Error(w, err)

@@ -2,6 +2,7 @@ package webapp
 
 import (
 	"github.com/nrc-no/core-kafka/pkg/auth"
+	"github.com/nrc-no/core-kafka/pkg/sessionmanager"
 	"html/template"
 	"io"
 	"net/http"
@@ -10,11 +11,13 @@ import (
 // RenderInterface defines the methods available in the template
 type RenderInterface interface {
 	IsLoggedIn() bool
+	Profile() *Claims
 }
 
 // RendererFactory is a factory to create Renderer
 type RendererFactory struct {
-	template *template.Template
+	template       *template.Template
+	sessionManager sessionmanager.Store
 }
 
 // RendererFactory must implement RenderInterface so that the methods
@@ -27,9 +30,15 @@ func (r *RendererFactory) IsLoggedIn() bool {
 	return false
 }
 
+func (r *RendererFactory) Profile() *Claims {
+	return nil
+}
+
 // NewRendererFactory creates a new instance of the RendererFactory
-func NewRendererFactory(templateDirectory string) (*RendererFactory, error) {
-	f := &RendererFactory{}
+func NewRendererFactory(templateDirectory string, sessionManager sessionmanager.Store) (*RendererFactory, error) {
+	f := &RendererFactory{
+		sessionManager: sessionManager,
+	}
 	t := template.New("")
 	t = WithRenderInterface(t, f)
 	var err error
@@ -44,7 +53,8 @@ func NewRendererFactory(templateDirectory string) (*RendererFactory, error) {
 // New creates a new Renderer
 func (r *RendererFactory) New(req *http.Request) *Renderer {
 	renderer := &Renderer{
-		req: req,
+		req:            req,
+		sessionManager: r.sessionManager,
 	}
 	renderer.template = WithRenderInterface(r.template, renderer)
 	return renderer
@@ -52,8 +62,9 @@ func (r *RendererFactory) New(req *http.Request) *Renderer {
 
 // Renderer is the actual struct that will render templates
 type Renderer struct {
-	template *template.Template
-	req      *http.Request
+	template       *template.Template
+	req            *http.Request
+	sessionManager sessionmanager.Store
 }
 
 // Renderer must implement RenderInterface so that the methods are available
@@ -69,9 +80,22 @@ func (r *Renderer) IsLoggedIn() bool {
 	return auth.IsAuthenticatedRequest(r.req)
 }
 
+func (r *Renderer) Profile() *Claims {
+	profileIntf := r.sessionManager.Get(r.req.Context(), "profile")
+	if profileIntf == nil {
+		return nil
+	}
+	profile, ok := profileIntf.(*Claims)
+	if !ok {
+		return nil
+	}
+	return profile
+}
+
 // WithRenderInterface adds the RenderInterface methods to the template
 func WithRenderInterface(t *template.Template, intf RenderInterface) *template.Template {
 	return t.Funcs(map[string]interface{}{
 		"IsLoggedIn": intf.IsLoggedIn,
+		"Profile":    intf.Profile,
 	})
 }

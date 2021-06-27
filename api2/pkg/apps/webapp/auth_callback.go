@@ -1,28 +1,29 @@
 package webapp
 
 import (
+	"encoding/gob"
 	"fmt"
-	"github.com/coreos/go-oidc/v3/oidc"
-	"golang.org/x/oauth2"
+	"github.com/nrc-no/core-kafka/pkg/apps/iam"
 	"net/http"
 )
+
+type Claims struct {
+	Subject       string `json:"sub"`
+	FamilyName    string `json:"family_name"`
+	GivenName     string `json:"given_name"`
+	Email         string `json:"email"`
+	EmailVerified bool   `json:"email_verified"`
+}
+
+func init() {
+	gob.Register(&Claims{})
+}
 
 func (s *Server) Callback(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
-	conf := oauth2.Config{
-		ClientID:     s.OauthClientID,
-		ClientSecret: s.OauthClientSecret,
-		RedirectURL:  "http://localhost:9000/callback",
-		Endpoint: oauth2.Endpoint{
-			AuthURL:   "http://localhost:4444/oauth2/auth",
-			TokenURL:  "http://localhost:4444/oauth2/token",
-			AuthStyle: 1,
-		},
-		Scopes: []string{oidc.ScopeOpenID, "profile"},
-	}
-
+	conf := s.oauth2Config
 	sessionState := s.sessionManager.PopString(ctx, "state")
 	queryState := req.URL.Query().Get("state")
 
@@ -43,8 +44,38 @@ func (s *Server) Callback(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	rawIDToken, ok := token.Extra("id_token").(string)
+	if !ok {
+		http.Error(w, "no id token in response", http.StatusInternalServerError)
+		return
+	}
+
+	idToken, err := s.oidcVerifier.Verify(ctx, rawIDToken)
+	if err != nil {
+		http.Error(w, "failed to verify id token", http.StatusInternalServerError)
+		return
+	}
+
+	var profile Claims
+	if err := idToken.Claims(&profile); err != nil {
+		http.Error(w, "failed to unmarshal claims", http.StatusInternalServerError)
+		return
+	}
+
+	s.sessionManager.Put(ctx, "id-token", rawIDToken)
 	s.sessionManager.Put(ctx, "access-token", token.AccessToken)
 	s.sessionManager.Put(ctx, "refresh-token", token.RefreshToken)
+
+	individual, err := s.IAMClient(ctx).Individuals().Get(ctx, profile.Subject)
+	if err != nil {
+		http.Error(w, "failed to retrieve individual", http.StatusInternalServerError)
+		return
+	}
+
+	profile.FamilyName = individual.Get(iam.LastNameAttribute.ID)
+	profile.GivenName = individual.Get(iam.FirstNameAttribute.ID)
+
+	s.sessionManager.Put(ctx, "profile", profile)
 
 	http.Redirect(w, req, "/", http.StatusSeeOther)
 
