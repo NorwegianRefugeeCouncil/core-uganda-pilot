@@ -6,6 +6,8 @@ require (
 	github.com/alexedwards/scs/redisstore v0.0.0-20210606090158-85ec2fab6bdf
 	github.com/alexedwards/scs/v2 v2.4.0
 	github.com/coreos/go-oidc/v3 v3.0.0
+	github.com/go-openapi/runtime v0.19.29 // indirect
+	github.com/go-openapi/strfmt v0.20.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/gomodule/redigo v1.8.5
 	github.com/gorilla/mux v1.8.0

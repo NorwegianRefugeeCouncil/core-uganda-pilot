@@ -43,7 +43,9 @@ func (s *Server) PostLoginForm(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Getting login request
-	_, err := s.HydraAdmin.GetLoginRequest(admin.NewGetLoginRequestParams().WithLoginChallenge(loginChallenge))
+	_, err := s.HydraAdmin.GetLoginRequest(
+		admin.NewGetLoginRequestParams().
+			WithLoginChallenge(loginChallenge))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

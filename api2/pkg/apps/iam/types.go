@@ -118,6 +118,16 @@ func (p *Party) GetAttribute(name string) []string {
 	return nil
 }
 
+// Get returns the first value of an Attribute
+func (p *Party) Get(name string) string {
+	if v, ok := p.Attributes[name]; ok {
+		if len(v) > 0 {
+			return v[0]
+		}
+	}
+	return ""
+}
+
 // HasAttribute checks if the Party has the given Attribute
 func (p *Party) HasAttribute(name string) bool {
 	_, ok := p.Attributes[name]

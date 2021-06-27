@@ -188,7 +188,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		RedisAddress:            c.RedisAddress,
 		RedisNetwork:            c.RedisNetwork,
 	}
-	webAppHandler, err := webapp2.NewServer(
+	webappServer, err := webapp2.NewServer(
 		webAppOptions,
 		c.HydraAdminClient,
 		c.HydraPublicClient,
@@ -196,7 +196,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	if err != nil {
 		panic(err)
 	}
-	router.PathPrefix("/").Handler(webAppHandler)
+	router.PathPrefix("/").Handler(webappServer)
 
 	httpServer := &http.Server{
 		Addr:    ":9000",
@@ -205,7 +205,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 
 	srv := &Server{
 		MongoClient:       c.MongoClient,
-		WebAppHandler:     webAppHandler,
+		WebAppHandler:     webappServer,
 		HydraPublicClient: c.HydraPublicClient,
 		HydraAdminClient:  c.HydraAdminClient,
 		HttpServer:        httpServer,
@@ -226,6 +226,10 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 			panic(err)
 		}
 	}()
+
+	if err := webappServer.Init(ctx); err != nil {
+		panic(err)
+	}
 
 	if err := seed.Seed(ctx, c.MongoDatabase, c.MongoClient); err != nil {
 		panic(err)
