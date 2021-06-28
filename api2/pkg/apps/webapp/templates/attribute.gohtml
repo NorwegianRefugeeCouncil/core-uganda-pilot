@@ -115,7 +115,7 @@
         let stateSubject = new BehaviorSubject({
             attribute: {
                 name: "{{.Attribute.Name}}",
-                valueType: "{{.Attribute.ValueType}}",
+                {{/*valueType: "{{.Attribute.ValueType}}",*/}}
                 partyTypeIds: "{{.Attribute.PartyTypeIDs}}",
                 isPii: {{.Attribute.IsPersonallyIdentifiableInfo}},
                 translations: [
