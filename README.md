@@ -77,3 +77,11 @@ make spinup
  cd core/api
  make test
  ```
+ 
+ ### E2E tests
+ 
+ ```bash
+ cd core/e2e
+ npm install
+ npm run open
+ ```
