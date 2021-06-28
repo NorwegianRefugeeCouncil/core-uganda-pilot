@@ -52,7 +52,7 @@ make spinup
  - Within GoLand IDE, open the `api` project directory as a root workspace (ie. not the `core` directory). Choose the `start` configuration from the top-right menu and press the green arrow.
  
  ```bash
- go run ./cmd --mongo-database=core --mongo-username=root --mongo-password=example --keycloak-base-url=http://localhost:8080 --keycloak-realm-name=nrc --keycloak-client-id=api --keycloak-client-secret=e6486272-039d-430f-b3c7-47887aa9e206
+ go run ./cmd --mongo-database=core --mongo-username=root --mongo-password=example
  
  # or
  
