@@ -26,7 +26,7 @@ func (s *Server) Init(ctx context.Context) error {
 	for _, relationshipType := range []RelationshipType{
 		HeadOfHouseholdRelationshipType,
 		SpousalRelationshipType,
-		FilialRelationshipType,
+		SiblingRelationshipType,
 		ParentalRelationshipType,
 		MembershipRelationshipType,
 		StaffRelationshipType,

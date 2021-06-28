@@ -166,10 +166,10 @@ var SpousalRelationshipType = RelationshipType{
 	},
 }
 
-var FilialRelationshipType = RelationshipType{
+var SiblingRelationshipType = RelationshipType{
 	ID:              "dcebef97-f666-4593-b97e-075ad1890385",
 	IsDirectional:   false,
-	Name:            "filial",
+	Name:            "sibling",
 	FirstPartyRole:  "Is sibling of",
 	SecondPartyRole: "Is sibling of",
 	Rules: []RelationshipTypeRule{
