@@ -57,6 +57,9 @@ func New(pool *redis.Pool, options Options) Store {
 	}
 }
 
+// Notification contains "flash" messages shown to the user.
+// The theme field should correspond to one of the bootstrap theme colors; eg. "success", "warning",
+// "danger", etc. https://getbootstrap.com/docs/5.0/customize/color/
 type Notification struct {
 	Message string
 	Theme   string
@@ -71,5 +74,9 @@ func (r RedisSessionManager) AddNotification(ctx context.Context, notification *
 	r.Put(ctx, "notifications", notifs)
 }
 func (r RedisSessionManager) ConsumeNotifications(ctx context.Context) []*Notification {
-	panic("implement me")
+	notifs, ok := r.Pop(ctx, "notifications").([]*Notification)
+	if !ok {
+		notifs = []*Notification{}
+	}
+	return notifs
 }
