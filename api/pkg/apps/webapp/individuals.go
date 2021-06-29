@@ -178,7 +178,7 @@ func (h *Server) Individual(w http.ResponseWriter, req *http.Request) {
 
 	g.Go(func() error {
 		var err error
-		cList, err = cmsClient.Cases().List(ctx, cms.CaseListOptions{PartyID: id})
+		cList, err = cmsClient.Cases().List(ctx, cms.CaseListOptions{PartyIDs: []string{id}})
 		return err
 	})
 

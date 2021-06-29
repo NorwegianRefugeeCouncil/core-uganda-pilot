@@ -6,10 +6,60 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
+	"github.com/satori/go.uuid"
 	"github.com/xeonx/timeago"
 	"golang.org/x/sync/errgroup"
 	"net/http"
+	"net/url"
 )
+
+type CasesListOptions struct {
+	Closed      *bool
+	TeamIDs     []string
+	CaseTypeIDs []string
+}
+
+func (c *CasesListOptions) ClosedOnly() bool {
+	return c.Closed != nil && *c.Closed == true
+}
+
+func (c *CasesListOptions) OpenOnly() bool {
+	return c.Closed != nil && *c.Closed == false
+}
+
+func (c *CasesListOptions) UnmarshalQueryParams(values url.Values) error {
+
+	hasStatusArg := false
+	for key, _ := range values {
+		if key == "status" {
+			hasStatusArg = true
+		}
+	}
+
+	statusStr := values.Get("status")
+	if !hasStatusArg && len(statusStr) == 0 {
+		statusStr = "false"
+	}
+	if len(statusStr) > 0 {
+		isClosed := statusStr == "closed"
+		c.Closed = &isClosed
+	}
+
+	for _, teamId := range values["teamId"] {
+		if _, err := uuid.FromString(teamId); err == nil {
+			c.TeamIDs = append(c.TeamIDs, teamId)
+		}
+	}
+
+	for _, caseTypeId := range values["caseTypeId"] {
+		if _, err := uuid.FromString(caseTypeId); err == nil {
+			c.CaseTypeIDs = append(c.CaseTypeIDs, caseTypeId)
+		}
+	}
+
+	return nil
+
+}
 
 func (h *Server) Cases(w http.ResponseWriter, req *http.Request) {
 
@@ -17,11 +67,45 @@ func (h *Server) Cases(w http.ResponseWriter, req *http.Request) {
 	cmsClient := h.CMSClient(ctx)
 	iamClient := h.IAMClient(ctx)
 
-	kases, err := cmsClient.Cases().List(ctx, cms.CaseListOptions{})
-	caseTypes, err := cmsClient.CaseTypes().List(ctx, cms.CaseTypeListOptions{})
-	partyList, err := iamClient.Parties().List(ctx, iam.PartyListOptions{})
+	options := &CasesListOptions{}
+	if err := options.UnmarshalQueryParams(req.URL.Query()); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-	if err != nil {
+	var kases *cms.CaseList
+	var caseTypes *cms.CaseTypeList
+	var partyList *iam.PartyList
+	var teams *iam.TeamList
+
+	caseListOptions := &cms.CaseListOptions{}
+	caseListOptions.Done = options.Closed
+	caseListOptions.CaseTypeIDs = options.CaseTypeIDs
+	caseListOptions.TeamIDs = options.TeamIDs
+
+	wg, ctx := errgroup.WithContext(ctx)
+	wg.Go(func() error {
+		var err error
+		kases, err = cmsClient.Cases().List(ctx, *caseListOptions)
+		return err
+	})
+	wg.Go(func() error {
+		var err error
+		caseTypes, err = cmsClient.CaseTypes().List(ctx, cms.CaseTypeListOptions{})
+		return err
+	})
+	wg.Go(func() error {
+		var err error
+		partyList, err = iamClient.Parties().List(ctx, iam.PartyListOptions{})
+		return err
+	})
+	wg.Go(func() error {
+		var err error
+		teams, err = iamClient.Teams().List(ctx, iam.TeamListOptions{})
+		return err
+	})
+
+	if err := wg.Wait(); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -32,9 +116,11 @@ func (h *Server) Cases(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if err := h.renderFactory.New(req).ExecuteTemplate(w, "cases", map[string]interface{}{
-		"Cases":     kases,
-		"CaseTypes": caseTypes,
-		"Parties":   partyList,
+		"Cases":         kases,
+		"CaseTypes":     caseTypes,
+		"Parties":       partyList,
+		"Teams":         teams,
+		"FilterOptions": options,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

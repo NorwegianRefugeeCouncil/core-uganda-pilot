@@ -343,6 +343,10 @@ type Team struct {
 	Name string `json:"name" bson:"name"`
 }
 
+func (t *Team) String() string {
+	return t.Name
+}
+
 type TeamList struct {
 	Items []*Team `json:"items"`
 }
