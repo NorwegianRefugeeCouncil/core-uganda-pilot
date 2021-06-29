@@ -93,6 +93,51 @@
                 .catch((err) => console.error((err)))
         }
 
+        const noPartiesFound = () => {
+            let partySelectorList = document.getElementById("partySelectorList")
+            let newListItem = document.createElement('li')
+            newListItem.classList.add('dropdown-item')
+            newListItem.onclick = onPartyListItemClick
+            let displayText = `No Parties Found`
+            newListItem.appendChild(
+                document.createTextNode(displayText)
+            )
+            partySelectorList.appendChild(newListItem)
+        }
+
+        // Party List Item click handler - sets the text box value used for searching to the selected item
+        // from the dropdown
+        const onPartyListItemClick = (event) => {
+            document.getElementById("partySelector").value = event.target.textContent
+            document.getElementById("partySelector").setAttribute("data-party-id", event.target.id)
+        }
+
+        // Get First Name from party attribute list, or return blank
+        const firstNameFromAttrs = (attrs) => {
+            let firstName = ""
+            Object.keys(attrs).forEach(
+                k => {
+                    if (k == "{{.FirstNameAttribute.ID}}") {
+                        firstName = attrs[k]
+                    }
+                }
+            )
+            return firstName
+        }
+
+        // Get Last Name from party attribute list, or return blank
+        const lastNameFromAttrs = (attrs) => {
+            let lastName = ""
+            Object.keys(attrs).forEach(
+                k => {
+                    if (k == "{{.LastNameAttribute.ID}}") {
+                        lastName = attrs[k]
+                    }
+                }
+            )
+            return lastName
+        }
+
         // On document ready
         document.addEventListener('DOMContentLoaded', function () {
             // Add listener for party selector item click
@@ -111,39 +156,6 @@
                 if (!(individualId == null || individualId == "")){
                     addIndividualToTeam("{{.Team.ID}}", individualId)
                 }
-            }
-
-            // Party List Item click handler - sets the text box value used for searching to the selected item
-            // from the dropdown
-            const onPartyListItemClick = (event) => {
-                document.getElementById("partySelector").value = event.target.textContent
-                document.getElementById("partySelector").setAttribute("data-party-id", event.target.id)
-            }
-
-            // Get First Name from party attribute list, or return blank
-            const firstNameFromAttrs = (attrs) => {
-                let firstName = ""
-                Object.keys(attrs).forEach(
-                    k => {
-                        if (k == "{{.FirstNameAttribute.ID}}") {
-                            firstName = attrs[k]
-                        }
-                    }
-                )
-                return firstName
-            }
-
-            // Get Last Name from party attribute list, or return blank
-            const lastNameFromAttrs = (attrs) => {
-                let lastName = ""
-                Object.keys(attrs).forEach(
-                    k => {
-                        if (k == "{{.LastNameAttribute.ID}}") {
-                            lastName = attrs[k]
-                        }
-                    }
-                )
-                return lastName
             }
 
             // Handle party search responses
@@ -175,14 +187,7 @@
                         })
                     } else {
                         // No Parties Found...
-                        let newListItem = document.createElement('li')
-                        newListItem.classList.add('dropdown-item')
-                        newListItem.onclick = onPartyListItemClick
-                        let displayText = `No Parties Found`
-                        newListItem.appendChild(
-                            document.createTextNode(displayText)
-                        )
-                        partySelectorList.appendChild(newListItem)
+                        noPartiesFound()
                     }
                 },
                 err => {
@@ -191,8 +196,8 @@
             )
         })
 
-        // Initial call to populate parties list
-        partySearchSubject.next(getSearchParam())
+        // Populate party picker with placeholder
+        noPartiesFound()
 
     </script>
 
