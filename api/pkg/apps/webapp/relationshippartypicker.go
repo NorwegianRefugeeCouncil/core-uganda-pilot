@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func (h *Server) PickParty(w http.ResponseWriter, req *http.Request){
+func (h *Server) PickRelationshipParty(w http.ResponseWriter, req *http.Request){
 	ctx := req.Context()
 	iamClient := h.IAMClient(ctx)
 
