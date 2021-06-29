@@ -159,16 +159,6 @@ func caseType(id, name, partyTypeID, teamID string) cms.CaseType {
 	return ct
 }
 
-func relationship(relationshipTypeID, firstPartyID, secondPartyID string) iam.Relationship {
-	r := iam.Relationship{
-		RelationshipTypeID: relationshipTypeID,
-		FirstPartyID:       firstPartyID,
-		SecondPartyID:      secondPartyID,
-	}
-	relationships = append(relationships, r)
-	return r
-}
-
 func team(id, name string) iam.Team {
 	t := iam.Team{
 		ID:   id,
