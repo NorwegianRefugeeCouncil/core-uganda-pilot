@@ -60,7 +60,7 @@
                                   rows="20"
                                   class="form-control"
                                   name="description"
-                                  data-cy="description"
+                                  data-testid="description"
                                   {{ if .ReferralCaseType}}disabled{{end}}
                                   style="height: 100px">{{if .Case}}{{.Case.Description}}{{end}}</textarea>
                         <label for="description-textarea">Description</label>
@@ -79,6 +79,7 @@
                     </div>
                     <button class="mb-5 btn btn-primary"
                             type="submit"
+                            data-testid="updateFormBtn"
                             {{ if .ReferralCaseType}}disabled{{end}}>
                         Save
                     </button>
@@ -95,9 +96,9 @@
                                         <div>{{if $caseType}}{{$caseType.Name}}{{end}}</div>
                                         <div style="flex-grow: 1"></div>
                                         {{if .Done}}
-                                            <span class="badge rounded-pill bg-danger">Closed</span>
+                                            <span class="badge rounded-pill bg-danger" data-testid="referralCaseClosed">Closed</span>
                                         {{else}}
-                                            <span class="badge rounded-pill bg-success">Open</span>
+                                            <span class="badge rounded-pill bg-success" data-testid="referralCaseOpen">Open</span>
                                         {{end}}
                                     </a>
                                 {{end}}
@@ -134,9 +135,10 @@
                                             id="description"
                                             name="description"
                                             class="form-control"
+                                            data-testid="referralDescription"
                                             rows="3"></textarea>
                                 </div>
-                                <button class="btn btn-primary" type="submit">Submit referral</button>
+                                <button class="btn btn-primary" type="submit" data-testid="submitReferralBtn">Submit referral</button>
                                 <a href="/cases/{{.Case.ID}}" class="btn btn-outline-secondary"
                                    type="submit">Cancel</a>
                             </form>
@@ -148,12 +150,14 @@
                         <button class="btn btn-primary dropdown-toggle"
                                 type="button"
                                 id="referral-dropdown"
+                                data-testid="referralPicker"
                                 data-bs-toggle="dropdown" aria-expanded="false">
                             Refer this case
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="referral-dropdown">
                             {{ range .CaseTypes.Items }}
                                 <li><a class="dropdown-item"
+                                       data-testid="referralCaseItem"
                                        href="/cases/{{$caseId}}?referralCaseTypeId={{.ID}}">{{.Name}}</a>
                                 </li>
                             {{end}}
