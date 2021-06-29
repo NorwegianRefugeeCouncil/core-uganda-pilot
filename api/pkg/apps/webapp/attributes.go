@@ -68,18 +68,18 @@ func (h *Server) Attribute(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	a, err := iamClient.Attributes().Get(ctx, id)
+	attribute, err := iamClient.Attributes().Get(ctx, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if req.Method == "POST" {
-		h.PostAttribute(ctx, a, w, req)
+		h.PostAttribute(ctx, attribute, w, req)
 	}
 
 	if err := h.renderFactory.New(req).ExecuteTemplate(w, "attribute", map[string]interface{}{
-		"Attribute": a,
+		"Attribute": attribute,
 		"PartyTypes": iam.PartyTypeList{
 			Items: []*iam.PartyType{
 				&iam.IndividualPartyType,
