@@ -10,6 +10,11 @@
         "cy": true,
         "Cypress": true
     },
+    "parser": "@babel/eslint-parser",
+    "parserOptions": {
+        "sourceType": "module",
+        "requireConfigFile": false
+    },
     "rules": {
         "prettier/prettier": "error"
     },
