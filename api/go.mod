@@ -7,7 +7,6 @@ require (
 	github.com/alexedwards/scs/v2 v2.4.0
 	github.com/coreos/go-oidc/v3 v3.0.0
 	github.com/go-openapi/runtime v0.19.29 // indirect
-	github.com/go-openapi/strfmt v0.20.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/gomodule/redigo v1.8.5
 	github.com/gorilla/mux v1.8.0
@@ -18,6 +17,7 @@ require (
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.7.0
+	github.com/xeonx/timeago v1.0.0-rc4
 	go.mongodb.org/mongo-driver v1.5.3
 	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e
 	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4 // indirect

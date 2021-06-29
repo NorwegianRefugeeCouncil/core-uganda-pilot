@@ -25,3 +25,9 @@ func (c ClientSet) CaseTypes() CaseTypeClient {
 		c: c.c,
 	}
 }
+
+func (c ClientSet) Comments() CommentClient {
+	return &RestCommentClient{
+		c: c.c,
+	}
+}

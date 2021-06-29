@@ -30,7 +30,7 @@
 
                 {{range $caseTypes.Items}}
                     {{if eq .ID $caseTypeId}}
-                        <input name="case-type" type="hidden" value="{{.ID}}"/>
+                        <input name="case-type" type="hidden" value="{{.ID}}" />
                         <h2>{{.Name}}</h2>
                     {{end}}
                 {{end}}
@@ -167,6 +167,36 @@
                 {{end}}
             </div>
         </div>
+
+        <div class="row">
+            <div class="col">
+
+                {{ if .Comments}}
+                    {{range .Comments}}
+                        <div class='card mb-4'>
+                            <div class='card-header bg-quite-light'>
+                                {{.AuthorID}} commented {{.TimeAgo}}
+                            </div>
+                            <div class='card-body'>
+                                {{.Body}}
+                            </div>
+                        </div>
+                    {{end}}
+                {{end}}
+
+                <div class='card'>
+                    <div class='card-body'>
+                        <form action='/comments' method='post'>
+                            <input type='hidden' name='case_id' value='{{$caseId}}'>
+                            <textarea placeholder='Leave a comment' class='form-control mb-3' name='body'></textarea>
+                            <button class='btn btn-success'>Comment</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
     </div>
 
     </body>

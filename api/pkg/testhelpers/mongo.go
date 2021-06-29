@@ -7,6 +7,7 @@ import (
 )
 
 func NewMongoClient(ctx context.Context) (*mongo.Client, error) {
+
 	mongoClient, err := mongo.NewClient(
 		options.Client().ApplyURI("mongodb://localhost:27017"),
 		options.Client().SetAuth(options.Credential{
