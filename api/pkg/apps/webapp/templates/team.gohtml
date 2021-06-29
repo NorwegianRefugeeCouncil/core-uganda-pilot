@@ -80,6 +80,19 @@
             return partySelector.textContent
         }
 
+        // Handle adding member to team
+        const addIndividualToTeam = (teamId, individualId) => {
+            const searchParams = new URLSearchParams({
+                "teamId": teamId,
+                "individualId": individualId
+            })
+            const reqUrl = "/teams/{{.Team.ID}}?" + searchParams.toString()
+            console.log(reqUrl)
+            fetch(reqUrl, { method: "POST", redirect: "follow" })
+                .then(response =>  {window.location.href = "/teams/{{.Team.ID}}"})
+                .catch((err) => console.error((err)))
+        }
+
         // On document ready
         document.addEventListener('DOMContentLoaded', function () {
             // Add listener for party selector item click
@@ -90,6 +103,14 @@
             // Add listener for party search box
             document.getElementById("partySelector").oninput = (event) => {
                 partySearchSubject.next(event.target.value)
+            }
+
+            // Add listener to add team member button
+            document.getElementById("btn-add").onclick = (event) => {
+                const individualId = document.getElementById("partySelector").getAttribute("data-party-id")
+                if (!(individualId == null || individualId == "")){
+                    addIndividualToTeam("{{.Team.ID}}", individualId)
+                }
             }
 
             // Party List Item click handler - sets the text box value used for searching to the selected item

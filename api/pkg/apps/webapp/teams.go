@@ -41,6 +41,11 @@ func (h *Server) Team(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	if req.Method == "POST" {
+		h.AddIndividualToTeam(w, req)
+		return
+	}
+
 	t, err := iamClient.Teams().Get(ctx, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
