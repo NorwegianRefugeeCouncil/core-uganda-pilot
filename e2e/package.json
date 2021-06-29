@@ -1,9 +1,14 @@
 {
   "scripts": {
     "run": "cypress run",
-    "open": "cypress open"
+    "open": "cypress open",
+    "lint": "eslint 'cypress/**/*.js' --max-warnings=0"
   },
   "devDependencies": {
-    "cypress": "^7.6.0"
+    "cypress": "^7.6.0",
+    "eslint": "^7.29.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "prettier": "^2.3.2"
   }
 }
