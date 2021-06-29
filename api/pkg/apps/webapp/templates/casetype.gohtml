@@ -57,6 +57,10 @@
                         </select>
                         <label for="team">Select Team</label>
                     </div>
+                    {{if .CaseType}}
+                        <input type="hidden" name="partyTypeId" value="{{.CaseType.PartyTypeID}}">
+                        <input type="hidden" name="teamId" value="{{.CaseType.TeamID}}">
+                    {{end}}
                     <button class="btn btn-primary">Save</button>
                 </form>
             </div>
