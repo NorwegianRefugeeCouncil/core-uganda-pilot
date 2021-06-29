@@ -376,7 +376,7 @@ func (h *Server) PostIndividual(
 			return
 		}
 		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
-			Message: fmt.Sprintf("%s successfully created", b.String()),
+			Message: fmt.Sprintf("Individual \"%s\" successfully created", b.String()),
 			Theme:   "success",
 		})
 	} else {
@@ -386,7 +386,7 @@ func (h *Server) PostIndividual(
 			return
 		}
 		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
-			Message: fmt.Sprintf("%s successfully updated", b.String()),
+			Message: fmt.Sprintf("Individual \"%s\" successfully updated", b.String()),
 			Theme:   "success",
 		})
 	}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/nrc-no/core/pkg/apps/iam"
+	"github.com/nrc-no/core/pkg/sessionmanager"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -139,6 +140,10 @@ func (h *Server) PostRelationshipType(
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+			Message: fmt.Sprintf("Relationship type \"%s\" successfully updated", r.Name),
+			Theme:   "success",
+		})
 		w.Header().Set("Location", "/settings/relationshiptypes/"+out.ID)
 		w.WriteHeader(http.StatusSeeOther)
 	} else {
@@ -147,6 +152,10 @@ func (h *Server) PostRelationshipType(
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+			Message: fmt.Sprintf("Relationship type \"%s\" successfully updated", r.Name),
+			Theme:   "success",
+		})
 		w.Header().Set("Location", "/settings/relationshiptypes/"+out.ID)
 		w.WriteHeader(http.StatusSeeOther)
 	}
