@@ -6,10 +6,10 @@ func (s *Server) ListMemberships(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	var listOptions MembershipListOptions
-
-	qry := req.URL.Query()
-	listOptions.TeamID = qry.Get("teamId")
-	listOptions.IndividualID = qry.Get("individualId")
+	if err := listOptions.UnmarshalQueryParameters(req.URL.Query()); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	ret, err := s.MembershipStore.List(ctx, listOptions)
 	if err != nil {
