@@ -4,6 +4,6 @@ export const Urls = {
 };
 
 export const credentials = {
-    username: 'birdie.tifawt@email.com',
-    password: 'password',
+    username: Cypress.env('USERNAME'),
+    password: Cypress.env('PASSWORD'),
 };
