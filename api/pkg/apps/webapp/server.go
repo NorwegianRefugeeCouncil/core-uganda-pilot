@@ -113,6 +113,7 @@ func NewServer(
 	router.Path("/settings/authclients/{id}").HandlerFunc(h.AuthClient)
 	router.Path("/settings/authclients/{id}/newsecret").HandlerFunc(h.AuthClientNewSecret)
 	router.Path("/settings/authclients/{id}/delete").HandlerFunc(h.DeleteAuthClient)
+	router.Path("/relationships/pickparty").HandlerFunc(h.PickParty)
 
 	h.router = router
 
