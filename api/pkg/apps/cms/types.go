@@ -10,6 +10,7 @@ type Case struct {
 	Done        bool   `json:"done" bson:"done"`
 	ParentID    string `json:"parentId" bson:"parentId"`
 	TeamID      string `json:"teamId" bson:"teamId"`
+	CreatorID   string `json:"creatorId" bson:"creatorId"`
 }
 
 type CaseList struct {
