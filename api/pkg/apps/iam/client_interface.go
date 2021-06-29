@@ -14,8 +14,6 @@ type Interface interface {
 	RelationshipTypes() RelationshipTypeClient
 	Attributes() AttributeClient
 	Teams() TeamClient
-	Organizations() OrganizationClient
-	Staff() StaffClient
 	Memberships() MembershipClient
 	Individuals() IndividualClient
 }
@@ -194,24 +192,6 @@ type TeamClient interface {
 	Create(ctx context.Context, party *Team) (*Team, error)
 	Update(ctx context.Context, party *Team) (*Team, error)
 	List(ctx context.Context, listOptions TeamListOptions) (*TeamList, error)
-}
-
-type OrganizationListOptions struct {
-}
-
-func (a *OrganizationListOptions) MarshalQueryParameters() (url.Values, error) {
-	return url.Values{}, nil
-}
-
-func (a *OrganizationListOptions) UnmarshalQueryParameters(values url.Values) error {
-	return nil
-}
-
-type OrganizationClient interface {
-	Get(ctx context.Context, id string) (*Organization, error)
-	Create(ctx context.Context, party *Organization) (*Organization, error)
-	Update(ctx context.Context, party *Organization) (*Organization, error)
-	List(ctx context.Context, listOptions OrganizationListOptions) (*OrganizationList, error)
 }
 
 type StaffListOptions struct {

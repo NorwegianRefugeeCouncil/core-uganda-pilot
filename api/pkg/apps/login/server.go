@@ -9,7 +9,6 @@ import (
 	"github.com/ory/hydra-client-go/client"
 	"github.com/ory/hydra-client-go/client/admin"
 	"github.com/ory/hydra-client-go/models"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -19,7 +18,6 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"time"
 )
 
 type ServerOptions struct {
@@ -101,14 +99,6 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 		Host:       "localhost:9000",
 		HTTPClient: adminCli,
 	})
-
-	go func() {
-		time.Sleep(2 * time.Second)
-		_, err := iamCli.Staff().List(ctx, iam.StaffListOptions{})
-		if err != nil {
-			logrus.WithError(err).Errorf("")
-		}
-	}()
 
 	mongoClient, err := mongo.NewClient(
 		options.Client().

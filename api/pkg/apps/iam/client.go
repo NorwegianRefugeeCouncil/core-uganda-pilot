@@ -50,18 +50,6 @@ func (c ClientSet) Teams() TeamClient {
 	}
 }
 
-func (c ClientSet) Organizations() OrganizationClient {
-	return &RESTOrganizationClient{
-		c: c.c,
-	}
-}
-
-func (c ClientSet) Staff() StaffClient {
-	return &RESTStaffClient{
-		c: c.c,
-	}
-}
-
 func (c ClientSet) Memberships() MembershipClient {
 	return &RESTMembershipClient{
 		c: c.c,
