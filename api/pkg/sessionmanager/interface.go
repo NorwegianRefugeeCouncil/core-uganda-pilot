@@ -2,6 +2,7 @@ package sessionmanager
 
 import (
 	"context"
+	"encoding/gob"
 	"github.com/alexedwards/scs/redisstore"
 	"github.com/alexedwards/scs/v2"
 	"github.com/gomodule/redigo/redis"
@@ -33,6 +34,16 @@ type Store interface {
 	Clear(ctx context.Context) error
 	Destroy(ctx context.Context) error
 	Commit(ctx context.Context) (string, time.Time, error)
+	AddNotification(ctx context.Context, notification *Notification)
+	ConsumeNotifications(ctx context.Context) []*Notification
+}
+
+type RedisSessionManager struct {
+	*scs.SessionManager
+}
+
+func init() {
+	gob.Register([]*Notification{})
 }
 
 func New(pool *redis.Pool, options Options) Store {
@@ -41,5 +52,24 @@ func New(pool *redis.Pool, options Options) Store {
 	if options.ErrorFunc != nil {
 		sessionManager.ErrorFunc = options.ErrorFunc
 	}
-	return sessionManager
+	return RedisSessionManager{
+		SessionManager: sessionManager,
+	}
+}
+
+type Notification struct {
+	Message string
+	Theme   string
+}
+
+func (r RedisSessionManager) AddNotification(ctx context.Context, notification *Notification) {
+	notifs, ok := r.Get(ctx, "notifications").([]*Notification)
+	if !ok {
+		notifs = []*Notification{}
+	}
+	notifs = append(notifs, notification)
+	r.Put(ctx, "notifications", notifs)
+}
+func (r RedisSessionManager) ConsumeNotifications(ctx context.Context) []*Notification {
+	panic("implement me")
 }
