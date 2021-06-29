@@ -63,6 +63,7 @@ type Server struct {
 	mongoClient   *mongo.Client
 	caseStore     *CaseStore
 	caseTypeStore *CaseTypeStore
+	commentStore  *CommentStore
 	HydraAdmin    admin.ClientService
 }
 
@@ -94,11 +95,17 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 		return nil, err
 	}
 
+	commentStore, err := NewCommentStore(ctx, mongoClient, o.MongoDatabase)
+	if err != nil {
+		return nil, err
+	}
+
 	srv := &Server{
 		router:        router,
 		mongoClient:   mongoClient,
 		caseStore:     caseStore,
 		caseTypeStore: caseTypeStore,
+		commentStore:  commentStore,
 	}
 
 	srv.HydraAdmin = client.NewHTTPClientWithConfig(nil, &client.TransportConfig{
@@ -106,7 +113,7 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 		Schemes: []string{"http"},
 	}).Admin
 
-	router.Use(srv.WithAuth(ctx))
+	router.Use(srv.WithAuth())
 
 	router.Path("/apis/cms/v1/cases").Methods("GET").HandlerFunc(srv.ListCases)
 	router.Path("/apis/cms/v1/cases").Methods("POST").HandlerFunc(srv.PostCase)
@@ -117,6 +124,12 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 	router.Path("/apis/cms/v1/casetypes").Methods("POST").HandlerFunc(srv.PostCaseType)
 	router.Path("/apis/cms/v1/casetypes/{id}").Methods("GET").HandlerFunc(srv.GetCaseType)
 	router.Path("/apis/cms/v1/casetypes/{id}").Methods("PUT").HandlerFunc(srv.PutCaseType)
+
+	router.Path("/apis/cms/v1/comments").Methods("GET").HandlerFunc(srv.ListComments)
+	router.Path("/apis/cms/v1/comments").Methods("POST").HandlerFunc(srv.PostComment)
+	router.Path("/apis/cms/v1/comments/{id}").Methods("GET").HandlerFunc(srv.GetComment)
+	router.Path("/apis/cms/v1/comments/{id}").Methods("PUT").HandlerFunc(srv.PutComment)
+	router.Path("/apis/cms/v1/comments/{id}").Methods("PUT").HandlerFunc(srv.DeleteComment)
 
 	return srv, nil
 
