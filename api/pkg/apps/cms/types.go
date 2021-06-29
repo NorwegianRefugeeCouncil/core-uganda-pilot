@@ -1,5 +1,7 @@
 package cms
 
+import "time"
+
 type Case struct {
 	ID          string `json:"id" bson:"id"`
 	CaseTypeID  string `json:"caseTypeId" bson:"caseTypeId"`
@@ -36,4 +38,17 @@ func (l *CaseTypeList) FindByID(id string) *CaseType {
 		}
 	}
 	return nil
+}
+
+type Comment struct {
+	ID        string    `json:"id" bson:"id"`
+	CaseID    string    `json:"caseId" bson:"caseId"`
+	AuthorID  string    `json:"authorId" bson:"authorId"`
+	Body      string    `json:"body" bson:"body"`
+	CreatedAt time.Time `json:"createdAt" bson:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt" bson:"updatedAt"`
+}
+
+type CommentList struct {
+	Items []*Comment `json:"items"`
 }

@@ -16,9 +16,12 @@ func (c *RequestClaims) GetClaims() *jwt2.Claims {
 	return &c.Claims
 }
 
-func (s *Server) WithAuth(ctx context.Context) func(handler http.Handler) http.Handler {
+func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 	return func(handler http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+
+			ctx := req.Context()
+
 			token, err := auth.AuthHeaderTokenSource(req).GetToken()
 			if err != nil {
 				s.Error(w, err)
@@ -40,6 +43,8 @@ func (s *Server) WithAuth(ctx context.Context) func(handler http.Handler) http.H
 				return
 			}
 
+			ctx = context.WithValue(ctx, "subject", res.Payload.Sub)
+			req = req.WithContext(ctx)
 			handler.ServeHTTP(w, req)
 		})
 	}

@@ -6,6 +6,8 @@
 
     {{template "navbar"}}
 
+    {{template "notifications"}}
+
     {{template "individuals_nav" . }}
 
     <div class="container">
@@ -160,7 +162,7 @@
                     "partyTypeId": getSecondPartyType(),
                     "searchParam": searchParam
                 })
-                const ajaxUrl = "/apis/iam/v1/parties?" + searchParams.toString()
+                const ajaxUrl = "/relationships/pickparty?" + searchParams.toString()
                 return ajax(ajaxUrl)
             })
         )

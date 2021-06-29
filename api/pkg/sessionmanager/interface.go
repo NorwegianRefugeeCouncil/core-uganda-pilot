@@ -2,6 +2,7 @@ package sessionmanager
 
 import (
 	"context"
+	"encoding/gob"
 	"github.com/alexedwards/scs/redisstore"
 	"github.com/alexedwards/scs/v2"
 	"github.com/gomodule/redigo/redis"
@@ -33,6 +34,16 @@ type Store interface {
 	Clear(ctx context.Context) error
 	Destroy(ctx context.Context) error
 	Commit(ctx context.Context) (string, time.Time, error)
+	AddNotification(ctx context.Context, notification *Notification)
+	ConsumeNotifications(ctx context.Context) []*Notification
+}
+
+type RedisSessionManager struct {
+	*scs.SessionManager
+}
+
+func init() {
+	gob.Register([]*Notification{})
 }
 
 func New(pool *redis.Pool, options Options) Store {
@@ -41,5 +52,31 @@ func New(pool *redis.Pool, options Options) Store {
 	if options.ErrorFunc != nil {
 		sessionManager.ErrorFunc = options.ErrorFunc
 	}
-	return sessionManager
+	return RedisSessionManager{
+		SessionManager: sessionManager,
+	}
+}
+
+// Notification contains "flash" messages shown to the user.
+// The theme field should correspond to one of the bootstrap theme colors; eg. "success", "warning",
+// "danger", etc. https://getbootstrap.com/docs/5.0/customize/color/
+type Notification struct {
+	Message string
+	Theme   string
+}
+
+func (r RedisSessionManager) AddNotification(ctx context.Context, notification *Notification) {
+	notifs, ok := r.Get(ctx, "notifications").([]*Notification)
+	if !ok {
+		notifs = []*Notification{}
+	}
+	notifs = append(notifs, notification)
+	r.Put(ctx, "notifications", notifs)
+}
+func (r RedisSessionManager) ConsumeNotifications(ctx context.Context) []*Notification {
+	notifs, ok := r.Pop(ctx, "notifications").([]*Notification)
+	if !ok {
+		notifs = []*Notification{}
+	}
+	return notifs
 }

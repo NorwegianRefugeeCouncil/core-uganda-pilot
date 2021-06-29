@@ -6,16 +6,18 @@ import (
 	"github.com/nrc-no/core/pkg/rest"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+	"golang.org/x/oauth2/clientcredentials"
 	"net/http"
 	"testing"
 )
 
 type Suite struct {
 	suite.Suite
-	server     *Server
-	serverOpts *ServerOptions
-	ctx        context.Context
-	client     *ClientSet
+	server                  *Server
+	serverOpts              *ServerOptions
+	ctx                     context.Context
+	client                  *ClientSet
+	authenticatedHttpClient *http.Client
 }
 
 func (s *Suite) SetupSuite() {
@@ -35,15 +37,24 @@ func (s *Suite) SetupSuite() {
 		s.T().Fatal()
 	}
 
+	clientCredsConfig := clientcredentials.Config{
+		ClientID:     "webapp",
+		ClientSecret: "somesupersecret",
+		TokenURL:     "http://localhost:4444/oauth2/token",
+	}
+	httpClient := clientCredsConfig.Client(ctx)
+
 	s.ctx = ctx
 	s.server = srv
 	s.client = NewClientSet(&rest.RESTConfig{
-		Scheme: "http",
-		Host:   "localhost:9001",
+		Scheme:     "http",
+		Host:       "localhost:9001",
+		HTTPClient: httpClient,
 	})
 
 	s.ResetDB()
 
+	s.authenticatedHttpClient = httpClient
 	go func() {
 		if err := http.ListenAndServe(opts.ListenAddress, srv); err != nil {
 			if errors.Is(err, context.Canceled) {

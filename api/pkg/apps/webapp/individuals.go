@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
+	"github.com/nrc-no/core/pkg/sessionmanager"
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/sync/errgroup"
 	"net/http"
@@ -370,15 +371,24 @@ func (h *Server) PostIndividual(
 		var err error
 		individual, err = iamClient.Individuals().Create(ctx, b)
 		if err != nil {
+
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+			Message: fmt.Sprintf("%s successfully created", b.String()),
+			Theme:   "success",
+		})
 	} else {
 		var err error
 		if individual, err = iamClient.Individuals().Update(ctx, b); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+			Message: fmt.Sprintf("%s successfully updated", b.String()),
+			Theme:   "success",
+		})
 	}
 
 	// Update, create or delete the relationships

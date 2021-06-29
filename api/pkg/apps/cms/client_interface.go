@@ -8,6 +8,7 @@ import (
 type Interface interface {
 	Cases() CaseClient
 	CaseTypes() CaseTypeClient
+	Comments() CommentClient
 }
 
 type CaseListOptions struct {
@@ -66,4 +67,27 @@ type CaseTypeClient interface {
 	Create(ctx context.Context, create *CaseType) (*CaseType, error)
 	Update(ctx context.Context, update *CaseType) (*CaseType, error)
 	List(ctx context.Context, listOptions CaseTypeListOptions) (*CaseTypeList, error)
+}
+
+type CommentListOptions struct {
+	CaseID string
+}
+
+func (a *CommentListOptions) MarshalQueryParameters() (url.Values, error) {
+	ret := url.Values{}
+	ret.Set("caseId", a.CaseID)
+	return ret, nil
+}
+
+func (a *CommentListOptions) UnmarshalQueryParameters(values url.Values) error {
+	a.CaseID = values.Get("caseId")
+	return nil
+}
+
+type CommentClient interface {
+	Get(ctx context.Context, id string) (*Comment, error)
+	Create(ctx context.Context, create *Comment) (*Comment, error)
+	Update(ctx context.Context, update *Comment) (*Comment, error)
+	List(ctx context.Context, listOptions CommentListOptions) (*CommentList, error)
+	Delete(ctx context.Context, id string) error
 }

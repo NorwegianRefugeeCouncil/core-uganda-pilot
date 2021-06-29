@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
+	"github.com/xeonx/timeago"
 	"golang.org/x/sync/errgroup"
 	"net/http"
 )
@@ -66,9 +67,11 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 	var kase *cms.Case
 	var kaseTypes *cms.CaseTypeList
 	var referrals *cms.CaseList
+	var comments *cms.CommentList
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
+	// Get Case
 	g.Go(func() error {
 		if id == "new" {
 			kase = &cms.Case{}
@@ -79,9 +82,19 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 		return err
 	})
 
+	// TODO : Remove this? We cannot list all parties
 	g.Go(func() error {
 		var err error
 		partyList, err = iamClient.Parties().List(waitCtx, iam.PartyListOptions{})
+		return err
+	})
+
+	// Get comments for case
+	g.Go(func() error {
+		var err error
+		comments, err = cmsClient.Comments().List(waitCtx, cms.CommentListOptions{
+			CaseID: id,
+		})
 		return err
 	})
 
@@ -90,6 +103,7 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	// Get case type team
 	if id != "new" {
 		teamRes, err := iamClient.Teams().Get(ctx, kase.TeamID)
 		if err != nil {
@@ -99,11 +113,14 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 		team = teamRes
 	}
 
+	// Get case recipient
 	party, err := iamClient.Parties().Get(ctx, kase.PartyID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	// Get case types
 	kaseTypes, err = cmsClient.CaseTypes().List(ctx, cms.CaseTypeListOptions{
 		PartyTypeIDs: party.PartyTypeIDs,
 	})
@@ -111,6 +128,8 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	// Get case referrals
 	referrals, err = cmsClient.Cases().List(ctx, cms.CaseListOptions{
 		ParentID: kase.ID,
 	})
@@ -137,11 +156,29 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 		"ReferralCaseType": referralCaseType,
 		"Referrals":        referrals,
 		"Team":             team,
+		"Comments":         displayComments(comments),
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+}
+
+type displayComment struct {
+	*cms.Comment
+	TimeAgo string
+}
+
+func displayComments(comments *cms.CommentList) []*displayComment {
+	var displayComments []*displayComment
+	for _, item := range comments.Items {
+		c := &displayComment{
+			Comment: item,
+			TimeAgo: timeago.English.Format(item.CreatedAt),
+		}
+		displayComments = append(displayComments, c)
+	}
+	return displayComments
 }
 
 func (h *Server) NewCase(w http.ResponseWriter, req *http.Request) {
