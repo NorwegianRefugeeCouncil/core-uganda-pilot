@@ -76,13 +76,13 @@ func (s *Suite) TestRelationshipListFilterByListOptions() {
 		mockParties = append(mockParties, strconv.Itoa(i))
 	}
 
-	type MockRelationships struct {
+	type MockRelationship struct {
 		RelationshipTypeID string
 		FirstParty         string
 		SecondParty        string
 	}
 
-	var mockRelationships []MockRelationships
+	var mockRelationships []*MockRelationship
 	numMockRelationships := 20
 
 	for i := 0; i < numMockRelationships; i++ {
@@ -91,7 +91,7 @@ func (s *Suite) TestRelationshipListFilterByListOptions() {
 		for p2 == p1 {
 			p2 = mockParties[rand.Intn(len(mockParties))]
 		}
-		mockRelationships = append(mockRelationships, MockRelationships{
+		mockRelationships = append(mockRelationships, &MockRelationship{
 			mockRelationshipTypeIDs[rand.Intn(len(mockRelationshipTypeIDs))],
 			p1,
 			p2,
@@ -104,8 +104,8 @@ func (s *Suite) TestRelationshipListFilterByListOptions() {
 	var bySecondParty = map[string][]*Relationship{}
 	var byEitherParty = map[string][]*Relationship{}
 	var byParties = map[string][]*Relationship{}
-	var byRFS = map[string][]*Relationship{}
-	var byRTIDAndEitherParty = map[string][]*Relationship{}
+	var byRelTypeIDFirstAndSecondParties = map[string][]*Relationship{}
+	var byRelTypeIDAndEitherParty = map[string][]*Relationship{}
 
 	// Create the relationships
 	for _, mock := range mockRelationships {
@@ -122,12 +122,12 @@ func (s *Suite) TestRelationshipListFilterByListOptions() {
 		bySecondParty[mock.SecondParty] = append(bySecondParty[mock.SecondParty], r)
 		byEitherParty[mock.FirstParty] = append(byEitherParty[mock.FirstParty], r)
 		byEitherParty[mock.SecondParty] = append(byEitherParty[mock.SecondParty], r)
-		byRTIDAndEitherParty[mock.RelationshipTypeID+mock.FirstParty] = append(byEitherParty[mock.RelationshipTypeID+mock.FirstParty], r)
-		byRTIDAndEitherParty[mock.RelationshipTypeID+mock.SecondParty] = append(byEitherParty[mock.RelationshipTypeID+mock.SecondParty], r)
+		byRelTypeIDAndEitherParty[mock.RelationshipTypeID+mock.FirstParty] = append(byEitherParty[mock.RelationshipTypeID+mock.FirstParty], r)
+		byRelTypeIDAndEitherParty[mock.RelationshipTypeID+mock.SecondParty] = append(byEitherParty[mock.RelationshipTypeID+mock.SecondParty], r)
 		firstAndSecond := mock.FirstParty + mock.SecondParty
 		byParties[firstAndSecond] = append(byParties[firstAndSecond], r)
 		rfs := mock.RelationshipTypeID + firstAndSecond
-		byRFS[rfs] = append(byRFS[rfs], r)
+		byRelTypeIDFirstAndSecondParties[rfs] = append(byRelTypeIDFirstAndSecondParties[rfs], r)
 	}
 
 	// Ensure we created enough entries
@@ -142,18 +142,18 @@ func (s *Suite) TestRelationshipListFilterByListOptions() {
 
 	// Actual tests
 	s.T().Run("Filter by RelationshipTypeID", func(t *testing.T) {
-		for _, mockRTID := range mockRelationshipTypeIDs {
+		for _, mockRelTypeID := range mockRelationshipTypeIDs {
 			list, err := s.client.Relationships().List(s.ctx, RelationshipListOptions{
-				RelationshipTypeID: mockRTID,
+				RelationshipTypeID: mockRelTypeID,
 			})
 			if !assert.NoError(t, err) {
 				return
 			}
 			// map entry and returned list should have the same length
-			assert.Len(t, byRelationshipTypeID[mockRTID], len(list.Items))
+			assert.Len(t, byRelationshipTypeID[mockRelTypeID], len(list.Items))
 			// map entry should contain same items as list
 			for _, l := range list.Items {
-				assert.Contains(t, byRelationshipTypeID[mockRTID], l)
+				assert.Contains(t, byRelationshipTypeID[mockRelTypeID], l)
 			}
 		}
 	})
@@ -209,21 +209,21 @@ func (s *Suite) TestRelationshipListFilterByListOptions() {
 		}
 	})
 
-	s.T().Run("Filter by RTID and EitherParty", func(t *testing.T) {
-		for _, mockRTID := range mockRelationshipTypeIDs {
+	s.T().Run("Filter by RelTypeID and EitherParty", func(t *testing.T) {
+		for _, mockRelTypeID := range mockRelationshipTypeIDs {
 			for _, mockParty := range mockParties {
 				list, err := s.client.Relationships().List(s.ctx, RelationshipListOptions{
-					RelationshipTypeID: mockRTID,
+					RelationshipTypeID: mockRelTypeID,
 					EitherPartyID:      mockParty,
 				})
 				if !assert.NoError(t, err) {
 					return
 				}
 				// map entry and returned list should have the same length
-				assert.Len(t, byRTIDAndEitherParty[mockRTID+mockParty], len(list.Items))
+				assert.Len(t, byRelTypeIDAndEitherParty[mockRelTypeID+mockParty], len(list.Items))
 				// map entry should contain same items as list
 				for _, l := range list.Items {
-					assert.Contains(t, byRTIDAndEitherParty[mockRTID+mockParty], l)
+					assert.Contains(t, byRelTypeIDAndEitherParty[mockRelTypeID+mockParty], l)
 				}
 			}
 		}
@@ -253,27 +253,27 @@ func (s *Suite) TestRelationshipListFilterByListOptions() {
 		}
 	})
 
-	s.T().Run("Filter by combinations of RTID, First- and SecondPartyID", func(t *testing.T) {
-		for _, mockRTID := range mockRelationshipTypeIDs {
+	s.T().Run("Filter by combinations of RelTypeID, First- and SecondPartyID", func(t *testing.T) {
+		for _, mockRelTypeID := range mockRelationshipTypeIDs {
 			for _, mockParty1 := range mockParties {
 				for _, mockParty2 := range mockParties {
 					if mockParty1 == mockParty2 {
 						continue
 					}
 					list, err := s.client.Relationships().List(s.ctx, RelationshipListOptions{
-						RelationshipTypeID: mockRTID,
+						RelationshipTypeID: mockRelTypeID,
 						FirstPartyID:       mockParty1,
 						SecondPartyID:      mockParty2,
 					})
 					if !assert.NoError(t, err) {
 						return
 					}
-					key := mockRTID + mockParty1 + mockParty2
+					key := mockRelTypeID + mockParty1 + mockParty2
 					// map entry and returned list should have the same length
-					assert.Len(t, byRFS[key], len(list.Items))
+					assert.Len(t, byRelTypeIDFirstAndSecondParties[key], len(list.Items))
 					// map entry should contain same items as list
 					for _, l := range list.Items {
-						assert.Contains(t, byRFS[key], l)
+						assert.Contains(t, byRelTypeIDFirstAndSecondParties[key], l)
 					}
 				}
 			}

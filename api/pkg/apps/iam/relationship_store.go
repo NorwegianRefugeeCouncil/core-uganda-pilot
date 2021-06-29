@@ -71,11 +71,13 @@ func (s *RelationshipStore) List(ctx context.Context, listOptions RelationshipLi
 	filter := bson.M{}
 
 	if len(filterExpressions) > 0 {
-		expressions := bson.A{}
+		expressions := bson.M{}
 		for _, filterExpression := range filterExpressions {
-			expressions = append(expressions, filterExpression)
+			for key, value := range filterExpression {
+				expressions[key] = value
+			}
 		}
-		filter["$and"] = expressions
+		filter = expressions
 	}
 
 	res, err := s.collection.Find(ctx, filter)
