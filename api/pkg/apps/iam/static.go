@@ -64,20 +64,11 @@ var EMailAttribute = Attribute{
 	},
 }
 
-// StaffRelationshipType represents the built-in Staff relationship type
-var StaffRelationshipType = RelationshipType{
-	ID:              "53478121-23af-4ed8-a367-2e0de6d60271",
-	Name:            "staff",
-	FirstPartyRole:  "Is working for",
-	SecondPartyRole: "Has staff",
-	Rules: []RelationshipTypeRule{
-		{
-			PartyTypeRule: &PartyTypeRule{
-				FirstPartyTypeID:  IndividualPartyType.ID,
-				SecondPartyTypeID: OrganizationPartyType.ID,
-			},
-		},
-	},
+// StaffPartyType represents the built-in Staff relationship type
+var StaffPartyType = PartyType{
+	ID:        "53478121-23af-4ed8-a367-2e0de6d60271",
+	Name:      "staff",
+	IsBuiltIn: true,
 }
 
 var IndividualPartyType = PartyType{
@@ -89,12 +80,6 @@ var IndividualPartyType = PartyType{
 var HouseholdPartyType = PartyType{
 	ID:        "d38a7085-7dff-4730-8be1-7c9d92a20cc3",
 	Name:      "Household",
-	IsBuiltIn: true,
-}
-
-var OrganizationPartyType = PartyType{
-	ID:        "09a7eef9-3f23-4c40-86f4-9b9440c56c6f",
-	Name:      "Organization",
 	IsBuiltIn: true,
 }
 
@@ -196,35 +181,4 @@ var ParentalRelationshipType = RelationshipType{
 			},
 		},
 	},
-}
-
-var LegalNameAttribute = Attribute{
-	ID:   "7afb0744-c764-4c5b-9dc6-b341d9b320b4",
-	Name: "legalName",
-	Translations: []AttributeTranslation{
-		{
-			Locale:           "en",
-			LongFormulation:  "Legal Name",
-			ShortFormulation: "Legal Name",
-		},
-	},
-	PartyTypeIDs: []string{
-		OrganizationPartyType.ID,
-	},
-}
-
-var TeamOrganizationRelationshipType = RelationshipType{
-	ID:   "ea1f077a-30ba-4ffb-a1c4-a51669f82e37",
-	Name: "TeamOrganization",
-	Rules: []RelationshipTypeRule{
-		{
-			PartyTypeRule: &PartyTypeRule{
-				FirstPartyTypeID:  TeamPartyType.ID,
-				SecondPartyTypeID: OrganizationPartyType.ID,
-			},
-		},
-	},
-	FirstPartyRole:  "Is part of organization",
-	SecondPartyRole: "has team",
-	IsDirectional:   true,
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/ory/hydra-client-go/client/admin"
 	"net/http"
+	"strings"
 )
 
 func (s *Server) WithAuth(ctx context.Context) func(handler http.Handler) http.Handler {
@@ -21,6 +22,14 @@ func (s *Server) WithAuth(ctx context.Context) func(handler http.Handler) http.H
 
 			// Get the access token from the session
 			token := s.sessionManager.GetString(req.Context(), "access-token")
+
+			if len(token) == 0 {
+				authHeader := req.Header.Get("Authorization")
+				authHeaderParts := strings.Split(authHeader, " ")
+				if len(authHeaderParts) == 2 && authHeaderParts[0] == "Bearer" {
+					token = authHeaderParts[1]
+				}
+			}
 
 			// Redirect to login if no access token
 			if len(token) == 0 {

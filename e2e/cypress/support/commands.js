@@ -39,3 +39,13 @@
 //     );
 //   });
 // });
+
+import {credentials} from '../helpers'
+
+Cypress.Commands.add('login', (username = credentials.username, password = credentials.password) => {
+
+    cy.visit('/')
+        .get('input[name=email]').type(username)
+        .get('input[name=password]').type(`${password}{enter}`)
+
+});

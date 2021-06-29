@@ -12,6 +12,7 @@ import (
 type RenderInterface interface {
 	IsLoggedIn() bool
 	Profile() *Claims
+	Notifications() []*sessionmanager.Notification
 }
 
 // RendererFactory is a factory to create Renderer
@@ -32,6 +33,10 @@ func (r *RendererFactory) IsLoggedIn() bool {
 
 func (r *RendererFactory) Profile() *Claims {
 	return nil
+}
+
+func (r *RendererFactory) Notifications() []*sessionmanager.Notification {
+	return []*sessionmanager.Notification{}
 }
 
 // NewRendererFactory creates a new instance of the RendererFactory
@@ -92,10 +97,15 @@ func (r *Renderer) Profile() *Claims {
 	return profile
 }
 
+func (r *Renderer) Notifications() []*sessionmanager.Notification {
+	return r.sessionManager.ConsumeNotifications(r.req.Context())
+}
+
 // WithRenderInterface adds the RenderInterface methods to the template
 func WithRenderInterface(t *template.Template, intf RenderInterface) *template.Template {
 	return t.Funcs(map[string]interface{}{
-		"IsLoggedIn": intf.IsLoggedIn,
-		"Profile":    intf.Profile,
+		"IsLoggedIn":    intf.IsLoggedIn,
+		"Profile":       intf.Profile,
+		"Notifications": intf.Notifications,
 	})
 }

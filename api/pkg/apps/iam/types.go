@@ -359,9 +359,8 @@ func (l *TeamList) FindByID(id string) *Team {
 // Staff is a relationship between an organization and an individual
 // that represents that the individual is working for that organization
 type Staff struct {
-	ID             string `json:"id"`
-	OrganizationID string `json:"organizationId"`
-	IndividualID   string `json:"individualId"`
+	ID           string `json:"id"`
+	IndividualID string `json:"individualId"`
 }
 
 // StaffList is a list of Staff
@@ -377,12 +376,4 @@ type Membership struct {
 
 type MembershipList struct {
 	Items []*Membership `json:"items"`
-}
-
-type Organization struct {
-	*Party
-}
-
-type OrganizationList struct {
-	Items []*Organization `json:"items" bson:"items"`
 }

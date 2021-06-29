@@ -3,7 +3,7 @@ const mockUpdatedText = "update"
 
 describe("Create & edit partytype", function () {
 
-    describe.only("Create", () => {
+    describe("Create", () => {
 
         it("registers a new partytype", () => {
             cy.visit('/settings/partytypes/new')
