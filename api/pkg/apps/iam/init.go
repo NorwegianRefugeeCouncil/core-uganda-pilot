@@ -11,7 +11,7 @@ func (s *Server) Init(ctx context.Context) error {
 		IndividualPartyType,
 		HouseholdPartyType,
 		TeamPartyType,
-		OrganizationPartyType,
+		StaffPartyType,
 	} {
 		if err := s.PartyTypeStore.Create(ctx, &partyType); err != nil {
 			if !mongo.IsDuplicateKeyError(err) {
@@ -29,7 +29,6 @@ func (s *Server) Init(ctx context.Context) error {
 		SiblingRelationshipType,
 		ParentalRelationshipType,
 		MembershipRelationshipType,
-		StaffRelationshipType,
 	} {
 		if err := s.RelationshipTypeStore.Create(ctx, &relationshipType); err != nil {
 			if !mongo.IsDuplicateKeyError(err) {
@@ -46,7 +45,6 @@ func (s *Server) Init(ctx context.Context) error {
 		LastNameAttribute,
 		BirthDateAttribute,
 		EMailAttribute,
-		LegalNameAttribute,
 		TeamNameAttribute,
 	} {
 		if err := s.AttributeStore.Create(ctx, &attribute); err != nil {

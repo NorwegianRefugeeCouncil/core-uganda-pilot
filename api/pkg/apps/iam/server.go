@@ -66,8 +66,6 @@ type Server struct {
 	RelationshipStore     *RelationshipStore
 	RelationshipTypeStore *RelationshipTypeStore
 	IndividualStore       *IndividualStore
-	StaffStore            *StaffStore
-	OrganizationStore     *OrganizationStore
 	TeamStore             *TeamStore
 	MembershipStore       *MembershipStore
 	HydraAdmin            admin.ClientService
@@ -127,9 +125,7 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 		RelationshipStore:     relationshipStore,
 		RelationshipTypeStore: relationshipTypeStore,
 		IndividualStore:       NewIndividualStore(mongoClient, o.MongoDatabase),
-		StaffStore:            NewStaffStore(relationshipStore),
 		TeamStore:             NewTeamStore(partyStore),
-		OrganizationStore:     NewOrganizationStore(partyStore),
 		MembershipStore:       NewMembershipStore(relationshipStore),
 	}
 
@@ -154,11 +150,6 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 	router.Path("/apis/iam/v1/memberships").Methods("POST").HandlerFunc(srv.PostMembership)
 	router.Path("/apis/iam/v1/memberships/{v1}").Methods("GET").HandlerFunc(srv.GetMembership)
 
-	router.Path("/apis/iam/v1/organizations").Methods("GET").HandlerFunc(srv.ListOrganizations)
-	router.Path("/apis/iam/v1/organizations").Methods("POST").HandlerFunc(srv.PostOrganization)
-	router.Path("/apis/iam/v1/organizations/{id}").Methods("GET").HandlerFunc(srv.GetOrganization)
-	router.Path("/apis/iam/v1/organizations/{id}").Methods("PUT").HandlerFunc(srv.PutOrganization)
-
 	router.Path("/apis/iam/v1/parties").Methods("GET").HandlerFunc(srv.ListParties)
 	router.Path("/apis/iam/v1/parties").Methods("POST").HandlerFunc(srv.PostParty)
 	router.Path("/apis/iam/v1/parties/{id}").Methods("GET").HandlerFunc(srv.GetParty)
@@ -179,10 +170,6 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 	router.Path("/apis/iam/v1/relationshiptypes").Methods("POST").HandlerFunc(srv.PostRelationshipType)
 	router.Path("/apis/iam/v1/relationshiptypes/{id}").Methods("GET").HandlerFunc(srv.GetRelationshipType)
 	router.Path("/apis/iam/v1/relationshiptypes/{id}").Methods("PUT").HandlerFunc(srv.PutRelationshipType)
-
-	router.Path("/apis/iam/v1/staff").Methods("GET").HandlerFunc(srv.ListStaff)
-	router.Path("/apis/iam/v1/staff").Methods("POST").HandlerFunc(srv.PostStaff)
-	router.Path("/apis/iam/v1/staff/{id}").Methods("GET").HandlerFunc(srv.GetStaff)
 
 	router.Path("/apis/iam/v1/teams").Methods("GET").HandlerFunc(srv.ListTeams)
 	router.Path("/apis/iam/v1/teams").Methods("POST").HandlerFunc(srv.PostTeam)
