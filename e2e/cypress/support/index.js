@@ -20,4 +20,4 @@ import './commands'
 // require('./commands')
 
 // call our custom login with access token before each test
-beforeEach(() => cy.login('admin', 'admin'))
+beforeEach(() => cy.login())

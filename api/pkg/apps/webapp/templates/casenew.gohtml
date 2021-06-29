@@ -8,19 +8,19 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Create Case</h4>
-                <form id="form" action="/cases" method="post">
+                <form id="form" data-testid='newCaseForm' action="/cases" method="post">
                     <div class="form-floating mb-3">
                         <select
                                 id="case-type"
                                 class="form-select"
                                 name="caseTypeId"
-                                data-cy="casetype-select"
+                                data-testid="caseTypePicker"
                         >
 
                             {{if .CaseTypes}}
                                 <option {{if not $.CaseTypeID}}selected{{end}} value="" hidden="hidden">Choose</option>
                                 {{range .CaseTypes.Items}}
-                                    <option value="{{.ID}}" data-cy="casetype-option" {{if eq .ID $.CaseTypeID}}selected{{end}}>{{.Name}}</option>
+                                    <option value="{{.ID}}" data-testid="caseTypeOption" {{if eq .ID $.CaseTypeID}}selected{{end}}>{{.Name}}</option>
                                 {{end}}
                             {{else}}
                                 <option selected disabled>No case types defined</option>
@@ -45,11 +45,11 @@
                     <input id="teamId" name="teamId" type="hidden" value="{{.Team.ID}}"/>
                     {{ end }}
                     <div class="form-floating mb-3">
-                        <select id="party" class="form-select" name="partyId" data-cy="party-select">
+                        <select id="party" class="form-select" name="partyId" data-testid="partyPicker">
                             {{if .Parties}}
                                 <option {{if not $.PartyID}}selected{{end}}></option>
                                 {{range .Parties.Items}}
-                                    <option value="{{.ID}}" data-cy="party-option" {{if eq .ID $.PartyID}}selected{{end}}>{{.}}</option>
+                                    <option value="{{.ID}}" data-testid="partyOption" {{if eq .ID $.PartyID}}selected{{end}}>{{.}}</option>
                                 {{end}}
                             {{else}}
                                 <option selected disabled>No parties defined</option>
@@ -65,10 +65,10 @@
                                 name="description"
                                 class="form-control"
                                 rows="3"
-                                data-cy="description"
+                                data-testid="description"
                         ></textarea>
                     </div>
-                    <button class="btn btn-primary" type="submit">Save</button>
+                    <button class="btn btn-primary" type="submit" data-testid="submitBtn">Save</button>
                 </form>
             </div>
         </div>
