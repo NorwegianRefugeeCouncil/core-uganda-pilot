@@ -1,5 +1,5 @@
-describe("The home page", () => {
-    it("successfully loads", () => {
-        cy.visit("/")
-    })
-})
+describe('The home page', () => {
+    it('successfully loads', () => {
+        cy.visit('/');
+    });
+});
