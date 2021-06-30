@@ -82,7 +82,6 @@ func (h *Server) Team(w http.ResponseWriter, req *http.Request) {
 	if err := h.renderFactory.New(req).ExecuteTemplate(w, "team", map[string]interface{}{
 		"Team":    t,
 		"Members": members,
-		"StaffPartyTypeID": iam.IndividualPartyType.ID,
 		"LastNameAttribute": iam.LastNameAttribute,
 		"FirstNameAttribute": iam.FirstNameAttribute,
 	}); err != nil {
