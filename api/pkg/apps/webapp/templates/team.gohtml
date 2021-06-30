@@ -135,12 +135,6 @@
             return lastName
         }
 
-
-        // Add listener for party selector item click
-        Array.from(document.getElementsByClassName('partySelectorItem')).forEach(e => {
-            e.onclick = onPartyListItemClick
-        })
-
         // Add listener for party search box
         document.getElementById("partySelector").oninput = (event) => {
             partySearchSubject.next(event.target.value)
