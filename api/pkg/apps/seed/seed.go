@@ -33,7 +33,7 @@ var (
 	Childcare          = caseType("039caa4e-1f93-40a9-a6ff-b5bf801dfd41", "Childcare", iam.IndividualPartyType.ID, NairobiICLATeam.ID)
 	HousingRights      = caseType("0d91d175-673a-4c10-bf87-3b940585e4ac", "Housing Rights", iam.IndividualPartyType.ID, KampalaICLATeam.ID)
 	FinancialAssistInd = caseType("785036d9-41ee-4413-987e-13d4af761737", "Financial Assistance", iam.IndividualPartyType.ID, KampalaResponseTeam.ID)
-	FinancialAssistHH  = caseType("52a24b6b-ad10-4297-b030-263bbdcd5420", "Financial Assistance", iam.IndividualPartyType.ID, NairobiResponseTeam.ID)
+	FinancialAssistHH  = caseType("52a24b6b-ad10-4297-b030-263bbdcd5420", "Rent Subsidy", iam.HouseholdPartyType.ID, NairobiResponseTeam.ID)
 
 	// Individuals
 	JohnDoe     = individual("c529d679-3bb6-4a20-8f06-c096f4d9adc1", "John", "Doe")
