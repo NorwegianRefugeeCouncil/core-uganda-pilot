@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/iam"
+	"github.com/nrc-no/core/pkg/sessionmanager"
 	"net/http"
 )
 
@@ -98,6 +99,10 @@ func (h *Server) PostPartyType(
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+			Message: fmt.Sprintf("Party type \"%s\" successfully updated", partyType.Name),
+			Theme:   "success",
+		})
 		w.Header().Set("Location", "/settings/partytypes/"+created.ID)
 		w.WriteHeader(http.StatusSeeOther)
 		return
@@ -107,6 +112,10 @@ func (h *Server) PostPartyType(
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+			Message: fmt.Sprintf("Party type \"%s\" successfully updated", partyType.Name),
+			Theme:   "success",
+		})
 		w.Header().Set("Location", "/settings/partytypes/"+updated.ID)
 		w.WriteHeader(http.StatusSeeOther)
 		return

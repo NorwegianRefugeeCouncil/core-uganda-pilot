@@ -107,6 +107,27 @@ func (p *Party) AddPartyType(partyType string) {
 }
 
 func (p *Party) String() string {
+
+	// Staff
+	if p.HasPartyType(StaffPartyType.ID) {
+		return p.Attributes.Get(FirstNameAttribute.ID) +
+			" " +
+			p.Attributes.Get(LastNameAttribute.ID)
+	}
+
+	// Individual
+	if p.HasPartyType(IndividualPartyType.ID) {
+		return p.Attributes.Get(FirstNameAttribute.ID) +
+			" " +
+			p.Attributes.Get(LastNameAttribute.ID)
+	}
+
+	// Team
+	if p.HasPartyType(TeamPartyType.ID) {
+		return p.Attributes.Get(TeamNameAttribute.ID)
+	}
+
+	// Default
 	return p.ID
 }
 
@@ -341,6 +362,10 @@ func (b *Individual) String() string {
 type Team struct {
 	ID   string `json:"id" bson:"id"`
 	Name string `json:"name" bson:"name"`
+}
+
+func (t *Team) String() string {
+	return t.Name
 }
 
 type TeamList struct {

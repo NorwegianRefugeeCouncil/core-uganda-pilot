@@ -5,6 +5,7 @@
     <body class="bg-light">
 
     {{template "navbar"}}
+    {{template "notifications"}}
 
     <div class="container mt-4">
         <div class="row">
@@ -15,7 +16,7 @@
 
                         <form action="/settings/attributes{{if .Attribute}}/{{.Attribute.ID}}{{end}}" method="post">
 
-                            <input type="hidden" id="id-input" name="id">
+                            <input type="hidden" id="id-input" name="id" value="{{.Attribute.ID}}">
 
                             <!-- Name -->
                             <div class="form-floating mb-3 shadow-sm font-monospace">

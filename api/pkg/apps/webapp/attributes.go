@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/iam"
+	"github.com/nrc-no/core/pkg/sessionmanager"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
 	"strings"
@@ -67,18 +68,19 @@ func (h *Server) Attribute(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	a, err := iamClient.Attributes().Get(ctx, id)
+	attribute, err := iamClient.Attributes().Get(ctx, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if req.Method == "POST" {
-		h.PostAttribute(ctx, a, w, req)
+		h.PostAttribute(ctx, attribute, w, req)
+		return
 	}
 
 	if err := h.renderFactory.New(req).ExecuteTemplate(w, "attribute", map[string]interface{}{
-		"Attribute": a,
+		"Attribute": attribute,
 		"PartyTypes": iam.PartyTypeList{
 			Items: []*iam.PartyType{
 				&iam.IndividualPartyType,
@@ -164,6 +166,10 @@ func (h *Server) PostAttribute(ctx context.Context, attribute *iam.Attribute, w 
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+			Message: fmt.Sprintf("Attribute \"%s\" successfully created", attribute.Name),
+			Theme:   "success",
+		})
 	} else {
 		var err error
 		out, err = iamClient.Attributes().Update(ctx, attribute)
@@ -171,6 +177,10 @@ func (h *Server) PostAttribute(ctx context.Context, attribute *iam.Attribute, w 
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+			Message: fmt.Sprintf("Attribute \"%s\" successfully updated.", attribute.Name),
+			Theme:   "success",
+		})
 	}
 
 	w.Header().Set("Location", "/settings/attributes/"+out.ID)

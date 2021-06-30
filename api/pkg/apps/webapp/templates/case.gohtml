@@ -1,14 +1,17 @@
 {{define "case"}}
     {{$caseId := .Case.ID}}
     {{$caseTypes := .CaseTypes }}
-    {{$partyId := .Case.PartyID}}
-    {{$party := .Parties.FindByID $partyId}}
+    {{$recipient := .Recipient}}
     {{$caseTypeId := .Case.CaseTypeID}}
+    {{$team := .Team}}
+    {{$teamId := .Team.ID}}
     <!doctype html>
     <html lang="en">
     {{template "head"}}
     <body>
     {{template "navbar"}}
+    {{template "notifications"}}
+
     {{template "case_nav" .Case }}
 
     <div class="container mt-4">
@@ -34,17 +37,19 @@
                         <h2>{{.Name}}</h2>
                     {{end}}
                 {{end}}
-                <h4><a class="d-block mb-3" href="/teams/{{.Team.ID}}">Open by {{.Team.Name}}</a></h4>
-                <a class="d-block mb-3" href="/individuals/{{$partyId}}">
-                    {{$party.String}}
-                </a>
-
+                <p>Team: <a href="/teams/{{$teamId}}">{{$team.Name}}</a></p>
+                <p>Recipient: <a href="/individuals/{{$recipient.ID}}">{{$recipient}}</a></p>
 
                 <h3 class="mb-3">
                     {{if .Case.Done}}
-                        <span class="badge rounded-pill bg-danger">Closed</span>
+
+                        <span class="badge rounded-pill bg-danger">
+                            <span class='fs-6 fw-normal mb-1 d-inline-block'>Closed</span>
+                        </span>
                     {{else}}
-                        <span class="badge rounded-pill bg-success">Open</span>
+                        <span class="badge rounded-pill bg-success">
+                           <span class='fs-6 fw-normal mb-1 d-inline-block'>Open</span>
+                        </span>
                     {{end}}
                 </h3>
 
@@ -89,11 +94,12 @@
                     <ul class="list-group mb-3">
                         {{if .Referrals.Items}}
                             {{ range .Referrals.Items }}
-                                {{$caseType := $caseTypes.FindByID .CaseTypeID}}
-                                {{if $caseType}}
+                                {{$referralCaseTypeId := .CaseTypeID}}
+                                {{$referralCaseType := $caseTypes.FindByID $referralCaseTypeId}}
+                                {{if $referralCaseType}}
                                     <a class="list-group-item list-group-item-action d-flex align-items-center"
                                        href="/cases/{{.ID}}">
-                                        <div>{{if $caseType}}{{$caseType.Name}}{{end}}</div>
+                                        <div>{{if $referralCaseType}}{{$referralCaseType.Name}}{{end}}</div>
                                         <div style="flex-grow: 1"></div>
                                         {{if .Done}}
                                             <span class="badge rounded-pill bg-danger" data-testid="referralCaseClosed">Closed</span>
@@ -125,8 +131,8 @@
                                     </select>
                                     <label for="referral-case-type">Referral Case Type</label>
                                 </div>
-                                <input type="hidden" name="partyId" value="{{$partyId}}">
-                                <input type="hidden" name="parentId" value="{{.Case.ID}}">
+                                <input type="hidden" name="partyId" value="{{$recipient.ID}}">
+                                <input type="hidden" name="parentId" value="{{$caseId}}">
                                 <input type="hidden" name="teamId" value="{{.ReferralCaseType.TeamID}}">
                                 <div class="mb-3">
                                     <label for="description" class="form-label">Description</label>
@@ -138,7 +144,9 @@
                                             data-testid="referralDescription"
                                             rows="3"></textarea>
                                 </div>
-                                <button class="btn btn-primary" type="submit" data-testid="submitReferralBtn">Submit referral</button>
+                                <button class="btn btn-primary" type="submit" data-testid="submitReferralBtn">Submit
+                                    referral
+                                </button>
                                 <a href="/cases/{{.Case.ID}}" class="btn btn-outline-secondary"
                                    type="submit">Cancel</a>
                             </form>
@@ -174,8 +182,8 @@
                 {{ if .Comments}}
                     {{range .Comments}}
                         <div class='card mb-4'>
-                            <div class='card-header bg-quite-light'>
-                                {{.AuthorID}} commented {{.TimeAgo}}
+                            <div class='card-header bg-quite-light py-3'>
+                                <b>{{.Author}}</b> <span class='text-muted'>commented {{.TimeAgo}}</span>
                             </div>
                             <div class='card-body'>
                                 {{.Body}}

@@ -45,14 +45,20 @@ func (s *CaseStore) List(ctx context.Context, listOptions CaseListOptions) (*Cas
 
 	filter := bson.M{}
 
-	if len(listOptions.PartyID) > 0 {
-		filter["partyId"] = listOptions.PartyID
+	if len(listOptions.PartyIDs) > 0 {
+		filter["partyId"] = bson.M{"$in": listOptions.PartyIDs}
 	}
-	if len(listOptions.CaseTypeID) > 0 {
-		filter["caseTypeId"] = listOptions.CaseTypeID
+	if len(listOptions.CaseTypeIDs) > 0 {
+		filter["caseTypeId"] = bson.M{"$in": listOptions.CaseTypeIDs}
+	}
+	if len(listOptions.TeamIDs) > 0 {
+		filter["teamId"] = bson.M{"$in": listOptions.TeamIDs}
 	}
 	if len(listOptions.ParentID) > 0 {
 		filter["parentId"] = listOptions.ParentID
+	}
+	if listOptions.Done != nil {
+		filter["done"] = *listOptions.Done
 	}
 
 	res, err := s.collection.Find(ctx, filter)

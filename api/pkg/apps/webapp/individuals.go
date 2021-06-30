@@ -178,7 +178,7 @@ func (h *Server) Individual(w http.ResponseWriter, req *http.Request) {
 
 	g.Go(func() error {
 		var err error
-		cList, err = cmsClient.Cases().List(ctx, cms.CaseListOptions{PartyID: id})
+		cList, err = cmsClient.Cases().List(ctx, cms.CaseListOptions{PartyIDs: []string{id}})
 		return err
 	})
 
@@ -376,7 +376,7 @@ func (h *Server) PostIndividual(
 			return
 		}
 		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
-			Message: fmt.Sprintf("%s successfully created", b.String()),
+			Message: fmt.Sprintf("Individual \"%s\" successfully created", b.String()),
 			Theme:   "success",
 		})
 	} else {
@@ -386,7 +386,7 @@ func (h *Server) PostIndividual(
 			return
 		}
 		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
-			Message: fmt.Sprintf("%s successfully updated", b.String()),
+			Message: fmt.Sprintf("Individual \"%s\" successfully updated", b.String()),
 			Theme:   "success",
 		})
 	}

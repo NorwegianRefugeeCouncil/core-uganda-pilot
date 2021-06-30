@@ -54,11 +54,21 @@ func (s *PartyStore) Get(ctx context.Context, id string) (*Party, error) {
 	return &r, nil
 }
 
-func (s *PartyStore) List(ctx context.Context, listOptions PartyListOptions) (*PartyList, error) {
+func (s *PartyStore) List(ctx context.Context, listOptions PartySearchOptions) (*PartyList, error) {
 	filterItems := bson.A{}
 
-	if len(listOptions.PartyTypeID) != 0 {
-		filterItems = append(filterItems, bson.M{"partyTypeIds": listOptions.PartyTypeID})
+	if len(listOptions.PartyTypeIDs) != 0 {
+		filterItems = append(filterItems, bson.M{"partyTypeIds": bson.M{"$in": listOptions.PartyTypeIDs}})
+	}
+
+	if len(listOptions.PartyIDs) != 0 {
+		filterItems = append(filterItems, bson.M{"id": bson.M{"$in": listOptions.PartyTypeIDs}})
+	}
+
+	if listOptions.Attributes != nil && len(listOptions.Attributes) > 0 {
+		for key, value := range listOptions.Attributes {
+			filterItems = append(filterItems, bson.M{"attributes." + key: value})
+		}
 	}
 
 	if len(listOptions.SearchParam) != 0 {
