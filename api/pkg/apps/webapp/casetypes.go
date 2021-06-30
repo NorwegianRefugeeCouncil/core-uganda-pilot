@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
+	"github.com/nrc-no/core/pkg/sessionmanager"
 	"golang.org/x/sync/errgroup"
 	"net/http"
 )
@@ -78,6 +79,10 @@ func (h *Server) PostCaseType(
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+			Message: fmt.Sprintf("Case type \"%s\" successfully created", caseType.Name),
+			Theme:   "success",
+		})
 		w.Header().Set("Location", "/settings/casetypes")
 		w.WriteHeader(http.StatusSeeOther)
 		return
@@ -87,6 +92,10 @@ func (h *Server) PostCaseType(
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+			Message: fmt.Sprintf("Case type \"%s\" successfully updated", caseType.Name),
+			Theme:   "success",
+		})
 		w.Header().Set("Location", "/settings/casetypes")
 		w.WriteHeader(http.StatusSeeOther)
 		return

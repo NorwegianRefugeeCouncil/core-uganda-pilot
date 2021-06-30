@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
+	"github.com/nrc-no/core/pkg/sessionmanager"
 	"github.com/satori/go.uuid"
 	"github.com/xeonx/timeago"
 	"golang.org/x/sync/errgroup"
@@ -379,6 +380,10 @@ func (h *Server) PostCase(ctx context.Context, id string, w http.ResponseWriter,
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+			Message: fmt.Sprintf("Case successfully created"),
+			Theme:   "success",
+		})
 	} else {
 		var err error
 		kase, err = cmsClient.Cases().Update(ctx, &cms.Case{
@@ -394,6 +399,10 @@ func (h *Server) PostCase(ctx context.Context, id string, w http.ResponseWriter,
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+			Message: fmt.Sprintf("Case successfully updated"),
+			Theme:   "success",
+		})
 	}
 	if len(parentId) > 0 {
 		w.Header().Set("Location", "/cases/"+parentId)

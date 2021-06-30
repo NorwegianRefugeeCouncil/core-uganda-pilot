@@ -12,6 +12,8 @@
     </style>
     <body class="bg-light">
     {{template "navbar"}}
+    {{template "notifications"}}
+
     <div class="container mt-4">
         <a href='/settings/casetypes/new' class='btn btn-primary mb-3'>Define new case type</a>
         {{ if .CaseTypes}}
