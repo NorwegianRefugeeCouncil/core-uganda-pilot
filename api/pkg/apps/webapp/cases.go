@@ -264,8 +264,6 @@ func (h *Server) PostCase(ctx context.Context, id string, w http.ResponseWriter,
 	var kase *cms.Case
 	if id == "" {
 		var err error
-		// record user id of creator if referral
-		// TODO get actual unique identifier rather than name
 		creatorId := ctx.Value("subject").(string)
 		kase, err = cmsClient.Cases().Create(ctx, &cms.Case{
 			CaseTypeID:  caseTypeId,
