@@ -12,29 +12,47 @@ type Interface interface {
 }
 
 type CaseListOptions struct {
-	PartyID    string
-	CaseTypeID string
-	ParentID   string
+	PartyIDs    []string
+	TeamIDs     []string
+	CaseTypeIDs []string
+	ParentID    string
+	Done        *bool
 }
 
 func (a *CaseListOptions) MarshalQueryParameters() (url.Values, error) {
 	ret := url.Values{}
-	if len(a.PartyID) > 0 {
-		ret.Set("partyId", a.PartyID)
+	for _, partyID := range a.PartyIDs {
+		ret.Add("partyId", partyID)
 	}
-	if len(a.CaseTypeID) > 0 {
-		ret.Set("caseTypeId", a.CaseTypeID)
+	for _, caseTypeID := range a.CaseTypeIDs {
+		ret.Add("caseTypeId", caseTypeID)
+	}
+	for _, teamID := range a.TeamIDs {
+		ret.Add("teamId", teamID)
 	}
 	if len(a.ParentID) > 0 {
 		ret.Set("parentId", a.ParentID)
+	}
+	if a.Done != nil {
+		if *a.Done {
+			ret.Set("done", "true")
+		} else {
+			ret.Set("done", "false")
+		}
 	}
 	return ret, nil
 }
 
 func (a *CaseListOptions) UnmarshalQueryParameters(values url.Values) error {
-	a.PartyID = values.Get("partyId")
-	a.CaseTypeID = values.Get("caseTypeId")
+	a.PartyIDs = values["partyId"]
+	a.CaseTypeIDs = values["caseTypeId"]
+	a.TeamIDs = values["teamId"]
 	a.ParentID = values.Get("parentId")
+	doneStr := values.Get("done")
+	if len(doneStr) > 0 {
+		isDone := doneStr == "true"
+		a.Done = &isDone
+	}
 	return nil
 }
 
