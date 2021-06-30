@@ -106,9 +106,6 @@ func (s *Suite) TestPartyList() {
 
 	s.T().Run("test filter by partyTypeId", func(t *testing.T) {
 		for _, party := range partyList {
-
-			t.Logf("listing parties with PartyTypeID: %s", party.partyTypeID)
-
 			list, err := s.client.Parties().List(s.ctx, PartyListOptions{
 				PartyTypeID: party.partyTypeID,
 			})
@@ -116,7 +113,6 @@ func (s *Suite) TestPartyList() {
 				return
 			}
 
-			t.Logf("received %d items", len(list.Items))
 			assert.Len(t, list.Items, len(byPartyTypeID[party.partyTypeID]))
 			for _, k := range byPartyTypeID[party.partyTypeID] {
 				assert.Contains(t, list.Items, k)
