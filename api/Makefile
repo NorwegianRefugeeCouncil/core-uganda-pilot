@@ -1,4 +1,10 @@
-spinup:
+docker:
+	sudo systemctl start docker
+
+docker-down:
+	sudo systemctl stop docker
+
+spinup: docker
 	sudo docker-compose -f artifacts/docker-compose.yaml up -d
 
 spindown:

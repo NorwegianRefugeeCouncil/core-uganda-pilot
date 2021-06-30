@@ -20,4 +20,5 @@ import './commands';
 // require('./commands')
 
 // call our custom login with access token before each test
+before(() => cy.resetDB());
 beforeEach(() => cy.login());

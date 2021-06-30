@@ -24,20 +24,22 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 // Cypress.Commands.add('login', (username, password) => {
-//   return
-//   cy.request({
-//     method: 'POST',
-//     url: 'http://localhost:8080/auth/realms/nrc/protocol/openid-connect/token',
-//     headers: {
-//       'Content-Type': 'application/x-www-form-urlencoded'
-//     },
-//     body: `client_id=api&client_secret=e6486272-039d-430f-b3c7-47887aa9e206&grant_type=password&username=${username}&password=${password}&scope=openid`
-//   }).then(response => {
-//     cy.intercept(
-//       { url: '*' },
-//       req => req.headers['Authorization'] = `Bearer ${response.body.access_token}`
-//     );
-//   });
+//     cy.request({
+//         method: 'POST',
+//         url: 'http://localhost:8080/auth/realms/nrc/protocol/openid-connect/token',
+//         headers: {
+//             'Content-Type': 'application/x-www-form-urlencoded',
+//         },
+//         body: `client_id=api&client_secret=e6486272-039d-430f-b3c7-47887aa9e206&grant_type=password&username=${username}&password=${password}&scope=openid`,
+//     }).then((response) => {
+//         cy.intercept(
+//             { url: '*' },
+//             (req) =>
+//                 (req.headers[
+//                     'Authorization'
+//                 ] = `Bearer ${response.body.access_token}`)
+//         );
+//     });
 // });
 
 import { credentials } from '../helpers';
@@ -52,3 +54,9 @@ Cypress.Commands.add(
             .type(`${password}{enter}`);
     }
 );
+
+Cypress.Commands.add('resetDB', () => {
+    cy.request('POST', 'localhost:9000/seed', {
+        action: 'RESET',
+    });
+});

@@ -180,6 +180,17 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	}
 	router.PathPrefix("/apis/cms").Handler(cmsServer)
 
+	// Create SeedHandler Server
+	seedServer, err := seed.NewServer(ctx, seed.NewServerOptions().
+		WithMongoDatabase(c.MongoDatabase).
+		WithMongoUsername(c.MongoUsername).
+		WithMongoPassword(c.MongoPassword).
+		WithMongoHosts([]string{"localhost:27017"}))
+	if err != nil {
+		panic(err)
+	}
+	router.PathPrefix("/seed").Handler(seedServer)
+
 	// Create Webapp
 	// WebApp
 	webAppOptions := webapp2.ServerOptions{

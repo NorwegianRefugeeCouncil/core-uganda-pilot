@@ -368,7 +368,13 @@ func (h *Server) PostCase(ctx context.Context, id string, w http.ResponseWriter,
 	var kase *cms.Case
 	if id == "" {
 		var err error
-		creatorId := ctx.Value("subject").(string)
+		subject := ctx.Value("subject")
+		var creatorId string
+		if subject == nil {
+			creatorId = ""
+		} else {
+			creatorId = subject.(string)
+		}
 		kase, err = cmsClient.Cases().Create(ctx, &cms.Case{
 			CaseTypeID:  caseTypeId,
 			PartyID:     partyId,
