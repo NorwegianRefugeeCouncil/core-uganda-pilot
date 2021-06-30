@@ -122,8 +122,8 @@ func (s *Suite) TestRelationshipListFilterByListOptions() {
 		bySecondParty[mock.SecondParty] = append(bySecondParty[mock.SecondParty], r)
 		byEitherParty[mock.FirstParty] = append(byEitherParty[mock.FirstParty], r)
 		byEitherParty[mock.SecondParty] = append(byEitherParty[mock.SecondParty], r)
-		byRelTypeIDAndEitherParty[mock.RelationshipTypeID+mock.FirstParty] = append(byEitherParty[mock.RelationshipTypeID+mock.FirstParty], r)
-		byRelTypeIDAndEitherParty[mock.RelationshipTypeID+mock.SecondParty] = append(byEitherParty[mock.RelationshipTypeID+mock.SecondParty], r)
+		byRelTypeIDAndEitherParty[mock.RelationshipTypeID+mock.FirstParty] = append(byRelTypeIDAndEitherParty[mock.RelationshipTypeID+mock.FirstParty], r)
+		byRelTypeIDAndEitherParty[mock.RelationshipTypeID+mock.SecondParty] = append(byRelTypeIDAndEitherParty[mock.RelationshipTypeID+mock.SecondParty], r)
 		firstAndSecond := mock.FirstParty + mock.SecondParty
 		byParties[firstAndSecond] = append(byParties[firstAndSecond], r)
 		rfs := mock.RelationshipTypeID + firstAndSecond
