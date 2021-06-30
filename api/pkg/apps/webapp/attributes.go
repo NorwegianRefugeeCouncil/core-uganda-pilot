@@ -76,6 +76,7 @@ func (h *Server) Attribute(w http.ResponseWriter, req *http.Request) {
 
 	if req.Method == "POST" {
 		h.PostAttribute(ctx, attribute, w, req)
+		return
 	}
 
 	if err := h.renderFactory.New(req).ExecuteTemplate(w, "attribute", map[string]interface{}{
