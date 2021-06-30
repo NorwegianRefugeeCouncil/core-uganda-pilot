@@ -34,4 +34,10 @@ func (r RESTPartyClient) List(ctx context.Context, listOptions PartyListOptions)
 	return &obj, err
 }
 
+func (r RESTPartyClient) Search(ctx context.Context, listOptions PartySearchOptions) (*PartyList, error) {
+	var obj PartyList
+	err := r.c.Post().Path("/apis/iam/v1/parties/search").Body(listOptions).Do(ctx).Into(&obj)
+	return &obj, err
+}
+
 var _ PartyClient = &RESTPartyClient{}

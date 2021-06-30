@@ -152,6 +152,7 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 
 	router.Path("/apis/iam/v1/parties").Methods("GET").HandlerFunc(srv.ListParties)
 	router.Path("/apis/iam/v1/parties").Methods("POST").HandlerFunc(srv.PostParty)
+	router.Path("/apis/iam/v1/parties/search").Methods("POST").HandlerFunc(srv.SearchParties)
 	router.Path("/apis/iam/v1/parties/{id}").Methods("GET").HandlerFunc(srv.GetParty)
 	router.Path("/apis/iam/v1/parties/{id}").Methods("PUT").HandlerFunc(srv.PutParty)
 
