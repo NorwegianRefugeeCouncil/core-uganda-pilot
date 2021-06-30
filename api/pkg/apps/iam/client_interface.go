@@ -19,9 +19,9 @@ type Interface interface {
 }
 
 type PartyListOptions struct {
-	PartyTypeID string            `json:"partyTypeId" bson:"partyTypeId"`
-	SearchParam string            `json:"searchParam" bson:"searchParam"`
-	Attributes  map[string]string `json:"attributes"`
+	PartyTypeID string
+	SearchParam string
+	Attributes  map[string]string
 }
 
 func (a *PartyListOptions) MarshalQueryParameters() (url.Values, error) {
@@ -58,11 +58,19 @@ func (a *PartyListOptions) UnmarshalQueryParameters(values url.Values) error {
 	return nil
 }
 
+type PartySearchOptions struct {
+	PartyIDs     []string          `json:"partyIds"`
+	PartyTypeIDs []string          `json:"partyTypeIds"`
+	Attributes   map[string]string `json:"attributes"`
+	SearchParam  string            `json:"searchParam"`
+}
+
 type PartyClient interface {
 	Get(ctx context.Context, id string) (*Party, error)
 	Create(ctx context.Context, party *Party) (*Party, error)
 	Update(ctx context.Context, party *Party) (*Party, error)
 	List(ctx context.Context, listOptions PartyListOptions) (*PartyList, error)
+	Search(ctx context.Context, listOptions PartySearchOptions) (*PartyList, error)
 }
 
 type PartyTypeListOptions struct {

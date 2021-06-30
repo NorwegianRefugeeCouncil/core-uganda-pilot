@@ -112,10 +112,7 @@ func (p *Party) String() string {
 	if p.HasPartyType(StaffPartyType.ID) {
 		return p.Attributes.Get(FirstNameAttribute.ID) +
 			" " +
-			p.Attributes.Get(LastNameAttribute.ID) +
-			" (" +
-			p.Attributes.Get(EMailAttribute.ID) +
-			")"
+			p.Attributes.Get(LastNameAttribute.ID)
 	}
 
 	// Individual

@@ -50,8 +50,8 @@ func MapTeamToParty(team *Team) *Party {
 }
 
 func (s *TeamStore) List(ctx context.Context) (*TeamList, error) {
-	ps, err := s.partyStore.List(ctx, PartyListOptions{
-		PartyTypeID: TeamPartyType.ID,
+	ps, err := s.partyStore.List(ctx, PartySearchOptions{
+		PartyTypeIDs: []string{TeamPartyType.ID},
 	})
 	if err != nil {
 		return nil, err

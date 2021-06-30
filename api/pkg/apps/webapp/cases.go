@@ -134,20 +134,19 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 	cmsClient := h.CMSClient(ctx)
 	iamClient := h.IAMClient(ctx)
 
-	id, ok := mux.Vars(req)["id"]
-	if !ok || len(id) == 0 {
+	caseID, ok := mux.Vars(req)["id"]
+	if !ok || len(caseID) == 0 {
 		err := fmt.Errorf("no id in path")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if req.Method == "POST" {
-		h.PostCase(ctx, id, w, req)
+		h.PostCase(ctx, caseID, w, req)
 		return
 	}
 
-	var party *iam.Party
-	var partyList *iam.PartyList
+	var recipientParty *iam.Party
 	var team *iam.Team
 
 	var kase *cms.Case
@@ -159,19 +158,12 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 
 	// Get Case
 	g.Go(func() error {
-		if id == "new" {
+		if caseID == "new" {
 			kase = &cms.Case{}
 			return nil
 		}
 		var err error
-		kase, err = cmsClient.Cases().Get(waitCtx, id)
-		return err
-	})
-
-	// TODO : Remove this? We cannot list all parties
-	g.Go(func() error {
-		var err error
-		partyList, err = iamClient.Parties().List(waitCtx, iam.PartyListOptions{})
+		kase, err = cmsClient.Cases().Get(waitCtx, caseID)
 		return err
 	})
 
@@ -179,7 +171,7 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 	g.Go(func() error {
 		var err error
 		comments, err = cmsClient.Comments().List(waitCtx, cms.CommentListOptions{
-			CaseID: id,
+			CaseID: caseID,
 		})
 		return err
 	})
@@ -189,8 +181,32 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	// Get all comment author IDs
+	var commentAuthorIDMap = map[string]bool{}
+	for _, comment := range comments.Items {
+		commentAuthorIDMap[comment.AuthorID] = true
+	}
+	var commentAuthorIDs []string
+	for authorID, _ := range commentAuthorIDMap {
+		commentAuthorIDs = append(commentAuthorIDs, authorID)
+	}
+
+	// Get all authors
+	commentAuthors, err := h.IAMClient(ctx).Parties().Search(ctx, iam.PartySearchOptions{
+		PartyTypeIDs: []string{iam.IndividualPartyType.ID},
+		PartyIDs:     commentAuthorIDs,
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	var commentAuthorMap = map[string]*iam.Party{}
+	for _, author := range commentAuthors.Items {
+		commentAuthorMap[author.ID] = author
+	}
+
 	// Get case type team
-	if id != "new" {
+	if caseID != "new" {
 		teamRes, err := iamClient.Teams().Get(ctx, kase.TeamID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -200,7 +216,7 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Get case recipient
-	party, err := iamClient.Parties().Get(ctx, kase.PartyID)
+	recipientParty, err = iamClient.Parties().Get(ctx, kase.PartyID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -208,7 +224,7 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 
 	// Get case types
 	kaseTypes, err = cmsClient.CaseTypes().List(ctx, cms.CaseTypeListOptions{
-		PartyTypeIDs: party.PartyTypeIDs,
+		PartyTypeIDs: recipientParty.PartyTypeIDs,
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -237,12 +253,11 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 	if err := h.renderFactory.New(req).ExecuteTemplate(w, "case", map[string]interface{}{
 		"Case":             kase,
 		"CaseTypes":        kaseTypes,
-		"Party":            party,
-		"Parties":          partyList,
+		"Recipient":        recipientParty,
 		"ReferralCaseType": referralCaseType,
 		"Referrals":        referrals,
 		"Team":             team,
-		"Comments":         displayComments(comments),
+		"Comments":         displayComments(comments, commentAuthorMap),
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -252,15 +267,17 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 
 type displayComment struct {
 	*cms.Comment
+	Author  *iam.Party
 	TimeAgo string
 }
 
-func displayComments(comments *cms.CommentList) []*displayComment {
+func displayComments(comments *cms.CommentList, authorMap map[string]*iam.Party) []*displayComment {
 	var displayComments []*displayComment
 	for _, item := range comments.Items {
 		c := &displayComment{
 			Comment: item,
 			TimeAgo: timeago.English.Format(item.CreatedAt),
+			Author:  authorMap[item.AuthorID],
 		}
 		displayComments = append(displayComments, c)
 	}
