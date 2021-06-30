@@ -115,6 +115,7 @@ func NewServer(
 	router.Path("/settings/authclients/{id}/delete").HandlerFunc(h.DeleteAuthClient)
 	router.Path("/comments").Methods("POST").HandlerFunc(h.PostComment)
 	router.Path("/relationships/pickparty").HandlerFunc(h.PickRelationshipParty)
+	router.Path("/teams/pickparty").HandlerFunc(h.PickTeamParty)
 
 	h.router = router
 
