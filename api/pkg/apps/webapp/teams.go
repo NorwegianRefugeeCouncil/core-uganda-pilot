@@ -41,11 +41,6 @@ func (h *Server) Team(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if req.Method == "POST" {
-		h.AddIndividualToTeam(w, req)
-		return
-	}
-
 	t, err := iamClient.Teams().Get(ctx, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -128,5 +123,4 @@ func (h *Server) AddIndividualToTeam(w http.ResponseWriter, req *http.Request) {
 	}
 
 	w.Header().Set("Location", "/teams/"+t)
-	w.WriteHeader(http.StatusSeeOther)
 }

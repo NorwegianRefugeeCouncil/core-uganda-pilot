@@ -14,7 +14,6 @@ type TeamPartyOptions struct {
 }
 
 func (a *TeamPartyOptions) UnmarshalQueryParameters(values url.Values) error {
-	a.PartyTypeID = values.Get("partyTypeId")
 	a.SearchParam = values.Get("searchParam")
 	a.TeamId = values.Get("teamId")
 	return nil
@@ -31,7 +30,7 @@ func (h *Server) PickTeamParty(w http.ResponseWriter, req *http.Request){
 	}
 
 	partyList, err := iamClient.Parties().List(ctx, iam.PartyListOptions{
-		PartyTypeID: listOptions.PartyTypeID,
+		PartyTypeID: iam.IndividualPartyType.ID,
 		SearchParam: listOptions.SearchParam,
 	})
 	if err != nil {

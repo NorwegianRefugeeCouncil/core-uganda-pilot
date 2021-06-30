@@ -95,6 +95,7 @@ func NewServer(
 	router.Path("/teams").HandlerFunc(h.Teams)
 	router.Path("/teams/pickparty").HandlerFunc(h.PickTeamParty)
 	router.Path("/teams/{id}").HandlerFunc(h.Team)
+	router.Path("/teams/{id}/invitemember").HandlerFunc(h.AddIndividualToTeam)
 	router.Path("/cases").HandlerFunc(h.Cases)
 	router.Path("/cases/new").HandlerFunc(h.NewCase)
 	router.Path("/cases/{id}").HandlerFunc(h.Case)
