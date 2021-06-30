@@ -266,16 +266,7 @@ func (h *Server) PostCase(ctx context.Context, id string, w http.ResponseWriter,
 		var err error
 		// record user id of creator if referral
 		// TODO get actual unique identifier rather than name
-		creatorId := ""
-		if len(parentId) > 0 {
-			profileIntf := h.sessionManager.Get(ctx, "profile")
-			profile, ok := profileIntf.(*Claims)
-			if !ok {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			creatorId = fmt.Sprintf("%s %s", profile.GivenName, profile.FamilyName)
-		}
+		creatorId := ctx.Value("subject").(string)
 		kase, err = cmsClient.Cases().Create(ctx, &cms.Case{
 			CaseTypeID:  caseTypeId,
 			PartyID:     partyId,
