@@ -83,25 +83,25 @@ func (h *Server) Cases(w http.ResponseWriter, req *http.Request) {
 	caseListOptions.CaseTypeIDs = options.CaseTypeIDs
 	caseListOptions.TeamIDs = options.TeamIDs
 
-	wg, ctx := errgroup.WithContext(ctx)
+	wg, wgCtx := errgroup.WithContext(ctx)
 	wg.Go(func() error {
 		var err error
-		kases, err = cmsClient.Cases().List(ctx, *caseListOptions)
+		kases, err = cmsClient.Cases().List(wgCtx, *caseListOptions)
 		return err
 	})
 	wg.Go(func() error {
 		var err error
-		caseTypes, err = cmsClient.CaseTypes().List(ctx, cms.CaseTypeListOptions{})
+		caseTypes, err = cmsClient.CaseTypes().List(wgCtx, cms.CaseTypeListOptions{})
 		return err
 	})
 	wg.Go(func() error {
 		var err error
-		partyList, err = iamClient.Parties().List(ctx, iam.PartyListOptions{})
+		partyList, err = iamClient.Parties().List(wgCtx, iam.PartyListOptions{})
 		return err
 	})
 	wg.Go(func() error {
 		var err error
-		teams, err = iamClient.Teams().List(ctx, iam.TeamListOptions{})
+		teams, err = iamClient.Teams().List(wgCtx, iam.TeamListOptions{})
 		return err
 	})
 
