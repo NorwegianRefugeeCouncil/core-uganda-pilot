@@ -48,10 +48,11 @@ func (h *Server) PickTeamParty(w http.ResponseWriter, req *http.Request){
 	}
 
 	var returnList iam.PartyList
+	returnList.Items = []*iam.Party{}
 	for _, party := range partyList.Items {
 		isMember := false
 		for _, member := range partiesInTeam.Items {
-			if party.ID == member.ID {
+			if party.ID == member.IndividualID {
 				isMember = true
 			}
 		}

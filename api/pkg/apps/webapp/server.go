@@ -93,6 +93,7 @@ func NewServer(
 	router.Path("/individuals/{id}").HandlerFunc(h.Individual)
 	router.Path("/individuals/{id}/credentials").HandlerFunc(h.IndividualCredentials)
 	router.Path("/teams").HandlerFunc(h.Teams)
+	router.Path("/teams/pickparty").HandlerFunc(h.PickTeamParty)
 	router.Path("/teams/{id}").HandlerFunc(h.Team)
 	router.Path("/cases").HandlerFunc(h.Cases)
 	router.Path("/cases/new").HandlerFunc(h.NewCase)
@@ -115,7 +116,6 @@ func NewServer(
 	router.Path("/settings/authclients/{id}/delete").HandlerFunc(h.DeleteAuthClient)
 	router.Path("/comments").Methods("POST").HandlerFunc(h.PostComment)
 	router.Path("/relationships/pickparty").HandlerFunc(h.PickRelationshipParty)
-	router.Path("/teams/pickparty").HandlerFunc(h.PickTeamParty)
 
 	h.router = router
 

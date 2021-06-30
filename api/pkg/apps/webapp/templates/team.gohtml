@@ -57,7 +57,7 @@
 
     <script>
         let {Subject, BehaviorSubject, pipe, Observable} = rxjs;
-        let {map, debounceTime, switchMap, distinctUntilChanged} = rxjs.operators;
+        let {map, debounceTime, switchMap, distinctUntilChanged, filter} = rxjs.operators;
         let {ajax} = rxjs.ajax;
 
         // Handles the search box for the parties dropdown
@@ -66,9 +66,10 @@
             debounceTime(200),
             map(s => s.trim()),
             distinctUntilChanged(),
+            filter(s => s && s.length >= 2),
             switchMap((searchParam) => {
                 const searchParams = new URLSearchParams({
-                    "partyTypeId": "{{.StaffPartyTypeId}}",
+                    "partyTypeId": "{{.StaffPartyTypeID}}",
                     "searchParam": searchParam,
                     "teamId": "{{.Team.ID}}"
                 })
