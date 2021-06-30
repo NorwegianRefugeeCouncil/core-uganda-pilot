@@ -45,22 +45,21 @@ func (s *RelationshipStore) List(ctx context.Context, listOptions RelationshipLi
 
 	filter := bson.M{}
 
-	if len(listOptions.RelationshipTypeID) != 0 {
+	if len(listOptions.RelationshipTypeID) > 0 {
 		filter["relationshipTypeId"] = listOptions.RelationshipTypeID
 	}
 
-	if len(listOptions.EitherPartyID) != 0 {
+	if len(listOptions.EitherPartyID) > 0 {
 		filter["$or"] = bson.A{
 			bson.M{"firstParty": listOptions.EitherPartyID},
 			bson.M{"secondParty": listOptions.EitherPartyID},
 		}
 	} else {
-		if len(listOptions.FirstPartyID) != 0 {
+		if len(listOptions.FirstPartyID) > 0 {
 			filter["firstParty"] = listOptions.FirstPartyID
 		}
-		if len(listOptions.SecondPartyID) != 0 {
+		if len(listOptions.SecondPartyID) > 0 {
 			filter["secondParty"] = listOptions.SecondPartyID
-
 		}
 	}
 
