@@ -3,6 +3,7 @@ package iam
 import (
 	"context"
 	"errors"
+	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/rest"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -14,7 +15,7 @@ import (
 type Suite struct {
 	suite.Suite
 	server                  *Server
-	serverOpts              *ServerOptions
+	serverOpts              *server.GenericServerOptions
 	ctx                     context.Context
 	client                  *ClientSet
 	authenticatedHttpClient *http.Client
@@ -22,7 +23,7 @@ type Suite struct {
 
 func (s *Suite) SetupSuite() {
 
-	opts := NewServerOptions().
+	opts := server.NewServerOptions().
 		WithMongoHosts([]string{"localhost:27017"}).
 		WithMongoDatabase("iam_test").
 		WithMongoUsername("root").
