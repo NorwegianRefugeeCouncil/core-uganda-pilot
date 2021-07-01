@@ -13,11 +13,14 @@ func (s *Server) ListParties(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	ret, err := s.PartyStore.List(ctx, PartySearchOptions{
-		PartyTypeIDs: []string{listOptions.PartyTypeID},
-		Attributes:   listOptions.Attributes,
-		SearchParam:  listOptions.SearchParam,
-	})
+	options := &PartySearchOptions{
+		Attributes:  listOptions.Attributes,
+		SearchParam: listOptions.SearchParam,
+	}
+	if len(listOptions.PartyTypeID) > 0 {
+		options.PartyIDs = []string{listOptions.PartyTypeID}
+	}
+	ret, err := s.PartyStore.List(ctx, *options)
 	if err != nil {
 		s.Error(w, err)
 		return
