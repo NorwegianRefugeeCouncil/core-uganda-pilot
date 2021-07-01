@@ -20,16 +20,8 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 	return func(handler http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 
-			ctx := req.Context()
-
 			if s.environment == "Development" {
-				authUserSubject := req.Header.Get("X-Authenticated-User-Subject")
-				if len(authUserSubject) != 0 {
-					ctx = context.WithValue(ctx, "Subject", authUserSubject)
-					req = req.WithContext(ctx)
-					handler.ServeHTTP(w, req)
-					return
-				}
+				auth.SetDevAuthenticatedUserSubject(handler, w, req)
 			}
 
 			token, err := auth.AuthHeaderTokenSource(req).GetToken()
@@ -52,7 +44,7 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 				s.Error(w, err)
 				return
 			}
-
+			ctx := req.Context()
 			ctx = context.WithValue(ctx, "subject", res.Payload.Sub)
 			req = req.WithContext(ctx)
 			handler.ServeHTTP(w, req)

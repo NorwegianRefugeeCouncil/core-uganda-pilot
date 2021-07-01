@@ -10,7 +10,6 @@ import (
 	"github.com/spf13/pflag"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"golang.org/x/oauth2"
 	"io/ioutil"
 	"net/http"
 )
@@ -72,7 +71,6 @@ type Server struct {
 	caseTypeStore *CaseTypeStore
 	commentStore  *CommentStore
 	HydraAdmin    admin.ClientService
-	oauth2Config  *oauth2.Config
 }
 
 func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
