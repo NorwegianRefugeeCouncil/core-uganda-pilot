@@ -3,6 +3,7 @@ package seed
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
@@ -24,6 +25,7 @@ type ServerOptions struct {
 	MongoDatabase string
 	MongoUsername string
 	MongoPassword string
+	ClearDB       bool
 }
 
 func NewServerOptions() *ServerOptions {
@@ -53,6 +55,10 @@ func (o *ServerOptions) WithListenAddress(address string) *ServerOptions {
 	o.ListenAddress = address
 	return o
 }
+func (o *ServerOptions) WithClearDB(clearDB bool) *ServerOptions {
+	o.ClearDB = clearDB
+	return o
+}
 
 func (o *ServerOptions) Flags(fs pflag.FlagSet) {
 	fs.StringVar(&o.ListenAddress, "listen-address", o.ListenAddress, "Server listen address")
@@ -60,11 +66,13 @@ func (o *ServerOptions) Flags(fs pflag.FlagSet) {
 	fs.StringVar(&o.MongoDatabase, "mongo-database", o.MongoDatabase, "Mongo database")
 	fs.StringVar(&o.MongoUsername, "mongo-username", o.MongoUsername, "Mongo username")
 	fs.StringVar(&o.MongoPassword, "mongo-password", o.MongoPassword, "Mongo password")
+	fs.BoolVar(&o.ClearDB, "clear-db", o.ClearDB, "Clear database on startup")
 }
 
 type Server struct {
-	router      *mux.Router
-	mongoClient *mongo.Client
+	databaseName string
+	router       *mux.Router
+	mongoClient  *mongo.Client
 }
 
 func (s Server) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
@@ -89,9 +97,16 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 
 	router := mux.NewRouter()
 
+	if o.ClearDB {
+		if err := mongoClient.Database(o.MongoDatabase).Drop(ctx); err != nil {
+			return nil, err
+		}
+	}
+
 	srv := &Server{
-		router:      router,
-		mongoClient: mongoClient,
+		databaseName: o.MongoDatabase,
+		router:       router,
+		mongoClient:  mongoClient,
 	}
 
 	router.Path("/seed").Methods("POST").HandlerFunc(srv.SeedHandler)
@@ -101,7 +116,6 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 }
 
 func (s *Server) SeedHandler(w http.ResponseWriter, req *http.Request) {
-	databaseName := "core" // TODO not sure where to best record this dynamically
 	ctx := req.Context()
 
 	bodyBytes, err := ioutil.ReadAll(req.Body)
@@ -118,20 +132,21 @@ func (s *Server) SeedHandler(w http.ResponseWriter, req *http.Request) {
 
 	switch action {
 	case "RESET":
-		if err := Clear(ctx, databaseName, s.mongoClient); err != nil {
+		if err := Clear(ctx, s.databaseName, s.mongoClient); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		err = Seed(ctx, databaseName, s.mongoClient)
+		err = Seed(ctx, s.databaseName, s.mongoClient)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	case "SEED":
-		if err := Seed(ctx, databaseName, s.mongoClient); err != nil {
+		if err := Seed(ctx, s.databaseName, s.mongoClient); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 	default:
+		err := fmt.Errorf("invalid error type")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

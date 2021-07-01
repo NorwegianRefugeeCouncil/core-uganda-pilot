@@ -36,6 +36,8 @@ type Server struct {
 	oidcProvider      *oidc.Provider
 	oidcVerifier      *oidc.IDTokenVerifier
 	oauth2Config      *oauth2.Config
+	environment       string
+	iamAdminClient    iam.Interface
 }
 
 type ServerOptions struct {
@@ -43,6 +45,7 @@ type ServerOptions struct {
 	RedisAddress            string
 	RedisMaxIdleConnections int
 	TemplateDirectory       string
+	Environment             string
 }
 
 func NewServer(
@@ -50,8 +53,6 @@ func NewServer(
 	hydraAdminClient *client.OryHydra,
 	hydraPublicClient *client.OryHydra,
 ) (*Server, error) {
-
-	ctx := context.Background()
 
 	pool := &redis.Pool{
 		MaxIdle: options.RedisMaxIdleConnections,
@@ -74,6 +75,7 @@ func NewServer(
 	fmt.Println(e)
 
 	h := &Server{
+		environment:       options.Environment,
 		hydraAdminClient:  hydraAdminClient,
 		hydraPublicClient: hydraPublicClient,
 		renderFactory:     renderFactory,
@@ -84,7 +86,7 @@ func NewServer(
 
 	router := mux.NewRouter()
 	router.Use(sm.LoadAndSave)
-	router.Use(h.WithAuth(ctx))
+	router.Use(h.WithAuth())
 	router.Path("/callback").HandlerFunc(h.Callback)
 	router.Path("/login").HandlerFunc(h.Login)
 	router.Path("/logout").HandlerFunc(h.Logout)
@@ -202,6 +204,13 @@ func (s *Server) Init(ctx context.Context) error {
 	})
 	s.login = loginClient
 
+	iamAdminClient := iam.NewClientSet(&rest.RESTConfig{
+		Scheme:     "http",
+		Host:       "localhost:9000",
+		HTTPClient: adminHttpClient,
+	})
+	s.iamAdminClient = iamAdminClient
+
 	return nil
 }
 
@@ -211,28 +220,44 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 func (s *Server) IAMClient(ctx context.Context) iam.Interface {
 	cfg := s.oauth2Config
+	accessToken := s.sessionManager.GetString(ctx, "access-token")
+	refreshToken := s.sessionManager.GetString(ctx, "refresh-token")
 	token := &oauth2.Token{
-		AccessToken:  s.sessionManager.GetString(ctx, "access-token"),
-		RefreshToken: s.sessionManager.GetString(ctx, "refresh-token"),
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
 	}
 	cli := cfg.Client(ctx, token)
+
+	httpClient := http.DefaultClient
+	if len(accessToken) > 0 || len(refreshToken) > 0 {
+		httpClient = cli
+	}
+
 	return iam.NewClientSet(&rest.RESTConfig{
 		Scheme:     "http",
 		Host:       "localhost:9000",
-		HTTPClient: cli,
+		HTTPClient: httpClient,
 	})
 }
 
 func (s *Server) CMSClient(ctx context.Context) cms.Interface {
 	cfg := s.oauth2Config
+	accessToken := s.sessionManager.GetString(ctx, "access-token")
+	refreshToken := s.sessionManager.GetString(ctx, "refresh-token")
 	token := &oauth2.Token{
-		AccessToken:  s.sessionManager.GetString(ctx, "access-token"),
-		RefreshToken: s.sessionManager.GetString(ctx, "refresh-token"),
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
 	}
 	cli := cfg.Client(ctx, token)
+
+	httpClient := http.DefaultClient
+	if len(accessToken) > 0 || len(refreshToken) > 0 {
+		httpClient = cli
+	}
+
 	return cms.NewClientSet(&rest.RESTConfig{
 		Scheme:     "http",
 		Host:       "localhost:9000",
-		HTTPClient: cli,
+		HTTPClient: httpClient,
 	})
 }

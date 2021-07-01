@@ -230,6 +230,10 @@ func (r *Request) Do(ctx context.Context) *Response {
 		req.Header.Set("Content-Type", "application/json")
 	}
 
+	if xAuthUserSubject, ok := ctx.Value("Subject").(string); ok {
+		req.Header.Set("X-Authenticated-User-Subject", xAuthUserSubject)
+	}
+
 	httpClient := r.c.config.HTTPClient
 	if httpClient == nil {
 		httpClient = http.DefaultClient

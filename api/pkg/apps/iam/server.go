@@ -20,6 +20,7 @@ type ServerOptions struct {
 	MongoDatabase string
 	MongoUsername string
 	MongoPassword string
+	Environment   string
 }
 
 func NewServerOptions() *ServerOptions {
@@ -49,6 +50,10 @@ func (o *ServerOptions) WithListenAddress(address string) *ServerOptions {
 	o.ListenAddress = address
 	return o
 }
+func (o *ServerOptions) WithEnvironment(environment string) *ServerOptions {
+	o.Environment = environment
+	return o
+}
 
 func (o *ServerOptions) Flags(fs pflag.FlagSet) {
 	fs.StringVar(&o.ListenAddress, "listen-address", o.ListenAddress, "Server listen address")
@@ -59,6 +64,7 @@ func (o *ServerOptions) Flags(fs pflag.FlagSet) {
 }
 
 type Server struct {
+	environment           string
 	router                *mux.Router
 	AttributeStore        *AttributeStore
 	PartyStore            *PartyStore
@@ -117,6 +123,7 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 	}
 
 	srv := &Server{
+		environment:           o.Environment,
 		router:                router,
 		mongoClient:           mongoClient,
 		AttributeStore:        attributeStore,

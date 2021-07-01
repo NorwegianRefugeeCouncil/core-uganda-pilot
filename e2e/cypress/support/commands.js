@@ -42,21 +42,16 @@
 //     });
 // });
 
-import { credentials } from '../helpers';
-
-Cypress.Commands.add(
-    'login',
-    (username = credentials.username, password = credentials.password) => {
-        cy.visit('/')
-            .get('input[name=email]')
-            .type(username)
-            .get('input[name=password]')
-            .type(`${password}{enter}`);
-    }
-);
 
 Cypress.Commands.add('resetDB', () => {
-    cy.request('POST', 'localhost:9000/seed', {
-        action: 'RESET',
-    });
+  cy.request('POST', 'localhost:9000/seed', {
+    action: 'RESET'
+  });
+});
+
+Cypress.Commands.add('login', (email) => {
+  cy.intercept(
+    { url: '*' },
+    (req) => (req.headers['X-E2E-Authenticated-User-Email'] = `${email}`)
+  );
 });

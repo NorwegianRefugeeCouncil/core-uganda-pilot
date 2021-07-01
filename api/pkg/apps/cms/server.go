@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/pflag"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"golang.org/x/oauth2"
 	"io/ioutil"
 	"net/http"
 )
@@ -20,6 +21,7 @@ type ServerOptions struct {
 	MongoDatabase string
 	MongoUsername string
 	MongoPassword string
+	Environment   string
 }
 
 func NewServerOptions() *ServerOptions {
@@ -49,6 +51,10 @@ func (o *ServerOptions) WithListenAddress(address string) *ServerOptions {
 	o.ListenAddress = address
 	return o
 }
+func (o *ServerOptions) WithEnvironment(environment string) *ServerOptions {
+	o.Environment = environment
+	return o
+}
 
 func (o *ServerOptions) Flags(fs pflag.FlagSet) {
 	fs.StringVar(&o.ListenAddress, "listen-address", o.ListenAddress, "Server listen address")
@@ -59,12 +65,14 @@ func (o *ServerOptions) Flags(fs pflag.FlagSet) {
 }
 
 type Server struct {
+	environment   string
 	router        *mux.Router
 	mongoClient   *mongo.Client
 	caseStore     *CaseStore
 	caseTypeStore *CaseTypeStore
 	commentStore  *CommentStore
 	HydraAdmin    admin.ClientService
+	oauth2Config  *oauth2.Config
 }
 
 func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
@@ -106,6 +114,7 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 		caseStore:     caseStore,
 		caseTypeStore: caseTypeStore,
 		commentStore:  commentStore,
+		environment:   o.Environment,
 	}
 
 	srv.HydraAdmin = client.NewHTTPClientWithConfig(nil, &client.TransportConfig{

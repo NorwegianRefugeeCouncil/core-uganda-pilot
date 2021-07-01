@@ -29,6 +29,7 @@ type Server struct {
 }
 
 type Options struct {
+	Environment       string
 	TemplateDirectory string
 	Address           string
 	MongoDatabase     string
@@ -45,6 +46,7 @@ type Options struct {
 
 func NewOptions() *Options {
 	return &Options{
+		Environment:       "Production",
 		TemplateDirectory: "pkg/apps/webapp/templates",
 		Address:           "http://localhost:9000",
 		MongoDatabase:     "core",
@@ -71,6 +73,7 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 	fs.StringVar(&o.RedisSecretKey, "redis-secret-key", o.RedisSecretKey, "Redis secret key")
 	fs.StringVar(&o.HydraAdminURL, "hydra-admin-url", o.HydraAdminURL, "Hydra Admin URL")
 	fs.StringVar(&o.HydraPublicURL, "hydra-public-url", o.HydraPublicURL, "Hydra Public URL")
+	fs.StringVar(&o.Environment, "environment", o.Environment, "Environment (Production / Development)")
 }
 
 type CompletedOptions struct {
@@ -138,10 +141,29 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	// Add logging middleware
 	router.Use(middleware.UseLogging())
 
+	// Create SeedHandler Server
+	seedServer, err := seed.NewServer(ctx, seed.NewServerOptions().
+		WithMongoDatabase(c.MongoDatabase).
+		WithMongoUsername(c.MongoUsername).
+		WithMongoPassword(c.MongoPassword).
+		WithMongoHosts([]string{"localhost:27017"}))
+	if err != nil {
+		panic(err)
+	}
+	router.PathPrefix("/seed").Handler(seedServer)
+
+	if c.ClearDB {
+		seeder.Clear()
+	}
+	if c.SeedDB {
+		seeder.Seed()
+	}
+
 	// Create IAM Server
 	iamServer, err := iam.NewServer(
 		ctx,
 		iam.NewServerOptions().
+			WithEnvironment(c.Environment).
 			WithMongoDatabase(c.MongoDatabase).
 			WithMongoUsername(c.MongoUsername).
 			WithMongoPassword(c.MongoPassword).
@@ -171,6 +193,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 
 	// Create CMS Server
 	cmsServer, err := cms.NewServer(ctx, cms.NewServerOptions().
+		WithEnvironment(c.Environment).
 		WithMongoDatabase(c.MongoDatabase).
 		WithMongoUsername(c.MongoUsername).
 		WithMongoPassword(c.MongoPassword).
@@ -180,17 +203,6 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	}
 	router.PathPrefix("/apis/cms").Handler(cmsServer)
 
-	// Create SeedHandler Server
-	seedServer, err := seed.NewServer(ctx, seed.NewServerOptions().
-		WithMongoDatabase(c.MongoDatabase).
-		WithMongoUsername(c.MongoUsername).
-		WithMongoPassword(c.MongoPassword).
-		WithMongoHosts([]string{"localhost:27017"}))
-	if err != nil {
-		panic(err)
-	}
-	router.PathPrefix("/seed").Handler(seedServer)
-
 	// Create Webapp
 	// WebApp
 	webAppOptions := webapp2.ServerOptions{
@@ -198,6 +210,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		RedisMaxIdleConnections: c.RedisMaxIdleConns,
 		RedisAddress:            c.RedisAddress,
 		RedisNetwork:            c.RedisNetwork,
+		Environment:             c.Environment,
 	}
 	webappServer, err := webapp2.NewServer(
 		webAppOptions,
