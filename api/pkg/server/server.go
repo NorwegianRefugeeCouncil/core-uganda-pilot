@@ -30,8 +30,6 @@ type Server struct {
 }
 
 type Options struct {
-	ClearDB           bool
-	Environment       string
 	TemplateDirectory string
 	Address           string
 	MongoDatabase     string
@@ -155,8 +153,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	// Create IAM Server
 	iamServer, err := iam.NewServer(
 		ctx,
-		server.NewServerOptions().
-			WithEnvironment(c.Environment).
+		iam.NewServerOptions().
 			WithMongoDatabase(c.MongoDatabase).
 			WithMongoUsername(c.MongoUsername).
 			WithMongoPassword(c.MongoPassword).
@@ -185,8 +182,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.PathPrefix("/apis/login").Handler(loginServer)
 
 	// Create CMS Server
-	cmsServer, err := cms.NewServer(ctx, server.NewServerOptions().
-		WithEnvironment(c.Environment).
+	cmsServer, err := cms.NewServer(ctx, cms.NewServerOptions().
 		WithMongoDatabase(c.MongoDatabase).
 		WithMongoUsername(c.MongoUsername).
 		WithMongoPassword(c.MongoPassword).
