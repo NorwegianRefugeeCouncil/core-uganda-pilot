@@ -9,6 +9,7 @@ import (
 	"github.com/nrc-no/core/pkg/apps/login"
 	"github.com/nrc-no/core/pkg/apps/seeder"
 	webapp2 "github.com/nrc-no/core/pkg/apps/webapp"
+	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/middleware"
 	"github.com/ory/hydra-client-go/client"
 	"github.com/spf13/pflag"
@@ -154,7 +155,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	// Create IAM Server
 	iamServer, err := iam.NewServer(
 		ctx,
-		iam.NewServerOptions().
+		server.NewServerOptions().
 			WithEnvironment(c.Environment).
 			WithMongoDatabase(c.MongoDatabase).
 			WithMongoUsername(c.MongoUsername).
@@ -184,7 +185,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.PathPrefix("/apis/login").Handler(loginServer)
 
 	// Create CMS Server
-	cmsServer, err := cms.NewServer(ctx, cms.NewServerOptions().
+	cmsServer, err := cms.NewServer(ctx, server.NewServerOptions().
 		WithEnvironment(c.Environment).
 		WithMongoDatabase(c.MongoDatabase).
 		WithMongoUsername(c.MongoUsername).
