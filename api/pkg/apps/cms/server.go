@@ -73,21 +73,25 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 
 	router.Use(srv.WithAuth())
 
-	router.Path("/apis/cms/v1/cases").Methods("GET").HandlerFunc(srv.ListCases)
-	router.Path("/apis/cms/v1/cases").Methods("POST").HandlerFunc(srv.PostCase)
-	router.Path("/apis/cms/v1/cases/{id}").Methods("GET").HandlerFunc(srv.GetCase)
-	router.Path("/apis/cms/v1/cases/{id}").Methods("PUT").HandlerFunc(srv.PutCase)
+	casesEP := server.Endpoints["cases"]
+	caseTypesEP := server.Endpoints["casetypes"]
+	commentsEP := server.Endpoints["comments"]
 
-	router.Path("/apis/cms/v1/casetypes").Methods("GET").HandlerFunc(srv.ListCaseTypes)
-	router.Path("/apis/cms/v1/casetypes").Methods("POST").HandlerFunc(srv.PostCaseType)
-	router.Path("/apis/cms/v1/casetypes/{id}").Methods("GET").HandlerFunc(srv.GetCaseType)
-	router.Path("/apis/cms/v1/casetypes/{id}").Methods("PUT").HandlerFunc(srv.PutCaseType)
+	router.Path(casesEP).Methods("GET").HandlerFunc(srv.ListCases)
+	router.Path(casesEP).Methods("POST").HandlerFunc(srv.PostCase)
+	router.Path(casesEP + "/{id}").Methods("GET").HandlerFunc(srv.GetCase)
+	router.Path(casesEP + "/{id}").Methods("PUT").HandlerFunc(srv.PutCase)
 
-	router.Path("/apis/cms/v1/comments").Methods("GET").HandlerFunc(srv.ListComments)
-	router.Path("/apis/cms/v1/comments").Methods("POST").HandlerFunc(srv.PostComment)
-	router.Path("/apis/cms/v1/comments/{id}").Methods("GET").HandlerFunc(srv.GetComment)
-	router.Path("/apis/cms/v1/comments/{id}").Methods("PUT").HandlerFunc(srv.PutComment)
-	router.Path("/apis/cms/v1/comments/{id}").Methods("PUT").HandlerFunc(srv.DeleteComment)
+	router.Path(caseTypesEP).Methods("GET").HandlerFunc(srv.ListCaseTypes)
+	router.Path(caseTypesEP).Methods("POST").HandlerFunc(srv.PostCaseType)
+	router.Path(caseTypesEP + "/{id}").Methods("GET").HandlerFunc(srv.GetCaseType)
+	router.Path(caseTypesEP + "/{id}").Methods("PUT").HandlerFunc(srv.PutCaseType)
+
+	router.Path(commentsEP).Methods("GET").HandlerFunc(srv.ListComments)
+	router.Path(commentsEP).Methods("POST").HandlerFunc(srv.PostComment)
+	router.Path(commentsEP + "/{id}").Methods("GET").HandlerFunc(srv.GetComment)
+	router.Path(commentsEP + "/{id}").Methods("PUT").HandlerFunc(srv.PutComment)
+	router.Path(commentsEP + "/{id}").Methods("PUT").HandlerFunc(srv.DeleteComment)
 
 	return srv, nil
 

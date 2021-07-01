@@ -50,3 +50,20 @@ func (o *GenericServerOptions) Flags(fs pflag.FlagSet) {
 	fs.StringVar(&o.MongoUsername, "mongo-username", o.MongoUsername, "Mongo username")
 	fs.StringVar(&o.MongoPassword, "mongo-password", o.MongoPassword, "Mongo password")
 }
+
+var cmsPath = "/apis/cms/v1/"
+var iamPath = "/apis/api/v1/"
+
+var Endpoints = map[string]string{
+	"cases":             cmsPath + "cases",
+	"casetypes":         cmsPath + "casetypes",
+	"comments":          cmsPath + "comments",
+	"attributes":        iamPath + "attributes",
+	"individuals":       iamPath + "individuals",
+	"memberships":       iamPath + "memberships",
+	"parties":           iamPath + "parties",
+	"partytypes":        iamPath + "partyTypes",
+	"relationships":     iamPath + "relationships",
+	"relationshiptypes": iamPath + "relationshiptypes",
+	"teams":             iamPath + "teams",
+}
