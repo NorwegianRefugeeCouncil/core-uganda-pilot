@@ -11,6 +11,11 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 	return func(handler http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 
+			if s.environment == "Development" {
+				auth.SetDevAuthenticatedUserSubject(handler, w, req)
+				return
+			}
+
 			token, err := auth.AuthHeaderTokenSource(req).GetToken()
 			if err != nil {
 				s.Error(w, err)

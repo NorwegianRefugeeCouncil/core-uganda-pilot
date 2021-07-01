@@ -7,7 +7,7 @@ import (
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/nrc-no/core/pkg/apps/login"
-	"github.com/nrc-no/core/pkg/apps/seed"
+	"github.com/nrc-no/core/pkg/apps/seeder"
 	webapp2 "github.com/nrc-no/core/pkg/apps/webapp"
 	"github.com/nrc-no/core/pkg/middleware"
 	"github.com/ory/hydra-client-go/client"
@@ -29,6 +29,8 @@ type Server struct {
 }
 
 type Options struct {
+	ClearDB           bool
+	Environment       string
 	TemplateDirectory string
 	Address           string
 	MongoDatabase     string
@@ -45,6 +47,8 @@ type Options struct {
 
 func NewOptions() *Options {
 	return &Options{
+		ClearDB:           false,
+		Environment:       "Production",
 		TemplateDirectory: "pkg/apps/webapp/templates",
 		Address:           "http://localhost:9000",
 		MongoDatabase:     "core",
@@ -71,6 +75,8 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 	fs.StringVar(&o.RedisSecretKey, "redis-secret-key", o.RedisSecretKey, "Redis secret key")
 	fs.StringVar(&o.HydraAdminURL, "hydra-admin-url", o.HydraAdminURL, "Hydra Admin URL")
 	fs.StringVar(&o.HydraPublicURL, "hydra-public-url", o.HydraPublicURL, "Hydra Public URL")
+	fs.StringVar(&o.Environment, "environment", o.Environment, "Environment (Production / Development)")
+	fs.BoolVar(&o.ClearDB, "fresh", o.ClearDB, "Clear user-created DB entries")
 }
 
 type CompletedOptions struct {
@@ -138,10 +144,18 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	// Add logging middleware
 	router.Use(middleware.UseLogging())
 
+	// Prep db
+	if c.ClearDB {
+		if err := seeder.Clear(ctx, c.MongoClient, c.MongoDatabase); err != nil {
+			panic(err)
+		}
+	}
+
 	// Create IAM Server
 	iamServer, err := iam.NewServer(
 		ctx,
 		iam.NewServerOptions().
+			WithEnvironment(c.Environment).
 			WithMongoDatabase(c.MongoDatabase).
 			WithMongoUsername(c.MongoUsername).
 			WithMongoPassword(c.MongoPassword).
@@ -171,6 +185,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 
 	// Create CMS Server
 	cmsServer, err := cms.NewServer(ctx, cms.NewServerOptions().
+		WithEnvironment(c.Environment).
 		WithMongoDatabase(c.MongoDatabase).
 		WithMongoUsername(c.MongoUsername).
 		WithMongoPassword(c.MongoPassword).
@@ -187,6 +202,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		RedisMaxIdleConnections: c.RedisMaxIdleConns,
 		RedisAddress:            c.RedisAddress,
 		RedisNetwork:            c.RedisNetwork,
+		Environment:             c.Environment,
 	}
 	webappServer, err := webapp2.NewServer(
 		webAppOptions,
@@ -231,7 +247,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		panic(err)
 	}
 
-	if err := seed.Seed(ctx, c.MongoDatabase, c.MongoClient); err != nil {
+	if err := seeder.Seed(ctx, c.MongoClient, c.MongoDatabase); err != nil {
 		panic(err)
 	}
 

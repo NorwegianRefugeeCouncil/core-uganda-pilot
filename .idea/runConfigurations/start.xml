@@ -2,7 +2,7 @@
   <configuration default="false" name="start" type="GoApplicationRunConfiguration" factoryName="Go Application">
     <module name="core" />
     <working_directory value="$PROJECT_DIR$/api" />
-    <parameters value="--mongo-database=core --mongo-username=root --mongo-password=example" />
+    <parameters value="--mongo-database=core --mongo-username=root --mongo-password=example --environment=Development --fresh=true" />
     <EXTENSION ID="net.ashald.envfile">
       <option name="IS_ENABLED" value="false" />
       <option name="IS_SUBST" value="false" />
