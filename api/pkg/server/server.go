@@ -7,7 +7,7 @@ import (
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/nrc-no/core/pkg/apps/login"
-	"github.com/nrc-no/core/pkg/apps/seed"
+	"github.com/nrc-no/core/pkg/apps/seeder"
 	webapp2 "github.com/nrc-no/core/pkg/apps/webapp"
 	"github.com/nrc-no/core/pkg/middleware"
 	"github.com/ory/hydra-client-go/client"
@@ -29,6 +29,7 @@ type Server struct {
 }
 
 type Options struct {
+	ClearDB           bool
 	Environment       string
 	TemplateDirectory string
 	Address           string
@@ -46,6 +47,7 @@ type Options struct {
 
 func NewOptions() *Options {
 	return &Options{
+		ClearDB:           false,
 		Environment:       "Production",
 		TemplateDirectory: "pkg/apps/webapp/templates",
 		Address:           "http://localhost:9000",
@@ -74,6 +76,7 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 	fs.StringVar(&o.HydraAdminURL, "hydra-admin-url", o.HydraAdminURL, "Hydra Admin URL")
 	fs.StringVar(&o.HydraPublicURL, "hydra-public-url", o.HydraPublicURL, "Hydra Public URL")
 	fs.StringVar(&o.Environment, "environment", o.Environment, "Environment (Production / Development)")
+	fs.BoolVar(&o.ClearDB, "fresh", o.ClearDB, "Clear user-created DB entries")
 }
 
 type CompletedOptions struct {
@@ -141,22 +144,11 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	// Add logging middleware
 	router.Use(middleware.UseLogging())
 
-	// Create SeedHandler Server
-	seedServer, err := seed.NewServer(ctx, seed.NewServerOptions().
-		WithMongoDatabase(c.MongoDatabase).
-		WithMongoUsername(c.MongoUsername).
-		WithMongoPassword(c.MongoPassword).
-		WithMongoHosts([]string{"localhost:27017"}))
-	if err != nil {
-		panic(err)
-	}
-	router.PathPrefix("/seed").Handler(seedServer)
-
+	// Prep db
 	if c.ClearDB {
-		seeder.Clear()
-	}
-	if c.SeedDB {
-		seeder.Seed()
+		if err := seeder.Clear(ctx, c.MongoClient, c.MongoDatabase); err != nil {
+			panic(err)
+		}
 	}
 
 	// Create IAM Server
@@ -255,7 +247,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		panic(err)
 	}
 
-	if err := seed.Seed(ctx, c.MongoDatabase, c.MongoClient); err != nil {
+	if err := seeder.Seed(ctx, c.MongoClient, c.MongoDatabase); err != nil {
 		panic(err)
 	}
 

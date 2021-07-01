@@ -1,9 +1,76 @@
-package seed
+package seeder
 
 import (
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
+	"strings"
 )
+
+func caseType(id, name, partyTypeID, teamID string) cms.CaseType {
+	ct := cms.CaseType{
+		ID:          id,
+		Name:        name,
+		PartyTypeID: partyTypeID,
+		TeamID:      teamID,
+	}
+	caseTypes = append(caseTypes, ct)
+	return ct
+}
+
+func team(id, name string) iam.Team {
+	t := iam.Team{
+		ID:   id,
+		Name: name,
+	}
+	teams = append(teams, t)
+	return t
+}
+
+func individual(id, firstName, lastName string) iam.Individual {
+	var i = iam.Individual{
+		Party: &iam.Party{
+			ID: id,
+			PartyTypeIDs: []string{
+				iam.IndividualPartyType.ID,
+			},
+			Attributes: map[string][]string{
+				iam.FirstNameAttribute.ID: {firstName},
+				iam.LastNameAttribute.ID:  {lastName},
+				iam.EMailAttribute.ID:     {strings.ToLower(firstName) + "." + strings.ToLower(lastName) + "@email.com"},
+			},
+		},
+	}
+	individuals = append(individuals, i)
+	return i
+}
+
+func staff(individual iam.Individual) iam.Individual {
+	individual.AddPartyType(iam.StaffPartyType.ID)
+	return individual
+}
+
+func membership(id string, individual iam.Individual, team iam.Team) iam.Membership {
+	m := iam.Membership{
+		ID:           id,
+		TeamID:       team.ID,
+		IndividualID: individual.ID,
+	}
+	memberships = append(memberships, m)
+	return m
+}
+
+func kase(id, caseTypeID, partyID, teamID, description string, done bool) cms.Case {
+	k := cms.Case{
+		ID:          id,
+		CaseTypeID:  caseTypeID,
+		PartyID:     partyID,
+		TeamID:      teamID,
+		Description: description,
+		Done:        done,
+	}
+	cases = append(cases, k)
+	return k
+}
 
 var (
 	teams         []iam.Team

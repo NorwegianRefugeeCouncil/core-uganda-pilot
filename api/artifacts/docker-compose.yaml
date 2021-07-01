@@ -53,6 +53,7 @@ services:
       - URLS_CONSENT=http://localhost:9000/auth/consent
       - URLS_LOGIN=http://localhost:9000/auth/login
       - URLS_LOGOUT=http://localhost:9000/auth/logout
+      - LOG_LEAK_SENSITIVE_VALUES=true
     restart: on-failure
 
   hydra_db:

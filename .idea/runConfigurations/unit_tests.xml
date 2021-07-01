@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="unit tests" type="GoTestRunConfiguration" factoryName="Go Test">
+    <module name="core" />
+    <working_directory value="$PROJECT_DIR$/api/pkg/apps/iam" />
+    <root_directory value="$PROJECT_DIR$/api" />
+    <kind value="PACKAGE" />
+    <package value="github.com/nrc-no/core/pkg/apps/iam" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$" />
+    <framework value="gotest" />
+    <method v="2" />
+  </configuration>
+</component>
