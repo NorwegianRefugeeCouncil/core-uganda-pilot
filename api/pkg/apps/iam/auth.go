@@ -1,7 +1,6 @@
 package iam
 
 import (
-	"context"
 	"github.com/nrc-no/core/pkg/auth"
 	"github.com/ory/hydra-client-go/client/admin"
 	"net/http"
@@ -15,13 +14,7 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 			ctx := req.Context()
 
 			if s.environment == "Development" {
-				authUserSubject := req.Header.Get("X-Authenticated-User-Subject")
-				if len(authUserSubject) != 0 {
-					ctx = context.WithValue(ctx, "Subject", authUserSubject)
-					req = req.WithContext(ctx)
-					handler.ServeHTTP(w, req)
-					return
-				}
+				auth.SetDevAuthenticatedUserSubject(ctx, handler, w, req)
 			}
 
 			token, err := auth.AuthHeaderTokenSource(req).GetToken()
