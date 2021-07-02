@@ -42,12 +42,14 @@ type AuthenticationContext struct {
 
 const AuthenticationContextKey = "authentication_context"
 
-func SetDevAuthenticatedUserSubject(handler http.Handler, w http.ResponseWriter, req *http.Request) {
+func SetDevAuthenticatedUserSubject(handler http.Handler, w http.ResponseWriter, req *http.Request) bool {
 	ctx := req.Context()
 	authUserSubject := req.Header.Get("X-Authenticated-User-Subject")
 	if len(authUserSubject) != 0 {
 		ctx = context.WithValue(ctx, "Subject", authUserSubject)
 		req = req.WithContext(ctx)
 		handler.ServeHTTP(w, req)
+		return true
 	}
+	return false
 }
