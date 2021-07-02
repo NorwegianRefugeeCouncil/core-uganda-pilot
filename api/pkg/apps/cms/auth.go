@@ -45,7 +45,7 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 				return
 			}
 			ctx := req.Context()
-			ctx = context.WithValue(ctx, "subject", res.Payload.Sub)
+			ctx = context.WithValue(ctx, "Subject", res.Payload.Sub)
 			req = req.WithContext(ctx)
 			handler.ServeHTTP(w, req)
 		})

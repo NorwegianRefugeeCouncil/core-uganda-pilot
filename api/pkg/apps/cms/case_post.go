@@ -16,6 +16,10 @@ func (s *Server) PostCase(w http.ResponseWriter, req *http.Request) {
 
 	kase := &payload
 	kase.ID = uuid.NewV4().String()
+	subject, ok := ctx.Value("Subject").(string)
+	if ok {
+		kase.CreatorID = subject
+	}
 
 	if err := s.caseStore.Create(ctx, kase); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
