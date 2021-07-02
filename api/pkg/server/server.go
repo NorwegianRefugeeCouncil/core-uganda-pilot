@@ -9,6 +9,7 @@ import (
 	"github.com/nrc-no/core/pkg/apps/login"
 	"github.com/nrc-no/core/pkg/apps/seeder"
 	webapp2 "github.com/nrc-no/core/pkg/apps/webapp"
+	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/middleware"
 	"github.com/ory/hydra-client-go/client"
 	"github.com/spf13/pflag"
@@ -151,15 +152,15 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		}
 	}
 
+	genericServerOptions := server.NewServerOptions().
+		WithEnvironment(c.Environment).
+		WithMongoDatabase(c.MongoDatabase).
+		WithMongoPassword(c.MongoPassword).
+		WithMongoUsername(c.MongoUsername).
+		WithMongoHosts([]string{"localhost:27017"})
+
 	// Create IAM Server
-	iamServer, err := iam.NewServer(
-		ctx,
-		iam.NewServerOptions().
-			WithEnvironment(c.Environment).
-			WithMongoDatabase(c.MongoDatabase).
-			WithMongoUsername(c.MongoUsername).
-			WithMongoPassword(c.MongoPassword).
-			WithMongoHosts([]string{"localhost:27017"}))
+	iamServer, err := iam.NewServer(ctx, genericServerOptions)
 	if err != nil {
 		panic(err)
 	}
@@ -184,12 +185,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.PathPrefix("/apis/login").Handler(loginServer)
 
 	// Create CMS Server
-	cmsServer, err := cms.NewServer(ctx, cms.NewServerOptions().
-		WithEnvironment(c.Environment).
-		WithMongoDatabase(c.MongoDatabase).
-		WithMongoUsername(c.MongoUsername).
-		WithMongoPassword(c.MongoPassword).
-		WithMongoHosts([]string{"localhost:27017"}))
+	cmsServer, err := cms.NewServer(ctx, genericServerOptions)
 	if err != nil {
 		panic(err)
 	}
