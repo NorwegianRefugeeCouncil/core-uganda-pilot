@@ -30,6 +30,8 @@ type Server struct {
 }
 
 type Options struct {
+	ClearDB           bool
+	Environment       string
 	TemplateDirectory string
 	Address           string
 	MongoDatabase     string
@@ -150,14 +152,15 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		}
 	}
 
+	genericServerOptions := server.NewServerOptions().
+		WithEnvironment(c.Environment).
+		WithMongoDatabase(c.MongoDatabase).
+		WithMongoPassword(c.MongoPassword).
+		WithMongoUsername(c.MongoUsername).
+		WithMongoHosts([]string{"localhost:27017"})
+
 	// Create IAM Server
-	iamServer, err := iam.NewServer(
-		ctx,
-		iam.NewServerOptions().
-			WithMongoDatabase(c.MongoDatabase).
-			WithMongoUsername(c.MongoUsername).
-			WithMongoPassword(c.MongoPassword).
-			WithMongoHosts([]string{"localhost:27017"}))
+	iamServer, err := iam.NewServer(ctx, genericServerOptions)
 	if err != nil {
 		panic(err)
 	}
@@ -182,11 +185,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	router.PathPrefix("/apis/login").Handler(loginServer)
 
 	// Create CMS Server
-	cmsServer, err := cms.NewServer(ctx, cms.NewServerOptions().
-		WithMongoDatabase(c.MongoDatabase).
-		WithMongoUsername(c.MongoUsername).
-		WithMongoPassword(c.MongoPassword).
-		WithMongoHosts([]string{"localhost:27017"}))
+	cmsServer, err := cms.NewServer(ctx, genericServerOptions)
 	if err != nil {
 		panic(err)
 	}
