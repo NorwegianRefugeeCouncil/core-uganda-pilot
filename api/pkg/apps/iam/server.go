@@ -202,7 +202,10 @@ func (s *Server) JSON(w http.ResponseWriter, status int, data interface{}) {
 	}
 	w.WriteHeader(status)
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(responseBytes)
+	if _, err := w.Write(responseBytes); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func (s *Server) GetPathParam(param string, w http.ResponseWriter, req *http.Request, into *string) bool {
