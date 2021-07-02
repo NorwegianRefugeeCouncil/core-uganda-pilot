@@ -12,14 +12,7 @@ import (
 )
 
 func Clear(ctx context.Context, mongoClient *mongo.Client, databaseName string) error {
-	collectionNames := []string{"parties", "credentials", "relationships", "caseTypes", "cases"}
-	for _, collectionName := range collectionNames {
-		_, err := mongoClient.Database(databaseName).Collection(collectionName).DeleteMany(ctx, bson.D{})
-		if err != nil {
-			return err
-		}
-	}
-	return nil
+	return mongoClient.Database(databaseName).Drop(ctx)
 }
 
 func Seed(ctx context.Context, mongoClient *mongo.Client, databaseName string) error {
