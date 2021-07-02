@@ -182,6 +182,16 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	var creator *iam.Party
+	if caseID != "new" && len(kase.CreatorID) > 0 {
+		var err error
+		creator, err = h.IAMClient(ctx).Parties().Get(ctx, kase.CreatorID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
 	// Get all comment author IDs
 	var commentAuthorIDMap = map[string]bool{}
 	for _, comment := range comments.Items {
@@ -258,6 +268,7 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 		"ReferralCaseType": referralCaseType,
 		"Referrals":        referrals,
 		"Team":             team,
+		"CreatedBy":        creator,
 		"Comments":         displayComments(comments, commentAuthorMap),
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
