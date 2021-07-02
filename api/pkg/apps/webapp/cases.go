@@ -379,7 +379,7 @@ func (h *Server) PostCase(ctx context.Context, id string, w http.ResponseWriter,
 	var kase *cms.Case
 	if id == "" {
 		var err error
-		subject := ctx.Value("subject")
+		subject := ctx.Value("Subject")
 		var creatorId string
 		if subject == nil {
 			creatorId = ""

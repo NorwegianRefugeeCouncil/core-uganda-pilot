@@ -16,7 +16,7 @@ func (s *Server) PostComment(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	subject := ctx.Value("subject").(string)
+	subject := ctx.Value("Subject").(string)
 
 	payload.AuthorID = subject
 	now := time.Now().UTC()
