@@ -26,9 +26,18 @@
                             {{$caseType := $caseTypes.FindByID $caseTypeId}}
                             {{$caseType.Name}}
                         </a>
-                        <span> by </span>
-                        <span>{{.Case.CreatorID}}</span>
+                        {{ if .CreatedBy}}
+                            <span> by </span>
+                            <a href="/individuals/{{.CreatedBy.ID}}">{{.CreatedBy}}</a>
+                        {{end}}
                     </div>
+                {{else}}
+                    {{if .CreatedBy}}
+                        <div class="p-3 bg-light mb-3 shadow-sm">
+                            <span>Created by </span>
+                            <a href="/individuals/{{.CreatedBy.ID}}">{{.CreatedBy}}</a>
+                        </div>
+                    {{end}}
                 {{end}}
 
                 {{range $caseTypes.Items}}
@@ -104,7 +113,8 @@
                                         {{if .Done}}
                                             <span class="badge rounded-pill bg-danger" data-testid="referralCaseClosed">Closed</span>
                                         {{else}}
-                                            <span class="badge rounded-pill bg-success" data-testid="referralCaseOpen">Open</span>
+                                            <span class="badge rounded-pill bg-success"
+                                                  data-testid="referralCaseOpen">Open</span>
                                         {{end}}
                                     </a>
                                 {{end}}
