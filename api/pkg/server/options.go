@@ -77,31 +77,44 @@ type Options struct {
 }
 
 func NewOptions() *Options {
+	defaultEnv := "Production"
+	defaultRedisAddress := "localhost:6379"
+	defaultHydraAdminURL := "http://localhost:4445"
+	defaultHydraPublicURL := "http://localhost:4444"
+	defaultHost := "localhost"
+	defaultScheme := "http"
+	defaultPort := "9000"
+
+	defaultUrl := url.URL{
+		Scheme: defaultScheme,
+		Host:   defaultHost + ":" + defaultPort,
+	}
+
 	return &Options{
 		ClearDB:                 false,
-		Environment:             "Production",
-		ListenAddress:           ":9000",
-		BaseURL:                 "http://localhost:9000",
+		Environment:             defaultEnv,
+		ListenAddress:           ":" + defaultUrl.Port(),
+		BaseURL:                 defaultUrl.String(),
 		MongoDatabase:           "core",
 		MongoUsername:           "",
 		MongoPassword:           "",
 		MongoHosts:              []string{"http://localhost:27017"},
 		RedisMaxIdleConnections: 10,
 		RedisNetwork:            "tcp",
-		RedisAddress:            "localhost:6379",
+		RedisAddress:            defaultRedisAddress,
 		RedisPassword:           "",
 		RedisSecretKey:          "some-secret",
-		HydraAdminURL:           "http://localhost:4445",
-		HydraPublicURL:          "http://localhost:4444",
+		HydraAdminURL:           defaultHydraAdminURL,
+		HydraPublicURL:          defaultHydraPublicURL,
 		WebAppTemplateDirectory: "pkg/apps/webapp/templates",
 		WebAppBasePath:          "",
 		WebAppClientID:          "webapp",
 		WebAppClientSecret:      "",
 		WebAppClientName:        "webapp",
-		WebAppIAMScheme:         "http",
-		WebAppIAMHost:           "localhost:9000",
-		WebAppCMSScheme:         "http",
-		WebAppCMSHost:           "localhost:9000",
+		WebAppIAMScheme:         defaultUrl.Scheme,
+		WebAppIAMHost:           defaultUrl.Host,
+		WebAppCMSScheme:         defaultUrl.Scheme,
+		WebAppCMSHost:           defaultUrl.Host,
 		CMSBasePath:             "/apis/cms",
 		IAMBasePath:             "/apis/iam",
 		LoginBasePath:           "/auth",
@@ -109,8 +122,8 @@ func NewOptions() *Options {
 		LoginClientID:           "login",
 		LoginClientSecret:       "",
 		LoginTemplateDirectory:  "",
-		LoginIAMHost:            "localhost:9000",
-		LoginIAMScheme:          "http",
+		LoginIAMScheme:          defaultUrl.Scheme,
+		LoginIAMHost:            defaultUrl.Host,
 	}
 }
 
