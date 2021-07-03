@@ -17,6 +17,7 @@ type RESTConfig struct {
 	Scheme     string
 	Host       string
 	HTTPClient *http.Client
+	Headers    http.Header
 }
 
 type Client struct {
@@ -179,6 +180,12 @@ func (r *Request) Do(ctx context.Context) *Response {
 	req, err := http.NewRequestWithContext(ctx, r.verb, u.String(), r.body)
 	if err != nil {
 		return &Response{err: err}
+	}
+
+	for key, values := range r.c.config.Headers {
+		for _, value := range values {
+			req.Header.Add(key, value)
+		}
 	}
 
 	for key, values := range r.headers {

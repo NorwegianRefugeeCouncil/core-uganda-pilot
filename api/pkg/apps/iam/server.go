@@ -54,6 +54,11 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 		return nil, err
 	}
 
+	var hydraAdmin admin.ClientService
+	if o.HydraAdminClient != nil {
+		hydraAdmin = o.HydraAdminClient.Admin
+	}
+
 	srv := &Server{
 		environment:           o.Environment,
 		mongoClient:           o.MongoClient,
@@ -65,7 +70,7 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 		IndividualStore:       NewIndividualStore(o.MongoClient, o.MongoDatabase),
 		TeamStore:             NewTeamStore(partyStore),
 		MembershipStore:       NewMembershipStore(relationshipStore),
-		HydraAdmin:            o.HydraAdminClient.Admin,
+		HydraAdmin:            hydraAdmin,
 	}
 
 	router := mux.NewRouter()
