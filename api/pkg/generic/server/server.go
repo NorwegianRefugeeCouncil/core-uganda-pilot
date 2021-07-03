@@ -5,6 +5,7 @@ import (
 	"github.com/gomodule/redigo/redis"
 	"github.com/ory/hydra-client-go/client"
 	"go.mongodb.org/mongo-driver/mongo"
+	"net/http"
 )
 
 type GenericServerOptions struct {
@@ -13,6 +14,7 @@ type GenericServerOptions struct {
 	Environment       string
 	HydraAdminClient  *client.OryHydra
 	HydraPublicClient *client.OryHydra
+	HydraHTTPClient   *http.Client
 	RedisPool         *redis.Pool
 	OidcProvider      *oidc.Provider
 }

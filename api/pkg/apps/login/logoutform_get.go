@@ -16,6 +16,7 @@ func (s *Server) GetLogoutForm(w http.ResponseWriter, req *http.Request) {
 	_, err := s.HydraAdmin.GetLogoutRequest(
 		admin.NewGetLogoutRequestParams().
 			WithLogoutChallenge(challenge).
+			WithHTTPClient(s.HydraHTTPClient).
 			WithContext(ctx),
 	)
 	if err != nil {
@@ -26,6 +27,7 @@ func (s *Server) GetLogoutForm(w http.ResponseWriter, req *http.Request) {
 	acceptResp, err := s.HydraAdmin.AcceptLogoutRequest(
 		admin.NewAcceptLogoutRequestParams().
 			WithLogoutChallenge(challenge).
+			WithHTTPClient(s.HydraHTTPClient).
 			WithContext(ctx))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

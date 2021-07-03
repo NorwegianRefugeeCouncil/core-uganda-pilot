@@ -25,6 +25,7 @@ type Server struct {
 	MembershipStore       *MembershipStore
 	HydraAdmin            admin.ClientService
 	mongoClient           *mongo.Client
+	HydraHTTPClient       *http.Client
 }
 
 func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, error) {
@@ -71,6 +72,7 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 		TeamStore:             NewTeamStore(partyStore),
 		MembershipStore:       NewMembershipStore(relationshipStore),
 		HydraAdmin:            hydraAdmin,
+		HydraHTTPClient:       o.HydraHTTPClient,
 	}
 
 	router := mux.NewRouter()

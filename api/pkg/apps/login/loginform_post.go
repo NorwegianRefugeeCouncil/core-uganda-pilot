@@ -43,9 +43,13 @@ func (s *Server) PostLoginForm(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Getting login request
+	getLoginRequestParams := admin.
+		NewGetLoginRequestParams().
+		WithLoginChallenge(loginChallenge).
+		WithHTTPClient(s.HydraHTTPClient)
+
 	_, err := s.HydraAdmin.GetLoginRequest(
-		admin.NewGetLoginRequestParams().
-			WithLoginChallenge(loginChallenge))
+		getLoginRequestParams)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -56,6 +60,7 @@ func (s *Server) PostLoginForm(w http.ResponseWriter, req *http.Request) {
 		admin.NewAcceptLoginRequestParams().
 			WithContext(ctx).
 			WithLoginChallenge(loginChallenge).
+			WithHTTPClient(s.HydraHTTPClient).
 			WithBody(&models.AcceptLoginRequest{
 				Remember: rememberMe,
 				Subject:  &individual.ID,

@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"io"
 	"net/http"
+	"path"
 )
 
 // RenderInterface defines the methods available in the template
@@ -47,7 +48,7 @@ func NewRendererFactory(templateDirectory string, sessionManager sessionmanager.
 	t := template.New("")
 	t = WithRenderInterface(t, f)
 	var err error
-	t, err = t.ParseGlob(templateDirectory + "/*.gohtml")
+	t, err = t.ParseGlob(path.Join(templateDirectory, "*.gohtml"))
 	if err != nil {
 		return nil, err
 	}

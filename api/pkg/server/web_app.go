@@ -37,7 +37,7 @@ func (c CompletedOptions) CreateWebAppServer(ctx context.Context, genericOptions
 		},
 	}
 
-	if err := createOauthClient(ctx, c.HydraAdminClient.Admin, cli); err != nil {
+	if err := createOauthClient(ctx, c.HydraAdminClient.Admin, c.HydraTLSClient, cli); err != nil {
 		return nil, err
 	}
 
@@ -46,7 +46,12 @@ func (c CompletedOptions) CreateWebAppServer(ctx context.Context, genericOptions
 		ClientSecret: c.WebAppClientSecret,
 		TokenURL:     c.OAuthTokenEndpoint,
 	}
-	adminCli := clientCredsCfg.Client(ctx)
+	tlsClient, err := tlsClient(c.TLSCertPath)
+	if err != nil {
+		return nil, err
+	}
+	adminCtx := context.WithValue(ctx, oauth2.HTTPClient, tlsClient)
+	adminCli := clientCredsCfg.Client(adminCtx)
 
 	oidcVerifier := c.OIDCProvider.Verifier(&oidc.Config{
 		ClientID: c.WebAppClientID,
@@ -71,6 +76,10 @@ func (c CompletedOptions) CreateWebAppServer(ctx context.Context, genericOptions
 		AdminHTTPClient:      adminCli,
 		IDTokenVerifier:      oidcVerifier,
 		OAuth2Config:         oauth2Config,
+		HydraHTTPClient:      tlsClient,
+		IAMHTTPClient:        tlsClient,
+		CMSHTTPClient:        tlsClient,
+		LoginHTTPClient:      tlsClient,
 	}
 
 	webappServer, err := webapp.NewServer(webAppOptions)

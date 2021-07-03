@@ -13,13 +13,14 @@ import (
 )
 
 type Server struct {
-	environment   string
-	router        *mux.Router
-	mongoClient   *mongo.Client
-	caseStore     *CaseStore
-	caseTypeStore *CaseTypeStore
-	commentStore  *CommentStore
-	HydraAdmin    admin.ClientService
+	environment     string
+	router          *mux.Router
+	mongoClient     *mongo.Client
+	caseStore       *CaseStore
+	caseTypeStore   *CaseTypeStore
+	commentStore    *CommentStore
+	HydraAdmin      admin.ClientService
+	HydraHttpClient *http.Client
 }
 
 func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, error) {
@@ -40,12 +41,13 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	}
 
 	srv := &Server{
-		mongoClient:   o.MongoClient,
-		environment:   o.Environment,
-		caseStore:     caseStore,
-		caseTypeStore: caseTypeStore,
-		commentStore:  commentStore,
-		HydraAdmin:    o.HydraAdminClient.Admin,
+		mongoClient:     o.MongoClient,
+		environment:     o.Environment,
+		caseStore:       caseStore,
+		caseTypeStore:   caseTypeStore,
+		commentStore:    commentStore,
+		HydraAdmin:      o.HydraAdminClient.Admin,
+		HydraHttpClient: o.HydraHTTPClient,
 	}
 
 	router := mux.NewRouter()

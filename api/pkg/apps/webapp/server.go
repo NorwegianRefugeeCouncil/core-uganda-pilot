@@ -11,7 +11,6 @@ import (
 	"github.com/nrc-no/core/pkg/rest"
 	"github.com/nrc-no/core/pkg/sessionmanager"
 	"github.com/ory/hydra-client-go/client/admin"
-	"github.com/ory/hydra-client-go/client/public"
 	"golang.org/x/oauth2"
 	"net/http"
 )
@@ -22,18 +21,18 @@ type Server struct {
 	router          *mux.Router
 	login           login.Interface
 	HydraAdmin      admin.ClientService
-	HydraPublic     public.ClientService
-	oidcIssuer      string
 	oidcVerifier    *oidc.IDTokenVerifier
 	oauth2Config    *oauth2.Config
 	environment     string
 	iamAdminClient  iam.Interface
 	baseURL         string
-	adminHttpClient *http.Client
 	iamScheme       string
 	iamHost         string
 	cmsScheme       string
 	cmsHost         string
+	HydraHTTPClient *http.Client
+	IAMHTTPClient   *http.Client
+	CMSHTTPClient   *http.Client
 }
 
 type ServerOptions struct {
@@ -47,6 +46,10 @@ type ServerOptions struct {
 	AdminHTTPClient   *http.Client
 	IDTokenVerifier   *oidc.IDTokenVerifier
 	OAuth2Config      *oauth2.Config
+	HydraHTTPClient   *http.Client
+	IAMHTTPClient     *http.Client
+	CMSHTTPClient     *http.Client
+	LoginHTTPClient   *http.Client
 }
 
 func NewServer(options *ServerOptions) (*Server, error) {
@@ -59,29 +62,30 @@ func NewServer(options *ServerOptions) (*Server, error) {
 	}
 
 	h := &Server{
-		baseURL:         options.BaseURL,
-		environment:     options.Environment,
-		renderFactory:   renderFactory,
-		sessionManager:  sm,
-		HydraAdmin:      options.HydraAdminClient.Admin,
-		HydraPublic:     options.HydraPublicClient.Public,
-		oidcVerifier:    options.IDTokenVerifier,
-		oauth2Config:    options.OAuth2Config,
-		adminHttpClient: options.AdminHTTPClient,
-		iamScheme:       options.IAMScheme,
-		iamHost:         options.IAMHost,
-		cmsScheme:       options.CMSScheme,
-		cmsHost:         options.CMSHost,
-		iamAdminClient: iam.NewClientSet(&rest.RESTConfig{
-			Scheme:     options.IAMScheme,
-			Host:       options.IAMHost,
-			HTTPClient: options.AdminHTTPClient,
-		}),
+		renderFactory:  renderFactory,
+		sessionManager: sm,
 		login: login.NewClientSet(&rest.RESTConfig{
 			Scheme:     options.CMSScheme,
 			Host:       options.CMSHost,
 			HTTPClient: options.AdminHTTPClient,
 		}),
+		HydraAdmin:   options.HydraAdminClient.Admin,
+		oidcVerifier: options.IDTokenVerifier,
+		oauth2Config: options.OAuth2Config,
+		environment:  options.Environment,
+		iamAdminClient: iam.NewClientSet(&rest.RESTConfig{
+			Scheme:     options.IAMScheme,
+			Host:       options.IAMHost,
+			HTTPClient: options.AdminHTTPClient,
+		}),
+		baseURL:         options.BaseURL,
+		iamScheme:       options.IAMScheme,
+		iamHost:         options.IAMHost,
+		cmsScheme:       options.CMSScheme,
+		cmsHost:         options.CMSHost,
+		HydraHTTPClient: options.HydraHTTPClient,
+		IAMHTTPClient:   options.IAMHTTPClient,
+		CMSHTTPClient:   options.CMSHTTPClient,
 	}
 
 	router := mux.NewRouter()
@@ -137,9 +141,9 @@ func (s *Server) IAMClient(ctx context.Context) iam.Interface {
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}
+	httpClient := s.IAMHTTPClient
+	ctx = context.WithValue(ctx, oauth2.HTTPClient, httpClient)
 	cli := cfg.Client(ctx, token)
-
-	httpClient := http.DefaultClient
 	if len(accessToken) > 0 || len(refreshToken) > 0 {
 		httpClient = cli
 	}
@@ -159,13 +163,12 @@ func (s *Server) CMSClient(ctx context.Context) cms.Interface {
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}
+	httpClient := s.CMSHTTPClient
+	ctx = context.WithValue(ctx, oauth2.HTTPClient, httpClient)
 	cli := cfg.Client(ctx, token)
-
-	httpClient := http.DefaultClient
 	if len(accessToken) > 0 || len(refreshToken) > 0 {
 		httpClient = cli
 	}
-
 	return cms.NewClientSet(&rest.RESTConfig{
 		Scheme:     s.cmsScheme,
 		Host:       s.cmsHost,

@@ -1,9 +1,11 @@
 package webapp
 
 import (
+	"context"
 	"encoding/gob"
 	"fmt"
 	"github.com/nrc-no/core/pkg/apps/iam"
+	"golang.org/x/oauth2"
 	"net/http"
 )
 
@@ -38,7 +40,8 @@ func (s *Server) Callback(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	token, err := conf.Exchange(ctx, code)
+	tokenCtx := context.WithValue(ctx, oauth2.HTTPClient, s.HydraHTTPClient)
+	token, err := conf.Exchange(tokenCtx, code)
 	if err != nil {
 		http.Error(w, fmt.Errorf("failed to exchange code: %v", err).Error(), http.StatusInternalServerError)
 		return

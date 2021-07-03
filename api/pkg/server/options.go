@@ -2,7 +2,10 @@ package server
 
 import (
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"errors"
+	"fmt"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gomodule/redigo/redis"
 	"github.com/gorilla/mux"
@@ -12,9 +15,11 @@ import (
 	"github.com/nrc-no/core/pkg/middleware"
 	"github.com/ory/hydra-client-go/client"
 	"github.com/ory/hydra-client-go/client/public"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -29,6 +34,8 @@ type Options struct {
 	Environment   string
 	ListenAddress string
 	BaseURL       string
+	TLSCertPath   string
+	TLSKeyPath    string
 
 	// Mongo
 	MongoDatabase string
@@ -119,7 +126,7 @@ func NewOptions() *Options {
 		LoginClientName:         "login",
 		LoginClientID:           "login",
 		LoginClientSecret:       "",
-		LoginTemplateDirectory:  "",
+		LoginTemplateDirectory:  "pkg/apps/login/templates",
 		LoginIAMScheme:          defaultUrl.Scheme,
 		LoginIAMHost:            defaultUrl.Host,
 	}
@@ -135,6 +142,8 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 	fs.StringVar(&o.Environment, "environment", o.Environment, "Environment (Production / Development)")
 	fs.StringVar(&o.ListenAddress, "listen-address", o.ListenAddress, "Listen Address")
 	fs.StringVar(&o.BaseURL, "base-url", o.BaseURL, "Base URL")
+	fs.StringVar(&o.TLSKeyPath, "tls-key-path", o.BaseURL, "TLS Key Path")
+	fs.StringVar(&o.TLSCertPath, "tls-cert-path", o.BaseURL, "TLS Cert Path")
 
 	// Mongo
 	fs.StringVar(&o.MongoDatabase, "mongo-database", o.MongoDatabase, "Mongo database name")
@@ -154,7 +163,7 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 	fs.StringVar(&o.HydraPublicURL, "hydra-public-url", o.HydraPublicURL, "Hydra Public URL")
 
 	// Login
-	fs.StringVar(&o.LoginTemplateDirectory, "login-template-directory", o.LoginTemplateDirectory, "Template directory for login module")
+	fs.StringVar(&o.LoginTemplateDirectory, "login-templates-directory", o.LoginTemplateDirectory, "Template directory for login module")
 	fs.StringVar(&o.LoginBasePath, "login-base-path", o.LoginBasePath, "Base path for the login module")
 	fs.StringVar(&o.LoginClientName, "login-client-name", o.LoginClientName, "Login OAuth client name")
 	fs.StringVar(&o.LoginClientID, "login-client-id", o.LoginClientID, "Login OAuth client ID")
@@ -170,7 +179,7 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 
 	// Web App
 	fs.StringVar(&o.WebAppBasePath, "web-base-path", o.WebAppBasePath, "Base path for the Web module")
-	fs.StringVar(&o.WebAppTemplateDirectory, "web-template-directory", o.WebAppTemplateDirectory, "Directory for the web app templates")
+	fs.StringVar(&o.WebAppTemplateDirectory, "web-templates-directory", o.WebAppTemplateDirectory, "Directory for the web app templates")
 	fs.StringVar(&o.WebAppClientID, "web-client-id", o.WebAppClientID, "Web app OAuth2 client ID")
 	fs.StringVar(&o.WebAppClientSecret, "web-client-secret", o.WebAppClientSecret, "Web app OAuth2 client secret")
 	fs.StringVar(&o.WebAppClientName, "web-client-name", o.WebAppClientName, "Web app OAuth2 client name")
@@ -188,6 +197,7 @@ type CompletedOptions struct {
 	RedisPool          *redis.Pool
 	OAuthTokenEndpoint string
 	OIDCProvider       *oidc.Provider
+	HydraTLSClient     *http.Client
 }
 
 func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
@@ -210,19 +220,28 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		return CompletedOptions{}, err
 	}
 
-	hydraPublicCLient, err := HydraAdminClient(o.HydraPublicURL)
+	hydraPublicClient, err := HydraAdminClient(o.HydraPublicURL)
 	if err != nil {
 		return CompletedOptions{}, err
 	}
 
-	openIdConf, err := hydraPublicCLient.Public.DiscoverOpenIDConfiguration(&public.DiscoverOpenIDConfigurationParams{
-		Context: ctx,
+	fmt.Printf("HydraAdminURL: %s, HydraPublicURL: %s", o.HydraAdminURL, o.HydraPublicURL)
+
+	hydraTlsClient, err := tlsClient(o.TLSCertPath)
+	if err != nil {
+		return CompletedOptions{}, err
+	}
+
+	openIdConf, err := hydraPublicClient.Public.DiscoverOpenIDConfiguration(&public.DiscoverOpenIDConfigurationParams{
+		Context:    ctx,
+		HTTPClient: hydraTlsClient,
 	})
 	if err != nil {
 		panic(err)
 	}
 
-	oidcProvider, err := oidc.NewProvider(ctx, issuerUrl)
+	oidcCtx := oidc.ClientContext(ctx, hydraTlsClient)
+	oidcProvider, err := oidc.NewProvider(oidcCtx, issuerUrl)
 	if err != nil {
 		panic(err)
 	}
@@ -238,12 +257,34 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		Options:            o,
 		MongoClient:        mongoClient,
 		HydraAdminClient:   hydraAdminClient,
-		HydraPublicClient:  hydraPublicCLient,
+		HydraPublicClient:  hydraPublicClient,
+		HydraTLSClient:     hydraTlsClient,
 		RedisPool:          pool,
 		OAuthTokenEndpoint: *openIdConf.Payload.TokenEndpoint,
 		OIDCProvider:       oidcProvider,
 	}
 	return completedOptions, nil
+}
+
+func tlsClient(tlsCertPath string) (*http.Client, error) {
+	certFile, err := ioutil.ReadFile(tlsCertPath)
+	if err != nil {
+		return nil, err
+	}
+	certPool := x509.NewCertPool()
+	if ok := certPool.AppendCertsFromPEM(certFile); !ok {
+		err := fmt.Errorf("failed to append cert to CertPool")
+		logrus.WithError(err).Errorf("")
+		return nil, err
+	}
+	httpClient := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{
+				RootCAs: certPool,
+			},
+		},
+	}
+	return httpClient, nil
 }
 
 func HydraAdminClient(adminURL string) (*client.OryHydra, error) {
@@ -284,6 +325,7 @@ func (c CompletedOptions) Generic() *server.GenericServerOptions {
 		HydraAdminClient:  c.HydraAdminClient,
 		HydraPublicClient: c.HydraPublicClient,
 		RedisPool:         c.RedisPool,
+		HydraHTTPClient:   c.HydraTLSClient,
 	}
 }
 
@@ -301,22 +343,26 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	// Create IAM Server
 	iamServer, err := c.CreateIAMServer(ctx, genericServerOptions)
 	if err != nil {
+		logrus.WithError(err).Errorf("failed to create IAM server")
 		panic(err)
 	}
 
 	loginServer, err := c.CreateLoginServer(ctx, genericServerOptions)
 	if err != nil {
+		logrus.WithError(err).Errorf("failed to create login server")
 		panic(err)
 	}
 
 	// Create CMS Server
 	cmsServer, err := cms.NewServer(ctx, genericServerOptions)
 	if err != nil {
+		logrus.WithError(err).Errorf("failed to create CMS server")
 		panic(err)
 	}
 
 	webAppServer, err := c.CreateWebAppServer(ctx, genericServerOptions)
 	if err != nil {
+		logrus.WithError(err).Errorf("failed to create WebApp server")
 		panic(err)
 	}
 
@@ -359,7 +405,8 @@ func (c CompletedOptions) CreateRouter(srv *Server) *mux.Router {
 }
 
 func (c CompletedOptions) StartServer(server *Server) {
-	if err := http.ListenAndServe(c.ListenAddress, server.Router); err != nil {
+
+	if err := http.ListenAndServeTLS(c.ListenAddress, c.TLSCertPath, c.TLSKeyPath, server.Router); err != nil {
 		if errors.Is(err, context.Canceled) {
 			return
 		}

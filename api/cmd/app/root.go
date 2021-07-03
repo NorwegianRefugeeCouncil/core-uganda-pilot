@@ -2,10 +2,8 @@ package app
 
 import (
 	"context"
-	"github.com/joho/godotenv"
 	"github.com/nrc-no/core/pkg/server"
 	"github.com/spf13/cobra"
-	"log"
 )
 
 func LaunchCommand(ctx context.Context, defaults *server.Options) *cobra.Command {
@@ -21,12 +19,6 @@ func LaunchCommand(ctx context.Context, defaults *server.Options) *cobra.Command
 			completedOptions, err := o.Complete(ctx)
 			if err != nil {
 				panic(err)
-			}
-
-			// load .env file
-			err = godotenv.Load(".env")
-			if err != nil {
-				log.Fatalf("Error loading .env file")
 			}
 
 			_ = completedOptions.New(ctx)

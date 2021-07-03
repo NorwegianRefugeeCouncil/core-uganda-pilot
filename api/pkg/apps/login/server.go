@@ -8,27 +8,31 @@ import (
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/rest"
 	"github.com/ory/hydra-client-go/client/admin"
+	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 	"html/template"
 	"io/ioutil"
 	"net/http"
+	"path"
 )
 
 type ServerOptions struct {
 	*server.GenericServerOptions
-	BCryptCost      int
-	AdminHTTPClient *http.Client
-	IAMHost         string
-	IAMScheme       string
+	BCryptCost        int
+	AdminHTTPClient   *http.Client
+	IAMHost           string
+	IAMScheme         string
+	TemplateDirectory string
 }
 
 type Server struct {
-	HydraAdmin admin.ClientService
-	Collection *mongo.Collection
-	BCryptCost int
-	router     *mux.Router
-	template   *template.Template
-	iam        iam.Interface
+	HydraAdmin      admin.ClientService
+	Collection      *mongo.Collection
+	BCryptCost      int
+	router          *mux.Router
+	template        *template.Template
+	iam             iam.Interface
+	HydraHTTPClient *http.Client
 }
 
 func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
@@ -42,10 +46,11 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 	collection := o.MongoClient.Database(o.MongoDatabase).Collection("credentials")
 
 	srv := &Server{
-		HydraAdmin: o.HydraAdminClient.Admin,
-		Collection: collection,
-		BCryptCost: o.BCryptCost,
-		iam:        iamCli,
+		HydraAdmin:      o.HydraAdminClient.Admin,
+		Collection:      collection,
+		BCryptCost:      o.BCryptCost,
+		iam:             iamCli,
+		HydraHTTPClient: o.HydraHTTPClient,
 	}
 
 	router := mux.NewRouter()
@@ -60,8 +65,9 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 
 	srv.router = router
 
-	tpl, err := template.ParseGlob("pkg/apps/login/templates/*.gohtml")
+	tpl, err := template.ParseGlob(path.Join(o.TemplateDirectory, "*.gohtml"))
 	if err != nil {
+		logrus.WithError(err).Errorf("failed to parse templates")
 		return nil, err
 	}
 
