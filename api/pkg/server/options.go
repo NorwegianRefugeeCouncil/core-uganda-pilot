@@ -79,17 +79,16 @@ type Options struct {
 func NewOptions() *Options {
 	defaultEnv := "Production"
 	defaultRedisAddress := "localhost:6379"
+	defaultMongoHosts := []string{"http://localhost:27017"}
 	defaultHydraAdminURL := "http://localhost:4445"
 	defaultHydraPublicURL := "http://localhost:4444"
 	defaultHost := "localhost"
 	defaultScheme := "http"
 	defaultPort := "9000"
-
 	defaultUrl := url.URL{
 		Scheme: defaultScheme,
 		Host:   defaultHost + ":" + defaultPort,
 	}
-
 	return &Options{
 		ClearDB:                 false,
 		Environment:             defaultEnv,
@@ -98,7 +97,7 @@ func NewOptions() *Options {
 		MongoDatabase:           "core",
 		MongoUsername:           "",
 		MongoPassword:           "",
-		MongoHosts:              []string{"http://localhost:27017"},
+		MongoHosts:              defaultMongoHosts,
 		RedisMaxIdleConnections: 10,
 		RedisNetwork:            "tcp",
 		RedisAddress:            defaultRedisAddress,
