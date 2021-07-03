@@ -52,30 +52,40 @@ make spinup
  - Within GoLand IDE, open the `api` project directory as a root workspace (ie. not the `core` directory). Choose the `start` configuration from the top-right menu and press the green arrow.
  
  ```bash
+
+ cd api
+ 
+ # Generate certificate + key for development purpose
+ make gen-certs
+
  go run ./cmd \
-  --fresh=true \
-  --seed=true \
   --mongo-database=core \
   --mongo-username=root \
   --mongo-password=example \
   --mongo-hosts=localhost:27017 \
   --environment=Development \
-  --hydra-admin-url=http://localhost:4445 \
-  --hydra-public-url=http://localhost:4444 \
+  --fresh=true \
+  --seed=true \
+  --hydra-admin-url=https://localhost:4445 \
+  --hydra-public-url=https://localhost:4444 \
+  --login-templates-directory=pkg/apps/login/templates \
   --login-client-id=login \
   --login-client-name=login \
   --login-client-secret=somesecret \
   --login-iam-host=localhost:9000 \
-  --login-iam-scheme=http \
+  --login-iam-scheme=https \
+  --web-templates-directory=pkg/apps/webapp/templates \
   --web-client-id=webapp \
   --web-client-secret=webapp \
   --web-client-name=webapp \
   --web-iam-host=localhost:9000 \
-  --web-iam-scheme=http \
+  --web-iam-scheme=https \
   --web-cms-host=localhost:9000 \
-  --web-cms-scheme=http \
+  --web-cms-scheme=https \
   --listen-address=:9000 \
-  --base-url=http://localhost:9000
+  --base-url=https://localhost:9000 \
+  --tls-cert-path=certs/cert.pem \
+  --tls-key-path=certs/key.pem
  
  # or
  

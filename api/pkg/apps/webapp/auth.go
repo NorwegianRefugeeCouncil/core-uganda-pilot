@@ -81,11 +81,6 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 				return
 			}
 
-			// Check id token
-			profile := s.sessionManager.Get(req.Context(), "profile")
-
-			fmt.Printf("%#v", profile)
-
 			if !*res.Payload.Active {
 				http.Redirect(w, req, "/login", http.StatusTemporaryRedirect)
 				// http.Error(w, err.Error(), http.StatusInternalServerError)

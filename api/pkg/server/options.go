@@ -225,8 +225,6 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		return CompletedOptions{}, err
 	}
 
-	fmt.Printf("HydraAdminURL: %s, HydraPublicURL: %s", o.HydraAdminURL, o.HydraPublicURL)
-
 	hydraTlsClient, err := tlsClient(o.TLSCertPath)
 	if err != nil {
 		return CompletedOptions{}, err
