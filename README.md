@@ -53,12 +53,13 @@ make spinup
  
  ```bash
  go run ./cmd \
+  --fresh=true \
+  --seed=true \
   --mongo-database=core \
   --mongo-username=root \
   --mongo-password=example \
   --mongo-hosts=localhost:27017 \
   --environment=Development \
-  --fresh=true \
   --hydra-admin-url=http://localhost:4445 \
   --hydra-public-url=http://localhost:4444 \
   --login-client-id=login \

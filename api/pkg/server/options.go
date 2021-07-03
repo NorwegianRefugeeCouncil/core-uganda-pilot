@@ -72,6 +72,7 @@ type Options struct {
 	LoginTemplateDirectory string
 	LoginIAMHost           string
 	LoginIAMScheme         string
+	SeedDB                 bool
 }
 
 func NewOptions() *Options {
@@ -128,6 +129,7 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 
 	// Seed
 	fs.BoolVar(&o.ClearDB, "fresh", o.ClearDB, "Clear user-created DB entries")
+	fs.BoolVar(&o.SeedDB, "seed", o.SeedDB, "Seed database with mock data")
 
 	// Serve
 	fs.StringVar(&o.Environment, "environment", o.Environment, "Environment (Production / Development)")
@@ -335,8 +337,10 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		c.StartServer(srv)
 	}()
 
-	if err := seeder.Seed(ctx, c.MongoClient, c.MongoDatabase); err != nil {
-		panic(err)
+	if c.SeedDB {
+		if err := seeder.Seed(ctx, c.MongoClient, c.MongoDatabase); err != nil {
+			panic(err)
+		}
 	}
 
 	return srv
