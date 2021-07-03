@@ -20,7 +20,7 @@ func (h *Server) AuthClients(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	clients, err := h.hydraAdminClient.Admin.ListOAuth2Clients(&admin.ListOAuth2ClientsParams{
+	clients, err := h.HydraAdmin.ListOAuth2Clients(&admin.ListOAuth2ClientsParams{
 		Context: ctx,
 	})
 	if err != nil {
@@ -47,7 +47,7 @@ func (h *Server) AuthClientNewSecret(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	cli, err := h.hydraAdminClient.Admin.GetOAuth2Client(&admin.GetOAuth2ClientParams{
+	cli, err := h.HydraAdmin.GetOAuth2Client(&admin.GetOAuth2ClientParams{
 		ID:      id,
 		Context: ctx,
 	})
@@ -65,7 +65,7 @@ func (h *Server) AuthClientNewSecret(w http.ResponseWriter, req *http.Request) {
 	c := cli.Payload
 	c.ClientSecret = clientSecret
 
-	_, err = h.hydraAdminClient.Admin.UpdateOAuth2Client(&admin.UpdateOAuth2ClientParams{
+	_, err = h.HydraAdmin.UpdateOAuth2Client(&admin.UpdateOAuth2ClientParams{
 		Context: ctx,
 		Body:    c,
 		ID:      c.ClientID,
@@ -103,7 +103,7 @@ func (h *Server) AuthClient(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	cli, err := h.hydraAdminClient.Admin.GetOAuth2Client(&admin.GetOAuth2ClientParams{
+	cli, err := h.HydraAdmin.GetOAuth2Client(&admin.GetOAuth2ClientParams{
 		ID:      id,
 		Context: ctx,
 	})
@@ -151,7 +151,7 @@ func (h *Server) DeleteAuthClient(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	_, err := h.hydraAdminClient.Admin.DeleteOAuth2Client(&admin.DeleteOAuth2ClientParams{
+	_, err := h.HydraAdmin.DeleteOAuth2Client(&admin.DeleteOAuth2ClientParams{
 		ID:      id,
 		Context: ctx,
 	})
@@ -223,7 +223,7 @@ func (h *Server) PostAuthClient(w http.ResponseWriter, req *http.Request, isNew 
 		h.sessionManager.Put(ctx, "client_secret", clientSecret)
 		cli.ClientSecret = clientSecret
 		cli.ClientID = uuid.NewV4().String()
-		response, err := h.hydraAdminClient.Admin.CreateOAuth2Client(&admin.CreateOAuth2ClientParams{
+		response, err := h.HydraAdmin.CreateOAuth2Client(&admin.CreateOAuth2ClientParams{
 			Context: ctx,
 			Body:    cli,
 		})
@@ -234,7 +234,7 @@ func (h *Server) PostAuthClient(w http.ResponseWriter, req *http.Request, isNew 
 		http.Redirect(w, req, "/settings/authclients/"+response.Payload.ClientID, http.StatusSeeOther)
 		return
 	} else {
-		response, err := h.hydraAdminClient.Admin.UpdateOAuth2Client(&admin.UpdateOAuth2ClientParams{
+		response, err := h.HydraAdmin.UpdateOAuth2Client(&admin.UpdateOAuth2ClientParams{
 			Body:    cli,
 			ID:      cli.ClientID,
 			Context: ctx,

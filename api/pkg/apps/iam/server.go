@@ -6,10 +6,8 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/generic/server"
-	"github.com/ory/hydra-client-go/client"
 	"github.com/ory/hydra-client-go/client/admin"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"io/ioutil"
 	"net/http"
 )
@@ -31,67 +29,46 @@ type Server struct {
 
 func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, error) {
 
-	mongoClient, err := mongo.NewClient(
-		options.Client().
-			SetHosts(o.MongoHosts).
-			SetAuth(options.Credential{
-				Username: o.MongoUsername,
-				Password: o.MongoPassword,
-			}))
+	relationshipStore, err := NewRelationshipStore(ctx, o.MongoClient, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := mongoClient.Connect(ctx); err != nil {
-		return nil, err
-	}
-
-	router := mux.NewRouter()
-
-	relationshipStore, err := NewRelationshipStore(ctx, mongoClient, o.MongoDatabase)
+	partyStore, err := NewPartyStore(ctx, o.MongoClient, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	partyStore, err := NewPartyStore(ctx, mongoClient, o.MongoDatabase)
+	attributeStore, err := NewAttributeStore(ctx, o.MongoClient, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	attributeStore, err := NewAttributeStore(ctx, mongoClient, o.MongoDatabase)
+	partyTypeStore, err := NewPartyTypeStore(ctx, o.MongoClient, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	partyTypeStore, err := NewPartyTypeStore(ctx, mongoClient, o.MongoDatabase)
-	if err != nil {
-		return nil, err
-	}
-
-	relationshipTypeStore, err := NewRelationshipTypeStore(ctx, mongoClient, o.MongoDatabase)
+	relationshipTypeStore, err := NewRelationshipTypeStore(ctx, o.MongoClient, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
 	srv := &Server{
 		environment:           o.Environment,
-		router:                router,
-		mongoClient:           mongoClient,
+		mongoClient:           o.MongoClient,
 		AttributeStore:        attributeStore,
 		PartyStore:            partyStore,
 		PartyTypeStore:        partyTypeStore,
 		RelationshipStore:     relationshipStore,
 		RelationshipTypeStore: relationshipTypeStore,
-		IndividualStore:       NewIndividualStore(mongoClient, o.MongoDatabase),
+		IndividualStore:       NewIndividualStore(o.MongoClient, o.MongoDatabase),
 		TeamStore:             NewTeamStore(partyStore),
 		MembershipStore:       NewMembershipStore(relationshipStore),
+		HydraAdmin:            o.HydraAdminClient.Admin,
 	}
 
-	srv.HydraAdmin = client.NewHTTPClientWithConfig(nil, &client.TransportConfig{
-		Host:    "localhost:4445",
-		Schemes: []string{"http"},
-	}).Admin
-
+	router := mux.NewRouter()
 	router.Use(srv.WithAuth())
 
 	router.Path("/apis/iam/v1/attributes").Methods("GET").HandlerFunc(srv.ListAttributes)
@@ -134,6 +111,8 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	router.Path("/apis/iam/v1/teams").Methods("POST").HandlerFunc(srv.PostTeam)
 	router.Path("/apis/iam/v1/teams/{id}").Methods("GET").HandlerFunc(srv.GetTeam)
 	router.Path("/apis/iam/v1/teams/{id}").Methods("PUT").HandlerFunc(srv.PutTeam)
+
+	srv.router = router
 
 	return srv, nil
 }
