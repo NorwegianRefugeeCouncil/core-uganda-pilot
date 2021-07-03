@@ -1,16 +1,22 @@
 package server
 
 import (
+	"github.com/gorilla/mux"
+	"github.com/nrc-no/core/pkg/apps/cms"
+	"github.com/nrc-no/core/pkg/apps/iam"
+	"github.com/nrc-no/core/pkg/apps/login"
 	webapp2 "github.com/nrc-no/core/pkg/apps/webapp"
 	"github.com/ory/hydra-client-go/client"
 	"go.mongodb.org/mongo-driver/mongo"
-	"net/http"
 )
 
 type Server struct {
 	MongoClient       *mongo.Client
-	WebAppHandler     *webapp2.Server
-	HttpServer        *http.Server
+	WebAppServer      *webapp2.Server
 	HydraPublicClient *client.OryHydra
 	HydraAdminClient  *client.OryHydra
+	Router            *mux.Router
+	IAMServer         *iam.Server
+	LoginServer       *login.Server
+	CMSServer         *cms.Server
 }

@@ -7,7 +7,6 @@ import (
 	"github.com/gomodule/redigo/redis"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/cms"
-	"github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/nrc-no/core/pkg/apps/seeder"
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/middleware"
@@ -16,7 +15,6 @@ import (
 	"github.com/spf13/pflag"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"net"
 	"net/http"
 	"net/url"
 	"strings"
@@ -299,11 +297,8 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	genericServerOptions := c.Generic()
 
 	// Create IAM Server
-	iamServer, err := iam.NewServer(ctx, genericServerOptions)
+	iamServer, err := c.CreateIAMServer(ctx, genericServerOptions)
 	if err != nil {
-		panic(err)
-	}
-	if err := iamServer.Init(ctx); err != nil {
 		panic(err)
 	}
 
@@ -323,41 +318,21 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		panic(err)
 	}
 
-	router := mux.NewRouter()
-	router.Use(middleware.UseLogging())
-	router.PathPrefix("/apis/cms").Handler(cmsServer)
-	router.PathPrefix("/apis/iam").Handler(iamServer)
-	router.PathPrefix("/auth").Handler(loginServer)
-	router.PathPrefix("/apis/login").Handler(loginServer)
-	router.PathPrefix("/").Handler(webAppServer)
-
-	httpServer := &http.Server{
-		Addr:    ":9000",
-		Handler: router,
-	}
-
 	srv := &Server{
 		MongoClient:       c.MongoClient,
 		HydraPublicClient: c.HydraPublicClient,
 		HydraAdminClient:  c.HydraAdminClient,
-		WebAppHandler:     webAppServer,
-		HttpServer:        httpServer,
+		WebAppServer:      webAppServer,
+		IAMServer:         iamServer,
+		LoginServer:       loginServer,
+		CMSServer:         cmsServer,
 	}
 
+	router := c.CreateRouter(srv)
+	srv.Router = router
+
 	go func() {
-		listenAddress := c.ListenAddress
-		listenAddress = strings.Replace(listenAddress, "https://", "", -1)
-		listenAddress = strings.Replace(listenAddress, "http://", "", -1)
-		_, port, err := net.SplitHostPort(listenAddress)
-		if err != nil {
-			panic(err)
-		}
-		if err := http.ListenAndServe(":"+port, router); err != nil {
-			if errors.Is(err, context.Canceled) {
-				return
-			}
-			panic(err)
-		}
+		c.StartServer(srv)
 	}()
 
 	if err := seeder.Seed(ctx, c.MongoClient, c.MongoDatabase); err != nil {
@@ -366,4 +341,24 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 
 	return srv
 
+}
+
+func (c CompletedOptions) CreateRouter(srv *Server) *mux.Router {
+	router := mux.NewRouter()
+	router.Use(middleware.UseLogging())
+	router.PathPrefix("/apis/cms").Handler(srv.CMSServer)
+	router.PathPrefix("/apis/iam").Handler(srv.IAMServer)
+	router.PathPrefix("/auth").Handler(srv.LoginServer)
+	router.PathPrefix("/apis/login").Handler(srv.LoginServer)
+	router.PathPrefix("/").Handler(srv.WebAppServer)
+	return router
+}
+
+func (c CompletedOptions) StartServer(server *Server) {
+	if err := http.ListenAndServe(c.ListenAddress, server.Router); err != nil {
+		if errors.Is(err, context.Canceled) {
+			return
+		}
+		panic(err)
+	}
 }
