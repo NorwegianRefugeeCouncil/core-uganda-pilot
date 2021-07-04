@@ -54,3 +54,4 @@ go test ./... -coverprofile "${SCRIPT_DIR}/cover.out" --tags=integration
 # cd "${SCRIPT_DIR}/../e2e" || exit 1 && npm i && npm run run
 
 kubectl delete -f "${SCRIPT_DIR}/test.yaml" --namespace test-pods
+
