@@ -1,0 +1,8 @@
+presubmit:
+  - name: core_e2e
+    decorate: true
+    spec:
+      containers:
+        - image: bash
+          args:
+            - /home/prow/go/src/github.com/nrc-no/core/.prow/e2e-tests.sh
