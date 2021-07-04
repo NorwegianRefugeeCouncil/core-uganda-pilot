@@ -1,3 +1,5 @@
+// +build integration
+
 package iam
 
 import (
@@ -9,7 +11,9 @@ import (
 	"github.com/stretchr/testify/suite"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"net"
 	"net/http"
+	"os"
 	"testing"
 )
 
@@ -21,11 +25,39 @@ type Suite struct {
 	client     *ClientSet
 }
 
+func GetEnvOrDefault(key, defaultValue string) string {
+	if value, ok := os.LookupEnv(key); ok {
+		return value
+	}
+	return defaultValue
+}
+
 func (s *Suite) SetupSuite() {
 
 	ctx := context.Background()
 
-	mongoClient, err := mongo.NewClient(options.Client().SetAuth(options.Credential{Username: "root", Password: "example"}).SetHosts([]string{"localhost:27017"}))
+	mongoUsername := GetEnvOrDefault("MONGO_USERNAME", "root")
+	mongoPassword := GetEnvOrDefault("MONGO_PASSWORD", "example")
+	mongoHost := GetEnvOrDefault("MONGO_HOST", "localhost:27017")
+	mongoDatabase := GetEnvOrDefault("MONGO_DATABASE", "e2e")
+
+	// Using a random port
+	ip := net.ParseIP("127.0.0.1")
+	listener, err := net.ListenTCP("tcp", &net.TCPAddr{
+		IP: ip,
+	})
+	if !assert.NoError(s.T(), err) {
+		s.T().Fatal(err)
+		return
+	}
+	s.T().Logf("Listening at: %s", listener.Addr().String())
+	_, port, err := net.SplitHostPort(listener.Addr().String())
+	if !assert.NoError(s.T(), err) {
+		s.T().Fatal(err)
+		return
+	}
+
+	mongoClient, err := mongo.NewClient(options.Client().SetAuth(options.Credential{Username: mongoUsername, Password: mongoPassword}).SetHosts([]string{mongoHost}))
 	if !assert.NoError(s.T(), err) {
 		s.T().Fatal(err)
 		return
@@ -37,7 +69,7 @@ func (s *Suite) SetupSuite() {
 
 	opts := &server.GenericServerOptions{
 		MongoClient:   mongoClient,
-		MongoDatabase: "e2e",
+		MongoDatabase: mongoDatabase,
 		Environment:   "Development",
 	}
 	s.serverOpts = opts
@@ -51,7 +83,7 @@ func (s *Suite) SetupSuite() {
 	s.server = srv
 	s.client = NewClientSet(&rest.RESTConfig{
 		Scheme: "http",
-		Host:   "localhost:9001",
+		Host:   "localhost:" + port,
 		Headers: map[string][]string{
 			"X-Authenticated-User-Subject": {"mock-auth-user"},
 		},
@@ -60,7 +92,7 @@ func (s *Suite) SetupSuite() {
 	s.ResetDB()
 
 	go func() {
-		if err := http.ListenAndServe(":9001", srv); err != nil {
+		if err := http.Serve(listener, srv); err != nil {
 			if errors.Is(err, context.Canceled) {
 				return
 			}
