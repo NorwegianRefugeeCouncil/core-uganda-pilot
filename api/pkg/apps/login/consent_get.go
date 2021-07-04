@@ -17,6 +17,7 @@ func (s *Server) GetConsent(w http.ResponseWriter, req *http.Request) {
 
 	consentGetResp, err := s.HydraAdmin.GetConsentRequest(admin.NewGetConsentRequestParams().
 		WithConsentChallenge(consentChallenge).
+		WithHTTPClient(s.HydraHTTPClient).
 		WithContext(req.Context()))
 	if err != nil {
 		s.Error(w, fmt.Errorf("could not request consent"))
@@ -27,6 +28,7 @@ func (s *Server) GetConsent(w http.ResponseWriter, req *http.Request) {
 		consentAcceptResp, err := s.HydraAdmin.AcceptConsentRequest(admin.NewAcceptConsentRequestParams().
 			WithContext(req.Context()).
 			WithConsentChallenge(consentChallenge).
+			WithHTTPClient(s.HydraHTTPClient).
 			WithBody(&models.AcceptConsentRequest{
 				GrantAccessTokenAudience: consentGetResp.GetPayload().RequestedAccessTokenAudience,
 				GrantScope:               consentGetResp.GetPayload().RequestedScope,

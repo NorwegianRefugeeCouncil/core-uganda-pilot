@@ -1,0 +1,7 @@
+.idea
+.env
+README.md
+Makefile
+Dockerfile
+.dockerignore
+certs

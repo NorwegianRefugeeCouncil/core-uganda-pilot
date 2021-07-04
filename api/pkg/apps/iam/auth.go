@@ -24,7 +24,7 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 			res, err := s.HydraAdmin.IntrospectOAuth2Token(&admin.IntrospectOAuth2TokenParams{
 				Token:      token,
 				Context:    req.Context(),
-				HTTPClient: nil,
+				HTTPClient: s.HydraHTTPClient,
 			})
 			if err != nil {
 				s.Error(w, err)

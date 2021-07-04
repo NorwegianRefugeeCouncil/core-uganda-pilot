@@ -6,71 +6,51 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/generic/server"
-	"github.com/ory/hydra-client-go/client"
 	"github.com/ory/hydra-client-go/client/admin"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"io/ioutil"
 	"net/http"
 )
 
 type Server struct {
-	environment   string
-	router        *mux.Router
-	mongoClient   *mongo.Client
-	caseStore     *CaseStore
-	caseTypeStore *CaseTypeStore
-	commentStore  *CommentStore
-	HydraAdmin    admin.ClientService
+	environment     string
+	router          *mux.Router
+	mongoClient     *mongo.Client
+	caseStore       *CaseStore
+	caseTypeStore   *CaseTypeStore
+	commentStore    *CommentStore
+	HydraAdmin      admin.ClientService
+	HydraHttpClient *http.Client
 }
 
 func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, error) {
-	mongoClient, err := mongo.NewClient(
-		options.Client().
-			SetHosts(o.MongoHosts).
-			SetAuth(options.Credential{
-				Username: o.MongoUsername,
-				Password: o.MongoPassword,
-			}))
+
+	caseStore, err := NewCaseStore(ctx, o.MongoClient, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := mongoClient.Connect(ctx); err != nil {
-		return nil, err
-	}
-
-	router := mux.NewRouter()
-
-	caseStore, err := NewCaseStore(ctx, mongoClient, o.MongoDatabase)
+	caseTypeStore, err := NewCaseTypeStore(ctx, o.MongoClient, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	caseTypeStore, err := NewCaseTypeStore(ctx, mongoClient, o.MongoDatabase)
-	if err != nil {
-		return nil, err
-	}
-
-	commentStore, err := NewCommentStore(ctx, mongoClient, o.MongoDatabase)
+	commentStore, err := NewCommentStore(ctx, o.MongoClient, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
 	srv := &Server{
-		router:        router,
-		mongoClient:   mongoClient,
-		caseStore:     caseStore,
-		caseTypeStore: caseTypeStore,
-		commentStore:  commentStore,
-		environment:   o.Environment,
+		mongoClient:     o.MongoClient,
+		environment:     o.Environment,
+		caseStore:       caseStore,
+		caseTypeStore:   caseTypeStore,
+		commentStore:    commentStore,
+		HydraAdmin:      o.HydraAdminClient.Admin,
+		HydraHttpClient: o.HydraHTTPClient,
 	}
 
-	srv.HydraAdmin = client.NewHTTPClientWithConfig(nil, &client.TransportConfig{
-		Host:    "localhost:4445",
-		Schemes: []string{"http"},
-	}).Admin
-
+	router := mux.NewRouter()
 	router.Use(srv.WithAuth())
 
 	router.Path("/apis/cms/v1/cases").Methods("GET").HandlerFunc(srv.ListCases)
@@ -88,6 +68,8 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	router.Path("/apis/cms/v1/comments/{id}").Methods("GET").HandlerFunc(srv.GetComment)
 	router.Path("/apis/cms/v1/comments/{id}").Methods("PUT").HandlerFunc(srv.PutComment)
 	router.Path("/apis/cms/v1/comments/{id}").Methods("PUT").HandlerFunc(srv.DeleteComment)
+
+	srv.router = router
 
 	return srv, nil
 

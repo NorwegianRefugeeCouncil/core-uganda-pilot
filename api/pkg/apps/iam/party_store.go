@@ -62,7 +62,7 @@ func (s *PartyStore) List(ctx context.Context, listOptions PartySearchOptions) (
 	}
 
 	if len(listOptions.PartyIDs) != 0 {
-		filterItems = append(filterItems, bson.M{"id": bson.M{"$in": listOptions.PartyTypeIDs}})
+		filterItems = append(filterItems, bson.M{"id": bson.M{"$in": listOptions.PartyIDs}})
 	}
 
 	if listOptions.Attributes != nil && len(listOptions.Attributes) > 0 {

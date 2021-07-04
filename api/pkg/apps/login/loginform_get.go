@@ -17,6 +17,7 @@ func (s *Server) GetLoginForm(w http.ResponseWriter, req *http.Request) {
 	resp, err := s.HydraAdmin.GetLoginRequest(
 		admin.NewGetLoginRequestParams().
 			WithLoginChallenge(challenge).
+			WithHTTPClient(s.HydraHTTPClient).
 			WithContext(ctx),
 	)
 
@@ -36,6 +37,7 @@ func (s *Server) GetLoginForm(w http.ResponseWriter, req *http.Request) {
 			admin.NewAcceptLoginRequestParams().
 				WithContext(ctx).
 				WithLoginChallenge(challenge).
+				WithHTTPClient(s.HydraHTTPClient).
 				WithBody(&models.AcceptLoginRequest{
 					Subject: resp.GetPayload().Subject,
 				}),
