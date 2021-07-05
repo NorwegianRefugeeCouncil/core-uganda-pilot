@@ -18,10 +18,11 @@ type CaseList struct {
 }
 
 type CaseType struct {
-	ID          string `json:"id" bson:"id"`
-	Name        string `json:"name" bson:"name"`
-	PartyTypeID string `json:"partyTypeId" bson:"partyTypeId"`
-	TeamID      string `json:"teamId" bson:"teamId"`
+	ID          string       `json:"id" bson:"id"`
+	Name        string       `json:"name" bson:"name"`
+	PartyTypeID string       `json:"partyTypeId" bson:"partyTypeId"`
+	TeamID      string       `json:"teamId" bson:"teamId"`
+	Template    CaseTemplate `json:"template" bson:"template"`
 }
 
 type CaseTypeList struct {
@@ -52,4 +53,32 @@ type Comment struct {
 
 type CommentList struct {
 	Items []*Comment `json:"items"`
+}
+
+// Case templates
+// https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-githubs-form-schema
+
+type CaseTemplate struct {
+	// FormElements is an ordered list of the elements found in the form
+	FormElements []CaseTemplateFormElement `json:"formElements" bson:"formElements"`
+}
+
+type CaseTemplateFormElement struct {
+	Type       string                            `json:"type" bson:"type"`
+	Attributes CaseTemplateFormElementAttribute  `json:"attributes" bson:"attributes"`
+	Validation CaseTemplateFormElementValidation `json:"validation" bson:"validation"`
+}
+
+type CaseTemplateFormElementAttribute struct {
+	Label       string   `json:"label" bson:"label"`
+	ID          string   `json:"id" bson:"id"`
+	Description string   `json:"description" bson:"description"`
+	Placeholder string   `json:"placeholder" bson:"placeholder"`
+	Value       string   `json:"value" bson:"value"`
+	Multiple    bool     `json:"multiple" bson:"multiple"`
+	Options     []string `json:"options" bson:"options"`
+}
+
+type CaseTemplateFormElementValidation struct {
+	Required bool `json:"required" bson:"required"`
 }
