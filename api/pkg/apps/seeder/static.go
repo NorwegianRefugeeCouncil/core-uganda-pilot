@@ -1,20 +1,32 @@
 package seeder
 
 import (
+	"encoding/json"
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
 	"strings"
 )
 
-func caseType(id, name, partyTypeID, teamID string) cms.CaseType {
+func caseType(id, name, partyTypeID, teamID string, template cms.CaseTemplate) cms.CaseType {
 	ct := cms.CaseType{
 		ID:          id,
 		Name:        name,
 		PartyTypeID: partyTypeID,
 		TeamID:      teamID,
+		Template:    template,
 	}
 	caseTypes = append(caseTypes, ct)
 	return ct
+}
+
+func caseTemplate(templateString string) cms.CaseTemplate {
+	var formElements []cms.CaseTemplateFormElement
+	if err := json.Unmarshal([]byte(templateString), &formElements); err != nil {
+		panic(err)
+	}
+	return cms.CaseTemplate{
+		FormElements: formElements,
+	}
 }
 
 func team(id, name string) iam.Team {
@@ -88,12 +100,15 @@ var (
 	NairobiResponseTeam = team("814fc372-08a6-4e6b-809b-30ebb51cb268", "Nairobi Response Team")
 	NairobiICLATeam     = team("80606eb4-b53a-4fda-be12-e9806e11d44a", "Nairobi ICLA Team")
 
+	// Case Templates
+	Legal = caseTemplate(`[{"type":"dropdown","attributes":{"label":"Legal status","id":"legalStatus","description":"What is the beneficiary's current legal status?","options":["Citizen","Permanent resident","Accepted refugee","Asylum seeker","Undetermined"]},"validations":{"required":true}},{"type":"checkbox","attributes":{"label":"Qualified services","id":"qualifiedServices","description":"What services does the beneficiary qualify for?","checkboxOptions":[{"label":"Councelling"},{"label":"Representation"},{"label":"Arbitration"}]},"validations":{"required":true}},{"type":"textarea","attributes":{"label":"Notes","id":"notes","description":"Additional informations, observations, concerns, etc.","placeholder":"Type something here..."}}]`)
+
 	// Case Types
-	GenderViolence     = caseType("920ca64f-66d0-4f00-af05-d8a50ce354e6", "Gender Violence", iam.IndividualPartyType.ID, KampalaResponseTeam.ID)
-	Childcare          = caseType("039caa4e-1f93-40a9-a6ff-b5bf801dfd41", "Childcare", iam.IndividualPartyType.ID, NairobiICLATeam.ID)
-	HousingRights      = caseType("0d91d175-673a-4c10-bf87-3b940585e4ac", "Housing Rights", iam.IndividualPartyType.ID, KampalaICLATeam.ID)
-	FinancialAssistInd = caseType("785036d9-41ee-4413-987e-13d4af761737", "Financial Assistance", iam.IndividualPartyType.ID, KampalaResponseTeam.ID)
-	FinancialAssistHH  = caseType("52a24b6b-ad10-4297-b030-263bbdcd5420", "Rent Subsidy", iam.HouseholdPartyType.ID, NairobiResponseTeam.ID)
+	GenderViolence     = caseType("920ca64f-66d0-4f00-af05-d8a50ce354e6", "Gender Violence", iam.IndividualPartyType.ID, KampalaResponseTeam.ID, Legal)
+	Childcare          = caseType("039caa4e-1f93-40a9-a6ff-b5bf801dfd41", "Childcare", iam.IndividualPartyType.ID, NairobiICLATeam.ID, Legal)
+	HousingRights      = caseType("0d91d175-673a-4c10-bf87-3b940585e4ac", "Housing Rights", iam.IndividualPartyType.ID, KampalaICLATeam.ID, Legal)
+	FinancialAssistInd = caseType("785036d9-41ee-4413-987e-13d4af761737", "Financial Assistance", iam.IndividualPartyType.ID, KampalaResponseTeam.ID, Legal)
+	FinancialAssistHH  = caseType("52a24b6b-ad10-4297-b030-263bbdcd5420", "Rent Subsidy", iam.HouseholdPartyType.ID, NairobiResponseTeam.ID, Legal)
 
 	// Individuals
 	JohnDoe     = individual("c529d679-3bb6-4a20-8f06-c096f4d9adc1", "John", "Doe")

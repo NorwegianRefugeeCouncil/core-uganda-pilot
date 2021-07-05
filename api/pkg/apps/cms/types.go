@@ -42,10 +42,11 @@ func (c *CaseType) UnmarshalFormData(values url.Values) error {
 	c.PartyTypeID = values.Get("partyTypeId")
 	c.TeamID = values.Get("teamId")
 	templateString := values.Get("template")
-
-	if err := json.Unmarshal([]byte(templateString), &c.Template); err != nil {
-	  return err
+	var formElements []CaseTemplateFormElement
+	if err := json.Unmarshal([]byte(templateString), &formElements); err != nil {
+		return err
 	}
+	c.Template = CaseTemplate{FormElements: formElements}
 	return nil
 }
 
@@ -86,15 +87,21 @@ type CaseTemplateFormElement struct {
 }
 
 type CaseTemplateFormElementAttribute struct {
-	Label       string      `json:"label" bson:"label"`
-	ID          string      `json:"id" bson:"id"`
-	Description string      `json:"description" bson:"description"`
-	Placeholder string      `json:"placeholder" bson:"placeholder"`
-	Value       string      `json:"value" bson:"value"`
-	Multiple    bool        `json:"multiple" bson:"multiple"`
-	Options     interface{} `json:"options" bson:"options"`
+	Label           string                       `json:"label" bson:"label"`
+	ID              string                       `json:"id" bson:"id"`
+	Description     string                       `json:"description" bson:"description"`
+	Placeholder     string                       `json:"placeholder" bson:"placeholder"`
+	Value           string                       `json:"value" bson:"value"`
+	Multiple        bool                         `json:"multiple" bson:"multiple"`
+	Options         []string                     `json:"options" bson:"options"`
+	CheckboxOptions []CaseTemplateCheckboxOption `json:"checkboxOptions" bson:"checkboxOptions"`
 }
 
 type CaseTemplateFormElementValidation struct {
 	Required bool `json:"required" bson:"required"`
+}
+
+type CaseTemplateCheckboxOption struct {
+	Label    string `json:"label" bson:"label"`
+	Required bool   `json:"required" bson:"required"`
 }
