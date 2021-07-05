@@ -54,41 +54,36 @@ func (s *PartyStore) Get(ctx context.Context, id string) (*Party, error) {
 	return &r, nil
 }
 
+func BSONStringA(strSlice []string) (result bson.A) {
+	result = bson.A{}
+	for _, s := range strSlice {
+		result = append(result, s)
+	}
+	return
+}
+
 func (s *PartyStore) List(ctx context.Context, listOptions PartySearchOptions) (*PartyList, error) {
-	filterItems := bson.A{}
+	filterItems := bson.M{}
 
 	if len(listOptions.PartyTypeIDs) != 0 {
-		filterItems = append(filterItems, bson.M{"partyTypeIds": bson.M{"$in": listOptions.PartyTypeIDs}})
+		filterItems["partyTypeIds"] = bson.D{{"$in", BSONStringA(listOptions.PartyTypeIDs)}}
 	}
 
 	if len(listOptions.PartyIDs) != 0 {
-		filterItems = append(filterItems, bson.M{"id": bson.M{"$in": listOptions.PartyIDs}})
+		filterItems["id"] = bson.D{{"$in", BSONStringA(listOptions.PartyIDs)}}
 	}
 
 	if listOptions.Attributes != nil && len(listOptions.Attributes) > 0 {
 		for key, value := range listOptions.Attributes {
-			filterItems = append(filterItems, bson.M{"attributes." + key: value})
+			filterItems["attributes."+key] = value
 		}
 	}
 
 	if len(listOptions.SearchParam) != 0 {
-		filterItems = append(filterItems, bson.M{
-			"$text": bson.M{
-				"$search": listOptions.SearchParam,
-			},
-		})
+		filterItems["$text"] = bson.M{"$search": listOptions.SearchParam}
 	}
 
-	var filter interface{}
-	if len(filterItems) == 0 {
-		filter = bson.M{}
-	} else if len(filterItems) == 1 {
-		filter = filterItems[0]
-	} else {
-		filter = bson.M{"$and": filterItems}
-	}
-
-	res, err := s.Collection.Find(ctx, filter)
+	res, err := s.Collection.Find(ctx, filterItems)
 	if err != nil {
 		return nil, err
 	}

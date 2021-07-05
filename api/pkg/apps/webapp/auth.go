@@ -17,32 +17,8 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 			if s.environment == "Development" {
 				authUserEmail := req.Header.Get("X-E2E-Authenticated-User-Email")
 				if len(authUserEmail) != 0 {
-
-					ctx := req.Context()
-
-					authUsers, err := s.iamAdminClient.Parties().Search(ctx, iam.PartySearchOptions{
-						Attributes: map[string]string{
-							iam.EMailAttribute.ID: authUserEmail,
-						},
-					})
-					if err != nil {
-						http.Error(w, err.Error(), http.StatusInternalServerError)
-						return
-					}
-					if len(authUsers.Items) == 0 {
-						err := fmt.Errorf("user not found")
-						http.Error(w, err.Error(), http.StatusInternalServerError)
-						return
-					}
-					authUser := authUsers.Items[0]
-
-					ctx = req.Context()
-					ctx = context.WithValue(ctx, "Subject", authUser.ID)
-					req = req.WithContext(ctx)
-
-					handler.ServeHTTP(w, req)
+					s.setAuthenticatedUserSubject(w, req, authUserEmail, handler)
 					return
-
 				}
 			}
 
@@ -91,4 +67,28 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 		})
 	}
 
+}
+
+func (s *Server) setAuthenticatedUserSubject(w http.ResponseWriter, req *http.Request, authUserEmail string, handler http.Handler) {
+	ctx := req.Context()
+
+	authUsers, err := s.iamAdminClient.Parties().Search(ctx, iam.PartySearchOptions{
+		Attributes: map[string]string{
+			iam.EMailAttribute.ID: authUserEmail,
+		},
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	if len(authUsers.Items) == 0 {
+		err := fmt.Errorf("user not found")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	authUser := authUsers.Items[0]
+
+	ctx = req.Context()
+	ctx = context.WithValue(ctx, "Subject", authUser.ID)
+	req = req.WithContext(ctx)
+
+	handler.ServeHTTP(w, req)
 }
