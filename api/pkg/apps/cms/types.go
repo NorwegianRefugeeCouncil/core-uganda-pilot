@@ -1,6 +1,10 @@
 package cms
 
-import "time"
+import (
+	"encoding/json"
+	"net/url"
+	"time"
+)
 
 type Case struct {
 	ID          string `json:"id" bson:"id"`
@@ -31,6 +35,35 @@ type CaseTypeList struct {
 
 func (c *CaseType) String() string {
 	return c.Name
+}
+
+func (c *CaseType) UnmarshalFormData(values url.Values) error {
+	c.Name = values.Get("name")
+	c.PartyTypeID = values.Get("partyTypeId")
+	c.TeamID = values.Get("teamId")
+	templateString := values.Get("template")
+
+	if templateString != "" {
+		template, err := parseTemplate(templateString)
+		if err != nil {
+			return err
+		}
+		c.Template = template
+	}
+	return nil
+}
+
+func parseTemplate(str string) (CaseTemplate, error) {
+	var template []CaseTemplateFormElement
+
+	err := json.Unmarshal([]byte(str), &template)
+	if err != nil {
+		return CaseTemplate{}, err
+	}
+
+	return CaseTemplate{
+		FormElements: template,
+	}, nil
 }
 
 func (l *CaseTypeList) FindByID(id string) *CaseType {

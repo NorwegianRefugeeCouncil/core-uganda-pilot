@@ -2,7 +2,6 @@ package webapp
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/cms"
@@ -70,17 +69,10 @@ func (h *Server) PostCaseType(
 	}
 
 	values := req.Form
-	caseType.Name = values.Get("name")
-	caseType.PartyTypeID = values.Get("partyTypeId")
-	caseType.TeamID = values.Get("teamId")
-	templateString := values.Get("template")
-
-	if templateString != "" {
-		template, err := parseTemplate(templateString)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-		caseType.Template = template
+	err := caseType.UnmarshalFormData(values)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	if isNew {
@@ -196,17 +188,4 @@ func (h *Server) NewCaseType(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-}
-
-func parseTemplate(str string) (cms.CaseTemplate, error) {
-	var template []cms.CaseTemplateFormElement
-
-	err := json.Unmarshal([]byte(str), &template)
-	if err != nil {
-		return cms.CaseTemplate{}, err
-	}
-
-	return cms.CaseTemplate{
-		FormElements: template,
-	}, nil
 }
