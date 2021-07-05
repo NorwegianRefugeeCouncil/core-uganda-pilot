@@ -43,12 +43,8 @@ func (c *CaseType) UnmarshalFormData(values url.Values) error {
 	c.TeamID = values.Get("teamId")
 	templateString := values.Get("template")
 
-	if templateString != "" {
-		template, err := parseTemplate(templateString)
-		if err != nil {
-			return err
-		}
-		c.Template = template
+	if err := json.Unmarshal([]byte(templateString), &c.Template); err != nil {
+	  return err
 	}
 	return nil
 }
