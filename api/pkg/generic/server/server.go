@@ -6,6 +6,7 @@ import (
 	"github.com/ory/hydra-client-go/client"
 	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
+	"path"
 )
 
 type GenericServerOptions struct {
@@ -19,19 +20,21 @@ type GenericServerOptions struct {
 	OidcProvider      *oidc.Provider
 }
 
-var cmsPath = "/apis/cms/v1/"
-var iamPath = "/apis/iam/v1/"
+var cmsPath = "/apis/cms/v1"
+var iamPath = "/apis/iam/v1"
 
-var Endpoints = map[string]string{
-	"cases":             cmsPath + "cases",
-	"casetypes":         cmsPath + "casetypes",
-	"comments":          cmsPath + "comments",
-	"attributes":        iamPath + "attributes",
-	"individuals":       iamPath + "individuals",
-	"memberships":       iamPath + "memberships",
-	"parties":           iamPath + "parties",
-	"partytypes":        iamPath + "partyTypes",
-	"relationships":     iamPath + "relationships",
-	"relationshiptypes": iamPath + "relationshiptypes",
-	"teams":             iamPath + "teams",
-}
+type Endpoint = string
+
+var (
+	CasesEndpoint             Endpoint = path.Join(cmsPath, "cases")
+	CaseTypesEndpoint         Endpoint = path.Join(cmsPath, "casetypes")
+	CommentsEndpoint          Endpoint = path.Join(cmsPath, "comments")
+	AttributesEndpoint        Endpoint = path.Join(iamPath, "attributes")
+	IndividualsEndpoint       Endpoint = path.Join(iamPath, "individuals")
+	MembershipsEndpoint       Endpoint = path.Join(iamPath, "memberships")
+	PartiesEndpoint           Endpoint = path.Join(iamPath, "parties")
+	PartyTypesEndpoint        Endpoint = path.Join(iamPath, "partytypes")
+	RelationshipsEndpoint     Endpoint = path.Join(iamPath, "relationships")
+	RelationshipTypesEndpoint Endpoint = path.Join(iamPath, "relationshiptypes")
+	TeamsEndpoint             Endpoint = path.Join(iamPath, "teams")
+)

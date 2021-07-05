@@ -4,35 +4,34 @@ import (
 	"context"
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/rest"
+	"path"
 )
 
 type RESTIndividualClient struct {
 	c *rest.Client
 }
 
-var individualsEP = server.Endpoints["individuals"]
-
 func (r RESTIndividualClient) Get(ctx context.Context, id string) (*Individual, error) {
 	var obj Individual
-	err := r.c.Get().Path(individualsEP + "/" + id).Do(ctx).Into(&obj)
+	err := r.c.Get().Path(path.Join(server.IndividualsEndpoint, id)).Do(ctx).Into(&obj)
 	return &obj, err
 }
 
 func (r RESTIndividualClient) Create(ctx context.Context, create *Individual) (*Individual, error) {
 	var obj Individual
-	err := r.c.Post().Body(create).Path(individualsEP).Do(ctx).Into(&obj)
+	err := r.c.Post().Body(create).Path(server.IndividualsEndpoint).Do(ctx).Into(&obj)
 	return &obj, err
 }
 
 func (r RESTIndividualClient) Update(ctx context.Context, update *Individual) (*Individual, error) {
 	var obj Individual
-	err := r.c.Put().Body(update).Path(individualsEP + "/" + update.ID).Do(ctx).Into(&obj)
+	err := r.c.Put().Body(update).Path(path.Join(server.IndividualsEndpoint, update.ID)).Do(ctx).Into(&obj)
 	return &obj, err
 }
 
 func (r RESTIndividualClient) List(ctx context.Context, listOptions IndividualListOptions) (*IndividualList, error) {
 	var obj IndividualList
-	err := r.c.Get().Path(individualsEP).WithParams(listOptions).Do(ctx).Into(&obj)
+	err := r.c.Get().Path(server.IndividualsEndpoint).WithParams(listOptions).Do(ctx).Into(&obj)
 	return &obj, err
 }
 

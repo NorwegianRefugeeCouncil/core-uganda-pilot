@@ -10,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"io/ioutil"
 	"net/http"
+	"path"
 )
 
 type Server struct {
@@ -53,25 +54,21 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	router := mux.NewRouter()
 	router.Use(srv.WithAuth())
 
-	casesEP := server.Endpoints["cases"]
-	caseTypesEP := server.Endpoints["casetypes"]
-	commentsEP := server.Endpoints["comments"]
+	router.Path(server.CasesEndpoint).Methods("GET").HandlerFunc(srv.ListCases)
+	router.Path(server.CasesEndpoint).Methods("POST").HandlerFunc(srv.PostCase)
+	router.Path(path.Join(server.CasesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.GetCase)
+	router.Path(path.Join(server.CasesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.PutCase)
 
-	router.Path(casesEP).Methods("GET").HandlerFunc(srv.ListCases)
-	router.Path(casesEP).Methods("POST").HandlerFunc(srv.PostCase)
-	router.Path(casesEP + "/{id}").Methods("GET").HandlerFunc(srv.GetCase)
-	router.Path(casesEP + "/{id}").Methods("PUT").HandlerFunc(srv.PutCase)
+	router.Path(server.CaseTypesEndpoint).Methods("GET").HandlerFunc(srv.ListCaseTypes)
+	router.Path(server.CaseTypesEndpoint).Methods("POST").HandlerFunc(srv.PostCaseType)
+	router.Path(path.Join(server.CaseTypesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.GetCaseType)
+	router.Path(path.Join(server.CaseTypesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.PutCaseType)
 
-	router.Path(caseTypesEP).Methods("GET").HandlerFunc(srv.ListCaseTypes)
-	router.Path(caseTypesEP).Methods("POST").HandlerFunc(srv.PostCaseType)
-	router.Path(caseTypesEP + "/{id}").Methods("GET").HandlerFunc(srv.GetCaseType)
-	router.Path(caseTypesEP + "/{id}").Methods("PUT").HandlerFunc(srv.PutCaseType)
-
-	router.Path(commentsEP).Methods("GET").HandlerFunc(srv.ListComments)
-	router.Path(commentsEP).Methods("POST").HandlerFunc(srv.PostComment)
-	router.Path(commentsEP + "/{id}").Methods("GET").HandlerFunc(srv.GetComment)
-	router.Path(commentsEP + "/{id}").Methods("PUT").HandlerFunc(srv.PutComment)
-	router.Path(commentsEP + "/{id}").Methods("PUT").HandlerFunc(srv.DeleteComment)
+	router.Path(server.CommentsEndpoint).Methods("GET").HandlerFunc(srv.ListComments)
+	router.Path(server.CommentsEndpoint).Methods("POST").HandlerFunc(srv.PostComment)
+	router.Path(path.Join(server.CommentsEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.GetComment)
+	router.Path(path.Join(server.CommentsEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.PutComment)
+	router.Path(path.Join(server.CommentsEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.DeleteComment)
 
 	srv.router = router
 
@@ -91,7 +88,10 @@ func (s *Server) JSON(w http.ResponseWriter, status int, data interface{}) {
 	}
 	w.WriteHeader(status)
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(responseBytes)
+	_, err = w.Write(responseBytes)
+	if err != nil {
+		return
+	}
 }
 
 func (s *Server) GetPathParam(param string, w http.ResponseWriter, req *http.Request, into *string) bool {
