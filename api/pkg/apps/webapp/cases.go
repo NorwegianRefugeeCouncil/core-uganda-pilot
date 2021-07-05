@@ -31,7 +31,7 @@ func (c *CasesListOptions) OpenOnly() bool {
 func (c *CasesListOptions) UnmarshalQueryParams(values url.Values) error {
 
 	hasStatusArg := false
-	for key, _ := range values {
+	for key := range values {
 		if key == "status" {
 			hasStatusArg = true
 		}
@@ -154,6 +154,7 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 	var kaseTypes *cms.CaseTypeList
 	var referrals *cms.CaseList
 	var comments *cms.CommentList
+	var creator *iam.Party
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
@@ -182,7 +183,6 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var creator *iam.Party
 	if caseID != "new" && len(kase.CreatorID) > 0 {
 		var err error
 		creator, err = h.IAMClient(ctx).Parties().Get(ctx, kase.CreatorID)
@@ -198,7 +198,7 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 		commentAuthorIDMap[comment.AuthorID] = true
 	}
 	var commentAuthorIDs []string
-	for authorID, _ := range commentAuthorIDMap {
+	for authorID := range commentAuthorIDMap {
 		commentAuthorIDs = append(commentAuthorIDs, authorID)
 	}
 
@@ -250,6 +250,7 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	qry := req.URL.Query()
 
 	var referralCaseType *cms.CaseType
