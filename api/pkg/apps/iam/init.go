@@ -7,6 +7,23 @@ import (
 
 func (s *Server) Init(ctx context.Context) error {
 
+	if err := s.InitPartyType(ctx); err != nil {
+		return err
+	}
+
+	if err := s.InitRelationshipType(ctx); err != nil {
+		return err
+	}
+
+	if err := s.InitAttribute(ctx); err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
+func (s *Server) InitPartyType(ctx context.Context) error {
 	for _, partyType := range []PartyType{
 		IndividualPartyType,
 		HouseholdPartyType,
@@ -22,7 +39,10 @@ func (s *Server) Init(ctx context.Context) error {
 			}
 		}
 	}
+	return nil
+}
 
+func (s *Server) InitRelationshipType(ctx context.Context) error {
 	for _, relationshipType := range []RelationshipType{
 		HeadOfHouseholdRelationshipType,
 		SpousalRelationshipType,
@@ -39,7 +59,10 @@ func (s *Server) Init(ctx context.Context) error {
 			}
 		}
 	}
+	return nil
+}
 
+func (s *Server) InitAttribute(ctx context.Context) error {
 	for _, attribute := range []Attribute{
 		FirstNameAttribute,
 		LastNameAttribute,
@@ -56,7 +79,5 @@ func (s *Server) Init(ctx context.Context) error {
 			}
 		}
 	}
-
 	return nil
-
 }

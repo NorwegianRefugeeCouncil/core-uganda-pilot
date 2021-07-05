@@ -9,6 +9,7 @@ import (
 	"github.com/ory/hydra-client-go/models"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
+	"net/url"
 )
 
 func (h *Server) AuthClients(w http.ResponseWriter, req *http.Request) {
@@ -175,37 +176,7 @@ func (h *Server) PostAuthClient(w http.ResponseWriter, req *http.Request, isNew 
 
 	values := req.Form
 
-	var grantTypes []string
-
-	if values.Get("grant_types[authorization_code]") == "true" {
-		grantTypes = append(grantTypes, "authorization_code")
-	}
-	if values.Get("grant_types[code]") == "true" {
-		grantTypes = append(grantTypes, "code")
-	}
-	if values.Get("grant_types[refresh_token]") == "true" {
-		grantTypes = append(grantTypes, "refresh_token")
-	}
-	if values.Get("grant_types[id_token]") == "true" {
-		grantTypes = append(grantTypes, "id_token")
-	}
-	if values.Get("grant_types[implicit]") == "true" {
-		grantTypes = append(grantTypes, "implicit")
-	}
-	if values.Get("grant_types[client_credentials]") == "true" {
-		grantTypes = append(grantTypes, "client_credentials")
-	}
-
-	var responseTypes []string
-	if values.Get("response_types[token]") == "true" {
-		responseTypes = append(responseTypes, "token")
-	}
-	if values.Get("response_types[code]") == "true" {
-		responseTypes = append(responseTypes, "code")
-	}
-	if values.Get("response_types[id_token]") == "true" {
-		responseTypes = append(responseTypes, "id_token")
-	}
+	grantTypes, responseTypes := getFormValues(values)
 
 	cli.ClientName = values.Get("client_name")
 	cli.GrantTypes = grantTypes
@@ -247,6 +218,42 @@ func (h *Server) PostAuthClient(w http.ResponseWriter, req *http.Request, isNew 
 		return
 	}
 
+}
+
+func getFormValues(values url.Values) ([]string, []string) {
+
+	var grantTypesFieldNames = []string{
+		"authorization_code",
+		"code",
+		"refresh_token",
+		"id_token",
+		"implicit",
+		"client_credentials",
+	}
+
+	var grantTypes []string
+
+	for _, fieldName := range grantTypesFieldNames {
+		if values.Get(fmt.Sprintf("grant_types[%s]", fieldName)) == "true" {
+			grantTypes = append(grantTypes, "fieldName")
+		}
+	}
+
+	var responseTypesFieldNames = []string{
+		"token",
+		"code",
+		"id_token",
+	}
+
+	var responseTypes []string
+
+	for _, fieldName := range responseTypesFieldNames {
+		if values.Get(fmt.Sprintf("response_types[%s]", fieldName)) == "true" {
+			responseTypes = append(responseTypes, "fieldName")
+		}
+	}
+
+	return grantTypes, responseTypes
 }
 
 func GenerateRandomBytes(n int) ([]byte, error) {

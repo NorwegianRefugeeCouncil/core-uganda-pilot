@@ -8,6 +8,7 @@ import (
 	"github.com/nrc-no/core/pkg/sessionmanager"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -103,43 +104,7 @@ func (h *Server) PostAttribute(ctx context.Context, attribute *iam.Attribute, w 
 
 	values := req.Form
 
-	translationMap := map[string]*iam.AttributeTranslation{}
-
-	for key, v := range values {
-		if !strings.HasPrefix(key, "translations.") {
-			continue
-		}
-		parts := strings.Split(key, ".")
-		if len(parts) != 3 {
-			http.Error(w, "unexpected translation key. Expected 'translation.{locale}.{short/long}' format", http.StatusInternalServerError)
-			return
-		}
-
-		locale := parts[1]
-		part := parts[2]
-
-		if part != "long" && part != "short" {
-			http.Error(w, "unexpected translation key. Expected 'translation.{locale}.{short/long}' format", http.StatusInternalServerError)
-			return
-		}
-
-		if _, ok := translationMap[locale]; !ok {
-			translationMap[locale] = &iam.AttributeTranslation{
-				Locale: locale,
-			}
-		}
-		t := translationMap[locale]
-
-		if part == "long" {
-			t.LongFormulation = v[0]
-		} else if part == "short" {
-			t.ShortFormulation = v[0]
-		} else {
-			http.Error(w, "unexpected translation key. Expected 'translation.{locale}.{short/long}' format", http.StatusInternalServerError)
-			return
-		}
-
-	}
+	translationMap := h.makeTranslationMap(values, w)
 
 	var translations []iam.AttributeTranslation
 	for _, translation := range translationMap {
@@ -186,4 +151,47 @@ func (h *Server) PostAttribute(ctx context.Context, attribute *iam.Attribute, w 
 	w.Header().Set("Location", "/settings/attributes/"+out.ID)
 	w.WriteHeader(http.StatusSeeOther)
 
+}
+
+func (h *Server) makeTranslationMap(values url.Values, w http.ResponseWriter) map[string]*iam.AttributeTranslation {
+	translationMap := map[string]*iam.AttributeTranslation{}
+
+	unexpectedKeyErrMsg := "unexpected translation key. Expected 'translation.{locale}.{short/long}' format"
+
+	for key, v := range values {
+		if !strings.HasPrefix(key, "translations.") {
+			continue
+		}
+		parts := strings.Split(key, ".")
+		if len(parts) != 3 {
+			http.Error(w, unexpectedKeyErrMsg, http.StatusInternalServerError)
+			return nil
+		}
+
+		locale := parts[1]
+		part := parts[2]
+
+		if part != "long" && part != "short" {
+			http.Error(w, unexpectedKeyErrMsg, http.StatusInternalServerError)
+			return nil
+		}
+
+		if _, ok := translationMap[locale]; !ok {
+			translationMap[locale] = &iam.AttributeTranslation{
+				Locale: locale,
+			}
+		}
+		t := translationMap[locale]
+
+		if part == "long" {
+			t.LongFormulation = v[0]
+		} else if part == "short" {
+			t.ShortFormulation = v[0]
+		} else {
+			http.Error(w, unexpectedKeyErrMsg, http.StatusInternalServerError)
+			return nil
+		}
+
+	}
+	return translationMap
 }
