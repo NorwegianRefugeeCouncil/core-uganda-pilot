@@ -49,19 +49,6 @@ func (c *CaseType) UnmarshalFormData(values url.Values) error {
 	return nil
 }
 
-func parseTemplate(str string) (CaseTemplate, error) {
-	var template []CaseTemplateFormElement
-
-	err := json.Unmarshal([]byte(str), &template)
-	if err != nil {
-		return CaseTemplate{}, err
-	}
-
-	return CaseTemplate{
-		FormElements: template,
-	}, nil
-}
-
 func (l *CaseTypeList) FindByID(id string) *CaseType {
 	for _, caseType := range l.Items {
 		if caseType.ID == id {
