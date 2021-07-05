@@ -5,58 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/ory/hydra-client-go/client"
+	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/ory/hydra-client-go/client/admin"
-	"github.com/spf13/pflag"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"io/ioutil"
 	"net/http"
 )
-
-type ServerOptions struct {
-	ListenAddress string
-	MongoHosts    []string
-	MongoDatabase string
-	MongoUsername string
-	MongoPassword string
-}
-
-func NewServerOptions() *ServerOptions {
-	return &ServerOptions{
-		ListenAddress: ":9001",
-		MongoHosts:    []string{"mongo://localhost:27017"},
-	}
-}
-
-func (o *ServerOptions) WithMongoHosts(hosts []string) *ServerOptions {
-	o.MongoHosts = hosts
-	return o
-}
-func (o *ServerOptions) WithMongoDatabase(mongoDatabase string) *ServerOptions {
-	o.MongoDatabase = mongoDatabase
-	return o
-}
-func (o *ServerOptions) WithMongoUsername(mongoUsername string) *ServerOptions {
-	o.MongoUsername = mongoUsername
-	return o
-}
-func (o *ServerOptions) WithMongoPassword(mongoPassword string) *ServerOptions {
-	o.MongoPassword = mongoPassword
-	return o
-}
-func (o *ServerOptions) WithListenAddress(address string) *ServerOptions {
-	o.ListenAddress = address
-	return o
-}
-
-func (o *ServerOptions) Flags(fs pflag.FlagSet) {
-	fs.StringVar(&o.ListenAddress, "listen-address", o.ListenAddress, "Server listen address")
-	fs.StringSliceVar(&o.MongoHosts, "mongo-url", o.MongoHosts, "Mongo url")
-	fs.StringVar(&o.MongoDatabase, "mongo-database", o.MongoDatabase, "Mongo database")
-	fs.StringVar(&o.MongoUsername, "mongo-username", o.MongoUsername, "Mongo username")
-	fs.StringVar(&o.MongoPassword, "mongo-password", o.MongoPassword, "Mongo password")
-}
 
 type Server struct {
 	environment           string
@@ -71,71 +25,57 @@ type Server struct {
 	MembershipStore       *MembershipStore
 	HydraAdmin            admin.ClientService
 	mongoClient           *mongo.Client
+	HydraHTTPClient       *http.Client
 }
 
-func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
+func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, error) {
 
-	mongoClient, err := mongo.NewClient(
-		options.Client().
-			SetHosts(o.MongoHosts).
-			SetAuth(options.Credential{
-				Username: o.MongoUsername,
-				Password: o.MongoPassword,
-			}))
+	relationshipStore, err := NewRelationshipStore(ctx, o.MongoClient, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := mongoClient.Connect(ctx); err != nil {
-		return nil, err
-	}
-
-	router := mux.NewRouter()
-
-	relationshipStore, err := NewRelationshipStore(ctx, mongoClient, o.MongoDatabase)
+	partyStore, err := NewPartyStore(ctx, o.MongoClient, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	partyStore, err := NewPartyStore(ctx, mongoClient, o.MongoDatabase)
+	attributeStore, err := NewAttributeStore(ctx, o.MongoClient, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	attributeStore, err := NewAttributeStore(ctx, mongoClient, o.MongoDatabase)
+	partyTypeStore, err := NewPartyTypeStore(ctx, o.MongoClient, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	partyTypeStore, err := NewPartyTypeStore(ctx, mongoClient, o.MongoDatabase)
+	relationshipTypeStore, err := NewRelationshipTypeStore(ctx, o.MongoClient, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	relationshipTypeStore, err := NewRelationshipTypeStore(ctx, mongoClient, o.MongoDatabase)
-	if err != nil {
-		return nil, err
+	var hydraAdmin admin.ClientService
+	if o.HydraAdminClient != nil {
+		hydraAdmin = o.HydraAdminClient.Admin
 	}
 
 	srv := &Server{
 		environment:           o.Environment,
-		router:                router,
-		mongoClient:           mongoClient,
+		mongoClient:           o.MongoClient,
 		AttributeStore:        attributeStore,
 		PartyStore:            partyStore,
 		PartyTypeStore:        partyTypeStore,
 		RelationshipStore:     relationshipStore,
 		RelationshipTypeStore: relationshipTypeStore,
-		IndividualStore:       NewIndividualStore(mongoClient, o.MongoDatabase),
+		IndividualStore:       NewIndividualStore(o.MongoClient, o.MongoDatabase),
 		TeamStore:             NewTeamStore(partyStore),
 		MembershipStore:       NewMembershipStore(relationshipStore),
+		HydraAdmin:            hydraAdmin,
+		HydraHTTPClient:       o.HydraHTTPClient,
 	}
 
-	srv.HydraAdmin = client.NewHTTPClientWithConfig(nil, &client.TransportConfig{
-		Host:    "localhost:4445",
-		Schemes: []string{"http"},
-	}).Admin
-
+	router := mux.NewRouter()
 	router.Use(srv.WithAuth())
 
 	var attributesEP = server.Endpoints["attributes"]
@@ -187,6 +127,8 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 	router.Path(teamsEP + "/{id}").Methods("GET").HandlerFunc(srv.GetTeam)
 	router.Path(teamsEP + "/{id}").Methods("PUT").HandlerFunc(srv.PutTeam)
 
+	srv.router = router
+
 	return srv, nil
 }
 
@@ -202,10 +144,7 @@ func (s *Server) JSON(w http.ResponseWriter, status int, data interface{}) {
 	}
 	w.WriteHeader(status)
 	w.Header().Set("Content-Type", "application/json")
-	if _, err := w.Write(responseBytes); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	w.Write(responseBytes)
 }
 
 func (s *Server) GetPathParam(param string, w http.ResponseWriter, req *http.Request, into *string) bool {

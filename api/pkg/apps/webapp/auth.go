@@ -50,17 +50,12 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 			res, err := s.HydraAdmin.IntrospectOAuth2Token(&admin.IntrospectOAuth2TokenParams{
 				Token:      token,
 				Context:    req.Context(),
-				HTTPClient: nil,
+				HTTPClient: s.HydraHTTPClient,
 			})
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
-
-			// Check id token
-			profile := s.sessionManager.Get(req.Context(), "profile")
-
-			fmt.Printf("%#v", profile)
 
 			if !*res.Payload.Active {
 				http.Redirect(w, req, "/login", http.StatusTemporaryRedirect)

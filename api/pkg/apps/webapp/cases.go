@@ -31,7 +31,7 @@ func (c *CasesListOptions) OpenOnly() bool {
 func (c *CasesListOptions) UnmarshalQueryParams(values url.Values) error {
 
 	hasStatusArg := false
-	for key := range values {
+	for key, _ := range values {
 		if key == "status" {
 			hasStatusArg = true
 		}
@@ -198,7 +198,7 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 		commentAuthorIDMap[comment.AuthorID] = true
 	}
 	var commentAuthorIDs []string
-	for authorID := range commentAuthorIDMap {
+	for authorID, _ := range commentAuthorIDMap {
 		commentAuthorIDs = append(commentAuthorIDs, authorID)
 	}
 
@@ -250,7 +250,6 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 	qry := req.URL.Query()
 
 	var referralCaseType *cms.CaseType

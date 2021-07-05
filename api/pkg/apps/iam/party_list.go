@@ -20,6 +20,7 @@ func (s *Server) ListParties(w http.ResponseWriter, req *http.Request) {
 	if len(listOptions.PartyTypeID) > 0 {
 		options.PartyTypeIDs = []string{listOptions.PartyTypeID}
 	}
+
 	ret, err := s.PartyStore.List(ctx, *options)
 	if err != nil {
 		s.Error(w, err)

@@ -2,86 +2,90 @@ package webapp
 
 import (
 	"context"
-	"fmt"
 	"github.com/coreos/go-oidc/v3/oidc"
-	"github.com/gomodule/redigo/redis"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/nrc-no/core/pkg/apps/login"
+	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/rest"
 	"github.com/nrc-no/core/pkg/sessionmanager"
-	"github.com/ory/hydra-client-go/client"
 	"github.com/ory/hydra-client-go/client/admin"
-	"github.com/ory/hydra-client-go/client/public"
-	"github.com/ory/hydra-client-go/models"
 	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/clientcredentials"
 	"net/http"
-	"os"
-	"strings"
 )
 
 type Server struct {
-	hydraAdminClient  *client.OryHydra
-	hydraPublicClient *client.OryHydra
-	renderFactory     *RendererFactory
-	sessionManager    sessionmanager.Store
-	router            *mux.Router
-	login             login.Interface
-	HydraAdmin        admin.ClientService
-	HydraPublic       public.ClientService
-	oidcIssuer        string
-	oidcConfig        *oidc.Config
-	oidcProvider      *oidc.Provider
-	oidcVerifier      *oidc.IDTokenVerifier
-	oauth2Config      *oauth2.Config
-	environment       string
-	iamAdminClient    iam.Interface
+	renderFactory   *RendererFactory
+	sessionManager  sessionmanager.Store
+	router          *mux.Router
+	login           login.Interface
+	HydraAdmin      admin.ClientService
+	oidcVerifier    *oidc.IDTokenVerifier
+	oauth2Config    *oauth2.Config
+	environment     string
+	iamAdminClient  iam.Interface
+	baseURL         string
+	iamScheme       string
+	iamHost         string
+	cmsScheme       string
+	cmsHost         string
+	HydraHTTPClient *http.Client
+	IAMHTTPClient   *http.Client
+	CMSHTTPClient   *http.Client
 }
 
 type ServerOptions struct {
-	RedisNetwork            string
-	RedisAddress            string
-	RedisMaxIdleConnections int
-	TemplateDirectory       string
-	Environment             string
+	*server.GenericServerOptions
+	TemplateDirectory string
+	BaseURL           string
+	IAMHost           string
+	IAMScheme         string
+	CMSHost           string
+	CMSScheme         string
+	AdminHTTPClient   *http.Client
+	IDTokenVerifier   *oidc.IDTokenVerifier
+	OAuth2Config      *oauth2.Config
+	HydraHTTPClient   *http.Client
+	IAMHTTPClient     *http.Client
+	CMSHTTPClient     *http.Client
+	LoginHTTPClient   *http.Client
 }
 
-func NewServer(
-	options ServerOptions,
-	hydraAdminClient *client.OryHydra,
-	hydraPublicClient *client.OryHydra,
-) (*Server, error) {
+func NewServer(options *ServerOptions) (*Server, error) {
 
-	pool := &redis.Pool{
-		MaxIdle: options.RedisMaxIdleConnections,
-		Dial: func() (redis.Conn, error) {
-			return redis.Dial(options.RedisNetwork, options.RedisAddress)
-		},
-	}
-
-	sm := sessionmanager.New(pool, sessionmanager.Options{})
+	sm := sessionmanager.New(options.RedisPool, sessionmanager.Options{})
 
 	renderFactory, err := NewRendererFactory(options.TemplateDirectory, sm)
 	if err != nil {
 		return nil, err
 	}
 
-	e, err := os.Executable()
-	if err != nil {
-		return nil, err
-	}
-	fmt.Println(e)
-
 	h := &Server{
-		environment:       options.Environment,
-		hydraAdminClient:  hydraAdminClient,
-		hydraPublicClient: hydraPublicClient,
-		renderFactory:     renderFactory,
-		sessionManager:    sm,
-		HydraAdmin:        hydraAdminClient.Admin,
-		HydraPublic:       hydraPublicClient.Public,
+		renderFactory:  renderFactory,
+		sessionManager: sm,
+		login: login.NewClientSet(&rest.RESTConfig{
+			Scheme:     options.CMSScheme,
+			Host:       options.CMSHost,
+			HTTPClient: options.AdminHTTPClient,
+		}),
+		HydraAdmin:   options.HydraAdminClient.Admin,
+		oidcVerifier: options.IDTokenVerifier,
+		oauth2Config: options.OAuth2Config,
+		environment:  options.Environment,
+		iamAdminClient: iam.NewClientSet(&rest.RESTConfig{
+			Scheme:     options.IAMScheme,
+			Host:       options.IAMHost,
+			HTTPClient: options.AdminHTTPClient,
+		}),
+		baseURL:         options.BaseURL,
+		iamScheme:       options.IAMScheme,
+		iamHost:         options.IAMHost,
+		cmsScheme:       options.CMSScheme,
+		cmsHost:         options.CMSHost,
+		HydraHTTPClient: options.HydraHTTPClient,
+		IAMHTTPClient:   options.IAMHTTPClient,
+		CMSHTTPClient:   options.CMSHTTPClient,
 	}
 
 	router := mux.NewRouter()
@@ -125,97 +129,6 @@ func NewServer(
 	return h, nil
 }
 
-func (s *Server) Init(ctx context.Context) error {
-
-	clientId := "webapp"
-	clientSecret := "somesupersecret"
-
-	cli := &models.OAuth2Client{
-		ClientID:     clientId,
-		ClientName:   "Web App",
-		ClientSecret: clientSecret,
-		GrantTypes: []string{
-			"client_credentials",
-			"authorization_code",
-			"id_token",
-			"access_token",
-			"refresh_token",
-		},
-		RedirectUris: []string{
-			"http://localhost:9000/callback",
-		},
-		ResponseTypes: []string{
-			"token",
-			"code",
-		},
-		Scope:                   "openid profile",
-		TokenEndpointAuthMethod: "client_secret_post",
-		PostLogoutRedirectUris: []string{
-			"http://localhost:9000",
-		},
-	}
-
-	_, err := s.HydraAdmin.CreateOAuth2Client(&admin.CreateOAuth2ClientParams{
-		Body:    cli,
-		Context: ctx,
-	})
-	if err != nil {
-		if strings.Contains(err.Error(), "createOAuth2ClientConflict") {
-			_, err = s.HydraAdmin.UpdateOAuth2Client(&admin.UpdateOAuth2ClientParams{
-				Body:    cli,
-				ID:      cli.ClientID,
-				Context: ctx,
-			})
-			if err != nil {
-				return err
-			}
-		} else {
-			return err
-		}
-	}
-	oidcProvider, err := oidc.NewProvider(ctx, "http://localhost:4444/")
-	if err != nil {
-		return err
-	}
-	s.oidcProvider = oidcProvider
-	oidcConfig := &oidc.Config{
-		ClientID: clientId,
-	}
-	s.oidcConfig = oidcConfig
-	oidcVerifier := oidcProvider.Verifier(s.oidcConfig)
-	s.oidcVerifier = oidcVerifier
-	oauth2Config := &oauth2.Config{
-		ClientID:     clientId,
-		ClientSecret: clientSecret,
-		Endpoint:     oidcProvider.Endpoint(),
-		RedirectURL:  "http://localhost:9000/callback",
-		Scopes:       []string{oidc.ScopeOpenID, "profile"},
-	}
-	s.oauth2Config = oauth2Config
-
-	clientCredentialsCfg := clientcredentials.Config{
-		ClientID:     clientId,
-		ClientSecret: clientSecret,
-		TokenURL:     oidcProvider.Endpoint().TokenURL,
-	}
-	adminHttpClient := clientCredentialsCfg.Client(ctx)
-	loginClient := login.NewClientSet(&rest.RESTConfig{
-		Scheme:     "http",
-		Host:       "localhost:9000",
-		HTTPClient: adminHttpClient,
-	})
-	s.login = loginClient
-
-	iamAdminClient := iam.NewClientSet(&rest.RESTConfig{
-		Scheme:     "http",
-		Host:       "localhost:9000",
-		HTTPClient: adminHttpClient,
-	})
-	s.iamAdminClient = iamAdminClient
-
-	return nil
-}
-
 func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	s.router.ServeHTTP(w, req)
 }
@@ -228,16 +141,16 @@ func (s *Server) IAMClient(ctx context.Context) iam.Interface {
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}
+	httpClient := s.IAMHTTPClient
+	ctx = context.WithValue(ctx, oauth2.HTTPClient, httpClient)
 	cli := cfg.Client(ctx, token)
-
-	httpClient := http.DefaultClient
 	if len(accessToken) > 0 || len(refreshToken) > 0 {
 		httpClient = cli
 	}
 
 	return iam.NewClientSet(&rest.RESTConfig{
-		Scheme:     "http",
-		Host:       "localhost:9000",
+		Scheme:     s.iamScheme,
+		Host:       s.iamHost,
 		HTTPClient: httpClient,
 	})
 }
@@ -250,16 +163,15 @@ func (s *Server) CMSClient(ctx context.Context) cms.Interface {
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}
+	httpClient := s.CMSHTTPClient
+	ctx = context.WithValue(ctx, oauth2.HTTPClient, httpClient)
 	cli := cfg.Client(ctx, token)
-
-	httpClient := http.DefaultClient
 	if len(accessToken) > 0 || len(refreshToken) > 0 {
 		httpClient = cli
 	}
-
 	return cms.NewClientSet(&rest.RESTConfig{
-		Scheme:     "http",
-		Host:       "localhost:9000",
+		Scheme:     s.cmsScheme,
+		Host:       s.cmsHost,
 		HTTPClient: httpClient,
 	})
 }

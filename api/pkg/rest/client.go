@@ -17,6 +17,7 @@ type RESTConfig struct {
 	Scheme     string
 	Host       string
 	HTTPClient *http.Client
+	Headers    http.Header
 }
 
 type Client struct {
@@ -157,41 +158,6 @@ type TokenIntrospectionResponse struct {
 	Active bool `json:"active"`
 }
 
-func (r *Request) introspectToken(token string) (*TokenIntrospectionResponse, error) {
-
-	var payload = url.Values{}
-	payload.Set("token", token)
-
-	req, err := http.NewRequest("POST", "http://localhost:4445/oauth2/introspect", strings.NewReader(payload.Encode()))
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set("Accept", "application/json")
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
-	}
-
-	respBytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	var tk TokenIntrospectionResponse
-	if err := json.Unmarshal(respBytes, &tk); err != nil {
-		return nil, err
-	}
-
-	return &tk, nil
-
-}
-
 func (r *Request) Do(ctx context.Context) *Response {
 
 	if r.err != nil {
@@ -214,6 +180,12 @@ func (r *Request) Do(ctx context.Context) *Response {
 	req, err := http.NewRequestWithContext(ctx, r.verb, u.String(), r.body)
 	if err != nil {
 		return &Response{err: err}
+	}
+
+	for key, values := range r.c.config.Headers {
+		for _, value := range values {
+			req.Header.Add(key, value)
+		}
 	}
 
 	for key, values := range r.headers {

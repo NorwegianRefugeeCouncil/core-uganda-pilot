@@ -17,7 +17,7 @@ func (s *Server) Logout(w http.ResponseWriter, req *http.Request) {
 
 	params := url.Values{}
 	params.Set("id_token_hint", s.sessionManager.GetString(ctx, "id-token"))
-	params.Set("post_logout_redirect_uri", "http://localhost:9000")
+	params.Set("post_logout_redirect_uri", s.baseURL)
 	logoutURL.RawQuery = params.Encode()
 
 	s.sessionManager.Clear(ctx)
