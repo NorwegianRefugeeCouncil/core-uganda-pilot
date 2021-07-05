@@ -303,7 +303,11 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 	pool := &redis.Pool{
 		MaxIdle: o.RedisMaxIdleConnections,
 		Dial: func() (redis.Conn, error) {
-			return redis.Dial(o.RedisNetwork, o.RedisAddress)
+			var redisOptions []redis.DialOption
+			if len(o.RedisPassword) > 0 {
+				redisOptions = append(redisOptions, redis.DialPassword(o.RedisPassword))
+			}
+			return redis.Dial(o.RedisNetwork, o.RedisAddress, redisOptions...)
 		},
 	}
 
