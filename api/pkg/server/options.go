@@ -22,6 +22,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 )
 
@@ -38,16 +39,19 @@ type Options struct {
 	TLSKeyPath    string
 
 	// Mongo
-	MongoDatabase string
-	MongoUsername string
-	MongoPassword string
-	MongoHosts    []string
+	MongoDatabase     string
+	MongoUsername     string
+	MongoUsernameFile string
+	MongoPassword     string
+	MongoPasswordFile string
+	MongoHosts        []string
 
 	// Redis
 	RedisMaxIdleConnections int
 	RedisNetwork            string
 	RedisAddress            string
 	RedisPassword           string
+	RedisPasswordFile       string
 	RedisSecretKey          string
 
 	// Hydra
@@ -59,6 +63,7 @@ type Options struct {
 	WebAppBasePath          string
 	WebAppClientID          string
 	WebAppClientSecret      string
+	WebAppClientSecretFile  string
 	WebAppClientName        string
 	WebAppIAMScheme         string
 	WebAppIAMHost           string
@@ -76,6 +81,7 @@ type Options struct {
 	LoginClientName        string
 	LoginClientID          string
 	LoginClientSecret      string
+	LoginClientSecretFile  string
 	LoginTemplateDirectory string
 	LoginIAMHost           string
 	LoginIAMScheme         string
@@ -148,14 +154,17 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 	// Mongo
 	fs.StringVar(&o.MongoDatabase, "mongo-database", o.MongoDatabase, "Mongo database name")
 	fs.StringVar(&o.MongoUsername, "mongo-username", o.MongoUsername, "Mongo username")
+	fs.StringVar(&o.MongoUsernameFile, "mongo-username-file", o.MongoUsernameFile, "Mongo username file")
 	fs.StringVar(&o.MongoPassword, "mongo-password", o.MongoPassword, "Mongo password")
+	fs.StringVar(&o.MongoPasswordFile, "mongo-password-file", o.MongoPasswordFile, "Mongo password file")
 	fs.StringSliceVar(&o.MongoHosts, "mongo-hosts", o.MongoHosts, "Mongo hosts")
 
 	// Redis
 	fs.IntVar(&o.RedisMaxIdleConnections, "redis-max-idle-conns", o.RedisMaxIdleConnections, "Redis maximum number of idle connections")
 	fs.StringVar(&o.RedisAddress, "redis-address", o.RedisAddress, "Redis address")
 	fs.StringVar(&o.RedisNetwork, "redis-network", o.RedisNetwork, "Redis network")
-	fs.StringVar(&o.RedisPassword, "redis-password", o.RedisPassword, "Redis password")
+	fs.StringVar(&o.RedisPassword, "redis-password", o.RedisPassword, "Redis password file")
+	fs.StringVar(&o.RedisPasswordFile, "redis-password-file", o.RedisPasswordFile, "Redis password")
 	fs.StringVar(&o.RedisSecretKey, "redis-secret-key", o.RedisSecretKey, "Redis secret key")
 
 	// Hydra
@@ -168,6 +177,7 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 	fs.StringVar(&o.LoginClientName, "login-client-name", o.LoginClientName, "Login OAuth client name")
 	fs.StringVar(&o.LoginClientID, "login-client-id", o.LoginClientID, "Login OAuth client ID")
 	fs.StringVar(&o.LoginClientSecret, "login-client-secret", o.LoginClientSecret, "Login OAuth client secret")
+	fs.StringVar(&o.LoginClientSecretFile, "login-client-secret-file", o.LoginClientSecretFile, "Login OAuth client secret file")
 	fs.StringVar(&o.LoginIAMHost, "login-iam-host", o.LoginIAMHost, "Login IAM Host")
 	fs.StringVar(&o.LoginIAMScheme, "login-iam-scheme", o.LoginIAMScheme, "Login IAM Scheme")
 
@@ -182,6 +192,7 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 	fs.StringVar(&o.WebAppTemplateDirectory, "web-templates-directory", o.WebAppTemplateDirectory, "Directory for the web app templates")
 	fs.StringVar(&o.WebAppClientID, "web-client-id", o.WebAppClientID, "Web app OAuth2 client ID")
 	fs.StringVar(&o.WebAppClientSecret, "web-client-secret", o.WebAppClientSecret, "Web app OAuth2 client secret")
+	fs.StringVar(&o.WebAppClientSecretFile, "web-client-secret-file", o.WebAppClientSecretFile, "Web app OAuth2 client secret file")
 	fs.StringVar(&o.WebAppClientName, "web-client-name", o.WebAppClientName, "Web app OAuth2 client name")
 	fs.StringVar(&o.WebAppIAMScheme, "web-iam-scheme", o.WebAppIAMScheme, "Web app IAM scheme")
 	fs.StringVar(&o.WebAppIAMHost, "web-iam-host", o.WebAppIAMHost, "Web app IAM host")
@@ -200,11 +211,56 @@ type CompletedOptions struct {
 	HydraTLSClient     *http.Client
 }
 
+func readFile(path string) (string, error) {
+	fileBytes, err := os.ReadFile(path)
+	if err != nil {
+		return "", err
+	}
+	return string(fileBytes), nil
+}
+
 func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 
 	issuerUrl := o.HydraPublicURL
 	if !strings.HasSuffix(issuerUrl, "/") {
 		issuerUrl = issuerUrl + "/"
+	}
+
+	var err error
+
+	if len(o.MongoUsername) == 0 && len(o.MongoUsernameFile) > 0 {
+		o.MongoUsername, err = readFile(o.MongoUsernameFile)
+		if err != nil {
+			return CompletedOptions{}, err
+		}
+	}
+
+	if len(o.MongoPassword) == 0 && len(o.MongoPasswordFile) > 0 {
+		o.MongoPassword, err = readFile(o.MongoPasswordFile)
+		if err != nil {
+			return CompletedOptions{}, err
+		}
+	}
+
+	if len(o.RedisPassword) == 0 && len(o.RedisPasswordFile) > 0 {
+		o.RedisPassword, err = readFile(o.RedisPasswordFile)
+		if err != nil {
+			return CompletedOptions{}, err
+		}
+	}
+
+	if len(o.LoginClientSecret) == 0 && len(o.LoginClientSecretFile) > 0 {
+		o.LoginClientSecret, err = readFile(o.LoginClientSecretFile)
+		if err != nil {
+			return CompletedOptions{}, err
+		}
+	}
+
+	if len(o.WebAppClientSecret) == 0 && len(o.WebAppClientSecretFile) > 0 {
+		o.WebAppClientSecret, err = readFile(o.WebAppClientSecretFile)
+		if err != nil {
+			return CompletedOptions{}, err
+		}
 	}
 
 	mongoClient, err := MongoClient(o.MongoHosts, o.MongoUsername, o.MongoPassword)
