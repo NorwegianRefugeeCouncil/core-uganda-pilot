@@ -93,11 +93,25 @@ type CommentList struct {
 
 type CaseTemplate struct {
 	// FormElements is an ordered list of the elements found in the form
-	FormElements []CaseTemplateFormElement `json:"formElements" bson:"form_elements"`
+	FormElements []CaseTemplateFormElement `json:"formElements" bson:"formElements"`
 }
 
 type CaseTemplateFormElement struct {
-	Type       string                 `json:"type" bson:"type"`
-	Attributes map[string]interface{} `json:"attributes" bson:"attributes"`
-	Validation map[string]interface{} `json:"validation" bson:"validation"`
+	Type       string                            `json:"type" bson:"type"`
+	Attributes CaseTemplateFormElementAttribute  `json:"attributes" bson:"attributes"`
+	Validation CaseTemplateFormElementValidation `json:"validation" bson:"validation"`
+}
+
+type CaseTemplateFormElementAttribute struct {
+	Label       string      `json:"label" bson:"label"`
+	ID          string      `json:"id" bson:"id"`
+	Description string      `json:"description" bson:"description"`
+	Placeholder string      `json:"placeholder" bson:"placeholder"`
+	Value       string      `json:"value" bson:"value"`
+	Multiple    bool        `json:"multiple" bson:"multiple"`
+	Options     interface{} `json:"options" bson:"options"`
+}
+
+type CaseTemplateFormElementValidation struct {
+	Required bool `json:"required" bson:"required"`
 }
