@@ -69,9 +69,11 @@ func (h *Server) PostCaseType(
 	}
 
 	values := req.Form
-	caseType.Name = values.Get("name")
-	caseType.PartyTypeID = values.Get("partyTypeId")
-	caseType.TeamID = values.Get("teamId")
+	err := caseType.UnmarshalFormData(values)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	if isNew {
 		_, err := cmsClient.CaseTypes().Create(ctx, caseType)

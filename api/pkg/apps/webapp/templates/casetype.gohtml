@@ -57,6 +57,16 @@
                         </select>
                         <label for="team">Select Team</label>
                     </div>
+                    <div class="form-floating mb-3">
+                        <textarea name="template" id="template" class="form-control font-monospace"
+                                  style="height: 400px"
+                                  {{if .CaseType}}readonly{{end}}>
+                            {{- if .CaseType -}}
+                                {{- .CaseType.Template -}}
+                            {{- end -}}
+                        </textarea>
+                        <label for="template">Form template</label>
+                    </div>
                     {{if .CaseType}}
                         <input type="hidden" name="partyTypeId" value="{{.CaseType.PartyTypeID}}">
                         <input type="hidden" name="teamId" value="{{.CaseType.TeamID}}">

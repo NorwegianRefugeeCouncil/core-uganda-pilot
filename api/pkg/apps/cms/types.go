@@ -1,6 +1,10 @@
 package cms
 
-import "time"
+import (
+	"encoding/json"
+	"net/url"
+	"time"
+)
 
 type Case struct {
 	ID          string `json:"id" bson:"id"`
@@ -31,6 +35,18 @@ type CaseTypeList struct {
 
 func (c *CaseType) String() string {
 	return c.Name
+}
+
+func (c *CaseType) UnmarshalFormData(values url.Values) error {
+	c.Name = values.Get("name")
+	c.PartyTypeID = values.Get("partyTypeId")
+	c.TeamID = values.Get("teamId")
+	templateString := values.Get("template")
+
+	if err := json.Unmarshal([]byte(templateString), &c.Template); err != nil {
+	  return err
+	}
+	return nil
 }
 
 func (l *CaseTypeList) FindByID(id string) *CaseType {
@@ -70,13 +86,13 @@ type CaseTemplateFormElement struct {
 }
 
 type CaseTemplateFormElementAttribute struct {
-	Label       string   `json:"label" bson:"label"`
-	ID          string   `json:"id" bson:"id"`
-	Description string   `json:"description" bson:"description"`
-	Placeholder string   `json:"placeholder" bson:"placeholder"`
-	Value       string   `json:"value" bson:"value"`
-	Multiple    bool     `json:"multiple" bson:"multiple"`
-	Options     []string `json:"options" bson:"options"`
+	Label       string      `json:"label" bson:"label"`
+	ID          string      `json:"id" bson:"id"`
+	Description string      `json:"description" bson:"description"`
+	Placeholder string      `json:"placeholder" bson:"placeholder"`
+	Value       string      `json:"value" bson:"value"`
+	Multiple    bool        `json:"multiple" bson:"multiple"`
+	Options     interface{} `json:"options" bson:"options"`
 }
 
 type CaseTemplateFormElementValidation struct {
