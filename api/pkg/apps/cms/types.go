@@ -42,11 +42,11 @@ func (c *CaseType) UnmarshalFormData(values url.Values) error {
 	c.PartyTypeID = values.Get("partyTypeId")
 	c.TeamID = values.Get("teamId")
 	templateString := values.Get("template")
-	var formElements []CaseTemplateFormElement
-	if err := json.Unmarshal([]byte(templateString), &formElements); err != nil {
+	template, err := NewCaseTemplate(templateString)
+	if err != nil {
 		return err
 	}
-	c.Template = CaseTemplate{FormElements: formElements}
+	c.Template = template
 	return nil
 }
 
@@ -78,6 +78,14 @@ type CommentList struct {
 type CaseTemplate struct {
 	// FormElements is an ordered list of the elements found in the form
 	FormElements []CaseTemplateFormElement `json:"formElements" bson:"formElements"`
+}
+
+func NewCaseTemplate(templateString string) (CaseTemplate, error) {
+	var ct CaseTemplate
+	if err := json.Unmarshal([]byte(templateString), &ct); err != nil {
+		return ct, err
+	}
+	return ct, nil
 }
 
 type CaseTemplateFormElement struct {

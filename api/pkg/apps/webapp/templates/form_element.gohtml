@@ -33,6 +33,7 @@
             <textarea id="{{.Attributes.ID}}"
                       name="{{.Attributes.ID}}"
                       class="form-control"
+                      style="height: 150px"
                       placeholder="{{.Attributes.Placeholder}}"
                       {{if .Validation.Required}}required{{end}}>{{.Attributes.Value}}</textarea>
             <label for="{{.Attributes.ID}}">{{.Attributes.Label}}</label>

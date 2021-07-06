@@ -1,7 +1,6 @@
 package seeder
 
 import (
-	"encoding/json"
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
 	"strings"
@@ -17,16 +16,6 @@ func caseType(id, name, partyTypeID, teamID string, template cms.CaseTemplate) c
 	}
 	caseTypes = append(caseTypes, ct)
 	return ct
-}
-
-func caseTemplate(templateString string) cms.CaseTemplate {
-	var formElements []cms.CaseTemplateFormElement
-	if err := json.Unmarshal([]byte(templateString), &formElements); err != nil {
-		panic(err)
-	}
-	return cms.CaseTemplate{
-		FormElements: formElements,
-	}
 }
 
 func team(id, name string) iam.Team {
@@ -101,7 +90,7 @@ var (
 	NairobiICLATeam     = team("80606eb4-b53a-4fda-be12-e9806e11d44a", "Nairobi ICLA Team")
 
 	// Case Templates
-	Legal = caseTemplate(`[{"type":"dropdown","attributes":{"label":"Legal status","id":"legalStatus","description":"What is the beneficiary's current legal status?","options":["Citizen","Permanent resident","Accepted refugee","Asylum seeker","Undetermined"]},"validations":{"required":true}},{"type":"checkbox","attributes":{"label":"Qualified services","id":"qualifiedServices","description":"What services does the beneficiary qualify for?","checkboxOptions":[{"label":"Councelling"},{"label":"Representation"},{"label":"Arbitration"}]},"validations":{"required":true}},{"type":"textarea","attributes":{"label":"Notes","id":"notes","description":"Additional informations, observations, concerns, etc.","placeholder":"Type something here..."}}]`)
+	Legal, _ = cms.NewCaseTemplate(`{"formElements": [{"type":"dropdown","attributes":{"label":"Legal status","id":"legalStatus","description":"What is the beneficiary's current legal status?","options":["Citizen","Permanent resident","Accepted refugee","Asylum seeker","Undetermined"]},"validations":{"required":true}},{"type":"checkbox","attributes":{"label":"Qualified services","id":"qualifiedServices","description":"What services does the beneficiary qualify for?","checkboxOptions":[{"label":"Councelling"},{"label":"Representation"},{"label":"Arbitration"}]},"validations":{"required":true}},{"type":"textarea","attributes":{"label":"Notes","id":"notes","description":"Additional informations, observations, concerns, etc.","placeholder":"Type something here..."}}]}`)
 
 	// Case Types
 	GenderViolence     = caseType("920ca64f-66d0-4f00-af05-d8a50ce354e6", "Gender Violence", iam.IndividualPartyType.ID, KampalaResponseTeam.ID, Legal)
