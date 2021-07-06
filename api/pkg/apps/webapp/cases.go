@@ -339,6 +339,14 @@ func (h *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
+	var caseType *cms.CaseType
+	if caseTypeID != "" {
+		caseType, err = cmsClient.CaseTypes().Get(ctx, caseTypeID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	}
+
 	var team *iam.Team
 	if len(teamID) > 0 {
 		team, err = iamClient.Teams().Get(ctx, teamID)
@@ -348,16 +356,15 @@ func (h *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if err := h.renderFactory.New(req).ExecuteTemplate(w, "casenew", map[string]interface{}{
-		"PartyID":    qry.Get("partyId"),
-		"CaseTypeID": qry.Get("caseTypeId"),
-		"Team":       team,
-		"CaseTypes":  caseTypes,
-		"Parties":    p,
+		"PartyID":   qry.Get("partyId"),
+		"CaseType":  caseType,
+		"Team":      team,
+		"CaseTypes": caseTypes,
+		"Parties":   p,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 }
 
 func (h *Server) PostCase(ctx context.Context, id string, w http.ResponseWriter, req *http.Request) {

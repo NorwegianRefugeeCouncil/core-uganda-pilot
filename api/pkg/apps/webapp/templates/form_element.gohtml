@@ -1,0 +1,55 @@
+{{define "formelement"}}
+    {{if eq .Type "dropdown"}}
+        <div class="form-floating mb-3">
+            <select id="{{.Attributes.ID}}"
+                    name="{{.Attributes.ID}}"
+                    class="form-select"
+                    aria-label="Default select example"
+                    {{if .Attributes.Multiple}}multiple{{end}}
+                    {{if .Validation.Required}}required{{end}}>
+                <option value="" selected></option>
+                {{range $i, $_ := .Attributes.Options}}
+                    <option value="{{$.Attributes.ID}}[{{$i}}]">{{.}}</option>
+                {{end}}
+            </select>
+            <label class="form-label" for="{{.Attributes.ID}}">{{.Attributes.Label}}</label>
+            <div class="form-text">{{.Attributes.Description}}</div>
+        </div>
+    {{else if eq .Type "checkbox"}}
+        <h5>{{.Attributes.Label}}</h5>
+        <div class="form-text">{{.Attributes.Description}}</div>
+        {{range $i, $_ := .Attributes.CheckboxOptions}}
+            <div class="form-check mb-3">
+                <input id="{{$.Attributes.ID}}[{{$i}}]"
+                       name="{{$.Attributes.ID}}[{{$i}}]"
+                       class="form-check-input"
+                       type="checkbox"
+                {{if .Required}}required{{end}}>
+                <label for="{{$.Attributes.ID}}[{{$i}}]" class="form-check-label">{{.Label}}</label>
+            </div>
+        {{end}}
+    {{else if eq .Type "textarea"}}
+        <div class="form-floating mb-3">
+            <textarea id="{{.Attributes.ID}}"
+                      name="{{.Attributes.ID}}"
+                      class="form-control"
+                      style="height: 150px"
+                      placeholder="{{.Attributes.Placeholder}}"
+                      {{if .Validation.Required}}required{{end}}>{{.Attributes.Value}}</textarea>
+            <label for="{{.Attributes.ID}}">{{.Attributes.Label}}</label>
+            <div class="form-text">{{.Attributes.Description}}</div>
+        </div>
+    {{else if eq .Type "textinput"}}
+        <div class="form-floating mb-3">
+            <div class="form-text">{{.Attributes.Description}}</div>
+            <input id="{{.Attributes.ID}}"
+                   name="{{.Attributes.ID}}"
+                   value="{{.Attributes.Value}}"
+                   class="form-control"
+                   type="text"
+                   placeholder="{{.Attributes.Placeholder}}"
+                   {{if .Validation.Required}}required{{end}}>{{.Attributes.Value}}>
+            <label for="{{.Attributes.ID}}">{{.Attributes.Label}}</label>
+        </div>
+    {{end}}
+{{end}}

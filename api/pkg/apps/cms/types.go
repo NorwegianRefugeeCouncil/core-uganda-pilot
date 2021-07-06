@@ -7,14 +7,31 @@ import (
 )
 
 type Case struct {
-	ID          string `json:"id" bson:"id"`
-	CaseTypeID  string `json:"caseTypeId" bson:"caseTypeId"`
-	PartyID     string `json:"partyId" bson:"partyId"`
-	Description string `json:"description" bson:"description"`
-	Done        bool   `json:"done" bson:"done"`
-	ParentID    string `json:"parentId" bson:"parentId"`
-	TeamID      string `json:"teamId" bson:"teamId"`
-	CreatorID   string `json:"creatorId" bson:"creatorId"`
+	ID          string        `json:"id" bson:"id"`
+	CaseTypeID  string        `json:"caseTypeId" bson:"caseTypeId"`
+	PartyID     string        `json:"partyId" bson:"partyId"`
+	Description string        `json:"description" bson:"description"`
+	Done        bool          `json:"done" bson:"done"`
+	ParentID    string        `json:"parentId" bson:"parentId"`
+	TeamID      string        `json:"teamId" bson:"teamId"`
+	CreatorID   string        `json:"creatorId" bson:"creatorId"`
+	FormData    *CaseTemplate `json:"formData" bson:"formData"`
+}
+
+func (c *Case) UnmarshalFormData(values url.Values, caseTemplate *CaseTemplate) error {
+	c.CaseTypeID = values.Get("caseTypeId")
+	c.PartyID = values.Get("partyId")
+	c.Description = values.Get("description")
+	c.Done = values.Get("done") == "on"
+	c.ParentID = values.Get("parentId")
+	c.TeamID = values.Get("teamId")
+	formElements := []CaseTemplateFormElement{}
+	for _, formElement := range caseTemplate.FormElements {
+		formElement.Attributes.Value = values[formElement.Attributes.ID]
+		formElements = append(formElements, formElement)
+	}
+	c.FormData = &CaseTemplate{formElements}
+	return nil
 }
 
 type CaseList struct {
@@ -22,11 +39,11 @@ type CaseList struct {
 }
 
 type CaseType struct {
-	ID          string       `json:"id" bson:"id"`
-	Name        string       `json:"name" bson:"name"`
-	PartyTypeID string       `json:"partyTypeId" bson:"partyTypeId"`
-	TeamID      string       `json:"teamId" bson:"teamId"`
-	Template    CaseTemplate `json:"template" bson:"template"`
+	ID          string        `json:"id" bson:"id"`
+	Name        string        `json:"name" bson:"name"`
+	PartyTypeID string        `json:"partyTypeId" bson:"partyTypeId"`
+	TeamID      string        `json:"teamId" bson:"teamId"`
+	Template    *CaseTemplate `json:"template" bson:"template"`
 }
 
 type CaseTypeList struct {
@@ -42,7 +59,6 @@ func (c *CaseType) UnmarshalFormData(values url.Values) error {
 	c.PartyTypeID = values.Get("partyTypeId")
 	c.TeamID = values.Get("teamId")
 	templateString := values.Get("template")
-
 	if err := json.Unmarshal([]byte(templateString), &c.Template); err != nil {
 	  return err
 	}
@@ -86,15 +102,21 @@ type CaseTemplateFormElement struct {
 }
 
 type CaseTemplateFormElementAttribute struct {
-	Label       string      `json:"label" bson:"label"`
-	ID          string      `json:"id" bson:"id"`
-	Description string      `json:"description" bson:"description"`
-	Placeholder string      `json:"placeholder" bson:"placeholder"`
-	Value       string      `json:"value" bson:"value"`
-	Multiple    bool        `json:"multiple" bson:"multiple"`
-	Options     interface{} `json:"options" bson:"options"`
+	Label           string                       `json:"label" bson:"label"`
+	ID              string                       `json:"id" bson:"id"`
+	Description     string                       `json:"description" bson:"description"`
+	Placeholder     string                       `json:"placeholder" bson:"placeholder"`
+	Value           []string                     `json:"value" bson:"value"`
+	Multiple        bool                         `json:"multiple" bson:"multiple"`
+	Options         []string                     `json:"options" bson:"options"`
+	CheckboxOptions []CaseTemplateCheckboxOption `json:"checkboxOptions" bson:"checkboxOptions"`
 }
 
 type CaseTemplateFormElementValidation struct {
 	Required bool `json:"required" bson:"required"`
+}
+
+type CaseTemplateCheckboxOption struct {
+	Label    string `json:"label" bson:"label"`
+	Required bool   `json:"required" bson:"required"`
 }
