@@ -17,29 +17,9 @@ func Clear(ctx context.Context, mongoClient *mongo.Client, databaseName string) 
 
 func Seed(ctx context.Context, mongoClient *mongo.Client, databaseName string) error {
 
-	for _, obj := range individuals {
-		if err := seedMongo(ctx, mongoClient, databaseName, "parties", bson.M{"id": obj.ID}, obj.Party); err != nil {
-			return err
-		}
-		if obj.HasPartyType(iam.StaffPartyType.ID) {
-			hash, err := login.HashAndSalt(bcrypt.MinCost, []byte("password"))
-			if err != nil {
-				return err
-			}
-			if _, err := mongoClient.Database(databaseName).Collection("credentials").UpdateOne(ctx,
-				bson.M{
-					"partyId": obj.ID,
-				},
-				bson.M{
-					"$set": bson.M{
-						"partyId": obj.ID,
-						"hash":    hash,
-					},
-				},
-				options.Update().SetUpsert(true)); err != nil {
-				return err
-			}
-		}
+	err := initCollection(ctx, mongoClient, databaseName)
+	if err != nil {
+		return err
 	}
 
 	for _, obj := range teams {
@@ -72,6 +52,34 @@ func Seed(ctx context.Context, mongoClient *mongo.Client, databaseName string) e
 		}
 	}
 
+	return nil
+}
+
+func initCollection(ctx context.Context, mongoClient *mongo.Client, databaseName string) error {
+	for _, obj := range individuals {
+		if err := seedMongo(ctx, mongoClient, databaseName, "parties", bson.M{"id": obj.ID}, obj.Party); err != nil {
+			return err
+		}
+		if obj.HasPartyType(iam.StaffPartyType.ID) {
+			hash, err := login.HashAndSalt(bcrypt.MinCost, []byte("password"))
+			if err != nil {
+				return err
+			}
+			if _, err := mongoClient.Database(databaseName).Collection("credentials").UpdateOne(ctx,
+				bson.M{
+					"partyId": obj.ID,
+				},
+				bson.M{
+					"$set": bson.M{
+						"partyId": obj.ID,
+						"hash":    hash,
+					},
+				},
+				options.Update().SetUpsert(true)); err != nil {
+				return err
+			}
+		}
+	}
 	return nil
 }
 

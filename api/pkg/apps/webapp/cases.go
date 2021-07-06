@@ -154,6 +154,7 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 	var kaseTypes *cms.CaseTypeList
 	var referrals *cms.CaseList
 	var comments *cms.CommentList
+	var creator *iam.Party
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
@@ -182,7 +183,6 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var creator *iam.Party
 	if caseID != "new" && len(kase.CreatorID) > 0 {
 		var err error
 		creator, err = h.IAMClient(ctx).Parties().Get(ctx, kase.CreatorID)
