@@ -59,9 +59,8 @@ func (c *CaseType) UnmarshalFormData(values url.Values) error {
 	c.PartyTypeID = values.Get("partyTypeId")
 	c.TeamID = values.Get("teamId")
 	templateString := values.Get("template")
-	err := json.Unmarshal([]byte(templateString), &c.Template)
-	if err != nil {
-		return err
+	if err := json.Unmarshal([]byte(templateString), &c.Template); err != nil {
+	  return err
 	}
 	return nil
 }
