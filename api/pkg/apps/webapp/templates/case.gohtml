@@ -195,8 +195,8 @@
                             <div class='card-header bg-quite-light py-3'>
                                 <b>{{.Author}}</b> <span class='text-muted'>commented {{.TimeAgo}}</span>
                             </div>
-                            <div class='card-body'>
-                                {{.Body}}
+                            <div class='card-body' style="white-space: pre">
+                                {{- .Body -}}
                             </div>
                         </div>
                     {{end}}
