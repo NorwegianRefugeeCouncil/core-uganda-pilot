@@ -135,6 +135,14 @@ var (
 					Placeholder: "Type here",
 				},
 			},
+			{
+				Type: "textinput",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Project number",
+					ID:          "projectNumber",
+					Description: "Enter the beneficiaries project number, if any",
+				},
+			},
 		},
 	}
 
