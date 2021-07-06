@@ -60,9 +60,17 @@ func (c *CaseType) UnmarshalFormData(values url.Values) error {
 	c.TeamID = values.Get("teamId")
 	templateString := values.Get("template")
 	if err := json.Unmarshal([]byte(templateString), &c.Template); err != nil {
-	  return err
+		return err
 	}
 	return nil
+}
+
+func (c *CaseType) MarshalTemplate() string {
+	b, err := json.MarshalIndent(c.Template, "", "  ")
+	if err != nil {
+		panic(err)
+	}
+	return string(b)
 }
 
 func (l *CaseTypeList) FindByID(id string) *CaseType {
