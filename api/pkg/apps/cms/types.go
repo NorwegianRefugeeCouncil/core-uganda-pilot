@@ -81,7 +81,7 @@ type CaseTemplate struct {
 	FormElements []CaseTemplateFormElement `json:"formElements" bson:"formElements"`
 
 	// FormData holds actual data corresponding to the elements in FormElements
-	FormData CaseFormData
+	FormData CaseFormData `json:"formData" bson:"formData"`
 }
 
 // NewCaseTemplate constructs a new case template from a JSON template string and creates a CaseFormData data structure
