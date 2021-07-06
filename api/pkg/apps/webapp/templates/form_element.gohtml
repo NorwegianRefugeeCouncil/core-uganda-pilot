@@ -36,7 +36,7 @@
                       class="form-control"
                       style="height: 150px"
                       placeholder="{{.Attributes.Placeholder}}"
-                      {{if .Validation.Required}}required{{end}}>{{.Attributes.Value}}</textarea>
+                      {{if .Validation.Required}}required{{end}}>{{if .Attributes.Value}}{{.Attributes.Value}}{{end}}</textarea>
             <label for="{{.Attributes.ID}}">{{.Attributes.Label}}</label>
             <div class="form-text">{{.Attributes.Description}}</div>
         </div>

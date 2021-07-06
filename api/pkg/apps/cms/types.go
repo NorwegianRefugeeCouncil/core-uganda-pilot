@@ -7,15 +7,31 @@ import (
 )
 
 type Case struct {
-	ID          string `json:"id" bson:"id"`
-	CaseTypeID  string `json:"caseTypeId" bson:"caseTypeId"`
-	PartyID     string `json:"partyId" bson:"partyId"`
-	Description string `json:"description" bson:"description"`
-	Done        bool   `json:"done" bson:"done"`
-	ParentID    string `json:"parentId" bson:"parentId"`
-	TeamID      string `json:"teamId" bson:"teamId"`
-	CreatorID   string `json:"creatorId" bson:"creatorId"`
-	FormData    CaseFormData
+	ID          string        `json:"id" bson:"id"`
+	CaseTypeID  string        `json:"caseTypeId" bson:"caseTypeId"`
+	PartyID     string        `json:"partyId" bson:"partyId"`
+	Description string        `json:"description" bson:"description"`
+	Done        bool          `json:"done" bson:"done"`
+	ParentID    string        `json:"parentId" bson:"parentId"`
+	TeamID      string        `json:"teamId" bson:"teamId"`
+	CreatorID   string        `json:"creatorId" bson:"creatorId"`
+	FormData    *CaseTemplate `json:"formData" bson:"formData"`
+}
+
+func (c *Case) UnmarshalFormData(values url.Values, caseTemplate *CaseTemplate) error {
+	c.CaseTypeID = values.Get("caseTypeId")
+	c.PartyID = values.Get("partyId")
+	c.Description = values.Get("description")
+	c.Done = values.Get("done") == "on"
+	c.ParentID = values.Get("parentId")
+	c.TeamID = values.Get("teamId")
+	formElements := []CaseTemplateFormElement{}
+	for _, formElement := range caseTemplate.FormElements {
+		formElement.Attributes.Value = values[formElement.Attributes.ID]
+		formElements = append(formElements, formElement)
+	}
+	c.FormData = &CaseTemplate{formElements}
+	return nil
 }
 
 type CaseList struct {
@@ -43,11 +59,10 @@ func (c *CaseType) UnmarshalFormData(values url.Values) error {
 	c.PartyTypeID = values.Get("partyTypeId")
 	c.TeamID = values.Get("teamId")
 	templateString := values.Get("template")
-	template, err := NewCaseTemplate(templateString)
+	err := json.Unmarshal([]byte(templateString), &c.Template)
 	if err != nil {
 		return err
 	}
-	c.Template = template
 	return nil
 }
 
@@ -79,29 +94,6 @@ type CommentList struct {
 type CaseTemplate struct {
 	// FormElements is an ordered list of the elements found in the form
 	FormElements []CaseTemplateFormElement `json:"formElements" bson:"formElements"`
-
-	// FormData holds actual data corresponding to the elements in FormElements
-	FormData CaseFormData `json:"formData" bson:"formData"`
-}
-
-// NewCaseTemplate constructs a new case template from a JSON template string and creates a CaseFormData data structure
-// that with hold the data corresponding to the fields described in the template
-func NewCaseTemplate(templateString string) (*CaseTemplate, error) {
-	var ct CaseTemplate
-	if err := json.Unmarshal([]byte(templateString), &ct); err != nil {
-		return &ct, err
-	}
-	ct.FormData = ct.ToCaseFormData()
-	return &ct, nil
-}
-
-// ToCaseFormData constructs a CaseFormData from a CaseTemplate's FormElements
-func (ct *CaseTemplate) ToCaseFormData() CaseFormData {
-	formData := CaseFormData{}
-	for _, el := range ct.FormElements {
-		formData[el.Attributes.ID] = NewCaseFormDatum(el.Type)
-	}
-	return formData
 }
 
 type CaseTemplateFormElement struct {
@@ -115,7 +107,7 @@ type CaseTemplateFormElementAttribute struct {
 	ID              string                       `json:"id" bson:"id"`
 	Description     string                       `json:"description" bson:"description"`
 	Placeholder     string                       `json:"placeholder" bson:"placeholder"`
-	Value           string                       `json:"value" bson:"value"`
+	Value           []string                     `json:"value" bson:"value"`
 	Multiple        bool                         `json:"multiple" bson:"multiple"`
 	Options         []string                     `json:"options" bson:"options"`
 	CheckboxOptions []CaseTemplateCheckboxOption `json:"checkboxOptions" bson:"checkboxOptions"`
@@ -128,42 +120,4 @@ type CaseTemplateFormElementValidation struct {
 type CaseTemplateCheckboxOption struct {
 	Label    string `json:"label" bson:"label"`
 	Required bool   `json:"required" bson:"required"`
-}
-
-type CaseFormData map[string]*CaseFormDatum
-
-type CaseFormDatum struct {
-	Type  string
-	Value []string
-}
-
-func NewCaseFormDatum(fieldType string) *CaseFormDatum {
-	switch fieldType {
-	case "textarea":
-		return &CaseFormDatum{
-			Type:  "string",
-			Value: []string{},
-		}
-	case "input":
-		return &CaseFormDatum{
-			Type:  "string",
-			Value: []string{},
-		}
-	case "dropdown":
-		return &CaseFormDatum{
-			Type:  "string",
-			Value: []string{},
-		}
-	case "checkbox":
-		return &CaseFormDatum{
-			Type:  "bool",
-			Value: []string{},
-		}
-	case "numeric":
-		return &CaseFormDatum{
-			Type:  "float64",
-			Value: []string{},
-		}
-	}
-	return &CaseFormDatum{}
 }
