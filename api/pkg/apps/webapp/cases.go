@@ -112,7 +112,7 @@ func (h *Server) Cases(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if req.Method == "POST" {
-		h.PostCase(ctx, "", w, req)
+		h.PostCase(ctx, &cms.Case{}, w, req)
 		return
 	}
 
@@ -139,11 +139,6 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 	if !ok || len(caseID) == 0 {
 		err := fmt.Errorf("no id in path")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	if req.Method == "POST" {
-		h.PostCase(ctx, caseID, w, req)
 		return
 	}
 
@@ -180,6 +175,11 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 
 	if err := g.Wait(); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if req.Method == "POST" {
+		h.PostCase(ctx, kase, w, req)
 		return
 	}
 
@@ -367,7 +367,7 @@ func (h *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (h *Server) PostCase(ctx context.Context, id string, w http.ResponseWriter, req *http.Request) {
+func (h *Server) PostCase(ctx context.Context, kase *cms.Case, w http.ResponseWriter, req *http.Request) {
 
 	cmsClient := h.CMSClient(ctx)
 
@@ -377,31 +377,28 @@ func (h *Server) PostCase(ctx context.Context, id string, w http.ResponseWriter,
 	}
 
 	caseTypeId := req.Form.Get("caseTypeId")
-	partyId := req.Form.Get("partyId")
-	description := req.Form.Get("description")
-	done := req.Form.Get("done")
-	parentId := req.Form.Get("parentId")
-	teamId := req.Form.Get("teamId")
 
-	var kase *cms.Case
-	if id == "" {
+	caseType, err := cmsClient.CaseTypes().Get(ctx, caseTypeId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = kase.UnmarshalFormData(req.Form, caseType.Template)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if kase.ID == "" {
 		var err error
 		subject := ctx.Value("Subject")
-		var creatorId string
 		if subject == nil {
-			creatorId = ""
+			kase.CreatorID = ""
 		} else {
-			creatorId = subject.(string)
+			kase.CreatorID = subject.(string)
 		}
-		kase, err = cmsClient.Cases().Create(ctx, &cms.Case{
-			CaseTypeID:  caseTypeId,
-			PartyID:     partyId,
-			Description: description,
-			Done:        false,
-			ParentID:    parentId,
-			TeamID:      teamId,
-			CreatorID:   creatorId,
-		})
+		kase, err = cmsClient.Cases().Create(ctx, kase)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -412,15 +409,7 @@ func (h *Server) PostCase(ctx context.Context, id string, w http.ResponseWriter,
 		})
 	} else {
 		var err error
-		kase, err = cmsClient.Cases().Update(ctx, &cms.Case{
-			ID:          id,
-			CaseTypeID:  caseTypeId,
-			PartyID:     partyId,
-			Description: description,
-			Done:        done == "on",
-			ParentID:    parentId,
-			TeamID:      teamId,
-		})
+		kase, err = cmsClient.Cases().Update(ctx, kase)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -430,8 +419,8 @@ func (h *Server) PostCase(ctx context.Context, id string, w http.ResponseWriter,
 			Theme:   "success",
 		})
 	}
-	if len(parentId) > 0 {
-		w.Header().Set("Location", "/cases/"+parentId)
+	if len(kase.ParentID) > 0 {
+		w.Header().Set("Location", "/cases/"+kase.ParentID)
 	} else {
 		w.Header().Set("Location", "/cases/"+kase.ID)
 	}
