@@ -376,12 +376,27 @@ func (h *Server) PostCase(ctx context.Context, id string, w http.ResponseWriter,
 		return
 	}
 
-	caseTypeId := req.Form.Get("caseTypeId")
-	partyId := req.Form.Get("partyId")
-	description := req.Form.Get("description")
-	done := req.Form.Get("done")
-	parentId := req.Form.Get("parentId")
-	teamId := req.Form.Get("teamId")
+	values := req.Form
+
+	caseTypeId := values.Get("caseTypeId")
+	partyId := values.Get("partyId")
+	description := values.Get("description")
+	done := values.Get("done")
+	parentId := values.Get("parentId")
+	teamId := values.Get("teamId")
+
+	// Get casetype template's FormData field
+	caseType, err := cmsClient.CaseTypes().Get(ctx, caseTypeId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	formData := caseType.Template.FormData
+
+	// Save actual form data into the FormData structure
+	for key := range formData {
+		formData[key].Value = values[key]
+	}
 
 	var kase *cms.Case
 	if id == "" {
@@ -401,6 +416,7 @@ func (h *Server) PostCase(ctx context.Context, id string, w http.ResponseWriter,
 			ParentID:    parentId,
 			TeamID:      teamId,
 			CreatorID:   creatorId,
+			FormData:    formData,
 		})
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

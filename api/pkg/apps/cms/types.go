@@ -15,6 +15,7 @@ type Case struct {
 	ParentID    string `json:"parentId" bson:"parentId"`
 	TeamID      string `json:"teamId" bson:"teamId"`
 	CreatorID   string `json:"creatorId" bson:"creatorId"`
+	FormData    CaseFormData
 }
 
 type CaseList struct {
@@ -22,11 +23,11 @@ type CaseList struct {
 }
 
 type CaseType struct {
-	ID          string       `json:"id" bson:"id"`
-	Name        string       `json:"name" bson:"name"`
-	PartyTypeID string       `json:"partyTypeId" bson:"partyTypeId"`
-	TeamID      string       `json:"teamId" bson:"teamId"`
-	Template    CaseTemplate `json:"template" bson:"template"`
+	ID          string        `json:"id" bson:"id"`
+	Name        string        `json:"name" bson:"name"`
+	PartyTypeID string        `json:"partyTypeId" bson:"partyTypeId"`
+	TeamID      string        `json:"teamId" bson:"teamId"`
+	Template    *CaseTemplate `json:"template" bson:"template"`
 }
 
 type CaseTypeList struct {
@@ -78,14 +79,29 @@ type CommentList struct {
 type CaseTemplate struct {
 	// FormElements is an ordered list of the elements found in the form
 	FormElements []CaseTemplateFormElement `json:"formElements" bson:"formElements"`
+
+	// FormData holds actual data corresponding to the elements in FormElements
+	FormData CaseFormData
 }
 
-func NewCaseTemplate(templateString string) (CaseTemplate, error) {
+// NewCaseTemplate constructs a new case template from a JSON template string and creates a CaseFormData data structure
+// that with hold the data corresponding to the fields described in the template
+func NewCaseTemplate(templateString string) (*CaseTemplate, error) {
 	var ct CaseTemplate
 	if err := json.Unmarshal([]byte(templateString), &ct); err != nil {
-		return ct, err
+		return &ct, err
 	}
-	return ct, nil
+	ct.FormData = ct.ToCaseFormData()
+	return &ct, nil
+}
+
+// ToCaseFormData constructs a CaseFormData from a CaseTemplate's FormElements
+func (ct *CaseTemplate) ToCaseFormData() CaseFormData {
+	formData := CaseFormData{}
+	for _, el := range ct.FormElements {
+		formData[el.Attributes.ID] = NewCaseFormDatum(el.Type)
+	}
+	return formData
 }
 
 type CaseTemplateFormElement struct {
@@ -112,4 +128,42 @@ type CaseTemplateFormElementValidation struct {
 type CaseTemplateCheckboxOption struct {
 	Label    string `json:"label" bson:"label"`
 	Required bool   `json:"required" bson:"required"`
+}
+
+type CaseFormData map[string]*CaseFormDatum
+
+type CaseFormDatum struct {
+	Type  string
+	Value []string
+}
+
+func NewCaseFormDatum(fieldType string) *CaseFormDatum {
+	switch fieldType {
+	case "textarea":
+		return &CaseFormDatum{
+			Type:  "string",
+			Value: []string{},
+		}
+	case "input":
+		return &CaseFormDatum{
+			Type:  "string",
+			Value: []string{},
+		}
+	case "dropdown":
+		return &CaseFormDatum{
+			Type:  "string",
+			Value: []string{},
+		}
+	case "checkbox":
+		return &CaseFormDatum{
+			Type:  "bool",
+			Value: []string{},
+		}
+	case "numeric":
+		return &CaseFormDatum{
+			Type:  "float64",
+			Value: []string{},
+		}
+	}
+	return &CaseFormDatum{}
 }

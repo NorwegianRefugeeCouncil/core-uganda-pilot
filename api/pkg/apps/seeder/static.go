@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func caseType(id, name, partyTypeID, teamID string, template cms.CaseTemplate) cms.CaseType {
+func caseType(id, name, partyTypeID, teamID string, template *cms.CaseTemplate) cms.CaseType {
 	ct := cms.CaseType{
 		ID:          id,
 		Name:        name,

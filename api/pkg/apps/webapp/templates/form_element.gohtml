@@ -9,7 +9,7 @@
                     {{if .Validation.Required}}required{{end}}>
                 <option value="" selected></option>
                 {{range $i, $_ := .Attributes.Options}}
-                    <option value="{{$.Attributes.ID}}[{{$i}}]">{{.}}</option>
+                    <option value="{{$i}}">{{.}}</option>
                 {{end}}
             </select>
             <label class="form-label" for="{{.Attributes.ID}}">{{.Attributes.Label}}</label>
@@ -21,7 +21,8 @@
         {{range $i, $_ := .Attributes.CheckboxOptions}}
             <div class="form-check mb-3">
                 <input id="{{$.Attributes.ID}}[{{$i}}]"
-                       name="{{$.Attributes.ID}}[{{$i}}]"
+                       name="{{$.Attributes.ID}}"
+                       value="{{$i}}"
                        class="form-check-input"
                        type="checkbox"
                 {{if .Required}}required{{end}}>
