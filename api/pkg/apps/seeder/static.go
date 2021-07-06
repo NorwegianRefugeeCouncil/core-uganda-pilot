@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func caseType(id, name, partyTypeID, teamID string, template cms.CaseTemplate) cms.CaseType {
+func caseType(id, name, partyTypeID, teamID string, template *cms.CaseTemplate) cms.CaseType {
 	ct := cms.CaseType{
 		ID:          id,
 		Name:        name,
@@ -90,7 +90,53 @@ var (
 	NairobiICLATeam     = team("80606eb4-b53a-4fda-be12-e9806e11d44a", "Nairobi ICLA Team")
 
 	// Case Templates
-	Legal, _ = cms.NewCaseTemplate(`{"formElements": [{"type":"dropdown","attributes":{"label":"Legal status","id":"legalStatus","description":"What is the beneficiary's current legal status?","options":["Citizen","Permanent resident","Accepted refugee","Asylum seeker","Undetermined"]},"validations":{"required":true}},{"type":"checkbox","attributes":{"label":"Qualified services","id":"qualifiedServices","description":"What services does the beneficiary qualify for?","checkboxOptions":[{"label":"Councelling"},{"label":"Representation"},{"label":"Arbitration"}]},"validations":{"required":true}},{"type":"textarea","attributes":{"label":"Notes","id":"notes","description":"Additional informations, observations, concerns, etc.","placeholder":"Type something here..."}}]}`)
+	Legal = &cms.CaseTemplate{
+		FormElements: []cms.CaseTemplateFormElement{
+			{
+				Type: "dropdown",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Legal satus",
+					ID:          "legalStatus",
+					Description: "What is the beneficiary's current legal status?",
+					Options:     []string{"Citizen", "Permanent resident", "Accepted refugee", "Asylum seeker", "Undetermined"},
+				},
+				Validation: cms.CaseTemplateFormElementValidation{
+					Required: true,
+				},
+			},
+			{
+				Type: "checkbox",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Qualified services",
+					ID:          "qualifiedServices",
+					Description: "What services does the beneficiary qualify for?",
+					CheckboxOptions: []cms.CaseTemplateCheckboxOption{
+						{
+							Label: "Counselling",
+						},
+						{
+							Label: "Representation",
+						},
+						{
+							Label: "Arbitration",
+						},
+					},
+				},
+				Validation: cms.CaseTemplateFormElementValidation{
+					Required: true,
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Notes",
+					ID:          "notes",
+					Description: "Additional information, observations, concerns, etc.",
+					Placeholder: "Type here",
+				},
+			},
+		},
+	}
 
 	// Case Types
 	GenderViolence     = caseType("920ca64f-66d0-4f00-af05-d8a50ce354e6", "Gender Violence", iam.IndividualPartyType.ID, KampalaResponseTeam.ID, Legal)
