@@ -10,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"io/ioutil"
 	"net/http"
+	"path"
 )
 
 type Server struct {
@@ -78,46 +79,46 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	router := mux.NewRouter()
 	router.Use(srv.WithAuth())
 
-	router.Path("/apis/iam/v1/attributes").Methods("GET").HandlerFunc(srv.ListAttributes)
-	router.Path("/apis/iam/v1/attributes").Methods("POST").HandlerFunc(srv.PostAttribute)
-	router.Path("/apis/iam/v1/attributes/{id}").Methods("GET").HandlerFunc(srv.GetAttribute)
-	router.Path("/apis/iam/v1/attributes/{id}").Methods("PUT").HandlerFunc(srv.PutAttribute)
+	router.Path(server.AttributesEndpoint).Methods("GET").HandlerFunc(srv.ListAttributes)
+	router.Path(server.AttributesEndpoint).Methods("POST").HandlerFunc(srv.PostAttribute)
+	router.Path(path.Join(server.AttributesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.GetAttribute)
+	router.Path(path.Join(server.AttributesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.PutAttribute)
 
-	router.Path("/apis/iam/v1/individuals").Methods("GET").HandlerFunc(srv.ListIndividuals)
-	router.Path("/apis/iam/v1/individuals").Methods("POST").HandlerFunc(srv.PostIndividual)
-	router.Path("/apis/iam/v1/individuals/{id}").Methods("GET").HandlerFunc(srv.GetIndividual)
-	router.Path("/apis/iam/v1/individuals/{id}").Methods("PUT").HandlerFunc(srv.PutIndividual)
+	router.Path(server.IndividualsEndpoint).Methods("GET").HandlerFunc(srv.ListIndividuals)
+	router.Path(server.IndividualsEndpoint).Methods("POST").HandlerFunc(srv.PostIndividual)
+	router.Path(path.Join(server.IndividualsEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.GetIndividual)
+	router.Path(path.Join(server.IndividualsEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.PutIndividual)
 
-	router.Path("/apis/iam/v1/memberships").Methods("GET").HandlerFunc(srv.ListMemberships)
-	router.Path("/apis/iam/v1/memberships").Methods("POST").HandlerFunc(srv.PostMembership)
-	router.Path("/apis/iam/v1/memberships/{v1}").Methods("GET").HandlerFunc(srv.GetMembership)
+	router.Path(server.MembershipsEndpoint).Methods("GET").HandlerFunc(srv.ListMemberships)
+	router.Path(server.MembershipsEndpoint).Methods("POST").HandlerFunc(srv.PostMembership)
+	router.Path(path.Join(server.MembershipsEndpoint, "{v1}")).Methods("GET").HandlerFunc(srv.GetMembership)
 
-	router.Path("/apis/iam/v1/parties").Methods("GET").HandlerFunc(srv.ListParties)
-	router.Path("/apis/iam/v1/parties").Methods("POST").HandlerFunc(srv.PostParty)
-	router.Path("/apis/iam/v1/parties/search").Methods("POST").HandlerFunc(srv.SearchParties)
-	router.Path("/apis/iam/v1/parties/{id}").Methods("GET").HandlerFunc(srv.GetParty)
-	router.Path("/apis/iam/v1/parties/{id}").Methods("PUT").HandlerFunc(srv.PutParty)
+	router.Path(server.PartiesEndpoint).Methods("GET").HandlerFunc(srv.ListParties)
+	router.Path(server.PartiesEndpoint).Methods("POST").HandlerFunc(srv.PostParty)
+	router.Path(path.Join(server.PartiesEndpoint, "/search")).Methods("POST").HandlerFunc(srv.SearchParties)
+	router.Path(path.Join(server.PartiesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.GetParty)
+	router.Path(path.Join(server.PartiesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.PutParty)
 
-	router.Path("/apis/iam/v1/partytypes").Methods("GET").HandlerFunc(srv.ListPartyTypes)
-	router.Path("/apis/iam/v1/partytypes").Methods("POST").HandlerFunc(srv.PostPartyType)
-	router.Path("/apis/iam/v1/partytypes/{id}").Methods("GET").HandlerFunc(srv.GetPartyType)
-	router.Path("/apis/iam/v1/partytypes/{id}").Methods("PUT").HandlerFunc(srv.PutPartyType)
+	router.Path(server.PartyTypesEndpoint).Methods("GET").HandlerFunc(srv.ListPartyTypes)
+	router.Path(server.PartyTypesEndpoint).Methods("POST").HandlerFunc(srv.PostPartyType)
+	router.Path(path.Join(server.PartyTypesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.GetPartyType)
+	router.Path(path.Join(server.PartyTypesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.PutPartyType)
 
-	router.Path("/apis/iam/v1/relationships").Methods("GET").HandlerFunc(srv.ListRelationships)
-	router.Path("/apis/iam/v1/relationships").Methods("POST").HandlerFunc(srv.PostRelationship)
-	router.Path("/apis/iam/v1/relationships/{id}").Methods("GET").HandlerFunc(srv.GetRelationship)
-	router.Path("/apis/iam/v1/relationships/{id}").Methods("PUT").HandlerFunc(srv.PutRelationship)
-	router.Path("/apis/iam/v1/relationships/{id}").Methods("DELETE").HandlerFunc(srv.DeleteRelationship)
+	router.Path(server.RelationshipsEndpoint).Methods("GET").HandlerFunc(srv.ListRelationships)
+	router.Path(server.RelationshipsEndpoint).Methods("POST").HandlerFunc(srv.PostRelationship)
+	router.Path(path.Join(server.RelationshipsEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.GetRelationship)
+	router.Path(path.Join(server.RelationshipsEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.PutRelationship)
+	router.Path(path.Join(server.RelationshipsEndpoint, "{id}")).Methods("DELETE").HandlerFunc(srv.DeleteRelationship)
 
-	router.Path("/apis/iam/v1/relationshiptypes").Methods("GET").HandlerFunc(srv.ListRelationshipTypes)
-	router.Path("/apis/iam/v1/relationshiptypes").Methods("POST").HandlerFunc(srv.PostRelationshipType)
-	router.Path("/apis/iam/v1/relationshiptypes/{id}").Methods("GET").HandlerFunc(srv.GetRelationshipType)
-	router.Path("/apis/iam/v1/relationshiptypes/{id}").Methods("PUT").HandlerFunc(srv.PutRelationshipType)
+	router.Path(server.RelationshipTypesEndpoint).Methods("GET").HandlerFunc(srv.ListRelationshipTypes)
+	router.Path(server.RelationshipTypesEndpoint).Methods("POST").HandlerFunc(srv.PostRelationshipType)
+	router.Path(path.Join(server.RelationshipTypesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.GetRelationshipType)
+	router.Path(path.Join(server.RelationshipTypesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.PutRelationshipType)
 
-	router.Path("/apis/iam/v1/teams").Methods("GET").HandlerFunc(srv.ListTeams)
-	router.Path("/apis/iam/v1/teams").Methods("POST").HandlerFunc(srv.PostTeam)
-	router.Path("/apis/iam/v1/teams/{id}").Methods("GET").HandlerFunc(srv.GetTeam)
-	router.Path("/apis/iam/v1/teams/{id}").Methods("PUT").HandlerFunc(srv.PutTeam)
+	router.Path(server.TeamsEndpoint).Methods("GET").HandlerFunc(srv.ListTeams)
+	router.Path(server.TeamsEndpoint).Methods("POST").HandlerFunc(srv.PostTeam)
+	router.Path(path.Join(server.TeamsEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.GetTeam)
+	router.Path(path.Join(server.TeamsEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.PutTeam)
 
 	srv.router = router
 
@@ -136,7 +137,10 @@ func (s *Server) JSON(w http.ResponseWriter, status int, data interface{}) {
 	}
 	w.WriteHeader(status)
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(responseBytes)
+	_, err = w.Write(responseBytes)
+	if err != nil {
+		return
+	}
 }
 
 func (s *Server) GetPathParam(param string, w http.ResponseWriter, req *http.Request, into *string) bool {
