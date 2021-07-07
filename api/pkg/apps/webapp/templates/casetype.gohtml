@@ -59,10 +59,10 @@
                     </div>
                     <div class="form-floating mb-3">
                         <textarea name="template" id="template" class="form-control font-monospace"
-                                  style="height: 400px"
+                                  style="height: 600px"
                                   {{if .CaseType}}readonly{{end}}>
                             {{- if .CaseType -}}
-                                {{- .CaseType.Template -}}
+                                {{- .CaseType.Pretty -}}
                             {{- end -}}
                         </textarea>
                         <label for="template">Form template</label>
