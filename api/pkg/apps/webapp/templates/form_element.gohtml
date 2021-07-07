@@ -6,14 +6,16 @@
                     class="form-select"
                     aria-label="Default select example"
                     {{if .Attributes.Multiple}}multiple{{end}}
-                    {{if .Validation.Required}}required{{end}}>
+                    {{if .Validation.Required}}required{{end}}
+                    {{if .Attributes.Value}}disabled{{end}}
+            >
                 <option value=""></option>
                 {{range $i, $_ := .Attributes.Options}}{{$istr := printf "%d" $i}}
                 <option
                         value="{{$i}}"
                         {{range $v := $.Attributes.Value }}{{if eq $istr $v}}selected{{end}}{{end}}
                 >
-                    {{.}}
+                    {{- . -}}
                 </option>
                 {{end}}
             </select>
@@ -32,6 +34,7 @@
                    type="checkbox"
                    {{if .Required}}required{{end}}
                     {{range $v := $.Attributes.Value }}{{if eq $istr $v}}checked{{end}}{{end}}
+                    {{if $.Attributes.Value}}disabled{{end}}
             >
             <label for="{{$.Attributes.ID}}[{{$i}}]" class="form-check-label">{{.Label}}</label>
         </div>
@@ -41,9 +44,13 @@
             <textarea id="{{.Attributes.ID}}"
                       name="{{.Attributes.ID}}"
                       class="form-control"
-                      style="height: 150px"
+                      style="height: 150px; white-space: pre"
                       placeholder="{{.Attributes.Placeholder}}"
-                      {{if .Validation.Required}}required{{end}}>{{if .Attributes.Value}}{{index .Attributes.Value 0}}{{end}}</textarea>
+                      {{if .Validation.Required}}required{{end}}
+                    {{if .Attributes.Value}}disabled{{end}}
+            >
+                {{- if .Attributes.Value}}{{- index .Attributes.Value 0 -}}{{end -}}
+            </textarea>
             <label for="{{.Attributes.ID}}">{{.Attributes.Label}}</label>
             <div class="form-text">{{.Attributes.Description}}</div>
         </div>
@@ -55,7 +62,9 @@
                    class="form-control"
                    type="text"
                    placeholder="{{.Attributes.Placeholder}}"
-                   {{if .Validation.Required}}required{{end}}>
+                   {{if .Validation.Required}}required{{end}}
+                    {{if .Attributes.Value}}disabled{{end}}
+            >
             <label for="{{.Attributes.ID}}">{{.Attributes.Label}}</label>
             <div class="form-text">{{.Attributes.Description}}</div>
         </div>
