@@ -68,7 +68,9 @@
         <div class="card mb-4">
             <div class="card-body">
                 <form action="/cases/{{$caseId}}" method="post">
-
+                    {{range .Case.FormData.FormElements}}
+                        {{template "formelement" .}}
+                    {{end}}
                     <div class="form-floating mb-3">
                         <textarea id="description-textarea"
                                   rows="20"
