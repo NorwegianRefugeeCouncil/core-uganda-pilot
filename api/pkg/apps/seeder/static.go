@@ -101,7 +101,7 @@ var (
 					Options:     []string{"Citizen", "Permanent resident", "Accepted refugee", "Asylum seeker", "Undetermined"},
 				},
 				Validation: cms.CaseTemplateFormElementValidation{
-					Required: true,
+					Required: false,
 				},
 			},
 			{
