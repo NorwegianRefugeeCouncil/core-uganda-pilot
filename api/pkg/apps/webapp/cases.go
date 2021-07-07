@@ -30,20 +30,9 @@ func (c *CasesListOptions) OpenOnly() bool {
 
 func (c *CasesListOptions) UnmarshalQueryParams(values url.Values) error {
 
-	hasStatusArg := false
-	for key := range values {
-		if key == "status" {
-			hasStatusArg = true
-		}
-	}
-
-	statusStr := values.Get("status")
-	if !hasStatusArg && len(statusStr) == 0 {
-		statusStr = "false"
-	}
-	if len(statusStr) > 0 {
-		isClosed := statusStr == "closed"
-		c.Closed = &isClosed
+	if len(values["status"]) == 1 {
+		closed := values["status"][0] == "closed"
+		c.Closed = &closed
 	}
 
 	for _, teamId := range values["teamId"] {

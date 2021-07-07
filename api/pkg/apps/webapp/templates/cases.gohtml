@@ -217,7 +217,7 @@
           refreshFilterInputs(s);
         });
         filterSubject.pipe(
-          debounceTime(1000),
+          debounceTime(200),
           distinctUntilChanged((prev, curr) => {
             return JSON.stringify(prev) === JSON.stringify(curr);
           }),
