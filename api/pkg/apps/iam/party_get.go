@@ -4,19 +4,19 @@ import (
 	"net/http"
 )
 
-func (s *Server) GetParty(w http.ResponseWriter, req *http.Request) {
+func (s *Server) getParty(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	var id string
 
-	if !s.GetPathParam("id", w, req, &id) {
+	if !s.getPathParam("id", w, req, &id) {
 		return
 	}
 
-	ret, err := s.PartyStore.Get(ctx, id)
+	ret, err := s.partyStore.get(ctx, id)
 	if err != nil {
-		s.Error(w, err)
+		s.error(w, err)
 		return
 	}
 
-	s.JSON(w, http.StatusOK, ret)
+	s.json(w, http.StatusOK, ret)
 }

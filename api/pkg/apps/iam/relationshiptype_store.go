@@ -11,7 +11,7 @@ type RelationshipTypeStore struct {
 	collection *mongo.Collection
 }
 
-func NewRelationshipTypeStore(ctx context.Context, mongoClient *mongo.Client, database string) (*RelationshipTypeStore, error) {
+func newRelationshipTypeStore(ctx context.Context, mongoClient *mongo.Client, database string) (*RelationshipTypeStore, error) {
 	store := &RelationshipTypeStore{
 		collection: mongoClient.Database(database).Collection("relationshipTypes"),
 	}

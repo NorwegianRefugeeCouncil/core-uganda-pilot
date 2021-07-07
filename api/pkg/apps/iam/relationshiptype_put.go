@@ -4,23 +4,23 @@ import (
 	"net/http"
 )
 
-func (s *Server) PutRelationshipType(w http.ResponseWriter, req *http.Request) {
+func (s *Server) putRelationshipType(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	var id string
 
-	if !s.GetPathParam("id", w, req, &id) {
+	if !s.getPathParam("id", w, req, &id) {
 		return
 	}
 
 	var payload RelationshipType
-	if err := s.Bind(req, &payload); err != nil {
-		s.Error(w, err)
+	if err := s.bind(req, &payload); err != nil {
+		s.error(w, err)
 		return
 	}
 
-	r, err := s.RelationshipTypeStore.Get(ctx, id)
+	r, err := s.relationshipTypeStore.Get(ctx, id)
 	if err != nil {
-		s.Error(w, err)
+		s.error(w, err)
 		return
 	}
 
@@ -30,10 +30,10 @@ func (s *Server) PutRelationshipType(w http.ResponseWriter, req *http.Request) {
 	r.Rules = payload.Rules
 	r.IsDirectional = payload.IsDirectional
 
-	if err := s.RelationshipTypeStore.Update(ctx, r); err != nil {
-		s.Error(w, err)
+	if err := s.relationshipTypeStore.Update(ctx, r); err != nil {
+		s.error(w, err)
 		return
 	}
 
-	s.JSON(w, http.StatusOK, r)
+	s.json(w, http.StatusOK, r)
 }

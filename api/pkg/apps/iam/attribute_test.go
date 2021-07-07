@@ -1,13 +1,20 @@
 // +build integration
 
-package iam
+package iam_test
 
 import (
+	. "github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/stretchr/testify/assert"
+	"math/rand"
 )
 
-func (s *Suite) TestAttributeCRUD() {
+func (s *Suite) TestAttribute() {
+	s.Run("API", func() { s.testAttributeAPI() })
+	s.SetupTest()
+	s.Run("List filtering", func() { s.testAttributeListFilter() })
+}
 
+func (s *Suite) testAttributeAPI() {
 	// CREATE
 	mock := "create"
 	created, err := s.client.Attributes().Create(s.ctx, &Attribute{
@@ -76,5 +83,76 @@ func (s *Suite) TestAttributeCRUD() {
 	list, err := s.client.Attributes().List(s.ctx, AttributeListOptions{})
 	assert.NoError(s.T(), err)
 	assert.Contains(s.T(), list.Items, get)
+}
 
+func (s *Suite) testAttributeListFilter() {
+
+	nPartyTypeIds := 30
+	nAttributes := 200
+	// Make a couple PartyTypeIDs
+	var partyTypeIds []string
+	for i := 0; i < nPartyTypeIds; i++ {
+		partyTypeIds = append(partyTypeIds, newUUID())
+	}
+	// Make a couple Attributes
+	var attributes []Attribute
+	for i := 0; i < nAttributes; i++ {
+		attributes = append(attributes, newRandomAttribute(partyTypeIds))
+	}
+	// Map PartyTypeIDs to the Attribute IDs
+	attributesFromPartyTypes := map[string][]string{}
+	for _, a := range attributes {
+		for _, p := range a.PartyTypeIDs {
+			attributesFromPartyTypes[p] = append(attributesFromPartyTypes[p], a.ID)
+		}
+	}
+	// Save the attributes to the DB
+	for _, attribute := range attributes {
+		_, err := s.client.Attributes().Create(s.ctx, &attribute)
+		assert.NoError(s.T(), err)
+	}
+	// Test list filtering with different PartyTypeID combinations
+	for i := 1; i < len(partyTypeIds); i++ {
+		partyTypeIdSlice := partyTypeIds[0:i]
+		options := AttributeListOptions{PartyTypeIDs: partyTypeIdSlice}
+		list, err := s.client.Attributes().List(ctx, options)
+		assert.NoError(s.T(), err)
+
+		// Get expected items
+		var expected []string
+		for _, a := range attributes {
+			var include = true
+			for _, p := range partyTypeIdSlice {
+				if !contains(a.PartyTypeIDs, p) {
+					include = false
+					break
+				}
+			}
+			if include {
+				expected = append(expected, a.ID)
+			}
+		}
+
+		// Check length
+		assert.Equal(s.T(), len(expected), len(list.Items))
+
+		// Check contents
+		for _, item := range list.Items {
+			assert.Contains(s.T(), expected, item.ID)
+		}
+	}
+}
+
+func newRandomAttribute(partyTypeIds []string) Attribute {
+	if len(partyTypeIds) != 0 {
+		n := rand.Intn(len(partyTypeIds)-1) + 1
+		return Attribute{
+			ID:                           newUUID(),
+			Name:                         "",
+			PartyTypeIDs:                 partyTypeIds[0:n],
+			IsPersonallyIdentifiableInfo: false,
+			Translations:                 nil,
+		}
+	}
+	return Attribute{}
 }

@@ -5,23 +5,26 @@ import (
 	"net/http"
 )
 
-func (s *Server) PostMembership(w http.ResponseWriter, req *http.Request) {
+func (s *Server) postMembership(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	var payload Membership
-	if err := s.Bind(req, &payload); err != nil {
-		s.Error(w, err)
+	if err := s.bind(req, &payload); err != nil {
+		s.error(w, err)
 		return
 	}
 
 	p := &payload
-	p.ID = uuid.NewV4().String()
 
-	if err := s.MembershipStore.Create(ctx, p); err != nil {
+	if p.ID == "" {
+		p.ID = uuid.NewV4().String()
+	}
+
+	if err := s.membershipStore.create(ctx, p); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	s.JSON(w, http.StatusOK, p)
+	s.json(w, http.StatusOK, p)
 
 }

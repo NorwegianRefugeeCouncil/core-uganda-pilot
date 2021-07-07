@@ -17,7 +17,7 @@ func NewIndividualStore(mongoClient *mongo.Client, database string) *IndividualS
 	}
 }
 
-func (s *IndividualStore) Create(ctx context.Context, individual *Individual) error {
+func (s *IndividualStore) create(ctx context.Context, individual *Individual) error {
 	individual.AddPartyType(IndividualPartyType.ID)
 	_, err := s.collection.InsertOne(ctx, individual)
 	if err != nil {
@@ -26,7 +26,19 @@ func (s *IndividualStore) Create(ctx context.Context, individual *Individual) er
 	return nil
 }
 
-func (s *IndividualStore) Upsert(ctx context.Context, individual *Individual) error {
+func (s *IndividualStore) get(ctx context.Context, ID string) (*Individual, error) {
+	findResult := s.collection.FindOne(ctx, bson.M{"id": ID})
+	if findResult.Err() != nil {
+		return nil, findResult.Err()
+	}
+	var individual *Individual
+	if err := findResult.Decode(&individual); err != nil {
+		return nil, err
+	}
+	return individual, nil
+}
+
+func (s *IndividualStore) upsert(ctx context.Context, individual *Individual) error {
 	individual.AddPartyType(IndividualPartyType.ID)
 	_, err := s.collection.UpdateOne(ctx, bson.M{
 		"id": individual.ID,
@@ -43,19 +55,7 @@ func (s *IndividualStore) Upsert(ctx context.Context, individual *Individual) er
 	return nil
 }
 
-func (s *IndividualStore) Get(ctx context.Context, ID string) (*Individual, error) {
-	findResult := s.collection.FindOne(ctx, bson.M{"id": ID})
-	if findResult.Err() != nil {
-		return nil, findResult.Err()
-	}
-	var individual *Individual
-	if err := findResult.Decode(&individual); err != nil {
-		return nil, err
-	}
-	return individual, nil
-}
-
-func (s *IndividualStore) List(ctx context.Context, listOptions IndividualListOptions) (*IndividualList, error) {
+func (s *IndividualStore) list(ctx context.Context, listOptions IndividualListOptions) (*IndividualList, error) {
 
 	includesIndividualPartyType := false
 

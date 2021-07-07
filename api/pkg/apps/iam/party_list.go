@@ -4,12 +4,12 @@ import (
 	"net/http"
 )
 
-func (s *Server) ListParties(w http.ResponseWriter, req *http.Request) {
+func (s *Server) listParties(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	listOptions := &PartyListOptions{}
 	if err := listOptions.UnmarshalQueryParameters(req.URL.Query()); err != nil {
-		s.Error(w, err)
+		s.error(w, err)
 		return
 	}
 
@@ -21,11 +21,11 @@ func (s *Server) ListParties(w http.ResponseWriter, req *http.Request) {
 		options.PartyTypeIDs = []string{listOptions.PartyTypeID}
 	}
 
-	ret, err := s.PartyStore.List(ctx, *options)
+	ret, err := s.partyStore.list(ctx, *options)
 	if err != nil {
-		s.Error(w, err)
+		s.error(w, err)
 		return
 	}
 
-	s.JSON(w, http.StatusOK, ret)
+	s.json(w, http.StatusOK, ret)
 }
