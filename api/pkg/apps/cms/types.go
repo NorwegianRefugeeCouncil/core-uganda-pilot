@@ -65,7 +65,7 @@ func (c *CaseType) UnmarshalFormData(values url.Values) error {
 	return nil
 }
 
-func (c *CaseType) MarshalTemplate() string {
+func (c *CaseType) Pretty() string {
 	b, err := json.MarshalIndent(c.Template, "", "  ")
 	if err != nil {
 		panic(err)
