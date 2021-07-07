@@ -60,15 +60,14 @@ func membership(id string, individual iam.Individual, team iam.Team) iam.Members
 	return m
 }
 
-func kase(id, caseTypeID, createdByID, partyID, teamID, description string, done bool) cms.Case {
+func kase(id, caseTypeID, createdByID, partyID, teamID string, done bool) cms.Case {
 	k := cms.Case{
-		ID:          id,
-		CaseTypeID:  caseTypeID,
-		CreatorID:   createdByID,
-		PartyID:     partyID,
-		TeamID:      teamID,
-		Description: description,
-		Done:        done,
+		ID:         id,
+		CaseTypeID: caseTypeID,
+		CreatorID:  createdByID,
+		PartyID:    partyID,
+		TeamID:     teamID,
+		Done:       done,
 	}
 	cases = append(cases, k)
 	return k
@@ -201,7 +200,7 @@ var (
 	LoanMembership      = membership("340d8740-b029-41ef-9db6-2bdf991c3ed3", Loan, NairobiICLATeam)
 
 	// Cases
-	DomesticAbuse    = kase("dba43642-8093-4685-a197-f8848d4cbaaa", GenderViolence.ID, Birdie.ID, MaryPoppins.ID, KampalaResponseTeam.ID, "Domestic abuse", false)
-	MonthlyAllowance = kase("47499762-c189-4a74-9156-7969f899073b", FinancialAssistInd.ID, Birdie.ID, JohnDoe.ID, KampalaResponseTeam.ID, "Monthly allowance", false)
-	ChildCare        = kase("8fb5f755-85eb-4d91-97a9-fdf86c01df25", Childcare.ID, Birdie.ID, BoDiddley.ID, KampalaResponseTeam.ID, "Monthly stipend for Bo Diddley's child", true)
+	DomesticAbuse    = kase("dba43642-8093-4685-a197-f8848d4cbaaa", GenderViolence.ID, Birdie.ID, MaryPoppins.ID, KampalaResponseTeam.ID, false)
+	MonthlyAllowance = kase("47499762-c189-4a74-9156-7969f899073b", FinancialAssistInd.ID, Birdie.ID, JohnDoe.ID, KampalaResponseTeam.ID, false)
+	ChildCare        = kase("8fb5f755-85eb-4d91-97a9-fdf86c01df25", Childcare.ID, Birdie.ID, BoDiddley.ID, KampalaResponseTeam.ID, true)
 )

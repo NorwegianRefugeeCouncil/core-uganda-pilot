@@ -93,9 +93,8 @@ func (s *CaseStore) Update(ctx context.Context, kase *Case) error {
 		"id": kase.ID,
 	}, bson.M{
 		"$set": bson.M{
-			"description": kase.Description,
-			"done":        kase.Done,
-			"formData":    kase.FormData,
+			"done":     kase.Done,
+			"formData": kase.FormData,
 		},
 	})
 	if err != nil {
