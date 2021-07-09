@@ -73,6 +73,11 @@ func (c *CaseType) Pretty() string {
 	return string(b)
 }
 
+func (c *CaseType) Validate(isNew bool) error {
+
+	return nil
+}
+
 func (l *CaseTypeList) FindByID(id string) *CaseType {
 	for _, caseType := range l.Items {
 		if caseType.ID == id {

@@ -3,5 +3,5 @@
 .idea/usage.statistics.xml
 .idea/shelf
 *.DS_Store
-api/certs/cert.pem
-api/certs/key.pem
+*.pem
+*.out

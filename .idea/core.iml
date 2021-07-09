@@ -3,6 +3,9 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/api/third-party" />
+      <excludeFolder url="file://$MODULE_DIR$/api/certs" />
+      <excludeFolder url="file://$MODULE_DIR$/e2e/cypress/screenshots" />
+      <excludeFolder url="file://$MODULE_DIR$/e2e/cypress/videos" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
