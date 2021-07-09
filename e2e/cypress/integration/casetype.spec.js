@@ -1,4 +1,5 @@
 import NewCaseTypePage from '../pages/newCasetype.page';
+import { caseTypeTemplate } from '../helpers';
 
 describe('CaseType Page', function () {
     describe('Create', () => {
@@ -9,7 +10,7 @@ describe('CaseType Page', function () {
                 .typeName('Test')
                 .selectPartyType('Individual')
                 .selectTeam('Kampala Response Team')
-                .typeTemplate('')
+                .typeTemplate(caseTypeTemplate)
                 .save();
         });
     });

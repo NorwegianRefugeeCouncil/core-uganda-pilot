@@ -52,9 +52,3 @@ describe('Relationship Type settings', function () {
         cy.visit('/settings/relationshiptypes');
     });
 });
-
-describe('Country Type settings', function () {
-    it('should show the page', () => {
-        cy.visit('/settings/countries');
-    });
-});
