@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/nrc-no/core/pkg/validation"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -221,8 +222,34 @@ func (r *Request) Do(ctx context.Context) *Response {
 		if err != nil {
 			return &Response{err: fmt.Errorf("unexpected status code: %d", res.StatusCode)}
 		}
+
+		if len(bodyBytes) == 0 {
+			return &Response{
+				err: &validation.Status{
+					Status:  validation.Failure,
+					Code:    http.StatusInternalServerError,
+					Message: "Unexpected error",
+					Errors:  nil,
+				},
+				body: bodyBytes,
+			}
+		}
+
+		var status validation.Status
+		if err := json.Unmarshal(bodyBytes, &status); err != nil {
+			return &Response{
+				err: &validation.Status{
+					Status:  validation.Failure,
+					Code:    http.StatusInternalServerError,
+					Message: "Unexpected error",
+					Errors:  nil,
+				},
+				body: bodyBytes,
+			}
+		}
+
 		return &Response{
-			err:  fmt.Errorf("unexpected status code: %d. response: %s", res.StatusCode, string(bodyBytes)),
+			err:  &status,
 			body: bodyBytes,
 		}
 	}
