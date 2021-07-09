@@ -1,3 +1,1 @@
-export default class NewIndividualPage {
-
-}
+export default class NewIndividualPage {}

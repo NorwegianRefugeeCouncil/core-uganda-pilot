@@ -12,7 +12,7 @@
             <div class="col">
                 <form method='post' action='/settings/partytypes{{if .PartyType.ID}}/{{.PartyType.ID}}{{end}}'>
                     <div class='form-floating mb-3'>
-                        <input name='name' id='name' type='text' class='form-control' placeholder='Name'
+                        <input name='name' id='name' type='text' class='form-control' placeholder='Name' data-cy="name"
                                {{if .PartyType}}value='{{.PartyType.Name}}'{{end}}>
                         <label for='name'>Name</label>
                     </div>
@@ -22,13 +22,14 @@
                                name='isBuiltIn'
                                type="checkbox"
                                id="isBuiltIn"
+                               data-cy="isBuiltIn"
                                value='true'
                               {{if and .PartyType .PartyType.IsBuiltIn}}checked{{end}}
                         >
                         <label class="form-check-label" for="isBuiltIn">Is Built In</label>
                     </div>
 
-                    <button class='btn btn-primary'>Save</button>
+                    <button class='btn btn-primary' data-cy="save-btn">Save</button>
                 </form>
             </div>
         </div>
