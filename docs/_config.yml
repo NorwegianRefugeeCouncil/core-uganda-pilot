@@ -6,4 +6,5 @@ relative_links:
 include:
   README.md
   CONTRIBUTING.md
+  ARCHITECTURE.md
 
