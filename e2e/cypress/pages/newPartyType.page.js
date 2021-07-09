@@ -4,10 +4,10 @@ const NAME = '[data-cy=name]';
 const IS_BULITIN = '[data-cy=isBuiltIn]';;
 const SAVE_BUTTON = '[data-cy=save-btn]';
 
-export default class NewEntityTypePage {
+export default class NewPartyTypePage {
     visitPage = () => {
-        cy.log('navigating to %s', Urls.NEW_ENTITYTYPE_URL);
-        cy.visit(Urls.NEW_ENTITYTYPE_URL);
+        cy.log('navigating to %s', Urls.NEW_PARTYTYPE_URL);
+        cy.visit(Urls.NEW_PARTYTYPE_URL);
         return this;
     };
 

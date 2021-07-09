@@ -29,7 +29,7 @@ export default class NewCaseTypePage {
     };
 
     typeTemplate = (value) => {
-        cy.get(TEMPLATE).type(value);
+        cy.get(TEMPLATE).invoke('val', value);
         return this;
     };
 
