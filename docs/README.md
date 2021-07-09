@@ -1,10 +1,6 @@
 # core
 A case management tool for the humanitarian sector - keep track of beneficiaries and services.
 
-# Documentation
-
-[https://nrc-no.github.io/core](https://nrc-no.github.io/core)
-
 ## Architecture
 
 ```
