@@ -1,6 +1,4 @@
-# Getting started
-
-First of all make sure you've [setup your development environment](./README.MD#getting-started)
+First of all make sure you've [setup your development environment](./README.MD#getting-started) properly :)
 
 # Issues and pull requests
 
