@@ -5,22 +5,24 @@ import (
 	"net/http"
 )
 
-func (s *Server) PostAttribute(w http.ResponseWriter, req *http.Request) {
+func (s *Server) postAttributes(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
 	var a Attribute
-	if err := s.Bind(req, &a); err != nil {
-		s.Error(w, err)
+	if err := s.bind(req, &a); err != nil {
+		s.error(w, err)
 	}
 
-	a.ID = uuid.NewV4().String()
+	if a.ID == "" {
+		a.ID = uuid.NewV4().String()
+	}
 
-	if err := s.AttributeStore.Create(ctx, &a); err != nil {
-		s.Error(w, err)
+	if err := s.attributeStore.create(ctx, &a); err != nil {
+		s.error(w, err)
 		return
 	}
 
-	s.JSON(w, http.StatusOK, a)
+	s.json(w, http.StatusOK, a)
 
 }

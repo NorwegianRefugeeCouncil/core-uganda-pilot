@@ -11,7 +11,7 @@ type AttributeStore struct {
 	collection *mongo.Collection
 }
 
-func NewAttributeStore(ctx context.Context, mongoClient *mongo.Client, database string) (*AttributeStore, error) {
+func newAttributeStore(ctx context.Context, mongoClient *mongo.Client, database string) (*AttributeStore, error) {
 	store := &AttributeStore{
 		collection: mongoClient.Database(database).Collection("attributes"),
 	}
@@ -27,7 +27,9 @@ func NewAttributeStore(ctx context.Context, mongoClient *mongo.Client, database 
 	return store, nil
 }
 
-func (s *AttributeStore) List(ctx context.Context, listOptions AttributeListOptions) (*AttributeList, error) {
+// list returns an AttributeList. If AttributeListOptions are supplied, list returns a filtered list containing
+// only those items whose Attribute.PartyTypeIDs field contains all the elements given in the query.
+func (s *AttributeStore) list(ctx context.Context, listOptions AttributeListOptions) (*AttributeList, error) {
 
 	filter := bson.M{}
 
@@ -62,7 +64,7 @@ func (s *AttributeStore) List(ctx context.Context, listOptions AttributeListOpti
 
 }
 
-func (s *AttributeStore) Create(ctx context.Context, attribute *Attribute) error {
+func (s *AttributeStore) create(ctx context.Context, attribute *Attribute) error {
 	_, err := s.collection.InsertOne(ctx, attribute)
 	if err != nil {
 		return err
@@ -70,7 +72,7 @@ func (s *AttributeStore) Create(ctx context.Context, attribute *Attribute) error
 	return nil
 }
 
-func (s *AttributeStore) Get(ctx context.Context, id string) (*Attribute, error) {
+func (s *AttributeStore) get(ctx context.Context, id string) (*Attribute, error) {
 	result := s.collection.FindOne(ctx, bson.M{
 		"id": id,
 	})
@@ -84,7 +86,7 @@ func (s *AttributeStore) Get(ctx context.Context, id string) (*Attribute, error)
 	return &a, nil
 }
 
-func (s *AttributeStore) Update(ctx context.Context, attribute *Attribute) error {
+func (s *AttributeStore) update(ctx context.Context, attribute *Attribute) error {
 	_, err := s.collection.UpdateOne(ctx, bson.M{
 		"id": attribute.ID,
 	}, bson.M{

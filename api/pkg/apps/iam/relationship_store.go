@@ -11,7 +11,7 @@ type RelationshipStore struct {
 	collection *mongo.Collection
 }
 
-func NewRelationshipStore(ctx context.Context, mongoClient *mongo.Client, database string) (*RelationshipStore, error) {
+func newRelationshipStore(ctx context.Context, mongoClient *mongo.Client, database string) (*RelationshipStore, error) {
 	store := &RelationshipStore{
 		collection: mongoClient.Database(database).Collection("relationships"),
 	}
@@ -27,7 +27,15 @@ func NewRelationshipStore(ctx context.Context, mongoClient *mongo.Client, databa
 
 }
 
-func (s *RelationshipStore) Get(ctx context.Context, id string) (*Relationship, error) {
+func (s *RelationshipStore) create(ctx context.Context, relationship *Relationship) error {
+	_, err := s.collection.InsertOne(ctx, relationship)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *RelationshipStore) get(ctx context.Context, id string) (*Relationship, error) {
 	res := s.collection.FindOne(ctx, bson.M{
 		"id": id,
 	})
@@ -41,7 +49,23 @@ func (s *RelationshipStore) Get(ctx context.Context, id string) (*Relationship, 
 	return &r, nil
 }
 
-func (s *RelationshipStore) List(ctx context.Context, listOptions RelationshipListOptions) (*RelationshipList, error) {
+func (s *RelationshipStore) update(ctx context.Context, relationship *Relationship) error {
+	_, err := s.collection.UpdateOne(ctx, bson.M{
+		"id": relationship.ID,
+	}, bson.M{
+		"$set": bson.M{
+			"firstParty":         relationship.FirstPartyID,
+			"secondParty":        relationship.SecondPartyID,
+			"relationshipTypeId": relationship.RelationshipTypeID,
+		},
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *RelationshipStore) list(ctx context.Context, listOptions RelationshipListOptions) (*RelationshipList, error) {
 
 	filter := bson.M{}
 
@@ -87,31 +111,7 @@ func (s *RelationshipStore) List(ctx context.Context, listOptions RelationshipLi
 	return &ret, nil
 }
 
-func (s *RelationshipStore) Update(ctx context.Context, relationship *Relationship) error {
-	_, err := s.collection.UpdateOne(ctx, bson.M{
-		"id": relationship.ID,
-	}, bson.M{
-		"$set": bson.M{
-			"firstParty":         relationship.FirstPartyID,
-			"secondParty":        relationship.SecondPartyID,
-			"relationshipTypeId": relationship.RelationshipTypeID,
-		},
-	})
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *RelationshipStore) Create(ctx context.Context, relationship *Relationship) error {
-	_, err := s.collection.InsertOne(ctx, relationship)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *RelationshipStore) Delete(ctx context.Context, id string) error {
+func (s *RelationshipStore) delete(ctx context.Context, id string) error {
 	_, err := s.collection.DeleteOne(ctx, bson.M{
 		"id": id,
 	})

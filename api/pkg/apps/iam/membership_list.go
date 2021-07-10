@@ -2,7 +2,7 @@ package iam
 
 import "net/http"
 
-func (s *Server) ListMemberships(w http.ResponseWriter, req *http.Request) {
+func (s *Server) listMemberships(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	var listOptions MembershipListOptions
@@ -11,11 +11,11 @@ func (s *Server) ListMemberships(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	ret, err := s.MembershipStore.List(ctx, listOptions)
+	ret, err := s.membershipStore.list(ctx, listOptions)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	s.JSON(w, http.StatusOK, ret)
+	s.json(w, http.StatusOK, ret)
 }

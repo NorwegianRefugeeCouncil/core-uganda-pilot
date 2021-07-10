@@ -5,22 +5,25 @@ import (
 	"net/http"
 )
 
-func (s *Server) PostRelationship(w http.ResponseWriter, req *http.Request) {
+func (s *Server) postRelationship(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	var payload Relationship
-	if err := s.Bind(req, &payload); err != nil {
-		s.Error(w, err)
+	if err := s.bind(req, &payload); err != nil {
+		s.error(w, err)
 		return
 	}
 
 	p := &payload
-	p.ID = uuid.NewV4().String()
 
-	if err := s.RelationshipStore.Create(ctx, p); err != nil {
-		s.Error(w, err)
+	if p.ID == "" {
+		p.ID = uuid.NewV4().String()
+	}
+
+	if err := s.relationshipStore.create(ctx, p); err != nil {
+		s.error(w, err)
 		return
 	}
 
-	s.JSON(w, http.StatusOK, p)
+	s.json(w, http.StatusOK, p)
 }

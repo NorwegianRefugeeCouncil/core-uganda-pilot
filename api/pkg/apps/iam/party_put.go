@@ -4,33 +4,33 @@ import (
 	"net/http"
 )
 
-func (s *Server) PutParty(w http.ResponseWriter, req *http.Request) {
+func (s *Server) putParty(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	var id string
 
-	if !s.GetPathParam("id", w, req, &id) {
+	if !s.getPathParam("id", w, req, &id) {
 		return
 	}
 
-	r, err := s.PartyStore.Get(ctx, id)
+	r, err := s.partyStore.get(ctx, id)
 	if err != nil {
-		s.Error(w, err)
+		s.error(w, err)
 		return
 	}
 
 	var payload Party
-	if err := s.Bind(req, &payload); err != nil {
-		s.Error(w, err)
+	if err := s.bind(req, &payload); err != nil {
+		s.error(w, err)
 		return
 	}
 
 	r.Attributes = payload.Attributes
 	r.PartyTypeIDs = payload.PartyTypeIDs
 
-	if err := s.PartyStore.Update(ctx, r); err != nil {
-		s.Error(w, err)
+	if err := s.partyStore.update(ctx, r); err != nil {
+		s.error(w, err)
 		return
 	}
 
-	s.JSON(w, http.StatusOK, r)
+	s.json(w, http.StatusOK, r)
 }

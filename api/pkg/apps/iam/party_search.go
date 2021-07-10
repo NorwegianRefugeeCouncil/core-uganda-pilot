@@ -4,24 +4,24 @@ import (
 	"net/http"
 )
 
-func (s *Server) SearchParties(w http.ResponseWriter, req *http.Request) {
+func (s *Server) searchParties(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	var listOptions PartySearchOptions
-	if err := s.Bind(req, &listOptions); err != nil {
-		s.Error(w, err)
+	if err := s.bind(req, &listOptions); err != nil {
+		s.error(w, err)
 		return
 	}
 
-	ret, err := s.PartyStore.List(ctx, PartySearchOptions{
+	ret, err := s.partyStore.list(ctx, PartySearchOptions{
 		PartyTypeIDs: listOptions.PartyTypeIDs,
 		Attributes:   listOptions.Attributes,
 		SearchParam:  listOptions.SearchParam,
 	})
 	if err != nil {
-		s.Error(w, err)
+		s.error(w, err)
 		return
 	}
 
-	s.JSON(w, http.StatusOK, ret)
+	s.json(w, http.StatusOK, ret)
 }

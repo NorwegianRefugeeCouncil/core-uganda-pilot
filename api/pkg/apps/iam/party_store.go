@@ -11,7 +11,7 @@ type PartyStore struct {
 	Collection *mongo.Collection
 }
 
-func NewPartyStore(ctx context.Context, mongoClient *mongo.Client, database string) (*PartyStore, error) {
+func newPartyStore(ctx context.Context, mongoClient *mongo.Client, database string) (*PartyStore, error) {
 	store := &PartyStore{
 		Collection: mongoClient.Database(database).Collection("parties"),
 	}
@@ -40,7 +40,7 @@ func NewPartyStore(ctx context.Context, mongoClient *mongo.Client, database stri
 	return store, nil
 }
 
-func (s *PartyStore) Get(ctx context.Context, id string) (*Party, error) {
+func (s *PartyStore) get(ctx context.Context, id string) (*Party, error) {
 	res := s.Collection.FindOne(ctx, bson.M{
 		"id": id,
 	})
@@ -62,7 +62,7 @@ func BSONStringA(strSlice []string) (result bson.A) {
 	return
 }
 
-func (s *PartyStore) List(ctx context.Context, listOptions PartySearchOptions) (*PartyList, error) {
+func (s *PartyStore) list(ctx context.Context, listOptions PartySearchOptions) (*PartyList, error) {
 	filterItems := bson.M{}
 
 	if len(listOptions.PartyTypeIDs) != 0 {
@@ -110,7 +110,7 @@ func (s *PartyStore) List(ctx context.Context, listOptions PartySearchOptions) (
 	return &ret, nil
 }
 
-func (s *PartyStore) Update(ctx context.Context, party *Party) error {
+func (s *PartyStore) update(ctx context.Context, party *Party) error {
 	_, err := s.Collection.UpdateOne(ctx, bson.M{
 		"id": party.ID,
 	}, bson.M{
@@ -125,7 +125,7 @@ func (s *PartyStore) Update(ctx context.Context, party *Party) error {
 	return nil
 }
 
-func (s *PartyStore) Create(ctx context.Context, party *Party) error {
+func (s *PartyStore) create(ctx context.Context, party *Party) error {
 	_, err := s.Collection.InsertOne(ctx, party)
 	if err != nil {
 		return err
@@ -137,7 +137,7 @@ type FindOptions struct {
 	Attributes map[string]string
 }
 
-func (s *PartyStore) Find(ctx context.Context, options FindOptions) (*Party, error) {
+func (s *PartyStore) find(ctx context.Context, options FindOptions) (*Party, error) {
 	filter := bson.M{}
 	for key, value := range options.Attributes {
 		filter["attributes."+key] = value

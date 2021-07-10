@@ -4,19 +4,19 @@ import (
 	"net/http"
 )
 
-func (s *Server) GetMembership(w http.ResponseWriter, req *http.Request) {
+func (s *Server) getMembership(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	var id string
 
-	if !s.GetPathParam("id", w, req, &id) {
+	if !s.getPathParam("id", w, req, &id) {
 		return
 	}
-	ret, err := s.MembershipStore.Get(ctx, id)
+	ret, err := s.membershipStore.get(ctx, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	s.JSON(w, http.StatusOK, ret)
+	s.json(w, http.StatusOK, ret)
 
 }
