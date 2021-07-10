@@ -1,3 +1,6 @@
+domain: nrc-no.github.io
+url: https://nrc-no.github.io
+baseUrl: /core/
 plugins:
   - jekyll-relative-links
 relative_links:
