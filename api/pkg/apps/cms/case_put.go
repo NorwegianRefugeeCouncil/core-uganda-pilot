@@ -24,7 +24,6 @@ func (s *Server) PutCase(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	kase.Description = payload.Description
 	kase.Done = payload.Done
 	kase.ParentID = payload.ParentID
 	kase.TeamID = payload.TeamID
