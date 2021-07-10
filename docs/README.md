@@ -1,6 +1,6 @@
 ![nrc](https://user-images.githubusercontent.com/55964909/125176016-409c4e80-e19e-11eb-8ef1-8315dc6e3e34.jpg)
 
-# core
+# [Core](https://nrc-no.github.io/core/)
 A case management tool for the humanitarian sector - keep track of beneficiaries and services.
 
 - [ARCHITECTURE](./ARCHITECTURE.md): get to know the repo
