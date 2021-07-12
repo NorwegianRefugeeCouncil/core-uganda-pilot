@@ -2,11 +2,13 @@ package webapp
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/nrc-no/core/pkg/sessionmanager"
+	"github.com/nrc-no/core/pkg/validator"
 	"golang.org/x/sync/errgroup"
 	"net/http"
 )
@@ -75,33 +77,56 @@ func (h *Server) PostCaseType(
 		return
 	}
 
-	if isNew {
-		_, err := cmsClient.CaseTypes().Create(ctx, caseType)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+	// Validate form data
+	validation := caseType.Validate("POST")
+	if !validation.IsValid {
 		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
-			Message: fmt.Sprintf("Case type \"%s\" successfully created", caseType.Name),
-			Theme:   "success",
+			Message: "There was a problem with the data you provided, see errors below",
+			Theme:   "danger",
 		})
-		w.Header().Set("Location", "/settings/casetypes")
-		w.WriteHeader(http.StatusSeeOther)
-		return
-	} else {
-		_, err := cmsClient.CaseTypes().Update(ctx, caseType)
+		w.Header().Set("Location", "/settings/cases/new")
+		w.WriteHeader(http.StatusOK)
+
+		responseBytes, err := validation.Response()
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+			w.Write(responseBytes)
 		}
-		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
-			Message: fmt.Sprintf("Case type \"%s\" successfully updated", caseType.Name),
-			Theme:   "success",
-		})
-		w.Header().Set("Location", "/settings/casetypes")
-		w.WriteHeader(http.StatusSeeOther)
 		return
 	}
+
+	if isNew {
+		h.CreateCaseType(ctx, caseType, w, cmsClient)
+	} else {
+		h.UpdateCaseType(ctx, caseType, w, cmsClient)
+	}
+}
+
+func (h *Server) CreateCaseType(ctx context.Context, caseType *cms.CaseType, w http.ResponseWriter, cmsClient cms.Interface) {
+	_, err := cmsClient.CaseTypes().Create(ctx, caseType)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+		Message: fmt.Sprintf("Case type \"%s\" successfully created", caseType.Name),
+		Theme:   "success",
+	})
+	w.Header().Set("Location", "/settings/casetypes")
+	w.WriteHeader(http.StatusSeeOther)
+}
+
+func (h *Server) UpdateCaseType(ctx context.Context, caseType *cms.CaseType, w http.ResponseWriter, cmsClient cms.Interface) {
+	_, err := cmsClient.CaseTypes().Update(ctx, caseType)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+		Message: fmt.Sprintf("Case type \"%s\" successfully updated", caseType.Name),
+		Theme:   "success",
+	})
+	w.Header().Set("Location", "/settings/casetypes")
+	w.WriteHeader(http.StatusSeeOther)
 }
 
 func (h *Server) CaseType(w http.ResponseWriter, req *http.Request) {
@@ -169,6 +194,13 @@ func (h *Server) NewCaseType(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	iamClient := h.IAMClient(ctx)
 
+	validation := &validator.JSONValidationResponse{}
+	err := json.NewDecoder(req.Body).Decode(validation)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	p, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -184,6 +216,7 @@ func (h *Server) NewCaseType(w http.ResponseWriter, req *http.Request) {
 	if err := h.renderFactory.New(req).ExecuteTemplate(w, "casetype", map[string]interface{}{
 		"PartyTypes": p,
 		"Teams":      teamsData,
+		"Validation": validation,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
