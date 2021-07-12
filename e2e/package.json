@@ -3,7 +3,8 @@
     "run": "cypress run",
     "open": "cypress open",
     "lint": "eslint 'cypress/**/*.js' --max-warnings=0",
-    "lint:fix": "eslint 'cypress/**/*.js' --fix"
+    "lint:fix": "eslint 'cypress/**/*.js' --fix",
+    "prepare": "cd ../ && husky install ./e2e/.husky"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.14.7",
@@ -12,6 +13,7 @@
     "eslint": "^7.29.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
+    "husky": "^7.0.1",
     "prettier": "^2.3.2"
   }
 }
