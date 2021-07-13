@@ -193,12 +193,216 @@ var (
 		},
 	}
 
-	// Case Types
-	GenderViolence     = caseType("920ca64f-66d0-4f00-af05-d8a50ce354e6", "Gender Violence", iam.IndividualPartyType.ID, KampalaResponseTeam.ID, Legal)
-	Childcare          = caseType("039caa4e-1f93-40a9-a6ff-b5bf801dfd41", "Childcare", iam.IndividualPartyType.ID, NairobiICLATeam.ID, Legal)
-	HousingRights      = caseType("0d91d175-673a-4c10-bf87-3b940585e4ac", "Housing Rights", iam.IndividualPartyType.ID, KampalaICLATeam.ID, Legal)
-	FinancialAssistInd = caseType("785036d9-41ee-4413-987e-13d4af761737", "Financial Assistance", iam.IndividualPartyType.ID, KampalaResponseTeam.ID, Legal)
-	FinancialAssistHH  = caseType("52a24b6b-ad10-4297-b030-263bbdcd5420", "Rent Subsidy", iam.HouseholdPartyType.ID, NairobiResponseTeam.ID, Legal)
+	// Case Templates for Uganda
+	// - Kampala Response Team
+	UGSituationAnalysis = &cms.CaseTemplate{
+		FormElements: []cms.CaseTemplateFormElement{
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
+					ID:          "safeDiginifiedLife",
+					Description: "Probe for description",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "How are you addressing these challenges and barriers? What is standing in your way? Can you give me some examples of how you are dealing with these challenges?",
+					ID:          "challengesBarriers",
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "What are some solutions you see for this and how could we work together on these solutions? How could we work to reduce these challenges together?",
+					ID:          "solutions",
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "If we were to work together on this, what could we do together? What would make the most difference for you?",
+					ID:          "workTogether",
+					Description: "",
+					Placeholder: "",
+				},
+			},
+		},
+	}
+	UGIndividualAssessment = &cms.CaseTemplate{
+		FormElements: []cms.CaseTemplateFormElement{
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Which service has the individual requested as a starting point of support?",
+					ID:          "serviceStartingPoint",
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "What other services has the individual requested/identified?",
+					ID:          "otherServices",
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "What is the perceived priority response level of the individual",
+					ID:          "perceivedPriority",
+					Description: "",
+					Placeholder: "",
+				},
+			},
+		},
+	}
+	UGReferral = &cms.CaseTemplate{
+		FormElements: []cms.CaseTemplateFormElement{
+			{
+				Type: "textinput",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Date of Referral",
+					ID:          "dateOfReferral",
+					Description: "",
+				},
+			},
+			{
+				Type: "dropdown",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Urgency",
+					ID:          "urgency",
+					Description: "",
+					Options:     []string{"Very Urgent", "Urgent", "Not Urgent"},
+				},
+				Validation: cms.CaseTemplateFormElementValidation{
+					Required: true,
+				},
+			},
+			{
+				Type: "dropdown",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Type of Referral",
+					ID:          "typeOfReferral",
+					Description: "",
+					Options:     []string{"Internal", "External"},
+				},
+				Validation: cms.CaseTemplateFormElementValidation{
+					Required: true,
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Services/assistance requested",
+					ID:          "servicesRequested",
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Reason for referral",
+					ID:          "reasonForReferral",
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "checkbox",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Does the beneficiary have any restrictions to be referred?",
+					ID:          "referralRestrictions",
+					Description: "",
+					CheckboxOptions: []cms.CaseTemplateCheckboxOption{
+						{
+							Label: "Has restrictions?",
+						},
+					},
+				},
+				Validation: cms.CaseTemplateFormElementValidation{
+					Required: true,
+				},
+			},
+			{
+				Type: "dropdown",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Means of Referral",
+					ID:          "meansOfReferral",
+					Description: "",
+					Options:     []string{"Phone", "E-mail", "Personal meeting", "Other"},
+				},
+				Validation: cms.CaseTemplateFormElementValidation{
+					Required: true,
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Means and terms of receiving feedback from the client",
+					ID:          "meansOfFeedback",
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textinput",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Deadline for receiving feedback from the client",
+					ID:          "deadlineForFeedback",
+					Description: "",
+				},
+			},
+		},
+	}
+	UGExternalReferralFollowup = &cms.CaseTemplate{
+		FormElements: []cms.CaseTemplateFormElement{
+			{
+				Type: "checkbox",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Was the referral accepted by the other provider?",
+					ID:          "referralAccepted",
+					Description: "",
+					CheckboxOptions: []cms.CaseTemplateCheckboxOption{
+						{
+							Label: "Referral accepted",
+						},
+					},
+				},
+				Validation: cms.CaseTemplateFormElementValidation{
+					Required: true,
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Provide any pertinent details on service needs / requests.",
+					ID:          "pertinentDetails",
+					Description: "",
+					Placeholder: "",
+				},
+			},
+		},
+	}
+	// - Kampala ICLA Team
+
+	// Case Types for Uganda
+	// - Kampala Response Team
+	UGSituationalAnalysisCaseType = caseType("0ae90b08-6944-48dc-8f30-5cb325292a8c", "Situational Analysis (Kampala Response)", iam.IndividualPartyType.ID, KampalaResponseTeam.ID, UGSituationAnalysis)
+	UGIndividualAssessmentCaseType = caseType("2f909038-0ce4-437b-af17-72fc5d668b49", "Individual Assessment (Kampala Response)", iam.IndividualPartyType.ID, KampalaResponseTeam.ID, UGIndividualAssessment)
+	UGReferralCaseType = caseType("ecdaf47f-6fa9-48c8-9d10-6324bf932ed7", "Referral (Kampala Response)", iam.IndividualPartyType.ID, KampalaResponseTeam.ID, UGReferral)
+	UGExternalReferralFollowupCaseType = caseType("2a1b670c-6336-4364-b89d-0e65fc771659", "External Referral Followup (Kampala Response)", iam.IndividualPartyType.ID, KampalaResponseTeam.ID, UGExternalReferralFollowup)
+	// - Kampala ICLA Team
 
 	// Individuals
 	JohnDoe     = individual("c529d679-3bb6-4a20-8f06-c096f4d9adc1", "John", "Doe", "12/02/1978", "Refugee", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "No", "Yes", "Moderate", "No", "", "No", "", "Kenya", "Kiswahili, English", "English", "123 Main Street, Kampala", "0123456789", "", "Email", "No")
@@ -248,7 +452,7 @@ var (
 	LoanMembership      = membership("340d8740-b029-41ef-9db6-2bdf991c3ed3", Loan, NairobiICLATeam)
 
 	// Cases
-	DomesticAbuse    = kase("dba43642-8093-4685-a197-f8848d4cbaaa", GenderViolence.ID, Birdie.ID, MaryPoppins.ID, KampalaResponseTeam.ID, false)
-	MonthlyAllowance = kase("47499762-c189-4a74-9156-7969f899073b", FinancialAssistInd.ID, Birdie.ID, JohnDoe.ID, KampalaResponseTeam.ID, false)
-	ChildCare        = kase("8fb5f755-85eb-4d91-97a9-fdf86c01df25", Childcare.ID, Birdie.ID, BoDiddley.ID, KampalaResponseTeam.ID, true)
+	//DomesticAbuse    = kase("dba43642-8093-4685-a197-f8848d4cbaaa", GenderViolence.ID, Birdie.ID, MaryPoppins.ID, KampalaResponseTeam.ID, false)
+	//MonthlyAllowance = kase("47499762-c189-4a74-9156-7969f899073b", FinancialAssistInd.ID, Birdie.ID, JohnDoe.ID, KampalaResponseTeam.ID, false)
+	//ChildCare        = kase("8fb5f755-85eb-4d91-97a9-fdf86c01df25", Childcare.ID, Birdie.ID, BoDiddley.ID, KampalaResponseTeam.ID, true)
 )
