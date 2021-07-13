@@ -395,6 +395,243 @@ var (
 		},
 	}
 	// - Kampala ICLA Team
+	UGICLAIndividualIntake = &cms.CaseTemplate{
+		FormElements: []cms.CaseTemplateFormElement{
+			{
+				Type: "dropdown",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Modality of service delivery",
+					ID:          "modality",
+					Description: "",
+					Options:     []string{"ICLA Legal Aid Centre", "Mobile visit", "Home visit", "Transit Centre", "Hotline", "Other"},
+				},
+				Validation: cms.CaseTemplateFormElementValidation{
+					Required: true,
+				},
+			},
+			{
+				Type: "dropdown",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Living situation",
+					ID:          "livingSituation",
+					Description: "",
+					Options:     []string{"Lives alone", "Lives with family", "Hosted by relatives"},
+				},
+				Validation: cms.CaseTemplateFormElementValidation{
+					Required: true,
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Comment on living situation",
+					ID:          "commentLivingSituation",
+					Description: "Additional information, observations, concerns, etc.",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "dropdown",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "How did you learn about ICLA services?",
+					ID:          "iclaServiceDiscovery",
+					Description: "",
+					Options:     []string{"ICLA in-person information session", "ICLA social media campaign, activities, brochures", "ICLA text messages", "Another beneficiary/friend/relative", "Another organisation", "General social media", "NRC employee", "State authority", "Other"},
+				},
+				Validation: cms.CaseTemplateFormElementValidation{
+					Required: true,
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Vulnerability data",
+					ID:          "vulnerability",
+					Description: "As needed within a particular context and required for the case",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textinput",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Full name of representative",
+					ID:          "representativeName",
+					Description: "Lawyer or other person",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Other personal information",
+					ID:          "otherInformation",
+					Description: "Other personal data as needed to identify the representative within the particular context",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textinput",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Reason for representative",
+					ID:          "representativeReason",
+					Description: "",
+				},
+			},
+			{
+				Type: "checkbox",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Is the guardianship legal as per national legislation?",
+					ID:          "guardianshipIsLegal",
+					Description: "If 'yes', attach/upload the legal assessment. If 'no', request or assist in identifying an appropriate legal guardian to represent beneficiary",
+					CheckboxOptions: []cms.CaseTemplateCheckboxOption{
+						{
+							Label: "Guardianship is legal",
+						},
+					},
+				},
+				Validation: cms.CaseTemplateFormElementValidation{
+					Required: true,
+				},
+			},
+			{
+				Type: "checkbox",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Does the beneficiary have the legal capacity to consent?",
+					ID:          "capacityToConsent",
+					Description: "",
+					CheckboxOptions: []cms.CaseTemplateCheckboxOption{
+						{
+							Label: "Beneficiary has legal capacity to consent",
+						},
+					},
+				},
+				Validation: cms.CaseTemplateFormElementValidation{
+					Required: true,
+				},
+			},
+		},
+	}
+	UGICLACaseAssessment = &cms.CaseTemplate{
+		FormElements: []cms.CaseTemplateFormElement{
+			{
+				Type: "dropdown",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Type of service",
+					ID:          "serviceType",
+					Description: "",
+					Options:     []string{"Legal counselling", "Legal assistance"},
+				},
+				Validation: cms.CaseTemplateFormElementValidation{
+					Required: true,
+				},
+			},
+			{
+				Type: "textinput",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Thematic area",
+					ID:          "thematicArea",
+					Description: "Applicable Thematic Area related to the problem",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Fact and details of the problem",
+					ID:          "details",
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "checkbox",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Other parties involved",
+					ID:          "otherPartiesInvolved",
+					Description: "Are there any other parties involved in the case",
+					CheckboxOptions: []cms.CaseTemplateCheckboxOption{
+						{
+							Label: "Landlord",
+						},
+						{
+							Label: "Lawyer",
+						},
+						{
+							Label: "Relative",
+						},
+						{
+							Label: "Other",
+						},
+					},
+				},
+				Validation: cms.CaseTemplateFormElementValidation{
+					Required: true,
+				},
+			},
+			{
+				Type: "checkbox",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Previous/existing lawyer working on the case",
+					ID:          "previousOrExistingLawyer",
+					Description: "Does the client have a previous or existing lawyer working on his/her case?",
+					CheckboxOptions: []cms.CaseTemplateCheckboxOption{
+						{
+							Label: "Previous lawyer",
+						},
+						{
+							Label: "Existing lawyer",
+						},
+					},
+				},
+				Validation: cms.CaseTemplateFormElementValidation{
+					Required: true,
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Previous or existing lawyer details",
+					ID:          "previousOrExistingLawyerDetails",
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "What actions have been taken to solve the problem, if any?",
+					ID:          "actionsTaken",
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Related to this problem, are there any cases pending before a court or administrative body?",
+					ID:          "pendingCourtCases",
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "If there are cases pending before a court or administrative body, are there any deadlines that need to be met?",
+					ID:          "pendingCourtCaseDeadlines",
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Is there any conflict of interest involved?",
+					ID:          "conflictOfInterest",
+					Description: "",
+					Placeholder: "",
+				},
+			},
+		},
+	}
 
 	// Case Types for Uganda
 	// - Kampala Response Team
@@ -403,6 +640,8 @@ var (
 	UGReferralCaseType = caseType("ecdaf47f-6fa9-48c8-9d10-6324bf932ed7", "Referral (Kampala Response)", iam.IndividualPartyType.ID, KampalaResponseTeam.ID, UGReferral)
 	UGExternalReferralFollowupCaseType = caseType("2a1b670c-6336-4364-b89d-0e65fc771659", "External Referral Followup (Kampala Response)", iam.IndividualPartyType.ID, KampalaResponseTeam.ID, UGExternalReferralFollowup)
 	// - Kampala ICLA Team
+	UGICLAIndividualIntakeCaseType = caseType("31fb6d03-2374-4bea-9374-48fc10500f81","ICLA Individual Intake (Kampala ICLA)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLAIndividualIntake)
+	UGICLACaseAssessmentCaseType = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (Kampala ICLA)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLACaseAssessment)
 
 	// Individuals
 	JohnDoe     = individual("c529d679-3bb6-4a20-8f06-c096f4d9adc1", "John", "Doe", "12/02/1978", "Refugee", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "No", "Yes", "Moderate", "No", "", "No", "", "Kenya", "Kiswahili, English", "English", "123 Main Street, Kampala", "0123456789", "", "Email", "No")
