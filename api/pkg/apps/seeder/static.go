@@ -27,7 +27,33 @@ func team(id, name string) iam.Team {
 	return t
 }
 
-func individual(id, firstName, lastName string) iam.Individual {
+func individual(
+	id string,
+	firstName string,
+	lastName string,
+	birthDate string,
+	displacementStatus string,
+	gender string,
+	consent string,
+	consentProof string,
+	anonymous string,
+	minor string,
+	protectionConcerns string,
+	physicalImpairment string,
+	physicalImpairmentIntensity string,
+	sensoryImpairment string,
+	sensoryImpairmentIntensity string,
+	mentalImpairment string,
+	mentalImpairmentIntensity string,
+	nationality string,
+	spokenLanguages string,
+	preferredLanguage string,
+	physicalAddress string,
+	primaryPhoneNumber string,
+	secondaryPhoneNumber string,
+	preferredMeansOfContact string,
+	requireAnInterpreter string,
+	) iam.Individual {
 	var i = iam.Individual{
 		Party: &iam.Party{
 			ID: id,
@@ -38,6 +64,28 @@ func individual(id, firstName, lastName string) iam.Individual {
 				iam.FirstNameAttribute.ID: {firstName},
 				iam.LastNameAttribute.ID:  {lastName},
 				iam.EMailAttribute.ID:     {strings.ToLower(firstName) + "." + strings.ToLower(lastName) + "@email.com"},
+				iam.BirthDateAttribute.ID: {birthDate},
+				iam.DisplacementStatusAttribute.ID: {displacementStatus},
+				iam.GenderAttribute.ID: {gender},
+				iam.ConsentToNrcDataUseAttribute.ID: {consent},
+				iam.ConsentToNrcDataUseProofAttribute.ID: {consentProof},
+				iam.AnonymousAttribute.ID: {anonymous},
+				iam.MinorAttribute.ID: {minor},
+				iam.ProtectionConcernsAttribute.ID: {protectionConcerns},
+				iam.PhysicalImpairmentAttribute.ID: {physicalImpairment},
+				iam.PhysicalImpairmentIntensityAttribute.ID: {physicalImpairmentIntensity},
+				iam.SensoryImpairmentAttribute.ID: {sensoryImpairment},
+				iam.SensoryImpairmentIntensityAttribute.ID: {sensoryImpairmentIntensity},
+				iam.MentalImpairmentAttribute.ID: {mentalImpairment},
+				iam.MentalImpairmentIntensityAttribute.ID: {mentalImpairmentIntensity},
+				iam.NationalityAttribute.ID: {nationality},
+				iam.SpokenLanguagesAttribute.ID: {spokenLanguages},
+				iam.PreferredLanguageAttribute.ID: {preferredLanguage},
+				iam.PhysicalAddressAttribute.ID: {physicalAddress},
+				iam.PrimaryPhoneNumberAttribute.ID: {primaryPhoneNumber},
+				iam.SecondaryPhoneNumberAttribute.ID: {secondaryPhoneNumber},
+				iam.PreferredMeansOfContactAttribute.ID: {preferredMeansOfContact},
+				iam.RequireAnInterpreterAttribute.ID: {requireAnInterpreter},
 			},
 		},
 	}
@@ -153,33 +201,33 @@ var (
 	FinancialAssistHH  = caseType("52a24b6b-ad10-4297-b030-263bbdcd5420", "Rent Subsidy", iam.HouseholdPartyType.ID, NairobiResponseTeam.ID, Legal)
 
 	// Individuals
-	JohnDoe     = individual("c529d679-3bb6-4a20-8f06-c096f4d9adc1", "John", "Doe")
-	MaryPoppins = individual("bbf539fd-ebaa-4438-ae4f-8aca8b327f42", "Mary", "Poppins")
-	BoDiddley   = individual("26335292-c839-48b6-8ad5-81271ee51e7b", "Bo", "Diddley")
-	Howell      = staff(individual("066a0268-fdc6-495a-9e4b-d60cfae2d81a", "Howell", "Jorg"))
-	Birdie      = staff(individual("ac9015ac-686f-4719-9c3d-bf3d1cae00ea", "Birdie", "Tifawt"))
-	Charis      = staff(individual("ce7ae69c-9f6a-413b-96bf-5808d0da92cd", "Charis", "Timothy"))
-	Danyial     = staff(individual("8da05c97-12c2-4b43-b022-dc79be7dc3a0", "Danyial", "Hrodebert"))
-	Devi        = staff(individual("6414895a-ce60-4647-b491-baeb54a76f26", "Devi", "Malvina"))
-	Levan       = staff(individual("5d4c4302-ad8e-45ab-bd4c-e1ac25ae972e", "Levan", "Elija"))
-	Lisbeth     = staff(individual("a5d4dab0-90d3-474d-afe6-46d04ca3caba", "Lisbeth", "Furkan"))
-	Liadan      = staff(individual("c9ce906d-87ba-4123-bb74-7a73664e6778", "Liadan", "Jordaan"))
-	Muhammad    = staff(individual("818206ea-0b5e-4ed9-b47e-db31566d10c0", "Muhammad", "Annemarie"))
-	Dardanos    = staff(individual("7921756a-8759-4589-8a83-ad98f8aa22c7", "Dardanos", "Rilla"))
-	Jana        = staff(individual("c7ca3a4d-0e96-4e5c-8c32-6750d0312706", "Jana", "Nurul"))
-	Simeon      = staff(individual("78663ffb-dbaa-4362-83b6-7319d6469caa", "Simeon", "Tumelo"))
-	Sayen       = staff(individual("29a20d76-dd37-471f-b9ec-9ab08f61d1ed", "Sayen", "Gezabele"))
-	Veniaminu   = staff(individual("051a46b2-1ef4-4c86-bd2f-9306daedec7e", "Veniaminu", "Ye-Jun"))
-	Loan        = staff(individual("f2a5d586-6865-40ea-a3db-7c729516b32b", "Loan", "Daniel"))
-	Reece       = staff(individual("bdeb7e66-9129-467e-abc0-51ab2df7f222", "Reece", "Hyakinthos"))
-	Svetlana    = staff(individual("afdd8b5c-b9b4-41e1-a015-7e0beb33f10b", "Svetlana", "Cerdic"))
-	Kyleigh     = staff(individual("12d6a293-d923-47c6-9bc1-441934bb79c5", "Kyleigh", "Jayma"))
-	Hermina     = staff(individual("dafee423-49c0-4fbf-b2f9-a42276c0cfce", "Hermina", "Magnus"))
-	Leela       = staff(individual("65410229-ad41-4c17-88f2-13e9a56a0fe8", "Leela", "Cynebald"))
-	Jovan       = staff(individual("bf22e83b-cfef-4c8a-b74e-f0cef6b27147", "Jovan", "Lynette"))
-	Bor         = staff(individual("e350e394-091f-469c-a217-488b27b113a3", "Bor", "Lora"))
-	Aldwin      = staff(individual("fdb6a682-8eb6-4565-879b-835a76384fe0", "Aldwin", "Colin"))
-	Trophimos   = staff(individual("bb800fe3-85a7-4c90-b8f2-cd0354825f56", "Trophimos", "Wiebke"))
+	JohnDoe     = individual("c529d679-3bb6-4a20-8f06-c096f4d9adc1", "John", "Doe", "12/02/1978", "Refugee", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "No", "Yes", "Moderate", "No", "", "No", "", "Kenya", "Kiswahili, English", "English", "123 Main Street, Kampala", "0123456789", "", "Email", "No")
+	MaryPoppins = individual("bbf539fd-ebaa-4438-ae4f-8aca8b327f42", "Mary", "Poppins", "12/02/1978", "Internally Displaced Person", "Female", "Yes", "https://link-to-consent.proof", "No", "No", "No", "No", "", "No", "", "No", "", "Uganda", "Rukiga, English", "Rukiga", "901 First Avenue, Kampala", "0123456789", "", "Telegram", "Yes")
+	BoDiddley   = individual("26335292-c839-48b6-8ad5-81271ee51e7b", "Bo", "Diddley", "12/02/1978", "Host Community", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "Yes", "No", "", "No", "", "No", "", "Somalia", "Somali, Arabic, English", "English", "101 Main Street, Kampala", "0123456789", "", "Whatsapp", "No")
+	Howell      = staff(individual("066a0268-fdc6-495a-9e4b-d60cfae2d81a", "Howell", "Jorg", "12/02/1978", "Refugee", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Birdie      = staff(individual("ac9015ac-686f-4719-9c3d-bf3d1cae00ea", "Birdie", "Tifawt", "12/02/1978", "Refugee", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Charis      = staff(individual("ce7ae69c-9f6a-413b-96bf-5808d0da92cd", "Charis", "Timothy", "12/02/1978", "Refugee", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Danyial     = staff(individual("8da05c97-12c2-4b43-b022-dc79be7dc3a0", "Danyial", "Hrodebert", "12/02/1978", "Refugee", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Devi        = staff(individual("6414895a-ce60-4647-b491-baeb54a76f26", "Devi", "Malvina", "12/02/1978", "Refugee", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Levan       = staff(individual("5d4c4302-ad8e-45ab-bd4c-e1ac25ae972e", "Levan", "Elija", "12/02/1978", "Refugee", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Lisbeth     = staff(individual("a5d4dab0-90d3-474d-afe6-46d04ca3caba", "Lisbeth", "Furkan", "12/02/1978", "Refugee", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Liadan      = staff(individual("c9ce906d-87ba-4123-bb74-7a73664e6778", "Liadan", "Jordaan", "12/02/1978", "Refugee", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Muhammad    = staff(individual("818206ea-0b5e-4ed9-b47e-db31566d10c0", "Muhammad", "Annemarie", "12/02/1978", "Refugee", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Dardanos    = staff(individual("7921756a-8759-4589-8a83-ad98f8aa22c7", "Dardanos", "Rilla", "12/02/1978", "Refugee", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Jana        = staff(individual("c7ca3a4d-0e96-4e5c-8c32-6750d0312706", "Jana", "Nurul", "12/02/1978", "Refugee", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Simeon      = staff(individual("78663ffb-dbaa-4362-83b6-7319d6469caa", "Simeon", "Tumelo", "12/02/1978", "Refugee", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Sayen       = staff(individual("29a20d76-dd37-471f-b9ec-9ab08f61d1ed", "Sayen", "Gezabele", "12/02/1978", "Refugee", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Veniaminu   = staff(individual("051a46b2-1ef4-4c86-bd2f-9306daedec7e", "Veniaminu", "Ye-Jun", "12/02/1978", "Refugee", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Loan        = staff(individual("f2a5d586-6865-40ea-a3db-7c729516b32b", "Loan", "Daniel", "12/02/1978", "Refugee", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Reece       = staff(individual("bdeb7e66-9129-467e-abc0-51ab2df7f222", "Reece", "Hyakinthos", "12/02/1978", "Refugee", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Svetlana    = staff(individual("afdd8b5c-b9b4-41e1-a015-7e0beb33f10b", "Svetlana", "Cerdic", "12/02/1978", "Refugee", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Kyleigh     = staff(individual("12d6a293-d923-47c6-9bc1-441934bb79c5", "Kyleigh", "Jayma", "12/02/1978", "Refugee", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Hermina     = staff(individual("dafee423-49c0-4fbf-b2f9-a42276c0cfce", "Hermina", "Magnus", "12/02/1978", "Refugee", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Leela       = staff(individual("65410229-ad41-4c17-88f2-13e9a56a0fe8", "Leela", "Cynebald", "12/02/1978", "Refugee", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Jovan       = staff(individual("bf22e83b-cfef-4c8a-b74e-f0cef6b27147", "Jovan", "Lynette", "12/02/1978", "Refugee", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Bor         = staff(individual("e350e394-091f-469c-a217-488b27b113a3", "Bor", "Lora", "12/02/1978", "Refugee", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Aldwin      = staff(individual("fdb6a682-8eb6-4565-879b-835a76384fe0", "Aldwin", "Colin", "12/02/1978", "Refugee", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Trophimos   = staff(individual("bb800fe3-85a7-4c90-b8f2-cd0354825f56", "Trophimos", "Wiebke", "12/02/1978", "Refugee", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
 
 	// Memberships
 	HowellMembership    = membership("862690ee-87f0-4f95-aa1e-8f8a2f2fd54a", Howell, KampalaResponseTeam)
