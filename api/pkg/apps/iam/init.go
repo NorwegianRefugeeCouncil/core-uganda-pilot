@@ -64,11 +64,38 @@ func (s *Server) initRelationshipType(ctx context.Context) error {
 
 func (s *Server) initAttribute(ctx context.Context) error {
 	for _, attribute := range []Attribute{
+		// "Built-in" Attributes
 		FirstNameAttribute,
 		LastNameAttribute,
 		BirthDateAttribute,
 		EMailAttribute,
 		TeamNameAttribute,
+
+		// Customisation for Uganda Demo
+
+		// Individual Attributes
+		DisplacementStatusAttribute,
+		GenderAttribute,
+		ConsentToNrcDataUseAttribute,
+		ConsentToNrcDataUseProofAttribute,
+		AnonymousAttribute,
+		MinorAttribute,
+		ProtectionConcernsAttribute,
+		PhysicalImpairmentAttribute,
+		PhysicalImpairmentIntensityAttribute,
+		SensoryImpairmentAttribute,
+		SensoryImpairmentIntensityAttribute,
+		MentalImpairmentAttribute,
+		MentalImpairmentIntensityAttribute,
+		NationalityAttribute,
+		SpokenLanguagesAttribute,
+		PreferredLanguageAttribute,
+		PhysicalAddressAttribute,
+		PrimaryPhoneNumberAttribute,
+		SecondaryPhoneNumberAttribute,
+		PreferredMeansOfContactAttribute,
+		RequireAnInterpreterAttribute,
+		// -- End of Individual Attributes
 	} {
 		if err := s.attributeStore.create(ctx, &attribute); err != nil {
 			if !mongo.IsDuplicateKeyError(err) {
