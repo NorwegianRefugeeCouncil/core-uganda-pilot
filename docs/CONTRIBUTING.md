@@ -1,4 +1,4 @@
-First of all make sure you've [setup your development environment](README.md#getting-started) properly :)
+First of all make sure you've [setup your development environment](README.md) properly :)
 
 # Issues and pull requests
 
