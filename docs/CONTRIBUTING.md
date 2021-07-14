@@ -4,4 +4,4 @@ First of all make sure you've [setup your development environment](README.MD#get
 
 _Everything_ goes through PRs, no commits to main!
 
-When starting on an issue, create a branch from `main` and give it a descriptive name starting with the issue number. ie `COR-455 Fix broken everything`
+When starting on an issue, create a branch from `main` and give it a descriptive name starting with the issue number. ie `COR-455-Fix_everything`
