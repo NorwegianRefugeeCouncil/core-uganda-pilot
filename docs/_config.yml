@@ -1,6 +1,7 @@
 domain: nrc-no.github.io
 url: https://nrc-no.github.io
 baseUrl: /core/
+markdown: GFM
 include:
   README.md
   CONTRIBUTING.md
