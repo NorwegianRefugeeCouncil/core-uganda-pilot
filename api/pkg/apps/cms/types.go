@@ -2,7 +2,9 @@ package cms
 
 import (
 	"encoding/json"
+	"github.com/nrc-no/core/pkg/validator"
 	"net/url"
+	"strings"
 	"time"
 )
 
@@ -61,6 +63,25 @@ func (c *CaseType) UnmarshalFormData(values url.Values) error {
 		return err
 	}
 	return nil
+}
+
+var CaseTypePostValidation = validator.ValidationRules{
+	"name":        {validator.Text, true},
+	"partyTypeId": {validator.UUID, true},
+	"teamId":      {validator.UUID, true},
+	"template":    {validator.JSONTemplate, true},
+}
+
+var CaseTypePutValidation = CaseTypePostValidation
+
+func (c *CaseType) Validate(method string) *validator.Validate {
+	validate := validator.New(&c)
+	if strings.ToLower(method) == "post" {
+		validate.Validate(CaseTypePostValidation)
+	} else if strings.ToLower(method) == "put" {
+		validate.Validate(CaseTypePutValidation)
+	}
+	return validate
 }
 
 func (c *CaseType) Pretty() string {
