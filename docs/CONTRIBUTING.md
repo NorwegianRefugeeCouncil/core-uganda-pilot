@@ -1,4 +1,10 @@
-First of all make sure you've [setup your development environment](README.md) properly :)
+---
+layout: page
+title: "Contributing"
+permalink: /contributing/
+---
+
+First make sure you've [setup your development environment](README.md) properly :)
 
 # Issues and pull requests
 

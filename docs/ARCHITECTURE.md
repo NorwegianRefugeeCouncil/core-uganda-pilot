@@ -1,3 +1,8 @@
+---
+layout: page
+title: "Architecture"
+permalink: /architecture/
+---
 Core is written in go and uses server-side rendering via [go templates](https://golang.org/pkg/text/template/).
 
 
