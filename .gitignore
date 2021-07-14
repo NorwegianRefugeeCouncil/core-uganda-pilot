@@ -7,4 +7,4 @@ api/certs/cert.pem
 api/certs/key.pem
 */coverage.out
 api/.idea
-_site
+/docs/_site/
