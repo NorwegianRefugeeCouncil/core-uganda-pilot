@@ -42,7 +42,7 @@ or
 
 ### 5. Endpoints:
  - webapp: [https://localhost:9000](http://localhost:9000)
- - mongo dashboard: [https://localhost:8090](http://localhost:8090)
+ - mongo dashboard: [http://localhost:8090](http://localhost:8090)
  
  
 ## Running tests
