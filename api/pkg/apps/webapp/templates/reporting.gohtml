@@ -1,0 +1,47 @@
+{{define "reporting"}}
+    <!doctype html>
+    <html lang="en">
+    {{template "head"}}
+
+    <style>
+    .attribute {
+        transition: all ease-in-out 0.2s;
+    }
+
+    .attribute:hover {
+        box-shadow: 0 .125rem .25rem rgba(11, 94, 215, 0.2) !important;
+        border-color: rgba(13, 110, 253, 1);
+    }
+    </style>
+
+    <body class="bg-light">
+
+    {{template "navbar"}}
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+                <div id="wdr-component"></div>
+            </div>
+        </div>
+    </div>
+
+    <link href="https://cdn.webdatarocks.com/latest/webdatarocks.min.css" rel="stylesheet"/>
+    <script src="https://cdn.webdatarocks.com/latest/webdatarocks.toolbar.min.js"></script>
+    <script src="https://cdn.webdatarocks.com/latest/webdatarocks.js"></script>
+
+    <script>
+      var pivot = new WebDataRocks({
+        container: "#wdr-component",
+        toolbar: true,
+        report: {
+          dataSource: {
+            filename: "https://cdn.webdatarocks.com/data/data.csv"
+          }
+        }
+      });
+    </script>
+
+    </body>
+    </html>
+{{end}}

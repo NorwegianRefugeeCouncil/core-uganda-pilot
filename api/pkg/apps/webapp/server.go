@@ -123,6 +123,7 @@ func NewServer(options *ServerOptions) (*Server, error) {
 	router.Path("/settings/authclients/{id}/delete").HandlerFunc(h.DeleteAuthClient)
 	router.Path("/comments").Methods("POST").HandlerFunc(h.PostComment)
 	router.Path("/relationships/pickparty").HandlerFunc(h.PickRelationshipParty)
+	router.Path("/reporting").HandlerFunc(h.Reporting)
 
 	h.router = router
 
