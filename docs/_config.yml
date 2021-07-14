@@ -4,6 +4,5 @@ baseUrl: /core/
 markdown: GFM
 include:
   README.md
-  CONTRIBUTING.md
   ARCHITECTURE.md
-
+  CONTRIBUTING.md
