@@ -4,19 +4,19 @@ import (
 	"net/http"
 )
 
-func (s *Server) GetIndividual(w http.ResponseWriter, req *http.Request) {
+func (s *Server) getIndividual(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	var id string
 
-	if !s.GetPathParam("id", w, req, &id) {
+	if !s.getPathParam("id", w, req, &id) {
 		return
 	}
 
-	b, err := s.IndividualStore.Get(ctx, id)
+	b, err := s.individualStore.get(ctx, id)
 	if err != nil {
-		s.Error(w, err)
+		s.error(w, err)
 		return
 	}
 
-	s.JSON(w, http.StatusOK, b)
+	s.json(w, http.StatusOK, b)
 }

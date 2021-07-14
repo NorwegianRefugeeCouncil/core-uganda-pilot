@@ -4,24 +4,24 @@ import (
 	"net/http"
 )
 
-func (s *Server) PutAttribute(w http.ResponseWriter, req *http.Request) {
+func (s *Server) putAttribute(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 	var id string
 
-	if !s.GetPathParam("id", w, req, &id) {
+	if !s.getPathParam("id", w, req, &id) {
 		return
 	}
 
 	var payload Attribute
-	if err := s.Bind(req, &payload); err != nil {
-		s.Error(w, err)
+	if err := s.bind(req, &payload); err != nil {
+		s.error(w, err)
 		return
 	}
 
-	attribute, err := s.AttributeStore.Get(ctx, id)
+	attribute, err := s.attributeStore.get(ctx, id)
 	if err != nil {
-		s.Error(w, err)
+		s.error(w, err)
 		return
 	}
 
@@ -30,11 +30,11 @@ func (s *Server) PutAttribute(w http.ResponseWriter, req *http.Request) {
 	attribute.PartyTypeIDs = payload.PartyTypeIDs
 	attribute.IsPersonallyIdentifiableInfo = payload.IsPersonallyIdentifiableInfo
 
-	if err := s.AttributeStore.Update(ctx, attribute); err != nil {
-		s.Error(w, err)
+	if err := s.attributeStore.update(ctx, attribute); err != nil {
+		s.error(w, err)
 		return
 	}
 
-	s.JSON(w, http.StatusOK, payload)
+	s.json(w, http.StatusOK, payload)
 
 }

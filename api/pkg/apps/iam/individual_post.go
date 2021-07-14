@@ -5,16 +5,18 @@ import (
 	"net/http"
 )
 
-func (s *Server) PostIndividual(w http.ResponseWriter, req *http.Request) {
+func (s *Server) postIndividual(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	var individual Individual
-	if err := s.Bind(req, &individual); err != nil {
-		s.Error(w, err)
+	if err := s.bind(req, &individual); err != nil {
+		s.error(w, err)
 		return
 	}
 
-	individual.ID = uuid.NewV4().String()
+	if individual.ID == "" {
+		individual.ID = uuid.NewV4().String()
+	}
 
 	attrs := map[string][]string{}
 	for key, values := range individual.Attributes {
@@ -31,10 +33,10 @@ func (s *Server) PostIndividual(w http.ResponseWriter, req *http.Request) {
 
 	individual.Attributes = attrs
 
-	if err := s.IndividualStore.Create(ctx, &individual); err != nil {
-		s.Error(w, err)
+	if err := s.individualStore.create(ctx, &individual); err != nil {
+		s.error(w, err)
 		return
 	}
 
-	s.JSON(w, http.StatusOK, individual)
+	s.json(w, http.StatusOK, individual)
 }

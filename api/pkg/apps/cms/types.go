@@ -7,21 +7,19 @@ import (
 )
 
 type Case struct {
-	ID          string        `json:"id" bson:"id"`
-	CaseTypeID  string        `json:"caseTypeId" bson:"caseTypeId"`
-	PartyID     string        `json:"partyId" bson:"partyId"`
-	Description string        `json:"description" bson:"description"`
-	Done        bool          `json:"done" bson:"done"`
-	ParentID    string        `json:"parentId" bson:"parentId"`
-	TeamID      string        `json:"teamId" bson:"teamId"`
-	CreatorID   string        `json:"creatorId" bson:"creatorId"`
-	FormData    *CaseTemplate `json:"formData" bson:"formData"`
+	ID         string        `json:"id" bson:"id"`
+	CaseTypeID string        `json:"caseTypeId" bson:"caseTypeId"`
+	PartyID    string        `json:"partyId" bson:"partyId"`
+	Done       bool          `json:"done" bson:"done"`
+	ParentID   string        `json:"parentId" bson:"parentId"`
+	TeamID     string        `json:"teamId" bson:"teamId"`
+	CreatorID  string        `json:"creatorId" bson:"creatorId"`
+	FormData   *CaseTemplate `json:"formData" bson:"formData"`
 }
 
 func (c *Case) UnmarshalFormData(values url.Values, caseTemplate *CaseTemplate) error {
 	c.CaseTypeID = values.Get("caseTypeId")
 	c.PartyID = values.Get("partyId")
-	c.Description = values.Get("description")
 	c.Done = values.Get("done") == "on"
 	c.ParentID = values.Get("parentId")
 	c.TeamID = values.Get("teamId")
@@ -108,8 +106,17 @@ type CaseTemplate struct {
 	FormElements []CaseTemplateFormElement `json:"formElements" bson:"formElements"`
 }
 
+type FormElementType string
+
+const (
+	Dropdown  FormElementType = "dropdown"
+	Textarea  FormElementType = "textarea"
+	TextInput FormElementType = "textinput"
+	Checkbox  FormElementType = "checkbox"
+)
+
 type CaseTemplateFormElement struct {
-	Type       string                            `json:"type" bson:"type"`
+	Type       FormElementType                   `json:"type" bson:"type"`
 	Attributes CaseTemplateFormElementAttribute  `json:"attributes" bson:"attributes"`
 	Validation CaseTemplateFormElementValidation `json:"validation" bson:"validation"`
 }

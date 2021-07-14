@@ -4,20 +4,20 @@ import (
 	"net/http"
 )
 
-func (s *Server) ListIndividuals(w http.ResponseWriter, req *http.Request) {
+func (s *Server) listIndividuals(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	listOptions := &IndividualListOptions{}
 	if err := listOptions.UnmarshalQueryParameters(req.URL.Query()); err != nil {
-		s.Error(w, err)
+		s.error(w, err)
 		return
 	}
 
-	list, err := s.IndividualStore.List(ctx, *listOptions)
+	list, err := s.individualStore.list(ctx, *listOptions)
 	if err != nil {
-		s.Error(w, err)
+		s.error(w, err)
 		return
 	}
 
-	s.JSON(w, http.StatusOK, list)
+	s.json(w, http.StatusOK, list)
 }

@@ -16,42 +16,42 @@ import (
 type Server struct {
 	environment           string
 	router                *mux.Router
-	AttributeStore        *AttributeStore
-	PartyStore            *PartyStore
-	PartyTypeStore        *PartyTypeStore
-	RelationshipStore     *RelationshipStore
-	RelationshipTypeStore *RelationshipTypeStore
-	IndividualStore       *IndividualStore
-	TeamStore             *TeamStore
-	MembershipStore       *MembershipStore
-	HydraAdmin            admin.ClientService
+	attributeStore        *AttributeStore
+	partyStore            *PartyStore
+	partyTypeStore        *PartyTypeStore
+	relationshipStore     *RelationshipStore
+	relationshipTypeStore *RelationshipTypeStore
+	individualStore       *IndividualStore
+	teamStore             *TeamStore
+	membershipStore       *MembershipStore
+	hydraAdmin            admin.ClientService
 	mongoClient           *mongo.Client
-	HydraHTTPClient       *http.Client
+	hydraHTTPClient       *http.Client
 }
 
 func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, error) {
 
-	relationshipStore, err := NewRelationshipStore(ctx, o.MongoClient, o.MongoDatabase)
+	relationshipStore, err := newRelationshipStore(ctx, o.MongoClient, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	partyStore, err := NewPartyStore(ctx, o.MongoClient, o.MongoDatabase)
+	partyStore, err := newPartyStore(ctx, o.MongoClient, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	attributeStore, err := NewAttributeStore(ctx, o.MongoClient, o.MongoDatabase)
+	attributeStore, err := newAttributeStore(ctx, o.MongoClient, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	partyTypeStore, err := NewPartyTypeStore(ctx, o.MongoClient, o.MongoDatabase)
+	partyTypeStore, err := newPartyTypeStore(ctx, o.MongoClient, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	relationshipTypeStore, err := NewRelationshipTypeStore(ctx, o.MongoClient, o.MongoDatabase)
+	relationshipTypeStore, err := newRelationshipTypeStore(ctx, o.MongoClient, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
@@ -64,61 +64,61 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	srv := &Server{
 		environment:           o.Environment,
 		mongoClient:           o.MongoClient,
-		AttributeStore:        attributeStore,
-		PartyStore:            partyStore,
-		PartyTypeStore:        partyTypeStore,
-		RelationshipStore:     relationshipStore,
-		RelationshipTypeStore: relationshipTypeStore,
-		IndividualStore:       NewIndividualStore(o.MongoClient, o.MongoDatabase),
-		TeamStore:             NewTeamStore(partyStore),
-		MembershipStore:       NewMembershipStore(relationshipStore),
-		HydraAdmin:            hydraAdmin,
-		HydraHTTPClient:       o.HydraHTTPClient,
+		attributeStore:        attributeStore,
+		partyStore:            partyStore,
+		partyTypeStore:        partyTypeStore,
+		relationshipStore:     relationshipStore,
+		relationshipTypeStore: relationshipTypeStore,
+		individualStore:       NewIndividualStore(o.MongoClient, o.MongoDatabase),
+		teamStore:             NewTeamStore(partyStore),
+		membershipStore:       NewMembershipStore(relationshipStore),
+		hydraAdmin:            hydraAdmin,
+		hydraHTTPClient:       o.HydraHTTPClient,
 	}
 
 	router := mux.NewRouter()
-	router.Use(srv.WithAuth())
+	router.Use(srv.withAuth())
 
-	router.Path(server.AttributesEndpoint).Methods("GET").HandlerFunc(srv.ListAttributes)
-	router.Path(server.AttributesEndpoint).Methods("POST").HandlerFunc(srv.PostAttribute)
-	router.Path(path.Join(server.AttributesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.GetAttribute)
-	router.Path(path.Join(server.AttributesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.PutAttribute)
+	router.Path(server.AttributesEndpoint).Methods("GET").HandlerFunc(srv.listAttributes)
+	router.Path(server.AttributesEndpoint).Methods("POST").HandlerFunc(srv.postAttributes)
+	router.Path(path.Join(server.AttributesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getAttribute)
+	router.Path(path.Join(server.AttributesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putAttribute)
 
-	router.Path(server.IndividualsEndpoint).Methods("GET").HandlerFunc(srv.ListIndividuals)
-	router.Path(server.IndividualsEndpoint).Methods("POST").HandlerFunc(srv.PostIndividual)
-	router.Path(path.Join(server.IndividualsEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.GetIndividual)
-	router.Path(path.Join(server.IndividualsEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.PutIndividual)
+	router.Path(server.IndividualsEndpoint).Methods("GET").HandlerFunc(srv.listIndividuals)
+	router.Path(server.IndividualsEndpoint).Methods("POST").HandlerFunc(srv.postIndividual)
+	router.Path(path.Join(server.IndividualsEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getIndividual)
+	router.Path(path.Join(server.IndividualsEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putIndividual)
 
-	router.Path(server.MembershipsEndpoint).Methods("GET").HandlerFunc(srv.ListMemberships)
-	router.Path(server.MembershipsEndpoint).Methods("POST").HandlerFunc(srv.PostMembership)
-	router.Path(path.Join(server.MembershipsEndpoint, "{v1}")).Methods("GET").HandlerFunc(srv.GetMembership)
+	router.Path(server.MembershipsEndpoint).Methods("GET").HandlerFunc(srv.listMemberships)
+	router.Path(server.MembershipsEndpoint).Methods("POST").HandlerFunc(srv.postMembership)
+	router.Path(path.Join(server.MembershipsEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getMembership)
 
-	router.Path(server.PartiesEndpoint).Methods("GET").HandlerFunc(srv.ListParties)
-	router.Path(server.PartiesEndpoint).Methods("POST").HandlerFunc(srv.PostParty)
-	router.Path(path.Join(server.PartiesEndpoint, "/search")).Methods("POST").HandlerFunc(srv.SearchParties)
-	router.Path(path.Join(server.PartiesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.GetParty)
-	router.Path(path.Join(server.PartiesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.PutParty)
+	router.Path(server.PartiesEndpoint).Methods("GET").HandlerFunc(srv.listParties)
+	router.Path(server.PartiesEndpoint).Methods("POST").HandlerFunc(srv.postParty)
+	router.Path(path.Join(server.PartiesEndpoint, "/search")).Methods("POST").HandlerFunc(srv.searchParties)
+	router.Path(path.Join(server.PartiesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getParty)
+	router.Path(path.Join(server.PartiesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putParty)
 
-	router.Path(server.PartyTypesEndpoint).Methods("GET").HandlerFunc(srv.ListPartyTypes)
-	router.Path(server.PartyTypesEndpoint).Methods("POST").HandlerFunc(srv.PostPartyType)
-	router.Path(path.Join(server.PartyTypesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.GetPartyType)
-	router.Path(path.Join(server.PartyTypesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.PutPartyType)
+	router.Path(server.PartyTypesEndpoint).Methods("GET").HandlerFunc(srv.listPartyTypes)
+	router.Path(server.PartyTypesEndpoint).Methods("POST").HandlerFunc(srv.postPartyType)
+	router.Path(path.Join(server.PartyTypesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getPartyType)
+	router.Path(path.Join(server.PartyTypesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putPartyType)
 
-	router.Path(server.RelationshipsEndpoint).Methods("GET").HandlerFunc(srv.ListRelationships)
-	router.Path(server.RelationshipsEndpoint).Methods("POST").HandlerFunc(srv.PostRelationship)
-	router.Path(path.Join(server.RelationshipsEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.GetRelationship)
-	router.Path(path.Join(server.RelationshipsEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.PutRelationship)
-	router.Path(path.Join(server.RelationshipsEndpoint, "{id}")).Methods("DELETE").HandlerFunc(srv.DeleteRelationship)
+	router.Path(server.RelationshipsEndpoint).Methods("GET").HandlerFunc(srv.listRelationships)
+	router.Path(server.RelationshipsEndpoint).Methods("POST").HandlerFunc(srv.postRelationship)
+	router.Path(path.Join(server.RelationshipsEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getRelationship)
+	router.Path(path.Join(server.RelationshipsEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putRelationship)
+	router.Path(path.Join(server.RelationshipsEndpoint, "{id}")).Methods("DELETE").HandlerFunc(srv.deleteRelationship)
 
-	router.Path(server.RelationshipTypesEndpoint).Methods("GET").HandlerFunc(srv.ListRelationshipTypes)
-	router.Path(server.RelationshipTypesEndpoint).Methods("POST").HandlerFunc(srv.PostRelationshipType)
-	router.Path(path.Join(server.RelationshipTypesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.GetRelationshipType)
-	router.Path(path.Join(server.RelationshipTypesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.PutRelationshipType)
+	router.Path(server.RelationshipTypesEndpoint).Methods("GET").HandlerFunc(srv.listRelationshipTypes)
+	router.Path(server.RelationshipTypesEndpoint).Methods("POST").HandlerFunc(srv.postRelationshipType)
+	router.Path(path.Join(server.RelationshipTypesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getRelationshipType)
+	router.Path(path.Join(server.RelationshipTypesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putRelationshipType)
 
-	router.Path(server.TeamsEndpoint).Methods("GET").HandlerFunc(srv.ListTeams)
-	router.Path(server.TeamsEndpoint).Methods("POST").HandlerFunc(srv.PostTeam)
-	router.Path(path.Join(server.TeamsEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.GetTeam)
-	router.Path(path.Join(server.TeamsEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.PutTeam)
+	router.Path(server.TeamsEndpoint).Methods("GET").HandlerFunc(srv.listTeams)
+	router.Path(server.TeamsEndpoint).Methods("POST").HandlerFunc(srv.postTeam)
+	router.Path(path.Join(server.TeamsEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getTeam)
+	router.Path(path.Join(server.TeamsEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putTeam)
 
 	srv.router = router
 
@@ -129,7 +129,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	s.router.ServeHTTP(w, req)
 }
 
-func (s *Server) JSON(w http.ResponseWriter, status int, data interface{}) {
+func (s *Server) json(w http.ResponseWriter, status int, data interface{}) {
 	responseBytes, err := json.Marshal(data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -143,7 +143,7 @@ func (s *Server) JSON(w http.ResponseWriter, status int, data interface{}) {
 	}
 }
 
-func (s *Server) GetPathParam(param string, w http.ResponseWriter, req *http.Request, into *string) bool {
+func (s *Server) getPathParam(param string, w http.ResponseWriter, req *http.Request, into *string) bool {
 	id, ok := mux.Vars(req)[param]
 	if !ok || len(id) == 0 {
 		err := fmt.Errorf("path parameter '%s' not found in path", param)
@@ -154,11 +154,11 @@ func (s *Server) GetPathParam(param string, w http.ResponseWriter, req *http.Req
 	return true
 }
 
-func (s *Server) Error(w http.ResponseWriter, err error) {
+func (s *Server) error(w http.ResponseWriter, err error) {
 	http.Error(w, err.Error(), http.StatusInternalServerError)
 }
 
-func (s *Server) Bind(req *http.Request, into interface{}) error {
+func (s *Server) bind(req *http.Request, into interface{}) error {
 	bodyBytes, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		return err
@@ -168,5 +168,15 @@ func (s *Server) Bind(req *http.Request, into interface{}) error {
 		return err
 	}
 
+	return nil
+}
+
+func (s *Server) ResetDB(ctx context.Context, databaseName string) error {
+	if err := s.mongoClient.Database(databaseName).Drop(ctx); err != nil {
+		return err
+	}
+	if err := s.Init(ctx); err != nil {
+		return err
+	}
 	return nil
 }

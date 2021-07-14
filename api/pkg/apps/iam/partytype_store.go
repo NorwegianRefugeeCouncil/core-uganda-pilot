@@ -11,7 +11,7 @@ type PartyTypeStore struct {
 	collection *mongo.Collection
 }
 
-func NewPartyTypeStore(ctx context.Context, mongoClient *mongo.Client, database string) (*PartyTypeStore, error) {
+func newPartyTypeStore(ctx context.Context, mongoClient *mongo.Client, database string) (*PartyTypeStore, error) {
 	store := &PartyTypeStore{
 		collection: mongoClient.Database(database).Collection("partyTypes"),
 	}
