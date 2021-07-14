@@ -1,6 +1,7 @@
 package cms
 
 import (
+	"github.com/nrc-no/core/pkg/validation"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
 )
@@ -15,6 +16,19 @@ func (s *Server) PostCase(w http.ResponseWriter, req *http.Request) {
 	}
 
 	kase := &payload
+
+	errList := ValidateCase(kase, &validation.Path{})
+	if len(errList) > 0 {
+		status := validation.Status{
+			Status:  validation.Failure,
+			Code:    http.StatusUnprocessableEntity,
+			Message: "invalid case type",
+			Errors:  errList,
+		}
+		s.JSON(w, status.Code, status)
+		return
+	}
+
 	kase.ID = uuid.NewV4().String()
 	subject, ok := ctx.Value("Subject").(string)
 	if ok {
