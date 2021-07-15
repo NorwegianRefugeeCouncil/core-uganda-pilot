@@ -35,6 +35,7 @@ type Options struct {
 	Environment   string
 	ListenAddress string
 	BaseURL       string
+	TLSDisable    bool
 	TLSCertPath   string
 	TLSKeyPath    string
 
@@ -150,6 +151,7 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 	fs.StringVar(&o.BaseURL, "base-url", o.BaseURL, "Base URL")
 	fs.StringVar(&o.TLSKeyPath, "tls-key-path", o.BaseURL, "TLS Key Path")
 	fs.StringVar(&o.TLSCertPath, "tls-cert-path", o.BaseURL, "TLS Cert Path")
+	fs.BoolVar(&o.TLSDisable, "tls-disable", o.TLSDisable, "Disable TLS")
 
 	// Mongo
 	fs.StringVar(&o.MongoDatabase, "mongo-database", o.MongoDatabase, "Mongo database name")
@@ -281,20 +283,23 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		return CompletedOptions{}, err
 	}
 
-	hydraTlsClient, err := tlsClient(o.TLSCertPath)
-	if err != nil {
-		return CompletedOptions{}, err
+	hydraHttpClient := http.DefaultClient
+	if !o.TLSDisable {
+		hydraHttpClient, err = tlsClient(o.TLSCertPath)
+		if err != nil {
+			return CompletedOptions{}, err
+		}
 	}
 
 	openIdConf, err := hydraPublicClient.Public.DiscoverOpenIDConfiguration(&public.DiscoverOpenIDConfigurationParams{
 		Context:    ctx,
-		HTTPClient: hydraTlsClient,
+		HTTPClient: hydraHttpClient,
 	})
 	if err != nil {
 		panic(err)
 	}
 
-	oidcCtx := oidc.ClientContext(ctx, hydraTlsClient)
+	oidcCtx := oidc.ClientContext(ctx, hydraHttpClient)
 	oidcProvider, err := oidc.NewProvider(oidcCtx, issuerUrl)
 	if err != nil {
 		panic(err)
@@ -316,7 +321,7 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		MongoClient:        mongoClient,
 		HydraAdminClient:   hydraAdminClient,
 		HydraPublicClient:  hydraPublicClient,
-		HydraTLSClient:     hydraTlsClient,
+		HydraTLSClient:     hydraHttpClient,
 		RedisPool:          pool,
 		OAuthTokenEndpoint: *openIdConf.Payload.TokenEndpoint,
 		OIDCProvider:       oidcProvider,
@@ -463,11 +468,19 @@ func (c CompletedOptions) CreateRouter(srv *Server) *mux.Router {
 }
 
 func (c CompletedOptions) StartServer(server *Server) {
-
-	if err := http.ListenAndServeTLS(c.ListenAddress, c.TLSCertPath, c.TLSKeyPath, server.Router); err != nil {
-		if errors.Is(err, context.Canceled) {
-			return
+	if c.TLSDisable {
+		if err := http.ListenAndServe(c.ListenAddress, server.Router); err != nil {
+			if errors.Is(err, context.Canceled) {
+				return
+			}
+			panic(err)
 		}
-		panic(err)
+	} else {
+		if err := http.ListenAndServeTLS(c.ListenAddress, c.TLSCertPath, c.TLSKeyPath, server.Router); err != nil {
+			if errors.Is(err, context.Canceled) {
+				return
+			}
+			panic(err)
+		}
 	}
 }
