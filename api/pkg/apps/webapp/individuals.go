@@ -226,6 +226,7 @@ func (h *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		"FirstNameAttribute": iam.FirstNameAttribute,
 		"LastNameAttribute":  iam.LastNameAttribute,
 		"Page":               "general",
+		"Constants": 		  h.Constants,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -159,7 +159,7 @@
                 let n = 0
                 if (res.response.items.length > 0) {
                     res.response.items.forEach(party => {
-                      if (n < 5) {
+                      if (n < {{ .Constants.PartyDropdownLimit }}) {
                         let newListItem = document.createElement('li')
                         newListItem.classList.add('dropdown-item')
                         newListItem.classList.add('partySelectorItem')
