@@ -33,6 +33,7 @@ type Server struct {
 	HydraHTTPClient *http.Client
 	IAMHTTPClient   *http.Client
 	CMSHTTPClient   *http.Client
+	Constants Constants
 }
 
 type ServerOptions struct {
@@ -86,6 +87,9 @@ func NewServer(options *ServerOptions) (*Server, error) {
 		HydraHTTPClient: options.HydraHTTPClient,
 		IAMHTTPClient:   options.IAMHTTPClient,
 		CMSHTTPClient:   options.CMSHTTPClient,
+		Constants: Constants{
+			PartyDropdownLimit: 5,
+		},
 	}
 
 	router := mux.NewRouter()
