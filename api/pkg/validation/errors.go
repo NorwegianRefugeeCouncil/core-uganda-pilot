@@ -10,8 +10,7 @@ import (
 func (v ErrorList) Find(field string) ErrorList {
 	errs := ErrorList{}
 	for _, err := range v {
-		paths := strings.Split(err.Field, ".")
-		if field == paths[len(paths)-1] {
+		if err.Field == field {
 			errs = append(errs, err)
 		}
 	}

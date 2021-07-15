@@ -33,12 +33,16 @@ func IsValidAlpha(s string) bool {
 	return true
 }
 
+var InvalidAlphaDetail = "Accepted: letters, spaces"
+
 func IsValidNumeric(s string) bool {
 	if _, err := strconv.Atoi(s); err != nil {
 		return false
 	}
 	return true
 }
+
+var InvalidNumericDetail = "Accepted: numbers"
 
 func IsValidAlphaNumeric(s string) bool {
 	for _, r := range s {
@@ -49,10 +53,14 @@ func IsValidAlphaNumeric(s string) bool {
 	return true
 }
 
+var InvalidAlphaNumericDetail = "Accepted: letters, numbers, spaces"
+
 func IsValidEmail(s string) bool {
 	_, err := mail.ParseAddress(s)
 	return err == nil
 }
+
+var InvalidEmailDetail = "Invalid email"
 
 func IsValidPassword(s string) bool {
 	// TODO
