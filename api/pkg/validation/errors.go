@@ -17,6 +17,15 @@ func (v ErrorList) Find(field string) ErrorList {
 	return errs
 }
 
+func (v ErrorList) HasError(field string, errType ErrorType) bool {
+	for _, err := range v {
+		if err.Field == field && err.Type == errType {
+			return true
+		}
+	}
+	return false
+}
+
 // Error is an implementation of the 'error' interface, which represents a
 // field-level validation error.
 type Error struct {
