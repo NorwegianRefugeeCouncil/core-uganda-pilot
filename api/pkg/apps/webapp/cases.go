@@ -135,6 +135,7 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 	var team *iam.Team
 
 	var kase *cms.Case
+	var parent *cms.Case
 	var kaseTypes *cms.CaseTypeList
 	var referrals *cms.CaseList
 	var comments *cms.CommentList
@@ -215,6 +216,15 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 		team = teamRes
 	}
 
+	// Get parent case
+	if len(kase.ParentID) > 0 {
+		parent, err = cmsClient.Cases().Get(ctx, kase.ParentID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
 	// Get case recipient
 	recipientParty, err = iamClient.Parties().Get(ctx, kase.PartyID)
 	if err != nil {
@@ -252,6 +262,7 @@ func (h *Server) Case(w http.ResponseWriter, req *http.Request) {
 
 	if err := h.renderFactory.New(req).ExecuteTemplate(w, "case", map[string]interface{}{
 		"Case":             kase,
+		"Parent":           parent,
 		"CaseTypes":        kaseTypes,
 		"Recipient":        recipientParty,
 		"ReferralCaseType": referralCaseType,
