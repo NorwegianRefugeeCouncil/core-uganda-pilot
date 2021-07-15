@@ -52,7 +52,6 @@ type Options struct {
 	RedisAddress            string
 	RedisPassword           string
 	RedisPasswordFile       string
-	RedisSecretKey          string
 
 	// Hydra
 	HydraAdminURL  string
@@ -114,7 +113,6 @@ func NewOptions() *Options {
 		RedisNetwork:            "tcp",
 		RedisAddress:            defaultRedisAddress,
 		RedisPassword:           "",
-		RedisSecretKey:          "some-secret",
 		HydraAdminURL:           defaultHydraAdminURL,
 		HydraPublicURL:          defaultHydraPublicURL,
 		WebAppTemplateDirectory: "pkg/apps/webapp/templates",
@@ -165,7 +163,6 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 	fs.StringVar(&o.RedisNetwork, "redis-network", o.RedisNetwork, "Redis network")
 	fs.StringVar(&o.RedisPassword, "redis-password", o.RedisPassword, "Redis password file")
 	fs.StringVar(&o.RedisPasswordFile, "redis-password-file", o.RedisPasswordFile, "Redis password")
-	fs.StringVar(&o.RedisSecretKey, "redis-secret-key", o.RedisSecretKey, "Redis secret key")
 
 	// Hydra
 	fs.StringVar(&o.HydraAdminURL, "hydra-admin-url", o.HydraAdminURL, "Hydra Admin URL")
@@ -221,12 +218,15 @@ func readFile(path string) (string, error) {
 
 func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 
+	_, err := NewConfiguration()
+	if err != nil {
+		return CompletedOptions{}, err
+	}
+
 	issuerUrl := o.HydraPublicURL
 	if !strings.HasSuffix(issuerUrl, "/") {
 		issuerUrl = issuerUrl + "/"
 	}
-
-	var err error
 
 	if len(o.MongoUsername) == 0 && len(o.MongoUsernameFile) > 0 {
 		o.MongoUsername, err = readFile(o.MongoUsernameFile)
