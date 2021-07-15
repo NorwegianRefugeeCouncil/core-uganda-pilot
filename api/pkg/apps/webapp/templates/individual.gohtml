@@ -358,31 +358,33 @@
 
                     let partySelectorList = document.getElementById("partySelectorList")
                     partySelectorList.innerHTML = ''
+                    console.log(res)
                     if (res.response.items.length > 0) {
-                            let n = 0
-                            res.response.items.forEach(pickedParty => {
-                            console.log(pickedParty)
-                            const party = pickedParty.party
-                            if (n < {{ .Constants.PartyDropdownLimit }}) {
-                                let newListItem = document.createElement('li')
-                                newListItem.classList.add('dropdown-item')
-                                newListItem.classList.add('partySelectorItem')
-                                newListItem.onclick = onPartyListItemClick
-                                let displayText = pickedParty.displayName
-                                newListItem.appendChild(
-                                  document.createTextNode(displayText)
-                                )
-                                newListItem.setAttribute('id', party.id)
-                                partySelectorList.appendChild(newListItem)
+                      let n = 0
+                      res.response.items.forEach(pickedParty => {
+                        console.log("in loop")
+                        console.log(pickedParty)
+                        const party = pickedParty.party
+                        if (n < {{ .Constants.PartyDropdownLimit }}) {
+                            let newListItem = document.createElement('li')
+                            newListItem.classList.add('dropdown-item')
+                            newListItem.classList.add('partySelectorItem')
+                            newListItem.onclick = onPartyListItemClick
+                            let displayText = pickedParty.displayName
+                            newListItem.appendChild(
+                              document.createTextNode(displayText)
+                            )
+                            newListItem.setAttribute('id', party.id)
+                            partySelectorList.appendChild(newListItem)
 
-                                // append party to parties list
-                                parties.push({
-                                  id: party.id,
-                                  name: displayText
-                                })
-                            }
-                            n++
-                        })
+                            // append party to parties list
+                            parties.push({
+                              id: party.id,
+                              name: displayText
+                            })
+                        }
+                        n++
+                      })
                     } else {
                         // No Parties Found...
                         let newListItem = document.createElement('li')
