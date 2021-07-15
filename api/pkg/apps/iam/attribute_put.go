@@ -1,6 +1,7 @@
 package iam
 
 import (
+	"github.com/nrc-no/core/pkg/validation"
 	"net/http"
 )
 
@@ -29,6 +30,18 @@ func (s *Server) putAttribute(w http.ResponseWriter, req *http.Request) {
 	attribute.Translations = payload.Translations
 	attribute.PartyTypeIDs = payload.PartyTypeIDs
 	attribute.IsPersonallyIdentifiableInfo = payload.IsPersonallyIdentifiableInfo
+
+	errList := ValidateAttribute(attribute, validation.NewPath(""))
+	if len(errList) > 0 {
+		status := validation.Status{
+			Status:  validation.Failure,
+			Code:    http.StatusUnprocessableEntity,
+			Message: "invalid attribute",
+			Errors:  errList,
+		}
+		s.json(w, status.Code, status)
+		return
+	}
 
 	if err := s.attributeStore.update(ctx, attribute); err != nil {
 		s.error(w, err)

@@ -1,6 +1,7 @@
 package iam
 
 import (
+	"github.com/nrc-no/core/pkg/validation"
 	"net/http"
 )
 
@@ -26,6 +27,18 @@ func (s *Server) putParty(w http.ResponseWriter, req *http.Request) {
 
 	r.Attributes = payload.Attributes
 	r.PartyTypeIDs = payload.PartyTypeIDs
+
+	errList := ValidateParty(r, validation.NewPath(""))
+	if len(errList) > 0 {
+		status := validation.Status{
+			Status:  validation.Failure,
+			Code:    http.StatusUnprocessableEntity,
+			Message: "invalid party",
+			Errors:  errList,
+		}
+		s.json(w, status.Code, status)
+		return
+	}
 
 	if err := s.partyStore.update(ctx, r); err != nil {
 		s.error(w, err)
