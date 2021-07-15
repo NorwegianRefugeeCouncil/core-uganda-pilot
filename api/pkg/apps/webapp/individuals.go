@@ -117,6 +117,7 @@ func (h *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	var relationshipsForIndividual *iam.RelationshipList
 	var relationshipTypes *iam.RelationshipTypeList
 	var attrs *iam.AttributeList
+	var tList *iam.TeamList
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
@@ -133,6 +134,12 @@ func (h *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	g.Go(func() error {
 		var err error
 		bList, err = iamClient.Individuals().List(waitCtx, iam.IndividualListOptions{})
+		return err
+	})
+
+	g.Go(func() error {
+		var err error
+		tList, err = iamClient.Teams().List(waitCtx, iam.TeamListOptions{})
 		return err
 	})
 
@@ -217,6 +224,7 @@ func (h *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		"IsNew":              id == "new",
 		"Individual":         b,
 		"Parties":            bList,
+		"Teams":              tList,
 		"PartyTypes":         partyTypes,
 		"RelationshipTypes":  relationshipTypes,
 		"Relationships":      relationshipsForIndividual,

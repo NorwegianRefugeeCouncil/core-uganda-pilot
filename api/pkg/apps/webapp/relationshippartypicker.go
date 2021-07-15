@@ -6,7 +6,12 @@ import (
 	"net/http"
 )
 
-func (h *Server) PickRelationshipParty(w http.ResponseWriter, req *http.Request){
+type PickedParty struct {
+	Party       iam.Party `json:"party"`
+	DisplayName string    `json:"displayName"`
+}
+
+func (h *Server) PickRelationshipParty(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	iamClient := h.IAMClient(ctx)
 
@@ -22,7 +27,15 @@ func (h *Server) PickRelationshipParty(w http.ResponseWriter, req *http.Request)
 		return
 	}
 
-	responseBytes, err := json.Marshal(response)
+	var responseList []PickedParty
+	for _, party := range response.Items {
+		responseList = append(responseList, PickedParty{
+			*party,
+			party.String(),
+		})
+	}
+
+	responseBytes, err := json.Marshal(responseList)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

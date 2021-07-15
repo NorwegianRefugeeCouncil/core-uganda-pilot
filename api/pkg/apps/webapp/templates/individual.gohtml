@@ -172,7 +172,13 @@
             {{range .Parties.Items}}
             {
                 id: {{.ID}},
-                name: "{{ . }}",
+                name: "{{ .String }}"
+            },
+            {{ end }}
+            {{range .Teams.Items}}
+            {
+                id: {{.ID}},
+                name: "{{ .String }}"
             },
             {{ end }}
         ];
@@ -349,12 +355,14 @@
                     let partySelectorList = document.getElementById("partySelectorList")
                     partySelectorList.innerHTML = ''
                     if (res.response.items.length > 0) {
-                        res.response.items.forEach(party => {
+                        res.response.items.forEach(pickedParty => {
+                            console.log(pickedParty)
+                            const party = pickedParty.party
                             let newListItem = document.createElement('li')
                             newListItem.classList.add('dropdown-item')
                             newListItem.classList.add('partySelectorItem')
                             newListItem.onclick = onPartyListItemClick
-                            let displayText = `${lastNameFromAttrs(party.attributes)}, ${firstNameFromAttrs(party.attributes)}`
+                            let displayText = pickedParty.displayName
                             newListItem.appendChild(
                                 document.createTextNode(displayText)
                             )
