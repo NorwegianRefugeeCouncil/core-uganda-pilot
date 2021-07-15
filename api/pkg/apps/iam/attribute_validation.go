@@ -9,8 +9,8 @@ func ValidateAttribute(attribute *Attribute, path *validation.Path) validation.E
 	if len(attribute.Name) == 0 {
 		err := validation.Required(path.Child("name"), "Name is required")
 		errs = append(errs, err)
-	} else if !validation.IsValidAlphaNumeric(attribute.Name) {
-		err := validation.Invalid(path.Child("name"), attribute.Name, validation.InvalidAlphaNumericDetail)
+	} else if !validation.IsValidAlpha(attribute.Name) {
+		err := validation.Invalid(path.Child("name"), attribute.Name, validation.InvalidAlphaDetail)
 		errs = append(errs, err)
 	}
 
