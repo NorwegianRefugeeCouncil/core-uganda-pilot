@@ -84,6 +84,7 @@ func (h *Server) Team(w http.ResponseWriter, req *http.Request) {
 		"Members": members,
 		"LastNameAttribute": iam.LastNameAttribute,
 		"FirstNameAttribute": iam.FirstNameAttribute,
+		"Constants": h.Constants,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

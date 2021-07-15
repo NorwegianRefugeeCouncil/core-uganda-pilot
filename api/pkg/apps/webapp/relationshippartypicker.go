@@ -30,8 +30,8 @@ func (h *Server) PickRelationshipParty(w http.ResponseWriter, req *http.Request)
 	var responseList []PickedParty
 	for _, party := range response.Items {
 		responseList = append(responseList, PickedParty{
-			*party,
-			party.String(),
+			Party:       *party,
+			DisplayName: party.String(),
 		})
 	}
 
