@@ -2,7 +2,6 @@ package iam
 
 import (
 	"github.com/nrc-no/core/pkg/validation"
-	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -13,12 +12,9 @@ func TestValidateParty(t *testing.T) {
 		assert func(t *testing.T, errList validation.ErrorList)
 	}{
 		{
-			name:  "empty partyTypeIds",
-			party: &Party{},
-			assert: func(t *testing.T, errList validation.ErrorList) {
-				assert.NotEmpty(t, errList)
-				assert.Equal(t, errList.Find(".partyTypeIds")[0].Type, validation.ErrorTypeRequired)
-			},
+			name:   "empty partyTypeIds",
+			party:  &Party{},
+			assert: assertRequired(".partyTypeIds"),
 		},
 	}
 	for _, tc := range tcs {
