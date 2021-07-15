@@ -2,6 +2,7 @@ package validation
 
 import (
 	"net/mail"
+	"regexp"
 	"strconv"
 	"unicode"
 )
@@ -24,13 +25,10 @@ func (s *Status) Error() string {
 	return s.Message
 }
 
+var alphaRegexp = regexp.MustCompile(`^[\w\-()]+( [\w\-()]+)*$`)
+
 func IsValidAlpha(s string) bool {
-	for _, r := range s {
-		if !unicode.IsLetter(r) && !unicode.IsSpace(r) {
-			return false
-		}
-	}
-	return true
+	return alphaRegexp.MatchString(s)
 }
 
 var InvalidAlphaDetail = "Accepted: letters, spaces"
