@@ -43,7 +43,11 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 		HTTPClient: o.AdminHTTPClient,
 	})
 
-	collection := o.MongoClient.Database(o.MongoDatabase).Collection("credentials")
+	mongoClient, err := o.MongoClientFn(ctx)
+	if err != nil {
+		return nil, err
+	}
+	collection := mongoClient.Database(o.MongoDatabase).Collection("credentials")
 
 	srv := &Server{
 		HydraAdmin:      o.HydraAdminClient.Admin,

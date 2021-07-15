@@ -8,6 +8,7 @@ import (
 	"github.com/ory/hydra-client-go/models"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"
+	"net/http"
 )
 
 func (c CompletedOptions) CreateWebAppServer(ctx context.Context, genericOptions *server.GenericServerOptions) (*webapp.Server, error) {
@@ -46,11 +47,16 @@ func (c CompletedOptions) CreateWebAppServer(ctx context.Context, genericOptions
 		ClientSecret: c.WebAppClientSecret,
 		TokenURL:     c.OAuthTokenEndpoint,
 	}
-	tlsClient, err := tlsClient(c.TLSCertPath)
-	if err != nil {
-		return nil, err
+	adminCtx := ctx
+	httpClient := http.DefaultClient
+	if !c.TLSDisable {
+		var err error
+		httpClient, err = tlsClient(c.TLSCertPath)
+		if err != nil {
+			return nil, err
+		}
+		adminCtx = context.WithValue(ctx, oauth2.HTTPClient, httpClient)
 	}
-	adminCtx := context.WithValue(ctx, oauth2.HTTPClient, tlsClient)
 	adminCli := clientCredsCfg.Client(adminCtx)
 
 	oidcVerifier := c.OIDCProvider.Verifier(&oidc.Config{
@@ -76,10 +82,10 @@ func (c CompletedOptions) CreateWebAppServer(ctx context.Context, genericOptions
 		AdminHTTPClient:      adminCli,
 		IDTokenVerifier:      oidcVerifier,
 		OAuth2Config:         oauth2Config,
-		HydraHTTPClient:      tlsClient,
-		IAMHTTPClient:        tlsClient,
-		CMSHTTPClient:        tlsClient,
-		LoginHTTPClient:      tlsClient,
+		HydraHTTPClient:      httpClient,
+		IAMHTTPClient:        httpClient,
+		CMSHTTPClient:        httpClient,
+		LoginHTTPClient:      httpClient,
 	}
 
 	webappServer, err := webapp.NewServer(webAppOptions)

@@ -33,7 +33,11 @@
                                                type="text"
                                                data-cy="text-attribute"
                                                value="{{$value}}">
-                                        <label for="attribute-{{$attribute.ID}}-{{$idx}}">{{$attribute.Name}}</label>
+                                        {{ if eq (len $attribute.Translations) 0}}
+                                            <label for="attribute-{{$attribute.ID}}-{{$idx}}">{{$attribute.Name}}</label>
+                                        {{ else }}
+                                            <label for="attribute-{{$attribute.ID}}-{{$idx}}">{{(index $attribute.Translations 0).LongFormulation}}</label>
+                                        {{ end }}
                                     </div>
                                 {{end}}
                             {{else}}
@@ -349,23 +353,27 @@
                     let partySelectorList = document.getElementById("partySelectorList")
                     partySelectorList.innerHTML = ''
                     if (res.response.items.length > 0) {
+                        let n = 0
                         res.response.items.forEach(party => {
+                          if (n < {{ .Constants.PartyDropdownLimit }}) {
                             let newListItem = document.createElement('li')
                             newListItem.classList.add('dropdown-item')
                             newListItem.classList.add('partySelectorItem')
                             newListItem.onclick = onPartyListItemClick
                             let displayText = `${lastNameFromAttrs(party.attributes)}, ${firstNameFromAttrs(party.attributes)}`
                             newListItem.appendChild(
-                                document.createTextNode(displayText)
+                              document.createTextNode(displayText)
                             )
                             newListItem.setAttribute('id', party.id)
                             partySelectorList.appendChild(newListItem)
 
                             // append party to parties list
                             parties.push({
-                                id: party.id,
-                                name: displayText
+                              id: party.id,
+                              name: displayText
                             })
+                          }
+                          n++
                         })
                     } else {
                         // No Parties Found...
