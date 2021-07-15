@@ -33,7 +33,11 @@
                                                type="text"
                                                data-cy="text-attribute"
                                                value="{{$value}}">
-                                        <label for="attribute-{{$attribute.ID}}-{{$idx}}">{{$attribute.Name}}</label>
+                                        {{ if eq (len $attribute.Translations) 0}}
+                                            <label for="attribute-{{$attribute.ID}}-{{$idx}}">{{$attribute.Name}}</label>
+                                        {{ else }}
+                                            <label for="attribute-{{$attribute.ID}}-{{$idx}}">{{(index $attribute.Translations 0).LongFormulation}}</label>
+                                        {{ end }}
                                     </div>
                                 {{end}}
                             {{else}}
