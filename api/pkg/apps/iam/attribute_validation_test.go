@@ -2,7 +2,6 @@ package iam
 
 import (
 	"github.com/nrc-no/core/pkg/validation"
-	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -15,74 +14,50 @@ func TestValidateAttribute(t *testing.T) {
 		{
 			name:      "empty name",
 			attribute: &Attribute{},
-			assert: func(t *testing.T, errList validation.ErrorList) {
-				assert.NotEmpty(t, errList)
-				assert.Equal(t, errList.Find(".name")[0].Type, validation.ErrorTypeRequired)
-			},
+			assert:    assertRequired(".name"),
 		},
 		{
 			name:      "invalid name",
 			attribute: &Attribute{Name: "&2"},
-			assert: func(t *testing.T, errList validation.ErrorList) {
-				assert.NotEmpty(t, errList)
-				assert.Equal(t, errList.Find(".name")[0].Type, validation.ErrorTypeInvalid)
-			},
+			assert:    assertInvalid(".name"),
 		},
 		{
 			name:      "empty party types",
 			attribute: &Attribute{},
-			assert: func(t *testing.T, errList validation.ErrorList) {
-				assert.NotEmpty(t, errList)
-				assert.Equal(t, errList.Find(".partyTypeIds")[0].Type, validation.ErrorTypeRequired)
-			},
+			assert:    assertRequired(".partyTypeIds"),
 		},
 		{
 			name:      "empty translations",
 			attribute: &Attribute{},
-			assert: func(t *testing.T, errList validation.ErrorList) {
-				assert.NotEmpty(t, errList)
-				assert.Equal(t, errList.Find(".translations")[0].Type, validation.ErrorTypeRequired)
-			},
+			assert:    assertRequired(".translations"),
 		},
 		{
 			name: "missing locale",
 			attribute: &Attribute{
 				Translations: []AttributeTranslation{{}},
 			},
-			assert: func(t *testing.T, errList validation.ErrorList) {
-				assert.NotEmpty(t, errList)
-				assert.Equal(t, errList.Find(".translations[0].locale")[0].Type, validation.ErrorTypeRequired)
-			},
+			assert: assertRequired(".translations[0].locale"),
 		},
 		{
 			name: "invalid locale",
 			attribute: &Attribute{
 				Translations: []AttributeTranslation{{Locale: "*"}},
 			},
-			assert: func(t *testing.T, errList validation.ErrorList) {
-				assert.NotEmpty(t, errList)
-				assert.Equal(t, errList.Find(".translations[0].locale")[0].Type, validation.ErrorTypeInvalid)
-			},
+			assert: assertInvalid(".translations[0].locale"),
 		},
 		{
 			name: "missing long formulation",
 			attribute: &Attribute{
 				Translations: []AttributeTranslation{{}},
 			},
-			assert: func(t *testing.T, errList validation.ErrorList) {
-				assert.NotEmpty(t, errList)
-				assert.Equal(t, errList.Find(".translations[0].long")[0].Type, validation.ErrorTypeRequired)
-			},
+			assert: assertRequired(".translations[0].long"),
 		},
 		{
 			name: "missing short formulation",
 			attribute: &Attribute{
 				Translations: []AttributeTranslation{{}},
 			},
-			assert: func(t *testing.T, errList validation.ErrorList) {
-				assert.NotEmpty(t, errList)
-				assert.Equal(t, errList.Find(".translations[0].short")[0].Type, validation.ErrorTypeRequired)
-			},
+			assert: assertRequired(".translations[0].short"),
 		},
 	}
 	for _, tc := range tcs {

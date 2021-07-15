@@ -2,7 +2,6 @@ package iam
 
 import (
 	"github.com/nrc-no/core/pkg/validation"
-	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -15,78 +14,51 @@ func TestValidateRelationshipType(t *testing.T) {
 		{
 			name:             "empty name",
 			relationshipType: &RelationshipType{},
-			assert: func(t *testing.T, errList validation.ErrorList) {
-				assert.NotEmpty(t, errList)
-				assert.Equal(t, errList.Find(".name")[0].Type, validation.ErrorTypeRequired)
-			},
+			assert:           assertRequired(".name"),
 		},
 		{
 			name:             "invalid name",
 			relationshipType: &RelationshipType{Name: "^&"},
-			assert: func(t *testing.T, errList validation.ErrorList) {
-				assert.NotEmpty(t, errList)
-				assert.Equal(t, errList.Find(".name")[0].Type, validation.ErrorTypeInvalid)
-			},
+			assert:           assertInvalid(".name"),
 		},
 		{
 			name:             "empty firstPartyRole",
 			relationshipType: &RelationshipType{},
-			assert: func(t *testing.T, errList validation.ErrorList) {
-				assert.NotEmpty(t, errList)
-				assert.Equal(t, errList.Find(".firstPartyRole")[0].Type, validation.ErrorTypeRequired)
-			},
+			assert:           assertRequired(".firstPartyRole"),
 		},
 		{
 			name:             "invalid firstPartyRole",
 			relationshipType: &RelationshipType{FirstPartyRole: "^&"},
-			assert: func(t *testing.T, errList validation.ErrorList) {
-				assert.NotEmpty(t, errList)
-				assert.Equal(t, errList.Find(".firstPartyRole")[0].Type, validation.ErrorTypeInvalid)
-			},
+			assert:           assertInvalid(".firstPartyRole"),
 		},
 		{
 			name:             "empty secondPartyRole",
 			relationshipType: &RelationshipType{IsDirectional: true},
-			assert: func(t *testing.T, errList validation.ErrorList) {
-				assert.NotEmpty(t, errList)
-				assert.Equal(t, errList.Find(".secondPartyRole")[0].Type, validation.ErrorTypeRequired)
-			},
+			assert:           assertRequired(".secondPartyRole"),
 		},
 		{
 			name:             "invalid secondPartyRole",
 			relationshipType: &RelationshipType{IsDirectional: true, SecondPartyRole: "^&"},
-			assert: func(t *testing.T, errList validation.ErrorList) {
-				assert.NotEmpty(t, errList)
-				assert.Equal(t, errList.Find(".secondPartyRole")[0].Type, validation.ErrorTypeInvalid)
-			},
+			assert:           assertInvalid(".secondPartyRole"),
 		},
 		{
 			name:             "empty rules",
 			relationshipType: &RelationshipType{},
-			assert: func(t *testing.T, errList validation.ErrorList) {
-				assert.NotEmpty(t, errList)
-				assert.Equal(t, errList.Find(".rules")[0].Type, validation.ErrorTypeRequired)
-			},
+			assert:           assertRequired(".rules"),
 		},
 		{
 			name: "empty secondPartyTypeId",
 			relationshipType: &RelationshipType{Rules: []RelationshipTypeRule{{
 				PartyTypeRule: &PartyTypeRule{},
 			}}},
-			assert: func(t *testing.T, errList validation.ErrorList) {
-				assert.NotEmpty(t, errList)
-				assert.Equal(t, errList.Find(".rules[0].firstPartyTypeId")[0].Type, validation.ErrorTypeRequired)
-			},
+			assert: assertRequired(".rules[0].firstPartyTypeId"),
 		},
 		{
 			name: "empty secondPartyTypeId",
 			relationshipType: &RelationshipType{IsDirectional: true, Rules: []RelationshipTypeRule{{
 				PartyTypeRule: &PartyTypeRule{},
 			}}},
-			assert: func(t *testing.T, errList validation.ErrorList) {
-				assert.NotEmpty(t, errList)
-				assert.Equal(t, errList.Find(".rules[0].secondPartyTypeId")[0].Type, validation.ErrorTypeRequired)
-			},
+			assert: assertRequired(".rules[0].secondPartyTypeId"),
 		},
 	}
 	for _, tc := range tcs {
