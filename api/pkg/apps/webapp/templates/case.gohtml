@@ -19,11 +19,11 @@
         <div class="row">
             <div class="col">
 
-                {{if .Case.ParentID}}
+                {{if .Parent}}
                     <div class="p-3 bg-light mb-3 shadow-sm">
                         <span>Referred from </span>
-                        <a href="/cases/{{.Case.ParentID}}">
-                            {{$caseType := $caseTypes.FindByID $caseTypeId}}
+                        <a href="/cases/{{.Parent.ID}}">
+                            {{$caseType := $caseTypes.FindByID .Parent.CaseTypeID}}
                             {{$caseType.Name}}
                         </a>
                         {{ if .CreatedBy}}
