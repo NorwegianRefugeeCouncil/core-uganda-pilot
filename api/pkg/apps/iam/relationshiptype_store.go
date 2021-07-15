@@ -2,21 +2,30 @@ package iam
 
 import (
 	"context"
+	"github.com/nrc-no/core/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type RelationshipTypeStore struct {
-	collection *mongo.Collection
+	getCollection utils.MongoCollectionFn
 }
 
-func newRelationshipTypeStore(ctx context.Context, mongoClient *mongo.Client, database string) (*RelationshipTypeStore, error) {
+func newRelationshipTypeStore(ctx context.Context, mongoClientFn utils.MongoClientFn, database string) (*RelationshipTypeStore, error) {
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
 	store := &RelationshipTypeStore{
-		collection: mongoClient.Database(database).Collection("relationshipTypes"),
+		getCollection: utils.GetCollectionFn(database, "relationshipTypes", mongoClientFn),
 	}
 
-	if _, err := store.collection.Indexes().CreateOne(ctx, mongo.IndexModel{
+	collection, err := store.getCollection(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if _, err := collection.Indexes().CreateOne(ctx, mongo.IndexModel{
 		Keys: bson.M{
 			"id": 1,
 		},
@@ -29,7 +38,11 @@ func newRelationshipTypeStore(ctx context.Context, mongoClient *mongo.Client, da
 }
 
 func (s *RelationshipTypeStore) Get(ctx context.Context, id string) (*RelationshipType, error) {
-	res := s.collection.FindOne(ctx, bson.M{
+	collection, err := s.getCollection(ctx)
+	if err != nil {
+		return nil, err
+	}
+	res := collection.FindOne(ctx, bson.M{
 		"id": id,
 	})
 	if res.Err() != nil {
@@ -58,8 +71,11 @@ func (s *RelationshipTypeStore) List(ctx context.Context, listOptions Relationsh
 			},
 		}
 	}
-
-	res, err := s.collection.Find(ctx, filter)
+	collection, err := s.getCollection(ctx)
+	if err != nil {
+		return nil, err
+	}
+	res, err := collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +100,11 @@ func (s *RelationshipTypeStore) List(ctx context.Context, listOptions Relationsh
 }
 
 func (s *RelationshipTypeStore) Update(ctx context.Context, relationshipType *RelationshipType) error {
-	_, err := s.collection.UpdateOne(ctx, bson.M{
+	collection, err := s.getCollection(ctx)
+	if err != nil {
+		return err
+	}
+	_, err = collection.UpdateOne(ctx, bson.M{
 		"id": relationshipType.ID,
 	}, bson.M{
 		"$set": bson.M{
@@ -102,7 +122,11 @@ func (s *RelationshipTypeStore) Update(ctx context.Context, relationshipType *Re
 }
 
 func (s *RelationshipTypeStore) Create(ctx context.Context, relationshipType *RelationshipType) error {
-	_, err := s.collection.InsertOne(ctx, relationshipType)
+	collection, err := s.getCollection(ctx)
+	if err != nil {
+		return err
+	}
+	_, err = collection.InsertOne(ctx, relationshipType)
 	if err != nil {
 		return err
 	}

@@ -2,6 +2,7 @@ package cms
 
 import (
 	"context"
+	"github.com/nrc-no/core/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -9,16 +10,24 @@ import (
 )
 
 type CommentStore struct {
-	collection *mongo.Collection
+	getCollection utils.MongoCollectionFn
 }
 
-func NewCommentStore(ctx context.Context, mongoClient *mongo.Client, database string) (*CommentStore, error) {
+func NewCommentStore(ctx context.Context, mongoClientFn utils.MongoClientFn, database string) (*CommentStore, error) {
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
 	store := &CommentStore{
-		collection: mongoClient.Database(database).Collection("comments"),
+		getCollection: utils.GetCollectionFn(database, "comments", mongoClientFn),
+	}
+
+	collection, err := store.getCollection(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	// Cases should have unique IDs
-	if _, err := store.collection.Indexes().CreateOne(ctx,
+	if _, err := collection.Indexes().CreateOne(ctx,
 		mongo.IndexModel{
 			Keys:    bson.M{"id": 1},
 			Options: options.Index().SetUnique(true),
@@ -27,7 +36,7 @@ func NewCommentStore(ctx context.Context, mongoClient *mongo.Client, database st
 	}
 
 	// Create index on CaseID
-	if _, err := store.collection.Indexes().CreateOne(ctx,
+	if _, err := collection.Indexes().CreateOne(ctx,
 		mongo.IndexModel{
 			Keys: bson.M{"caseId": 1},
 		}); err != nil {
@@ -38,7 +47,12 @@ func NewCommentStore(ctx context.Context, mongoClient *mongo.Client, database st
 }
 
 func (s *CommentStore) Get(ctx context.Context, id string) (*Comment, error) {
-	res := s.collection.FindOne(ctx, bson.M{
+	collection, err := s.getCollection(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	res := collection.FindOne(ctx, bson.M{
 		"id": id,
 	})
 	if res.Err() != nil {
@@ -57,7 +71,12 @@ func (s *CommentStore) List(ctx context.Context, options CommentListOptions) (*C
 		"caseId": options.CaseID,
 	}
 
-	res, err := s.collection.Find(ctx, filter)
+	collection, err := s.getCollection(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +115,12 @@ func (s *CommentStore) Update(ctx context.Context, id string, updateFunc func(ol
 		return nil, err
 	}
 
-	_, err = s.collection.ReplaceOne(ctx, bson.M{
+	collection, err := s.getCollection(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = collection.ReplaceOne(ctx, bson.M{
 		"id": id,
 	}, newComment)
 	if err != nil {
@@ -110,7 +134,13 @@ func (s *CommentStore) Create(ctx context.Context, comment *Comment) error {
 	now := time.Now().UTC()
 	comment.CreatedAt = now
 	comment.UpdatedAt = now
-	_, err := s.collection.InsertOne(ctx, comment)
+
+	collection, err := s.getCollection(ctx)
+	if err != nil {
+		return err
+	}
+
+	_, err = collection.InsertOne(ctx, comment)
 	if err != nil {
 		return err
 	}
@@ -118,7 +148,11 @@ func (s *CommentStore) Create(ctx context.Context, comment *Comment) error {
 }
 
 func (s *CommentStore) Delete(ctx context.Context, id string) error {
-	_, err := s.collection.DeleteOne(ctx, bson.M{
+	collection, err := s.getCollection(ctx)
+	if err != nil {
+		return err
+	}
+	_, err = collection.DeleteOne(ctx, bson.M{
 		"id": id,
 	})
 	if err != nil {
