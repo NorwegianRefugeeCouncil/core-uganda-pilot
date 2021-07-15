@@ -2,8 +2,8 @@ package validation
 
 import (
 	"net/mail"
+	"regexp"
 	"strconv"
-	"unicode"
 )
 
 type StatusType string
@@ -24,16 +24,13 @@ func (s *Status) Error() string {
 	return s.Message
 }
 
+var alphaRegexp = regexp.MustCompile(`^[\w\-()]+( [\w\-()]+)*$`)
+
 func IsValidAlpha(s string) bool {
-	for _, r := range s {
-		if !unicode.IsLetter(r) && !unicode.IsSpace(r) {
-			return false
-		}
-	}
-	return true
+	return alphaRegexp.MatchString(s)
 }
 
-var InvalidAlphaDetail = "Accepted: letters, spaces"
+var InvalidAlphaDetail = "Accepted: a-z A-Z 0-9 -_()"
 
 func IsValidNumeric(s string) bool {
 	if _, err := strconv.Atoi(s); err != nil {
@@ -42,18 +39,7 @@ func IsValidNumeric(s string) bool {
 	return true
 }
 
-var InvalidNumericDetail = "Accepted: numbers"
-
-func IsValidAlphaNumeric(s string) bool {
-	for _, r := range s {
-		if !unicode.IsLetter(r) && !unicode.IsDigit(r) && !unicode.IsSpace(r) {
-			return false
-		}
-	}
-	return true
-}
-
-var InvalidAlphaNumericDetail = "Accepted: letters, numbers, spaces"
+var InvalidNumericDetail = "Accepted: 0-9"
 
 func IsValidEmail(s string) bool {
 	_, err := mail.ParseAddress(s)

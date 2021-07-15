@@ -57,7 +57,7 @@ func TestValidateAttribute(t *testing.T) {
 		{
 			name: "invalid locale",
 			attribute: &Attribute{
-				Translations: []AttributeTranslation{{Locale: "5"}},
+				Translations: []AttributeTranslation{{Locale: "*"}},
 			},
 			assert: func(t *testing.T, errList validation.ErrorList) {
 				assert.NotEmpty(t, errList)

@@ -9,8 +9,8 @@ func ValidateRelationshipType(relationshipType *RelationshipType, path *validati
 	if len(relationshipType.Name) == 0 {
 		err := validation.Required(path.Child("name"), "name is required")
 		errs = append(errs, err)
-	} else if !validation.IsValidAlphaNumeric(relationshipType.Name) {
-		err := validation.Invalid(path.Child("name"), relationshipType.Name, validation.InvalidAlphaNumericDetail)
+	} else if !validation.IsValidAlpha(relationshipType.Name) {
+		err := validation.Invalid(path.Child("name"), relationshipType.Name, validation.InvalidAlphaDetail)
 		errs = append(errs, err)
 	}
 
@@ -18,8 +18,8 @@ func ValidateRelationshipType(relationshipType *RelationshipType, path *validati
 	if len(relationshipType.FirstPartyRole) == 0 {
 		err := validation.Required(path.Child("firstPartyRole"), "First party role is required")
 		errs = append(errs, err)
-	} else if !validation.IsValidAlphaNumeric(relationshipType.FirstPartyRole) {
-		err := validation.Invalid(path.Child("firstPartyRole"), relationshipType.FirstPartyRole, validation.InvalidAlphaNumericDetail)
+	} else if !validation.IsValidAlpha(relationshipType.FirstPartyRole) {
+		err := validation.Invalid(path.Child("firstPartyRole"), relationshipType.FirstPartyRole, validation.InvalidAlphaDetail)
 		errs = append(errs, err)
 	}
 
@@ -27,8 +27,8 @@ func ValidateRelationshipType(relationshipType *RelationshipType, path *validati
 	if relationshipType.IsDirectional && len(relationshipType.SecondPartyRole) == 0 {
 		err := validation.Required(path.Child("secondPartyRole"), "Second party role is required")
 		errs = append(errs, err)
-	} else if !validation.IsValidAlphaNumeric(relationshipType.SecondPartyRole) {
-		err := validation.Invalid(path.Child("secondPartyRole"), relationshipType.SecondPartyRole, validation.InvalidAlphaNumericDetail)
+	} else if !validation.IsValidAlpha(relationshipType.SecondPartyRole) {
+		err := validation.Invalid(path.Child("secondPartyRole"), relationshipType.SecondPartyRole, validation.InvalidAlphaDetail)
 		errs = append(errs, err)
 	}
 
