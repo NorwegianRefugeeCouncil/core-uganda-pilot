@@ -26,7 +26,7 @@ describe('CaseType Page', function () {
     });
 
     describe('Update', () => {
-        it('should update description on existing CaseType', () => {
+        it('should update name on existing CaseType', () => {
             var casetypesOverviewPage = new CasetypesOverviewPage();
             casetypesOverviewPage
                 .visitCasetype()

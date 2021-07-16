@@ -3,7 +3,7 @@ import NewPartyTypePage from './newPartyType.page';
 
 const PARTYTYPE_ROWS = '[data-cy=partytype]';
 
-export default class CasetypesOverviewPage {
+export default class PartytypeOverviewPage {
     visitPage = () => {
         cy.log('navigating to %s', Urls.PARTYTYPE_URL);
         cy.visit(Urls.PARTYTYPE_URL);

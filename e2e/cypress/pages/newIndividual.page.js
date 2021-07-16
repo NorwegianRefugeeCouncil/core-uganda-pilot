@@ -6,7 +6,7 @@ const RELATED_PARTY = '[data-cy=relatedParty]';
 const ADD_BTN = '[data-cy=add-btn]';
 const SAVE_BUTTON = '[data-cy=save-btn]';
 
-export default class NewIndividualPagePage {
+export default class NewIndividualPage {
     visitPage = () => {
         cy.log('navigating to %s', Urls.NEW_INDIVIDUAL_URL);
         cy.visit(Urls.NEW_INDIVIDUAL_URL);
@@ -37,6 +37,13 @@ export default class NewIndividualPagePage {
 
     save = () => {
         cy.get(SAVE_BUTTON).click();
+        return this;
+    };
+
+    clearTextAttributes = () => {
+        cy.get(TEXT_ATTRIBUTES).each(($el) => {
+            cy.wrap($el).clear();
+        });
         return this;
     };
 }

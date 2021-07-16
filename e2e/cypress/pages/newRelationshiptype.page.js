@@ -49,4 +49,9 @@ export default class NewRelationshiptypePage {
         cy.get(SAVE_BUTTON).click();
         return this;
     };
+
+    clearName = () => {
+        cy.get(NAME).clear();
+        return this;
+    };
 }

@@ -23,7 +23,7 @@ describe('PartyType Page', function () {
     });
 
     describe('Update', () => {
-        it('should update description on existing PartyType', () => {
+        it('should update name on existing PartyType', () => {
             var partytypesOverviewPage = new PartytypesOverviewPage();
             partytypesOverviewPage
                 .visitPartytype()
