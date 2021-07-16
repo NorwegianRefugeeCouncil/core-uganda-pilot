@@ -9,41 +9,41 @@ import (
 	"sync"
 )
 
-func (h *Server) Teams(w http.ResponseWriter, req *http.Request) {
+func (s *Server) Teams(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	iamClient := h.IAMClient(ctx)
+	iamClient := s.IAMClient(ctx)
 
 	t, err := iamClient.Teams().List(ctx, iam.TeamListOptions{})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
-	if err := h.renderFactory.New(req).ExecuteTemplate(w, "teams", map[string]interface{}{
+	if err := s.renderFactory.New(req).ExecuteTemplate(w, "teams", map[string]interface{}{
 		"Teams": t,
 	}); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 }
 
-func (h *Server) Team(w http.ResponseWriter, req *http.Request) {
+func (s *Server) Team(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	iamClient := h.IAMClient(ctx)
+	iamClient := s.IAMClient(ctx)
 
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
 		err := fmt.Errorf("no id found in path")
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 	t, err := iamClient.Teams().Get(ctx, id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
@@ -51,7 +51,7 @@ func (h *Server) Team(w http.ResponseWriter, req *http.Request) {
 		TeamID: id,
 	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
@@ -75,25 +75,26 @@ func (h *Server) Team(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if err := g.Wait(); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
-	if err := h.renderFactory.New(req).ExecuteTemplate(w, "team", map[string]interface{}{
-		"Team":    t,
-		"Members": members,
-		"LastNameAttribute": iam.LastNameAttribute,
+	if err := s.renderFactory.New(req).ExecuteTemplate(w, "team", map[string]interface{}{
+		"Team":               t,
+		"Members":            members,
+		"LastNameAttribute":  iam.LastNameAttribute,
 		"FirstNameAttribute": iam.FirstNameAttribute,
+		"Constants":          s.Constants,
 	}); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 }
 
-func (h *Server) AddIndividualToTeam(w http.ResponseWriter, req *http.Request) {
+func (s *Server) AddIndividualToTeam(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	iamClient := h.IAMClient(ctx)
+	iamClient := s.IAMClient(ctx)
 
 	i := req.URL.Query().Get("individualId")
 	t := req.URL.Query().Get("teamId")
@@ -103,7 +104,7 @@ func (h *Server) AddIndividualToTeam(w http.ResponseWriter, req *http.Request) {
 		TeamID:       t,
 	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
@@ -117,7 +118,7 @@ func (h *Server) AddIndividualToTeam(w http.ResponseWriter, req *http.Request) {
 		IndividualID: i,
 	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 

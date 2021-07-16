@@ -11,99 +11,99 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-func (h *Server) RelationshipTypes(w http.ResponseWriter, req *http.Request) {
+func (s *Server) RelationshipTypes(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	iamClient := h.IAMClient(ctx)
+	iamClient := s.IAMClient(ctx)
 
 	r := &iam.RelationshipType{}
 
 	if req.Method == "POST" {
-		h.PostRelationshipType(ctx, r, w, req)
+		s.PostRelationshipType(ctx, r, w, req)
 		return
 	}
 
 	relationshipTypes, err := iamClient.RelationshipTypes().List(ctx, iam.RelationshipTypeListOptions{})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
-	if err := h.renderFactory.New(req).ExecuteTemplate(w, "relationshiptypes", map[string]interface{}{
+	if err := s.renderFactory.New(req).ExecuteTemplate(w, "relationshiptypes", map[string]interface{}{
 		"RelationshipTypes": relationshipTypes,
 	}); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 }
 
-func (h *Server) NewRelationshipType(w http.ResponseWriter, req *http.Request) {
+func (s *Server) NewRelationshipType(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	iamClient := h.IAMClient(ctx)
+	iamClient := s.IAMClient(ctx)
 
 	p, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
-	if err := h.renderFactory.New(req).ExecuteTemplate(w, "relationshiptype", map[string]interface{}{
+	if err := s.renderFactory.New(req).ExecuteTemplate(w, "relationshiptype", map[string]interface{}{
 		"PartyTypes": p,
 	}); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 }
 
-func (h *Server) RelationshipType(w http.ResponseWriter, req *http.Request) {
+func (s *Server) RelationshipType(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	iamClient := h.IAMClient(ctx)
+	iamClient := s.IAMClient(ctx)
 
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
 		err := fmt.Errorf("no id found in path")
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 	r, err := iamClient.RelationshipTypes().Get(ctx, id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 	p, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 	if req.Method == "POST" {
-		h.PostRelationshipType(ctx, r, w, req)
+		s.PostRelationshipType(ctx, r, w, req)
 		return
 	}
 
-	if err := h.renderFactory.New(req).ExecuteTemplate(w, "relationshiptype", map[string]interface{}{
+	if err := s.renderFactory.New(req).ExecuteTemplate(w, "relationshiptype", map[string]interface{}{
 		"RelationshipType": r,
 		"PartyTypes":       p,
 	}); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 }
 
-func (h *Server) PostRelationshipType(
+func (s *Server) PostRelationshipType(
 	ctx context.Context,
 	r *iam.RelationshipType,
 	w http.ResponseWriter,
 	req *http.Request,
 ) {
 
-	iamClient := h.IAMClient(ctx)
+	iamClient := s.IAMClient(ctx)
 
 	if err := req.ParseForm(); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
@@ -137,10 +137,10 @@ func (h *Server) PostRelationshipType(
 	if isNew {
 		out, err := iamClient.RelationshipTypes().Create(ctx, r)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			s.Error(w, err)
 			return
 		}
-		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+		s.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
 			Message: fmt.Sprintf("Relationship type \"%s\" successfully updated", r.Name),
 			Theme:   "success",
 		})
@@ -149,10 +149,10 @@ func (h *Server) PostRelationshipType(
 	} else {
 		out, err := iamClient.RelationshipTypes().Update(ctx, r)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			s.Error(w, err)
 			return
 		}
-		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+		s.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
 			Message: fmt.Sprintf("Relationship type \"%s\" successfully updated", r.Name),
 			Theme:   "success",
 		})

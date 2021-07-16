@@ -13,7 +13,7 @@ func (s *Server) ListCaseTypes(w http.ResponseWriter, req *http.Request) {
 
 	ret, err := s.caseTypeStore.List(ctx, *listOptions)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 

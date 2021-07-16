@@ -30,11 +30,15 @@ func (c CompletedOptions) CreateLoginServer(ctx context.Context, genericOptions 
 		ClientSecret: c.LoginClientSecret,
 		TokenURL:     c.OAuthTokenEndpoint,
 	}
-	tlsCli, err := tlsClient(c.TLSCertPath)
-	if err != nil {
-		return nil, err
+
+	adminCtx := ctx
+	if !c.TLSDisable {
+		tlsCli, err := tlsClient(c.TLSCertPath)
+		if err != nil {
+			return nil, err
+		}
+		adminCtx = context.WithValue(ctx, oauth2.HTTPClient, tlsCli)
 	}
-	adminCtx := context.WithValue(ctx, oauth2.HTTPClient, tlsCli)
 	adminCli := clientCredsCfg.Client(adminCtx)
 
 	loginOptions := &login.ServerOptions{

@@ -6,11 +6,16 @@ import (
 	"github.com/nrc-no/core/pkg/apps/webapp"
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/ory/hydra-client-go/models"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"
+	"net/http"
 )
 
 func (c CompletedOptions) CreateWebAppServer(ctx context.Context, genericOptions *server.GenericServerOptions) (*webapp.Server, error) {
+
+	l := logrus.WithField("server", "webapp")
+	l.Infof("creating webapp server")
 
 	cli := &models.OAuth2Client{
 		ClientID:     c.WebAppClientID,
@@ -37,33 +42,49 @@ func (c CompletedOptions) CreateWebAppServer(ctx context.Context, genericOptions
 		},
 	}
 
+	l.Infof("creating webapp oauth2 client")
 	if err := createOauthClient(ctx, c.HydraAdminClient.Admin, c.HydraTLSClient, cli); err != nil {
+		l.WithError(err).Errorf("failed to create webapp oauth2 client")
 		return nil, err
 	}
 
+	l.Infof("configuring HTTP client for internal traffic")
+	httpClient := http.DefaultClient
+	if !c.TLSDisable {
+		var err error
+		httpClient, err = tlsClient(c.TLSCertPath)
+		if err != nil {
+			l.WithError(err).Errorf("failed to create internal HTTP client")
+			return nil, err
+		}
+	}
+
+	l.Infof("creating administrative HTTP client for privileged traffic")
 	clientCredsCfg := clientcredentials.Config{
 		ClientID:     c.WebAppClientID,
 		ClientSecret: c.WebAppClientSecret,
 		TokenURL:     c.OAuthTokenEndpoint,
 	}
-	tlsClient, err := tlsClient(c.TLSCertPath)
-	if err != nil {
-		return nil, err
-	}
-	adminCtx := context.WithValue(ctx, oauth2.HTTPClient, tlsClient)
-	adminCli := clientCredsCfg.Client(adminCtx)
+	adminCli := clientCredsCfg.Client(context.WithValue(ctx, oauth2.HTTPClient, httpClient))
 
-	oidcVerifier := c.OIDCProvider.Verifier(&oidc.Config{
-		ClientID: c.WebAppClientID,
-	})
-
+	l.Infof("creating oauth2 configuration")
 	oauth2Config := &oauth2.Config{
 		ClientID:     c.WebAppClientID,
 		ClientSecret: c.WebAppClientSecret,
-		Endpoint:     c.OIDCProvider.Endpoint(),
-		RedirectURL:  c.BaseURL + "/callback",
-		Scopes:       []string{oidc.ScopeOpenID, "profile"},
+		Endpoint: oauth2.Endpoint{
+			AuthURL:  c.OAuthAuthorizationEndpoint,
+			TokenURL: c.OAuthTokenEndpoint,
+		},
+		RedirectURL: c.BaseURL + "/callback",
+		Scopes:      []string{oidc.ScopeOpenID, "profile"},
 	}
+
+	l.Infof("creating oidc verifier")
+	jwks := oidc.NewRemoteKeySet(ctx, c.OAuthJwksURI)
+	oidcVerifier := oidc.NewVerifier(c.OAuthIssuerURL, jwks, &oidc.Config{
+		ClientID:             c.WebAppClientID,
+		SupportedSigningAlgs: c.OAuthIDTokenSigningAlgs,
+	})
 
 	webAppOptions := &webapp.ServerOptions{
 		GenericServerOptions: genericOptions,
@@ -76,15 +97,15 @@ func (c CompletedOptions) CreateWebAppServer(ctx context.Context, genericOptions
 		AdminHTTPClient:      adminCli,
 		IDTokenVerifier:      oidcVerifier,
 		OAuth2Config:         oauth2Config,
-		HydraHTTPClient:      tlsClient,
-		IAMHTTPClient:        tlsClient,
-		CMSHTTPClient:        tlsClient,
-		LoginHTTPClient:      tlsClient,
+		HydraHTTPClient:      httpClient,
+		IAMHTTPClient:        httpClient,
+		CMSHTTPClient:        httpClient,
+		LoginHTTPClient:      httpClient,
 	}
 
 	webappServer, err := webapp.NewServer(webAppOptions)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	return webappServer, nil
