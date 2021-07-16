@@ -1,7 +1,7 @@
 import { Urls } from '../helpers';
 
 const NAME = '[data-cy=name]';
-const IS_BULITIN = '[data-cy=isBuiltIn]';;
+const IS_BULITIN = '[data-cy=isBuiltIn]';
 const SAVE_BUTTON = '[data-cy=save-btn]';
 
 export default class NewPartyTypePage {
@@ -23,6 +23,11 @@ export default class NewPartyTypePage {
 
     save = () => {
         cy.get(SAVE_BUTTON).click();
+        return this;
+    };
+
+    clearName = () => {
+        cy.get(NAME).clear();
         return this;
     };
 }

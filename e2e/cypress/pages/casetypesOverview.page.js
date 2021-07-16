@@ -10,11 +10,11 @@ export default class CasetypesOverviewPage {
         return this;
     };
 
-    selectCase = () => {
+    selectCasetype = () => {
         return cy.get(CASETYPE_ROWS).last();
     };
 
-    visitCase = () => {
+    visitCasetype = () => {
         cy.get(CASETYPE_ROWS).last().click();
         return new NewCaseTypePage();
     };
