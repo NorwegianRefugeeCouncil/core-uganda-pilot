@@ -8,7 +8,12 @@ import (
 
 func (s *Server) PickRelationshipParty(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	iamClient := s.IAMClient(ctx)
+
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	var listOptions iam.PartyListOptions
 	if err := listOptions.UnmarshalQueryParameters(req.URL.Query()); err != nil {

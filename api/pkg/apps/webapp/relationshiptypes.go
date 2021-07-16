@@ -14,7 +14,12 @@ import (
 func (s *Server) RelationshipTypes(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	iamClient := s.IAMClient(ctx)
+
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	r := &iam.RelationshipType{}
 
@@ -39,8 +44,12 @@ func (s *Server) RelationshipTypes(w http.ResponseWriter, req *http.Request) {
 
 func (s *Server) NewRelationshipType(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	iamClient := s.IAMClient(ctx)
 
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 	p, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
 		s.Error(w, err)
@@ -58,7 +67,12 @@ func (s *Server) NewRelationshipType(w http.ResponseWriter, req *http.Request) {
 func (s *Server) RelationshipType(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	iamClient := s.IAMClient(ctx)
+
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
@@ -100,7 +114,11 @@ func (s *Server) PostRelationshipType(
 	req *http.Request,
 ) {
 
-	iamClient := s.IAMClient(ctx)
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	if err := req.ParseForm(); err != nil {
 		s.Error(w, err)
@@ -140,10 +158,15 @@ func (s *Server) PostRelationshipType(
 			s.Error(w, err)
 			return
 		}
-		s.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+
+		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
 			Message: fmt.Sprintf("Relationship type \"%s\" successfully updated", r.Name),
 			Theme:   "success",
-		})
+		}); err != nil {
+			s.Error(w, err)
+			return
+		}
+
 		w.Header().Set("Location", "/settings/relationshiptypes/"+out.ID)
 		w.WriteHeader(http.StatusSeeOther)
 	} else {
@@ -152,10 +175,15 @@ func (s *Server) PostRelationshipType(
 			s.Error(w, err)
 			return
 		}
-		s.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+
+		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
 			Message: fmt.Sprintf("Relationship type \"%s\" successfully updated", r.Name),
 			Theme:   "success",
-		})
+		}); err != nil {
+			s.Error(w, err)
+			return
+		}
+
 		w.Header().Set("Location", "/settings/relationshiptypes/"+out.ID)
 		w.WriteHeader(http.StatusSeeOther)
 	}

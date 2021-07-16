@@ -54,8 +54,18 @@ func (c *CasesListOptions) UnmarshalQueryParams(values url.Values) error {
 func (s *Server) Cases(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	cmsClient := s.CMSClient(ctx)
-	iamClient := s.IAMClient(ctx)
+
+	cmsClient, err := s.CMSClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	options := &CasesListOptions{}
 	if err := options.UnmarshalQueryParams(req.URL.Query()); err != nil {
@@ -121,8 +131,17 @@ func (s *Server) Cases(w http.ResponseWriter, req *http.Request) {
 func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	cmsClient := s.CMSClient(ctx)
-	iamClient := s.IAMClient(ctx)
+	cmsClient, err := s.CMSClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	caseID, ok := mux.Vars(req)["id"]
 	if !ok || len(caseID) == 0 {
@@ -175,7 +194,7 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 
 	if caseID != "new" && len(kase.CreatorID) > 0 {
 		var err error
-		creator, err = s.IAMClient(ctx).Parties().Get(ctx, kase.CreatorID)
+		creator, err = iamClient.Parties().Get(ctx, kase.CreatorID)
 		if err != nil {
 			s.Error(w, err)
 			return
@@ -193,7 +212,7 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Get all authors
-	commentAuthors, err := s.IAMClient(ctx).Parties().Search(ctx, iam.PartySearchOptions{
+	commentAuthors, err := iamClient.Parties().Search(ctx, iam.PartySearchOptions{
 		PartyTypeIDs: []string{iam.IndividualPartyType.ID},
 		PartyIDs:     commentAuthorIDs,
 	})
@@ -299,8 +318,17 @@ func displayComments(comments *cms.CommentList, authorMap map[string]*iam.Party)
 func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	cmsClient := s.CMSClient(ctx)
-	iamClient := s.IAMClient(ctx)
+	cmsClient, err := s.CMSClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	var caseTypes *cms.CaseTypeList
 	var p *iam.PartyList
@@ -334,7 +362,7 @@ func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 		PartyTypeID: partyTypeID,
 	}
 
-	p, err := iamClient.Parties().List(ctx, listOptions)
+	p, err = iamClient.Parties().List(ctx, listOptions)
 	if err != nil {
 		s.Error(w, err)
 	}
@@ -371,7 +399,11 @@ func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 
 func (s *Server) PostCase(ctx context.Context, kase *cms.Case, w http.ResponseWriter, req *http.Request) {
 
-	cmsClient := s.CMSClient(ctx)
+	cmsClient, err := s.CMSClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	if err := req.ParseForm(); err != nil {
 		s.Error(w, err)
@@ -405,10 +437,15 @@ func (s *Server) PostCase(ctx context.Context, kase *cms.Case, w http.ResponseWr
 			s.Error(w, err)
 			return
 		}
-		s.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+
+		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
 			Message: fmt.Sprintf("Case successfully created"),
 			Theme:   "success",
-		})
+		}); err != nil {
+			s.Error(w, err)
+			return
+		}
+
 	} else {
 		var err error
 		kase, err = cmsClient.Cases().Update(ctx, kase)
@@ -416,10 +453,15 @@ func (s *Server) PostCase(ctx context.Context, kase *cms.Case, w http.ResponseWr
 			s.Error(w, err)
 			return
 		}
-		s.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+
+		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
 			Message: fmt.Sprintf("Case successfully updated"),
 			Theme:   "success",
-		})
+		}); err != nil {
+			s.Error(w, err)
+			return
+		}
+
 	}
 	if len(kase.ParentID) > 0 {
 		w.Header().Set("Location", "/cases/"+kase.ParentID)

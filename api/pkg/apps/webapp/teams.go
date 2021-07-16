@@ -12,7 +12,12 @@ import (
 func (s *Server) Teams(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	iamClient := s.IAMClient(ctx)
+
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	t, err := iamClient.Teams().List(ctx, iam.TeamListOptions{})
 	if err != nil {
@@ -32,7 +37,12 @@ func (s *Server) Teams(w http.ResponseWriter, req *http.Request) {
 func (s *Server) Team(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	iamClient := s.IAMClient(ctx)
+
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
@@ -94,7 +104,12 @@ func (s *Server) Team(w http.ResponseWriter, req *http.Request) {
 
 func (s *Server) AddIndividualToTeam(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	iamClient := s.IAMClient(ctx)
+
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	i := req.URL.Query().Get("individualId")
 	t := req.URL.Query().Get("teamId")
