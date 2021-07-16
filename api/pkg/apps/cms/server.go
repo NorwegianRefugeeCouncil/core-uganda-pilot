@@ -6,6 +6,7 @@ import (
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/ory/hydra-client-go/client/admin"
+	"go.mongodb.org/mongo-driver/bson"
 	"net/http"
 	"path"
 )
@@ -38,13 +39,18 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 		return nil, err
 	}
 
+	var hydraAdmin admin.ClientService
+	if o.HydraAdminClient != nil {
+		hydraAdmin = o.HydraAdminClient.Admin
+	}
+
 	srv := &Server{
 		mongoClientFn:   o.MongoClientFn,
 		environment:     o.Environment,
 		caseStore:       caseStore,
 		caseTypeStore:   caseTypeStore,
 		commentStore:    commentStore,
-		HydraAdmin:      o.HydraAdminClient.Admin,
+		HydraAdmin:      hydraAdmin,
 		HydraHttpClient: o.HydraHTTPClient,
 	}
 
@@ -91,4 +97,30 @@ func (s *Server) Error(w http.ResponseWriter, err error) {
 
 func (s *Server) Bind(req *http.Request, into interface{}) error {
 	return utils.BindJSON(req, into)
+}
+
+func (s *Server) ResetDB(ctx context.Context, databaseName string) error {
+	mongoClient, err := s.mongoClientFn(ctx)
+	if err != nil {
+		return err
+	}
+	// Delete CaseTypes
+	_, err = mongoClient.Database(databaseName).Collection("caseTypes").DeleteMany(ctx, bson.D{})
+	if err != nil {
+		return err
+	}
+	// Delete Cases
+	_, err = mongoClient.Database(databaseName).Collection("cases").DeleteMany(ctx, bson.D{})
+	if err != nil {
+		return err
+	}
+	// Delete Comments
+	_, err = mongoClient.Database(databaseName).Collection("comments").DeleteMany(ctx, bson.D{})
+	if err != nil {
+		return err
+	}
+	if err := mongoClient.Database(databaseName).Drop(ctx); err != nil {
+		return err
+	}
+	return nil
 }

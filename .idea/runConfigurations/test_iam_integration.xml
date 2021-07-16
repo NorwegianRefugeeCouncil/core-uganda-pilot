@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="test iam integration" type="GoTestRunConfiguration" factoryName="Go Test">
+    <module name="core" />
+    <working_directory value="$PROJECT_DIR$" />
+    <go_parameters value="--tags=integration" />
+    <kind value="PACKAGE" />
+    <package value="github.com/nrc-no/core/pkg/apps/iam" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$" />
+    <framework value="gotest" />
+    <method v="2" />
+  </configuration>
+</component>

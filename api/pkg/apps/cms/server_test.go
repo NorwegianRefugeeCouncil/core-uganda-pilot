@@ -1,11 +1,11 @@
 // +build integration
 
-package iam_test
+package cms_test
 
 import (
 	"context"
 	"errors"
-	. "github.com/nrc-no/core/pkg/apps/iam"
+	. "github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/rest"
 	uuid "github.com/satori/go.uuid"
@@ -136,91 +136,13 @@ func newUUID() string {
 	return uuid.NewV4().String()
 }
 
-func (s *Suite) mockPartyTypes(n int) []*PartyType {
-	var partyTypes []*PartyType
+func (s *Suite) mockCaseTypes(n int) []*CaseType {
+	var caseTypes []*CaseType
 	for i := 0; i < n; i++ {
-		partyTypes = append(partyTypes, &PartyType{
-			ID:        newUUID(),
-			Name:      newUUID(),
-			IsBuiltIn: false,
+		caseTypes = append(caseTypes, &CaseType{
+			ID:   newUUID(),
+			Name: "mock",
 		})
 	}
-	return partyTypes
-}
-
-func (s *Suite) mockAttributes(n int) []*Attribute {
-	var attributes []*Attribute
-	for i := 0; i < n; i++ {
-		attributes = append(attributes, &Attribute{
-			ID:                           newUUID(),
-			Name:                         newUUID(),
-			PartyTypeIDs:                 make([]string, 0),
-			IsPersonallyIdentifiableInfo: false,
-			Translations:                 make([]AttributeTranslation, 0),
-		})
-	}
-	return attributes
-}
-
-func (s *Suite) mockParties(n int) []*Party {
-	var parties []*Party
-	for i := 0; i < n; i++ {
-		parties = append(parties, &Party{
-			ID:           newUUID(),
-			PartyTypeIDs: make([]string, 0),
-			Attributes:   make(map[string][]string),
-		})
-	}
-	return parties
-}
-
-func (s *Suite) mockRelationshipTypes(n int) []*RelationshipType {
-	var relationshipTypes []*RelationshipType
-	for i := 0; i < n; i++ {
-		relationshipTypes = append(relationshipTypes, &RelationshipType{
-			ID:              newUUID(),
-			IsDirectional:   false,
-			Name:            newUUID(),
-			FirstPartyRole:  "",
-			SecondPartyRole: "",
-			Rules:           nil,
-		})
-	}
-	return relationshipTypes
-}
-
-func (s *Suite) mockRelationships(n int) []*Relationship {
-	var relationships []*Relationship
-	for i := 0; i < n; i++ {
-		relationships = append(relationships, &Relationship{
-			ID:                 newUUID(),
-			RelationshipTypeID: "",
-			FirstPartyID:       "",
-			SecondPartyID:      "",
-		})
-	}
-	return relationships
-}
-
-func (s *Suite) mockIndividuals(n int) []*Individual {
-	var individuals []*Individual
-	for i := 0; i < n; i++ {
-		individual := *NewIndividual(newUUID())
-		individual.Attributes.Add(FirstNameAttribute.ID, "mock")
-		individual.Attributes.Add(LastNameAttribute.ID, "mock")
-		individuals = append(individuals, &individual)
-	}
-	return individuals
-}
-
-func (s *Suite) mockMemberships(n int) []*Membership {
-	var memberships []*Membership
-	for i := 0; i < n; i++ {
-		memberships = append(memberships, &Membership{
-			ID:           newUUID(),
-			TeamID:       "",
-			IndividualID: "",
-		})
-	}
-	return memberships
+	return caseTypes
 }

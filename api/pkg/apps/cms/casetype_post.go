@@ -15,7 +15,10 @@ func (s *Server) PostCaseType(w http.ResponseWriter, req *http.Request) {
 	}
 
 	caseType := &payload
-	caseType.ID = uuid.NewV4().String()
+
+	if len(caseType.ID) == 0 {
+		caseType.ID = uuid.NewV4().String()
+	}
 
 	if err := s.caseTypeStore.Create(ctx, caseType); err != nil {
 		s.Error(w, err)
