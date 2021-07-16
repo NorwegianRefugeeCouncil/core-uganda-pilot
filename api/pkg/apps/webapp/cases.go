@@ -344,6 +344,7 @@ func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 		caseType, err = cmsClient.CaseTypes().Get(ctx, caseTypeID)
 		if err != nil {
 			s.Error(w, err)
+			return
 		}
 	}
 
@@ -352,6 +353,7 @@ func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 		team, err = iamClient.Teams().Get(ctx, teamID)
 		if err != nil {
 			s.Error(w, err)
+			return
 		}
 	}
 
