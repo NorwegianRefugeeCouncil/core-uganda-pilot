@@ -35,7 +35,13 @@ func (s *Server) Individuals(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	list, err := iamClient.Individuals().List(ctx, iam.IndividualListOptions{})
+  var listOptions iam.IndividualListOptions
+	if err := listOptions.UnmarshalQueryParameters(req.URL.Query()); err != nil {
+		s.Error(w, err)
+		return
+	}
+  
+  list, err := iamCli.Individuals().List(ctx, listOptions)
 	if err != nil {
 		s.Error(w, err)
 		return

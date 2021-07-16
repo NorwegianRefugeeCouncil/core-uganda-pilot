@@ -41,7 +41,7 @@ or
  ```
 
 ### 5. Endpoints:
- - webapp: [https://localhost:9000](http://localhost:9000)
+ - webapp: [http://localhost:9000](http://localhost:9000)
  - mongo express: [http://localhost:8090](http://localhost:8090)
  
  
