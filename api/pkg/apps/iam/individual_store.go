@@ -92,6 +92,10 @@ func (s *IndividualStore) list(ctx context.Context, listOptions IndividualListOp
 		filter["attributes."+key] = value
 	}
 
+	if len(listOptions.SearchParam) != 0 {
+		filter["$text"] = bson.M{"$search": listOptions.SearchParam}
+	}
+
 	collection, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
