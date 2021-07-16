@@ -49,8 +49,7 @@ type Options struct {
 
 	// Redis
 	RedisMaxIdleConnections int
-	RedisNetwork            string
-	RedisAddress            string
+	RedisURL                string
 	RedisPassword           string
 	RedisPasswordFile       string
 
@@ -111,8 +110,7 @@ func NewOptions() *Options {
 		MongoPassword:           "",
 		MongoHosts:              defaultMongoHosts,
 		RedisMaxIdleConnections: 10,
-		RedisNetwork:            "tcp",
-		RedisAddress:            defaultRedisAddress,
+		RedisURL:                defaultRedisAddress,
 		RedisPassword:           "",
 		HydraAdminURL:           defaultHydraAdminURL,
 		HydraPublicURL:          defaultHydraPublicURL,
@@ -161,8 +159,7 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 
 	// Redis
 	fs.IntVar(&o.RedisMaxIdleConnections, "redis-max-idle-conns", o.RedisMaxIdleConnections, "Redis maximum number of idle connections")
-	fs.StringVar(&o.RedisAddress, "redis-address", o.RedisAddress, "Redis address")
-	fs.StringVar(&o.RedisNetwork, "redis-network", o.RedisNetwork, "Redis network")
+	fs.StringVar(&o.RedisURL, "redis-url", o.RedisURL, "Redis URL")
 	fs.StringVar(&o.RedisPassword, "redis-password", o.RedisPassword, "Redis password file")
 	fs.StringVar(&o.RedisPasswordFile, "redis-password-file", o.RedisPasswordFile, "Redis password")
 
@@ -325,7 +322,7 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 			if len(o.RedisPassword) > 0 {
 				redisOptions = append(redisOptions, redis.DialPassword(o.RedisPassword))
 			}
-			return redis.Dial(o.RedisNetwork, o.RedisAddress, redisOptions...)
+			return redis.DialURL(o.RedisURL, redisOptions...)
 		},
 	}
 

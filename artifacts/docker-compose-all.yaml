@@ -97,7 +97,7 @@ services:
       - --mongo-username=root
       - --mongo-password=example
       - --mongo-hosts=localhost:27017
-      - --redis-address=localhost:6379
+      - --redis-url=redis://localhost:6379
       - --redis-password=
       - --redis-network=tcp
       - --redis-secret-key=secret
