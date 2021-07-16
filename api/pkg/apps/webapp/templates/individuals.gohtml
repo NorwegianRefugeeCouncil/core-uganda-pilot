@@ -36,9 +36,9 @@
                             <div class="py-2"><b>Individuals</b></div>
                             <div class="flex-grow-1"></div>
                             <div class="mx-2">
-                            <input class="form-control" type="text" placeholder="Search"/>
+                            <input id="search-input" class="form-control" type="text" placeholder="Search"/>
                             </div>
-                            <button class="btn btn-outline-secondary">Search</button>
+                            <button id="search-button" class="btn btn-outline-secondary">Search</button>
                         </div>
 
                     </div>
@@ -53,6 +53,19 @@
             </div>
         </div>
     </div>
+
+    <script>
+      const searchButton = document.getElementById("search-button")
+      const searchInput = document.getElementById("search-input")
+
+      searchButton.addEventListener("click", (event) => {
+        const searchParams = new URLSearchParams({
+          "searchParam": searchInput.value
+        })
+        const redirectUrl = "/individuals?" + searchParams.toString()
+        window.location = redirectUrl
+      })
+    </script>
 
     </body>
     </html>
