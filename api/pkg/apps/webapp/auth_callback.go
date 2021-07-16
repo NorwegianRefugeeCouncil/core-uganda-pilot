@@ -69,6 +69,7 @@ func (s *Server) Callback(w http.ResponseWriter, req *http.Request) {
 	if err := idToken.Claims(&profile); err != nil {
 		err := fmt.Errorf("failed to unmarshal claim: %v", err)
 		s.Error(w, err)
+		return
 	}
 
 	s.sessionManager.Put(ctx, "id-token", rawIDToken)
