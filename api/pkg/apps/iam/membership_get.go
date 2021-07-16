@@ -13,7 +13,7 @@ func (s *Server) getMembership(w http.ResponseWriter, req *http.Request) {
 	}
 	ret, err := s.membershipStore.get(ctx, id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.error(w, err)
 		return
 	}
 

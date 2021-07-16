@@ -21,7 +21,7 @@ func (s *Server) postParty(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if err := s.partyStore.create(ctx, p); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.error(w, err)
 		return
 	}
 

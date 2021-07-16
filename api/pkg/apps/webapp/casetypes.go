@@ -11,11 +11,11 @@ import (
 	"net/http"
 )
 
-func (h *Server) CaseTypes(w http.ResponseWriter, req *http.Request) {
+func (s *Server) CaseTypes(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	cmsClient := h.CMSClient(ctx)
-	iamClient := h.IAMClient(ctx)
+	cmsClient := s.CMSClient(ctx)
+	iamClient := s.IAMClient(ctx)
 
 	caseTypes, err := cmsClient.CaseTypes().List(ctx, cms.CaseTypeListOptions{})
 	if errResponse(w, err) {
@@ -35,7 +35,7 @@ func (h *Server) CaseTypes(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := h.renderFactory.New(req).ExecuteTemplate(w, "casetypes", map[string]interface{}{
+	if err := s.renderFactory.New(req).ExecuteTemplate(w, "casetypes", map[string]interface{}{
 		"CaseTypes":  caseTypes,
 		"PartyTypes": partyTypes,
 		"Teams":      teams,
@@ -44,11 +44,11 @@ func (h *Server) CaseTypes(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (h *Server) CaseType(w http.ResponseWriter, req *http.Request) {
+func (s *Server) CaseType(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	cmsClient := h.CMSClient(ctx)
-	iamClient := h.IAMClient(ctx)
+	cmsClient := s.CMSClient(ctx)
+	iamClient := s.IAMClient(ctx)
 
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
@@ -89,7 +89,7 @@ func (h *Server) CaseType(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := h.renderFactory.New(req).ExecuteTemplate(w, "casetype", map[string]interface{}{
+	if err := s.renderFactory.New(req).ExecuteTemplate(w, "casetype", map[string]interface{}{
 		"CaseType":   caseType,
 		"PartyTypes": partyTypes,
 		"Teams":      teamsData,
@@ -158,9 +158,9 @@ func (h *Server) UpdateCaseType(ctx context.Context, caseType *cms.CaseType, w h
 	w.WriteHeader(http.StatusSeeOther)
 }
 
-func (h *Server) NewCaseType(w http.ResponseWriter, req *http.Request) {
+func (s *Server) NewCaseType(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	iamClient := h.IAMClient(ctx)
+	iamClient := s.IAMClient(ctx)
 
 	p, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if errResponse(w, err) {
@@ -172,7 +172,7 @@ func (h *Server) NewCaseType(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := h.renderFactory.New(req).ExecuteTemplate(w, "casetype", map[string]interface{}{
+	if err := s.renderFactory.New(req).ExecuteTemplate(w, "casetype", map[string]interface{}{
 		"PartyTypes": p,
 		"Teams":      teamsData,
 	}); errResponse(w, err) {

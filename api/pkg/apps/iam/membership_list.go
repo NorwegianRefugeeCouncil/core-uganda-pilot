@@ -7,13 +7,13 @@ func (s *Server) listMemberships(w http.ResponseWriter, req *http.Request) {
 
 	var listOptions MembershipListOptions
 	if err := listOptions.UnmarshalQueryParameters(req.URL.Query()); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.error(w, err)
 		return
 	}
 
 	ret, err := s.membershipStore.list(ctx, listOptions)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.error(w, err)
 		return
 	}
 

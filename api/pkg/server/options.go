@@ -6,7 +6,6 @@ import (
 	"crypto/x509"
 	"errors"
 	"fmt"
-	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gomodule/redigo/redis"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/cms"
@@ -50,8 +49,7 @@ type Options struct {
 
 	// Redis
 	RedisMaxIdleConnections int
-	RedisNetwork            string
-	RedisAddress            string
+	RedisURL                string
 	RedisPassword           string
 	RedisPasswordFile       string
 
@@ -112,8 +110,7 @@ func NewOptions() *Options {
 		MongoPassword:           "",
 		MongoHosts:              defaultMongoHosts,
 		RedisMaxIdleConnections: 10,
-		RedisNetwork:            "tcp",
-		RedisAddress:            defaultRedisAddress,
+		RedisURL:                defaultRedisAddress,
 		RedisPassword:           "",
 		HydraAdminURL:           defaultHydraAdminURL,
 		HydraPublicURL:          defaultHydraPublicURL,
@@ -162,8 +159,7 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 
 	// Redis
 	fs.IntVar(&o.RedisMaxIdleConnections, "redis-max-idle-conns", o.RedisMaxIdleConnections, "Redis maximum number of idle connections")
-	fs.StringVar(&o.RedisAddress, "redis-address", o.RedisAddress, "Redis address")
-	fs.StringVar(&o.RedisNetwork, "redis-network", o.RedisNetwork, "Redis network")
+	fs.StringVar(&o.RedisURL, "redis-url", o.RedisURL, "Redis URL")
 	fs.StringVar(&o.RedisPassword, "redis-password", o.RedisPassword, "Redis password file")
 	fs.StringVar(&o.RedisPasswordFile, "redis-password-file", o.RedisPasswordFile, "Redis password")
 
@@ -202,13 +198,16 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 
 type CompletedOptions struct {
 	*Options
-	MongoClientFn      utils.MongoClientFn
-	HydraAdminClient   *client.OryHydra
-	HydraPublicClient  *client.OryHydra
-	RedisPool          *redis.Pool
-	OAuthTokenEndpoint string
-	OIDCProvider       *oidc.Provider
-	HydraTLSClient     *http.Client
+	MongoClientFn              utils.MongoClientFn
+	HydraAdminClient           *client.OryHydra
+	HydraPublicClient          *client.OryHydra
+	RedisPool                  *redis.Pool
+	OAuthTokenEndpoint         string
+	OAuthJwksURI               string
+	OAuthIssuerURL             string
+	OAuthAuthorizationEndpoint string
+	HydraTLSClient             *http.Client
+	OAuthIDTokenSigningAlgs    []string
 }
 
 func readFile(path string) (string, error) {
@@ -257,6 +256,7 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		if len(mongoUsername) == 0 && len(o.MongoUsernameFile) > 0 {
 			mongoUsername, err = readFile(o.MongoUsernameFile)
 			if err != nil {
+				logrus.WithError(err).Errorf("failed to read mongo username file")
 				return nil, err
 			}
 		}
@@ -265,16 +265,19 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		if len(mongoPassword) == 0 && len(o.MongoPasswordFile) > 0 {
 			mongoPassword, err = readFile(o.MongoPasswordFile)
 			if err != nil {
+				logrus.WithError(err).Errorf("failed to read mongo password file")
 				return nil, err
 			}
 		}
 
 		mongoClient, err := MongoClient(o.MongoHosts, mongoUsername, mongoPassword)
 		if err != nil {
+			logrus.WithError(err).Errorf("failed to create mongo client")
 			return nil, err
 		}
 
 		if err := mongoClient.Connect(ctx); err != nil {
+			logrus.WithError(err).Errorf("failed to connect to mongo")
 			return nil, err
 		}
 
@@ -282,13 +285,15 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 
 	}
 
-	hydraAdminClient, err := HydraAdminClient(o.HydraAdminURL)
+	hydraAdminClient, err := HydraClient(o.HydraAdminURL)
 	if err != nil {
+		logrus.WithError(err).Errorf("failed to create hydra admin client")
 		return CompletedOptions{}, err
 	}
 
-	hydraPublicClient, err := HydraAdminClient(o.HydraPublicURL)
+	hydraPublicClient, err := HydraClient(o.HydraPublicURL)
 	if err != nil {
+		logrus.WithError(err).Errorf("failed to create hydra public client")
 		return CompletedOptions{}, err
 	}
 
@@ -296,6 +301,7 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 	if !o.TLSDisable {
 		hydraHttpClient, err = tlsClient(o.TLSCertPath)
 		if err != nil {
+			logrus.WithError(err).Errorf("failed to create tls client")
 			return CompletedOptions{}, err
 		}
 	}
@@ -305,12 +311,7 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		HTTPClient: hydraHttpClient,
 	})
 	if err != nil {
-		panic(err)
-	}
-
-	oidcCtx := oidc.ClientContext(ctx, hydraHttpClient)
-	oidcProvider, err := oidc.NewProvider(oidcCtx, issuerUrl)
-	if err != nil {
+		logrus.WithError(err).Errorf("failed to discover openid configuration")
 		panic(err)
 	}
 
@@ -321,19 +322,22 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 			if len(o.RedisPassword) > 0 {
 				redisOptions = append(redisOptions, redis.DialPassword(o.RedisPassword))
 			}
-			return redis.Dial(o.RedisNetwork, o.RedisAddress, redisOptions...)
+			return redis.DialURL(o.RedisURL, redisOptions...)
 		},
 	}
 
 	completedOptions := CompletedOptions{
-		Options:            o,
-		MongoClientFn:      mongoClientFn,
-		HydraAdminClient:   hydraAdminClient,
-		HydraPublicClient:  hydraPublicClient,
-		HydraTLSClient:     hydraHttpClient,
-		RedisPool:          pool,
-		OAuthTokenEndpoint: *openIdConf.Payload.TokenEndpoint,
-		OIDCProvider:       oidcProvider,
+		Options:                    o,
+		MongoClientFn:              mongoClientFn,
+		HydraAdminClient:           hydraAdminClient,
+		HydraPublicClient:          hydraPublicClient,
+		HydraTLSClient:             hydraHttpClient,
+		RedisPool:                  pool,
+		OAuthTokenEndpoint:         *openIdConf.Payload.TokenEndpoint,
+		OAuthJwksURI:               *openIdConf.Payload.JwksURI,
+		OAuthIssuerURL:             *openIdConf.Payload.Issuer,
+		OAuthAuthorizationEndpoint: *openIdConf.Payload.AuthorizationEndpoint,
+		OAuthIDTokenSigningAlgs:    openIdConf.Payload.IDTokenSigningAlgValuesSupported,
 	}
 	return completedOptions, nil
 }
@@ -341,6 +345,8 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 func tlsClient(tlsCertPath string) (*http.Client, error) {
 	certFile, err := ioutil.ReadFile(tlsCertPath)
 	if err != nil {
+		err = fmt.Errorf("failed to read tls cert file: %v", err)
+		logrus.WithError(err).Errorf("")
 		return nil, err
 	}
 	certPool := x509.NewCertPool()
@@ -359,9 +365,11 @@ func tlsClient(tlsCertPath string) (*http.Client, error) {
 	return httpClient, nil
 }
 
-func HydraAdminClient(adminURL string) (*client.OryHydra, error) {
+func HydraClient(adminURL string) (*client.OryHydra, error) {
 	hydraAdminURL, err := url.Parse(adminURL)
 	if err != nil {
+		err = fmt.Errorf("failed to parse hydra admin url: %v", err)
+		logrus.WithError(err).Errorf("")
 		return nil, err
 	}
 	hydraAdminClient := client.NewHTTPClientWithConfig(nil, &client.TransportConfig{

@@ -12,109 +12,109 @@ import (
 	"net/url"
 )
 
-func (h *Server) AuthClients(w http.ResponseWriter, req *http.Request) {
+func (s *Server) AuthClients(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
 	if req.Method == "POST" {
-		h.PostAuthClient(w, req, true, &models.OAuth2Client{})
+		s.PostAuthClient(w, req, true, &models.OAuth2Client{})
 		return
 	}
 
-	clients, err := h.HydraAdmin.ListOAuth2Clients(&admin.ListOAuth2ClientsParams{
+	clients, err := s.HydraAdmin.ListOAuth2Clients(&admin.ListOAuth2ClientsParams{
 		Context: ctx,
 	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
-	if err := h.renderFactory.New(req).ExecuteTemplate(w, "auth_clients", map[string]interface{}{
+	if err := s.renderFactory.New(req).ExecuteTemplate(w, "auth_clients", map[string]interface{}{
 		"Clients": clients.Payload,
 	}); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 }
 
-func (h *Server) AuthClientNewSecret(w http.ResponseWriter, req *http.Request) {
+func (s *Server) AuthClientNewSecret(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
 		err := fmt.Errorf("no id in path")
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
-	cli, err := h.HydraAdmin.GetOAuth2Client(&admin.GetOAuth2ClientParams{
+	cli, err := s.HydraAdmin.GetOAuth2Client(&admin.GetOAuth2ClientParams{
 		ID:      id,
 		Context: ctx,
 	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 	clientSecret, err := GenerateRandomStringURLSafe(32)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 	c := cli.Payload
 	c.ClientSecret = clientSecret
 
-	_, err = h.HydraAdmin.UpdateOAuth2Client(&admin.UpdateOAuth2ClientParams{
+	_, err = s.HydraAdmin.UpdateOAuth2Client(&admin.UpdateOAuth2ClientParams{
 		Context: ctx,
 		Body:    c,
 		ID:      c.ClientID,
 	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
-	h.sessionManager.Put(ctx, "client_secret", clientSecret)
+	s.sessionManager.Put(ctx, "client_secret", clientSecret)
 
 	http.Redirect(w, req, "/settings/authclients/"+id, http.StatusSeeOther)
 
 }
 
-func (h *Server) AuthClient(w http.ResponseWriter, req *http.Request) {
+func (s *Server) AuthClient(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
 		err := fmt.Errorf("no id in path")
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 	if id == "new" {
-		if err := h.renderFactory.New(req).ExecuteTemplate(w, "auth_client", map[string]interface{}{
+		if err := s.renderFactory.New(req).ExecuteTemplate(w, "auth_client", map[string]interface{}{
 			"GrantTypes":    map[string]bool{},
 			"ResponseTypes": map[string]bool{},
 			"AuthMethod":    "none",
 		}); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			s.Error(w, err)
 			return
 		}
 		return
 	}
 
-	cli, err := h.HydraAdmin.GetOAuth2Client(&admin.GetOAuth2ClientParams{
+	cli, err := s.HydraAdmin.GetOAuth2Client(&admin.GetOAuth2ClientParams{
 		ID:      id,
 		Context: ctx,
 	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 	if req.Method == "POST" {
-		h.PostAuthClient(w, req, false, cli.Payload)
+		s.PostAuthClient(w, req, false, cli.Payload)
 		return
 	}
 
@@ -128,36 +128,36 @@ func (h *Server) AuthClient(w http.ResponseWriter, req *http.Request) {
 		responseTypes[responseType] = true
 	}
 
-	if err := h.renderFactory.New(req).ExecuteTemplate(w, "auth_client", map[string]interface{}{
+	if err := s.renderFactory.New(req).ExecuteTemplate(w, "auth_client", map[string]interface{}{
 		"Client":        cli.Payload,
-		"ClientSecret":  h.sessionManager.PopString(ctx, "client_secret"),
+		"ClientSecret":  s.sessionManager.PopString(ctx, "client_secret"),
 		"GrantTypes":    grantTypes,
 		"ResponseTypes": responseTypes,
 		"AuthMethod":    cli.Payload.TokenEndpointAuthMethod,
 	}); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 }
 
-func (h *Server) DeleteAuthClient(w http.ResponseWriter, req *http.Request) {
+func (s *Server) DeleteAuthClient(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
 		err := fmt.Errorf("no id in path")
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
-	_, err := h.HydraAdmin.DeleteOAuth2Client(&admin.DeleteOAuth2ClientParams{
+	_, err := s.HydraAdmin.DeleteOAuth2Client(&admin.DeleteOAuth2ClientParams{
 		ID:      id,
 		Context: ctx,
 	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
@@ -165,12 +165,12 @@ func (h *Server) DeleteAuthClient(w http.ResponseWriter, req *http.Request) {
 
 }
 
-func (h *Server) PostAuthClient(w http.ResponseWriter, req *http.Request, isNew bool, cli *models.OAuth2Client) {
+func (s *Server) PostAuthClient(w http.ResponseWriter, req *http.Request, isNew bool, cli *models.OAuth2Client) {
 
 	ctx := req.Context()
 
 	if err := req.ParseForm(); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
@@ -188,30 +188,30 @@ func (h *Server) PostAuthClient(w http.ResponseWriter, req *http.Request, isNew 
 		cli = &*cli
 		clientSecret, err := GenerateRandomStringURLSafe(32)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			s.Error(w, err)
 			return
 		}
-		h.sessionManager.Put(ctx, "client_secret", clientSecret)
+		s.sessionManager.Put(ctx, "client_secret", clientSecret)
 		cli.ClientSecret = clientSecret
 		cli.ClientID = uuid.NewV4().String()
-		response, err := h.HydraAdmin.CreateOAuth2Client(&admin.CreateOAuth2ClientParams{
+		response, err := s.HydraAdmin.CreateOAuth2Client(&admin.CreateOAuth2ClientParams{
 			Context: ctx,
 			Body:    cli,
 		})
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			s.Error(w, err)
 			return
 		}
 		http.Redirect(w, req, "/settings/authclients/"+response.Payload.ClientID, http.StatusSeeOther)
 		return
 	} else {
-		response, err := h.HydraAdmin.UpdateOAuth2Client(&admin.UpdateOAuth2ClientParams{
+		response, err := s.HydraAdmin.UpdateOAuth2Client(&admin.UpdateOAuth2ClientParams{
 			Body:    cli,
 			ID:      cli.ClientID,
 			Context: ctx,
 		})
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			s.Error(w, err)
 			return
 		}
 		http.Redirect(w, req, "/settings/authclients/"+response.Payload.ClientID, http.StatusSeeOther)

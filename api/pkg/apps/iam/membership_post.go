@@ -21,7 +21,7 @@ func (s *Server) postMembership(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if err := s.membershipStore.create(ctx, p); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.error(w, err)
 		return
 	}
 

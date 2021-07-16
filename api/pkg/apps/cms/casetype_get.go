@@ -14,7 +14,7 @@ func (s *Server) GetCaseType(w http.ResponseWriter, req *http.Request) {
 
 	ret, err := s.caseTypeStore.Get(ctx, id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 

@@ -14,7 +14,7 @@ func (s *Server) GetCase(w http.ResponseWriter, req *http.Request) {
 
 	ret, err := s.caseStore.Get(ctx, id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 

@@ -2,13 +2,10 @@ package iam
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/ory/hydra-client-go/client/admin"
-	"io/ioutil"
 	"net/http"
 	"path"
 )
@@ -130,45 +127,19 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }
 
 func (s *Server) json(w http.ResponseWriter, status int, data interface{}) {
-	responseBytes, err := json.Marshal(data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(status)
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(responseBytes)
-	if err != nil {
-		return
-	}
+	utils.JSONResponse(w, status, data)
 }
 
 func (s *Server) getPathParam(param string, w http.ResponseWriter, req *http.Request, into *string) bool {
-	id, ok := mux.Vars(req)[param]
-	if !ok || len(id) == 0 {
-		err := fmt.Errorf("path parameter '%s' not found in path", param)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return false
-	}
-	*into = id
-	return true
+	return utils.GetPathParam(param, w, req, into)
 }
 
 func (s *Server) error(w http.ResponseWriter, err error) {
-	http.Error(w, err.Error(), http.StatusInternalServerError)
+	utils.ErrorResponse(w, err)
 }
 
 func (s *Server) bind(req *http.Request, into interface{}) error {
-	bodyBytes, err := ioutil.ReadAll(req.Body)
-	if err != nil {
-		return err
-	}
-
-	if err := json.Unmarshal(bodyBytes, &into); err != nil {
-		return err
-	}
-
-	return nil
+	return utils.BindJSON(req, into)
 }
 
 func (s *Server) ResetDB(ctx context.Context, databaseName string) error {
