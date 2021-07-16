@@ -60,7 +60,7 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 				HTTPClient: s.HydraHTTPClient,
 			})
 			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+				s.Error(w, err)
 				return
 			}
 
@@ -85,11 +85,11 @@ func (s *Server) dangerouslySetAuthenticatedUserUsingEmail(w http.ResponseWriter
 		},
 	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 	}
 	if len(authUsers.Items) == 0 {
 		err := fmt.Errorf("user not found")
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 	}
 	authUser := authUsers.Items[0]
 

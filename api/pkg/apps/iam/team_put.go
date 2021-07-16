@@ -20,7 +20,7 @@ func (s *Server) putTeam(w http.ResponseWriter, req *http.Request) {
 
 	r, err := s.teamStore.Get(ctx, id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.error(w, err)
 		return
 	}
 
@@ -28,7 +28,7 @@ func (s *Server) putTeam(w http.ResponseWriter, req *http.Request) {
 	r.Name = payload.Name
 
 	if err := s.teamStore.Update(ctx, r); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.error(w, err)
 		return
 	}
 
