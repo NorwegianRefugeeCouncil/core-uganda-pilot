@@ -6,7 +6,6 @@ import (
 	"crypto/x509"
 	"errors"
 	"fmt"
-	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gomodule/redigo/redis"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/cms"
@@ -202,13 +201,16 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 
 type CompletedOptions struct {
 	*Options
-	MongoClientFn      utils.MongoClientFn
-	HydraAdminClient   *client.OryHydra
-	HydraPublicClient  *client.OryHydra
-	RedisPool          *redis.Pool
-	OAuthTokenEndpoint string
-	OIDCProvider       *oidc.Provider
-	HydraTLSClient     *http.Client
+	MongoClientFn              utils.MongoClientFn
+	HydraAdminClient           *client.OryHydra
+	HydraPublicClient          *client.OryHydra
+	RedisPool                  *redis.Pool
+	OAuthTokenEndpoint         string
+	OAuthJwksURI               string
+	OAuthIssuerURL             string
+	OAuthAuthorizationEndpoint string
+	HydraTLSClient             *http.Client
+	OAuthIDTokenSigningAlgs    []string
 }
 
 func readFile(path string) (string, error) {
@@ -308,12 +310,6 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		panic(err)
 	}
 
-	oidcCtx := oidc.ClientContext(ctx, hydraHttpClient)
-	oidcProvider, err := oidc.NewProvider(oidcCtx, issuerUrl)
-	if err != nil {
-		panic(err)
-	}
-
 	pool := &redis.Pool{
 		MaxIdle: o.RedisMaxIdleConnections,
 		Dial: func() (redis.Conn, error) {
@@ -326,14 +322,17 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 	}
 
 	completedOptions := CompletedOptions{
-		Options:            o,
-		MongoClientFn:      mongoClientFn,
-		HydraAdminClient:   hydraAdminClient,
-		HydraPublicClient:  hydraPublicClient,
-		HydraTLSClient:     hydraHttpClient,
-		RedisPool:          pool,
-		OAuthTokenEndpoint: *openIdConf.Payload.TokenEndpoint,
-		OIDCProvider:       oidcProvider,
+		Options:                    o,
+		MongoClientFn:              mongoClientFn,
+		HydraAdminClient:           hydraAdminClient,
+		HydraPublicClient:          hydraPublicClient,
+		HydraTLSClient:             hydraHttpClient,
+		RedisPool:                  pool,
+		OAuthTokenEndpoint:         *openIdConf.Payload.TokenEndpoint,
+		OAuthJwksURI:               *openIdConf.Payload.JwksURI,
+		OAuthIssuerURL:             *openIdConf.Payload.Issuer,
+		OAuthAuthorizationEndpoint: *openIdConf.Payload.AuthorizationEndpoint,
+		OAuthIDTokenSigningAlgs:    openIdConf.Payload.IDTokenSigningAlgValuesSupported,
 	}
 	return completedOptions, nil
 }
