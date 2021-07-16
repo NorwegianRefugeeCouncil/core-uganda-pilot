@@ -259,6 +259,7 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		if len(mongoUsername) == 0 && len(o.MongoUsernameFile) > 0 {
 			mongoUsername, err = readFile(o.MongoUsernameFile)
 			if err != nil {
+				logrus.WithError(err).Errorf("failed to read mongo username file")
 				return nil, err
 			}
 		}
@@ -267,16 +268,19 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		if len(mongoPassword) == 0 && len(o.MongoPasswordFile) > 0 {
 			mongoPassword, err = readFile(o.MongoPasswordFile)
 			if err != nil {
+				logrus.WithError(err).Errorf("failed to read mongo password file")
 				return nil, err
 			}
 		}
 
 		mongoClient, err := MongoClient(o.MongoHosts, mongoUsername, mongoPassword)
 		if err != nil {
+			logrus.WithError(err).Errorf("failed to create mongo client")
 			return nil, err
 		}
 
 		if err := mongoClient.Connect(ctx); err != nil {
+			logrus.WithError(err).Errorf("failed to connect to mongo")
 			return nil, err
 		}
 
@@ -284,13 +288,15 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 
 	}
 
-	hydraAdminClient, err := HydraAdminClient(o.HydraAdminURL)
+	hydraAdminClient, err := HydraClient(o.HydraAdminURL)
 	if err != nil {
+		logrus.WithError(err).Errorf("failed to create hydra admin client")
 		return CompletedOptions{}, err
 	}
 
-	hydraPublicClient, err := HydraAdminClient(o.HydraPublicURL)
+	hydraPublicClient, err := HydraClient(o.HydraPublicURL)
 	if err != nil {
+		logrus.WithError(err).Errorf("failed to create hydra public client")
 		return CompletedOptions{}, err
 	}
 
@@ -298,6 +304,7 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 	if !o.TLSDisable {
 		hydraHttpClient, err = tlsClient(o.TLSCertPath)
 		if err != nil {
+			logrus.WithError(err).Errorf("failed to create tls client")
 			return CompletedOptions{}, err
 		}
 	}
@@ -307,6 +314,7 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		HTTPClient: hydraHttpClient,
 	})
 	if err != nil {
+		logrus.WithError(err).Errorf("failed to discover openid configuration")
 		panic(err)
 	}
 
@@ -340,6 +348,8 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 func tlsClient(tlsCertPath string) (*http.Client, error) {
 	certFile, err := ioutil.ReadFile(tlsCertPath)
 	if err != nil {
+		err = fmt.Errorf("failed to read tls cert file: %v", err)
+		logrus.WithError(err).Errorf("")
 		return nil, err
 	}
 	certPool := x509.NewCertPool()
@@ -358,9 +368,11 @@ func tlsClient(tlsCertPath string) (*http.Client, error) {
 	return httpClient, nil
 }
 
-func HydraAdminClient(adminURL string) (*client.OryHydra, error) {
+func HydraClient(adminURL string) (*client.OryHydra, error) {
 	hydraAdminURL, err := url.Parse(adminURL)
 	if err != nil {
+		err = fmt.Errorf("failed to parse hydra admin url: %v", err)
+		logrus.WithError(err).Errorf("")
 		return nil, err
 	}
 	hydraAdminClient := client.NewHTTPClientWithConfig(nil, &client.TransportConfig{

@@ -3,6 +3,7 @@ package webapp
 import (
 	"context"
 	"encoding/gob"
+	"errors"
 	"fmt"
 	"github.com/nrc-no/core/pkg/apps/iam"
 	"golang.org/x/oauth2"
@@ -30,39 +31,44 @@ func (s *Server) Callback(w http.ResponseWriter, req *http.Request) {
 	queryState := req.URL.Query().Get("state")
 
 	if sessionState != queryState {
-		http.Error(w, "state mismatch", http.StatusInternalServerError)
+		err := errors.New("state mismatch")
+		s.Error(w, err)
 		return
 	}
 
 	code := req.URL.Query().Get("code")
 	if len(code) == 0 {
-		http.Error(w, "code not found", http.StatusInternalServerError)
+		err := errors.New("code not found")
+		s.Error(w, err)
 		return
 	}
 
 	tokenCtx := context.WithValue(ctx, oauth2.HTTPClient, s.HydraHTTPClient)
 	token, err := conf.Exchange(tokenCtx, code)
 	if err != nil {
-		http.Error(w, fmt.Errorf("failed to exchange code: %v", err).Error(), http.StatusInternalServerError)
+		err := fmt.Errorf("failed to exchange code: %v", err)
+		s.Error(w, err)
 		return
 	}
 
 	rawIDToken, ok := token.Extra("id_token").(string)
 	if !ok {
-		http.Error(w, "no id token in response", http.StatusInternalServerError)
+		err := fmt.Errorf("no id token in response")
+		s.Error(w, err)
 		return
 	}
 
 	idToken, err := s.oidcVerifier.Verify(ctx, rawIDToken)
 	if err != nil {
-		http.Error(w, "failed to verify id token", http.StatusInternalServerError)
+		err := fmt.Errorf("failed to verify id token: %v", err)
+		s.Error(w, err)
 		return
 	}
 
 	var profile Claims
 	if err := idToken.Claims(&profile); err != nil {
-		http.Error(w, "failed to unmarshal claims", http.StatusInternalServerError)
-		return
+		err := fmt.Errorf("failed to unmarshal claim: %v", err)
+		s.Error(w, err)
 	}
 
 	s.sessionManager.Put(ctx, "id-token", rawIDToken)
@@ -71,7 +77,8 @@ func (s *Server) Callback(w http.ResponseWriter, req *http.Request) {
 
 	individual, err := s.IAMClient(ctx).Individuals().Get(ctx, profile.Subject)
 	if err != nil {
-		http.Error(w, "failed to retrieve individual", http.StatusInternalServerError)
+		err := fmt.Errorf("failed to retrieve individual: %v", err)
+		s.Error(w, err)
 		return
 	}
 

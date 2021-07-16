@@ -10,6 +10,7 @@ import (
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/rest"
 	"github.com/nrc-no/core/pkg/sessionmanager"
+	"github.com/nrc-no/core/pkg/utils"
 	"github.com/ory/hydra-client-go/client/admin"
 	"golang.org/x/oauth2"
 	"net/http"
@@ -33,7 +34,7 @@ type Server struct {
 	HydraHTTPClient *http.Client
 	IAMHTTPClient   *http.Client
 	CMSHTTPClient   *http.Client
-	Constants Constants
+	Constants       Constants
 }
 
 type ServerOptions struct {
@@ -178,4 +179,8 @@ func (s *Server) CMSClient(ctx context.Context) cms.Interface {
 		Host:       s.cmsHost,
 		HTTPClient: httpClient,
 	})
+}
+
+func (s *Server) Error(w http.ResponseWriter, err error) {
+	utils.ErrorResponse(w, err)
 }

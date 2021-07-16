@@ -6,25 +6,25 @@ import (
 	"net/http"
 )
 
-func (h *Server) PickRelationshipParty(w http.ResponseWriter, req *http.Request){
+func (s *Server) PickRelationshipParty(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	iamClient := h.IAMClient(ctx)
+	iamClient := s.IAMClient(ctx)
 
 	var listOptions iam.PartyListOptions
 	if err := listOptions.UnmarshalQueryParameters(req.URL.Query()); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 	response, err := iamClient.Parties().List(ctx, listOptions)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 	responseBytes, err := json.Marshal(response)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
