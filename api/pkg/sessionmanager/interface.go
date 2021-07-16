@@ -2,6 +2,7 @@ package sessionmanager
 
 import (
 	"encoding/gob"
+	"fmt"
 	"github.com/boj/redistore"
 	"github.com/gorilla/sessions"
 	"github.com/sirupsen/logrus"
@@ -16,10 +17,30 @@ type Store interface {
 	AddNotification(req *http.Request, w http.ResponseWriter, notification *Notification) error
 	ConsumeNotifications(req *http.Request) ([]*Notification, error)
 	Get(req *http.Request) (*sessions.Session, error)
+	GetString(req *http.Request, key string) (string, error)
 }
 
 type RedisSessionManager struct {
 	sessions.Store
+}
+
+func (r *RedisSessionManager) GetString(req *http.Request, key string) (string, error) {
+	session, err := r.Get(req)
+	if err != nil {
+		return "", err
+	}
+
+	strIntf, ok := session.Values[key]
+	if !ok {
+		return "", fmt.Errorf("key %s not found in session", key)
+	}
+
+	str, ok := strIntf.(string)
+	if !ok {
+		return "", fmt.Errorf("key %s is not a string", key)
+	}
+
+	return str, nil
 }
 
 func (r *RedisSessionManager) Get(req *http.Request) (*sessions.Session, error) {

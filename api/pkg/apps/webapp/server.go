@@ -1,8 +1,6 @@
 package webapp
 
 import (
-	"context"
-	"fmt"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/cms"
@@ -145,36 +143,10 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }
 
 func (s *Server) IAMClient(req *http.Request) (iam.Interface, error) {
-	cfg := s.privateOauth2Config
-
-	session, err := s.sessionManager.Get(req)
+	httpClient, err := utils.GetOauth2HttpClient(s.sessionManager, req, s.privateOauth2Config, s.IAMHTTPClient)
 	if err != nil {
 		return nil, err
 	}
-
-	accessToken, ok := session.Values["access-token"].(string)
-	if !ok {
-		return nil, fmt.Errorf("access token not found")
-	}
-
-	refreshToken, ok := session.Values["refresh-token"].(string)
-	if !ok {
-		return nil, fmt.Errorf("refresh token not found")
-	}
-
-	ctx := req.Context()
-
-	token := &oauth2.Token{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-	}
-	httpClient := s.IAMHTTPClient
-	ctx = context.WithValue(ctx, oauth2.HTTPClient, httpClient)
-	cli := cfg.Client(ctx, token)
-	if len(accessToken) > 0 || len(refreshToken) > 0 {
-		httpClient = cli
-	}
-
 	return iam.NewClientSet(&rest.RESTConfig{
 		Scheme:     s.iamScheme,
 		Host:       s.iamHost,
@@ -183,34 +155,9 @@ func (s *Server) IAMClient(req *http.Request) (iam.Interface, error) {
 }
 
 func (s *Server) CMSClient(req *http.Request) (cms.Interface, error) {
-	cfg := s.privateOauth2Config
-
-	session, err := s.sessionManager.Get(req)
+	httpClient, err := utils.GetOauth2HttpClient(s.sessionManager, req, s.privateOauth2Config, s.CMSHTTPClient)
 	if err != nil {
 		return nil, err
-	}
-
-	accessToken, ok := session.Values["access-token"].(string)
-	if !ok {
-		return nil, fmt.Errorf("access token not found")
-	}
-
-	refreshToken, ok := session.Values["refresh-token"].(string)
-	if !ok {
-		return nil, fmt.Errorf("refresh token not found")
-	}
-
-	ctx := req.Context()
-
-	token := &oauth2.Token{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-	}
-	httpClient := s.CMSHTTPClient
-	ctx = context.WithValue(ctx, oauth2.HTTPClient, httpClient)
-	cli := cfg.Client(ctx, token)
-	if len(accessToken) > 0 || len(refreshToken) > 0 {
-		httpClient = cli
 	}
 	return cms.NewClientSet(&rest.RESTConfig{
 		Scheme:     s.cmsScheme,
