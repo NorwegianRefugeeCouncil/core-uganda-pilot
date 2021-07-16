@@ -80,7 +80,7 @@ func (s *Suite) testCaseTypeListFilter() {
 }
 
 func (s *Suite) testCaseTypeFilterByPartyType(caseTypes []*CaseType, partyTypes []string) {
-	for i := 1; i < len(partyTypes); i++ {
+	for i := 1; i <= len(partyTypes); i++ {
 		types := partyTypes[0:i]
 		list, err := s.client.CaseTypes().List(s.ctx, CaseTypeListOptions{types})
 		if !assert.NoError(s.T(), err) {

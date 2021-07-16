@@ -146,3 +146,15 @@ func (s *Suite) mockCaseTypes(n int) []*CaseType {
 	}
 	return caseTypes
 }
+
+func (s *Suite) mockCases(n int) []*Case {
+	var cases []*Case
+	for i := 0; i < n; i++ {
+		cases = append(cases, &Case{
+			ID:        newUUID(),
+			TeamID:    newUUID(),
+			CreatorID: "mock-auth-user",
+		})
+	}
+	return cases
+}
