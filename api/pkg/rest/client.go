@@ -218,7 +218,7 @@ func (r *Request) Do(ctx context.Context) *Response {
 
 	res, err := httpClient.Do(req)
 	if err != nil {
-		l.WithError(r.err).Errorf("could not send http request")
+		l.WithError(err).Errorf("could not send http request")
 		return &Response{err: err}
 	}
 
@@ -227,8 +227,10 @@ func (r *Request) Do(ctx context.Context) *Response {
 	if res.StatusCode < 200 || res.StatusCode > 399 {
 		bodyBytes, err := ioutil.ReadAll(res.Body)
 		if err != nil {
-			l.WithError(r.err).Errorf("error status code received")
-			return &Response{err: fmt.Errorf("unexpected status code: %d", res.StatusCode)}
+			l.Errorf("error status code received")
+			return &Response{err: fmt.Errorf("unexpected status code")}
+		} else {
+			l.WithField("response", string(bodyBytes)).Errorf("unexpected status code")
 		}
 		return &Response{
 			err:  fmt.Errorf("unexpected status code: %d. response: %s", res.StatusCode, string(bodyBytes)),
