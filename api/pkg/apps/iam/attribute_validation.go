@@ -28,26 +28,31 @@ func ValidateAttribute(attribute *Attribute, path *validation.Path) validation.E
 	} else {
 		for i, translation := range attribute.Translations {
 			translationPath := translationsPath.Index(i)
-			// Validate Locale
-			if len(translation.Locale) == 0 {
-				err := validation.Required(translationPath.Child("locale"), "Locale is required")
-				errs = append(errs, err)
-			} else if !validation.IsValidAlpha(translation.Locale) {
-				err := validation.Invalid(translationPath.Child("locale"), translation.Locale, validation.InvalidAlphaDetail)
-				errs = append(errs, err)
-			}
-			// Validate LongFormulation
-			if len(translation.LongFormulation) == 0 {
-				err := validation.Required(translationPath.Child("long"), "Long formulation is required")
-				errs = append(errs, err)
-			}
-			// Validate ShortFormulation
-			if len(translation.ShortFormulation) == 0 {
-				err := validation.Required(translationPath.Child("short"), "Short formulation is required")
-				errs = append(errs, err)
-			}
+			errs = ValidateTranslation(translation, translationPath, errs)
 		}
 	}
 
+	return errs
+}
+
+func ValidateTranslation(translation AttributeTranslation, translationPath *validation.Path, errs validation.ErrorList) validation.ErrorList {
+	// Validate Locale
+	if len(translation.Locale) == 0 {
+		err := validation.Required(translationPath.Child("locale"), "Locale is required")
+		errs = append(errs, err)
+	} else if !validation.IsValidAlpha(translation.Locale) {
+		err := validation.Invalid(translationPath.Child("locale"), translation.Locale, validation.InvalidAlphaDetail)
+		errs = append(errs, err)
+	}
+	// Validate LongFormulation
+	if len(translation.LongFormulation) == 0 {
+		err := validation.Required(translationPath.Child("long"), "Long formulation is required")
+		errs = append(errs, err)
+	}
+	// Validate ShortFormulation
+	if len(translation.ShortFormulation) == 0 {
+		err := validation.Required(translationPath.Child("short"), "Short formulation is required")
+		errs = append(errs, err)
+	}
 	return errs
 }
