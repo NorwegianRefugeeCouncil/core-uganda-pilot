@@ -5,7 +5,6 @@ package iam_test
 import (
 	. "github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/stretchr/testify/assert"
-	"math/rand"
 )
 
 func (s *Suite) TestAttribute() {
@@ -87,42 +86,37 @@ func (s *Suite) testAttributeAPI() {
 
 func (s *Suite) testAttributeListFilter() {
 
-	nPartyTypeIds := 30
-	nAttributes := 200
-	// Make a couple PartyTypeIDs
-	var partyTypeIds []string
-	for i := 0; i < nPartyTypeIds; i++ {
-		partyTypeIds = append(partyTypeIds, newUUID())
-	}
+	const nAttributes = 30
+	const nPartyTypeIds = 6
+
 	// Make a couple Attributes
-	var attributes []Attribute
-	for i := 0; i < nAttributes; i++ {
-		attributes = append(attributes, newRandomAttribute(partyTypeIds))
+	attributes := s.mockAttributes(nAttributes)
+
+	// Make a couple PartyTypeIDs
+	var partyTypeIds [nPartyTypeIds]string
+	for i := range partyTypeIds {
+		partyTypeIds[i] = newUUID()
 	}
-	// Map PartyTypeIDs to the Attribute IDs
-	attributesFromPartyTypes := map[string][]string{}
-	for _, a := range attributes {
-		for _, p := range a.PartyTypeIDs {
-			attributesFromPartyTypes[p] = append(attributesFromPartyTypes[p], a.ID)
-		}
-	}
+
 	// Save the attributes to the DB
-	for _, attribute := range attributes {
-		_, err := s.client.Attributes().Create(s.ctx, &attribute)
+	for i, attribute := range attributes {
+		attribute.PartyTypeIDs = partyTypeIds[0 : 1+(i%len(partyTypeIds))]
+		created, err := s.client.Attributes().Create(s.ctx, attribute)
 		assert.NoError(s.T(), err)
+		attribute.ID = created.ID
 	}
+
 	// Test list filtering with different PartyTypeID combinations
-	for i := 1; i < len(partyTypeIds); i++ {
-		partyTypeIdSlice := partyTypeIds[0:i]
-		options := AttributeListOptions{PartyTypeIDs: partyTypeIdSlice}
-		list, err := s.client.Attributes().List(ctx, options)
+	for i := 1; i <= len(partyTypeIds); i++ {
+		partyTypes := partyTypeIds[0:i]
+		list, err := s.client.Attributes().List(ctx, AttributeListOptions{PartyTypeIDs: partyTypes})
 		assert.NoError(s.T(), err)
 
 		// Get expected items
 		var expected []string
 		for _, a := range attributes {
 			var include = true
-			for _, p := range partyTypeIdSlice {
+			for _, p := range partyTypes {
 				if !contains(a.PartyTypeIDs, p) {
 					include = false
 					break
@@ -141,18 +135,4 @@ func (s *Suite) testAttributeListFilter() {
 			assert.Contains(s.T(), expected, item.ID)
 		}
 	}
-}
-
-func newRandomAttribute(partyTypeIds []string) Attribute {
-	if len(partyTypeIds) != 0 {
-		n := rand.Intn(len(partyTypeIds)-1) + 1
-		return Attribute{
-			ID:                           newUUID(),
-			Name:                         "",
-			PartyTypeIDs:                 partyTypeIds[0:n],
-			IsPersonallyIdentifiableInfo: false,
-			Translations:                 nil,
-		}
-	}
-	return Attribute{}
 }

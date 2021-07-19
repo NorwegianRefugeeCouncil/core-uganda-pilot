@@ -20,6 +20,7 @@ func (s *Suite) testCaseTypeAPI() {
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
+	caseType.ID = created.ID
 	assert.Equal(s.T(), caseType, created)
 
 	// GET
@@ -72,8 +73,9 @@ func (s *Suite) testCaseTypeListFilter() {
 	for i, caseType := range caseTypes {
 		n := i % len(partyTypes)
 		caseType.PartyTypeID = partyTypes[n]
-		_, err := s.client.CaseTypes().Create(s.ctx, caseType)
+		created, err := s.client.CaseTypes().Create(s.ctx, caseType)
 		assert.NoError(s.T(), err)
+		caseType.ID = created.ID
 	}
 
 	s.Run("by party type", func() { s.testCaseTypeFilterByPartyType(caseTypes, partyTypes) })

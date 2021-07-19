@@ -7,97 +7,41 @@ import (
 	"errors"
 	. "github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/nrc-no/core/pkg/generic/server"
-	"github.com/nrc-no/core/pkg/rest"
+	"github.com/nrc-no/core/pkg/testutils"
 	uuid "github.com/satori/go.uuid"
-	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"net"
 	"net/http"
-	"os"
 	"testing"
 )
 
 type Suite struct {
 	suite.Suite
+	*server.GenericServerTestSuite
 	server     *Server
 	serverOpts *server.GenericServerOptions
 	ctx        context.Context
 	client     *ClientSet
 }
 
-func GetEnvOrDefault(key, defaultValue string) string {
-	if value, ok := os.LookupEnv(key); ok {
-		return value
-	}
-	return defaultValue
-}
-
-var (
-	ctx = context.Background()
-
-	mongoUsername = GetEnvOrDefault("MONGO_USERNAME", "root")
-	mongoPassword = GetEnvOrDefault("MONGO_PASSWORD", "example")
-	mongoHost     = GetEnvOrDefault("MONGO_HOST", "localhost:27017")
-	mongoDatabase = GetEnvOrDefault("MONGO_DATABASE", "e2e")
-)
+var ctx = context.Background()
 
 func (s *Suite) SetupSuite() {
-	// Using a random port
-	ip := net.ParseIP("127.0.0.1")
-	listener, err := net.ListenTCP("tcp", &net.TCPAddr{
-		IP: ip,
-	})
-	if !assert.NoError(s.T(), err) {
-		s.T().Fatal(err)
-		return
-	}
-	s.T().Logf("Listening at: %s", listener.Addr().String())
-	_, port, err := net.SplitHostPort(listener.Addr().String())
-	if !assert.NoError(s.T(), err) {
-		s.T().Fatal(err)
-		return
-	}
+	args := s.GenericSetupSuite()
 
-	var mongoClientFn = func(ctx context.Context) (*mongo.Client, error) {
-		mongoClient, err := mongo.NewClient(options.Client().SetAuth(options.Credential{Username: mongoUsername, Password: mongoPassword}).SetHosts([]string{mongoHost}))
-		if !assert.NoError(s.T(), err) {
-			s.T().Fatal(err)
-		}
-		if err := mongoClient.Connect(ctx); err != nil {
-			logrus.WithError(err).Errorf("failed to connect to mongo")
-			return nil, err
-		}
-		return mongoClient, nil
+	s.ctx = ctx
+	s.serverOpts = &args.Options
 
-	}
-
-	opts := &server.GenericServerOptions{
-		MongoClientFn: mongoClientFn,
-		MongoDatabase: mongoDatabase,
-		Environment:   "Development",
-	}
-	s.serverOpts = opts
-
-	srv, err := NewServer(ctx, opts)
+	srv, err := NewServer(s.ctx, s.serverOpts)
 	if !assert.NoError(s.T(), err) {
 		s.T().Fatal()
 	}
 
-	s.ctx = ctx
 	s.server = srv
-	s.client = NewClientSet(&rest.RESTConfig{
-		Scheme: "http",
-		Host:   "localhost:" + port,
-		Headers: map[string][]string{
-			"X-Authenticated-User-Subject": {"mock-auth-user"},
-		},
-	})
+	s.client = NewClientSet(testutils.SetXAuthenticatedUserSubject(args.Port))
 
 	go func() {
-		if err := http.Serve(listener, srv); err != nil {
+		if err := http.Serve(args.Listener, srv); err != nil {
 			if errors.Is(err, context.Canceled) {
 				return
 			}
@@ -110,7 +54,7 @@ func (s *Suite) SetupSuite() {
 
 // This will run before each test in the suite but must be called manually before subtests
 func (s *Suite) SetupTest() {
-	err := s.server.ResetDB(ctx, mongoDatabase)
+	err := s.server.ResetDB(ctx, s.serverOpts.MongoDatabase)
 	if err != nil {
 		return
 	}
@@ -118,6 +62,10 @@ func (s *Suite) SetupTest() {
 
 func TestSuite(t *testing.T) {
 	suite.Run(t, &Suite{})
+}
+
+func (s *Suite) TearDownSuite() {
+	s.SetupTest()
 }
 
 //
@@ -140,7 +88,6 @@ func (s *Suite) mockPartyTypes(n int) []*PartyType {
 	var partyTypes []*PartyType
 	for i := 0; i < n; i++ {
 		partyTypes = append(partyTypes, &PartyType{
-			ID:        newUUID(),
 			Name:      newUUID(),
 			IsBuiltIn: false,
 		})
@@ -152,7 +99,6 @@ func (s *Suite) mockAttributes(n int) []*Attribute {
 	var attributes []*Attribute
 	for i := 0; i < n; i++ {
 		attributes = append(attributes, &Attribute{
-			ID:                           newUUID(),
 			Name:                         newUUID(),
 			PartyTypeIDs:                 make([]string, 0),
 			IsPersonallyIdentifiableInfo: false,
@@ -166,7 +112,6 @@ func (s *Suite) mockParties(n int) []*Party {
 	var parties []*Party
 	for i := 0; i < n; i++ {
 		parties = append(parties, &Party{
-			ID:           newUUID(),
 			PartyTypeIDs: make([]string, 0),
 			Attributes:   make(map[string][]string),
 		})
@@ -178,7 +123,6 @@ func (s *Suite) mockRelationshipTypes(n int) []*RelationshipType {
 	var relationshipTypes []*RelationshipType
 	for i := 0; i < n; i++ {
 		relationshipTypes = append(relationshipTypes, &RelationshipType{
-			ID:              newUUID(),
 			IsDirectional:   false,
 			Name:            newUUID(),
 			FirstPartyRole:  "",
@@ -193,7 +137,6 @@ func (s *Suite) mockRelationships(n int) []*Relationship {
 	var relationships []*Relationship
 	for i := 0; i < n; i++ {
 		relationships = append(relationships, &Relationship{
-			ID:                 newUUID(),
 			RelationshipTypeID: "",
 			FirstPartyID:       "",
 			SecondPartyID:      "",
@@ -217,7 +160,6 @@ func (s *Suite) mockMemberships(n int) []*Membership {
 	var memberships []*Membership
 	for i := 0; i < n; i++ {
 		memberships = append(memberships, &Membership{
-			ID:           newUUID(),
 			TeamID:       "",
 			IndividualID: "",
 		})

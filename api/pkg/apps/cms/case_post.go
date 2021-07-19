@@ -15,9 +15,8 @@ func (s *Server) PostCase(w http.ResponseWriter, req *http.Request) {
 	}
 
 	kase := &payload
-	if len(kase.ID) == 0 {
-		kase.ID = uuid.NewV4().String()
-	}
+	kase.ID = uuid.NewV4().String()
+
 	subject, ok := ctx.Value("Subject").(string)
 	if ok {
 		kase.CreatorID = subject

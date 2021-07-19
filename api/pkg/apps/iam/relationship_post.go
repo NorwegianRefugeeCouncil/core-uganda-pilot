@@ -16,9 +16,7 @@ func (s *Server) postRelationship(w http.ResponseWriter, req *http.Request) {
 
 	p := &payload
 
-	if p.ID == "" {
-		p.ID = uuid.NewV4().String()
-	}
+	p.ID = uuid.NewV4().String()
 
 	if err := s.relationshipStore.create(ctx, p); err != nil {
 		s.error(w, err)

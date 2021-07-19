@@ -20,7 +20,8 @@ func (s *Suite) testIndividualAPI() {
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
-	assert.Equal(s.T(), individual, created)
+	individual.ID = created.ID
+	assert.Equal(s.T(), created, individual)
 
 	// GET
 	get, err := s.client.Individuals().Get(s.ctx, created.ID)
@@ -90,8 +91,9 @@ func (s *Suite) testIndividualListFilter() {
 		}
 
 		// Save the individual to the DB
-		_, err := s.client.Individuals().Create(s.ctx, individual)
+		created, err := s.client.Individuals().Create(s.ctx, individual)
 		assert.NoError(s.T(), err)
+		individual.ID = created.ID
 	}
 
 	s.Run("by party type", func() {
