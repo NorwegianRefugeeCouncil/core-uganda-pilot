@@ -1,125 +1,212 @@
 // +build integration
 
-package iam
+package iam_test
 
 import (
-	uuid "github.com/satori/go.uuid"
+	. "github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
-func (s *Suite) TestPartyCRUD() {
+func (s *Suite) TestParty() {
+	s.Run("API", func() { s.testPartyAPI() })
+	s.SetupTest()
+	s.Run("List filtering", func() { s.testPartyListFilter() })
+	s.SetupTest()
+	s.Run("Search", func() { s.testPartySearch() })
+}
+
+func (s *Suite) testPartyAPI() {
+	party := s.mockParties(1)[0]
+	party.PartyTypeIDs = []string{IndividualPartyType.ID}
+	attribute := s.mockAttributes(1)[0]
+	party.Attributes.Set(attribute.ID, "mock")
 
 	// CREATE
-	mock := "create"
-	created, err := s.client.Parties().Create(s.ctx, &Party{
-		PartyTypeIDs: []string{mock},
-		Attributes:   PartyAttributes{"mock": []string{mock}},
-	})
-	assert.NoError(s.T(), err)
-	assert.Equal(s.T(), []string{mock}, created.PartyTypeIDs)
-	assert.Equal(s.T(), PartyAttributes{"mock": []string{mock}}, created.Attributes)
+	created, err := s.client.Parties().Create(s.ctx, party)
+	if !assert.NoError(s.T(), err) {
+		s.T().FailNow()
+	}
+	assert.Equal(s.T(), party.ID, created.ID)
+	assert.Equal(s.T(), party.PartyTypeIDs, created.PartyTypeIDs)
+	assert.Equal(s.T(), party.Get(attribute.ID), created.Get(attribute.ID))
 
 	// GET
 	get, err := s.client.Parties().Get(s.ctx, created.ID)
-	assert.NoError(s.T(), err)
+	if !assert.NoError(s.T(), err) {
+		s.T().FailNow()
+	}
 	assert.Equal(s.T(), created, get)
 
 	// UPDATE
-	updatedMock := "update"
-	updated, err := s.client.Parties().Update(s.ctx, &Party{
-		ID:           created.ID,
-		PartyTypeIDs: []string{updatedMock},
-		Attributes:   PartyAttributes{"mock": []string{updatedMock}},
-	})
-	assert.NoError(s.T(), err)
-	assert.Equal(s.T(), created.ID, updated.ID)
-	assert.Equal(s.T(), []string{updatedMock}, updated.PartyTypeIDs)
-	assert.Equal(s.T(), PartyAttributes{"mock": []string{updatedMock}}, updated.Attributes)
+	party.PartyTypeIDs = []string{newUUID()}
+	party.Attributes.Set(attribute.ID, "update")
+	updated, err := s.client.Parties().Update(s.ctx, party)
+	if !assert.NoError(s.T(), err) {
+		s.T().FailNow()
+	}
+	assert.Equal(s.T(), party.ID, updated.ID)
+	assert.Equal(s.T(), party.PartyTypeIDs, updated.PartyTypeIDs)
+	assert.Equal(s.T(), party.Get(attribute.ID), updated.Get(attribute.ID))
 
 	// GET
 	get, err = s.client.Parties().Get(s.ctx, updated.ID)
-	assert.NoError(s.T(), err)
+	if !assert.NoError(s.T(), err) {
+		s.T().FailNow()
+	}
 	assert.Equal(s.T(), updated, get)
 
 	// LIST
 	list, err := s.client.Parties().List(s.ctx, PartyListOptions{})
-	assert.NoError(s.T(), err)
+	if !assert.NoError(s.T(), err) {
+		s.T().FailNow()
+	}
 	assert.Contains(s.T(), list.Items, get)
 }
 
-// TestPartyList tests that we can effectively filter the parties by
-// - PartyID
-// - PartyTypeID
-// - Both PartyID and PartyTypeID
-func (s *Suite) TestPartyList() {
-	partyTypeID1 := uuid.NewV4().String()
-	partyTypeID2 := uuid.NewV4().String()
-	partyTypeID3 := uuid.NewV4().String()
-	partyID1 := uuid.NewV4().String()
-	partyID2 := uuid.NewV4().String()
+func (s *Suite) testPartyListFilter() {
+	nParties := 4
+	nPartyTypes := 2
+	nAttributes := 2
 
-	// Define the parties we're going to create/list
-	partyList := []*struct {
-		partyTypeID string
-		partyID     string
-		party       *Party
-	}{
-		{
-			partyTypeID: partyTypeID1,
-			partyID:     partyID1,
-		}, {
-			partyTypeID: partyTypeID2,
-			partyID:     partyID2,
-		}, {
-			partyTypeID: partyTypeID3,
-			partyID:     partyID1,
-		}, {
-			partyTypeID: partyTypeID3,
-			partyID:     partyID2,
-		},
+	// Make mock structs
+	parties := s.mockParties(nParties)
+	var partyTypeIds []string
+	for i := 0; i < nPartyTypes; i++ {
+		partyTypeIds = append(partyTypeIds, newUUID())
+	}
+	var attributes []string
+	for i := 0; i < nAttributes; i++ {
+		attributes = append(attributes, newUUID())
 	}
 
-	// Holds the parties by PartyTypeID
-	byPartyTypeID := map[string][]*Party{}
+	// Create parties
+	for i, party := range parties {
+		// Set PartyTypes
+		n := 1 + i%len(partyTypeIds)
+		pts := partyTypeIds[0:n]
+		party.PartyTypeIDs = pts
 
-	// Holds the parties by PartyID
-	byPartyID := map[string][]*Party{}
+		// Set Attributes
+		m := 1 + i%len(attributes)
+		attrs := attributes[0:m]
+		for _, attributeId := range attrs {
+			party.Attributes.Set(attributeId, "mock")
+		}
 
-	// Holds the parties by PartyTypeID + PartyID
-	byPartyTypeIdAndPartyId := map[string][]*Party{}
+		// Add to map
+		// Save the party to the DB
+		_, err := s.client.Parties().Create(s.ctx, party)
+		if !assert.NoError(s.T(), err) {
+			s.T().FailNow()
+		}
 
-	// Create the parties
-	for _, party := range partyList {
-		k, err := s.client.Parties().Create(s.ctx, &Party{
-			PartyTypeIDs: []string{party.partyTypeID},
+	}
+
+	s.Run("by type", func() { s.testPartyListFilterByType(parties, partyTypeIds) })
+	s.Run("by attribute", func() { s.testPartyListFilterByAttribute(parties, attributes) })
+	s.Run("by type and attribute", func() { s.testPartyListFilterByTypeAndAttribute(parties, partyTypeIds, attributes) })
+}
+
+func (s *Suite) testPartyListFilterByType(parties []*Party, partyTypeIds []string) {
+	for _, partyTypeId := range partyTypeIds {
+		list, err := s.client.Parties().List(s.ctx, PartyListOptions{
+			PartyTypeID: partyTypeId,
 		})
 		if !assert.NoError(s.T(), err) {
-			return
+			s.T().FailNow()
 		}
-		party.party = k
-
-		// Add the created parties to the relevant maps
-		byPartyTypeID[party.partyTypeID] = append(byPartyTypeID[party.partyTypeID], k)
-		byPartyID[party.partyID] = append(byPartyID[party.partyID], k)
-		caseAndPartyId := party.partyTypeID + "-" + party.partyID
-		byPartyTypeIdAndPartyId[caseAndPartyId] = append(byPartyTypeIdAndPartyId[caseAndPartyId], k)
+		// Get expected items
+		var expected []string
+		for _, party := range parties {
+			if party.HasPartyType(partyTypeId) {
+				expected = append(expected, party.ID)
+			}
+		}
+		assert.Len(s.T(), list.Items, len(expected))
+		for _, item := range list.Items {
+			assert.Contains(s.T(), expected, item.ID)
+		}
 	}
+}
 
-	s.T().Run("test filter by partyTypeId", func(t *testing.T) {
-		for _, party := range partyList {
-			list, err := s.client.Parties().List(s.ctx, PartyListOptions{
-				PartyTypeID: party.partyTypeID,
-			})
-			if !assert.NoError(t, err) {
-				return
+func (s *Suite) testPartyListFilterByAttribute(parties []*Party, attributes []string) {
+	for i := 1; i <= len(attributes); i++ {
+		attrs := attributes[0:i]
+		attributeOptions := make(map[string]string)
+		for _, attributeId := range attrs {
+			attributeOptions[attributeId] = "mock"
+		}
+		list, err := s.client.Parties().List(s.ctx, PartyListOptions{
+			Attributes: attributeOptions,
+		})
+		if !assert.NoError(s.T(), err) {
+			s.T().FailNow()
+		}
+
+		// Get expected items
+		var expected []string
+		for _, party := range parties {
+			var include = true
+			for attributeId := range attributeOptions {
+				if !party.HasAttribute(attributeId) {
+					include = false
+					break
+				}
 			}
-
-			assert.Len(t, list.Items, len(byPartyTypeID[party.partyTypeID]))
-			for _, k := range byPartyTypeID[party.partyTypeID] {
-				assert.Contains(t, list.Items, k)
+			if include {
+				expected = append(expected, party.ID)
 			}
 		}
-	})
 
+		assert.Len(s.T(), list.Items, len(expected))
+		for _, item := range list.Items {
+			assert.Contains(s.T(), expected, item.ID)
+		}
+	}
+}
+
+func (s *Suite) testPartyListFilterByTypeAndAttribute(parties []*Party, partyTypeIds, attributes []string) {
+	for i := 1; i <= len(attributes); i++ {
+		for _, partyTypeId := range partyTypeIds {
+			attributeOptions := make(map[string]string)
+			for _, attributeId := range attributes[0:i] {
+				attributeOptions[attributeId] = "mock"
+			}
+			list, err := s.client.Parties().List(ctx, PartyListOptions{
+				PartyTypeID: partyTypeId,
+				Attributes:  attributeOptions,
+			})
+			if !assert.NoError(s.T(), err) {
+				s.T().FailNow()
+			}
+			// Get expected items
+			var expected []string
+			for _, party := range parties {
+				if !party.HasPartyType(partyTypeId) {
+					continue
+				}
+				var include = true
+				for id := range attributeOptions {
+					if !party.HasAttribute(id) {
+						include = false
+						break
+					}
+				}
+				if include {
+					expected = append(expected, party.ID)
+				}
+			}
+
+			// Compare list lengths
+			assert.Len(s.T(), expected, len(list.Items))
+			// ... and contents
+			for _, item := range list.Items {
+				assert.Contains(s.T(), expected, item.ID)
+			}
+		}
+	}
+}
+
+func (s *Suite) testPartySearch() {
+	// TODO
 }

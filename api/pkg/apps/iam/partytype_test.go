@@ -1,16 +1,16 @@
 // +build integration
 
-package iam
+package iam_test
 
 import (
-	uuid "github.com/satori/go.uuid"
+	. "github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/stretchr/testify/assert"
 )
 
-func (s *Suite) TestPartyTypeCRUD() {
+func (s *Suite) TestPartyType() {
 
 	// Create party type
-	name := uuid.NewV4().String()
+	name := newUUID()
 	created, err := s.client.PartyTypes().Create(s.ctx, &PartyType{
 		Name:      name,
 		IsBuiltIn: false,

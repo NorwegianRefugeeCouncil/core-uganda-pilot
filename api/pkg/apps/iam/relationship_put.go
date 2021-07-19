@@ -4,23 +4,23 @@ import (
 	"net/http"
 )
 
-func (s *Server) PutRelationship(w http.ResponseWriter, req *http.Request) {
+func (s *Server) putRelationship(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	var id string
 
-	if !s.GetPathParam("id", w, req, &id) {
+	if !s.getPathParam("id", w, req, &id) {
 		return
 	}
 
-	r, err := s.RelationshipStore.Get(ctx, id)
+	r, err := s.relationshipStore.get(ctx, id)
 	if err != nil {
-		s.Error(w, err)
+		s.error(w, err)
 		return
 	}
 
 	var payload Relationship
-	if err := s.Bind(req, &payload); err != nil {
-		s.Error(w, err)
+	if err := s.bind(req, &payload); err != nil {
+		s.error(w, err)
 		return
 	}
 
@@ -29,10 +29,10 @@ func (s *Server) PutRelationship(w http.ResponseWriter, req *http.Request) {
 	r.FirstPartyID = payload.FirstPartyID
 	r.SecondPartyID = payload.SecondPartyID
 
-	if err := s.RelationshipStore.Update(ctx, r); err != nil {
-		s.Error(w, err)
+	if err := s.relationshipStore.update(ctx, r); err != nil {
+		s.error(w, err)
 		return
 	}
 
-	s.JSON(w, http.StatusOK, r)
+	s.json(w, http.StatusOK, r)
 }

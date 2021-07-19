@@ -262,6 +262,7 @@ type MembershipClient interface {
 type IndividualListOptions struct {
 	PartyTypeIDs []string
 	Attributes   map[string]string
+	SearchParam  string
 }
 
 func (a *IndividualListOptions) MarshalQueryParameters() (url.Values, error) {
@@ -269,6 +270,7 @@ func (a *IndividualListOptions) MarshalQueryParameters() (url.Values, error) {
 	for _, partyTypeID := range a.PartyTypeIDs {
 		values.Add("partyTypeId", partyTypeID)
 	}
+	values.Add("searchParam", a.SearchParam)
 	if a.Attributes != nil {
 		for key, value := range a.Attributes {
 			if len(value) == 0 {
@@ -289,6 +291,9 @@ func (a *IndividualListOptions) UnmarshalQueryParameters(values url.Values) erro
 			}
 			attrKey := key[11 : len(key)-1]
 			a.Attributes[attrKey] = values[0]
+		}
+		if key == "searchParam" {
+			a.SearchParam = values[0]
 		}
 	}
 	return nil

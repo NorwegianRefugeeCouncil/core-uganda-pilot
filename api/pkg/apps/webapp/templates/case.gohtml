@@ -19,11 +19,11 @@
         <div class="row">
             <div class="col">
 
-                {{if .Case.ParentID}}
+                {{if .Parent}}
                     <div class="p-3 bg-light mb-3 shadow-sm">
                         <span>Referred from </span>
-                        <a href="/cases/{{.Case.ParentID}}">
-                            {{$caseType := $caseTypes.FindByID $caseTypeId}}
+                        <a href="/cases/{{.Parent.ID}}">
+                            {{$caseType := $caseTypes.FindByID .Parent.CaseTypeID}}
                             {{$caseType.Name}}
                         </a>
                         {{ if .CreatedBy}}
@@ -71,16 +71,6 @@
                     {{range .Case.FormData.FormElements}}
                         {{template "formelement" .}}
                     {{end}}
-                    <div class="form-floating mb-3">
-                        <textarea id="description-textarea"
-                                  rows="20"
-                                  class="form-control"
-                                  name="description"
-                                  data-testid="description"
-                                  {{ if .ReferralCaseType}}disabled{{end}}
-                                  style="height: 100px">{{if .Case}}{{.Case.Description}}{{end}}</textarea>
-                        <label for="description-textarea">Description</label>
-                    </div>
                     <div class="form-check mb-3">
                         <input id="done-input"
                                class="form-check-input"
@@ -146,16 +136,6 @@
                                 <input type="hidden" name="partyId" value="{{$recipient.ID}}">
                                 <input type="hidden" name="parentId" value="{{$caseId}}">
                                 <input type="hidden" name="teamId" value="{{.ReferralCaseType.TeamID}}">
-                                <div class="mb-3">
-                                    <label for="description" class="form-label">Description</label>
-                                    <textarea
-                                            autofocus
-                                            id="description"
-                                            name="description"
-                                            class="form-control"
-                                            data-testid="referralDescription"
-                                            rows="3"></textarea>
-                                </div>
                                 <button class="btn btn-primary" type="submit" data-testid="submitReferralBtn">Submit
                                     referral
                                 </button>

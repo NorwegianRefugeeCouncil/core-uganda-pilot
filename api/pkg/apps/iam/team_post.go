@@ -5,22 +5,22 @@ import (
 	"net/http"
 )
 
-func (s *Server) PostTeam(w http.ResponseWriter, req *http.Request) {
+func (s *Server) postTeam(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	var payload Team
-	if err := s.Bind(req, &payload); err != nil {
-		s.Error(w, err)
+	if err := s.bind(req, &payload); err != nil {
+		s.error(w, err)
 		return
 	}
 
 	team := &payload
 	team.ID = uuid.NewV4().String()
 
-	if err := s.TeamStore.Create(ctx, team); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if err := s.teamStore.Create(ctx, team); err != nil {
+		s.error(w, err)
 		return
 	}
 
-	s.JSON(w, http.StatusOK, team)
+	s.json(w, http.StatusOK, team)
 }

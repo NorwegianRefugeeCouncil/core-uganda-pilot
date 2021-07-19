@@ -51,7 +51,7 @@ func (s *Server) PostLoginForm(w http.ResponseWriter, req *http.Request) {
 	_, err := s.HydraAdmin.GetLoginRequest(
 		getLoginRequestParams)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
@@ -67,7 +67,7 @@ func (s *Server) PostLoginForm(w http.ResponseWriter, req *http.Request) {
 				// Subject:  &party.ID, TODO
 			}))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 

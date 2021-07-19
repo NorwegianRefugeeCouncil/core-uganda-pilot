@@ -2,21 +2,30 @@ package iam
 
 import (
 	"context"
+	"github.com/nrc-no/core/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type RelationshipStore struct {
-	collection *mongo.Collection
+	getCollection utils.MongoCollectionFn
 }
 
-func NewRelationshipStore(ctx context.Context, mongoClient *mongo.Client, database string) (*RelationshipStore, error) {
+func newRelationshipStore(ctx context.Context, mongoClientFn utils.MongoClientFn, database string) (*RelationshipStore, error) {
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
 	store := &RelationshipStore{
-		collection: mongoClient.Database(database).Collection("relationships"),
+		getCollection: utils.GetCollectionFn(database, "relationships", mongoClientFn),
 	}
 
-	if _, err := store.collection.Indexes().CreateOne(ctx, mongo.IndexModel{
+	collection, err := store.getCollection(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if _, err := collection.Indexes().CreateOne(ctx, mongo.IndexModel{
 		Keys:    bson.M{"id": 1},
 		Options: options.Index().SetUnique(true),
 	}); err != nil {
@@ -27,8 +36,24 @@ func NewRelationshipStore(ctx context.Context, mongoClient *mongo.Client, databa
 
 }
 
-func (s *RelationshipStore) Get(ctx context.Context, id string) (*Relationship, error) {
-	res := s.collection.FindOne(ctx, bson.M{
+func (s *RelationshipStore) create(ctx context.Context, relationship *Relationship) error {
+	collection, err := s.getCollection(ctx)
+	if err != nil {
+		return err
+	}
+	_, err = collection.InsertOne(ctx, relationship)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *RelationshipStore) get(ctx context.Context, id string) (*Relationship, error) {
+	collection, err := s.getCollection(ctx)
+	if err != nil {
+		return nil, err
+	}
+	res := collection.FindOne(ctx, bson.M{
 		"id": id,
 	})
 	if res.Err() != nil {
@@ -41,7 +66,27 @@ func (s *RelationshipStore) Get(ctx context.Context, id string) (*Relationship, 
 	return &r, nil
 }
 
-func (s *RelationshipStore) List(ctx context.Context, listOptions RelationshipListOptions) (*RelationshipList, error) {
+func (s *RelationshipStore) update(ctx context.Context, relationship *Relationship) error {
+	collection, err := s.getCollection(ctx)
+	if err != nil {
+		return err
+	}
+	_, err = collection.UpdateOne(ctx, bson.M{
+		"id": relationship.ID,
+	}, bson.M{
+		"$set": bson.M{
+			"firstParty":         relationship.FirstPartyID,
+			"secondParty":        relationship.SecondPartyID,
+			"relationshipTypeId": relationship.RelationshipTypeID,
+		},
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *RelationshipStore) list(ctx context.Context, listOptions RelationshipListOptions) (*RelationshipList, error) {
 
 	filter := bson.M{}
 
@@ -63,7 +108,12 @@ func (s *RelationshipStore) List(ctx context.Context, listOptions RelationshipLi
 		}
 	}
 
-	res, err := s.collection.Find(ctx, filter)
+	collection, err := s.getCollection(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
@@ -87,32 +137,12 @@ func (s *RelationshipStore) List(ctx context.Context, listOptions RelationshipLi
 	return &ret, nil
 }
 
-func (s *RelationshipStore) Update(ctx context.Context, relationship *Relationship) error {
-	_, err := s.collection.UpdateOne(ctx, bson.M{
-		"id": relationship.ID,
-	}, bson.M{
-		"$set": bson.M{
-			"firstParty":         relationship.FirstPartyID,
-			"secondParty":        relationship.SecondPartyID,
-			"relationshipTypeId": relationship.RelationshipTypeID,
-		},
-	})
+func (s *RelationshipStore) delete(ctx context.Context, id string) error {
+	collection, err := s.getCollection(ctx)
 	if err != nil {
 		return err
 	}
-	return nil
-}
-
-func (s *RelationshipStore) Create(ctx context.Context, relationship *Relationship) error {
-	_, err := s.collection.InsertOne(ctx, relationship)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *RelationshipStore) Delete(ctx context.Context, id string) error {
-	_, err := s.collection.DeleteOne(ctx, bson.M{
+	_, err = collection.DeleteOne(ctx, bson.M{
 		"id": id,
 	})
 	if err != nil {

@@ -4,21 +4,21 @@ import (
 	"net/http"
 )
 
-func (s *Server) GetAttribute(w http.ResponseWriter, req *http.Request) {
+func (s *Server) getAttribute(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 	var id string
 
-	if !s.GetPathParam("id", w, req, &id) {
+	if !s.getPathParam("id", w, req, &id) {
 		return
 	}
 
-	a, err := s.AttributeStore.Get(ctx, id)
+	a, err := s.attributeStore.get(ctx, id)
 	if err != nil {
-		s.Error(w, err)
+		s.error(w, err)
 		return
 	}
 
-	s.JSON(w, http.StatusOK, a)
+	s.json(w, http.StatusOK, a)
 
 }

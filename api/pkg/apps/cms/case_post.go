@@ -22,7 +22,7 @@ func (s *Server) PostCase(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if err := s.caseStore.Create(ctx, kase); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
