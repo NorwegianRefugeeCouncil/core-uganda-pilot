@@ -21,12 +21,7 @@ func (s *Server) postIndividual(w http.ResponseWriter, req *http.Request) {
 
 	errList := ValidateIndividual(&individual, validation.NewPath(""))
 	if len(errList) > 0 {
-		status := validation.Status{
-			Status:  validation.Failure,
-			Code:    http.StatusUnprocessableEntity,
-			Message: "invalid individual",
-			Errors:  errList,
-		}
+		status := errList.Status(http.StatusUnprocessableEntity, "invalid individual")
 		s.json(w, status.Code, status)
 		return
 	}

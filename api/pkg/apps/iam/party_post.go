@@ -23,12 +23,7 @@ func (s *Server) postParty(w http.ResponseWriter, req *http.Request) {
 
 	errList := ValidateParty(p, validation.NewPath(""))
 	if len(errList) > 0 {
-		status := validation.Status{
-			Status:  validation.Failure,
-			Code:    http.StatusUnprocessableEntity,
-			Message: "invalid party",
-			Errors:  errList,
-		}
+		status := errList.Status(http.StatusUnprocessableEntity, "invalid party")
 		s.json(w, status.Code, status)
 		return
 	}
