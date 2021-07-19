@@ -21,7 +21,12 @@ func (a *TeamPartyOptions) UnmarshalQueryParameters(values url.Values) error {
 
 func (s *Server) PickTeamParty(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	iamClient := s.IAMClient(ctx)
+
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	var listOptions TeamPartyOptions
 	if err := listOptions.UnmarshalQueryParameters(req.URL.Query()); err != nil {

@@ -4,17 +4,8 @@ import (
 	"context"
 	"github.com/nrc-no/core/pkg/auth"
 	"github.com/ory/hydra-client-go/client/admin"
-	jwt2 "gopkg.in/square/go-jose.v2/jwt"
 	"net/http"
 )
-
-type RequestClaims struct {
-	jwt2.Claims
-}
-
-func (c *RequestClaims) GetClaims() *jwt2.Claims {
-	return &c.Claims
-}
 
 func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 	return func(handler http.Handler) http.Handler {

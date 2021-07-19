@@ -22,7 +22,11 @@ func (s *Server) Attributes(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	iamClient := s.IAMClient(ctx)
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	list, err := iamClient.Attributes().List(ctx, iam.AttributeListOptions{})
 	if err != nil {
@@ -61,7 +65,11 @@ func (s *Server) NewAttribute(w http.ResponseWriter, req *http.Request) {
 func (s *Server) Attribute(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	iamClient := s.IAMClient(ctx)
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
@@ -96,7 +104,11 @@ func (s *Server) Attribute(w http.ResponseWriter, req *http.Request) {
 }
 
 func (s *Server) PostAttribute(ctx context.Context, attribute *iam.Attribute, w http.ResponseWriter, req *http.Request) {
-	iamClient := s.IAMClient(ctx)
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	if err := req.ParseForm(); err != nil {
 		s.Error(w, err)
@@ -132,10 +144,16 @@ func (s *Server) PostAttribute(ctx context.Context, attribute *iam.Attribute, w 
 			s.Error(w, err)
 			return
 		}
-		s.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+
+		err = s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
 			Message: fmt.Sprintf("Attribute \"%s\" successfully created", attribute.Name),
 			Theme:   "success",
 		})
+		if err != nil {
+			s.Error(w, err)
+			return
+		}
+
 	} else {
 		var err error
 		out, err = iamClient.Attributes().Update(ctx, attribute)
@@ -143,10 +161,16 @@ func (s *Server) PostAttribute(ctx context.Context, attribute *iam.Attribute, w 
 			s.Error(w, err)
 			return
 		}
-		s.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+
+		err = s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
 			Message: fmt.Sprintf("Attribute \"%s\" successfully updated.", attribute.Name),
 			Theme:   "success",
 		})
+		if err != nil {
+			s.Error(w, err)
+			return
+		}
+
 	}
 
 	w.Header().Set("Location", "/settings/attributes/"+out.ID)

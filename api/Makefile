@@ -46,4 +46,8 @@ serve:
 
 .PHONY:
 docker-build:
-	docker build -t core .
+	docker build -t digitalbackbonecr.azurecr.io/nrc-no/core:latest .
+
+.PHONY:
+docker-push: docker-build
+	docker push digitalbackbonecr.azurecr.io/nrc-no/core:latest

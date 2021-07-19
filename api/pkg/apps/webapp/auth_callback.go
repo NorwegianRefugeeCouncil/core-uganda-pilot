@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/nrc-no/core/pkg/apps/iam"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
 	"net/http"
 )
@@ -26,8 +27,31 @@ func (s *Server) Callback(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
-	conf := s.oauth2Config
-	sessionState := s.sessionManager.PopString(ctx, "state")
+	conf := s.privateOauth2Config
+
+	session, err := s.sessionManager.Get(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	stateIntf, ok := session.Values["state"]
+	if !ok {
+		s.Error(w, fmt.Errorf("no state found in session"))
+		return
+	}
+
+	delete(session.Values, "state")
+	session.Save(req, w)
+
+	stateStr, ok := stateIntf.(string)
+	if !ok {
+		s.Error(w, fmt.Errorf("no state found in session"))
+		return
+	}
+
+	sessionState := stateStr
+
 	queryState := req.URL.Query().Get("state")
 
 	if sessionState != queryState {
@@ -72,11 +96,17 @@ func (s *Server) Callback(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	s.sessionManager.Put(ctx, "id-token", rawIDToken)
-	s.sessionManager.Put(ctx, "access-token", token.AccessToken)
-	s.sessionManager.Put(ctx, "refresh-token", token.RefreshToken)
+	session.Values["id-token"] = rawIDToken
+	session.Values["access-token"] = token.AccessToken
+	session.Values["refresh-token"] = token.RefreshToken
 
-	individual, err := s.IAMClient(ctx).Individuals().Get(ctx, profile.Subject)
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	individual, err := iamClient.Individuals().Get(ctx, profile.Subject)
 	if err != nil {
 		err := fmt.Errorf("failed to retrieve individual: %v", err)
 		s.Error(w, err)
@@ -86,7 +116,12 @@ func (s *Server) Callback(w http.ResponseWriter, req *http.Request) {
 	profile.FamilyName = individual.Get(iam.LastNameAttribute.ID)
 	profile.GivenName = individual.Get(iam.FirstNameAttribute.ID)
 
-	s.sessionManager.Put(ctx, "profile", profile)
+	session.Values["profile"] = profile
+	if err := session.Save(req, w); err != nil {
+		logrus.WithError(err).Errorf("failed to save session")
+		s.Error(w, err)
+		return
+	}
 
 	http.Redirect(w, req, "/", http.StatusSeeOther)
 
