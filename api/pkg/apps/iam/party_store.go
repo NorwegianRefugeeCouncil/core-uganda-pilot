@@ -2,21 +2,30 @@ package iam
 
 import (
 	"context"
+	"github.com/nrc-no/core/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type PartyStore struct {
-	Collection *mongo.Collection
+	GetCollection utils.MongoCollectionFn
 }
 
-func NewPartyStore(ctx context.Context, mongoClient *mongo.Client, database string) (*PartyStore, error) {
+func newPartyStore(ctx context.Context, mongoClientFn utils.MongoClientFn, database string) (*PartyStore, error) {
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
 	store := &PartyStore{
-		Collection: mongoClient.Database(database).Collection("parties"),
+		GetCollection: utils.GetCollectionFn(database, "parties", mongoClientFn),
 	}
 
-	if _, err := store.Collection.Indexes().CreateOne(ctx, mongo.IndexModel{
+	collection, err := store.GetCollection(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if _, err := collection.Indexes().CreateOne(ctx, mongo.IndexModel{
 		Keys:    bson.M{"id": 1},
 		Options: options.Index().SetUnique(true),
 	}); err != nil {
@@ -24,7 +33,7 @@ func NewPartyStore(ctx context.Context, mongoClient *mongo.Client, database stri
 	}
 
 	// first name and last name full text index
-	if _, err := store.Collection.Indexes().CreateOne(ctx, mongo.IndexModel{
+	if _, err := collection.Indexes().CreateOne(ctx, mongo.IndexModel{
 		Keys: bson.D{
 			{
 				"attributes." + FirstNameAttribute.ID, "text",
@@ -40,8 +49,12 @@ func NewPartyStore(ctx context.Context, mongoClient *mongo.Client, database stri
 	return store, nil
 }
 
-func (s *PartyStore) Get(ctx context.Context, id string) (*Party, error) {
-	res := s.Collection.FindOne(ctx, bson.M{
+func (s *PartyStore) get(ctx context.Context, id string) (*Party, error) {
+	collection, err := s.GetCollection(ctx)
+	if err != nil {
+		return nil, err
+	}
+	res := collection.FindOne(ctx, bson.M{
 		"id": id,
 	})
 	if res.Err() != nil {
@@ -62,7 +75,7 @@ func BSONStringA(strSlice []string) (result bson.A) {
 	return
 }
 
-func (s *PartyStore) List(ctx context.Context, listOptions PartySearchOptions) (*PartyList, error) {
+func (s *PartyStore) list(ctx context.Context, listOptions PartySearchOptions) (*PartyList, error) {
 	filterItems := bson.M{}
 
 	if len(listOptions.PartyTypeIDs) != 0 {
@@ -83,7 +96,12 @@ func (s *PartyStore) List(ctx context.Context, listOptions PartySearchOptions) (
 		filterItems["$text"] = bson.M{"$search": listOptions.SearchParam}
 	}
 
-	res, err := s.Collection.Find(ctx, filterItems)
+	collection, err := s.GetCollection(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := collection.Find(ctx, filterItems)
 	if err != nil {
 		return nil, err
 	}
@@ -110,8 +128,12 @@ func (s *PartyStore) List(ctx context.Context, listOptions PartySearchOptions) (
 	return &ret, nil
 }
 
-func (s *PartyStore) Update(ctx context.Context, party *Party) error {
-	_, err := s.Collection.UpdateOne(ctx, bson.M{
+func (s *PartyStore) update(ctx context.Context, party *Party) error {
+	collection, err := s.GetCollection(ctx)
+	if err != nil {
+		return err
+	}
+	_, err = collection.UpdateOne(ctx, bson.M{
 		"id": party.ID,
 	}, bson.M{
 		"$set": bson.M{
@@ -125,8 +147,12 @@ func (s *PartyStore) Update(ctx context.Context, party *Party) error {
 	return nil
 }
 
-func (s *PartyStore) Create(ctx context.Context, party *Party) error {
-	_, err := s.Collection.InsertOne(ctx, party)
+func (s *PartyStore) create(ctx context.Context, party *Party) error {
+	collection, err := s.GetCollection(ctx)
+	if err != nil {
+		return err
+	}
+	_, err = collection.InsertOne(ctx, party)
 	if err != nil {
 		return err
 	}
@@ -137,12 +163,16 @@ type FindOptions struct {
 	Attributes map[string]string
 }
 
-func (s *PartyStore) Find(ctx context.Context, options FindOptions) (*Party, error) {
+func (s *PartyStore) find(ctx context.Context, options FindOptions) (*Party, error) {
 	filter := bson.M{}
 	for key, value := range options.Attributes {
 		filter["attributes."+key] = value
 	}
-	res := s.Collection.FindOne(ctx, filter)
+	collection, err := s.GetCollection(ctx)
+	if err != nil {
+		return nil, err
+	}
+	res := collection.FindOne(ctx, filter)
 	if res.Err() != nil {
 		return nil, res.Err()
 	}

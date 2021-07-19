@@ -2,33 +2,58 @@ package iam
 
 import (
 	"context"
+	"github.com/nrc-no/core/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type IndividualStore struct {
-	collection *mongo.Collection
+	getCollection utils.MongoCollectionFn
 }
 
-func NewIndividualStore(mongoClient *mongo.Client, database string) *IndividualStore {
-	return &IndividualStore{
-		collection: mongoClient.Database(database).Collection("parties"),
+func NewIndividualStore(mongoClientFn utils.MongoClientFn, database string) *IndividualStore {
+	store := &IndividualStore{
+		getCollection: utils.GetCollectionFn(database, "parties", mongoClientFn),
 	}
+	return store
 }
 
-func (s *IndividualStore) Create(ctx context.Context, individual *Individual) error {
+func (s *IndividualStore) create(ctx context.Context, individual *Individual) error {
 	individual.AddPartyType(IndividualPartyType.ID)
-	_, err := s.collection.InsertOne(ctx, individual)
+	collection, err := s.getCollection(ctx)
+	if err != nil {
+		return err
+	}
+	_, err = collection.InsertOne(ctx, individual)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (s *IndividualStore) Upsert(ctx context.Context, individual *Individual) error {
+func (s *IndividualStore) get(ctx context.Context, ID string) (*Individual, error) {
+	collection, err := s.getCollection(ctx)
+	if err != nil {
+		return nil, err
+	}
+	findResult := collection.FindOne(ctx, bson.M{"id": ID})
+	if findResult.Err() != nil {
+		return nil, findResult.Err()
+	}
+	var individual *Individual
+	if err := findResult.Decode(&individual); err != nil {
+		return nil, err
+	}
+	return individual, nil
+}
+
+func (s *IndividualStore) upsert(ctx context.Context, individual *Individual) error {
+	collection, err := s.getCollection(ctx)
+	if err != nil {
+		return err
+	}
 	individual.AddPartyType(IndividualPartyType.ID)
-	_, err := s.collection.UpdateOne(ctx, bson.M{
+	_, err = collection.UpdateOne(ctx, bson.M{
 		"id": individual.ID,
 	}, bson.M{
 		"$set": bson.M{
@@ -43,19 +68,7 @@ func (s *IndividualStore) Upsert(ctx context.Context, individual *Individual) er
 	return nil
 }
 
-func (s *IndividualStore) Get(ctx context.Context, ID string) (*Individual, error) {
-	findResult := s.collection.FindOne(ctx, bson.M{"id": ID})
-	if findResult.Err() != nil {
-		return nil, findResult.Err()
-	}
-	var individual *Individual
-	if err := findResult.Decode(&individual); err != nil {
-		return nil, err
-	}
-	return individual, nil
-}
-
-func (s *IndividualStore) List(ctx context.Context, listOptions IndividualListOptions) (*IndividualList, error) {
+func (s *IndividualStore) list(ctx context.Context, listOptions IndividualListOptions) (*IndividualList, error) {
 
 	includesIndividualPartyType := false
 
@@ -79,7 +92,16 @@ func (s *IndividualStore) List(ctx context.Context, listOptions IndividualListOp
 		filter["attributes."+key] = value
 	}
 
-	cursor, err := s.collection.Find(ctx, filter)
+	if len(listOptions.SearchParam) != 0 {
+		filter["$text"] = bson.M{"$search": listOptions.SearchParam}
+	}
+
+	collection, err := s.getCollection(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err
 	}

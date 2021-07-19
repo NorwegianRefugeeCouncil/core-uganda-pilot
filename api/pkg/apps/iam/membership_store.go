@@ -14,9 +14,9 @@ func NewMembershipStore(relationshipStore *RelationshipStore) *MembershipStore {
 	return &MembershipStore{relationshipStore: relationshipStore}
 }
 
-func (s *MembershipStore) List(ctx context.Context, listOptions MembershipListOptions) (*MembershipList, error) {
+func (s *MembershipStore) list(ctx context.Context, listOptions MembershipListOptions) (*MembershipList, error) {
 
-	got, err := s.relationshipStore.List(ctx, RelationshipListOptions{
+	got, err := s.relationshipStore.list(ctx, RelationshipListOptions{
 		RelationshipTypeID: MembershipRelationshipType.ID,
 		FirstPartyID:       listOptions.IndividualID,
 		SecondPartyID:      listOptions.TeamID,
@@ -36,8 +36,8 @@ func (s *MembershipStore) List(ctx context.Context, listOptions MembershipListOp
 
 }
 
-func (s *MembershipStore) Get(ctx context.Context, id string) (*Membership, error) {
-	got, err := s.relationshipStore.Get(ctx, id)
+func (s *MembershipStore) get(ctx context.Context, id string) (*Membership, error) {
+	got, err := s.relationshipStore.get(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -49,8 +49,8 @@ func (s *MembershipStore) Get(ctx context.Context, id string) (*Membership, erro
 
 }
 
-func (s *MembershipStore) Find(ctx context.Context, individualId, teamId string) (*Membership, error) {
-	got, err := s.relationshipStore.List(ctx, RelationshipListOptions{
+func (s *MembershipStore) find(ctx context.Context, individualId, teamId string) (*Membership, error) {
+	got, err := s.relationshipStore.list(ctx, RelationshipListOptions{
 		RelationshipTypeID: MembershipRelationshipType.ID,
 		FirstPartyID:       individualId,
 		SecondPartyID:      teamId,
@@ -64,8 +64,8 @@ func (s *MembershipStore) Find(ctx context.Context, individualId, teamId string)
 	return MapRelationshipToMembership(got.Items[0]), nil
 }
 
-func (s *MembershipStore) Create(ctx context.Context, membership *Membership) error {
-	got, err := s.Find(ctx, membership.IndividualID, membership.TeamID)
+func (s *MembershipStore) create(ctx context.Context, membership *Membership) error {
+	got, err := s.find(ctx, membership.IndividualID, membership.TeamID)
 	if err != nil {
 		return err
 	}
@@ -73,8 +73,10 @@ func (s *MembershipStore) Create(ctx context.Context, membership *Membership) er
 		return nil
 	}
 	rel := MapMembershipToRelationship(membership)
-	rel.ID = uuid.NewV4().String()
-	return s.relationshipStore.Create(ctx, rel)
+	if rel.ID == "" {
+		rel.ID = uuid.NewV4().String()
+	}
+	return s.relationshipStore.create(ctx, rel)
 }
 
 func MapRelationshipToMembership(rel *Relationship) *Membership {

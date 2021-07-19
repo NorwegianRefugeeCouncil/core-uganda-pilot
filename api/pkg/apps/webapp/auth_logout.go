@@ -11,7 +11,7 @@ func (s *Server) Logout(w http.ResponseWriter, req *http.Request) {
 
 	logoutURL, err := url.Parse(strings.Replace(s.oauth2Config.Endpoint.TokenURL, "/oauth2/token", "/oauth2/sessions/logout", -1))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 

@@ -12,7 +12,7 @@ func (s *Server) Login(w http.ResponseWriter, req *http.Request) {
 	b := make([]byte, 32)
 	_, err := rand.Read(b)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 

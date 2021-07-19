@@ -5,22 +5,25 @@ import (
 	"net/http"
 )
 
-func (s *Server) PostParty(w http.ResponseWriter, req *http.Request) {
+func (s *Server) postParty(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	var party Party
-	if err := s.Bind(req, &party); err != nil {
-		s.Error(w, err)
+	if err := s.bind(req, &party); err != nil {
+		s.error(w, err)
 		return
 	}
 
 	p := &party
-	p.ID = uuid.NewV4().String()
 
-	if err := s.PartyStore.Create(ctx, p); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if p.ID == "" {
+		p.ID = uuid.NewV4().String()
+	}
+
+	if err := s.partyStore.create(ctx, p); err != nil {
+		s.error(w, err)
 		return
 	}
 
-	s.JSON(w, http.StatusOK, p)
+	s.json(w, http.StatusOK, p)
 }

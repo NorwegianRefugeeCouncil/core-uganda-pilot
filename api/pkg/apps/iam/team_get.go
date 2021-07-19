@@ -4,20 +4,20 @@ import (
 	"net/http"
 )
 
-func (s *Server) GetTeam(w http.ResponseWriter, req *http.Request) {
+func (s *Server) getTeam(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	var id string
 
-	if !s.GetPathParam("id", w, req, &id) {
+	if !s.getPathParam("id", w, req, &id) {
 		return
 	}
 
-	ret, err := s.TeamStore.Get(ctx, id)
+	ret, err := s.teamStore.Get(ctx, id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.error(w, err)
 		return
 	}
 
-	s.JSON(w, http.StatusOK, ret)
+	s.json(w, http.StatusOK, ret)
 
 }

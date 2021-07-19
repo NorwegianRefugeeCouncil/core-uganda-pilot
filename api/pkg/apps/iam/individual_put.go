@@ -4,31 +4,31 @@ import (
 	"net/http"
 )
 
-func (s *Server) PutIndividual(w http.ResponseWriter, req *http.Request) {
+func (s *Server) putIndividual(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	var id string
 
-	if !s.GetPathParam("id", w, req, &id) {
+	if !s.getPathParam("id", w, req, &id) {
 		return
 	}
 
 	var individual Individual
-	if err := s.Bind(req, &individual); err != nil {
-		s.Error(w, err)
+	if err := s.bind(req, &individual); err != nil {
+		s.error(w, err)
 		return
 	}
 
-	_, err := s.IndividualStore.Get(ctx, id)
+	_, err := s.individualStore.get(ctx, id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.error(w, err)
 		return
 	}
 
-	if err := s.IndividualStore.Upsert(ctx, &individual); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if err := s.individualStore.upsert(ctx, &individual); err != nil {
+		s.error(w, err)
 		return
 	}
 
-	s.JSON(w, http.StatusOK, &individual)
+	s.json(w, http.StatusOK, &individual)
 
 }

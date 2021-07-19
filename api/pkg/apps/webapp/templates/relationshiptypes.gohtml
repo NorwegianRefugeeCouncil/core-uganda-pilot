@@ -26,7 +26,7 @@
                     {{ range .RelationshipTypes.Items }}
                         <a class="card mb-3 shadow-sm text-dark text-decoration-none attribute"
                            href="/settings/relationshiptypes/{{.ID}}"
-                           data-cy="relationshiptype"
+                           data-testid="relationshiptype"
                         >
                             <div class="card-body">
                                 {{.Name}}

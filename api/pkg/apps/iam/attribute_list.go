@@ -4,21 +4,21 @@ import (
 	"net/http"
 )
 
-func (s *Server) ListAttributes(w http.ResponseWriter, req *http.Request) {
+func (s *Server) listAttributes(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
 	listOptions := &AttributeListOptions{}
 	if err := listOptions.UnmarshalQueryParameters(req.URL.Query()); err != nil {
-		s.Error(w, err)
+		s.error(w, err)
 		return
 	}
 
-	list, err := s.AttributeStore.List(ctx, *listOptions)
+	list, err := s.attributeStore.list(ctx, *listOptions)
 	if err != nil {
-		s.Error(w, err)
+		s.error(w, err)
 		return
 	}
 
-	s.JSON(w, http.StatusOK, list)
+	s.json(w, http.StatusOK, list)
 }

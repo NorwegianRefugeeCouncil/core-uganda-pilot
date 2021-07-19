@@ -46,6 +46,7 @@
                       name="{{.Attributes.ID}}"
                       class="form-control"
                       style="height: 150px; white-space: pre"
+                      data-testid="form"
                       placeholder="{{.Attributes.Placeholder}}"
                       {{if .Validation.Required}}required{{end}}
                     {{if or .Attributes.Value (and (not .Attributes.Value) $filled)}}disabled{{end}}

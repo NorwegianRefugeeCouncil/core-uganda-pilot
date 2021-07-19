@@ -17,7 +17,7 @@ func NewTeamStore(partyStore *PartyStore) *TeamStore {
 
 func (s *TeamStore) Get(ctx context.Context, id string) (*Team, error) {
 
-	p, err := s.partyStore.Get(ctx, id)
+	p, err := s.partyStore.get(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func MapTeamToParty(team *Team) *Party {
 }
 
 func (s *TeamStore) List(ctx context.Context) (*TeamList, error) {
-	ps, err := s.partyStore.List(ctx, PartySearchOptions{
+	ps, err := s.partyStore.list(ctx, PartySearchOptions{
 		PartyTypeIDs: []string{TeamPartyType.ID},
 	})
 	if err != nil {
@@ -69,7 +69,7 @@ func (s *TeamStore) List(ctx context.Context) (*TeamList, error) {
 
 func (s *TeamStore) Update(ctx context.Context, team *Team) error {
 	party := MapTeamToParty(team)
-	if err := s.partyStore.Update(ctx, party); err != nil {
+	if err := s.partyStore.update(ctx, party); err != nil {
 		return err
 	}
 	return nil
@@ -77,7 +77,7 @@ func (s *TeamStore) Update(ctx context.Context, team *Team) error {
 
 func (s *TeamStore) Create(ctx context.Context, team *Team) error {
 	party := MapTeamToParty(team)
-	if err := s.partyStore.Create(ctx, party); err != nil {
+	if err := s.partyStore.create(ctx, party); err != nil {
 		return err
 	}
 	return nil

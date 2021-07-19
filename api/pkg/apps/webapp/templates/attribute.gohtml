@@ -26,7 +26,7 @@
                                        class="form-control"
                                        value=""
                                        placeholder="Name"
-                                       data-cy="name"
+                                       data-testid="name"
                                 >
                                 <label for="name-input">Name</label>
                             </div>
@@ -38,7 +38,7 @@
                                 <select id="value-type-input"
                                         name="valueType"
                                         class="form-select"
-                                        data-cy="type"
+                                        data-testid="type"
                                 >
                                     <option>String</option>
                                 </select>
@@ -50,7 +50,7 @@
                                 <select id="subject-type-input"
                                         name="partyTypes"
                                         class="form-select"
-                                        data-cy="subject"
+                                        data-testid="subject"
                                 >
                                     {{range .PartyTypes.Items}}
                                     <option value="{{.ID}}">{{.Name}}</option>
@@ -65,7 +65,7 @@
                                        name="isPii"
                                        type="checkbox"
                                        class="form-check-input"
-                                       data-cy="personal-info-chkbx"
+                                       data-testid="personal-info-chkbx"
                                        {{if .Attribute.IsPersonallyIdentifiableInfo}}checked{{end}}
                                 >
                                 <label class="form-check-label" for="is-pii-input">
@@ -83,7 +83,7 @@
                                 </div>
                                 <div id="language-picker-container" class="card-body border-top">
                                     <div class="form-floating shadow-sm">
-                                        <select id="language-picker" class="form-select" data-cy="language">
+                                        <select id="language-picker" class="form-select" data-testid="language">
                                             <!-- Templated -->
                                         </select>
                                         <label for="language-picker">Language</label>
@@ -91,7 +91,7 @@
                                 </div>
                             </div>
 
-                            <button class="btn btn-primary">Save</button>
+                            <button class="btn btn-primary" data-testid="save-btn">Save</button>
 
                         </form>
                     </div>
@@ -268,7 +268,7 @@
                                            type="text"
                                            value="${long}"
                                            placeholder="Long Description"
-                                           data-cy="translation-long"
+                                           data-testid="translation-long"
                                     >
                                     <label for="i81n-long-${language}">Long</label>
                                 </div>
@@ -280,7 +280,7 @@
                                            type="text"
                                            value="${short}"
                                            placeholder="Short Description"
-                                           data-cy="translation-short"
+                                           data-testid="translation-short"
                                     >
                                     <label for="i81n-short-${language}">Short</label>
                                 </div>

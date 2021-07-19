@@ -31,9 +31,13 @@
                                                name="attribute[{{$attribute.ID}}]"
                                                id="attribute-{{$attribute.ID}}-{{$idx}}"
                                                type="text"
-                                               data-cy="text-attribute"
+                                               data-testid="text-attribute"
                                                value="{{$value}}">
-                                        <label for="attribute-{{$attribute.ID}}-{{$idx}}">{{$attribute.Name}}</label>
+                                        {{ if eq (len $attribute.Translations) 0}}
+                                            <label for="attribute-{{$attribute.ID}}-{{$idx}}">{{$attribute.Name}}</label>
+                                        {{ else }}
+                                            <label for="attribute-{{$attribute.ID}}-{{$idx}}">{{(index $attribute.Translations 0).LongFormulation}}</label>
+                                        {{ end }}
                                     </div>
                                 {{end}}
                             {{else}}
@@ -42,7 +46,7 @@
                                            name="attribute[{{$attribute.ID}}]"
                                            id="attribute-{{$attribute.ID}}-0"
                                            type="text"
-                                           data-cy="text-attribute"
+                                           data-testid="text-attribute"
                                            value="">
                                     <label for="attribute-{{$attribute.ID}}-0">{{$attribute.Name}}</label>
                                 </div>
@@ -60,7 +64,7 @@
 
                         <div class="d-flex flex-row mb-3">
                             <div class="form-floating  me-2">
-                                <select id="relationshipTypeSelector" class="form-select pe-5">
+                                <select id="relationshipTypeSelector" class="form-select pe-5" data-testid="relationshipType">
                                     {{range .RelationshipTypes.Items}}
                                         <option value="{{.ID}}">{{.FirstPartyRole}}</option>
                                     {{end}}
@@ -72,6 +76,7 @@
                                        class="form-control dropdown-toggle"
                                        name="partySelector"
                                        id="partySelector"
+                                       data-testid="relatedParty"
                                        data-bs-toggle="dropdown"
                                        aria-expanded="false"/>
 
@@ -82,6 +87,7 @@
 
                             <button class="btn btn-primary ms-2"
                                     id="add-relationship-button"
+                                    data-testid="add-btn"
                                     type='button'>
                                 Add
                             </button>
@@ -123,7 +129,7 @@
 
                         {{end}}
 
-                        <button class="btn btn-primary mt-5">Save</button>
+                        <button class="btn btn-primary mt-5" data-testid="save-btn">Save</button>
                     </form>
 
                 </div>
@@ -349,23 +355,27 @@
                     let partySelectorList = document.getElementById("partySelectorList")
                     partySelectorList.innerHTML = ''
                     if (res.response.items.length > 0) {
+                        let n = 0
                         res.response.items.forEach(party => {
+                          if (n < {{ .Constants.PartyDropdownLimit }}) {
                             let newListItem = document.createElement('li')
                             newListItem.classList.add('dropdown-item')
                             newListItem.classList.add('partySelectorItem')
                             newListItem.onclick = onPartyListItemClick
                             let displayText = `${lastNameFromAttrs(party.attributes)}, ${firstNameFromAttrs(party.attributes)}`
                             newListItem.appendChild(
-                                document.createTextNode(displayText)
+                              document.createTextNode(displayText)
                             )
                             newListItem.setAttribute('id', party.id)
                             partySelectorList.appendChild(newListItem)
 
                             // append party to parties list
                             parties.push({
-                                id: party.id,
-                                name: displayText
+                              id: party.id,
+                              name: displayText
                             })
+                          }
+                          n++
                         })
                     } else {
                         // No Parties Found...

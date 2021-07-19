@@ -20,7 +20,7 @@ func (s *Server) GetLogoutForm(w http.ResponseWriter, req *http.Request) {
 			WithContext(ctx),
 	)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
@@ -30,7 +30,7 @@ func (s *Server) GetLogoutForm(w http.ResponseWriter, req *http.Request) {
 			WithHTTPClient(s.HydraHTTPClient).
 			WithContext(ctx))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 

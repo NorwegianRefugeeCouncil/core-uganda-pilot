@@ -36,16 +36,17 @@
                                    class="form-control dropdown-toggle"
                                    name="partySelector"
                                    id="partySelector"
+                                   data-testid="partySelector"
                                    data-bs-toggle="dropdown"
                                    aria-expanded="false"/>
 
                             <ul class="dropdown-menu" id="partySelectorList" aria-labelledby="partySelector">
                             </ul>
                         </div>
-                        <button id="btn-add" class="btn btn-outline-secondary">Add</button>
+                        <button id="btn-add" class="btn btn-outline-secondary" data-testid="btn-add">Add</button>
                     </div>
                     {{range .Members}}
-                        <div class="list-group-item font-monospace py-3 bg-quite-light">
+                        <div class="list-group-item font-monospace py-3 bg-quite-light" data-testid="member">
                             <i class="bi bi-person-fill"></i> {{.}}
                         </div>
                     {{end}}
@@ -156,24 +157,29 @@
 
                 let partySelectorList = document.getElementById("partySelectorList")
                 partySelectorList.innerHTML = ''
+                let n = 0
                 if (res.response.items.length > 0) {
                     res.response.items.forEach(party => {
+                      if (n < {{ .Constants.PartyDropdownLimit }}) {
                         let newListItem = document.createElement('li')
                         newListItem.classList.add('dropdown-item')
                         newListItem.classList.add('partySelectorItem')
                         newListItem.onclick = onPartyListItemClick
                         let displayText = `${lastNameFromAttrs(party.attributes)}, ${firstNameFromAttrs(party.attributes)}`
                         newListItem.appendChild(
-                            document.createTextNode(displayText)
+                          document.createTextNode(displayText)
                         )
                         newListItem.setAttribute('id', party.id)
+                        newListItem.setAttribute('data-testid', 'partySelectorItem')
                         partySelectorList.appendChild(newListItem)
 
                         // append party to parties list
                         parties.push({
-                            id: party.id,
-                            name: displayText
+                          id: party.id,
+                          name: displayText
                         })
+                      }
+                      n++
                     })
                 } else {
                     // No Parties Found...

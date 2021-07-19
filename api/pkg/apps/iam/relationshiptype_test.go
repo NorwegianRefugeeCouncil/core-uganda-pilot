@@ -1,13 +1,14 @@
 // +build integration
 
-package iam
+package iam_test
 
 import (
+	. "github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-func (s *Suite) TestRelationShipTypeCRUD() {
+func (s *Suite) TestRelationshipType() {
 	// CREATE relationship type
 	mock := "create"
 	created, err := s.client.RelationshipTypes().Create(s.ctx, &RelationshipType{
@@ -83,10 +84,10 @@ func (s *Suite) TestRelationShipTypeCRUD() {
 	assert.Contains(s.T(), list.Items, get)
 }
 
-// TestRelationshipTypeList tests that we can effectively filter relationship types by
+// TestRelationshipTypeListFilter tests that we can effectively filter relationship types by
 // - PartyType = IndividualPartyType
 // - PartyType = HouseholdPartyType
-func (s *Suite) TestRelationshipTypeList() {
+func (s *Suite) TestRelationshipTypeListFilter() {
 
 	s.T().Run("test filter by IndividualPartyType", func(t *testing.T) {
 		// retrieve list of RelationshipTypes with the IndividualPartyType rule

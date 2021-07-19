@@ -19,7 +19,7 @@ func (s *Server) PutCaseType(w http.ResponseWriter, req *http.Request) {
 
 	caseType, err := s.caseTypeStore.Get(ctx, id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
@@ -28,7 +28,7 @@ func (s *Server) PutCaseType(w http.ResponseWriter, req *http.Request) {
 	caseType.TeamID = payload.TeamID
 
 	if err := s.caseTypeStore.Update(ctx, caseType); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 

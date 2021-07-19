@@ -18,7 +18,7 @@ func (s *Server) PostCaseType(w http.ResponseWriter, req *http.Request) {
 	caseType.ID = uuid.NewV4().String()
 
 	if err := s.caseTypeStore.Create(ctx, caseType); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
