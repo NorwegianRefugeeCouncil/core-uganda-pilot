@@ -18,15 +18,18 @@ func (s *Server) CaseTypes(w http.ResponseWriter, req *http.Request) {
 	iamClient := s.IAMClient(ctx)
 
 	caseTypes, err := cmsClient.CaseTypes().List(ctx, cms.CaseTypeListOptions{})
-	if errResponse(w, err) {
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	partyTypes, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
-	if errResponse(w, err) {
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	teams, err := iamClient.Teams().List(ctx, iam.TeamListOptions{})
-	if errResponse(w, err) {
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -39,8 +42,8 @@ func (s *Server) CaseTypes(w http.ResponseWriter, req *http.Request) {
 		"CaseTypes":  caseTypes,
 		"PartyTypes": partyTypes,
 		"Teams":      teams,
-	}); errResponse(w, err) {
-		return
+	}); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
@@ -52,7 +55,7 @@ func (s *Server) CaseType(w http.ResponseWriter, req *http.Request) {
 
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
-		errResponse(w, fmt.Errorf("no id in path"))
+		http.Error(w, fmt.Errorf("no id in path").Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -80,8 +83,8 @@ func (s *Server) CaseType(w http.ResponseWriter, req *http.Request) {
 		teamsData, err = iamClient.Teams().List(ctx, iam.TeamListOptions{})
 		return err
 	})
-	if err := g.Wait(); errResponse(w, err) {
-		return
+	if err := g.Wait(); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
 	if req.Method == "POST" {
@@ -94,8 +97,8 @@ func (s *Server) CaseType(w http.ResponseWriter, req *http.Request) {
 		"PartyTypes": partyTypes,
 		"Teams":      teamsData,
 		//"ErrList": validation,
-	}); errResponse(w, err) {
-		return
+	}); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
@@ -109,22 +112,19 @@ func (h *Server) PostCaseType(
 ) {
 	cmsClient := h.CMSClient(ctx)
 
-	isNew := false
-	if len(caseType.ID) == 0 {
-		isNew = true
-	}
-
-	if err := req.ParseForm(); errResponse(w, err) {
-		return
+	if err := req.ParseForm(); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
 	values := req.Form
 
 	err := caseType.UnmarshalFormData(values)
-	if errResponse(w, err) {
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	isNew := len(caseType.ID) == 0
 	if isNew {
 		h.CreateCaseType(ctx, caseType, w, cmsClient)
 	} else {
@@ -134,7 +134,8 @@ func (h *Server) PostCaseType(
 
 func (h *Server) CreateCaseType(ctx context.Context, caseType *cms.CaseType, w http.ResponseWriter, cmsClient cms.Interface) {
 	_, err := cmsClient.CaseTypes().Create(ctx, caseType)
-	if errResponse(w, err) {
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
@@ -147,7 +148,8 @@ func (h *Server) CreateCaseType(ctx context.Context, caseType *cms.CaseType, w h
 
 func (h *Server) UpdateCaseType(ctx context.Context, caseType *cms.CaseType, w http.ResponseWriter, cmsClient cms.Interface) {
 	_, err := cmsClient.CaseTypes().Update(ctx, caseType)
-	if errResponse(w, err) {
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
@@ -163,27 +165,21 @@ func (s *Server) NewCaseType(w http.ResponseWriter, req *http.Request) {
 	iamClient := s.IAMClient(ctx)
 
 	p, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
-	if errResponse(w, err) {
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	teamsData, err := iamClient.Teams().List(ctx, iam.TeamListOptions{})
-	if errResponse(w, err) {
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if err := s.renderFactory.New(req).ExecuteTemplate(w, "casetype", map[string]interface{}{
 		"PartyTypes": p,
 		"Teams":      teamsData,
-	}); errResponse(w, err) {
-		return
-	}
-}
-
-func errResponse(w http.ResponseWriter, err error) bool {
-	if err != nil {
+	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return true
 	}
-	return false
 }
