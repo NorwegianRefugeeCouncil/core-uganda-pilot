@@ -10,24 +10,24 @@
                 <h4 class="card-title">Case Type</h4>
                 <form action="/settings/casetypes{{if .CaseType}}/{{.CaseType.ID}}{{end}}" method="post">
                     <div class="form-floating mb-3">
-                        <input id="name" type="text" class="form-control" name="name" data-cy="name"
+                        <input id="name" type="text" class="form-control" name="name" data-testid="name"
                                value="{{if .CaseType}}{{.CaseType.Name}}{{end}}">
                         <label for="name">Name</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <select id="party-type" type="select" class="form-select" name="partyTypeId" data-cy="partytype"
+                        <select id="party-type" type="select" class="form-select" name="partyTypeId" data-testid="partytype"
                                 {{if .CaseType}}disabled{{end}}>
                             {{if .CaseType}}
                                 {{$partyType := .PartyTypes.FindByID .CaseType.PartyTypeID}}
                                 <option selected value="{{$partyType.ID}}"
-                                        data-cy="partytype-option">
+                                        data-testid="partytype-option">
                                     {{$partyType.Name}}
                                 </option>
                             {{else}}
                                 {{if .PartyTypes}}
                                     <option selected></option>
                                     {{range .PartyTypes.Items}}
-                                        <option value="{{.ID}}" data-cy="partytype-option">{{.Name}}</option>
+                                        <option value="{{.ID}}" data-testid="partytype-option">{{.Name}}</option>
                                     {{end}}
                                 {{else}}
                                     <option disabled selected>No party types defined</option>
@@ -37,18 +37,18 @@
                         <label for="party-type">Select Party Type</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <select id="team" type="select" class="form-select" name="teamId" data-cy="team"
+                        <select id="team" type="select" class="form-select" name="teamId" data-testid="team"
                                 {{if .CaseType}}disabled{{end}}>
                             {{if .CaseType}}
                                 {{$team := .Teams.FindByID .CaseType.TeamID}}
-                                <option selected value="{{$team.ID}}" data-cy="team-option">
+                                <option selected value="{{$team.ID}}" data-testid="team-option">
                                     {{$team.Name}}
                                 </option>
                             {{else}}
                                 {{if .Teams}}
                                     <option selected></option>
                                     {{range .Teams.Items}}
-                                        <option value="{{.ID}}" data-cy="team-option">{{.Name}}</option>
+                                        <option value="{{.ID}}" data-testid="team-option">{{.Name}}</option>
                                     {{end}}
                                 {{else}}
                                     <option disabled selected>No teams defined</option>
@@ -58,7 +58,7 @@
                         <label for="team">Select Team</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <textarea name="template" id="template" class="form-control font-monospace" data-cy="template"
+                        <textarea name="template" id="template" class="form-control font-monospace" data-testid="template"
                                   style="height: 600px"
                                   {{if .CaseType}}readonly{{end}}>
                             {{- if .CaseType -}}
@@ -71,7 +71,7 @@
                         <input type="hidden" name="partyTypeId" value="{{.CaseType.PartyTypeID}}">
                         <input type="hidden" name="teamId" value="{{.CaseType.TeamID}}">
                     {{end}}
-                    <button class="btn btn-primary" data-cy="save-btn">Save</button>
+                    <button class="btn btn-primary" data-testid="save-btn">Save</button>
                 </form>
             </div>
         </div>

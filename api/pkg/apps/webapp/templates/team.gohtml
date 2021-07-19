@@ -36,17 +36,17 @@
                                    class="form-control dropdown-toggle"
                                    name="partySelector"
                                    id="partySelector"
-                                   data-cy="partySelector"
+                                   data-testid="partySelector"
                                    data-bs-toggle="dropdown"
                                    aria-expanded="false"/>
 
                             <ul class="dropdown-menu" id="partySelectorList" aria-labelledby="partySelector">
                             </ul>
                         </div>
-                        <button id="btn-add" class="btn btn-outline-secondary" data-cy="btn-add">Add</button>
+                        <button id="btn-add" class="btn btn-outline-secondary" data-testid="btn-add">Add</button>
                     </div>
                     {{range .Members}}
-                        <div class="list-group-item font-monospace py-3 bg-quite-light" data-cy="member">
+                        <div class="list-group-item font-monospace py-3 bg-quite-light" data-testid="member">
                             <i class="bi bi-person-fill"></i> {{.}}
                         </div>
                     {{end}}
@@ -170,7 +170,7 @@
                           document.createTextNode(displayText)
                         )
                         newListItem.setAttribute('id', party.id)
-                        newListItem.setAttribute('data-cy', 'partySelectorItem')
+                        newListItem.setAttribute('data-testid', 'partySelectorItem')
                         partySelectorList.appendChild(newListItem)
 
                         // append party to parties list

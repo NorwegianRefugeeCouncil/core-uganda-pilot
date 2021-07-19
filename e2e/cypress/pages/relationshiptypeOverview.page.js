@@ -1,7 +1,7 @@
 import { Urls } from '../helpers';
 import NewRelationshiptypePage from './newRelationshiptype.page';
 
-const RELATIONSHIPTYPE_ROWS = '[data-cy=relationshiptype]';
+const RELATIONSHIPTYPE_ROWS = '[data-testid=relationshiptype]';
 
 export default class RelationshiptypeOverviewPage {
     visitPage = () => {

@@ -1,10 +1,10 @@
 import { Urls } from '../helpers';
 
-const TEXT_ATTRIBUTES = '[data-cy=text-attribute]';
-const RELATIONSHIP_TYPE = '[data-cy=relationshipType]';
-const RELATED_PARTY = '[data-cy=relatedParty]';
-const ADD_BTN = '[data-cy=add-btn]';
-const SAVE_BUTTON = '[data-cy=save-btn]';
+const TEXT_ATTRIBUTES = '[data-testid=text-attribute]';
+const RELATIONSHIP_TYPE = '[data-testid=relationshipType]';
+const RELATED_PARTY = '[data-testid=relatedParty]';
+const ADD_BTN = '[data-testid=add-btn]';
+const SAVE_BUTTON = '[data-testid=save-btn]';
 
 export default class NewIndividualPage {
     visitPage = () => {

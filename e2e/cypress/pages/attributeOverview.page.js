@@ -1,7 +1,7 @@
 import { Urls } from '../helpers';
 import NewAttributePage from './newAttribute.page';
 
-const ATTRIBUTE_ROWS = '[data-cy=attribute]';
+const ATTRIBUTE_ROWS = '[data-testid=attribute]';
 
 export default class AttributeOverviewPage {
     visitPage = () => {

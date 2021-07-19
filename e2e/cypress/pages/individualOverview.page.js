@@ -1,7 +1,7 @@
 import { Urls } from '../helpers';
 import NewIndividualPage from './newIndividual.page';
 
-const INDIVIDUAL_ROWS = '[data-cy=individual]';
+const INDIVIDUAL_ROWS = '[data-testid=individual]';
 
 export default class IndividualOverviewPage {
     visitPage = () => {

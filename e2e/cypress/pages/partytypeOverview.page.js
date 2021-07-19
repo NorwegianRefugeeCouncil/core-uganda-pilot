@@ -1,7 +1,7 @@
 import { Urls } from '../helpers';
 import NewPartyTypePage from './newPartyType.page';
 
-const PARTYTYPE_ROWS = '[data-cy=partytype]';
+const PARTYTYPE_ROWS = '[data-testid=partytype]';
 
 export default class PartytypeOverviewPage {
     visitPage = () => {

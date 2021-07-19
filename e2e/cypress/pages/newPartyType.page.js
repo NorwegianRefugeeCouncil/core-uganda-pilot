@@ -1,8 +1,8 @@
 import { Urls } from '../helpers';
 
-const NAME = '[data-cy=name]';
-const IS_BULITIN = '[data-cy=isBuiltIn]';
-const SAVE_BUTTON = '[data-cy=save-btn]';
+const NAME = '[data-testid=name]';
+const IS_BULITIN = '[data-testid=isBuiltIn]';
+const SAVE_BUTTON = '[data-testid=save-btn]';
 
 export default class NewPartyTypePage {
     visitPage = () => {

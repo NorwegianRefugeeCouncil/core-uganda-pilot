@@ -63,11 +63,11 @@ describe('Case Page', function () {
                     cy.wrap($row).should('contain.text');
                 });
             cy.get('tr').last().click({ force: true });
-            cy.get('textarea[data-cy=description]').should(
+            cy.get('textarea[data-testid=description]').should(
                 'contain.text',
                 mockUpdatedText
             );
-            cy.get('input[data-cy=done-check]')
+            cy.get('input[data-testid=done-check]')
                 .invoke('prop', 'checked')
                 .then((checked) => expect(checked).to.be.true);
         });

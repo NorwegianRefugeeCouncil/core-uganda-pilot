@@ -1,12 +1,12 @@
 import { Urls } from '../helpers';
 
-const NAME = '[data-cy=name]';
-const IS_DIRECTIONAL = '[data-cy=isDirectional]';
-const FIRST_PARTY_ROLE = '[data-cy=firstPartyRole]';
-const SECOND_PARTY_ROLE = '[data-cy=secondPartyRole]';
-const FIRST_PARTY_TYPE = '[data-cy=firstPartyType]';
-const SECOND_PARTY_TYPE = '[data-cy=secondPartyType]';
-const SAVE_BUTTON = '[data-cy=save-btn]';
+const NAME = '[data-testid=name]';
+const IS_DIRECTIONAL = '[data-testid=isDirectional]';
+const FIRST_PARTY_ROLE = '[data-testid=firstPartyRole]';
+const SECOND_PARTY_ROLE = '[data-testid=secondPartyRole]';
+const FIRST_PARTY_TYPE = '[data-testid=firstPartyType]';
+const SECOND_PARTY_TYPE = '[data-testid=secondPartyType]';
+const SAVE_BUTTON = '[data-testid=save-btn]';
 
 export default class NewRelationshiptypePage {
     visitPage = () => {

@@ -1,7 +1,7 @@
-const PARTYSELECTOR = '[data-cy=partySelector]';
-const ADD_BUTTON = '[data-cy=btn-add]';
-const PARTYITEM = '[data-cy=partySelectorItem]';
-const MEMBER = '[data-cy=member]';
+const PARTYSELECTOR = '[data-testid=partySelector]';
+const ADD_BUTTON = '[data-testid=btn-add]';
+const PARTYITEM = '[data-testid=partySelectorItem]';
+const MEMBER = '[data-testid=member]';
 
 export default class TeamPage {
     typeParty = (value) => {

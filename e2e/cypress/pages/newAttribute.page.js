@@ -1,11 +1,11 @@
 import { Urls } from '../helpers';
 
-const NAME = '[data-cy=name]';
-const VALUE_TYPE = '[data-cy=type]';
-const SUBJECT_TYPE = '[data-cy=subject]';
-// const PERSONAL_INFO = '[data-cy=personal-info-chkbx]';
-const LANGUAGE = '[data-cy=language]';
-const SAVE_BUTTON = '[data-cy=save-btn]';
+const NAME = '[data-testid=name]';
+const VALUE_TYPE = '[data-testid=type]';
+const SUBJECT_TYPE = '[data-testid=subject]';
+// const PERSONAL_INFO = '[data-testid=personal-info-chkbx]';
+const LANGUAGE = '[data-testid=language]';
+const SAVE_BUTTON = '[data-testid=save-btn]';
 
 export default class NewAttributePage {
     visitPage = () => {

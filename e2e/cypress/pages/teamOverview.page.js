@@ -1,7 +1,7 @@
 import { Urls } from '../helpers';
 import TeamPage from './team.page';
 
-const TEAM_ROWS = '[data-cy=team]';
+const TEAM_ROWS = '[data-testid=team]';
 
 export default class TeamsOverviewPage {
     visitPage = () => {

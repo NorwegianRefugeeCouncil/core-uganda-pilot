@@ -1,7 +1,7 @@
 import { Urls } from '../helpers';
 import NewCaseTypePage from './newCasetype.page';
 
-const CASETYPE_ROWS = '[data-cy=casetype]';
+const CASETYPE_ROWS = '[data-testid=casetype]';
 
 export default class CasetypesOverviewPage {
     visitPage = () => {

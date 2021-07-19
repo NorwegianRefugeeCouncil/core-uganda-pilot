@@ -22,7 +22,7 @@
                                id="name"
                                name="name"
                                placeholder="Name"
-                               data-cy="name"
+                               data-testid="name"
                                value="{{if .RelationshipType}}{{.RelationshipType.Name}}{{end}}"
                         />
                         <label for="name">Name</label>
@@ -36,7 +36,7 @@
                                     {{if .RelationshipType}}{{if .RelationshipType.IsDirectional}}
                                     checked
                                     {{end}}{{end}}
-                                    class="form-control form-check-input" data-cy="isDirectional"
+                                    class="form-control form-check-input" data-testid="isDirectional"
                                     type="checkbox"
                                     id="isDirectional"
                                     name="isDirectional"
@@ -54,7 +54,7 @@
                                id="firstPartyRole"
                                name="firstPartyRole"
                                placeholder="First party role"
-                               data-cy="firstPartyRole"
+                               data-testid="firstPartyRole"
                                value="{{if .RelationshipType}}{{.RelationshipType.FirstPartyRole}}{{end}}"/>
                         <label id="firstPartyRoleLabel" for="firstPartyRole">First Party Role</label>
                     </div>
@@ -65,7 +65,7 @@
                                type="text"
                                id="secondPartyRole"
                                name="secondPartyRole"
-                               data-cy="secondPartyRole"
+                               data-testid="secondPartyRole"
                                placeholder="Second party role"
                                value="{{if .RelationshipType}}{{.RelationshipType.SecondPartyRole}}{{end}}"
                         />
@@ -86,10 +86,10 @@
                                     class="form-select"
                                     aria-label="Select the type of the first party"
                                     id="firstPartyType"
-                                    data-cy="firstPartyType"
+                                    data-testid="firstPartyType"
                                     name="rules[0].firstPartyTypeId">
                                     {{range .PartyTypes.Items}}
-                                        <option value="{{.ID}}" data-cy="first-partytype-option">{{.Name}}</option>
+                                        <option value="{{.ID}}" data-testid="first-partytype-option">{{.Name}}</option>
                                     {{end}}
                                 </select>
                                 <label id="firstPartyTypeLabel" for="firstPartyType">First Party Type</label>
@@ -101,10 +101,10 @@
                                     class="form-select"
                                     aria-label="Select the type of the second party"
                                     id="secondPartyType"
-                                    data-cy="secondPartyType"
+                                    data-testid="secondPartyType"
                                     name="rules[0].secondPartyTypeId">
                                     {{range .PartyTypes.Items}}
-                                        <option value="{{.ID}}" data-cy="second-partytype-option">{{.Name}}</option>
+                                        <option value="{{.ID}}" data-testid="second-partytype-option">{{.Name}}</option>
                                     {{end}}
                                 </select>
                                 <label id="secondPartyTypeLabel" for="secondPartyType">Second Party Type</label>
@@ -112,7 +112,7 @@
                         </div>
                     </div>
 
-                    <button class="btn btn-primary" data-cy="save-btn">Save</button>
+                    <button class="btn btn-primary" data-testid="save-btn">Save</button>
 
                 </form>
 

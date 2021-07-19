@@ -1,10 +1,10 @@
 import { Urls } from '../helpers';
 
-const NAME = '[data-cy=name]';
-const PARTY_TYPE = '[data-cy=partytype]';
-const TEAM = '[data-cy=team]';
-const TEMPLATE = '[data-cy=template]';
-const SAVE_BUTTON = '[data-cy=save-btn]';
+const NAME = '[data-testid=name]';
+const PARTY_TYPE = '[data-testid=partytype]';
+const TEAM = '[data-testid=team]';
+const TEMPLATE = '[data-testid=template]';
+const SAVE_BUTTON = '[data-testid=save-btn]';
 
 export default class NewCaseTypePage {
     visitPage = () => {
