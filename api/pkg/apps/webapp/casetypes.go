@@ -11,109 +11,51 @@ import (
 	"net/http"
 )
 
-func (h *Server) CaseTypes(w http.ResponseWriter, req *http.Request) {
+func (s *Server) CaseTypes(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	cmsClient := h.CMSClient(ctx)
-	iamClient := h.IAMClient(ctx)
-
-	if req.Method == "POST" {
-		h.PostCaseType(ctx, &cms.CaseType{}, w, req)
-		return
-	}
+	cmsClient := s.CMSClient(ctx)
+	iamClient := s.IAMClient(ctx)
 
 	caseTypes, err := cmsClient.CaseTypes().List(ctx, cms.CaseTypeListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 	partyTypes, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 	teams, err := iamClient.Teams().List(ctx, iam.TeamListOptions{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	if err := h.renderFactory.New(req).ExecuteTemplate(w, "casetypes", map[string]interface{}{
+	if req.Method == "POST" {
+		s.PostCaseType(ctx, &cms.CaseType{}, w, req, partyTypes, teams)
+		return
+	}
+
+	if err := s.renderFactory.New(req).ExecuteTemplate(w, "casetypes", map[string]interface{}{
 		"CaseTypes":  caseTypes,
 		"PartyTypes": partyTypes,
 		"Teams":      teams,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
 	}
 }
 
-func (h *Server) PostCaseType(
-	ctx context.Context,
-	caseType *cms.CaseType,
-	w http.ResponseWriter,
-	req *http.Request,
-) {
-	cmsClient := h.CMSClient(ctx)
-
-	isNew := false
-	if len(caseType.ID) == 0 {
-		isNew = true
-	}
-
-	if err := req.ParseForm(); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	values := req.Form
-	err := caseType.UnmarshalFormData(values)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	if isNew {
-		_, err := cmsClient.CaseTypes().Create(ctx, caseType)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
-			Message: fmt.Sprintf("Case type \"%s\" successfully created", caseType.Name),
-			Theme:   "success",
-		})
-		w.Header().Set("Location", "/settings/casetypes")
-		w.WriteHeader(http.StatusSeeOther)
-		return
-	} else {
-		_, err := cmsClient.CaseTypes().Update(ctx, caseType)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
-			Message: fmt.Sprintf("Case type \"%s\" successfully updated", caseType.Name),
-			Theme:   "success",
-		})
-		w.Header().Set("Location", "/settings/casetypes")
-		w.WriteHeader(http.StatusSeeOther)
-		return
-	}
-}
-
-func (h *Server) CaseType(w http.ResponseWriter, req *http.Request) {
+func (s *Server) CaseType(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	cmsClient := h.CMSClient(ctx)
-	iamClient := h.IAMClient(ctx)
+	cmsClient := s.CMSClient(ctx)
+	iamClient := s.IAMClient(ctx)
 
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
-		err := fmt.Errorf("no id in path")
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, fmt.Errorf("no id in path").Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -122,7 +64,6 @@ func (h *Server) CaseType(w http.ResponseWriter, req *http.Request) {
 	var teamsData *iam.TeamList
 
 	g, waitCtx := errgroup.WithContext(ctx)
-
 	g.Go(func() error {
 		if id == "new" {
 			caseType = &cms.CaseType{}
@@ -132,42 +73,96 @@ func (h *Server) CaseType(w http.ResponseWriter, req *http.Request) {
 		caseType, err = cmsClient.CaseTypes().Get(waitCtx, id)
 		return err
 	})
-
 	g.Go(func() error {
 		var err error
 		partyTypes, err = iamClient.PartyTypes().List(waitCtx, iam.PartyTypeListOptions{})
 		return err
 	})
-
 	g.Go(func() error {
 		var err error
 		teamsData, err = iamClient.Teams().List(ctx, iam.TeamListOptions{})
 		return err
 	})
-
 	if err := g.Wait(); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
 	}
 
 	if req.Method == "POST" {
-		h.PostCaseType(ctx, caseType, w, req)
+		s.PostCaseType(ctx, caseType, w, req, partyTypes, teamsData)
 		return
 	}
 
-	if err := h.renderFactory.New(req).ExecuteTemplate(w, "casetype", map[string]interface{}{
+	if err := s.renderFactory.New(req).ExecuteTemplate(w, "casetype", map[string]interface{}{
 		"CaseType":   caseType,
 		"PartyTypes": partyTypes,
 		"Teams":      teamsData,
+		//"ErrList": validation,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
 	}
 }
 
-func (h *Server) NewCaseType(w http.ResponseWriter, req *http.Request) {
+func (h *Server) PostCaseType(
+	ctx context.Context,
+	caseType *cms.CaseType,
+	w http.ResponseWriter,
+	req *http.Request,
+	partyTypes *iam.PartyTypeList,
+	teamsData *iam.TeamList,
+) {
+	cmsClient := h.CMSClient(ctx)
+
+	if err := req.ParseForm(); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	values := req.Form
+
+	err := caseType.UnmarshalFormData(values)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	isNew := len(caseType.ID) == 0
+	if isNew {
+		h.CreateCaseType(ctx, caseType, w, cmsClient)
+	} else {
+		h.UpdateCaseType(ctx, caseType, w, cmsClient)
+	}
+}
+
+func (h *Server) CreateCaseType(ctx context.Context, caseType *cms.CaseType, w http.ResponseWriter, cmsClient cms.Interface) {
+	_, err := cmsClient.CaseTypes().Create(ctx, caseType)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+		Message: fmt.Sprintf("Case type \"%s\" successfully created", caseType.Name),
+		Theme:   "success",
+	})
+	w.Header().Set("Location", "/settings/casetypes")
+	w.WriteHeader(http.StatusSeeOther)
+}
+
+func (h *Server) UpdateCaseType(ctx context.Context, caseType *cms.CaseType, w http.ResponseWriter, cmsClient cms.Interface) {
+	_, err := cmsClient.CaseTypes().Update(ctx, caseType)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+		Message: fmt.Sprintf("Case type \"%s\" successfully updated", caseType.Name),
+		Theme:   "success",
+	})
+	w.Header().Set("Location", "/settings/casetypes")
+	w.WriteHeader(http.StatusSeeOther)
+}
+
+func (s *Server) NewCaseType(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	iamClient := h.IAMClient(ctx)
+	iamClient := s.IAMClient(ctx)
 
 	p, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
@@ -181,11 +176,10 @@ func (h *Server) NewCaseType(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := h.renderFactory.New(req).ExecuteTemplate(w, "casetype", map[string]interface{}{
+	if err := s.renderFactory.New(req).ExecuteTemplate(w, "casetype", map[string]interface{}{
 		"PartyTypes": p,
 		"Teams":      teamsData,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
 	}
 }

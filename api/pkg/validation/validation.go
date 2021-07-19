@@ -1,6 +1,7 @@
 package validation
 
 import (
+	uuid "github.com/satori/go.uuid"
 	"net/mail"
 	"regexp"
 	"strconv"
@@ -22,6 +23,11 @@ type Status struct {
 
 func (s *Status) Error() string {
 	return s.Message
+}
+
+func IsValidUUID(s string) bool {
+	_, err := uuid.FromString(s)
+	return err == nil
 }
 
 var alphaRegexp = regexp.MustCompile(`^[\w\-()]+( [\w\-()]+)*$`)
@@ -58,7 +64,3 @@ func IsValidPhone(s string) bool {
 	return true
 }
 
-func IsValidUUID(s string) bool {
-	// TODO
-	return true
-}

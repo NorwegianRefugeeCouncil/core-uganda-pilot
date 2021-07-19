@@ -10,9 +10,27 @@
                 <h4 class="card-title">Case Type</h4>
                 <form action="/settings/casetypes{{if .CaseType}}/{{.CaseType.ID}}{{end}}" method="post">
                     <div class="form-floating mb-3">
-                        <input id="name" type="text" class="form-control" name="name"
-                               value="{{if .CaseType}}{{.CaseType.Name}}{{end}}">
+                        {{if .Validation}}{{$name := index .Validation.Elements "name"}}
+                        <input
+                                id="name"
+                                type="text"
+                                class="form-control {{$name.ClassStr}}"
+                                name="name"
+                                value="{{if $name.Value}}{{$name.Value}}{{ else if .CaseType}}{{.CaseType.Name}}{{end}}">
                         <label for="name">Name</label>
+                        {{if $name.IsValid}}
+                            <div class="valid-feedback">Yay!</div>{{end}}
+                        {{if not $name.IsValid}}
+                            <div class="invalid-feedback">{{$name.Message}}</div>{{end}}
+                        {{else}}
+                            <input
+                                    id="name"
+                                    type="text"
+                                    class="form-control"
+                                    name="name"
+                                    value="{{if .CaseType}}{{.CaseType.Name}}{{end}}">
+                            <label for="name">Name</label>
+                        {{end}}
                     </div>
                     <div class="form-floating mb-3">
                         <select id="party-type" type="select" class="form-select" name="partyTypeId"

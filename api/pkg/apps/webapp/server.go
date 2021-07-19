@@ -10,6 +10,7 @@ import (
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/rest"
 	"github.com/nrc-no/core/pkg/sessionmanager"
+	"github.com/nrc-no/core/pkg/utils"
 	"github.com/ory/hydra-client-go/client/admin"
 	"golang.org/x/oauth2"
 	"net/http"
@@ -33,6 +34,7 @@ type Server struct {
 	HydraHTTPClient *http.Client
 	IAMHTTPClient   *http.Client
 	CMSHTTPClient   *http.Client
+	Constants       Constants
 }
 
 type ServerOptions struct {
@@ -86,6 +88,9 @@ func NewServer(options *ServerOptions) (*Server, error) {
 		HydraHTTPClient: options.HydraHTTPClient,
 		IAMHTTPClient:   options.IAMHTTPClient,
 		CMSHTTPClient:   options.CMSHTTPClient,
+		Constants: Constants{
+			PartyDropdownLimit: 5,
+		},
 	}
 
 	router := mux.NewRouter()
@@ -174,4 +179,8 @@ func (s *Server) CMSClient(ctx context.Context) cms.Interface {
 		Host:       s.cmsHost,
 		HTTPClient: httpClient,
 	})
+}
+
+func (s *Server) Error(w http.ResponseWriter, err error) {
+	utils.ErrorResponse(w, err)
 }

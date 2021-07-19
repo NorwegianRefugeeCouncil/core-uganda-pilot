@@ -2,13 +2,10 @@ package iam
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/generic/server"
+	"github.com/nrc-no/core/pkg/utils"
 	"github.com/ory/hydra-client-go/client/admin"
-	"go.mongodb.org/mongo-driver/mongo"
-	"io/ioutil"
 	"net/http"
 	"path"
 )
@@ -25,33 +22,33 @@ type Server struct {
 	teamStore             *TeamStore
 	membershipStore       *MembershipStore
 	hydraAdmin            admin.ClientService
-	mongoClient           *mongo.Client
+	mongoClientFn         utils.MongoClientFn
 	hydraHTTPClient       *http.Client
 }
 
 func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, error) {
 
-	relationshipStore, err := newRelationshipStore(ctx, o.MongoClient, o.MongoDatabase)
+	relationshipStore, err := newRelationshipStore(ctx, o.MongoClientFn, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	partyStore, err := newPartyStore(ctx, o.MongoClient, o.MongoDatabase)
+	partyStore, err := newPartyStore(ctx, o.MongoClientFn, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	attributeStore, err := newAttributeStore(ctx, o.MongoClient, o.MongoDatabase)
+	attributeStore, err := newAttributeStore(ctx, o.MongoClientFn, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	partyTypeStore, err := newPartyTypeStore(ctx, o.MongoClient, o.MongoDatabase)
+	partyTypeStore, err := newPartyTypeStore(ctx, o.MongoClientFn, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	relationshipTypeStore, err := newRelationshipTypeStore(ctx, o.MongoClient, o.MongoDatabase)
+	relationshipTypeStore, err := newRelationshipTypeStore(ctx, o.MongoClientFn, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
@@ -63,13 +60,13 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 
 	srv := &Server{
 		environment:           o.Environment,
-		mongoClient:           o.MongoClient,
+		mongoClientFn:         o.MongoClientFn,
 		attributeStore:        attributeStore,
 		partyStore:            partyStore,
 		partyTypeStore:        partyTypeStore,
 		relationshipStore:     relationshipStore,
 		relationshipTypeStore: relationshipTypeStore,
-		individualStore:       NewIndividualStore(o.MongoClient, o.MongoDatabase),
+		individualStore:       NewIndividualStore(o.MongoClientFn, o.MongoDatabase),
 		teamStore:             NewTeamStore(partyStore),
 		membershipStore:       NewMembershipStore(relationshipStore),
 		hydraAdmin:            hydraAdmin,
@@ -130,49 +127,27 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }
 
 func (s *Server) json(w http.ResponseWriter, status int, data interface{}) {
-	responseBytes, err := json.Marshal(data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(status)
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(responseBytes)
-	if err != nil {
-		return
-	}
+	utils.JSONResponse(w, status, data)
 }
 
 func (s *Server) getPathParam(param string, w http.ResponseWriter, req *http.Request, into *string) bool {
-	id, ok := mux.Vars(req)[param]
-	if !ok || len(id) == 0 {
-		err := fmt.Errorf("path parameter '%s' not found in path", param)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return false
-	}
-	*into = id
-	return true
+	return utils.GetPathParam(param, w, req, into)
 }
 
 func (s *Server) error(w http.ResponseWriter, err error) {
-	http.Error(w, err.Error(), http.StatusInternalServerError)
+	utils.ErrorResponse(w, err)
 }
 
 func (s *Server) bind(req *http.Request, into interface{}) error {
-	bodyBytes, err := ioutil.ReadAll(req.Body)
-	if err != nil {
-		return err
-	}
-
-	if err := json.Unmarshal(bodyBytes, &into); err != nil {
-		return err
-	}
-
-	return nil
+	return utils.BindJSON(req, into)
 }
 
 func (s *Server) ResetDB(ctx context.Context, databaseName string) error {
-	if err := s.mongoClient.Database(databaseName).Drop(ctx); err != nil {
+	mongoClient, err := s.mongoClientFn(ctx)
+	if err != nil {
+		return err
+	}
+	if err := mongoClient.Database(databaseName).Drop(ctx); err != nil {
 		return err
 	}
 	if err := s.Init(ctx); err != nil {

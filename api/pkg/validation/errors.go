@@ -26,6 +26,15 @@ func (v ErrorList) HasError(field string, errType ErrorType) bool {
 	return false
 }
 
+func (v ErrorList) Status(code int, msg string) Status {
+	return Status{
+		Status:  Failure,
+		Code:    code,
+		Message: msg,
+		Errors:  v,
+	}
+}
+
 // Error is an implementation of the 'error' interface, which represents a
 // field-level validation error.
 type Error struct {

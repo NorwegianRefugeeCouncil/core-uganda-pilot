@@ -53,7 +53,7 @@ func individual(
 	secondaryPhoneNumber string,
 	preferredMeansOfContact string,
 	requireAnInterpreter string,
-	) iam.Individual {
+) iam.Individual {
 	var i = iam.Individual{
 		Party: &iam.Party{
 			ID: id,
@@ -61,31 +61,31 @@ func individual(
 				iam.IndividualPartyType.ID,
 			},
 			Attributes: map[string][]string{
-				iam.FirstNameAttribute.ID: {firstName},
-				iam.LastNameAttribute.ID:  {lastName},
-				iam.EMailAttribute.ID:     {strings.ToLower(firstName) + "." + strings.ToLower(lastName) + "@email.com"},
-				iam.BirthDateAttribute.ID: {birthDate},
-				iam.DisplacementStatusAttribute.ID: {displacementStatus},
-				iam.GenderAttribute.ID: {gender},
-				iam.ConsentToNrcDataUseAttribute.ID: {consent},
-				iam.ConsentToNrcDataUseProofAttribute.ID: {consentProof},
-				iam.AnonymousAttribute.ID: {anonymous},
-				iam.MinorAttribute.ID: {minor},
-				iam.ProtectionConcernsAttribute.ID: {protectionConcerns},
-				iam.PhysicalImpairmentAttribute.ID: {physicalImpairment},
+				iam.FirstNameAttribute.ID:                   {firstName},
+				iam.LastNameAttribute.ID:                    {lastName},
+				iam.EMailAttribute.ID:                       {strings.ToLower(firstName) + "." + strings.ToLower(lastName) + "@email.com"},
+				iam.BirthDateAttribute.ID:                   {birthDate},
+				iam.DisplacementStatusAttribute.ID:          {displacementStatus},
+				iam.GenderAttribute.ID:                      {gender},
+				iam.ConsentToNrcDataUseAttribute.ID:         {consent},
+				iam.ConsentToNrcDataUseProofAttribute.ID:    {consentProof},
+				iam.AnonymousAttribute.ID:                   {anonymous},
+				iam.MinorAttribute.ID:                       {minor},
+				iam.ProtectionConcernsAttribute.ID:          {protectionConcerns},
+				iam.PhysicalImpairmentAttribute.ID:          {physicalImpairment},
 				iam.PhysicalImpairmentIntensityAttribute.ID: {physicalImpairmentIntensity},
-				iam.SensoryImpairmentAttribute.ID: {sensoryImpairment},
-				iam.SensoryImpairmentIntensityAttribute.ID: {sensoryImpairmentIntensity},
-				iam.MentalImpairmentAttribute.ID: {mentalImpairment},
-				iam.MentalImpairmentIntensityAttribute.ID: {mentalImpairmentIntensity},
-				iam.NationalityAttribute.ID: {nationality},
-				iam.SpokenLanguagesAttribute.ID: {spokenLanguages},
-				iam.PreferredLanguageAttribute.ID: {preferredLanguage},
-				iam.PhysicalAddressAttribute.ID: {physicalAddress},
-				iam.PrimaryPhoneNumberAttribute.ID: {primaryPhoneNumber},
-				iam.SecondaryPhoneNumberAttribute.ID: {secondaryPhoneNumber},
-				iam.PreferredMeansOfContactAttribute.ID: {preferredMeansOfContact},
-				iam.RequireAnInterpreterAttribute.ID: {requireAnInterpreter},
+				iam.SensoryImpairmentAttribute.ID:           {sensoryImpairment},
+				iam.SensoryImpairmentIntensityAttribute.ID:  {sensoryImpairmentIntensity},
+				iam.MentalImpairmentAttribute.ID:            {mentalImpairment},
+				iam.MentalImpairmentIntensityAttribute.ID:   {mentalImpairmentIntensity},
+				iam.NationalityAttribute.ID:                 {nationality},
+				iam.SpokenLanguagesAttribute.ID:             {spokenLanguages},
+				iam.PreferredLanguageAttribute.ID:           {preferredLanguage},
+				iam.PhysicalAddressAttribute.ID:             {physicalAddress},
+				iam.PrimaryPhoneNumberAttribute.ID:          {primaryPhoneNumber},
+				iam.SecondaryPhoneNumberAttribute.ID:        {secondaryPhoneNumber},
+				iam.PreferredMeansOfContactAttribute.ID:     {preferredMeansOfContact},
+				iam.RequireAnInterpreterAttribute.ID:        {requireAnInterpreter},
 			},
 		},
 	}
@@ -108,7 +108,7 @@ func membership(id string, individual iam.Individual, team iam.Team) iam.Members
 	return m
 }
 
-func kase(id, caseTypeID, createdByID, partyID, teamID string, done bool) cms.Case {
+func kase(id, caseTypeID, createdByID, partyID, teamID string, done bool, formData *cms.CaseTemplate) cms.Case {
 	k := cms.Case{
 		ID:         id,
 		CaseTypeID: caseTypeID,
@@ -116,6 +116,7 @@ func kase(id, caseTypeID, createdByID, partyID, teamID string, done bool) cms.Ca
 		PartyID:    partyID,
 		TeamID:     teamID,
 		Done:       done,
+		FormData: 	formData,
 	}
 	cases = append(cases, k)
 	return k
@@ -136,69 +137,12 @@ var (
 	UgandaCoreAdminTeam     = team("814fc372-08a6-4e6b-809b-30ebb51cb268", "Uganda Core Admin Team")
 	MozambiqueEducationTeam = team("80606eb4-b53a-4fda-be12-e9806e11d44a", "Mozambique Education Team")
 
-	// Case Templates
-	Legal = &cms.CaseTemplate{
-		FormElements: []cms.CaseTemplateFormElement{
-			{
-				Type: "dropdown",
-				Attributes: cms.CaseTemplateFormElementAttribute{
-					Label:       "Legal satus",
-					ID:          "legalStatus",
-					Description: "What is the beneficiary's current legal status?",
-					Options:     []string{"Citizen", "Permanent resident", "Accepted refugee", "Asylum seeker", "Undetermined"},
-				},
-				Validation: cms.CaseTemplateFormElementValidation{
-					Required: true,
-				},
-			},
-			{
-				Type: "checkbox",
-				Attributes: cms.CaseTemplateFormElementAttribute{
-					Label:       "Qualified services",
-					ID:          "qualifiedServices",
-					Description: "What services does the beneficiary qualify for?",
-					CheckboxOptions: []cms.CaseTemplateCheckboxOption{
-						{
-							Label: "Counselling",
-						},
-						{
-							Label: "Representation",
-						},
-						{
-							Label: "Arbitration",
-						},
-					},
-				},
-				Validation: cms.CaseTemplateFormElementValidation{
-					Required: true,
-				},
-			},
-			{
-				Type: "textarea",
-				Attributes: cms.CaseTemplateFormElementAttribute{
-					Label:       "Notes",
-					ID:          "notes",
-					Description: "Additional information, observations, concerns, etc.",
-					Placeholder: "Type here",
-				},
-			},
-			{
-				Type: "textinput",
-				Attributes: cms.CaseTemplateFormElementAttribute{
-					Label:       "Project number",
-					ID:          "projectNumber",
-					Description: "Enter the beneficiaries project number, if any",
-				},
-			},
-		},
-	}
-
 	// Case Templates for Uganda
 	// - Kampala Response Team
 	UGSituationAnalysis = &cms.CaseTemplate{
 		FormElements: []cms.CaseTemplateFormElement{
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
 					ID:          "safeDiginifiedLife",
@@ -207,7 +151,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "How are you addressing these challenges and barriers? What is standing in your way? Can you give me some examples of how you are dealing with these challenges?",
 					ID:          "challengesBarriers",
@@ -216,7 +160,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "What are some solutions you see for this and how could we work together on these solutions? How could we work to reduce these challenges together?",
 					ID:          "solutions",
@@ -225,7 +169,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "If we were to work together on this, what could we do together? What would make the most difference for you?",
 					ID:          "workTogether",
@@ -238,7 +182,7 @@ var (
 	UGIndividualAssessment = &cms.CaseTemplate{
 		FormElements: []cms.CaseTemplateFormElement{
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Which service has the individual requested as a starting point of support?",
 					ID:          "serviceStartingPoint",
@@ -247,7 +191,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "What other services has the individual requested/identified?",
 					ID:          "otherServices",
@@ -256,7 +200,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "What is the perceived priority response level of the individual",
 					ID:          "perceivedPriority",
@@ -269,7 +213,7 @@ var (
 	UGReferral = &cms.CaseTemplate{
 		FormElements: []cms.CaseTemplateFormElement{
 			{
-				Type: "textinput",
+				Type: cms.TextInput,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Date of Referral",
 					ID:          "dateOfReferral",
@@ -277,7 +221,7 @@ var (
 				},
 			},
 			{
-				Type: "dropdown",
+				Type: cms.Dropdown,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Urgency",
 					ID:          "urgency",
@@ -289,7 +233,7 @@ var (
 				},
 			},
 			{
-				Type: "dropdown",
+				Type: cms.Dropdown,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Type of Referral",
 					ID:          "typeOfReferral",
@@ -301,7 +245,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Services/assistance requested",
 					ID:          "servicesRequested",
@@ -310,7 +254,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Reason for referral",
 					ID:          "reasonForReferral",
@@ -319,7 +263,7 @@ var (
 				},
 			},
 			{
-				Type: "checkbox",
+				Type: cms.Checkbox,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Does the beneficiary have any restrictions to be referred?",
 					ID:          "referralRestrictions",
@@ -335,7 +279,7 @@ var (
 				},
 			},
 			{
-				Type: "dropdown",
+				Type: cms.Dropdown,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Means of Referral",
 					ID:          "meansOfReferral",
@@ -347,7 +291,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Means and terms of receiving feedback from the client",
 					ID:          "meansOfFeedback",
@@ -356,7 +300,7 @@ var (
 				},
 			},
 			{
-				Type: "textinput",
+				Type: cms.TextInput,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Deadline for receiving feedback from the client",
 					ID:          "deadlineForFeedback",
@@ -368,7 +312,7 @@ var (
 	UGExternalReferralFollowup = &cms.CaseTemplate{
 		FormElements: []cms.CaseTemplateFormElement{
 			{
-				Type: "checkbox",
+				Type: cms.Checkbox,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Was the referral accepted by the other provider?",
 					ID:          "referralAccepted",
@@ -384,7 +328,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Provide any pertinent details on service needs / requests.",
 					ID:          "pertinentDetails",
@@ -398,7 +342,7 @@ var (
 	UGICLAIndividualIntake = &cms.CaseTemplate{
 		FormElements: []cms.CaseTemplateFormElement{
 			{
-				Type: "dropdown",
+				Type: cms.Dropdown,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Modality of service delivery",
 					ID:          "modality",
@@ -410,7 +354,7 @@ var (
 				},
 			},
 			{
-				Type: "dropdown",
+				Type: cms.Dropdown,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Living situation",
 					ID:          "livingSituation",
@@ -422,7 +366,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Comment on living situation",
 					ID:          "commentLivingSituation",
@@ -431,7 +375,7 @@ var (
 				},
 			},
 			{
-				Type: "dropdown",
+				Type: cms.Dropdown,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "How did you learn about ICLA services?",
 					ID:          "iclaServiceDiscovery",
@@ -443,7 +387,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Vulnerability data",
 					ID:          "vulnerability",
@@ -452,7 +396,7 @@ var (
 				},
 			},
 			{
-				Type: "textinput",
+				Type: cms.TextInput,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Full name of representative",
 					ID:          "representativeName",
@@ -460,7 +404,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Other personal information",
 					ID:          "otherInformation",
@@ -469,7 +413,7 @@ var (
 				},
 			},
 			{
-				Type: "textinput",
+				Type: cms.TextInput,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Reason for representative",
 					ID:          "representativeReason",
@@ -477,7 +421,7 @@ var (
 				},
 			},
 			{
-				Type: "checkbox",
+				Type: cms.Checkbox,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Is the guardianship legal as per national legislation?",
 					ID:          "guardianshipIsLegal",
@@ -493,7 +437,7 @@ var (
 				},
 			},
 			{
-				Type: "checkbox",
+				Type: cms.Checkbox,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Does the beneficiary have the legal capacity to consent?",
 					ID:          "capacityToConsent",
@@ -513,7 +457,7 @@ var (
 	UGICLACaseAssessment = &cms.CaseTemplate{
 		FormElements: []cms.CaseTemplateFormElement{
 			{
-				Type: "dropdown",
+				Type: cms.Dropdown,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Type of service",
 					ID:          "serviceType",
@@ -525,7 +469,7 @@ var (
 				},
 			},
 			{
-				Type: "textinput",
+				Type: cms.TextInput,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Thematic area",
 					ID:          "thematicArea",
@@ -533,7 +477,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Fact and details of the problem",
 					ID:          "details",
@@ -542,7 +486,7 @@ var (
 				},
 			},
 			{
-				Type: "checkbox",
+				Type: cms.Checkbox,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Other parties involved",
 					ID:          "otherPartiesInvolved",
@@ -567,7 +511,7 @@ var (
 				},
 			},
 			{
-				Type: "checkbox",
+				Type: cms.Checkbox,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Previous/existing lawyer working on the case",
 					ID:          "previousOrExistingLawyer",
@@ -586,7 +530,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Previous or existing lawyer details",
 					ID:          "previousOrExistingLawyerDetails",
@@ -595,7 +539,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "What actions have been taken to solve the problem, if any?",
 					ID:          "actionsTaken",
@@ -604,7 +548,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Related to this problem, are there any cases pending before a court or administrative body?",
 					ID:          "pendingCourtCases",
@@ -613,7 +557,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "If there are cases pending before a court or administrative body, are there any deadlines that need to be met?",
 					ID:          "pendingCourtCaseDeadlines",
@@ -622,7 +566,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Is there any conflict of interest involved?",
 					ID:          "conflictOfInterest",
@@ -635,29 +579,80 @@ var (
 
 	// Case Types for Uganda
 	// - Kampala Response Team
-	UGSituationalAnalysisCaseType = caseType("0ae90b08-6944-48dc-8f30-5cb325292a8c", "Situational Analysis (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGSituationAnalysis)
-	UGIndividualAssessmentCaseType = caseType("2f909038-0ce4-437b-af17-72fc5d668b49", "Individual Assessment (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGIndividualAssessment)
-	UGReferralCaseType = caseType("ecdaf47f-6fa9-48c8-9d10-6324bf932ed7", "Referral (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGReferral)
+	UGSituationalAnalysisCaseType      = caseType("0ae90b08-6944-48dc-8f30-5cb325292a8c", "Situational Analysis (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGSituationAnalysis)
+	UGIndividualAssessmentCaseType     = caseType("2f909038-0ce4-437b-af17-72fc5d668b49", "Individual Assessment (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGIndividualAssessment)
+	UGReferralCaseType                 = caseType("ecdaf47f-6fa9-48c8-9d10-6324bf932ed7", "Referral (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGReferral)
 	UGExternalReferralFollowupCaseType = caseType("2a1b670c-6336-4364-b89d-0e65fc771659", "External Referral Followup (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGExternalReferralFollowup)
 	// - Kampala ICLA Team
-	UGICLAIndividualIntakeCaseType = caseType("31fb6d03-2374-4bea-9374-48fc10500f81","ICLA Individual Intake (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIndividualIntake)
-	UGICLACaseAssessmentCaseType = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLACaseAssessment)
+	UGICLAIndividualIntakeCaseType = caseType("31fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Individual Intake (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIndividualIntake)
+	UGICLACaseAssessmentCaseType   = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLACaseAssessment)
 
 	// Individuals
 	JohnDoe     = individual("c529d679-3bb6-4a20-8f06-c096f4d9adc1", "John", "Doe", "12/02/1978", "Refugee", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "No", "Yes", "Moderate", "No", "", "No", "", "Kenya", "Kiswahili, English", "English", "123 Main Street, Kampala", "0123456789", "", "Email", "No")
 	MaryPoppins = individual("bbf539fd-ebaa-4438-ae4f-8aca8b327f42", "Mary", "Poppins", "12/02/1978", "Internally Displaced Person", "Female", "Yes", "https://link-to-consent.proof", "No", "No", "No", "No", "", "No", "", "No", "", "Uganda", "Rukiga, English", "Rukiga", "901 First Avenue, Kampala", "0123456789", "", "Telegram", "Yes")
 	BoDiddley   = individual("26335292-c839-48b6-8ad5-81271ee51e7b", "Bo", "Diddley", "12/02/1978", "Host Community", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "Yes", "No", "", "No", "", "No", "", "Somalia", "Somali, Arabic, English", "English", "101 Main Street, Kampala", "0123456789", "", "Whatsapp", "No")
+
+	// Individuals (Staff)
 	Stephen      = staff(individual("066a0268-fdc6-495a-9e4b-d60cfae2d81a", "Stephen", "Kabagambe", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
 	Colette = staff(individual("93f9461f-31da-402e-8988-6e0100ecaa24", "Colette", "le Jeune", "12/02/1978","", "Female","", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
 	Courtney = staff(individual("14c014d9-f433-4508-b33d-dc45bf86690b", "Courtney", "Lare", "12/02/1978","", "Female","", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
 
 	// Memberships
-	StevenMembership    = membership("862690ee-87f0-4f95-aa1e-8f8a2f2fd54a", Stephen, UgandaCoreAdminTeam)
-	ColetteMembership = membership("9d4abef9-0be0-4750-81ab-0524a412c049", Colette, UgandaProtectionTeam)
+	StevenMembership   = membership("862690ee-87f0-4f95-aa1e-8f8a2f2fd54a", Stephen, UgandaCoreAdminTeam)
+	ColetteMembership  = membership("9d4abef9-0be0-4750-81ab-0524a412c049", Colette, UgandaProtectionTeam)
 	CourtneyMembership = membership("83c5e73a-5947-4d7e-996c-14a2a7b1c850", Courtney, MozambiqueEducationTeam)
 
 	// Cases
-	//DomesticAbuse    = kase("dba43642-8093-4685-a197-f8848d4cbaaa", GenderViolence.ID, Birdie.ID, MaryPoppins.ID, UgandaProtectionTeam.ID, false)
-	//MonthlyAllowance = kase("47499762-c189-4a74-9156-7969f899073b", FinancialAssistInd.ID, Birdie.ID, JohnDoe.ID, UgandaProtectionTeam.ID, false)
-	//ChildCare        = kase("8fb5f755-85eb-4d91-97a9-fdf86c01df25", Childcare.ID, Birdie.ID, BoDiddley.ID, UgandaProtectionTeam.ID, true)
+	BoDiddleySituationAnalysis    = kase("dba43642-8093-4685-a197-f8848d4cbaaa", UGSituationalAnalysisCaseType.ID, Colette.ID, BoDiddley.ID, UgandaProtectionTeam.ID, false, &cms.CaseTemplate{
+		FormElements: []cms.CaseTemplateFormElement{
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
+					ID:          "safeDiginifiedLife",
+					Description: "Probe for description",
+					Value: []string{
+						"Yes, I live a safe and dignified life and I am reasonably happy with my achievements and quality of life.",
+					},
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "How are you addressing these challenges and barriers? What is standing in your way? Can you give me some examples of how you are dealing with these challenges?",
+					ID:          "challengesBarriers",
+					Value: []string{
+						"Some of the barriers I face are communication gaps between myself and refugee tenants. We are attempting to deal with these challenges by using google translate.",
+					},
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "What are some solutions you see for this and how could we work together on these solutions? How could we work to reduce these challenges together?",
+					ID:          "solutions",
+					Value: []string{
+						"A qualified interpreter, who knows the legal context could help us to agree on contractual matters.",
+					},
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "If we were to work together on this, what could we do together? What would make the most difference for you?",
+					ID:          "workTogether",
+					Value: []string{
+						"NRC could provide a translator and a legal representative to ease contract negotiations",
+					},
+					Description: "",
+					Placeholder: "",
+				},
+			},
+		},
+	})
 )

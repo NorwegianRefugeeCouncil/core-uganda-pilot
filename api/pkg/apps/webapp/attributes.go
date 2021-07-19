@@ -2,6 +2,7 @@ package webapp
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/iam"
@@ -12,75 +13,75 @@ import (
 	"strings"
 )
 
-func (h *Server) Attributes(w http.ResponseWriter, req *http.Request) {
+func (s *Server) Attributes(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
 	if req.Method == "POST" {
-		h.PostAttribute(ctx, &iam.Attribute{}, w, req)
+		s.PostAttribute(ctx, &iam.Attribute{}, w, req)
 		return
 	}
 
-	iamClient := h.IAMClient(ctx)
+	iamClient := s.IAMClient(ctx)
 
 	list, err := iamClient.Attributes().List(ctx, iam.AttributeListOptions{})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 	partyTypes, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
-	if err := h.renderFactory.New(req).ExecuteTemplate(w, "attributes", map[string]interface{}{
+	if err := s.renderFactory.New(req).ExecuteTemplate(w, "attributes", map[string]interface{}{
 		"Attributes": list,
 		"PartyTypes": partyTypes,
 	}); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 }
 
-func (h *Server) NewAttribute(w http.ResponseWriter, req *http.Request) {
-	if err := h.renderFactory.New(req).ExecuteTemplate(w, "attribute", map[string]interface{}{
+func (s *Server) NewAttribute(w http.ResponseWriter, req *http.Request) {
+	if err := s.renderFactory.New(req).ExecuteTemplate(w, "attribute", map[string]interface{}{
 		"PartyTypes": iam.PartyTypeList{
 			Items: []*iam.PartyType{
 				&iam.IndividualPartyType,
 			},
 		},
 	}); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 }
 
-func (h *Server) Attribute(w http.ResponseWriter, req *http.Request) {
+func (s *Server) Attribute(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	iamClient := h.IAMClient(ctx)
+	iamClient := s.IAMClient(ctx)
 
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
 		err := fmt.Errorf("No id in path")
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 	attribute, err := iamClient.Attributes().Get(ctx, id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 	if req.Method == "POST" {
-		h.PostAttribute(ctx, attribute, w, req)
+		s.PostAttribute(ctx, attribute, w, req)
 		return
 	}
 
-	if err := h.renderFactory.New(req).ExecuteTemplate(w, "attribute", map[string]interface{}{
+	if err := s.renderFactory.New(req).ExecuteTemplate(w, "attribute", map[string]interface{}{
 		"Attribute": attribute,
 		"PartyTypes": iam.PartyTypeList{
 			Items: []*iam.PartyType{
@@ -88,23 +89,23 @@ func (h *Server) Attribute(w http.ResponseWriter, req *http.Request) {
 			},
 		},
 	}); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 }
 
-func (h *Server) PostAttribute(ctx context.Context, attribute *iam.Attribute, w http.ResponseWriter, req *http.Request) {
-	iamClient := h.IAMClient(ctx)
+func (s *Server) PostAttribute(ctx context.Context, attribute *iam.Attribute, w http.ResponseWriter, req *http.Request) {
+	iamClient := s.IAMClient(ctx)
 
 	if err := req.ParseForm(); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 	values := req.Form
 
-	translationMap := h.makeTranslationMap(values, w)
+	translationMap := s.makeTranslationMap(values, w)
 
 	var translations []iam.AttributeTranslation
 	for _, translation := range translationMap {
@@ -128,10 +129,10 @@ func (h *Server) PostAttribute(ctx context.Context, attribute *iam.Attribute, w 
 		var err error
 		out, err = iamClient.Attributes().Create(ctx, attribute)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			s.Error(w, err)
 			return
 		}
-		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+		s.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
 			Message: fmt.Sprintf("Attribute \"%s\" successfully created", attribute.Name),
 			Theme:   "success",
 		})
@@ -139,10 +140,10 @@ func (h *Server) PostAttribute(ctx context.Context, attribute *iam.Attribute, w 
 		var err error
 		out, err = iamClient.Attributes().Update(ctx, attribute)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			s.Error(w, err)
 			return
 		}
-		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+		s.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
 			Message: fmt.Sprintf("Attribute \"%s\" successfully updated.", attribute.Name),
 			Theme:   "success",
 		})
@@ -153,7 +154,7 @@ func (h *Server) PostAttribute(ctx context.Context, attribute *iam.Attribute, w 
 
 }
 
-func (h *Server) makeTranslationMap(values url.Values, w http.ResponseWriter) map[string]*iam.AttributeTranslation {
+func (s *Server) makeTranslationMap(values url.Values, w http.ResponseWriter) map[string]*iam.AttributeTranslation {
 	translationMap := map[string]*iam.AttributeTranslation{}
 
 	unexpectedKeyErrMsg := "unexpected translation key. Expected 'translation.{locale}.{short/long}' format"
@@ -164,7 +165,7 @@ func (h *Server) makeTranslationMap(values url.Values, w http.ResponseWriter) ma
 		}
 		parts := strings.Split(key, ".")
 		if len(parts) != 3 {
-			http.Error(w, unexpectedKeyErrMsg, http.StatusInternalServerError)
+			s.Error(w, errors.New(unexpectedKeyErrMsg))
 			return nil
 		}
 
@@ -172,7 +173,7 @@ func (h *Server) makeTranslationMap(values url.Values, w http.ResponseWriter) ma
 		part := parts[2]
 
 		if part != "long" && part != "short" {
-			http.Error(w, unexpectedKeyErrMsg, http.StatusInternalServerError)
+			s.Error(w, errors.New(unexpectedKeyErrMsg))
 			return nil
 		}
 
@@ -188,7 +189,7 @@ func (h *Server) makeTranslationMap(values url.Values, w http.ResponseWriter) ma
 		} else if part == "short" {
 			t.ShortFormulation = v[0]
 		} else {
-			http.Error(w, unexpectedKeyErrMsg, http.StatusInternalServerError)
+			s.Error(w, errors.New(unexpectedKeyErrMsg))
 			return nil
 		}
 

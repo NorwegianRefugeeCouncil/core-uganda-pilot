@@ -2,21 +2,30 @@ package iam
 
 import (
 	"context"
+	"github.com/nrc-no/core/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type PartyTypeStore struct {
-	collection *mongo.Collection
+	getCollection utils.MongoCollectionFn
 }
 
-func newPartyTypeStore(ctx context.Context, mongoClient *mongo.Client, database string) (*PartyTypeStore, error) {
+func newPartyTypeStore(ctx context.Context, mongoClientFn utils.MongoClientFn, database string) (*PartyTypeStore, error) {
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
 	store := &PartyTypeStore{
-		collection: mongoClient.Database(database).Collection("partyTypes"),
+		getCollection: utils.GetCollectionFn(database, "partyTypes", mongoClientFn),
 	}
 
-	if _, err := store.collection.Indexes().CreateOne(ctx, mongo.IndexModel{
+	collection, err := store.getCollection(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if _, err := collection.Indexes().CreateOne(ctx, mongo.IndexModel{
 		Keys: bson.M{
 			"id": 1,
 		},
@@ -29,7 +38,11 @@ func newPartyTypeStore(ctx context.Context, mongoClient *mongo.Client, database 
 }
 
 func (s *PartyTypeStore) Get(ctx context.Context, id string) (*PartyType, error) {
-	res := s.collection.FindOne(ctx, bson.M{
+	collection, err := s.getCollection(ctx)
+	if err != nil {
+		return nil, err
+	}
+	res := collection.FindOne(ctx, bson.M{
 		"id": id,
 	})
 	if res.Err() != nil {
@@ -46,7 +59,12 @@ func (s *PartyTypeStore) List(ctx context.Context, listOptions PartyTypeListOpti
 
 	filter := bson.M{}
 
-	res, err := s.collection.Find(ctx, filter)
+	collection, err := s.getCollection(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +89,11 @@ func (s *PartyTypeStore) List(ctx context.Context, listOptions PartyTypeListOpti
 }
 
 func (s *PartyTypeStore) Update(ctx context.Context, partyType *PartyType) error {
-	_, err := s.collection.UpdateOne(ctx, bson.M{
+	collection, err := s.getCollection(ctx)
+	if err != nil {
+		return err
+	}
+	_, err = collection.UpdateOne(ctx, bson.M{
 		"id": partyType.ID,
 	}, bson.M{
 		"$set": bson.M{
@@ -86,7 +108,11 @@ func (s *PartyTypeStore) Update(ctx context.Context, partyType *PartyType) error
 }
 
 func (s *PartyTypeStore) Create(ctx context.Context, partyType *PartyType) error {
-	_, err := s.collection.InsertOne(ctx, partyType)
+	collection, err := s.getCollection(ctx)
+	if err != nil {
+		return err
+	}
+	_, err = collection.InsertOne(ctx, partyType)
 	if err != nil {
 		return err
 	}

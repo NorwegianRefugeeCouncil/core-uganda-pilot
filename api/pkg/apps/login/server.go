@@ -2,16 +2,15 @@ package login
 
 import (
 	"context"
-	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/rest"
+	"github.com/nrc-no/core/pkg/utils"
 	"github.com/ory/hydra-client-go/client/admin"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 	"html/template"
-	"io/ioutil"
 	"net/http"
 	"path"
 )
@@ -43,7 +42,11 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 		HTTPClient: o.AdminHTTPClient,
 	})
 
-	collection := o.MongoClient.Database(o.MongoDatabase).Collection("credentials")
+	mongoClient, err := o.MongoClientFn(ctx)
+	if err != nil {
+		return nil, err
+	}
+	collection := mongoClient.Database(o.MongoDatabase).Collection("credentials")
 
 	srv := &Server{
 		HydraAdmin:      o.HydraAdminClient.Admin,
@@ -82,16 +85,9 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }
 
 func (s *Server) Error(w http.ResponseWriter, err error) {
-	http.Error(w, err.Error(), http.StatusInternalServerError)
+	utils.ErrorResponse(w, err)
 }
 
 func (s *Server) Bind(req *http.Request, into interface{}) error {
-	bodyBytes, err := ioutil.ReadAll(req.Body)
-	if err != nil {
-		return err
-	}
-	if err := json.Unmarshal(bodyBytes, &into); err != nil {
-		return err
-	}
-	return nil
+	return utils.BindJSON(req, into)
 }
