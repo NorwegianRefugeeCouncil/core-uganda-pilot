@@ -1,12 +1,11 @@
 import { Urls } from '../helpers';
 import CasePage from './case.page';
 
-const NEW_CASE_FORM = '[data-testid=newCaseForm]';
 const CASE_TYPE_PICKER = '[data-testid=caseTypePicker]';
 const CASE_TYPE_OPTIONS = '[data-testid=caseTypeOption]';
 const PARTY_PICKER = '[data-testid=partyPicker]';
 const PARTY_OPTIONS = '[data-testid=partyOption]';
-const DESCRIPTION = '[data-testid=description]';
+const FORM = '[data-testid=form]';
 const SUBMIT_BUTTON = '[data-testid=submitBtn]';
 
 export default class NewCasePage {
@@ -31,22 +30,15 @@ export default class NewCasePage {
         return this;
     };
 
-    typeDescription = (value) => {
-        cy.get(DESCRIPTION).type(value);
+    typeForm = (value) => {
+        cy.get(FORM).each(($el) => {
+            cy.wrap($el).type(value);
+        });
         return this;
     };
 
     submitForm = () => {
         cy.get(SUBMIT_BUTTON).click();
-        return this;
-    };
-
-    getNewCase = () => {
-        const casePage = new CasePage();
-        return casePage.getDescriptionValue();
-    };
-
-    verifyForm = () => {
-        return cy.get(NEW_CASE_FORM);
+        return new CasePage();
     };
 }

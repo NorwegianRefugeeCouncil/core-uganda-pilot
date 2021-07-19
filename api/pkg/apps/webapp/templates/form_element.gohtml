@@ -42,6 +42,7 @@
                       name="{{.Attributes.ID}}"
                       class="form-control"
                       style="height: 150px"
+                      data-testid="form"
                       placeholder="{{.Attributes.Placeholder}}"
                       {{if .Validation.Required}}required{{end}}>{{if .Attributes.Value}}{{index .Attributes.Value 0}}{{end}}</textarea>
             <label for="{{.Attributes.ID}}">{{.Attributes.Label}}</label>

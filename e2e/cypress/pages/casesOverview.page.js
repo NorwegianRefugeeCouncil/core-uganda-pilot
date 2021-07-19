@@ -23,7 +23,6 @@ export default class CasesOverviewPage {
     };
 
     newCaseForm = () => {
-        const newCasePage = new NewCasePage();
-        return newCasePage.verifyForm();
+        return new NewCasePage();
     };
 }
