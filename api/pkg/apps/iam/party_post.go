@@ -16,9 +16,7 @@ func (s *Server) postParty(w http.ResponseWriter, req *http.Request) {
 
 	p := &party
 
-	if p.ID == "" {
-		p.ID = uuid.NewV4().String()
-	}
+	p.ID = uuid.NewV4().String()
 
 	if err := s.partyStore.create(ctx, p); err != nil {
 		s.error(w, err)

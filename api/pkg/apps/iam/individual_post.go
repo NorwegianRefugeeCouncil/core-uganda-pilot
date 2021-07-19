@@ -14,9 +14,7 @@ func (s *Server) postIndividual(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if individual.ID == "" {
-		individual.ID = uuid.NewV4().String()
-	}
+	individual.ID = uuid.NewV4().String()
 
 	attrs := map[string][]string{}
 	for key, values := range individual.Attributes {

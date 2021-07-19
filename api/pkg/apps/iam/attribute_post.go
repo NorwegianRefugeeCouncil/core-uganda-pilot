@@ -14,9 +14,7 @@ func (s *Server) postAttributes(w http.ResponseWriter, req *http.Request) {
 		s.error(w, err)
 	}
 
-	if a.ID == "" {
-		a.ID = uuid.NewV4().String()
-	}
+	a.ID = uuid.NewV4().String()
 
 	if err := s.attributeStore.create(ctx, &a); err != nil {
 		s.error(w, err)

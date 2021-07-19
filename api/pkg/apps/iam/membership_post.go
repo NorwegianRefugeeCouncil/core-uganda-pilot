@@ -16,9 +16,7 @@ func (s *Server) postMembership(w http.ResponseWriter, req *http.Request) {
 
 	p := &payload
 
-	if p.ID == "" {
-		p.ID = uuid.NewV4().String()
-	}
+	p.ID = uuid.NewV4().String()
 
 	if err := s.membershipStore.create(ctx, p); err != nil {
 		s.error(w, err)

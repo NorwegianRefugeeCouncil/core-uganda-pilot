@@ -26,7 +26,7 @@ func (s *Suite) testPartyAPI() {
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
-	assert.Equal(s.T(), party.ID, created.ID)
+	party.ID = created.ID
 	assert.Equal(s.T(), party.PartyTypeIDs, created.PartyTypeIDs)
 	assert.Equal(s.T(), party.Get(attribute.ID), created.Get(attribute.ID))
 
@@ -95,11 +95,11 @@ func (s *Suite) testPartyListFilter() {
 
 		// Add to map
 		// Save the party to the DB
-		_, err := s.client.Parties().Create(s.ctx, party)
+		created, err := s.client.Parties().Create(s.ctx, party)
 		if !assert.NoError(s.T(), err) {
 			s.T().FailNow()
 		}
-
+		party.ID = created.ID
 	}
 
 	s.Run("by type", func() { s.testPartyListFilterByType(parties, partyTypeIds) })

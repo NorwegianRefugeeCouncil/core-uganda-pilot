@@ -21,7 +21,8 @@ func (s *Suite) testMembershipAPI() {
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
-	assert.Equal(s.T(), membership, created)
+	assert.Equal(s.T(), membership.TeamID, created.TeamID)
+	assert.Equal(s.T(), membership.IndividualID, created.IndividualID)
 
 	// Get
 	get, err := s.client.Memberships().Get(s.ctx, created.ID)
@@ -30,22 +31,8 @@ func (s *Suite) testMembershipAPI() {
 	}
 	assert.Equal(s.T(), created, get)
 
+	// Update
 	// NB Membership doesn't implement UPDATE for now
-	//// Update
-	//membership.TeamID = newUUID()
-	//membership.IndividualID = newUUID()
-	//updated, err := s.client.Memberships().Update(s.ctx, &membership)
-	//if !assert.NoError(s.T(), err) {
-	//	s.T().FailNow()
-	//}
-	//assert.Equal(s.T(), membership, *updated)
-	//
-	//// Get
-	//get, err = s.client.Memberships().Get(s.ctx, updated.ID)
-	//if !assert.NoError(s.T(), err) {
-	//	s.T().FailNow()
-	//}
-	//assert.Equal(s.T(), updated, get)
 
 	// List
 	list, err := s.client.Memberships().List(s.ctx, MembershipListOptions{})

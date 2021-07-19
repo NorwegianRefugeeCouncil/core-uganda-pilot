@@ -21,6 +21,7 @@ func (s *Suite) testCaseAPI() {
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
+	kase.ID = created.ID
 	assert.Equal(s.T(), kase, created)
 
 	// GET
@@ -95,50 +96,60 @@ func (s *Suite) testCaseListFilter() {
 		c.CaseTypeID = caseTypes[i%len(caseTypes)]
 		c.ParentID = parents[i%len(parents)]
 		c.Done = i%2 == 0
-		_, err := s.client.Cases().Create(s.ctx, c)
+		created, err := s.client.Cases().Create(s.ctx, c)
 		if err != nil {
 			s.T().FailNow()
 		}
+		c.ID = created.ID
 	}
 
-	s.Run("by party type", func() { s.testCaseFilterBy("PartyIDs")(cases, parties) })
-	s.Run("by team", func() { s.testCaseFilterBy("TeamIDs")(cases, teams) })
-	s.Run("by case type", func() { s.testCaseFilterBy("CaseTypeIDs")(cases, caseTypes) })
-	s.Run("by parent", func() { s.testCaseFilterBy("ParentID")(cases, parents) })
+	// Run the tests
+	for _, tc := range []struct {
+		testName  string
+		testField string
+		slice     []string
+	}{
+		{"by party type", "PartyIDs", parties},
+		{"by team", "TeamIDs", teams},
+		{"by case type", "CaseTypeIDs", caseTypes},
+		{"by parent", "ParentID", parents},
+	} {
+		s.Run(tc.testName, func() {
+			s.testCaseFilterBy(tc.testField, cases, tc.slice)
+		})
+	}
 	s.Run("by done", func() { s.testCaseFilterByDone(cases) })
 }
 
-func (s *Suite) testCaseFilterBy(field string) func(kases []*Case, search []string) {
-	return func(kases []*Case, search []string) {
-		hasMany := field[len(field)-1:] == "s"
-		for i := 1; i <= len(search); i++ {
-			searchOpts := search[0:i]
-			var opt = CaseListOptions{}
-			f := reflect.ValueOf(&opt).Elem().FieldByName(field)
+func (s *Suite) testCaseFilterBy(field string, kases []*Case, search []string) {
+	hasMany := field[len(field)-1:] == "s"
+	for i := 1; i <= len(search); i++ {
+		searchOpts := search[0:i]
+		var opt = CaseListOptions{}
+		f := reflect.ValueOf(&opt).Elem().FieldByName(field)
+		if hasMany {
+			f.Set(reflect.ValueOf(searchOpts))
+		} else {
+			f.Set(reflect.ValueOf(search[i-1]))
+		}
+		list, err := s.client.Cases().List(s.ctx, opt)
+		if err != nil {
+			s.T().FailNow()
+		}
+		expected := []string{}
+		for _, kase := range kases {
+			name := field
 			if hasMany {
-				f.Set(reflect.ValueOf(searchOpts))
-			} else {
-				f.Set(reflect.ValueOf(search[i-1]))
+				name = field[0 : len(field)-1]
 			}
-			list, err := s.client.Cases().List(s.ctx, opt)
-			if err != nil {
-				s.T().FailNow()
+			f := reflect.ValueOf(kase).Elem().FieldByName(name)
+			if (hasMany && contains(searchOpts, f.String())) || search[i-1] == f.String() {
+				expected = append(expected, kase.ID)
 			}
-			expected := []string{}
-			for _, kase := range kases {
-				name := field
-				if hasMany {
-					name = field[0 : len(field)-1]
-				}
-				f := reflect.ValueOf(kase).Elem().FieldByName(name)
-				if (hasMany && contains(searchOpts, f.String())) || search[i-1] == f.String() {
-					expected = append(expected, kase.ID)
-				}
-			}
-			assert.Len(s.T(), list.Items, len(expected))
-			for _, item := range list.Items {
-				assert.Contains(s.T(), expected, item.ID)
-			}
+		}
+		assert.Len(s.T(), list.Items, len(expected))
+		for _, item := range list.Items {
+			assert.Contains(s.T(), expected, item.ID)
 		}
 	}
 }
