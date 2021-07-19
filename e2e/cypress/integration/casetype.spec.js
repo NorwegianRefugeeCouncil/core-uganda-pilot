@@ -13,7 +13,7 @@ describe('CaseType Page', function () {
                 .visitPage()
                 .typeName(TYPE_NAME)
                 .selectPartyType('Individual')
-                .selectTeam('Kampala Response Team')
+                .selectTeam('Uganda Protection Team')
                 .typeTemplate(caseTypeTemplate)
                 .save();
 
