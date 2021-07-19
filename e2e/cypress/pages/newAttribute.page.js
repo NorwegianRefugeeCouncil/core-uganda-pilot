@@ -3,7 +3,7 @@ import { Urls } from '../helpers';
 const NAME = '[data-cy=name]';
 const VALUE_TYPE = '[data-cy=type]';
 const SUBJECT_TYPE = '[data-cy=subject]';
-const PERSONAL_INFO = '[data-cy=personal-info-chkbx]';
+// const PERSONAL_INFO = '[data-cy=personal-info-chkbx]';
 const LANGUAGE = '[data-cy=language]';
 const SAVE_BUTTON = '[data-cy=save-btn]';
 

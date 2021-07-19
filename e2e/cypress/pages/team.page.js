@@ -1,5 +1,3 @@
-import { Urls } from '../helpers';
-
 const PARTYSELECTOR = '[data-cy=partySelector]';
 const ADD_BUTTON = '[data-cy=btn-add]';
 const PARTYITEM = '[data-cy=partySelectorItem]';
