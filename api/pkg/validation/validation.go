@@ -1,6 +1,7 @@
 package validation
 
 import (
+	uuid "github.com/satori/go.uuid"
 	"net/mail"
 	"regexp"
 	"strconv"
@@ -25,6 +26,11 @@ func (s *Status) Error() string {
 	return s.Message
 }
 
+func IsValidUUID(s string) bool {
+	_, err := uuid.FromString(s)
+	return err == nil
+}
+
 var alphaRegexp = regexp.MustCompile(`^[\w\-()]+( [\w\-()]+)*$`)
 
 func IsValidAlpha(s string) bool {
@@ -34,10 +40,8 @@ func IsValidAlpha(s string) bool {
 var InvalidAlphaDetail = "Accepted: letters, spaces"
 
 func IsValidNumeric(s string) bool {
-	if _, err := strconv.Atoi(s); err != nil {
-		return false
-	}
-	return true
+	_, err := strconv.Atoi(s)
+	return err == nil
 }
 
 var InvalidNumericDetail = "Accepted: numbers"
@@ -66,11 +70,6 @@ func IsValidPassword(s string) bool {
 }
 
 func IsValidPhone(s string) bool {
-	// TODO
-	return true
-}
-
-func IsValidUUID(s string) bool {
 	// TODO
 	return true
 }

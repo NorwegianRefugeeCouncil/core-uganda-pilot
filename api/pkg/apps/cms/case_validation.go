@@ -13,7 +13,7 @@ func ValidateCase(kase *Case, path *validation.Path) validation.ErrorList {
 		if elem.Validation.Required && len(elem.Attributes.Value) == 0 {
 			errList = append(errList, validation.Required(path.Child(elem.Attributes.ID), fmt.Sprintf("%s is required", elem.Attributes.ID)))
 		}
-		// TODO implement validation for specific input controls (email, date, etc)
+		// TODO COR-156 implement validation for specific input controls (email, date, etc)
 	}
 
 	return errList
