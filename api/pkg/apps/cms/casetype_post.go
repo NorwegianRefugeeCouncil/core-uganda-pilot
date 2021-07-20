@@ -20,7 +20,7 @@ func (s *Server) PostCaseType(w http.ResponseWriter, req *http.Request) {
 	errList := ValidateCaseType(caseType, &validation.Path{})
 	if len(errList) > 0 {
 		status := errList.Status(http.StatusUnprocessableEntity, "invalid case type")
-		s.JSON(w, status.Code, status)
+		s.Error(w, &status)
 		return
 	}
 

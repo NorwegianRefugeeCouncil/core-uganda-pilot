@@ -5,6 +5,7 @@ import (
 	"net/mail"
 	"regexp"
 	"strconv"
+	"unicode"
 )
 
 type StatusType string
@@ -36,16 +37,25 @@ func IsValidAlpha(s string) bool {
 	return alphaRegexp.MatchString(s)
 }
 
-var InvalidAlphaDetail = "Accepted: a-z A-Z 0-9 -_()"
+var InvalidAlphaDetail = "Accepted: letters, spaces"
 
 func IsValidNumeric(s string) bool {
-	if _, err := strconv.Atoi(s); err != nil {
-		return false
+	_, err := strconv.Atoi(s)
+	return err == nil
+}
+
+var InvalidNumericDetail = "Accepted: numbers"
+
+func IsValidAlphaNumeric(s string) bool {
+	for _, r := range s {
+		if !unicode.IsLetter(r) && !unicode.IsDigit(r) && !unicode.IsSpace(r) {
+			return false
+		}
 	}
 	return true
 }
 
-var InvalidNumericDetail = "Accepted: 0-9"
+var InvalidAlphaNumericDetail = "Accepted: letters, numbers, spaces"
 
 func IsValidEmail(s string) bool {
 	_, err := mail.ParseAddress(s)
@@ -63,4 +73,3 @@ func IsValidPhone(s string) bool {
 	// TODO
 	return true
 }
-
