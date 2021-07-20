@@ -17,7 +17,7 @@ func ValidateCase(kase *Case, path *validation.Path) validation.ErrorList {
 		"creatorId":  kase.CreatorID}
 
 	for name, uuid := range uuids {
-		if !validation.IsValidUUID(uuid) {
+		if uuid != "" && !validation.IsValidUUID(uuid) {
 			errList = append(errList, validation.Invalid(path.Child(name), uuid, fmt.Sprintf("%s is not a valid UUID", name)))
 		}
 	}
