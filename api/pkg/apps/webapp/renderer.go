@@ -1,6 +1,7 @@
 package webapp
 
 import (
+	"errors"
 	"github.com/nrc-no/core/pkg/auth"
 	"github.com/nrc-no/core/pkg/sessionmanager"
 	"html/template"
@@ -14,6 +15,7 @@ type RenderInterface interface {
 	IsLoggedIn() bool
 	Profile() *Claims
 	Notifications() []*sessionmanager.Notification
+	Dict(values ...interface{}) (map[string]interface{}, error)
 }
 
 // RendererFactory is a factory to create Renderer
@@ -38,6 +40,10 @@ func (r *RendererFactory) Profile() *Claims {
 
 func (r *RendererFactory) Notifications() []*sessionmanager.Notification {
 	return []*sessionmanager.Notification{}
+}
+
+func (r *RendererFactory) Dict(values ...interface{}) (map[string]interface{}, error) {
+	return map[string]interface{}{}, nil
 }
 
 // NewRendererFactory creates a new instance of the RendererFactory
@@ -102,11 +108,27 @@ func (r *Renderer) Notifications() []*sessionmanager.Notification {
 	return r.sessionManager.ConsumeNotifications(r.req.Context())
 }
 
+func (r *Renderer) Dict(values ...interface{}) (map[string]interface{}, error) {
+	if len(values)%2 != 0 {
+		return nil, errors.New("invalid dict call")
+	}
+	dict := make(map[string]interface{}, len(values)/2)
+	for i := 0; i < len(values); i += 2 {
+		key, ok := values[i].(string)
+		if !ok {
+			return nil, errors.New("dict keys must be strings")
+		}
+		dict[key] = values[i+1]
+	}
+	return dict, nil
+}
+
 // WithRenderInterface adds the RenderInterface methods to the template
 func WithRenderInterface(t *template.Template, intf RenderInterface) *template.Template {
 	return t.Funcs(map[string]interface{}{
 		"IsLoggedIn":    intf.IsLoggedIn,
 		"Profile":       intf.Profile,
 		"Notifications": intf.Notifications,
+		"Dict":          intf.Dict,
 	})
 }

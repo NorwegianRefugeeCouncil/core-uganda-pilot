@@ -25,7 +25,6 @@ func (c *Case) UnmarshalFormData(values url.Values, caseTemplate *CaseTemplate) 
 	c.TeamID = values.Get("teamId")
 	formElements := []CaseTemplateFormElement{}
 	for _, formElement := range caseTemplate.FormElements {
-		formElement.Filled = true
 		formElement.Attributes.Value = values[formElement.Attributes.ID]
 		formElements = append(formElements, formElement)
 	}
@@ -103,7 +102,6 @@ type CaseTemplate struct {
 }
 
 type CaseTemplateFormElement struct {
-	Filled     bool                              `json:"filled"`
 	Type       string                            `json:"type" bson:"type"`
 	Attributes CaseTemplateFormElementAttribute  `json:"attributes" bson:"attributes"`
 	Validation CaseTemplateFormElementValidation `json:"validation" bson:"validation"`

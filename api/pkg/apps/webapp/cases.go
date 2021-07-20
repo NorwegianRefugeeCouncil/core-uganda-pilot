@@ -173,7 +173,9 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if caseID != "new" && len(kase.CreatorID) > 0 {
+	isNewCase := caseID == "new"
+
+	if !isNewCase && len(kase.CreatorID) > 0 {
 		var err error
 		creator, err = s.IAMClient(ctx).Parties().Get(ctx, kase.CreatorID)
 		if err != nil {
@@ -207,7 +209,7 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Get case type team
-	if caseID != "new" {
+	if !isNewCase {
 		teamRes, err := iamClient.Teams().Get(ctx, kase.TeamID)
 		if err != nil {
 			s.Error(w, err)
@@ -270,6 +272,7 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 		"Team":             team,
 		"CreatedBy":        creator,
 		"Comments":         displayComments(comments, commentAuthorMap),
+		"IsNew":            isNewCase,
 	}); err != nil {
 		s.Error(w, err)
 		return
@@ -363,6 +366,7 @@ func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 		"Team":      team,
 		"CaseTypes": caseTypes,
 		"Parties":   p,
+		"IsNew":     true,
 	}); err != nil {
 		s.Error(w, err)
 		return
