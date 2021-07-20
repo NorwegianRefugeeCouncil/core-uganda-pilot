@@ -34,7 +34,7 @@ func (s *Server) CaseTypes(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if req.Method == "POST" {
-		s.PostCaseType(ctx, &cms.CaseType{}, w, req, partyTypes, teams)
+		s.PostCaseType(ctx, &cms.CaseType{}, w, req)
 		return
 	}
 
@@ -88,7 +88,7 @@ func (s *Server) CaseType(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if req.Method == "POST" {
-		s.PostCaseType(ctx, caseType, w, req, partyTypes, teamsData)
+		s.PostCaseType(ctx, caseType, w, req)
 		return
 	}
 
@@ -96,7 +96,6 @@ func (s *Server) CaseType(w http.ResponseWriter, req *http.Request) {
 		"CaseType":   caseType,
 		"PartyTypes": partyTypes,
 		"Teams":      teamsData,
-		//"ErrList": validation,
 	}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -107,8 +106,6 @@ func (h *Server) PostCaseType(
 	caseType *cms.CaseType,
 	w http.ResponseWriter,
 	req *http.Request,
-	partyTypes *iam.PartyTypeList,
-	teamsData *iam.TeamList,
 ) {
 	cmsClient := h.CMSClient(ctx)
 
