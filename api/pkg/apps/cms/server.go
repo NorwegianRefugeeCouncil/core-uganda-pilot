@@ -39,15 +39,13 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 		return nil, err
 	}
 
-	hydraAdmin := o.HydraAdminClient
-
 	srv := &Server{
 		mongoClientFn:   o.MongoClientFn,
 		environment:     o.Environment,
 		caseStore:       caseStore,
 		caseTypeStore:   caseTypeStore,
 		commentStore:    commentStore,
-		HydraAdmin:      hydraAdmin,
+		HydraAdmin:      o.HydraAdminClient,
 		HydraHttpClient: o.HydraHTTPClient,
 	}
 
