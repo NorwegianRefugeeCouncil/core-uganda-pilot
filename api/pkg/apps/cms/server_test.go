@@ -1,5 +1,3 @@
-// +build integration
-
 package cms_test
 
 import (
@@ -55,7 +53,7 @@ func (s *Suite) SetupSuite() {
 func (s *Suite) SetupTest() {
 	err := s.server.ResetDB(s.ctx, s.serverOpts.MongoDatabase)
 	if err != nil {
-		return
+		s.T().Fatal(err)
 	}
 }
 
@@ -93,13 +91,17 @@ func (s *Suite) mockCaseTypes(n int) []*CaseType {
 	return caseTypes
 }
 
-func (s *Suite) mockCases(n int) []*Case {
+func aMockCase() *Case {
+	return &Case{
+		TeamID:    newUUID(),
+		CreatorID: "mock-auth-user",
+	}
+}
+
+func mockCases(n int) []*Case {
 	var cases []*Case
 	for i := 0; i < n; i++ {
-		cases = append(cases, &Case{
-			TeamID:    newUUID(),
-			CreatorID: "mock-auth-user",
-		})
+		cases = append(cases, aMockCase())
 	}
 	return cases
 }

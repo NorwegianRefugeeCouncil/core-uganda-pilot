@@ -1,28 +1,22 @@
-// +build integration
-
 package cms_test
 
 import (
+	"context"
 	. "github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/stretchr/testify/assert"
-	"reflect"
+	"golang.org/x/sync/errgroup"
+	"testing"
 )
 
-func (s *Suite) TestCase() {
-	s.Run("API", func() { s.testCaseAPI() })
-	s.SetupTest()
-	s.Run("List filtering", func() { s.testCaseListFilter() })
-}
-
-func (s *Suite) testCaseAPI() {
+func (s *Suite) TestCaseAPI() {
 	// Create
-	kase := s.mockCases(1)[0]
-	created, err := s.client.Cases().Create(s.ctx, kase)
+	mockCase := aMockCase()
+	created, err := s.client.Cases().Create(s.ctx, mockCase)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
-	kase.ID = created.ID
-	assert.Equal(s.T(), kase, created)
+	mockCase.ID = created.ID
+	assert.Equal(s.T(), mockCase, created)
 
 	// GET
 	get, err := s.client.Cases().Get(s.ctx, created.ID)
@@ -32,19 +26,19 @@ func (s *Suite) testCaseAPI() {
 	assert.Equal(s.T(), created, get)
 
 	// UPDATE
-	kase.Done = true
-	kase.FormData = &CaseTemplate{FormElements: []CaseTemplateFormElement{{
+	get.Done = true
+	get.FormData = &CaseTemplate{FormElements: []CaseTemplateFormElement{{
 		Type: "textarea",
 		Attributes: CaseTemplateFormElementAttribute{
 			Label: "mock",
 			Value: []string{"mock"},
 		},
 	}}}
-	updated, err := s.client.Cases().Update(s.ctx, kase)
+	updated, err := s.client.Cases().Update(s.ctx, get)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
-	assert.Equal(s.T(), kase, updated)
+	assert.Equal(s.T(), get, updated)
 
 	// GET
 	get, err = s.client.Cases().Get(s.ctx, updated.ID)
@@ -61,8 +55,74 @@ func (s *Suite) testCaseAPI() {
 	assert.Contains(s.T(), list.Items, get)
 }
 
-func (s *Suite) testCaseListFilter() {
-	nCases := 20
+func (s *Suite) TestCaseListFilter() {
+
+	bunch := newCaseBunch(20)
+	if !assert.NoError(s.T(), bunch.create(s.ctx, s.client.Cases())) {
+		return
+	}
+
+	type tc struct {
+		name          string
+		testField     string
+		slice         []string
+		searchOptions CaseListOptions
+		want          []*Case
+		wantErr       bool
+	}
+
+	tcs := []tc{
+		{
+			name: "Single PartyID",
+			searchOptions: CaseListOptions{
+				PartyIDs: []string{
+					bunch.parties[0],
+				},
+			},
+			want: bunch.filterByPartyIDs(bunch.parties[0]).getCases(),
+		},
+		{
+			name: "Multiple PartyIDs",
+			searchOptions: CaseListOptions{
+				PartyIDs: []string{
+					bunch.parties[0],
+					bunch.parties[1],
+				},
+			},
+			want: bunch.filterByPartyIDs(bunch.parties[0], bunch.parties[1]).getCases(),
+		},
+	}
+
+	for _, tc := range tcs {
+		testCase := tc
+		s.T().Run(tc.name, func(t *testing.T) {
+			got, err := s.client.Cases().List(s.ctx, testCase.searchOptions)
+			if testCase.wantErr {
+				assert.Error(t, err)
+				return
+			} else {
+				if !assert.NoError(t, err) {
+					return
+				}
+				assert.ElementsMatch(t, testCase.want, got.Items)
+			}
+		})
+	}
+
+}
+
+type caseBunch struct {
+	cases     []*Case
+	parties   []string
+	teams     []string
+	caseTypes []string
+	parents   []string
+}
+
+func newCaseBunch(nCases int) *caseBunch {
+
+	var cases = mockCases(nCases)
+
 	const (
 		nParties   = 5
 		nTeams     = 4
@@ -75,7 +135,6 @@ func (s *Suite) testCaseListFilter() {
 	caseTypes := []string{}
 	parents := []string{}
 
-	cases := s.mockCases(nCases)
 	for i := 0; i < nParties; i++ {
 		parties = append(parties, newUUID())
 	}
@@ -96,81 +155,49 @@ func (s *Suite) testCaseListFilter() {
 		c.CaseTypeID = caseTypes[i%len(caseTypes)]
 		c.ParentID = parents[i%len(parents)]
 		c.Done = i%2 == 0
-		created, err := s.client.Cases().Create(s.ctx, c)
-		if err != nil {
-			s.T().FailNow()
-		}
-		c.ID = created.ID
 	}
 
-	// Run the tests
-	for _, tc := range []struct {
-		testName  string
-		testField string
-		slice     []string
-	}{
-		{"by party type", "PartyIDs", parties},
-		{"by team", "TeamIDs", teams},
-		{"by case type", "CaseTypeIDs", caseTypes},
-		{"by parent", "ParentID", parents},
-	} {
-		s.Run(tc.testName, func() {
-			s.testCaseFilterBy(tc.testField, cases, tc.slice)
+	return &caseBunch{
+		cases:     cases,
+		parties:   parties,
+		teams:     teams,
+		caseTypes: caseTypes,
+		parents:   parents,
+	}
+}
+
+func (c caseBunch) create(ctx context.Context, cli CaseClient) error {
+	g, ctx := errgroup.WithContext(ctx)
+	for _, c := range c.cases {
+		kase := c
+		g.Go(func() error {
+			created, err := cli.Create(ctx, kase)
+			if err != nil {
+				return err
+			}
+			kase.ID = created.ID
+			return nil
 		})
 	}
-	s.Run("by done", func() { s.testCaseFilterByDone(cases) })
+	return g.Wait()
 }
 
-func (s *Suite) testCaseFilterBy(field string, kases []*Case, search []string) {
-	hasMany := field[len(field)-1:] == "s"
-	for i := 1; i <= len(search); i++ {
-		searchOpts := search[0:i]
-		var opt = CaseListOptions{}
-		f := reflect.ValueOf(&opt).Elem().FieldByName(field)
-		if hasMany {
-			f.Set(reflect.ValueOf(searchOpts))
-		} else {
-			f.Set(reflect.ValueOf(search[i-1]))
-		}
-		list, err := s.client.Cases().List(s.ctx, opt)
-		if err != nil {
-			s.T().FailNow()
-		}
-		expected := []string{}
-		for _, kase := range kases {
-			name := field
-			if hasMany {
-				name = field[0 : len(field)-1]
-			}
-			f := reflect.ValueOf(kase).Elem().FieldByName(name)
-			if (hasMany && contains(searchOpts, f.String())) || search[i-1] == f.String() {
-				expected = append(expected, kase.ID)
-			}
-		}
-		assert.Len(s.T(), list.Items, len(expected))
-		for _, item := range list.Items {
-			assert.Contains(s.T(), expected, item.ID)
+func (c caseBunch) filterByPartyIDs(partyID ...string) caseBunch {
+	cb := caseBunch{}
+
+	partyIDMap := map[string]bool{}
+	for _, partyID := range partyID {
+		partyIDMap[partyID] = true
+	}
+
+	for _, kase := range c.cases {
+		if _, ok := partyIDMap[kase.PartyID]; ok {
+			cb.cases = append(cb.cases, kase)
 		}
 	}
+	return cb
 }
 
-func (s *Suite) testCaseFilterByDone(kases []*Case) {
-	d := true
-	for i := 0; i < 2; i++ {
-		list, err := s.client.Cases().List(s.ctx, CaseListOptions{Done: &d})
-		if err != nil {
-			s.T().FailNow()
-		}
-		expected := []string{}
-		for _, kase := range kases {
-			if kase.Done == d {
-				expected = append(expected, kase.ID)
-			}
-		}
-		assert.Len(s.T(), list.Items, len(expected))
-		for _, item := range list.Items {
-			assert.Contains(s.T(), expected, item.ID)
-		}
-		d = false
-	}
+func (c caseBunch) getCases() []*Case {
+	return c.cases
 }
