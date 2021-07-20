@@ -22,7 +22,7 @@ func (s *Server) postAttributes(w http.ResponseWriter, req *http.Request) {
 	errList := ValidateAttribute(&a, validation.NewPath(""))
 	if len(errList) > 0 {
 		status := errList.Status(http.StatusUnprocessableEntity, "invalid attribute")
-		s.json(w, status.Code, status)
+		s.error(w, &status)
 		return
 	}
 

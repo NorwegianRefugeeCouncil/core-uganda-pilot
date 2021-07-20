@@ -21,7 +21,7 @@ func (s *Server) postRelationshipType(w http.ResponseWriter, req *http.Request) 
 	errList := ValidateRelationshipType(p, validation.NewPath(""))
 	if len(errList) > 0 {
 		status := errList.Status(http.StatusUnprocessableEntity, "invalid relationship type")
-		s.json(w, status.Code, status)
+		s.error(w, &status)
 		return
 	}
 

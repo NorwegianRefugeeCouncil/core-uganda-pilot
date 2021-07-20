@@ -33,7 +33,7 @@ func (s *Server) putRelationship(w http.ResponseWriter, req *http.Request) {
 	errList := ValidateRelationship(r, validation.NewPath(""))
 	if len(errList) > 0 {
 		status := errList.Status(http.StatusUnprocessableEntity, "invalid relationship")
-		s.json(w, status.Code, status)
+		s.error(w, &status)
 		return
 	}
 
