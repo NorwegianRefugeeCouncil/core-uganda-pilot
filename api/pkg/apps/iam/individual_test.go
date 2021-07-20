@@ -1,5 +1,3 @@
-// +build integration
-
 package iam_test
 
 import (
