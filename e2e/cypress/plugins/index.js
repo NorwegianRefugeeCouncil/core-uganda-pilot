@@ -17,11 +17,9 @@
  */
 // eslint-disable-next-line no-unused-vars
 // load the environment variables from the local .env file
-const dotenvPlugin = require('cypress-dotenv');
 
 module.exports = (on, config) => {
     // `on` is used to hook into various events Cypress emits
     // `config` is the resolved Cypress config
-    config = dotenvPlugin(config);
     return config;
 };

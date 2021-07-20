@@ -77,7 +77,7 @@
                                type="checkbox"
                                {{ if .ReferralCaseType}}disabled{{end}}
                                name="done"
-                               data-cy="done-check"
+                               data-testid="done-check"
                                 {{if .Case.Done}}checked{{end}}>
                         <label class="form-check-label" for="done-input">
                             Done

@@ -10,7 +10,7 @@
                 <h4 class="card-title">Case Type</h4>
                 <form action="/settings/casetypes{{if .CaseType}}/{{.CaseType.ID}}{{end}}" method="post">
                     <div class="form-floating mb-3">
-                        <input id="name" type="text" class="form-control" name="name"
+                        <input id="name" type="text" class="form-control" name="name" data-testid="name"
                                value="{{if .CaseType}}{{.CaseType.Name}}{{end}}">
                         <label for="name">Name</label>
                     </div>

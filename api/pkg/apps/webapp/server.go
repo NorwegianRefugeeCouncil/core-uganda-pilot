@@ -1,7 +1,6 @@
 package webapp
 
 import (
-	"context"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/cms"
@@ -12,69 +11,64 @@ import (
 	"github.com/nrc-no/core/pkg/sessionmanager"
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/ory/hydra-client-go/client/admin"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
 	"net/http"
 )
 
 type Server struct {
-	renderFactory   *RendererFactory
-	sessionManager  sessionmanager.Store
-	router          *mux.Router
-	login           login.Interface
-	HydraAdmin      admin.ClientService
-	oidcVerifier    *oidc.IDTokenVerifier
-	oauth2Config    *oauth2.Config
-	environment     string
-	iamAdminClient  iam.Interface
-	baseURL         string
-	iamScheme       string
-	iamHost         string
-	cmsScheme       string
-	cmsHost         string
-	HydraHTTPClient *http.Client
-	IAMHTTPClient   *http.Client
-	CMSHTTPClient   *http.Client
-	Constants       Constants
+	renderFactory       *RendererFactory
+	sessionManager      sessionmanager.Store
+	router              *mux.Router
+	login               login.Interface
+	HydraAdmin          admin.ClientService
+	oidcVerifier        *oidc.IDTokenVerifier
+	privateOauth2Config *oauth2.Config
+	environment         string
+	iamAdminClient      iam.Interface
+	baseURL             string
+	iamScheme           string
+	iamHost             string
+	cmsScheme           string
+	cmsHost             string
+	HydraHTTPClient     *http.Client
+	IAMHTTPClient       *http.Client
+	CMSHTTPClient       *http.Client
+	Constants           Constants
+	publicOauth2Config  *oauth2.Config
 }
 
 type ServerOptions struct {
 	*server.GenericServerOptions
-	TemplateDirectory string
-	BaseURL           string
-	IAMHost           string
-	IAMScheme         string
-	CMSHost           string
-	CMSScheme         string
-	AdminHTTPClient   *http.Client
-	IDTokenVerifier   *oidc.IDTokenVerifier
-	OAuth2Config      *oauth2.Config
-	HydraHTTPClient   *http.Client
-	IAMHTTPClient     *http.Client
-	CMSHTTPClient     *http.Client
-	LoginHTTPClient   *http.Client
+	TemplateDirectory   string
+	BaseURL             string
+	IAMHost             string
+	IAMScheme           string
+	CMSHost             string
+	CMSScheme           string
+	AdminHTTPClient     *http.Client
+	IDTokenVerifier     *oidc.IDTokenVerifier
+	PrivateOAuth2Config *oauth2.Config
+	HydraHTTPClient     *http.Client
+	IAMHTTPClient       *http.Client
+	CMSHTTPClient       *http.Client
+	LoginHTTPClient     *http.Client
+	PublicOauth2Config  *oauth2.Config
 }
 
 func NewServer(options *ServerOptions) (*Server, error) {
 
-	sm := sessionmanager.New(options.RedisPool, sessionmanager.Options{})
-
-	renderFactory, err := NewRendererFactory(options.TemplateDirectory, sm)
-	if err != nil {
-		return nil, err
-	}
-
 	h := &Server{
-		renderFactory:  renderFactory,
-		sessionManager: sm,
 		login: login.NewClientSet(&rest.RESTConfig{
 			Scheme:     options.CMSScheme,
 			Host:       options.CMSHost,
 			HTTPClient: options.AdminHTTPClient,
 		}),
-		HydraAdmin:   options.HydraAdminClient,
-		oidcVerifier: options.IDTokenVerifier,
-		oauth2Config: options.OAuth2Config,
-		environment:  options.Environment,
+		HydraAdmin:          options.HydraAdminClient.Admin,
+		oidcVerifier:        options.IDTokenVerifier,
+		privateOauth2Config: options.PrivateOAuth2Config,
+		publicOauth2Config:  options.PublicOauth2Config,
+		environment:         options.Environment,
 		iamAdminClient: iam.NewClientSet(&rest.RESTConfig{
 			Scheme:     options.IAMScheme,
 			Host:       options.IAMHost,
@@ -93,8 +87,22 @@ func NewServer(options *ServerOptions) (*Server, error) {
 		},
 	}
 
+	sm, err := sessionmanager.New(options.RedisStore)
+	if err != nil {
+		logrus.WithError(err).Errorf("failed to create session manager")
+		return nil, err
+	}
+
+	renderFactory, err := NewRendererFactory(options.TemplateDirectory, sm)
+	if err != nil {
+		logrus.WithError(err).Errorf("failed to create renderer")
+		return nil, err
+	}
+
+	h.sessionManager = sm
+	h.renderFactory = renderFactory
+
 	router := mux.NewRouter()
-	router.Use(sm.LoadAndSave)
 	router.Use(h.WithAuth())
 	router.Path("/callback").HandlerFunc(h.Callback)
 	router.Path("/login").HandlerFunc(h.Login)
@@ -122,10 +130,6 @@ func NewServer(options *ServerOptions) (*Server, error) {
 	router.Path("/settings/casetypes").HandlerFunc(h.CaseTypes)
 	router.Path("/settings/casetypes/new").HandlerFunc(h.NewCaseType)
 	router.Path("/settings/casetypes/{id}").HandlerFunc(h.CaseType)
-	router.Path("/settings/authclients").HandlerFunc(h.AuthClients)
-	router.Path("/settings/authclients/{id}").HandlerFunc(h.AuthClient)
-	router.Path("/settings/authclients/{id}/newsecret").HandlerFunc(h.AuthClientNewSecret)
-	router.Path("/settings/authclients/{id}/delete").HandlerFunc(h.DeleteAuthClient)
 	router.Path("/comments").Methods("POST").HandlerFunc(h.PostComment)
 	router.Path("/relationships/pickparty").HandlerFunc(h.PickRelationshipParty)
 
@@ -138,47 +142,28 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	s.router.ServeHTTP(w, req)
 }
 
-func (s *Server) IAMClient(ctx context.Context) iam.Interface {
-	cfg := s.oauth2Config
-	accessToken := s.sessionManager.GetString(ctx, "access-token")
-	refreshToken := s.sessionManager.GetString(ctx, "refresh-token")
-	token := &oauth2.Token{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
+func (s *Server) IAMClient(req *http.Request) (iam.Interface, error) {
+	httpClient, err := utils.GetOauth2HttpClient(s.sessionManager, req, s.privateOauth2Config, s.IAMHTTPClient)
+	if err != nil {
+		return nil, err
 	}
-	httpClient := s.IAMHTTPClient
-	ctx = context.WithValue(ctx, oauth2.HTTPClient, httpClient)
-	cli := cfg.Client(ctx, token)
-	if len(accessToken) > 0 || len(refreshToken) > 0 {
-		httpClient = cli
-	}
-
 	return iam.NewClientSet(&rest.RESTConfig{
 		Scheme:     s.iamScheme,
 		Host:       s.iamHost,
 		HTTPClient: httpClient,
-	})
+	}), nil
 }
 
-func (s *Server) CMSClient(ctx context.Context) cms.Interface {
-	cfg := s.oauth2Config
-	accessToken := s.sessionManager.GetString(ctx, "access-token")
-	refreshToken := s.sessionManager.GetString(ctx, "refresh-token")
-	token := &oauth2.Token{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-	}
-	httpClient := s.CMSHTTPClient
-	ctx = context.WithValue(ctx, oauth2.HTTPClient, httpClient)
-	cli := cfg.Client(ctx, token)
-	if len(accessToken) > 0 || len(refreshToken) > 0 {
-		httpClient = cli
+func (s *Server) CMSClient(req *http.Request) (cms.Interface, error) {
+	httpClient, err := utils.GetOauth2HttpClient(s.sessionManager, req, s.privateOauth2Config, s.CMSHTTPClient)
+	if err != nil {
+		return nil, err
 	}
 	return cms.NewClientSet(&rest.RESTConfig{
 		Scheme:     s.cmsScheme,
 		Host:       s.cmsHost,
 		HTTPClient: httpClient,
-	})
+	}), nil
 }
 
 func (s *Server) Error(w http.ResponseWriter, err error) {

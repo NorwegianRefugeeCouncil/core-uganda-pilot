@@ -2,10 +2,12 @@ package server
 
 import (
 	"context"
+	"crypto/rand"
 	"crypto/tls"
 	"crypto/x509"
 	"errors"
 	"fmt"
+	"github.com/boj/redistore"
 	"github.com/gomodule/redigo/redis"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/cms"
@@ -24,6 +26,7 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"time"
 )
 
 type Options struct {
@@ -49,7 +52,7 @@ type Options struct {
 
 	// Redis
 	RedisMaxIdleConnections int
-	RedisURL                string
+	RedisAddress            string
 	RedisPassword           string
 	RedisPasswordFile       string
 
@@ -68,6 +71,10 @@ type Options struct {
 	WebAppIAMHost           string
 	WebAppCMSScheme         string
 	WebAppCMSHost           string
+	WebAppSessionKeyFile1   string
+	WebAppBlockKeyFile1     string
+	WebAppSessionKeyFile2   string
+	WebAppBlockKeyFile2     string
 
 	// CMS
 	CMSBasePath string
@@ -110,7 +117,7 @@ func NewOptions() *Options {
 		MongoPassword:           "",
 		MongoHosts:              defaultMongoHosts,
 		RedisMaxIdleConnections: 10,
-		RedisURL:                defaultRedisAddress,
+		RedisAddress:            defaultRedisAddress,
 		RedisPassword:           "",
 		HydraAdminURL:           defaultHydraAdminURL,
 		HydraPublicURL:          defaultHydraPublicURL,
@@ -159,7 +166,7 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 
 	// Redis
 	fs.IntVar(&o.RedisMaxIdleConnections, "redis-max-idle-conns", o.RedisMaxIdleConnections, "Redis maximum number of idle connections")
-	fs.StringVar(&o.RedisURL, "redis-url", o.RedisURL, "Redis URL")
+	fs.StringVar(&o.RedisAddress, "redis-address", o.RedisAddress, "Redis Address")
 	fs.StringVar(&o.RedisPassword, "redis-password", o.RedisPassword, "Redis password file")
 	fs.StringVar(&o.RedisPasswordFile, "redis-password-file", o.RedisPasswordFile, "Redis password")
 
@@ -194,6 +201,10 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 	fs.StringVar(&o.WebAppIAMHost, "web-iam-host", o.WebAppIAMHost, "Web app IAM host")
 	fs.StringVar(&o.WebAppCMSScheme, "web-cms-scheme", o.WebAppCMSScheme, "Web app CMS scheme")
 	fs.StringVar(&o.WebAppCMSHost, "web-cms-host", o.WebAppCMSHost, "Web app CMS host")
+	fs.StringVar(&o.WebAppSessionKeyFile1, "session-hash-key-file-1", o.WebAppSessionKeyFile1, "Web app session hash key file (1)")
+	fs.StringVar(&o.WebAppBlockKeyFile1, "session-block-key-file-1", o.WebAppBlockKeyFile1, "Web app session block key file (1)")
+	fs.StringVar(&o.WebAppSessionKeyFile2, "session-hash-key-file-2", o.WebAppSessionKeyFile2, "Web app session hash key file (2)")
+	fs.StringVar(&o.WebAppBlockKeyFile2, "session-block-key-file-2", o.WebAppBlockKeyFile2, "Web app session block key file (2)")
 }
 
 type CompletedOptions struct {
@@ -201,13 +212,14 @@ type CompletedOptions struct {
 	MongoClientFn              utils.MongoClientFn
 	HydraAdminClient           *client.OryHydra
 	HydraPublicClient          *client.OryHydra
-	RedisPool                  *redis.Pool
 	OAuthTokenEndpoint         string
 	OAuthJwksURI               string
 	OAuthIssuerURL             string
 	OAuthAuthorizationEndpoint string
 	HydraTLSClient             *http.Client
 	OAuthIDTokenSigningAlgs    []string
+	RediStore                  *redistore.RediStore
+	OpenIdConf                 *public.DiscoverOpenIDConfigurationOK
 }
 
 func readFile(path string) (string, error) {
@@ -222,6 +234,8 @@ func readFile(path string) (string, error) {
 
 func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 
+	logrus.Infof("completing server options")
+
 	var err error
 
 	issuerUrl := o.HydraPublicURL
@@ -232,6 +246,7 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 	if len(o.RedisPassword) == 0 && len(o.RedisPasswordFile) > 0 {
 		o.RedisPassword, err = readFile(o.RedisPasswordFile)
 		if err != nil {
+			logrus.WithError(err).Errorf("failed to get redis password")
 			return CompletedOptions{}, err
 		}
 	}
@@ -239,6 +254,7 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 	if len(o.LoginClientSecret) == 0 && len(o.LoginClientSecretFile) > 0 {
 		o.LoginClientSecret, err = readFile(o.LoginClientSecretFile)
 		if err != nil {
+			logrus.WithError(err).Errorf("failed to get login client secret")
 			return CompletedOptions{}, err
 		}
 	}
@@ -246,6 +262,7 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 	if len(o.WebAppClientSecret) == 0 && len(o.WebAppClientSecretFile) > 0 {
 		o.WebAppClientSecret, err = readFile(o.WebAppClientSecretFile)
 		if err != nil {
+			logrus.WithError(err).Errorf("failed to get webapp client secret")
 			return CompletedOptions{}, err
 		}
 	}
@@ -306,6 +323,9 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		}
 	}
 
+	time.Sleep(5 * time.Second)
+
+	logrus.Infof("discovering openid configuration")
 	openIdConf, err := hydraPublicClient.Public.DiscoverOpenIDConfiguration(&public.DiscoverOpenIDConfigurationParams{
 		Context:    ctx,
 		HTTPClient: hydraHttpClient,
@@ -315,15 +335,88 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		panic(err)
 	}
 
+	logrus.Infof("creating redis pool for redis host %s", o.RedisAddress)
 	pool := &redis.Pool{
-		MaxIdle: o.RedisMaxIdleConnections,
+		MaxActive:   500,
+		MaxIdle:     500,
+		IdleTimeout: 5 * time.Second,
+		TestOnBorrow: func(c redis.Conn, t time.Time) error {
+			_, err := c.Do("PING")
+			if err != nil {
+				logrus.WithError(err).Errorf("failed to get connection")
+			}
+			return err
+		},
 		Dial: func() (redis.Conn, error) {
 			var redisOptions []redis.DialOption
 			if len(o.RedisPassword) > 0 {
 				redisOptions = append(redisOptions, redis.DialPassword(o.RedisPassword))
 			}
-			return redis.DialURL(o.RedisURL, redisOptions...)
+			return redis.Dial("tcp", o.RedisAddress, redisOptions...)
 		},
+	}
+
+	logrus.Infof("getting redis connection")
+	conn := pool.Get()
+	defer conn.Close()
+
+	logrus.Infof("testing redis connection")
+	_, err = conn.Do("PING")
+	if err != nil {
+		logrus.WithError(err).Errorf("failed to test redis")
+		panic(err)
+	}
+
+	var sessionKey1 = make([]byte, 32)
+	var blockKey1 []byte = nil
+	var sessionKey2 []byte = nil
+	var blockKey2 []byte = nil
+	if len(o.WebAppSessionKeyFile1) > 0 {
+		sessionKeyStr, err := readFile(o.WebAppSessionKeyFile1)
+		if err != nil {
+			logrus.WithError(err).Errorf("failed to read session hash key file ")
+			panic(err)
+		}
+		sessionKey1 = []byte(sessionKeyStr)[0:32]
+	} else {
+		_, err = rand.Read(sessionKey1)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	if len(o.WebAppBlockKeyFile1) > 0 {
+		fileValue, err := readFile(o.WebAppBlockKeyFile1)
+		if err != nil {
+			logrus.WithError(err).Errorf("failed to read session block key file 1")
+			panic(err)
+		}
+		blockKey1 = []byte(fileValue)[0:32]
+	}
+
+	if len(o.WebAppSessionKeyFile2) > 0 {
+		fileValue, err := readFile(o.WebAppSessionKeyFile2)
+		if err != nil {
+			logrus.WithError(err).Errorf("failed to read session hash key file 2")
+			panic(err)
+		}
+		sessionKey2 = []byte(fileValue)[0:32]
+	}
+
+	if len(o.WebAppBlockKeyFile2) > 0 {
+		fileValue, err := readFile(o.WebAppBlockKeyFile2)
+		if err != nil {
+			logrus.WithError(err).Errorf("failed to read session block key file 2")
+			panic(err)
+		}
+		blockKey2 = []byte(fileValue)[0:32]
+	}
+
+	logrus.Infof("creating redis store")
+	redisStore, err := redistore.NewRediStoreWithPool(pool, sessionKey1, blockKey1, sessionKey2, blockKey2)
+	if err != nil {
+		logrus.WithError(err).Errorf("failed to create redis store")
+		panic(err)
 	}
 
 	completedOptions := CompletedOptions{
@@ -332,12 +425,13 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		HydraAdminClient:           hydraAdminClient,
 		HydraPublicClient:          hydraPublicClient,
 		HydraTLSClient:             hydraHttpClient,
-		RedisPool:                  pool,
-		OAuthTokenEndpoint:         *openIdConf.Payload.TokenEndpoint,
-		OAuthJwksURI:               *openIdConf.Payload.JwksURI,
-		OAuthIssuerURL:             *openIdConf.Payload.Issuer,
-		OAuthAuthorizationEndpoint: *openIdConf.Payload.AuthorizationEndpoint,
+		RediStore:                  redisStore,
+		OAuthTokenEndpoint:         o.HydraPublicURL + "/oauth2/token",
+		OAuthJwksURI:               o.HydraPublicURL + "/.well-known/jwks.json",
+		OAuthIssuerURL:             o.HydraPublicURL,
+		OAuthAuthorizationEndpoint: o.HydraPublicURL + "/oauth2/auth",
 		OAuthIDTokenSigningAlgs:    openIdConf.Payload.IDTokenSigningAlgValuesSupported,
+		OpenIdConf:                 openIdConf,
 	}
 	return completedOptions, nil
 }
@@ -402,9 +496,9 @@ func (c CompletedOptions) Generic() *server.GenericServerOptions {
 		MongoClientFn:     c.MongoClientFn,
 		MongoDatabase:     c.MongoDatabase,
 		Environment:       c.Environment,
-		HydraAdminClient:  c.HydraAdminClient.Admin,
-		HydraPublicClient: c.HydraPublicClient.Public,
-		RedisPool:         c.RedisPool,
+		HydraAdminClient:  c.HydraAdminClient,
+		HydraPublicClient: c.HydraPublicClient,
+		RedisStore:        c.RediStore,
 		HydraHTTPClient:   c.HydraTLSClient,
 	}
 }

@@ -67,13 +67,25 @@ func (c CompletedOptions) CreateWebAppServer(ctx context.Context, genericOptions
 	}
 	adminCli := clientCredsCfg.Client(context.WithValue(ctx, oauth2.HTTPClient, httpClient))
 
-	l.Infof("creating oauth2 configuration")
-	oauth2Config := &oauth2.Config{
+	l.Infof("creating private oauth2 configuration")
+	privateOauth2Config := &oauth2.Config{
 		ClientID:     c.WebAppClientID,
 		ClientSecret: c.WebAppClientSecret,
 		Endpoint: oauth2.Endpoint{
-			AuthURL:  c.OAuthAuthorizationEndpoint,
-			TokenURL: c.OAuthTokenEndpoint,
+			AuthURL:  c.HydraPublicURL + "/oauth2/auth",
+			TokenURL: c.HydraPublicURL + "/oauth2/token",
+		},
+		RedirectURL: c.BaseURL + "/callback",
+		Scopes:      []string{oidc.ScopeOpenID, "profile"},
+	}
+
+	l.Infof("creating public oauth2 configuration")
+	publicOauth2Config := &oauth2.Config{
+		ClientID:     c.WebAppClientID,
+		ClientSecret: c.WebAppClientSecret,
+		Endpoint: oauth2.Endpoint{
+			AuthURL:  *c.OpenIdConf.Payload.AuthorizationEndpoint,
+			TokenURL: *c.OpenIdConf.Payload.TokenEndpoint,
 		},
 		RedirectURL: c.BaseURL + "/callback",
 		Scopes:      []string{oidc.ScopeOpenID, "profile"},
@@ -81,7 +93,7 @@ func (c CompletedOptions) CreateWebAppServer(ctx context.Context, genericOptions
 
 	l.Infof("creating oidc verifier")
 	jwks := oidc.NewRemoteKeySet(ctx, c.OAuthJwksURI)
-	oidcVerifier := oidc.NewVerifier(c.OAuthIssuerURL, jwks, &oidc.Config{
+	oidcVerifier := oidc.NewVerifier(*c.OpenIdConf.Payload.Issuer, jwks, &oidc.Config{
 		ClientID:             c.WebAppClientID,
 		SupportedSigningAlgs: c.OAuthIDTokenSigningAlgs,
 	})
@@ -96,7 +108,8 @@ func (c CompletedOptions) CreateWebAppServer(ctx context.Context, genericOptions
 		CMSScheme:            c.WebAppCMSScheme,
 		AdminHTTPClient:      adminCli,
 		IDTokenVerifier:      oidcVerifier,
-		OAuth2Config:         oauth2Config,
+		PrivateOAuth2Config:  privateOauth2Config,
+		PublicOauth2Config:   publicOauth2Config,
 		HydraHTTPClient:      httpClient,
 		IAMHTTPClient:        httpClient,
 		CMSHTTPClient:        httpClient,
