@@ -2,14 +2,9 @@ package auth
 
 import (
 	"fmt"
-	jwt2 "gopkg.in/square/go-jose.v2/jwt"
 	"net/http"
 	"strings"
 )
-
-type Claimer interface {
-	GetClaims() *jwt2.Claims
-}
 
 type TokenSource interface {
 	GetToken() (string, error)

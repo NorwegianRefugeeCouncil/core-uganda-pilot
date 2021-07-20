@@ -64,7 +64,6 @@ func (s *Server) PostLoginForm(w http.ResponseWriter, req *http.Request) {
 			WithBody(&models.AcceptLoginRequest{
 				Remember: rememberMe,
 				Subject:  &individual.ID,
-				// Subject:  &party.ID, TODO
 			}))
 	if err != nil {
 		s.Error(w, err)

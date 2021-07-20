@@ -18,8 +18,13 @@ func (s *Server) Individuals(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
-	iamCli := s.IAMClient(ctx)
-	attrs, err := iamCli.Attributes().List(ctx, iam.AttributeListOptions{})
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	attrs, err := iamClient.Attributes().List(ctx, iam.AttributeListOptions{})
 	if err != nil {
 		s.Error(w, err)
 		return
@@ -36,7 +41,7 @@ func (s *Server) Individuals(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	list, err := iamCli.Individuals().List(ctx, listOptions)
+	list, err := iamClient.Individuals().List(ctx, listOptions)
 	if err != nil {
 		s.Error(w, err)
 		return
@@ -54,7 +59,12 @@ func (s *Server) Individuals(w http.ResponseWriter, req *http.Request) {
 
 func (s *Server) IndividualCredentials(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	iamClient := s.IAMClient(ctx)
+
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
@@ -105,8 +115,18 @@ func (s *Server) PostIndividualCredentials(w http.ResponseWriter, req *http.Requ
 func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	cmsClient := s.CMSClient(ctx)
-	iamClient := s.IAMClient(ctx)
+
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	cmsClient, err := s.CMSClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
@@ -266,7 +286,11 @@ func (s *Server) PostIndividual(
 	w http.ResponseWriter,
 	req *http.Request) {
 
-	iamClient := s.IAMClient(ctx)
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	if err := req.ParseForm(); err != nil {
 		s.Error(w, err)
@@ -378,24 +402,33 @@ func (s *Server) PostIndividual(
 		var err error
 		individual, err = iamClient.Individuals().Create(ctx, b)
 		if err != nil {
-
 			s.Error(w, err)
 			return
 		}
-		s.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+
+		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
 			Message: fmt.Sprintf("Individual \"%s\" successfully created", b.String()),
 			Theme:   "success",
-		})
+		}); err != nil {
+			s.Error(w, err)
+			return
+		}
+
 	} else {
 		var err error
 		if individual, err = iamClient.Individuals().Update(ctx, b); err != nil {
 			s.Error(w, err)
 			return
 		}
-		s.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+
+		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
 			Message: fmt.Sprintf("Individual \"%s\" successfully updated", b.String()),
 			Theme:   "success",
-		})
+		}); err != nil {
+			s.Error(w, err)
+			return
+		}
+
 	}
 
 	// Update, create or delete the relationships
