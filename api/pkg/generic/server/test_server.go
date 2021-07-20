@@ -2,16 +2,21 @@ package server
 
 import (
 	"context"
+	"errors"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"net"
+	"net/http"
 	"os"
+	"testing"
 )
 
-type GenericServerTestSuite struct {
-	serverOpts *GenericServerOptions
-	ctx        context.Context
+type GenericServerTestSetup struct {
+	*GenericServerOptions
+	Ctx      context.Context
+	Listener *net.TCPListener
+	Port     string
 }
 
 func GetEnvOrDefault(key, defaultValue string) string {
@@ -35,12 +40,14 @@ type GenericServerTestSuiteArgs struct {
 	Options       GenericServerOptions
 }
 
-func (s *GenericServerTestSuite) GenericSetupSuite() GenericServerTestSuiteArgs {
+func NewGenericServerTestSetup() *GenericServerTestSetup {
+
 	// Using a random port
 	ip := net.ParseIP("127.0.0.1")
 	listener, err := net.ListenTCP("tcp", &net.TCPAddr{
 		IP: ip,
 	})
+
 	if err != nil || listener == nil {
 		panic(err)
 	}
@@ -59,18 +66,29 @@ func (s *GenericServerTestSuite) GenericSetupSuite() GenericServerTestSuiteArgs 
 			return nil, err
 		}
 		return mongoClient, nil
-
 	}
 
-	opts := GenericServerOptions{
-		MongoClientFn: mongoClientFn,
-		MongoDatabase: mongoDatabase,
-		Environment:   "Development",
+	return &GenericServerTestSetup{
+		GenericServerOptions: &GenericServerOptions{
+			MongoClientFn: mongoClientFn,
+			MongoDatabase: mongoDatabase,
+			Environment:   "Development",
+		},
+		Ctx:      context.Background(),
+		Listener: listener,
+		Port:     port,
 	}
-	return GenericServerTestSuiteArgs{
-		Listener:      listener,
-		MongoClientFn: mongoClientFn,
-		Port:          port,
-		Options:       opts,
-	}
+
+}
+
+func (s *GenericServerTestSetup) Serve(t *testing.T, handler http.Handler) {
+	go func() {
+		if err := http.Serve(s.Listener, handler); err != nil {
+			if errors.Is(err, context.Canceled) {
+				return
+			}
+		} else {
+			t.Fatal(err)
+		}
+	}()
 }

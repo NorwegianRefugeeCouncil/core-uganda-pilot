@@ -14,7 +14,7 @@ func (s *Suite) TestCaseType() {
 func (s *Suite) testCaseTypeAPI() {
 	// Create
 	caseType := s.mockCaseTypes(1)[0]
-	created, err := s.client.CaseTypes().Create(s.ctx, caseType)
+	created, err := s.client.CaseTypes().Create(s.Ctx, caseType)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
@@ -22,7 +22,7 @@ func (s *Suite) testCaseTypeAPI() {
 	assert.Equal(s.T(), caseType, created)
 
 	// GET
-	get, err := s.client.CaseTypes().Get(s.ctx, created.ID)
+	get, err := s.client.CaseTypes().Get(s.Ctx, created.ID)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
@@ -33,21 +33,21 @@ func (s *Suite) testCaseTypeAPI() {
 	caseType.PartyTypeID = newUUID()
 	caseType.TeamID = newUUID()
 	caseType.Template = &CaseTemplate{FormElements: []CaseTemplateFormElement{{Type: "textarea", Attributes: CaseTemplateFormElementAttribute{Label: "updated"}}}}
-	updated, err := s.client.CaseTypes().Update(s.ctx, caseType)
+	updated, err := s.client.CaseTypes().Update(s.Ctx, caseType)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
 	assert.Equal(s.T(), caseType, updated)
 
 	// GET
-	get, err = s.client.CaseTypes().Get(s.ctx, updated.ID)
+	get, err = s.client.CaseTypes().Get(s.Ctx, updated.ID)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
 	assert.Equal(s.T(), updated, get)
 
 	// LIST
-	list, err := s.client.CaseTypes().List(s.ctx, CaseTypeListOptions{})
+	list, err := s.client.CaseTypes().List(s.Ctx, CaseTypeListOptions{})
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
@@ -71,7 +71,7 @@ func (s *Suite) testCaseTypeListFilter() {
 	for i, caseType := range caseTypes {
 		n := i % len(partyTypes)
 		caseType.PartyTypeID = partyTypes[n]
-		created, err := s.client.CaseTypes().Create(s.ctx, caseType)
+		created, err := s.client.CaseTypes().Create(s.Ctx, caseType)
 		assert.NoError(s.T(), err)
 		caseType.ID = created.ID
 	}
@@ -82,7 +82,7 @@ func (s *Suite) testCaseTypeListFilter() {
 func (s *Suite) testCaseTypeFilterByPartyType(caseTypes []*CaseType, partyTypes []string) {
 	for i := 1; i <= len(partyTypes); i++ {
 		types := partyTypes[0:i]
-		list, err := s.client.CaseTypes().List(s.ctx, CaseTypeListOptions{types})
+		list, err := s.client.CaseTypes().List(s.Ctx, CaseTypeListOptions{types})
 		if !assert.NoError(s.T(), err) {
 			s.T().FailNow()
 		}

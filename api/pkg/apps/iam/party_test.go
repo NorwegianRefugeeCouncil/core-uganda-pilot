@@ -22,7 +22,7 @@ func (s *Suite) testPartyAPI() {
 	party.Attributes.Set(attribute.ID, "mock")
 
 	// CREATE
-	created, err := s.client.Parties().Create(s.ctx, party)
+	created, err := s.client.Parties().Create(s.Ctx, party)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
@@ -31,7 +31,7 @@ func (s *Suite) testPartyAPI() {
 	assert.Equal(s.T(), party.Get(attribute.ID), created.Get(attribute.ID))
 
 	// GET
-	get, err := s.client.Parties().Get(s.ctx, created.ID)
+	get, err := s.client.Parties().Get(s.Ctx, created.ID)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
@@ -40,7 +40,7 @@ func (s *Suite) testPartyAPI() {
 	// UPDATE
 	party.PartyTypeIDs = []string{newUUID()}
 	party.Attributes.Set(attribute.ID, "update")
-	updated, err := s.client.Parties().Update(s.ctx, party)
+	updated, err := s.client.Parties().Update(s.Ctx, party)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
@@ -49,14 +49,14 @@ func (s *Suite) testPartyAPI() {
 	assert.Equal(s.T(), party.Get(attribute.ID), updated.Get(attribute.ID))
 
 	// GET
-	get, err = s.client.Parties().Get(s.ctx, updated.ID)
+	get, err = s.client.Parties().Get(s.Ctx, updated.ID)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
 	assert.Equal(s.T(), updated, get)
 
 	// LIST
-	list, err := s.client.Parties().List(s.ctx, PartyListOptions{})
+	list, err := s.client.Parties().List(s.Ctx, PartyListOptions{})
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
@@ -95,7 +95,7 @@ func (s *Suite) testPartyListFilter() {
 
 		// Add to map
 		// Save the party to the DB
-		created, err := s.client.Parties().Create(s.ctx, party)
+		created, err := s.client.Parties().Create(s.Ctx, party)
 		if !assert.NoError(s.T(), err) {
 			s.T().FailNow()
 		}
@@ -109,7 +109,7 @@ func (s *Suite) testPartyListFilter() {
 
 func (s *Suite) testPartyListFilterByType(parties []*Party, partyTypeIds []string) {
 	for _, partyTypeId := range partyTypeIds {
-		list, err := s.client.Parties().List(s.ctx, PartyListOptions{
+		list, err := s.client.Parties().List(s.Ctx, PartyListOptions{
 			PartyTypeID: partyTypeId,
 		})
 		if !assert.NoError(s.T(), err) {
@@ -136,7 +136,7 @@ func (s *Suite) testPartyListFilterByAttribute(parties []*Party, attributes []st
 		for _, attributeId := range attrs {
 			attributeOptions[attributeId] = "mock"
 		}
-		list, err := s.client.Parties().List(s.ctx, PartyListOptions{
+		list, err := s.client.Parties().List(s.Ctx, PartyListOptions{
 			Attributes: attributeOptions,
 		})
 		if !assert.NoError(s.T(), err) {

@@ -11,7 +11,7 @@ func (s *Suite) TestPartyType() {
 
 	// Create party type
 	name := newUUID()
-	created, err := s.client.PartyTypes().Create(s.ctx, &PartyType{
+	created, err := s.client.PartyTypes().Create(s.Ctx, &PartyType{
 		Name:      name,
 		IsBuiltIn: false,
 	})
@@ -23,7 +23,7 @@ func (s *Suite) TestPartyType() {
 	assert.False(s.T(), created.IsBuiltIn)
 
 	// Get party type
-	get, err := s.client.PartyTypes().Get(s.ctx, created.ID)
+	get, err := s.client.PartyTypes().Get(s.Ctx, created.ID)
 	if !assert.NoError(s.T(), err) {
 		return
 	}
@@ -32,7 +32,7 @@ func (s *Suite) TestPartyType() {
 	}
 
 	// List party types
-	list, err := s.client.PartyTypes().List(s.ctx, PartyTypeListOptions{})
+	list, err := s.client.PartyTypes().List(s.Ctx, PartyTypeListOptions{})
 	if !assert.NoError(s.T(), err) {
 		return
 	}

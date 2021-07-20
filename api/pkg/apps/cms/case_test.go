@@ -10,7 +10,7 @@ import (
 func (s *Suite) TestCaseAPI() {
 	// Create
 	mockCase := aMockCase()
-	created, err := s.client.Cases().Create(s.ctx, mockCase)
+	created, err := s.client.Cases().Create(s.Ctx, mockCase)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
@@ -18,7 +18,7 @@ func (s *Suite) TestCaseAPI() {
 	assert.Equal(s.T(), mockCase, created)
 
 	// GET
-	get, err := s.client.Cases().Get(s.ctx, created.ID)
+	get, err := s.client.Cases().Get(s.Ctx, created.ID)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
@@ -33,21 +33,21 @@ func (s *Suite) TestCaseAPI() {
 			Value: []string{"mock"},
 		},
 	}}}
-	updated, err := s.client.Cases().Update(s.ctx, get)
+	updated, err := s.client.Cases().Update(s.Ctx, get)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
 	assert.Equal(s.T(), get, updated)
 
 	// GET
-	get, err = s.client.Cases().Get(s.ctx, updated.ID)
+	get, err = s.client.Cases().Get(s.Ctx, updated.ID)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
 	assert.Equal(s.T(), updated, get)
 
 	// LIST
-	list, err := s.client.Cases().List(s.ctx, CaseListOptions{})
+	list, err := s.client.Cases().List(s.Ctx, CaseListOptions{})
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
@@ -57,7 +57,7 @@ func (s *Suite) TestCaseAPI() {
 func (s *Suite) TestCaseListFilter() {
 
 	bunch := newCaseBunch(20)
-	if !assert.NoError(s.T(), bunch.create(s.ctx, s.client.Cases())) {
+	if !assert.NoError(s.T(), bunch.create(s.Ctx, s.client.Cases())) {
 		return
 	}
 
@@ -94,7 +94,7 @@ func (s *Suite) TestCaseListFilter() {
 		tc := tt
 		s.Run(tt.name, func() {
 			s.T().Parallel()
-			got, err := s.client.Cases().List(s.ctx, tc.args)
+			got, err := s.client.Cases().List(s.Ctx, tc.args)
 			if tc.wantErr {
 				s.Error(err)
 				return

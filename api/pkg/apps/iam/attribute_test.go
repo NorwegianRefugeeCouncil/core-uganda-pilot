@@ -16,7 +16,7 @@ func (s *Suite) TestAttribute() {
 func (s *Suite) testAttributeAPI() {
 	// CREATE
 	mock := "create"
-	created, err := s.client.Attributes().Create(s.ctx, &Attribute{
+	created, err := s.client.Attributes().Create(s.Ctx, &Attribute{
 		Name:                         mock,
 		PartyTypeIDs:                 []string{mock},
 		IsPersonallyIdentifiableInfo: false,
@@ -42,14 +42,14 @@ func (s *Suite) testAttributeAPI() {
 	}, created.Translations)
 
 	// GET
-	get, err := s.client.Attributes().Get(s.ctx, created.ID)
+	get, err := s.client.Attributes().Get(s.Ctx, created.ID)
 	assert.NoError(s.T(), err)
 	assert.Equal(s.T(), get, created)
 
 	// UPDATE
 	updatedMock := "update"
 
-	updated, err := s.client.Attributes().Update(s.ctx, &Attribute{
+	updated, err := s.client.Attributes().Update(s.Ctx, &Attribute{
 		ID:                           created.ID,
 		Name:                         updatedMock,
 		PartyTypeIDs:                 []string{updatedMock},
@@ -74,12 +74,12 @@ func (s *Suite) testAttributeAPI() {
 	}, updated.Translations)
 
 	// GET
-	get, err = s.client.Attributes().Get(s.ctx, updated.ID)
+	get, err = s.client.Attributes().Get(s.Ctx, updated.ID)
 	assert.NoError(s.T(), err)
 	assert.Equal(s.T(), updated, get)
 
 	// LIST
-	list, err := s.client.Attributes().List(s.ctx, AttributeListOptions{})
+	list, err := s.client.Attributes().List(s.Ctx, AttributeListOptions{})
 	assert.NoError(s.T(), err)
 	assert.Contains(s.T(), list.Items, get)
 }
@@ -101,7 +101,7 @@ func (s *Suite) testAttributeListFilter() {
 	// Save the attributes to the DB
 	for i, attribute := range attributes {
 		attribute.PartyTypeIDs = partyTypeIds[0 : 1+(i%len(partyTypeIds))]
-		created, err := s.client.Attributes().Create(s.ctx, attribute)
+		created, err := s.client.Attributes().Create(s.Ctx, attribute)
 		assert.NoError(s.T(), err)
 		attribute.ID = created.ID
 	}

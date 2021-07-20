@@ -4,57 +4,33 @@ package iam_test
 
 import (
 	"context"
-	"errors"
 	. "github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/testutils"
 	uuid "github.com/satori/go.uuid"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"net/http"
 	"testing"
 )
 
 type Suite struct {
+	*server.GenericServerTestSetup
 	suite.Suite
-	*server.GenericServerTestSuite
-	server     *Server
-	serverOpts *server.GenericServerOptions
-	ctx        context.Context
-	client     *ClientSet
+	server *Server
+	client *ClientSet
 }
 
 var ctx = context.Background()
 
 func (s *Suite) SetupSuite() {
-	args := s.GenericSetupSuite()
-
-	s.ctx = ctx
-	s.serverOpts = &args.Options
-
-	srv, err := NewServer(s.ctx, s.serverOpts)
-	if !assert.NoError(s.T(), err) {
-		s.T().Fatal()
-	}
-
-	s.server = srv
-	s.client = NewClientSet(testutils.SetXAuthenticatedUserSubject(args.Port))
-
-	go func() {
-		if err := http.Serve(args.Listener, srv); err != nil {
-			if errors.Is(err, context.Canceled) {
-				return
-			}
-		} else {
-			s.T().Fatal(err)
-		}
-	}()
-
+	s.GenericServerTestSetup = server.NewGenericServerTestSetup()
+	s.server = NewServerOrDie(s.Ctx, s.GenericServerOptions)
+	s.client = NewClientSet(testutils.SetXAuthenticatedUserSubject(s.Port))
+	s.Serve(s.T(), s.server)
 }
 
 // This will run before each test in the suite but must be called manually before subtests
 func (s *Suite) SetupTest() {
-	err := s.server.ResetDB(ctx, s.serverOpts.MongoDatabase)
+	err := s.server.ResetDB(ctx, s.GenericServerOptions.MongoDatabase)
 	if err != nil {
 		return
 	}

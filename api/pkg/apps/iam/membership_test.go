@@ -17,7 +17,7 @@ func (s *Suite) testMembershipAPI() {
 	membership.IndividualID = newUUID()
 
 	// Create
-	created, err := s.client.Memberships().Create(s.ctx, membership)
+	created, err := s.client.Memberships().Create(s.Ctx, membership)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
@@ -25,7 +25,7 @@ func (s *Suite) testMembershipAPI() {
 	assert.Equal(s.T(), membership.IndividualID, created.IndividualID)
 
 	// Get
-	get, err := s.client.Memberships().Get(s.ctx, created.ID)
+	get, err := s.client.Memberships().Get(s.Ctx, created.ID)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
@@ -35,7 +35,7 @@ func (s *Suite) testMembershipAPI() {
 	// NB Membership doesn't implement UPDATE for now
 
 	// List
-	list, err := s.client.Memberships().List(s.ctx, MembershipListOptions{})
+	list, err := s.client.Memberships().List(s.Ctx, MembershipListOptions{})
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}

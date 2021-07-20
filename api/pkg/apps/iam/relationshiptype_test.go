@@ -11,7 +11,7 @@ import (
 func (s *Suite) TestRelationshipType() {
 	// CREATE relationship type
 	mock := "create"
-	created, err := s.client.RelationshipTypes().Create(s.ctx, &RelationshipType{
+	created, err := s.client.RelationshipTypes().Create(s.Ctx, &RelationshipType{
 		IsDirectional:   true,
 		Name:            mock,
 		FirstPartyRole:  mock,
@@ -29,7 +29,7 @@ func (s *Suite) TestRelationshipType() {
 	assert.IsType(s.T(), []RelationshipTypeRule{{&PartyTypeRule{FirstPartyTypeID: mock, SecondPartyTypeID: mock}}}, created.Rules)
 
 	// GET relationship type
-	get, err := s.client.RelationshipTypes().Get(s.ctx, created.ID)
+	get, err := s.client.RelationshipTypes().Get(s.Ctx, created.ID)
 	if !assert.NoError(s.T(), err) {
 		return
 	}
@@ -40,7 +40,7 @@ func (s *Suite) TestRelationshipType() {
 	// UPDATE relationship type
 	updatedMock := "update"
 
-	updated, err := s.client.RelationshipTypes().Update(s.ctx, &RelationshipType{
+	updated, err := s.client.RelationshipTypes().Update(s.Ctx, &RelationshipType{
 		ID:              created.ID,
 		IsDirectional:   !created.IsDirectional,
 		Name:            updatedMock,
@@ -66,7 +66,7 @@ func (s *Suite) TestRelationshipType() {
 	assert.IsType(s.T(), []RelationshipTypeRule{{&PartyTypeRule{FirstPartyTypeID: updatedMock, SecondPartyTypeID: updatedMock}}}, updated.Rules)
 
 	// GET relationship type
-	get, err = s.client.RelationshipTypes().Get(s.ctx, updated.ID)
+	get, err = s.client.RelationshipTypes().Get(s.Ctx, updated.ID)
 	if !assert.NoError(s.T(), err) {
 		return
 	}
@@ -75,7 +75,7 @@ func (s *Suite) TestRelationshipType() {
 	}
 
 	// LIST relationship types
-	list, err := s.client.RelationshipTypes().List(s.ctx, RelationshipTypeListOptions{
+	list, err := s.client.RelationshipTypes().List(s.Ctx, RelationshipTypeListOptions{
 		PartyTypeID: updatedMock,
 	})
 	if !assert.NoError(s.T(), err) {
@@ -91,7 +91,7 @@ func (s *Suite) TestRelationshipTypeListFilter() {
 
 	s.T().Run("test filter by IndividualPartyType", func(t *testing.T) {
 		// retrieve list of RelationshipTypes with the IndividualPartyType rule
-		list, err := s.client.RelationshipTypes().List(s.ctx, RelationshipTypeListOptions{
+		list, err := s.client.RelationshipTypes().List(s.Ctx, RelationshipTypeListOptions{
 			PartyTypeID: IndividualPartyType.ID,
 		})
 		if !assert.NoError(t, err) {
@@ -112,7 +112,7 @@ func (s *Suite) TestRelationshipTypeListFilter() {
 
 	s.T().Run("test filter by HouseholdPartyType", func(t *testing.T) {
 		//  retrieve list of relationship types with party type: HouseholdPartyType
-		list2, err := s.client.RelationshipTypes().List(s.ctx, RelationshipTypeListOptions{
+		list2, err := s.client.RelationshipTypes().List(s.Ctx, RelationshipTypeListOptions{
 			PartyTypeID: HouseholdPartyType.ID,
 		})
 		if !assert.NoError(t, err) {

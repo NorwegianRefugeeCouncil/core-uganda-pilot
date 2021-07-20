@@ -12,7 +12,7 @@ func (s *Suite) TestTeam() {
 func (s *Suite) testTeamAPI() {
 	// Create team
 	name := newUUID()
-	created, err := s.client.Teams().Create(s.ctx, &Team{
+	created, err := s.client.Teams().Create(s.Ctx, &Team{
 		Name: name,
 	})
 	if !assert.NoError(s.T(), err) {
@@ -22,7 +22,7 @@ func (s *Suite) testTeamAPI() {
 	assert.NotEmpty(s.T(), created.ID)
 
 	// Get team
-	get, err := s.client.Teams().Get(s.ctx, created.ID)
+	get, err := s.client.Teams().Get(s.Ctx, created.ID)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
@@ -31,7 +31,7 @@ func (s *Suite) testTeamAPI() {
 	}
 
 	// List teams
-	list, err := s.client.Teams().List(s.ctx, TeamListOptions{})
+	list, err := s.client.Teams().List(s.Ctx, TeamListOptions{})
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
