@@ -1,8 +1,8 @@
 package server
 
 import (
+	"github.com/boj/redistore"
 	"github.com/coreos/go-oidc/v3/oidc"
-	"github.com/gomodule/redigo/redis"
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/ory/hydra-client-go/client"
 	"net/http"
@@ -16,8 +16,8 @@ type GenericServerOptions struct {
 	HydraAdminClient  *client.OryHydra
 	HydraPublicClient *client.OryHydra
 	HydraHTTPClient   *http.Client
-	RedisPool         *redis.Pool
 	OidcProvider      *oidc.Provider
+	RedisStore        *redistore.RediStore
 }
 
 var cmsPath = "/apis/cms/v1"

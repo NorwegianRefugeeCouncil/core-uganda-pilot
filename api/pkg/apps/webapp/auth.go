@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/ory/hydra-client-go/client/admin"
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"strings"
 )
@@ -35,7 +36,22 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 			}
 
 			// Get the access token from the session
-			token := s.sessionManager.GetString(req.Context(), "access-token")
+			session, err := s.sessionManager.Get(req)
+			if err != nil {
+				logrus.WithError(err).Errorf("failed to get session")
+				s.Error(w, err)
+				return
+			}
+
+			var token string
+
+			accessTokenIntf, ok := session.Values["access-token"]
+			if ok {
+				accessTokenStr, ok := accessTokenIntf.(string)
+				if ok {
+					token = accessTokenStr
+				}
+			}
 
 			// Retrieve token from Authorization header if the token
 			// was not present in the session
