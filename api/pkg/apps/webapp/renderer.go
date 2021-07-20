@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/nrc-no/core/pkg/auth"
 	"github.com/nrc-no/core/pkg/sessionmanager"
+	"github.com/nrc-no/core/pkg/validation"
+	"html"
 	"html/template"
 	"io"
 	"net/http"
@@ -15,6 +17,8 @@ type RenderInterface interface {
 	IsLoggedIn() bool
 	Profile() (*Claims, error)
 	Notifications() ([]*sessionmanager.Notification, error)
+	ValidationClass(errorList validation.ErrorList) string
+	ValidationFeedback(errorList validation.ErrorList, id string) template.HTML
 }
 
 // RendererFactory is a factory to create Renderer
@@ -39,6 +43,14 @@ func (r *RendererFactory) Profile() (*Claims, error) {
 
 func (r *RendererFactory) Notifications() ([]*sessionmanager.Notification, error) {
 	return []*sessionmanager.Notification{}, nil
+}
+
+func (r *RendererFactory) ValidationClass(errorList validation.ErrorList) string {
+	return ""
+}
+
+func (r *RendererFactory) ValidationFeedback(errorList validation.ErrorList, id string) template.HTML {
+	return ""
 }
 
 // NewRendererFactory creates a new instance of the RendererFactory
@@ -111,11 +123,35 @@ func (r *Renderer) Notifications() ([]*sessionmanager.Notification, error) {
 	return r.sessionManager.ConsumeNotifications(r.req)
 }
 
+func (r *Renderer) ValidationClass(errorList validation.ErrorList) string {
+	if len(errorList) > 0 {
+		return "is-invalid"
+	}
+	return "is-valid"
+}
+
+func (r *Renderer) ValidationFeedback(errorList validation.ErrorList, id string) template.HTML {
+	if len(errorList) == 0 {
+		return `<div class="valid-feedback">Looks good!</div>`
+	}
+	s := fmt.Sprintf(`<div id="%sFeedback" class="invalid-feedback">`, id)
+	for i, e := range errorList {
+		if i > 0 {
+			s += `<br>`
+		}
+		s += html.EscapeString(e.Detail)
+	}
+	s += `</div>`
+	return template.HTML(s)
+}
+
 // WithRenderInterface adds the RenderInterface methods to the template
 func WithRenderInterface(t *template.Template, intf RenderInterface) *template.Template {
 	return t.Funcs(map[string]interface{}{
-		"IsLoggedIn":    intf.IsLoggedIn,
-		"Profile":       intf.Profile,
-		"Notifications": intf.Notifications,
+		"IsLoggedIn":         intf.IsLoggedIn,
+		"Profile":            intf.Profile,
+		"Notifications":      intf.Notifications,
+		"ValidationClass":    intf.ValidationClass,
+		"ValidationFeedback": intf.ValidationFeedback,
 	})
 }

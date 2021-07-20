@@ -16,6 +16,7 @@
       <excludeFolder url="file://$MODULE_DIR$/e2e/cypress/screenshots" />
       <excludeFolder url="file://$MODULE_DIR$/e2e/cypress/videos" />
       <excludeFolder url="file://$MODULE_DIR$/docs/_site" />
+      <excludeFolder url="file://$MODULE_DIR$/e2e/.husky/_" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

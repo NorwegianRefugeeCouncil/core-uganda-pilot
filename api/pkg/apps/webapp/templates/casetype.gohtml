@@ -10,34 +10,77 @@
                 <h4 class="card-title">Case Type</h4>
                 <form action="/settings/casetypes{{if .CaseType}}/{{.CaseType.ID}}{{end}}" method="post">
                     <div class="form-floating mb-3">
-                        <input id="name" type="text" class="form-control" name="name" data-testid="name"
-                               value="{{if .CaseType}}{{.CaseType.Name}}{{end}}">
-                        <label for="name">Name</label>
+                        {{$name := "name"}}
+                        {{if .Errors}}
+                            {{$errs := .Errors.Find $name}}
+                            <input id="{{$name}}"
+                                   type="text"
+                                   name="{{$name}}"
+                                   value="{{if .CaseType}}{{.CaseType.Name}}{{end}}"
+                                   data-testid="{{$name}}"
+                                   class="form-control {{ValidationClass $errs}}"
+                                   aria-describedby="nameFeedback"
+                            >
+                            <label for="{{$name}}">Name</label>
+                            {{ValidationFeedback $errs $name}}
+                        {{else}}
+                            <input id="{{$name}}" type="text" class="form-control" name="{{$name}}"
+                                   data-testid="{{$name}}"
+                                   value="{{if .CaseType}}{{.CaseType.Name}}{{end}}">
+                            <label for="{{$name}}">Name</label>
+                        {{end}}
                     </div>
                     <div class="form-floating mb-3">
-                        <select id="party-type" type="select" class="form-select" name="partyTypeId"
-                                {{if .CaseType}}disabled{{end}}>
-                            {{if .CaseType}}
-                                {{$partyType := .PartyTypes.FindByID .CaseType.PartyTypeID}}
-                                <option selected value="{{$partyType.ID}}"
-                                        data-cy="partytype-option">
-                                    {{$partyType.Name}}
-                                </option>
-                            {{else}}
-                                {{if .PartyTypes}}
-                                    <option selected></option>
-                                    {{range .PartyTypes.Items}}
-                                        <option value="{{.ID}}" data-cy="partytype-option">{{.Name}}</option>
-                                    {{end}}
+                        {{$name = "partyTypeId"}}
+                        {{if .Errors}}
+                            {{$errs := .Errors.Find $name}}
+                            <select id="party-type"
+                                    class="form-select {{ValidationClass $errs}}"
+                                    name="{{$name}}"
+                                    {{if .CaseType}}disabled{{end}}>
+                                {{if .CaseType}}
+                                    {{$partyType := .PartyTypes.FindByID .CaseType.PartyTypeID}}
+                                    <option selected value="{{$partyType.ID}}"
+                                            data-cy="partytype-option">
+                                        {{$partyType.Name}}
+                                    </option>
                                 {{else}}
-                                    <option disabled selected>No party types defined</option>
+                                    {{if .PartyTypes}}
+                                        <option selected></option>
+                                        {{range .PartyTypes.Items}}
+                                            <option value="{{.ID}}" data-cy="partytype-option">{{.Name}}</option>
+                                        {{end}}
+                                    {{else}}
+                                        <option disabled selected>No party types defined</option>
+                                    {{end}}
                                 {{end}}
-                            {{end}}
-                        </select>
+                            </select>
+                            {{ValidationFeedback $errs $name}}
+                        {{else}}
+                            <select id="party-type" class="form-select" name="{{$name}}"
+                                    {{if .CaseType}}disabled{{end}}>
+                                {{if .CaseType}}
+                                    {{$partyType := .PartyTypes.FindByID .CaseType.PartyTypeID}}
+                                    <option selected value="{{$partyType.ID}}"
+                                            data-cy="partytype-option">
+                                        {{$partyType.Name}}
+                                    </option>
+                                {{else}}
+                                    {{if .PartyTypes}}
+                                        <option selected></option>
+                                        {{range .PartyTypes.Items}}
+                                            <option value="{{.ID}}" data-cy="partytype-option">{{.Name}}</option>
+                                        {{end}}
+                                    {{else}}
+                                        <option disabled selected>No party types defined</option>
+                                    {{end}}
+                                {{end}}
+                            </select>
+                        {{end}}
                         <label for="party-type">Select Party Type</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <select id="team" type="select" class="form-select" name="teamId"
+                        <select id="team" class="form-select" name="teamId"
                                 {{if .CaseType}}disabled{{end}}>
                             {{if .CaseType}}
                                 {{$team := .Teams.FindByID .CaseType.TeamID}}

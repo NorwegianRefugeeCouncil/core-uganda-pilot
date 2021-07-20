@@ -7,7 +7,17 @@ import (
 	"strings"
 )
 
+// formatField lets us use field names without the leading "." which paths have by default
+func formatField(field string) string {
+	lead := field[0:1]
+	if lead != "." && lead != "[" {
+		field = "." + field
+	}
+	return field
+}
+
 func (v ErrorList) Find(field string) ErrorList {
+	field = formatField(field)
 	errs := ErrorList{}
 	for _, err := range v {
 		if err.Field == field {
@@ -18,6 +28,7 @@ func (v ErrorList) Find(field string) ErrorList {
 }
 
 func (v ErrorList) HasError(field string, errType ErrorType) bool {
+	field = formatField(field)
 	for _, err := range v {
 		if err.Field == field && err.Type == errType {
 			return true
