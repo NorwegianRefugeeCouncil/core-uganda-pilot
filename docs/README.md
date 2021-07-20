@@ -48,8 +48,8 @@ or
 ### 6. Login:
 
 To login into the webapp, use the following credentials:
-- username: _courtney.lare@email.com_
-- password: password
+- username: __courtney.lare@email.com__
+- password: __password__
 
 
 ## Running tests
