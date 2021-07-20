@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -160,7 +161,10 @@ type TokenIntrospectionResponse struct {
 
 func (r *Request) Do(ctx context.Context) *Response {
 
+	l := logrus.WithField("scheme", r.c.config.Scheme).WithField("host", r.c.config.Host).WithField("path", r.path)
+
 	if r.err != nil {
+		l.WithError(r.err).Errorf("could not send request")
 		return &Response{err: r.err}
 	}
 
@@ -179,6 +183,7 @@ func (r *Request) Do(ctx context.Context) *Response {
 
 	req, err := http.NewRequestWithContext(ctx, r.verb, u.String(), r.body)
 	if err != nil {
+		l.WithError(r.err).Errorf("could not create http request")
 		return &Response{err: err}
 	}
 
@@ -213,13 +218,19 @@ func (r *Request) Do(ctx context.Context) *Response {
 
 	res, err := httpClient.Do(req)
 	if err != nil {
+		l.WithError(err).Errorf("could not send http request")
 		return &Response{err: err}
 	}
+
+	l = l.WithField("statusCode", res.StatusCode)
 
 	if res.StatusCode < 200 || res.StatusCode > 399 {
 		bodyBytes, err := ioutil.ReadAll(res.Body)
 		if err != nil {
-			return &Response{err: fmt.Errorf("unexpected status code: %d", res.StatusCode)}
+			l.Errorf("error status code received")
+			return &Response{err: fmt.Errorf("unexpected status code")}
+		} else {
+			l.WithField("response", string(bodyBytes)).Errorf("unexpected status code")
 		}
 		return &Response{
 			err:  fmt.Errorf("unexpected status code: %d. response: %s", res.StatusCode, string(bodyBytes)),
@@ -229,6 +240,7 @@ func (r *Request) Do(ctx context.Context) *Response {
 
 	bodyBytes, err := ioutil.ReadAll(res.Body)
 	if err != nil {
+		l.WithError(r.err).Errorf("failed to read response body")
 		return &Response{err: err}
 	}
 

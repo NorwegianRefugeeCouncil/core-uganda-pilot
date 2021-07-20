@@ -14,98 +14,124 @@ import (
 	"strings"
 )
 
-func (h *Server) Individuals(w http.ResponseWriter, req *http.Request) {
+func (s *Server) Individuals(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
-	iamCli := h.IAMClient(ctx)
-	attrs, err := iamCli.Attributes().List(ctx, iam.AttributeListOptions{})
+	iamClient, err := s.IAMClient(req)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
+		return
+	}
+
+	attrs, err := iamClient.Attributes().List(ctx, iam.AttributeListOptions{})
+	if err != nil {
+		s.Error(w, err)
 		return
 	}
 
 	if req.Method == "POST" {
-		h.PostIndividual(ctx, attrs.Items, "", w, req)
+		s.PostIndividual(ctx, attrs.Items, "", w, req)
 		return
 	}
 
-	list, err := iamCli.Individuals().List(ctx, iam.IndividualListOptions{})
+	var listOptions iam.IndividualListOptions
+	if err := listOptions.UnmarshalQueryParameters(req.URL.Query()); err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	list, err := iamClient.Individuals().List(ctx, listOptions)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
-	if err := h.renderFactory.New(req).ExecuteTemplate(w, "individuals", map[string]interface{}{
+	if err := s.renderFactory.New(req).ExecuteTemplate(w, "individuals", map[string]interface{}{
 		"Individuals": list,
 		"Page":        "list",
 	}); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 }
 
-func (h *Server) IndividualCredentials(w http.ResponseWriter, req *http.Request) {
+func (s *Server) IndividualCredentials(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	iamClient := h.IAMClient(ctx)
+
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
 		err := fmt.Errorf("no id in path")
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 	individual, err := iamClient.Individuals().Get(ctx, id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 	if req.Method == "POST" {
-		h.PostIndividualCredentials(w, req, individual.ID)
+		s.PostIndividualCredentials(w, req, individual.ID)
 		return
 	}
 
-	if err := h.renderFactory.New(req).ExecuteTemplate(w, "individual_credentials", map[string]interface{}{
+	if err := s.renderFactory.New(req).ExecuteTemplate(w, "individual_credentials", map[string]interface{}{
 		"Page":       "credentials",
 		"Individual": individual,
 	}); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 }
 
-func (h *Server) PostIndividualCredentials(w http.ResponseWriter, req *http.Request, partyID string) {
+func (s *Server) PostIndividualCredentials(w http.ResponseWriter, req *http.Request, partyID string) {
 	ctx := req.Context()
 
 	if err := req.ParseForm(); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 	values := req.Form
 	password := values.Get("password")
 
-	if err := h.login.Login().SetCredentials(ctx, partyID, password); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if err := s.login.Login().SetCredentials(ctx, partyID, password); err != nil {
+		s.Error(w, err)
 		return
 	}
 
 	http.Redirect(w, req, "/individuals/"+partyID+"/credentials", http.StatusSeeOther)
 }
 
-func (h *Server) Individual(w http.ResponseWriter, req *http.Request) {
+func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	cmsClient := h.CMSClient(ctx)
-	iamClient := h.IAMClient(ctx)
+
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	cmsClient, err := s.CMSClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
 		err := fmt.Errorf("no id in path")
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
@@ -190,14 +216,14 @@ func (h *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	})
 
 	if err := g.Wait(); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 	relationshipTypes = PrepRelationshipTypeDropdown(relationshipTypes)
 
 	if req.Method == "POST" {
-		h.PostIndividual(ctx, attrs.Items, id, w, req)
+		s.PostIndividual(ctx, attrs.Items, id, w, req)
 		return
 	}
 
@@ -220,7 +246,7 @@ func (h *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		displayCases = append(displayCases, &d)
 	}
 
-	if err := h.renderFactory.New(req).ExecuteTemplate(w, "individual", map[string]interface{}{
+	if err := s.renderFactory.New(req).ExecuteTemplate(w, "individual", map[string]interface{}{
 		"IsNew":              id == "new",
 		"Individual":         b,
 		"Parties":            bList,
@@ -234,9 +260,9 @@ func (h *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		"FirstNameAttribute": iam.FirstNameAttribute,
 		"LastNameAttribute":  iam.LastNameAttribute,
 		"Page":               "general",
-		"Constants": 		  h.Constants,
+		"Constants":          s.Constants,
 	}); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
@@ -261,17 +287,21 @@ func PrepRelationshipTypeDropdown(relationshipTypes *iam.RelationshipTypeList) *
 	return &newList
 }
 
-func (h *Server) PostIndividual(
+func (s *Server) PostIndividual(
 	ctx context.Context,
 	attrs []*iam.Attribute,
 	id string,
 	w http.ResponseWriter,
 	req *http.Request) {
 
-	iamClient := h.IAMClient(ctx)
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	if err := req.ParseForm(); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
@@ -298,20 +328,20 @@ func (h *Server) PostIndividual(
 
 			if !strings.HasSuffix(key, "]") {
 				err := fmt.Errorf("unexpected form value key: %s", key)
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+				s.Error(w, err)
 				return
 			}
 
 			attrId, err := uuid.FromString(key[10 : len(key)-1])
 			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+				s.Error(w, err)
 				return
 			}
 
 			attr, ok := attributeMap[attrId.String()]
 			if !ok {
 				err := fmt.Errorf("attribute with id %s not found", attrId)
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+				s.Error(w, err)
 				return
 			}
 
@@ -325,20 +355,20 @@ func (h *Server) PostIndividual(
 			keyParts := strings.Split(key, ".")
 			if len(keyParts) != 2 {
 				err := fmt.Errorf("unexpected form value key: %s", key)
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+				s.Error(w, err)
 				return
 			}
 
 			if !strings.HasSuffix(keyParts[0], "]") {
 				err := fmt.Errorf("unexpected form value key: %s", key)
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+				s.Error(w, err)
 				return
 			}
 
 			relationshipIdxStr := keyParts[0][14 : len(keyParts[0])-1]
 			relationshipIdx, err := strconv.Atoi(relationshipIdxStr)
 			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+				s.Error(w, err)
 				return
 			}
 
@@ -367,7 +397,7 @@ func (h *Server) PostIndividual(
 				rel.RelationshipTypeID = vals[0]
 			default:
 				err := fmt.Errorf("unexpected relationship attribute: %s", attrName)
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+				s.Error(w, err)
 				return
 			}
 		}
@@ -380,24 +410,33 @@ func (h *Server) PostIndividual(
 		var err error
 		individual, err = iamClient.Individuals().Create(ctx, b)
 		if err != nil {
-
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			s.Error(w, err)
 			return
 		}
-		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+
+		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
 			Message: fmt.Sprintf("Individual \"%s\" successfully created", b.String()),
 			Theme:   "success",
-		})
+		}); err != nil {
+			s.Error(w, err)
+			return
+		}
+
 	} else {
 		var err error
 		if individual, err = iamClient.Individuals().Update(ctx, b); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			s.Error(w, err)
 			return
 		}
-		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+
+		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
 			Message: fmt.Sprintf("Individual \"%s\" successfully updated", b.String()),
 			Theme:   "success",
-		})
+		}); err != nil {
+			s.Error(w, err)
+			return
+		}
+
 	}
 
 	// Update, create or delete the relationships
@@ -409,7 +448,7 @@ func (h *Server) PostIndividual(
 			relationship := rel.Relationship
 			relationship.FirstPartyID = individual.ID
 			if _, err := iamClient.Relationships().Create(ctx, rel.Relationship); err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+				s.Error(w, err)
 				return
 			}
 		} else if !rel.MarkedForDeletion {
@@ -417,13 +456,13 @@ func (h *Server) PostIndividual(
 			relationship := rel.Relationship
 			relationship.FirstPartyID = individual.ID
 			if _, err := iamClient.Relationships().Update(ctx, rel.Relationship); err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+				s.Error(w, err)
 				return
 			}
 		} else {
 			// Delete the relationship
 			if err := iamClient.Relationships().Delete(ctx, rel.Relationship.ID); err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+				s.Error(w, err)
 				return
 			}
 		}

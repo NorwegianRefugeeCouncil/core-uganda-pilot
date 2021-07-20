@@ -2,17 +2,19 @@ package server
 
 import (
 	"context"
+	"crypto/rand"
 	"crypto/tls"
 	"crypto/x509"
 	"errors"
 	"fmt"
-	"github.com/coreos/go-oidc/v3/oidc"
+	"github.com/boj/redistore"
 	"github.com/gomodule/redigo/redis"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/seeder"
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/middleware"
+	"github.com/nrc-no/core/pkg/utils"
 	"github.com/ory/hydra-client-go/client"
 	"github.com/ory/hydra-client-go/client/public"
 	"github.com/sirupsen/logrus"
@@ -24,6 +26,7 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"time"
 )
 
 type Options struct {
@@ -49,11 +52,9 @@ type Options struct {
 
 	// Redis
 	RedisMaxIdleConnections int
-	RedisNetwork            string
 	RedisAddress            string
 	RedisPassword           string
 	RedisPasswordFile       string
-	RedisSecretKey          string
 
 	// Hydra
 	HydraAdminURL  string
@@ -70,6 +71,10 @@ type Options struct {
 	WebAppIAMHost           string
 	WebAppCMSScheme         string
 	WebAppCMSHost           string
+	WebAppSessionKeyFile1   string
+	WebAppBlockKeyFile1     string
+	WebAppSessionKeyFile2   string
+	WebAppBlockKeyFile2     string
 
 	// CMS
 	CMSBasePath string
@@ -112,10 +117,8 @@ func NewOptions() *Options {
 		MongoPassword:           "",
 		MongoHosts:              defaultMongoHosts,
 		RedisMaxIdleConnections: 10,
-		RedisNetwork:            "tcp",
 		RedisAddress:            defaultRedisAddress,
 		RedisPassword:           "",
-		RedisSecretKey:          "some-secret",
 		HydraAdminURL:           defaultHydraAdminURL,
 		HydraPublicURL:          defaultHydraPublicURL,
 		WebAppTemplateDirectory: "pkg/apps/webapp/templates",
@@ -163,11 +166,9 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 
 	// Redis
 	fs.IntVar(&o.RedisMaxIdleConnections, "redis-max-idle-conns", o.RedisMaxIdleConnections, "Redis maximum number of idle connections")
-	fs.StringVar(&o.RedisAddress, "redis-address", o.RedisAddress, "Redis address")
-	fs.StringVar(&o.RedisNetwork, "redis-network", o.RedisNetwork, "Redis network")
+	fs.StringVar(&o.RedisAddress, "redis-address", o.RedisAddress, "Redis Address")
 	fs.StringVar(&o.RedisPassword, "redis-password", o.RedisPassword, "Redis password file")
 	fs.StringVar(&o.RedisPasswordFile, "redis-password-file", o.RedisPasswordFile, "Redis password")
-	fs.StringVar(&o.RedisSecretKey, "redis-secret-key", o.RedisSecretKey, "Redis secret key")
 
 	// Hydra
 	fs.StringVar(&o.HydraAdminURL, "hydra-admin-url", o.HydraAdminURL, "Hydra Admin URL")
@@ -200,17 +201,25 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 	fs.StringVar(&o.WebAppIAMHost, "web-iam-host", o.WebAppIAMHost, "Web app IAM host")
 	fs.StringVar(&o.WebAppCMSScheme, "web-cms-scheme", o.WebAppCMSScheme, "Web app CMS scheme")
 	fs.StringVar(&o.WebAppCMSHost, "web-cms-host", o.WebAppCMSHost, "Web app CMS host")
+	fs.StringVar(&o.WebAppSessionKeyFile1, "session-hash-key-file-1", o.WebAppSessionKeyFile1, "Web app session hash key file (1)")
+	fs.StringVar(&o.WebAppBlockKeyFile1, "session-block-key-file-1", o.WebAppBlockKeyFile1, "Web app session block key file (1)")
+	fs.StringVar(&o.WebAppSessionKeyFile2, "session-hash-key-file-2", o.WebAppSessionKeyFile2, "Web app session hash key file (2)")
+	fs.StringVar(&o.WebAppBlockKeyFile2, "session-block-key-file-2", o.WebAppBlockKeyFile2, "Web app session block key file (2)")
 }
 
 type CompletedOptions struct {
 	*Options
-	MongoClient        *mongo.Client
-	HydraAdminClient   *client.OryHydra
-	HydraPublicClient  *client.OryHydra
-	RedisPool          *redis.Pool
-	OAuthTokenEndpoint string
-	OIDCProvider       *oidc.Provider
-	HydraTLSClient     *http.Client
+	MongoClientFn              utils.MongoClientFn
+	HydraAdminClient           *client.OryHydra
+	HydraPublicClient          *client.OryHydra
+	OAuthTokenEndpoint         string
+	OAuthJwksURI               string
+	OAuthIssuerURL             string
+	OAuthAuthorizationEndpoint string
+	HydraTLSClient             *http.Client
+	OAuthIDTokenSigningAlgs    []string
+	RediStore                  *redistore.RediStore
+	OpenIdConf                 *public.DiscoverOpenIDConfigurationOK
 }
 
 func readFile(path string) (string, error) {
@@ -218,35 +227,26 @@ func readFile(path string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return string(fileBytes), nil
+	fileContent := string(fileBytes)
+	lines := strings.Split(fileContent, "\n")
+	return lines[0], nil
 }
 
 func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
+
+	logrus.Infof("completing server options")
+
+	var err error
 
 	issuerUrl := o.HydraPublicURL
 	if !strings.HasSuffix(issuerUrl, "/") {
 		issuerUrl = issuerUrl + "/"
 	}
 
-	var err error
-
-	if len(o.MongoUsername) == 0 && len(o.MongoUsernameFile) > 0 {
-		o.MongoUsername, err = readFile(o.MongoUsernameFile)
-		if err != nil {
-			return CompletedOptions{}, err
-		}
-	}
-
-	if len(o.MongoPassword) == 0 && len(o.MongoPasswordFile) > 0 {
-		o.MongoPassword, err = readFile(o.MongoPasswordFile)
-		if err != nil {
-			return CompletedOptions{}, err
-		}
-	}
-
 	if len(o.RedisPassword) == 0 && len(o.RedisPasswordFile) > 0 {
 		o.RedisPassword, err = readFile(o.RedisPasswordFile)
 		if err != nil {
+			logrus.WithError(err).Errorf("failed to get redis password")
 			return CompletedOptions{}, err
 		}
 	}
@@ -254,6 +254,7 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 	if len(o.LoginClientSecret) == 0 && len(o.LoginClientSecretFile) > 0 {
 		o.LoginClientSecret, err = readFile(o.LoginClientSecretFile)
 		if err != nil {
+			logrus.WithError(err).Errorf("failed to get login client secret")
 			return CompletedOptions{}, err
 		}
 	}
@@ -261,25 +262,55 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 	if len(o.WebAppClientSecret) == 0 && len(o.WebAppClientSecretFile) > 0 {
 		o.WebAppClientSecret, err = readFile(o.WebAppClientSecretFile)
 		if err != nil {
+			logrus.WithError(err).Errorf("failed to get webapp client secret")
 			return CompletedOptions{}, err
 		}
 	}
 
-	mongoClient, err := MongoClient(o.MongoHosts, o.MongoUsername, o.MongoPassword)
-	if err != nil {
-		return CompletedOptions{}, err
+	var mongoClientFn = func(ctx context.Context) (*mongo.Client, error) {
+
+		var mongoUsername = o.MongoUsername
+		if len(mongoUsername) == 0 && len(o.MongoUsernameFile) > 0 {
+			mongoUsername, err = readFile(o.MongoUsernameFile)
+			if err != nil {
+				logrus.WithError(err).Errorf("failed to read mongo username file")
+				return nil, err
+			}
+		}
+
+		var mongoPassword = o.MongoPassword
+		if len(mongoPassword) == 0 && len(o.MongoPasswordFile) > 0 {
+			mongoPassword, err = readFile(o.MongoPasswordFile)
+			if err != nil {
+				logrus.WithError(err).Errorf("failed to read mongo password file")
+				return nil, err
+			}
+		}
+
+		mongoClient, err := MongoClient(o.MongoHosts, mongoUsername, mongoPassword)
+		if err != nil {
+			logrus.WithError(err).Errorf("failed to create mongo client")
+			return nil, err
+		}
+
+		if err := mongoClient.Connect(ctx); err != nil {
+			logrus.WithError(err).Errorf("failed to connect to mongo")
+			return nil, err
+		}
+
+		return mongoClient, nil
+
 	}
-	if err := mongoClient.Connect(ctx); err != nil {
+
+	hydraAdminClient, err := HydraClient(o.HydraAdminURL)
+	if err != nil {
+		logrus.WithError(err).Errorf("failed to create hydra admin client")
 		return CompletedOptions{}, err
 	}
 
-	hydraAdminClient, err := HydraAdminClient(o.HydraAdminURL)
+	hydraPublicClient, err := HydraClient(o.HydraPublicURL)
 	if err != nil {
-		return CompletedOptions{}, err
-	}
-
-	hydraPublicClient, err := HydraAdminClient(o.HydraPublicURL)
-	if err != nil {
+		logrus.WithError(err).Errorf("failed to create hydra public client")
 		return CompletedOptions{}, err
 	}
 
@@ -287,44 +318,120 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 	if !o.TLSDisable {
 		hydraHttpClient, err = tlsClient(o.TLSCertPath)
 		if err != nil {
+			logrus.WithError(err).Errorf("failed to create tls client")
 			return CompletedOptions{}, err
 		}
 	}
 
+	time.Sleep(5 * time.Second)
+
+	logrus.Infof("discovering openid configuration")
 	openIdConf, err := hydraPublicClient.Public.DiscoverOpenIDConfiguration(&public.DiscoverOpenIDConfigurationParams{
 		Context:    ctx,
 		HTTPClient: hydraHttpClient,
 	})
 	if err != nil {
+		logrus.WithError(err).Errorf("failed to discover openid configuration")
 		panic(err)
 	}
 
-	oidcCtx := oidc.ClientContext(ctx, hydraHttpClient)
-	oidcProvider, err := oidc.NewProvider(oidcCtx, issuerUrl)
-	if err != nil {
-		panic(err)
-	}
-
+	logrus.Infof("creating redis pool for redis host %s", o.RedisAddress)
 	pool := &redis.Pool{
-		MaxIdle: o.RedisMaxIdleConnections,
+		MaxActive:   500,
+		MaxIdle:     500,
+		IdleTimeout: 5 * time.Second,
+		TestOnBorrow: func(c redis.Conn, t time.Time) error {
+			_, err := c.Do("PING")
+			if err != nil {
+				logrus.WithError(err).Errorf("failed to get connection")
+			}
+			return err
+		},
 		Dial: func() (redis.Conn, error) {
 			var redisOptions []redis.DialOption
 			if len(o.RedisPassword) > 0 {
 				redisOptions = append(redisOptions, redis.DialPassword(o.RedisPassword))
 			}
-			return redis.Dial(o.RedisNetwork, o.RedisAddress, redisOptions...)
+			return redis.Dial("tcp", o.RedisAddress, redisOptions...)
 		},
 	}
 
+	logrus.Infof("getting redis connection")
+	conn := pool.Get()
+	defer conn.Close()
+
+	logrus.Infof("testing redis connection")
+	_, err = conn.Do("PING")
+	if err != nil {
+		logrus.WithError(err).Errorf("failed to test redis")
+		panic(err)
+	}
+
+	var sessionKey1 = make([]byte, 32)
+	var blockKey1 []byte = nil
+	var sessionKey2 []byte = nil
+	var blockKey2 []byte = nil
+	if len(o.WebAppSessionKeyFile1) > 0 {
+		sessionKeyStr, err := readFile(o.WebAppSessionKeyFile1)
+		if err != nil {
+			logrus.WithError(err).Errorf("failed to read session hash key file ")
+			panic(err)
+		}
+		sessionKey1 = []byte(sessionKeyStr)[0:32]
+	} else {
+		_, err = rand.Read(sessionKey1)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	if len(o.WebAppBlockKeyFile1) > 0 {
+		fileValue, err := readFile(o.WebAppBlockKeyFile1)
+		if err != nil {
+			logrus.WithError(err).Errorf("failed to read session block key file 1")
+			panic(err)
+		}
+		blockKey1 = []byte(fileValue)[0:32]
+	}
+
+	if len(o.WebAppSessionKeyFile2) > 0 {
+		fileValue, err := readFile(o.WebAppSessionKeyFile2)
+		if err != nil {
+			logrus.WithError(err).Errorf("failed to read session hash key file 2")
+			panic(err)
+		}
+		sessionKey2 = []byte(fileValue)[0:32]
+	}
+
+	if len(o.WebAppBlockKeyFile2) > 0 {
+		fileValue, err := readFile(o.WebAppBlockKeyFile2)
+		if err != nil {
+			logrus.WithError(err).Errorf("failed to read session block key file 2")
+			panic(err)
+		}
+		blockKey2 = []byte(fileValue)[0:32]
+	}
+
+	logrus.Infof("creating redis store")
+	redisStore, err := redistore.NewRediStoreWithPool(pool, sessionKey1, blockKey1, sessionKey2, blockKey2)
+	if err != nil {
+		logrus.WithError(err).Errorf("failed to create redis store")
+		panic(err)
+	}
+
 	completedOptions := CompletedOptions{
-		Options:            o,
-		MongoClient:        mongoClient,
-		HydraAdminClient:   hydraAdminClient,
-		HydraPublicClient:  hydraPublicClient,
-		HydraTLSClient:     hydraHttpClient,
-		RedisPool:          pool,
-		OAuthTokenEndpoint: *openIdConf.Payload.TokenEndpoint,
-		OIDCProvider:       oidcProvider,
+		Options:                    o,
+		MongoClientFn:              mongoClientFn,
+		HydraAdminClient:           hydraAdminClient,
+		HydraPublicClient:          hydraPublicClient,
+		HydraTLSClient:             hydraHttpClient,
+		RediStore:                  redisStore,
+		OAuthTokenEndpoint:         o.HydraPublicURL + "/oauth2/token",
+		OAuthJwksURI:               o.HydraPublicURL + "/.well-known/jwks.json",
+		OAuthIssuerURL:             o.HydraPublicURL,
+		OAuthAuthorizationEndpoint: o.HydraPublicURL + "/oauth2/auth",
+		OAuthIDTokenSigningAlgs:    openIdConf.Payload.IDTokenSigningAlgValuesSupported,
+		OpenIdConf:                 openIdConf,
 	}
 	return completedOptions, nil
 }
@@ -332,6 +439,8 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 func tlsClient(tlsCertPath string) (*http.Client, error) {
 	certFile, err := ioutil.ReadFile(tlsCertPath)
 	if err != nil {
+		err = fmt.Errorf("failed to read tls cert file: %v", err)
+		logrus.WithError(err).Errorf("")
 		return nil, err
 	}
 	certPool := x509.NewCertPool()
@@ -350,9 +459,11 @@ func tlsClient(tlsCertPath string) (*http.Client, error) {
 	return httpClient, nil
 }
 
-func HydraAdminClient(adminURL string) (*client.OryHydra, error) {
+func HydraClient(adminURL string) (*client.OryHydra, error) {
 	hydraAdminURL, err := url.Parse(adminURL)
 	if err != nil {
+		err = fmt.Errorf("failed to parse hydra admin url: %v", err)
+		logrus.WithError(err).Errorf("")
 		return nil, err
 	}
 	hydraAdminClient := client.NewHTTPClientWithConfig(nil, &client.TransportConfig{
@@ -382,12 +493,12 @@ func MongoClient(hosts []string, username, password string) (*mongo.Client, erro
 
 func (c CompletedOptions) Generic() *server.GenericServerOptions {
 	return &server.GenericServerOptions{
-		MongoClient:       c.MongoClient,
+		MongoClientFn:     c.MongoClientFn,
 		MongoDatabase:     c.MongoDatabase,
 		Environment:       c.Environment,
 		HydraAdminClient:  c.HydraAdminClient,
 		HydraPublicClient: c.HydraPublicClient,
-		RedisPool:         c.RedisPool,
+		RedisStore:        c.RediStore,
 		HydraHTTPClient:   c.HydraTLSClient,
 	}
 }
@@ -396,7 +507,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 
 	// Prep db
 	if c.ClearDB {
-		if err := seeder.Clear(ctx, c.MongoClient, c.MongoDatabase); err != nil {
+		if err := seeder.Clear(ctx, c.MongoClientFn, c.MongoDatabase); err != nil {
 			panic(err)
 		}
 	}
@@ -430,7 +541,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	}
 
 	srv := &Server{
-		MongoClient:       c.MongoClient,
+		MongoClientFn:     c.MongoClientFn,
 		HydraPublicClient: c.HydraPublicClient,
 		HydraAdminClient:  c.HydraAdminClient,
 		WebAppServer:      webAppServer,
@@ -447,7 +558,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	}()
 
 	if c.SeedDB {
-		if err := seeder.Seed(ctx, c.MongoClient, c.MongoDatabase); err != nil {
+		if err := seeder.Seed(ctx, c.MongoClientFn, c.MongoDatabase); err != nil {
 			panic(err)
 		}
 	}

@@ -22,7 +22,7 @@
                 {{ range .CaseTypes.Items }}
                     <a class="card mb-3 shadow-sm text-dark text-decoration-none"
                        href="/settings/casetypes/{{.ID}}"
-                       data-cy="casetype"
+                       data-testid="casetype"
                     >
                         <div class="card-body">
                             {{$partyType := $.PartyTypes.FindByID .PartyTypeID}}

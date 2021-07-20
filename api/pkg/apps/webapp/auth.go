@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/ory/hydra-client-go/client/admin"
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"strings"
 )
@@ -14,24 +15,46 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 	return func(handler http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 
+			// When in development mode, the user may provide a custom header
+			// containing the email of the user s.he wants to impersonate,
+			// effectively bypassing authorization
 			if s.environment == "Development" {
 				authUserEmail := req.Header.Get("X-E2E-Authenticated-User-Email")
 				if len(authUserEmail) != 0 {
-					s.setAuthenticatedUserSubject(w, req, authUserEmail, handler)
+					s.dangerouslySetAuthenticatedUserUsingEmail(w, req, authUserEmail, handler)
 					return
 				}
 			}
 
 			// Do no perform auth when user tries to access login or callback
 			// Because that is performing auth itself
+			// If we would return a unauthorized response, then the user could
+			// never log in, as logging in would itself be "unauthorized"
 			if req.URL.Path == "/login" || req.URL.Path == "/callback" {
 				handler.ServeHTTP(w, req)
 				return
 			}
 
 			// Get the access token from the session
-			token := s.sessionManager.GetString(req.Context(), "access-token")
+			session, err := s.sessionManager.Get(req)
+			if err != nil {
+				logrus.WithError(err).Errorf("failed to get session")
+				s.Error(w, err)
+				return
+			}
 
+			var token string
+
+			accessTokenIntf, ok := session.Values["access-token"]
+			if ok {
+				accessTokenStr, ok := accessTokenIntf.(string)
+				if ok {
+					token = accessTokenStr
+				}
+			}
+
+			// Retrieve token from Authorization header if the token
+			// was not present in the session
 			if len(token) == 0 {
 				authHeader := req.Header.Get("Authorization")
 				authHeaderParts := strings.Split(authHeader, " ")
@@ -53,13 +76,13 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 				HTTPClient: s.HydraHTTPClient,
 			})
 			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+				s.Error(w, err)
 				return
 			}
 
+			// If the user is not active, then redirect to login
 			if !*res.Payload.Active {
 				http.Redirect(w, req, "/login", http.StatusTemporaryRedirect)
-				// http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
 
@@ -69,7 +92,7 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 
 }
 
-func (s *Server) setAuthenticatedUserSubject(w http.ResponseWriter, req *http.Request, authUserEmail string, handler http.Handler) {
+func (s *Server) dangerouslySetAuthenticatedUserUsingEmail(w http.ResponseWriter, req *http.Request, authUserEmail string, handler http.Handler) {
 	ctx := req.Context()
 
 	authUsers, err := s.iamAdminClient.Parties().Search(ctx, iam.PartySearchOptions{
@@ -78,11 +101,11 @@ func (s *Server) setAuthenticatedUserSubject(w http.ResponseWriter, req *http.Re
 		},
 	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 	}
 	if len(authUsers.Items) == 0 {
 		err := fmt.Errorf("user not found")
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 	}
 	authUser := authUsers.Items[0]
 

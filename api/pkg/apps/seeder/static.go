@@ -108,7 +108,7 @@ func membership(id string, individual iam.Individual, team iam.Team) iam.Members
 	return m
 }
 
-func kase(id, caseTypeID, createdByID, partyID, teamID string, done bool) cms.Case {
+func kase(id, caseTypeID, createdByID, partyID, teamID string, done bool, formData *cms.CaseTemplate) cms.Case {
 	k := cms.Case{
 		ID:         id,
 		CaseTypeID: caseTypeID,
@@ -116,6 +116,7 @@ func kase(id, caseTypeID, createdByID, partyID, teamID string, done bool) cms.Ca
 		PartyID:    partyID,
 		TeamID:     teamID,
 		Done:       done,
+		FormData: 	formData,
 	}
 	cases = append(cases, k)
 	return k
@@ -135,63 +136,6 @@ var (
 	UgandaICLATeam          = team("a43f84d5-3f8a-48c4-a896-5fb0fcd3e42b", "Uganda ICLA Team")
 	UgandaCoreAdminTeam     = team("814fc372-08a6-4e6b-809b-30ebb51cb268", "Uganda Core Admin Team")
 	MozambiqueEducationTeam = team("80606eb4-b53a-4fda-be12-e9806e11d44a", "Mozambique Education Team")
-
-	// Case Templates
-	Legal = &cms.CaseTemplate{
-		FormElements: []cms.CaseTemplateFormElement{
-			{
-				Type: "dropdown",
-				Attributes: cms.CaseTemplateFormElementAttribute{
-					Label:       "Legal satus",
-					ID:          "legalStatus",
-					Description: "What is the beneficiary's current legal status?",
-					Options:     []string{"Citizen", "Permanent resident", "Accepted refugee", "Asylum seeker", "Undetermined"},
-				},
-				Validation: cms.CaseTemplateFormElementValidation{
-					Required: true,
-				},
-			},
-			{
-				Type: "checkbox",
-				Attributes: cms.CaseTemplateFormElementAttribute{
-					Label:       "Qualified services",
-					ID:          "qualifiedServices",
-					Description: "What services does the beneficiary qualify for?",
-					CheckboxOptions: []cms.CaseTemplateCheckboxOption{
-						{
-							Label: "Counselling",
-						},
-						{
-							Label: "Representation",
-						},
-						{
-							Label: "Arbitration",
-						},
-					},
-				},
-				Validation: cms.CaseTemplateFormElementValidation{
-					Required: true,
-				},
-			},
-			{
-				Type: "textarea",
-				Attributes: cms.CaseTemplateFormElementAttribute{
-					Label:       "Notes",
-					ID:          "notes",
-					Description: "Additional information, observations, concerns, etc.",
-					Placeholder: "Type here",
-				},
-			},
-			{
-				Type: "textinput",
-				Attributes: cms.CaseTemplateFormElementAttribute{
-					Label:       "Project number",
-					ID:          "projectNumber",
-					Description: "Enter the beneficiaries project number, if any",
-				},
-			},
-		},
-	}
 
 	// Case Templates for Uganda
 	// - Kampala Response Team
@@ -647,6 +591,8 @@ var (
 	JohnDoe     = individual("c529d679-3bb6-4a20-8f06-c096f4d9adc1", "John", "Doe", "12/02/1978", "Refugee", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "No", "Yes", "Moderate", "No", "", "No", "", "Kenya", "Kiswahili, English", "English", "123 Main Street, Kampala", "0123456789", "", "Email", "No")
 	MaryPoppins = individual("bbf539fd-ebaa-4438-ae4f-8aca8b327f42", "Mary", "Poppins", "12/02/1978", "Internally Displaced Person", "Female", "Yes", "https://link-to-consent.proof", "No", "No", "No", "No", "", "No", "", "No", "", "Uganda", "Rukiga, English", "Rukiga", "901 First Avenue, Kampala", "0123456789", "", "Telegram", "Yes")
 	BoDiddley   = individual("26335292-c839-48b6-8ad5-81271ee51e7b", "Bo", "Diddley", "12/02/1978", "Host Community", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "Yes", "No", "", "No", "", "No", "", "Somalia", "Somali, Arabic, English", "English", "101 Main Street, Kampala", "0123456789", "", "Whatsapp", "No")
+
+	// Individuals (Staff)
 	Stephen      = staff(individual("066a0268-fdc6-495a-9e4b-d60cfae2d81a", "Stephen", "Kabagambe", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
 	Colette = staff(individual("93f9461f-31da-402e-8988-6e0100ecaa24", "Colette", "le Jeune", "12/02/1978","", "Female","", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
 	Courtney = staff(individual("14c014d9-f433-4508-b33d-dc45bf86690b", "Courtney", "Lare", "12/02/1978","", "Female","", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
@@ -657,7 +603,56 @@ var (
 	CourtneyMembership = membership("83c5e73a-5947-4d7e-996c-14a2a7b1c850", Courtney, MozambiqueEducationTeam)
 
 	// Cases
-	//DomesticAbuse    = kase("dba43642-8093-4685-a197-f8848d4cbaaa", GenderViolence.ID, Birdie.ID, MaryPoppins.ID, UgandaProtectionTeam.ID, false)
-	//MonthlyAllowance = kase("47499762-c189-4a74-9156-7969f899073b", FinancialAssistInd.ID, Birdie.ID, JohnDoe.ID, UgandaProtectionTeam.ID, false)
-	//ChildCare        = kase("8fb5f755-85eb-4d91-97a9-fdf86c01df25", Childcare.ID, Birdie.ID, BoDiddley.ID, UgandaProtectionTeam.ID, true)
+	BoDiddleySituationAnalysis    = kase("dba43642-8093-4685-a197-f8848d4cbaaa", UGSituationalAnalysisCaseType.ID, Colette.ID, BoDiddley.ID, UgandaProtectionTeam.ID, false, &cms.CaseTemplate{
+		FormElements: []cms.CaseTemplateFormElement{
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
+					ID:          "safeDiginifiedLife",
+					Description: "Probe for description",
+					Value: []string{
+						"Yes, I live a safe and dignified life and I am reasonably happy with my achievements and quality of life.",
+					},
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "How are you addressing these challenges and barriers? What is standing in your way? Can you give me some examples of how you are dealing with these challenges?",
+					ID:          "challengesBarriers",
+					Value: []string{
+						"Some of the barriers I face are communication gaps between myself and refugee tenants. We are attempting to deal with these challenges by using google translate.",
+					},
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "What are some solutions you see for this and how could we work together on these solutions? How could we work to reduce these challenges together?",
+					ID:          "solutions",
+					Value: []string{
+						"A qualified interpreter, who knows the legal context could help us to agree on contractual matters.",
+					},
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "If we were to work together on this, what could we do together? What would make the most difference for you?",
+					ID:          "workTogether",
+					Value: []string{
+						"NRC could provide a translator and a legal representative to ease contract negotiations",
+					},
+					Description: "",
+					Placeholder: "",
+				},
+			},
+		},
+	})
 )

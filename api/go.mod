@@ -3,14 +3,13 @@ module github.com/nrc-no/core
 go 1.16
 
 require (
-	github.com/alexedwards/scs/redisstore v0.0.0-20210606090158-85ec2fab6bdf
-	github.com/alexedwards/scs/v2 v2.4.0
+	github.com/boj/redistore v0.0.0-20180917114910-cd5dcc76aeff
 	github.com/coreos/go-oidc/v3 v3.0.0
 	github.com/go-openapi/runtime v0.19.29 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/gomodule/redigo v1.8.5
+	github.com/gomodule/redigo v2.0.0+incompatible
 	github.com/gorilla/mux v1.8.0
-	github.com/joho/godotenv v1.3.0
+	github.com/gorilla/sessions v1.2.1
 	github.com/ory/hydra-client-go v1.10.3
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.8.1

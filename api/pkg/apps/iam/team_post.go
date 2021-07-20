@@ -18,7 +18,7 @@ func (s *Server) postTeam(w http.ResponseWriter, req *http.Request) {
 	team.ID = uuid.NewV4().String()
 
 	if err := s.teamStore.Create(ctx, team); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.error(w, err)
 		return
 	}
 

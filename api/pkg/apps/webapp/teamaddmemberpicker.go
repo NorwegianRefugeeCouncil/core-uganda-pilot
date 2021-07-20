@@ -10,7 +10,7 @@ import (
 type TeamPartyOptions struct {
 	PartyTypeID string `json:"partyTypeId"`
 	SearchParam string `json:"searchParam"`
-	TeamId string `json:"teamId"`
+	TeamId      string `json:"teamId"`
 }
 
 func (a *TeamPartyOptions) UnmarshalQueryParameters(values url.Values) error {
@@ -19,13 +19,18 @@ func (a *TeamPartyOptions) UnmarshalQueryParameters(values url.Values) error {
 	return nil
 }
 
-func (h *Server) PickTeamParty(w http.ResponseWriter, req *http.Request){
+func (s *Server) PickTeamParty(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	iamClient := h.IAMClient(ctx)
+
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	var listOptions TeamPartyOptions
 	if err := listOptions.UnmarshalQueryParameters(req.URL.Query()); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
@@ -34,15 +39,15 @@ func (h *Server) PickTeamParty(w http.ResponseWriter, req *http.Request){
 		SearchParam: listOptions.SearchParam,
 	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 	partiesInTeam, err := iamClient.Memberships().List(ctx, iam.MembershipListOptions{
-		TeamID:       listOptions.TeamId,
+		TeamID: listOptions.TeamId,
 	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
@@ -62,7 +67,7 @@ func (h *Server) PickTeamParty(w http.ResponseWriter, req *http.Request){
 
 	responseBytes, err := json.Marshal(returnList)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 

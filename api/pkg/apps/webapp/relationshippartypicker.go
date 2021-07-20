@@ -11,19 +11,24 @@ type PickedParty struct {
 	DisplayName string    `json:"displayName"`
 }
 
-func (h *Server) PickRelationshipParty(w http.ResponseWriter, req *http.Request) {
+func (s *Server) PickRelationshipParty(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	iamClient := h.IAMClient(ctx)
+
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	var listOptions iam.PartyListOptions
 	if err := listOptions.UnmarshalQueryParameters(req.URL.Query()); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 	response, err := iamClient.Parties().List(ctx, listOptions)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
@@ -37,7 +42,7 @@ func (h *Server) PickRelationshipParty(w http.ResponseWriter, req *http.Request)
 
 	responseBytes, err := json.Marshal(responseList)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 

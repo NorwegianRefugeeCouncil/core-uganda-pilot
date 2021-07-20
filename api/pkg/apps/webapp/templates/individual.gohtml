@@ -31,7 +31,7 @@
                                                name="attribute[{{$attribute.ID}}]"
                                                id="attribute-{{$attribute.ID}}-{{$idx}}"
                                                type="text"
-                                               data-cy="text-attribute"
+                                               data-testid="text-attribute"
                                                value="{{$value}}">
                                         {{ if eq (len $attribute.Translations) 0}}
                                             <label for="attribute-{{$attribute.ID}}-{{$idx}}">{{$attribute.Name}}</label>
@@ -46,7 +46,7 @@
                                            name="attribute[{{$attribute.ID}}]"
                                            id="attribute-{{$attribute.ID}}-0"
                                            type="text"
-                                           data-cy="text-attribute"
+                                           data-testid="text-attribute"
                                            value="">
                                     <label for="attribute-{{$attribute.ID}}-0">{{$attribute.Name}}</label>
                                 </div>
@@ -64,7 +64,7 @@
 
                         <div class="d-flex flex-row mb-3">
                             <div class="form-floating  me-2">
-                                <select id="relationshipTypeSelector" class="form-select pe-5">
+                                <select id="relationshipTypeSelector" class="form-select pe-5" data-testid="relationshipType">
                                     {{range .RelationshipTypes.Items}}
                                         <option value="{{.ID}}">{{.FirstPartyRole}}</option>
                                     {{end}}
@@ -76,6 +76,7 @@
                                        class="form-control dropdown-toggle"
                                        name="partySelector"
                                        id="partySelector"
+                                       data-testid="relatedParty"
                                        data-bs-toggle="dropdown"
                                        aria-expanded="false"/>
 
@@ -86,6 +87,7 @@
 
                             <button class="btn btn-primary ms-2"
                                     id="add-relationship-button"
+                                    data-testid="add-btn"
                                     type='button'>
                                 Add
                             </button>
@@ -127,7 +129,7 @@
 
                         {{end}}
 
-                        <button class="btn btn-primary mt-5">Save</button>
+                        <button class="btn btn-primary mt-5" data-testid="save-btn">Save</button>
                     </form>
 
                 </div>

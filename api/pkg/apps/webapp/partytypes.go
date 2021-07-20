@@ -9,40 +9,50 @@ import (
 	"net/http"
 )
 
-func (h *Server) PartyTypes(w http.ResponseWriter, req *http.Request) {
+func (s *Server) PartyTypes(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	iamClient := h.IAMClient(ctx)
+
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	if req.Method == "POST" {
-		h.PostPartyType(ctx, &iam.PartyType{}, w, req)
+		s.PostPartyType(ctx, &iam.PartyType{}, w, req)
 		return
 	}
 
 	partyTypes, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
-	if err := h.renderFactory.New(req).ExecuteTemplate(w, "partytypes", map[string]interface{}{
+	if err := s.renderFactory.New(req).ExecuteTemplate(w, "partytypes", map[string]interface{}{
 		"PartyTypes": partyTypes,
 	}); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 }
 
-func (h *Server) PartyType(w http.ResponseWriter, req *http.Request) {
+func (s *Server) PartyType(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	iamClient := h.IAMClient(ctx)
+
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
 		err := fmt.Errorf("no id found in path")
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
@@ -51,33 +61,37 @@ func (h *Server) PartyType(w http.ResponseWriter, req *http.Request) {
 		var err error
 		partyType, err = iamClient.PartyTypes().Get(ctx, id)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			s.Error(w, err)
 			return
 		}
 	}
 
 	if req.Method == "POST" {
-		h.PostPartyType(ctx, partyType, w, req)
+		s.PostPartyType(ctx, partyType, w, req)
 		return
 	}
 
-	if err := h.renderFactory.New(req).ExecuteTemplate(w, "partytype", map[string]interface{}{
+	if err := s.renderFactory.New(req).ExecuteTemplate(w, "partytype", map[string]interface{}{
 		"PartyType": partyType,
 	}); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
 }
 
-func (h *Server) PostPartyType(
+func (s *Server) PostPartyType(
 	ctx context.Context,
 	partyType *iam.PartyType,
 	w http.ResponseWriter,
 	req *http.Request,
 ) {
 
-	iamClient := h.IAMClient(ctx)
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	isNew := false
 	if len(partyType.ID) == 0 {
@@ -85,7 +99,7 @@ func (h *Server) PostPartyType(
 	}
 
 	if err := req.ParseForm(); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
@@ -96,26 +110,36 @@ func (h *Server) PostPartyType(
 	if isNew {
 		created, err := iamClient.PartyTypes().Create(ctx, partyType)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			s.Error(w, err)
 			return
 		}
-		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+
+		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
 			Message: fmt.Sprintf("Party type \"%s\" successfully updated", partyType.Name),
 			Theme:   "success",
-		})
+		}); err != nil {
+			s.Error(w, err)
+			return
+		}
+
 		w.Header().Set("Location", "/settings/partytypes/"+created.ID)
 		w.WriteHeader(http.StatusSeeOther)
 		return
 	} else {
 		updated, err := iamClient.PartyTypes().Update(ctx, partyType)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			s.Error(w, err)
 			return
 		}
-		h.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+
+		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
 			Message: fmt.Sprintf("Party type \"%s\" successfully updated", partyType.Name),
 			Theme:   "success",
-		})
+		}); err != nil {
+			s.Error(w, err)
+			return
+		}
+
 		w.Header().Set("Location", "/settings/partytypes/"+updated.ID)
 		w.WriteHeader(http.StatusSeeOther)
 		return

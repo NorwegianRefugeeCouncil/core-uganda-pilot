@@ -8,7 +8,7 @@ import (
 func (s *Server) PostComment(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	if err := req.ParseForm(); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
 		return
 	}
 
@@ -19,9 +19,15 @@ func (s *Server) PostComment(w http.ResponseWriter, req *http.Request) {
 		Body:   body,
 	}
 
-	_, err := s.CMSClient(ctx).Comments().Create(ctx, &comment)
+	cmsClient, err := s.CMSClient(req)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.Error(w, err)
+		return
+	}
+
+	_, err = cmsClient.Comments().Create(ctx, &comment)
+	if err != nil {
+		s.Error(w, err)
 		return
 	}
 
