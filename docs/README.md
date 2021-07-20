@@ -44,7 +44,14 @@ or
  - webapp: [http://localhost:9000](http://localhost:9000)
  - mongo express: [http://localhost:8090](http://localhost:8090)
  
- 
+
+### 6. Login:
+
+To login into the webapp, use the following credentials:
+- username: _courtney.lare@email.com_
+- password: password
+
+
 ## Running tests
  
 ### Integration tests
