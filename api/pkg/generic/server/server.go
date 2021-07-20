@@ -4,7 +4,8 @@ import (
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gomodule/redigo/redis"
 	"github.com/nrc-no/core/pkg/utils"
-	"github.com/ory/hydra-client-go/client"
+	"github.com/ory/hydra-client-go/client/admin"
+	"github.com/ory/hydra-client-go/client/public"
 	"net/http"
 	"path"
 )
@@ -13,8 +14,8 @@ type GenericServerOptions struct {
 	MongoClientFn     utils.MongoClientFn
 	MongoDatabase     string
 	Environment       string
-	HydraAdminClient  *client.OryHydra
-	HydraPublicClient *client.OryHydra
+	HydraAdminClient  admin.ClientService
+	HydraPublicClient public.ClientService
 	HydraHTTPClient   *http.Client
 	RedisPool         *redis.Pool
 	OidcProvider      *oidc.Provider

@@ -71,7 +71,7 @@ func NewServer(options *ServerOptions) (*Server, error) {
 			Host:       options.CMSHost,
 			HTTPClient: options.AdminHTTPClient,
 		}),
-		HydraAdmin:   options.HydraAdminClient.Admin,
+		HydraAdmin:   options.HydraAdminClient,
 		oidcVerifier: options.IDTokenVerifier,
 		oauth2Config: options.OAuth2Config,
 		environment:  options.Environment,

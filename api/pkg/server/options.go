@@ -402,8 +402,8 @@ func (c CompletedOptions) Generic() *server.GenericServerOptions {
 		MongoClientFn:     c.MongoClientFn,
 		MongoDatabase:     c.MongoDatabase,
 		Environment:       c.Environment,
-		HydraAdminClient:  c.HydraAdminClient,
-		HydraPublicClient: c.HydraPublicClient,
+		HydraAdminClient:  c.HydraAdminClient.Admin,
+		HydraPublicClient: c.HydraPublicClient.Public,
 		RedisPool:         c.RedisPool,
 		HydraHTTPClient:   c.HydraTLSClient,
 	}
