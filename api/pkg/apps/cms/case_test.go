@@ -5,7 +5,6 @@ import (
 	. "github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/sync/errgroup"
-	"testing"
 )
 
 func (s *Suite) TestCaseAPI() {
@@ -63,18 +62,16 @@ func (s *Suite) TestCaseListFilter() {
 	}
 
 	type tc struct {
-		name          string
-		testField     string
-		slice         []string
-		searchOptions CaseListOptions
-		want          []*Case
-		wantErr       bool
+		name    string
+		args    CaseListOptions
+		want    []*Case
+		wantErr bool
 	}
 
-	tcs := []tc{
+	tests := []tc{
 		{
 			name: "Single PartyID",
-			searchOptions: CaseListOptions{
+			args: CaseListOptions{
 				PartyIDs: []string{
 					bunch.parties[0],
 				},
@@ -83,7 +80,7 @@ func (s *Suite) TestCaseListFilter() {
 		},
 		{
 			name: "Multiple PartyIDs",
-			searchOptions: CaseListOptions{
+			args: CaseListOptions{
 				PartyIDs: []string{
 					bunch.parties[0],
 					bunch.parties[1],
@@ -93,18 +90,19 @@ func (s *Suite) TestCaseListFilter() {
 		},
 	}
 
-	for _, tc := range tcs {
-		testCase := tc
-		s.T().Run(tc.name, func(t *testing.T) {
-			got, err := s.client.Cases().List(s.ctx, testCase.searchOptions)
-			if testCase.wantErr {
-				assert.Error(t, err)
+	for _, tt := range tests {
+		tc := tt
+		s.Run(tt.name, func() {
+			s.T().Parallel()
+			got, err := s.client.Cases().List(s.ctx, tc.args)
+			if tc.wantErr {
+				s.Error(err)
 				return
 			} else {
-				if !assert.NoError(t, err) {
+				if !s.NoError(err) {
 					return
 				}
-				assert.ElementsMatch(t, testCase.want, got.Items)
+				s.ElementsMatch(tc.want, got.Items)
 			}
 		})
 	}
