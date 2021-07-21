@@ -55,11 +55,21 @@ func newUUID() string {
 	return uuid.NewV4().String()
 }
 
+func uuidSlice(n int) []string {
+	s := []string{}
+	for i := 0; i < n; i++ {
+		s = append(s, newUUID())
+	}
+	return s
+}
+
 func (s *Suite) mockCaseTypes(n int) []*CaseType {
 	var caseTypes []*CaseType
 	for i := 0; i < n; i++ {
 		caseTypes = append(caseTypes, &CaseType{
-			Name: "mock",
+			Name:        "mock",
+			PartyTypeID: newUUID(),
+			TeamID:      newUUID(),
 		})
 	}
 	return caseTypes
@@ -67,8 +77,16 @@ func (s *Suite) mockCaseTypes(n int) []*CaseType {
 
 func aMockCase() *Case {
 	return &Case{
-		TeamID:    newUUID(),
-		CreatorID: "mock-auth-user",
+		TeamID:  newUUID(),
+		PartyID: newUUID(),
+		FormData: &CaseTemplate{FormElements: []CaseTemplateFormElement{{
+			Type: "textarea",
+			Attributes: CaseTemplateFormElementAttribute{
+				Label: "mock",
+				ID:    "mock",
+			},
+			Validation: CaseTemplateFormElementValidation{},
+		}}},
 	}
 }
 

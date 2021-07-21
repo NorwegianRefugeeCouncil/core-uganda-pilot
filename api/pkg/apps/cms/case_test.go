@@ -5,6 +5,7 @@ import (
 	. "github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/sync/errgroup"
+	"reflect"
 )
 
 func (s *Suite) TestCaseAPI() {
@@ -15,6 +16,7 @@ func (s *Suite) TestCaseAPI() {
 		s.T().FailNow()
 	}
 	mockCase.ID = created.ID
+	mockCase.CreatorID = created.CreatorID
 	assert.Equal(s.T(), mockCase, created)
 
 	// GET
@@ -56,7 +58,7 @@ func (s *Suite) TestCaseAPI() {
 
 func (s *Suite) TestCaseListFilter() {
 
-	bunch := newCaseBunch(20)
+	bunch := newCaseBunch()
 	if !assert.NoError(s.T(), bunch.create(s.Ctx, s.client.Cases())) {
 		return
 	}
@@ -72,36 +74,149 @@ func (s *Suite) TestCaseListFilter() {
 		{
 			name: "Single PartyID",
 			args: CaseListOptions{
-				PartyIDs: []string{
-					bunch.parties[0],
-				},
+				PartyIDs: bunch.parties[0:1],
 			},
-			want: bunch.filterByPartyIDs(bunch.parties[0]).getCases(),
+			want: bunch.filterBy("PartyID", bunch.parties[0:1]).getCases(),
 		},
 		{
 			name: "Multiple PartyIDs",
 			args: CaseListOptions{
-				PartyIDs: []string{
-					bunch.parties[0],
-					bunch.parties[1],
-				},
+				PartyIDs: bunch.parties[0:2],
 			},
-			want: bunch.filterByPartyIDs(bunch.parties[0], bunch.parties[1]).getCases(),
+			want: bunch.filterBy("PartyID", bunch.parties[0:2]).getCases(),
+		},
+		{
+			name: "Wrong PartyID",
+			args: CaseListOptions{
+				PartyIDs: []string{"abc"},
+			},
+			want:    bunch.filterBy("PartyID", []string{"abc"}).getCases(),
+			wantErr: true,
+		},
+		{
+			name: "Single TeamID",
+			args: CaseListOptions{
+				TeamIDs: bunch.teams[0:1],
+			},
+			want: bunch.filterBy("TeamID", bunch.teams[0:1]).getCases(),
+		},
+		{
+			name: "Multiple TeamIDs",
+			args: CaseListOptions{
+				TeamIDs: bunch.teams[0:2],
+			},
+			want: bunch.filterBy("TeamID", bunch.teams[0:2]).getCases(),
+		},
+		{
+			name: "Wrong TeamID",
+			args: CaseListOptions{
+				TeamIDs: []string{"abc"},
+			},
+			want:    bunch.filterBy("TeamID", []string{"abc"}).getCases(),
+			wantErr: true,
+		},
+		{
+			name: "Single CaseTypeID",
+			args: CaseListOptions{
+				CaseTypeIDs: bunch.caseTypes[0:1],
+			},
+			want: bunch.filterBy("CaseTypeID", bunch.caseTypes[0:1]).getCases(),
+		},
+		{
+			name: "Multiple CaseTypeIDs",
+			args: CaseListOptions{
+				CaseTypeIDs: bunch.caseTypes[0:2],
+			},
+			want: bunch.filterBy("CaseTypeID", bunch.caseTypes[0:2]).getCases(),
+		},
+		{
+			name: "Wrong CaseTypeID",
+			args: CaseListOptions{
+				CaseTypeIDs: []string{"abc"},
+			},
+			want:    bunch.filterBy("CaseTypeID", []string{"abc"}).getCases(),
+			wantErr: true,
+		},
+		{
+			name: "Single ParentID",
+			args: CaseListOptions{
+				ParentID: bunch.parents[0],
+			},
+			want: bunch.filterBy("ParentID", bunch.parents[0:1]).getCases(),
+		},
+		{
+			name: "Wrong ParentID",
+			args: CaseListOptions{
+				ParentID: "abc",
+			},
+			want:    bunch.filterBy("ParentID", []string{"abc"}).getCases(),
+			wantErr: true,
+		},
+		{
+			name: "Done",
+			args: CaseListOptions{
+				Done: boolPtr(true),
+			},
+			want: bunch.filterByDone(true).getCases(),
+		},
+		{
+			name: "Done",
+			args: CaseListOptions{
+				Done: boolPtr(false),
+			},
+			want: bunch.filterByDone(false).getCases(),
+		},
+		{
+			name: "Combo PartyIDs TeamIDs",
+			args: CaseListOptions{
+				PartyIDs: bunch.parties[0:2],
+				TeamIDs:  bunch.teams[0:2],
+			},
+			want: bunch.filterBy("PartyID", bunch.parties[0:2]).filterBy("TeamID", bunch.teams[0:2]).getCases(),
+		},
+		{
+			name: "Combo PartyIDs TeamIDs CaseTypes",
+			args: CaseListOptions{
+				PartyIDs:    bunch.parties[0:2],
+				TeamIDs:     bunch.teams[0:2],
+				CaseTypeIDs: bunch.caseTypes[0:2],
+			},
+			want: bunch.filterBy("PartyID", bunch.parties[0:2]).filterBy("TeamID", bunch.teams[0:2]).filterBy("CaseTypeID", bunch.caseTypes[0:2]).getCases(),
+		},
+		{
+			name: "Combo PartyIDs TeamIDs CaseTypes Parent",
+			args: CaseListOptions{
+				PartyIDs:    bunch.parties[0:2],
+				TeamIDs:     bunch.teams[0:2],
+				CaseTypeIDs: bunch.caseTypes[0:2],
+				ParentID:    bunch.parents[0],
+			},
+			want: bunch.filterBy("PartyID", bunch.parties[0:2]).filterBy("TeamID", bunch.teams[0:2]).filterBy("CaseTypeID", bunch.caseTypes[0:2]).filterBy("ParentID", bunch.parents[0:1]).getCases(),
+		},
+		{
+			name: "Combo PartyIDs TeamIDs CaseTypes Parent Done",
+			args: CaseListOptions{
+				PartyIDs:    bunch.parties[0:2],
+				TeamIDs:     bunch.teams[0:2],
+				CaseTypeIDs: bunch.caseTypes[0:2],
+				ParentID:    bunch.parents[0],
+				Done:        boolPtr(true),
+			},
+			want: bunch.filterBy("PartyID", bunch.parties[0:2]).filterBy("TeamID", bunch.teams[0:2]).filterBy("CaseTypeID", bunch.caseTypes[0:2]).filterBy("ParentID", bunch.parents[0:1]).filterByDone(true).getCases(),
 		},
 	}
 
 	for _, tt := range tests {
 		tc := tt
 		s.Run(tt.name, func() {
-			s.T().Parallel()
+			//s.T().Parallel()
 			got, err := s.client.Cases().List(s.Ctx, tc.args)
+			if !s.NoError(err) {
+				s.T().FailNow()
+			}
 			if tc.wantErr {
-				s.Error(err)
-				return
+				s.Empty(got.Items)
 			} else {
-				if !s.NoError(err) {
-					return
-				}
 				s.ElementsMatch(tc.want, got.Items)
 			}
 		})
@@ -117,34 +232,21 @@ type caseBunch struct {
 	parents   []string
 }
 
-func newCaseBunch(nCases int) *caseBunch {
-
-	var cases = mockCases(nCases)
+func newCaseBunch() *caseBunch {
 
 	const (
+		nCases     = 6
 		nParties   = 5
 		nTeams     = 4
 		nCaseTypes = 5
-		nParents   = 30
+		nParents   = 10
 	)
 
-	parties := []string{}
-	teams := []string{}
-	caseTypes := []string{}
-	parents := []string{}
-
-	for i := 0; i < nParties; i++ {
-		parties = append(parties, newUUID())
-	}
-	for i := 0; i < nTeams; i++ {
-		teams = append(teams, newUUID())
-	}
-	for i := 0; i < nCaseTypes; i++ {
-		caseTypes = append(caseTypes, newUUID())
-	}
-	for i := 0; i < nParents; i++ {
-		parents = append(parents, newUUID())
-	}
+	cases := mockCases(nCases)
+	parties := uuidSlice(nParties)
+	teams := uuidSlice(nTeams)
+	caseTypes := uuidSlice(nCaseTypes)
+	parents := uuidSlice(nParents)
 
 	// Prepare test data
 	for i, c := range cases {
@@ -156,11 +258,11 @@ func newCaseBunch(nCases int) *caseBunch {
 	}
 
 	return &caseBunch{
-		cases:     cases,
-		parties:   parties,
-		teams:     teams,
-		caseTypes: caseTypes,
-		parents:   parents,
+		cases,
+		parties,
+		teams,
+		caseTypes,
+		parents,
 	}
 }
 
@@ -174,22 +276,32 @@ func (c caseBunch) create(ctx context.Context, cli CaseClient) error {
 				return err
 			}
 			kase.ID = created.ID
+			kase.CreatorID = created.CreatorID
 			return nil
 		})
 	}
 	return g.Wait()
 }
 
-func (c caseBunch) filterByPartyIDs(partyID ...string) caseBunch {
+func (c caseBunch) filterBy(fieldName string, uuids []string) caseBunch {
 	cb := caseBunch{}
-
-	partyIDMap := map[string]bool{}
-	for _, partyID := range partyID {
-		partyIDMap[partyID] = true
+	idMap := map[string]bool{}
+	for _, uuid := range uuids {
+		idMap[uuid] = true
 	}
-
 	for _, kase := range c.cases {
-		if _, ok := partyIDMap[kase.PartyID]; ok {
+		k := reflect.ValueOf(kase).Elem().FieldByName(fieldName).String()
+		if _, ok := idMap[k]; ok {
+			cb.cases = append(cb.cases, kase)
+		}
+	}
+	return cb
+}
+
+func (c caseBunch) filterByDone(done bool) caseBunch {
+	cb := caseBunch{}
+	for _, kase := range c.cases {
+		if kase.Done == done {
 			cb.cases = append(cb.cases, kase)
 		}
 	}
@@ -198,4 +310,8 @@ func (c caseBunch) filterByPartyIDs(partyID ...string) caseBunch {
 
 func (c caseBunch) getCases() []*Case {
 	return c.cases
+}
+
+func boolPtr(b bool) *bool {
+	return &b
 }
