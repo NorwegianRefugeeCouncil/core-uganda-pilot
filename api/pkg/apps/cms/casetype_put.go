@@ -26,6 +26,7 @@ func (s *Server) PutCaseType(w http.ResponseWriter, req *http.Request) {
 	caseType.Name = payload.Name
 	caseType.PartyTypeID = payload.PartyTypeID
 	caseType.TeamID = payload.TeamID
+	caseType.Template = payload.Template
 
 	if err := s.caseTypeStore.Update(ctx, caseType); err != nil {
 		s.Error(w, err)

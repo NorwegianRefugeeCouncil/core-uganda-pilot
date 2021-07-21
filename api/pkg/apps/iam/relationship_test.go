@@ -1,5 +1,3 @@
-// +build integration
-
 package iam_test
 
 import (
@@ -19,17 +17,17 @@ func (s *Suite) testRelationshipAPI() {
 	relationship.RelationshipTypeID = newUUID()
 	relationship.FirstPartyID = newUUID()
 	relationship.SecondPartyID = newUUID()
-	created, err := s.client.Relationships().Create(s.ctx, relationship)
+	created, err := s.client.Relationships().Create(s.Ctx, relationship)
 	if !assert.NoError(s.T(), err) {
 		return
 	}
-	assert.Equal(s.T(), relationship.ID, created.ID)
+	relationship.ID = created.ID
 	assert.Equal(s.T(), relationship.RelationshipTypeID, created.RelationshipTypeID)
 	assert.Equal(s.T(), relationship.FirstPartyID, created.FirstPartyID)
 	assert.Equal(s.T(), relationship.SecondPartyID, created.SecondPartyID)
 
 	// GET relationship
-	get, err := s.client.Relationships().Get(s.ctx, created.ID)
+	get, err := s.client.Relationships().Get(s.Ctx, created.ID)
 	if !assert.NoError(s.T(), err) {
 		return
 	}
@@ -40,7 +38,7 @@ func (s *Suite) testRelationshipAPI() {
 	relationship.FirstPartyID = newUUID()
 	relationship.SecondPartyID = newUUID()
 
-	updated, err := s.client.Relationships().Update(s.ctx, relationship)
+	updated, err := s.client.Relationships().Update(s.Ctx, relationship)
 	if !assert.NoError(s.T(), err) {
 		return
 	}
@@ -50,7 +48,7 @@ func (s *Suite) testRelationshipAPI() {
 	assert.Equal(s.T(), relationship.SecondPartyID, updated.SecondPartyID)
 
 	// GET relationships type
-	get, err = s.client.Relationships().Get(s.ctx, updated.ID)
+	get, err = s.client.Relationships().Get(s.Ctx, updated.ID)
 	if !assert.NoError(s.T(), err) {
 		return
 	}
@@ -58,7 +56,7 @@ func (s *Suite) testRelationshipAPI() {
 		return
 	}
 	// LIST relationships types
-	list, err := s.client.Relationships().List(s.ctx, RelationshipListOptions{})
+	list, err := s.client.Relationships().List(s.Ctx, RelationshipListOptions{})
 	if !assert.NoError(s.T(), err) {
 		return
 	}
@@ -66,13 +64,21 @@ func (s *Suite) testRelationshipAPI() {
 }
 
 func (s *Suite) testRelationshipListFilter() {
-	nRelationships := 10
-	nRelationshipTypes := 3
-	nParties := 4
+	const nRelationships = 10
+	const nRelationshipTypes = 3
+	const nParties = 4
 
 	relationships := s.mockRelationships(nRelationships)
-	relationshipTypes := s.mockRelationshipTypes(nRelationshipTypes)
-	parties := s.mockParties(nParties)
+	relationshipTypes := []string{}
+	parties := []string{}
+
+	for i := 0; i < nRelationshipTypes; i++ {
+		relationshipTypes = append(relationshipTypes, newUUID())
+	}
+
+	for i := 0; i < nParties; i++ {
+		parties = append(parties, newUUID())
+	}
 
 	relationshipsFromTypes := make(map[string][]string)
 	relationshipsFromFirstParties := make(map[string][]string)
@@ -85,18 +91,19 @@ func (s *Suite) testRelationshipListFilter() {
 	// Prepare test data
 	for i, relationship := range relationships {
 		// Assign field values to the empty relationships
-		rType := relationshipTypes[i%len(relationshipTypes)].ID
-		party1 := parties[i%len(parties)].ID
-		party2 := parties[(i+1)%len(parties)].ID
+		rType := relationshipTypes[i%len(relationshipTypes)]
+		party1 := parties[i%len(parties)]
+		party2 := parties[(i+1)%len(parties)]
 		relationship.RelationshipTypeID = rType
 		relationship.FirstPartyID = party1
 		relationship.SecondPartyID = party2
 
 		// Save the relationship to the DB
-		_, err := s.client.Relationships().Create(s.ctx, relationship)
+		created, err := s.client.Relationships().Create(s.Ctx, relationship)
 		if !assert.NoError(s.T(), err) {
 			s.T().FailNow()
 		}
+		relationship.ID = created.ID
 
 		// Maps the fields to the relationship
 		id := relationship.ID
@@ -124,10 +131,10 @@ func (s *Suite) testRelationshipListFilter() {
 	})
 }
 
-func (s *Suite) testRelationshipFilterByType(expected map[string][]string, types []*RelationshipType) {
+func (s *Suite) testRelationshipFilterByType(expected map[string][]string, types []string) {
 	for _, relationshipType := range types {
-		rType := relationshipType.ID
-		list, err := s.client.Relationships().List(s.ctx, RelationshipListOptions{
+		rType := relationshipType
+		list, err := s.client.Relationships().List(s.Ctx, RelationshipListOptions{
 			RelationshipTypeID: rType,
 		})
 		if !assert.NoError(s.T(), err) {
@@ -142,71 +149,71 @@ func (s *Suite) testRelationshipFilterByType(expected map[string][]string, types
 	}
 }
 
-func (s *Suite) testRelationshipFilterByFirstParty(expected map[string][]string, parties []*Party) {
+func (s *Suite) testRelationshipFilterByFirstParty(expected map[string][]string, parties []string) {
 	for _, party := range parties {
-		list, err := s.client.Relationships().List(s.ctx, RelationshipListOptions{
-			FirstPartyID: party.ID,
+		list, err := s.client.Relationships().List(s.Ctx, RelationshipListOptions{
+			FirstPartyID: party,
 		})
 		if !assert.NoError(s.T(), err) {
 			s.T().FailNow()
 		}
 		// map entry and returned list should have the same length
-		assert.Len(s.T(), expected[party.ID], len(list.Items))
+		assert.Len(s.T(), expected[party], len(list.Items))
 		// map entry should contain same items as list
 		for _, l := range list.Items {
-			assert.Contains(s.T(), expected[party.ID], l.ID)
+			assert.Contains(s.T(), expected[party], l.ID)
 		}
 	}
 }
 
-func (s *Suite) testRelationshipFilterBySecondParty(expected map[string][]string, parties []*Party) {
+func (s *Suite) testRelationshipFilterBySecondParty(expected map[string][]string, parties []string) {
 	for _, party := range parties {
-		list, err := s.client.Relationships().List(s.ctx, RelationshipListOptions{
-			SecondPartyID: party.ID,
+		list, err := s.client.Relationships().List(s.Ctx, RelationshipListOptions{
+			SecondPartyID: party,
 		})
 		if !assert.NoError(s.T(), err) {
 			s.T().FailNow()
 		}
 		// map entry and returned list should have the same length
-		assert.Len(s.T(), expected[party.ID], len(list.Items))
+		assert.Len(s.T(), expected[party], len(list.Items))
 		// map entry should contain same items as list
 		for _, l := range list.Items {
-			assert.Contains(s.T(), expected[party.ID], l.ID)
+			assert.Contains(s.T(), expected[party], l.ID)
 		}
 	}
 }
 
-func (s *Suite) testRelationshipFilterByEitherParty(expected map[string][]string, parties []*Party) {
+func (s *Suite) testRelationshipFilterByEitherParty(expected map[string][]string, parties []string) {
 	for _, party := range parties {
-		list, err := s.client.Relationships().List(s.ctx, RelationshipListOptions{
-			EitherPartyID: party.ID,
+		list, err := s.client.Relationships().List(s.Ctx, RelationshipListOptions{
+			EitherPartyID: party,
 		})
 		if !assert.NoError(s.T(), err) {
 			s.T().FailNow()
 		}
 		// map entry and returned list should have the same length
-		assert.Len(s.T(), expected[party.ID], len(list.Items))
+		assert.Len(s.T(), list.Items, len(expected[party]))
 		// map entry should contain same items as list
 		for _, l := range list.Items {
-			assert.Contains(s.T(), expected[party.ID], l.ID)
+			assert.Contains(s.T(), expected[party], l.ID)
 		}
 	}
 }
 
-func (s *Suite) testRelationshipFilterByBothParties(expected map[string][]string, parties []*Party) {
+func (s *Suite) testRelationshipFilterByBothParties(expected map[string][]string, parties []string) {
 	for _, party1 := range parties {
 		for _, party2 := range parties {
-			if party1.ID == party2.ID {
+			if party1 == party2 {
 				continue
 			}
-			list, err := s.client.Relationships().List(s.ctx, RelationshipListOptions{
-				FirstPartyID:  party1.ID,
-				SecondPartyID: party2.ID,
+			list, err := s.client.Relationships().List(s.Ctx, RelationshipListOptions{
+				FirstPartyID:  party1,
+				SecondPartyID: party2,
 			})
 			if !assert.NoError(s.T(), err) {
 				s.T().FailNow()
 			}
-			key := party1.ID + party2.ID
+			key := party1 + party2
 			// map entry and returned list should have the same length
 			assert.Len(s.T(), expected[key], len(list.Items))
 			// map entry should contain same items as list
@@ -217,18 +224,18 @@ func (s *Suite) testRelationshipFilterByBothParties(expected map[string][]string
 	}
 }
 
-func (s *Suite) testRelationshipFilterByTypeAndEither(expected map[string][]string, types []*RelationshipType, parties []*Party) {
+func (s *Suite) testRelationshipFilterByTypeAndEither(expected map[string][]string, types []string, parties []string) {
 	for _, relationshipType := range types {
-		rType := relationshipType.ID
+		rType := relationshipType
 		for _, party := range parties {
-			list, err := s.client.Relationships().List(s.ctx, RelationshipListOptions{
+			list, err := s.client.Relationships().List(s.Ctx, RelationshipListOptions{
 				RelationshipTypeID: rType,
-				EitherPartyID:      party.ID,
+				EitherPartyID:      party,
 			})
 			if !assert.NoError(s.T(), err) {
 				s.T().FailNow()
 			}
-			key := rType + party.ID
+			key := rType + party
 			// map entry and returned list should have the same length
 			assert.Len(s.T(), expected[key], len(list.Items))
 			// map entry should contain same items as list
@@ -238,20 +245,20 @@ func (s *Suite) testRelationshipFilterByTypeAndEither(expected map[string][]stri
 		}
 	}
 }
-func (s *Suite) testRelationshipFilterByTypeAndBoth(expected map[string][]string, types []*RelationshipType, parties []*Party) {
+func (s *Suite) testRelationshipFilterByTypeAndBoth(expected map[string][]string, types []string, parties []string) {
 	for _, relationshipType := range types {
-		rType := relationshipType.ID
+		rType := relationshipType
 		for _, party1 := range parties {
 			for _, party2 := range parties {
-				list, err := s.client.Relationships().List(s.ctx, RelationshipListOptions{
+				list, err := s.client.Relationships().List(s.Ctx, RelationshipListOptions{
 					RelationshipTypeID: rType,
-					FirstPartyID:       party1.ID,
-					SecondPartyID:      party2.ID,
+					FirstPartyID:       party1,
+					SecondPartyID:      party2,
 				})
 				if !assert.NoError(s.T(), err) {
 					s.T().FailNow()
 				}
-				key := rType + party1.ID + party2.ID
+				key := rType + party1 + party2
 				// map entry and returned list should have the same length
 				assert.Len(s.T(), expected[key], len(list.Items))
 				// map entry should contain same items as list
