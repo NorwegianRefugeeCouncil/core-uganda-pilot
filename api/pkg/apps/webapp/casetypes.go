@@ -161,10 +161,6 @@ func (s *Server) PostCaseType(
 		_, err := cmsClient.CaseTypes().Create(ctx, caseType)
 		if err != nil {
 			if status, ok := err.(*validation.Status); ok {
-				_, err := w.Write([]byte{})
-				if err != nil {
-					return
-				}
 				if err := s.renderFactory.New(req).ExecuteTemplate(w, "casetype", map[string]interface{}{
 					"CaseType":   caseType,
 					"PartyTypes": partyTypes,
@@ -174,9 +170,10 @@ func (s *Server) PostCaseType(
 					s.Error(w, err)
 					return
 				}
+			} else {
+				s.Error(w, err)
+				return
 			}
-			s.Error(w, err)
-			return
 		}
 
 		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{

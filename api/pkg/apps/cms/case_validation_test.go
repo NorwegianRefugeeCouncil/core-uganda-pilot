@@ -16,40 +16,40 @@ func TestValidateCase(t *testing.T) {
 		name: "emptyFields",
 		caseType: &Case{
 			FormData: &CaseTemplate{
-				FormElements: []CaseTemplateFormElement{
+				FormElements: []FormElement{
 					{
 						Type: Dropdown,
-						Attributes: CaseTemplateFormElementAttribute{
+						Attributes: FormElementAttribute{
 							ID: "dropdown",
 						},
-						Validation: CaseTemplateFormElementValidation{
+						Validation: FormElementValidation{
 							Required: true,
 						},
 					},
 					{
 						Type: Textarea,
-						Attributes: CaseTemplateFormElementAttribute{
+						Attributes: FormElementAttribute{
 							ID: "textarea",
 						},
-						Validation: CaseTemplateFormElementValidation{
+						Validation: FormElementValidation{
 							Required: true,
 						},
 					},
 					{
 						Type: TextInput,
-						Attributes: CaseTemplateFormElementAttribute{
+						Attributes: FormElementAttribute{
 							ID: "textinput",
 						},
-						Validation: CaseTemplateFormElementValidation{
+						Validation: FormElementValidation{
 							Required: true,
 						},
 					},
 					{
 						Type: Checkbox,
-						Attributes: CaseTemplateFormElementAttribute{
+						Attributes: FormElementAttribute{
 							ID: "checkbox",
 						},
-						Validation: CaseTemplateFormElementValidation{
+						Validation: FormElementValidation{
 							Required: true,
 						},
 					},

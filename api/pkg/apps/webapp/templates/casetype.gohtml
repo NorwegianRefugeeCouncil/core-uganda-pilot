@@ -8,7 +8,7 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Case Type</h4>
-                <form action="/settings/casetypes{{if .CaseType}}/{{.CaseType.ID}}{{end}}" method="post">
+                <form action="/settings/casetypes{{if .CaseType.ID}}/{{.CaseType.ID}}{{end}}" method="post">
                     <div class="form-floating mb-3">
                         {{$name := "name"}}
                         {{if .Errors}}
@@ -16,19 +16,22 @@
                             <input id="{{$name}}"
                                    type="text"
                                    name="{{$name}}"
-                                   value="{{if .CaseType}}{{.CaseType.Name}}{{end}}"
+                                   value="{{if .CaseType.Name}}{{.CaseType.Name}}{{end}}"
                                    data-testid="{{$name}}"
                                    class="form-control {{ValidationClass $errs}}"
                                    aria-describedby="nameFeedback"
                             >
-                            <label for="{{$name}}">Name</label>
                             {{ValidationFeedback $errs $name}}
                         {{else}}
-                            <input id="{{$name}}" type="text" class="form-control" name="{{$name}}"
+                            <input id="{{$name}}"
+                                   type="text"
+                                   class="form-control"
+                                   name="{{$name}}"
                                    data-testid="{{$name}}"
-                                   value="{{if .CaseType}}{{.CaseType.Name}}{{end}}">
-                            <label for="{{$name}}">Name</label>
+                                   value="{{if .CaseType}}{{.CaseType.Name}}{{end}}"
+                            >
                         {{end}}
+                        <label for="{{$name}}">Name</label>
                     </div>
                     <div class="form-floating mb-3">
                         {{$name = "partyTypeId"}}
@@ -37,80 +40,116 @@
                             <select id="party-type"
                                     class="form-select {{ValidationClass $errs}}"
                                     name="{{$name}}"
-                                    {{if .CaseType}}disabled{{end}}>
-                                {{if .CaseType}}
+                                    aria-describedby="partyTypeIdFeedback"
+                            >
+
+                                {{if .CaseType.PartyTypeID}}
                                     {{$partyType := .PartyTypes.FindByID .CaseType.PartyTypeID}}
-                                    <option selected value="{{$partyType.ID}}"
-                                            data-cy="partytype-option">
+                                    <option selected
+                                            value="{{$partyType.ID}}"
+                                            data-cy="partytype-option"
+                                    >
                                         {{$partyType.Name}}
                                     </option>
                                 {{else}}
-                                    {{if .PartyTypes}}
-                                        <option selected></option>
-                                        {{range .PartyTypes.Items}}
-                                            <option value="{{.ID}}" data-cy="partytype-option">{{.Name}}</option>
-                                        {{end}}
-                                    {{else}}
-                                        <option disabled selected>No party types defined</option>
-                                    {{end}}
+                                    <option selected></option>
+                                {{end}}
+                                {{range .PartyTypes.Items}}
+                                    <option value="{{.ID}}" data-cy="partytype-option">{{.Name}}</option>
                                 {{end}}
                             </select>
                             {{ValidationFeedback $errs $name}}
                         {{else}}
-                            <select id="party-type" class="form-select" name="{{$name}}"
-                                    {{if .CaseType}}disabled{{end}}>
+                            <select id="party-type"
+                                    class="form-select"
+                                    name="{{$name}}"
+                                    {{if .CaseType}}disabled{{end}}
+                            >
                                 {{if .CaseType}}
                                     {{$partyType := .PartyTypes.FindByID .CaseType.PartyTypeID}}
-                                    <option selected value="{{$partyType.ID}}"
-                                            data-cy="partytype-option">
+                                    <option selected value="{{$partyType.ID}}" data-cy="partytype-option">
                                         {{$partyType.Name}}
                                     </option>
                                 {{else}}
-                                    {{if .PartyTypes}}
-                                        <option selected></option>
-                                        {{range .PartyTypes.Items}}
-                                            <option value="{{.ID}}" data-cy="partytype-option">{{.Name}}</option>
-                                        {{end}}
-                                    {{else}}
-                                        <option disabled selected>No party types defined</option>
-                                    {{end}}
+                                    <option selected></option>
+                                {{end}}
+                                {{range .PartyTypes.Items}}
+                                    <option value="{{.ID}}" data-cy="partytype-option">{{.Name}}</option>
                                 {{end}}
                             </select>
                         {{end}}
                         <label for="party-type">Select Party Type</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <select id="team" class="form-select" name="teamId"
-                                {{if .CaseType}}disabled{{end}}>
-                            {{if .CaseType}}
-                                {{$team := .Teams.FindByID .CaseType.TeamID}}
-                                <option selected value="{{$team.ID}}" data-cy="team-option">
-                                    {{$team.Name}}
-                                </option>
-                            {{else}}
-                                {{if .Teams}}
+                        {{$name = "teamId"}}
+                        {{if .Errors}}
+                            {{$errs := .Errors.Find $name}}
+                            <select id="team"
+                                    class="form-select {{ValidationClass $errs}}"
+                                    name="{{$name}}"
+                                    aria-describedby="teamIdFeedback"
+                            >
+                                {{if .CaseType.TeamID}}
+                                    {{$team := .Teams.FindByID .CaseType.TeamID}}
+                                    <option selected value="{{$team.ID}}" data-cy="team-option">
+                                        {{$team.Name}}
+                                    </option>
+                                {{else}}
+                                    <option selected></option>
+                                {{end}}
+                                {{range .Teams.Items}}
+                                    <option value="{{.ID}}" data-cy="team-option">{{.Name}}</option>
+                                {{end}}
+                            </select>
+                            {{ValidationFeedback $errs $name}}
+                        {{else}}
+                            <select id="team"
+                                    class="form-select"
+                                    name="{{$name}}"
+                                    {{if .CaseType}}disabled{{end}}
+                            >
+                                {{if .CaseType}}
+                                    {{$team := .Teams.FindByID .CaseType.TeamID}}
+                                    <option selected value="{{$team.ID}}" data-cy="team-option">
+                                        {{$team.Name}}
+                                    </option>
+                                {{else}}
                                     <option selected></option>
                                     {{range .Teams.Items}}
                                         <option value="{{.ID}}" data-cy="team-option">{{.Name}}</option>
+
                                     {{end}}
-                                {{else}}
-                                    <option disabled selected>No teams defined</option>
                                 {{end}}
-                            {{end}}
-                        </select>
+                            </select>
+                        {{end}}
                         <label for="team">Select Team</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <textarea name="template" id="template" class="form-control font-monospace"
-                                  style="height: 600px"
-                                  {{if .CaseType}}readonly{{end}}>
-                            {{- if .CaseType -}}
-                                {{- .CaseType.Pretty -}}
-                            {{- end -}}
-                        </textarea>
+                        {{$name = "template"}}
+                        {{if .Errors}}
+                            {{$errs := .Errors.Find $name}}
+                            <textarea name="template"
+                                      id="template"
+                                      class="form-control font-monospace {{ValidationClass $errs}}"
+                                      style="height: 600px"
+                                      aria-describedby="templateFeedback"
+                            >
+                                {{- if .CaseType.Template}}{{.CaseType.Pretty}}{{end -}}
+                            </textarea>
+                            {{ValidationFeedback $errs $name}}
+                        {{else}}
+                            <textarea name="template"
+                                      id="template"
+                                      class="form-control font-monospace"
+                                      style="height: 600px"
+                                      {{if .CaseType}}readonly{{end}}
+                            >
+                                {{- if .CaseType.Template}}{{.CaseType.Pretty}}{{end -}}
+                            </textarea>
+                        {{end}}
                         <label for="template">Form template</label>
                     </div>
-                    {{if .CaseType}}
+                    {{if and (not .Errors) .CaseType}}
                         <input type="hidden" name="partyTypeId" value="{{.CaseType.PartyTypeID}}">
                         <input type="hidden" name="teamId" value="{{.CaseType.TeamID}}">
                     {{end}}

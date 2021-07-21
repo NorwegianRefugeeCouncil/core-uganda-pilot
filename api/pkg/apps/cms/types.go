@@ -2,6 +2,8 @@ package cms
 
 import (
 	"encoding/json"
+	"github.com/nrc-no/core/pkg/validation"
+	"html/template"
 	"net/url"
 	"time"
 )
@@ -23,7 +25,7 @@ func (c *Case) UnmarshalFormData(values url.Values, caseTemplate *CaseTemplate) 
 	c.Done = values.Get("done") == "on"
 	c.ParentID = values.Get("parentId")
 	c.TeamID = values.Get("teamId")
-	formElements := []CaseTemplateFormElement{}
+	formElements := []FormElement{}
 	for _, formElement := range caseTemplate.FormElements {
 		formElement.Attributes.Value = values[formElement.Attributes.ID]
 		formElements = append(formElements, formElement)
@@ -57,8 +59,12 @@ func (c *CaseType) UnmarshalFormData(values url.Values) error {
 	c.PartyTypeID = values.Get("partyTypeId")
 	c.TeamID = values.Get("teamId")
 	templateString := values.Get("template")
-	if err := json.Unmarshal([]byte(templateString), &c.Template); err != nil {
-		return err
+	if templateString == "" {
+		c.Template = &CaseTemplate{}
+	} else {
+		if err := json.Unmarshal([]byte(templateString), &c.Template); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -98,7 +104,7 @@ type CommentList struct {
 
 type CaseTemplate struct {
 	// FormElements is an ordered list of the elements found in the form
-	FormElements []CaseTemplateFormElement `json:"formElements" bson:"formElements"`
+	FormElements []FormElement `json:"formElements" bson:"formElements"`
 }
 
 type FormElementType string
@@ -110,28 +116,41 @@ const (
 	Checkbox  FormElementType = "checkbox"
 )
 
-type CaseTemplateFormElement struct {
-	Type       FormElementType                   `json:"type" bson:"type"`
-	Attributes CaseTemplateFormElementAttribute  `json:"attributes" bson:"attributes"`
-	Validation CaseTemplateFormElementValidation `json:"validation" bson:"validation"`
+type FormElement struct {
+	Type       FormElementType       `json:"type" bson:"type"`
+	Attributes FormElementAttribute  `json:"attributes" bson:"attributes"`
+	Validation FormElementValidation `json:"validation" bson:"validation"`
 }
 
-type CaseTemplateFormElementAttribute struct {
-	Label           string                       `json:"label" bson:"label"`
-	ID              string                       `json:"id" bson:"id"`
-	Description     string                       `json:"description" bson:"description"`
-	Placeholder     string                       `json:"placeholder" bson:"placeholder"`
-	Value           []string                     `json:"value" bson:"value"`
-	Multiple        bool                         `json:"multiple" bson:"multiple"`
-	Options         []string                     `json:"options" bson:"options"`
-	CheckboxOptions []CaseTemplateCheckboxOption `json:"checkboxOptions" bson:"checkboxOptions"`
+type FormElementAttribute struct {
+	Label           string           `json:"label" bson:"label"`
+	ID              string           `json:"id" bson:"id"`
+	Description     string           `json:"description" bson:"description"`
+	Placeholder     string           `json:"placeholder" bson:"placeholder"`
+	Value           []string         `json:"value" bson:"value"`
+	Multiple        bool             `json:"multiple" bson:"multiple"`
+	Options         []string         `json:"options" bson:"options"`
+	CheckboxOptions []CheckboxOption `json:"checkboxOptions" bson:"checkboxOptions"`
 }
 
-type CaseTemplateFormElementValidation struct {
+type FormElementValidation struct {
 	Required bool `json:"required" bson:"required"`
 }
 
-type CaseTemplateCheckboxOption struct {
+type CheckboxOption struct {
 	Label    string `json:"label" bson:"label"`
 	Required bool   `json:"required" bson:"required"`
+}
+
+type CaseForm struct {
+	Elements []CaseFormElement
+}
+
+type CaseFormElement struct {
+	FormElement
+	Error validation.Error
+}
+
+func (c CaseFormElement) RenderError() template.HTML {
+	return template.HTML("")
 }
