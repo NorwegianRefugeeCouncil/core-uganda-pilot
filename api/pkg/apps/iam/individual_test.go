@@ -1,5 +1,3 @@
-// +build integration
-
 package iam_test
 
 import (
@@ -16,14 +14,15 @@ func (s *Suite) TestIndividual() {
 func (s *Suite) testIndividualAPI() {
 	// CREATE
 	individual := s.mockIndividuals(1)[0]
-	created, err := s.client.Individuals().Create(s.ctx, individual)
+	created, err := s.client.Individuals().Create(s.Ctx, individual)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
-	assert.Equal(s.T(), individual, created)
+	individual.ID = created.ID
+	assert.Equal(s.T(), created, individual)
 
 	// GET
-	get, err := s.client.Individuals().Get(s.ctx, created.ID)
+	get, err := s.client.Individuals().Get(s.Ctx, created.ID)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
@@ -32,21 +31,21 @@ func (s *Suite) testIndividualAPI() {
 	// UPDATE
 	individual.Attributes.Set(FirstNameAttribute.ID, "updated")
 	individual.Attributes.Set(LastNameAttribute.ID, "updated")
-	updated, err := s.client.Individuals().Update(s.ctx, individual)
+	updated, err := s.client.Individuals().Update(s.Ctx, individual)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
 	assert.Equal(s.T(), individual, updated)
 
 	// GET
-	get, err = s.client.Individuals().Get(s.ctx, updated.ID)
+	get, err = s.client.Individuals().Get(s.Ctx, updated.ID)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
 	assert.Equal(s.T(), updated, get)
 
 	// LIST
-	list, err := s.client.Individuals().List(s.ctx, IndividualListOptions{})
+	list, err := s.client.Individuals().List(s.Ctx, IndividualListOptions{})
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
@@ -90,8 +89,9 @@ func (s *Suite) testIndividualListFilter() {
 		}
 
 		// Save the individual to the DB
-		_, err := s.client.Individuals().Create(s.ctx, individual)
+		created, err := s.client.Individuals().Create(s.Ctx, individual)
 		assert.NoError(s.T(), err)
+		individual.ID = created.ID
 	}
 
 	s.Run("by party type", func() {
