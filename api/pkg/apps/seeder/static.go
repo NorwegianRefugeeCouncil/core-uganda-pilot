@@ -182,7 +182,7 @@ var (
 	UGIndividualAssessment = &cms.CaseTemplate{
 		FormElements: []cms.CaseTemplateFormElement{
 			{
-				Type: cms.Textarea,
+				Type: cms.TaxonomyInput,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Which service has the individual requested as a starting point of support?",
 					ID:          "serviceStartingPoint",
@@ -191,7 +191,7 @@ var (
 				},
 			},
 			{
-				Type: cms.Textarea,
+				Type: cms.TaxonomyInput,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "What other services has the individual requested/identified?",
 					ID:          "otherServices",

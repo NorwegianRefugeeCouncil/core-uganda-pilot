@@ -60,5 +60,225 @@
             <label for="{{.Attributes.ID}}">{{.Attributes.Label}}</label>
             <div class="form-text">{{.Attributes.Description}}</div>
         </div>
+    {{else if eq .Type "taxonomyinput"}}
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="form-floating mb-3">
+                    <select id="programme-area" class="form-select">
+                    </select>
+                    <label for="programme-area">Programme Area</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <select id="service-area" class="form-select">
+                    </select>
+                    <label for="service-area">Service Area</label>
+
+                </div>
+
+                <div class="form-floating mb-3">
+                    <select id="thematic-area" class="form-select">
+                    </select>
+                    <label for="thematic-area">Thematic Area</label>
+
+                </div>
+
+                <div id="button-container" class="form-floating mb-3">
+                    <button id="btn-add" type="button" class="btn btn-primary">Add</button>
+                    <button id="btn-clear" type="button" class="btn btn-primary">Clear</button>
+                </div>
+
+                <div id="badge-container" class="form-floating mb-3"></div>
+
+            </div>
+        </div>
+
+        <script>
+          const taxonomy = {
+            "ICLA": {
+              "Counselling": {
+                "Legal Identity": {},
+                "Refugee Status, Migration, and Residency": {},
+                "Housing, Land and Property": {},
+                "Employment Laws and Procedures": {},
+                "IDP Registration": {}
+              },
+              "Information": {
+                "Legal Identity": {},
+                "Refugee Status, Migration, and Residency": {},
+                "Housing, Land and Property": {},
+                "Employment Laws and Procedures": {},
+                "IDP Registration": {},
+                "Essential Services": {}
+              },
+              "Legal Assistance": {
+                "Legal Identity": {},
+                "Refugee Status, Migration, and Residency": {},
+                "Housing, Land and Property": {},
+                "Employment Laws and Procedures": {},
+                "IDP Registration": {},
+                "Essential Services": {}
+              },
+              "Training": {
+                "Legal Identity": {},
+                "Refugee Status, Migration, and Residency": {},
+                "Housing, Land and Property": {},
+                "Employment Laws and Procedures": {},
+                "IDP Registration": {},
+                "Essential Services": {},
+                "Other": {}
+              }
+            },
+            "Protection": {
+              "Individual Targeted Protection": {
+                "Individual Protection Assistance": {},
+                "Protection Case Management": {}
+              },
+              "Community Support": {
+                "Community Protection Assistance": {}
+              }
+            }
+          }
+
+          // remove all the options from a select element
+          const clearSelectOptions = (selectId) => {
+            document.getElementById(selectId).innerHTML = "";
+          }
+
+          // create a new select option element
+          const createSelectOption = (value, label) => {
+            const option = document.createElement("option");
+            option.value = value;
+            option.text = label;
+            return option
+          }
+
+          // get the value selected of a select
+          const getSelected = (selectId) => {
+            return document.getElementById(selectId).value
+          }
+
+          // build a badge element
+          const buildBadge = (label) => {
+            const badge = document.createElement("span")
+            const classesToAdd = [
+              "badge",
+              "rounded-pill",
+              "bg-secondary"
+            ]
+            classesToAdd.forEach(classToAdd => badge.classList.add(classToAdd))
+            badge.textContent = label
+            return badge
+          }
+
+          document.addEventListener('DOMContentLoaded', (event) => {
+
+            const programmeAreaSelect = document.getElementById("programme-area")
+            const serviceAreaSelect = document.getElementById("service-area")
+            const thematicAreaSelect = document.getElementById("thematic-area")
+
+            const badgeContainer = document.getElementById("badge-container")
+            const addBadgeButton = document.getElementById("btn-add")
+            const clearBadgesButton = document.getElementById("btn-clear")
+
+            Object.keys(taxonomy).forEach(programmeArea => {
+              programmeAreaSelect.appendChild(createSelectOption(programmeArea, programmeArea))
+            })
+
+            programmeAreaSelect.selectedIndex = -1
+
+            programmeAreaSelect.addEventListener('change', (event) => {
+              const programmeArea = getSelected("programme-area")
+
+              clearSelectOptions("service-area")
+              clearSelectOptions("thematic-area")
+
+              if (
+                programmeArea !== null &&
+                programmeArea !== undefined &&
+                programmeArea !== ""
+              ) {
+                Object.keys(taxonomy[programmeArea]).forEach(serviceArea => {
+                  serviceAreaSelect.appendChild(createSelectOption(serviceArea, serviceArea))
+                })
+              }
+
+              serviceAreaSelect.selectedIndex = -1
+              thematicAreaSelect.selectedIndex = -1
+            })
+
+            serviceAreaSelect.addEventListener('change', (event) => {
+              const programmeArea = getSelected("programme-area")
+              const serviceArea = getSelected("service-area")
+
+              clearSelectOptions("thematic-area")
+
+              if (
+                programmeArea !== null &&
+                programmeArea !== undefined &&
+                programmeArea !== "" &&
+                serviceArea !== null &&
+                serviceArea !== undefined &&
+                serviceArea !== ""
+              ) {
+                Object.keys(taxonomy[programmeArea][serviceArea]).forEach(thematicArea => {
+                  thematicAreaSelect.appendChild(createSelectOption(thematicArea, thematicArea))
+                })
+              }
+
+              thematicAreaSelect.selectedIndex = -1
+
+            })
+
+            addBadgeButton.addEventListener('click', (event) => {
+
+              const programmeArea = getSelected("programme-area")
+              const serviceArea = getSelected("service-area")
+              const thematicArea = getSelected("thematic-area")
+
+              let label = ""
+
+              if (
+                programmeArea !== "" &&
+                programmeArea !== null &&
+                programmeArea !== undefined
+              ) {
+
+                label = `${programmeArea}`
+
+                if (
+                  serviceArea !== "" &&
+                  serviceArea !== null &&
+                  serviceArea !== undefined
+                ) {
+
+                  label = `${label} - ${serviceArea}`
+
+                  if (
+                    thematicArea !== "" &&
+                    thematicArea !== null &&
+                    thematicArea !== undefined
+                  ) {
+
+                    label = `${label} - ${thematicArea}`
+
+                  }
+
+                }
+
+                const badge = buildBadge(label)
+                badgeContainer.appendChild(badge)
+
+              }
+
+
+            })
+
+            clearBadgesButton.addEventListener('click', (event) => {
+              badgeContainer.innerHTML = ''
+            })
+
+          }, false);
+        </script>
     {{end}}
 {{end}}
