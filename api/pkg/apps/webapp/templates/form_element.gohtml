@@ -63,123 +63,127 @@
     {{else if eq .Type "taxonomyinput"}}
         <div class="card mb-4">
             <div class="card-body">
+                <span>{{.Attributes.Label}}</span>
+                <p class="form-text">{{.Attributes.Description}}</p>
                 <div class="form-floating mb-3">
-                    <select id="programme-area" class="form-select">
+                    <select id="programme-area-{{.Attributes.ID}}" class="form-select">
                     </select>
-                    <label for="programme-area">Programme Area</label>
-                </div>
-
-                <div class="form-floating mb-3">
-                    <select id="service-area" class="form-select">
-                    </select>
-                    <label for="service-area">Service Area</label>
-
+                    <label for="programme-area-{{.Attributes.ID}}">Programme Area</label>
                 </div>
 
                 <div class="form-floating mb-3">
-                    <select id="thematic-area" class="form-select">
+                    <select id="service-area-{{.Attributes.ID}}" class="form-select">
                     </select>
-                    <label for="thematic-area">Thematic Area</label>
+                    <label for="service-area-{{.Attributes.ID}}">Service Area</label>
 
                 </div>
 
-                <div id="button-container" class="form-floating mb-3">
-                    <button id="btn-add" type="button" class="btn btn-primary">Add</button>
-                    <button id="btn-clear" type="button" class="btn btn-primary">Clear</button>
+                <div class="form-floating mb-3">
+                    <select id="thematic-area-{{.Attributes.ID}}" class="form-select">
+                    </select>
+                    <label for="thematic-area-{{.Attributes.ID}}">Thematic Area</label>
+
                 </div>
 
-                <div id="badge-container" class="form-floating mb-3"></div>
+                <div id="button-container-{{.Attributes.ID}}" class="form-floating mb-3">
+                    <button id="btn-add-{{.Attributes.ID}}" type="button" class="btn btn-primary">Add</button>
+                    <button id="btn-clear-{{.Attributes.ID}}" type="button" class="btn btn-primary">Clear</button>
+                </div>
+
+                <div id="badge-container-{{.Attributes.ID}}" class="form-floating mb-3"></div>
 
             </div>
         </div>
 
         <script>
-          const taxonomy = {
-            "ICLA": {
-              "Counselling": {
-                "Legal Identity": {},
-                "Refugee Status, Migration, and Residency": {},
-                "Housing, Land and Property": {},
-                "Employment Laws and Procedures": {},
-                "IDP Registration": {}
+          // since this is a component and it can be used multiple times on the same page, collisions are possible
+          // adding the code to an anonymous function such as the event listener below effectively creates a new
+          // namespace, provided variables and functions are declared using the const keyword.
+          document.addEventListener('DOMContentLoaded', (event) => {
+            const taxonomy = {
+              "ICLA": {
+                "Counselling": {
+                  "Legal Identity": {},
+                  "Refugee Status, Migration, and Residency": {},
+                  "Housing, Land and Property": {},
+                  "Employment Laws and Procedures": {},
+                  "IDP Registration": {}
+                },
+                "Information": {
+                  "Legal Identity": {},
+                  "Refugee Status, Migration, and Residency": {},
+                  "Housing, Land and Property": {},
+                  "Employment Laws and Procedures": {},
+                  "IDP Registration": {},
+                  "Essential Services": {}
+                },
+                "Legal Assistance": {
+                  "Legal Identity": {},
+                  "Refugee Status, Migration, and Residency": {},
+                  "Housing, Land and Property": {},
+                  "Employment Laws and Procedures": {},
+                  "IDP Registration": {},
+                  "Essential Services": {}
+                },
+                "Training": {
+                  "Legal Identity": {},
+                  "Refugee Status, Migration, and Residency": {},
+                  "Housing, Land and Property": {},
+                  "Employment Laws and Procedures": {},
+                  "IDP Registration": {},
+                  "Essential Services": {},
+                  "Other": {}
+                }
               },
-              "Information": {
-                "Legal Identity": {},
-                "Refugee Status, Migration, and Residency": {},
-                "Housing, Land and Property": {},
-                "Employment Laws and Procedures": {},
-                "IDP Registration": {},
-                "Essential Services": {}
-              },
-              "Legal Assistance": {
-                "Legal Identity": {},
-                "Refugee Status, Migration, and Residency": {},
-                "Housing, Land and Property": {},
-                "Employment Laws and Procedures": {},
-                "IDP Registration": {},
-                "Essential Services": {}
-              },
-              "Training": {
-                "Legal Identity": {},
-                "Refugee Status, Migration, and Residency": {},
-                "Housing, Land and Property": {},
-                "Employment Laws and Procedures": {},
-                "IDP Registration": {},
-                "Essential Services": {},
-                "Other": {}
-              }
-            },
-            "Protection": {
-              "Individual Targeted Protection": {
-                "Individual Protection Assistance": {},
-                "Protection Case Management": {}
-              },
-              "Community Support": {
-                "Community Protection Assistance": {}
+              "Protection": {
+                "Individual Targeted Protection": {
+                  "Individual Protection Assistance": {},
+                  "Protection Case Management": {}
+                },
+                "Community Support": {
+                  "Community Protection Assistance": {}
+                }
               }
             }
-          }
 
-          // remove all the options from a select element
-          const clearSelectOptions = (selectId) => {
-            document.getElementById(selectId).innerHTML = "";
-          }
+            // remove all the options from a select element
+            const clearSelectOptions = (selectId) => {
+              document.getElementById(selectId).innerHTML = "";
+            }
 
-          // create a new select option element
-          const createSelectOption = (value, label) => {
-            const option = document.createElement("option");
-            option.value = value;
-            option.text = label;
-            return option
-          }
+            // create a new select option element
+            const createSelectOption = (value, label) => {
+              const option = document.createElement("option");
+              option.value = value;
+              option.text = label;
+              return option
+            }
 
-          // get the value selected of a select
-          const getSelected = (selectId) => {
-            return document.getElementById(selectId).value
-          }
+            // get the value selected of a select
+            const getSelected = (selectId) => {
+              return document.getElementById(selectId).value
+            }
 
-          // build a badge element
-          const buildBadge = (label) => {
-            const badge = document.createElement("span")
-            const classesToAdd = [
-              "badge",
-              "rounded-pill",
-              "bg-secondary"
-            ]
-            classesToAdd.forEach(classToAdd => badge.classList.add(classToAdd))
-            badge.textContent = label
-            return badge
-          }
+            // build a badge element
+            const buildBadge = (label) => {
+              const badge = document.createElement("span")
+              const classesToAdd = [
+                "badge",
+                "rounded-pill",
+                "bg-secondary"
+              ]
+              classesToAdd.forEach(classToAdd => badge.classList.add(classToAdd))
+              badge.textContent = label
+              return badge
+            }
 
-          document.addEventListener('DOMContentLoaded', (event) => {
+            const programmeAreaSelect = document.getElementById("programme-area-{{.Attributes.ID}}")
+            const serviceAreaSelect = document.getElementById("service-area-{{.Attributes.ID}}")
+            const thematicAreaSelect = document.getElementById("thematic-area-{{.Attributes.ID}}")
 
-            const programmeAreaSelect = document.getElementById("programme-area")
-            const serviceAreaSelect = document.getElementById("service-area")
-            const thematicAreaSelect = document.getElementById("thematic-area")
-
-            const badgeContainer = document.getElementById("badge-container")
-            const addBadgeButton = document.getElementById("btn-add")
-            const clearBadgesButton = document.getElementById("btn-clear")
+            const badgeContainer = document.getElementById("badge-container-{{.Attributes.ID}}")
+            const addBadgeButton = document.getElementById("btn-add-{{.Attributes.ID}}")
+            const clearBadgesButton = document.getElementById("btn-clear-{{.Attributes.ID}}")
 
             Object.keys(taxonomy).forEach(programmeArea => {
               programmeAreaSelect.appendChild(createSelectOption(programmeArea, programmeArea))
@@ -188,10 +192,10 @@
             programmeAreaSelect.selectedIndex = -1
 
             programmeAreaSelect.addEventListener('change', (event) => {
-              const programmeArea = getSelected("programme-area")
+              const programmeArea = getSelected("programme-area-{{.Attributes.ID}}")
 
-              clearSelectOptions("service-area")
-              clearSelectOptions("thematic-area")
+              clearSelectOptions("service-area-{{.Attributes.ID}}")
+              clearSelectOptions("thematic-area-{{.Attributes.ID}}")
 
               if (
                 programmeArea !== null &&
@@ -208,10 +212,10 @@
             })
 
             serviceAreaSelect.addEventListener('change', (event) => {
-              const programmeArea = getSelected("programme-area")
-              const serviceArea = getSelected("service-area")
+              const programmeArea = getSelected("programme-area-{{.Attributes.ID}}")
+              const serviceArea = getSelected("service-area-{{.Attributes.ID}}")
 
-              clearSelectOptions("thematic-area")
+              clearSelectOptions("thematic-area-{{.Attributes.ID}}")
 
               if (
                 programmeArea !== null &&
@@ -232,9 +236,9 @@
 
             addBadgeButton.addEventListener('click', (event) => {
 
-              const programmeArea = getSelected("programme-area")
-              const serviceArea = getSelected("service-area")
-              const thematicArea = getSelected("thematic-area")
+              const programmeArea = getSelected("programme-area-{{.Attributes.ID}}")
+              const serviceArea = getSelected("service-area-{{.Attributes.ID}}")
+              const thematicArea = getSelected("thematic-area-{{.Attributes.ID}}")
 
               let label = ""
 
@@ -268,6 +272,10 @@
 
                 const badge = buildBadge(label)
                 badgeContainer.appendChild(badge)
+
+                programmeAreaSelect.selectedIndex = -1
+                serviceAreaSelect.selectedIndex = -1
+                thematicAreaSelect.selectedIndex = -1
 
               }
 

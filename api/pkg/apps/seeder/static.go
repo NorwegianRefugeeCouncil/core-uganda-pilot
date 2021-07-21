@@ -186,7 +186,7 @@ var (
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Which service has the individual requested as a starting point of support?",
 					ID:          "serviceStartingPoint",
-					Description: "",
+					Description: "Add the taxonomies of the services requested as a starting point one by one, by selecting the relevant options from the dropdowns below.",
 					Placeholder: "",
 				},
 			},
@@ -195,7 +195,7 @@ var (
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "What other services has the individual requested/identified?",
 					ID:          "otherServices",
-					Description: "",
+					Description: "Add the taxonomies of the other services requested one by one, by selecting the relevant options from the dropdowns below.",
 					Placeholder: "",
 				},
 			},
