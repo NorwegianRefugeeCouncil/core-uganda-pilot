@@ -71,7 +71,9 @@ func (s *Suite) SetupSuite() {
 	}
 
 	opts := &server.GenericServerOptions{
-		MongoClient:   mongoClient,
+		MongoClientFn: func(ctx context.Context) (*mongo.Client, error) {
+			return mongoClient, nil
+		},
 		MongoDatabase: mongoDatabase,
 		Environment:   "Development",
 	}

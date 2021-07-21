@@ -5,8 +5,8 @@ const INDIVIDUAL_ROWS = '[data-testid=individual]';
 
 export default class IndividualOverviewPage {
     visitPage = () => {
-        cy.log('navigating to %s', Urls.INDIVIDUAL_URL);
-        cy.visit(Urls.INDIVIDUAL_URL);
+        cy.log('navigating to %s', Urls.INDIVIDUALS_URL);
+        cy.visit(Urls.INDIVIDUALS_URL);
         return this;
     };
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/nrc-no/core/pkg/rest"
 	"net/url"
+	"strconv"
 	"strings"
 )
 
@@ -263,6 +264,9 @@ type IndividualListOptions struct {
 	PartyTypeIDs []string
 	Attributes   map[string]string
 	SearchParam  string
+	Page         int
+	PerPage      int
+	Sort         string
 }
 
 func (a *IndividualListOptions) MarshalQueryParameters() (url.Values, error) {
@@ -271,6 +275,9 @@ func (a *IndividualListOptions) MarshalQueryParameters() (url.Values, error) {
 		values.Add("partyTypeId", partyTypeID)
 	}
 	values.Add("searchParam", a.SearchParam)
+	values.Add("page", strconv.Itoa(a.Page))
+	values.Add("perPage", strconv.Itoa(a.PerPage))
+	values.Add("sort", a.Sort)
 	if a.Attributes != nil {
 		for key, value := range a.Attributes {
 			if len(value) == 0 {
@@ -294,6 +301,25 @@ func (a *IndividualListOptions) UnmarshalQueryParameters(values url.Values) erro
 		}
 		if key == "searchParam" {
 			a.SearchParam = values[0]
+		}
+		if key == "page" {
+			str := values[0]
+			page, err := strconv.Atoi(str)
+			if err != nil {
+				return err
+			}
+			a.Page = page
+		}
+		if key == "perPage" {
+			str := values[0]
+			perPage, err := strconv.Atoi(str)
+			if err != nil {
+				return err
+			}
+			a.PerPage = perPage
+		}
+		if key == "sort" {
+			a.Sort = values[0]
 		}
 	}
 	return nil
