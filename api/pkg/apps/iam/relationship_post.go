@@ -17,9 +17,7 @@ func (s *Server) postRelationship(w http.ResponseWriter, req *http.Request) {
 
 	p := &payload
 
-	if p.ID == "" {
-		p.ID = uuid.NewV4().String()
-	}
+	p.ID = uuid.NewV4().String()
 
 	errList := ValidateRelationship(p, validation.NewPath(""))
 	if len(errList) > 0 {

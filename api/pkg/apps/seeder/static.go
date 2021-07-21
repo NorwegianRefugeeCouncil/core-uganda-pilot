@@ -116,7 +116,7 @@ func kase(id, caseTypeID, createdByID, partyID, teamID string, done bool, formDa
 		PartyID:    partyID,
 		TeamID:     teamID,
 		Done:       done,
-		FormData: 	formData,
+		FormData:   formData,
 	}
 	cases = append(cases, k)
 	return k
@@ -136,6 +136,7 @@ var (
 	UgandaICLATeam          = team("a43f84d5-3f8a-48c4-a896-5fb0fcd3e42b", "Uganda ICLA Team")
 	UgandaCoreAdminTeam     = team("814fc372-08a6-4e6b-809b-30ebb51cb268", "Uganda Core Admin Team")
 	MozambiqueEducationTeam = team("80606eb4-b53a-4fda-be12-e9806e11d44a", "Mozambique Education Team")
+	DTeam                   = team("5efecef3-a7a9-4705-84ca-70c89d7d783f", "D-Team")
 
 	// Case Templates for Uganda
 	// - Kampala Response Team
@@ -577,6 +578,52 @@ var (
 		},
 	}
 
+	// Dogfooding Case Templates
+	DTeamBugReport = &cms.CaseTemplate{
+		FormElements: []cms.CaseTemplateFormElement{
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "What action were you undertaking in the application, when the error happened",
+					ID:          "whatActionBeforeError",
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "If the error had not happened, what would be your expected outcome for the action you were performing when the error happened",
+					ID:          "expectedOutcome",
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "List any error messages shown",
+					ID:          "errorMessages",
+					Description: "",
+					Placeholder: "",
+				},
+			},
+		},
+	}
+	DTeamFeatureRequest = &cms.CaseTemplate{
+		FormElements: []cms.CaseTemplateFormElement{
+			{
+				Type: "textarea",
+				Attributes: cms.CaseTemplateFormElementAttribute{
+					Label:       "Describe the change or new functionality you would like in Core",
+					ID:          "request",
+					Description: "",
+					Placeholder: "",
+				},
+			},
+		},
+	}
+
 	// Case Types for Uganda
 	// - Kampala Response Team
 	UGSituationalAnalysisCaseType      = caseType("0ae90b08-6944-48dc-8f30-5cb325292a8c", "Situational Analysis (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGSituationAnalysis)
@@ -587,23 +634,43 @@ var (
 	UGICLAIndividualIntakeCaseType = caseType("31fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Individual Intake (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIndividualIntake)
 	UGICLACaseAssessmentCaseType   = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLACaseAssessment)
 
+	// Case Types for Dogfooding
+	DTeamBugReportCaseType      = caseType("39b24aaa-02a3-4455-b3a6-fd05e6a59fef", "Report a bug in Core", iam.IndividualPartyType.ID, DTeam.ID, DTeamBugReport)
+	DTeamFeatureRequestCaseType = caseType("95bf45fd-a703-4698-ae9c-12f1865b1a6f", "Request a feature/change in Core", iam.IndividualPartyType.ID, DTeam.ID, DTeamFeatureRequest)
+
 	// Individuals
 	JohnDoe     = individual("c529d679-3bb6-4a20-8f06-c096f4d9adc1", "John", "Doe", "12/02/1978", "Refugee", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "No", "Yes", "Moderate", "No", "", "No", "", "Kenya", "Kiswahili, English", "English", "123 Main Street, Kampala", "0123456789", "", "Email", "No")
 	MaryPoppins = individual("bbf539fd-ebaa-4438-ae4f-8aca8b327f42", "Mary", "Poppins", "12/02/1978", "Internally Displaced Person", "Female", "Yes", "https://link-to-consent.proof", "No", "No", "No", "No", "", "No", "", "No", "", "Uganda", "Rukiga, English", "Rukiga", "901 First Avenue, Kampala", "0123456789", "", "Telegram", "Yes")
 	BoDiddley   = individual("26335292-c839-48b6-8ad5-81271ee51e7b", "Bo", "Diddley", "12/02/1978", "Host Community", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "Yes", "No", "", "No", "", "No", "", "Somalia", "Somali, Arabic, English", "English", "101 Main Street, Kampala", "0123456789", "", "Whatsapp", "No")
 
 	// Individuals (Staff)
-	Stephen      = staff(individual("066a0268-fdc6-495a-9e4b-d60cfae2d81a", "Stephen", "Kabagambe", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
-	Colette = staff(individual("93f9461f-31da-402e-8988-6e0100ecaa24", "Colette", "le Jeune", "12/02/1978","", "Female","", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
-	Courtney = staff(individual("14c014d9-f433-4508-b33d-dc45bf86690b", "Courtney", "Lare", "12/02/1978","", "Female","", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Stephen  = staff(individual("066a0268-fdc6-495a-9e4b-d60cfae2d81a", "Stephen", "Kabagambe", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Colette  = staff(individual("93f9461f-31da-402e-8988-6e0100ecaa24", "Colette", "le Jeune", "12/02/1978", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Courtney = staff(individual("14c014d9-f433-4508-b33d-dc45bf86690b", "Courtney", "Lare", "12/02/1978", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+
+	// D-Team (Dogfooding)
+	Ludovic  = staff(individual("78b494dc-7461-42f5-bf2d-1c9695e63ba8", "Ludovic", "Cleroux", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Cassie   = staff(individual("dd65e4cf-c691-411a-a1f8-bed22c538480", "Cassie", "Seo", "12/02/1978", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Senyao   = staff(individual("1889acbb-5dbb-4998-a071-ab00c19c2b77", "Senyao", "Hou", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Robert   = staff(individual("3e8488eb-785a-49c4-95f1-2cc5c09e8ab9", "Robert", "Focke", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Nicolas  = staff(individual("7c1107b7-3fa7-4f49-acea-e953c5d8723f", "Nicolas", "Epstein", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Kristjan = staff(individual("ae4d0fd5-bb03-4b9d-948d-c99754aca5ce", "Kristjan", "Thoroddsson", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
 
 	// Memberships
 	StevenMembership   = membership("862690ee-87f0-4f95-aa1e-8f8a2f2fd54a", Stephen, UgandaCoreAdminTeam)
 	ColetteMembership  = membership("9d4abef9-0be0-4750-81ab-0524a412c049", Colette, UgandaProtectionTeam)
 	CourtneyMembership = membership("83c5e73a-5947-4d7e-996c-14a2a7b1c850", Courtney, MozambiqueEducationTeam)
 
+	// D-Team Memberships
+	LudovicMembership  = membership("156e7e3a-6cec-43ca-be28-94e8eb0bb27c", Ludovic, DTeam)
+	CassieMembership   = membership("16f91d0b-d53a-41cc-a437-5124fd65656e", Cassie, DTeam)
+	SenyaoMembership   = membership("fdad7109-5fde-41ca-8eee-3f699ad8e491", Senyao, DTeam)
+	RobertMembership   = membership("2cc4d8e7-2087-41d0-af7f-90144820466f", Robert, DTeam)
+	NicolasMembership  = membership("624291ac-d573-4866-b507-d9e83b9b2288", Nicolas, DTeam)
+	KristjanMembership = membership("a6a7a318-64d8-4cfa-83c7-8710f1d12778", Kristjan, DTeam)
+
 	// Cases
-	BoDiddleySituationAnalysis    = kase("dba43642-8093-4685-a197-f8848d4cbaaa", UGSituationalAnalysisCaseType.ID, Colette.ID, BoDiddley.ID, UgandaProtectionTeam.ID, false, &cms.CaseTemplate{
+	BoDiddleySituationAnalysis = kase("dba43642-8093-4685-a197-f8848d4cbaaa", UGSituationalAnalysisCaseType.ID, Colette.ID, BoDiddley.ID, UgandaProtectionTeam.ID, false, &cms.CaseTemplate{
 		FormElements: []cms.CaseTemplateFormElement{
 			{
 				Type: "textarea",
@@ -620,8 +687,8 @@ var (
 			{
 				Type: "textarea",
 				Attributes: cms.CaseTemplateFormElementAttribute{
-					Label:       "How are you addressing these challenges and barriers? What is standing in your way? Can you give me some examples of how you are dealing with these challenges?",
-					ID:          "challengesBarriers",
+					Label: "How are you addressing these challenges and barriers? What is standing in your way? Can you give me some examples of how you are dealing with these challenges?",
+					ID:    "challengesBarriers",
 					Value: []string{
 						"Some of the barriers I face are communication gaps between myself and refugee tenants. We are attempting to deal with these challenges by using google translate.",
 					},
@@ -632,8 +699,8 @@ var (
 			{
 				Type: "textarea",
 				Attributes: cms.CaseTemplateFormElementAttribute{
-					Label:       "What are some solutions you see for this and how could we work together on these solutions? How could we work to reduce these challenges together?",
-					ID:          "solutions",
+					Label: "What are some solutions you see for this and how could we work together on these solutions? How could we work to reduce these challenges together?",
+					ID:    "solutions",
 					Value: []string{
 						"A qualified interpreter, who knows the legal context could help us to agree on contractual matters.",
 					},
@@ -644,8 +711,8 @@ var (
 			{
 				Type: "textarea",
 				Attributes: cms.CaseTemplateFormElementAttribute{
-					Label:       "If we were to work together on this, what could we do together? What would make the most difference for you?",
-					ID:          "workTogether",
+					Label: "If we were to work together on this, what could we do together? What would make the most difference for you?",
+					ID:    "workTogether",
 					Value: []string{
 						"NRC could provide a translator and a legal representative to ease contract negotiations",
 					},

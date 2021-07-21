@@ -2,7 +2,6 @@
   <configuration default="false" name="test cms" type="GoTestRunConfiguration" factoryName="Go Test">
     <module name="core" />
     <working_directory value="$PROJECT_DIR$/api/pkg/apps/cms" />
-    <parameters value="--tags=integration" />
     <root_directory value="$PROJECT_DIR$/api" />
     <kind value="DIRECTORY" />
     <package value="github.com/nrc-no/core/pkg/apps/iam" />
