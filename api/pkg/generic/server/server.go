@@ -4,8 +4,7 @@ import (
 	"github.com/boj/redistore"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/nrc-no/core/pkg/utils"
-	"github.com/ory/hydra-client-go/client/admin"
-	"github.com/ory/hydra-client-go/client/public"
+	"github.com/ory/hydra-client-go/client"
 	"net/http"
 	"path"
 )
@@ -14,8 +13,8 @@ type GenericServerOptions struct {
 	MongoClientFn     utils.MongoClientFn
 	MongoDatabase     string
 	Environment       string
-	HydraAdminClient  admin.ClientService
-	HydraPublicClient public.ClientService
+	HydraAdminClient  *client.OryHydra
+	HydraPublicClient *client.OryHydra
 	HydraHTTPClient   *http.Client
 	OidcProvider      *oidc.Provider
 	RedisStore        *redistore.RediStore

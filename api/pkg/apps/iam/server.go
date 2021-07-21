@@ -61,7 +61,7 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 		return nil, err
 	}
 
-	hydraAdmin := o.HydraAdminClient
+	hydraAdmin := o.HydraAdminClient.Admin
 
 	srv := &Server{
 		environment:           o.Environment,

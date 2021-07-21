@@ -61,7 +61,7 @@ func (s *Suite) testCaseTypeListFilter() {
 	// Make some CaseTypes
 	caseTypes := s.mockCaseTypes(nCaseTypes)
 
-	// Mase some PartyTypes
+	// Make some PartyTypes
 	partyTypes := []string{}
 	for i := 0; i < nPartyTypes; i++ {
 		partyTypes = append(partyTypes, newUUID())

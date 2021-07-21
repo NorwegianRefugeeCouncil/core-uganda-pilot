@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"errors"
+	"github.com/ory/hydra-client-go/client"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -68,11 +69,14 @@ func NewGenericServerTestSetup() *GenericServerTestSetup {
 		return mongoClient, nil
 	}
 
+	hydraClient := client.NewHTTPClient(nil)
+
 	return &GenericServerTestSetup{
 		GenericServerOptions: &GenericServerOptions{
-			MongoClientFn: mongoClientFn,
-			MongoDatabase: mongoDatabase,
-			Environment:   "Development",
+			MongoClientFn:    mongoClientFn,
+			MongoDatabase:    mongoDatabase,
+			Environment:      "Development",
+			HydraAdminClient: hydraClient,
 		},
 		Ctx:      context.Background(),
 		Listener: listener,

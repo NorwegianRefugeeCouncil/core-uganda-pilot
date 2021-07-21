@@ -53,7 +53,7 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 		caseStore:       caseStore,
 		caseTypeStore:   caseTypeStore,
 		commentStore:    commentStore,
-		HydraAdmin:      o.HydraAdminClient,
+		HydraAdmin:      o.HydraAdminClient.Admin,
 		HydraHttpClient: o.HydraHTTPClient,
 	}
 
