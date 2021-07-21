@@ -92,6 +92,13 @@
 
                 <div id="badge-container-{{.Attributes.ID}}" class="form-floating mb-3"></div>
 
+                <input id="{{.Attributes.ID}}"
+                       name="{{.Attributes.ID}}"
+                       value="{{if .Attributes.Value}}{{index .Attributes.Value 0}}{{end}}"
+                       type="hidden"
+                       placeholder="{{.Attributes.Placeholder}}"
+                       {{if .Validation.Required}}required{{end}}>
+
             </div>
         </div>
 
@@ -185,6 +192,17 @@
             const addBadgeButton = document.getElementById("btn-add-{{.Attributes.ID}}")
             const clearBadgesButton = document.getElementById("btn-clear-{{.Attributes.ID}}")
 
+            const valueContainer = document.getElementById("{{.Attributes.ID}}")
+
+            // initially populate badge container
+            {{if .Attributes.Value}}
+            const initialValue = "{{index .Attributes.Value 0}}"
+            console.log(initialValue)
+            initialValue.split("|").forEach(badgeContent => {
+              badgeContainer.appendChild(buildBadge(badgeContent))
+            })
+            {{end}}
+
             Object.keys(taxonomy).forEach(programmeArea => {
               programmeAreaSelect.appendChild(createSelectOption(programmeArea, programmeArea))
             })
@@ -273,6 +291,14 @@
                 const badge = buildBadge(label)
                 badgeContainer.appendChild(badge)
 
+                if (valueContainer.value === ""){
+                  valueContainer.value = `${label}`
+                } else {
+                  valueContainer.value = `${valueContainer.value}|${label}`
+                }
+
+                console.log(valueContainer.value)
+
                 programmeAreaSelect.selectedIndex = -1
                 serviceAreaSelect.selectedIndex = -1
                 thematicAreaSelect.selectedIndex = -1
@@ -284,6 +310,8 @@
 
             clearBadgesButton.addEventListener('click', (event) => {
               badgeContainer.innerHTML = ''
+              valueContainer.value = ''
+              console.log(valueContainer.value)
             })
 
           }, false);
