@@ -1,6 +1,7 @@
 package iam
 
 import (
+	"github.com/nrc-no/core/pkg/validation"
 	"net/http"
 )
 
@@ -28,6 +29,13 @@ func (s *Server) putRelationship(w http.ResponseWriter, req *http.Request) {
 	r.RelationshipTypeID = payload.RelationshipTypeID
 	r.FirstPartyID = payload.FirstPartyID
 	r.SecondPartyID = payload.SecondPartyID
+
+	errList := ValidateRelationship(r, validation.NewPath(""))
+	if len(errList) > 0 {
+		status := errList.Status(http.StatusUnprocessableEntity, "invalid relationship")
+		s.error(w, &status)
+		return
+	}
 
 	if err := s.relationshipStore.update(ctx, r); err != nil {
 		s.error(w, err)

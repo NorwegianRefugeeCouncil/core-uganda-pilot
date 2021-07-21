@@ -1,24 +1,28 @@
-const DESCRIPTION = '[data-testid=description]';
+const ALERT = '[data-testid=alert]';
 const UPDATE_FORM_Btn = '[data-testid=updateFormBtn]';
 const REFERRAL_PICKER = '[data-testid=referralPicker]';
 const REFERRAL_CASES = '[data-testid=referralCaseItem]';
-const REFERRAL_DESCRIPTION = '[data-testid=referralDescription]';
 const SUBMIT_REFERRAL_BUTTON = '[data-testid=submitReferralBtn]';
 const REFERRAL_CASE_OPEN = '[data-testid=referralCaseOpen]';
+const FORM = '[data-testid=form]';
 
 export default class CasePage {
-    clearDescriptionValue = () => {
-        cy.get(DESCRIPTION).clear();
+    getAlertMessage = () => {
+        return cy.get(ALERT);
+    };
+
+    clearForm = () => {
+        cy.get(FORM).each(($el) => {
+            cy.wrap($el).clear();
+        });
         return this;
     };
 
-    typeDescription = (value) => {
-        cy.get(DESCRIPTION).type(value);
+    typeForm = (value) => {
+        cy.get(FORM).each(($el) => {
+            cy.wrap($el).type(value);
+        });
         return this;
-    };
-
-    getDescriptionValue = () => {
-        return cy.get(DESCRIPTION);
     };
 
     submitUpdate = () => {
@@ -29,11 +33,6 @@ export default class CasePage {
     selectReferral = () => {
         cy.get(REFERRAL_PICKER).click();
         cy.get(REFERRAL_CASES).first().click();
-        return this;
-    };
-
-    typeReferralDescription = (value) => {
-        cy.get(REFERRAL_DESCRIPTION).type(value);
         return this;
     };
 

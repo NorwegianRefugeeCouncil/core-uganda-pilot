@@ -1,6 +1,7 @@
 package iam
 
 import (
+	"github.com/nrc-no/core/pkg/validation"
 	"net/http"
 )
 
@@ -21,6 +22,13 @@ func (s *Server) putIndividual(w http.ResponseWriter, req *http.Request) {
 	_, err := s.individualStore.get(ctx, id)
 	if err != nil {
 		s.error(w, err)
+		return
+	}
+
+	errList := ValidateIndividual(&individual, validation.NewPath(""))
+	if len(errList) > 0 {
+		status := errList.Status(http.StatusUnprocessableEntity, "invalid individual")
+		s.error(w, &status)
 		return
 	}
 

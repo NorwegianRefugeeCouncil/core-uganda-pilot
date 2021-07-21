@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/nrc-no/core/pkg/validation"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
@@ -26,7 +27,20 @@ func JSONResponse(w http.ResponseWriter, status int, data interface{}) {
 
 func ErrorResponse(w http.ResponseWriter, err error) {
 	logrus.WithError(err).Errorf("server error")
-	http.Error(w, err.Error(), http.StatusInternalServerError)
+	if status, ok := err.(*validation.Status); ok {
+		code := status.Code
+		if code == 0 {
+			code = http.StatusInternalServerError
+		}
+		JSONResponse(w, code, status)
+		return
+	} else {
+		status := &validation.Status{
+			Code: http.StatusInternalServerError,
+		}
+		JSONResponse(w, status.Code, status)
+		return
+	}
 }
 
 func BindJSON(req *http.Request, into interface{}) error {

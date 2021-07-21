@@ -1,6 +1,7 @@
 package iam
 
 import (
+	"github.com/nrc-no/core/pkg/validation"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
 )
@@ -16,6 +17,13 @@ func (s *Server) postIndividual(w http.ResponseWriter, req *http.Request) {
 
 	if individual.ID == "" {
 		individual.ID = uuid.NewV4().String()
+	}
+
+	errList := ValidateIndividual(&individual, validation.NewPath(""))
+	if len(errList) > 0 {
+		status := errList.Status(http.StatusUnprocessableEntity, "invalid individual")
+		s.error(w, &status)
+		return
 	}
 
 	attrs := map[string][]string{}

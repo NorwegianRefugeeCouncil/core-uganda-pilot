@@ -143,7 +143,7 @@ var (
 	UGSituationAnalysis = &cms.CaseTemplate{
 		FormElements: []cms.CaseTemplateFormElement{
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
 					ID:          "safeDiginifiedLife",
@@ -152,7 +152,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "How are you addressing these challenges and barriers? What is standing in your way? Can you give me some examples of how you are dealing with these challenges?",
 					ID:          "challengesBarriers",
@@ -161,7 +161,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "What are some solutions you see for this and how could we work together on these solutions? How could we work to reduce these challenges together?",
 					ID:          "solutions",
@@ -170,7 +170,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "If we were to work together on this, what could we do together? What would make the most difference for you?",
 					ID:          "workTogether",
@@ -183,7 +183,7 @@ var (
 	UGIndividualAssessment = &cms.CaseTemplate{
 		FormElements: []cms.CaseTemplateFormElement{
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Which service has the individual requested as a starting point of support?",
 					ID:          "serviceStartingPoint",
@@ -192,7 +192,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "What other services has the individual requested/identified?",
 					ID:          "otherServices",
@@ -201,7 +201,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "What is the perceived priority response level of the individual",
 					ID:          "perceivedPriority",
@@ -214,7 +214,7 @@ var (
 	UGReferral = &cms.CaseTemplate{
 		FormElements: []cms.CaseTemplateFormElement{
 			{
-				Type: "textinput",
+				Type: cms.TextInput,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Date of Referral",
 					ID:          "dateOfReferral",
@@ -222,7 +222,7 @@ var (
 				},
 			},
 			{
-				Type: "dropdown",
+				Type: cms.Dropdown,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Urgency",
 					ID:          "urgency",
@@ -234,7 +234,7 @@ var (
 				},
 			},
 			{
-				Type: "dropdown",
+				Type: cms.Dropdown,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Type of Referral",
 					ID:          "typeOfReferral",
@@ -246,7 +246,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Services/assistance requested",
 					ID:          "servicesRequested",
@@ -255,7 +255,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Reason for referral",
 					ID:          "reasonForReferral",
@@ -264,7 +264,7 @@ var (
 				},
 			},
 			{
-				Type: "checkbox",
+				Type: cms.Checkbox,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Does the beneficiary have any restrictions to be referred?",
 					ID:          "referralRestrictions",
@@ -280,7 +280,7 @@ var (
 				},
 			},
 			{
-				Type: "dropdown",
+				Type: cms.Dropdown,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Means of Referral",
 					ID:          "meansOfReferral",
@@ -292,7 +292,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Means and terms of receiving feedback from the client",
 					ID:          "meansOfFeedback",
@@ -301,7 +301,7 @@ var (
 				},
 			},
 			{
-				Type: "textinput",
+				Type: cms.TextInput,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Deadline for receiving feedback from the client",
 					ID:          "deadlineForFeedback",
@@ -313,7 +313,7 @@ var (
 	UGExternalReferralFollowup = &cms.CaseTemplate{
 		FormElements: []cms.CaseTemplateFormElement{
 			{
-				Type: "checkbox",
+				Type: cms.Checkbox,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Was the referral accepted by the other provider?",
 					ID:          "referralAccepted",
@@ -329,7 +329,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Provide any pertinent details on service needs / requests.",
 					ID:          "pertinentDetails",
@@ -343,7 +343,7 @@ var (
 	UGICLAIndividualIntake = &cms.CaseTemplate{
 		FormElements: []cms.CaseTemplateFormElement{
 			{
-				Type: "dropdown",
+				Type: cms.Dropdown,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Modality of service delivery",
 					ID:          "modality",
@@ -355,7 +355,7 @@ var (
 				},
 			},
 			{
-				Type: "dropdown",
+				Type: cms.Dropdown,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Living situation",
 					ID:          "livingSituation",
@@ -367,7 +367,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Comment on living situation",
 					ID:          "commentLivingSituation",
@@ -376,7 +376,7 @@ var (
 				},
 			},
 			{
-				Type: "dropdown",
+				Type: cms.Dropdown,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "How did you learn about ICLA services?",
 					ID:          "iclaServiceDiscovery",
@@ -388,7 +388,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Vulnerability data",
 					ID:          "vulnerability",
@@ -397,7 +397,7 @@ var (
 				},
 			},
 			{
-				Type: "textinput",
+				Type: cms.TextInput,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Full name of representative",
 					ID:          "representativeName",
@@ -405,7 +405,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Other personal information",
 					ID:          "otherInformation",
@@ -414,7 +414,7 @@ var (
 				},
 			},
 			{
-				Type: "textinput",
+				Type: cms.TextInput,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Reason for representative",
 					ID:          "representativeReason",
@@ -422,7 +422,7 @@ var (
 				},
 			},
 			{
-				Type: "checkbox",
+				Type: cms.Checkbox,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Is the guardianship legal as per national legislation?",
 					ID:          "guardianshipIsLegal",
@@ -438,7 +438,7 @@ var (
 				},
 			},
 			{
-				Type: "checkbox",
+				Type: cms.Checkbox,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Does the beneficiary have the legal capacity to consent?",
 					ID:          "capacityToConsent",
@@ -458,7 +458,7 @@ var (
 	UGICLACaseAssessment = &cms.CaseTemplate{
 		FormElements: []cms.CaseTemplateFormElement{
 			{
-				Type: "dropdown",
+				Type: cms.Dropdown,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Type of service",
 					ID:          "serviceType",
@@ -470,7 +470,7 @@ var (
 				},
 			},
 			{
-				Type: "textinput",
+				Type: cms.TextInput,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Thematic area",
 					ID:          "thematicArea",
@@ -478,7 +478,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Fact and details of the problem",
 					ID:          "details",
@@ -487,7 +487,7 @@ var (
 				},
 			},
 			{
-				Type: "checkbox",
+				Type: cms.Checkbox,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Other parties involved",
 					ID:          "otherPartiesInvolved",
@@ -512,7 +512,7 @@ var (
 				},
 			},
 			{
-				Type: "checkbox",
+				Type: cms.Checkbox,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Previous/existing lawyer working on the case",
 					ID:          "previousOrExistingLawyer",
@@ -531,7 +531,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Previous or existing lawyer details",
 					ID:          "previousOrExistingLawyerDetails",
@@ -540,7 +540,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "What actions have been taken to solve the problem, if any?",
 					ID:          "actionsTaken",
@@ -549,7 +549,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Related to this problem, are there any cases pending before a court or administrative body?",
 					ID:          "pendingCourtCases",
@@ -558,7 +558,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "If there are cases pending before a court or administrative body, are there any deadlines that need to be met?",
 					ID:          "pendingCourtCaseDeadlines",
@@ -567,7 +567,7 @@ var (
 				},
 			},
 			{
-				Type: "textarea",
+				Type: cms.Textarea,
 				Attributes: cms.CaseTemplateFormElementAttribute{
 					Label:       "Is there any conflict of interest involved?",
 					ID:          "conflictOfInterest",

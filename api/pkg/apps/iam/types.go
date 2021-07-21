@@ -52,6 +52,7 @@ func (l *AttributeList) FindByID(id string) *Attribute {
 	return nil
 }
 
+// TODO COR-158
 // PartyAttributes contains the Attribute values of a Party
 type PartyAttributes map[string][]string
 
