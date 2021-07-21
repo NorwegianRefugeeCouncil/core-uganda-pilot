@@ -37,11 +37,12 @@ func getLinks(searchParam string, currentPage int, pageCount int, perPageParam s
 	if currentPage == 1 {
 		previousPage = currentPage
 	}
-	first := fmt.Sprintf("?%s&page=%d%s%s", searchParam, 1, perPageParam, sortParam)
-	previous := fmt.Sprintf("?%s&page=%d%s%s", searchParam, previousPage, perPageParam, sortParam)
-	self := fmt.Sprintf("?%s&page=%d%s%s", searchParam, currentPage, perPageParam, sortParam)
-	next := fmt.Sprintf("?%s&page=%d%s%s", searchParam, currentPage+1, perPageParam, sortParam)
-	last := fmt.Sprintf("?%s&page=%d%s%s", searchParam, pageCount, perPageParam, sortParam)
+	const stringFragment = "?%s&page=%d%s%s"
+	first := fmt.Sprintf(stringFragment, searchParam, 1, perPageParam, sortParam)
+	previous := fmt.Sprintf(stringFragment, searchParam, previousPage, perPageParam, sortParam)
+	self := fmt.Sprintf(stringFragment, searchParam, currentPage, perPageParam, sortParam)
+	next := fmt.Sprintf(stringFragment, searchParam, currentPage+1, perPageParam, sortParam)
+	last := fmt.Sprintf(stringFragment, searchParam, pageCount, perPageParam, sortParam)
 
 	return Links{first, previous, self, next, last}
 }

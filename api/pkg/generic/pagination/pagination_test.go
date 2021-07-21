@@ -259,6 +259,7 @@ func TestGetPaginationMetaData(t *testing.T) {
 		sortValue   string
 		searchValue string
 	}
+	const firstPageLink = "?searchParam=abc&page=1&perPage=2&sort=desc"
 	tests := []struct {
 		name string
 		args args
@@ -280,9 +281,9 @@ func TestGetPaginationMetaData(t *testing.T) {
 				TotalCount: 6,
 				Sort:       "desc",
 				Links: Links{
-					First:    "?searchParam=abc&page=1&perPage=2&sort=desc",
-					Previous: "?searchParam=abc&page=1&perPage=2&sort=desc",
-					Self:     "?searchParam=abc&page=1&perPage=2&sort=desc",
+					First:    firstPageLink,
+					Previous: firstPageLink,
+					Self:     firstPageLink,
 					Next:     "?searchParam=abc&page=2&perPage=2&sort=desc",
 					Last:     "?searchParam=abc&page=3&perPage=2&sort=desc",
 				},

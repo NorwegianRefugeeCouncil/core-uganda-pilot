@@ -292,37 +292,45 @@ func (a *IndividualListOptions) MarshalQueryParameters() (url.Values, error) {
 func (a *IndividualListOptions) UnmarshalQueryParameters(values url.Values) error {
 	a.PartyTypeIDs = values["partyTypeId"]
 	for key, values := range values {
-		if strings.HasPrefix(key, "attributes[") && strings.HasSuffix(key, "]") {
-			if a.Attributes == nil {
-				a.Attributes = map[string]string{}
-			}
-			attrKey := key[11 : len(key)-1]
-			a.Attributes[attrKey] = values[0]
+		if containAttributes(key) {
+			setAttributesValue(a, key, values)
 		}
-		if key == "searchParam" {
+		switch key {
+		case "searchParam":
 			a.SearchParam = values[0]
-		}
-		if key == "page" {
+		case "page":
 			str := values[0]
 			page, err := strconv.Atoi(str)
 			if err != nil {
 				return err
 			}
 			a.Page = page
-		}
-		if key == "perPage" {
+		case "perPage":
 			str := values[0]
 			perPage, err := strconv.Atoi(str)
 			if err != nil {
 				return err
 			}
 			a.PerPage = perPage
-		}
-		if key == "sort" {
+		case "sort":
 			a.Sort = values[0]
+		default:
+			break
 		}
 	}
 	return nil
+}
+
+func setAttributesValue(a *IndividualListOptions, key string, values []string) {
+	if a.Attributes == nil {
+		a.Attributes = map[string]string{}
+	}
+	attrKey := key[11 : len(key)-1]
+	a.Attributes[attrKey] = values[0]
+}
+
+func containAttributes(key string) bool {
+	return strings.HasPrefix(key, "attributes[") && strings.HasSuffix(key, "]")
 }
 
 type IndividualClient interface {
