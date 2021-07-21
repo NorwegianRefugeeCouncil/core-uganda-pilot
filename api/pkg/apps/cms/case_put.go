@@ -25,8 +25,7 @@ func (s *Server) PutCase(w http.ResponseWriter, req *http.Request) {
 	}
 
 	kase.Done = payload.Done
-	kase.ParentID = payload.ParentID
-	kase.TeamID = payload.TeamID
+	kase.FormData = payload.FormData
 
 	if err := s.caseStore.Update(ctx, kase); err != nil {
 		s.Error(w, err)

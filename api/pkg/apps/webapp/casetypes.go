@@ -161,15 +161,8 @@ func (s *Server) PostCaseType(
 		_, err := cmsClient.CaseTypes().Create(ctx, caseType)
 		if err != nil {
 			if status, ok := err.(*validation.Status); ok {
-				if err := s.renderFactory.New(req).ExecuteTemplate(w, "casetype", map[string]interface{}{
-					"CaseType":   caseType,
-					"PartyTypes": partyTypes,
-					"Teams":      teams,
-					"Errors":     status.Errors,
-				}); err != nil {
-					s.Error(w, err)
-					return
-				}
+				s.RenderValidated(req, w, caseType, partyTypes, teams, status)
+				return
 			} else {
 				s.Error(w, err)
 				return
@@ -190,8 +183,13 @@ func (s *Server) PostCaseType(
 	} else {
 		_, err := cmsClient.CaseTypes().Update(ctx, caseType)
 		if err != nil {
-			s.Error(w, err)
-			return
+			if status, ok := err.(*validation.Status); ok {
+				s.RenderValidated(req, w, caseType, partyTypes, teams, status)
+				return
+			} else {
+				s.Error(w, err)
+				return
+			}
 		}
 
 		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
@@ -206,6 +204,28 @@ func (s *Server) PostCaseType(
 		w.WriteHeader(http.StatusSeeOther)
 		return
 	}
+}
+
+func (s *Server) RenderValidated(req *http.Request, w http.ResponseWriter, caseType *cms.CaseType, partyTypes *iam.PartyTypeList, teams *iam.TeamList, status *validation.Status) {
+	// Set notification
+	if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
+		Message: "There seems to be an problem with the data you have submitted. See below for errors.",
+		Theme:   "danger",
+	}); err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	if err := s.renderFactory.New(req).ExecuteTemplate(w, "casetype", map[string]interface{}{
+		"CaseType":   caseType,
+		"PartyTypes": partyTypes,
+		"Teams":      teams,
+		"Errors":     status.Errors,
+	}); err != nil {
+		s.Error(w, err)
+		return
+	}
+	return
 }
 
 func (s *Server) NewCaseType(w http.ResponseWriter, req *http.Request) {
