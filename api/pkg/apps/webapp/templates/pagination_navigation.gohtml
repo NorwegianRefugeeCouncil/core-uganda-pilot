@@ -1,0 +1,24 @@
+{{define "pagination-navigation"}}
+    <nav aria-label="Page navigation example" data-testid="paginationNavigator">
+        <ul class="pagination justify-content-end" style="padding-top: 0.3rem">
+            <li class="page-item" style="padding: 0.5rem">
+                <a data-testid="totalPaginatedItems">{{$.TotalCount}} items</a>
+            </li>
+            <li class="page-item" data-testid="firstPage">
+                <a class="page-link" href="{{$.Links.First}}" tabindex="-1" aria-disabled="true"><i class="bi bi-chevron-double-left"></i></a>
+            </li>
+            <li class="page-item" data-testid="prevPage">
+                <a class="page-link" href="{{$.Links.Previous}}" tabindex="-1" aria-disabled="true"><i class="bi bi-chevron-left"></i></a>
+            </li>
+            <li class="page-item" style="padding: 0.5rem">
+                <a data-testid="paginationState">{{$.Page}} of {{$.PageCount}}</a>
+            </li>
+            <li class="page-item" data-testid="nextPage">
+                <a class="page-link" href="{{$.Links.Next}}"><i class="bi bi-chevron-right</i></a>
+            </li>
+            <li class="page-item" data-testid="lastPage">
+                <a class="page-link" href="{{$.Links.Last}}"><i class="bi bi-chevron-double-right"></i></a>
+            </li>
+        </ul>
+    </nav>
+{{end}}
