@@ -64,7 +64,7 @@ func TestForm_RenderValidationError(t *testing.T) {
 				ValidationErrors: tt.fields.ValidationErrors,
 				Fields:           tt.fields.Fields,
 			}
-			if got := f.RenderValidationError(tt.args.field); got != tt.want {
+			if got := f.RenderValidationErrorsFor(tt.args.field); got != tt.want {
 				t.Errorf("RenderValidationError() = %v, want %v", got, tt.want)
 			}
 		})

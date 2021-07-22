@@ -152,7 +152,7 @@ func (s *Server) PostCaseType(
 		return
 	}
 
-	if err := caseType.UnmarshalFormData(req.Form); err != nil {
+	if err := UnmarshalCaseTypeFormData(caseType, req.Form); err != nil {
 		s.Error(w, err)
 		return
 	}

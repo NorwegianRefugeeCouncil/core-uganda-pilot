@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"github.com/nrc-no/core/pkg/validation"
 	"html/template"
-	"net/url"
 	"time"
 )
 
@@ -17,21 +16,6 @@ type Case struct {
 	TeamID     string        `json:"teamId" bson:"teamId"`
 	CreatorID  string        `json:"creatorId" bson:"creatorId"`
 	FormData   *CaseTemplate `json:"formData" bson:"formData"`
-}
-
-func (c *Case) UnmarshalFormData(values url.Values, caseTemplate *CaseTemplate) error {
-	c.CaseTypeID = values.Get("caseTypeId")
-	c.PartyID = values.Get("partyId")
-	c.Done = values.Get("done") == "on"
-	c.ParentID = values.Get("parentId")
-	c.TeamID = values.Get("teamId")
-	formElements := []FormElement{}
-	for _, formElement := range caseTemplate.FormElements {
-		formElement.Attributes.Value = values[formElement.Attributes.ID]
-		formElements = append(formElements, formElement)
-	}
-	c.FormData = &CaseTemplate{formElements}
-	return nil
 }
 
 type CaseList struct {
@@ -52,21 +36,6 @@ type CaseTypeList struct {
 
 func (c *CaseType) String() string {
 	return c.Name
-}
-
-func (c *CaseType) UnmarshalFormData(values url.Values) error {
-	c.Name = values.Get("name")
-	c.PartyTypeID = values.Get("partyTypeId")
-	c.TeamID = values.Get("teamId")
-	templateString := values.Get("template")
-	if templateString == "" {
-		c.Template = &CaseTemplate{}
-	} else {
-		if err := json.Unmarshal([]byte(templateString), &c.Template); err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 func (c *CaseType) Pretty() string {

@@ -418,7 +418,7 @@ func (s *Server) PostCase(ctx context.Context, kase *cms.Case, w http.ResponseWr
 		return
 	}
 
-	err = kase.UnmarshalFormData(req.Form, caseType.Template)
+	err = UnmarshalCaseFormData(kase, caseType.Template, req.Form)
 	if err != nil {
 		s.Error(w, err)
 		return
