@@ -18,10 +18,19 @@ type Store interface {
 	ConsumeNotifications(req *http.Request) ([]*Notification, error)
 	Get(req *http.Request) (*sessions.Session, error)
 	GetString(req *http.Request, key string) (string, error)
+	FindString(req *http.Request, key string) (string, bool)
 }
 
 type RedisSessionManager struct {
 	sessions.Store
+}
+
+func (r *RedisSessionManager) FindString(req *http.Request, key string) (string, bool) {
+	str, err := r.GetString(req, key)
+	if err != nil {
+		return "", false
+	}
+	return str, true
 }
 
 func (r *RedisSessionManager) GetString(req *http.Request, key string) (string, error) {

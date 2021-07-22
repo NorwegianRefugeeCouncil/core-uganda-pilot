@@ -7,28 +7,21 @@ import (
 	"net/http"
 )
 
-func GetAccessAndRefreshTokens(s sessionmanager.Store, req *http.Request) (string, string, error) {
-	accessToken, err := s.GetString(req, "access-token")
-	if err != nil {
-		return "", "", err
-	}
-	refreshToken, err := s.GetString(req, "refresh-token")
-	if err != nil {
-		return "", "", err
-	}
-	return accessToken, refreshToken, nil
+func GetAccessAndRefreshTokens(s sessionmanager.Store, req *http.Request) (string, string) {
+	accessToken, _ := s.FindString(req, "access-token")
+	refreshToken, _ := s.FindString(req, "refresh-token")
+	return accessToken, refreshToken
 }
 
-func GetOauth2Token(s sessionmanager.Store, req *http.Request) (*oauth2.Token, error) {
-	accessToken, refreshToken, err := GetAccessAndRefreshTokens(s, req)
-	if err != nil {
-		return nil, err
+func GetOauth2Token(s sessionmanager.Store, req *http.Request) *oauth2.Token {
+	accessToken, refreshToken := GetAccessAndRefreshTokens(s, req)
+	if len(accessToken) > 0 || len(refreshToken) > 0 {
+		return &oauth2.Token{
+			AccessToken:  accessToken,
+			RefreshToken: refreshToken,
+		}
 	}
-	token := &oauth2.Token{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-	}
-	return token, nil
+	return nil
 }
 
 func GetOauth2HttpClient(
@@ -37,15 +30,14 @@ func GetOauth2HttpClient(
 	oauth2Config *oauth2.Config,
 	defaultClient *http.Client,
 ) (*http.Client, error) {
-	token, err := GetOauth2Token(s, req)
-	if err != nil {
-		return nil, err
-	}
+	ctx := req.Context()
 	httpClient := defaultClient
-	ctx := context.WithValue(req.Context(), oauth2.HTTPClient, httpClient)
-	cli := oauth2Config.Client(ctx, token)
-	if len(token.AccessToken) > 0 || len(token.RefreshToken) > 0 {
-		httpClient = cli
+	ctx = context.WithValue(ctx, oauth2.HTTPClient, httpClient)
+
+	token := GetOauth2Token(s, req)
+	if token != nil {
+		httpClient = oauth2Config.Client(ctx, token)
 	}
+
 	return httpClient, nil
 }

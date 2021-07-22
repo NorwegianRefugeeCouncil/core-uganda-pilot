@@ -102,12 +102,31 @@ func (s *Server) dangerouslySetAuthenticatedUserUsingEmail(w http.ResponseWriter
 	})
 	if err != nil {
 		s.Error(w, err)
+		return
 	}
 	if len(authUsers.Items) == 0 {
 		err := fmt.Errorf("user not found")
 		s.Error(w, err)
+		return
 	}
 	authUser := authUsers.Items[0]
+
+	var profile = &Claims{}
+	profile.Email = authUser.Get(iam.EMailAttribute.ID)
+	profile.FamilyName = authUser.Get(iam.LastNameAttribute.ID)
+	profile.GivenName = authUser.Get(iam.FirstNameAttribute.ID)
+	profile.Subject = authUser.ID
+
+	session, err := s.sessionManager.Get(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+	session.Values["profile"] = profile
+	if err := session.Save(req, w); err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	ctx = req.Context()
 	ctx = context.WithValue(ctx, "Subject", authUser.ID)
