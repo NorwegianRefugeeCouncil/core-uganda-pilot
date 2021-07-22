@@ -157,15 +157,18 @@ func (s *Server) PostCaseType(
 		return
 	}
 
+	var action string
 	if isNewCaseType {
 		_, err = cmsClient.CaseTypes().Create(ctx, caseType)
+		action = "created"
 	} else {
 		_, err = cmsClient.CaseTypes().Update(ctx, caseType)
+		action = "updated"
 	}
-	s.renderAfterPostCaseType(err, req, w, caseType, partyTypes, teams)
+	s.renderAfterPostCaseType(err, req, w, caseType, partyTypes, teams, action)
 }
 
-func (s *Server) renderAfterPostCaseType(err error, req *http.Request, w http.ResponseWriter, caseType *cms.CaseType, partyTypes *iam.PartyTypeList, teams *iam.TeamList) {
+func (s *Server) renderAfterPostCaseType(err error, req *http.Request, w http.ResponseWriter, caseType *cms.CaseType, partyTypes *iam.PartyTypeList, teams *iam.TeamList, action string) {
 	if err != nil {
 		if status, ok := err.(*validation.Status); ok {
 			s.RenderValidated(req, w, caseType, partyTypes, teams, status)
@@ -177,7 +180,7 @@ func (s *Server) renderAfterPostCaseType(err error, req *http.Request, w http.Re
 	}
 
 	if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
-		Message: fmt.Sprintf("Case type \"%s\" successfully created", caseType.Name),
+		Message: fmt.Sprintf("Case type \"%s\" successfully %s", caseType.Name, action),
 		Theme:   "success",
 	}); err != nil {
 		s.Error(w, err)
