@@ -153,6 +153,16 @@
               }
             }
 
+            const programmeAreaSelect = document.getElementById("programme-area-{{.Attributes.ID}}")
+            const serviceAreaSelect = document.getElementById("service-area-{{.Attributes.ID}}")
+            const thematicAreaSelect = document.getElementById("thematic-area-{{.Attributes.ID}}")
+
+            const badgeContainer = document.getElementById("badge-container-{{.Attributes.ID}}")
+            const addBadgeButton = document.getElementById("btn-add-{{.Attributes.ID}}")
+            const clearBadgesButton = document.getElementById("btn-clear-{{.Attributes.ID}}")
+
+            const valueContainer = document.getElementById("{{.Attributes.ID}}")
+
             // remove all the options from a select element
             const clearSelectOptions = (selectId) => {
               document.getElementById(selectId).innerHTML = "";
@@ -171,28 +181,59 @@
               return document.getElementById(selectId).value
             }
 
+            // helper function to remove value from value container
+            const removeValue = (label) => {
+              const oldValues = valueContainer.value.split("|")
+              const newValues = []
+              oldValues.forEach(oldValue => {
+                if (oldValue !== label) {
+                  newValues.push(oldValue)
+                }
+              })
+              valueContainer.value = newValues.join("|")
+            }
+
+            // helper function to remove badge
+            const removeBadge = (label) => {
+              const oldBadges = Array.from(badgeContainer.children)
+              badgeContainer.innerHTML = ''
+              oldBadges.forEach(oldBadge => {
+                if (oldBadge.textContent !== label) {
+                  badgeContainer.appendChild(oldBadge)
+                }
+              })
+            }
+
+            // helper function to remove badge and value by label
+            const removeBadgeAndValue = (label) => {
+              removeBadge(label)
+              removeValue(label)
+            }
+
             // build a badge element
             const buildBadge = (label) => {
               const badge = document.createElement("span")
               const classesToAdd = [
                 "badge",
                 "rounded-pill",
-                "bg-secondary"
+                "bg-secondary",
+                "taxonomy-badge"
               ]
               classesToAdd.forEach(classToAdd => badge.classList.add(classToAdd))
               badge.textContent = label
+              badge.addEventListener("click", (event) => {
+                removeBadgeAndValue(label)
+              })
+              badge.addEventListener("mouseover", (event) => {
+                badge.classList.remove("bg-secondary")
+                badge.classList.add("bg-danger")
+              })
+              badge.addEventListener("mouseout", (event) => {
+                badge.classList.remove("bg-danger")
+                badge.classList.add("bg-secondary")
+              })
               return badge
             }
-
-            const programmeAreaSelect = document.getElementById("programme-area-{{.Attributes.ID}}")
-            const serviceAreaSelect = document.getElementById("service-area-{{.Attributes.ID}}")
-            const thematicAreaSelect = document.getElementById("thematic-area-{{.Attributes.ID}}")
-
-            const badgeContainer = document.getElementById("badge-container-{{.Attributes.ID}}")
-            const addBadgeButton = document.getElementById("btn-add-{{.Attributes.ID}}")
-            const clearBadgesButton = document.getElementById("btn-clear-{{.Attributes.ID}}")
-
-            const valueContainer = document.getElementById("{{.Attributes.ID}}")
 
             // initially populate badge container
             {{if .Attributes.Value}}
@@ -288,16 +329,16 @@
 
                 }
 
-                const badge = buildBadge(label)
-                badgeContainer.appendChild(badge)
+                if (!valueContainer.value.includes(label)) {
+                  const badge = buildBadge(label)
+                  badgeContainer.appendChild(badge)
 
-                if (valueContainer.value === ""){
-                  valueContainer.value = `${label}`
-                } else {
-                  valueContainer.value = `${valueContainer.value}|${label}`
+                  if (valueContainer.value === ""){
+                    valueContainer.value = `${label}`
+                  } else {
+                    valueContainer.value = `${valueContainer.value}|${label}`
+                  }
                 }
-
-                console.log(valueContainer.value)
 
                 programmeAreaSelect.selectedIndex = -1
                 serviceAreaSelect.selectedIndex = -1
