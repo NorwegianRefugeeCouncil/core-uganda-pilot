@@ -28,9 +28,9 @@ func (s *Suite) TestCaseAPI() {
 
 	// UPDATE
 	get.Done = true
-	get.FormData = &CaseTemplate{FormElements: []CaseTemplateFormElement{{
+	get.FormData = &CaseTemplate{FormElements: []FormElement{{
 		Type: "textarea",
-		Attributes: CaseTemplateFormElementAttribute{
+		Attributes: FormElementAttribute{
 			Label: "mock",
 			Value: []string{"mock"},
 		},

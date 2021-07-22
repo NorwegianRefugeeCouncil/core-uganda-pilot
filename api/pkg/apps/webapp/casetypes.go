@@ -138,7 +138,7 @@ func (s *Server) PostCaseType(
 	w http.ResponseWriter,
 	req *http.Request,
 ) {
-
+	var err error
 	cmsClient, err := s.CMSClient(req)
 	if err != nil {
 		s.Error(w, err)
@@ -158,52 +158,35 @@ func (s *Server) PostCaseType(
 	}
 
 	if isNewCaseType {
-		_, err := cmsClient.CaseTypes().Create(ctx, caseType)
-		if err != nil {
-			if status, ok := err.(*validation.Status); ok {
-				s.RenderValidated(req, w, caseType, partyTypes, teams, status)
-				return
-			} else {
-				s.Error(w, err)
-				return
-			}
-		}
-
-		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
-			Message: fmt.Sprintf("Case type \"%s\" successfully created", caseType.Name),
-			Theme:   "success",
-		}); err != nil {
-			s.Error(w, err)
-			return
-		}
-
-		w.Header().Set("Location", "/settings/casetypes")
-		w.WriteHeader(http.StatusSeeOther)
-		return
+		_, err = cmsClient.CaseTypes().Create(ctx, caseType)
 	} else {
-		_, err := cmsClient.CaseTypes().Update(ctx, caseType)
-		if err != nil {
-			if status, ok := err.(*validation.Status); ok {
-				s.RenderValidated(req, w, caseType, partyTypes, teams, status)
-				return
-			} else {
-				s.Error(w, err)
-				return
-			}
-		}
+		_, err = cmsClient.CaseTypes().Update(ctx, caseType)
+	}
+	s.renderAfterPostCaseType(err, req, w, caseType, partyTypes, teams)
+}
 
-		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
-			Message: fmt.Sprintf("Case type \"%s\" successfully updated", caseType.Name),
-			Theme:   "success",
-		}); err != nil {
+func (s *Server) renderAfterPostCaseType(err error, req *http.Request, w http.ResponseWriter, caseType *cms.CaseType, partyTypes *iam.PartyTypeList, teams *iam.TeamList) {
+	if err != nil {
+		if status, ok := err.(*validation.Status); ok {
+			s.RenderValidated(req, w, caseType, partyTypes, teams, status)
+			return
+		} else {
 			s.Error(w, err)
 			return
 		}
+	}
 
-		w.Header().Set("Location", "/settings/casetypes")
-		w.WriteHeader(http.StatusSeeOther)
+	if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
+		Message: fmt.Sprintf("Case type \"%s\" successfully created", caseType.Name),
+		Theme:   "success",
+	}); err != nil {
+		s.Error(w, err)
 		return
 	}
+
+	w.Header().Set("Location", "/settings/casetypes")
+	w.WriteHeader(http.StatusSeeOther)
+	return
 }
 
 func (s *Server) RenderValidated(req *http.Request, w http.ResponseWriter, caseType *cms.CaseType, partyTypes *iam.PartyTypeList, teams *iam.TeamList, status *validation.Status) {

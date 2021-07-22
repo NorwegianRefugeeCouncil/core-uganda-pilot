@@ -580,10 +580,10 @@ var (
 
 	// Dogfooding Case Templates
 	DTeamBugReport = &cms.CaseTemplate{
-		FormElements: []cms.CaseTemplateFormElement{
+		FormElements: []cms.FormElement{
 			{
 				Type: "textarea",
-				Attributes: cms.CaseTemplateFormElementAttribute{
+				Attributes: cms.FormElementAttribute{
 					Label:       "What action were you undertaking in the application, when the error happened",
 					ID:          "whatActionBeforeError",
 					Description: "",
@@ -592,7 +592,7 @@ var (
 			},
 			{
 				Type: "textarea",
-				Attributes: cms.CaseTemplateFormElementAttribute{
+				Attributes: cms.FormElementAttribute{
 					Label:       "If the error had not happened, what would be your expected outcome for the action you were performing when the error happened",
 					ID:          "expectedOutcome",
 					Description: "",
@@ -601,7 +601,7 @@ var (
 			},
 			{
 				Type: "textarea",
-				Attributes: cms.CaseTemplateFormElementAttribute{
+				Attributes: cms.FormElementAttribute{
 					Label:       "List any error messages shown",
 					ID:          "errorMessages",
 					Description: "",
@@ -611,10 +611,10 @@ var (
 		},
 	}
 	DTeamFeatureRequest = &cms.CaseTemplate{
-		FormElements: []cms.CaseTemplateFormElement{
+		FormElements: []cms.FormElement{
 			{
 				Type: "textarea",
-				Attributes: cms.CaseTemplateFormElementAttribute{
+				Attributes: cms.FormElementAttribute{
 					Label:       "Describe the change or new functionality you would like in Core",
 					ID:          "request",
 					Description: "",
@@ -647,7 +647,6 @@ var (
 	Stephen  = staff(individual("066a0268-fdc6-495a-9e4b-d60cfae2d81a", "Stephen", "Kabagambe", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
 	Colette  = staff(individual("93f9461f-31da-402e-8988-6e0100ecaa24", "Colette", "le Jeune", "12/02/1978", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
 	Courtney = staff(individual("14c014d9-f433-4508-b33d-dc45bf86690b", "Courtney", "Lare", "12/02/1978", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
-
 
 	// D-Team (Dogfooding)
 	Ludovic  = staff(individual("78b494dc-7461-42f5-bf2d-1c9695e63ba8", "Ludovic", "Cleroux", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
