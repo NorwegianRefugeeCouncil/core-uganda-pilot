@@ -15,9 +15,7 @@ func (s *Server) postIndividual(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if individual.ID == "" {
-		individual.ID = uuid.NewV4().String()
-	}
+	individual.ID = uuid.NewV4().String()
 
 	errList := ValidateIndividual(&individual, validation.NewPath(""))
 	if len(errList) > 0 {

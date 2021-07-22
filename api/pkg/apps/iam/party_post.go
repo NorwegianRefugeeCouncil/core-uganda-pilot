@@ -17,9 +17,7 @@ func (s *Server) postParty(w http.ResponseWriter, req *http.Request) {
 
 	p := &party
 
-	if p.ID == "" {
-		p.ID = uuid.NewV4().String()
-	}
+	p.ID = uuid.NewV4().String()
 
 	errList := ValidateParty(p, validation.NewPath(""))
 	if len(errList) > 0 {

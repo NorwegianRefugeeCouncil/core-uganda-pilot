@@ -15,9 +15,7 @@ func (s *Server) postAttributes(w http.ResponseWriter, req *http.Request) {
 		s.error(w, err)
 	}
 
-	if a.ID == "" {
-		a.ID = uuid.NewV4().String()
-	}
+	a.ID = uuid.NewV4().String()
 
 	errList := ValidateAttribute(&a, validation.NewPath(""))
 	if len(errList) > 0 {
