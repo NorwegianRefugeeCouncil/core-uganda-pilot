@@ -26,6 +26,14 @@ type Server struct {
 	hydraHTTPClient       *http.Client
 }
 
+func NewServerOrDie(ctx context.Context, o *server.GenericServerOptions) *Server {
+	srv, err := NewServer(ctx, o)
+	if err != nil {
+		panic(err)
+	}
+	return srv
+}
+
 func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, error) {
 
 	relationshipStore, err := newRelationshipStore(ctx, o.MongoClientFn, o.MongoDatabase)
@@ -53,10 +61,7 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 		return nil, err
 	}
 
-	var hydraAdmin admin.ClientService
-	if o.HydraAdminClient != nil {
-		hydraAdmin = o.HydraAdminClient.Admin
-	}
+	hydraAdmin := o.HydraAdminClient.Admin
 
 	srv := &Server{
 		environment:           o.Environment,
