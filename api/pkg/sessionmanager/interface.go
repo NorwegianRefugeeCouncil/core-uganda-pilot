@@ -62,7 +62,7 @@ func (r *RedisSessionManager) Get(req *http.Request) (*sessions.Session, error) 
 }
 
 func init() {
-	gob.Register(Notification{})
+	gob.Register(&Notification{})
 }
 
 func New(redisStore *redistore.RediStore) (Store, error) {
