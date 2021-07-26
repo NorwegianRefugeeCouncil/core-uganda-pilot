@@ -269,19 +269,28 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 }
 
 func PrepRelationshipTypeDropdown(relationshipTypes *iam.RelationshipTypeList) *iam.RelationshipTypeList {
+
+	// TODO:
+	// Currently Core only works with individuals
+	// this function should be changed when this is no longer
+	// the case
+
 	var newList = iam.RelationshipTypeList{}
 	for _, relType := range relationshipTypes.Items {
-		if relType.IsDirectional {
-			for _, rule := range relType.Rules {
-				if rule.PartyTypeRule.FirstPartyTypeID == iam.IndividualPartyType.ID {
-					newList.Items = append(newList.Items, relType)
-				}
-				if rule.PartyTypeRule.SecondPartyTypeID == iam.IndividualPartyType.ID {
-					newList.Items = append(newList.Items, relType.Mirror())
-				}
+
+		relTypeOnlyForIndividuals := true
+
+		for _, rule := range relType.Rules {
+			if !(rule.PartyTypeRule.FirstPartyTypeID == iam.IndividualPartyType.ID && rule.PartyTypeRule.SecondPartyTypeID == iam.IndividualPartyType.ID) {
+				relTypeOnlyForIndividuals = false
 			}
-		} else {
+		}
+
+		if relTypeOnlyForIndividuals {
 			newList.Items = append(newList.Items, relType)
+			if relType.IsDirectional {
+				newList.Items = append(newList.Items, relType.Mirror())
+			}
 		}
 	}
 	return &newList
