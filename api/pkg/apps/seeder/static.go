@@ -242,7 +242,7 @@ var (
 					Options:     []string{"Internal", "External"},
 				},
 				Validation: cms.CaseTemplateFormElementValidation{
-					Required: true,
+					Required: false,
 				},
 			},
 			{
