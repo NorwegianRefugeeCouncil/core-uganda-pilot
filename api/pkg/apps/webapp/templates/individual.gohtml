@@ -65,7 +65,7 @@
                         <div class="d-flex flex-row mb-3">
                             <div class="form-floating  me-2">
                                 <select id="relationshipTypeSelector" class="form-select pe-5" data-testid="relationshipType">
-                                    {{range .RelationshipTypes.Items}}
+                                    {{range .FilteredRelationshipTypes.Items}}
                                         <option value="{{.ID}}">{{.FirstPartyRole}}</option>
                                     {{end}}
                                 </select>

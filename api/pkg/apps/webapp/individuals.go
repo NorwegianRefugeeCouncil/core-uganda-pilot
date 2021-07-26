@@ -220,7 +220,7 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	relationshipTypes = PrepRelationshipTypeDropdown(relationshipTypes)
+	filteredRelationshipTypes := PrepRelationshipTypeDropdown(relationshipTypes)
 
 	if req.Method == "POST" {
 		s.PostIndividual(ctx, attrs.Items, id, w, req)
@@ -247,20 +247,24 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if err := s.renderFactory.New(req).ExecuteTemplate(w, "individual", map[string]interface{}{
-		"IsNew":              id == "new",
-		"Individual":         b,
-		"Parties":            bList,
-		"Teams":              tList,
-		"PartyTypes":         partyTypes,
-		"RelationshipTypes":  relationshipTypes,
-		"Relationships":      relationshipsForIndividual,
-		"Attributes":         attrs,
-		"Cases":              displayCases,
-		"CaseTypes":          ctList,
-		"FirstNameAttribute": iam.FirstNameAttribute,
-		"LastNameAttribute":  iam.LastNameAttribute,
-		"Page":               "general",
-		"Constants":          s.Constants,
+		"IsNew":                     id == "new",
+		"Individual":                b,
+		"Parties":                   bList,
+		"Teams":                     tList,
+		"PartyTypes":                partyTypes,
+		"RelationshipTypes":         relationshipTypes,
+		"FilteredRelationshipTypes": filteredRelationshipTypes,
+		"Relationships":             relationshipsForIndividual,
+		"Attributes":                attrs,
+		"Cases":                     displayCases,
+		"CaseTypes":                 ctList,
+		"FirstNameAttribute":        iam.FirstNameAttribute,
+		"LastNameAttribute":         iam.LastNameAttribute,
+		"Page":                      "general",
+		"Constants":                 s.Constants,
+		"IndividualPartyTypeID":     iam.IndividualPartyType.ID,
+		"HouseholdPartyTypeID":      iam.HouseholdPartyType.ID,
+		"TeamPartyTypeID":           iam.TeamPartyType.ID,
 	}); err != nil {
 		s.Error(w, err)
 		return
