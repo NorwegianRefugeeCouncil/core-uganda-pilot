@@ -52,8 +52,8 @@
                             </select>
                             <label for="party">Select Party</label>
                         </div>
-                        {{range $_, $formElement := .CaseType.Template.FormElements}}
-                            {{template "formelement" $formElement}}
+                        {{range $element := .CaseType.Template.FormElements}}
+                            {{template "formelement" Dict "isNew" $.IsNew "element" $element}}
                         {{end}}
                     {{end}}
                     <button class="btn btn-primary" type="submit" data-testid="submitBtn">Save</button>

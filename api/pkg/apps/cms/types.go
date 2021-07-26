@@ -108,6 +108,7 @@ const (
 	Textarea  FormElementType = "textarea"
 	TextInput FormElementType = "textinput"
 	Checkbox  FormElementType = "checkbox"
+	TaxonomyInput FormElementType = "taxonomyinput"
 )
 
 type CaseTemplateFormElement struct {

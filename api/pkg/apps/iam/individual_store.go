@@ -2,6 +2,7 @@ package iam
 
 import (
 	"context"
+	"github.com/nrc-no/core/pkg/generic/pagination"
 	"github.com/nrc-no/core/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -101,7 +102,11 @@ func (s *IndividualStore) list(ctx context.Context, listOptions IndividualListOp
 		return nil, err
 	}
 
-	cursor, err := collection.Find(ctx, filter)
+	maxPerPage := pagination.GetMaxPerPage(listOptions.PerPage)
+	currentPage := pagination.GetCurrentPage(listOptions.Page)
+	totalCount, _ := collection.CountDocuments(ctx, filter)
+
+	cursor, err := collection.Find(ctx, filter, getFindOptions(currentPage, maxPerPage, listOptions))
 	if err != nil {
 		return nil, err
 	}
@@ -123,6 +128,15 @@ func (s *IndividualStore) list(ctx context.Context, listOptions IndividualListOp
 		items = []*Individual{}
 	}
 	return &IndividualList{
-		Items: items,
+		Items:    items,
+		Metadata: pagination.GetPaginationMetaData(int(totalCount), currentPage, maxPerPage, listOptions.Sort, listOptions.SearchParam),
 	}, nil
+}
+
+func getFindOptions(currentPage int, maxPerPage int, listOptions IndividualListOptions) *options.FindOptions {
+	findOptions := options.Find()
+	findOptions.SetSort(bson.D{{"attributes." + LastNameAttribute.ID, pagination.GetSortOptionType(listOptions.Sort)}})
+	findOptions.SetSkip(int64((currentPage - 1) * maxPerPage))
+	findOptions.SetLimit(int64(maxPerPage))
+	return findOptions
 }
