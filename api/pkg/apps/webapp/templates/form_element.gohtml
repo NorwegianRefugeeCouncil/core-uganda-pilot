@@ -59,20 +59,48 @@
                 <label for="{{$id}}">{{.Attributes.Label}}</label>
                 <div class="form-text">{{.Attributes.Description}}</div>
             </div>
-        {{else if eq .Type "textinput"}}
-            <div class="form-floating mb-3">
-                <input id="{{$id}}"
-                       name="{{$id}}"
-                       value="{{if $value}}{{index $value 0}}{{end}}"
-                       class="form-control"
-                       type="text"
-                       placeholder="{{.Attributes.Placeholder}}"
-                       {{if .Validation.Required}}required{{end}}
-                        {{if or $value (and (not $value) (not $isNew))}}disabled{{end}}
-                >
-                <label for="{{$id}}">{{.Attributes.Label}}</label>
-                <div class="form-text">{{.Attributes.Description}}</div>
+        {{else if eq .Type "taxonomyinput"}}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <span>{{.Attributes.Label}}</span>
+                    <p class="form-text">{{.Attributes.Description}}</p>
+                    <div class="form-floating mb-3">
+                        <select id="programme-area-{{.Attributes.ID}}" class="form-select">
+                        </select>
+                        <label for="programme-area-{{.Attributes.ID}}">Programme Area</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <select id="service-area-{{.Attributes.ID}}" class="form-select">
+                        </select>
+                        <label for="service-area-{{.Attributes.ID}}">Service Area</label>
+
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <select id="thematic-area-{{.Attributes.ID}}" class="form-select">
+                        </select>
+                        <label for="thematic-area-{{.Attributes.ID}}">Thematic Area</label>
+
+                    </div>
+
+                    <div id="button-container-{{.Attributes.ID}}" class="form-floating mb-3">
+                        <button id="btn-add-{{.Attributes.ID}}" type="button" class="btn btn-primary">Add</button>
+                        <button id="btn-clear-{{.Attributes.ID}}" type="button" class="btn btn-primary">Clear</button>
+                    </div>
+
+                    <div id="badge-container-{{.Attributes.ID}}" class="form-floating mb-3"></div>
+
+                    <input id="{{.Attributes.ID}}"
+                           name="{{.Attributes.ID}}"
+                           value="{{if .Attributes.Value}}{{index .Attributes.Value 0}}{{end}}"
+                           type="hidden"
+                           placeholder="{{.Attributes.Placeholder}}"
+                           {{if .Validation.Required}}required{{end}}>
+
+                </div>
             </div>
+
+            {{template "taxonomyinput_script" .}}
         {{end}}
     {{end}}
-{{end}}

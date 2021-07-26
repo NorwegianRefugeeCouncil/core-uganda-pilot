@@ -2,6 +2,7 @@ package webapp
 
 import (
 	"errors"
+	"fmt"
 	"github.com/nrc-no/core/pkg/auth"
 	"github.com/nrc-no/core/pkg/sessionmanager"
 	"html/template"
@@ -13,8 +14,8 @@ import (
 // RenderInterface defines the methods available in the template
 type RenderInterface interface {
 	IsLoggedIn() bool
-	Profile() *Claims
-	Notifications() []*sessionmanager.Notification
+	Profile() (*Claims, error)
+	Notifications() ([]*sessionmanager.Notification, error)
 	Dict(values ...interface{}) (map[string]interface{}, error)
 }
 
@@ -34,12 +35,12 @@ func (r *RendererFactory) IsLoggedIn() bool {
 	return false
 }
 
-func (r *RendererFactory) Profile() *Claims {
-	return nil
+func (r *RendererFactory) Profile() (*Claims, error) {
+	return nil, nil
 }
 
-func (r *RendererFactory) Notifications() []*sessionmanager.Notification {
-	return []*sessionmanager.Notification{}
+func (r *RendererFactory) Notifications() ([]*sessionmanager.Notification, error) {
+	return []*sessionmanager.Notification{}, nil
 }
 
 func (r *RendererFactory) Dict(values ...interface{}) (map[string]interface{}, error) {
@@ -92,20 +93,28 @@ func (r *Renderer) IsLoggedIn() bool {
 	return auth.IsAuthenticatedRequest(r.req)
 }
 
-func (r *Renderer) Profile() *Claims {
-	profileIntf := r.sessionManager.Get(r.req.Context(), "profile")
-	if profileIntf == nil {
-		return nil
+func (r *Renderer) Profile() (*Claims, error) {
+
+	session, err := r.sessionManager.Get(r.req)
+	if err != nil {
+		return nil, err
 	}
+
+	profileIntf, ok := session.Values["profile"]
+	if !ok {
+		return nil, fmt.Errorf("profile not found")
+	}
+
 	profile, ok := profileIntf.(*Claims)
 	if !ok {
-		return nil
+		return nil, fmt.Errorf("")
 	}
-	return profile
+
+	return profile, nil
 }
 
-func (r *Renderer) Notifications() []*sessionmanager.Notification {
-	return r.sessionManager.ConsumeNotifications(r.req.Context())
+func (r *Renderer) Notifications() ([]*sessionmanager.Notification, error) {
+	return r.sessionManager.ConsumeNotifications(r.req)
 }
 
 func (r *Renderer) Dict(values ...interface{}) (map[string]interface{}, error) {

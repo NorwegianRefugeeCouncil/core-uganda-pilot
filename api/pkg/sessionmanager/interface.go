@@ -1,13 +1,12 @@
 package sessionmanager
 
 import (
-	"context"
 	"encoding/gob"
-	"github.com/alexedwards/scs/redisstore"
-	"github.com/alexedwards/scs/v2"
-	"github.com/gomodule/redigo/redis"
+	"fmt"
+	"github.com/boj/redistore"
+	"github.com/gorilla/sessions"
+	"github.com/sirupsen/logrus"
 	"net/http"
-	"time"
 )
 
 type Options struct {
@@ -15,46 +14,61 @@ type Options struct {
 }
 
 type Store interface {
-	Get(ctx context.Context, key string) interface{}
-	GetBool(ctx context.Context, key string) bool
-	GetString(ctx context.Context, key string) string
-	GetBytes(ctx context.Context, key string) []byte
-	GetFloat(ctx context.Context, key string) float64
-	GetTime(ctx context.Context, key string) time.Time
-	GetInt(ctx context.Context, key string) int
-	Pop(ctx context.Context, key string) interface{}
-	PopBool(ctx context.Context, key string) bool
-	PopString(ctx context.Context, key string) string
-	PopBytes(ctx context.Context, key string) []byte
-	PopFloat(ctx context.Context, key string) float64
-	PopTime(ctx context.Context, key string) time.Time
-	PopInt(ctx context.Context, key string) int
-	Put(ctx context.Context, key string, val interface{})
-	LoadAndSave(next http.Handler) http.Handler
-	Clear(ctx context.Context) error
-	Destroy(ctx context.Context) error
-	Commit(ctx context.Context) (string, time.Time, error)
-	AddNotification(ctx context.Context, notification *Notification)
-	ConsumeNotifications(ctx context.Context) []*Notification
+	AddNotification(req *http.Request, w http.ResponseWriter, notification *Notification) error
+	ConsumeNotifications(req *http.Request) ([]*Notification, error)
+	Get(req *http.Request) (*sessions.Session, error)
+	GetString(req *http.Request, key string) (string, error)
+	FindString(req *http.Request, key string) (string, bool)
 }
 
 type RedisSessionManager struct {
-	*scs.SessionManager
+	sessions.Store
+}
+
+func (r *RedisSessionManager) FindString(req *http.Request, key string) (string, bool) {
+	str, err := r.GetString(req, key)
+	if err != nil {
+		return "", false
+	}
+	return str, true
+}
+
+func (r *RedisSessionManager) GetString(req *http.Request, key string) (string, error) {
+	session, err := r.Get(req)
+	if err != nil {
+		return "", err
+	}
+
+	strIntf, ok := session.Values[key]
+	if !ok {
+		return "", fmt.Errorf("key %s not found in session", key)
+	}
+
+	str, ok := strIntf.(string)
+	if !ok {
+		return "", fmt.Errorf("key %s is not a string", key)
+	}
+
+	return str, nil
+}
+
+func (r *RedisSessionManager) Get(req *http.Request) (*sessions.Session, error) {
+	session, err := r.Store.Get(req, varSession)
+	if err != nil {
+		logrus.WithError(err).Errorf("failed to get session")
+		return nil, err
+	}
+	return session, nil
 }
 
 func init() {
-	gob.Register([]*Notification{})
+	gob.Register(&Notification{})
 }
 
-func New(pool *redis.Pool, options Options) Store {
-	sessionManager := scs.New()
-	sessionManager.Store = redisstore.New(pool)
-	if options.ErrorFunc != nil {
-		sessionManager.ErrorFunc = options.ErrorFunc
-	}
-	return RedisSessionManager{
-		SessionManager: sessionManager,
-	}
+func New(redisStore *redistore.RediStore) (Store, error) {
+	return &RedisSessionManager{
+		redisStore,
+	}, nil
 }
 
 // Notification contains "flash" messages shown to the user.
@@ -65,18 +79,35 @@ type Notification struct {
 	Theme   string
 }
 
-func (r RedisSessionManager) AddNotification(ctx context.Context, notification *Notification) {
-	notifs, ok := r.Get(ctx, "notifications").([]*Notification)
-	if !ok {
-		notifs = []*Notification{}
+const (
+	varSession       = "session"
+	varNotifications = "notifications"
+)
+
+func (r RedisSessionManager) AddNotification(req *http.Request, w http.ResponseWriter, notification *Notification) error {
+	session, err := r.Store.Get(req, varNotifications)
+	if err != nil {
+		return err
 	}
-	notifs = append(notifs, notification)
-	r.Put(ctx, "notifications", notifs)
+	session.AddFlash(notification)
+	if err := session.Save(req, w); err != nil {
+		return err
+	}
+	return nil
 }
-func (r RedisSessionManager) ConsumeNotifications(ctx context.Context) []*Notification {
-	notifs, ok := r.Pop(ctx, "notifications").([]*Notification)
-	if !ok {
-		notifs = []*Notification{}
+
+func (r RedisSessionManager) ConsumeNotifications(req *http.Request) ([]*Notification, error) {
+	session, err := r.Store.Get(req, varNotifications)
+	if err != nil {
+		return nil, err
 	}
-	return notifs
+	flashes := session.Flashes()
+	var notifications []*Notification
+	for _, flash := range flashes {
+		flashNotification, ok := flash.(*Notification)
+		if ok {
+			notifications = append(notifications, flashNotification)
+		}
+	}
+	return notifications, nil
 }

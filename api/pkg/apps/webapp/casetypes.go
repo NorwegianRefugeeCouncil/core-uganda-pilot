@@ -14,9 +14,17 @@ import (
 func (s *Server) CaseTypes(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	cmsClient := s.CMSClient(ctx)
-	iamClient := s.IAMClient(ctx)
+	cmsClient, err := s.CMSClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 	if req.Method == "POST" {
 		s.PostCaseType(ctx, &cms.CaseType{}, w, req)
 		return
@@ -56,7 +64,12 @@ func (s *Server) PostCaseType(
 	w http.ResponseWriter,
 	req *http.Request,
 ) {
-	cmsClient := s.CMSClient(ctx)
+
+	cmsClient, err := s.CMSClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	isNew := false
 	if len(caseType.ID) == 0 {
@@ -68,9 +81,7 @@ func (s *Server) PostCaseType(
 		return
 	}
 
-	values := req.Form
-	err := caseType.UnmarshalFormData(values)
-	if err != nil {
+	if err := caseType.UnmarshalFormData(req.Form); err != nil {
 		s.Error(w, err)
 		return
 	}
@@ -81,10 +92,15 @@ func (s *Server) PostCaseType(
 			s.Error(w, err)
 			return
 		}
-		s.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+
+		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
 			Message: fmt.Sprintf("Case type \"%s\" successfully created", caseType.Name),
 			Theme:   "success",
-		})
+		}); err != nil {
+			s.Error(w, err)
+			return
+		}
+
 		w.Header().Set("Location", "/settings/casetypes")
 		w.WriteHeader(http.StatusSeeOther)
 		return
@@ -94,10 +110,15 @@ func (s *Server) PostCaseType(
 			s.Error(w, err)
 			return
 		}
-		s.sessionManager.AddNotification(ctx, &sessionmanager.Notification{
+
+		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
 			Message: fmt.Sprintf("Case type \"%s\" successfully updated", caseType.Name),
 			Theme:   "success",
-		})
+		}); err != nil {
+			s.Error(w, err)
+			return
+		}
+
 		w.Header().Set("Location", "/settings/casetypes")
 		w.WriteHeader(http.StatusSeeOther)
 		return
@@ -107,8 +128,17 @@ func (s *Server) PostCaseType(
 func (s *Server) CaseType(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
-	cmsClient := s.CMSClient(ctx)
-	iamClient := s.IAMClient(ctx)
+	cmsClient, err := s.CMSClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
@@ -167,7 +197,11 @@ func (s *Server) CaseType(w http.ResponseWriter, req *http.Request) {
 
 func (s *Server) NewCaseType(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	iamClient := s.IAMClient(ctx)
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	p, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {

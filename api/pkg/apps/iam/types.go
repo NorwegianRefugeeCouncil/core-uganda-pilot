@@ -1,6 +1,7 @@
 package iam
 
 import (
+	"github.com/nrc-no/core/pkg/generic/pagination"
 	"strings"
 	"time"
 )
@@ -52,6 +53,7 @@ func (l *AttributeList) FindByID(id string) *Attribute {
 	return nil
 }
 
+// TODO COR-158
 // PartyAttributes contains the Attribute values of a Party
 type PartyAttributes map[string][]string
 
@@ -303,6 +305,7 @@ type Individual struct {
 
 type IndividualList struct {
 	Items []*Individual `json:"items" bson:"items"`
+	Metadata pagination.Pagination `json:"metadata"`
 }
 
 func NewIndividual(ID string) *Individual {
