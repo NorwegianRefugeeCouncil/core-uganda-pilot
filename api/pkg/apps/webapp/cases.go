@@ -385,12 +385,17 @@ func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
+	var caseForm Form
+
+	caseForm.FromCaseTemplate(caseType.Template)
+
 	if err := s.renderFactory.New(req).ExecuteTemplate(w, "casenew", map[string]interface{}{
 		"PartyID":   qry.Get("partyId"),
 		"CaseType":  caseType,
 		"Team":      team,
 		"CaseTypes": caseTypes,
 		"Parties":   p,
+		"CaseForm":  caseForm,
 	}); err != nil {
 		s.Error(w, err)
 		return

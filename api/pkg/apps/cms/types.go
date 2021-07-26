@@ -76,17 +76,21 @@ type CaseTemplate struct {
 	FormElements []FormElement `json:"formElements" bson:"formElements"`
 }
 
-type FormElementType string
+type FieldType string
 
 const (
-	Dropdown  FormElementType = "dropdown"
-	Textarea  FormElementType = "textarea"
-	TextInput FormElementType = "textinput"
-	Checkbox  FormElementType = "checkbox"
+	Textarea  FieldType = "textarea"
+	TextInput FieldType = "textinput"
+	Dropdown  FieldType = "dropdown"
+	Checkbox  FieldType = "checkbox"
+	Email     FieldType = "email"
+	Date      FieldType = "date"
+	File      FieldType = "file"
+	Time      FieldType = "time"
 )
 
 type FormElement struct {
-	Type       FormElementType       `json:"type" bson:"type"`
+	Type       FieldType             `json:"type" bson:"type"`
 	Attributes FormElementAttribute  `json:"attributes" bson:"attributes"`
 	Validation FormElementValidation `json:"validation" bson:"validation"`
 }

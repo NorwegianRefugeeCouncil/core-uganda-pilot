@@ -1,14 +1,11 @@
 package webapp
 
 import (
-	"bytes"
 	"encoding/json"
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/validation"
 	"html/template"
 	"net/url"
-	"regexp"
-	"strings"
 )
 
 type CaseTypeForm struct {
@@ -27,27 +24,26 @@ type Form struct {
 }
 
 type FormField struct {
-	Type        FieldType
-	Name        string
-	Value       []string
-	Label       string
-	Placeholder string
-	Description string
-	Error       *validation.Error
+	Type            FieldType
+	Name            string
+	Value           []string
+	Class           string
+	Options         []string
+	CheckboxOptions []CheckboxOption
+	Label           string
+	Placeholder     string
+	Description     string
+	Errors          *validation.ErrorList
+	Required        bool
+	Multiple        bool
 }
 
-type FieldType string
+type CheckboxOption struct {
+	Label    string
+	Required bool
+}
 
-const (
-	Textarea  FieldType = "textarea"
-	TextInput FieldType = "textinput"
-	Dropdown  FieldType = "dropdown"
-	Checkbox  FieldType = "checkbox"
-	Email     FieldType = "email"
-	Date      FieldType = "date"
-	File      FieldType = "file"
-	Time      FieldType = "time"
-)
+type FieldType cms.FieldType
 
 func UnmarshalCaseTypeFormData(c *cms.CaseType, values url.Values) error {
 	c.Name = values.Get("name")
@@ -79,8 +75,27 @@ func UnmarshalCaseFormData(c *cms.Case, caseTemplate *cms.CaseTemplate, values u
 	return nil
 }
 
-func (f Form) RenderFormField() template.HTML {
-	return template.HTML("")
+func (f Form) FromCaseTemplate(tmpl *cms.CaseTemplate) {
+	for _, element := range tmpl.FormElements {
+		checkboxOptions := []CheckboxOption{}
+		for _, option := range element.Attributes.CheckboxOptions {
+			checkboxOptions = append(checkboxOptions, CheckboxOption{
+				Label:    option.Label,
+				Required: option.Required,
+			})
+		}
+		formField := FormField{
+			Type:            FieldType(element.Type),
+			Name:            element.Attributes.ID,
+			Value:           element.Attributes.Value,
+			Options:         element.Attributes.Options,
+			CheckboxOptions: checkboxOptions,
+			Label:           element.Attributes.Label,
+			Placeholder:     element.Attributes.Placeholder,
+			Description:     element.Attributes.Description,
+		}
+		f.Fields = append(f.Fields, formField)
+	}
 }
 
 func (f Form) IsValidated() bool {
@@ -89,83 +104,4 @@ func (f Form) IsValidated() bool {
 
 func (f Form) GetValidationErrors() validation.ErrorList {
 	return f.ValidationErrors
-}
-
-func (f Form) RenderValidationError(err validation.Error) template.HTML {
-	field := err.Field
-	// get only the "name" part of the field (in case we pass in a path like 'parent[1].child'
-	rg, _ := regexp.Compile(`^*([\w-])$`)
-	matches := rg.FindStringSubmatch(field)
-	if len(matches) > 1 {
-		field = matches[1]
-	}
-	data := map[string]interface{}{
-		"field":  field,
-		"errors": errs,
-	}
-	templateText := `
-	<div id="{{index . "field"}}Feedback" class="invalid-feedback">
-		{{- range (index . "errors") -}}
-			<p>{{.Detail}}</p>
-		{{- end -}}
-	</div>
-	`
-	return parseAndExecuteTemplate(templateText, data)
-}
-
-func (f Form) RenderValidationErrorsFor(field string) template.HTML {
-	errs := f.ValidationErrors.Find(field)
-	if len(errs) == 0 {
-		return template.HTML("")
-	}
-	data := map[string]interface{}{
-		"field":  field,
-		"errors": errs,
-	}
-	templateText := `
-	<div id="{{index . "field"}}Feedback" class="invalid-feedback">
-		{{- range (index . "errors") -}}
-			<p>{{.Detail}}</p>
-		{{- end -}}
-	</div>
-	`
-	return parseAndExecuteTemplate(templateText, data)
-}
-
-func getFieldTemplateForType(t FieldType) template.Template {
-	switch t {
-	case Textarea:
-	case TextInput:
-	case Dropdown:
-	case Checkbox:
-	}
-}
-
-func parseAndExecuteTemplate(templateText string, data map[string]interface{}) template.HTML {
-	tmpl, _ := template.New("").Parse(templateText)
-	var buf bytes.Buffer
-	err := tmpl.Execute(&buf, data)
-	if err != nil {
-		panic(err)
-	}
-	s := strings.TrimSpace(buf.String())
-	return template.HTML(s)
-}
-
-func textareaTemplate(name string) *template.Template {
-	t := `
-	<div class="form-floating mb-3">
-            <textarea id="{{.Field}}"
-                      name="{{.Field}}"
-                      class="form-control {{***TODO***}}"
-                      style="height: 150px"
-                      data-testid="form"
-                      placeholder="{{.Placeholder}}"
-                      {{if .Validation.Required}}required{{end}}>{{if .Attributes.Value}}{{index .Attributes.Value 0}}{{end}}</textarea>
-            <label for="{{.Attributes.ID}}">{{.Attributes.Label}}</label>
-            <div class="form-text">{{.Attributes.Description}}</div>
-	</div>
-	`
-	tmpl, _ := template.New(name).Parse(t)
-	return tmpl
 }

@@ -55,6 +55,7 @@
                         {{range $_, $formElement := .CaseType.Template.FormElements}}
                             {{template "formelement" $formElement}}
                         {{end}}
+                        {{.CaseForm.Render}}
                     {{end}}
                     <button class="btn btn-primary" type="submit" data-testid="submitBtn">Save</button>
                 </form>

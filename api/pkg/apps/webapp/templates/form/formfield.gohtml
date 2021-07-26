@@ -1,0 +1,11 @@
+{{define "formfield"}}
+    {{if eq .Type "dropdown"}}
+        {{template "dropdown" .}}
+    {{else if eq .Type "textarea"}}
+        {{template "textarea" .}}
+    {{else if eq .Type "textinput"}}
+        {{template "textinput" .}}
+    {{else if eq .Type "checkbox"}}
+        {{template "checkbox" .}}
+    {{end}}
+{{end}}

@@ -1,17 +1,17 @@
 {{define "textarea"}}
     <div class="form-floating mb-3">
-            <textarea id="{{.Field}}"
-                      name="{{.Field}}"
-                      class="form-control {{***TODO***}}"
+            <textarea id="{{.Name}}"
+                      name="{{.Name}}"
+                      class="form-control  {{if .Errors}}is-invalid{{end}}"
                       style="height: 150px"
-                      data-testid="form"
                       placeholder="{{.Placeholder}}"
-                      {{if .Validation.Required}}required{{end}}>
-                {{if .Value}}
-                    {{index .Value 0}}
-                {{end}}
+                      {{if .Required}}required{{end}}
+                    {{if .Errors}}aria-describedby="{{.Name}}Feedback"{{end}}
+            >
+                {{- if .Value}}{{index .Value 0}}{{end -}}
             </textarea>
-        <label for="{{.Field}}">{{.Label}}</label>
+        <label for="{{.Name}}">{{.Label}}</label>
         <div class="form-text">{{.Description}}</div>
+        {{template "validation_feedback" .}}
     </div>
 {{end}}

@@ -1,0 +1,28 @@
+{{define "checkbox"}}
+    <h5>{{.Label}}</h5>
+    <div class="form-text">{{.Description}}</div>
+    {{range $i, $_ := .CheckboxOptions}}
+        {{$istr := printf "%d" $i}}
+        {{$fieldName := (printf "%s[%s]" $.Name $i)}}
+        {{$err := false}}
+        {{if .Errors}}
+            {{$err = .Errors.Find $fieldName}}
+        {{end}}
+        <div class="form-check mb-3">
+        <input id="{{$.Name}}[{{$i}}]"
+               name="{{$.Name}}"
+               value="{{$i}}"
+               class="form-check-input {{if $err}}is-invalid{{end}}"
+               type="checkbox"
+               {{if .Required}}required{{end}}
+                {{range $v := $.Value }}{{if eq $istr $v}}checked{{end}}{{end}}
+                {{if $err}}aria-describedby="{{$.Name}}[{{$i}}]Feedback"{{end}}
+        >
+        <label for="{{$.Name}}[{{$i}}]" class="form-check-label">{{.Label}}</label>
+        {{if $err }}
+            <div id="{{$.Name}}[{{$i}}]Feedback" class="invalid-feedback">
+                You must check this box.
+            </div>
+        {{end}}
+    {{end}}
+{{end}}
