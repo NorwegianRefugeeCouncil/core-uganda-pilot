@@ -250,7 +250,6 @@
         }
 
         function deleteRelationship(idx) {
-            console.log("ok")
             const state = stateSubject.value
             const relationships = state.relationships
             const relationship = relationships[idx]
@@ -348,12 +347,9 @@
 
                     let partySelectorList = document.getElementById("partySelectorList")
                     partySelectorList.innerHTML = ''
-                    console.log(res)
                     if (res.response.length > 0) {
                       let n = 0
                       res.response.forEach(pickedParty => {
-                        console.log("in loop")
-                        console.log(pickedParty)
                         const party = pickedParty.party
                         if (n < {{ .Constants.PartyDropdownLimit }}) {
                             let newListItem = document.createElement('li')
@@ -405,9 +401,6 @@
                     const secondPartyName = parties.find(({id}) => id === relationship.secondParty)?.name;
                     const firstPartyTypeId = relationshipTypes.find(({id}) => id === relationship.relationshipTypeId).firstPartyTypeId;
                     const secondPartyTypeId = relationshipTypes.find(({id}) => id === relationship.relationshipTypeId).secondPartyTypeId;
-
-                    console.log(relationship)
-                    console.log(parties)
 
                     const firstPartyLinkNode = document.createElement("a")
                     firstPartyLinkNode.href = partyLink(firstPartyTypeId, relationship.firstPartyTypeId);
