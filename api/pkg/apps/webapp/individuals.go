@@ -143,6 +143,7 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	var relationshipsForIndividual *iam.RelationshipList
 	var relationshipTypes *iam.RelationshipTypeList
 	var attrs *iam.AttributeList
+	var tList *iam.TeamList
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
@@ -159,6 +160,12 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	g.Go(func() error {
 		var err error
 		bList, err = iamClient.Individuals().List(waitCtx, iam.IndividualListOptions{})
+		return err
+	})
+
+	g.Go(func() error {
+		var err error
+		tList, err = iamClient.Teams().List(waitCtx, iam.TeamListOptions{})
 		return err
 	})
 
@@ -213,7 +220,7 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	relationshipTypes = PrepRelationshipTypeDropdown(relationshipTypes)
+	filteredRelationshipTypes := PrepRelationshipTypeDropdown(relationshipTypes)
 
 	if req.Method == "POST" {
 		s.PostIndividual(ctx, attrs.Items, id, w, req)
@@ -240,19 +247,24 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if err := s.renderFactory.New(req).ExecuteTemplate(w, "individual", map[string]interface{}{
-		"IsNew":              id == "new",
-		"Individual":         b,
-		"Parties":            bList,
-		"PartyTypes":         partyTypes,
-		"RelationshipTypes":  relationshipTypes,
-		"Relationships":      relationshipsForIndividual,
-		"Attributes":         attrs,
-		"Cases":              displayCases,
-		"CaseTypes":          ctList,
-		"FirstNameAttribute": iam.FirstNameAttribute,
-		"LastNameAttribute":  iam.LastNameAttribute,
-		"Page":               "general",
-		"Constants":          s.Constants,
+		"IsNew":                     id == "new",
+		"Individual":                b,
+		"Parties":                   bList,
+		"Teams":                     tList,
+		"PartyTypes":                partyTypes,
+		"RelationshipTypes":         relationshipTypes,
+		"FilteredRelationshipTypes": filteredRelationshipTypes,
+		"Relationships":             relationshipsForIndividual,
+		"Attributes":                attrs,
+		"Cases":                     displayCases,
+		"CaseTypes":                 ctList,
+		"FirstNameAttribute":        iam.FirstNameAttribute,
+		"LastNameAttribute":         iam.LastNameAttribute,
+		"Page":                      "general",
+		"Constants":                 s.Constants,
+		"IndividualPartyTypeID":     iam.IndividualPartyType.ID,
+		"HouseholdPartyTypeID":      iam.HouseholdPartyType.ID,
+		"TeamPartyTypeID":           iam.TeamPartyType.ID,
 	}); err != nil {
 		s.Error(w, err)
 		return
@@ -261,19 +273,28 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 }
 
 func PrepRelationshipTypeDropdown(relationshipTypes *iam.RelationshipTypeList) *iam.RelationshipTypeList {
+
+	// TODO:
+	// Currently Core only works with individuals
+	// this function should be changed when this is no longer
+	// the case
+
 	var newList = iam.RelationshipTypeList{}
 	for _, relType := range relationshipTypes.Items {
-		if relType.IsDirectional {
-			for _, rule := range relType.Rules {
-				if rule.PartyTypeRule.FirstPartyTypeID == iam.IndividualPartyType.ID {
-					newList.Items = append(newList.Items, relType)
-				}
-				if rule.PartyTypeRule.SecondPartyTypeID == iam.IndividualPartyType.ID {
-					newList.Items = append(newList.Items, relType.Mirror())
-				}
+
+		relTypeOnlyForIndividuals := true
+
+		for _, rule := range relType.Rules {
+			if !(rule.PartyTypeRule.FirstPartyTypeID == iam.IndividualPartyType.ID && rule.PartyTypeRule.SecondPartyTypeID == iam.IndividualPartyType.ID) {
+				relTypeOnlyForIndividuals = false
 			}
-		} else {
+		}
+
+		if relTypeOnlyForIndividuals {
 			newList.Items = append(newList.Items, relType)
+			if relType.IsDirectional {
+				newList.Items = append(newList.Items, relType.Mirror())
+			}
 		}
 	}
 	return &newList
