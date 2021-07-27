@@ -23,7 +23,7 @@ func ValidateCase(kase *Case, path *validation.Path) validation.ErrorList {
 	}
 
 	// Validate form elements
-	for _, elem := range kase.FormData.FormElements {
+	for _, elem := range kase.Form.FormElements {
 		if elem.Validation.Required && len(elem.Attributes.Value) == 0 {
 			errList = append(errList, validation.Required(path.Child(elem.Attributes.ID), fmt.Sprintf("%s is required", elem.Attributes.ID)))
 		}

@@ -125,11 +125,11 @@
                         <label for="team">Select Team</label>
                     </div>
                     <div class="form-floating mb-3">
-                        {{$name = "template"}}
+                        {{$name = "caseTemplate"}}
                         {{if .Errors}}
                             {{$errs := .Errors.Find $name}}
-                            <textarea name="template"
-                                      id="template"
+                            <textarea name="caseTemplate"
+                                      id="caseTemplate"
                                       class="form-control font-monospace {{ValidationClass $errs}}"
                                       style="height: 600px"
                                       aria-describedby="templateFeedback"
@@ -138,8 +138,8 @@
                             </textarea>
                             {{ValidationFeedback $errs $name}}
                         {{else}}
-                            <textarea name="template"
-                                      id="template"
+                            <textarea name="caseTemplate"
+                                      id="caseTemplate"
                                       class="form-control font-monospace"
                                       style="height: 600px"
                                       {{if .CaseType}}readonly{{end}}
@@ -147,7 +147,7 @@
                                 {{- if .CaseType.Template}}{{.CaseType.Pretty}}{{end -}}
                             </textarea>
                         {{end}}
-                        <label for="template">Form template</label>
+                        <label for="caseTemplate">Form template</label>
                     </div>
                     {{if and (not .Errors) .CaseType}}
                         <input type="hidden" name="partyTypeId" value="{{.CaseType.PartyTypeID}}">

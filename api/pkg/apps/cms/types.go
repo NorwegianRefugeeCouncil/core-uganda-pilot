@@ -2,32 +2,32 @@ package cms
 
 import (
 	"encoding/json"
-	"github.com/nrc-no/core/pkg/validation"
-	"html/template"
 	"time"
 )
 
+// Case describes a case form including relevant metadata
 type Case struct {
-	ID         string        `json:"id" bson:"id"`
-	CaseTypeID string        `json:"caseTypeId" bson:"caseTypeId"`
-	PartyID    string        `json:"partyId" bson:"partyId"`
-	Done       bool          `json:"done" bson:"done"`
-	ParentID   string        `json:"parentId" bson:"parentId"`
-	TeamID     string        `json:"teamId" bson:"teamId"`
-	CreatorID  string        `json:"creatorId" bson:"creatorId"`
-	FormData   *CaseTemplate `json:"formData" bson:"formData"`
+	ID         string    `json:"id" bson:"id"`
+	CaseTypeID string    `json:"caseTypeId" bson:"caseTypeId"`
+	PartyID    string    `json:"partyId" bson:"partyId"`
+	Done       bool      `json:"done" bson:"done"`
+	ParentID   string    `json:"parentId" bson:"parentId"`
+	TeamID     string    `json:"teamId" bson:"teamId"`
+	CreatorID  string    `json:"creatorId" bson:"creatorId"`
+	Form       *CaseForm `json:"form" bson:"form"`
 }
 
 type CaseList struct {
 	Items []*Case `json:"items" bson:"items"`
 }
 
+// CaseType contains the information needed to construct a case form as well as Team and PartyType IDs associated with the form.
 type CaseType struct {
-	ID          string        `json:"id" bson:"id"`
-	Name        string        `json:"name" bson:"name"`
-	PartyTypeID string        `json:"partyTypeId" bson:"partyTypeId"`
-	TeamID      string        `json:"teamId" bson:"teamId"`
-	Template    *CaseTemplate `json:"template" bson:"template"`
+	ID           string        `json:"id" bson:"id"`
+	Name         string        `json:"name" bson:"name"`
+	PartyTypeID  string        `json:"partyTypeId" bson:"partyTypeId"`
+	TeamID       string        `json:"teamId" bson:"teamId"`
+	CaseTemplate *CaseTemplate `json:"caseTemplate" bson:"caseTemplate"`
 }
 
 type CaseTypeList struct {
@@ -39,7 +39,7 @@ func (c *CaseType) String() string {
 }
 
 func (c *CaseType) Pretty() string {
-	b, err := json.MarshalIndent(c.Template, "", "  ")
+	b, err := json.MarshalIndent(c.CaseTemplate, "", "  ")
 	if err != nil {
 		panic(err)
 	}
@@ -71,6 +71,7 @@ type CommentList struct {
 // Case templates
 // https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-githubs-form-schema
 
+// CaseTemplate contains a list of form elements used to construct a case form
 type CaseTemplate struct {
 	// FormElements is an ordered list of the elements found in the form
 	FormElements []FormElement `json:"formElements" bson:"formElements"`
@@ -116,14 +117,5 @@ type CheckboxOption struct {
 }
 
 type CaseForm struct {
-	Elements []CaseFormElement
-}
-
-type CaseFormElement struct {
-	FormElement
-	Error validation.Error
-}
-
-func (c CaseFormElement) RenderError() template.HTML {
-	return template.HTML("")
+	*CaseTemplate
 }

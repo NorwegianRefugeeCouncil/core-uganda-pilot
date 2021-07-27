@@ -387,7 +387,7 @@ func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 
 	var caseForm Form
 
-	caseForm.FromCaseTemplate(caseType.Template)
+	caseForm.FromCaseTemplate(caseType.CaseTemplate)
 
 	if err := s.renderFactory.New(req).ExecuteTemplate(w, "casenew", map[string]interface{}{
 		"PartyID":   qry.Get("partyId"),
@@ -423,7 +423,7 @@ func (s *Server) PostCase(ctx context.Context, kase *cms.Case, w http.ResponseWr
 		return
 	}
 
-	err = UnmarshalCaseFormData(kase, caseType.Template, req.Form)
+	err = UnmarshalCaseFormData(kase, caseType.CaseTemplate, req.Form)
 	if err != nil {
 		s.Error(w, err)
 		return

@@ -15,7 +15,7 @@ type RenderInterface interface {
 	IsLoggedIn() bool
 	Profile() (*Claims, error)
 	Notifications() ([]*sessionmanager.Notification, error)
-	FormRender(Form) template.HTML
+	RenderForm(Form) template.HTML
 }
 
 // RendererFactory is a factory to create Renderer
@@ -42,7 +42,7 @@ func (r *RendererFactory) Notifications() ([]*sessionmanager.Notification, error
 	return []*sessionmanager.Notification{}, nil
 }
 
-func (r *RendererFactory) FormRender(form Form) template.HTML {
+func (r *RendererFactory) RenderForm(form Form) template.HTML {
 	return template.HTML("")
 }
 
@@ -114,6 +114,10 @@ func (r *Renderer) Profile() (*Claims, error) {
 
 func (r *Renderer) Notifications() ([]*sessionmanager.Notification, error) {
 	return r.sessionManager.ConsumeNotifications(r.req)
+}
+
+func (r *Renderer) RenderForm(form Form) template.HTML {
+	panic("implement me")
 }
 
 // WithRenderInterface adds the RenderInterface methods to the template

@@ -27,7 +27,6 @@ type FormField struct {
 	Type            FieldType
 	Name            string
 	Value           []string
-	Class           string
 	Options         []string
 	CheckboxOptions []CheckboxOption
 	Label           string
@@ -49,11 +48,11 @@ func UnmarshalCaseTypeFormData(c *cms.CaseType, values url.Values) error {
 	c.Name = values.Get("name")
 	c.PartyTypeID = values.Get("partyTypeId")
 	c.TeamID = values.Get("teamId")
-	templateString := values.Get("template")
+	templateString := values.Get("caseTemplate")
 	if templateString == "" {
-		c.Template = &cms.CaseTemplate{}
+		c.CaseTemplate = &cms.CaseTemplate{}
 	} else {
-		if err := json.Unmarshal([]byte(templateString), &c.Template); err != nil {
+		if err := json.Unmarshal([]byte(templateString), &c.CaseTemplate); err != nil {
 			return err
 		}
 	}
@@ -71,7 +70,7 @@ func UnmarshalCaseFormData(c *cms.Case, caseTemplate *cms.CaseTemplate, values u
 		formElement.Attributes.Value = values[formElement.Attributes.ID]
 		formElements = append(formElements, formElement)
 	}
-	c.FormData = &cms.CaseTemplate{FormElements: formElements}
+	c.Form = &cms.CaseForm{CaseTemplate: &cms.CaseTemplate{FormElements: formElements}}
 	return nil
 }
 

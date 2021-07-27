@@ -15,7 +15,7 @@ func TestValidateCase(t *testing.T) {
 	}{{
 		name: "emptyFields",
 		caseType: &Case{
-			FormData: &CaseTemplate{
+			Form: &CaseTemplate{
 				FormElements: []FormElement{
 					{
 						Type: Dropdown,

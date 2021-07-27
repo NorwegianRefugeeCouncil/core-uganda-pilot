@@ -6,13 +6,13 @@ import (
 	"strings"
 )
 
-func caseType(id, name, partyTypeID, teamID string, template *cms.CaseTemplate) cms.CaseType {
+func caseType(id, name, partyTypeID, teamID string, caseTemplate *cms.CaseTemplate) cms.CaseType {
 	ct := cms.CaseType{
-		ID:          id,
-		Name:        name,
-		PartyTypeID: partyTypeID,
-		TeamID:      teamID,
-		Template:    template,
+		ID:           id,
+		Name:         name,
+		PartyTypeID:  partyTypeID,
+		TeamID:       teamID,
+		CaseTemplate: caseTemplate,
 	}
 	caseTypes = append(caseTypes, ct)
 	return ct
@@ -108,7 +108,7 @@ func membership(id string, individual iam.Individual, team iam.Team) iam.Members
 	return m
 }
 
-func kase(id, caseTypeID, createdByID, partyID, teamID string, done bool, formData *cms.CaseTemplate) cms.Case {
+func kase(id, caseTypeID, createdByID, partyID, teamID string, done bool, form *cms.CaseTemplate) cms.Case {
 	k := cms.Case{
 		ID:         id,
 		CaseTypeID: caseTypeID,
@@ -116,7 +116,7 @@ func kase(id, caseTypeID, createdByID, partyID, teamID string, done bool, formDa
 		PartyID:    partyID,
 		TeamID:     teamID,
 		Done:       done,
-		FormData:   formData,
+		Form:       form,
 	}
 	cases = append(cases, k)
 	return k

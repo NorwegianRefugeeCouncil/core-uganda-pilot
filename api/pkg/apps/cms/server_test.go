@@ -76,10 +76,10 @@ func (s *Suite) mockCaseTypes(n int) []*CaseType {
 	var caseTypes []*CaseType
 	for i := 0; i < n; i++ {
 		caseTypes = append(caseTypes, &CaseType{
-			Name:        "mock",
-			PartyTypeID: newUUID(),
-			TeamID:      newUUID(),
-			Template:    mockTemplate,
+			Name:         "mock",
+			PartyTypeID:  newUUID(),
+			TeamID:       newUUID(),
+			CaseTemplate: mockTemplate,
 		})
 	}
 	return caseTypes
@@ -89,7 +89,7 @@ func aMockCase() *Case {
 	return &Case{
 		TeamID:  newUUID(),
 		PartyID: newUUID(),
-		FormData: &CaseTemplate{FormElements: []FormElement{{
+		Form: &CaseTemplate{FormElements: []FormElement{{
 			Type: "textarea",
 			Attributes: FormElementAttribute{
 				Label: "mock",
