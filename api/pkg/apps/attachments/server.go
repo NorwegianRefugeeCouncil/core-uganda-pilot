@@ -18,7 +18,7 @@ type Server struct {
 	HydraHttpClient *http.Client
 }
 
-func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, err) {
+func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, error) {
 	attachmentStore, err := NewAttachmentStore(ctx, o.MongoClientFn, o.MongoDatabase)
 	if err != nil {
 		return nil, err
@@ -36,6 +36,7 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	router.Use(srv.WithAuth())
 
 	srv.router = router
+	return srv, nil
 }
 
 func (s *Server) Error(w http.ResponseWriter, err error) {
