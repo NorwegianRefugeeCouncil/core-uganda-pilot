@@ -7,14 +7,14 @@ import (
 
 // Case describes a case form including relevant metadata
 type Case struct {
-	ID         string    `json:"id" bson:"id"`
-	CaseTypeID string    `json:"caseTypeId" bson:"caseTypeId"`
-	PartyID    string    `json:"partyId" bson:"partyId"`
-	Done       bool      `json:"done" bson:"done"`
-	ParentID   string    `json:"parentId" bson:"parentId"`
-	TeamID     string    `json:"teamId" bson:"teamId"`
-	CreatorID  string    `json:"creatorId" bson:"creatorId"`
-	Form       *CaseForm `json:"form" bson:"form"`
+	ID         string        `json:"id" bson:"id"`
+	CaseTypeID string        `json:"caseTypeId" bson:"caseTypeId"`
+	PartyID    string        `json:"partyId" bson:"partyId"`
+	Done       bool          `json:"done" bson:"done"`
+	ParentID   string        `json:"parentId" bson:"parentId"`
+	TeamID     string        `json:"teamId" bson:"teamId"`
+	CreatorID  string        `json:"creatorId" bson:"creatorId"`
+	Template   *CaseTemplate `json:"template" bson:"template"`
 }
 
 type CaseList struct {
@@ -114,8 +114,4 @@ type FormElementValidation struct {
 type CheckboxOption struct {
 	Label    string `json:"label" bson:"label"`
 	Required bool   `json:"required" bson:"required"`
-}
-
-type CaseForm struct {
-	*CaseTemplate
 }

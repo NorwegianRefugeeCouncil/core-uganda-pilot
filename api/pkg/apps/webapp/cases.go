@@ -7,49 +7,13 @@ import (
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/nrc-no/core/pkg/sessionmanager"
+	"github.com/nrc-no/core/pkg/validation"
 	"github.com/satori/go.uuid"
 	"github.com/xeonx/timeago"
 	"golang.org/x/sync/errgroup"
 	"net/http"
 	"net/url"
 )
-
-type CasesListOptions struct {
-	Closed      *bool
-	TeamIDs     []string
-	CaseTypeIDs []string
-}
-
-func (c *CasesListOptions) ClosedOnly() bool {
-	return c.Closed != nil && *c.Closed == true
-}
-
-func (c *CasesListOptions) OpenOnly() bool {
-	return c.Closed != nil && *c.Closed == false
-}
-
-func (c *CasesListOptions) UnmarshalQueryParams(values url.Values) error {
-
-	if len(values["status"]) == 1 {
-		closed := values["status"][0] == "closed"
-		c.Closed = &closed
-	}
-
-	for _, teamId := range values["teamId"] {
-		if _, err := uuid.FromString(teamId); err == nil {
-			c.TeamIDs = append(c.TeamIDs, teamId)
-		}
-	}
-
-	for _, caseTypeId := range values["caseTypeId"] {
-		if _, err := uuid.FromString(caseTypeId); err == nil {
-			c.CaseTypeIDs = append(c.CaseTypeIDs, caseTypeId)
-		}
-	}
-
-	return nil
-
-}
 
 func (s *Server) Cases(w http.ResponseWriter, req *http.Request) {
 
@@ -152,7 +116,6 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 
 	var recipientParty *iam.Party
 	var team *iam.Team
-
 	var kase *cms.Case
 	var parent *cms.Case
 	var kaseTypes *cms.CaseTypeList
@@ -296,25 +259,6 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 
 }
 
-type displayComment struct {
-	*cms.Comment
-	Author  *iam.Party
-	TimeAgo string
-}
-
-func displayComments(comments *cms.CommentList, authorMap map[string]*iam.Party) []*displayComment {
-	var displayComments []*displayComment
-	for _, item := range comments.Items {
-		c := &displayComment{
-			Comment: item,
-			TimeAgo: timeago.English.Format(item.CreatedAt),
-			Author:  authorMap[item.AuthorID],
-		}
-		displayComments = append(displayComments, c)
-	}
-	return displayComments
-}
-
 func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
@@ -385,17 +329,12 @@ func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	var caseForm Form
-
-	caseForm.FromCaseTemplate(caseType.CaseTemplate)
-
 	if err := s.renderFactory.New(req).ExecuteTemplate(w, "casenew", map[string]interface{}{
 		"PartyID":   qry.Get("partyId"),
 		"CaseType":  caseType,
 		"Team":      team,
 		"CaseTypes": caseTypes,
 		"Parties":   p,
-		"CaseForm":  caseForm,
 	}); err != nil {
 		s.Error(w, err)
 		return
@@ -403,6 +342,7 @@ func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 }
 
 func (s *Server) PostCase(ctx context.Context, kase *cms.Case, w http.ResponseWriter, req *http.Request) {
+	var err error
 
 	cmsClient, err := s.CMSClient(req)
 	if err != nil {
@@ -429,8 +369,9 @@ func (s *Server) PostCase(ctx context.Context, kase *cms.Case, w http.ResponseWr
 		return
 	}
 
-	if kase.ID == "" {
-		var err error
+	var isNewCase = kase.ID == ""
+	var action string
+	if isNewCase {
 		subject := ctx.Value("Subject")
 		if subject == nil {
 			kase.CreatorID = ""
@@ -438,35 +379,54 @@ func (s *Server) PostCase(ctx context.Context, kase *cms.Case, w http.ResponseWr
 			kase.CreatorID = subject.(string)
 		}
 		kase, err = cmsClient.Cases().Create(ctx, kase)
-		if err != nil {
-			s.Error(w, err)
-			return
-		}
-
-		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
-			Message: fmt.Sprintf("Case successfully created"),
-			Theme:   "success",
-		}); err != nil {
-			s.Error(w, err)
-			return
-		}
-
+		action = "created"
 	} else {
-		var err error
 		kase, err = cmsClient.Cases().Update(ctx, kase)
-		if err != nil {
+		action = "updated"
+	}
+	s.processCaseValidation(req, w, kase, err, action)
+}
+
+type displayComment struct {
+	*cms.Comment
+	Author  *iam.Party
+	TimeAgo string
+}
+
+func displayComments(comments *cms.CommentList, authorMap map[string]*iam.Party) []*displayComment {
+	var displayComments []*displayComment
+	for _, item := range comments.Items {
+		c := &displayComment{
+			Comment: item,
+			TimeAgo: timeago.English.Format(item.CreatedAt),
+			Author:  authorMap[item.AuthorID],
+		}
+		displayComments = append(displayComments, c)
+	}
+	return displayComments
+}
+
+func (s *Server) processCaseValidation(req *http.Request, w http.ResponseWriter, kase *cms.Case, err error, action string) {
+	if err != nil {
+		if status, ok := err.(*validation.Status); ok {
+			s.renderCaseValidation(req, w, status )
+			return
+		} else {
 			s.Error(w, err)
 			return
 		}
+	} else {
+		s.redirectAfterSuccessfulCasePost(req, w, kase, action)
+	}
+}
 
-		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
-			Message: fmt.Sprintf("Case successfully updated"),
-			Theme:   "success",
-		}); err != nil {
-			s.Error(w, err)
-			return
-		}
-
+func (s *Server) redirectAfterSuccessfulCasePost(req *http.Request, w http.ResponseWriter, kase *cms.Case, action string) {
+	if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
+		Message: fmt.Sprintf("Case successfully %s", action),
+		Theme:   "success",
+	}); err != nil {
+		s.Error(w, err)
+		return
 	}
 	if len(kase.ParentID) > 0 {
 		w.Header().Set("Location", "/cases/"+kase.ParentID)
@@ -474,5 +434,88 @@ func (s *Server) PostCase(ctx context.Context, kase *cms.Case, w http.ResponseWr
 		w.Header().Set("Location", "/cases/"+kase.ID)
 	}
 	w.WriteHeader(http.StatusSeeOther)
+}
 
+func (s *Server) renderCaseValidation(req *http.Request, w http.ResponseWriter, status *validation.Status) {
+	validatedForm := NewValidatedTemplate()
+	parties, err := s.retrieveParties(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+	caseTypes, err := s.retrieveCaseTypes(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	qry := req.URL.Query()
+
+	// Set notification and render
+	s.validationErrorNotification(req, w)
+	if err := s.renderFactory.New(req).ExecuteTemplate(w, "casenew", map[string]interface{}{
+		"PartyID":      qry.Get("partyId"),
+		"WasValidated": true,
+		"Form":         ,
+		"Team":        ,
+		"CaseTypes":    caseTypes,
+		"Parties":      parties,
+	}); err != nil {
+		s.Error(w, err)
+		return
+	}
+
+}
+
+type CasesListOptions struct {
+	Closed      *bool
+	TeamIDs     []string
+	CaseTypeIDs []string
+}
+
+func (c *CasesListOptions) ClosedOnly() bool {
+	return c.Closed != nil && *c.Closed == true
+}
+
+func (c *CasesListOptions) OpenOnly() bool {
+	return c.Closed != nil && *c.Closed == false
+}
+
+func (c *CasesListOptions) UnmarshalQueryParams(values url.Values) error {
+
+	if len(values["status"]) == 1 {
+		closed := values["status"][0] == "closed"
+		c.Closed = &closed
+	}
+
+	for _, teamId := range values["teamId"] {
+		if _, err := uuid.FromString(teamId); err == nil {
+			c.TeamIDs = append(c.TeamIDs, teamId)
+		}
+	}
+
+	for _, caseTypeId := range values["caseTypeId"] {
+		if _, err := uuid.FromString(caseTypeId); err == nil {
+			c.CaseTypeIDs = append(c.CaseTypeIDs, caseTypeId)
+		}
+	}
+
+	return nil
+
+}
+
+// UnmarshalCaseFormData retrieves entries from a url.Values and applies them to a cms.Case object via a cms.CaseTemplate.
+func UnmarshalCaseFormData(c *cms.Case, caseTemplate *cms.CaseTemplate, values url.Values) error {
+	c.CaseTypeID = values.Get("caseTypeId")
+	c.PartyID = values.Get("partyId")
+	c.Done = values.Get("done") == "on"
+	c.ParentID = values.Get("parentId")
+	c.TeamID = values.Get("teamId")
+	var formElements []cms.FormElement
+	for _, formElement := range caseTemplate.FormElements {
+		formElement.Attributes.Value = values[formElement.Attributes.ID]
+		formElements = append(formElements, formElement)
+	}
+	c.Template = &cms.CaseForm{CaseTemplate: &cms.CaseTemplate{FormElements: formElements}}
+	return nil
 }

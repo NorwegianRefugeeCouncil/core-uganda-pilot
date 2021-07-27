@@ -2,6 +2,7 @@ package webapp
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/cms"
@@ -10,6 +11,7 @@ import (
 	"github.com/nrc-no/core/pkg/validation"
 	"golang.org/x/sync/errgroup"
 	"net/http"
+	"net/url"
 )
 
 func (s *Server) CaseTypes(w http.ResponseWriter, req *http.Request) {
@@ -130,90 +132,6 @@ func (s *Server) CaseType(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (s *Server) PostCaseType(
-	ctx context.Context,
-	caseType *cms.CaseType,
-	partyTypes *iam.PartyTypeList,
-	teams *iam.TeamList,
-	w http.ResponseWriter,
-	req *http.Request,
-) {
-	var err error
-	cmsClient, err := s.CMSClient(req)
-	if err != nil {
-		s.Error(w, err)
-		return
-	}
-
-	isNewCaseType := len(caseType.ID) == 0
-
-	if err := req.ParseForm(); err != nil {
-		s.Error(w, err)
-		return
-	}
-
-	if err := UnmarshalCaseTypeFormData(caseType, req.Form); err != nil {
-		s.Error(w, err)
-		return
-	}
-
-	var action string
-	if isNewCaseType {
-		_, err = cmsClient.CaseTypes().Create(ctx, caseType)
-		action = "created"
-	} else {
-		_, err = cmsClient.CaseTypes().Update(ctx, caseType)
-		action = "updated"
-	}
-	s.renderAfterPostCaseType(err, req, w, caseType, partyTypes, teams, action)
-}
-
-func (s *Server) renderAfterPostCaseType(err error, req *http.Request, w http.ResponseWriter, caseType *cms.CaseType, partyTypes *iam.PartyTypeList, teams *iam.TeamList, action string) {
-	if err != nil {
-		if status, ok := err.(*validation.Status); ok {
-			s.RenderValidated(req, w, caseType, partyTypes, teams, status)
-			return
-		} else {
-			s.Error(w, err)
-			return
-		}
-	}
-
-	if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
-		Message: fmt.Sprintf("Case type \"%s\" successfully %s", caseType.Name, action),
-		Theme:   "success",
-	}); err != nil {
-		s.Error(w, err)
-		return
-	}
-
-	w.Header().Set("Location", "/settings/casetypes")
-	w.WriteHeader(http.StatusSeeOther)
-	return
-}
-
-func (s *Server) RenderValidated(req *http.Request, w http.ResponseWriter, caseType *cms.CaseType, partyTypes *iam.PartyTypeList, teams *iam.TeamList, status *validation.Status) {
-	// Set notification
-	if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
-		Message: "There seems to be an problem with the data you have submitted. See below for errors.",
-		Theme:   "danger",
-	}); err != nil {
-		s.Error(w, err)
-		return
-	}
-
-	if err := s.renderFactory.New(req).ExecuteTemplate(w, "casetype", map[string]interface{}{
-		"CaseType":   caseType,
-		"PartyTypes": partyTypes,
-		"Teams":      teams,
-		"Errors":     status.Errors,
-	}); err != nil {
-		s.Error(w, err)
-		return
-	}
-	return
-}
-
 func (s *Server) NewCaseType(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	iamClient, err := s.IAMClient(req)
@@ -241,4 +159,108 @@ func (s *Server) NewCaseType(w http.ResponseWriter, req *http.Request) {
 		s.Error(w, err)
 		return
 	}
+}
+
+func (s *Server) PostCaseType(
+	ctx context.Context,
+	caseType *cms.CaseType,
+	partyTypes *iam.PartyTypeList,
+	teams *iam.TeamList,
+	w http.ResponseWriter,
+	req *http.Request,
+) {
+	var err error
+	cmsClient, err := s.CMSClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	if err := req.ParseForm(); err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	if err := UnmarshalCaseTypeFormData(caseType, req.Form); err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	var action string
+	isNewCaseType := len(caseType.ID) == 0
+	if isNewCaseType {
+		_, err = cmsClient.CaseTypes().Create(ctx, caseType)
+		action = "created"
+	} else {
+		_, err = cmsClient.CaseTypes().Update(ctx, caseType)
+		action = "updated"
+	}
+	s.processCaseTypeValidation(req, w, caseType, partyTypes, teams, err, action)
+}
+
+func (s *Server) processCaseTypeValidation(req *http.Request, w http.ResponseWriter, caseType *cms.CaseType, partyTypes *iam.PartyTypeList, teams *iam.TeamList, err error, action string) {
+	// Examine the error argument
+	if err != nil {
+		if status, ok := err.(*validation.Status); ok {
+			// If the error is a validation.Status proceed with rendering the validated form.
+			s.renderCaseTypeValidation(req, w, caseType, partyTypes, teams, status)
+		} else {
+			// Otherwise write the error
+			s.Error(w, err)
+		}
+	} else {
+		// If there was no error was passed in, proceed with success
+		s.redirectAfterSuccessfulCaseTypePost(req, w, caseType, action)
+	}
+}
+
+func (s *Server) renderCaseTypeValidation(req *http.Request, w http.ResponseWriter, caseType *cms.CaseType, partyTypes *iam.PartyTypeList, teams *iam.TeamList, status *validation.Status) {
+	// Set notification
+	if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
+		Message: "There seems to be an problem with the data you have submitted. See below for errors.",
+		Theme:   "danger",
+	}); err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	if err := s.renderFactory.New(req).ExecuteTemplate(w, "casetype", map[string]interface{}{
+		"CaseType":   caseType,
+		"PartyTypes": partyTypes,
+		"Teams":      teams,
+		"Errors":     status.Errors,
+	}); err != nil {
+		s.Error(w, err)
+		return
+	}
+	return
+}
+
+func (s *Server) redirectAfterSuccessfulCaseTypePost(req *http.Request, w http.ResponseWriter, caseType *cms.CaseType, action string) bool {
+	if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
+		Message: fmt.Sprintf("Case type \"%s\" successfully %s", caseType.Name, action),
+		Theme:   "success",
+	}); err != nil {
+		s.Error(w, err)
+		return true
+	}
+	w.Header().Set("Location", "/settings/casetypes")
+	w.WriteHeader(http.StatusSeeOther)
+	return false
+}
+
+// UnmarshalCaseTypeFormData retrieves entries from a url.Values and applies them to a cms.CaseType object.
+func UnmarshalCaseTypeFormData(c *cms.CaseType, values url.Values) error {
+	c.Name = values.Get("name")
+	c.PartyTypeID = values.Get("partyTypeId")
+	c.TeamID = values.Get("teamId")
+	templateString := values.Get("caseTemplate")
+	if templateString == "" {
+		c.CaseTemplate = &cms.CaseTemplate{}
+	} else {
+		if err := json.Unmarshal([]byte(templateString), &c.CaseTemplate); err != nil {
+			return err
+		}
+	}
+	return nil
 }

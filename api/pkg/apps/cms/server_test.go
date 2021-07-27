@@ -89,7 +89,7 @@ func aMockCase() *Case {
 	return &Case{
 		TeamID:  newUUID(),
 		PartyID: newUUID(),
-		Form: &CaseTemplate{FormElements: []FormElement{{
+		Template: &CaseTemplate{FormElements: []FormElement{{
 			Type: "textarea",
 			Attributes: FormElementAttribute{
 				Label: "mock",

@@ -17,7 +17,6 @@ import (
 )
 
 type Server struct {
-	formRenderer        *FormRenderer
 	renderFactory       *RendererFactory
 	sessionManager      sessionmanager.Store
 	router              *mux.Router
@@ -100,11 +99,8 @@ func NewServer(options *ServerOptions) (*Server, error) {
 		return nil, err
 	}
 
-	formRenderer := NewFormRenderer(options.TemplateDirectory)
-
 	h.sessionManager = sm
 	h.renderFactory = renderFactory
-	h.formRenderer = formRenderer
 
 	router := mux.NewRouter()
 	router.Use(h.WithAuth())

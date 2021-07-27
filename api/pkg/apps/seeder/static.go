@@ -116,7 +116,7 @@ func kase(id, caseTypeID, createdByID, partyID, teamID string, done bool, form *
 		PartyID:    partyID,
 		TeamID:     teamID,
 		Done:       done,
-		Form:       form,
+		Template:   form,
 	}
 	cases = append(cases, k)
 	return k
