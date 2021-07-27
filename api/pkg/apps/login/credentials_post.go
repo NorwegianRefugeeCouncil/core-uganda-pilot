@@ -5,14 +5,20 @@ import (
 )
 
 func (s *Server) PostCredentials(w http.ResponseWriter, req *http.Request) {
-	saltedHash, err := HashAndSalt(s.BCryptCost, []byte(req.Form.Get("plaintextPassword")))
+	var payload SetCredentialPayload
+	if err := s.Bind(req, &payload); err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	saltedHash, err := HashAndSalt(s.BCryptCost, []byte(payload.PlaintextPassword))
 	if err != nil {
 		s.Error(w, err)
 		return
 	}
 
 	var newCredential = Credential{
-		PartyID: req.Form.Get("partyId"),
+		PartyID: payload.PartyID,
 		Hash:    saltedHash,
 	}
 
