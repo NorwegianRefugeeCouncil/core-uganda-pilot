@@ -64,7 +64,7 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 	router.Path("/auth/consent").Methods("POST").HandlerFunc(srv.PostConsent)
 	router.Path("/apis/login/v1/credentials").
 		Methods("POST").
-		Handler(srv.WithAuth()(http.HandlerFunc(srv.PostLoginForm)))
+		Handler(srv.WithAuth()(http.HandlerFunc(srv.PostCredentials)))
 
 	srv.router = router
 
@@ -78,6 +78,10 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 
 	return srv, nil
 
+}
+
+func (s *Server) json(w http.ResponseWriter, status int, data interface{}) {
+	utils.JSONResponse(w, status, data)
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
