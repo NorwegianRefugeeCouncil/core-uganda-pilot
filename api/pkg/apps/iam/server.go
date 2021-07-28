@@ -20,6 +20,7 @@ type Server struct {
 	relationshipTypeStore *RelationshipTypeStore
 	individualStore       *IndividualStore
 	teamStore             *TeamStore
+	countryStore          *CountryStore
 	membershipStore       *MembershipStore
 	hydraAdmin            admin.ClientService
 	mongoClientFn         utils.MongoClientFn
@@ -67,6 +68,7 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 		environment:           o.Environment,
 		mongoClientFn:         o.MongoClientFn,
 		attributeStore:        attributeStore,
+		countryStore:          NewCountryStore(partyStore),
 		partyStore:            partyStore,
 		partyTypeStore:        partyTypeStore,
 		relationshipStore:     relationshipStore,
@@ -121,6 +123,11 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	router.Path(server.TeamsEndpoint).Methods("POST").HandlerFunc(srv.postTeam)
 	router.Path(path.Join(server.TeamsEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getTeam)
 	router.Path(path.Join(server.TeamsEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putTeam)
+
+	router.Path(server.CountrysEndpoint).Methods("GET").HandlerFunc(srv.listCountrys)
+	router.Path(server.CountrysEndpoint).Methods("POST").HandlerFunc(srv.postCountry)
+	router.Path(path.Join(server.CountrysEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getCountry)
+	router.Path(path.Join(server.CountrysEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putCountry)
 
 	srv.router = router
 

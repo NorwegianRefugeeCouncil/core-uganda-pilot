@@ -50,6 +50,12 @@ func (c ClientSet) Teams() TeamClient {
 	}
 }
 
+func (c ClientSet) Countrys() CountryClient {
+	return &RESTCountryClient{
+		c: c.c,
+	}
+}
+
 func (c ClientSet) Memberships() MembershipClient {
 	return &RESTMembershipClient{
 		c: c.c,

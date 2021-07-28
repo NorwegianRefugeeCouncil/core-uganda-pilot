@@ -8,16 +8,19 @@ import (
 	"strings"
 )
 
-type Interface interface {
-	Parties() PartyClient
-	PartyTypes() PartyTypeClient
-	Relationships() RelationshipClient
-	RelationshipTypes() RelationshipTypeClient
-	Attributes() AttributeClient
-	Teams() TeamClient
-	Memberships() MembershipClient
-	Individuals() IndividualClient
-}
+type (
+	Interface interface {
+		Parties() PartyClient
+		PartyTypes() PartyTypeClient
+		Relationships() RelationshipClient
+		RelationshipTypes() RelationshipTypeClient
+		Attributes() AttributeClient
+		Teams() TeamClient
+		Memberships() MembershipClient
+		Individuals() IndividualClient
+		Countrys() CountryClient
+	}
+)
 
 type PartyListOptions struct {
 	PartyTypeID string
@@ -201,6 +204,25 @@ type TeamClient interface {
 	Create(ctx context.Context, party *Team) (*Team, error)
 	Update(ctx context.Context, party *Team) (*Team, error)
 	List(ctx context.Context, listOptions TeamListOptions) (*TeamList, error)
+}
+
+//Country
+type CountryListOptions struct {
+}
+
+func (a *CountryListOptions) MarshalQueryParameters() (url.Values, error) {
+	return url.Values{}, nil
+}
+
+func (a *CountryListOptions) UnmarshalQueryParameters(values url.Values) error {
+	return nil
+}
+
+type CountryClient interface {
+	Get(ctx context.Context, id string) (*Country, error)
+	Create(ctx context.Context, party *Country) (*Country, error)
+	Update(ctx context.Context, party *Country) (*Country, error)
+	List(ctx context.Context, listOptions CountryListOptions) (*CountryList, error)
 }
 
 type StaffListOptions struct {
