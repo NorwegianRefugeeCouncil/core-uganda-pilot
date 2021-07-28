@@ -34,34 +34,18 @@ func (s *Server) PostCredentials(w http.ResponseWriter, req *http.Request) {
 		credentials = append(credentials, &c)
 	}
 
-	saltedHash, err := HashAndSalt(s.BCryptCost, []byte(payload.PlaintextPassword))
-	if err != nil {
-		s.Error(w, err)
-		return
-	}
-
-	var returnValue Credential
-
 	// no credentials found, need to create new
 	if len(credentials) == 0 {
-		var newCredential = Credential{
-			PartyID: payload.PartyID,
-			Hash:    saltedHash,
-		}
-
-		_, err = s.Collection.InsertOne(ctx, newCredential)
+		err = s.CreatePassword(ctx, payload.PartyID, payload.PlaintextPassword)
 		if err != nil {
 			s.Error(w, err)
 			return
 		}
-
-		returnValue = newCredential
 	}
 
 	// existing credential found, updating
 	if len(credentials) == 1 {
 		err = s.SetPassword(ctx, payload.PartyID, payload.PlaintextPassword)
-
 		if err != nil {
 			s.Error(w, err)
 			return
@@ -74,5 +58,6 @@ func (s *Server) PostCredentials(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	s.json(w, http.StatusOK, returnValue)
+	var i interface{}
+	s.json(w, http.StatusOK, i)
 }
