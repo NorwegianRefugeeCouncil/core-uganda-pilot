@@ -7,6 +7,7 @@ import (
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/ory/hydra-client-go/client/admin"
 	"net/http"
+	"path"
 )
 
 type Server struct {
@@ -35,8 +36,16 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	router := mux.NewRouter()
 	router.Use(srv.WithAuth())
 
+	router.Path(server.AttachmentsEndpoint).Methods("GET").HandlerFunc(srv.ListAttachments)
+	router.Path(path.Join(server.AttributesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.GetAttachment)
+
 	srv.router = router
+
 	return srv, nil
+}
+
+func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	s.router.ServeHTTP(w, req)
 }
 
 func (s *Server) Error(w http.ResponseWriter, err error) {
@@ -49,4 +58,8 @@ func (s *Server) Bind(req *http.Request, into interface{}) error {
 
 func (s *Server) json(w http.ResponseWriter, status int, data interface{}) {
 	utils.JSONResponse(w, status, data)
+}
+
+func (s *Server) GetPathParam(param string, w http.ResponseWriter, req *http.Request, into *string) bool {
+	return utils.GetPathParam(param, w, req, into)
 }
