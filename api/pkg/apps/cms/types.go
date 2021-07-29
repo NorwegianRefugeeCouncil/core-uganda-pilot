@@ -99,6 +99,7 @@ const (
 	Date      FieldType = "date"
 	File      FieldType = "file"
 	Time      FieldType = "time"
+	TaxonomyInput FieldType = "taxonomyinput"
 )
 
 type FormElement struct {

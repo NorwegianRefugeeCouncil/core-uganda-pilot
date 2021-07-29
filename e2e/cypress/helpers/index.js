@@ -9,7 +9,7 @@ export const Urls = {
     NEW_RELATIONSHIPTYPE_URL: '/settings/relationshiptypes/new',
     ATTRIBUTE_URL: '/settings/attributes',
     CASETYPE_URL: '/settings/casetypes',
-    INDIVIDUAL_URL: '/individuals',
+    INDIVIDUALS_URL: '/individuals',
     PARTYTYPE_URL: '/settings/partytypes',
     RELATIONSHIPTYPE_URL: '/settings/relationshiptypes',
 };
