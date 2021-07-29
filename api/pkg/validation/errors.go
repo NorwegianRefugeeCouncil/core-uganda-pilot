@@ -3,6 +3,7 @@ package validation
 import (
 	"fmt"
 	"reflect"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -16,7 +17,7 @@ func formatField(field string) string {
 	return field
 }
 
-func (v ErrorList) Find(field string) ErrorList {
+func (v ErrorList) Find(field string) *ErrorList {
 	field = formatField(field)
 	errs := ErrorList{}
 	for _, err := range v {
@@ -24,7 +25,23 @@ func (v ErrorList) Find(field string) ErrorList {
 			errs = append(errs, err)
 		}
 	}
-	return errs
+	return &errs
+}
+
+func (v ErrorList) FindFamily(field string) *ErrorList {
+	field = formatField(field)
+	errs := ErrorList{}
+	for _, fieldError := range v {
+		isMember, err := regexp.MatchString(field, fieldError.Field)
+		if err != nil {
+			panic(err)
+		}
+		if isMember {
+			errs = append(errs, fieldError)
+		}
+	}
+	return &errs
+
 }
 
 func (v ErrorList) HasError(field string, errType ErrorType) bool {
@@ -44,6 +61,17 @@ func (v ErrorList) Status(code int, msg string) Status {
 		Message: msg,
 		Errors:  v,
 	}
+}
+
+func (v ErrorList) HasMany() bool {
+	return len(v) > 1
+}
+
+func (v *ErrorList) Length() int {
+	if v == nil {
+		return 0
+	}
+	return len(*v)
 }
 
 // Error is an implementation of the 'error' interface, which represents a

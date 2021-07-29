@@ -16,8 +16,8 @@ func ValidateCaseType(caseType *CaseType, path *validation.Path) validation.Erro
 	if len(caseType.TeamID) == 0 {
 		errList = append(errList, validation.Required(path.Child("teamId"), "team is required"))
 	}
-	if caseType.CaseTemplate == nil || caseType.CaseTemplate.FormElements == nil {
-		errList = append(errList, validation.Required(path.Child("caseTemplate"), "template is required"))
+	if caseType.Template == nil || caseType.Template.FormElements == nil {
+		errList = append(errList, validation.Required(path.Child("template"), "template is required"))
 	}
 
 	return errList

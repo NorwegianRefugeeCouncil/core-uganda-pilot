@@ -2,6 +2,7 @@ package cms
 
 import (
 	"encoding/json"
+	"github.com/nrc-no/core/pkg/validation"
 	"time"
 )
 
@@ -23,11 +24,11 @@ type CaseList struct {
 
 // CaseType contains the information needed to construct a case form as well as Team and PartyType IDs associated with the form.
 type CaseType struct {
-	ID           string        `json:"id" bson:"id"`
-	Name         string        `json:"name" bson:"name"`
-	PartyTypeID  string        `json:"partyTypeId" bson:"partyTypeId"`
-	TeamID       string        `json:"teamId" bson:"teamId"`
-	CaseTemplate *CaseTemplate `json:"caseTemplate" bson:"caseTemplate"`
+	ID          string        `json:"id" bson:"id"`
+	Name        string        `json:"name" bson:"name"`
+	PartyTypeID string        `json:"partyTypeId" bson:"partyTypeId"`
+	TeamID      string        `json:"teamId" bson:"teamId"`
+	Template    *CaseTemplate `json:"template" bson:"template"`
 }
 
 type CaseTypeList struct {
@@ -39,7 +40,7 @@ func (c *CaseType) String() string {
 }
 
 func (c *CaseType) Pretty() string {
-	b, err := json.MarshalIndent(c.CaseTemplate, "", "  ")
+	b, err := json.MarshalIndent(c.Template, "", "  ")
 	if err != nil {
 		panic(err)
 	}
@@ -94,14 +95,16 @@ type FormElement struct {
 	Type       FieldType             `json:"type" bson:"type"`
 	Attributes FormElementAttribute  `json:"attributes" bson:"attributes"`
 	Validation FormElementValidation `json:"validation" bson:"validation"`
+	Errors     *validation.ErrorList
+	ReadOnly   bool
 }
 
 type FormElementAttribute struct {
 	Label           string           `json:"label" bson:"label"`
-	ID              string           `json:"id" bson:"id"`
+	Name            string           `json:"name" bson:"name"`
+	Value           []string         `json:"value" bson:"value"`
 	Description     string           `json:"description" bson:"description"`
 	Placeholder     string           `json:"placeholder" bson:"placeholder"`
-	Value           []string         `json:"value" bson:"value"`
 	Multiple        bool             `json:"multiple" bson:"multiple"`
 	Options         []string         `json:"options" bson:"options"`
 	CheckboxOptions []CheckboxOption `json:"checkboxOptions" bson:"checkboxOptions"`

@@ -254,11 +254,11 @@ func UnmarshalCaseTypeFormData(c *cms.CaseType, values url.Values) error {
 	c.Name = values.Get("name")
 	c.PartyTypeID = values.Get("partyTypeId")
 	c.TeamID = values.Get("teamId")
-	templateString := values.Get("caseTemplate")
+	templateString := values.Get("template")
 	if templateString == "" {
-		c.CaseTemplate = &cms.CaseTemplate{}
+		c.Template = &cms.CaseTemplate{}
 	} else {
-		if err := json.Unmarshal([]byte(templateString), &c.CaseTemplate); err != nil {
+		if err := json.Unmarshal([]byte(templateString), &c.Template); err != nil {
 			return err
 		}
 	}

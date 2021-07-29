@@ -11,17 +11,21 @@
                 <form action="/settings/casetypes{{if .CaseType.ID}}/{{.CaseType.ID}}{{end}}" method="post">
                     <div class="form-floating mb-3">
                         {{$name := "name"}}
-                        {{if .Errors}}
+                        {{if and .Errors (.Errors.Find $name)}}
                             {{$errs := .Errors.Find $name}}
                             <input id="{{$name}}"
                                    type="text"
                                    name="{{$name}}"
-                                   value="{{if .CaseType.Name}}{{.CaseType.Name}}{{end}}"
+                                   value="{{(index $errs 0).BadValue}}"
                                    data-testid="{{$name}}"
-                                   class="form-control {{ValidationClass $errs}}"
-                                   aria-describedby="nameFeedback"
+                                   class="form-control {{if $errs}}is-invalid{{end}}"
+                                   aria-describedby="{{$name}}Feedback"
                             >
-                            {{ValidationFeedback $errs $name}}
+                            <div id="{{$name}}Feedback" class="invalid-feedback">
+                                {{range $errs}}
+                                    <p>{{.Detail}}</p>
+                                {{end}}
+                            </div>
                         {{else}}
                             <input id="{{$name}}"
                                    type="text"
@@ -35,10 +39,10 @@
                     </div>
                     <div class="form-floating mb-3">
                         {{$name = "partyTypeId"}}
-                        {{if .Errors}}
+                        {{if and .Errors (.Errors.Find $name)}}
                             {{$errs := .Errors.Find $name}}
                             <select id="party-type"
-                                    class="form-select {{ValidationClass $errs}}"
+                                    class="form-select {{if $errs}}is-invalid{{end}}"
                                     name="{{$name}}"
                                     aria-describedby="partyTypeIdFeedback"
                             >
@@ -58,7 +62,11 @@
                                     <option value="{{.ID}}" data-cy="partytype-option">{{.Name}}</option>
                                 {{end}}
                             </select>
-                            {{ValidationFeedback $errs $name}}
+                            <div id="{{$name}}Feedback" class="invalid-feedback">
+                                {{range $errs}}
+                                    <p>{{.Detail}}</p>
+                                {{end}}
+                            </div>
                         {{else}}
                             <select id="party-type"
                                     class="form-select"
@@ -82,10 +90,10 @@
                     </div>
                     <div class="form-floating mb-3">
                         {{$name = "teamId"}}
-                        {{if .Errors}}
+                        {{if and .Errors (.Errors.Find $name)}}
                             {{$errs := .Errors.Find $name}}
                             <select id="team"
-                                    class="form-select {{ValidationClass $errs}}"
+                                    class="form-select {{if $errs}}is-invalid{{end}}"
                                     name="{{$name}}"
                                     aria-describedby="teamIdFeedback"
                             >
@@ -101,7 +109,11 @@
                                     <option value="{{.ID}}" data-cy="team-option">{{.Name}}</option>
                                 {{end}}
                             </select>
-                            {{ValidationFeedback $errs $name}}
+                            <div id="{{$name}}Feedback" class="invalid-feedback">
+                                {{range $errs}}
+                                    <p>{{.Detail}}</p>
+                                {{end}}
+                            </div>
                         {{else}}
                             <select id="team"
                                     class="form-select"
@@ -125,29 +137,33 @@
                         <label for="team">Select Team</label>
                     </div>
                     <div class="form-floating mb-3">
-                        {{$name = "caseTemplate"}}
-                        {{if .Errors}}
+                        {{$name = "template"}}
+                        {{if and .Errors (.Errors.Find $name)}}
                             {{$errs := .Errors.Find $name}}
-                            <textarea name="caseTemplate"
-                                      id="caseTemplate"
-                                      class="form-control font-monospace {{ValidationClass $errs}}"
+                            <textarea name="{{$name}}"
+                                      id="{{$name}}"
+                                      class="form-control font-monospace {{if $errs}}is-invalid{{end}}"
                                       style="height: 600px"
-                                      aria-describedby="templateFeedback"
+                                      aria-describedby="{{$name}}}Feedback"
                             >
-                                {{- if .CaseType.Template}}{{.CaseType.Pretty}}{{end -}}
+                                {{- if .CaseType.CaseTemplate}}{{.CaseType.Pretty}}{{end -}}
                             </textarea>
-                            {{ValidationFeedback $errs $name}}
+                            <div id="{{$name}}Feedback" class="invalid-feedback">
+                                {{range $errs}}
+                                    <p>{{.Detail}}</p>
+                                {{end}}
+                            </div>
                         {{else}}
-                            <textarea name="caseTemplate"
-                                      id="caseTemplate"
+                            <textarea name="{{$name}}"
+                                      id="{{$name}}"
                                       class="form-control font-monospace"
                                       style="height: 600px"
                                       {{if .CaseType}}readonly{{end}}
                             >
-                                {{- if .CaseType.Template}}{{.CaseType.Pretty}}{{end -}}
+                                {{- if .CaseType.CaseTemplate}}{{.CaseType.Pretty}}{{end -}}
                             </textarea>
                         {{end}}
-                        <label for="caseTemplate">Form template</label>
+                        <label for="{{$name}}">Form template</label>
                     </div>
                     {{if and (not .Errors) .CaseType}}
                         <input type="hidden" name="partyTypeId" value="{{.CaseType.PartyTypeID}}">

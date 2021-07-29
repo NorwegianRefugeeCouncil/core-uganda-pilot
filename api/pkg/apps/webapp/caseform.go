@@ -5,23 +5,25 @@ import (
 	"github.com/nrc-no/core/pkg/validation"
 )
 
-type ValidatedTemplate struct {
-	FormElements []FormElement
+type ValidatedCaseTemplate struct {
+	Template struct {
+		FormElements []FormElement
+	}
 }
 
 type FormElement struct {
 	cms.FormElement
-	Errors validation.ErrorList
 }
 
-func NewValidatedTemplate(template *cms.CaseTemplate, errors *validation.ErrorList) *ValidatedTemplate {
-	formFields := []FormElement{}
+func NewValidatedTemplate(template *cms.CaseTemplate, errors validation.ErrorList) *ValidatedCaseTemplate {
+	formElements := []FormElement{}
 	for _, element := range template.FormElements {
-		errs := errors.Find(element.Attributes.ID)
-		formFields = append(formFields, FormElement{
+		if errs := errors.FindFamily(element.Attributes.Name); len(*errs) > 0 {
+			element.Errors = errs
+		}
+		formElements = append(formElements, FormElement{
 			FormElement: element,
-			Errors:      errs,
 		})
 	}
-	return &ValidatedTemplate{formFields}
+	return &ValidatedCaseTemplate{struct{ FormElements []FormElement }{FormElements: formElements}}
 }

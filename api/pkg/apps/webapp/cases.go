@@ -75,7 +75,7 @@ func (s *Server) Cases(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if req.Method == "POST" {
-		s.PostCase(ctx, &cms.Case{}, w, req)
+		s.PostCase(req, w, ctx, &cms.Case{})
 		return
 	}
 
@@ -147,11 +147,6 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 
 	if err := g.Wait(); err != nil {
 		s.Error(w, err)
-		return
-	}
-
-	if req.Method == "POST" {
-		s.PostCase(ctx, kase, w, req)
 		return
 	}
 
@@ -241,7 +236,10 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 	}
-
+	if req.Method == "POST" {
+		s.PostCase(req, w, ctx, kase)
+		return
+	}
 	if err := s.renderFactory.New(req).ExecuteTemplate(w, "case", map[string]interface{}{
 		"Case":             kase,
 		"Parent":           parent,
@@ -341,7 +339,7 @@ func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (s *Server) PostCase(ctx context.Context, kase *cms.Case, w http.ResponseWriter, req *http.Request) {
+func (s *Server) PostCase(req *http.Request, w http.ResponseWriter, ctx context.Context, kase *cms.Case) {
 	var err error
 
 	cmsClient, err := s.CMSClient(req)
@@ -363,7 +361,7 @@ func (s *Server) PostCase(ctx context.Context, kase *cms.Case, w http.ResponseWr
 		return
 	}
 
-	err = UnmarshalCaseFormData(kase, caseType.CaseTemplate, req.Form)
+	err = UnmarshalCaseFormData(kase, caseType.Template, req.Form)
 	if err != nil {
 		s.Error(w, err)
 		return
@@ -371,6 +369,7 @@ func (s *Server) PostCase(ctx context.Context, kase *cms.Case, w http.ResponseWr
 
 	var isNewCase = kase.ID == ""
 	var action string
+	var postedCase *cms.Case
 	if isNewCase {
 		subject := ctx.Value("Subject")
 		if subject == nil {
@@ -378,13 +377,22 @@ func (s *Server) PostCase(ctx context.Context, kase *cms.Case, w http.ResponseWr
 		} else {
 			kase.CreatorID = subject.(string)
 		}
-		kase, err = cmsClient.Cases().Create(ctx, kase)
+		postedCase, err = cmsClient.Cases().Create(ctx, kase)
 		action = "created"
 	} else {
-		kase, err = cmsClient.Cases().Update(ctx, kase)
+		postedCase, err = cmsClient.Cases().Update(ctx, kase)
 		action = "updated"
 	}
-	s.processCaseValidation(req, w, kase, err, action)
+	if err != nil {
+		if status, ok := err.(*validation.Status); ok {
+			s.renderCaseValidation(req, w, kase, status)
+			return
+		} else {
+			s.Error(w, err)
+			return
+		}
+	}
+	s.redirectAfterSuccessfulCasePost(req, w, postedCase, action)
 }
 
 type displayComment struct {
@@ -409,7 +417,7 @@ func displayComments(comments *cms.CommentList, authorMap map[string]*iam.Party)
 func (s *Server) processCaseValidation(req *http.Request, w http.ResponseWriter, kase *cms.Case, err error, action string) {
 	if err != nil {
 		if status, ok := err.(*validation.Status); ok {
-			s.renderCaseValidation(req, w, status )
+			s.renderCaseValidation(req, w, kase, status)
 			return
 		} else {
 			s.Error(w, err)
@@ -436,8 +444,8 @@ func (s *Server) redirectAfterSuccessfulCasePost(req *http.Request, w http.Respo
 	w.WriteHeader(http.StatusSeeOther)
 }
 
-func (s *Server) renderCaseValidation(req *http.Request, w http.ResponseWriter, status *validation.Status) {
-	validatedForm := NewValidatedTemplate()
+func (s *Server) renderCaseValidation(req *http.Request, w http.ResponseWriter, kase *cms.Case, status *validation.Status) {
+	validatedForm := NewValidatedTemplate(kase.Template, status.Errors)
 	parties, err := s.retrieveParties(req)
 	if err != nil {
 		s.Error(w, err)
@@ -448,18 +456,39 @@ func (s *Server) renderCaseValidation(req *http.Request, w http.ResponseWriter, 
 		s.Error(w, err)
 		return
 	}
-
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+	cmsClient, err := s.CMSClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+	team, err := iamClient.Teams().Get(req.Context(), kase.TeamID)
+	if err != nil {
+		s.Error(w, err)
+	}
+	caseType, err := cmsClient.CaseTypes().Get(req.Context(), kase.CaseTypeID)
+	if err != nil {
+		s.Error(w, err)
+	}
 	qry := req.URL.Query()
 
+	partyID := qry.Get("partyId")
+	if len(partyID) == 0 {
+		partyID = kase.PartyID
+	}
 	// Set notification and render
 	s.validationErrorNotification(req, w)
 	if err := s.renderFactory.New(req).ExecuteTemplate(w, "casenew", map[string]interface{}{
-		"PartyID":      qry.Get("partyId"),
-		"WasValidated": true,
-		"Form":         ,
-		"Team":        ,
-		"CaseTypes":    caseTypes,
-		"Parties":      parties,
+		"Team":          team,
+		"CaseTypes":     caseTypes,
+		"CaseType":      caseType,
+		"Parties":       parties,
+		"PartyID":       partyID,
+		"ValidatedForm": validatedForm,
 	}); err != nil {
 		s.Error(w, err)
 		return
@@ -505,17 +534,17 @@ func (c *CasesListOptions) UnmarshalQueryParams(values url.Values) error {
 }
 
 // UnmarshalCaseFormData retrieves entries from a url.Values and applies them to a cms.Case object via a cms.CaseTemplate.
-func UnmarshalCaseFormData(c *cms.Case, caseTemplate *cms.CaseTemplate, values url.Values) error {
+func UnmarshalCaseFormData(c *cms.Case, template *cms.CaseTemplate, values url.Values) error {
 	c.CaseTypeID = values.Get("caseTypeId")
 	c.PartyID = values.Get("partyId")
 	c.Done = values.Get("done") == "on"
 	c.ParentID = values.Get("parentId")
 	c.TeamID = values.Get("teamId")
 	var formElements []cms.FormElement
-	for _, formElement := range caseTemplate.FormElements {
-		formElement.Attributes.Value = values[formElement.Attributes.ID]
+	for _, formElement := range template.FormElements {
+		formElement.Attributes.Value = values[formElement.Attributes.Name]
 		formElements = append(formElements, formElement)
 	}
-	c.Template = &cms.CaseForm{CaseTemplate: &cms.CaseTemplate{FormElements: formElements}}
+	c.Template = &cms.CaseTemplate{FormElements: formElements}
 	return nil
 }

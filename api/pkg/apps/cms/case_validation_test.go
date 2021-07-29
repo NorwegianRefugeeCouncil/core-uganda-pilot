@@ -20,7 +20,7 @@ func TestValidateCase(t *testing.T) {
 					{
 						Type: Dropdown,
 						Attributes: FormElementAttribute{
-							ID: "dropdown",
+							Name: "dropdown",
 						},
 						Validation: FormElementValidation{
 							Required: true,
@@ -29,7 +29,7 @@ func TestValidateCase(t *testing.T) {
 					{
 						Type: Textarea,
 						Attributes: FormElementAttribute{
-							ID: "textarea",
+							Name: "textarea",
 						},
 						Validation: FormElementValidation{
 							Required: true,
@@ -38,7 +38,7 @@ func TestValidateCase(t *testing.T) {
 					{
 						Type: TextInput,
 						Attributes: FormElementAttribute{
-							ID: "textinput",
+							Name: "textinput",
 						},
 						Validation: FormElementValidation{
 							Required: true,
@@ -47,7 +47,7 @@ func TestValidateCase(t *testing.T) {
 					{
 						Type: Checkbox,
 						Attributes: FormElementAttribute{
-							ID: "checkbox",
+							Name: "checkbox",
 						},
 						Validation: FormElementValidation{
 							Required: true,

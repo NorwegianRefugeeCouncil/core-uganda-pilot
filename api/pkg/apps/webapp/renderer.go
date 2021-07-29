@@ -117,5 +117,13 @@ func WithRenderInterface(t *template.Template, intf RenderInterface) *template.T
 		"IsLoggedIn":    intf.IsLoggedIn,
 		"Profile":       intf.Profile,
 		"Notifications": intf.Notifications,
+		"length":        length,
 	})
+}
+
+func length(slice []interface{}) int {
+	if slice == nil {
+		return 0
+	}
+	return len(slice)
 }

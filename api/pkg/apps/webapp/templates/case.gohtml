@@ -68,8 +68,8 @@
         <div class="card mb-4">
             <div class="card-body">
                 <form action="/cases/{{$caseId}}" method="post">
-                    {{range .Case.FormData.FormElements}}
-                        {{template "formelement" .}}
+                    {{range .Case.Template.FormElements}}
+                        {{template "formfield" .}}
                     {{end}}
                     <div class="form-check mb-3">
                         <input id="done-input"

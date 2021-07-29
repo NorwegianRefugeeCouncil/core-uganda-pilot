@@ -32,7 +32,7 @@ func (s *Suite) testCaseTypeAPI() {
 	caseType.Name = "updated"
 	caseType.PartyTypeID = newUUID()
 	caseType.TeamID = newUUID()
-	caseType.CaseTemplate = &CaseTemplate{FormElements: []FormElement{{Type: "textarea", Attributes: FormElementAttribute{Label: "updated"}}}}
+	caseType.Template = &CaseTemplate{FormElements: []FormElement{{Type: "textarea", Attributes: FormElementAttribute{Label: "updated"}}}}
 	updated, err := s.client.CaseTypes().Update(s.Ctx, caseType)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()

@@ -17,10 +17,13 @@
                                 data-testid="caseTypePicker"
                         >
                             {{if .CaseTypes}}
-                                <option {{if not $.CaseType}}selected{{end}} value="">Choose</option>
+                                <option value="">Choose</option>
                                 {{range .CaseTypes.Items}}
-                                    <option value="{{.ID}}" data-testid="caseTypeOption"
-                                            {{if $.CaseType}}{{if eq .ID $.CaseType.ID}}selected{{end}}{{end}}>{{.Name}}</option>
+                                    <option value="{{.ID}}"
+                                            data-testid="caseTypeOption"
+                                            {{if $.CaseType}}{{if (eq .ID $.CaseType.ID)}}selected{{end}}{{end}}>
+                                        {{- .Name -}}
+                                    </option>
                                 {{end}}
                             {{else}}
                                 <option selected disabled>No case types defined</option>
@@ -28,7 +31,7 @@
                         </select>
                         <label for="case-type">Select Case Type</label>
                     </div>
-                    {{ if or .CaseType .WasValidated}}
+                    {{ if or .ValidatedForm .CaseType}}
                         <div class="form-floating mb-3">
                             <select disabled id="team" class="form-select" name="teamIdSelect">
                                 <option selected value="{{.Team.ID}}">{{.Team.Name}}</option>
@@ -38,7 +41,7 @@
                         <input id="teamId" name="teamId" type="hidden" value="{{.Team.ID}}" />
 
                         <div class="form-floating mb-3">
-                            <select id="party" class="form-select" name="partyId" data-testid="partyPicker">
+                            <select id="party" class="form-select" name="partyId" data-testid="partyPicker" required>
                                 {{if .Parties}}
                                     <option {{if not $.PartyID}}selected{{end}}></option>
                                     {{range .Parties.Items}}
@@ -51,11 +54,9 @@
                             </select>
                             <label for="party">Select Party</label>
                         </div>
-                        {{if .WasValidated}}
-                            {{.Case.Form.Render}}
-                        {{else}}
-                            {{range $_, $formElement := .CaseType.Template.FormElements}}
-                                {{template "formelement" $formElement}}
+                        {{with or .ValidatedForm .CaseType}}
+                            {{range .Template.FormElements}}
+                                {{template "formfield" .}}
                             {{end}}
                         {{end}}
                     {{end}}

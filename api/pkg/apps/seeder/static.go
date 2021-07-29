@@ -6,13 +6,13 @@ import (
 	"strings"
 )
 
-func caseType(id, name, partyTypeID, teamID string, caseTemplate *cms.CaseTemplate) cms.CaseType {
+func caseType(id, name, partyTypeID, teamID string, template *cms.CaseTemplate) cms.CaseType {
 	ct := cms.CaseType{
-		ID:           id,
-		Name:         name,
-		PartyTypeID:  partyTypeID,
-		TeamID:       teamID,
-		CaseTemplate: caseTemplate,
+		ID:          id,
+		Name:        name,
+		PartyTypeID: partyTypeID,
+		TeamID:      teamID,
+		Template:    template,
 	}
 	caseTypes = append(caseTypes, ct)
 	return ct
@@ -146,7 +146,7 @@ var (
 				Type: cms.Textarea,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
-					ID:          "safeDiginifiedLife",
+					Name:        "safeDiginifiedLife",
 					Description: "Probe for description",
 					Placeholder: "",
 				},
@@ -155,7 +155,7 @@ var (
 				Type: cms.Textarea,
 				Attributes: cms.FormElementAttribute{
 					Label:       "How are you addressing these challenges and barriers? What is standing in your way? Can you give me some examples of how you are dealing with these challenges?",
-					ID:          "challengesBarriers",
+					Name:        "challengesBarriers",
 					Description: "",
 					Placeholder: "",
 				},
@@ -164,7 +164,7 @@ var (
 				Type: cms.Textarea,
 				Attributes: cms.FormElementAttribute{
 					Label:       "What are some solutions you see for this and how could we work together on these solutions? How could we work to reduce these challenges together?",
-					ID:          "solutions",
+					Name:        "solutions",
 					Description: "",
 					Placeholder: "",
 				},
@@ -173,7 +173,7 @@ var (
 				Type: cms.Textarea,
 				Attributes: cms.FormElementAttribute{
 					Label:       "If we were to work together on this, what could we do together? What would make the most difference for you?",
-					ID:          "workTogether",
+					Name:        "workTogether",
 					Description: "",
 					Placeholder: "",
 				},
@@ -186,7 +186,7 @@ var (
 				Type: cms.Textarea,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Which service has the individual requested as a starting point of support?",
-					ID:          "serviceStartingPoint",
+					Name:        "serviceStartingPoint",
 					Description: "",
 					Placeholder: "",
 				},
@@ -195,7 +195,7 @@ var (
 				Type: cms.Textarea,
 				Attributes: cms.FormElementAttribute{
 					Label:       "What other services has the individual requested/identified?",
-					ID:          "otherServices",
+					Name:        "otherServices",
 					Description: "",
 					Placeholder: "",
 				},
@@ -204,7 +204,7 @@ var (
 				Type: cms.Textarea,
 				Attributes: cms.FormElementAttribute{
 					Label:       "What is the perceived priority response level of the individual",
-					ID:          "perceivedPriority",
+					Name:        "perceivedPriority",
 					Description: "",
 					Placeholder: "",
 				},
@@ -217,7 +217,7 @@ var (
 				Type: cms.TextInput,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Date of Referral",
-					ID:          "dateOfReferral",
+					Name:        "dateOfReferral",
 					Description: "",
 				},
 			},
@@ -225,7 +225,7 @@ var (
 				Type: cms.Dropdown,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Urgency",
-					ID:          "urgency",
+					Name:        "urgency",
 					Description: "",
 					Options:     []string{"Very Urgent", "Urgent", "Not Urgent"},
 				},
@@ -237,7 +237,7 @@ var (
 				Type: cms.Dropdown,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Type of Referral",
-					ID:          "typeOfReferral",
+					Name:        "typeOfReferral",
 					Description: "",
 					Options:     []string{"Internal", "External"},
 				},
@@ -249,7 +249,7 @@ var (
 				Type: cms.Textarea,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Services/assistance requested",
-					ID:          "servicesRequested",
+					Name:        "servicesRequested",
 					Description: "",
 					Placeholder: "",
 				},
@@ -258,7 +258,7 @@ var (
 				Type: cms.Textarea,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Reason for referral",
-					ID:          "reasonForReferral",
+					Name:        "reasonForReferral",
 					Description: "",
 					Placeholder: "",
 				},
@@ -267,23 +267,21 @@ var (
 				Type: cms.Checkbox,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Does the beneficiary have any restrictions to be referred?",
-					ID:          "referralRestrictions",
+					Name:        "referralRestrictions",
 					Description: "",
 					CheckboxOptions: []cms.CheckboxOption{
 						{
-							Label: "Has restrictions?",
+							Label:    "Has restrictions?",
+							Required: true,
 						},
 					},
-				},
-				Validation: cms.FormElementValidation{
-					Required: true,
 				},
 			},
 			{
 				Type: cms.Dropdown,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Means of Referral",
-					ID:          "meansOfReferral",
+					Name:        "meansOfReferral",
 					Description: "",
 					Options:     []string{"Phone", "E-mail", "Personal meeting", "Other"},
 				},
@@ -295,7 +293,7 @@ var (
 				Type: cms.Textarea,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Means and terms of receiving feedback from the client",
-					ID:          "meansOfFeedback",
+					Name:        "meansOfFeedback",
 					Description: "",
 					Placeholder: "",
 				},
@@ -304,7 +302,7 @@ var (
 				Type: cms.TextInput,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Deadline for receiving feedback from the client",
-					ID:          "deadlineForFeedback",
+					Name:        "deadlineForFeedback",
 					Description: "",
 				},
 			},
@@ -316,23 +314,21 @@ var (
 				Type: cms.Checkbox,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Was the referral accepted by the other provider?",
-					ID:          "referralAccepted",
+					Name:        "referralAccepted",
 					Description: "",
 					CheckboxOptions: []cms.CheckboxOption{
 						{
-							Label: "Referral accepted",
+							Label:    "Referral accepted",
+							Required: true,
 						},
 					},
-				},
-				Validation: cms.FormElementValidation{
-					Required: true,
 				},
 			},
 			{
 				Type: cms.Textarea,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Provide any pertinent details on service needs / requests.",
-					ID:          "pertinentDetails",
+					Name:        "pertinentDetails",
 					Description: "",
 					Placeholder: "",
 				},
@@ -346,7 +342,7 @@ var (
 				Type: cms.Dropdown,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Modality of service delivery",
-					ID:          "modality",
+					Name:        "modality",
 					Description: "",
 					Options:     []string{"ICLA Legal Aid Centre", "Mobile visit", "Home visit", "Transit Centre", "Hotline", "Other"},
 				},
@@ -358,7 +354,7 @@ var (
 				Type: cms.Dropdown,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Living situation",
-					ID:          "livingSituation",
+					Name:        "livingSituation",
 					Description: "",
 					Options:     []string{"Lives alone", "Lives with family", "Hosted by relatives"},
 				},
@@ -370,7 +366,7 @@ var (
 				Type: cms.Textarea,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Comment on living situation",
-					ID:          "commentLivingSituation",
+					Name:        "commentLivingSituation",
 					Description: "Additional information, observations, concerns, etc.",
 					Placeholder: "",
 				},
@@ -379,7 +375,7 @@ var (
 				Type: cms.Dropdown,
 				Attributes: cms.FormElementAttribute{
 					Label:       "How did you learn about ICLA services?",
-					ID:          "iclaServiceDiscovery",
+					Name:        "iclaServiceDiscovery",
 					Description: "",
 					Options:     []string{"ICLA in-person information session", "ICLA social media campaign, activities, brochures", "ICLA text messages", "Another beneficiary/friend/relative", "Another organisation", "General social media", "NRC employee", "State authority", "Other"},
 				},
@@ -391,7 +387,7 @@ var (
 				Type: cms.Textarea,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Vulnerability data",
-					ID:          "vulnerability",
+					Name:        "vulnerability",
 					Description: "As needed within a particular context and required for the case",
 					Placeholder: "",
 				},
@@ -400,7 +396,7 @@ var (
 				Type: cms.TextInput,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Full name of representative",
-					ID:          "representativeName",
+					Name:        "representativeName",
 					Description: "Lawyer or other person",
 				},
 			},
@@ -408,7 +404,7 @@ var (
 				Type: cms.Textarea,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Other personal information",
-					ID:          "otherInformation",
+					Name:        "otherInformation",
 					Description: "Other personal data as needed to identify the representative within the particular context",
 					Placeholder: "",
 				},
@@ -417,7 +413,7 @@ var (
 				Type: cms.TextInput,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Reason for representative",
-					ID:          "representativeReason",
+					Name:        "representativeReason",
 					Description: "",
 				},
 			},
@@ -425,32 +421,28 @@ var (
 				Type: cms.Checkbox,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Is the guardianship legal as per national legislation?",
-					ID:          "guardianshipIsLegal",
+					Name:        "guardianshipIsLegal",
 					Description: "If 'yes', attach/upload the legal assessment. If 'no', request or assist in identifying an appropriate legal guardian to represent beneficiary",
 					CheckboxOptions: []cms.CheckboxOption{
 						{
-							Label: "Guardianship is legal",
+							Label:    "Guardianship is legal",
+							Required: true,
 						},
 					},
-				},
-				Validation: cms.FormElementValidation{
-					Required: true,
 				},
 			},
 			{
 				Type: cms.Checkbox,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Does the beneficiary have the legal capacity to consent?",
-					ID:          "capacityToConsent",
+					Name:        "capacityToConsent",
 					Description: "",
 					CheckboxOptions: []cms.CheckboxOption{
 						{
-							Label: "Beneficiary has legal capacity to consent",
+							Label:    "Beneficiary has legal capacity to consent",
+							Required: true,
 						},
 					},
-				},
-				Validation: cms.FormElementValidation{
-					Required: true,
 				},
 			},
 		},
@@ -461,7 +453,7 @@ var (
 				Type: cms.Dropdown,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Type of service",
-					ID:          "serviceType",
+					Name:        "serviceType",
 					Description: "",
 					Options:     []string{"Legal counselling", "Legal assistance"},
 				},
@@ -473,7 +465,7 @@ var (
 				Type: cms.TextInput,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Thematic area",
-					ID:          "thematicArea",
+					Name:        "thematicArea",
 					Description: "Applicable Thematic Area related to the problem",
 				},
 			},
@@ -481,7 +473,7 @@ var (
 				Type: cms.Textarea,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Fact and details of the problem",
-					ID:          "details",
+					Name:        "details",
 					Description: "",
 					Placeholder: "",
 				},
@@ -490,7 +482,7 @@ var (
 				Type: cms.Checkbox,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Other parties involved",
-					ID:          "otherPartiesInvolved",
+					Name:        "otherPartiesInvolved",
 					Description: "Are there any other parties involved in the case",
 					CheckboxOptions: []cms.CheckboxOption{
 						{
@@ -515,7 +507,7 @@ var (
 				Type: cms.Checkbox,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Previous/existing lawyer working on the case",
-					ID:          "previousOrExistingLawyer",
+					Name:        "previousOrExistingLawyer",
 					Description: "Does the client have a previous or existing lawyer working on his/her case?",
 					CheckboxOptions: []cms.CheckboxOption{
 						{
@@ -534,7 +526,7 @@ var (
 				Type: cms.Textarea,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Previous or existing lawyer details",
-					ID:          "previousOrExistingLawyerDetails",
+					Name:        "previousOrExistingLawyerDetails",
 					Description: "",
 					Placeholder: "",
 				},
@@ -543,7 +535,7 @@ var (
 				Type: cms.Textarea,
 				Attributes: cms.FormElementAttribute{
 					Label:       "What actions have been taken to solve the problem, if any?",
-					ID:          "actionsTaken",
+					Name:        "actionsTaken",
 					Description: "",
 					Placeholder: "",
 				},
@@ -552,7 +544,7 @@ var (
 				Type: cms.Textarea,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Related to this problem, are there any cases pending before a court or administrative body?",
-					ID:          "pendingCourtCases",
+					Name:        "pendingCourtCases",
 					Description: "",
 					Placeholder: "",
 				},
@@ -561,7 +553,7 @@ var (
 				Type: cms.Textarea,
 				Attributes: cms.FormElementAttribute{
 					Label:       "If there are cases pending before a court or administrative body, are there any deadlines that need to be met?",
-					ID:          "pendingCourtCaseDeadlines",
+					Name:        "pendingCourtCaseDeadlines",
 					Description: "",
 					Placeholder: "",
 				},
@@ -570,7 +562,7 @@ var (
 				Type: cms.Textarea,
 				Attributes: cms.FormElementAttribute{
 					Label:       "Is there any conflict of interest involved?",
-					ID:          "conflictOfInterest",
+					Name:        "conflictOfInterest",
 					Description: "",
 					Placeholder: "",
 				},
@@ -585,7 +577,7 @@ var (
 				Type: "textarea",
 				Attributes: cms.FormElementAttribute{
 					Label:       "What action were you undertaking in the application, when the error happened",
-					ID:          "whatActionBeforeError",
+					Name:        "whatActionBeforeError",
 					Description: "",
 					Placeholder: "",
 				},
@@ -594,7 +586,7 @@ var (
 				Type: "textarea",
 				Attributes: cms.FormElementAttribute{
 					Label:       "If the error had not happened, what would be your expected outcome for the action you were performing when the error happened",
-					ID:          "expectedOutcome",
+					Name:        "expectedOutcome",
 					Description: "",
 					Placeholder: "",
 				},
@@ -603,7 +595,7 @@ var (
 				Type: "textarea",
 				Attributes: cms.FormElementAttribute{
 					Label:       "List any error messages shown",
-					ID:          "errorMessages",
+					Name:        "errorMessages",
 					Description: "",
 					Placeholder: "",
 				},
@@ -616,7 +608,7 @@ var (
 				Type: "textarea",
 				Attributes: cms.FormElementAttribute{
 					Label:       "Describe the change or new functionality you would like in Core",
-					ID:          "request",
+					Name:        "request",
 					Description: "",
 					Placeholder: "",
 				},
@@ -676,7 +668,7 @@ var (
 				Type: "textarea",
 				Attributes: cms.FormElementAttribute{
 					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
-					ID:          "safeDiginifiedLife",
+					Name:        "safeDiginifiedLife",
 					Description: "Probe for description",
 					Value: []string{
 						"Yes, I live a safe and dignified life and I am reasonably happy with my achievements and quality of life.",
@@ -688,7 +680,7 @@ var (
 				Type: "textarea",
 				Attributes: cms.FormElementAttribute{
 					Label: "How are you addressing these challenges and barriers? What is standing in your way? Can you give me some examples of how you are dealing with these challenges?",
-					ID:    "challengesBarriers",
+					Name:  "challengesBarriers",
 					Value: []string{
 						"Some of the barriers I face are communication gaps between myself and refugee tenants. We are attempting to deal with these challenges by using google translate.",
 					},
@@ -700,7 +692,7 @@ var (
 				Type: "textarea",
 				Attributes: cms.FormElementAttribute{
 					Label: "What are some solutions you see for this and how could we work together on these solutions? How could we work to reduce these challenges together?",
-					ID:    "solutions",
+					Name:  "solutions",
 					Value: []string{
 						"A qualified interpreter, who knows the legal context could help us to agree on contractual matters.",
 					},
@@ -712,7 +704,7 @@ var (
 				Type: "textarea",
 				Attributes: cms.FormElementAttribute{
 					Label: "If we were to work together on this, what could we do together? What would make the most difference for you?",
-					ID:    "workTogether",
+					Name:  "workTogether",
 					Value: []string{
 						"NRC could provide a translator and a legal representative to ease contract negotiations",
 					},

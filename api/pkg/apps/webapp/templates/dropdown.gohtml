@@ -1,0 +1,20 @@
+{{define "dropdown"}}
+    <div class="form-floating mb-3">
+        <select id="{{.Attributes.Name}}"
+                name="{{.Attributes.Name}}"
+                class="form-select {{if .Errors}}is-invalid{{end}}"
+                {{if .Attributes.Multiple}}multiple{{end}}
+                {{if .Validation.Required}}required{{end}}
+                {{if .Errors}}aria-describedby="{{.Attributes.Name}}Feedback"{{end}}
+        >
+            <option value=""></option>
+            {{range $i, $_ := .Attributes.Options}}
+                {{$istr := printf "%d" $i}}
+                <option value="{{$i}}" {{range $v := $.Attributes.Value }}{{if eq $istr $v}}selected{{end}}{{end}}>{{.}}</option>
+            {{end}}
+        </select>
+        <label class="form-label" for="{{.Attributes.Name}}">{{.Attributes.Label}}</label>
+        <div class="form-text">{{.Attributes.Description}}</div>
+        {{template "validation_feedback" .}}
+    </div>
+{{end}}
