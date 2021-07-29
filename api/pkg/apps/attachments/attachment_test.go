@@ -5,7 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func (s *Suite) TestCaseType() {
+func (s *Suite) TestAttachments() {
 	s.Run("API", func() { s.testAttachmentAPI() })
 }
 
