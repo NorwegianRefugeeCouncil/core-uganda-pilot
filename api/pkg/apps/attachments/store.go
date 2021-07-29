@@ -35,3 +35,60 @@ func NewAttachmentStore(ctx context.Context, mongoClientFn utils.MongoClientFn, 
 
 	return store, nil
 }
+
+func (s *AttachmentStore) Get(ctx context.Context, id string) (*Attachment, error) {
+	collection, err := s.getCollection(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	res := collection.FindOne(ctx, bson.M{
+		"id": id,
+	})
+	if res.Err() != nil {
+		return nil, res.Err()
+	}
+	var r Attachment
+	if err := res.Decode(&r); err != nil {
+		return nil, err
+	}
+	return &r, nil
+}
+
+func (s *AttachmentStore) List(ctx context.Context, options AttachmentListOptions) (*AttachmentList, error) {
+
+	filter := bson.M{
+		"attachedToId": options.AttachedToID,
+	}
+
+	collection, err := s.getCollection(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := collection.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	var items []*Attachment
+	for {
+		if !res.Next(ctx) {
+			break
+		}
+		var r Attachment
+		if err := res.Decode(&r); err != nil {
+			return nil, err
+		}
+		items = append(items, &r)
+	}
+	if res.Err() != nil {
+		return nil, res.Err()
+	}
+	if items == nil {
+		items = []*Attachment{}
+	}
+	ret := AttachmentList{
+		Items: items,
+	}
+	return &ret, nil
+}
