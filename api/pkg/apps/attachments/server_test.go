@@ -54,20 +54,20 @@ func contains(s []string, item string) bool {
 	return false
 }
 
-func newUUID() string {
+func (s *Suite) NewUUID() string {
 	return uuid.NewV4().String()
 }
 
-func uuidSlice(n int) []string {
-	s := []string{}
+func (s *Suite) uuidSlice(n int) []string {
+	t := []string{}
 	for i := 0; i < n; i++ {
-		s = append(s, newUUID())
+		t = append(t, s.NewUUID())
 	}
-	return s
+	return t
 }
 
 func (s *Suite) aMockAttachment(attachedToId string) *Attachment {
-	var newUUIDForAttachment = newUUID()
+	var newUUIDForAttachment = s.NewUUID()
 	return &Attachment{
 		ID:           newUUIDForAttachment,
 		AttachedToID: attachedToId,
