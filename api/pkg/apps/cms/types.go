@@ -91,14 +91,14 @@ func (c *CaseTemplate) MarkAsReadonly() *CaseTemplate {
 type FieldType string
 
 const (
-	Textarea  FieldType = "textarea"
-	TextInput FieldType = "textinput"
-	Dropdown  FieldType = "dropdown"
-	Checkbox  FieldType = "checkbox"
-	Email     FieldType = "email"
-	Date      FieldType = "date"
-	File      FieldType = "file"
-	Time      FieldType = "time"
+	Textarea      FieldType = "textarea"
+	TextInput     FieldType = "textinput"
+	Dropdown      FieldType = "dropdown"
+	Checkbox      FieldType = "checkbox"
+	Email         FieldType = "email"
+	Date          FieldType = "date"
+	File          FieldType = "file"
+	Time          FieldType = "time"
 	TaxonomyInput FieldType = "taxonomyinput"
 )
 
