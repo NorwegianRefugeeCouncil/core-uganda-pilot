@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/gorilla/mux"
+	"github.com/nrc-no/core/pkg/apps/attachments"
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/nrc-no/core/pkg/apps/login"
@@ -19,4 +20,5 @@ type Server struct {
 	IAMServer         *iam.Server
 	LoginServer       *login.Server
 	CMSServer         *cms.Server
+	AttachmentServer  *attachments.Server
 }
