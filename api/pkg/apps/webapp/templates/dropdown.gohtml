@@ -6,6 +6,7 @@
                 {{if .Attributes.Multiple}}multiple{{end}}
                 {{if .Validation.Required}}required{{end}}
                 {{if .Errors}}aria-describedby="{{.Attributes.Name}}Feedback"{{end}}
+                {{if .Readonly}}disabled{{end}}
         >
             <option value=""></option>
             {{range $i, $_ := .Attributes.Options}}

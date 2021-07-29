@@ -78,6 +78,16 @@ type CaseTemplate struct {
 	FormElements []FormElement `json:"formElements" bson:"formElements"`
 }
 
+func (c *CaseTemplate) MarkAsReadonly() *CaseTemplate {
+	elems := []FormElement{}
+	for _, element := range c.FormElements {
+		e := element
+		e.Readonly = true
+		elems = append(elems, e)
+	}
+	return &CaseTemplate{elems}
+}
+
 type FieldType string
 
 const (
@@ -96,7 +106,7 @@ type FormElement struct {
 	Attributes FormElementAttribute  `json:"attributes" bson:"attributes"`
 	Validation FormElementValidation `json:"validation" bson:"validation"`
 	Errors     *validation.ErrorList
-	ReadOnly   bool
+	Readonly   bool
 }
 
 type FormElementAttribute struct {

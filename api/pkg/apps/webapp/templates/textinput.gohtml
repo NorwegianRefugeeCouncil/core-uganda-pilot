@@ -8,6 +8,7 @@
                placeholder="{{.Attributes.Placeholder}}"
                {{if .Validation.Required}}required{{end}}
                 {{if .Errors}}aria-describedby="{{.Attributes.Name}}Feedback"{{end}}
+                {{if .Readonly}}disabled readonly{{end}}
         >
         <label for="{{.Attributes.Name}}">{{.Attributes.Label}}</label>
         <div class="form-text">{{.Attributes.Description}}</div>
