@@ -92,3 +92,36 @@ func (s *AttachmentStore) List(ctx context.Context, options AttachmentListOption
 	}
 	return &ret, nil
 }
+
+func (s *AttachmentStore) Update(ctx context.Context, attachment *Attachment) error {
+	collection, err := s.getCollection(ctx)
+	if err != nil {
+		return err
+	}
+
+	_, err = collection.UpdateOne(ctx, bson.M{
+		"id": attachment.ID,
+	}, bson.M{
+		"$set": bson.M{
+			"attachedToId": attachment.AttachedToID,
+			"body":         attachment.Body,
+		},
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *AttachmentStore) Create(ctx context.Context, attachment *Attachment) error {
+	collection, err := s.getCollection(ctx)
+	if err != nil {
+		return err
+	}
+
+	_, err = collection.InsertOne(ctx, attachment)
+	if err != nil {
+		return err
+	}
+	return nil
+}

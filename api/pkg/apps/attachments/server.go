@@ -37,7 +37,9 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	router.Use(srv.WithAuth())
 
 	router.Path(server.AttachmentsEndpoint).Methods("GET").HandlerFunc(srv.ListAttachments)
+	router.Path(server.AttachmentsEndpoint).Methods("POST").HandlerFunc(srv.PostAttachment)
 	router.Path(path.Join(server.AttributesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.GetAttachment)
+	router.Path(path.Join(server.AttributesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.PostAttachment)
 
 	srv.router = router
 
