@@ -65,7 +65,7 @@
                         <div class="d-flex flex-row mb-3">
                             <div class="form-floating  me-2">
                                 <select id="relationshipTypeSelector" class="form-select pe-5" data-testid="relationshipType">
-                                    {{range .RelationshipTypes.Items}}
+                                    {{range .FilteredRelationshipTypes.Items}}
                                         <option value="{{.ID}}">{{.FirstPartyRole}}</option>
                                     {{end}}
                                 </select>
@@ -178,7 +178,13 @@
             {{range .Parties.Items}}
             {
                 id: {{.ID}},
-                name: "{{ . }}",
+                name: "{{ .String }}"
+            },
+            {{ end }}
+            {{range .Teams.Items}}
+            {
+                id: {{.ID}},
+                name: "{{ .String }}"
             },
             {{ end }}
         ];
@@ -244,7 +250,6 @@
         }
 
         function deleteRelationship(idx) {
-            console.log("ok")
             const state = stateSubject.value
             const relationships = state.relationships
             const relationship = relationships[idx]
@@ -293,30 +298,18 @@
             document.getElementById("partySelector").setAttribute("data-party-id", event.target.id)
         }
 
-        // Get First Name from party attribute list, or return blank
-        const firstNameFromAttrs = (attrs) => {
-            let firstName = ""
-            Object.keys(attrs).forEach(
-                k => {
-                    if (k == "{{.FirstNameAttribute.ID}}") {
-                        firstName = attrs[k]
-                    }
-                }
-            )
-            return firstName
-        }
-
-        // Get Last Name from party attribute list, or return blank
-        const lastNameFromAttrs = (attrs) => {
-            let lastName = ""
-            Object.keys(attrs).forEach(
-                k => {
-                    if (k == "{{.LastNameAttribute.ID}}") {
-                        lastName = attrs[k]
-                    }
-                }
-            )
-            return lastName
+        // Build a party link
+        const partyLink = (partyTypeId, partyId) => {
+          if (partyTypeId === "{{ .IndividualPartyTypeID }}"){
+            return "/individuals/" + partyId
+          }
+          if (partyTypeId === "{{ .TeamPartyTypeID }}"){
+            return "/teams/" + partyId
+          }
+          if (partyTypeId === "{{ .HouseholdPartyTypeID }}"){
+            return "/households/" + partyId
+          }
+          return "/"
         }
 
         // On document ready
@@ -354,15 +347,16 @@
 
                     let partySelectorList = document.getElementById("partySelectorList")
                     partySelectorList.innerHTML = ''
-                    if (res.response.items.length > 0) {
-                        let n = 0
-                        res.response.items.forEach(party => {
-                          if (n < {{ .Constants.PartyDropdownLimit }}) {
+                    if (res.response.length > 0) {
+                      let n = 0
+                      res.response.forEach(pickedParty => {
+                        const party = pickedParty.party
+                        if (n < {{ .Constants.PartyDropdownLimit }}) {
                             let newListItem = document.createElement('li')
                             newListItem.classList.add('dropdown-item')
                             newListItem.classList.add('partySelectorItem')
                             newListItem.onclick = onPartyListItemClick
-                            let displayText = `${lastNameFromAttrs(party.attributes)}, ${firstNameFromAttrs(party.attributes)}`
+                            let displayText = pickedParty.displayName
                             newListItem.appendChild(
                               document.createTextNode(displayText)
                             )
@@ -374,9 +368,9 @@
                               id: party.id,
                               name: displayText
                             })
-                          }
-                          n++
-                        })
+                        }
+                        n++
+                      })
                     } else {
                         // No Parties Found...
                         let newListItem = document.createElement('li')
@@ -405,19 +399,18 @@
                     const firstPartyName = parties.find(({id}) => id === relationship.firstParty)?.name;
                     const firstPartyRole = relationshipTypes.find(({id}) => id === relationship.relationshipTypeId)?.firstPartyRole;
                     const secondPartyName = parties.find(({id}) => id === relationship.secondParty)?.name;
-
-                    console.log(relationship)
-                    console.log(parties)
+                    const firstPartyTypeId = relationshipTypes.find(({id}) => id === relationship.relationshipTypeId).firstPartyTypeId;
+                    const secondPartyTypeId = relationshipTypes.find(({id}) => id === relationship.relationshipTypeId).secondPartyTypeId;
 
                     const firstPartyLinkNode = document.createElement("a")
-                    firstPartyLinkNode.href = "/individuals/" + relationship.firstParty
+                    firstPartyLinkNode.href = partyLink(firstPartyTypeId, relationship.firstPartyTypeId);
                     firstPartyLinkNode.innerText = firstPartyName
 
                     const roleSpanNode = document.createElement("span")
                     roleSpanNode.innerText = firstPartyRole.substring(0, 1).toLocaleLowerCase() + firstPartyRole.substring(1)
 
                     const secondPartyLinkNode = document.createElement("a")
-                    secondPartyLinkNode.href = "/individuals/" + relationship.secondParty
+                    secondPartyLinkNode.href = partyLink(secondPartyTypeId, relationship.secondParty);
                     secondPartyLinkNode.innerText = secondPartyName
 
                     const space1Node = document.createElement("span")
