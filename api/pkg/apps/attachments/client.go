@@ -11,6 +11,12 @@ type RESTAttachmentClient struct {
 	c *rest.Client
 }
 
+func NewClient(restConfig *rest.RESTConfig) *RESTAttachmentClient {
+	return &RESTAttachmentClient{
+		c: rest.NewClient(restConfig),
+	}
+}
+
 func (r RESTAttachmentClient) Get(ctx context.Context, id string) (*Attachment, error) {
 	var obj Attachment
 	err := r.c.Get().Path(path.Join(server.AttachmentsEndpoint, id)).Do(ctx).Into(&obj)

@@ -6,6 +6,7 @@ import (
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/ory/hydra-client-go/client/admin"
+	"go.mongodb.org/mongo-driver/bson"
 	"net/http"
 	"path"
 )
@@ -17,6 +18,14 @@ type Server struct {
 	store           *AttachmentStore
 	HydraAdmin      admin.ClientService
 	HydraHttpClient *http.Client
+}
+
+func NewServerOrDie(ctx context.Context, o *server.GenericServerOptions) *Server {
+	srv, err := NewServer(ctx, o)
+	if err != nil {
+		panic(err)
+	}
+	return srv
 }
 
 func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, error) {
@@ -64,4 +73,20 @@ func (s *Server) json(w http.ResponseWriter, status int, data interface{}) {
 
 func (s *Server) GetPathParam(param string, w http.ResponseWriter, req *http.Request, into *string) bool {
 	return utils.GetPathParam(param, w, req, into)
+}
+
+func (s *Server) ResetDB(ctx context.Context, databaseName string) error {
+	mongoClient, err := s.mongoClientFn(ctx)
+	if err != nil {
+		return err
+	}
+	// Delete attachments
+	_, err = mongoClient.Database(databaseName).Collection("attachments").DeleteMany(ctx, bson.D{})
+	if err != nil {
+		return err
+	}
+	if err := mongoClient.Database(databaseName).Drop(ctx); err != nil {
+		return err
+	}
+	return nil
 }
