@@ -8,37 +8,42 @@ import (
 // This package is responsible for interpreting the state of an cms.Individual to determine an Individual's current
 // status and what actions a user can take.
 
-// CaseHandler retrieves state information for an individual
+// CaseHandler retrieves state information for an individual.
 type CaseHandler interface {
 	GetAllCases() []*cms.Case
 	GetOpenCases() []*cms.Case
 	GetClosedCases() []*cms.Case
 }
 
-// Controller describes a controller's external interface
+// Controller describes a controller's external interface.
 type Controller interface {
 	Status() *Status
 	Actions() []Action
 }
 
+// Action describes an applicable action based on the provided state.
 type Action struct {
 	Type  string
 	Label string
 	Link  string
 }
 
+// Status indicates the Individuals progress along the CaseFlow.
 type Status struct {
 	Progress Progress
 	Label    string
 }
 
 type Progress []Stage
+
+// Stage represents the status of one step along the CaseFlow.
 type Stage struct {
 	CaseType *cms.CaseType
 	CaseStatus
 }
-type CaseStatus int
 
+// CaseStatus indicates the current status of a Case (either Unopened, Open or Closed)
+type CaseStatus int
 var (
 	Unopened CaseStatus = 0
 	Open     CaseStatus = 1
@@ -51,10 +56,10 @@ type state struct {
 	closedCases []*cms.Case
 }
 
-// Implementation
 // Ensure RegistrationController implements the Controller interface
 var _ Controller = &RegistrationController{}
 
+// RegistrationController compares a CaseHandler against a CaseFlow to provide available Actions and Status of an Individual in the registration process.
 type RegistrationController struct {
 	handler  CaseHandler
 	caseFlow CaseFlow
@@ -62,12 +67,14 @@ type RegistrationController struct {
 	status   *Status
 }
 
+// Implementation
+
 func (r *RegistrationController) Status() *Status {
 	status := &Status{}
 	progress := r.progress()
-	done := len(r.handler.GetClosedCases())
-	total := len(r.caseFlow.CaseTypes)
 	status.Progress = progress
+	done := len(r.state.closedCases)
+	total := len(r.caseFlow.CaseTypes)
 	status.Label = fmt.Sprintf("%d of %d", done, total)
 	r.status = status
 	return status
@@ -83,7 +90,7 @@ func (r *RegistrationController) Actions() []Action {
 				Link:  p.CaseType.ID,
 			})
 		} else if p.CaseStatus == Unopened && len(actions) == 0 {
-			// If this case is unopened ant there are no open cases, this is the next action
+			// If this case is unopened and there are no open cases, this is the next action
 			actions = append(actions, Action{
 				Type:  p.CaseType.Name,
 				Label: "Continue",
