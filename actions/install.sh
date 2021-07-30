@@ -1,19 +1,23 @@
 #!/bin/bash
 
 # move to script dir
-GIT_HOOKS="$(dirname "$0")/git-hooks"
-cd "$GIT_HOOKS"
+SRC_DIR="$(realpath $(dirname $0))/git-hooks"
+echo "$SRC_DIR"
+cd "$SRC_DIR"
 
-DEST=$(realpath ../../.git/hooks)
 
 for f in *; do
+	echo "$f"
+	DEST="../../.git/hooks/$f"
 	# check if symlink or file exists
-	if [[ -h "$DEST/$f" || -f "$DEST/$f" ]]; then
-		rm "$DEST/$f"
+	if [[ -h "$DEST" || -f "$DEST" ]]; then
+		echo "Removing old file."
+		rm "$DEST"
 	fi
 	# create symlink
-	ln -s $f "$DEST/$f"
+	ln -s -f "$SRC_DIR/$f" "$DEST"
 	if [ $? == 0 ]; then
 		echo "Created symlink for $f hook."
 	fi
 done
+

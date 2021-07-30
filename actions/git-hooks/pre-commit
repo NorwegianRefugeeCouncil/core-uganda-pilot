@@ -1,87 +1,92 @@
-#!/usr/bin/bash
-
-# An example hook script to verify what is about to be pushed.  Called by "git
-# push" after it has checked the remote status, but before anything has been
-# pushed.  If this script exits with a non-zero status nothing will be pushed.
+#!/bin/bash
 #
-# This hook is called with the following parameters:
+# An example hook script to verify what is about to be committed.
+# Called by "git commit" with no arguments.  The hook should
+# exit with non-zero status after issuing an appropriate message if
+# it wants to stop the commit.
 #
-# $1 -- Name of the remote to which the push is being done
-# $2 -- URL to which the push is being done
-#
-# If pushing without using a named remote those arguments will be equal.
-#
-# Information about the commits which are being pushed is supplied as lines to
-# the standard input in the form:
-#
-#   <local ref> <local oid> <remote ref> <remote oid>
-#
-# This sample shows how to prevent push of commits where the log message starts
-# with "WIP" (work in progress).
-echo "test"
+# To enable this hook, rename this file to "pre-commit".
+DIR=$(pwd)
+PREFIX="[pre-commit]"
+echo "$PREFIX Running hook..."
 
-remote="$1"
-url="$2"
-
-zero=$(git hash-object --stdin </dev/null | tr '[0-9a-f]' '0')
-
-while read local_ref local_oid remote_ref remote_oid
-do
-	echo "$local_ref"
-	echo "Running pre-push hook..."
-	cwd=$(pwd)
-
-	echo $cwd
-	exit 0
-
-	# check for running containers
-	# TODO
-	
+# check for running containers
+echo "$PREFIX Checking docker-compose..."
+cd artifacts
+CONTAINERS=('hydra_1' 'hydra_db_1' 'hydra_migrate' 'mongo-express' 'mongo_1' 'redis')
+if [[ -w $(which docker-compose) ]]; then
+	DC="docker-compose ps"
+else
+	DC="sudo docker-compose ps"
+fi
+for c in "${CONTAINERS[@]}"; do
+	eval "$DC" | grep -q "$c" &> /dev/null
 	if [ $? != 0 ]; then
-		>&2 echo "[pre-push] Please ensure docker-compose is up and running."
+		echo "$PREFIX Please ensure docker-compose is up and running."
 		exit 1
-	fi
-	
-	# check for localhost:9000 listening
-	# TODO
-	# if [ $? != 0 ]; then
-#		# TODO start webapp
-#	fi
-
-	# run integration tests
-	if [ $? != 0 ]; then
-		>&2 echo "[pre-push] Integration tests failed, see output above."
-		exit 1
-	fi
-
-	# run e2e tests
-	if [ $? != 0 ]; then
-		>&2 echo "[pre-push] E2E tests failed, see output above."
-		exit 1
-	fi
-
-	if test "$local_oid" = "$zero"
-	then
-		# Handle delete
-		:
-	else
-		if test "$remote_oid" = "$zero"
-		then
-			# New branch, examine all commits
-			range="$local_oid"
-		else
-			# Update to existing branch, examine new commits
-			range="$remote_oid..$local_oid"
-		fi
-
-		# Check for WIP commit
-		commit=$(git rev-list -n 1 --grep '^WIP' "$range")
-		if test -n "$commit"
-		then
-			echo >&2 "Found WIP commit in $local_ref, not pushing"
-			exit 1
-		fi
-	fi
+fi
 done
+echo "$PREFIX All containers are up and running!"
 
+# run integration tests
+# echo "$PREFIX Running IAM integration tests..."
+#
+# cd "$DIR/api/pkg/apps/iam"
+# go test .
+# # github.com/nrc-no/core/pkg/apps/iam
+# # /usr/local/go/bin/go tool test2json -t /tmp/GoLand/___test_iam_integration.test -test.v -test.paniconexit0
+# if [ $? != 0 ]; then
+# 	>&2 echo "[pre-push] Integration tests failed, see output above."
+# 	exit 1
+# fi
+#
+# echo "$PREFIX Running CMS integration tests..."
+#
+# cd "$DIR/api/pkg/apps/cms"
+# go test .
+# # github.com/nrc-no/core/pkg/apps/iam
+# # /usr/local/go/bin/go tool test2json -t /tmp/GoLand/___test_iam_integration.test -test.v -test.paniconexit0
+# if [ $? != 0 ]; then
+# 	>&2 echo "[pre-push] Integration tests failed, see output above."
+# 	exit 1
+# fi
+#
+# exit 1
+
+# run e2e tests
+# check for localhost:9000 listening
+echo "$PREFIX Checking webapp"
+serverIsRunning() {
+	netstat -tln | grep -q ":9000" &> /dev/null
+	if [ $? == 0 ]; then
+		return 0
+	else
+		return 1
+	fi
+}
+if ! serverIsRunning; then
+	echo "$PREFIX webapp is not running, attempting to start it now."
+	cd "$DIR/api"
+	make serve &> /dev/null &
+	sleep 10
+	if ! serverIsRunning; then
+		>&2 echo "$PREFIX Unable to start webapp."
+		exit 1
+	fi
+fi
+echo "$PREFIX webapp is up and running!"
+cd "$DIR/e2e"
+echo "$PREFIX Running eslint on .js files..."
+npm run lint:fix
+if [ $? != 0 ]; then
+	>&2 echo "[pre-push] Linting failed, see output above."
+	exit 1
+fi
+echo "$PREFIX Running E2E tests..."
+npm run run
+if [ $? != 0 ]; then
+	>&2 echo "[pre-push] E2E tests failed, see output above."
+	exit 1
+fi
+echo "$PREFIX All E2E tests passed!"
 exit 0

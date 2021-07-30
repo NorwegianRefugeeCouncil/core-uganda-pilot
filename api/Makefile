@@ -15,34 +15,34 @@ gen-certs:
 
 .PHONY:
 serve:
-	${GOROOT}/bin/go run ./cmd \
+	go run ./cmd \
 		--mongo-database=core \
-        --mongo-username=root \
-        --mongo-password=example \
-        --mongo-hosts=localhost:27017 \
-        --environment=Development \
-        --fresh=true \
-        --seed=true \
-        --hydra-admin-url=https://localhost:4445 \
-        --hydra-public-url=https://localhost:4444 \
-        --login-templates-directory=pkg/apps/login/templates \
-        --login-client-id=login \
-        --login-client-name=login \
-        --login-client-secret=somesecret \
-        --login-iam-host=localhost:9000 \
-        --login-iam-scheme=https \
-        --web-templates-directory=pkg/apps/webapp/templates \
-        --web-client-id=webapp \
-        --web-client-secret=webapp \
-        --web-client-name=webapp \
-        --web-iam-host=localhost:9000 \
-        --web-iam-scheme=https \
-        --web-cms-host=localhost:9000 \
-        --web-cms-scheme=https \
-        --listen-address=:9000 \
-        --base-url=https://localhost:9000 \
-        --tls-cert-path=certs/cert.pem \
-        --tls-key-path=certs/key.pem
+		--mongo-username=root \
+		--mongo-password=example \
+		--mongo-hosts=localhost:27017 \
+		--redis-address=localhost:6379 \
+		--environment=Development \
+		--fresh=true \
+		--seed=true \
+		--tls-disable=true \
+		--hydra-admin-url=http://localhost:4445 \
+		--hydra-public-url=http://localhost:4444 \
+		--login-templates-directory=pkg/apps/login/templates \
+		--login-client-id=login \
+		--login-client-name=login \
+		--login-client-secret=somesecret \
+		--login-iam-host=localhost:9000 \
+		--login-iam-scheme=http \
+		--web-templates-directory=pkg/apps/webapp/templates \
+		--web-client-id=webapp \
+		--web-client-secret=webapp \
+		--web-client-name=webapp \
+		--web-iam-host=localhost:9000 \
+		--web-iam-scheme=http \
+		--web-cms-host=localhost:9000 \
+		--web-cms-scheme=http \
+		--listen-address=:9000 \
+		--base-url=http://localhost:9000
 
 .PHONY:
 docker-build:
