@@ -57,8 +57,12 @@ func (s *AttachmentStore) Get(ctx context.Context, id string) (*Attachment, erro
 
 func (s *AttachmentStore) List(ctx context.Context, options AttachmentListOptions) (*AttachmentList, error) {
 
-	filter := bson.M{
-		"attachedToId": options.AttachedToID,
+	var filter = bson.M{}
+
+	if len(options.AttachedToID) != 0 {
+		filter = bson.M{
+			"attachedToId": options.AttachedToID,
+		}
 	}
 
 	collection, err := s.getCollection(ctx)

@@ -6,9 +6,9 @@ import (
 )
 
 func (s *Suite) TestAttachments() {
-	s.Run("Store -> Create", func() { s.testAttachmentStore() })
+	//s.Run("Store -> Create", func() { s.testAttachmentStore() })
 	//s.SetupTest()
-	//s.Run("API", func() { s.testAttachmentAPI() })
+	s.Run("API", func() { s.testAttachmentAPI() })
 }
 
 func (s *Suite) testAttachmentStore() {
@@ -53,7 +53,7 @@ func (s *Suite) testAttachmentAPI() {
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
-	assert.Equal(s.T(), created, get)
+	assert.Equal(s.T(), updated, get)
 
 	// List
 	list, err := s.client.List(s.Ctx, attachments.AttachmentListOptions{})

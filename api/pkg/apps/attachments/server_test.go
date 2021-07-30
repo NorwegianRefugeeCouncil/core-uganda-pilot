@@ -28,10 +28,10 @@ func (s *Suite) SetupSuite() {
 
 // This will run before each test in the suite but must be called manually before subtests
 func (s *Suite) SetupTest() {
-	err := s.server.ResetDB(s.Ctx, s.GenericServerTestSetup.GenericServerOptions.MongoDatabase)
+	/*err := s.server.ResetDB(s.Ctx, s.GenericServerTestSetup.GenericServerOptions.MongoDatabase)
 	if err != nil {
 		s.T().Fatal(err)
-	}
+	}*/
 }
 
 func (s *Suite) TearDownSuite() {
@@ -69,7 +69,7 @@ func (s *Suite) uuidSlice(n int) []string {
 func (s *Suite) aMockAttachment(attachedToId string) *Attachment {
 	var newUUIDForAttachment = s.NewUUID()
 	return &Attachment{
-		ID:           newUUIDForAttachment,
+		//ID:           newUUIDForAttachment,
 		AttachedToID: attachedToId,
 		Body:         "{\"data\":\"" + newUUIDForAttachment + "\"}",
 	}
