@@ -543,6 +543,22 @@ var MembershipRelationshipType = RelationshipType{
 	},
 }
 
+var NationalityRelationshipType = RelationshipType{
+	ID:              "4e9701db-7f5f-4536-a61f-b484997fe4c3",
+	IsDirectional:   true,
+	Name:            "teamNationality",
+	FirstPartyRole:  "Is from country",
+	SecondPartyRole: "Has team",
+	Rules: []RelationshipTypeRule{
+		{
+			&PartyTypeRule{
+				FirstPartyTypeID:  TeamPartyType.ID,
+				SecondPartyTypeID: CountryPartyType.ID,
+			},
+		},
+	},
+}
+
 var HeadOfHouseholdRelationshipType = RelationshipType{
 	ID:              "de887604-9ce9-4fdc-af6b-602091a17913",
 	IsDirectional:   true,

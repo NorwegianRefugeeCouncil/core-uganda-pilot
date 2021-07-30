@@ -62,6 +62,12 @@ func (c ClientSet) Memberships() MembershipClient {
 	}
 }
 
+func (c ClientSet) Nationalitys() NationalityClient {
+	return &RESTNationalityClient{
+		c: c.c,
+	}
+}
+
 func (c ClientSet) Individuals() IndividualClient {
 	return &RESTIndividualClient{
 		c: c.c,

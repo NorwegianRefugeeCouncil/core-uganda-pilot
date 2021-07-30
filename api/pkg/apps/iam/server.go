@@ -22,6 +22,7 @@ type Server struct {
 	teamStore             *TeamStore
 	countryStore          *CountryStore
 	membershipStore       *MembershipStore
+	nationalityStore      *NationalityStore
 	hydraAdmin            admin.ClientService
 	mongoClientFn         utils.MongoClientFn
 	hydraHTTPClient       *http.Client
@@ -76,6 +77,7 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 		individualStore:       NewIndividualStore(o.MongoClientFn, o.MongoDatabase),
 		teamStore:             NewTeamStore(partyStore),
 		membershipStore:       NewMembershipStore(relationshipStore),
+		nationalityStore:      NewNationalityStore(relationshipStore),
 		hydraAdmin:            hydraAdmin,
 		hydraHTTPClient:       o.HydraHTTPClient,
 	}
@@ -96,6 +98,10 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	router.Path(server.MembershipsEndpoint).Methods("GET").HandlerFunc(srv.listMemberships)
 	router.Path(server.MembershipsEndpoint).Methods("POST").HandlerFunc(srv.postMembership)
 	router.Path(path.Join(server.MembershipsEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getMembership)
+
+	router.Path(server.NationalitysEndpoint).Methods("GET").HandlerFunc(srv.listNationalitys)
+	router.Path(server.NationalitysEndpoint).Methods("POST").HandlerFunc(srv.postNationality)
+	router.Path(path.Join(server.NationalitysEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getNationality)
 
 	router.Path(server.PartiesEndpoint).Methods("GET").HandlerFunc(srv.listParties)
 	router.Path(server.PartiesEndpoint).Methods("POST").HandlerFunc(srv.postParty)

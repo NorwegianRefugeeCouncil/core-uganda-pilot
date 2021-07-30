@@ -37,5 +37,6 @@ var (
 	RelationshipsEndpoint     Endpoint = path.Join(iamPath, "relationships")
 	RelationshipTypesEndpoint Endpoint = path.Join(iamPath, "relationshiptypes")
 	TeamsEndpoint             Endpoint = path.Join(iamPath, "teams")
-	CountrysEndpoint		  Endpoint = path.Join(iamPath, "countrys")
+	CountrysEndpoint          Endpoint = path.Join(iamPath, "countrys")
+	NationalitysEndpoint      Endpoint = path.Join(iamPath, "nationalitys")
 )

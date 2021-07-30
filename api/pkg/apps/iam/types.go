@@ -308,7 +308,7 @@ type Individual struct {
 }
 
 type IndividualList struct {
-	Items []*Individual `json:"items" bson:"items"`
+	Items    []*Individual         `json:"items" bson:"items"`
 	Metadata pagination.Pagination `json:"metadata"`
 }
 
@@ -411,7 +411,6 @@ func (l *CountryList) FindByID(id string) *Country {
 	return nil
 }
 
-
 // Staff is a relationship between an organization and an individual
 // that represents that the individual is working for that organization
 type Staff struct {
@@ -432,4 +431,14 @@ type Membership struct {
 
 type MembershipList struct {
 	Items []*Membership `json:"items"`
+}
+
+type Nationality struct {
+	ID        string `json:"id"`
+	CountryID string `json:"CountryId"`
+	TeamID    string `json:"teamId"`
+}
+
+type NationalityList struct {
+	Items []*Nationality `json:"items"`
 }
