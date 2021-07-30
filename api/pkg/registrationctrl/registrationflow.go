@@ -41,7 +41,7 @@ func (r *RegistrationFlow) toProgress(s state) Progress {
 		}
 		switch step.Type {
 		case IndividualAttributes:
-			// If s.isVirgin == false then this step is done
+			// If s.isVirgin == false then this step must be done
 			stage.StageStatus = Closed
 		case CaseType:
 			stage.StageStatus = Unopened
