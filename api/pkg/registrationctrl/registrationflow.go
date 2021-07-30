@@ -33,7 +33,7 @@ func (r *RegistrationFlow) toProgress(s state) Progress {
 		}
 		return progress
 	}
-	// Otherwise iterate over the steps and evaluate
+	// Otherwise iterate over the steps and determine each one's status
 	for _, step := range r.Steps {
 		var stage = Stage{
 			Type: step.Type,
