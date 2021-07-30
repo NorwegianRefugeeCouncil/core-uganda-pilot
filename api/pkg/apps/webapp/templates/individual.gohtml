@@ -218,8 +218,8 @@
 
       // aggregate relationship types and relationships for display purposes
       let displayRelationships$ = relationships$.pipe(
-        map(r => {
-          return r.map(relationship => {
+        map(relationships => {
+          return relationships.map(relationship => {
             let relationshipType = relationshipTypes.find(t => t.id === relationship.relationshipTypeId);
             if (!relationshipType) {
               return;
@@ -233,7 +233,6 @@
           });
         })
       );
-
 
       function addRelationship(relationshipTypeId, secondPartyID) {
         const state = stateSubject.value;
@@ -343,9 +342,6 @@
         // Handle party search responses
         partySearch$.subscribe(
           res => {
-            // update parties list
-            parties = [];
-
             let partySelectorList = document.getElementById('partySelectorList');
             partySelectorList.innerHTML = '';
             if (res.response.length > 0) {
@@ -363,12 +359,6 @@
                   );
                   newListItem.setAttribute('id', party.id);
                   partySelectorList.appendChild(newListItem);
-
-                  // append party to parties list
-                  parties.push({
-                    id: party.id,
-                    name: displayText
-                  });
                 }
                 n++;
               });
@@ -394,7 +384,7 @@
           const list = document.getElementById('relationships-list');
           list.innerHTML = '';
           relationships.forEach((relationship, idx) => {
-
+            console.table(relationship)
             const li = document.createElement('li');
             li.className = 'list-group-item';
             const firstPartyName = parties.find(({ id }) => id === relationship.firstParty)?.name;
