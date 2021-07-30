@@ -77,7 +77,6 @@ var _ Controller = &RegistrationController{}
 
 // RegistrationController compares a IndividualHandler against a RegistrationFlow to provide available Actions and Status of an Individual in the registration process.
 type RegistrationController struct {
-	handler          IndividualHandler
 	registrationFlow RegistrationFlow
 	state            state
 	status           *Status
