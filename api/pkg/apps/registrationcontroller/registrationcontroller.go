@@ -8,8 +8,9 @@ import (
 // This package is responsible for interpreting the state of an cms.Individual to determine an Individual's current
 // status and what actions a user can take.
 
-// CaseHandler retrieves state information for an individual.
-type CaseHandler interface {
+// IndividualHandler retrieves state information for an individual.
+type IndividualHandler interface {
+	Exists() bool
 	GetAllCases() []*cms.Case
 	GetOpenCases() []*cms.Case
 	GetClosedCases() []*cms.Case
@@ -28,7 +29,7 @@ type Action struct {
 	Link  string
 }
 
-// Status indicates the Individuals progress along the CaseFlow.
+// Status indicates the Individuals progress along the RegistrationFlow.
 type Status struct {
 	Progress Progress
 	Label    string
@@ -36,7 +37,7 @@ type Status struct {
 
 type Progress []Stage
 
-// Stage represents the status of one step along the CaseFlow.
+// Stage represents the status of one step along the RegistrationFlow.
 type Stage struct {
 	CaseType *cms.CaseType
 	CaseStatus
@@ -44,6 +45,7 @@ type Stage struct {
 
 // CaseStatus indicates the current status of a Case (either Unopened, Open or Closed)
 type CaseStatus int
+
 var (
 	Unopened CaseStatus = 0
 	Open     CaseStatus = 1
@@ -59,10 +61,10 @@ type state struct {
 // Ensure RegistrationController implements the Controller interface
 var _ Controller = &RegistrationController{}
 
-// RegistrationController compares a CaseHandler against a CaseFlow to provide available Actions and Status of an Individual in the registration process.
+// RegistrationController compares a IndividualHandler against a RegistrationFlow to provide available Actions and Status of an Individual in the registration process.
 type RegistrationController struct {
-	handler  CaseHandler
-	caseFlow CaseFlow
+	handler  IndividualHandler
+	caseFlow RegistrationFlow
 	state    state
 	status   *Status
 }
@@ -74,7 +76,7 @@ func (r *RegistrationController) Status() *Status {
 	progress := r.progress()
 	status.Progress = progress
 	done := len(r.state.closedCases)
-	total := len(r.caseFlow.CaseTypes)
+	total := len(r.caseFlow.Steps)
 	status.Label = fmt.Sprintf("%d of %d", done, total)
 	r.status = status
 	return status
@@ -103,24 +105,30 @@ func (r *RegistrationController) Actions() []Action {
 	return actions
 }
 
-func NewRegistrationController(handler CaseHandler, caseFlow CaseFlow) *RegistrationController {
+func NewRegistrationController(handler IndividualHandler, caseFlow RegistrationFlow) *RegistrationController {
+	var state = state{}
+	if handler.Exists() {
+		state.cases = handler.GetAllCases()
+		state.openCases = handler.GetOpenCases()
+		state.closedCases = handler.GetClosedCases()
+	} else {
+		state.cases = nil
+		state.openCases = nil
+		state.closedCases = nil
+	}
 	controller := &RegistrationController{
 		handler:  handler,
 		caseFlow: caseFlow,
-		state: state{
-			cases:       handler.GetAllCases(),
-			openCases:   handler.GetOpenCases(),
-			closedCases: handler.GetClosedCases(),
-		},
+		state:    state,
 	}
-	controller.status = controller.Status()
+	controller.Status()
 	return controller
 }
 
 func (r *RegistrationController) progress() []Stage {
 	var progress []Stage
 	// Get cases that match the flow
-	for _, caseType := range r.caseFlow.CaseTypes {
+	for _, caseType := range r.caseFlow.Steps {
 		for _, closedCase := range r.state.closedCases {
 			if caseType.ID == closedCase.CaseTypeID {
 				progress = append(progress, Stage{

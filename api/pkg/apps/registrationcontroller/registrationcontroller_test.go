@@ -7,8 +7,8 @@ import (
 
 func TestNewRegistrationController(t *testing.T) {
 	type args struct {
-		handler  CaseHandler
-		caseFlow CaseFlow
+		handler  IndividualHandler
+		caseFlow RegistrationFlow
 	}
 	tests := []struct {
 		name string
@@ -28,8 +28,8 @@ func TestNewRegistrationController(t *testing.T) {
 
 func TestRegistrationController_Actions(t *testing.T) {
 	type fields struct {
-		handler  CaseHandler
-		caseFlow CaseFlow
+		handler  IndividualHandler
+		caseFlow RegistrationFlow
 		state    state
 		status   *Status
 	}
@@ -57,8 +57,8 @@ func TestRegistrationController_Actions(t *testing.T) {
 
 func TestRegistrationController_Status(t *testing.T) {
 	type fields struct {
-		handler  CaseHandler
-		caseFlow CaseFlow
+		handler  IndividualHandler
+		caseFlow RegistrationFlow
 		state    state
 		status   *Status
 	}
@@ -86,8 +86,8 @@ func TestRegistrationController_Status(t *testing.T) {
 
 func TestRegistrationController_progress(t *testing.T) {
 	type fields struct {
-		handler  CaseHandler
-		caseFlow CaseFlow
+		handler  IndividualHandler
+		caseFlow RegistrationFlow
 		state    state
 		status   *Status
 	}

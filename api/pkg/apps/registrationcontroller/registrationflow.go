@@ -5,19 +5,25 @@ import (
 	"github.com/nrc-no/core/pkg/apps/seeder"
 )
 
-type CaseFlow struct {
-	TeamID    string
-	CaseTypes []*cms.CaseType
+type RegistrationFlow struct {
+	TeamID string
+	Steps  []*cms.CaseType
+}
+
+type RegistrationType string
+
+var ()
+
+type Step struct {
+	Type string
 }
 
 var (
-	Uganda = CaseFlow{
+	Uganda = RegistrationFlow{
 		TeamID: "",
-		CaseTypes: []*cms.CaseType{
+		Steps: []*cms.CaseType{
 			&seeder.UGIndividualAssessmentCaseType,
 			&seeder.UGSituationalAnalysisCaseType,
-			&seeder.UGReferralCaseType,
-			&seeder.UGExternalReferralFollowupCaseType,
 		},
 	}
 )
