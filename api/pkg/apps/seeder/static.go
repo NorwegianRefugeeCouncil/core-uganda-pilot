@@ -3,6 +3,7 @@ package seeder
 import (
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
+	"github.com/nrc-no/core/pkg/registrationctrl"
 	"strings"
 )
 
@@ -634,6 +635,23 @@ var (
 	UGICLAIndividualIntakeCaseType = caseType("31fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Individual Intake (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIndividualIntake)
 	UGICLACaseAssessmentCaseType   = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLACaseAssessment)
 
+	Uganda = registrationctrl.RegistrationFlow{
+		// TODO Country
+		TeamID: "",
+		Steps: []registrationctrl.Step{{
+			Type:  registrationctrl.IndividualAttributes,
+			Label: "New individual intake",
+			Ref:   "",
+		}, {
+			Type:  registrationctrl.CaseType,
+			Label: "Situation Analysis",
+			Ref:   UGSituationalAnalysisCaseType.ID,
+		}, {
+			Type:  registrationctrl.CaseType,
+			Label: "Individual Assessment",
+			Ref:   UGIndividualAssessmentCaseType.ID,
+		}},
+	}
 	// Case Types for Dogfooding
 	DTeamBugReportCaseType      = caseType("39b24aaa-02a3-4455-b3a6-fd05e6a59fef", "Report a bug in Core", iam.IndividualPartyType.ID, DTeam.ID, DTeamBugReport)
 	DTeamFeatureRequestCaseType = caseType("95bf45fd-a703-4698-ae9c-12f1865b1a6f", "Request a feature/change in Core", iam.IndividualPartyType.ID, DTeam.ID, DTeamFeatureRequest)
