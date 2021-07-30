@@ -26,7 +26,7 @@ func (s *Server) PostAttachment(w http.ResponseWriter, req *http.Request) {
 
 	att.ID = uuid.NewV4().String()
 
-	if err := s.store.Create(ctx, att); err != nil {
+	if err := s.Store.Create(ctx, att); err != nil {
 		s.Error(w, err)
 		return
 	}

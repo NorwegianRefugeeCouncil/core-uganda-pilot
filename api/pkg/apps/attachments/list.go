@@ -11,7 +11,7 @@ func (s *Server) ListAttachments(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	ret, err := s.store.List(ctx, *listOptions)
+	ret, err := s.Store.List(ctx, *listOptions)
 	if err != nil {
 		s.Error(w, err)
 		return

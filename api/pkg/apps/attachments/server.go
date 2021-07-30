@@ -15,7 +15,7 @@ type Server struct {
 	environment     string
 	router          *mux.Router
 	mongoClientFn   utils.MongoClientFn
-	store           *AttachmentStore
+	Store           *AttachmentStore
 	HydraAdmin      admin.ClientService
 	HydraHttpClient *http.Client
 }
@@ -37,7 +37,7 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	srv := &Server{
 		environment:     o.Environment,
 		mongoClientFn:   o.MongoClientFn,
-		store:           attachmentStore,
+		Store:           attachmentStore,
 		HydraAdmin:      o.HydraAdminClient.Admin,
 		HydraHttpClient: o.HydraHTTPClient,
 	}

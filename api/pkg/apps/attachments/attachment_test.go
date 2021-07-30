@@ -6,7 +6,17 @@ import (
 )
 
 func (s *Suite) TestAttachments() {
-	s.Run("API", func() { s.testAttachmentAPI() })
+	s.Run("Store -> Create", func() { s.testAttachmentStore() })
+	//s.SetupTest()
+	//s.Run("API", func() { s.testAttachmentAPI() })
+}
+
+func (s *Suite) testAttachmentStore() {
+	// Create
+	var imaginaryOwner = s.NewUUID()
+	attachment := s.aMockAttachment(imaginaryOwner)
+	s.server.Store.Create(s.Ctx, attachment)
+	assert.Equal(s.T(), true, true)
 }
 
 func (s *Suite) testAttachmentAPI() {

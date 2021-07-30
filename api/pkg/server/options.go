@@ -515,6 +515,12 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 
 	genericServerOptions := c.Generic()
 
+	// Create Attachment Server
+	attachmentServer, err := attachments.NewServer(ctx, genericServerOptions)
+	if err != nil {
+		logrus.WithError(err).Errorf("faled to create attachment server")
+	}
+
 	// Create IAM Server
 	iamServer, err := c.CreateIAMServer(ctx, genericServerOptions)
 	if err != nil {
@@ -538,12 +544,6 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	webAppServer, err := c.CreateWebAppServer(ctx, genericServerOptions)
 	if err != nil {
 		logrus.WithError(err).Errorf("failed to create WebApp server")
-		panic(err)
-	}
-
-	attachmentServer, err := attachments.NewServer(ctx, genericServerOptions)
-	if err != nil {
-		logrus.WithError(err).Errorf("failed to create Attachment server")
 		panic(err)
 	}
 
