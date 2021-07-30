@@ -10,7 +10,7 @@ func (s *Server) GetAttachment(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	ret, err := s.Store.Get(ctx, id)
+	ret, err := s.store.Get(ctx, id)
 	if err != nil {
 		s.Error(w, err)
 		return

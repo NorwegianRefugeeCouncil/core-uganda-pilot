@@ -16,7 +16,7 @@ func (s *Server) PutAttachment(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	att, err := s.Store.Get(ctx, id)
+	att, err := s.store.Get(ctx, id)
 	if err != nil {
 		s.Error(w, err)
 		return
@@ -25,7 +25,7 @@ func (s *Server) PutAttachment(w http.ResponseWriter, req *http.Request) {
 	att.AttachedToID = payload.AttachedToID
 	att.Body = payload.Body
 
-	if err := s.Store.Update(ctx, att); err != nil {
+	if err := s.store.Update(ctx, att); err != nil {
 		s.Error(w, err)
 		return
 	}
