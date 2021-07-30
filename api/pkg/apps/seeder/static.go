@@ -635,7 +635,7 @@ var (
 	UGICLAIndividualIntakeCaseType = caseType("31fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Individual Intake (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIndividualIntake)
 	UGICLACaseAssessmentCaseType   = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLACaseAssessment)
 
-	Uganda = registrationctrl.RegistrationFlow{
+	UgandaRegistrationFlow = registrationctrl.RegistrationFlow{
 		// TODO Country
 		TeamID: "",
 		Steps: []registrationctrl.Step{{
