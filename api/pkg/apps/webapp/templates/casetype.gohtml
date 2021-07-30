@@ -8,66 +8,164 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Case Type</h4>
-                <form action="/settings/casetypes{{if .CaseType}}/{{.CaseType.ID}}{{end}}" method="post">
+                <form action="/settings/casetypes{{if .CaseType.ID}}/{{.CaseType.ID}}{{end}}" method="post">
                     <div class="form-floating mb-3">
-                        <input id="name" type="text" class="form-control" name="name" data-testid="name"
-                               value="{{if .CaseType}}{{.CaseType.Name}}{{end}}">
-                        <label for="name">Name</label>
+                        {{$name := "name"}}
+                        {{if and .Errors (.Errors.Find $name)}}
+                            {{$errs := .Errors.Find $name}}
+                            <input id="{{$name}}"
+                                   type="text"
+                                   name="{{$name}}"
+                                   value="{{(index $errs 0).BadValue}}"
+                                   data-testid="{{$name}}"
+                                   class="form-control {{if $errs}}is-invalid{{end}}"
+                                   aria-describedby="{{$name}}Feedback"
+                            >
+                            <div id="{{$name}}Feedback" class="invalid-feedback">
+                                {{range $errs}}
+                                    <p>{{.Detail}}</p>
+                                {{end}}
+                            </div>
+                        {{else}}
+                            <input id="{{$name}}"
+                                   type="text"
+                                   class="form-control"
+                                   name="{{$name}}"
+                                   data-testid="{{$name}}"
+                                   value="{{if .CaseType}}{{.CaseType.Name}}{{end}}"
+                            >
+                        {{end}}
+                        <label for="{{$name}}">Name</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <select id="party-type" type="select" class="form-select" name="partyTypeId"
-                                {{if .CaseType}}disabled{{end}}>
-                            {{if .CaseType}}
-                                {{$partyType := .PartyTypes.FindByID .CaseType.PartyTypeID}}
-                                <option selected value="{{$partyType.ID}}"
-                                        data-cy="partytype-option">
-                                    {{$partyType.Name}}
-                                </option>
-                            {{else}}
-                                {{if .PartyTypes}}
-                                    <option selected></option>
-                                    {{range .PartyTypes.Items}}
-                                        <option value="{{.ID}}" data-cy="partytype-option">{{.Name}}</option>
-                                    {{end}}
+                        {{$name = "partyTypeId"}}
+                        {{if and .Errors (.Errors.Find $name)}}
+                            {{$errs := .Errors.Find $name}}
+                            <select id="party-type"
+                                    class="form-select {{if $errs}}is-invalid{{end}}"
+                                    name="{{$name}}"
+                                    aria-describedby="partyTypeIdFeedback"
+                            >
+
+                                {{if .CaseType.PartyTypeID}}
+                                    {{$partyType := .PartyTypes.FindByID .CaseType.PartyTypeID}}
+                                    <option selected
+                                            value="{{$partyType.ID}}"
+                                            data-cy="partytype-option"
+                                    >
+                                        {{$partyType.Name}}
+                                    </option>
                                 {{else}}
-                                    <option disabled selected>No party types defined</option>
+                                    <option selected></option>
                                 {{end}}
-                            {{end}}
-                        </select>
+                                {{range .PartyTypes.Items}}
+                                    <option value="{{.ID}}" data-cy="partytype-option">{{.Name}}</option>
+                                {{end}}
+                            </select>
+                            <div id="{{$name}}Feedback" class="invalid-feedback">
+                                {{range $errs}}
+                                    <p>{{.Detail}}</p>
+                                {{end}}
+                            </div>
+                        {{else}}
+                            <select id="party-type"
+                                    class="form-select"
+                                    name="{{$name}}"
+                                    {{if .CaseType}}disabled{{end}}
+                            >
+                                {{if .CaseType}}
+                                    {{$partyType := .PartyTypes.FindByID .CaseType.PartyTypeID}}
+                                    <option selected value="{{$partyType.ID}}" data-cy="partytype-option">
+                                        {{$partyType.Name}}
+                                    </option>
+                                {{else}}
+                                    <option selected></option>
+                                {{end}}
+                                {{range .PartyTypes.Items}}
+                                    <option value="{{.ID}}" data-cy="partytype-option">{{.Name}}</option>
+                                {{end}}
+                            </select>
+                        {{end}}
                         <label for="party-type">Select Party Type</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <select id="team" type="select" class="form-select" name="teamId"
-                                {{if .CaseType}}disabled{{end}}>
-                            {{if .CaseType}}
-                                {{$team := .Teams.FindByID .CaseType.TeamID}}
-                                <option selected value="{{$team.ID}}" data-cy="team-option">
-                                    {{$team.Name}}
-                                </option>
-                            {{else}}
-                                {{if .Teams}}
+                        {{$name = "teamId"}}
+                        {{if and .Errors (.Errors.Find $name)}}
+                            {{$errs := .Errors.Find $name}}
+                            <select id="team"
+                                    class="form-select {{if $errs}}is-invalid{{end}}"
+                                    name="{{$name}}"
+                                    aria-describedby="teamIdFeedback"
+                            >
+                                {{if .CaseType.TeamID}}
+                                    {{$team := .Teams.FindByID .CaseType.TeamID}}
+                                    <option selected value="{{$team.ID}}" data-cy="team-option">
+                                        {{$team.Name}}
+                                    </option>
+                                {{else}}
+                                    <option selected></option>
+                                {{end}}
+                                {{range .Teams.Items}}
+                                    <option value="{{.ID}}" data-cy="team-option">{{.Name}}</option>
+                                {{end}}
+                            </select>
+                            <div id="{{$name}}Feedback" class="invalid-feedback">
+                                {{range $errs}}
+                                    <p>{{.Detail}}</p>
+                                {{end}}
+                            </div>
+                        {{else}}
+                            <select id="team"
+                                    class="form-select"
+                                    name="{{$name}}"
+                                    {{if .CaseType}}disabled{{end}}
+                            >
+                                {{if .CaseType}}
+                                    {{$team := .Teams.FindByID .CaseType.TeamID}}
+                                    <option selected value="{{$team.ID}}" data-cy="team-option">
+                                        {{$team.Name}}
+                                    </option>
+                                {{else}}
                                     <option selected></option>
                                     {{range .Teams.Items}}
                                         <option value="{{.ID}}" data-cy="team-option">{{.Name}}</option>
+
                                     {{end}}
-                                {{else}}
-                                    <option disabled selected>No teams defined</option>
                                 {{end}}
-                            {{end}}
-                        </select>
+                            </select>
+                        {{end}}
                         <label for="team">Select Team</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <textarea name="template" id="template" class="form-control font-monospace"
-                                  style="height: 600px"
-                                  {{if .CaseType}}readonly{{end}}>
-                            {{- if .CaseType -}}
-                                {{- .CaseType.Pretty -}}
-                            {{- end -}}
-                        </textarea>
-                        <label for="template">Form template</label>
+                        {{$name = "template"}}
+                        {{if and .Errors (.Errors.Find $name)}}
+                            {{$errs := .Errors.Find $name}}
+                            <textarea name="{{$name}}"
+                                      id="{{$name}}"
+                                      class="form-control font-monospace {{if $errs}}is-invalid{{end}}"
+                                      style="height: 600px"
+                                      aria-describedby="{{$name}}}Feedback"
+                            >
+                                {{- if .CaseType.CaseTemplate}}{{.CaseType.Pretty}}{{end -}}
+                            </textarea>
+                            <div id="{{$name}}Feedback" class="invalid-feedback">
+                                {{range $errs}}
+                                    <p>{{.Detail}}</p>
+                                {{end}}
+                            </div>
+                        {{else}}
+                            <textarea name="{{$name}}"
+                                      id="{{$name}}"
+                                      class="form-control font-monospace"
+                                      style="height: 600px"
+                                      {{if .CaseType}}readonly{{end}}
+                            >
+                                {{- if .CaseType.CaseTemplate}}{{.CaseType.Pretty}}{{end -}}
+                            </textarea>
+                        {{end}}
+                        <label for="{{$name}}">Form template</label>
                     </div>
-                    {{if .CaseType}}
+                    {{if and (not .Errors) .CaseType}}
                         <input type="hidden" name="partyTypeId" value="{{.CaseType.PartyTypeID}}">
                         <input type="hidden" name="teamId" value="{{.CaseType.TeamID}}">
                     {{end}}

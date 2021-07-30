@@ -5,7 +5,6 @@
     {{$caseTypeId := .Case.CaseTypeID}}
     {{$team := .Team}}
     {{$teamId := .Team.ID}}
-    {{$formElements := .FormElements}}
     <!doctype html>
     <html lang="en">
     {{template "head"}}
@@ -69,8 +68,8 @@
         <div class="card mb-4">
             <div class="card-body">
                 <form action="/cases/{{$caseId}}" method="post">
-                    {{range .Case.FormData.FormElements}}
-                        {{template "formelement" Dict "isNew" $.IsNew "element" .}}
+                    {{range .Case.Template.FormElements}}
+                        {{template "formfield" .}}
                     {{end}}
                     <div class="form-check mb-3">
                         <input id="done-input"
@@ -87,7 +86,7 @@
                     <button class="mb-5 btn btn-primary"
                             type="submit"
                             data-testid="updateFormBtn"
-                            disabled>
+                            {{ if .ReferralCaseType}}disabled{{end}}>
                         Save
                     </button>
                 </form>
