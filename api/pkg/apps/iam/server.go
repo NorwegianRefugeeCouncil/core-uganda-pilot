@@ -20,7 +20,9 @@ type Server struct {
 	relationshipTypeStore *RelationshipTypeStore
 	individualStore       *IndividualStore
 	teamStore             *TeamStore
+	countryStore          *CountryStore
 	membershipStore       *MembershipStore
+	nationalityStore      *NationalityStore
 	hydraAdmin            admin.ClientService
 	mongoClientFn         utils.MongoClientFn
 	hydraHTTPClient       *http.Client
@@ -67,6 +69,7 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 		environment:           o.Environment,
 		mongoClientFn:         o.MongoClientFn,
 		attributeStore:        attributeStore,
+		countryStore:          NewCountryStore(partyStore),
 		partyStore:            partyStore,
 		partyTypeStore:        partyTypeStore,
 		relationshipStore:     relationshipStore,
@@ -74,6 +77,7 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 		individualStore:       NewIndividualStore(o.MongoClientFn, o.MongoDatabase),
 		teamStore:             NewTeamStore(partyStore),
 		membershipStore:       NewMembershipStore(relationshipStore),
+		nationalityStore:      NewNationalityStore(relationshipStore),
 		hydraAdmin:            hydraAdmin,
 		hydraHTTPClient:       o.HydraHTTPClient,
 	}
@@ -94,6 +98,10 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	router.Path(server.MembershipsEndpoint).Methods("GET").HandlerFunc(srv.listMemberships)
 	router.Path(server.MembershipsEndpoint).Methods("POST").HandlerFunc(srv.postMembership)
 	router.Path(path.Join(server.MembershipsEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getMembership)
+
+	router.Path(server.NationalitiesEndpoint).Methods("GET").HandlerFunc(srv.listNationalities)
+	router.Path(server.NationalitiesEndpoint).Methods("POST").HandlerFunc(srv.postNationality)
+	router.Path(path.Join(server.NationalitiesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getNationality)
 
 	router.Path(server.PartiesEndpoint).Methods("GET").HandlerFunc(srv.listParties)
 	router.Path(server.PartiesEndpoint).Methods("POST").HandlerFunc(srv.postParty)
@@ -121,6 +129,11 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	router.Path(server.TeamsEndpoint).Methods("POST").HandlerFunc(srv.postTeam)
 	router.Path(path.Join(server.TeamsEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getTeam)
 	router.Path(path.Join(server.TeamsEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putTeam)
+
+	router.Path(server.CountriesEndpoint).Methods("GET").HandlerFunc(srv.listCountries)
+	router.Path(server.CountriesEndpoint).Methods("POST").HandlerFunc(srv.postCountry)
+	router.Path(path.Join(server.CountriesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getCountry)
+	router.Path(path.Join(server.CountriesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putCountry)
 
 	srv.router = router
 

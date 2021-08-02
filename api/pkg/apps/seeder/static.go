@@ -28,6 +28,15 @@ func team(id, name string) iam.Team {
 	return t
 }
 
+func country(id, name string) iam.Country {
+	t := iam.Country{
+		ID:   id,
+		Name: name,
+	}
+	countries = append(countries, t)
+	return t
+}
+
 func individual(
 	id string,
 	firstName string,
@@ -109,7 +118,18 @@ func membership(id string, individual iam.Individual, team iam.Team) iam.Members
 	return m
 }
 
+func nationality(id string, team iam.Team, country iam.Country) iam.Nationality {
+	m := iam.Nationality{
+		ID:        id,
+		CountryID: country.ID,
+		TeamID:    team.ID,
+	}
+	nationalities = append(nationalities, m)
+	return m
+}
+
 func kase(id, caseTypeID, createdByID, partyID, teamID string, done bool, form *cms.CaseTemplate) cms.Case {
+
 	k := cms.Case{
 		ID:         id,
 		CaseTypeID: caseTypeID,
@@ -128,9 +148,15 @@ var (
 	individuals   []iam.Individual
 	staffers      []iam.Staff
 	memberships   []iam.Membership
+	countries     []iam.Country
+	nationalities []iam.Nationality
 	relationships []iam.Relationship
 	caseTypes     []cms.CaseType
 	cases         []cms.Case
+
+	// Countries
+	Germany = country("02680685-806e-4386-b6a5-95c4af1fc141", "Germany")
+	Uganda  = country("062a7fe9-b9cc-4fbc-837e-138a15242007", "Uganda")
 
 	// Teams
 	UgandaProtectionTeam    = team("ac9b8d7d-d04d-4850-9a7f-3f93324c0d1e", "Uganda Protection Team")
@@ -678,6 +704,13 @@ var (
 	RobertMembership   = membership("2cc4d8e7-2087-41d0-af7f-90144820466f", Robert, DTeam)
 	NicolasMembership  = membership("624291ac-d573-4866-b507-d9e83b9b2288", Nicolas, DTeam)
 	KristjanMembership = membership("a6a7a318-64d8-4cfa-83c7-8710f1d12778", Kristjan, DTeam)
+
+	// Nationalities
+	DTeamNationality                   = nationality("9c1c1f2d-67f5-41cc-a752-534f031c05f9", DTeam, Germany)
+	UgandaCoreAdminTeamNationality     = nationality("0987460d-c906-43cd-b7fd-5e7afca0d93e", UgandaCoreAdminTeam, Uganda)
+	UgandaProtectionTeamNationality    = nationality("b58e4d26-fe8e-4442-8449-7ec4ca3d9066", UgandaProtectionTeam, Uganda)
+	UgandaICLATeamNationality          = nationality("23e3eb5e-592e-42e2-8bbf-ee097d93034c", UgandaICLATeam, Uganda)
+	MozambiqueEducationTeamNationality = nationality("c26c5a55-9a9d-44c7-a230-1ccf392dcf10", MozambiqueEducationTeam, Uganda)
 
 	// Cases
 	BoDiddleySituationAnalysis = kase("dba43642-8093-4685-a197-f8848d4cbaaa", UGSituationalAnalysisCaseType.ID, Colette.ID, BoDiddley.ID, UgandaProtectionTeam.ID, false, &cms.CaseTemplate{

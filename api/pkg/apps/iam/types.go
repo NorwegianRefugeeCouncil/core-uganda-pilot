@@ -129,6 +129,10 @@ func (p *Party) String() string {
 		return p.Attributes.Get(TeamNameAttribute.ID)
 	}
 
+	// Country
+	if p.HasPartyType(CountryPartyType.ID) {
+		return p.Attributes.Get(CountryNameAttribute.ID)
+	}
 	// Default
 	return p.ID
 }
@@ -304,7 +308,7 @@ type Individual struct {
 }
 
 type IndividualList struct {
-	Items []*Individual `json:"items" bson:"items"`
+	Items    []*Individual         `json:"items" bson:"items"`
 	Metadata pagination.Pagination `json:"metadata"`
 }
 
@@ -384,6 +388,29 @@ func (l *TeamList) FindByID(id string) *Team {
 	return nil
 }
 
+//Country
+type Country struct {
+	ID   string `json:"id" bson:"id"`
+	Name string `json:"name" bson:"name"`
+}
+
+func (c *Country) String() string {
+	return c.Name
+}
+
+type CountryList struct {
+	Items []*Country `json:"items"`
+}
+
+func (l *CountryList) FindByID(id string) *Country {
+	for _, country := range l.Items {
+		if country.ID == id {
+			return country
+		}
+	}
+	return nil
+}
+
 // Staff is a relationship between an organization and an individual
 // that represents that the individual is working for that organization
 type Staff struct {
@@ -404,4 +431,14 @@ type Membership struct {
 
 type MembershipList struct {
 	Items []*Membership `json:"items"`
+}
+
+type Nationality struct {
+	ID        string `json:"id"`
+	CountryID string `json:"CountryId"`
+	TeamID    string `json:"teamId"`
+}
+
+type NationalityList struct {
+	Items []*Nationality `json:"items"`
 }

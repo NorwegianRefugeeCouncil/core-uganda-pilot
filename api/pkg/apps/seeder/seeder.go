@@ -70,6 +70,18 @@ func Seed(ctx context.Context, mongoClientFn utils.MongoClientFn, databaseName s
 		}
 	}
 
+	for _, obj := range countries {
+		if err := seedMongo(ctx, mongoClient, databaseName, "parties", bson.M{"id": obj.ID}, iam.MapCountryToParty(&obj)); err != nil {
+			return err
+		}
+	}
+
+	for _, obj := range nationalities {
+		if err := seedMongo(ctx, mongoClient, databaseName, "relationships", bson.M{"id": obj.ID}, iam.MapNationalityToRelationship(&obj)); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 

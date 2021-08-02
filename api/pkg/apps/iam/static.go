@@ -493,6 +493,12 @@ var TeamPartyType = PartyType{
 	IsBuiltIn: true,
 }
 
+var CountryPartyType = PartyType{
+	ID:        "4954aaa1-98e4-480b-a542-3ffad12ca6cd",
+	Name:      "Country",
+	IsBuiltIn: true,
+}
+
 var TeamNameAttribute = Attribute{
 	ID:                           "18f410a3-6fde-45ce-80c7-fc5d92b85870",
 	Name:                         "teamName",
@@ -503,6 +509,20 @@ var TeamNameAttribute = Attribute{
 			Locale:           "en",
 			ShortFormulation: "Team name",
 			LongFormulation:  "Team name",
+		},
+	},
+}
+
+var CountryNameAttribute = Attribute{
+	ID:                           "e011d638-864b-496e-b3e5-af89d0278e1e",
+	Name:                         "countryName",
+	PartyTypeIDs:                 []string{CountryPartyType.ID},
+	IsPersonallyIdentifiableInfo: false,
+	Translations: []AttributeTranslation{
+		{
+			Locale:           "en",
+			ShortFormulation: "Country name",
+			LongFormulation:  "Country name",
 		},
 	},
 }
@@ -518,6 +538,22 @@ var MembershipRelationshipType = RelationshipType{
 			&PartyTypeRule{
 				FirstPartyTypeID:  IndividualPartyType.ID,
 				SecondPartyTypeID: TeamPartyType.ID,
+			},
+		},
+	},
+}
+
+var NationalityRelationshipType = RelationshipType{
+	ID:              "4e9701db-7f5f-4536-a61f-b484997fe4c3",
+	IsDirectional:   true,
+	Name:            "teamNationality",
+	FirstPartyRole:  "Is from country",
+	SecondPartyRole: "Has team",
+	Rules: []RelationshipTypeRule{
+		{
+			&PartyTypeRule{
+				FirstPartyTypeID:  TeamPartyType.ID,
+				SecondPartyTypeID: CountryPartyType.ID,
 			},
 		},
 	},

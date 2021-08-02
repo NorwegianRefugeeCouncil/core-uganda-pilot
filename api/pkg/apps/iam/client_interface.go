@@ -8,16 +8,20 @@ import (
 	"strings"
 )
 
-type Interface interface {
-	Parties() PartyClient
-	PartyTypes() PartyTypeClient
-	Relationships() RelationshipClient
-	RelationshipTypes() RelationshipTypeClient
-	Attributes() AttributeClient
-	Teams() TeamClient
-	Memberships() MembershipClient
-	Individuals() IndividualClient
-}
+type (
+	Interface interface {
+		Parties() PartyClient
+		PartyTypes() PartyTypeClient
+		Relationships() RelationshipClient
+		RelationshipTypes() RelationshipTypeClient
+		Attributes() AttributeClient
+		Teams() TeamClient
+		Memberships() MembershipClient
+		Individuals() IndividualClient
+		Countries() CountryClient
+		Nationalities() NationalityClient
+	}
+)
 
 type PartyListOptions struct {
 	PartyTypeID string
@@ -203,6 +207,25 @@ type TeamClient interface {
 	List(ctx context.Context, listOptions TeamListOptions) (*TeamList, error)
 }
 
+//Country
+type CountryListOptions struct {
+}
+
+func (a *CountryListOptions) MarshalQueryParameters() (url.Values, error) {
+	return url.Values{}, nil
+}
+
+func (a *CountryListOptions) UnmarshalQueryParameters(values url.Values) error {
+	return nil
+}
+
+type CountryClient interface {
+	Get(ctx context.Context, id string) (*Country, error)
+	Create(ctx context.Context, party *Country) (*Country, error)
+	Update(ctx context.Context, party *Country) (*Country, error)
+	List(ctx context.Context, listOptions CountryListOptions) (*CountryList, error)
+}
+
 type StaffListOptions struct {
 	IndividualID   string
 	OrganizationID string
@@ -236,6 +259,28 @@ type MembershipListOptions struct {
 	TeamID       string
 }
 
+type NationalityListOptions struct {
+	TeamID    string
+	CountryID string
+}
+
+func (a *NationalityListOptions) MarshalQueryParameters() (url.Values, error) {
+	values := url.Values{}
+	if len(a.TeamID) > 0 {
+		values.Set("teamId", a.TeamID)
+	}
+	if len(a.CountryID) > 0 {
+		values.Set("countryId", a.CountryID)
+	}
+	return values, nil
+}
+
+func (a *NationalityListOptions) UnmarshalQueryParameters(values url.Values) error {
+	a.CountryID = values.Get("countryId")
+	a.TeamID = values.Get("teamId")
+	return nil
+}
+
 func (a *MembershipListOptions) MarshalQueryParameters() (url.Values, error) {
 	values := url.Values{}
 	if len(a.IndividualID) > 0 {
@@ -258,6 +303,13 @@ type MembershipClient interface {
 	Create(ctx context.Context, create *Membership) (*Membership, error)
 	Update(ctx context.Context, update *Membership) (*Membership, error)
 	List(ctx context.Context, listOptions MembershipListOptions) (*MembershipList, error)
+}
+
+type NationalityClient interface {
+	Get(ctx context.Context, id string) (*Nationality, error)
+	Create(ctx context.Context, create *Nationality) (*Nationality, error)
+	Update(ctx context.Context, update *Nationality) (*Nationality, error)
+	List(ctx context.Context, listOptions NationalityListOptions) (*NationalityList, error)
 }
 
 type IndividualListOptions struct {
