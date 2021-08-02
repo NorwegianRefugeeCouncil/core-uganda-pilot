@@ -25,7 +25,7 @@ func (s *Server) PutCase(w http.ResponseWriter, req *http.Request) {
 	}
 
 	kase.Done = payload.Done
-	kase.FormData = payload.FormData
+	kase.Template = payload.Template
 
 	if err := s.caseStore.Update(ctx, kase); err != nil {
 		s.Error(w, err)
