@@ -65,6 +65,21 @@ func (s *Server) Team(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	n, err := iamClient.Nationalitys().List(ctx, iam.NationalityListOptions{
+		TeamID: id,
+	})
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	countryID := n.Items[0].CountryID
+	c, err := iamClient.Countrys().Get(ctx, countryID)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+
 	var members []*iam.Party
 	lock := sync.Mutex{}
 
@@ -95,6 +110,7 @@ func (s *Server) Team(w http.ResponseWriter, req *http.Request) {
 		"LastNameAttribute":  iam.LastNameAttribute,
 		"FirstNameAttribute": iam.FirstNameAttribute,
 		"Constants":          s.Constants,
+		"Country":            c,
 	}); err != nil {
 		s.Error(w, err)
 		return

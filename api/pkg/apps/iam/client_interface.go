@@ -19,6 +19,7 @@ type (
 		Memberships() MembershipClient
 		Individuals() IndividualClient
 		Countrys() CountryClient
+		Nationalitys() NationalityClient
 	}
 )
 

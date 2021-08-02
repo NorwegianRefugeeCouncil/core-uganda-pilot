@@ -16,11 +16,12 @@ func NewNationalityStore(relationshipStore *RelationshipStore) *NationalityStore
 
 func (s *NationalityStore) list(ctx context.Context, listOptions NationalityListOptions) (*NationalityList, error) {
 
-	got, err := s.relationshipStore.list(ctx, RelationshipListOptions{
+	var relopts = RelationshipListOptions{
 		RelationshipTypeID: NationalityRelationshipType.ID,
 		FirstPartyID:       listOptions.TeamID,
-		SecondPartyID:      listOptions.CountryID,
-	})
+		//SecondPartyID:      nil,
+	}
+	got, err := s.relationshipStore.list(ctx, relopts)
 	if err != nil {
 		return nil, err
 	}
