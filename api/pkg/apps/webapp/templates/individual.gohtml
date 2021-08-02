@@ -238,6 +238,16 @@
 
       function addRelationship(relationshipTypeId, secondPartyID) {
         const state = stateSubject.value;
+        // Check for self-reference
+        if (secondPartyID === {{.Individual.ID}}) return;
+        // Check for valid party
+        const isValidParty = parties.filter(({ id }) => id === secondPartyID).length === 1;
+        if (!isValidParty) return;
+        // Check for duplicate
+        const relationshipExists = state.relationships
+          .filter(r => r.relationshipTypeId === relationshipTypeId && r.secondParty === secondPartyID)
+          .length > 0;
+        if (relationshipExists) return;
         stateSubject.next({
           ...state,
           relationships: [
