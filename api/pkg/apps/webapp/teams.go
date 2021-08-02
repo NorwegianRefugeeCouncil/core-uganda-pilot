@@ -73,8 +73,7 @@ func (s *Server) Team(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	countryID := n.Items[0].CountryID
-	c, err := iamClient.Countrys().Get(ctx, countryID)
+	c, err := iamClient.Countrys().Get(ctx, n.Items[0].CountryID)
 	if err != nil {
 		s.Error(w, err)
 		return
