@@ -78,9 +78,9 @@
                                        name="partySelector"
                                        id="partySelector"
                                        data-testid="relatedParty"
-                                                                               data-bs-toggle="dropdown"
-                                                                               data-bs-auto-close="false"
-                                                                               aria-expanded="false"
+                                       data-bs-toggle="dropdown"
+                                       data-bs-auto-close="false"
+                                       aria-expanded="false"
                                        autocomplete="off"
                                 />
                                 <ul class="dropdown-menu" id="partySelectorList" aria-labelledby="partySelector">
@@ -327,7 +327,7 @@
         };
 
         // Override bootstrap dropdown events
-        const partySelector = document.querySelector('#partySelector')
+        const partySelector = document.querySelector('#partySelector');
         const toggler = new bootstrap.Dropdown(partySelector);
         document.querySelector('#partySelector').onclick = (event) => {
           toggler.show();
