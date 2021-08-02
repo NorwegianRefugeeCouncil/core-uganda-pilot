@@ -69,6 +69,26 @@ func (s *Server) SetPassword(ctx context.Context, partyID string, password strin
 	return nil
 }
 
+// CreatePassword will create a new credential for the Party
+func (s *Server) CreatePassword(ctx context.Context, partyID string, password string) error {
+	saltedHash, err := HashAndSalt(s.BCryptCost, []byte(password))
+	if err != nil {
+		return err
+	}
+
+	var newCredential = Credential{
+		PartyID: partyID,
+		Hash:    saltedHash,
+	}
+
+	_, err = s.Collection.InsertOne(ctx, newCredential)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // HashAndSalt uses bcrypt algorithm to compute a salt + hash of a password
 // Used to mitigate bruteforce attacks, rainbow tables, etc.
 func HashAndSalt(cost int, pwd []byte) (string, error) {

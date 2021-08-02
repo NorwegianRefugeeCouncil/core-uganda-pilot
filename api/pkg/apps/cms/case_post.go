@@ -30,7 +30,6 @@ func (s *Server) PostCase(w http.ResponseWriter, req *http.Request) {
 	if ok {
 		kase.CreatorID = subject
 	}
-
 	if err := s.caseStore.Create(ctx, kase); err != nil {
 		s.Error(w, err)
 		return

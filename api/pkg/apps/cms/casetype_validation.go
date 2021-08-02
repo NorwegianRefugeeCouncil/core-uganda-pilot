@@ -11,10 +11,13 @@ func ValidateCaseType(caseType *CaseType, path *validation.Path) validation.Erro
 		errList = append(errList, validation.Invalid(path.Child("name"), caseType.Name, "name should only contain letters and spaces"))
 	}
 	if len(caseType.PartyTypeID) == 0 {
-		errList = append(errList, validation.Required(path.Child("partyTypeId"), "this field is required"))
+		errList = append(errList, validation.Required(path.Child("partyTypeId"), "party type is required"))
 	}
 	if len(caseType.TeamID) == 0 {
-		errList = append(errList, validation.Required(path.Child("teamId"), "this field is required"))
+		errList = append(errList, validation.Required(path.Child("teamId"), "team is required"))
+	}
+	if caseType.Template == nil || caseType.Template.FormElements == nil {
+		errList = append(errList, validation.Required(path.Child("template"), "template is required"))
 	}
 
 	return errList

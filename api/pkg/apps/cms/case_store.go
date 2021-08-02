@@ -119,7 +119,7 @@ func (s *CaseStore) Update(ctx context.Context, kase *Case) error {
 	}, bson.M{
 		"$set": bson.M{
 			"done":     kase.Done,
-			"formData": kase.FormData,
+			"template": kase.Template,
 		},
 	})
 	if err != nil {

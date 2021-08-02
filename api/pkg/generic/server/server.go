@@ -22,10 +22,12 @@ type GenericServerOptions struct {
 
 var cmsPath = "/apis/cms/v1"
 var iamPath = "/apis/iam/v1"
+var attachmentsPath = "/apis/attachments/v1"
 
 type Endpoint = string
 
 var (
+	AttachmentsEndpoint       Endpoint = path.Join(attachmentsPath, "attachments")
 	CasesEndpoint             Endpoint = path.Join(cmsPath, "cases")
 	CaseTypesEndpoint         Endpoint = path.Join(cmsPath, "casetypes")
 	CommentsEndpoint          Endpoint = path.Join(cmsPath, "comments")

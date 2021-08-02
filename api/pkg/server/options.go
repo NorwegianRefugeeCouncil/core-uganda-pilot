@@ -10,6 +10,7 @@ import (
 	"github.com/boj/redistore"
 	"github.com/gomodule/redigo/redis"
 	"github.com/gorilla/mux"
+	"github.com/nrc-no/core/pkg/apps/attachments"
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/seeder"
 	"github.com/nrc-no/core/pkg/generic/server"
@@ -514,6 +515,12 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 
 	genericServerOptions := c.Generic()
 
+	// Create Attachment Server
+	attachmentServer, err := attachments.NewServer(ctx, genericServerOptions)
+	if err != nil {
+		logrus.WithError(err).Errorf("faled to create attachment server")
+	}
+
 	// Create IAM Server
 	iamServer, err := c.CreateIAMServer(ctx, genericServerOptions)
 	if err != nil {
@@ -548,6 +555,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		IAMServer:         iamServer,
 		LoginServer:       loginServer,
 		CMSServer:         cmsServer,
+		AttachmentServer:  attachmentServer,
 	}
 
 	router := c.CreateRouter(srv)
@@ -570,6 +578,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 func (c CompletedOptions) CreateRouter(srv *Server) *mux.Router {
 	router := mux.NewRouter()
 	router.Use(middleware.UseLogging())
+	router.PathPrefix("/apis/attachments").Handler(srv.AttachmentServer)
 	router.PathPrefix("/apis/cms").Handler(srv.CMSServer)
 	router.PathPrefix("/apis/iam").Handler(srv.IAMServer)
 	router.PathPrefix("/auth").Handler(srv.LoginServer)

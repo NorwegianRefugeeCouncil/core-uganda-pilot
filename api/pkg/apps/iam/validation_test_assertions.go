@@ -9,12 +9,13 @@ import (
 func assertRequired(field string) func(t *testing.T, errList validation.ErrorList) {
 	return func(t *testing.T, errList validation.ErrorList) {
 		assert.NotEmpty(t, errList)
-		assert.Equal(t, errList.Find(field)[0].Type, validation.ErrorTypeRequired)
+		e := *errList.Find(field)
+		assert.Equal(t, e[0].Type, validation.ErrorTypeRequired)
 	}
 }
 func assertInvalid(field string) func(t *testing.T, errList validation.ErrorList) {
 	return func(t *testing.T, errList validation.ErrorList) {
-		assert.NotEmpty(t, errList)
-		assert.Equal(t, errList.Find(field)[0].Type, validation.ErrorTypeInvalid)
+		e := *errList.Find(field)
+		assert.Equal(t, e[0].Type, validation.ErrorTypeInvalid)
 	}
 }

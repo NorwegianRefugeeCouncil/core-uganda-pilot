@@ -1,4 +1,4 @@
-package cms
+package attachments
 
 import (
 	"context"
@@ -8,16 +8,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type CaseTypeStore struct {
+type AttachmentStore struct {
 	getCollection utils.MongoCollectionFn
 }
 
-func NewCaseTypeStore(ctx context.Context, mongoClientFn utils.MongoClientFn, database string) (*CaseTypeStore, error) {
+func NewAttachmentStore(ctx context.Context, mongoClientFn utils.MongoClientFn, database string) (*AttachmentStore, error) {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	store := &CaseTypeStore{
-		getCollection: utils.GetCollectionFn(database, "caseTypes", mongoClientFn),
+	store := &AttachmentStore{
+		getCollection: utils.GetCollectionFn(database, "attachments", mongoClientFn),
 	}
 
 	collection, err := store.getCollection(ctx)
@@ -36,7 +36,7 @@ func NewCaseTypeStore(ctx context.Context, mongoClientFn utils.MongoClientFn, da
 	return store, nil
 }
 
-func (s *CaseTypeStore) Get(ctx context.Context, id string) (*CaseType, error) {
+func (s *AttachmentStore) Get(ctx context.Context, id string) (*Attachment, error) {
 	collection, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
@@ -48,20 +48,20 @@ func (s *CaseTypeStore) Get(ctx context.Context, id string) (*CaseType, error) {
 	if res.Err() != nil {
 		return nil, res.Err()
 	}
-	var r CaseType
+	var r Attachment
 	if err := res.Decode(&r); err != nil {
 		return nil, err
 	}
 	return &r, nil
 }
 
-func (s *CaseTypeStore) List(ctx context.Context, options CaseTypeListOptions) (*CaseTypeList, error) {
+func (s *AttachmentStore) List(ctx context.Context, options AttachmentListOptions) (*AttachmentList, error) {
 
-	filter := bson.M{}
+	var filter = bson.M{}
 
-	if len(options.PartyTypeIDs) > 0 {
-		filter["partyTypeId"] = bson.M{
-			"$in": options.PartyTypeIDs,
+	if len(options.AttachedToID) != 0 {
+		filter = bson.M{
+			"attachedToId": options.AttachedToID,
 		}
 	}
 
@@ -74,12 +74,12 @@ func (s *CaseTypeStore) List(ctx context.Context, options CaseTypeListOptions) (
 	if err != nil {
 		return nil, err
 	}
-	var items []*CaseType
+	var items []*Attachment
 	for {
 		if !res.Next(ctx) {
 			break
 		}
-		var r CaseType
+		var r Attachment
 		if err := res.Decode(&r); err != nil {
 			return nil, err
 		}
@@ -89,28 +89,26 @@ func (s *CaseTypeStore) List(ctx context.Context, options CaseTypeListOptions) (
 		return nil, res.Err()
 	}
 	if items == nil {
-		items = []*CaseType{}
+		items = []*Attachment{}
 	}
-	ret := CaseTypeList{
+	ret := AttachmentList{
 		Items: items,
 	}
 	return &ret, nil
 }
 
-func (s *CaseTypeStore) Update(ctx context.Context, caseType *CaseType) error {
+func (s *AttachmentStore) Update(ctx context.Context, attachment *Attachment) error {
 	collection, err := s.getCollection(ctx)
 	if err != nil {
 		return err
 	}
 
 	_, err = collection.UpdateOne(ctx, bson.M{
-		"id": caseType.ID,
+		"id": attachment.ID,
 	}, bson.M{
 		"$set": bson.M{
-			"name":        caseType.Name,
-			"partyTypeId": caseType.PartyTypeID,
-			"teamId":      caseType.TeamID,
-			"casTemplate": caseType.Template,
+			"attachedToId": attachment.AttachedToID,
+			"body":         attachment.Body,
 		},
 	})
 	if err != nil {
@@ -119,12 +117,13 @@ func (s *CaseTypeStore) Update(ctx context.Context, caseType *CaseType) error {
 	return nil
 }
 
-func (s *CaseTypeStore) Create(ctx context.Context, caseType *CaseType) error {
+func (s *AttachmentStore) Create(ctx context.Context, attachment *Attachment) error {
 	collection, err := s.getCollection(ctx)
 	if err != nil {
 		return err
 	}
-	_, err = collection.InsertOne(ctx, caseType)
+
+	_, err = collection.InsertOne(ctx, attachment)
 	if err != nil {
 		return err
 	}

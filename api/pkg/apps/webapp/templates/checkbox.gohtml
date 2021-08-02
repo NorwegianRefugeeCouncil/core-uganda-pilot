@@ -1,0 +1,39 @@
+{{define "checkbox"}}
+    <h5>{{.Attributes.Label}}</h5>
+    <div class="form-text">{{.Attributes.Description}}</div>
+    {{$hasOuterErr := and (eq .Errors.Length 1) (not .Attributes.Value)}}
+    <div id="{{.Attributes.Name}}"
+         {{if $hasOuterErr}}class="is-invalid form-control" aria-describedby="{{.Attributes.Name}}Feedback"{{end}}>
+        {{range $i, $_ := .Attributes.CheckboxOptions}}
+            {{$istr := printf "%d" $i}}
+            {{$fieldName := (printf "%s[%s]" $.Attributes.Name $i)}}
+            {{$hasInnerErr := false}}
+            {{if gt $.Errors.Length 1}}
+                {{$hasInnerErr = gt ($.Errors.Find $fieldName).Length 1}}
+            {{end}}
+            <div class="form-check mb-3">
+                <input id="{{$fieldName}}"
+                       name="{{$.Attributes.Name}}"
+                       value="{{$i}}"
+                       class="form-check-input {{if $hasInnerErr}}is-invalid{{end}}"
+                       type="checkbox"
+                       {{if .Required}}required{{end}}
+                        {{range $v := $.Attributes.Value}}{{if eq $istr $v}}checked{{end}}{{end}}
+                        {{if $hasInnerErr}}aria-describedby="{{$fieldName}}Feedback"{{end}}
+                        {{if $.Readonly}}disabled{{end}}
+                >
+                <label for="{{$fieldName}}" class="form-check-label">{{.Label}}</label>
+                {{if $hasInnerErr}}
+                    <div id="{{$fieldName}}Feedback" class="invalid-feedback">
+                        You must check this box.
+                    </div>
+                {{end}}
+            </div>
+        {{end}}
+    </div>
+    {{if $hasOuterErr}}
+        <div id="{{.Attributes.Name}}Feedback" class="invalid-feedback mb-3">
+            Please pick at least one option.
+        </div>
+    {{end}}
+{{end}}
