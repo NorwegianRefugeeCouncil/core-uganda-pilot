@@ -77,7 +77,7 @@ func Seed(ctx context.Context, mongoClientFn utils.MongoClientFn, databaseName s
 	}
 
 	for _, obj := range nationalitys {
-		if err := seedMongo(ctx, mongoClient, databaseName, "nationalitys", bson.M{"id": obj.ID}, iam.MapNationalityToRelationship(&obj)); err != nil {
+		if err := seedMongo(ctx, mongoClient, databaseName, "relationships", bson.M{"id": obj.ID}, iam.MapNationalityToRelationship(&obj)); err != nil {
 			return err
 		}
 	}
