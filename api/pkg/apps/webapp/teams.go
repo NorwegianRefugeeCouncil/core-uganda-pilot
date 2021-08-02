@@ -72,6 +72,11 @@ func (s *Server) Team(w http.ResponseWriter, req *http.Request) {
 		s.Error(w, err)
 		return
 	}
+	if len(n.Items) < 1 {
+		err := fmt.Errorf("failed to find nationality relationship for team")
+		s.Error(w, err)
+		return
+	}
 
 	c, err := iamClient.Countries().Get(ctx, n.Items[0].CountryID)
 	if err != nil {
