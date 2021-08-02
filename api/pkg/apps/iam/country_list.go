@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-func (s *Server) listCountrys(w http.ResponseWriter, req *http.Request) {
+func (s *Server) listCountries(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	ret, err := s.countryStore.List(ctx)

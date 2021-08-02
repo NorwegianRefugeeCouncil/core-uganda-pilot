@@ -10,7 +10,7 @@ func (s *Suite) TestCountry() {
 func (s *Suite) testCountryAPI() {
 	// Create country
 	name := newUUID()
-	created, err := s.client.Countrys().Create(s.Ctx, &Country{
+	created, err := s.client.Countries().Create(s.Ctx, &Country{
 		Name: name,
 	})
 	if !assert.NoError(s.T(), err) {
@@ -20,7 +20,7 @@ func (s *Suite) testCountryAPI() {
 	assert.NotEmpty(s.T(), created.ID)
 
 	// Get country
-	get, err := s.client.Countrys().Get(s.Ctx, created.ID)
+	get, err := s.client.Countries().Get(s.Ctx, created.ID)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
@@ -28,8 +28,8 @@ func (s *Suite) testCountryAPI() {
 		return
 	}
 
-	// List countrys
-	list, err := s.client.Countrys().List(s.Ctx, CountryListOptions{})
+	// List countries
+	list, err := s.client.Countries().List(s.Ctx, CountryListOptions{})
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}

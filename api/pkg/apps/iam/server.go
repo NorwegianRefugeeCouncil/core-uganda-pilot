@@ -99,9 +99,9 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	router.Path(server.MembershipsEndpoint).Methods("POST").HandlerFunc(srv.postMembership)
 	router.Path(path.Join(server.MembershipsEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getMembership)
 
-	router.Path(server.NationalitysEndpoint).Methods("GET").HandlerFunc(srv.listNationalitys)
-	router.Path(server.NationalitysEndpoint).Methods("POST").HandlerFunc(srv.postNationality)
-	router.Path(path.Join(server.NationalitysEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getNationality)
+	router.Path(server.NationalitiesEndpoint).Methods("GET").HandlerFunc(srv.listNationalities)
+	router.Path(server.NationalitiesEndpoint).Methods("POST").HandlerFunc(srv.postNationality)
+	router.Path(path.Join(server.NationalitiesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getNationality)
 
 	router.Path(server.PartiesEndpoint).Methods("GET").HandlerFunc(srv.listParties)
 	router.Path(server.PartiesEndpoint).Methods("POST").HandlerFunc(srv.postParty)
@@ -130,10 +130,10 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	router.Path(path.Join(server.TeamsEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getTeam)
 	router.Path(path.Join(server.TeamsEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putTeam)
 
-	router.Path(server.CountrysEndpoint).Methods("GET").HandlerFunc(srv.listCountrys)
-	router.Path(server.CountrysEndpoint).Methods("POST").HandlerFunc(srv.postCountry)
-	router.Path(path.Join(server.CountrysEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getCountry)
-	router.Path(path.Join(server.CountrysEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putCountry)
+	router.Path(server.CountriesEndpoint).Methods("GET").HandlerFunc(srv.listCountries)
+	router.Path(server.CountriesEndpoint).Methods("POST").HandlerFunc(srv.postCountry)
+	router.Path(path.Join(server.CountriesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getCountry)
+	router.Path(path.Join(server.CountriesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putCountry)
 
 	srv.router = router
 

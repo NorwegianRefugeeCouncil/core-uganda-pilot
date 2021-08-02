@@ -57,13 +57,13 @@ func (s *CountryStore) List(ctx context.Context) (*CountryList, error) {
 		return nil, err
 	}
 
-	countrys := make([]*Country, len(ps.Items))
+	countries := make([]*Country, len(ps.Items))
 	for i, item := range ps.Items {
-		countrys[i] = MapPartyToCountry(item)
+		countries[i] = MapPartyToCountry(item)
 	}
 
 	return &CountryList{
-		Items: countrys,
+		Items: countries,
 	}, nil
 }
 

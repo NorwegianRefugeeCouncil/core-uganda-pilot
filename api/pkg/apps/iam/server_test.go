@@ -141,13 +141,13 @@ func (s *Suite) mockMemberships(n int) []*Membership {
 	return memberships
 }
 
-func (s *Suite) mockNationalitys(n int) []*Nationality {
-	var nationalitys []*Nationality
+func (s *Suite) mockNationalities(n int) []*Nationality {
+	var nationalities []*Nationality
 	for i := 0; i < n; i++ {
-		nationalitys = append(nationalitys, &Nationality{
+		nationalities = append(nationalities, &Nationality{
 			CountryID: "",
 			TeamID:    "",
 		})
 	}
-	return nationalitys
+	return nationalities
 }

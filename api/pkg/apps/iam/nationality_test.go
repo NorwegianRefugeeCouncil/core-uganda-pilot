@@ -10,12 +10,12 @@ func (s *Suite) TestNationality() {
 }
 
 func (s *Suite) testNationalityAPI() {
-	nationality := s.mockNationalitys(1)[0]
+	nationality := s.mockNationalities(1)[0]
 	nationality.CountryID = newUUID()
 	nationality.TeamID = newUUID()
 
 	// Create
-	created, err := s.client.Nationalitys().Create(s.Ctx, nationality)
+	created, err := s.client.Nationalities().Create(s.Ctx, nationality)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
@@ -23,7 +23,7 @@ func (s *Suite) testNationalityAPI() {
 	assert.Equal(s.T(), nationality.TeamID, created.TeamID)
 
 	// Get
-	get, err := s.client.Nationalitys().Get(s.Ctx, created.ID)
+	get, err := s.client.Nationalities().Get(s.Ctx, created.ID)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
@@ -33,7 +33,7 @@ func (s *Suite) testNationalityAPI() {
 	// NB Nationality doesn't implement UPDATE for now
 
 	// List
-	list, err := s.client.Nationalitys().List(s.Ctx, NationalityListOptions{})
+	list, err := s.client.Nationalities().List(s.Ctx, NationalityListOptions{})
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}

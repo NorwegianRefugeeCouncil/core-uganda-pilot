@@ -50,7 +50,7 @@ func (c ClientSet) Teams() TeamClient {
 	}
 }
 
-func (c ClientSet) Countrys() CountryClient {
+func (c ClientSet) Countries() CountryClient {
 	return &RESTCountryClient{
 		c: c.c,
 	}
@@ -62,7 +62,7 @@ func (c ClientSet) Memberships() MembershipClient {
 	}
 }
 
-func (c ClientSet) Nationalitys() NationalityClient {
+func (c ClientSet) Nationalities() NationalityClient {
 	return &RESTNationalityClient{
 		c: c.c,
 	}

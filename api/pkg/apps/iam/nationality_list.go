@@ -2,7 +2,7 @@ package iam
 
 import "net/http"
 
-func (s *Server) listNationalitys(w http.ResponseWriter, req *http.Request) {
+func (s *Server) listNationalities(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	var listOptions NationalityListOptions

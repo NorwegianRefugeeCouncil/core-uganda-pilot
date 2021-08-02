@@ -18,8 +18,8 @@ type (
 		Teams() TeamClient
 		Memberships() MembershipClient
 		Individuals() IndividualClient
-		Countrys() CountryClient
-		Nationalitys() NationalityClient
+		Countries() CountryClient
+		Nationalities() NationalityClient
 	}
 )
 

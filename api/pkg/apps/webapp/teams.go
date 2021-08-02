@@ -65,7 +65,7 @@ func (s *Server) Team(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	n, err := iamClient.Nationalitys().List(ctx, iam.NationalityListOptions{
+	n, err := iamClient.Nationalities().List(ctx, iam.NationalityListOptions{
 		TeamID: id,
 	})
 	if err != nil {
@@ -73,7 +73,7 @@ func (s *Server) Team(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	c, err := iamClient.Countrys().Get(ctx, n.Items[0].CountryID)
+	c, err := iamClient.Countries().Get(ctx, n.Items[0].CountryID)
 	if err != nil {
 		s.Error(w, err)
 		return

@@ -32,7 +32,7 @@ func country(id, name string) iam.Country {
 		ID:   id,
 		Name: name,
 	}
-	countrys = append(countrys, t)
+	countries = append(countries, t)
 	return t
 }
 
@@ -123,7 +123,7 @@ func nationality(id string, team iam.Team, country iam.Country) iam.Nationality 
 		CountryID: country.ID,
 		TeamID:    team.ID,
 	}
-	nationalitys = append(nationalitys, m)
+	nationalities = append(nationalities, m)
 	return m
 }
 
@@ -146,8 +146,8 @@ var (
 	individuals   []iam.Individual
 	staffers      []iam.Staff
 	memberships   []iam.Membership
-	countrys      []iam.Country
-	nationalitys  []iam.Nationality
+	countries     []iam.Country
+	nationalities []iam.Nationality
 	relationships []iam.Relationship
 	caseTypes     []cms.CaseType
 	cases         []cms.Case
