@@ -324,6 +324,26 @@
           addRelationship(relationshipType, party);
         };
 
+        // Prevent partySelector click bug
+        document.getElementById('partySelector').addEventListener('focusin', (event) => {
+          const partySelectorList = document.getElementById("partySelectorList");
+          if (partySelectorList.classList.contains("hide")) {
+            partySelectorList.classList.remove("hide");
+          }
+          if (!partySelectorList.classList.contains("show")) {
+            partySelectorList.classList.add("show");
+          }
+        });
+        document.getElementById('partySelector').addEventListener('focusout', (event) => {
+          const partySelectorList = document.getElementById("partySelectorList");
+          if (partySelectorList.classList.contains("show")) {
+            partySelectorList.classList.remove("show");
+          }
+          if (!partySelectorList.classList.contains("hide")) {
+            partySelectorList.classList.add("hide");
+          }
+        });
+
         // Add listener for party selector item click
         Array.from(document.getElementsByClassName('partySelectorItem')).forEach(e => {
           e.onclick = onPartyListItemClick;
