@@ -74,13 +74,15 @@
                             </div>
                             <div class="form-floating mx-2 flex-grow-1 dropdown">
                                 <input type="text"
-                                       class="form-control dropdown-toggle"
+                                       class="form-control"
                                        name="partySelector"
                                        id="partySelector"
                                        data-testid="relatedParty"
-                                       data-bs-toggle="dropdown"
-                                       aria-expanded="false" />
-
+                                                                               data-bs-toggle="dropdown"
+                                                                               data-bs-auto-close="false"
+                                                                               aria-expanded="false"
+                                       autocomplete="off"
+                                />
                                 <ul class="dropdown-menu" id="partySelectorList" aria-labelledby="partySelector">
                                 </ul>
                                 <label for="partySelector" class="form-label">Related Party</label>
@@ -324,33 +326,28 @@
           addRelationship(relationshipType, party);
         };
 
-        // Prevent partySelector click bug
-        document.getElementById('partySelector').addEventListener('focusin', (event) => {
-          const partySelectorList = document.getElementById("partySelectorList");
-          if (partySelectorList.classList.contains("hide")) {
-            partySelectorList.classList.remove("hide");
+        // Override bootstrap dropdown events
+        const partySelector = document.querySelector('#partySelector')
+        const toggler = new bootstrap.Dropdown(partySelector);
+        document.querySelector('#partySelector').onclick = (event) => {
+          toggler.show();
+        };
+        // Hide dropdown on click outside
+        document.onclick = event => {
+          const partySelectorList = document.querySelector('#partySelectorList');
+          const shouldHidePartySelectorList = event.target.id !== 'partySelector' && partySelectorList.classList.contains('show');
+          if (shouldHidePartySelectorList) {
+            toggler.hide();
           }
-          if (!partySelectorList.classList.contains("show")) {
-            partySelectorList.classList.add("show");
-          }
-        });
-        document.getElementById('partySelector').addEventListener('focusout', (event) => {
-          const partySelectorList = document.getElementById("partySelectorList");
-          if (partySelectorList.classList.contains("show")) {
-            partySelectorList.classList.remove("show");
-          }
-          if (!partySelectorList.classList.contains("hide")) {
-            partySelectorList.classList.add("hide");
-          }
-        });
+        };
 
         // Add listener for party selector item click
-        Array.from(document.getElementsByClassName('partySelectorItem')).forEach(e => {
+        document.querySelectorAll('.partySelectorItem').forEach(e => {
           e.onclick = onPartyListItemClick;
         });
 
         // Add listener for party search box
-        document.getElementById('partySelector').oninput = (event) => {
+        partySelector.oninput = (event) => {
           partySearchSubject.next(event.target.value);
         };
 
@@ -386,7 +383,6 @@
               // No Parties Found...
               let newListItem = document.createElement('li');
               newListItem.classList.add('dropdown-item');
-              newListItem.onclick = onPartyListItemClick;
               let displayText = `No Parties Found`;
               newListItem.appendChild(
                 document.createTextNode(displayText)
@@ -404,7 +400,6 @@
           const list = document.getElementById('relationships-list');
           list.innerHTML = '';
           relationships.forEach((relationship, idx) => {
-            console.table(relationship)
             const li = document.createElement('li');
             li.className = 'list-group-item';
             const firstPartyName = parties.find(({ id }) => id === relationship.firstParty)?.name;
