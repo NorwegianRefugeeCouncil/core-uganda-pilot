@@ -377,6 +377,7 @@ func (s *Server) PostCase(req *http.Request, w http.ResponseWriter, ctx context.
 		} else {
 			kase.CreatorID = subject.(string)
 		}
+		kase.IntakeCase = caseType.IntakeCaseType
 		postedCase, err = cmsClient.Cases().Create(ctx, kase)
 		action = "created"
 	} else {

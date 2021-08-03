@@ -37,6 +37,9 @@
                         {{end}}
                         <label for="{{$name}}">Name</label>
                     </div>
+
+                    <!-- TODO: Add a checkbox field for intakeCaseType -->
+
                     <div class="form-floating mb-3">
                         {{$name = "partyTypeId"}}
                         {{if and .Errors (.Errors.Find $name)}}

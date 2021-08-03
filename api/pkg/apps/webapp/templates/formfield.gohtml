@@ -7,5 +7,7 @@
         {{template "textinput" .}}
     {{else if eq .Type "checkbox"}}
         {{template "checkbox" .}}
+    {{else if eq .Type "taxonomyinput"}}
+        {{template "taxonomyinput" .}}
     {{end}}
 {{end}}

@@ -313,6 +313,35 @@ func (s *Server) PostIndividual(
 		return
 	}
 
+	cmsClient, err := s.CMSClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	creatorId := ""
+	subject := ctx.Value("Subject")
+	if subject != nil {
+		creatorId = subject.(string)
+	}
+
+	var situationAnalysisCaseType *cms.CaseType
+	var individualAssessmentCaseType *cms.CaseType
+
+	ctr, err := cmsClient.CaseTypes().List(ctx, cms.CaseTypeListOptions{})
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+	for _, caseType := range ctr.Items {
+		if caseType.Name == "Situational Analysis (UG Protection/Response)" {
+			situationAnalysisCaseType = caseType
+		}
+		if caseType.Name == "Individual Assessment (UG Protection/Response)" {
+			individualAssessmentCaseType = caseType
+		}
+	}
+
 	if err := req.ParseForm(); err != nil {
 		s.Error(w, err)
 		return
@@ -425,6 +454,28 @@ func (s *Server) PostIndividual(
 		if err != nil {
 			s.Error(w, err)
 			return
+		}
+
+		// Create UG Intake Cases for new individual
+		if situationAnalysisCaseType != nil {
+			_, err = cmsClient.Cases().Create(ctx, &cms.Case{
+				CaseTypeID: situationAnalysisCaseType.ID,
+				PartyID:    individual.ID,
+				Done:       false,
+				TeamID:     situationAnalysisCaseType.TeamID,
+				CreatorID:  creatorId,
+				Template:   nil,
+			})
+		}
+		if individualAssessmentCaseType != nil {
+			_, err = cmsClient.Cases().Create(ctx, &cms.Case{
+				CaseTypeID: individualAssessmentCaseType.ID,
+				PartyID:    individual.ID,
+				Done:       false,
+				TeamID:     individualAssessmentCaseType.TeamID,
+				CreatorID:  creatorId,
+				Template:   nil,
+			})
 		}
 
 		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{

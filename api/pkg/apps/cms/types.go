@@ -16,6 +16,7 @@ type Case struct {
 	TeamID     string        `json:"teamId" bson:"teamId"`
 	CreatorID  string        `json:"creatorId" bson:"creatorId"`
 	Template   *CaseTemplate `json:"template" bson:"template"`
+	IntakeCase bool          `json:"intakeCase" bson:"intakeCase"`
 }
 
 type CaseList struct {
@@ -24,11 +25,12 @@ type CaseList struct {
 
 // CaseType contains the information needed to construct a case form as well as Team and PartyType IDs associated with the form.
 type CaseType struct {
-	ID          string        `json:"id" bson:"id"`
-	Name        string        `json:"name" bson:"name"`
-	PartyTypeID string        `json:"partyTypeId" bson:"partyTypeId"`
-	TeamID      string        `json:"teamId" bson:"teamId"`
-	Template    *CaseTemplate `json:"template" bson:"template"`
+	ID             string        `json:"id" bson:"id"`
+	Name           string        `json:"name" bson:"name"`
+	PartyTypeID    string        `json:"partyTypeId" bson:"partyTypeId"`
+	TeamID         string        `json:"teamId" bson:"teamId"`
+	Template       *CaseTemplate `json:"template" bson:"template"`
+	IntakeCaseType bool          `json:"intakeCaseType" bson:"intakeCaseType"`
 }
 
 type CaseTypeList struct {
