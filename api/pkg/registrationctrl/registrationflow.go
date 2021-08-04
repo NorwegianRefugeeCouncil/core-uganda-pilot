@@ -42,19 +42,19 @@ func (r *RegistrationFlow) toProgress(s state) Progress {
 		switch step.Type {
 		case IndividualAttributes:
 			// If s.isVirgin == false then this step must be done
-			stage.StageStatus = Closed
+			stage.StageStatus = Complete
 		case CaseType:
 			stage.StageStatus = Unopened
 			// Examine the given state, if there's a match, update the status.
 			for _, closedCase := range s.closedCases {
 				if step.Ref == closedCase.CaseTypeID {
-					stage.StageStatus = Closed
+					stage.StageStatus = Complete
 					break
 				}
 			}
 			for _, opencase := range s.openCases {
 				if step.Ref == opencase.CaseTypeID {
-					stage.StageStatus = Open
+					stage.StageStatus = Incomplete
 					break
 				}
 			}

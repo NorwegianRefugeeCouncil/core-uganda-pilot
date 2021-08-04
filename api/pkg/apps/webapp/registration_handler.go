@@ -12,6 +12,10 @@ type IndividualRegistrationRequestHandler struct {
 	r *http.Request
 }
 
+func NewIndividualRegistrationHandler(s *Server, i *iam.Individual, r *http.Request) *IndividualRegistrationRequestHandler {
+	return &IndividualRegistrationRequestHandler{s, i, r}
+}
+
 func (irh *IndividualRegistrationRequestHandler) IndividualExists() bool {
 	necessaryDataExistsForIndividual := true
 
@@ -24,12 +28,12 @@ func (irh *IndividualRegistrationRequestHandler) IndividualExists() bool {
 	}
 
 	for _, expectedAttribute := range expectedAttributes {
-		if !irh.i.HasAttribute(expectedAttribute.ID) {
+		isNotPresentOrIsNotSet := !irh.i.HasAttribute(expectedAttribute.ID) || (irh.i.HasAttribute(expectedAttribute.ID) && len(irh.i.GetAttribute(expectedAttribute.ID)) == 0)
+		if isNotPresentOrIsNotSet {
 			necessaryDataExistsForIndividual = false
 			break
 		}
 	}
-
 	return necessaryDataExistsForIndividual
 }
 

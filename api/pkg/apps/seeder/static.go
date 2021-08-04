@@ -774,8 +774,11 @@ var (
 			{
 				Type: cms.TaxonomyInput,
 				Attributes: cms.FormElementAttribute{
-					Label:       "Which service has the individual requested as a starting point of support?",
-					Name:        "serviceStartingPoint",
+					Label: "Which service has the individual requested as a starting point of support?",
+					Name:  "serviceStartingPoint",
+					Value: []string{
+						"ICLA - Counselling - Legal Identity",
+					},
 					Description: "Add the taxonomies of the services requested as a starting point one by one, by selecting the relevant options from the dropdowns below.",
 					Placeholder: "",
 				},
@@ -783,8 +786,195 @@ var (
 			{
 				Type: cms.TaxonomyInput,
 				Attributes: cms.FormElementAttribute{
-					Label:       "What other services has the individual requested/identified?",
-					Name:        "otherServices",
+					Label: "What other services has the individual requested/identified?",
+					Name:  "otherServices",
+					Value: []string{
+						"Protection - Individual Targeted Protection - Individual Protection Assistance",
+					},
+					Description: "Add the taxonomies of the other services requested one by one, by selecting the relevant options from the dropdowns below.",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: cms.Textarea,
+				Attributes: cms.FormElementAttribute{
+					Label:       "What is the perceived priority response level of the individual",
+					Name:        "perceivedPriority",
+					Description: "",
+					Placeholder: "",
+				},
+			},
+		},
+	}, true)
+
+	MaryPoppinsSituationAnalysis = kase("4f7708ed-240a-423f-9bd1-839542e65833", UGSituationalAnalysisCaseType.ID, Colette.ID, MaryPoppins.ID, UgandaProtectionTeam.ID, false, &cms.CaseTemplate{
+		FormElements: []cms.FormElement{
+			{
+				Type: "textarea",
+				Attributes: cms.FormElementAttribute{
+					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
+					Name:        "safeDiginifiedLife",
+					Description: "Probe for description",
+					Value: []string{
+						"Yes, I live a safe and dignified life and I am reasonably happy with my achievements and quality of life.",
+					},
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.FormElementAttribute{
+					Label: "How are you addressing these challenges and barriers? What is standing in your way? Can you give me some examples of how you are dealing with these challenges?",
+					Name:  "challengesBarriers",
+					Value: []string{
+						"Some of the barriers I face are communication gaps between myself and refugee tenants. We are attempting to deal with these challenges by using google translate.",
+					},
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.FormElementAttribute{
+					Label: "What are some solutions you see for this and how could we work together on these solutions? How could we work to reduce these challenges together?",
+					Name:  "solutions",
+					Value: []string{
+						"A qualified interpreter, who knows the legal context could help us to agree on contractual matters.",
+					},
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.FormElementAttribute{
+					Label: "If we were to work together on this, what could we do together? What would make the most difference for you?",
+					Name:  "workTogether",
+					Value: []string{
+						"NRC could provide a translator and a legal representative to ease contract negotiations",
+					},
+					Description: "",
+					Placeholder: "",
+				},
+			},
+		},
+	},
+		true)
+
+	MaryPoppinsIndividualAssessment = kase("45b4a637-c610-4ab9-afe6-4e958c36a96f", UGIndividualAssessmentCaseType.ID, Colette.ID, MaryPoppins.ID, UgandaProtectionTeam.ID, false, &cms.CaseTemplate{
+		FormElements: []cms.FormElement{
+			{
+				Type: cms.TaxonomyInput,
+				Attributes: cms.FormElementAttribute{
+					Label: "Which service has the individual requested as a starting point of support?",
+					Name:  "serviceStartingPoint",
+					Value: []string{
+						"ICLA - Counselling - Legal Identity",
+					},
+					Description: "Add the taxonomies of the services requested as a starting point one by one, by selecting the relevant options from the dropdowns below.",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: cms.TaxonomyInput,
+				Attributes: cms.FormElementAttribute{
+					Label: "What other services has the individual requested/identified?",
+					Name:  "otherServices",
+					Value: []string{
+						"Protection - Individual Targeted Protection - Individual Protection Assistance",
+					},
+					Description: "Add the taxonomies of the other services requested one by one, by selecting the relevant options from the dropdowns below.",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: cms.Textarea,
+				Attributes: cms.FormElementAttribute{
+					Label:       "What is the perceived priority response level of the individual",
+					Name:        "perceivedPriority",
+					Description: "",
+					Placeholder: "",
+				},
+			},
+		},
+	}, true)
+
+	JohnDoesSituationAnalysis = kase("43140381-8166-4fb3-9ac5-339082920ade", UGSituationalAnalysisCaseType.ID, Colette.ID, JohnDoe.ID, UgandaProtectionTeam.ID, false, &cms.CaseTemplate{
+		FormElements: []cms.FormElement{
+			{
+				Type: "textarea",
+				Attributes: cms.FormElementAttribute{
+					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
+					Name:        "safeDiginifiedLife",
+					Description: "Probe for description",
+					Value: []string{
+						"Yes, I live a safe and dignified life and I am reasonably happy with my achievements and quality of life.",
+					},
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.FormElementAttribute{
+					Label: "How are you addressing these challenges and barriers? What is standing in your way? Can you give me some examples of how you are dealing with these challenges?",
+					Name:  "challengesBarriers",
+					Value: []string{
+						"Some of the barriers I face are communication gaps between myself and refugee tenants. We are attempting to deal with these challenges by using google translate.",
+					},
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.FormElementAttribute{
+					Label: "What are some solutions you see for this and how could we work together on these solutions? How could we work to reduce these challenges together?",
+					Name:  "solutions",
+					Value: []string{
+						"A qualified interpreter, who knows the legal context could help us to agree on contractual matters.",
+					},
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.FormElementAttribute{
+					Label: "If we were to work together on this, what could we do together? What would make the most difference for you?",
+					Name:  "workTogether",
+					Value: []string{
+						"NRC could provide a translator and a legal representative to ease contract negotiations",
+					},
+					Description: "",
+					Placeholder: "",
+				},
+			},
+		},
+	},
+		true)
+
+	JohnDoeIndividualAssessment = kase("65e02e79-1676-4745-9890-582e3d67d13f", UGIndividualAssessmentCaseType.ID, Colette.ID, JohnDoe.ID, UgandaProtectionTeam.ID, false, &cms.CaseTemplate{
+		FormElements: []cms.FormElement{
+			{
+				Type: cms.TaxonomyInput,
+				Attributes: cms.FormElementAttribute{
+					Label: "Which service has the individual requested as a starting point of support?",
+					Name:  "serviceStartingPoint",
+					Value: []string{
+						"ICLA - Counselling - Legal Identity",
+					},
+					Description: "Add the taxonomies of the services requested as a starting point one by one, by selecting the relevant options from the dropdowns below.",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: cms.TaxonomyInput,
+				Attributes: cms.FormElementAttribute{
+					Label: "What other services has the individual requested/identified?",
+					Name:  "otherServices",
+					Value: []string{
+						"Protection - Individual Targeted Protection - Individual Protection Assistance",
+					},
 					Description: "Add the taxonomies of the other services requested one by one, by selecting the relevant options from the dropdowns below.",
 					Placeholder: "",
 				},

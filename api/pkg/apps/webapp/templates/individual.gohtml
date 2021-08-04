@@ -14,11 +14,16 @@
         <div class="row">
             <div class="col">
                 <div class="mt-3">
-
+                    <div class="mb-3">
+                        Registration progress:
+                        <span class="badge rounded-pill bg-primary">Steps {{.ProgressLabel}}</span><br>
+                    </div>
                     <form action="/individuals{{if .Individual}}{{if .Individual.ID}}/{{.Individual.ID}}{{end}}{{end}}"
                           method="post">
 
-                        <h4 class="display-6">Attributes</h4>
+                        <h4 class="display-6">Bio & Intake Information</h4>
+
+                        <h5 class="mb-3">Attributes <span class="badge rounded-pill bg-primary">{{(index .Progress 0).StageStatus}}</span></h5>
 
                         {{ range $index, $attribute := .Attributes.Items}}
 
@@ -52,6 +57,18 @@
                                 </div>
                             {{end}}
 
+                        {{end}}
+
+                        {{if and (eq (len .Individual.PartyTypeIDs) 1) (.Individual.HasPartyType .IndividualPartyTypeID)}}
+                            <h5 class="mb-3">Situation Analysis <span class="badge rounded-pill bg-primary">{{(index .Progress 1).StageStatus}}</span></h5>
+                            {{range .SituationAnalysis.Template.FormElements}}
+                                {{template "formfield" .}}
+                            {{end}}
+
+                            <h5>Individual Assessment <span class="badge rounded-pill bg-primary">{{(index .Progress 2).StageStatus}}</span></h5>
+                            {{range .IndividualAssessment.Template.FormElements}}
+                                {{template "formfield" .}}
+                            {{end}}
                         {{end}}
 
                         <h4 class="display-6">Relationships</h4>
