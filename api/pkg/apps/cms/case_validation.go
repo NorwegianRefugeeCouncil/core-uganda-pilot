@@ -35,7 +35,7 @@ func ValidateCase(kase *Case, path *validation.Path) validation.ErrorList {
 			}
 			fallthrough
 		default:
-			if elem.Validation.Required && len(elem.Attributes.Value) == 0 {
+			if elem.Validation.Required && allEmpty(elem.Attributes.Value) {
 				err := validation.Required(path.Child(elem.Attributes.Name), fmt.Sprintf("%s is required", elem.Attributes.Name))
 				errList = append(errList, err)
 			}
@@ -54,4 +54,13 @@ func contains(slice []string, elem string) bool {
 		}
 	}
 	return false
+}
+
+func allEmpty(strSlice []string) bool {
+	for _, s := range strSlice {
+		if len(s) > 0 {
+			return false
+		}
+	}
+	return true
 }

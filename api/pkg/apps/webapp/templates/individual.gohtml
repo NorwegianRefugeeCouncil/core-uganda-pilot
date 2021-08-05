@@ -161,10 +161,10 @@
 
                         {{end}}
 
-                        <button id="formSubmitButton" type="button" class="btn btn-primary mt-5" data-testid="save-btn">
-                            Save
-                        </button>
                     </form>
+                    <button id="formSubmitButton" type="button" class="btn btn-primary mt-5" data-testid="save-btn">
+                        Save
+                    </button>
 
                 </div>
             </div>
@@ -175,7 +175,7 @@
 
     <script type="application/javascript">
 
-      let { Subject, BehaviorSubject} = rxjs;
+      let { Subject, BehaviorSubject } = rxjs;
       let { map, debounceTime, switchMap } = rxjs.operators;
       let { ajax } = rxjs.ajax;
 
@@ -361,7 +361,15 @@
         async function validateSubForm(formID, caseID) {
           const saFields = document.querySelectorAll(`#${formID}>div>[name]`);
           const searchParams = new URLSearchParams();
-          saFields.forEach(field => searchParams.append(field.name, field.value));
+          saFields.forEach(field => {
+            /* if (field instanceof HTMLTextAreaElement) {
+              field.value = field.textContent;
+            } else */
+            if (field instanceof HTMLSelectElement) {
+              field.value = field.options[field.selectedIndex].value;
+            }
+            searchParams.append(field.name, field.value);
+          });
 
           const url = `/cases/${caseID}?validationOnly=true`;
           const options = {
@@ -385,50 +393,70 @@
         }
 
         function applyValidation(validation) {
-          for (const field of validation.template.formElements) {
-            const { name} = field.attributes;
+          for (const element of validation.template.formElements) {
+            let { name } = element.attributes;
+            if (!element.errors) {
+              continue;
+            }
             // Get DOM form element
             const el = document.querySelector(`#${name}`);
             // Apply attributes
             el.classList.add('is-invalid');
             el.setAttribute('aria-describedby', `${name}Feedback`);
-            // Create feedback div
-            const feedback = document.createElement('div');
-            feedback.className = 'invalid-feedback';
-            // Populate with error messages
-            feedback.setAttribute('id', `${name}Feedback`);
-            for (const [i, error] of field.errors.entries()) {
-              // separator
-              if (i > 0) {
-                feedback.appendChild(document.createElement('br'));
+            // Get feedback div
+            const feedback = document.getElementById(`${name}Feedback`);
+            if (feedback != null) {
+              feedback.innerHTML = '';
+              // Populate attributes and error messages
+              for (const error of element.errors) {
+                const p = document.createElement('p');
+                p.textContent = error.detail;
+                feedback.appendChild(p);
               }
-              const s = document.createElement('span').textContent = error.detail;
-              feedback.appendChild(s);
             }
           }
         }
 
+        function removeValidation(formID) {
+          const fields = document.querySelectorAll(`#${formID}>div>[name]`);
+          fields.forEach(field => {
+            field.classList.remove('is-invalid');
+            const feedback = document.getElementById(`${field.name}Feedback`);
+            if (feedback != null) {
+              feedback.innerHTML = '';
+            }
+          });
+        }
+
         const submitBtn = document.getElementById('formSubmitButton');
-        submitBtn.onclick = event => {
-          event.preventDefault();
+        submitBtn.onclick = async event => {
+          // event.preventDefault();
           // TODO submit attributes
           const subForms = [
-            {formID: 'situationAnalysis', caseID:"{{.SituationAnalysis.ID}}"},
-            {formID: 'individualAssessment', caseID:"{{.IndividualAssessment.ID}}"},
-          ]
-          let requiredValidation = false
+            { formID: 'situationAnalysis', caseID: "{{.SituationAnalysis.ID}}" },
+            { formID: 'individualAssessment', caseID: "{{.IndividualAssessment.ID}}" }
+          ];
           // Do validation
-          subForms.forEach(async ({formID, caseID}) => {
-            const validation = await validateSubForm(formID, caseID);
-            if (validation != null) {
-              applyValidation(validation)
-              requiredValidation = true
+          const validations = await Promise.allSettled(subForms.map(async ({ formID, caseID }) => {
+            let returnVar;
+            try {
+              const validation = await validateSubForm(formID, caseID);
+              removeValidation(formID);
+              if (validation != null) {
+                applyValidation(validation);
+                return Promise.resolve(true);
+              }
+            } catch (e) {
+              console.error(e);
+            } finally {
+              returnVar = Promise.resolve(false);
             }
-            return null
-          })
+            return returnVar;
+          }));
+
           // Show updated Individual
-          if (!requiredValidation) {
-            location.reload()
+          if (validations.every(v => !v)) {
+            location.reload();
           }
         };
 
