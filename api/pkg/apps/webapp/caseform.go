@@ -6,9 +6,11 @@ import (
 )
 
 type ValidatedCaseTemplate struct {
-	Template struct {
-		FormElements []FormElement
-	}
+	Template Template `json:"template"`
+}
+
+type Template struct {
+	FormElements []FormElement `json:"formElements"`
 }
 
 type FormElement struct {
@@ -25,5 +27,5 @@ func NewValidatedTemplate(template *cms.CaseTemplate, errors validation.ErrorLis
 			FormElement: element,
 		})
 	}
-	return &ValidatedCaseTemplate{struct{ FormElements []FormElement }{FormElements: formElements}}
+	return &ValidatedCaseTemplate{Template{formElements}}
 }

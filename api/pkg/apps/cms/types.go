@@ -108,7 +108,7 @@ type FormElement struct {
 	Type       FieldType             `json:"type" bson:"type"`
 	Attributes FormElementAttribute  `json:"attributes" bson:"attributes"`
 	Validation FormElementValidation `json:"validation" bson:"validation"`
-	Errors     *validation.ErrorList
+	Errors     *validation.ErrorList `json:"errors"`
 	Readonly   bool
 }
 

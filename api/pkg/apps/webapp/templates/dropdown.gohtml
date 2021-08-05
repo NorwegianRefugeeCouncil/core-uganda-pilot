@@ -1,7 +1,11 @@
 {{define "dropdown"}}
+    {{$prefix := ""}}
+    {{if .Prefix}}
+        {{$prefix = .Prefix}}
+    {{end}}
     <div class="form-floating mb-3">
         <select id="{{.Attributes.Name}}"
-                name="{{.Attributes.Name}}"
+                name="{{$prefix}}{{.Attributes.Name}}"
                 class="form-select {{if .Errors}}is-invalid{{end}}"
                 {{if .Attributes.Multiple}}multiple{{end}}
                 {{if .Validation.Required}}required{{end}}
@@ -11,7 +15,8 @@
             <option value=""></option>
             {{range $i, $_ := .Attributes.Options}}
                 {{$istr := printf "%d" $i}}
-                <option value="{{$i}}" {{range $v := $.Attributes.Value }}{{if eq $istr $v}}selected{{end}}{{end}}>{{.}}</option>
+                <option value="{{$i}}"
+                        {{range $v := $.Attributes.Value }}{{if eq $istr $v}}selected{{end}}{{end}}>{{.}}</option>
             {{end}}
         </select>
         <label class="form-label" for="{{.Attributes.Name}}">{{.Attributes.Label}}</label>

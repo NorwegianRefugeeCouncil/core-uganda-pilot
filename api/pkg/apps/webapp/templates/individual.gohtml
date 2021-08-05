@@ -18,12 +18,15 @@
                         Registration progress:
                         <span class="badge rounded-pill bg-primary">Steps {{.ProgressLabel}}</span><br>
                     </div>
-                    <form action="/individuals{{if .Individual}}{{if .Individual.ID}}/{{.Individual.ID}}{{end}}{{end}}"
+                    <form id="form"
+                          action="/individuals{{if .Individual}}{{if .Individual.ID}}/{{.Individual.ID}}{{end}}{{end}}"
                           method="post">
 
                         <h4 class="display-6">Bio & Intake Information</h4>
 
-                        <h5 class="mb-3">Attributes <span class="badge rounded-pill bg-primary">{{(index .Progress 0).StageStatus}}</span></h5>
+                        <h5 class="mb-3">Attributes <span
+                                    class="badge rounded-pill bg-primary">{{(index .Progress 0).StageStatus}}</span>
+                        </h5>
 
                         {{ range $index, $attribute := .Attributes.Items}}
 
@@ -60,15 +63,24 @@
                         {{end}}
 
                         {{if and (eq (len .Individual.PartyTypeIDs) 1) (.Individual.HasPartyType .IndividualPartyTypeID)}}
-                            <h5 class="mb-3">Situation Analysis <span class="badge rounded-pill bg-primary">{{(index .Progress 1).StageStatus}}</span></h5>
-                            {{range .SituationAnalysis.Template.FormElements}}
-                                {{template "formfield" .}}
-                            {{end}}
+                            <h5 class="mb-3">Situation Analysis <span
+                                        class="badge rounded-pill bg-primary">{{(index .Progress 1).StageStatus}}</span>
+                            </h5>
+                            <div id="situationAnalysis">
+                                {{range .SituationAnalysis.Template.FormElements}}
+                                    {{template "formfield" .}}
+                                {{end}}
+                            </div>
 
-                            <h5>Individual Assessment <span class="badge rounded-pill bg-primary">{{(index .Progress 2).StageStatus}}</span></h5>
-                            {{range .IndividualAssessment.Template.FormElements}}
-                                {{template "formfield" .}}
-                            {{end}}
+
+                            <h5>Individual Assessment <span
+                                        class="badge rounded-pill bg-primary">{{(index .Progress 2).StageStatus}}</span>
+                            </h5>
+                            <div id="individualAssessment">
+                                {{range .IndividualAssessment.Template.FormElements}}
+                                    {{template "formfield" .}}
+                                {{end}}
+                            </div>
                         {{end}}
 
                         <h4 class="display-6">Relationships</h4>
@@ -149,7 +161,9 @@
 
                         {{end}}
 
-                        <button class="btn btn-primary mt-5" data-testid="save-btn">Save</button>
+                        <button id="formSubmitButton" type="button" class="btn btn-primary mt-5" data-testid="save-btn">
+                            Save
+                        </button>
                     </form>
 
                 </div>
@@ -161,7 +175,7 @@
 
     <script type="application/javascript">
 
-      let { Subject, BehaviorSubject, pipe, Observable } = rxjs;
+      let { Subject, BehaviorSubject} = rxjs;
       let { map, debounceTime, switchMap } = rxjs.operators;
       let { ajax } = rxjs.ajax;
 
@@ -230,7 +244,7 @@
       let state$ = stateSubject.asObservable();
 
       // Individual attributes observable$
-      let attributes$ = state$.pipe(map(s => s.attributes));
+      state$.pipe(map(s => s.attributes));
 
       // Individual relationships observable$
       let relationships$ = state$.pipe(map(s => s.relationships));
@@ -343,6 +357,84 @@
 
       // On document ready
       document.addEventListener('DOMContentLoaded', function() {
+
+        //
+        // Form handling
+        //
+        async function validateSubForm(formID, caseID) {
+          const saFields = document.querySelectorAll(`#${formID}>div>[name]`);
+          const searchParams = new URLSearchParams();
+          saFields.forEach(field => searchParams.append(field.name, field.value));
+
+          const url = `/cases/${caseID}?validationOnly=true`;
+          const options = {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: searchParams
+          };
+
+          const response = await fetch(url, options);
+          if (response.ok) return null;
+          let validation;
+          try {
+            validation = await response.json();
+          } catch (e) {
+            console.error(`Fetch error: ${e}`);
+            return null;
+          }
+          return validation;
+        }
+
+        function applyValidation(validation) {
+          for (const field of validation.template.formElements) {
+            const { name} = field.attributes;
+            // Get DOM form element
+            const el = document.querySelector(`#${name}`);
+            // Apply attributes
+            el.classList.add('is-invalid');
+            el.setAttribute('aria-describedby', `${name}Feedback`);
+            // Create feedback div
+            const feedback = document.createElement('div');
+            feedback.className = 'invalid-feedback';
+            // Populate with error messages
+            feedback.setAttribute('id', `${name}Feedback`);
+            for (const [i, error] of field.errors.entries()) {
+              // separator
+              if (i > 0) {
+                feedback.appendChild(document.createElement('br'));
+              }
+              const s = document.createElement('span').textContent = error.detail;
+              feedback.appendChild(s);
+            }
+          }
+        }
+
+        const submitBtn = document.getElementById('formSubmitButton');
+        submitBtn.onclick = event => {
+          event.preventDefault();
+          // TODO submit attributes
+          const subForms = [
+            {formID: 'situationAnalysis', caseID:"{{.SituationAnalysis.ID}}"},
+            {formID: 'individualAssessment', caseID:"{{.IndividualAssessment.ID}}"},
+          ]
+          let requiredValidation = false
+          // Do validation
+          subForms.forEach(async ({formID, caseID}) => {
+            const validation = await validateSubForm(formID, caseID);
+            if (validation != null) {
+              applyValidation(validation)
+              requiredValidation = true
+            }
+            return null
+          })
+          // Show updated Individual
+          if (!requiredValidation) {
+            location.reload()
+          }
+        };
+
 
         // Bind add relationship button
         document.getElementById('add-relationship-button').onclick = () => {

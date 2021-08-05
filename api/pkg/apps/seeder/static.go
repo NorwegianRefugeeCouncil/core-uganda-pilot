@@ -179,6 +179,9 @@ var (
 					Description: "Probe for description",
 					Placeholder: "",
 				},
+				Validation: cms.FormElementValidation{
+					Required: true,
+				},
 			},
 			{
 				Type: cms.Textarea,
@@ -187,6 +190,9 @@ var (
 					Name:        "challengesBarriers",
 					Description: "",
 					Placeholder: "",
+				},
+				Validation: cms.FormElementValidation{
+					Required: true,
 				},
 			},
 			{
@@ -197,6 +203,9 @@ var (
 					Description: "",
 					Placeholder: "",
 				},
+				Validation: cms.FormElementValidation{
+					Required: true,
+				},
 			},
 			{
 				Type: cms.Textarea,
@@ -205,6 +214,9 @@ var (
 					Name:        "workTogether",
 					Description: "",
 					Placeholder: "",
+				},
+				Validation: cms.FormElementValidation{
+					Required: true,
 				},
 			},
 		},
@@ -219,6 +231,9 @@ var (
 					Description: "Add the taxonomies of the services requested as a starting point one by one, by selecting the relevant options from the dropdowns below.",
 					Placeholder: "",
 				},
+				Validation: cms.FormElementValidation{
+					Required: true,
+				},
 			},
 			{
 				Type: cms.TaxonomyInput,
@@ -228,6 +243,9 @@ var (
 					Description: "Add the taxonomies of the other services requested one by one, by selecting the relevant options from the dropdowns below.",
 					Placeholder: "",
 				},
+				Validation: cms.FormElementValidation{
+					Required: true,
+				},
 			},
 			{
 				Type: cms.Textarea,
@@ -236,6 +254,9 @@ var (
 					Name:        "perceivedPriority",
 					Description: "",
 					Placeholder: "",
+				},
+				Validation: cms.FormElementValidation{
+					Required: true,
 				},
 			},
 		},
