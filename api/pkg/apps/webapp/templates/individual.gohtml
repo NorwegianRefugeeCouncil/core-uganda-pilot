@@ -53,7 +53,7 @@
                             {{else}}
                                 <div class="form mb-3">
                                     <label class="mb-2 text-muted" style="font-weight: bold;"
-                                           for="attribute-{{$attribute.ID}}-0">{{$attribute.Name}}</label>
+                                           for="attribute-{{$attribute.ID}}-0">{{(index $attribute.Translations 0).LongFormulation}}</label>
                                     <input class="form-control"
                                            name="attribute[{{$attribute.ID}}]"
                                            id="attribute-{{$attribute.ID}}-0"
