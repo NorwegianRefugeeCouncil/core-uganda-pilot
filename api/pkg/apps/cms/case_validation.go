@@ -24,24 +24,26 @@ func ValidateCase(kase *Case, path *validation.Path) validation.ErrorList {
 	}
 
 	// Validate form elements
-	for _, elem := range kase.Template.FormElements {
-		switch elem.Type {
-		case Checkbox:
-			for i, option := range elem.Attributes.CheckboxOptions {
-				if option.Required && !contains(elem.Attributes.Value, strconv.Itoa(i)) {
-					err := validation.Required(path.Child(elem.Attributes.Name).Index(i), fmt.Sprintf("%s is required", elem.Attributes.Name))
+	if kase.Template != nil {
+		for _, elem := range kase.Template.FormElements {
+			switch elem.Type {
+			case Checkbox:
+				for i, option := range elem.Attributes.CheckboxOptions {
+					if option.Required && !contains(elem.Attributes.Value, strconv.Itoa(i)) {
+						err := validation.Required(path.Child(elem.Attributes.Name).Index(i), fmt.Sprintf("%s is required", elem.Attributes.Name))
+						errList = append(errList, err)
+					}
+				}
+				fallthrough
+			default:
+				if elem.Validation.Required && allEmpty(elem.Attributes.Value) {
+					err := validation.Required(path.Child(elem.Attributes.Name), fmt.Sprintf("%s is required", elem.Attributes.Name))
 					errList = append(errList, err)
 				}
+				break
 			}
-			fallthrough
-		default:
-			if elem.Validation.Required && len(elem.Attributes.Value) == 0 {
-				err := validation.Required(path.Child(elem.Attributes.Name), fmt.Sprintf("%s is required", elem.Attributes.Name))
-				errList = append(errList, err)
-			}
-			break
+			// TODO COR-156 implement validation for specific input controls (email, date, etc)
 		}
-		// TODO COR-156 implement validation for specific input controls (email, date, etc)
 	}
 
 	return errList
@@ -54,4 +56,13 @@ func contains(slice []string, elem string) bool {
 		}
 	}
 	return false
+}
+
+func allEmpty(strSlice []string) bool {
+	for _, s := range strSlice {
+		if len(s) > 0 {
+			return false
+		}
+	}
+	return true
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
+	"github.com/nrc-no/core/pkg/apps/seeder"
 	"github.com/nrc-no/core/pkg/sessionmanager"
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/sync/errgroup"
@@ -144,6 +145,8 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	var relationshipTypes *iam.RelationshipTypeList
 	var attrs *iam.AttributeList
 	var tList *iam.TeamList
+	var individualAssessment *cms.Case
+	var situationAnalysis *cms.Case
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
@@ -215,6 +218,42 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		return err
 	})
 
+	g.Go(func() error {
+		var err error
+		returnedCases, err := cmsClient.Cases().List(ctx, cms.CaseListOptions{
+			PartyIDs:    []string{id},
+			CaseTypeIDs: []string{seeder.UGIndividualAssessmentCaseType.ID},
+		})
+		if err != nil {
+			return err
+		}
+		if len(returnedCases.Items) == 1 {
+			individualAssessment = returnedCases.Items[0]
+		}
+		return err
+	})
+
+	g.Go(func() error {
+		var err error
+		returnedCases, err := cmsClient.Cases().List(ctx, cms.CaseListOptions{
+			PartyIDs:    []string{id},
+			CaseTypeIDs: []string{seeder.UGSituationalAnalysisCaseType.ID},
+		})
+		if err != nil {
+			return err
+		}
+		if len(returnedCases.Items) == 1 {
+			situationAnalysis = returnedCases.Items[0]
+		}
+		return err
+	})
+
+	g.Go(func() error {
+		var err error
+		cList, err = cmsClient.Cases().List(ctx, cms.CaseListOptions{PartyIDs: []string{id}})
+		return err
+	})
+
 	if err := g.Wait(); err != nil {
 		s.Error(w, err)
 		return
@@ -246,6 +285,15 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		displayCases = append(displayCases, &d)
 	}
 
+	rc, err := s.GetRegistrationController(w, req, b)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+	status := rc.Status()
+	progressLabel := status.Label
+	progress := status.Progress
+
 	if err := s.renderFactory.New(req).ExecuteTemplate(w, "individual", map[string]interface{}{
 		"IsNew":                     id == "new",
 		"Individual":                b,
@@ -265,6 +313,10 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		"IndividualPartyTypeID":     iam.IndividualPartyType.ID,
 		"HouseholdPartyTypeID":      iam.HouseholdPartyType.ID,
 		"TeamPartyTypeID":           iam.TeamPartyType.ID,
+		"IndividualAssessment":      individualAssessment,
+		"SituationAnalysis":         situationAnalysis,
+		"ProgressLabel":             progressLabel,
+		"Progress":                  progress,
 	}); err != nil {
 		s.Error(w, err)
 		return
@@ -426,6 +478,11 @@ func (s *Server) PostIndividual(
 			s.Error(w, err)
 			return
 		}
+		err = s.createDefaultIndividualIntakeCases(req, individual)
+		if err != nil {
+			s.Error(w, err)
+			return
+		}
 
 		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
 			Message: fmt.Sprintf("Individual \"%s\" successfully created", b.String()),
@@ -485,4 +542,50 @@ func (s *Server) PostIndividual(
 	w.Header().Set("Location", "/individuals/"+individual.ID)
 	w.WriteHeader(http.StatusSeeOther)
 
+}
+
+func (s *Server) createDefaultIndividualIntakeCases(req *http.Request, individual *iam.Individual) error {
+	var situationAnalysisCaseType *cms.CaseType = &seeder.UGSituationalAnalysisCaseType
+	var individualAssessmentCaseType *cms.CaseType = &seeder.UGIndividualAssessmentCaseType
+
+	cmsClient, err := s.CMSClient(req)
+	if err != nil {
+		return err
+	}
+	creatorId := ""
+	ctx := req.Context()
+	subject := ctx.Value("Subject")
+	if subject != nil {
+		creatorId = subject.(string)
+	}
+	// Create UG Intake Cases for new individual
+	if situationAnalysisCaseType != nil {
+		_, err = cmsClient.Cases().Create(ctx, &cms.Case{
+			CaseTypeID:       situationAnalysisCaseType.ID,
+			PartyID:          individual.ID,
+			Done:             false,
+			BypassValidation: true,
+			TeamID:           situationAnalysisCaseType.TeamID,
+			CreatorID:        creatorId,
+			Template:         situationAnalysisCaseType.Template,
+		})
+		if err != nil {
+			return err
+		}
+	}
+	if individualAssessmentCaseType != nil {
+		_, err = cmsClient.Cases().Create(ctx, &cms.Case{
+			CaseTypeID:       individualAssessmentCaseType.ID,
+			PartyID:          individual.ID,
+			Done:             false,
+			BypassValidation: true,
+			TeamID:           individualAssessmentCaseType.TeamID,
+			CreatorID:        creatorId,
+			Template:         individualAssessmentCaseType.Template,
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

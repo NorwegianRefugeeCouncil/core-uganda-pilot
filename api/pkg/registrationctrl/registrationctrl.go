@@ -33,8 +33,9 @@ type Action struct {
 
 // Status indicates the Individuals progress along the RegistrationFlow.
 type Status struct {
-	Progress Progress
-	Label    string
+	Progress     Progress
+	CurrentStage int
+	Label        string
 }
 
 // Stage represents the status of one step along the RegistrationFlow.
@@ -50,20 +51,20 @@ type Progress []Stage
 func (p Progress) nClosed() int {
 	count := 0
 	for _, stage := range p {
-		if stage.StageStatus == Closed {
+		if stage.StageStatus == Complete {
 			count += 1
 		}
 	}
 	return count
 }
 
-// StageStatus indicates the current status of a Case (either Unopened, Open or Closed)
-type StageStatus int
+// StageStatus indicates the current status of a Case (either Unopened, Incomplete or Complete)
+type StageStatus string
 
 var (
-	Unopened StageStatus = 0
-	Open     StageStatus = 1
-	Closed   StageStatus = 2
+	Unopened   StageStatus = "Unopened"
+	Incomplete StageStatus = "Incomplete"
+	Complete   StageStatus = "Complete"
 )
 
 type state struct {
@@ -109,6 +110,7 @@ func (r *RegistrationController) Status() *Status {
 	done := status.Progress.nClosed()
 	total := len(r.registrationFlow.Steps)
 	status.Label = fmt.Sprintf("%d of %d", done, total)
+	status.CurrentStage = done - 1
 	r.status = status
 	return status
 }
@@ -117,10 +119,10 @@ func (r *RegistrationController) Status() *Status {
 func (r *RegistrationController) Action() Action {
 	var action = Action{}
 	for _, p := range r.status.Progress {
-		if p.StageStatus == Closed {
+		if p.StageStatus == Complete {
 			continue
 		}
-		if p.StageStatus == Open {
+		if p.StageStatus == Incomplete {
 			action.Label = "Incomplete"
 			action.Link = p.Ref
 			break

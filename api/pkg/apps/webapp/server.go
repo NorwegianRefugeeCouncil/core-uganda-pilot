@@ -118,6 +118,7 @@ func NewServer(options *ServerOptions) (*Server, error) {
 	router.Path("/cases").HandlerFunc(h.Cases)
 	router.Path("/cases/new").HandlerFunc(h.NewCase)
 	router.Path("/cases/{id}").HandlerFunc(h.Case)
+	router.Path("/cases/{id}").Queries("validationOnly", "true").HandlerFunc(h.Case)
 	router.Path("/settings").HandlerFunc(h.Settings)
 	router.Path("/settings/attributes").HandlerFunc(h.Attributes)
 	router.Path("/settings/attributes/new").HandlerFunc(h.NewAttribute)
@@ -168,4 +169,11 @@ func (s *Server) CMSClient(req *http.Request) (cms.Interface, error) {
 
 func (s *Server) Error(w http.ResponseWriter, err error) {
 	utils.ErrorResponse(w, err)
+}
+func (s *Server) GetPathParam(param string, w http.ResponseWriter, req *http.Request, into *string) bool {
+	return utils.GetPathParam(param, w, req, into)
+}
+
+func (s *Server) json(w http.ResponseWriter, status int, data interface{}) {
+	utils.JSONResponse(w, status, data)
 }

@@ -74,8 +74,8 @@ func (s *Server) Cases(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if req.Method == "POST" {
-		s.PostCase(req, w, ctx, &cms.Case{})
+	if req.Method == "POST" || req.Method == "PUT" {
+		s.PutOrPostCase(req, w, ctx, &cms.Case{})
 		return
 	}
 
@@ -236,10 +236,12 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 	}
-	if req.Method == "POST" {
-		s.PostCase(req, w, ctx, kase)
+
+	if req.Method == "POST" || req.Method == "PUT" {
+		s.PutOrPostCase(req, w, ctx, kase)
 		return
 	}
+
 	if err := s.renderFactory.New(req).ExecuteTemplate(w, "case", map[string]interface{}{
 		"Case":             kase,
 		"Parent":           parent,
@@ -339,7 +341,7 @@ func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (s *Server) PostCase(req *http.Request, w http.ResponseWriter, ctx context.Context, kase *cms.Case) {
+func (s *Server) PutOrPostCase(req *http.Request, w http.ResponseWriter, ctx context.Context, kase *cms.Case) {
 	var err error
 
 	cmsClient, err := s.CMSClient(req)
@@ -353,9 +355,12 @@ func (s *Server) PostCase(req *http.Request, w http.ResponseWriter, ctx context.
 		return
 	}
 
-	caseTypeId := req.Form.Get("caseTypeId")
-
-	caseType, err := cmsClient.CaseTypes().Get(ctx, caseTypeId)
+	var validationOnly = false
+	_, ok := req.URL.Query()["validationOnly"]
+	if ok {
+		validationOnly = true
+	}
+	caseType, err := cmsClient.CaseTypes().Get(ctx, kase.CaseTypeID)
 	if err != nil {
 		s.Error(w, err)
 		return
@@ -377,6 +382,7 @@ func (s *Server) PostCase(req *http.Request, w http.ResponseWriter, ctx context.
 		} else {
 			kase.CreatorID = subject.(string)
 		}
+		kase.IntakeCase = caseType.IntakeCaseType
 		postedCase, err = cmsClient.Cases().Create(ctx, kase)
 		action = "created"
 	} else {
@@ -385,14 +391,22 @@ func (s *Server) PostCase(req *http.Request, w http.ResponseWriter, ctx context.
 	}
 	if err != nil {
 		if status, ok := err.(*validation.Status); ok {
-			s.renderCaseValidation(req, w, kase, status)
-			return
+			if validationOnly {
+				validatedForm := NewValidatedTemplate(kase.Template, status.Errors)
+				s.json(w, status.Code, validatedForm)
+			} else {
+				s.renderWithValidation(req, w, kase, status)
+			}
 		} else {
 			s.Error(w, err)
-			return
 		}
+		return
 	}
-	s.redirectAfterSuccessfulCasePost(req, w, postedCase, action)
+	if validationOnly {
+		s.json(w, http.StatusOK, nil)
+	} else {
+		s.redirectAfterSuccessfulCasePost(req, w, postedCase, action)
+	}
 }
 
 type displayComment struct {
@@ -417,7 +431,7 @@ func displayComments(comments *cms.CommentList, authorMap map[string]*iam.Party)
 func (s *Server) processCaseValidation(req *http.Request, w http.ResponseWriter, kase *cms.Case, err error, action string) {
 	if err != nil {
 		if status, ok := err.(*validation.Status); ok {
-			s.renderCaseValidation(req, w, kase, status)
+			s.renderWithValidation(req, w, kase, status)
 			return
 		} else {
 			s.Error(w, err)
@@ -444,7 +458,7 @@ func (s *Server) redirectAfterSuccessfulCasePost(req *http.Request, w http.Respo
 	w.WriteHeader(http.StatusSeeOther)
 }
 
-func (s *Server) renderCaseValidation(req *http.Request, w http.ResponseWriter, kase *cms.Case, status *validation.Status) {
+func (s *Server) renderWithValidation(req *http.Request, w http.ResponseWriter, kase *cms.Case, status *validation.Status) {
 	validatedForm := NewValidatedTemplate(kase.Template, status.Errors)
 	parties, err := s.retrieveParties(req)
 	if err != nil {

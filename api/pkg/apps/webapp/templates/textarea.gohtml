@@ -1,9 +1,10 @@
 {{define "textarea"}}
-    <div class="form-floating mb-3">
-            <textarea id="{{.Attributes.Name}}"
+    <div class="form mb-3">
+        <label class="mb-2 text-muted" style="font-weight: bold;" for="{{.Attributes.Name}}">{{.Attributes.Label}}</label>
+        <textarea id="{{.Attributes.Name}}"
                       name="{{.Attributes.Name}}"
                       class="form-control  {{if .Errors}}is-invalid{{end}}"
-                      style="height: 150px"
+                      style="height: 100px"
                       placeholder="{{.Attributes.Placeholder}}"
                       {{if .Validation.Required}}required{{end}}
                     {{if .Errors}}aria-describedby="{{.Attributes.Name}}Feedback"{{end}}
@@ -12,7 +13,6 @@
                 {{- if .Errors}}{{with (index .Errors 0)}}{{.BadValue}}{{end -}}
                 {{- else if .Attributes.Value}}{{index .Attributes.Value 0}}{{end -}}
             </textarea>
-        <label for="{{.Attributes.Name}}">{{.Attributes.Label}}</label>
         <div class="form-text">{{.Attributes.Description}}</div>
         {{template "validation_feedback" .}}
     </div>

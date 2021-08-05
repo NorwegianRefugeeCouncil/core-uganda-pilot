@@ -37,6 +37,9 @@
                         {{end}}
                         <label for="{{$name}}">Name</label>
                     </div>
+
+                    <!-- TODO: Add a checkbox field for intakeCaseType -->
+
                     <div class="form-floating mb-3">
                         {{$name = "partyTypeId"}}
                         {{if and .Errors (.Errors.Find $name)}}
@@ -146,7 +149,7 @@
                                       style="height: 600px"
                                       aria-describedby="{{$name}}}Feedback"
                             >
-                                {{- if .CaseType.CaseTemplate}}{{.CaseType.Pretty}}{{end -}}
+                                {{- if .CaseType.Template}}{{.CaseType.Pretty}}{{end -}}
                             </textarea>
                             <div id="{{$name}}Feedback" class="invalid-feedback">
                                 {{range $errs}}
@@ -160,7 +163,7 @@
                                       style="height: 600px"
                                       {{if .CaseType}}readonly{{end}}
                             >
-                                {{- if .CaseType.CaseTemplate}}{{.CaseType.Pretty}}{{end -}}
+                                {{- if .CaseType.Template}}{{.CaseType.Pretty}}{{end -}}
                             </textarea>
                         {{end}}
                         <label for="{{$name}}">Form template</label>

@@ -7,13 +7,14 @@ import (
 	"strings"
 )
 
-func caseType(id, name, partyTypeID, teamID string, template *cms.CaseTemplate) cms.CaseType {
+func caseType(id, name, partyTypeID, teamID string, template *cms.CaseTemplate, intakeCaseType bool) cms.CaseType {
 	ct := cms.CaseType{
-		ID:          id,
-		Name:        name,
-		PartyTypeID: partyTypeID,
-		TeamID:      teamID,
-		Template:    template,
+		ID:             id,
+		Name:           name,
+		PartyTypeID:    partyTypeID,
+		TeamID:         teamID,
+		Template:       template,
+		IntakeCaseType: intakeCaseType,
 	}
 	caseTypes = append(caseTypes, ct)
 	return ct
@@ -128,7 +129,7 @@ func nationality(id string, team iam.Team, country iam.Country) iam.Nationality 
 	return m
 }
 
-func kase(id, caseTypeID, createdByID, partyID, teamID string, done bool, form *cms.CaseTemplate) cms.Case {
+func kase(id, caseTypeID, createdByID, partyID, teamID string, done bool, form *cms.CaseTemplate, intakeCase bool) cms.Case {
 
 	k := cms.Case{
 		ID:         id,
@@ -138,6 +139,7 @@ func kase(id, caseTypeID, createdByID, partyID, teamID string, done bool, form *
 		TeamID:     teamID,
 		Done:       done,
 		Template:   form,
+		IntakeCase: intakeCase,
 	}
 	cases = append(cases, k)
 	return k
@@ -177,6 +179,9 @@ var (
 					Description: "Probe for description",
 					Placeholder: "",
 				},
+				Validation: cms.FormElementValidation{
+					Required: true,
+				},
 			},
 			{
 				Type: cms.Textarea,
@@ -185,6 +190,9 @@ var (
 					Name:        "challengesBarriers",
 					Description: "",
 					Placeholder: "",
+				},
+				Validation: cms.FormElementValidation{
+					Required: true,
 				},
 			},
 			{
@@ -195,6 +203,9 @@ var (
 					Description: "",
 					Placeholder: "",
 				},
+				Validation: cms.FormElementValidation{
+					Required: true,
+				},
 			},
 			{
 				Type: cms.Textarea,
@@ -203,6 +214,9 @@ var (
 					Name:        "workTogether",
 					Description: "",
 					Placeholder: "",
+				},
+				Validation: cms.FormElementValidation{
+					Required: true,
 				},
 			},
 		},
@@ -217,6 +231,9 @@ var (
 					Description: "Add the taxonomies of the services requested as a starting point one by one, by selecting the relevant options from the dropdowns below.",
 					Placeholder: "",
 				},
+				Validation: cms.FormElementValidation{
+					Required: true,
+				},
 			},
 			{
 				Type: cms.TaxonomyInput,
@@ -226,6 +243,9 @@ var (
 					Description: "Add the taxonomies of the other services requested one by one, by selecting the relevant options from the dropdowns below.",
 					Placeholder: "",
 				},
+				Validation: cms.FormElementValidation{
+					Required: true,
+				},
 			},
 			{
 				Type: cms.Textarea,
@@ -234,6 +254,9 @@ var (
 					Name:        "perceivedPriority",
 					Description: "",
 					Placeholder: "",
+				},
+				Validation: cms.FormElementValidation{
+					Required: true,
 				},
 			},
 		},
@@ -645,13 +668,13 @@ var (
 
 	// Case Types for Uganda
 	// - Kampala Response Team
-	UGSituationalAnalysisCaseType      = caseType("0ae90b08-6944-48dc-8f30-5cb325292a8c", "Situational Analysis (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGSituationAnalysis)
-	UGIndividualAssessmentCaseType     = caseType("2f909038-0ce4-437b-af17-72fc5d668b49", "Individual Assessment (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGIndividualAssessment)
-	UGReferralCaseType                 = caseType("ecdaf47f-6fa9-48c8-9d10-6324bf932ed7", "Referral (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGReferral)
-	UGExternalReferralFollowupCaseType = caseType("2a1b670c-6336-4364-b89d-0e65fc771659", "External Referral Followup (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGExternalReferralFollowup)
+	UGSituationalAnalysisCaseType      = caseType("0ae90b08-6944-48dc-8f30-5cb325292a8c", "Situational Analysis (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGSituationAnalysis, true)
+	UGIndividualAssessmentCaseType     = caseType("2f909038-0ce4-437b-af17-72fc5d668b49", "Individual Assessment (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGIndividualAssessment, true)
+	UGReferralCaseType                 = caseType("ecdaf47f-6fa9-48c8-9d10-6324bf932ed7", "Referral (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGReferral, false)
+	UGExternalReferralFollowupCaseType = caseType("2a1b670c-6336-4364-b89d-0e65fc771659", "External Referral Followup (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGExternalReferralFollowup, false)
 	// - Kampala ICLA Team
-	UGICLAIndividualIntakeCaseType = caseType("31fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Individual Intake (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIndividualIntake)
-	UGICLACaseAssessmentCaseType   = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLACaseAssessment)
+	UGICLAIndividualIntakeCaseType = caseType("31fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Individual Intake (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIndividualIntake, false)
+	UGICLACaseAssessmentCaseType   = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLACaseAssessment, false)
 
 	UgandaRegistrationFlow = registrationctrl.RegistrationFlow{
 		// TODO Country
@@ -671,8 +694,8 @@ var (
 		}},
 	}
 	// Case Types for Dogfooding
-	DTeamBugReportCaseType      = caseType("39b24aaa-02a3-4455-b3a6-fd05e6a59fef", "Report a bug in Core", iam.IndividualPartyType.ID, DTeam.ID, DTeamBugReport)
-	DTeamFeatureRequestCaseType = caseType("95bf45fd-a703-4698-ae9c-12f1865b1a6f", "Request a feature/change in Core", iam.IndividualPartyType.ID, DTeam.ID, DTeamFeatureRequest)
+	DTeamBugReportCaseType      = caseType("39b24aaa-02a3-4455-b3a6-fd05e6a59fef", "Report a bug in Core", iam.IndividualPartyType.ID, DTeam.ID, DTeamBugReport, false)
+	DTeamFeatureRequestCaseType = caseType("95bf45fd-a703-4698-ae9c-12f1865b1a6f", "Request a feature/change in Core", iam.IndividualPartyType.ID, DTeam.ID, DTeamFeatureRequest, false)
 
 	// Individuals
 	JohnDoe     = individual("c529d679-3bb6-4a20-8f06-c096f4d9adc1", "John", "Doe", "12/02/1978", "Refugee", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "No", "Yes", "Moderate", "No", "", "No", "", "Kenya", "Kiswahili, English", "English", "123 Main Street, Kampala", "0123456789", "", "Email", "No")
@@ -713,7 +736,7 @@ var (
 	MozambiqueEducationTeamNationality = nationality("c26c5a55-9a9d-44c7-a230-1ccf392dcf10", MozambiqueEducationTeam, Uganda)
 
 	// Cases
-	BoDiddleySituationAnalysis = kase("dba43642-8093-4685-a197-f8848d4cbaaa", UGSituationalAnalysisCaseType.ID, Colette.ID, BoDiddley.ID, UgandaProtectionTeam.ID, false, &cms.CaseTemplate{
+	BoDiddleySituationAnalysis = kase("dba43642-8093-4685-a197-f8848d4cbaaa", UGSituationalAnalysisCaseType.ID, Colette.ID, BoDiddley.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
 		FormElements: []cms.FormElement{
 			{
 				Type: "textarea",
@@ -764,5 +787,237 @@ var (
 				},
 			},
 		},
-	})
+	},
+		true)
+
+	BoDiddleyIndividualAssessment = kase("3ea8c121-bdf0-46a0-86a8-698dc4abc872", UGIndividualAssessmentCaseType.ID, Colette.ID, BoDiddley.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
+		FormElements: []cms.FormElement{
+			{
+				Type: cms.TaxonomyInput,
+				Attributes: cms.FormElementAttribute{
+					Label: "Which service has the individual requested as a starting point of support?",
+					Name:  "serviceStartingPoint",
+					Value: []string{
+						"ICLA - Counselling - Legal Identity",
+					},
+					Description: "Add the taxonomies of the services requested as a starting point one by one, by selecting the relevant options from the dropdowns below.",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: cms.TaxonomyInput,
+				Attributes: cms.FormElementAttribute{
+					Label: "What other services has the individual requested/identified?",
+					Name:  "otherServices",
+					Value: []string{
+						"Protection - Individual Targeted Protection - Individual Protection Assistance",
+					},
+					Description: "Add the taxonomies of the other services requested one by one, by selecting the relevant options from the dropdowns below.",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: cms.Textarea,
+				Attributes: cms.FormElementAttribute{
+					Label:       "What is the perceived priority response level of the individual",
+					Name:        "perceivedPriority",
+					Description: "",
+					Placeholder: "",
+					Value: []string{
+						"High",
+					},
+				},
+			},
+		},
+	}, true)
+
+	MaryPoppinsSituationAnalysis = kase("4f7708ed-240a-423f-9bd1-839542e65833", UGSituationalAnalysisCaseType.ID, Colette.ID, MaryPoppins.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
+		FormElements: []cms.FormElement{
+			{
+				Type: "textarea",
+				Attributes: cms.FormElementAttribute{
+					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
+					Name:        "safeDiginifiedLife",
+					Description: "Probe for description",
+					Value: []string{
+						"Yes, I live a safe and dignified life and I am reasonably happy with my achievements and quality of life.",
+					},
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.FormElementAttribute{
+					Label: "How are you addressing these challenges and barriers? What is standing in your way? Can you give me some examples of how you are dealing with these challenges?",
+					Name:  "challengesBarriers",
+					Value: []string{
+						"Some of the barriers I face are communication gaps between myself and refugee tenants. We are attempting to deal with these challenges by using google translate.",
+					},
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.FormElementAttribute{
+					Label: "What are some solutions you see for this and how could we work together on these solutions? How could we work to reduce these challenges together?",
+					Name:  "solutions",
+					Value: []string{
+						"A qualified interpreter, who knows the legal context could help us to agree on contractual matters.",
+					},
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.FormElementAttribute{
+					Label: "If we were to work together on this, what could we do together? What would make the most difference for you?",
+					Name:  "workTogether",
+					Value: []string{
+						"NRC could provide a translator and a legal representative to ease contract negotiations",
+					},
+					Description: "",
+					Placeholder: "",
+				},
+			},
+		},
+	},
+		true)
+
+	MaryPoppinsIndividualAssessment = kase("45b4a637-c610-4ab9-afe6-4e958c36a96f", UGIndividualAssessmentCaseType.ID, Colette.ID, MaryPoppins.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
+		FormElements: []cms.FormElement{
+			{
+				Type: cms.TaxonomyInput,
+				Attributes: cms.FormElementAttribute{
+					Label: "Which service has the individual requested as a starting point of support?",
+					Name:  "serviceStartingPoint",
+					Value: []string{
+						"ICLA - Counselling - Legal Identity",
+					},
+					Description: "Add the taxonomies of the services requested as a starting point one by one, by selecting the relevant options from the dropdowns below.",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: cms.TaxonomyInput,
+				Attributes: cms.FormElementAttribute{
+					Label: "What other services has the individual requested/identified?",
+					Name:  "otherServices",
+					Value: []string{
+						"Protection - Individual Targeted Protection - Individual Protection Assistance",
+					},
+					Description: "Add the taxonomies of the other services requested one by one, by selecting the relevant options from the dropdowns below.",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: cms.Textarea,
+				Attributes: cms.FormElementAttribute{
+					Label:       "What is the perceived priority response level of the individual",
+					Name:        "perceivedPriority",
+					Description: "",
+					Value: []string{
+						"High",
+					},
+					Placeholder: "",
+				},
+			},
+		},
+	}, true)
+
+	JohnDoesSituationAnalysis = kase("43140381-8166-4fb3-9ac5-339082920ade", UGSituationalAnalysisCaseType.ID, Colette.ID, JohnDoe.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
+		FormElements: []cms.FormElement{
+			{
+				Type: "textarea",
+				Attributes: cms.FormElementAttribute{
+					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
+					Name:        "safeDiginifiedLife",
+					Description: "Probe for description",
+					Value: []string{
+						"Yes, I live a safe and dignified life and I am reasonably happy with my achievements and quality of life.",
+					},
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.FormElementAttribute{
+					Label: "How are you addressing these challenges and barriers? What is standing in your way? Can you give me some examples of how you are dealing with these challenges?",
+					Name:  "challengesBarriers",
+					Value: []string{
+						"Some of the barriers I face are communication gaps between myself and refugee tenants. We are attempting to deal with these challenges by using google translate.",
+					},
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.FormElementAttribute{
+					Label: "What are some solutions you see for this and how could we work together on these solutions? How could we work to reduce these challenges together?",
+					Name:  "solutions",
+					Value: []string{
+						"A qualified interpreter, who knows the legal context could help us to agree on contractual matters.",
+					},
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: "textarea",
+				Attributes: cms.FormElementAttribute{
+					Label: "If we were to work together on this, what could we do together? What would make the most difference for you?",
+					Name:  "workTogether",
+					Value: []string{
+						"NRC could provide a translator and a legal representative to ease contract negotiations",
+					},
+					Description: "",
+					Placeholder: "",
+				},
+			},
+		},
+	},
+		true)
+
+	JohnDoeIndividualAssessment = kase("65e02e79-1676-4745-9890-582e3d67d13f", UGIndividualAssessmentCaseType.ID, Colette.ID, JohnDoe.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
+		FormElements: []cms.FormElement{
+			{
+				Type: cms.TaxonomyInput,
+				Attributes: cms.FormElementAttribute{
+					Label: "Which service has the individual requested as a starting point of support?",
+					Name:  "serviceStartingPoint",
+					Value: []string{
+						"ICLA - Counselling - Legal Identity",
+					},
+					Description: "Add the taxonomies of the services requested as a starting point one by one, by selecting the relevant options from the dropdowns below.",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: cms.TaxonomyInput,
+				Attributes: cms.FormElementAttribute{
+					Label: "What other services has the individual requested/identified?",
+					Name:  "otherServices",
+					Value: []string{
+						"Protection - Individual Targeted Protection - Individual Protection Assistance",
+					},
+					Description: "Add the taxonomies of the other services requested one by one, by selecting the relevant options from the dropdowns below.",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: cms.Textarea,
+				Attributes: cms.FormElementAttribute{
+					Label: "What is the perceived priority response level of the individual",
+					Name:  "perceivedPriority",
+					Value: []string{
+						"High",
+					},
+					Description: "",
+					Placeholder: "",
+				},
+			},
+		},
+	}, true)
 )
