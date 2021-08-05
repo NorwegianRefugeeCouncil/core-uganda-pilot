@@ -243,9 +243,6 @@
       // Display state observable$
       let state$ = stateSubject.asObservable();
 
-      // Individual attributes observable$
-      state$.pipe(map(s => s.attributes));
-
       // Individual relationships observable$
       let relationships$ = state$.pipe(map(s => s.relationships));
 
