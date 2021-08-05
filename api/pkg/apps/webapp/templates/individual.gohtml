@@ -18,7 +18,7 @@
                         Registration progress:
                         <span class="badge rounded-pill bg-primary">Steps {{.ProgressLabel}}</span><br>
                     </div>
-                    <form id="form"
+                    <form id="attributesForm"
                           action="/individuals{{if .Individual}}{{if .Individual.ID}}/{{.Individual.ID}}{{end}}{{end}}"
                           method="post">
 
@@ -64,107 +64,108 @@
                             {{end}}
 
                         {{end}}
-
-                        {{if and (eq (len .Individual.PartyTypeIDs) 1) (.Individual.HasPartyType .IndividualPartyTypeID)}}
+                    </form>
+                    {{if (not .IsNew)}}
+                        {{if (and (eq (len .Individual.PartyTypeIDs) 1) (.Individual.HasPartyType .IndividualPartyTypeID))}}
                             <h5 class="mb-3">Situation Analysis <span
                                         class="badge rounded-pill bg-primary">{{(index .Progress 1).StageStatus}}</span>
                             </h5>
-                            <div id="situationAnalysis">
+                            <form id="situationAnalysis">
                                 {{range .SituationAnalysis.Template.FormElements}}
                                     {{template "formfield" .}}
                                 {{end}}
-                            </div>
+                            </form>
 
 
-                            <h5>Individual Assessment <span
+                            <h5 class="mb-3">Individual Assessment <span
                                         class="badge rounded-pill bg-primary">{{(index .Progress 2).StageStatus}}</span>
                             </h5>
-                            <div id="individualAssessment">
+                            <form id="individualAssessment">
                                 {{range .IndividualAssessment.Template.FormElements}}
                                     {{template "formfield" .}}
                                 {{end}}
-                            </div>
+                            </form>
                         {{end}}
+                    {{end}}
 
-                        <h4 class="display-6">Relationships</h4>
+                    <h4 class="display-6">Relationships</h4>
 
-                        <div id='relationships-container'>
-                            <ul id='relationships-list' class="list-group mb-3">
-                                <!-- Templated -->
-                            </ul>
-                        </div>
+                    <div id='relationships-container'>
+                        <ul id='relationships-list' class="list-group mb-3">
+                            <!-- Templated -->
+                        </ul>
+                    </div>
 
-                        <div class="d-flex flex-row mb-3">
-                            <div class="form-floating  me-2">
-                                <select id="relationshipTypeSelector" class="form-select pe-5"
-                                        data-testid="relationshipType">
-                                    {{range .FilteredRelationshipTypes.Items}}
-                                        <option value="{{.ID}}">{{.FirstPartyRole}}</option>
-                                    {{end}}
-                                </select>
-                                <label for="relationshipTypeSelector">Relationship Type</label>
-                            </div>
-                            <div class="form-floating mx-2 flex-grow-1 dropdown">
-                                <input type="text"
-                                       class="form-control"
-                                       name="partySelector"
-                                       id="partySelector"
-                                       data-testid="relatedParty"
-                                       data-bs-toggle="dropdown"
-                                       data-bs-auto-close="false"
-                                       aria-expanded="false"
-                                       autocomplete="off"
-                                />
-                                <ul class="dropdown-menu" id="partySelectorList" aria-labelledby="partySelector">
-                                </ul>
-                                <label for="partySelector" class="form-label">Related Party</label>
-                            </div>
-
-                            <button class="btn btn-primary ms-2"
-                                    id="add-relationship-button"
-                                    data-testid="add-btn"
-                                    type='button'>
-                                Add
-                            </button>
-                        </div>
-
-                        {{if not .IsNew}}
-
-                            <h4 class="display-6">Cases</h4>
-
-                            <table class="table table-hover table-bordered">
-
-                                <thead>
-                                <tr>
-                                    <th scope="col">Type</th>
-                                    <th scope="col">Status</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-
-                                {{range .Cases}}
-                                    <tr>
-                                        <td><a href="/cases/{{.Case.ID}}">{{.CaseType.Name}}</a></td>
-                                        <td>{{if .Case.Done}}Closed{{else}}Open{{end}}</td>
-                                    </tr>
+                    <div class="d-flex flex-row mb-3">
+                        <div class="form-floating  me-2">
+                            <select id="relationshipTypeSelector" class="form-select pe-5"
+                                    data-testid="relationshipType">
+                                {{range .FilteredRelationshipTypes.Items}}
+                                    <option value="{{.ID}}">{{.FirstPartyRole}}</option>
                                 {{end}}
+                            </select>
+                            <label for="relationshipTypeSelector">Relationship Type</label>
+                        </div>
+                        <div class="form-floating mx-2 flex-grow-1 dropdown">
+                            <input type="text"
+                                   class="form-control"
+                                   name="partySelector"
+                                   id="partySelector"
+                                   data-testid="relatedParty"
+                                   data-bs-toggle="dropdown"
+                                   data-bs-auto-close="false"
+                                   aria-expanded="false"
+                                   autocomplete="off"
+                            />
+                            <ul class="dropdown-menu" id="partySelectorList" aria-labelledby="partySelector">
+                            </ul>
+                            <label for="partySelector" class="form-label">Related Party</label>
+                        </div>
 
-                                </tbody>
-                            </table>
+                        <button class="btn btn-primary ms-2"
+                                id="add-relationship-button"
+                                data-testid="add-btn"
+                                type='button'>
+                            Add
+                        </button>
+                    </div>
 
-                            <h4 class="display-6">Open Case</h4>
+                    {{if not .IsNew}}
 
-                            {{range .CaseTypes.Items}}
+                        <h4 class="display-6">Cases</h4>
 
-                                <div>
-                                    <a href="/cases/new?caseTypeId={{.ID}}&partyId={{$.Individual.ID}}">{{.Name}}</a>
-                                </div>
+                        <table class="table table-hover table-bordered">
 
+                            <thead>
+                            <tr>
+                                <th scope="col">Type</th>
+                                <th scope="col">Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            {{range .Cases}}
+                                <tr>
+                                    <td><a href="/cases/{{.Case.ID}}">{{.CaseType.Name}}</a></td>
+                                    <td>{{if .Case.Done}}Closed{{else}}Open{{end}}</td>
+                                </tr>
                             {{end}}
 
+                            </tbody>
+                        </table>
+
+                        <h4 class="display-6">Open Case</h4>
+
+                        {{range .CaseTypes.Items}}
+
+                            <div>
+                                <a href="/cases/new?caseTypeId={{.ID}}&partyId={{$.Individual.ID}}">{{.Name}}</a>
+                            </div>
+
                         {{end}}
 
-                    </form>
+                    {{end}}
+
                     <button id="formSubmitButton" type="button" class="btn btn-primary mt-5" data-testid="save-btn">
                         Save
                     </button>
@@ -440,6 +441,7 @@
         submitBtn.onclick = async event => {
           // event.preventDefault();
           // TODO submit attributes
+            {{if (not .IsNew)}}
           const subForms = [
             { formID: 'situationAnalysis', caseID: "{{.SituationAnalysis.ID}}" },
             { formID: 'individualAssessment', caseID: "{{.IndividualAssessment.ID}}" }
@@ -464,8 +466,11 @@
 
           // Show updated Individual
           if (validations.every(v => !v.value)) {
-            location.reload();
           }
+            {{else}}
+          const f = document.getElementById('attributesForm');
+          f.submit();
+            {{end}}
         };
 
 

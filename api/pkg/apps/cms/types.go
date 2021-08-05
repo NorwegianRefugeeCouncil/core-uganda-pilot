@@ -8,15 +8,16 @@ import (
 
 // Case describes a case form including relevant metadata
 type Case struct {
-	ID         string        `json:"id" bson:"id"`
-	CaseTypeID string        `json:"caseTypeId" bson:"caseTypeId"`
-	PartyID    string        `json:"partyId" bson:"partyId"`
-	Done       bool          `json:"done" bson:"done"`
-	ParentID   string        `json:"parentId" bson:"parentId"`
-	TeamID     string        `json:"teamId" bson:"teamId"`
-	CreatorID  string        `json:"creatorId" bson:"creatorId"`
-	Template   *CaseTemplate `json:"template" bson:"template"`
-	IntakeCase bool          `json:"intakeCase" bson:"intakeCase"`
+	ID               string        `json:"id" bson:"id"`
+	CaseTypeID       string        `json:"caseTypeId" bson:"caseTypeId"`
+	PartyID          string        `json:"partyId" bson:"partyId"`
+	Done             bool          `json:"done" bson:"done"`
+	BypassValidation bool          `json:"bypassValidation"`
+	ParentID         string        `json:"parentId" bson:"parentId"`
+	TeamID           string        `json:"teamId" bson:"teamId"`
+	CreatorID        string        `json:"creatorId" bson:"creatorId"`
+	Template         *CaseTemplate `json:"template" bson:"template"`
+	IntakeCase       bool          `json:"intakeCase" bson:"intakeCase"`
 }
 
 type CaseList struct {

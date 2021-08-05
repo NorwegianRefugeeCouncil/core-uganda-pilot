@@ -16,12 +16,15 @@ func (s *Server) PostCase(w http.ResponseWriter, req *http.Request) {
 	}
 
 	kase := &payload
-
-	errList := ValidateCase(kase, &validation.Path{})
-	if len(errList) > 0 {
-		status := errList.Status(http.StatusUnprocessableEntity, "invalid case")
-		s.Error(w, &status)
-		return
+	if !kase.BypassValidation {
+		errList := ValidateCase(kase, &validation.Path{})
+		if len(errList) > 0 {
+			status := errList.Status(http.StatusUnprocessableEntity, "invalid case")
+			s.Error(w, &status)
+			return
+		}
+	} else {
+		kase.BypassValidation = false
 	}
 
 	kase.ID = uuid.NewV4().String()

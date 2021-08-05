@@ -285,7 +285,7 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		displayCases = append(displayCases, &d)
 	}
 
-	rc, err := s.GetRegistrationController(w, req)
+	rc, err := s.GetRegistrationController(w, req, b)
 	if err != nil {
 		s.Error(w, err)
 		return
@@ -364,21 +364,6 @@ func (s *Server) PostIndividual(
 		s.Error(w, err)
 		return
 	}
-
-	cmsClient, err := s.CMSClient(req)
-	if err != nil {
-		s.Error(w, err)
-		return
-	}
-
-	creatorId := ""
-	subject := ctx.Value("Subject")
-	if subject != nil {
-		creatorId = subject.(string)
-	}
-
-	var situationAnalysisCaseType *cms.CaseType = &seeder.UGSituationalAnalysisCaseType
-	var individualAssessmentCaseType *cms.CaseType = &seeder.UGIndividualAssessmentCaseType
 
 	if err := req.ParseForm(); err != nil {
 		s.Error(w, err)
@@ -493,27 +478,10 @@ func (s *Server) PostIndividual(
 			s.Error(w, err)
 			return
 		}
-
-		// Create UG Intake Cases for new individual
-		if situationAnalysisCaseType != nil {
-			_, err = cmsClient.Cases().Create(ctx, &cms.Case{
-				CaseTypeID: situationAnalysisCaseType.ID,
-				PartyID:    individual.ID,
-				Done:       false,
-				TeamID:     situationAnalysisCaseType.TeamID,
-				CreatorID:  creatorId,
-				Template:   nil,
-			})
-		}
-		if individualAssessmentCaseType != nil {
-			_, err = cmsClient.Cases().Create(ctx, &cms.Case{
-				CaseTypeID: individualAssessmentCaseType.ID,
-				PartyID:    individual.ID,
-				Done:       false,
-				TeamID:     individualAssessmentCaseType.TeamID,
-				CreatorID:  creatorId,
-				Template:   nil,
-			})
+		err = s.createDefaultIndividualIntakeCases(req, individual)
+		if err != nil {
+			s.Error(w, err)
+			return
 		}
 
 		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
@@ -574,4 +542,50 @@ func (s *Server) PostIndividual(
 	w.Header().Set("Location", "/individuals/"+individual.ID)
 	w.WriteHeader(http.StatusSeeOther)
 
+}
+
+func (s *Server) createDefaultIndividualIntakeCases(req *http.Request, individual *iam.Individual) error {
+	var situationAnalysisCaseType *cms.CaseType = &seeder.UGSituationalAnalysisCaseType
+	var individualAssessmentCaseType *cms.CaseType = &seeder.UGIndividualAssessmentCaseType
+
+	cmsClient, err := s.CMSClient(req)
+	if err != nil {
+		return err
+	}
+	creatorId := ""
+	ctx := req.Context()
+	subject := ctx.Value("Subject")
+	if subject != nil {
+		creatorId = subject.(string)
+	}
+	// Create UG Intake Cases for new individual
+	if situationAnalysisCaseType != nil {
+		_, err = cmsClient.Cases().Create(ctx, &cms.Case{
+			CaseTypeID:       situationAnalysisCaseType.ID,
+			PartyID:          individual.ID,
+			Done:             false,
+			BypassValidation: true,
+			TeamID:           situationAnalysisCaseType.TeamID,
+			CreatorID:        creatorId,
+			Template:         situationAnalysisCaseType.Template,
+		})
+		if err != nil {
+			return err
+		}
+	}
+	if individualAssessmentCaseType != nil {
+		_, err = cmsClient.Cases().Create(ctx, &cms.Case{
+			CaseTypeID:       individualAssessmentCaseType.ID,
+			PartyID:          individual.ID,
+			Done:             false,
+			BypassValidation: true,
+			TeamID:           individualAssessmentCaseType.TeamID,
+			CreatorID:        creatorId,
+			Template:         individualAssessmentCaseType.Template,
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
