@@ -386,7 +386,11 @@
 
         function applyValidation(validation) {
           for (const field of validation.template.formElements) {
-            const { name} = field.attributes;
+            let { name} = field.attributes;
+            // skip leading "."
+            if (name.slice(0, 1) === '.') {
+              name = name.slice(1)
+            }
             // Get DOM form element
             const el = document.querySelector(`#${name}`);
             // Apply attributes
@@ -394,8 +398,10 @@
             el.setAttribute('aria-describedby', `${name}Feedback`);
             // Create feedback div
             const feedback = document.createElement('div');
+            // Add after el
+            el.insertAdjacentElement('afterend', feedback);
+            // Populate attributes and error messages
             feedback.className = 'invalid-feedback';
-            // Populate with error messages
             feedback.setAttribute('id', `${name}Feedback`);
             for (const [i, error] of field.errors.entries()) {
               // separator
