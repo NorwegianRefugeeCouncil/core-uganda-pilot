@@ -12,6 +12,7 @@
                 {{$hasInnerErr = gt ($.Errors.Find $fieldName).Length 1}}
             {{end}}
             <div class="form-check mb-3">
+                <label class="form-check-label mb-2 text-muted" style="font-weight: bold;" for="{{$fieldName}}">{{.Label}}</label>
                 <input id="{{$fieldName}}"
                        name="{{$.Attributes.Name}}"
                        value="{{$i}}"
@@ -22,7 +23,6 @@
                         {{if $hasInnerErr}}aria-describedby="{{$fieldName}}Feedback"{{end}}
                         {{if $.Readonly}}disabled{{end}}
                 >
-                <label for="{{$fieldName}}" class="form-check-label">{{.Label}}</label>
                 {{if $hasInnerErr}}
                     <div id="{{$fieldName}}Feedback" class="invalid-feedback">
                         You must check this box.

@@ -1,44 +1,47 @@
 {{define "taxonomyinput"}}
-    <div class="card mb-4">
-        <div class="card-body">
-            <span>{{.Attributes.Label}}</span>
-            <p class="form-text">{{.Attributes.Description}}</p>
-            <div class="form-floating mb-3">
-                <select id="programme-area-{{.Attributes.Name}}" class="form-select">
-                </select>
-                <label for="programme-area-{{.Attributes.Name}}">Programme Area</label>
+    <div class="mb-3">
+        <div class="card form-control">
+            <div class="card-body">
+                <span>{{.Attributes.Label}}</span>
+                <p class="form-text">{{.Attributes.Description}}</p>
+                <div class="form-floating mb-3">
+                    <select id="programme-area-{{.Attributes.Name}}" class="form-select">
+                    </select>
+                    <label for="programme-area-{{.Attributes.Name}}">Programme Area</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <select id="service-area-{{.Attributes.Name}}" class="form-select">
+                    </select>
+                    <label for="service-area-{{.Attributes.Name}}">Service Area</label>
+
+                </div>
+
+                <div class="form-floating mb-3">
+                    <select id="thematic-area-{{.Attributes.Name}}" class="form-select">
+                    </select>
+                    <label for="thematic-area-{{.Attributes.Name}}">Thematic Area</label>
+
+                </div>
+
+                <div id="button-container-{{.Attributes.Name}}" class="form-floating mb-3">
+                    <button id="btn-add-{{.Attributes.Name}}" type="button" class="btn btn-primary">Add</button>
+                    <button id="btn-clear-{{.Attributes.Name}}" type="button" class="btn btn-primary">Clear</button>
+                </div>
+
+                <div id="badge-container-{{.Attributes.Name}}" class="form-floating mb-3"></div>
+
+
             </div>
-
-            <div class="form-floating mb-3">
-                <select id="service-area-{{.Attributes.Name}}" class="form-select">
-                </select>
-                <label for="service-area-{{.Attributes.Name}}">Service Area</label>
-
-            </div>
-
-            <div class="form-floating mb-3">
-                <select id="thematic-area-{{.Attributes.Name}}" class="form-select">
-                </select>
-                <label for="thematic-area-{{.Attributes.Name}}">Thematic Area</label>
-
-            </div>
-
-            <div id="button-container-{{.Attributes.Name}}" class="form-floating mb-3">
-                <button id="btn-add-{{.Attributes.Name}}" type="button" class="btn btn-primary">Add</button>
-                <button id="btn-clear-{{.Attributes.Name}}" type="button" class="btn btn-primary">Clear</button>
-            </div>
-
-            <div id="badge-container-{{.Attributes.Name}}" class="form-floating mb-3"></div>
-
             <input id="{{.Attributes.Name}}"
+                   class="taxonomyinput"
                    name="{{.Attributes.Name}}"
                    value="{{if .Attributes.Value}}{{index .Attributes.Value 0}}{{end}}"
                    type="hidden"
                    placeholder="{{.Attributes.Placeholder}}"
                    {{if .Validation.Required}}required{{end}}>
-
         </div>
+        {{template "validation_feedback" .}}
     </div>
-
     {{template "taxonomyinput_script" .}}
 {{end}}

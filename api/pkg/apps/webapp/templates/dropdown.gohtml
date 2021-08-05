@@ -4,6 +4,7 @@
         {{$prefix = .Prefix}}
     {{end}}
     <div class="form-floating mb-3">
+        <label class="mb-2 text-muted" style="font-weight: bold;" for="{{.Attributes.Name}}">{{.Attributes.Label}}</label>
         <select id="{{.Attributes.Name}}"
                 name="{{$prefix}}{{.Attributes.Name}}"
                 class="form-select {{if .Errors}}is-invalid{{end}}"
@@ -18,8 +19,7 @@
                 <option value="{{$i}}"
                         {{range $v := $.Attributes.Value }}{{if eq $istr $v}}selected{{end}}{{end}}>{{.}}</option>
             {{end}}
-        </select>
-        <label class="form-label" for="{{.Attributes.Name}}">{{.Attributes.Label}}</label>
+        <
         <div class="form-text">{{.Attributes.Description}}</div>
         {{template "validation_feedback" .}}
     </div>

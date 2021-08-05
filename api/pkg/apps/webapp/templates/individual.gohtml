@@ -34,29 +34,32 @@
 
                             {{ if $values}}
                                 {{range $idx, $value := $values}}
-                                    <div class="form-floating mb-3">
+                                    <div class="form mb-3">
+                                        {{ if eq (len $attribute.Translations) 0}}
+                                            <label class="mb-2 text-muted" style="font-weight: bold;"
+                                                   for="attribute-{{$attribute.ID}}-{{$idx}}">{{$attribute.Name}}</label>
+                                        {{ else }}
+                                            <label class="mb-2 text-muted" style="font-weight: bold;"
+                                                   for="attribute-{{$attribute.ID}}-{{$idx}}">{{(index $attribute.Translations 0).LongFormulation}}</label>
+                                        {{ end }}
                                         <input class="form-control"
                                                name="attribute[{{$attribute.ID}}]"
                                                id="attribute-{{$attribute.ID}}-{{$idx}}"
                                                type="text"
                                                data-testid="text-attribute"
                                                value="{{$value}}">
-                                        {{ if eq (len $attribute.Translations) 0}}
-                                            <label for="attribute-{{$attribute.ID}}-{{$idx}}">{{$attribute.Name}}</label>
-                                        {{ else }}
-                                            <label for="attribute-{{$attribute.ID}}-{{$idx}}">{{(index $attribute.Translations 0).LongFormulation}}</label>
-                                        {{ end }}
                                     </div>
                                 {{end}}
                             {{else}}
-                                <div class="form-floating mb-3">
+                                <div class="form mb-3">
+                                    <label class="mb-2 text-muted" style="font-weight: bold;"
+                                           for="attribute-{{$attribute.ID}}-0">{{$attribute.Name}}</label>
                                     <input class="form-control"
                                            name="attribute[{{$attribute.ID}}]"
                                            id="attribute-{{$attribute.ID}}-0"
                                            type="text"
                                            data-testid="text-attribute"
                                            value="">
-                                    <label for="attribute-{{$attribute.ID}}-0">{{$attribute.Name}}</label>
                                 </div>
                             {{end}}
 
@@ -359,12 +362,9 @@
         // Form handling
         //
         async function validateSubForm(formID, caseID) {
-          const saFields = document.querySelectorAll(`#${formID}>div>[name]`);
+          const fields = document.querySelectorAll(`#${formID} [name]`);
           const searchParams = new URLSearchParams();
-          saFields.forEach(field => {
-            /* if (field instanceof HTMLTextAreaElement) {
-              field.value = field.textContent;
-            } else */
+          fields.forEach(field => {
             if (field instanceof HTMLSelectElement) {
               field.value = field.options[field.selectedIndex].value;
             }
@@ -399,7 +399,10 @@
               continue;
             }
             // Get DOM form element
-            const el = document.querySelector(`#${name}`);
+            let el = document.querySelector(`#${name}`);
+            if (element.type === 'taxonomyinput') {
+              el = el.parentElement;
+            }
             // Apply attributes
             el.classList.add('is-invalid');
             el.setAttribute('aria-describedby', `${name}Feedback`);
@@ -418,10 +421,15 @@
         }
 
         function removeValidation(formID) {
-          const fields = document.querySelectorAll(`#${formID}>div>[name]`);
+          const fields = document.querySelectorAll(`#${formID} [name]`);
           fields.forEach(field => {
+            const name = field.name;
+            if (field.classList.contains('taxonomyinput')) {
+              field = field.parentElement;
+            }
             field.classList.remove('is-invalid');
-            const feedback = document.getElementById(`${field.name}Feedback`);
+            field.removeAttribute('aria-describedby');
+            const feedback = document.getElementById(`${name}Feedback`);
             if (feedback != null) {
               feedback.innerHTML = '';
             }
@@ -455,7 +463,7 @@
           }));
 
           // Show updated Individual
-          if (validations.every(v => !v)) {
+          if (validations.every(v => !v.value)) {
             location.reload();
           }
         };
