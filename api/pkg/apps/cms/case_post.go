@@ -16,7 +16,7 @@ func (s *Server) PostCase(w http.ResponseWriter, req *http.Request) {
 	}
 
 	kase := &payload
-	if !kase.BypassValidation {
+	if kase.Template != nil {
 		errList := ValidateCase(kase, &validation.Path{})
 		if len(errList) > 0 {
 			status := errList.Status(http.StatusUnprocessableEntity, "invalid case")
@@ -24,7 +24,12 @@ func (s *Server) PostCase(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 	} else {
-		kase.BypassValidation = false
+		ct, err := s.caseTypeStore.Get(ctx, kase.CaseTypeID)
+		if err != nil {
+			s.Error(w, err)
+			return
+		}
+		kase.Template = ct.Template
 	}
 
 	kase.ID = uuid.NewV4().String()

@@ -119,6 +119,7 @@
           ];
           classesToAdd.forEach(classToAdd => badge.classList.add(classToAdd));
           badge.textContent = label;
+            {{if not .Readonly}}
           badge.addEventListener('click', (event) => {
             removeBadgeAndValue(label);
           });
@@ -130,6 +131,7 @@
             badge.classList.remove('bg-danger');
             badge.classList.add('bg-secondary');
           });
+          {{end}}
           return badge;
         };
 

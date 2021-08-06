@@ -27,19 +27,19 @@ func (s *Server) PutCase(w http.ResponseWriter, req *http.Request) {
 
 	kase.Template = payload.Template
 
-	if !kase.BypassValidation {
-		errList := ValidateCase(kase, &validation.Path{})
-		if len(errList) > 0 {
-			status := errList.Status(http.StatusUnprocessableEntity, "invalid case")
-			s.Error(w, &status)
-			return
-		}
-	} else {
-		kase.BypassValidation = false
+	errList := ValidateCase(kase, &validation.Path{})
+	if len(errList) > 0 {
+		status := errList.Status(http.StatusUnprocessableEntity, "invalid case")
+		s.Error(w, &status)
+		return
 	}
 
-	// if no validation errors, assume the case is Done
-	kase.Done = true
+	// if no validation errors, assume the case is Done if intake case
+	if kase.IntakeCase {
+		kase.Done = true
+	} else {
+		kase.Done = payload.Done
+	}
 
 	if err := s.caseStore.Update(ctx, kase); err != nil {
 		s.Error(w, err)

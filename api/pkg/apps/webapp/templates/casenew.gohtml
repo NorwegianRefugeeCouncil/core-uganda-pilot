@@ -10,7 +10,8 @@
             <div class="card-body">
                 <h4 class="card-title">Create Case</h4>
                 <form id="form" data-testid='newCaseForm' action="/cases" method="post">
-                    <div class="form-floating mb-3">
+                    <div class="form mb-3">
+                        <label for="case-type">Select Case Type</label>
                         <select
                                 id="case-type"
                                 class="form-select"
@@ -30,18 +31,18 @@
                                 <option selected disabled>No case types defined</option>
                             {{end}}
                         </select>
-                        <label for="case-type">Select Case Type</label>
                     </div>
                     {{ if or .ValidatedForm .CaseType}}
-                        <div class="form-floating mb-3">
+                        <div class="form mb-3">
+                            <label for="team">Corresponding Team</label>
                             <select disabled id="team" class="form-select" name="teamIdSelect">
                                 <option selected value="{{.Team.ID}}">{{.Team.Name}}</option>
                             </select>
-                            <label for="team">Corresponding Team</label>
                         </div>
                         <input id="teamId" name="teamId" type="hidden" value="{{.Team.ID}}" />
 
-                        <div class="form-floating mb-3">
+                        <div class="form mb-3">
+                            <label for="party">Select Party</label>
                             <select id="party" class="form-select" name="partyId" data-testid="partyPicker" required>
                                 {{if .Parties}}
                                     <option {{if not $.PartyID}}selected{{end}}></option>
@@ -53,7 +54,6 @@
                                     <option selected disabled>No parties defined</option>
                                 {{end}}
                             </select>
-                            <label for="party">Select Party</label>
                         </div>
                         {{with or .ValidatedForm .CaseType}}
                             {{range .Template.FormElements}}
