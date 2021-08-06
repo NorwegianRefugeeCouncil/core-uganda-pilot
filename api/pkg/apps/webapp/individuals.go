@@ -222,7 +222,7 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		var err error
 		returnedCases, err := cmsClient.Cases().List(ctx, cms.CaseListOptions{
 			PartyIDs:    []string{id},
-			CaseTypeIDs: []string{seeder.UGIndividualAssessmentCaseType.ID},
+			CaseTypeIDs: []string{seeder.UGIndividualResponseCaseType.ID},
 		})
 		if err != nil {
 			return err
@@ -546,7 +546,7 @@ func (s *Server) PostIndividual(
 
 func (s *Server) createDefaultIndividualIntakeCases(req *http.Request, individual *iam.Individual) error {
 	var situationAnalysisCaseType *cms.CaseType = &seeder.UGSituationalAnalysisCaseType
-	var individualAssessmentCaseType *cms.CaseType = &seeder.UGIndividualAssessmentCaseType
+	var individualResponseCaseType *cms.CaseType = &seeder.UGIndividualResponseCaseType
 
 	cmsClient, err := s.CMSClient(req)
 	if err != nil {
@@ -572,12 +572,12 @@ func (s *Server) createDefaultIndividualIntakeCases(req *http.Request, individua
 			return err
 		}
 	}
-	if individualAssessmentCaseType != nil {
+	if individualResponseCaseType != nil {
 		_, err = cmsClient.Cases().Create(ctx, &cms.Case{
-			CaseTypeID: individualAssessmentCaseType.ID,
+			CaseTypeID: individualResponseCaseType.ID,
 			PartyID:    individual.ID,
 			Done:       false,
-			TeamID:     individualAssessmentCaseType.TeamID,
+			TeamID:     individualResponseCaseType.TeamID,
 			CreatorID:  creatorId,
 			IntakeCase: situationAnalysisCaseType.IntakeCaseType,
 		})

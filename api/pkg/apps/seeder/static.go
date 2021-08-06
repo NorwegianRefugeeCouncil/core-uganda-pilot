@@ -221,7 +221,7 @@ var (
 			},
 		},
 	}
-	UGIndividualAssessment = &cms.CaseTemplate{
+	UGIndividualResponse = &cms.CaseTemplate{
 		FormElements: []cms.FormElement{
 			{
 				Type: cms.TaxonomyInput,
@@ -655,7 +655,7 @@ var (
 	// Case Types for Uganda
 	// - Kampala Response Team
 	UGSituationalAnalysisCaseType      = caseType("0ae90b08-6944-48dc-8f30-5cb325292a8c", "Situational Analysis (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGSituationAnalysis, true)
-	UGIndividualAssessmentCaseType     = caseType("2f909038-0ce4-437b-af17-72fc5d668b49", "Individual Assessment (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGIndividualAssessment, true)
+	UGIndividualResponseCaseType       = caseType("2f909038-0ce4-437b-af17-72fc5d668b49", "Response (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGIndividualResponse, true)
 	UGReferralCaseType                 = caseType("ecdaf47f-6fa9-48c8-9d10-6324bf932ed7", "Referral (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGReferral, false)
 	UGExternalReferralFollowupCaseType = caseType("2a1b670c-6336-4364-b89d-0e65fc771659", "External Referral Followup (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGExternalReferralFollowup, false)
 	// - Kampala ICLA Team
@@ -675,8 +675,8 @@ var (
 			Ref:   UGSituationalAnalysisCaseType.ID,
 		}, {
 			Type:  registrationctrl.CaseType,
-			Label: "Individual Assessment",
-			Ref:   UGIndividualAssessmentCaseType.ID,
+			Label: "Individual Response",
+			Ref:   UGIndividualResponseCaseType.ID,
 		}},
 	}
 	// Case Types for Dogfooding
@@ -776,7 +776,7 @@ var (
 	},
 		true)
 
-	BoDiddleyIndividualAssessment = kase("3ea8c121-bdf0-46a0-86a8-698dc4abc872", UGIndividualAssessmentCaseType.ID, Colette.ID, BoDiddley.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
+	BoDiddleyIndividualAssessment = kase("3ea8c121-bdf0-46a0-86a8-698dc4abc872", UGIndividualResponseCaseType.ID, Colette.ID, BoDiddley.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
 		FormElements: []cms.FormElement{
 			{
 				Type: cms.TaxonomyInput,
@@ -871,7 +871,7 @@ var (
 	},
 		true)
 
-	MaryPoppinsIndividualAssessment = kase("45b4a637-c610-4ab9-afe6-4e958c36a96f", UGIndividualAssessmentCaseType.ID, Colette.ID, MaryPoppins.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
+	MaryPoppinsIndividualAssessment = kase("45b4a637-c610-4ab9-afe6-4e958c36a96f", UGIndividualResponseCaseType.ID, Colette.ID, MaryPoppins.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
 		FormElements: []cms.FormElement{
 			{
 				Type: cms.TaxonomyInput,
@@ -966,7 +966,7 @@ var (
 	},
 		true)
 
-	JohnDoeIndividualAssessment = kase("65e02e79-1676-4745-9890-582e3d67d13f", UGIndividualAssessmentCaseType.ID, Colette.ID, JohnDoe.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
+	JohnDoeIndividualAssessment = kase("65e02e79-1676-4745-9890-582e3d67d13f", UGIndividualResponseCaseType.ID, Colette.ID, JohnDoe.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
 		FormElements: []cms.FormElement{
 			{
 				Type: cms.TaxonomyInput,
