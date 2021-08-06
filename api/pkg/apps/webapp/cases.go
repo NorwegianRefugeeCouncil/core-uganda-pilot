@@ -360,6 +360,16 @@ func (s *Server) PutOrPostCase(req *http.Request, w http.ResponseWriter, ctx con
 	if ok {
 		validationOnly = true
 	}
+
+	if kase.CaseTypeID == "" {
+		// we need to get the caseTypeId from the form data
+		kase.CaseTypeID = req.Form.Get("caseTypeId")
+		if kase.CaseTypeID == "" {
+			s.Error(w, fmt.Errorf("unable to detect case type id for new case"))
+			return
+		}
+	}
+
 	caseType, err := cmsClient.CaseTypes().Get(ctx, kase.CaseTypeID)
 	if err != nil {
 		s.Error(w, err)
