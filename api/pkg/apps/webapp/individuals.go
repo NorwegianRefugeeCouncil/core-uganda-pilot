@@ -561,13 +561,12 @@ func (s *Server) createDefaultIndividualIntakeCases(req *http.Request, individua
 	// Create UG Intake Cases for new individual
 	if situationAnalysisCaseType != nil {
 		_, err = cmsClient.Cases().Create(ctx, &cms.Case{
-			CaseTypeID:       situationAnalysisCaseType.ID,
-			PartyID:          individual.ID,
-			Done:             false,
-			BypassValidation: true,
-			TeamID:           situationAnalysisCaseType.TeamID,
-			CreatorID:        creatorId,
-			Template:         situationAnalysisCaseType.Template,
+			CaseTypeID: situationAnalysisCaseType.ID,
+			PartyID:    individual.ID,
+			Done:       false,
+			TeamID:     situationAnalysisCaseType.TeamID,
+			CreatorID:  creatorId,
+			IntakeCase: situationAnalysisCaseType.IntakeCaseType,
 		})
 		if err != nil {
 			return err
@@ -575,13 +574,12 @@ func (s *Server) createDefaultIndividualIntakeCases(req *http.Request, individua
 	}
 	if individualAssessmentCaseType != nil {
 		_, err = cmsClient.Cases().Create(ctx, &cms.Case{
-			CaseTypeID:       individualAssessmentCaseType.ID,
-			PartyID:          individual.ID,
-			Done:             false,
-			BypassValidation: true,
-			TeamID:           individualAssessmentCaseType.TeamID,
-			CreatorID:        creatorId,
-			Template:         individualAssessmentCaseType.Template,
+			CaseTypeID: individualAssessmentCaseType.ID,
+			PartyID:    individual.ID,
+			Done:       false,
+			TeamID:     individualAssessmentCaseType.TeamID,
+			CreatorID:  creatorId,
+			IntakeCase: situationAnalysisCaseType.IntakeCaseType,
 		})
 		if err != nil {
 			return err

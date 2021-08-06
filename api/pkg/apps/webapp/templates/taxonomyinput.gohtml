@@ -4,32 +4,31 @@
             <div class="card-body">
                 <span>{{.Attributes.Label}}</span>
                 <p class="form-text">{{.Attributes.Description}}</p>
-                <div class="form-floating mb-3">
-                    <select id="programme-area-{{.Attributes.Name}}" class="form-select">
-                    </select>
-                    <label for="programme-area-{{.Attributes.Name}}">Programme Area</label>
-                </div>
+                    <div class="form mb-3" {{if .Readonly}}style="display: none"{{end}}>
+                        <label for="programme-area-{{.Attributes.Name}}">Programme Area</label>
+                        <select id="programme-area-{{.Attributes.Name}}" class="form-select">
+                        </select>
+                    </div>
 
-                <div class="form-floating mb-3">
-                    <select id="service-area-{{.Attributes.Name}}" class="form-select">
-                    </select>
-                    <label for="service-area-{{.Attributes.Name}}">Service Area</label>
+                    <div class="form mb-3" {{if .Readonly}}style="display: none"{{end}}>
+                        <label for="service-area-{{.Attributes.Name}}">Service Area</label>
+                        <select id="service-area-{{.Attributes.Name}}" class="form-select">
+                        </select>
 
-                </div>
+                    </div>
 
-                <div class="form-floating mb-3">
-                    <select id="thematic-area-{{.Attributes.Name}}" class="form-select">
-                    </select>
-                    <label for="thematic-area-{{.Attributes.Name}}">Thematic Area</label>
+                    <div class="form mb-3" {{if .Readonly}}style="display: none"{{end}}>
+                        <label for="thematic-area-{{.Attributes.Name}}">Thematic Area</label>
+                        <select id="thematic-area-{{.Attributes.Name}}" class="form-select">
+                        </select>
 
-                </div>
+                    </div>
 
-                <div id="button-container-{{.Attributes.Name}}" class="form-floating mb-3">
-                    <button id="btn-add-{{.Attributes.Name}}" type="button" class="btn btn-primary">Add</button>
-                    <button id="btn-clear-{{.Attributes.Name}}" type="button" class="btn btn-primary">Clear</button>
-                </div>
-
-                <div id="badge-container-{{.Attributes.Name}}" class="form-floating mb-3"></div>
+                    <div id="button-container-{{.Attributes.Name}}" class="mb-3" {{if .Readonly}}style="display: none"{{end}}>
+                        <button id="btn-add-{{.Attributes.Name}}" type="button" class="btn btn-primary">Add</button>
+                        <button id="btn-clear-{{.Attributes.Name}}" type="button" class="btn btn-primary">Clear</button>
+                    </div>
+                <div id="badge-container-{{.Attributes.Name}}" class="mb-3"></div>
 
 
             </div>

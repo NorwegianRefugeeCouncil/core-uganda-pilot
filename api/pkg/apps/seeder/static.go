@@ -229,7 +229,6 @@ var (
 					Label:       "Which service has the individual requested as a starting point of support?",
 					Name:        "serviceStartingPoint",
 					Description: "Add the taxonomies of the services requested as a starting point one by one, by selecting the relevant options from the dropdowns below.",
-					Placeholder: "",
 				},
 				Validation: cms.FormElementValidation{
 					Required: true,
@@ -241,19 +240,16 @@ var (
 					Label:       "What other services has the individual requested/identified?",
 					Name:        "otherServices",
 					Description: "Add the taxonomies of the other services requested one by one, by selecting the relevant options from the dropdowns below.",
-					Placeholder: "",
 				},
 				Validation: cms.FormElementValidation{
 					Required: true,
 				},
 			},
 			{
-				Type: cms.Textarea,
+				Type: cms.TextInput,
 				Attributes: cms.FormElementAttribute{
-					Label:       "What is the perceived priority response level of the individual",
-					Name:        "perceivedPriority",
-					Description: "",
-					Placeholder: "",
+					Label: "What is the perceived priority response level of the individual",
+					Name:  "perceivedPriority",
 				},
 				Validation: cms.FormElementValidation{
 					Required: true,
@@ -321,8 +317,7 @@ var (
 					Description: "",
 					CheckboxOptions: []cms.CheckboxOption{
 						{
-							Label:    "Has restrictions?",
-							Required: true,
+							Label: "Has restrictions?",
 						},
 					},
 				},
@@ -368,8 +363,7 @@ var (
 					Description: "",
 					CheckboxOptions: []cms.CheckboxOption{
 						{
-							Label:    "Referral accepted",
-							Required: true,
+							Label: "Referral accepted",
 						},
 					},
 				},
@@ -475,8 +469,7 @@ var (
 					Description: "If 'yes', attach/upload the legal assessment. If 'no', request or assist in identifying an appropriate legal guardian to represent beneficiary",
 					CheckboxOptions: []cms.CheckboxOption{
 						{
-							Label:    "Guardianship is legal",
-							Required: true,
+							Label: "Guardianship is legal",
 						},
 					},
 				},
@@ -489,8 +482,7 @@ var (
 					Description: "",
 					CheckboxOptions: []cms.CheckboxOption{
 						{
-							Label:    "Beneficiary has legal capacity to consent",
-							Required: true,
+							Label: "Beneficiary has legal capacity to consent",
 						},
 					},
 				},
@@ -549,9 +541,6 @@ var (
 						},
 					},
 				},
-				Validation: cms.FormElementValidation{
-					Required: true,
-				},
 			},
 			{
 				Type: cms.Checkbox,
@@ -567,9 +556,6 @@ var (
 							Label: "Existing lawyer",
 						},
 					},
-				},
-				Validation: cms.FormElementValidation{
-					Required: true,
 				},
 			},
 			{

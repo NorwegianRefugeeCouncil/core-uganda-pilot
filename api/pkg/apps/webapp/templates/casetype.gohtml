@@ -9,8 +9,9 @@
             <div class="card-body">
                 <h4 class="card-title">Case Type</h4>
                 <form action="/settings/casetypes{{if .CaseType.ID}}/{{.CaseType.ID}}{{end}}" method="post">
-                    <div class="form-floating mb-3">
+                    <div class="form mb-3">
                         {{$name := "name"}}
+                        <label for="{{$name}}">Name</label>
                         {{if and .Errors (.Errors.Find $name)}}
                             {{$errs := .Errors.Find $name}}
                             <input id="{{$name}}"
@@ -35,13 +36,13 @@
                                    value="{{if .CaseType}}{{.CaseType.Name}}{{end}}"
                             >
                         {{end}}
-                        <label for="{{$name}}">Name</label>
                     </div>
 
                     <!-- TODO: Add a checkbox field for intakeCaseType -->
 
-                    <div class="form-floating mb-3">
+                    <div class="form mb-3">
                         {{$name = "partyTypeId"}}
+                        <label for="party-type">Select Party Type</label>
                         {{if and .Errors (.Errors.Find $name)}}
                             {{$errs := .Errors.Find $name}}
                             <select id="party-type"
@@ -89,9 +90,9 @@
                                 {{end}}
                             </select>
                         {{end}}
-                        <label for="party-type">Select Party Type</label>
                     </div>
-                    <div class="form-floating mb-3">
+                    <div class="form mb-3">
+                        <label for="team">Select Team</label>
                         {{$name = "teamId"}}
                         {{if and .Errors (.Errors.Find $name)}}
                             {{$errs := .Errors.Find $name}}
@@ -137,9 +138,9 @@
                                 {{end}}
                             </select>
                         {{end}}
-                        <label for="team">Select Team</label>
                     </div>
-                    <div class="form-floating mb-3">
+                    <div class="form mb-3">
+                        <label for="{{$name}}">Form template</label>
                         {{$name = "template"}}
                         {{if and .Errors (.Errors.Find $name)}}
                             {{$errs := .Errors.Find $name}}
@@ -166,7 +167,6 @@
                                 {{- if .CaseType.Template}}{{.CaseType.Pretty}}{{end -}}
                             </textarea>
                         {{end}}
-                        <label for="{{$name}}">Form template</label>
                     </div>
                     {{if and (not .Errors) .CaseType}}
                         <input type="hidden" name="partyTypeId" value="{{.CaseType.PartyTypeID}}">
