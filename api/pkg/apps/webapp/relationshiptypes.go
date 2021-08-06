@@ -34,7 +34,7 @@ func (s *Server) RelationshipTypes(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := s.renderFactory.New(req).ExecuteTemplate(w, "relationshiptypes", map[string]interface{}{
+	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "relationshiptypes", map[string]interface{}{
 		"RelationshipTypes": relationshipTypes,
 	}); err != nil {
 		s.Error(w, err)
@@ -56,7 +56,7 @@ func (s *Server) NewRelationshipType(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := s.renderFactory.New(req).ExecuteTemplate(w, "relationshiptype", map[string]interface{}{
+	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "relationshiptype", map[string]interface{}{
 		"PartyTypes": p,
 	}); err != nil {
 		s.Error(w, err)
@@ -98,7 +98,7 @@ func (s *Server) RelationshipType(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := s.renderFactory.New(req).ExecuteTemplate(w, "relationshiptype", map[string]interface{}{
+	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "relationshiptype", map[string]interface{}{
 		"RelationshipType": r,
 		"PartyTypes":       p,
 	}); err != nil {

@@ -58,9 +58,10 @@ func NewRendererFactory(templateDirectory string, sessionManager sessionmanager.
 }
 
 // New creates a new Renderer
-func (r *RendererFactory) New(req *http.Request) *Renderer {
+func (r *RendererFactory) New(req *http.Request, w http.ResponseWriter) *Renderer {
 	renderer := &Renderer{
 		req:            req,
+		w:              w,
 		sessionManager: r.sessionManager,
 	}
 	renderer.template = WithRenderInterface(r.template, renderer)
@@ -71,6 +72,7 @@ func (r *RendererFactory) New(req *http.Request) *Renderer {
 type Renderer struct {
 	template       *template.Template
 	req            *http.Request
+	w              http.ResponseWriter
 	sessionManager sessionmanager.Store
 }
 
@@ -108,7 +110,7 @@ func (r *Renderer) Profile() (*Claims, error) {
 }
 
 func (r *Renderer) Notifications() ([]*sessionmanager.Notification, error) {
-	return r.sessionManager.ConsumeNotifications(r.req)
+	return r.sessionManager.ConsumeNotifications(r.req, r.w)
 }
 
 // WithRenderInterface adds the RenderInterface methods to the template

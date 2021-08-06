@@ -79,7 +79,7 @@ func (s *Server) Cases(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := s.renderFactory.New(req).ExecuteTemplate(w, "cases", map[string]interface{}{
+	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "cases", map[string]interface{}{
 		"Cases":         kases,
 		"CaseTypes":     caseTypes,
 		"Parties":       partyList,
@@ -242,7 +242,7 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := s.renderFactory.New(req).ExecuteTemplate(w, "case", map[string]interface{}{
+	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "case", map[string]interface{}{
 		"Case":             kase,
 		"Parent":           parent,
 		"CaseTypes":        kaseTypes,
@@ -329,7 +329,7 @@ func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	if err := s.renderFactory.New(req).ExecuteTemplate(w, "casenew", map[string]interface{}{
+	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "casenew", map[string]interface{}{
 		"PartyID":   qry.Get("partyId"),
 		"CaseType":  caseType,
 		"Team":      team,
@@ -506,7 +506,7 @@ func (s *Server) renderWithValidation(req *http.Request, w http.ResponseWriter, 
 	}
 	// Set notification and render
 	s.validationErrorNotification(req, w)
-	if err := s.renderFactory.New(req).ExecuteTemplate(w, "casenew", map[string]interface{}{
+	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "casenew", map[string]interface{}{
 		"Team":          team,
 		"CaseTypes":     caseTypes,
 		"CaseType":      caseType,

@@ -48,7 +48,7 @@ func (s *Server) Individuals(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := s.renderFactory.New(req).ExecuteTemplate(w, "individuals", map[string]interface{}{
+	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "individuals", map[string]interface{}{
 		"Individuals": list,
 		"Page":        "list",
 	}); err != nil {
@@ -85,7 +85,7 @@ func (s *Server) IndividualCredentials(w http.ResponseWriter, req *http.Request)
 		return
 	}
 
-	if err := s.renderFactory.New(req).ExecuteTemplate(w, "individual_credentials", map[string]interface{}{
+	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "individual_credentials", map[string]interface{}{
 		"Page":       "credentials",
 		"Individual": individual,
 	}); err != nil {
@@ -294,7 +294,7 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	progressLabel := status.Label
 	progress := status.Progress
 
-	if err := s.renderFactory.New(req).ExecuteTemplate(w, "individual", map[string]interface{}{
+	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "individual", map[string]interface{}{
 		"IsNew":                     id == "new",
 		"Individual":                b,
 		"Parties":                   bList,
