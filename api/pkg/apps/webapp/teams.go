@@ -25,7 +25,7 @@ func (s *Server) Teams(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := s.renderFactory.New(req).ExecuteTemplate(w, "teams", map[string]interface{}{
+	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "teams", map[string]interface{}{
 		"Teams": t,
 	}); err != nil {
 		s.Error(w, err)
@@ -108,7 +108,7 @@ func (s *Server) Team(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := s.renderFactory.New(req).ExecuteTemplate(w, "team", map[string]interface{}{
+	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "team", map[string]interface{}{
 		"Team":               t,
 		"Members":            members,
 		"LastNameAttribute":  iam.LastNameAttribute,

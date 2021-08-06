@@ -15,7 +15,7 @@ type Options struct {
 
 type Store interface {
 	AddNotification(req *http.Request, w http.ResponseWriter, notification *Notification) error
-	ConsumeNotifications(req *http.Request) ([]*Notification, error)
+	ConsumeNotifications(req *http.Request, w http.ResponseWriter) ([]*Notification, error)
 	Get(req *http.Request) (*sessions.Session, error)
 	GetString(req *http.Request, key string) (string, error)
 	FindString(req *http.Request, key string) (string, bool)
@@ -96,7 +96,7 @@ func (r RedisSessionManager) AddNotification(req *http.Request, w http.ResponseW
 	return nil
 }
 
-func (r RedisSessionManager) ConsumeNotifications(req *http.Request) ([]*Notification, error) {
+func (r RedisSessionManager) ConsumeNotifications(req *http.Request, w http.ResponseWriter) ([]*Notification, error) {
 	session, err := r.Store.Get(req, varNotifications)
 	if err != nil {
 		return nil, err
@@ -108,6 +108,10 @@ func (r RedisSessionManager) ConsumeNotifications(req *http.Request) ([]*Notific
 		if ok {
 			notifications = append(notifications, flashNotification)
 		}
+	}
+	err = session.Save(req, w)
+	if err != nil {
+		return nil, err
 	}
 	return notifications, nil
 }
