@@ -10,20 +10,12 @@ import (
 
 func (s *Server) GetRegistrationController(w http.ResponseWriter, req *http.Request, individual *iam.Individual) (*registrationctrl.RegistrationController, error) {
 	var individualId string
-	if !s.GetPathParam("id", w, req, &individualId) {
-		return nil, fmt.Errorf("cannot find id in path")
+
+	if individual.ID == "new" || individual.ID == "" {
+		if !s.GetPathParam("id", w, req, &individualId) {
+			return nil, fmt.Errorf("cannot find id in path")
+		}
 	}
-
-	//iamClient, err := s.IAMClient(req)
-	//if err != nil {
-	//	return nil, err
-	//}
-
-	//i, err := iamClient.Individuals().Get(req.Context(), individualId)
-	//if err != nil {
-	//	return nil, err
-	//}
-
 	irh := NewIndividualRegistrationHandler(s, individual, req)
 
 	return registrationctrl.NewRegistrationController(irh, seeder.UgandaRegistrationFlow), nil
