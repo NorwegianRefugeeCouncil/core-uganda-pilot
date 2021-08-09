@@ -1,4 +1,4 @@
-import { Urls } from '../helpers';
+import { URL } from '../helpers';
 
 const NAME = '[data-testid=name]';
 const IS_DIRECTIONAL = '[data-testid=isDirectional]';
@@ -10,8 +10,8 @@ const SAVE_BUTTON = '[data-testid=save-btn]';
 
 export default class NewRelationshiptypePage {
     visitPage = () => {
-        cy.log('navigating to %s', Urls.NEW_RELATIONSHIPTYPE_URL);
-        cy.visit(Urls.NEW_RELATIONSHIPTYPE_URL);
+        cy.log('navigating to %s', URL.NEW_RELATIONSHIPTYPE);
+        cy.visit(URL.NEW_RELATIONSHIPTYPE);
         return this;
     };
 

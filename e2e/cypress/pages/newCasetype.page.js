@@ -1,4 +1,4 @@
-import { Urls } from '../helpers';
+import { URL } from '../helpers';
 
 const NAME = '[data-testid=name]';
 const PARTY_TYPE = '[data-testid=partytype]';
@@ -8,8 +8,8 @@ const SAVE_BUTTON = '[data-testid=save-btn]';
 
 export default class NewCaseTypePage {
     visitPage = () => {
-        cy.log('navigating to %s', Urls.NEW_CASETYPE_URL);
-        cy.visit(Urls.NEW_CASETYPE_URL);
+        cy.log('navigating to %s', URL.NEW_CASETYPE);
+        cy.visit(URL.NEW_CASETYPE);
         return this;
     };
 

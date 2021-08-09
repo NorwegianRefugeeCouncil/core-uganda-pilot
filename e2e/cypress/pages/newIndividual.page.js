@@ -1,4 +1,4 @@
-import { Urls } from '../helpers';
+import { URL } from '../helpers';
 
 const TEXT_ATTRIBUTES = '[data-testid=text-attribute]';
 const RELATIONSHIP_TYPE = '[data-testid=relationshipType]';
@@ -8,8 +8,8 @@ const SAVE_BUTTON = '[data-testid=save-btn]';
 
 export default class NewIndividualPage {
     visitPage = () => {
-        cy.log('navigating to %s', Urls.NEW_INDIVIDUAL_URL);
-        cy.visit(Urls.NEW_INDIVIDUAL_URL);
+        cy.log('navigating to %s', URL.NEW_INDIVIDUAL);
+        cy.visit(URL.NEW_INDIVIDUAL);
         return this;
     };
 

@@ -1,12 +1,12 @@
-import { Urls } from '../helpers';
+import { URL } from '../helpers';
 import NewPartyTypePage from './newPartyType.page';
 
 const PARTYTYPE_ROWS = '[data-testid=partytype]';
 
 export default class PartytypeOverviewPage {
     visitPage = () => {
-        cy.log('navigating to %s', Urls.PARTYTYPE_URL);
-        cy.visit(Urls.PARTYTYPE_URL);
+        cy.log('navigating to %s', URL.PARTYTYPE);
+        cy.visit(URL.PARTYTYPE);
         return this;
     };
 

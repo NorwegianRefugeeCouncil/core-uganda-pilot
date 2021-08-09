@@ -1,12 +1,12 @@
-import { Urls } from '../helpers';
-import NewAttributePage from './newAttribute.page';
+import { URL } from '../helpers';
+import AttributePage from './attributePage';
 
 const ATTRIBUTE_ROWS = '[data-testid=attribute]';
 
 export default class AttributeOverviewPage {
     visitPage = () => {
-        cy.log('navigating to %s', Urls.ATTRIBUTE_URL);
-        cy.visit(Urls.ATTRIBUTE_URL);
+        cy.log('navigating to %s', URL.ATTRIBUTE);
+        cy.visit(URL.ATTRIBUTE);
         return this;
     };
 
@@ -16,6 +16,7 @@ export default class AttributeOverviewPage {
 
     visitAttribute = () => {
         cy.get(ATTRIBUTE_ROWS).last().click();
-        return new NewAttributePage();
+        return this;
+        // return new NewAttributePage();
     };
 }

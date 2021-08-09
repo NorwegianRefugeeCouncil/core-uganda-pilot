@@ -1,12 +1,12 @@
-import { Urls } from '../helpers';
+import { URL } from '../helpers';
 import NewRelationshiptypePage from './newRelationshiptype.page';
 
 const RELATIONSHIPTYPE_ROWS = '[data-testid=relationshiptype]';
 
 export default class RelationshiptypeOverviewPage {
     visitPage = () => {
-        cy.log('navigating to %s', Urls.RELATIONSHIPTYPE_URL);
-        cy.visit(Urls.RELATIONSHIPTYPE_URL);
+        cy.log('navigating to %s', URL.RELATIONSHIPTYPE);
+        cy.visit(URL.RELATIONSHIPTYPE);
         return this;
     };
 

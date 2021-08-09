@@ -1,22 +1,18 @@
-export const Urls = {
-    CASES_URL: '/cases',
-    TEAMS_URL: '/teams',
-    NEW_CASE_URL: '/cases/new',
-    NEW_ATTRIBUTE_URL: '/settings/attributes/new',
-    NEW_CASETYPE_URL: '/settings/casetypes/new',
-    NEW_INDIVIDUAL_URL: '/individuals/new',
-    NEW_PARTYTYPE_URL: '/settings/partytypes/new',
-    NEW_RELATIONSHIPTYPE_URL: '/settings/relationshiptypes/new',
-    ATTRIBUTE_URL: '/settings/attributes',
-    CASETYPE_URL: '/settings/casetypes',
-    INDIVIDUALS_URL: '/individuals',
-    PARTYTYPE_URL: '/settings/partytypes',
-    RELATIONSHIPTYPE_URL: '/settings/relationshiptypes',
-};
-
-export const credentials = {
-    username: Cypress.env('USERNAME'),
-    password: Cypress.env('PASSWORD'),
+export const URL = {
+    INDIVIDUALS: '/individuals',
+    CASES: '/cases',
+    NEW_CASE: '/cases/new',
+    TEAMS: '/teams',
+    ATTRIBUTES: '/settings/attributes',
+    NEW_ATTRIBUTE: '/settings/attributes/new',
+    NEW_CASETYPE: '/settings/casetypes/new',
+    NEW_INDIVIDUAL: '/individuals/new',
+    NEW_PARTYTYPE: '/settings/partytypes/new',
+    NEW_RELATIONSHIPTYPE: '/settings/relationshiptypes/new',
+    ATTRIBUTE: '/settings/attributes',
+    CASETYPE: '/settings/casetypes',
+    PARTYTYPE: '/settings/partytypes',
+    RELATIONSHIPTYPE: '/settings/relationshiptypes',
 };
 
 export const caseTypeTemplate = `{
@@ -106,3 +102,5 @@ export const caseTypeTemplate = `{
     }
   ]
 }`;
+
+export const testId = (id) => `[data-testid=${id}]`;

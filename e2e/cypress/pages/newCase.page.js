@@ -1,4 +1,4 @@
-import { Urls } from '../helpers';
+import { URL } from '../helpers';
 import CasePage from './case.page';
 
 const CASE_TYPE_PICKER = '[data-testid=caseTypePicker]';
@@ -10,7 +10,7 @@ const SUBMIT_BUTTON = '[data-testid=submitBtn]';
 
 export default class NewCasePage {
     visitPage = () => {
-        cy.visit(Urls.NEW_CASE_URL);
+        cy.visit(URL.NEW_CASE);
         return this;
     };
 

@@ -1,4 +1,4 @@
-import { Urls } from '../helpers';
+import { URL } from '../helpers';
 
 const FIRST_PAGE_Btn = '[data-testid=firstPage]';
 const PREV_PAGE_Btn = '[data-testid=prevPage]';
@@ -8,7 +8,7 @@ const PAGINATION_STAGE = '[data-testid=paginationState]';
 
 export default class PaginationPage {
     visitPage = (params) => {
-        const url = Urls.INDIVIDUALS_URL + params;
+        const url = URL.INDIVIDUALS + params;
         cy.log('navigating to %s', url);
         cy.visit(url);
         return this;

@@ -1,4 +1,4 @@
-import { Urls } from '../helpers';
+import { URL } from '../helpers';
 import CasePage from './case.page';
 import NewCasePage from './newCase.page';
 
@@ -7,8 +7,8 @@ const CASE_ROWS = '[data-testid=caseRow]';
 
 export default class CasesOverviewPage {
     visitPage = () => {
-        cy.log('navigating to %s', Urls.CASE_URL);
-        cy.visit(Urls.CASES_URL);
+        cy.log('navigating to %s', URL.CASE);
+        cy.visit(URL.CASES);
         return this;
     };
 

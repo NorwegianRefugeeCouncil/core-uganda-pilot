@@ -31,7 +31,7 @@
                                 <label for="name-input">Name</label>
                             </div>
 
-                            <hr/>
+                            <hr />
 
                             <!-- Value Type -->
                             <div class="form-floating mb-3 shadow-sm">
@@ -53,7 +53,7 @@
                                         data-testid="subject"
                                 >
                                     {{range .PartyTypes.Items}}
-                                    <option value="{{.ID}}">{{.Name}}</option>
+                                        <option value="{{.ID}}">{{.Name}}</option>
                                     {{end}}
                                 </select>
                                 <label for="subject-type-input">Subject Type</label>
@@ -104,13 +104,13 @@
 
     <script type="application/javascript">
 
-        const {BehaviorSubject, combineLatest, fromEvent } = rxjs
-        const {map} = rxjs.operators
+        const { BehaviorSubject, combineLatest, fromEvent } = rxjs;
+        const { map } = rxjs.operators;
 
         let languages = [
-            {value: "en", name: "English"},
-            {value: "fr", name: "French"}
-        ]
+            { value: 'en', name: 'English' },
+            { value: 'fr', name: 'French' }
+        ];
 
         {{ if .Attribute }}
         let stateSubject = new BehaviorSubject({
@@ -123,66 +123,66 @@
                     {
                         locale: "{{.Locale}}",
                         long: "{{.LongFormulation}}",
-                        short: "{{.ShortFormulation}}",
+                        short: "{{.ShortFormulation}}"
                     },
                     {{end}}
                 ]
             },
             partyTypes: [
                 {{range .PartyTypes.Items}}
-                {value: "{{.ID}}", name: "{{.Name}}"}
+                { value: "{{.ID}}", name: "{{.Name}}" }
                 {{end}}
             ]
-        })
+        });
         {{else }}
         let stateSubject = new BehaviorSubject({
             attribute: {
-                name: "",
-                valueType: "",
+                name: '',
+                valueType: '',
                 partyTypes: ["{{(index .PartyTypes.Items 0).ID}}"],
                 isPii: false,
                 translations: []
             },
             partyTypes: [
                 {{range .PartyTypes.Items}}
-                {value: "{{.ID}}", name: "{{.Name}}"},
+                { value: "{{.ID}}", name: "{{.Name}}" },
                 {{end}}
             ]
-        })
+        });
         {{end}}
 
-        let state$ = stateSubject.asObservable()
-        let attribute$ = state$.pipe(map(s => s.attribute))
-        let name$ = attribute$.pipe(map(a => a.name))
-        let valueType$ = attribute$.pipe(map(a => a.valueType))
-        let partyTypes = attribute$.pipe(map(a => a.partyTypes))
-        let isPii$ = attribute$.pipe(map(a => a.isPii))
-        let translations$ = attribute$.pipe(map(a => a.translations))
+        let state$ = stateSubject.asObservable();
+        let attribute$ = state$.pipe(map(s => s.attribute));
+        let name$ = attribute$.pipe(map(a => a.name));
+        let valueType$ = attribute$.pipe(map(a => a.valueType));
+        let partyTypes = attribute$.pipe(map(a => a.partyTypes));
+        let isPii$ = attribute$.pipe(map(a => a.isPii));
+        let translations$ = attribute$.pipe(map(a => a.translations));
         let availableLanguages$ = translations$.pipe(
             map(translations => {
                 return languages.filter(l => {
-                    return !translations.find(t => t.locale === l.value)
-                })
+                    return !translations.find(t => t.locale === l.value);
+                });
             })
-        )
+        );
 
 
-        const nameInput = document.getElementById("name-input");
+        const nameInput = document.getElementById('name-input');
         nameInput.onchange = event => {
             const state = {
                 ...stateSubject.value,
                 attribute: {
                     ...stateSubject.value.attribute,
-                    name: event.target.value,
+                    name: event.target.value
                 }
-            }
+            };
             stateSubject.next(state);
-        }
+        };
 
 
         name$.subscribe(n => {
-            document.getElementById("name-input").value = n
-        })
+            document.getElementById('name-input').value = n;
+        });
 
         let removeTranslation = (locale) => {
             stateSubject.next({
@@ -191,11 +191,11 @@
                     ...stateSubject.value.attribute,
                     translations: stateSubject.value.attribute.translations.filter(t => t.locale !== locale)
                 }
-            })
-        }
+            });
+        };
 
-        document.addEventListener("DOMContentLoaded", function () {
-            let languagePicker = document.getElementById("language-picker")
+        document.addEventListener('DOMContentLoaded', function() {
+            let languagePicker = document.getElementById('language-picker');
             languagePicker.onchange = (ev) => {
                 const state = {
                     ...stateSubject.value,
@@ -205,58 +205,58 @@
                             ...stateSubject.value.attribute.translations,
                             {
                                 locale: ev.target.value,
-                                long: "",
-                                short: ""
+                                long: '',
+                                short: ''
                             }
                         ]
                     }
-                }
-                stateSubject.next(state)
-            }
+                };
+                stateSubject.next(state);
+            };
 
             availableLanguages$.subscribe(l => {
-                languagePicker.innerHTML = ''
-                languagePicker.appendChild(languageOptionTemplate("", ""))
+                languagePicker.innerHTML = '';
+                languagePicker.appendChild(languageOptionTemplate('', ''));
                 for (let language of l) {
-                    languagePicker.appendChild(languageOptionTemplate(language.value, language.name))
+                    languagePicker.appendChild(languageOptionTemplate(language.value, language.name));
                 }
-                let pickerContainer = document.getElementById("language-picker-container")
+                let pickerContainer = document.getElementById('language-picker-container');
                 if (l.length === 0) {
-                    pickerContainer.classList.add("d-none")
+                    pickerContainer.classList.add('d-none');
                 } else {
-                    pickerContainer.classList.remove("d-none")
+                    pickerContainer.classList.remove('d-none');
                 }
-            })
+            });
 
             translations$.subscribe(t => {
-                let translations = document.getElementById("translations")
-                translations.innerHTML = ''
-                console.log(t)
+                let translations = document.getElementById('translations');
+                translations.innerHTML = '';
+                console.log(t);
                 for (let translation of t) {
-                    let tpl = translationTemplate(translation.locale, translation.long, translation.short)
-                    translations.appendChild(tpl)
+                    let tpl = translationTemplate(translation.locale, translation.long, translation.short);
+                    translations.appendChild(tpl);
                 }
-            })
+            });
 
         });
 
         const languageOptionTemplate = (value, name) => {
-            let option = `<option value="${value}">${name}</option>`
-            return new DOMParser().parseFromString(option, "text/html").getElementsByTagName("option")[0]
-        }
+            let option = `<option value="${value}">${name}</option>`;
+            return new DOMParser().parseFromString(option, 'text/html').getElementsByTagName('option')[0];
+        };
 
         const findLanguageName = (locale) => {
-            let l = languages.find(l => l.value === locale)
+            let l = languages.find(l => l.value === locale);
             if (l) {
-                return l.name
+                return l.name;
             }
-        }
+        };
 
         function translationTemplate(language, long, short) {
             const doc = `
                 <div class="list-group-item py-0">
                     <div class="d-flex flex-row align-items-center">
-                        <div class="h-100 pe-3 text-center" style="width: 4.5rem">
+                        <div class="h-100 pe-3 text-center" style="width: 4.5rem" data-testid="language-display">
                             ${findLanguageName(language)}
                         </div>
                         <div class="flex-grow-1 border-start ps-3 border-end pe-3">
@@ -293,8 +293,8 @@
                                     onclick="removeTranslation('${language}')"/>
                         </div>
                     </div>
-                </div>`
-            return new DOMParser().parseFromString(doc, "text/html").getElementsByTagName("div")[0]
+                </div>`;
+            return new DOMParser().parseFromString(doc, 'text/html').getElementsByTagName('div')[0];
         }
 
     </script>
