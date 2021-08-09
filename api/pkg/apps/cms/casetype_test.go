@@ -13,7 +13,7 @@ func (s *Suite) TestCaseType() {
 
 func (s *Suite) testCaseTypeAPI() {
 	// Create
-	caseType := s.mockCaseTypes(1)[0]
+	caseType := aMockCaseType()
 	created, err := s.client.CaseTypes().Create(s.Ctx, caseType)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
@@ -32,19 +32,25 @@ func (s *Suite) testCaseTypeAPI() {
 	caseType.Name = "updated"
 	caseType.PartyTypeID = newUUID()
 	caseType.TeamID = newUUID()
-	caseType.Template = &CaseTemplate{FormElements: []FormElement{{Type: "textarea", Attributes: FormElementAttribute{Label: "updated"}}}}
+	caseType.Template = mockCaseTemplate("update")
 	updated, err := s.client.CaseTypes().Update(s.Ctx, caseType)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
-	assert.Equal(s.T(), caseType, updated)
+	assert.Equal(s.T(), caseType.Name, updated.Name)
+	assert.Equal(s.T(), caseType.PartyTypeID, updated.PartyTypeID)
+	assert.Equal(s.T(), caseType.TeamID, updated.TeamID)
+	assert.Equal(s.T(), *caseType.Template, *updated.Template)
 
 	// GET
 	get, err = s.client.CaseTypes().Get(s.Ctx, updated.ID)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
-	assert.Equal(s.T(), updated, get)
+	assert.Equal(s.T(), updated.Name, get.Name)
+	assert.Equal(s.T(), updated.PartyTypeID, get.PartyTypeID)
+	assert.Equal(s.T(), updated.TeamID, get.TeamID)
+	assert.Equal(s.T(), *updated.Template, *get.Template)
 
 	// LIST
 	list, err := s.client.CaseTypes().List(s.Ctx, CaseTypeListOptions{})
