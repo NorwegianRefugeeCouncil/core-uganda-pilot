@@ -7,6 +7,7 @@ import (
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/nrc-no/core/pkg/apps/seeder"
+	"github.com/nrc-no/core/pkg/registrationctrl"
 	"github.com/nrc-no/core/pkg/sessionmanager"
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/sync/errgroup"
@@ -14,6 +15,11 @@ import (
 	"strconv"
 	"strings"
 )
+
+type IndividualWithStatuses struct {
+	Individual         *iam.Individual
+	RegistrationStatus *registrationctrl.Status
+}
 
 func (s *Server) Individuals(w http.ResponseWriter, req *http.Request) {
 
@@ -48,9 +54,23 @@ func (s *Server) Individuals(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	var beneficiaryWithStatuses []IndividualWithStatuses
+	for _, b := range list.Items {
+		rc, err := s.GetRegistrationController(w, req, b)
+		if err != nil {
+			s.Error(w, err)
+			return
+		}
+		beneficiaryWithStatuses = append(beneficiaryWithStatuses, IndividualWithStatuses{
+			Individual:         b,
+			RegistrationStatus: rc.Status(),
+		})
+	}
+
 	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "individuals", map[string]interface{}{
-		"Individuals": list,
-		"Page":        "list",
+		"Individuals":             list,
+		"IndividualsWithStatuses": beneficiaryWithStatuses,
+		"Page":                    "list",
 	}); err != nil {
 		s.Error(w, err)
 		return

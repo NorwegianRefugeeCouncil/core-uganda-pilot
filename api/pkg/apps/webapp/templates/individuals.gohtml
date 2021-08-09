@@ -1,17 +1,11 @@
 {{define "individual-row"}}
 
-    {{$gender := .FindAttributeValue "gender"}}
-    {{$age := .FindAge}}
-
     <a class="list-group-item font-monospace py-3 bg-quite-light"
        data-testid="individual"
-       href="/individuals/{{.ID}}">
-        {{.}}
+       href="/individuals/{{.Individual.ID}}">
+        {{.Individual}}
         <span class="d-block text-muted">
-            {{if $gender}}
-                {{if eq $gender "Male"}}M{{else if eq $gender "Female"}}F{{end}}
-            {{end}}
-            {{if $age}}{{$age}}{{end}}
+            Registration/Intake Step {{.RegistrationStatus.Label}}
         </span>
     </a>
 {{end}}
@@ -42,9 +36,10 @@
                         </div>
 
                     </div>
-                    {{ if .Individuals.Items}}
-                        {{ range .Individuals.Items }}
-                            {{template "individual-row" .}}
+
+                    {{ if .IndividualsWithStatuses}}
+                        {{ range .IndividualsWithStatuses }}
+                           {{template "individual-row" .}}
                         {{end}}
                     {{else}}
                         <div class='list-group-item disabled'>No individual found</div>
