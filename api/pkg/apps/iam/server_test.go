@@ -69,15 +69,23 @@ func (s *Suite) mockPartyTypes(n int) []*PartyType {
 	return partyTypes
 }
 
+func mockAttribute() *Attribute {
+	return &Attribute{
+		Name:         "mock",
+		PartyTypeIDs: make([]string, 0),
+		Translations: []AttributeTranslation{{
+			Locale:           "mock",
+			LongFormulation:  "mock",
+			ShortFormulation: "mock",
+		},
+		},
+	}
+}
+
 func (s *Suite) mockAttributes(n int) []*Attribute {
 	var attributes []*Attribute
 	for i := 0; i < n; i++ {
-		attributes = append(attributes, &Attribute{
-			Name:                         newUUID(),
-			PartyTypeIDs:                 make([]string, 0),
-			IsPersonallyIdentifiableInfo: false,
-			Translations:                 make([]AttributeTranslation, 0),
-		})
+		attributes = append(attributes, mockAttribute())
 	}
 	return attributes
 }

@@ -84,7 +84,7 @@ func (s *Suite) testAttributeAPI() {
 
 func (s *Suite) testAttributeListFilter() {
 
-	const nAttributes = 30
+	const nAttributes = 10
 	const nPartyTypeIds = 6
 
 	// Make a couple Attributes
