@@ -2,6 +2,7 @@ package cms
 
 import (
 	"fmt"
+	"github.com/nrc-no/core/pkg/form"
 	"github.com/nrc-no/core/pkg/validation"
 	"strconv"
 )
@@ -27,7 +28,7 @@ func ValidateCase(kase *Case, path *validation.Path) validation.ErrorList {
 	if kase.Template != nil {
 		for _, elem := range kase.Template.FormElements {
 			switch elem.Type {
-			case Checkbox:
+			case form.Checkbox:
 				for i, option := range elem.Attributes.CheckboxOptions {
 					if option.Required && !contains(elem.Attributes.Value, strconv.Itoa(i)) {
 						err := validation.Required(path.Child(elem.Attributes.Name).Index(i), fmt.Sprintf("%s is required", elem.Attributes.Name))

@@ -1,8 +1,12 @@
 package iam
 
+import "github.com/nrc-no/core/pkg/form"
+
 var FirstNameAttribute = Attribute{
-	ID:   "8514da51-aad5-4fb4-a797-8bcc0c969b27",
-	Name: "firstName",
+	ID:         "8514da51-aad5-4fb4-a797-8bcc0c969b27",
+	Name:       "firstName",
+	Type:       form.Text,
+	Validation: AttributeValidation{Required: true},
 	Translations: []AttributeTranslation{
 		{
 			Locale:           "en",
@@ -17,8 +21,10 @@ var FirstNameAttribute = Attribute{
 }
 
 var LastNameAttribute = Attribute{
-	ID:   "21079bbc-e04b-4fe8-897f-644d73af0d9e",
-	Name: "lastName",
+	ID:         "21079bbc-e04b-4fe8-897f-644d73af0d9e",
+	Name:       "lastName",
+	Type:       form.Text,
+	Validation: AttributeValidation{Required: true},
 	Translations: []AttributeTranslation{
 		{
 			Locale:           "en",
@@ -33,8 +39,10 @@ var LastNameAttribute = Attribute{
 }
 
 var BirthDateAttribute = Attribute{
-	ID:   "87fe07d7-e6a7-4428-8086-3842b69f3665",
-	Name: "birthDate",
+	ID:         "87fe07d7-e6a7-4428-8086-3842b69f3665",
+	Name:       "birthDate",
+	Type:       form.Date,
+	Validation: AttributeValidation{Required: true},
 	Translations: []AttributeTranslation{
 		{
 			Locale:           "en",
@@ -49,8 +57,10 @@ var BirthDateAttribute = Attribute{
 }
 
 var EMailAttribute = Attribute{
-	ID:   "0ca7fa2b-982b-4fa5-85be-a6ebee8d4912",
-	Name: "email",
+	ID:         "0ca7fa2b-982b-4fa5-85be-a6ebee8d4912",
+	Name:       "email",
+	Type:       form.Email,
+	Validation: AttributeValidation{Required: true},
 	Translations: []AttributeTranslation{
 		{
 			Locale:           "en",
@@ -76,6 +86,7 @@ var EMailAttribute = Attribute{
 var DisplacementStatusAttribute = Attribute{
 	ID:   "d1d824b2-d163-43ff-bc0a-527bd86b79bb",
 	Name: "displacementStatus",
+	Type: form.Text,
 	Translations: []AttributeTranslation{
 		{
 			Locale:           "en",
@@ -96,6 +107,7 @@ var DisplacementStatusAttribute = Attribute{
 var GenderAttribute = Attribute{
 	ID:   "b43f630c-2eb6-4629-af89-44ded61f7f3e",
 	Name: "gender",
+	Type: form.Radio,
 	Translations: []AttributeTranslation{
 		{
 			Locale:           "en",

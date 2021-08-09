@@ -1,6 +1,7 @@
 package cms
 
 import (
+	"github.com/nrc-no/core/pkg/form"
 	"github.com/nrc-no/core/pkg/validation"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -16,40 +17,40 @@ func TestValidateCase(t *testing.T) {
 		name: "emptyFields",
 		caseType: &Case{
 			Template: &CaseTemplate{
-				FormElements: []FormElement{
+				FormElements: []form.FormElement{
 					{
-						Type: Dropdown,
-						Attributes: FormElementAttribute{
+						Type: form.Dropdown,
+						Attributes: form.FormElementAttribute{
 							Name: "dropdown",
 						},
-						Validation: FormElementValidation{
+						Validation: form.FormElementValidation{
 							Required: true,
 						},
 					},
 					{
-						Type: Textarea,
-						Attributes: FormElementAttribute{
+						Type: form.Textarea,
+						Attributes: form.FormElementAttribute{
 							Name: "textarea",
 						},
-						Validation: FormElementValidation{
+						Validation: form.FormElementValidation{
 							Required: true,
 						},
 					},
 					{
-						Type: TextInput,
-						Attributes: FormElementAttribute{
+						Type: form.TextInput,
+						Attributes: form.FormElementAttribute{
 							Name: "textinput",
 						},
-						Validation: FormElementValidation{
+						Validation: form.FormElementValidation{
 							Required: true,
 						},
 					},
 					{
-						Type: Checkbox,
-						Attributes: FormElementAttribute{
+						Type: form.Checkbox,
+						Attributes: form.FormElementAttribute{
 							Name: "checkbox",
 						},
-						Validation: FormElementValidation{
+						Validation: form.FormElementValidation{
 							Required: true,
 						},
 					},
