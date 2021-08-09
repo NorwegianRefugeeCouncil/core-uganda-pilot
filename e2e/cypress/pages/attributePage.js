@@ -12,10 +12,14 @@ const SAVE_BUTTON = testId('save-btn');
 
 export default class AttributePage {
     constructor(href) {
-        if (href != null) href.then((h) => cy.visit(h));
+        if (href != null) {
+            href.then((h) => cy.visit(h));
+        } else {
+            this.visitPage();
+        }
     }
 
-    visitNew = () => {
+    visitPage = () => {
         cy.log('navigating to %s', URL.NEW_ATTRIBUTE);
         cy.visit(URL.NEW_ATTRIBUTE);
         return this;
