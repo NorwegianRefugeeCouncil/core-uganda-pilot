@@ -2,7 +2,6 @@
     <!doctype html>
     <html lang="en">
     {{template "head"}}
-
     <style>
         .attribute {
             transition: all ease-in-out 0.2s;
@@ -13,45 +12,35 @@
             border-color: rgba(13, 110, 253, 1);
         }
     </style>
-
     <body class="bg-light">
-
     {{template "navbar"}}
-
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col">
-
-                {{if .Attributes.Items}}
-                    {{ range .Attributes.Items }}
-                        <a class="card mb-3 shadow-sm text-dark text-decoration-none attribute"
-                           href="/settings/attributes/{{.ID}}" data-testid="attribute">
-                            <div class="card-body">
-                                <div>
-                                    {{range $index, $partytypeID := .PartyTypeIDs}}
-                                        {{if gt $index 0 }}, {{end}}
-                                        {{$partyType := $.PartyTypes.FindByID $partytypeID}}
-                                        <small class="text-muted">{{$partyType.Name}}</small>
-                                    {{end}}
-                                </div>
-                                {{.Name}}
-                            </div>
-                        </a>
-                    {{end}}
-                {{else}}
-                    <div class="card">
-                        <div class="card-body shadow-sm">
-                            No Attributes
+    <div class="container my-3">
+        <a class="btn btn-primary mb-3" href="/settings/attributes/new" data-testid="new-attribute-btn">New
+            Attribute</a>
+        {{if .Attributes.Items}}
+            {{ range .Attributes.Items }}
+                <a class="card mb-3 shadow-sm text-dark text-decoration-none attribute"
+                   href="/settings/attributes/{{.ID}}" data-testid="attribute">
+                    <div class="card-body">
+                        <div>
+                            {{range $index, $partytypeID := .PartyTypeIDs}}
+                                {{if gt $index 0 }}, {{end}}
+                                {{$partyType := $.PartyTypes.FindByID $partytypeID}}
+                                <small class="text-muted">{{$partyType.Name}}</small>
+                            {{end}}
                         </div>
+                        {{.Name}}
                     </div>
-                {{end}}
-
-
-                <a class="btn btn-primary" href="/settings/attributes/new">New Attribute</a>
+                </a>
+            {{end}}
+        {{else}}
+            <div class="card">
+                <div class="card-body shadow-sm">
+                    No Attributes
+                </div>
             </div>
-        </div>
+        {{end}}
     </div>
-
     </body>
     </html>
 {{end}}
