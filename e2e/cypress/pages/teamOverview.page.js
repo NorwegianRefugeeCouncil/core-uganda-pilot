@@ -5,7 +5,6 @@ const TEAM_ROWS = '[data-testid=team]';
 
 export default class TeamsOverviewPage {
     visitPage = () => {
-        cy.log('navigating to %s', URL.TEAMS);
         cy.visit(URL.TEAMS);
         return this;
     };

@@ -5,8 +5,7 @@ const PARTYTYPE_ROWS = '[data-testid=partytype]';
 
 export default class PartytypeOverviewPage {
     visitPage = () => {
-        cy.log('navigating to %s', URL.PARTYTYPE);
-        cy.visit(URL.PARTYTYPE);
+        cy.visit(URL.PARTYTYPES);
         return this;
     };
 

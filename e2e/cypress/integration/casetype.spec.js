@@ -49,7 +49,7 @@ describe('CaseType Page', () => {
             caseTypePage
                 .getTemplate()
                 .invoke('val')
-                .should((v) => expect(v).not.to.be.empty);
+                .should(v => expect(v).not.to.be.empty);
             caseTypePage.getTemplate().should('have.attr', 'readonly');
         });
     });
@@ -75,7 +75,7 @@ describe('CaseType Page', () => {
             caseTypePage
                 .getTemplate()
                 .invoke('val')
-                .should((v) => expect(v).not.to.be.empty);
+                .should(v => expect(v).not.to.be.empty);
             caseTypePage.getTemplate().should('have.attr', 'readonly');
         });
     });

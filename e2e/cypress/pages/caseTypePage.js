@@ -9,7 +9,7 @@ const SAVE_BUTTON = testId('save-btn');
 export default class CaseTypePage {
     constructor(href) {
         if (href != null) {
-            href.then((h) => cy.visit(h));
+            href.then(h => cy.visit(h));
         } else {
             this.visitPage();
         }
@@ -21,25 +21,25 @@ export default class CaseTypePage {
     };
 
     getName = () => cy.get(NAME);
-    setName = (value) => {
+    setName = value => {
         this.getName().clear().type(value);
         return this;
     };
 
     getPartyTypeSelect = () => cy.get(PARTY_TYPE);
-    setPartyType = (value) => {
+    setPartyType = value => {
         this.getPartyTypeSelect().select(value);
         return this;
     };
 
     getTeamSelect = () => cy.get(TEAM);
-    setTeam = (value) => {
+    setTeam = value => {
         this.getTeamSelect().select(value);
         return this;
     };
 
     getTemplate = () => cy.get(TEMPLATE);
-    setTemplate = (value) => {
+    setTemplate = value => {
         this.getTemplate().invoke('val', value);
         return this;
     };

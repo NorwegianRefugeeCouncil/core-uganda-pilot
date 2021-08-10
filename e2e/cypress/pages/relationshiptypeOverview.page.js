@@ -5,8 +5,7 @@ const RELATIONSHIPTYPE_ROWS = '[data-testid=relationshiptype]';
 
 export default class RelationshiptypeOverviewPage {
     visitPage = () => {
-        cy.log('navigating to %s', URL.RELATIONSHIPTYPE);
-        cy.visit(URL.RELATIONSHIPTYPE);
+        cy.visit(URL.RELATIONSHIPTYPES);
         return this;
     };
 

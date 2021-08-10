@@ -7,9 +7,8 @@ const LAST_PAGE_Btn = '[data-testid=lastPage]';
 const PAGINATION_STAGE = '[data-testid=paginationState]';
 
 export default class PaginationPage {
-    visitPage = (params) => {
+    visitPage = params => {
         const url = URL.INDIVIDUALS + params;
-        cy.log('navigating to %s', url);
         cy.visit(url);
         return this;
     };

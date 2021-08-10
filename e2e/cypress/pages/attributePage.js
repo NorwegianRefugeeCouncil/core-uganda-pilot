@@ -14,7 +14,7 @@ const REMOVE_BUTTON = '-remove-btn';
 export default class AttributePage {
     constructor(href) {
         if (href != null) {
-            href.then((h) => cy.visit(h));
+            href.then(h => cy.visit(h));
         } else {
             this.visitNewAttributePage();
         }
@@ -26,19 +26,19 @@ export default class AttributePage {
     };
 
     getName = () => cy.get(NAME);
-    setName = (value) => {
+    setName = value => {
         this.getName().clear().type(value);
         return this;
     };
 
     getValueType = () => cy.get(VALUE_TYPE);
-    selectValueType = (value) => {
+    selectValueType = value => {
         this.getValueType().select(value);
         return this;
     };
 
     getSubjectType = () => cy.get(SUBJECT_TYPE);
-    selectSubjectType = (value) => {
+    selectSubjectType = value => {
         this.getSubjectType().select(value);
         return this;
     };
@@ -49,27 +49,27 @@ export default class AttributePage {
         return this;
     };
 
-    getLanguageDsp = (lang) => cy.get(testId(lang + LANGUAGE_DSP));
+    getLanguageDsp = lang => cy.get(testId(lang + LANGUAGE_DSP));
 
     getLanguage = () => cy.get(LANGUAGE_SELECT);
-    selectLanguage = (value) => {
+    selectLanguage = value => {
         this.getLanguage().select(value);
         return this;
     };
 
-    getTranslationLong = (lang) => cy.get(testId(lang + TRANSLATION_LONG));
+    getTranslationLong = lang => cy.get(testId(lang + TRANSLATION_LONG));
     setTranslationLong = (lang, value) => {
         this.getTranslationLong(lang).clear().type(value);
         return this;
     };
 
-    getTranslationShort = (lang) => cy.get(testId(lang + TRANSLATION_SHORT));
+    getTranslationShort = lang => cy.get(testId(lang + TRANSLATION_SHORT));
     setTranslationShort = (lang, value) => {
         this.getTranslationShort(lang).clear().type(value);
         return this;
     };
 
-    removeTranslation = (lang) => cy.get(testId(lang + REMOVE_BUTTON)).click();
+    removeTranslation = lang => cy.get(testId(lang + REMOVE_BUTTON)).click();
 
     save = () => {
         cy.get(SAVE_BUTTON).click();
