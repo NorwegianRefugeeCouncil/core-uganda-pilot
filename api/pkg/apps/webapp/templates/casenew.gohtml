@@ -16,7 +16,7 @@
                                 id="case-type"
                                 class="form-select"
                                 name="caseTypeId"
-                                data-testid="caseTypePicker"
+                                data-testid="casetype-select"
                         >
                             {{if .CaseTypes}}
                                 <option value="">Choose</option>
@@ -43,7 +43,7 @@
 
                         <div class="form mb-3">
                             <label for="party">Select Party</label>
-                            <select id="party" class="form-select" name="partyId" data-testid="partyPicker" required>
+                            <select id="party" class="form-select" name="partyId" data-testid="party-select" required>
                                 {{if .Parties}}
                                     <option {{if not $.PartyID}}selected{{end}}></option>
                                     {{range .Parties.Items}}
@@ -68,14 +68,14 @@
     </div>
     <script>
 
-      const caseTypeSelect = document.querySelector('#case-type');
-      caseTypeSelect.onchange = (event) => {
-        const caseTypeId = event.target.value;
-        if (caseTypeId === '') {
-          return;
-        }
-        window.location.href = `/cases/new?caseTypeId=${caseTypeId}`;
-      };
+        const caseTypeSelect = document.querySelector('#case-type');
+        caseTypeSelect.onchange = (event) => {
+            const caseTypeId = event.target.value;
+            if (caseTypeId === '') {
+                return;
+            }
+            window.location.href = `/cases/new?caseTypeId=${caseTypeId}`;
+        };
 
     </script>
     </body>

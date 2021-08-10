@@ -1,3 +1,5 @@
+export const testId = id => `[data-testid=${id}]`;
+
 export const URL = {
     INDIVIDUALS: '/individuals',
     CASES: '/cases',
@@ -15,10 +17,8 @@ export const URL = {
 };
 
 export const TEST_CASE_TEMPLATE_FIELD = {
-    DROPDOWN: 'testDropdown',
-    CHECKBOX: 'testCheckbox',
-    TEXTINPUT: 'testTextInput',
-    TEXTAREA: 'testTextarea',
+    DROPDOWN: testId('test-dropdown'),
+    CHECKBOX: testId('test-checkbox'),
+    TEXTINPUT: testId('test-textinput'),
+    TEXTAREA: testId('test-textarea'),
 };
-
-export const testId = (id) => `[data-testid=${id}]`;

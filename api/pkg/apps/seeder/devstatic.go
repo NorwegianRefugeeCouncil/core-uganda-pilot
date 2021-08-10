@@ -12,12 +12,13 @@ var (
 	DTeamFeatureRequestCaseType = caseType("95bf45fd-a703-4698-ae9c-12f1865b1a6f", "Request a feature/change in Core", iam.IndividualPartyType.ID, DTeam.ID, DTeamFeatureRequest, false)
 
 	// D-Team (Dogfooding)
-	Ludovic  = staff(individual("78b494dc-7461-42f5-bf2d-1c9695e63ba8", "Ludovic", "Cleroux", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
-	Cassie   = staff(individual("dd65e4cf-c691-411a-a1f8-bed22c538480", "Cassie", "Seo", "12/02/1978", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
-	Senyao   = staff(individual("1889acbb-5dbb-4998-a071-ab00c19c2b77", "Senyao", "Hou", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
-	Robert   = staff(individual("3e8488eb-785a-49c4-95f1-2cc5c09e8ab9", "Robert", "Focke", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
-	Nicolas  = staff(individual("7c1107b7-3fa7-4f49-acea-e953c5d8723f", "Nicolas", "Epstein", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
-	Kristjan = staff(individual("ae4d0fd5-bb03-4b9d-948d-c99754aca5ce", "Kristjan", "Thoroddsson", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	TestIndividual = individual("3a38a57c-660d-4482-975c-e49e7618c689", "Test", "Individual", "01/01/1234", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Ludovic        = staff(individual("78b494dc-7461-42f5-bf2d-1c9695e63ba8", "Ludovic", "Cleroux", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Cassie         = staff(individual("dd65e4cf-c691-411a-a1f8-bed22c538480", "Cassie", "Seo", "12/02/1978", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Senyao         = staff(individual("1889acbb-5dbb-4998-a071-ab00c19c2b77", "Senyao", "Hou", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Robert         = staff(individual("3e8488eb-785a-49c4-95f1-2cc5c09e8ab9", "Robert", "Focke", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Nicolas        = staff(individual("7c1107b7-3fa7-4f49-acea-e953c5d8723f", "Nicolas", "Epstein", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Kristjan       = staff(individual("ae4d0fd5-bb03-4b9d-948d-c99754aca5ce", "Kristjan", "Thoroddsson", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
 
 	DTeam = team("5efecef3-a7a9-4705-84ca-70c89d7d783f", "D-Team")
 
@@ -88,7 +89,7 @@ var (
 					Description: "Dropdown description",
 					Options:     []string{"0", "1", "2"},
 				},
-				Validation: cms.FormElementValidation{Required: true},
+				Validation: cms.FormElementValidation{Required: false},
 			},
 			{
 				Type: "checkbox",
@@ -98,7 +99,7 @@ var (
 					Description:     "Checkbox description",
 					CheckboxOptions: []cms.CheckboxOption{{Label: "0"}, {Label: "1"}, {Label: "2"}},
 				},
-				Validation: cms.FormElementValidation{Required: true},
+				Validation: cms.FormElementValidation{Required: false},
 			},
 			{
 				Type: "textarea",
@@ -108,7 +109,7 @@ var (
 					Description: "Textarea description",
 					Placeholder: "Textarea placeholder",
 				},
-				Validation: cms.FormElementValidation{Required: true},
+				Validation: cms.FormElementValidation{Required: false},
 			},
 			{
 				Type: "textinput",
@@ -118,7 +119,7 @@ var (
 					Description: "Textinput description",
 					Placeholder: "Textinput placeholder",
 				},
-				Validation: cms.FormElementValidation{Required: true},
+				Validation: cms.FormElementValidation{Required: false},
 			},
 		},
 	}
