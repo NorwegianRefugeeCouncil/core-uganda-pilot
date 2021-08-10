@@ -83,7 +83,7 @@
                                 </div>
                                 <div id="language-picker-container" class="card-body border-top">
                                     <div class="form-floating shadow-sm">
-                                        <select id="language-picker" class="form-select" data-testid="language">
+                                        <select id="language-picker" class="form-select" data-testid="language-select">
                                             <!-- Templated -->
                                         </select>
                                         <label for="language-picker">Language</label>
@@ -256,7 +256,7 @@
             const doc = `
                 <div class="list-group-item py-0">
                     <div class="d-flex flex-row align-items-center">
-                        <div class="h-100 pe-3 text-center" style="width: 4.5rem" data-testid="language-display">
+                        <div class="h-100 pe-3 text-center" style="width: 4.5rem" data-testid="${language}-display">
                             ${findLanguageName(language)}
                         </div>
                         <div class="flex-grow-1 border-start ps-3 border-end pe-3">
@@ -268,7 +268,7 @@
                                            type="text"
                                            value="${long}"
                                            placeholder="Long Description"
-                                           data-testid="translation-long"
+                                           data-testid="${language}-translation-long"
                                     >
                                     <label for="i81n-long-${language}">Long</label>
                                 </div>
@@ -280,7 +280,7 @@
                                            type="text"
                                            value="${short}"
                                            placeholder="Short Description"
-                                           data-testid="translation-short"
+                                           data-testid="${language}-translation-short"
                                     >
                                     <label for="i81n-short-${language}">Short</label>
                                 </div>
@@ -290,7 +290,9 @@
                         <div class="h-100">
                             <button class="btn-close ms-3"
                                     type="button"
-                                    onclick="removeTranslation('${language}')"/>
+                                    onclick="removeTranslation('${language}')"
+                                    data-testid="${language}-remove-btn"
+                                    />
                         </div>
                     </div>
                 </div>`;

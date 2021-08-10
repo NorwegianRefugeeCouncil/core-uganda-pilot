@@ -4,30 +4,30 @@ const NAME = testId('name');
 const VALUE_TYPE = testId('type');
 const SUBJECT_TYPE = testId('subject');
 const PERSONAL_INFO = testId('personal-info-chkbx');
-const LANGUAGE = testId('language');
-const LANGUAGE_DSP = testId('language-display');
-const TRANSLATION_LONG = testId('translation-long');
-const TRANSLATION_SHORT = testId('translation-short');
+const LANGUAGE_SELECT = testId('language-select');
+const LANGUAGE_DSP = '-display';
+const TRANSLATION_LONG = '-translation-long';
+const TRANSLATION_SHORT = '-translation-short';
 const SAVE_BUTTON = testId('save-btn');
+const REMOVE_BUTTON = '-remove-btn';
 
 export default class AttributePage {
     constructor(href) {
         if (href != null) {
             href.then((h) => cy.visit(h));
         } else {
-            this.visitPage();
+            this.visitNewAttributePage();
         }
     }
 
-    visitPage = () => {
-        cy.log('navigating to %s', URL.NEW_ATTRIBUTE);
+    visitNewAttributePage = () => {
         cy.visit(URL.NEW_ATTRIBUTE);
         return this;
     };
 
     getName = () => cy.get(NAME);
-    typeName = (value) => {
-        this.getName().type(value);
+    setName = (value) => {
+        this.getName().clear().type(value);
         return this;
     };
 
@@ -49,24 +49,27 @@ export default class AttributePage {
         return this;
     };
 
-    getLanguage = () => cy.get(LANGUAGE);
-    getLanguageDsp = () => cy.get(LANGUAGE_DSP);
+    getLanguageDsp = (lang) => cy.get(testId(lang + LANGUAGE_DSP));
+
+    getLanguage = () => cy.get(LANGUAGE_SELECT);
     selectLanguage = (value) => {
         this.getLanguage().select(value);
         return this;
     };
 
-    getTranslationLong = () => cy.get(TRANSLATION_LONG);
-    setTranslationLong = (value) => {
-        this.getTranslationLong().type(value);
+    getTranslationLong = (lang) => cy.get(testId(lang + TRANSLATION_LONG));
+    setTranslationLong = (lang, value) => {
+        this.getTranslationLong(lang).clear().type(value);
         return this;
     };
 
-    getTranslationShort = () => cy.get(TRANSLATION_SHORT);
-    setTranslationShort = (value) => {
-        this.getTranslationShort().type(value);
+    getTranslationShort = (lang) => cy.get(testId(lang + TRANSLATION_SHORT));
+    setTranslationShort = (lang, value) => {
+        this.getTranslationShort(lang).clear().type(value);
         return this;
     };
+
+    removeTranslation = (lang) => cy.get(testId(lang + REMOVE_BUTTON)).click();
 
     save = () => {
         cy.get(SAVE_BUTTON).click();

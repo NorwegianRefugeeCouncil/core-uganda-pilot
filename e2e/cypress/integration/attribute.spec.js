@@ -1,61 +1,98 @@
 import AttributePage from '../pages/attributePage';
 import AttributeOverviewPage from '../pages/attributeOverview.page';
+import ids from '../fixtures/ids.json';
 
 const OPTIONS = {
-    NAME: 'New Test',
-    EDITED_NAME: 'Test Edited',
+    NAME: 'Test attribute',
+    NAME_U: 'Test attribute - updated',
     VALUE_TYPE: 'String',
-    SUBJECT_TYPE: 'a842e7cb-3777-423a-9478-f1348be3b4a5', // Individual PartyTypeID
-    LANGUAGE: 'English',
-    TRANSLATION_LONG: 'Long',
-    TRANSLATION_SHORT: 'Short',
+    SUBJECT_TYPE: ids.IndividualPartyTypeID,
+    LANGUAGE_1: 'en',
+    TRANSLATION_1_L: 'Long translation',
+    TRANSLATION_1_L_U: 'Long translation - updated',
+    TRANSLATION_1_S: 'Short translation',
+    TRANSLATION_1_S_U: 'Short translation - updated',
+    LANGUAGE_2: 'fr',
+    TRANSLATION_2_L: 'Traduction longue',
+    TRANSLATION_2_S: 'Traduction courte',
 };
 
 describe('Attribute Page', function () {
+    describe('Navigate', () => {
+        it('should navigate to the New Attribute page from the attributes page', () => {
+            const attributeOverviewPage = new AttributeOverviewPage();
+            attributeOverviewPage.clickNewAttributeBtn().url().should('include', 'attributes/new');
+        });
+    });
     describe('Create', () => {
-        it('should navigate to New Attribute Form Page and save new attribute', () => {
+        it('should create a new attribute', () => {
             const newAttributePage = new AttributePage();
             newAttributePage
-                .typeName(OPTIONS.NAME)
+                .setName(OPTIONS.NAME)
                 .selectValueType(OPTIONS.VALUE_TYPE)
                 .selectSubjectType(OPTIONS.SUBJECT_TYPE)
-                .selectLanguage(OPTIONS.LANGUAGE)
-                .setTranslationLong(OPTIONS.TRANSLATION_LONG)
-                .setTranslationShort(OPTIONS.TRANSLATION_SHORT)
+                .selectLanguage(OPTIONS.LANGUAGE_1)
+                .setTranslationLong(OPTIONS.LANGUAGE_1, OPTIONS.TRANSLATION_1_L)
+                .setTranslationShort(OPTIONS.LANGUAGE_1, OPTIONS.TRANSLATION_1_S)
+                .selectLanguage(OPTIONS.LANGUAGE_2)
+                .setTranslationLong(OPTIONS.LANGUAGE_2, OPTIONS.TRANSLATION_2_L)
+                .setTranslationShort(OPTIONS.LANGUAGE_2, OPTIONS.TRANSLATION_2_S)
                 .save();
+        });
+    });
 
+    describe('Verify creation', () => {
+        it('should verify that the attribute was created properly', () => {
             const attributeOverviewPage = new AttributeOverviewPage();
-            attributeOverviewPage
-                .selectAttribute()
-                .should('contain.text', OPTIONS.NAME);
+            attributeOverviewPage.selectLastAttribute().should('contain.text', OPTIONS.NAME);
+            const attrPage = attributeOverviewPage.attributePageForNewest();
 
             // Verify values
-            const attrPage = attributeOverviewPage.attributePageForLatest();
             attrPage.getName().should('have.value', OPTIONS.NAME);
             attrPage.getValueType().should('have.value', OPTIONS.VALUE_TYPE);
-            attrPage
-                .getSubjectType()
-                .should('have.value', OPTIONS.SUBJECT_TYPE);
+            attrPage.getSubjectType().should('have.value', OPTIONS.SUBJECT_TYPE);
             attrPage.getPersonalInfo().should('not.be.checked');
-            attrPage.getLanguageDsp().should('contain.text', OPTIONS.LANGUAGE);
-            attrPage
-                .getTranslationLong()
-                .should('have.value', OPTIONS.TRANSLATION_LONG);
-            attrPage
-                .getTranslationShort()
-                .should('have.value', OPTIONS.TRANSLATION_SHORT);
+            attrPage.getLanguageDsp(OPTIONS.LANGUAGE_1).should('exist');
+            attrPage.getTranslationLong(OPTIONS.LANGUAGE_1).should('have.value', OPTIONS.TRANSLATION_1_L);
+            attrPage.getTranslationShort(OPTIONS.LANGUAGE_1).should('have.value', OPTIONS.TRANSLATION_1_S);
+            attrPage.getLanguageDsp(OPTIONS.LANGUAGE_2).should('exist');
+            attrPage.getTranslationLong(OPTIONS.LANGUAGE_2).should('have.value', OPTIONS.TRANSLATION_2_L);
+            attrPage.getTranslationShort(OPTIONS.LANGUAGE_2).should('have.value', OPTIONS.TRANSLATION_2_S);
         });
     });
 
     describe('Update', () => {
         it('should update name on existing Attribute', () => {
             const attributeOverviewPage = new AttributeOverviewPage();
-            const attrPage = attributeOverviewPage
-                .attributePageForLatest()
-                .clearName()
-                .typeName(OPTIONS.EDITED_NAME)
-                .save();
-            attrPage.getName().should('have.value', OPTIONS.EDITED_NAME);
+            const attrPage = attributeOverviewPage.attributePageForNewest();
+
+            // Update values
+
+            attrPage.setName(OPTIONS.NAME_U);
+            // TODO attrPage.selectValueType();
+            attrPage.getPersonalInfo().check();
+            attrPage.setTranslationLong(OPTIONS.LANGUAGE_1, OPTIONS.TRANSLATION_1_L_U);
+            attrPage.setTranslationShort(OPTIONS.LANGUAGE_1, OPTIONS.TRANSLATION_1_S_U);
+            attrPage.removeTranslation(OPTIONS.LANGUAGE_2);
+            attrPage.save();
+        });
+    });
+
+    describe('Verify update', () => {
+        it('should verify that the attribute was updated properly', () => {
+            const attributeOverviewPage = new AttributeOverviewPage();
+            attributeOverviewPage.selectLastAttribute().should('contain.text', OPTIONS.NAME);
+            const attrPage = attributeOverviewPage.attributePageForNewest();
+
+            // Verify values
+            attrPage.getName().should('have.value', OPTIONS.NAME_U);
+            attrPage.getValueType().should('have.value', OPTIONS.VALUE_TYPE);
+            attrPage.getSubjectType().should('have.value', OPTIONS.SUBJECT_TYPE);
+            attrPage.getPersonalInfo().should('be.checked');
+            attrPage.getLanguageDsp(OPTIONS.LANGUAGE_1).should('exist');
+            attrPage.getTranslationLong(OPTIONS.LANGUAGE_1).should('have.value', OPTIONS.TRANSLATION_1_L_U);
+            attrPage.getTranslationShort(OPTIONS.LANGUAGE_1).should('have.value', OPTIONS.TRANSLATION_1_S_U);
+            attrPage.getLanguageDsp(OPTIONS.LANGUAGE_2).should('not.exist');
         });
     });
 });
