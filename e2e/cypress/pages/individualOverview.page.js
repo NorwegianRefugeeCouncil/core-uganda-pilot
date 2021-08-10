@@ -1,21 +1,36 @@
-import { URL } from '../helpers';
-import NewIndividualPage from './newIndividual.page';
+import { testId, URL } from '../helpers';
+import IndividualPage from './individualPage';
 
-const INDIVIDUAL_ROWS = '[data-testid=individual]';
+const ID = {
+    INDIVIDUAL_ROWS: testId('individual'),
+    INDIVIDUAL: testId('individual'),
+    SEARCH: testId('search'),
+    SEARCH_BTN: testId('search-btn'),
+};
 
 export default class IndividualOverviewPage {
     visitPage = () => {
-        cy.log('navigating to %s', URL.INDIVIDUALS);
         cy.visit(URL.INDIVIDUALS);
         return this;
     };
 
     selectIndividual = () => {
-        return cy.get(INDIVIDUAL_ROWS).last();
+        return cy.get(ID.INDIVIDUAL_ROWS).last();
     };
 
     visitIndividual = () => {
-        cy.get(INDIVIDUAL_ROWS).last().click();
-        return new NewIndividualPage();
+        cy.get(ID.INDIVIDUAL_ROWS).last().click();
+        return new IndividualPage();
+    };
+
+    searchFor = value => {
+        return cy
+            .get(ID.SEARCH)
+            .type(value)
+            .get(ID.SEARCH_BTN)
+            .click()
+            .get(ID.INDIVIDUAL)
+            .last()
+            .invoke('attr', 'href');
     };
 }
