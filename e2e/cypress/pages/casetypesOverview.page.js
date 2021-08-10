@@ -1,21 +1,34 @@
-import { URL } from '../helpers';
-import NewCaseTypePage from './newCasetype.page';
+import { testId, URL } from '../helpers';
+import CaseTypePage from './caseTypePage';
 
-const CASETYPE_ROWS = '[data-testid=casetype]';
+const CASETYPE_ROWS = testId('casetype');
+const NEW_CASETYPE_BTN = testId('new-casetype-btn');
 
 export default class CasetypesOverviewPage {
+    constructor() {
+        this.visitPage();
+    }
+
     visitPage = () => {
-        cy.log('navigating to %s', URL.CASETYPE);
-        cy.visit(URL.CASETYPE);
+        cy.visit(URL.CASETYPES);
         return this;
     };
 
-    selectCasetype = () => {
+    clickNewCaseTypeBtn = () => {
+        return cy.get(NEW_CASETYPE_BTN).click();
+    };
+
+    selectNewestCasetype = () => {
         return cy.get(CASETYPE_ROWS).last();
     };
 
     visitCasetype = () => {
         cy.get(CASETYPE_ROWS).last().click();
-        return new NewCaseTypePage();
+        return new CaseTypePage();
+    };
+
+    caseTypePageForNewest = () => {
+        cy.get(CASETYPE_ROWS).last().invoke('attr', 'href').as('href');
+        return new CaseTypePage(cy.get('@href'));
     };
 }

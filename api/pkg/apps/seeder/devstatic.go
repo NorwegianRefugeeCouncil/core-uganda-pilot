@@ -76,9 +76,9 @@ var (
 		},
 	}
 
-	// DevTemplate !!! It's important to keep this template up-to-date for e2e testing.
+	// TestTemplate !!! It's important to keep this template up-to-date for e2e testing.
 	// It MUST include an instance of each input type described in cms/iam.
-	DevTemplate = &cms.CaseTemplate{
+	TestTemplate = &cms.CaseTemplate{
 		FormElements: []cms.FormElement{
 			{
 				Type: "dropdown",
@@ -123,7 +123,7 @@ var (
 		},
 	}
 
-	DevCaseType = caseType("05b3460e-9f20-4af7-9a74-06f632f7ae24", "Test Case Type", iam.IndividualPartyType.ID, DTeam.ID, DevTemplate, false)
+	TestCaseType = caseType("05b3460e-9f20-4af7-9a74-06f632f7ae24", "Test Case Type", iam.IndividualPartyType.ID, DTeam.ID, TestTemplate, false)
 
-	DevCase = kase("5827081c-e6b8-4b29-a1b1-f6780a65c28e", DevCaseType.ID, "D-Team", DTeam.ID, DTeam.ID, false, DevCaseType.Template, DevCaseType.IntakeCaseType)
+	TestCase = kase("5827081c-e6b8-4b29-a1b1-f6780a65c28e", TestCaseType.ID, "D-Team", DTeam.ID, DTeam.ID, false, TestCaseType.Template, TestCaseType.IntakeCaseType)
 )

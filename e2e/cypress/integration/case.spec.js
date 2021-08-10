@@ -1,14 +1,25 @@
+import { URL } from '../helpers';
 import CasesOverviewPage from '../pages/casesOverview.page';
 
 const mockText = 'Test';
 const mockUpdatedText = 'Updated Test';
 
 describe('Case Page', function () {
+    describe.skip('Prepares the db', () => {
+        it('should add the test casetype', () => {
+            cy.fixture('test_casetype')
+                .then((tmpl) => {
+                    cy.request('POST', URL.CASETYPES, tmpl);
+                })
+                .then((res) => {
+                    expect(res.status).to.eq(303); // expect to be redirected after successful POST
+                });
+        });
+    });
     describe('Create', () => {
-        it('should navigate to New Case Form Page when NewCaseBtn is selected on Case Overview Page', () => {
+        it('should navigate to New Case Page from Case Overview Page and submit a new case', () => {
             const caseOverviewPage = new CasesOverviewPage();
             caseOverviewPage
-                .visitPage()
                 .openNewCase()
                 .newCaseForm()
                 .selectCaseType()
