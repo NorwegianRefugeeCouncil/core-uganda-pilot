@@ -685,22 +685,22 @@ var (
 	DTeamFeatureRequestCaseType = caseType("95bf45fd-a703-4698-ae9c-12f1865b1a6f", "Request a feature/change in Core", iam.IndividualPartyType.ID, DTeam.ID, DTeamFeatureRequest, false)
 
 	// Individuals
-	JohnDoe     = individual("c529d679-3bb6-4a20-8f06-c096f4d9adc1", "John", "Doe", "12/02/1978", "Refugee", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "No", "Yes", "Moderate", "No", "", "No", "", "Kenya", "Kiswahili, English", "English", "123 Main Street, Kampala", "0123456789", "", "Email", "No")
-	MaryPoppins = individual("bbf539fd-ebaa-4438-ae4f-8aca8b327f42", "Mary", "Poppins", "12/02/1978", "Internally Displaced Person", "Female", "Yes", "https://link-to-consent.proof", "No", "No", "No", "No", "", "No", "", "No", "", "Uganda", "Rukiga, English", "Rukiga", "901 First Avenue, Kampala", "0123456789", "", "Telegram", "Yes")
-	BoDiddley   = individual("26335292-c839-48b6-8ad5-81271ee51e7b", "Bo", "Diddley", "12/02/1978", "Host Community", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "Yes", "No", "", "No", "", "No", "", "Somalia", "Somali, Arabic, English", "English", "101 Main Street, Kampala", "0123456789", "", "Whatsapp", "No")
+	JohnDoe     = individual("c529d679-3bb6-4a20-8f06-c096f4d9adc1", "John", "Doe", "1983-04-23", "Refugee", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "No", "Yes", "Moderate", "No", "", "No", "", "Kenya", "Kiswahili, English", "English", "123 Main Street, Kampala", "0123456789", "", "Email", "No")
+	MaryPoppins = individual("bbf539fd-ebaa-4438-ae4f-8aca8b327f42", "Mary", "Poppins", "1983-04-23", "Internally Displaced Person", "Female", "Yes", "https://link-to-consent.proof", "No", "No", "No", "No", "", "No", "", "No", "", "Uganda", "Rukiga, English", "Rukiga", "901 First Avenue, Kampala", "0123456789", "", "Telegram", "Yes")
+	BoDiddley   = individual("26335292-c839-48b6-8ad5-81271ee51e7b", "Bo", "Diddley", "1983-04-23", "Host Community", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "Yes", "No", "", "No", "", "No", "", "Somalia", "Somali, Arabic, English", "English", "101 Main Street, Kampala", "0123456789", "", "Whatsapp", "No")
 
 	// Individuals (Staff)
-	Stephen  = staff(individual("066a0268-fdc6-495a-9e4b-d60cfae2d81a", "Stephen", "Kabagambe", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
-	Colette  = staff(individual("93f9461f-31da-402e-8988-6e0100ecaa24", "Colette", "le Jeune", "12/02/1978", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
-	Courtney = staff(individual("14c014d9-f433-4508-b33d-dc45bf86690b", "Courtney", "Lare", "12/02/1978", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Stephen  = staff(individual("066a0268-fdc6-495a-9e4b-d60cfae2d81a", "Stephen", "Kabagambe", "1983-04-23", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Colette  = staff(individual("93f9461f-31da-402e-8988-6e0100ecaa24", "Colette", "le Jeune", "1983-04-23", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Courtney = staff(individual("14c014d9-f433-4508-b33d-dc45bf86690b", "Courtney", "Lare", "1983-04-23", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
 
 	// D-Team (Dogfooding)
-	Ludovic  = staff(individual("78b494dc-7461-42f5-bf2d-1c9695e63ba8", "Ludovic", "Cleroux", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
-	Cassie   = staff(individual("dd65e4cf-c691-411a-a1f8-bed22c538480", "Cassie", "Seo", "12/02/1978", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
-	Senyao   = staff(individual("1889acbb-5dbb-4998-a071-ab00c19c2b77", "Senyao", "Hou", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
-	Robert   = staff(individual("3e8488eb-785a-49c4-95f1-2cc5c09e8ab9", "Robert", "Focke", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
-	Nicolas  = staff(individual("7c1107b7-3fa7-4f49-acea-e953c5d8723f", "Nicolas", "Epstein", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
-	Kristjan = staff(individual("ae4d0fd5-bb03-4b9d-948d-c99754aca5ce", "Kristjan", "Thoroddsson", "12/02/1978", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Ludovic  = staff(individual("78b494dc-7461-42f5-bf2d-1c9695e63ba8", "Ludovic", "Cleroux", "1983-04-23", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Cassie   = staff(individual("dd65e4cf-c691-411a-a1f8-bed22c538480", "Cassie", "Seo", "1983-04-23", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Senyao   = staff(individual("1889acbb-5dbb-4998-a071-ab00c19c2b77", "Senyao", "Hou", "1983-04-23", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Robert   = staff(individual("3e8488eb-785a-49c4-95f1-2cc5c09e8ab9", "Robert", "Focke", "1983-04-23", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Nicolas  = staff(individual("7c1107b7-3fa7-4f49-acea-e953c5d8723f", "Nicolas", "Epstein", "1983-04-23", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Kristjan = staff(individual("ae4d0fd5-bb03-4b9d-948d-c99754aca5ce", "Kristjan", "Thoroddsson", "1983-04-23", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
 
 	// Memberships
 	StevenMembership   = membership("862690ee-87f0-4f95-aa1e-8f8a2f2fd54a", Stephen, UgandaCoreAdminTeam)

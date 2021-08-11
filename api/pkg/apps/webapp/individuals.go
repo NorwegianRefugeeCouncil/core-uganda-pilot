@@ -314,6 +314,12 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	progressLabel := status.Label
 	progress := status.Progress
 
+	// Write Individual attribute values (if any) to Attributes object
+	for _, attribute := range attrs.Items {
+		values := b.GetAttribute(attribute.ID)
+		attribute.Attributes.Value = values
+	}
+
 	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "individual", map[string]interface{}{
 		"IsNew":                     id == "new",
 		"Individual":                b,

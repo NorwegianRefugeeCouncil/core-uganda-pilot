@@ -1,11 +1,11 @@
-{{define "textinput"}}
+{{define "file"}}
     <div class="form mb-3">
-        <label class="mb-2 text-muted" style="font-weight: bold;" for="{{.Attributes.Name}}">{{.Attributes.Label}}</label>
+        {{template "label" .}}
         <input id="{{.Attributes.Name}}"
                name="{{.Attributes.Name}}"
                value="{{if .Attributes.Value}}{{index .Attributes.Value 0}}{{end}}"
                class="form-control  {{if .Errors}}is-invalid{{end}}"
-               type="text"
+               type="file"
                placeholder="{{.Attributes.Placeholder}}"
                {{if .Validation.Required}}required{{end}}
                 {{if .Errors}}aria-describedby="{{.Attributes.Name}}Feedback"{{end}}

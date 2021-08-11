@@ -6,7 +6,7 @@ type FieldType string
 
 const (
 	Textarea      FieldType = "textarea"
-	Text          FieldType = "textinput"
+	Text          FieldType = "text"
 	Dropdown      FieldType = "dropdown"
 	Radio         FieldType = "radio"
 	Checkbox      FieldType = "checkbox"

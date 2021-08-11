@@ -29,34 +29,35 @@
 
                     {{ range $index, $attribute := .Attributes.Items}}
 
-                        {{ $values := index $.Individual.Attributes $attribute.ID }}
+                        {{/*                        {{ $values := index $.Individual.Attributes $attribute.ID }}*/}}
 
-                        {{ if $values}}
-                            {{range $idx, $value := $values}}
-                                {{ if eq (len $attribute.Translations) 0}}
-                                    <label class="mb-2 text-muted" style="font-weight: bold;"
-                                           for="attribute-{{$attribute.ID}}-{{$idx}}">{{$attribute.Name}}</label>
-                                {{ else }}
-                                    <label class="mb-2 text-muted" style="font-weight: bold;"
-                                           for="attribute-{{$attribute.ID}}-{{$idx}}">{{(index $attribute.Translations 0).LongFormulation}}</label>
-                                {{ end }}
-                                <input class="form-control"
-                                       name="attribute[{{$attribute.ID}}]"
-                                       id="attribute-{{$attribute.ID}}-{{$idx}}"
-                                       type="text"
-                                       data-testid="text-attribute"
-                                       value="{{$value}}">
-                            {{end}}
-                        {{else}}
-                            <label class="mb-2 text-muted" style="font-weight: bold;"
-                                   for="attribute-{{$attribute.ID}}-0">{{(index $attribute.Translations 0).LongFormulation}}</label>
-                            <input class="form-control"
-                                   name="attribute[{{$attribute.ID}}]"
-                                   id="attribute-{{$attribute.ID}}-0"
-                                   type="text"
-                                   data-testid="text-attribute"
-                                   value="">
-                        {{end}}
+                        {{/*                        {{ if $values}}*/}}
+                        {{template "formelement" $attribute}}
+                        {{/*                            {{range $idx, $value := $values}}*/}}
+                        {{/*                                {{ if eq (len $attribute.Translations) 0}}*/}}
+                        {{/*                                    <label class="mb-2 text-muted" style="font-weight: bold;"*/}}
+                        {{/*                                           for="attribute-{{$attribute.ID}}-{{$idx}}">{{$attribute.Name}}</label>*/}}
+                        {{/*                                {{ else }}*/}}
+                        {{/*                                    <label class="mb-2 text-muted" style="font-weight: bold;"*/}}
+                        {{/*                                           for="attribute-{{$attribute.ID}}-{{$idx}}">{{(index $attribute.Translations 0).LongFormulation}}</label>*/}}
+                        {{/*                                {{ end }}*/}}
+                        {{/*                                <input class="form-control"*/}}
+                        {{/*                                       name="attribute[{{$attribute.ID}}]"*/}}
+                        {{/*                                       id="attribute-{{$attribute.ID}}-{{$idx}}"*/}}
+                        {{/*                                       type="text"*/}}
+                        {{/*                                       data-testid="text-attribute"*/}}
+                        {{/*                                       value="{{$value}}">*/}}
+                        {{/*                            {{end}}*/}}
+                        {{/*                        {{else}}*/}}
+                        {{/*                            <label class="mb-2 text-muted" style="font-weight: bold;"*/}}
+                        {{/*                                   for="attribute-{{$attribute.ID}}-0">{{(index $attribute.Translations 0).LongFormulation}}</label>*/}}
+                        {{/*                            <input class="form-control"*/}}
+                        {{/*                                   name="attribute[{{$attribute.ID}}]"*/}}
+                        {{/*                                   id="attribute-{{$attribute.ID}}-0"*/}}
+                        {{/*                                   type="text"*/}}
+                        {{/*                                   data-testid="text-attribute"*/}}
+                        {{/*                                   value="">*/}}
+                        {{/*                        {{end}}*/}}
 
                     {{end}}
 
@@ -116,7 +117,7 @@
                         </div>
                         <div id="situationAnalysis">
                             {{range .SituationAnalysis.Template.FormElements}}
-                                {{template "formfield" .}}
+                                {{template "formelement" .}}
                             {{end}}
                         </div>
                     </div>
@@ -130,7 +131,7 @@
                         </div>
                         <div id="individualAssessment">
                             {{range .IndividualAssessment.Template.FormElements}}
-                                {{template "formfield" .}}
+                                {{template "formelement" .}}
                             {{end}}
                         </div>
                     </div>
@@ -444,7 +445,7 @@
         submitBtn.onclick = async event => {
           // event.preventDefault();
           // TODO submit attributes
-            {{if (not .IsNew)}}
+            {{if and (not .IsNew) (and .SituationAnalysis .IndividualAssessment)}}
           const subForms = [
             { formID: 'situationAnalysis', caseID: "{{.SituationAnalysis.ID}}" },
             { formID: 'individualAssessment', caseID: "{{.IndividualAssessment.ID}}" }

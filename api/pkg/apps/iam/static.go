@@ -524,12 +524,12 @@ var RequireAnInterpreterAttribute = Attribute{
 	Type: form.Checkbox,
 	Attributes: form.FormElementAttributes{
 		Name:            "requireAnInterpreter",
-		CheckboxOptions: []form.CheckboxOption{{Label: "Does this beneficiary require an interpreter?"}},
+		CheckboxOptions: []form.CheckboxOption{{Label: "This beneficiary requires an interpreter."}},
 	},
 	Translations: []AttributeTranslation{
 		{
 			Locale:           "en",
-			LongFormulation:  "Does this beneficiary require an interpreter?",
+			LongFormulation:  "This beneficiary requires an interpreter.",
 			ShortFormulation: "Requires an interpreter",
 		},
 	},

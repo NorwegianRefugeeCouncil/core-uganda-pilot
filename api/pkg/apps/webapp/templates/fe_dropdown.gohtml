@@ -1,15 +1,17 @@
 {{define "dropdown"}}
     <div class="form mb-3">
-        <label class="mb-2 text-muted" style="font-weight: bold;" for="{{.Attributes.Name}}">{{.Attributes.Label}}</label>
+        {{template "label" .}}
         <select id="{{.Attributes.Name}}"
                 name="{{.Attributes.Name}}"
                 class="form-select {{if .Errors}}is-invalid{{end}}"
-                {{if .Attributes.Multiple}}multiple{{end}}
+                {{if .Attributes.Multiple}}multiple size="{{len .Attributes.Options}}"{{end}}
                 {{if .Validation.Required}}required{{end}}
                 {{if .Errors}}aria-describedby="{{.Attributes.Name}}Feedback"{{end}}
                 {{if .Readonly}}disabled{{end}}
         >
-            <option value=""></option>
+            {{if not .Attributes.Multiple}}
+                <option value=""></option>
+            {{end}}
             {{range $i, $_ := .Attributes.Options}}
                 {{$istr := printf "%d" $i}}
                 <option value="{{$i}}"
