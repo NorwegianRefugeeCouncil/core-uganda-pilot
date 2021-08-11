@@ -50,16 +50,16 @@ func newUUID() string {
 	return uuid.NewV4().String()
 }
 
-func (s *Suite) mockPartyTypes(n int) []*PartyType {
-	var partyTypes []*PartyType
-	for i := 0; i < n; i++ {
-		partyTypes = append(partyTypes, &PartyType{
-			Name:      newUUID(),
-			IsBuiltIn: false,
-		})
-	}
-	return partyTypes
-}
+//func (s *Suite) mockPartyTypes(n int) []*PartyType {
+//	var partyTypes []*PartyType
+//	for i := 0; i < n; i++ {
+//		partyTypes = append(partyTypes, &PartyType{
+//			Name:      newUUID(),
+//			IsBuiltIn: false,
+//		})
+//	}
+//	return partyTypes
+//}
 
 func (s *Suite) mockAttributes(n int) []*Attribute {
 	var attributes []*Attribute
@@ -85,19 +85,19 @@ func (s *Suite) mockParties(n int) []*Party {
 	return parties
 }
 
-func (s *Suite) mockRelationshipTypes(n int) []*RelationshipType {
-	var relationshipTypes []*RelationshipType
-	for i := 0; i < n; i++ {
-		relationshipTypes = append(relationshipTypes, &RelationshipType{
-			IsDirectional:   false,
-			Name:            newUUID(),
-			FirstPartyRole:  "",
-			SecondPartyRole: "",
-			Rules:           nil,
-		})
-	}
-	return relationshipTypes
-}
+//func (s *Suite) mockRelationshipTypes(n int) []*RelationshipType {
+//	var relationshipTypes []*RelationshipType
+//	for i := 0; i < n; i++ {
+//		relationshipTypes = append(relationshipTypes, &RelationshipType{
+//			IsDirectional:   false,
+//			Name:            newUUID(),
+//			FirstPartyRole:  "",
+//			SecondPartyRole: "",
+//			Rules:           nil,
+//		})
+//	}
+//	return relationshipTypes
+//}
 
 func (s *Suite) mockRelationships(n int) []*Relationship {
 	var relationships []*Relationship

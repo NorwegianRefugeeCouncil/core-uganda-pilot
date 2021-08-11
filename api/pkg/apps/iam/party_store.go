@@ -79,11 +79,11 @@ func (s *PartyStore) list(ctx context.Context, listOptions PartySearchOptions) (
 	filterItems := bson.M{}
 
 	if len(listOptions.PartyTypeIDs) != 0 {
-		filterItems["partyTypeIds"] = bson.D{{"$in", BSONStringA(listOptions.PartyTypeIDs)}}
+		filterItems["partyTypeIds"] = bson.D{{Key: "$in", Value: BSONStringA(listOptions.PartyTypeIDs)}}
 	}
 
 	if len(listOptions.PartyIDs) != 0 {
-		filterItems["id"] = bson.D{{"$in", BSONStringA(listOptions.PartyIDs)}}
+		filterItems["id"] = bson.D{{Key: "$in", Value: BSONStringA(listOptions.PartyIDs)}}
 	}
 
 	if listOptions.Attributes != nil && len(listOptions.Attributes) > 0 {

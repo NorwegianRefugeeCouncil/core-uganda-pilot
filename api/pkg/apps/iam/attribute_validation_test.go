@@ -61,10 +61,103 @@ func TestValidateAttribute(t *testing.T) {
 			assert: assertRequired(".translations[0].short"),
 		},
 		{
-			name: "missing required field",
+			name: "missing required form field",
 			attribute: &Attribute{
 				Type: form.Text,
+				Attributes: form.FormElementAttributes{
+					Name: "text",
+				},
+				Validation: form.FormElementValidation{Required: true},
 			},
+			assert: assertRequired(".text"),
+		},
+		{
+			name: "invalid email",
+			attribute: &Attribute{
+				Type: form.Email,
+				Attributes: form.FormElementAttributes{
+					Name:  "field",
+					Value: []string{"42"},
+				},
+			},
+			assert: assertInvalid(".field"),
+		},
+		{
+			name: "valid email",
+			attribute: &Attribute{
+				Type: form.Email,
+				Attributes: form.FormElementAttributes{
+					Name:  "field",
+					Value: []string{"valid@email.com"},
+				},
+			},
+			assert: assertNoError(".field"),
+		},
+		{
+			name: "invalid phone",
+			attribute: &Attribute{
+				Type: form.Email,
+				Attributes: form.FormElementAttributes{
+					Name:  "field",
+					Value: []string{"42"},
+				},
+			},
+			assert: assertInvalid(".field"),
+		},
+		{
+			name: "valid phone",
+			attribute: &Attribute{
+				Type: form.Phone,
+				Attributes: form.FormElementAttributes{
+					Name:  "field",
+					Value: []string{"+256-345-939499"},
+				},
+			},
+			assert: assertNoError(".field"),
+		},
+		{
+			name: "valid phone alternate",
+			attribute: &Attribute{
+				Type: form.Phone,
+				Attributes: form.FormElementAttributes{
+					Name:  "field",
+					Value: []string{"0345 939499"},
+				},
+			},
+			assert: assertNoError(".field"),
+		},
+		{
+			name: "invalid date",
+			attribute: &Attribute{
+				Type: form.Date,
+				Attributes: form.FormElementAttributes{
+					Name:  "field",
+					Value: []string{"1987-14-02"},
+				},
+			},
+			assert: assertInvalid(".field"),
+		},
+		{
+			name: "invalid date alternate",
+			attribute: &Attribute{
+				Type: form.Date,
+				Attributes: form.FormElementAttributes{
+					Name:  "field",
+					Value: []string{"1987-03-32"},
+				},
+			},
+			assert: assertInvalid(".field"),
+		},
+		{
+			name: "valid date",
+			attribute: &Attribute{
+				Type: form.Date,
+				Attributes: form.FormElementAttributes{
+					Name:  "field",
+					Value: []string{"1987-12-30"},
+				},
+			},
+			assert: assertNoError(".field"),
 		},
 	}
 	for _, tc := range tcs {
