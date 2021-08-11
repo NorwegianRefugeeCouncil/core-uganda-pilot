@@ -2,6 +2,7 @@ package cms_test
 
 import (
 	. "github.com/nrc-no/core/pkg/apps/cms"
+	"github.com/nrc-no/core/pkg/form"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -32,7 +33,7 @@ func (s *Suite) testCaseTypeAPI() {
 	caseType.Name = "updated"
 	caseType.PartyTypeID = newUUID()
 	caseType.TeamID = newUUID()
-	caseType.Template = &CaseTemplate{FormElements: []FormElement{{Type: "textarea", Attributes: FormElementAttribute{Label: "updated"}}}}
+	caseType.Template = &CaseTemplate{FormElements: []form.FormElement{{Type: "textarea", Attributes: form.FormElementAttributes{Label: "updated"}}}}
 	updated, err := s.client.CaseTypes().Update(s.Ctx, caseType)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()

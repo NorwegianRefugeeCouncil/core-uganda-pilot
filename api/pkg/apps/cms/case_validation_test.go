@@ -20,7 +20,7 @@ func TestValidateCase(t *testing.T) {
 				FormElements: []form.FormElement{
 					{
 						Type: form.Dropdown,
-						Attributes: form.FormElementAttribute{
+						Attributes: form.FormElementAttributes{
 							Name: "dropdown",
 						},
 						Validation: form.FormElementValidation{
@@ -29,7 +29,7 @@ func TestValidateCase(t *testing.T) {
 					},
 					{
 						Type: form.Textarea,
-						Attributes: form.FormElementAttribute{
+						Attributes: form.FormElementAttributes{
 							Name: "textarea",
 						},
 						Validation: form.FormElementValidation{
@@ -38,7 +38,7 @@ func TestValidateCase(t *testing.T) {
 					},
 					{
 						Type: form.TextInput,
-						Attributes: form.FormElementAttribute{
+						Attributes: form.FormElementAttributes{
 							Name: "textinput",
 						},
 						Validation: form.FormElementValidation{
@@ -47,7 +47,7 @@ func TestValidateCase(t *testing.T) {
 					},
 					{
 						Type: form.Checkbox,
-						Attributes: form.FormElementAttribute{
+						Attributes: form.FormElementAttributes{
 							Name: "checkbox",
 						},
 						Validation: form.FormElementValidation{

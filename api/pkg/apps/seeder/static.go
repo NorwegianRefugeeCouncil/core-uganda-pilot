@@ -174,7 +174,7 @@ var (
 		FormElements: []form.FormElement{
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
 					Name:        "safeDiginifiedLife",
 					Description: "Probe for description",
@@ -186,7 +186,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "How are you addressing these challenges and barriers? What is standing in your way? Can you give me some examples of how you are dealing with these challenges?",
 					Name:        "challengesBarriers",
 					Description: "",
@@ -198,7 +198,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "What are some solutions you see for this and how could we work together on these solutions? How could we work to reduce these challenges together?",
 					Name:        "solutions",
 					Description: "",
@@ -210,7 +210,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "If we were to work together on this, what could we do together? What would make the most difference for you?",
 					Name:        "workTogether",
 					Description: "",
@@ -226,7 +226,7 @@ var (
 		FormElements: []form.FormElement{
 			{
 				Type: form.TaxonomyInput,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Which service has the individual requested as a starting point of support?",
 					Name:        "serviceStartingPoint",
 					Description: "Add the taxonomies of the services requested as a starting point one by one, by selecting the relevant options from the dropdowns below.",
@@ -237,7 +237,7 @@ var (
 			},
 			{
 				Type: form.TaxonomyInput,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "What other services has the individual requested/identified?",
 					Name:        "otherServices",
 					Description: "Add the taxonomies of the other services requested one by one, by selecting the relevant options from the dropdowns below.",
@@ -248,7 +248,7 @@ var (
 			},
 			{
 				Type: form.Text,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label: "What is the perceived priority response level of the individual",
 					Name:  "perceivedPriority",
 				},
@@ -262,7 +262,7 @@ var (
 		FormElements: []form.FormElement{
 			{
 				Type: form.Text,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Date of Referral",
 					Name:        "dateOfReferral",
 					Description: "",
@@ -270,7 +270,7 @@ var (
 			},
 			{
 				Type: form.Dropdown,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Urgency",
 					Name:        "urgency",
 					Description: "",
@@ -282,7 +282,7 @@ var (
 			},
 			{
 				Type: form.Dropdown,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Type of Referral",
 					Name:        "typeOfReferral",
 					Description: "",
@@ -294,7 +294,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Services/assistance requested",
 					Name:        "servicesRequested",
 					Description: "",
@@ -303,7 +303,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Reason for referral",
 					Name:        "reasonForReferral",
 					Description: "",
@@ -312,7 +312,7 @@ var (
 			},
 			{
 				Type: form.Checkbox,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Does the beneficiary have any restrictions to be referred?",
 					Name:        "referralRestrictions",
 					Description: "",
@@ -325,7 +325,7 @@ var (
 			},
 			{
 				Type: form.Dropdown,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Means of Referral",
 					Name:        "meansOfReferral",
 					Description: "",
@@ -337,7 +337,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Means and terms of receiving feedback from the client",
 					Name:        "meansOfFeedback",
 					Description: "",
@@ -346,7 +346,7 @@ var (
 			},
 			{
 				Type: form.Text,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Deadline for receiving feedback from the client",
 					Name:        "deadlineForFeedback",
 					Description: "",
@@ -358,7 +358,7 @@ var (
 		FormElements: []form.FormElement{
 			{
 				Type: form.Checkbox,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Was the referral accepted by the other provider?",
 					Name:        "referralAccepted",
 					Description: "",
@@ -371,7 +371,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Provide any pertinent details on service needs / requests.",
 					Name:        "pertinentDetails",
 					Description: "",
@@ -385,7 +385,7 @@ var (
 		FormElements: []form.FormElement{
 			{
 				Type: form.Dropdown,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Modality of service delivery",
 					Name:        "modality",
 					Description: "",
@@ -397,7 +397,7 @@ var (
 			},
 			{
 				Type: form.Dropdown,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Living situation",
 					Name:        "livingSituation",
 					Description: "",
@@ -409,7 +409,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Comment on living situation",
 					Name:        "commentLivingSituation",
 					Description: "Additional information, observations, concerns, etc.",
@@ -418,7 +418,7 @@ var (
 			},
 			{
 				Type: form.Dropdown,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "How did you learn about ICLA services?",
 					Name:        "iclaServiceDiscovery",
 					Description: "",
@@ -430,7 +430,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Vulnerability data",
 					Name:        "vulnerability",
 					Description: "As needed within a particular context and required for the case",
@@ -439,7 +439,7 @@ var (
 			},
 			{
 				Type: form.Text,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Full name of representative",
 					Name:        "representativeName",
 					Description: "Lawyer or other person",
@@ -447,7 +447,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Other personal information",
 					Name:        "otherInformation",
 					Description: "Other personal data as needed to identify the representative within the particular context",
@@ -456,7 +456,7 @@ var (
 			},
 			{
 				Type: form.Text,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Reason for representative",
 					Name:        "representativeReason",
 					Description: "",
@@ -464,7 +464,7 @@ var (
 			},
 			{
 				Type: form.Checkbox,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Is the guardianship legal as per national legislation?",
 					Name:        "guardianshipIsLegal",
 					Description: "If 'yes', attach/upload the legal assessment. If 'no', request or assist in identifying an appropriate legal guardian to represent beneficiary",
@@ -477,7 +477,7 @@ var (
 			},
 			{
 				Type: form.Checkbox,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Does the beneficiary have the legal capacity to consent?",
 					Name:        "capacityToConsent",
 					Description: "",
@@ -494,7 +494,7 @@ var (
 		FormElements: []form.FormElement{
 			{
 				Type: form.Dropdown,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Type of service",
 					Name:        "serviceType",
 					Description: "",
@@ -506,7 +506,7 @@ var (
 			},
 			{
 				Type: form.Text,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Thematic area",
 					Name:        "thematicArea",
 					Description: "Applicable Thematic Area related to the problem",
@@ -514,7 +514,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Fact and details of the problem",
 					Name:        "details",
 					Description: "",
@@ -523,7 +523,7 @@ var (
 			},
 			{
 				Type: form.Checkbox,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Other parties involved",
 					Name:        "otherPartiesInvolved",
 					Description: "Are there any other parties involved in the case",
@@ -545,7 +545,7 @@ var (
 			},
 			{
 				Type: form.Checkbox,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Previous/existing lawyer working on the case",
 					Name:        "previousOrExistingLawyer",
 					Description: "Does the client have a previous or existing lawyer working on his/her case?",
@@ -561,7 +561,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Previous or existing lawyer details",
 					Name:        "previousOrExistingLawyerDetails",
 					Description: "",
@@ -570,7 +570,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "What actions have been taken to solve the problem, if any?",
 					Name:        "actionsTaken",
 					Description: "",
@@ -579,7 +579,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Related to this problem, are there any cases pending before a court or administrative body?",
 					Name:        "pendingCourtCases",
 					Description: "",
@@ -588,7 +588,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "If there are cases pending before a court or administrative body, are there any deadlines that need to be met?",
 					Name:        "pendingCourtCaseDeadlines",
 					Description: "",
@@ -597,7 +597,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Is there any conflict of interest involved?",
 					Name:        "conflictOfInterest",
 					Description: "",
@@ -612,7 +612,7 @@ var (
 		FormElements: []form.FormElement{
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "What action were you undertaking in the application, when the error happened",
 					Name:        "whatActionBeforeError",
 					Description: "",
@@ -621,7 +621,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "If the error had not happened, what would be your expected outcome for the action you were performing when the error happened",
 					Name:        "expectedOutcome",
 					Description: "",
@@ -630,7 +630,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "List any error messages shown",
 					Name:        "errorMessages",
 					Description: "",
@@ -643,7 +643,7 @@ var (
 		FormElements: []form.FormElement{
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Describe the change or new functionality you would like in Core",
 					Name:        "request",
 					Description: "",
@@ -727,7 +727,7 @@ var (
 		FormElements: []form.FormElement{
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
 					Name:        "safeDiginifiedLife",
 					Description: "Probe for description",
@@ -739,7 +739,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label: "How are you addressing these challenges and barriers? What is standing in your way? Can you give me some examples of how you are dealing with these challenges?",
 					Name:  "challengesBarriers",
 					Value: []string{
@@ -751,7 +751,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label: "What are some solutions you see for this and how could we work together on these solutions? How could we work to reduce these challenges together?",
 					Name:  "solutions",
 					Value: []string{
@@ -763,7 +763,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label: "If we were to work together on this, what could we do together? What would make the most difference for you?",
 					Name:  "workTogether",
 					Value: []string{
@@ -781,7 +781,7 @@ var (
 		FormElements: []form.FormElement{
 			{
 				Type: form.TaxonomyInput,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label: "Which service has the individual requested as a starting point of support?",
 					Name:  "serviceStartingPoint",
 					Value: []string{
@@ -793,7 +793,7 @@ var (
 			},
 			{
 				Type: form.TaxonomyInput,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label: "What other services has the individual requested/identified?",
 					Name:  "otherServices",
 					Value: []string{
@@ -805,7 +805,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "What is the perceived priority response level of the individual",
 					Name:        "perceivedPriority",
 					Description: "",
@@ -822,7 +822,7 @@ var (
 		FormElements: []form.FormElement{
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
 					Name:        "safeDiginifiedLife",
 					Description: "Probe for description",
@@ -834,7 +834,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label: "How are you addressing these challenges and barriers? What is standing in your way? Can you give me some examples of how you are dealing with these challenges?",
 					Name:  "challengesBarriers",
 					Value: []string{
@@ -846,7 +846,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label: "What are some solutions you see for this and how could we work together on these solutions? How could we work to reduce these challenges together?",
 					Name:  "solutions",
 					Value: []string{
@@ -858,7 +858,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label: "If we were to work together on this, what could we do together? What would make the most difference for you?",
 					Name:  "workTogether",
 					Value: []string{
@@ -876,7 +876,7 @@ var (
 		FormElements: []form.FormElement{
 			{
 				Type: form.TaxonomyInput,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label: "Which service has the individual requested as a starting point of support?",
 					Name:  "serviceStartingPoint",
 					Value: []string{
@@ -888,7 +888,7 @@ var (
 			},
 			{
 				Type: form.TaxonomyInput,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label: "What other services has the individual requested/identified?",
 					Name:  "otherServices",
 					Value: []string{
@@ -900,7 +900,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "What is the perceived priority response level of the individual",
 					Name:        "perceivedPriority",
 					Description: "",
@@ -917,7 +917,7 @@ var (
 		FormElements: []form.FormElement{
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
 					Name:        "safeDiginifiedLife",
 					Description: "Probe for description",
@@ -929,7 +929,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label: "How are you addressing these challenges and barriers? What is standing in your way? Can you give me some examples of how you are dealing with these challenges?",
 					Name:  "challengesBarriers",
 					Value: []string{
@@ -941,7 +941,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label: "What are some solutions you see for this and how could we work together on these solutions? How could we work to reduce these challenges together?",
 					Name:  "solutions",
 					Value: []string{
@@ -953,7 +953,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label: "If we were to work together on this, what could we do together? What would make the most difference for you?",
 					Name:  "workTogether",
 					Value: []string{
@@ -971,7 +971,7 @@ var (
 		FormElements: []form.FormElement{
 			{
 				Type: form.TaxonomyInput,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label: "Which service has the individual requested as a starting point of support?",
 					Name:  "serviceStartingPoint",
 					Value: []string{
@@ -983,7 +983,7 @@ var (
 			},
 			{
 				Type: form.TaxonomyInput,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label: "What other services has the individual requested/identified?",
 					Name:  "otherServices",
 					Value: []string{
@@ -995,7 +995,7 @@ var (
 			},
 			{
 				Type: form.Textarea,
-				Attributes: form.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label: "What is the perceived priority response level of the individual",
 					Name:  "perceivedPriority",
 					Value: []string{

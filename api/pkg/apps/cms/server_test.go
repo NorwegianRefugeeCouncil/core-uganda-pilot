@@ -2,6 +2,7 @@ package cms_test
 
 import (
 	. "github.com/nrc-no/core/pkg/apps/cms"
+	"github.com/nrc-no/core/pkg/form"
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/testutils"
 	uuid "github.com/satori/go.uuid"
@@ -65,9 +66,9 @@ func uuidSlice(n int) []string {
 
 func (s *Suite) mockCaseTypes(n int) []*CaseType {
 	mockTemplate := &CaseTemplate{
-		FormElements: []FormElement{{
+		FormElements: []form.FormElement{{
 			Type: "textarea",
-			Attributes: FormElementAttribute{
+			Attributes: form.FormElementAttributes{
 				Label: "mock",
 				Name:  "mock",
 			},
@@ -89,13 +90,13 @@ func aMockCase() *Case {
 	return &Case{
 		TeamID:  newUUID(),
 		PartyID: newUUID(),
-		Template: &CaseTemplate{FormElements: []FormElement{{
+		Template: &CaseTemplate{FormElements: []form.FormElement{{
 			Type: "textarea",
-			Attributes: FormElementAttribute{
+			Attributes: form.FormElementAttributes{
 				Label: "mock",
 				Name:  "mock",
 			},
-			Validation: FormElementValidation{},
+			Validation: form.FormElementValidation{},
 		}}},
 	}
 }
