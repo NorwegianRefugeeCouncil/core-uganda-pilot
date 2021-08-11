@@ -6,6 +6,7 @@ var FirstNameAttribute = Attribute{
 	ID:         "8514da51-aad5-4fb4-a797-8bcc0c969b27",
 	Name:       "firstName",
 	Type:       form.Text,
+	Attributes: form.FormElementAttributes{Name: "firstName"},
 	Validation: form.FormElementValidation{Required: true},
 	Translations: []AttributeTranslation{
 		{
@@ -24,6 +25,7 @@ var LastNameAttribute = Attribute{
 	ID:         "21079bbc-e04b-4fe8-897f-644d73af0d9e",
 	Name:       "lastName",
 	Type:       form.Text,
+	Attributes: form.FormElementAttributes{Name: "lastName"},
 	Validation: form.FormElementValidation{Required: true},
 	Translations: []AttributeTranslation{
 		{
@@ -42,6 +44,7 @@ var BirthDateAttribute = Attribute{
 	ID:         "87fe07d7-e6a7-4428-8086-3842b69f3665",
 	Name:       "birthDate",
 	Type:       form.Date,
+	Attributes: form.FormElementAttributes{Name: "birthDate"},
 	Validation: form.FormElementValidation{Required: true},
 	Translations: []AttributeTranslation{
 		{
@@ -60,6 +63,7 @@ var EMailAttribute = Attribute{
 	ID:         "0ca7fa2b-982b-4fa5-85be-a6ebee8d4912",
 	Name:       "email",
 	Type:       form.Email,
+	Attributes: form.FormElementAttributes{Name: "email"},
 	Validation: form.FormElementValidation{Required: true},
 	Translations: []AttributeTranslation{
 		{
@@ -87,6 +91,7 @@ var DisplacementStatusAttribute = Attribute{
 	ID:         "d1d824b2-d163-43ff-bc0a-527bd86b79bb",
 	Name:       "displacementStatus",
 	Type:       form.Text,
+	Attributes: form.FormElementAttributes{Name: "displacementStatus"},
 	Validation: form.FormElementValidation{Required: true},
 	Translations: []AttributeTranslation{
 		{
@@ -106,6 +111,7 @@ var GenderAttribute = Attribute{
 	Name: "gender",
 	Type: form.Dropdown,
 	Attributes: form.FormElementAttributes{
+		Name:    "gender",
 		Options: []string{"Male", "Female"},
 	},
 	Validation: form.FormElementValidation{Required: true},
@@ -132,6 +138,7 @@ var ConsentToNrcDataUseAttribute = Attribute{
 	Name: "consent_to_nrc_data_use",
 	Type: form.Checkbox,
 	Attributes: form.FormElementAttributes{
+		Name: "consent_to_nrc_data_use",
 		CheckboxOptions: []form.CheckboxOption{
 			{
 				// FIXME Translation and checkbox option have no overlap
@@ -154,9 +161,10 @@ var ConsentToNrcDataUseAttribute = Attribute{
 }
 
 var ConsentToNrcDataUseProofAttribute = Attribute{
-	ID:   "1ac8cf17-49f3-4281-b9c9-6fd6036229c2",
-	Name: "consentToNrcDataUseProof",
-	Type: form.File,
+	ID:         "1ac8cf17-49f3-4281-b9c9-6fd6036229c2",
+	Name:       "consentToNrcDataUseProof",
+	Type:       form.File,
+	Attributes: form.FormElementAttributes{Name: "consentToNrcDataUseProof"},
 	Translations: []AttributeTranslation{
 		{
 			Locale:           "en",
@@ -175,6 +183,7 @@ var AnonymousAttribute = Attribute{
 	Name: "anonymous",
 	Type: form.Checkbox,
 	Attributes: form.FormElementAttributes{
+		Name: "anonymous",
 		CheckboxOptions: []form.CheckboxOption{
 			{Label: "Beneficiary prefers to remain anonymous."},
 		},
@@ -197,6 +206,7 @@ var MinorAttribute = Attribute{
 	Name: "minor",
 	Type: form.Checkbox,
 	Attributes: form.FormElementAttributes{
+		Name: "minor",
 		CheckboxOptions: []form.CheckboxOption{
 			{Label: "Is the beneficiary a minor?"},
 		},
@@ -219,6 +229,7 @@ var ProtectionConcernsAttribute = Attribute{
 	Name: "protectionConcerns",
 	Type: form.Checkbox,
 	Attributes: form.FormElementAttributes{
+		Name: "protectionConcerns",
 		CheckboxOptions: []form.CheckboxOption{
 			{Label: "Beneficiary presents protection concerns"},
 		},
@@ -241,6 +252,7 @@ var PhysicalImpairmentAttribute = Attribute{
 	Name: "physicalImpairment",
 	Type: form.Checkbox,
 	Attributes: form.FormElementAttributes{
+		Name: "physicalImpairment",
 		CheckboxOptions: []form.CheckboxOption{
 			{Label: "Would you say you experience some form of physical impairment?"},
 		},
@@ -263,6 +275,7 @@ var PhysicalImpairmentIntensityAttribute = Attribute{
 	Name: "physicalImpairmentIntensity",
 	Type: form.Dropdown,
 	Attributes: form.FormElementAttributes{
+		Name:    "physicalImpairmentIntensity",
 		Options: []string{"Moderate", "Severe"},
 	},
 	Translations: []AttributeTranslation{
@@ -283,6 +296,7 @@ var SensoryImpairmentAttribute = Attribute{
 	Name: "sensoryImpairment",
 	Type: form.Checkbox,
 	Attributes: form.FormElementAttributes{
+		Name: "sensoryImpairment",
 		CheckboxOptions: []form.CheckboxOption{
 			{Label: "Would you say you experience some form of sensory impairment?"},
 		},
@@ -305,6 +319,7 @@ var SensoryImpairmentIntensityAttribute = Attribute{
 	Name: "sensoryImpairmentIntensity",
 	Type: form.Dropdown,
 	Attributes: form.FormElementAttributes{
+		Name:    "sensoryImpairmentIntensity",
 		Options: []string{"Moderate", "Severe"},
 	},
 	Translations: []AttributeTranslation{
@@ -326,6 +341,7 @@ var MentalImpairmentAttribute = Attribute{
 	Name: "mentalImpairment",
 	Type: form.Checkbox,
 	Attributes: form.FormElementAttributes{
+		Name: "mentalImpairment",
 		CheckboxOptions: []form.CheckboxOption{
 			{Label: "Would you say you experience some form of mental impairment?"},
 		},
@@ -345,9 +361,10 @@ var MentalImpairmentAttribute = Attribute{
 
 var MentalImpairmentIntensityAttribute = Attribute{
 	ID:   "9983188b-4f43-4cd5-a972-fde3a08f4810",
-	Name: "sensoryImpairmentIntensity",
+	Name: "mentalImpairmentIntensity",
 	Type: form.Dropdown,
 	Attributes: form.FormElementAttributes{
+		Name:    "mentalImpairmentIntensity",
 		Options: []string{"Moderate", "Severe"},
 	},
 	Translations: []AttributeTranslation{
@@ -368,6 +385,7 @@ var NationalityAttribute = Attribute{
 	Name: "nationality",
 	Type: form.Dropdown,
 	Attributes: form.FormElementAttributes{
+		Name:     "nationality",
 		Options:  []string{"Uganda", "Kenya", "Tanzania", "Rwanda", "Burundi", "Democratic Republic of Congo", "South Sudan", "Sudan", "Somalia", "Ethiopia"},
 		Multiple: true,
 	},
@@ -385,9 +403,10 @@ var NationalityAttribute = Attribute{
 }
 
 var SpokenLanguagesAttribute = Attribute{
-	ID:   "d041cba5-9486-4390-bc2b-ec7fb03d67ff",
-	Name: "spokenLanguages",
-	Type: form.Text,
+	ID:         "d041cba5-9486-4390-bc2b-ec7fb03d67ff",
+	Name:       "spokenLanguages",
+	Type:       form.Text,
+	Attributes: form.FormElementAttributes{Name: "spokenLanguages"},
 	Translations: []AttributeTranslation{
 		{
 			Locale:           "en",
@@ -402,9 +421,10 @@ var SpokenLanguagesAttribute = Attribute{
 }
 
 var PreferredLanguageAttribute = Attribute{
-	ID:   "da27a6e8-abe3-48d5-bfd9-46033e476a09",
-	Name: "preferredLanguage",
-	Type: form.Text,
+	ID:         "da27a6e8-abe3-48d5-bfd9-46033e476a09",
+	Name:       "preferredLanguage",
+	Type:       form.Text,
+	Attributes: form.FormElementAttributes{Name: "preferredLanguage"},
 	Translations: []AttributeTranslation{
 		{
 			Locale:           "en",
@@ -423,9 +443,10 @@ var PreferredLanguageAttribute = Attribute{
 // the work in maintaining data when a change needs to be made to
 // an address in the app (1 update in 1 place)
 var PhysicalAddressAttribute = Attribute{
-	ID:   "ac2795e8-15a5-42a0-b11f-b9269ff2a309",
-	Name: "physicalAddress",
-	Type: form.Textarea,
+	ID:         "ac2795e8-15a5-42a0-b11f-b9269ff2a309",
+	Name:       "physicalAddress",
+	Type:       form.Textarea,
+	Attributes: form.FormElementAttributes{Name: "physicalAddress"},
 	Translations: []AttributeTranslation{
 		{
 			Locale:           "en",
@@ -441,9 +462,10 @@ var PhysicalAddressAttribute = Attribute{
 
 // TODO: Evaluate replacing primary + secondary numbers with an array type?
 var PrimaryPhoneNumberAttribute = Attribute{
-	ID:   "8eae83a8-cbc7-4ab2-a21f-d57cb3bb29ff",
-	Name: "primaryPhoneNumber",
-	Type: form.Phone,
+	ID:         "8eae83a8-cbc7-4ab2-a21f-d57cb3bb29ff",
+	Name:       "primaryPhoneNumber",
+	Type:       form.Phone,
+	Attributes: form.FormElementAttributes{Name: "primaryPhoneNumber"},
 	Translations: []AttributeTranslation{
 		{
 			Locale:           "en",
@@ -458,9 +480,10 @@ var PrimaryPhoneNumberAttribute = Attribute{
 }
 
 var SecondaryPhoneNumberAttribute = Attribute{
-	ID:   "1f3016af-ab39-422a-beb8-904b68a1619e",
-	Name: "secondaryPhoneNumber",
-	Type: form.Phone,
+	ID:         "1f3016af-ab39-422a-beb8-904b68a1619e",
+	Name:       "secondaryPhoneNumber",
+	Type:       form.Phone,
+	Attributes: form.FormElementAttributes{Name: "secondaryPhoneNumber"},
 	Translations: []AttributeTranslation{
 		{
 			Locale:           "en",
@@ -479,6 +502,7 @@ var PreferredMeansOfContactAttribute = Attribute{
 	Name: "preferredMeansOfContact",
 	Type: form.Dropdown,
 	Attributes: form.FormElementAttributes{
+		Name:    "preferredMeansOfContact",
 		Options: []string{"Phone Call", "Text message", "WhatsApp", "Signal", "Telegram", "Email", "Home visit"},
 	},
 	Translations: []AttributeTranslation{
@@ -499,6 +523,7 @@ var RequireAnInterpreterAttribute = Attribute{
 	Name: "requireAnInterpreter",
 	Type: form.Checkbox,
 	Attributes: form.FormElementAttributes{
+		Name:            "requireAnInterpreter",
 		CheckboxOptions: []form.CheckboxOption{{Label: "Does this beneficiary require an interpreter?"}},
 	},
 	Translations: []AttributeTranslation{
