@@ -49,6 +49,16 @@ type AttributeList struct {
 	Items []*Attribute `json:"items" bson:"items"`
 }
 
+// FindByName returns the first Attribute it encounters that possesses the given name
+func (l *AttributeList) FindByName(name string) *Attribute {
+	for _, attribute := range l.Items {
+		if attribute.Name == name || attribute.Attributes.Name == name {
+			return attribute
+		}
+	}
+	return nil
+}
+
 // FindByID finds an Attribute by ID
 func (l *AttributeList) FindByID(id string) *Attribute {
 	for _, item := range l.Items {

@@ -9,7 +9,7 @@ import (
 	"github.com/nrc-no/core/pkg/apps/seeder"
 	"github.com/nrc-no/core/pkg/registrationctrl"
 	"github.com/nrc-no/core/pkg/sessionmanager"
-	uuid "github.com/satori/go.uuid"
+	"github.com/nrc-no/core/pkg/validation"
 	"golang.org/x/sync/errgroup"
 	"net/http"
 	"strconv"
@@ -31,14 +31,8 @@ func (s *Server) Individuals(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	attrs, err := iamClient.Attributes().List(ctx, iam.AttributeListOptions{})
-	if err != nil {
-		s.Error(w, err)
-		return
-	}
-
 	if req.Method == "POST" {
-		s.PostIndividual(ctx, attrs.Items, "", w, req)
+		s.Individual(w, req)
 		return
 	}
 
@@ -150,7 +144,7 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	}
 
 	id, ok := mux.Vars(req)["id"]
-	if !ok || len(id) == 0 {
+	if (!ok || len(id) == 0) && req.Method != "POST" {
 		err := fmt.Errorf("no id in path")
 		s.Error(w, err)
 		return
@@ -282,8 +276,18 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	filteredRelationshipTypes := PrepRelationshipTypeDropdown(relationshipTypes)
 
 	if req.Method == "POST" {
-		s.PostIndividual(ctx, attrs.Items, id, w, req)
-		return
+		err := s.PostIndividual(ctx, attrs, id, w, req)
+		if err != nil {
+			if status, ok := err.(*validation.Status); ok {
+				zipErrorsAndAttributes(status.Errors, attrs)
+				//s.json(w, status.Code, attrs)
+			} else {
+				s.Error(w, err)
+				return
+			}
+		} else {
+			return
+		}
 	}
 
 	type DisplayCase struct {
@@ -350,6 +354,16 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 
 }
 
+// zipErrorsAndAttributes populates the Attribute Errors field if any matching errors are found
+func zipErrorsAndAttributes(errorList validation.ErrorList, attributes *iam.AttributeList) {
+	for _, attribute := range attributes.Items {
+		errs := errorList.Find(attribute.Attributes.Name)
+		if errs != nil {
+			attribute.Errors = &errorList
+		}
+	}
+}
+
 func PrepRelationshipTypeDropdown(relationshipTypes *iam.RelationshipTypeList) *iam.RelationshipTypeList {
 
 	// TODO:
@@ -380,26 +394,24 @@ func PrepRelationshipTypeDropdown(relationshipTypes *iam.RelationshipTypeList) *
 
 func (s *Server) PostIndividual(
 	ctx context.Context,
-	attrs []*iam.Attribute,
+	attrs *iam.AttributeList,
 	id string,
 	w http.ResponseWriter,
-	req *http.Request) {
+	req *http.Request) error {
 
 	iamClient, err := s.IAMClient(req)
 	if err != nil {
-		s.Error(w, err)
-		return
+		return err
 	}
 
 	if err := req.ParseForm(); err != nil {
-		s.Error(w, err)
-		return
+		return err
 	}
 
 	b := iam.NewIndividual(id)
 
 	attributeMap := map[string]*iam.Attribute{}
-	for _, attribute := range attrs {
+	for _, attribute := range attrs.Items {
 		attributeMap[attribute.ID] = attribute
 	}
 
@@ -411,33 +423,17 @@ func (s *Server) PostIndividual(
 	//goland:noinspection GoPreferNilSlice
 	var rels = []*RelationshipEntry{}
 
+	// Validate Attributes
+	attrErrs := validation.ErrorList{}
 	f := req.Form
 	for key, vals := range f {
 
 		// Populate the Party.attributes
-		if strings.HasPrefix(key, "attribute[") {
-
-			if !strings.HasSuffix(key, "]") {
-				err := fmt.Errorf("unexpected form value key: %s", key)
-				s.Error(w, err)
-				return
-			}
-
-			attrId, err := uuid.FromString(key[10 : len(key)-1])
-			if err != nil {
-				s.Error(w, err)
-				return
-			}
-
-			attr, ok := attributeMap[attrId.String()]
-			if !ok {
-				err := fmt.Errorf("attribute with id %s not found", attrId)
-				s.Error(w, err)
-				return
-			}
-
+		// as well as the Attributes object (for validation)
+		if attr := attrs.FindByName(key); attr != nil {
 			b.Attributes[attr.ID] = vals
-
+			attr.Attributes.Value = vals
+			attrErrs = append(attrErrs, iam.ValidateAttribute(attr, validation.NewPath(""))...)
 		}
 
 		// Retrieve party relationships
@@ -446,21 +442,18 @@ func (s *Server) PostIndividual(
 			keyParts := strings.Split(key, ".")
 			if len(keyParts) != 2 {
 				err := fmt.Errorf("unexpected form value key: %s", key)
-				s.Error(w, err)
-				return
+				return err
 			}
 
 			if !strings.HasSuffix(keyParts[0], "]") {
 				err := fmt.Errorf("unexpected form value key: %s", key)
-				s.Error(w, err)
-				return
+				return err
 			}
 
 			relationshipIdxStr := keyParts[0][14 : len(keyParts[0])-1]
 			relationshipIdx, err := strconv.Atoi(relationshipIdxStr)
 			if err != nil {
-				s.Error(w, err)
-				return
+				return err
 			}
 
 			var rel *RelationshipEntry
@@ -488,49 +481,48 @@ func (s *Server) PostIndividual(
 				rel.RelationshipTypeID = vals[0]
 			default:
 				err := fmt.Errorf("unexpected relationship attribute: %s", attrName)
-				s.Error(w, err)
-				return
+				return err
 			}
 		}
 	}
 
 	var individual *iam.Individual
+	// Verify attribute validation and act accordingly
+	if len(attrErrs) > 0 {
+		status := attrErrs.Status(http.StatusUnprocessableEntity, "invalid case")
+		return &status
+	}
 
 	// Update or create the individual
 	if id == "" {
 		var err error
 		individual, err = iamClient.Individuals().Create(ctx, b)
 		if err != nil {
-			s.Error(w, err)
-			return
+			return err
 		}
 		err = s.createDefaultIndividualIntakeCases(req, individual)
 		if err != nil {
-			s.Error(w, err)
-			return
+			return err
 		}
 
 		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
 			Message: fmt.Sprintf("Individual \"%s\" successfully created", b.String()),
 			Theme:   "success",
 		}); err != nil {
-			s.Error(w, err)
-			return
+			return err
 		}
 
 	} else {
 		var err error
 		if individual, err = iamClient.Individuals().Update(ctx, b); err != nil {
-			s.Error(w, err)
-			return
+			return err
 		}
 
 		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
 			Message: fmt.Sprintf("Individual \"%s\" successfully updated", b.String()),
 			Theme:   "success",
 		}); err != nil {
-			s.Error(w, err)
-			return
+			return err
 		}
 
 	}
@@ -544,22 +536,19 @@ func (s *Server) PostIndividual(
 			relationship := rel.Relationship
 			relationship.FirstPartyID = individual.ID
 			if _, err := iamClient.Relationships().Create(ctx, rel.Relationship); err != nil {
-				s.Error(w, err)
-				return
+				return err
 			}
 		} else if !rel.MarkedForDeletion {
 			// Update the relationship
 			relationship := rel.Relationship
 			relationship.FirstPartyID = individual.ID
 			if _, err := iamClient.Relationships().Update(ctx, rel.Relationship); err != nil {
-				s.Error(w, err)
-				return
+				return err
 			}
 		} else {
 			// Delete the relationship
 			if err := iamClient.Relationships().Delete(ctx, rel.Relationship.ID); err != nil {
-				s.Error(w, err)
-				return
+				return err
 			}
 		}
 
@@ -567,7 +556,7 @@ func (s *Server) PostIndividual(
 
 	w.Header().Set("Location", "/individuals/"+individual.ID)
 	w.WriteHeader(http.StatusSeeOther)
-
+	return nil
 }
 
 func (s *Server) createDefaultIndividualIntakeCases(req *http.Request, individual *iam.Individual) error {

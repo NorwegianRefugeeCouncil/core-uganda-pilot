@@ -25,14 +25,14 @@
                 <form id="attributesForm"
                       class="mb-5"
                       action="/individuals{{if .Individual}}{{if .Individual.ID}}/{{.Individual.ID}}{{end}}{{end}}"
-                      method="post">
+                      method="POST">
 
                     {{ range $index, $attribute := .Attributes.Items}}
 
+                        {{template "formelement" $attribute}}
                         {{/*                        {{ $values := index $.Individual.Attributes $attribute.ID }}*/}}
 
                         {{/*                        {{ if $values}}*/}}
-                        {{template "formelement" $attribute}}
                         {{/*                            {{range $idx, $value := $values}}*/}}
                         {{/*                                {{ if eq (len $attribute.Translations) 0}}*/}}
                         {{/*                                    <label class="mb-2 text-muted" style="font-weight: bold;"*/}}
