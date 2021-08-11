@@ -115,7 +115,7 @@ func (s *Suite) testAttributeListFilter() {
 		for _, a := range attributes {
 			var include = true
 			for _, p := range partyTypes {
-				if !contains(a.PartyTypeIDs, p) {
+				if !utils.Contains(a.PartyTypeIDs, p) {
 					include = false
 					break
 				}

@@ -32,6 +32,9 @@ func ValidateAttribute(attribute *Attribute, path *validation.Path) validation.E
 		}
 	}
 
+	// Validate form elements
+	attribute.Validate(errs, path)
+
 	return errs
 }
 

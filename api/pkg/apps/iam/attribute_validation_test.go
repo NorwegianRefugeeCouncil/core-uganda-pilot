@@ -1,6 +1,7 @@
 package iam
 
 import (
+	"github.com/nrc-no/core/pkg/form"
 	"github.com/nrc-no/core/pkg/validation"
 	"testing"
 )
@@ -58,6 +59,12 @@ func TestValidateAttribute(t *testing.T) {
 				Translations: []AttributeTranslation{{}},
 			},
 			assert: assertRequired(".translations[0].short"),
+		},
+		{
+			name: "missing required field",
+			attribute: &Attribute{
+				Type: form.Text,
+			},
 		},
 	}
 	for _, tc := range tcs {

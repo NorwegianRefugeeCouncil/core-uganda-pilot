@@ -3,6 +3,7 @@ package cms
 import (
 	"fmt"
 	"github.com/nrc-no/core/pkg/form"
+	"github.com/nrc-no/core/pkg/utils"
 	"github.com/nrc-no/core/pkg/validation"
 	"strconv"
 )
@@ -30,14 +31,14 @@ func ValidateCase(kase *Case, path *validation.Path) validation.ErrorList {
 			switch elem.Type {
 			case form.Checkbox:
 				for i, option := range elem.Attributes.CheckboxOptions {
-					if option.Required && !contains(elem.Attributes.Value, strconv.Itoa(i)) {
+					if option.Required && !utils.Contains(elem.Attributes.Value, strconv.Itoa(i)) {
 						err := validation.Required(path.Child(elem.Attributes.Name).Index(i), fmt.Sprintf("%s is required", elem.Attributes.Name))
 						errList = append(errList, err)
 					}
 				}
 				fallthrough
 			default:
-				if elem.Validation.Required && allEmpty(elem.Attributes.Value) {
+				if elem.Validation.Required && utils.AllEmpty(elem.Attributes.Value) {
 					err := validation.Required(path.Child(elem.Attributes.Name), fmt.Sprintf("%s is required", elem.Attributes.Name))
 					errList = append(errList, err)
 				}
@@ -48,22 +49,4 @@ func ValidateCase(kase *Case, path *validation.Path) validation.ErrorList {
 	}
 
 	return errList
-}
-
-func contains(slice []string, elem string) bool {
-	for _, s := range slice {
-		if s == elem {
-			return true
-		}
-	}
-	return false
-}
-
-func allEmpty(strSlice []string) bool {
-	for _, s := range strSlice {
-		if len(s) > 0 {
-			return false
-		}
-	}
-	return true
 }
