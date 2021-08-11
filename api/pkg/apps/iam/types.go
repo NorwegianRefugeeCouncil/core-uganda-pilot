@@ -53,6 +53,15 @@ func (l *AttributeList) FindByID(id string) *Attribute {
 	return nil
 }
 
+func (l *AttributeList) FindByName(name string) string {
+	for _, item := range l.Items {
+		if item.Name == name {
+			return item.ID
+		}
+	}
+	return ""
+}
+
 // TODO COR-158
 // PartyAttributes contains the Attribute values of a Party
 type PartyAttributes map[string][]string

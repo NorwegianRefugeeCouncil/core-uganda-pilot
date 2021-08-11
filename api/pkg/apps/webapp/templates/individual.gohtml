@@ -565,10 +565,10 @@
             const li = document.createElement('li');
             li.className = 'list-group-item';
             let firstPartyName
-            if (window.location.pathname == '/individuals/new') {
-              const lastName = document.getElementsByName('attribute[21079bbc-e04b-4fe8-897f-644d73af0d9e]')[0].value
-              const firstName = document.getElementsByName('attribute[8514da51-aad5-4fb4-a797-8bcc0c969b27]')[0].value
-              firstPartyName = lastName.toUpperCase() + ', ' + firstName
+            if (window.location.pathname === '/individuals/new') {
+              const lastName = document.getElementsByName('attribute[{{.Attributes.FindByName "lastName"}}]')[0].value;
+              const firstName = document.getElementsByName('attribute[{{.Attributes.FindByName "firstName"}}]')[0].value;
+              firstPartyName = lastName.toUpperCase() + ', ' + firstName;
             } else {
               firstPartyName = parties.find(({ id }) => id === relationship.firstParty)?.name;
             }
