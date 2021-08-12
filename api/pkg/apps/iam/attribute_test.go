@@ -2,6 +2,7 @@ package iam_test
 
 import (
 	. "github.com/nrc-no/core/pkg/apps/iam"
+	"github.com/nrc-no/core/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -115,7 +116,7 @@ func (s *Suite) testAttributeListFilter() {
 		for _, a := range attributes {
 			var include = true
 			for _, p := range partyTypes {
-				if !contains(a.PartyTypeIDs, p) {
+				if !utils.Contains(a.PartyTypeIDs, p) {
 					include = false
 					break
 				}

@@ -69,7 +69,19 @@ func IsValidPassword(s string) bool {
 	return true
 }
 
+var ugandaPhoneFormat = regexp.MustCompile(`^(\+?256(\s|-)?|0)\d{3}(\s|-)?\d{6}$`)
+
 func IsValidPhone(s string) bool {
-	// TODO
-	return true
+	return ugandaPhoneFormat.MatchString(s)
 }
+
+var InvalidPhoneDetail = "Invalid phone number"
+
+// input[type="date"] will always yield yyyy-mm-dd regardless of locale (and user facing format)
+var dateFormat = regexp.MustCompile(`^\d{4}-(0\d|1[12])-([012]\d|3[01])`)
+
+func IsValidDate(s string) bool {
+	return dateFormat.MatchString(s)
+}
+
+var InvalidDateDetail = "Invalid date"

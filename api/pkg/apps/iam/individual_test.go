@@ -2,6 +2,7 @@ package iam_test
 
 import (
 	. "github.com/nrc-no/core/pkg/apps/iam"
+	"github.com/nrc-no/core/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -119,7 +120,7 @@ func (s *Suite) testIndividualFilterByPartyType(individuals []*Individual, party
 		for _, individual := range individuals {
 			var include = true
 			for _, wantedPartyTypeId := range types {
-				if !contains(individual.PartyTypeIDs, wantedPartyTypeId) {
+				if !utils.Contains(individual.PartyTypeIDs, wantedPartyTypeId) {
 					include = false
 					break
 				}
@@ -193,7 +194,7 @@ func (s *Suite) testIndividualFilterByPartyTypeAndAttribute(individuals []*Indiv
 			for _, individual := range individuals {
 				var include = true
 				for _, partyType := range partyTypeIds {
-					if !contains(individual.PartyTypeIDs, partyType) {
+					if !utils.Contains(individual.PartyTypeIDs, partyType) {
 						include = false
 						break
 					}

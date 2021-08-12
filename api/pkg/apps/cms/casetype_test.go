@@ -95,7 +95,7 @@ func (s *Suite) testCaseTypeFilterByPartyType(caseTypes []*CaseType, partyTypes 
 		}
 		expected := []string{}
 		for _, caseType := range caseTypes {
-			if contains(types, caseType.PartyTypeID) {
+			if utils.Contains(types, caseType.PartyTypeID) {
 				expected = append(expected, caseType.ID)
 			}
 		}

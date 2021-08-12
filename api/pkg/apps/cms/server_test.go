@@ -43,14 +43,6 @@ func TestSuite(t *testing.T) {
 //
 // Helpers
 //
-func contains(s []string, item string) bool {
-	for _, a := range s {
-		if a == item {
-			return true
-		}
-	}
-	return false
-}
 
 func newUUID() string {
 	return uuid.NewV4().String()
