@@ -22,43 +22,10 @@
                     <h1 class="display-5">Attributes</h1>
                     <h5><span class="badge bg-primary">{{(index .Progress 0).StageStatus}}</span></h5>
                 </div>
-                <form id="attributesForm"
-                      class="mb-5"
-                      action="/individuals{{if .Individual}}{{if .Individual.ID}}/{{.Individual.ID}}{{end}}{{end}}"
-                      method="POST">
+                <div id="attributes">
 
                     {{ range $index, $attribute := .Attributes.Items}}
-
                         {{template "formelement" $attribute}}
-                        {{/*                        {{ $values := index $.Individual.Attributes $attribute.ID }}*/}}
-
-                        {{/*                        {{ if $values}}*/}}
-                        {{/*                            {{range $idx, $value := $values}}*/}}
-                        {{/*                                {{ if eq (len $attribute.Translations) 0}}*/}}
-                        {{/*                                    <label class="mb-2 text-muted" style="font-weight: bold;"*/}}
-                        {{/*                                           for="attribute-{{$attribute.ID}}-{{$idx}}">{{$attribute.Name}}</label>*/}}
-                        {{/*                                {{ else }}*/}}
-                        {{/*                                    <label class="mb-2 text-muted" style="font-weight: bold;"*/}}
-                        {{/*                                           for="attribute-{{$attribute.ID}}-{{$idx}}">{{(index $attribute.Translations 0).LongFormulation}}</label>*/}}
-                        {{/*                                {{ end }}*/}}
-                        {{/*                                <input class="form-control"*/}}
-                        {{/*                                       name="attribute[{{$attribute.ID}}]"*/}}
-                        {{/*                                       id="attribute-{{$attribute.ID}}-{{$idx}}"*/}}
-                        {{/*                                       type="text"*/}}
-                        {{/*                                       data-testid="text-attribute"*/}}
-                        {{/*                                       value="{{$value}}">*/}}
-                        {{/*                            {{end}}*/}}
-                        {{/*                        {{else}}*/}}
-                        {{/*                            <label class="mb-2 text-muted" style="font-weight: bold;"*/}}
-                        {{/*                                   for="attribute-{{$attribute.ID}}-0">{{(index $attribute.Translations 0).LongFormulation}}</label>*/}}
-                        {{/*                            <input class="form-control"*/}}
-                        {{/*                                   name="attribute[{{$attribute.ID}}]"*/}}
-                        {{/*                                   id="attribute-{{$attribute.ID}}-0"*/}}
-                        {{/*                                   type="text"*/}}
-                        {{/*                                   data-testid="text-attribute"*/}}
-                        {{/*                                   value="">*/}}
-                        {{/*                        {{end}}*/}}
-
                     {{end}}
 
                     <h1 class="display-5 my-3">Relationships</h1>
@@ -101,7 +68,7 @@
                             Add
                         </button>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
 
@@ -208,11 +175,11 @@
             switchMap((searchParam) => {
                 const searchParams = new URLSearchParams({
                     'partyTypeId': getSecondPartyType(),
-                    'searchParam': searchParam
+                    'searchParam': searchParam,
                 });
                 const ajaxUrl = '/relationships/pickparty?' + searchParams.toString();
                 return ajax(ajaxUrl);
-            })
+            }),
         );
 
         // Holds the different parties (for relationship dropdown select)
@@ -220,13 +187,13 @@
             {{range .Parties.Items}}
             {
                 id: {{.ID}},
-                name: "{{ .String }}"
+                name: "{{ .String }}",
             },
             {{ end }}
             {{range .Teams.Items}}
             {
                 id: {{.ID}},
-                name: "{{ .String }}"
+                name: "{{ .String }}",
             },
             {{ end }}
         ];
@@ -242,10 +209,10 @@
                     secondParty: {{.SecondPartyID}},
                     relationshipTypeId: {{.RelationshipTypeID}},
                     isNew: false,
-                    markedForDeletion: false
+                    markedForDeletion: false,
                 },
                 {{end}}
-            ]
+            ],
         });
 
         // Display state observable$
@@ -266,10 +233,10 @@
                         ...relationship,
                         firstPartyRole: relationshipType.firstPartyRole,
                         secondPartyRole: relationshipType.secondPartyRole,
-                        relationshipTypeName: relationshipType.name
+                        relationshipTypeName: relationshipType.name,
                     };
                 });
-            })
+            }),
         );
 
         function addRelationship(relationshipTypeId, secondPartyID) {
@@ -291,9 +258,9 @@
                     {
                         relationshipTypeId,
                         firstParty: {{.Individual.ID}},
-                        secondParty: secondPartyID
-                    }
-                ]
+                        secondParty: secondPartyID,
+                    },
+                ],
             });
         }
 
@@ -305,19 +272,19 @@
                 relationships[idx] = {
                     ...relationship,
                     // toggle marked for deletion
-                    markedForDeletion: !relationship.markedForDeletion
+                    markedForDeletion: !relationship.markedForDeletion,
                 };
                 stateSubject.next({
                     ...state,
                     relationships: [
-                        ...relationships
-                    ]
+                        ...relationships,
+                    ],
                 });
             } else {
                 relationships.splice(idx, 1);
                 stateSubject.next({
                     ...state,
-                    relationships: [...relationships]
+                    relationships: [...relationships],
                 });
             }
         }
@@ -328,7 +295,7 @@
             const relationshipTypeSelector = document.getElementById('relationshipTypeSelector');
             let selectedRelationshipType = relationshipTypes.find(
                 e => e.id === relationshipTypeSelector.value
-                    && e.firstPartyRole === relationshipTypeSelector.options[relationshipTypeSelector.selectedIndex].text
+                    && e.firstPartyRole === relationshipTypeSelector.options[relationshipTypeSelector.selectedIndex].text,
             );
             return selectedRelationshipType.secondPartyTypeId;
         };
@@ -366,26 +333,40 @@
             //
             // Form handling
             //
-            async function validateSubForm(formID, caseID) {
+            function collectSearchParams(formID) {
                 const fields = document.querySelectorAll(`#${formID} [name]`);
                 const searchParams = new URLSearchParams();
                 fields.forEach(field => {
-                    if (field instanceof HTMLSelectElement) {
-                        field.value = field.options[field.selectedIndex].value;
+                    const isCheckboxOrRadio = field.type === 'checkbox' || field.type === 'radio';
+                    if (!isCheckboxOrRadio || (isCheckboxOrRadio && field.checked)) {
+                        searchParams.append(field.name, field.value);
+                    } else if (field instanceof HTMLSelectElement) {
+                        if (field.hasAttribute('multiple')) {
+                            const children = field.children;
+                            for (let i = 0; i < children.length; i++) {
+                                const child = children.item(i);
+                                if (child.hasAttribute('selected')) {
+                                    searchParams.append(field.name, child.value);
+                                }
+                            }
+                        } else {
+                            searchParams.append(field.name, field.options[field.selectedIndex].value);
+                        }
                     }
-                    searchParams.append(field.name, field.value);
                 });
+                return searchParams;
+            }
 
-                const url = `/cases/${caseID}?validationOnly=true`;
+            async function validateSubForm(formID, path) {
                 const options = {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
+                        'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: searchParams
+                    body: collectSearchParams(formID),
                 };
 
-                const response = await fetch(url, options);
+                const response = await fetch(path, options);
                 if (response.ok) return null;
                 let validation;
                 try {
@@ -398,7 +379,7 @@
             }
 
             function applyValidation(validation) {
-                for (const element of validation.template.formElements) {
+                for (const element of validation) {
                     let { name } = element.attributes;
                     if (!element.errors) {
                         continue;
@@ -443,18 +424,21 @@
 
             const submitBtn = document.getElementById('formSubmitButton');
             submitBtn.onclick = async event => {
-                // event.preventDefault();
-                // TODO submit attributes
-                {{if and (not .IsNew) (and .SituationAnalysis .IndividualAssessment)}}
                 const subForms = [
-                    { formID: 'situationAnalysis', caseID: "{{.SituationAnalysis.ID}}" },
-                    { formID: 'individualAssessment', caseID: "{{.IndividualAssessment.ID}}" }
+                    {
+                        formID: 'attributes',
+                        path: "/individuals{{if .Individual}}{{if .Individual.ID}}/{{.Individual.ID}}{{end}}{{end}}",
+                    },
+                    {{if and (not .IsNew) (and .SituationAnalysis .IndividualAssessment)}}
+                    { formID: 'situationAnalysis', path: "/cases/{{.SituationAnalysis.ID}}" },
+                    { formID: 'individualAssessment', path: "/cases/{{.IndividualAssessment.ID}}" },
+                    {{end}}
                 ];
                 // Do validation
-                const validations = await Promise.allSettled(subForms.map(async ({ formID, caseID }) => {
+                const validations = await Promise.allSettled(subForms.map(async ({ formID, path }) => {
                     let returnVar;
                     try {
-                        const validation = await validateSubForm(formID, caseID);
+                        const validation = await validateSubForm(formID, path);
                         removeValidation(formID);
                         if (validation != null) {
                             applyValidation(validation);
@@ -470,13 +454,10 @@
 
                 // Show updated Individual
                 if (validations.every(v => !v.value)) {
-                    const f = document.getElementById('attributesForm');
-                    f.submit();
+                    if (!location.pathname.includes('new'))
+                        location.reload();
+                    else !location.assign(location.origin + '/individuals');
                 }
-                {{else}}
-                const f = document.getElementById('attributesForm');
-                f.submit();
-                {{end}}
             };
 
 
@@ -536,7 +517,7 @@
                                 newListItem.onclick = onPartyListItemClick;
                                 let displayText = pickedParty.displayName;
                                 newListItem.appendChild(
-                                    document.createTextNode(displayText)
+                                    document.createTextNode(displayText),
                                 );
                                 newListItem.setAttribute('id', party.id);
                                 partySelectorList.appendChild(newListItem);
@@ -549,14 +530,14 @@
                         newListItem.classList.add('dropdown-item');
                         let displayText = `No Parties Found`;
                         newListItem.appendChild(
-                            document.createTextNode(displayText)
+                            document.createTextNode(displayText),
                         );
                         partySelectorList.appendChild(newListItem);
                     }
                 },
                 err => {
                     console.error('got error: ', err);
-                }
+                },
             );
 
             // Render relationships
