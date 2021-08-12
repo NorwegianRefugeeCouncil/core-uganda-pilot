@@ -42,7 +42,7 @@ export default class CasePage {
                     case 'INPUT':
                         switch ($el[0].getAttribute('type')) {
                             case 'text':
-                                cy.wrap($el).should('have.value', value.textinput);
+                                cy.wrap($el).should('have.value', value.text);
                                 break;
                             case 'checkbox':
                                 value.checkbox

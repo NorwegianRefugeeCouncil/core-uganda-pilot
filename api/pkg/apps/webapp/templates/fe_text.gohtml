@@ -7,7 +7,7 @@
                class="form-control  {{if .Errors}}is-invalid{{end}}"
                type="text"
                placeholder="{{.Attributes.Placeholder}}"
-               data-testid="test-textinput"
+               data-testid="test-text"
                {{if .Validation.Required}}required{{end}}
                 {{if .Errors}}aria-describedby="{{.Attributes.Name}}Feedback"{{end}}
                 {{if .Readonly}}disabled readonly{{end}}

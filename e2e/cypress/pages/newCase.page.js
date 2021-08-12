@@ -6,7 +6,7 @@ const ID = {
     PARTY_SELECT: testId('party-select'),
     PARTY_OPTION: testId('partyOption'),
     FORM: testId('form'),
-    SUBMIT_BTN: testId('submitBtn'),
+    SUBMIT_BTN: testId('submitBtn')
 };
 
 export default class NewCasePage {
@@ -40,7 +40,7 @@ export default class NewCasePage {
                 if (tag === 'INPUT') {
                     switch ($el[0].getAttribute('type')) {
                         case 'text':
-                            cy.wrap($el).clear().type(value.textinput);
+                            cy.wrap($el).clear().type(value.text);
                             break;
                         case 'checkbox':
                             cy.wrap($el).each(ck => {

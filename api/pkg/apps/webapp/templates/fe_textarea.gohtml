@@ -6,6 +6,7 @@
                   class="form-control  {{if .Errors}}is-invalid{{end}}"
                   style="height: 100px"
                   placeholder="{{.Attributes.Placeholder}}"
+                  date-testid="test-textarea"
                   {{if .Validation.Required}}required{{end}}
                 {{if .Errors}}aria-describedby="{{.Attributes.Name}}Feedback"{{end}}
                 {{if .Readonly}}disabled readonly{{end}}

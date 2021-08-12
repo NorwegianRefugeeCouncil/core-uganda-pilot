@@ -3,6 +3,7 @@ package seeder
 import (
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
+	"github.com/nrc-no/core/pkg/form"
 )
 
 // Dev static objects.
@@ -32,10 +33,10 @@ var (
 
 	// Dogfooding Case Templates
 	DTeamBugReport = &cms.CaseTemplate{
-		FormElements: []cms.FormElement{
+		FormElements: []form.FormElement{
 			{
 				Type: "textarea",
-				Attributes: cms.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "What action were you undertaking in the application, when the error happened",
 					Name:        "whatActionBeforeError",
 					Description: "",
@@ -44,7 +45,7 @@ var (
 			},
 			{
 				Type: "textarea",
-				Attributes: cms.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "If the error had not happened, what would be your expected outcome for the action you were performing when the error happened",
 					Name:        "expectedOutcome",
 					Description: "",
@@ -53,7 +54,7 @@ var (
 			},
 			{
 				Type: "textarea",
-				Attributes: cms.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "List any error messages shown",
 					Name:        "errorMessages",
 					Description: "",
@@ -64,10 +65,10 @@ var (
 	}
 
 	DTeamFeatureRequest = &cms.CaseTemplate{
-		FormElements: []cms.FormElement{
+		FormElements: []form.FormElement{
 			{
 				Type: "textarea",
-				Attributes: cms.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Describe the change or new functionality you would like in Core",
 					Name:        "request",
 					Description: "",
@@ -80,46 +81,46 @@ var (
 	// TestTemplate !!! It's important to keep this template up-to-date for e2e testing.
 	// It MUST include an instance of each input type described in cms/iam.
 	TestTemplate = &cms.CaseTemplate{
-		FormElements: []cms.FormElement{
+		FormElements: []form.FormElement{
 			{
 				Type: "dropdown",
-				Attributes: cms.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Dropdown",
 					Name:        "testDropdown",
 					Description: "Dropdown description",
 					Options:     []string{"0", "1", "2"},
 				},
-				Validation: cms.FormElementValidation{Required: false},
+				Validation: form.FormElementValidation{Required: false},
 			},
 			{
 				Type: "checkbox",
-				Attributes: cms.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:           "Checkbox",
 					Name:            "testCheckbox",
 					Description:     "Checkbox description",
-					CheckboxOptions: []cms.CheckboxOption{{Label: "0"}, {Label: "1"}, {Label: "2"}},
+					CheckboxOptions: []form.CheckboxOption{{Label: "0"}, {Label: "1"}, {Label: "2"}},
 				},
-				Validation: cms.FormElementValidation{Required: false},
+				Validation: form.FormElementValidation{Required: false},
 			},
 			{
 				Type: "textarea",
-				Attributes: cms.FormElementAttribute{
+				Attributes: form.FormElementAttributes{
 					Label:       "Textarea",
 					Name:        "testTextarea",
 					Description: "Textarea description",
 					Placeholder: "Textarea placeholder",
 				},
-				Validation: cms.FormElementValidation{Required: false},
+				Validation: form.FormElementValidation{Required: false},
 			},
 			{
-				Type: "textinput",
-				Attributes: cms.FormElementAttribute{
+				Type: "text",
+				Attributes: form.FormElementAttributes{
 					Label:       "Textinput",
 					Name:        "testTextinput",
 					Description: "Textinput description",
 					Placeholder: "Textinput placeholder",
 				},
-				Validation: cms.FormElementValidation{Required: false},
+				Validation: form.FormElementValidation{Required: false},
 			},
 		},
 	}

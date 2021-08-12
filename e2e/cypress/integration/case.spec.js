@@ -10,19 +10,19 @@ const DATA = {
     PARTY: ids.TestIndividual,
     FORM: {
         dropdown: '0',
-        textinput: 'test',
+        text: 'test',
         textarea: 'test',
-        checkbox: true,
+        checkbox: true
     },
     FORM_U: {
         dropdown: '1',
-        textinput: 'test - updated',
+        text: 'test - updated',
         textarea: 'test - updated',
-        checkbox: false,
-    },
+        checkbox: false
+    }
 };
 
-describe('Case Page', function () {
+describe('Case Page', function() {
     let caseId;
     describe('Navigate', () => {
         it('should navigate to new Case page from the case overview page', () => {

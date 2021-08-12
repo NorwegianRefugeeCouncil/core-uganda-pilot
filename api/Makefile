@@ -15,7 +15,7 @@ gen-certs:
 
 .PHONY:
 serve:
-	${GOROOT}/bin/go run ./cmd \
+	go run ./cmd \
 		--mongo-database=core \
         --mongo-username=root \
         --mongo-password=example \
