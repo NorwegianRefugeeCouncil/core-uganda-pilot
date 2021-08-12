@@ -110,7 +110,7 @@ func (s *CaseTypeStore) Update(ctx context.Context, caseType *CaseType) error {
 			"name":        caseType.Name,
 			"partyTypeId": caseType.PartyTypeID,
 			"teamId":      caseType.TeamID,
-			"casTemplate": caseType.Template,
+			"Template":    caseType.Template,
 		},
 	})
 	if err != nil {

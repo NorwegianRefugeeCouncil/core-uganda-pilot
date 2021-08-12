@@ -36,10 +36,10 @@ func newPartyStore(ctx context.Context, mongoClientFn utils.MongoClientFn, datab
 	if _, err := collection.Indexes().CreateOne(ctx, mongo.IndexModel{
 		Keys: bson.D{
 			{
-				"attributes." + FirstNameAttribute.ID, "text",
+				Key: "attributes." + FirstNameAttribute.ID, Value: "text",
 			},
 			{
-				"attributes." + LastNameAttribute.ID, "text",
+				Key: "attributes." + LastNameAttribute.ID, Value: "text",
 			},
 		},
 	}); err != nil {
@@ -79,11 +79,11 @@ func (s *PartyStore) list(ctx context.Context, listOptions PartySearchOptions) (
 	filterItems := bson.M{}
 
 	if len(listOptions.PartyTypeIDs) != 0 {
-		filterItems["partyTypeIds"] = bson.D{{"$in", BSONStringA(listOptions.PartyTypeIDs)}}
+		filterItems["partyTypeIds"] = bson.D{{Key: "$in", Value: BSONStringA(listOptions.PartyTypeIDs)}}
 	}
 
 	if len(listOptions.PartyIDs) != 0 {
-		filterItems["id"] = bson.D{{"$in", BSONStringA(listOptions.PartyIDs)}}
+		filterItems["id"] = bson.D{{Key: "$in", Value: BSONStringA(listOptions.PartyIDs)}}
 	}
 
 	if listOptions.Attributes != nil && len(listOptions.Attributes) > 0 {
@@ -163,22 +163,22 @@ type FindOptions struct {
 	Attributes map[string]string
 }
 
-func (s *PartyStore) find(ctx context.Context, options FindOptions) (*Party, error) {
-	filter := bson.M{}
-	for key, value := range options.Attributes {
-		filter["attributes."+key] = value
-	}
-	collection, err := s.GetCollection(ctx)
-	if err != nil {
-		return nil, err
-	}
-	res := collection.FindOne(ctx, filter)
-	if res.Err() != nil {
-		return nil, res.Err()
-	}
-	var party *Party
-	if err := res.Decode(&party); err != nil {
-		return nil, err
-	}
-	return party, nil
-}
+//func (s *PartyStore) find(ctx context.Context, options FindOptions) (*Party, error) {
+//	filter := bson.M{}
+//	for key, value := range options.Attributes {
+//		filter["attributes."+key] = value
+//	}
+//	collection, err := s.GetCollection(ctx)
+//	if err != nil {
+//		return nil, err
+//	}
+//	res := collection.FindOne(ctx, filter)
+//	if res.Err() != nil {
+//		return nil, res.Err()
+//	}
+//	var party *Party
+//	if err := res.Decode(&party); err != nil {
+//		return nil, err
+//	}
+//	return party, nil
+//}

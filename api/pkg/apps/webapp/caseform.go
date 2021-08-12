@@ -2,6 +2,7 @@ package webapp
 
 import (
 	"github.com/nrc-no/core/pkg/apps/cms"
+	"github.com/nrc-no/core/pkg/form"
 	"github.com/nrc-no/core/pkg/validation"
 )
 
@@ -14,7 +15,7 @@ type Template struct {
 }
 
 type FormElement struct {
-	cms.FormElement
+	form.FormElement
 }
 
 func NewValidatedTemplate(template *cms.CaseTemplate, errors validation.ErrorList) *ValidatedCaseTemplate {

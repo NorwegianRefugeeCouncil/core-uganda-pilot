@@ -49,6 +49,7 @@
                                     class="form-select {{if $errs}}is-invalid{{end}}"
                                     name="{{$name}}"
                                     aria-describedby="partyTypeIdFeedback"
+                                    data-testid="partytype"
                             >
 
                                 {{if .CaseType.PartyTypeID}}
@@ -75,6 +76,7 @@
                             <select id="party-type"
                                     class="form-select"
                                     name="{{$name}}"
+                                    data-testid="partytype"
                                     {{if .CaseType}}disabled{{end}}
                             >
                                 {{if .CaseType}}
@@ -99,6 +101,7 @@
                             <select id="team"
                                     class="form-select {{if $errs}}is-invalid{{end}}"
                                     name="{{$name}}"
+                                    data-testid="team"
                                     aria-describedby="teamIdFeedback"
                             >
                                 {{if .CaseType.TeamID}}
@@ -122,6 +125,7 @@
                             <select id="team"
                                     class="form-select"
                                     name="{{$name}}"
+                                    data-testid="team"
                                     {{if .CaseType}}disabled{{end}}
                             >
                                 {{if .CaseType}}
@@ -148,6 +152,7 @@
                                       id="{{$name}}"
                                       class="form-control font-monospace {{if $errs}}is-invalid{{end}}"
                                       style="height: 600px"
+                                      data-testid="template"
                                       aria-describedby="{{$name}}}Feedback"
                             >
                                 {{- if .CaseType.Template}}{{.CaseType.Pretty}}{{end -}}
@@ -162,6 +167,7 @@
                                       id="{{$name}}"
                                       class="form-control font-monospace"
                                       style="height: 600px"
+                                      data-testid="template"
                                       {{if .CaseType}}readonly{{end}}
                             >
                                 {{- if .CaseType.Template}}{{.CaseType.Pretty}}{{end -}}
@@ -172,7 +178,7 @@
                         <input type="hidden" name="partyTypeId" value="{{.CaseType.PartyTypeID}}">
                         <input type="hidden" name="teamId" value="{{.CaseType.TeamID}}">
                     {{end}}
-                    <button class="btn btn-primary">Save</button>
+                    <button class="btn btn-primary" data-testid="save-btn">Save</button>
                 </form>
             </div>
         </div>

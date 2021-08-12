@@ -1,9 +1,11 @@
 {{define "dropdown"}}
     <div class="form mb-3">
-        <label class="mb-2 text-muted" style="font-weight: bold;" for="{{.Attributes.Name}}">{{.Attributes.Label}}</label>
+        <label class="mb-2 text-muted" style="font-weight: bold;"
+               for="{{.Attributes.Name}}">{{.Attributes.Label}}</label>
         <select id="{{.Attributes.Name}}"
                 name="{{.Attributes.Name}}"
                 class="form-select {{if .Errors}}is-invalid{{end}}"
+                data-testid="test-dropdown"
                 {{if .Attributes.Multiple}}multiple{{end}}
                 {{if .Validation.Required}}required{{end}}
                 {{if .Errors}}aria-describedby="{{.Attributes.Name}}Feedback"{{end}}

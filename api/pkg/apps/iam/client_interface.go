@@ -174,9 +174,7 @@ func (a *AttributeListOptions) MarshalQueryParameters() (url.Values, error) {
 
 func (a *AttributeListOptions) UnmarshalQueryParameters(values url.Values) error {
 	partyTypeIDs := values["partyTypeId"]
-	for _, partyTypeID := range partyTypeIDs {
-		a.PartyTypeIDs = append(a.PartyTypeIDs, partyTypeID)
-	}
+	a.PartyTypeIDs = append(a.PartyTypeIDs, partyTypeIDs...)
 	return nil
 }
 

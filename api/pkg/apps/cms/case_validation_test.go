@@ -1,6 +1,7 @@
 package cms
 
 import (
+	"github.com/nrc-no/core/pkg/form"
 	"github.com/nrc-no/core/pkg/validation"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -16,40 +17,40 @@ func TestValidateCase(t *testing.T) {
 		name: "emptyFields",
 		caseType: &Case{
 			Template: &CaseTemplate{
-				FormElements: []FormElement{
+				FormElements: []form.FormElement{
 					{
-						Type: Dropdown,
-						Attributes: FormElementAttribute{
+						Type: form.Dropdown,
+						Attributes: form.FormElementAttributes{
 							Name: "dropdown",
 						},
-						Validation: FormElementValidation{
+						Validation: form.FormElementValidation{
 							Required: true,
 						},
 					},
 					{
-						Type: Textarea,
-						Attributes: FormElementAttribute{
+						Type: form.Textarea,
+						Attributes: form.FormElementAttributes{
 							Name: "textarea",
 						},
-						Validation: FormElementValidation{
+						Validation: form.FormElementValidation{
 							Required: true,
 						},
 					},
 					{
-						Type: TextInput,
-						Attributes: FormElementAttribute{
+						Type: form.TextInput,
+						Attributes: form.FormElementAttributes{
 							Name: "textinput",
 						},
-						Validation: FormElementValidation{
+						Validation: form.FormElementValidation{
 							Required: true,
 						},
 					},
 					{
-						Type: Checkbox,
-						Attributes: FormElementAttribute{
+						Type: form.Checkbox,
+						Attributes: form.FormElementAttributes{
 							Name: "checkbox",
 						},
-						Validation: FormElementValidation{
+						Validation: form.FormElementValidation{
 							Required: true,
 						},
 					},
@@ -58,10 +59,18 @@ func TestValidateCase(t *testing.T) {
 		},
 		assert: func(t *testing.T, errList validation.ErrorList) {
 			assert.NotEmpty(t, errList)
-			assert.Equal(t, errList.Find(".dropdown")[0].Type, validation.ErrorTypeRequired)
-			assert.Equal(t, errList.Find(".textarea")[0].Type, validation.ErrorTypeRequired)
-			assert.Equal(t, errList.Find(".textinput")[0].Type, validation.ErrorTypeRequired)
-			assert.Equal(t, errList.Find(".checkbox")[0].Type, validation.ErrorTypeRequired)
+			dd := errList.Find(".dropdown")
+			ta := errList.Find(".textarea")
+			ti := errList.Find(".textinput")
+			cb := errList.Find(".checkbox")
+			for _, list := range []*validation.ErrorList{dd, ta, ti, cb} {
+				assert.NotNil(t, list)
+				assert.NotEmpty(t, list)
+				assert.Len(t, *list, 1)
+				l := *list
+				err := l[0]
+				assert.Equal(t, err.Type, validation.ErrorTypeRequired)
+			}
 		},
 	}}
 

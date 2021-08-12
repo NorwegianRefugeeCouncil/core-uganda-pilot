@@ -12,12 +12,14 @@
                 {{$hasInnerErr = gt ($.Errors.Find $fieldName).Length 1}}
             {{end}}
             <div class="form-check mb-3">
-                <label class="form-check-label mb-2 text-muted" style="font-weight: bold;" for="{{$fieldName}}">{{.Label}}</label>
+                <label class="form-check-label mb-2 text-muted" style="font-weight: bold;"
+                       for="{{$fieldName}}">{{.Label}}</label>
                 <input id="{{$fieldName}}"
                        name="{{$.Attributes.Name}}"
                        value="{{$i}}"
                        class="form-check-input {{if $hasInnerErr}}is-invalid{{end}}"
                        type="checkbox"
+                       data-testid="test-checkbox"
                        {{if .Required}}required{{end}}
                         {{range $v := $.Attributes.Value}}{{if eq $istr $v}}checked{{end}}{{end}}
                         {{if $hasInnerErr}}aria-describedby="{{$fieldName}}Feedback"{{end}}
