@@ -28,7 +28,6 @@ type Attribute struct {
 	Type       form.FieldType             `json:"type" bson:"type"`
 	Attributes form.FormElementAttributes `json:"attributes" bson:"attributes"`
 	Validation form.FormElementValidation `json:"validation" bson:"validation"`
-	form.FormElement
 }
 
 // AttributeTranslation represents a localized description of an Attribute

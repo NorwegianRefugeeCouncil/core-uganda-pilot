@@ -109,7 +109,7 @@ func (s *Suite) testIndividualListFilter() {
 func (s *Suite) testIndividualFilterByPartyType(individuals []*Individual, partyTypeIds []string) {
 	for i := 1; i <= len(partyTypeIds); i++ {
 		types := append([]string{IndividualPartyType.ID}, partyTypeIds[0:i]...)
-		list, err := s.client.Individuals().List(ctx, IndividualListOptions{
+		list, err := s.client.Individuals().List(s.Ctx, IndividualListOptions{
 			PartyTypeIDs: types,
 		})
 		if !assert.NoError(s.T(), err) {
@@ -147,7 +147,7 @@ func (s *Suite) testIndividualFilterByAttribute(individuals []*Individual, attri
 			attributesOptions[attribute] = "mock"
 		}
 		options := IndividualListOptions{Attributes: attributesOptions}
-		list, err := s.client.Individuals().List(ctx, options)
+		list, err := s.client.Individuals().List(s.Ctx, options)
 		assert.NoError(s.T(), err)
 
 		// Get expected items
@@ -182,7 +182,7 @@ func (s *Suite) testIndividualFilterByPartyTypeAndAttribute(individuals []*Indiv
 			for _, attribute := range attributes[0:i] {
 				attributeOptions[attribute] = "mock"
 			}
-			list, err := s.client.Individuals().List(ctx, IndividualListOptions{
+			list, err := s.client.Individuals().List(s.Ctx, IndividualListOptions{
 				PartyTypeIDs: partyTypeIds,
 				Attributes:   attributeOptions,
 			})

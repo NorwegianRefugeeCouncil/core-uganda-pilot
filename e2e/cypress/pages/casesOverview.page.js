@@ -1,28 +1,34 @@
-import { Urls } from '../helpers';
-import CasePage from './case.page';
+import { testId, URL } from '../helpers';
 import NewCasePage from './newCase.page';
 
-const OPEN_NEW_CASE_Btn = '[data-testid=openNewCase]';
+const NEW_CASE_BTN = testId('new-case-btn');
 const CASE_ROWS = '[data-testid=caseRow]';
 
 export default class CasesOverviewPage {
+    constructor() {
+        this.visitPage();
+    }
+
     visitPage = () => {
-        cy.log('navigating to %s', Urls.CASE_URL);
-        cy.visit(Urls.CASES_URL);
+        cy.visit(URL.CASES);
         return this;
     };
 
     openNewCase = () => {
-        cy.get(OPEN_NEW_CASE_Btn).click();
+        cy.get(NEW_CASE_BTN).click();
         return this;
     };
 
     selectCase = () => {
         cy.get(CASE_ROWS).last().click();
-        return new CasePage();
+        return new NewCasePage();
     };
 
     newCaseForm = () => {
         return new NewCasePage();
+    };
+
+    clickNewCaseBtn = () => {
+        return cy.get(NEW_CASE_BTN).click();
     };
 }

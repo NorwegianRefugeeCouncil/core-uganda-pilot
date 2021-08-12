@@ -27,12 +27,11 @@ func (s *Suite) TestCaseAPI() {
 	assert.Equal(s.T(), created, get)
 
 	// UPDATE
-	get.Done = true
-	get.Template = &CaseTemplate{FormElements: []FormElement{{
+	get.Template = &CaseTemplate{FormElements: []form.FormElement{{
 		Type: "textarea",
 		Attributes: form.FormElementAttributes{
-			Label: "mock",
-			Value: []string{"mock"},
+			Label: "update",
+			Name:  "update",
 		},
 	}}}
 	updated, err := s.client.Cases().Update(s.Ctx, get)
