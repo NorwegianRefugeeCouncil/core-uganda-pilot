@@ -558,23 +558,30 @@
                 }
             );
 
-            // Render relationships
-            displayRelationships$.subscribe(relationships => {
-                const list = document.getElementById('relationships-list');
-                list.innerHTML = '';
-                relationships.forEach((relationship, idx) => {
-                    const li = document.createElement('li');
-                    li.className = 'list-group-item';
-                    li.setAttribute('data-testid', 'relationship');
-                    const firstPartyName = parties.find(({ id }) => id === relationship.firstParty)?.name;
-                    const firstPartyRole = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId)?.firstPartyRole;
-                    const secondPartyName = parties.find(({ id }) => id === relationship.secondParty)?.name;
-                    const firstPartyTypeId = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId).firstPartyTypeId;
-                    const secondPartyTypeId = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId).secondPartyTypeId;
+        // Render relationships
+        displayRelationships$.subscribe(relationships => {
+          const list = document.getElementById('relationships-list');
+          list.innerHTML = '';
+          relationships.forEach((relationship, idx) => {
+            const li = document.createElement('li');
+            li.className = 'list-group-item';
+            let firstPartyName
+            if (window.location.pathname === '/individuals/new') {
+              const lastName = document.querySelector('input[name="lastName"]')?.value;
+              const firstName = document.querySelector('input[name="firstName"]')?.value;
+              firstPartyName = lastName.toUpperCase() + ', ' + firstName;
+            } else {
+              firstPartyName = parties.find(({ id }) => id === relationship.firstParty)?.name;
+            }
+            li.setAttribute('data-testid', 'relationship');
+            const firstPartyRole = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId)?.firstPartyRole;
+            const secondPartyName = parties.find(({ id }) => id === relationship.secondParty)?.name;
+            const firstPartyTypeId = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId).firstPartyTypeId;
+            const secondPartyTypeId = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId).secondPartyTypeId;
 
-                    const firstPartyLinkNode = document.createElement('a');
-                    firstPartyLinkNode.href = partyLink(firstPartyTypeId, relationship.firstPartyTypeId);
-                    firstPartyLinkNode.innerText = firstPartyName;
+            const firstPartyLinkNode = document.createElement('a');
+            firstPartyLinkNode.href = partyLink(firstPartyTypeId, relationship.firstParty);
+            firstPartyLinkNode.innerText = firstPartyName;
 
                     const roleSpanNode = document.createElement('span');
                     roleSpanNode.innerText = firstPartyRole.substring(0, 1).toLocaleLowerCase() + firstPartyRole.substring(1);
