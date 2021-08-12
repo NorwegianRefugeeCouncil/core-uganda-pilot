@@ -7,7 +7,7 @@
                         <div>
                             <i class="bi bi-journal-medical"></i> <a href="/cases">Cases</a>
                             {{ if .}}
-                                / {{.ID}}
+                                / <span data-testid="case-id">{{.ID}}</span>
                             {{end}}
                         </div>
                         <div class="flex-grow-1"></div>

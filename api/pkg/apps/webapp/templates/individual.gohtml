@@ -182,480 +182,482 @@
 
     <script type="application/javascript">
 
-      let { Subject, BehaviorSubject } = rxjs;
-      let { map, debounceTime, switchMap } = rxjs.operators;
-      let { ajax } = rxjs.ajax;
+        let { Subject, BehaviorSubject } = rxjs;
+        let { map, debounceTime, switchMap } = rxjs.operators;
+        let { ajax } = rxjs.ajax;
 
-      // Holds the different relationship types
-      const relationshipTypes = [
-          {{range .RelationshipTypes.Items}}
-        {
-          id: {{.ID}},
-          name: {{.Name}},
-          firstPartyRole: {{.FirstPartyRole}},
-          secondPartyRole: {{.SecondPartyRole}},
-          firstPartyTypeId: {{(index .Rules 0).PartyTypeRule.FirstPartyTypeID}},
-          secondPartyTypeId: {{(index .Rules 0).PartyTypeRule.SecondPartyTypeID}}
-        },
-          {{end}}
-      ];
-
-      // Handles the search box for the parties dropdown
-      let partySearchSubject = new Subject();
-      let partySearch$ = partySearchSubject.asObservable().pipe(
-        debounceTime(200),
-        switchMap((searchParam) => {
-          const searchParams = new URLSearchParams({
-            'partyTypeId': getSecondPartyType(),
-            'searchParam': searchParam
-          });
-          const ajaxUrl = '/relationships/pickparty?' + searchParams.toString();
-          return ajax(ajaxUrl);
-        })
-      );
-
-      // Holds the different parties (for relationship dropdown select)
-      let parties = [
-          {{range .Parties.Items}}
-        {
-          id: {{.ID}},
-          name: "{{ .String }}"
-        },
-          {{ end }}
-          {{range .Teams.Items}}
-        {
-          id: {{.ID}},
-          name: "{{ .String }}"
-        },
-          {{ end }}
-      ];
-
-      // Holds the display state
-      let stateSubject = new BehaviorSubject({
-        attributes: [],
-        relationships: [
-            {{range .Relationships.Items}}
-          {
-            id: {{.ID}},
-            firstParty: {{.FirstPartyID}},
-            secondParty: {{.SecondPartyID}},
-            relationshipTypeId: {{.RelationshipTypeID}},
-            isNew: false,
-            markedForDeletion: false
-          },
-            {{end}}
-        ]
-      });
-
-      // Display state observable$
-      let state$ = stateSubject.asObservable();
-
-      // Individual relationships observable$
-      let relationships$ = state$.pipe(map(s => s.relationships));
-
-      // aggregate relationship types and relationships for display purposes
-      let displayRelationships$ = relationships$.pipe(
-        map(relationships => {
-          return relationships.map(relationship => {
-            let relationshipType = relationshipTypes.find(t => t.id === relationship.relationshipTypeId);
-            if (!relationshipType) {
-              return;
-            }
-            return {
-              ...relationship,
-              firstPartyRole: relationshipType.firstPartyRole,
-              secondPartyRole: relationshipType.secondPartyRole,
-              relationshipTypeName: relationshipType.name
-            };
-          });
-        })
-      );
-
-      function addRelationship(relationshipTypeId, secondPartyID) {
-        const state = stateSubject.value;
-        // Check for self-reference
-        if (secondPartyID === {{.Individual.ID}}) return;
-        // Check for valid party
-        const isValidParty = parties.filter(({ id }) => id === secondPartyID).length === 1;
-        if (!isValidParty) return;
-        // Check for duplicate
-        const relationshipExists = state.relationships
-          .filter(r => r.relationshipTypeId === relationshipTypeId && r.secondParty === secondPartyID)
-          .length > 0;
-        if (relationshipExists) return;
-        stateSubject.next({
-          ...state,
-          relationships: [
-            ...state.relationships,
+        // Holds the different relationship types
+        const relationshipTypes = [
+            {{range .RelationshipTypes.Items}}
             {
-              relationshipTypeId,
-              firstParty: {{.Individual.ID}},
-              secondParty: secondPartyID
-            }
-          ]
-        });
-      }
-
-      function deleteRelationship(idx) {
-        const state = stateSubject.value;
-        const relationships = state.relationships;
-        const relationship = relationships[idx];
-        if (relationship.id) {
-          relationships[idx] = {
-            ...relationship,
-            // toggle marked for deletion
-            markedForDeletion: !relationship.markedForDeletion
-          };
-          stateSubject.next({
-            ...state,
-            relationships: [
-              ...relationships
-            ]
-          });
-        } else {
-          relationships.splice(idx, 1);
-          stateSubject.next({
-            ...state,
-            relationships: [...relationships]
-          });
-        }
-      }
-
-      // Returns the secondPartyType ID corresponding to the selection of the relationship type
-      // dropdown
-      const getSecondPartyType = () => {
-        const relationshipTypeSelector = document.getElementById('relationshipTypeSelector');
-        let selectedRelationshipType = relationshipTypes.find(
-          e => e.id === relationshipTypeSelector.value
-            && e.firstPartyRole === relationshipTypeSelector.options[relationshipTypeSelector.selectedIndex].text
-        );
-        return selectedRelationshipType.secondPartyTypeId;
-      };
-
-      // Returns the value of the partySelector search box
-      const getSearchParam = () => {
-        const partySelector = document.getElementById('partySelector');
-        return partySelector.textContent;
-      };
-
-      // Party List Item click handler - sets the text box value used for searching to the selected item
-      // from the dropdown
-      const onPartyListItemClick = (event) => {
-        document.getElementById('partySelector').value = event.target.textContent;
-        document.getElementById('partySelector').setAttribute('data-party-id', event.target.id);
-      };
-
-      // Build a party link
-      const partyLink = (partyTypeId, partyId) => {
-        if (partyTypeId === "{{ .IndividualPartyTypeID }}") {
-          return '/individuals/' + partyId;
-        }
-        if (partyTypeId === "{{ .TeamPartyTypeID }}") {
-          return '/teams/' + partyId;
-        }
-        if (partyTypeId === "{{ .HouseholdPartyTypeID }}") {
-          return '/households/' + partyId;
-        }
-        return '/';
-      };
-
-      // On document ready
-      document.addEventListener('DOMContentLoaded', function() {
-
-        //
-        // Form handling
-        //
-        async function validateSubForm(formID, caseID) {
-          const fields = document.querySelectorAll(`#${formID} [name]`);
-          const searchParams = new URLSearchParams();
-          fields.forEach(field => {
-            if (field instanceof HTMLSelectElement) {
-              field.value = field.options[field.selectedIndex].value;
-            }
-            searchParams.append(field.name, field.value);
-          });
-
-          const url = `/cases/${caseID}?validationOnly=true`;
-          const options = {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded'
+                id: {{.ID}},
+                name: {{.Name}},
+                firstPartyRole: {{.FirstPartyRole}},
+                secondPartyRole: {{.SecondPartyRole}},
+                firstPartyTypeId: {{(index .Rules 0).PartyTypeRule.FirstPartyTypeID}},
+                secondPartyTypeId: {{(index .Rules 0).PartyTypeRule.SecondPartyTypeID}}
             },
-            body: searchParams
-          };
-
-          const response = await fetch(url, options);
-          if (response.ok) return null;
-          let validation;
-          try {
-            validation = await response.json();
-          } catch (e) {
-            console.error(`Fetch error: ${e}`);
-            return null;
-          }
-          return validation;
-        }
-
-        function applyValidation(validation) {
-          for (const element of validation.template.formElements) {
-            let { name } = element.attributes;
-            if (!element.errors) {
-              continue;
-            }
-            // Get DOM form element
-            let el = document.querySelector(`#${name}`);
-            if (element.type === 'taxonomyinput') {
-              el = el.parentElement;
-            }
-            // Apply attributes
-            el.classList.add('is-invalid');
-            el.setAttribute('aria-describedby', `${name}Feedback`);
-            // Get feedback div
-            const feedback = document.getElementById(`${name}Feedback`);
-            if (feedback != null) {
-              feedback.innerHTML = '';
-              // Populate attributes and error messages
-              for (const error of element.errors) {
-                const p = document.createElement('p');
-                p.textContent = error.detail;
-                feedback.appendChild(p);
-              }
-            }
-          }
-        }
-
-        function removeValidation(formID) {
-          const fields = document.querySelectorAll(`#${formID} [name]`);
-          fields.forEach(field => {
-            const name = field.name;
-            if (field.classList.contains('taxonomyinput')) {
-              field = field.parentElement;
-            }
-            field.classList.remove('is-invalid');
-            field.removeAttribute('aria-describedby');
-            const feedback = document.getElementById(`${name}Feedback`);
-            if (feedback != null) {
-              feedback.innerHTML = '';
-            }
-          });
-        }
-
-        const submitBtn = document.getElementById('formSubmitButton');
-        submitBtn.onclick = async event => {
-          // event.preventDefault();
-          // TODO submit attributes
-            {{if (not .IsNew)}}
-          const subForms = [
-            { formID: 'situationAnalysis', caseID: "{{.SituationAnalysis.ID}}" },
-            { formID: 'individualAssessment', caseID: "{{.IndividualAssessment.ID}}" }
-          ];
-          // Do validation
-          const validations = await Promise.allSettled(subForms.map(async ({ formID, caseID }) => {
-            let returnVar;
-            try {
-              const validation = await validateSubForm(formID, caseID);
-              removeValidation(formID);
-              if (validation != null) {
-                applyValidation(validation);
-                return Promise.resolve(true);
-              }
-            } catch (e) {
-              console.error(e);
-            } finally {
-              returnVar = Promise.resolve(false);
-            }
-            return returnVar;
-          }));
-
-          // Show updated Individual
-          if (validations.every(v => !v.value)) {
-            const f = document.getElementById('attributesForm');
-            f.submit();
-          }
-            {{else}}
-          const f = document.getElementById('attributesForm');
-          f.submit();
             {{end}}
-        };
+        ];
 
-
-        // Bind add relationship button
-        document.getElementById('add-relationship-button').onclick = () => {
-          let typeSelector = document.getElementById('relationshipTypeSelector');
-          let partySelector = document.getElementById('partySelector');
-          let relationshipType = typeSelector.value;
-          let party = partySelector.getAttribute('data-party-id');
-          addRelationship(relationshipType, party);
-        };
-
-        // Override bootstrap dropdown events
-        const partySelector = document.querySelector('#partySelector');
-        const toggler = new bootstrap.Dropdown(partySelector);
-        document.querySelector('#partySelector').onclick = (event) => {
-          toggler.show();
-        };
-        // Hide dropdown on click outside
-        document.onclick = event => {
-          const partySelectorList = document.querySelector('#partySelectorList');
-          const shouldHidePartySelectorList = event.target.id !== 'partySelector' && partySelectorList.classList.contains('show');
-          if (shouldHidePartySelectorList) {
-            toggler.hide();
-          }
-        };
-
-        // Add listener for party selector item click
-        document.querySelectorAll('.partySelectorItem').forEach(e => {
-          e.onclick = onPartyListItemClick;
-        });
-
-        // Add listener for party search box
-        partySelector.oninput = (event) => {
-          partySearchSubject.next(event.target.value);
-        };
-
-        // Add listener for relationship type change
-        document.getElementById('relationshipTypeSelector').onchange = (event) => {
-          partySearchSubject.next(getSearchParam());
-        };
-
-        // Handle party search responses
-        partySearch$.subscribe(
-          res => {
-            let partySelectorList = document.getElementById('partySelectorList');
-            partySelectorList.innerHTML = '';
-            if (res.response.length > 0) {
-              let n = 0;
-              res.response.forEach(pickedParty => {
-                const party = pickedParty.party;
-                if (n < {{ .Constants.PartyDropdownLimit }}) {
-                  let newListItem = document.createElement('li');
-                  newListItem.classList.add('dropdown-item');
-                  newListItem.classList.add('partySelectorItem');
-                  newListItem.onclick = onPartyListItemClick;
-                  let displayText = pickedParty.displayName;
-                  newListItem.appendChild(
-                    document.createTextNode(displayText)
-                  );
-                  newListItem.setAttribute('id', party.id);
-                  partySelectorList.appendChild(newListItem);
-                }
-                n++;
-              });
-            } else {
-              // No Parties Found...
-              let newListItem = document.createElement('li');
-              newListItem.classList.add('dropdown-item');
-              let displayText = `No Parties Found`;
-              newListItem.appendChild(
-                document.createTextNode(displayText)
-              );
-              partySelectorList.appendChild(newListItem);
-            }
-          },
-          err => {
-            console.error('got error: ', err);
-          }
+        // Handles the search box for the parties dropdown
+        let partySearchSubject = new Subject();
+        let partySearch$ = partySearchSubject.asObservable().pipe(
+            debounceTime(200),
+            switchMap((searchParam) => {
+                const searchParams = new URLSearchParams({
+                    'partyTypeId': getSecondPartyType(),
+                    'searchParam': searchParam
+                });
+                const ajaxUrl = '/relationships/pickparty?' + searchParams.toString();
+                return ajax(ajaxUrl);
+            })
         );
 
-        // Render relationships
-        displayRelationships$.subscribe(relationships => {
-          const list = document.getElementById('relationships-list');
-          list.innerHTML = '';
-          relationships.forEach((relationship, idx) => {
-            const li = document.createElement('li');
-            li.className = 'list-group-item';
-            const firstPartyName = parties.find(({ id }) => id === relationship.firstParty)?.name;
-            const firstPartyRole = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId)?.firstPartyRole;
-            const secondPartyName = parties.find(({ id }) => id === relationship.secondParty)?.name;
-            const firstPartyTypeId = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId).firstPartyTypeId;
-            const secondPartyTypeId = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId).secondPartyTypeId;
+        // Holds the different parties (for relationship dropdown select)
+        let parties = [
+            {{range .Parties.Items}}
+            {
+                id: {{.ID}},
+                name: "{{ .String }}"
+            },
+            {{ end }}
+            {{range .Teams.Items}}
+            {
+                id: {{.ID}},
+                name: "{{ .String }}"
+            },
+            {{ end }}
+        ];
 
-            const firstPartyLinkNode = document.createElement('a');
-            firstPartyLinkNode.href = partyLink(firstPartyTypeId, relationship.firstPartyTypeId);
-            firstPartyLinkNode.innerText = firstPartyName;
-
-            const roleSpanNode = document.createElement('span');
-            roleSpanNode.innerText = firstPartyRole.substring(0, 1).toLocaleLowerCase() + firstPartyRole.substring(1);
-
-            const secondPartyLinkNode = document.createElement('a');
-            secondPartyLinkNode.href = partyLink(secondPartyTypeId, relationship.secondParty);
-            secondPartyLinkNode.innerText = secondPartyName;
-
-            const space1Node = document.createElement('span');
-            space1Node.innerText = ' ';
-
-            const space2Node = document.createElement('span');
-            space2Node.innerText = ' ';
-
-            const containerNode = document.createElement('span');
-
-            if (relationship.markedForDeletion) {
-              containerNode.style.textDecoration = 'line-through';
-            }
-
-            if (!relationship.id) {
-
-              const plusNode = document.createElement('span');
-              plusNode.innerHTML = '+ ';
-              containerNode.appendChild(plusNode);
-              containerNode.classList.add('text-success');
-              containerNode.classList.add('fw-bold');
-            }
-
-            containerNode.appendChild(firstPartyLinkNode);
-            containerNode.appendChild(space1Node);
-            containerNode.appendChild(roleSpanNode);
-            containerNode.appendChild(space2Node);
-            containerNode.appendChild(secondPartyLinkNode);
-
-            const secondPartyInput = document.createElement('input');
-            secondPartyInput.name = 'relationships[' + idx + '].secondPartyId';
-            secondPartyInput.setAttribute('value', relationship.secondParty);
-            secondPartyInput.hidden = true;
-
-            const relationshipTypeIdInput = document.createElement('input');
-            relationshipTypeIdInput.name = 'relationships[' + idx + '].relationshipTypeId';
-            relationshipTypeIdInput.setAttribute('value', relationship.relationshipTypeId);
-            relationshipTypeIdInput.hidden = true;
-
-            const closeButton = document.createElement('button');
-            closeButton.type = 'button';
-            closeButton.classList.add('btn-close');
-            closeButton.classList.add('float-end');
-            closeButton.onclick = () => {
-              deleteRelationship(idx);
-            };
-            containerNode.appendChild(closeButton);
-
-            if (relationship.id) {
-              const idHiddenInput = document.createElement('input');
-              idHiddenInput.hidden = true;
-              idHiddenInput.name = `relationships[${idx}].id`;
-              idHiddenInput.setAttribute('value', relationship.id);
-              li.appendChild(idHiddenInput);
-            }
-
-            if (relationship.markedForDeletion) {
-              const markedForDeletionHiddenInput = document.createElement('input');
-              markedForDeletionHiddenInput.hidden = true;
-              markedForDeletionHiddenInput.name = `relationships[${idx}].markedForDeletion`;
-              markedForDeletionHiddenInput.setAttribute('value', 'true');
-              li.appendChild(markedForDeletionHiddenInput);
-            }
-
-            li.appendChild(secondPartyInput);
-            li.appendChild(relationshipTypeIdInput);
-            li.appendChild(containerNode);
-
-            list.appendChild(li);
-          });
-
+        // Holds the display state
+        let stateSubject = new BehaviorSubject({
+            attributes: [],
+            relationships: [
+                {{range .Relationships.Items}}
+                {
+                    id: {{.ID}},
+                    firstParty: {{.FirstPartyID}},
+                    secondParty: {{.SecondPartyID}},
+                    relationshipTypeId: {{.RelationshipTypeID}},
+                    isNew: false,
+                    markedForDeletion: false
+                },
+                {{end}}
+            ]
         });
 
-        // Initial call to populate parties list
-        partySearchSubject.next(getSearchParam());
+        // Display state observable$
+        let state$ = stateSubject.asObservable();
 
-      });
+        // Individual relationships observable$
+        let relationships$ = state$.pipe(map(s => s.relationships));
+
+        // aggregate relationship types and relationships for display purposes
+        let displayRelationships$ = relationships$.pipe(
+            map(relationships => {
+                return relationships.map(relationship => {
+                    let relationshipType = relationshipTypes.find(t => t.id === relationship.relationshipTypeId);
+                    if (!relationshipType) {
+                        return;
+                    }
+                    return {
+                        ...relationship,
+                        firstPartyRole: relationshipType.firstPartyRole,
+                        secondPartyRole: relationshipType.secondPartyRole,
+                        relationshipTypeName: relationshipType.name
+                    };
+                });
+            })
+        );
+
+        function addRelationship(relationshipTypeId, secondPartyID) {
+            const state = stateSubject.value;
+            // Check for self-reference
+            if (secondPartyID === {{.Individual.ID}}) return;
+            // Check for valid party
+            const isValidParty = parties.filter(({ id }) => id === secondPartyID).length === 1;
+            if (!isValidParty) return;
+            // Check for duplicate
+            const relationshipExists = state.relationships
+                .filter(r => r.relationshipTypeId === relationshipTypeId && r.secondParty === secondPartyID)
+                .length > 0;
+            if (relationshipExists) return;
+            stateSubject.next({
+                ...state,
+                relationships: [
+                    ...state.relationships,
+                    {
+                        relationshipTypeId,
+                        firstParty: {{.Individual.ID}},
+                        secondParty: secondPartyID
+                    }
+                ]
+            });
+        }
+
+        function deleteRelationship(idx) {
+            const state = stateSubject.value;
+            const relationships = state.relationships;
+            const relationship = relationships[idx];
+            if (relationship.id) {
+                relationships[idx] = {
+                    ...relationship,
+                    // toggle marked for deletion
+                    markedForDeletion: !relationship.markedForDeletion
+                };
+                stateSubject.next({
+                    ...state,
+                    relationships: [
+                        ...relationships
+                    ]
+                });
+            } else {
+                relationships.splice(idx, 1);
+                stateSubject.next({
+                    ...state,
+                    relationships: [...relationships]
+                });
+            }
+        }
+
+        // Returns the secondPartyType ID corresponding to the selection of the relationship type
+        // dropdown
+        const getSecondPartyType = () => {
+            const relationshipTypeSelector = document.getElementById('relationshipTypeSelector');
+            let selectedRelationshipType = relationshipTypes.find(
+                e => e.id === relationshipTypeSelector.value
+                    && e.firstPartyRole === relationshipTypeSelector.options[relationshipTypeSelector.selectedIndex].text
+            );
+            return selectedRelationshipType.secondPartyTypeId;
+        };
+
+        // Returns the value of the partySelector search box
+        const getSearchParam = () => {
+            const partySelector = document.getElementById('partySelector');
+            return partySelector.textContent;
+        };
+
+        // Party List Item click handler - sets the text box value used for searching to the selected item
+        // from the dropdown
+        const onPartyListItemClick = (event) => {
+            document.getElementById('partySelector').value = event.target.textContent;
+            document.getElementById('partySelector').setAttribute('data-party-id', event.target.id);
+        };
+
+        // Build a party link
+        const partyLink = (partyTypeId, partyId) => {
+            if (partyTypeId === "{{ .IndividualPartyTypeID }}") {
+                return '/individuals/' + partyId;
+            }
+            if (partyTypeId === "{{ .TeamPartyTypeID }}") {
+                return '/teams/' + partyId;
+            }
+            if (partyTypeId === "{{ .HouseholdPartyTypeID }}") {
+                return '/households/' + partyId;
+            }
+            return '/';
+        };
+
+        // On document ready
+        document.addEventListener('DOMContentLoaded', function() {
+
+            //
+            // Form handling
+            //
+            async function validateSubForm(formID, caseID) {
+                const fields = document.querySelectorAll(`#${formID} [name]`);
+                const searchParams = new URLSearchParams();
+                fields.forEach(field => {
+                    if (field instanceof HTMLSelectElement) {
+                        field.value = field.options[field.selectedIndex].value;
+                    }
+                    searchParams.append(field.name, field.value);
+                });
+
+                const url = `/cases/${caseID}?validationOnly=true`;
+                const options = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: searchParams
+                };
+
+                const response = await fetch(url, options);
+                if (response.ok) return null;
+                let validation;
+                try {
+                    validation = await response.json();
+                } catch (e) {
+                    console.error(`Fetch error: ${e}`);
+                    return null;
+                }
+                return validation;
+            }
+
+            function applyValidation(validation) {
+                for (const element of validation.template.formElements) {
+                    let { name } = element.attributes;
+                    if (!element.errors) {
+                        continue;
+                    }
+                    // Get DOM form element
+                    let el = document.querySelector(`#${name}`);
+                    if (element.type === 'taxonomyinput') {
+                        el = el.parentElement;
+                    }
+                    // Apply attributes
+                    el.classList.add('is-invalid');
+                    el.setAttribute('aria-describedby', `${name}Feedback`);
+                    // Get feedback div
+                    const feedback = document.getElementById(`${name}Feedback`);
+                    if (feedback != null) {
+                        feedback.innerHTML = '';
+                        // Populate attributes and error messages
+                        for (const error of element.errors) {
+                            const p = document.createElement('p');
+                            p.textContent = error.detail;
+                            feedback.appendChild(p);
+                        }
+                    }
+                }
+            }
+
+            function removeValidation(formID) {
+                const fields = document.querySelectorAll(`#${formID} [name]`);
+                fields.forEach(field => {
+                    const name = field.name;
+                    if (field.classList.contains('taxonomyinput')) {
+                        field = field.parentElement;
+                    }
+                    field.classList.remove('is-invalid');
+                    field.removeAttribute('aria-describedby');
+                    const feedback = document.getElementById(`${name}Feedback`);
+                    if (feedback != null) {
+                        feedback.innerHTML = '';
+                    }
+                });
+            }
+
+            const submitBtn = document.getElementById('formSubmitButton');
+            submitBtn.onclick = async event => {
+                // event.preventDefault();
+                // TODO submit attributes
+                {{if (not .IsNew)}}
+                const subForms = [
+                    { formID: 'situationAnalysis', caseID: "{{.SituationAnalysis.ID}}" },
+                    { formID: 'individualAssessment', caseID: "{{.IndividualAssessment.ID}}" }
+                ];
+                // Do validation
+                const validations = await Promise.allSettled(subForms.map(async ({ formID, caseID }) => {
+                    let returnVar;
+                    try {
+                        const validation = await validateSubForm(formID, caseID);
+                        removeValidation(formID);
+                        if (validation != null) {
+                            applyValidation(validation);
+                            return Promise.resolve(true);
+                        }
+                    } catch (e) {
+                        console.error(e);
+                    } finally {
+                        returnVar = Promise.resolve(false);
+                    }
+                    return returnVar;
+                }));
+
+                // Show updated Individual
+                if (validations.every(v => !v.value)) {
+                    const f = document.getElementById('attributesForm');
+                    f.submit();
+                }
+                {{else}}
+                const f = document.getElementById('attributesForm');
+                f.submit();
+                {{end}}
+            };
+
+
+            // Bind add relationship button
+            document.getElementById('add-relationship-button').onclick = () => {
+                let typeSelector = document.getElementById('relationshipTypeSelector');
+                let partySelector = document.getElementById('partySelector');
+                let relationshipType = typeSelector.value;
+                let party = partySelector.getAttribute('data-party-id');
+                addRelationship(relationshipType, party);
+            };
+
+            // Override bootstrap dropdown events
+            const partySelector = document.querySelector('#partySelector');
+            const toggler = new bootstrap.Dropdown(partySelector);
+            document.querySelector('#partySelector').onclick = (event) => {
+                toggler.show();
+            };
+            // Hide dropdown on click outside
+            document.onclick = event => {
+                const partySelectorList = document.querySelector('#partySelectorList');
+                const shouldHidePartySelectorList = event.target.id !== 'partySelector' && partySelectorList.classList.contains('show');
+                if (shouldHidePartySelectorList) {
+                    toggler.hide();
+                }
+            };
+
+            // Add listener for party selector item click
+            document.querySelectorAll('.partySelectorItem').forEach(e => {
+                e.onclick = onPartyListItemClick;
+            });
+
+            // Add listener for party search box
+            partySelector.oninput = (event) => {
+                partySearchSubject.next(event.target.value);
+            };
+
+            // Add listener for relationship type change
+            document.getElementById('relationshipTypeSelector').onchange = (event) => {
+                partySearchSubject.next(getSearchParam());
+            };
+
+            // Handle party search responses
+            partySearch$.subscribe(
+                res => {
+                    let partySelectorList = document.getElementById('partySelectorList');
+                    partySelectorList.innerHTML = '';
+                    if (res.response.length > 0) {
+                        let n = 0;
+                        res.response.forEach(pickedParty => {
+                            const party = pickedParty.party;
+                            if (n < {{ .Constants.PartyDropdownLimit }}) {
+                                let newListItem = document.createElement('li');
+                                newListItem.classList.add('dropdown-item');
+                                newListItem.classList.add('partySelectorItem');
+                                newListItem.setAttribute('data-testid', 'party-search-result');
+                                newListItem.onclick = onPartyListItemClick;
+                                let displayText = pickedParty.displayName;
+                                newListItem.appendChild(
+                                    document.createTextNode(displayText)
+                                );
+                                newListItem.setAttribute('id', party.id);
+                                partySelectorList.appendChild(newListItem);
+                            }
+                            n++;
+                        });
+                    } else {
+                        // No Parties Found...
+                        let newListItem = document.createElement('li');
+                        newListItem.classList.add('dropdown-item');
+                        let displayText = `No Parties Found`;
+                        newListItem.appendChild(
+                            document.createTextNode(displayText)
+                        );
+                        partySelectorList.appendChild(newListItem);
+                    }
+                },
+                err => {
+                    console.error('got error: ', err);
+                }
+            );
+
+            // Render relationships
+            displayRelationships$.subscribe(relationships => {
+                const list = document.getElementById('relationships-list');
+                list.innerHTML = '';
+                relationships.forEach((relationship, idx) => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item';
+                    li.setAttribute('data-testid', 'relationship');
+                    const firstPartyName = parties.find(({ id }) => id === relationship.firstParty)?.name;
+                    const firstPartyRole = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId)?.firstPartyRole;
+                    const secondPartyName = parties.find(({ id }) => id === relationship.secondParty)?.name;
+                    const firstPartyTypeId = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId).firstPartyTypeId;
+                    const secondPartyTypeId = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId).secondPartyTypeId;
+
+                    const firstPartyLinkNode = document.createElement('a');
+                    firstPartyLinkNode.href = partyLink(firstPartyTypeId, relationship.firstPartyTypeId);
+                    firstPartyLinkNode.innerText = firstPartyName;
+
+                    const roleSpanNode = document.createElement('span');
+                    roleSpanNode.innerText = firstPartyRole.substring(0, 1).toLocaleLowerCase() + firstPartyRole.substring(1);
+
+                    const secondPartyLinkNode = document.createElement('a');
+                    secondPartyLinkNode.href = partyLink(secondPartyTypeId, relationship.secondParty);
+                    secondPartyLinkNode.innerText = secondPartyName;
+
+                    const space1Node = document.createElement('span');
+                    space1Node.innerText = ' ';
+
+                    const space2Node = document.createElement('span');
+                    space2Node.innerText = ' ';
+
+                    const containerNode = document.createElement('span');
+
+                    if (relationship.markedForDeletion) {
+                        containerNode.style.textDecoration = 'line-through';
+                    }
+
+                    if (!relationship.id) {
+
+                        const plusNode = document.createElement('span');
+                        plusNode.innerHTML = '+ ';
+                        containerNode.appendChild(plusNode);
+                        containerNode.classList.add('text-success');
+                        containerNode.classList.add('fw-bold');
+                    }
+
+                    containerNode.appendChild(firstPartyLinkNode);
+                    containerNode.appendChild(space1Node);
+                    containerNode.appendChild(roleSpanNode);
+                    containerNode.appendChild(space2Node);
+                    containerNode.appendChild(secondPartyLinkNode);
+
+                    const secondPartyInput = document.createElement('input');
+                    secondPartyInput.name = 'relationships[' + idx + '].secondPartyId';
+                    secondPartyInput.setAttribute('value', relationship.secondParty);
+                    secondPartyInput.hidden = true;
+
+                    const relationshipTypeIdInput = document.createElement('input');
+                    relationshipTypeIdInput.name = 'relationships[' + idx + '].relationshipTypeId';
+                    relationshipTypeIdInput.setAttribute('value', relationship.relationshipTypeId);
+                    relationshipTypeIdInput.hidden = true;
+
+                    const closeButton = document.createElement('button');
+                    closeButton.type = 'button';
+                    closeButton.classList.add('btn-close');
+                    closeButton.classList.add('float-end');
+                    closeButton.onclick = () => {
+                        deleteRelationship(idx);
+                    };
+                    containerNode.appendChild(closeButton);
+
+                    if (relationship.id) {
+                        const idHiddenInput = document.createElement('input');
+                        idHiddenInput.hidden = true;
+                        idHiddenInput.name = `relationships[${idx}].id`;
+                        idHiddenInput.setAttribute('value', relationship.id);
+                        li.appendChild(idHiddenInput);
+                    }
+
+                    if (relationship.markedForDeletion) {
+                        const markedForDeletionHiddenInput = document.createElement('input');
+                        markedForDeletionHiddenInput.hidden = true;
+                        markedForDeletionHiddenInput.name = `relationships[${idx}].markedForDeletion`;
+                        markedForDeletionHiddenInput.setAttribute('value', 'true');
+                        li.appendChild(markedForDeletionHiddenInput);
+                    }
+
+                    li.appendChild(secondPartyInput);
+                    li.appendChild(relationshipTypeIdInput);
+                    li.appendChild(containerNode);
+
+                    list.appendChild(li);
+                });
+
+            });
+
+            // Initial call to populate parties list
+            partySearchSubject.next(getSearchParam());
+
+        });
 
 
     </script>

@@ -1,7 +1,6 @@
 package iam_test
 
 import (
-	"context"
 	. "github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/testutils"
@@ -17,8 +16,6 @@ type Suite struct {
 	client *ClientSet
 }
 
-var ctx = context.Background()
-
 func (s *Suite) SetupSuite() {
 	s.GenericServerTestSetup = server.NewGenericServerTestSetup()
 	s.server = NewServerOrDie(s.Ctx, s.GenericServerOptions)
@@ -28,7 +25,7 @@ func (s *Suite) SetupSuite() {
 
 // This will run before each test in the suite but must be called manually before subtests
 func (s *Suite) SetupTest() {
-	err := s.server.ResetDB(ctx, s.GenericServerOptions.MongoDatabase)
+	err := s.server.ResetDB(s.Ctx, s.GenericServerOptions.MongoDatabase)
 	if err != nil {
 		return
 	}
@@ -69,15 +66,23 @@ func (s *Suite) mockPartyTypes(n int) []*PartyType {
 	return partyTypes
 }
 
+func mockAttribute() *Attribute {
+	return &Attribute{
+		Name:         "mock",
+		PartyTypeIDs: make([]string, 0),
+		Translations: []AttributeTranslation{{
+			Locale:           "mock",
+			LongFormulation:  "mock",
+			ShortFormulation: "mock",
+		},
+		},
+	}
+}
+
 func (s *Suite) mockAttributes(n int) []*Attribute {
 	var attributes []*Attribute
 	for i := 0; i < n; i++ {
-		attributes = append(attributes, &Attribute{
-			Name:                         newUUID(),
-			PartyTypeIDs:                 make([]string, 0),
-			IsPersonallyIdentifiableInfo: false,
-			Translations:                 make([]AttributeTranslation, 0),
-		})
+		attributes = append(attributes, mockAttribute())
 	}
 	return attributes
 }
