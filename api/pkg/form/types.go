@@ -5,17 +5,17 @@ import "github.com/nrc-no/core/pkg/validation"
 type FieldType string
 
 const (
-	Textarea      FieldType = "textarea"
 	Text          FieldType = "text"
-	Dropdown      FieldType = "dropdown"
-	Radio         FieldType = "radio"
-	Checkbox      FieldType = "checkbox"
 	Email         FieldType = "email"
 	Phone         FieldType = "tel"
+	URL           FieldType = "url"
 	Date          FieldType = "date"
-	File          FieldType = "file"
-	Time          FieldType = "time"
+	Textarea      FieldType = "textarea"
+	Dropdown      FieldType = "dropdown"
+	Checkbox      FieldType = "checkbox"
+	Radio         FieldType = "radio"
 	TaxonomyInput FieldType = "taxonomyinput"
+	File          FieldType = "file"
 )
 
 type FormElement struct {

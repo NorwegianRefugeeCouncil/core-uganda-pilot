@@ -4,25 +4,34 @@ import CasesOverviewPage from '../pages/casesOverview.page';
 import NewCasePage from '../pages/newCase.page';
 import CasePage from '../pages/case.page';
 
-const mockUpdatedText = 'Updated Test';
 const DATA = {
     CASETYPE: ids.DevCaseType,
     PARTY: ids.TestIndividual,
     FORM: {
-        dropdown: '0',
         text: 'test',
+        email: 'test@whatever.net',
+        phone: '0897-938900',
+        url: 'www.hello-world.com',
+        date: '1933-02-24',
         textarea: 'test',
-        checkbox: true
+        dropdown: '0',
+        checkbox: '0',
+        radio: '0',
     },
     FORM_U: {
+        text: 'test-updated',
+        email: 'test_updated@whatever.net',
+        phone: '0897-938901',
+        url: 'www.hello-world-updated.com',
+        date: '1933-02-25',
+        textarea: 'test-updated',
         dropdown: '1',
-        text: 'test - updated',
-        textarea: 'test - updated',
-        checkbox: false
-    }
+        checkbox: '1',
+        radio: '1',
+    },
 };
 
-describe('Case Page', function() {
+describe('Case Page', function () {
     let caseId;
     describe('Navigate', () => {
         it('should navigate to new Case page from the case overview page', () => {

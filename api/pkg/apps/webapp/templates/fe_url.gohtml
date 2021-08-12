@@ -1,12 +1,12 @@
-{{define "email"}}
+{{define "url"}}
     <div class="form mb-3">
         {{template "label" .}}
         <input id="{{.Attributes.Name}}"
                name="{{.Attributes.Name}}"
                value="{{if .Attributes.Value}}{{index .Attributes.Value 0}}{{end}}"
                class="form-control  {{if .Errors}}is-invalid{{end}}"
-               type="email"
-               data-testid="test-email"
+               type="url"
+               data-testid="test-url"
                placeholder="{{.Attributes.Placeholder}}"
                {{if .Validation.Required}}required{{end}}
                 {{if .Errors}}aria-describedby="{{.Attributes.Name}}Feedback"{{end}}

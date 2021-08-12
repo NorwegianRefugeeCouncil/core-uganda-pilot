@@ -6,6 +6,7 @@
                value="{{if .Attributes.Value}}{{index .Attributes.Value 0}}{{end}}"
                class="form-control  {{if .Errors}}is-invalid{{end}}"
                type="date"
+               data-testid="test-date"
                placeholder="{{.Attributes.Placeholder}}"
                {{if .Validation.Required}}required{{end}}
                 {{if .Errors}}aria-describedby="{{.Attributes.Name}}Feedback"{{end}}

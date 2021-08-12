@@ -13,12 +13,17 @@ export const URL = {
     NEW_RELATIONSHIPTYPE: '/settings/relationshiptypes/new',
     CASETYPES: '/settings/casetypes',
     PARTYTYPES: '/settings/partytypes',
-    RELATIONSHIPTYPES: '/settings/relationshiptypes'
+    RELATIONSHIPTYPES: '/settings/relationshiptypes',
 };
 
 export const TEST_CASE_TEMPLATE_FIELD = {
+    TEXT: testId('test-text'),
+    EMAIL: testId('test-email'),
+    PHONE: testId('test-tel'),
+    URL: testId('test-url'),
+    DATE: testId('test-date'),
+    TEXTAREA: testId('test-textarea'),
     DROPDOWN: testId('test-dropdown'),
     CHECKBOX: testId('test-checkbox'),
-    TEXTINPUT: testId('test-text'),
-    TEXTAREA: testId('test-textarea')
+    RADIO: testId('test-radio'),
 };

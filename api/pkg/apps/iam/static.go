@@ -166,7 +166,7 @@ var ConsentToNrcDataUseAttribute = Attribute{
 var ConsentToNrcDataUseProofAttribute = Attribute{
 	ID:         "1ac8cf17-49f3-4281-b9c9-6fd6036229c2",
 	Name:       "consentToNrcDataUseProof",
-	Type:       form.Text,
+	Type:       form.URL,
 	Attributes: form.FormElementAttributes{Name: "consentToNrcDataUseProof"},
 	Translations: []AttributeTranslation{
 		{

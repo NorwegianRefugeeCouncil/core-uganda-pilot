@@ -15,6 +15,7 @@
                        value="{{$i}}"
                        class="form-check-input"
                        type="radio"
+                       data-testid="test-radio"
                        {{if .Required}}required{{end}}
                         {{range $v := $.Attributes.Value}}{{if eq $istr $v}}checked{{end}}{{end}}
                         {{if $.Readonly}}disabled{{end}}

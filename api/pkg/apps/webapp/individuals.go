@@ -9,6 +9,7 @@ import (
 	"github.com/nrc-no/core/pkg/apps/seeder"
 	"github.com/nrc-no/core/pkg/registrationctrl"
 	"github.com/nrc-no/core/pkg/sessionmanager"
+	"github.com/nrc-no/core/pkg/utils"
 	"github.com/nrc-no/core/pkg/validation"
 	"golang.org/x/sync/errgroup"
 	"net/http"
@@ -279,8 +280,9 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		err := s.PostIndividual(ctx, attrs, id, w, req)
 		if err != nil {
 			if status, ok := err.(*validation.Status); ok {
-				zipErrorsAndAttributes(status.Errors, attrs)
-				//s.json(w, status.Code, attrs)
+				zipErrorsAndAttributes(&status.Errors, attrs)
+				s.json(w, status.Code, attrs)
+				return
 			} else {
 				s.Error(w, err)
 				return
@@ -355,13 +357,21 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 }
 
 // zipErrorsAndAttributes populates the Attribute Errors field if any matching errors are found
-func zipErrorsAndAttributes(errorList validation.ErrorList, attributes *iam.AttributeList) {
+func zipErrorsAndAttributes(errorList *validation.ErrorList, attributes *iam.AttributeList) {
 	for _, attribute := range attributes.Items {
 		errs := errorList.Find(attribute.Attributes.Name)
-		if errs != nil {
-			attribute.Errors = &errorList
+		if errs != nil && !shouldIgnoreValidationError(attribute, errs) {
+			attribute.Errors = errs
 		}
 	}
+}
+
+func shouldIgnoreValidationError(attribute *iam.Attribute, errorList *validation.ErrorList) bool {
+	// Ignore validation errors on empty optional fields
+	if !attribute.Validation.Required && utils.AllEmpty(attribute.Attributes.Value) {
+		return true
+	}
+	return false
 }
 
 func PrepRelationshipTypeDropdown(relationshipTypes *iam.RelationshipTypeList) *iam.RelationshipTypeList {

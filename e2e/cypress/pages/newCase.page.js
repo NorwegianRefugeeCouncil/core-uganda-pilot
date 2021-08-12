@@ -6,7 +6,7 @@ const ID = {
     PARTY_SELECT: testId('party-select'),
     PARTY_OPTION: testId('partyOption'),
     FORM: testId('form'),
-    SUBMIT_BTN: testId('submitBtn')
+    SUBMIT_BTN: testId('submitBtn'),
 };
 
 export default class NewCasePage {
@@ -33,24 +33,42 @@ export default class NewCasePage {
         return this;
     };
 
-    fillOutForm = value => {
+    fillOutForm = data => {
         for (const id of Object.values(TEST_CASE_TEMPLATE_FIELD)) {
             cy.get(id).then($el => {
                 const tag = $el[0].tagName;
                 if (tag === 'INPUT') {
                     switch ($el[0].getAttribute('type')) {
                         case 'text':
-                            cy.wrap($el).clear().type(value.text);
+                            cy.wrap($el).clear().type(data.text);
+                            break;
+                        case 'email':
+                            cy.wrap($el).clear().type(data.email);
+                            break;
+                        case 'tel':
+                            cy.wrap($el).clear().type(data.phone);
+                            break;
+                        case 'url':
+                            cy.wrap($el).clear().type(data.url);
+                            break;
+                        case 'date':
+                            cy.wrap($el).clear().type(data.date);
                             break;
                         case 'checkbox':
                             cy.wrap($el).each(ck => {
-                                return value.checkbox ? cy.wrap(ck).check() : cy.wrap(ck).uncheck();
+                                if (ck.val() === data.checkbox) cy.wrap(ck).check();
+                                else cy.wrap(ck).uncheck();
+                            });
+                            break;
+                        case 'radio':
+                            cy.wrap($el).each(ck => {
+                                if (ck.val() === data.radio) cy.wrap(ck).check();
                             });
                     }
                 } else if (tag === 'SELECT') {
-                    cy.wrap($el).select(value.dropdown);
+                    cy.wrap($el).select(data.dropdown);
                 } else if (tag === 'TEXTAREA') {
-                    cy.wrap($el).clear().type(value.textarea);
+                    cy.wrap($el).clear().type(data.textarea);
                 }
             });
         }

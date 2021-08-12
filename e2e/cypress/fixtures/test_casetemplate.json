@@ -53,10 +53,10 @@
     {
       "type": "text",
       "attributes": {
-        "label": "Textinput",
-        "name": "testTextinput",
-        "description": "Textinput description",
-        "placeholder": "Textinput placeholder"
+        "label": "Text",
+        "name": "testText",
+        "description": "Text description",
+        "placeholder": "Text placeholder"
       },
       "validation": {
         "required": true
