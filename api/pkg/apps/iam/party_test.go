@@ -170,7 +170,7 @@ func (s *Suite) testPartyListFilterByTypeAndAttribute(parties []*Party, partyTyp
 			for _, attributeId := range attributes[0:i] {
 				attributeOptions[attributeId] = "mock"
 			}
-			list, err := s.client.Parties().List(ctx, PartyListOptions{
+			list, err := s.client.Parties().List(s.Ctx, PartyListOptions{
 				PartyTypeID: partyTypeId,
 				Attributes:  attributeOptions,
 			})

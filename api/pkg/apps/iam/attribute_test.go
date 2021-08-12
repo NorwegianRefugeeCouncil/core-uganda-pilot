@@ -84,7 +84,7 @@ func (s *Suite) testAttributeAPI() {
 
 func (s *Suite) testAttributeListFilter() {
 
-	const nAttributes = 30
+	const nAttributes = 10
 	const nPartyTypeIds = 6
 
 	// Make a couple Attributes
@@ -107,7 +107,7 @@ func (s *Suite) testAttributeListFilter() {
 	// Test list filtering with different PartyTypeID combinations
 	for i := 1; i <= len(partyTypeIds); i++ {
 		partyTypes := partyTypeIds[0:i]
-		list, err := s.client.Attributes().List(ctx, AttributeListOptions{PartyTypeIDs: partyTypes})
+		list, err := s.client.Attributes().List(s.Ctx, AttributeListOptions{PartyTypeIDs: partyTypes})
 		assert.NoError(s.T(), err)
 
 		// Get expected items

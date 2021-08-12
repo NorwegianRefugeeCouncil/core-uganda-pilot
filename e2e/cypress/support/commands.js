@@ -24,9 +24,6 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-Cypress.Commands.add('login', (email) => {
-    cy.intercept(
-        { url: '*' },
-        (req) => (req.headers['X-E2E-Authenticated-User-Email'] = `${email}`)
-    );
+Cypress.Commands.add('login', email => {
+    cy.intercept({ url: '*' }, req => (req.headers['X-E2E-Authenticated-User-Email'] = `${email}`));
 });

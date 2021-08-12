@@ -3,11 +3,7 @@ package iam_test
 import "github.com/stretchr/testify/assert"
 import . "github.com/nrc-no/core/pkg/apps/iam"
 
-func (s *Suite) TestTeam() {
-	s.Run("API", func() { s.testTeamAPI() })
-}
-
-func (s *Suite) testTeamAPI() {
+func (s *Suite) TestTeamAPI() {
 	// Create team
 	name := newUUID()
 	created, err := s.client.Teams().Create(s.Ctx, &Team{

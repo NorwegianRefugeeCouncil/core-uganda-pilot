@@ -17,16 +17,22 @@ func TestValidateCaseType(t *testing.T) {
 			name:     "empty name",
 			caseType: &CaseType{},
 			assert: func(t *testing.T, errList validation.ErrorList) {
+				assert.NotNil(t, errList)
 				assert.NotEmpty(t, errList)
-				assert.Equal(t, errList.Find(".name")[0].Type, validation.ErrorTypeRequired)
+				l := *errList.Find(".name")
+				err := l[0]
+				assert.Equal(t, err.Type, validation.ErrorTypeRequired)
 			},
 		},
 		{
 			name:     "invalid name",
 			caseType: &CaseType{Name: "%^&"},
 			assert: func(t *testing.T, errList validation.ErrorList) {
+				assert.NotNil(t, errList)
 				assert.NotEmpty(t, errList)
-				assert.Equal(t, errList.Find(".name")[0].Type, validation.ErrorTypeInvalid)
+				l := *errList.Find(".name")
+				err := l[0]
+				assert.Equal(t, err.Type, validation.ErrorTypeInvalid)
 			},
 		},
 		{
@@ -41,18 +47,22 @@ func TestValidateCaseType(t *testing.T) {
 			name:     "empty partyTypeId",
 			caseType: &CaseType{},
 			assert: func(t *testing.T, errList validation.ErrorList) {
+				assert.NotNil(t, errList)
 				assert.NotEmpty(t, errList)
-				assert.Len(t, errList.Find(".partyTypeId"), 1)
-				assert.Equal(t, errList.Find(".partyTypeId")[0].Type, validation.ErrorTypeRequired)
+				l := *errList.Find(".name")
+				err := l[0]
+				assert.Equal(t, err.Type, validation.ErrorTypeRequired)
 			},
 		},
 		{
 			name:     "empty teamId",
 			caseType: &CaseType{},
 			assert: func(t *testing.T, errList validation.ErrorList) {
+				assert.NotNil(t, errList)
 				assert.NotEmpty(t, errList)
-				assert.Len(t, errList.Find(".partyTypeId"), 1)
-				assert.Equal(t, errList.Find(".partyTypeId")[0].Type, validation.ErrorTypeRequired)
+				l := *errList.Find(".name")
+				err := l[0]
+				assert.Equal(t, err.Type, validation.ErrorTypeRequired)
 			},
 		},
 	}
