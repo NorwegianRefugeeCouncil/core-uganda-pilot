@@ -59,10 +59,18 @@ func TestValidateCase(t *testing.T) {
 		},
 		assert: func(t *testing.T, errList validation.ErrorList) {
 			assert.NotEmpty(t, errList)
-			assert.Equal(t, errList.Find(".dropdown")[0].Type, validation.ErrorTypeRequired)
-			assert.Equal(t, errList.Find(".textarea")[0].Type, validation.ErrorTypeRequired)
-			assert.Equal(t, errList.Find(".text")[0].Type, validation.ErrorTypeRequired)
-			assert.Equal(t, errList.Find(".checkbox")[0].Type, validation.ErrorTypeRequired)
+			dd := errList.Find(".dropdown")
+			ta := errList.Find(".textarea")
+			ti := errList.Find(".text")
+			cb := errList.Find(".checkbox")
+			for _, list := range []*validation.ErrorList{dd, ta, ti, cb} {
+				assert.NotNil(t, list)
+				assert.NotEmpty(t, list)
+				assert.Len(t, *list, 1)
+				l := *list
+				err := l[0]
+				assert.Equal(t, err.Type, validation.ErrorTypeRequired)
+			}
 		},
 	}}
 

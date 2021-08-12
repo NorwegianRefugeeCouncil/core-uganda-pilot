@@ -4,6 +4,7 @@
         <select id="{{.Attributes.Name}}"
                 name="{{.Attributes.Name}}"
                 class="form-select {{if .Errors}}is-invalid{{end}}"
+                data-testid="test-dropdown"
                 {{if .Attributes.Multiple}}multiple size="{{len .Attributes.Options}}"{{end}}
                 {{if .Validation.Required}}required{{end}}
                 {{if .Errors}}aria-describedby="{{.Attributes.Name}}Feedback"{{end}}

@@ -5,13 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func (s *Suite) TestAttachments() {
-	s.Run("API", func() { s.testAttachmentAPI() })
-	s.SetupTest()
-	s.Run("List filtering", func() { s.testAttachmentListFilter() })
-}
-
-func (s *Suite) testAttachmentAPI() {
+func (s *Suite) TestAttachmentAPI() {
 	var imaginaryOwner = s.NewUUID()
 	var anotherImaginaryOwner = s.NewUUID()
 
@@ -55,7 +49,7 @@ func (s *Suite) testAttachmentAPI() {
 	assert.Contains(s.T(), list.Items, get)
 }
 
-func (s *Suite) testAttachmentListFilter() {
+func (s *Suite) TestAttachmentListFilter() {
 	const nOwners = 10
 	const nAttachmentsPerOwner = 10
 

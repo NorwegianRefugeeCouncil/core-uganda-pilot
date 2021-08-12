@@ -14,55 +14,50 @@
 
     {{template "case_nav" .Case }}
 
-    <div class="container mt-4">
+    <div class="container my-4">
 
-        <div class="row">
-            <div class="col">
-
-                {{if .Parent}}
-                    <div class="p-3 bg-light mb-3 shadow-sm">
-                        <span>Referred from </span>
-                        <a href="/cases/{{.Parent.ID}}">
-                            {{$caseType := $caseTypes.FindByID .Parent.CaseTypeID}}
-                            {{$caseType.Name}}
-                        </a>
-                        {{ if .CreatedBy}}
-                            <span> by </span>
-                            <a href="/individuals/{{.CreatedBy.ID}}">{{.CreatedBy}}</a>
-                        {{end}}
-                    </div>
-                {{else}}
-                    {{if .CreatedBy}}
-                        <div class="p-3 bg-light mb-3 shadow-sm">
-                            <span>Created by </span>
-                            <a href="/individuals/{{.CreatedBy.ID}}">{{.CreatedBy}}</a>
-                        </div>
-                    {{end}}
+        {{if .Parent}}
+            <div class="p-3 bg-light mb-3 shadow-sm">
+                <span>Referred from </span>
+                <a href="/cases/{{.Parent.ID}}">
+                    {{$caseType := $caseTypes.FindByID .Parent.CaseTypeID}}
+                    {{$caseType.Name}}
+                </a>
+                {{ if .CreatedBy}}
+                    <span> by </span>
+                    <a href="/individuals/{{.CreatedBy.ID}}">{{.CreatedBy}}</a>
                 {{end}}
+            </div>
+        {{else}}
+            {{if .CreatedBy}}
+                <div class="p-3 bg-light mb-3 shadow-sm">
+                    <span>Created by </span>
+                    <a href="/individuals/{{.CreatedBy.ID}}">{{.CreatedBy}}</a>
+                </div>
+            {{end}}
+        {{end}}
 
-                {{range $caseTypes.Items}}
-                    {{if eq .ID $caseTypeId}}
-                        <input name="case-type" type="hidden" value="{{.ID}}" />
-                        <h2>{{.Name}}</h2>
-                    {{end}}
-                {{end}}
-                <p>Team: <a href="/teams/{{$teamId}}">{{$team.Name}}</a></p>
-                <p>Recipient: <a href="/individuals/{{$recipient.ID}}">{{$recipient}}</a></p>
+        {{range $caseTypes.Items}}
+            {{if eq .ID $caseTypeId}}
+                <input name="case-type" type="hidden" value="{{.ID}}" />
+                <h2>{{.Name}}</h2>
+            {{end}}
+        {{end}}
+        <p>Team: <a href="/teams/{{$teamId}}">{{$team.Name}}</a></p>
+        <p>Recipient: <a href="/individuals/{{$recipient.ID}}" data-testid="recipient">{{$recipient}}</a></p>
 
-                <h3 class="mb-3">
-                    {{if .Case.Done}}
-                        <span class="badge rounded-pill bg-danger">
+        <h3 class="mb-3">
+            {{if .Case.Done}}
+                <span class="badge rounded-pill bg-danger" data-testid="done-pill">
                             <span class='fs-6 fw-normal mb-1 d-inline-block'>Closed</span>
                         </span>
-                    {{else}}
-                        <span class="badge rounded-pill bg-success">
+            {{else}}
+                <span class="badge rounded-pill bg-success" data-testid="done-pill">
                            <span class='fs-6 fw-normal mb-1 d-inline-block'>Open</span>
                         </span>
-                    {{end}}
-                </h3>
+            {{end}}
+        </h3>
 
-            </div>
-        </div>
 
         <div class="card mb-4">
             <div class="card-body">
@@ -85,7 +80,7 @@
                         </div>
                         <button class="mb-5 btn btn-primary"
                                 type="submit"
-                                data-testid="updateFormBtn"
+                                data-testid="save-btn"
                                 {{ if .ReferralCaseType}}disabled{{end}}>
                             Save
                         </button>
