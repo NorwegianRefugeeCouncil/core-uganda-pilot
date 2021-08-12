@@ -566,8 +566,8 @@
             li.className = 'list-group-item';
             let firstPartyName
             if (window.location.pathname === '/individuals/new') {
-              const lastName = document.getElementsByName('attribute[{{.Attributes.FindByName "lastName"}}]')[0].value;
-              const firstName = document.getElementsByName('attribute[{{.Attributes.FindByName "firstName"}}]')[0].value;
+              const lastName = document.querySelector('input[name="lastName"]')?.value;
+              const firstName = document.querySelector('input[name="firstName"]')?.value;
               firstPartyName = lastName.toUpperCase() + ', ' + firstName;
             } else {
               firstPartyName = parties.find(({ id }) => id === relationship.firstParty)?.name;
