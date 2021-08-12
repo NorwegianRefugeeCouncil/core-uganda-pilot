@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
+	"github.com/nrc-no/core/pkg/form"
 	"github.com/nrc-no/core/pkg/sessionmanager"
 	"github.com/nrc-no/core/pkg/validation"
 	"github.com/satori/go.uuid"
@@ -564,7 +565,7 @@ func UnmarshalCaseFormData(c *cms.Case, template *cms.CaseTemplate, values url.V
 	c.Done = values.Get("done") == "on"
 	c.ParentID = values.Get("parentId")
 	c.TeamID = values.Get("teamId")
-	var formElements []cms.FormElement
+	var formElements []form.FormElement
 	for _, formElement := range template.FormElements {
 		formElement.Attributes.Value = values[formElement.Attributes.Name]
 		formElements = append(formElements, formElement)

@@ -2,6 +2,7 @@ package cms_test
 
 import (
 	. "github.com/nrc-no/core/pkg/apps/cms"
+	"github.com/nrc-no/core/pkg/form"
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/testutils"
 	uuid "github.com/satori/go.uuid"
@@ -65,9 +66,9 @@ func uuidSlice(n int) []string {
 
 func mockCaseTemplate(name string) *CaseTemplate {
 	return &CaseTemplate{
-		FormElements: []FormElement{{
+		FormElements: []form.FormElement{{
 			Type: "textarea",
-			Attributes: FormElementAttribute{
+			Attributes: form.FormElementAttributes{
 				Label: name,
 				Name:  name,
 			},

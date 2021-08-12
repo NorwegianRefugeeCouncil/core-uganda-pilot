@@ -135,7 +135,7 @@ func (s *IndividualStore) list(ctx context.Context, listOptions IndividualListOp
 
 func getFindOptions(currentPage int, maxPerPage int, listOptions IndividualListOptions) *options.FindOptions {
 	findOptions := options.Find()
-	findOptions.SetSort(bson.D{{"attributes." + LastNameAttribute.ID, pagination.GetSortOptionType(listOptions.Sort)}})
+	findOptions.SetSort(bson.D{{Key: "attributes." + LastNameAttribute.ID, Value: pagination.GetSortOptionType(listOptions.Sort)}})
 	findOptions.SetSkip(int64((currentPage - 1) * maxPerPage))
 	findOptions.SetLimit(int64(maxPerPage))
 	return findOptions

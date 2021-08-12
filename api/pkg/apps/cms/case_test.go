@@ -27,9 +27,9 @@ func (s *Suite) TestCaseAPI() {
 	assert.Equal(s.T(), created, get)
 
 	// UPDATE
-	get.Template = &CaseTemplate{FormElements: []FormElement{{
+	get.Template = &CaseTemplate{FormElements: []form.FormElement{{
 		Type: "textarea",
-		Attributes: FormElementAttribute{
+		Attributes: form.FormElementAttributes{
 			Label: "update",
 			Name:  "update",
 		},

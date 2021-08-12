@@ -565,8 +565,8 @@ func (s *Server) PostIndividual(
 }
 
 func (s *Server) createDefaultIndividualIntakeCases(req *http.Request, individual *iam.Individual) error {
-	var situationAnalysisCaseType *cms.CaseType = &seeder.UGSituationalAnalysisCaseType
-	var individualResponseCaseType *cms.CaseType = &seeder.UGIndividualResponseCaseType
+	var situationAnalysisCaseType = &seeder.UGSituationalAnalysisCaseType
+	var individualResponseCaseType = &seeder.UGIndividualResponseCaseType
 
 	cmsClient, err := s.CMSClient(req)
 	if err != nil {

@@ -1,6 +1,7 @@
 package iam
 
 import (
+	"github.com/nrc-no/core/pkg/form"
 	"github.com/nrc-no/core/pkg/generic/pagination"
 	"strings"
 	"time"
@@ -23,6 +24,10 @@ type Attribute struct {
 
 	// Translations represent the localized descriptions of the Attribute
 	Translations []AttributeTranslation `json:"translations" bson:"translations"`
+
+	Type       form.FieldType             `json:"type" bson:"type"`
+	Attributes form.FormElementAttributes `json:"attributes" bson:"attributes"`
+	Validation form.FormElementValidation `json:"validation" bson:"validation"`
 }
 
 // AttributeTranslation represents a localized description of an Attribute
@@ -53,7 +58,6 @@ func (l *AttributeList) FindByID(id string) *Attribute {
 	return nil
 }
 
-// TODO COR-158
 // PartyAttributes contains the Attribute values of a Party
 type PartyAttributes map[string][]string
 
@@ -109,7 +113,6 @@ func (p *Party) AddPartyType(partyType string) {
 }
 
 func (p *Party) String() string {
-
 	// Staff
 	if p.HasPartyType(StaffPartyType.ID) {
 		return p.Attributes.Get(FirstNameAttribute.ID) +
