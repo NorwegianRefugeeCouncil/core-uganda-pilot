@@ -88,10 +88,13 @@ var EMailAttribute = Attribute{
 // - Internally-displaced person
 // - Host community
 var DisplacementStatusAttribute = Attribute{
-	ID:         "d1d824b2-d163-43ff-bc0a-527bd86b79bb",
-	Name:       "displacementStatus",
-	Type:       form.Text,
-	Attributes: form.FormElementAttributes{Name: "displacementStatus"},
+	ID:   "d1d824b2-d163-43ff-bc0a-527bd86b79bb",
+	Name: "displacementStatus",
+	Type: form.Dropdown,
+	Attributes: form.FormElementAttributes{
+		Name:    "displacementStatus",
+		Options: []string{"Refugee", "Internally displaced person", "Host community", "Other"},
+	},
 	Validation: form.FormElementValidation{Required: true},
 	Translations: []AttributeTranslation{
 		{
@@ -163,7 +166,7 @@ var ConsentToNrcDataUseAttribute = Attribute{
 var ConsentToNrcDataUseProofAttribute = Attribute{
 	ID:         "1ac8cf17-49f3-4281-b9c9-6fd6036229c2",
 	Name:       "consentToNrcDataUseProof",
-	Type:       form.File,
+	Type:       form.URL,
 	Attributes: form.FormElementAttributes{Name: "consentToNrcDataUseProof"},
 	Translations: []AttributeTranslation{
 		{
@@ -524,12 +527,12 @@ var RequireAnInterpreterAttribute = Attribute{
 	Type: form.Checkbox,
 	Attributes: form.FormElementAttributes{
 		Name:            "requireAnInterpreter",
-		CheckboxOptions: []form.CheckboxOption{{Label: "Does this beneficiary require an interpreter?"}},
+		CheckboxOptions: []form.CheckboxOption{{Label: "This beneficiary requires an interpreter."}},
 	},
 	Translations: []AttributeTranslation{
 		{
 			Locale:           "en",
-			LongFormulation:  "Does this beneficiary require an interpreter?",
+			LongFormulation:  "This beneficiary requires an interpreter.",
 			ShortFormulation: "Requires an interpreter",
 		},
 	},

@@ -57,7 +57,7 @@
                         </div>
                         {{with or .ValidatedForm .CaseType}}
                             {{range .Template.FormElements}}
-                                {{template "formfield" .}}
+                                {{template "formelement" .}}
                             {{end}}
                         {{end}}
                     {{end}}

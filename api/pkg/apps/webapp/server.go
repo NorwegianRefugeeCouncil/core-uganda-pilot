@@ -118,7 +118,6 @@ func NewServer(options *ServerOptions) (*Server, error) {
 	router.Path("/cases").HandlerFunc(h.Cases)
 	router.Path("/cases/new").HandlerFunc(h.NewCase)
 	router.Path("/cases/{id}").HandlerFunc(h.Case)
-	router.Path("/cases/{id}").Queries("validationOnly", "true").HandlerFunc(h.Case)
 	router.Path("/settings").HandlerFunc(h.Settings)
 	router.Path("/settings/attributes").HandlerFunc(h.Attributes)
 	router.Path("/settings/attributes/new").HandlerFunc(h.NewAttribute)
