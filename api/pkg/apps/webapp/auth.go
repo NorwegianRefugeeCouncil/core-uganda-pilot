@@ -3,6 +3,7 @@ package webapp
 import (
 	"context"
 	"fmt"
+	"github.com/gorilla/sessions"
 	"github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/ory/hydra-client-go/client/admin"
 	"github.com/sirupsen/logrus"
@@ -38,7 +39,13 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 			// Get the access token from the session
 			session, err := s.sessionManager.Get(req)
 			if err != nil {
-				logrus.WithError(err).Errorf("failed to get session, attempting to redirect to login")
+				logrus.WithError(err).Errorf("failed to get session, attempting to clear session and redirect to login")
+				session.Options.MaxAge = -1
+				if err = sessions.Save(req, w); err != nil {
+					logrus.WithError(err).Errorf("failed to clear session!")
+					s.Error(w, err)
+					return
+				}
 				http.Redirect(w, req, "/login", http.StatusTemporaryRedirect)
 				return
 			}
