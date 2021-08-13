@@ -5,7 +5,6 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
-	"github.com/gorilla/sessions"
 	"github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/ory/hydra-client-go/client/admin"
 	"github.com/sirupsen/logrus"
@@ -45,14 +44,14 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 
 				// if the session manager returns a non-nil session with the error
 				// try to use it to clear the session
-				if session != nil {
+				/*if session != nil {
 					session.Options.MaxAge = -1
 					if err = sessions.Save(req, w); err != nil {
 						logrus.WithError(err).Errorf("failed to clear session!")
 						s.Error(w, err)
 						return
 					}
-				}
+				}*/
 
 				// make a new state variable for hydra login flow
 				b := make([]byte, 32)
@@ -63,6 +62,21 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 					return
 				}
 				state := base64.StdEncoding.EncodeToString(b)
+
+				// if possible, store new state in the session
+				if session != nil {
+					session.Values["state"] = state
+					if err := session.Save(req, w); err != nil {
+						logrus.WithError(err).Errorf("failed to store new state in the session!")
+						s.Error(w, err)
+						return
+					}
+				} else {
+					err = fmt.Errorf("nil session")
+					logrus.WithError(err).Errorf("session was nil, unable to store state in the session")
+					s.Error(w, err)
+					return
+				}
 
 				// create a hydra login flow redirect url with the new state
 				// variable, and redirect the user
