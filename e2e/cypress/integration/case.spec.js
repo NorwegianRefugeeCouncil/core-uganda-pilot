@@ -3,10 +3,15 @@ import ids from '../fixtures/ids.json';
 import CasesOverviewPage from '../pages/casesOverview.page';
 import NewCasePage from '../pages/newCase.page';
 import CasePage from '../pages/case.page';
+import CaseTypePage from '../pages/caseTypePage';
+import testTemplate from '../fixtures/test_casetemplate.json';
+import CasetypesOverviewPage from '../pages/casetypesOverview.page';
 
 const DATA = {
-    CASETYPE: ids.DevCaseType,
-    PARTY: ids.TestIndividual,
+    NAME: 'test casetype',
+    PARTYTYPEID: ids.IndividualPartyTypeID,
+    TEAMID: ids.DTeamID,
+    TEMPLATE: testTemplate,
     FORM: {
         text: 'test',
         email: 'test@whatever.net',
@@ -32,6 +37,28 @@ const DATA = {
 };
 
 describe('Case Page', function () {
+    before('Seed DB with test casetype', () => {
+        cy.login('courtney.lare@email.com');
+        const caseTypePage = new CaseTypePage();
+        caseTypePage
+            .setName(DATA.NAME)
+            .setPartyType(DATA.PARTYTYPEID)
+            .setTeam(DATA.TEAMID)
+            .setTemplate(JSON.stringify(DATA.TEMPLATE, null, 2))
+            .save();
+
+        // Get the new CaseTypeId
+        const casetypesOverviewPage = new CasetypesOverviewPage();
+        casetypesOverviewPage
+            .visitPage()
+            .selectNewestCasetype()
+            .invoke('attr', 'href')
+            .then(h => {
+                // h should look like "/settings/casetypes/<id>"
+                const sepIdx = h.lastIndexOf('/');
+                DATA.CASETYPEID = h.slice(sepIdx + 1);
+            });
+    });
     let caseId;
     describe('Navigate', () => {
         it('should navigate to new Case page from the case overview page', () => {
@@ -43,8 +70,8 @@ describe('Case Page', function () {
         it('should create a new Case', () => {
             const newCasePage = new NewCasePage();
             newCasePage
-                .setCaseType(DATA.CASETYPE)
-                .setParty(DATA.PARTY)
+                .setCaseType(DATA.CASETYPEID)
+                .setParty(DATA.PARTYTYPEID)
                 .fillOutForm(DATA.FORM)
                 .submitForm()
                 // store caseId

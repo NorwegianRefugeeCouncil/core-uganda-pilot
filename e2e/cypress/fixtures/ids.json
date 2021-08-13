@@ -1,8 +1,4 @@
 {
-  "DevCaseType": "05b3460e-9f20-4af7-9a74-06f632f7ae24",
-  "DevCase": "5827081c-e6b8-4b29-a1b1-f6780a65c28e",
   "IndividualPartyTypeID": "a842e7cb-3777-423a-9478-f1348be3b4a5",
-  "DTeamID": "5efecef3-a7a9-4705-84ca-70c89d7d783f",
-  "TestIndividual": "3a38a57c-660d-4482-975c-e49e7618c689",
-  "TestIndividualName": "Test Individual"
+  "DTeamID": "5efecef3-a7a9-4705-84ca-70c89d7d783f"
 }

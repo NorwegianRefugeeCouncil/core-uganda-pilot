@@ -1,4 +1,5 @@
-import { TEST_CASE_TEMPLATE_FIELD, testId } from '../helpers';
+import { testId } from '../helpers';
+import testTemplate from '../fixtures/test_casetemplate.json';
 
 const ID = {
     FLASH: testId('flash'),
@@ -35,8 +36,10 @@ export default class CasePage {
     };
 
     verifyForm = value => {
-        for (const id of Object.values(TEST_CASE_TEMPLATE_FIELD)) {
-            cy.get(id).then($el => {
+        for (const {
+            attributes: { name },
+        } of testTemplate.formElements) {
+            cy.get(name).then($el => {
                 const tag = $el[0].tagName;
                 switch (tag) {
                     case 'INPUT':
