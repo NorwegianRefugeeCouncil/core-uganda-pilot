@@ -1,16 +1,16 @@
 #!/bin/bash
 #
-# An example hook script to verify what is about to be committed.
-# Called by "git commit" with no arguments.  The hook should
-# exit with non-zero status after issuing an appropriate message if
-# it wants to stop the commit.
-#
-# To enable this hook, rename this file to "pre-commit".
+
+# When run as a hook by git, DIR be the repository's root folder.
 DIR=$(pwd)
+
 PREFIX="[pre-commit]"
+
 echo "$PREFIX Running hook..."
 
-# check for running containers
+#
+# CHECK FOR RUNNING CONTAINERS
+#
 echo "$PREFIX Checking docker-compose..."
 cd artifacts
 CONTAINERS=('hydra_1' 'hydra_db_1' 'hydra_migrate' 'mongo-express' 'mongo_1' 'redis')
@@ -28,33 +28,38 @@ fi
 done
 echo "$PREFIX All containers are up and running!"
 
-# run integration tests
-# echo "$PREFIX Running IAM integration tests..."
 #
-# cd "$DIR/api/pkg/apps/iam"
-# go test .
-# # github.com/nrc-no/core/pkg/apps/iam
-# # /usr/local/go/bin/go tool test2json -t /tmp/GoLand/___test_iam_integration.test -test.v -test.paniconexit0
-# if [ $? != 0 ]; then
-# 	>&2 echo "[pre-push] Integration tests failed, see output above."
-# 	exit 1
-# fi
+# RUN INTEGRATION TESTS
 #
-# echo "$PREFIX Running CMS integration tests..."
-#
-# cd "$DIR/api/pkg/apps/cms"
-# go test .
-# # github.com/nrc-no/core/pkg/apps/iam
-# # /usr/local/go/bin/go tool test2json -t /tmp/GoLand/___test_iam_integration.test -test.v -test.paniconexit0
-# if [ $? != 0 ]; then
-# 	>&2 echo "[pre-push] Integration tests failed, see output above."
-# 	exit 1
-# fi
-#
-# exit 1
+echo "$PREFIX Running IAM integration tests..."
 
-# run e2e tests
+cd "$DIR/api/" # pkg/apps/iam"
+go test github.com/nrc-no/core/pkg/apps/iam
+# /usr/local/go/bin/go tool test2json -t /tmp/GoLand/___test_iam_integration.test -test.v -test.paniconexit0
+if [ $? != 0 ]; then
+	>&2 echo "[pre-push] Integration tests failed, see output above."
+	exit 1
+fi
+
+echo "$PREFIX Running CMS integration tests..."
+
+cd "$DIR/api/pkg/apps/cms"
+go test .
+# github.com/nrc-no/core/pkg/apps/iam
+# /usr/local/go/bin/go tool test2json -t /tmp/GoLand/___test_iam_integration.test -test.v -test.paniconexit0
+if [ $? != 0 ]; then
+	>&2 echo "[pre-push] Integration tests failed, see output above."
+	exit 1
+fi
+
+exit 1
+
+#
+# RUN E2E TESTS
+#
+
 # check for localhost:9000 listening
+#
 echo "$PREFIX Checking webapp"
 serverIsRunning() {
 	netstat -tln | grep -q ":9000" &> /dev/null
@@ -75,13 +80,18 @@ if ! serverIsRunning; then
 	fi
 fi
 echo "$PREFIX webapp is up and running!"
+
 cd "$DIR/e2e"
+
+# linting
+#
 echo "$PREFIX Running eslint on .js files..."
 npm run lint:fix
 if [ $? != 0 ]; then
 	>&2 echo "[pre-push] Linting failed, see output above."
 	exit 1
 fi
+
 echo "$PREFIX Running E2E tests..."
 npm run run
 if [ $? != 0 ]; then
@@ -89,4 +99,6 @@ if [ $? != 0 ]; then
 	exit 1
 fi
 echo "$PREFIX All E2E tests passed!"
+
 exit 0
+
