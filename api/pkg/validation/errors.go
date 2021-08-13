@@ -41,7 +41,6 @@ func (v ErrorList) FindFamily(field string) *ErrorList {
 		}
 	}
 	return &errs
-
 }
 
 func (v ErrorList) HasError(field string, errType ErrorType) bool {

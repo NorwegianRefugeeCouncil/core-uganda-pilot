@@ -17,8 +17,13 @@ export const URL = {
 };
 
 export const TEST_CASE_TEMPLATE_FIELD = {
+    TEXT: testId('test-text'),
+    EMAIL: testId('test-email'),
+    PHONE: testId('test-tel'),
+    URL: testId('test-url'),
+    DATE: testId('test-date'),
+    TEXTAREA: testId('test-textarea'),
     DROPDOWN: testId('test-dropdown'),
     CHECKBOX: testId('test-checkbox'),
-    TEXTINPUT: testId('test-textinput'),
-    TEXTAREA: testId('test-textarea'),
+    RADIO: testId('test-radio'),
 };

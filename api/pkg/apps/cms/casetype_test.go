@@ -2,7 +2,7 @@ package cms_test
 
 import (
 	. "github.com/nrc-no/core/pkg/apps/cms"
-	"github.com/nrc-no/core/pkg/form"
+	"github.com/nrc-no/core/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 

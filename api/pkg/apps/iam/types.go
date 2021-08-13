@@ -28,6 +28,7 @@ type Attribute struct {
 	Type       form.FieldType             `json:"type" bson:"type"`
 	Attributes form.FormElementAttributes `json:"attributes" bson:"attributes"`
 	Validation form.FormElementValidation `json:"validation" bson:"validation"`
+	form.FormElement
 }
 
 // AttributeTranslation represents a localized description of an Attribute
@@ -46,6 +47,16 @@ type AttributeTranslation struct {
 // AttributeList represents a list of Attribute
 type AttributeList struct {
 	Items []*Attribute `json:"items" bson:"items"`
+}
+
+// FindByName returns the first Attribute it encounters that possesses the given name
+func (l *AttributeList) FindByName(name string) *Attribute {
+	for _, attribute := range l.Items {
+		if attribute.Name == name || attribute.Attributes.Name == name {
+			return attribute
+		}
+	}
+	return nil
 }
 
 // FindByID finds an Attribute by ID

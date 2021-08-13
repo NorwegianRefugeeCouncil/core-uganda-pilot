@@ -37,9 +37,9 @@ func TestValidateCase(t *testing.T) {
 						},
 					},
 					{
-						Type: form.TextInput,
+						Type: form.Text,
 						Attributes: form.FormElementAttributes{
-							Name: "textinput",
+							Name: "text",
 						},
 						Validation: form.FormElementValidation{
 							Required: true,
@@ -61,7 +61,7 @@ func TestValidateCase(t *testing.T) {
 			assert.NotEmpty(t, errList)
 			dd := errList.Find(".dropdown")
 			ta := errList.Find(".textarea")
-			ti := errList.Find(".textinput")
+			ti := errList.Find(".text")
 			cb := errList.Find(".checkbox")
 			for _, list := range []*validation.ErrorList{dd, ta, ti, cb} {
 				assert.NotNil(t, list)
