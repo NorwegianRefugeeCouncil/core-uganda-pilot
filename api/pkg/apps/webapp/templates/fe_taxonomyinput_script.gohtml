@@ -51,15 +51,15 @@
           }
         };
 
-        const programmeAreaSelect = document.getElementById("programme-area-{{.Attributes.ID}}");
-        const serviceAreaSelect = document.getElementById("service-area-{{.Attributes.ID}}");
-        const thematicAreaSelect = document.getElementById("thematic-area-{{.Attributes.ID}}");
+        const programmeAreaSelect = document.getElementById("programme-area-{{.Attributes.Name}}");
+        const serviceAreaSelect = document.getElementById("service-area-{{.Attributes.Name}}");
+        const thematicAreaSelect = document.getElementById("thematic-area-{{.Attributes.Name}}");
 
-        const badgeContainer = document.getElementById("badge-container-{{.Attributes.ID}}");
-        const addBadgeButton = document.getElementById("btn-add-{{.Attributes.ID}}");
-        const clearBadgesButton = document.getElementById("btn-clear-{{.Attributes.ID}}");
+        const badgeContainer = document.getElementById("badge-container-{{.Attributes.Name}}");
+        const addBadgeButton = document.getElementById("btn-add-{{.Attributes.Name}}");
+        const clearBadgesButton = document.getElementById("btn-clear-{{.Attributes.Name}}");
 
-        const valueContainer = document.getElementById("{{.Attributes.ID}}");
+        const valueContainer = document.getElementById("{{.Attributes.Name}}");
 
         // remove all the options from a select element
         const clearSelectOptions = (selectId) => {
@@ -119,6 +119,7 @@
           ];
           classesToAdd.forEach(classToAdd => badge.classList.add(classToAdd));
           badge.textContent = label;
+            {{if not .Readonly}}
           badge.addEventListener('click', (event) => {
             removeBadgeAndValue(label);
           });
@@ -130,6 +131,7 @@
             badge.classList.remove('bg-danger');
             badge.classList.add('bg-secondary');
           });
+          {{end}}
           return badge;
         };
 
@@ -148,10 +150,10 @@
         programmeAreaSelect.selectedIndex = -1;
 
         programmeAreaSelect.addEventListener('change', (event) => {
-          const programmeArea = getSelected("programme-area-{{.Attributes.ID}}");
+          const programmeArea = getSelected("programme-area-{{.Attributes.Name}}");
 
-          clearSelectOptions("service-area-{{.Attributes.ID}}");
-          clearSelectOptions("thematic-area-{{.Attributes.ID}}");
+          clearSelectOptions("service-area-{{.Attributes.Name}}");
+          clearSelectOptions("thematic-area-{{.Attributes.Name}}");
 
           if (
             programmeArea !== null &&
@@ -168,10 +170,10 @@
         });
 
         serviceAreaSelect.addEventListener('change', (event) => {
-          const programmeArea = getSelected("programme-area-{{.Attributes.ID}}");
-          const serviceArea = getSelected("service-area-{{.Attributes.ID}}");
+          const programmeArea = getSelected("programme-area-{{.Attributes.Name}}");
+          const serviceArea = getSelected("service-area-{{.Attributes.Name}}");
 
-          clearSelectOptions("thematic-area-{{.Attributes.ID}}");
+          clearSelectOptions("thematic-area-{{.Attributes.Name}}");
 
           if (
             programmeArea !== null &&
@@ -192,9 +194,9 @@
 
         addBadgeButton.addEventListener('click', (event) => {
 
-          const programmeArea = getSelected("programme-area-{{.Attributes.ID}}");
-          const serviceArea = getSelected("service-area-{{.Attributes.ID}}");
-          const thematicArea = getSelected("thematic-area-{{.Attributes.ID}}");
+          const programmeArea = getSelected("programme-area-{{.Attributes.Name}}");
+          const serviceArea = getSelected("service-area-{{.Attributes.Name}}");
+          const thematicArea = getSelected("thematic-area-{{.Attributes.Name}}");
 
           let label = '';
 

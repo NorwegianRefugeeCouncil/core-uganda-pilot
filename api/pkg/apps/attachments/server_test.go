@@ -1,7 +1,6 @@
 package attachments_test
 
 import (
-	"context"
 	. "github.com/nrc-no/core/pkg/apps/attachments"
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/testutils"
@@ -17,8 +16,6 @@ type Suite struct {
 	client *RESTAttachmentClient
 }
 
-var ctx = context.Background()
-
 func (s *Suite) SetupSuite() {
 	s.GenericServerTestSetup = server.NewGenericServerTestSetup()
 	s.server = NewServerOrDie(s.Ctx, s.GenericServerOptions)
@@ -28,7 +25,7 @@ func (s *Suite) SetupSuite() {
 
 // This will run before each test in the suite but must be called manually before subtests
 func (s *Suite) SetupTest() {
-	err := s.server.ResetDB(s.Ctx, s.GenericServerTestSetup.GenericServerOptions.MongoDatabase)
+	err := s.server.ResetDB(s.Ctx, s.GenericServerOptions.MongoDatabase)
 	if err != nil {
 		s.T().Fatal(err)
 	}
@@ -45,14 +42,6 @@ func TestSuite(t *testing.T) {
 //
 // Helpers
 //
-func contains(s []string, item string) bool {
-	for _, a := range s {
-		if a == item {
-			return true
-		}
-	}
-	return false
-}
 
 func (s *Suite) NewUUID() string {
 	return uuid.NewV4().String()

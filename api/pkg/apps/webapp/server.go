@@ -169,3 +169,10 @@ func (s *Server) CMSClient(req *http.Request) (cms.Interface, error) {
 func (s *Server) Error(w http.ResponseWriter, err error) {
 	utils.ErrorResponse(w, err)
 }
+func (s *Server) GetPathParam(param string, w http.ResponseWriter, req *http.Request, into *string) bool {
+	return utils.GetPathParam(param, w, req, into)
+}
+
+func (s *Server) json(w http.ResponseWriter, status int, data interface{}) {
+	utils.JSONResponse(w, status, data)
+}

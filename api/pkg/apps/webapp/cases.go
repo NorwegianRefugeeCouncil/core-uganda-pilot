@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
+	"github.com/nrc-no/core/pkg/form"
 	"github.com/nrc-no/core/pkg/sessionmanager"
 	"github.com/nrc-no/core/pkg/validation"
 	"github.com/satori/go.uuid"
@@ -74,12 +75,12 @@ func (s *Server) Cases(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if req.Method == "POST" {
-		s.PostCase(req, w, ctx, &cms.Case{})
+	if req.Method == "POST" || req.Method == "PUT" {
+		s.Case(w, req)
 		return
 	}
 
-	if err := s.renderFactory.New(req).ExecuteTemplate(w, "cases", map[string]interface{}{
+	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "cases", map[string]interface{}{
 		"Cases":         kases,
 		"CaseTypes":     caseTypes,
 		"Parties":       partyList,
@@ -93,7 +94,6 @@ func (s *Server) Cases(w http.ResponseWriter, req *http.Request) {
 }
 
 func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 	cmsClient, err := s.CMSClient(req)
 	if err != nil {
@@ -108,7 +108,7 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 	}
 
 	caseID, ok := mux.Vars(req)["id"]
-	if !ok || len(caseID) == 0 {
+	if (!ok || len(caseID) == 0) && req.Method != "POST" && req.Method != "PUT" {
 		err := fmt.Errorf("no id in path")
 		s.Error(w, err)
 		return
@@ -127,7 +127,7 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 
 	// Get Case
 	g.Go(func() error {
-		if caseID == "new" {
+		if caseID == "new" || len(caseID) == 0 {
 			kase = &cms.Case{}
 			return nil
 		}
@@ -236,11 +236,23 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 	}
-	if req.Method == "POST" {
-		s.PostCase(req, w, ctx, kase)
-		return
+
+	if req.Method == "POST" || req.Method == "PUT" {
+		err := s.PutOrPostCase(req, w, ctx, kase)
+		if err != nil {
+			if status, ok := err.(*validation.Status); ok {
+				validatedElements := zipTemplateAndErrors(status.Errors, kase.Template)
+				s.json(w, status.Code, validatedElements)
+			} else {
+				s.Error(w, err)
+			}
+			return
+		} else {
+			s.redirectAfterSuccessfulCasePost(req, w, kase)
+		}
 	}
-	if err := s.renderFactory.New(req).ExecuteTemplate(w, "case", map[string]interface{}{
+
+	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "case", map[string]interface{}{
 		"Case":             kase,
 		"Parent":           parent,
 		"CaseTypes":        kaseTypes,
@@ -255,6 +267,18 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+}
+
+// zipTemplateAndErrors returns a slice of form.FormElement populated with validated template form elements.
+func zipTemplateAndErrors(errors validation.ErrorList, template *cms.CaseTemplate) []form.FormElement {
+	var formElements []form.FormElement
+	for _, element := range template.FormElements {
+		if errs := errors.FindFamily(element.Attributes.Name); len(*errs) > 0 {
+			element.Errors = errs
+			formElements = append(formElements, element)
+		}
+	}
+	return formElements
 }
 
 func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
@@ -327,7 +351,7 @@ func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	if err := s.renderFactory.New(req).ExecuteTemplate(w, "casenew", map[string]interface{}{
+	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "casenew", map[string]interface{}{
 		"PartyID":   qry.Get("partyId"),
 		"CaseType":  caseType,
 		"Team":      team,
@@ -339,37 +363,42 @@ func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (s *Server) PostCase(req *http.Request, w http.ResponseWriter, ctx context.Context, kase *cms.Case) {
+func (s *Server) PutOrPostCase(req *http.Request, w http.ResponseWriter, ctx context.Context, kase *cms.Case) error {
 	var err error
 
 	cmsClient, err := s.CMSClient(req)
 	if err != nil {
 		s.Error(w, err)
-		return
+		return nil
 	}
 
 	if err := req.ParseForm(); err != nil {
 		s.Error(w, err)
-		return
+		return nil
 	}
 
-	caseTypeId := req.Form.Get("caseTypeId")
+	if kase.CaseTypeID == "" {
+		// we need to get the caseTypeId from the form data
+		kase.CaseTypeID = req.Form.Get("caseTypeId")
+		if kase.CaseTypeID == "" {
+			s.Error(w, fmt.Errorf("unable to detect case type id for new case"))
+			return nil
+		}
+	}
 
-	caseType, err := cmsClient.CaseTypes().Get(ctx, caseTypeId)
+	caseType, err := cmsClient.CaseTypes().Get(ctx, kase.CaseTypeID)
 	if err != nil {
 		s.Error(w, err)
-		return
+		return nil
 	}
 
 	err = UnmarshalCaseFormData(kase, caseType.Template, req.Form)
 	if err != nil {
 		s.Error(w, err)
-		return
+		return nil
 	}
 
 	var isNewCase = kase.ID == ""
-	var action string
-	var postedCase *cms.Case
 	if isNewCase {
 		subject := ctx.Value("Subject")
 		if subject == nil {
@@ -377,22 +406,12 @@ func (s *Server) PostCase(req *http.Request, w http.ResponseWriter, ctx context.
 		} else {
 			kase.CreatorID = subject.(string)
 		}
-		postedCase, err = cmsClient.Cases().Create(ctx, kase)
-		action = "created"
+		kase.IntakeCase = caseType.IntakeCaseType
+		_, err = cmsClient.Cases().Create(ctx, kase)
 	} else {
-		postedCase, err = cmsClient.Cases().Update(ctx, kase)
-		action = "updated"
+		_, err = cmsClient.Cases().Update(ctx, kase)
 	}
-	if err != nil {
-		if status, ok := err.(*validation.Status); ok {
-			s.renderCaseValidation(req, w, kase, status)
-			return
-		} else {
-			s.Error(w, err)
-			return
-		}
-	}
-	s.redirectAfterSuccessfulCasePost(req, w, postedCase, action)
+	return err
 }
 
 type displayComment struct {
@@ -414,21 +433,27 @@ func displayComments(comments *cms.CommentList, authorMap map[string]*iam.Party)
 	return displayComments
 }
 
-func (s *Server) processCaseValidation(req *http.Request, w http.ResponseWriter, kase *cms.Case, err error, action string) {
+func (s *Server) processCaseValidation(req *http.Request, w http.ResponseWriter, kase *cms.Case, err error) {
 	if err != nil {
 		if status, ok := err.(*validation.Status); ok {
-			s.renderCaseValidation(req, w, kase, status)
+			s.renderWithValidation(req, w, kase, status)
 			return
 		} else {
 			s.Error(w, err)
 			return
 		}
 	} else {
-		s.redirectAfterSuccessfulCasePost(req, w, kase, action)
+		s.redirectAfterSuccessfulCasePost(req, w, kase)
 	}
 }
 
-func (s *Server) redirectAfterSuccessfulCasePost(req *http.Request, w http.ResponseWriter, kase *cms.Case, action string) {
+func (s *Server) redirectAfterSuccessfulCasePost(req *http.Request, w http.ResponseWriter, kase *cms.Case) {
+	var action string
+	if req.Method == "POST" {
+		action = "created"
+	} else if req.Method == "PUT" {
+		action = "updated"
+	}
 	if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
 		Message: fmt.Sprintf("Case successfully %s", action),
 		Theme:   "success",
@@ -444,8 +469,8 @@ func (s *Server) redirectAfterSuccessfulCasePost(req *http.Request, w http.Respo
 	w.WriteHeader(http.StatusSeeOther)
 }
 
-func (s *Server) renderCaseValidation(req *http.Request, w http.ResponseWriter, kase *cms.Case, status *validation.Status) {
-	validatedForm := NewValidatedTemplate(kase.Template, status.Errors)
+func (s *Server) renderWithValidation(req *http.Request, w http.ResponseWriter, kase *cms.Case, status *validation.Status) {
+	validatedForm := zipTemplateAndErrors(status.Errors, kase.Template)
 	parties, err := s.retrieveParties(req)
 	if err != nil {
 		s.Error(w, err)
@@ -482,7 +507,7 @@ func (s *Server) renderCaseValidation(req *http.Request, w http.ResponseWriter, 
 	}
 	// Set notification and render
 	s.validationErrorNotification(req, w)
-	if err := s.renderFactory.New(req).ExecuteTemplate(w, "casenew", map[string]interface{}{
+	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "casenew", map[string]interface{}{
 		"Team":          team,
 		"CaseTypes":     caseTypes,
 		"CaseType":      caseType,
@@ -540,7 +565,7 @@ func UnmarshalCaseFormData(c *cms.Case, template *cms.CaseTemplate, values url.V
 	c.Done = values.Get("done") == "on"
 	c.ParentID = values.Get("parentId")
 	c.TeamID = values.Get("teamId")
-	var formElements []cms.FormElement
+	var formElements []form.FormElement
 	for _, formElement := range template.FormElements {
 		formElement.Attributes.Value = values[formElement.Attributes.Name]
 		formElements = append(formElements, formElement)

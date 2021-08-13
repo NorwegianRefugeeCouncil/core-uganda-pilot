@@ -18,30 +18,18 @@ describe('Relationshiptype Page', function () {
                 .selectSecondPartyType('Household')
                 .save();
 
-            const relationshiptypeOverviewPage =
-                new RelationshiptypeOverviewPage();
-            relationshiptypeOverviewPage
-                .visitPage()
-                .selectRelationshiptype()
-                .should('contain.text', TYPE_NAME);
+            const relationshiptypeOverviewPage = new RelationshiptypeOverviewPage();
+            relationshiptypeOverviewPage.visitPage().selectRelationshiptype().should('contain.text', TYPE_NAME);
         });
     });
 
     describe('Update', () => {
         it('should update name on existing Relationshiptype', () => {
-            var relationshiptypeOverviewPage =
-                new RelationshiptypeOverviewPage();
-            relationshiptypeOverviewPage
-                .visitRelationshiptype()
-                .clearName()
-                .typeName(EDITED_TYPE_NAME)
-                .save();
+            var relationshiptypeOverviewPage = new RelationshiptypeOverviewPage();
+            relationshiptypeOverviewPage.visitRelationshiptype().clearName().typeName(EDITED_TYPE_NAME).save();
 
             relationshiptypeOverviewPage = new RelationshiptypeOverviewPage();
-            relationshiptypeOverviewPage
-                .visitPage()
-                .selectRelationshiptype()
-                .should('contain.text', EDITED_TYPE_NAME);
+            relationshiptypeOverviewPage.visitPage().selectRelationshiptype().should('contain.text', EDITED_TYPE_NAME);
         });
     });
 });

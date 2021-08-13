@@ -1,0 +1,66 @@
+{
+  "formElements": [
+    {
+      "type": "dropdown",
+      "attributes": {
+        "label": "Dropdown",
+        "name": "testDropdown",
+        "description": "Dropdown description",
+        "options": [
+          "0",
+          "1",
+          "2"
+        ]
+      },
+      "validation": {
+        "required": true
+      }
+    },
+    {
+      "type": "checkbox",
+      "attributes": {
+        "label": "Checkbox",
+        "name": "testCheckbox",
+        "description": "Checkbox description",
+        "checkboxOptions": [
+          {
+            "Label": "0"
+          },
+          {
+            "Label": "1"
+          },
+          {
+            "Label": "2"
+          }
+        ]
+      },
+      "validation": {
+        "required": true
+      }
+    },
+    {
+      "type": "textarea",
+      "attributes": {
+        "label": "Textarea",
+        "name": "testTextarea",
+        "description": "Textarea description",
+        "placeholder": "Textarea placeholder"
+      },
+      "validation": {
+        "required": true
+      }
+    },
+    {
+      "type": "text",
+      "attributes": {
+        "label": "Text",
+        "name": "testText",
+        "description": "Text description",
+        "placeholder": "Text placeholder"
+      },
+      "validation": {
+        "required": true
+      }
+    }
+  ]
+}

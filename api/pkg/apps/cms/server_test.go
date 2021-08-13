@@ -2,6 +2,7 @@ package cms_test
 
 import (
 	. "github.com/nrc-no/core/pkg/apps/cms"
+	"github.com/nrc-no/core/pkg/form"
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/testutils"
 	uuid "github.com/satori/go.uuid"
@@ -42,14 +43,6 @@ func TestSuite(t *testing.T) {
 //
 // Helpers
 //
-func contains(s []string, item string) bool {
-	for _, a := range s {
-		if a == item {
-			return true
-		}
-	}
-	return false
-}
 
 func newUUID() string {
 	return uuid.NewV4().String()
@@ -63,40 +56,40 @@ func uuidSlice(n int) []string {
 	return s
 }
 
-func (s *Suite) mockCaseTypes(n int) []*CaseType {
-	mockTemplate := &CaseTemplate{
-		FormElements: []FormElement{{
+func mockCaseTemplate(name string) *CaseTemplate {
+	return &CaseTemplate{
+		FormElements: []form.FormElement{{
 			Type: "textarea",
-			Attributes: FormElementAttribute{
-				Label: "mock",
-				Name:  "mock",
+			Attributes: form.FormElementAttributes{
+				Label: name,
+				Name:  name,
 			},
 		}},
 	}
+}
+
+func (s *Suite) mockCaseTypes(n int) []*CaseType {
 	var caseTypes []*CaseType
 	for i := 0; i < n; i++ {
-		caseTypes = append(caseTypes, &CaseType{
-			Name:        "mock",
-			PartyTypeID: newUUID(),
-			TeamID:      newUUID(),
-			Template:    mockTemplate,
-		})
+		caseTypes = append(caseTypes, aMockCaseType())
 	}
 	return caseTypes
 }
 
+func aMockCaseType() *CaseType {
+	return &CaseType{
+		Name:        "mock",
+		PartyTypeID: newUUID(),
+		TeamID:      newUUID(),
+		Template:    mockCaseTemplate("mock"),
+	}
+}
+
 func aMockCase() *Case {
 	return &Case{
-		TeamID:  newUUID(),
-		PartyID: newUUID(),
-		Template: &CaseTemplate{FormElements: []FormElement{{
-			Type: "textarea",
-			Attributes: FormElementAttribute{
-				Label: "mock",
-				Name:  "mock",
-			},
-			Validation: FormElementValidation{},
-		}}},
+		TeamID:   newUUID(),
+		PartyID:  newUUID(),
+		Template: mockCaseTemplate("mock"),
 	}
 }
 

@@ -6,6 +6,7 @@
         .card {
             transition: border ease-in-out 250ms;
         }
+
         .card:hover {
             /*noinspection CssUnresolvedCustomProperty*/
             border-color: var(--bs-blue);
@@ -15,8 +16,9 @@
     {{template "navbar"}}
     {{template "notifications"}}
 
-    <div class="container mt-4">
-        <a href='/settings/casetypes/new' class='btn btn-primary mb-3'>Define new case type</a>
+    <div class="container my-3">
+        <a href='/settings/casetypes/new' class='btn btn-primary mb-3' data-testid="new-casetype-btn">Define new case
+            type</a>
         {{ if .CaseTypes}}
             <ul class="list-group mb-3">
                 {{ range .CaseTypes.Items }}

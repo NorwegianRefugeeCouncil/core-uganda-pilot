@@ -30,7 +30,7 @@ func (s *Server) PartyTypes(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := s.renderFactory.New(req).ExecuteTemplate(w, "partytypes", map[string]interface{}{
+	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "partytypes", map[string]interface{}{
 		"PartyTypes": partyTypes,
 	}); err != nil {
 		s.Error(w, err)
@@ -71,7 +71,7 @@ func (s *Server) PartyType(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := s.renderFactory.New(req).ExecuteTemplate(w, "partytype", map[string]interface{}{
+	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "partytype", map[string]interface{}{
 		"PartyType": partyType,
 	}); err != nil {
 		s.Error(w, err)

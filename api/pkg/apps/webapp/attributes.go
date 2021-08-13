@@ -40,7 +40,7 @@ func (s *Server) Attributes(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := s.renderFactory.New(req).ExecuteTemplate(w, "attributes", map[string]interface{}{
+	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "attributes", map[string]interface{}{
 		"Attributes": list,
 		"PartyTypes": partyTypes,
 	}); err != nil {
@@ -50,7 +50,7 @@ func (s *Server) Attributes(w http.ResponseWriter, req *http.Request) {
 }
 
 func (s *Server) NewAttribute(w http.ResponseWriter, req *http.Request) {
-	if err := s.renderFactory.New(req).ExecuteTemplate(w, "attribute", map[string]interface{}{
+	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "attribute", map[string]interface{}{
 		"PartyTypes": iam.PartyTypeList{
 			Items: []*iam.PartyType{
 				&iam.IndividualPartyType,
@@ -89,7 +89,7 @@ func (s *Server) Attribute(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := s.renderFactory.New(req).ExecuteTemplate(w, "attribute", map[string]interface{}{
+	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "attribute", map[string]interface{}{
 		"Attribute": attribute,
 		"PartyTypes": iam.PartyTypeList{
 			Items: []*iam.PartyType{

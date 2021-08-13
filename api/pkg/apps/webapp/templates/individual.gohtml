@@ -10,400 +10,535 @@
 
     {{template "individuals_nav" . }}
 
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <div class="mt-3">
+    <div class="container py-4">
+        <div class="mb-3">
+            Registration progress
+            <span class="badge rounded-pill bg-primary">Steps {{.ProgressLabel}}</span><br>
+        </div>
+        <h1 class="display-4 my-3">Bio Information</h1>
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h1 class="display-5">Attributes</h1>
+                    <h5><span class="badge bg-primary">{{(index .Progress 0).StageStatus}}</span></h5>
+                </div>
+                <div id="attributes">
 
-                    <form action="/individuals{{if .Individual}}{{if .Individual.ID}}/{{.Individual.ID}}{{end}}{{end}}"
-                          method="post">
+                    {{ range $index, $attribute := .Attributes.Items}}
+                        {{template "formelement" $attribute}}
+                    {{end}}
 
-                        <h4 class="display-6">Attributes</h4>
+                    <h1 class="display-5 my-3">Relationships</h1>
+                    <div id='relationships-container'>
+                        <ul id='relationships-list' class="list-group mb-3">
+                            <!-- Templated -->
+                        </ul>
+                    </div>
 
-                        {{ range $index, $attribute := .Attributes.Items}}
-
-                            {{ $values := index $.Individual.Attributes $attribute.ID }}
-
-                            {{ if $values}}
-                                {{range $idx, $value := $values}}
-                                    <div class="form-floating mb-3">
-                                        <input class="form-control"
-                                               name="attribute[{{$attribute.ID}}]"
-                                               id="attribute-{{$attribute.ID}}-{{$idx}}"
-                                               type="text"
-                                               data-testid="text-attribute"
-                                               value="{{$value}}">
-                                        {{ if eq (len $attribute.Translations) 0}}
-                                            <label for="attribute-{{$attribute.ID}}-{{$idx}}">{{$attribute.Name}}</label>
-                                        {{ else }}
-                                            <label for="attribute-{{$attribute.ID}}-{{$idx}}">{{(index $attribute.Translations 0).LongFormulation}}</label>
-                                        {{ end }}
-                                    </div>
+                    <div class="d-flex">
+                        <div class="me-2">
+                            <label class="form-label" for="relationshipTypeSelector">Relationship Type</label>
+                            <select id="relationshipTypeSelector" class="form-select pe-5"
+                                    data-testid="relationshipType">
+                                {{range .FilteredRelationshipTypes.Items}}
+                                    <option value="{{.ID}}">{{.FirstPartyRole}}</option>
                                 {{end}}
-                            {{else}}
-                                <div class="form-floating mb-3">
-                                    <input class="form-control"
-                                           name="attribute[{{$attribute.ID}}]"
-                                           id="attribute-{{$attribute.ID}}-0"
-                                           type="text"
-                                           data-testid="text-attribute"
-                                           value="">
-                                    <label for="attribute-{{$attribute.ID}}-0">{{$attribute.Name}}</label>
-                                </div>
-                            {{end}}
-
-                        {{end}}
-
-                        <h4 class="display-6">Relationships</h4>
-
-                        <div id='relationships-container'>
-                            <ul id='relationships-list' class="list-group mb-3">
-                                <!-- Templated -->
+                            </select>
+                        </div>
+                        <div class="mx-2 flex-grow-1 dropdown">
+                            <label for="partySelector" class="form-label">Related Party</label>
+                            <input type="text"
+                                   class="form-control"
+                                   name="partySelector"
+                                   id="partySelector"
+                                   data-testid="relatedParty"
+                                   data-bs-toggle="dropdown"
+                                   data-bs-auto-close="false"
+                                   aria-expanded="false"
+                                   autocomplete="off"
+                            />
+                            <ul class="dropdown-menu" id="partySelectorList" aria-labelledby="partySelector">
                             </ul>
                         </div>
 
-                        <div class="d-flex flex-row mb-3">
-                            <div class="form-floating  me-2">
-                                <select id="relationshipTypeSelector" class="form-select pe-5"
-                                        data-testid="relationshipType">
-                                    {{range .FilteredRelationshipTypes.Items}}
-                                        <option value="{{.ID}}">{{.FirstPartyRole}}</option>
-                                    {{end}}
-                                </select>
-                                <label for="relationshipTypeSelector">Relationship Type</label>
-                            </div>
-                            <div class="form-floating mx-2 flex-grow-1 dropdown">
-                                <input type="text"
-                                       class="form-control"
-                                       name="partySelector"
-                                       id="partySelector"
-                                       data-testid="relatedParty"
-                                       data-bs-toggle="dropdown"
-                                       data-bs-auto-close="false"
-                                       aria-expanded="false"
-                                       autocomplete="off"
-                                />
-                                <ul class="dropdown-menu" id="partySelectorList" aria-labelledby="partySelector">
-                                </ul>
-                                <label for="partySelector" class="form-label">Related Party</label>
-                            </div>
-
-                            <button class="btn btn-primary ms-2"
-                                    id="add-relationship-button"
-                                    data-testid="add-btn"
-                                    type='button'>
-                                Add
-                            </button>
-                        </div>
-
-                        {{if not .IsNew}}
-
-                            <h4 class="display-6">Cases</h4>
-
-                            <table class="table table-hover table-bordered">
-
-                                <thead>
-                                <tr>
-                                    <th scope="col">Type</th>
-                                    <th scope="col">Status</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-
-                                {{range .Cases}}
-                                    <tr>
-                                        <td><a href="/cases/{{.Case.ID}}">{{.CaseType.Name}}</a></td>
-                                        <td>{{if .Case.Done}}Closed{{else}}Open{{end}}</td>
-                                    </tr>
-                                {{end}}
-
-                                </tbody>
-                            </table>
-
-                            <h4 class="display-6">Open Case</h4>
-
-                            {{range .CaseTypes.Items}}
-
-                                <div>
-                                    <a href="/cases/new?caseTypeId={{.ID}}&partyId={{$.Individual.ID}}">{{.Name}}</a>
-                                </div>
-
-                            {{end}}
-
-                        {{end}}
-
-                        <button class="btn btn-primary mt-5" data-testid="save-btn">Save</button>
-                    </form>
-
+                        <button class="btn btn-primary ms-2"
+                                id="add-relationship-button"
+                                data-testid="add-btn"
+                                type='button'>
+                            Add
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
+
+        {{if not .IsNew}}
+            {{if (and (eq (len .Individual.PartyTypeIDs) 1) (.Individual.HasPartyType .IndividualPartyTypeID))}}
+                <h1 class="display-4 my-3">Intake Information</h1>
+
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h1 class="display-5">Situation Analysis</h1>
+                            <h5><span class="badge bg-primary">{{(index .Progress 1).StageStatus}}</span></h5>
+                        </div>
+                        <div id="situationAnalysis">
+                            {{range .SituationAnalysis.Template.FormElements}}
+                                {{template "formelement" .}}
+                            {{end}}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h1 class="display-5">Response</h1>
+                            <h5><span class="badge bg-primary">{{(index .Progress 2).StageStatus}}</span></h5>
+                        </div>
+                        <div id="individualAssessment">
+                            {{range .IndividualAssessment.Template.FormElements}}
+                                {{template "formelement" .}}
+                            {{end}}
+                        </div>
+                    </div>
+                </div>
+            {{end}}
+        {{end}}
+
+        <button id="formSubmitButton" type="button" class="btn btn-lg btn-primary my-3" data-testid="save-btn">
+            Save
+        </button>
+
+        {{if not .IsNew}}
+            {{if gt (len .Cases) 0}}
+                <h1 class="display-5 my-3">Cases</h1>
+                <table class="table table-hover table-bordered">
+                    <thead>
+                    <tr>
+                        <th scope="col">Type</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    {{range .Cases}}
+                        <tr>
+                            <td><a href="/cases/{{.Case.ID}}">{{.CaseType.Name}}</a></td>
+                            <td>{{if .Case.Done}}Closed{{else}}Open{{end}}</td>
+                        </tr>
+                    {{end}}
+
+                    </tbody>
+                </table>
+            {{end}}
+
+            <h1 class="display-5 my-3">Open a new case for this beneficiary</h1>
+            <div class="list-group">
+                {{range .CaseTypes.Items}}
+                    <a class="list-group-item list-group-item-action"
+                       href="/cases/new?caseTypeId={{.ID}}&partyId={{$.Individual.ID}}">{{.Name}}</a>
+                {{end}}
+            </div>
+
+        {{end}}
+
+
     </div>
 
     </body>
 
     <script type="application/javascript">
 
-      let { Subject, BehaviorSubject, pipe, Observable } = rxjs;
-      let { map, debounceTime, switchMap } = rxjs.operators;
-      let { ajax } = rxjs.ajax;
+        let { Subject, BehaviorSubject } = rxjs;
+        let { map, debounceTime, switchMap } = rxjs.operators;
+        let { ajax } = rxjs.ajax;
 
-      // Holds the different relationship types
-      const relationshipTypes = [
-          {{range .RelationshipTypes.Items}}
-        {
-          id: {{.ID}},
-          name: {{.Name}},
-          firstPartyRole: {{.FirstPartyRole}},
-          secondPartyRole: {{.SecondPartyRole}},
-          firstPartyTypeId: {{(index .Rules 0).PartyTypeRule.FirstPartyTypeID}},
-          secondPartyTypeId: {{(index .Rules 0).PartyTypeRule.SecondPartyTypeID}}
-        },
-          {{end}}
-      ];
-
-      // Handles the search box for the parties dropdown
-      let partySearchSubject = new Subject();
-      let partySearch$ = partySearchSubject.asObservable().pipe(
-        debounceTime(200),
-        switchMap((searchParam) => {
-          const searchParams = new URLSearchParams({
-            'partyTypeId': getSecondPartyType(),
-            'searchParam': searchParam
-          });
-          const ajaxUrl = '/relationships/pickparty?' + searchParams.toString();
-          return ajax(ajaxUrl);
-        })
-      );
-
-      // Holds the different parties (for relationship dropdown select)
-      let parties = [
-          {{range .Parties.Items}}
-        {
-          id: {{.ID}},
-          name: "{{ .String }}"
-        },
-          {{ end }}
-          {{range .Teams.Items}}
-        {
-          id: {{.ID}},
-          name: "{{ .String }}"
-        },
-          {{ end }}
-      ];
-
-      // Holds the display state
-      let stateSubject = new BehaviorSubject({
-        attributes: [],
-        relationships: [
-            {{range .Relationships.Items}}
-          {
-            id: {{.ID}},
-            firstParty: {{.FirstPartyID}},
-            secondParty: {{.SecondPartyID}},
-            relationshipTypeId: {{.RelationshipTypeID}},
-            isNew: false,
-            markedForDeletion: false
-          },
-            {{end}}
-        ]
-      });
-
-      // Display state observable$
-      let state$ = stateSubject.asObservable();
-
-      // Individual attributes observable$
-      let attributes$ = state$.pipe(map(s => s.attributes));
-
-      // Individual relationships observable$
-      let relationships$ = state$.pipe(map(s => s.relationships));
-
-      // aggregate relationship types and relationships for display purposes
-      let displayRelationships$ = relationships$.pipe(
-        map(relationships => {
-          return relationships.map(relationship => {
-            let relationshipType = relationshipTypes.find(t => t.id === relationship.relationshipTypeId);
-            if (!relationshipType) {
-              return;
-            }
-            return {
-              ...relationship,
-              firstPartyRole: relationshipType.firstPartyRole,
-              secondPartyRole: relationshipType.secondPartyRole,
-              relationshipTypeName: relationshipType.name
-            };
-          });
-        })
-      );
-
-      function addRelationship(relationshipTypeId, secondPartyID) {
-        const state = stateSubject.value;
-        // Check for self-reference
-        if (secondPartyID === {{.Individual.ID}}) return;
-        // Check for valid party
-        const isValidParty = parties.filter(({ id }) => id === secondPartyID).length === 1;
-        if (!isValidParty) return;
-        // Check for duplicate
-        const relationshipExists = state.relationships
-          .filter(r => r.relationshipTypeId === relationshipTypeId && r.secondParty === secondPartyID)
-          .length > 0;
-        if (relationshipExists) return;
-        stateSubject.next({
-          ...state,
-          relationships: [
-            ...state.relationships,
+        // Holds the different relationship types
+        const relationshipTypes = [
+            {{range .RelationshipTypes.Items}}
             {
-              relationshipTypeId,
-              firstParty: {{.Individual.ID}},
-              secondParty: secondPartyID
-            }
-          ]
-        });
-      }
+                id: {{.ID}},
+                name: {{.Name}},
+                firstPartyRole: {{.FirstPartyRole}},
+                secondPartyRole: {{.SecondPartyRole}},
+                firstPartyTypeId: {{(index .Rules 0).PartyTypeRule.FirstPartyTypeID}},
+                secondPartyTypeId: {{(index .Rules 0).PartyTypeRule.SecondPartyTypeID}}
+            },
+            {{end}}
+        ];
 
-      function deleteRelationship(idx) {
-        const state = stateSubject.value;
-        const relationships = state.relationships;
-        const relationship = relationships[idx];
-        if (relationship.id) {
-          relationships[idx] = {
-            ...relationship,
-            // toggle marked for deletion
-            markedForDeletion: !relationship.markedForDeletion
-          };
-          stateSubject.next({
-            ...state,
+        // Handles the search box for the parties dropdown
+        let partySearchSubject = new Subject();
+        let partySearch$ = partySearchSubject.asObservable().pipe(
+            debounceTime(200),
+            switchMap((searchParam) => {
+                const searchParams = new URLSearchParams({
+                    'partyTypeId': getSecondPartyType(),
+                    'searchParam': searchParam,
+                });
+                const ajaxUrl = '/relationships/pickparty?' + searchParams.toString();
+                return ajax(ajaxUrl);
+            }),
+        );
+
+        // Holds the different parties (for relationship dropdown select)
+        let parties = [
+            {{range .Parties.Items}}
+            {
+                id: {{.ID}},
+                name: "{{ .String }}",
+            },
+            {{ end }}
+            {{range .Teams.Items}}
+            {
+                id: {{.ID}},
+                name: "{{ .String }}",
+            },
+            {{ end }}
+        ];
+
+        // Holds the display state
+        let stateSubject = new BehaviorSubject({
+            attributes: [],
             relationships: [
-              ...relationships
-            ]
-          });
-        } else {
-          relationships.splice(idx, 1);
-          stateSubject.next({
-            ...state,
-            relationships: [...relationships]
-          });
-        }
-      }
-
-      // Returns the secondPartyType ID corresponding to the selection of the relationship type
-      // dropdown
-      const getSecondPartyType = () => {
-        const relationshipTypeSelector = document.getElementById('relationshipTypeSelector');
-        let selectedRelationshipType = relationshipTypes.find(
-          e => e.id === relationshipTypeSelector.value
-            && e.firstPartyRole === relationshipTypeSelector.options[relationshipTypeSelector.selectedIndex].text
-        );
-        return selectedRelationshipType.secondPartyTypeId;
-      };
-
-      // Returns the value of the partySelector search box
-      const getSearchParam = () => {
-        const partySelector = document.getElementById('partySelector');
-        return partySelector.textContent;
-      };
-
-      // Party List Item click handler - sets the text box value used for searching to the selected item
-      // from the dropdown
-      const onPartyListItemClick = (event) => {
-        document.getElementById('partySelector').value = event.target.textContent;
-        document.getElementById('partySelector').setAttribute('data-party-id', event.target.id);
-      };
-
-      // Build a party link
-      const partyLink = (partyTypeId, partyId) => {
-        if (partyTypeId === "{{ .IndividualPartyTypeID }}") {
-          return '/individuals/' + partyId;
-        }
-        if (partyTypeId === "{{ .TeamPartyTypeID }}") {
-          return '/teams/' + partyId;
-        }
-        if (partyTypeId === "{{ .HouseholdPartyTypeID }}") {
-          return '/households/' + partyId;
-        }
-        return '/';
-      };
-
-      // On document ready
-      document.addEventListener('DOMContentLoaded', function() {
-
-        // Bind add relationship button
-        document.getElementById('add-relationship-button').onclick = () => {
-          let typeSelector = document.getElementById('relationshipTypeSelector');
-          let partySelector = document.getElementById('partySelector');
-          let relationshipType = typeSelector.value;
-          let party = partySelector.getAttribute('data-party-id');
-          addRelationship(relationshipType, party);
-        };
-
-        // Override bootstrap dropdown events
-        const partySelector = document.querySelector('#partySelector');
-        const toggler = new bootstrap.Dropdown(partySelector);
-        document.querySelector('#partySelector').onclick = (event) => {
-          toggler.show();
-        };
-        // Hide dropdown on click outside
-        document.onclick = event => {
-          const partySelectorList = document.querySelector('#partySelectorList');
-          const shouldHidePartySelectorList = event.target.id !== 'partySelector' && partySelectorList.classList.contains('show');
-          if (shouldHidePartySelectorList) {
-            toggler.hide();
-          }
-        };
-
-        // Add listener for party selector item click
-        document.querySelectorAll('.partySelectorItem').forEach(e => {
-          e.onclick = onPartyListItemClick;
+                {{range .Relationships.Items}}
+                {
+                    id: {{.ID}},
+                    firstParty: {{.FirstPartyID}},
+                    secondParty: {{.SecondPartyID}},
+                    relationshipTypeId: {{.RelationshipTypeID}},
+                    isNew: false,
+                    markedForDeletion: false,
+                },
+                {{end}}
+            ],
         });
 
-        // Add listener for party search box
-        partySelector.oninput = (event) => {
-          partySearchSubject.next(event.target.value);
-        };
+        // Display state observable$
+        let state$ = stateSubject.asObservable();
 
-        // Add listener for relationship type change
-        document.getElementById('relationshipTypeSelector').onchange = (event) => {
-          partySearchSubject.next(getSearchParam());
-        };
+        // Individual relationships observable$
+        let relationships$ = state$.pipe(map(s => s.relationships));
 
-        // Handle party search responses
-        partySearch$.subscribe(
-          res => {
-            let partySelectorList = document.getElementById('partySelectorList');
-            partySelectorList.innerHTML = '';
-            if (res.response.length > 0) {
-              let n = 0;
-              res.response.forEach(pickedParty => {
-                const party = pickedParty.party;
-                if (n < {{ .Constants.PartyDropdownLimit }}) {
-                  let newListItem = document.createElement('li');
-                  newListItem.classList.add('dropdown-item');
-                  newListItem.classList.add('partySelectorItem');
-                  newListItem.onclick = onPartyListItemClick;
-                  let displayText = pickedParty.displayName;
-                  newListItem.appendChild(
-                    document.createTextNode(displayText)
-                  );
-                  newListItem.setAttribute('id', party.id);
-                  partySelectorList.appendChild(newListItem);
-                }
-                n++;
-              });
-            } else {
-              // No Parties Found...
-              let newListItem = document.createElement('li');
-              newListItem.classList.add('dropdown-item');
-              let displayText = `No Parties Found`;
-              newListItem.appendChild(
-                document.createTextNode(displayText)
-              );
-              partySelectorList.appendChild(newListItem);
-            }
-          },
-          err => {
-            console.error('got error: ', err);
-          }
+        // aggregate relationship types and relationships for display purposes
+        let displayRelationships$ = relationships$.pipe(
+            map(relationships => {
+                return relationships.map(relationship => {
+                    let relationshipType = relationshipTypes.find(t => t.id === relationship.relationshipTypeId);
+                    if (!relationshipType) {
+                        return;
+                    }
+                    return {
+                        ...relationship,
+                        firstPartyRole: relationshipType.firstPartyRole,
+                        secondPartyRole: relationshipType.secondPartyRole,
+                        relationshipTypeName: relationshipType.name,
+                    };
+                });
+            }),
         );
+
+        function addRelationship(relationshipTypeId, secondPartyID) {
+            const state = stateSubject.value;
+            // Check for self-reference
+            if (secondPartyID === {{.Individual.ID}}) return;
+            // Check for valid party
+            const isValidParty = parties.filter(({ id }) => id === secondPartyID).length === 1;
+            if (!isValidParty) return;
+            // Check for duplicate
+            const relationshipExists = state.relationships
+                .filter(r => r.relationshipTypeId === relationshipTypeId && r.secondParty === secondPartyID)
+                .length > 0;
+            if (relationshipExists) return;
+            stateSubject.next({
+                ...state,
+                relationships: [
+                    ...state.relationships,
+                    {
+                        relationshipTypeId,
+                        firstParty: {{.Individual.ID}},
+                        secondParty: secondPartyID,
+                    },
+                ],
+            });
+        }
+
+        function deleteRelationship(idx) {
+            const state = stateSubject.value;
+            const relationships = state.relationships;
+            const relationship = relationships[idx];
+            if (relationship.id) {
+                relationships[idx] = {
+                    ...relationship,
+                    // toggle marked for deletion
+                    markedForDeletion: !relationship.markedForDeletion,
+                };
+                stateSubject.next({
+                    ...state,
+                    relationships: [
+                        ...relationships,
+                    ],
+                });
+            } else {
+                relationships.splice(idx, 1);
+                stateSubject.next({
+                    ...state,
+                    relationships: [...relationships],
+                });
+            }
+        }
+
+        // Returns the secondPartyType ID corresponding to the selection of the relationship type
+        // dropdown
+        const getSecondPartyType = () => {
+            const relationshipTypeSelector = document.getElementById('relationshipTypeSelector');
+            let selectedRelationshipType = relationshipTypes.find(
+                e => e.id === relationshipTypeSelector.value
+                    && e.firstPartyRole === relationshipTypeSelector.options[relationshipTypeSelector.selectedIndex].text,
+            );
+            return selectedRelationshipType.secondPartyTypeId;
+        };
+
+        // Returns the value of the partySelector search box
+        const getSearchParam = () => {
+            const partySelector = document.getElementById('partySelector');
+            return partySelector.textContent;
+        };
+
+        // Party List Item click handler - sets the text box value used for searching to the selected item
+        // from the dropdown
+        const onPartyListItemClick = (event) => {
+            document.getElementById('partySelector').value = event.target.textContent;
+            document.getElementById('partySelector').setAttribute('data-party-id', event.target.id);
+        };
+
+        // Build a party link
+        const partyLink = (partyTypeId, partyId) => {
+            if (partyTypeId === "{{ .IndividualPartyTypeID }}") {
+                return '/individuals/' + partyId;
+            }
+            if (partyTypeId === "{{ .TeamPartyTypeID }}") {
+                return '/teams/' + partyId;
+            }
+            if (partyTypeId === "{{ .HouseholdPartyTypeID }}") {
+                return '/households/' + partyId;
+            }
+            return '/';
+        };
+
+        // On document ready
+        document.addEventListener('DOMContentLoaded', function() {
+
+            //
+            // Form handling
+            //
+            function collectSearchParams(formID) {
+                const fields = document.querySelectorAll(`#${formID} [name]`);
+                const searchParams = new URLSearchParams();
+                fields.forEach(field => {
+                    const isCheckboxOrRadio = field.type === 'checkbox' || field.type === 'radio';
+                    if (!isCheckboxOrRadio || (isCheckboxOrRadio && field.checked)) {
+                        searchParams.append(field.name, field.value);
+                    } else if (field instanceof HTMLSelectElement) {
+                        if (field.hasAttribute('multiple')) {
+                            const children = field.children;
+                            for (let i = 0; i < children.length; i++) {
+                                const child = children.item(i);
+                                if (child.hasAttribute('selected')) {
+                                    searchParams.append(field.name, child.value);
+                                }
+                            }
+                        } else {
+                            searchParams.append(field.name, field.options[field.selectedIndex].value);
+                        }
+                    }
+                });
+                return searchParams;
+            }
+
+            async function validateSubForm(formID, path) {
+                const options = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: collectSearchParams(formID),
+                };
+
+                const response = await fetch(path, options);
+                if (response.ok) return null;
+                let validation;
+                try {
+                    validation = await response.json();
+                } catch (e) {
+                    console.error(`Fetch error: ${e}`);
+                    return null;
+                }
+                return validation;
+            }
+
+            function applyValidation(validation) {
+                for (const element of validation) {
+                    let { name } = element.attributes;
+                    if (!element.errors) {
+                        continue;
+                    }
+                    // Get DOM form element
+                    let el = document.querySelector(`#${name}`);
+                    if (element.type === 'taxonomyinput') {
+                        el = el.parentElement;
+                    }
+                    // Apply attributes
+                    el.classList.add('is-invalid');
+                    el.setAttribute('aria-describedby', `${name}Feedback`);
+                    // Get feedback div
+                    const feedback = document.getElementById(`${name}Feedback`);
+                    if (feedback != null) {
+                        feedback.innerHTML = '';
+                        // Populate attributes and error messages
+                        for (const error of element.errors) {
+                            const p = document.createElement('p');
+                            p.textContent = error.detail;
+                            feedback.appendChild(p);
+                        }
+                    }
+                }
+            }
+
+            function removeValidation(formID) {
+                const fields = document.querySelectorAll(`#${formID} [name]`);
+                fields.forEach(field => {
+                    const name = field.name;
+                    if (field.classList.contains('taxonomyinput')) {
+                        field = field.parentElement;
+                    }
+                    field.classList.remove('is-invalid');
+                    field.removeAttribute('aria-describedby');
+                    const feedback = document.getElementById(`${name}Feedback`);
+                    if (feedback != null) {
+                        feedback.innerHTML = '';
+                    }
+                });
+            }
+
+            const submitBtn = document.getElementById('formSubmitButton');
+            submitBtn.onclick = async event => {
+                const subForms = [
+                    {
+                        formID: 'attributes',
+                        path: "/individuals{{if .Individual}}{{if .Individual.ID}}/{{.Individual.ID}}{{end}}{{end}}",
+                    },
+                    {{if and (not .IsNew) (and .SituationAnalysis .IndividualAssessment)}}
+                    { formID: 'situationAnalysis', path: "/cases/{{.SituationAnalysis.ID}}" },
+                    { formID: 'individualAssessment', path: "/cases/{{.IndividualAssessment.ID}}" },
+                    {{end}}
+                ];
+                // Do validation
+                const validations = await Promise.allSettled(subForms.map(async ({ formID, path }) => {
+                    let returnVar;
+                    try {
+                        const validation = await validateSubForm(formID, path);
+                        removeValidation(formID);
+                        if (validation != null) {
+                            applyValidation(validation);
+                            return Promise.resolve(true);
+                        }
+                    } catch (e) {
+                        console.error(e);
+                    } finally {
+                        returnVar = Promise.resolve(false);
+                    }
+                    return returnVar;
+                }));
+
+                // Show updated Individual
+                if (validations.every(v => !v.value)) {
+                    if (!location.pathname.includes('new'))
+                        location.reload();
+                    else !location.assign(location.origin + '/individuals');
+                }
+            };
+
+
+            // Bind add relationship button
+            document.getElementById('add-relationship-button').onclick = () => {
+                let typeSelector = document.getElementById('relationshipTypeSelector');
+                let partySelector = document.getElementById('partySelector');
+                let relationshipType = typeSelector.value;
+                let party = partySelector.getAttribute('data-party-id');
+                addRelationship(relationshipType, party);
+            };
+
+            // Override bootstrap dropdown events
+            const partySelector = document.querySelector('#partySelector');
+            const toggler = new bootstrap.Dropdown(partySelector);
+            document.querySelector('#partySelector').onclick = (event) => {
+                toggler.show();
+            };
+            // Hide dropdown on click outside
+            document.onclick = event => {
+                const partySelectorList = document.querySelector('#partySelectorList');
+                const shouldHidePartySelectorList = event.target.id !== 'partySelector' && partySelectorList.classList.contains('show');
+                if (shouldHidePartySelectorList) {
+                    toggler.hide();
+                }
+            };
+
+            // Add listener for party selector item click
+            document.querySelectorAll('.partySelectorItem').forEach(e => {
+                e.onclick = onPartyListItemClick;
+            });
+
+            // Add listener for party search box
+            partySelector.oninput = (event) => {
+                partySearchSubject.next(event.target.value);
+            };
+
+            // Add listener for relationship type change
+            document.getElementById('relationshipTypeSelector').onchange = (event) => {
+                partySearchSubject.next(getSearchParam());
+            };
+
+            // Handle party search responses
+            partySearch$.subscribe(
+                res => {
+                    let partySelectorList = document.getElementById('partySelectorList');
+                    partySelectorList.innerHTML = '';
+                    if (res.response.length > 0) {
+                        let n = 0;
+                        res.response.forEach(pickedParty => {
+                            const party = pickedParty.party;
+                            if (n < {{ .Constants.PartyDropdownLimit }}) {
+                                let newListItem = document.createElement('li');
+                                newListItem.classList.add('dropdown-item');
+                                newListItem.classList.add('partySelectorItem');
+                                newListItem.setAttribute('data-testid', 'party-search-result');
+                                newListItem.onclick = onPartyListItemClick;
+                                let displayText = pickedParty.displayName;
+                                newListItem.appendChild(
+                                    document.createTextNode(displayText),
+                                );
+                                newListItem.setAttribute('id', party.id);
+                                partySelectorList.appendChild(newListItem);
+                            }
+                            n++;
+                        });
+                    } else {
+                        // No Parties Found...
+                        let newListItem = document.createElement('li');
+                        newListItem.classList.add('dropdown-item');
+                        let displayText = `No Parties Found`;
+                        newListItem.appendChild(
+                            document.createTextNode(displayText),
+                        );
+                        partySelectorList.appendChild(newListItem);
+                    }
+                },
+                err => {
+                    console.error('got error: ', err);
+                },
+            );
 
         // Render relationships
         displayRelationships$.subscribe(relationships => {
@@ -412,98 +547,106 @@
           relationships.forEach((relationship, idx) => {
             const li = document.createElement('li');
             li.className = 'list-group-item';
-            const firstPartyName = parties.find(({ id }) => id === relationship.firstParty)?.name;
+            let firstPartyName
+            if (window.location.pathname === '/individuals/new') {
+              const lastName = document.querySelector('input[name="lastName"]')?.value;
+              const firstName = document.querySelector('input[name="firstName"]')?.value;
+              firstPartyName = lastName.toUpperCase() + ', ' + firstName;
+            } else {
+              firstPartyName = parties.find(({ id }) => id === relationship.firstParty)?.name;
+            }
+            li.setAttribute('data-testid', 'relationship');
             const firstPartyRole = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId)?.firstPartyRole;
             const secondPartyName = parties.find(({ id }) => id === relationship.secondParty)?.name;
             const firstPartyTypeId = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId).firstPartyTypeId;
             const secondPartyTypeId = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId).secondPartyTypeId;
 
             const firstPartyLinkNode = document.createElement('a');
-            firstPartyLinkNode.href = partyLink(firstPartyTypeId, relationship.firstPartyTypeId);
+            firstPartyLinkNode.href = partyLink(firstPartyTypeId, relationship.firstParty);
             firstPartyLinkNode.innerText = firstPartyName;
 
-            const roleSpanNode = document.createElement('span');
-            roleSpanNode.innerText = firstPartyRole.substring(0, 1).toLocaleLowerCase() + firstPartyRole.substring(1);
+                    const roleSpanNode = document.createElement('span');
+                    roleSpanNode.innerText = firstPartyRole.substring(0, 1).toLocaleLowerCase() + firstPartyRole.substring(1);
 
-            const secondPartyLinkNode = document.createElement('a');
-            secondPartyLinkNode.href = partyLink(secondPartyTypeId, relationship.secondParty);
-            secondPartyLinkNode.innerText = secondPartyName;
+                    const secondPartyLinkNode = document.createElement('a');
+                    secondPartyLinkNode.href = partyLink(secondPartyTypeId, relationship.secondParty);
+                    secondPartyLinkNode.innerText = secondPartyName;
 
-            const space1Node = document.createElement('span');
-            space1Node.innerText = ' ';
+                    const space1Node = document.createElement('span');
+                    space1Node.innerText = ' ';
 
-            const space2Node = document.createElement('span');
-            space2Node.innerText = ' ';
+                    const space2Node = document.createElement('span');
+                    space2Node.innerText = ' ';
 
-            const containerNode = document.createElement('span');
+                    const containerNode = document.createElement('span');
 
-            if (relationship.markedForDeletion) {
-              containerNode.style.textDecoration = 'line-through';
-            }
+                    if (relationship.markedForDeletion) {
+                        containerNode.style.textDecoration = 'line-through';
+                    }
 
-            if (!relationship.id) {
+                    if (!relationship.id) {
 
-              const plusNode = document.createElement('span');
-              plusNode.innerHTML = '+ ';
-              containerNode.appendChild(plusNode);
-              containerNode.classList.add('text-success');
-              containerNode.classList.add('fw-bold');
-            }
+                        const plusNode = document.createElement('span');
+                        plusNode.innerHTML = '+ ';
+                        containerNode.appendChild(plusNode);
+                        containerNode.classList.add('text-success');
+                        containerNode.classList.add('fw-bold');
+                    }
 
-            containerNode.appendChild(firstPartyLinkNode);
-            containerNode.appendChild(space1Node);
-            containerNode.appendChild(roleSpanNode);
-            containerNode.appendChild(space2Node);
-            containerNode.appendChild(secondPartyLinkNode);
+                    containerNode.appendChild(firstPartyLinkNode);
+                    containerNode.appendChild(space1Node);
+                    containerNode.appendChild(roleSpanNode);
+                    containerNode.appendChild(space2Node);
+                    containerNode.appendChild(secondPartyLinkNode);
 
-            const secondPartyInput = document.createElement('input');
-            secondPartyInput.name = 'relationships[' + idx + '].secondPartyId';
-            secondPartyInput.setAttribute('value', relationship.secondParty);
-            secondPartyInput.hidden = true;
+                    const secondPartyInput = document.createElement('input');
+                    secondPartyInput.name = 'relationships[' + idx + '].secondPartyId';
+                    secondPartyInput.setAttribute('value', relationship.secondParty);
+                    secondPartyInput.hidden = true;
 
-            const relationshipTypeIdInput = document.createElement('input');
-            relationshipTypeIdInput.name = 'relationships[' + idx + '].relationshipTypeId';
-            relationshipTypeIdInput.setAttribute('value', relationship.relationshipTypeId);
-            relationshipTypeIdInput.hidden = true;
+                    const relationshipTypeIdInput = document.createElement('input');
+                    relationshipTypeIdInput.name = 'relationships[' + idx + '].relationshipTypeId';
+                    relationshipTypeIdInput.setAttribute('value', relationship.relationshipTypeId);
+                    relationshipTypeIdInput.hidden = true;
 
-            const closeButton = document.createElement('button');
-            closeButton.type = 'button';
-            closeButton.classList.add('btn-close');
-            closeButton.classList.add('float-end');
-            closeButton.onclick = () => {
-              deleteRelationship(idx);
-            };
-            containerNode.appendChild(closeButton);
+                    const closeButton = document.createElement('button');
+                    closeButton.type = 'button';
+                    closeButton.classList.add('btn-close');
+                    closeButton.classList.add('float-end');
+                    closeButton.onclick = () => {
+                        deleteRelationship(idx);
+                    };
+                    containerNode.appendChild(closeButton);
 
-            if (relationship.id) {
-              const idHiddenInput = document.createElement('input');
-              idHiddenInput.hidden = true;
-              idHiddenInput.name = `relationships[${idx}].id`;
-              idHiddenInput.setAttribute('value', relationship.id);
-              li.appendChild(idHiddenInput);
-            }
+                    if (relationship.id) {
+                        const idHiddenInput = document.createElement('input');
+                        idHiddenInput.hidden = true;
+                        idHiddenInput.name = `relationships[${idx}].id`;
+                        idHiddenInput.setAttribute('value', relationship.id);
+                        li.appendChild(idHiddenInput);
+                    }
 
-            if (relationship.markedForDeletion) {
-              const markedForDeletionHiddenInput = document.createElement('input');
-              markedForDeletionHiddenInput.hidden = true;
-              markedForDeletionHiddenInput.name = `relationships[${idx}].markedForDeletion`;
-              markedForDeletionHiddenInput.setAttribute('value', 'true');
-              li.appendChild(markedForDeletionHiddenInput);
-            }
+                    if (relationship.markedForDeletion) {
+                        const markedForDeletionHiddenInput = document.createElement('input');
+                        markedForDeletionHiddenInput.hidden = true;
+                        markedForDeletionHiddenInput.name = `relationships[${idx}].markedForDeletion`;
+                        markedForDeletionHiddenInput.setAttribute('value', 'true');
+                        li.appendChild(markedForDeletionHiddenInput);
+                    }
 
-            li.appendChild(secondPartyInput);
-            li.appendChild(relationshipTypeIdInput);
-            li.appendChild(containerNode);
+                    li.appendChild(secondPartyInput);
+                    li.appendChild(relationshipTypeIdInput);
+                    li.appendChild(containerNode);
 
-            list.appendChild(li);
-          });
+                    list.appendChild(li);
+                });
+
+            });
+
+            // Initial call to populate parties list
+            partySearchSubject.next(getSearchParam());
 
         });
-
-        // Initial call to populate parties list
-        partySearchSubject.next(getSearchParam());
-
-      });
 
 
     </script>
