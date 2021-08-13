@@ -2,6 +2,8 @@ package webapp
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/base64"
 	"fmt"
 	"github.com/gorilla/sessions"
 	"github.com/nrc-no/core/pkg/apps/iam"
@@ -40,13 +42,32 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 			session, err := s.sessionManager.Get(req)
 			if err != nil {
 				logrus.WithError(err).Errorf("failed to get session, attempting to clear session and redirect to login")
-				session.Options.MaxAge = -1
-				if err = sessions.Save(req, w); err != nil {
-					logrus.WithError(err).Errorf("failed to clear session!")
+
+				// if the session manager returns a non-nil session with the error
+				// try to use it to clear the session
+				if session != nil {
+					session.Options.MaxAge = -1
+					if err = sessions.Save(req, w); err != nil {
+						logrus.WithError(err).Errorf("failed to clear session!")
+						s.Error(w, err)
+						return
+					}
+				}
+
+				// make a new state variable for hydra login flow
+				b := make([]byte, 32)
+				_, err := rand.Read(b)
+				if err != nil {
+					logrus.WithError(err).Errorf("failed to create a new state variable for hydra login flow!")
 					s.Error(w, err)
 					return
 				}
-				http.Redirect(w, req, "/login", http.StatusTemporaryRedirect)
+				state := base64.StdEncoding.EncodeToString(b)
+
+				// create a hydra login flow redirect url with the new state
+				// variable, and redirect the user
+				redirectUrl := s.publicOauth2Config.AuthCodeURL(state)
+				http.Redirect(w, req, redirectUrl, http.StatusTemporaryRedirect)
 				return
 			}
 

@@ -56,7 +56,7 @@ func (r *RedisSessionManager) Get(req *http.Request) (*sessions.Session, error) 
 	session, err := r.Store.Get(req, varSession)
 	if err != nil {
 		logrus.WithError(err).Errorf("failed to get session")
-		return nil, err
+		return session, err
 	}
 	return session, nil
 }
