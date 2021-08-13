@@ -42,17 +42,6 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 			if err != nil {
 				logrus.WithError(err).Errorf("failed to get session, attempting to clear session and redirect to login")
 
-				// if the session manager returns a non-nil session with the error
-				// try to use it to clear the session
-				/*if session != nil {
-					session.Options.MaxAge = -1
-					if err = sessions.Save(req, w); err != nil {
-						logrus.WithError(err).Errorf("failed to clear session!")
-						s.Error(w, err)
-						return
-					}
-				}*/
-
 				// make a new state variable for hydra login flow
 				b := make([]byte, 32)
 				_, err := rand.Read(b)
