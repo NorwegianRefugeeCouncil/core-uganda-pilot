@@ -38,8 +38,8 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 			// Get the access token from the session
 			session, err := s.sessionManager.Get(req)
 			if err != nil {
-				logrus.WithError(err).Errorf("failed to get session")
-				s.Error(w, err)
+				logrus.WithError(err).Errorf("failed to get session, attempting to redirect to login")
+				http.Redirect(w, req, "/login", http.StatusTemporaryRedirect)
 				return
 			}
 
