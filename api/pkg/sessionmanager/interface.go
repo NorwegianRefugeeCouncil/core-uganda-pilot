@@ -85,33 +85,37 @@ const (
 )
 
 func (r RedisSessionManager) AddNotification(req *http.Request, w http.ResponseWriter, notification *Notification) error {
-	session, err := r.Store.Get(req, varNotifications)
-	if err != nil {
-		return err
-	}
-	session.AddFlash(notification)
-	if err := session.Save(req, w); err != nil {
-		return err
-	}
+	// FIXME was converted to noop because of securecookie error
 	return nil
+	// session, err := r.Store.Get(req, varNotifications)
+	// if err != nil {
+	// 	return err
+	// }
+	// session.AddFlash(notification)
+	// if err := session.Save(req, w); err != nil {
+	// 	return err
+	// }
+	// return nil
 }
 
 func (r RedisSessionManager) ConsumeNotifications(req *http.Request, w http.ResponseWriter) ([]*Notification, error) {
-	session, err := r.Store.Get(req, varNotifications)
-	if err != nil {
-		return nil, err
-	}
-	flashes := session.Flashes()
-	var notifications []*Notification
-	for _, flash := range flashes {
-		flashNotification, ok := flash.(*Notification)
-		if ok {
-			notifications = append(notifications, flashNotification)
-		}
-	}
-	err = session.Save(req, w)
-	if err != nil {
-		return nil, err
-	}
-	return notifications, nil
+	// FIXME was converted to noop because of securecookie error
+	return nil, nil
+	// session, err := r.Store.Get(req, varNotifications)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// flashes := session.Flashes()
+	// var notifications []*Notification
+	// for _, flash := range flashes {
+	// 	flashNotification, ok := flash.(*Notification)
+	// 	if ok {
+	// 		notifications = append(notifications, flashNotification)
+	// 	}
+	// }
+	// err = session.Save(req, w)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// return notifications, nil
 }
