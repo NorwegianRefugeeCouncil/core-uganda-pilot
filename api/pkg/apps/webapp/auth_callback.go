@@ -37,7 +37,7 @@ func (s *Server) Callback(w http.ResponseWriter, req *http.Request) {
 
 	stateIntf, ok := session.Values["state"]
 	if !ok {
-		s.Error(w, fmt.Errorf("no state found in session"))
+		s.Error(w, fmt.Errorf("no state found in session: unable to read state from session values"))
 		return
 	}
 
@@ -46,7 +46,7 @@ func (s *Server) Callback(w http.ResponseWriter, req *http.Request) {
 
 	stateStr, ok := stateIntf.(string)
 	if !ok {
-		s.Error(w, fmt.Errorf("no state found in session"))
+		s.Error(w, fmt.Errorf("no state found in session: unable to get string of session state value"))
 		return
 	}
 
