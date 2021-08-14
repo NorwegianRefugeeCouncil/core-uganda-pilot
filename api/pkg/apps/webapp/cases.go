@@ -150,7 +150,6 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if req.Method == "POST" {
-		//tmpl := *kase.Template // store a copy of the template as it is otherwise lost if
 		posted, err := s.PostCase(req, w, ctx, kase)
 		if err != nil {
 			if status, ok := err.(*validation.Status); ok {
@@ -248,6 +247,7 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 			}
 			return nil
 		})
+		// Referrals
 		g.Go(func() error {
 			if referrals, err = cmsClient.Cases().List(waitCtx, cms.CaseListOptions{ParentID: kase.ID}); err != nil {
 				return err
