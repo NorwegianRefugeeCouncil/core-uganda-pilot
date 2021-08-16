@@ -1,4 +1,4 @@
-import { testId, URL } from '../helpers';
+import { URL } from '../helpers';
 import ids from '../fixtures/ids.json';
 import CasesOverviewPage from '../pages/casesOverview.page';
 import NewCasePage from '../pages/newCase.page';

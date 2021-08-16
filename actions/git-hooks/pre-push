@@ -34,8 +34,7 @@ echo "$PREFIX Running IAM integration tests..."
 
 cd "$DIR/api/pkg/apps/iam" || exit
 export GO111MODULE=on
-go test
-if [ $? -ne 0 ]; then
+if ! go test; then
 	>&2 echo "[pre-push] Integration tests failed, see output above."
 	exit 1
 fi
@@ -43,8 +42,7 @@ fi
 echo "$PREFIX Running CMS integration tests..."
 
 cd "$DIR/api/pkg/apps/cms" || exit
-go test .
-if [ $? -ne 0 ]; then
+if ! go test; then
 	>&2 echo "[pre-push] Integration tests failed, see output above."
 	exit 1
 fi
