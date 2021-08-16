@@ -1,6 +1,7 @@
 import AttributePage from '../pages/attributePage';
 import AttributeOverviewPage from '../pages/attributeOverview.page';
 import ids from '../fixtures/ids.json';
+import { URL } from '../helpers';
 
 const DATA = {
     NAME: 'Test attribute',
@@ -17,7 +18,8 @@ const DATA = {
     TRANSLATION_2_S: 'Traduction courte',
 };
 
-describe('Attribute Page', function () {
+// FIXME COR-204
+describe.skip('Attribute Page', function () {
     describe('Navigate', () => {
         it('should navigate to the New Attribute page from the attributes page', () => {
             const attributeOverviewPage = new AttributeOverviewPage();

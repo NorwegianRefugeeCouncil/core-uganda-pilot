@@ -35,10 +35,8 @@ export default class NewCasePage {
     };
 
     fillOutForm = data => {
-        for (const {
-            attributes: { name },
-        } of testTemplate.formElements) {
-            cy.get(name).then($el => {
+        for (const { type } of testTemplate.formElements) {
+            cy.get(testId('test-' + type)).then($el => {
                 const tag = $el[0].tagName;
                 if (tag === 'INPUT') {
                     switch ($el[0].getAttribute('type')) {

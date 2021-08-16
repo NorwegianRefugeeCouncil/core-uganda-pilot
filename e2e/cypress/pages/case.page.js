@@ -36,10 +36,8 @@ export default class CasePage {
     };
 
     verifyForm = value => {
-        for (const {
-            attributes: { name },
-        } of testTemplate.formElements) {
-            cy.get(name).then($el => {
+        for (const { type } of testTemplate.formElements) {
+            cy.get(testId('test-' + type)).then($el => {
                 const tag = $el[0].tagName;
                 switch (tag) {
                     case 'INPUT':

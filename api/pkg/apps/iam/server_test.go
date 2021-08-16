@@ -5,7 +5,6 @@ import (
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/testutils"
 	uuid "github.com/satori/go.uuid"
-	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/suite"
 	"testing"
 )
@@ -32,14 +31,6 @@ func (s *Suite) SetupTest() {
 	}
 }
 
-func (s *Suite) BeforeTest(suiteName, testName string) {
-	logrus.Infof("starting" + testName)
-}
-
-func (s *Suite) AfterTest(suiteName, testName string) {
-	logrus.Infof("finished" + testName)
-}
-
 func TestSuite(t *testing.T) {
 	suite.Run(t, &Suite{})
 }
@@ -55,17 +46,6 @@ func (s *Suite) TearDownSuite() {
 func newUUID() string {
 	return uuid.NewV4().String()
 }
-
-//func (s *Suite) mockPartyTypes(n int) []*PartyType {
-//	var partyTypes []*PartyType
-//	for i := 0; i < n; i++ {
-//		partyTypes = append(partyTypes, &PartyType{
-//			Name:      newUUID(),
-//			IsBuiltIn: false,
-//		})
-//	}
-//	return partyTypes
-//}
 
 func mockAttribute() *Attribute {
 	return &Attribute{
