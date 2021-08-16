@@ -1,14 +1,12 @@
 #!/bin/bash
 
 # move to script dir
-SRC_DIR="$(realpath "$(dirname $0)")/git-hooks"
-echo "$SRC_DIR"
+SRC_DIR="$(realpath "$(dirname "$0")")/git-hooks"
+GIT_DIR="$(realpath "$(dirname "$(dirname "$0")")")/.git"
 cd "$SRC_DIR" || exit
 
-
 for f in *; do
-	echo "$f"
-	DEST="../../.git/hooks/$f"
+	DEST="$GIT_DIR/hooks/$f"
 	# check if symlink or file exists
 	if [ -h "$DEST" ] || [ -f "$DEST" ]; then
 		echo "Removing old file."
