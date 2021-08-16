@@ -64,7 +64,7 @@ func (s *Suite) testRelationshipAPI() {
 }
 
 func (s *Suite) testRelationshipListFilter() {
-	const nRelationships = 10000
+	const nRelationships = 10
 	const nRelationshipTypes = 3
 	const nParties = 4
 
