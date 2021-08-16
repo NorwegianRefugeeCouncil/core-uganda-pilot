@@ -32,14 +32,9 @@ echo "$PREFIX All containers are up and running!"
 #
 echo "$PREFIX Running IAM integration tests..."
 
-cd "$DIR/api/pkg/apps/iam" || exit # pkg/apps/iam"
+cd "$DIR/api/pkg/apps/iam" || exit
 export GO111MODULE=on
-#go env -w GOMOD="$DIR/api/go.mod"
-# go env | sort
-go test #github.com/nrc-no/core/pkg/apps/iam
-# go tool test2json -t /tmp/___test_iam_integration.test -test.v -test.paniconexit0
-# go test # github.com/nrc-no/core/pkg/apps/iam
-# /usr/local/go/bin/go tool test2json -t /tmp/GoLand/___test_iam_integration.test -test.v -test.paniconexit0
+go test
 if [ $? -ne 0 ]; then
 	>&2 echo "[pre-push] Integration tests failed, see output above."
 	exit 1
@@ -49,12 +44,12 @@ echo "$PREFIX Running CMS integration tests..."
 
 cd "$DIR/api/pkg/apps/cms" || exit
 go test .
-# github.com/nrc-no/core/pkg/apps/iam
-# /usr/local/go/bin/go tool test2json -t /tmp/GoLand/___test_iam_integration.test -test.v -test.paniconexit0
 if [ $? -ne 0 ]; then
 	>&2 echo "[pre-push] Integration tests failed, see output above."
 	exit 1
 fi
+
+exit 1
 
 #
 # RUN E2E TESTS
@@ -71,7 +66,15 @@ if ! serverIsRunning; then
 	echo "$PREFIX webapp is not running, attempting to start it now."
 	cd "$DIR/api" || exit
 	make serve &> /dev/null &
-	sleep 10
+
+	n=0
+  until [ "$n" -ge 5 ]
+  do
+     serverIsRunning && break
+     n=$((n+1))
+     sleep 10
+  done
+
 	if ! serverIsRunning; then
 		>&2 echo "$PREFIX Unable to start webapp."
 		exit 1
@@ -88,8 +91,6 @@ if ! npm run lint:fix; then
 	>&2 echo "[pre-push] Linting failed, see output above."
 	exit 1
 fi
-
-exit 1
 
 echo "$PREFIX Running E2E tests..."
 if ! npm run run; then
