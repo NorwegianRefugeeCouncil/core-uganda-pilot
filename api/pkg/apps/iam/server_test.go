@@ -5,6 +5,7 @@ import (
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/testutils"
 	uuid "github.com/satori/go.uuid"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/suite"
 	"testing"
 )
@@ -29,6 +30,14 @@ func (s *Suite) SetupTest() {
 	if err != nil {
 		return
 	}
+}
+
+func (s *Suite) BeforeTest(suiteName, testName string) {
+	logrus.Infof("starting" + testName)
+}
+
+func (s *Suite) AfterTest(suiteName, testName string) {
+	logrus.Infof("finished" + testName)
 }
 
 func TestSuite(t *testing.T) {

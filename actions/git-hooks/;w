@@ -13,12 +13,12 @@ echo "$PREFIX Running hook..."
 #
 echo "$PREFIX Checking docker-compose..."
 cd artifacts || exit
-if [ -w "$(which docker-compose)" ]; then
+CONTAINERS=('hydra_1' 'hydra_db_1' 'hydra_migrate' 'mongo-express' 'mongo_1' 'redis')
+if [ -w $(which docker-compose) ]; then
 	DC="docker-compose ps"
 else
 	DC="sudo docker-compose ps"
 fi
-CONTAINERS=('hydra_1' 'hydra_db_1' 'hydra_migrate' 'mongo-express' 'mongo_1' 'redis')
 for c in "${CONTAINERS[@]}"; do
 	if  ! (eval "$DC" | grep -q "$c" &> /dev/null) ; then
 		echo "$PREFIX Please ensure docker-compose is up and running."
@@ -32,15 +32,10 @@ echo "$PREFIX All containers are up and running!"
 #
 echo "$PREFIX Running IAM integration tests..."
 
-cd "$DIR/api/pkg/apps/iam" || exit # pkg/apps/iam"
-export GO111MODULE=on
-#go env -w GOMOD="$DIR/api/go.mod"
-# go env | sort
-go test -run 'TestRelationshipType' #github.com/nrc-no/core/pkg/apps/iam
-# go tool test2json -t /tmp/___test_iam_integration.test -test.v -test.paniconexit0
-# go test # github.com/nrc-no/core/pkg/apps/iam
+cd "$DIR/api/" || exit # pkg/apps/iam"
+go test github.com/nrc-no/core/pkg/apps/iam
 # /usr/local/go/bin/go tool test2json -t /tmp/GoLand/___test_iam_integration.test -test.v -test.paniconexit0
-if [ $? -ne 0 ]; then
+if [ ! $? ]; then
 	>&2 echo "[pre-push] Integration tests failed, see output above."
 	exit 1
 fi
@@ -51,7 +46,7 @@ cd "$DIR/api/pkg/apps/cms" || exit
 go test .
 # github.com/nrc-no/core/pkg/apps/iam
 # /usr/local/go/bin/go tool test2json -t /tmp/GoLand/___test_iam_integration.test -test.v -test.paniconexit0
-if [ $? -ne 0 ]; then
+if [ ! $? ]; then
 	>&2 echo "[pre-push] Integration tests failed, see output above."
 	exit 1
 fi
@@ -86,13 +81,15 @@ cd "$DIR/e2e" || exit
 # linting
 #
 echo "$PREFIX Running eslint on .js files..."
-if ! npm run lint:fix; then
+npm run lint:fix
+if [ ! $? ]; then
 	>&2 echo "[pre-push] Linting failed, see output above."
 	exit 1
 fi
 
 echo "$PREFIX Running E2E tests..."
-if ! npm run run; then
+npm run run
+if [ ! $? ]; then
 	>&2 echo "[pre-push] E2E tests failed, see output above."
 	exit 1
 fi
