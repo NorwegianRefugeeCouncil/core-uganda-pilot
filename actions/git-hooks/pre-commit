@@ -49,8 +49,9 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-exit 1
+exit
 
+# Skipped for now
 #
 # RUN E2E TESTS
 #
