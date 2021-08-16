@@ -116,8 +116,9 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 	referralCaseTypeID := qry.Get("referralCaseTypeId")
 
 	caseID, ok := mux.Vars(req)["id"]
-	if !ok || len(caseID) == 0 {
-		if req.Method == "POST" {
+	isNewCase := !ok || len(caseID) == 0
+	if isNewCase {
+		if req.Method != "POST" {
 			caseID = "new"
 		} else {
 			err := fmt.Errorf("no id in path")
@@ -137,7 +138,7 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if caseID == "new" {
+	if isNewCase {
 		kase = &cms.Case{}
 		if len(referralCaseTypeID) > 0 {
 			kase.CaseTypeID = referralCaseTypeID
@@ -161,7 +162,7 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 		var action string
-		if caseID == "new" {
+		if isNewCase {
 			action = "created"
 		} else {
 			action = "updated"
