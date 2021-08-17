@@ -1,4 +1,5 @@
 {{define "individual"}}
+    {{$hasIntakeCases := (and (not .IsNew) (and (eq (len .Individual.PartyTypeIDs) 1) (.Individual.HasPartyType .IndividualPartyTypeID)))}}
     <!doctype html>
     <html lang="en">
     {{template "head"}}
@@ -15,97 +16,120 @@
             Registration progress
             <span class="badge rounded-pill bg-primary">Steps {{.ProgressLabel}}</span><br>
         </div>
-        <h1 class="display-4 my-3">Bio Information</h1>
-        <div class="card mb-3">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <h1 class="display-5">Attributes</h1>
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="attributes-tab" data-bs-toggle="tab" data-bs-target="#attributes"
+                        type="button"
+                        role="tab" aria-controls="attributes" aria-selected="true">Attributes
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link{{if not $hasIntakeCases}} disabled{{end}}" id="situation-analysis-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#situation-analysis" type="button"
+                        role="tab" aria-controls="situation-analysis" aria-selected="false">Intake information
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link{{if not $hasIntakeCases}} disabled{{end}}" id="response-tab"
+                        data-bs-toggle="tab" data-bs-target="#response" type="button"
+                        role="tab" aria-controls="response" aria-selected="false">Response
+                </button>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="attributes" role="tabpanel"
+                 aria-labelledby="attributes-tab">
+                <div class="d-flex justify-content-start align-items-center my-3">
+                    <h1 class="display-4 me-3">Bio Information</h1>
                     <h5><span class="badge bg-primary">{{(index .Progress 0).StageStatus}}</span></h5>
                 </div>
-                <div id="attributes">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div id="attributes">
 
-                    {{ range $index, $attribute := .Attributes.Items}}
-                        {{template "formelement" $attribute}}
-                    {{end}}
+                            {{ range $index, $attribute := .Attributes.Items}}
+                                {{template "formelement" $attribute}}
+                            {{end}}
 
-                    <h1 class="display-5 my-3">Relationships</h1>
-                    <div id='relationships-container'>
-                        <ul id='relationships-list' class="list-group mb-3">
-                            <!-- Templated -->
-                        </ul>
-                    </div>
+                            <h1 class="display-5 my-3">Relationships</h1>
+                            <div id='relationships-container'>
+                                <ul id='relationships-list' class="list-group mb-3">
+                                    <!-- Templated -->
+                                </ul>
+                            </div>
 
-                    <div class="d-flex">
-                        <div class="me-2">
-                            <label class="form-label" for="relationshipTypeSelector">Relationship Type</label>
-                            <select id="relationshipTypeSelector" class="form-select pe-5"
-                                    data-testid="relationshipType">
-                                {{range .FilteredRelationshipTypes.Items}}
-                                    <option value="{{.ID}}">{{.FirstPartyRole}}</option>
-                                {{end}}
-                            </select>
+                            <div class="d-flex">
+                                <div class="me-2">
+                                    <label class="form-label" for="relationshipTypeSelector">Relationship Type</label>
+                                    <select id="relationshipTypeSelector" class="form-select pe-5"
+                                            data-testid="relationshipType">
+                                        {{range .FilteredRelationshipTypes.Items}}
+                                            <option value="{{.ID}}">{{.FirstPartyRole}}</option>
+                                        {{end}}
+                                    </select>
+                                </div>
+                                <div class="mx-2 flex-grow-1 dropdown">
+                                    <label for="partySelector" class="form-label">Related Party</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           name="partySelector"
+                                           id="partySelector"
+                                           data-testid="relatedParty"
+                                           data-bs-toggle="dropdown"
+                                           data-bs-auto-close="false"
+                                           aria-expanded="false"
+                                           autocomplete="off"
+                                    />
+                                    <ul class="dropdown-menu" id="partySelectorList" aria-labelledby="partySelector">
+                                    </ul>
+                                </div>
+
+                                <button class="btn btn-primary ms-2"
+                                        id="add-relationship-button"
+                                        data-testid="add-btn"
+                                        type='button'>
+                                    Add
+                                </button>
+                            </div>
                         </div>
-                        <div class="mx-2 flex-grow-1 dropdown">
-                            <label for="partySelector" class="form-label">Related Party</label>
-                            <input type="text"
-                                   class="form-control"
-                                   name="partySelector"
-                                   id="partySelector"
-                                   data-testid="relatedParty"
-                                   data-bs-toggle="dropdown"
-                                   data-bs-auto-close="false"
-                                   aria-expanded="false"
-                                   autocomplete="off"
-                            />
-                            <ul class="dropdown-menu" id="partySelectorList" aria-labelledby="partySelector">
-                            </ul>
-                        </div>
-
-                        <button class="btn btn-primary ms-2"
-                                id="add-relationship-button"
-                                data-testid="add-btn"
-                                type='button'>
-                            Add
-                        </button>
                     </div>
                 </div>
             </div>
-        </div>
-
-        {{if not .IsNew}}
-            {{if (and (eq (len .Individual.PartyTypeIDs) 1) (.Individual.HasPartyType .IndividualPartyTypeID))}}
-                <h1 class="display-4 my-3">Intake Information</h1>
-
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <h1 class="display-5">Situation Analysis</h1>
-                            <h5><span class="badge bg-primary">{{(index .Progress 1).StageStatus}}</span></h5>
-                        </div>
-                        <div id="situationAnalysis">
-                            {{range .SituationAnalysis.Template.FormElements}}
-                                {{template "formelement" .}}
-                            {{end}}
+            {{if  $hasIntakeCases}}
+                <div class="tab-pane fade" id="situation-analysis" role="tabpanel"
+                     aria-labelledby="situation-analysis-tab">
+                    <div class="d-flex justify-content-start align-items-center my-3">
+                        <h1 class="display-4 me-3">Situation Analysis</h1>
+                        <h5><span class="badge bg-primary">{{(index .Progress 1).StageStatus}}</span></h5>
+                    </div>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div id="situationAnalysis">
+                                {{range .SituationAnalysis.Template.FormElements}}
+                                    {{template "formelement" .}}
+                                {{end}}
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <h1 class="display-5">Response</h1>
-                            <h5><span class="badge bg-primary">{{(index .Progress 2).StageStatus}}</span></h5>
-                        </div>
-                        <div id="individualAssessment">
-                            {{range .IndividualAssessment.Template.FormElements}}
-                                {{template "formelement" .}}
-                            {{end}}
+                <div class="tab-pane fade" id="response" role="tabpanel" aria-labelledby="response-tab">
+                    <div class="d-flex justify-content-start align-items-center my-3">
+                        <h1 class="display-4 me-3">Response</h1>
+                        <h5><span class="badge bg-primary">{{(index .Progress 2).StageStatus}}</span></h5>
+                    </div>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div id="individualAssessment">
+                                {{range .IndividualAssessment.Template.FormElements}}
+                                    {{template "formelement" .}}
+                                {{end}}
+                            </div>
                         </div>
                     </div>
                 </div>
             {{end}}
-        {{end}}
-
+        </div>
         <button id="formSubmitButton" type="button" class="btn btn-lg btn-primary my-3" data-testid="save-btn">
             Save
         </button>
@@ -540,30 +564,30 @@
                 },
             );
 
-        // Render relationships
-        displayRelationships$.subscribe(relationships => {
-          const list = document.getElementById('relationships-list');
-          list.innerHTML = '';
-          relationships.forEach((relationship, idx) => {
-            const li = document.createElement('li');
-            li.className = 'list-group-item';
-            let firstPartyName
-            if (window.location.pathname === '/individuals/new') {
-              const lastName = document.querySelector('input[name="lastName"]')?.value;
-              const firstName = document.querySelector('input[name="firstName"]')?.value;
-              firstPartyName = lastName.toUpperCase() + ', ' + firstName;
-            } else {
-              firstPartyName = parties.find(({ id }) => id === relationship.firstParty)?.name;
-            }
-            li.setAttribute('data-testid', 'relationship');
-            const firstPartyRole = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId)?.firstPartyRole;
-            const secondPartyName = parties.find(({ id }) => id === relationship.secondParty)?.name;
-            const firstPartyTypeId = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId).firstPartyTypeId;
-            const secondPartyTypeId = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId).secondPartyTypeId;
+            // Render relationships
+            displayRelationships$.subscribe(relationships => {
+                const list = document.getElementById('relationships-list');
+                list.innerHTML = '';
+                relationships.forEach((relationship, idx) => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item';
+                    let firstPartyName;
+                    if (window.location.pathname === '/individuals/new') {
+                        const lastName = document.querySelector('input[name="lastName"]')?.value;
+                        const firstName = document.querySelector('input[name="firstName"]')?.value;
+                        firstPartyName = lastName.toUpperCase() + ', ' + firstName;
+                    } else {
+                        firstPartyName = parties.find(({ id }) => id === relationship.firstParty)?.name;
+                    }
+                    li.setAttribute('data-testid', 'relationship');
+                    const firstPartyRole = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId)?.firstPartyRole;
+                    const secondPartyName = parties.find(({ id }) => id === relationship.secondParty)?.name;
+                    const firstPartyTypeId = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId).firstPartyTypeId;
+                    const secondPartyTypeId = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId).secondPartyTypeId;
 
-            const firstPartyLinkNode = document.createElement('a');
-            firstPartyLinkNode.href = partyLink(firstPartyTypeId, relationship.firstParty);
-            firstPartyLinkNode.innerText = firstPartyName;
+                    const firstPartyLinkNode = document.createElement('a');
+                    firstPartyLinkNode.href = partyLink(firstPartyTypeId, relationship.firstParty);
+                    firstPartyLinkNode.innerText = firstPartyName;
 
                     const roleSpanNode = document.createElement('span');
                     roleSpanNode.innerText = firstPartyRole.substring(0, 1).toLocaleLowerCase() + firstPartyRole.substring(1);
