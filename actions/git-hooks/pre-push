@@ -1,10 +1,11 @@
 #!/bin/bash
 #
-
+# increase maximum open files for shell to workaround issue on Fedora
+ulimit -n 1000000
 # When run as a hook by git, DIR be the repository's root folder.
 DIR=$(pwd)
 
-PREFIX="[pre-commit]"
+PREFIX="[pre-push]"
 
 echo "$PREFIX Running hook..."
 
