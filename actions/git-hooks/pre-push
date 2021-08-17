@@ -14,16 +14,16 @@ echo "$PREFIX Running hook..."
 echo "$PREFIX Checking docker-compose..."
 cd artifacts || exit
 if [ -w "$(which docker-compose)" ]; then
-	DC="docker-compose ps"
+  DC="docker-compose ps"
 else
-	DC="sudo docker-compose ps"
+  DC="sudo docker-compose ps"
 fi
 CONTAINERS=('hydra_1' 'hydra_db_1' 'hydra_migrate' 'mongo-express' 'mongo_1' 'redis')
 for c in "${CONTAINERS[@]}"; do
-	if  ! (eval "$DC" | grep -q "$c" &> /dev/null) ; then
-		echo "$PREFIX Please ensure docker-compose is up and running."
-		exit 1
-fi
+  if ! (eval "$DC" | grep -q "$c" &>/dev/null); then
+    echo "$PREFIX Please ensure docker-compose is up and running."
+    exit 1
+  fi
 done
 echo "$PREFIX All containers are up and running!"
 
@@ -35,16 +35,16 @@ echo "$PREFIX Running IAM integration tests..."
 cd "$DIR/api/pkg/apps/iam" || exit
 export GO111MODULE=on
 if ! go test; then
-	>&2 echo "[pre-push] Integration tests failed, see output above."
-	exit 1
+  echo >&2 "[pre-push] Integration tests failed, see output above."
+  exit 1
 fi
 
 echo "$PREFIX Running CMS integration tests..."
 
 cd "$DIR/api/pkg/apps/cms" || exit
 if ! go test; then
-	>&2 echo "[pre-push] Integration tests failed, see output above."
-	exit 1
+  echo >&2 "[pre-push] Integration tests failed, see output above."
+  exit 1
 fi
 
 #
@@ -55,26 +55,25 @@ fi
 #
 echo "$PREFIX Checking webapp"
 serverIsRunning() {
-	netstat -tln | grep -q ":9000" &> /dev/null
-	return $?
+  netstat -tln | grep -q ":9000" &>/dev/null
+  return $?
 }
 if ! serverIsRunning; then
-	echo "$PREFIX webapp is not running, attempting to start it now."
-	cd "$DIR/api" || exit
-	make serve &> /dev/null &
+  echo "$PREFIX webapp is not running, attempting to start it now."
+  cd "$DIR/api" || exit
+  make serve &>/dev/null &
 
-	n=0
-  until [ "$n" -ge 5 ]
-  do
-     serverIsRunning && break
-     n=$((n+1))
-     sleep 10
+  n=0
+  until [ "$n" -ge 5 ]; do
+    serverIsRunning && break
+    n=$((n + 1))
+    sleep 10
   done
 
-	if ! serverIsRunning; then
-		>&2 echo "$PREFIX Unable to start webapp."
-		exit 1
-	fi
+  if ! serverIsRunning; then
+    echo >&2 "$PREFIX Unable to start webapp."
+    exit 1
+  fi
 fi
 echo "$PREFIX webapp is up and running!"
 
@@ -84,16 +83,15 @@ cd "$DIR/e2e" || exit
 #
 echo "$PREFIX Running eslint on .js files..."
 if ! npm run lint:fix; then
-	>&2 echo "[pre-push] Linting failed, see output above."
-	exit 1
+  echo >&2 "[pre-push] Linting failed, see output above."
+  exit 1
 fi
 
 echo "$PREFIX Running E2E tests..."
 if ! npm run run; then
-	>&2 echo "[pre-push] E2E tests failed, see output above."
-	exit 1
+  echo >&2 "[pre-push] E2E tests failed, see output above."
+  exit 1
 fi
 echo "$PREFIX All E2E tests passed!"
 
 exit 0
-
