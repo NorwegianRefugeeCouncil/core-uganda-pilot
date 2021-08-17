@@ -10,7 +10,7 @@ export default class TeamsOverviewPage {
     };
 
     visitTeam = () => {
-        cy.get(TEAM_ROWS).eq(1).click();
+        cy.get(TEAM_ROWS).last().click();
         return new TeamPage();
     };
 }
