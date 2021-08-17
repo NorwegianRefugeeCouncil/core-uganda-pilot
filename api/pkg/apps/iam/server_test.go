@@ -47,17 +47,6 @@ func newUUID() string {
 	return uuid.NewV4().String()
 }
 
-//func (s *Suite) mockPartyTypes(n int) []*PartyType {
-//	var partyTypes []*PartyType
-//	for i := 0; i < n; i++ {
-//		partyTypes = append(partyTypes, &PartyType{
-//			Name:      newUUID(),
-//			IsBuiltIn: false,
-//		})
-//	}
-//	return partyTypes
-//}
-
 func mockAttribute() *Attribute {
 	return &Attribute{
 		Name:         "mock",

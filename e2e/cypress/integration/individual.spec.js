@@ -10,7 +10,8 @@ const DATA = {
 const ATTRIBUTE_NAME = 'Test';
 const EDITED_ATTRIBUTE_NAME = 'Edited';
 
-describe('Individual Page', function () {
+// FIXME rewrite
+describe.skip('Individual Page', function () {
     describe('Create', () => {
         it('should navigate to New Individual Form Page and save new Individual', () => {
             const newIndividualPage = new IndividualPage();
