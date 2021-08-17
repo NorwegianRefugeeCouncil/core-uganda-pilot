@@ -1,7 +1,7 @@
-import { URL } from '../helpers';
+import { testId, URL } from '../helpers';
 import TeamPage from './team.page';
 
-const TEAM_ROWS = '[data-testid=team]';
+const TEAM_ROWS = testId('team');
 
 export default class TeamsOverviewPage {
     visitPage = () => {
@@ -10,7 +10,7 @@ export default class TeamsOverviewPage {
     };
 
     visitTeam = () => {
-        cy.get(TEAM_ROWS).first().click();
+        cy.get(TEAM_ROWS).eq(1).click();
         return new TeamPage();
     };
 }

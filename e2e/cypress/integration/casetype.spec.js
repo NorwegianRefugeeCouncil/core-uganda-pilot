@@ -26,7 +26,7 @@ describe('CaseType Page', () => {
                 .setName(DATA.NAME)
                 .setPartyType(DATA.PARTYTYPE)
                 .setTeam(DATA.TEAM)
-                .setTemplate(JSON.stringify(DATA.TEMPLATE))
+                .setTemplate(JSON.stringify(DATA.TEMPLATE, null, 2))
                 .save();
 
             const casetypesOverviewPage = new CasetypesOverviewPage();

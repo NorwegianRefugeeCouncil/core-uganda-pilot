@@ -1,4 +1,5 @@
-import { URL, testId, TEST_CASE_TEMPLATE_FIELD } from '../helpers';
+import { URL, testId } from '../helpers';
+import testTemplate from '../fixtures/test_casetemplate.json';
 
 const ID = {
     CASETYPE_SELECT: testId('casetype-select'),
@@ -34,8 +35,8 @@ export default class NewCasePage {
     };
 
     fillOutForm = data => {
-        for (const id of Object.values(TEST_CASE_TEMPLATE_FIELD)) {
-            cy.get(id).then($el => {
+        for (const { type } of testTemplate.formElements) {
+            cy.get(testId('test-' + type)).then($el => {
                 const tag = $el[0].tagName;
                 if (tag === 'INPUT') {
                     switch ($el[0].getAttribute('type')) {

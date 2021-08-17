@@ -3,5 +3,8 @@
   "defaultCommandTimeout": 1000,
   "screenshotOnRunFailure": false,
   "video": false,
-  "reporter": "min"
+  "reporter": "min",
+  "reporterOptions": {
+    "onlyFailures": true
+  }
 }

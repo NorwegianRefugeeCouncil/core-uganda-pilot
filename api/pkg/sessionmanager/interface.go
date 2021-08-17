@@ -85,8 +85,8 @@ const (
 )
 
 func (r RedisSessionManager) AddNotification(req *http.Request, w http.ResponseWriter, notification *Notification) error {
-	// FIXME was converted to noop because of securecookie error
 	return nil
+	// FIXME was converted to noop because of securecookie error
 	// session, err := r.Store.Get(req, varNotifications)
 	// if err != nil {
 	// 	return err
@@ -99,8 +99,8 @@ func (r RedisSessionManager) AddNotification(req *http.Request, w http.ResponseW
 }
 
 func (r RedisSessionManager) ConsumeNotifications(req *http.Request, w http.ResponseWriter) ([]*Notification, error) {
-	// FIXME was converted to noop because of securecookie error
 	return nil, nil
+	// FIXME was converted to noop because of securecookie error
 	// session, err := r.Store.Get(req, varNotifications)
 	// if err != nil {
 	// 	return nil, err
