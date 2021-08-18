@@ -11,8 +11,5 @@ func ValidateParty(party *Party, path *validation.Path) validation.ErrorList {
 		errs = append(errs, err)
 	}
 
-	// Validate Attributes
-	// TODO COR-159
-
 	return errs
 }

@@ -31,7 +31,7 @@ type I18nString struct {
 	Value  string `json:"value" bson:"value"`
 }
 
-// TODO change static string fields (labels, descriptors) to []I18nString?
+// TODO COR-209 change static string fields (labels, descriptors) to []I18nString?
 type FormElementAttributes struct {
 	Label           string           `json:"label" bson:"label"`
 	Name            string           `json:"name" bson:"name"`

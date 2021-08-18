@@ -82,11 +82,6 @@ var EMailAttribute = Attribute{
 
 // Customisation for Uganda Demo
 
-// TODO: This should be a dropdown attribute
-// Values
-// - Refugee
-// - Internally-displaced person
-// - Host community
 var DisplacementStatusAttribute = Attribute{
 	ID:   "d1d824b2-d163-43ff-bc0a-527bd86b79bb",
 	Name: "displacementStatus",
@@ -132,6 +127,7 @@ var GenderAttribute = Attribute{
 }
 
 // TODO: This should be replaced with the OIDC consent mechanism
+// COR-208
 // This was previously mentioned by @ludydoo, and this attribute
 // should be considered only for demo purposes!
 // Also evaluate whether the proof attribute is still needed if
@@ -338,7 +334,6 @@ var SensoryImpairmentIntensityAttribute = Attribute{
 	},
 }
 
-// TODO: Should be a checkbox/boolean attribute
 var MentalImpairmentAttribute = Attribute{
 	ID:   "41b7eb87-6488-47e3-a4b0-1422c039d0c7",
 	Name: "mentalImpairment",
