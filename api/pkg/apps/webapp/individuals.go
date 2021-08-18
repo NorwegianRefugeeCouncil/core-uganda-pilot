@@ -43,8 +43,9 @@ func (s *Server) Individuals(w http.ResponseWriter, req *http.Request) {
 		s.Error(w, err)
 		return
 	}
+	listOptions.PartyTypeIDs = []string{iam.BeneficiaryPartyType.ID}
 
-	list, err := iamClient.Individuals().List(ctx, iam.IndividualListOptions{PartyTypeIDs: []string{iam.BeneficiaryPartyType.ID}})
+	list, err := iamClient.Individuals().List(ctx, listOptions)
 	if err != nil {
 		s.Error(w, err)
 		return

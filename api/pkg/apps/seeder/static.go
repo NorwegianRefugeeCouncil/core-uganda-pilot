@@ -650,7 +650,6 @@ var (
 	_ = beneficiary(JohnDoe)
 	_ = beneficiary(MaryPoppins)
 	_ = beneficiary(BoDiddley)
-	_ = beneficiary(Stephen)
 
 	// Staff
 	_ = staff(Stephen)

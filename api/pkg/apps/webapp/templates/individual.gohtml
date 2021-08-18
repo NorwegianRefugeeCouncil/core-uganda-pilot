@@ -1,5 +1,5 @@
 {{define "individual"}}
-    {{$hasIntakeCases := (and (not .IsNew) (and (eq (len .Individual.PartyTypeIDs) 1) (.Individual.HasPartyType .IndividualPartyTypeID)))}}
+    {{$hasIntakeCases := (and (not .IsNew) (and .SituationAnalysis .IndividualAssessment))}}
     <!doctype html>
     <html lang="en">
     {{template "head"}}
