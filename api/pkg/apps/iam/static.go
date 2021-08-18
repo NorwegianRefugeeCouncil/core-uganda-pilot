@@ -551,6 +551,12 @@ var StaffPartyType = PartyType{
 	IsBuiltIn: true,
 }
 
+var BeneficiaryPartyType = PartyType{
+	ID:        "09dbb93e-25c5-4cd5-a861-c2706efee0e0",
+	Name:      "beneficiary",
+	IsBuiltIn: true,
+}
+
 var IndividualPartyType = PartyType{
 	ID:        "a842e7cb-3777-423a-9478-f1348be3b4a5",
 	Name:      "Individual",
