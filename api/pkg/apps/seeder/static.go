@@ -110,6 +110,11 @@ func staff(individual iam.Individual) iam.Individual {
 	return individual
 }
 
+func beneficiary(individual iam.Individual) iam.Individual {
+	individual.AddPartyType(iam.BeneficiaryPartyType.ID)
+	return individual
+}
+
 func membership(id string, individual iam.Individual, team iam.Team) iam.Membership {
 	m := iam.Membership{
 		ID:           id,
@@ -637,10 +642,19 @@ var (
 	MaryPoppins = individual("bbf539fd-ebaa-4438-ae4f-8aca8b327f42", "Mary", "Poppins", "1983-04-23", "Internally Displaced Person", "Female", "Yes", "https://link-to-consent.proof", "No", "No", "No", "No", "", "No", "", "No", "", "Uganda", "Rukiga, English", "Rukiga", "901 First Avenue, Kampala", "0123456789", "", "Telegram", "Yes")
 	BoDiddley   = individual("26335292-c839-48b6-8ad5-81271ee51e7b", "Bo", "Diddley", "1983-04-23", "Host Community", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "Yes", "No", "", "No", "", "No", "", "Somalia", "Somali, Arabic, English", "English", "101 Main Street, Kampala", "0123456789", "", "Whatsapp", "No")
 
-	// Individuals (Staff)
-	Stephen  = staff(individual("066a0268-fdc6-495a-9e4b-d60cfae2d81a", "Stephen", "Kabagambe", "1983-04-23", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
-	Colette  = staff(individual("93f9461f-31da-402e-8988-6e0100ecaa24", "Colette", "le Jeune", "1983-04-23", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
-	Courtney = staff(individual("14c014d9-f433-4508-b33d-dc45bf86690b", "Courtney", "Lare", "1983-04-23", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
+	Stephen  = individual("066a0268-fdc6-495a-9e4b-d60cfae2d81a", "Stephen", "Kabagambe", "1983-04-23", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Colette  = individual("93f9461f-31da-402e-8988-6e0100ecaa24", "Colette", "le Jeune", "1983-04-23", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Courtney = individual("14c014d9-f433-4508-b33d-dc45bf86690b", "Courtney", "Lare", "1983-04-23", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+
+	// Beneficiaries
+	_ = beneficiary(JohnDoe)
+	_ = beneficiary(MaryPoppins)
+	_ = beneficiary(BoDiddley)
+
+	// Staff
+	_ = staff(Stephen)
+	_ = staff(Colette)
+	_ = staff(Courtney)
 
 	// Memberships
 	StevenMembership   = membership("862690ee-87f0-4f95-aa1e-8f8a2f2fd54a", Stephen, UgandaCoreAdminTeam)
