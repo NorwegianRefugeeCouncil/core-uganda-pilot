@@ -1,6 +1,7 @@
 package webapp
 
 import (
+	"fmt"
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/nrc-no/core/pkg/teamstatusctrl"
@@ -22,13 +23,26 @@ func (s *Server) GetTeamStatusController(req *http.Request, individual *iam.Indi
 		return tsc, err
 	}
 
-	// Get Memberships For Individual
+	// Get currently logged in user
+	session, err := s.sessionManager.Get(req)
+	if err != nil {
+		return tsc, err
+	}
+
+	profile := session.Values["profile"]
+
+	userSessionClaims, ok := profile.(*Claims)
+	if !ok {
+		return tsc, fmt.Errorf("Failed to cast profile to claims")
+	}
+
+	// Get memberships For currently logged in user
 	iamClient, err := s.IAMClient(req)
 	if err != nil {
 		return tsc, err
 	}
 	memberships, err := iamClient.Memberships().List(req.Context(), iam.MembershipListOptions{
-		IndividualID: individual.ID,
+		IndividualID: userSessionClaims.Subject,
 	})
 	if err != nil {
 		return tsc, err
@@ -50,7 +64,7 @@ func (s *Server) GetTeamStatusController(req *http.Request, individual *iam.Indi
 		}
 	}
 
-	// Get team intake case types for individual
+	// Get team intake case types for currently logged in user
 	teamIntakeCaseTypes := []*cms.CaseType{}
 	caseTypes, err := cmsClient.CaseTypes().List(req.Context(), cms.CaseTypeListOptions{
 		TeamIDs: teamIdsForIndividual,

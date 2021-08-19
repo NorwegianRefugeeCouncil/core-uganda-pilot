@@ -1,13 +1,29 @@
 {{define "individual-row"}}
 
-    <a class="list-group-item font-monospace py-3 bg-quite-light"
-       data-testid="individual"
-       href="/individuals/{{.Individual.ID}}">
-        {{.Individual}}
-        <span class="d-block text-muted">
-            Registration/Intake Step {{.RegistrationStatus.Label}}
-        </span>
-    </a>
+    <div class="list-group-item py-3">
+        <a class="font-monospace bg-quite-light"
+           data-testid="individual"
+           href="/individuals/{{.Individual.ID}}">
+            {{.Individual}}
+            <span class="d-block text-muted">
+                Registration/Intake Step {{.RegistrationStatus.Label}}
+            </span>
+        </a>
+
+        <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+        {{ range .TeamStatusActions }}
+
+            {{ if eq .RedirectID ""}}
+                <button type="button" class="btn btn-outline-primary">Create a new {{.Label}}</button>
+            {{ else }}
+                <button type="button" class="btn btn-outline-secondary">View existing {{.Label}}</button>
+            {{ end}}
+
+        {{ end }}
+        </div>
+
+    </div>
+
 {{end}}
 
 {{define "individuals"}}

@@ -10,9 +10,9 @@ type TeamStatusCtrl struct {
 }
 
 type TeamStatusAction struct {
-	label      string
-	caseTypeId string
-	redirectId string
+	Label      string
+	CaseTypeID string
+	RedirectID string
 }
 
 func (tsc *TeamStatusCtrl) GetTeamStatusActions() []TeamStatusAction {
@@ -24,9 +24,9 @@ func (tsc *TeamStatusCtrl) GetTeamStatusActions() []TeamStatusAction {
 		for _, ct := range tsc.TeamIntakeCaseTypes {
 			if kase.CaseTypeID == ct.ID {
 				newAction := TeamStatusAction{
-					label:      ct.Name,
-					caseTypeId: ct.ID,
-					redirectId: kase.ID,
+					Label:      ct.Name,
+					CaseTypeID: ct.ID,
+					RedirectID: kase.ID,
 				}
 				teamStatusActions = append(teamStatusActions, newAction)
 				break
@@ -40,7 +40,7 @@ func (tsc *TeamStatusCtrl) GetTeamStatusActions() []TeamStatusAction {
 		ctAccountedForInActions := false
 
 		for _, tsa := range teamStatusActions {
-			if tsa.caseTypeId == ct.ID {
+			if tsa.CaseTypeID == ct.ID {
 				ctAccountedForInActions = true
 				break
 			}
@@ -48,9 +48,9 @@ func (tsc *TeamStatusCtrl) GetTeamStatusActions() []TeamStatusAction {
 
 		if !ctAccountedForInActions {
 			newAction := TeamStatusAction{
-				label:      ct.Name,
-				caseTypeId: ct.ID,
-				redirectId: "",
+				Label:      ct.Name,
+				CaseTypeID: ct.ID,
+				RedirectID: "",
 			}
 
 			teamStatusActions = append(teamStatusActions, newAction)
