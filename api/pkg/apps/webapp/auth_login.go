@@ -1,21 +1,17 @@
 package webapp
 
 import (
-	"crypto/rand"
-	"encoding/base64"
+	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
 func (s *Server) Login(w http.ResponseWriter, req *http.Request) {
-
-	b := make([]byte, 32)
-	_, err := rand.Read(b)
+	state, err := s.createHydraStateVariable()
 	if err != nil {
+		logrus.WithError(err).Errorf("failed to make a new state variable for hydra login flow")
 		s.Error(w, err)
 		return
 	}
-
-	state := base64.StdEncoding.EncodeToString(b)
 
 	session, err := s.sessionManager.Get(req)
 	if err != nil {
