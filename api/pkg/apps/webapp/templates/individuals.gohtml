@@ -1,7 +1,7 @@
 {{define "individual-row"}}
 
-    <div class="list-group-item py-3">
-        <a class="font-monospace bg-quite-light"
+    <div class="list-group-item py-3 d-flex justify-content-between flex-wrap">
+        <a class="font-monospace bg-quite-light text-decoration-none"
            data-testid="individual"
            href="/individuals/{{.Individual.ID}}">
             {{.Individual}}
@@ -14,9 +14,9 @@
         {{ range .TeamStatusActions }}
 
             {{ if eq .RedirectID ""}}
-                <button type="button" class="btn btn-outline-primary">Create a new {{.Label}}</button>
+                <a href="/cases/new?caseTypeId={{.CaseTypeID}}&partyId={{$.Individual.ID}}" type="button" class="btn btn-outline-primary">Create a new {{.Label}}</a>
             {{ else }}
-                <button type="button" class="btn btn-outline-secondary">View existing {{.Label}}</button>
+                <a href="/cases/{{.RedirectID}}" type="button" class="btn btn-outline-secondary">View existing {{.Label}}</a>
             {{ end}}
 
         {{ end }}

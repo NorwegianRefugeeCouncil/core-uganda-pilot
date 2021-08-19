@@ -524,6 +524,7 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.AttributeList, i
 	// Update or create the individual
 	var storageAction string
 	if id == "" {
+		b.PartyTypeIDs = append(b.PartyTypeIDs, iam.BeneficiaryPartyType.ID)
 		individual, err = iamClient.Individuals().Create(ctx, b)
 		if err != nil {
 			return nil, err
