@@ -44,7 +44,6 @@ func ValidateCase(kase *Case, path *validation.Path) validation.ErrorList {
 				}
 				break
 			}
-			// TODO COR-156 implement validation for specific input controls (email, date, etc)
 		}
 	}
 
