@@ -43,14 +43,12 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 				logrus.WithError(err).Errorf("failed to get session, attempting to clear session and redirect to login")
 
 				// make a new state variable for hydra login flow
-				b := make([]byte, 32)
-				_, err := rand.Read(b)
+				state, err := s.createHydraStateVariable()
 				if err != nil {
-					logrus.WithError(err).Errorf("failed to create a new state variable for hydra login flow!")
+					logrus.WithError(err).Errorf("failed to make a new state variable for hydra login flow")
 					s.Error(w, err)
 					return
 				}
-				state := base64.StdEncoding.EncodeToString(b)
 
 				// if possible, store new state in the session
 				if session != nil {
@@ -121,6 +119,17 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 		})
 	}
 
+}
+
+func (s *Server) createHydraStateVariable() (string, error) {
+	b := make([]byte, 32)
+	_, err := rand.Read(b)
+	if err != nil {
+		logrus.WithError(err).Errorf("failed to create a new state variable!")
+		return "", err
+	}
+	state := base64.StdEncoding.EncodeToString(b)
+	return state, nil
 }
 
 func (s *Server) dangerouslySetAuthenticatedUserUsingEmail(w http.ResponseWriter, req *http.Request, authUserEmail string, handler http.Handler) {
