@@ -80,12 +80,11 @@ type CaseTemplate struct {
 	FormElements []form.FormElement `json:"formElements" bson:"formElements"`
 }
 
-func (c *CaseTemplate) MarkAsReadonly() *CaseTemplate {
-	elems := []form.FormElement{}
+func (c *CaseTemplate) MarkAsReadonly() {
+	var elems []form.FormElement
 	for _, element := range c.FormElements {
-		e := element
-		e.Readonly = true
-		elems = append(elems, e)
+		element.Readonly = true
+		elems = append(elems, element)
 	}
-	return &CaseTemplate{elems}
+	c.FormElements = elems
 }

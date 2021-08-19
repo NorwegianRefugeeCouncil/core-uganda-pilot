@@ -325,6 +325,13 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		attribute.Attributes.Value = values
 	}
 
+	// mark cases readonly if needed
+	for _, kase := range []*cms.Case{individualAssessment, situationAnalysis} {
+		if kase != nil && (kase.Done || status.CurrentStage == -1) {
+			kase.Template.MarkAsReadonly()
+		}
+	}
+
 	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "individual", map[string]interface{}{
 		"IsNew":                     id == "new",
 		"Individual":                individual,
