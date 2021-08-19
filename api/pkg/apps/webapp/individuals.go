@@ -10,6 +10,7 @@ import (
 	"github.com/nrc-no/core/pkg/form"
 	"github.com/nrc-no/core/pkg/registrationctrl"
 	"github.com/nrc-no/core/pkg/sessionmanager"
+	"github.com/nrc-no/core/pkg/teamstatusctrl"
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/nrc-no/core/pkg/validation"
 	"golang.org/x/sync/errgroup"
@@ -21,6 +22,7 @@ import (
 type IndividualWithStatuses struct {
 	Individual         *iam.Individual
 	RegistrationStatus *registrationctrl.Status
+	TeamStatusActions  []teamstatusctrl.TeamStatusAction
 }
 
 func (s *Server) Individuals(w http.ResponseWriter, req *http.Request) {
@@ -58,9 +60,17 @@ func (s *Server) Individuals(w http.ResponseWriter, req *http.Request) {
 			s.Error(w, err)
 			return
 		}
+
+		tsc, err := s.GetTeamStatusController(req, b)
+		if err != nil {
+			s.Error(w, err)
+			return
+		}
+
 		beneficiaryWithStatuses = append(beneficiaryWithStatuses, IndividualWithStatuses{
 			Individual:         b,
 			RegistrationStatus: rc.Status(),
+			TeamStatusActions:  tsc.GetTeamStatusActions(),
 		})
 	}
 
@@ -514,6 +524,7 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.AttributeList, i
 	// Update or create the individual
 	var storageAction string
 	if id == "" {
+		b.PartyTypeIDs = append(b.PartyTypeIDs, iam.BeneficiaryPartyType.ID)
 		individual, err = iamClient.Individuals().Create(ctx, b)
 		if err != nil {
 			return nil, err
