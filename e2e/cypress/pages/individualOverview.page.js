@@ -1,11 +1,12 @@
 import { testId, URL } from '../helpers';
 import IndividualPage from './individualPage';
 
-const ID = {
-    INDIVIDUAL_ROWS: testId('individual'),
-    INDIVIDUAL: testId('individual'),
-    SEARCH: testId('search'),
-    SEARCH_BTN: testId('search-btn'),
+const selector = {
+    individualRows: testId('individual'),
+    individual: testId('individual'),
+    newIndividualBtn: testId('new-individual-btn'),
+    search: testId('search'),
+    searchBtn: testId('search-btn'),
 };
 
 export default class IndividualOverviewPage {
@@ -14,22 +15,25 @@ export default class IndividualOverviewPage {
         return this;
     };
 
+    newIndividual = () => {
+        return cy.get(selector.newIndividualBtn).click();
+    };
     selectIndividual = () => {
-        return cy.get(ID.INDIVIDUAL_ROWS).last();
+        return cy.get(selector.individualRows).last();
     };
 
     visitIndividual = () => {
-        cy.get(ID.INDIVIDUAL_ROWS).last().click();
+        cy.get(selector.individualRows).last().click();
         return new IndividualPage();
     };
 
     searchFor = value => {
         return cy
-            .get(ID.SEARCH)
+            .get(selector.search)
             .type(value)
-            .get(ID.SEARCH_BTN)
+            .get(selector.searchBtn)
             .click()
-            .get(ID.INDIVIDUAL)
+            .get(selector.individual)
             .last()
             .invoke('attr', 'href');
     };

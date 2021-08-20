@@ -1,46 +1,78 @@
 import IndividualPage from '../pages/individualPage';
 import IndividualOverviewPage from '../pages/individualOverview.page';
 
-const DATA = {
-    ATTRIBUTE_NAME: 'Test',
-    EDITED_ATTRIBUTE_NAME: 'Edited',
-    RELATIONSHIP_TYPE: 'Is spouse of',
-    RELATED_PARTY: 'DOE',
+const data = {
+    attributes: {
+        firstName: 'Test',
+        lastName: 'Person',
+        birthDate: '1978-10-30',
+        email: 'test@email.com',
+        status: '0',
+        gender: '0',
+        relationshipType: 'Is spouse of',
+        relatedParty: 'POPPINS',
+    },
+    attributes_u: {
+        firstName: 'Test - updated',
+        lastName: 'Person - updated',
+        birthDate: '1979-11-12',
+        email: 'test.updated@email.com',
+        status: '1',
+        gender: '1',
+        relationshipType: 'Is sibling of',
+        relatedParty: 'DOE',
+    },
+    situationAnalysis: 'text content',
+    response: {
+        optionIdx: 0,
+        priorityTxt: 'text content',
+    },
 };
-const ATTRIBUTE_NAME = 'Test';
-const EDITED_ATTRIBUTE_NAME = 'Edited';
 
-// FIXME rewrite
+function getTestIndividual(lastName) {
+    const individualOverviewPage = new IndividualOverviewPage().visitPage();
+    return new IndividualPage(individualOverviewPage.searchFor(lastName));
+}
+
 describe.skip('Individual Page', function () {
-    describe('Create', () => {
-        it('should navigate to New Individual Form Page and save new Individual', () => {
+    describe('Navigate', () => {
+        it('should navigate to new Individual page from Individuals overview', () => {
+            const individualOverviewPage = new IndividualOverviewPage();
+            individualOverviewPage.visitPage().newIndividual();
+        });
+    });
+    describe('Attributes', () => {
+        it('should create a new Individual', () => {
             const newIndividualPage = new IndividualPage();
-            newIndividualPage
-                .visitPage()
-                .typeTextAttributes(ATTRIBUTE_NAME)
-                .selectRelationshipType(DATA.RELATIONSHIP_TYPE)
-                .typeRelatedParty(DATA.RELATED_PARTY)
-                .addParty()
-                .save();
+            newIndividualPage.visitPage().inputAttributes(data.attributes).save();
         });
-    });
-
-    describe('Verify new Individual', () => {
         it('should verify that the Individual was properly created', () => {
-            const individualOverviewPage = new IndividualOverviewPage().visitPage();
-            const individualPage = new IndividualPage(individualOverviewPage.searchFor(ATTRIBUTE_NAME));
-            // Verify values
-            individualPage.verifyTextAttributes(ATTRIBUTE_NAME);
-            individualPage.getRelationship().should('contain.text', DATA.RELATED_PARTY);
+            const individualPage = getTestIndividual(data.attributes.lastName);
+            individualPage.verifyAttributes(data.attributes);
+        });
+        it('should update attribute name on existing Individual', () => {
+            const individualPage = getTestIndividual(data.attributes.lastName);
+            individualPage.removeRelationship().inputAttributes(data.attributes_u).save();
+        });
+        it('should verify that the Individual was properly updated', () => {
+            const individualPage = getTestIndividual(data.attributes_u.lastName);
+            individualPage.verifyAttributes(data.attributes_u);
         });
     });
 
-    // TODO update this after COR-187 is done
-    describe.skip('Update', () => {
-        it('should update attribute name on existing Individual', () => {
-            const individualOverviewPage = new IndividualOverviewPage().visitPage();
-            const individualPage = new IndividualPage(individualOverviewPage.searchFor(ATTRIBUTE_NAME));
-            individualPage.typeTextAttributes(EDITED_ATTRIBUTE_NAME).save();
+    describe('Situation Analysis', () => {
+        it('should submit a situation analysis and verify it', () => {
+            const individualPage = getTestIndividual(data.attributes_u.lastName);
+            individualPage.visitSituationAnalysisTab().fillOutSituationAnalysis(data.situationAnalysis).save();
+            individualPage.visitSituationAnalysisTab().verifySituationAnalysis(data.situationAnalysis);
+        });
+    });
+
+    describe('Response', () => {
+        it('should submit a response form and verify it', () => {
+            const individualPage = getTestIndividual(data.attributes_u.lastName);
+            individualPage.visitResponseTab().fillOutResponse(data.response).save();
+            individualPage.visitResponseTab().verifyResponse(data.response);
         });
     });
 });
