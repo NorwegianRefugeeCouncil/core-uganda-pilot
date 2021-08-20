@@ -34,7 +34,7 @@ function getTestIndividual(lastName) {
     return new IndividualPage(individualOverviewPage.searchFor(lastName));
 }
 
-describe.skip('Individual Page', function () {
+describe('Individual Page', function () {
     describe('Navigate', () => {
         it('should navigate to new Individual page from Individuals overview', () => {
             const individualOverviewPage = new IndividualOverviewPage();

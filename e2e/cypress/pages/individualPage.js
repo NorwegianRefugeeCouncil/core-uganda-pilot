@@ -114,7 +114,9 @@ export default class IndividualPage {
         cy.get(selector.responseTab).click();
         return this;
     };
+
     getResponse = () => cy.get(selector.response);
+
     fillOutResponse = data => {
         this.getResponse().within(() => {
             cy.get(selector.taxonomyInput).each($t => this.fillTaxonomyInput($t, data.optionIdx));
@@ -122,6 +124,7 @@ export default class IndividualPage {
         });
         return this;
     };
+
     fillTaxonomyInput = ($t, i) => {
         cy.wrap($t).within(() => {
             cy.get('select').each($s => {
@@ -133,26 +136,18 @@ export default class IndividualPage {
             cy.get(selector.addTaxonomyBtn).click();
         });
     };
+
     verifyResponse = data => {
         this.getResponse().within(() => {
             cy.get(selector.taxonomyInput).each($t => this.verifyTaxonomyInput($t, data.optionIdx));
-            cy.get(selector.perceivedPriority).should('contain.text', data.priorityTxt);
+            cy.get(selector.perceivedPriority).should('have.value', data.priorityTxt);
         });
     };
-    verifyTaxonomyInput = ($t, i) => {
-        const expectedTaxonomy = [];
-        cy.wrap($t)
-            .find('select')
-            .each($s => {
-                cy.wrap($s)
-                    .find('option')
-                    .eq(i)
-                    .then($o => {
-                        expectedTaxonomy.push($o.text());
-                    });
-            });
-        cy.wrap($t).find(selector.taxonomyBadges).should('contain.text', expectedTaxonomy.join(' - '));
+
+    verifyTaxonomyInput = $t => {
+        cy.wrap($t).find(selector.taxonomyBadges).should('have.length', 1);
     };
+
     save = () => {
         cy.get(selector.saveBtn).click();
     };
