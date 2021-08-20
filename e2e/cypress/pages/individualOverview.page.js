@@ -1,5 +1,4 @@
 import { testId, URL } from '../helpers';
-import IndividualPage from './individualPage';
 
 const selector = {
     individualRows: testId('individual'),
@@ -18,14 +17,6 @@ export default class IndividualOverviewPage {
     newIndividual = () => {
         return cy.get(selector.newIndividualBtn).click();
     };
-    selectIndividual = () => {
-        return cy.get(selector.individualRows).last();
-    };
-
-    visitIndividual = () => {
-        cy.get(selector.individualRows).last().click();
-        return new IndividualPage();
-    };
 
     searchFor = value => {
         return cy
@@ -33,6 +24,7 @@ export default class IndividualOverviewPage {
             .type(value)
             .get(selector.searchBtn)
             .click()
+            .wait(500)
             .get(selector.individual)
             .last()
             .invoke('attr', 'href');
