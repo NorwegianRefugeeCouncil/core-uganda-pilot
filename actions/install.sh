@@ -8,5 +8,5 @@ gitconfig='../.git/config'
 # remove hooksPath from git config if set
 grep -v "hooksPath" $gitconfig > __tmp && mv __tmp $gitconfig
 # point hooksPath to hooks dir
-sed -i "s/\[core\]/\[core\]\n\thooksPath = actions\/git-hooks/" $gitconfig
+sed -i'' "s/\[core\]/\[core\]\n\thooksPath = actions\/git-hooks/" $gitconfig
 echo "Updated repo git config successfully."

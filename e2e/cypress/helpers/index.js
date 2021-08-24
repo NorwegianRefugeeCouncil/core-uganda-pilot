@@ -1,4 +1,5 @@
 export const testId = id => `[data-testid=${id}]`;
+export const nameAttr = name => `[name=${name}]`;
 
 export const URL = {
     INDIVIDUALS: '/individuals',
