@@ -28,10 +28,8 @@
 
     <div class="container mt-4">
         <div class="row">
-            <div class="col">
-                <div id="pivotContainer"></div>
-                <!--<div id="chartContainer"></div>-->
-            </div>
+            <div id="pivotContainer"></div>
+            <div id="chartContainer"></div>
         </div>
     </div>
 
@@ -55,14 +53,16 @@
             individuals.forEach(individual => {
                 if (individual['partyTypeIds'].includes("{{.BeneficiaryPartyTypeID}}")) {
 
-                    let individualCases = []
+                    let openCases = 0
+                    let closedCases = 0
 
                     cases.forEach(kase => {
                         if (kase["partyId"] === individual["id"]) {
-                            individualCases.push({
-                                'status': kase['done'],
-                                'name': caseTypeLabelMap[kase['caseTypeId']]
-                            })
+                            if (kase['done']) {
+                                closedCases++
+                            } else {
+                                openCases++
+                            }
                         }
                     })
 
@@ -71,7 +71,8 @@
                         displacementStatus: individual['attributes']["{{.DisplacementStatusAttributeID}}"][0],
                         gender: individual['attributes']["{{.GenderAttributeID}}"][0],
                         birthDate: individual['attributes']["{{.BirthDateAttributeID}}"][0],
-                        cases: individualCases,
+                        openCases: openCases,
+                        closedCases: closedCases,
                     });
                 }
             });
@@ -79,7 +80,7 @@
         };
         var pivot = new WebDataRocks({
             container: '#pivotContainer',
-            toolbar: false,
+            toolbar: true,
             height: 580,
             width: '100%',
             report: {
@@ -92,9 +93,67 @@
                         'title': 'Beneficiary Pivot Table'
                     }
                 },
+                "slice": {
+                    "rows": [
+                        {
+                            "uniqueName": "gender"
+                        }
+                    ],
+                    "columns": [
+                        {
+                            "uniqueName": "Measures"
+                        }
+                    ],
+                    "measures": [
+                        {
+                            "uniqueName": "closedCases",
+                            "aggregation": "sum"
+                        }
+                    ]
+                },
+            },
+            reportcomplete: function() {
+                createPieChart();
             },
         });
-        console.log(JSON.stringify(parseData({{.Individuals.Items}}, {{.Cases.Items}}, {{.CaseTypes.Items}}), null, 3));
+        var chart
+        function createPieChart() {
+            /* Get all the data from the pivot grid (alternatively, a slice can be passed to getData() as the first argument) */
+            pivot.amcharts.getData({}, drawChart, updateChart);
+        }
+
+        function drawChart(chartData, rawData) {
+            /* Apply amCharts theme */
+            am4core.useTheme(am4themes_animated);
+
+            /* Create chart instance */
+            chart = am4core.create("chartContainer", am4charts.PieChart);
+
+            /* Add data processed by WebDataRocks to the chart */
+            chart.data = chartData.data;
+            var numberFormat = pivot.amcharts.getNumberFormatPattern(rawData.meta.formats[0]);
+
+            /* Apply number formatting to the chart */
+            chart.numberFormatter.numberFormat = numberFormat;
+
+            /* Create and configure series for a pie chart */
+            var pieSeries = chart.series.push(new am4charts.PieSeries());
+            pieSeries.dataFields.category = pivot.amcharts.getCategoryName(rawData);
+            pieSeries.dataFields.value = pivot.amcharts.getMeasureNameByIndex(rawData, 0);
+            pieSeries.slices.template.stroke = am4core.color("#fff");
+            pieSeries.slices.template.strokeWidth = 2;
+            pieSeries.slices.template.strokeOpacity = 1;
+
+            /* Create initial animation */
+            pieSeries.hiddenState.properties.opacity = 1;
+            pieSeries.hiddenState.properties.endAngle = -90;
+            pieSeries.hiddenState.properties.startAngle = -90;
+        }
+
+        function updateChart(chartData, rawData) {
+            chart.dispose();
+            drawChart(chartData, rawData);
+        }
     </script>
 
     </body>
