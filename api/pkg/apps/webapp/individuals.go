@@ -436,7 +436,12 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.AttributeList, i
 		return nil, err
 	}
 
-	b := iam.NewIndividual(id)
+	var individual *iam.Individual
+	if len(id) == 0 {
+		individual = iam.NewIndividual("")
+	} else {
+		individual, err = iamClient.Individuals().Get(ctx, id)
+	}
 
 	attributeMap := map[string]*iam.Attribute{}
 	for _, attribute := range attrs.Items {
@@ -459,7 +464,7 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.AttributeList, i
 		// Populate the Party.attributes
 		// as well as the Attributes object (for validation)
 		if attr := attrs.FindByName(key); attr != nil {
-			b.Attributes[attr.ID] = vals
+			individual.Attributes[attr.ID] = vals
 			attr.Attributes.Value = vals
 			attrErrs = append(attrErrs, iam.ValidateAttribute(attr, validation.NewPath(""))...)
 		}
@@ -514,7 +519,6 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.AttributeList, i
 		}
 	}
 
-	var individual *iam.Individual
 	// Verify attribute validation and act accordingly
 	if len(attrErrs) > 0 {
 		status := attrErrs.Status(http.StatusUnprocessableEntity, "invalid case")
@@ -524,8 +528,8 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.AttributeList, i
 	// Update or create the individual
 	var storageAction string
 	if id == "" {
-		b.PartyTypeIDs = append(b.PartyTypeIDs, iam.BeneficiaryPartyType.ID)
-		individual, err = iamClient.Individuals().Create(ctx, b)
+		individual.PartyTypeIDs = append(individual.PartyTypeIDs, iam.BeneficiaryPartyType.ID)
+		individual, err = iamClient.Individuals().Create(ctx, individual)
 		if err != nil {
 			return nil, err
 		}
@@ -535,7 +539,7 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.AttributeList, i
 		}
 		storageAction = "created"
 	} else {
-		if individual, err = iamClient.Individuals().Update(ctx, b); err != nil {
+		if individual, err = iamClient.Individuals().Update(ctx, individual); err != nil {
 			return nil, err
 		}
 		storageAction = "updated"
@@ -570,7 +574,7 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.AttributeList, i
 
 	// Set flash notification
 	if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
-		Message: fmt.Sprintf("Individual \"%s\" successfully %s", b.String(), storageAction),
+		Message: fmt.Sprintf("Individual \"%s\" successfully %s", individual.String(), storageAction),
 		Theme:   "success",
 	}); err != nil {
 		return nil, err

@@ -78,7 +78,7 @@ func IsValidPhone(s string) bool {
 var InvalidPhoneDetail = "Invalid phone number"
 
 // input[type="date"] will always yield yyyy-mm-dd regardless of locale (and user facing format)
-var dateFormat = regexp.MustCompile(`^\d{4}-(0\d|1[12])-([012]\d|3[01])`)
+var dateFormat = regexp.MustCompile(`^\d{4}-(0\d|1[012])-([012]\d|3[01])`)
 
 func IsValidDate(s string) bool {
 	return dateFormat.MatchString(s)
