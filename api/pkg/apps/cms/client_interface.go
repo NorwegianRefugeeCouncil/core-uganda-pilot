@@ -65,6 +65,7 @@ type CaseClient interface {
 
 type CaseTypeListOptions struct {
 	PartyTypeIDs []string
+	TeamIDs      []string
 }
 
 func (a *CaseTypeListOptions) MarshalQueryParameters() (url.Values, error) {
@@ -72,11 +73,15 @@ func (a *CaseTypeListOptions) MarshalQueryParameters() (url.Values, error) {
 	for _, partyTypeID := range a.PartyTypeIDs {
 		ret.Add("partyTypeId", partyTypeID)
 	}
+	for _, teamID := range a.TeamIDs {
+		ret.Add("teamId", teamID)
+	}
 	return ret, nil
 }
 
 func (a *CaseTypeListOptions) UnmarshalQueryParameters(values url.Values) error {
 	a.PartyTypeIDs = values["partyTypeId"]
+	a.TeamIDs = values["teamId"]
 	return nil
 }
 

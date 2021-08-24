@@ -1,13 +1,29 @@
 {{define "individual-row"}}
 
-    <a class="list-group-item font-monospace py-3 bg-quite-light"
-       data-testid="individual"
-       href="/individuals/{{.Individual.ID}}">
-        {{.Individual}}
-        <span class="d-block text-muted">
-            Registration/Intake Step {{.RegistrationStatus.Label}}
-        </span>
-    </a>
+    <div class="list-group-item py-3 d-flex justify-content-between flex-wrap">
+        <a class="font-monospace bg-quite-light text-decoration-none"
+           data-testid="individual"
+           href="/individuals/{{.Individual.ID}}">
+            {{.Individual}}
+            <span class="d-block text-muted">
+                Registration/Intake Step {{.RegistrationStatus.Label}}
+            </span>
+        </a>
+
+        <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+        {{ range .TeamStatusActions }}
+
+            {{ if eq .RedirectID ""}}
+                <a href="/cases/new?caseTypeId={{.CaseTypeID}}&partyId={{$.Individual.ID}}" type="button" class="btn btn-outline-primary">Create a new {{.Label}}</a>
+            {{ else }}
+                <a href="/cases/{{.RedirectID}}" type="button" class="btn btn-outline-secondary">View existing {{.Label}}</a>
+            {{ end}}
+
+        {{ end }}
+        </div>
+
+    </div>
+
 {{end}}
 
 {{define "individuals"}}
@@ -23,7 +39,8 @@
     <div class="container mt-4">
         <div class="row">
             <div class="col">
-                <a href='/individuals/new' class='btn btn-primary mb-3'>Register Individual</a>
+                <a href='/individuals/new' class='btn btn-primary mb-3' data-testid="new-individual-btn">Register
+                    Individual</a>
                 <div class="list-group">
                     <div class="list-group-item bg-light ">
                         <div class="d-flex align-items-center">
@@ -42,7 +59,7 @@
 
                     {{ if .IndividualsWithStatuses}}
                         {{ range .IndividualsWithStatuses }}
-                           {{template "individual-row" .}}
+                            {{template "individual-row" .}}
                         {{end}}
                     {{else}}
                         <div class='list-group-item disabled'>No individual found</div>
@@ -59,7 +76,7 @@
 
         searchButton.addEventListener('click', (event) => {
             const searchParams = new URLSearchParams({
-                'searchParam': searchInput.value
+                'searchParam': searchInput.value,
             });
             window.location = '/individuals?' + searchParams.toString();
         });
