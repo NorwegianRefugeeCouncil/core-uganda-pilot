@@ -65,6 +65,12 @@ func (s *CaseTypeStore) List(ctx context.Context, options CaseTypeListOptions) (
 		}
 	}
 
+	if len(options.TeamIDs) > 0 {
+		filter["teamId"] = bson.M{
+			"$in": options.TeamIDs,
+		}
+	}
+
 	collection, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
@@ -110,7 +116,7 @@ func (s *CaseTypeStore) Update(ctx context.Context, caseType *CaseType) error {
 			"name":        caseType.Name,
 			"partyTypeId": caseType.PartyTypeID,
 			"teamId":      caseType.TeamID,
-			"casTemplate": caseType.Template,
+			"Template":    caseType.Template,
 		},
 	})
 	if err != nil {

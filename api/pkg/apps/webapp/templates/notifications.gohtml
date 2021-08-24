@@ -2,7 +2,8 @@
     {{$notifications := Notifications}}
     {{if $notifications}}
         {{range $index, $notification := $notifications}}
-            <div class="alert {{if $notification.Theme}}alert-{{$notification.Theme}}{{end}} alert-dismissible fade show" role="alert" data-testid="alert">
+            <div class="alert {{if $notification.Theme}}alert-{{$notification.Theme}}{{end}} alert-dismissible fade show"
+                 role="alert" data-testid="flash">
                 {{$notification.Message}}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>

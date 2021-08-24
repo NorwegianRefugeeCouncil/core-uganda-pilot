@@ -1,0 +1,10 @@
+{{define "label"}}
+    <label class="mb-2 text-muted" style="font-weight: bold;"
+           for="{{.Attributes.Name}}">
+        {{if .Attributes.Label}}
+            {{.Attributes.Label}}
+        {{else if .Translations}}
+            {{(index .Translations 0).LongFormulation}}
+        {{end}}
+    </label>
+{{end}}

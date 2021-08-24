@@ -1,17 +1,16 @@
-import { Urls } from '../helpers';
+import { testId, URL } from '../helpers';
 import TeamPage from './team.page';
 
-const TEAM_ROWS = '[data-testid=team]';
+const TEAM_ROWS = testId('team');
 
 export default class TeamsOverviewPage {
     visitPage = () => {
-        cy.log('navigating to %s', Urls.TEAMS_URL);
-        cy.visit(Urls.TEAMS_URL);
+        cy.visit(URL.TEAMS);
         return this;
     };
 
     visitTeam = () => {
-        cy.get(TEAM_ROWS).first().click();
+        cy.get(TEAM_ROWS).last().click();
         return new TeamPage();
     };
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
+	"github.com/nrc-no/core/pkg/form"
 	"github.com/nrc-no/core/pkg/sessionmanager"
 	"github.com/nrc-no/core/pkg/validation"
 	"github.com/satori/go.uuid"
@@ -74,12 +75,7 @@ func (s *Server) Cases(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if req.Method == "POST" {
-		s.PostCase(req, w, ctx, &cms.Case{})
-		return
-	}
-
-	if err := s.renderFactory.New(req).ExecuteTemplate(w, "cases", map[string]interface{}{
+	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "cases", map[string]interface{}{
 		"Cases":         kases,
 		"CaseTypes":     caseTypes,
 		"Parties":       partyList,
@@ -93,8 +89,23 @@ func (s *Server) Cases(w http.ResponseWriter, req *http.Request) {
 }
 
 func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
+	var (
+		err              error
+		recipientParty   *iam.Party
+		team             *iam.Team
+		kase             *cms.Case
+		parent           *cms.Case
+		kaseTypes        *cms.CaseTypeList
+		referrals        *cms.CaseList
+		referralCaseType *cms.CaseType
+		creator          *iam.Party
+		comments         *cms.CommentList
+		commentAuthors   *iam.PartyList
+		commentAuthorMap = make(map[string]*iam.Party)
+	)
 
 	ctx := req.Context()
+
 	cmsClient, err := s.CMSClient(req)
 	if err != nil {
 		s.Error(w, err)
@@ -107,140 +118,95 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	caseID, ok := mux.Vars(req)["id"]
-	if !ok || len(caseID) == 0 {
-		err := fmt.Errorf("no id in path")
+	caseID, referralCaseTypeID, err := s.getCaseIds(req)
+	if err != nil {
 		s.Error(w, err)
 		return
 	}
 
-	var recipientParty *iam.Party
-	var team *iam.Team
-	var kase *cms.Case
-	var parent *cms.Case
-	var kaseTypes *cms.CaseTypeList
-	var referrals *cms.CaseList
-	var comments *cms.CommentList
-	var creator *iam.Party
+	kase, err = s.getCase(ctx, cmsClient, caseID, referralCaseTypeID)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
-	// Get Case
+	// Comments
 	g.Go(func() error {
-		if caseID == "new" {
-			kase = &cms.Case{}
-			return nil
-		}
-		var err error
-		kase, err = cmsClient.Cases().Get(waitCtx, caseID)
-		return err
-	})
-
-	// Get comments for case
-	g.Go(func() error {
-		var err error
-		comments, err = cmsClient.Comments().List(waitCtx, cms.CommentListOptions{
+		if comments, err = cmsClient.Comments().List(waitCtx, cms.CommentListOptions{
 			CaseID: caseID,
-		})
+		}); err == nil {
+			var commentAuthorIDMap = make(map[string]bool)
+			var commentAuthorIDs []string
+			// Get all comment author IDs
+			for _, comment := range comments.Items {
+				commentAuthorIDMap[comment.AuthorID] = true
+			}
+			for authorID := range commentAuthorIDMap {
+				commentAuthorIDs = append(commentAuthorIDs, authorID)
+			}
+			commentAuthors, err = iamClient.Parties().Search(waitCtx, iam.PartySearchOptions{
+				PartyTypeIDs: []string{iam.IndividualPartyType.ID},
+				PartyIDs:     commentAuthorIDs,
+			})
+			for _, author := range commentAuthors.Items {
+				commentAuthorMap[author.ID] = author
+			}
+		}
 		return err
 	})
 
-	if err := g.Wait(); err != nil {
-		s.Error(w, err)
-		return
-	}
-
-	if caseID != "new" && len(kase.CreatorID) > 0 {
-		var err error
-		creator, err = iamClient.Parties().Get(ctx, kase.CreatorID)
-		if err != nil {
-			s.Error(w, err)
-			return
+	// Creator
+	g.Go(func() error {
+		if len(kase.CreatorID) > 0 {
+			creator, err = iamClient.Parties().Get(waitCtx, kase.CreatorID)
 		}
-	}
-
-	// Get all comment author IDs
-	var commentAuthorIDMap = map[string]bool{}
-	for _, comment := range comments.Items {
-		commentAuthorIDMap[comment.AuthorID] = true
-	}
-	var commentAuthorIDs []string
-	for authorID := range commentAuthorIDMap {
-		commentAuthorIDs = append(commentAuthorIDs, authorID)
-	}
-
-	// Get all authors
-	commentAuthors, err := iamClient.Parties().Search(ctx, iam.PartySearchOptions{
-		PartyTypeIDs: []string{iam.IndividualPartyType.ID},
-		PartyIDs:     commentAuthorIDs,
+		return err
 	})
-	if err != nil {
-		s.Error(w, err)
-		return
-	}
-	var commentAuthorMap = map[string]*iam.Party{}
-	for _, author := range commentAuthors.Items {
-		commentAuthorMap[author.ID] = author
-	}
 
-	// Get case type team
-	if caseID != "new" {
-		teamRes, err := iamClient.Teams().Get(ctx, kase.TeamID)
-		if err != nil {
-			s.Error(w, err)
-			return
-		}
-		team = teamRes
-	}
-
-	// Get parent case
-	if len(kase.ParentID) > 0 {
-		parent, err = cmsClient.Cases().Get(ctx, kase.ParentID)
-		if err != nil {
-			s.Error(w, err)
-			return
-		}
-	}
-
-	// Get case recipient
-	recipientParty, err = iamClient.Parties().Get(ctx, kase.PartyID)
-	if err != nil {
-		s.Error(w, err)
-		return
-	}
-
-	// Get case types
-	kaseTypes, err = cmsClient.CaseTypes().List(ctx, cms.CaseTypeListOptions{
-		PartyTypeIDs: recipientParty.PartyTypeIDs,
+	// Team
+	g.Go(func() error {
+		team, err = iamClient.Teams().Get(waitCtx, kase.TeamID)
+		return err
 	})
-	if err != nil {
-		s.Error(w, err)
-		return
-	}
 
-	// Get case referrals
-	referrals, err = cmsClient.Cases().List(ctx, cms.CaseListOptions{
-		ParentID: kase.ID,
-	})
-	if err != nil {
-		s.Error(w, err)
-		return
-	}
-	qry := req.URL.Query()
-
-	var referralCaseType *cms.CaseType
-	if referralCaseTypeID := qry.Get("referralCaseTypeId"); len(referralCaseTypeID) > 0 {
-		referralCaseType, err = cmsClient.CaseTypes().Get(ctx, referralCaseTypeID)
-		if err != nil {
-			s.Error(w, err)
-			return
+	// Parent Case
+	g.Go(func() error {
+		if len(kase.ParentID) > 0 {
+			parent, err = cmsClient.Cases().Get(waitCtx, kase.ParentID)
 		}
-	}
-	if req.Method == "POST" {
-		s.PostCase(req, w, ctx, kase)
+		return err
+	})
+
+	// Recipient & CaseTypes
+	g.Go(func() error {
+		if recipientParty, err = iamClient.Parties().Get(waitCtx, kase.PartyID); err == nil {
+			kaseTypes, err = cmsClient.CaseTypes().List(waitCtx, cms.CaseTypeListOptions{
+				PartyTypeIDs: recipientParty.PartyTypeIDs,
+			})
+		}
+		return err
+	})
+
+	// Referrals
+	g.Go(func() error {
+		referrals, err = cmsClient.Cases().List(waitCtx, cms.CaseListOptions{ParentID: kase.ID})
+		return err
+	})
+	g.Go(func() error {
+		if len(referralCaseTypeID) > 0 {
+			referralCaseType, err = cmsClient.CaseTypes().Get(waitCtx, referralCaseTypeID)
+		}
+		return err
+	})
+
+	if err = g.Wait(); err != nil {
+		s.Error(w, err)
 		return
 	}
-	if err := s.renderFactory.New(req).ExecuteTemplate(w, "case", map[string]interface{}{
+
+	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "case", map[string]interface{}{
 		"Case":             kase,
 		"Parent":           parent,
 		"CaseTypes":        kaseTypes,
@@ -252,9 +218,7 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 		"Comments":         displayComments(comments, commentAuthorMap),
 	}); err != nil {
 		s.Error(w, err)
-		return
 	}
-
 }
 
 func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
@@ -327,7 +291,7 @@ func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	if err := s.renderFactory.New(req).ExecuteTemplate(w, "casenew", map[string]interface{}{
+	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "casenew", map[string]interface{}{
 		"PartyID":   qry.Get("partyId"),
 		"CaseType":  caseType,
 		"Team":      team,
@@ -339,37 +303,47 @@ func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (s *Server) PostCase(req *http.Request, w http.ResponseWriter, ctx context.Context, kase *cms.Case) {
+func (s *Server) PostCase(w http.ResponseWriter, req *http.Request) {
 	var err error
+	ctx := req.Context()
 
 	cmsClient, err := s.CMSClient(req)
 	if err != nil {
+		return
+	}
+
+	caseID, referralCaseTypeID, err := s.getCaseIds(req)
+	if err != nil {
 		s.Error(w, err)
 		return
 	}
+
+	kase, err := s.getCase(ctx, cmsClient, caseID, referralCaseTypeID)
 
 	if err := req.ParseForm(); err != nil {
-		s.Error(w, err)
 		return
 	}
 
-	caseTypeId := req.Form.Get("caseTypeId")
+	if kase.CaseTypeID == "" {
+		// we need to get the caseTypeId from the form data
+		kase.CaseTypeID = req.Form.Get("caseTypeId")
+		if kase.CaseTypeID == "" {
+			err = fmt.Errorf("unable to detect case type id for new case")
+			return
+		}
+	}
 
-	caseType, err := cmsClient.CaseTypes().Get(ctx, caseTypeId)
+	caseType, err := cmsClient.CaseTypes().Get(ctx, kase.CaseTypeID)
 	if err != nil {
-		s.Error(w, err)
 		return
 	}
 
-	err = UnmarshalCaseFormData(kase, caseType.Template, req.Form)
+	err = unmarshalCaseFormData(kase, caseType.Template, req.Form)
 	if err != nil {
-		s.Error(w, err)
 		return
 	}
 
 	var isNewCase = kase.ID == ""
-	var action string
-	var postedCase *cms.Case
 	if isNewCase {
 		subject := ctx.Value("Subject")
 		if subject == nil {
@@ -377,22 +351,106 @@ func (s *Server) PostCase(req *http.Request, w http.ResponseWriter, ctx context.
 		} else {
 			kase.CreatorID = subject.(string)
 		}
-		postedCase, err = cmsClient.Cases().Create(ctx, kase)
-		action = "created"
+		kase.IntakeCase = caseType.IntakeCaseType
+		kase, err = cmsClient.Cases().Create(ctx, kase)
 	} else {
-		postedCase, err = cmsClient.Cases().Update(ctx, kase)
-		action = "updated"
+		kase, err = cmsClient.Cases().Update(ctx, kase)
 	}
 	if err != nil {
 		if status, ok := err.(*validation.Status); ok {
-			s.renderCaseValidation(req, w, kase, status)
-			return
+			validatedElements := zipTemplateAndErrors(status.Errors, kase.Template)
+			s.json(w, status.Code, validatedElements)
 		} else {
 			s.Error(w, err)
-			return
+		}
+		return
+	}
+
+	s.redirectAfterPost(w, req, kase, isNewCase)
+
+	return
+}
+
+func (s *Server) getCaseIds(req *http.Request) (caseID string, referralCaseTypeID string, err error) {
+	qry := req.URL.Query()
+	referralCaseTypeID = qry.Get("referralCaseTypeId")
+	caseID, ok := mux.Vars(req)["id"]
+	if !ok || len(caseID) == 0 {
+		if req.Method != "POST" {
+			err := fmt.Errorf("no id in path")
+			return "", "", err
 		}
 	}
-	s.redirectAfterSuccessfulCasePost(req, w, postedCase, action)
+	return caseID, referralCaseTypeID, nil
+}
+
+func (s *Server) getCase(ctx context.Context, cmsClient cms.Interface, caseID string, referralCaseTypeID string) (*cms.Case, error) {
+	isNewCase := len(caseID) == 0
+	kase := &cms.Case{}
+	if isNewCase {
+		if len(referralCaseTypeID) > 0 {
+			kase.CaseTypeID = referralCaseTypeID
+		}
+	} else {
+		var err error
+		kase, err = cmsClient.Cases().Get(ctx, caseID)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return kase, nil
+}
+
+func (s *Server) redirectAfterPost(w http.ResponseWriter, req *http.Request, posted *cms.Case, isNewCase bool) {
+	var action string
+	if isNewCase {
+		action = "created"
+	} else {
+		action = "updated"
+	}
+	if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
+		Message: fmt.Sprintf("Case successfully %s", action),
+		Theme:   "success",
+	}); err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	if len(posted.ParentID) > 0 {
+		w.Header().Set("Location", "/cases/"+posted.ParentID)
+	} else {
+		w.Header().Set("Location", "/cases/"+posted.ID)
+	}
+	w.WriteHeader(http.StatusSeeOther)
+	return
+}
+
+// zipTemplateAndErrors returns a slice of form.FormElement populated with validated template form elements.
+func zipTemplateAndErrors(errors validation.ErrorList, template *cms.CaseTemplate) []form.FormElement {
+	var formElements []form.FormElement
+	for _, element := range template.FormElements {
+		if errs := errors.FindFamily(element.Attributes.Name); len(*errs) > 0 {
+			element.Errors = errs
+			formElements = append(formElements, element)
+		}
+	}
+	return formElements
+}
+
+// unmarshalCaseFormData retrieves entries from a url.Values and applies them to a cms.Case object via a cms.CaseTemplate.
+func unmarshalCaseFormData(c *cms.Case, template *cms.CaseTemplate, values url.Values) error {
+	c.CaseTypeID = values.Get("caseTypeId")
+	c.PartyID = values.Get("partyId")
+	c.Done = values.Get("done") == "on"
+	c.ParentID = values.Get("parentId")
+	c.TeamID = values.Get("teamId")
+	var formElements []form.FormElement
+	for _, formElement := range template.FormElements {
+		formElement.Attributes.Value = values[formElement.Attributes.Name]
+		formElements = append(formElements, formElement)
+	}
+	c.Template = &cms.CaseTemplate{FormElements: formElements}
+	return nil
 }
 
 type displayComment struct {
@@ -412,88 +470,6 @@ func displayComments(comments *cms.CommentList, authorMap map[string]*iam.Party)
 		displayComments = append(displayComments, c)
 	}
 	return displayComments
-}
-
-func (s *Server) processCaseValidation(req *http.Request, w http.ResponseWriter, kase *cms.Case, err error, action string) {
-	if err != nil {
-		if status, ok := err.(*validation.Status); ok {
-			s.renderCaseValidation(req, w, kase, status)
-			return
-		} else {
-			s.Error(w, err)
-			return
-		}
-	} else {
-		s.redirectAfterSuccessfulCasePost(req, w, kase, action)
-	}
-}
-
-func (s *Server) redirectAfterSuccessfulCasePost(req *http.Request, w http.ResponseWriter, kase *cms.Case, action string) {
-	if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
-		Message: fmt.Sprintf("Case successfully %s", action),
-		Theme:   "success",
-	}); err != nil {
-		s.Error(w, err)
-		return
-	}
-	if len(kase.ParentID) > 0 {
-		w.Header().Set("Location", "/cases/"+kase.ParentID)
-	} else {
-		w.Header().Set("Location", "/cases/"+kase.ID)
-	}
-	w.WriteHeader(http.StatusSeeOther)
-}
-
-func (s *Server) renderCaseValidation(req *http.Request, w http.ResponseWriter, kase *cms.Case, status *validation.Status) {
-	validatedForm := NewValidatedTemplate(kase.Template, status.Errors)
-	parties, err := s.retrieveParties(req)
-	if err != nil {
-		s.Error(w, err)
-		return
-	}
-	caseTypes, err := s.retrieveCaseTypes(req)
-	if err != nil {
-		s.Error(w, err)
-		return
-	}
-	iamClient, err := s.IAMClient(req)
-	if err != nil {
-		s.Error(w, err)
-		return
-	}
-	cmsClient, err := s.CMSClient(req)
-	if err != nil {
-		s.Error(w, err)
-		return
-	}
-	team, err := iamClient.Teams().Get(req.Context(), kase.TeamID)
-	if err != nil {
-		s.Error(w, err)
-	}
-	caseType, err := cmsClient.CaseTypes().Get(req.Context(), kase.CaseTypeID)
-	if err != nil {
-		s.Error(w, err)
-	}
-	qry := req.URL.Query()
-
-	partyID := qry.Get("partyId")
-	if len(partyID) == 0 {
-		partyID = kase.PartyID
-	}
-	// Set notification and render
-	s.validationErrorNotification(req, w)
-	if err := s.renderFactory.New(req).ExecuteTemplate(w, "casenew", map[string]interface{}{
-		"Team":          team,
-		"CaseTypes":     caseTypes,
-		"CaseType":      caseType,
-		"Parties":       parties,
-		"PartyID":       partyID,
-		"ValidatedForm": validatedForm,
-	}); err != nil {
-		s.Error(w, err)
-		return
-	}
-
 }
 
 type CasesListOptions struct {
@@ -531,20 +507,4 @@ func (c *CasesListOptions) UnmarshalQueryParams(values url.Values) error {
 
 	return nil
 
-}
-
-// UnmarshalCaseFormData retrieves entries from a url.Values and applies them to a cms.Case object via a cms.CaseTemplate.
-func UnmarshalCaseFormData(c *cms.Case, template *cms.CaseTemplate, values url.Values) error {
-	c.CaseTypeID = values.Get("caseTypeId")
-	c.PartyID = values.Get("partyId")
-	c.Done = values.Get("done") == "on"
-	c.ParentID = values.Get("parentId")
-	c.TeamID = values.Get("teamId")
-	var formElements []cms.FormElement
-	for _, formElement := range template.FormElements {
-		formElement.Attributes.Value = values[formElement.Attributes.Name]
-		formElements = append(formElements, formElement)
-	}
-	c.Template = &cms.CaseTemplate{FormElements: formElements}
-	return nil
 }

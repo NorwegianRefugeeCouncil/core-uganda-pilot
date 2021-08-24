@@ -17,6 +17,8 @@ func (s *Server) GetCase(w http.ResponseWriter, req *http.Request) {
 		s.Error(w, err)
 		return
 	}
-	ret.Template = ret.Template.MarkAsReadonly()
+	if ret.Done {
+		ret.Template.MarkAsReadonly()
+	}
 	s.JSON(w, http.StatusOK, ret)
 }

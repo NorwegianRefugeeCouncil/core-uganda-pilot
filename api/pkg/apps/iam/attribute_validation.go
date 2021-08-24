@@ -1,6 +1,12 @@
 package iam
 
-import "github.com/nrc-no/core/pkg/validation"
+import (
+	"fmt"
+	"github.com/nrc-no/core/pkg/form"
+	"github.com/nrc-no/core/pkg/utils"
+	"github.com/nrc-no/core/pkg/validation"
+	"strconv"
+)
 
 func ValidateAttribute(attribute *Attribute, path *validation.Path) validation.ErrorList {
 	errs := validation.ErrorList{}
@@ -32,7 +38,47 @@ func ValidateAttribute(attribute *Attribute, path *validation.Path) validation.E
 		}
 	}
 
+	// Validate form elements
+	errs = attribute.ValidateFormField(errs, path)
+
 	return errs
+}
+
+func (a *Attribute) ValidateFormField(errList validation.ErrorList, path *validation.Path) validation.ErrorList {
+	values := a.Attributes.Value
+	fieldPath := path.Child(a.Attributes.Name)
+	// no use validating empty values
+	if !utils.AllEmpty(a.Attributes.Value) {
+		switch a.Type {
+		case form.Date:
+			if !validation.IsValidDate(values[0]) {
+				err := validation.Invalid(fieldPath, values[0], validation.InvalidDateDetail)
+				errList = append(errList, err)
+			}
+		case form.Phone:
+			if !validation.IsValidPhone(values[0]) {
+				err := validation.Invalid(fieldPath, values[0], validation.InvalidPhoneDetail)
+				errList = append(errList, err)
+			}
+		case form.Email:
+			if !validation.IsValidEmail(values[0]) {
+				err := validation.Invalid(fieldPath, values[0], validation.InvalidEmailDetail)
+				errList = append(errList, err)
+			}
+		case form.Checkbox:
+			for i, option := range a.Attributes.CheckboxOptions {
+				if option.Required && !utils.Contains(a.Attributes.Value, strconv.Itoa(i)) {
+					err := validation.Required(fieldPath.Index(i), fmt.Sprintf("%s is required", a.Attributes.Name))
+					errList = append(errList, err)
+				}
+			}
+		}
+	}
+	if a.Validation.Required && utils.AllEmpty(a.Attributes.Value) {
+		err := validation.Required(fieldPath, fmt.Sprintf("%s is required", a.Attributes.Name))
+		errList = append(errList, err)
+	}
+	return errList
 }
 
 func ValidateTranslation(translation AttributeTranslation, translationPath *validation.Path, errs validation.ErrorList) validation.ErrorList {

@@ -41,7 +41,6 @@ func (v ErrorList) FindFamily(field string) *ErrorList {
 		}
 	}
 	return &errs
-
 }
 
 func (v ErrorList) HasError(field string, errType ErrorType) bool {
@@ -77,10 +76,10 @@ func (v *ErrorList) Length() int {
 // Error is an implementation of the 'error' interface, which represents a
 // field-level validation error.
 type Error struct {
-	Type     ErrorType
-	Field    string
-	BadValue interface{}
-	Detail   string
+	Type     ErrorType   `json:"type"`
+	Field    string      `json:"field"`
+	BadValue interface{} `json:"badValue"`
+	Detail   string      `json:"detail"`
 }
 
 var _ error = &Error{}

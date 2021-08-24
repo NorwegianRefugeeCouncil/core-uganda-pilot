@@ -74,3 +74,4 @@ In Goland, choose the `e2e (browser)` configuration from the top-right menu and 
 cd e2e
 npm run open
 ```
+

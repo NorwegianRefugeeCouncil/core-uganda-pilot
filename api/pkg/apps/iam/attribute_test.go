@@ -2,6 +2,7 @@ package iam_test
 
 import (
 	. "github.com/nrc-no/core/pkg/apps/iam"
+	"github.com/nrc-no/core/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -84,7 +85,7 @@ func (s *Suite) testAttributeAPI() {
 
 func (s *Suite) testAttributeListFilter() {
 
-	const nAttributes = 30
+	const nAttributes = 10
 	const nPartyTypeIds = 6
 
 	// Make a couple Attributes
@@ -107,7 +108,7 @@ func (s *Suite) testAttributeListFilter() {
 	// Test list filtering with different PartyTypeID combinations
 	for i := 1; i <= len(partyTypeIds); i++ {
 		partyTypes := partyTypeIds[0:i]
-		list, err := s.client.Attributes().List(ctx, AttributeListOptions{PartyTypeIDs: partyTypes})
+		list, err := s.client.Attributes().List(s.Ctx, AttributeListOptions{PartyTypeIDs: partyTypes})
 		assert.NoError(s.T(), err)
 
 		// Get expected items
@@ -115,7 +116,7 @@ func (s *Suite) testAttributeListFilter() {
 		for _, a := range attributes {
 			var include = true
 			for _, p := range partyTypes {
-				if !contains(a.PartyTypeIDs, p) {
+				if !utils.Contains(a.PartyTypeIDs, p) {
 					include = false
 					break
 				}

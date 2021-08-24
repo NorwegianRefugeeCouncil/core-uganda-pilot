@@ -1,7 +1,7 @@
 import TeamsOverviewPage from '../pages/teamOverview.page';
 
-const SEARCH_NAME = 'LARE, Courtney';
-const MEMBER_SHOWN_NAME = 'Courtney Lare';
+const SEARCH_NAME = 'FOCKE, Robert';
+const MEMBER_SHOWN_NAME = 'Robert Focke';
 
 describe('Teams Page', function () {
     describe('Create', () => {

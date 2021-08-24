@@ -2,6 +2,8 @@ package webapp
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/base64"
 	"fmt"
 	"github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/ory/hydra-client-go/client/admin"
@@ -38,8 +40,35 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 			// Get the access token from the session
 			session, err := s.sessionManager.Get(req)
 			if err != nil {
-				logrus.WithError(err).Errorf("failed to get session")
-				s.Error(w, err)
+				logrus.WithError(err).Errorf("failed to get session, attempting to clear session and redirect to login")
+
+				// make a new state variable for hydra login flow
+				state, err := s.createHydraStateVariable()
+				if err != nil {
+					logrus.WithError(err).Errorf("failed to make a new state variable for hydra login flow")
+					s.Error(w, err)
+					return
+				}
+
+				// if possible, store new state in the session
+				if session != nil {
+					session.Values["state"] = state
+					if err := session.Save(req, w); err != nil {
+						logrus.WithError(err).Errorf("failed to store new state in the session!")
+						s.Error(w, err)
+						return
+					}
+				} else {
+					err = fmt.Errorf("nil session")
+					logrus.WithError(err).Errorf("session was nil, unable to store state in the session")
+					s.Error(w, err)
+					return
+				}
+
+				// create a hydra login flow redirect url with the new state
+				// variable, and redirect the user
+				redirectUrl := s.publicOauth2Config.AuthCodeURL(state)
+				http.Redirect(w, req, redirectUrl, http.StatusTemporaryRedirect)
 				return
 			}
 
@@ -90,6 +119,17 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 		})
 	}
 
+}
+
+func (s *Server) createHydraStateVariable() (string, error) {
+	b := make([]byte, 32)
+	_, err := rand.Read(b)
+	if err != nil {
+		logrus.WithError(err).Errorf("failed to create a new state variable!")
+		return "", err
+	}
+	state := base64.StdEncoding.EncodeToString(b)
+	return state, nil
 }
 
 func (s *Server) dangerouslySetAuthenticatedUserUsingEmail(w http.ResponseWriter, req *http.Request, authUserEmail string, handler http.Handler) {

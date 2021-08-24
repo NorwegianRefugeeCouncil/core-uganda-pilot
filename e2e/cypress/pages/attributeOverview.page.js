@@ -1,21 +1,34 @@
-import { Urls } from '../helpers';
-import NewAttributePage from './newAttribute.page';
+import { testId, URL } from '../helpers';
+import AttributePage from './attributePage';
 
 const ATTRIBUTE_ROWS = '[data-testid=attribute]';
+const NEW_ATTR_BTN = testId('new-attribute-btn');
 
 export default class AttributeOverviewPage {
+    constructor() {
+        this.visitPage();
+    }
+
     visitPage = () => {
-        cy.log('navigating to %s', Urls.ATTRIBUTE_URL);
-        cy.visit(Urls.ATTRIBUTE_URL);
+        cy.visit(URL.ATTRIBUTES);
         return this;
     };
 
-    selectAttribute = () => {
+    clickNewAttributeBtn = () => {
+        return cy.get(NEW_ATTR_BTN).click();
+    };
+
+    selectLastAttribute = () => {
         return cy.get(ATTRIBUTE_ROWS).last();
     };
 
     visitAttribute = () => {
-        cy.get(ATTRIBUTE_ROWS).last().click();
-        return new NewAttributePage();
+        this.selectLastAttribute().click();
+    };
+
+    // Expect newest attribute to be at the end of the list
+    attributePageForNewest = () => {
+        cy.get(ATTRIBUTE_ROWS).last().invoke('attr', 'href').as('href');
+        return new AttributePage(cy.get('@href'));
     };
 }

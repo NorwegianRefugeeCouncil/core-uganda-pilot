@@ -1,4 +1,4 @@
-import { Urls } from '../helpers';
+import { URL } from '../helpers';
 
 const NAME = '[data-testid=name]';
 const IS_DIRECTIONAL = '[data-testid=isDirectional]';
@@ -10,12 +10,11 @@ const SAVE_BUTTON = '[data-testid=save-btn]';
 
 export default class NewRelationshiptypePage {
     visitPage = () => {
-        cy.log('navigating to %s', Urls.NEW_RELATIONSHIPTYPE_URL);
-        cy.visit(Urls.NEW_RELATIONSHIPTYPE_URL);
+        cy.visit(URL.NEW_RELATIONSHIPTYPE);
         return this;
     };
 
-    typeName = (value) => {
+    typeName = value => {
         cy.get(NAME).type(value);
         return this;
     };
@@ -25,22 +24,22 @@ export default class NewRelationshiptypePage {
         return this;
     };
 
-    typeFirstPartyRole = (value) => {
+    typeFirstPartyRole = value => {
         cy.get(FIRST_PARTY_ROLE).type(value);
         return this;
     };
 
-    typeSecondPartyRole = (value) => {
+    typeSecondPartyRole = value => {
         cy.get(SECOND_PARTY_ROLE).type(value);
         return this;
     };
 
-    selectFristPartyType = (value) => {
+    selectFristPartyType = value => {
         cy.get(FIRST_PARTY_TYPE).select(value);
         return this;
     };
 
-    selectSecondPartyType = (value) => {
+    selectSecondPartyType = value => {
         cy.get(SECOND_PARTY_TYPE).select(value);
         return this;
     };

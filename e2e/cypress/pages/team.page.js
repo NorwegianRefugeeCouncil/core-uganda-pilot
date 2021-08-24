@@ -4,7 +4,7 @@ const PARTYITEM = '[data-testid=partySelectorItem]';
 const MEMBER = '[data-testid=member]';
 
 export default class TeamPage {
-    typeParty = (value) => {
+    typeParty = value => {
         cy.get(PARTYSELECTOR).type(value);
         return this;
     };

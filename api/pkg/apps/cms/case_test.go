@@ -3,6 +3,7 @@ package cms_test
 import (
 	"context"
 	. "github.com/nrc-no/core/pkg/apps/cms"
+	"github.com/nrc-no/core/pkg/form"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/sync/errgroup"
 	"reflect"
@@ -27,12 +28,11 @@ func (s *Suite) TestCaseAPI() {
 	assert.Equal(s.T(), created, get)
 
 	// UPDATE
-	get.Done = true
-	get.Template = &CaseTemplate{FormElements: []FormElement{{
+	get.Template = &CaseTemplate{FormElements: []form.FormElement{{
 		Type: "textarea",
-		Attributes: FormElementAttribute{
-			Label: "mock",
-			Value: []string{"mock"},
+		Attributes: form.FormElementAttributes{
+			Label: "update",
+			Name:  "update",
 		},
 	}}}
 	updated, err := s.client.Cases().Update(s.Ctx, get)

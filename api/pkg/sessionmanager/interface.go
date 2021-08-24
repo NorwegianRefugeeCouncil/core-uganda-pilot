@@ -15,7 +15,7 @@ type Options struct {
 
 type Store interface {
 	AddNotification(req *http.Request, w http.ResponseWriter, notification *Notification) error
-	ConsumeNotifications(req *http.Request) ([]*Notification, error)
+	ConsumeNotifications(req *http.Request, w http.ResponseWriter) ([]*Notification, error)
 	Get(req *http.Request) (*sessions.Session, error)
 	GetString(req *http.Request, key string) (string, error)
 	FindString(req *http.Request, key string) (string, bool)
@@ -56,7 +56,7 @@ func (r *RedisSessionManager) Get(req *http.Request) (*sessions.Session, error) 
 	session, err := r.Store.Get(req, varSession)
 	if err != nil {
 		logrus.WithError(err).Errorf("failed to get session")
-		return nil, err
+		return session, err
 	}
 	return session, nil
 }
@@ -85,29 +85,37 @@ const (
 )
 
 func (r RedisSessionManager) AddNotification(req *http.Request, w http.ResponseWriter, notification *Notification) error {
-	session, err := r.Store.Get(req, varNotifications)
-	if err != nil {
-		return err
-	}
-	session.AddFlash(notification)
-	if err := session.Save(req, w); err != nil {
-		return err
-	}
 	return nil
+	// FIXME was converted to noop because of securecookie error
+	// session, err := r.Store.Get(req, varNotifications)
+	// if err != nil {
+	// 	return err
+	// }
+	// session.AddFlash(notification)
+	// if err := session.Save(req, w); err != nil {
+	// 	return err
+	// }
+	// return nil
 }
 
-func (r RedisSessionManager) ConsumeNotifications(req *http.Request) ([]*Notification, error) {
-	session, err := r.Store.Get(req, varNotifications)
-	if err != nil {
-		return nil, err
-	}
-	flashes := session.Flashes()
-	var notifications []*Notification
-	for _, flash := range flashes {
-		flashNotification, ok := flash.(*Notification)
-		if ok {
-			notifications = append(notifications, flashNotification)
-		}
-	}
-	return notifications, nil
+func (r RedisSessionManager) ConsumeNotifications(req *http.Request, w http.ResponseWriter) ([]*Notification, error) {
+	return nil, nil
+	// FIXME was converted to noop because of securecookie error
+	// session, err := r.Store.Get(req, varNotifications)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// flashes := session.Flashes()
+	// var notifications []*Notification
+	// for _, flash := range flashes {
+	// 	flashNotification, ok := flash.(*Notification)
+	// 	if ok {
+	// 		notifications = append(notifications, flashNotification)
+	// 	}
+	// }
+	// err = session.Save(req, w)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// return notifications, nil
 }

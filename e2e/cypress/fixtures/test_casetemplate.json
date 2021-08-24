@@ -1,0 +1,101 @@
+{
+  "formElements": [
+    {
+      "type": "text",
+      "attributes": {
+        "label": "text",
+        "name": "testText",
+        "description": "text description",
+        "placeholder": "text placeholder"
+      }
+    },
+    {
+      "type": "email",
+      "attributes": {
+        "label": "email",
+        "name": "testEmail",
+        "description": "email description",
+        "placeholder": "example@email.com"
+      }
+    },
+    {
+      "type": "tel",
+      "attributes": {
+        "label": "phone",
+        "name": "testPhone",
+        "description": "phone description",
+        "placeholder": "0555 555555"
+      }
+    },
+    {
+      "type": "url",
+      "attributes": {
+        "label": "url",
+        "name": "testUrl",
+        "description": "url description",
+        "placeholder": "https://www.example.com"
+      }
+    },
+    {
+      "type": "date",
+      "attributes": {
+        "label": "date",
+        "name": "testDate",
+        "description": "date description"
+      }
+    },
+    {
+      "type": "textarea",
+      "attributes": {
+        "label": "textarea",
+        "name": "testTextarea",
+        "description": "textarea description",
+        "placeholder": "textarea placeholder"
+      }
+    },
+    {
+      "type": "dropdown",
+      "attributes": {
+        "label": "dropdown",
+        "name": "testDropdown",
+        "description": "dropdown description",
+        "options": [
+          "0",
+          "1"
+        ]
+      }
+    },
+    {
+      "type": "checkbox",
+      "attributes": {
+        "label": "checkbox",
+        "name": "testCheckbox",
+        "description": "checkbox description",
+        "checkboxOptions": [
+          {
+            "Label": "0"
+          },
+          {
+            "Label": "1"
+          }
+        ]
+      }
+    },
+    {
+      "type": "radio",
+      "attributes": {
+        "label": "radio",
+        "name": "testRadio",
+        "description": "radio description",
+        "checkboxOptions": [
+          {
+            "Label": "0"
+          },
+          {
+            "Label": "1"
+          }
+        ]
+      }
+    }
+  ]
+}

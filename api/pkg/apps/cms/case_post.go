@@ -16,12 +16,20 @@ func (s *Server) PostCase(w http.ResponseWriter, req *http.Request) {
 	}
 
 	kase := &payload
-
-	errList := ValidateCase(kase, &validation.Path{})
-	if len(errList) > 0 {
-		status := errList.Status(http.StatusUnprocessableEntity, "invalid case")
-		s.Error(w, &status)
-		return
+	if kase.Template != nil {
+		errList := ValidateCase(kase, &validation.Path{})
+		if len(errList) > 0 {
+			status := errList.Status(http.StatusUnprocessableEntity, "invalid case")
+			s.Error(w, &status)
+			return
+		}
+	} else {
+		ct, err := s.caseTypeStore.Get(ctx, kase.CaseTypeID)
+		if err != nil {
+			s.Error(w, err)
+			return
+		}
+		kase.Template = ct.Template
 	}
 
 	kase.ID = uuid.NewV4().String()

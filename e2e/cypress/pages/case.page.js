@@ -1,47 +1,105 @@
-const ALERT = '[data-testid=alert]';
-const UPDATE_FORM_Btn = '[data-testid=updateFormBtn]';
-const REFERRAL_PICKER = '[data-testid=referralPicker]';
-const REFERRAL_CASES = '[data-testid=referralCaseItem]';
-const SUBMIT_REFERRAL_BUTTON = '[data-testid=submitReferralBtn]';
-const REFERRAL_CASE_OPEN = '[data-testid=referralCaseOpen]';
-const FORM = '[data-testid=form]';
+import { testId } from '../helpers';
+import testTemplate from '../fixtures/test_casetemplate.json';
+
+const ID = {
+    FLASH: testId('flash'),
+    RECIPIENT: testId('recipient'),
+    DONE_PILL: testId('done-pill'),
+    DONE_CHECK: testId('done-check'),
+    SAVE_BTN: testId('save-btn'),
+    REFERRAL_PICKER: testId('referralPicker'),
+    REFERRAL_CASES: testId('referralCaseItem'),
+    SUBMIT_REFERRAL_BUTTON: testId('submitReferralBtn'),
+    REFERRAL_CASE_OPEN: testId('referralCaseOpen'),
+    FORM: testId('form'),
+};
 
 export default class CasePage {
-    getAlertMessage = () => {
-        return cy.get(ALERT);
-    };
+    constructor(href) {
+        if (href != null) {
+            cy.visit(href);
+        } else {
+            this.visitPage();
+        }
+    }
+
+    getFlash = () => cy.get(ID.FLASH);
+
+    getRecipient = () => cy.get(ID.RECIPIENT);
+    getDonePill = () => cy.get(ID.DONE_PILL);
 
     clearForm = () => {
-        cy.get(FORM).each(($el) => {
+        cy.get(ID.FORM).each($el => {
             cy.wrap($el).clear();
         });
         return this;
     };
 
-    typeForm = (value) => {
-        cy.get(FORM).each(($el) => {
+    verifyForm = value => {
+        for (const { type } of testTemplate.formElements) {
+            cy.get(testId('test-' + type)).then($el => {
+                const tag = $el[0].tagName;
+                switch (tag) {
+                    case 'INPUT':
+                        switch ($el[0].getAttribute('type')) {
+                            case 'text':
+                                cy.wrap($el).should('have.value', value.text);
+                                break;
+                            case 'checkbox':
+                                value.checkbox
+                                    ? cy.wrap($el).should('be.checked')
+                                    : cy.wrap($el).should('not.be.checked');
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case 'SELECT':
+                        cy.wrap($el).should('have.value', value.dropdown);
+                        break;
+                    case 'TEXTAREA':
+                        cy.wrap($el).should('have.value', value.textarea);
+                        break;
+                    default:
+                        break;
+                }
+            });
+        }
+        return this;
+    };
+
+    getDoneCheck = () => cy.get(ID.DONE_CHECK);
+    setDoneCheck = () => {
+        cy.get(ID.DONE_CHECK).check();
+        return this;
+    };
+
+    save = () => cy.get(ID.SAVE_BTN).click();
+
+    typeForm = value => {
+        cy.get(ID.FORM).each($el => {
             cy.wrap($el).type(value);
         });
         return this;
     };
 
     submitUpdate = () => {
-        cy.get(UPDATE_FORM_Btn).click();
+        cy.get(ID.SAVE_BTN).click();
         return this;
     };
 
     selectReferral = () => {
-        cy.get(REFERRAL_PICKER).click();
-        cy.get(REFERRAL_CASES).first().click();
+        cy.get(ID.REFERRAL_PICKER).click();
+        cy.get(ID.REFERRAL_CASES).first().click();
         return this;
     };
 
     submitReferral = () => {
-        cy.get(SUBMIT_REFERRAL_BUTTON).click();
+        cy.get(ID.SUBMIT_REFERRAL_BUTTON).click();
         return this;
     };
 
     getOpenReferralItem = () => {
-        return cy.get(REFERRAL_CASE_OPEN);
+        return cy.get(ID.REFERRAL_CASE_OPEN);
     };
 }

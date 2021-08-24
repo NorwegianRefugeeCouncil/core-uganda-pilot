@@ -9,8 +9,9 @@
             <div class="card-body">
                 <h4 class="card-title">Case Type</h4>
                 <form action="/settings/casetypes{{if .CaseType.ID}}/{{.CaseType.ID}}{{end}}" method="post">
-                    <div class="form-floating mb-3">
+                    <div class="form mb-3">
                         {{$name := "name"}}
+                        <label for="{{$name}}">Name</label>
                         {{if and .Errors (.Errors.Find $name)}}
                             {{$errs := .Errors.Find $name}}
                             <input id="{{$name}}"
@@ -35,16 +36,20 @@
                                    value="{{if .CaseType}}{{.CaseType.Name}}{{end}}"
                             >
                         {{end}}
-                        <label for="{{$name}}">Name</label>
                     </div>
-                    <div class="form-floating mb-3">
+
+                    <!-- TODO: Add a checkbox field for intakeCaseType -->
+
+                    <div class="form mb-3">
                         {{$name = "partyTypeId"}}
+                        <label for="party-type">Select Party Type</label>
                         {{if and .Errors (.Errors.Find $name)}}
                             {{$errs := .Errors.Find $name}}
                             <select id="party-type"
                                     class="form-select {{if $errs}}is-invalid{{end}}"
                                     name="{{$name}}"
                                     aria-describedby="partyTypeIdFeedback"
+                                    data-testid="partytype"
                             >
 
                                 {{if .CaseType.PartyTypeID}}
@@ -71,6 +76,7 @@
                             <select id="party-type"
                                     class="form-select"
                                     name="{{$name}}"
+                                    data-testid="partytype"
                                     {{if .CaseType}}disabled{{end}}
                             >
                                 {{if .CaseType}}
@@ -86,15 +92,16 @@
                                 {{end}}
                             </select>
                         {{end}}
-                        <label for="party-type">Select Party Type</label>
                     </div>
-                    <div class="form-floating mb-3">
+                    <div class="form mb-3">
+                        <label for="team">Select Team</label>
                         {{$name = "teamId"}}
                         {{if and .Errors (.Errors.Find $name)}}
                             {{$errs := .Errors.Find $name}}
                             <select id="team"
                                     class="form-select {{if $errs}}is-invalid{{end}}"
                                     name="{{$name}}"
+                                    data-testid="team"
                                     aria-describedby="teamIdFeedback"
                             >
                                 {{if .CaseType.TeamID}}
@@ -118,6 +125,7 @@
                             <select id="team"
                                     class="form-select"
                                     name="{{$name}}"
+                                    data-testid="team"
                                     {{if .CaseType}}disabled{{end}}
                             >
                                 {{if .CaseType}}
@@ -134,9 +142,9 @@
                                 {{end}}
                             </select>
                         {{end}}
-                        <label for="team">Select Team</label>
                     </div>
-                    <div class="form-floating mb-3">
+                    <div class="form mb-3">
+                        <label for="{{$name}}">Form template</label>
                         {{$name = "template"}}
                         {{if and .Errors (.Errors.Find $name)}}
                             {{$errs := .Errors.Find $name}}
@@ -144,9 +152,10 @@
                                       id="{{$name}}"
                                       class="form-control font-monospace {{if $errs}}is-invalid{{end}}"
                                       style="height: 600px"
+                                      data-testid="template"
                                       aria-describedby="{{$name}}}Feedback"
                             >
-                                {{- if .CaseType.CaseTemplate}}{{.CaseType.Pretty}}{{end -}}
+                                {{- if .CaseType.Template}}{{.CaseType.Pretty}}{{end -}}
                             </textarea>
                             <div id="{{$name}}Feedback" class="invalid-feedback">
                                 {{range $errs}}
@@ -158,18 +167,18 @@
                                       id="{{$name}}"
                                       class="form-control font-monospace"
                                       style="height: 600px"
+                                      data-testid="template"
                                       {{if .CaseType}}readonly{{end}}
                             >
-                                {{- if .CaseType.CaseTemplate}}{{.CaseType.Pretty}}{{end -}}
+                                {{- if .CaseType.Template}}{{.CaseType.Pretty}}{{end -}}
                             </textarea>
                         {{end}}
-                        <label for="{{$name}}">Form template</label>
                     </div>
                     {{if and (not .Errors) .CaseType}}
                         <input type="hidden" name="partyTypeId" value="{{.CaseType.PartyTypeID}}">
                         <input type="hidden" name="teamId" value="{{.CaseType.TeamID}}">
                     {{end}}
-                    <button class="btn btn-primary">Save</button>
+                    <button class="btn btn-primary" data-testid="save-btn">Save</button>
                 </form>
             </div>
         </div>

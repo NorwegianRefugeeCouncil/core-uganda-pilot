@@ -14,81 +14,77 @@
 
     {{template "case_nav" .Case }}
 
-    <div class="container mt-4">
+    <div class="container my-4">
 
-        <div class="row">
-            <div class="col">
-
-                {{if .Parent}}
-                    <div class="p-3 bg-light mb-3 shadow-sm">
-                        <span>Referred from </span>
-                        <a href="/cases/{{.Parent.ID}}">
-                            {{$caseType := $caseTypes.FindByID .Parent.CaseTypeID}}
-                            {{$caseType.Name}}
-                        </a>
-                        {{ if .CreatedBy}}
-                            <span> by </span>
-                            <a href="/individuals/{{.CreatedBy.ID}}">{{.CreatedBy}}</a>
-                        {{end}}
-                    </div>
-                {{else}}
-                    {{if .CreatedBy}}
-                        <div class="p-3 bg-light mb-3 shadow-sm">
-                            <span>Created by </span>
-                            <a href="/individuals/{{.CreatedBy.ID}}">{{.CreatedBy}}</a>
-                        </div>
-                    {{end}}
+        {{if .Parent}}
+            <div class="p-3 bg-light mb-3 shadow-sm">
+                <span>Referred from </span>
+                <a href="/cases/{{.Parent.ID}}">
+                    {{$caseType := $caseTypes.FindByID .Parent.CaseTypeID}}
+                    {{$caseType.Name}}
+                </a>
+                {{ if .CreatedBy}}
+                    <span> by </span>
+                    <a href="/individuals/{{.CreatedBy.ID}}">{{.CreatedBy}}</a>
                 {{end}}
+            </div>
+        {{else}}
+            {{if .CreatedBy}}
+                <div class="p-3 bg-light mb-3 shadow-sm">
+                    <span>Created by </span>
+                    <a href="/individuals/{{.CreatedBy.ID}}">{{.CreatedBy}}</a>
+                </div>
+            {{end}}
+        {{end}}
 
-                {{range $caseTypes.Items}}
-                    {{if eq .ID $caseTypeId}}
-                        <input name="case-type" type="hidden" value="{{.ID}}" />
-                        <h2>{{.Name}}</h2>
-                    {{end}}
-                {{end}}
-                <p>Team: <a href="/teams/{{$teamId}}">{{$team.Name}}</a></p>
-                <p>Recipient: <a href="/individuals/{{$recipient.ID}}">{{$recipient}}</a></p>
+        {{range $caseTypes.Items}}
+            {{if eq .ID $caseTypeId}}
+                <input name="case-type" type="hidden" value="{{.ID}}" />
+                <h2>{{.Name}}</h2>
+            {{end}}
+        {{end}}
+        <p>Team: <a href="/teams/{{$teamId}}">{{$team.Name}}</a></p>
+        <p>Recipient: <a href="/individuals/{{$recipient.ID}}" data-testid="recipient">{{$recipient}}</a></p>
 
-                <h3 class="mb-3">
-                    {{if .Case.Done}}
-
-                        <span class="badge rounded-pill bg-danger">
+        <h3 class="mb-3">
+            {{if .Case.Done}}
+                <span class="badge rounded-pill bg-danger" data-testid="done-pill">
                             <span class='fs-6 fw-normal mb-1 d-inline-block'>Closed</span>
                         </span>
-                    {{else}}
-                        <span class="badge rounded-pill bg-success">
+            {{else}}
+                <span class="badge rounded-pill bg-success" data-testid="done-pill">
                            <span class='fs-6 fw-normal mb-1 d-inline-block'>Open</span>
                         </span>
-                    {{end}}
-                </h3>
+            {{end}}
+        </h3>
 
-            </div>
-        </div>
 
         <div class="card mb-4">
             <div class="card-body">
                 <form action="/cases/{{$caseId}}" method="post">
                     {{range .Case.Template.FormElements}}
-                        {{template "formfield" .}}
+                        {{template "formelement" .}}
                     {{end}}
-                    <div class="form-check mb-3">
-                        <input id="done-input"
-                               class="form-check-input"
-                               type="checkbox"
-                               {{ if .ReferralCaseType}}disabled{{end}}
-                               name="done"
-                               data-testid="done-check"
-                                {{if .Case.Done}}checked{{end}}>
-                        <label class="form-check-label" for="done-input">
-                            Done
-                        </label>
-                    </div>
-                    <button class="mb-5 btn btn-primary"
-                            type="submit"
-                            data-testid="updateFormBtn"
-                            {{ if .ReferralCaseType}}disabled{{end}}>
-                        Save
-                    </button>
+                    {{if not .Case.Done}}
+                        <div class="form-check mb-3">
+                            <input id="done-input"
+                                   class="form-check-input"
+                                   type="checkbox"
+                                   {{ if .ReferralCaseType}}disabled{{end}}
+                                   name="done"
+                                   data-testid="done-check"
+                                    {{if .Case.Done}}checked{{end}}>
+                            <label class="form-check-label" for="done-input">
+                                Done
+                            </label>
+                        </div>
+                        <button class="mb-5 btn btn-primary"
+                                type="submit"
+                                data-testid="save-btn"
+                                {{ if .ReferralCaseType}}disabled{{end}}>
+                            Save
+                        </button>
+                    {{end}}
                 </form>
                 {{if .Referrals}}
                     <h4>Referrals</h4>
@@ -122,8 +118,9 @@
                     <div class="card shadow">
                         <div class="card-body">
                             <form action="/cases" method="post">
-                                <div class="form-floating mb-3">
+                                <div class="form mb-3">
                                     <input type="hidden" name="caseTypeId" value="{{.ReferralCaseType.ID}}">
+                                    <label for="referral-case-type">Referral Case Type</label>
                                     <select
                                             id="referral-case-type"
                                             class="form-select"
@@ -131,7 +128,6 @@
                                     >
                                         <option>{{ .ReferralCaseType.Name }}</option>
                                     </select>
-                                    <label for="referral-case-type">Referral Case Type</label>
                                 </div>
                                 <input type="hidden" name="partyId" value="{{$recipient.ID}}">
                                 <input type="hidden" name="parentId" value="{{$caseId}}">

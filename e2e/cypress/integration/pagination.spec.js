@@ -4,10 +4,7 @@ describe('Pagination Page', function () {
     describe('Should Navigate to Next and Previous Page', () => {
         it('should start on first page', () => {
             const paginationPage = new PaginationPage();
-            paginationPage
-                .visitPage('?page=1&perPage=2')
-                .getPaginationState()
-                .should('contain.text', '1 of');
+            paginationPage.visitPage('?page=1&perPage=2').getPaginationState().should('contain.text', '1 of');
         });
         it('should navigate to next page', () => {
             const paginationPage = new PaginationPage();
