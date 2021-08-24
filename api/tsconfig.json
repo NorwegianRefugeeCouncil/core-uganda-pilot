@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2020",
+    "lib": [
+      "dom",
+      "es2020"
+    ],
+    "sourceMap": true,
+    "outDir": "./tmp/static"
+  },
+  "include": [
+    "./pkg/apps/webapp/static"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

@@ -54,6 +54,7 @@ type ServerOptions struct {
 	CMSHTTPClient       *http.Client
 	LoginHTTPClient     *http.Client
 	PublicOauth2Config  *oauth2.Config
+	StaticDic           string
 }
 
 func NewServer(options *ServerOptions) (*Server, error) {
@@ -99,6 +100,12 @@ func NewServer(options *ServerOptions) (*Server, error) {
 		return nil, err
 	}
 
+	err = transpileTS()
+	if err != nil {
+		logrus.WithError(err).Errorf("failed to transpile typescript files")
+		return nil, err
+	}
+
 	h.sessionManager = sm
 	h.renderFactory = renderFactory
 
@@ -134,6 +141,7 @@ func NewServer(options *ServerOptions) (*Server, error) {
 	router.Path("/settings/casetypes/{id}").HandlerFunc(h.CaseType)
 	router.Path("/comments").Methods("POST").HandlerFunc(h.PostComment)
 	router.Path("/relationships/pickparty").HandlerFunc(h.PickRelationshipParty)
+	router.Path("/static/js/{file}").HandlerFunc(h.serveJS(options.StaticDic))
 
 	h.router = router
 
