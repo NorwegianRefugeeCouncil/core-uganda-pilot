@@ -43,15 +43,35 @@
     <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
 
     <script>
-        const parseData = (data) => {
+        const parseData = (individuals, cases, caseTypes) => {
+
+            // create a map of caseTypeId => name
+            const caseTypeLabelMap = {}
+            caseTypes.forEach(caseType => {
+                caseTypeLabelMap[caseType["id"]] = caseType["name"]
+            })
+
             const returnData = [];
-            data.forEach(datum => {
-                if (datum['partyTypeIds'].includes("{{.BeneficiaryPartyTypeID}}")) {
+            individuals.forEach(individual => {
+                if (individual['partyTypeIds'].includes("{{.BeneficiaryPartyTypeID}}")) {
+
+                    let individualCases = []
+
+                    cases.forEach(kase => {
+                        if (kase["partyId"] === individual["id"]) {
+                            individualCases.push({
+                                'status': kase['done'],
+                                'name': caseTypeLabelMap[kase['caseTypeId']]
+                            })
+                        }
+                    })
+
                     returnData.push({
-                        //id: datum["id"],
-                        displacementStatus: datum['attributes']["{{.DisplacementStatusAttributeID}}"][0],
-                        gender: datum['attributes']["{{.GenderAttributeID}}"][0],
-                        birthDate: datum['attributes']["{{.BirthDateAttributeID}}"][0],
+                        id: individual["id"],
+                        displacementStatus: individual['attributes']["{{.DisplacementStatusAttributeID}}"][0],
+                        gender: individual['attributes']["{{.GenderAttributeID}}"][0],
+                        birthDate: individual['attributes']["{{.BirthDateAttributeID}}"][0],
+                        cases: individualCases,
                     });
                 }
             });
@@ -65,29 +85,16 @@
             report: {
                 'dataSource': {
                     'dataSourceType': 'json',
-                    'data': parseData({{.Individuals.Items}}),
+                    'data': parseData({{.Individuals.Items}}, {{.Cases.Items}}, {{.CaseTypes.Items}}),
                 },
                 'options': {
                     'grid': {
                         'title': 'Beneficiary Pivot Table'
                     }
                 },
-                'slice': {
-                    'rows': [
-                        {
-                            'uniqueName': 'displacementStatus'
-                        },
-                        {
-                            'uniqueName': 'gender'
-                        },
-                        {
-                            'uniqueName': 'birthDate'
-                        },
-                    ],
-                }
             },
         });
-        console.log(JSON.stringify(parseData({{.Individuals.Items}}), null, 3));
+        console.log(JSON.stringify(parseData({{.Individuals.Items}}, {{.Cases.Items}}, {{.CaseTypes.Items}}), null, 3));
     </script>
 
     </body>
