@@ -2,11 +2,27 @@
 #
 # increase maximum open files for shell to workaround issue on Fedora
 ulimit -n 1000000
-# When run as a hook by git, DIR be the repository's root folder.
-DIR=$(pwd)
 
+# When run as a hook by git, `pwd` will be the repository's root folder.
+DIR=$(pwd)
 PREFIX="[pre-push]"
 
+function cleanup() {
+  # kill all child processes
+  pkill -P $$
+}
+# cleanup on exit
+for sig in INT QUIT HUP TERM; do
+  trap "
+	cleanup
+	trap - $sig EXIT
+	kill -s $sig "'"$$"' "$sig"
+done
+trap cleanup EXIT
+
+#
+#
+#
 echo "$PREFIX Running hook..."
 
 #
@@ -14,18 +30,22 @@ echo "$PREFIX Running hook..."
 #
 echo "$PREFIX Checking docker-compose..."
 cd artifacts || exit
+
 if [ -w "$(which docker-compose)" ]; then
   DC="docker-compose ps"
 else
   DC="sudo docker-compose ps"
 fi
+
 CONTAINERS=('hydra_1' 'hydra_db_1' 'hydra_migrate' 'mongo-express' 'mongo_1' 'redis')
+
 for c in "${CONTAINERS[@]}"; do
   if ! (eval "$DC" | grep -q "$c" &>/dev/null); then
     echo "$PREFIX Please ensure docker-compose is up and running."
     exit 1
   fi
 done
+
 echo "$PREFIX All containers are up and running!"
 
 #
@@ -34,30 +54,34 @@ echo "$PREFIX All containers are up and running!"
 
 # check for localhost:9000 listening
 #
-echo "$PREFIX Checking webapp"
+echo "$PREFIX Starting webapp..."
+
 serverIsRunning() {
   netstat -tln | grep -q ":9000" &>/dev/null
   return $?
 }
-if ! serverIsRunning; then
-  echo "$PREFIX webapp is not running, attempting to start it now."
-  cd "$DIR/api" || exit
-  make serve &>/dev/null &
 
-  n=0
-  until [ "$n" -ge 5 ]; do
-    serverIsRunning && break
-    n=$((n + 1))
-    sleep 10
-  done
-
-  if ! serverIsRunning; then
-    echo >&2 "$PREFIX Unable to start webapp."
-    exit 1
-  fi
+if serverIsRunning; then
+  echo "$PREFIX Server already running, please stop it first."
+  exit 1
 fi
-echo "$PREFIX webapp is up and running!"
 
+cd "$DIR/api" || exit
+make serve &>/dev/null &
+
+n=0
+until [ "$n" -ge 5 ]; do
+  serverIsRunning && break
+  n=$((n + 1))
+  sleep 10
+done
+
+if ! serverIsRunning; then
+  echo >&2 "$PREFIX Unable to start webapp."
+  exit 1
+fi
+
+echo "$PREFIX Webapp is up and running!"
 cd "$DIR/e2e" || exit
 
 # linting
