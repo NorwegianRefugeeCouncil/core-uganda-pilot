@@ -23,7 +23,7 @@ export default class IndividualOverviewPage {
             .get(selector.search)
             .type(value)
             .get(selector.searchBtn)
-            .wait(750)
+            .wait(2000) // server is slow
             .click()
             .get(selector.individual)
             .last()
