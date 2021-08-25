@@ -491,6 +491,74 @@ var (
 					},
 				},
 			},
+			{
+				Type: form.Date,
+				Attributes: form.FormElementAttributes{
+					Label:       "Date of Identification",
+					Name:        "identificationDate",
+					Description: "Date of first interaction with NRC",
+				},
+			},
+			{
+				Type: form.Dropdown,
+				Attributes: form.FormElementAttributes{
+					Label:       "Location of Identification",
+					Name:        "identificationLocation",
+					Description: "",
+					Options:     []string{"Kabusu Access Center", "Nsambya Access Center", "Kisenyi ICLA Center", "Lukuli ICLA Center", "Kawempe ICLA Center", "Ndejje ICLA Center", "Mengo Field Office", "Community (Specify location)", "Home Visit", "Phone", "Other (Specify)"},
+				},
+				Validation: form.FormElementValidation{
+					Required: true,
+				},
+			},
+			{
+				Type: form.Dropdown,
+				Attributes: form.FormElementAttributes{
+					Label:       "Source of Identification",
+					Name:        "identificationSource",
+					Description: "",
+					Options:     []string{"Walk-in Center", "FFRM Referral", "Internal Referral (Other – Specify)", "ICLA Outreach Team", "External Referral (Community Leader/Contact)", "External Referral (INGO/LNGO)", "External Referral (Other – Specify)", "Self (Telephone)", "Self (Email)", "Internal Referral (Other NRC Sector – Specify)", "CBP Outreach Team", "Other NRC Outreach Team (Specify)", "External Referral (UN Agency)", "External Referral (Government)", "Other – Specify"},
+				},
+				Validation: form.FormElementValidation{
+					Required: true,
+				},
+			},
+			{
+				Type: form.Dropdown,
+				Attributes: form.FormElementAttributes{
+					Label:       "District / Admin 2",
+					Name:        "admin2",
+					Description: "",
+					Options:     []string{"ABIM", "ADJUMANI", "ALEBTONG", "AMOLATAR", "AMUDAT", "AMURIA", "AMURU", "APAC", "BUDAKA", "BUGIRI", "BUIKWE", "BUKOMANSIMBI", "BUKWO", "BULAMBULI", "BULIISA", "BUNDIBUGYO", "BUSHENYI", "BUYENDE", "DOKOLO", "BUTAMBALA", "HOIMA", "IGANGA", "KAABONG", "KABALE", "KABAROLE", "KALANGALA", "KALIRO", "KALUNGU", "KAMULI", "KANUNGU", "KAPCHORWA", "KATAKWI", "KAYUNGA", "SHEEMA", "KITGUM", "KOBOKO", "KOLE", "KOTIDO", "KISORO", "KWEEN", "LAMWO", "LIRA", "LUUKA", "LYANTONDE", "MANAFWA", "MASAKA", "MASINDI", "MAYUGE", "MBALE", "MBARARA", "MOROTO", "MOYO", "NAKAPIRIPIRIT", "NAKASEKE", "NAKASONGOLA", "NAMUTUMBA", "NAPAK", "NEBBI", "NGORA", "BUHWEJU", "NTOROKO", "MARACHA", "OTUKE", "OYAM", "PADER", "RUBIRIZI", "SIRONKO", "SOROTI", "WAKISO", "YUMBE", "ZOMBO", "ISINGIRO", "MITOOMA", "KYEGEGWA", "NTUNGAMO", "RUKUNGIRI", "KAMWENGE", "IBANDA", "KASESE", "KIRUHURA", "KYENJOJO", "MUBENDE", "GOMBA", "KIBOGA", "MPIGI", "KYANKWANZI", "KAKUMIRO", "NWOYA", "KIRYANDONGO", "SERERE", "OMORO", "ARUA", "LWENGO", "SEMBABULE", "RAKAI", "MITYANA", "LUWERO", "MUKONO", "KAMPALA", "BUVUMA", "JINJA", "NAMAYINGO", "BUSIA", "BUDUDA", "TORORO", "BUTALEJA", "BUKEDEA", "KUMI", "PALLISA", "KIBUKU", "KABERAMAIDO", "AGAGO", "KAGADI", "KIBAALE", "GULU", "RUBANDA"},
+				},
+				Validation: form.FormElementValidation{
+					Required: true,
+				},
+			},
+			{
+				Type: form.Text,
+				Attributes: form.FormElementAttributes{
+					Label:       "Subcounty / Admin 3",
+					Name:        "admin3",
+					Description: "",
+				},
+			},
+			{
+				Type: form.Text,
+				Attributes: form.FormElementAttributes{
+					Label:       "Parish / Admin 4",
+					Name:        "admin4",
+					Description: "",
+				},
+			},
+			{
+				Type: form.Text,
+				Attributes: form.FormElementAttributes{
+					Label:       "Village / Admin 5",
+					Name:        "admin5",
+					Description: "",
+				},
+			},
 		},
 	}
 	UGICLACaseAssessment = &cms.CaseTemplate{
