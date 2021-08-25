@@ -29,26 +29,6 @@ done
 echo "$PREFIX All containers are up and running!"
 
 #
-# RUN INTEGRATION TESTS
-#
-echo "$PREFIX Running IAM integration tests..."
-
-cd "$DIR/api/pkg/apps/iam" || exit
-export GO111MODULE=on
-if ! go test; then
-  echo >&2 "[pre-push] Integration tests failed, see output above."
-  exit 1
-fi
-
-echo "$PREFIX Running CMS integration tests..."
-
-cd "$DIR/api/pkg/apps/cms" || exit
-if ! go test; then
-  echo >&2 "[pre-push] Integration tests failed, see output above."
-  exit 1
-fi
-
-#
 # RUN E2E TESTS
 #
 
@@ -94,5 +74,25 @@ if ! npm run run; then
   exit 1
 fi
 echo "$PREFIX All E2E tests passed!"
+
+#
+# RUN INTEGRATION TESTS
+#
+echo "$PREFIX Running IAM integration tests..."
+
+cd "$DIR/api/pkg/apps/iam" || exit
+export GO111MODULE=on
+if ! go test; then
+  echo >&2 "[pre-push] Integration tests failed, see output above."
+  exit 1
+fi
+
+echo "$PREFIX Running CMS integration tests..."
+
+cd "$DIR/api/pkg/apps/cms" || exit
+if ! go test; then
+  echo >&2 "[pre-push] Integration tests failed, see output above."
+  exit 1
+fi
 
 exit 0
