@@ -80,13 +80,13 @@ export default class IndividualPage {
     selectDisplacementStatus = value => this.getDisplacementStatus().select(value);
     selectGender = value => this.getGender().select(value);
     selectRelationshipType = value => this.getRelationshipType().select(value);
-    typeRelatedParty = value => this.getRelatedParty().clear().type(value).wait(1000);
+    typeRelatedParty = value => this.getRelatedParty().clear().type(value).wait(500);
     addRelatedParty = () => this.getSearchResult().click();
     addRelationship = ({ relationshipType, relatedParty }) => {
         this.selectRelationshipType(relationshipType);
         this.typeRelatedParty(relatedParty);
         this.addRelatedParty();
-        cy.get(selector.addRelationshipBtn).click().wait(1000);
+        cy.get(selector.addRelationshipBtn).click().wait(500);
     };
     removeRelationship = () => {
         this.getRelationShip().find(selector.removeRelationshipBtn).click();
