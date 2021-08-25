@@ -1,5 +1,6 @@
-.SHELLFLAGS := -eu -o pipefail -c # fail on errors
+SHELL := bash
 .ONESHELL: # ensures each Make recipe is ran as one single shell session, rather than one new shell per line
+.SHELLFLAGS := -eu -o pipefail -c # fail on errors
 
 webapp = ./tmp/main
 flags = --mongo-database=core \
