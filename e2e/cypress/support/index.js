@@ -21,9 +21,3 @@ import './commands';
 
 // call our custom login with access token before each test
 beforeEach(() => cy.login('courtney.lare@email.com'));
-afterEach(function() {
-  if (this.currentTest.state === 'failed') {
-    Cypress.runner.stop()
-  }
-});
-
