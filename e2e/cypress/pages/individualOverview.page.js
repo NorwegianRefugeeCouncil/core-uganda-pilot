@@ -23,8 +23,8 @@ export default class IndividualOverviewPage {
             .get(selector.search)
             .type(value)
             .get(selector.searchBtn)
+            .wait(750)
             .click()
-            .wait(500)
             .get(selector.individual)
             .last()
             .invoke('attr', 'href');

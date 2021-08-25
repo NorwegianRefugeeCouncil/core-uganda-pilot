@@ -29,8 +29,7 @@ flags = --mongo-database=core \
 	--web-cms-host=localhost:9000 \
 	--web-cms-scheme=http \
 	--listen-address=:9000 \
-	--base-url=http://localhost:9000
-
+	--base-url=http://localhost:9000 
 
 up:
 	@docker-compose -f ../artifacts/docker-compose.yaml up --build -d

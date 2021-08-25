@@ -463,7 +463,6 @@
                 ];
                 // Do validation
                 const validations = await Promise.allSettled(subForms.map(async ({ formID, path }) => {
-                    let returnVar;
                     try {
                         const validation = await validateSubForm(formID, path);
                         removeValidation(formID);
@@ -473,17 +472,17 @@
                         }
                     } catch (e) {
                         console.error(e);
-                    } finally {
-                        returnVar = Promise.resolve(false);
                     }
-                    return returnVar;
+                    return Promise.resolve(false);
                 }));
 
                 // Show updated Individual
                 if (validations.every(v => !v.value)) {
-                    if (!location.pathname.includes('new'))
+                    if (!location.pathname.includes('new')) {
                         location.reload();
-                    else !location.assign(location.origin + '/individuals');
+                    } else {
+                        location.assign(location.origin + '/individuals');
+                    }
                 }
             };
 
@@ -532,7 +531,7 @@
                 res => {
                     let partySelectorList = document.getElementById('partySelectorList');
                     partySelectorList.innerHTML = '';
-                    if (res.response.length > 0) {
+                    if (res.response?.length > 0) {
                         let n = 0;
                         res.response.forEach(pickedParty => {
                             const party = pickedParty.party;
