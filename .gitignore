@@ -5,4 +5,4 @@
 *.DS_Store
 *.pem
 *.out
-actions/__tmp
+tmp/
