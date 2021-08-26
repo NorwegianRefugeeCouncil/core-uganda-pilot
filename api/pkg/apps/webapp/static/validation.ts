@@ -1,75 +1,88 @@
-//
-// Form handling
-//
+type FormInputElement = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 
-function Validator(forms: { formID: string, path: string }[], submit?: HTMLButtonElement) {
-  const submitBtn = submit ? submit : document.querySelector('button[type=submit]') as HTMLButtonElement;
-  submitBtn.onclick = async event => {
-    // Do validation
-    const validations = await Promise.allSettled<Promise<boolean>[]>(forms.map(async ({ formID, path }) => {
-      try {
-        const validation = await validateSubForm(formID, path);
-        removeValidation(formID);
-        if (validation != null) {
-          applyValidation(validation);
-          return Promise.resolve(true);
-        }
-      } catch (e) {
-        console.error(e);
-      }
-      return Promise.resolve(false);
-    }));
-
-    if (validations.every(v => !v)) {
-      if (!location.pathname.includes('new')) {
-        location.reload();
-      } else {
-        // FIXME!! where should this point
-        location.assign(location.origin);
-      }
-    }
+interface ValidationFormElement {
+  type: string;
+  attributes: {
+    name: string
   };
-  return {};
+  errors: ValidationError[];
 }
 
-type InputElement = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+interface ValidationError {
+  detail: string;
+}
 
-function collectSearchParams(formID) {
-  const fields = document.querySelectorAll(`#${formID} [name]`);
+// validateServerSide initiates and handles server-side validation for document form entities. The handler sends form
+// data to the provided endpoints and awaits a validation response object from the server. If validation is received,
+// the handler applies it to the concerned DOM elements. If no validation is received, the handler redirects the browser
+// to the appropriate location.
+export async function validateServerSide(forms: HTMLFormElement[], redirectPath = '') {
+  const validations = await Promise.allSettled(forms.map(async (formElement) => {
+    try {
+      const validation = await validateSubForm(formElement);
+      removeValidation(formElement);
+      if (validation != null) {
+        applyValidation(validation);
+        return Promise.resolve(true);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    return Promise.resolve(false);
+  }));
+
+  const passedValidation = validations.every(v => v.status !== 'rejected' && !v.value);
+  if (passedValidation) {
+    if (!location.pathname.includes('new')) {
+      location.reload();
+    } else {
+      const redirect = location.origin + redirectPath;
+      location.assign(redirect);
+    }
+  }
+}
+
+function collectSearchParams(formElement: HTMLFormElement): URLSearchParams {
+  const formInputElements = formElement.querySelectorAll('[name]');
   const searchParams = new URLSearchParams();
-  fields.forEach((field: InputElement) => {
-    const isCheckboxOrRadio = (field): field is HTMLInputElement => field.type === 'checkbox' || field.type === 'radio';
-    if (!isCheckboxOrRadio || (isCheckboxOrRadio(field) && field.checked)) {
-      searchParams.append(field.name, field.value);
-    } else if (field instanceof HTMLSelectElement) {
-      if (field.hasAttribute('multiple')) {
-        const children = field.children;
+
+  formInputElements.forEach((formInputElement: FormInputElement) => {
+    const isCheckboxOrRadio = (ele): ele is HTMLInputElement => ele.type === 'checkbox' || ele.type === 'radio';
+    if (!isCheckboxOrRadio(formInputElement) || (isCheckboxOrRadio(formInputElement) && formInputElement.checked)) {
+      searchParams.append(formInputElement.name, formInputElement.value);
+    } else if (formInputElement instanceof HTMLSelectElement) {
+      if (formInputElement.hasAttribute('multiple')) {
+        const { children } = formInputElement;
+
         for (let i = 0; i < children.length; i++) {
           const child = children.item(i) as HTMLOptionElement;
           if (child.hasAttribute('selected')) {
-            searchParams.append(field.name, child.value);
+            searchParams.append(formInputElement.name, child.value);
           }
         }
       } else {
-        searchParams.append(field.name, field.options[field.selectedIndex].value);
+        searchParams.append(formInputElement.name, formInputElement.options[formInputElement.selectedIndex].value);
       }
     }
   });
   return searchParams;
 }
 
-async function validateSubForm(formID, path) {
+async function validateSubForm(formElement: HTMLFormElement): Promise<ValidationFormElement[]> {
   const options = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
-    body: collectSearchParams(formID)
+    body: collectSearchParams(formElement)
   };
 
-  const response = await fetch(path, options);
+  const response = await fetch(formElement.action, options);
+
   if (response.ok) return null;
+
   let validation;
+
   try {
     validation = await response.json();
   } catch (e) {
@@ -79,26 +92,24 @@ async function validateSubForm(formID, path) {
   return validation;
 }
 
-function applyValidation(validation) {
-  for (const element of validation) {
-    let { name } = element.attributes;
-    if (!element.errors) {
+function applyValidation(validation: ValidationFormElement[]) {
+  for (const { type, attributes: { name }, errors } of validation) {
+    if (!errors) {
       continue;
     }
-    // Get DOM form element
-    let el = document.querySelector(`#${name}`);
-    if (element.type === 'taxonomyinput') {
-      el = el.parentElement;
+    let domFormElement = document.querySelector(`#${name}`);
+    if (type === 'taxonomyinput') {
+      domFormElement = domFormElement.parentElement;
     }
+
     // Apply attributes
-    el.classList.add('is-invalid');
-    el.setAttribute('aria-describedby', `${name}Feedback`);
-    // Get feedback div
+    domFormElement.classList.add('is-invalid');
+    domFormElement.setAttribute('aria-describedby', `${name}Feedback`);
     const feedback = document.getElementById(`${name}Feedback`);
+    // Append error messages
     if (feedback != null) {
       feedback.innerHTML = '';
-      // Populate attributes and error messages
-      for (const error of element.errors) {
+      for (const error of errors) {
         const p = document.createElement('p');
         p.textContent = error.detail;
         feedback.appendChild(p);
@@ -107,19 +118,21 @@ function applyValidation(validation) {
   }
 }
 
-function removeValidation(formID: string) {
-  const fields = document.querySelectorAll(`#${formID} [name]`);
-  fields.forEach((field: InputElement) => {
-    const name = field.name;
-    let receiver: InputElement | HTMLDivElement;
-    if (field.classList.contains('taxonomyinput')) {
-      receiver = field.parentElement as HTMLDivElement;
+function removeValidation(formElement: HTMLFormElement) {
+  const formElements = formElement.querySelectorAll('[name]');
+
+  formElements.forEach((formElement: FormInputElement) => {
+    let target: FormInputElement | HTMLDivElement;
+
+    if (formElement.classList.contains('taxonomyinput')) {
+      target = formElement.parentElement as HTMLDivElement;
     } else {
-      receiver = field;
+      target = formElement;
     }
-    receiver.classList.remove('is-invalid');
-    receiver.removeAttribute('aria-describedby');
-    const feedback = document.getElementById(`${name}Feedback`);
+
+    target.classList.remove('is-invalid');
+    target.removeAttribute('aria-describedby');
+    const feedback = document.getElementById(`${formElement.name}Feedback`);
     if (feedback != null) {
       feedback.innerHTML = '';
     }
