@@ -16,6 +16,7 @@ const (
 	Radio         FieldType = "radio"
 	TaxonomyInput FieldType = "taxonomyinput"
 	File          FieldType = "file"
+	CustomDiv     FieldType = "div"
 )
 
 type FormElement struct {
