@@ -343,6 +343,7 @@ func (s *Server) PostCase(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	var storedCase *cms.Case
 	var isNewCase = kase.ID == ""
 	if isNewCase {
 		subject := ctx.Value("Subject")
@@ -352,9 +353,9 @@ func (s *Server) PostCase(w http.ResponseWriter, req *http.Request) {
 			kase.CreatorID = subject.(string)
 		}
 		kase.IntakeCase = caseType.IntakeCaseType
-		kase, err = cmsClient.Cases().Create(ctx, kase)
+		storedCase, err = cmsClient.Cases().Create(ctx, kase)
 	} else {
-		kase, err = cmsClient.Cases().Update(ctx, kase)
+		storedCase, err = cmsClient.Cases().Update(ctx, kase)
 	}
 	if err != nil {
 		if status, ok := err.(*validation.Status); ok {
@@ -366,7 +367,7 @@ func (s *Server) PostCase(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	s.redirectAfterPost(w, req, kase, isNewCase)
+	s.redirectAfterPost(w, req, storedCase, isNewCase)
 
 	return
 }
