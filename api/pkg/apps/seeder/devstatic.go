@@ -73,6 +73,7 @@ var (
 					Description: "",
 					Placeholder: "",
 				},
+				Validation: form.FormElementValidation{Required: true},
 			},
 		},
 	}
