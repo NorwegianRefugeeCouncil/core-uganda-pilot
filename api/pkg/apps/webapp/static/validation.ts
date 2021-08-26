@@ -1,10 +1,15 @@
 type FormInputElement = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 
-interface ValidationFormElement {
+interface ServerSideFormElementValidation {
   type: string;
   attributes: {
     name: string
   };
+  errors: ValidationError[];
+}
+
+interface ClientSideFormElementValidation {
+  formInputElement: FormInputElement;
   errors: ValidationError[];
 }
 
@@ -20,9 +25,9 @@ export async function validateServerSide(forms: HTMLFormElement[], redirectPath 
   const validations = await Promise.allSettled(forms.map(async (formElement) => {
     try {
       const validation = await validateSubForm(formElement);
-      removeValidation(formElement);
+      removeFormValidation(formElement);
       if (validation != null) {
-        applyValidation(validation);
+        applyServerSideValidation(validation);
         return Promise.resolve(true);
       }
     } catch (e) {
@@ -36,10 +41,28 @@ export async function validateServerSide(forms: HTMLFormElement[], redirectPath 
     if (!location.pathname.includes('new')) {
       location.reload();
     } else {
-      const redirect = location.origin + redirectPath;
+      const redirect = redirectPath ?? location.origin;
       location.assign(redirect);
     }
   }
+}
+
+export function validateClientSide(): boolean {
+  // FIXME I'm really dumb
+  const formInputElements: Array<FormInputElement> = Array.from(document.querySelectorAll('[name]'));
+  const validation: ClientSideFormElementValidation[] = [];
+  for (const formInputElement of formInputElements) {
+    removeFormInputElementValidation(formInputElement);
+    if (formInputElement.required && !formInputElement.value) {
+      const errors: ValidationError[] = [{ detail: `${formInputElement.name} is required` }];
+      validation.push({ formInputElement, errors });
+    }
+  }
+  if (validation.length > 0) {
+    applyClientSideValidation(validation);
+    return true;
+  }
+  return false;
 }
 
 function collectSearchParams(formElement: HTMLFormElement): URLSearchParams {
@@ -68,7 +91,7 @@ function collectSearchParams(formElement: HTMLFormElement): URLSearchParams {
   return searchParams;
 }
 
-async function validateSubForm(formElement: HTMLFormElement): Promise<ValidationFormElement[]> {
+async function validateSubForm(formElement: HTMLFormElement): Promise<ServerSideFormElementValidation[]> {
   const options = {
     method: 'POST',
     headers: {
@@ -92,52 +115,70 @@ async function validateSubForm(formElement: HTMLFormElement): Promise<Validation
   return validation;
 }
 
-function applyValidation(validation: ValidationFormElement[]) {
+function applyServerSideValidation(validation: ServerSideFormElementValidation[]) {
   for (const { type, attributes: { name }, errors } of validation) {
     if (!errors) {
       continue;
     }
-    let domFormElement = document.querySelector(`#${name}`);
+    let domFormElement = document.querySelector(`#${name}`) as FormInputElement | HTMLDivElement;
     if (type === 'taxonomyinput') {
-      domFormElement = domFormElement.parentElement;
+      domFormElement = domFormElement.parentElement as HTMLDivElement;
     }
-
-    // Apply attributes
-    domFormElement.classList.add('is-invalid');
-    domFormElement.setAttribute('aria-describedby', `${name}Feedback`);
-    const feedback = document.getElementById(`${name}Feedback`);
-    // Append error messages
-    if (feedback != null) {
-      feedback.innerHTML = '';
-      for (const error of errors) {
-        const p = document.createElement('p');
-        p.textContent = error.detail;
-        feedback.appendChild(p);
-      }
-    }
+    applyFormInputElementValidation(domFormElement, name, errors);
   }
 }
 
-function removeValidation(formElement: HTMLFormElement) {
-  const formElements = formElement.querySelectorAll('[name]');
+function applyClientSideValidation(validation: ClientSideFormElementValidation[]) {
+  for (const { formInputElement, errors } of validation) {
+    removeFormInputElementValidation(formInputElement);
+    applyFormInputElementValidation(formInputElement, formInputElement.name, errors);
+  }
 
-  formElements.forEach((formElement: FormInputElement) => {
-    let target: FormInputElement | HTMLDivElement;
-
-    if (formElement.classList.contains('taxonomyinput')) {
-      target = formElement.parentElement as HTMLDivElement;
-    } else {
-      target = formElement;
-    }
-
-    target.classList.remove('is-invalid');
-    target.removeAttribute('aria-describedby');
-    const feedback = document.getElementById(`${formElement.name}Feedback`);
-    if (feedback != null) {
-      feedback.innerHTML = '';
-    }
-  });
 }
 
+function applyFormInputElementValidation(element: FormInputElement | HTMLDivElement, name: string, errors: ValidationError[]) {
+  element.classList.add('is-invalid');
+  element.setAttribute('aria-describedby', `${name}Feedback`);
+  // Append error messages
+  let feedback = document.getElementById(`${name}Feedback`);
+  if (feedback == null) {
+    feedback = appendFeedbackChild(element, name, errors);
+  }
+  feedback.innerHTML = '';
+  for (const error of errors) {
+    const p = document.createElement('p');
+    p.textContent = error.detail;
+    feedback.appendChild(p);
+  }
+}
 
+function removeFormValidation(formElement: HTMLFormElement) {
+  const formInputElements = formElement.querySelectorAll('[name]');
+  formInputElements.forEach(removeFormInputElementValidation);
+}
+
+function removeFormInputElementValidation(formInputElement: FormInputElement) {
+  let target: FormInputElement | HTMLDivElement;
+
+  if (formInputElement.classList.contains('taxonomyinput')) {
+    target = formInputElement.parentElement as HTMLDivElement;
+  } else {
+    target = formInputElement;
+  }
+
+  target.classList.remove('is-invalid');
+  target.removeAttribute('aria-describedby');
+  const feedback = document.getElementById(`${formInputElement.name}Feedback`);
+  if (feedback != null) {
+    feedback.innerHTML = '';
+  }
+
+}
+
+function appendFeedbackChild(element: FormInputElement | HTMLDivElement, name: string, errors: ValidationError[]): HTMLDivElement {
+  const div = document.createElement('div');
+  div.id = `${name}Feedback`;
+  div.className = 'invalid-feedback';
+  return element.insertAdjacentElement('afterend', div) as HTMLDivElement;
+}
 
