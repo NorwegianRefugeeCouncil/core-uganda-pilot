@@ -9,7 +9,7 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Create Case</h4>
-                <form id="form" data-testid='newCaseForm' action="/cases" method="post">
+                <form id="case-form" data-testid='newCaseForm' action="/cases" method="post">
                     <div class="form mb-3">
                         <label for="case-type">Select Case Type</label>
                         <select
@@ -61,7 +61,7 @@
                             {{end}}
                         {{end}}
                     {{end}}
-                    <button class="btn btn-primary" type="submit" data-testid="submitBtn">Save</button>
+                    <button id="case-submit-btn" class="btn btn-primary" data-testid="submitBtn">Save</button>
                 </form>
             </div>
         </div>
@@ -77,6 +77,18 @@
             window.location.href = `/cases/new?caseTypeId=${caseTypeId}`;
         };
 
+    </script>
+    <script type="module">
+        import { validateClientSide, validateServerSide } from '/static/js/validation.js';
+
+        const form = document.getElementById('case-form');
+        const submitBtn = document.getElementById('case-submit-btn');
+        submitBtn.onclick = async event => {
+            event.preventDefault();
+            if (!validateClientSide()) {
+                validateServerSide([form], form.action);
+            }
+        };
     </script>
     </body>
     </html>
