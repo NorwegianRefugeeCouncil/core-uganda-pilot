@@ -105,6 +105,26 @@ func individual(
 	return i
 }
 
+func ugandaIndividual(
+	individual iam.Individual,
+	identificationDate string,
+	identificationLocation string,
+	identificationSource string,
+	admin2 string,
+	admin3 string,
+	admin4 string,
+	admin5 string,
+) iam.Individual {
+	individual.Attributes.Add(iam.IdentificationDateAttribute.ID, identificationDate)
+	individual.Attributes.Add(iam.IdentificationLocationAttribute.ID, identificationLocation)
+	individual.Attributes.Add(iam.IdentificationSourceAttribute.ID, identificationSource)
+	individual.Attributes.Add(iam.Admin2Attribute.ID, admin2)
+	individual.Attributes.Add(iam.Admin3Attribute.ID, admin3)
+	individual.Attributes.Add(iam.Admin4Attribute.ID, admin4)
+	individual.Attributes.Add(iam.Admin5Attribute.ID, admin5)
+	return individual
+}
+
 func staff(individual iam.Individual) iam.Individual {
 	individual.AddPartyType(iam.StaffPartyType.ID)
 	return individual
@@ -491,74 +511,6 @@ var (
 					},
 				},
 			},
-			{
-				Type: form.Date,
-				Attributes: form.FormElementAttributes{
-					Label:       "Date of Identification",
-					Name:        "identificationDate",
-					Description: "Date of first interaction with NRC",
-				},
-			},
-			{
-				Type: form.Dropdown,
-				Attributes: form.FormElementAttributes{
-					Label:       "Location of Identification",
-					Name:        "identificationLocation",
-					Description: "",
-					Options:     []string{"Kabusu Access Center", "Nsambya Access Center", "Kisenyi ICLA Center", "Lukuli ICLA Center", "Kawempe ICLA Center", "Ndejje ICLA Center", "Mengo Field Office", "Community (Specify location)", "Home Visit", "Phone", "Other (Specify)"},
-				},
-				Validation: form.FormElementValidation{
-					Required: true,
-				},
-			},
-			{
-				Type: form.Dropdown,
-				Attributes: form.FormElementAttributes{
-					Label:       "Source of Identification",
-					Name:        "identificationSource",
-					Description: "",
-					Options:     []string{"Walk-in Center", "FFRM Referral", "Internal Referral (Other – Specify)", "ICLA Outreach Team", "External Referral (Community Leader/Contact)", "External Referral (INGO/LNGO)", "External Referral (Other – Specify)", "Self (Telephone)", "Self (Email)", "Internal Referral (Other NRC Sector – Specify)", "CBP Outreach Team", "Other NRC Outreach Team (Specify)", "External Referral (UN Agency)", "External Referral (Government)", "Other – Specify"},
-				},
-				Validation: form.FormElementValidation{
-					Required: true,
-				},
-			},
-			{
-				Type: form.Dropdown,
-				Attributes: form.FormElementAttributes{
-					Label:       "District / Admin 2",
-					Name:        "admin2",
-					Description: "",
-					Options:     []string{"ABIM", "ADJUMANI", "ALEBTONG", "AMOLATAR", "AMUDAT", "AMURIA", "AMURU", "APAC", "BUDAKA", "BUGIRI", "BUIKWE", "BUKOMANSIMBI", "BUKWO", "BULAMBULI", "BULIISA", "BUNDIBUGYO", "BUSHENYI", "BUYENDE", "DOKOLO", "BUTAMBALA", "HOIMA", "IGANGA", "KAABONG", "KABALE", "KABAROLE", "KALANGALA", "KALIRO", "KALUNGU", "KAMULI", "KANUNGU", "KAPCHORWA", "KATAKWI", "KAYUNGA", "SHEEMA", "KITGUM", "KOBOKO", "KOLE", "KOTIDO", "KISORO", "KWEEN", "LAMWO", "LIRA", "LUUKA", "LYANTONDE", "MANAFWA", "MASAKA", "MASINDI", "MAYUGE", "MBALE", "MBARARA", "MOROTO", "MOYO", "NAKAPIRIPIRIT", "NAKASEKE", "NAKASONGOLA", "NAMUTUMBA", "NAPAK", "NEBBI", "NGORA", "BUHWEJU", "NTOROKO", "MARACHA", "OTUKE", "OYAM", "PADER", "RUBIRIZI", "SIRONKO", "SOROTI", "WAKISO", "YUMBE", "ZOMBO", "ISINGIRO", "MITOOMA", "KYEGEGWA", "NTUNGAMO", "RUKUNGIRI", "KAMWENGE", "IBANDA", "KASESE", "KIRUHURA", "KYENJOJO", "MUBENDE", "GOMBA", "KIBOGA", "MPIGI", "KYANKWANZI", "KAKUMIRO", "NWOYA", "KIRYANDONGO", "SERERE", "OMORO", "ARUA", "LWENGO", "SEMBABULE", "RAKAI", "MITYANA", "LUWERO", "MUKONO", "KAMPALA", "BUVUMA", "JINJA", "NAMAYINGO", "BUSIA", "BUDUDA", "TORORO", "BUTALEJA", "BUKEDEA", "KUMI", "PALLISA", "KIBUKU", "KABERAMAIDO", "AGAGO", "KAGADI", "KIBAALE", "GULU", "RUBANDA"},
-				},
-				Validation: form.FormElementValidation{
-					Required: true,
-				},
-			},
-			{
-				Type: form.Text,
-				Attributes: form.FormElementAttributes{
-					Label:       "Subcounty / Admin 3",
-					Name:        "admin3",
-					Description: "",
-				},
-			},
-			{
-				Type: form.Text,
-				Attributes: form.FormElementAttributes{
-					Label:       "Parish / Admin 4",
-					Name:        "admin4",
-					Description: "",
-				},
-			},
-			{
-				Type: form.Text,
-				Attributes: form.FormElementAttributes{
-					Label:       "Village / Admin 5",
-					Name:        "admin5",
-					Description: "",
-				},
-			},
 		},
 	}
 	UGICLACaseAssessment = &cms.CaseTemplate{
@@ -706,9 +658,9 @@ var (
 	}
 
 	// Individuals
-	JohnDoe     = individual("c529d679-3bb6-4a20-8f06-c096f4d9adc1", "John", "Doe", "1983-04-23", "Refugee", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "No", "Yes", "Moderate", "No", "", "No", "", "Kenya", "Kiswahili, English", "English", "123 Main Street, Kampala", "0123456789", "", "Email", "No")
-	MaryPoppins = individual("bbf539fd-ebaa-4438-ae4f-8aca8b327f42", "Mary", "Poppins", "1983-04-23", "Internally Displaced Person", "Female", "Yes", "https://link-to-consent.proof", "No", "No", "No", "No", "", "No", "", "No", "", "Uganda", "Rukiga, English", "Rukiga", "901 First Avenue, Kampala", "0123456789", "", "Telegram", "Yes")
-	BoDiddley   = individual("26335292-c839-48b6-8ad5-81271ee51e7b", "Bo", "Diddley", "1983-04-23", "Host Community", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "Yes", "No", "", "No", "", "No", "", "Somalia", "Somali, Arabic, English", "English", "101 Main Street, Kampala", "0123456789", "", "Whatsapp", "No")
+	JohnDoe     = ugandaIndividual(individual("c529d679-3bb6-4a20-8f06-c096f4d9adc1", "John", "Doe", "1983-04-23", "Refugee", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "No", "Yes", "Moderate", "No", "", "No", "", "Kenya", "Kiswahili, English", "English", "123 Main Street, Kampala", "0123456789", "", "Email", "No"),"1983-04-23","0","0","0","0","0","0")
+	MaryPoppins = ugandaIndividual(individual("bbf539fd-ebaa-4438-ae4f-8aca8b327f42", "Mary", "Poppins", "1983-04-23", "Internally Displaced Person", "Female", "Yes", "https://link-to-consent.proof", "No", "No", "No", "No", "", "No", "", "No", "", "Uganda", "Rukiga, English", "Rukiga", "901 First Avenue, Kampala", "0123456789", "", "Telegram", "Yes"),"1983-04-23","0","0","0","0","0","0")
+	BoDiddley   = ugandaIndividual(individual("26335292-c839-48b6-8ad5-81271ee51e7b", "Bo", "Diddley", "1983-04-23", "Host Community", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "Yes", "No", "", "No", "", "No", "", "Somalia", "Somali, Arabic, English", "English", "101 Main Street, Kampala", "0123456789", "", "Whatsapp", "No"),"1983-04-23","0","0","0","0","0","0")
 
 	Stephen  = individual("066a0268-fdc6-495a-9e4b-d60cfae2d81a", "Stephen", "Kabagambe", "1983-04-23", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
 	Colette  = individual("93f9461f-31da-402e-8988-6e0100ecaa24", "Colette", "le Jeune", "1983-04-23", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
