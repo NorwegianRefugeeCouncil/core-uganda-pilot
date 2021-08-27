@@ -27,6 +27,8 @@
                                        value=""
                                        placeholder="Name"
                                        data-testid="name"
+                                       maxlength="40"
+                                       required
                                 >
                                 <label for="name-input">Name</label>
                             </div>
@@ -109,7 +111,7 @@
 
         let languages = [
             { value: 'en', name: 'English' },
-            { value: 'fr', name: 'French' }
+            { value: 'fr', name: 'French' },
         ];
 
         {{ if .Attribute }}
@@ -123,16 +125,16 @@
                     {
                         locale: "{{.Locale}}",
                         long: "{{.LongFormulation}}",
-                        short: "{{.ShortFormulation}}"
+                        short: "{{.ShortFormulation}}",
                     },
                     {{end}}
-                ]
+                ],
             },
             partyTypes: [
                 {{range .PartyTypes.Items}}
                 { value: "{{.ID}}", name: "{{.Name}}" }
                 {{end}}
-            ]
+            ],
         });
         {{else }}
         let stateSubject = new BehaviorSubject({
@@ -141,13 +143,13 @@
                 valueType: '',
                 partyTypes: ["{{(index .PartyTypes.Items 0).ID}}"],
                 isPii: false,
-                translations: []
+                translations: [],
             },
             partyTypes: [
                 {{range .PartyTypes.Items}}
                 { value: "{{.ID}}", name: "{{.Name}}" },
                 {{end}}
-            ]
+            ],
         });
         {{end}}
 
@@ -163,7 +165,7 @@
                 return languages.filter(l => {
                     return !translations.find(t => t.locale === l.value);
                 });
-            })
+            }),
         );
 
 
@@ -173,8 +175,8 @@
                 ...stateSubject.value,
                 attribute: {
                     ...stateSubject.value.attribute,
-                    name: event.target.value
-                }
+                    name: event.target.value,
+                },
             };
             stateSubject.next(state);
         };
@@ -189,8 +191,8 @@
                 ...stateSubject.value,
                 attribute: {
                     ...stateSubject.value.attribute,
-                    translations: stateSubject.value.attribute.translations.filter(t => t.locale !== locale)
-                }
+                    translations: stateSubject.value.attribute.translations.filter(t => t.locale !== locale),
+                },
             });
         };
 
@@ -206,10 +208,10 @@
                             {
                                 locale: ev.target.value,
                                 long: '',
-                                short: ''
-                            }
-                        ]
-                    }
+                                short: '',
+                            },
+                        ],
+                    },
                 };
                 stateSubject.next(state);
             };

@@ -21,6 +21,7 @@
                                    data-testid="{{$name}}"
                                    class="form-control {{if $errs}}is-invalid{{end}}"
                                    aria-describedby="{{$name}}Feedback"
+                                   required
                             >
                             <div id="{{$name}}Feedback" class="invalid-feedback">
                                 {{range $errs}}
@@ -34,6 +35,7 @@
                                    name="{{$name}}"
                                    data-testid="{{$name}}"
                                    value="{{if .CaseType}}{{.CaseType.Name}}{{end}}"
+                                   required
                             >
                         {{end}}
                     </div>
@@ -50,6 +52,7 @@
                                     name="{{$name}}"
                                     aria-describedby="partyTypeIdFeedback"
                                     data-testid="partytype"
+                                    required
                             >
 
                                 {{if .CaseType.PartyTypeID}}
@@ -78,6 +81,7 @@
                                     name="{{$name}}"
                                     data-testid="partytype"
                                     {{if .CaseType}}disabled{{end}}
+                                    required
                             >
                                 {{if .CaseType}}
                                     {{$partyType := .PartyTypes.FindByID .CaseType.PartyTypeID}}
@@ -103,6 +107,7 @@
                                     name="{{$name}}"
                                     data-testid="team"
                                     aria-describedby="teamIdFeedback"
+                                    required
                             >
                                 {{if .CaseType.TeamID}}
                                     {{$team := .Teams.FindByID .CaseType.TeamID}}
@@ -127,6 +132,7 @@
                                     name="{{$name}}"
                                     data-testid="team"
                                     {{if .CaseType}}disabled{{end}}
+                                    required
                             >
                                 {{if .CaseType}}
                                     {{$team := .Teams.FindByID .CaseType.TeamID}}
@@ -154,6 +160,7 @@
                                       style="height: 600px"
                                       data-testid="template"
                                       aria-describedby="{{$name}}}Feedback"
+                                      required
                             >
                                 {{- if .CaseType.Template}}{{.CaseType.Pretty}}{{end -}}
                             </textarea>
@@ -169,6 +176,7 @@
                                       style="height: 600px"
                                       data-testid="template"
                                       {{if .CaseType}}readonly{{end}}
+                                      required
                             >
                                 {{- if .CaseType.Template}}{{.CaseType.Pretty}}{{end -}}
                             </textarea>

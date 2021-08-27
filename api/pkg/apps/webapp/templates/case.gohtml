@@ -184,7 +184,8 @@
                     <div class='card-body'>
                         <form action='/comments' method='post'>
                             <input type='hidden' name='case_id' value='{{$caseId}}'>
-                            <textarea placeholder='Leave a comment' class='form-control mb-3' name='body'></textarea>
+                            <textarea placeholder='Leave a comment' class='form-control mb-3' name='body'
+                                      maxlength="500"></textarea>
                             <button class='btn btn-success'>Comment</button>
                         </form>
                     </div>

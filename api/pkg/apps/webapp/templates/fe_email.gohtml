@@ -6,6 +6,7 @@
                value="{{if .Attributes.Value}}{{index .Attributes.Value 0}}{{end}}"
                class="form-control  {{if .Errors}}is-invalid{{end}}"
                type="email"
+               maxlength="80"
                data-testid="test-email"
                placeholder="{{.Attributes.Placeholder}}"
                {{if .Validation.Required}}required{{end}}

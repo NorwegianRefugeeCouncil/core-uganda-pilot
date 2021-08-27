@@ -11,9 +11,11 @@
             <div class="row">
                 <div class="col">
                     <div class="d-flex flex-row pt-3" style="height: 3.25rem">
-                        <div><i class="bi bi-people"></i> <a href="/teams">Teams</a> / <b>{{.Team.Name}} ({{.Country.Name}})</b></div>
+                        <div><i class="bi bi-people"></i> <a href="/teams">Teams</a> / <b>{{.Team.Name}}
+                                ({{.Country.Name}})</b></div>
                         <div class="flex-grow-1"></div>
-                        <a href="" class="text-decoration-none text-dark border-primary border-bottom border-2 ps-3 pe-4">
+                        <a href=""
+                           class="text-decoration-none text-dark border-primary border-bottom border-2 ps-3 pe-4">
                             <i class="bi bi-person-fill pe-2"></i> <b>Members</b>
                         </a>
                     </div>
@@ -38,7 +40,7 @@
                                    id="partySelector"
                                    data-testid="partySelector"
                                    data-bs-toggle="dropdown"
-                                   aria-expanded="false"/>
+                                   aria-expanded="false">
 
                             <ul class="dropdown-menu" id="partySelectorList" aria-labelledby="partySelector">
                             </ul>
@@ -57,12 +59,12 @@
     </div>
 
     <script>
-        let {Subject} = rxjs;
-        let {map, debounceTime, switchMap, distinctUntilChanged, filter} = rxjs.operators;
-        let {ajax} = rxjs.ajax;
+        let { Subject } = rxjs;
+        let { map, debounceTime, switchMap, distinctUntilChanged, filter } = rxjs.operators;
+        let { ajax } = rxjs.ajax;
 
         // Handles the search box for the parties dropdown
-        let partySearchSubject = new Subject()
+        let partySearchSubject = new Subject();
         let partySearch$ = partySearchSubject.asObservable().pipe(
             debounceTime(200),
             map(s => s.trim()),
@@ -70,129 +72,131 @@
             filter(s => s && s.length >= 2),
             switchMap((searchParam) => {
                 const searchParams = new URLSearchParams({
-                    "searchParam": searchParam,
-                    "teamId": "{{.Team.ID}}"
-                })
-                const ajaxUrl = "/teams/pickparty?" + searchParams.toString()
-                return ajax(ajaxUrl)
-            })
-        )
+                    'searchParam': searchParam,
+                    'teamId': "{{.Team.ID}}",
+                });
+                const ajaxUrl = '/teams/pickparty?' + searchParams.toString();
+                return ajax(ajaxUrl);
+            }),
+        );
 
         // Handle adding member to team
         const addIndividualToTeam = (teamId, individualId) => {
             const searchParams = new URLSearchParams({
-                "teamId": teamId,
-                "individualId": individualId
-            })
-            const reqUrl = `/teams/${teamId}/invitemember?` + searchParams.toString()
-            console.log(reqUrl)
-            fetch(reqUrl, { method: "POST", redirect: "follow" })
-                .then(response =>  {window.location.href = response.headers.get("Location")})
-                .catch((err) => console.error((err)))
-        }
+                'teamId': teamId,
+                'individualId': individualId,
+            });
+            const reqUrl = `/teams/${teamId}/invitemember?` + searchParams.toString();
+            console.log(reqUrl);
+            fetch(reqUrl, { method: 'POST', redirect: 'follow' })
+                .then(response => {
+                    window.location.href = response.headers.get('Location');
+                })
+                .catch((err) => console.error((err)));
+        };
 
         const noPartiesFound = () => {
-            let partySelectorList = document.getElementById("partySelectorList")
-            let newListItem = document.createElement('li')
-            newListItem.classList.add('dropdown-item')
-            newListItem.onclick = onPartyListItemClick
-            let displayText = `No Parties Found`
+            let partySelectorList = document.getElementById('partySelectorList');
+            let newListItem = document.createElement('li');
+            newListItem.classList.add('dropdown-item');
+            newListItem.onclick = onPartyListItemClick;
+            let displayText = `No Parties Found`;
             newListItem.appendChild(
-                document.createTextNode(displayText)
-            )
-            partySelectorList.appendChild(newListItem)
-        }
+                document.createTextNode(displayText),
+            );
+            partySelectorList.appendChild(newListItem);
+        };
 
         // Party List Item click handler - sets the text box value used for searching to the selected item
         // from the dropdown
         const onPartyListItemClick = (event) => {
-            document.getElementById("partySelector").value = event.target.textContent
-            document.getElementById("partySelector").setAttribute("data-party-id", event.target.id)
-        }
+            document.getElementById('partySelector').value = event.target.textContent;
+            document.getElementById('partySelector').setAttribute('data-party-id', event.target.id);
+        };
 
         // Get First Name from party attribute list, or return blank
         const firstNameFromAttrs = (attrs) => {
-            let firstName = ""
+            let firstName = '';
             Object.keys(attrs).forEach(
                 k => {
                     if (k == "{{.FirstNameAttribute.ID}}") {
-                        firstName = attrs[k]
+                        firstName = attrs[k];
                     }
-                }
-            )
-            return firstName
-        }
+                },
+            );
+            return firstName;
+        };
 
         // Get Last Name from party attribute list, or return blank
         const lastNameFromAttrs = (attrs) => {
-            let lastName = ""
+            let lastName = '';
             Object.keys(attrs).forEach(
                 k => {
                     if (k == "{{.LastNameAttribute.ID}}") {
-                        lastName = attrs[k]
+                        lastName = attrs[k];
                     }
-                }
-            )
-            return lastName
-        }
+                },
+            );
+            return lastName;
+        };
 
         // Add listener for party search box
-        document.getElementById("partySelector").oninput = (event) => {
-            partySearchSubject.next(event.target.value)
-        }
+        document.getElementById('partySelector').oninput = (event) => {
+            partySearchSubject.next(event.target.value);
+        };
 
         // Add listener to add team member button
-        document.getElementById("btn-add").onclick = (event) => {
-            const individualId = document.getElementById("partySelector").getAttribute("data-party-id")
-            if (!(individualId === null || individualId === "")){
-                addIndividualToTeam("{{.Team.ID}}", individualId)
+        document.getElementById('btn-add').onclick = (event) => {
+            const individualId = document.getElementById('partySelector').getAttribute('data-party-id');
+            if (!(individualId === null || individualId === '')) {
+                addIndividualToTeam("{{.Team.ID}}", individualId);
             }
-        }
+        };
 
         // Handle party search responses
         partySearch$.subscribe(
             res => {
                 // update parties list
-                parties = []
+                parties = [];
 
-                let partySelectorList = document.getElementById("partySelectorList")
-                partySelectorList.innerHTML = ''
-                let n = 0
+                let partySelectorList = document.getElementById('partySelectorList');
+                partySelectorList.innerHTML = '';
+                let n = 0;
                 if (res.response.items.length > 0) {
                     res.response.items.forEach(party => {
-                      if (n < {{ .Constants.PartyDropdownLimit }}) {
-                        let newListItem = document.createElement('li')
-                        newListItem.classList.add('dropdown-item')
-                        newListItem.classList.add('partySelectorItem')
-                        newListItem.onclick = onPartyListItemClick
-                        let displayText = `${lastNameFromAttrs(party.attributes)}, ${firstNameFromAttrs(party.attributes)}`
-                        newListItem.appendChild(
-                          document.createTextNode(displayText)
-                        )
-                        newListItem.setAttribute('id', party.id)
-                        newListItem.setAttribute('data-testid', 'partySelectorItem')
-                        partySelectorList.appendChild(newListItem)
+                        if (n < {{ .Constants.PartyDropdownLimit }}) {
+                            let newListItem = document.createElement('li');
+                            newListItem.classList.add('dropdown-item');
+                            newListItem.classList.add('partySelectorItem');
+                            newListItem.onclick = onPartyListItemClick;
+                            let displayText = `${lastNameFromAttrs(party.attributes)}, ${firstNameFromAttrs(party.attributes)}`;
+                            newListItem.appendChild(
+                                document.createTextNode(displayText),
+                            );
+                            newListItem.setAttribute('id', party.id);
+                            newListItem.setAttribute('data-testid', 'partySelectorItem');
+                            partySelectorList.appendChild(newListItem);
 
-                        // append party to parties list
-                        parties.push({
-                          id: party.id,
-                          name: displayText
-                        })
-                      }
-                      n++
-                    })
+                            // append party to parties list
+                            parties.push({
+                                id: party.id,
+                                name: displayText,
+                            });
+                        }
+                        n++;
+                    });
                 } else {
                     // No Parties Found...
-                    noPartiesFound()
+                    noPartiesFound();
                 }
             },
             err => {
-                console.error("got error: ", err)
-            }
-        )
+                console.error('got error: ', err);
+            },
+        );
 
         // Populate party picker with placeholder
-        noPartiesFound()
+        noPartiesFound();
 
     </script>
 
