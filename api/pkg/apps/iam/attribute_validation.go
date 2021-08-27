@@ -74,10 +74,17 @@ func (a *Attribute) ValidateFormField(errList validation.ErrorList, path *valida
 			}
 		}
 	}
-	if a.Validation.Required && utils.AllEmpty(a.Attributes.Value) {
-		err := validation.Required(fieldPath, fmt.Sprintf("%s is required", a.Attributes.Name))
-		errList = append(errList, err)
-	}
+	// FIXME ? circumvented because was being used both during new attribute instantiation (ie creating a whole new
+	// attribute) and when submitting an attribute value via API. The absence of a value in the first case was
+	// triggering an error here and there was no easy way to avoid it.
+	// It might be ok to skip this step because client-side validation prevents submitting empty required values via the
+	// front end, however, this obviously leaves the door open to direct API submissions.
+	// Ideally, editing available Attributes, and validating user-submitted Attribute _data_ should be handled in
+	// separate places.
+	//if a.Validation.Required && utils.AllEmpty(a.Attributes.Value) {
+	//	err := validation.Required(fieldPath, fmt.Sprintf("%s is required", a.Attributes.Name))
+	//	errList = append(errList, err)
+	//}
 	return errList
 }
 
