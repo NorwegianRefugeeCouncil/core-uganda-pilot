@@ -2,17 +2,17 @@ package iam
 
 import "github.com/nrc-no/core/pkg/form"
 
-var FirstNameAttribute = Attribute{
+var FullNameAttribute = Attribute{
 	ID:         "8514da51-aad5-4fb4-a797-8bcc0c969b27",
-	Name:       "firstName",
+	Name:       "fullName",
 	Type:       form.Text,
-	Attributes: form.FormElementAttributes{Name: "firstName"},
+	Attributes: form.FormElementAttributes{Name: "fullName"},
 	Validation: form.FormElementValidation{Required: true},
 	Translations: []AttributeTranslation{
 		{
 			Locale:           "en",
-			LongFormulation:  "First Name",
-			ShortFormulation: "First Name",
+			LongFormulation:  "Full Name",
+			ShortFormulation: "Full Name",
 		},
 	},
 	IsPersonallyIdentifiableInfo: true,
@@ -21,17 +21,17 @@ var FirstNameAttribute = Attribute{
 	},
 }
 
-var LastNameAttribute = Attribute{
+var DisplayNameAttribute = Attribute{
 	ID:         "21079bbc-e04b-4fe8-897f-644d73af0d9e",
-	Name:       "lastName",
+	Name:       "displayName",
 	Type:       form.Text,
-	Attributes: form.FormElementAttributes{Name: "lastName"},
+	Attributes: form.FormElementAttributes{Name: "displayName"},
 	Validation: form.FormElementValidation{Required: true},
 	Translations: []AttributeTranslation{
 		{
 			Locale:           "en",
-			LongFormulation:  "Last Name",
-			ShortFormulation: "Last Name",
+			LongFormulation:  "Display Name",
+			ShortFormulation: "Display Name",
 		},
 	},
 	IsPersonallyIdentifiableInfo: true,

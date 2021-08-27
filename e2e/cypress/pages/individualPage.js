@@ -1,8 +1,8 @@
 import { URL, testId, nameAttr } from '../helpers';
 
 const selector = {
-    firstName: nameAttr('firstName'),
-    lastName: nameAttr('lastName'),
+    fullName: nameAttr('fullName'),
+    displayName: nameAttr('displayName'),
     email: nameAttr('email'),
     birthDate: nameAttr('birthDate'),
     displacementStatus: nameAttr('displacementStatus'),
@@ -38,9 +38,9 @@ export default class IndividualPage {
     };
 
     inputAttributes = data => {
-        const { firstName, lastName, birthDate, email, status, gender, relationshipType, relatedParty } = data;
-        this.typeFirstName(firstName);
-        this.typeLastName(lastName);
+        const { fullName, displayName, birthDate, email, status, gender, relationshipType, relatedParty } = data;
+        this.typeFirstName(fullName);
+        this.typeLastName(displayName);
         this.enterBirthDate(birthDate);
         this.typeEmail(email);
         this.selectDisplacementStatus(status);
@@ -49,9 +49,9 @@ export default class IndividualPage {
         return this;
     };
     verifyAttributes = data => {
-        const { firstName, lastName, birthDate, email, status, gender, relationshipType, relatedParty } = data;
-        this.getFirstName().should('have.value', firstName);
-        this.getLastName().should('have.value', lastName);
+        const { fullName, displayName, birthDate, email, status, gender, relationshipType, relatedParty } = data;
+        this.getFirstName().should('have.value', fullName);
+        this.getLastName().should('have.value', displayName);
         this.getBirthDate().should('have.value', birthDate);
         this.getEmail().should('have.value', email);
         this.getDisplacementStatus().should('have.value', status);
@@ -62,8 +62,8 @@ export default class IndividualPage {
         return this;
     };
 
-    getFirstName = () => cy.get(selector.firstName);
-    getLastName = () => cy.get(selector.lastName);
+    getFirstName = () => cy.get(selector.fullName);
+    getLastName = () => cy.get(selector.displayName);
     getEmail = () => cy.get(selector.email);
     getBirthDate = () => cy.get(selector.birthDate);
     getDisplacementStatus = () => cy.get(selector.displacementStatus);

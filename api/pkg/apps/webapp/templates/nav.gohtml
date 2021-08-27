@@ -32,8 +32,9 @@
                     {{$profile := Profile}}
                     {{if $profile}}
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="profile-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                {{$profile.FamilyName}}
+                            <a class="nav-link dropdown-toggle" href="#" id="profile-dropdown" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                {{$profile.DisplayName}}
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="profile-dropdown">
                                 <li><a class="dropdown-item" href="/logout" data-testid="logoutBtn">Logout</a></li>

@@ -20,8 +20,8 @@ func (irh *IndividualRegistrationRequestHandler) IndividualExists() bool {
 	necessaryDataExistsForIndividual := true
 
 	expectedAttributes := []*iam.Attribute{
-		&iam.FirstNameAttribute,
-		&iam.LastNameAttribute,
+		&iam.FullNameAttribute,
+		&iam.DisplayNameAttribute,
 		&iam.GenderAttribute,
 		&iam.DisplacementStatusAttribute,
 		&iam.BirthDateAttribute,

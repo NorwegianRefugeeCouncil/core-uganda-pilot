@@ -65,8 +65,8 @@ func (s *Server) initRelationshipType(ctx context.Context) error {
 func (s *Server) initAttribute(ctx context.Context) error {
 	for _, attribute := range []Attribute{
 		// "Built-in" Attributes
-		FirstNameAttribute,
-		LastNameAttribute,
+		FullNameAttribute,
+		DisplayNameAttribute,
 		BirthDateAttribute,
 		EMailAttribute,
 		TeamNameAttribute,

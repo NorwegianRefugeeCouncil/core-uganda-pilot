@@ -13,8 +13,8 @@ import (
 
 type Claims struct {
 	Subject       string `json:"sub"`
-	FamilyName    string `json:"family_name"`
-	GivenName     string `json:"given_name"`
+	DisplayName   string `json:"display_name"`
+	FullName      string `json:"full_name"`
 	Email         string `json:"email"`
 	EmailVerified bool   `json:"email_verified"`
 }
@@ -113,8 +113,8 @@ func (s *Server) Callback(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	profile.FamilyName = individual.Get(iam.LastNameAttribute.ID)
-	profile.GivenName = individual.Get(iam.FirstNameAttribute.ID)
+	profile.DisplayName = individual.Get(iam.DisplayNameAttribute.ID)
+	profile.FullName = individual.Get(iam.FullNameAttribute.ID)
 
 	session.Values["profile"] = profile
 	if err := session.Save(req, w); err != nil {

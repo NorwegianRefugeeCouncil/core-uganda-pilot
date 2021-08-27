@@ -32,8 +32,7 @@ func (s *Server) PostConsent(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	givenName := individual.Get(iam.FirstNameAttribute.ID)
-	familyName := individual.Get(iam.LastNameAttribute.ID)
+	fullName := individual.Get(iam.FullNameAttribute.ID)
 
 	consentAcceptResp, err := s.HydraAdmin.AcceptConsentRequest(admin.NewAcceptConsentRequestParams().
 		WithContext(req.Context()).
@@ -45,12 +44,10 @@ func (s *Server) PostConsent(w http.ResponseWriter, req *http.Request) {
 			Remember:                 true,
 			Session: &models.ConsentRequestSession{
 				AccessToken: map[string]interface{}{
-					"given_name":  givenName,
-					"family_name": familyName,
+					"full_name": fullName,
 				},
 				IDToken: map[string]interface{}{
-					"given_name":  givenName,
-					"family_name": familyName,
+					"full_name": fullName,
 				},
 			},
 		}))
