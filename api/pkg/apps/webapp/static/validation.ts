@@ -39,19 +39,19 @@ export async function validateServerSide(forms: HTMLFormElement[], redirectPath 
 
   const passedValidation = validations.every(v => v.status !== 'rejected' && !v.value);
   if (passedValidation) {
-    if (!location.pathname.includes('new')) {
-      location.reload();
-    } else {
-      const redirect = redirectPath ?? location.origin;
-      location.assign(redirect);
-    }
+    const redirect = redirectPath ?? location.origin;
+    location.assign(redirect);
   }
 }
 
-export function validateClientSide(form: HTMLFormElement): boolean {
-  // FIXME I'm really dumb. For instance, I validate input, select, and textarea elements but not custom input elements.
-  const isValid = form.reportValidity();
-  if (!isValid) {
+export function validateClientSide(forms: HTMLFormElement[]): boolean {
+  // FIXME I'm really dumb.
+  //  For instance, I validate input, select, and textarea elements but not custom form elements.
+  let isValid = true;
+  for (const form of forms) {
+    if (!form.reportValidity()) {
+      isValid = false;
+    }
     form.classList.add('was-validated');
   }
   return isValid;
