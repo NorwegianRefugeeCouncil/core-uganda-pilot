@@ -27,6 +27,7 @@ export async function validateServerSide(forms: HTMLFormElement[], redirectPath 
       const validation = await validateSubForm(formElement);
       removeFormValidation(formElement);
       if (validation != null) {
+        formElement.classList.add('was-validated');
         applyServerSideValidation(validation);
         return Promise.resolve(true);
       }
@@ -47,22 +48,13 @@ export async function validateServerSide(forms: HTMLFormElement[], redirectPath 
   }
 }
 
-export function validateClientSide(): boolean {
-  // FIXME I'm really dumb
-  const formInputElements: Array<FormInputElement> = Array.from(document.querySelectorAll('[name]'));
-  const validation: ClientSideFormElementValidation[] = [];
-  for (const formInputElement of formInputElements) {
-    removeFormInputElementValidation(formInputElement);
-    if (formInputElement.required && !formInputElement.value) {
-      const errors: ValidationError[] = [{ detail: `${formInputElement.name} is required` }];
-      validation.push({ formInputElement, errors });
-    }
+export function validateClientSide(form: HTMLFormElement): boolean {
+  // FIXME I'm really dumb. For instance, I validate input, select, and textarea elements but not custom input elements.
+  const isValid = form.reportValidity();
+  if (!isValid) {
+    form.classList.add('was-validated');
   }
-  if (validation.length > 0) {
-    applyClientSideValidation(validation);
-    return true;
-  }
-  return false;
+  return isValid;
 }
 
 function collectSearchParams(formElement: HTMLFormElement): URLSearchParams {
