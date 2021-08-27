@@ -110,7 +110,7 @@
 
         const form = document.getElementById('attributes-form');
         const submitBtn = document.getElementById('form-submit-btn');
-        submitBtn.onclick = async event => {
+        submitBtn.onclick = event => {
             event.preventDefault();
             if (validateClientSide([form])) {
                 validateServerSide([form], form.action);

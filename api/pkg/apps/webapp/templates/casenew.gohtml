@@ -83,7 +83,7 @@
 
         const form = document.getElementById('case-form');
         const submitBtn = document.getElementById('case-submit-btn');
-        submitBtn.onclick = async event => {
+        submitBtn.onclick = event => {
             event.preventDefault();
             if (validateClientSide([form])) {
                 validateServerSide([form], form.action);
