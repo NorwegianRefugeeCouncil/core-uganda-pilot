@@ -2,6 +2,17 @@ package iam
 
 import "github.com/nrc-no/core/pkg/form"
 
+//Countries
+var GlobalCountry = Country{
+	ID: "36790d84-0bea-437c-b26e-bae1bcd2d1bc",
+	Name: "Global",
+}
+
+var UgandaCountry = Country{
+	ID: "fc82a799-b4fc-4eda-81fc-f2710a0d27d8",
+	Name: "Uganda",
+}
+
 //Individual Global Attributes
 var FirstNameAttribute = Attribute{
 	ID:         "8514da51-aad5-4fb4-a797-8bcc0c969b27",
@@ -83,6 +94,7 @@ var EMailAttribute = Attribute{
 var IdentificationDateAttribute = Attribute{
 	ID:         "c84b8b93-b974-4bec-b9f7-d437446b24a7",
 	Name:       "identificationDate",
+	CountryID:  UgandaCountry.ID,
 	Type: form.Date,
 	Attributes: form.FormElementAttributes{
 		Label:       "Date of Identification",
@@ -106,6 +118,7 @@ var IdentificationDateAttribute = Attribute{
 var IdentificationLocationAttribute = Attribute{
 	ID:         "06680252-1a1f-4c9d-85dd-56feef20019d",
 	Name:       "identificationLocation",
+	CountryID:  UgandaCountry.ID,
 	Type: form.Dropdown,
 	Attributes: form.FormElementAttributes{
 		Label:       "Location of Identification",
@@ -130,6 +143,7 @@ var IdentificationLocationAttribute = Attribute{
 var IdentificationSourceAttribute = Attribute{
 	ID:         "a131a0fb-0270-4feb-8fc9-46e7dd6b5acb",
 	Name:       "identificationSource",
+	CountryID:  UgandaCountry.ID,
 	Type: form.Dropdown,
 	Attributes: form.FormElementAttributes{
 		Label:       "Source of Identification",
@@ -154,6 +168,7 @@ var IdentificationSourceAttribute = Attribute{
 var Admin2Attribute = Attribute{
 	ID:         "44dffbc4-7536-42b9-af84-32ea4e9ed493",
 	Name:       "admin2",
+	CountryID:  UgandaCountry.ID,
 	Type: form.Dropdown,
 	Attributes: form.FormElementAttributes{
 		Label:       "District / Admin 2",
@@ -178,6 +193,7 @@ var Admin2Attribute = Attribute{
 var Admin3Attribute = Attribute{
 	ID:         "a17ffa5e-5d62-44cd-b89f-438eeba128ac",
 	Name:       "admin3",
+	CountryID:  UgandaCountry.ID,
 	Type: form.Text,
 	Attributes: form.FormElementAttributes{
 		Label:       "Subcounty / Admin 3",
@@ -201,6 +217,7 @@ var Admin3Attribute = Attribute{
 var Admin4Attribute = Attribute{
 	ID:         "f867c62a-dcd0-4778-9f4e-7309d044e905",
 	Name:       "admin4",
+	CountryID:  UgandaCountry.ID,
 	Type: form.Text,
 	Attributes: form.FormElementAttributes{
 		Label:       "Parish / Admin 4",
@@ -224,6 +241,7 @@ var Admin4Attribute = Attribute{
 var Admin5Attribute = Attribute{
 	ID:         "f0b34ffc-3e15-4195-8e90-a3e1e4b3940c",
 	Name:       "admin5",
+	CountryID:  UgandaCountry.ID,
 	Type: form.Text,
 	Attributes: form.FormElementAttributes{
 		Label:       "Village / Admin 5",
@@ -246,7 +264,6 @@ var Admin5Attribute = Attribute{
 
 // ---------------------------------------------------------------------------
 
-// Customisation for Uganda Demo
 
 var DisplacementStatusAttribute = Attribute{
 	ID:   "d1d824b2-d163-43ff-bc0a-527bd86b79bb",

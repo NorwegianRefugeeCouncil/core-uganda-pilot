@@ -182,10 +182,6 @@ var (
 	caseTypes     []cms.CaseType
 	cases         []cms.Case
 
-	// Countries
-	Germany = country("02680685-806e-4386-b6a5-95c4af1fc141", "Germany")
-	Uganda  = country("062a7fe9-b9cc-4fbc-837e-138a15242007", "Uganda")
-
 	// Teams
 	UgandaProtectionTeam = team("ac9b8d7d-d04d-4850-9a7f-3f93324c0d1e", "Uganda Protection Team")
 	UgandaICLATeam       = team("a43f84d5-3f8a-48c4-a896-5fb0fcd3e42b", "Uganda ICLA Team")
@@ -682,10 +678,9 @@ var (
 	CourtneyMembership = membership("83c5e73a-5947-4d7e-996c-14a2a7b1c850", Courtney, UgandaProtectionTeam)
 
 	// Nationalities
-	DTeamNationality                = nationality("9c1c1f2d-67f5-41cc-a752-534f031c05f9", DTeam, Germany)
-	UgandaCoreAdminTeamNationality  = nationality("0987460d-c906-43cd-b7fd-5e7afca0d93e", UgandaCoreAdminTeam, Uganda)
-	UgandaProtectionTeamNationality = nationality("b58e4d26-fe8e-4442-8449-7ec4ca3d9066", UgandaProtectionTeam, Uganda)
-	UgandaICLATeamNationality       = nationality("23e3eb5e-592e-42e2-8bbf-ee097d93034c", UgandaICLATeam, Uganda)
+	UgandaCoreAdminTeamNationality  = nationality("0987460d-c906-43cd-b7fd-5e7afca0d93e", UgandaCoreAdminTeam, iam.UgandaCountry)
+	UgandaProtectionTeamNationality = nationality("b58e4d26-fe8e-4442-8449-7ec4ca3d9066", UgandaProtectionTeam, iam.UgandaCountry)
+	UgandaICLATeamNationality       = nationality("23e3eb5e-592e-42e2-8bbf-ee097d93034c", UgandaICLATeam, iam.UgandaCountry)
 
 	// Cases
 	BoDiddleySituationAnalysis = kase("dba43642-8093-4685-a197-f8848d4cbaaa", UGSituationalAnalysisCaseType.ID, Colette.ID, BoDiddley.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
