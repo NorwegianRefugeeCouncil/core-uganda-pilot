@@ -34,7 +34,7 @@ function getTestIndividual(lastName) {
     return new IndividualPage(individualOverviewPage.searchFor(lastName));
 }
 
-describe('Individual Page', function () {
+describe.skip('Individual Page', function () {
     describe('Navigate', () => {
         it('should navigate to new Individual page from Individuals overview', () => {
             const individualOverviewPage = new IndividualOverviewPage();
@@ -44,14 +44,17 @@ describe('Individual Page', function () {
     describe('Attributes', () => {
         it('should create a new Individual', () => {
             const newIndividualPage = new IndividualPage();
+            cy.pause();
             newIndividualPage.visitPage().inputAttributes(data.attributes).save();
         });
         it('should verify that the Individual was properly created', () => {
+            cy.pause();
             const individualPage = getTestIndividual(data.attributes.lastName);
             individualPage.verifyAttributes(data.attributes);
         });
         it('should update attribute name on existing Individual', () => {
             const individualPage = getTestIndividual(data.attributes.lastName);
+            cy.pause();
             individualPage.removeRelationship().inputAttributes(data.attributes_u).save();
         });
         it('should verify that the Individual was properly updated', () => {
