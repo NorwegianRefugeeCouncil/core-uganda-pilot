@@ -74,7 +74,7 @@
             if (caseTypeId === '') {
                 return;
             }
-            window.location.href = `/cases/new?caseTypeId=${caseTypeId}`;
+            location.assign(`/cases/new?caseTypeId=${caseTypeId}`);
         };
 
     </script>
@@ -85,7 +85,7 @@
         const submitBtn = document.getElementById('case-submit-btn');
         submitBtn.onclick = async event => {
             event.preventDefault();
-            if (!validateClientSide()) {
+            if (validateClientSide(form)) {
                 validateServerSide([form], form.action);
             }
         };

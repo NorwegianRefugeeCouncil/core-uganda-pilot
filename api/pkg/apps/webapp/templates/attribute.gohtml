@@ -14,21 +14,23 @@
                 <div class="card">
                     <div class="card-body">
 
-                        <form action="/settings/attributes{{if .Attribute}}/{{.Attribute.ID}}{{end}}" method="post">
+                        <form id="attributes-form"
+                              action="/settings/attributes{{if .Attribute}}/{{.Attribute.ID}}{{end}}" method="post">
 
                             <input type="hidden" id="id-input" name="id" value="{{.Attribute.ID}}">
 
                             <!-- Name -->
                             <div class="form-floating mb-3 shadow-sm font-monospace">
-                                <input id="name-input"
+                                <input id="name"
                                        name="name"
                                        type="text"
                                        class="form-control"
                                        value=""
                                        placeholder="Name"
                                        data-testid="name"
+                                       required
                                 >
-                                <label for="name-input">Name</label>
+                                <label for="name">Name</label>
                             </div>
 
                             <hr />
@@ -39,6 +41,7 @@
                                         name="valueType"
                                         class="form-select"
                                         data-testid="type"
+                                        required
                                 >
                                     <option>String</option>
                                 </select>
@@ -48,9 +51,10 @@
                             <!-- Subject Type -->
                             <div class="form-floating mb-3 shadow-sm">
                                 <select id="subject-type-input"
-                                        name="partyTypes"
+                                        name="partyTypeIds"
                                         class="form-select"
                                         data-testid="subject"
+                                        required
                                 >
                                     {{range .PartyTypes.Items}}
                                         <option value="{{.ID}}">{{.Name}}</option>
@@ -83,7 +87,8 @@
                                 </div>
                                 <div id="language-picker-container" class="card-body border-top">
                                     <div class="form-floating shadow-sm">
-                                        <select id="language-picker" class="form-select" data-testid="language-select">
+                                        <select id="language-picker" class="form-select" data-testid="language-select"
+                                        >
                                             <!-- Templated -->
                                         </select>
                                         <label for="language-picker">Language</label>
@@ -91,7 +96,7 @@
                                 </div>
                             </div>
 
-                            <button class="btn btn-primary" data-testid="save-btn">Save</button>
+                            <button id="form-submit-btn" class="btn btn-primary" data-testid="save-btn">Save</button>
 
                         </form>
                     </div>
@@ -100,6 +105,19 @@
         </div>
     </div>
 
+    <script type="module">
+        import { validateClientSide, validateServerSide } from '/static/js/validation.js';
+
+        const form = document.getElementById('attributes-form');
+        const submitBtn = document.getElementById('form-submit-btn');
+        submitBtn.onclick = async event => {
+            event.preventDefault();
+            if (validateClientSide(form)) {
+                validateServerSide([form], form.action);
+            }
+        };
+
+    </script>
     </body>
 
     <script type="application/javascript">
@@ -109,7 +127,7 @@
 
         let languages = [
             { value: 'en', name: 'English' },
-            { value: 'fr', name: 'French' }
+            { value: 'fr', name: 'French' },
         ];
 
         {{ if .Attribute }}
@@ -123,16 +141,16 @@
                     {
                         locale: "{{.Locale}}",
                         long: "{{.LongFormulation}}",
-                        short: "{{.ShortFormulation}}"
+                        short: "{{.ShortFormulation}}",
                     },
                     {{end}}
-                ]
+                ],
             },
             partyTypes: [
                 {{range .PartyTypes.Items}}
                 { value: "{{.ID}}", name: "{{.Name}}" }
                 {{end}}
-            ]
+            ],
         });
         {{else }}
         let stateSubject = new BehaviorSubject({
@@ -141,13 +159,13 @@
                 valueType: '',
                 partyTypes: ["{{(index .PartyTypes.Items 0).ID}}"],
                 isPii: false,
-                translations: []
+                translations: [],
             },
             partyTypes: [
                 {{range .PartyTypes.Items}}
                 { value: "{{.ID}}", name: "{{.Name}}" },
                 {{end}}
-            ]
+            ],
         });
         {{end}}
 
@@ -163,25 +181,25 @@
                 return languages.filter(l => {
                     return !translations.find(t => t.locale === l.value);
                 });
-            })
+            }),
         );
 
 
-        const nameInput = document.getElementById('name-input');
+        const nameInput = document.getElementById('name');
         nameInput.onchange = event => {
             const state = {
                 ...stateSubject.value,
                 attribute: {
                     ...stateSubject.value.attribute,
-                    name: event.target.value
-                }
+                    name: event.target.value,
+                },
             };
             stateSubject.next(state);
         };
 
 
         name$.subscribe(n => {
-            document.getElementById('name-input').value = n;
+            document.getElementById('name').value = n;
         });
 
         let removeTranslation = (locale) => {
@@ -189,8 +207,8 @@
                 ...stateSubject.value,
                 attribute: {
                     ...stateSubject.value.attribute,
-                    translations: stateSubject.value.attribute.translations.filter(t => t.locale !== locale)
-                }
+                    translations: stateSubject.value.attribute.translations.filter(t => t.locale !== locale),
+                },
             });
         };
 
@@ -206,10 +224,10 @@
                             {
                                 locale: ev.target.value,
                                 long: '',
-                                short: ''
-                            }
-                        ]
-                    }
+                                short: '',
+                            },
+                        ],
+                    },
                 };
                 stateSubject.next(state);
             };
@@ -269,6 +287,7 @@
                                            value="${long}"
                                            placeholder="Long Description"
                                            data-testid="${language}-translation-long"
+                                           required
                                     >
                                     <label for="i81n-long-${language}">Long</label>
                                 </div>
@@ -281,6 +300,7 @@
                                            value="${short}"
                                            placeholder="Short Description"
                                            data-testid="${language}-translation-short"
+                                           required
                                     >
                                     <label for="i81n-short-${language}">Short</label>
                                 </div>
