@@ -363,6 +363,7 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		"TeamPartyTypeID":           iam.TeamPartyType.ID,
 		"IndividualAssessment":      individualAssessment,
 		"SituationAnalysis":         situationAnalysis,
+		"Status":                    status,
 		"ProgressLabel":             progressLabel,
 		"Progress":                  progress,
 	}); err != nil {
