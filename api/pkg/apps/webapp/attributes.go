@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/iam"
+	"github.com/nrc-no/core/pkg/form"
 	"github.com/nrc-no/core/pkg/sessionmanager"
+	"github.com/nrc-no/core/pkg/validation"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
 	"net/url"
@@ -131,51 +133,87 @@ func (s *Server) PostAttribute(ctx context.Context, attribute *iam.Attribute, w 
 	}
 
 	attribute.Name = values.Get("name")
-	attribute.PartyTypeIDs = values["partyTypes"]
+	attribute.PartyTypeIDs = values["partyTypeIds"]
 	attribute.Translations = translations
 	attribute.IsPersonallyIdentifiableInfo = values.Get("isPii") == "on"
 
-	var out *iam.Attribute
-
+	var storageAction string
+	var storedAttribute *iam.Attribute
 	if isNew {
-		var err error
-		out, err = iamClient.Attributes().Create(ctx, attribute)
-		if err != nil {
-			s.Error(w, err)
-			return
-		}
-
-		err = s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
-			Message: fmt.Sprintf("Attribute \"%s\" successfully created", attribute.Name),
-			Theme:   "success",
-		})
-		if err != nil {
-			s.Error(w, err)
-			return
-		}
-
+		storedAttribute, err = iamClient.Attributes().Create(ctx, attribute)
+		storageAction = "created"
 	} else {
-		var err error
-		out, err = iamClient.Attributes().Update(ctx, attribute)
-		if err != nil {
+		storedAttribute, err = iamClient.Attributes().Update(ctx, attribute)
+		storageAction = "updated"
+	}
+	if err != nil {
+		if status, ok := err.(*validation.Status); ok {
+			validatedElements := zipNewAttributeFormElementsAndErrors(attribute, status.Errors)
+			s.json(w, status.Code, validatedElements)
+		} else {
 			s.Error(w, err)
-			return
 		}
-
-		err = s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
-			Message: fmt.Sprintf("Attribute \"%s\" successfully updated.", attribute.Name),
-			Theme:   "success",
-		})
-		if err != nil {
-			s.Error(w, err)
-			return
-		}
-
+		return
 	}
 
-	w.Header().Set("Location", "/settings/attributes/"+out.ID)
+	err = s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
+		Message: fmt.Sprintf("Attribute \"%s\" successfully %s.", attribute.Name, storageAction),
+		Theme:   "success",
+	})
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	w.Header().Set("Location", "/settings/attributes/"+storedAttribute.ID)
 	w.WriteHeader(http.StatusSeeOther)
 
+}
+
+func zipNewAttributeFormElementsAndErrors(attribute *iam.Attribute, errorList validation.ErrorList) []form.FormElement {
+	var validated []form.FormElement
+	var errs *validation.ErrorList
+
+	// name
+	if errs = errorList.FindFamily("name"); errs.Length() > 0 {
+		validated = append(validated, form.FormElement{
+			Type:       form.Text,
+			Attributes: form.FormElementAttributes{Name: "name"},
+			Errors:     errs,
+		})
+	}
+	// partyTypeIds
+	if errs = errorList.FindFamily("partyTypeIds"); errs.Length() > 0 {
+		validated = append(validated, form.FormElement{
+			Type:       form.Dropdown,
+			Attributes: form.FormElementAttributes{Name: "partyTypeId"},
+			Errors:     errs,
+		})
+	}
+	// translations
+	if errs = errorList.Find("translations"); errs.Length() == 1 {
+		validated = append(validated, form.FormElement{
+			Type:       form.Dropdown,
+			Attributes: form.FormElementAttributes{Name: "language-picker"},
+			Errors:     errs,
+		})
+	} else if errs = errorList.FindFamily("translations"); errs.Length() > 0 {
+		for _, translation := range attribute.Translations {
+			short := fmt.Sprintf("translation.%s.short", translation.Locale)
+			long := fmt.Sprintf("translation.%s.long", translation.Locale)
+			for _, s := range []string{short, long} {
+				if e := errs.FindFamily(s); e != nil {
+					validated = append(validated, form.FormElement{
+						Type:       form.Text,
+						Attributes: form.FormElementAttributes{Name: s},
+						Errors:     e,
+					})
+				}
+			}
+		}
+	}
+
+	return validated
 }
 
 func (s *Server) makeTranslationMap(values url.Values, w http.ResponseWriter) map[string]*iam.AttributeTranslation {
