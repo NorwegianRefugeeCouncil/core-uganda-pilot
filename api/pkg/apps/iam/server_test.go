@@ -109,8 +109,8 @@ func (s *Suite) mockIndividuals(n int) []*Individual {
 	var individuals []*Individual
 	for i := 0; i < n; i++ {
 		individual := *NewIndividual(newUUID())
-		individual.Attributes.Add(FirstNameAttribute.ID, "mock")
-		individual.Attributes.Add(LastNameAttribute.ID, "mock")
+		individual.Attributes.Add(FullNameAttribute.ID, "mock")
+		individual.Attributes.Add(DisplayNameAttribute.ID, "mock")
 		individuals = append(individuals, &individual)
 	}
 	return individuals

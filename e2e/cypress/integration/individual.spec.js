@@ -3,8 +3,8 @@ import IndividualOverviewPage from '../pages/individualOverview.page';
 
 const data = {
     attributes: {
-        firstName: 'Test',
-        lastName: 'Person',
+        fullName: 'Test',
+        displayName: 'Person',
         birthDate: '1978-10-30',
         email: 'test@email.com',
         status: '0',
@@ -13,8 +13,8 @@ const data = {
         relatedParty: 'POPPINS',
     },
     attributes_u: {
-        firstName: 'Test - updated',
-        lastName: 'Person - updated',
+        fullName: 'Test - updated',
+        displayName: 'Person - updated',
         birthDate: '1979-11-12',
         email: 'test.updated@email.com',
         status: '1',
@@ -31,9 +31,9 @@ const data = {
     },
 };
 
-function getTestIndividual(lastName) {
+function getTestIndividual(displayName) {
     const individualOverviewPage = new IndividualOverviewPage().visitPage();
-    return new IndividualPage(individualOverviewPage.searchFor(lastName));
+    return new IndividualPage(individualOverviewPage.searchFor(displayName));
 }
 
 describe.skip('Individual Page', function () {
@@ -49,22 +49,22 @@ describe.skip('Individual Page', function () {
             newIndividualPage.visitPage().inputAttributes(data.attributes).save();
         });
         it('should verify that the Individual was properly created', () => {
-            const individualPage = getTestIndividual(data.attributes.lastName);
+            const individualPage = getTestIndividual(data.attributes.displayName);
             individualPage.verifyAttributes(data.attributes);
         });
         it('should update attribute name on existing Individual', () => {
-            const individualPage = getTestIndividual(data.attributes.lastName);
+            const individualPage = getTestIndividual(data.attributes.displayName);
             individualPage.removeRelationship().inputAttributes(data.attributes_u).save();
         });
         it('should verify that the Individual was properly updated', () => {
-            const individualPage = getTestIndividual(data.attributes_u.lastName);
+            const individualPage = getTestIndividual(data.attributes_u.displayName);
             individualPage.verifyAttributes(data.attributes_u);
         });
     });
 
     describe('Situation Analysis', () => {
         it('should submit a situation analysis and verify it', () => {
-            const individualPage = getTestIndividual(data.attributes_u.lastName);
+            const individualPage = getTestIndividual(data.attributes_u.displayName);
             individualPage.visitSituationAnalysisTab().fillOutSituationAnalysis(data.situationAnalysis).save();
             individualPage.visitSituationAnalysisTab().verifySituationAnalysis(data.situationAnalysis);
         });
@@ -72,7 +72,7 @@ describe.skip('Individual Page', function () {
 
     describe('Response', () => {
         it('should submit a response form and verify it', () => {
-            const individualPage = getTestIndividual(data.attributes_u.lastName);
+            const individualPage = getTestIndividual(data.attributes_u.displayName);
             individualPage.visitResponseTab().fillOutResponse(data.response).save();
             individualPage.visitResponseTab().verifyResponse(data.response);
         });

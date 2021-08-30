@@ -5,7 +5,6 @@ import (
 	"github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/nrc-no/core/pkg/form"
 	"github.com/nrc-no/core/pkg/registrationctrl"
-	"strings"
 )
 
 func caseType(id, name, partyTypeID, teamID string, template *cms.CaseTemplate, intakeCaseType bool) cms.CaseType {
@@ -39,33 +38,7 @@ func country(id, name string) iam.Country {
 	return t
 }
 
-func individual(
-	id string,
-	firstName string,
-	lastName string,
-	birthDate string,
-	displacementStatus string,
-	gender string,
-	consent string,
-	consentProof string,
-	anonymous string,
-	minor string,
-	protectionConcerns string,
-	physicalImpairment string,
-	physicalImpairmentIntensity string,
-	sensoryImpairment string,
-	sensoryImpairmentIntensity string,
-	mentalImpairment string,
-	mentalImpairmentIntensity string,
-	nationality string,
-	spokenLanguages string,
-	preferredLanguage string,
-	physicalAddress string,
-	primaryPhoneNumber string,
-	secondaryPhoneNumber string,
-	preferredMeansOfContact string,
-	requireAnInterpreter string,
-) iam.Individual {
+func individual(id string, fullName string, displayName string, birthDate string, email string, displacementStatus string, gender string, consent string, consentProof string, anonymous string, minor string, protectionConcerns string, physicalImpairment string, physicalImpairmentIntensity string, sensoryImpairment string, sensoryImpairmentIntensity string, mentalImpairment string, mentalImpairmentIntensity string, nationality string, spokenLanguages string, preferredLanguage string, physicalAddress string, primaryPhoneNumber string, secondaryPhoneNumber string, preferredMeansOfContact string, requireAnInterpreter string) iam.Individual {
 	var i = iam.Individual{
 		Party: &iam.Party{
 			ID: id,
@@ -73,9 +46,9 @@ func individual(
 				iam.IndividualPartyType.ID,
 			},
 			Attributes: map[string][]string{
-				iam.FirstNameAttribute.ID:                   {firstName},
-				iam.LastNameAttribute.ID:                    {lastName},
-				iam.EMailAttribute.ID:                       {strings.ToLower(firstName) + "." + strings.ToLower(lastName) + "@email.com"},
+				iam.FullNameAttribute.ID:                    {fullName},
+				iam.DisplayNameAttribute.ID:                 {displayName},
+				iam.EMailAttribute.ID:                       {email + "@email.com"},
 				iam.BirthDateAttribute.ID:                   {birthDate},
 				iam.DisplacementStatusAttribute.ID:          {displacementStatus},
 				iam.GenderAttribute.ID:                      {gender},
@@ -195,7 +168,7 @@ var (
 				Type: form.Textarea,
 				Attributes: form.FormElementAttributes{
 					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
-					Name:        "safeDiginifiedLife",
+					Name:        "safeDignifiedLife",
 					Description: "Probe for description",
 					Placeholder: "",
 				},
@@ -672,13 +645,13 @@ var (
 	}
 
 	// Individuals
-	JohnDoe     = ugandaIndividual(individual("c529d679-3bb6-4a20-8f06-c096f4d9adc1", "John", "Doe", "1983-04-23", "Refugee", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "No", "Yes", "Moderate", "No", "", "No", "", "Kenya", "Kiswahili, English", "English", "123 Main Street, Kampala", "0123456789", "", "Email", "No"),"1983-04-23","0","0","0","0","0","0")
-	MaryPoppins = ugandaIndividual(individual("bbf539fd-ebaa-4438-ae4f-8aca8b327f42", "Mary", "Poppins", "1983-04-23", "Internally Displaced Person", "Female", "Yes", "https://link-to-consent.proof", "No", "No", "No", "No", "", "No", "", "No", "", "Uganda", "Rukiga, English", "Rukiga", "901 First Avenue, Kampala", "0123456789", "", "Telegram", "Yes"),"1983-04-23","0","0","0","0","0","0")
-	BoDiddley   = ugandaIndividual(individual("26335292-c839-48b6-8ad5-81271ee51e7b", "Bo", "Diddley", "1983-04-23", "Host Community", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "Yes", "No", "", "No", "", "No", "", "Somalia", "Somali, Arabic, English", "English", "101 Main Street, Kampala", "0123456789", "", "Whatsapp", "No"),"1983-04-23","0","0","0","0","0","0")
+	JohnDoe     = ugandaIndividual(individual("c529d679-3bb6-4a20-8f06-c096f4d9adc1", "John Sinclair Doe", "John Doe", "1983-04-23", "john.doe", "Refugee", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "No", "Yes", "Moderate", "No", "", "No", "", "Kenya", "Kiswahili, English", "English", "123 Main Street, Kampala", "0123456789", "", "Email", "No"), "1983-04-23", "0", "0", "0", "0", "0", "0")
+	MaryPoppins = ugandaIndividual(individual("bbf539fd-ebaa-4438-ae4f-8aca8b327f42", "Mary Poppins", "Mary Poppins", "1983-04-23", "mary.poppins", "Internally Displaced Person", "Female", "Yes", "https://link-to-consent.proof", "No", "No", "No", "No", "", "No", "", "No", "", "Uganda", "Rukiga, English", "Rukiga", "901 First Avenue, Kampala", "0123456789", "", "Telegram", "Yes"), "1983-04-23", "0", "0", "0", "0", "0", "0")
+	BoDiddley   = ugandaIndividual(individual("26335292-c839-48b6-8ad5-81271ee51e7b", "Ellas McDaniel", "Bo Diddley", "1983-04-23", "bo.diddley", "Host Community", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "Yes", "No", "", "No", "", "No", "", "Somalia", "Somali, Arabic, English", "English", "101 Main Street, Kampala", "0123456789", "", "Whatsapp", "No"), "1983-04-23", "0", "0", "0", "0", "0", "0")
 
-	Stephen  = individual("066a0268-fdc6-495a-9e4b-d60cfae2d81a", "Stephen", "Kabagambe", "1983-04-23", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
-	Colette  = individual("93f9461f-31da-402e-8988-6e0100ecaa24", "Colette", "le Jeune", "1983-04-23", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
-	Courtney = individual("14c014d9-f433-4508-b33d-dc45bf86690b", "Courtney", "Lare", "1983-04-23", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Stephen  = individual("066a0268-fdc6-495a-9e4b-d60cfae2d81a", "Stephen Kabagambe", "Stephen Kabagambe", "1983-04-23", "stephen.kabagambe", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Colette  = individual("93f9461f-31da-402e-8988-6e0100ecaa24", "Colette le Jeune", "Colette le Jeune", "1983-04-23", "colette.le.jeune", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Courtney = individual("14c014d9-f433-4508-b33d-dc45bf86690b", "Courtney Lare", "Courtney Lare", "1983-04-23", "courtney.lare", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
 
 	// Beneficiaries
 	_ = beneficiary(JohnDoe)
@@ -710,7 +683,7 @@ var (
 				Type: form.Textarea,
 				Attributes: form.FormElementAttributes{
 					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
-					Name:        "safeDiginifiedLife",
+					Name:        "safeDignifiedLife",
 					Description: "Probe for description",
 					Value: []string{
 						"Yes, I live a safe and dignified life and I am reasonably happy with my achievements and quality of life.",
@@ -829,7 +802,7 @@ var (
 				Type: form.Textarea,
 				Attributes: form.FormElementAttributes{
 					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
-					Name:        "safeDiginifiedLife",
+					Name:        "safeDignifiedLife",
 					Description: "Probe for description",
 					Value: []string{
 						"Yes, I live a safe and dignified life and I am reasonably happy with my achievements and quality of life.",
@@ -948,7 +921,7 @@ var (
 				Type: form.Textarea,
 				Attributes: form.FormElementAttributes{
 					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
-					Name:        "safeDiginifiedLife",
+					Name:        "safeDignifiedLife",
 					Description: "Probe for description",
 					Value: []string{
 						"Yes, I live a safe and dignified life and I am reasonably happy with my achievements and quality of life.",
