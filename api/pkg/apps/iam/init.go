@@ -93,6 +93,8 @@ func (s *Server) initAttribute(ctx context.Context) error {
 		SecondaryPhoneNumberAttribute,
 		PreferredMeansOfContactAttribute,
 		RequireAnInterpreterAttribute,
+		CanInitiateContactAttribute,
+		InstructionOnMakingContactAttribute,
 		// -- End of Individual Attributes
 
 		// Customisation for Uganda Demo

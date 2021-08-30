@@ -263,6 +263,46 @@ var Admin5Attribute = Attribute{
 }
 
 // ---------------------------------------------------------------------------
+var InstructionOnMakingContactAttribute = Attribute{
+	ID:         "4d399cb3-6653-4a61-92eb-331f07e6c395",
+	Name:       "instructionOnMakingContact",
+	Type:       form.Textarea,
+	Attributes: form.FormElementAttributes{Name: "instructionOnMakingContact"},
+	Translations: []AttributeTranslation{
+		{
+			Locale:           "en",
+			LongFormulation:  "Instructions on contacting the beneficiary",
+			ShortFormulation: "Instructions on contacting the beneficiary",
+		},
+	},
+	IsPersonallyIdentifiableInfo: false,
+	PartyTypeIDs: []string{
+		IndividualPartyType.ID,
+	},
+}
+
+var CanInitiateContactAttribute = Attribute{
+	ID:   "7476fef0-d116-4b94-b981-ac647e16203d",
+	Name: "canInitiateContact",
+	Type: form.Checkbox,
+	Attributes: form.FormElementAttributes{
+		Name: "canInitiateContact",
+		CheckboxOptions: []form.CheckboxOption{
+			{Label: "NRC can initiate contact with Beneficiary."},
+		},
+	},
+	Translations: []AttributeTranslation{
+		{
+			Locale:           "en",
+			LongFormulation:  "NRC can initiate contact with Beneficiary.",
+			ShortFormulation: "NRC can initiate contact with Beneficiary.",
+		},
+	},
+	IsPersonallyIdentifiableInfo: false,
+	PartyTypeIDs: []string{
+		IndividualPartyType.ID,
+	},
+}
 
 var DisplacementStatusAttribute = Attribute{
 	ID:   "d1d824b2-d163-43ff-bc0a-527bd86b79bb",
