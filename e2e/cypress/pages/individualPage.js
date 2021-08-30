@@ -86,7 +86,7 @@ export default class IndividualPage {
         this.selectRelationshipType(relationshipType);
         this.typeRelatedParty(relatedParty);
         this.addRelatedParty();
-        cy.get(selector.addRelationshipBtn).click().wait(500);
+        cy.get(selector.addRelationshipBtn).click();
     };
     removeRelationship = () => {
         this.getRelationShip().find(selector.removeRelationshipBtn).click();
