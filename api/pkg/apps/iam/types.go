@@ -15,6 +15,9 @@ type Attribute struct {
 	// Name is the name of an attribute
 	Name string `json:"name" bson:"name"`
 
+	// Country ID
+	CountryID string `json:"countryId" bson:"countryId"`
+
 	// PartyTypeIDs represents the type of Party that can have this attribute
 	PartyTypeIDs []string `json:"partyTypeIds" bson:"partyTypeIds"`
 

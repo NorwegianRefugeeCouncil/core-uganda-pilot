@@ -105,6 +105,26 @@ func individual(
 	return i
 }
 
+func ugandaIndividual(
+	individual iam.Individual,
+	identificationDate string,
+	identificationLocation string,
+	identificationSource string,
+	admin2 string,
+	admin3 string,
+	admin4 string,
+	admin5 string,
+) iam.Individual {
+	individual.Attributes.Add(iam.IdentificationDateAttribute.ID, identificationDate)
+	individual.Attributes.Add(iam.IdentificationLocationAttribute.ID, identificationLocation)
+	individual.Attributes.Add(iam.IdentificationSourceAttribute.ID, identificationSource)
+	individual.Attributes.Add(iam.Admin2Attribute.ID, admin2)
+	individual.Attributes.Add(iam.Admin3Attribute.ID, admin3)
+	individual.Attributes.Add(iam.Admin4Attribute.ID, admin4)
+	individual.Attributes.Add(iam.Admin5Attribute.ID, admin5)
+	return individual
+}
+
 func staff(individual iam.Individual) iam.Individual {
 	individual.AddPartyType(iam.StaffPartyType.ID)
 	return individual
@@ -161,10 +181,6 @@ var (
 	relationships []iam.Relationship
 	caseTypes     []cms.CaseType
 	cases         []cms.Case
-
-	// Countries
-	Germany = country("02680685-806e-4386-b6a5-95c4af1fc141", "Germany")
-	Uganda  = country("062a7fe9-b9cc-4fbc-837e-138a15242007", "Uganda")
 
 	// Teams
 	UgandaProtectionTeam = team("ac9b8d7d-d04d-4850-9a7f-3f93324c0d1e", "Uganda Protection Team")
@@ -638,9 +654,9 @@ var (
 	}
 
 	// Individuals
-	JohnDoe     = individual("c529d679-3bb6-4a20-8f06-c096f4d9adc1", "John", "Doe", "1983-04-23", "Refugee", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "No", "Yes", "Moderate", "No", "", "No", "", "Kenya", "Kiswahili, English", "English", "123 Main Street, Kampala", "0123456789", "", "Email", "No")
-	MaryPoppins = individual("bbf539fd-ebaa-4438-ae4f-8aca8b327f42", "Mary", "Poppins", "1983-04-23", "Internally Displaced Person", "Female", "Yes", "https://link-to-consent.proof", "No", "No", "No", "No", "", "No", "", "No", "", "Uganda", "Rukiga, English", "Rukiga", "901 First Avenue, Kampala", "0123456789", "", "Telegram", "Yes")
-	BoDiddley   = individual("26335292-c839-48b6-8ad5-81271ee51e7b", "Bo", "Diddley", "1983-04-23", "Host Community", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "Yes", "No", "", "No", "", "No", "", "Somalia", "Somali, Arabic, English", "English", "101 Main Street, Kampala", "0123456789", "", "Whatsapp", "No")
+	JohnDoe     = ugandaIndividual(individual("c529d679-3bb6-4a20-8f06-c096f4d9adc1", "John", "Doe", "1983-04-23", "Refugee", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "No", "Yes", "Moderate", "No", "", "No", "", "Kenya", "Kiswahili, English", "English", "123 Main Street, Kampala", "0123456789", "", "Email", "No"),"1983-04-23","0","0","0","0","0","0")
+	MaryPoppins = ugandaIndividual(individual("bbf539fd-ebaa-4438-ae4f-8aca8b327f42", "Mary", "Poppins", "1983-04-23", "Internally Displaced Person", "Female", "Yes", "https://link-to-consent.proof", "No", "No", "No", "No", "", "No", "", "No", "", "Uganda", "Rukiga, English", "Rukiga", "901 First Avenue, Kampala", "0123456789", "", "Telegram", "Yes"),"1983-04-23","0","0","0","0","0","0")
+	BoDiddley   = ugandaIndividual(individual("26335292-c839-48b6-8ad5-81271ee51e7b", "Bo", "Diddley", "1983-04-23", "Host Community", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "Yes", "No", "", "No", "", "No", "", "Somalia", "Somali, Arabic, English", "English", "101 Main Street, Kampala", "0123456789", "", "Whatsapp", "No"),"1983-04-23","0","0","0","0","0","0")
 
 	Stephen  = individual("066a0268-fdc6-495a-9e4b-d60cfae2d81a", "Stephen", "Kabagambe", "1983-04-23", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
 	Colette  = individual("93f9461f-31da-402e-8988-6e0100ecaa24", "Colette", "le Jeune", "1983-04-23", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
@@ -662,10 +678,9 @@ var (
 	CourtneyMembership = membership("83c5e73a-5947-4d7e-996c-14a2a7b1c850", Courtney, UgandaProtectionTeam)
 
 	// Nationalities
-	DTeamNationality                = nationality("9c1c1f2d-67f5-41cc-a752-534f031c05f9", DTeam, Germany)
-	UgandaCoreAdminTeamNationality  = nationality("0987460d-c906-43cd-b7fd-5e7afca0d93e", UgandaCoreAdminTeam, Uganda)
-	UgandaProtectionTeamNationality = nationality("b58e4d26-fe8e-4442-8449-7ec4ca3d9066", UgandaProtectionTeam, Uganda)
-	UgandaICLATeamNationality       = nationality("23e3eb5e-592e-42e2-8bbf-ee097d93034c", UgandaICLATeam, Uganda)
+	UgandaCoreAdminTeamNationality  = nationality("0987460d-c906-43cd-b7fd-5e7afca0d93e", UgandaCoreAdminTeam, iam.UgandaCountry)
+	UgandaProtectionTeamNationality = nationality("b58e4d26-fe8e-4442-8449-7ec4ca3d9066", UgandaProtectionTeam, iam.UgandaCountry)
+	UgandaICLATeamNationality       = nationality("23e3eb5e-592e-42e2-8bbf-ee097d93034c", UgandaICLATeam, iam.UgandaCountry)
 
 	// Cases
 	BoDiddleySituationAnalysis = kase("dba43642-8093-4685-a197-f8848d4cbaaa", UGSituationalAnalysisCaseType.ID, Colette.ID, BoDiddley.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
