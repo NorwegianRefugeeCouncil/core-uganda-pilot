@@ -29,7 +29,7 @@ flags = --mongo-database=core \
 	--web-cms-host=localhost:9000 \
 	--web-cms-scheme=http \
 	--listen-address=:9000 \
-	--base-url=http://localhost:9000 
+	--base-url=http://localhost:9000
 
 up:
 	@docker-compose -f ../artifacts/docker-compose.yaml up --build -d
@@ -38,24 +38,36 @@ down:
 	@docker-compose -f ../artifacts/docker-compose.yaml down --remove-orphans
 
 gen-certs:
-	go run ${GOROOT}/src/crypto/tls/generate_cert.go --rsa-bits 2048 --host 127.0.0.1,::1,localhost,hydra --ca --start-date "Jan 1 00:00:00 1970" --duration=1000000h
-	mkdir certs
-	mv cert.pem certs/cert.pem
-	mv key.pem certs/key.pem
+	@go run ${GOROOT}/src/crypto/tls/generate_cert.go --rsa-bits 2048 --host 127.0.0.1,::1,localhost,hydra --ca --start-date "Jan 1 00:00:00 1970" --duration=1000000h
+	@mkdir certs
+	@mv cert.pem certs/cert.pem
+	@mv key.pem certs/key.pem
+
+test-iam:
+	@cd pkg/apps/iam && go test
+
+test-cms:
+	@cd pkg/apps/cms && go test
+
+test-attachments:
+	@cd pkg/apps/attachments && go test
+
+test-e2e:
+	@cd ../e2e && npm run run
 
 build:
 	@go build -o tmp/main ./cmd
 
-serve: build 
+serve: build
 	@$(webapp) $(flags)
 
 watch:
 	@`go env GOPATH`/bin/air
 
 docker-build:
-	docker build -t digitalbackbonecr.azurecr.io/nrc-no/core:latest .
+	@docker build -t digitalbackbonecr.azurecr.io/nrc-no/core:latest .
 
 docker-push: docker-build
-	docker push digitalbackbonecr.azurecr.io/nrc-no/core:latest
+	@docker push digitalbackbonecr.azurecr.io/nrc-no/core:latest
 
 .PHONY: up down build serve

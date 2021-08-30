@@ -5,7 +5,7 @@ ulimit -n 1000000
 
 # When run as a hook by git, `pwd` will be the repository's root folder.
 DIR=$(pwd)
-PREFIX="[pre-push]"
+PREFIX="$(tput setaf 6)[pre-push] $(tput setaf 0)"
 
 function cleanup() {
 	# kill all child processes
@@ -56,7 +56,7 @@ echo "$PREFIX All containers are up and running!"
 #
 echo "$PREFIX Starting webapp..."
 
-serverIsRunning() { 
+serverIsRunning() {
 	lsof -PiTCP -sTCP:LISTEN | grep -q ":9000" &>/dev/null
 	return $?
 }
@@ -82,19 +82,21 @@ if ! serverIsRunning; then
 fi
 
 echo "$PREFIX Webapp is up and running!"
-cd "$DIR/e2e" || exit
 
 # linting
 #
 echo "$PREFIX Running eslint on .js files..."
+cd "$DIR/e2e" || exit
 if ! npm run lint:fix; then
-	echo >&2 "[pre-push] Linting failed, see output above."
+	echo >&2 "$PREFIX Linting failed, see output above."
 	exit 1
 fi
 
+cd "$DIR/api" || exit
+
 echo "$PREFIX Running E2E tests..."
-if ! npm run run; then
-	echo >&2 "[pre-push] E2E tests failed, see output above."
+if ! make test-e2e; then
+	echo >&2 "$PREFIX E2E tests failed, see output above."
 	exit 1
 fi
 echo "$PREFIX All E2E tests passed!"
@@ -102,21 +104,24 @@ echo "$PREFIX All E2E tests passed!"
 #
 # RUN INTEGRATION TESTS
 #
-echo "$PREFIX Running IAM integration tests..."
+echo "$PREFIX Running iam integration tests..."
 
-cd "$DIR/api/pkg/apps/iam" || exit
-export GO111MODULE=on
-if ! go test; then
-	echo >&2 "[pre-push] Integration tests failed, see output above."
+if ! make test-iam; then
+	echo >&2 "$PREFIX iam tests failed, see output above."
 	exit 1
 fi
 
-echo "$PREFIX Running CMS integration tests..."
+echo "$PREFIX Running cms integration tests..."
 
-cd "$DIR/api/pkg/apps/cms" || exit
-if ! go test; then
-	echo >&2 "[pre-push] Integration tests failed, see output above."
+if ! make test-cms; then
+	echo >&2 "$PREFIX cms tests failed, see output above."
 	exit 1
 fi
 
+echo "$PREFIX Running attachments integration tests..."
+
+if ! make test-attachments; then
+	echo >&2 "$PREFIX attachments tests failed, see output above."
+	exit 1
+fi
 exit 0
