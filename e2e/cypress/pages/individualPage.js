@@ -21,6 +21,8 @@ const selector = {
     addTaxonomyBtn: testId('add-taxonomy-btn'),
     taxonomyBadges: testId('badge-container'),
     perceivedPriority: nameAttr('perceivedPriority'),
+    commentStartingPoint: nameAttr('commentStartingPoint'),
+    commentOtherServices: nameAttr('commentOtherServices'),
     responseTab: '#response-tab',
     response: '#response',
 };
@@ -121,6 +123,8 @@ export default class IndividualPage {
         this.getResponse().within(() => {
             cy.get(selector.taxonomyInput).each($t => this.fillTaxonomyInput($t, data.optionIdx));
             cy.get(selector.perceivedPriority).clear().type(data.priorityTxt);
+            cy.get(selector.commentStartingPoint).clear().type(data.commentStartingPoint);
+            cy.get(selector.commentOtherServices).clear().type(data.commentOtherServices);
         });
         return this;
     };
@@ -141,6 +145,8 @@ export default class IndividualPage {
         this.getResponse().within(() => {
             cy.get(selector.taxonomyInput).each($t => this.verifyTaxonomyInput($t, data.optionIdx));
             cy.get(selector.perceivedPriority).should('have.value', data.priorityTxt);
+            cy.get(selector.commentStartingPoint).should('have.value', data.commentStartingPoint);
+            cy.get(selector.commentOtherServices).should('have.value', data.commentOtherServices);
         });
     };
 

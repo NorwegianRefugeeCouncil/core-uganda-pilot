@@ -239,6 +239,15 @@ var (
 				},
 			},
 			{
+				Type: form.Textarea,
+				Attributes: form.FormElementAttributes{
+					Label:       "Comment on service the individual requested as a starting point of support?",
+					Name:        "commentStartingPoint",
+					Description: "Additional information, observations, concerns, etc.",
+					Placeholder: "",
+				},
+			},
+			{
 				Type: form.TaxonomyInput,
 				Attributes: form.FormElementAttributes{
 					Label:       "What other services has the individual requested/identified?",
@@ -247,6 +256,15 @@ var (
 				},
 				Validation: form.FormElementValidation{
 					Required: true,
+				},
+			},
+			{
+				Type: form.Textarea,
+				Attributes: form.FormElementAttributes{
+					Label:       "Comment on other services the individual requested/identified?",
+					Name:        "commentOtherServices",
+					Description: "Additional information, observations, concerns, etc.",
+					Placeholder: "",
 				},
 			},
 			{
@@ -722,7 +740,7 @@ var (
 	},
 		true)
 
-	BoDiddleyIndividualAssessment = kase("3ea8c121-bdf0-46a0-86a8-698dc4abc872", UGIndividualResponseCaseType.ID, Colette.ID, BoDiddley.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
+	BoDiddleyIndividualResponse = kase("3ea8c121-bdf0-46a0-86a8-698dc4abc872", UGIndividualResponseCaseType.ID, Colette.ID, BoDiddley.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
 		FormElements: []form.FormElement{
 			{
 				Type: form.TaxonomyInput,
@@ -730,10 +748,22 @@ var (
 					Label: "Which service has the individual requested as a starting point of support?",
 					Name:  "serviceStartingPoint",
 					Value: []string{
-						"ICLA - Counselling - Legal Identity",
+						"ICLA",
 					},
 					Description: "Add the taxonomies of the services requested as a starting point one by one, by selecting the relevant options from the dropdowns below.",
 					Placeholder: "",
+				},
+			},
+			{
+				Type: form.Textarea,
+				Attributes: form.FormElementAttributes{
+					Label:       "Comment on service the individual requested as a starting point of support?",
+					Name:        "commentStartingPoint",
+					Description: "Additional information, observations, concerns, etc.",
+					Placeholder: "",
+					Value: []string{
+						"The individual has requested ICLA as a starting point, we should create a referral",
+					},
 				},
 			},
 			{
@@ -742,10 +772,22 @@ var (
 					Label: "What other services has the individual requested/identified?",
 					Name:  "otherServices",
 					Value: []string{
-						"Protection - Individual Targeted Protection - Individual Protection Assistance",
+						"Protection",
 					},
 					Description: "Add the taxonomies of the other services requested one by one, by selecting the relevant options from the dropdowns below.",
 					Placeholder: "",
+				},
+			},
+			{
+				Type: form.Textarea,
+				Attributes: form.FormElementAttributes{
+					Label:       "Comment on other services the individual requested/identified?",
+					Name:        "commentOtherServices",
+					Description: "Additional information, observations, concerns, etc.",
+					Placeholder: "",
+					Value: []string{
+						"The individual has requested additional Protection services, we should create a referral",
+					},
 				},
 			},
 			{
@@ -817,7 +859,7 @@ var (
 	},
 		true)
 
-	MaryPoppinsIndividualAssessment = kase("45b4a637-c610-4ab9-afe6-4e958c36a96f", UGIndividualResponseCaseType.ID, Colette.ID, MaryPoppins.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
+	MaryPoppinsIndividualResponse = kase("45b4a637-c610-4ab9-afe6-4e958c36a96f", UGIndividualResponseCaseType.ID, Colette.ID, MaryPoppins.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
 		FormElements: []form.FormElement{
 			{
 				Type: form.TaxonomyInput,
@@ -825,10 +867,22 @@ var (
 					Label: "Which service has the individual requested as a starting point of support?",
 					Name:  "serviceStartingPoint",
 					Value: []string{
-						"ICLA - Counselling - Legal Identity",
+						"S&S",
 					},
 					Description: "Add the taxonomies of the services requested as a starting point one by one, by selecting the relevant options from the dropdowns below.",
 					Placeholder: "",
+				},
+			},
+			{
+				Type: form.Textarea,
+				Attributes: form.FormElementAttributes{
+					Label:       "Comment on service the individual requested as a starting point of support?",
+					Name:        "commentStartingPoint",
+					Description: "Additional information, observations, concerns, etc.",
+					Placeholder: "",
+					Value: []string{
+						"The individual has requested S&S as a starting point, we should create a referral",
+					},
 				},
 			},
 			{
@@ -837,10 +891,22 @@ var (
 					Label: "What other services has the individual requested/identified?",
 					Name:  "otherServices",
 					Value: []string{
-						"Protection - Individual Targeted Protection - Individual Protection Assistance",
+						"Protection",
 					},
 					Description: "Add the taxonomies of the other services requested one by one, by selecting the relevant options from the dropdowns below.",
 					Placeholder: "",
+				},
+			},
+			{
+				Type: form.Textarea,
+				Attributes: form.FormElementAttributes{
+					Label:       "Comment on other services the individual requested/identified?",
+					Name:        "commentOtherServices",
+					Description: "Additional information, observations, concerns, etc.",
+					Placeholder: "",
+					Value: []string{
+						"The individual has requested additional Protection services, we should create a referral",
+					},
 				},
 			},
 			{
@@ -912,7 +978,7 @@ var (
 	},
 		true)
 
-	JohnDoeIndividualAssessment = kase("65e02e79-1676-4745-9890-582e3d67d13f", UGIndividualResponseCaseType.ID, Colette.ID, JohnDoe.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
+	JohnDoeIndividualResponse = kase("65e02e79-1676-4745-9890-582e3d67d13f", UGIndividualResponseCaseType.ID, Colette.ID, JohnDoe.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
 		FormElements: []form.FormElement{
 			{
 				Type: form.TaxonomyInput,
@@ -920,10 +986,22 @@ var (
 					Label: "Which service has the individual requested as a starting point of support?",
 					Name:  "serviceStartingPoint",
 					Value: []string{
-						"ICLA - Counselling - Legal Identity",
+						"LFS",
 					},
 					Description: "Add the taxonomies of the services requested as a starting point one by one, by selecting the relevant options from the dropdowns below.",
 					Placeholder: "",
+				},
+			},
+			{
+				Type: form.Textarea,
+				Attributes: form.FormElementAttributes{
+					Label:       "Comment on service the individual requested as a starting point of support?",
+					Name:        "commentStartingPoint",
+					Description: "Additional information, observations, concerns, etc.",
+					Placeholder: "",
+					Value: []string{
+						"The individual has requested LFS as a starting point, we should create a referral",
+					},
 				},
 			},
 			{
@@ -932,10 +1010,22 @@ var (
 					Label: "What other services has the individual requested/identified?",
 					Name:  "otherServices",
 					Value: []string{
-						"Protection - Individual Targeted Protection - Individual Protection Assistance",
+						"WASH",
 					},
 					Description: "Add the taxonomies of the other services requested one by one, by selecting the relevant options from the dropdowns below.",
 					Placeholder: "",
+				},
+			},
+			{
+				Type: form.Textarea,
+				Attributes: form.FormElementAttributes{
+					Label:       "Comment on other services the individual requested/identified?",
+					Name:        "commentOtherServices",
+					Description: "Additional information, observations, concerns, etc.",
+					Placeholder: "",
+					Value: []string{
+						"The individual has requested additional WASH services, we should create a referral",
+					},
 				},
 			},
 			{
