@@ -2,17 +2,29 @@ package iam
 
 import "github.com/nrc-no/core/pkg/form"
 
-var FirstNameAttribute = Attribute{
+//Countries
+var GlobalCountry = Country{
+	ID:   "36790d84-0bea-437c-b26e-bae1bcd2d1bc",
+	Name: "Global",
+}
+
+var UgandaCountry = Country{
+	ID:   "fc82a799-b4fc-4eda-81fc-f2710a0d27d8",
+	Name: "Uganda",
+}
+
+//Individual Global Attributes
+var FullNameAttribute = Attribute{
 	ID:         "8514da51-aad5-4fb4-a797-8bcc0c969b27",
-	Name:       "firstName",
+	Name:       "fullName",
 	Type:       form.Text,
-	Attributes: form.FormElementAttributes{Name: "firstName"},
+	Attributes: form.FormElementAttributes{Name: "fullName"},
 	Validation: form.FormElementValidation{Required: true},
 	Translations: []AttributeTranslation{
 		{
 			Locale:           "en",
-			LongFormulation:  "First Name",
-			ShortFormulation: "First Name",
+			LongFormulation:  "Full Name",
+			ShortFormulation: "Full Name",
 		},
 	},
 	IsPersonallyIdentifiableInfo: true,
@@ -21,17 +33,17 @@ var FirstNameAttribute = Attribute{
 	},
 }
 
-var LastNameAttribute = Attribute{
+var DisplayNameAttribute = Attribute{
 	ID:         "21079bbc-e04b-4fe8-897f-644d73af0d9e",
-	Name:       "lastName",
+	Name:       "displayName",
 	Type:       form.Text,
-	Attributes: form.FormElementAttributes{Name: "lastName"},
+	Attributes: form.FormElementAttributes{Name: "displayName"},
 	Validation: form.FormElementValidation{Required: true},
 	Translations: []AttributeTranslation{
 		{
 			Locale:           "en",
-			LongFormulation:  "Last Name",
-			ShortFormulation: "Last Name",
+			LongFormulation:  "Display Name",
+			ShortFormulation: "Display Name",
 		},
 	},
 	IsPersonallyIdentifiableInfo: true,
@@ -78,9 +90,179 @@ var EMailAttribute = Attribute{
 	},
 }
 
-// ---------------------------------------------------------------------------
+// Uganda Idividual Attributes
+var IdentificationDateAttribute = Attribute{
+	ID:        "c84b8b93-b974-4bec-b9f7-d437446b24a7",
+	Name:      "identificationDate",
+	CountryID: UgandaCountry.ID,
+	Type:      form.Date,
+	Attributes: form.FormElementAttributes{
+		Label:       "Date of Identification",
+		Name:        "identificationDate",
+		Description: "Date of first interaction with NRC",
+	},
+	Validation: form.FormElementValidation{Required: true},
+	Translations: []AttributeTranslation{
+		{
+			Locale:           "en",
+			LongFormulation:  "Date of Identification",
+			ShortFormulation: "Date of Identification",
+		},
+	},
+	IsPersonallyIdentifiableInfo: false,
+	PartyTypeIDs: []string{
+		IndividualPartyType.ID,
+	},
+}
 
-// Customisation for Uganda Demo
+var IdentificationLocationAttribute = Attribute{
+	ID:        "06680252-1a1f-4c9d-85dd-56feef20019d",
+	Name:      "identificationLocation",
+	CountryID: UgandaCountry.ID,
+	Type:      form.Dropdown,
+	Attributes: form.FormElementAttributes{
+		Label:       "Location of Identification",
+		Name:        "identificationLocation",
+		Description: "",
+		Options:     []string{"Kabusu Access Center", "Nsambya Access Center", "Kisenyi ICLA Center", "Lukuli ICLA Center", "Kawempe ICLA Center", "Ndejje ICLA Center", "Mengo Field Office", "Community (Specify location)", "Home Visit", "Phone", "Other (Specify)"},
+	},
+	Validation: form.FormElementValidation{Required: true},
+	Translations: []AttributeTranslation{
+		{
+			Locale:           "en",
+			LongFormulation:  "Location of Identification",
+			ShortFormulation: "Location of Identification",
+		},
+	},
+	IsPersonallyIdentifiableInfo: false,
+	PartyTypeIDs: []string{
+		IndividualPartyType.ID,
+	},
+}
+
+var IdentificationSourceAttribute = Attribute{
+	ID:        "a131a0fb-0270-4feb-8fc9-46e7dd6b5acb",
+	Name:      "identificationSource",
+	CountryID: UgandaCountry.ID,
+	Type:      form.Dropdown,
+	Attributes: form.FormElementAttributes{
+		Label:       "Source of Identification",
+		Name:        "identificationSource",
+		Description: "",
+		Options:     []string{"Walk-in Center", "FFRM Referral", "Internal Referral (Other – Specify)", "ICLA Outreach Team", "External Referral (Community Leader/Contact)", "External Referral (INGO/LNGO)", "External Referral (Other – Specify)", "Self (Telephone)", "Self (Email)", "Internal Referral (Other NRC Sector – Specify)", "CBP Outreach Team", "Other NRC Outreach Team (Specify)", "External Referral (UN Agency)", "External Referral (Government)", "Other – Specify"},
+	},
+	Validation: form.FormElementValidation{Required: true},
+	Translations: []AttributeTranslation{
+		{
+			Locale:           "en",
+			LongFormulation:  "Source of Identification",
+			ShortFormulation: "Source of Identification",
+		},
+	},
+	IsPersonallyIdentifiableInfo: false,
+	PartyTypeIDs: []string{
+		IndividualPartyType.ID,
+	},
+}
+
+var Admin2Attribute = Attribute{
+	ID:        "44dffbc4-7536-42b9-af84-32ea4e9ed493",
+	Name:      "admin2",
+	CountryID: UgandaCountry.ID,
+	Type:      form.Dropdown,
+	Attributes: form.FormElementAttributes{
+		Label:       "District / Admin 2",
+		Name:        "admin2",
+		Description: "",
+		Options:     []string{"ABIM", "ADJUMANI", "ALEBTONG", "AMOLATAR", "AMUDAT", "AMURIA", "AMURU", "APAC", "BUDAKA", "BUGIRI", "BUIKWE", "BUKOMANSIMBI", "BUKWO", "BULAMBULI", "BULIISA", "BUNDIBUGYO", "BUSHENYI", "BUYENDE", "DOKOLO", "BUTAMBALA", "HOIMA", "IGANGA", "KAABONG", "KABALE", "KABAROLE", "KALANGALA", "KALIRO", "KALUNGU", "KAMULI", "KANUNGU", "KAPCHORWA", "KATAKWI", "KAYUNGA", "SHEEMA", "KITGUM", "KOBOKO", "KOLE", "KOTIDO", "KISORO", "KWEEN", "LAMWO", "LIRA", "LUUKA", "LYANTONDE", "MANAFWA", "MASAKA", "MASINDI", "MAYUGE", "MBALE", "MBARARA", "MOROTO", "MOYO", "NAKAPIRIPIRIT", "NAKASEKE", "NAKASONGOLA", "NAMUTUMBA", "NAPAK", "NEBBI", "NGORA", "BUHWEJU", "NTOROKO", "MARACHA", "OTUKE", "OYAM", "PADER", "RUBIRIZI", "SIRONKO", "SOROTI", "WAKISO", "YUMBE", "ZOMBO", "ISINGIRO", "MITOOMA", "KYEGEGWA", "NTUNGAMO", "RUKUNGIRI", "KAMWENGE", "IBANDA", "KASESE", "KIRUHURA", "KYENJOJO", "MUBENDE", "GOMBA", "KIBOGA", "MPIGI", "KYANKWANZI", "KAKUMIRO", "NWOYA", "KIRYANDONGO", "SERERE", "OMORO", "ARUA", "LWENGO", "SEMBABULE", "RAKAI", "MITYANA", "LUWERO", "MUKONO", "KAMPALA", "BUVUMA", "JINJA", "NAMAYINGO", "BUSIA", "BUDUDA", "TORORO", "BUTALEJA", "BUKEDEA", "KUMI", "PALLISA", "KIBUKU", "KABERAMAIDO", "AGAGO", "KAGADI", "KIBAALE", "GULU", "RUBANDA"},
+	},
+	Validation: form.FormElementValidation{Required: true},
+	Translations: []AttributeTranslation{
+		{
+			Locale:           "en",
+			LongFormulation:  "District / Admin 2",
+			ShortFormulation: "District / Admin 2",
+		},
+	},
+	IsPersonallyIdentifiableInfo: false,
+	PartyTypeIDs: []string{
+		IndividualPartyType.ID,
+	},
+}
+
+var Admin3Attribute = Attribute{
+	ID:        "a17ffa5e-5d62-44cd-b89f-438eeba128ac",
+	Name:      "admin3",
+	CountryID: UgandaCountry.ID,
+	Type:      form.Text,
+	Attributes: form.FormElementAttributes{
+		Label:       "Subcounty / Admin 3",
+		Name:        "admin3",
+		Description: "",
+	},
+	Validation: form.FormElementValidation{Required: true},
+	Translations: []AttributeTranslation{
+		{
+			Locale:           "en",
+			LongFormulation:  "Subcounty / Admin 3",
+			ShortFormulation: "Subcounty / Admin 3",
+		},
+	},
+	IsPersonallyIdentifiableInfo: false,
+	PartyTypeIDs: []string{
+		IndividualPartyType.ID,
+	},
+}
+
+var Admin4Attribute = Attribute{
+	ID:        "f867c62a-dcd0-4778-9f4e-7309d044e905",
+	Name:      "admin4",
+	CountryID: UgandaCountry.ID,
+	Type:      form.Text,
+	Attributes: form.FormElementAttributes{
+		Label:       "Parish / Admin 4",
+		Name:        "admin4",
+		Description: "",
+	},
+	Validation: form.FormElementValidation{Required: true},
+	Translations: []AttributeTranslation{
+		{
+			Locale:           "en",
+			LongFormulation:  "Parish / Admin 4",
+			ShortFormulation: "Parish / Admin 4",
+		},
+	},
+	IsPersonallyIdentifiableInfo: false,
+	PartyTypeIDs: []string{
+		IndividualPartyType.ID,
+	},
+}
+
+var Admin5Attribute = Attribute{
+	ID:        "f0b34ffc-3e15-4195-8e90-a3e1e4b3940c",
+	Name:      "admin5",
+	CountryID: UgandaCountry.ID,
+	Type:      form.Text,
+	Attributes: form.FormElementAttributes{
+		Label:       "Village / Admin 5",
+		Name:        "admin5",
+		Description: "",
+	},
+	Validation: form.FormElementValidation{Required: true},
+	Translations: []AttributeTranslation{
+		{
+			Locale:           "en",
+			LongFormulation:  "Village / Admin 5",
+			ShortFormulation: "Village / Admin 5",
+		},
+	},
+	IsPersonallyIdentifiableInfo: false,
+	PartyTypeIDs: []string{
+		IndividualPartyType.ID,
+	},
+}
+
+// ---------------------------------------------------------------------------
 
 var DisplacementStatusAttribute = Attribute{
 	ID:   "d1d824b2-d163-43ff-bc0a-527bd86b79bb",

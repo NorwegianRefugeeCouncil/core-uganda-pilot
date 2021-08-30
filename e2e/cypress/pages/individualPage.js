@@ -1,8 +1,8 @@
 import { URL, testId, nameAttr } from '../helpers';
 
 const selector = {
-    firstName: nameAttr('firstName'),
-    lastName: nameAttr('lastName'),
+    fullName: nameAttr('fullName'),
+    displayName: nameAttr('displayName'),
     email: nameAttr('email'),
     birthDate: nameAttr('birthDate'),
     displacementStatus: nameAttr('displacementStatus'),
@@ -21,6 +21,8 @@ const selector = {
     addTaxonomyBtn: testId('add-taxonomy-btn'),
     taxonomyBadges: testId('badge-container'),
     perceivedPriority: nameAttr('perceivedPriority'),
+    commentStartingPoint: nameAttr('commentStartingPoint'),
+    commentOtherServices: nameAttr('commentOtherServices'),
     responseTab: '#response-tab',
     response: '#response',
 };
@@ -38,9 +40,9 @@ export default class IndividualPage {
     };
 
     inputAttributes = data => {
-        const { firstName, lastName, birthDate, email, status, gender, relationshipType, relatedParty } = data;
-        this.typeFirstName(firstName);
-        this.typeLastName(lastName);
+        const { fullName, displayName, birthDate, email, status, gender, relationshipType, relatedParty } = data;
+        this.typeFirstName(fullName);
+        this.typeLastName(displayName);
         this.enterBirthDate(birthDate);
         this.typeEmail(email);
         this.selectDisplacementStatus(status);
@@ -49,9 +51,9 @@ export default class IndividualPage {
         return this;
     };
     verifyAttributes = data => {
-        const { firstName, lastName, birthDate, email, status, gender, relationshipType, relatedParty } = data;
-        this.getFirstName().should('have.value', firstName);
-        this.getLastName().should('have.value', lastName);
+        const { fullName, displayName, birthDate, email, status, gender, relationshipType, relatedParty } = data;
+        this.getFirstName().should('have.value', fullName);
+        this.getLastName().should('have.value', displayName);
         this.getBirthDate().should('have.value', birthDate);
         this.getEmail().should('have.value', email);
         this.getDisplacementStatus().should('have.value', status);
@@ -62,8 +64,8 @@ export default class IndividualPage {
         return this;
     };
 
-    getFirstName = () => cy.get(selector.firstName);
-    getLastName = () => cy.get(selector.lastName);
+    getFirstName = () => cy.get(selector.fullName);
+    getLastName = () => cy.get(selector.displayName);
     getEmail = () => cy.get(selector.email);
     getBirthDate = () => cy.get(selector.birthDate);
     getDisplacementStatus = () => cy.get(selector.displacementStatus);
@@ -121,6 +123,8 @@ export default class IndividualPage {
         this.getResponse().within(() => {
             cy.get(selector.taxonomyInput).each($t => this.fillTaxonomyInput($t, data.optionIdx));
             cy.get(selector.perceivedPriority).clear().type(data.priorityTxt);
+            cy.get(selector.commentStartingPoint).clear().type(data.commentStartingPoint);
+            cy.get(selector.commentOtherServices).clear().type(data.commentOtherServices);
         });
         return this;
     };
@@ -141,6 +145,8 @@ export default class IndividualPage {
         this.getResponse().within(() => {
             cy.get(selector.taxonomyInput).each($t => this.verifyTaxonomyInput($t, data.optionIdx));
             cy.get(selector.perceivedPriority).should('have.value', data.priorityTxt);
+            cy.get(selector.commentStartingPoint).should('have.value', data.commentStartingPoint);
+            cy.get(selector.commentOtherServices).should('have.value', data.commentOtherServices);
         });
     };
 

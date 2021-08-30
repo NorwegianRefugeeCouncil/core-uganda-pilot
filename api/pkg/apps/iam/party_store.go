@@ -36,10 +36,7 @@ func newPartyStore(ctx context.Context, mongoClientFn utils.MongoClientFn, datab
 	if _, err := collection.Indexes().CreateOne(ctx, mongo.IndexModel{
 		Keys: bson.D{
 			{
-				Key: "attributes." + FirstNameAttribute.ID, Value: "text",
-			},
-			{
-				Key: "attributes." + LastNameAttribute.ID, Value: "text",
+				Key: "attributes." + FullNameAttribute.ID, Value: "text",
 			},
 		},
 	}); err != nil {

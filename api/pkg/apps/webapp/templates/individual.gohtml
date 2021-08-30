@@ -416,7 +416,7 @@
                 res => {
                     let partySelectorList = document.getElementById('partySelectorList');
                     partySelectorList.innerHTML = '';
-                    if (res.response.length > 0) {
+                    if (res.response?.length > 0) {
                         let n = 0;
                         res.response.forEach(pickedParty => {
                             const party = pickedParty.party;
@@ -460,9 +460,8 @@
                     li.className = 'list-group-item';
                     let firstPartyName;
                     if (window.location.pathname === '/individuals/new') {
-                        const lastName = document.querySelector('input[name="lastName"]')?.value;
-                        const firstName = document.querySelector('input[name="firstName"]')?.value;
-                        firstPartyName = lastName.toUpperCase() + ', ' + firstName;
+                        const displayName = document.querySelector('input[name="displayName"]')?.value;
+                        firstPartyName = displayName.toUpperCase();
                     } else {
                         firstPartyName = parties.find(({ id }) => id === relationship.firstParty)?.name;
                     }

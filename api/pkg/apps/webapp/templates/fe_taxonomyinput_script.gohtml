@@ -5,55 +5,9 @@
       // adding the code to an anonymous function such as the event listener below effectively creates a new
       // namespace, provided variables and functions are declared using the const keyword.
       document.addEventListener('DOMContentLoaded', (event) => {
-        const taxonomy = {
-          'ICLA': {
-            'Counselling': {
-              'Legal Identity': {},
-              'Refugee Status, Migration, and Residency': {},
-              'Housing, Land and Property': {},
-              'Employment Laws and Procedures': {},
-              'IDP Registration': {}
-            },
-            'Information': {
-              'Legal Identity': {},
-              'Refugee Status, Migration, and Residency': {},
-              'Housing, Land and Property': {},
-              'Employment Laws and Procedures': {},
-              'IDP Registration': {},
-              'Essential Services': {}
-            },
-            'Legal Assistance': {
-              'Legal Identity': {},
-              'Refugee Status, Migration, and Residency': {},
-              'Housing, Land and Property': {},
-              'Employment Laws and Procedures': {},
-              'IDP Registration': {},
-              'Essential Services': {}
-            },
-            'Training': {
-              'Legal Identity': {},
-              'Refugee Status, Migration, and Residency': {},
-              'Housing, Land and Property': {},
-              'Employment Laws and Procedures': {},
-              'IDP Registration': {},
-              'Essential Services': {},
-              'Other': {}
-            }
-          },
-          'Protection': {
-            'Individual Targeted Protection': {
-              'Individual Protection Assistance': {},
-              'Protection Case Management': {}
-            },
-            'Community Support': {
-              'Community Protection Assistance': {}
-            }
-          }
-        };
+        const taxonomy = ["Education", "ICLA", "Protection" , "WASH", "LFS", "S&S"]
 
         const programmeAreaSelect = document.getElementById("programme-area-{{.Attributes.Name}}");
-        const serviceAreaSelect = document.getElementById("service-area-{{.Attributes.Name}}");
-        const thematicAreaSelect = document.getElementById("thematic-area-{{.Attributes.Name}}");
 
         const badgeContainer = document.getElementById("badge-container-{{.Attributes.Name}}");
         const addBadgeButton = document.getElementById("btn-add-{{.Attributes.Name}}");
@@ -143,60 +97,15 @@
         });
           {{end}}
 
-        Object.keys(taxonomy).forEach(programmeArea => {
+        taxonomy.forEach(programmeArea => {
           programmeAreaSelect.appendChild(createSelectOption(programmeArea, programmeArea));
         });
 
         programmeAreaSelect.selectedIndex = -1;
 
-        programmeAreaSelect.addEventListener('change', (event) => {
-          const programmeArea = getSelected("programme-area-{{.Attributes.Name}}");
-
-          clearSelectOptions("service-area-{{.Attributes.Name}}");
-          clearSelectOptions("thematic-area-{{.Attributes.Name}}");
-
-          if (
-            programmeArea !== null &&
-            programmeArea !== undefined &&
-            programmeArea !== ''
-          ) {
-            Object.keys(taxonomy[programmeArea]).forEach(serviceArea => {
-              serviceAreaSelect.appendChild(createSelectOption(serviceArea, serviceArea));
-            });
-          }
-
-          serviceAreaSelect.selectedIndex = -1;
-          thematicAreaSelect.selectedIndex = -1;
-        });
-
-        serviceAreaSelect.addEventListener('change', (event) => {
-          const programmeArea = getSelected("programme-area-{{.Attributes.Name}}");
-          const serviceArea = getSelected("service-area-{{.Attributes.Name}}");
-
-          clearSelectOptions("thematic-area-{{.Attributes.Name}}");
-
-          if (
-            programmeArea !== null &&
-            programmeArea !== undefined &&
-            programmeArea !== '' &&
-            serviceArea !== null &&
-            serviceArea !== undefined &&
-            serviceArea !== ''
-          ) {
-            Object.keys(taxonomy[programmeArea][serviceArea]).forEach(thematicArea => {
-              thematicAreaSelect.appendChild(createSelectOption(thematicArea, thematicArea));
-            });
-          }
-
-          thematicAreaSelect.selectedIndex = -1;
-
-        });
-
         addBadgeButton.addEventListener('click', (event) => {
 
           const programmeArea = getSelected("programme-area-{{.Attributes.Name}}");
-          const serviceArea = getSelected("service-area-{{.Attributes.Name}}");
-          const thematicArea = getSelected("thematic-area-{{.Attributes.Name}}");
 
           let label = '';
 
@@ -205,28 +114,7 @@
             programmeArea !== null &&
             programmeArea !== undefined
           ) {
-
             label = `${programmeArea}`;
-
-            if (
-              serviceArea !== '' &&
-              serviceArea !== null &&
-              serviceArea !== undefined
-            ) {
-
-              label = `${label} - ${serviceArea}`;
-
-              if (
-                thematicArea !== '' &&
-                thematicArea !== null &&
-                thematicArea !== undefined
-              ) {
-
-                label = `${label} - ${thematicArea}`;
-
-              }
-
-            }
 
             if (!valueContainer.value.includes(label)) {
               const badge = buildBadge(label);
@@ -240,11 +128,7 @@
             }
 
             programmeAreaSelect.selectedIndex = -1;
-            serviceAreaSelect.selectedIndex = -1;
-            thematicAreaSelect.selectedIndex = -1;
-
           }
-
 
         });
 

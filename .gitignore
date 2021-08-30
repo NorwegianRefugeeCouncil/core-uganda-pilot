@@ -6,3 +6,4 @@
 *.pem
 *.out
 api/tmp/
+vendor/

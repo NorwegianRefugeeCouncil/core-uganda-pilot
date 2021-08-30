@@ -10,20 +10,6 @@
                     </select>
                 </div>
 
-                <div class="form mb-3" {{if .Readonly}}style="display: none"{{end}}>
-                    <label for="service-area-{{.Attributes.Name}}">Service Area</label>
-                    <select id="service-area-{{.Attributes.Name}}" class="form-select">
-                    </select>
-
-                </div>
-
-                <div class="form mb-3" {{if .Readonly}}style="display: none"{{end}}>
-                    <label for="thematic-area-{{.Attributes.Name}}">Thematic Area</label>
-                    <select id="thematic-area-{{.Attributes.Name}}" class="form-select">
-                    </select>
-
-                </div>
-
                 <div id="button-container-{{.Attributes.Name}}" class="mb-3"
                      {{if .Readonly}}style="display: none"{{end}}>
                     <button id="btn-add-{{.Attributes.Name}}" type="button" class="btn btn-primary"
