@@ -22,6 +22,9 @@ var (
 
 	DTeam = team("5efecef3-a7a9-4705-84ca-70c89d7d783f", "D-Team")
 
+	globalCountry = country(iam.GlobalCountry.ID, iam.GlobalCountry.Name)
+	DTeamNationality  = nationality("8f6be182-f64c-4096-ba8e-4562506dae6d", DTeam, globalCountry)
+
 	// D-Team Memberships
 	LudovicMembership  = membership("156e7e3a-6cec-43ca-be28-94e8eb0bb27c", Ludovic, DTeam)
 	CassieMembership   = membership("16f91d0b-d53a-41cc-a437-5124fd65656e", Cassie, DTeam)
