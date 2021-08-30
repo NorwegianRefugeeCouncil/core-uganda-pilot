@@ -71,8 +71,6 @@ func (s *Server) initAttribute(ctx context.Context) error {
 		EMailAttribute,
 		TeamNameAttribute,
 
-		// Customisation for Uganda Demo
-
 		// Individual Attributes
 		DisplacementStatusAttribute,
 		GenderAttribute,
@@ -96,6 +94,17 @@ func (s *Server) initAttribute(ctx context.Context) error {
 		PreferredMeansOfContactAttribute,
 		RequireAnInterpreterAttribute,
 		// -- End of Individual Attributes
+
+		// Customisation for Uganda Demo
+		IdentificationDateAttribute,
+		IdentificationLocationAttribute,
+		IdentificationSourceAttribute,
+		Admin2Attribute,
+		Admin3Attribute,
+		Admin4Attribute,
+		Admin5Attribute,
+
+
 	} {
 		if err := s.attributeStore.create(ctx, &attribute); err != nil {
 			if !mongo.IsDuplicateKeyError(err) {
