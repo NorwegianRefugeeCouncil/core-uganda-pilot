@@ -5,5 +5,5 @@
 *.DS_Store
 *.pem
 *.out
-tmp/
+api/tmp/
 vendor/
