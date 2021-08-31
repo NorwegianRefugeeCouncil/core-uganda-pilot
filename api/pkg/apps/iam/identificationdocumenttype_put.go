@@ -6,7 +6,9 @@ func (s *Server) putIdentificationDocumentType(w http.ResponseWriter, req *http.
 	ctx := req.Context()
 	var id string
 
-	if !s.getPathParam("id", w, req, &id)
+	if !s.getPathParam("id", w, req, &id) {
+		return
+	}
 
 	var payload IdentificationDocumentType
 	if err := s.bind(req, &payload); err != nil {
