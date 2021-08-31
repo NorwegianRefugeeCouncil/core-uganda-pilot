@@ -1,21 +1,24 @@
 package iam
 
-import "net/http"
+import (
+	uuid "github.com/satori/go.uuid"
+	"net/http"
+)
 
 func (s *Server) postIdentificationDocumentType(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	listOptions := &IdentificationDocumentTypeListOptions{}
-	if err := listOptions.UnmarshalQueryParameters(req.URL.Query()); err != nil {
+	var a IdentificationDocumentType
+	if err := s.bind(req, &a); err != nil {
+		s.error(w, err)
+	}
+
+	a.ID = uuid.NewV4().String()
+
+	if err := s.identificationDocumetTypeStore.create(ctx, &a); err != nil {
 		s.error(w, err)
 		return
 	}
 
-	list, err := s.identificationDocumetTypeStore.list(ctx, *listOptions)
-	if err != nil {
-		s.error(w, err)
-		return
-	}
-
-	s.json(w, http.StatusOK, list)
+	s.json(w, http.StatusOK, a)
 }

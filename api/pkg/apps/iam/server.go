@@ -142,6 +142,11 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	router.Path(path.Join(server.CountriesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getCountry)
 	router.Path(path.Join(server.CountriesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putCountry)
 
+	router.Path(server.IdentificationDocumentTypesEndpoint).Methods("GET").HandlerFunc(srv.listIdentificationDocumentTypes)
+	router.Path(server.IdentificationDocumentTypesEndpoint).Methods("POST").HandlerFunc(srv.postIdentificationDocumentType)
+	router.Path(path.Join(server.IdentificationDocumentTypesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getIdentificationDocumentType)
+	router.Path(path.Join(server.IdentificationDocumentTypesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putIdentificationDocumentType)
+
 	srv.router = router
 
 	return srv, nil
