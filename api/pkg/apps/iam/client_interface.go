@@ -187,6 +187,24 @@ type AttributeClient interface {
 	List(ctx context.Context, listOptions AttributeListOptions) (*AttributeList, error)
 }
 
+type IdentificationDocumentTypeClient interface {
+	Get(ctx context.Context, id string) (*IdentificationDocumentType, error)
+	Create(ctx context.Context, create *IdentificationDocumentType) (*IdentificationDocumentType, error)
+	Update(ctx context.Context, update *IdentificationDocumentType) (*IdentificationDocumentType, error)
+	List(ctx context.Context, listOptions IdentificationDocumentTypeListOptions) (*IdentificationDocumentTypeList, error)
+}
+
+type IdentificationDocumentTypeListOptions struct {
+}
+
+func (a *IdentificationDocumentTypeListOptions) MarshalQueryParameters() (url.Values, error) {
+	return url.Values{}, nil
+}
+
+func (a *IdentificationDocumentTypeListOptions) UnmarshalQueryParameters(values url.Values) error {
+	return nil
+}
+
 type TeamListOptions struct {
 }
 
