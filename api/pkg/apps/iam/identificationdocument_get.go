@@ -2,7 +2,7 @@ package iam
 
 import "net/http"
 
-func (s *Server) getIdentificationDocumentType(w http.ResponseWriter, req *http.Request) {
+func (s *Server) getIdentificationDocument(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	var id string
 
@@ -10,7 +10,7 @@ func (s *Server) getIdentificationDocumentType(w http.ResponseWriter, req *http.
 		return
 	}
 
-	a, err := s.identificationDocumentTypeStore.get(ctx, id)
+	a, err := s.identificationDocumentStore.get(ctx, id)
 	if err != nil {
 		s.error(w, err)
 		return

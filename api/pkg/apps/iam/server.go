@@ -11,22 +11,23 @@ import (
 )
 
 type Server struct {
-	environment                    string
-	router                         *mux.Router
-	attributeStore                 *AttributeStore
-	partyStore                     *PartyStore
-	partyTypeStore                 *PartyTypeStore
-	relationshipStore              *RelationshipStore
-	relationshipTypeStore          *RelationshipTypeStore
-	identificationDocumetTypeStore *IdentificationDocumentTypeStore
-	individualStore                *IndividualStore
-	teamStore                      *TeamStore
-	countryStore                   *CountryStore
-	membershipStore                *MembershipStore
-	nationalityStore               *NationalityStore
-	hydraAdmin                     admin.ClientService
-	mongoClientFn                  utils.MongoClientFn
-	hydraHTTPClient                *http.Client
+	environment                     string
+	router                          *mux.Router
+	attributeStore                  *AttributeStore
+	partyStore                      *PartyStore
+	partyTypeStore                  *PartyTypeStore
+	relationshipStore               *RelationshipStore
+	relationshipTypeStore           *RelationshipTypeStore
+	identificationDocumentStore     *IdentificationDocumentStore
+	identificationDocumentTypeStore *IdentificationDocumentTypeStore
+	individualStore                 *IndividualStore
+	teamStore                       *TeamStore
+	countryStore                    *CountryStore
+	membershipStore                 *MembershipStore
+	nationalityStore                *NationalityStore
+	hydraAdmin                      admin.ClientService
+	mongoClientFn                   utils.MongoClientFn
+	hydraHTTPClient                 *http.Client
 }
 
 func NewServerOrDie(ctx context.Context, o *server.GenericServerOptions) *Server {
@@ -64,6 +65,11 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 		return nil, err
 	}
 
+	identificationDocumentStore, err := newIdentificationDocumentStore(ctx, o.MongoClientFn, o.MongoDatabase)
+	if err != nil {
+		return nil, err
+	}
+
 	identificationDocumentTypeStore, err := newIdentificationDocumentTypeStore(ctx, o.MongoClientFn, o.MongoDatabase)
 	if err != nil {
 		return nil, err
@@ -72,21 +78,22 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	hydraAdmin := o.HydraAdminClient.Admin
 
 	srv := &Server{
-		environment:                    o.Environment,
-		mongoClientFn:                  o.MongoClientFn,
-		attributeStore:                 attributeStore,
-		countryStore:                   NewCountryStore(partyStore),
-		partyStore:                     partyStore,
-		partyTypeStore:                 partyTypeStore,
-		relationshipStore:              relationshipStore,
-		relationshipTypeStore:          relationshipTypeStore,
-		identificationDocumetTypeStore: identificationDocumentTypeStore,
-		individualStore:                NewIndividualStore(o.MongoClientFn, o.MongoDatabase),
-		teamStore:                      NewTeamStore(partyStore),
-		membershipStore:                NewMembershipStore(relationshipStore),
-		nationalityStore:               NewNationalityStore(relationshipStore),
-		hydraAdmin:                     hydraAdmin,
-		hydraHTTPClient:                o.HydraHTTPClient,
+		environment:                     o.Environment,
+		mongoClientFn:                   o.MongoClientFn,
+		attributeStore:                  attributeStore,
+		countryStore:                    NewCountryStore(partyStore),
+		partyStore:                      partyStore,
+		partyTypeStore:                  partyTypeStore,
+		relationshipStore:               relationshipStore,
+		relationshipTypeStore:           relationshipTypeStore,
+		identificationDocumentStore:     identificationDocumentStore,
+		identificationDocumentTypeStore: identificationDocumentTypeStore,
+		individualStore:                 NewIndividualStore(o.MongoClientFn, o.MongoDatabase),
+		teamStore:                       NewTeamStore(partyStore),
+		membershipStore:                 NewMembershipStore(relationshipStore),
+		nationalityStore:                NewNationalityStore(relationshipStore),
+		hydraAdmin:                      hydraAdmin,
+		hydraHTTPClient:                 o.HydraHTTPClient,
 	}
 
 	router := mux.NewRouter()
@@ -141,6 +148,11 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	router.Path(server.CountriesEndpoint).Methods("POST").HandlerFunc(srv.postCountry)
 	router.Path(path.Join(server.CountriesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getCountry)
 	router.Path(path.Join(server.CountriesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putCountry)
+
+	router.Path(server.IdentificationDocumentsEndpoint).Methods("GET").HandlerFunc(srv.listIdentificationDocuments)
+	router.Path(server.IdentificationDocumentsEndpoint).Methods("POST").HandlerFunc(srv.postIdentificationDocument)
+	router.Path(path.Join(server.IdentificationDocumentsEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getIdentificationDocument)
+	router.Path(path.Join(server.IdentificationDocumentsEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putIdentificationDocument)
 
 	router.Path(server.IdentificationDocumentTypesEndpoint).Methods("GET").HandlerFunc(srv.listIdentificationDocumentTypes)
 	router.Path(server.IdentificationDocumentTypesEndpoint).Methods("POST").HandlerFunc(srv.postIdentificationDocumentType)

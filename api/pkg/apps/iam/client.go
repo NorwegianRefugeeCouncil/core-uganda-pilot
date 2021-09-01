@@ -79,3 +79,9 @@ func (c ClientSet) IdentificationDocumentTypes() IdentificationDocumentTypeClien
 		c: c.c,
 	}
 }
+
+func (c ClientSet) IdentificationDocuments() IdentificationDocumentClient {
+	return &RESTIdentificationDocumentClient{
+		c: c.c,
+	}
+}

@@ -5,17 +5,17 @@ import (
 	"net/http"
 )
 
-func (s *Server) postIdentificationDocumentType(w http.ResponseWriter, req *http.Request) {
+func (s *Server) postIdentificationDocument(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	var a IdentificationDocumentType
+	var a IdentificationDocument
 	if err := s.bind(req, &a); err != nil {
 		s.error(w, err)
 	}
 
 	a.ID = uuid.NewV4().String()
 
-	if err := s.identificationDocumentTypeStore.create(ctx, &a); err != nil {
+	if err := s.identificationDocumentStore.create(ctx, &a); err != nil {
 		s.error(w, err)
 		return
 	}

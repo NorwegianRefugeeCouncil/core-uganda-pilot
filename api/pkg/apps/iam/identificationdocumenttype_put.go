@@ -16,7 +16,7 @@ func (s *Server) putIdentificationDocumentType(w http.ResponseWriter, req *http.
 		return
 	}
 
-	identificationDocumentType, err := s.identificationDocumetTypeStore.get(ctx, id)
+	identificationDocumentType, err := s.identificationDocumentTypeStore.get(ctx, id)
 	if err != nil {
 		s.error(w, err)
 		return
@@ -24,7 +24,7 @@ func (s *Server) putIdentificationDocumentType(w http.ResponseWriter, req *http.
 
 	identificationDocumentType.Name = payload.Name
 
-	if err := s.identificationDocumetTypeStore.update(ctx, identificationDocumentType); err != nil {
+	if err := s.identificationDocumentTypeStore.update(ctx, identificationDocumentType); err != nil {
 		s.error(w, err)
 		return
 	}

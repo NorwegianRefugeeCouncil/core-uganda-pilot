@@ -205,6 +205,31 @@ func (a *IdentificationDocumentTypeListOptions) UnmarshalQueryParameters(values 
 	return nil
 }
 
+type IdentificationDocumentClient interface {
+	Get(ctx context.Context, id string) (*IdentificationDocument, error)
+	Create(ctx context.Context, create *IdentificationDocument) (*IdentificationDocument, error)
+	Update(ctx context.Context, update *IdentificationDocument) (*IdentificationDocument, error)
+	List(ctx context.Context, listOptions IdentificationDocumentListOptions) (*IdentificationDocumentList, error)
+}
+
+type IdentificationDocumentListOptions struct {
+	PartyIDs []string
+}
+
+func (a *IdentificationDocumentListOptions) MarshalQueryParameters() (url.Values, error) {
+	ret := url.Values{}
+	for _, partyTypeID := range a.PartyIDs {
+		ret.Add("partyId", partyTypeID)
+	}
+	return ret, nil
+}
+
+func (a *IdentificationDocumentListOptions) UnmarshalQueryParameters(values url.Values) error {
+	partyIDs := values["partyId"]
+	a.PartyIDs = append(a.PartyIDs, partyIDs...)
+	return nil
+}
+
 type TeamListOptions struct {
 }
 
