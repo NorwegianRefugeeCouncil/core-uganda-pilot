@@ -95,6 +95,58 @@
                                     Add
                                 </button>
                             </div>
+
+                            {{if not .IsNew }}
+                                {{if .IdentificationDocuments}}
+                                    <h1 class="display-5 my-3">Identification Documents</h1>
+
+                                    <div class="d-flex">
+                                        <div class="me-2">
+                                            <label class="form-label" for="identificationDocumentTypeSelector">Identification Document Type</label>
+                                            <select id="identificationDocumentTypeSelector" class="form-select pe-5"
+                                                    data-testid="identification-document-type">
+                                                {{range .IdentificationDocumentTypes.Items}}
+                                                    <option value="{{.ID}}">{{.Name}}</option>
+                                                {{end}}
+                                            </select>
+                                        </div>
+                                        <div class="mx-2 flex-grow-1">
+                                            <label for="documentNumber" class="form-label">Document Number</label>
+                                            <input type="text"
+                                                   class="form-control"
+                                                   name="documentNumber"
+                                                   id="documentNumber"
+                                            />
+                                        </div>
+
+                                        <button class="btn btn-primary ms-2"
+                                                id="add-document-button"
+                                                data-testid="add-document-btn"
+                                                type='button'>
+                                            Add
+                                        </button>
+                                    </div>
+
+                                    <table class="table table-hover table-bordered mt-4">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Type</th>
+                                            <th scope="col">Number</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        {{range .IdentificationDocuments.Items}}
+                                            <tr>
+                                                <td>{{index $.IdentificationDocumentTypesMap .IdentificationDocumentTypeID }}</td>
+                                                <td>{{.DocumentNumber}}</td>
+                                            </tr>
+                                        {{end}}
+
+                                        </tbody>
+                                    </table>
+                                {{end}}
+                            {{end}}
                         </div>
                     </div>
                 </div>

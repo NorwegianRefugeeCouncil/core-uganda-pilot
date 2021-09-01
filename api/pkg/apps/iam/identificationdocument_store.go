@@ -17,7 +17,7 @@ func newIdentificationDocumentStore(ctx context.Context, mongoClientFn utils.Mon
 	defer cancel()
 
 	store := &IdentificationDocumentStore{
-		getCollection: utils.GetCollectionFn(database, "identificationdocument", mongoClientFn),
+		getCollection: utils.GetCollectionFn(database, "identificationDocuments", mongoClientFn),
 	}
 
 	collection, err := store.getCollection(ctx)

@@ -174,6 +174,9 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	var teams *iam.TeamList
 	var individualAssessment *cms.Case
 	var situationAnalysis *cms.Case
+	var identificationDocuments *iam.IdentificationDocumentList
+	var identificationDocumentTypes *iam.IdentificationDocumentTypeList
+	var identificationDocumentTypesMap = map[string]string{}
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
@@ -206,6 +209,15 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	})
 
 	g.Go(func() error {
+		var err error
+		identificationDocumentTypes, err = iamClient.IdentificationDocumentTypes().List(waitCtx, iam.IdentificationDocumentTypeListOptions{})
+		for _, idt := range identificationDocumentTypes.Items {
+			identificationDocumentTypesMap[idt.ID] = idt.Name
+		}
+		return err
+	})
+
+	g.Go(func() error {
 		if id == "new" {
 			relationshipsForIndividual = &iam.RelationshipList{
 				Items: []*iam.Relationship{},
@@ -214,6 +226,7 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		}
 		var err error
 		relationshipsForIndividual, err = iamClient.Relationships().List(waitCtx, iam.RelationshipListOptions{EitherPartyID: id})
+		identificationDocuments, err = iamClient.IdentificationDocuments().List(waitCtx, iam.IdentificationDocumentListOptions{PartyIDs: []string{id}})
 		return err
 	})
 
@@ -343,28 +356,31 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "individual", map[string]interface{}{
-		"IsNew":                     id == "new",
-		"Individual":                individual,
-		"Parties":                   parties,
-		"Teams":                     teams,
-		"PartyTypes":                partyTypes,
-		"RelationshipTypes":         relationshipTypes,
-		"FilteredRelationshipTypes": filteredRelationshipTypes,
-		"Relationships":             relationshipsForIndividual,
-		"Attributes":                attrs,
-		"Cases":                     displayCases,
-		"CaseTypes":                 caseTypes,
-		"FullNameAttribute":         iam.FullNameAttribute,
-		"DisplayNameAttribute":      iam.DisplayNameAttribute,
-		"Page":                      "general",
-		"Constants":                 s.Constants,
-		"IndividualPartyTypeID":     iam.IndividualPartyType.ID,
-		"HouseholdPartyTypeID":      iam.HouseholdPartyType.ID,
-		"TeamPartyTypeID":           iam.TeamPartyType.ID,
-		"IndividualAssessment":      individualAssessment,
-		"SituationAnalysis":         situationAnalysis,
-		"ProgressLabel":             progressLabel,
-		"Progress":                  progress,
+		"IsNew":                          id == "new",
+		"Individual":                     individual,
+		"Parties":                        parties,
+		"Teams":                          teams,
+		"PartyTypes":                     partyTypes,
+		"RelationshipTypes":              relationshipTypes,
+		"FilteredRelationshipTypes":      filteredRelationshipTypes,
+		"Relationships":                  relationshipsForIndividual,
+		"Attributes":                     attrs,
+		"Cases":                          displayCases,
+		"CaseTypes":                      caseTypes,
+		"FullNameAttribute":              iam.FullNameAttribute,
+		"DisplayNameAttribute":           iam.DisplayNameAttribute,
+		"Page":                           "general",
+		"Constants":                      s.Constants,
+		"IndividualPartyTypeID":          iam.IndividualPartyType.ID,
+		"HouseholdPartyTypeID":           iam.HouseholdPartyType.ID,
+		"TeamPartyTypeID":                iam.TeamPartyType.ID,
+		"IndividualAssessment":           individualAssessment,
+		"SituationAnalysis":              situationAnalysis,
+		"ProgressLabel":                  progressLabel,
+		"Progress":                       progress,
+		"IdentificationDocuments":        identificationDocuments,
+		"IdentificationDocumentTypes":    identificationDocumentTypes,
+		"IdentificationDocumentTypesMap": identificationDocumentTypesMap,
 	}); err != nil {
 		s.Error(w, err)
 		return

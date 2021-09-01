@@ -20,6 +20,8 @@ type (
 		Individuals() IndividualClient
 		Countries() CountryClient
 		Nationalities() NationalityClient
+		IdentificationDocuments() IdentificationDocumentClient
+		IdentificationDocumentTypes() IdentificationDocumentTypeClient
 	}
 )
 

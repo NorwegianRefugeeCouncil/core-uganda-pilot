@@ -17,7 +17,7 @@ func newIdentificationDocumentTypeStore(ctx context.Context, mongoClientFn utils
 	defer cancel()
 
 	store := &IdentificationDocumentTypeStore{
-		getCollection: utils.GetCollectionFn(database, "identificationdocumenttypes", mongoClientFn),
+		getCollection: utils.GetCollectionFn(database, "identificationDocumentTypes", mongoClientFn),
 	}
 
 	collection, err := store.getCollection(ctx)
