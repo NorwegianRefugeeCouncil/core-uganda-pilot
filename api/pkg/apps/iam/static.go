@@ -674,7 +674,7 @@ var PhysicalAddressAttribute = Attribute{
 			ShortFormulation: "Physical address",
 		},
 	},
-	IsPersonallyIdentifiableInfo: false,
+	IsPersonallyIdentifiableInfo: true,
 	PartyTypeIDs: []string{
 		IndividualPartyType.ID,
 	},
@@ -693,7 +693,7 @@ var PrimaryPhoneNumberAttribute = Attribute{
 			ShortFormulation: "Primary phone number",
 		},
 	},
-	IsPersonallyIdentifiableInfo: false,
+	IsPersonallyIdentifiableInfo: true,
 	PartyTypeIDs: []string{
 		IndividualPartyType.ID,
 	},
@@ -711,7 +711,7 @@ var SecondaryPhoneNumberAttribute = Attribute{
 			ShortFormulation: "Secondary phone number",
 		},
 	},
-	IsPersonallyIdentifiableInfo: false,
+	IsPersonallyIdentifiableInfo: true,
 	PartyTypeIDs: []string{
 		IndividualPartyType.ID,
 	},
@@ -729,7 +729,7 @@ var TertiaryPhoneNumberAttribute = Attribute{
 			ShortFormulation: "Tertiary phone number",
 		},
 	},
-	IsPersonallyIdentifiableInfo: false,
+	IsPersonallyIdentifiableInfo: true,
 	PartyTypeIDs: []string{
 		IndividualPartyType.ID,
 	},
