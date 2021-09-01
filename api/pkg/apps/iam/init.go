@@ -91,6 +91,7 @@ func (s *Server) initAttribute(ctx context.Context) error {
 		PhysicalAddressAttribute,
 		PrimaryPhoneNumberAttribute,
 		SecondaryPhoneNumberAttribute,
+		TertiaryPhoneNumberAttribute,
 		PreferredMeansOfContactAttribute,
 		RequireAnInterpreterAttribute,
 		CanInitiateContactAttribute,

@@ -717,6 +717,24 @@ var SecondaryPhoneNumberAttribute = Attribute{
 	},
 }
 
+var TertiaryPhoneNumberAttribute = Attribute{
+	ID:         "4a0ba072-66a5-403f-bea1-35e9427659fb",
+	Name:       "tertiaryPhoneNumber",
+	Type:       form.Phone,
+	Attributes: form.FormElementAttributes{Name: "tertiaryPhoneNumber"},
+	Translations: []AttributeTranslation{
+		{
+			Locale:           "en",
+			LongFormulation:  "Tertiary phone number",
+			ShortFormulation: "Tertiary phone number",
+		},
+	},
+	IsPersonallyIdentifiableInfo: false,
+	PartyTypeIDs: []string{
+		IndividualPartyType.ID,
+	},
+}
+
 var PreferredMeansOfContactAttribute = Attribute{
 	ID:   "1e7f2db9-eb63-46ae-b6d5-5c171a9e2534",
 	Name: "preferredMeansOfContact",
