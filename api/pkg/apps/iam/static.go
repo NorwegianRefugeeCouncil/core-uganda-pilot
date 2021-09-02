@@ -13,6 +13,11 @@ var UgandaCountry = Country{
 	Name: "Uganda",
 }
 
+var ColombiaCountry = Country{
+	ID:   "d351395b-468c-4ceb-94d3-fa5f6338a5d3",
+	Name: "Colombia",
+}
+
 //Individual Global Attributes
 var FullNameAttribute = Attribute{
 	ID:         "8514da51-aad5-4fb4-a797-8bcc0c969b27",
