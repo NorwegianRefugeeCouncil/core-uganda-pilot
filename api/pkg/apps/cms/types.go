@@ -3,6 +3,7 @@ package cms
 import (
 	"encoding/json"
 	"github.com/nrc-no/core/pkg/form"
+	"net/url"
 	"time"
 )
 
@@ -42,7 +43,7 @@ func (c *CaseType) String() string {
 }
 
 func (c *CaseType) Pretty() string {
-	b, err := json.MarshalIndent(c.Template, "", "  ")
+	b, err := json.MarshalIndent(c.Form, "", "  ")
 	if err != nil {
 		panic(err)
 	}

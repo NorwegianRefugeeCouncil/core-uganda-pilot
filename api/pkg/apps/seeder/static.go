@@ -7,13 +7,13 @@ import (
 	"github.com/nrc-no/core/pkg/registrationctrl"
 )
 
-func caseType(id, name, partyTypeID, teamID string, template *cms.CaseTemplate, intakeCaseType bool) cms.CaseType {
+func caseType(id, name, partyTypeID, teamID string, form form.Form, intakeCaseType bool) cms.CaseType {
 	ct := cms.CaseType{
 		ID:             id,
 		Name:           name,
 		PartyTypeID:    partyTypeID,
 		TeamID:         teamID,
-		Template:       template,
+		Form:           form,
 		IntakeCaseType: intakeCaseType,
 	}
 	caseTypes = append(caseTypes, ct)

@@ -81,7 +81,7 @@ func aMockCaseType() *CaseType {
 		Name:        "mock",
 		PartyTypeID: newUUID(),
 		TeamID:      newUUID(),
-		Template:    mockCaseTemplate("mock"),
+		Form:        mockForm(),
 	}
 }
 

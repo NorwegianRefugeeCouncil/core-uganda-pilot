@@ -167,7 +167,6 @@ var IdentificationSourceAttribute = Attribute{
 
 var Admin2Attribute = Attribute{
 	ID:        "44dffbc4-7536-42b9-af84-32ea4e9ed493",
-	Name:      "admin2",
 	CountryID: UgandaCountry.ID,
 	Type:      form.Dropdown,
 	Attributes: form.FormElementAttributes{
@@ -221,8 +220,10 @@ var Admin4Attribute = Attribute{
 	Type:      form.Text,
 	Attributes: form.FormElementAttributes{
 		Label:       "Parish / Admin 4",
-		Name:        "admin4",
 		Description: "",
+		Validation: form.ControlValidation{
+			Required: true,
+		},
 	},
 	Validation: form.FormElementValidation{Required: true},
 	Translations: []AttributeTranslation{
@@ -271,6 +272,9 @@ var DisplacementStatusAttribute = Attribute{
 	Attributes: form.FormElementAttributes{
 		Name:    "displacementStatus",
 		Options: []string{"Refugee", "Internally displaced person", "Host community", "Other"},
+		Validation: form.ControlValidation{
+			Required: true,
+		},
 	},
 	Validation: form.FormElementValidation{Required: true},
 	Translations: []AttributeTranslation{
@@ -322,17 +326,8 @@ var ConsentToNrcDataUseAttribute = Attribute{
 		Name: "consent_to_nrc_data_use",
 		CheckboxOptions: []form.CheckboxOption{
 			{
-				// FIXME Translation and checkbox option have no overlap
 				Label: "Has the beneficiary consented to NRC using their data?",
-				// Required: true,
 			},
-		},
-	},
-	Translations: []AttributeTranslation{
-		{
-			Locale:           "en",
-			LongFormulation:  "Has the beneficiary consented to NRC using their data",
-			ShortFormulation: "Consented to NRC using their data",
 		},
 	},
 	IsPersonallyIdentifiableInfo: false,
@@ -369,13 +364,6 @@ var AnonymousAttribute = Attribute{
 			{Label: "Beneficiary prefers to remain anonymous."},
 		},
 	},
-	Translations: []AttributeTranslation{
-		{
-			Locale:           "en",
-			LongFormulation:  "Beneficiary prefers to remain anonymous",
-			ShortFormulation: "Anonymous",
-		},
-	},
 	IsPersonallyIdentifiableInfo: false,
 	PartyTypeIDs: []string{
 		IndividualPartyType.ID,
@@ -390,13 +378,6 @@ var MinorAttribute = Attribute{
 		Name: "minor",
 		CheckboxOptions: []form.CheckboxOption{
 			{Label: "Is the beneficiary a minor?"},
-		},
-	},
-	Translations: []AttributeTranslation{
-		{
-			Locale:           "en",
-			LongFormulation:  "Is the beneficiary a minor",
-			ShortFormulation: "Minor",
 		},
 	},
 	IsPersonallyIdentifiableInfo: false,
@@ -438,13 +419,6 @@ var PhysicalImpairmentAttribute = Attribute{
 			{Label: "Would you say you experience some form of physical impairment?"},
 		},
 	},
-	Translations: []AttributeTranslation{
-		{
-			Locale:           "en",
-			LongFormulation:  "Would you say you experience some form of physical impairment?",
-			ShortFormulation: "Experiences physical impairment",
-		},
-	},
 	IsPersonallyIdentifiableInfo: false,
 	PartyTypeIDs: []string{
 		IndividualPartyType.ID,
@@ -458,13 +432,6 @@ var PhysicalImpairmentIntensityAttribute = Attribute{
 	Attributes: form.FormElementAttributes{
 		Name:    "physicalImpairmentIntensity",
 		Options: []string{"Moderate", "Severe"},
-	},
-	Translations: []AttributeTranslation{
-		{
-			Locale:           "en",
-			LongFormulation:  "How would you define the intensity of the physical impairment?",
-			ShortFormulation: "Physical impairment intensity",
-		},
 	},
 	IsPersonallyIdentifiableInfo: false,
 	PartyTypeIDs: []string{
@@ -503,13 +470,6 @@ var SensoryImpairmentIntensityAttribute = Attribute{
 		Name:    "sensoryImpairmentIntensity",
 		Options: []string{"Moderate", "Severe"},
 	},
-	Translations: []AttributeTranslation{
-		{
-			Locale:           "en",
-			LongFormulation:  "How would you define the intensity of the sensory impairment?",
-			ShortFormulation: "Sensory impairment intensity",
-		},
-	},
 	IsPersonallyIdentifiableInfo: false,
 	PartyTypeIDs: []string{
 		IndividualPartyType.ID,
@@ -547,13 +507,6 @@ var MentalImpairmentIntensityAttribute = Attribute{
 		Name:    "mentalImpairmentIntensity",
 		Options: []string{"Moderate", "Severe"},
 	},
-	Translations: []AttributeTranslation{
-		{
-			Locale:           "en",
-			LongFormulation:  "How would you define the intensity of the mental impairment?",
-			ShortFormulation: "Mental impairment intensity",
-		},
-	},
 	IsPersonallyIdentifiableInfo: false,
 	PartyTypeIDs: []string{
 		IndividualPartyType.ID,
@@ -568,13 +521,6 @@ var NationalityAttribute = Attribute{
 		Name:     "nationality",
 		Options:  []string{"Uganda", "Kenya", "Tanzania", "Rwanda", "Burundi", "Democratic Republic of Congo", "South Sudan", "Sudan", "Somalia", "Ethiopia"},
 		Multiple: true,
-	},
-	Translations: []AttributeTranslation{
-		{
-			Locale:           "en",
-			LongFormulation:  "Nationality",
-			ShortFormulation: "Nationality",
-		},
 	},
 	IsPersonallyIdentifiableInfo: false,
 	PartyTypeIDs: []string{
@@ -777,13 +723,6 @@ var CountryNameAttribute = Attribute{
 	Name:                         "countryName",
 	PartyTypeIDs:                 []string{CountryPartyType.ID},
 	IsPersonallyIdentifiableInfo: false,
-	Translations: []AttributeTranslation{
-		{
-			Locale:           "en",
-			ShortFormulation: "Country name",
-			LongFormulation:  "Country name",
-		},
-	},
 }
 
 var MembershipRelationshipType = RelationshipType{

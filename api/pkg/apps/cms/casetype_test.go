@@ -33,7 +33,7 @@ func (s *Suite) testCaseTypeAPI() {
 	caseType.Name = "updated"
 	caseType.PartyTypeID = newUUID()
 	caseType.TeamID = newUUID()
-	caseType.Template = mockCaseTemplate("update")
+	caseType.Form = mockForm()
 	updated, err := s.client.CaseTypes().Update(s.Ctx, caseType)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
@@ -41,7 +41,7 @@ func (s *Suite) testCaseTypeAPI() {
 	assert.Equal(s.T(), caseType.Name, updated.Name)
 	assert.Equal(s.T(), caseType.PartyTypeID, updated.PartyTypeID)
 	assert.Equal(s.T(), caseType.TeamID, updated.TeamID)
-	assert.Equal(s.T(), *caseType.Template, *updated.Template)
+	assert.Equal(s.T(), caseType.Form, updated.Form)
 
 	// GET
 	get, err = s.client.CaseTypes().Get(s.Ctx, updated.ID)
@@ -51,7 +51,7 @@ func (s *Suite) testCaseTypeAPI() {
 	assert.Equal(s.T(), updated.Name, get.Name)
 	assert.Equal(s.T(), updated.PartyTypeID, get.PartyTypeID)
 	assert.Equal(s.T(), updated.TeamID, get.TeamID)
-	assert.Equal(s.T(), *updated.Template, *get.Template)
+	assert.Equal(s.T(), updated.Form, get.Form)
 
 	// LIST
 	list, err := s.client.CaseTypes().List(s.Ctx, CaseTypeListOptions{})

@@ -19,15 +19,18 @@ func (s *Server) PutCase(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	kase, err := s.caseStore.Get(ctx, id)
+	// Get Case from store
+	kase, err := s.caseStore.get(ctx, id)
 	if err != nil {
 		s.Error(w, err)
 		return
 	}
 
-	kase.Template = payload.Template
+	// Update struct
+	update := updateCaseStruct(kase, payload)
 
-	errList := ValidateCase(kase, &validation.Path{})
+	// Perform validation
+	errList := ValidateCase(update, validation.NewPath(""))
 	if len(errList) > 0 {
 		status := errList.Status(http.StatusUnprocessableEntity, "invalid case")
 		s.Error(w, &status)

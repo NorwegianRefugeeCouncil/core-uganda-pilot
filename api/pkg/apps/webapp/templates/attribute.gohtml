@@ -15,14 +15,15 @@
                     <div class="card-body">
 
                         <form id="attributes-form"
-                              action="/settings/attributes{{if .Attribute}}/{{.Attribute.ID}}{{end}}" method="post">
+                              action="/settings/attributes{{if .PartyAttributeDefinition}}/{{.PartyAttributeDefinition.ID}}{{end}}"
+                              method="post">
 
-                            <input type="hidden" id="id-input" name="id" value="{{.Attribute.ID}}">
+                            <input type="hidden" id="id-input" name="id" value="{{.PartyAttributeDefinition.ID}}">
 
                             <!-- Name -->
                             <div class="form-floating mb-3 shadow-sm font-monospace">
-                                <input id="name"
-                                       name="name"
+                                <input id="id"
+                                       name="id"
                                        type="text"
                                        class="form-control"
                                        value=""
@@ -70,7 +71,7 @@
                                        type="checkbox"
                                        class="form-check-input"
                                        data-testid="personal-info-chkbx"
-                                       {{if .Attribute.IsPersonallyIdentifiableInfo}}checked{{end}}
+                                       {{if .PartyAttributeDefinition.IsPersonallyIdentifiableInfo}}checked{{end}}
                                 >
                                 <label class="form-check-label" for="is-pii-input">
                                     Is Personally Identifiable Information

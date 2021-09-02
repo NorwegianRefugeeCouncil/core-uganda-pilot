@@ -338,7 +338,6 @@ func NewIndividual(ID string) *Individual {
 }
 
 func (b *Individual) FindAge() *int {
-
 	birthDate := b.FindAttributeValue(BirthDateAttribute.ID)
 	if birthDate == nil {
 		return nil

@@ -1,5 +1,10 @@
 package form
 
+import (
+	"github.com/nrc-no/core/pkg/validation"
+	"net/url"
+)
+
 import "github.com/nrc-no/core/pkg/validation"
 
 type FieldType string
@@ -32,6 +37,8 @@ type I18nString struct {
 	Value  string `json:"value" bson:"value"`
 }
 
+type I18nStringList []I18nString
+
 // TODO COR-209 change static string fields (labels, descriptors) to []I18nString?
 type FormElementAttributes struct {
 	Label           string           `json:"label" bson:"label"`
@@ -49,6 +56,53 @@ type CheckboxOption struct {
 	Required bool   `json:"required" bson:"required"`
 }
 
-type FormElementValidation struct {
+type ControlValidation struct {
 	Required bool `json:"required" bson:"required"`
+}
+
+type ValuedControl struct {
+	*Control
+	Value  []string
+	Errors *validation.ErrorList
+}
+
+type ValuedForm struct {
+	Controls []ValuedControl
+	Errors   *validation.ErrorList
+}
+
+// Case templates
+// https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-githubs-form-schema
+
+// CaseTemplate contains a list of form elements used to construct a case form
+type Form struct {
+	// FormControls is an ordered list of the elements found in the form
+	Controls []Control `json:"formcontrols" bson:"formcontrols"`
+}
+
+func (f *Form) FindControlByName(name string) *Control {
+	for _, control := range f.Controls {
+		if control.Name == name {
+			return &control
+		}
+	}
+	return nil
+}
+
+func NewValuedForm(form Form, values url.Values, errors validation.ErrorList) ValuedForm {
+	var valuedControls []ValuedControl
+	for _, control := range form.Controls {
+		value := values[control.Name]
+		errs := errors.FindFamily(control.Name)
+		valuedControls = append(valuedControls, ValuedControl{
+			Control: &control,
+			Value:   value,
+			Errors:  errs,
+		})
+	}
+	errs := errors.Find("")
+	return ValuedForm{
+		Controls: valuedControls,
+		Errors:   errs,
+	}
 }

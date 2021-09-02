@@ -11,3 +11,8 @@ type ValidatedCaseTemplate struct {
 type Template struct {
 	FormElements []form.FormElement `json:"formElements"`
 }
+
+func (t *Template) Fill() *form.ValuedForm {
+	// TODO implement me
+	return nil
+}

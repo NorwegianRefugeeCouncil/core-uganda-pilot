@@ -113,10 +113,11 @@ func (s *CaseTypeStore) Update(ctx context.Context, caseType *CaseType) error {
 		"id": caseType.ID,
 	}, bson.M{
 		"$set": bson.M{
-			"name":        caseType.Name,
-			"partyTypeId": caseType.PartyTypeID,
-			"teamId":      caseType.TeamID,
-			"Template":    caseType.Template,
+			"name":           caseType.Name,
+			"partyTypeId":    caseType.PartyTypeID,
+			"teamId":         caseType.TeamID,
+			"form":           caseType.Form,
+			"intakeCaseType": caseType.IntakeCaseType,
 		},
 	})
 	if err != nil {
