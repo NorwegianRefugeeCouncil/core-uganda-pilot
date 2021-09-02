@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-func (s *Server) getAttribute(w http.ResponseWriter, req *http.Request) {
+func (s *Server) getPartyAttributeDefinition(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 	var id string
@@ -13,12 +13,11 @@ func (s *Server) getAttribute(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	a, err := s.attributeStore.get(ctx, id)
+	a, err := s.partyAttributeDefinitionStore.get(ctx, id)
 	if err != nil {
 		s.error(w, err)
 		return
 	}
 
 	s.json(w, http.StatusOK, a)
-
 }

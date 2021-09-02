@@ -3,7 +3,6 @@ package cms_test
 import (
 	"context"
 	. "github.com/nrc-no/core/pkg/apps/cms"
-	"github.com/nrc-no/core/pkg/form"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/sync/errgroup"
 	"reflect"
@@ -11,14 +10,18 @@ import (
 
 func (s *Suite) TestCaseAPI() {
 	// Create
-	mockCase := aMockCase()
-	created, err := s.client.Cases().Create(s.Ctx, mockCase)
+	caseType, err := s.client.CaseTypes().Create(s.Ctx, mockCaseType())
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
-	mockCase.ID = created.ID
-	mockCase.CreatorID = created.CreatorID
-	assert.Equal(s.T(), mockCase, created)
+	create := mockCase(caseType)
+	created, err := s.client.Cases().Create(s.Ctx, create)
+	if !assert.NoError(s.T(), err) {
+		s.T().FailNow()
+	}
+	create.ID = created.ID
+	create.CreatorID = created.CreatorID
+	assert.Equal(s.T(), create, created)
 
 	// GET
 	get, err := s.client.Cases().Get(s.Ctx, created.ID)
@@ -28,18 +31,13 @@ func (s *Suite) TestCaseAPI() {
 	assert.Equal(s.T(), created, get)
 
 	// UPDATE
-	get.Template = &CaseTemplate{FormElements: []form.FormElement{{
-		Type: "textarea",
-		Attributes: form.FormElementAttributes{
-			Label: "update",
-			Name:  "update",
-		},
-	}}}
-	updated, err := s.client.Cases().Update(s.Ctx, get)
+	update := created
+	update.FormData = map[string][]string{"test": {"string"}}
+	updated, err := s.client.Cases().Update(s.Ctx, update)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
-	assert.Equal(s.T(), get, updated)
+	assert.Equal(s.T(), update, updated)
 
 	// GET
 	get, err = s.client.Cases().Get(s.Ctx, updated.ID)
@@ -268,6 +266,7 @@ func newCaseBunch() *caseBunch {
 
 func (c caseBunch) create(ctx context.Context, cli CaseClient) error {
 	g, ctx := errgroup.WithContext(ctx)
+
 	for _, c := range c.cases {
 		kase := c
 		g.Go(func() error {

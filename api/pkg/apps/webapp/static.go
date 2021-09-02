@@ -52,7 +52,7 @@ func safeFileName(str string) (string, error) {
 	return name, nil
 }
 
-func transpileTS() error {
+func TranspileTS() error {
 	cmd := exec.Command("tsc")
 	err := cmd.Run()
 	return err

@@ -5,31 +5,36 @@ import (
 	"net/url"
 )
 
-import "github.com/nrc-no/core/pkg/validation"
-
-type FieldType string
+type ControlType string
 
 const (
-	Text          FieldType = "text"
-	Email         FieldType = "email"
-	Phone         FieldType = "tel"
-	URL           FieldType = "url"
-	Date          FieldType = "date"
-	Textarea      FieldType = "textarea"
-	Dropdown      FieldType = "dropdown"
-	Checkbox      FieldType = "checkbox"
-	Radio         FieldType = "radio"
-	TaxonomyInput FieldType = "taxonomyinput"
-	File          FieldType = "file"
-	CustomDiv     FieldType = "div"
+	Text     ControlType = "text"
+	Email    ControlType = "email"
+	Phone    ControlType = "tel"
+	URL      ControlType = "url"
+	Date     ControlType = "date"
+	Textarea ControlType = "textarea"
+	Dropdown ControlType = "dropdown"
+	Checkbox ControlType = "checkbox"
+	Radio    ControlType = "radio"
+	Taxonomy ControlType = "taxonomyinput"
+	File     ControlType = "file"
 )
 
-type FormElement struct {
-	Type       FieldType             `json:"type" bson:"type"`
-	Attributes FormElementAttributes `json:"attributes" bson:"attributes"`
-	Validation FormElementValidation `json:"validation" bson:"validation"`
-	Errors     *validation.ErrorList `json:"errors"`
-	Readonly   bool
+var ControlTypes = []ControlType{Text, Email, Phone, URL, Date, Textarea, Dropdown, Checkbox, Radio, Taxonomy, File}
+
+type Control struct {
+	Name            string            `json:"name" bson:"name"`
+	Type            ControlType       `json:"type" bson:"type"`
+	Label           string            `json:"label" bson:"label"`
+	DefaultValue    []string          `json:"defaultValue" bson:"defaultValue"`
+	Description     string            `json:"description" bson:"description"`
+	Placeholder     string            `json:"placeholder" bson:"placeholder"`
+	Multiple        bool              `json:"multiple" bson:"multiple"`
+	Options         []string          `json:"options" bson:"options"`
+	CheckboxOptions []CheckboxOption  `json:"checkboxOptions" bson:"checkboxOptions"`
+	Validation      ControlValidation `json:"validation" bson:"validation"`
+	Readonly        bool              `json:"readonly" bson:"readonly"`
 }
 
 type I18nString struct {
@@ -38,18 +43,6 @@ type I18nString struct {
 }
 
 type I18nStringList []I18nString
-
-// TODO COR-209 change static string fields (labels, descriptors) to []I18nString?
-type FormElementAttributes struct {
-	Label           string           `json:"label" bson:"label"`
-	Name            string           `json:"name" bson:"name"`
-	Value           []string         `json:"value" bson:"value"`
-	Description     string           `json:"description" bson:"description"`
-	Placeholder     string           `json:"placeholder" bson:"placeholder"`
-	Multiple        bool             `json:"multiple" bson:"multiple"`
-	Options         []string         `json:"options" bson:"options"`
-	CheckboxOptions []CheckboxOption `json:"checkboxOptions" bson:"checkboxOptions"`
-}
 
 type CheckboxOption struct {
 	Label    string `json:"label" bson:"label"`

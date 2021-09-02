@@ -12,10 +12,10 @@ func (s *Server) GetComment(w http.ResponseWriter, req *http.Request) {
 
 	comment, err := s.commentStore.Get(ctx, id)
 	if err != nil {
-		s.Error(w, err)
+		s.error(w, err)
 		return
 	}
 
-	s.JSON(w, http.StatusOK, comment)
+	s.json(w, http.StatusOK, comment)
 
 }

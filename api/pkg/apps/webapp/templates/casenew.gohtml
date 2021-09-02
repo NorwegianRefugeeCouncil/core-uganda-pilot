@@ -56,8 +56,8 @@
                             </select>
                         </div>
                         {{with or .ValidatedForm .CaseType}}
-                            {{range .Template.FormElements}}
-                                {{template "formelement" .}}
+                            {{range .Form.Controls}}
+                                {{template "formcontrol" .}}
                             {{end}}
                         {{end}}
                     {{end}}

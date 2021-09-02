@@ -1,5 +1,5 @@
 {{define "individual"}}
-    {{$hasIntakeCases := (and (not .IsNew) (and .SituationAnalysis .IndividualAssessment))}}
+    {{$hasIntakeCases := (and (not .IsNew) (and .SituationAnalysis .IndividualResponse))}}
     <!doctype html>
     <html lang="en">
     {{template "head"}}
@@ -52,8 +52,8 @@
                         <form id="attributes-form"
                               action="/individuals{{if .Individual}}{{if .Individual.ID}}/{{.Individual.ID}}{{end}}{{end}}">
 
-                            {{ range $index, $attribute := .Attributes.Items}}
-                                {{template "formelement" $attribute}}
+                            {{ range $index, $attribute := .Attributes.Controls}}
+                                {{template "formcontrol" $attribute}}
                             {{end}}
 
                             <h1 class="display-5 my-3">Relationships</h1>
@@ -110,8 +110,8 @@
                     <div class="card mb-3">
                         <div class="card-body">
                             <form id="situation-analysis-form" action="/cases/{{.SituationAnalysis.ID}}">
-                                {{range .SituationAnalysis.Template.FormElements}}
-                                    {{template "formelement" .}}
+                                {{range .SituationAnalysisForm.Controls}}
+                                    {{template "formcontrol" .}}
                                 {{end}}
                             </form>
                         </div>
@@ -124,9 +124,9 @@
                     </div>
                     <div class="card mb-3">
                         <div class="card-body">
-                            <form id="response-form" action="/cases/{{.IndividualAssessment.ID}}">
-                                {{range .IndividualAssessment.Template.FormElements}}
-                                    {{template "formelement" .}}
+                            <form id="response-form" action="/cases/{{.IndividualResponse.ID}}">
+                                {{range .IndividualResponseForm.Controls}}
+                                    {{template "formcontrol" .}}
                                 {{end}}
                             </form>
                         </div>

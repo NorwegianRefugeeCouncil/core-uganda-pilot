@@ -36,7 +36,7 @@ export default class CasePage {
     };
 
     verifyForm = value => {
-        for (const { type } of testTemplate.formElements) {
+        for (const { type } of testTemplate.formcontrols) {
             cy.get(testId('test-' + type)).then($el => {
                 const tag = $el[0].tagName;
                 switch (tag) {

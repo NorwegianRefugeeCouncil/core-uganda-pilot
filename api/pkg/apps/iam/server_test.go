@@ -47,34 +47,32 @@ func newUUID() string {
 	return uuid.NewV4().String()
 }
 
-func mockAttribute() *Attribute {
-	return &Attribute{
-		Name:         "mock",
-		PartyTypeIDs: make([]string, 0),
-		Translations: []AttributeTranslation{{
-			Locale:           "mock",
-			LongFormulation:  "mock",
-			ShortFormulation: "mock",
-		},
-		},
+func mockPartyAttributeDefinition() *PartyAttributeDefinition {
+	return &PartyAttributeDefinition{
+		CountryID:    newUUID(),
+		PartyTypeIDs: []string{newUUID()},
 	}
 }
 
-func (s *Suite) mockAttributes(n int) []*Attribute {
-	var attributes []*Attribute
+func mockPartyAttributeDefinitions(n int) []*PartyAttributeDefinition {
+	var attributes []*PartyAttributeDefinition
 	for i := 0; i < n; i++ {
-		attributes = append(attributes, mockAttribute())
+		attributes = append(attributes, mockPartyAttributeDefinition())
 	}
 	return attributes
 }
 
-func (s *Suite) mockParties(n int) []*Party {
+func mockParty() *Party {
+	return &Party{
+		PartyTypeIDs: make([]string, 0),
+		Attributes:   make(map[string][]string),
+	}
+}
+
+func mockParties(n int) []*Party {
 	var parties []*Party
 	for i := 0; i < n; i++ {
-		parties = append(parties, &Party{
-			PartyTypeIDs: make([]string, 0),
-			Attributes:   make(map[string][]string),
-		})
+		parties = append(parties, mockParty())
 	}
 	return parties
 }
@@ -93,47 +91,53 @@ func (s *Suite) mockParties(n int) []*Party {
 //	return relationshipTypes
 //}
 
-func (s *Suite) mockRelationships(n int) []*Relationship {
+func mockRelationship() *Relationship {
+	return &Relationship{}
+}
+
+func mockRelationships(n int) []*Relationship {
 	var relationships []*Relationship
 	for i := 0; i < n; i++ {
-		relationships = append(relationships, &Relationship{
-			RelationshipTypeID: "",
-			FirstPartyID:       "",
-			SecondPartyID:      "",
-		})
+		relationships = append(relationships, mockRelationship())
 	}
 	return relationships
 }
 
-func (s *Suite) mockIndividuals(n int) []*Individual {
+func mockIndividual() *Individual {
+	individual := NewIndividual(newUUID())
+	individual.Attributes.Add(FullNameAttribute.ID, "mock")
+	individual.Attributes.Add(DisplayNameAttribute.ID, "mock")
+	return individual
+
+}
+
+func mockIndividuals(n int) []*Individual {
 	var individuals []*Individual
 	for i := 0; i < n; i++ {
-		individual := *NewIndividual(newUUID())
-		individual.Attributes.Add(FullNameAttribute.ID, "mock")
-		individual.Attributes.Add(DisplayNameAttribute.ID, "mock")
-		individuals = append(individuals, &individual)
+		individuals = append(individuals, mockIndividual())
 	}
 	return individuals
 }
 
-func (s *Suite) mockMemberships(n int) []*Membership {
+func mockMembership() *Membership {
+	return &Membership{}
+}
+
+func mockMemberships(n int) []*Membership {
 	var memberships []*Membership
 	for i := 0; i < n; i++ {
-		memberships = append(memberships, &Membership{
-			TeamID:       "",
-			IndividualID: "",
-		})
+		memberships = append(memberships, mockMembership())
 	}
 	return memberships
 }
 
-func (s *Suite) mockNationalities(n int) []*Nationality {
+func mockNationality() *Nationality {
+	return &Nationality{}
+}
+func mockNationalities(n int) []*Nationality {
 	var nationalities []*Nationality
 	for i := 0; i < n; i++ {
-		nationalities = append(nationalities, &Nationality{
-			CountryID: "",
-			TeamID:    "",
-		})
+		nationalities = append(nationalities, mockNationality())
 	}
 	return nationalities
 }

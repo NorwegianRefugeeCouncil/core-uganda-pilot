@@ -35,7 +35,7 @@ export default class NewCasePage {
     };
 
     fillOutForm = data => {
-        for (const { type } of testTemplate.formElements) {
+        for (const { type } of testTemplate.formcontrols) {
             cy.get(testId('test-' + type)).then($el => {
                 const tag = $el[0].tagName;
                 if (tag === 'INPUT') {

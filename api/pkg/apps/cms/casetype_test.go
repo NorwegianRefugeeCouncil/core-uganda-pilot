@@ -2,9 +2,73 @@ package cms_test
 
 import (
 	. "github.com/nrc-no/core/pkg/apps/cms"
+	"github.com/nrc-no/core/pkg/form"
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
+
+var FormWithAllControlTypes = form.Form{
+	Controls: []form.Control{
+		{
+			Name:       "text",
+			Type:       form.Text,
+			Validation: form.ControlValidation{Required: true},
+		},
+		{
+			Name:       "email",
+			Type:       form.Email,
+			Validation: form.ControlValidation{Required: true},
+		},
+		{
+			Name:       "phone",
+			Type:       form.Phone,
+			Validation: form.ControlValidation{Required: true},
+		},
+		{
+			Name:       "url",
+			Type:       form.URL,
+			Validation: form.ControlValidation{Required: true},
+		},
+		{
+			Name:       "date",
+			Type:       form.Date,
+			Validation: form.ControlValidation{Required: true},
+		},
+		{
+			Name:       "textarea",
+			Type:       form.Textarea,
+			Validation: form.ControlValidation{Required: true},
+		},
+		{
+			Name:       "dropdown",
+			Type:       form.Dropdown,
+			Options:    []string{"a", "b"},
+			Validation: form.ControlValidation{Required: true},
+		},
+		{
+			Name:            "checkbox",
+			Type:            form.Checkbox,
+			CheckboxOptions: []form.CheckboxOption{{Label: "a"}, {Label: "b"}},
+			Validation:      form.ControlValidation{Required: true},
+		},
+		{
+			Name:            "radio",
+			Type:            form.Radio,
+			CheckboxOptions: []form.CheckboxOption{{Label: "a"}, {Label: "b"}},
+			Validation:      form.ControlValidation{Required: true},
+		},
+		{
+			Name:       "taxonomy",
+			Type:       form.Taxonomy,
+			Validation: form.ControlValidation{Required: true},
+		},
+		{
+			Name:       "file",
+			Type:       form.File,
+			Validation: form.ControlValidation{Required: true},
+		},
+	},
+}
 
 func (s *Suite) TestCaseType() {
 	s.Run("API", func() { s.testCaseTypeAPI() })
@@ -14,7 +78,7 @@ func (s *Suite) TestCaseType() {
 
 func (s *Suite) testCaseTypeAPI() {
 	// Create
-	caseType := aMockCaseType()
+	caseType := mockCaseType()
 	created, err := s.client.CaseTypes().Create(s.Ctx, caseType)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()

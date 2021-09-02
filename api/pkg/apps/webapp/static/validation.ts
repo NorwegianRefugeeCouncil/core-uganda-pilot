@@ -1,6 +1,6 @@
 type FormInputElement = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 
-interface ServerSideFormElementValidation {
+interface ServerSideFormcontrolValidation {
   type: string;
   attributes: {
     name: string
@@ -8,7 +8,7 @@ interface ServerSideFormElementValidation {
   errors: ValidationError[];
 }
 
-interface ClientSideFormElementValidation {
+interface ClientSideFormcontrolValidation {
   formInputElement: FormInputElement;
   errors: ValidationError[];
 }
@@ -22,12 +22,12 @@ interface ValidationError {
 // the handler applies it to the concerned DOM elements. If no validation is received, the handler redirects the browser
 // to the appropriate location.
 export async function validateServerSide(forms: HTMLFormElement[], redirectPath = '') {
-  const validations = await Promise.allSettled(forms.map(async (formElement) => {
+  const validations = await Promise.allSettled(forms.map(async (formcontrol) => {
     try {
-      const validation = await validateSubForm(formElement);
-      removeFormValidation(formElement);
+      const validation = await validateSubForm(formcontrol);
+      removeFormValidation(formcontrol);
       if (validation != null) {
-        formElement.classList.add('was-validated');
+        formcontrol.classList.add('was-validated');
         applyServerSideValidation(validation);
         return Promise.resolve(true);
       }
@@ -57,8 +57,8 @@ export function validateClientSide(forms: HTMLFormElement[]): boolean {
   return isValid;
 }
 
-function collectSearchParams(formElement: HTMLFormElement): URLSearchParams {
-  const formInputElements = formElement.querySelectorAll('[name]');
+function collectSearchParams(formcontrol: HTMLFormElement): URLSearchParams {
+  const formInputElements = formcontrol.querySelectorAll('[name]');
   const searchParams = new URLSearchParams();
 
   formInputElements.forEach((formInputElement: FormInputElement) => {
@@ -83,16 +83,16 @@ function collectSearchParams(formElement: HTMLFormElement): URLSearchParams {
   return searchParams;
 }
 
-async function validateSubForm(formElement: HTMLFormElement): Promise<ServerSideFormElementValidation[]> {
+async function validateSubForm(formcontrol: HTMLFormElement): Promise<ServerSideFormcontrolValidation[]> {
   const options = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
-    body: collectSearchParams(formElement)
+    body: collectSearchParams(formcontrol)
   };
 
-  const response = await fetch(formElement.action, options);
+  const response = await fetch(formcontrol.action, options);
 
   if (response.ok) return null;
 
@@ -107,20 +107,20 @@ async function validateSubForm(formElement: HTMLFormElement): Promise<ServerSide
   return validation;
 }
 
-function applyServerSideValidation(validation: ServerSideFormElementValidation[]) {
+function applyServerSideValidation(validation: ServerSideFormcontrolValidation[]) {
   for (const { type, attributes: { name }, errors } of validation) {
     if (!errors) {
       continue;
     }
-    let domFormElement = document.querySelector(`#${name}`) as FormInputElement | HTMLDivElement;
+    let domFormcontrol = document.querySelector(`#${name}`) as FormInputElement | HTMLDivElement;
     if (type === 'taxonomyinput') {
-      domFormElement = domFormElement.parentElement as HTMLDivElement;
+      domFormcontrol = domFormcontrol.parentElement as HTMLDivElement;
     }
-    applyFormInputElementValidation(domFormElement, name, errors);
+    applyFormInputElementValidation(domFormcontrol, name, errors);
   }
 }
 
-function applyClientSideValidation(validation: ClientSideFormElementValidation[]) {
+function applyClientSideValidation(validation: ClientSideFormcontrolValidation[]) {
   for (const { formInputElement, errors } of validation) {
     removeFormInputElementValidation(formInputElement);
     applyFormInputElementValidation(formInputElement, formInputElement.name, errors);
@@ -144,8 +144,8 @@ function applyFormInputElementValidation(element: FormInputElement | HTMLDivElem
   }
 }
 
-function removeFormValidation(formElement: HTMLFormElement) {
-  const formInputElements = formElement.querySelectorAll('[name]');
+function removeFormValidation(formcontrol: HTMLFormElement) {
+  const formInputElements = formcontrol.querySelectorAll('[name]');
   formInputElements.forEach(removeFormInputElementValidation);
 }
 

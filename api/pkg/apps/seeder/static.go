@@ -128,16 +128,17 @@ func nationality(id string, team iam.Team, country iam.Country) iam.Nationality 
 	return m
 }
 
-func kase(id, caseTypeID, createdByID, partyID, teamID string, done bool, form *cms.CaseTemplate, intakeCase bool) cms.Case {
+func kase(id, createdByID, partyID, teamID string, caseType cms.CaseType, done, intakeCase bool, formData map[string][]string) cms.Case {
 
 	k := cms.Case{
 		ID:         id,
-		CaseTypeID: caseTypeID,
+		CaseTypeID: caseType.ID,
 		CreatorID:  createdByID,
 		PartyID:    partyID,
 		TeamID:     teamID,
 		Done:       done,
-		Template:   form,
+		Form:       caseType.Form,
+		FormData:   formData,
 		IntakeCase: intakeCase,
 	}
 	cases = append(cases, k)
@@ -162,457 +163,331 @@ var (
 
 	// Case Templates for Uganda
 	// - Kampala Response Team
-	UGSituationAnalysis = &cms.CaseTemplate{
-		FormElements: []form.FormElement{
+	UGSituationAnalysis = form.Form{
+		Controls: []form.Control{
 			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
-					Name:        "safeDignifiedLife",
-					Description: "Probe for description",
-					Placeholder: "",
-				},
-				Validation: form.FormElementValidation{
+				Name:        "safeDignifiedLife",
+				Type:        form.Textarea,
+				Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
+				Description: "Probe for description",
+				Validation: form.ControlValidation{
 					Required: true,
 				},
 			},
 			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "How are you addressing these challenges and barriers? What is standing in your way? Can you give me some examples of how you are dealing with these challenges?",
-					Name:        "challengesBarriers",
-					Description: "",
-					Placeholder: "",
-				},
-				Validation: form.FormElementValidation{
+				Name:  "challengesBarriers",
+				Type:  form.Textarea,
+				Label: "How are you addressing these challenges and barriers? What is standing in your way? Can you give me some examples of how you are dealing with these challenges?",
+				Validation: form.ControlValidation{
 					Required: true,
 				},
 			},
 			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "What are some solutions you see for this and how could we work together on these solutions? How could we work to reduce these challenges together?",
-					Name:        "solutions",
-					Description: "",
-					Placeholder: "",
-				},
-				Validation: form.FormElementValidation{
+				Name:  "solutions",
+				Type:  form.Textarea,
+				Label: "What are some solutions you see for this and how could we work together on these solutions? How could we work to reduce these challenges together?",
+				Validation: form.ControlValidation{
 					Required: true,
 				},
 			},
 			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "If we were to work together on this, what could we do together? What would make the most difference for you?",
-					Name:        "workTogether",
-					Description: "",
-					Placeholder: "",
-				},
-				Validation: form.FormElementValidation{
+				Name:  "workTogether",
+				Type:  form.Textarea,
+				Label: "If we were to work together on this, what could we do together? What would make the most difference for you?",
+				Validation: form.ControlValidation{
 					Required: true,
 				},
 			},
 		},
 	}
-	UGIndividualResponse = &cms.CaseTemplate{
-		FormElements: []form.FormElement{
+	UGIndividualResponse = form.Form{
+		Controls: []form.Control{
 			{
-				Type: form.TaxonomyInput,
-				Attributes: form.FormElementAttributes{
-					Label:       "Which service has the individual requested as a starting point of support?",
-					Name:        "serviceStartingPoint",
-					Description: "Add the taxonomies of the services requested as a starting point one by one, by selecting the relevant options from the dropdowns below.",
-				},
-				Validation: form.FormElementValidation{
+				Name:        "servicesStartingPoint",
+				Type:        form.Taxonomy,
+				Label:       "Which service has the individual requested as a starting point of support?",
+				Description: "Add the taxonomies of the services requested as a starting point one by one, by selecting the relevant options from the dropdowns below.",
+				Validation: form.ControlValidation{
 					Required: true,
 				},
 			},
 			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "Comment on service the individual requested as a starting point of support?",
-					Name:        "commentStartingPoint",
-					Description: "Additional information, observations, concerns, etc.",
-					Placeholder: "",
-				},
+				Name:        "commentStartingPoint",
+				Type:        form.Textarea,
+				Label:       "Comment on service the individual requested as a starting point of support?",
+				Description: "Additional information, observations, concerns, etc.",
 			},
 			{
-				Type: form.TaxonomyInput,
-				Attributes: form.FormElementAttributes{
-					Label:       "What other services has the individual requested/identified?",
-					Name:        "otherServices",
-					Description: "Add the taxonomies of the other services requested one by one, by selecting the relevant options from the dropdowns below.",
-				},
-				Validation: form.FormElementValidation{
+				Name: "otherServices",
+				Type: form.Taxonomy,
+
+				Label:       "What other services has the individual requested/identified?",
+				Description: "Add the taxonomies of the other services requested one by one, by selecting the relevant options from the dropdowns below.",
+				Validation: form.ControlValidation{
 					Required: true,
 				},
 			},
 			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "Comment on other services the individual requested/identified?",
-					Name:        "commentOtherServices",
-					Description: "Additional information, observations, concerns, etc.",
-					Placeholder: "",
-				},
+				Name:        "commentOtherServices",
+				Type:        form.Textarea,
+				Label:       "Comment on other services the individual requested/identified?",
+				Description: "Additional information, observations, concerns, etc.",
 			},
 			{
-				Type: form.Text,
-				Attributes: form.FormElementAttributes{
-					Label: "What is the perceived priority response level of the individual",
-					Name:  "perceivedPriority",
-				},
-				Validation: form.FormElementValidation{
+				Name:  "perceivedPriority",
+				Type:  form.Text,
+				Label: "What is the perceived priority response level of the individual",
+				Validation: form.ControlValidation{
 					Required: true,
 				},
 			},
 		},
 	}
-	UGReferral = &cms.CaseTemplate{
-		FormElements: []form.FormElement{
+	UGReferral = form.Form{
+		Controls: []form.Control{
 			{
-				Type: form.Text,
-				Attributes: form.FormElementAttributes{
-					Label:       "Date of Referral",
-					Name:        "dateOfReferral",
-					Description: "",
-				},
+				Name:  "dateOfReferral",
+				Type:  form.Text,
+				Label: "Date of Referral",
 			},
 			{
-				Type: form.Dropdown,
-				Attributes: form.FormElementAttributes{
-					Label:       "Urgency",
-					Name:        "urgency",
-					Description: "",
-					Options:     []string{"Very Urgent", "Urgent", "Not Urgent"},
-				},
-				Validation: form.FormElementValidation{
+				Name:    "ugency",
+				Type:    form.Dropdown,
+				Label:   "Urgency",
+				Options: []string{"Very Urgent", "Urgent", "Not Urgent"},
+				Validation: form.ControlValidation{
 					Required: true,
 				},
 			},
 			{
-				Type: form.Dropdown,
-				Attributes: form.FormElementAttributes{
-					Label:       "Type of Referral",
-					Name:        "typeOfReferral",
-					Description: "",
-					Options:     []string{"Internal", "External"},
-				},
-				Validation: form.FormElementValidation{
-					Required: false,
-				},
+				Name:    "typeOfReferral",
+				Type:    form.Dropdown,
+				Label:   "Type of Referral",
+				Options: []string{"Internal", "External"},
 			},
 			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "Services/assistance requested",
-					Name:        "servicesRequested",
-					Description: "",
-					Placeholder: "",
-				},
+				Name:  "servicesRequested",
+				Type:  form.Textarea,
+				Label: "Services/assistance requested",
 			},
 			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "Reason for referral",
-					Name:        "reasonForReferral",
-					Description: "",
-					Placeholder: "",
-				},
+				Name:  "readonforReferral",
+				Type:  form.Textarea,
+				Label: "Reason for referral",
 			},
 			{
-				Type: form.Checkbox,
-				Attributes: form.FormElementAttributes{
-					Label:       "Does the beneficiary have any restrictions to be referred?",
-					Name:        "referralRestrictions",
-					Description: "",
-					CheckboxOptions: []form.CheckboxOption{
-						{
-							Label: "Has restrictions?",
-						},
+				Name:  "referralRestrictions",
+				Type:  form.Checkbox,
+				Label: "Does the beneficiary have any restrictions to be referred?",
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: "Has restrictions?",
 					},
 				},
 			},
 			{
-				Type: form.Dropdown,
-				Attributes: form.FormElementAttributes{
-					Label:       "Means of Referral",
-					Name:        "meansOfReferral",
-					Description: "",
-					Options:     []string{"Phone", "E-mail", "Personal meeting", "Other"},
-				},
-				Validation: form.FormElementValidation{
+				Name:    "meansOfReferral",
+				Type:    form.Dropdown,
+				Label:   "Means of Referral",
+				Options: []string{"Phone", "E-mail", "Personal meeting", "Other"},
+				Validation: form.ControlValidation{
 					Required: true,
 				},
 			},
 			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "Means and terms of receiving feedback from the client",
-					Name:        "meansOfFeedback",
-					Description: "",
-					Placeholder: "",
-				},
+				Name:  "meansOfFeedback",
+				Type:  form.Textarea,
+				Label: "Means and terms of receiving feedback from the client",
 			},
 			{
-				Type: form.Text,
-				Attributes: form.FormElementAttributes{
-					Label:       "Deadline for receiving feedback from the client",
-					Name:        "deadlineForFeedback",
-					Description: "",
-				},
+				Name:  "deadlineForFeedback",
+				Type:  form.Text,
+				Label: "Deadline for receiving feedback from the client",
 			},
 		},
 	}
-	UGExternalReferralFollowup = &cms.CaseTemplate{
-		FormElements: []form.FormElement{
+	UGExternalReferralFollowup = form.Form{
+		Controls: []form.Control{
 			{
-				Type: form.Checkbox,
-				Attributes: form.FormElementAttributes{
-					Label:       "Was the referral accepted by the other provider?",
-					Name:        "referralAccepted",
-					Description: "",
-					CheckboxOptions: []form.CheckboxOption{
-						{
-							Label: "Referral accepted",
-						},
+				Name:  "referralAccepted",
+				Type:  form.Checkbox,
+				Label: "Was the referral accepted by the other provider?",
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: "Referral accepted",
 					},
 				},
 			},
 			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "Provide any pertinent details on service needs / requests.",
-					Name:        "pertinentDetails",
-					Description: "",
-					Placeholder: "",
-				},
+				Name:  "pertinentDetails",
+				Type:  form.Textarea,
+				Label: "Provide any pertinent details on service needs / requests.",
 			},
 		},
 	}
 	// - Kampala ICLA Team
-	UGICLAIndividualIntake = &cms.CaseTemplate{
-		FormElements: []form.FormElement{
+	UGICLAIndividualIntake = form.Form{
+		Controls: []form.Control{
 			{
-				Type: form.Dropdown,
-				Attributes: form.FormElementAttributes{
-					Label:       "Modality of service delivery",
-					Name:        "modality",
-					Description: "",
-					Options:     []string{"ICLA Legal Aid Centre", "Mobile visit", "Home visit", "Transit Centre", "Hotline", "Other"},
-				},
-				Validation: form.FormElementValidation{
+				Name:    "modalityOfService",
+				Type:    form.Dropdown,
+				Label:   "Modality of service delivery",
+				Options: []string{"ICLA Legal Aid Centre", "Mobile visit", "Home visit", "Transit Centre", "Hotline", "Other"},
+				Validation: form.ControlValidation{
 					Required: true,
 				},
 			},
 			{
-				Type: form.Dropdown,
-				Attributes: form.FormElementAttributes{
-					Label:       "Living situation",
-					Name:        "livingSituation",
-					Description: "",
-					Options:     []string{"Lives alone", "Lives with family", "Hosted by relatives"},
-				},
-				Validation: form.FormElementValidation{
+				Name:    "livingSituation",
+				Type:    form.Dropdown,
+				Label:   "Living situation",
+				Options: []string{"Lives alone", "Lives with family", "Hosted by relatives"},
+				Validation: form.ControlValidation{
 					Required: true,
 				},
 			},
 			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "Comment on living situation",
-					Name:        "commentLivingSituation",
-					Description: "Additional information, observations, concerns, etc.",
-					Placeholder: "",
-				},
+				Name:        "commentLivingSituation",
+				Type:        form.Textarea,
+				Label:       "Comment on living situation",
+				Description: "Additional information, observations, concerns, etc.",
 			},
 			{
-				Type: form.Dropdown,
-				Attributes: form.FormElementAttributes{
-					Label:       "How did you learn about ICLA services?",
-					Name:        "iclaServiceDiscovery",
-					Description: "",
-					Options:     []string{"ICLA in-person information session", "ICLA social media campaign, activities, brochures", "ICLA text messages", "Another beneficiary/friend/relative", "Another organisation", "General social media", "NRC employee", "State authority", "Other"},
-				},
-				Validation: form.FormElementValidation{
+				Name:    "iclaMeansOfDiscovery",
+				Type:    form.Dropdown,
+				Label:   "How did you learn about ICLA services?",
+				Options: []string{"ICLA in-person information session", "ICLA social media campaign, activities, brochures", "ICLA text messages", "Another beneficiary/friend/relative", "Another organisation", "General social media", "NRC employee", "State authority", "Other"},
+				Validation: form.ControlValidation{
 					Required: true,
 				},
 			},
 			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "Vulnerability data",
-					Name:        "vulnerability",
-					Description: "As needed within a particular context and required for the case",
-					Placeholder: "",
-				},
+				Name:        "vulnerability",
+				Type:        form.Textarea,
+				Label:       "Vulnerability data",
+				Description: "As needed within a particular context and required for the case",
 			},
 			{
-				Type: form.Text,
-				Attributes: form.FormElementAttributes{
-					Label:       "Full name of representative",
-					Name:        "representativeName",
-					Description: "Lawyer or other person",
-				},
+				Name:        "representativeFullName",
+				Type:        form.Text,
+				Label:       "Full name of representative",
+				Description: "Lawyer or other person",
 			},
 			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "Other personal information",
-					Name:        "otherInformation",
-					Description: "Other personal data as needed to identify the representative within the particular context",
-					Placeholder: "",
-				},
+				Name:        "otherPersonalInfo",
+				Type:        form.Textarea,
+				Label:       "Other personal information",
+				Description: "Other personal data as needed to identify the representative within the particular context",
 			},
 			{
-				Type: form.Text,
-				Attributes: form.FormElementAttributes{
-					Label:       "Reason for representative",
-					Name:        "representativeReason",
-					Description: "",
-				},
+				Name:  "reasonForRepresentative",
+				Type:  form.Text,
+				Label: "Reason for representative",
 			},
 			{
-				Type: form.Checkbox,
-				Attributes: form.FormElementAttributes{
-					Label:       "Is the guardianship legal as per national legislation?",
-					Name:        "guardianshipIsLegal",
-					Description: "If 'yes', attach/upload the legal assessment. If 'no', request or assist in identifying an appropriate legal guardian to represent beneficiary",
-					CheckboxOptions: []form.CheckboxOption{
-						{
-							Label: "Guardianship is legal",
-						},
+				Name:        "guardianshipIsLegal",
+				Type:        form.Checkbox,
+				Label:       "Is the guardianship legal as per national legislation?",
+				Description: "If 'yes', attach/upload the legal assessment. If 'no', request or assist in identifying an appropriate legal guardian to represent beneficiary",
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: "Guardianship is legal",
 					},
 				},
 			},
 			{
-				Type: form.Checkbox,
-				Attributes: form.FormElementAttributes{
-					Label:       "Does the beneficiary have the legal capacity to consent?",
-					Name:        "capacityToConsent",
-					Description: "",
-					CheckboxOptions: []form.CheckboxOption{
-						{
-							Label: "Beneficiary has legal capacity to consent",
-						},
+				Name:  "capacityToConsent",
+				Type:  form.Checkbox,
+				Label: "Does the beneficiary have the legal capacity to consent?",
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: "Beneficiary has legal capacity to consent",
 					},
 				},
 			},
 		},
 	}
-	UGICLACaseAssessment = &cms.CaseTemplate{
-		FormElements: []form.FormElement{
+
+	UGICLACaseAssessment = form.Form{
+		Controls: []form.Control{
 			{
-				Type: form.Dropdown,
-				Attributes: form.FormElementAttributes{
-					Label:       "Type of service",
-					Name:        "serviceType",
-					Description: "",
-					Options:     []string{"Legal counselling", "Legal assistance"},
-				},
-				Validation: form.FormElementValidation{
+				Name:    "serviceType",
+				Type:    form.Dropdown,
+				Label:   "Type of service",
+				Options: []string{"Legal counselling", "Legal assistance"},
+				Validation: form.ControlValidation{
 					Required: true,
 				},
 			},
 			{
-				Type: form.Text,
-				Attributes: form.FormElementAttributes{
-					Label:       "Thematic area",
-					Name:        "thematicArea",
-					Description: "Applicable Thematic Area related to the problem",
-				},
+				Name:        "thematicArea",
+				Type:        form.Text,
+				Label:       "Thematic area",
+				Description: "Applicable Thematic Area related to the problem",
 			},
 			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "Fact and details of the problem",
-					Name:        "details",
-					Description: "",
-					Placeholder: "",
-				},
+				Name:  "problemDetails",
+				Type:  form.Textarea,
+				Label: "Fact and details of the problem",
 			},
 			{
+				Name: "otherPartiesInvolved",
 				Type: form.Checkbox,
-				Attributes: form.FormElementAttributes{
-					Label:       "Other parties involved",
-					Name:        "otherPartiesInvolved",
-					Description: "Are there any other parties involved in the case",
-					CheckboxOptions: []form.CheckboxOption{
-						{
-							Label: "Landlord",
-						},
-						{
-							Label: "Lawyer",
-						},
-						{
-							Label: "Relative",
-						},
-						{
-							Label: "Other",
-						},
+
+				Label:       "Other parties involved",
+				Description: "Are there any other parties involved in the case",
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: "Landlord",
+					},
+					{
+						Label: "Lawyer",
+					},
+					{
+						Label: "Relative",
+					},
+					{
+						Label: "Other",
 					},
 				},
 			},
 			{
-				Type: form.Checkbox,
-				Attributes: form.FormElementAttributes{
-					Label:       "Previous/existing lawyer working on the case",
-					Name:        "previousOrExistingLawyer",
-					Description: "Does the client have a previous or existing lawyer working on his/her case?",
-					CheckboxOptions: []form.CheckboxOption{
-						{
-							Label: "Previous lawyer",
-						},
-						{
-							Label: "Existing lawyer",
-						},
+				Name:  "previousOrExistingLawyer",
+				Type:  form.Checkbox,
+				Label: "Previous/existing lawyer working on the case",
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: "Previous lawyer",
+					},
+					{
+						Label: "Existing lawyer",
 					},
 				},
 			},
 			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "Previous or existing lawyer details",
-					Name:        "previousOrExistingLawyerDetails",
-					Description: "",
-					Placeholder: "",
-				},
+				Name:  "previousOrExistingLawyerDetails",
+				Type:  form.Textarea,
+				Label: "Previous or existing lawyer details",
 			},
 			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "What actions have been taken to solve the problem, if any?",
-					Name:        "actionsTaken",
-					Description: "",
-					Placeholder: "",
-				},
+				Name:  "actionsTaken",
+				Type:  form.Textarea,
+				Label: "What actions have been taken to solve the problem, if any?",
 			},
 			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "Related to this problem, are there any cases pending before a court or administrative body?",
-					Name:        "pendingCourtCases",
-					Description: "",
-					Placeholder: "",
-				},
+				Name:  "pendingCourtCases",
+				Type:  form.Textarea,
+				Label: "Related to this problem, are there any cases pending before a court or administrative body?",
 			},
 			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "If there are cases pending before a court or administrative body, are there any deadlines that need to be met?",
-					Name:        "pendingCourtCaseDeadlines",
-					Description: "",
-					Placeholder: "",
-				},
+				Name:  "pendingCourtDeadlines",
+				Type:  form.Textarea,
+				Label: "If there are cases pending before a court or administrative body, are there any deadlines that need to be met?",
 			},
 			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "Is there any conflict of interest involved?",
-					Name:        "conflictOfInterest",
-					Description: "",
-					Placeholder: "",
-				},
+				Name:  "conflictOfInterest",
+				Type:  form.Textarea,
+				Label: "Is there any conflict of interest involved?",
 			},
 		},
 	}
@@ -677,360 +552,53 @@ var (
 	UgandaICLATeamNationality       = nationality("23e3eb5e-592e-42e2-8bbf-ee097d93034c", UgandaICLATeam, ugandaCountry)
 
 	// Cases
-	BoDiddleySituationAnalysis = kase("dba43642-8093-4685-a197-f8848d4cbaaa", UGSituationalAnalysisCaseType.ID, Colette.ID, BoDiddley.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
-		FormElements: []form.FormElement{
-			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
-					Name:        "safeDignifiedLife",
-					Description: "Probe for description",
-					Value: []string{
-						"Yes, I live a safe and dignified life and I am reasonably happy with my achievements and quality of life.",
-					},
-					Placeholder: "",
-				},
-			},
-			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label: "How are you addressing these challenges and barriers? What is standing in your way? Can you give me some examples of how you are dealing with these challenges?",
-					Name:  "challengesBarriers",
-					Value: []string{
-						"Some of the barriers I face are communication gaps between myself and refugee tenants. We are attempting to deal with these challenges by using google translate.",
-					},
-					Description: "",
-					Placeholder: "",
-				},
-			},
-			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label: "What are some solutions you see for this and how could we work together on these solutions? How could we work to reduce these challenges together?",
-					Name:  "solutions",
-					Value: []string{
-						"A qualified interpreter, who knows the legal context could help us to agree on contractual matters.",
-					},
-					Description: "",
-					Placeholder: "",
-				},
-			},
-			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label: "If we were to work together on this, what could we do together? What would make the most difference for you?",
-					Name:  "workTogether",
-					Value: []string{
-						"NRC could provide a translator and a legal representative to ease contract negotiations",
-					},
-					Description: "",
-					Placeholder: "",
-				},
-			},
-		},
-	},
-		true)
+	BoDiddleySituationAnalysisData = map[string][]string{
+		"safeDignifiedLife":  {"Yes, I live a safe and dignified life and I am reasonably happy with my achievements and quality of life."},
+		"challengesBarriers": {"Yes, I live a safe and dignified life and I am reasonably happy with my achievements and quality of life."},
+		"solutions":          {"A qualified interpreter, who knows the legal context could help us to agree on contractual matters."},
+		"workTogether":       {"NRC could provide a translator and a legal representative to ease contract negotiations"},
+	}
 
-	BoDiddleyIndividualResponse = kase("3ea8c121-bdf0-46a0-86a8-698dc4abc872", UGIndividualResponseCaseType.ID, Colette.ID, BoDiddley.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
-		FormElements: []form.FormElement{
-			{
-				Type: form.TaxonomyInput,
-				Attributes: form.FormElementAttributes{
-					Label: "Which service has the individual requested as a starting point of support?",
-					Name:  "serviceStartingPoint",
-					Value: []string{
-						"ICLA",
-					},
-					Description: "Add the taxonomies of the services requested as a starting point one by one, by selecting the relevant options from the dropdowns below.",
-					Placeholder: "",
-				},
-			},
-			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "Comment on service the individual requested as a starting point of support?",
-					Name:        "commentStartingPoint",
-					Description: "Additional information, observations, concerns, etc.",
-					Placeholder: "",
-					Value: []string{
-						"The individual has requested ICLA as a starting point, we should create a referral",
-					},
-				},
-			},
-			{
-				Type: form.TaxonomyInput,
-				Attributes: form.FormElementAttributes{
-					Label: "What other services has the individual requested/identified?",
-					Name:  "otherServices",
-					Value: []string{
-						"Protection",
-					},
-					Description: "Add the taxonomies of the other services requested one by one, by selecting the relevant options from the dropdowns below.",
-					Placeholder: "",
-				},
-			},
-			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "Comment on other services the individual requested/identified?",
-					Name:        "commentOtherServices",
-					Description: "Additional information, observations, concerns, etc.",
-					Placeholder: "",
-					Value: []string{
-						"The individual has requested additional Protection services, we should create a referral",
-					},
-				},
-			},
-			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "What is the perceived priority response level of the individual",
-					Name:        "perceivedPriority",
-					Description: "",
-					Placeholder: "",
-					Value: []string{
-						"High",
-					},
-				},
-			},
-		},
-	}, true)
+	BoDiddleyResponseData = map[string][]string{
+		"servicesStartingPoint": {"ICLA"},
+		"commentStartingPoint":  {"The individual has requested ICLA as a starting point, we should create a referral"},
+		"otherServices":         {"Protection"},
+		"commentOtherServices":  {"The individual has requested additional Protection services, we should create a referral"},
+		"perceivedPriority":     {"High"},
+	}
+	MaryPoppinsSituationAnalysisData = map[string][]string{
+		"safeDignifiedLife":  {"Yes, I live a safe and dignified life and I am reasonably happy with my achievements and quality of life."},
+		"challengesBarriers": {"Some of the barriers I face are communication gaps between myself and refugee tenants. We are attempting to deal with these challenges by using google translate."},
+		"solutions":          {"A qualified interpreter, who knows the legal context could help us to agree on contractual matters."},
+		"workTogether":       {"NRC could provide a translator and a legal representative to ease contract negotiations"},
+	}
+	MaryPoppinsResponseData = map[string][]string{
+		"servicesStartingPoint": {"S&S"},
+		"commentStartingPoint":  {"The individual has requested S&S as a starting point, we should create a referral"},
+		"otherServices":         {"Protection"},
+		"commentOtherServices":  {"The individual has requested additional Protection services, we should create a referral"},
+		"perceivedPriority":     {"High"},
+	}
+	JohnDoeSituationAnalysisData = map[string][]string{
+		"safeDignifiedLife":  {"Yes, I live a safe and dignified life and I am reasonably happy with my achievements and quality of life."},
+		"challengesBarriers": {"Some of the barriers I face are communication gaps between myself and refugee tenants. We are attempting to deal with these challenges by using google translate."},
+		"solutions":          {"A qualified interpreter, who knows the legal context could help us to agree on contractual matters."},
+		"workTogether":       {"NRC could provide a translator and a legal representative to ease contract negotiations"},
+	}
+	JohnDoeResponseData = map[string][]string{
+		"servicesStartingPoint": {"LFS"},
+		"commentStartingPoint":  {"The individual has requested LFS as a starting point, we should create a referral"},
+		"otherServices":         {"WASH"},
+		"commentOtherServices":  {"The individual has requested additional WASH services, we should create a referral"},
+		"perceivedPriority":     {"High"},
+	}
 
-	MaryPoppinsSituationAnalysis = kase("4f7708ed-240a-423f-9bd1-839542e65833", UGSituationalAnalysisCaseType.ID, Colette.ID, MaryPoppins.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
-		FormElements: []form.FormElement{
-			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
-					Name:        "safeDignifiedLife",
-					Description: "Probe for description",
-					Value: []string{
-						"Yes, I live a safe and dignified life and I am reasonably happy with my achievements and quality of life.",
-					},
-					Placeholder: "",
-				},
-			},
-			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label: "How are you addressing these challenges and barriers? What is standing in your way? Can you give me some examples of how you are dealing with these challenges?",
-					Name:  "challengesBarriers",
-					Value: []string{
-						"Some of the barriers I face are communication gaps between myself and refugee tenants. We are attempting to deal with these challenges by using google translate.",
-					},
-					Description: "",
-					Placeholder: "",
-				},
-			},
-			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label: "What are some solutions you see for this and how could we work together on these solutions? How could we work to reduce these challenges together?",
-					Name:  "solutions",
-					Value: []string{
-						"A qualified interpreter, who knows the legal context could help us to agree on contractual matters.",
-					},
-					Description: "",
-					Placeholder: "",
-				},
-			},
-			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label: "If we were to work together on this, what could we do together? What would make the most difference for you?",
-					Name:  "workTogether",
-					Value: []string{
-						"NRC could provide a translator and a legal representative to ease contract negotiations",
-					},
-					Description: "",
-					Placeholder: "",
-				},
-			},
-		},
-	},
-		true)
+	BoDiddleySituationAnalysis  = kase("dba43642-8093-4685-a197-f8848d4cbaaa", Colette.ID, BoDiddley.ID, UgandaProtectionTeam.ID, UGSituationalAnalysisCaseType, true, true, BoDiddleySituationAnalysisData)
+	BoDiddleyIndividualResponse = kase("3ea8c121-bdf0-46a0-86a8-698dc4abc872", Colette.ID, BoDiddley.ID, UgandaProtectionTeam.ID, UGIndividualResponseCaseType, true, true, BoDiddleyResponseData)
 
-	MaryPoppinsIndividualResponse = kase("45b4a637-c610-4ab9-afe6-4e958c36a96f", UGIndividualResponseCaseType.ID, Colette.ID, MaryPoppins.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
-		FormElements: []form.FormElement{
-			{
-				Type: form.TaxonomyInput,
-				Attributes: form.FormElementAttributes{
-					Label: "Which service has the individual requested as a starting point of support?",
-					Name:  "serviceStartingPoint",
-					Value: []string{
-						"S&S",
-					},
-					Description: "Add the taxonomies of the services requested as a starting point one by one, by selecting the relevant options from the dropdowns below.",
-					Placeholder: "",
-				},
-			},
-			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "Comment on service the individual requested as a starting point of support?",
-					Name:        "commentStartingPoint",
-					Description: "Additional information, observations, concerns, etc.",
-					Placeholder: "",
-					Value: []string{
-						"The individual has requested S&S as a starting point, we should create a referral",
-					},
-				},
-			},
-			{
-				Type: form.TaxonomyInput,
-				Attributes: form.FormElementAttributes{
-					Label: "What other services has the individual requested/identified?",
-					Name:  "otherServices",
-					Value: []string{
-						"Protection",
-					},
-					Description: "Add the taxonomies of the other services requested one by one, by selecting the relevant options from the dropdowns below.",
-					Placeholder: "",
-				},
-			},
-			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "Comment on other services the individual requested/identified?",
-					Name:        "commentOtherServices",
-					Description: "Additional information, observations, concerns, etc.",
-					Placeholder: "",
-					Value: []string{
-						"The individual has requested additional Protection services, we should create a referral",
-					},
-				},
-			},
-			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "What is the perceived priority response level of the individual",
-					Name:        "perceivedPriority",
-					Description: "",
-					Value: []string{
-						"High",
-					},
-					Placeholder: "",
-				},
-			},
-		},
-	}, true)
+	MaryPoppinsSituationAnalysis  = kase("4f7708ed-240a-423f-9bd1-839542e65833", Colette.ID, MaryPoppins.ID, UgandaProtectionTeam.ID, UGSituationalAnalysisCaseType, true, true, MaryPoppinsSituationAnalysisData)
+	MaryPoppinsIndividualResponse = kase("45b4a637-c610-4ab9-afe6-4e958c36a96f", Colette.ID, MaryPoppins.ID, UgandaProtectionTeam.ID, UGIndividualResponseCaseType, true, true, MaryPoppinsResponseData)
 
-	JohnDoesSituationAnalysis = kase("43140381-8166-4fb3-9ac5-339082920ade", UGSituationalAnalysisCaseType.ID, Colette.ID, JohnDoe.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
-		FormElements: []form.FormElement{
-			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
-					Name:        "safeDignifiedLife",
-					Description: "Probe for description",
-					Value: []string{
-						"Yes, I live a safe and dignified life and I am reasonably happy with my achievements and quality of life.",
-					},
-					Placeholder: "",
-				},
-			},
-			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label: "How are you addressing these challenges and barriers? What is standing in your way? Can you give me some examples of how you are dealing with these challenges?",
-					Name:  "challengesBarriers",
-					Value: []string{
-						"Some of the barriers I face are communication gaps between myself and refugee tenants. We are attempting to deal with these challenges by using google translate.",
-					},
-					Description: "",
-					Placeholder: "",
-				},
-			},
-			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label: "What are some solutions you see for this and how could we work together on these solutions? How could we work to reduce these challenges together?",
-					Name:  "solutions",
-					Value: []string{
-						"A qualified interpreter, who knows the legal context could help us to agree on contractual matters.",
-					},
-					Description: "",
-					Placeholder: "",
-				},
-			},
-			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label: "If we were to work together on this, what could we do together? What would make the most difference for you?",
-					Name:  "workTogether",
-					Value: []string{
-						"NRC could provide a translator and a legal representative to ease contract negotiations",
-					},
-					Description: "",
-					Placeholder: "",
-				},
-			},
-		},
-	},
-		true)
-
-	JohnDoeIndividualResponse = kase("65e02e79-1676-4745-9890-582e3d67d13f", UGIndividualResponseCaseType.ID, Colette.ID, JohnDoe.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
-		FormElements: []form.FormElement{
-			{
-				Type: form.TaxonomyInput,
-				Attributes: form.FormElementAttributes{
-					Label: "Which service has the individual requested as a starting point of support?",
-					Name:  "serviceStartingPoint",
-					Value: []string{
-						"LFS",
-					},
-					Description: "Add the taxonomies of the services requested as a starting point one by one, by selecting the relevant options from the dropdowns below.",
-					Placeholder: "",
-				},
-			},
-			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "Comment on service the individual requested as a starting point of support?",
-					Name:        "commentStartingPoint",
-					Description: "Additional information, observations, concerns, etc.",
-					Placeholder: "",
-					Value: []string{
-						"The individual has requested LFS as a starting point, we should create a referral",
-					},
-				},
-			},
-			{
-				Type: form.TaxonomyInput,
-				Attributes: form.FormElementAttributes{
-					Label: "What other services has the individual requested/identified?",
-					Name:  "otherServices",
-					Value: []string{
-						"WASH",
-					},
-					Description: "Add the taxonomies of the other services requested one by one, by selecting the relevant options from the dropdowns below.",
-					Placeholder: "",
-				},
-			},
-			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "Comment on other services the individual requested/identified?",
-					Name:        "commentOtherServices",
-					Description: "Additional information, observations, concerns, etc.",
-					Placeholder: "",
-					Value: []string{
-						"The individual has requested additional WASH services, we should create a referral",
-					},
-				},
-			},
-			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label: "What is the perceived priority response level of the individual",
-					Name:  "perceivedPriority",
-					Value: []string{
-						"High",
-					},
-					Description: "",
-					Placeholder: "",
-				},
-			},
-		},
-	}, true)
+	JohnDoesSituationAnalysis = kase("43140381-8166-4fb3-9ac5-339082920ade", Colette.ID, JohnDoe.ID, UgandaProtectionTeam.ID, UGSituationalAnalysisCaseType, true, true, JohnDoeSituationAnalysisData)
+	JohnDoeIndividualResponse = kase("65e02e79-1676-4745-9890-582e3d67d13f", Colette.ID, JohnDoe.ID, UgandaProtectionTeam.ID, UGIndividualResponseCaseType, true, true, JohnDoeResponseData)
 )

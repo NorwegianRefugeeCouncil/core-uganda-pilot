@@ -206,8 +206,10 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	valuedKase := form.NewValuedForm(kase.Form, kase.FormData, nil)
 	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "case", map[string]interface{}{
 		"Case":             kase,
+		"CaseForm":         valuedKase,
 		"Parent":           parent,
 		"CaseTypes":        kaseTypes,
 		"Recipient":        recipientParty,
@@ -338,10 +340,7 @@ func (s *Server) PostCase(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	err = unmarshalCaseFormData(kase, caseType.Template, req.Form)
-	if err != nil {
-		return
-	}
+	kase.FormData = req.Form
 
 	var storedCase *cms.Case
 	var isNewCase = kase.ID == ""
@@ -359,7 +358,7 @@ func (s *Server) PostCase(w http.ResponseWriter, req *http.Request) {
 	}
 	if err != nil {
 		if status, ok := err.(*validation.Status); ok {
-			validatedElements := zipTemplateAndErrors(status.Errors, kase.Template)
+			validatedElements := submittedFormFromErrors(status.Errors, kase.Form, kase.FormData)
 			s.json(w, status.Code, validatedElements)
 		} else {
 			s.Error(w, err)
@@ -426,31 +425,31 @@ func (s *Server) redirectAfterPost(w http.ResponseWriter, req *http.Request, pos
 	return
 }
 
-// zipTemplateAndErrors returns a slice of form.FormElement populated with validated template form elements.
-func zipTemplateAndErrors(errors validation.ErrorList, template *cms.CaseTemplate) []form.FormElement {
-	var formElements []form.FormElement
-	for _, element := range template.FormElements {
-		if errs := errors.FindFamily(element.Attributes.Name); len(*errs) > 0 {
-			element.Errors = errs
-			formElements = append(formElements, element)
+// submittedFormFromErrors returns a slice of form.Control populated with validated template form elements.
+func submittedFormFromErrors(errors validation.ErrorList, f form.Form, fd url.Values) form.ValuedForm {
+	var controls []form.ValuedControl
+	for name := range fd {
+		if errs := errors.FindFamily(name); len(*errs) > 0 {
+			el := f.FindControlByName(name)
+			controls = append(controls, form.ValuedControl{Control: el, Errors: errs})
 		}
 	}
-	return formElements
+	return form.ValuedForm{Controls: controls}
 }
 
 // unmarshalCaseFormData retrieves entries from a url.Values and applies them to a cms.Case object via a cms.CaseTemplate.
-func unmarshalCaseFormData(c *cms.Case, template *cms.CaseTemplate, values url.Values) error {
+func unmarshalCaseFormData(c *cms.Case, phorm form.Form, values url.Values) error {
 	c.CaseTypeID = values.Get("caseTypeId")
 	c.PartyID = values.Get("partyId")
 	c.Done = values.Get("done") == "on"
 	c.ParentID = values.Get("parentId")
 	c.TeamID = values.Get("teamId")
-	var formElements []form.FormElement
-	for _, formElement := range template.FormElements {
-		formElement.Attributes.Value = values[formElement.Attributes.Name]
-		formElements = append(formElements, formElement)
+	var formcontrols []form.Control
+	for _, control := range phorm.Controls {
+		control.DefaultValue = values[control.Name]
+		formcontrols = append(formcontrols, control)
 	}
-	c.Template = &cms.CaseTemplate{FormElements: formElements}
+	c.Form = form.Form{Controls: formcontrols}
 	return nil
 }
 

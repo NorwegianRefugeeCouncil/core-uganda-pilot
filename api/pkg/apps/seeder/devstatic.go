@@ -1,7 +1,6 @@
 package seeder
 
 import (
-	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/nrc-no/core/pkg/form"
 )
@@ -22,8 +21,8 @@ var (
 
 	DTeam = team("5efecef3-a7a9-4705-84ca-70c89d7d783f", "D-Team")
 
-	globalCountry = country(iam.GlobalCountry.ID, iam.GlobalCountry.Name)
-	DTeamNationality  = nationality("8f6be182-f64c-4096-ba8e-4562506dae6d", DTeam, globalCountry)
+	globalCountry    = country(iam.GlobalCountry.ID, iam.GlobalCountry.Name)
+	DTeamNationality = nationality("8f6be182-f64c-4096-ba8e-4562506dae6d", DTeam, globalCountry)
 
 	// D-Team Memberships
 	LudovicMembership  = membership("156e7e3a-6cec-43ca-be28-94e8eb0bb27c", Ludovic, DTeam)
@@ -34,49 +33,31 @@ var (
 	KristjanMembership = membership("a6a7a318-64d8-4cfa-83c7-8710f1d12778", Kristjan, DTeam)
 
 	// Dogfooding Case Templates
-	DTeamBugReport = &cms.CaseTemplate{
-		FormElements: []form.FormElement{
+	DTeamBugReport = form.Form{
+		Controls: []form.Control{
 			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "What action were you undertaking in the application, when the error happened",
-					Name:        "whatActionBeforeError",
-					Description: "",
-					Placeholder: "",
-				},
+				Type:       form.Textarea,
+				Label:      "What action were you undertaking in the application, when the error happened",
+				Validation: form.ControlValidation{Required: true},
 			},
 			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "If the error had not happened, what would be your expected outcome for the action you were performing when the error happened",
-					Name:        "expectedOutcome",
-					Description: "",
-					Placeholder: "",
-				},
+				Type:       form.Textarea,
+				Label:      "If the error had not happened, what would be your expected outcome for the action you were performing when the error happened",
+				Validation: form.ControlValidation{Required: true},
 			},
 			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "List any error messages shown",
-					Name:        "errorMessages",
-					Description: "",
-					Placeholder: "",
-				},
+				Type:  form.Textarea,
+				Label: "List any error messages shown",
 			},
 		},
 	}
 
-	DTeamFeatureRequest = &cms.CaseTemplate{
-		FormElements: []form.FormElement{
+	DTeamFeatureRequest = form.Form{
+		Controls: []form.Control{
 			{
-				Type: form.Textarea,
-				Attributes: form.FormElementAttributes{
-					Label:       "Describe the change or new functionality you would like in Core",
-					Name:        "request",
-					Description: "",
-					Placeholder: "",
-				},
-				Validation: form.FormElementValidation{Required: true},
+				Type:       form.Textarea,
+				Label:      "Describe the change or new functionality you would like in Core",
+				Validation: form.ControlValidation{Required: true},
 			},
 		},
 	}

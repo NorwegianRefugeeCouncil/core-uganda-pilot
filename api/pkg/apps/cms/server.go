@@ -66,9 +66,9 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	router.Path(path.Join(server.CasesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.PutCase)
 
 	router.Path(server.CaseTypesEndpoint).Methods("GET").HandlerFunc(srv.ListCaseTypes)
-	router.Path(server.CaseTypesEndpoint).Methods("POST").HandlerFunc(srv.PostCaseType)
+	router.Path(server.CaseTypesEndpoint).Methods("POST").HandlerFunc(srv.postCaseType)
 	router.Path(path.Join(server.CaseTypesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.GetCaseType)
-	router.Path(path.Join(server.CaseTypesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.PutCaseType)
+	router.Path(path.Join(server.CaseTypesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putCaseType)
 
 	router.Path(server.CommentsEndpoint).Methods("GET").HandlerFunc(srv.ListComments)
 	router.Path(server.CommentsEndpoint).Methods("POST").HandlerFunc(srv.PostComment)
@@ -86,19 +86,19 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	s.router.ServeHTTP(w, req)
 }
 
-func (s *Server) JSON(w http.ResponseWriter, status int, data interface{}) {
+func (s *Server) json(w http.ResponseWriter, status int, data interface{}) {
 	utils.JSONResponse(w, status, data)
 }
 
-func (s *Server) GetPathParam(param string, w http.ResponseWriter, req *http.Request, into *string) bool {
+func (s *Server) getPathParam(param string, w http.ResponseWriter, req *http.Request, into *string) bool {
 	return utils.GetPathParam(param, w, req, into)
 }
 
-func (s *Server) Error(w http.ResponseWriter, err error) {
+func (s *Server) error(w http.ResponseWriter, err error) {
 	utils.ErrorResponse(w, err)
 }
 
-func (s *Server) Bind(req *http.Request, into interface{}) error {
+func (s *Server) bind(req *http.Request, into interface{}) error {
 	return utils.BindJSON(req, into)
 }
 

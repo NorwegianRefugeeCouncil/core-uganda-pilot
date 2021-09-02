@@ -9,7 +9,7 @@ type ValidatedCaseTemplate struct {
 }
 
 type Template struct {
-	FormElements []form.FormElement `json:"formElements"`
+	Formcontrols []form.Control `json:"formcontrols"`
 }
 
 func (t *Template) Fill() *form.ValuedForm {

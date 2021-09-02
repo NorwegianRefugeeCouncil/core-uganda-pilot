@@ -100,12 +100,6 @@ func NewServer(options *ServerOptions) (*Server, error) {
 		return nil, err
 	}
 
-	err = transpileTS()
-	if err != nil {
-		logrus.WithError(err).Errorf("failed to transpile typescript files")
-		return nil, err
-	}
-
 	h.sessionManager = sm
 	h.renderFactory = renderFactory
 

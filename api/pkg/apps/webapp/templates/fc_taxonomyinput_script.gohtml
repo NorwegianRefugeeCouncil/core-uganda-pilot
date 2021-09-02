@@ -1,0 +1,143 @@
+{{define "taxonomyinput_script"}}
+
+    <script>
+        // since this is a component and it can be used multiple times on the same page, collisions are possible
+        // adding the code to an anonymous function such as the event listener below effectively creates a new
+        // namespace, provided variables and functions are declared using the const keyword.
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const taxonomy = ['Education', 'ICLA', 'Protection', 'WASH', 'LFS', 'S&S'];
+
+            const programmeAreaSelect = document.getElementById("programme-area-{{.Name}}");
+
+            const badgeContainer = document.getElementById("badge-container-{{.Name}}");
+            const addBadgeButton = document.getElementById("btn-add-{{.Name}}");
+            const clearBadgesButton = document.getElementById("btn-clear-{{.Name}}");
+
+            const valueContainer = document.getElementById("{{.Name}}");
+
+            // remove all the options from a select element
+            const clearSelectOptions = (selectId) => {
+                document.getElementById(selectId).innerHTML = '';
+            };
+
+            // create a new select option element
+            const createSelectOption = (value, label) => {
+                const option = document.createElement('option');
+                option.value = value;
+                option.text = label;
+                return option;
+            };
+
+            // get the value selected of a select
+            const getSelected = (selectId) => {
+                return document.getElementById(selectId).value;
+            };
+
+            // helper function to remove value from value container
+            const removeValue = (label) => {
+                const oldValues = valueContainer.value.split('|');
+                const newValues = [];
+                oldValues.forEach(oldValue => {
+                    if (oldValue !== label) {
+                        newValues.push(oldValue);
+                    }
+                });
+                valueContainer.value = newValues.join('|');
+            };
+
+            // helper function to remove badge
+            const removeBadge = (label) => {
+                const oldBadges = Array.from(badgeContainer.children);
+                badgeContainer.innerHTML = '';
+                oldBadges.forEach(oldBadge => {
+                    if (oldBadge.textContent !== label) {
+                        badgeContainer.appendChild(oldBadge);
+                    }
+                });
+            };
+
+            // helper function to remove badge and value by label
+            const removeBadgeAndValue = (label) => {
+                removeBadge(label);
+                removeValue(label);
+            };
+
+            // build a badge element
+            const buildBadge = (label) => {
+                const badge = document.createElement('span');
+                const classesToAdd = [
+                    'badge',
+                    'rounded-pill',
+                    'bg-secondary',
+                    'taxonomy-badge',
+                ];
+                classesToAdd.forEach(classToAdd => badge.classList.add(classToAdd));
+                badge.textContent = label;
+                {{if not .Readonly}}
+                badge.addEventListener('click', (event) => {
+                    removeBadgeAndValue(label);
+                });
+                badge.addEventListener('mouseover', (event) => {
+                    badge.classList.remove('bg-secondary');
+                    badge.classList.add('bg-danger');
+                });
+                badge.addEventListener('mouseout', (event) => {
+                    badge.classList.remove('bg-danger');
+                    badge.classList.add('bg-secondary');
+                });
+                {{end}}
+                return badge;
+            };
+
+            // initially populate badge container
+            {{if .Attributes.Value}}
+            const initialValue = "{{index .Attributes.Value 0}}";
+            initialValue.split('|').forEach(badgeContent => {
+                badgeContainer.appendChild(buildBadge(badgeContent));
+            });
+            {{end}}
+
+            taxonomy.forEach(programmeArea => {
+                programmeAreaSelect.appendChild(createSelectOption(programmeArea, programmeArea));
+            });
+
+            programmeAreaSelect.selectedIndex = -1;
+
+            addBadgeButton.addEventListener('click', (event) => {
+
+                const programmeArea = getSelected("programme-area-{{.Name}}");
+
+                let label = '';
+
+                if (
+                    programmeArea !== '' &&
+                    programmeArea !== null &&
+                    programmeArea !== undefined
+                ) {
+                    label = `${programmeArea}`;
+
+                    if (!valueContainer.value.includes(label)) {
+                        const badge = buildBadge(label);
+                        badgeContainer.appendChild(badge);
+
+                        if (valueContainer.value === '') {
+                            valueContainer.value = `${label}`;
+                        } else {
+                            valueContainer.value = `${valueContainer.value}|${label}`;
+                        }
+                    }
+
+                    programmeAreaSelect.selectedIndex = -1;
+                }
+
+            });
+
+            clearBadgesButton.addEventListener('click', (event) => {
+                badgeContainer.innerHTML = '';
+                valueContainer.value = '';
+            });
+
+        }, false);
+    </script>
+
+{{end}}

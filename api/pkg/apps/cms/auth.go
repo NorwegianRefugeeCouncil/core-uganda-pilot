@@ -17,7 +17,7 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 
 			token, err := auth.AuthHeaderTokenSource(req).GetToken()
 			if err != nil {
-				s.Error(w, err)
+				s.error(w, err)
 				return
 			}
 
@@ -27,12 +27,12 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 				HTTPClient: s.HydraHttpClient,
 			})
 			if err != nil {
-				s.Error(w, err)
+				s.error(w, err)
 				return
 			}
 
 			if !*res.Payload.Active {
-				s.Error(w, err)
+				s.error(w, err)
 				return
 			}
 			ctx := req.Context()

@@ -63,7 +63,7 @@ func (s *Server) initRelationshipType(ctx context.Context) error {
 }
 
 func (s *Server) initAttribute(ctx context.Context) error {
-	for _, attribute := range []Attribute{
+	for _, attribute := range []PartyAttributeDefinition{
 		// "Built-in" Attributes
 		FullNameAttribute,
 		DisplayNameAttribute,
@@ -103,14 +103,12 @@ func (s *Server) initAttribute(ctx context.Context) error {
 		Admin3Attribute,
 		Admin4Attribute,
 		Admin5Attribute,
-
-
 	} {
-		if err := s.attributeStore.create(ctx, &attribute); err != nil {
+		if err := s.partyAttributeDefinitionStore.create(ctx, &attribute); err != nil {
 			if !mongo.IsDuplicateKeyError(err) {
 				return err
 			}
-			if err := s.attributeStore.update(ctx, &attribute); err != nil {
+			if err := s.partyAttributeDefinitionStore.update(ctx, &attribute); err != nil {
 				return err
 			}
 		}

@@ -14,7 +14,7 @@ type (
 		PartyTypes() PartyTypeClient
 		Relationships() RelationshipClient
 		RelationshipTypes() RelationshipTypeClient
-		Attributes() AttributeClient
+		PartyAttributeDefinitions() PartyAttributeDefinitionClient
 		Teams() TeamClient
 		Memberships() MembershipClient
 		Individuals() IndividualClient
@@ -160,11 +160,11 @@ type RelationshipTypeClient interface {
 	List(ctx context.Context, listOptions RelationshipTypeListOptions) (*RelationshipTypeList, error)
 }
 
-type AttributeListOptions struct {
+type PartyAttributeDefinitionListOptions struct {
 	PartyTypeIDs []string
 }
 
-func (a *AttributeListOptions) MarshalQueryParameters() (url.Values, error) {
+func (a *PartyAttributeDefinitionListOptions) MarshalQueryParameters() (url.Values, error) {
 	ret := url.Values{}
 	for _, partyTypeID := range a.PartyTypeIDs {
 		ret.Add("partyTypeId", partyTypeID)
@@ -172,19 +172,19 @@ func (a *AttributeListOptions) MarshalQueryParameters() (url.Values, error) {
 	return ret, nil
 }
 
-func (a *AttributeListOptions) UnmarshalQueryParameters(values url.Values) error {
+func (a *PartyAttributeDefinitionListOptions) UnmarshalQueryParameters(values url.Values) error {
 	partyTypeIDs := values["partyTypeId"]
 	a.PartyTypeIDs = append(a.PartyTypeIDs, partyTypeIDs...)
 	return nil
 }
 
-var _ rest.UrlValuer = &AttributeListOptions{}
+var _ rest.UrlValuer = &PartyAttributeDefinitionListOptions{}
 
-type AttributeClient interface {
-	Get(ctx context.Context, id string) (*Attribute, error)
-	Create(ctx context.Context, create *Attribute) (*Attribute, error)
-	Update(ctx context.Context, update *Attribute) (*Attribute, error)
-	List(ctx context.Context, listOptions AttributeListOptions) (*AttributeList, error)
+type PartyAttributeDefinitionClient interface {
+	Get(ctx context.Context, id string) (*PartyAttributeDefinition, error)
+	Create(ctx context.Context, create *PartyAttributeDefinition) (*PartyAttributeDefinition, error)
+	Update(ctx context.Context, update *PartyAttributeDefinition) (*PartyAttributeDefinition, error)
+	List(ctx context.Context, listOptions PartyAttributeDefinitionListOptions) (*PartyAttributeDefinitionList, error)
 }
 
 type TeamListOptions struct {

@@ -3,49 +3,61 @@ package cms
 import (
 	"fmt"
 	"github.com/nrc-no/core/pkg/form"
-	"github.com/nrc-no/core/pkg/utils"
 	"github.com/nrc-no/core/pkg/validation"
-	"strconv"
 )
 
 func ValidateCase(kase *Case, path *validation.Path) validation.ErrorList {
-	errList := validation.ErrorList{}
+	result := validation.ErrorList{}
 
-	// Validate UUIDs
+	result = validateUUIDs(kase, path, result)
+	result = validateFormData(kase, path, result)
+
+	return result
+}
+
+func validateUUIDs(kase *Case, path *validation.Path, errList validation.ErrorList) validation.ErrorList {
 	uuids := map[string]string{
+		"id":         kase.ID,
 		"caseTypeId": kase.CaseTypeID,
 		"partyId":    kase.PartyID,
 		"parentId":   kase.ParentID,
 		"teamId":     kase.TeamID,
 		"creatorId":  kase.CreatorID}
 
-	for name, uuid := range uuids {
-		if uuid != "" && !validation.IsValidUUID(uuid) {
-			errList = append(errList, validation.Invalid(path.Child(name), uuid, fmt.Sprintf("%s is not a valid UUID", name)))
-		}
-	}
+	requiredUUIDs := []string{"id", "caseTypeId", "partyId", "teamId", "creatorId"}
 
-	// Validate form elements
-	if kase.Template != nil {
-		for _, elem := range kase.Template.FormElements {
-			switch elem.Type {
-			case form.Checkbox:
-				for i, option := range elem.Attributes.CheckboxOptions {
-					if option.Required && !utils.Contains(elem.Attributes.Value, strconv.Itoa(i)) {
-						err := validation.Required(path.Child(elem.Attributes.Name).Index(i), fmt.Sprintf("%s is required", elem.Attributes.Name))
-						errList = append(errList, err)
-					}
-				}
-				fallthrough
-			default:
-				if elem.Validation.Required && utils.AllEmpty(elem.Attributes.Value) {
-					err := validation.Required(path.Child(elem.Attributes.Name), fmt.Sprintf("%s is required", elem.Attributes.Name))
-					errList = append(errList, err)
-				}
+	for name, uuid := range uuids {
+		// check for required uuids
+		for _, required := range requiredUUIDs {
+			if name == required && len(uuid) == 0 {
+				msg := fmt.Sprintf("%s was empty but is required", name)
+				errList = append(errList, validation.Required(path.Child(name), msg))
 				break
 			}
 		}
+		// check that uuids are valid
+		if len(uuid) > 0 && !validation.IsValidUUID(uuid) {
+			errList = append(errList, validation.Invalid(path.Child(name), uuid, fmt.Sprintf("%s is not a valid UUID", name)))
+		}
+	}
+	return errList
+}
+
+func validateFormData(kase *Case, path *validation.Path, errList validation.ErrorList) validation.ErrorList {
+	// skip if no data
+	if kase.FormData == nil {
+		return errList
 	}
 
+	// range over form data and validate according to control
+	for name, value := range kase.FormData {
+		control := kase.Form.FindControlByName(name)
+		if control != nil {
+			errs := form.ValidateControlValue(*control, value, path)
+			if len(errs) > 0 {
+				errList = append(errList, errs...)
+			}
+		}
+	}
 	return errList
 }

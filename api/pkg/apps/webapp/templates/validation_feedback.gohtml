@@ -1,5 +1,5 @@
 {{define "validation_feedback"}}
-    <div id="{{.Attributes.Name}}Feedback" class="invalid-feedback">
+    <div id="{{.Name}}Feedback" class="invalid-feedback">
         {{if .Errors}}
             {{range .Errors}}
                 <p>{{.Detail}}</p>

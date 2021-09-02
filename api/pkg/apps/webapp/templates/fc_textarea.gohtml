@@ -1,20 +1,20 @@
 {{define "textarea"}}
     <div class="form mb-3">
         {{template "label" .}}
-        <textarea id="{{.Attributes.Name}}"
-                  name="{{.Attributes.Name}}"
+        <textarea id="{{.Name}}"
+                  name="{{.Name}}"
                   class="form-control  {{if .Errors}}is-invalid{{end}}"
                   style="height: 100px"
-                  placeholder="{{.Attributes.Placeholder}}"
+                  placeholder="{{.Placeholder}}"
                   data-testid="test-textarea"
                   {{if .Validation.Required}}required{{end}}
-                {{if .Errors}}aria-describedby="{{.Attributes.Name}}Feedback"{{end}}
+                {{if .Errors}}aria-describedby="{{.Name}}Feedback"{{end}}
                 {{if .Readonly}}disabled readonly{{end}}
             >
                 {{- if .Errors}}{{with (index .Errors 0)}}{{.BadValue}}{{end -}}
-                {{- else if .Attributes.Value}}{{index .Attributes.Value 0}}{{end -}}
+                {{- else if .Value}}{{index .Value 0}}{{end -}}
             </textarea>
-        <div class="form-text">{{.Attributes.Description}}</div>
+        <div class="form-text">{{.Description}}</div>
         {{template "validation_feedback" .}}
     </div>
 {{end}}
