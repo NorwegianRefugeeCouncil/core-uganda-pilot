@@ -36,11 +36,13 @@ var (
 	DTeamBugReport = form.Form{
 		Controls: []form.Control{
 			{
+				Name:       "userAction",
 				Type:       form.Textarea,
 				Label:      "What action were you undertaking in the application, when the error happened",
 				Validation: form.ControlValidation{Required: true},
 			},
 			{
+				Name:       "expectedBehavior",
 				Type:       form.Textarea,
 				Label:      "If the error had not happened, what would be your expected outcome for the action you were performing when the error happened",
 				Validation: form.ControlValidation{Required: true},
@@ -55,6 +57,7 @@ var (
 	DTeamFeatureRequest = form.Form{
 		Controls: []form.Control{
 			{
+				Name:       "featureDescription",
 				Type:       form.Textarea,
 				Label:      "Describe the change or new functionality you would like in Core",
 				Validation: form.ControlValidation{Required: true},

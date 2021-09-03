@@ -26,6 +26,10 @@ func (s *Server) PutCase(w http.ResponseWriter, req *http.Request) {
 		s.error(w, err)
 		return
 	}
+	// Done cases shouldn't be changed
+	if kase.Done {
+		return
+	}
 
 	// Update struct
 	update := updateCaseStruct(kase, payload)

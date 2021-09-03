@@ -21,50 +21,82 @@
                             <input type="hidden" id="id-input" name="id" value="{{.PartyAttributeDefinition.ID}}">
 
                             <!-- Name -->
-                            <div class="form-floating mb-3 shadow-sm font-monospace">
+                            <div class="mb-3 shadow-sm font-monospace">
+                                <label for="name" class="form-label">Name</label>
                                 <input id="id"
-                                       name="id"
+                                       name="name"
                                        type="text"
                                        class="form-control"
                                        value="{{.PartyAttributeDefinition.FormControl.Name}}"
-                                       placeholder="Name"
                                        data-testid="name"
                                        required
+                                       aria-describedby="nameFeedback"
                                 >
-                                <label for="name">Name</label>
+                                <div id="nameFeedback" class="invalid-feedback">This field is required</div>
                             </div>
 
                             <hr />
 
+                            <div class="mb-3">
+                                <label for="label" class="form-label">Label</label>
+                                <input id="label" name="label" value="{{.PartyAttributeDefinition.FormControl.Label}}"
+                                       class="form-control" type="text" data-testid="label" required
+                                       aria-describedby="labelFeedback">
+                                <div id="labelFeedback" class="invalid-feedback">This field is required</div>
+                            </div>
+
                             <!-- Control Type -->
-                            <div class="form-floating mb-3 shadow-sm">
+                            <div class="mb-3 shadow-sm">
+                                <label for="controlType">Control Type</label>
                                 <select id="controlType"
-                                        name="contolType"
+                                        name="controlType"
                                         class="form-select"
-                                        data-testid="type"
+                                        data-testid="control-type"
                                         required
+                                        aria-describedby="controlTypeFeedback"
                                 >
                                     {{range .ControlTypes}}
                                         <option value="{{.}}"
-                                                {{if eq $.PartyAttributeDefinition.FormControl.Type .}}selected{{end}}>{{.}}</option>
+                                                {{if $.PartyAttributeDefinition}}{{if eq $.PartyAttributeDefinition.FormControl.Type .}}selected{{end}}{{end}}>{{.}}</option>
                                     {{end}}
                                 </select>
-                                <label for="controlType">Control Type</label>
+                                <div id="controlTypeFeedback" class="invalid-feedback">This field is required</div>
                             </div>
 
                             <!-- Subject Type -->
-                            <div class="form-floating mb-3 shadow-sm">
+                            <div class="mb-3 shadow-sm">
+                                <label for="subject-type-input">Subject Type</label>
                                 <select id="subject-type-input"
                                         name="partyTypeIds"
                                         class="form-select"
                                         data-testid="subject"
                                         required
+                                        multiple
+                                        aria-describedby="subjectTypeFeedback"
                                 >
-                                    {{range .PartyTypes.Items}}
-                                        <option value="{{.ID}}">{{.Name}}</option>
+                                    {{range $option := .PartyTypes.Items}}
+                                        <option value="{{.ID}}"
+                                                {{range $id := $.PartyAttributeDefinition.PartyTypeIDs}}
+                                                    {{if eq $option.ID $id}}selected{{end}}
+                                                {{end}}
+                                        >{{.Name}}</option>
                                     {{end}}
                                 </select>
-                                <label for="subject-type-input">Subject Type</label>
+                                <div id="subjectTypeFeedback" class="invalid-feedback">Please choose at least one
+                                    option
+                                </div>
+                            </div>
+
+                            <!-- Required -->
+                            <div class="form-check form-switch mb-3">
+                                <input id="is-required"
+                                       name="isRequired"
+                                       type="checkbox"
+                                       class="form-check-input"
+                                       data-testid="required-checkbox"
+                                       {{if .PartyAttributeDefinition.FormControl.Validation.Required}}checked{{end}}
+                                >
+                                <label class="form-check-label" for="is-required">Is Required</label>
                             </div>
 
                             <!-- Personally Identifiable Info -->

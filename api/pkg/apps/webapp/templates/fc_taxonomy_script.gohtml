@@ -1,4 +1,4 @@
-{{define "taxonomyinput_script"}}
+{{define "taxonomy_script"}}
 
     <script>
         // since this is a component and it can be used multiple times on the same page, collisions are possible
@@ -90,8 +90,8 @@
             };
 
             // initially populate badge container
-            {{if .Attributes.Value}}
-            const initialValue = "{{index .Attributes.Value 0}}";
+            {{if .Value}}
+            const initialValue = "{{index .Value 0}}";
             initialValue.split('|').forEach(badgeContent => {
                 badgeContainer.appendChild(buildBadge(badgeContent));
             });

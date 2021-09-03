@@ -1,9 +1,8 @@
 {{define "radio"}}
     <h5>{{.Label}}</h5>
     <div class="form-text">{{.Description}}</div>
-    {{$hasOuterErr := and (eq .Errors.Length 1) (not .Value)}}
     <div id="{{.Name}}"
-         {{if $hasOuterErr}}class="is-invalid form" aria-describedby="{{.Name}}Feedback"{{end}}>
+         aria-describedby="{{.Name}}Feedback">
         {{range $i, $option := .CheckboxOptions}}
             {{$fieldName := (printf "%s[%s]" $.Name $i)}}
             <div class="form-check mb-3">
@@ -22,9 +21,7 @@
             </div>
         {{end}}
     </div>
-    {{if $hasOuterErr}}
-        <div id="{{.Name}}Feedback" class="invalid-feedback mb-3">
-            Please pick at least one option.
-        </div>
-    {{end}}
+    <div id="{{.Name}}Feedback" class="invalid-feedback mb-3">
+        Please pick at least one option.
+    </div>
 {{end}}

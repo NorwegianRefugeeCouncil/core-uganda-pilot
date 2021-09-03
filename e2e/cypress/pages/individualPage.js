@@ -17,7 +17,7 @@ const selector = {
     situationAnalysisTab: '#situation-analysis-tab',
     situationAnalysis: '#situation-analysis',
     textArea: testId('test-textarea'),
-    taxonomyInput: testId('test-taxonomyinput'),
+    taxonomyInput: testId('test-taxonomy'),
     addTaxonomyBtn: testId('add-taxonomy-btn'),
     taxonomyBadges: testId('badge-container'),
     perceivedPriority: nameAttr('perceivedPriority'),

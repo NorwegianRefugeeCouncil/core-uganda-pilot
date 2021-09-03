@@ -339,7 +339,7 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	attributes := form.ValuedForm{}
 	for _, attribute := range attrs.Items {
 		ctrl := form.ValuedControl{
-			Control: &attribute.FormControl,
+			Control: attribute.FormControl,
 			Value:   individual.GetAttribute(attribute.ID),
 		}
 		attributes.Controls = append(attributes.Controls, ctrl)
@@ -387,7 +387,7 @@ func sumbittedFormFromErrors(errorList *validation.ErrorList, attributes *iam.Pa
 		if len(*errs) > 0 && !shouldIgnoreValidationError(attribute, []string{value}) {
 			control := attribute.FormControl
 			controls = append(controls, form.ValuedControl{
-				Control: &control,
+				Control: control,
 				Errors:  errs,
 			})
 		}

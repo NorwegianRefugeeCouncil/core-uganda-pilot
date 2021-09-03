@@ -55,6 +55,7 @@ func (s *Server) NewAttribute(w http.ResponseWriter, req *http.Request) {
 				&iam.IndividualPartyType,
 			},
 		},
+		"ControlTypes": form.ControlTypes,
 	}); err != nil {
 		s.Error(w, err)
 		return
@@ -127,7 +128,28 @@ func (s *Server) PostAttribute(ctx context.Context, attribute *iam.PartyAttribut
 	attribute.PartyTypeIDs = values["partyTypeIds"]
 	attribute.IsPersonallyIdentifiableInfo = values.Get("isPii") == "on"
 
+	// form control
+	name := values.Get("name")
+	label := values.Get("label")
+	required := values.Get("isRequired") == "on"
+	controlType := form.ControlType(values["controlType"][0])
+	attribute.FormControl = *form.NewControl(name, controlType, label, required)
+
+	// TODO infer country from subject
+	//subject, ok := ctx.Value("Subject").(string)
+	//if !ok {
+	//	s.Error(w, errors.New("couldn't get subject id string"))
+	//	return
+	//}
+	//user, err := iamClient.Individuals().Get(ctx, subject)
+	//if err != nil {
+	//	s.Error(w, err)
+	//	return
+	//}
+	attribute.CountryID = iam.UgandaCountry.ID
+
 	var storedAttribute *iam.PartyAttributeDefinition
+
 	if isNew {
 		storedAttribute, err = iamClient.PartyAttributeDefinitions().Create(ctx, attribute)
 	} else {
@@ -165,14 +187,14 @@ func zipNewAttributeFormcontrolsAndErrors(attribute *iam.PartyAttributeDefinitio
 	// name
 	if errs = errorList.FindFamily("id"); errs.Length() > 0 {
 		validated = append(validated, form.ValuedControl{
-			Control: &attribute.FormControl,
+			Control: attribute.FormControl,
 			Errors:  errs,
 		})
 	}
 	// partyTypeIds
 	if errs = errorList.FindFamily("partyTypeIds"); errs.Length() > 0 {
 		validated = append(validated, form.ValuedControl{
-			Control: &attribute.FormControl,
+			Control: attribute.FormControl,
 			Errors:  errs,
 		})
 	}

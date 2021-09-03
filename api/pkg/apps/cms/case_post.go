@@ -18,6 +18,11 @@ func (s *Server) PostCase(w http.ResponseWriter, req *http.Request) {
 	kase := &payload
 	kase.ID = uuid.NewV4().String()
 
+	subject, ok := ctx.Value("Subject").(string)
+	if ok {
+		kase.CreatorID = subject
+	}
+
 	errList := ValidateCase(kase, validation.NewPath(""))
 	if len(errList) > 0 {
 		status := errList.Status(http.StatusUnprocessableEntity, "invalid case")
@@ -25,10 +30,6 @@ func (s *Server) PostCase(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	subject, ok := ctx.Value("Subject").(string)
-	if ok {
-		kase.CreatorID = subject
-	}
 	if err := s.caseStore.create(ctx, kase); err != nil {
 		s.error(w, err)
 		return

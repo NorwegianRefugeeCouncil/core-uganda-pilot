@@ -1,101 +1,79 @@
 {
-  "formcontrols": [
+  "controls": [
     {
       "type": "text",
-      "attributes": {
-        "label": "text",
-        "name": "testText",
-        "description": "text description",
-        "placeholder": "text placeholder"
-      }
+      "label": "text",
+      "name": "text"
     },
     {
       "type": "email",
-      "attributes": {
-        "label": "email",
-        "name": "testEmail",
-        "description": "email description",
-        "placeholder": "example@email.com"
-      }
+      "label": "email",
+      "name": "email"
     },
     {
       "type": "tel",
-      "attributes": {
-        "label": "phone",
-        "name": "testPhone",
-        "description": "phone description",
-        "placeholder": "0555 555555"
-      }
+      "label": "tel",
+      "name": "tel"
     },
     {
       "type": "url",
-      "attributes": {
-        "label": "url",
-        "name": "testUrl",
-        "description": "url description",
-        "placeholder": "https://www.example.com"
-      }
+      "label": "url",
+      "name": "url"
     },
     {
       "type": "date",
-      "attributes": {
-        "label": "date",
-        "name": "testDate",
-        "description": "date description"
-      }
+      "label": "date",
+      "name": "date"
     },
     {
       "type": "textarea",
-      "attributes": {
-        "label": "textarea",
-        "name": "testTextarea",
-        "description": "textarea description",
-        "placeholder": "textarea placeholder"
-      }
+      "label": "textarea",
+      "name": "textarea"
     },
     {
       "type": "dropdown",
-      "attributes": {
-        "label": "dropdown",
-        "name": "testDropdown",
-        "description": "dropdown description",
-        "options": [
-          "0",
-          "1"
-        ]
-      }
+      "label": "dropdown",
+      "name": "dropdown",
+      "options": [
+        "0",
+        "1"
+      ]
     },
     {
       "type": "checkbox",
-      "attributes": {
-        "label": "checkbox",
-        "name": "testCheckbox",
-        "description": "checkbox description",
-        "checkboxOptions": [
-          {
-            "Label": "0"
-          },
-          {
-            "Label": "1"
-          }
-        ]
-      }
+      "label": "checkbox",
+      "name": "checkbox",
+      "checkboxOptions": [
+        {
+          "Label": "0"
+        },
+        {
+          "Label": "1"
+        }
+      ]
     },
     {
       "type": "radio",
-      "attributes": {
-        "label": "radio",
-        "name": "testRadio",
-        "description": "radio description",
-        "checkboxOptions": [
-          {
-            "Label": "0"
-          },
-          {
-            "Label": "1"
-          }
-        ]
-      }
+      "label": "radio",
+      "name": "radio",
+      "checkboxOptions": [
+        {
+          "Label": "0"
+        },
+        {
+          "Label": "1"
+        }
+      ]
+    },
+    {
+      "type": "taxonomy",
+      "label": "taxonomy",
+      "name": "taxonomy"
+    },
+    {
+      "type": "file",
+      "label": "file",
+      "name": "file"
     }
   ]
 }

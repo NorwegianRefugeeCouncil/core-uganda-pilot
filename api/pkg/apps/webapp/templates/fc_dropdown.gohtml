@@ -3,11 +3,11 @@
         {{template "label" .}}
         <select id="{{.Name}}"
                 name="{{.Name}}"
-                class="form-select {{if .Errors}}is-invalid{{end}}"
+                class="form-select"
                 data-testid="test-dropdown"
                 {{if .Multiple}}multiple size="{{len .Options}}"{{end}}
                 {{if .Validation.Required}}required{{end}}
-                {{if .Errors}}aria-describedby="{{.Name}}Feedback"{{end}}
+                aria-describedby="{{.Name}}Feedback"
                 {{if .Readonly}}disabled{{end}}
         >
             {{if not .Multiple}}
@@ -19,6 +19,6 @@
             {{end}}
         </select>
         <div class="form-text">{{.Description}}</div>
-        {{template "validation_feedback" .}}
+        {{template "fc_feedback" .}}
     </div>
 {{end}}

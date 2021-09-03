@@ -1,7 +1,7 @@
-{{define "taxonomyinput"}}
+{{define "taxonomy"}}
     <div class="mb-3">
         <div class="card form">
-            <div class="card-body" data-testid="test-taxonomyinput">
+            <div class="card-body" data-testid="test-taxonomy">
                 <span>{{.Label}}</span>
                 <p class="form-text">{{.Description}}</p>
                 <div class="form mb-3" {{if .Readonly}}style="display: none"{{end}}>
@@ -22,14 +22,14 @@
 
             </div>
             <input id="{{.Name}}"
-                   class="taxonomyinput"
+                   class="taxonomy"
                    name="{{.Name}}"
                    value="{{if .Value}}{{index .Value 0}}{{end}}"
                    type="hidden"
                    placeholder="{{.Placeholder}}"
                    {{if .Validation.Required}}required{{end}}>
         </div>
-        {{template "validation_feedback" .}}
+        {{template "fc_feedback" .}}
     </div>
-    {{template "taxonomyinput_script" .}}
+    {{template "taxonomy_script" .}}
 {{end}}

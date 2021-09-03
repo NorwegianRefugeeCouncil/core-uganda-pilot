@@ -112,7 +112,7 @@
                         {{$teams := .Teams}}
                         {{ range .Cases.Items }}
                             <tr onclick="window.location.href = '/cases/{{.ID}}'" style="cursor: pointer;"
-                                data-testid="caseRow">
+                                data-testid="case-row" data-testhref="/cases/{{.ID}}">
                                 <td style="width: 3rem">
                                     {{if .Done}}
                                         <i class="bi bi-check-circle"></i>
@@ -164,7 +164,7 @@
                 {{range .FilterOptions.CaseTypeIDs}}
                 {{.}},
                 {{end}}
-            ]
+            ],
         });
 
         function toggleFilterElem(elem, value) {
@@ -177,7 +177,7 @@
             }
             filterSubject.next({
                 ...filter,
-                [elem]: state
+                [elem]: state,
             });
         }
 
@@ -218,7 +218,7 @@
                     return JSON.stringify(prev) === JSON.stringify(curr);
                 }),
                 pairwise(),
-                map(p => p[1])
+                map(p => p[1]),
             ).subscribe((filter) => {
                 const url = new URL(window.location);
                 const searchParams = new URLSearchParams();

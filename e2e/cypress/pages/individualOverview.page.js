@@ -10,7 +10,7 @@ const selector = {
 
 export default class IndividualOverviewPage {
     visitPage = () => {
-        cy.visit(URL.INDIVIDUALS);
+        cy.visit(URL.individuals);
         return this;
     };
 

@@ -124,6 +124,7 @@ var IdentificationSourceAttribute = PartyAttributeDefinition{
 		Name:       "identificationSource",
 		Type:       form.Dropdown,
 		Label:      "Source of Identification",
+		Options:    []string{"Walk-in Center", "FFRM Referral", "Internal Referral (Other – Specify)", "ICLA Outreach Team", "External Referral (Community Leader/Contact)", "External Referral (INGO/LNGO)", "External Referral (Other – Specify)", "Self (Telephone)", "Self (Email)", "Internal Referral (Other NRC Sector – Specify)", "CBP Outreach Team", "Other NRC Outreach Team (Specify)", "External Referral (UN Agency)", "External Referral (Government)", "Other – Specify"},
 		Validation: form.ControlValidation{Required: true},
 	},
 	CountryID:                    UgandaCountry.ID,

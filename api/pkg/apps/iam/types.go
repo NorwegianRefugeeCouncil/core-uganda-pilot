@@ -23,7 +23,7 @@ type PartyAttributeDefinition struct {
 	IsPersonallyIdentifiableInfo bool `json:"isPii" bson:"isPii"`
 
 	// Form control definition
-	FormControl form.Control `json:"control" bson:"control"`
+	FormControl form.Control `json:"formControl" bson:"formControl"`
 }
 
 // PartyAttributeDefinitionList represents a list of PartyAttributeDefinition

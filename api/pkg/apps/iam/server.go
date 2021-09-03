@@ -13,7 +13,7 @@ import (
 type Server struct {
 	environment                   string
 	router                        *mux.Router
-	partyAttributeDefinitionStore *AttributeStore
+	partyAttributeDefinitionStore *PartyAttributeDefinitionStore
 	partyStore                    *PartyStore
 	partyTypeStore                *PartyTypeStore
 	relationshipStore             *RelationshipStore

@@ -8,7 +8,7 @@ const PAGINATION_STAGE = '[data-testid=paginationState]';
 
 export default class PaginationPage {
     visitPage = params => {
-        const url = URL.INDIVIDUALS + params;
+        const url = URL.individuals + params;
         cy.visit(url);
         return this;
     };

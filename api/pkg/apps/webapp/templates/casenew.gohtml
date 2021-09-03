@@ -17,6 +17,7 @@
                                 class="form-select"
                                 name="caseTypeId"
                                 data-testid="casetype-select"
+                                required
                         >
                             {{if .CaseTypes}}
                                 <option value="">Choose</option>
@@ -35,11 +36,10 @@
                     {{ if or .ValidatedForm .CaseType}}
                         <div class="form mb-3">
                             <label for="team">Corresponding Team</label>
-                            <select disabled id="team" class="form-select" name="teamIdSelect">
+                            <select disabled id="team" class="form-select" name="teamId">
                                 <option selected value="{{.Team.ID}}">{{.Team.Name}}</option>
                             </select>
                         </div>
-                        <input id="teamId" name="teamId" type="hidden" value="{{.Team.ID}}" />
 
                         <div class="form mb-3">
                             <label for="party">Select Party</label>
@@ -55,10 +55,8 @@
                                 {{end}}
                             </select>
                         </div>
-                        {{with or .ValidatedForm .CaseType}}
-                            {{range .Form.Controls}}
-                                {{template "formcontrol" .}}
-                            {{end}}
+                        {{range .Form.Controls}}
+                            {{template "formcontrol" .}}
                         {{end}}
                     {{end}}
                     <button id="case-submit-btn" class="btn btn-primary" data-testid="submitBtn">Save</button>

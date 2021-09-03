@@ -8,27 +8,27 @@ import testTemplate from '../fixtures/test_casetemplate.json';
 import CasetypesOverviewPage from '../pages/casetypesOverview.page';
 
 const DATA = {
-    NAME: 'test casetype',
-    PARTYTYPEID: ids.IndividualPartyTypeID,
-    PARTYID: ids.BoDiddleyID,
-    TEAMID: ids.DTeamID,
-    TEMPLATE: testTemplate,
-    FORM: {
+    name: 'test casetype',
+    partyTypeId: ids.IndividualPartyTypeID,
+    partyId: ids.BoDiddleyID,
+    teamId: ids.DTeamID,
+    formText: testTemplate,
+    form: {
         text: 'test',
         email: 'test@whatever.net',
         phone: '0897-938900',
-        url: 'www.hello-world.com',
+        url: 'https://www.hello-world.com',
         date: '1933-02-24',
         textarea: 'test',
         dropdown: '0',
         checkbox: '0',
         radio: '0',
     },
-    FORM_U: {
+    formUpd: {
         text: 'test-updated',
         email: 'test_updated@whatever.net',
         phone: '0897-938901',
-        url: 'www.hello-world-updated.com',
+        url: 'https://www.hello-world-updated.com',
         date: '1933-02-25',
         textarea: 'test-updated',
         dropdown: '1',
@@ -42,13 +42,13 @@ describe('Case Page', function () {
         cy.login('courtney.lare@email.com');
         const caseTypePage = new CaseTypePage();
         caseTypePage
-            .setName(DATA.NAME)
-            .setPartyType(DATA.PARTYTYPEID)
-            .setTeam(DATA.TEAMID)
-            .setTemplate(JSON.stringify(DATA.TEMPLATE, null, 2))
+            .setName(DATA.name)
+            .setPartyType(DATA.partyTypeId)
+            .setTeam(DATA.teamId)
+            .setTemplate(JSON.stringify(DATA.formText, null, 2))
             .save();
 
-        // Get the new CaseTypeId
+        // store the new CaseTypeId in the DATA object
         const casetypesOverviewPage = new CasetypesOverviewPage();
         casetypesOverviewPage
             .visitPage()
@@ -57,59 +57,55 @@ describe('Case Page', function () {
             .then(h => {
                 // h should look like "/settings/casetypes/<id>"
                 const sepIdx = h.lastIndexOf('/');
-                DATA.CASETYPEID = h.slice(sepIdx + 1);
+                DATA.caseTypeId = h.slice(sepIdx + 1);
             });
     });
     describe('Navigate', () => {
         it('should navigate to new Case page from the case overview page', () => {
             const casesOverviewPage = new CasesOverviewPage();
-            casesOverviewPage.clickNewCaseBtn().url().should('include', URL.NEW_CASE);
+            casesOverviewPage.clickNewCaseBtn().url().should('include', URL.newCase);
         });
     });
     describe('Create', () => {
         it('should create a new Case', () => {
             const newCasePage = new NewCasePage();
-            newCasePage.setCaseType(DATA.CASETYPEID).setParty(DATA.PARTYID).fillOutForm(DATA.FORM).submitForm();
-            // TODO get and store caseID
-            // store caseId
-            // .get(testId('case-id'))
-            // .then($c => (DATA.CASEID = $c.text()));
+            newCasePage.setCaseType(DATA.caseTypeId).setParty(DATA.partyId).fillOutForm(DATA.form).submitForm();
         });
     });
 
-    // FIXME
-    describe.skip('Verify creation', () => {
+    describe('Verify creation', () => {
         it('should verify that the Case was properly created', () => {
-            const casePage = new CasePage(URL.CASES + '/' + DATA.CASEID);
+            const casesOverviewPage = new CasesOverviewPage();
+            casesOverviewPage.selectLastCase().should('contain.text', DATA.name);
+            const casePage = casesOverviewPage.newestCasePage();
 
             // Verify values
-            casePage.getRecipient().should('contain.text', ids.TestIndividualName);
             casePage.getDonePill().should('contain.text', 'Open');
-            casePage.verifyForm(DATA.FORM);
+            casePage.verifyForm(DATA.form);
             casePage.getDoneCheck().should('not.be.checked');
         });
     });
 
-    // FIXME
-    describe.skip('Update', () => {
+    describe('Update', () => {
         it('should update the case', () => {
-            const casePage = new CasePage(URL.CASES + '/' + DATA.CASEID);
+            const casesOverviewPage = new CasesOverviewPage();
+            const casePage = casesOverviewPage.newestCasePage();
 
             // Verify values
-            new NewCasePage(true).fillOutForm.apply(casePage, [DATA.FORM_U]);
+            new NewCasePage(true).fillOutForm.apply(casePage, [DATA.formUpd]);
             casePage.setDoneCheck().save();
         });
     });
 
-    // FIXME
-    describe.skip('Verify update', () => {
+    describe('Verify update', () => {
         it('should verify that the Case was properly updated', () => {
-            const casePage = new CasePage(URL.CASES + '/' + DATA.CASEID);
+            const casesOverviewPage = new CasesOverviewPage();
+            casesOverviewPage.selectLastCase().should('contain.text', DATA.name);
+            const casePage = casesOverviewPage.newestCasePage();
 
             // Verify values
-            casePage.getRecipient().should('contain.text', ids.TestIndividualName);
             casePage.getDonePill().should('contain.text', 'Closed');
-            casePage.verifyForm(DATA.FORM_U);
+            casePage.verifyForm(DATA.formUpd);
             casePage.getDoneCheck().should('not.exist');
         });
     });

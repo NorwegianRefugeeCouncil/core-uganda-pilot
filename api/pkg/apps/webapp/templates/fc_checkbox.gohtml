@@ -1,40 +1,31 @@
 {{define "checkbox"}}
     <h5>{{.Label}}</h5>
     <div class="form-text">{{.Description}}</div>
-    {{$hasOuterErr := and (eq .Errors.Length 1) (not .Value)}}
     <div id="{{.Name}}"
-         {{if $hasOuterErr}}class="is-invalid form" aria-describedby="{{.Name}}Feedback"{{end}}>
+         aria-describedby="{{.Name}}Feedback">
         {{range $i, $option := .CheckboxOptions}}
             {{$fieldName := (printf "%s[%s]" $.Name $i)}}
-            {{$hasInnerErr := false}}
-            {{if gt $.Errors.Length 1}}
-                {{$hasInnerErr = gt ($.Errors.Find $fieldName).Length 1}}
-            {{end}}
             <div class="form-check mb-3">
                 <label class="form-check-label mb-2 text-muted" style="font-weight: bold;"
                        for="{{$fieldName}}">{{$option.Label}}</label>
                 <input id="{{$fieldName}}"
                        name="{{$.Name}}"
                        value="{{$option.Label}}"
-                       class="form-check-input {{if $hasInnerErr}}is-invalid{{end}}"
+                       class="form-check-input"
                        type="checkbox"
                        data-testid="test-checkbox"
                        {{if $option.Required}}required{{end}}
                         {{range $v := $.Value}}{{if eq $option.Label $v}}checked{{end}}{{end}}
-                        {{if $hasInnerErr}}aria-describedby="{{$fieldName}}Feedback"{{end}}
+                       aria-describedby="{{$fieldName}}Feedback"
                         {{if $.Readonly}}disabled{{end}}
                 >
-                {{if $hasInnerErr}}
-                    <div id="{{$fieldName}}Feedback" class="invalid-feedback">
-                        You must check this box.
-                    </div>
-                {{end}}
+                <div id="{{$fieldName}}Feedback" class="invalid-feedback">
+                    You must check this box.
+                </div>
             </div>
         {{end}}
     </div>
-    {{if $hasOuterErr}}
-        <div id="{{.Name}}Feedback" class="invalid-feedback mb-3">
-            Please pick at least one option.
-        </div>
-    {{end}}
+    <div id="{{.Name}}Feedback" class="invalid-feedback mb-3">
+        Please pick at least one option.
+    </div>
 {{end}}

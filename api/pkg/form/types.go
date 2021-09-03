@@ -17,7 +17,7 @@ const (
 	Dropdown ControlType = "dropdown"
 	Checkbox ControlType = "checkbox"
 	Radio    ControlType = "radio"
-	Taxonomy ControlType = "taxonomyinput"
+	Taxonomy ControlType = "taxonomy"
 	File     ControlType = "file"
 )
 
@@ -27,14 +27,23 @@ type Control struct {
 	Name            string            `json:"name" bson:"name"`
 	Type            ControlType       `json:"type" bson:"type"`
 	Label           string            `json:"label" bson:"label"`
+	Validation      ControlValidation `json:"validation" bson:"validation"`
 	DefaultValue    []string          `json:"defaultValue" bson:"defaultValue"`
 	Description     string            `json:"description" bson:"description"`
 	Placeholder     string            `json:"placeholder" bson:"placeholder"`
 	Multiple        bool              `json:"multiple" bson:"multiple"`
 	Options         []string          `json:"options" bson:"options"`
 	CheckboxOptions []CheckboxOption  `json:"checkboxOptions" bson:"checkboxOptions"`
-	Validation      ControlValidation `json:"validation" bson:"validation"`
 	Readonly        bool              `json:"readonly" bson:"readonly"`
+}
+
+func NewControl(name string, typ ControlType, label string, required bool) *Control {
+	return &Control{
+		Name:       name,
+		Type:       typ,
+		Label:      label,
+		Validation: ControlValidation{Required: required},
+	}
 }
 
 type I18nString struct {
@@ -54,7 +63,7 @@ type ControlValidation struct {
 }
 
 type ValuedControl struct {
-	*Control
+	Control
 	Value  []string
 	Errors *validation.ErrorList
 }
@@ -70,7 +79,7 @@ type ValuedForm struct {
 // CaseTemplate contains a list of form elements used to construct a case form
 type Form struct {
 	// FormControls is an ordered list of the elements found in the form
-	Controls []Control `json:"formcontrols" bson:"formcontrols"`
+	Controls []Control `json:"controls" bson:"controls"`
 }
 
 func (f *Form) FindControlByName(name string) *Control {
@@ -85,17 +94,22 @@ func (f *Form) FindControlByName(name string) *Control {
 func NewValuedForm(form Form, values url.Values, errors validation.ErrorList) ValuedForm {
 	var valuedControls []ValuedControl
 	for _, control := range form.Controls {
-		value := values[control.Name]
-		errs := errors.FindFamily(control.Name)
-		valuedControls = append(valuedControls, ValuedControl{
-			Control: &control,
-			Value:   value,
-			Errors:  errs,
-		})
+		ctrl := ValuedControl{Control: control}
+		if values != nil {
+			value := values[control.Name]
+			ctrl.Value = value
+		}
+		if errors != nil {
+			errs := errors.FindFamily(control.Name)
+			ctrl.Errors = errs
+		}
+		valuedControls = append(valuedControls, ctrl)
 	}
-	errs := errors.Find("")
-	return ValuedForm{
-		Controls: valuedControls,
-		Errors:   errs,
+	var result ValuedForm
+	result.Controls = valuedControls
+	if errors != nil {
+		errs := errors.Find("")
+		result.Errors = errs
 	}
+	return result
 }

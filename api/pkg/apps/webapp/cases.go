@@ -293,9 +293,15 @@ func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
+	var phorm form.ValuedForm
+	if caseType != nil {
+		phorm = form.NewValuedForm(caseType.Form, nil, nil)
+	}
+
 	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "casenew", map[string]interface{}{
 		"PartyID":   qry.Get("partyId"),
 		"CaseType":  caseType,
+		"Form":      phorm,
 		"Team":      team,
 		"CaseTypes": caseTypes,
 		"Parties":   p,
@@ -321,14 +327,19 @@ func (s *Server) PostCase(w http.ResponseWriter, req *http.Request) {
 	}
 
 	kase, err := s.getCase(ctx, cmsClient, caseID, referralCaseTypeID)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	if err := req.ParseForm(); err != nil {
 		return
 	}
+	values := req.Form
 
 	if kase.CaseTypeID == "" {
 		// we need to get the caseTypeId from the form data
-		kase.CaseTypeID = req.Form.Get("caseTypeId")
+		kase.CaseTypeID = values.Get("caseTypeId")
 		if kase.CaseTypeID == "" {
 			err = fmt.Errorf("unable to detect case type id for new case")
 			return
@@ -340,17 +351,15 @@ func (s *Server) PostCase(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	kase.TeamID = values.Get("teamId")
+	kase.PartyID = values.Get("partyId")
+	kase.Done = values.Get("done") == "on"
+	kase.Form = caseType.Form
 	kase.FormData = req.Form
 
 	var storedCase *cms.Case
 	var isNewCase = kase.ID == ""
 	if isNewCase {
-		subject := ctx.Value("Subject")
-		if subject == nil {
-			kase.CreatorID = ""
-		} else {
-			kase.CreatorID = subject.(string)
-		}
 		kase.IntakeCase = caseType.IntakeCaseType
 		storedCase, err = cmsClient.Cases().Create(ctx, kase)
 	} else {
@@ -358,8 +367,8 @@ func (s *Server) PostCase(w http.ResponseWriter, req *http.Request) {
 	}
 	if err != nil {
 		if status, ok := err.(*validation.Status); ok {
-			validatedElements := submittedFormFromErrors(status.Errors, kase.Form, kase.FormData)
-			s.json(w, status.Code, validatedElements)
+			formValidation := makeFormValidation(status.Errors, kase.Form)
+			s.json(w, status.Code, formValidation)
 		} else {
 			s.Error(w, err)
 		}
@@ -423,18 +432,6 @@ func (s *Server) redirectAfterPost(w http.ResponseWriter, req *http.Request, pos
 	}
 	w.WriteHeader(http.StatusSeeOther)
 	return
-}
-
-// submittedFormFromErrors returns a slice of form.Control populated with validated template form elements.
-func submittedFormFromErrors(errors validation.ErrorList, f form.Form, fd url.Values) form.ValuedForm {
-	var controls []form.ValuedControl
-	for name := range fd {
-		if errs := errors.FindFamily(name); len(*errs) > 0 {
-			el := f.FindControlByName(name)
-			controls = append(controls, form.ValuedControl{Control: el, Errors: errs})
-		}
-	}
-	return form.ValuedForm{Controls: controls}
 }
 
 // unmarshalCaseFormData retrieves entries from a url.Values and applies them to a cms.Case object via a cms.CaseTemplate.

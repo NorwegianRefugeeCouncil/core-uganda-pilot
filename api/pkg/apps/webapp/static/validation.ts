@@ -2,9 +2,7 @@ type FormInputElement = HTMLInputElement | HTMLTextAreaElement | HTMLSelectEleme
 
 interface ServerSideFormcontrolValidation {
   type: string;
-  attributes: {
-    name: string
-  };
+  name: string;
   errors: ValidationError[];
 }
 
@@ -108,15 +106,19 @@ async function validateSubForm(formcontrol: HTMLFormElement): Promise<ServerSide
 }
 
 function applyServerSideValidation(validation: ServerSideFormcontrolValidation[]) {
-  for (const { type, attributes: { name }, errors } of validation) {
+  for (const { type, name, errors } of validation) {
     if (!errors) {
       continue;
     }
-    let domFormcontrol = document.querySelector(`#${name}`) as FormInputElement | HTMLDivElement;
-    if (type === 'taxonomyinput') {
-      domFormcontrol = domFormcontrol.parentElement as HTMLDivElement;
+    let domFormControl = document.querySelector(`#${name}, [name=${name}]`) as FormInputElement | HTMLDivElement;
+    if (domFormControl == null) {
+      console.error(`element with name "${name} not found`);
+      continue;
     }
-    applyFormInputElementValidation(domFormcontrol, name, errors);
+    if (type === 'taxonomy') {
+      domFormControl = domFormControl.parentElement as HTMLDivElement;
+    }
+    applyFormInputElementValidation(domFormControl, name, errors);
   }
 }
 
@@ -152,7 +154,7 @@ function removeFormValidation(formcontrol: HTMLFormElement) {
 function removeFormInputElementValidation(formInputElement: FormInputElement) {
   let target: FormInputElement | HTMLDivElement;
 
-  if (formInputElement.classList.contains('taxonomyinput')) {
+  if (formInputElement.classList.contains('taxonomy')) {
     target = formInputElement.parentElement as HTMLDivElement;
   } else {
     target = formInputElement;

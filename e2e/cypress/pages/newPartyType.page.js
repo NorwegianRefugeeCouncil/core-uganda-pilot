@@ -6,7 +6,7 @@ const SAVE_BUTTON = '[data-testid=save-btn]';
 
 export default class NewPartyTypePage {
     visitPage = () => {
-        cy.visit(URL.NEW_PARTYTYPE);
+        cy.visit(URL.new_partytype);
         return this;
     };
 
