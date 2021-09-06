@@ -36,7 +36,7 @@ function getTestIndividual(displayName) {
     return new IndividualPage(individualOverviewPage.searchFor(displayName));
 }
 
-describe.skip('Individual Page', function () {
+describe('Individual Page', function () {
     describe('Navigate', () => {
         it('should navigate to new Individual page from Individuals overview', () => {
             const individualOverviewPage = new IndividualOverviewPage();
@@ -46,7 +46,6 @@ describe.skip('Individual Page', function () {
     describe('Attributes', () => {
         it('should create a new Individual', () => {
             const newIndividualPage = new IndividualPage();
-            cy.pause();
             newIndividualPage.visitPage().inputAttributes(data.attributes).save();
         });
         it('should verify that the Individual was properly created', () => {

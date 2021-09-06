@@ -41,11 +41,11 @@ func (l *PartyAttributeDefinitionList) FindByID(id string) *PartyAttributeDefini
 	return nil
 }
 
-// PartyAttributeDefinitions contains the PartyAttributeDefinition values of a Party
-type PartyAttributeDefinitions map[string][]string
+// AttributeMap contains the PartyAttributeDefinition values of a Party
+type AttributeMap map[string][]string
 
 // Get returns the first value of a Party PartyAttributeDefinition
-func (a PartyAttributeDefinitions) Get(key string) string {
+func (a AttributeMap) Get(key string) string {
 	if values, ok := a[key]; ok {
 		if len(values) > 0 {
 			return values[0]
@@ -55,12 +55,12 @@ func (a PartyAttributeDefinitions) Get(key string) string {
 }
 
 // Set sets the value of an PartyAttributeDefinition
-func (a PartyAttributeDefinitions) Set(key, value string) {
+func (a AttributeMap) Set(key, value string) {
 	a[key] = []string{value}
 }
 
 // Add adds an PartyAttributeDefinition value
-func (a PartyAttributeDefinitions) Add(key, value string) {
+func (a AttributeMap) Add(key, value string) {
 	a[key] = append(a[key], value)
 }
 
@@ -74,7 +74,7 @@ type Party struct {
 	PartyTypeIDs []string `json:"partyTypeIds" bson:"partyTypeIds"`
 
 	// Attributes represent the PartyAttributeDefinition values
-	Attributes PartyAttributeDefinitions `json:"attributes" bson:"attributes"`
+	Attributes AttributeMap `json:"attributes" bson:"attributes"`
 }
 
 // HasPartyType checks if the Party has the given PartyType

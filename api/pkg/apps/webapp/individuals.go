@@ -250,23 +250,6 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 
 	g.Go(func() error {
 		var err error
-		cases, err := cmsClient.Cases().List(ctx, cms.CaseListOptions{
-			PartyIDs:    []string{id},
-			CaseTypeIDs: []string{seeder.UGIndividualResponseCaseType.ID},
-		})
-		if err != nil {
-			return err
-		}
-		if len(cases.Items) == 1 {
-			kase := cases.Items[0]
-			individualResponse = kase
-			irForm = form.NewValuedForm(kase.Form, kase.FormData, nil)
-		}
-		return err
-	})
-
-	g.Go(func() error {
-		var err error
 		returnedCases, err := cmsClient.Cases().List(ctx, cms.CaseListOptions{
 			PartyIDs:    []string{id},
 			CaseTypeIDs: []string{seeder.UGSituationalAnalysisCaseType.ID},
@@ -278,6 +261,23 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 			kase := returnedCases.Items[0]
 			situationAnalysis = kase
 			saForm = form.NewValuedForm(kase.Form, kase.FormData, nil)
+		}
+		return err
+	})
+
+	g.Go(func() error {
+		var err error
+		cases, err := cmsClient.Cases().List(ctx, cms.CaseListOptions{
+			PartyIDs:    []string{id},
+			CaseTypeIDs: []string{seeder.UGIndividualResponseCaseType.ID},
+		})
+		if err != nil {
+			return err
+		}
+		if len(cases.Items) == 1 {
+			kase := cases.Items[0]
+			individualResponse = kase
+			irForm = form.NewValuedForm(kase.Form, kase.FormData, nil)
 		}
 		return err
 	})
@@ -441,6 +441,7 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDe
 	if err := req.ParseForm(); err != nil {
 		return nil, err
 	}
+	values := req.Form
 
 	var individual *iam.Individual
 	if len(id) == 0 {
@@ -452,10 +453,14 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDe
 		}
 	}
 
-	attributeMap := map[string]*iam.PartyAttributeDefinition{}
+	attributeMap := map[string][]string{}
 	for _, attribute := range attrs.Items {
-		attributeMap[attribute.ID] = attribute
+		value := values[attribute.FormControl.Name]
+		if len(value) > 0 {
+			attributeMap[attribute.ID] = value
+		}
 	}
+	individual.Attributes = attributeMap
 
 	type RelationshipEntry struct {
 		*iam.Relationship
@@ -608,6 +613,7 @@ func (s *Server) createDefaultIndividualIntakeCases(req *http.Request, individua
 			TeamID:     situationAnalysisCaseType.TeamID,
 			CreatorID:  creatorId,
 			IntakeCase: situationAnalysisCaseType.IntakeCaseType,
+			Form:       situationAnalysisCaseType.Form,
 		})
 		if err != nil {
 			return err
@@ -620,7 +626,8 @@ func (s *Server) createDefaultIndividualIntakeCases(req *http.Request, individua
 			Done:       false,
 			TeamID:     individualResponseCaseType.TeamID,
 			CreatorID:  creatorId,
-			IntakeCase: situationAnalysisCaseType.IntakeCaseType,
+			IntakeCase: individualResponseCaseType.IntakeCaseType,
+			Form:       individualResponseCaseType.Form,
 		})
 		if err != nil {
 			return err
