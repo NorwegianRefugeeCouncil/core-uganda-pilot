@@ -27,6 +27,7 @@ describe('Attribute Page', function () {
                 .setName(DATA.name)
                 .setLabel(DATA.label)
                 .selectControlType(DATA.controlType)
+                .checkRequired()
                 .selectSubjectType(DATA.subjectType)
                 .save();
         });
@@ -42,7 +43,7 @@ describe('Attribute Page', function () {
             attrPage.getName().should('have.value', DATA.name);
             attrPage.getControlType().should('have.value', DATA.controlType);
             attrPage.getSubjectType().should('contain.value', DATA.subjectType);
-            attrPage.getRequired().should('not.be.checked');
+            attrPage.getRequired().should('be.checked');
             attrPage.getPersonalInfo().should('not.be.checked');
         });
     });
@@ -57,7 +58,7 @@ describe('Attribute Page', function () {
                 .setName(DATA.nameUpd)
                 .setLabel(DATA.labelUpd)
                 .selectControlType(DATA.controlTypeUpd)
-                .checkRequired()
+                .uncheckRequired()
                 .checkPersonalInfo()
                 .save();
         });
@@ -74,7 +75,7 @@ describe('Attribute Page', function () {
             attrPage.getLabel().should('have.value', DATA.labelUpd);
             attrPage.getControlType().should('have.value', DATA.controlTypeUpd);
             attrPage.getSubjectType().should('contain.value', DATA.subjectType);
-            attrPage.getRequired().should('be.checked');
+            attrPage.getRequired().should('not.be.checked');
             attrPage.getPersonalInfo().should('be.checked');
         });
     });

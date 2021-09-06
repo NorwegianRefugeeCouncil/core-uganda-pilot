@@ -67,7 +67,7 @@ if serverIsRunning; then
 fi
 
 cd "$DIR/api" || exit
-make serve &>/dev/null &
+make serve &>/dev/pts/6 &
 
 n=0
 until [ "$n" -ge 5 ]; do

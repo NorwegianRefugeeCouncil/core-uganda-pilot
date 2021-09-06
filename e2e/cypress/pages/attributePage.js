@@ -51,6 +51,10 @@ export default class AttributePage {
         this.getRequired().check();
         return this;
     };
+    uncheckRequired = () => {
+        this.getRequired().uncheck();
+        return this;
+    };
 
     getPersonalInfo = () => cy.get(PERSONAL_INFO);
     checkPersonalInfo = () => {

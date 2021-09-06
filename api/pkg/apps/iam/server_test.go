@@ -2,6 +2,7 @@ package iam_test
 
 import (
 	. "github.com/nrc-no/core/pkg/apps/iam"
+	"github.com/nrc-no/core/pkg/form"
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/testutils"
 	uuid "github.com/satori/go.uuid"
@@ -51,6 +52,7 @@ func mockPartyAttributeDefinition() *PartyAttributeDefinition {
 	return &PartyAttributeDefinition{
 		CountryID:    newUUID(),
 		PartyTypeIDs: []string{newUUID()},
+		FormControl:  form.Control{Name: "mock"},
 	}
 }
 
