@@ -456,9 +456,7 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDe
 	attributeMap := map[string][]string{}
 	for _, attribute := range attrs.Items {
 		value := values[attribute.FormControl.Name]
-		if len(value) > 0 {
-			attributeMap[attribute.ID] = value
-		}
+		attributeMap[attribute.ID] = value
 	}
 	individual.Attributes = attributeMap
 
@@ -472,12 +470,6 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDe
 
 	f := req.Form
 	for attrId, value := range f {
-
-		// Populate the Party.attributes
-		if attr := attrs.FindByID(attrId); attr != nil {
-			individual.Attributes[attr.ID] = value
-		}
-
 		// Retrieve party relationships
 		if strings.HasPrefix(attrId, "relationships[") {
 

@@ -9,7 +9,7 @@ export const URL = {
     attributes: '/settings/attributes',
     newAttribute: '/settings/attributes/new',
     newCasetype: '/settings/casetypes/new',
-    new_individual: '/individuals/new',
+    newIndividual: '/individuals/new',
     new_partytype: '/settings/partytypes/new',
     newRelationshipType: '/settings/relationshiptypes/new',
     casetypes: '/settings/casetypes',

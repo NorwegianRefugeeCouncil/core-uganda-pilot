@@ -23,8 +23,9 @@ export default class IndividualOverviewPage {
             .get(selector.search)
             .type(value)
             .get(selector.searchBtn)
-            .wait(2000) // server is slow
+            .wait(250) // server is slow
             .click()
+            .wait(250)
             .get(selector.individual)
             .last()
             .invoke('attr', 'href');

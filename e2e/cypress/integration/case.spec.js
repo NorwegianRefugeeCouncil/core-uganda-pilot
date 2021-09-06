@@ -2,7 +2,6 @@ import { URL } from '../helpers';
 import ids from '../fixtures/ids.json';
 import CasesOverviewPage from '../pages/casesOverview.page';
 import NewCasePage from '../pages/newCase.page';
-import CasePage from '../pages/case.page';
 import CaseTypePage from '../pages/caseTypePage';
 import testTemplate from '../fixtures/test_casetemplate.json';
 import CasetypesOverviewPage from '../pages/casetypesOverview.page';
