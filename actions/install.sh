@@ -1,8 +1,8 @@
 #!/bin/bash
 
 if [ ! -e "install.sh" ]; then
-  echo "This script needs to be run from within its directory"
-  exit 1
+	echo "This script needs to be run from within its directory"
+	exit 1
 fi
 
 gitconfig='../.git/config'

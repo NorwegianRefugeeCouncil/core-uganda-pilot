@@ -10,7 +10,9 @@ A case management tool for the humanitarian sector - keep track of beneficiaries
 
 __nb__ Use your IDE of choice, but be aware this repository includes convenience scripts for the GoLand IDE.
 
-### 1. Install dependencies
+### Setup
+
+#### 1. Install dependencies
 
 (GoLand should do this automatically the first time you open the directory)
 ```bash
@@ -19,59 +21,67 @@ go get ./cmd
 cd ../e2e
 npm install
 ```
+You will also need to install `air`: [https://github.com/cosmtrek/air](https://github.com/cosmtrek/air). Make sure `air` is available in `bash`'s `PATH
 
-### 2. Start the backend services
-```bash
-cd api
-make up
-```
+And Typescript: `npm install -g typescript`. -> make sure `tsc` is available from bash
 
-### 3. Generate certificates (you only have to do this once)
+**note**, all the following commands are run from the `api` directory, unless otherwise specified
+
+
+#### 2. Generate certificates (you only have to do this once)
+
 ```bash
 make gen-certs
 ```
 
-### 4. Start the development server
-In Goland, choose the `start` configuration from the top-right menu and press the green arrow.
+#### 3. Install git hooks
 
-or
+Navigate to the `actions` directory
+```bash
+./install.sh
+```
+
+### Launch
+
+#### 1. Start the backend services
+
+With the `docker` daemon running in the background, the following command reads from a docker-compose config and launches mongoDB, hydra (auth) and redis.
+
+```bash
+make up
+```
+
+
+#### 2. Start the dev server
+ 
  
  ```bash
+ # to launch the server
  make serve
+ 
+ # to launch the server in watch (hot reload) mode
+ make watch
  ```
+ 
+ These are also available as run configs from Goland
 
-### 5. Endpoints:
+### Endpoints:
  - webapp: [http://localhost:9000](http://localhost:9000)
  - mongo express: [http://localhost:8090](http://localhost:8090)
  
 
-### 6. Login:
+### Login:
 
-To login into the webapp, use the following credentials:
+To log into the webapp, you may use the following credentials:
 - username: __courtney.lare@email.com__
 - password: __password__
 
 
 ## Running tests
- 
-### Integration tests
- 
-In Goland, choose the `iam test` configuration from the top-right menu and press the green arrow.
 
-or
+With the git hook installed, tests will run locally automatically before every push. If any tests fail, the push operation will be aborted.
 
-```
-cd api
-make test
-```
+You can run tests manually: with `make test-iam`, `make test-cms`, `make test-attachments` and `make test-e2e`
 
-### E2E tests
-
-
-In Goland, choose the `e2e (browser)` configuration from the top-right menu and press the green arrow.
-
-```bash
-cd e2e
-npm run open
-```
+Or via the run configurations available in Goland.
 

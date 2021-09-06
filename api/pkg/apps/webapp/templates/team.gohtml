@@ -114,30 +114,14 @@
             document.getElementById('partySelector').setAttribute('data-party-id', event.target.id);
         };
 
-        // Get First Name from party attribute list, or return blank
-        const firstNameFromAttrs = (attrs) => {
-            let firstName = '';
-            Object.keys(attrs).forEach(
-                k => {
-                    if (k == "{{.FirstNameAttribute.ID}}") {
-                        firstName = attrs[k];
-                    }
-                },
-            );
-            return firstName;
-        };
-
-        // Get Last Name from party attribute list, or return blank
-        const lastNameFromAttrs = (attrs) => {
-            let lastName = '';
-            Object.keys(attrs).forEach(
-                k => {
-                    if (k == "{{.LastNameAttribute.ID}}") {
-                        lastName = attrs[k];
-                    }
-                },
-            );
-            return lastName;
+        // Get Display Name from party attribute list, or return blank
+        const displayNameFromAttrs = (attrs) => {
+            for (const id of Object.keys(attrs)) {
+                if (id === "{{.DisplayNameAttribute.ID}}") {
+                    return attrs[id];
+                }
+            }
+            return '';
         };
 
         // Add listener for party search box
@@ -169,7 +153,7 @@
                             newListItem.classList.add('dropdown-item');
                             newListItem.classList.add('partySelectorItem');
                             newListItem.onclick = onPartyListItemClick;
-                            let displayText = `${lastNameFromAttrs(party.attributes)}, ${firstNameFromAttrs(party.attributes)}`;
+                            let displayText = `${displayNameFromAttrs(party.attributes)}`;
                             newListItem.appendChild(
                                 document.createTextNode(displayText),
                             );

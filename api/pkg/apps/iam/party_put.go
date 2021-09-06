@@ -26,6 +26,7 @@ func (s *Server) putParty(w http.ResponseWriter, req *http.Request) {
 	}
 
 	r.Attributes = payload.Attributes
+
 	r.PartyTypeIDs = payload.PartyTypeIDs
 
 	errList := ValidateParty(r, validation.NewPath(""))

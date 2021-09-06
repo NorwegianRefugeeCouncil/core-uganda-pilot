@@ -54,6 +54,7 @@ type ServerOptions struct {
 	CMSHTTPClient       *http.Client
 	LoginHTTPClient     *http.Client
 	PublicOauth2Config  *oauth2.Config
+	StaticDir           string
 }
 
 func NewServer(options *ServerOptions) (*Server, error) {
@@ -134,6 +135,7 @@ func NewServer(options *ServerOptions) (*Server, error) {
 	router.Path("/settings/casetypes/{id}").HandlerFunc(h.CaseType)
 	router.Path("/comments").Methods("POST").HandlerFunc(h.PostComment)
 	router.Path("/relationships/pickparty").HandlerFunc(h.PickRelationshipParty)
+	router.Path("/static/js/{file}").HandlerFunc(h.serveJS(options.StaticDir))
 
 	h.router = router
 

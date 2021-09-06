@@ -162,7 +162,7 @@
                                       aria-describedby="{{$name}}}Feedback"
                                       required
                             >
-                                {{- if .CaseType.Template}}{{.CaseType.Pretty}}{{end -}}
+                                {{- if .CaseType.Form}}{{.CaseType.Pretty}}{{end -}}
                             </textarea>
                             <div id="{{$name}}Feedback" class="invalid-feedback">
                                 {{range $errs}}
@@ -178,7 +178,7 @@
                                       {{if .CaseType}}readonly{{end}}
                                       required
                             >
-                                {{- if .CaseType.Template}}{{.CaseType.Pretty}}{{end -}}
+                                {{- if .CaseType.Form}}{{.CaseType.Pretty}}{{end -}}
                             </textarea>
                         {{end}}
                     </div>

@@ -206,8 +206,10 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	valuedKase := form.NewValuedForm(kase.Form, kase.FormData, nil)
 	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "case", map[string]interface{}{
 		"Case":             kase,
+		"CaseForm":         valuedKase,
 		"Parent":           parent,
 		"CaseTypes":        kaseTypes,
 		"Recipient":        recipientParty,
@@ -291,9 +293,15 @@ func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
+	var phorm form.ValuedForm
+	if caseType != nil {
+		phorm = form.NewValuedForm(caseType.Form, nil, nil)
+	}
+
 	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "casenew", map[string]interface{}{
 		"PartyID":   qry.Get("partyId"),
 		"CaseType":  caseType,
+		"Form":      phorm,
 		"Team":      team,
 		"CaseTypes": caseTypes,
 		"Parties":   p,
@@ -319,14 +327,19 @@ func (s *Server) PostCase(w http.ResponseWriter, req *http.Request) {
 	}
 
 	kase, err := s.getCase(ctx, cmsClient, caseID, referralCaseTypeID)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
 
 	if err := req.ParseForm(); err != nil {
 		return
 	}
+	values := req.Form
 
 	if kase.CaseTypeID == "" {
 		// we need to get the caseTypeId from the form data
-		kase.CaseTypeID = req.Form.Get("caseTypeId")
+		kase.CaseTypeID = values.Get("caseTypeId")
 		if kase.CaseTypeID == "" {
 			err = fmt.Errorf("unable to detect case type id for new case")
 			return
@@ -338,35 +351,31 @@ func (s *Server) PostCase(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	err = unmarshalCaseFormData(kase, caseType.Template, req.Form)
-	if err != nil {
-		return
-	}
+	kase.TeamID = values.Get("teamId")
+	kase.PartyID = values.Get("partyId")
+	kase.Done = values.Get("done") == "on"
+	kase.Form = caseType.Form
+	kase.FormData = req.Form
 
+	var storedCase *cms.Case
 	var isNewCase = kase.ID == ""
 	if isNewCase {
-		subject := ctx.Value("Subject")
-		if subject == nil {
-			kase.CreatorID = ""
-		} else {
-			kase.CreatorID = subject.(string)
-		}
 		kase.IntakeCase = caseType.IntakeCaseType
-		kase, err = cmsClient.Cases().Create(ctx, kase)
+		storedCase, err = cmsClient.Cases().Create(ctx, kase)
 	} else {
-		kase, err = cmsClient.Cases().Update(ctx, kase)
+		storedCase, err = cmsClient.Cases().Update(ctx, kase)
 	}
 	if err != nil {
 		if status, ok := err.(*validation.Status); ok {
-			validatedElements := zipTemplateAndErrors(status.Errors, kase.Template)
-			s.json(w, status.Code, validatedElements)
+			formValidation := makeFormValidation(status.Errors, kase.Form)
+			s.json(w, status.Code, formValidation)
 		} else {
 			s.Error(w, err)
 		}
 		return
 	}
 
-	s.redirectAfterPost(w, req, kase, isNewCase)
+	s.redirectAfterPost(w, req, storedCase, isNewCase)
 
 	return
 }
@@ -425,31 +434,19 @@ func (s *Server) redirectAfterPost(w http.ResponseWriter, req *http.Request, pos
 	return
 }
 
-// zipTemplateAndErrors returns a slice of form.FormElement populated with validated template form elements.
-func zipTemplateAndErrors(errors validation.ErrorList, template *cms.CaseTemplate) []form.FormElement {
-	var formElements []form.FormElement
-	for _, element := range template.FormElements {
-		if errs := errors.FindFamily(element.Attributes.Name); len(*errs) > 0 {
-			element.Errors = errs
-			formElements = append(formElements, element)
-		}
-	}
-	return formElements
-}
-
 // unmarshalCaseFormData retrieves entries from a url.Values and applies them to a cms.Case object via a cms.CaseTemplate.
-func unmarshalCaseFormData(c *cms.Case, template *cms.CaseTemplate, values url.Values) error {
+func unmarshalCaseFormData(c *cms.Case, phorm form.Form, values url.Values) error {
 	c.CaseTypeID = values.Get("caseTypeId")
 	c.PartyID = values.Get("partyId")
 	c.Done = values.Get("done") == "on"
 	c.ParentID = values.Get("parentId")
 	c.TeamID = values.Get("teamId")
-	var formElements []form.FormElement
-	for _, formElement := range template.FormElements {
-		formElement.Attributes.Value = values[formElement.Attributes.Name]
-		formElements = append(formElements, formElement)
+	var formcontrols []form.Control
+	for _, control := range phorm.Controls {
+		control.DefaultValue = values[control.Name]
+		formcontrols = append(formcontrols, control)
 	}
-	c.Template = &cms.CaseTemplate{FormElements: formElements}
+	c.Form = form.Form{Controls: formcontrols}
 	return nil
 }
 

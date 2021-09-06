@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
+	"github.com/nrc-no/core/pkg/form"
 	"github.com/nrc-no/core/pkg/sessionmanager"
 	"github.com/nrc-no/core/pkg/validation"
 	"golang.org/x/sync/errgroup"
@@ -256,9 +257,9 @@ func UnmarshalCaseTypeFormData(c *cms.CaseType, values url.Values) error {
 	c.TeamID = values.Get("teamId")
 	templateString := values.Get("template")
 	if templateString == "" {
-		c.Template = &cms.CaseTemplate{}
+		c.Form = form.Form{}
 	} else {
-		if err := json.Unmarshal([]byte(templateString), &c.Template); err != nil {
+		if err := json.Unmarshal([]byte(templateString), &c.Form); err != nil {
 			return err
 		}
 	}

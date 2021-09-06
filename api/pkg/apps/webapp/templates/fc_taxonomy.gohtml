@@ -1,0 +1,35 @@
+{{define "taxonomy"}}
+    <div class="mb-3">
+        <div class="card form">
+            <div class="card-body" data-testid="test-taxonomy">
+                <span>{{.Label}}</span>
+                <p class="form-text">{{.Description}}</p>
+                <div class="form mb-3" {{if .Readonly}}style="display: none"{{end}}>
+                    <label for="programme-area-{{.Name}}">Programme Area</label>
+                    <select id="programme-area-{{.Name}}" class="form-select">
+                    </select>
+                </div>
+
+                <div id="button-container-{{.Name}}" class="mb-3"
+                     {{if .Readonly}}style="display: none"{{end}}>
+                    <button id="btn-add-{{.Name}}" type="button" class="btn btn-primary"
+                            data-testid="add-taxonomy-btn">Add
+                    </button>
+                    <button id="btn-clear-{{.Name}}" type="button" class="btn btn-primary">Clear</button>
+                </div>
+                <div id="badge-container-{{.Name}}" class="mb-3" data-testid="badge-container"></div>
+
+
+            </div>
+            <input id="{{.Name}}"
+                   class="taxonomy"
+                   name="{{.Name}}"
+                   value="{{if .Value}}{{index .Value 0}}{{end}}"
+                   type="hidden"
+                   placeholder="{{.Placeholder}}"
+                   {{if .Validation.Required}}required{{end}}>
+        </div>
+        {{template "fc_feedback" .}}
+    </div>
+    {{template "taxonomy_script" .}}
+{{end}}

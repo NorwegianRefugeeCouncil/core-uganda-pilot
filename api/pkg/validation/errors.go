@@ -10,7 +10,12 @@ import (
 
 // formatField lets us use field names without the leading "." which paths have by default
 func formatField(field string) string {
-	lead := field[0:1]
+	var lead string
+	if len(field) > 0 {
+		lead = field[0:1]
+	} else {
+		lead = "."
+	}
 	if lead != "." && lead != "[" {
 		field = "." + field
 	}
@@ -25,7 +30,11 @@ func (v ErrorList) Find(field string) *ErrorList {
 			errs = append(errs, err)
 		}
 	}
-	return &errs
+	if len(errs) > 0 {
+		return &errs
+	} else {
+		return nil
+	}
 }
 
 func (v ErrorList) FindFamily(field string) *ErrorList {
@@ -40,7 +49,11 @@ func (v ErrorList) FindFamily(field string) *ErrorList {
 			errs = append(errs, fieldError)
 		}
 	}
-	return &errs
+	if len(errs) > 0 {
+		return &errs
+	} else {
+		return nil
+	}
 }
 
 func (v ErrorList) HasError(field string, errType ErrorType) bool {

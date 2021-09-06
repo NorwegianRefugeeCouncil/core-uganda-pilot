@@ -19,5 +19,4 @@ func (s *Server) getCountry(w http.ResponseWriter, req *http.Request) {
 	}
 
 	s.json(w, http.StatusOK, ret)
-
 }

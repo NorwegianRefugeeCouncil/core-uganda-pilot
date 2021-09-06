@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "module": "es6",
+    "target": "es6",
+    "lib": [
+      "dom",
+      "esnext"
+    ],
+    "sourceMap": false,
+    "outDir": "./tmp/static"
+  },
+  "include": [
+    "./pkg/apps/webapp/static"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

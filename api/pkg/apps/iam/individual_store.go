@@ -19,17 +19,17 @@ func NewIndividualStore(mongoClientFn utils.MongoClientFn, database string) *Ind
 	return store
 }
 
-func (s *IndividualStore) create(ctx context.Context, individual *Individual) error {
+func (s *IndividualStore) create(ctx context.Context, individual *Individual) (*Individual, error) {
 	individual.AddPartyType(IndividualPartyType.ID)
 	collection, err := s.getCollection(ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	_, err = collection.InsertOne(ctx, individual)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return individual, nil
 }
 
 func (s *IndividualStore) get(ctx context.Context, ID string) (*Individual, error) {
@@ -48,10 +48,10 @@ func (s *IndividualStore) get(ctx context.Context, ID string) (*Individual, erro
 	return individual, nil
 }
 
-func (s *IndividualStore) upsert(ctx context.Context, individual *Individual) error {
+func (s *IndividualStore) upsert(ctx context.Context, individual *Individual) (*Individual, error) {
 	collection, err := s.getCollection(ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	individual.AddPartyType(IndividualPartyType.ID)
 	_, err = collection.UpdateOne(ctx, bson.M{
@@ -64,9 +64,9 @@ func (s *IndividualStore) upsert(ctx context.Context, individual *Individual) er
 	}, options.Update().SetUpsert(true))
 
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return individual, nil
 }
 
 func (s *IndividualStore) list(ctx context.Context, listOptions IndividualListOptions) (*IndividualList, error) {
@@ -135,7 +135,7 @@ func (s *IndividualStore) list(ctx context.Context, listOptions IndividualListOp
 
 func getFindOptions(currentPage int, maxPerPage int, listOptions IndividualListOptions) *options.FindOptions {
 	findOptions := options.Find()
-	findOptions.SetSort(bson.D{{Key: "attributes." + LastNameAttribute.ID, Value: pagination.GetSortOptionType(listOptions.Sort)}})
+	findOptions.SetSort(bson.D{{Key: "attributes." + DisplayNameAttribute.ID, Value: pagination.GetSortOptionType(listOptions.Sort)}})
 	findOptions.SetSkip(int64((currentPage - 1) * maxPerPage))
 	findOptions.SetLimit(int64(maxPerPage))
 	return findOptions

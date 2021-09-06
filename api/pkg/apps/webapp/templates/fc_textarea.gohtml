@@ -1,0 +1,19 @@
+{{define "textarea"}}
+    <div class="form mb-3">
+        {{template "label" .}}
+        <textarea id="{{.Name}}"
+                  name="{{.Name}}"
+                  class="form-control"
+                  style="height: 100px"
+                  placeholder="{{.Placeholder}}"
+                  data-testid="test-textarea"
+                  {{if .Validation.Required}}required{{end}}
+                aria-describedby="{{.Name}}Feedback"
+                {{if .Readonly}}disabled readonly{{end}}
+            >
+                {{- if .Value}}{{index .Value 0}}{{end -}}
+            </textarea>
+        <div class="form-text">{{.Description}}</div>
+        {{template "fc_feedback" .}}
+    </div>
+{{end}}

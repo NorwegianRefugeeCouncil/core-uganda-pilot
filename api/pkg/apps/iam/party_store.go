@@ -32,14 +32,14 @@ func newPartyStore(ctx context.Context, mongoClientFn utils.MongoClientFn, datab
 		return nil, err
 	}
 
-	// first name and last name full text index
+	// full and display names full text index
 	if _, err := collection.Indexes().CreateOne(ctx, mongo.IndexModel{
 		Keys: bson.D{
 			{
-				Key: "attributes." + FirstNameAttribute.ID, Value: "text",
+				Key: "attributes." + FullNameAttribute.ID, Value: "text",
 			},
 			{
-				Key: "attributes." + LastNameAttribute.ID, Value: "text",
+				Key: "attributes." + DisplayNameAttribute.ID, Value: "text",
 			},
 		},
 	}); err != nil {

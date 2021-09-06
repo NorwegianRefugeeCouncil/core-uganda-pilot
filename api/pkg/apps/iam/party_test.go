@@ -14,9 +14,9 @@ func (s *Suite) TestParty() {
 }
 
 func (s *Suite) testPartyAPI() {
-	party := s.mockParties(1)[0]
+	party := mockParties(1)[0]
 	party.PartyTypeIDs = []string{IndividualPartyType.ID}
-	attribute := s.mockAttributes(1)[0]
+	attribute := mockPartyAttributeDefinitions(1)[0]
 	party.Attributes.Set(attribute.ID, "mock")
 
 	// CREATE
@@ -67,7 +67,7 @@ func (s *Suite) testPartyListFilter() {
 	nAttributes := 2
 
 	// Make mock structs
-	parties := s.mockParties(nParties)
+	parties := mockParties(nParties)
 	var partyTypeIds []string
 	for i := 0; i < nPartyTypes; i++ {
 		partyTypeIds = append(partyTypeIds, newUUID())

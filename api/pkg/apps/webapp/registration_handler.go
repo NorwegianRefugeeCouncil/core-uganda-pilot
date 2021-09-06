@@ -19,9 +19,9 @@ func NewIndividualRegistrationHandler(s *Server, i *iam.Individual, r *http.Requ
 func (irh *IndividualRegistrationRequestHandler) IndividualExists() bool {
 	necessaryDataExistsForIndividual := true
 
-	expectedAttributes := []*iam.Attribute{
-		&iam.FirstNameAttribute,
-		&iam.LastNameAttribute,
+	expectedAttributes := []*iam.PartyAttributeDefinition{
+		&iam.FullNameAttribute,
+		&iam.DisplayNameAttribute,
 		&iam.GenderAttribute,
 		&iam.DisplacementStatusAttribute,
 		&iam.BirthDateAttribute,

@@ -39,7 +39,7 @@ func (s *Server) postIndividual(w http.ResponseWriter, req *http.Request) {
 
 	individual.Attributes = attrs
 
-	if err := s.individualStore.create(ctx, &individual); err != nil {
+	if _, err := s.individualStore.create(ctx, &individual); err != nil {
 		s.error(w, err)
 		return
 	}

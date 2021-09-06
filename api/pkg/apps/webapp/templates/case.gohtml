@@ -61,9 +61,9 @@
 
         <div class="card mb-4">
             <div class="card-body">
-                <form action="/cases/{{$caseId}}" method="post">
-                    {{range .Case.Template.FormElements}}
-                        {{template "formelement" .}}
+                <form id="case-form" action="/cases/{{$caseId}}" method="post">
+                    {{range .CaseForm.Controls}}
+                        {{template "formcontrol" .}}
                     {{end}}
                     {{if not .Case.Done}}
                         <div class="form-check mb-3">
@@ -78,10 +78,11 @@
                                 Done
                             </label>
                         </div>
-                        <button class="mb-5 btn btn-primary"
-                                type="submit"
+                        <button id="case-submit-btn"
+                                class="mb-5 btn btn-primary"
                                 data-testid="save-btn"
-                                {{ if .ReferralCaseType}}disabled{{end}}>
+                                {{ if .ReferralCaseType}}disabled{{end}}
+                        >
                             Save
                         </button>
                     {{end}}
@@ -195,7 +196,18 @@
         </div>
 
     </div>
+    <script type="module">
+        import { validateServerSide, validateClientSide } from '/static/js/validation.js';
 
+        const submitBtn = document.querySelector('#case-submit-btn');
+        if (submitBtn != null) {
+            const form = document.querySelector('#case-form');
+            submitBtn.onclick = event => {
+                event.preventDefault();
+                if (validateClientSide([form])) validateServerSide([form], form.action);
+            };
+        }
+    </script>
     </body>
     </html>
 {{end}}

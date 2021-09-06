@@ -18,6 +18,7 @@ func (s *Server) putIndividual(w http.ResponseWriter, req *http.Request) {
 		s.error(w, err)
 		return
 	}
+	individual.ID = id
 
 	_, err := s.individualStore.get(ctx, id)
 	if err != nil {
@@ -32,11 +33,11 @@ func (s *Server) putIndividual(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := s.individualStore.upsert(ctx, &individual); err != nil {
+	updated, err := s.individualStore.upsert(ctx, &individual)
+	if err != nil {
 		s.error(w, err)
 		return
 	}
 
-	s.json(w, http.StatusOK, &individual)
-
+	s.json(w, http.StatusOK, &updated)
 }

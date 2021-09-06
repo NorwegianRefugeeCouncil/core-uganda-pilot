@@ -8,15 +8,15 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type AttributeStore struct {
+type PartyAttributeDefinitionStore struct {
 	getCollection utils.MongoCollectionFn
 }
 
-func newAttributeStore(ctx context.Context, mongoClientFn utils.MongoClientFn, database string) (*AttributeStore, error) {
+func newAttributeStore(ctx context.Context, mongoClientFn utils.MongoClientFn, database string) (*PartyAttributeDefinitionStore, error) {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	store := &AttributeStore{
+	store := &PartyAttributeDefinitionStore{
 		getCollection: utils.GetCollectionFn(database, "attributes", mongoClientFn),
 	}
 
@@ -36,9 +36,9 @@ func newAttributeStore(ctx context.Context, mongoClientFn utils.MongoClientFn, d
 	return store, nil
 }
 
-// list returns an AttributeList. If AttributeListOptions are supplied, list returns a filtered list containing
-// only those items whose Attribute.PartyTypeIDs field contains all the elements given in the query.
-func (s *AttributeStore) list(ctx context.Context, listOptions AttributeListOptions) (*AttributeList, error) {
+// list returns an PartyAttributeDefinitionList. If PartyAttributeDefinitionListOptions are supplied, list returns a filtered list containing
+// only those items whose PartyAttributeDefinition.PartyTypeIDs field contains all the elements given in the query.
+func (s *PartyAttributeDefinitionStore) list(ctx context.Context, listOptions PartyAttributeDefinitionListOptions) (*PartyAttributeDefinitionList, error) {
 
 	filter := bson.M{}
 
@@ -57,12 +57,12 @@ func (s *AttributeStore) list(ctx context.Context, listOptions AttributeListOpti
 	if err != nil {
 		return nil, err
 	}
-	var list []*Attribute
+	var list []*PartyAttributeDefinition
 	for {
 		if !cursor.Next(ctx) {
 			break
 		}
-		var a Attribute
+		var a PartyAttributeDefinition
 		if err := cursor.Decode(&a); err != nil {
 			return nil, err
 		}
@@ -72,13 +72,13 @@ func (s *AttributeStore) list(ctx context.Context, listOptions AttributeListOpti
 		return nil, cursor.Err()
 	}
 
-	return &AttributeList{
+	return &PartyAttributeDefinitionList{
 		Items: list,
 	}, nil
 
 }
 
-func (s *AttributeStore) create(ctx context.Context, attribute *Attribute) error {
+func (s *PartyAttributeDefinitionStore) create(ctx context.Context, attribute *PartyAttributeDefinition) error {
 	collection, err := s.getCollection(ctx)
 	if err != nil {
 		return err
@@ -90,7 +90,7 @@ func (s *AttributeStore) create(ctx context.Context, attribute *Attribute) error
 	return nil
 }
 
-func (s *AttributeStore) get(ctx context.Context, id string) (*Attribute, error) {
+func (s *PartyAttributeDefinitionStore) get(ctx context.Context, id string) (*PartyAttributeDefinition, error) {
 	collection, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
@@ -101,14 +101,14 @@ func (s *AttributeStore) get(ctx context.Context, id string) (*Attribute, error)
 	if result.Err() != nil {
 		return nil, result.Err()
 	}
-	var a Attribute
+	var a PartyAttributeDefinition
 	if err := result.Decode(&a); err != nil {
 		return nil, err
 	}
 	return &a, nil
 }
 
-func (s *AttributeStore) update(ctx context.Context, attribute *Attribute) error {
+func (s *PartyAttributeDefinitionStore) update(ctx context.Context, attribute *PartyAttributeDefinition) error {
 	collection, err := s.getCollection(ctx)
 	if err != nil {
 		return err
@@ -117,10 +117,10 @@ func (s *AttributeStore) update(ctx context.Context, attribute *Attribute) error
 		"id": attribute.ID,
 	}, bson.M{
 		"$set": bson.M{
-			"name":         attribute.Name,
-			"translations": attribute.Translations,
-			"isPii":        attribute.IsPersonallyIdentifiableInfo,
+			"countryId":    attribute.CountryID,
 			"partyTypeIds": attribute.PartyTypeIDs,
+			"isPii":        attribute.IsPersonallyIdentifiableInfo,
+			"formControl":  attribute.FormControl,
 		},
 	})
 	if err != nil {

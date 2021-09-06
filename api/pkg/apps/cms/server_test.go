@@ -56,47 +56,45 @@ func uuidSlice(n int) []string {
 	return s
 }
 
-func mockCaseTemplate(name string) *CaseTemplate {
-	return &CaseTemplate{
-		FormElements: []form.FormElement{{
-			Type: "textarea",
-			Attributes: form.FormElementAttributes{
-				Label: name,
-				Name:  name,
-			},
-		}},
-	}
+func mockForm() form.Form {
+	return FormWithAllControlTypes
 }
 
 func (s *Suite) mockCaseTypes(n int) []*CaseType {
 	var caseTypes []*CaseType
 	for i := 0; i < n; i++ {
-		caseTypes = append(caseTypes, aMockCaseType())
+		caseTypes = append(caseTypes, mockCaseType())
 	}
 	return caseTypes
 }
 
-func aMockCaseType() *CaseType {
+func mockCaseType() *CaseType {
 	return &CaseType{
+		ID:          newUUID(),
 		Name:        "mock",
 		PartyTypeID: newUUID(),
 		TeamID:      newUUID(),
-		Template:    mockCaseTemplate("mock"),
+		Form:        mockForm(),
 	}
 }
 
-func aMockCase() *Case {
-	return &Case{
-		TeamID:   newUUID(),
-		PartyID:  newUUID(),
-		Template: mockCaseTemplate("mock"),
+func mockCase(caseType *CaseType) *Case {
+	kase := &Case{
+		PartyID:   newUUID(),
+		TeamID:    newUUID(),
+		CreatorID: newUUID(),
 	}
+	if caseType != nil {
+		kase.CaseTypeID = caseType.ID
+		kase.Form = caseType.Form
+	}
+	return kase
 }
 
 func mockCases(n int) []*Case {
 	var cases []*Case
 	for i := 0; i < n; i++ {
-		cases = append(cases, aMockCase())
+		cases = append(cases, mockCase(nil))
 	}
 	return cases
 }

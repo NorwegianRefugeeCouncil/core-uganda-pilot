@@ -153,8 +153,8 @@ func (s *Server) dangerouslySetAuthenticatedUserUsingEmail(w http.ResponseWriter
 
 	var profile = &Claims{}
 	profile.Email = authUser.Get(iam.EMailAttribute.ID)
-	profile.FamilyName = authUser.Get(iam.LastNameAttribute.ID)
-	profile.GivenName = authUser.Get(iam.FirstNameAttribute.ID)
+	profile.DisplayName = authUser.Get(iam.DisplayNameAttribute.ID)
+	profile.FullName = authUser.Get(iam.FullNameAttribute.ID)
 	profile.Subject = authUser.ID
 
 	session, err := s.sessionManager.Get(req)

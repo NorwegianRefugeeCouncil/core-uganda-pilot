@@ -1,0 +1,18 @@
+{{define "tel"}}
+    <div class="form mb-3">
+        {{template "label" .}}
+        <input id="{{.Control.Name}}"
+               name="{{.Control.Name}}"
+               value="{{if .Value}}{{index .Value 0}}{{end}}"
+               class="form-control"
+               type="tel"
+               data-testid="test-tel"
+               placeholder="{{.Control.Placeholder}}"
+               {{if .Control.Validation.Required}}required{{end}}
+               aria-describedby="{{.Control.Name}}Feedback"
+                {{if .Control.Readonly}}disabled readonly{{end}}
+        >
+        <div class="form-text">{{.Control.Description}}</div>
+        {{template "fc_feedback" .}}
+    </div>
+{{end}}

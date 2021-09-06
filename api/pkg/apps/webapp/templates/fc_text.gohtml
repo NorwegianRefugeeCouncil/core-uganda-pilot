@@ -1,0 +1,18 @@
+{{define "text"}}
+    <div class="form mb-3">
+        {{template "label" .}}
+        <input id="{{.Name}}"
+               name="{{.Name}}"
+               value="{{if .Value}}{{index .Value 0}}{{end}}"
+               class="form-control"
+               type="text"
+               placeholder="{{.Placeholder}}"
+               data-testid="test-text"
+               {{if .Validation.Required}}required{{end}}
+               aria-describedby="{{.Name}}Feedback"
+                {{if .Readonly}}disabled readonly{{end}}
+        >
+        <div class="form-text">{{.Description}}</div>
+        {{template "fc_feedback" .}}
+    </div>
+{{end}}

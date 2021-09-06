@@ -17,8 +17,8 @@ type Claims struct {
 	PreferredUsername string            `json:"preferred_username"`
 	EmailVerified     bool              `json:"email_verified"`
 	Scope             string            `json:"scope"`
-	FamilyName        string            `json:"family_name"`
-	GivenName         string            `json:"given_name"`
+	DisplayName       string            `json:"display_name"`
+	FullName          string            `json:"full_name"`
 	Name              string            `json:"name"`
 	RealmAccess       Roles             `json:"realm_access"`
 	ResourceAccess    ResourceAccessMap `json:"resource_access"`
@@ -30,8 +30,8 @@ type UserInfo struct {
 	EmailVerified     bool   `json:"email_verified"`
 	Name              string `json:"name"`
 	PreferredUsername string `json:"preferred_username"`
-	GivenName         string `json:"given_name"`
-	FamilyName        string `json:"family_name"`
+	FullName          string `json:"full_name"`
+	DisplayName       string `json:"display_name"`
 }
 
 type AuthenticationContext struct {

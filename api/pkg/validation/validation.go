@@ -3,6 +3,7 @@ package validation
 import (
 	uuid "github.com/satori/go.uuid"
 	"net/mail"
+	"net/url"
 	"regexp"
 	"strconv"
 	"unicode"
@@ -30,6 +31,8 @@ func IsValidUUID(s string) bool {
 	_, err := uuid.FromString(s)
 	return err == nil
 }
+
+var InvalidUUIDDetail = "invalid UUID"
 
 var alphaRegexp = regexp.MustCompile(`^[\w\-()]+( [\w\-()]+)*$`)
 
@@ -62,7 +65,7 @@ func IsValidEmail(s string) bool {
 	return err == nil
 }
 
-var InvalidEmailDetail = "Invalid email"
+var InvalidEmailDetail = "invalid email"
 
 func IsValidPassword(s string) bool {
 	// TODO
@@ -75,7 +78,7 @@ func IsValidPhone(s string) bool {
 	return ugandaPhoneFormat.MatchString(s)
 }
 
-var InvalidPhoneDetail = "Invalid phone number"
+var InvalidPhoneDetail = "invalid phone number"
 
 // input[type="date"] will always yield yyyy-mm-dd regardless of locale (and user facing format)
 var dateFormat = regexp.MustCompile(`^\d{4}-(0\d|1[012])-([012]\d|3[01])`)
@@ -84,4 +87,11 @@ func IsValidDate(s string) bool {
 	return dateFormat.MatchString(s)
 }
 
-var InvalidDateDetail = "Invalid date"
+var InvalidDateDetail = "invalid date"
+
+func IsValidURL(s string) bool {
+	_, err := url.ParseRequestURI(s)
+	return err == nil
+}
+
+var InvalidURLDetail = "invalid URL"

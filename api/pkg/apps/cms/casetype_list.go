@@ -7,16 +7,15 @@ func (s *Server) ListCaseTypes(w http.ResponseWriter, req *http.Request) {
 
 	listOptions := &CaseTypeListOptions{}
 	if err := listOptions.UnmarshalQueryParameters(req.URL.Query()); err != nil {
-		s.Error(w, err)
+		s.error(w, err)
 		return
 	}
 
-	ret, err := s.caseTypeStore.List(ctx, *listOptions)
+	ret, err := s.caseTypeStore.list(ctx, *listOptions)
 	if err != nil {
-		s.Error(w, err)
+		s.error(w, err)
 		return
 	}
 
-	s.JSON(w, http.StatusOK, ret)
-
+	s.json(w, http.StatusOK, ret)
 }
