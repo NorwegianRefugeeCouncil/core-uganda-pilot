@@ -20,10 +20,11 @@ func newAttributeStore(ctx context.Context, mongoClientFn utils.MongoClientFn, d
 		getCollection: utils.GetCollectionFn(database, "attributes", mongoClientFn),
 	}
 
-	collection, err := store.getCollection(ctx)
+	collection, done, err := store.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer done()
 
 	if _, err := collection.Indexes().CreateOne(ctx,
 		mongo.IndexModel{
@@ -48,10 +49,11 @@ func (s *AttributeStore) list(ctx context.Context, listOptions AttributeListOpti
 		}
 	}
 
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer done()
 
 	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
@@ -79,10 +81,12 @@ func (s *AttributeStore) list(ctx context.Context, listOptions AttributeListOpti
 }
 
 func (s *AttributeStore) create(ctx context.Context, attribute *Attribute) error {
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return err
 	}
+	defer done()
+
 	_, err = collection.InsertOne(ctx, attribute)
 	if err != nil {
 		return err
@@ -91,10 +95,12 @@ func (s *AttributeStore) create(ctx context.Context, attribute *Attribute) error
 }
 
 func (s *AttributeStore) get(ctx context.Context, id string) (*Attribute, error) {
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer done()
+
 	result := collection.FindOne(ctx, bson.M{
 		"id": id,
 	})
@@ -109,10 +115,12 @@ func (s *AttributeStore) get(ctx context.Context, id string) (*Attribute, error)
 }
 
 func (s *AttributeStore) update(ctx context.Context, attribute *Attribute) error {
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return err
 	}
+	defer done()
+
 	_, err = collection.UpdateOne(ctx, bson.M{
 		"id": attribute.ID,
 	}, bson.M{
