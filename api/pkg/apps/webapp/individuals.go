@@ -13,6 +13,7 @@ import (
 	"github.com/nrc-no/core/pkg/teamstatusctrl"
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/nrc-no/core/pkg/validation"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 	"net/http"
 	"strconv"
@@ -225,10 +226,14 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		return err
 	})
 
+	countryID := s.GetCountryFromLoginUser(w, req)
+	logrus.Infof("Country id: %s", countryID)
+
 	g.Go(func() error {
 		var err error
 		attrs, err = iamClient.Attributes().List(waitCtx, iam.AttributeListOptions{
 			PartyTypeIDs: []string{iam.IndividualPartyType.ID},
+			CountryIDs: []string{countryID},
 		})
 		return err
 	})
