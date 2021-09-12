@@ -162,6 +162,7 @@ type RelationshipTypeClient interface {
 
 type AttributeListOptions struct {
 	PartyTypeIDs []string
+	CountryIDs []string
 }
 
 func (a *AttributeListOptions) MarshalQueryParameters() (url.Values, error) {

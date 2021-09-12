@@ -49,6 +49,12 @@ func (s *AttributeStore) list(ctx context.Context, listOptions AttributeListOpti
 		}
 	}
 
+	if len(listOptions.CountryIDs) == 1 {
+		filter["countryId"] = bson.M{
+			"countryId": listOptions.CountryIDs[0],
+		}
+	}
+
 	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
