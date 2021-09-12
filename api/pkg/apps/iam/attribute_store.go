@@ -3,7 +3,6 @@ package iam
 import (
 	"context"
 	"github.com/nrc-no/core/pkg/utils"
-	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -50,7 +49,6 @@ func (s *AttributeStore) list(ctx context.Context, listOptions AttributeListOpti
 		}
 	}
 
-	logrus.Infof("CountryIDs len: %d", len(listOptions.CountryIDs))
 	if len(listOptions.CountryIDs) > 0 {
 		filter["countryId"] = bson.M{
 			"$in": listOptions.CountryIDs,

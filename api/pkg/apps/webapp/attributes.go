@@ -8,7 +8,6 @@ import (
 	"github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/nrc-no/core/pkg/sessionmanager"
 	uuid "github.com/satori/go.uuid"
-	"github.com/sirupsen/logrus"
 	"net/http"
 	"net/url"
 	"strings"
@@ -30,7 +29,6 @@ func (s *Server) Attributes(w http.ResponseWriter, req *http.Request) {
 	}
 
 	countryID := s.GetCountryFromLoginUser(w, req)
-	logrus.Infof("Country id: %s", countryID)
 
 	list, err := iamClient.Attributes().List(ctx, iam.AttributeListOptions{
 		CountryIDs: []string{iam.GlobalCountry.ID, countryID},

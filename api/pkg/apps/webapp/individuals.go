@@ -13,7 +13,6 @@ import (
 	"github.com/nrc-no/core/pkg/teamstatusctrl"
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/nrc-no/core/pkg/validation"
-	"github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 	"net/http"
 	"strconv"
@@ -227,7 +226,6 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	})
 
 	countryID := s.GetCountryFromLoginUser(w, req)
-	logrus.Infof("Country id: %s", countryID)
 
 	g.Go(func() error {
 		var err error
