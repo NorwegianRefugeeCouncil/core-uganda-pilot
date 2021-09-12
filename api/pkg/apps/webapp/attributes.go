@@ -8,6 +8,7 @@ import (
 	"github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/nrc-no/core/pkg/sessionmanager"
 	uuid "github.com/satori/go.uuid"
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"net/url"
 	"strings"
@@ -27,6 +28,45 @@ func (s *Server) Attributes(w http.ResponseWriter, req *http.Request) {
 		s.Error(w, err)
 		return
 	}
+
+	session, err := s.sessionManager.Get(req)
+	if err != nil {
+		s.Error(w, err)
+	}
+
+	profileIntf, ok := session.Values["profile"]
+	if !ok {
+		logrus.Errorf("profile not found")
+	}
+
+	claims, ok := profileIntf.(*Claims)
+	if !ok {
+		logrus.Errorf("claims not found")
+	}
+
+	membership, err := iamClient.Memberships().List(ctx, iam.MembershipListOptions{
+		IndividualID: claims.Subject,
+	})
+
+	var teamID string
+	if len((*membership).Items) == 1 {
+		teamID = (*membership).Items[0].TeamID
+	} else {
+		logrus.Errorf("User %s has no team or more than one team", claims.Subject)
+	}
+
+	nationality, err:= iamClient.Nationalities().List(ctx, iam.NationalityListOptions{TeamID: teamID})
+
+	var countryID string
+	if len((*nationality).Items) == 1 {
+		countryID = (*nationality).Items[0].CountryID
+	} else {
+		logrus.Errorf("Team %s has no nationality or more than one nationality", teamID)
+	}
+
+	logrus.Infof("User id: %s", claims.Subject)
+	logrus.Infof("Team id: %s", teamID)
+	logrus.Infof("Country id: %s", countryID)
 
 	list, err := iamClient.Attributes().List(ctx, iam.AttributeListOptions{})
 	if err != nil {
