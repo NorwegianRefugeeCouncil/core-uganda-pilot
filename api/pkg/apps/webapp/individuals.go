@@ -233,7 +233,7 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		var err error
 		attrs, err = iamClient.Attributes().List(waitCtx, iam.AttributeListOptions{
 			PartyTypeIDs: []string{iam.IndividualPartyType.ID},
-			CountryIDs: []string{countryID},
+			CountryIDs: []string{iam.GlobalCountry.ID, countryID},
 		})
 		return err
 	})

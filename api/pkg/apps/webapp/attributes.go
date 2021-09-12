@@ -33,7 +33,7 @@ func (s *Server) Attributes(w http.ResponseWriter, req *http.Request) {
 	logrus.Infof("Country id: %s", countryID)
 
 	list, err := iamClient.Attributes().List(ctx, iam.AttributeListOptions{
-		CountryIDs: []string{countryID},
+		CountryIDs: []string{iam.GlobalCountry.ID, countryID},
 	})
 	if err != nil {
 		s.Error(w, err)
