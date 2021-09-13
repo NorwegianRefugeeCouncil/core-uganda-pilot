@@ -162,6 +162,7 @@ type RelationshipTypeClient interface {
 
 type AttributeListOptions struct {
 	PartyTypeIDs []string
+	CountryIDs []string
 }
 
 func (a *AttributeListOptions) MarshalQueryParameters() (url.Values, error) {
@@ -169,12 +170,17 @@ func (a *AttributeListOptions) MarshalQueryParameters() (url.Values, error) {
 	for _, partyTypeID := range a.PartyTypeIDs {
 		ret.Add("partyTypeId", partyTypeID)
 	}
+	for _, countryID := range a.CountryIDs {
+		ret.Add("countryId", countryID)
+	}
 	return ret, nil
 }
 
 func (a *AttributeListOptions) UnmarshalQueryParameters(values url.Values) error {
 	partyTypeIDs := values["partyTypeId"]
+	countryIDs := values["countryId"]
 	a.PartyTypeIDs = append(a.PartyTypeIDs, partyTypeIDs...)
+	a.CountryIDs = append(a.CountryIDs, countryIDs...)
 	return nil
 }
 
