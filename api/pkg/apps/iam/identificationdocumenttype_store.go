@@ -20,7 +20,7 @@ func newIdentificationDocumentTypeStore(ctx context.Context, mongoClientFn utils
 		getCollection: utils.GetCollectionFn(database, "identificationDocumentTypes", mongoClientFn),
 	}
 
-	collection, err := store.getCollection(ctx)
+	collection, close, err := store.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -33,6 +33,8 @@ func newIdentificationDocumentTypeStore(ctx context.Context, mongoClientFn utils
 		return nil, err
 	}
 
+	close()
+
 	return store, nil
 }
 
@@ -40,7 +42,7 @@ func (s *IdentificationDocumentTypeStore) list(ctx context.Context, listOptions 
 
 	filter := bson.M{}
 
-	collection, err := s.getCollection(ctx)
+	collection, close, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -64,6 +66,8 @@ func (s *IdentificationDocumentTypeStore) list(ctx context.Context, listOptions 
 		return nil, cursor.Err()
 	}
 
+	close()
+
 	return &IdentificationDocumentTypeList{
 		Items: list,
 	}, nil
@@ -71,7 +75,7 @@ func (s *IdentificationDocumentTypeStore) list(ctx context.Context, listOptions 
 }
 
 func (s *IdentificationDocumentTypeStore) create(ctx context.Context, identificationDocumentType *IdentificationDocumentType) error {
-	collection, err := s.getCollection(ctx)
+	collection, close, err := s.getCollection(ctx)
 	if err != nil {
 		return err
 	}
@@ -79,11 +83,12 @@ func (s *IdentificationDocumentTypeStore) create(ctx context.Context, identifica
 	if err != nil {
 		return err
 	}
+	close()
 	return nil
 }
 
 func (s *IdentificationDocumentTypeStore) get(ctx context.Context, id string) (*IdentificationDocumentType, error) {
-	collection, err := s.getCollection(ctx)
+	collection, close, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -97,11 +102,12 @@ func (s *IdentificationDocumentTypeStore) get(ctx context.Context, id string) (*
 	if err := result.Decode(&a); err != nil {
 		return nil, err
 	}
+	close()
 	return &a, nil
 }
 
 func (s *IdentificationDocumentTypeStore) update(ctx context.Context, identificationDocumentType *IdentificationDocumentType) error {
-	collection, err := s.getCollection(ctx)
+	collection, close, err := s.getCollection(ctx)
 	if err != nil {
 		return err
 	}
@@ -115,5 +121,6 @@ func (s *IdentificationDocumentTypeStore) update(ctx context.Context, identifica
 	if err != nil {
 		return err
 	}
+	close()
 	return nil
 }
