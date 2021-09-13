@@ -20,10 +20,11 @@ func NewCaseTypeStore(ctx context.Context, mongoClientFn utils.MongoClientFn, da
 		getCollection: utils.GetCollectionFn(database, "caseTypes", mongoClientFn),
 	}
 
-	collection, err := store.getCollection(ctx)
+	collection, done, err := store.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer done()
 
 	if _, err := collection.Indexes().CreateOne(ctx,
 		mongo.IndexModel{
@@ -37,10 +38,11 @@ func NewCaseTypeStore(ctx context.Context, mongoClientFn utils.MongoClientFn, da
 }
 
 func (s *CaseTypeStore) Get(ctx context.Context, id string) (*CaseType, error) {
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer done()
 
 	res := collection.FindOne(ctx, bson.M{
 		"id": id,
@@ -71,10 +73,11 @@ func (s *CaseTypeStore) List(ctx context.Context, options CaseTypeListOptions) (
 		}
 	}
 
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer done()
 
 	res, err := collection.Find(ctx, filter)
 	if err != nil {
@@ -104,10 +107,11 @@ func (s *CaseTypeStore) List(ctx context.Context, options CaseTypeListOptions) (
 }
 
 func (s *CaseTypeStore) Update(ctx context.Context, caseType *CaseType) error {
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return err
 	}
+	defer done()
 
 	_, err = collection.UpdateOne(ctx, bson.M{
 		"id": caseType.ID,
@@ -126,10 +130,12 @@ func (s *CaseTypeStore) Update(ctx context.Context, caseType *CaseType) error {
 }
 
 func (s *CaseTypeStore) Create(ctx context.Context, caseType *CaseType) error {
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return err
 	}
+	defer done()
+
 	_, err = collection.InsertOne(ctx, caseType)
 	if err != nil {
 		return err

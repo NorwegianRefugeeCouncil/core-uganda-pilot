@@ -7,15 +7,17 @@ import (
 )
 
 type MongoClientFn = func(ctx context.Context) (*mongo.Client, error)
-type MongoCollectionFn = func(ctx context.Context) (*mongo.Collection, error)
+type MongoCollectionFn = func(ctx context.Context) (collection *mongo.Collection, close func(), err error)
 
 func GetCollectionFn(database, collection string, clientFn MongoClientFn) MongoCollectionFn {
-	return func(ctx context.Context) (*mongo.Collection, error) {
+	return func(ctx context.Context) (*mongo.Collection, func(), error) {
 		mongoClient, err := clientFn(ctx)
 		if err != nil {
 			logrus.WithError(err).Errorf("failed to get mongo client")
-			return nil, err
+			return nil, nil, err
 		}
-		return mongoClient.Database(database).Collection(collection), nil
+		return mongoClient.Database(database).Collection(collection), func() {
+			mongoClient.Disconnect(ctx)
+		}, nil
 	}
 }

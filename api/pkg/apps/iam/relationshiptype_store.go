@@ -20,10 +20,11 @@ func newRelationshipTypeStore(ctx context.Context, mongoClientFn utils.MongoClie
 		getCollection: utils.GetCollectionFn(database, "relationshipTypes", mongoClientFn),
 	}
 
-	collection, err := store.getCollection(ctx)
+	collection, done, err := store.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer done()
 
 	if _, err := collection.Indexes().CreateOne(ctx, mongo.IndexModel{
 		Keys: bson.M{
@@ -38,10 +39,12 @@ func newRelationshipTypeStore(ctx context.Context, mongoClientFn utils.MongoClie
 }
 
 func (s *RelationshipTypeStore) Get(ctx context.Context, id string) (*RelationshipType, error) {
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer done()
+
 	res := collection.FindOne(ctx, bson.M{
 		"id": id,
 	})
@@ -71,10 +74,12 @@ func (s *RelationshipTypeStore) List(ctx context.Context, listOptions Relationsh
 			},
 		}
 	}
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer done()
+
 	res, err := collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err
@@ -100,10 +105,12 @@ func (s *RelationshipTypeStore) List(ctx context.Context, listOptions Relationsh
 }
 
 func (s *RelationshipTypeStore) Update(ctx context.Context, relationshipType *RelationshipType) error {
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return err
 	}
+	defer done()
+
 	_, err = collection.UpdateOne(ctx, bson.M{
 		"id": relationshipType.ID,
 	}, bson.M{
@@ -122,10 +129,12 @@ func (s *RelationshipTypeStore) Update(ctx context.Context, relationshipType *Re
 }
 
 func (s *RelationshipTypeStore) Create(ctx context.Context, relationshipType *RelationshipType) error {
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return err
 	}
+	defer done()
+
 	_, err = collection.InsertOne(ctx, relationshipType)
 	if err != nil {
 		return err
