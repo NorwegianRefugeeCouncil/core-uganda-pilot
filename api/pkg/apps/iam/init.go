@@ -91,8 +91,11 @@ func (s *Server) initAttribute(ctx context.Context) error {
 		PhysicalAddressAttribute,
 		PrimaryPhoneNumberAttribute,
 		SecondaryPhoneNumberAttribute,
+		TertiaryPhoneNumberAttribute,
 		PreferredMeansOfContactAttribute,
 		RequireAnInterpreterAttribute,
+		CanInitiateContactAttribute,
+		InstructionOnMakingContactAttribute,
 		// -- End of Individual Attributes
 
 		// Customisation for Uganda Demo

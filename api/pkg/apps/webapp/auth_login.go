@@ -15,12 +15,14 @@ func (s *Server) Login(w http.ResponseWriter, req *http.Request) {
 
 	session, err := s.sessionManager.Get(req)
 	if err != nil {
+		logrus.WithError(err).Errorf("failed to get session")
 		s.Error(w, err)
 		return
 	}
 
 	session.Values["state"] = state
 	if err := session.Save(req, w); err != nil {
+		logrus.WithError(err).Errorf("failed to save session")
 		s.Error(w, err)
 		return
 	}

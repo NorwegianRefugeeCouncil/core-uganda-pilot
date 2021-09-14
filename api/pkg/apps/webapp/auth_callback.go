@@ -31,6 +31,7 @@ func (s *Server) Callback(w http.ResponseWriter, req *http.Request) {
 
 	session, err := s.sessionManager.Get(req)
 	if err != nil {
+		logrus.WithError(err).Errorf("failed to get session")
 		s.Error(w, err)
 		return
 	}
