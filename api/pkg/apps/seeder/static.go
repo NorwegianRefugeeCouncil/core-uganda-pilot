@@ -63,14 +63,14 @@ func individual(id string, fullName string, displayName string, birthDate string
 				iam.SensoryImpairmentIntensityAttribute.ID:  {sensoryImpairmentIntensity},
 				iam.MentalImpairmentAttribute.ID:            {mentalImpairment},
 				iam.MentalImpairmentIntensityAttribute.ID:   {mentalImpairmentIntensity},
-				iam.NationalityAttribute.ID:                 {nationality},
-				iam.SpokenLanguagesAttribute.ID:             {spokenLanguages},
-				iam.PreferredLanguageAttribute.ID:           {preferredLanguage},
-				iam.PhysicalAddressAttribute.ID:             {physicalAddress},
-				iam.PrimaryPhoneNumberAttribute.ID:          {primaryPhoneNumber},
-				iam.SecondaryPhoneNumberAttribute.ID:        {secondaryPhoneNumber},
-				iam.PreferredMeansOfContactAttribute.ID:     {preferredMeansOfContact},
-				iam.RequireAnInterpreterAttribute.ID:        {requireAnInterpreter},
+				iam.UGNationalityAttribute.ID:               {nationality},
+				iam.UGSpokenLanguagesAttribute.ID:           {spokenLanguages},
+				iam.UGPreferredLanguageAttribute.ID:         {preferredLanguage},
+				iam.UGPhysicalAddressAttribute.ID:           {physicalAddress},
+				iam.UGPrimaryPhoneNumberAttribute.ID:        {primaryPhoneNumber},
+				iam.UGSecondaryPhoneNumberAttribute.ID:      {secondaryPhoneNumber},
+				iam.UGPreferredMeansOfContactAttribute.ID:   {preferredMeansOfContact},
+				iam.UGRequireAnInterpreterAttribute.ID:      {requireAnInterpreter},
 			},
 		},
 	}
@@ -88,13 +88,13 @@ func ugandaIndividual(
 	admin4 string,
 	admin5 string,
 ) iam.Individual {
-	individual.Attributes.Add(iam.IdentificationDateAttribute.ID, identificationDate)
-	individual.Attributes.Add(iam.IdentificationLocationAttribute.ID, identificationLocation)
-	individual.Attributes.Add(iam.IdentificationSourceAttribute.ID, identificationSource)
-	individual.Attributes.Add(iam.Admin2Attribute.ID, admin2)
-	individual.Attributes.Add(iam.Admin3Attribute.ID, admin3)
-	individual.Attributes.Add(iam.Admin4Attribute.ID, admin4)
-	individual.Attributes.Add(iam.Admin5Attribute.ID, admin5)
+	individual.Attributes.Add(iam.UGIdentificationDateAttribute.ID, identificationDate)
+	individual.Attributes.Add(iam.UGIdentificationLocationAttribute.ID, identificationLocation)
+	individual.Attributes.Add(iam.UGIdentificationSourceAttribute.ID, identificationSource)
+	individual.Attributes.Add(iam.UGAdmin2Attribute.ID, admin2)
+	individual.Attributes.Add(iam.UGAdmin3Attribute.ID, admin3)
+	individual.Attributes.Add(iam.UGAdmin4Attribute.ID, admin4)
+	individual.Attributes.Add(iam.UGAdmin5Attribute.ID, admin5)
 	return individual
 }
 

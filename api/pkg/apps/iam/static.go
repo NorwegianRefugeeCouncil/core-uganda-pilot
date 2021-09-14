@@ -411,14 +411,14 @@ var MentalImpairmentIntensityAttribute = Attribute{
 // Uganda Individual Attributes -----------------------------------------------
 
 var (
-	IdentificationDateAttribute = Attribute{
+	UGIdentificationDateAttribute = Attribute{
 		ID:        "c84b8b93-b974-4bec-b9f7-d437446b24a7",
-		Name:      "identificationDate",
+		Name:      "ugIdentificationDate",
 		CountryID: UgandaCountry.ID,
 		Type:      form.Date,
 		Attributes: form.FormElementAttributes{
 			Label:       "Date of Identification",
-			Name:        "identificationDate",
+			Name:        "ugIdentificationDate",
 			Description: "Date of first interaction with NRC",
 		},
 		Validation: form.FormElementValidation{Required: true},
@@ -435,14 +435,14 @@ var (
 		},
 	}
 
-	IdentificationLocationAttribute = Attribute{
+	UGIdentificationLocationAttribute = Attribute{
 		ID:        "06680252-1a1f-4c9d-85dd-56feef20019d",
-		Name:      "identificationLocation",
+		Name:      "ugIdentificationLocation",
 		CountryID: UgandaCountry.ID,
 		Type:      form.Dropdown,
 		Attributes: form.FormElementAttributes{
 			Label:       "Location of Identification",
-			Name:        "identificationLocation",
+			Name:        "ugIdentificationLocation",
 			Description: "",
 			Options:     []string{"Kabusu Access Center", "Nsambya Access Center", "Kisenyi ICLA Center", "Lukuli ICLA Center", "Kawempe ICLA Center", "Ndejje ICLA Center", "Mengo Field Office", "Community (Specify location)", "Home Visit", "Phone", "Other (Specify)"},
 		},
@@ -460,14 +460,14 @@ var (
 		},
 	}
 
-	IdentificationSourceAttribute = Attribute{
+	UGIdentificationSourceAttribute = Attribute{
 		ID:        "a131a0fb-0270-4feb-8fc9-46e7dd6b5acb",
-		Name:      "identificationSource",
+		Name:      "ugIdentificationSource",
 		CountryID: UgandaCountry.ID,
 		Type:      form.Dropdown,
 		Attributes: form.FormElementAttributes{
 			Label:       "Source of Identification",
-			Name:        "identificationSource",
+			Name:        "ugIdentificationSource",
 			Description: "",
 			Options:     []string{"Walk-in Center", "FFRM Referral", "Internal Referral (Other – Specify)", "ICLA Outreach Team", "External Referral (Community Leader/Contact)", "External Referral (INGO/LNGO)", "External Referral (Other – Specify)", "Self (Telephone)", "Self (Email)", "Internal Referral (Other NRC Sector – Specify)", "CBP Outreach Team", "Other NRC Outreach Team (Specify)", "External Referral (UN Agency)", "External Referral (Government)", "Other – Specify"},
 		},
@@ -485,14 +485,14 @@ var (
 		},
 	}
 
-	Admin2Attribute = Attribute{
+	UGAdmin2Attribute = Attribute{
 		ID:        "44dffbc4-7536-42b9-af84-32ea4e9ed493",
-		Name:      "admin2",
+		Name:      "ugAdmin2",
 		CountryID: UgandaCountry.ID,
 		Type:      form.Dropdown,
 		Attributes: form.FormElementAttributes{
 			Label:       "District / Admin 2",
-			Name:        "admin2",
+			Name:        "ugAdmin2",
 			Description: "",
 			Options:     []string{"ABIM", "ADJUMANI", "ALEBTONG", "AMOLATAR", "AMUDAT", "AMURIA", "AMURU", "APAC", "BUDAKA", "BUGIRI", "BUIKWE", "BUKOMANSIMBI", "BUKWO", "BULAMBULI", "BULIISA", "BUNDIBUGYO", "BUSHENYI", "BUYENDE", "DOKOLO", "BUTAMBALA", "HOIMA", "IGANGA", "KAABONG", "KABALE", "KABAROLE", "KALANGALA", "KALIRO", "KALUNGU", "KAMULI", "KANUNGU", "KAPCHORWA", "KATAKWI", "KAYUNGA", "SHEEMA", "KITGUM", "KOBOKO", "KOLE", "KOTIDO", "KISORO", "KWEEN", "LAMWO", "LIRA", "LUUKA", "LYANTONDE", "MANAFWA", "MASAKA", "MASINDI", "MAYUGE", "MBALE", "MBARARA", "MOROTO", "MOYO", "NAKAPIRIPIRIT", "NAKASEKE", "NAKASONGOLA", "NAMUTUMBA", "NAPAK", "NEBBI", "NGORA", "BUHWEJU", "NTOROKO", "MARACHA", "OTUKE", "OYAM", "PADER", "RUBIRIZI", "SIRONKO", "SOROTI", "WAKISO", "YUMBE", "ZOMBO", "ISINGIRO", "MITOOMA", "KYEGEGWA", "NTUNGAMO", "RUKUNGIRI", "KAMWENGE", "IBANDA", "KASESE", "KIRUHURA", "KYENJOJO", "MUBENDE", "GOMBA", "KIBOGA", "MPIGI", "KYANKWANZI", "KAKUMIRO", "NWOYA", "KIRYANDONGO", "SERERE", "OMORO", "ARUA", "LWENGO", "SEMBABULE", "RAKAI", "MITYANA", "LUWERO", "MUKONO", "KAMPALA", "BUVUMA", "JINJA", "NAMAYINGO", "BUSIA", "BUDUDA", "TORORO", "BUTALEJA", "BUKEDEA", "KUMI", "PALLISA", "KIBUKU", "KABERAMAIDO", "AGAGO", "KAGADI", "KIBAALE", "GULU", "RUBANDA"},
 		},
@@ -510,14 +510,14 @@ var (
 		},
 	}
 
-	Admin3Attribute = Attribute{
+	UGAdmin3Attribute = Attribute{
 		ID:        "a17ffa5e-5d62-44cd-b89f-438eeba128ac",
-		Name:      "admin3",
+		Name:      "ugAdmin3",
 		CountryID: UgandaCountry.ID,
 		Type:      form.Text,
 		Attributes: form.FormElementAttributes{
 			Label:       "Subcounty / Admin 3",
-			Name:        "admin3",
+			Name:        "ugAdmin3",
 			Description: "",
 		},
 		Validation: form.FormElementValidation{Required: true},
@@ -534,14 +534,14 @@ var (
 		},
 	}
 
-	Admin4Attribute = Attribute{
+	UGAdmin4Attribute = Attribute{
 		ID:        "f867c62a-dcd0-4778-9f4e-7309d044e905",
-		Name:      "admin4",
+		Name:      "ugAdmin4",
 		CountryID: UgandaCountry.ID,
 		Type:      form.Text,
 		Attributes: form.FormElementAttributes{
 			Label:       "Parish / Admin 4",
-			Name:        "admin4",
+			Name:        "ugAdmin4",
 			Description: "",
 		},
 		Validation: form.FormElementValidation{Required: true},
@@ -558,14 +558,14 @@ var (
 		},
 	}
 
-	Admin5Attribute = Attribute{
+	UGAdmin5Attribute = Attribute{
 		ID:        "f0b34ffc-3e15-4195-8e90-a3e1e4b3940c",
-		Name:      "admin5",
+		Name:      "ugAdmin5",
 		CountryID: UgandaCountry.ID,
 		Type:      form.Text,
 		Attributes: form.FormElementAttributes{
 			Label:       "Village / Admin 5",
-			Name:        "admin5",
+			Name:        "ugAdmin5",
 			Description: "",
 		},
 		Validation: form.FormElementValidation{Required: true},
@@ -582,13 +582,13 @@ var (
 		},
 	}
 
-	NationalityAttribute = Attribute{
+	UGNationalityAttribute = Attribute{
 		ID:        "76aab836-73a6-4a1e-9c17-04b8a4c25d8d",
-		Name:      "nationality",
+		Name:      "ugNationality",
 		Type:      form.Dropdown,
 		CountryID: UgandaCountry.ID,
 		Attributes: form.FormElementAttributes{
-			Name:     "nationality",
+			Name:     "ugNationality",
 			Options:  []string{"Uganda", "Kenya", "Tanzania", "Rwanda", "Burundi", "Democratic Republic of Congo", "South Sudan", "Sudan", "Somalia", "Ethiopia"},
 			Multiple: true,
 		},
@@ -605,12 +605,14 @@ var (
 		},
 	}
 
-	SpokenLanguagesAttribute = Attribute{
-		ID:         "d041cba5-9486-4390-bc2b-ec7fb03d67ff",
-		Name:       "spokenLanguages",
-		Type:       form.Text,
-		CountryID:  UgandaCountry.ID,
-		Attributes: form.FormElementAttributes{Name: "spokenLanguages"},
+	UGSpokenLanguagesAttribute = Attribute{
+		ID:        "d041cba5-9486-4390-bc2b-ec7fb03d67ff",
+		Name:      "ugSpokenLanguages",
+		Type:      form.Text,
+		CountryID: UgandaCountry.ID,
+		Attributes: form.FormElementAttributes{
+			Name: "ugSpokenLanguages",
+		},
 		Translations: []AttributeTranslation{
 			{
 				Locale:           "en",
@@ -624,12 +626,14 @@ var (
 		},
 	}
 
-	PreferredLanguageAttribute = Attribute{
-		ID:         "da27a6e8-abe3-48d5-bfd9-46033e476a09",
-		Name:       "preferredLanguage",
-		Type:       form.Text,
-		CountryID:  UgandaCountry.ID,
-		Attributes: form.FormElementAttributes{Name: "preferredLanguage"},
+	UGPreferredLanguageAttribute = Attribute{
+		ID:        "da27a6e8-abe3-48d5-bfd9-46033e476a09",
+		Name:      "ugPreferredLanguage",
+		Type:      form.Text,
+		CountryID: UgandaCountry.ID,
+		Attributes: form.FormElementAttributes{
+			Name: "ugPreferredLanguage",
+		},
 		Translations: []AttributeTranslation{
 			{
 				Locale:           "en",
@@ -643,16 +647,14 @@ var (
 		},
 	}
 
-	// TODO: Decide whether addresses should be their own entity
-	// This could allow beneficiaries to share addresses and reduce
-	// the work in maintaining data when a change needs to be made to
-	// an address in the app (1 update in 1 place)
-	PhysicalAddressAttribute = Attribute{
-		ID:         "ac2795e8-15a5-42a0-b11f-b9269ff2a309",
-		Name:       "physicalAddress",
-		CountryID:  UgandaCountry.ID,
-		Type:       form.Textarea,
-		Attributes: form.FormElementAttributes{Name: "physicalAddress"},
+	UGPhysicalAddressAttribute = Attribute{
+		ID:        "ac2795e8-15a5-42a0-b11f-b9269ff2a309",
+		Name:      "ugPhysicalAddress",
+		CountryID: UgandaCountry.ID,
+		Type:      form.Textarea,
+		Attributes: form.FormElementAttributes{
+			Name: "ugPhysicalAddress",
+		},
 		Translations: []AttributeTranslation{
 			{
 				Locale:           "en",
@@ -666,13 +668,14 @@ var (
 		},
 	}
 
-	// TODO: Evaluate replacing primary + secondary numbers with an array type?
-	PrimaryPhoneNumberAttribute = Attribute{
-		ID:         "8eae83a8-cbc7-4ab2-a21f-d57cb3bb29ff",
-		Name:       "primaryPhoneNumber",
-		CountryID:  UgandaCountry.ID,
-		Type:       form.Phone,
-		Attributes: form.FormElementAttributes{Name: "primaryPhoneNumber"},
+	UGPrimaryPhoneNumberAttribute = Attribute{
+		ID:        "8eae83a8-cbc7-4ab2-a21f-d57cb3bb29ff",
+		Name:      "ugPrimaryPhoneNumber",
+		CountryID: UgandaCountry.ID,
+		Type:      form.Phone,
+		Attributes: form.FormElementAttributes{
+			Name: "ugPrimaryPhoneNumber",
+		},
 		Translations: []AttributeTranslation{
 			{
 				Locale:           "en",
@@ -686,12 +689,14 @@ var (
 		},
 	}
 
-	SecondaryPhoneNumberAttribute = Attribute{
-		ID:         "1f3016af-ab39-422a-beb8-904b68a1619e",
-		Name:       "secondaryPhoneNumber",
-		CountryID:  UgandaCountry.ID,
-		Type:       form.Phone,
-		Attributes: form.FormElementAttributes{Name: "secondaryPhoneNumber"},
+	UGSecondaryPhoneNumberAttribute = Attribute{
+		ID:        "1f3016af-ab39-422a-beb8-904b68a1619e",
+		Name:      "ugSecondaryPhoneNumber",
+		CountryID: UgandaCountry.ID,
+		Type:      form.Phone,
+		Attributes: form.FormElementAttributes{
+			Name: "ugSecondaryPhoneNumber",
+		},
 		Translations: []AttributeTranslation{
 			{
 				Locale:           "en",
@@ -705,12 +710,14 @@ var (
 		},
 	}
 
-	TertiaryPhoneNumberAttribute = Attribute{
-		ID:         "4a0ba072-66a5-403f-bea1-35e9427659fb",
-		Name:       "tertiaryPhoneNumber",
-		CountryID:  UgandaCountry.ID,
-		Type:       form.Phone,
-		Attributes: form.FormElementAttributes{Name: "tertiaryPhoneNumber"},
+	UGTertiaryPhoneNumberAttribute = Attribute{
+		ID:        "4a0ba072-66a5-403f-bea1-35e9427659fb",
+		Name:      "ugTertiaryPhoneNumber",
+		CountryID: UgandaCountry.ID,
+		Type:      form.Phone,
+		Attributes: form.FormElementAttributes{
+			Name: "ugTertiaryPhoneNumber",
+		},
 		Translations: []AttributeTranslation{
 			{
 				Locale:           "en",
@@ -724,12 +731,14 @@ var (
 		},
 	}
 
-	InstructionOnMakingContactAttribute = Attribute{
-		ID:         "4d399cb3-6653-4a61-92eb-331f07e6c395",
-		Name:       "instructionOnMakingContact",
-		CountryID:  GlobalCountry.ID,
-		Type:       form.Textarea,
-		Attributes: form.FormElementAttributes{Name: "instructionOnMakingContact"},
+	UGInstructionOnMakingContactAttribute = Attribute{
+		ID:        "4d399cb3-6653-4a61-92eb-331f07e6c395",
+		Name:      "ugInstructionOnMakingContact",
+		CountryID: GlobalCountry.ID,
+		Type:      form.Textarea,
+		Attributes: form.FormElementAttributes{
+			Name: "ugInstructionOnMakingContact",
+		},
 		Translations: []AttributeTranslation{
 			{
 				Locale:           "en",
@@ -743,13 +752,13 @@ var (
 		},
 	}
 
-	CanInitiateContactAttribute = Attribute{
+	UGCanInitiateContactAttribute = Attribute{
 		ID:        "7476fef0-d116-4b94-b981-ac647e16203d",
-		Name:      "canInitiateContact",
+		Name:      "ugCanInitiateContact",
 		CountryID: GlobalCountry.ID,
 		Type:      form.Checkbox,
 		Attributes: form.FormElementAttributes{
-			Name: "canInitiateContact",
+			Name: "ugCanInitiateContact",
 			CheckboxOptions: []form.CheckboxOption{
 				{Label: "NRC can initiate contact with Beneficiary."},
 			},
@@ -767,13 +776,13 @@ var (
 		},
 	}
 
-	PreferredMeansOfContactAttribute = Attribute{
+	UGPreferredMeansOfContactAttribute = Attribute{
 		ID:        "1e7f2db9-eb63-46ae-b6d5-5c171a9e2534",
-		Name:      "preferredMeansOfContact",
+		Name:      "ugPreferredMeansOfContact",
 		CountryID: UgandaCountry.ID,
 		Type:      form.Dropdown,
 		Attributes: form.FormElementAttributes{
-			Name:    "preferredMeansOfContact",
+			Name:    "ugPreferredMeansOfContact",
 			Options: []string{"Phone Call", "Text message", "WhatsApp", "Signal", "Telegram", "Email", "Home visit"},
 		},
 		Translations: []AttributeTranslation{
@@ -789,13 +798,13 @@ var (
 		},
 	}
 
-	RequireAnInterpreterAttribute = Attribute{
+	UGRequireAnInterpreterAttribute = Attribute{
 		ID:        "9b6ae87d-8935-49aa-9e32-26e7445d1afc",
-		Name:      "requireAnInterpreter",
+		Name:      "ugRequireAnInterpreter",
 		CountryID: UgandaCountry.ID,
 		Type:      form.Checkbox,
 		Attributes: form.FormElementAttributes{
-			Name:            "requireAnInterpreter",
+			Name:            "ugRequireAnInterpreter",
 			CheckboxOptions: []form.CheckboxOption{{Label: "This beneficiary requires an interpreter."}},
 		},
 		Translations: []AttributeTranslation{

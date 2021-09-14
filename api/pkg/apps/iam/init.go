@@ -71,7 +71,7 @@ func (s *Server) initAttribute(ctx context.Context) error {
 		EMailAttribute,
 		TeamNameAttribute,
 
-		// Individual Attributes
+		// Global Individual Attributes
 		DisplacementStatusAttribute,
 		GenderAttribute,
 		ConsentToNrcDataUseAttribute,
@@ -85,29 +85,28 @@ func (s *Server) initAttribute(ctx context.Context) error {
 		SensoryImpairmentIntensityAttribute,
 		MentalImpairmentAttribute,
 		MentalImpairmentIntensityAttribute,
-		NationalityAttribute,
-		SpokenLanguagesAttribute,
-		PreferredLanguageAttribute,
-		PhysicalAddressAttribute,
-		PrimaryPhoneNumberAttribute,
-		SecondaryPhoneNumberAttribute,
-		TertiaryPhoneNumberAttribute,
-		PreferredMeansOfContactAttribute,
-		RequireAnInterpreterAttribute,
-		CanInitiateContactAttribute,
-		InstructionOnMakingContactAttribute,
 		// -- End of Individual Attributes
 
-		// Customisation for Uganda Demo
-		IdentificationDateAttribute,
-		IdentificationLocationAttribute,
-		IdentificationSourceAttribute,
-		Admin2Attribute,
-		Admin3Attribute,
-		Admin4Attribute,
-		Admin5Attribute,
-
-
+		// Uganda Individual Attributes
+		UGNationalityAttribute,
+		UGSpokenLanguagesAttribute,
+		UGPreferredLanguageAttribute,
+		UGPhysicalAddressAttribute,
+		UGPrimaryPhoneNumberAttribute,
+		UGSecondaryPhoneNumberAttribute,
+		UGTertiaryPhoneNumberAttribute,
+		UGPreferredMeansOfContactAttribute,
+		UGRequireAnInterpreterAttribute,
+		UGCanInitiateContactAttribute,
+		UGInstructionOnMakingContactAttribute,
+		UGIdentificationDateAttribute,
+		UGIdentificationLocationAttribute,
+		UGIdentificationSourceAttribute,
+		UGAdmin2Attribute,
+		UGAdmin3Attribute,
+		UGAdmin4Attribute,
+		UGAdmin5Attribute,
+		// -- End of Uganda Individual Attributes
 	} {
 		if err := s.attributeStore.create(ctx, &attribute); err != nil {
 			if !mongo.IsDuplicateKeyError(err) {
