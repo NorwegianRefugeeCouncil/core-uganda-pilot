@@ -705,6 +705,68 @@ var (
 		},
 	}
 
+	TertiaryPhoneNumberAttribute = Attribute{
+		ID:         "4a0ba072-66a5-403f-bea1-35e9427659fb",
+		Name:       "tertiaryPhoneNumber",
+		CountryID:  UgandaCountry.ID,
+		Type:       form.Phone,
+		Attributes: form.FormElementAttributes{Name: "tertiaryPhoneNumber"},
+		Translations: []AttributeTranslation{
+			{
+				Locale:           "en",
+				LongFormulation:  "Tertiary phone number",
+				ShortFormulation: "Tertiary phone number",
+			},
+		},
+		IsPersonallyIdentifiableInfo: true,
+		PartyTypeIDs: []string{
+			IndividualPartyType.ID,
+		},
+	}
+
+	InstructionOnMakingContactAttribute = Attribute{
+		ID:         "4d399cb3-6653-4a61-92eb-331f07e6c395",
+		Name:       "instructionOnMakingContact",
+		CountryID:  GlobalCountry.ID,
+		Type:       form.Textarea,
+		Attributes: form.FormElementAttributes{Name: "instructionOnMakingContact"},
+		Translations: []AttributeTranslation{
+			{
+				Locale:           "en",
+				LongFormulation:  "Instructions on contacting the beneficiary",
+				ShortFormulation: "Instructions on contacting the beneficiary",
+			},
+		},
+		IsPersonallyIdentifiableInfo: false,
+		PartyTypeIDs: []string{
+			IndividualPartyType.ID,
+		},
+	}
+
+	CanInitiateContactAttribute = Attribute{
+		ID:        "7476fef0-d116-4b94-b981-ac647e16203d",
+		Name:      "canInitiateContact",
+		CountryID: GlobalCountry.ID,
+		Type:      form.Checkbox,
+		Attributes: form.FormElementAttributes{
+			Name: "canInitiateContact",
+			CheckboxOptions: []form.CheckboxOption{
+				{Label: "NRC can initiate contact with Beneficiary."},
+			},
+		},
+		Translations: []AttributeTranslation{
+			{
+				Locale:           "en",
+				LongFormulation:  "NRC can initiate contact with Beneficiary.",
+				ShortFormulation: "NRC can initiate contact with Beneficiary.",
+			},
+		},
+		IsPersonallyIdentifiableInfo: false,
+		PartyTypeIDs: []string{
+			IndividualPartyType.ID,
+		},
+	}
+
 	PreferredMeansOfContactAttribute = Attribute{
 		ID:        "1e7f2db9-eb63-46ae-b6d5-5c171a9e2534",
 		Name:      "preferredMeansOfContact",
