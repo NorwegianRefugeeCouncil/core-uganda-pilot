@@ -85,6 +85,47 @@ func (s *Server) Individuals(w http.ResponseWriter, req *http.Request) {
 
 }
 
+func (s *Server) IndividualIdentificationDocuments(w http.ResponseWriter, req *http.Request) {
+	ctx := req.Context()
+
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	id, ok := mux.Vars(req)["id"]
+	if !ok || len(id) == 0 {
+		err := fmt.Errorf("no id in path")
+		s.Error(w, err)
+		return
+	}
+
+	individual, err := iamClient.Individuals().Get(ctx, id)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	if req.Method == "POST" {
+		s.PostIndividualCredentials(w, req, individual.ID)
+		return
+	}
+
+	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "individual_identification_documents", map[string]interface{}{
+		"Page":       "identification_documents",
+		"Individual": individual,
+	}); err != nil {
+		s.Error(w, err)
+		return
+	}
+
+}
+
+func (s *Server) PostIndividualIdentificationDocuments(w http.ResponseWriter, req *http.Request, partyID string) {
+	http.Redirect(w, req, "/individuals/"+partyID+"/identificationdocuments", http.StatusSeeOther)
+}
+
 func (s *Server) IndividualCredentials(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
