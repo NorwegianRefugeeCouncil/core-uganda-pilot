@@ -85,16 +85,16 @@ func (s *Server) initAttribute(ctx context.Context) error {
 		SensoryImpairmentIntensityAttribute,
 		MentalImpairmentAttribute,
 		MentalImpairmentIntensityAttribute,
-		// -- End of Individual Attributes
+		// -- End of Global Individual Attributes
 
 		// Uganda Individual Attributes
 		UGNationalityAttribute,
 		UGSpokenLanguagesAttribute,
 		UGPreferredLanguageAttribute,
 		UGPhysicalAddressAttribute,
-		UGPrimaryPhoneNumberAttribute,
-		UGSecondaryPhoneNumberAttribute,
-		UGTertiaryPhoneNumberAttribute,
+		PrimaryPhoneNumberAttribute,
+		SecondaryPhoneNumberAttribute,
+		TertiaryPhoneNumberAttribute,
 		UGPreferredMeansOfContactAttribute,
 		UGRequireAnInterpreterAttribute,
 		UGCanInitiateContactAttribute,
@@ -107,6 +107,38 @@ func (s *Server) initAttribute(ctx context.Context) error {
 		UGAdmin4Attribute,
 		UGAdmin5Attribute,
 		// -- End of Uganda Individual Attributes
+
+		// Colombia Individual Attributes
+		COPrimaryNationalityAttribute,
+		COSecondaryNationalityAttribute,
+		COMaritalStatusAttribute,
+		COBeneficiaryTypeAttribute,
+		COEthnicityAttribute,
+		CORegistrationDateAttribute,
+		CORegistrationLocationAttribute,
+		COSourceOfIdentificationAttribute,
+		COTypeOfSettlementAttribute,
+		COEmergencyCareAttribute,
+		CODurableSolutionsAttribute,
+		COHardToReachAttribute,
+		COAttendedCovid19Attribute,
+		COIntroSourceAttribute,
+		COAdmin1Attribute,
+		COAdmin2Attribute,
+		COAdmin3Attribute,
+		COAdmin4Attribute,
+		COAdmin5Attribute,
+		COJobOrEnterpriseAttribute,
+		COTypeOfEnterpriseAttribute,
+		COTimeInBusinessAttribute,
+		COTypeOfEmploymentAttribute,
+		COFormsOfIncomeGenerationAttribute,
+		COLegalRepresentativeNameAttribue,
+		COLegalRepresentativeAdditionalInfoAttribute,
+		COReasonsForRepresentationAttribute,
+		COGuardianshipIsLegalAttribute,
+		COAbleToGiveLegalConsentAttribute,
+		// -- End of Colombia Individual Attributes
 	} {
 		if err := s.attributeStore.create(ctx, &attribute); err != nil {
 			if !mongo.IsDuplicateKeyError(err) {

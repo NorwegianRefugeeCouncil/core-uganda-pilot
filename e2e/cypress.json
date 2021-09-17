@@ -1,7 +1,9 @@
 {
+  "projectId": "coreui",
   "baseUrl": "http://localhost:9000",
   "screenshotOnRunFailure": false,
-  "video": false,
+  "videoCompression": false,
+  "video": true,
   "reporter": "spec",
   "reporterOptions": {
     "onlyFailures": true

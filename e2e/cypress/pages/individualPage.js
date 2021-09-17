@@ -27,6 +27,61 @@ const selector = {
     response: '#response',
 };
 
+const ugandaAttributeNames = [
+    nameAttr('ugIdentificationDate'),
+    nameAttr('ugIdentificationLocation'),
+    nameAttr('ugIdentificationSource'),
+    nameAttr('ugAdmin2'),
+    nameAttr('ugAdmin3'),
+    nameAttr('ugAdmin4'),
+    nameAttr('ugAdmin5'),
+    nameAttr('ugNationality'),
+    nameAttr('ugSpokenLanguages'),
+    nameAttr('ugPreferredLanguage'),
+    nameAttr('ugPhysicalAddress'),
+    nameAttr('ugInstructionOnMakingContact'),
+    nameAttr('ugCanInitiateContact'),
+    nameAttr('ugPreferredMeansOfContact'),
+    nameAttr('ugRequireAnInterpreter'),
+];
+
+const colombiaAttributeNames = [
+    nameAttr('coPrimaryNationality'),
+    nameAttr('coSecondaryNationality'),
+    nameAttr('coMaritalStatus'),
+    nameAttr('coBeneficiaryType'),
+    nameAttr('coEthnicity'),
+    nameAttr('coRegistrationDate'),
+    nameAttr('coRegistrationLocation'),
+    nameAttr('coSourceOfIdentification'),
+    nameAttr('coTypeOfSettlement'),
+    nameAttr('coEmergencyCare'),
+    nameAttr('coDurableSolutions'),
+    nameAttr('coHardToReach'),
+    nameAttr('coAttendedCovid19'),
+    nameAttr('coIntroSource'),
+    nameAttr('coAdmin1'),
+    nameAttr('coAdmin2'),
+    nameAttr('coAdmin3'),
+    nameAttr('coAdmin4'),
+    nameAttr('coAdmin5'),
+    nameAttr('coJobOrEnterprise'),
+    nameAttr('coTypeOfEnterprise'),
+    nameAttr('coTimeInBusiness'),
+    nameAttr('coTypeOfEmployment'),
+    nameAttr('coFormsOfIncomeGeneration'),
+    nameAttr('coLegalRepresentativeName'),
+    nameAttr('coLegalRepresentativeAdditionalInfo'),
+    nameAttr('coReasonsForRepresentation'),
+    nameAttr('coGuardianshipIsLegal'),
+    nameAttr('coAbleToGiveLegalConsent'),
+];
+
+const countryCodeAttributeMap = new Map([
+    ['CO', colombiaAttributeNames],
+    ['UG', ugandaAttributeNames],
+]);
+
 export default class IndividualPage {
     constructor(href) {
         if (href) {
@@ -62,6 +117,13 @@ export default class IndividualPage {
         r.should('contain.text', relationshipType.toLowerCase());
         r.should('contain.text', relatedParty);
         return this;
+    };
+
+    verifyCountrySpecificAttributes = countryCode => {
+        const expectedAttributes = countryCodeAttributeMap.get(countryCode);
+        expectedAttributes.forEach(attrName => {
+            cy.get(attrName).should('exist');
+        });
     };
 
     getFirstName = () => cy.get(selector.fullName);

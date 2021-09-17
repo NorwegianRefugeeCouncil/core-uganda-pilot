@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "run": "cypress run --quiet",
+    "run": "cypress run --quiet --spec 'cypress/integration/countrySpecificIndividualAttributes.spec.js'",
     "open": "cypress open",
     "lint": "eslint 'cypress/**/*.js' --max-warnings=0",
     "lint:fix": "eslint 'cypress/**/*.js' --fix"
