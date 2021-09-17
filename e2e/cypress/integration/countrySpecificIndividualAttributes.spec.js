@@ -1,5 +1,5 @@
-import IndividualPage from '../pages/individualPage';
-import IndividualOverviewPage from '../pages/individualOverview.page';
+/* import IndividualPage from '../pages/individualPage';
+import IndividualOverviewPage from '../pages/individualOverview.page'; */
 import '../support/commands';
 
 /* describe('Country-specific Individual Attributes (Colombia)', function () {
