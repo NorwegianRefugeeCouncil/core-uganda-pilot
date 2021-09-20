@@ -7,3 +7,4 @@
 *.out
 actions/__tmp
 api/tmp
+vendor/

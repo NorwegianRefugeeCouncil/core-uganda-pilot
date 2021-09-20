@@ -20,10 +20,11 @@ func newPartyStore(ctx context.Context, mongoClientFn utils.MongoClientFn, datab
 		GetCollection: utils.GetCollectionFn(database, "parties", mongoClientFn),
 	}
 
-	collection, err := store.GetCollection(ctx)
+	collection, done, err := store.GetCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer done()
 
 	if _, err := collection.Indexes().CreateOne(ctx, mongo.IndexModel{
 		Keys:    bson.M{"id": 1},
@@ -36,10 +37,7 @@ func newPartyStore(ctx context.Context, mongoClientFn utils.MongoClientFn, datab
 	if _, err := collection.Indexes().CreateOne(ctx, mongo.IndexModel{
 		Keys: bson.D{
 			{
-				Key: "attributes." + FirstNameAttribute.ID, Value: "text",
-			},
-			{
-				Key: "attributes." + LastNameAttribute.ID, Value: "text",
+				Key: "attributes." + FullNameAttribute.ID, Value: "text",
 			},
 		},
 	}); err != nil {
@@ -50,10 +48,12 @@ func newPartyStore(ctx context.Context, mongoClientFn utils.MongoClientFn, datab
 }
 
 func (s *PartyStore) get(ctx context.Context, id string) (*Party, error) {
-	collection, err := s.GetCollection(ctx)
+	collection, done, err := s.GetCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer done()
+
 	res := collection.FindOne(ctx, bson.M{
 		"id": id,
 	})
@@ -96,10 +96,11 @@ func (s *PartyStore) list(ctx context.Context, listOptions PartySearchOptions) (
 		filterItems["$text"] = bson.M{"$search": listOptions.SearchParam}
 	}
 
-	collection, err := s.GetCollection(ctx)
+	collection, done, err := s.GetCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer done()
 
 	res, err := collection.Find(ctx, filterItems)
 	if err != nil {
@@ -129,10 +130,12 @@ func (s *PartyStore) list(ctx context.Context, listOptions PartySearchOptions) (
 }
 
 func (s *PartyStore) update(ctx context.Context, party *Party) error {
-	collection, err := s.GetCollection(ctx)
+	collection, done, err := s.GetCollection(ctx)
 	if err != nil {
 		return err
 	}
+	defer done()
+
 	_, err = collection.UpdateOne(ctx, bson.M{
 		"id": party.ID,
 	}, bson.M{
@@ -148,10 +151,12 @@ func (s *PartyStore) update(ctx context.Context, party *Party) error {
 }
 
 func (s *PartyStore) create(ctx context.Context, party *Party) error {
-	collection, err := s.GetCollection(ctx)
+	collection, done, err := s.GetCollection(ctx)
 	if err != nil {
 		return err
 	}
+	defer done()
+
 	_, err = collection.InsertOne(ctx, party)
 	if err != nil {
 		return err
@@ -168,7 +173,7 @@ type FindOptions struct {
 //	for key, value := range options.Attributes {
 //		filter["attributes."+key] = value
 //	}
-//	collection, err := s.GetCollection(ctx)
+//	collection, done, err := s.GetCollection(ctx)
 //	if err != nil {
 //		return nil, err
 //	}

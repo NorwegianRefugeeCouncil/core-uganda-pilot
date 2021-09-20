@@ -109,12 +109,12 @@ func (s *Server) Team(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "team", map[string]interface{}{
-		"Team":               t,
-		"Members":            members,
-		"LastNameAttribute":  iam.LastNameAttribute,
-		"FirstNameAttribute": iam.FirstNameAttribute,
-		"Constants":          s.Constants,
-		"Country":            c,
+		"Team":                 t,
+		"Members":              members,
+		"DisplayNameAttribute": iam.DisplayNameAttribute,
+		"FullNameAttribute":    iam.FullNameAttribute,
+		"Constants":            s.Constants,
+		"Country":              c,
 	}); err != nil {
 		s.Error(w, err)
 		return

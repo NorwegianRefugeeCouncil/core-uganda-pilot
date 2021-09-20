@@ -15,6 +15,9 @@ type Attribute struct {
 	// Name is the name of an attribute
 	Name string `json:"name" bson:"name"`
 
+	// Country ID
+	CountryID string `json:"countryId" bson:"countryId"`
+
 	// PartyTypeIDs represents the type of Party that can have this attribute
 	PartyTypeIDs []string `json:"partyTypeIds" bson:"partyTypeIds"`
 
@@ -126,16 +129,12 @@ func (p *Party) AddPartyType(partyType string) {
 func (p *Party) String() string {
 	// Staff
 	if p.HasPartyType(StaffPartyType.ID) {
-		return p.Attributes.Get(FirstNameAttribute.ID) +
-			" " +
-			p.Attributes.Get(LastNameAttribute.ID)
+		return p.Attributes.Get(DisplayNameAttribute.ID)
 	}
 
 	// Individual
 	if p.HasPartyType(IndividualPartyType.ID) {
-		return p.Attributes.Get(FirstNameAttribute.ID) +
-			" " +
-			p.Attributes.Get(LastNameAttribute.ID)
+		return p.Attributes.Get(DisplayNameAttribute.ID)
 	}
 
 	// Team
@@ -370,11 +369,10 @@ func (b *Individual) FindAge() *int {
 
 func (b *Individual) String() string {
 
-	firstNames, hasFirstNames := b.Attributes[FirstNameAttribute.ID]
-	lastNames, hasLastNames := b.Attributes[LastNameAttribute.ID]
+	displayName, hasDisplayName := b.Attributes[DisplayNameAttribute.ID]
 
-	if hasFirstNames && hasLastNames {
-		return strings.ToUpper(lastNames[0]) + ", " + firstNames[0]
+	if hasDisplayName {
+		return strings.ToUpper(displayName[0])
 	}
 
 	return b.ID

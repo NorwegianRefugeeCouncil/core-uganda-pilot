@@ -11,6 +11,7 @@ import (
 	"github.com/nrc-no/core/pkg/sessionmanager"
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/ory/hydra-client-go/client/admin"
+	"github.com/ory/hydra-client-go/client/public"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
 	"net/http"
@@ -22,6 +23,7 @@ type Server struct {
 	router              *mux.Router
 	login               login.Interface
 	HydraAdmin          admin.ClientService
+	HydraPublic         public.ClientService
 	oidcVerifier        *oidc.IDTokenVerifier
 	privateOauth2Config *oauth2.Config
 	environment         string
@@ -65,6 +67,7 @@ func NewServer(options *ServerOptions) (*Server, error) {
 			HTTPClient: options.AdminHTTPClient,
 		}),
 		HydraAdmin:          options.HydraAdminClient.Admin,
+		HydraPublic:         options.HydraPublicClient.Public,
 		oidcVerifier:        options.IDTokenVerifier,
 		privateOauth2Config: options.PrivateOAuth2Config,
 		publicOauth2Config:  options.PublicOauth2Config,

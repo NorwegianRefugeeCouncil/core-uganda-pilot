@@ -20,10 +20,11 @@ func newRelationshipStore(ctx context.Context, mongoClientFn utils.MongoClientFn
 		getCollection: utils.GetCollectionFn(database, "relationships", mongoClientFn),
 	}
 
-	collection, err := store.getCollection(ctx)
+	collection, done, err := store.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer done()
 
 	if _, err := collection.Indexes().CreateOne(ctx, mongo.IndexModel{
 		Keys:    bson.M{"id": 1},
@@ -37,10 +38,12 @@ func newRelationshipStore(ctx context.Context, mongoClientFn utils.MongoClientFn
 }
 
 func (s *RelationshipStore) create(ctx context.Context, relationship *Relationship) error {
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return err
 	}
+	defer done()
+
 	_, err = collection.InsertOne(ctx, relationship)
 	if err != nil {
 		return err
@@ -49,10 +52,12 @@ func (s *RelationshipStore) create(ctx context.Context, relationship *Relationsh
 }
 
 func (s *RelationshipStore) get(ctx context.Context, id string) (*Relationship, error) {
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer done()
+
 	res := collection.FindOne(ctx, bson.M{
 		"id": id,
 	})
@@ -67,10 +72,12 @@ func (s *RelationshipStore) get(ctx context.Context, id string) (*Relationship, 
 }
 
 func (s *RelationshipStore) update(ctx context.Context, relationship *Relationship) error {
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return err
 	}
+	defer done()
+
 	_, err = collection.UpdateOne(ctx, bson.M{
 		"id": relationship.ID,
 	}, bson.M{
@@ -108,10 +115,11 @@ func (s *RelationshipStore) list(ctx context.Context, listOptions RelationshipLi
 		}
 	}
 
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer done()
 
 	res, err := collection.Find(ctx, filter)
 	if err != nil {
@@ -138,10 +146,12 @@ func (s *RelationshipStore) list(ctx context.Context, listOptions RelationshipLi
 }
 
 func (s *RelationshipStore) delete(ctx context.Context, id string) error {
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return err
 	}
+	defer done()
+
 	_, err = collection.DeleteOne(ctx, bson.M{
 		"id": id,
 	})

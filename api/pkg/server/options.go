@@ -519,6 +519,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	attachmentServer, err := attachments.NewServer(ctx, genericServerOptions)
 	if err != nil {
 		logrus.WithError(err).Errorf("faled to create attachment server")
+		panic(err)
 	}
 
 	// Create IAM Server

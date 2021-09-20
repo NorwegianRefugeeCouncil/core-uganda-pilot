@@ -38,15 +38,15 @@
 
         <div class="row">
             <div class="col">
-                <h6 class='display-6'>Entity types</h6>
-                <a href='/settings/partytypes/new' class='btn btn-primary mb-3'>New Entity Type</a>
+                <h6 class='display-6'>Party types</h6>
+                <a href='/settings/partytypes/new' class='btn btn-primary mb-3'>New Party Type</a>
                 <div class="list-group">
                     {{ if .PartyTypes.Items}}
                         {{ range .PartyTypes.Items }}
                             {{template "partytype-row" .}}
                         {{end}}
                     {{else}}
-                        <div class='list-group-item disabled'>No entity type found</div>
+                        <div class='list-group-item disabled'>No party type found</div>
                     {{end}}
                 </div>
             </div>

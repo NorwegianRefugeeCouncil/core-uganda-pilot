@@ -5,7 +5,6 @@ import (
 	"github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/nrc-no/core/pkg/form"
 	"github.com/nrc-no/core/pkg/registrationctrl"
-	"strings"
 )
 
 func caseType(id, name, partyTypeID, teamID string, template *cms.CaseTemplate, intakeCaseType bool) cms.CaseType {
@@ -39,33 +38,7 @@ func country(id, name string) iam.Country {
 	return t
 }
 
-func individual(
-	id string,
-	firstName string,
-	lastName string,
-	birthDate string,
-	displacementStatus string,
-	gender string,
-	consent string,
-	consentProof string,
-	anonymous string,
-	minor string,
-	protectionConcerns string,
-	physicalImpairment string,
-	physicalImpairmentIntensity string,
-	sensoryImpairment string,
-	sensoryImpairmentIntensity string,
-	mentalImpairment string,
-	mentalImpairmentIntensity string,
-	nationality string,
-	spokenLanguages string,
-	preferredLanguage string,
-	physicalAddress string,
-	primaryPhoneNumber string,
-	secondaryPhoneNumber string,
-	preferredMeansOfContact string,
-	requireAnInterpreter string,
-) iam.Individual {
+func individual(id string, fullName string, displayName string, birthDate string, email string, displacementStatus string, gender string, consent string, consentProof string, anonymous string, minor string, protectionConcerns string, physicalImpairment string, physicalImpairmentIntensity string, sensoryImpairment string, sensoryImpairmentIntensity string, mentalImpairment string, mentalImpairmentIntensity string, nationality string, spokenLanguages string, preferredLanguage string, physicalAddress string, primaryPhoneNumber string, secondaryPhoneNumber string, preferredMeansOfContact string, requireAnInterpreter string) iam.Individual {
 	var i = iam.Individual{
 		Party: &iam.Party{
 			ID: id,
@@ -73,9 +46,9 @@ func individual(
 				iam.IndividualPartyType.ID,
 			},
 			Attributes: map[string][]string{
-				iam.FirstNameAttribute.ID:                   {firstName},
-				iam.LastNameAttribute.ID:                    {lastName},
-				iam.EMailAttribute.ID:                       {strings.ToLower(firstName) + "." + strings.ToLower(lastName) + "@email.com"},
+				iam.FullNameAttribute.ID:                    {fullName},
+				iam.DisplayNameAttribute.ID:                 {displayName},
+				iam.EMailAttribute.ID:                       {email + "@email.com"},
 				iam.BirthDateAttribute.ID:                   {birthDate},
 				iam.DisplacementStatusAttribute.ID:          {displacementStatus},
 				iam.GenderAttribute.ID:                      {gender},
@@ -103,6 +76,26 @@ func individual(
 	}
 	individuals = append(individuals, i)
 	return i
+}
+
+func ugandaIndividual(
+	individual iam.Individual,
+	identificationDate string,
+	identificationLocation string,
+	identificationSource string,
+	admin2 string,
+	admin3 string,
+	admin4 string,
+	admin5 string,
+) iam.Individual {
+	individual.Attributes.Add(iam.IdentificationDateAttribute.ID, identificationDate)
+	individual.Attributes.Add(iam.IdentificationLocationAttribute.ID, identificationLocation)
+	individual.Attributes.Add(iam.IdentificationSourceAttribute.ID, identificationSource)
+	individual.Attributes.Add(iam.Admin2Attribute.ID, admin2)
+	individual.Attributes.Add(iam.Admin3Attribute.ID, admin3)
+	individual.Attributes.Add(iam.Admin4Attribute.ID, admin4)
+	individual.Attributes.Add(iam.Admin5Attribute.ID, admin5)
+	return individual
 }
 
 func staff(individual iam.Individual) iam.Individual {
@@ -162,10 +155,6 @@ var (
 	caseTypes     []cms.CaseType
 	cases         []cms.Case
 
-	// Countries
-	Germany = country("02680685-806e-4386-b6a5-95c4af1fc141", "Germany")
-	Uganda  = country("062a7fe9-b9cc-4fbc-837e-138a15242007", "Uganda")
-
 	// Teams
 	UgandaProtectionTeam = team("ac9b8d7d-d04d-4850-9a7f-3f93324c0d1e", "Uganda Protection Team")
 	UgandaICLATeam       = team("a43f84d5-3f8a-48c4-a896-5fb0fcd3e42b", "Uganda ICLA Team")
@@ -179,7 +168,7 @@ var (
 				Type: form.Textarea,
 				Attributes: form.FormElementAttributes{
 					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
-					Name:        "safeDiginifiedLife",
+					Name:        "safeDignifiedLife",
 					Description: "Probe for description",
 					Placeholder: "",
 				},
@@ -239,6 +228,15 @@ var (
 				},
 			},
 			{
+				Type: form.Textarea,
+				Attributes: form.FormElementAttributes{
+					Label:       "Comment on service the individual requested as a starting point of support?",
+					Name:        "commentStartingPoint",
+					Description: "Additional information, observations, concerns, etc.",
+					Placeholder: "",
+				},
+			},
+			{
 				Type: form.TaxonomyInput,
 				Attributes: form.FormElementAttributes{
 					Label:       "What other services has the individual requested/identified?",
@@ -247,6 +245,15 @@ var (
 				},
 				Validation: form.FormElementValidation{
 					Required: true,
+				},
+			},
+			{
+				Type: form.Textarea,
+				Attributes: form.FormElementAttributes{
+					Label:       "Comment on other services the individual requested/identified?",
+					Name:        "commentOtherServices",
+					Description: "Additional information, observations, concerns, etc.",
+					Placeholder: "",
 				},
 			},
 			{
@@ -638,13 +645,13 @@ var (
 	}
 
 	// Individuals
-	JohnDoe     = individual("c529d679-3bb6-4a20-8f06-c096f4d9adc1", "John", "Doe", "1983-04-23", "Refugee", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "No", "Yes", "Moderate", "No", "", "No", "", "Kenya", "Kiswahili, English", "English", "123 Main Street, Kampala", "0123456789", "", "Email", "No")
-	MaryPoppins = individual("bbf539fd-ebaa-4438-ae4f-8aca8b327f42", "Mary", "Poppins", "1983-04-23", "Internally Displaced Person", "Female", "Yes", "https://link-to-consent.proof", "No", "No", "No", "No", "", "No", "", "No", "", "Uganda", "Rukiga, English", "Rukiga", "901 First Avenue, Kampala", "0123456789", "", "Telegram", "Yes")
-	BoDiddley   = individual("26335292-c839-48b6-8ad5-81271ee51e7b", "Bo", "Diddley", "1983-04-23", "Host Community", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "Yes", "No", "", "No", "", "No", "", "Somalia", "Somali, Arabic, English", "English", "101 Main Street, Kampala", "0123456789", "", "Whatsapp", "No")
+	JohnDoe     = ugandaIndividual(individual("c529d679-3bb6-4a20-8f06-c096f4d9adc1", "John Sinclair Doe", "John Doe", "1983-04-23", "john.doe", "Refugee", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "No", "Yes", "Moderate", "No", "", "No", "", "Kenya", "Kiswahili, English", "English", "123 Main Street, Kampala", "0123456789", "", "Email", "No"), "1983-04-23", "0", "0", "0", "0", "0", "0")
+	MaryPoppins = ugandaIndividual(individual("bbf539fd-ebaa-4438-ae4f-8aca8b327f42", "Mary Poppins", "Mary Poppins", "1983-04-23", "mary.poppins", "Internally Displaced Person", "Female", "Yes", "https://link-to-consent.proof", "No", "No", "No", "No", "", "No", "", "No", "", "Uganda", "Rukiga, English", "Rukiga", "901 First Avenue, Kampala", "0123456789", "", "Telegram", "Yes"), "1983-04-23", "0", "0", "0", "0", "0", "0")
+	BoDiddley   = ugandaIndividual(individual("26335292-c839-48b6-8ad5-81271ee51e7b", "Ellas McDaniel", "Bo Diddley", "1983-04-23", "bo.diddley", "Host Community", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "Yes", "No", "", "No", "", "No", "", "Somalia", "Somali, Arabic, English", "English", "101 Main Street, Kampala", "0123456789", "", "Whatsapp", "No"), "1983-04-23", "0", "0", "0", "0", "0", "0")
 
-	Stephen  = individual("066a0268-fdc6-495a-9e4b-d60cfae2d81a", "Stephen", "Kabagambe", "1983-04-23", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
-	Colette  = individual("93f9461f-31da-402e-8988-6e0100ecaa24", "Colette", "le Jeune", "1983-04-23", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
-	Courtney = individual("14c014d9-f433-4508-b33d-dc45bf86690b", "Courtney", "Lare", "1983-04-23", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Stephen  = individual("066a0268-fdc6-495a-9e4b-d60cfae2d81a", "Stephen Kabagambe", "Stephen Kabagambe", "1983-04-23", "stephen.kabagambe", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Colette  = individual("93f9461f-31da-402e-8988-6e0100ecaa24", "Colette le Jeune", "Colette le Jeune", "1983-04-23", "colette.le.jeune", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Courtney = individual("14c014d9-f433-4508-b33d-dc45bf86690b", "Courtney Lare", "Courtney Lare", "1983-04-23", "courtney.lare", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
 
 	// Beneficiaries
 	_ = beneficiary(JohnDoe)
@@ -661,11 +668,13 @@ var (
 	ColetteMembership  = membership("9d4abef9-0be0-4750-81ab-0524a412c049", Colette, UgandaProtectionTeam)
 	CourtneyMembership = membership("83c5e73a-5947-4d7e-996c-14a2a7b1c850", Courtney, UgandaProtectionTeam)
 
+	// Countries
+	ugandaCountry = country(iam.UgandaCountry.ID, iam.UgandaCountry.Name)
+
 	// Nationalities
-	DTeamNationality                = nationality("9c1c1f2d-67f5-41cc-a752-534f031c05f9", DTeam, Germany)
-	UgandaCoreAdminTeamNationality  = nationality("0987460d-c906-43cd-b7fd-5e7afca0d93e", UgandaCoreAdminTeam, Uganda)
-	UgandaProtectionTeamNationality = nationality("b58e4d26-fe8e-4442-8449-7ec4ca3d9066", UgandaProtectionTeam, Uganda)
-	UgandaICLATeamNationality       = nationality("23e3eb5e-592e-42e2-8bbf-ee097d93034c", UgandaICLATeam, Uganda)
+	UgandaCoreAdminTeamNationality  = nationality("0987460d-c906-43cd-b7fd-5e7afca0d93e", UgandaCoreAdminTeam, ugandaCountry)
+	UgandaProtectionTeamNationality = nationality("b58e4d26-fe8e-4442-8449-7ec4ca3d9066", UgandaProtectionTeam, ugandaCountry)
+	UgandaICLATeamNationality       = nationality("23e3eb5e-592e-42e2-8bbf-ee097d93034c", UgandaICLATeam, ugandaCountry)
 
 	// Cases
 	BoDiddleySituationAnalysis = kase("dba43642-8093-4685-a197-f8848d4cbaaa", UGSituationalAnalysisCaseType.ID, Colette.ID, BoDiddley.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
@@ -674,7 +683,7 @@ var (
 				Type: form.Textarea,
 				Attributes: form.FormElementAttributes{
 					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
-					Name:        "safeDiginifiedLife",
+					Name:        "safeDignifiedLife",
 					Description: "Probe for description",
 					Value: []string{
 						"Yes, I live a safe and dignified life and I am reasonably happy with my achievements and quality of life.",
@@ -722,7 +731,7 @@ var (
 	},
 		true)
 
-	BoDiddleyIndividualAssessment = kase("3ea8c121-bdf0-46a0-86a8-698dc4abc872", UGIndividualResponseCaseType.ID, Colette.ID, BoDiddley.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
+	BoDiddleyIndividualResponse = kase("3ea8c121-bdf0-46a0-86a8-698dc4abc872", UGIndividualResponseCaseType.ID, Colette.ID, BoDiddley.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
 		FormElements: []form.FormElement{
 			{
 				Type: form.TaxonomyInput,
@@ -730,10 +739,22 @@ var (
 					Label: "Which service has the individual requested as a starting point of support?",
 					Name:  "serviceStartingPoint",
 					Value: []string{
-						"ICLA - Counselling - Legal Identity",
+						"ICLA",
 					},
 					Description: "Add the taxonomies of the services requested as a starting point one by one, by selecting the relevant options from the dropdowns below.",
 					Placeholder: "",
+				},
+			},
+			{
+				Type: form.Textarea,
+				Attributes: form.FormElementAttributes{
+					Label:       "Comment on service the individual requested as a starting point of support?",
+					Name:        "commentStartingPoint",
+					Description: "Additional information, observations, concerns, etc.",
+					Placeholder: "",
+					Value: []string{
+						"The individual has requested ICLA as a starting point, we should create a referral",
+					},
 				},
 			},
 			{
@@ -742,10 +763,22 @@ var (
 					Label: "What other services has the individual requested/identified?",
 					Name:  "otherServices",
 					Value: []string{
-						"Protection - Individual Targeted Protection - Individual Protection Assistance",
+						"Protection",
 					},
 					Description: "Add the taxonomies of the other services requested one by one, by selecting the relevant options from the dropdowns below.",
 					Placeholder: "",
+				},
+			},
+			{
+				Type: form.Textarea,
+				Attributes: form.FormElementAttributes{
+					Label:       "Comment on other services the individual requested/identified?",
+					Name:        "commentOtherServices",
+					Description: "Additional information, observations, concerns, etc.",
+					Placeholder: "",
+					Value: []string{
+						"The individual has requested additional Protection services, we should create a referral",
+					},
 				},
 			},
 			{
@@ -769,7 +802,7 @@ var (
 				Type: form.Textarea,
 				Attributes: form.FormElementAttributes{
 					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
-					Name:        "safeDiginifiedLife",
+					Name:        "safeDignifiedLife",
 					Description: "Probe for description",
 					Value: []string{
 						"Yes, I live a safe and dignified life and I am reasonably happy with my achievements and quality of life.",
@@ -817,7 +850,7 @@ var (
 	},
 		true)
 
-	MaryPoppinsIndividualAssessment = kase("45b4a637-c610-4ab9-afe6-4e958c36a96f", UGIndividualResponseCaseType.ID, Colette.ID, MaryPoppins.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
+	MaryPoppinsIndividualResponse = kase("45b4a637-c610-4ab9-afe6-4e958c36a96f", UGIndividualResponseCaseType.ID, Colette.ID, MaryPoppins.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
 		FormElements: []form.FormElement{
 			{
 				Type: form.TaxonomyInput,
@@ -825,10 +858,22 @@ var (
 					Label: "Which service has the individual requested as a starting point of support?",
 					Name:  "serviceStartingPoint",
 					Value: []string{
-						"ICLA - Counselling - Legal Identity",
+						"S&S",
 					},
 					Description: "Add the taxonomies of the services requested as a starting point one by one, by selecting the relevant options from the dropdowns below.",
 					Placeholder: "",
+				},
+			},
+			{
+				Type: form.Textarea,
+				Attributes: form.FormElementAttributes{
+					Label:       "Comment on service the individual requested as a starting point of support?",
+					Name:        "commentStartingPoint",
+					Description: "Additional information, observations, concerns, etc.",
+					Placeholder: "",
+					Value: []string{
+						"The individual has requested S&S as a starting point, we should create a referral",
+					},
 				},
 			},
 			{
@@ -837,10 +882,22 @@ var (
 					Label: "What other services has the individual requested/identified?",
 					Name:  "otherServices",
 					Value: []string{
-						"Protection - Individual Targeted Protection - Individual Protection Assistance",
+						"Protection",
 					},
 					Description: "Add the taxonomies of the other services requested one by one, by selecting the relevant options from the dropdowns below.",
 					Placeholder: "",
+				},
+			},
+			{
+				Type: form.Textarea,
+				Attributes: form.FormElementAttributes{
+					Label:       "Comment on other services the individual requested/identified?",
+					Name:        "commentOtherServices",
+					Description: "Additional information, observations, concerns, etc.",
+					Placeholder: "",
+					Value: []string{
+						"The individual has requested additional Protection services, we should create a referral",
+					},
 				},
 			},
 			{
@@ -864,7 +921,7 @@ var (
 				Type: form.Textarea,
 				Attributes: form.FormElementAttributes{
 					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
-					Name:        "safeDiginifiedLife",
+					Name:        "safeDignifiedLife",
 					Description: "Probe for description",
 					Value: []string{
 						"Yes, I live a safe and dignified life and I am reasonably happy with my achievements and quality of life.",
@@ -912,7 +969,7 @@ var (
 	},
 		true)
 
-	JohnDoeIndividualAssessment = kase("65e02e79-1676-4745-9890-582e3d67d13f", UGIndividualResponseCaseType.ID, Colette.ID, JohnDoe.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
+	JohnDoeIndividualResponse = kase("65e02e79-1676-4745-9890-582e3d67d13f", UGIndividualResponseCaseType.ID, Colette.ID, JohnDoe.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
 		FormElements: []form.FormElement{
 			{
 				Type: form.TaxonomyInput,
@@ -920,10 +977,22 @@ var (
 					Label: "Which service has the individual requested as a starting point of support?",
 					Name:  "serviceStartingPoint",
 					Value: []string{
-						"ICLA - Counselling - Legal Identity",
+						"LFS",
 					},
 					Description: "Add the taxonomies of the services requested as a starting point one by one, by selecting the relevant options from the dropdowns below.",
 					Placeholder: "",
+				},
+			},
+			{
+				Type: form.Textarea,
+				Attributes: form.FormElementAttributes{
+					Label:       "Comment on service the individual requested as a starting point of support?",
+					Name:        "commentStartingPoint",
+					Description: "Additional information, observations, concerns, etc.",
+					Placeholder: "",
+					Value: []string{
+						"The individual has requested LFS as a starting point, we should create a referral",
+					},
 				},
 			},
 			{
@@ -932,10 +1001,22 @@ var (
 					Label: "What other services has the individual requested/identified?",
 					Name:  "otherServices",
 					Value: []string{
-						"Protection - Individual Targeted Protection - Individual Protection Assistance",
+						"WASH",
 					},
 					Description: "Add the taxonomies of the other services requested one by one, by selecting the relevant options from the dropdowns below.",
 					Placeholder: "",
+				},
+			},
+			{
+				Type: form.Textarea,
+				Attributes: form.FormElementAttributes{
+					Label:       "Comment on other services the individual requested/identified?",
+					Name:        "commentOtherServices",
+					Description: "Additional information, observations, concerns, etc.",
+					Placeholder: "",
+					Value: []string{
+						"The individual has requested additional WASH services, we should create a referral",
+					},
 				},
 			},
 			{

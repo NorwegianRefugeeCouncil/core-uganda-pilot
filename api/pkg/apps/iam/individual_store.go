@@ -21,10 +21,12 @@ func NewIndividualStore(mongoClientFn utils.MongoClientFn, database string) *Ind
 
 func (s *IndividualStore) create(ctx context.Context, individual *Individual) error {
 	individual.AddPartyType(IndividualPartyType.ID)
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return err
 	}
+	defer done()
+
 	_, err = collection.InsertOne(ctx, individual)
 	if err != nil {
 		return err
@@ -33,10 +35,12 @@ func (s *IndividualStore) create(ctx context.Context, individual *Individual) er
 }
 
 func (s *IndividualStore) get(ctx context.Context, ID string) (*Individual, error) {
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer done()
+
 	findResult := collection.FindOne(ctx, bson.M{"id": ID})
 	if findResult.Err() != nil {
 		return nil, findResult.Err()
@@ -49,10 +53,12 @@ func (s *IndividualStore) get(ctx context.Context, ID string) (*Individual, erro
 }
 
 func (s *IndividualStore) upsert(ctx context.Context, individual *Individual) error {
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return err
 	}
+	defer done()
+
 	individual.AddPartyType(IndividualPartyType.ID)
 	_, err = collection.UpdateOne(ctx, bson.M{
 		"id": individual.ID,
@@ -97,10 +103,11 @@ func (s *IndividualStore) list(ctx context.Context, listOptions IndividualListOp
 		filter["$text"] = bson.M{"$search": listOptions.SearchParam}
 	}
 
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer done()
 
 	maxPerPage := pagination.GetMaxPerPage(listOptions.PerPage)
 	currentPage := pagination.GetCurrentPage(listOptions.Page)
@@ -135,7 +142,7 @@ func (s *IndividualStore) list(ctx context.Context, listOptions IndividualListOp
 
 func getFindOptions(currentPage int, maxPerPage int, listOptions IndividualListOptions) *options.FindOptions {
 	findOptions := options.Find()
-	findOptions.SetSort(bson.D{{Key: "attributes." + LastNameAttribute.ID, Value: pagination.GetSortOptionType(listOptions.Sort)}})
+	findOptions.SetSort(bson.D{{Key: "attributes." + DisplayNameAttribute.ID, Value: pagination.GetSortOptionType(listOptions.Sort)}})
 	findOptions.SetSkip(int64((currentPage - 1) * maxPerPage))
 	findOptions.SetLimit(int64(maxPerPage))
 	return findOptions

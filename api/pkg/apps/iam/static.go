@@ -2,17 +2,30 @@ package iam
 
 import "github.com/nrc-no/core/pkg/form"
 
-var FirstNameAttribute = Attribute{
+//Countries
+var GlobalCountry = Country{
+	ID:   "",
+	Name: "Global",
+}
+
+var UgandaCountry = Country{
+	ID:   "fc82a799-b4fc-4eda-81fc-f2710a0d27d8",
+	Name: "Uganda",
+}
+
+//Individual Global Attributes
+var FullNameAttribute = Attribute{
 	ID:         "8514da51-aad5-4fb4-a797-8bcc0c969b27",
-	Name:       "firstName",
+	Name:       "fullName",
+	CountryID: 	GlobalCountry.ID,
 	Type:       form.Text,
-	Attributes: form.FormElementAttributes{Name: "firstName"},
+	Attributes: form.FormElementAttributes{Name: "fullName"},
 	Validation: form.FormElementValidation{Required: true},
 	Translations: []AttributeTranslation{
 		{
 			Locale:           "en",
-			LongFormulation:  "First Name",
-			ShortFormulation: "First Name",
+			LongFormulation:  "Full Name",
+			ShortFormulation: "Full Name",
 		},
 	},
 	IsPersonallyIdentifiableInfo: true,
@@ -21,17 +34,18 @@ var FirstNameAttribute = Attribute{
 	},
 }
 
-var LastNameAttribute = Attribute{
+var DisplayNameAttribute = Attribute{
 	ID:         "21079bbc-e04b-4fe8-897f-644d73af0d9e",
-	Name:       "lastName",
+	Name:       "displayName",
+	CountryID: 	GlobalCountry.ID,
 	Type:       form.Text,
-	Attributes: form.FormElementAttributes{Name: "lastName"},
+	Attributes: form.FormElementAttributes{Name: "displayName"},
 	Validation: form.FormElementValidation{Required: true},
 	Translations: []AttributeTranslation{
 		{
 			Locale:           "en",
-			LongFormulation:  "Last Name",
-			ShortFormulation: "Last Name",
+			LongFormulation:  "Display Name",
+			ShortFormulation: "Display Name",
 		},
 	},
 	IsPersonallyIdentifiableInfo: true,
@@ -43,6 +57,7 @@ var LastNameAttribute = Attribute{
 var BirthDateAttribute = Attribute{
 	ID:         "87fe07d7-e6a7-4428-8086-3842b69f3665",
 	Name:       "birthDate",
+	CountryID: 	GlobalCountry.ID,
 	Type:       form.Date,
 	Attributes: form.FormElementAttributes{Name: "birthDate"},
 	Validation: form.FormElementValidation{Required: true},
@@ -62,6 +77,7 @@ var BirthDateAttribute = Attribute{
 var EMailAttribute = Attribute{
 	ID:         "0ca7fa2b-982b-4fa5-85be-a6ebee8d4912",
 	Name:       "email",
+	CountryID: 	GlobalCountry.ID,
 	Type:       form.Email,
 	Attributes: form.FormElementAttributes{Name: "email"},
 	Validation: form.FormElementValidation{Required: true},
@@ -78,13 +94,226 @@ var EMailAttribute = Attribute{
 	},
 }
 
-// ---------------------------------------------------------------------------
+// Uganda Idividual Attributes
+var IdentificationDateAttribute = Attribute{
+	ID:        "c84b8b93-b974-4bec-b9f7-d437446b24a7",
+	Name:      "identificationDate",
+	CountryID: UgandaCountry.ID,
+	Type:      form.Date,
+	Attributes: form.FormElementAttributes{
+		Label:       "Date of Identification",
+		Name:        "identificationDate",
+		Description: "Date of first interaction with NRC",
+	},
+	Validation: form.FormElementValidation{Required: true},
+	Translations: []AttributeTranslation{
+		{
+			Locale:           "en",
+			LongFormulation:  "Date of Identification",
+			ShortFormulation: "Date of Identification",
+		},
+	},
+	IsPersonallyIdentifiableInfo: false,
+	PartyTypeIDs: []string{
+		IndividualPartyType.ID,
+	},
+}
 
-// Customisation for Uganda Demo
+var IdentificationLocationAttribute = Attribute{
+	ID:        "06680252-1a1f-4c9d-85dd-56feef20019d",
+	Name:      "identificationLocation",
+	CountryID: UgandaCountry.ID,
+	Type:      form.Dropdown,
+	Attributes: form.FormElementAttributes{
+		Label:       "Location of Identification",
+		Name:        "identificationLocation",
+		Description: "",
+		Options:     []string{"Kabusu Access Center", "Nsambya Access Center", "Kisenyi ICLA Center", "Lukuli ICLA Center", "Kawempe ICLA Center", "Ndejje ICLA Center", "Mengo Field Office", "Community (Specify location)", "Home Visit", "Phone", "Other (Specify)"},
+	},
+	Validation: form.FormElementValidation{Required: true},
+	Translations: []AttributeTranslation{
+		{
+			Locale:           "en",
+			LongFormulation:  "Location of Identification",
+			ShortFormulation: "Location of Identification",
+		},
+	},
+	IsPersonallyIdentifiableInfo: false,
+	PartyTypeIDs: []string{
+		IndividualPartyType.ID,
+	},
+}
+
+var IdentificationSourceAttribute = Attribute{
+	ID:        "a131a0fb-0270-4feb-8fc9-46e7dd6b5acb",
+	Name:      "identificationSource",
+	CountryID: UgandaCountry.ID,
+	Type:      form.Dropdown,
+	Attributes: form.FormElementAttributes{
+		Label:       "Source of Identification",
+		Name:        "identificationSource",
+		Description: "",
+		Options:     []string{"Walk-in Center", "FFRM Referral", "Internal Referral (Other – Specify)", "ICLA Outreach Team", "External Referral (Community Leader/Contact)", "External Referral (INGO/LNGO)", "External Referral (Other – Specify)", "Self (Telephone)", "Self (Email)", "Internal Referral (Other NRC Sector – Specify)", "CBP Outreach Team", "Other NRC Outreach Team (Specify)", "External Referral (UN Agency)", "External Referral (Government)", "Other – Specify"},
+	},
+	Validation: form.FormElementValidation{Required: true},
+	Translations: []AttributeTranslation{
+		{
+			Locale:           "en",
+			LongFormulation:  "Source of Identification",
+			ShortFormulation: "Source of Identification",
+		},
+	},
+	IsPersonallyIdentifiableInfo: false,
+	PartyTypeIDs: []string{
+		IndividualPartyType.ID,
+	},
+}
+
+var Admin2Attribute = Attribute{
+	ID:        "44dffbc4-7536-42b9-af84-32ea4e9ed493",
+	Name:      "admin2",
+	CountryID: UgandaCountry.ID,
+	Type:      form.Dropdown,
+	Attributes: form.FormElementAttributes{
+		Label:       "District / Admin 2",
+		Name:        "admin2",
+		Description: "",
+		Options:     []string{"ABIM", "ADJUMANI", "ALEBTONG", "AMOLATAR", "AMUDAT", "AMURIA", "AMURU", "APAC", "BUDAKA", "BUGIRI", "BUIKWE", "BUKOMANSIMBI", "BUKWO", "BULAMBULI", "BULIISA", "BUNDIBUGYO", "BUSHENYI", "BUYENDE", "DOKOLO", "BUTAMBALA", "HOIMA", "IGANGA", "KAABONG", "KABALE", "KABAROLE", "KALANGALA", "KALIRO", "KALUNGU", "KAMULI", "KANUNGU", "KAPCHORWA", "KATAKWI", "KAYUNGA", "SHEEMA", "KITGUM", "KOBOKO", "KOLE", "KOTIDO", "KISORO", "KWEEN", "LAMWO", "LIRA", "LUUKA", "LYANTONDE", "MANAFWA", "MASAKA", "MASINDI", "MAYUGE", "MBALE", "MBARARA", "MOROTO", "MOYO", "NAKAPIRIPIRIT", "NAKASEKE", "NAKASONGOLA", "NAMUTUMBA", "NAPAK", "NEBBI", "NGORA", "BUHWEJU", "NTOROKO", "MARACHA", "OTUKE", "OYAM", "PADER", "RUBIRIZI", "SIRONKO", "SOROTI", "WAKISO", "YUMBE", "ZOMBO", "ISINGIRO", "MITOOMA", "KYEGEGWA", "NTUNGAMO", "RUKUNGIRI", "KAMWENGE", "IBANDA", "KASESE", "KIRUHURA", "KYENJOJO", "MUBENDE", "GOMBA", "KIBOGA", "MPIGI", "KYANKWANZI", "KAKUMIRO", "NWOYA", "KIRYANDONGO", "SERERE", "OMORO", "ARUA", "LWENGO", "SEMBABULE", "RAKAI", "MITYANA", "LUWERO", "MUKONO", "KAMPALA", "BUVUMA", "JINJA", "NAMAYINGO", "BUSIA", "BUDUDA", "TORORO", "BUTALEJA", "BUKEDEA", "KUMI", "PALLISA", "KIBUKU", "KABERAMAIDO", "AGAGO", "KAGADI", "KIBAALE", "GULU", "RUBANDA"},
+	},
+	Validation: form.FormElementValidation{Required: true},
+	Translations: []AttributeTranslation{
+		{
+			Locale:           "en",
+			LongFormulation:  "District / Admin 2",
+			ShortFormulation: "District / Admin 2",
+		},
+	},
+	IsPersonallyIdentifiableInfo: false,
+	PartyTypeIDs: []string{
+		IndividualPartyType.ID,
+	},
+}
+
+var Admin3Attribute = Attribute{
+	ID:        "a17ffa5e-5d62-44cd-b89f-438eeba128ac",
+	Name:      "admin3",
+	CountryID: UgandaCountry.ID,
+	Type:      form.Text,
+	Attributes: form.FormElementAttributes{
+		Label:       "Subcounty / Admin 3",
+		Name:        "admin3",
+		Description: "",
+	},
+	Validation: form.FormElementValidation{Required: true},
+	Translations: []AttributeTranslation{
+		{
+			Locale:           "en",
+			LongFormulation:  "Subcounty / Admin 3",
+			ShortFormulation: "Subcounty / Admin 3",
+		},
+	},
+	IsPersonallyIdentifiableInfo: false,
+	PartyTypeIDs: []string{
+		IndividualPartyType.ID,
+	},
+}
+
+var Admin4Attribute = Attribute{
+	ID:        "f867c62a-dcd0-4778-9f4e-7309d044e905",
+	Name:      "admin4",
+	CountryID: UgandaCountry.ID,
+	Type:      form.Text,
+	Attributes: form.FormElementAttributes{
+		Label:       "Parish / Admin 4",
+		Name:        "admin4",
+		Description: "",
+	},
+	Validation: form.FormElementValidation{Required: true},
+	Translations: []AttributeTranslation{
+		{
+			Locale:           "en",
+			LongFormulation:  "Parish / Admin 4",
+			ShortFormulation: "Parish / Admin 4",
+		},
+	},
+	IsPersonallyIdentifiableInfo: false,
+	PartyTypeIDs: []string{
+		IndividualPartyType.ID,
+	},
+}
+
+var Admin5Attribute = Attribute{
+	ID:        "f0b34ffc-3e15-4195-8e90-a3e1e4b3940c",
+	Name:      "admin5",
+	CountryID: UgandaCountry.ID,
+	Type:      form.Text,
+	Attributes: form.FormElementAttributes{
+		Label:       "Village / Admin 5",
+		Name:        "admin5",
+		Description: "",
+	},
+	Validation: form.FormElementValidation{Required: true},
+	Translations: []AttributeTranslation{
+		{
+			Locale:           "en",
+			LongFormulation:  "Village / Admin 5",
+			ShortFormulation: "Village / Admin 5",
+		},
+	},
+	IsPersonallyIdentifiableInfo: false,
+	PartyTypeIDs: []string{
+		IndividualPartyType.ID,
+	},
+}
+
+// ---------------------------------------------------------------------------
+var InstructionOnMakingContactAttribute = Attribute{
+	ID:         "4d399cb3-6653-4a61-92eb-331f07e6c395",
+	Name:       "instructionOnMakingContact",
+	CountryID: 	GlobalCountry.ID,
+	Type:       form.Textarea,
+	Attributes: form.FormElementAttributes{Name: "instructionOnMakingContact"},
+	Translations: []AttributeTranslation{
+		{
+			Locale:           "en",
+			LongFormulation:  "Instructions on contacting the beneficiary",
+			ShortFormulation: "Instructions on contacting the beneficiary",
+		},
+	},
+	IsPersonallyIdentifiableInfo: false,
+	PartyTypeIDs: []string{
+		IndividualPartyType.ID,
+	},
+}
+
+var CanInitiateContactAttribute = Attribute{
+	ID:   "7476fef0-d116-4b94-b981-ac647e16203d",
+	Name: "canInitiateContact",
+	CountryID: 	GlobalCountry.ID,
+	Type: form.Checkbox,
+	Attributes: form.FormElementAttributes{
+		Name: "canInitiateContact",
+		CheckboxOptions: []form.CheckboxOption{
+			{Label: "NRC can initiate contact with Beneficiary."},
+		},
+	},
+	Translations: []AttributeTranslation{
+		{
+			Locale:           "en",
+			LongFormulation:  "NRC can initiate contact with Beneficiary.",
+			ShortFormulation: "NRC can initiate contact with Beneficiary.",
+		},
+	},
+	IsPersonallyIdentifiableInfo: false,
+	PartyTypeIDs: []string{
+		IndividualPartyType.ID,
+	},
+}
 
 var DisplacementStatusAttribute = Attribute{
 	ID:   "d1d824b2-d163-43ff-bc0a-527bd86b79bb",
 	Name: "displacementStatus",
+	CountryID: 	GlobalCountry.ID,
 	Type: form.Dropdown,
 	Attributes: form.FormElementAttributes{
 		Name:    "displacementStatus",
@@ -107,6 +336,7 @@ var DisplacementStatusAttribute = Attribute{
 var GenderAttribute = Attribute{
 	ID:   "b43f630c-2eb6-4629-af89-44ded61f7f3e",
 	Name: "gender",
+	CountryID: 	GlobalCountry.ID,
 	Type: form.Dropdown,
 	Attributes: form.FormElementAttributes{
 		Name:    "gender",
@@ -135,6 +365,7 @@ var GenderAttribute = Attribute{
 var ConsentToNrcDataUseAttribute = Attribute{
 	ID:   "8463d701-f964-4454-b8b2-efc202e8007d",
 	Name: "consent_to_nrc_data_use",
+	CountryID: 	GlobalCountry.ID,
 	Type: form.Checkbox,
 	Attributes: form.FormElementAttributes{
 		Name: "consent_to_nrc_data_use",
@@ -162,6 +393,7 @@ var ConsentToNrcDataUseAttribute = Attribute{
 var ConsentToNrcDataUseProofAttribute = Attribute{
 	ID:         "1ac8cf17-49f3-4281-b9c9-6fd6036229c2",
 	Name:       "consentToNrcDataUseProof",
+	CountryID: 	GlobalCountry.ID,
 	Type:       form.URL,
 	Attributes: form.FormElementAttributes{Name: "consentToNrcDataUseProof"},
 	Translations: []AttributeTranslation{
@@ -180,6 +412,7 @@ var ConsentToNrcDataUseProofAttribute = Attribute{
 var AnonymousAttribute = Attribute{
 	ID:   "0ab6fd31-fa0e-4d53-b236-94bce6f67d4b",
 	Name: "anonymous",
+	CountryID: 	GlobalCountry.ID,
 	Type: form.Checkbox,
 	Attributes: form.FormElementAttributes{
 		Name: "anonymous",
@@ -203,6 +436,7 @@ var AnonymousAttribute = Attribute{
 var MinorAttribute = Attribute{
 	ID:   "24be4f47-ba00-405a-9bc5-c6fe58ecd80c",
 	Name: "minor",
+	CountryID: 	GlobalCountry.ID,
 	Type: form.Checkbox,
 	Attributes: form.FormElementAttributes{
 		Name: "minor",
@@ -226,6 +460,7 @@ var MinorAttribute = Attribute{
 var ProtectionConcernsAttribute = Attribute{
 	ID:   "ae56b1fd-21f6-480a-9184-091a7093d8b8",
 	Name: "protectionConcerns",
+	CountryID: 	GlobalCountry.ID,
 	Type: form.Checkbox,
 	Attributes: form.FormElementAttributes{
 		Name: "protectionConcerns",
@@ -249,6 +484,7 @@ var ProtectionConcernsAttribute = Attribute{
 var PhysicalImpairmentAttribute = Attribute{
 	ID:   "cb51b2e8-27da-4375-b85f-c5c107f5d2b4",
 	Name: "physicalImpairment",
+	CountryID: 	GlobalCountry.ID,
 	Type: form.Checkbox,
 	Attributes: form.FormElementAttributes{
 		Name: "physicalImpairment",
@@ -272,6 +508,7 @@ var PhysicalImpairmentAttribute = Attribute{
 var PhysicalImpairmentIntensityAttribute = Attribute{
 	ID:   "98def70b-ee72-40eb-aed1-5a834bf8f579",
 	Name: "physicalImpairmentIntensity",
+	CountryID: 	GlobalCountry.ID,
 	Type: form.Dropdown,
 	Attributes: form.FormElementAttributes{
 		Name:    "physicalImpairmentIntensity",
@@ -293,6 +530,7 @@ var PhysicalImpairmentIntensityAttribute = Attribute{
 var SensoryImpairmentAttribute = Attribute{
 	ID:   "972c0d7f-8fa9-436d-95ab-6773070bc451",
 	Name: "sensoryImpairment",
+	CountryID: 	GlobalCountry.ID,
 	Type: form.Checkbox,
 	Attributes: form.FormElementAttributes{
 		Name: "sensoryImpairment",
@@ -316,6 +554,7 @@ var SensoryImpairmentAttribute = Attribute{
 var SensoryImpairmentIntensityAttribute = Attribute{
 	ID:   "b1e6cfac-a8b9-4a0d-a5c7-f164fde99bcc",
 	Name: "sensoryImpairmentIntensity",
+	CountryID: 	GlobalCountry.ID,
 	Type: form.Dropdown,
 	Attributes: form.FormElementAttributes{
 		Name:    "sensoryImpairmentIntensity",
@@ -337,6 +576,7 @@ var SensoryImpairmentIntensityAttribute = Attribute{
 var MentalImpairmentAttribute = Attribute{
 	ID:   "41b7eb87-6488-47e3-a4b0-1422c039d0c7",
 	Name: "mentalImpairment",
+	CountryID: 	GlobalCountry.ID,
 	Type: form.Checkbox,
 	Attributes: form.FormElementAttributes{
 		Name: "mentalImpairment",
@@ -360,6 +600,7 @@ var MentalImpairmentAttribute = Attribute{
 var MentalImpairmentIntensityAttribute = Attribute{
 	ID:   "9983188b-4f43-4cd5-a972-fde3a08f4810",
 	Name: "mentalImpairmentIntensity",
+	CountryID: 	GlobalCountry.ID,
 	Type: form.Dropdown,
 	Attributes: form.FormElementAttributes{
 		Name:    "mentalImpairmentIntensity",
@@ -381,6 +622,7 @@ var MentalImpairmentIntensityAttribute = Attribute{
 var NationalityAttribute = Attribute{
 	ID:   "76aab836-73a6-4a1e-9c17-04b8a4c25d8d",
 	Name: "nationality",
+	CountryID: 	GlobalCountry.ID,
 	Type: form.Dropdown,
 	Attributes: form.FormElementAttributes{
 		Name:     "nationality",
@@ -403,6 +645,7 @@ var NationalityAttribute = Attribute{
 var SpokenLanguagesAttribute = Attribute{
 	ID:         "d041cba5-9486-4390-bc2b-ec7fb03d67ff",
 	Name:       "spokenLanguages",
+	CountryID: 	GlobalCountry.ID,
 	Type:       form.Text,
 	Attributes: form.FormElementAttributes{Name: "spokenLanguages"},
 	Translations: []AttributeTranslation{
@@ -421,6 +664,7 @@ var SpokenLanguagesAttribute = Attribute{
 var PreferredLanguageAttribute = Attribute{
 	ID:         "da27a6e8-abe3-48d5-bfd9-46033e476a09",
 	Name:       "preferredLanguage",
+	CountryID: 	GlobalCountry.ID,
 	Type:       form.Text,
 	Attributes: form.FormElementAttributes{Name: "preferredLanguage"},
 	Translations: []AttributeTranslation{
@@ -443,6 +687,7 @@ var PreferredLanguageAttribute = Attribute{
 var PhysicalAddressAttribute = Attribute{
 	ID:         "ac2795e8-15a5-42a0-b11f-b9269ff2a309",
 	Name:       "physicalAddress",
+	CountryID: 	GlobalCountry.ID,
 	Type:       form.Textarea,
 	Attributes: form.FormElementAttributes{Name: "physicalAddress"},
 	Translations: []AttributeTranslation{
@@ -452,7 +697,7 @@ var PhysicalAddressAttribute = Attribute{
 			ShortFormulation: "Physical address",
 		},
 	},
-	IsPersonallyIdentifiableInfo: false,
+	IsPersonallyIdentifiableInfo: true,
 	PartyTypeIDs: []string{
 		IndividualPartyType.ID,
 	},
@@ -462,6 +707,7 @@ var PhysicalAddressAttribute = Attribute{
 var PrimaryPhoneNumberAttribute = Attribute{
 	ID:         "8eae83a8-cbc7-4ab2-a21f-d57cb3bb29ff",
 	Name:       "primaryPhoneNumber",
+	CountryID: 	GlobalCountry.ID,
 	Type:       form.Phone,
 	Attributes: form.FormElementAttributes{Name: "primaryPhoneNumber"},
 	Translations: []AttributeTranslation{
@@ -471,7 +717,7 @@ var PrimaryPhoneNumberAttribute = Attribute{
 			ShortFormulation: "Primary phone number",
 		},
 	},
-	IsPersonallyIdentifiableInfo: false,
+	IsPersonallyIdentifiableInfo: true,
 	PartyTypeIDs: []string{
 		IndividualPartyType.ID,
 	},
@@ -480,6 +726,7 @@ var PrimaryPhoneNumberAttribute = Attribute{
 var SecondaryPhoneNumberAttribute = Attribute{
 	ID:         "1f3016af-ab39-422a-beb8-904b68a1619e",
 	Name:       "secondaryPhoneNumber",
+	CountryID: 	GlobalCountry.ID,
 	Type:       form.Phone,
 	Attributes: form.FormElementAttributes{Name: "secondaryPhoneNumber"},
 	Translations: []AttributeTranslation{
@@ -489,7 +736,26 @@ var SecondaryPhoneNumberAttribute = Attribute{
 			ShortFormulation: "Secondary phone number",
 		},
 	},
-	IsPersonallyIdentifiableInfo: false,
+	IsPersonallyIdentifiableInfo: true,
+	PartyTypeIDs: []string{
+		IndividualPartyType.ID,
+	},
+}
+
+var TertiaryPhoneNumberAttribute = Attribute{
+	ID:         "4a0ba072-66a5-403f-bea1-35e9427659fb",
+	Name:       "tertiaryPhoneNumber",
+	CountryID: 	GlobalCountry.ID,
+	Type:       form.Phone,
+	Attributes: form.FormElementAttributes{Name: "tertiaryPhoneNumber"},
+	Translations: []AttributeTranslation{
+		{
+			Locale:           "en",
+			LongFormulation:  "Tertiary phone number",
+			ShortFormulation: "Tertiary phone number",
+		},
+	},
+	IsPersonallyIdentifiableInfo: true,
 	PartyTypeIDs: []string{
 		IndividualPartyType.ID,
 	},
@@ -498,6 +764,7 @@ var SecondaryPhoneNumberAttribute = Attribute{
 var PreferredMeansOfContactAttribute = Attribute{
 	ID:   "1e7f2db9-eb63-46ae-b6d5-5c171a9e2534",
 	Name: "preferredMeansOfContact",
+	CountryID: 	GlobalCountry.ID,
 	Type: form.Dropdown,
 	Attributes: form.FormElementAttributes{
 		Name:    "preferredMeansOfContact",
@@ -519,6 +786,7 @@ var PreferredMeansOfContactAttribute = Attribute{
 var RequireAnInterpreterAttribute = Attribute{
 	ID:   "9b6ae87d-8935-49aa-9e32-26e7445d1afc",
 	Name: "requireAnInterpreter",
+	CountryID: 	GlobalCountry.ID,
 	Type: form.Checkbox,
 	Attributes: form.FormElementAttributes{
 		Name:            "requireAnInterpreter",
@@ -579,6 +847,7 @@ var CountryPartyType = PartyType{
 var TeamNameAttribute = Attribute{
 	ID:                           "18f410a3-6fde-45ce-80c7-fc5d92b85870",
 	Name:                         "teamName",
+	CountryID: 	GlobalCountry.ID,
 	PartyTypeIDs:                 []string{TeamPartyType.ID},
 	IsPersonallyIdentifiableInfo: false,
 	Translations: []AttributeTranslation{
@@ -593,6 +862,7 @@ var TeamNameAttribute = Attribute{
 var CountryNameAttribute = Attribute{
 	ID:                           "e011d638-864b-496e-b3e5-af89d0278e1e",
 	Name:                         "countryName",
+	CountryID: 	GlobalCountry.ID,
 	PartyTypeIDs:                 []string{CountryPartyType.ID},
 	IsPersonallyIdentifiableInfo: false,
 	Translations: []AttributeTranslation{

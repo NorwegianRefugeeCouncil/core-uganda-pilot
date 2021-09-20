@@ -65,13 +65,11 @@ func (s *Server) initRelationshipType(ctx context.Context) error {
 func (s *Server) initAttribute(ctx context.Context) error {
 	for _, attribute := range []Attribute{
 		// "Built-in" Attributes
-		FirstNameAttribute,
-		LastNameAttribute,
+		FullNameAttribute,
+		DisplayNameAttribute,
 		BirthDateAttribute,
 		EMailAttribute,
 		TeamNameAttribute,
-
-		// Customisation for Uganda Demo
 
 		// Individual Attributes
 		DisplacementStatusAttribute,
@@ -93,9 +91,23 @@ func (s *Server) initAttribute(ctx context.Context) error {
 		PhysicalAddressAttribute,
 		PrimaryPhoneNumberAttribute,
 		SecondaryPhoneNumberAttribute,
+		TertiaryPhoneNumberAttribute,
 		PreferredMeansOfContactAttribute,
 		RequireAnInterpreterAttribute,
+		CanInitiateContactAttribute,
+		InstructionOnMakingContactAttribute,
 		// -- End of Individual Attributes
+
+		// Customisation for Uganda Demo
+		IdentificationDateAttribute,
+		IdentificationLocationAttribute,
+		IdentificationSourceAttribute,
+		Admin2Attribute,
+		Admin3Attribute,
+		Admin4Attribute,
+		Admin5Attribute,
+
+
 	} {
 		if err := s.attributeStore.create(ctx, &attribute); err != nil {
 			if !mongo.IsDuplicateKeyError(err) {

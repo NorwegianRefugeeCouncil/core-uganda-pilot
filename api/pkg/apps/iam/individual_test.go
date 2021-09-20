@@ -30,8 +30,8 @@ func (s *Suite) testIndividualAPI() {
 	assert.Equal(s.T(), created, get)
 
 	// UPDATE
-	individual.Attributes.Set(FirstNameAttribute.ID, "updated")
-	individual.Attributes.Set(LastNameAttribute.ID, "updated")
+	individual.Attributes.Set(FullNameAttribute.ID, "updated")
+	individual.Attributes.Set(DisplayNameAttribute.ID, "updated")
 	updated, err := s.client.Individuals().Update(s.Ctx, individual)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()

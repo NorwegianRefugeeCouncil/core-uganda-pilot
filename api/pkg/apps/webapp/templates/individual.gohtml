@@ -20,20 +20,23 @@
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="attributes-tab" data-bs-toggle="tab" data-bs-target="#attributes"
                         type="button"
-                        role="tab" aria-controls="attributes" aria-selected="true">Attributes
+                        role="tab" aria-controls="attributes" aria-selected="true">
+                    Attributes
                 </button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link{{if not $hasIntakeCases}} disabled{{end}}" id="situation-analysis-tab"
                         data-bs-toggle="tab"
                         data-bs-target="#situation-analysis" type="button"
-                        role="tab" aria-controls="situation-analysis" aria-selected="false">Intake information
+                        role="tab" aria-controls="situation-analysis" aria-selected="false">
+                    Situation Analysis
                 </button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link{{if not $hasIntakeCases}} disabled{{end}}" id="response-tab"
                         data-bs-toggle="tab" data-bs-target="#response" type="button"
-                        role="tab" aria-controls="response" aria-selected="false">Response
+                        role="tab" aria-controls="response" aria-selected="false">
+                    Response
                 </button>
             </li>
         </ul>
@@ -63,7 +66,7 @@
                                 <div class="me-2">
                                     <label class="form-label" for="relationshipTypeSelector">Relationship Type</label>
                                     <select id="relationshipTypeSelector" class="form-select pe-5"
-                                            data-testid="relationshipType">
+                                            data-testid="relationship-type">
                                         {{range .FilteredRelationshipTypes.Items}}
                                             <option value="{{.ID}}">{{.FirstPartyRole}}</option>
                                         {{end}}
@@ -75,7 +78,7 @@
                                            class="form-control"
                                            name="partySelector"
                                            id="partySelector"
-                                           data-testid="relatedParty"
+                                           data-testid="related-party"
                                            data-bs-toggle="dropdown"
                                            data-bs-auto-close="false"
                                            aria-expanded="false"
@@ -87,7 +90,7 @@
 
                                 <button class="btn btn-primary ms-2"
                                         id="add-relationship-button"
-                                        data-testid="add-btn"
+                                        data-testid="add-relationship-btn"
                                         type='button'>
                                     Add
                                 </button>
@@ -460,7 +463,6 @@
                 ];
                 // Do validation
                 const validations = await Promise.allSettled(subForms.map(async ({ formID, path }) => {
-                    let returnVar;
                     try {
                         const validation = await validateSubForm(formID, path);
                         removeValidation(formID);
@@ -470,17 +472,17 @@
                         }
                     } catch (e) {
                         console.error(e);
-                    } finally {
-                        returnVar = Promise.resolve(false);
                     }
-                    return returnVar;
+                    return Promise.resolve(false);
                 }));
 
                 // Show updated Individual
                 if (validations.every(v => !v.value)) {
-                    if (!location.pathname.includes('new'))
+                    if (!location.pathname.includes('new')) {
                         location.reload();
-                    else !location.assign(location.origin + '/individuals');
+                    } else {
+                        location.assign(location.origin + '/individuals');
+                    }
                 }
             };
 
@@ -529,7 +531,7 @@
                 res => {
                     let partySelectorList = document.getElementById('partySelectorList');
                     partySelectorList.innerHTML = '';
-                    if (res.response.length > 0) {
+                    if (res.response?.length > 0) {
                         let n = 0;
                         res.response.forEach(pickedParty => {
                             const party = pickedParty.party;
@@ -573,9 +575,8 @@
                     li.className = 'list-group-item';
                     let firstPartyName;
                     if (window.location.pathname === '/individuals/new') {
-                        const lastName = document.querySelector('input[name="lastName"]')?.value;
-                        const firstName = document.querySelector('input[name="firstName"]')?.value;
-                        firstPartyName = lastName.toUpperCase() + ', ' + firstName;
+                        const displayName = document.querySelector('input[name="displayName"]')?.value;
+                        firstPartyName = displayName.toUpperCase();
                     } else {
                         firstPartyName = parties.find(({ id }) => id === relationship.firstParty)?.name;
                     }
@@ -637,6 +638,7 @@
                     closeButton.type = 'button';
                     closeButton.classList.add('btn-close');
                     closeButton.classList.add('float-end');
+                    closeButton.setAttribute('data-testid', 'remove-relationship-btn');
                     closeButton.onclick = () => {
                         deleteRelationship(idx);
                     };
