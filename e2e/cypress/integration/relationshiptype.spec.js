@@ -1,5 +1,6 @@
 import NewRelationshiptypePage from '../pages/newRelationshiptype.page';
 import RelationshiptypeOverviewPage from '../pages/relationshiptypeOverview.page';
+import './commands';
 
 const TYPE_NAME = 'New Test';
 const EDITED_TYPE_NAME = 'Test Edited';

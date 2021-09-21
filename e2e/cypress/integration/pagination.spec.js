@@ -1,4 +1,5 @@
 import PaginationPage from '../pages/pagination.page';
+import './commands';
 
 describe('Pagination Page', function () {
     before('Login', () => {

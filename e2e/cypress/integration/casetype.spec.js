@@ -3,6 +3,7 @@ import { URL } from '../helpers';
 import ids from '../fixtures/ids.json';
 import testTemplate from '../fixtures/test_casetemplate.json';
 import CasetypesOverviewPage from '../pages/casetypesOverview.page';
+import './commands';
 
 const DATA = {
     NAME: 'Test casetype',

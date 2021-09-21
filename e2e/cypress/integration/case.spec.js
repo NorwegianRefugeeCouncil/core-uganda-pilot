@@ -6,6 +6,7 @@ import CasePage from '../pages/case.page';
 import CaseTypePage from '../pages/caseTypePage';
 import testTemplate from '../fixtures/test_casetemplate.json';
 import CasetypesOverviewPage from '../pages/casetypesOverview.page';
+import './commands';
 
 const DATA = {
     NAME: 'test casetype',

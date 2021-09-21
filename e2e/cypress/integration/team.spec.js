@@ -1,4 +1,5 @@
 import TeamsOverviewPage from '../pages/teamOverview.page';
+import './commands';
 
 const SEARCH_NAME = 'FOCKE, Robert';
 const MEMBER_SHOWN_NAME = 'Robert Focke';

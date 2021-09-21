@@ -1,5 +1,6 @@
 import NewPartyTypePage from '../pages/newPartyType.page';
 import PartytypesOverviewPage from '../pages/partytypeOverview.page';
+import './commands';
 
 const TYPE_NAME = 'New Test';
 const EDITED_TYPE_NAME = 'Test Edited';

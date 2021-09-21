@@ -1,5 +1,6 @@
 import IndividualPage from '../pages/individualPage';
 import IndividualOverviewPage from '../pages/individualOverview.page';
+import './commands';
 
 const data = {
     attributes: {
