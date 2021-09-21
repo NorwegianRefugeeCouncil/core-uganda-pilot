@@ -279,10 +279,13 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		return err
 	})
 
+	countryID := s.GetCountryFromLoginUser(w, req)
+
 	g.Go(func() error {
 		var err error
 		attrs, err = iamClient.Attributes().List(waitCtx, iam.AttributeListOptions{
 			PartyTypeIDs: []string{iam.IndividualPartyType.ID},
+			CountryIDs: []string{iam.GlobalCountry.ID, countryID},
 		})
 		return err
 	})

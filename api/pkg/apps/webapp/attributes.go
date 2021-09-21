@@ -28,7 +28,11 @@ func (s *Server) Attributes(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	list, err := iamClient.Attributes().List(ctx, iam.AttributeListOptions{})
+	countryID := s.GetCountryFromLoginUser(w, req)
+
+	list, err := iamClient.Attributes().List(ctx, iam.AttributeListOptions{
+		CountryIDs: []string{iam.GlobalCountry.ID, countryID},
+	})
 	if err != nil {
 		s.Error(w, err)
 		return
