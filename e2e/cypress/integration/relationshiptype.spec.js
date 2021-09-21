@@ -6,7 +6,7 @@ const TYPE_NAME = 'New Test';
 const EDITED_TYPE_NAME = 'Test Edited';
 
 describe('Relationshiptype Page', function () {
-    before('Login', () => {
+    beforeEach('Login', () => {
         cy.login('courtney.lare@email.com');
     });
     describe('Create', () => {

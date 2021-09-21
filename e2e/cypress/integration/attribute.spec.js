@@ -21,7 +21,7 @@ const DATA = {
 
 // FIXME COR-204
 describe.skip('Attribute Page', function () {
-    before('Login', () => {
+    beforeEach('Login', () => {
         cy.login('courtney.lare@email.com');
     });
     describe('Navigate', () => {

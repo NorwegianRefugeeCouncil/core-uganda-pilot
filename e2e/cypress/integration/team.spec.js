@@ -5,7 +5,7 @@ const SEARCH_NAME = 'FOCKE, Robert';
 const MEMBER_SHOWN_NAME = 'Robert Focke';
 
 describe('Teams Page', function () {
-    before('Login', () => {
+    beforeEach('Login', () => {
         cy.login('courtney.lare@email.com');
     });
     describe('Create', () => {

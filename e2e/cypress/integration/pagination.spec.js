@@ -2,7 +2,7 @@ import PaginationPage from '../pages/pagination.page';
 import '../support/commands';
 
 describe('Pagination Page', function () {
-    before('Login', () => {
+    beforeEach('Login', () => {
         cy.login('courtney.lare@email.com');
     });
     describe('Should Navigate to Next and Previous Page', () => {

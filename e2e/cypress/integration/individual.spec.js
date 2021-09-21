@@ -38,7 +38,7 @@ function getTestIndividual(displayName) {
 }
 
 describe.skip('Individual Page', function () {
-    before('Login', () => {
+    beforeEach('Login', () => {
         cy.login('courtney.lare@email.com');
     });
     describe('Navigate', () => {

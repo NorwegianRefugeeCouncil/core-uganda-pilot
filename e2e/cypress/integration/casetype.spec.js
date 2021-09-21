@@ -14,7 +14,7 @@ const DATA = {
 };
 
 describe('CaseType Page', () => {
-    before('Login', () => {
+    beforeEach('Login', () => {
         cy.login('courtney.lare@email.com');
     });
     describe('Navigate', () => {

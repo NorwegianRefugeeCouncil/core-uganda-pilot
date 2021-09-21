@@ -39,8 +39,10 @@ const DATA = {
 };
 
 describe('Case Page', function () {
-    before('Seed DB with test casetype', () => {
+    beforeEach('Login', () => {
         cy.login('courtney.lare@email.com');
+    });
+    before('Seed DB with test casetype', () => {
         const caseTypePage = new CaseTypePage();
         caseTypePage
             .setName(DATA.NAME)
