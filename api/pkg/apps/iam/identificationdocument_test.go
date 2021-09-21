@@ -50,4 +50,8 @@ func (s *Suite) testIdentificationDocumentAPI() {
 	list, err := s.client.IdentificationDocuments().List(s.Ctx, iam.IdentificationDocumentListOptions{})
 	assert.NoError(s.T(), err)
 	assert.Contains(s.T(), list.Items, get)
+
+	// Delete
+	err = s.client.IdentificationDocuments().Delete(s.Ctx, created.ID)
+	assert.NoError(s.T(), err)
 }
