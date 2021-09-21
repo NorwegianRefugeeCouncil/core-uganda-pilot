@@ -13,6 +13,9 @@ const DATA = {
 };
 
 describe('CaseType Page', () => {
+    before('Login', () => {
+        cy.login('courtney.lare@email.com');
+    });
     describe('Navigate', () => {
         it('should navigate to new CaseType page from CaseTypes overview page', () => {
             const casetypesOverviewPage = new CasetypesOverviewPage();

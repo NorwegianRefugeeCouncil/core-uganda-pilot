@@ -1,6 +1,9 @@
 import PaginationPage from '../pages/pagination.page';
 
 describe('Pagination Page', function () {
+    before('Login', () => {
+        cy.login('courtney.lare@email.com');
+    });
     describe('Should Navigate to Next and Previous Page', () => {
         it('should start on first page', () => {
             const paginationPage = new PaginationPage();

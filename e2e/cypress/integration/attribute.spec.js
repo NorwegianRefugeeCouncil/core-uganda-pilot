@@ -20,6 +20,9 @@ const DATA = {
 
 // FIXME COR-204
 describe.skip('Attribute Page', function () {
+    before('Login', () => {
+        cy.login('courtney.lare@email.com');
+    });
     describe('Navigate', () => {
         it('should navigate to the New Attribute page from the attributes page', () => {
             const attributeOverviewPage = new AttributeOverviewPage();

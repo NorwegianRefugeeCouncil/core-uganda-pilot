@@ -37,6 +37,9 @@ function getTestIndividual(displayName) {
 }
 
 describe.skip('Individual Page', function () {
+    before('Login', () => {
+        cy.login('courtney.lare@email.com');
+    });
     describe('Navigate', () => {
         it('should navigate to new Individual page from Individuals overview', () => {
             const individualOverviewPage = new IndividualOverviewPage();

@@ -5,6 +5,9 @@ const TYPE_NAME = 'New Test';
 const EDITED_TYPE_NAME = 'Test Edited';
 
 describe('Relationshiptype Page', function () {
+    before('Login', () => {
+        cy.login('courtney.lare@email.com');
+    });
     describe('Create', () => {
         it('should navigate to New Relationshiptype Form Page and save new attribute', () => {
             const newRelationshiptypePage = new NewRelationshiptypePage();
