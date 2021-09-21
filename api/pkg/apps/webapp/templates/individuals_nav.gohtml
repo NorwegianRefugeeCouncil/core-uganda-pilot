@@ -17,6 +17,9 @@
                                     class="fs-5 text-decoration-none {{if eq .Page "general" }}border-bottom border-primary{{end}} px-3 py-2 me-3 text-dark"
                                     href="/individuals/{{.Individual.ID}}">General</a>
                             <a
+                                    class="fs-5 text-decoration-none {{if eq .Page "identification_documents"}}border-bottom border-primary{{end}} px-3 py-2 me-3 text-dark"
+                                    href="/individuals/{{.Individual.ID}}/identificationdocuments">Identification Documents</a>
+                            <a
                                     class="fs-5 text-decoration-none {{if eq .Page "credentials"}}border-bottom border-primary{{end}} px-3 py-2 me-3 text-dark"
                                     href="/individuals/{{.Individual.ID}}/credentials">Credentials</a>
                         {{end}}

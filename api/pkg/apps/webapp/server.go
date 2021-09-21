@@ -114,6 +114,7 @@ func NewServer(options *ServerOptions) (*Server, error) {
 	router.Path("/individuals").HandlerFunc(h.Individuals)
 	router.Path("/individuals/{id}").HandlerFunc(h.Individual)
 	router.Path("/individuals/{id}/credentials").HandlerFunc(h.IndividualCredentials)
+	router.Path("/individuals/{id}/identificationdocuments").HandlerFunc(h.IndividualIdentificationDocuments)
 	router.Path("/teams").HandlerFunc(h.Teams)
 	router.Path("/teams/pickparty").HandlerFunc(h.PickTeamParty)
 	router.Path("/teams/{id}").HandlerFunc(h.Team)

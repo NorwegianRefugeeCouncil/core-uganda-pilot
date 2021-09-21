@@ -153,6 +153,7 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	router.Path(server.IdentificationDocumentsEndpoint).Methods("POST").HandlerFunc(srv.postIdentificationDocument)
 	router.Path(path.Join(server.IdentificationDocumentsEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getIdentificationDocument)
 	router.Path(path.Join(server.IdentificationDocumentsEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putIdentificationDocument)
+	router.Path(path.Join(server.IdentificationDocumentsEndpoint, "{id}")).Methods("DELETE").HandlerFunc(srv.deleteIdentificationDocument)
 
 	router.Path(server.IdentificationDocumentTypesEndpoint).Methods("GET").HandlerFunc(srv.listIdentificationDocumentTypes)
 	router.Path(server.IdentificationDocumentTypesEndpoint).Methods("POST").HandlerFunc(srv.postIdentificationDocumentType)

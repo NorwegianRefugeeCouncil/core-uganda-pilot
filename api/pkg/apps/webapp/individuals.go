@@ -101,28 +101,119 @@ func (s *Server) IndividualIdentificationDocuments(w http.ResponseWriter, req *h
 		return
 	}
 
-	individual, err := iamClient.Individuals().Get(ctx, id)
-	if err != nil {
+	var identificationDocuments *iam.IdentificationDocumentList
+	var identificationDocumentTypes *iam.IdentificationDocumentTypeList
+	var identificationDocumentTypesMap = map[string]string{}
+	var individual *iam.Individual
+
+	g, waitCtx := errgroup.WithContext(ctx)
+
+	g.Go(func() error {
+		var err error
+		identificationDocumentTypes, err = iamClient.IdentificationDocumentTypes().List(waitCtx, iam.IdentificationDocumentTypeListOptions{})
+		for _, idt := range identificationDocumentTypes.Items {
+			identificationDocumentTypesMap[idt.ID] = idt.Name
+		}
+		return err
+	})
+
+	g.Go(func() error {
+		var err error
+		identificationDocuments, err = iamClient.IdentificationDocuments().List(waitCtx, iam.IdentificationDocumentListOptions{PartyIDs: []string{id}})
+		return err
+	})
+
+	g.Go(func() error {
+		var err error
+		individual, err = iamClient.Individuals().Get(ctx, id)
+		return err
+	})
+
+	if err := g.Wait(); err != nil {
 		s.Error(w, err)
 		return
 	}
 
 	if req.Method == "POST" {
-		s.PostIndividualCredentials(w, req, individual.ID)
+		s.PostIndividualIdentificationDocuments(w, req, individual.ID)
 		return
 	}
 
+	if req.Method == "DELETE" {
+		s.DeleteIndividualIdentificationDocuments(w, req, individual.ID)
+	}
+
 	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "individual_identification_documents", map[string]interface{}{
-		"Page":       "identification_documents",
-		"Individual": individual,
+		"Page":                           "identification_documents",
+		"IsNew":                          id == "new",
+		"Individual":                     individual,
+		"IdentificationDocuments":        identificationDocuments,
+		"IdentificationDocumentTypes":    identificationDocumentTypes,
+		"IdentificationDocumentTypesMap": identificationDocumentTypesMap,
 	}); err != nil {
 		s.Error(w, err)
 		return
 	}
-
 }
 
 func (s *Server) PostIndividualIdentificationDocuments(w http.ResponseWriter, req *http.Request, partyID string) {
+
+	ctx := req.Context()
+
+	if err := req.ParseForm(); err != nil {
+		s.Error(w, err)
+		return
+	}
+	values := req.Form
+	documentNumber := values.Get("documentNumber")
+	documentTypeID := values.Get("documentTypeId")
+
+	if len(documentNumber) == 0 || len(documentTypeID) == 0 {
+		s.Error(w, fmt.Errorf("invalid data"))
+		return
+	}
+
+	var newIdentificationDocument = &iam.IdentificationDocument{
+		PartyID:                      partyID,
+		DocumentNumber:               documentNumber,
+		IdentificationDocumentTypeID: documentTypeID,
+	}
+
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	if _, err := iamClient.IdentificationDocuments().Create(ctx, newIdentificationDocument); err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	http.Redirect(w, req, "/individuals/"+partyID+"/identificationdocuments", http.StatusSeeOther)
+}
+
+func (s *Server) DeleteIndividualIdentificationDocuments(w http.ResponseWriter, req *http.Request, partyID string) {
+	ctx := req.Context()
+
+	id := req.URL.Query().Get("id")
+
+	if len(id) == 0 {
+		s.Error(w, fmt.Errorf("invalid data"))
+		return
+	}
+
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	if err := iamClient.IdentificationDocuments().Delete(ctx, id); err != nil {
+		s.Error(w, err)
+		return
+	}
+
 	http.Redirect(w, req, "/individuals/"+partyID+"/identificationdocuments", http.StatusSeeOther)
 }
 
@@ -215,9 +306,6 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	var teams *iam.TeamList
 	var individualAssessment *cms.Case
 	var situationAnalysis *cms.Case
-	var identificationDocuments *iam.IdentificationDocumentList
-	var identificationDocumentTypes *iam.IdentificationDocumentTypeList
-	var identificationDocumentTypesMap = map[string]string{}
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
@@ -250,15 +338,6 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	})
 
 	g.Go(func() error {
-		var err error
-		identificationDocumentTypes, err = iamClient.IdentificationDocumentTypes().List(waitCtx, iam.IdentificationDocumentTypeListOptions{})
-		for _, idt := range identificationDocumentTypes.Items {
-			identificationDocumentTypesMap[idt.ID] = idt.Name
-		}
-		return err
-	})
-
-	g.Go(func() error {
 		if id == "new" {
 			relationshipsForIndividual = &iam.RelationshipList{
 				Items: []*iam.Relationship{},
@@ -267,7 +346,6 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		}
 		var err error
 		relationshipsForIndividual, err = iamClient.Relationships().List(waitCtx, iam.RelationshipListOptions{EitherPartyID: id})
-		identificationDocuments, err = iamClient.IdentificationDocuments().List(waitCtx, iam.IdentificationDocumentListOptions{PartyIDs: []string{id}})
 		return err
 	})
 
@@ -285,7 +363,7 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		var err error
 		attrs, err = iamClient.Attributes().List(waitCtx, iam.AttributeListOptions{
 			PartyTypeIDs: []string{iam.IndividualPartyType.ID},
-			CountryIDs: []string{iam.GlobalCountry.ID, countryID},
+			CountryIDs:   []string{iam.GlobalCountry.ID, countryID},
 		})
 		return err
 	})
@@ -400,36 +478,32 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "individual", map[string]interface{}{
-		"IsNew":                          id == "new",
-		"Individual":                     individual,
-		"Parties":                        parties,
-		"Teams":                          teams,
-		"PartyTypes":                     partyTypes,
-		"RelationshipTypes":              relationshipTypes,
-		"FilteredRelationshipTypes":      filteredRelationshipTypes,
-		"Relationships":                  relationshipsForIndividual,
-		"Attributes":                     attrs,
-		"Cases":                          displayCases,
-		"CaseTypes":                      caseTypes,
-		"FullNameAttribute":              iam.FullNameAttribute,
-		"DisplayNameAttribute":           iam.DisplayNameAttribute,
-		"Page":                           "general",
-		"Constants":                      s.Constants,
-		"IndividualPartyTypeID":          iam.IndividualPartyType.ID,
-		"HouseholdPartyTypeID":           iam.HouseholdPartyType.ID,
-		"TeamPartyTypeID":                iam.TeamPartyType.ID,
-		"IndividualAssessment":           individualAssessment,
-		"SituationAnalysis":              situationAnalysis,
-		"ProgressLabel":                  progressLabel,
-		"Progress":                       progress,
-		"IdentificationDocuments":        identificationDocuments,
-		"IdentificationDocumentTypes":    identificationDocumentTypes,
-		"IdentificationDocumentTypesMap": identificationDocumentTypesMap,
+		"IsNew":                     id == "new",
+		"Individual":                individual,
+		"Parties":                   parties,
+		"Teams":                     teams,
+		"PartyTypes":                partyTypes,
+		"RelationshipTypes":         relationshipTypes,
+		"FilteredRelationshipTypes": filteredRelationshipTypes,
+		"Relationships":             relationshipsForIndividual,
+		"Attributes":                attrs,
+		"Cases":                     displayCases,
+		"CaseTypes":                 caseTypes,
+		"FullNameAttribute":         iam.FullNameAttribute,
+		"DisplayNameAttribute":      iam.DisplayNameAttribute,
+		"Page":                      "general",
+		"Constants":                 s.Constants,
+		"IndividualPartyTypeID":     iam.IndividualPartyType.ID,
+		"HouseholdPartyTypeID":      iam.HouseholdPartyType.ID,
+		"TeamPartyTypeID":           iam.TeamPartyType.ID,
+		"IndividualAssessment":      individualAssessment,
+		"SituationAnalysis":         situationAnalysis,
+		"ProgressLabel":             progressLabel,
+		"Progress":                  progress,
 	}); err != nil {
 		s.Error(w, err)
 		return
 	}
-
 }
 
 // zipAttributesAndErrors returns a slice of form.FormElement populated with validated attributes.

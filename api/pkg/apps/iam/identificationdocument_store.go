@@ -130,3 +130,19 @@ func (s *IdentificationDocumentStore) update(ctx context.Context, identification
 	close()
 	return nil
 }
+
+func (s *IdentificationDocumentStore) delete(ctx context.Context, id string) error {
+	collection, done, err := s.getCollection(ctx)
+	if err != nil {
+		return err
+	}
+	defer done()
+
+	_, err = collection.DeleteOne(ctx, bson.M{
+		"id": id,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}

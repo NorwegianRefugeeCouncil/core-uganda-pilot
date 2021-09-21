@@ -35,4 +35,8 @@ func (r RESTIdentificationDocumentClient) List(ctx context.Context, listOptions 
 	return &obj, err
 }
 
+func (r RESTIdentificationDocumentClient) Delete(ctx context.Context, id string) error {
+	return r.c.Delete().Path(server.IdentificationDocumentsEndpoint + "/" + id).Do(ctx).Error()
+}
+
 var _ IdentificationDocumentClient = &RESTIdentificationDocumentClient{}

@@ -164,7 +164,7 @@ type RelationshipTypeClient interface {
 
 type AttributeListOptions struct {
 	PartyTypeIDs []string
-	CountryIDs []string
+	CountryIDs   []string
 }
 
 func (a *AttributeListOptions) MarshalQueryParameters() (url.Values, error) {
@@ -218,6 +218,7 @@ type IdentificationDocumentClient interface {
 	Create(ctx context.Context, create *IdentificationDocument) (*IdentificationDocument, error)
 	Update(ctx context.Context, update *IdentificationDocument) (*IdentificationDocument, error)
 	List(ctx context.Context, listOptions IdentificationDocumentListOptions) (*IdentificationDocumentList, error)
+	Delete(ctx context.Context, id string) error
 }
 
 type IdentificationDocumentListOptions struct {
