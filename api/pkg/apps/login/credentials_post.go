@@ -16,7 +16,13 @@ func (s *Server) PostCredentials(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	res, err := s.Collection.Find(ctx, bson.M{"partyId": payload.PartyID})
+	credentialsCollection, err := s.credentialsCollectionFn()
+	if err != nil {
+		err = fmt.Errorf("failed to get credentials collection: %v", err)
+		s.Error(w, err)
+	}
+
+	res, err := credentialsCollection.Find(ctx, bson.M{"partyId": payload.PartyID})
 	if err != nil {
 		s.Error(w, fmt.Errorf("failed to get credentials: %v", err))
 		return

@@ -27,8 +27,14 @@ func (s *Server) VerifyPassword(ctx context.Context, email, password string) (*i
 		return nil, false
 	}
 
+	credentialsCollection, err := s.credentialsCollectionFn()
+	if err != nil {
+		logrus.WithError(err).Errorf("failed to get credentials collection")
+		return nil, false
+	}
+
 	partyID := individualList.Items[0].ID
-	res := s.Collection.FindOne(ctx, bson.M{
+	res := credentialsCollection.FindOne(ctx, bson.M{
 		"partyId": partyID,
 	})
 	if res.Err() != nil {
@@ -64,11 +70,19 @@ func (s *Server) VerifyPassword(ctx context.Context, email, password string) (*i
 
 // SetPassword will set the Party password
 func (s *Server) SetPassword(ctx context.Context, partyID string, password string) error {
+
+	credentialsCollection, err := s.credentialsCollectionFn()
+	if err != nil {
+		logrus.WithError(err).Errorf("failed to get credentials collection")
+		return err
+	}
+
 	saltedHash, err := HashAndSalt(s.BCryptCost, []byte(password))
 	if err != nil {
 		return fmt.Errorf("failed to hash and salt: %v", err)
 	}
-	_, err = s.Collection.UpdateOne(ctx, bson.M{
+
+	_, err = credentialsCollection.UpdateOne(ctx, bson.M{
 		"partyId": partyID,
 	}, bson.M{
 		"$set": bson.M{
@@ -84,6 +98,13 @@ func (s *Server) SetPassword(ctx context.Context, partyID string, password strin
 
 // CreatePassword will create a new credential for the Party
 func (s *Server) CreatePassword(ctx context.Context, partyID string, password string) error {
+
+	credentialsCollection, err := s.credentialsCollectionFn()
+	if err != nil {
+		logrus.WithError(err).Errorf("failed to get credentials collection")
+		return err
+	}
+
 	saltedHash, err := HashAndSalt(s.BCryptCost, []byte(password))
 	if err != nil {
 		return fmt.Errorf("failed to hash and salt: %v", err)
@@ -94,7 +115,7 @@ func (s *Server) CreatePassword(ctx context.Context, partyID string, password st
 		Hash:    saltedHash,
 	}
 
-	_, err = s.Collection.InsertOne(ctx, newCredential)
+	_, err = credentialsCollection.InsertOne(ctx, newCredential)
 	if err != nil {
 		return fmt.Errorf("failed to insert credential: %v", err)
 	}
