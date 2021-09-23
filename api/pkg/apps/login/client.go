@@ -14,7 +14,7 @@ func NewClientSet(restConfig *rest.RESTConfig) *ClientSet {
 	}
 }
 
-func (c *ClientSet) Login() LoginClient {
+func (c *ClientSet) Login() Client {
 	return &RESTLoginClient{
 		c: c.c,
 	}

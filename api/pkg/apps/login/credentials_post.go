@@ -2,6 +2,7 @@ package login
 
 import (
 	"errors"
+	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"net/http"
 )
@@ -17,7 +18,7 @@ func (s *Server) PostCredentials(w http.ResponseWriter, req *http.Request) {
 
 	res, err := s.Collection.Find(ctx, bson.M{"partyId": payload.PartyID})
 	if err != nil {
-		s.Error(w, err)
+		s.Error(w, fmt.Errorf("failed to get credentials: %v", err))
 		return
 	}
 
@@ -28,7 +29,7 @@ func (s *Server) PostCredentials(w http.ResponseWriter, req *http.Request) {
 		}
 		var c Credential
 		if err := res.Decode(&c); err != nil {
-			s.Error(w, err)
+			s.Error(w, fmt.Errorf("failed to decode credentials: %v", err))
 			return
 		}
 		credentials = append(credentials, &c)
@@ -38,7 +39,7 @@ func (s *Server) PostCredentials(w http.ResponseWriter, req *http.Request) {
 	if len(credentials) == 0 {
 		err = s.CreatePassword(ctx, payload.PartyID, payload.PlaintextPassword)
 		if err != nil {
-			s.Error(w, err)
+			s.Error(w, fmt.Errorf("failed to create password: %v", err))
 			return
 		}
 	}
@@ -47,7 +48,7 @@ func (s *Server) PostCredentials(w http.ResponseWriter, req *http.Request) {
 	if len(credentials) == 1 {
 		err = s.SetPassword(ctx, payload.PartyID, payload.PlaintextPassword)
 		if err != nil {
-			s.Error(w, err)
+			s.Error(w, fmt.Errorf("failed to set password: %v", err))
 			return
 		}
 	}

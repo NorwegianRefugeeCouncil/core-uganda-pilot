@@ -2,7 +2,9 @@ package login
 
 import (
 	"context"
+	"fmt"
 	"github.com/nrc-no/core/pkg/apps/iam"
+	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/crypto/bcrypt"
@@ -16,32 +18,43 @@ func (s *Server) VerifyPassword(ctx context.Context, email, password string) (*i
 		},
 	})
 	if err != nil {
+		logrus.WithError(err).WithField("email", email).Warnf("failed to list individuals")
 		return nil, false
 	}
 
 	if len(individualList.Items) == 0 {
+		logrus.Trace("no individuals found with email %s", email)
 		return nil, false
 	}
 
+	partyID := individualList.Items[0].ID
 	res := s.Collection.FindOne(ctx, bson.M{
-		"partyId": individualList.Items[0].ID,
+		"partyId": partyID,
 	})
 	if res.Err() != nil {
+		logrus.WithError(res.Err()).WithField("PartyID", partyID).Warnf("failed to find party")
 		return nil, false
 	}
 
 	raw, err := res.DecodeBytes()
 	if err != nil {
+		logrus.WithError(err).Warnf("failed to decode bytes")
 		return nil, false
 	}
 
 	hash, ok := raw.Lookup("hash").StringValueOK()
 	if !ok {
+		logrus.WithError(fmt.Errorf("could not convert mongo hash to string"))
 		return nil, false
 	}
 
 	match := comparePasswords(hash, []byte(password))
 	if !match {
+		logrus.
+			WithField("PartyID", partyID).
+			WithField("Email", email).
+			Tracef("wrong password provided")
+
 		return nil, false
 	}
 
@@ -53,7 +66,7 @@ func (s *Server) VerifyPassword(ctx context.Context, email, password string) (*i
 func (s *Server) SetPassword(ctx context.Context, partyID string, password string) error {
 	saltedHash, err := HashAndSalt(s.BCryptCost, []byte(password))
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to hash and salt: %v", err)
 	}
 	_, err = s.Collection.UpdateOne(ctx, bson.M{
 		"partyId": partyID,
@@ -64,7 +77,7 @@ func (s *Server) SetPassword(ctx context.Context, partyID string, password strin
 		},
 	}, options.Update().SetUpsert(true))
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to upsert password: %v", err)
 	}
 	return nil
 }
@@ -73,7 +86,7 @@ func (s *Server) SetPassword(ctx context.Context, partyID string, password strin
 func (s *Server) CreatePassword(ctx context.Context, partyID string, password string) error {
 	saltedHash, err := HashAndSalt(s.BCryptCost, []byte(password))
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to hash and salt: %v", err)
 	}
 
 	var newCredential = Credential{
@@ -83,7 +96,7 @@ func (s *Server) CreatePassword(ctx context.Context, partyID string, password st
 
 	_, err = s.Collection.InsertOne(ctx, newCredential)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to insert credential: %v", err)
 	}
 
 	return nil
@@ -94,7 +107,7 @@ func (s *Server) CreatePassword(ctx context.Context, partyID string, password st
 func HashAndSalt(cost int, pwd []byte) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword(pwd, cost)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to generate hash from password: %v", err)
 	}
 	return string(hash), nil
 }
@@ -103,8 +116,5 @@ func HashAndSalt(cost int, pwd []byte) (string, error) {
 func comparePasswords(hashedPwd string, plainPwd []byte) bool {
 	byteHash := []byte(hashedPwd)
 	err := bcrypt.CompareHashAndPassword(byteHash, plainPwd)
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }

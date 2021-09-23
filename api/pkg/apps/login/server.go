@@ -89,6 +89,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }
 
 func (s *Server) Error(w http.ResponseWriter, err error) {
+	logrus.WithError(err).Error()
 	utils.ErrorResponse(w, err)
 }
 
