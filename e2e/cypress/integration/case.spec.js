@@ -6,6 +6,7 @@ import CasePage from '../pages/case.page';
 import CaseTypePage from '../pages/caseTypePage';
 import testTemplate from '../fixtures/test_casetemplate.json';
 import CasetypesOverviewPage from '../pages/casetypesOverview.page';
+import '../support/commands';
 
 const DATA = {
     NAME: 'test casetype',
@@ -38,6 +39,9 @@ const DATA = {
 };
 
 describe('Case Page', function () {
+    beforeEach('Login', () => {
+        cy.login('courtney.lare@email.com');
+    });
     before('Seed DB with test casetype', () => {
         cy.login('courtney.lare@email.com');
         const caseTypePage = new CaseTypePage();
