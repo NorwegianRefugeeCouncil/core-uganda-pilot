@@ -144,16 +144,38 @@ func kase(id, caseTypeID, createdByID, partyID, teamID string, done bool, form *
 	return k
 }
 
+func identificationDocumentType(id, name string) iam.IdentificationDocumentType {
+	idt := iam.IdentificationDocumentType{
+		ID:   id,
+		Name: name,
+	}
+	identificationDocumentTypes = append(identificationDocumentTypes, idt)
+	return idt
+}
+
+func identificationDocument(id, partyId, documentNumber, identificationDocumentTypeId string) iam.IdentificationDocument {
+	newId := iam.IdentificationDocument{
+		ID:                           id,
+		PartyID:                      partyId,
+		DocumentNumber:               documentNumber,
+		IdentificationDocumentTypeID: identificationDocumentTypeId,
+	}
+	identificationDocuments = append(identificationDocuments, newId)
+	return newId
+}
+
 var (
-	teams         []iam.Team
-	individuals   []iam.Individual
-	staffers      []iam.Staff
-	memberships   []iam.Membership
-	countries     []iam.Country
-	nationalities []iam.Nationality
-	relationships []iam.Relationship
-	caseTypes     []cms.CaseType
-	cases         []cms.Case
+	teams                       []iam.Team
+	individuals                 []iam.Individual
+	staffers                    []iam.Staff
+	memberships                 []iam.Membership
+	countries                   []iam.Country
+	nationalities               []iam.Nationality
+	relationships               []iam.Relationship
+	caseTypes                   []cms.CaseType
+	cases                       []cms.Case
+	identificationDocumentTypes []iam.IdentificationDocumentType
+	identificationDocuments     []iam.IdentificationDocument
 
 	// Teams
 	UgandaProtectionTeam = team("ac9b8d7d-d04d-4850-9a7f-3f93324c0d1e", "Uganda Protection Team")
@@ -1044,4 +1066,14 @@ var (
 			},
 		},
 	}, true)
+
+	// Identification Document Types
+	DriversLicense = identificationDocumentType("75c41c5f-bf7e-4b45-a242-5e0f875e3044", "Drivers License")
+	NationalID     = identificationDocumentType("8910a1ea-4bfe-4321-aa5b-15922b09ad4d", "National ID")
+	UNHCRID        = identificationDocumentType("6833cb6d-593f-4f3f-926d-498be74352d1", "UNHCR ID")
+	Passport       = identificationDocumentType("567d04e5-abf4-4899-848f-0395264309f0", "Passport")
+
+	BoDiddleyPassport  = identificationDocument("20d194d6-a1ac-483e-8c24-38b5efbaca6f", BoDiddley.ID, "A0JBODIDDLEY129", Passport.ID)
+	MaryPoppinsUNHRCID = identificationDocument("0244b59e-5d5c-4e13-af96-da1ccf4e9499", MaryPoppins.ID, "LLP987MARYPOPPINS99", UNHCRID.ID)
+	JohnDoeNationalID  = identificationDocument("4c9477c9-c149-4db7-928c-f5e5f915e018", JohnDoe.ID, "B811HJOHNDOE01", NationalID.ID)
 )

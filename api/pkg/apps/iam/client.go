@@ -73,3 +73,15 @@ func (c ClientSet) Individuals() IndividualClient {
 		c: c.c,
 	}
 }
+
+func (c ClientSet) IdentificationDocumentTypes() IdentificationDocumentTypeClient {
+	return &RESTIdentificationDocumentTypeClient{
+		c: c.c,
+	}
+}
+
+func (c ClientSet) IdentificationDocuments() IdentificationDocumentClient {
+	return &RESTIdentificationDocumentClient{
+		c: c.c,
+	}
+}

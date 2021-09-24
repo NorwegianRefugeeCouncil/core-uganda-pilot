@@ -20,6 +20,8 @@ type (
 		Individuals() IndividualClient
 		Countries() CountryClient
 		Nationalities() NationalityClient
+		IdentificationDocuments() IdentificationDocumentClient
+		IdentificationDocumentTypes() IdentificationDocumentTypeClient
 	}
 )
 
@@ -162,7 +164,7 @@ type RelationshipTypeClient interface {
 
 type AttributeListOptions struct {
 	PartyTypeIDs []string
-	CountryIDs []string
+	CountryIDs   []string
 }
 
 func (a *AttributeListOptions) MarshalQueryParameters() (url.Values, error) {
@@ -191,6 +193,50 @@ type AttributeClient interface {
 	Create(ctx context.Context, create *Attribute) (*Attribute, error)
 	Update(ctx context.Context, update *Attribute) (*Attribute, error)
 	List(ctx context.Context, listOptions AttributeListOptions) (*AttributeList, error)
+}
+
+type IdentificationDocumentTypeClient interface {
+	Get(ctx context.Context, id string) (*IdentificationDocumentType, error)
+	Create(ctx context.Context, create *IdentificationDocumentType) (*IdentificationDocumentType, error)
+	Update(ctx context.Context, update *IdentificationDocumentType) (*IdentificationDocumentType, error)
+	List(ctx context.Context, listOptions IdentificationDocumentTypeListOptions) (*IdentificationDocumentTypeList, error)
+}
+
+type IdentificationDocumentTypeListOptions struct {
+}
+
+func (a *IdentificationDocumentTypeListOptions) MarshalQueryParameters() (url.Values, error) {
+	return url.Values{}, nil
+}
+
+func (a *IdentificationDocumentTypeListOptions) UnmarshalQueryParameters(values url.Values) error {
+	return nil
+}
+
+type IdentificationDocumentClient interface {
+	Get(ctx context.Context, id string) (*IdentificationDocument, error)
+	Create(ctx context.Context, create *IdentificationDocument) (*IdentificationDocument, error)
+	Update(ctx context.Context, update *IdentificationDocument) (*IdentificationDocument, error)
+	List(ctx context.Context, listOptions IdentificationDocumentListOptions) (*IdentificationDocumentList, error)
+	Delete(ctx context.Context, id string) error
+}
+
+type IdentificationDocumentListOptions struct {
+	PartyIDs []string
+}
+
+func (a *IdentificationDocumentListOptions) MarshalQueryParameters() (url.Values, error) {
+	ret := url.Values{}
+	for _, partyTypeID := range a.PartyIDs {
+		ret.Add("partyId", partyTypeID)
+	}
+	return ret, nil
+}
+
+func (a *IdentificationDocumentListOptions) UnmarshalQueryParameters(values url.Values) error {
+	partyIDs := values["partyId"]
+	a.PartyIDs = append(a.PartyIDs, partyIDs...)
+	return nil
 }
 
 type TeamListOptions struct {
