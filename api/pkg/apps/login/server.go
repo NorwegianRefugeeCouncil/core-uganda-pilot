@@ -25,13 +25,13 @@ type ServerOptions struct {
 }
 
 type Server struct {
-	HydraAdmin      admin.ClientService
-	Collection      *mongo.Collection
-	BCryptCost      int
-	router          *mux.Router
-	template        *template.Template
-	iam             iam.Interface
-	HydraHTTPClient *http.Client
+	HydraAdmin              admin.ClientService
+	BCryptCost              int
+	router                  *mux.Router
+	template                *template.Template
+	iam                     iam.Interface
+	HydraHTTPClient         *http.Client
+	credentialsCollectionFn func() (*mongo.Collection, error)
 }
 
 func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
@@ -42,18 +42,20 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 		HTTPClient: o.AdminHTTPClient,
 	})
 
-	mongoClient, err := o.MongoClientFn(ctx)
-	if err != nil {
-		return nil, err
-	}
-	collection := mongoClient.Database(o.MongoDatabase).Collection("credentials")
-
 	srv := &Server{
 		HydraAdmin:      o.HydraAdminClient.Admin,
-		Collection:      collection,
 		BCryptCost:      o.BCryptCost,
 		iam:             iamCli,
 		HydraHTTPClient: o.HydraHTTPClient,
+		credentialsCollectionFn: func() (*mongo.Collection, error) {
+			mongoClient, err := o.MongoClientFn(ctx)
+			if err != nil {
+				logrus.WithError(err).Errorf("unable to get mongo client")
+				return nil, err
+			}
+			collection := mongoClient.Database(o.MongoDatabase).Collection("credentials")
+			return collection, nil
+		},
 	}
 
 	router := mux.NewRouter()
@@ -89,6 +91,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }
 
 func (s *Server) Error(w http.ResponseWriter, err error) {
+	logrus.WithError(err).Error()
 	utils.ErrorResponse(w, err)
 }
 

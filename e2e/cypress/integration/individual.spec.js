@@ -1,5 +1,6 @@
 import IndividualPage from '../pages/individualPage';
 import IndividualOverviewPage from '../pages/individualOverview.page';
+import '../support/commands';
 
 const data = {
     attributes: {
@@ -37,6 +38,9 @@ function getTestIndividual(displayName) {
 }
 
 describe.skip('Individual Page', function () {
+    beforeEach('Login', () => {
+        cy.login('courtney.lare@email.com');
+    });
     describe('Navigate', () => {
         it('should navigate to new Individual page from Individuals overview', () => {
             const individualOverviewPage = new IndividualOverviewPage();

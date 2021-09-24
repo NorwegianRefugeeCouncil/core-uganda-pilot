@@ -1,6 +1,7 @@
 package login
 
 import (
+	"fmt"
 	"github.com/ory/hydra-client-go/client/admin"
 	"net/http"
 )
@@ -20,7 +21,7 @@ func (s *Server) GetLogoutForm(w http.ResponseWriter, req *http.Request) {
 			WithContext(ctx),
 	)
 	if err != nil {
-		s.Error(w, err)
+		s.Error(w, fmt.Errorf("failed to get logout request: %v", err))
 		return
 	}
 
@@ -30,7 +31,7 @@ func (s *Server) GetLogoutForm(w http.ResponseWriter, req *http.Request) {
 			WithHTTPClient(s.HydraHTTPClient).
 			WithContext(ctx))
 	if err != nil {
-		s.Error(w, err)
+		s.Error(w, fmt.Errorf("failed to accept logout request: %v", err))
 		return
 	}
 

@@ -46,13 +46,11 @@ func ErrorResponse(w http.ResponseWriter, err error) {
 func BindJSON(req *http.Request, into interface{}) error {
 	bodyBytes, err := ioutil.ReadAll(req.Body)
 	if err != nil {
-		logrus.WithError(err).Errorf("failed to read request body")
-		return err
+		return fmt.Errorf("failed to read request body: %v", err)
 	}
 
 	if err := json.Unmarshal(bodyBytes, &into); err != nil {
-		logrus.WithError(err).Errorf("failed to unmarshal request body")
-		return err
+		return fmt.Errorf("failed to marshal request body: %v", err)
 	}
 
 	return nil

@@ -3,6 +3,7 @@ import { URL } from '../helpers';
 import ids from '../fixtures/ids.json';
 import testTemplate from '../fixtures/test_casetemplate.json';
 import CasetypesOverviewPage from '../pages/casetypesOverview.page';
+import '../support/commands';
 
 const DATA = {
     NAME: 'Test casetype',
@@ -13,6 +14,9 @@ const DATA = {
 };
 
 describe('CaseType Page', () => {
+    beforeEach('Login', () => {
+        cy.login('courtney.lare@email.com');
+    });
     describe('Navigate', () => {
         it('should navigate to new CaseType page from CaseTypes overview page', () => {
             const casetypesOverviewPage = new CasetypesOverviewPage();
