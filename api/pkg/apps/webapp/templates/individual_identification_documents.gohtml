@@ -18,25 +18,34 @@
                             <h1 class="display-4 me-3">Identification Documents</h1>
                         </div>
                         <div class="mt-3">
-                            <form method="post" action="/individuals/{{.Individual.ID}}/identificationdocuments">
+                            <form class="needs-validation" method="post" action="/individuals/{{.Individual.ID}}/identificationdocuments" novalidate>
                                 <div class="d-flex">
                                     <div class="me-2">
                                         <label class="form-label" for="identificationDocumentTypeSelector">Identification Document Type</label>
-                                        <select id="identificationDocumentTypeSelector" class="form-select pe-5"
-                                                data-testid="identification-document-type"
-                                                name="documentTypeId">
-                                            {{range .IdentificationDocumentTypes.Items}}
-                                                <option value="{{.ID}}">{{.Name}}</option>
-                                            {{end}}
-                                        </select>
+                                        <div class="input-group has-validation">
+                                            <select id="identificationDocumentTypeSelector" class="form-select pe-5"
+                                                    data-testid="identification-document-type"
+                                                    name="documentTypeId"
+                                                    required>
+                                                {{range .IdentificationDocumentTypes.Items}}
+                                                    <option value="{{.ID}}">{{.Name}}</option>
+                                                {{end}}
+                                            </select>
+                                        </div>
                                     </div>
                                     <div class="mx-2 flex-grow-1">
                                         <label for="documentNumber" class="form-label">Document Number</label>
-                                        <input type="text"
-                                               class="form-control"
-                                               name="documentNumber"
-                                               id="documentNumber"
-                                        />
+                                        <div class="input-group has-validation">
+                                            <input type="text"
+                                                   class="form-control"
+                                                   name="documentNumber"
+                                                   id="documentNumber"
+                                                   required
+                                            />
+                                            <div class="invalid-feedback">
+                                                Please enter a document number.
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <button class="btn btn-primary ms-2"
@@ -89,6 +98,22 @@
                 .then(res => location.reload());
             })
         })
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation')
+
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+
+                    form.classList.add('was-validated')
+                }, false)
+            })
     </script>
 
     </body>
