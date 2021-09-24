@@ -5,6 +5,7 @@
 *.DS_Store
 *.pem
 *.out
-api/tmp/
+actions/__tmp
+api/tmp
 vendor/
 actions/__tmp
