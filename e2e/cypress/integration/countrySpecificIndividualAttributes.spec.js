@@ -3,6 +3,9 @@ import IndividualOverviewPage from '../pages/individualOverview.page';
 import '../support/commands';
 
 describe('Country-specific Individual Attributes (Colombia)', function () {
+    beforeEach(() => {
+        cy.login('claudia.garcia@email.com');
+    });
     describe('Navigate', () => {
         it('should navigate to new Individual page from Individuals overview', () => {
             const individualOverviewPage = new IndividualOverviewPage();
@@ -19,7 +22,7 @@ describe('Country-specific Individual Attributes (Colombia)', function () {
 });
 
 describe('Country-specific Individual Attributes (Uganda)', function () {
-    before(() => {
+    beforeEach(() => {
         cy.login('stephen.kabagambe@email.com');
     });
     describe('Navigate', () => {
