@@ -3,7 +3,7 @@
   "baseUrl": "http://localhost:9000",
   "screenshotOnRunFailure": false,
   "videoCompression": false,
-  "video": true,
+  "video": false,
   "reporter": "spec",
   "reporterOptions": {
     "onlyFailures": true
