@@ -3,9 +3,9 @@ package login
 import "context"
 
 type Interface interface {
-	Login() LoginClient
+	Login() Client
 }
 
-type LoginClient interface {
+type Client interface {
 	SetCredentials(ctx context.Context, partyId, plaintextPassword string) error
 }

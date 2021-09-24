@@ -15,9 +15,3 @@
 
 // Import commands.js using ES2015 syntax:
 import './commands';
-
-// Alternatively you can use CommonJS syntax:
-// require('./commands')
-
-// call our custom login with access token before each test
-beforeEach(() => cy.login('courtney.lare@email.com'));

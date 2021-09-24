@@ -1,0 +1,258 @@
+{{define "reporting"}}
+    <!doctype html>
+    <html lang="en">
+    {{template "head"}}
+    <link href="https://cdn.webdatarocks.com/1.3.1/webdatarocks.min.css" rel="stylesheet" />
+
+    <style>
+        #chartContainer {
+            margin-top: 30px;
+            width: 100%;
+            height: 500px;
+        }
+
+        button.nav-link {
+            background-color: transparent !important;
+            border: none !important;
+        }
+    </style>
+
+
+    <body class="bg-white">
+
+    {{template "navbar"}}
+
+    <div class="container-fluid bg-quite-light border-bottom">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="d-flex flex-row py-1">
+                        <nav class="nav">
+                            <button class="nav-link active" id="gender-tab" data-bs-toggle="tab" data-bs-target="#gender" type="button" role="tab" aria-controls="gender" aria-selected="true">
+                                <i class="bi bi-gender-female"></i>
+                                <i class="bi bi-gender-male"></i>
+                                Cases Closed by Gender
+                            </button>
+                            <button class="nav-link" id="displacement-tab" data-bs-toggle="tab" data-bs-target="#displacement" type="button" role="tab" aria-controls="displacement" aria-selected="false">
+                                <i class="bi bi-arrow-left-right"></i>
+                                <i class="bi bi-person"></i>
+                                Cases Closed by Displacement Status
+                            </button>
+                            <button class="nav-link" id="age-tab" data-bs-toggle="tab" data-bs-target="#age" type="button" role="tab" aria-controls="age" aria-selected="false">
+                                <i class="bi bi-calendar3-week"></i>
+                                <i class="bi bi-person"></i>
+                                Cases Closed by Age
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="gender" role="tabpanel" aria-labelledby="gender-tab">
+                    <h1 class="display-5 me-3">Cases Closed by Gender</h1>
+                </div>
+                <div class="tab-pane fade" id="displacement" role="tabpanel" aria-labelledby="displacement-tab">
+                    <h1 class="display-5 me-3">Cases Closed by Displacement Status</h1>
+                </div>
+                <div class="tab-pane fade" id="age" role="tabpanel" aria-labelledby="age-tab">
+                    <h1 class="display-5 me-3">Cases Closed by Age</h1>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 col-sm-12 col-12">
+                <div id="pivotContainer"></div>
+            </div>
+            <div class="col-md-8 col-sm-12 col-12">
+                <div id="chartContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.webdatarocks.com/1.3.1/webdatarocks.toolbar.min.js"></script>
+    <script src="https://cdn.webdatarocks.com/1.3.1/webdatarocks.js"></script>
+    <script src="https://cdn.webdatarocks.com/1.3.1/webdatarocks.amcharts.js"></script>
+    <script src="https://www.amcharts.com/lib/4/core.js"></script>
+    <script src="https://www.amcharts.com/lib/4/charts.js"></script>
+    <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+
+    <script>
+        const genderSlice = {
+            "rows": [
+                {
+                    "uniqueName": "gender"
+                }
+            ],
+            "columns": [
+                {
+                    "uniqueName": "Measures"
+                }
+            ],
+            "measures": [
+                {
+                    "uniqueName": "closedCases",
+                    "aggregation": "sum"
+                }
+            ]
+        }
+
+        const displacementSlice = {
+            "rows": [
+                {
+                    "uniqueName": "displacementStatus"
+                }
+            ],
+            "columns": [
+                {
+                    "uniqueName": "Measures"
+                }
+            ],
+            "measures": [
+                {
+                    "uniqueName": "closedCases",
+                    "aggregation": "sum"
+                }
+            ]
+        }
+
+        const ageSlice = {
+            "rows": [
+                {
+                    "uniqueName": "birthDate.Year"
+                }
+            ],
+            "columns": [
+                {
+                    "uniqueName": "Measures"
+                }
+            ],
+            "measures": [
+                {
+                    "uniqueName": "closedCases",
+                    "aggregation": "sum"
+                }
+            ]
+        }
+
+        const parseData = (individuals, cases, caseTypes) => {
+
+            // create a map of caseTypeId => name
+            const caseTypeLabelMap = {}
+            caseTypes.forEach(caseType => {
+                caseTypeLabelMap[caseType["id"]] = caseType["name"]
+            })
+
+            const returnData = [];
+            individuals.forEach(individual => {
+                if (individual['partyTypeIds'].includes("{{.BeneficiaryPartyTypeID}}")) {
+
+                    let openCases = 0
+                    let closedCases = 0
+
+                    cases.forEach(kase => {
+                        if (kase["partyId"] === individual["id"]) {
+                            if (kase['done']) {
+                                closedCases++
+                            } else {
+                                openCases++
+                            }
+                        }
+                    })
+
+                    returnData.push({
+                        id: individual["id"],
+                        displacementStatus: individual['attributes']["{{.DisplacementStatusAttributeID}}"][0],
+                        gender: individual['attributes']["{{.GenderAttributeID}}"][0],
+                        birthDate: individual['attributes']["{{.BirthDateAttributeID}}"][0],
+                        openCases: openCases,
+                        closedCases: closedCases,
+                    });
+                }
+            });
+            return returnData;
+        };
+        const makePivot = (pivotContainerId, title, slice) => {
+          return new WebDataRocks({
+              container: pivotContainerId,
+              toolbar: false,
+              height: 580,
+              width: '100%',
+              report: {
+                  'dataSource': {
+                      'dataSourceType': 'json',
+                      'data': parseData({{.Individuals.Items}}, {{.Cases.Items}}, {{.CaseTypes.Items}}),
+                  },
+                  'options': {
+                      'grid': {
+                          'title': title
+                      }
+                  },
+                  "slice": slice,
+              },
+              reportcomplete: function() {
+                  createPieChart();
+              },
+          });
+        };
+        var pivot = makePivot('#pivotContainer', 'Closed Cases by Gender', genderSlice);
+        var chart
+        function createPieChart() {
+            // Get all the data from the pivot grid (alternatively, a slice can be passed to getData() as the first argument)
+            pivot.amcharts.getData({}, drawChart, updateChart);
+        }
+
+        function drawChart(chartData, rawData) {
+            /* Apply amCharts theme */
+            am4core.useTheme(am4themes_animated);
+
+            /* Create chart instance */
+            chart = am4core.create("chartContainer", am4charts.PieChart);
+
+            /* Add data processed by WebDataRocks to the chart */
+            chart.data = chartData.data;
+            var numberFormat = pivot.amcharts.getNumberFormatPattern(rawData.meta.formats[0]);
+
+            /* Apply number formatting to the chart */
+            chart.numberFormatter.numberFormat = numberFormat;
+
+            /* Create and configure series for a pie chart */
+            var pieSeries = chart.series.push(new am4charts.PieSeries());
+            pieSeries.dataFields.category = pivot.amcharts.getCategoryName(rawData);
+            pieSeries.dataFields.value = pivot.amcharts.getMeasureNameByIndex(rawData, 0);
+            pieSeries.slices.template.stroke = am4core.color("#fff");
+            pieSeries.slices.template.strokeWidth = 2;
+            pieSeries.slices.template.strokeOpacity = 1;
+
+            /* Create initial animation */
+            pieSeries.hiddenState.properties.opacity = 1;
+            pieSeries.hiddenState.properties.endAngle = -90;
+            pieSeries.hiddenState.properties.startAngle = -90;
+        }
+
+        function updateChart(chartData, rawData) {
+            chart.dispose();
+            drawChart(chartData, rawData);
+        }
+
+        const genderButton = document.getElementById('gender-tab');
+        const displacementButton = document.getElementById('displacement-tab');
+        const ageButton = document.getElementById('age-tab');
+        genderButton.addEventListener('click', () => {
+            pivot = makePivot('#pivotContainer', 'Closed Cases by Gender', genderSlice);
+        });
+        displacementButton.addEventListener('click', () => {
+            pivot = makePivot('#pivotContainer', 'Closed Cases by Displacement Status', displacementSlice);
+        });
+        ageButton.addEventListener('click', () => {
+            pivot = makePivot('#pivotContainer', 'Closed Cases by Age', ageSlice);
+        });
+    </script>
+
+    </body>
+    </html>
+{{end}}
