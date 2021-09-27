@@ -1,10 +1,14 @@
 import NewRelationshiptypePage from '../pages/newRelationshiptype.page';
 import RelationshiptypeOverviewPage from '../pages/relationshiptypeOverview.page';
+import '../support/commands';
 
 const TYPE_NAME = 'New Test';
 const EDITED_TYPE_NAME = 'Test Edited';
 
 describe('Relationshiptype Page', function () {
+    beforeEach('Login', () => {
+        cy.login('courtney.lare@email.com');
+    });
     describe('Create', () => {
         it('should navigate to New Relationshiptype Form Page and save new attribute', () => {
             const newRelationshiptypePage = new NewRelationshiptypePage();

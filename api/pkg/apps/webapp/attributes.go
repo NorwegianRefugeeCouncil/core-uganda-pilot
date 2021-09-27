@@ -27,7 +27,11 @@ func (s *Server) Attributes(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	list, err := iamClient.PartyAttributeDefinitions().List(ctx, iam.PartyAttributeDefinitionListOptions{})
+	countryID := s.GetCountryFromLoginUser(w, req)
+
+	list, err := iamClient.PartyAttributeDefinitions().List(ctx, iam.PartyAttributeDefinitionListOptions{
+		CountryIDs: []string{iam.GlobalCountry.ID, countryID},
+	})
 	if err != nil {
 		s.Error(w, err)
 		return

@@ -63,14 +63,14 @@ func individual(id string, fullName string, displayName string, birthDate string
 				iam.SensoryImpairmentIntensityAttribute.ID:  {sensoryImpairmentIntensity},
 				iam.MentalImpairmentAttribute.ID:            {mentalImpairment},
 				iam.MentalImpairmentIntensityAttribute.ID:   {mentalImpairmentIntensity},
-				iam.NationalityAttribute.ID:                 {nationality},
-				iam.SpokenLanguagesAttribute.ID:             {spokenLanguages},
-				iam.PreferredLanguageAttribute.ID:           {preferredLanguage},
-				iam.PhysicalAddressAttribute.ID:             {physicalAddress},
+				iam.UGNationalityAttribute.ID:               {nationality},
+				iam.UGSpokenLanguagesAttribute.ID:           {spokenLanguages},
+				iam.UGPreferredLanguageAttribute.ID:         {preferredLanguage},
+				iam.UGPhysicalAddressAttribute.ID:           {physicalAddress},
 				iam.PrimaryPhoneNumberAttribute.ID:          {primaryPhoneNumber},
 				iam.SecondaryPhoneNumberAttribute.ID:        {secondaryPhoneNumber},
-				iam.PreferredMeansOfContactAttribute.ID:     {preferredMeansOfContact},
-				iam.RequireAnInterpreterAttribute.ID:        {requireAnInterpreter},
+				iam.UGPreferredMeansOfContactAttribute.ID:   {preferredMeansOfContact},
+				iam.UGRequireAnInterpreterAttribute.ID:      {requireAnInterpreter},
 			},
 		},
 	}
@@ -88,13 +88,13 @@ func ugandaIndividual(
 	admin4 string,
 	admin5 string,
 ) iam.Individual {
-	individual.Attributes.Add(iam.IdentificationDateAttribute.ID, identificationDate)
-	individual.Attributes.Add(iam.IdentificationLocationAttribute.ID, identificationLocation)
-	individual.Attributes.Add(iam.IdentificationSourceAttribute.ID, identificationSource)
-	individual.Attributes.Add(iam.Admin2Attribute.ID, admin2)
-	individual.Attributes.Add(iam.Admin3Attribute.ID, admin3)
-	individual.Attributes.Add(iam.Admin4Attribute.ID, admin4)
-	individual.Attributes.Add(iam.Admin5Attribute.ID, admin5)
+	individual.Attributes.Add(iam.UGIdentificationDateAttribute.ID, identificationDate)
+	individual.Attributes.Add(iam.UGIdentificationLocationAttribute.ID, identificationLocation)
+	individual.Attributes.Add(iam.UGIdentificationSourceAttribute.ID, identificationSource)
+	individual.Attributes.Add(iam.UGAdmin2Attribute.ID, admin2)
+	individual.Attributes.Add(iam.UGAdmin3Attribute.ID, admin3)
+	individual.Attributes.Add(iam.UGAdmin4Attribute.ID, admin4)
+	individual.Attributes.Add(iam.UGAdmin5Attribute.ID, admin5)
 	return individual
 }
 
@@ -145,21 +145,44 @@ func kase(id, createdByID, partyID, teamID string, caseType cms.CaseType, done, 
 	return k
 }
 
+func identificationDocumentType(id, name string) iam.IdentificationDocumentType {
+	idt := iam.IdentificationDocumentType{
+		ID:   id,
+		Name: name,
+	}
+	identificationDocumentTypes = append(identificationDocumentTypes, idt)
+	return idt
+}
+
+func identificationDocument(id, partyId, documentNumber, identificationDocumentTypeId string) iam.IdentificationDocument {
+	newId := iam.IdentificationDocument{
+		ID:                           id,
+		PartyID:                      partyId,
+		DocumentNumber:               documentNumber,
+		IdentificationDocumentTypeID: identificationDocumentTypeId,
+	}
+	identificationDocuments = append(identificationDocuments, newId)
+	return newId
+}
+
 var (
-	teams         []iam.Team
-	individuals   []iam.Individual
-	staffers      []iam.Staff
-	memberships   []iam.Membership
-	countries     []iam.Country
-	nationalities []iam.Nationality
-	relationships []iam.Relationship
-	caseTypes     []cms.CaseType
-	cases         []cms.Case
+	teams                       []iam.Team
+	individuals                 []iam.Individual
+	staffers                    []iam.Staff
+	memberships                 []iam.Membership
+	countries                   []iam.Country
+	nationalities               []iam.Nationality
+	relationships               []iam.Relationship
+	caseTypes                   []cms.CaseType
+	cases                       []cms.Case
+	identificationDocumentTypes []iam.IdentificationDocumentType
+	identificationDocuments     []iam.IdentificationDocument
 
 	// Teams
 	UgandaProtectionTeam = team("ac9b8d7d-d04d-4850-9a7f-3f93324c0d1e", "Uganda Protection Team")
 	UgandaICLATeam       = team("a43f84d5-3f8a-48c4-a896-5fb0fcd3e42b", "Uganda ICLA Team")
 	UgandaCoreAdminTeam  = team("814fc372-08a6-4e6b-809b-30ebb51cb268", "Uganda Core Admin Team")
+	ColombiaTeam         = team("a6bc6436-fcea-4738-bde8-593e6480e1ad", "Colombia Team")
 
 	// Case Templates for Uganda
 	// - Kampala Response Team
@@ -492,6 +515,7 @@ var (
 		},
 	}
 
+	// Case Types for Uganda
 	// - Kampala Response Team
 	UGSituationalAnalysisCaseType      = caseType("0ae90b08-6944-48dc-8f30-5cb325292a8c", "Situational Analysis (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGSituationAnalysis, true)
 	UGIndividualResponseCaseType       = caseType("2f909038-0ce4-437b-af17-72fc5d668b49", "Response (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGIndividualResponse, true)
@@ -501,6 +525,7 @@ var (
 	UGICLAIndividualIntakeCaseType = caseType("31fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Individual Intake (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIndividualIntake, true)
 	UGICLACaseAssessmentCaseType   = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLACaseAssessment, false)
 
+	// Registration Controller Flow for Uganda Intake Process
 	UgandaRegistrationFlow = registrationctrl.RegistrationFlow{
 		// TODO Country
 		TeamID: "",
@@ -519,14 +544,18 @@ var (
 		}},
 	}
 
-	// Individuals
+	// Individuals - UG Beneficiaries
 	JohnDoe     = ugandaIndividual(individual("c529d679-3bb6-4a20-8f06-c096f4d9adc1", "John Sinclair Doe", "John Doe", "1983-04-23", "john.doe", "Refugee", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "No", "Yes", "Moderate", "No", "", "No", "", "Kenya", "Kiswahili, English", "English", "123 Main Street, Kampala", "0123456789", "", "Email", "No"), "1983-04-23", "0", "0", "0", "0", "0", "0")
 	MaryPoppins = ugandaIndividual(individual("bbf539fd-ebaa-4438-ae4f-8aca8b327f42", "Mary Poppins", "Mary Poppins", "1983-04-23", "mary.poppins", "Internally Displaced Person", "Female", "Yes", "https://link-to-consent.proof", "No", "No", "No", "No", "", "No", "", "No", "", "Uganda", "Rukiga, English", "Rukiga", "901 First Avenue, Kampala", "0123456789", "", "Telegram", "Yes"), "1983-04-23", "0", "0", "0", "0", "0", "0")
 	BoDiddley   = ugandaIndividual(individual("26335292-c839-48b6-8ad5-81271ee51e7b", "Ellas McDaniel", "Bo Diddley", "1983-04-23", "bo.diddley", "Host Community", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "Yes", "No", "", "No", "", "No", "", "Somalia", "Somali, Arabic, English", "English", "101 Main Street, Kampala", "0123456789", "", "Whatsapp", "No"), "1983-04-23", "0", "0", "0", "0", "0", "0")
 
+	// Individuals - UG Staff
 	Stephen  = individual("066a0268-fdc6-495a-9e4b-d60cfae2d81a", "Stephen Kabagambe", "Stephen Kabagambe", "1983-04-23", "stephen.kabagambe", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
 	Colette  = individual("93f9461f-31da-402e-8988-6e0100ecaa24", "Colette le Jeune", "Colette le Jeune", "1983-04-23", "colette.le.jeune", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
 	Courtney = individual("14c014d9-f433-4508-b33d-dc45bf86690b", "Courtney Lare", "Courtney Lare", "1983-04-23", "courtney.lare", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+
+	// Individuals - CO staff
+	Claudia = individual("0888928f-aa48-4b5f-a23e-8f885d734f71", "Claudia Garcia", "Claudia Garcia", "1983-04-23", "claudia.garcia", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
 
 	// Beneficiaries
 	_ = beneficiary(JohnDoe)
@@ -537,19 +566,23 @@ var (
 	_ = staff(Stephen)
 	_ = staff(Colette)
 	_ = staff(Courtney)
+	_ = staff(Claudia)
 
 	// Memberships
 	StevenMembership   = membership("862690ee-87f0-4f95-aa1e-8f8a2f2fd54a", Stephen, UgandaCoreAdminTeam)
 	ColetteMembership  = membership("9d4abef9-0be0-4750-81ab-0524a412c049", Colette, UgandaProtectionTeam)
 	CourtneyMembership = membership("83c5e73a-5947-4d7e-996c-14a2a7b1c850", Courtney, UgandaProtectionTeam)
+	ClaudiaMembership  = membership("344016e3-1d89-4f28-976b-1bf891d69aff", Claudia, ColombiaTeam)
 
 	// Countries
-	ugandaCountry = country(iam.UgandaCountry.ID, iam.UgandaCountry.Name)
+	ugandaCountry   = country(iam.UgandaCountry.ID, iam.UgandaCountry.Name)
+	colombiaCountry = country(iam.ColombiaCountry.ID, iam.ColombiaCountry.Name)
 
 	// Nationalities
 	UgandaCoreAdminTeamNationality  = nationality("0987460d-c906-43cd-b7fd-5e7afca0d93e", UgandaCoreAdminTeam, ugandaCountry)
 	UgandaProtectionTeamNationality = nationality("b58e4d26-fe8e-4442-8449-7ec4ca3d9066", UgandaProtectionTeam, ugandaCountry)
 	UgandaICLATeamNationality       = nationality("23e3eb5e-592e-42e2-8bbf-ee097d93034c", UgandaICLATeam, ugandaCountry)
+	ColombiaTeamNationality         = nationality("7ba6d2ee-1af9-447c-8000-7719467b3414", ColombiaTeam, colombiaCountry)
 
 	// Cases
 	BoDiddleySituationAnalysisData = map[string][]string{
@@ -599,6 +632,132 @@ var (
 	MaryPoppinsSituationAnalysis  = kase("4f7708ed-240a-423f-9bd1-839542e65833", Colette.ID, MaryPoppins.ID, UgandaProtectionTeam.ID, UGSituationalAnalysisCaseType, true, true, MaryPoppinsSituationAnalysisData)
 	MaryPoppinsIndividualResponse = kase("45b4a637-c610-4ab9-afe6-4e958c36a96f", Colette.ID, MaryPoppins.ID, UgandaProtectionTeam.ID, UGIndividualResponseCaseType, true, true, MaryPoppinsResponseData)
 
-	JohnDoesSituationAnalysis = kase("43140381-8166-4fb3-9ac5-339082920ade", Colette.ID, JohnDoe.ID, UgandaProtectionTeam.ID, UGSituationalAnalysisCaseType, true, true, JohnDoeSituationAnalysisData)
-	JohnDoeIndividualResponse = kase("65e02e79-1676-4745-9890-582e3d67d13f", Colette.ID, JohnDoe.ID, UgandaProtectionTeam.ID, UGIndividualResponseCaseType, true, true, JohnDoeResponseData)
+	JohnDoesSituationAnalysis = kase("43140381-8166-4fb3-9ac5-339082920ade", UGSituationalAnalysisCaseType.ID, Colette.ID, JohnDoe.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
+		FormElements: []form.FormElement{
+			{
+				Type: form.Textarea,
+				Attributes: form.FormElementAttributes{
+					Label:       "Do you think you are living a safe and dignified life? Are you achieving what you want? Are you able to live a good life?",
+					Name:        "safeDignifiedLife",
+					Description: "Probe for description",
+					Value: []string{
+						"Yes, I live a safe and dignified life and I am reasonably happy with my achievements and quality of life.",
+					},
+					Placeholder: "",
+				},
+			},
+			{
+				Type: form.Textarea,
+				Attributes: form.FormElementAttributes{
+					Label: "How are you addressing these challenges and barriers? What is standing in your way? Can you give me some examples of how you are dealing with these challenges?",
+					Name:  "challengesBarriers",
+					Value: []string{
+						"Some of the barriers I face are communication gaps between myself and refugee tenants. We are attempting to deal with these challenges by using google translate.",
+					},
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: form.Textarea,
+				Attributes: form.FormElementAttributes{
+					Label: "What are some solutions you see for this and how could we work together on these solutions? How could we work to reduce these challenges together?",
+					Name:  "solutions",
+					Value: []string{
+						"A qualified interpreter, who knows the legal context could help us to agree on contractual matters.",
+					},
+					Description: "",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: form.Textarea,
+				Attributes: form.FormElementAttributes{
+					Label: "If we were to work together on this, what could we do together? What would make the most difference for you?",
+					Name:  "workTogether",
+					Value: []string{
+						"NRC could provide a translator and a legal representative to ease contract negotiations",
+					},
+					Description: "",
+					Placeholder: "",
+				},
+			},
+		},
+	},
+		true)
+
+	JohnDoeIndividualResponse = kase("65e02e79-1676-4745-9890-582e3d67d13f", UGIndividualResponseCaseType.ID, Colette.ID, JohnDoe.ID, UgandaProtectionTeam.ID, true, &cms.CaseTemplate{
+		FormElements: []form.FormElement{
+			{
+				Type: form.TaxonomyInput,
+				Attributes: form.FormElementAttributes{
+					Label: "Which service has the individual requested as a starting point of support?",
+					Name:  "serviceStartingPoint",
+					Value: []string{
+						"LFS",
+					},
+					Description: "Add the taxonomies of the services requested as a starting point one by one, by selecting the relevant options from the dropdowns below.",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: form.Textarea,
+				Attributes: form.FormElementAttributes{
+					Label:       "Comment on service the individual requested as a starting point of support?",
+					Name:        "commentStartingPoint",
+					Description: "Additional information, observations, concerns, etc.",
+					Placeholder: "",
+					Value: []string{
+						"The individual has requested LFS as a starting point, we should create a referral",
+					},
+				},
+			},
+			{
+				Type: form.TaxonomyInput,
+				Attributes: form.FormElementAttributes{
+					Label: "What other services has the individual requested/identified?",
+					Name:  "otherServices",
+					Value: []string{
+						"WASH",
+					},
+					Description: "Add the taxonomies of the other services requested one by one, by selecting the relevant options from the dropdowns below.",
+					Placeholder: "",
+				},
+			},
+			{
+				Type: form.Textarea,
+				Attributes: form.FormElementAttributes{
+					Label:       "Comment on other services the individual requested/identified?",
+					Name:        "commentOtherServices",
+					Description: "Additional information, observations, concerns, etc.",
+					Placeholder: "",
+					Value: []string{
+						"The individual has requested additional WASH services, we should create a referral",
+					},
+				},
+			},
+			{
+				Type: form.Textarea,
+				Attributes: form.FormElementAttributes{
+					Label: "What is the perceived priority response level of the individual",
+					Name:  "perceivedPriority",
+					Value: []string{
+						"High",
+					},
+					Description: "",
+					Placeholder: "",
+				},
+			},
+		},
+	}, true)
+
+	// Identification Document Types
+	DriversLicense = identificationDocumentType("75c41c5f-bf7e-4b45-a242-5e0f875e3044", "Drivers License")
+	NationalID     = identificationDocumentType("8910a1ea-4bfe-4321-aa5b-15922b09ad4d", "National ID")
+	UNHCRID        = identificationDocumentType("6833cb6d-593f-4f3f-926d-498be74352d1", "UNHCR ID")
+	Passport       = identificationDocumentType("567d04e5-abf4-4899-848f-0395264309f0", "Passport")
+
+	BoDiddleyPassport  = identificationDocument("20d194d6-a1ac-483e-8c24-38b5efbaca6f", BoDiddley.ID, "A0JBODIDDLEY129", Passport.ID)
+	MaryPoppinsUNHRCID = identificationDocument("0244b59e-5d5c-4e13-af96-da1ccf4e9499", MaryPoppins.ID, "LLP987MARYPOPPINS99", UNHCRID.ID)
+	JohnDoeNationalID  = identificationDocument("4c9477c9-c149-4db7-928c-f5e5f915e018", JohnDoe.ID, "B811HJOHNDOE01", NationalID.ID)
 )

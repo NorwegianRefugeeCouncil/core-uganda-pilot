@@ -18,6 +18,8 @@ type Server struct {
 	partyTypeStore                *PartyTypeStore
 	relationshipStore             *RelationshipStore
 	relationshipTypeStore         *RelationshipTypeStore
+	identificationDocumentStore     *IdentificationDocumentStore
+	identificationDocumentTypeStore *IdentificationDocumentTypeStore
 	individualStore               *IndividualStore
 	teamStore                     *TeamStore
 	countryStore                  *CountryStore
@@ -63,6 +65,16 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 		return nil, err
 	}
 
+	identificationDocumentStore, err := newIdentificationDocumentStore(ctx, o.MongoClientFn, o.MongoDatabase)
+	if err != nil {
+		return nil, err
+	}
+
+	identificationDocumentTypeStore, err := newIdentificationDocumentTypeStore(ctx, o.MongoClientFn, o.MongoDatabase)
+	if err != nil {
+		return nil, err
+	}
+
 	hydraAdmin := o.HydraAdminClient.Admin
 
 	srv := &Server{
@@ -74,7 +86,8 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 		partyTypeStore:                partyTypeStore,
 		relationshipStore:             relationshipStore,
 		relationshipTypeStore:         relationshipTypeStore,
-		individualStore:               NewIndividualStore(o.MongoClientFn, o.MongoDatabase),
+		identificationDocumentStore:     identificationDocumentStore,
+		identificationDocumentTypeStore: identificationDocumentTypeStore,individualStore:               NewIndividualStore(o.MongoClientFn, o.MongoDatabase),
 		teamStore:                     NewTeamStore(partyStore),
 		membershipStore:               NewMembershipStore(relationshipStore),
 		nationalityStore:              NewNationalityStore(relationshipStore),
@@ -134,6 +147,17 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	router.Path(server.CountriesEndpoint).Methods("POST").HandlerFunc(srv.postCountry)
 	router.Path(path.Join(server.CountriesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getCountry)
 	router.Path(path.Join(server.CountriesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putCountry)
+
+	router.Path(server.IdentificationDocumentsEndpoint).Methods("GET").HandlerFunc(srv.listIdentificationDocuments)
+	router.Path(server.IdentificationDocumentsEndpoint).Methods("POST").HandlerFunc(srv.postIdentificationDocument)
+	router.Path(path.Join(server.IdentificationDocumentsEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getIdentificationDocument)
+	router.Path(path.Join(server.IdentificationDocumentsEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putIdentificationDocument)
+	router.Path(path.Join(server.IdentificationDocumentsEndpoint, "{id}")).Methods("DELETE").HandlerFunc(srv.deleteIdentificationDocument)
+
+	router.Path(server.IdentificationDocumentTypesEndpoint).Methods("GET").HandlerFunc(srv.listIdentificationDocumentTypes)
+	router.Path(server.IdentificationDocumentTypesEndpoint).Methods("POST").HandlerFunc(srv.postIdentificationDocumentType)
+	router.Path(path.Join(server.IdentificationDocumentTypesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getIdentificationDocumentType)
+	router.Path(path.Join(server.IdentificationDocumentTypesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putIdentificationDocumentType)
 
 	srv.router = router
 

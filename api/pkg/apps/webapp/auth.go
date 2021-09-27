@@ -94,6 +94,7 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 
 			// Redirect to login if no access token
 			if len(token) == 0 {
+				logrus.Infof("redirecting to /login as no access token is present")
 				http.Redirect(w, req, "/login", http.StatusTemporaryRedirect)
 				return
 			}
@@ -105,12 +106,14 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 				HTTPClient: s.HydraHTTPClient,
 			})
 			if err != nil {
+				logrus.WithError(err).Errorf("failed to verify access token")
 				s.Error(w, err)
 				return
 			}
 
 			// If the user is not active, then redirect to login
 			if !*res.Payload.Active {
+				logrus.Warn("token is not active")
 				http.Redirect(w, req, "/login", http.StatusTemporaryRedirect)
 				return
 			}

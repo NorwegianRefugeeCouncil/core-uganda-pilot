@@ -20,10 +20,11 @@ func newPartyTypeStore(ctx context.Context, mongoClientFn utils.MongoClientFn, d
 		getCollection: utils.GetCollectionFn(database, "partyTypes", mongoClientFn),
 	}
 
-	collection, err := store.getCollection(ctx)
+	collection, done, err := store.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer done()
 
 	if _, err := collection.Indexes().CreateOne(ctx, mongo.IndexModel{
 		Keys: bson.M{
@@ -38,10 +39,12 @@ func newPartyTypeStore(ctx context.Context, mongoClientFn utils.MongoClientFn, d
 }
 
 func (s *PartyTypeStore) Get(ctx context.Context, id string) (*PartyType, error) {
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer done()
+
 	res := collection.FindOne(ctx, bson.M{
 		"id": id,
 	})
@@ -59,10 +62,11 @@ func (s *PartyTypeStore) List(ctx context.Context, listOptions PartyTypeListOpti
 
 	filter := bson.M{}
 
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer done()
 
 	res, err := collection.Find(ctx, filter)
 	if err != nil {
@@ -89,10 +93,12 @@ func (s *PartyTypeStore) List(ctx context.Context, listOptions PartyTypeListOpti
 }
 
 func (s *PartyTypeStore) Update(ctx context.Context, partyType *PartyType) error {
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return err
 	}
+	defer done()
+
 	_, err = collection.UpdateOne(ctx, bson.M{
 		"id": partyType.ID,
 	}, bson.M{
@@ -108,10 +114,12 @@ func (s *PartyTypeStore) Update(ctx context.Context, partyType *PartyType) error
 }
 
 func (s *PartyTypeStore) Create(ctx context.Context, partyType *PartyType) error {
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return err
 	}
+	defer done()
+
 	_, err = collection.InsertOne(ctx, partyType)
 	if err != nil {
 		return err

@@ -21,10 +21,11 @@ func NewCommentStore(ctx context.Context, mongoClientFn utils.MongoClientFn, dat
 		getCollection: utils.GetCollectionFn(database, "comments", mongoClientFn),
 	}
 
-	collection, err := store.getCollection(ctx)
+	collection, done, err := store.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer done()
 
 	// Cases should have unique IDs
 	if _, err := collection.Indexes().CreateOne(ctx,
@@ -47,10 +48,11 @@ func NewCommentStore(ctx context.Context, mongoClientFn utils.MongoClientFn, dat
 }
 
 func (s *CommentStore) Get(ctx context.Context, id string) (*Comment, error) {
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer done()
 
 	res := collection.FindOne(ctx, bson.M{
 		"id": id,
@@ -71,10 +73,11 @@ func (s *CommentStore) List(ctx context.Context, options CommentListOptions) (*C
 		"caseId": options.CaseID,
 	}
 
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer done()
 
 	res, err := collection.Find(ctx, filter)
 	if err != nil {
@@ -115,10 +118,11 @@ func (s *CommentStore) Update(ctx context.Context, id string, updateFunc func(ol
 		return nil, err
 	}
 
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer done()
 
 	_, err = collection.ReplaceOne(ctx, bson.M{
 		"id": id,
@@ -135,10 +139,11 @@ func (s *CommentStore) Create(ctx context.Context, comment *Comment) error {
 	comment.CreatedAt = now
 	comment.UpdatedAt = now
 
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return err
 	}
+	defer done()
 
 	_, err = collection.InsertOne(ctx, comment)
 	if err != nil {
@@ -148,10 +153,12 @@ func (s *CommentStore) Create(ctx context.Context, comment *Comment) error {
 }
 
 func (s *CommentStore) Delete(ctx context.Context, id string) error {
-	collection, err := s.getCollection(ctx)
+	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return err
 	}
+	defer done()
+
 	_, err = collection.DeleteOne(ctx, bson.M{
 		"id": id,
 	})

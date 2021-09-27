@@ -9,7 +9,7 @@ type RESTLoginClient struct {
 	c *rest.Client
 }
 
-var _ LoginClient = &RESTLoginClient{}
+var _ Client = &RESTLoginClient{}
 
 type SetCredentialPayload struct {
 	PartyID           string `json:"partyId"`
