@@ -517,7 +517,7 @@ var (
 			},
 			Options: []i18n.Strings{
 				{
-					{"en", "Kabusa Access Center"},
+					{"en", "Kabusu Access Center"},
 				},
 				{
 					{"en", "Nsambya AccessCenter"},
