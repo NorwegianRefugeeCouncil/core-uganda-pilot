@@ -20,7 +20,7 @@ func newIdentificationDocumentStore(ctx context.Context, mongoClientFn utils.Mon
 		getCollection: utils.GetCollectionFn(database, "identificationDocuments", mongoClientFn),
 	}
 
-	collection, close, err := store.getCollection(ctx)
+	collection, klose, err := store.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +33,7 @@ func newIdentificationDocumentStore(ctx context.Context, mongoClientFn utils.Mon
 		return nil, err
 	}
 
-	close()
+	klose()
 
 	return store, nil
 }
@@ -46,7 +46,7 @@ func (s *IdentificationDocumentStore) list(ctx context.Context, listOptions Iden
 		filter["partyId"] = bson.D{{Key: "$in", Value: BSONStringA(listOptions.PartyIDs)}}
 	}
 
-	collection, close, err := s.getCollection(ctx)
+	collection, klose, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +70,7 @@ func (s *IdentificationDocumentStore) list(ctx context.Context, listOptions Iden
 		return nil, cursor.Err()
 	}
 
-	close()
+	klose()
 
 	return &IdentificationDocumentList{
 		Items: list,
@@ -79,7 +79,7 @@ func (s *IdentificationDocumentStore) list(ctx context.Context, listOptions Iden
 }
 
 func (s *IdentificationDocumentStore) create(ctx context.Context, identificationDocument *IdentificationDocument) error {
-	collection, close, err := s.getCollection(ctx)
+	collection, klose, err := s.getCollection(ctx)
 	if err != nil {
 		return err
 	}
@@ -87,12 +87,12 @@ func (s *IdentificationDocumentStore) create(ctx context.Context, identification
 	if err != nil {
 		return err
 	}
-	close()
+	klose()
 	return nil
 }
 
 func (s *IdentificationDocumentStore) get(ctx context.Context, id string) (*IdentificationDocument, error) {
-	collection, close, err := s.getCollection(ctx)
+	collection, klose, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -106,12 +106,12 @@ func (s *IdentificationDocumentStore) get(ctx context.Context, id string) (*Iden
 	if err := result.Decode(&a); err != nil {
 		return nil, err
 	}
-	close()
+	klose()
 	return &a, nil
 }
 
 func (s *IdentificationDocumentStore) update(ctx context.Context, identificationDocument *IdentificationDocument) error {
-	collection, close, err := s.getCollection(ctx)
+	collection, klose, err := s.getCollection(ctx)
 	if err != nil {
 		return err
 	}
@@ -127,7 +127,7 @@ func (s *IdentificationDocumentStore) update(ctx context.Context, identification
 	if err != nil {
 		return err
 	}
-	close()
+	klose()
 	return nil
 }
 
