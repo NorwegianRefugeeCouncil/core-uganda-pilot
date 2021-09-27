@@ -39,7 +39,8 @@
 
                             <div class="mb-3">
                                 <label for="label" class="form-label">Label</label>
-                                <input id="label" name="label" value="{{.PartyAttributeDefinition.FormControl.Label}}"
+                                <input id="label" name="label"
+                                       value="{{if .PartyAttributeDefinition}}{{(index .PartyAttributeDefinition.FormControl.Label 0).Value}}{{end}}"
                                        class="form-control" type="text" data-testid="label" required
                                        aria-describedby="labelFeedback">
                                 <div id="labelFeedback" class="invalid-feedback">This field is required</div>

@@ -3,6 +3,7 @@ package cms_test
 import (
 	. "github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/form"
+	"github.com/nrc-no/core/pkg/i18n"
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
@@ -40,22 +41,34 @@ var FormWithAllControlTypes = form.Form{
 			Validation: form.ControlValidation{Required: true},
 		},
 		{
-			Name:       "dropdown",
-			Type:       form.Dropdown,
-			Options:    []string{"a", "b"},
+			Name: "dropdown",
+			Type: form.Dropdown,
+			Options: []i18n.Strings{
+				{
+					{"en", "a"},
+				},
+				{
+					{"en", "b"},
+				}},
 			Validation: form.ControlValidation{Required: true},
 		},
 		{
-			Name:            "checkbox",
-			Type:            form.Checkbox,
-			CheckboxOptions: []form.CheckboxOption{{Label: "a"}, {Label: "b"}},
-			Validation:      form.ControlValidation{Required: true},
+			Name: "checkbox",
+			Type: form.Checkbox,
+			CheckboxOptions: []form.CheckboxOption{
+				{Label: i18n.Strings{{"en", "a"}}},
+				{Label: i18n.Strings{{"en", "b"}}},
+			},
+			Validation: form.ControlValidation{Required: true},
 		},
 		{
-			Name:            "radio",
-			Type:            form.Radio,
-			CheckboxOptions: []form.CheckboxOption{{Label: "a"}, {Label: "b"}},
-			Validation:      form.ControlValidation{Required: true},
+			Name: "radio",
+			Type: form.Radio,
+			CheckboxOptions: []form.CheckboxOption{
+				{Label: i18n.Strings{{"en", "a"}}},
+				{Label: i18n.Strings{{"en", "b"}}},
+			},
+			Validation: form.ControlValidation{Required: true},
 		},
 		{
 			Name:       "taxonomy",

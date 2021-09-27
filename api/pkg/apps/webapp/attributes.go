@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/nrc-no/core/pkg/form"
+	"github.com/nrc-no/core/pkg/i18n"
 	"github.com/nrc-no/core/pkg/sessionmanager"
 	"github.com/nrc-no/core/pkg/validation"
 	uuid "github.com/satori/go.uuid"
@@ -134,7 +135,8 @@ func (s *Server) PostAttribute(ctx context.Context, attribute *iam.PartyAttribut
 
 	// form control
 	name := values.Get("name")
-	label := values.Get("label")
+	// TODO add dynamic locale
+	label := i18n.Strings{{"en", values.Get("label")}}
 	required := values.Get("isRequired") == "on"
 	controlType := form.ControlType(values["controlType"][0])
 	attribute.FormControl = *form.NewControl(name, controlType, label, required)
