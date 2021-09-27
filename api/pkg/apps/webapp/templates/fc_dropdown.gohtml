@@ -14,11 +14,11 @@
                 <option value=""></option>
             {{end}}
             {{range $i, $option := .Options}}
-                <option value="{{$option}}"
-                        {{range $v := $.Value }}{{if eq $option $v}}selected{{end}}{{end}}>{{.}}</option>
+                <option value="{{$option.ForLocale "en"}}"
+                        {{range $v := $.Value }}{{if eq ($option.ForLocale "en") $v}}selected{{end}}{{end}}>{{.ForLocale "en"}}</option>
             {{end}}
         </select>
-        <div class="form-text">{{.Description}}</div>
+        {{template "description" .}}
         {{template "fc_feedback" .}}
     </div>
 {{end}}

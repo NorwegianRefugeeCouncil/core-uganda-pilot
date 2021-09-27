@@ -1,7 +1,7 @@
 {{define "label"}}
     {{if .Label}}
         <label class="mb-2 text-muted" style="font-weight: bold;" for="{{.Name}}">
-            {{- .Label -}}
+            {{- .Label.ForLocale "en" -}}
         </label>
     {{end}}
 {{end}}

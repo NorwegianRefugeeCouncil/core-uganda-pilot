@@ -2,8 +2,8 @@
     <div class="mb-3">
         <div class="card form">
             <div class="card-body" data-testid="test-taxonomy">
-                <span>{{.Label}}</span>
-                <p class="form-text">{{.Description}}</p>
+                <span>{{.Label.ForLocale "en"}}</span>
+                {{template "description" .}}
                 <div class="form mb-3" {{if .Readonly}}style="display: none"{{end}}>
                     <label for="programme-area-{{.Name}}">Programme Area</label>
                     <select id="programme-area-{{.Name}}" class="form-select">

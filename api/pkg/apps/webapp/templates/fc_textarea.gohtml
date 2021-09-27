@@ -5,7 +5,7 @@
                   name="{{.Name}}"
                   class="form-control"
                   style="height: 100px"
-                  placeholder="{{.Placeholder}}"
+                  placeholder="{{.Placeholder.ForLocale "en"}}"
                   data-testid="test-textarea"
                   {{if .Validation.Required}}required{{end}}
                 aria-describedby="{{.Name}}Feedback"
@@ -13,7 +13,7 @@
             >
                 {{- if .Value}}{{index .Value 0}}{{end -}}
             </textarea>
-        <div class="form-text">{{.Description}}</div>
+        {{template "description" .}}
         {{template "fc_feedback" .}}
     </div>
 {{end}}

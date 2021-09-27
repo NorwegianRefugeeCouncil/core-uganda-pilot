@@ -7,12 +7,12 @@
                class="form-control"
                type="url"
                data-testid="test-url"
-               placeholder="{{.Control.Placeholder}}"
+               placeholder="{{.Control.Placeholder.ForLocale "en"}}"
                {{if .Control.Validation.Required}}required{{end}}
                aria-describedby="{{.Control.Name}}Feedback"
                 {{if .Control.Readonly}}disabled readonly{{end}}
         >
-        <div class="form-text">{{.Control.Description}}</div>
+        {{template "description" .}}
         {{template "fc_feedback" .}}
     </div>
 {{end}}
