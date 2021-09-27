@@ -6,3 +6,12 @@ type LocaleString struct {
 }
 
 type Strings []LocaleString
+
+func (s Strings) ForLocale(locale string) string {
+	for _, localeString := range s {
+		if localeString.Locale == locale {
+			return localeString.Value
+		}
+	}
+	return ""
+}
