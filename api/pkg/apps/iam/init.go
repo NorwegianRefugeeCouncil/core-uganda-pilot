@@ -135,7 +135,8 @@ func (s *Server) initAttribute(ctx context.Context) error {
 		COFormsOfIncomeGenerationAttribute,
 		COLegalRepresentativeNameAttribue,
 		COLegalRepresentativeAdditionalInfoAttribute,
-		COReasonsForRepresentationAttribute,COGuardianshipIsLegalAttribute,
+		COReasonsForRepresentationAttribute,
+		COGuardianshipIsLegalAttribute,
 		COAbleToGiveLegalConsentAttribute,
 		// -- End of Colombia Individual Attributes
 	} {

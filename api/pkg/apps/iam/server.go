@@ -11,23 +11,23 @@ import (
 )
 
 type Server struct {
-	environment                   string
-	router                        *mux.Router
-	partyAttributeDefinitionStore *PartyAttributeDefinitionStore
-	partyStore                    *PartyStore
-	partyTypeStore                *PartyTypeStore
-	relationshipStore             *RelationshipStore
-	relationshipTypeStore         *RelationshipTypeStore
+	environment                     string
+	router                          *mux.Router
+	partyAttributeDefinitionStore   *PartyAttributeDefinitionStore
+	partyStore                      *PartyStore
+	partyTypeStore                  *PartyTypeStore
+	relationshipStore               *RelationshipStore
+	relationshipTypeStore           *RelationshipTypeStore
 	identificationDocumentStore     *IdentificationDocumentStore
 	identificationDocumentTypeStore *IdentificationDocumentTypeStore
-	individualStore               *IndividualStore
-	teamStore                     *TeamStore
-	countryStore                  *CountryStore
-	membershipStore               *MembershipStore
-	nationalityStore              *NationalityStore
-	hydraAdmin                    admin.ClientService
-	mongoClientFn                 utils.MongoClientFn
-	hydraHTTPClient               *http.Client
+	individualStore                 *IndividualStore
+	teamStore                       *TeamStore
+	countryStore                    *CountryStore
+	membershipStore                 *MembershipStore
+	nationalityStore                *NationalityStore
+	hydraAdmin                      admin.ClientService
+	mongoClientFn                   utils.MongoClientFn
+	hydraHTTPClient                 *http.Client
 }
 
 func NewServerOrDie(ctx context.Context, o *server.GenericServerOptions) *Server {
@@ -78,21 +78,21 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	hydraAdmin := o.HydraAdminClient.Admin
 
 	srv := &Server{
-		environment:                   o.Environment,
-		mongoClientFn:                 o.MongoClientFn,
-		partyAttributeDefinitionStore: attributeStore,
-		countryStore:                  NewCountryStore(partyStore),
-		partyStore:                    partyStore,
-		partyTypeStore:                partyTypeStore,
-		relationshipStore:             relationshipStore,
-		relationshipTypeStore:         relationshipTypeStore,
+		environment:                     o.Environment,
+		mongoClientFn:                   o.MongoClientFn,
+		partyAttributeDefinitionStore:   attributeStore,
+		countryStore:                    NewCountryStore(partyStore),
+		partyStore:                      partyStore,
+		partyTypeStore:                  partyTypeStore,
+		relationshipStore:               relationshipStore,
+		relationshipTypeStore:           relationshipTypeStore,
 		identificationDocumentStore:     identificationDocumentStore,
-		identificationDocumentTypeStore: identificationDocumentTypeStore,individualStore:               NewIndividualStore(o.MongoClientFn, o.MongoDatabase),
-		teamStore:                     NewTeamStore(partyStore),
-		membershipStore:               NewMembershipStore(relationshipStore),
-		nationalityStore:              NewNationalityStore(relationshipStore),
-		hydraAdmin:                    hydraAdmin,
-		hydraHTTPClient:               o.HydraHTTPClient,
+		identificationDocumentTypeStore: identificationDocumentTypeStore, individualStore: NewIndividualStore(o.MongoClientFn, o.MongoDatabase),
+		teamStore:        NewTeamStore(partyStore),
+		membershipStore:  NewMembershipStore(relationshipStore),
+		nationalityStore: NewNationalityStore(relationshipStore),
+		hydraAdmin:       hydraAdmin,
+		hydraHTTPClient:  o.HydraHTTPClient,
 	}
 
 	router := mux.NewRouter()

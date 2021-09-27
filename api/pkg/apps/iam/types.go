@@ -368,7 +368,6 @@ func (l *TeamList) FindByID(id string) *Team {
 	return nil
 }
 
-//Country
 type Country struct {
 	ID   string `json:"id" bson:"id"`
 	Name string `json:"name" bson:"name"`
