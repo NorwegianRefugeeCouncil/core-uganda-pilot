@@ -1,11 +1,14 @@
 import { of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { request } from 'universal-rxjs-ajax';
 import { Party } from './types/party';
 import { Attribute } from './types/attributes';
 import { Case } from './types/cases';
+import { ajax } from 'rxjs/ajax';
+import { XMLHttpRequest } from 'xhr2';
 
-let test = request(
+global.XMLHttpRequest = global.XMLHttpRequest ? global.XMLHttpRequest : XMLHttpRequest;
+
+let test = ajax(
   {
     url: 'http://localhost:9000/apis/cms/v1/cases',
     // url: 'http://localhost:9000/apis/iam/v1/attributes',
@@ -20,12 +23,12 @@ let test = request(
     withCredentials: false,
     responseType: 'json'
   }
-).pipe(map((data) => {
+).pipe(map((response) => {
 
   // const newTypedThing = new Attribute(data.response.items[0]);
   // const newTypedThing = new Party(data.response.items[0]);
-  const newTypedThing = new Case(data.response.items[0]);
-    console.log(newTypedThing);
+  // const newTypedThing = new Case(data.response.items[0]);
+    console.log(response);
   }, catchError(error => {
     console.log('error: ', error);
     return of(error);
