@@ -73,13 +73,13 @@
         [
           {
             "locale": "en",
-            "value": "1"
+            "value": "0"
           }
         ],
         [
           {
             "locale": "en",
-            "value": "2"
+            "value": "1"
           }
         ]
       ]
@@ -95,12 +95,13 @@
       "name": "checkbox",
       "checkboxOptions": [
         {
-          "Label": [
+          "label": [
             {
               "locale": "en",
               "value": "0"
             }
-          ]
+          ],
+          "value": "0"
         },
         {
           "label": [
@@ -108,7 +109,8 @@
               "locale": "en",
               "value": "1"
             }
-          ]
+          ],
+          "value": "1"
         }
       ]
     },
@@ -128,7 +130,8 @@
               "locale": "en",
               "value": "0"
             }
-          ]
+          ],
+          "value": "0"
         },
         {
           "label": [
@@ -136,7 +139,8 @@
               "locale": "en",
               "value": "1"
             }
-          ]
+          ],
+          "value": "1"
         }
       ]
     },
