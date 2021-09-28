@@ -6,6 +6,7 @@
                value="{{if .Value}}{{index .Value 0}}{{end}}"
                class="form-control"
                type="tel"
+               maxlength="25"
                data-testid="test-tel"
                placeholder="{{.Control.Placeholder.ForLocale "en"}}"
                {{if .Control.Validation.Required}}required{{end}}
