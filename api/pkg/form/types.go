@@ -17,6 +17,7 @@ const (
 	Textarea ControlType = "textarea"
 	Dropdown ControlType = "dropdown"
 	Checkbox ControlType = "checkbox"
+	Boolean  ControlType = "boolean"
 	Radio    ControlType = "radio"
 	Taxonomy ControlType = "taxonomy"
 	File     ControlType = "file"

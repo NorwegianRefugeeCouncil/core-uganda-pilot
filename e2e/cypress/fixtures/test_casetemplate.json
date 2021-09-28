@@ -85,6 +85,16 @@
       ]
     },
     {
+      "type": "boolean",
+      "name": "boolean",
+      "label": [
+        {
+          "locale": "en",
+          "value": "boolean"
+        }
+      ]
+    },
+    {
       "type": "checkbox",
       "label": [
         {
