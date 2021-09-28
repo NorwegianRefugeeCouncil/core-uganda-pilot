@@ -14,7 +14,7 @@
             >
                 {{- if .Value}}{{index .Value 0}}{{end -}}
             </textarea>
-        <div class="form-text">{{.Description}}</div>
+        {{template "description" .}}
         {{template "fc_feedback" .}}
     </div>
 {{end}}

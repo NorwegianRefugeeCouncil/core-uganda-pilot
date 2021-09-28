@@ -13,7 +13,7 @@
                aria-describedby="{{.Name}}Feedback"
                 {{if .Readonly}}disabled readonly{{end}}
         >
-        <div class="form-text">{{.Description}}</div>
+        {{template "description" .}}
         {{template "fc_feedback" .}}
     </div>
 {{end}}
