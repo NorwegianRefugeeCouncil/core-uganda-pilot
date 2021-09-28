@@ -12,9 +12,6 @@ func (s *Suite) TestPartyAttributeDefinition() {
 	s.Run("List filtering", func() { s.testPartyAttributeDefinitionListFilter() })
 }
 
-const MockStr = "created"
-const MockStrUpd = "updated"
-
 func (s *Suite) testPartyAttributeDefinitionAPI() {
 	// CREATE
 	create := mockPartyAttributeDefinition()

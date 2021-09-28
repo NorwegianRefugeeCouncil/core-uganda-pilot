@@ -86,6 +86,138 @@ func (s *Server) Individuals(w http.ResponseWriter, req *http.Request) {
 
 }
 
+func (s *Server) IndividualIdentificationDocuments(w http.ResponseWriter, req *http.Request) {
+	ctx := req.Context()
+
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	id, ok := mux.Vars(req)["id"]
+	if !ok || len(id) == 0 {
+		err := fmt.Errorf("no id in path")
+		s.Error(w, err)
+		return
+	}
+
+	var identificationDocuments *iam.IdentificationDocumentList
+	var identificationDocumentTypes *iam.IdentificationDocumentTypeList
+	var identificationDocumentTypesMap = map[string]string{}
+	var individual *iam.Individual
+
+	g, waitCtx := errgroup.WithContext(ctx)
+
+	g.Go(func() error {
+		var err error
+		identificationDocumentTypes, err = iamClient.IdentificationDocumentTypes().List(waitCtx, iam.IdentificationDocumentTypeListOptions{})
+		for _, idt := range identificationDocumentTypes.Items {
+			identificationDocumentTypesMap[idt.ID] = idt.Name
+		}
+		return err
+	})
+
+	g.Go(func() error {
+		var err error
+		identificationDocuments, err = iamClient.IdentificationDocuments().List(waitCtx, iam.IdentificationDocumentListOptions{PartyIDs: []string{id}})
+		return err
+	})
+
+	g.Go(func() error {
+		var err error
+		individual, err = iamClient.Individuals().Get(ctx, id)
+		return err
+	})
+
+	if err := g.Wait(); err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	if req.Method == "POST" {
+		s.PostIndividualIdentificationDocuments(w, req, individual.ID)
+		return
+	}
+
+	if req.Method == "DELETE" {
+		s.DeleteIndividualIdentificationDocuments(w, req, individual.ID)
+	}
+
+	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "individual_identification_documents", map[string]interface{}{
+		"Page":                           "identification_documents",
+		"IsNew":                          id == "new",
+		"Individual":                     individual,
+		"IdentificationDocuments":        identificationDocuments,
+		"IdentificationDocumentTypes":    identificationDocumentTypes,
+		"IdentificationDocumentTypesMap": identificationDocumentTypesMap,
+	}); err != nil {
+		s.Error(w, err)
+		return
+	}
+}
+
+func (s *Server) PostIndividualIdentificationDocuments(w http.ResponseWriter, req *http.Request, partyID string) {
+
+	ctx := req.Context()
+
+	if err := req.ParseForm(); err != nil {
+		s.Error(w, err)
+		return
+	}
+	values := req.Form
+	documentNumber := values.Get("documentNumber")
+	documentTypeID := values.Get("documentTypeId")
+
+	if len(documentNumber) == 0 || len(documentTypeID) == 0 {
+		s.Error(w, fmt.Errorf("invalid data"))
+		return
+	}
+
+	var newIdentificationDocument = &iam.IdentificationDocument{
+		PartyID:                      partyID,
+		DocumentNumber:               documentNumber,
+		IdentificationDocumentTypeID: documentTypeID,
+	}
+
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	if _, err := iamClient.IdentificationDocuments().Create(ctx, newIdentificationDocument); err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	http.Redirect(w, req, "/individuals/"+partyID+"/identificationdocuments", http.StatusSeeOther)
+}
+
+func (s *Server) DeleteIndividualIdentificationDocuments(w http.ResponseWriter, req *http.Request, partyID string) {
+	ctx := req.Context()
+
+	id := req.URL.Query().Get("id")
+
+	if len(id) == 0 {
+		s.Error(w, fmt.Errorf("invalid data"))
+		return
+	}
+
+	iamClient, err := s.IAMClient(req)
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	if err := iamClient.IdentificationDocuments().Delete(ctx, id); err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	http.Redirect(w, req, "/individuals/"+partyID+"/identificationdocuments", http.StatusSeeOther)
+}
+
 func (s *Server) IndividualCredentials(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
@@ -228,10 +360,13 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		return err
 	})
 
+	countryID := s.GetCountryFromLoginUser(w, req)
+
 	g.Go(func() error {
 		var err error
 		attrs, err = iamClient.PartyAttributeDefinitions().List(waitCtx, iam.PartyAttributeDefinitionListOptions{
 			PartyTypeIDs: []string{iam.IndividualPartyType.ID},
+			CountryIDs:   []string{iam.GlobalCountry.ID, countryID},
 		})
 		return err
 	})
@@ -375,7 +510,6 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		s.Error(w, err)
 		return
 	}
-
 }
 
 // sumbittedFormFromErrors returns a slice of form.Control populated with validated attributes.

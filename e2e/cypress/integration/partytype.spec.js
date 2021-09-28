@@ -1,10 +1,14 @@
 import NewPartyTypePage from '../pages/newPartyType.page';
 import PartytypesOverviewPage from '../pages/partytypeOverview.page';
+import '../support/commands';
 
 const TYPE_NAME = 'New Test';
 const EDITED_TYPE_NAME = 'Test Edited';
 
 describe('PartyType Page', function () {
+    beforeEach('Login', () => {
+        cy.login('courtney.lare@email.com');
+    });
     describe('Create', () => {
         it('should navigate to New PartyType Form Page and save new attribute', () => {
             const newPartyTypePage = new NewPartyTypePage();

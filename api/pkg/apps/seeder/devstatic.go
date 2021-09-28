@@ -3,6 +3,7 @@ package seeder
 import (
 	"github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/nrc-no/core/pkg/form"
+	"github.com/nrc-no/core/pkg/i18n"
 )
 
 // Dev static objects.
@@ -38,18 +39,18 @@ var (
 			{
 				Name:       "userAction",
 				Type:       form.Textarea,
-				Label:      "What action were you undertaking in the application, when the error happened",
+				Label:      i18n.Strings{{"en", "What action were you undertaking in the application, when the error happened"}},
 				Validation: form.ControlValidation{Required: true},
 			},
 			{
 				Name:       "expectedBehavior",
 				Type:       form.Textarea,
-				Label:      "If the error had not happened, what would be your expected outcome for the action you were performing when the error happened",
+				Label:      i18n.Strings{{"en", "If the error had not happened, what would be your expected outcome for the action you were performing when the error happened"}},
 				Validation: form.ControlValidation{Required: true},
 			},
 			{
 				Type:  form.Textarea,
-				Label: "List any error messages shown",
+				Label: i18n.Strings{{"en", "List any error messages shown"}},
 			},
 		},
 	}
@@ -59,7 +60,7 @@ var (
 			{
 				Name:       "featureDescription",
 				Type:       form.Textarea,
-				Label:      "Describe the change or new functionality you would like in Core",
+				Label:      i18n.Strings{{"en", "Describe the change or new functionality you would like in Core"}},
 				Validation: form.ControlValidation{Required: true},
 			},
 		},

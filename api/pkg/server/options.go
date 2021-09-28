@@ -326,7 +326,7 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		}
 	}
 
-	time.Sleep(5 * time.Second)
+	time.Sleep(2 * time.Second)
 
 	logrus.Infof("discovering openid configuration")
 	openIdConf, err := hydraPublicClient.Public.DiscoverOpenIDConfiguration(&public.DiscoverOpenIDConfigurationParams{
@@ -421,6 +421,8 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		logrus.WithError(err).Errorf("failed to create redis store")
 		panic(err)
 	}
+
+	logrus.SetLevel(logrus.TraceLevel)
 
 	completedOptions := CompletedOptions{
 		Options:                    o,
@@ -521,6 +523,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	attachmentServer, err := attachments.NewServer(ctx, genericServerOptions)
 	if err != nil {
 		logrus.WithError(err).Errorf("faled to create attachment server")
+		panic(err)
 	}
 
 	// Create IAM Server

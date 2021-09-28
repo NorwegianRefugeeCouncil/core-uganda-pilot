@@ -2,77 +2,166 @@
   "controls": [
     {
       "type": "text",
-      "label": "text",
+      "label": [
+        {
+          "locale": "en",
+          "value": "text"
+        }
+      ],
       "name": "text"
     },
     {
       "type": "email",
-      "label": "email",
+      "label": [
+        {
+          "locale": "en",
+          "value": "email"
+        }
+      ],
       "name": "email"
     },
     {
       "type": "tel",
-      "label": "tel",
+      "label": [
+        {
+          "locale": "en",
+          "value": "tel"
+        }
+      ],
       "name": "tel"
     },
     {
       "type": "url",
-      "label": "url",
+      "label": [
+        {
+          "locale": "en",
+          "value": "url"
+        }
+      ],
       "name": "url"
     },
     {
       "type": "date",
-      "label": "date",
+      "label": [
+        {
+          "locale": "en",
+          "value": "date"
+        }
+      ],
       "name": "date"
     },
     {
       "type": "textarea",
-      "label": "textarea",
+      "label": [
+        {
+          "locale": "en",
+          "value": "textarea"
+        }
+      ],
       "name": "textarea"
     },
     {
       "type": "dropdown",
-      "label": "dropdown",
+      "label": [
+        {
+          "locale": "en",
+          "value": "dropdown"
+        }
+      ],
       "name": "dropdown",
       "options": [
-        "0",
-        "1"
+        [
+          {
+            "locale": "en",
+            "value": "0"
+          }
+        ],
+        [
+          {
+            "locale": "en",
+            "value": "1"
+          }
+        ]
       ]
     },
     {
       "type": "checkbox",
-      "label": "checkbox",
+      "label": [
+        {
+          "locale": "en",
+          "value": "checkbox"
+        }
+      ],
       "name": "checkbox",
       "checkboxOptions": [
         {
-          "Label": "0"
+          "label": [
+            {
+              "locale": "en",
+              "value": "0"
+            }
+          ],
+          "value": "0"
         },
         {
-          "Label": "1"
+          "label": [
+            {
+              "locale": "en",
+              "value": "1"
+            }
+          ],
+          "value": "1"
         }
       ]
     },
     {
       "type": "radio",
-      "label": "radio",
+      "label": [
+        {
+          "locale": "en",
+          "value": "radio"
+        }
+      ],
       "name": "radio",
       "checkboxOptions": [
         {
-          "Label": "0"
+          "label": [
+            {
+              "locale": "en",
+              "value": "0"
+            }
+          ],
+          "value": "0"
         },
         {
-          "Label": "1"
+          "label": [
+            {
+              "locale": "en",
+              "value": "1"
+            }
+          ],
+          "value": "1"
         }
       ]
     },
     {
       "type": "taxonomy",
-      "label": "taxonomy",
+      "label": [
+        {
+          "locale": "en",
+          "value": "taxonomy"
+        }
+      ],
       "name": "taxonomy"
     },
     {
       "type": "file",
-      "label": "file",
+      "label": [
+        {
+          "locale": "en",
+          "value": "file"
+        }
+      ],
       "name": "file"
     }
   ]

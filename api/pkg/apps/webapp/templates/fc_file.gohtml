@@ -9,12 +9,12 @@
                type="file"
                 {{/* TODO implement submiting files with forms. Keep this element disabled until then (it requires special care) */}}
                disabled
-               placeholder="{{.Control.Placeholder}}"
+               placeholder="{{.Control.Placeholder.ForLocale "en"}}"
                 {{if .Control.Validation.Required}}required{{end}}
                aria-describedby="{{.Control.Name}}Feedback"
                 {{if .Control.Readonly}}disabled readonly{{end}}
         >
-        <div class="form-text">{{.Control.Description}}</div>
+        {{template "description" .}}
         {{template "fc_feedback" .}}
     </div>
 {{end}}

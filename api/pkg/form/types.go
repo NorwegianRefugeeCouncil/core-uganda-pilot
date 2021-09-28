@@ -1,6 +1,7 @@
 package form
 
 import (
+	"github.com/nrc-no/core/pkg/i18n"
 	"github.com/nrc-no/core/pkg/validation"
 	"net/url"
 )
@@ -26,18 +27,18 @@ var ControlTypes = []ControlType{Text, Email, Phone, URL, Date, Textarea, Dropdo
 type Control struct {
 	Name            string            `json:"name" bson:"name"`
 	Type            ControlType       `json:"type" bson:"type"`
-	Label           string            `json:"label" bson:"label"`
+	Label           i18n.Strings      `json:"label" bson:"label"`
 	Validation      ControlValidation `json:"validation" bson:"validation"`
 	DefaultValue    []string          `json:"defaultValue" bson:"defaultValue"`
-	Description     string            `json:"description" bson:"description"`
-	Placeholder     string            `json:"placeholder" bson:"placeholder"`
+	Description     i18n.Strings      `json:"description" bson:"description"`
+	Placeholder     i18n.Strings      `json:"placeholder" bson:"placeholder"`
 	Multiple        bool              `json:"multiple" bson:"multiple"`
-	Options         []string          `json:"options" bson:"options"`
+	Options         []i18n.Strings    `json:"options" bson:"options"`
 	CheckboxOptions []CheckboxOption  `json:"checkboxOptions" bson:"checkboxOptions"`
 	Readonly        bool              `json:"readonly" bson:"readonly"`
 }
 
-func NewControl(name string, typ ControlType, label string, required bool) *Control {
+func NewControl(name string, typ ControlType, label i18n.Strings, required bool) *Control {
 	return &Control{
 		Name:       name,
 		Type:       typ,
@@ -46,16 +47,10 @@ func NewControl(name string, typ ControlType, label string, required bool) *Cont
 	}
 }
 
-type I18nString struct {
-	Locale string `json:"locale" bson:"locale"`
-	Value  string `json:"value" bson:"value"`
-}
-
-type I18nStringList []I18nString
-
 type CheckboxOption struct {
-	Label    string `json:"label" bson:"label"`
-	Required bool   `json:"required" bson:"required"`
+	Label    i18n.Strings `json:"label" bson:"label"`
+	Value    string       `json:"value" bson:"value"`
+	Required bool         `json:"required" bson:"required"`
 }
 
 type ControlValidation struct {
@@ -73,12 +68,7 @@ type ValuedForm struct {
 	Errors   *validation.ErrorList
 }
 
-// Case templates
-// https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-githubs-form-schema
-
-// CaseTemplate contains a list of form elements used to construct a case form
 type Form struct {
-	// FormControls is an ordered list of the elements found in the form
 	Controls []Control `json:"controls" bson:"controls"`
 }
 

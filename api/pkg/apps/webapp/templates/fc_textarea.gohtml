@@ -6,7 +6,7 @@
                   class="form-control"
                   style="height: 100px"
                   maxlength="2000"
-                  placeholder="{{.Placeholder}}"
+                  placeholder="{{.Placeholder.ForLocale "en"}}"
                   data-testid="test-textarea"
                   {{if .Validation.Required}}required{{end}}
                 aria-describedby="{{.Name}}Feedback"

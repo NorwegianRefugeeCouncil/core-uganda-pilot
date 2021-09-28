@@ -11,6 +11,7 @@ import (
 	"github.com/nrc-no/core/pkg/sessionmanager"
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/ory/hydra-client-go/client/admin"
+	"github.com/ory/hydra-client-go/client/public"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
 	"net/http"
@@ -22,6 +23,7 @@ type Server struct {
 	router              *mux.Router
 	login               login.Interface
 	HydraAdmin          admin.ClientService
+	HydraPublic         public.ClientService
 	oidcVerifier        *oidc.IDTokenVerifier
 	privateOauth2Config *oauth2.Config
 	environment         string
@@ -66,6 +68,7 @@ func NewServer(options *ServerOptions) (*Server, error) {
 			HTTPClient: options.AdminHTTPClient,
 		}),
 		HydraAdmin:          options.HydraAdminClient.Admin,
+		HydraPublic:         options.HydraPublicClient.Public,
 		oidcVerifier:        options.IDTokenVerifier,
 		privateOauth2Config: options.PrivateOAuth2Config,
 		publicOauth2Config:  options.PublicOauth2Config,
@@ -112,6 +115,7 @@ func NewServer(options *ServerOptions) (*Server, error) {
 	router.Path("/individuals").HandlerFunc(h.Individuals)
 	router.Path("/individuals/{id}").HandlerFunc(h.Individual)
 	router.Path("/individuals/{id}/credentials").HandlerFunc(h.IndividualCredentials)
+	router.Path("/individuals/{id}/identificationdocuments").HandlerFunc(h.IndividualIdentificationDocuments)
 	router.Path("/teams").HandlerFunc(h.Teams)
 	router.Path("/teams/pickparty").HandlerFunc(h.PickTeamParty)
 	router.Path("/teams/{id}").HandlerFunc(h.Team)
@@ -136,6 +140,7 @@ func NewServer(options *ServerOptions) (*Server, error) {
 	router.Path("/comments").Methods("POST").HandlerFunc(h.PostComment)
 	router.Path("/relationships/pickparty").HandlerFunc(h.PickRelationshipParty)
 	router.Path("/static/js/{file}").HandlerFunc(h.serveJS(options.StaticDir))
+	router.Path("/reporting").HandlerFunc(h.Reporting)
 
 	h.router = router
 

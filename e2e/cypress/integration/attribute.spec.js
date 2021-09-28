@@ -2,6 +2,7 @@ import AttributePage from '../pages/attributePage';
 import AttributeOverviewPage from '../pages/attributeOverview.page';
 import ids from '../fixtures/ids.json';
 import { URL } from '../helpers';
+import '../support/commands';
 
 const DATA = {
     name: 'Test attribute',
@@ -14,6 +15,9 @@ const DATA = {
 };
 
 describe('Attribute Page', function () {
+    beforeEach('Login', () => {
+        cy.login('courtney.lare@email.com');
+    });
     describe('Navigate', () => {
         it('should navigate to the New Attribute page from the attributes page', () => {
             const attributeOverviewPage = new AttributeOverviewPage();

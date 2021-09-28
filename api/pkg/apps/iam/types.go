@@ -368,7 +368,6 @@ func (l *TeamList) FindByID(id string) *Team {
 	return nil
 }
 
-//Country
 type Country struct {
 	ID   string `json:"id" bson:"id"`
 	Name string `json:"name" bson:"name"`
@@ -421,4 +420,24 @@ type Nationality struct {
 
 type NationalityList struct {
 	Items []*Nationality `json:"items"`
+}
+
+type IdentificationDocument struct {
+	ID                           string `json:"id" bson:"id"`
+	PartyID                      string `json:"partyId" bson:"partyId"`
+	DocumentNumber               string `json:"documentNumber" bson:"documentNumber"`
+	IdentificationDocumentTypeID string `json:"identificationDocumentTypeId" bson:"identificationDocumentTypeId"`
+}
+
+type IdentificationDocumentList struct {
+	Items []*IdentificationDocument `json:"items"`
+}
+
+type IdentificationDocumentType struct {
+	ID   string `json:"id" bson:"id"`
+	Name string `json:"name" bson:"name"`
+}
+
+type IdentificationDocumentTypeList struct {
+	Items []*IdentificationDocumentType `json:"items"`
 }

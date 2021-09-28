@@ -1,5 +1,6 @@
 import IndividualPage from '../pages/individualPage';
 import IndividualOverviewPage from '../pages/individualOverview.page';
+import '../support/commands';
 
 const data = {
     attributes: {
@@ -9,6 +10,7 @@ const data = {
         email: 'test@email.com',
         displacementStatus: 'Refugee',
         gender: 'Male',
+        identificationDate: '2021-03-12',
         identificationLocation: 'Kabusu Access Center',
         identificationSource: 'Walk-in Center',
         admin2: 'ABIM',
@@ -23,6 +25,7 @@ const data = {
         email: 'test.updated@email.com',
         displacementStatus: 'Internally displaced person',
         gender: 'Female',
+        identificationDate: '2021-03-15',
         identificationLocation: 'Nsambya Access Center',
         identificationSource: 'FFRM Referral',
         admin2: 'ADJUMANI',
@@ -45,6 +48,9 @@ function getTestIndividual(displayName) {
 }
 
 describe('Individual Page', function () {
+    beforeEach('Login', () => {
+        cy.login('courtney.lare@email.com');
+    });
     describe('Navigate', () => {
         it('should navigate to new Individual page from Individuals overview', () => {
             const individualOverviewPage = new IndividualOverviewPage();

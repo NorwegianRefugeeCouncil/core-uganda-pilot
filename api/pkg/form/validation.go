@@ -168,7 +168,7 @@ func validateCheckboxControl(control Control, value []string, path *validation.P
 
 	// check required options
 	for i, option := range control.CheckboxOptions {
-		if option.Required && !utils.Contains(value, option.Label) {
+		if option.Required && !utils.Contains(value, option.Value) {
 			optionPath := path.Index(i)
 			err := validation.Required(optionPath, "this is required")
 			result = append(result, err)
