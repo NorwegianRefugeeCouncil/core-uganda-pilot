@@ -517,6 +517,344 @@ var (
 		},
 	}
 
+	UGICLAIntake = form.Form{
+		[]form.Control{
+			{
+				Name:  "legalIssueDescription",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "What/Describe legal/concerns are you facing"}},
+			},
+			{
+				Name:  "legalIssue",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Select the legal issue of concern"}},
+				Options: []i18n.Strings{
+					{{"en", "RSD"}},
+					{{"en", "ELP"}},
+					{{"en", "HLP"}},
+					{{"en", "IDP registration"}},
+					{{"en", "Other"}},
+				},
+			},
+			{
+				Name:  "otherLegalIssueDescription",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "If other, please specify"}},
+			},
+			{
+				Name:  "actionTaken",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "What action has been taken to solve the problem, if any"}},
+			},
+			// TODO subsection "Information of beneficiary's representative
+			{
+				Name: "hasRepresentative",
+				Type: form.Checkbox,
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: i18n.Strings{{"en", "Is there a representative (lawyer or another person/Legal Guardian/Other) for this individual?"}},
+						Value: "yes",
+					},
+				},
+			},
+			// TODO dependant fields
+			{
+				Name:  "representativeFullName",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Full name of representative"}},
+			},
+			{
+				Name:  "reasonForRepresentative",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Reason for representative (instead of beneficiary)"}},
+			},
+			{
+				Name: "isLegalGuardianship",
+				Type: form.Checkbox,
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: i18n.Strings{{"en", "Is the guardianship legal as per national legislation?"}},
+						Value: "yes",
+					},
+				},
+			},
+			{
+				Name:  "courtOrder",
+				Type:  form.File,
+				Label: []i18n.LocaleString{{"en", "Attach/upload the legal/court order"}},
+			},
+			// TODO subsection "RSD"
+			{
+				Name:  "individualDisplacementStatus",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "What is the individual's displacement status?"}},
+				Options: []i18n.Strings{
+					{{"en", "Unregistered asylum seeker"}},
+					{{"en", "Registered asylum seeker"}},
+					{{"en", "Refugee"}},
+				},
+			},
+			{
+				Name: "isAtRiskStateless",
+				Type: form.Checkbox,
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: i18n.Strings{{"en", "Are you at risk of being stateless"}},
+						Value: "yes",
+					},
+				},
+			},
+			{
+				Name:  "statelessRiskDescription",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Describe this in detail"}},
+			},
+			{
+				Name:  "rsdDocuments",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "What RSD documents do you have?"}},
+				Options: []i18n.Strings{
+					{{"en", "Family Attestation"}},
+					{{"en", "Refugee ID"}},
+					{{"en", "Asylum certificate"}},
+					{{"en", "Rejection decision"}},
+					{{"en", "Other"}},
+				},
+				Multiple: true,
+			},
+			{
+				Name:  "rsdComment",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Comment"}},
+			},
+			{
+				Name:  "rsdIssues",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Specific RSD issues presented (narrative)"}},
+			},
+			// TODO subsection HLP
+			{
+				Name:  "specificHLPConcern",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "What specific HLP concern is presented?"}},
+				Options: []i18n.Strings{
+					{{"en", "Housing"}},
+					{{"en", "Land"}},
+					{{"en", "Property"}},
+				},
+			},
+			// TODO sub-subsection House
+			{
+				Name:  "indStay",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Does the individual stay in their own house or rent?"}},
+				Options: []i18n.Strings{
+					{{"en", "Own house"}},
+					{{"en", "Rent"}},
+					{{"en", "Other"}},
+				},
+			},
+			{
+				Name: "hasRentalAgreement",
+				Type: form.Checkbox,
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: i18n.Strings{{"en", "In the case of rent, does the individual possess any agreement?"}},
+						Value: "yes",
+					},
+				},
+			},
+			{
+				Name:  "agreementKind",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "What kind of agreement of proof does the individual possess?"}},
+			},
+			{
+				Name: "hasEvictionRisk",
+				Type: form.Checkbox,
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: i18n.Strings{{"en", "Have you been or are you at risk of eviction?"}},
+						Value: "yes",
+					},
+				},
+			},
+			{
+				Name:  "evictionDoc",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "If yes, what eviction document or proof do you possess?"}},
+				Options: []i18n.Strings{
+					{{"en", "Eviction notice"}},
+					{{"en", "Other"}},
+				},
+			},
+			{
+				Name:  "evictionComment",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Comment/Narrative"}},
+			},
+			// TODO sub-subsection Land
+			{
+				Name: "isLegalOwner",
+				Type: form.Checkbox,
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: i18n.Strings{{"en", "Are you the legal owner of the land?"}},
+						Value: "yes",
+					},
+				},
+			},
+			{
+				Name:  "natureLandTenure",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Nature of tenancy"}},
+				Options: []i18n.Strings{
+					{{"en", "Joint ownership"}},
+					{{"en", "Co-ownership"}},
+					{{"en", "Individual ownership"}},
+					{{"en", "Other"}},
+				},
+			},
+			{
+				Name:  "natureTenure",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Nature of tenure"}},
+				Options: []i18n.Strings{
+					{{"en", "Mailo"}},
+					{{"en", "Lease"}},
+					{{"en", "Freehold"}},
+					{{"en", "Sustomary"}},
+				},
+			},
+			{
+				Name: "hasLandEvictionRisk",
+				Type: form.Checkbox,
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: i18n.Strings{{"en", "Have you been or are you at risk of eviction?"}},
+						Value: "yes",
+					},
+				},
+			},
+			{
+				Name:  "landEvictionProof",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "If yes, what eviction document or proof do you possess?"}},
+				Options: []i18n.Strings{
+					{{"en", "Eviction notice"}},
+					{{"en", "Other"}},
+				},
+			},
+			{
+				Name:  "specificLandIssues",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Specific land issues (Narrative)"}},
+			},
+			// TODO sub-subsection Property
+			{
+				Name:  "propertyNature",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Nature of the property in contest."}},
+			},
+			{
+				Name: "hasLegalOwnershipOfProperty",
+				Type: form.Checkbox,
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: i18n.Strings{{"en", "Do you have legal ownership of the property?"}},
+						Value: "yes",
+					},
+				},
+			},
+			{
+				Name:  "propertyOwnershipProof",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Proof of property ownership (supporting documents)"}},
+			},
+			{
+				Name:  "propertyAcquisitionInquiry",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Inquiry on property acquisition (Narrative)"}},
+			},
+			// TODO sub-section LCD
+			{
+				Name:  "documentationChallenges",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "What documentation challenges do you have?"}},
+			},
+			{
+				Name:  "typeOfDocument",
+				Type:  form.Radio,
+				Label: i18n.Strings{{"en", "What type of document do you have?"}},
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: i18n.Strings{{"en", "Legal"}},
+						Value: "Legal",
+					},
+					{
+						Label: i18n.Strings{{"en", "Civil"}},
+						Value: "Civil",
+					},
+				},
+			},
+			{
+				Name:  "lcdActionsTaken",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "What action has been taken so far on this issue?"}},
+			},
+			// TODO sub-section ELP
+			{
+				Name:  "employmentOrBusinessChallenge",
+				Type:  form.Checkbox,
+				Label: i18n.Strings{{"en", "Is it and employment or business challenge?"}},
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: i18n.Strings{{"en", "Employment"}},
+						Value: "employment",
+					},
+					{
+						Label: i18n.Strings{{"en", "Business"}},
+						Value: "business",
+					},
+				},
+			},
+			{
+				Name:  "employmentChallenges",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "What employment challenges do you have?"}},
+			},
+			{
+				Name:  "typeOfEmploymentAgreement",
+				Type:  form.Radio,
+				Label: i18n.Strings{{"en", "What type of agreement do you have?"}},
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: i18n.Strings{{"en", "Oral"}},
+						Value: "Legal",
+					},
+					{
+						Label: i18n.Strings{{"en", "Written"}},
+						Value: "Civil",
+					},
+				},
+			},
+			{
+				Name:  "elpActionsTaken",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "What actions have been taken? (Narrative)"}},
+			},
+			{
+				Name:  "businessRelatedChallenges",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "What business-related challenges do you have? (Narrative)"}},
+			},
+			{
+				Name:  "businessRegistrationNeeds",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "What business registration needs do you have? (Narrative)"}},
+			},
+		},
+	}
 	// Case Types for Uganda
 	// - Kampala Response Team
 	UGSituationalAnalysisCaseType      = caseType("0ae90b08-6944-48dc-8f30-5cb325292a8c", "Situational Analysis (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGSituationAnalysis, true)
