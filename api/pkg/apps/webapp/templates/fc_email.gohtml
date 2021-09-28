@@ -6,6 +6,7 @@
                value="{{if .Value}}{{index .Value 0}}{{end}}"
                class="form-control"
                type="email"
+               maxlength="80"
                data-testid="test-email"
                placeholder="{{.Placeholder.ForLocale "en"}}"
                {{if .Validation.Required}}required{{end}}
