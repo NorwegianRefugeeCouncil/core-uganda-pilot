@@ -509,7 +509,7 @@ var (
 		ID:        "06680252-1a1f-4c9d-85dd-56feef20019d",
 		CountryID: UgandaCountry.ID,
 		FormControl: form.Control{
-			Name: "identificationLocation",
+			Name: "ugIdentificationLocation",
 			Type: form.Dropdown,
 			Label: i18n.Strings{
 				{"en", "Location of Identification"},
