@@ -4,10 +4,73 @@ import (
 	"context"
 	"flag"
 	"github.com/nrc-no/core/cmd/app"
+	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
 	"github.com/nrc-no/core/pkg/server"
 	"github.com/tkrajina/typescriptify-golang-structs/typescriptify"
 )
+
+func generateTypescriptTypes() error {
+	types := []interface{}{
+		// iam types
+		iam.Attribute{},
+		iam.AttributeTranslation{},
+		iam.AttributeList{},
+		iam.PartyAttributes{},
+		iam.Party{},
+		iam.PartyList{},
+		iam.PartyType{},
+		iam.PartyTypeList{},
+		iam.Relationship{},
+		iam.RelationshipList{},
+		iam.RelationshipTypeRule{},
+		iam.PartyTypeRule{},
+		iam.RelationshipType{},
+		iam.RelationshipTypeList{},
+		iam.Individual{},
+		iam.IndividualList{},
+		iam.Team{},
+		iam.TeamList{},
+		iam.Country{},
+		iam.CountryList{},
+		iam.Staff{},
+		iam.StaffList{},
+		iam.Membership{},
+		iam.MembershipList{},
+		iam.Nationality{},
+		iam.NationalityList{},
+		iam.PartyListOptions{},
+		iam.PartySearchOptions{},
+		iam.PartyTypeListOptions{},
+		iam.RelationshipListOptions{},
+		iam.RelationshipTypeListOptions{},
+		iam.AttributeListOptions{},
+		iam.TeamListOptions{},
+		iam.CountryListOptions{},
+		iam.StaffListOptions{},
+		iam.MembershipListOptions{},
+		iam.NationalityListOptions{},
+		iam.IndividualListOptions{},
+
+		// cms types
+		cms.Case{},
+		cms.CaseList{},
+		cms.CaseType{},
+		cms.CaseTypeList{},
+		cms.Comment{},
+		cms.CommentList{},
+		cms.CaseTemplate{},
+		cms.CaseListOptions{},
+		cms.CaseTypeListOptions{},
+		cms.CommentListOptions{},
+	}
+	converter := typescriptify.New()
+	for _, typ := range types {
+		converter = converter.Add(typ)
+	}
+	err := converter.ConvertToFile("models.ts")
+	return err
+}
 
 func main() {
 	ctx := context.Background()
@@ -16,10 +79,7 @@ func main() {
 	cmd.Flags().AddGoFlagSet(flag.CommandLine)
 
 	// Generate TS types for client
-	converter := typescriptify.New().
-		Add(iam.Party{})
-	err := converter.ConvertToFile("models.ts")
-	if err != nil {
+	if err := generateTypescriptTypes(); err != nil {
 		panic(err.Error())
 	}
 	// end of TS type generation
