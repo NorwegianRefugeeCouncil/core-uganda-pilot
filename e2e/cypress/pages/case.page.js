@@ -17,9 +17,9 @@ const ID = {
 export default class CasePage {
     constructor(href) {
         if (href != null) {
-            cy.visit(href);
+            href.then(h => cy.visit(h));
         } else {
-            this.visitPage();
+            cy.visit(URL.newCase);
         }
     }
 
@@ -36,30 +36,38 @@ export default class CasePage {
     };
 
     verifyForm = value => {
-        for (const { type } of testTemplate.formElements) {
+        for (const { type } of testTemplate.controls) {
             cy.get(testId('test-' + type)).then($el => {
-                const tag = $el[0].tagName;
-                switch (tag) {
-                    case 'INPUT':
-                        switch ($el[0].getAttribute('type')) {
-                            case 'text':
-                                cy.wrap($el).should('have.value', value.text);
-                                break;
-                            case 'checkbox':
-                                value.checkbox
-                                    ? cy.wrap($el).should('be.checked')
-                                    : cy.wrap($el).should('not.be.checked');
-                                break;
-                            default:
-                                break;
-                        }
+                switch (type) {
+                    case 'text':
+                        cy.wrap($el).should('have.value', value.text);
                         break;
-                    case 'SELECT':
-                        cy.wrap($el).should('have.value', value.dropdown);
+                    case 'email':
+                        cy.wrap($el).should('have.value', value.email);
                         break;
-                    case 'TEXTAREA':
+                    case 'tel':
+                        cy.wrap($el).should('have.value', value.phone);
+                        break;
+                    case 'url':
+                        cy.wrap($el).should('have.value', value.url);
+                        break;
+                    case 'date':
+                        cy.wrap($el).should('have.value', value.date);
+                        break;
+                    case 'textarea':
                         cy.wrap($el).should('have.value', value.textarea);
                         break;
+                    case 'dropdown':
+                        cy.wrap($el).should('have.value', value.dropdown);
+                        break;
+                    case 'checkbox':
+                        value.checkbox ? cy.wrap($el).should('be.checked') : cy.wrap($el).should('not.be.checked');
+                        break;
+                    case 'radio':
+                        value.radio ? cy.wrap($el).should('be.checked') : cy.wrap($el).should('not.be.checked');
+                        break;
+                    case 'file':
+                    case 'taxonomy':
                     default:
                         break;
                 }
@@ -74,7 +82,7 @@ export default class CasePage {
         return this;
     };
 
-    save = () => cy.get(ID.SAVE_BTN).click();
+    save = () => cy.get(ID.SAVE_BTN).click().wait(200);
 
     typeForm = value => {
         cy.get(ID.FORM).each($el => {

@@ -10,7 +10,7 @@ func (s *Suite) TestNationality() {
 }
 
 func (s *Suite) testNationalityAPI() {
-	nationality := s.mockNationalities(1)[0]
+	nationality := mockNationalities(1)[0]
 	nationality.CountryID = newUUID()
 	nationality.TeamID = newUUID()
 

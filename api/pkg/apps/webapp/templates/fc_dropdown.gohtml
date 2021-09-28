@@ -1,0 +1,24 @@
+{{define "dropdown"}}
+    <div class="form mb-3">
+        {{template "label" .}}
+        <select id="{{.Name}}"
+                name="{{.Name}}"
+                class="form-select"
+                data-testid="test-dropdown"
+                {{if .Multiple}}multiple size="{{len .Options}}"{{end}}
+                {{if .Validation.Required}}required{{end}}
+                aria-describedby="{{.Name}}Feedback"
+                {{if .Readonly}}disabled{{end}}
+        >
+            {{if not .Multiple}}
+                <option value=""></option>
+            {{end}}
+            {{range $i, $option := .Options}}
+                <option value="{{$option.ForLocale "en"}}"
+                        {{range $v := $.Value }}{{if eq ($option.ForLocale "en") $v}}selected{{end}}{{end}}>{{.ForLocale "en"}}</option>
+            {{end}}
+        </select>
+        {{template "description" .}}
+        {{template "fc_feedback" .}}
+    </div>
+{{end}}

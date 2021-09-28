@@ -5,7 +5,7 @@ const TEAM_ROWS = testId('team');
 
 export default class TeamsOverviewPage {
     visitPage = () => {
-        cy.visit(URL.TEAMS);
+        cy.visit(URL.teams);
         return this;
     };
 

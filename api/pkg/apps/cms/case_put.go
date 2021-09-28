@@ -7,45 +7,65 @@ import (
 
 func (s *Server) PutCase(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-
 	var id string
-	if !s.GetPathParam("id", w, req, &id) {
+
+	if !s.getPathParam("id", w, req, &id) {
 		return
 	}
 
-	var payload Case
-	if err := s.Bind(req, &payload); err != nil {
-		s.Error(w, err)
+	// Unmarshal request payload
+	var payload *Case
+	if err := s.bind(req, &payload); err != nil {
+		s.error(w, err)
 		return
 	}
 
-	kase, err := s.caseStore.Get(ctx, id)
+	// Get Case from store
+	kase, err := s.caseStore.get(ctx, id)
 	if err != nil {
-		s.Error(w, err)
+		s.error(w, err)
+		return
+	}
+	// Done cases shouldn't be changed
+	if kase.Done {
 		return
 	}
 
-	kase.Template = payload.Template
+	// Update struct
+	update := updateCaseStruct(kase, payload)
 
-	errList := ValidateCase(kase, &validation.Path{})
+	// Perform validation
+	errList := ValidateCase(update, validation.NewPath(""))
 	if len(errList) > 0 {
 		status := errList.Status(http.StatusUnprocessableEntity, "invalid case")
-		s.Error(w, &status)
+		s.error(w, &status)
 		return
 	}
 
-	// if no validation errors, assume the case is Done if intake case
-	if kase.IntakeCase {
-		kase.Done = true
-	} else {
-		kase.Done = payload.Done
+	// if no validation errors, conclude the case as Done if intake case
+	if update.IntakeCase {
+		update.Done = true
 	}
 
-	if err := s.caseStore.Update(ctx, kase); err != nil {
-		s.Error(w, err)
+	// Persist case changes
+	if err := s.caseStore.update(ctx, update); err != nil {
+		s.error(w, err)
 		return
 	}
 
-	s.JSON(w, http.StatusOK, kase)
+	s.json(w, http.StatusOK, update)
 
+}
+
+func updateCaseStruct(kase *Case, update *Case) *Case {
+	// make copy
+	result := *kase
+
+	// update
+	if update.FormData != nil {
+		result.FormData = update.FormData
+	}
+	result.Done = update.Done
+
+	return &result
 }

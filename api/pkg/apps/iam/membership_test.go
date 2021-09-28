@@ -10,7 +10,7 @@ func (s *Suite) TestMembership() {
 }
 
 func (s *Suite) testMembershipAPI() {
-	membership := s.mockMemberships(1)[0]
+	membership := mockMembership()
 	membership.TeamID = newUUID()
 	membership.IndividualID = newUUID()
 

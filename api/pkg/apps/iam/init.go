@@ -63,7 +63,7 @@ func (s *Server) initRelationshipType(ctx context.Context) error {
 }
 
 func (s *Server) initAttribute(ctx context.Context) error {
-	for _, attribute := range []Attribute{
+	for _, attribute := range []PartyAttributeDefinition{
 		// "Built-in" Attributes
 		FullNameAttribute,
 		DisplayNameAttribute,
@@ -140,11 +140,11 @@ func (s *Server) initAttribute(ctx context.Context) error {
 		COAbleToGiveLegalConsentAttribute,
 		// -- End of Colombia Individual Attributes
 	} {
-		if err := s.attributeStore.create(ctx, &attribute); err != nil {
+		if err := s.partyAttributeDefinitionStore.create(ctx, &attribute); err != nil {
 			if !mongo.IsDuplicateKeyError(err) {
 				return err
 			}
-			if err := s.attributeStore.update(ctx, &attribute); err != nil {
+			if err := s.partyAttributeDefinitionStore.update(ctx, &attribute); err != nil {
 				return err
 			}
 		}

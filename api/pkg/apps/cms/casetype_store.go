@@ -37,7 +37,7 @@ func NewCaseTypeStore(ctx context.Context, mongoClientFn utils.MongoClientFn, da
 	return store, nil
 }
 
-func (s *CaseTypeStore) Get(ctx context.Context, id string) (*CaseType, error) {
+func (s *CaseTypeStore) get(ctx context.Context, id string) (*CaseType, error) {
 	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
@@ -57,7 +57,7 @@ func (s *CaseTypeStore) Get(ctx context.Context, id string) (*CaseType, error) {
 	return &r, nil
 }
 
-func (s *CaseTypeStore) List(ctx context.Context, options CaseTypeListOptions) (*CaseTypeList, error) {
+func (s *CaseTypeStore) list(ctx context.Context, options CaseTypeListOptions) (*CaseTypeList, error) {
 
 	filter := bson.M{}
 
@@ -106,7 +106,7 @@ func (s *CaseTypeStore) List(ctx context.Context, options CaseTypeListOptions) (
 	return &ret, nil
 }
 
-func (s *CaseTypeStore) Update(ctx context.Context, caseType *CaseType) error {
+func (s *CaseTypeStore) update(ctx context.Context, caseType *CaseType) error {
 	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return err
@@ -117,10 +117,11 @@ func (s *CaseTypeStore) Update(ctx context.Context, caseType *CaseType) error {
 		"id": caseType.ID,
 	}, bson.M{
 		"$set": bson.M{
-			"name":        caseType.Name,
-			"partyTypeId": caseType.PartyTypeID,
-			"teamId":      caseType.TeamID,
-			"Template":    caseType.Template,
+			"name":           caseType.Name,
+			"partyTypeId":    caseType.PartyTypeID,
+			"teamId":         caseType.TeamID,
+			"form":           caseType.Form,
+			"intakeCaseType": caseType.IntakeCaseType,
 		},
 	})
 	if err != nil {
@@ -129,7 +130,7 @@ func (s *CaseTypeStore) Update(ctx context.Context, caseType *CaseType) error {
 	return nil
 }
 
-func (s *CaseTypeStore) Create(ctx context.Context, caseType *CaseType) error {
+func (s *CaseTypeStore) create(ctx context.Context, caseType *CaseType) error {
 	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return err

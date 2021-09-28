@@ -1,0 +1,18 @@
+{{define "url"}}
+    <div class="form mb-3">
+        {{template "label" .}}
+        <input id="{{.Control.Name}}"
+               name="{{.Control.Name}}"
+               value="{{if .Value}}{{index .Value 0}}{{end}}"
+               class="form-control"
+               type="url"
+               data-testid="test-url"
+               placeholder="{{.Control.Placeholder.ForLocale "en"}}"
+               {{if .Control.Validation.Required}}required{{end}}
+               aria-describedby="{{.Control.Name}}Feedback"
+                {{if .Control.Readonly}}disabled readonly{{end}}
+        >
+        {{template "description" .}}
+        {{template "fc_feedback" .}}
+    </div>
+{{end}}

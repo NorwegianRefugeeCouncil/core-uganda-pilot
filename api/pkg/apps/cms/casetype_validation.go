@@ -13,12 +13,13 @@ func ValidateCaseType(caseType *CaseType, path *validation.Path) validation.Erro
 	if len(caseType.PartyTypeID) == 0 {
 		errList = append(errList, validation.Required(path.Child("partyTypeId"), "party type is required"))
 	}
+	// todo validate that PartyTypeIds are valid uuids
 	if len(caseType.TeamID) == 0 {
 		errList = append(errList, validation.Required(path.Child("teamId"), "team is required"))
 	}
-	if caseType.Template == nil || caseType.Template.FormElements == nil {
-		errList = append(errList, validation.Required(path.Child("template"), "template is required"))
-	}
+	// todo validate that TeamID is a valid uuid
+	// todo form.ValidateForm()
+	// the form package should have a ValidateForm(form form.Form, path *validation.Path) validation.ErrorList method
 
 	return errList
 }

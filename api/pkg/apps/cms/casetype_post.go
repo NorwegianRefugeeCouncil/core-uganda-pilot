@@ -6,29 +6,28 @@ import (
 	"net/http"
 )
 
-func (s *Server) PostCaseType(w http.ResponseWriter, req *http.Request) {
+func (s *Server) postCaseType(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	var payload CaseType
-	if err := s.Bind(req, &payload); err != nil {
-		s.Error(w, err)
+	if err := s.bind(req, &payload); err != nil {
+		s.error(w, err)
 		return
 	}
 
-	caseType := &payload
+	payload.ID = uuid.NewV4().String()
 
-	errList := ValidateCaseType(caseType, &validation.Path{})
+	errList := ValidateCaseType(&payload, validation.NewPath(""))
 	if len(errList) > 0 {
 		status := errList.Status(http.StatusUnprocessableEntity, "invalid case type")
-		s.Error(w, &status)
+		s.error(w, &status)
 		return
 	}
 
-	caseType.ID = uuid.NewV4().String()
-
-	if err := s.caseTypeStore.Create(ctx, caseType); err != nil {
-		s.Error(w, err)
+	if err := s.caseTypeStore.create(ctx, &payload); err != nil {
+		s.error(w, err)
 		return
 	}
-	s.JSON(w, http.StatusOK, caseType)
+
+	s.json(w, http.StatusOK, &payload)
 }

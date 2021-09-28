@@ -8,17 +8,14 @@ func (s *Server) GetCase(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	var id string
 
-	if !s.GetPathParam("id", w, req, &id) {
+	if !s.getPathParam("id", w, req, &id) {
 		return
 	}
 
-	ret, err := s.caseStore.Get(ctx, id)
+	ret, err := s.caseStore.get(ctx, id)
 	if err != nil {
-		s.Error(w, err)
+		s.error(w, err)
 		return
 	}
-	if ret.Done {
-		ret.Template.MarkAsReadonly()
-	}
-	s.JSON(w, http.StatusOK, ret)
+	s.json(w, http.StatusOK, ret)
 }

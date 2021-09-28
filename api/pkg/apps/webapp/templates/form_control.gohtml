@@ -1,4 +1,4 @@
-{{define "formelement"}}
+{{define "formcontrol"}}
     {{ if eq .Type "text"}}
         {{template "text" .}}
     {{else if eq .Type "email"}}
@@ -17,8 +17,8 @@
         {{template "checkbox" .}}
     {{else if eq .Type "radio"}}
         {{template "radio" .}}
-    {{else if eq .Type "taxonomyinput"}}
-        {{template "taxonomyinput" .}}
+    {{else if eq .Type "taxonomy"}}
+        {{template "taxonomy" .}}
     {{else if eq .Type "file"}}
         {{template "file" .}}
     {{end}}

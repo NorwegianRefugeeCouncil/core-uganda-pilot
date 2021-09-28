@@ -2,9 +2,86 @@ package cms_test
 
 import (
 	. "github.com/nrc-no/core/pkg/apps/cms"
+	"github.com/nrc-no/core/pkg/form"
+	"github.com/nrc-no/core/pkg/i18n"
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
+
+var FormWithAllControlTypes = form.Form{
+	Controls: []form.Control{
+		{
+			Name:       "text",
+			Type:       form.Text,
+			Validation: form.ControlValidation{Required: true},
+		},
+		{
+			Name:       "email",
+			Type:       form.Email,
+			Validation: form.ControlValidation{Required: true},
+		},
+		{
+			Name:       "phone",
+			Type:       form.Phone,
+			Validation: form.ControlValidation{Required: true},
+		},
+		{
+			Name:       "url",
+			Type:       form.URL,
+			Validation: form.ControlValidation{Required: true},
+		},
+		{
+			Name:       "date",
+			Type:       form.Date,
+			Validation: form.ControlValidation{Required: true},
+		},
+		{
+			Name:       "textarea",
+			Type:       form.Textarea,
+			Validation: form.ControlValidation{Required: true},
+		},
+		{
+			Name: "dropdown",
+			Type: form.Dropdown,
+			Options: []i18n.Strings{
+				{
+					{"en", "a"},
+				},
+				{
+					{"en", "b"},
+				}},
+			Validation: form.ControlValidation{Required: true},
+		},
+		{
+			Name: "checkbox",
+			Type: form.Checkbox,
+			CheckboxOptions: []form.CheckboxOption{
+				{Label: i18n.Strings{{"en", "a"}}},
+				{Label: i18n.Strings{{"en", "b"}}},
+			},
+			Validation: form.ControlValidation{Required: true},
+		},
+		{
+			Name: "radio",
+			Type: form.Radio,
+			CheckboxOptions: []form.CheckboxOption{
+				{Label: i18n.Strings{{"en", "a"}}},
+				{Label: i18n.Strings{{"en", "b"}}},
+			},
+			Validation: form.ControlValidation{Required: true},
+		},
+		{
+			Name:       "taxonomy",
+			Type:       form.Taxonomy,
+			Validation: form.ControlValidation{Required: true},
+		},
+		{
+			Name:       "file",
+			Type:       form.File,
+			Validation: form.ControlValidation{Required: true},
+		},
+	},
+}
 
 func (s *Suite) TestCaseType() {
 	s.Run("API", func() { s.testCaseTypeAPI() })
@@ -14,7 +91,7 @@ func (s *Suite) TestCaseType() {
 
 func (s *Suite) testCaseTypeAPI() {
 	// Create
-	caseType := aMockCaseType()
+	caseType := mockCaseType()
 	created, err := s.client.CaseTypes().Create(s.Ctx, caseType)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
@@ -33,7 +110,7 @@ func (s *Suite) testCaseTypeAPI() {
 	caseType.Name = "updated"
 	caseType.PartyTypeID = newUUID()
 	caseType.TeamID = newUUID()
-	caseType.Template = mockCaseTemplate("update")
+	caseType.Form = mockForm()
 	updated, err := s.client.CaseTypes().Update(s.Ctx, caseType)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
@@ -41,7 +118,7 @@ func (s *Suite) testCaseTypeAPI() {
 	assert.Equal(s.T(), caseType.Name, updated.Name)
 	assert.Equal(s.T(), caseType.PartyTypeID, updated.PartyTypeID)
 	assert.Equal(s.T(), caseType.TeamID, updated.TeamID)
-	assert.Equal(s.T(), *caseType.Template, *updated.Template)
+	assert.Equal(s.T(), caseType.Form, updated.Form)
 
 	// GET
 	get, err = s.client.CaseTypes().Get(s.Ctx, updated.ID)
@@ -51,7 +128,7 @@ func (s *Suite) testCaseTypeAPI() {
 	assert.Equal(s.T(), updated.Name, get.Name)
 	assert.Equal(s.T(), updated.PartyTypeID, get.PartyTypeID)
 	assert.Equal(s.T(), updated.TeamID, get.TeamID)
-	assert.Equal(s.T(), *updated.Template, *get.Template)
+	assert.Equal(s.T(), updated.Form, get.Form)
 
 	// LIST
 	list, err := s.client.CaseTypes().List(s.Ctx, CaseTypeListOptions{})

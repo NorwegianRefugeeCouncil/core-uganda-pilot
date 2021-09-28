@@ -10,7 +10,7 @@ const SAVE_BUTTON = '[data-testid=save-btn]';
 
 export default class NewRelationshiptypePage {
     visitPage = () => {
-        cy.visit(URL.NEW_RELATIONSHIPTYPE);
+        cy.visit(URL.newRelationshipType);
         return this;
     };
 

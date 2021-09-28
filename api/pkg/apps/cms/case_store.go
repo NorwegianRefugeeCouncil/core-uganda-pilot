@@ -37,7 +37,21 @@ func NewCaseStore(ctx context.Context, mongoClientFn utils.MongoClientFn, databa
 	return store, nil
 }
 
-func (s *CaseStore) Get(ctx context.Context, id string) (*Case, error) {
+func (s *CaseStore) create(ctx context.Context, kase *Case) error {
+	collection, done, err := s.getCollection(ctx)
+	if err != nil {
+		return err
+	}
+	defer done()
+
+	_, err = collection.InsertOne(ctx, kase)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *CaseStore) get(ctx context.Context, id string) (*Case, error) {
 
 	collection, done, err := s.getCollection(ctx)
 	if err != nil {
@@ -58,7 +72,7 @@ func (s *CaseStore) Get(ctx context.Context, id string) (*Case, error) {
 	return &r, nil
 }
 
-func (s *CaseStore) List(ctx context.Context, listOptions CaseListOptions) (*CaseList, error) {
+func (s *CaseStore) list(ctx context.Context, listOptions CaseListOptions) (*CaseList, error) {
 
 	filter := bson.M{}
 
@@ -111,7 +125,7 @@ func (s *CaseStore) List(ctx context.Context, listOptions CaseListOptions) (*Cas
 	return &ret, nil
 }
 
-func (s *CaseStore) Update(ctx context.Context, kase *Case) error {
+func (s *CaseStore) update(ctx context.Context, kase *Case) error {
 	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return err
@@ -122,24 +136,10 @@ func (s *CaseStore) Update(ctx context.Context, kase *Case) error {
 		"id": kase.ID,
 	}, bson.M{
 		"$set": bson.M{
+			"formData": kase.FormData,
 			"done":     kase.Done,
-			"template": kase.Template,
 		},
 	})
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *CaseStore) Create(ctx context.Context, kase *Case) error {
-	collection, done, err := s.getCollection(ctx)
-	if err != nil {
-		return err
-	}
-	defer done()
-
-	_, err = collection.InsertOne(ctx, kase)
 	if err != nil {
 		return err
 	}

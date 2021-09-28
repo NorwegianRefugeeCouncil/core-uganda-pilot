@@ -1,8 +1,9 @@
 import { testId, URL } from '../helpers';
 import NewCasePage from './newCase.page';
+import CasePage from './case.page';
 
 const NEW_CASE_BTN = testId('new-case-btn');
-const CASE_ROWS = '[data-testid=caseRow]';
+const CASE_ROW = testId('case-row');
 
 export default class CasesOverviewPage {
     constructor() {
@@ -10,8 +11,14 @@ export default class CasesOverviewPage {
     }
 
     visitPage = () => {
-        cy.visit(URL.CASES);
+        cy.visit(URL.cases);
         return this;
+    };
+
+    selectLastCase = () => cy.get(CASE_ROW).last();
+    newestCasePage = () => {
+        this.selectLastCase().invoke('attr', 'data-testhref').as('href');
+        return new CasePage(cy.get('@href'));
     };
 
     openNewCase = () => {
@@ -20,7 +27,7 @@ export default class CasesOverviewPage {
     };
 
     selectCase = () => {
-        cy.get(CASE_ROWS).last().click();
+        cy.get(CASE_ROW).last().click();
         return new NewCasePage();
     };
 

@@ -38,7 +38,7 @@ func (c ClientSet) RelationshipTypes() RelationshipTypeClient {
 	}
 }
 
-func (c ClientSet) Attributes() AttributeClient {
+func (c ClientSet) PartyAttributeDefinitions() PartyAttributeDefinitionClient {
 	return &RESTAttributeClient{
 		c: c.c,
 	}

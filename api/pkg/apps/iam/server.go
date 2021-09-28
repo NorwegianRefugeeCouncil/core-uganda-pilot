@@ -13,7 +13,7 @@ import (
 type Server struct {
 	environment                     string
 	router                          *mux.Router
-	attributeStore                  *AttributeStore
+	partyAttributeDefinitionStore   *PartyAttributeDefinitionStore
 	partyStore                      *PartyStore
 	partyTypeStore                  *PartyTypeStore
 	relationshipStore               *RelationshipStore
@@ -80,29 +80,28 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	srv := &Server{
 		environment:                     o.Environment,
 		mongoClientFn:                   o.MongoClientFn,
-		attributeStore:                  attributeStore,
+		partyAttributeDefinitionStore:   attributeStore,
 		countryStore:                    NewCountryStore(partyStore),
 		partyStore:                      partyStore,
 		partyTypeStore:                  partyTypeStore,
 		relationshipStore:               relationshipStore,
 		relationshipTypeStore:           relationshipTypeStore,
 		identificationDocumentStore:     identificationDocumentStore,
-		identificationDocumentTypeStore: identificationDocumentTypeStore,
-		individualStore:                 NewIndividualStore(o.MongoClientFn, o.MongoDatabase),
-		teamStore:                       NewTeamStore(partyStore),
-		membershipStore:                 NewMembershipStore(relationshipStore),
-		nationalityStore:                NewNationalityStore(relationshipStore),
-		hydraAdmin:                      hydraAdmin,
-		hydraHTTPClient:                 o.HydraHTTPClient,
+		identificationDocumentTypeStore: identificationDocumentTypeStore, individualStore: NewIndividualStore(o.MongoClientFn, o.MongoDatabase),
+		teamStore:        NewTeamStore(partyStore),
+		membershipStore:  NewMembershipStore(relationshipStore),
+		nationalityStore: NewNationalityStore(relationshipStore),
+		hydraAdmin:       hydraAdmin,
+		hydraHTTPClient:  o.HydraHTTPClient,
 	}
 
 	router := mux.NewRouter()
 	router.Use(srv.withAuth())
 
-	router.Path(server.AttributesEndpoint).Methods("GET").HandlerFunc(srv.listAttributes)
-	router.Path(server.AttributesEndpoint).Methods("POST").HandlerFunc(srv.postAttributes)
-	router.Path(path.Join(server.AttributesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getAttribute)
-	router.Path(path.Join(server.AttributesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putAttribute)
+	router.Path(server.AttributesEndpoint).Methods("GET").HandlerFunc(srv.listPartyAttributeDefinitions)
+	router.Path(server.AttributesEndpoint).Methods("POST").HandlerFunc(srv.postPartyAttributeDefinition)
+	router.Path(path.Join(server.AttributesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getPartyAttributeDefinition)
+	router.Path(path.Join(server.AttributesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putPartyAttributeDefinition)
 
 	router.Path(server.IndividualsEndpoint).Methods("GET").HandlerFunc(srv.listIndividuals)
 	router.Path(server.IndividualsEndpoint).Methods("POST").HandlerFunc(srv.postIndividual)

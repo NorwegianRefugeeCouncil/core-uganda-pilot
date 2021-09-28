@@ -76,6 +76,7 @@ type Options struct {
 	WebAppBlockKeyFile1     string
 	WebAppSessionKeyFile2   string
 	WebAppBlockKeyFile2     string
+	WebAppStaticDir         string
 
 	// CMS
 	CMSBasePath string
@@ -131,6 +132,7 @@ func NewOptions() *Options {
 		WebAppIAMHost:           defaultUrl.Host,
 		WebAppCMSScheme:         defaultUrl.Scheme,
 		WebAppCMSHost:           defaultUrl.Host,
+		WebAppStaticDir:         "tmp/static",
 		CMSBasePath:             "/apis/cms",
 		IAMBasePath:             "/apis/iam",
 		LoginBasePath:           "/auth",

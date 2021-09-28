@@ -98,9 +98,17 @@ func (c CompletedOptions) CreateWebAppServer(ctx context.Context, genericOptions
 		SupportedSigningAlgs: c.OAuthIDTokenSigningAlgs,
 	})
 
+	l.Infof("transpiling typescript")
+	err := webapp.TranspileTS()
+	if err != nil {
+		l.WithError(err).Errorf("failed to transpile typescript")
+		return nil, err
+	}
+
 	webAppOptions := &webapp.ServerOptions{
 		GenericServerOptions: genericOptions,
 		TemplateDirectory:    c.WebAppTemplateDirectory,
+		StaticDir:            c.WebAppStaticDir,
 		BaseURL:              c.BaseURL + c.WebAppBasePath,
 		IAMHost:              c.WebAppIAMHost,
 		IAMScheme:            c.WebAppIAMScheme,

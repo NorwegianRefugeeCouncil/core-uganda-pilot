@@ -7,63 +7,32 @@ import (
 	"time"
 )
 
-// Attribute represents an attribute that can be attached to a Party
-type Attribute struct {
+// PartyAttributeDefinition represents an attribute that can be attached to a Party
+type PartyAttributeDefinition struct {
 	// ID is the unique ID of an attribute
 	ID string `json:"id" bson:"id"`
 
-	// Name is the name of an attribute
-	Name string `json:"name" bson:"name"`
-
-	// Country ID
+	// Country ID represents the relevance of a PartyAttributeDefinition in a given country
 	CountryID string `json:"countryId" bson:"countryId"`
 
-	// PartyTypeIDs represents the type of Party that can have this attribute
+	// PartyTypeIDs represents the type of Party that can have this PartyAttributeDefinition
 	PartyTypeIDs []string `json:"partyTypeIds" bson:"partyTypeIds"`
 
-	// IsPersonallyIdentifiableInfo represents wether or not the Attribute is considered
+	// IsPersonallyIdentifiableInfo represents whether the PartyAttributeDefinition is considered
 	// as personally identifiable information
 	IsPersonallyIdentifiableInfo bool `json:"isPii" bson:"isPii"`
 
-	// Translations represent the localized descriptions of the Attribute
-	Translations []AttributeTranslation `json:"translations" bson:"translations"`
-
-	Type       form.FieldType             `json:"type" bson:"type"`
-	Attributes form.FormElementAttributes `json:"attributes" bson:"attributes"`
-	Validation form.FormElementValidation `json:"validation" bson:"validation"`
-	form.FormElement
+	// Form control definition
+	FormControl form.Control `json:"formControl" bson:"formControl"`
 }
 
-// AttributeTranslation represents a localized description of an Attribute
-type AttributeTranslation struct {
-
-	// Locale represents the locale of the AttributeTranslation
-	Locale string `json:"locale" bson:"locale"`
-
-	// LongFormulation is a longer formulation for display purposes
-	LongFormulation string `json:"longFormulation" bson:"longFormulation"`
-
-	// ShortFormulation is a short formulation for display purposes
-	ShortFormulation string `json:"shortFormulation" bson:"shortFormulation"`
+// PartyAttributeDefinitionList represents a list of PartyAttributeDefinition
+type PartyAttributeDefinitionList struct {
+	Items []*PartyAttributeDefinition `json:"items" bson:"items"`
 }
 
-// AttributeList represents a list of Attribute
-type AttributeList struct {
-	Items []*Attribute `json:"items" bson:"items"`
-}
-
-// FindByName returns the first Attribute it encounters that possesses the given name
-func (l *AttributeList) FindByName(name string) *Attribute {
-	for _, attribute := range l.Items {
-		if attribute.Name == name || attribute.Attributes.Name == name {
-			return attribute
-		}
-	}
-	return nil
-}
-
-// FindByID finds an Attribute by ID
-func (l *AttributeList) FindByID(id string) *Attribute {
+// FindByID finds an PartyAttributeDefinition by ID
+func (l *PartyAttributeDefinitionList) FindByID(id string) *PartyAttributeDefinition {
 	for _, item := range l.Items {
 		if item.ID == id {
 			return item
@@ -72,11 +41,11 @@ func (l *AttributeList) FindByID(id string) *Attribute {
 	return nil
 }
 
-// PartyAttributes contains the Attribute values of a Party
-type PartyAttributes map[string][]string
+// AttributeMap contains the PartyAttributeDefinition values of a Party
+type AttributeMap map[string][]string
 
-// Get returns the first value of a Party Attribute
-func (a PartyAttributes) Get(key string) string {
+// Get returns the first value of a Party PartyAttributeDefinition
+func (a AttributeMap) Get(key string) string {
 	if values, ok := a[key]; ok {
 		if len(values) > 0 {
 			return values[0]
@@ -85,13 +54,13 @@ func (a PartyAttributes) Get(key string) string {
 	return ""
 }
 
-// Set sets the value of an Attribute
-func (a PartyAttributes) Set(key, value string) {
+// Set sets the value of an PartyAttributeDefinition
+func (a AttributeMap) Set(key, value string) {
 	a[key] = []string{value}
 }
 
-// Add adds an Attribute value
-func (a PartyAttributes) Add(key, value string) {
+// Add adds an PartyAttributeDefinition value
+func (a AttributeMap) Add(key, value string) {
 	a[key] = append(a[key], value)
 }
 
@@ -104,8 +73,8 @@ type Party struct {
 	// PartyTypeIDs represent the different PartyType that this Party has
 	PartyTypeIDs []string `json:"partyTypeIds" bson:"partyTypeIds"`
 
-	// Attributes represent the Attribute values
-	Attributes PartyAttributes `json:"attributes" bson:"attributes"`
+	// Attributes represent the PartyAttributeDefinition values
+	Attributes AttributeMap `json:"attributes" bson:"attributes"`
 }
 
 // HasPartyType checks if the Party has the given PartyType
@@ -150,7 +119,7 @@ func (p *Party) String() string {
 	return p.ID
 }
 
-// GetAttribute returns the value of an Attribute
+// GetAttribute returns the value of an PartyAttributeDefinition
 func (p *Party) GetAttribute(name string) []string {
 	if v, ok := p.Attributes[name]; ok {
 		return v
@@ -158,7 +127,7 @@ func (p *Party) GetAttribute(name string) []string {
 	return nil
 }
 
-// Get returns the first value of an Attribute
+// Get returns the first value of an PartyAttributeDefinition
 func (p *Party) Get(name string) string {
 	if v, ok := p.Attributes[name]; ok {
 		if len(v) > 0 {
@@ -168,13 +137,13 @@ func (p *Party) Get(name string) string {
 	return ""
 }
 
-// HasAttribute checks if the Party has the given Attribute
+// HasAttribute checks if the Party has the given PartyAttributeDefinition
 func (p *Party) HasAttribute(name string) bool {
 	_, ok := p.Attributes[name]
 	return ok
 }
 
-// FindAttributeValue returns the value of an Attribute
+// FindAttributeValue returns the value of an PartyAttributeDefinition
 func (p *Party) FindAttributeValue(name string) interface{} {
 	if v, ok := p.Attributes[name]; ok {
 		return v
@@ -338,7 +307,6 @@ func NewIndividual(ID string) *Individual {
 }
 
 func (b *Individual) FindAge() *int {
-
 	birthDate := b.FindAttributeValue(BirthDateAttribute.ID)
 	if birthDate == nil {
 		return nil
@@ -400,7 +368,6 @@ func (l *TeamList) FindByID(id string) *Team {
 	return nil
 }
 
-//Country
 type Country struct {
 	ID   string `json:"id" bson:"id"`
 	Name string `json:"name" bson:"name"`
