@@ -517,6 +517,28 @@ var (
 		},
 	}
 
+
+	UGICLAConsent = form.Form{
+		Controls: []form.Control{
+			{
+				Name:  "consentGiven",
+				Type:  form.Checkbox,
+				Label: i18n.Strings{{"en", "Has the beneficiary consented?"}},
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: i18n.Strings{{"en", "Consent given"}},
+						Value: "yes",
+					},
+				},
+			},
+			{
+				Name:  "consentProofURL",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "URL to proof of beneficiary consent."}},
+			},
+		},
+	}
+
 	// Case Types for Uganda
 	// - Kampala Response Team
 	UGSituationalAnalysisCaseType      = caseType("0ae90b08-6944-48dc-8f30-5cb325292a8c", "Situational Analysis (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGSituationAnalysis, true)
@@ -526,6 +548,7 @@ var (
 	// - Kampala ICLA Team
 	UGICLAIndividualIntakeCaseType = caseType("31fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Individual Intake (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIndividualIntake, true)
 	UGICLACaseAssessmentCaseType   = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLACaseAssessment, false)
+	UGICLAConsentCaseType   = caseType("3ad2d524-4dd0-4834-9fc2-47808cf66941", "ICLA Consent (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAConsent, false)
 
 	// Registration Controller Flow for Uganda Intake Process
 	UgandaRegistrationFlow = registrationctrl.RegistrationFlow{
