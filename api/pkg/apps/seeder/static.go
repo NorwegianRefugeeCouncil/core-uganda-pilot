@@ -300,14 +300,8 @@ var (
 			},
 			{
 				Name:  "referralRestrictions",
-				Type:  form.Checkbox,
+				Type:  form.Boolean,
 				Label: i18n.Strings{{"en", "Does the beneficiary have any restrictions to be referred?"}},
-				CheckboxOptions: []form.CheckboxOption{
-					{
-						Label: i18n.Strings{{"en", "Has restrictions?"}},
-						Value: "yes",
-					},
-				},
 			},
 			{
 				Name:    "meansOfReferral",
@@ -334,14 +328,8 @@ var (
 		Controls: []form.Control{
 			{
 				Name:  "referralAccepted",
-				Type:  form.Checkbox,
+				Type:  form.Boolean,
 				Label: i18n.Strings{{"en", "Was the referral accepted by the other provider?"}},
-				CheckboxOptions: []form.CheckboxOption{
-					{
-						Label: i18n.Strings{{"en", "Referral accepted"}},
-						Value: "yes",
-					},
-				},
 			},
 			{
 				Name:  "pertinentDetails",
@@ -548,14 +536,9 @@ var (
 			},
 			// TODO subsection "Information of beneficiary's representative
 			{
-				Name: "hasRepresentative",
-				Type: form.Checkbox,
-				CheckboxOptions: []form.CheckboxOption{
-					{
-						Label: i18n.Strings{{"en", "Is there a representative (lawyer or another person/Legal Guardian/Other) for this individual?"}},
-						Value: "yes",
-					},
-				},
+				Name:  "hasRepresentative",
+				Type:  form.Boolean,
+				Label: i18n.Strings{{"en", "Is there a representative (lawyer or another person/Legal Guardian/Other) for this individual?"}},
 			},
 			// TODO dependant fields
 			{
@@ -569,14 +552,9 @@ var (
 				Label: i18n.Strings{{"en", "Reason for representative (instead of beneficiary)"}},
 			},
 			{
-				Name: "isLegalGuardianship",
-				Type: form.Checkbox,
-				CheckboxOptions: []form.CheckboxOption{
-					{
-						Label: i18n.Strings{{"en", "Is the guardianship legal as per national legislation?"}},
-						Value: "yes",
-					},
-				},
+				Name:  "isLegalGuardianship",
+				Type:  form.Boolean,
+				Label: i18n.Strings{{"en", "Is the guardianship legal as per national legislation?"}},
 			},
 			{
 				Name:  "courtOrder",
@@ -595,14 +573,9 @@ var (
 				},
 			},
 			{
-				Name: "isAtRiskStateless",
-				Type: form.Checkbox,
-				CheckboxOptions: []form.CheckboxOption{
-					{
-						Label: i18n.Strings{{"en", "Are you at risk of being stateless"}},
-						Value: "yes",
-					},
-				},
+				Name:  "isAtRiskStateless",
+				Type:  form.Boolean,
+				Label: i18n.Strings{{"en", "Are you at risk of being stateless"}},
 			},
 			{
 				Name:  "statelessRiskDescription",
@@ -655,14 +628,9 @@ var (
 				},
 			},
 			{
-				Name: "hasRentalAgreement",
-				Type: form.Checkbox,
-				CheckboxOptions: []form.CheckboxOption{
-					{
-						Label: i18n.Strings{{"en", "In the case of rent, does the individual possess any agreement?"}},
-						Value: "yes",
-					},
-				},
+				Name:  "hasRentalAgreement",
+				Type:  form.Boolean,
+				Label: i18n.Strings{{"en", "In the case of rent, does the individual possess any agreement?"}},
 			},
 			{
 				Name:  "agreementKind",
@@ -670,14 +638,9 @@ var (
 				Label: i18n.Strings{{"en", "What kind of agreement of proof does the individual possess?"}},
 			},
 			{
-				Name: "hasEvictionRisk",
-				Type: form.Checkbox,
-				CheckboxOptions: []form.CheckboxOption{
-					{
-						Label: i18n.Strings{{"en", "Have you been or are you at risk of eviction?"}},
-						Value: "yes",
-					},
-				},
+				Name:  "hasEvictionRisk",
+				Type:  form.Boolean,
+				Label: i18n.Strings{{"en", "Have you been or are you at risk of eviction?"}},
 			},
 			{
 				Name:  "evictionDoc",
@@ -695,14 +658,9 @@ var (
 			},
 			// TODO sub-subsection Land
 			{
-				Name: "isLegalOwner",
-				Type: form.Checkbox,
-				CheckboxOptions: []form.CheckboxOption{
-					{
-						Label: i18n.Strings{{"en", "Are you the legal owner of the land?"}},
-						Value: "yes",
-					},
-				},
+				Name:  "isLegalOwner",
+				Type:  form.Boolean,
+				Label: i18n.Strings{{"en", "Are you the legal owner of the land?"}},
 			},
 			{
 				Name:  "natureLandTenure",
@@ -727,14 +685,9 @@ var (
 				},
 			},
 			{
-				Name: "hasLandEvictionRisk",
-				Type: form.Checkbox,
-				CheckboxOptions: []form.CheckboxOption{
-					{
-						Label: i18n.Strings{{"en", "Have you been or are you at risk of eviction?"}},
-						Value: "yes",
-					},
-				},
+				Name:  "hasLandEvictionRisk",
+				Type:  form.Boolean,
+				Label: i18n.Strings{{"en", "Have you been or are you at risk of eviction?"}},
 			},
 			{
 				Name:  "landEvictionProof",
@@ -757,14 +710,9 @@ var (
 				Label: i18n.Strings{{"en", "Nature of the property in contest."}},
 			},
 			{
-				Name: "hasLegalOwnershipOfProperty",
-				Type: form.Checkbox,
-				CheckboxOptions: []form.CheckboxOption{
-					{
-						Label: i18n.Strings{{"en", "Do you have legal ownership of the property?"}},
-						Value: "yes",
-					},
-				},
+				Name:  "hasLegalOwnershipOfProperty",
+				Type:  form.Boolean,
+				Label: i18n.Strings{{"en", "Do you have legal ownership of the property?"}},
 			},
 			{
 				Name:  "propertyOwnershipProof",
