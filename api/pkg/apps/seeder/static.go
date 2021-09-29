@@ -1575,10 +1575,10 @@ var (
 	UGICLAIndividualCasePlan = form.Form{
 		Controls: form.Controls{
 			{
-				Name:  "actionTypes",
-				Type:  form.Dropdown,
+				Name:     "actionTypes",
+				Type:     form.Dropdown,
 				Multiple: true,
-				Label: i18n.Strings{{"en", "Type of actions for case worker agreed upon with beneficiary"}},
+				Label:    i18n.Strings{{"en", "Type of actions for case worker agreed upon with beneficiary"}},
 				Options: []i18n.Strings{
 					{{"en", "Discussion with supervisor/team leader"}},
 					{{"en", "Conducting legal analysis, including the study of judicial practice"}},
@@ -1840,10 +1840,10 @@ var (
 	UGICLACaseAssessmentCaseType     = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA - Case Assessment (Kampala)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLACaseAssessment, false)
 	UGICLAAppointmentCaseType        = caseType("27064ded-fbfe-4197-830c-164a797d5306", "ICLA - Appointment (Kampala)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLAAppointment, false)
 	UGICLAConsentCaseType            = caseType("3ad2d524-4dd0-4834-9fc2-47808cf66941", "ICLA - Consent (Kampala)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLAConsent, false)
-	UGICLAActionPlanCaseType     = caseType("2b4f46a7-aebd-4754-89fd-dc7897a79ddb", "ICLA - Action Plan (Kampala)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLAActionPlan, false)
-	UGICLACaseClosureCaseType    = caseType("2411793d-55a0-46af-b4f6-a2310d66568f", "ICLA - Case Closure (Kampala)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLACaseClosure, false)
-	UGICLAReferralCaseType       = caseType("9896c0f1-8d66-4657-92f2-e67a7afcf9ab", "ICLA - Referral (Kampala)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLAReferral, false)
-	UGICLAIndividualCasePlanCaseType = caseType("80b2b596-1664-47ff-975b-b4c5af23abdf", "ICLA Individual Case Plan & Risk Assessment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIndividualCasePlan, false)
+	UGICLAActionPlanCaseType         = caseType("2b4f46a7-aebd-4754-89fd-dc7897a79ddb", "ICLA - Action Plan (Kampala)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLAActionPlan, false)
+	UGICLACaseClosureCaseType        = caseType("2411793d-55a0-46af-b4f6-a2310d66568f", "ICLA - Case Closure (Kampala)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLACaseClosure, false)
+	UGICLAReferralCaseType           = caseType("9896c0f1-8d66-4657-92f2-e67a7afcf9ab", "ICLA - Referral (Kampala)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLAReferral, false)
+	UGICLAIndividualCasePlanCaseType = caseType("80b2b596-1664-47ff-975b-b4c5af23abdf", "ICLA - Individual Case Plan & Risk Assessment (Kampala)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLAIndividualCasePlan, false)
 
 	// Registration Controller Flow for Uganda Intake Process
 	UgandaRegistrationFlow = registrationctrl.RegistrationFlow{
