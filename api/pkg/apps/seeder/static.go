@@ -1557,8 +1557,12 @@ var (
 				},
 			},
 			{
-				Title:        []i18n.LocaleString{{"en", "Consent"}},
-				ControlNames: []string{"beneficiaryConsentedToInformationRelease"},
+				Title: []i18n.LocaleString{{"en", "Consent"}},
+				ControlNames: []string{
+					"beneficiaryConsentedToInformationRelease",
+					"beneficiaryConsentedToInformationReleaseHintYes",
+					"beneficiaryConsentedToInformationReleaseHintNo",
+				},
 			},
 			{
 				Title: i18n.Strings{{"en", "Means of Referral"}},
@@ -1624,11 +1628,16 @@ var (
 				Type:  form.Boolean,
 				Label: i18n.Strings{{"en", "Has the beneficiary consented to the release of his/her information for the referral? "}},
 			},
-			// TODO: Add hints here
-			/*
-				If 'yes', upload signed consent form and proceed
-				If 'no', explain the reason why and do not refer the case
-			*/
+			{
+				Name:  "beneficiaryConsentedToInformationReleaseHintYes",
+				Type:  form.Hint,
+				Label: i18n.Strings{{"en", "If 'yes', upload signed consent form and proceed"}},
+			},
+			{
+				Name:  "beneficiaryConsentedToInformationReleaseHintNo",
+				Type:  form.Hint,
+				Label: i18n.Strings{{"en", "If 'no', explain the reason why and do not refer the case"}},
+			},
 			{
 				Name:  "beneficiaryHasRestrictionsWithReferral",
 				Type:  form.Boolean,
