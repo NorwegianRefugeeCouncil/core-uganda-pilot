@@ -1503,6 +1503,127 @@ var (
 		},
 	}
 
+	UGICLAIndividualCasePlan = form.Form{
+		Controls: form.Controls{
+			{
+				Name:  "actionTypes",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Type of actions for case worker agreed upon with beneficiary"}},
+				Options: []i18n.Strings{
+					{{"en", "Discussion with supervisor/team leader"}},
+					{{"en", "Conducting legal analysis, including the study of judicial practice"}},
+					{{"en", "Preparing letters/inquiries to various authorities"}},
+					{{"en", "Drafting of other legal documents (such as leases or contracts"}},
+					{{"en", "Lodging of a court application"}},
+					{{"en", "Attending of court session/hearing"}},
+					{{"en", "Review of the decision/appeal"}},
+					{{"en", "Negotiation"}},
+					{{"en", "Follow-up with relevant administrative authority or other entity"}},
+					{{"en", "Accompaniment"}},
+					{{"en", "Other"}},
+				},
+			},
+			{
+				Name:  "notes",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Notes/Narrative"}},
+			},
+			{
+				Type:  form.Subtitle,
+				Label: i18n.Strings{{"en", "Individual Risk Assessment"}},
+			},
+			{
+				Name:  "riskElementsExist",
+				Type:  form.Boolean,
+				Label: i18n.Strings{{"en", "Are there any elements of risk for the safety or well-being of the beneficiary or that of a relative in relation to the suggested course of action?"}},
+			},
+			{
+				Name:  "riskNarrative",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Notes/Narrative"}},
+			},
+			{
+				Name:  "particularProtectionRisks",
+				Type:  form.Boolean,
+				Label: i18n.Strings{{"en", "Any particular Protection Risks?"}},
+			},
+			{
+				Name:  "typeOfProtectionRisks",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "If yes, indicate what type"}},
+			},
+			{
+				Name:  "protectionRisksNarrative",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Narrative"}},
+			},
+			{
+				Name:  "hasNegativeConsequences",
+				Type:  form.Boolean,
+				Label: i18n.Strings{{"en", "Are there any unintended consequences of the suggested course of actions for the beneficiary's family or larger community?"}},
+			},
+			{
+				Name:  "consequencesNarrative",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Notes/Narrative"}},
+			},
+			{
+				Type:  form.Hint,
+				Label: i18n.Strings{{"en", "If any of the answers were 'yes', discuss with the beneficiary what might be done to avoid or minimise the risks or negative consequences."}},
+			},
+			{
+				Name:  "agreedUponActions",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Actions agreed upon with the beneficiary"}},
+			},
+			{
+				Name:  "actionsProsCons",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Discuss the pro's and con's of the suggested course of action, including the analysis of risks. Does the beneficiary agree to continue with the case?"}},
+			},
+			{
+				Name:  "prosConsNarrative",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Notes/Narrative"}},
+			},
+			{
+				Type:  form.Subtitle,
+				Label: i18n.Strings{{"en", "Best Interest Determination"}},
+			},
+			{
+				Type:  form.Hint,
+				Label: i18n.Strings{{"en", "In case of a minor, or person with limited (mental) capacity"}},
+			},
+			{
+				Name:  "BIDNeeded",
+				Type:  form.Boolean,
+				Label: i18n.Strings{{"en", "Is a Best Interest Determination needed for the case?"}},
+			},
+			{
+				Type:  form.Hint,
+				Label: i18n.Strings{{"en", "If yes, refer the case to social services or an appropriate child protection actor"}},
+			},
+			{
+				Name: "followUpMeans",
+				Type: form.Checkbox,
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: i18n.Strings{{"en", "In-person meeting"}},
+						Value: "in person",
+					},
+					{
+						Label: i18n.Strings{{"en", "Phone call"}},
+						Value: "phone call",
+					},
+					{
+						Label: i18n.Strings{{"en", "Other"}},
+						Value: "other",
+					},
+				},
+			},
+		},
+	}
+
 	// Case Types for Uganda
 	// - Kampala Response Team
 	UGSituationalAnalysisCaseType              = caseType("0ae90b08-6944-48dc-8f30-5cb325292a8c", "Situational Analysis (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGSituationAnalysis, true)
@@ -1517,11 +1638,12 @@ var (
 	UGProtectionActionReportCaseType           = caseType("f4989460-8e76-4d82-aad5-ed2ad3d3d627", "Action Report (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionActionReport, false)
 
 	// - Kampala ICLA Team
-	UGICLAFollowUpCaseType       = caseType("415be6d4-cf1b-484a-9bad-83acd8474498", "ICLA Follow up (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAFollowUp, false)
-	UGICLAIntakeCaseType         = caseType("61fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Intake (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIntake, true)
-	UGICLACaseAssessmentCaseType = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLACaseAssessment, false)
-	UGICLAAppointmentCaseType    = caseType("27064ded-fbfe-4197-830c-164a797d5306", "ICLA Appointment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAAppointment, false)
-	UGICLAConsentCaseType        = caseType("3ad2d524-4dd0-4834-9fc2-47808cf66941", "ICLA Consent (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAConsent, false)
+	UGICLAFollowUpCaseType           = caseType("415be6d4-cf1b-484a-9bad-83acd8474498", "ICLA Follow up (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAFollowUp, false)
+	UGICLAIntakeCaseType             = caseType("61fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Intake (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIntake, true)
+	UGICLACaseAssessmentCaseType     = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLACaseAssessment, false)
+	UGICLAAppointmentCaseType        = caseType("27064ded-fbfe-4197-830c-164a797d5306", "ICLA Appointment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAAppointment, false)
+	UGICLAConsentCaseType            = caseType("3ad2d524-4dd0-4834-9fc2-47808cf66941", "ICLA Consent (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAConsent, false)
+	UGICLAIndividualCasePlanCaseType = caseType("80b2b596-1664-47ff-975b-b4c5af23abdf", "ICLA Individual Case Plan & Risk Assessment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIndividualCasePlan, false)
 
 	// Registration Controller Flow for Uganda Intake Process
 	UgandaRegistrationFlow = registrationctrl.RegistrationFlow{

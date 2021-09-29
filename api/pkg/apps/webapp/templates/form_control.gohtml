@@ -29,5 +29,7 @@
         {{template "number" .}}
     {{else if eq .Type "hint"}}
         {{template "hint" .}}
+    {{else if eq .Type "subtitle"}}
+        {{template "subtitle" .}}
     {{end}}
 {{end}}
