@@ -23,6 +23,8 @@
         {{template "taxonomy" .}}
     {{else if eq .Type "file"}}
         {{template "file" .}}
+    {{else if eq .Type "number"}}
+        {{template "number" .}}
     {{else if eq .Type "time"}}
         {{template "time" .}}
     {{end}}

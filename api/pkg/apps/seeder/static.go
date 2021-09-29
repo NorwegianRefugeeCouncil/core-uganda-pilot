@@ -918,16 +918,256 @@ var (
 		},
 	}
 
+	specificNeedsOptions = []i18n.Strings{
+		{{"en", "Disability"}},
+		{{"en", "Pregant woman"}},
+		{{"en", "Elderly taking care of minors alone"}},
+		{{"en", "Elderly living alone"}},
+		{{"en", "Single parent"}},
+		{{"en", "Chronic illness"}},
+		{{"en", "Legal protection needs"}},
+		{{"en", "Child"}},
+		{{"en", "Other"}},
+	}
+
+	disabilityNeedsOptions = []i18n.Strings{
+		{{"en", "No"}},
+		{{"en", "Moderate physical impairment"}},
+		{{"en", "Severe physical impairment"}},
+		{{"en", "Moderate sensory impairment"}},
+		{{"en", "Severe sensory impairment"}},
+		{{"en", "Moderate mental disability"}},
+		{{"en", "Severe mental disability"}},
+	}
+
+	obstacleOptions = []i18n.Strings{
+		{{"en", "Insufficient funds"}},
+		{{"en", "Distance issues"}},
+		{{"en", "Insecurity"}},
+		{{"en", "Social discrimination"}},
+		{{"en", "Insufficient quantity of goods"}},
+		{{"en", "Inadequate quality of goods/services"}},
+		{{"en", "Insufficient capabilities and competences"}},
+		{{"en", "Others"}},
+	}
+
+	meetNeedsAbility = []i18n.Strings{
+		{{"en", "Can meet all needs wont worry"}},
+		{{"en", "Can meet needs"}},
+		{{"en", "Can barely meet needs"}},
+		{{"en", "Unable to meet needs"}},
+		{{"en", "Totally unable to meet needs"}},
+	}
+
+	UGProtectionSocialStatusAssessment = form.Form{
+		Controls: []form.Control{
+			{
+				Name:    "specificNeeds",
+				Type:    form.Dropdown,
+				Label:   i18n.Strings{{"en", "Does the Client have specific needs?"}},
+				Options: specificNeedsOptions,
+			},
+			{
+				Name:  "comment",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Comment"}},
+			},
+			{
+				Name:  "otherHHMemberHasSpecificNeeds",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Does any other member of the HH have specific needs?"}},
+			},
+			{
+				Name:    "otherHHMemberSpecificNeeds",
+				Type:    form.Dropdown,
+				Label:   i18n.Strings{{"en", "What specific need does the HH member have?"}},
+				Options: specificNeedsOptions,
+			},
+			{
+				Name:  "homeSituation",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Home situation"}},
+				Options: []i18n.Strings{
+					{{"en", "Lives alone"}},
+					{{"en", "Lives with family"}},
+					{{"en", "Hosted by relatives"}},
+					{{"en", "Other"}},
+				},
+			},
+			{
+				Name:    "disability",
+				Type:    form.Dropdown,
+				Label:   i18n.Strings{{"en", "Does the client have a disability?"}},
+				Options: disabilityNeedsOptions,
+			},
+			{
+				Name:    "otherHHMemberDisability",
+				Type:    form.Dropdown,
+				Label:   i18n.Strings{{"en", "Does any other member of the HH live with disability?"}},
+				Options: disabilityNeedsOptions,
+			},
+			{
+				Name:  "disabledHHMember",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Which other member of the HH lives with a disability?"}},
+			},
+			{
+				Name:  "incomeNeeds",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "How do you meet your income HH needs for all its members?"}},
+				Options: []i18n.Strings{
+					{{"en", "Remittances"}},
+					{{"en", "Savings and credit groups"}},
+					{{"en", "Small business(registered)"}},
+					{{"en", "Small business (unregistered)"}},
+					{{"en", "Unskilled labor"}},
+					{{"en", "Skilled labor"}},
+					{{"en", "Agriculture/pastoralism"}},
+					{{"en", "Donation/Humanitarian assistance"}},
+					{{"en", "Begging"}},
+					{{"en", "Bank loan"}},
+					{{"en", "Other"}},
+				},
+			},
+			{
+				Name:  "workingMembersOfHH",
+				Type:  form.Number,
+				Label: i18n.Strings{{"en", "How many people are able to work in your HH?"}},
+			},
+			{
+				Name:  "workAmount",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "How often do they work?"}},
+			},
+			{
+				Name:  "workType",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "What do they do?"}},
+			},
+			{
+				Name:  "humanitarianAssistance",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Do you receive humanitarian assistance?"}},
+			},
+			{
+				Name:  "humanitarianAssistanceComment",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Comment/ recent changes regarding humanitarian assistance"}},
+			},
+			{
+				Name:  "homeSituationComment",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Comment on living situation (Narrative)"}},
+			},
+			{
+				Name:  "workType",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "What do they do?"}},
+			},
+			{
+				Name:  "workType",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "What do they do?"}},
+			},
+			{
+				Name:  "amountGirls0to5",
+				Type:  form.Number,
+				Label: i18n.Strings{{"en", "Number of 0-5 old girls"}},
+			},
+			{
+				Name:  "amountBoys0to5",
+				Type:  form.Number,
+				Label: i18n.Strings{{"en", "Number of 0-5 old boys"}},
+			},
+			{
+				Name:  "amountGirls6to12",
+				Type:  form.Number,
+				Label: i18n.Strings{{"en", "Number of 6-12 old girls"}},
+			},
+			{
+				Name:  "amountBoys6to12",
+				Type:  form.Number,
+				Label: i18n.Strings{{"en", "Number of 6-12 old boys"}},
+			},
+			{
+				Name:  "amountGirls13to17",
+				Type:  form.Number,
+				Label: i18n.Strings{{"en", "Number of 13-17 old girls"}},
+			},
+			{
+				Name:  "amountBoys13to17",
+				Type:  form.Number,
+				Label: i18n.Strings{{"en", "Number of 13-17 old boys"}},
+			},
+			{
+				Name:  "amountFemales18to59",
+				Type:  form.Number,
+				Label: i18n.Strings{{"en", "Number of 18-59 old females"}},
+			},
+			{
+				Name:  "amountMales18to59",
+				Type:  form.Number,
+				Label: i18n.Strings{{"en", "Number of 18-59 old males"}},
+			},
+			{
+				Name:  "amountFemalesOver59",
+				Type:  form.Number,
+				Label: i18n.Strings{{"en", "Number of 59+ old females"}},
+			},
+			{
+				Name:  "amountMalesOver59",
+				Type:  form.Number,
+				Label: i18n.Strings{{"en", "Number of 59+ old males"}},
+			},
+			{
+				Name:  "foodNeedsMet",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "HH’s ability to meet the food needs of all its members."}},
+				Options: meetNeedsAbility,
+			},
+			{
+				Name:    "foodNeedObstacles",
+				Type:    form.Dropdown,
+				Label:   i18n.Strings{{"en", "What are the main obstacles you face in meeting food needs?"}},
+				Options: obstacleOptions,
+			},
+			{
+				Name:    "accommodationNeedObstacles",
+				Type:    form.Dropdown,
+				Label:   i18n.Strings{{"en", "Main Obstacles you face in meeting accommodation needs"}},
+				Options: obstacleOptions,
+			},
+			{
+				Name:  "washNeedsMet",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Can the HH meet WASH needs?"}},
+				Options: meetNeedsAbility,
+			},
+			{
+				Name:  "incomeNeeds",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", " Main obstacles in meeting WASH needs?"}},
+				Options: obstacleOptions,
+			},
+			{
+				Name:  "summaryNarrative",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Summary Narrative"}},
+			},
+		},
+	}
+
 	// Case Types for Uganda
 	// - Kampala Response Team
-	UGSituationalAnalysisCaseType      = caseType("0ae90b08-6944-48dc-8f30-5cb325292a8c", "Situational Analysis (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGSituationAnalysis, true)
-	UGIndividualResponseCaseType       = caseType("2f909038-0ce4-437b-af17-72fc5d668b49", "Response (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGIndividualResponse, true)
-	UGReferralCaseType                 = caseType("ecdaf47f-6fa9-48c8-9d10-6324bf932ed7", "Referral (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGReferral, false)
-	UGExternalReferralFollowupCaseType = caseType("2a1b670c-6336-4364-b89d-0e65fc771659", "External Referral Followup (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGExternalReferralFollowup, false)
+	UGSituationalAnalysisCaseType              = caseType("0ae90b08-6944-48dc-8f30-5cb325292a8c", "Situational Analysis (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGSituationAnalysis, true)
+	UGIndividualResponseCaseType               = caseType("2f909038-0ce4-437b-af17-72fc5d668b49", "Response (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGIndividualResponse, true)
+	UGReferralCaseType                         = caseType("ecdaf47f-6fa9-48c8-9d10-6324bf932ed7", "Referral (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGReferral, false)
+	UGExternalReferralFollowupCaseType         = caseType("2a1b670c-6336-4364-b89d-0e65fc771659", "External Referral Followup (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGExternalReferralFollowup, false)
+	UGProtectionIntakeCaseType                 = caseType("da20a49d-3cc9-413c-89b8-ff40e3afe95c", "Intake (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionIntake, true)
+	UGProtectionFollowUpCaseType               = caseType("dcebe6c8-47cd-4e0f-8562-5680573aed88", "Follow up (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionFollowUp, false)
+	UGProtectionSocialStatusAssessmentCaseType = caseType("e3b30f91-7181-41a3-8187-f176084a0ab2", "Social Status Assessment (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionSocialStatusAssessment, false)
 	UGProtectionReferralCaseType       = caseType("dc18bf9d-e812-43a8-b843-604c23306cd6", "UG Protection Referral (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionReferral, false)
 	UGProtectionIncidentCaseType       = caseType("f6117a29-db5a-49d7-b564-bf42740ae824", "Incident (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionIncident, false)
-	UGProtectionIntakeCaseType         = caseType("da20a49d-3cc9-413c-89b8-ff40e3afe95c", "Intake (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionIntake, true)
-	UGProtectionFollowUpCaseType       = caseType("dcebe6c8-47cd-4e0f-8562-5680573aed88", "Follow up (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionFollowUp, false)
 	UGProtectionActionReportCaseType   = caseType("f4989460-8e76-4d82-aad5-ed2ad3d3d627", "Action Report (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionActionReport, false)
 
 	// - Kampala ICLA Team
