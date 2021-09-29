@@ -1508,6 +1508,7 @@ var (
 			{
 				Name:  "actionTypes",
 				Type:  form.Dropdown,
+				Multiple: true,
 				Label: i18n.Strings{{"en", "Type of actions for case worker agreed upon with beneficiary"}},
 				Options: []i18n.Strings{
 					{{"en", "Discussion with supervisor/team leader"}},
