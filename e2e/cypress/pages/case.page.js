@@ -54,6 +54,9 @@ export default class CasePage {
                     case 'date':
                         cy.wrap($el).should('have.value', value.date);
                         break;
+                    case 'time':
+                        cy.wrap($el).should('have.value', value.time);
+                        break;
                     case 'textarea':
                         cy.wrap($el).should('have.value', value.textarea);
                         break;
