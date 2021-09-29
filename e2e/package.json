@@ -6,7 +6,7 @@
     "lint:fix": "eslint 'cypress/**/*.js' --fix"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.14.7",
+    "@babel/eslint-parser": "^7.15.7",
     "cypress": "^8.5.0",
     "eslint": "^7.29.0",
     "eslint-config-prettier": "^8.3.0",
