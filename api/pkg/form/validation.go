@@ -3,6 +3,7 @@ package form
 import (
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/nrc-no/core/pkg/validation"
+	"strconv"
 )
 
 const MaxStringLength = 200
@@ -46,6 +47,8 @@ func ValidateControlValue(control Control, value []string, path *validation.Path
 		result = validateFileControl(control, value, path)
 	case Time:
 		result = validateTimeControl(control, value, path)
+	case Number:
+		result = validateNumberControl(control, value, path)
 	}
 	return validation.ErrorList{}
 }
@@ -207,5 +210,16 @@ func validateFileControl(control Control, value []string, path *validation.Path)
 
 	// TODO implement me
 
+	return result
+}
+
+func validateNumberControl(control Control, value []string, path *validation.Path) validation.ErrorList {
+	var result validation.ErrorList
+
+	number, err := strconv.Atoi(value[0])
+	if err != nil {
+		err := validation.Invalid(path, number, validation.InvalidNumericDetail)
+		result = append(result, err)
+	}
 	return result
 }
