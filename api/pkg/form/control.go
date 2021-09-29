@@ -46,6 +46,7 @@ const (
 	File     ControlType = "file"
 	Number   ControlType = "number"
 	Hint     ControlType = "hint"
+	Subtitle ControlType = "subtitle"
 )
 
 var ControlTypes = []ControlType{Text, Email, Phone, URL, Time, Date, Textarea, Dropdown, Boolean, Checkbox, Radio, Taxonomy, File, Number, Hint}
