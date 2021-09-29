@@ -38,7 +38,7 @@ func ValidateControlValue(control Control, value []string, path *validation.Path
 		result = validateTextareaControl(control, value, path)
 	case Dropdown:
 		result = validateDropdownControl(control, value, path)
-	case Checkbox, Radio:
+	case Boolean, Checkbox, Radio:
 		result = validateCheckboxControl(control, value, path)
 	case Taxonomy:
 		result = validateTaxonomyControl(control, value, path)

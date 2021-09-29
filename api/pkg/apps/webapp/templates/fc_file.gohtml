@@ -1,18 +1,18 @@
 {{define "file"}}
     <div class="form mb-3">
         {{template "label" .}}
-        <input id="{{.Control.Name}}"
+        <input id="{{.Name}}"
                data-testid="test-file"
-               name="{{.Control.Name}}"
+               name="{{.Name}}"
                value="{{if .Value}}{{index .Value 0}}{{end}}"
                class="form-control"
                type="file"
                 {{/* TODO implement submiting files with forms. Keep this element disabled until then (it requires special care) */}}
                disabled
-               placeholder="{{.Control.Placeholder.ForLocale "en"}}"
-                {{if .Control.Validation.Required}}required{{end}}
-               aria-describedby="{{.Control.Name}}Feedback"
-                {{if .Control.Readonly}}disabled readonly{{end}}
+               placeholder="{{.Placeholder.ForLocale "en"}}"
+                {{if .Validation.Required}}required{{end}}
+               aria-describedby="{{.Name}}Feedback"
+                {{if .Readonly}}disabled readonly{{end}}
         >
         {{template "description" .}}
         {{template "fc_feedback" .}}

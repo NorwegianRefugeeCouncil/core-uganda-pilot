@@ -62,6 +62,9 @@ export default class NewCasePage {
                     case 'dropdown':
                         cy.wrap($el).select(data.dropdown);
                         break;
+                    case 'boolean':
+                        data.boolean ? cy.wrap($el).check() : cy.wrap($el).uncheck();
+                        break;
                     case 'checkbox':
                         cy.wrap($el).each(ck => {
                             if (ck.val() === data.checkbox) cy.wrap(ck).check();

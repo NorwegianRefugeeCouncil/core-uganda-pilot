@@ -63,6 +63,9 @@ export default class CasePage {
                     case 'dropdown':
                         cy.wrap($el).should('have.value', value.dropdown);
                         break;
+                    case 'boolean':
+                        value.boolean ? cy.wrap($el).should('be.checked') : cy.wrap($el).should('not.be.checked');
+                        break;
                     case 'checkbox':
                         value.checkbox ? cy.wrap($el).should('be.checked') : cy.wrap($el).should('not.be.checked');
                         break;
