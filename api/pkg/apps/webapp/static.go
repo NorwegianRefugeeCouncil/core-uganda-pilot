@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
-	"os/exec"
 	"path"
 	"regexp"
 	"strings"
@@ -50,10 +49,4 @@ func safeFileName(str string) (string, error) {
 		name = strings.Replace(name, "--", "-", -1)
 	}
 	return name, nil
-}
-
-func TranspileTS() error {
-	cmd := exec.Command("tsc")
-	err := cmd.Run()
-	return err
 }

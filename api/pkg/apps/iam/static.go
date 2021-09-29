@@ -165,15 +165,10 @@ var (
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
 			Name: "consentToDataUse",
-			Type: form.Checkbox,
-			CheckboxOptions: []form.CheckboxOption{
-				{
-					Label: i18n.Strings{
-						{"en", "Has the beneficiary consented to NRC using their data?"},
-						{"es", "¿El beneficiario ha dado su consentimiento para que NRC use sus datos?"},
-					},
-					Value: "yes",
-				},
+			Type: form.Boolean,
+			Label: i18n.Strings{
+				{"en", "Has the beneficiary consented to NRC using their data?"},
+				{"es", "¿El beneficiario ha dado su consentimiento para que NRC use sus datos?"},
 			},
 		},
 		IsPersonallyIdentifiableInfo: false,
@@ -202,15 +197,10 @@ var (
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
 			Name: "anonymous",
-			Type: form.Checkbox,
-			CheckboxOptions: []form.CheckboxOption{
-				{
-					Label: i18n.Strings{
-						{"en", "Beneficiary prefers to remain anonymous."},
-						{"es", "La/el beneficiaria/o prefiere permanecer anónima/o."},
-					},
-					Value: "yes",
-				},
+			Type: form.Boolean,
+			Label: i18n.Strings{
+				{"en", "Beneficiary prefers to remain anonymous."},
+				{"es", "La/el beneficiaria/o prefiere permanecer anónima/o."},
 			},
 		},
 		IsPersonallyIdentifiableInfo: false,
@@ -223,15 +213,10 @@ var (
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
 			Name: "minor",
-			Type: form.Checkbox,
-			CheckboxOptions: []form.CheckboxOption{
-				{
-					Label: i18n.Strings{
-						{"en", "Is the beneficiary a minor?"},
-						{"es", "¿La/el beneficiaria/o es menor de edad?"},
-					},
-					Value: "yes",
-				},
+			Type: form.Boolean,
+			Label: i18n.Strings{
+				{"en", "Is the beneficiary a minor?"},
+				{"es", "¿La/el beneficiaria/o es menor de edad?"},
 			},
 		},
 		IsPersonallyIdentifiableInfo: false,
@@ -244,15 +229,10 @@ var (
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
 			Name: "protectionConcerns",
-			Type: form.Checkbox,
-			CheckboxOptions: []form.CheckboxOption{
-				{
-					Label: i18n.Strings{
-						{"en", "Beneficiary presents protection concerns"},
-						{"es", "La/el beneficiaria/o presenta preocupaciones de protección"},
-					},
-					Value: "yes",
-				},
+			Type: form.Boolean,
+			Label: i18n.Strings{
+				{"en", "Beneficiary presents protection concerns"},
+				{"es", "La/el beneficiaria/o presenta preocupaciones de protección"},
 			},
 		},
 		IsPersonallyIdentifiableInfo: false,
@@ -860,14 +840,9 @@ var (
 		ID:        "7476fef0-d116-4b94-b981-ac647e16203d",
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
-			Name: "ugCanInitiateContact",
-			Type: form.Checkbox,
-			CheckboxOptions: []form.CheckboxOption{
-				{
-					Label: i18n.Strings{{"en", "NRC can initiate contact with Beneficiary."}},
-					Value: "yes",
-				},
-			},
+			Name:  "ugCanInitiateContact",
+			Type:  form.Boolean,
+			Label: i18n.Strings{{"en", "NRC can initiate contact with Beneficiary."}},
 		},
 		IsPersonallyIdentifiableInfo: false,
 		PartyTypeIDs: []string{
@@ -901,14 +876,9 @@ var (
 		ID:        "9b6ae87d-8935-49aa-9e32-26e7445d1afc",
 		CountryID: UgandaCountry.ID,
 		FormControl: form.Control{
-			Name: "ugRequireAnInterpreter",
-			Type: form.Checkbox,
-			CheckboxOptions: []form.CheckboxOption{
-				{
-					Label: i18n.Strings{{"en", "This beneficiary requires an interpreter."}},
-					Value: "yes",
-				},
-			},
+			Name:  "ugRequireAnInterpreter",
+			Type:  form.Boolean,
+			Label: i18n.Strings{{"en", "This beneficiary requires an interpreter."}},
 		},
 		IsPersonallyIdentifiableInfo: false,
 		PartyTypeIDs: []string{
@@ -1211,14 +1181,10 @@ var (
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coEmergencyCare",
-			Type: form.Checkbox,
-			CheckboxOptions: []form.CheckboxOption{
-				{Label: i18n.Strings{
-					{"en", "Beneficiary requires emergency care"},
-					{"es", "La/el beneficiaria/o requiere atención de emergencia"},
-				},
-					Value: "yes",
-				},
+			Type: form.Boolean,
+			Label: i18n.Strings{
+				{"en", "Beneficiary requires emergency care"},
+				{"es", "La/el beneficiaria/o requiere atención de emergencia"},
 			},
 		},
 		IsPersonallyIdentifiableInfo: false,
@@ -1232,15 +1198,10 @@ var (
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coDurableSolutions",
-			Type: form.Checkbox,
-			CheckboxOptions: []form.CheckboxOption{
-				{
-					Label: i18n.Strings{
-						{"en", "Response is a durable solution?"},
-						{"es", "¿La respuesta es una solución duradera?"},
-					},
-					Value: "yes",
-				},
+			Type: form.Boolean,
+			Label: i18n.Strings{
+				{"en", "Response is a durable solution?"},
+				{"es", "¿La respuesta es una solución duradera?"},
 			},
 		},
 		IsPersonallyIdentifiableInfo: false,
@@ -1254,15 +1215,10 @@ var (
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coHardToReach",
-			Type: form.Checkbox,
-			CheckboxOptions: []form.CheckboxOption{
-				{
-					Label: i18n.Strings{
-						{"en", "Is the beneficiary in a hard to reach location?"},
-						{"es", "¿Está la/el beneficiaria/o en un lugar de difícil acceso?"},
-					},
-					Value: "yes",
-				},
+			Type: form.Boolean,
+			Label: i18n.Strings{
+				{"en", "Is the beneficiary in a hard to reach location?"},
+				{"es", "¿Está la/el beneficiaria/o en un lugar de difícil acceso?"},
 			},
 		},
 		IsPersonallyIdentifiableInfo: false,
@@ -1276,15 +1232,10 @@ var (
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coAttendedCovid19",
-			Type: form.Checkbox,
-			CheckboxOptions: []form.CheckboxOption{
-				{
-					Label: i18n.Strings{
-						{"en", "Did the beneficiary take part in Covid19 emergency training?"},
-						{"es", "¿La/el beneficiaria/o participó en la capacitación de emergencia de Covid19?"},
-					},
-					Value: "yes",
-				},
+			Type: form.Boolean,
+			Label: i18n.Strings{
+				{"en", "Did the beneficiary take part in Covid19 emergency training?"},
+				{"es", "¿La/el beneficiaria/o participó en la capacitación de emergencia de Covid19?"},
 			},
 		},
 		IsPersonallyIdentifiableInfo: false,
@@ -1431,15 +1382,10 @@ var (
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coJobOrEnterprise",
-			Type: form.Checkbox,
-			CheckboxOptions: []form.CheckboxOption{
-				{
-					Label: i18n.Strings{
-						{"en", "Do you have a job or enterprise?"},
-						{"es", "Ustedes tiene empleo o emprendimiento?"},
-					},
-					Value: "yes",
-				},
+			Type: form.Boolean,
+			Label: i18n.Strings{
+				{"en", "Do you have a job or enterprise?"},
+				{"es", "Ustedes tiene empleo o emprendimiento?"},
 			},
 		},
 		IsPersonallyIdentifiableInfo: false,
@@ -1597,15 +1543,10 @@ var (
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coGuardianshipIsLegal",
-			Type: form.Checkbox,
-			CheckboxOptions: []form.CheckboxOption{
-				{
-					Label: i18n.Strings{
-						{"en", "Is the guardianship legal according to national legislation?"},
-						{"es", "¿La tutela es legal según la legislación nacional?"},
-					},
-					Value: "yes",
-				},
+			Type: form.Boolean,
+			Label: i18n.Strings{
+				{"en", "Is the guardianship legal according to national legislation?"},
+				{"es", "¿La tutela es legal según la legislación nacional?"},
 			},
 		},
 		IsPersonallyIdentifiableInfo: false,
@@ -1619,15 +1560,10 @@ var (
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coAbleToGiveLegalConsent",
-			Type: form.Checkbox,
-			CheckboxOptions: []form.CheckboxOption{
-				{
-					Label: i18n.Strings{
-						{"en", "Is the person able to give legal consent?"},
-						{"es", "¿La persona puede dar su consentimiento de forma legal?"},
-					},
-					Value: "yes",
-				},
+			Type: form.Boolean,
+			Label: i18n.Strings{
+				{"en", "Is the person able to give legal consent?"},
+				{"es", "¿La persona puede dar su consentimiento de forma legal?"},
 			},
 		},
 		IsPersonallyIdentifiableInfo: false,

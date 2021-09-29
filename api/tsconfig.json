@@ -7,7 +7,7 @@
       "esnext"
     ],
     "sourceMap": false,
-    "outDir": "./tmp/static"
+    "outDir": "./pkg/apps/webapp/static"
   },
   "include": [
     "./pkg/apps/webapp/static"

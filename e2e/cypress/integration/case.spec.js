@@ -25,6 +25,7 @@ const DATA = {
         dropdown: '0',
         checkbox: '0',
         radio: '0',
+        number: 0,
     },
     formUpd: {
         text: 'test-updated',
@@ -38,6 +39,7 @@ const DATA = {
         dropdown: '1',
         checkbox: '1',
         radio: '1',
+        number: 1,
     },
 };
 
