@@ -48,14 +48,14 @@ func (s *Server) Individuals(w http.ResponseWriter, req *http.Request) {
 	}
 	listOptions.PartyTypeIDs = []string{iam.BeneficiaryPartyType.ID}
 
-	list, err := iamClient.Individuals().List(ctx, listOptions)
+	individuals, err := iamClient.Individuals().List(ctx, listOptions)
 	if err != nil {
 		s.Error(w, err)
 		return
 	}
 
 	var beneficiaryWithStatuses []IndividualWithStatuses
-	for _, b := range list.Items {
+	for _, b := range individuals.Items {
 		rc, err := s.GetRegistrationController(w, req, b)
 		if err != nil {
 			s.Error(w, err)
@@ -76,7 +76,7 @@ func (s *Server) Individuals(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "individuals", map[string]interface{}{
-		"Individuals":             list,
+		"Individuals":             individuals,
 		"IndividualsWithStatuses": beneficiaryWithStatuses,
 		"Page":                    "list",
 	}); err != nil {
