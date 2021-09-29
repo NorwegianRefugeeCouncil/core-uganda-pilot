@@ -506,7 +506,95 @@ var (
 	}
 
 	UGICLAIntake = form.Form{
-		[]form.Control{
+		Sections: []form.Section{
+			{
+				Title: []i18n.LocaleString{{"en", "Legal Issue"}},
+				ControlNames: []string{
+					"legalIssueDescription",
+					"legalIssue",
+					"otherLegalIssueDescription",
+					"legalActionsTaken",
+				},
+			},
+			{
+				Title: []i18n.LocaleString{{"en", "Information of beneficiary's representative"}},
+				ControlNames: []string{
+					"hasRepresentative",
+					"representativeFullName",
+					"reasonForRepresentative",
+					"isLegalGuardianship",
+					"courtOrder",
+				},
+			},
+			{
+				Title: i18n.Strings{{"en", "RSD"}},
+				ControlNames: []string{
+					"individualDisplacementStatus",
+					"isAtRiskStateless",
+					"statelessRiskDescription",
+					"rsdDocuments",
+					"rsdComment",
+					"rsdIssues",
+				},
+			},
+			{
+				Title: i18n.Strings{{"en", "HLP"}},
+				ControlNames: []string{
+					"specificHLPConcern",
+				},
+			},
+			{
+				Title: i18n.Strings{{"en", "Housing"}},
+				ControlNames: []string{
+					"indStay",
+					"hasRentalAgreement",
+					"agreementKind",
+					"hasEvictionRisk",
+					"evictionDoc",
+					"evictionComment",
+				},
+			},
+			{
+				Title: i18n.Strings{{"en", "Land"}},
+				ControlNames: []string{
+					"isLegalOwner",
+					"natureLandTenancy",
+					"natureLandTenure",
+					"hasLandEvictionRisk",
+					"landEvictionProof",
+					"specificLandIssues",
+				},
+			},
+			{
+				Title: i18n.Strings{{"en", "Property"}},
+				ControlNames: []string{
+					"propertyNature",
+					"hasLegalOwnershipOfProperty",
+					"propertyOwnershipProof",
+					"propertyAcquisitionProof",
+				},
+			},
+			{
+				Title: i18n.Strings{{"en", "LCD"}},
+				ControlNames: []string{
+					"documentationChallenges",
+					"typeOfDocument",
+					"lcdActionsTaken",
+				},
+			},
+			{
+				Title: i18n.Strings{{"en", "ELP"}},
+				ControlNames: []string{
+					"employmentOrBusinessChallenge",
+					"employmentChallenges",
+					"typeOfEmploymentAgreement",
+					"elpActionsTaken",
+					"businessRelatedChallenges",
+					"businessRegistrationNeeds",
+				},
+			},
+		},
+		Controls: []form.Control{
 			{
 				Name:  "legalIssueDescription",
 				Type:  form.Textarea,
@@ -530,11 +618,11 @@ var (
 				Label: i18n.Strings{{"en", "If other, please specify"}},
 			},
 			{
-				Name:  "actionTaken",
+				Name:  "legalActionsTaken",
 				Type:  form.Textarea,
 				Label: i18n.Strings{{"en", "What action has been taken to solve the problem, if any"}},
 			},
-			// TODO subsection "Information of beneficiary's representative
+			// subsection Information of beneficiary's representative
 			{
 				Name:  "hasRepresentative",
 				Type:  form.Boolean,
@@ -561,7 +649,7 @@ var (
 				Type:  form.File,
 				Label: []i18n.LocaleString{{"en", "Attach/upload the legal/court order"}},
 			},
-			// TODO subsection "RSD"
+			//  subsection "RSD"
 			{
 				Name:  "individualDisplacementStatus",
 				Type:  form.Dropdown,
@@ -575,7 +663,7 @@ var (
 			{
 				Name:  "isAtRiskStateless",
 				Type:  form.Boolean,
-				Label: i18n.Strings{{"en", "Are you at risk of being stateless"}},
+				Label: i18n.Strings{{"en", "Are you at risk of being stateless?"}},
 			},
 			{
 				Name:  "statelessRiskDescription",
@@ -605,7 +693,7 @@ var (
 				Type:  form.Textarea,
 				Label: i18n.Strings{{"en", "Specific RSD issues presented (narrative)"}},
 			},
-			// TODO subsection HLP
+			//  subsection HLP
 			{
 				Name:  "specificHLPConcern",
 				Type:  form.Dropdown,
@@ -616,7 +704,7 @@ var (
 					{{"en", "Property"}},
 				},
 			},
-			// TODO sub-subsection House
+			//  sub-subsection House
 			{
 				Name:  "indStay",
 				Type:  form.Dropdown,
@@ -656,14 +744,14 @@ var (
 				Type:  form.Textarea,
 				Label: i18n.Strings{{"en", "Comment/Narrative"}},
 			},
-			// TODO sub-subsection Land
+			//  sub-subsection Land
 			{
 				Name:  "isLegalOwner",
 				Type:  form.Boolean,
 				Label: i18n.Strings{{"en", "Are you the legal owner of the land?"}},
 			},
 			{
-				Name:  "natureLandTenure",
+				Name:  "natureLandTenancy",
 				Type:  form.Dropdown,
 				Label: i18n.Strings{{"en", "Nature of tenancy"}},
 				Options: []i18n.Strings{
@@ -674,7 +762,7 @@ var (
 				},
 			},
 			{
-				Name:  "natureTenure",
+				Name:  "natureLandTenure",
 				Type:  form.Dropdown,
 				Label: i18n.Strings{{"en", "Nature of tenure"}},
 				Options: []i18n.Strings{
@@ -703,7 +791,7 @@ var (
 				Type:  form.Textarea,
 				Label: i18n.Strings{{"en", "Specific land issues (Narrative)"}},
 			},
-			// TODO sub-subsection Property
+			// sub-subsection Property
 			{
 				Name:  "propertyNature",
 				Type:  form.Text,
@@ -724,7 +812,7 @@ var (
 				Type:  form.Textarea,
 				Label: i18n.Strings{{"en", "Inquiry on property acquisition (Narrative)"}},
 			},
-			// TODO sub-section LCD
+			// sub-section LCD
 			{
 				Name:  "documentationChallenges",
 				Type:  form.Textarea,
@@ -750,7 +838,7 @@ var (
 				Type:  form.Textarea,
 				Label: i18n.Strings{{"en", "What action has been taken so far on this issue?"}},
 			},
-			// TODO sub-section ELP
+			// sub-section ELP
 			{
 				Name:  "employmentOrBusinessChallenge",
 				Type:  form.Checkbox,
@@ -1217,6 +1305,7 @@ var (
 	UGProtectionActionReportCaseType   = caseType("f4989460-8e76-4d82-aad5-ed2ad3d3d627", "Action Report (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionActionReport, false)
 
 	// - Kampala ICLA Team
+	UGICLAIntakeCaseType           = caseType("61fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Intake (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIntake, true)
 	UGICLAIndividualIntakeCaseType = caseType("31fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Individual Intake (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIndividualIntake, true)
 	UGICLACaseAssessmentCaseType   = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLACaseAssessment, false)
 	UGICLAAppointmentCaseType      = caseType("27064ded-fbfe-4197-830c-164a797d5306", "ICLA Appointment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAAppointment, false)
