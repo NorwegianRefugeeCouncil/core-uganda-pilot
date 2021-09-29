@@ -266,169 +266,75 @@ var (
 			},
 		},
 	}
-	//UGReferral = form.Form{
-	//	Controls: []form.Control{
-	//		{
-	//			Name:  "dateOfReferral",
-	//			Type:  form.Text,
-	//			Label: i18n.Strings{{"en", "Date of Referral"}},
-	//		},
-	//		{
-	//			Name:    "ugency",
-	//			Type:    form.Dropdown,
-	//			Label:   i18n.Strings{{"en", "Urgency"}},
-	//			Options: []i18n.Strings{{{"en", "Very Urgent"}}, {{"en", "Urgent"}}, {{"en", "Not Urgent"}}},
-	//			Validation: form.ControlValidation{
-	//				Required: true,
-	//			},
-	//		},
-	//		{
-	//			Name:    "typeOfReferral",
-	//			Type:    form.Dropdown,
-	//			Label:   i18n.Strings{{"en", "Type of Referral"}},
-	//			Options: []i18n.Strings{{{"en", "Internal"}}, {{"en", "External"}}},
-	//		},
-	//		{
-	//			Name:  "servicesRequested",
-	//			Type:  form.Textarea,
-	//			Label: i18n.Strings{{"en", "Services/assistance requested"}},
-	//		},
-	//		{
-	//			Name:  "readonforReferral",
-	//			Type:  form.Textarea,
-	//			Label: i18n.Strings{{"en", "Reason for referral"}},
-	//		},
-	//		{
-	//			Name:  "referralRestrictions",
-	//			Type:  form.Checkbox,
-	//			Label: i18n.Strings{{"en", "Does the beneficiary have any restrictions to be referred?"}},
-	//			CheckboxOptions: []form.CheckboxOption{
-	//				{
-	//					Label: i18n.Strings{{"en", "Has restrictions?"}},
-	//					Value: "yes",
-	//				},
-	//			},
-	//		},
-	//		{
-	//			Name:    "meansOfReferral",
-	//			Type:    form.Dropdown,
-	//			Label:   i18n.Strings{{"en", "Means of Referral"}},
-	//			Options: []i18n.Strings{{{"en", "Phone"}}, {{"en", "E-mail"}}, {{"en", "Personal meeting"}}, {{"en", "Other"}}},
-	//			Validation: form.ControlValidation{
-	//				Required: true,
-	//			},
-	//		},
-	//		{
-	//			Name:  "meansOfFeedback",
-	//			Type:  form.Textarea,
-	//			Label: i18n.Strings{{"en", "Means and terms of receiving feedback from the client"}},
-	//		},
-	//		{
-	//			Name:  "deadlineForFeedback",
-	//			Type:  form.Text,
-	//			Label: i18n.Strings{{"en", "Deadline for receiving feedback from the client"}},
-	//		},
-	//	},
-	//}
-	//UGExternalReferralFollowup = form.Form{
-	//	Controls: []form.Control{
-	//		{
-	//			Name:  "referralAccepted",
-	//			Type:  form.Checkbox,
-	//			Label: i18n.Strings{{"en", "Was the referral accepted by the other provider?"}},
-	//			CheckboxOptions: []form.CheckboxOption{
-	//				{
-	//					Label: i18n.Strings{{"en", "Referral accepted"}},
-	//					Value: "yes",
-	//				},
-	//			},
-	//		},
-	//		{
-	//			Name:  "pertinentDetails",
-	//			Type:  form.Textarea,
-	//			Label: i18n.Strings{{"en", "Provide any pertinent details on service needs / requests."}},
-	//		},
-	//	},
-	//}
-	// - Kampala ICLA Team
-	UGICLAIndividualIntake = form.Form{
+	UGReferral = form.Form{
 		Controls: []form.Control{
 			{
-				Name:    "modalityOfService",
-				Type:    form.Dropdown,
-				Label:   i18n.Strings{{"en", "Modality of service delivery"}},
-				Options: []i18n.Strings{{{"en", "ICLA Legal Aid Centre"}}, {{"en", "Mobile visit"}}, {{"en", "Home visit"}}, {{"en", "Transit Centre"}}, {{"en", "Hotline"}}, {{"en", "Other"}}},
-				Validation: form.ControlValidation{
-					Required: true,
-				},
-			},
-			{
-				Name:    "livingSituation",
-				Type:    form.Dropdown,
-				Label:   i18n.Strings{{"en", "Living situation"}},
-				Options: []i18n.Strings{{{"en", "Lives alone"}}, {{"en", "Lives with family"}}, {{"en", "Hosted by relatives"}}},
-				Validation: form.ControlValidation{
-					Required: true,
-				},
-			},
-			{
-				Name:        "commentLivingSituation",
-				Type:        form.Textarea,
-				Label:       i18n.Strings{{"en", "Comment on living situation"}},
-				Description: i18n.Strings{{"en", "Additional information, observations, concerns, etc."}},
-			},
-			{
-				Name:    "iclaMeansOfDiscovery",
-				Type:    form.Dropdown,
-				Label:   i18n.Strings{{"en", "How did you learn about ICLA services?"}},
-				Options: []i18n.Strings{{{"en", "ICLA in-person information session"}}, {{"en", "ICLA social media campaign, activities, brochures"}}, {{"en", "ICLA text messages"}}, {{"en", "Another beneficiary/friend/relative"}}, {{"en", "Another organisation"}}, {{"en", "General social media"}}, {{"en", "NRC employee"}}, {{"en", "State authority"}}, {{"en", "Other"}}},
-				Validation: form.ControlValidation{
-					Required: true,
-				},
-			},
-			{
-				Name:        "vulnerability",
-				Type:        form.Textarea,
-				Label:       i18n.Strings{{"en", "Vulnerability data"}},
-				Description: i18n.Strings{{"en", "As needed within a particular context and required for the case"}},
-			},
-			{
-				Name:        "representativeFullName",
-				Type:        form.Text,
-				Label:       i18n.Strings{{"en", "Full name of representative"}},
-				Description: i18n.Strings{{"en", "Lawyer or other person"}},
-			},
-			{
-				Name:        "otherPersonalInfo",
-				Type:        form.Textarea,
-				Label:       i18n.Strings{{"en", "Other personal information"}},
-				Description: i18n.Strings{{"en", "Other personal data as needed to identify the representative within the particular context"}},
-			},
-			{
-				Name:  "reasonForRepresentative",
+				Name:  "dateOfReferral",
 				Type:  form.Text,
-				Label: i18n.Strings{{"en", "Reason for representative"}},
+				Label: i18n.Strings{{"en", "Date of Referral"}},
 			},
 			{
-				Name:        "guardianshipIsLegal",
-				Type:        form.Checkbox,
-				Label:       i18n.Strings{{"en", "Is the guardianship legal as per national legislation?"}},
-				Description: i18n.Strings{{"en", "If 'yes', attach/upload the legal assessment. If 'no', request or assist in identifying an appropriate legal guardian to represent beneficiary"}},
-				CheckboxOptions: []form.CheckboxOption{
-					{
-						Label: i18n.Strings{{"en", "Guardianship is legal"}},
-					},
+				Name:    "ugency",
+				Type:    form.Dropdown,
+				Label:   i18n.Strings{{"en", "Urgency"}},
+				Options: []i18n.Strings{{{"en", "Very Urgent"}}, {{"en", "Urgent"}}, {{"en", "Not Urgent"}}},
+				Validation: form.ControlValidation{
+					Required: true,
 				},
 			},
 			{
-				Name:  "capacityToConsent",
-				Type:  form.Checkbox,
-				Label: i18n.Strings{{"en", "Does the beneficiary have the legal capacity to consent?"}},
-				CheckboxOptions: []form.CheckboxOption{
-					{
-						Label: i18n.Strings{{"en", "Beneficiary has legal capacity to consent"}},
-					},
+				Name:    "typeOfReferral",
+				Type:    form.Dropdown,
+				Label:   i18n.Strings{{"en", "Type of Referral"}},
+				Options: []i18n.Strings{{{"en", "Internal"}}, {{"en", "External"}}},
+			},
+			{
+				Name:  "servicesRequested",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Services/assistance requested"}},
+			},
+			{
+				Name:  "readonforReferral",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Reason for referral"}},
+			},
+			{
+				Name:  "referralRestrictions",
+				Type:  form.Boolean,
+				Label: i18n.Strings{{"en", "Does the beneficiary have any restrictions to be referred?"}},
+			},
+			{
+				Name:    "meansOfReferral",
+				Type:    form.Dropdown,
+				Label:   i18n.Strings{{"en", "Means of Referral"}},
+				Options: []i18n.Strings{{{"en", "Phone"}}, {{"en", "E-mail"}}, {{"en", "Personal meeting"}}, {{"en", "Other"}}},
+				Validation: form.ControlValidation{
+					Required: true,
 				},
+			},
+			{
+				Name:  "meansOfFeedback",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Means and terms of receiving feedback from the client"}},
+			},
+			{
+				Name:  "deadlineForFeedback",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Deadline for receiving feedback from the client"}},
+			},
+		},
+	}
+	UGExternalReferralFollowup = form.Form{
+		Controls: []form.Control{
+			{
+				Name:  "referralAccepted",
+				Type:  form.Boolean,
+				Label: i18n.Strings{{"en", "Was the referral accepted by the other provider?"}},
+			},
+			{
+				Name:  "pertinentDetails",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Provide any pertinent details on service needs / requests."}},
 			},
 		},
 	}
@@ -517,6 +423,456 @@ var (
 		},
 	}
 
+	UGICLAFollowUp = form.Form{
+		Controls: []form.Control{
+			{
+				Name:  "dateOfFollowUp",
+				Type:  form.Date,
+				Label: i18n.Strings{{"en", "Date of follow up"}},
+			},
+			{
+				Name:     "actionPoints",
+				Type:     form.Dropdown,
+				Multiple: true,
+				Label:    i18n.Strings{{"en", "What action points did you follow up on?"}},
+				Options: []i18n.Strings{
+					{{"en", "(1) In-person interview / meeting with beneficiary"}},
+					{{"en", "(2) Phone conversation with a beneficiary"}},
+					{{"en", "(3) Discussion with supervisor/team leader"}},
+					{{"en", "(4) Conducting legal analysis, including the study of judicial practice"}},
+					{{"en", "(5) Preparing letters, inquiries to various authorities"}},
+					{{"en", "(6) Drafting of other legal documents (such leases or contracts)"}},
+					{{"en", "(7) Lodging of a court application"}},
+					{{"en", "(8) Attending of court session/hearing"}},
+					{{"en", "(9) Review of the decision/appeal"}},
+					{{"en", "(10) Execution of the court decision"}},
+					{{"en", "(11) Negotiation"}},
+					{{"en", "(12) Follow up with relevant administrative authority or other entities"}},
+					{{"en", "(13) Accompaniment"}},
+					{{"en", "(14) Other"}},
+				},
+			},
+			{
+				Name:  "notes",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Notes from the follow up undertaken"}},
+			},
+			{
+				Name:  "documentLink",
+				Type:  form.URL,
+				Label: i18n.Strings{{"en", "Document link"}},
+			},
+			{
+				Name:  "dateOfReceipt",
+				Type:  form.Date,
+				Label: i18n.Strings{{"en", "Date of receipt"}},
+			},
+		},
+		Sections: []form.Section{
+			{
+				Title: i18n.Strings{{"en", "FOLLOW UP"}},
+				ControlNames: []string{
+					"dateOfFollowUp",
+					"actionPoints",
+					"notes",
+				},
+			},
+			{
+				Title: i18n.Strings{{"en", "DOCUMENTS RECEIVED FROM BENEFICIARY"}},
+				ControlNames: []string{
+					"documentLink",
+					"dateOfReceipt",
+				},
+			},
+		},
+	}
+
+	UGICLAIntake = form.Form{
+		Sections: []form.Section{
+			{
+				Title: []i18n.LocaleString{{"en", "Legal Issue"}},
+				ControlNames: []string{
+					"legalIssueDescription",
+					"legalIssue",
+					"otherLegalIssueDescription",
+					"legalActionsTaken",
+				},
+			},
+			{
+				Title: []i18n.LocaleString{{"en", "Information of beneficiary's representative"}},
+				ControlNames: []string{
+					"hasRepresentative",
+					"representativeFullName",
+					"reasonForRepresentative",
+					"isLegalGuardianship",
+					"courtOrder",
+				},
+			},
+			{
+				Title: i18n.Strings{{"en", "RSD"}},
+				ControlNames: []string{
+					"individualDisplacementStatus",
+					"isAtRiskStateless",
+					"statelessRiskDescription",
+					"rsdDocuments",
+					"rsdComment",
+					"rsdIssues",
+				},
+			},
+			{
+				Title: i18n.Strings{{"en", "HLP"}},
+				ControlNames: []string{
+					"specificHLPConcern",
+				},
+			},
+			{
+				Title: i18n.Strings{{"en", "Housing"}},
+				ControlNames: []string{
+					"indStay",
+					"hasRentalAgreement",
+					"agreementKind",
+					"hasEvictionRisk",
+					"evictionDoc",
+					"evictionComment",
+				},
+			},
+			{
+				Title: i18n.Strings{{"en", "Land"}},
+				ControlNames: []string{
+					"isLegalOwner",
+					"natureLandTenancy",
+					"natureLandTenure",
+					"hasLandEvictionRisk",
+					"landEvictionProof",
+					"specificLandIssues",
+				},
+			},
+			{
+				Title: i18n.Strings{{"en", "Property"}},
+				ControlNames: []string{
+					"propertyNature",
+					"hasLegalOwnershipOfProperty",
+					"propertyOwnershipProof",
+					"propertyAcquisitionProof",
+				},
+			},
+			{
+				Title: i18n.Strings{{"en", "LCD"}},
+				ControlNames: []string{
+					"documentationChallenges",
+					"typeOfDocument",
+					"lcdActionsTaken",
+				},
+			},
+			{
+				Title: i18n.Strings{{"en", "ELP"}},
+				ControlNames: []string{
+					"employmentOrBusinessChallenge",
+					"employmentChallenges",
+					"typeOfEmploymentAgreement",
+					"elpActionsTaken",
+					"businessRelatedChallenges",
+					"businessRegistrationNeeds",
+				},
+			},
+		},
+		Controls: []form.Control{
+			{
+				Name:  "legalIssueDescription",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "What/Describe legal/concerns are you facing"}},
+			},
+			{
+				Name:  "legalIssue",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Select the legal issue of concern"}},
+				Options: []i18n.Strings{
+					{{"en", "RSD"}},
+					{{"en", "ELP"}},
+					{{"en", "HLP"}},
+					{{"en", "IDP registration"}},
+					{{"en", "Other"}},
+				},
+			},
+			{
+				Name:  "otherLegalIssueDescription",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "If other, please specify"}},
+			},
+			{
+				Name:  "legalActionsTaken",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "What action has been taken to solve the problem, if any"}},
+			},
+			// subsection Information of beneficiary's representative
+			{
+				Name:  "hasRepresentative",
+				Type:  form.Boolean,
+				Label: i18n.Strings{{"en", "Is there a representative (lawyer or another person/Legal Guardian/Other) for this individual?"}},
+			},
+			// TODO dependant fields
+			{
+				Name:  "representativeFullName",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Full name of representative"}},
+			},
+			{
+				Name:  "reasonForRepresentative",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Reason for representative (instead of beneficiary)"}},
+			},
+			{
+				Name:  "isLegalGuardianship",
+				Type:  form.Boolean,
+				Label: i18n.Strings{{"en", "Is the guardianship legal as per national legislation?"}},
+			},
+			{
+				Name:  "courtOrder",
+				Type:  form.File,
+				Label: []i18n.LocaleString{{"en", "Attach/upload the legal/court order"}},
+			},
+			//  subsection "RSD"
+			{
+				Name:  "individualDisplacementStatus",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "What is the individual's displacement status?"}},
+				Options: []i18n.Strings{
+					{{"en", "Unregistered asylum seeker"}},
+					{{"en", "Registered asylum seeker"}},
+					{{"en", "Refugee"}},
+				},
+			},
+			{
+				Name:  "isAtRiskStateless",
+				Type:  form.Boolean,
+				Label: i18n.Strings{{"en", "Are you at risk of being stateless?"}},
+			},
+			{
+				Name:  "statelessRiskDescription",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Describe this in detail"}},
+			},
+			{
+				Name:  "rsdDocuments",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "What RSD documents do you have?"}},
+				Options: []i18n.Strings{
+					{{"en", "Family Attestation"}},
+					{{"en", "Refugee ID"}},
+					{{"en", "Asylum certificate"}},
+					{{"en", "Rejection decision"}},
+					{{"en", "Other"}},
+				},
+				Multiple: true,
+			},
+			{
+				Name:  "rsdComment",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Comment"}},
+			},
+			{
+				Name:  "rsdIssues",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Specific RSD issues presented (narrative)"}},
+			},
+			//  subsection HLP
+			{
+				Name:  "specificHLPConcern",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "What specific HLP concern is presented?"}},
+				Options: []i18n.Strings{
+					{{"en", "Housing"}},
+					{{"en", "Land"}},
+					{{"en", "Property"}},
+				},
+			},
+			//  sub-subsection House
+			{
+				Name:  "indStay",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Does the individual stay in their own house or rent?"}},
+				Options: []i18n.Strings{
+					{{"en", "Own house"}},
+					{{"en", "Rent"}},
+					{{"en", "Other"}},
+				},
+			},
+			{
+				Name:  "hasRentalAgreement",
+				Type:  form.Boolean,
+				Label: i18n.Strings{{"en", "In the case of rent, does the individual possess any agreement?"}},
+			},
+			{
+				Name:  "agreementKind",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "What kind of agreement of proof does the individual possess?"}},
+			},
+			{
+				Name:  "hasEvictionRisk",
+				Type:  form.Boolean,
+				Label: i18n.Strings{{"en", "Have you been or are you at risk of eviction?"}},
+			},
+			{
+				Name:  "evictionDoc",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "If yes, what eviction document or proof do you possess?"}},
+				Options: []i18n.Strings{
+					{{"en", "Eviction notice"}},
+					{{"en", "Other"}},
+				},
+			},
+			{
+				Name:  "evictionComment",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Comment/Narrative"}},
+			},
+			//  sub-subsection Land
+			{
+				Name:  "isLegalOwner",
+				Type:  form.Boolean,
+				Label: i18n.Strings{{"en", "Are you the legal owner of the land?"}},
+			},
+			{
+				Name:  "natureLandTenancy",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Nature of tenancy"}},
+				Options: []i18n.Strings{
+					{{"en", "Joint ownership"}},
+					{{"en", "Co-ownership"}},
+					{{"en", "Individual ownership"}},
+					{{"en", "Other"}},
+				},
+			},
+			{
+				Name:  "natureLandTenure",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Nature of tenure"}},
+				Options: []i18n.Strings{
+					{{"en", "Mailo"}},
+					{{"en", "Lease"}},
+					{{"en", "Freehold"}},
+					{{"en", "Sustomary"}},
+				},
+			},
+			{
+				Name:  "hasLandEvictionRisk",
+				Type:  form.Boolean,
+				Label: i18n.Strings{{"en", "Have you been or are you at risk of eviction?"}},
+			},
+			{
+				Name:  "landEvictionProof",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "If yes, what eviction document or proof do you possess?"}},
+				Options: []i18n.Strings{
+					{{"en", "Eviction notice"}},
+					{{"en", "Other"}},
+				},
+			},
+			{
+				Name:  "specificLandIssues",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Specific land issues (Narrative)"}},
+			},
+			// sub-subsection Property
+			{
+				Name:  "propertyNature",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Nature of the property in contest."}},
+			},
+			{
+				Name:  "hasLegalOwnershipOfProperty",
+				Type:  form.Boolean,
+				Label: i18n.Strings{{"en", "Do you have legal ownership of the property?"}},
+			},
+			{
+				Name:  "propertyOwnershipProof",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Proof of property ownership (supporting documents)"}},
+			},
+			{
+				Name:  "propertyAcquisitionInquiry",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Inquiry on property acquisition (Narrative)"}},
+			},
+			// sub-section LCD
+			{
+				Name:  "documentationChallenges",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "What documentation challenges do you have?"}},
+			},
+			{
+				Name:  "typeOfDocument",
+				Type:  form.Radio,
+				Label: i18n.Strings{{"en", "What type of document do you have?"}},
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: i18n.Strings{{"en", "Legal"}},
+						Value: "Legal",
+					},
+					{
+						Label: i18n.Strings{{"en", "Civil"}},
+						Value: "Civil",
+					},
+				},
+			},
+			{
+				Name:  "lcdActionsTaken",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "What action has been taken so far on this issue?"}},
+			},
+			// sub-section ELP
+			{
+				Name:  "employmentOrBusinessChallenge",
+				Type:  form.Checkbox,
+				Label: i18n.Strings{{"en", "Is it and employment or business challenge?"}},
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: i18n.Strings{{"en", "Employment"}},
+						Value: "employment",
+					},
+					{
+						Label: i18n.Strings{{"en", "Business"}},
+						Value: "business",
+					},
+				},
+			},
+			{
+				Name:  "employmentChallenges",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "What employment challenges do you have?"}},
+			},
+			{
+				Name:  "typeOfEmploymentAgreement",
+				Type:  form.Radio,
+				Label: i18n.Strings{{"en", "What type of agreement do you have?"}},
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: i18n.Strings{{"en", "Oral"}},
+						Value: "Legal",
+					},
+					{
+						Label: i18n.Strings{{"en", "Written"}},
+						Value: "Civil",
+					},
+				},
+			},
+			{
+				Name:  "elpActionsTaken",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "What actions have been taken? (Narrative)"}},
+			},
+			{
+				Name:  "businessRelatedChallenges",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "What business-related challenges do you have? (Narrative)"}},
+			},
+			{
+				Name:  "businessRegistrationNeeds",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "What business registration needs do you have? (Narrative)"}},
+			},
+		},
+	}
 	UGProtectionReferral = form.Form{
 		Controls: []form.Control{
 			{
@@ -914,6 +1270,245 @@ var (
 				Name:  "agreedFollowUp",
 				Type:  form.Text,
 				Label: i18n.Strings{{"en", "Agreed follow up with the beneficiary"}},
+			},
+		},
+	}
+
+	specificNeedsOptions = []i18n.Strings{
+		{{"en", "Disability"}},
+		{{"en", "Pregant woman"}},
+		{{"en", "Elderly taking care of minors alone"}},
+		{{"en", "Elderly living alone"}},
+		{{"en", "Single parent"}},
+		{{"en", "Chronic illness"}},
+		{{"en", "Legal protection needs"}},
+		{{"en", "Child"}},
+		{{"en", "Other"}},
+	}
+
+	disabilityNeedsOptions = []i18n.Strings{
+		{{"en", "No"}},
+		{{"en", "Moderate physical impairment"}},
+		{{"en", "Severe physical impairment"}},
+		{{"en", "Moderate sensory impairment"}},
+		{{"en", "Severe sensory impairment"}},
+		{{"en", "Moderate mental disability"}},
+		{{"en", "Severe mental disability"}},
+	}
+
+	obstacleOptions = []i18n.Strings{
+		{{"en", "Insufficient funds"}},
+		{{"en", "Distance issues"}},
+		{{"en", "Insecurity"}},
+		{{"en", "Social discrimination"}},
+		{{"en", "Insufficient quantity of goods"}},
+		{{"en", "Inadequate quality of goods/services"}},
+		{{"en", "Insufficient capabilities and competences"}},
+		{{"en", "Others"}},
+	}
+
+	meetNeedsAbility = []i18n.Strings{
+		{{"en", "Can meet all needs wont worry"}},
+		{{"en", "Can meet needs"}},
+		{{"en", "Can barely meet needs"}},
+		{{"en", "Unable to meet needs"}},
+		{{"en", "Totally unable to meet needs"}},
+	}
+
+	UGProtectionSocialStatusAssessment = form.Form{
+		Controls: []form.Control{
+			{
+				Name:    "specificNeeds",
+				Type:    form.Dropdown,
+				Label:   i18n.Strings{{"en", "Does the Client have specific needs?"}},
+				Options: specificNeedsOptions,
+			},
+			{
+				Name:  "comment",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Comment"}},
+			},
+			{
+				Name:  "otherHHMemberHasSpecificNeeds",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Does any other member of the HH have specific needs?"}},
+			},
+			{
+				Name:    "otherHHMemberSpecificNeeds",
+				Type:    form.Dropdown,
+				Label:   i18n.Strings{{"en", "What specific need does the HH member have?"}},
+				Options: specificNeedsOptions,
+			},
+			{
+				Name:  "homeSituation",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Home situation"}},
+				Options: []i18n.Strings{
+					{{"en", "Lives alone"}},
+					{{"en", "Lives with family"}},
+					{{"en", "Hosted by relatives"}},
+					{{"en", "Other"}},
+				},
+			},
+			{
+				Name:    "disability",
+				Type:    form.Dropdown,
+				Label:   i18n.Strings{{"en", "Does the client have a disability?"}},
+				Options: disabilityNeedsOptions,
+			},
+			{
+				Name:    "otherHHMemberDisability",
+				Type:    form.Dropdown,
+				Label:   i18n.Strings{{"en", "Does any other member of the HH live with disability?"}},
+				Options: disabilityNeedsOptions,
+			},
+			{
+				Name:  "disabledHHMember",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Which other member of the HH lives with a disability?"}},
+			},
+			{
+				Name:  "incomeNeeds",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "How do you meet your income HH needs for all its members?"}},
+				Options: []i18n.Strings{
+					{{"en", "Remittances"}},
+					{{"en", "Savings and credit groups"}},
+					{{"en", "Small business(registered)"}},
+					{{"en", "Small business (unregistered)"}},
+					{{"en", "Unskilled labor"}},
+					{{"en", "Skilled labor"}},
+					{{"en", "Agriculture/pastoralism"}},
+					{{"en", "Donation/Humanitarian assistance"}},
+					{{"en", "Begging"}},
+					{{"en", "Bank loan"}},
+					{{"en", "Other"}},
+				},
+			},
+			{
+				Name:  "workingMembersOfHH",
+				Type:  form.Number,
+				Label: i18n.Strings{{"en", "How many people are able to work in your HH?"}},
+			},
+			{
+				Name:  "workAmount",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "How often do they work?"}},
+			},
+			{
+				Name:  "workType",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "What do they do?"}},
+			},
+			{
+				Name:  "humanitarianAssistance",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Do you receive humanitarian assistance?"}},
+			},
+			{
+				Name:  "humanitarianAssistanceComment",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Comment/ recent changes regarding humanitarian assistance"}},
+			},
+			{
+				Name:  "homeSituationComment",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Comment on living situation (Narrative)"}},
+			},
+			{
+				Name:  "workType",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "What do they do?"}},
+			},
+			{
+				Name:  "workType",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "What do they do?"}},
+			},
+			{
+				Name:  "amountGirls0to5",
+				Type:  form.Number,
+				Label: i18n.Strings{{"en", "Number of 0-5 old girls"}},
+			},
+			{
+				Name:  "amountBoys0to5",
+				Type:  form.Number,
+				Label: i18n.Strings{{"en", "Number of 0-5 old boys"}},
+			},
+			{
+				Name:  "amountGirls6to12",
+				Type:  form.Number,
+				Label: i18n.Strings{{"en", "Number of 6-12 old girls"}},
+			},
+			{
+				Name:  "amountBoys6to12",
+				Type:  form.Number,
+				Label: i18n.Strings{{"en", "Number of 6-12 old boys"}},
+			},
+			{
+				Name:  "amountGirls13to17",
+				Type:  form.Number,
+				Label: i18n.Strings{{"en", "Number of 13-17 old girls"}},
+			},
+			{
+				Name:  "amountBoys13to17",
+				Type:  form.Number,
+				Label: i18n.Strings{{"en", "Number of 13-17 old boys"}},
+			},
+			{
+				Name:  "amountFemales18to59",
+				Type:  form.Number,
+				Label: i18n.Strings{{"en", "Number of 18-59 old females"}},
+			},
+			{
+				Name:  "amountMales18to59",
+				Type:  form.Number,
+				Label: i18n.Strings{{"en", "Number of 18-59 old males"}},
+			},
+			{
+				Name:  "amountFemalesOver59",
+				Type:  form.Number,
+				Label: i18n.Strings{{"en", "Number of 59+ old females"}},
+			},
+			{
+				Name:  "amountMalesOver59",
+				Type:  form.Number,
+				Label: i18n.Strings{{"en", "Number of 59+ old males"}},
+			},
+			{
+				Name:    "foodNeedsMet",
+				Type:    form.Dropdown,
+				Label:   i18n.Strings{{"en", "HH’s ability to meet the food needs of all its members."}},
+				Options: meetNeedsAbility,
+			},
+			{
+				Name:    "foodNeedObstacles",
+				Type:    form.Dropdown,
+				Label:   i18n.Strings{{"en", "What are the main obstacles you face in meeting food needs?"}},
+				Options: obstacleOptions,
+			},
+			{
+				Name:    "accommodationNeedObstacles",
+				Type:    form.Dropdown,
+				Label:   i18n.Strings{{"en", "Main Obstacles you face in meeting accommodation needs"}},
+				Options: obstacleOptions,
+			},
+			{
+				Name:    "washNeedsMet",
+				Type:    form.Dropdown,
+				Label:   i18n.Strings{{"en", "Can the HH meet WASH needs?"}},
+				Options: meetNeedsAbility,
+			},
+			{
+				Name:    "incomeNeeds",
+				Type:    form.Dropdown,
+				Label:   i18n.Strings{{"en", " Main obstacles in meeting WASH needs?"}},
+				Options: obstacleOptions,
+			},
+			{
+				Name:  "summaryNarrative",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Summary Narrative"}},
 			},
 		},
 	}

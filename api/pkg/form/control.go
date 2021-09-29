@@ -44,9 +44,10 @@ const (
 	Radio    ControlType = "radio"
 	Taxonomy ControlType = "taxonomy"
 	File     ControlType = "file"
+	Number     ControlType = "number"
 )
 
-var ControlTypes = []ControlType{Text, Email, Phone, URL, Time, Date, Textarea, Dropdown, Boolean, Checkbox, Radio, Taxonomy, File}
+var ControlTypes = []ControlType{Text, Email, Phone, URL, Time, Date, Textarea, Dropdown, Boolean, Checkbox, Radio, Taxonomy, File, Number}
 
 func NewControl(name string, typ ControlType, label i18n.Strings, required bool) *Control {
 	return &Control{
