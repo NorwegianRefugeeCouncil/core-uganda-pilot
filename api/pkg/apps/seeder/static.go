@@ -1416,16 +1416,6 @@ var (
 				Label: i18n.Strings{{"en", "Comment on living situation (Narrative)"}},
 			},
 			{
-				Name:  "workType",
-				Type:  form.Textarea,
-				Label: i18n.Strings{{"en", "What do they do?"}},
-			},
-			{
-				Name:  "workType",
-				Type:  form.Textarea,
-				Label: i18n.Strings{{"en", "What do they do?"}},
-			},
-			{
 				Name:  "amountGirls0to5",
 				Type:  form.Number,
 				Label: i18n.Strings{{"en", "Number of 0-5 old girls"}},
@@ -1476,9 +1466,9 @@ var (
 				Label: i18n.Strings{{"en", "Number of 59+ old males"}},
 			},
 			{
-				Name:  "foodNeedsMet",
-				Type:  form.Dropdown,
-				Label: i18n.Strings{{"en", "HH’s ability to meet the food needs of all its members."}},
+				Name:    "foodNeedsMet",
+				Type:    form.Dropdown,
+				Label:   i18n.Strings{{"en", "HH’s ability to meet the food needs of all its members."}},
 				Options: meetNeedsAbility,
 			},
 			{
@@ -1494,15 +1484,15 @@ var (
 				Options: obstacleOptions,
 			},
 			{
-				Name:  "washNeedsMet",
-				Type:  form.Dropdown,
-				Label: i18n.Strings{{"en", "Can the HH meet WASH needs?"}},
+				Name:    "washNeedsMet",
+				Type:    form.Dropdown,
+				Label:   i18n.Strings{{"en", "Can the HH meet WASH needs?"}},
 				Options: meetNeedsAbility,
 			},
 			{
-				Name:  "incomeNeeds",
-				Type:  form.Dropdown,
-				Label: i18n.Strings{{"en", " Main obstacles in meeting WASH needs?"}},
+				Name:    "washNeedsObstacles",
+				Type:    form.Dropdown,
+				Label:   i18n.Strings{{"en", " Main obstacles in meeting WASH needs?"}},
 				Options: obstacleOptions,
 			},
 			{
@@ -1522,12 +1512,12 @@ var (
 	UGProtectionIntakeCaseType                 = caseType("da20a49d-3cc9-413c-89b8-ff40e3afe95c", "Intake (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionIntake, true)
 	UGProtectionFollowUpCaseType               = caseType("dcebe6c8-47cd-4e0f-8562-5680573aed88", "Follow up (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionFollowUp, false)
 	UGProtectionSocialStatusAssessmentCaseType = caseType("e3b30f91-7181-41a3-8187-f176084a0ab2", "Social Status Assessment (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionSocialStatusAssessment, false)
-	UGProtectionReferralCaseType       = caseType("dc18bf9d-e812-43a8-b843-604c23306cd6", "UG Protection Referral (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionReferral, false)
-	UGProtectionIncidentCaseType       = caseType("f6117a29-db5a-49d7-b564-bf42740ae824", "Incident (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionIncident, false)
-	UGProtectionActionReportCaseType   = caseType("f4989460-8e76-4d82-aad5-ed2ad3d3d627", "Action Report (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionActionReport, false)
+	UGProtectionReferralCaseType               = caseType("dc18bf9d-e812-43a8-b843-604c23306cd6", "UG Protection Referral (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionReferral, false)
+	UGProtectionIncidentCaseType               = caseType("f6117a29-db5a-49d7-b564-bf42740ae824", "Incident (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionIncident, false)
+	UGProtectionActionReportCaseType           = caseType("f4989460-8e76-4d82-aad5-ed2ad3d3d627", "Action Report (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionActionReport, false)
 
 	// - Kampala ICLA Team
-	UGICLAFollowUpCaseType         = caseType("415be6d4-cf1b-484a-9bad-83acd8474498", "ICLA Follow up (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAFollowUp, false)
+	UGICLAFollowUpCaseType       = caseType("415be6d4-cf1b-484a-9bad-83acd8474498", "ICLA Follow up (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAFollowUp, false)
 	UGICLAIntakeCaseType         = caseType("61fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Intake (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIntake, true)
 	UGICLACaseAssessmentCaseType = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLACaseAssessment, false)
 	UGICLAAppointmentCaseType    = caseType("27064ded-fbfe-4197-830c-164a797d5306", "ICLA Appointment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAAppointment, false)
