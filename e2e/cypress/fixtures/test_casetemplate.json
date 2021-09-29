@@ -11,6 +11,16 @@
       "name": "text"
     },
     {
+      "type": "number",
+      "label": [
+        {
+          "locale": "en",
+          "value": "number"
+        }
+      ],
+      "name": "number"
+    },
+    {
       "type": "email",
       "label": [
         {
