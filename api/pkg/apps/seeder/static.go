@@ -533,7 +533,7 @@ var (
 			},
 			{
 				Name:  "consentProofURL",
-				Type:  form.Text,
+				Type:  form.URL,
 				Label: i18n.Strings{{"en", "URL to proof of beneficiary consent."}},
 			},
 		},
