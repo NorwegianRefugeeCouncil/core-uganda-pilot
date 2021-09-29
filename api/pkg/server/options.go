@@ -196,6 +196,7 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 	// Web App
 	fs.StringVar(&o.WebAppBasePath, "web-base-path", o.WebAppBasePath, "Base path for the Web module")
 	fs.StringVar(&o.WebAppTemplateDirectory, "web-templates-directory", o.WebAppTemplateDirectory, "Directory for the web app templates")
+	fs.StringVar(&o.WebAppStaticDir, "web-static-directory", o.WebAppStaticDir, "Directory for the web app static files")
 	fs.StringVar(&o.WebAppClientID, "web-client-id", o.WebAppClientID, "Web app OAuth2 client ID")
 	fs.StringVar(&o.WebAppClientSecret, "web-client-secret", o.WebAppClientSecret, "Web app OAuth2 client secret")
 	fs.StringVar(&o.WebAppClientSecretFile, "web-client-secret-file", o.WebAppClientSecretFile, "Web app OAuth2 client secret file")
