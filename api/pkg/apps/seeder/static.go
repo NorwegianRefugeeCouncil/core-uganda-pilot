@@ -517,6 +517,53 @@ var (
 		},
 	}
 
+	UGICLAFollowUp = form.Form{
+		Controls: []form.Control{
+			{
+				Name:  "dateOfFollowUp",
+				Type:  form.Date,
+				Label: i18n.Strings{{"en", "Date of follow up"}},
+			},
+			{
+				Name:     "actionPoints",
+				Type:     form.Dropdown,
+				Multiple: true,
+				Label:    i18n.Strings{{"en", "What action points did you follow up on?"}},
+				Options: []i18n.Strings{
+					{{"en", "(1) In-person interview / meeting with beneficiary"}},
+					{{"en", "(2) Phone conversation with a beneficiary"}},
+					{{"en", "(3) Discussion with supervisor/team leader"}},
+					{{"en", "(4) Conducting legal analysis, including the study of judicial practice"}},
+					{{"en", "(5) Preparing letters, inquiries to various authorities"}},
+					{{"en", "(6) Drafting of other legal documents (such leases or contracts)"}},
+					{{"en", "(7) Lodging of a court application"}},
+					{{"en", "(8) Attending of court session/hearing"}},
+					{{"en", "(9) Review of the decision/appeal"}},
+					{{"en", "(10) Execution of the court decision"}},
+					{{"en", "(11) Negotiation"}},
+					{{"en", "(12) Follow up with relevant administrative authority or other entities"}},
+					{{"en", "(13) Accompaniment"}},
+					{{"en", "(14) Other"}},
+				},
+			},
+			{
+				Name:  "notes",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Notes from the follow up undertaken"}},
+			},
+			{
+				Name:  "documentLink",
+				Type:  form.URL,
+				Label: i18n.Strings{{"en", "Document link"}},
+			},
+			{
+				Name:  "dateOfReceipt",
+				Type:  form.Date,
+				Label: i18n.Strings{{"en", "Date of receipt"}},
+			},
+		},
+	}
+
 	// Case Types for Uganda
 	// - Kampala Response Team
 	UGSituationalAnalysisCaseType      = caseType("0ae90b08-6944-48dc-8f30-5cb325292a8c", "Situational Analysis (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGSituationAnalysis, true)
@@ -526,6 +573,7 @@ var (
 	// - Kampala ICLA Team
 	UGICLAIndividualIntakeCaseType = caseType("31fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Individual Intake (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIndividualIntake, true)
 	UGICLACaseAssessmentCaseType   = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLACaseAssessment, false)
+	UGICLAFollowUpCaseType         = caseType("415be6d4-cf1b-484a-9bad-83acd8474498", "ICLA Follow up (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAFollowUp, false)
 
 	// Registration Controller Flow for Uganda Intake Process
 	UgandaRegistrationFlow = registrationctrl.RegistrationFlow{
