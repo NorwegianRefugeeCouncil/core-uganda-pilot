@@ -1519,17 +1519,19 @@ var (
 	UGIndividualResponseCaseType  = caseType("2f909038-0ce4-437b-af17-72fc5d668b49", "Response (UG Protection/Response)", iam.IndividualPartyType.ID, KampalaProtectionTeam.ID, UGIndividualResponse, true)
 	//UGReferralCaseType                 = caseType("ecdaf47f-6fa9-48c8-9d10-6324bf932ed7", "Referral (UG Protection/Response)", iam.IndividualPartyType.ID, KampalaProtectionTeam.ID, UGReferral, false)
 	//UGExternalReferralFollowupCaseType = caseType("2a1b670c-6336-4364-b89d-0e65fc771659", "External Referral Followup (UG Protection/Response)", iam.IndividualPartyType.ID, KampalaProtectionTeam.ID, UGExternalReferralFollowup, false)
-	UGProtectionReferralCaseType     = caseType("dc18bf9d-e812-43a8-b843-604c23306cd6", "UG Protection Referral (UG Protection/Response)", iam.IndividualPartyType.ID, KampalaProtectionTeam.ID, UGProtectionReferral, false)
-	UGProtectionIncidentCaseType     = caseType("f6117a29-db5a-49d7-b564-bf42740ae824", "Incident (UG Protection/Response)", iam.IndividualPartyType.ID, KampalaProtectionTeam.ID, UGProtectionIncident, false)
-	UGProtectionIntakeCaseType       = caseType("da20a49d-3cc9-413c-89b8-ff40e3afe95c", "Intake (UG Protection/Response)", iam.IndividualPartyType.ID, KampalaProtectionTeam.ID, UGProtectionIntake, true)
-	UGProtectionFollowUpCaseType     = caseType("dcebe6c8-47cd-4e0f-8562-5680573aed88", "Follow up (UG Protection/Response)", iam.IndividualPartyType.ID, KampalaProtectionTeam.ID, UGProtectionFollowUp, false)
-	UGProtectionActionReportCaseType = caseType("f4989460-8e76-4d82-aad5-ed2ad3d3d627", "Action Report (UG Protection/Response)", iam.IndividualPartyType.ID, KampalaProtectionTeam.ID, UGProtectionActionReport, false)
+	UGProtectionIntakeCaseType                 = caseType("da20a49d-3cc9-413c-89b8-ff40e3afe95c", "Intake (UG Protection/Response)", iam.IndividualPartyType.ID, KampalaProtectionTeam.ID, UGProtectionIntake, true)
+	UGProtectionFollowUpCaseType               = caseType("dcebe6c8-47cd-4e0f-8562-5680573aed88", "Follow up (UG Protection/Response)", iam.IndividualPartyType.ID, KampalaProtectionTeam.ID, UGProtectionFollowUp, false)
+	UGProtectionSocialStatusAssessmentCaseType = caseType("e3b30f91-7181-41a3-8187-f176084a0ab2", "Social Status Assessment (UG Protection/Response)", iam.IndividualPartyType.ID, KampalaProtectionTeam.ID, UGProtectionSocialStatusAssessment, false)
+	UGProtectionReferralCaseType               = caseType("dc18bf9d-e812-43a8-b843-604c23306cd6", "UG Protection Referral (UG Protection/Response)", iam.IndividualPartyType.ID, KampalaProtectionTeam.ID, UGProtectionReferral, false)
+	UGProtectionIncidentCaseType               = caseType("f6117a29-db5a-49d7-b564-bf42740ae824", "Incident (UG Protection/Response)", iam.IndividualPartyType.ID, KampalaProtectionTeam.ID, UGProtectionIncident, false)
+	UGProtectionActionReportCaseType           = caseType("f4989460-8e76-4d82-aad5-ed2ad3d3d627", "Action Report (UG Protection/Response)", iam.IndividualPartyType.ID, KampalaProtectionTeam.ID, UGProtectionActionReport, false)
 
 	// - Kampala ICLA Team
-	UGICLAIndividualIntakeCaseType = caseType("31fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Individual Intake (UG ICLA)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLAIndividualIntake, true)
-	UGICLACaseAssessmentCaseType   = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLACaseAssessment, false)
-	UGICLAAppointmentCaseType      = caseType("27064ded-fbfe-4197-830c-164a797d5306", "ICLA Appointment (UG ICLA)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLAAppointment, false)
-	UGICLAConsentCaseType          = caseType("3ad2d524-4dd0-4834-9fc2-47808cf66941", "ICLA Consent (UG ICLA)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLAConsent, false)
+	UGICLAFollowUpCaseType       = caseType("415be6d4-cf1b-484a-9bad-83acd8474498", "ICLA Follow up (UG ICLA)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLAFollowUp, false)
+	UGICLAIntakeCaseType         = caseType("61fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Intake (UG ICLA)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLAIntake, true)
+	UGICLACaseAssessmentCaseType = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLACaseAssessment, false)
+	UGICLAAppointmentCaseType    = caseType("27064ded-fbfe-4197-830c-164a797d5306", "ICLA Appointment (UG ICLA)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLAAppointment, false)
+	UGICLAConsentCaseType        = caseType("3ad2d524-4dd0-4834-9fc2-47808cf66941", "ICLA Consent (UG ICLA)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLAConsent, false)
 
 	// Registration Controller Flow for Uganda Intake Process
 	UgandaRegistrationFlow = registrationctrl.RegistrationFlow{
