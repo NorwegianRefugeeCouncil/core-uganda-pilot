@@ -517,6 +517,36 @@ var (
 		},
 	}
 
+	UGProtectionActionReport = form.Form{
+		Controls: []form.Control{
+			{
+				Name:  "agreedUponService",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Which service has the beneficiary together with staff agreed to take?"}},
+				Options: []i18n.Strings{
+					{{"en", "Cash support"}},
+					{{"en", "Referral"}},
+					{{"en", "Other (Specify with a narrative)"}},
+					{{"en", "Relocation"}},
+					{{"en", "Livelihood"}},
+					{{"en", "Business support"}},
+				},
+				Validation: form.ControlValidation{
+					Required: true,
+				},
+			},
+			{
+				Name:  "narrative",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Narrative/ Describe the response action agreed."}},
+			},
+			{
+				Name:  "followUp",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Agreed follow up with beneficiary."}},
+			},
+		},
+	}
 	// Case Types for Uganda
 	// - Kampala Response Team
 	UGSituationalAnalysisCaseType      = caseType("0ae90b08-6944-48dc-8f30-5cb325292a8c", "Situational Analysis (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGSituationAnalysis, true)
@@ -524,8 +554,9 @@ var (
 	UGReferralCaseType                 = caseType("ecdaf47f-6fa9-48c8-9d10-6324bf932ed7", "Referral (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGReferral, false)
 	UGExternalReferralFollowupCaseType = caseType("2a1b670c-6336-4364-b89d-0e65fc771659", "External Referral Followup (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGExternalReferralFollowup, false)
 	// - Kampala ICLA Team
-	UGICLAIndividualIntakeCaseType = caseType("31fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Individual Intake (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIndividualIntake, true)
-	UGICLACaseAssessmentCaseType   = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLACaseAssessment, false)
+	UGICLAIndividualIntakeCaseType   = caseType("31fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Individual Intake (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIndividualIntake, true)
+	UGICLACaseAssessmentCaseType     = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLACaseAssessment, false)
+	UGProtectionActionReportCaseType = caseType("f4989460-8e76-4d82-aad5-ed2ad3d3d627", "Action Report (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionActionReport, false)
 
 	// Registration Controller Flow for Uganda Intake Process
 	UgandaRegistrationFlow = registrationctrl.RegistrationFlow{
