@@ -1274,6 +1274,49 @@ var (
 		},
 	}
 
+	UGICLAActionPlan = form.Form{
+		Controls: []form.Control{
+			{
+				Name:     "agreedService",
+				Type:     form.Dropdown,
+				Label:    i18n.Strings{{"en", "Which service has the beneficiary together with staff agreed to take?"}},
+				Multiple: true,
+				Options: []i18n.Strings{
+					{{"en", "Legal counselling"}},
+					{{"en", "Referral"}},
+					{{"en", "Other (Specify with a narrative),"}},
+					{{"en", "Relocation"}},
+					{{"en", "Livelihood"}},
+					{{"en", "Business support"}},
+				},
+			},
+			{
+				Name:     "agreedAction",
+				Type:     form.Dropdown,
+				Label:    i18n.Strings{{"en", "Type of actions for case worker agreed upon with beneficiary"}},
+				Multiple: true,
+				Options: []i18n.Strings{
+					{{"en", "(1) Discussion with supervisor/team leader"}},
+					{{"en", "(2) Conducting legal analysis, including the study of judicial practice"}},
+					{{"en", "(3) Preparing letters, inquiries to various authorities"}},
+					{{"en", "(4) Drafting of other legal documents (such leases or contracts)"}},
+					{{"en", "(5) Lodging of a court application"}},
+					{{"en", "(6) Attending of court session/hearing"}},
+					{{"en", "(7) Review of the decision/appeal"}},
+					{{"en", "(8) Negotiation"}},
+					{{"en", "(9) Follow up with relevant administrative authority or other entities"}},
+					{{"en", "(10) Accompaniment"}},
+					{{"en", "(11) Other"}},
+				},
+			},
+			{
+				Name:  "actionComment",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Action comment"}},
+			},
+		},
+	}
+
 	specificNeedsOptions = []i18n.Strings{
 		{{"en", "Disability"}},
 		{{"en", "Pregant woman"}},
@@ -1532,6 +1575,7 @@ var (
 	UGICLACaseAssessmentCaseType = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLACaseAssessment, false)
 	UGICLAAppointmentCaseType    = caseType("27064ded-fbfe-4197-830c-164a797d5306", "ICLA Appointment (UG ICLA)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLAAppointment, false)
 	UGICLAConsentCaseType        = caseType("3ad2d524-4dd0-4834-9fc2-47808cf66941", "ICLA Consent (UG ICLA)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLAConsent, false)
+	UGICLAActionPlanCaseType     = caseType("2b4f46a7-aebd-4754-89fd-dc7897a79ddb", "ICLA Action Plan (UG ICLA)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLAActionPlan, false)
 
 	// Registration Controller Flow for Uganda Intake Process
 	UgandaRegistrationFlow = registrationctrl.RegistrationFlow{
