@@ -517,6 +517,58 @@ var (
 		},
 	}
 
+	UGICLAAppointment = form.Form{
+		Controls: []form.Control{
+			{
+				Name:  "name",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Name"}},
+			},
+			{
+				Name:  "place",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Place"}},
+			},
+			{
+				Name:  "date",
+				Type:  form.Date,
+				Label: i18n.Strings{{"en", "Date"}},
+			},
+			{
+				Name:  "preferredContactMethod",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Preferred Contact Method"}},
+				Options: []i18n.Strings{
+					{{"en", "Email"}},
+					{{"en", "Telephone"}},
+					{{"en", "Other"}},
+				},
+				Validation: form.ControlValidation{
+					Required: true,
+				},
+			},
+			{
+				Name:  "appointmentPurpose",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Appointment purpose"}},
+				Options: []i18n.Strings{
+					{{"en", "HLP"}},
+					{{"en", "LCD"}},
+					{{"en", "RSD"}},
+					{{"en", "Employment/Business"}},
+					{{"en", "Other"}},
+				},
+				Validation: form.ControlValidation{
+					Required: true,
+				},
+			},
+			{
+				Name:  "preferredDate",
+				Type:  form.Date,
+				Label: i18n.Strings{{"en", "Preferred date"}},
+			},
+		},
+	}
 	UGICLAConsent = form.Form{
 		Controls: []form.Control{
 			{
@@ -740,6 +792,7 @@ var (
 	// - Kampala ICLA Team
 	UGICLAIndividualIntakeCaseType = caseType("31fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Individual Intake (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIndividualIntake, true)
 	UGICLACaseAssessmentCaseType   = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLACaseAssessment, false)
+	UGICLAAppointmentCaseType      = caseType("27064ded-fbfe-4197-830c-164a797d5306", "ICLA Appointment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAAppointment, false)
 	UGICLAConsentCaseType          = caseType("3ad2d524-4dd0-4834-9fc2-47808cf66941", "ICLA Consent (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAConsent, false)
 
 	// Registration Controller Flow for Uganda Intake Process
