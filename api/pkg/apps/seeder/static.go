@@ -179,10 +179,10 @@ var (
 	identificationDocuments     []iam.IdentificationDocument
 
 	// Teams
-	UgandaProtectionTeam = team("ac9b8d7d-d04d-4850-9a7f-3f93324c0d1e", "Uganda Protection Team")
-	UgandaICLATeam       = team("a43f84d5-3f8a-48c4-a896-5fb0fcd3e42b", "Uganda ICLA Team")
-	UgandaCoreAdminTeam  = team("814fc372-08a6-4e6b-809b-30ebb51cb268", "Uganda Core Admin Team")
-	ColombiaTeam         = team("a6bc6436-fcea-4738-bde8-593e6480e1ad", "Colombia Team")
+	KampalaProtectionTeam = team("ac9b8d7d-d04d-4850-9a7f-3f93324c0d1e", "Kampala Protection Team")
+	KampalaICLATeam       = team("a43f84d5-3f8a-48c4-a896-5fb0fcd3e42b", "Kampala ICLA Team")
+	KampalaCOTeam         = team("814fc372-08a6-4e6b-809b-30ebb51cb268", "Kampala CO Team")
+	ColombiaTeam          = team("a6bc6436-fcea-4738-bde8-593e6480e1ad", "Colombia Team")
 
 	// Case Templates for Uganda
 	// - Kampala Response Team
@@ -1476,9 +1476,9 @@ var (
 				Label: i18n.Strings{{"en", "Number of 59+ old males"}},
 			},
 			{
-				Name:  "foodNeedsMet",
-				Type:  form.Dropdown,
-				Label: i18n.Strings{{"en", "HH’s ability to meet the food needs of all its members."}},
+				Name:    "foodNeedsMet",
+				Type:    form.Dropdown,
+				Label:   i18n.Strings{{"en", "HH’s ability to meet the food needs of all its members."}},
 				Options: meetNeedsAbility,
 			},
 			{
@@ -1494,15 +1494,15 @@ var (
 				Options: obstacleOptions,
 			},
 			{
-				Name:  "washNeedsMet",
-				Type:  form.Dropdown,
-				Label: i18n.Strings{{"en", "Can the HH meet WASH needs?"}},
+				Name:    "washNeedsMet",
+				Type:    form.Dropdown,
+				Label:   i18n.Strings{{"en", "Can the HH meet WASH needs?"}},
 				Options: meetNeedsAbility,
 			},
 			{
-				Name:  "incomeNeeds",
-				Type:  form.Dropdown,
-				Label: i18n.Strings{{"en", " Main obstacles in meeting WASH needs?"}},
+				Name:    "incomeNeeds",
+				Type:    form.Dropdown,
+				Label:   i18n.Strings{{"en", " Main obstacles in meeting WASH needs?"}},
 				Options: obstacleOptions,
 			},
 			{
@@ -1515,23 +1515,23 @@ var (
 
 	// Case Types for Uganda
 	// - Kampala Response Team
-	UGSituationalAnalysisCaseType              = caseType("0ae90b08-6944-48dc-8f30-5cb325292a8c", "Situational Analysis (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGSituationAnalysis, true)
-	UGIndividualResponseCaseType               = caseType("2f909038-0ce4-437b-af17-72fc5d668b49", "Response (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGIndividualResponse, true)
-	UGReferralCaseType                         = caseType("ecdaf47f-6fa9-48c8-9d10-6324bf932ed7", "Referral (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGReferral, false)
-	UGExternalReferralFollowupCaseType         = caseType("2a1b670c-6336-4364-b89d-0e65fc771659", "External Referral Followup (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGExternalReferralFollowup, false)
-	UGProtectionIntakeCaseType                 = caseType("da20a49d-3cc9-413c-89b8-ff40e3afe95c", "Intake (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionIntake, true)
-	UGProtectionFollowUpCaseType               = caseType("dcebe6c8-47cd-4e0f-8562-5680573aed88", "Follow up (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionFollowUp, false)
-	UGProtectionSocialStatusAssessmentCaseType = caseType("e3b30f91-7181-41a3-8187-f176084a0ab2", "Social Status Assessment (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionSocialStatusAssessment, false)
-	UGProtectionReferralCaseType       = caseType("dc18bf9d-e812-43a8-b843-604c23306cd6", "UG Protection Referral (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionReferral, false)
-	UGProtectionIncidentCaseType       = caseType("f6117a29-db5a-49d7-b564-bf42740ae824", "Incident (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionIncident, false)
-	UGProtectionActionReportCaseType   = caseType("f4989460-8e76-4d82-aad5-ed2ad3d3d627", "Action Report (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionActionReport, false)
+	UGSituationalAnalysisCaseType = caseType("0ae90b08-6944-48dc-8f30-5cb325292a8c", "Situational Analysis (UG Protection/Response)", iam.IndividualPartyType.ID, KampalaProtectionTeam.ID, UGSituationAnalysis, true)
+	UGIndividualResponseCaseType  = caseType("2f909038-0ce4-437b-af17-72fc5d668b49", "Response (UG Protection/Response)", iam.IndividualPartyType.ID, KampalaProtectionTeam.ID, UGIndividualResponse, true)
+	//UGReferralCaseType                 = caseType("ecdaf47f-6fa9-48c8-9d10-6324bf932ed7", "Referral (UG Protection/Response)", iam.IndividualPartyType.ID, KampalaProtectionTeam.ID, UGReferral, false)
+	//UGExternalReferralFollowupCaseType = caseType("2a1b670c-6336-4364-b89d-0e65fc771659", "External Referral Followup (UG Protection/Response)", iam.IndividualPartyType.ID, KampalaProtectionTeam.ID, UGExternalReferralFollowup, false)
+	UGProtectionIntakeCaseType                 = caseType("da20a49d-3cc9-413c-89b8-ff40e3afe95c", "Intake (UG Protection/Response)", iam.IndividualPartyType.ID, KampalaProtectionTeam.ID, UGProtectionIntake, true)
+	UGProtectionFollowUpCaseType               = caseType("dcebe6c8-47cd-4e0f-8562-5680573aed88", "Follow up (UG Protection/Response)", iam.IndividualPartyType.ID, KampalaProtectionTeam.ID, UGProtectionFollowUp, false)
+	UGProtectionSocialStatusAssessmentCaseType = caseType("e3b30f91-7181-41a3-8187-f176084a0ab2", "Social Status Assessment (UG Protection/Response)", iam.IndividualPartyType.ID, KampalaProtectionTeam.ID, UGProtectionSocialStatusAssessment, false)
+	UGProtectionReferralCaseType               = caseType("dc18bf9d-e812-43a8-b843-604c23306cd6", "UG Protection Referral (UG Protection/Response)", iam.IndividualPartyType.ID, KampalaProtectionTeam.ID, UGProtectionReferral, false)
+	UGProtectionIncidentCaseType               = caseType("f6117a29-db5a-49d7-b564-bf42740ae824", "Incident (UG Protection/Response)", iam.IndividualPartyType.ID, KampalaProtectionTeam.ID, UGProtectionIncident, false)
+	UGProtectionActionReportCaseType           = caseType("f4989460-8e76-4d82-aad5-ed2ad3d3d627", "Action Report (UG Protection/Response)", iam.IndividualPartyType.ID, KampalaProtectionTeam.ID, UGProtectionActionReport, false)
 
 	// - Kampala ICLA Team
-	UGICLAFollowUpCaseType         = caseType("415be6d4-cf1b-484a-9bad-83acd8474498", "ICLA Follow up (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAFollowUp, false)
-	UGICLAIntakeCaseType         = caseType("61fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Intake (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIntake, true)
-	UGICLACaseAssessmentCaseType = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLACaseAssessment, false)
-	UGICLAAppointmentCaseType    = caseType("27064ded-fbfe-4197-830c-164a797d5306", "ICLA Appointment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAAppointment, false)
-	UGICLAConsentCaseType        = caseType("3ad2d524-4dd0-4834-9fc2-47808cf66941", "ICLA Consent (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAConsent, false)
+	UGICLAFollowUpCaseType       = caseType("415be6d4-cf1b-484a-9bad-83acd8474498", "ICLA Follow up (UG ICLA)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLAFollowUp, false)
+	UGICLAIntakeCaseType         = caseType("61fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Intake (UG ICLA)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLAIntake, true)
+	UGICLACaseAssessmentCaseType = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLACaseAssessment, false)
+	UGICLAAppointmentCaseType    = caseType("27064ded-fbfe-4197-830c-164a797d5306", "ICLA Appointment (UG ICLA)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLAAppointment, false)
+	UGICLAConsentCaseType        = caseType("3ad2d524-4dd0-4834-9fc2-47808cf66941", "ICLA Consent (UG ICLA)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLAConsent, false)
 
 	// Registration Controller Flow for Uganda Intake Process
 	UgandaRegistrationFlow = registrationctrl.RegistrationFlow{
@@ -1558,9 +1558,31 @@ var (
 	BoDiddley   = ugandaIndividual(individual("26335292-c839-48b6-8ad5-81271ee51e7b", "Ellas McDaniel", "Bo Diddley", "1983-04-23", "bo.diddley", "Host Community", "Male", "Yes", "https://link-to-consent.proof", "No", "No", "Yes", "No", "", "No", "", "No", "", "Somalia", "Somali, Arabic, English", "English", "101 Main Street, Kampala", "0123456789", "", "Whatsapp", "No"), "1983-04-23", "0", "0", "0", "0", "0", "0")
 
 	// Individuals - UG Staff
-	Stephen  = individual("066a0268-fdc6-495a-9e4b-d60cfae2d81a", "Stephen Kabagambe", "Stephen Kabagambe", "1983-04-23", "stephen.kabagambe", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
-	Colette  = individual("93f9461f-31da-402e-8988-6e0100ecaa24", "Colette le Jeune", "Colette le Jeune", "1983-04-23", "colette.le.jeune", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
-	Courtney = individual("14c014d9-f433-4508-b33d-dc45bf86690b", "Courtney Lare", "Courtney Lare", "1983-04-23", "courtney.lare", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Stephen   = individual("066a0268-fdc6-495a-9e4b-d60cfae2d81a", "Stephen Kabagambe", "Stephen Kabagambe", "1983-04-23", "stephen.kabagambe", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Colette   = individual("93f9461f-31da-402e-8988-6e0100ecaa24", "Colette le Jeune", "Colette le Jeune", "1983-04-23", "colette.le.jeune", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Courtney  = individual("14c014d9-f433-4508-b33d-dc45bf86690b", "Courtney Lare", "Courtney Lare", "1983-04-23", "courtney.lare", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Ulrika    = individual("8f3abe4a-f6c2-45df-a095-482eb4f9a3e9", "Ulrika Blom", "Ulrika Blom", "1983-04-23", "ulrika.blom", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Nathan    = individual("8fd700e7-3621-4b9c-8f25-db0a90994002", "Nathan Chelimo", "Nathan Chelimo", "1983-04-23", "nathan.chelimo", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Lilian    = individual("4db00c54-c15a-4594-932c-08127a35e6c8", "Lilian Kabooga", "Lilian Kabooga", "1983-04-23", "lilian.kabooga", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Viviane   = individual("4517afc4-d105-4585-9f6f-9b2643ba03b9", "Viviane Mushimiyimana", "Viviane Mushimiyimana", "1983-04-23", "viviane.n", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Elizabeth = individual("ee1002bf-a8cf-4c29-95e2-57dbe1ef3054", "Elizabeth Salaama", "Elizabeth Salaama", "1983-04-23", "elizabeth.salaama", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Basil     = individual("72bf35ab-1198-46c5-bc8d-b86a9b23a6fa", "Basil Droti", "Basil Droti", "1983-04-23", "basil.droti", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Abaasi    = individual("0d816f2f-51d4-4b78-b4fb-7d65f5712111", "Abaasi Abdilahin", "Abaasi Abdilahin", "1983-04-23", "abaasi.abdilahin", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Judith    = individual("69ff82af-ecdc-49ca-9f2e-a90d3eca706a", "Judith Andoua", "Judith Andoua", "1983-04-23", "judith.andoua", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Muriel    = individual("1923aaea-8b82-4617-9d41-c345a5235bb4", "Muriel Iyanu", "Muriel Iyanu", "1983-04-23", "muriel.iyanu", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Christine = individual("c42f8aa6-e873-48d7-8f51-8bb312ea6ae1", "Christine Onen", "Christine Onen", "1983-04-23", "christine.onen", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Jamusi    = individual("5f1dbd2d-62e0-4f25-97f7-f982da6553d6", "Jamusi Kisyenene", "Jamusi Kisyenene", "1983-04-23", "jamusi.kisyenene", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Juliet    = individual("07eae976-fd58-415a-bb91-8b19de7ba5fc", "Juliet Aryamo", "Juliet Aryamo", "1983-04-23", "juliet.aryamo", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Rebecca   = individual("3883a43f-95af-4a3a-9490-7f726a76f169", "Rebecca Naluzze", "Rebecca Naluzze", "1983-04-23", "rebecca.naluzze", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Angella   = individual("9096ee30-2fd8-4c7d-a038-518a6e2e6b44", "Angella Namuyomba", "Angella Namuyomba", "1983-04-23", "angella.namuyomba", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Hassan    = individual("2bab647f-1e1e-46a7-a721-125c9214d345", "Hassan Mpanga", "Hassan Mpanga", "1983-04-23", "hassan.mpanga", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Fauzia    = individual("f159b04d-f7d2-4d4e-9ff4-e267a1caf566", "Fauzia Nkunyingi", "Fauzia Nkunyingi", "1983-04-23", "fauzia.nkunyingi", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Denis     = individual("679ec5ed-1cb4-4a4c-b872-0e7dd97ab7c5", "Denis Onena", "Denis Onena", "1983-04-23", "denis.onena", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Nicola    = individual("fef9c068-5603-4469-9d9a-3b48706d2424", "Nicola Cozza", "Nicola Cozza", "1983-04-23", "nicola.cozza", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Grace     = individual("bf672aa8-a22f-47e2-ae10-1c72f12bdd90", "Grace Chebet", "Grace Chebet", "1983-04-23", "grace.chebet", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Robert    = individual("8b645f9f-d727-4bad-830c-a04a2f8dd0f1", "Robert Dikua", "Robert Dikua", "1983-04-23", "robert.dikua", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Emmaneul  = individual("0c57d265-2c08-4b09-813d-afd62184f878", "Emmaneul Epaire", "Emmaneul Epaire", "1983-04-23", "emmaneul.epaire", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+	Shamir    = individual("11b3394b-d621-4b90-8f3c-5ff70e57c48a", "Shamir Nabada", "Shamir Nabada", "1983-04-23", "shamir.nabada", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
 
 	// Individuals - CO staff
 	Claudia = individual("0888928f-aa48-4b5f-a23e-8f885d734f71", "Claudia Garcia", "Claudia Garcia", "1983-04-23", "claudia.garcia", "", "Female", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
@@ -1575,23 +1597,66 @@ var (
 	_ = staff(Colette)
 	_ = staff(Courtney)
 	_ = staff(Claudia)
+	_ = staff(Ulrika)
+	_ = staff(Nathan)
+	_ = staff(Lilian)
+	_ = staff(Viviane)
+	_ = staff(Elizabeth)
+	_ = staff(Basil)
+	_ = staff(Abaasi)
+	_ = staff(Judith)
+	_ = staff(Muriel)
+	_ = staff(Christine)
+	_ = staff(Jamusi)
+	_ = staff(Juliet)
+	_ = staff(Rebecca)
+	_ = staff(Angella)
+	_ = staff(Hassan)
+	_ = staff(Fauzia)
+	_ = staff(Denis)
+	_ = staff(Nicola)
+	_ = staff(Grace)
+	_ = staff(Robert)
+	_ = staff(Emmaneul)
+	_ = staff(Shamir)
 
 	// Memberships
-	StevenMembership   = membership("862690ee-87f0-4f95-aa1e-8f8a2f2fd54a", Stephen, UgandaCoreAdminTeam)
-	ColetteMembership  = membership("9d4abef9-0be0-4750-81ab-0524a412c049", Colette, UgandaProtectionTeam)
-	CourtneyMembership = membership("83c5e73a-5947-4d7e-996c-14a2a7b1c850", Courtney, UgandaProtectionTeam)
-	ClaudiaMembership  = membership("344016e3-1d89-4f28-976b-1bf891d69aff", Claudia, ColombiaTeam)
+	StevenMembership    = membership("862690ee-87f0-4f95-aa1e-8f8a2f2fd54a", Stephen, KampalaCOTeam)
+	ColetteMembership   = membership("9d4abef9-0be0-4750-81ab-0524a412c049", Colette, KampalaProtectionTeam)
+	CourtneyMembership  = membership("83c5e73a-5947-4d7e-996c-14a2a7b1c850", Courtney, KampalaProtectionTeam)
+	ClaudiaMembership   = membership("344016e3-1d89-4f28-976b-1bf891d69aff", Claudia, ColombiaTeam)
+	UlrikaMembership    = membership("06e69c81-3c43-4c6d-b950-723af73ad5aa", Ulrika, KampalaCOTeam)
+	NathanMembership    = membership("32d48a07-9e4c-4e3c-b0f2-68e821b013a0", Nathan, KampalaCOTeam)
+	LilianMembership    = membership("fd781438-7ecf-412a-b5a7-2b0db67d06f2", Lilian, KampalaProtectionTeam)
+	VivianeMembership   = membership("cce94aac-4dc6-499f-9333-bdf2db9a1e7e", Viviane, KampalaProtectionTeam)
+	ElizabethMembership = membership("7e86fbcc-f1c3-46dc-b363-d241ce74ac67", Elizabeth, KampalaProtectionTeam)
+	BasilMembership     = membership("d0a68559-ebbb-46fd-97ba-b88ce51995a0", Basil, KampalaICLATeam)
+	AbaasiMembership    = membership("c92f4e4a-5c44-4832-9a8c-0d676f168685", Abaasi, KampalaICLATeam)
+	JudithMembership    = membership("2f9dfba9-e2cb-4634-8616-dcc0b7de68ae", Judith, KampalaICLATeam)
+	MurielMembership    = membership("302a21f8-692e-422d-8f33-67b1c124f481", Muriel, KampalaICLATeam)
+	ChristineMembership = membership("bd69517c-e4e7-4e4d-a19c-a12d605fb830", Christine, KampalaCOTeam)
+	JamusiMembership    = membership("8de2e1fc-6d04-430b-badd-0726fcc3e006", Jamusi, KampalaCOTeam)
+	JulietMembership    = membership("ae0b2a4d-4727-4efc-a1c2-8d6ecdabd062", Juliet, KampalaCOTeam)
+	RebeccaMembership   = membership("f8543015-4634-4115-a9c0-1c8df56ec0ec", Rebecca, KampalaCOTeam)
+	AngellaMembership   = membership("eb97df7a-978b-413d-998c-4d14269f59ea", Angella, KampalaCOTeam)
+	HassanMembership    = membership("b78f7bed-7b28-4025-90e1-b9f2aaaf332c", Hassan, KampalaCOTeam)
+	FauziaMembership    = membership("7f5e9a79-0533-439c-adbd-5b4e411f538f", Fauzia, KampalaCOTeam)
+	DenisMembership     = membership("dc42a6d1-635a-402a-8376-638dd263c549", Denis, KampalaCOTeam)
+	NicolaMembership    = membership("d30188f6-12a5-4485-85f0-a42be0247e3c", Nicola, KampalaCOTeam)
+	GraceMembership     = membership("ced861ed-120b-4af9-98ce-aa1000fef05e", Grace, KampalaCOTeam)
+	RobertMembership    = membership("9c438611-b11e-4a76-9e44-ac14ff3e14c6", Robert, KampalaCOTeam)
+	EmmaneulMembership  = membership("ce8f6666-feea-40ea-9c71-d92df73f5720", Emmaneul, KampalaProtectionTeam)
+	ShamirMembership    = membership("c5776d66-ca35-483d-bcf3-721fcde9eeff", Shamir, KampalaProtectionTeam)
 
 	// Countries
 	ugandaCountry   = country(iam.UgandaCountry.ID, iam.UgandaCountry.Name)
 	colombiaCountry = country(iam.ColombiaCountry.ID, iam.ColombiaCountry.Name)
 
 	// Nationalities
-
-	UgandaCoreAdminTeamNationality  = nationality("0987460d-c906-43cd-b7fd-5e7afca0d93e", UgandaCoreAdminTeam, ugandaCountry)
-	UgandaProtectionTeamNationality = nationality("b58e4d26-fe8e-4442-8449-7ec4ca3d9066", UgandaProtectionTeam, ugandaCountry)
-	UgandaICLATeamNationality       = nationality("23e3eb5e-592e-42e2-8bbf-ee097d93034c", UgandaICLATeam, ugandaCountry)
-	ColombiaTeamNationality         = nationality("7ba6d2ee-1af9-447c-8000-7719467b3414", ColombiaTeam, colombiaCountry)
+	KampalaCOTeamNationality         = nationality("0987460d-c906-43cd-b7fd-5e7afca0d93e", KampalaCOTeam, ugandaCountry)
+	KampalaProtectionTeamNationality = nationality("b58e4d26-fe8e-4442-8449-7ec4ca3d9066", KampalaProtectionTeam, ugandaCountry)
+	KampalaICLATeamNationality       = nationality("23e3eb5e-592e-42e2-8bbf-ee097d93034c", KampalaICLATeam, ugandaCountry)
+	ColombiaTeamNationality          = nationality("7ba6d2ee-1af9-447c-8000-7719467b3414", ColombiaTeam, colombiaCountry)
 
 	// Cases
 
@@ -1636,14 +1701,14 @@ var (
 		"perceivedPriority":     {"High"},
 	}
 
-	BoDiddleySituationAnalysis  = kase("dba43642-8093-4685-a197-f8848d4cbaaa", Colette.ID, BoDiddley.ID, UgandaProtectionTeam.ID, UGSituationalAnalysisCaseType, true, true, BoDiddleySituationAnalysisData)
-	BoDiddleyIndividualResponse = kase("3ea8c121-bdf0-46a0-86a8-698dc4abc872", Colette.ID, BoDiddley.ID, UgandaProtectionTeam.ID, UGIndividualResponseCaseType, true, true, BoDiddleyResponseData)
+	BoDiddleySituationAnalysis  = kase("dba43642-8093-4685-a197-f8848d4cbaaa", Colette.ID, BoDiddley.ID, KampalaProtectionTeam.ID, UGSituationalAnalysisCaseType, true, true, BoDiddleySituationAnalysisData)
+	BoDiddleyIndividualResponse = kase("3ea8c121-bdf0-46a0-86a8-698dc4abc872", Colette.ID, BoDiddley.ID, KampalaProtectionTeam.ID, UGIndividualResponseCaseType, true, true, BoDiddleyResponseData)
 
-	MaryPoppinsSituationAnalysis  = kase("4f7708ed-240a-423f-9bd1-839542e65833", Colette.ID, MaryPoppins.ID, UgandaProtectionTeam.ID, UGSituationalAnalysisCaseType, true, true, MaryPoppinsSituationAnalysisData)
-	MaryPoppinsIndividualResponse = kase("45b4a637-c610-4ab9-afe6-4e958c36a96f", Colette.ID, MaryPoppins.ID, UgandaProtectionTeam.ID, UGIndividualResponseCaseType, true, true, MaryPoppinsResponseData)
+	MaryPoppinsSituationAnalysis  = kase("4f7708ed-240a-423f-9bd1-839542e65833", Colette.ID, MaryPoppins.ID, KampalaProtectionTeam.ID, UGSituationalAnalysisCaseType, true, true, MaryPoppinsSituationAnalysisData)
+	MaryPoppinsIndividualResponse = kase("45b4a637-c610-4ab9-afe6-4e958c36a96f", Colette.ID, MaryPoppins.ID, KampalaProtectionTeam.ID, UGIndividualResponseCaseType, true, true, MaryPoppinsResponseData)
 
-	JohnDoesSituationAnalysis = kase("43140381-8166-4fb3-9ac5-339082920ade", Colette.ID, JohnDoe.ID, UgandaProtectionTeam.ID, UGSituationalAnalysisCaseType, true, true, JohnDoeSituationAnalysisData)
-	JohnDoeIndividualResponse = kase("65e02e79-1676-4745-9890-582e3d67d13f", Colette.ID, JohnDoe.ID, UgandaProtectionTeam.ID, UGIndividualResponseCaseType, true, true, JohnDoeResponseData)
+	JohnDoesSituationAnalysis = kase("43140381-8166-4fb3-9ac5-339082920ade", Colette.ID, JohnDoe.ID, KampalaProtectionTeam.ID, UGSituationalAnalysisCaseType, true, true, JohnDoeSituationAnalysisData)
+	JohnDoeIndividualResponse = kase("65e02e79-1676-4745-9890-582e3d67d13f", Colette.ID, JohnDoe.ID, KampalaProtectionTeam.ID, UGIndividualResponseCaseType, true, true, JohnDoeResponseData)
 
 	// Identification Document Types
 	DriversLicense = identificationDocumentType("75c41c5f-bf7e-4b45-a242-5e0f875e3044", "Drivers License")

@@ -1,8 +1,8 @@
 import TeamsOverviewPage from '../pages/teamOverview.page';
 import '../support/commands';
 
-const SEARCH_NAME = 'FOCKE, Robert';
-const MEMBER_SHOWN_NAME = 'Robert Focke';
+const SEARCH_NAME = 'DIKUA, Robert';
+const MEMBER_SHOWN_NAME = 'Robert Dikua';
 
 describe('Teams Page', function () {
     beforeEach('Login', () => {
