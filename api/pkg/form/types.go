@@ -20,9 +20,10 @@ const (
 	Radio    ControlType = "radio"
 	Taxonomy ControlType = "taxonomy"
 	File     ControlType = "file"
+	Time     ControlType = "time"
 )
 
-var ControlTypes = []ControlType{Text, Email, Phone, URL, Date, Textarea, Dropdown, Checkbox, Radio, Taxonomy, File}
+var ControlTypes = []ControlType{Text, Email, Phone, URL, Date, Textarea, Dropdown, Checkbox, Radio, Taxonomy, File, Time}
 
 type Control struct {
 	Name            string            `json:"name" bson:"name"`
