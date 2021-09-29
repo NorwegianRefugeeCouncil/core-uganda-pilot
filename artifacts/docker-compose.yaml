@@ -4,6 +4,7 @@ services:
 
   mongo:
     image: mongo
+    container_name: "core-mongo"
     restart: on-failure
     ports:
       - 27017:27017
@@ -13,6 +14,7 @@ services:
 
   mongo-express:
     image: mongo-express
+    container_name: "core-mongo-express"
     restart: on-failure
     links:
       - "mongo"
@@ -27,6 +29,7 @@ services:
 
   redis:
     image: 'bitnami/redis:latest'
+    container_name: "core-redis"
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
@@ -35,6 +38,7 @@ services:
 
   hydra_migrate:
     image: oryd/hydra:v1.10.2
+    container_name: "core-hydra-migrate"
     command:
       - migrate
       - sql
@@ -44,6 +48,7 @@ services:
 
   hydra:
     image: oryd/hydra:v1.10.2
+    container_name: "core-hydra"
     ports:
       - 4444:4444
       - 4445:4445
@@ -63,6 +68,7 @@ services:
 
   hydra_db:
     image: postgres:9.6
+    container_name: "core-hydra-db"
     ports:
       - "5433:5432"
     environment:
