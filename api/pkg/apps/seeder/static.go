@@ -423,6 +423,70 @@ var (
 		},
 	}
 
+	UGICLAFollowUp = form.Form{
+		Controls: []form.Control{
+			{
+				Name:  "dateOfFollowUp",
+				Type:  form.Date,
+				Label: i18n.Strings{{"en", "Date of follow up"}},
+			},
+			{
+				Name:     "actionPoints",
+				Type:     form.Dropdown,
+				Multiple: true,
+				Label:    i18n.Strings{{"en", "What action points did you follow up on?"}},
+				Options: []i18n.Strings{
+					{{"en", "(1) In-person interview / meeting with beneficiary"}},
+					{{"en", "(2) Phone conversation with a beneficiary"}},
+					{{"en", "(3) Discussion with supervisor/team leader"}},
+					{{"en", "(4) Conducting legal analysis, including the study of judicial practice"}},
+					{{"en", "(5) Preparing letters, inquiries to various authorities"}},
+					{{"en", "(6) Drafting of other legal documents (such leases or contracts)"}},
+					{{"en", "(7) Lodging of a court application"}},
+					{{"en", "(8) Attending of court session/hearing"}},
+					{{"en", "(9) Review of the decision/appeal"}},
+					{{"en", "(10) Execution of the court decision"}},
+					{{"en", "(11) Negotiation"}},
+					{{"en", "(12) Follow up with relevant administrative authority or other entities"}},
+					{{"en", "(13) Accompaniment"}},
+					{{"en", "(14) Other"}},
+				},
+			},
+			{
+				Name:  "notes",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Notes from the follow up undertaken"}},
+			},
+			{
+				Name:  "documentLink",
+				Type:  form.URL,
+				Label: i18n.Strings{{"en", "Document link"}},
+			},
+			{
+				Name:  "dateOfReceipt",
+				Type:  form.Date,
+				Label: i18n.Strings{{"en", "Date of receipt"}},
+			},
+		},
+		Sections: []form.Section{
+			{
+				Title: i18n.Strings{{"en", "FOLLOW UP"}},
+				ControlNames: []string{
+					"dateOfFollowUp",
+					"actionPoints",
+					"notes",
+				},
+			},
+			{
+				Title: i18n.Strings{{"en", "DOCUMENTS RECEIVED FROM BENEFICIARY"}},
+				ControlNames: []string{
+					"documentLink",
+					"dateOfReceipt",
+				},
+			},
+		},
+	}
+
 	UGICLAIntake = form.Form{
 		Sections: []form.Section{
 			{
@@ -1463,6 +1527,7 @@ var (
 	UGProtectionActionReportCaseType   = caseType("f4989460-8e76-4d82-aad5-ed2ad3d3d627", "Action Report (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionActionReport, false)
 
 	// - Kampala ICLA Team
+	UGICLAFollowUpCaseType         = caseType("415be6d4-cf1b-484a-9bad-83acd8474498", "ICLA Follow up (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAFollowUp, false)
 	UGICLAIntakeCaseType         = caseType("61fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Intake (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIntake, true)
 	UGICLACaseAssessmentCaseType = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLACaseAssessment, false)
 	UGICLAAppointmentCaseType    = caseType("27064ded-fbfe-4197-830c-164a797d5306", "ICLA Appointment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAAppointment, false)
