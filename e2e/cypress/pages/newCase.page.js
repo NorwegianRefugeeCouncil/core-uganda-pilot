@@ -53,6 +53,9 @@ export default class NewCasePage {
                     case 'date':
                         cy.wrap($el).clear().type(data.date);
                         break;
+                    case 'time':
+                        cy.wrap($el).clear().type(data.time);
+                        break;
                     case 'textarea':
                         cy.wrap($el).clear().type(data.textarea);
                         break;

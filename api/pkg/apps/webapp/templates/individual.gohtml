@@ -110,9 +110,7 @@
                     <div class="card mb-3">
                         <div class="card-body">
                             <form id="situation-analysis-form" action="/cases/{{.SituationAnalysis.ID}}">
-                                {{range .SituationAnalysisForm.Controls}}
-                                    {{template "formcontrol" .}}
-                                {{end}}
+                                {{template "form" .SituationAnalysisForm}}
                             </form>
                         </div>
                     </div>
@@ -125,9 +123,7 @@
                     <div class="card mb-3">
                         <div class="card-body">
                             <form id="response-form" action="/cases/{{.IndividualResponse.ID}}">
-                                {{range .IndividualResponseForm.Controls}}
-                                    {{template "formcontrol" .}}
-                                {{end}}
+                                {{template "form" .IndividualResponseForm}}
                             </form>
                         </div>
                     </div>

@@ -55,9 +55,7 @@
                                 {{end}}
                             </select>
                         </div>
-                        {{range .Form.Controls}}
-                            {{template "formcontrol" .}}
-                        {{end}}
+                        {{template "form" .Form}}
                     {{end}}
                     <button id="case-submit-btn" class="btn btn-primary" data-testid="submitBtn">Save</button>
                 </form>

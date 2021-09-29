@@ -51,6 +51,16 @@
       "name": "date"
     },
     {
+      "type": "time",
+      "label": [
+        {
+          "locale": "en",
+          "value": "time"
+        }
+      ],
+      "name": "time"
+    },
+    {
       "type": "textarea",
       "label": [
         {

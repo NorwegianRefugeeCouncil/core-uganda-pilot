@@ -53,7 +53,7 @@ test-attachments:
 	@cd pkg/apps/attachments && go test
 
 test-e2e:
-	@cd ../e2e && npm run run
+	@cd ../e2e && npm i && npm run run
 
 build:
 	@go build -o tmp/main ./cmd

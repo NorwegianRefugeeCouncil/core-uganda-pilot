@@ -1,17 +1,17 @@
 {{define "url"}}
     <div class="form mb-3">
         {{template "label" .}}
-        <input id="{{.Control.Name}}"
-               name="{{.Control.Name}}"
+        <input id="{{.Name}}"
+               name="{{.Name}}"
                value="{{if .Value}}{{index .Value 0}}{{end}}"
                class="form-control"
                type="url"
                maxlength="80"
                data-testid="test-url"
-               placeholder="{{.Control.Placeholder.ForLocale "en"}}"
-               {{if .Control.Validation.Required}}required{{end}}
-               aria-describedby="{{.Control.Name}}Feedback"
-                {{if .Control.Readonly}}disabled readonly{{end}}
+               placeholder="{{.Placeholder.ForLocale "en"}}"
+               {{if .Validation.Required}}required{{end}}
+               aria-describedby="{{.Name}}Feedback"
+                {{if .Readonly}}disabled readonly{{end}}
         >
         {{template "description" .}}
         {{template "fc_feedback" .}}
