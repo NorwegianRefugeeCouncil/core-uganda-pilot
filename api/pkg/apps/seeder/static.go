@@ -338,88 +338,6 @@ var (
 			},
 		},
 	}
-	// - Kampala ICLA Team
-	UGICLAIndividualIntake = form.Form{
-		Controls: []form.Control{
-			{
-				Name:    "modalityOfService",
-				Type:    form.Dropdown,
-				Label:   i18n.Strings{{"en", "Modality of service delivery"}},
-				Options: []i18n.Strings{{{"en", "ICLA Legal Aid Centre"}}, {{"en", "Mobile visit"}}, {{"en", "Home visit"}}, {{"en", "Transit Centre"}}, {{"en", "Hotline"}}, {{"en", "Other"}}},
-				Validation: form.ControlValidation{
-					Required: true,
-				},
-			},
-			{
-				Name:    "livingSituation",
-				Type:    form.Dropdown,
-				Label:   i18n.Strings{{"en", "Living situation"}},
-				Options: []i18n.Strings{{{"en", "Lives alone"}}, {{"en", "Lives with family"}}, {{"en", "Hosted by relatives"}}},
-				Validation: form.ControlValidation{
-					Required: true,
-				},
-			},
-			{
-				Name:        "commentLivingSituation",
-				Type:        form.Textarea,
-				Label:       i18n.Strings{{"en", "Comment on living situation"}},
-				Description: i18n.Strings{{"en", "Additional information, observations, concerns, etc."}},
-			},
-			{
-				Name:    "iclaMeansOfDiscovery",
-				Type:    form.Dropdown,
-				Label:   i18n.Strings{{"en", "How did you learn about ICLA services?"}},
-				Options: []i18n.Strings{{{"en", "ICLA in-person information session"}}, {{"en", "ICLA social media campaign, activities, brochures"}}, {{"en", "ICLA text messages"}}, {{"en", "Another beneficiary/friend/relative"}}, {{"en", "Another organisation"}}, {{"en", "General social media"}}, {{"en", "NRC employee"}}, {{"en", "State authority"}}, {{"en", "Other"}}},
-				Validation: form.ControlValidation{
-					Required: true,
-				},
-			},
-			{
-				Name:        "vulnerability",
-				Type:        form.Textarea,
-				Label:       i18n.Strings{{"en", "Vulnerability data"}},
-				Description: i18n.Strings{{"en", "As needed within a particular context and required for the case"}},
-			},
-			{
-				Name:        "representativeFullName",
-				Type:        form.Text,
-				Label:       i18n.Strings{{"en", "Full name of representative"}},
-				Description: i18n.Strings{{"en", "Lawyer or other person"}},
-			},
-			{
-				Name:        "otherPersonalInfo",
-				Type:        form.Textarea,
-				Label:       i18n.Strings{{"en", "Other personal information"}},
-				Description: i18n.Strings{{"en", "Other personal data as needed to identify the representative within the particular context"}},
-			},
-			{
-				Name:  "reasonForRepresentative",
-				Type:  form.Text,
-				Label: i18n.Strings{{"en", "Reason for representative"}},
-			},
-			{
-				Name:        "guardianshipIsLegal",
-				Type:        form.Checkbox,
-				Label:       i18n.Strings{{"en", "Is the guardianship legal as per national legislation?"}},
-				Description: i18n.Strings{{"en", "If 'yes', attach/upload the legal assessment. If 'no', request or assist in identifying an appropriate legal guardian to represent beneficiary"}},
-				CheckboxOptions: []form.CheckboxOption{
-					{
-						Label: i18n.Strings{{"en", "Guardianship is legal"}},
-					},
-				},
-			},
-			{
-				Name:  "capacityToConsent",
-				Type:  form.Checkbox,
-				Label: i18n.Strings{{"en", "Does the beneficiary have the legal capacity to consent?"}},
-				CheckboxOptions: []form.CheckboxOption{
-					{
-						Label: i18n.Strings{{"en", "Beneficiary has legal capacity to consent"}},
-					},
-				},
-			},
-		},
-	}
 
 	UGICLACaseAssessment = form.Form{
 		Controls: []form.Control{
@@ -1305,11 +1223,10 @@ var (
 	UGProtectionActionReportCaseType   = caseType("f4989460-8e76-4d82-aad5-ed2ad3d3d627", "Action Report (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionActionReport, false)
 
 	// - Kampala ICLA Team
-	UGICLAIntakeCaseType           = caseType("61fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Intake (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIntake, true)
-	UGICLAIndividualIntakeCaseType = caseType("31fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Individual Intake (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIndividualIntake, true)
-	UGICLACaseAssessmentCaseType   = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLACaseAssessment, false)
-	UGICLAAppointmentCaseType      = caseType("27064ded-fbfe-4197-830c-164a797d5306", "ICLA Appointment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAAppointment, false)
-	UGICLAConsentCaseType          = caseType("3ad2d524-4dd0-4834-9fc2-47808cf66941", "ICLA Consent (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAConsent, false)
+	UGICLAIntakeCaseType         = caseType("61fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Intake (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIntake, true)
+	UGICLACaseAssessmentCaseType = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLACaseAssessment, false)
+	UGICLAAppointmentCaseType    = caseType("27064ded-fbfe-4197-830c-164a797d5306", "ICLA Appointment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAAppointment, false)
+	UGICLAConsentCaseType        = caseType("3ad2d524-4dd0-4834-9fc2-47808cf66941", "ICLA Consent (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAConsent, false)
 
 	// Registration Controller Flow for Uganda Intake Process
 	UgandaRegistrationFlow = registrationctrl.RegistrationFlow{
