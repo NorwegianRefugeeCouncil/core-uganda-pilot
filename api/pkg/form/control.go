@@ -36,6 +36,7 @@ const (
 	Phone    ControlType = "tel"
 	URL      ControlType = "url"
 	Date     ControlType = "date"
+	Time     ControlType = "time"
 	Textarea ControlType = "textarea"
 	Dropdown ControlType = "dropdown"
 	Boolean  ControlType = "boolean"
@@ -45,7 +46,7 @@ const (
 	File     ControlType = "file"
 )
 
-var ControlTypes = []ControlType{Text, Email, Phone, URL, Date, Textarea, Dropdown, Boolean, Checkbox, Radio, Taxonomy, File}
+var ControlTypes = []ControlType{Text, Email, Phone, URL, Time, Date, Textarea, Dropdown, Boolean, Checkbox, Radio, Taxonomy, File}
 
 func NewControl(name string, typ ControlType, label i18n.Strings, required bool) *Control {
 	return &Control{
