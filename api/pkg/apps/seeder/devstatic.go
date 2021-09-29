@@ -17,15 +17,15 @@ var (
 	//Robert   = staff(individual("3e8488eb-785a-49c4-95f1-2cc5c09e8ab9", "Robert Focke", "Robert Focke", "12/02/1978", "robert.focke", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
 	//Nicolas  = staff(individual("7c1107b7-3fa7-4f49-acea-e953c5d8723f", "Nicolas Epstein", "Nicolas Epstein", "12/02/1978", "nicolas.epstein", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
 	//Kristjan = staff(individual("ae4d0fd5-bb03-4b9d-948d-c99754aca5ce", "Kristjan Thoroddsson", "Kristjan Thoroddsson", "12/02/1978", "kristjan.thoroddsson", "", "Male", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""))
-	//
-	//DTeam = team("5efecef3-a7a9-4705-84ca-70c89d7d783f", "D-Team")
 
-	globalCountry = country(iam.GlobalCountry.ID, iam.GlobalCountry.Name)
-	//DTeamNationality = nationality("8f6be182-f64c-4096-ba8e-4562506dae6d", DTeam, globalCountry)
-	//
-	//// D-Team Memberships
-	//LudovicMembership  = membership("156e7e3a-6cec-43ca-be28-94e8eb0bb27c", Ludovic, DTeam)
-	//CassieMembership   = membership("16f91d0b-d53a-41cc-a437-5124fd65656e", Cassie, DTeam)
+	DTeam = team("5efecef3-a7a9-4705-84ca-70c89d7d783f", "D-Team")
+
+	globalCountry    = country(iam.GlobalCountry.ID, iam.GlobalCountry.Name)
+	DTeamNationality = nationality("8f6be182-f64c-4096-ba8e-4562506dae6d", DTeam, globalCountry)
+
+	// D-Team Memberships
+	LudovicMembership = membership("156e7e3a-6cec-43ca-be28-94e8eb0bb27c", Ludovic, DTeam)
+	CassieMembership  = membership("16f91d0b-d53a-41cc-a437-5124fd65656e", Cassie, DTeam)
 	//SenyaoMembership   = membership("fdad7109-5fde-41ca-8eee-3f699ad8e491", Senyao, DTeam)
 	//RobertMembership   = membership("2cc4d8e7-2087-41d0-af7f-90144820466f", Robert, DTeam)
 	//NicolasMembership  = membership("624291ac-d573-4866-b507-d9e83b9b2288", Nicolas, DTeam)
