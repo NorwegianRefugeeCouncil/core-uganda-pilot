@@ -1546,6 +1546,134 @@ var (
 		},
 	}
 
+	UGICLAReferral = form.Form{
+		Sections: []form.Section{
+			{
+				Title: []i18n.LocaleString{{"en", "Beneficiary's Information"}},
+				ControlNames: []string{
+					"typeOfICLAReferral",
+					"typeOfServicesRequested",
+					"reasonForReferral",
+				},
+			},
+			{
+				Title: []i18n.LocaleString{{"en", "Consent"}},
+				ControlNames: []string{
+					"beneficiaryConsentedToInformationRelease",
+					"beneficiaryConsentedToInformationReleaseHintYes",
+					"beneficiaryConsentedToInformationReleaseHintNo",
+				},
+			},
+			{
+				Title: i18n.Strings{{"en", "Means of Referral"}},
+				ControlNames: []string{
+					"beneficiaryHasRestrictionsWithReferral",
+					"meansOfReferral",
+					"meansOfFeedback",
+				},
+			},
+		},
+		Controls: []form.Control{
+			{
+				Name:  "typeOfICLAReferral",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Type of Referral"}},
+				Options: []i18n.Strings{
+					{{"en", "Internal - Shelter/NFI"}},
+					{{"en", "Internal - Livelihood/Food Security"}},
+					{{"en", "Internal - Education"}},
+					{{"en", "Internal - WASH"}},
+					{{"en", "Internal - Camp Management/UDOC"}},
+					{{"en", "External - Organisation"}},
+					{{"en", "External - Contact person"}},
+					{{"en", "External - Phone number"}},
+					{{"en", "External - E-Mail"}},
+				},
+				Validation: form.ControlValidation{
+					Required: true,
+				},
+			},
+			{
+				Name:     "typeOfServicesRequested",
+				Type:     form.Dropdown,
+				Label:    i18n.Strings{{"en", "Type of Services/Assistance Requested"}},
+				Multiple: true,
+				Options: []i18n.Strings{
+					{{"en", "Health care (including medication)"}},
+					{{"en", "Legal assistance"}},
+					{{"en", "Education"}},
+					{{"en", "Mental Health"}},
+					{{"en", "Transportation"}},
+					{{"en", "Food"}},
+					{{"en", "Non-food items (including hygiene items)"}},
+					{{"en", "Disability"}},
+					{{"en", "MPC"}},
+					{{"en", "Shelter/Housing"}},
+					{{"en", "Shelter construction/repair"}},
+					{{"en", "Youth Livelihoods (e.g. vocational training)"}},
+					{{"en", "Small/Medium Business Grants"}},
+					{{"en", "Other livelihood activities"}},
+				},
+				Validation: form.ControlValidation{
+					Required: true,
+				},
+			},
+			{
+				Name:  "reasonForReferral",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Reason for Referral"}},
+			},
+			{
+				Name:  "beneficiaryConsentedToInformationRelease",
+				Type:  form.Boolean,
+				Label: i18n.Strings{{"en", "Has the beneficiary consented to the release of his/her information for the referral? "}},
+			},
+			{
+				Name:  "beneficiaryConsentedToInformationReleaseHintYes",
+				Type:  form.Hint,
+				Label: i18n.Strings{{"en", "If 'yes', upload signed consent form and proceed"}},
+			},
+			{
+				Name:  "beneficiaryConsentedToInformationReleaseHintNo",
+				Type:  form.Hint,
+				Label: i18n.Strings{{"en", "If 'no', explain the reason why and do not refer the case"}},
+			},
+			{
+				Name:  "beneficiaryHasRestrictionsWithReferral",
+				Type:  form.Boolean,
+				Label: i18n.Strings{{"en", "Does the beneficiary have any restrictions to be referred?"}},
+			},
+			{
+				Name:  "meansOfReferral",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Means of referral "}},
+				Options: []i18n.Strings{
+					{{"en", "(1) Phone"}},
+					{{"en", "(2) E-mail"}},
+					{{"en", "(3) Personal meeting"}},
+					{{"en", "(4) Other"}},
+				},
+				Validation: form.ControlValidation{
+					Required: true,
+				},
+			},
+			{
+				Name:  "meansOfFeedback",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Means and terms of receiving feedback from the client"}},
+				Options: []i18n.Strings{
+					{{"en", "(1) Phone"}},
+					{{"en", "(2) E-mail"}},
+					{{"en", "(3) Personal meeting"}},
+					{{"en", "(4) Other"}},
+				},
+				Validation: form.ControlValidation{
+					Required: true,
+				},
+			},
+		},
+	}
+
 	// Case Types for Uganda
 	// - Kampala Response Team
 	UGSituationalAnalysisCaseType = caseType("0ae90b08-6944-48dc-8f30-5cb325292a8c", "Situational Analysis (UG Protection/Response)", iam.IndividualPartyType.ID, KampalaProtectionTeam.ID, UGSituationAnalysis, true)
@@ -1565,6 +1693,7 @@ var (
 	UGICLACaseAssessmentCaseType = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLACaseAssessment, false)
 	UGICLAAppointmentCaseType    = caseType("27064ded-fbfe-4197-830c-164a797d5306", "ICLA Appointment (UG ICLA)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLAAppointment, false)
 	UGICLAConsentCaseType        = caseType("3ad2d524-4dd0-4834-9fc2-47808cf66941", "ICLA Consent (UG ICLA)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLAConsent, false)
+	UGICLAReferralCaseType       = caseType("9896c0f1-8d66-4657-92f2-e67a7afcf9ab", "ICLA Referral (UG ICLA)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLAReferral, false)
 	UGICLAActionPlanCaseType     = caseType("2b4f46a7-aebd-4754-89fd-dc7897a79ddb", "ICLA Action Plan (UG ICLA)", iam.IndividualPartyType.ID, KampalaICLATeam.ID, UGICLAActionPlan, false)
 
 	// Registration Controller Flow for Uganda Intake Process
