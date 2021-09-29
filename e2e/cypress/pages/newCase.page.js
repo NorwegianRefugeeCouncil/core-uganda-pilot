@@ -41,6 +41,9 @@ export default class NewCasePage {
                     case 'text':
                         cy.wrap($el).clear().type(data.text);
                         break;
+                    case 'number':
+                        cy.wrap($el).clear().type(data.number);
+                        break;
                     case 'email':
                         cy.wrap($el).clear().type(data.email);
                         break;
