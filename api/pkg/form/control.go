@@ -9,17 +9,19 @@ import (
 //intended as 1:1 mappings to HTML form element attributes. Others like Validation, Label and CheckboxOptions correspond
 // to cross-cutting concerns (Validation), sibling elements (Label) or richer data structures (CheckboxOptions).
 type Control struct {
-	Name            string            `json:"name" bson:"name"`
-	Type            ControlType       `json:"type" bson:"type"`
-	Placeholder     i18n.Strings      `json:"placeholder" bson:"placeholder"`
-	Multiple        bool              `json:"multiple" bson:"multiple"`
-	Readonly        bool              `json:"readonly" bson:"readonly"`
-	Label           i18n.Strings      `json:"label" bson:"label"`
-	Description     i18n.Strings      `json:"description" bson:"description"`
-	DefaultValue    []string          `json:"defaultValue" bson:"defaultValue"`
-	Options         []i18n.Strings    `json:"options" bson:"options"`
-	CheckboxOptions []CheckboxOption  `json:"checkboxOptions" bson:"checkboxOptions"`
-	Validation      ControlValidation `json:"validation" bson:"validation"`
+	Name            string                `json:"name" bson:"name"`
+	Type            ControlType           `json:"type" bson:"type"`
+	Placeholder     i18n.Strings          `json:"placeholder" bson:"placeholder"`
+	Multiple        bool                  `json:"multiple" bson:"multiple"`
+	Readonly        bool                  `json:"readonly" bson:"readonly"`
+	Label           i18n.Strings          `json:"label" bson:"label"`
+	Description     i18n.Strings          `json:"description" bson:"description"`
+	DefaultValue    []string              `json:"defaultValue" bson:"defaultValue"`
+	Value           []string              `json:"value" bson:"value"`
+	Options         []i18n.Strings        `json:"options" bson:"options"`
+	CheckboxOptions []CheckboxOption      `json:"checkboxOptions" bson:"checkboxOptions"`
+	Validation      ControlValidation     `json:"validation" bson:"validation"`
+	Errors          *validation.ErrorList `json:"errors" bson:"errors"`
 }
 
 // ControlType is the type of a form input element. Some ControlTypes correspond to built-in HTML input type such as
@@ -67,18 +69,13 @@ type ControlValidation struct {
 	Required bool `json:"required" bson:"required"`
 }
 
-func (f *Form) FindControlByName(name string) *Control {
-	for _, control := range f.Controls {
+type Controls []Control
+
+func (c Controls) FindByName(name string) *Control {
+	for _, control := range c {
 		if control.Name == name {
 			return &control
 		}
 	}
 	return nil
-}
-
-// ValuedControl is Control which has undergone validation and contains a Value as well as possible validation Errors.
-type ValuedControl struct {
-	Control
-	Value  []string
-	Errors *validation.ErrorList
 }

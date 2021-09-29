@@ -5,26 +5,21 @@ import (
 	"net/url"
 )
 
-// Form describes the content of an HTML form element as an ordered list of Control elements
+// Form describes the content of an HTML form element as an ordered list of Control elements optionally grouped into
+// sections
 type Form struct {
-	Controls []Control `json:"controls" bson:"controls"`
-	Groups   []Group   `json:"groups" bson:"groups"`
+	Controls Controls              `json:"controls" bson:"controls"`
+	Sections []Section             `json:"sections" bson:"sections"`
+	Errors   *validation.ErrorList `json:"errors" bson:"errors"`
 }
 
-// ValuedForm is a Form which has undergone validation. It is composed of an ordered list of ValuedControl as well as
-// possible validation Errors
-type ValuedForm struct {
-	Controls []ValuedControl
-	Errors   *validation.ErrorList
-}
-
-// NewValuedForm takes a Form, url.Values corresponding to that form (originating from an HTTP form submission) and a
-// validation.ErrorList containing 0 or more validation errors. NewValuedForm combines these three structures into
-// a ValuedForm.
-func NewValuedForm(form Form, values url.Values, errors validation.ErrorList) ValuedForm {
-	var valuedControls []ValuedControl
-	for _, control := range form.Controls {
-		ctrl := ValuedControl{Control: control}
+// NewValidatedForm takes a Form, url.Values corresponding to that form (originating from an HTTP form submission) and a
+// validation.ErrorList containing 0 or more validation errors and combines these three structures into a new Form.
+func NewValidatedForm(phorm Form, values url.Values, errors validation.ErrorList) Form {
+	var result Form
+	var resultControls []Control
+	for _, control := range phorm.Controls {
+		ctrl := control
 		if values != nil {
 			value := values[control.Name]
 			ctrl.Value = value
@@ -33,10 +28,10 @@ func NewValuedForm(form Form, values url.Values, errors validation.ErrorList) Va
 			errs := errors.FindFamily(control.Name)
 			ctrl.Errors = errs
 		}
-		valuedControls = append(valuedControls, ctrl)
+		resultControls = append(resultControls, ctrl)
 	}
-	var result ValuedForm
-	result.Controls = valuedControls
+	result.Controls = resultControls
+	result.Sections = phorm.Sections
 	if errors != nil {
 		errs := errors.Find("")
 		result.Errors = errs

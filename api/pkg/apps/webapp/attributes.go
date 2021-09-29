@@ -163,7 +163,7 @@ func (s *Server) PostAttribute(ctx context.Context, attribute *iam.PartyAttribut
 	}
 	if err != nil {
 		if status, ok := err.(*validation.Status); ok {
-			validatedElements := zipNewAttributeFormcontrolsAndErrors(attribute, status.Errors)
+			validatedElements := zipAttributeAndErrors(attribute, status.Errors)
 			s.json(w, status.Code, validatedElements)
 		} else {
 			s.Error(w, err)
@@ -185,26 +185,23 @@ func (s *Server) PostAttribute(ctx context.Context, attribute *iam.PartyAttribut
 
 }
 
-func zipNewAttributeFormcontrolsAndErrors(attribute *iam.PartyAttributeDefinition, errorList validation.ErrorList) form.ValuedForm {
-	var submittedForm form.ValuedForm
-	var validated []form.ValuedControl
+//zipAttributeAndErrors returns a form.Form containing the validation information, ie the faulty form elements only
+func zipAttributeAndErrors(attribute *iam.PartyAttributeDefinition, errorList validation.ErrorList) form.Form {
+	var result form.Form
 	var errs *validation.ErrorList
+	ctrl := attribute.FormControl
 
 	// name
-	if errs = errorList.FindFamily("id"); errs.Length() > 0 {
-		validated = append(validated, form.ValuedControl{
-			Control: attribute.FormControl,
-			Errors:  errs,
-		})
+	if errs = errorList.FindFamily("name"); errs.Length() > 0 {
+		ctrl.Errors = errs
+		result.Controls = append(result.Controls, ctrl)
 	}
 	// partyTypeIds
 	if errs = errorList.FindFamily("partyTypeIds"); errs.Length() > 0 {
-		validated = append(validated, form.ValuedControl{
-			Control: attribute.FormControl,
-			Errors:  errs,
-		})
+		ctrl.Errors = errs
+		result.Controls = append(result.Controls, ctrl)
 	}
 
-	submittedForm.Controls = validated
-	return submittedForm
+	result.Controls = []form.Control{ctrl}
+	return result
 }

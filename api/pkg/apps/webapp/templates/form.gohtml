@@ -1,0 +1,20 @@
+{{define "form"}}
+    {{$form := .}}
+    {{if gt (len .Sections) 0}}
+        {{range .Sections}}
+            <div class="p-3 mb-3 border border-muted rounded-2">
+                <h4 class="mb-3">{{.Title.ForLocale "en"}}</h4>
+                {{range $name := .ControlNames}}
+                    {{$control := $.Controls.FindByName $name}}
+                    {{if $control}}
+                        {{template "formcontrol" $control}}
+                    {{end}}
+                {{end}}
+            </div>
+        {{end}}
+    {{else}}
+        {{range .Controls}}
+            {{template "formcontrol" .}}
+        {{end}}
+    {{end}}
+{{end}}

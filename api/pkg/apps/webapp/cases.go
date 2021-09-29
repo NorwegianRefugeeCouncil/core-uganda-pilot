@@ -206,7 +206,7 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	valuedKase := form.NewValuedForm(kase.Form, kase.FormData, nil)
+	valuedKase := form.NewValidatedForm(kase.Form, kase.FormData, nil)
 	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "case", map[string]interface{}{
 		"Case":             kase,
 		"CaseForm":         valuedKase,
@@ -293,9 +293,9 @@ func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	var phorm form.ValuedForm
+	var phorm form.Form
 	if caseType != nil {
-		phorm = form.NewValuedForm(caseType.Form, nil, nil)
+		phorm = form.NewValidatedForm(caseType.Form, nil, nil)
 	}
 
 	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "casenew", map[string]interface{}{
