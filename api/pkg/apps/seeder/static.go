@@ -517,12 +517,71 @@ var (
 		},
 	}
 
+	UGProtectionIntake = form.Form{
+		Controls: []form.Control{
+			{
+				Name:  "screeningDate",
+				Type:  form.Date,
+				Label: i18n.Strings{{"en", "Date of screening"}},
+			},
+			{
+				Name:  "riskExposure",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Have you been exposed to any protection risk?"}},
+				Options: []i18n.Strings{
+					{{"en", "Violence"}},
+					{{"en", "Coercion"}},
+					{{"en", "Discrimination"}},
+					{{"en", "Deprivation"}},
+				},
+				Validation: form.ControlValidation{
+					Required: true,
+				},
+			},
+			{
+				Name:  "riskExposureType",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "What type of protection concern experienced?"}},
+				Options: []i18n.Strings{
+					{{"en", "Physical violence"}},
+					{{"en", "Neglect"}},
+					{{"en", "Family separation"}},
+					{{"en", "Arrest"}},
+					{{"en", "Denial of resources"}},
+					{{"en", "Psychosocial violence"}},
+				},
+				Validation: form.ControlValidation{
+					Required: true,
+				},
+			},
+			{
+				Name:  "details",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Provide details (Narrative)"}},
+			},
+			{
+				Name:  "responsePriority",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Response Priority"}},
+				Options: []i18n.Strings{
+					{{"en", "High (follow up requested in 24 hours)"}},
+					{{"en", "Medium (Follow up in 3 days)"}},
+					{{"en", "Low (Follow up in 7 days)"}},
+				},
+				Validation: form.ControlValidation{
+					Required: true,
+				},
+			},
+		},
+	}
+
 	// Case Types for Uganda
 	// - Kampala Response Team
 	UGSituationalAnalysisCaseType      = caseType("0ae90b08-6944-48dc-8f30-5cb325292a8c", "Situational Analysis (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGSituationAnalysis, true)
 	UGIndividualResponseCaseType       = caseType("2f909038-0ce4-437b-af17-72fc5d668b49", "Response (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGIndividualResponse, true)
 	UGReferralCaseType                 = caseType("ecdaf47f-6fa9-48c8-9d10-6324bf932ed7", "Referral (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGReferral, false)
 	UGExternalReferralFollowupCaseType = caseType("2a1b670c-6336-4364-b89d-0e65fc771659", "External Referral Followup (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGExternalReferralFollowup, false)
+	UGProtectionIntakeCaseType         = caseType("da20a49d-3cc9-413c-89b8-ff40e3afe95c", "Intake (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionIntake, true)
 	// - Kampala ICLA Team
 	UGICLAIndividualIntakeCaseType = caseType("31fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Individual Intake (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIndividualIntake, true)
 	UGICLACaseAssessmentCaseType   = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLACaseAssessment, false)
