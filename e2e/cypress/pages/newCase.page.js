@@ -56,11 +56,17 @@ export default class NewCasePage {
                     case 'date':
                         cy.wrap($el).clear().type(data.date);
                         break;
+                    case 'time':
+                        cy.wrap($el).clear().type(data.time);
+                        break;
                     case 'textarea':
                         cy.wrap($el).clear().type(data.textarea);
                         break;
                     case 'dropdown':
                         cy.wrap($el).select(data.dropdown);
+                        break;
+                    case 'boolean':
+                        data.boolean ? cy.wrap($el).check() : cy.wrap($el).uncheck();
                         break;
                     case 'checkbox':
                         cy.wrap($el).each(ck => {

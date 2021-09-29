@@ -38,12 +38,14 @@ func ValidateControlValue(control Control, value []string, path *validation.Path
 		result = validateTextareaControl(control, value, path)
 	case Dropdown:
 		result = validateDropdownControl(control, value, path)
-	case Checkbox, Radio:
+	case Boolean, Checkbox, Radio:
 		result = validateCheckboxControl(control, value, path)
 	case Taxonomy:
 		result = validateTaxonomyControl(control, value, path)
 	case File:
 		result = validateFileControl(control, value, path)
+	case Time:
+		result = validateTimeControl(control, value, path)
 	}
 	return validation.ErrorList{}
 }
@@ -133,6 +135,20 @@ func validateDateControl(control Control, value []string, path *validation.Path)
 	date := value[0]
 	if !validation.IsValidDate(date) {
 		err := validation.Invalid(path, date, validation.InvalidDateDetail)
+		result = append(result, err)
+	}
+
+	return result
+}
+
+func validateTimeControl(control Control, value []string, path *validation.Path) validation.ErrorList {
+	var result validation.ErrorList
+
+	result = validateSingleStringControl(value, path, result)
+
+	date := value[0]
+	if !validation.IsValidTime(date) {
+		err := validation.Invalid(path, date, validation.InvalidTimeDetail)
 		result = append(result, err)
 	}
 

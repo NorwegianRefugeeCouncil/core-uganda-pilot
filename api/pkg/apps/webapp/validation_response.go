@@ -29,7 +29,7 @@ func makeFormValidation(errors validation.ErrorList, f form.Form) formValidation
 		var cvr controlValidationResponse
 		cvr.Name = name
 		cvr.Errors = errorMessagesFromName[name]
-		if control := f.FindControlByName(name); control != nil {
+		if control := f.Controls.FindByName(name); control != nil {
 			cvr.Type = control.Type
 		}
 		result = append(result, cvr)

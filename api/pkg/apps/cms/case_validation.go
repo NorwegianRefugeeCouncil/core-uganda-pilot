@@ -51,7 +51,7 @@ func validateFormData(kase *Case, path *validation.Path, errList validation.Erro
 
 	// range over form data and validate according to control
 	for name, value := range kase.FormData {
-		control := kase.Form.FindControlByName(name)
+		control := kase.Form.Controls.FindByName(name)
 		if control != nil {
 			errs := form.ValidateControlValue(*control, value, path)
 			if len(errs) > 0 {

@@ -61,6 +61,16 @@
       "name": "date"
     },
     {
+      "type": "time",
+      "label": [
+        {
+          "locale": "en",
+          "value": "time"
+        }
+      ],
+      "name": "time"
+    },
+    {
       "type": "textarea",
       "label": [
         {
@@ -92,6 +102,16 @@
             "value": "1"
           }
         ]
+      ]
+    },
+    {
+      "type": "boolean",
+      "name": "boolean",
+      "label": [
+        {
+          "locale": "en",
+          "value": "boolean"
+        }
       ]
     },
     {
