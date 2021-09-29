@@ -517,6 +517,81 @@ var (
 		},
 	}
 
+	UGProtectionIncident = form.Form{
+		Controls: []form.Control{
+			{
+				Name:  "locationOfIncident",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Location of incident"}},
+			},
+			{
+				Name:  "timeOfIncident",
+				Type:  form.Time,
+				Label: i18n.Strings{{"en", "Time of incident"}},
+			},
+			{
+				Name:  "reportedIncidentDate",
+				Type:  form.Date,
+				Label: i18n.Strings{{"en", "Date incident reported"}},
+			},
+			{
+				Name:  "receivedBy",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Received by"}},
+			},
+			{
+				Name:  "vulnerability",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Vulnerability"}},
+				Options: []i18n.Strings{
+					{{"en", "Child at Risk"}},
+					{{"en", "Elder at Risk"}},
+					{{"en", "Single parent"}},
+					{{"en", "Separated Child"}},
+					{{"en", "Disability"}},
+					{{"en", "Woman at Risk"}},
+					{{"en", "Legal and physical protection"}},
+					{{"en", "Medical condition"}},
+					{{"en", "Pregnant/ lactating woman"}},
+				},
+				Validation: form.ControlValidation{
+					Required: true,
+				},
+			},
+			{
+				Name:  "incidentDescription",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Description of the Incident i.e Where, when, what, who involved"}},
+			},
+			{
+				Name:  "incidentHasBeenReportedToPolice",
+				Type:  form.Checkbox,
+				Label: i18n.Strings{{"en", "Has the incident been reported to police?"}},
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: i18n.Strings{{"en", "Has been reported?"}},
+						Value: "yes",
+					},
+				},
+			},
+			{
+				Name:  "comment",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Comment"}},
+			},
+			{
+				Name:  "incidentHasBeenReportedToOthers",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Has the Incident been reported to:"}},
+				Options: []i18n.Strings{
+					{{"en", "UNCHR"}},
+					{{"en", "Other platforms"}},
+				},
+				Multiple: true,
+			},
+		},
+	}
+
 	UGProtectionActionReport = form.Form{
 		Controls: []form.Control{
 			{
@@ -530,13 +605,13 @@ var (
 					{{"en", "Relocation"}},
 					{{"en", "Livelihood"}},
 					{{"en", "Business support"}},
-         },
-        Validation: form.ControlValidation{
-          Required: true,
-        },
+				},
+				Validation: form.ControlValidation{
+					Required: true,
+				},
 			},
 			{
-        Name:  "narrative",
+				Name:  "narrative",
 				Type:  form.Textarea,
 				Label: i18n.Strings{{"en", "Narrative/ Describe the response action agreed."}},
 			},
@@ -580,9 +655,13 @@ var (
 					{{"en", "Arrest"}},
 					{{"en", "Denial of resources"}},
 					{{"en", "Psychosocial violence"}},
-      }, 
-      {
-        Name:  "details",
+				},
+				Validation: form.ControlValidation{
+					Required: true,
+				},
+			},
+			{
+				Name:  "details",
 				Type:  form.Textarea,
 				Label: i18n.Strings{{"en", "Provide details (Narrative)"}},
 			},
@@ -601,7 +680,7 @@ var (
 			},
 		},
 	}
-    
+
 	UGProtectionFollowUp = form.Form{
 		Controls: []form.Control{
 			{
@@ -619,12 +698,12 @@ var (
 				},
 			},
 			{
-				Name:        "agreedFollowUp",
-				Type:        form.Text,
-				Label:       i18n.Strings{{"en", "Agreed follow up with the beneficiary"}},
+				Name:  "agreedFollowUp",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Agreed follow up with the beneficiary"}},
 			},
-		}
-  }
+		},
+	}
 
 	// Case Types for Uganda
 	// - Kampala Response Team
@@ -632,8 +711,10 @@ var (
 	UGIndividualResponseCaseType       = caseType("2f909038-0ce4-437b-af17-72fc5d668b49", "Response (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGIndividualResponse, true)
 	UGReferralCaseType                 = caseType("ecdaf47f-6fa9-48c8-9d10-6324bf932ed7", "Referral (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGReferral, false)
 	UGExternalReferralFollowupCaseType = caseType("2a1b670c-6336-4364-b89d-0e65fc771659", "External Referral Followup (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGExternalReferralFollowup, false)
+	UGProtectionIncidentCaseType       = caseType("f6117a29-db5a-49d7-b564-bf42740ae824", "Incident (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionIncident, false)
 	UGProtectionIntakeCaseType         = caseType("da20a49d-3cc9-413c-89b8-ff40e3afe95c", "Intake (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionIntake, true)
 	UGProtectionFollowUpCaseType       = caseType("dcebe6c8-47cd-4e0f-8562-5680573aed88", "Follow up (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionFollowUp, false)
+
 	// - Kampala ICLA Team
 	UGICLAIndividualIntakeCaseType   = caseType("31fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Individual Intake (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIndividualIntake, true)
 	UGICLACaseAssessmentCaseType     = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLACaseAssessment, false)
