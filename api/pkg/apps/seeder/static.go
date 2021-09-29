@@ -562,6 +562,424 @@ var (
 				Label: i18n.Strings{{"en", "Date of receipt"}},
 			},
 		},
+		Sections: []form.Section{
+			{
+				Title: i18n.Strings{{"en", "FOLLOW UP"}},
+				ControlNames: []string{
+					"dateOfFollowUp",
+					"actionPoints",
+					"notes",
+				},
+			},
+			{
+				Title: i18n.Strings{{"en", "DOCUMENTS RECEIVED FROM BENEFICIARY"}},
+				ControlNames: []string{
+					"documentLink",
+					"dateOfReceipt",
+				},
+			},
+		},
+	}
+
+	UGProtectionReferral = form.Form{
+		Controls: []form.Control{
+			{
+				Name:  "priority",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Priority"}},
+				Options: []i18n.Strings{
+					{{"en", "Low (follow-up within 7 days)"}},
+					{{"en", "Medium (follow-up in 3 days)"}},
+					{{"en", "High (follow-up within 1 day)"}},
+				},
+				Validation: form.ControlValidation{
+					Required: true,
+				},
+			},
+			{
+				Name:  "referredVia",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Referred via"}},
+				Options: []i18n.Strings{
+					{{"en", "Phone (High priority only)"}},
+					{{"en", "Email"}},
+					{{"en", "In person"}},
+				},
+				Validation: form.ControlValidation{
+					Required: true,
+				},
+			},
+			{
+				Name:  "referralDate",
+				Label: i18n.Strings{{"en", "Referral date"}},
+				Type:  form.Date,
+			},
+			{
+				Name:  "receivingAgency",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Receiving Agency"}},
+			},
+			{
+				Name:  "partnerName",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Name of partner case worker"}},
+			},
+			{
+				Name:  "recipientPosition",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Position of person receiving referral"}},
+			},
+			{
+				Name:  "recipientContact",
+				Type:  form.Phone,
+				Label: i18n.Strings{{"en", "Contact of person receiving referral"}},
+			},
+			{
+				Name:  "releaseConsent",
+				Type:  form.Checkbox,
+				Label: i18n.Strings{{"en", "Consent to release information"}},
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: i18n.Strings{{"en", "Yes"}},
+						Value: "yes",
+					},
+					{
+						Label: i18n.Strings{{"en", "No"}},
+						Value: "no",
+					},
+				},
+				Validation: form.ControlValidation{
+					Required: true,
+				},
+			},
+			{
+				Name:  "referralRestriction",
+				Type:  form.Checkbox,
+				Label: i18n.Strings{{"en", "Has person expressed any restriction on referrals? If yes, specify."}},
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: i18n.Strings{{"en", "Yes"}},
+						Value: "yes",
+					},
+				},
+			},
+			{
+				Name:  "specification",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Specification of restriction on referrals"}},
+			},
+			{
+				Name:  "isMinor",
+				Type:  form.Checkbox,
+				Label: i18n.Strings{{"en", "Is a beneficiary a minor?"}},
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: i18n.Strings{{"en", "Yes"}},
+						Value: "yes",
+					},
+					{
+						Label: i18n.Strings{{"en", "No"}},
+						Value: "no",
+					},
+				},
+			},
+			{
+				Name:  "primaryGiver",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Name of the primary giver"}},
+			},
+			{
+				Name:  "relationshipToChild",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Relationship to the child"}},
+			},
+			{
+				Name:  "careGiverInformed",
+				Type:  form.Checkbox,
+				Label: i18n.Strings{{"en", "Is care giver informed of referral?"}},
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: i18n.Strings{{"en", "Yes"}},
+						Value: "yes",
+					},
+				},
+			},
+			{
+				Name:  "noInformationExplanation",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "If not informed, explain"}},
+			},
+			{
+				Name:  "referralReason",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Reason for referral"}},
+			},
+			{
+				Name:  "referralType",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Type of referral"}},
+				Options: []i18n.Strings{
+					{{"en", "Health"}},
+					{{"en", "Livelihood/IGAS"}},
+					{{"en", "Psychosocial support"}},
+					{{"en", "Safety and security"}},
+					{{"en", "Education"}},
+					{{"en", "Shelter"}},
+				},
+			},
+		},
+	}
+
+	UGICLAAppointment = form.Form{
+		Controls: []form.Control{
+			{
+				Name:  "name",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Name"}},
+			},
+			{
+				Name:  "place",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Place"}},
+			},
+			{
+				Name:  "date",
+				Type:  form.Date,
+				Label: i18n.Strings{{"en", "Date"}},
+			},
+			{
+				Name:  "preferredContactMethod",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Preferred Contact Method"}},
+				Options: []i18n.Strings{
+					{{"en", "Email"}},
+					{{"en", "Telephone"}},
+					{{"en", "Other"}},
+				},
+			},
+			{
+				Name:  "appointmentPurpose",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Appointment purpose"}},
+				Options: []i18n.Strings{
+					{{"en", "HLP"}},
+					{{"en", "LCD"}},
+					{{"en", "RSD"}},
+					{{"en", "Employment/Business"}},
+					{{"en", "Other"}},
+				},
+			},
+			{
+				Name:  "preferredDate",
+				Type:  form.Date,
+				Label: i18n.Strings{{"en", "Preferred date"}},
+			},
+		},
+	}
+	UGICLAConsent = form.Form{
+		Controls: []form.Control{
+			{
+				Name:  "consentGiven",
+				Type:  form.Checkbox,
+				Label: i18n.Strings{{"en", "Has the beneficiary consented?"}},
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: i18n.Strings{{"en", "Consent given"}},
+						Value: "yes",
+					},
+				},
+			},
+			{
+				Name:  "consentProofURL",
+				Type:  form.URL,
+				Label: i18n.Strings{{"en", "URL to proof of beneficiary consent."}},
+			},
+		},
+	}
+
+	UGProtectionIncident = form.Form{
+		Controls: []form.Control{
+			{
+				Name:  "locationOfIncident",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Location of incident"}},
+			},
+			{
+				Name:  "timeOfIncident",
+				Type:  form.Time,
+				Label: i18n.Strings{{"en", "Time of incident"}},
+			},
+			{
+				Name:  "reportedIncidentDate",
+				Type:  form.Date,
+				Label: i18n.Strings{{"en", "Date incident reported"}},
+			},
+			{
+				Name:  "receivedBy",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Received by"}},
+			},
+			{
+				Name:  "vulnerability",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Vulnerability"}},
+				Options: []i18n.Strings{
+					{{"en", "Child at Risk"}},
+					{{"en", "Elder at Risk"}},
+					{{"en", "Single parent"}},
+					{{"en", "Separated Child"}},
+					{{"en", "Disability"}},
+					{{"en", "Woman at Risk"}},
+					{{"en", "Legal and physical protection"}},
+					{{"en", "Medical condition"}},
+					{{"en", "Pregnant/ lactating woman"}},
+				},
+			},
+			{
+				Name:  "incidentDescription",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Description of the Incident i.e Where, when, what, who involved"}},
+			},
+			{
+				Name:  "incidentHasBeenReportedToPolice",
+				Type:  form.Checkbox,
+				Label: i18n.Strings{{"en", "Has the incident been reported to police?"}},
+				CheckboxOptions: []form.CheckboxOption{
+					{
+						Label: i18n.Strings{{"en", "Has been reported?"}},
+						Value: "yes",
+					},
+				},
+			},
+			{
+				Name:  "comment",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Comment"}},
+			},
+			{
+				Name:  "incidentHasBeenReportedToOthers",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Has the Incident been reported to:"}},
+				Options: []i18n.Strings{
+					{{"en", "UNCHR"}},
+					{{"en", "Other platforms"}},
+				},
+				Multiple: true,
+			},
+		},
+	}
+
+	UGProtectionActionReport = form.Form{
+		Controls: []form.Control{
+			{
+				Name:  "agreedUponService",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Which service has the beneficiary together with staff agreed to take?"}},
+				Options: []i18n.Strings{
+					{{"en", "Cash support"}},
+					{{"en", "Referral"}},
+					{{"en", "Other (Specify with a narrative)"}},
+					{{"en", "Relocation"}},
+					{{"en", "Livelihood"}},
+					{{"en", "Business support"}},
+				},
+				Validation: form.ControlValidation{
+					Required: true,
+				},
+			},
+			{
+				Name:  "narrative",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Narrative/ Describe the response action agreed."}},
+			},
+			{
+				Name:  "followUp",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Agreed follow up with beneficiary."}},
+			},
+		},
+	}
+
+	UGProtectionIntake = form.Form{
+		Controls: []form.Control{
+			{
+				Name:  "screeningDate",
+				Type:  form.Date,
+				Label: i18n.Strings{{"en", "Date of screening"}},
+			},
+			{
+				Name:  "riskExposure",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Have you been exposed to any protection risk?"}},
+				Options: []i18n.Strings{
+					{{"en", "Violence"}},
+					{{"en", "Coercion"}},
+					{{"en", "Discrimination"}},
+					{{"en", "Deprivation"}},
+				},
+				Validation: form.ControlValidation{
+					Required: true,
+				},
+			},
+			{
+				Name:  "riskExposureType",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "What type of protection concern experienced?"}},
+				Options: []i18n.Strings{
+					{{"en", "Physical violence"}},
+					{{"en", "Neglect"}},
+					{{"en", "Family separation"}},
+					{{"en", "Arrest"}},
+					{{"en", "Denial of resources"}},
+					{{"en", "Psychosocial violence"}},
+				},
+				Validation: form.ControlValidation{
+					Required: true,
+				},
+			},
+			{
+				Name:  "details",
+				Type:  form.Textarea,
+				Label: i18n.Strings{{"en", "Provide details (Narrative)"}},
+			},
+			{
+				Name:  "responsePriority",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Response Priority"}},
+				Options: []i18n.Strings{
+					{{"en", "High (follow up requested in 24 hours)"}},
+					{{"en", "Medium (Follow up in 3 days)"}},
+					{{"en", "Low (Follow up in 7 days)"}},
+				},
+				Validation: form.ControlValidation{
+					Required: true,
+				},
+			},
+		},
+	}
+
+	UGProtectionFollowUp = form.Form{
+		Controls: []form.Control{
+			{
+				Name:  "followUpAfter",
+				Type:  form.Dropdown,
+				Label: i18n.Strings{{"en", "Follow up after"}},
+				Options: []i18n.Strings{
+					{{"en", "1 week"}},
+					{{"en", "2 weeks"}},
+					{{"en", "1 month"}},
+					{{"en", "3 months"}},
+				},
+				Validation: form.ControlValidation{
+					Required: true,
+				},
+			},
+			{
+				Name:  "agreedFollowUp",
+				Type:  form.Text,
+				Label: i18n.Strings{{"en", "Agreed follow up with the beneficiary"}},
+			},
+		},
 	}
 
 	// Case Types for Uganda
@@ -570,10 +988,18 @@ var (
 	UGIndividualResponseCaseType       = caseType("2f909038-0ce4-437b-af17-72fc5d668b49", "Response (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGIndividualResponse, true)
 	UGReferralCaseType                 = caseType("ecdaf47f-6fa9-48c8-9d10-6324bf932ed7", "Referral (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGReferral, false)
 	UGExternalReferralFollowupCaseType = caseType("2a1b670c-6336-4364-b89d-0e65fc771659", "External Referral Followup (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGExternalReferralFollowup, false)
+	UGProtectionReferralCaseType       = caseType("dc18bf9d-e812-43a8-b843-604c23306cd6", "UG Protection Referral (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionReferral, false)
+	UGProtectionIncidentCaseType       = caseType("f6117a29-db5a-49d7-b564-bf42740ae824", "Incident (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionIncident, false)
+	UGProtectionIntakeCaseType         = caseType("da20a49d-3cc9-413c-89b8-ff40e3afe95c", "Intake (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionIntake, true)
+	UGProtectionFollowUpCaseType       = caseType("dcebe6c8-47cd-4e0f-8562-5680573aed88", "Follow up (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionFollowUp, false)
+	UGProtectionActionReportCaseType   = caseType("f4989460-8e76-4d82-aad5-ed2ad3d3d627", "Action Report (UG Protection/Response)", iam.IndividualPartyType.ID, UgandaProtectionTeam.ID, UGProtectionActionReport, false)
+
 	// - Kampala ICLA Team
 	UGICLAIndividualIntakeCaseType = caseType("31fb6d03-2374-4bea-9374-48fc10500f81", "ICLA Individual Intake (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAIndividualIntake, true)
 	UGICLACaseAssessmentCaseType   = caseType("bbf820de-8d10-49eb-b8c9-728993ab0b73", "ICLA Case Assessment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLACaseAssessment, false)
 	UGICLAFollowUpCaseType         = caseType("415be6d4-cf1b-484a-9bad-83acd8474498", "ICLA Follow up (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAFollowUp, false)
+	UGICLAAppointmentCaseType      = caseType("27064ded-fbfe-4197-830c-164a797d5306", "ICLA Appointment (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAAppointment, false)
+	UGICLAConsentCaseType          = caseType("3ad2d524-4dd0-4834-9fc2-47808cf66941", "ICLA Consent (UG ICLA)", iam.IndividualPartyType.ID, UgandaICLATeam.ID, UGICLAConsent, false)
 
 	// Registration Controller Flow for Uganda Intake Process
 	UgandaRegistrationFlow = registrationctrl.RegistrationFlow{

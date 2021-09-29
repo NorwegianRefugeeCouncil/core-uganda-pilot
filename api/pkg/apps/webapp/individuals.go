@@ -307,8 +307,8 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	var teams *iam.TeamList
 	var situationAnalysis *cms.Case
 	var individualResponse *cms.Case
-	var saForm form.ValuedForm
-	var irForm form.ValuedForm
+	var saForm form.Form
+	var irForm form.Form
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
@@ -395,7 +395,7 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		if len(returnedCases.Items) == 1 {
 			kase := returnedCases.Items[0]
 			situationAnalysis = kase
-			saForm = form.NewValuedForm(kase.Form, kase.FormData, nil)
+			saForm = form.NewValidatedForm(kase.Form, kase.FormData, nil)
 		}
 		return err
 	})
@@ -412,7 +412,7 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		if len(cases.Items) == 1 {
 			kase := cases.Items[0]
 			individualResponse = kase
-			irForm = form.NewValuedForm(kase.Form, kase.FormData, nil)
+			irForm = form.NewValidatedForm(kase.Form, kase.FormData, nil)
 		}
 		return err
 	})
@@ -471,12 +471,10 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	progressLabel := status.Label
 	progress := status.Progress
 
-	attributes := form.ValuedForm{}
+	attributes := form.Form{}
 	for _, attribute := range attrs.Items {
-		ctrl := form.ValuedControl{
-			Control: attribute.FormControl,
-			Value:   individual.GetAttribute(attribute.ID),
-		}
+		ctrl := attribute.FormControl
+		ctrl.Value = individual.GetAttribute(attribute.ID)
 		attributes.Controls = append(attributes.Controls, ctrl)
 	}
 
@@ -513,20 +511,18 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 }
 
 // sumbittedFormFromErrors returns a slice of form.Control populated with validated attributes.
-func sumbittedFormFromErrors(errorList *validation.ErrorList, attributes *iam.PartyAttributeDefinitionList, values url.Values) form.ValuedForm {
-	var controls []form.ValuedControl
+func sumbittedFormFromErrors(errorList *validation.ErrorList, attributes *iam.PartyAttributeDefinitionList, values url.Values) form.Form {
+	var controls []form.Control
 	for _, attribute := range attributes.Items {
 		errs := errorList.FindFamily(attribute.ID)
 		value := values.Get(attribute.ID)
 		if len(*errs) > 0 && !shouldIgnoreValidationError(attribute, []string{value}) {
 			control := attribute.FormControl
-			controls = append(controls, form.ValuedControl{
-				Control: control,
-				Errors:  errs,
-			})
+			control.Errors = errs
+			controls = append(controls, control)
 		}
 	}
-	return form.ValuedForm{Controls: controls}
+	return form.Form{Controls: controls}
 }
 
 func shouldIgnoreValidationError(attribute *iam.PartyAttributeDefinition, values []string) bool {

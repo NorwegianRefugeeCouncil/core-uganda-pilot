@@ -25,7 +25,7 @@ type Case struct {
 	// Form is required
 	Form form.Form `json:"form" bson:"form"`
 	// FormData is optional
-	FormData url.Values `json:"formData"`
+	FormData url.Values `json:"formData" bson:"formData"`
 	Done     bool       `json:"done" bson:"done"`
 }
 

@@ -54,11 +54,17 @@ export default class CasePage {
                     case 'date':
                         cy.wrap($el).should('have.value', value.date);
                         break;
+                    case 'time':
+                        cy.wrap($el).should('have.value', value.time);
+                        break;
                     case 'textarea':
                         cy.wrap($el).should('have.value', value.textarea);
                         break;
                     case 'dropdown':
                         cy.wrap($el).should('have.value', value.dropdown);
+                        break;
+                    case 'boolean':
+                        value.boolean ? cy.wrap($el).should('be.checked') : cy.wrap($el).should('not.be.checked');
                         break;
                     case 'checkbox':
                         value.checkbox ? cy.wrap($el).should('be.checked') : cy.wrap($el).should('not.be.checked');

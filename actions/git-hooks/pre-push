@@ -37,7 +37,7 @@ else
 	DC="sudo docker-compose ps"
 fi
 
-CONTAINERS=('hydra_1' 'hydra_db_1' 'hydra_migrate' 'mongo-express' 'mongo_1' 'redis')
+CONTAINERS=('core-hydra' 'core-hydra-db' 'core-hydra-migrate' 'core-mongo-express' 'core-mongo' 'core-redis')
 
 for c in "${CONTAINERS[@]}"; do
 	if ! (eval "$DC" | grep -q "$c" &>/dev/null); then

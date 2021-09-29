@@ -89,6 +89,14 @@ func IsValidDate(s string) bool {
 
 var InvalidDateDetail = "invalid date"
 
+var timeFormat = regexp.MustCompile(`^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$`)
+
+func IsValidTime(s string) bool {
+	return dateFormat.MatchString(s)
+}
+
+var InvalidTimeDetail = "invalid time"
+
 func IsValidURL(s string) bool {
 	_, err := url.ParseRequestURI(s)
 	return err == nil

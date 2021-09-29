@@ -1,16 +1,14 @@
-{{define "file"}}
+{{define "time"}}
     <div class="form mb-3">
         {{template "label" .}}
         <input id="{{.Name}}"
-               data-testid="test-file"
                name="{{.Name}}"
                value="{{if .Value}}{{index .Value 0}}{{end}}"
                class="form-control"
-               type="file"
-                {{/* TODO implement submiting files with forms. Keep this element disabled until then (it requires special care) */}}
-               disabled
-               placeholder="{{.Placeholder.ForLocale "en"}}"
-                {{if .Validation.Required}}required{{end}}
+               type="time"
+               data-testid="test-time"
+               placeholder="{{.Placeholder}}"
+               {{if .Validation.Required}}required{{end}}
                aria-describedby="{{.Name}}Feedback"
                 {{if .Readonly}}disabled readonly{{end}}
         >

@@ -13,6 +13,8 @@
         {{template "textarea" .}}
     {{else if eq .Type "dropdown"}}
         {{template "dropdown" .}}
+    {{else if eq .Type "boolean"}}
+        {{template "boolean" .}}
     {{else if eq .Type "checkbox"}}
         {{template "checkbox" .}}
     {{else if eq .Type "radio"}}
@@ -21,5 +23,7 @@
         {{template "taxonomy" .}}
     {{else if eq .Type "file"}}
         {{template "file" .}}
+    {{else if eq .Type "time"}}
+        {{template "time" .}}
     {{end}}
 {{end}}
