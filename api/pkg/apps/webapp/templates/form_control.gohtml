@@ -9,6 +9,8 @@
         {{template "url" .}}
     {{else if eq .Type "date"}}
         {{template "date" .}}
+    {{else if eq .Type "time"}}
+        {{template "time" .}}
     {{else if eq .Type "textarea"}}
         {{template "textarea" .}}
     {{else if eq .Type "dropdown"}}
@@ -25,7 +27,7 @@
         {{template "file" .}}
     {{else if eq .Type "number"}}
         {{template "number" .}}
-    {{else if eq .Type "time"}}
-        {{template "time" .}}
+    {{else if eq .Type "hint"}}
+        {{template "hint" .}}
     {{end}}
 {{end}}

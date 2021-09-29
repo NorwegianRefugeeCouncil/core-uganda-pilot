@@ -1459,16 +1459,6 @@ var (
 				Label: i18n.Strings{{"en", "Comment on living situation (Narrative)"}},
 			},
 			{
-				Name:  "workType",
-				Type:  form.Textarea,
-				Label: i18n.Strings{{"en", "What do they do?"}},
-			},
-			{
-				Name:  "workType",
-				Type:  form.Textarea,
-				Label: i18n.Strings{{"en", "What do they do?"}},
-			},
-			{
 				Name:  "amountGirls0to5",
 				Type:  form.Number,
 				Label: i18n.Strings{{"en", "Number of 0-5 old girls"}},
@@ -1543,7 +1533,7 @@ var (
 				Options: meetNeedsAbility,
 			},
 			{
-				Name:    "incomeNeeds",
+				Name:    "washNeedsObstacles",
 				Type:    form.Dropdown,
 				Label:   i18n.Strings{{"en", " Main obstacles in meeting WASH needs?"}},
 				Options: obstacleOptions,
