@@ -9,7 +9,7 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Create Case</h4>
-                <form id="form" data-testid='newCaseForm' action="/cases" method="post">
+                <form id="case-form" data-testid='newCaseForm' action="/cases" method="post">
                     <div class="form mb-3">
                         <label for="case-type">Select Case Type</label>
                         <select
@@ -17,6 +17,7 @@
                                 class="form-select"
                                 name="caseTypeId"
                                 data-testid="casetype-select"
+                                required
                         >
                             {{if .CaseTypes}}
                                 <option value="">Choose</option>
@@ -35,11 +36,10 @@
                     {{ if or .ValidatedForm .CaseType}}
                         <div class="form mb-3">
                             <label for="team">Corresponding Team</label>
-                            <select disabled id="team" class="form-select" name="teamIdSelect">
+                            <select disabled id="team" class="form-select" name="teamId">
                                 <option selected value="{{.Team.ID}}">{{.Team.Name}}</option>
                             </select>
                         </div>
-                        <input id="teamId" name="teamId" type="hidden" value="{{.Team.ID}}" />
 
                         <div class="form mb-3">
                             <label for="party">Select Party</label>
@@ -55,13 +55,9 @@
                                 {{end}}
                             </select>
                         </div>
-                        {{with or .ValidatedForm .CaseType}}
-                            {{range .Template.FormElements}}
-                                {{template "formelement" .}}
-                            {{end}}
-                        {{end}}
+                        {{template "form" .Form}}
                     {{end}}
-                    <button class="btn btn-primary" type="submit" data-testid="submitBtn">Save</button>
+                    <button id="case-submit-btn" class="btn btn-primary" data-testid="submitBtn">Save</button>
                 </form>
             </div>
         </div>
@@ -74,9 +70,21 @@
             if (caseTypeId === '') {
                 return;
             }
-            window.location.href = `/cases/new?caseTypeId=${caseTypeId}`;
+            location.assign(`/cases/new?caseTypeId=${caseTypeId}`);
         };
 
+    </script>
+    <script type="module">
+        import { validateClientSide, validateServerSide } from '/static/js/validation.js';
+
+        const form = document.getElementById('case-form');
+        const submitBtn = document.getElementById('case-submit-btn');
+        submitBtn.onclick = event => {
+            event.preventDefault();
+            if (validateClientSide([form])) {
+                validateServerSide([form], form.action);
+            }
+        };
     </script>
     </body>
     </html>

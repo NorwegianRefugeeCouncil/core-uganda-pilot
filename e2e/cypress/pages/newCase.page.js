@@ -2,12 +2,12 @@ import { URL, testId } from '../helpers';
 import testTemplate from '../fixtures/test_casetemplate.json';
 
 const ID = {
-    CASETYPE_SELECT: testId('casetype-select'),
-    CASETYPE_OPTION: testId('caseTypeOption'),
-    PARTY_SELECT: testId('party-select'),
-    PARTY_OPTION: testId('partyOption'),
-    FORM: testId('form'),
-    SUBMIT_BTN: testId('submitBtn'),
+    casetypeSelect: testId('casetype-select'),
+    casetypeOption: testId('caseTypeOption'),
+    partySelect: testId('party-select'),
+    partyOption: testId('partyOption'),
+    form: testId('form'),
+    submitBtn: testId('submitBtn'),
 };
 
 export default class NewCasePage {
@@ -18,58 +18,71 @@ export default class NewCasePage {
     }
 
     visitPage = () => {
-        cy.visit(URL.NEW_CASE);
+        cy.visit(URL.newCase);
         return this;
     };
 
-    getCaseTypeSelect = () => cy.get(ID.CASETYPE_SELECT);
+    getCaseTypeSelect = () => cy.get(ID.casetypeSelect);
     setCaseType = value => {
         this.getCaseTypeSelect().select(value);
         return this;
     };
 
-    getPartySelect = () => cy.get(ID.PARTY_SELECT);
+    getPartySelect = () => cy.get(ID.partySelect);
     setParty = value => {
         this.getPartySelect().select(value);
         return this;
     };
 
     fillOutForm = data => {
-        for (const { type } of testTemplate.formElements) {
+        for (const { type } of testTemplate.controls) {
             cy.get(testId('test-' + type)).then($el => {
-                const tag = $el[0].tagName;
-                if (tag === 'INPUT') {
-                    switch ($el[0].getAttribute('type')) {
-                        case 'text':
-                            cy.wrap($el).clear().type(data.text);
-                            break;
-                        case 'email':
-                            cy.wrap($el).clear().type(data.email);
-                            break;
-                        case 'tel':
-                            cy.wrap($el).clear().type(data.phone);
-                            break;
-                        case 'url':
-                            cy.wrap($el).clear().type(data.url);
-                            break;
-                        case 'date':
-                            cy.wrap($el).clear().type(data.date);
-                            break;
-                        case 'checkbox':
-                            cy.wrap($el).each(ck => {
-                                if (ck.val() === data.checkbox) cy.wrap(ck).check();
-                                else cy.wrap(ck).uncheck();
-                            });
-                            break;
-                        case 'radio':
-                            cy.wrap($el).each(ck => {
-                                if (ck.val() === data.radio) cy.wrap(ck).check();
-                            });
-                    }
-                } else if (tag === 'SELECT') {
-                    cy.wrap($el).select(data.dropdown);
-                } else if (tag === 'TEXTAREA') {
-                    cy.wrap($el).clear().type(data.textarea);
+                switch (type) {
+                    case 'text':
+                        cy.wrap($el).clear().type(data.text);
+                        break;
+                    case 'number':
+                        cy.wrap($el).clear().type(data.number);
+                        break;
+                    case 'email':
+                        cy.wrap($el).clear().type(data.email);
+                        break;
+                    case 'tel':
+                        cy.wrap($el).clear().type(data.phone);
+                        break;
+                    case 'url':
+                        cy.wrap($el).clear().type(data.url);
+                        break;
+                    case 'date':
+                        cy.wrap($el).clear().type(data.date);
+                        break;
+                    case 'time':
+                        cy.wrap($el).clear().type(data.time);
+                        break;
+                    case 'textarea':
+                        cy.wrap($el).clear().type(data.textarea);
+                        break;
+                    case 'dropdown':
+                        cy.wrap($el).select(data.dropdown);
+                        break;
+                    case 'boolean':
+                        data.boolean ? cy.wrap($el).check() : cy.wrap($el).uncheck();
+                        break;
+                    case 'checkbox':
+                        cy.wrap($el).each(ck => {
+                            if (ck.val() === data.checkbox) cy.wrap(ck).check();
+                            else cy.wrap(ck).uncheck();
+                        });
+                        break;
+                    case 'radio':
+                        cy.wrap($el).each(ck => {
+                            if (ck.val() === data.radio) cy.wrap(ck).check();
+                        });
+                        break;
+                    case 'file':
+                    case 'taxonomy':
+                    default:
+                        break;
                 }
             });
         }
@@ -77,6 +90,6 @@ export default class NewCasePage {
     };
 
     submitForm = () => {
-        return cy.get(ID.SUBMIT_BTN).click();
+        return cy.get(ID.submitBtn).click().wait(200);
     };
 }

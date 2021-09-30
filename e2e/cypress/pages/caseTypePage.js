@@ -16,7 +16,7 @@ export default class CaseTypePage {
     }
 
     visitPage = () => {
-        cy.visit(URL.NEW_CASETYPE);
+        cy.visit(URL.newCasetype);
         return this;
     };
 

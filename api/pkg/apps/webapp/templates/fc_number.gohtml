@@ -1,0 +1,19 @@
+{{define "number"}}
+    <div class="form mb-3">
+        {{template "label" .}}
+        <input id="{{.Name}}"
+               name="{{.Name}}"
+               value="{{if .Value}}{{index .Value 0}}{{end}}"
+               class="form-control"
+               type="number"
+               maxlength="200"
+               placeholder="{{.Placeholder.ForLocale "en"}}"
+               data-testid="test-number"
+               {{if .Validation.Required}}required{{end}}
+               aria-describedby="{{.Name}}Feedback"
+                {{if .Readonly}}disabled readonly{{end}}
+        >
+        {{template "description" .}}
+        {{template "fc_feedback" .}}
+    </div>
+{{end}}

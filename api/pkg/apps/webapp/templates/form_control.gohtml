@@ -1,0 +1,35 @@
+{{define "formcontrol"}}
+    {{ if eq .Type "text"}}
+        {{template "text" .}}
+    {{else if eq .Type "email"}}
+        {{template "email" .}}
+    {{else if eq .Type "tel"}}
+        {{template "tel" .}}
+    {{else if eq .Type "url"}}
+        {{template "url" .}}
+    {{else if eq .Type "date"}}
+        {{template "date" .}}
+    {{else if eq .Type "time"}}
+        {{template "time" .}}
+    {{else if eq .Type "textarea"}}
+        {{template "textarea" .}}
+    {{else if eq .Type "dropdown"}}
+        {{template "dropdown" .}}
+    {{else if eq .Type "boolean"}}
+        {{template "boolean" .}}
+    {{else if eq .Type "checkbox"}}
+        {{template "checkbox" .}}
+    {{else if eq .Type "radio"}}
+        {{template "radio" .}}
+    {{else if eq .Type "taxonomy"}}
+        {{template "taxonomy" .}}
+    {{else if eq .Type "file"}}
+        {{template "file" .}}
+    {{else if eq .Type "number"}}
+        {{template "number" .}}
+    {{else if eq .Type "hint"}}
+        {{template "hint" .}}
+    {{else if eq .Type "subtitle"}}
+        {{template "subtitle" .}}
+    {{end}}
+{{end}}

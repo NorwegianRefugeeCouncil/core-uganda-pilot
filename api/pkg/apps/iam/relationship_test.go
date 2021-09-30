@@ -13,7 +13,7 @@ func (s *Suite) TestRelationship() {
 
 func (s *Suite) testRelationshipAPI() {
 	// CREATE relationship
-	relationship := s.mockRelationships(1)[0]
+	relationship := mockRelationships(1)[0]
 	relationship.RelationshipTypeID = newUUID()
 	relationship.FirstPartyID = newUUID()
 	relationship.SecondPartyID = newUUID()
@@ -68,7 +68,7 @@ func (s *Suite) testRelationshipListFilter() {
 	const nRelationshipTypes = 3
 	const nParties = 4
 
-	relationships := s.mockRelationships(nRelationships)
+	relationships := mockRelationships(nRelationships)
 	relationshipTypes := []string{}
 	parties := []string{}
 

@@ -11,21 +11,23 @@ import (
 )
 
 type Server struct {
-	environment           string
-	router                *mux.Router
-	attributeStore        *AttributeStore
-	partyStore            *PartyStore
-	partyTypeStore        *PartyTypeStore
-	relationshipStore     *RelationshipStore
-	relationshipTypeStore *RelationshipTypeStore
-	individualStore       *IndividualStore
-	teamStore             *TeamStore
-	countryStore          *CountryStore
-	membershipStore       *MembershipStore
-	nationalityStore      *NationalityStore
-	hydraAdmin            admin.ClientService
-	mongoClientFn         utils.MongoClientFn
-	hydraHTTPClient       *http.Client
+	environment                     string
+	router                          *mux.Router
+	partyAttributeDefinitionStore   *PartyAttributeDefinitionStore
+	partyStore                      *PartyStore
+	partyTypeStore                  *PartyTypeStore
+	relationshipStore               *RelationshipStore
+	relationshipTypeStore           *RelationshipTypeStore
+	identificationDocumentStore     *IdentificationDocumentStore
+	identificationDocumentTypeStore *IdentificationDocumentTypeStore
+	individualStore                 *IndividualStore
+	teamStore                       *TeamStore
+	countryStore                    *CountryStore
+	membershipStore                 *MembershipStore
+	nationalityStore                *NationalityStore
+	hydraAdmin                      admin.ClientService
+	mongoClientFn                   utils.MongoClientFn
+	hydraHTTPClient                 *http.Client
 }
 
 func NewServerOrDie(ctx context.Context, o *server.GenericServerOptions) *Server {
@@ -63,32 +65,43 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 		return nil, err
 	}
 
+	identificationDocumentStore, err := newIdentificationDocumentStore(ctx, o.MongoClientFn, o.MongoDatabase)
+	if err != nil {
+		return nil, err
+	}
+
+	identificationDocumentTypeStore, err := newIdentificationDocumentTypeStore(ctx, o.MongoClientFn, o.MongoDatabase)
+	if err != nil {
+		return nil, err
+	}
+
 	hydraAdmin := o.HydraAdminClient.Admin
 
 	srv := &Server{
-		environment:           o.Environment,
-		mongoClientFn:         o.MongoClientFn,
-		attributeStore:        attributeStore,
-		countryStore:          NewCountryStore(partyStore),
-		partyStore:            partyStore,
-		partyTypeStore:        partyTypeStore,
-		relationshipStore:     relationshipStore,
-		relationshipTypeStore: relationshipTypeStore,
-		individualStore:       NewIndividualStore(o.MongoClientFn, o.MongoDatabase),
-		teamStore:             NewTeamStore(partyStore),
-		membershipStore:       NewMembershipStore(relationshipStore),
-		nationalityStore:      NewNationalityStore(relationshipStore),
-		hydraAdmin:            hydraAdmin,
-		hydraHTTPClient:       o.HydraHTTPClient,
+		environment:                     o.Environment,
+		mongoClientFn:                   o.MongoClientFn,
+		partyAttributeDefinitionStore:   attributeStore,
+		countryStore:                    NewCountryStore(partyStore),
+		partyStore:                      partyStore,
+		partyTypeStore:                  partyTypeStore,
+		relationshipStore:               relationshipStore,
+		relationshipTypeStore:           relationshipTypeStore,
+		identificationDocumentStore:     identificationDocumentStore,
+		identificationDocumentTypeStore: identificationDocumentTypeStore, individualStore: NewIndividualStore(o.MongoClientFn, o.MongoDatabase),
+		teamStore:        NewTeamStore(partyStore),
+		membershipStore:  NewMembershipStore(relationshipStore),
+		nationalityStore: NewNationalityStore(relationshipStore),
+		hydraAdmin:       hydraAdmin,
+		hydraHTTPClient:  o.HydraHTTPClient,
 	}
 
 	router := mux.NewRouter()
 	router.Use(srv.withAuth())
 
-	router.Path(server.AttributesEndpoint).Methods("GET").HandlerFunc(srv.listAttributes)
-	router.Path(server.AttributesEndpoint).Methods("POST").HandlerFunc(srv.postAttributes)
-	router.Path(path.Join(server.AttributesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getAttribute)
-	router.Path(path.Join(server.AttributesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putAttribute)
+	router.Path(server.AttributesEndpoint).Methods("GET").HandlerFunc(srv.listPartyAttributeDefinitions)
+	router.Path(server.AttributesEndpoint).Methods("POST").HandlerFunc(srv.postPartyAttributeDefinition)
+	router.Path(path.Join(server.AttributesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getPartyAttributeDefinition)
+	router.Path(path.Join(server.AttributesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putPartyAttributeDefinition)
 
 	router.Path(server.IndividualsEndpoint).Methods("GET").HandlerFunc(srv.listIndividuals)
 	router.Path(server.IndividualsEndpoint).Methods("POST").HandlerFunc(srv.postIndividual)
@@ -134,6 +147,17 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	router.Path(server.CountriesEndpoint).Methods("POST").HandlerFunc(srv.postCountry)
 	router.Path(path.Join(server.CountriesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getCountry)
 	router.Path(path.Join(server.CountriesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putCountry)
+
+	router.Path(server.IdentificationDocumentsEndpoint).Methods("GET").HandlerFunc(srv.listIdentificationDocuments)
+	router.Path(server.IdentificationDocumentsEndpoint).Methods("POST").HandlerFunc(srv.postIdentificationDocument)
+	router.Path(path.Join(server.IdentificationDocumentsEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getIdentificationDocument)
+	router.Path(path.Join(server.IdentificationDocumentsEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putIdentificationDocument)
+	router.Path(path.Join(server.IdentificationDocumentsEndpoint, "{id}")).Methods("DELETE").HandlerFunc(srv.deleteIdentificationDocument)
+
+	router.Path(server.IdentificationDocumentTypesEndpoint).Methods("GET").HandlerFunc(srv.listIdentificationDocumentTypes)
+	router.Path(server.IdentificationDocumentTypesEndpoint).Methods("POST").HandlerFunc(srv.postIdentificationDocumentType)
+	router.Path(path.Join(server.IdentificationDocumentTypesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.getIdentificationDocumentType)
+	router.Path(path.Join(server.IdentificationDocumentTypesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putIdentificationDocumentType)
 
 	srv.router = router
 

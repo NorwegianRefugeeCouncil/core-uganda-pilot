@@ -4,6 +4,7 @@
 A case management tool for the humanitarian sector - keep track of beneficiaries and services.
 
 - [ARCHITECTURE](ARCHITECTURE.md): get to know the repo
+- [GLOSSARY](GLOSSARY.md): understand commonly used terms
 - [CONTRIBUTING](CONTRIBUTING.md): contribution guidelines
 
 ## Getting started:

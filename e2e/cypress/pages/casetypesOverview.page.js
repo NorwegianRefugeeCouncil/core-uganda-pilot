@@ -10,7 +10,7 @@ export default class CasetypesOverviewPage {
     }
 
     visitPage = () => {
-        cy.visit(URL.CASETYPES);
+        cy.visit(URL.casetypes);
         return this;
     };
 

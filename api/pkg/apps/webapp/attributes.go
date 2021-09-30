@@ -3,14 +3,14 @@ package webapp
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/apps/iam"
+	"github.com/nrc-no/core/pkg/form"
+	"github.com/nrc-no/core/pkg/i18n"
 	"github.com/nrc-no/core/pkg/sessionmanager"
+	"github.com/nrc-no/core/pkg/validation"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
-	"net/url"
-	"strings"
 )
 
 func (s *Server) Attributes(w http.ResponseWriter, req *http.Request) {
@@ -18,7 +18,7 @@ func (s *Server) Attributes(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	if req.Method == "POST" {
-		s.PostAttribute(ctx, &iam.Attribute{}, w, req)
+		s.PostAttribute(ctx, &iam.PartyAttributeDefinition{}, w, req)
 		return
 	}
 
@@ -30,7 +30,7 @@ func (s *Server) Attributes(w http.ResponseWriter, req *http.Request) {
 
 	countryID := s.GetCountryFromLoginUser(w, req)
 
-	list, err := iamClient.Attributes().List(ctx, iam.AttributeListOptions{
+	list, err := iamClient.PartyAttributeDefinitions().List(ctx, iam.PartyAttributeDefinitionListOptions{
 		CountryIDs: []string{iam.GlobalCountry.ID, countryID},
 	})
 	if err != nil {
@@ -60,6 +60,7 @@ func (s *Server) NewAttribute(w http.ResponseWriter, req *http.Request) {
 				&iam.IndividualPartyType,
 			},
 		},
+		"ControlTypes": form.ControlTypes,
 	}); err != nil {
 		s.Error(w, err)
 		return
@@ -77,24 +78,25 @@ func (s *Server) Attribute(w http.ResponseWriter, req *http.Request) {
 
 	id, ok := mux.Vars(req)["id"]
 	if !ok || len(id) == 0 {
-		err := fmt.Errorf("No id in path")
+		err := errors.New("no id in path")
 		s.Error(w, err)
 		return
 	}
 
-	attribute, err := iamClient.Attributes().Get(ctx, id)
+	partyAttributeDefinition, err := iamClient.PartyAttributeDefinitions().Get(ctx, id)
 	if err != nil {
 		s.Error(w, err)
 		return
 	}
 
 	if req.Method == "POST" {
-		s.PostAttribute(ctx, attribute, w, req)
+		s.PostAttribute(ctx, partyAttributeDefinition, w, req)
 		return
 	}
 
 	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "attribute", map[string]interface{}{
-		"Attribute": attribute,
+		"PartyAttributeDefinition": partyAttributeDefinition,
+		"ControlTypes":             form.ControlTypes,
 		"PartyTypes": iam.PartyTypeList{
 			Items: []*iam.PartyType{
 				&iam.IndividualPartyType,
@@ -107,7 +109,7 @@ func (s *Server) Attribute(w http.ResponseWriter, req *http.Request) {
 
 }
 
-func (s *Server) PostAttribute(ctx context.Context, attribute *iam.Attribute, w http.ResponseWriter, req *http.Request) {
+func (s *Server) PostAttribute(ctx context.Context, attribute *iam.PartyAttributeDefinition, w http.ResponseWriter, req *http.Request) {
 	iamClient, err := s.IAMClient(req)
 	if err != nil {
 		s.Error(w, err)
@@ -121,106 +123,85 @@ func (s *Server) PostAttribute(ctx context.Context, attribute *iam.Attribute, w 
 
 	values := req.Form
 
-	translationMap := s.makeTranslationMap(values, w)
-
-	var translations []iam.AttributeTranslation
-	for _, translation := range translationMap {
-		translations = append(translations, *translation)
-	}
-
 	isNew := false
 	if len(attribute.ID) == 0 {
 		attribute.ID = uuid.NewV4().String()
 		isNew = true
 	}
 
-	attribute.Name = values.Get("name")
-	attribute.PartyTypeIDs = values["partyTypes"]
-	attribute.Translations = translations
+	attribute.ID = values.Get("id")
+	attribute.PartyTypeIDs = values["partyTypeIds"]
 	attribute.IsPersonallyIdentifiableInfo = values.Get("isPii") == "on"
 
-	var out *iam.Attribute
+	// form control
+	name := values.Get("name")
+	// TODO add dynamic locale
+	label := i18n.Strings{{"en", values.Get("label")}}
+	required := values.Get("isRequired") == "on"
+	controlType := form.ControlType(values["controlType"][0])
+	attribute.FormControl = *form.NewControl(name, controlType, label, required)
+
+	// TODO infer country from subject
+	//subject, ok := ctx.Value("Subject").(string)
+	//if !ok {
+	//	s.Error(w, errors.New("couldn't get subject id string"))
+	//	return
+	//}
+	//user, err := iamClient.Individuals().Get(ctx, subject)
+	//if err != nil {
+	//	s.Error(w, err)
+	//	return
+	//}
+	attribute.CountryID = iam.UgandaCountry.ID
+
+	var storedAttribute *iam.PartyAttributeDefinition
 
 	if isNew {
-		var err error
-		out, err = iamClient.Attributes().Create(ctx, attribute)
-		if err != nil {
-			s.Error(w, err)
-			return
-		}
-
-		err = s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
-			Message: fmt.Sprintf("Attribute \"%s\" successfully created", attribute.Name),
-			Theme:   "success",
-		})
-		if err != nil {
-			s.Error(w, err)
-			return
-		}
-
+		storedAttribute, err = iamClient.PartyAttributeDefinitions().Create(ctx, attribute)
 	} else {
-		var err error
-		out, err = iamClient.Attributes().Update(ctx, attribute)
-		if err != nil {
+		storedAttribute, err = iamClient.PartyAttributeDefinitions().Update(ctx, attribute)
+	}
+	if err != nil {
+		if status, ok := err.(*validation.Status); ok {
+			validatedElements := zipAttributeAndErrors(attribute, status.Errors)
+			s.json(w, status.Code, validatedElements)
+		} else {
 			s.Error(w, err)
-			return
 		}
-
-		err = s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
-			Message: fmt.Sprintf("Attribute \"%s\" successfully updated.", attribute.Name),
-			Theme:   "success",
-		})
-		if err != nil {
-			s.Error(w, err)
-			return
-		}
-
+		return
 	}
 
-	w.Header().Set("Location", "/settings/attributes/"+out.ID)
+	err = s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
+		Message: "New attribute definition successfully saved",
+		Theme:   "success",
+	})
+	if err != nil {
+		s.Error(w, err)
+		return
+	}
+
+	w.Header().Set("Location", "/settings/attributes/"+storedAttribute.ID)
 	w.WriteHeader(http.StatusSeeOther)
 
 }
 
-func (s *Server) makeTranslationMap(values url.Values, w http.ResponseWriter) map[string]*iam.AttributeTranslation {
-	translationMap := map[string]*iam.AttributeTranslation{}
+//zipAttributeAndErrors returns a form.Form containing the validation information, ie the faulty form elements only
+func zipAttributeAndErrors(attribute *iam.PartyAttributeDefinition, errorList validation.ErrorList) form.Form {
+	var result form.Form
+	var errs *validation.ErrorList
+	ctrl := attribute.FormControl
 
-	unexpectedKeyErrMsg := "unexpected translation key. Expected 'translation.{locale}.{short/long}' format"
-
-	for key, v := range values {
-		if !strings.HasPrefix(key, "translations.") {
-			continue
-		}
-		parts := strings.Split(key, ".")
-		if len(parts) != 3 {
-			s.Error(w, errors.New(unexpectedKeyErrMsg))
-			return nil
-		}
-
-		locale := parts[1]
-		part := parts[2]
-
-		if part != "long" && part != "short" {
-			s.Error(w, errors.New(unexpectedKeyErrMsg))
-			return nil
-		}
-
-		if _, ok := translationMap[locale]; !ok {
-			translationMap[locale] = &iam.AttributeTranslation{
-				Locale: locale,
-			}
-		}
-		t := translationMap[locale]
-
-		if part == "long" {
-			t.LongFormulation = v[0]
-		} else if part == "short" {
-			t.ShortFormulation = v[0]
-		} else {
-			s.Error(w, errors.New(unexpectedKeyErrMsg))
-			return nil
-		}
-
+	// name
+	if errs = errorList.FindFamily("name"); errs.Length() > 0 {
+		ctrl.Errors = errs
+		result.Controls = append(result.Controls, ctrl)
 	}
-	return translationMap
+	// partyTypeIds
+	if errs = errorList.FindFamily("partyTypeIds"); errs.Length() > 0 {
+		ctrl.Errors = errs
+		result.Controls = append(result.Controls, ctrl)
+	}
+
+	result.Controls = []form.Control{ctrl}
+	return result
 }

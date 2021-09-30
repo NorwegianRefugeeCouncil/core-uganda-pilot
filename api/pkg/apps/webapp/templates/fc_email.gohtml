@@ -1,0 +1,19 @@
+{{define "email"}}
+    <div class="form mb-3">
+        {{template "label" .}}
+        <input id="{{.Name}}"
+               name="{{.Name}}"
+               value="{{if .Value}}{{index .Value 0}}{{end}}"
+               class="form-control"
+               type="email"
+               maxlength="80"
+               data-testid="test-email"
+               placeholder="{{.Placeholder.ForLocale "en"}}"
+               {{if .Validation.Required}}required{{end}}
+               aria-describedby="{{.Name}}Feedback"
+                {{if .Readonly}}disabled readonly{{end}}
+        >
+        {{template "description" .}}
+        {{template "fc_feedback" .}}
+    </div>
+{{end}}

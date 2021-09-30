@@ -26,6 +26,7 @@ FROM scratch
 
 COPY --from=builder /build/cmd/main /
 COPY --from=builder /build/pkg/apps/webapp/templates /static/webapp/templates
+COPY --from=builder /build/pkg/apps/webapp/static /static/webapp/static
 COPY --from=builder /build/pkg/apps/login/templates /static/login/templates
 
 # Command to run

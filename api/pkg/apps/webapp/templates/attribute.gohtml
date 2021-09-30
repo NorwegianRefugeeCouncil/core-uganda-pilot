@@ -14,49 +14,91 @@
                 <div class="card">
                     <div class="card-body">
 
-                        <form action="/settings/attributes{{if .Attribute}}/{{.Attribute.ID}}{{end}}" method="post">
+                        <form id="attributes-form"
+                              action="/settings/attributes{{if .PartyAttributeDefinition}}/{{.PartyAttributeDefinition.ID}}{{end}}"
+                              method="post">
 
-                            <input type="hidden" id="id-input" name="id" value="{{.Attribute.ID}}">
+                            <input type="hidden" id="id-input" name="id" value="{{.PartyAttributeDefinition.ID}}">
 
                             <!-- Name -->
-                            <div class="form-floating mb-3 shadow-sm font-monospace">
-                                <input id="name-input"
+                            <div class="mb-3 shadow-sm font-monospace">
+                                <label for="name" class="form-label">Name</label>
+                                <input id="id"
                                        name="name"
                                        type="text"
                                        class="form-control"
-                                       value=""
-                                       placeholder="Name"
+                                       value="{{.PartyAttributeDefinition.FormControl.Name}}"
                                        data-testid="name"
+                                       required
+                                       maxlength="40"
+                                       aria-describedby="nameFeedback"
                                 >
-                                <label for="name-input">Name</label>
+                                <div id="nameFeedback" class="invalid-feedback">This field is required</div>
                             </div>
 
                             <hr />
 
-                            <!-- Value Type -->
-                            <div class="form-floating mb-3 shadow-sm">
-                                <select id="value-type-input"
-                                        name="valueType"
+                            <div class="mb-3">
+                                <label for="label" class="form-label">Label</label>
+                                <input id="label" name="label"
+                                       value="{{if .PartyAttributeDefinition}}{{(index .PartyAttributeDefinition.FormControl.Label 0).Value}}{{end}}"
+                                       class="form-control" type="text" data-testid="label" required
+                                       aria-describedby="labelFeedback">
+                                <div id="labelFeedback" class="invalid-feedback">This field is required</div>
+                            </div>
+
+                            <!-- Control Type -->
+                            <div class="mb-3 shadow-sm">
+                                <label for="controlType">Control Type</label>
+                                <select id="controlType"
+                                        name="controlType"
                                         class="form-select"
-                                        data-testid="type"
+                                        data-testid="control-type"
+                                        required
+                                        aria-describedby="controlTypeFeedback"
                                 >
-                                    <option>String</option>
+                                    {{range .ControlTypes}}
+                                        <option value="{{.}}"
+                                                {{if $.PartyAttributeDefinition}}{{if eq $.PartyAttributeDefinition.FormControl.Type .}}selected{{end}}{{end}}>{{.}}</option>
+                                    {{end}}
                                 </select>
-                                <label for="value-type-input">Value Type</label>
+                                <div id="controlTypeFeedback" class="invalid-feedback">This field is required</div>
                             </div>
 
                             <!-- Subject Type -->
-                            <div class="form-floating mb-3 shadow-sm">
+                            <div class="mb-3 shadow-sm">
+                                <label for="subject-type-input">Subject Type</label>
                                 <select id="subject-type-input"
-                                        name="partyTypes"
+                                        name="partyTypeIds"
                                         class="form-select"
                                         data-testid="subject"
+                                        required
+                                        multiple
+                                        aria-describedby="subjectTypeFeedback"
                                 >
-                                    {{range .PartyTypes.Items}}
-                                        <option value="{{.ID}}">{{.Name}}</option>
+                                    {{range $option := .PartyTypes.Items}}
+                                        <option value="{{.ID}}"
+                                                {{range $id := $.PartyAttributeDefinition.PartyTypeIDs}}
+                                                    {{if eq $option.ID $id}}selected{{end}}
+                                                {{end}}
+                                        >{{.Name}}</option>
                                     {{end}}
                                 </select>
-                                <label for="subject-type-input">Subject Type</label>
+                                <div id="subjectTypeFeedback" class="invalid-feedback">Please choose at least one
+                                    option
+                                </div>
+                            </div>
+
+                            <!-- Required -->
+                            <div class="form-check form-switch mb-3">
+                                <input id="is-required"
+                                       name="isRequired"
+                                       type="checkbox"
+                                       class="form-check-input"
+                                       data-testid="required-checkbox"
+                                       {{if .PartyAttributeDefinition.FormControl.Validation.Required}}checked{{end}}
+                                >
+                                <label class="form-check-label" for="is-required">Is Required</label>
                             </div>
 
                             <!-- Personally Identifiable Info -->
@@ -66,32 +108,13 @@
                                        type="checkbox"
                                        class="form-check-input"
                                        data-testid="personal-info-chkbx"
-                                       {{if .Attribute.IsPersonallyIdentifiableInfo}}checked{{end}}
+                                       {{if .PartyAttributeDefinition.IsPersonallyIdentifiableInfo}}checked{{end}}
                                 >
-                                <label class="form-check-label" for="is-pii-input">
-                                    Is Personally Identifiable Information
-                                </label>
+                                <label class="form-check-label" for="is-pii-input">Is Personally Identifiable
+                                    Information</label>
                             </div>
 
-                            <!-- Translations -->
-                            <div class="card mb-3">
-                                <div class="card-body pb-0">
-                                    <h5 class="card-title">Translations</h5>
-                                </div>
-                                <div id="translations" class="list-group list-group-flush mt-2 border-bottom-0">
-                                    <!-- Templated -->
-                                </div>
-                                <div id="language-picker-container" class="card-body border-top">
-                                    <div class="form-floating shadow-sm">
-                                        <select id="language-picker" class="form-select" data-testid="language-select">
-                                            <!-- Templated -->
-                                        </select>
-                                        <label for="language-picker">Language</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button class="btn btn-primary" data-testid="save-btn">Save</button>
+                            <button id="form-submit-btn" class="btn btn-primary" data-testid="save-btn">Save</button>
 
                         </form>
                     </div>
@@ -100,206 +123,20 @@
         </div>
     </div>
 
-    </body>
+    <script type="module">
+        import { validateClientSide, validateServerSide } from '/static/js/validation.js';
 
-    <script type="application/javascript">
-
-        const { BehaviorSubject, combineLatest, fromEvent } = rxjs;
-        const { map } = rxjs.operators;
-
-        let languages = [
-            { value: 'en', name: 'English' },
-            { value: 'fr', name: 'French' },
-        ];
-
-        {{ if .Attribute }}
-        let stateSubject = new BehaviorSubject({
-            attribute: {
-                name: "{{.Attribute.Name}}",
-                partyTypeIds: "{{.Attribute.PartyTypeIDs}}",
-                isPii: {{.Attribute.IsPersonallyIdentifiableInfo}},
-                translations: [
-                    {{range .Attribute.Translations}}
-                    {
-                        locale: "{{.Locale}}",
-                        long: "{{.LongFormulation}}",
-                        short: "{{.ShortFormulation}}",
-                    },
-                    {{end}}
-                ],
-            },
-            partyTypes: [
-                {{range .PartyTypes.Items}}
-                { value: "{{.ID}}", name: "{{.Name}}" }
-                {{end}}
-            ],
-        });
-        {{else }}
-        let stateSubject = new BehaviorSubject({
-            attribute: {
-                name: '',
-                valueType: '',
-                partyTypes: ["{{(index .PartyTypes.Items 0).ID}}"],
-                isPii: false,
-                translations: [],
-            },
-            partyTypes: [
-                {{range .PartyTypes.Items}}
-                { value: "{{.ID}}", name: "{{.Name}}" },
-                {{end}}
-            ],
-        });
-        {{end}}
-
-        let state$ = stateSubject.asObservable();
-        let attribute$ = state$.pipe(map(s => s.attribute));
-        let name$ = attribute$.pipe(map(a => a.name));
-        let valueType$ = attribute$.pipe(map(a => a.valueType));
-        let partyTypes = attribute$.pipe(map(a => a.partyTypes));
-        let isPii$ = attribute$.pipe(map(a => a.isPii));
-        let translations$ = attribute$.pipe(map(a => a.translations));
-        let availableLanguages$ = translations$.pipe(
-            map(translations => {
-                return languages.filter(l => {
-                    return !translations.find(t => t.locale === l.value);
-                });
-            }),
-        );
-
-
-        const nameInput = document.getElementById('name-input');
-        nameInput.onchange = event => {
-            const state = {
-                ...stateSubject.value,
-                attribute: {
-                    ...stateSubject.value.attribute,
-                    name: event.target.value,
-                },
-            };
-            stateSubject.next(state);
-        };
-
-
-        name$.subscribe(n => {
-            document.getElementById('name-input').value = n;
-        });
-
-        let removeTranslation = (locale) => {
-            stateSubject.next({
-                ...stateSubject.value,
-                attribute: {
-                    ...stateSubject.value.attribute,
-                    translations: stateSubject.value.attribute.translations.filter(t => t.locale !== locale),
-                },
-            });
-        };
-
-        document.addEventListener('DOMContentLoaded', function() {
-            let languagePicker = document.getElementById('language-picker');
-            languagePicker.onchange = (ev) => {
-                const state = {
-                    ...stateSubject.value,
-                    attribute: {
-                        ...stateSubject.value.attribute,
-                        translations: [
-                            ...stateSubject.value.attribute.translations,
-                            {
-                                locale: ev.target.value,
-                                long: '',
-                                short: '',
-                            },
-                        ],
-                    },
-                };
-                stateSubject.next(state);
-            };
-
-            availableLanguages$.subscribe(l => {
-                languagePicker.innerHTML = '';
-                languagePicker.appendChild(languageOptionTemplate('', ''));
-                for (let language of l) {
-                    languagePicker.appendChild(languageOptionTemplate(language.value, language.name));
-                }
-                let pickerContainer = document.getElementById('language-picker-container');
-                if (l.length === 0) {
-                    pickerContainer.classList.add('d-none');
-                } else {
-                    pickerContainer.classList.remove('d-none');
-                }
-            });
-
-            translations$.subscribe(t => {
-                let translations = document.getElementById('translations');
-                translations.innerHTML = '';
-                console.log(t);
-                for (let translation of t) {
-                    let tpl = translationTemplate(translation.locale, translation.long, translation.short);
-                    translations.appendChild(tpl);
-                }
-            });
-
-        });
-
-        const languageOptionTemplate = (value, name) => {
-            let option = `<option value="${value}">${name}</option>`;
-            return new DOMParser().parseFromString(option, 'text/html').getElementsByTagName('option')[0];
-        };
-
-        const findLanguageName = (locale) => {
-            let l = languages.find(l => l.value === locale);
-            if (l) {
-                return l.name;
+        const form = document.getElementById('attributes-form');
+        const submitBtn = document.getElementById('form-submit-btn');
+        submitBtn.onclick = event => {
+            event.preventDefault();
+            if (validateClientSide([form])) {
+                validateServerSide([form], form.action);
             }
         };
 
-        function translationTemplate(language, long, short) {
-            const doc = `
-                <div class="list-group-item py-0">
-                    <div class="d-flex flex-row align-items-center">
-                        <div class="h-100 pe-3 text-center" style="width: 4.5rem" data-testid="${language}-display">
-                            ${findLanguageName(language)}
-                        </div>
-                        <div class="flex-grow-1 border-start ps-3 border-end pe-3">
-                            <div class="py-3">
-                                <div class="form-floating mb-3 shadow-sm">
-                                    <input id="i81n-long-${language}"
-                                           name="translations.${language}.long"
-                                           class="form-control"
-                                           type="text"
-                                           value="${long}"
-                                           placeholder="Long Description"
-                                           data-testid="${language}-translation-long"
-                                    >
-                                    <label for="i81n-long-${language}">Long</label>
-                                </div>
-
-                                <div class="form-floating shadow-sm">
-                                    <input id="i81n-short-${language}"
-                                           name="translations.${language}.short"
-                                           class="form-control"
-                                           type="text"
-                                           value="${short}"
-                                           placeholder="Short Description"
-                                           data-testid="${language}-translation-short"
-                                    >
-                                    <label for="i81n-short-${language}">Short</label>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div class="h-100">
-                            <button class="btn-close ms-3"
-                                    type="button"
-                                    onclick="removeTranslation('${language}')"
-                                    data-testid="${language}-remove-btn"
-                                    />
-                        </div>
-                    </div>
-                </div>`;
-            return new DOMParser().parseFromString(doc, 'text/html').getElementsByTagName('div')[0];
-        }
-
     </script>
+    </body>
 
     </html>
 {{end}}

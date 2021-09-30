@@ -58,6 +58,18 @@ func Seed(ctx context.Context, mongoClientFn utils.MongoClientFn, databaseName s
 		}
 	}
 
+	for _, obj := range identificationDocumentTypes {
+		if err := seedMongo(ctx, mongoClient, databaseName, "identificationDocumentTypes", bson.M{"id": obj.ID}, obj); err != nil {
+			return err
+		}
+	}
+
+	for _, obj := range identificationDocuments {
+		if err := seedMongo(ctx, mongoClient, databaseName, "identificationDocuments", bson.M{"id": obj.ID}, obj); err != nil {
+			return err
+		}
+	}
+
 	for _, obj := range caseTypes {
 		if err := seedMongo(ctx, mongoClient, databaseName, "caseTypes", bson.M{"id": obj.ID}, obj); err != nil {
 			return err

@@ -38,7 +38,7 @@ func (c ClientSet) RelationshipTypes() RelationshipTypeClient {
 	}
 }
 
-func (c ClientSet) Attributes() AttributeClient {
+func (c ClientSet) PartyAttributeDefinitions() PartyAttributeDefinitionClient {
 	return &RESTAttributeClient{
 		c: c.c,
 	}
@@ -70,6 +70,18 @@ func (c ClientSet) Nationalities() NationalityClient {
 
 func (c ClientSet) Individuals() IndividualClient {
 	return &RESTIndividualClient{
+		c: c.c,
+	}
+}
+
+func (c ClientSet) IdentificationDocumentTypes() IdentificationDocumentTypeClient {
+	return &RESTIdentificationDocumentTypeClient{
+		c: c.c,
+	}
+}
+
+func (c ClientSet) IdentificationDocuments() IdentificationDocumentClient {
+	return &RESTIdentificationDocumentClient{
 		c: c.c,
 	}
 }

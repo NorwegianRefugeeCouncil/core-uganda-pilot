@@ -76,6 +76,7 @@ type Options struct {
 	WebAppBlockKeyFile1     string
 	WebAppSessionKeyFile2   string
 	WebAppBlockKeyFile2     string
+	WebAppStaticDir         string
 
 	// CMS
 	CMSBasePath string
@@ -131,6 +132,7 @@ func NewOptions() *Options {
 		WebAppIAMHost:           defaultUrl.Host,
 		WebAppCMSScheme:         defaultUrl.Scheme,
 		WebAppCMSHost:           defaultUrl.Host,
+		WebAppStaticDir:         "tmp/static",
 		CMSBasePath:             "/apis/cms",
 		IAMBasePath:             "/apis/iam",
 		LoginBasePath:           "/auth",
@@ -194,6 +196,7 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 	// Web App
 	fs.StringVar(&o.WebAppBasePath, "web-base-path", o.WebAppBasePath, "Base path for the Web module")
 	fs.StringVar(&o.WebAppTemplateDirectory, "web-templates-directory", o.WebAppTemplateDirectory, "Directory for the web app templates")
+	fs.StringVar(&o.WebAppStaticDir, "web-static-directory", o.WebAppStaticDir, "Directory for the web app static files")
 	fs.StringVar(&o.WebAppClientID, "web-client-id", o.WebAppClientID, "Web app OAuth2 client ID")
 	fs.StringVar(&o.WebAppClientSecret, "web-client-secret", o.WebAppClientSecret, "Web app OAuth2 client secret")
 	fs.StringVar(&o.WebAppClientSecretFile, "web-client-secret-file", o.WebAppClientSecretFile, "Web app OAuth2 client secret file")
@@ -324,7 +327,7 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		}
 	}
 
-	time.Sleep(5 * time.Second)
+	time.Sleep(2 * time.Second)
 
 	logrus.Infof("discovering openid configuration")
 	openIdConf, err := hydraPublicClient.Public.DiscoverOpenIDConfiguration(&public.DiscoverOpenIDConfigurationParams{
@@ -419,6 +422,8 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		logrus.WithError(err).Errorf("failed to create redis store")
 		panic(err)
 	}
+
+	logrus.SetLevel(logrus.TraceLevel)
 
 	completedOptions := CompletedOptions{
 		Options:                    o,

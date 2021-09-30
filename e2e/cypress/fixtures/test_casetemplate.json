@@ -1,101 +1,198 @@
 {
-  "formElements": [
+  "controls": [
     {
       "type": "text",
-      "attributes": {
-        "label": "text",
-        "name": "testText",
-        "description": "text description",
-        "placeholder": "text placeholder"
-      }
+      "label": [
+        {
+          "locale": "en",
+          "value": "text"
+        }
+      ],
+      "name": "text"
+    },
+    {
+      "type": "number",
+      "label": [
+        {
+          "locale": "en",
+          "value": "number"
+        }
+      ],
+      "name": "number"
     },
     {
       "type": "email",
-      "attributes": {
-        "label": "email",
-        "name": "testEmail",
-        "description": "email description",
-        "placeholder": "example@email.com"
-      }
+      "label": [
+        {
+          "locale": "en",
+          "value": "email"
+        }
+      ],
+      "name": "email"
     },
     {
       "type": "tel",
-      "attributes": {
-        "label": "phone",
-        "name": "testPhone",
-        "description": "phone description",
-        "placeholder": "0555 555555"
-      }
+      "label": [
+        {
+          "locale": "en",
+          "value": "tel"
+        }
+      ],
+      "name": "tel"
     },
     {
       "type": "url",
-      "attributes": {
-        "label": "url",
-        "name": "testUrl",
-        "description": "url description",
-        "placeholder": "https://www.example.com"
-      }
+      "label": [
+        {
+          "locale": "en",
+          "value": "url"
+        }
+      ],
+      "name": "url"
     },
     {
       "type": "date",
-      "attributes": {
-        "label": "date",
-        "name": "testDate",
-        "description": "date description"
-      }
+      "label": [
+        {
+          "locale": "en",
+          "value": "date"
+        }
+      ],
+      "name": "date"
+    },
+    {
+      "type": "time",
+      "label": [
+        {
+          "locale": "en",
+          "value": "time"
+        }
+      ],
+      "name": "time"
     },
     {
       "type": "textarea",
-      "attributes": {
-        "label": "textarea",
-        "name": "testTextarea",
-        "description": "textarea description",
-        "placeholder": "textarea placeholder"
-      }
+      "label": [
+        {
+          "locale": "en",
+          "value": "textarea"
+        }
+      ],
+      "name": "textarea"
     },
     {
       "type": "dropdown",
-      "attributes": {
-        "label": "dropdown",
-        "name": "testDropdown",
-        "description": "dropdown description",
-        "options": [
-          "0",
-          "1"
+      "label": [
+        {
+          "locale": "en",
+          "value": "dropdown"
+        }
+      ],
+      "name": "dropdown",
+      "options": [
+        [
+          {
+            "locale": "en",
+            "value": "0"
+          }
+        ],
+        [
+          {
+            "locale": "en",
+            "value": "1"
+          }
         ]
-      }
+      ]
+    },
+    {
+      "type": "boolean",
+      "name": "boolean",
+      "label": [
+        {
+          "locale": "en",
+          "value": "boolean"
+        }
+      ]
     },
     {
       "type": "checkbox",
-      "attributes": {
-        "label": "checkbox",
-        "name": "testCheckbox",
-        "description": "checkbox description",
-        "checkboxOptions": [
-          {
-            "Label": "0"
-          },
-          {
-            "Label": "1"
-          }
-        ]
-      }
+      "label": [
+        {
+          "locale": "en",
+          "value": "checkbox"
+        }
+      ],
+      "name": "checkbox",
+      "checkboxOptions": [
+        {
+          "label": [
+            {
+              "locale": "en",
+              "value": "0"
+            }
+          ],
+          "value": "0"
+        },
+        {
+          "label": [
+            {
+              "locale": "en",
+              "value": "1"
+            }
+          ],
+          "value": "1"
+        }
+      ]
     },
     {
       "type": "radio",
-      "attributes": {
-        "label": "radio",
-        "name": "testRadio",
-        "description": "radio description",
-        "checkboxOptions": [
-          {
-            "Label": "0"
-          },
-          {
-            "Label": "1"
-          }
-        ]
-      }
+      "label": [
+        {
+          "locale": "en",
+          "value": "radio"
+        }
+      ],
+      "name": "radio",
+      "checkboxOptions": [
+        {
+          "label": [
+            {
+              "locale": "en",
+              "value": "0"
+            }
+          ],
+          "value": "0"
+        },
+        {
+          "label": [
+            {
+              "locale": "en",
+              "value": "1"
+            }
+          ],
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "type": "taxonomy",
+      "label": [
+        {
+          "locale": "en",
+          "value": "taxonomy"
+        }
+      ],
+      "name": "taxonomy"
+    },
+    {
+      "type": "file",
+      "label": [
+        {
+          "locale": "en",
+          "value": "file"
+        }
+      ],
+      "name": "file"
     }
   ]
 }

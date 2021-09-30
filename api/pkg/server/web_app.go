@@ -101,6 +101,7 @@ func (c CompletedOptions) CreateWebAppServer(ctx context.Context, genericOptions
 	webAppOptions := &webapp.ServerOptions{
 		GenericServerOptions: genericOptions,
 		TemplateDirectory:    c.WebAppTemplateDirectory,
+		StaticDir:            c.WebAppStaticDir,
 		BaseURL:              c.BaseURL + c.WebAppBasePath,
 		IAMHost:              c.WebAppIAMHost,
 		IAMScheme:            c.WebAppIAMScheme,

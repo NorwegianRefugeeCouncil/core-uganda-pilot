@@ -61,10 +61,8 @@
 
         <div class="card mb-4">
             <div class="card-body">
-                <form action="/cases/{{$caseId}}" method="post">
-                    {{range .Case.Template.FormElements}}
-                        {{template "formelement" .}}
-                    {{end}}
+                <form id="case-form" action="/cases/{{$caseId}}" method="post">
+                    {{template "form" .CaseForm}}
                     {{if not .Case.Done}}
                         <div class="form-check mb-3">
                             <input id="done-input"
@@ -78,10 +76,11 @@
                                 Done
                             </label>
                         </div>
-                        <button class="mb-5 btn btn-primary"
-                                type="submit"
+                        <button id="case-submit-btn"
+                                class="mb-5 btn btn-primary"
                                 data-testid="save-btn"
-                                {{ if .ReferralCaseType}}disabled{{end}}>
+                                {{ if .ReferralCaseType}}disabled{{end}}
+                        >
                             Save
                         </button>
                     {{end}}
@@ -184,7 +183,8 @@
                     <div class='card-body'>
                         <form action='/comments' method='post'>
                             <input type='hidden' name='case_id' value='{{$caseId}}'>
-                            <textarea placeholder='Leave a comment' class='form-control mb-3' name='body'></textarea>
+                            <textarea placeholder='Leave a comment' class='form-control mb-3' name='body'
+                                      maxlength="500"></textarea>
                             <button class='btn btn-success'>Comment</button>
                         </form>
                     </div>
@@ -194,7 +194,18 @@
         </div>
 
     </div>
+    <script type="module">
+        import { validateServerSide, validateClientSide } from '/static/js/validation.js';
 
+        const submitBtn = document.querySelector('#case-submit-btn');
+        if (submitBtn != null) {
+            const form = document.querySelector('#case-form');
+            submitBtn.onclick = event => {
+                event.preventDefault();
+                if (validateClientSide([form])) validateServerSide([form], form.action);
+            };
+        }
+    </script>
     </body>
     </html>
 {{end}}

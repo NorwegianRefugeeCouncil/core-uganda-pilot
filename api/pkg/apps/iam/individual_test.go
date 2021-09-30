@@ -14,13 +14,13 @@ func (s *Suite) TestIndividual() {
 
 func (s *Suite) testIndividualAPI() {
 	// CREATE
-	individual := s.mockIndividuals(1)[0]
-	created, err := s.client.Individuals().Create(s.Ctx, individual)
+	create := mockIndividual()
+	created, err := s.client.Individuals().Create(s.Ctx, create)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
-	individual.ID = created.ID
-	assert.Equal(s.T(), created, individual)
+	create.ID = created.ID
+	assert.Equal(s.T(), create, created)
 
 	// GET
 	get, err := s.client.Individuals().Get(s.Ctx, created.ID)
@@ -30,13 +30,15 @@ func (s *Suite) testIndividualAPI() {
 	assert.Equal(s.T(), created, get)
 
 	// UPDATE
-	individual.Attributes.Set(FullNameAttribute.ID, "updated")
-	individual.Attributes.Set(DisplayNameAttribute.ID, "updated")
-	updated, err := s.client.Individuals().Update(s.Ctx, individual)
+	update := created
+	update.Attributes.Set(FullNameAttribute.ID, "updated")
+	update.Attributes.Set(DisplayNameAttribute.ID, "updated")
+	updated, err := s.client.Individuals().Update(s.Ctx, update)
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}
-	assert.Equal(s.T(), individual, updated)
+	assert.Equal(s.T(), created.ID, updated.ID)
+	assert.Equal(s.T(), update, updated)
 
 	// GET
 	get, err = s.client.Individuals().Get(s.Ctx, updated.ID)
@@ -59,7 +61,7 @@ func (s *Suite) testIndividualListFilter() {
 	nAttributes := 5
 
 	// Make a couple Individuals
-	individuals := s.mockIndividuals(nIndividuals)
+	individuals := mockIndividuals(nIndividuals)
 	// ... and a couple PartyTypes
 	partyTypes := make([]string, 0)
 	for i := 0; i < nPartyTypes; i++ {

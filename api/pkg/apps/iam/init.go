@@ -63,7 +63,7 @@ func (s *Server) initRelationshipType(ctx context.Context) error {
 }
 
 func (s *Server) initAttribute(ctx context.Context) error {
-	for _, attribute := range []Attribute{
+	for _, attribute := range []PartyAttributeDefinition{
 		// "Built-in" Attributes
 		FullNameAttribute,
 		DisplayNameAttribute,
@@ -71,7 +71,7 @@ func (s *Server) initAttribute(ctx context.Context) error {
 		EMailAttribute,
 		TeamNameAttribute,
 
-		// Individual Attributes
+		// Global Individual Attributes
 		DisplacementStatusAttribute,
 		GenderAttribute,
 		ConsentToNrcDataUseAttribute,
@@ -85,35 +85,66 @@ func (s *Server) initAttribute(ctx context.Context) error {
 		SensoryImpairmentIntensityAttribute,
 		MentalImpairmentAttribute,
 		MentalImpairmentIntensityAttribute,
-		NationalityAttribute,
-		SpokenLanguagesAttribute,
-		PreferredLanguageAttribute,
-		PhysicalAddressAttribute,
+		// -- End of Global Individual Attributes
+
+		// Uganda Individual Attributes
+		UGNationalityAttribute,
+		UGSpokenLanguagesAttribute,
+		UGPreferredLanguageAttribute,
+		UGPhysicalAddressAttribute,
 		PrimaryPhoneNumberAttribute,
 		SecondaryPhoneNumberAttribute,
 		TertiaryPhoneNumberAttribute,
-		PreferredMeansOfContactAttribute,
-		RequireAnInterpreterAttribute,
-		CanInitiateContactAttribute,
-		InstructionOnMakingContactAttribute,
-		// -- End of Individual Attributes
+		UGPreferredMeansOfContactAttribute,
+		UGRequireAnInterpreterAttribute,
+		UGCanInitiateContactAttribute,
+		UGInstructionOnMakingContactAttribute,
+		UGIdentificationDateAttribute,
+		UGIdentificationLocationAttribute,
+		UGIdentificationSourceAttribute,
+		UGAdmin2Attribute,
+		UGAdmin3Attribute,
+		UGAdmin4Attribute,
+		UGAdmin5Attribute,
+		// -- End of Uganda Individual Attributes
 
-		// Customisation for Uganda Demo
-		IdentificationDateAttribute,
-		IdentificationLocationAttribute,
-		IdentificationSourceAttribute,
-		Admin2Attribute,
-		Admin3Attribute,
-		Admin4Attribute,
-		Admin5Attribute,
-
-
+		// Colombia Individual Attributes
+		COPrimaryNationalityAttribute,
+		COSecondaryNationalityAttribute,
+		COMaritalStatusAttribute,
+		COBeneficiaryTypeAttribute,
+		COEthnicityAttribute,
+		CORegistrationDateAttribute,
+		CORegistrationLocationAttribute,
+		COSourceOfIdentificationAttribute,
+		COTypeOfSettlementAttribute,
+		COEmergencyCareAttribute,
+		CODurableSolutionsAttribute,
+		COHardToReachAttribute,
+		COAttendedCovid19Attribute,
+		COIntroSourceAttribute,
+		COAdmin1Attribute,
+		COAdmin2Attribute,
+		COAdmin3Attribute,
+		COAdmin4Attribute,
+		COAdmin5Attribute,
+		COJobOrEnterpriseAttribute,
+		COTypeOfEnterpriseAttribute,
+		COTimeInBusinessAttribute,
+		COTypeOfEmploymentAttribute,
+		COFormsOfIncomeGenerationAttribute,
+		COLegalRepresentativeNameAttribue,
+		COLegalRepresentativeAdditionalInfoAttribute,
+		COReasonsForRepresentationAttribute,
+		COGuardianshipIsLegalAttribute,
+		COAbleToGiveLegalConsentAttribute,
+		// -- End of Colombia Individual Attributes
 	} {
-		if err := s.attributeStore.create(ctx, &attribute); err != nil {
+		if err := s.partyAttributeDefinitionStore.create(ctx, &attribute); err != nil {
 			if !mongo.IsDuplicateKeyError(err) {
 				return err
 			}
-			if err := s.attributeStore.update(ctx, &attribute); err != nil {
+			if err := s.partyAttributeDefinitionStore.update(ctx, &attribute); err != nil {
 				return err
 			}
 		}

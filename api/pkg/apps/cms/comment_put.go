@@ -13,8 +13,8 @@ func (s *Server) PutComment(w http.ResponseWriter, req *http.Request) {
 	id := mux.Vars(req)["id"]
 
 	var payload Comment
-	if err := s.Bind(req, &payload); err != nil {
-		s.Error(w, err)
+	if err := s.bind(req, &payload); err != nil {
+		s.error(w, err)
 		return
 	}
 
@@ -26,10 +26,10 @@ func (s *Server) PutComment(w http.ResponseWriter, req *http.Request) {
 		return newComment, nil
 	})
 	if err != nil {
-		s.Error(w, err)
+		s.error(w, err)
 		return
 	}
 
-	s.JSON(w, http.StatusOK, updated)
+	s.json(w, http.StatusOK, updated)
 
 }
