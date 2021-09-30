@@ -128,7 +128,7 @@ function applyFormInputElementValidation(element, name, errors) {
     feedback.innerHTML = '';
     for (const error of errors) {
         const p = document.createElement('p');
-        p.textContent = error.detail;
+        p.textContent = error;
         feedback.appendChild(p);
     }
 }
