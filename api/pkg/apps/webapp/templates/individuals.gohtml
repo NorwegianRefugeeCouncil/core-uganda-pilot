@@ -16,7 +16,7 @@
             {{ if eq .RedirectID ""}}
                 <a href="/cases/new?caseTypeId={{.CaseTypeID}}&partyId={{$.Individual.ID}}" type="button" class="btn btn-outline-primary">Create a new {{.Label}}</a>
             {{ else }}
-                <a href="/cases/{{.RedirectID}}" type="button" class="btn btn-outline-secondary">View existing {{.Label}}</a>
+                <a href="/cases/{{.RedirectID}}" type="button" class="btn btn-outline-secondary">{{.Label}}</a>
             {{ end}}
 
         {{ end }}
