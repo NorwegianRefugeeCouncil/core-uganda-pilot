@@ -6,6 +6,7 @@ import (
 	"github.com/nrc-no/core/cmd/app"
 	"github.com/nrc-no/core/pkg/apps/cms"
 	"github.com/nrc-no/core/pkg/apps/iam"
+	"github.com/nrc-no/core/pkg/form"
 	"github.com/nrc-no/core/pkg/server"
 	"github.com/tkrajina/typescriptify-golang-structs/typescriptify"
 )
@@ -13,10 +14,10 @@ import (
 func generateTypescriptTypes() error {
 	types := []interface{}{
 		// iam types
-		iam.Attribute{},
-		iam.AttributeTranslation{},
-		iam.AttributeList{},
-		iam.PartyAttributes{},
+		iam.PartyAttributeDefinition{},
+		iam.PartyAttributeDefinitionList{},
+		iam.PartyAttributeDefinitionListOptions{},
+		iam.AttributeMap{},
 		iam.Party{},
 		iam.PartyList{},
 		iam.PartyType{},
@@ -44,7 +45,6 @@ func generateTypescriptTypes() error {
 		iam.PartyTypeListOptions{},
 		iam.RelationshipListOptions{},
 		iam.RelationshipTypeListOptions{},
-		iam.AttributeListOptions{},
 		iam.TeamListOptions{},
 		iam.CountryListOptions{},
 		iam.StaffListOptions{},
@@ -59,10 +59,12 @@ func generateTypescriptTypes() error {
 		cms.CaseTypeList{},
 		cms.Comment{},
 		cms.CommentList{},
-		cms.CaseTemplate{},
 		cms.CaseListOptions{},
 		cms.CaseTypeListOptions{},
 		cms.CommentListOptions{},
+
+		// other types
+		form.Form{},
 	}
 	converter := typescriptify.New()
 	for _, typ := range types {
