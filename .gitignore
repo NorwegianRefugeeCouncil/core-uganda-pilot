@@ -1,10 +1,9 @@
-.vscode
-.idea/workspace.xml
-.idea/usage.statistics.xml
-.idea/shelf
+.vscode/
+.idea/
+!.idea/runConfigurations/
+actions/__tmp/
+api/tmp/
+vendor/
 *.DS_Store
 *.pem
 *.out
-actions/__tmp
-api/tmp
-vendor/
