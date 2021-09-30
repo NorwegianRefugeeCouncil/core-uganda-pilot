@@ -113,7 +113,6 @@ var (
 	BasilKampalaRegistrationTeamMembership     = membership("93526175-024c-415e-8c5d-eb256ca55f2f", Basil, KampalaRegistrationTeam)
 	CassieKampalaRegistrationTeamMembership    = membership("ae7aa402-ec5f-4ad8-907f-19aaf730d7c2", Cassie, KampalaRegistrationTeam)
 	ChristineKampalaRegistrationTeamMembership = membership("f8e0c3b1-1f64-4c79-8828-905eda8282cb", Christine, KampalaRegistrationTeam)
-	ClaudiaKampalaRegistrationTeamMembership   = membership("3a3544c5-d245-4e19-b08e-b0663ab7e9d4", Claudia, KampalaRegistrationTeam)
 	ColetteKampalaRegistrationTeamMembership   = membership("874735b8-e03d-4eac-8542-05dbd533ede6", Colette, KampalaRegistrationTeam)
 	CourtneyKampalaRegistrationTeamMembership  = membership("95eb28f9-1790-4238-a108-cb216fb4a116", Courtney, KampalaRegistrationTeam)
 	DenisKampalaRegistrationTeamMembership     = membership("2cbc0360-1ede-4f85-ba15-abb82420d2de", Denis, KampalaRegistrationTeam)
