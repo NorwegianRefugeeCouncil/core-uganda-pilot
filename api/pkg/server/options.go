@@ -132,7 +132,7 @@ func NewOptions() *Options {
 		WebAppIAMHost:           defaultUrl.Host,
 		WebAppCMSScheme:         defaultUrl.Scheme,
 		WebAppCMSHost:           defaultUrl.Host,
-		WebAppStaticDir:         "tmp/static",
+		WebAppStaticDir:         "pkg/apps/webapp/static",
 		CMSBasePath:             "/apis/cms",
 		IAMBasePath:             "/apis/iam",
 		LoginBasePath:           "/auth",

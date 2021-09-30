@@ -3,16 +3,12 @@ type FormInputElement = HTMLInputElement | HTMLTextAreaElement | HTMLSelectEleme
 interface ServerSideFormcontrolValidation {
   type: string;
   name: string;
-  errors: ValidationError[];
+  errors: string[];
 }
 
 interface ClientSideFormcontrolValidation {
   formInputElement: FormInputElement;
-  errors: ValidationError[];
-}
-
-interface ValidationError {
-  detail: string;
+  errors: string[];
 }
 
 // validateServerSide initiates and handles server-side validation for document form entities. The handler sends form
@@ -130,7 +126,7 @@ function applyClientSideValidation(validation: ClientSideFormcontrolValidation[]
 
 }
 
-function applyFormInputElementValidation(element: FormInputElement | HTMLDivElement, name: string, errors: ValidationError[]) {
+function applyFormInputElementValidation(element: FormInputElement | HTMLDivElement, name: string, errors: string[]) {
   element.classList.add('is-invalid');
   element.setAttribute('aria-describedby', `${name}Feedback`);
   // Append error messages
@@ -141,7 +137,7 @@ function applyFormInputElementValidation(element: FormInputElement | HTMLDivElem
   feedback.innerHTML = '';
   for (const error of errors) {
     const p = document.createElement('p');
-    p.textContent = error.detail;
+    p.textContent = error;
     feedback.appendChild(p);
   }
 }
@@ -169,7 +165,7 @@ function removeFormInputElementValidation(formInputElement: FormInputElement) {
 
 }
 
-function appendFeedbackChild(element: FormInputElement | HTMLDivElement, name: string, errors: ValidationError[]): HTMLDivElement {
+function appendFeedbackChild(element: FormInputElement | HTMLDivElement, name: string, errors: string[]): HTMLDivElement {
   const div = document.createElement('div');
   div.id = `${name}Feedback`;
   div.className = 'invalid-feedback';

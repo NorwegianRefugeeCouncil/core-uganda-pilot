@@ -434,22 +434,6 @@ func (s *Server) redirectAfterPost(w http.ResponseWriter, req *http.Request, pos
 	return
 }
 
-// unmarshalCaseFormData retrieves entries from a url.Values and applies them to a cms.Case object via a cms.CaseTemplate.
-func unmarshalCaseFormData(c *cms.Case, phorm form.Form, values url.Values) error {
-	c.CaseTypeID = values.Get("caseTypeId")
-	c.PartyID = values.Get("partyId")
-	c.Done = values.Get("done") == "on"
-	c.ParentID = values.Get("parentId")
-	c.TeamID = values.Get("teamId")
-	var formcontrols []form.Control
-	for _, control := range phorm.Controls {
-		control.DefaultValue = values[control.Name]
-		formcontrols = append(formcontrols, control)
-	}
-	c.Form = form.Form{Controls: formcontrols}
-	return nil
-}
-
 type displayComment struct {
 	*cms.Comment
 	Author  *iam.Party
