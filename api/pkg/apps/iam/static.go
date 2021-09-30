@@ -89,7 +89,7 @@ var (
 				{"en", "Email"},
 				{"es", "Email"},
 			},
-			Validation: form.ControlValidation{Required: true},
+			Validation: form.ControlValidation{Required: false},
 		},
 		IsPersonallyIdentifiableInfo: true,
 		PartyTypeIDs: []string{
