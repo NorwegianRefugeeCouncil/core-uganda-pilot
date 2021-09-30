@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func (s *Server) GetProfile(w http.ResponseWriter, req *http.Request)(*Claims) {
+func (s *Server) GetProfile(w http.ResponseWriter, req *http.Request) *Claims {
 	session, err := s.sessionManager.Get(req)
 	if err != nil {
 		s.Error(w, err)
@@ -40,7 +40,7 @@ func (s *Server) GetTeamFromLoginUser(w http.ResponseWriter, req *http.Request) 
 	})
 
 	var teamID string
-	if len((*membership).Items) == 1 {
+	if len((*membership).Items) > 0 {
 		teamID = (*membership).Items[0].TeamID
 	} else {
 		logrus.Errorf("User %s has no team or more than one team", claims.Subject)
@@ -57,10 +57,10 @@ func (s *Server) GetCountryFromLoginUser(w http.ResponseWriter, req *http.Reques
 		return ""
 	}
 	teamID := s.GetTeamFromLoginUser(w, req)
-	nationality, err:= iamClient.Nationalities().List(ctx, iam.NationalityListOptions{TeamID: teamID})
+	nationality, err := iamClient.Nationalities().List(ctx, iam.NationalityListOptions{TeamID: teamID})
 
 	var countryID string
-	if len((*nationality).Items) == 1 {
+	if len((*nationality).Items) > 0 {
 		countryID = (*nationality).Items[0].CountryID
 	} else {
 		logrus.Errorf("Team %s has no nationality or more than one nationality", teamID)
