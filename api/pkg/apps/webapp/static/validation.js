@@ -13,11 +13,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 // to the appropriate location.
 export function validateServerSide(forms, redirectPath = '') {
     return __awaiter(this, void 0, void 0, function* () {
+        let redirect = redirectPath !== null && redirectPath !== void 0 ? redirectPath : location.origin;
         const validations = yield Promise.allSettled(forms.map((formcontrol) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const validation = yield validateSubForm(formcontrol);
                 removeFormValidation(formcontrol);
-                if (validation != null) {
+                if (validation instanceof Response) {
+                    redirect = validation.url;
+                }
+                else {
                     formcontrol.classList.add('was-validated');
                     applyServerSideValidation(validation);
                     return Promise.resolve(true);
@@ -30,7 +34,6 @@ export function validateServerSide(forms, redirectPath = '') {
         })));
         const passedValidation = validations.every(v => v.status !== 'rejected' && !v.value);
         if (passedValidation) {
-            const redirect = redirectPath !== null && redirectPath !== void 0 ? redirectPath : location.origin;
             location.assign(redirect);
         }
     });
@@ -83,7 +86,7 @@ function validateSubForm(formcontrol) {
         };
         const response = yield fetch(formcontrol.action, options);
         if (response.ok)
-            return null;
+            return response;
         let validation;
         try {
             validation = yield response.json();
