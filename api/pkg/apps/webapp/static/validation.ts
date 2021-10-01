@@ -16,12 +16,14 @@ interface ClientSideFormcontrolValidation {
 // the handler applies it to the concerned DOM elements. If no validation is received, the handler redirects the browser
 // to the appropriate location.
 export async function validateServerSide(forms: HTMLFormElement[], redirectPath = '') {
-  console.log('validateServerSide, redirectPath', redirectPath);
+  let redirect = redirectPath ?? location.origin
   const validations = await Promise.allSettled(forms.map(async (formcontrol) => {
     try {
       const validation = await validateSubForm(formcontrol);
       removeFormValidation(formcontrol);
-      if (validation != null) {
+      if (validation instanceof Response) {
+        redirect = validation.url;
+      } else {
         formcontrol.classList.add('was-validated');
         applyServerSideValidation(validation);
         return Promise.resolve(true);
@@ -33,10 +35,8 @@ export async function validateServerSide(forms: HTMLFormElement[], redirectPath 
   }));
 
   const passedValidation = validations.every(v => v.status !== 'rejected' && !v.value);
-  console.log('validateServerSide, passedValidation', passedValidation);
 
   if (passedValidation) {
-    const redirect = redirectPath ?? location.origin;
     location.assign(redirect);
   }
 }
@@ -45,14 +45,12 @@ export function validateClientSide(forms: HTMLFormElement[]): boolean {
   // FIXME I'm really dumb.
   //  For instance, I validate input, select, and textarea elements but not custom form elements.
   let isValid = true;
-  console.log('validateClientSide start', isValid)
   for (const form of forms) {
     if (!form.reportValidity()) {
       isValid = false;
     }
     form.classList.add('was-validated');
   }
-  console.log('validateClientSide end', isValid)
   return isValid;
 }
 
@@ -82,7 +80,7 @@ function collectSearchParams(formcontrol: HTMLFormElement): URLSearchParams {
   return searchParams;
 }
 
-async function validateSubForm(formcontrol: HTMLFormElement): Promise<ServerSideFormcontrolValidation[]> {
+async function validateSubForm(formcontrol: HTMLFormElement): Promise<ServerSideFormcontrolValidation[]|Response> {
   const options = {
     method: 'POST',
     headers: {
@@ -93,7 +91,7 @@ async function validateSubForm(formcontrol: HTMLFormElement): Promise<ServerSide
 
   const response = await fetch(formcontrol.action, options);
 
-  if (response.ok) return null;
+  if (response.ok) return response;
 
   let validation;
 

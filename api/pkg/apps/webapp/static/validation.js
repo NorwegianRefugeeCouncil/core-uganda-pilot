@@ -11,32 +11,29 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 // data to the provided endpoints and awaits a validation response object from the server. If validation is received,
 // the handler applies it to the concerned DOM elements. If no validation is received, the handler redirects the browser
 // to the appropriate location.
-export function validateServerSide(forms, redirectPath = '', console) {
-        console.log('\n\nvalidateServerSide', redirectPath);
+export function validateServerSide(forms, redirectPath = '') {
     return __awaiter(this, void 0, void 0, function* () {
+        let redirect = redirectPath !== null && redirectPath !== void 0 ? redirectPath : location.origin;
         const validations = yield Promise.allSettled(forms.map((formcontrol) => __awaiter(this, void 0, void 0, function* () {
             try {
-        console.log('\n\nvalidateServerSide try', redirectPath);
                 const validation = yield validateSubForm(formcontrol);
                 removeFormValidation(formcontrol);
-                if (validation != null) {
+                if (validation instanceof Response) {
+                    redirect = validation.url;
+                }
+                else {
                     formcontrol.classList.add('was-validated');
                     applyServerSideValidation(validation);
                     return Promise.resolve(true);
                 }
             }
             catch (e) {
-        console.log('\n\nvalidateServerSide error', e);
                 console.error(e);
             }
             return Promise.resolve(false);
         })));
-        console.log('\n\nvalidateServerSide validating');
         const passedValidation = validations.every(v => v.status !== 'rejected' && !v.value);
-        console.log('\n\nvalidateServerSide passed?', passedValidation);
         if (passedValidation) {
-            console.log('REDIRECT', redirect);
-            const redirect = redirectPath !== null && redirectPath !== void 0 ? redirectPath : location.origin;
             location.assign(redirect);
         }
     });
@@ -46,11 +43,7 @@ export function validateClientSide(forms) {
     //  For instance, I validate input, select, and textarea elements but not custom form elements.
     let isValid = true;
     for (const form of forms) {
-        console.log('\n\n\nvalidateClientSide\n\n\n', isValid);
-
         if (!form.reportValidity()) {
-            // console.log('\n\n\nkfdjhgjkdl;jg;ldf\n\n\n\n\n\n');
-
             isValid = false;
         }
         form.classList.add('was-validated');
@@ -93,7 +86,7 @@ function validateSubForm(formcontrol) {
         };
         const response = yield fetch(formcontrol.action, options);
         if (response.ok)
-            return null;
+            return response;
         let validation;
         try {
             validation = yield response.json();
