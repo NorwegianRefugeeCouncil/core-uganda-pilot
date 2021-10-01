@@ -63,7 +63,7 @@
             <div class="card-body">
                 <form id="case-form" action="/cases/{{$caseId}}" method="post">
                     {{template "form" .CaseForm}}
-                    {{if not .Case.Done}}
+
                         <div class="form-check mb-3">
                             <input id="done-input"
                                    class="form-check-input"
@@ -83,7 +83,7 @@
                         >
                             Save
                         </button>
-                    {{end}}
+
                 </form>
                 {{if .Referrals}}
                     <h4>Referrals</h4>
