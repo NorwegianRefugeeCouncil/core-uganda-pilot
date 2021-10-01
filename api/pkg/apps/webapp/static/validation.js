@@ -19,7 +19,9 @@ export function validateServerSide(forms, redirectPath = '') {
                 const validation = yield validateSubForm(formcontrol);
                 removeFormValidation(formcontrol);
                 if (validation instanceof Response) {
-                    redirect = validation.url;
+                    if (validation.url.includes('individuals')) {
+                        redirect = validation.url;
+                    }
                 }
                 else {
                     formcontrol.classList.add('was-validated');

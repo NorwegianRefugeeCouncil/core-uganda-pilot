@@ -16,13 +16,15 @@ interface ClientSideFormcontrolValidation {
 // the handler applies it to the concerned DOM elements. If no validation is received, the handler redirects the browser
 // to the appropriate location.
 export async function validateServerSide(forms: HTMLFormElement[], redirectPath = '') {
-  let redirect = redirectPath ?? location.origin
+  let redirect = redirectPath ?? location.origin;
   const validations = await Promise.allSettled(forms.map(async (formcontrol) => {
     try {
       const validation = await validateSubForm(formcontrol);
       removeFormValidation(formcontrol);
       if (validation instanceof Response) {
-        redirect = validation.url;
+        if (validation.url.includes('individuals')) {
+          redirect = validation.url;
+        }
       } else {
         formcontrol.classList.add('was-validated');
         applyServerSideValidation(validation);
@@ -80,7 +82,7 @@ function collectSearchParams(formcontrol: HTMLFormElement): URLSearchParams {
   return searchParams;
 }
 
-async function validateSubForm(formcontrol: HTMLFormElement): Promise<ServerSideFormcontrolValidation[]|Response> {
+async function validateSubForm(formcontrol: HTMLFormElement): Promise<ServerSideFormcontrolValidation[] | Response> {
   const options = {
     method: 'POST',
     headers: {
