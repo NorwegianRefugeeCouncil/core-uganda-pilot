@@ -64,25 +64,25 @@
                 <form id="case-form" action="/cases/{{$caseId}}" method="post">
                     {{template "form" .CaseForm}}
 
-                        <div class="form-check mb-3">
-                            <input id="done-input"
-                                   class="form-check-input"
-                                   type="checkbox"
-                                   {{ if .ReferralCaseType}}disabled{{end}}
-                                   name="done"
-                                   data-testid="done-check"
-                                    {{if .Case.Done}}checked{{end}}>
-                            <label class="form-check-label" for="done-input">
-                                Done
-                            </label>
-                        </div>
-                        <button id="case-submit-btn"
-                                class="mb-5 btn btn-primary"
-                                data-testid="save-btn"
-                                {{ if .ReferralCaseType}}disabled{{end}}
-                        >
-                            Save
-                        </button>
+                    <div class="form-check mb-3">
+                        <input id="done-input"
+                               class="form-check-input"
+                               type="checkbox"
+                               {{ if .ReferralCaseType}}disabled{{end}}
+                               name="done"
+                               data-testid="done-check"
+                                {{if .Case.Done}}checked{{end}}>
+                        <label class="form-check-label" for="done-input">
+                            Done
+                        </label>
+                    </div>
+                    <button id="case-submit-btn"
+                            class="mb-5 btn btn-primary"
+                            data-testid="save-btn"
+                            {{ if .ReferralCaseType}}disabled{{end}}
+                    >
+                        Save
+                    </button>
 
                 </form>
                 {{if .Referrals}}
