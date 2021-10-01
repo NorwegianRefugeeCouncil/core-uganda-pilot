@@ -67,22 +67,6 @@ var (
 				Description: i18n.Strings{{"en", "Additional information, observations, concerns, etc."}},
 			},
 			{
-				Name: "otherServices",
-				Type: form.Taxonomy,
-
-				Label:       i18n.Strings{{"en", "What other services has the individual requested/identified?"}},
-				Description: i18n.Strings{{"en", "Add the taxonomies of the other services requested one by one, by selecting the relevant options from the dropdowns below."}},
-				Validation: form.ControlValidation{
-					Required: true,
-				},
-			},
-			{
-				Name:        "commentOtherServices",
-				Type:        form.Textarea,
-				Label:       i18n.Strings{{"en", "Comment on other services the individual requested/identified?"}},
-				Description: i18n.Strings{{"en", "Additional information, observations, concerns, etc."}},
-			},
-			{
 				Name:  "perceivedPriority",
 				Type:  form.Text,
 				Label: i18n.Strings{{"en", "What is the perceived priority response level of the individual"}},
