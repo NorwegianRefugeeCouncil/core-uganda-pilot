@@ -290,7 +290,6 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	}
 
 	id, ok := mux.Vars(req)["id"]
-	fmt.Printf("\n\n\n\n\nINDIVIDUAL", id, ok, req.Method)
 	if (!ok || len(id) == 0) && req.Method != "POST" {
 		err := fmt.Errorf("no id in path")
 		s.Error(w, err)
@@ -314,7 +313,6 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	g, waitCtx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
-		fmt.Printf("ID", id)
 		if id == "new" {
 			individual = iam.NewIndividual("")
 			return nil
@@ -432,24 +430,18 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 
 	filteredRelationshipTypes := PrepRelationshipTypeDropdown(relationshipTypes)
 
-	fmt.Printf("\n\n\n\nREQ METHOD", req.Method)
 	if req.Method == "POST" {
 		individual, err = s.PostIndividual(ctx, attrs, id, w, req)
-		fmt.Printf("\n\n\nERROR", err)
 		if err != nil {
 			if status, ok := err.(*validation.Status); ok {
-				fmt.Printf("\n\n\nsumbittedFormFromErrors before", attrs)
 				validatedAttrs := sumbittedFormFromErrors(&status.Errors, attrs, req.Form)
-				fmt.Printf("\n\n\nsumbittedFormFromErrors after", validatedAttrs)
 				s.json(w, status.Code, validatedAttrs)
 			} else {
-				fmt.Printf("\n\n\nERROR", err)
 				s.Error(w, err)
 			}
 			return
 		}
 	}
-	fmt.Printf("\n\n\nAFTER POST", err)
 
 	type DisplayCase struct {
 		Case     *cms.Case
@@ -582,7 +574,6 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDe
 	values := req.Form
 
 	var individual *iam.Individual
-	fmt.Printf("POST", id, len(id))
 	if len(id) == 0 {
 		individual = iam.NewIndividual("")
 	} else {
@@ -592,7 +583,6 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDe
 		}
 	}
 
-	fmt.Printf("ID after POST", individual.ID)
 	attributeMap := map[string][]string{}
 	for _, attribute := range attrs.Items {
 		value := values[attribute.FormControl.Name]
@@ -662,7 +652,6 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDe
 
 	// Update or create the individual
 	var storageAction string
-	fmt.Printf("before storage action", id)
 	if id == "" {
 		individual.PartyTypeIDs = append(individual.PartyTypeIDs, iam.BeneficiaryPartyType.ID)
 		individual, err = iamClient.Individuals().Create(ctx, individual)
@@ -680,8 +669,6 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDe
 		}
 		storageAction = "updated"
 	}
-
-	fmt.Printf("ID after storage action", individual.ID)
 
 	// Update, create or delete the relationships
 
@@ -717,8 +704,6 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDe
 	}); err != nil {
 		return nil, err
 	}
-
-	fmt.Printf("before redirect", individual.ID)
 
 	if storageAction == "created" {
 		w.Header().Set("Location", "/individuals/"+individual.ID)
