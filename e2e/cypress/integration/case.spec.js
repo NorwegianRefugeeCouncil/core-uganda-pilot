@@ -115,7 +115,6 @@ describe('Case Page', function () {
             // Verify values
             casePage.getDonePill().should('contain.text', 'Closed');
             casePage.verifyForm(DATA.formUpd);
-            casePage.getDoneCheck().should('not.exist');
         });
     });
 });
