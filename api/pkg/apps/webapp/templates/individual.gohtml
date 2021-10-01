@@ -179,9 +179,14 @@
         const submitBtn = document.getElementById('form-submit-btn');
         submitBtn.onclick = event => {
             event.preventDefault();
+            console.log('\n\n\n\n\nDUOAGFBHDSIAPPGOASJRDPOERtjGIOj\n\n\n\n\n', validateServerSide);
             if (forms != null && validateClientSide(forms)) {
+                console.log('\n\nIF\n', '{{.IsNew}}', '{{.Individual.ID}}', forms, validateClientSide(forms));
                 validateServerSide(forms, '/individuals{{if not .IsNew}}/{{.Individual.ID}}{{end}}');
+            } else {
+                console.log('\n\nELSE\n', forms!=null, validateClientSide(forms));
             }
+            console.log('\n\n\nkfdjhgjkdl;jg;ldf\n\n\n\n\n\n');
         };
     </script>
 
