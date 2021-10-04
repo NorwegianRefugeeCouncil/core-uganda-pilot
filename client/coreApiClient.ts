@@ -5,7 +5,7 @@ import {
   CaseType, CaseTypeListOptions, CommentListOptions, Party, PartySearchOptions, PartyListOptions, PartyList
 } from './types/models';
 import { ajax, AjaxResponse } from 'rxjs/ajax';
-import { XMLHttpRequest } from 'xhr2';
+import { XMLHttpRequest } from 'xhr2/lib/xhr2';
 
 // needed for rxjs/ajax compatibility outside the browser
 global.XMLHttpRequest = global.XMLHttpRequest ? global.XMLHttpRequest : XMLHttpRequest;
@@ -160,7 +160,7 @@ class IAMClient {
 
 class CaseClient {
   readonly httpClient = new HttpClient<Case>(shouldAddAuthHeader)
-  readonly endpoint = 'http://localhost:9000/apis/cms/v1/cases'
+  readonly endpoint = 'http://localhost:9000/apis/cms/v1/cases/'
 
   Get(id: string) {
     return this.httpClient.get(this.endpoint + id)
@@ -222,7 +222,7 @@ class CommentClient {
     return this.httpClient.put(this.endpoint + c.id, c)
   }
 
-  List(lo: CommentListOptions) {
+  List(lo?: CommentListOptions) {
     const query = new URLSearchParams(lo as Record<string, string>)
     return this.httpClient.get(
       query ? this.endpoint : this.endpoint + `?${query}`
@@ -234,7 +234,7 @@ class CommentClient {
   }
 }
 
-class CMSClient {
+export class CMSClient {
   static Cases() {
     return new CaseClient
   }
@@ -248,7 +248,7 @@ class CMSClient {
   }
 }
 
-CMSClient.Comments().List(new CommentListOptions())
+CMSClient.Comments().List()
   .pipe(map((response) => {
     console.log(response);
   }, catchError(error => {
