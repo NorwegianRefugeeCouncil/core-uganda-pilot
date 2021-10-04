@@ -26,10 +26,6 @@ func (s *Server) PutCase(w http.ResponseWriter, req *http.Request) {
 		s.error(w, err)
 		return
 	}
-	// Done cases shouldn't be changed
-	if kase.Done {
-		return
-	}
 
 	// Update struct
 	update := updateCaseStruct(kase, payload)
@@ -40,11 +36,6 @@ func (s *Server) PutCase(w http.ResponseWriter, req *http.Request) {
 		status := errList.Status(http.StatusUnprocessableEntity, "invalid case")
 		s.error(w, &status)
 		return
-	}
-
-	// if no validation errors, conclude the case as Done if intake case
-	if update.IntakeCase {
-		update.Done = true
 	}
 
 	// Persist case changes

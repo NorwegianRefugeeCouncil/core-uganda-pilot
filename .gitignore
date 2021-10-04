@@ -6,6 +6,5 @@
 *.pem
 *.out
 actions/__tmp
-api/tmp
 vendor/
 actions/__tmp
