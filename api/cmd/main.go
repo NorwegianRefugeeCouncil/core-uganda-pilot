@@ -67,6 +67,7 @@ func generateTypescriptTypes() error {
 		form.Form{},
 	}
 	converter := typescriptify.New()
+	converter.CreateInterface = true
 	for _, typ := range types {
 		converter = converter.Add(typ)
 	}
