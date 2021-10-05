@@ -3,9 +3,20 @@
     "allowJs": true,
     "esModuleInterop": true,
     "moduleResolution": "Node",
-    "lib": ["DOM", "ESNext"],
+    "lib": [
+      "DOM",
+      "ESNext"
+    ],
     "skipLibCheck": true,
-    "target": "ESNext"
+    "target": "ES6",
+    "rootDir": "src",
+    "outDir": "lib"
   },
-  "exclude": ["node_modules"]
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "lib"
+  ]
 }

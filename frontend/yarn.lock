@@ -5558,6 +5558,14 @@
   "resolved" "https://registry.npmjs.org/jimp-compact/-/jimp-compact-0.16.1.tgz"
   "version" "0.16.1"
 
+"js-api-client@../client":
+  "resolved" "file:../client"
+  "version" "0.0.1"
+  dependencies:
+    "@types/node" "^14.17.20"
+    "rxjs" "^7.3.0"
+    "xhr2" "^0.2.1"
+
 "js-tokens@^3.0.0 || ^4.0.0", "js-tokens@^4.0.0":
   "integrity" "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ=="
   "resolved" "https://registry.npmjs.org/js-tokens/-/js-tokens-4.0.0.tgz"
