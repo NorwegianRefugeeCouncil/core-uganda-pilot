@@ -1,28 +1,24 @@
-import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import {
   Case, CaseListOptions, Comment,
   CaseType, CaseTypeListOptions, CommentListOptions, Party, PartySearchOptions, PartyListOptions, PartyList
 } from './types/models';
 import { ajax, AjaxResponse } from 'rxjs/ajax';
-import { XMLHttpRequest } from 'xhr2/lib/xhr2';
-
-// needed for rxjs/ajax compatibility outside the browser
-global.XMLHttpRequest = global.XMLHttpRequest ? global.XMLHttpRequest : XMLHttpRequest;
 
 // todo: should come from environment
 const shouldAddAuthHeader = true;
-const noop = () => {}
+const noop = () => {
+};
 
 class HttpClient<T> {
-  headers: { "X-Authenticated-User-Subject"?: string; }
+  headers: { 'X-Authenticated-User-Subject'?: string; };
 
   constructor(shouldAddAuthPassthroughHeader: boolean) {
-    this.headers = {}
+    this.headers = {};
     if (shouldAddAuthPassthroughHeader) {
       this.headers = {
         'X-Authenticated-User-Subject': 'stephen.kabagambe@email.com'
-      }
+      };
     }
   }
 
@@ -38,7 +34,7 @@ class HttpClient<T> {
         withCredentials: false,
         responseType: 'json'
       }
-    )
+    );
   }
 
   getCustom<R>(url: string): Observable<AjaxResponse<R>> {
@@ -53,7 +49,7 @@ class HttpClient<T> {
         withCredentials: false,
         responseType: 'json'
       }
-    )
+    );
   }
 
   put(url: string, body: T): Observable<AjaxResponse<T>> {
@@ -69,7 +65,7 @@ class HttpClient<T> {
         withCredentials: false,
         responseType: 'json'
       }
-    )
+    );
   }
 
   post(url: string, body: T): Observable<AjaxResponse<T>> {
@@ -85,7 +81,7 @@ class HttpClient<T> {
         withCredentials: false,
         responseType: 'json'
       }
-    )
+    );
   }
 
   postCustom<B, R>(url: string, body: B): Observable<AjaxResponse<R>> {
@@ -101,7 +97,7 @@ class HttpClient<T> {
         withCredentials: false,
         responseType: 'json'
       }
-    )
+    );
   }
 
   delete(url: string): Observable<AjaxResponse<T>> {
@@ -116,144 +112,151 @@ class HttpClient<T> {
         withCredentials: false,
         responseType: 'json'
       }
-    )
+    );
   }
 }
 
 // -- IAM ---------------------------
 
 class PartyClient {
-  readonly httpClient = new HttpClient<Party>(shouldAddAuthHeader)
-  readonly endpoint = 'http://localhost:9000/apis/iam/v1/parties'
+  readonly httpClient = new HttpClient<Party>(shouldAddAuthHeader);
+  readonly endpoint = 'http://localhost:9000/apis/iam/v1/parties';
 
   Get(id: string) {
-    return this.httpClient.get(this.endpoint + id)
+    return this.httpClient.get(this.endpoint + id);
   }
 
   Create(p: Party) {
-    return this.httpClient.post(this.endpoint, p)
+    return this.httpClient.post(this.endpoint, p);
   }
 
   Update(p: Party) {
-    return this.httpClient.put(this.endpoint + p.id, p)
+    return this.httpClient.put(this.endpoint + p.id, p);
   }
 
   List(lo: PartyListOptions) {
-    const query = new URLSearchParams(lo as Record<string, string>)
+    const query = new URLSearchParams(lo as Record<string, string>);
     return this.httpClient.getCustom<PartyList>(
       query ? this.endpoint : this.endpoint + `?${query}`
-    )
+    );
   }
 
   Search(so: PartySearchOptions) {
-    return this.httpClient.postCustom<PartySearchOptions, PartyList>(this.endpoint + '/search', so)
+    return this.httpClient.postCustom<PartySearchOptions, PartyList>(this.endpoint + '/search', so);
   }
 }
 
 class IAMClient {
   static Parties() {
-    return new PartyClient
+    return new PartyClient;
   }
 }
 
 // -- CMS ---------------------------
 
 class CaseClient {
-  readonly httpClient = new HttpClient<Case>(shouldAddAuthHeader)
-  readonly endpoint = 'http://localhost:9000/apis/cms/v1/cases/'
+  readonly httpClient = new HttpClient<Case>(shouldAddAuthHeader);
+  readonly endpoint;
+
+  constructor(hostname: string) {
+    this.endpoint = `http://${hostname}/apis/cms/v1/cases/`;
+  }
 
   Get(id: string) {
-    return this.httpClient.get(this.endpoint + id)
+    return this.httpClient.get(this.endpoint + id);
   }
 
   Create(c: Case) {
-    return this.httpClient.post(this.endpoint, c)
+    return this.httpClient.post(this.endpoint, c);
   }
 
   Update(c: Case) {
-    return this.httpClient.put(this.endpoint + c.id, c)
+    return this.httpClient.put(this.endpoint + c.id, c);
   }
 
   List(lo: CaseListOptions) {
-    const query = new URLSearchParams(lo as Record<string, string>)
+    const query = new URLSearchParams(lo as Record<string, string>);
     return this.httpClient.get(
       query ? this.endpoint : this.endpoint + `?${query}`
-    )
+    );
   }
 }
 
 class CaseTypeClient {
-  readonly httpClient = new HttpClient<CaseType>(shouldAddAuthHeader)
-  readonly endpoint = 'http://localhost:9000/apis/cms/v1/casetypes'
+  readonly httpClient = new HttpClient<CaseType>(shouldAddAuthHeader);
+  readonly endpoint = 'http://localhost:9000/apis/cms/v1/casetypes';
 
   Get(id: string) {
-    return this.httpClient.get(this.endpoint + id)
+    return this.httpClient.get(this.endpoint + id);
   }
 
   Create(c: CaseType) {
-    return this.httpClient.post(this.endpoint, c)
+    return this.httpClient.post(this.endpoint, c);
   }
 
   Update(c: CaseType) {
-    return this.httpClient.put(this.endpoint + c.id, c)
+    return this.httpClient.put(this.endpoint + c.id, c);
   }
 
   List(lo: CaseTypeListOptions) {
-    const query = new URLSearchParams(lo as Record<string, string>)
+    const query = new URLSearchParams(lo as Record<string, string>);
     return this.httpClient.get(
       query ? this.endpoint : this.endpoint + `?${query}`
-    )
+    );
   }
 }
 
 class CommentClient {
-  readonly httpClient = new HttpClient<Comment>(shouldAddAuthHeader)
-  readonly endpoint = 'http://localhost:9000/apis/cms/v1/comments'
+  readonly httpClient = new HttpClient<Comment>(shouldAddAuthHeader);
+  readonly endpoint = 'http://localhost:9000/apis/cms/v1/comments';
 
   Get(id: string) {
-    return this.httpClient.get(this.endpoint + id)
+    return this.httpClient.get(this.endpoint + id);
   }
 
   Create(c: Comment) {
-    return this.httpClient.post(this.endpoint, c)
+    return this.httpClient.post(this.endpoint, c);
   }
 
   Update(c: Comment) {
-    return this.httpClient.put(this.endpoint + c.id, c)
+    return this.httpClient.put(this.endpoint + c.id, c);
   }
 
   List(lo?: CommentListOptions) {
-    const query = new URLSearchParams(lo as Record<string, string>)
+    const query = new URLSearchParams(lo as Record<string, string>);
     return this.httpClient.get(
       query ? this.endpoint : this.endpoint + `?${query}`
-    )
+    );
   }
 
   Delete(id: string) {
-    return this.httpClient.delete(this.endpoint + id)
+    return this.httpClient.delete(this.endpoint + id);
   }
 }
 
 export class CMSClient {
-  static Cases() {
-    return new CaseClient
+  constructor(public hostname: string) {
   }
 
-  static CaseTypes() {
-    return new CaseTypeClient
+  Cases() {
+    return new CaseClient(this.hostname);
   }
 
-  static Comments() {
-    return new CommentClient
+  CaseTypes() {
+    return new CaseTypeClient;
+  }
+
+  Comments() {
+    return new CommentClient;
   }
 }
 
-CMSClient.Comments().List()
-  .pipe(map((response) => {
-    console.log(response);
-  }, catchError(error => {
-    console.log('error: ', error);
-    return of(error);
-  }))
-).subscribe(noop);
+// CMSClient.Comments().List()
+//   .pipe(map((response) => {
+//       console.log(Object.keys(response));
+//     }, catchError(error => {
+//       console.log('error: ', error);
+//       return of(error);
+//     }))
+//   ).subscribe(noop);
 

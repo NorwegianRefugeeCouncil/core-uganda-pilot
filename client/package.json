@@ -1,11 +1,9 @@
 {
-  "name": "js-api-client",
+  "name": "core-js-api-client",
   "version": "0.0.1",
-  "main": "lib/coreApiClient.js",
-  "scripts": {},
+  "main": "src/coreApiClient.js",
   "dependencies": {
     "@types/node": "^14.17.20",
-    "rxjs": "^7.3.0",
-    "xhr2": "^0.2.1"
+    "rxjs": "^7.3.0"
   }
 }

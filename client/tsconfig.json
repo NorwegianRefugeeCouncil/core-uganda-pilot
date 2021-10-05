@@ -1,22 +1,17 @@
 {
   "compilerOptions": {
-    "allowJs": true,
+    "module": "CommonJS",
     "esModuleInterop": true,
-    "moduleResolution": "Node",
+    "target": "ES6",
     "lib": [
       "DOM",
       "ESNext"
-    ],
-    "skipLibCheck": true,
-    "target": "ES6",
-    "rootDir": "src",
-    "outDir": "lib"
+    ]
   },
   "include": [
     "src"
   ],
   "exclude": [
-    "node_modules",
-    "lib"
+    "node_modules"
   ]
 }
