@@ -1,1027 +1,251 @@
 /* Do not change, this code is generated from Golang structs */
 
 
-export class Error {
+export interface Error {
     type: string;
     field: string;
     badValue: any;
     detail: string;
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.type = source["type"];
-        this.field = source["field"];
-        this.badValue = source["badValue"];
-        this.detail = source["detail"];
-    }
 }
-export class FormElementValidation {
+export interface ControlValidation {
     required: boolean;
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.required = source["required"];
-    }
 }
-export class CheckboxOption {
-    label: string;
+export interface CheckboxOption {
+    label: LocaleString[];
+    value: string;
     required: boolean;
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.label = source["label"];
-        this.required = source["required"];
-    }
 }
-export class FormElementAttributes {
-    label: string;
-    name: string;
-    value: string[];
-    description: string;
-    placeholder: string;
-    multiple: boolean;
-    options: string[];
-    checkboxOptions: CheckboxOption[];
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.label = source["label"];
-        this.name = source["name"];
-        this.value = source["value"];
-        this.description = source["description"];
-        this.placeholder = source["placeholder"];
-        this.multiple = source["multiple"];
-        this.options = source["options"];
-        this.checkboxOptions = this.convertValues(source["checkboxOptions"], CheckboxOption);
-    }
-
-	convertValues(a: any, classs: any, asMap: boolean = false): any {
-	    if (!a) {
-	        return a;
-	    }
-	    if (a.slice) {
-	        return (a as any[]).map(elem => this.convertValues(elem, classs));
-	    } else if ("object" === typeof a) {
-	        if (asMap) {
-	            for (const key of Object.keys(a)) {
-	                a[key] = new classs(a[key]);
-	            }
-	            return a;
-	        }
-	        return new classs(a);
-	    }
-	    return a;
-	}
-}
-export class AttributeTranslation {
+export interface LocaleString {
     locale: string;
-    longFormulation: string;
-    shortFormulation: string;
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.locale = source["locale"];
-        this.longFormulation = source["longFormulation"];
-        this.shortFormulation = source["shortFormulation"];
-    }
+    value: string;
 }
-export class Attribute {
-    id: string;
+export interface Control {
     name: string;
+    type: string;
+    placeholder: LocaleString[];
+    multiple: boolean;
+    readonly: boolean;
+    label: LocaleString[];
+    description: LocaleString[];
+    defaultValue: string[];
+    value: string[];
+    options: LocaleString[][];
+    checkboxOptions: CheckboxOption[];
+    validation: ControlValidation;
+    errors?: Error[];
+}
+export interface PartyAttributeDefinition {
+    id: string;
     countryId: string;
     partyTypeIds: string[];
     isPii: boolean;
-    translations: AttributeTranslation[];
-    type: string;
-    attributes: FormElementAttributes;
-    validation: FormElementValidation;
-    errors?: Error[];
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.id = source["id"];
-        this.name = source["name"];
-        this.countryId = source["countryId"];
-        this.partyTypeIds = source["partyTypeIds"];
-        this.isPii = source["isPii"];
-        this.translations = this.convertValues(source["translations"], AttributeTranslation);
-        this.type = source["type"];
-        this.attributes = this.convertValues(source["attributes"], FormElementAttributes);
-        this.validation = this.convertValues(source["validation"], FormElementValidation);
-        this.type = source["type"];
-        this.attributes = this.convertValues(source["attributes"], FormElementAttributes);
-        this.validation = this.convertValues(source["validation"], FormElementValidation);
-        this.errors = this.convertValues(source["errors"], Error);
-    }
-
-	convertValues(a: any, classs: any, asMap: boolean = false): any {
-	    if (!a) {
-	        return a;
-	    }
-	    if (a.slice) {
-	        return (a as any[]).map(elem => this.convertValues(elem, classs));
-	    } else if ("object" === typeof a) {
-	        if (asMap) {
-	            for (const key of Object.keys(a)) {
-	                a[key] = new classs(a[key]);
-	            }
-	            return a;
-	        }
-	        return new classs(a);
-	    }
-	    return a;
-	}
+    formControl: Control;
 }
-
-export class AttributeList {
-    items: Attribute[];
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.items = this.convertValues(source["items"], Attribute);
-    }
-
-	convertValues(a: any, classs: any, asMap: boolean = false): any {
-	    if (!a) {
-	        return a;
-	    }
-	    if (a.slice) {
-	        return (a as any[]).map(elem => this.convertValues(elem, classs));
-	    } else if ("object" === typeof a) {
-	        if (asMap) {
-	            for (const key of Object.keys(a)) {
-	                a[key] = new classs(a[key]);
-	            }
-	            return a;
-	        }
-	        return new classs(a);
-	    }
-	    return a;
-	}
+export interface PartyAttributeDefinitionList {
+    items: PartyAttributeDefinition[];
 }
-export class PartyAttributes {
+export interface PartyAttributeDefinitionListOptions {
 
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-
-    }
 }
-export class Party {
+export interface AttributeMap {
+
+}
+export interface Party {
     id: string;
     partyTypeIds: string[];
     attributes: {[key: string]: string[]};
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.id = source["id"];
-        this.partyTypeIds = source["partyTypeIds"];
-        this.attributes = source["attributes"];
-    }
 }
-export class PartyList {
+export interface PartyList {
     items: Party[];
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.items = this.convertValues(source["items"], Party);
-    }
-
-	convertValues(a: any, classs: any, asMap: boolean = false): any {
-	    if (!a) {
-	        return a;
-	    }
-	    if (a.slice) {
-	        return (a as any[]).map(elem => this.convertValues(elem, classs));
-	    } else if ("object" === typeof a) {
-	        if (asMap) {
-	            for (const key of Object.keys(a)) {
-	                a[key] = new classs(a[key]);
-	            }
-	            return a;
-	        }
-	        return new classs(a);
-	    }
-	    return a;
-	}
 }
-export class PartyType {
+export interface PartyType {
     id: string;
     name: string;
     isBuiltIn: boolean;
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.id = source["id"];
-        this.name = source["name"];
-        this.isBuiltIn = source["isBuiltIn"];
-    }
 }
-export class PartyTypeList {
+export interface PartyTypeList {
 
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-
-    }
 }
-export class Relationship {
+export interface Relationship {
     id: string;
     relationshipTypeId: string;
     firstParty: string;
     secondParty: string;
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.id = source["id"];
-        this.relationshipTypeId = source["relationshipTypeId"];
-        this.firstParty = source["firstParty"];
-        this.secondParty = source["secondParty"];
-    }
 }
-export class RelationshipList {
+export interface RelationshipList {
     items: Relationship[];
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.items = this.convertValues(source["items"], Relationship);
-    }
-
-	convertValues(a: any, classs: any, asMap: boolean = false): any {
-	    if (!a) {
-	        return a;
-	    }
-	    if (a.slice) {
-	        return (a as any[]).map(elem => this.convertValues(elem, classs));
-	    } else if ("object" === typeof a) {
-	        if (asMap) {
-	            for (const key of Object.keys(a)) {
-	                a[key] = new classs(a[key]);
-	            }
-	            return a;
-	        }
-	        return new classs(a);
-	    }
-	    return a;
-	}
 }
-export class PartyTypeRule {
+export interface PartyTypeRule {
     firstPartyTypeId: string;
     secondPartyTypeId: string;
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.firstPartyTypeId = source["firstPartyTypeId"];
-        this.secondPartyTypeId = source["secondPartyTypeId"];
-    }
 }
-/*export class RelationshipTypeRule {
+export interface RelationshipTypeRule {
     ?: PartyTypeRule;
+}
 
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this. = this.convertValues(source[""], PartyTypeRule);
-    }
-
-	convertValues(a: any, classs: any, asMap: boolean = false): any {
-	    if (!a) {
-	        return a;
-	    }
-	    if (a.slice) {
-	        return (a as any[]).map(elem => this.convertValues(elem, classs));
-	    } else if ("object" === typeof a) {
-	        if (asMap) {
-	            for (const key of Object.keys(a)) {
-	                a[key] = new classs(a[key]);
-	            }
-	            return a;
-	        }
-	        return new classs(a);
-	    }
-	    return a;
-	}
-}*/
-
-export class RelationshipType {
+export interface RelationshipType {
     id: string;
     isDirectional: boolean;
     name: string;
     firstPartyRole: string;
     secondPartyRole: string;
-    //rules: RelationshipTypeRule[];
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.id = source["id"];
-        this.isDirectional = source["isDirectional"];
-        this.name = source["name"];
-        this.firstPartyRole = source["firstPartyRole"];
-        this.secondPartyRole = source["secondPartyRole"];
-        //this.rules = this.convertValues(source["rules"], RelationshipTypeRule);
-    }
-
-	convertValues(a: any, classs: any, asMap: boolean = false): any {
-	    if (!a) {
-	        return a;
-	    }
-	    if (a.slice) {
-	        return (a as any[]).map(elem => this.convertValues(elem, classs));
-	    } else if ("object" === typeof a) {
-	        if (asMap) {
-	            for (const key of Object.keys(a)) {
-	                a[key] = new classs(a[key]);
-	            }
-	            return a;
-	        }
-	        return new classs(a);
-	    }
-	    return a;
-	}
+    rules: RelationshipTypeRule[];
 }
-export class RelationshipTypeList {
+export interface RelationshipTypeList {
     items: RelationshipType[];
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.items = this.convertValues(source["items"], RelationshipType);
-    }
-
-	convertValues(a: any, classs: any, asMap: boolean = false): any {
-	    if (!a) {
-	        return a;
-	    }
-	    if (a.slice) {
-	        return (a as any[]).map(elem => this.convertValues(elem, classs));
-	    } else if ("object" === typeof a) {
-	        if (asMap) {
-	            for (const key of Object.keys(a)) {
-	                a[key] = new classs(a[key]);
-	            }
-	            return a;
-	        }
-	        return new classs(a);
-	    }
-	    return a;
-	}
 }
-export class Individual {
+export interface Individual {
     id: string;
     partyTypeIds: string[];
     attributes: {[key: string]: string[]};
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.id = source["id"];
-        this.partyTypeIds = source["partyTypeIds"];
-        this.attributes = source["attributes"];
-    }
 }
-export class Links {
+export interface Links {
     first: string;
     previous: string;
     self: string;
     next: string;
     last: string;
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.first = source["first"];
-        this.previous = source["previous"];
-        this.self = source["self"];
-        this.next = source["next"];
-        this.last = source["last"];
-    }
 }
-export class Pagination {
+export interface Pagination {
     page: number;
     perPage: number;
     pageCount: number;
     totalCount: number;
     sort: string;
     links: Links;
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.page = source["page"];
-        this.perPage = source["perPage"];
-        this.pageCount = source["pageCount"];
-        this.totalCount = source["totalCount"];
-        this.sort = source["sort"];
-        this.links = this.convertValues(source["links"], Links);
-    }
-
-	convertValues(a: any, classs: any, asMap: boolean = false): any {
-	    if (!a) {
-	        return a;
-	    }
-	    if (a.slice) {
-	        return (a as any[]).map(elem => this.convertValues(elem, classs));
-	    } else if ("object" === typeof a) {
-	        if (asMap) {
-	            for (const key of Object.keys(a)) {
-	                a[key] = new classs(a[key]);
-	            }
-	            return a;
-	        }
-	        return new classs(a);
-	    }
-	    return a;
-	}
 }
-export class IndividualList {
+export interface IndividualList {
     items: Individual[];
     metadata: Pagination;
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.items = this.convertValues(source["items"], Individual);
-        this.metadata = this.convertValues(source["metadata"], Pagination);
-    }
-
-	convertValues(a: any, classs: any, asMap: boolean = false): any {
-	    if (!a) {
-	        return a;
-	    }
-	    if (a.slice) {
-	        return (a as any[]).map(elem => this.convertValues(elem, classs));
-	    } else if ("object" === typeof a) {
-	        if (asMap) {
-	            for (const key of Object.keys(a)) {
-	                a[key] = new classs(a[key]);
-	            }
-	            return a;
-	        }
-	        return new classs(a);
-	    }
-	    return a;
-	}
 }
-export class Team {
+export interface Team {
     id: string;
     name: string;
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.id = source["id"];
-        this.name = source["name"];
-    }
 }
-export class TeamList {
+export interface TeamList {
     items: Team[];
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.items = this.convertValues(source["items"], Team);
-    }
-
-	convertValues(a: any, classs: any, asMap: boolean = false): any {
-	    if (!a) {
-	        return a;
-	    }
-	    if (a.slice) {
-	        return (a as any[]).map(elem => this.convertValues(elem, classs));
-	    } else if ("object" === typeof a) {
-	        if (asMap) {
-	            for (const key of Object.keys(a)) {
-	                a[key] = new classs(a[key]);
-	            }
-	            return a;
-	        }
-	        return new classs(a);
-	    }
-	    return a;
-	}
 }
-export class Country {
+export interface Country {
     id: string;
     name: string;
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.id = source["id"];
-        this.name = source["name"];
-    }
 }
-export class CountryList {
+export interface CountryList {
     items: Country[];
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.items = this.convertValues(source["items"], Country);
-    }
-
-	convertValues(a: any, classs: any, asMap: boolean = false): any {
-	    if (!a) {
-	        return a;
-	    }
-	    if (a.slice) {
-	        return (a as any[]).map(elem => this.convertValues(elem, classs));
-	    } else if ("object" === typeof a) {
-	        if (asMap) {
-	            for (const key of Object.keys(a)) {
-	                a[key] = new classs(a[key]);
-	            }
-	            return a;
-	        }
-	        return new classs(a);
-	    }
-	    return a;
-	}
 }
-export class Staff {
+export interface Staff {
     id: string;
     individualId: string;
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.id = source["id"];
-        this.individualId = source["individualId"];
-    }
 }
-export class StaffList {
+export interface StaffList {
     items: Staff[];
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.items = this.convertValues(source["items"], Staff);
-    }
-
-	convertValues(a: any, classs: any, asMap: boolean = false): any {
-	    if (!a) {
-	        return a;
-	    }
-	    if (a.slice) {
-	        return (a as any[]).map(elem => this.convertValues(elem, classs));
-	    } else if ("object" === typeof a) {
-	        if (asMap) {
-	            for (const key of Object.keys(a)) {
-	                a[key] = new classs(a[key]);
-	            }
-	            return a;
-	        }
-	        return new classs(a);
-	    }
-	    return a;
-	}
 }
-export class Membership {
+export interface Membership {
     id: string;
     teamId: string;
     individualId: string;
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.id = source["id"];
-        this.teamId = source["teamId"];
-        this.individualId = source["individualId"];
-    }
 }
-export class MembershipList {
+export interface MembershipList {
     items: Membership[];
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.items = this.convertValues(source["items"], Membership);
-    }
-
-	convertValues(a: any, classs: any, asMap: boolean = false): any {
-	    if (!a) {
-	        return a;
-	    }
-	    if (a.slice) {
-	        return (a as any[]).map(elem => this.convertValues(elem, classs));
-	    } else if ("object" === typeof a) {
-	        if (asMap) {
-	            for (const key of Object.keys(a)) {
-	                a[key] = new classs(a[key]);
-	            }
-	            return a;
-	        }
-	        return new classs(a);
-	    }
-	    return a;
-	}
 }
-export class Nationality {
+export interface Nationality {
     id: string;
     CountryId: string;
     teamId: string;
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.id = source["id"];
-        this.CountryId = source["CountryId"];
-        this.teamId = source["teamId"];
-    }
 }
-export class NationalityList {
+export interface NationalityList {
     items: Nationality[];
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.items = this.convertValues(source["items"], Nationality);
-    }
-
-	convertValues(a: any, classs: any, asMap: boolean = false): any {
-	    if (!a) {
-	        return a;
-	    }
-	    if (a.slice) {
-	        return (a as any[]).map(elem => this.convertValues(elem, classs));
-	    } else if ("object" === typeof a) {
-	        if (asMap) {
-	            for (const key of Object.keys(a)) {
-	                a[key] = new classs(a[key]);
-	            }
-	            return a;
-	        }
-	        return new classs(a);
-	    }
-	    return a;
-	}
 }
-export class PartyListOptions {
+export interface PartyListOptions {
 
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-
-    }
 }
-export class PartySearchOptions {
+export interface PartySearchOptions {
     partyIds: string[];
     partyTypeIds: string[];
     attributes: {[key: string]: string};
     searchParam: string;
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.partyIds = source["partyIds"];
-        this.partyTypeIds = source["partyTypeIds"];
-        this.attributes = source["attributes"];
-        this.searchParam = source["searchParam"];
-    }
 }
-export class PartyTypeListOptions {
+export interface PartyTypeListOptions {
 
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-
-    }
 }
-export class RelationshipListOptions {
+export interface RelationshipListOptions {
 
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-
-    }
 }
-export class RelationshipTypeListOptions {
+export interface RelationshipTypeListOptions {
 
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-
-    }
 }
-export class AttributeListOptions {
+export interface TeamListOptions {
 
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-
-    }
 }
-export class TeamListOptions {
+export interface CountryListOptions {
 
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-
-    }
 }
-export class CountryListOptions {
+export interface StaffListOptions {
 
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-
-    }
 }
-export class StaffListOptions {
+export interface MembershipListOptions {
 
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-
-    }
 }
-export class MembershipListOptions {
+export interface NationalityListOptions {
 
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-
-    }
 }
-export class NationalityListOptions {
+export interface IndividualListOptions {
 
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-
-    }
 }
-export class IndividualListOptions {
-
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-
-    }
+export interface Section {
+    title: LocaleString[];
+    controlNames: string[];
 }
-export class FormElement {
-    type: string;
-    attributes: FormElementAttributes;
-    validation: FormElementValidation;
+export interface Form {
+    controls: Control[];
+    sections: Section[];
     errors?: Error[];
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.type = source["type"];
-        this.attributes = this.convertValues(source["attributes"], FormElementAttributes);
-        this.validation = this.convertValues(source["validation"], FormElementValidation);
-        this.errors = this.convertValues(source["errors"], Error);
-    }
-
-	convertValues(a: any, classs: any, asMap: boolean = false): any {
-	    if (!a) {
-	        return a;
-	    }
-	    if (a.slice) {
-	        return (a as any[]).map(elem => this.convertValues(elem, classs));
-	    } else if ("object" === typeof a) {
-	        if (asMap) {
-	            for (const key of Object.keys(a)) {
-	                a[key] = new classs(a[key]);
-	            }
-	            return a;
-	        }
-	        return new classs(a);
-	    }
-	    return a;
-	}
 }
-export class CaseTemplate {
-    formElements: FormElement[];
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.formElements = this.convertValues(source["formElements"], FormElement);
-    }
-
-	convertValues(a: any, classs: any, asMap: boolean = false): any {
-	    if (!a) {
-	        return a;
-	    }
-	    if (a.slice) {
-	        return (a as any[]).map(elem => this.convertValues(elem, classs));
-	    } else if ("object" === typeof a) {
-	        if (asMap) {
-	            for (const key of Object.keys(a)) {
-	                a[key] = new classs(a[key]);
-	            }
-	            return a;
-	        }
-	        return new classs(a);
-	    }
-	    return a;
-	}
-}
-export class Case {
+export interface Case {
     id: string;
     caseTypeId: string;
     partyId: string;
-    done: boolean;
-    parentId: string;
     teamId: string;
     creatorId: string;
-    template?: CaseTemplate;
+    parentId: string;
     intakeCase: boolean;
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.id = source["id"];
-        this.caseTypeId = source["caseTypeId"];
-        this.partyId = source["partyId"];
-        this.done = source["done"];
-        this.parentId = source["parentId"];
-        this.teamId = source["teamId"];
-        this.creatorId = source["creatorId"];
-        this.template = this.convertValues(source["template"], CaseTemplate);
-        this.intakeCase = source["intakeCase"];
-    }
-
-	convertValues(a: any, classs: any, asMap: boolean = false): any {
-	    if (!a) {
-	        return a;
-	    }
-	    if (a.slice) {
-	        return (a as any[]).map(elem => this.convertValues(elem, classs));
-	    } else if ("object" === typeof a) {
-	        if (asMap) {
-	            for (const key of Object.keys(a)) {
-	                a[key] = new classs(a[key]);
-	            }
-	            return a;
-	        }
-	        return new classs(a);
-	    }
-	    return a;
-	}
+    form: Form;
+    formData: {[key: string]: string[]};
+    done: boolean;
 }
-export class CaseList {
+export interface CaseList {
     items: Case[];
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.items = this.convertValues(source["items"], Case);
-    }
-
-	convertValues(a: any, classs: any, asMap: boolean = false): any {
-	    if (!a) {
-	        return a;
-	    }
-	    if (a.slice) {
-	        return (a as any[]).map(elem => this.convertValues(elem, classs));
-	    } else if ("object" === typeof a) {
-	        if (asMap) {
-	            for (const key of Object.keys(a)) {
-	                a[key] = new classs(a[key]);
-	            }
-	            return a;
-	        }
-	        return new classs(a);
-	    }
-	    return a;
-	}
 }
-export class CaseType {
+export interface CaseType {
     id: string;
     name: string;
     partyTypeId: string;
     teamId: string;
-    template?: CaseTemplate;
+    form: Form;
     intakeCaseType: boolean;
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.id = source["id"];
-        this.name = source["name"];
-        this.partyTypeId = source["partyTypeId"];
-        this.teamId = source["teamId"];
-        this.template = this.convertValues(source["template"], CaseTemplate);
-        this.intakeCaseType = source["intakeCaseType"];
-    }
-
-	convertValues(a: any, classs: any, asMap: boolean = false): any {
-	    if (!a) {
-	        return a;
-	    }
-	    if (a.slice) {
-	        return (a as any[]).map(elem => this.convertValues(elem, classs));
-	    } else if ("object" === typeof a) {
-	        if (asMap) {
-	            for (const key of Object.keys(a)) {
-	                a[key] = new classs(a[key]);
-	            }
-	            return a;
-	        }
-	        return new classs(a);
-	    }
-	    return a;
-	}
 }
-export class CaseTypeList {
+export interface CaseTypeList {
     items: CaseType[];
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.items = this.convertValues(source["items"], CaseType);
-    }
-
-	convertValues(a: any, classs: any, asMap: boolean = false): any {
-	    if (!a) {
-	        return a;
-	    }
-	    if (a.slice) {
-	        return (a as any[]).map(elem => this.convertValues(elem, classs));
-	    } else if ("object" === typeof a) {
-	        if (asMap) {
-	            for (const key of Object.keys(a)) {
-	                a[key] = new classs(a[key]);
-	            }
-	            return a;
-	        }
-	        return new classs(a);
-	    }
-	    return a;
-	}
 }
-export class Time {
+export interface Time {
 
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-
-    }
 }
-export class Comment {
+export interface Comment {
     id: string;
     caseId: string;
     authorId: string;
     body: string;
     createdAt: Time;
     updatedAt: Time;
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.id = source["id"];
-        this.caseId = source["caseId"];
-        this.authorId = source["authorId"];
-        this.body = source["body"];
-        this.createdAt = this.convertValues(source["createdAt"], Time);
-        this.updatedAt = this.convertValues(source["updatedAt"], Time);
-    }
-
-	convertValues(a: any, classs: any, asMap: boolean = false): any {
-	    if (!a) {
-	        return a;
-	    }
-	    if (a.slice) {
-	        return (a as any[]).map(elem => this.convertValues(elem, classs));
-	    } else if ("object" === typeof a) {
-	        if (asMap) {
-	            for (const key of Object.keys(a)) {
-	                a[key] = new classs(a[key]);
-	            }
-	            return a;
-	        }
-	        return new classs(a);
-	    }
-	    return a;
-	}
 }
-export class CommentList {
+export interface CommentList {
     items: Comment[];
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.items = this.convertValues(source["items"], Comment);
-    }
-
-	convertValues(a: any, classs: any, asMap: boolean = false): any {
-	    if (!a) {
-	        return a;
-	    }
-	    if (a.slice) {
-	        return (a as any[]).map(elem => this.convertValues(elem, classs));
-	    } else if ("object" === typeof a) {
-	        if (asMap) {
-	            for (const key of Object.keys(a)) {
-	                a[key] = new classs(a[key]);
-	            }
-	            return a;
-	        }
-	        return new classs(a);
-	    }
-	    return a;
-	}
 }
+export interface CaseListOptions {
 
-export class CaseListOptions {
-
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-
-    }
 }
-export class CaseTypeListOptions {
+export interface CaseTypeListOptions {
 
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-
-    }
 }
-export class CommentListOptions {
+export interface CommentListOptions {
 
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-
-    }
 }
