@@ -1,42 +1,14 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { Platform, Image, View } from 'react-native';
+import { Platform } from 'react-native';
 import { CMSClient } from 'core-js-api-client';
-import { Appbar, Provider as PaperProvider, Text } from 'react-native-paper';
+import { Provider as PaperProvider } from 'react-native-paper';
 import theme from './src/constants/theme';
-import layout from './src/styles/layout';
-import common from './src/styles/common';
-import nrc from './assets/nrc.svg';
-import { isMobile } from 'react-device-detect';
+import Layout from './src/components/Layout';
 
 export default function App() {
   return (
     <PaperProvider theme={theme}>
-      <View style={layout.container}>
-        {isMobile && (
-          <View style={layout.navigation} />
-        )}
-        <View style={layout.body}>
-        {!isMobile && (
-          <Appbar style={common.top} theme={{ dark: true }}>
-            <Image source={nrc} style={common.logo}/>
-            <Appbar.Content title="Title" subtitle={'Subtitle'} />
-            <Appbar.Action
-              icon="archive"
-              onPress={() => console.log('Pressed archive')}
-            />
-            <Appbar.Action icon="mail" onPress={() => console.log('Pressed mail')} />
-            <Appbar.Action icon="label" onPress={() => console.log('Pressed label')} />
-            <Appbar.Action
-              icon="delete"
-              onPress={() => console.log('Pressed delete')}
-            />
-          </Appbar>
-        )}
-          <Text>Open up App.tsx to start working on your app!</Text>
-          <StatusBar style="auto" />
-        </View>
-      </View>
+      <Layout />
     </PaperProvider>
   );
 }

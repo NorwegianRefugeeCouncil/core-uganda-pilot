@@ -1,6 +1,6 @@
 import { DefaultTheme } from 'react-native-paper';
 
-export default {
+const lightTheme = {
   ...DefaultTheme,
   colors: {
     primary: '#24303E',
@@ -19,5 +19,27 @@ export default {
     blue: '#00ADD0',
     yellow: '#FDC82F',
     red: '#CE3616',
+    white: '#FFFFFF'
+  }
+};
+
+export default lightTheme;
+
+export const darkTheme = {
+  ...DefaultTheme,
+  ...lightTheme,
+  dark: true,
+  colors: {
+    primary: '#24303E',
+    accent: '#FF7602',
+    background: '#24303E',
+    surface: '#24303E',
+    error: '#CE3616',
+    text: '#FFFFFF',
+    onSurface: '#000000',
+    disabled: '#808080',
+    placeholder: '#808080',
+    backdrop: '#24303E',
+    notification: '#FFF0E6',
   }
 };

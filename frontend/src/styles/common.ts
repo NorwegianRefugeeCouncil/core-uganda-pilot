@@ -1,14 +1,8 @@
 import { StyleSheet } from 'react-native';
+import theme from '../constants/theme';
 
 export default StyleSheet.create({
-  top: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-  },
-  logo: {
-    height: 40,
-    width: 40,
+  textCentered: {
+    alignSelf: 'center'
   }
 });

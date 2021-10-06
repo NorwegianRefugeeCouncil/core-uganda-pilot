@@ -4,22 +4,19 @@ import theme from '../constants/theme';
 export default StyleSheet.create({
   container: {
     flex: 1,
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    backgroundColor: theme.colors.green
+    flexGrow: 1,
   },
   navigation: {
-    // flex: 1,
-    display: 'flex',
-    width: 230,
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-    backgroundColor: theme.colors.red
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    justifyContent: 'space-between',
+    alignContent: 'center',
+    alignItems: 'center'
   },
   body: {
-    flex: 1,
+    flexGrow: 1,
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
-    backgroundColor: theme.colors.yellow
+    padding: 18,
   }
 });
