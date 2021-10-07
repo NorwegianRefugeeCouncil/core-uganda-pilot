@@ -6,13 +6,6 @@ export default StyleSheet.create({
     flex: 1,
     flexGrow: 1,
   },
-  navigation: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    justifyContent: 'space-between',
-    alignContent: 'center',
-    alignItems: 'center'
-  },
   body: {
     flexGrow: 1,
     alignItems: 'flex-start',

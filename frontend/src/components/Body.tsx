@@ -5,13 +5,13 @@ import { StyleProp, View } from 'react-native';
 
 type BodyProps = {
   style: StyleProp<any>;
+  children: React.ReactNode;
 };
 
-const Body: React.FC<BodyProps> = ({ style }) => {
+const Body: React.FC<BodyProps> = ({ style, children }) => {
   return (
     <View style={style}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
+      {children}
     </View>
   );
 }
