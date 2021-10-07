@@ -3,12 +3,12 @@ import { Platform } from 'react-native';
 import { CMSClient } from 'core-js-api-client';
 import { Provider as PaperProvider } from 'react-native-paper';
 import theme from './src/constants/theme';
-import Layout from './src/components/Layout';
+import Router from './src/components/Router';
 
 export default function App() {
   return (
     <PaperProvider theme={theme}>
-      <Layout />
+      <Router />
     </PaperProvider>
   );
 }

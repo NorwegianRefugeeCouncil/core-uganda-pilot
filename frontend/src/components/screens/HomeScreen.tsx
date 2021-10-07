@@ -1,13 +1,13 @@
 import React from 'react';
-import { Text } from 'react-native-paper';
-import layout from '../../styles/layout';
-import Body from '../Body';
+import { Title } from 'react-native-paper';
+import { layout } from '../../styles';
+import { View } from 'react-native';
 
 const HomeScreen = () => {
   return (
-    <Body style={layout.body}>
-      <Text>Home</Text>
-    </Body>
+    <View style={layout.body}>
+      <Title>Home</Title>
+    </View>
   );
 };
 

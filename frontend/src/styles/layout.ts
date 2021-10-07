@@ -1,5 +1,4 @@
 import { StyleSheet } from 'react-native';
-import theme from '../constants/theme';
 
 export default StyleSheet.create({
   container: {
@@ -10,6 +9,11 @@ export default StyleSheet.create({
     flexGrow: 1,
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
-    padding: 18,
+    padding: 18
+  },
+  fab: {
+    position: 'absolute',
+    bottom: 28,
+    right: 18
   }
 });
