@@ -303,7 +303,6 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		}
 
 		return mongoClient, nil
-
 	}
 
 	hydraAdminClient, err := HydraClient(o.HydraAdminURL)
@@ -484,13 +483,12 @@ func HydraClient(adminURL string) (*client.OryHydra, error) {
 
 func MongoClient(hosts []string, username, password string) (*mongo.Client, error) {
 	// Setup mongo client
-	mongoClient, err := mongo.NewClient(options.Client().
-		SetHosts(hosts).
-		SetAuth(
-			options.Credential{
-				Username: username,
-				Password: password,
-			}))
+	mongoClient, err := mongo.NewClient(options.Client().SetHosts(hosts))
+	//.SetAuth(
+	//		options.Credential{
+	//			Username: username,
+	//			Password: password,
+	//		}))
 	if err != nil {
 		return nil, err
 	}

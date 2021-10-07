@@ -58,7 +58,7 @@ func NewGenericServerTestSetup() *GenericServerTestSetup {
 	}
 
 	var mongoClientFn = func(ctx context.Context) (*mongo.Client, error) {
-		mongoClient, err := mongo.NewClient(options.Client().SetAuth(options.Credential{Username: mongoUsername, Password: mongoPassword}).SetHosts([]string{mongoHost}))
+		mongoClient, err := mongo.NewClient(options.Client().SetHosts([]string{mongoHost})) // .SetAuth(options.Credential{Username: mongoUsername, Password: mongoPassword}))
 		if err != nil {
 			panic(err)
 		}
