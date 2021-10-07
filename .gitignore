@@ -8,4 +8,4 @@
 actions/__tmp
 vendor/
 api/tmp/
-api/models.ts*
+*.backup
