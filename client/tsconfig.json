@@ -7,5 +7,10 @@
     "skipLibCheck": true,
     "target": "ESNext"
   },
+  "include": [
+    "coreApiClient.ts",
+    "coreApiClient.test.ts",
+    "types/models.ts"
+  ],
   "exclude": ["node_modules"]
 }

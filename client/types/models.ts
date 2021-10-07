@@ -79,9 +79,9 @@ export interface PartyTypeRule {
     firstPartyTypeId: string;
     secondPartyTypeId: string;
 }
-export interface RelationshipTypeRule {
-    ?: PartyTypeRule;
-}
+// export interface RelationshipTypeRule {
+//     ?: PartyTypeRule;
+// }
 
 export interface RelationshipType {
     id: string;
@@ -89,7 +89,7 @@ export interface RelationshipType {
     name: string;
     firstPartyRole: string;
     secondPartyRole: string;
-    rules: RelationshipTypeRule[];
+    //rules: RelationshipTypeRule[];
 }
 export interface RelationshipTypeList {
     items: RelationshipType[];
@@ -189,6 +189,28 @@ export interface NationalityListOptions {
 
 }
 export interface IndividualListOptions {
+
+}
+export interface IdentificationDocument {
+    id: string;
+    partyId: string;
+    documentNumber: string;
+    identificationDocumentTypeId: string;
+}
+export interface IdentificationDocumentList {
+    items: IdentificationDocument[];
+}
+export interface IdentificationDocumentListOptions {
+
+}
+export interface IdentificationDocumentType {
+    id: string;
+    name: string;
+}
+export interface IdentificationDocumentTypeList {
+    items: IdentificationDocumentType[];
+}
+export interface IdentificationDocumentTypeListOptions {
 
 }
 export interface Section {

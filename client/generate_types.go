@@ -47,6 +47,12 @@ func GenerateTypescriptTypes() error {
 		iam.MembershipListOptions{},
 		iam.NationalityListOptions{},
 		iam.IndividualListOptions{},
+		iam.IdentificationDocument{},
+		iam.IdentificationDocumentList{},
+		iam.IdentificationDocumentListOptions{},
+		iam.IdentificationDocumentType{},
+		iam.IdentificationDocumentTypeList{},
+		iam.IdentificationDocumentTypeListOptions{},
 
 		// cms types
 		cms.Case{},
@@ -63,6 +69,7 @@ func GenerateTypescriptTypes() error {
 		form.Form{},
 	}
 	converter := typescriptify.New()
+	// export interfaces and not classes
 	converter.CreateInterface = true
 	for _, typ := range types {
 		converter = converter.Add(typ)
