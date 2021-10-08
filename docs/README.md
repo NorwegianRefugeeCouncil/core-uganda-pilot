@@ -16,7 +16,7 @@ __nb__ Use your IDE of choice, but be aware this repository includes convenience
 #### 1. Install dependencies
 
 - `nix`: https://nixos.org/guides/install-nix.html
-- `direnv: https://direnv.net/ (make sure to [setup direnv to work with your shell](https://direnv.net/docs/hook.html))
+- `direnv`: https://direnv.net/ (make sure to [setup direnv to work with your shell](https://direnv.net/docs/hook.html))
 
 *nb* If you use a shell other than `bash` you'll have to take some extra care to setup nix; lot's of guides available for `zsh` and `fish` shells
 
