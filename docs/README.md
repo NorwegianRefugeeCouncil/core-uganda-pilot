@@ -26,13 +26,12 @@ __nb__ Use your IDE of choice, but be aware this repository includes convenience
 make gen-certs
 ```
 
-#### 3. Install git hooks
+#### 3. Install git hooks (you only have to do this once)
 
 Navigate to the `actions` directory
 ```bash
 ./install.sh
 ```
-You only have to do this once.
 
 ### Launch
 
