@@ -1,14 +1,15 @@
 import React from 'react';
-import { FAB, List, Title } from 'react-native-paper';
+import { FAB, Text, Title } from 'react-native-paper';
 import { layout } from '../../styles';
 import routes from '../../constants/routes';
-import pngIndividuals from '../../../assets/png/symbol_individuals.png';
+import { FlatList, Image, TouchableOpacity, View } from 'react-native';
+import pngIndividual from '../../../assets/png/symbol_individuals.png';
 import theme from '../../constants/theme';
-import { View } from 'react-native';
 
 type Individual = {
   name: string
 }
+
 export const testIndividuals: Individual[] = [
   {
     name: 'Person 1'
@@ -22,23 +23,32 @@ const IndividualsListScreen: React.FC<any> = ({ navigation }) => {
   return (
     <View style={layout.body}>
       <Title>Individuals</Title>
+      <FlatList
+        style={{ flex: 1, width: '100%' }}
+        data={testIndividuals}
+        renderItem={({ item, index, separators }) => (
+          <TouchableOpacity
+            key={index}
+            onPress={() => navigation.navigate(routes.individual.name, { id: index, paddingRight: 12 })}
+          >
+            <View style={{ flexDirection: 'row', flex: 1 }}>
+              <View style={{ justifyContent: 'center', paddingRight: 12 }}>
+                <Image source={pngIndividual} style={{ tintColor: theme.colors.text, width: 20, height: 20 }} />
+              </View>
+              <View style={{ justifyContent: 'center' }}>
+                <Title>{index}</Title>
+                <Text>{item.name}</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        )}
+      />
       <FAB
         style={layout.fab}
         icon="plus"
         color={'white'}
-        onPress={() => navigation.navigate(routes.individual.name, {id: null})}
+        onPress={() => navigation.navigate(routes.individual.name, { id: null })}
       />
-
-      <List.Section>
-        {testIndividuals.map((individual, index) =>
-          <List.Item
-            key={index}
-            title={individual.name}
-            left={() => <List.Icon icon={pngIndividuals} color={theme.colors.backdrop}/>}
-            onPress={() => navigation.navigate(routes.individual.name, {id: index})}
-          />
-        )}
-      </List.Section>
     </View>
   );
 };
