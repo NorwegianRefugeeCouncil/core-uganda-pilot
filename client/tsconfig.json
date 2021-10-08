@@ -1,16 +1,25 @@
 {
   "compilerOptions": {
-    "allowJs": true,
+    "module": "CommonJS",
     "esModuleInterop": true,
-    "moduleResolution": "Node",
-    "lib": ["DOM", "ESNext"],
-    "skipLibCheck": true,
-    "target": "ESNext"
+    "target": "ES6",
+    "lib": [
+      "DOM",
+      "ESNext"
+    ]
   },
   "include": [
+<<<<<<< HEAD
     "coreApiClient.ts",
     "coreApiClient.test.ts",
     "types/models.ts"
   ],
   "exclude": ["node_modules"]
+=======
+    "src"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+>>>>>>> 543ac989dce66ff31d0d5c31b6a41dd7455e7ade
 }

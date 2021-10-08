@@ -1,5 +1,5 @@
 {
-  "name": "js-api-client",
+  "name": "core-js-api-client",
   "version": "0.0.1",
   "main": "coreApiClient.js",
   "scripts": {
