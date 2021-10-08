@@ -1,7 +1,8 @@
 {
   "name": "core-js-api-client",
   "version": "0.0.1",
-  "main": "coreApiClient.js",
+  "main": "./lib/coreApiClient.js",
+  "types": "./lib/coreApiClient.d.ts",
   "scripts": {
     "test": "mocha -r ts-node/register coreApiClient.test.ts"
   },

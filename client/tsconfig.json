@@ -10,7 +10,9 @@
     "typeRoots": [
       "./node_modules/@types",
       "./types"
-    ]
+    ],
+    "declaration": true,
+    "outDir": "./lib"
   },
   "include": [
     "coreApiClient.ts",
