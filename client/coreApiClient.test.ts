@@ -20,13 +20,9 @@ const noop = () => {}
 
 describe("CMSClient - Comments", () => {
   let testId: string
-  let testComment: Comment
-
-  before(() => {
-    testComment = {
-      caseId: "TESTCASEID"
-    } as Comment
-  })
+  let testComment = {
+    caseId: "TESTCASEID"
+  } as Comment
 
   it("Should return 200 on Create and params match", (done) => {
     CMSClient.Comments().Create(testComment)
@@ -53,14 +49,12 @@ describe("CMSClient - Comments", () => {
       })
   })
 
-  before(() => {
+  it("Should return 200 on Update", (done) => {
     testComment = {
       id: testId,
       caseId: "TESTCASEID2"
     } as Comment
-  })
 
-  it("Should return 200 on Update", (done) => {
     CMSClient.Comments().Update({
       id: testId,
       caseId: "TESTCASEID2"
