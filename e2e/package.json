@@ -1,6 +1,4 @@
 {
-  "name": "core-e2e-cy-test-suite",
-  "version": "0.0.1",
   "scripts": {
     "run": "cypress run --quiet",
     "open": "cypress open",
@@ -8,7 +6,6 @@
     "lint:fix": "eslint 'cypress/**/*.js' --fix"
   },
   "devDependencies": {
-    "@babel/core": "^7.15.5",
     "@babel/eslint-parser": "^7.14.7",
     "cypress": "^8.5.0",
     "eslint": "^7.29.0",
