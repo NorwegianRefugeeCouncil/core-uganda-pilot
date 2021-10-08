@@ -16,7 +16,6 @@ require (
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.7.0
-	github.com/tkrajina/typescriptify-golang-structs v0.1.7
 	github.com/xeonx/timeago v1.0.0-rc4
 	go.mongodb.org/mongo-driver v1.5.3
 	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e
