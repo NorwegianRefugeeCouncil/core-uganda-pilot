@@ -11,8 +11,7 @@
   "include": [
     "coreApiClient.ts",
     "coreApiClient.test.ts",
-    "types/models.ts",
-    "src"
+    "types/models.ts"
   ],
   "exclude": [
     "node_modules"

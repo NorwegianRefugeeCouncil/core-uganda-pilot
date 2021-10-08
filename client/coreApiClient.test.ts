@@ -46,12 +46,11 @@ import {
   TeamList,
   TeamListOptions,
   CommentList,
-  CaseTypeList
+  CaseTypeList, Control
 } from './types/models';
 import { expect } from 'chai'
 
-const noop = () => {}
-const defaultHost = "localhost"
+const defaultHost = "localhost:9000"
 const defaultScheme = "http"
 
 const cmsClient = new CMSClient(defaultHost, defaultScheme)
@@ -561,3 +560,264 @@ describe("IAMClient - Relationship Types", () => {
       })
   })
 })
+
+describe("IAMClient - Relationships", () => {
+  let testId: string
+  let testRelationship = {
+    relationshipTypeId: "TESTRELATIONSHIPTYPEID",
+    firstParty: "TESTFIRSTPARTY",
+    secondParty: "TESTSECONDPARTY"
+  } as Relationship
+
+  it("Should return 200 on Create", (done) => {
+    iamClient.Relationships().Create(testRelationship)
+      .subscribe((response) => {
+        if (response.status === 200) {
+          testId = response.response.id
+          done()
+        } else {
+          done(expect(response.status).to.equal(200));
+        }
+      })
+  })
+
+  it("Should return 200 on Get", (done) => {
+    iamClient.Relationships().Get(testId)
+      .subscribe((response) => {
+        if (response.status === 200) {
+          let gotRelationship = response.response as Relationship
+          expect(gotRelationship.relationshipTypeId).to.equal(testRelationship.relationshipTypeId)
+          expect(gotRelationship.firstParty).to.equal(testRelationship.firstParty)
+          expect(gotRelationship.secondParty).to.equal(testRelationship.secondParty)
+          done()
+        } else {
+          done(expect(response.status).to.equal(200));
+        }
+      })
+  })
+
+  it("Should return 200 on Update", (done) => {
+    testRelationship = {
+      relationshipTypeId: "TESTRELATIONSHIPTYPEID2",
+      firstParty: "TESTFIRSTPARTY2",
+      secondParty: "TESTSECONDPARTY2"
+    } as Relationship
+
+    iamClient.Relationships().Update({
+      relationshipTypeId: "TESTRELATIONSHIPTYPEID2",
+      firstParty: "TESTFIRSTPARTY2",
+      secondParty: "TESTSECONDPARTY2"
+    } as Relationship)
+      .subscribe((response) => {
+        if (response.status === 200) {
+          done()
+        } else {
+          done(expect(response.status).to.equal(200));
+        }
+      })
+  })
+
+  it("Should return 200 on Get after Update", (done) => {
+    iamClient.Relationships().Get(testId)
+      .subscribe((response) => {
+        if (response.status === 200) {
+          let gotRelationship = response.response as Relationship
+          expect(gotRelationship.relationshipTypeId).to.equal(testRelationship.relationshipTypeId)
+          expect(gotRelationship.firstParty).to.equal(testRelationship.firstParty)
+          expect(gotRelationship.secondParty).to.equal(testRelationship.secondParty)
+          done()
+        } else {
+          done(expect(response.status).to.equal(200));
+        }
+      })
+  })
+
+  it("Should return 200 on List", (done) => {
+    iamClient.Relationships().List({} as RelationshipListOptions)
+      .subscribe((response) => {
+        if (response.status === 200) {
+          let gotRelationshipList = response.response as RelationshipList
+          let listContainsRelationship = false
+          gotRelationshipList.items.forEach((relationship) => {
+            if (relationship.id == testId) {
+              expect(relationship.relationshipTypeId).to.equal(testRelationship.relationshipTypeId)
+              expect(relationship.firstParty).to.equal(testRelationship.firstParty)
+              expect(relationship.secondParty).to.equal(testRelationship.secondParty)
+              listContainsRelationship = true
+            }
+          })
+          expect(listContainsRelationship).to.equal(true)
+          done()
+        } else {
+          done(expect(response.status).to.equal(200));
+        }
+      })
+  })
+})
+
+describe("IAMClient - Party Types", () => {
+  let testId: string
+  let testPartyType = {
+    name: "TESTNAME",
+    isBuiltIn: false
+  } as PartyType
+
+  it("Should return 200 on Create", (done) => {
+    iamClient.PartyTypes().Create(testPartyType)
+      .subscribe((response) => {
+        if (response.status === 200) {
+          testId = response.response.id
+          done()
+        } else {
+          done(expect(response.status).to.equal(200));
+        }
+      })
+  })
+
+  it("Should return 200 on Get", (done) => {
+    iamClient.PartyTypes().Get(testId)
+      .subscribe((response) => {
+        if (response.status === 200) {
+          let gotPartyType = response.response as PartyType
+          expect(gotPartyType.name).to.equal(testPartyType.name)
+          expect(gotPartyType.isBuiltIn).to.equal(testPartyType.isBuiltIn)
+          done()
+        } else {
+          done(expect(response.status).to.equal(200));
+        }
+      })
+  })
+
+  it("Should return 200 on Update", (done) => {
+    testPartyType = {
+      name: "TESTNAME2",
+      isBuiltIn: false
+    } as PartyType
+
+    iamClient.PartyTypes().Update({
+      name: "TESTNAME2",
+      isBuiltIn: false
+    } as PartyType)
+      .subscribe((response) => {
+        if (response.status === 200) {
+          done()
+        } else {
+          done(expect(response.status).to.equal(200));
+        }
+      })
+  })
+
+  it("Should return 200 on Get after Update", (done) => {
+    iamClient.PartyTypes().Get(testId)
+      .subscribe((response) => {
+        if (response.status === 200) {
+          let gotPartyType = response.response as PartyType
+          expect(gotPartyType.name).to.equal(testPartyType.name)
+          expect(gotPartyType.isBuiltIn).to.equal(testPartyType.isBuiltIn)
+          done()
+        } else {
+          done(expect(response.status).to.equal(200));
+        }
+      })
+  })
+
+  // Party Type List test omitted since party type list is not implemented
+})
+
+/*describe("IAMClient - Party Attribute Definitions", () => {
+  let testId: string
+  let testAttribute = {
+    countryId: "TESTCOUNTRYID",
+    partyTypeIds: ["TESTPARTYTYPE"],
+    isPii: false,
+    formControl: {} as Control
+  } as PartyAttributeDefinition
+
+  it("Should return 200 on Create", (done) => {
+    iamClient.PartyAttributeDefinitions().Create(testAttribute)
+      .subscribe((response) => {
+        if (response.status === 200) {
+          testId = response.response.id
+          done()
+        } else {
+          done(expect(response.status).to.equal(200));
+        }
+      })
+  })
+
+  it("Should return 200 on Get", (done) => {
+    iamClient.PartyAttributeDefinitions().Get(testId)
+      .subscribe((response) => {
+        if (response.status === 200) {
+          let gotPartyAttributeDefinition = response.response as PartyAttributeDefinition
+          expect(gotPartyAttributeDefinition.countryId).to.equal(testAttribute.countryId)
+          testAttribute.partyTypeIds.forEach((id) => {
+            expect(gotPartyAttributeDefinition.partyTypeIds).to.include(id)
+          })
+          expect(gotPartyAttributeDefinition.isPii).to.equal(testAttribute.isPii)
+          done()
+        } else {
+          done(expect(response.status).to.equal(200));
+        }
+      })
+  })
+
+  it("Should return 200 on Update", (done) => {
+    testAttribute = {
+      countryId: "TESTCOUNTRYID2",
+      partyTypeIds: ["TESTPARTYTYPE2"],
+      isPii: false,
+      formControl: {} as Control
+    } as PartyAttributeDefinition
+
+    iamClient.PartyAttributeDefinitions().Update({
+      countryId: "TESTCOUNTRYID2",
+      partyTypeIds: ["TESTPARTYTYPE2"],
+      isPii: false,
+      formControl: {} as Control
+    } as PartyAttributeDefinition)
+      .subscribe((response) => {
+        if (response.status === 200) {
+          done()
+        } else {
+          done(expect(response.status).to.equal(200));
+        }
+      })
+  })
+
+  it("Should return 200 on Get after Update", (done) => {
+    iamClient.PartyTypes().Get(testId)
+      .subscribe((response) => {
+        if (response.status === 200) {
+          let gotPartyType = response.response as PartyType
+          expect(gotPartyType.name).to.equal(testPartyType.name)
+          expect(gotPartyType.isBuiltIn).to.equal(testPartyType.isBuiltIn)
+          done()
+        } else {
+          done(expect(response.status).to.equal(200));
+        }
+      })
+  })
+
+  it("Should return 200 on List", (done) => {
+    iamClient.Relationships().List({} as RelationshipListOptions)
+      .subscribe((response) => {
+        if (response.status === 200) {
+          let gotRelationshipList = response.response as RelationshipList
+          let listContainsRelationship = false
+          gotRelationshipList.items.forEach((relationship) => {
+            if (relationship.id == testId) {
+              expect(relationship.relationshipTypeId).to.equal(testRelationship.relationshipTypeId)
+              expect(relationship.firstParty).to.equal(testRelationship.firstParty)
+              expect(relationship.secondParty).to.equal(testRelationship.secondParty)
+              listContainsRelationship = true
+            }
+          })
+          expect(listContainsRelationship).to.equal(true)
+          done()
+        } else {
+          done(expect(response.status).to.equal(200));
+        }
+      })
+  })
+})*/
