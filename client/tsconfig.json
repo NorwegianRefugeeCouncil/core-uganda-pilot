@@ -9,6 +9,9 @@
     ]
   },
   "include": [
+    "coreApiClient.ts",
+    "coreApiClient.test.ts",
+    "types/models.ts",
     "src"
   ],
   "exclude": [
