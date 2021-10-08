@@ -1,6 +1,7 @@
 import { Observable } from 'rxjs';
 import {
   Case,
+  CaseList,
   CaseListOptions,
   Comment,
   CaseType,
@@ -42,7 +43,9 @@ import {
   RelationshipTypeListOptions,
   Team,
   TeamList,
-  TeamListOptions, CommentList
+  TeamListOptions,
+  CommentList,
+  CaseTypeList
 } from './types/models';
 import { ajax, AjaxResponse } from 'rxjs/ajax';
 import { XMLHttpRequest } from 'xhr2';
@@ -163,7 +166,11 @@ class HttpClient<T> {
 
 class TeamClient {
   readonly httpClient = new HttpClient<Team>(shouldAddAuthHeader)
-  readonly endpoint = 'http://localhost:9000/apis/iam/v1/teams'
+  endpoint: string
+
+  constructor(host: string, scheme: string) {
+    this.endpoint = `${scheme}://${host}/apis/iam/v1/teams`
+  }
 
   Get(id: string) {
     return this.httpClient.get(this.endpoint + '/' + id)
@@ -187,7 +194,11 @@ class TeamClient {
 
 class RelationshipTypeClient {
   readonly httpClient = new HttpClient<RelationshipType>(shouldAddAuthHeader)
-  readonly endpoint = 'http://localhost:9000/apis/iam/v1/relationshiptypes'
+  endpoint: string
+
+  constructor(host: string, scheme: string) {
+    this.endpoint = `${scheme}://${host}/apis/iam/v1/relationshiptypes`
+  }
 
   Get(id: string) {
     return this.httpClient.get(this.endpoint + '/' + id)
@@ -211,7 +222,11 @@ class RelationshipTypeClient {
 
 class RelationshipClient {
   readonly httpClient = new HttpClient<Relationship>(shouldAddAuthHeader)
-  readonly endpoint = 'http://localhost:9000/apis/iam/v1/relationships'
+  endpoint: string
+
+  constructor(host: string, scheme: string) {
+    this.endpoint = `${scheme}://${host}/apis/iam/v1/relationships`
+  }
 
   Get(id: string) {
     return this.httpClient.get(this.endpoint + '/' + id)
@@ -239,7 +254,11 @@ class RelationshipClient {
 
 class PartyTypeClient {
   readonly httpClient = new HttpClient<PartyType>(shouldAddAuthHeader)
-  readonly endpoint = 'http://localhost:9000/apis/iam/v1/partytypes'
+  endpoint: string
+
+  constructor(host: string, scheme: string) {
+    this.endpoint = `${scheme}://${host}/apis/iam/v1/partytypes`
+  }
 
   Get(id: string) {
     return this.httpClient.get(this.endpoint + '/' + id)
@@ -263,7 +282,11 @@ class PartyTypeClient {
 
 class PartyAttributeDefinitionClient {
   readonly httpClient = new HttpClient<PartyAttributeDefinition>(shouldAddAuthHeader)
-  readonly endpoint = 'http://localhost:9000/apis/iam/v1/attributes'
+  endpoint: string
+
+  constructor(host: string, scheme: string) {
+    this.endpoint = `${scheme}://${host}/apis/iam/v1/attributes`
+  }
 
   Get(id: string) {
     return this.httpClient.get(this.endpoint + '/' + id)
@@ -287,7 +310,11 @@ class PartyAttributeDefinitionClient {
 
 class NationalityClient {
   readonly httpClient = new HttpClient<Nationality>(shouldAddAuthHeader)
-  readonly endpoint = 'http://localhost:9000/apis/iam/v1/nationalities'
+  endpoint: string
+
+  constructor(host: string, scheme: string) {
+    this.endpoint = `${scheme}://${host}/apis/iam/v1/nationalities`
+  }
 
   Get(id: string) {
     return this.httpClient.get(this.endpoint + '/' + id)
@@ -311,7 +338,11 @@ class NationalityClient {
 
 class MembershipClient {
   readonly httpClient = new HttpClient<Membership>(shouldAddAuthHeader)
-  readonly endpoint = 'http://localhost:9000/apis/iam/v1/memberships'
+  endpoint: string
+
+  constructor(host: string, scheme: string) {
+    this.endpoint = `${scheme}://${host}/apis/iam/v1/memberships`
+  }
 
   Get(id: string) {
     return this.httpClient.get(this.endpoint + '/' + id)
@@ -335,7 +366,11 @@ class MembershipClient {
 
 class IndividualClient {
   readonly httpClient = new HttpClient<Individual>(shouldAddAuthHeader)
-  readonly endpoint = 'http://localhost:9000/apis/iam/v1/individuals'
+  endpoint: string
+
+  constructor(host: string, scheme: string) {
+    this.endpoint = `${scheme}://${host}/apis/iam/v1/individuals`
+  }
 
   Get(id: string) {
     return this.httpClient.get(this.endpoint + '/' + id)
@@ -359,7 +394,11 @@ class IndividualClient {
 
 class IdentificationDocumentTypeClient {
   readonly httpClient = new HttpClient<IdentificationDocumentType>(shouldAddAuthHeader)
-  readonly endpoint = 'http://localhost:9000/apis/iam/v1/identificationdocumenttypes'
+  endpoint: string
+
+  constructor(host: string, scheme: string) {
+    this.endpoint = `${scheme}://${host}/apis/iam/v1/identificationdocumenttypes`
+  }
 
   Get(id: string) {
     return this.httpClient.get(this.endpoint + '/' + id)
@@ -383,7 +422,11 @@ class IdentificationDocumentTypeClient {
 
 class IdentificationDocumentClient {
   readonly httpClient = new HttpClient<IdentificationDocument>(shouldAddAuthHeader)
-  readonly endpoint = 'http://localhost:9000/apis/iam/v1/identificationdocuments'
+  endpoint: string
+
+  constructor(host: string, scheme: string) {
+    this.endpoint = `${scheme}://${host}/apis/iam/v1/identificationdocuments`
+  }
 
   Get(id: string) {
     return this.httpClient.get(this.endpoint + '/' + id)
@@ -411,7 +454,11 @@ class IdentificationDocumentClient {
 
 class CountryClient {
   readonly httpClient = new HttpClient<Country>(shouldAddAuthHeader)
-  readonly endpoint = 'http://localhost:9000/apis/iam/v1/countries'
+  endpoint: string
+
+  constructor(host: string, scheme: string) {
+    this.endpoint = `${scheme}://${host}/apis/iam/v1/countries`
+  }
 
   Get(id: string) {
     return this.httpClient.get(this.endpoint + '/' + id)
@@ -435,7 +482,11 @@ class CountryClient {
 
 class PartyClient {
   readonly httpClient = new HttpClient<Party>(shouldAddAuthHeader)
-  readonly endpoint = 'http://localhost:9000/apis/iam/v1/parties'
+  endpoint: string
+
+  constructor(host: string, scheme: string) {
+    this.endpoint = `${scheme}://${host}/apis/iam/v1/parties`
+  }
 
   Get(id: string) {
     return this.httpClient.get(this.endpoint + '/' + id)
@@ -462,52 +513,60 @@ class PartyClient {
 }
 
 export class IAMClient {
-  static Parties() {
-    return new PartyClient
+  host: string
+  scheme: string
+
+  constructor(host: string, scheme: string) {
+    this.host = host
+    this.scheme = scheme
   }
 
-  static Countries() {
-    return new CountryClient
+  Parties() {
+    return new PartyClient(this.host, this.scheme)
   }
 
-  static IdentificationDocuments() {
-    return new IdentificationDocumentClient
+  Countries() {
+    return new CountryClient(this.host, this.scheme)
   }
 
-  static IdentificationDocumentTypes() {
-    return new IdentificationDocumentTypeClient
+  IdentificationDocuments() {
+    return new IdentificationDocumentClient(this.host, this.scheme)
   }
 
-  static Individuals() {
-    return new IndividualClient
+  IdentificationDocumentTypes() {
+    return new IdentificationDocumentTypeClient(this.host, this.scheme)
   }
 
-  static Memberships() {
-    return new MembershipClient
+  Individuals() {
+    return new IndividualClient(this.host, this.scheme)
   }
 
-  static Nationalities() {
-    return new NationalityClient
+  Memberships() {
+    return new MembershipClient(this.host, this.scheme)
   }
 
-  static PartyAttributeDefinitions() {
-    return new PartyAttributeDefinitionClient
+  Nationalities() {
+    return new NationalityClient(this.host, this.scheme)
   }
 
-  static PartyTypes() {
-    return new PartyTypeClient
+  PartyAttributeDefinitions() {
+    return new PartyAttributeDefinitionClient(this.host, this.scheme)
   }
 
-  static Relationships() {
-    return new RelationshipClient
+  PartyTypes() {
+    return new PartyTypeClient(this.host, this.scheme)
   }
 
-  static RelationshipTypes() {
-    return new RelationshipTypeClient
+  Relationships() {
+    return new RelationshipClient(this.host, this.scheme)
   }
 
-  static Teams() {
-    return new TeamClient
+  RelationshipTypes() {
+    return new RelationshipTypeClient(this.host, this.scheme)
+  }
+
+  Teams() {
+    return new TeamClient(this.host, this.scheme)
   }
 }
 
@@ -515,7 +574,11 @@ export class IAMClient {
 
 class CaseClient {
   readonly httpClient = new HttpClient<Case>(shouldAddAuthHeader)
-  readonly endpoint = 'http://localhost:9000/apis/cms/v1/cases'
+  endpoint: string
+
+  constructor(host: string, scheme: string) {
+    this.endpoint = `${scheme}://${host}/apis/cms/v1/cases`
+  }
 
   Get(id: string) {
     return this.httpClient.get(this.endpoint + '/' + id)
@@ -531,7 +594,7 @@ class CaseClient {
 
   List(lo: CaseListOptions) {
     const query = new URLSearchParams(lo as Record<string, string>)
-    return this.httpClient.get(
+    return this.httpClient.getCustom<CaseList>(
       query ? this.endpoint : this.endpoint + `?${query}`
     )
   }
@@ -539,7 +602,11 @@ class CaseClient {
 
 class CaseTypeClient {
   readonly httpClient = new HttpClient<CaseType>(shouldAddAuthHeader)
-  readonly endpoint = 'http://localhost:9000/apis/cms/v1/casetypes'
+  endpoint: string
+
+  constructor(host: string, scheme: string) {
+    this.endpoint = `${scheme}://${host}/apis/cms/v1/casetypes`
+  }
 
   Get(id: string) {
     return this.httpClient.get(this.endpoint + '/' + id)
@@ -555,7 +622,7 @@ class CaseTypeClient {
 
   List(lo: CaseTypeListOptions) {
     const query = new URLSearchParams(lo as Record<string, string>)
-    return this.httpClient.get(
+    return this.httpClient.getCustom<CaseTypeList>(
       query ? this.endpoint : this.endpoint + `?${query}`
     )
   }
@@ -563,7 +630,11 @@ class CaseTypeClient {
 
 class CommentClient {
   readonly httpClient = new HttpClient<Comment>(shouldAddAuthHeader)
-  readonly endpoint = 'http://localhost:9000/apis/cms/v1/comments'
+  endpoint: string
+
+  constructor(host: string, scheme: string) {
+    this.endpoint = `${scheme}://${host}/apis/cms/v1/comments`
+  }
 
   Get(id: string) {
     return this.httpClient.get(this.endpoint + '/' + id)
@@ -590,15 +661,23 @@ class CommentClient {
 }
 
 export class CMSClient {
-  static Cases() {
-    return new CaseClient
+  host: string
+  scheme: string
+
+  constructor(host: string, scheme: string) {
+    this.host = host
+    this.scheme = scheme
   }
 
-  static CaseTypes() {
-    return new CaseTypeClient
+  Cases() {
+    return new CaseClient(this.host, this.scheme)
   }
 
-  static Comments() {
-    return new CommentClient
+  CaseTypes() {
+    return new CaseTypeClient(this.host, this.scheme)
+  }
+
+  Comments() {
+    return new CommentClient(this.host, this.scheme)
   }
 }
