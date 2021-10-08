@@ -1,14 +1,15 @@
 # How to run this (for now)
 
 
-1. cd into `api/client`
+1. `cd client`
 2. `npm i`
 3. `go run .` to generate a `models.ts` file
-4. `tsc`
-5. cd into `api`
-6. `make serve`
-7. cd into `api/frontend`
-8. create `.env` file with the following content:
+5. comment out line 83 of the generated `types/models.ts`
+5. `tsc` to generate the javascript
+6. `cd ../api`
+7. `make serve`
+8. `cd frontend` in another terminal
+9. create `.env` file with the following content:
 ```
 NODE_ENV='development'
 SERVER_HOSTNAME='<your-local-ip>:9000'
