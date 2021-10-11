@@ -29,7 +29,7 @@ echo "$PREFIX Running hook..."
 # CHECK FOR RUNNING CONTAINERS
 #
 echo "$PREFIX Checking docker-compose..."
-cd artifacts || exit
+cd deployments || exit
 
 if [ -w "$(which docker-compose)" ]; then
 	DC="docker-compose ps"
@@ -66,7 +66,7 @@ if serverIsRunning; then
 	exit 1
 fi
 
-cd "$DIR/api" || exit
+cd "$DIR" || exit
 make serve &>/dev/null &
 
 n=0
@@ -86,13 +86,13 @@ echo "$PREFIX Webapp is up and running!"
 # linting
 #
 echo "$PREFIX Running eslint on .js files..."
-cd "$DIR/e2e" || exit
+cd "$DIR/test/e2e" || exit
 if ! npm run lint:fix; then
 	echo >&2 "$PREFIX Linting failed, see output above."
 	exit 1
 fi
 
-cd "$DIR/api" || exit
+cd "$DIR" || exit
 
 echo "$PREFIX Running E2E tests..."
 if ! make test-e2e; then
