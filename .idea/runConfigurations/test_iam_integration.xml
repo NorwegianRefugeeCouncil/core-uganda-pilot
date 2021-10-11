@@ -3,7 +3,7 @@
     <module name="core" />
     <working_directory value="$PROJECT_DIR$" />
     <kind value="PACKAGE" />
-    <package value="github.com/nrc-no/core/test/integration/iam" />
+    <package value="github.com/nrc-no/core/pkg/iam" />
     <directory value="$PROJECT_DIR$" />
     <filePath value="$PROJECT_DIR$" />
     <framework value="gotest" />
