@@ -28,7 +28,6 @@
     "web": {
       "favicon": "./assets/png/nrc.png"
     },
-      "icon": "./assets/png/nrc.png",
     "androidStatusBar": {
       "hidden": true,
       "backgroundColor": "#728346",

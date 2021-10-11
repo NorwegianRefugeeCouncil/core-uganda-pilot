@@ -1,15 +1,16 @@
-import { DefaultTheme } from 'react-native-paper';
+import { DefaultTheme as RNPDefaultTheme } from 'react-native-paper';
+import { DefaultTheme as NavigationDefaultTheme } from '@react-navigation/native';
 
 const lightTheme = {
-  ...DefaultTheme,
+  ...RNPDefaultTheme,
   colors: {
     primary: '#24303E',
     accent: '#FF7602',
     background: '#E5E5E5',
-    surface: '#FFFFFF',
+    surface: '#E5E5E5',
     error: '#CE3616',
     text: '#000000',
-    onSurface: '#000000',
+    onSurface: '#FF7602',
     disabled: '#808080',
     placeholder: '#808080',
     backdrop: '#24303E',
@@ -26,20 +27,31 @@ const lightTheme = {
 export default lightTheme;
 
 export const darkTheme = {
-  ...DefaultTheme,
+  ...RNPDefaultTheme,
   ...lightTheme,
   dark: true,
   colors: {
+    ...lightTheme.colors,
     primary: '#24303E',
     accent: '#FF7602',
     background: '#24303E',
-    surface: '#24303E',
-    error: '#CE3616',
+    surface: '#808080',
     text: '#FFFFFF',
-    onSurface: '#000000',
-    disabled: '#808080',
-    placeholder: '#808080',
-    backdrop: '#24303E',
-    notification: '#FFF0E6',
+    onSurface: '#FF7602',
+    backdrop: '#808080',
+    notification: '#808080',
   }
+};
+
+
+export const NavigationTheme = {
+  ...NavigationDefaultTheme,
+  dark: false,
+  colors: {
+    ...NavigationDefaultTheme.colors,
+    ...lightTheme.colors,
+    card: '#24303E',
+    text: '#FFFFFF',
+    border: '#24303E',
+  },
 };
