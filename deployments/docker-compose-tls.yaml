@@ -1,0 +1,76 @@
+services:
+  mongo:
+    container_name: core-mongo
+    image: mongo
+    restart: on-failure
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
+  mongo-express:
+    container_name: core-mongo-express
+    image: mongo-express
+    restart: on-failure
+    ports:
+      - "8090:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+
+  redis:
+    container_name: core-redis
+    image: 'bitnami/redis:latest'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - "6379:6379"
+    restart: on-failure
+
+  hydra_migrate:
+    container_name: core-hydra-migrate
+    image: oryd/hydra:v1.10.2
+    command:
+      - migrate
+      - sql
+      - --yes
+      - postgres://hydra:secret@hydra_db:5432/hydra?sslmode=disable&max_conns=20&max_idle_conns=4
+    restart: on-failure
+
+  hydra:
+    container_name: core-hydra
+    image: oryd/hydra:v1.10.2
+    ports:
+      - "4444:4444"
+      - "4445:4445"
+    command:
+      - serve
+      - all
+    volumes:
+      - ../certs/cert.pem:/certs/cert.pem
+      - ../certs/key.pem:/certs/key.pem
+    environment:
+      - DSN=postgres://hydra:secret@hydra_db:5432/hydra?sslmode=disable&max_conns=20&max_idle_conns=4
+      - SECRETS_SYSTEM=fVuJ0N1nFuymQjcnC4OWcIyo15gb0MYe
+      - URLS_SELF_ISSUER=https://localhost:4444
+      - URLS_CONSENT=https://localhost:9000/auth/consent
+      - URLS_LOGIN=https://localhost:9000/auth/login
+      - URLS_LOGOUT=https://localhost:9000/auth/logout
+      - LOG_LEAK_SENSITIVE_VALUES=true
+      - SERVE_TLS_KEY_PATH=/certs/key.pem
+      - SERVE_TLS_CERT_PATH=/certs/cert.pem
+      - HTTPS_TLS_KEY_PATH=/certs/key.pem
+      - HTTPS_TLS_CERT_PATH=/certs/cert.pem
+    restart: on-failure
+
+  hydra_db:
+    container_name: core-hydra-db
+    image: postgres:9.6
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=hydra
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=hydra
+    restart: on-failure

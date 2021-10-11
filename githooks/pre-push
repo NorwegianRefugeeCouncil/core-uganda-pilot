@@ -1,0 +1,114 @@
+#!/bin/bash
+#
+# increase maximum open files for shell to workaround issue on Fedora
+ulimit -n 1000000
+
+# When run as a hook by git, `pwd` will be the repository's root folder.
+DIR=$(pwd)
+PREFIX="[pre-push]"
+
+function cleanup() {
+	# kill all child processes
+	pkill -P $$
+}
+# cleanup on exit
+for sig in INT QUIT HUP TERM; do
+	trap "
+	cleanup
+	trap - $sig EXIT
+	kill -s $sig "'"$$"' "$sig"
+done
+trap cleanup EXIT
+
+#
+#
+#
+echo "$PREFIX Running hook..."
+
+#
+# CHECK FOR RUNNING CONTAINERS
+#
+echo "$PREFIX Checking docker-compose..."
+cd artifacts || exit
+
+if [ -w "$(which docker-compose)" ]; then
+	DC="docker-compose ps"
+else
+	DC="sudo docker-compose ps"
+fi
+
+CONTAINERS=('core-hydra' 'core-hydra-db' 'core-hydra-migrate' 'core-mongo-express' 'core-mongo' 'core-redis')
+
+for c in "${CONTAINERS[@]}"; do
+	if ! (eval "$DC" | grep -q "$c" &>/dev/null); then
+		echo "$PREFIX Please ensure docker-compose is up and running."
+		exit 1
+	fi
+done
+
+echo "$PREFIX All containers are up and running!"
+
+#
+# RUN E2E TESTS
+#
+
+# check for localhost:9000 listening
+#
+echo "$PREFIX Starting webapp..."
+
+serverIsRunning() {
+	lsof -PiTCP -sTCP:LISTEN | grep -q ":9000" &>/dev/null
+	return $?
+}
+
+if serverIsRunning; then
+	echo "$PREFIX Server already running, please stop it first."
+	exit 1
+fi
+
+cd "$DIR/api" || exit
+make serve &>/dev/null &
+
+n=0
+until [ "$n" -ge 5 ]; do
+	serverIsRunning && break
+	n=$((n + 1))
+	sleep 10
+done
+
+if ! serverIsRunning; then
+	echo >&2 "$PREFIX Unable to start webapp."
+	exit 1
+fi
+
+echo "$PREFIX Webapp is up and running!"
+
+# linting
+#
+echo "$PREFIX Running eslint on .js files..."
+cd "$DIR/e2e" || exit
+if ! npm run lint:fix; then
+	echo >&2 "$PREFIX Linting failed, see output above."
+	exit 1
+fi
+
+cd "$DIR/api" || exit
+
+echo "$PREFIX Running E2E tests..."
+if ! make test-e2e; then
+	echo >&2 "$PREFIX E2E tests failed, see output above."
+	exit 1
+fi
+echo "$PREFIX All E2E tests passed!"
+
+#
+# RUN INTEGRATION TESTS
+#
+echo "$PREFIX Running integration tests..."
+
+if ! make test-integration; then
+	echo >&2 "$PREFIX integration tests failed, see output above."
+	exit 1
+fi
+
+exit 0

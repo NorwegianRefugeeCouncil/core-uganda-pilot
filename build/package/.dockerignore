@@ -1,0 +1,10 @@
+.idea/
+.vscode/
+docs/
+certs/
+tmp/
+.env
+Makefile
+Dockerfile
+.dockerignore
+

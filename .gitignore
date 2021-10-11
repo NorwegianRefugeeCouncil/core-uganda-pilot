@@ -1,9 +1,25 @@
+# IDEs
 .vscode/
-.idea/
+.idea/*
 !.idea/runConfigurations/
-actions/__tmp/
-api/tmp/
+
+# dependency dir
 vendor/
+
+# macos junk
 *.DS_Store
+
+# certificates
 *.pem
+
+# output from the go coverage tool
 *.out
+
+# test binaries built by `go test -c`
+*.test
+
+# generated certificates
+certs/
+
+# build output
+tmp/
