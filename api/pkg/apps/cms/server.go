@@ -74,7 +74,7 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	router.Path(server.CommentsEndpoint).Methods("POST").HandlerFunc(srv.PostComment)
 	router.Path(path.Join(server.CommentsEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.GetComment)
 	router.Path(path.Join(server.CommentsEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.PutComment)
-	router.Path(path.Join(server.CommentsEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.DeleteComment)
+	router.Path(path.Join(server.CommentsEndpoint, "{id}")).Methods("DELETE").HandlerFunc(srv.DeleteComment)
 
 	srv.router = router
 

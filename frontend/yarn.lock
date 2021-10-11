@@ -2438,6 +2438,7 @@ core-js-api-client@../client:
   dependencies:
     "@types/node" "^14.17.20"
     rxjs "^7.3.0"
+    xhr2 "^0.2.1"
 
 core-js-compat@^3.16.0, core-js-compat@^3.16.2, core-js-compat@^3.8.0:
   version "3.18.1"
@@ -2612,6 +2613,11 @@ destroy@~1.0.4:
   resolved "https://registry.npmjs.org/destroy/-/destroy-1.0.4.tgz"
   integrity sha1-l4hXRCxEdJ5CBmE+N5RiBYJqvYA=
 
+dotenv@^10.0.0:
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-10.0.0.tgz#3d4227b8fb95f81096cdd2b66653fb2c7085ba81"
+  integrity sha512-rlBi9d8jpv9Sf1klPjNfFAuWDjKLwTIJJ/VxtoTwIR6hnZxcEOQCZg2oIL3MWBYw5GpUDKOEnND7LXTbIpQ03Q==
+
 ee-first@1.1.1:
   version "1.1.1"
   resolved "https://registry.npmjs.org/ee-first/-/ee-first-1.1.1.tgz"
@@ -2774,6 +2780,15 @@ expo-asset@~8.3.3:
     md5-file "^3.2.3"
     path-browserify "^1.0.0"
     url-parse "^1.4.4"
+
+expo-constants@~11.0.1:
+  version "11.0.1"
+  resolved "https://registry.yarnpkg.com/expo-constants/-/expo-constants-11.0.1.tgz#8a33d9702d03289ab68d6de2bbeb2bbc9654734c"
+  integrity sha512-yolJSfsNAVmuNDc+NNxBzUKbZRXPM35edoMpv8xdmRBMpOWkRmTdpBIFAYAKCtrGruw2tkIQhnLmCD2aDycvTg==
+  dependencies:
+    "@expo/config" "^4.0.0"
+    expo-modules-core "~0.2.0"
+    uuid "^3.3.2"
 
 expo-constants@~11.0.2:
   version "11.0.2"
@@ -5970,6 +5985,11 @@ xcode@^3.0.1:
   dependencies:
     simple-plist "^1.1.0"
     uuid "^7.0.3"
+
+xhr2@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/xhr2/-/xhr2-0.2.1.tgz#4e73adc4f9cfec9cbd2157f73efdce3a5f108a93"
+  integrity sha512-sID0rrVCqkVNUn8t6xuv9+6FViXjUVXq8H5rWOH2rz9fDNQEd4g0EA2XlcEdJXRz5BMEn4O1pJFdT+z4YHhoWw==
 
 xml2js@^0.4.23:
   version "0.4.23"

@@ -7,4 +7,5 @@
 *.out
 actions/__tmp
 vendor/
-actions/__tmp
+api/tmp/
+*.backup
