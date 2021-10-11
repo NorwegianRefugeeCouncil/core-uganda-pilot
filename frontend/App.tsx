@@ -13,6 +13,6 @@ export default function App() {
   );
 }
 
-const host = (Platform.OS === 'web' ? 'localhost' : '192.168.178.40') + ':9000';
+export const host = (Platform.OS === 'web' ? 'localhost' : '192.168.178.40') + ':9000';
 const cmsClient = new CMSClient(host);
 cmsClient.Cases().Get('dba43642-8093-4685-a197-f8848d4cbaaa').subscribe();

@@ -29,7 +29,7 @@ const IndividualsListScreen: React.FC<any> = ({ navigation }) => {
         renderItem={({ item, index, separators }) => (
           <TouchableOpacity
             key={index}
-            onPress={() => navigation.navigate(routes.individual.name, { id: index, paddingRight: 12 })}
+            onPress={() => navigation.navigate(routes.individual.name, { id: index })}
           >
             <View style={{ flexDirection: 'row', flex: 1 }}>
               <View style={{ justifyContent: 'center', paddingRight: 12 }}>

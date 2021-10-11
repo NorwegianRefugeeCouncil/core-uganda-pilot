@@ -2,14 +2,16 @@ import React from 'react';
 import { Appbar, Menu } from 'react-native-paper';
 import pngMore from '../../assets/png/symbol_more.png';
 import theme from '../constants/theme';
+import routes from '../constants/routes';
 
 type DropdownProps = {
   visible: boolean,
   closeMenu: () => void
   openMenu: () => void
+  navigation: any
 }
 
-const NavigationDropdown: React.FC<DropdownProps> = ({ visible, closeMenu, openMenu }) => {
+const NavigationDropdown: React.FC<DropdownProps> = ({ visible, closeMenu, openMenu, navigation }) => {
   return (
     <Menu
       visible={visible}
@@ -21,9 +23,10 @@ const NavigationDropdown: React.FC<DropdownProps> = ({ visible, closeMenu, openM
           color={theme.colors.white}
         />
       }>
-      <Menu.Item onPress={() => {
-        console.log('Option 1 was pressed');
-      }} title="Option 1" />
+      <Menu.Item
+        title="Cases"
+        onPress={() => navigation.navigate(routes.cases.name)}
+      />
       <Menu.Item onPress={() => {
         console.log('Option 2 was pressed');
       }} title="Option 2" />

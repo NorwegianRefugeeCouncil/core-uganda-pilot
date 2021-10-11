@@ -1,19 +1,24 @@
 type Route = {
+  title: string,
   name: string
 }
 
 const routes: { [key: string]: Route; } = {
   home: {
-    name: 'Home'
+    title: 'Home',
+    name: 'home',
   },
   individuals: {
-    name: 'Individuals List'
+    title: 'Individuals List',
+    name: 'individuals'
   },
   individual: {
-    name: 'Edit Individual'
+    title: 'Edit Individual',
+    name: 'individual',
   },
   cases: {
-    name: 'Cases'
+    title: 'Cases',
+    name: 'cases',
   }
 };
 

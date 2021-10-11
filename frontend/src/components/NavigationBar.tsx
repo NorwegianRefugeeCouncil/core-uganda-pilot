@@ -10,7 +10,12 @@ import NavigationDropdown from './NavigationDropdown';
 
 type NavigationProps = StackHeaderProps;
 
-const NavigationBar: React.FC<NavigationProps> = ({ navigation, back, route }) => {
+const NavigationBar: React.FC<NavigationProps> = (
+  {
+    navigation,
+    back,
+    options,
+  }) => {
 
   const [visible, setVisible] = React.useState(false);
   const openMenu = () => setVisible(true);
@@ -21,14 +26,14 @@ const NavigationBar: React.FC<NavigationProps> = ({ navigation, back, route }) =
       {back ? <Appbar.BackAction onPress={navigation.goBack} /> : null}
       <Appbar.Action
         icon={pngIndividuals}
-        accessibilityLabel={'Individuals'}
+        accessibilityLabel={routes.individuals.title}
         onPress={() => navigation.navigate(routes.individuals.name)}
       />
       <Appbar.Action
         icon={pngSearch}
       />
       <Appbar.Content
-        title={route.name}
+        title={options.title}
         titleStyle={common.textCentered}
         onPress={() => navigation.navigate(routes.home.name)}
       />
@@ -39,6 +44,7 @@ const NavigationBar: React.FC<NavigationProps> = ({ navigation, back, route }) =
         visible={visible}
         closeMenu={closeMenu}
         openMenu={openMenu}
+        navigation={navigation}
       />
     </Appbar.Header>
   );
