@@ -9,7 +9,7 @@
     "sourceMap": false
   },
   "include": [
-    "../web/static/js"
+    "web/static/js"
   ],
   "exclude": [
     "node_modules"
