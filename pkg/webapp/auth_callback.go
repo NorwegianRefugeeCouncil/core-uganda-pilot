@@ -24,7 +24,6 @@ func init() {
 }
 
 func (s *Server) Callback(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 
 	conf := s.privateOauth2Config
@@ -71,7 +70,7 @@ func (s *Server) Callback(w http.ResponseWriter, req *http.Request) {
 	tokenCtx := context.WithValue(ctx, oauth2.HTTPClient, s.HydraHTTPClient)
 	token, err := conf.Exchange(tokenCtx, code)
 	if err != nil {
-		err := fmt.Errorf("failed to exchange code: %v", err)
+		err := fmt.Errorf("failed to exchange code: %w", err)
 		s.Error(w, err)
 		return
 	}
@@ -85,14 +84,14 @@ func (s *Server) Callback(w http.ResponseWriter, req *http.Request) {
 
 	idToken, err := s.oidcVerifier.Verify(ctx, rawIDToken)
 	if err != nil {
-		err := fmt.Errorf("failed to verify id token: %v", err)
+		err := fmt.Errorf("failed to verify id token: %w", err)
 		s.Error(w, err)
 		return
 	}
 
 	var profile Claims
 	if err := idToken.Claims(&profile); err != nil {
-		err := fmt.Errorf("failed to unmarshal claim: %v", err)
+		err := fmt.Errorf("failed to unmarshal claim: %w", err)
 		s.Error(w, err)
 		return
 	}
@@ -109,7 +108,7 @@ func (s *Server) Callback(w http.ResponseWriter, req *http.Request) {
 
 	individual, err := iamClient.Individuals().Get(ctx, profile.Subject)
 	if err != nil {
-		err := fmt.Errorf("failed to retrieve individual: %v", err)
+		err := fmt.Errorf("failed to retrieve individual: %w", err)
 		s.Error(w, err)
 		return
 	}
@@ -125,5 +124,4 @@ func (s *Server) Callback(w http.ResponseWriter, req *http.Request) {
 	}
 
 	http.Redirect(w, req, "/", http.StatusSeeOther)
-
 }

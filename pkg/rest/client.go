@@ -15,7 +15,7 @@ import (
 	"strings"
 )
 
-type RESTConfig struct {
+type Config struct {
 	Scheme     string
 	Host       string
 	HTTPClient *http.Client
@@ -23,10 +23,10 @@ type RESTConfig struct {
 }
 
 type Client struct {
-	config *RESTConfig
+	config *Config
 }
 
-func NewClient(config *RESTConfig) *Client {
+func NewClient(config *Config) *Client {
 	return &Client{
 		config: config,
 	}
@@ -106,7 +106,7 @@ func (r *Request) Body(body interface{}) *Request {
 	return r
 }
 
-type UrlValuer interface {
+type URLValuer interface {
 	MarshalQueryParameters() (url.Values, error)
 	UnmarshalQueryParameters(values url.Values) error
 }
@@ -129,7 +129,7 @@ func (r *Request) WithParams(params interface{}) *Request {
 		vp.Elem().Set(reflect.ValueOf(p))
 		intf := vp.Interface()
 
-		valuer, ok := intf.(UrlValuer)
+		valuer, ok := intf.(URLValuer)
 		if ok {
 			values, err := valuer.MarshalQueryParameters()
 			if err != nil {
@@ -161,7 +161,6 @@ type TokenIntrospectionResponse struct {
 }
 
 func (r *Request) Do(ctx context.Context) *Response {
-
 	l := logrus.WithField("scheme", r.c.config.Scheme).WithField("host", r.c.config.Host).WithField("path", r.path)
 
 	if r.err != nil {
@@ -230,9 +229,8 @@ func (r *Request) Do(ctx context.Context) *Response {
 		if err != nil {
 			l.Errorf("error status code received")
 			return &Response{err: fmt.Errorf("unexpected status code")}
-		} else {
-			l.WithField("response", string(bodyBytes)).Errorf("unexpected status code")
 		}
+		l.WithField("response", string(bodyBytes)).Errorf("unexpected status code")
 
 		if len(bodyBytes) == 0 {
 			return &Response{
@@ -274,7 +272,6 @@ func (r *Request) Do(ctx context.Context) *Response {
 	return &Response{
 		body: bodyBytes,
 	}
-
 }
 
 type Response struct {
@@ -289,10 +286,7 @@ func (r *Response) Into(into interface{}) error {
 	if len(r.body) == 0 {
 		return fmt.Errorf("0-length body")
 	}
-	if err := json.Unmarshal(r.body, &into); err != nil {
-		return err
-	}
-	return nil
+	return json.Unmarshal(r.body, &into)
 }
 
 func (r *Response) Error() error {

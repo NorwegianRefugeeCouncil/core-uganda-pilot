@@ -6,7 +6,7 @@ import (
 )
 
 // Control describes the attributes of a form input control. Some fields, like Name, Placeholder and Readonly are
-//intended as 1:1 mappings to HTML form element attributes. Others like Validation, Label and CheckboxOptions correspond
+// intended as 1:1 mappings to HTML form element attributes. Others like Validation, Label and CheckboxOptions correspond
 // to cross-cutting concerns (Validation), sibling elements (Label) or richer data structures (CheckboxOptions).
 type Control struct {
 	Name            string                `json:"name" bson:"name"`
@@ -61,7 +61,7 @@ func NewControl(name string, typ ControlType, label i18n.Strings, required bool)
 }
 
 // CheckboxOption describes the attributes of a checkbox input element intended as a Checkbox and Radio ControlType
-//child element.
+// child element.
 type CheckboxOption struct {
 	Label    i18n.Strings `json:"label" bson:"label"`
 	Value    string       `json:"value" bson:"value"`

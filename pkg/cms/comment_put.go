@@ -7,7 +7,6 @@ import (
 )
 
 func (s *Server) PutComment(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 
 	id := mux.Vars(req)["id"]
@@ -31,5 +30,4 @@ func (s *Server) PutComment(w http.ResponseWriter, req *http.Request) {
 	}
 
 	s.json(w, http.StatusOK, updated)
-
 }

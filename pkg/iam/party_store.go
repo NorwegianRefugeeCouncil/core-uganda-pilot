@@ -171,7 +171,7 @@ type FindOptions struct {
 	Attributes map[string]string
 }
 
-//func (s *PartyStore) find(ctx context.Context, options FindOptions) (*Party, error) {
+// func (s *PartyStore) find(ctx context.Context, options FindOptions) (*Party, error) {
 //	filter := bson.M{}
 //	for key, value := range options.Attributes {
 //		filter["attributes."+key] = value

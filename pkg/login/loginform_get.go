@@ -10,7 +10,6 @@ import (
 
 // GetLoginForm is called when Ory Hydra redirects the user to login
 func (s *Server) GetLoginForm(w http.ResponseWriter, req *http.Request) {
-
 	logrus.Trace("getting login challenge")
 
 	ctx := req.Context()
@@ -28,9 +27,9 @@ func (s *Server) GetLoginForm(w http.ResponseWriter, req *http.Request) {
 	)
 	if err != nil {
 		logrus.WithError(err).Error("failed to get login request")
-		s.Render(w, req, "login", map[string]interface{}{
+		s.Render(w, "login", map[string]interface{}{
 			"Challenge": challenge,
-			"Error":     fmt.Errorf("failed to get login request: %v", err),
+			"Error":     fmt.Errorf("failed to get login request: %w", err),
 		})
 		return
 	}
@@ -39,7 +38,6 @@ func (s *Server) GetLoginForm(w http.ResponseWriter, req *http.Request) {
 
 	// When skip is true, user does not have to login again
 	if resp.Payload.Skip != nil && *resp.Payload.Skip {
-
 		logrus.Trace("skipping manual login request")
 
 		// Accept login request
@@ -54,9 +52,9 @@ func (s *Server) GetLoginForm(w http.ResponseWriter, req *http.Request) {
 		)
 		if err != nil {
 			logrus.WithError(err).Error("failed to accept login request")
-			s.Render(w, req, "login", map[string]interface{}{
+			s.Render(w, "login", map[string]interface{}{
 				"Challenge": challenge,
-				"Error":     fmt.Errorf("failed to accept login request: %v", err),
+				"Error":     fmt.Errorf("failed to accept login request: %w", err),
 			})
 			return
 		}
@@ -72,8 +70,7 @@ func (s *Server) GetLoginForm(w http.ResponseWriter, req *http.Request) {
 	logrus.Tracef("not skipping manual login request. Rendering login form")
 
 	// Render the login page
-	s.Render(w, req, "login", map[string]interface{}{
+	s.Render(w, "login", map[string]interface{}{
 		"Challenge": challenge,
 	})
-
 }

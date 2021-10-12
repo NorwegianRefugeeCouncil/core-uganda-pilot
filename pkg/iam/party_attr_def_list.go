@@ -5,7 +5,6 @@ import (
 )
 
 func (s *Server) listPartyAttributeDefinitions(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 
 	listOptions := &PartyAttributeDefinitionListOptions{}

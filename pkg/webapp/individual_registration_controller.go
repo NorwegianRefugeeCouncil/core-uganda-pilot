@@ -9,10 +9,10 @@ import (
 )
 
 func (s *Server) GetRegistrationController(w http.ResponseWriter, req *http.Request, individual *iam.Individual) (*registrationctrl.RegistrationController, error) {
-	var individualId string
+	var individualID string
 
 	if individual.ID == "new" || individual.ID == "" {
-		if !s.GetPathParam("id", w, req, &individualId) {
+		if !s.GetPathParam("id", w, req, &individualID) {
 			return nil, fmt.Errorf("cannot find id in path")
 		}
 	}

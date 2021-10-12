@@ -16,7 +16,6 @@ func NewCountryStore(partyStore *PartyStore) *CountryStore {
 }
 
 func (s *CountryStore) Get(ctx context.Context, id string) (*Country, error) {
-
 	p, err := s.partyStore.get(ctx, id)
 	if err != nil {
 		return nil, err
@@ -69,16 +68,10 @@ func (s *CountryStore) List(ctx context.Context) (*CountryList, error) {
 
 func (s *CountryStore) Update(ctx context.Context, country *Country) error {
 	party := MapCountryToParty(country)
-	if err := s.partyStore.update(ctx, party); err != nil {
-		return err
-	}
-	return nil
+	return s.partyStore.update(ctx, party)
 }
 
 func (s *CountryStore) Create(ctx context.Context, country *Country) error {
 	party := MapCountryToParty(country)
-	if err := s.partyStore.create(ctx, party); err != nil {
-		return err
-	}
-	return nil
+	return s.partyStore.create(ctx, party)
 }

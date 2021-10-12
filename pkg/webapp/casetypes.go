@@ -16,7 +16,6 @@ import (
 )
 
 func (s *Server) CaseTypes(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 	cmsClient, err := s.CMSClient(req)
 	if err != nil {
@@ -64,7 +63,6 @@ func (s *Server) CaseTypes(w http.ResponseWriter, req *http.Request) {
 }
 
 func (s *Server) CaseType(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 	cmsClient, err := s.CMSClient(req)
 	if err != nil {
@@ -258,10 +256,8 @@ func UnmarshalCaseTypeFormData(c *cms.CaseType, values url.Values) error {
 	templateString := values.Get("template")
 	if templateString == "" {
 		c.Form = form.Form{}
-	} else {
-		if err := json.Unmarshal([]byte(templateString), &c.Form); err != nil {
-			return err
-		}
+	} else if err := json.Unmarshal([]byte(templateString), &c.Form); err != nil {
+		return err
 	}
 	return nil
 }

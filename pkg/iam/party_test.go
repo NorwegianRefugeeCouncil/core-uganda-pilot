@@ -83,8 +83,8 @@ func (s *Suite) createParties(nParties int, nPartyTypes int, nAttributes int) ([
 		// Set Attributes
 		m := 1 + i%len(attributes)
 		attrs := attributes[0:m]
-		for _, attributeId := range attrs {
-			party.Attributes.Set(attributeId, "mock")
+		for _, attributeID := range attrs {
+			party.Attributes.Set(attributeID, "mock")
 		}
 
 		// Add to map
@@ -99,7 +99,6 @@ func (s *Suite) createParties(nParties int, nPartyTypes int, nAttributes int) ([
 }
 
 func (s *Suite) testPartyListFilter() {
-
 	parties, partyTypeIds, attributes := s.createParties(4, 2, 2)
 
 	s.Run("by type", func() { s.testPartyListFilterByType(parties, partyTypeIds) })
@@ -108,9 +107,9 @@ func (s *Suite) testPartyListFilter() {
 }
 
 func (s *Suite) testPartyListFilterByType(parties []*Party, partyTypeIds []string) {
-	for _, partyTypeId := range partyTypeIds {
+	for _, partyTypeID := range partyTypeIds {
 		list, err := s.client.Parties().List(s.Ctx, PartyListOptions{
-			PartyTypeID: partyTypeId,
+			PartyTypeID: partyTypeID,
 		})
 		if !assert.NoError(s.T(), err) {
 			s.T().FailNow()
@@ -118,7 +117,7 @@ func (s *Suite) testPartyListFilterByType(parties []*Party, partyTypeIds []strin
 		// Get expected items
 		var expected []string
 		for _, party := range parties {
-			if party.HasPartyType(partyTypeId) {
+			if party.HasPartyType(partyTypeID) {
 				expected = append(expected, party.ID)
 			}
 		}
@@ -133,8 +132,8 @@ func (s *Suite) testPartyListFilterByAttribute(parties []*Party, attributes []st
 	for i := 1; i <= len(attributes); i++ {
 		attrs := attributes[0:i]
 		attributeOptions := make(map[string]string)
-		for _, attributeId := range attrs {
-			attributeOptions[attributeId] = "mock"
+		for _, attributeID := range attrs {
+			attributeOptions[attributeID] = "mock"
 		}
 		list, err := s.client.Parties().List(s.Ctx, PartyListOptions{
 			Attributes: attributeOptions,
@@ -147,8 +146,8 @@ func (s *Suite) testPartyListFilterByAttribute(parties []*Party, attributes []st
 		var expected []string
 		for _, party := range parties {
 			var include = true
-			for attributeId := range attributeOptions {
-				if !party.HasAttribute(attributeId) {
+			for attributeID := range attributeOptions {
+				if !party.HasAttribute(attributeID) {
 					include = false
 					break
 				}
@@ -167,13 +166,13 @@ func (s *Suite) testPartyListFilterByAttribute(parties []*Party, attributes []st
 
 func (s *Suite) testPartyListFilterByTypeAndAttribute(parties []*Party, partyTypeIds, attributes []string) {
 	for i := 1; i <= len(attributes); i++ {
-		for _, partyTypeId := range partyTypeIds {
+		for _, partyTypeID := range partyTypeIds {
 			attributeOptions := make(map[string]string)
-			for _, attributeId := range attributes[0:i] {
-				attributeOptions[attributeId] = "mock"
+			for _, attributeID := range attributes[0:i] {
+				attributeOptions[attributeID] = "mock"
 			}
 			list, err := s.client.Parties().List(s.Ctx, PartyListOptions{
-				PartyTypeID: partyTypeId,
+				PartyTypeID: partyTypeID,
 				Attributes:  attributeOptions,
 			})
 			if !assert.NoError(s.T(), err) {
@@ -182,7 +181,7 @@ func (s *Suite) testPartyListFilterByTypeAndAttribute(parties []*Party, partyTyp
 			// Get expected items
 			var expected []string
 			for _, party := range parties {
-				if !party.HasPartyType(partyTypeId) {
+				if !party.HasPartyType(partyTypeID) {
 					continue
 				}
 				var include = true
@@ -210,7 +209,7 @@ func (s *Suite) testPartyListFilterByTypeAndAttribute(parties []*Party, partyTyp
 func (s *Suite) testPartySearch() {
 	parties, partyTypeIds, attributes := s.createParties(4, 2, 2)
 
-	//Search by partyId
+	// Search by partyId
 	for _, party := range parties {
 		list, err := s.client.Parties().Search(s.Ctx, PartySearchOptions{
 			PartyIDs: []string{party.ID},
@@ -222,7 +221,7 @@ func (s *Suite) testPartySearch() {
 		assert.Equal(s.T(), party.ID, list.Items[0].ID)
 	}
 
-	//Search by multiple partyIds
+	// Search by multiple partyIds
 	var partyIds []string
 	partyIds = append(partyIds, parties[0].ID)
 	partyIds = append(partyIds, parties[2].ID)
@@ -237,10 +236,10 @@ func (s *Suite) testPartySearch() {
 		assert.Equal(s.T(), partyIds[i], item.ID)
 	}
 
-	//Search by partyTypeId
-	for _, partyTypeId := range partyTypeIds {
+	// Search by partyTypeId
+	for _, partyTypeID := range partyTypeIds {
 		list, err := s.client.Parties().Search(s.Ctx, PartySearchOptions{
-			PartyTypeIDs: []string{partyTypeId},
+			PartyTypeIDs: []string{partyTypeID},
 		})
 		if !assert.NoError(s.T(), err) {
 			s.T().FailNow()
@@ -248,7 +247,7 @@ func (s *Suite) testPartySearch() {
 		// Get expected items
 		var expected []string
 		for _, party := range parties {
-			if party.HasPartyType(partyTypeId) {
+			if party.HasPartyType(partyTypeID) {
 				expected = append(expected, party.ID)
 			}
 		}
@@ -258,12 +257,12 @@ func (s *Suite) testPartySearch() {
 		}
 	}
 
-	//Search by attributes
+	// Search by attributes
 	for i := 1; i <= len(attributes); i++ {
 		attrs := attributes[0:i]
 		attributeOptions := make(map[string]string)
-		for _, attributeId := range attrs {
-			attributeOptions[attributeId] = "mock"
+		for _, attributeID := range attrs {
+			attributeOptions[attributeID] = "mock"
 		}
 		list, err := s.client.Parties().Search(s.Ctx, PartySearchOptions{
 			Attributes: attributeOptions,
@@ -276,8 +275,8 @@ func (s *Suite) testPartySearch() {
 		var expected []string
 		for _, party := range parties {
 			var include = true
-			for attributeId := range attributeOptions {
-				if !party.HasAttribute(attributeId) {
+			for attributeID := range attributeOptions {
+				if !party.HasAttribute(attributeID) {
 					include = false
 					break
 				}

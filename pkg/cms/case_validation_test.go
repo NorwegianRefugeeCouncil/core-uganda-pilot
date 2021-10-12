@@ -11,7 +11,6 @@ var names = []string{"text", "email", "phone", "url", "date", "textarea", "dropd
 var caseType = mockCaseType()
 
 func TestValidateCase(t *testing.T) {
-
 	tcs := []struct {
 		name   string
 		kase   Case
@@ -37,7 +36,7 @@ func TestValidateCase(t *testing.T) {
 		},
 		assert: func(t *testing.T, errList validation.ErrorList) {
 			assert.NotEmpty(t, errList)
-			errLists := []*validation.ErrorList{}
+			var errLists []*validation.ErrorList
 			for _, name := range names {
 				errLists = append(errLists, errList.Find(name))
 			}
@@ -88,5 +87,4 @@ func TestValidateCase(t *testing.T) {
 			testCase.assert(t, errList)
 		})
 	}
-
 }

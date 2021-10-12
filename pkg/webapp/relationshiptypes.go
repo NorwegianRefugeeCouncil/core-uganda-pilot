@@ -12,7 +12,6 @@ import (
 )
 
 func (s *Server) RelationshipTypes(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 
 	iamClient, err := s.IAMClient(req)
@@ -65,7 +64,6 @@ func (s *Server) NewRelationshipType(w http.ResponseWriter, req *http.Request) {
 }
 
 func (s *Server) RelationshipType(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 
 	iamClient, err := s.IAMClient(req)
@@ -113,7 +111,6 @@ func (s *Server) PostRelationshipType(
 	w http.ResponseWriter,
 	req *http.Request,
 ) {
-
 	iamClient, err := s.IAMClient(req)
 	if err != nil {
 		s.Error(w, err)
@@ -187,5 +184,4 @@ func (s *Server) PostRelationshipType(
 		w.Header().Set("Location", "/settings/relationshiptypes/"+out.ID)
 		w.WriteHeader(http.StatusSeeOther)
 	}
-
 }

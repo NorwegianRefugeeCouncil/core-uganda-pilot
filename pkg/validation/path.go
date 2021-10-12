@@ -55,7 +55,7 @@ func (p *Path) String() string {
 		return "<nil>"
 	}
 	// make a slice to iterate
-	elems := []*Path{}
+	var elems []*Path
 	for ; p != nil; p = p.parent {
 		elems = append(elems, p)
 	}

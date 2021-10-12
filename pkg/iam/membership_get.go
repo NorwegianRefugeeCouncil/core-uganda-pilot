@@ -18,5 +18,4 @@ func (s *Server) getMembership(w http.ResponseWriter, req *http.Request) {
 	}
 
 	s.json(w, http.StatusOK, ret)
-
 }

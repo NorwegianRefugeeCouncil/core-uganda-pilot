@@ -6,7 +6,6 @@ import (
 )
 
 func (s *Server) Init(ctx context.Context) error {
-
 	if err := s.initPartyType(ctx); err != nil {
 		return err
 	}
@@ -15,12 +14,7 @@ func (s *Server) Init(ctx context.Context) error {
 		return err
 	}
 
-	if err := s.initAttribute(ctx); err != nil {
-		return err
-	}
-
-	return nil
-
+	return s.initAttribute(ctx)
 }
 
 func (s *Server) initPartyType(ctx context.Context) error {

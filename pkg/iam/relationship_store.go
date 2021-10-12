@@ -34,7 +34,6 @@ func newRelationshipStore(ctx context.Context, mongoClientFn utils.MongoClientFn
 	}
 
 	return store, nil
-
 }
 
 func (s *RelationshipStore) create(ctx context.Context, relationship *Relationship) error {
@@ -94,7 +93,6 @@ func (s *RelationshipStore) update(ctx context.Context, relationship *Relationsh
 }
 
 func (s *RelationshipStore) list(ctx context.Context, listOptions RelationshipListOptions) (*RelationshipList, error) {
-
 	filter := bson.M{}
 
 	if len(listOptions.RelationshipTypeID) > 0 {

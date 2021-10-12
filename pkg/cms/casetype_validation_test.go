@@ -7,7 +7,6 @@ import (
 )
 
 func TestValidateCaseType(t *testing.T) {
-
 	tcs := []struct {
 		name     string
 		caseType *CaseType
@@ -74,5 +73,4 @@ func TestValidateCaseType(t *testing.T) {
 			testCase.assert(t, errList)
 		})
 	}
-
 }

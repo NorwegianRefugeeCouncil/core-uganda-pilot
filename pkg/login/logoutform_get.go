@@ -8,7 +8,6 @@ import (
 
 // GetLogoutForm is called when Ory Hydra redirects the user to login
 func (s *Server) GetLogoutForm(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 	qry := req.URL.Query()
 	challenge := qry.Get("logout_challenge")
@@ -21,7 +20,7 @@ func (s *Server) GetLogoutForm(w http.ResponseWriter, req *http.Request) {
 			WithContext(ctx),
 	)
 	if err != nil {
-		s.Error(w, fmt.Errorf("failed to get logout request: %v", err))
+		s.Error(w, fmt.Errorf("failed to get logout request: %w", err))
 		return
 	}
 
@@ -31,12 +30,10 @@ func (s *Server) GetLogoutForm(w http.ResponseWriter, req *http.Request) {
 			WithHTTPClient(s.HydraHTTPClient).
 			WithContext(ctx))
 	if err != nil {
-		s.Error(w, fmt.Errorf("failed to accept logout request: %v", err))
+		s.Error(w, fmt.Errorf("failed to accept logout request: %w", err))
 		return
 	}
 
 	// Redirect to the requested resource
 	http.Redirect(w, req, *acceptResp.Payload.RedirectTo, http.StatusSeeOther)
-	return
-
 }

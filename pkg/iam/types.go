@@ -294,10 +294,10 @@ type IndividualList struct {
 	Metadata pagination.Pagination `json:"metadata"`
 }
 
-func NewIndividual(ID string) *Individual {
+func NewIndividual(id string) *Individual {
 	return &Individual{
 		Party: &Party{
-			ID: ID,
+			ID: id,
 			PartyTypeIDs: []string{
 				IndividualPartyType.ID,
 			},
@@ -332,11 +332,9 @@ func (b *Individual) FindAge() *int {
 	rounded := int(years)
 
 	return &rounded
-
 }
 
 func (b *Individual) String() string {
-
 	displayName, hasDisplayName := b.Attributes[DisplayNameAttribute.ID]
 
 	if hasDisplayName {
@@ -414,7 +412,7 @@ type MembershipList struct {
 
 type Nationality struct {
 	ID        string `json:"id"`
-	CountryID string `json:"CountryId"`
+	CountryID string `json:"countryId"`
 	TeamID    string `json:"teamId"`
 }
 

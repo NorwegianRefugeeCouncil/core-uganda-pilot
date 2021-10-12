@@ -49,7 +49,6 @@ func (s *Suite) testPartyAttributeDefinitionAPI() {
 }
 
 func (s *Suite) testPartyAttributeDefinitionListFilter() {
-
 	const nAttributes = 10
 	const nPartyTypeIds = 6
 

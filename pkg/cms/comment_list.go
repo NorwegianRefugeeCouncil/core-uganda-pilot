@@ -5,7 +5,6 @@ import (
 )
 
 func (s *Server) ListComments(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 
 	var listOptions = &CommentListOptions{}
@@ -21,5 +20,4 @@ func (s *Server) ListComments(w http.ResponseWriter, req *http.Request) {
 	}
 
 	s.json(w, http.StatusOK, comments)
-
 }

@@ -10,7 +10,6 @@ import (
 )
 
 func (s *Server) PartyTypes(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 
 	iamClient, err := s.IAMClient(req)
@@ -36,11 +35,9 @@ func (s *Server) PartyTypes(w http.ResponseWriter, req *http.Request) {
 		s.Error(w, err)
 		return
 	}
-
 }
 
 func (s *Server) PartyType(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 
 	iamClient, err := s.IAMClient(req)
@@ -77,7 +74,6 @@ func (s *Server) PartyType(w http.ResponseWriter, req *http.Request) {
 		s.Error(w, err)
 		return
 	}
-
 }
 
 func (s *Server) PostPartyType(
@@ -86,7 +82,6 @@ func (s *Server) PostPartyType(
 	w http.ResponseWriter,
 	req *http.Request,
 ) {
-
 	iamClient, err := s.IAMClient(req)
 	if err != nil {
 		s.Error(w, err)
@@ -125,23 +120,20 @@ func (s *Server) PostPartyType(
 		w.Header().Set("Location", "/settings/partytypes/"+created.ID)
 		w.WriteHeader(http.StatusSeeOther)
 		return
-	} else {
-		updated, err := iamClient.PartyTypes().Update(ctx, partyType)
-		if err != nil {
-			s.Error(w, err)
-			return
-		}
-
-		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
-			Message: fmt.Sprintf("Party type \"%s\" successfully updated", partyType.Name),
-			Theme:   "success",
-		}); err != nil {
-			s.Error(w, err)
-			return
-		}
-
-		w.Header().Set("Location", "/settings/partytypes/"+updated.ID)
-		w.WriteHeader(http.StatusSeeOther)
+	}
+	updated, err := iamClient.PartyTypes().Update(ctx, partyType)
+	if err != nil {
+		s.Error(w, err)
 		return
 	}
+	if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
+		Message: fmt.Sprintf("Party type \"%s\" successfully updated", partyType.Name),
+		Theme:   "success",
+	}); err != nil {
+		s.Error(w, err)
+		return
+	}
+	w.Header().Set("Location", "/settings/partytypes/"+updated.ID)
+	w.WriteHeader(http.StatusSeeOther)
+	return
 }

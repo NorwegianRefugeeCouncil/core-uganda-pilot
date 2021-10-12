@@ -14,7 +14,7 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 				return
 			}
 
-			token, err := auth.AuthHeaderTokenSource(req).GetToken()
+			token, err := auth.HeaderTokenSource(req).GetToken()
 			if err != nil {
 				s.Error(w, err)
 				return
@@ -23,7 +23,7 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 			res, err := s.HydraAdmin.IntrospectOAuth2Token(&admin.IntrospectOAuth2TokenParams{
 				Token:      token,
 				Context:    req.Context(),
-				HTTPClient: s.HydraHttpClient,
+				HTTPClient: s.HydraHTTPClient,
 			})
 			if err != nil {
 				s.Error(w, err)

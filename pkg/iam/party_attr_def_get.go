@@ -5,7 +5,6 @@ import (
 )
 
 func (s *Server) getPartyAttributeDefinition(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 	var id string
 

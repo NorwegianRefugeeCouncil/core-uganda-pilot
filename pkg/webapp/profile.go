@@ -38,10 +38,14 @@ func (s *Server) GetTeamFromLoginUser(w http.ResponseWriter, req *http.Request) 
 	membership, err := iamClient.Memberships().List(ctx, iam.MembershipListOptions{
 		IndividualID: claims.Subject,
 	})
+	if err != nil {
+		s.Error(w, err)
+		return ""
+	}
 
 	var teamID string
-	if len((*membership).Items) > 0 {
-		teamID = (*membership).Items[0].TeamID
+	if len(membership.Items) > 0 {
+		teamID = membership.Items[0].TeamID
 	} else {
 		logrus.Errorf("User %s has no team or more than one team", claims.Subject)
 	}
@@ -58,13 +62,16 @@ func (s *Server) GetCountryFromLoginUser(w http.ResponseWriter, req *http.Reques
 	}
 	teamID := s.GetTeamFromLoginUser(w, req)
 	nationality, err := iamClient.Nationalities().List(ctx, iam.NationalityListOptions{TeamID: teamID})
+	if err != nil {
+		s.Error(w, err)
+		return ""
+	}
 
 	var countryID string
-	if len((*nationality).Items) > 0 {
-		countryID = (*nationality).Items[0].CountryID
+	if len(nationality.Items) > 0 {
+		countryID = nationality.Items[0].CountryID
 	} else {
 		logrus.Errorf("Team %s has no nationality or more than one nationality", teamID)
 	}
 	return countryID
-
 }

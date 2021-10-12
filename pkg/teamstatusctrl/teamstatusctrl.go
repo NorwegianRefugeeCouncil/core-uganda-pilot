@@ -16,7 +16,7 @@ type TeamStatusAction struct {
 }
 
 func (tsc *TeamStatusCtrl) GetTeamStatusActions() []TeamStatusAction {
-	teamStatusActions := []TeamStatusAction{}
+	var teamStatusActions []TeamStatusAction
 
 	// Create actions for team intake case type cases that
 	// already exist for the individual

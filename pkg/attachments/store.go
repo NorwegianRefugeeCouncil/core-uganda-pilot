@@ -17,7 +17,6 @@ func NewAttachmentStore(
 	mongoClientFn utils.MongoClientFn,
 	database string,
 ) (*AttachmentStore, error) {
-
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
@@ -63,7 +62,6 @@ func (s *AttachmentStore) Get(ctx context.Context, id string) (*Attachment, erro
 }
 
 func (s *AttachmentStore) List(ctx context.Context, options AttachmentListOptions) (*AttachmentList, error) {
-
 	var filter = bson.M{}
 
 	if len(options.AttachedToID) != 0 {

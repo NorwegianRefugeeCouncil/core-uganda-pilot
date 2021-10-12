@@ -5,9 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func (s *Suite) TestPartyType() {
-
-	// Create party type
+func (s *Suite) TestPartyType() { // Create party type
 	name := newUUID()
 	created, err := s.client.PartyTypes().Create(s.Ctx, &PartyType{
 		Name:      name,
@@ -35,5 +33,4 @@ func (s *Suite) TestPartyType() {
 		return
 	}
 	assert.Contains(s.T(), list.Items, get)
-
 }

@@ -11,7 +11,7 @@ type RESTAttachmentClient struct {
 	c *rest.Client
 }
 
-func NewClient(restConfig *rest.RESTConfig) *RESTAttachmentClient {
+func NewClient(restConfig *rest.Config) *RESTAttachmentClient {
 	return &RESTAttachmentClient{
 		c: rest.NewClient(restConfig),
 	}

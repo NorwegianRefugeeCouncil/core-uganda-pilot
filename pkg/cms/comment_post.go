@@ -7,7 +7,6 @@ import (
 )
 
 func (s *Server) PostComment(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 
 	var payload Comment
@@ -30,5 +29,4 @@ func (s *Server) PostComment(w http.ResponseWriter, req *http.Request) {
 	}
 
 	s.json(w, http.StatusOK, &payload)
-
 }

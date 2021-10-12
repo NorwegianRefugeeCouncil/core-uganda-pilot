@@ -24,5 +24,4 @@ func (s *Server) postNationality(w http.ResponseWriter, req *http.Request) {
 	}
 
 	s.json(w, http.StatusOK, p)
-
 }

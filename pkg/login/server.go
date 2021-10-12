@@ -35,8 +35,7 @@ type Server struct {
 }
 
 func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
-
-	iamCli := iam.NewClientSet(&rest.RESTConfig{
+	iamCli := iam.NewClientSet(&rest.Config{
 		Scheme:     o.IAMScheme,
 		Host:       o.IAMHost,
 		HTTPClient: o.AdminHTTPClient,
@@ -79,7 +78,6 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 	srv.template = tpl
 
 	return srv, nil
-
 }
 
 func (s *Server) json(w http.ResponseWriter, status int, data interface{}) {

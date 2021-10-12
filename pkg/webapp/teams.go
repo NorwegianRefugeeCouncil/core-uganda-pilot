@@ -10,7 +10,6 @@ import (
 )
 
 func (s *Server) Teams(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 
 	iamClient, err := s.IAMClient(req)
@@ -31,11 +30,9 @@ func (s *Server) Teams(w http.ResponseWriter, req *http.Request) {
 		s.Error(w, err)
 		return
 	}
-
 }
 
 func (s *Server) Team(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 
 	iamClient, err := s.IAMClient(req)
@@ -119,7 +116,6 @@ func (s *Server) Team(w http.ResponseWriter, req *http.Request) {
 		s.Error(w, err)
 		return
 	}
-
 }
 
 func (s *Server) AddIndividualToTeam(w http.ResponseWriter, req *http.Request) {

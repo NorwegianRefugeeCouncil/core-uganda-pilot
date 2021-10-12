@@ -1,7 +1,17 @@
 #!/usr/bin/env bash
 
-if ! tsc; then
+tsc --build configs/tsconfig.json
+
+if [ ! "$?" ]; then
   exit 1
 fi
 
+echo ">>> Transpiled .ts"
+
 go build -o ./tmp/main ./cmd/core
+
+if [ ! "$?" ]; then
+  exit 1
+fi
+
+echo ">>> Built core"

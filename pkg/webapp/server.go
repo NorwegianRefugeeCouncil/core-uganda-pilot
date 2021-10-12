@@ -15,6 +15,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
 	"net/http"
+	"path"
 )
 
 type Server struct {
@@ -60,9 +61,8 @@ type ServerOptions struct {
 }
 
 func NewServer(options *ServerOptions) (*Server, error) {
-
 	h := &Server{
-		login: login.NewClientSet(&rest.RESTConfig{
+		login: login.NewClientSet(&rest.Config{
 			Scheme:     options.CMSScheme,
 			Host:       options.CMSHost,
 			HTTPClient: options.AdminHTTPClient,
@@ -73,7 +73,7 @@ func NewServer(options *ServerOptions) (*Server, error) {
 		privateOauth2Config: options.PrivateOAuth2Config,
 		publicOauth2Config:  options.PublicOauth2Config,
 		environment:         options.Environment,
-		iamAdminClient: iam.NewClientSet(&rest.RESTConfig{
+		iamAdminClient: iam.NewClientSet(&rest.Config{
 			Scheme:     options.IAMScheme,
 			Host:       options.IAMHost,
 			HTTPClient: options.AdminHTTPClient,
@@ -139,7 +139,7 @@ func NewServer(options *ServerOptions) (*Server, error) {
 	router.Path("/settings/casetypes/{id}").HandlerFunc(h.CaseType)
 	router.Path("/comments").Methods("POST").HandlerFunc(h.PostComment)
 	router.Path("/relationships/pickparty").HandlerFunc(h.PickRelationshipParty)
-	router.Path("/static/js/{file}").HandlerFunc(h.serveJS(options.StaticDir))
+	router.Path("/static/js/{file}").HandlerFunc(h.serveJS(path.Join(options.StaticDir, "js")))
 	router.Path("/reporting").HandlerFunc(h.Reporting)
 
 	h.router = router
@@ -156,7 +156,7 @@ func (s *Server) IAMClient(req *http.Request) (iam.Interface, error) {
 	if err != nil {
 		return nil, err
 	}
-	return iam.NewClientSet(&rest.RESTConfig{
+	return iam.NewClientSet(&rest.Config{
 		Scheme:     s.iamScheme,
 		Host:       s.iamHost,
 		HTTPClient: httpClient,
@@ -168,7 +168,7 @@ func (s *Server) CMSClient(req *http.Request) (cms.Interface, error) {
 	if err != nil {
 		return nil, err
 	}
-	return cms.NewClientSet(&rest.RESTConfig{
+	return cms.NewClientSet(&rest.Config{
 		Scheme:     s.cmsScheme,
 		Host:       s.cmsHost,
 		HTTPClient: httpClient,

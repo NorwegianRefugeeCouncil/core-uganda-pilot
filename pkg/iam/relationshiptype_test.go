@@ -86,7 +86,6 @@ func (s *Suite) TestRelationshipType() {
 // - PartyType = IndividualPartyType
 // - PartyType = HouseholdPartyType
 func (s *Suite) TestRelationshipTypeListFilter() {
-
 	s.T().Run("test filter by IndividualPartyType", func(t *testing.T) {
 		// retrieve list of RelationshipTypes with the IndividualPartyType rule
 		list, err := s.client.RelationshipTypes().List(s.Ctx, RelationshipTypeListOptions{
@@ -99,7 +98,7 @@ func (s *Suite) TestRelationshipTypeListFilter() {
 		for _, rt := range list.Items {
 			valid := false
 			for _, r := range rt.Rules {
-				//t.Logf("checking rule for type %s \nwith 1st %s \nand 2nd %s \nto see if it contains %s", rt.Name, r.PartyTypeRule.FirstPartyTypeID, r.PartyTypeRule.SecondPartyTypeID, IndividualPartyType.ID)
+				// t.Logf("checking rule for type %s \nwith 1st %s \nand 2nd %s \nto see if it contains %s", rt.Name, r.PartyTypeRule.FirstPartyTypeID, r.PartyTypeRule.SecondPartyTypeID, IndividualPartyType.ID)
 				if r.PartyTypeRule.FirstPartyTypeID == IndividualPartyType.ID || r.PartyTypeRule.SecondPartyTypeID == IndividualPartyType.ID {
 					valid = true
 				}
@@ -120,7 +119,7 @@ func (s *Suite) TestRelationshipTypeListFilter() {
 		for _, rt := range list2.Items {
 			valid := false
 			for _, r := range rt.Rules {
-				//t.Logf("checking rule for type %s \nwith 1st %s \nand 2nd %s \nto see if it contains %s", rt.Name, r.PartyTypeRule.FirstPartyTypeID, r.PartyTypeRule.SecondPartyTypeID, HouseholdPartyType.ID)
+				// t.Logf("checking rule for type %s \nwith 1st %s \nand 2nd %s \nto see if it contains %s", rt.Name, r.PartyTypeRule.FirstPartyTypeID, r.PartyTypeRule.SecondPartyTypeID, HouseholdPartyType.ID)
 				if r.PartyTypeRule.FirstPartyTypeID == HouseholdPartyType.ID || r.PartyTypeRule.SecondPartyTypeID == HouseholdPartyType.ID {
 					valid = true
 				}
@@ -128,5 +127,4 @@ func (s *Suite) TestRelationshipTypeListFilter() {
 			assert.True(t, valid, "asserting that there is at least one rule with the individual party type")
 		}
 	})
-
 }

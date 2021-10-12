@@ -39,7 +39,6 @@ func NewServerOrDie(ctx context.Context, o *server.GenericServerOptions) *Server
 }
 
 func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, error) {
-
 	relationshipStore, err := newRelationshipStore(ctx, o.MongoClientFn, o.MongoDatabase)
 	if err != nil {
 		return nil, err
@@ -192,8 +191,5 @@ func (s *Server) ResetDB(ctx context.Context, databaseName string) error {
 	if err := mongoClient.Database(databaseName).Drop(ctx); err != nil {
 		return err
 	}
-	if err := s.Init(ctx); err != nil {
-		return err
-	}
-	return nil
+	return s.Init(ctx)
 }

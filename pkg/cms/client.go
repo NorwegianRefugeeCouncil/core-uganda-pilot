@@ -10,7 +10,7 @@ type ClientSet struct {
 
 var _ Interface = &ClientSet{}
 
-func NewClientSet(restConfig *rest.RESTConfig) *ClientSet {
+func NewClientSet(restConfig *rest.Config) *ClientSet {
 	return &ClientSet{
 		c: rest.NewClient(restConfig),
 	}

@@ -6,11 +6,11 @@ import (
 )
 
 func TestValidateAttribute(t *testing.T) {
-	tcs := []struct {
+	var tcs []struct {
 		name      string
 		attribute *PartyAttributeDefinition
 		assert    func(t *testing.T, errList validation.ErrorList)
-	}{}
+	}
 	for _, tc := range tcs {
 		t.Run(tc.name, func(t *testing.T) {
 			errList := ValidatePartyAttributeDefinition(tc.attribute, validation.NewPath(""))

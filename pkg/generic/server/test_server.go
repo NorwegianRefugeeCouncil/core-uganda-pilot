@@ -41,9 +41,7 @@ type GenericServerTestSuiteArgs struct {
 	Options       GenericServerOptions
 }
 
-func NewGenericServerTestSetup() *GenericServerTestSetup {
-
-	// Using a random port
+func NewGenericServerTestSetup() *GenericServerTestSetup { // Using a random port
 	ip := net.ParseIP("127.0.0.1")
 	listener, err := net.ListenTCP("tcp", &net.TCPAddr{
 		IP: ip,
@@ -82,7 +80,6 @@ func NewGenericServerTestSetup() *GenericServerTestSetup {
 		Listener: listener,
 		Port:     port,
 	}
-
 }
 
 func (s *GenericServerTestSetup) Serve(t *testing.T, handler http.Handler) {

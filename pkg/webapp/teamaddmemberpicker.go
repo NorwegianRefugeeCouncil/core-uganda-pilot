@@ -10,12 +10,12 @@ import (
 type TeamPartyOptions struct {
 	PartyTypeID string `json:"partyTypeId"`
 	SearchParam string `json:"searchParam"`
-	TeamId      string `json:"teamId"`
+	TeamID      string `json:"teamId"`
 }
 
 func (a *TeamPartyOptions) UnmarshalQueryParameters(values url.Values) error {
 	a.SearchParam = values.Get("searchParam")
-	a.TeamId = values.Get("teamId")
+	a.TeamID = values.Get("teamId")
 	return nil
 }
 
@@ -44,7 +44,7 @@ func (s *Server) PickTeamParty(w http.ResponseWriter, req *http.Request) {
 	}
 
 	partiesInTeam, err := iamClient.Memberships().List(ctx, iam2.MembershipListOptions{
-		TeamID: listOptions.TeamId,
+		TeamID: listOptions.TeamID,
 	})
 	if err != nil {
 		s.Error(w, err)

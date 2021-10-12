@@ -6,6 +6,7 @@ import (
 
 func (s *Server) GetCase(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
+
 	var id string
 
 	if !s.getPathParam("id", w, req, &id) {
@@ -17,5 +18,6 @@ func (s *Server) GetCase(w http.ResponseWriter, req *http.Request) {
 		s.error(w, err)
 		return
 	}
+
 	s.json(w, http.StatusOK, ret)
 }

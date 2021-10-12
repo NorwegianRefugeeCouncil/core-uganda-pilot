@@ -16,7 +16,7 @@ type Server struct {
 	mongoClientFn   utils.MongoClientFn
 	store           *AttachmentStore
 	HydraAdmin      admin.ClientService
-	HydraHttpClient *http.Client
+	HydraHTTPClient *http.Client
 }
 
 func NewServerOrDie(ctx context.Context, o *server.GenericServerOptions) *Server {
@@ -38,7 +38,7 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 		mongoClientFn:   o.MongoClientFn,
 		store:           attachmentStore,
 		HydraAdmin:      o.HydraAdminClient.Admin,
-		HydraHttpClient: o.HydraHTTPClient,
+		HydraHTTPClient: o.HydraHTTPClient,
 	}
 
 	router := mux.NewRouter()
@@ -80,8 +80,5 @@ func (s *Server) ResetDB(ctx context.Context, databaseName string) error {
 		return err
 	}
 	// Delete attachments
-	if err := mongoClient.Database(databaseName).Drop(ctx); err != nil {
-		return err
-	}
-	return nil
+	return mongoClient.Database(databaseName).Drop(ctx)
 }

@@ -13,9 +13,9 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 			logrus.Trace("retrieving Authorization header")
 
-			token, err := auth.AuthHeaderTokenSource(req).GetToken()
+			token, err := auth.HeaderTokenSource(req).GetToken()
 			if err != nil {
-				s.Error(w, fmt.Errorf("failed to get token from Authorization header: %v", err))
+				s.Error(w, fmt.Errorf("failed to get token from Authorization header: %w", err))
 				return
 			}
 
@@ -27,7 +27,7 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 				HTTPClient: nil,
 			})
 			if err != nil {
-				s.Error(w, fmt.Errorf("failed to introspect token: %v", err))
+				s.Error(w, fmt.Errorf("failed to introspect token: %w", err))
 				return
 			}
 

@@ -33,7 +33,7 @@ func (s *Server) GetTeamStatusController(req *http.Request, individual *iam.Indi
 
 	userSessionClaims, ok := profile.(*Claims)
 	if !ok {
-		return tsc, fmt.Errorf("Failed to cast profile to claims")
+		return tsc, fmt.Errorf("failed to cast profile to claims")
 	}
 
 	// Get memberships For currently logged in user
@@ -49,23 +49,23 @@ func (s *Server) GetTeamStatusController(req *http.Request, individual *iam.Indi
 	}
 
 	// Infer list of team ids from memberships
-	teamIdsForIndividual := []string{}
+	var teamIdsForIndividual []string
 	for _, membership := range memberships.Items {
-		teamIdAlreadyInList := false
+		teamIDAlreadyInList := false
 		for _, tid := range teamIdsForIndividual {
 			if tid == membership.TeamID {
-				teamIdAlreadyInList = true
+				teamIDAlreadyInList = true
 				break
 			}
 		}
 
-		if !teamIdAlreadyInList {
+		if !teamIDAlreadyInList {
 			teamIdsForIndividual = append(teamIdsForIndividual, membership.TeamID)
 		}
 	}
 
 	// Get team intake case types for currently logged in user
-	teamIntakeCaseTypes := []*cms.CaseType{}
+	var teamIntakeCaseTypes []*cms.CaseType
 	caseTypes, err := cmsClient.CaseTypes().List(req.Context(), cms.CaseTypeListOptions{
 		TeamIDs: teamIdsForIndividual,
 	})

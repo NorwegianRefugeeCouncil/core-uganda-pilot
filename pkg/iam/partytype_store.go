@@ -59,7 +59,6 @@ func (s *PartyTypeStore) Get(ctx context.Context, id string) (*PartyType, error)
 }
 
 func (s *PartyTypeStore) List(ctx context.Context, listOptions PartyTypeListOptions) (*PartyTypeList, error) {
-
 	filter := bson.M{}
 
 	collection, done, err := s.getCollection(ctx)

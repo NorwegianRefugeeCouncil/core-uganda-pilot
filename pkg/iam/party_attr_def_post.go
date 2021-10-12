@@ -7,7 +7,6 @@ import (
 )
 
 func (s *Server) postPartyAttributeDefinition(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 
 	var payload PartyAttributeDefinition

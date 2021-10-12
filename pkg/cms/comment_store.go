@@ -68,7 +68,6 @@ func (s *CommentStore) Get(ctx context.Context, id string) (*Comment, error) {
 }
 
 func (s *CommentStore) List(ctx context.Context, options CommentListOptions) (*CommentList, error) {
-
 	filter := bson.M{
 		"caseId": options.CaseID,
 	}
@@ -107,7 +106,6 @@ func (s *CommentStore) List(ctx context.Context, options CommentListOptions) (*C
 }
 
 func (s *CommentStore) Update(ctx context.Context, id string, updateFunc func(oldComment *Comment) (*Comment, error)) (*Comment, error) {
-
 	comment, err := s.Get(ctx, id)
 	if err != nil {
 		return nil, err

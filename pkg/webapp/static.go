@@ -46,7 +46,7 @@ func safeFileName(str string) (string, error) {
 	}
 	name = legal.ReplaceAllString(name, "")
 	for strings.Contains(name, "--") {
-		name = strings.Replace(name, "--", "-", -1)
+		name = strings.ReplaceAll(name, "--", "-")
 	}
 	return name, nil
 }

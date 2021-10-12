@@ -32,5 +32,4 @@ func (s *Server) PostComment(w http.ResponseWriter, req *http.Request) {
 	}
 
 	http.Redirect(w, req, "/cases/"+caseID, http.StatusSeeOther)
-
 }

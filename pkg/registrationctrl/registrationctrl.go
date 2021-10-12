@@ -45,14 +45,14 @@ type Stage struct {
 	StageStatus
 }
 
-//Progress represents the overall progress of the individual
+// Progress represents the overall progress of the individual
 type Progress []Stage
 
 func (p Progress) nClosed() int {
 	count := 0
 	for _, stage := range p {
 		if stage.StageStatus == Complete {
-			count += 1
+			count++
 		}
 	}
 	return count

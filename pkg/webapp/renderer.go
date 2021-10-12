@@ -90,7 +90,6 @@ func (r *Renderer) IsLoggedIn() bool {
 }
 
 func (r *Renderer) Profile() (*Claims, error) {
-
 	session, err := r.sessionManager.Get(r.req)
 	if err != nil {
 		return nil, err

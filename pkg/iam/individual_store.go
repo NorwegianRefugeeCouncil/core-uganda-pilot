@@ -34,14 +34,14 @@ func (s *IndividualStore) create(ctx context.Context, individual *Individual) (*
 	return individual, nil
 }
 
-func (s *IndividualStore) get(ctx context.Context, ID string) (*Individual, error) {
+func (s *IndividualStore) get(ctx context.Context, id string) (*Individual, error) {
 	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
 	}
 	defer done()
 
-	findResult := collection.FindOne(ctx, bson.M{"id": ID})
+	findResult := collection.FindOne(ctx, bson.M{"id": id})
 	if findResult.Err() != nil {
 		return nil, findResult.Err()
 	}
@@ -76,11 +76,10 @@ func (s *IndividualStore) upsert(ctx context.Context, individual *Individual) (*
 }
 
 func (s *IndividualStore) list(ctx context.Context, listOptions IndividualListOptions) (*IndividualList, error) {
-
 	includesIndividualPartyType := false
 
-	for _, partyTypeId := range listOptions.PartyTypeIDs {
-		if partyTypeId == IndividualPartyType.ID {
+	for _, partyTypeID := range listOptions.PartyTypeIDs {
+		if partyTypeID == IndividualPartyType.ID {
 			includesIndividualPartyType = true
 		}
 	}

@@ -12,8 +12,8 @@ var (
 	ColombiaTeam            = team("a6bc6436-fcea-4738-bde8-593e6480e1ad", "Colombia Team")
 
 	// Nationalities
-	KampalaRegistrationTeamNationality = nationality("3ea0eea3-fef8-4bef-983a-b52a7814efbd", KampalaRegistrationTeam, ugandaCountry)
-	KampalaProtectionTeamNationality   = nationality("b58e4d26-fe8e-4442-8449-7ec4ca3d9066", KampalaProtectionTeam, ugandaCountry)
-	KampalaICLATeamNationality         = nationality("23e3eb5e-592e-42e2-8bbf-ee097d93034c", KampalaICLATeam, ugandaCountry)
-	ColombiaTeamNationality            = nationality("7ba6d2ee-1af9-447c-8000-7719467b3414", ColombiaTeam, colombiaCountry)
+	_ = nationality("3ea0eea3-fef8-4bef-983a-b52a7814efbd", KampalaRegistrationTeam, ugandaCountry)
+	_ = nationality("b58e4d26-fe8e-4442-8449-7ec4ca3d9066", KampalaProtectionTeam, ugandaCountry)
+	_ = nationality("23e3eb5e-592e-42e2-8bbf-ee097d93034c", KampalaICLATeam, ugandaCountry)
+	_ = nationality("7ba6d2ee-1af9-447c-8000-7719467b3414", ColombiaTeam, colombiaCountry)
 )

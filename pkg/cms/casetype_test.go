@@ -146,7 +146,7 @@ func (s *Suite) testCaseTypeListFilter() {
 	caseTypes := s.mockCaseTypes(nCaseTypes)
 
 	// Make some PartyTypes
-	partyTypes := []string{}
+	var partyTypes []string
 	for i := 0; i < nPartyTypes; i++ {
 		partyTypes = append(partyTypes, newUUID())
 	}
@@ -166,11 +166,11 @@ func (s *Suite) testCaseTypeListFilter() {
 func (s *Suite) testCaseTypeFilterByPartyType(caseTypes []*CaseType, partyTypes []string) {
 	for i := 1; i <= len(partyTypes); i++ {
 		types := partyTypes[0:i]
-		list, err := s.client.CaseTypes().List(s.Ctx, CaseTypeListOptions{types, []string{}})
+		list, err := s.client.CaseTypes().List(s.Ctx, CaseTypeListOptions{PartyTypeIDs: types, TeamIDs: []string{}})
 		if !assert.NoError(s.T(), err) {
 			s.T().FailNow()
 		}
-		expected := []string{}
+		var expected []string
 		for _, caseType := range caseTypes {
 			if utils.Contains(types, caseType.PartyTypeID) {
 				expected = append(expected, caseType.ID)

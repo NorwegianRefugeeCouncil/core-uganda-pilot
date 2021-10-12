@@ -15,7 +15,6 @@ func NewNationalityStore(relationshipStore *RelationshipStore) *NationalityStore
 }
 
 func (s *NationalityStore) list(ctx context.Context, listOptions NationalityListOptions) (*NationalityList, error) {
-
 	var relopts = RelationshipListOptions{
 		RelationshipTypeID: NationalityRelationshipType.ID,
 		FirstPartyID:       listOptions.TeamID,
@@ -34,7 +33,6 @@ func (s *NationalityStore) list(ctx context.Context, listOptions NationalityList
 	return &NationalityList{
 		Items: items,
 	}, nil
-
 }
 
 func (s *NationalityStore) get(ctx context.Context, id string) (*Nationality, error) {
@@ -47,13 +45,12 @@ func (s *NationalityStore) get(ctx context.Context, id string) (*Nationality, er
 	}
 
 	return MapRelationshipToNationality(got), nil
-
 }
 
-func (s *NationalityStore) find(ctx context.Context, teamId, countryId string) (*Nationality, error) {
+func (s *NationalityStore) find(ctx context.Context, teamID, countryId string) (*Nationality, error) {
 	got, err := s.relationshipStore.list(ctx, RelationshipListOptions{
 		RelationshipTypeID: NationalityRelationshipType.ID,
-		FirstPartyID:       teamId,
+		FirstPartyID:       teamID,
 		SecondPartyID:      countryId,
 	})
 	if err != nil {

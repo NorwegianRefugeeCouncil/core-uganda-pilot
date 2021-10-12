@@ -74,13 +74,13 @@ func (s *Suite) testIndividualListFilter() {
 	}
 
 	// Prepare the test data
-	//individualsFromPartyTypes := make(map[string][]string)
-	//individualsFromAttributes := make(map[string][]string)
+	// individualsFromPartyTypes := make(map[string][]string)
+	// individualsFromAttributes := make(map[string][]string)
 	for i, individual := range individuals {
 		// Individuals have the IndividualPartyType by default, lets give them a couple more
 		n := i % len(partyTypes)
 		individual.PartyTypeIDs = append(individual.PartyTypeIDs, partyTypes[0:n]...)
-		//for _, partyType := range individual.PartyTypeIDs {
+		// for _, partyType := range individual.PartyTypeIDs {
 		//	individualsFromPartyTypes[partyType] = append(individualsFromPartyTypes[partyType], individual.ID)
 		//}
 
@@ -88,7 +88,7 @@ func (s *Suite) testIndividualListFilter() {
 		m := i % len(attributes)
 		for _, attribute := range attributes[0:m] {
 			individual.Attributes.Set(attribute, "mock")
-			//individualsFromAttributes[attribute] = append(individualsFromAttributes[attribute], individual.ID)
+			// individualsFromAttributes[attribute] = append(individualsFromAttributes[attribute], individual.ID)
 		}
 
 		// Save the individual to the DB
@@ -121,8 +121,8 @@ func (s *Suite) testIndividualFilterByPartyType(individuals []*Individual, party
 		var expected []string
 		for _, individual := range individuals {
 			var include = true
-			for _, wantedPartyTypeId := range types {
-				if !utils.Contains(individual.PartyTypeIDs, wantedPartyTypeId) {
+			for _, wantedPartyTypeID := range types {
+				if !utils.Contains(individual.PartyTypeIDs, wantedPartyTypeID) {
 					include = false
 					break
 				}

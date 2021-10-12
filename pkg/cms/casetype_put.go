@@ -6,7 +6,6 @@ import (
 )
 
 func (s *Server) putCaseType(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 	var id string
 
@@ -42,7 +41,6 @@ func (s *Server) putCaseType(w http.ResponseWriter, req *http.Request) {
 	}
 
 	s.json(w, http.StatusOK, update)
-
 }
 
 func updateCaseTypeStruct(caseType *CaseType, update *CaseType) *CaseType {

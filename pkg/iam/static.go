@@ -5,7 +5,7 @@ import (
 	"github.com/nrc-no/core/pkg/i18n"
 )
 
-//Countries
+// Countries
 
 var (
 	GlobalCountry = Country{

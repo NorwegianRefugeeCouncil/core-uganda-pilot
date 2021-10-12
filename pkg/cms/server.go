@@ -19,7 +19,7 @@ type Server struct {
 	caseTypeStore   *CaseTypeStore
 	commentStore    *CommentStore
 	HydraAdmin      admin.ClientService
-	HydraHttpClient *http.Client
+	HydraHTTPClient *http.Client
 }
 
 func NewServerOrDie(ctx context.Context, o *server.GenericServerOptions) *Server {
@@ -31,7 +31,6 @@ func NewServerOrDie(ctx context.Context, o *server.GenericServerOptions) *Server
 }
 
 func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, error) {
-
 	caseStore, err := NewCaseStore(ctx, o.MongoClientFn, o.MongoDatabase)
 	if err != nil {
 		return nil, err
@@ -54,7 +53,7 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 		caseTypeStore:   caseTypeStore,
 		commentStore:    commentStore,
 		HydraAdmin:      o.HydraAdminClient.Admin,
-		HydraHttpClient: o.HydraHTTPClient,
+		HydraHTTPClient: o.HydraHTTPClient,
 	}
 
 	router := mux.NewRouter()
@@ -79,7 +78,6 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	srv.router = router
 
 	return srv, nil
-
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
@@ -122,8 +120,6 @@ func (s *Server) ResetDB(ctx context.Context, databaseName string) error {
 	if err != nil {
 		return err
 	}
-	if err := mongoClient.Database(databaseName).Drop(ctx); err != nil {
-		return err
-	}
+	return mongoClient.Database(databaseName).Drop(ctx)
 	return nil
 }

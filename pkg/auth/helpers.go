@@ -17,7 +17,6 @@ func GetAuthenticationContext(req *http.Request) AuthenticationContext {
 	}
 
 	return authCtx
-
 }
 
 func IsAuthenticatedRequest(req *http.Request) bool {

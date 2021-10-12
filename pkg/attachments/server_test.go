@@ -48,26 +48,26 @@ func (s *Suite) NewUUID() string {
 }
 
 func (s *Suite) uuidSlice(n int) []string {
-	t := []string{}
+	var t []string
 	for i := 0; i < n; i++ {
 		t = append(t, s.NewUUID())
 	}
 	return t
 }
 
-func (s *Suite) aMockAttachment(attachedToId string) *Attachment {
+func (s *Suite) aMockAttachment(attachedToID string) *Attachment {
 	var newUUIDForAttachment = s.NewUUID()
 	return &Attachment{
 		//ID:           newUUIDForAttachment,
-		AttachedToID: attachedToId,
+		AttachedToID: attachedToID,
 		Body:         "{\"data\":\"" + newUUIDForAttachment + "\"}",
 	}
 }
 
-func (s *Suite) mockAttachments(n int, attachedToId string) []*Attachment {
+func (s *Suite) mockAttachments(n int, attachedToID string) []*Attachment {
 	var attachments []*Attachment
 	for i := 0; i < n; i++ {
-		attachments = append(attachments, s.aMockAttachment(attachedToId))
+		attachments = append(attachments, s.aMockAttachment(attachedToID))
 	}
 	return attachments
 }

@@ -186,7 +186,7 @@ func (a *PartyAttributeDefinitionListOptions) UnmarshalQueryParameters(values ur
 	return nil
 }
 
-var _ rest.UrlValuer = &PartyAttributeDefinitionListOptions{}
+var _ rest.URLValuer = &PartyAttributeDefinitionListOptions{}
 
 type PartyAttributeDefinitionClient interface {
 	Get(ctx context.Context, id string) (*PartyAttributeDefinition, error)
@@ -257,7 +257,7 @@ type TeamClient interface {
 	List(ctx context.Context, listOptions TeamListOptions) (*TeamList, error)
 }
 
-//Country
+// Country
 
 type CountryListOptions struct {
 }

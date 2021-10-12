@@ -58,7 +58,6 @@ func (s *CaseTypeStore) get(ctx context.Context, id string) (*CaseType, error) {
 }
 
 func (s *CaseTypeStore) list(ctx context.Context, options CaseTypeListOptions) (*CaseTypeList, error) {
-
 	filter := bson.M{}
 
 	if len(options.PartyTypeIDs) > 0 {

@@ -59,7 +59,6 @@ func (s *RelationshipTypeStore) Get(ctx context.Context, id string) (*Relationsh
 }
 
 func (s *RelationshipTypeStore) List(ctx context.Context, listOptions RelationshipTypeListOptions) (*RelationshipTypeList, error) {
-
 	filter := bson.M{}
 
 	if len(listOptions.PartyTypeID) != 0 {

@@ -60,7 +60,7 @@ func (s *Suite) TestAttachmentListFilter() {
 	}
 
 	for _, owner := range owners {
-		attachmentsForOwner := []*Attachment{}
+		var attachmentsForOwner []*Attachment
 
 		// create attachments for each owner
 		for i := 0; i < nAttachmentsPerOwner; i++ {

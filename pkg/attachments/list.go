@@ -18,5 +18,4 @@ func (s *Server) ListAttachments(w http.ResponseWriter, req *http.Request) {
 	}
 
 	s.json(w, http.StatusOK, ret)
-
 }

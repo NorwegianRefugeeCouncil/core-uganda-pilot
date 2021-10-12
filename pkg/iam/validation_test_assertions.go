@@ -19,10 +19,3 @@ func assertInvalid(field string) func(t *testing.T, errList validation.ErrorList
 		assert.Equal(t, e[0].Type, validation.ErrorTypeInvalid)
 	}
 }
-
-func assertNoError(field string) func(t *testing.T, errList validation.ErrorList) {
-	return func(t *testing.T, errList validation.ErrorList) {
-		e := *errList.Find(field)
-		assert.Empty(t, e)
-	}
-}

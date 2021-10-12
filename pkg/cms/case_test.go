@@ -55,7 +55,6 @@ func (s *Suite) TestCaseAPI() {
 }
 
 func (s *Suite) TestCaseListFilter() {
-
 	bunch := newCaseBunch()
 	if !assert.NoError(s.T(), bunch.create(s.Ctx, s.client.Cases())) {
 		return
@@ -207,7 +206,7 @@ func (s *Suite) TestCaseListFilter() {
 	for _, tt := range tests {
 		tc := tt
 		s.Run(tt.name, func() {
-			//s.T().Parallel()
+			// s.T().Parallel()
 			got, err := s.client.Cases().List(s.Ctx, tc.args)
 			if !s.NoError(err) {
 				s.T().FailNow()
@@ -219,7 +218,6 @@ func (s *Suite) TestCaseListFilter() {
 			}
 		})
 	}
-
 }
 
 type caseBunch struct {
@@ -231,7 +229,6 @@ type caseBunch struct {
 }
 
 func newCaseBunch() *caseBunch {
-
 	const (
 		nCases     = 6
 		nParties   = 5

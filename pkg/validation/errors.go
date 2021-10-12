@@ -32,9 +32,8 @@ func (v ErrorList) Find(field string) *ErrorList {
 	}
 	if len(errs) > 0 {
 		return &errs
-	} else {
-		return nil
 	}
+	return nil
 }
 
 func (v ErrorList) FindFamily(field string) *ErrorList {
@@ -51,9 +50,8 @@ func (v ErrorList) FindFamily(field string) *ErrorList {
 	}
 	if len(errs) > 0 {
 		return &errs
-	} else {
-		return nil
 	}
+	return nil
 }
 
 func (v ErrorList) HasError(field string, errType ErrorType) bool {

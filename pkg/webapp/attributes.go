@@ -14,7 +14,6 @@ import (
 )
 
 func (s *Server) Attributes(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 
 	if req.Method == "POST" {
@@ -68,7 +67,6 @@ func (s *Server) NewAttribute(w http.ResponseWriter, req *http.Request) {
 }
 
 func (s *Server) Attribute(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 	iamClient, err := s.IAMClient(req)
 	if err != nil {
@@ -106,9 +104,7 @@ func (s *Server) Attribute(w http.ResponseWriter, req *http.Request) {
 		s.Error(w, err)
 		return
 	}
-
 }
-
 func (s *Server) PostAttribute(ctx context.Context, attribute *iam.PartyAttributeDefinition, w http.ResponseWriter, req *http.Request) {
 	iamClient, err := s.IAMClient(req)
 	if err != nil {
@@ -142,7 +138,7 @@ func (s *Server) PostAttribute(ctx context.Context, attribute *iam.PartyAttribut
 	attribute.FormControl = *form.NewControl(name, controlType, label, required)
 
 	// TODO infer country from subject
-	//subject, ok := ctx.Value("Subject").(string)
+	// subject, ok := ctx.Value("Subject").(string)
 	//if !ok {
 	//	s.Error(w, errors.New("couldn't get subject id string"))
 	//	return
@@ -182,10 +178,9 @@ func (s *Server) PostAttribute(ctx context.Context, attribute *iam.PartyAttribut
 
 	w.Header().Set("Location", "/settings/attributes/"+storedAttribute.ID)
 	w.WriteHeader(http.StatusSeeOther)
-
 }
 
-//zipAttributeAndErrors returns a form.Form containing the validation information, ie the faulty form elements only
+// zipAttributeAndErrors returns a form.Form containing the validation information, ie the faulty form elements only
 func zipAttributeAndErrors(attribute *iam.PartyAttributeDefinition, errorList validation.ErrorList) form.Form {
 	var result form.Form
 	var errs *validation.ErrorList

@@ -42,12 +42,12 @@ var (
 		"perceivedPriority":     {"High"},
 	}
 
-	BoDiddleySituationAnalysis  = kase("dba43642-8093-4685-a197-f8848d4cbaaa", Colette.ID, BoDiddley.ID, KampalaProtectionTeam.ID, UGSituationalAnalysisCaseType, true, true, BoDiddleySituationAnalysisData)
-	BoDiddleyIndividualResponse = kase("3ea8c121-bdf0-46a0-86a8-698dc4abc872", Colette.ID, BoDiddley.ID, KampalaProtectionTeam.ID, UGIndividualResponseCaseType, true, true, BoDiddleyResponseData)
+	_ = kase("dba43642-8093-4685-a197-f8848d4cbaaa", Colette.ID, BoDiddley.ID, KampalaProtectionTeam.ID, UGSituationalAnalysisCaseType, true, true, BoDiddleySituationAnalysisData)
+	_ = kase("3ea8c121-bdf0-46a0-86a8-698dc4abc872", Colette.ID, BoDiddley.ID, KampalaProtectionTeam.ID, UGIndividualResponseCaseType, true, true, BoDiddleyResponseData)
 
-	MaryPoppinsSituationAnalysis  = kase("4f7708ed-240a-423f-9bd1-839542e65833", Colette.ID, MaryPoppins.ID, KampalaProtectionTeam.ID, UGSituationalAnalysisCaseType, true, true, MaryPoppinsSituationAnalysisData)
-	MaryPoppinsIndividualResponse = kase("45b4a637-c610-4ab9-afe6-4e958c36a96f", Colette.ID, MaryPoppins.ID, KampalaProtectionTeam.ID, UGIndividualResponseCaseType, true, true, MaryPoppinsResponseData)
+	_ = kase("4f7708ed-240a-423f-9bd1-839542e65833", Colette.ID, MaryPoppins.ID, KampalaProtectionTeam.ID, UGSituationalAnalysisCaseType, true, true, MaryPoppinsSituationAnalysisData)
+	_ = kase("45b4a637-c610-4ab9-afe6-4e958c36a96f", Colette.ID, MaryPoppins.ID, KampalaProtectionTeam.ID, UGIndividualResponseCaseType, true, true, MaryPoppinsResponseData)
 
-	JohnDoesSituationAnalysis = kase("43140381-8166-4fb3-9ac5-339082920ade", Colette.ID, JohnDoe.ID, KampalaProtectionTeam.ID, UGSituationalAnalysisCaseType, true, true, JohnDoeSituationAnalysisData)
-	JohnDoeIndividualResponse = kase("65e02e79-1676-4745-9890-582e3d67d13f", Colette.ID, JohnDoe.ID, KampalaProtectionTeam.ID, UGIndividualResponseCaseType, true, true, JohnDoeResponseData)
+	_ = kase("43140381-8166-4fb3-9ac5-339082920ade", Colette.ID, JohnDoe.ID, KampalaProtectionTeam.ID, UGSituationalAnalysisCaseType, true, true, JohnDoeSituationAnalysisData)
+	_ = kase("65e02e79-1676-4745-9890-582e3d67d13f", Colette.ID, JohnDoe.ID, KampalaProtectionTeam.ID, UGIndividualResponseCaseType, true, true, JohnDoeResponseData)
 )

@@ -9,7 +9,6 @@ import (
 )
 
 func (s *Server) GetConsent(w http.ResponseWriter, req *http.Request) {
-
 	logrus.Trace("getting consent challenge")
 
 	consentChallenge := req.URL.Query().Get("consent_challenge")
@@ -25,14 +24,13 @@ func (s *Server) GetConsent(w http.ResponseWriter, req *http.Request) {
 		WithHTTPClient(s.HydraHTTPClient).
 		WithContext(req.Context()))
 	if err != nil {
-		s.Error(w, fmt.Errorf("could not request consent: %v", err))
+		s.Error(w, fmt.Errorf("could not request consent: %w", err))
 		return
 	}
 
 	consentRequest := consentGetResp.GetPayload()
 
 	if consentRequest.Skip {
-
 		logrus.Trace("consent skipped. Accepting consent request")
 
 		consentAcceptResp, err := s.HydraAdmin.AcceptConsentRequest(admin.NewAcceptConsentRequestParams().
@@ -44,7 +42,7 @@ func (s *Server) GetConsent(w http.ResponseWriter, req *http.Request) {
 				GrantScope:               consentRequest.RequestedScope,
 			}))
 		if err != nil {
-			s.Error(w, fmt.Errorf("could not accept consent: %v", err))
+			s.Error(w, fmt.Errorf("could not accept consent: %w", err))
 			return
 		}
 
@@ -59,10 +57,9 @@ func (s *Server) GetConsent(w http.ResponseWriter, req *http.Request) {
 	consentMessage := fmt.Sprintf("Application %s wants to access resources on your behalf and to:",
 		consentRequest.Client.ClientName)
 
-	s.Render(w, req, "consent", map[string]interface{}{
+	s.Render(w, "consent", map[string]interface{}{
 		"ConsentChallenge": consentChallenge,
 		"ConsentMessage":   consentMessage,
 		"RequestedScopes":  consentRequest.RequestedScope,
 	})
-
 }

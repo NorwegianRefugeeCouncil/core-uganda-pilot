@@ -9,7 +9,6 @@ import (
 )
 
 func (s *Server) PostLoginForm(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 
 	logrus.Trace("parsing login form values")
@@ -17,7 +16,7 @@ func (s *Server) PostLoginForm(w http.ResponseWriter, req *http.Request) {
 	// Parsing the form values
 	if err := req.ParseForm(); err != nil {
 		logrus.WithError(err).Error()
-		s.Render(w, req, "login", map[string]interface{}{
+		s.Render(w, "login", map[string]interface{}{
 			"Error": err.Error(),
 		})
 		return
@@ -43,7 +42,7 @@ func (s *Server) PostLoginForm(w http.ResponseWriter, req *http.Request) {
 	individual, isValid := s.VerifyPassword(ctx, email, password)
 	if !isValid {
 		logrus.Trace("invalid username/password")
-		s.Render(w, req, "login", map[string]interface{}{
+		s.Render(w, "login", map[string]interface{}{
 			"Challenge": loginChallenge,
 			"Error":     "Invalid credentials",
 		})
@@ -61,7 +60,7 @@ func (s *Server) PostLoginForm(w http.ResponseWriter, req *http.Request) {
 	_, err := s.HydraAdmin.GetLoginRequest(
 		getLoginRequestParams)
 	if err != nil {
-		s.Error(w, fmt.Errorf("failed to get login request: %v", err))
+		s.Error(w, fmt.Errorf("failed to get login request: %w", err))
 		return
 	}
 
@@ -78,12 +77,11 @@ func (s *Server) PostLoginForm(w http.ResponseWriter, req *http.Request) {
 				Subject:  &individual.ID,
 			}))
 	if err != nil {
-		s.Error(w, fmt.Errorf("failed to accept login request: %v", err))
+		s.Error(w, fmt.Errorf("failed to accept login request: %w", err))
 		return
 	}
 
 	logrus.Tracef("redirecting user to %s", *respLoginAccept.Payload.RedirectTo)
 
 	http.Redirect(w, req, *respLoginAccept.Payload.RedirectTo, http.StatusFound)
-
 }

@@ -11,7 +11,6 @@ import (
 )
 
 func (s *Server) VerifyPassword(ctx context.Context, email, password string) (*iam2.Individual, bool) {
-
 	individualList, err := s.iam.Individuals().List(ctx, iam2.IndividualListOptions{
 		Attributes: map[string]string{
 			iam2.EMailAttribute.ID: email,
@@ -65,12 +64,10 @@ func (s *Server) VerifyPassword(ctx context.Context, email, password string) (*i
 	}
 
 	return individualList.Items[0], true
-
 }
 
 // SetPassword will set the Party password
 func (s *Server) SetPassword(ctx context.Context, partyID string, password string) error {
-
 	credentialsCollection, err := s.credentialsCollectionFn()
 	if err != nil {
 		logrus.WithError(err).Errorf("failed to get credentials collection")
@@ -79,7 +76,7 @@ func (s *Server) SetPassword(ctx context.Context, partyID string, password strin
 
 	saltedHash, err := HashAndSalt(s.BCryptCost, []byte(password))
 	if err != nil {
-		return fmt.Errorf("failed to hash and salt: %v", err)
+		return fmt.Errorf("failed to hash and salt: %w", err)
 	}
 
 	_, err = credentialsCollection.UpdateOne(ctx, bson.M{
@@ -91,14 +88,13 @@ func (s *Server) SetPassword(ctx context.Context, partyID string, password strin
 		},
 	}, options.Update().SetUpsert(true))
 	if err != nil {
-		return fmt.Errorf("failed to upsert password: %v", err)
+		return fmt.Errorf("failed to upsert password: %w", err)
 	}
 	return nil
 }
 
 // CreatePassword will create a new credential for the Party
 func (s *Server) CreatePassword(ctx context.Context, partyID string, password string) error {
-
 	credentialsCollection, err := s.credentialsCollectionFn()
 	if err != nil {
 		logrus.WithError(err).Errorf("failed to get credentials collection")
@@ -107,7 +103,7 @@ func (s *Server) CreatePassword(ctx context.Context, partyID string, password st
 
 	saltedHash, err := HashAndSalt(s.BCryptCost, []byte(password))
 	if err != nil {
-		return fmt.Errorf("failed to hash and salt: %v", err)
+		return fmt.Errorf("failed to hash and salt: %w", err)
 	}
 
 	var newCredential = Credential{
@@ -117,7 +113,7 @@ func (s *Server) CreatePassword(ctx context.Context, partyID string, password st
 
 	_, err = credentialsCollection.InsertOne(ctx, newCredential)
 	if err != nil {
-		return fmt.Errorf("failed to insert credential: %v", err)
+		return fmt.Errorf("failed to insert credential: %w", err)
 	}
 
 	return nil
@@ -128,7 +124,7 @@ func (s *Server) CreatePassword(ctx context.Context, partyID string, password st
 func HashAndSalt(cost int, pwd []byte) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword(pwd, cost)
 	if err != nil {
-		return "", fmt.Errorf("failed to generate hash from password: %v", err)
+		return "", fmt.Errorf("failed to generate hash from password: %w", err)
 	}
 	return string(hash), nil
 }

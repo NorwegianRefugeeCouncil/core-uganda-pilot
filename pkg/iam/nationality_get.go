@@ -18,5 +18,4 @@ func (s *Server) getNationality(w http.ResponseWriter, req *http.Request) {
 	}
 
 	s.json(w, http.StatusOK, ret)
-
 }

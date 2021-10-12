@@ -19,5 +19,4 @@ func (s *Server) getPartyType(w http.ResponseWriter, req *http.Request) {
 	}
 
 	s.json(w, http.StatusOK, ret)
-
 }

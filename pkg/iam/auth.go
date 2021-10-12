@@ -13,7 +13,7 @@ func (s *Server) withAuth() func(handler http.Handler) http.Handler {
 				return
 			}
 
-			token, err := auth.AuthHeaderTokenSource(req).GetToken()
+			token, err := auth.HeaderTokenSource(req).GetToken()
 			if err != nil {
 				s.error(w, err)
 				return

@@ -24,5 +24,4 @@ func (s *Server) postMembership(w http.ResponseWriter, req *http.Request) {
 	}
 
 	s.json(w, http.StatusOK, p)
-
 }

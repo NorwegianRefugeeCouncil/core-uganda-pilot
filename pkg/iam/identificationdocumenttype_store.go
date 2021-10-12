@@ -39,7 +39,6 @@ func newIdentificationDocumentTypeStore(ctx context.Context, mongoClientFn utils
 }
 
 func (s *IdentificationDocumentTypeStore) list(ctx context.Context, listOptions IdentificationDocumentTypeListOptions) (*IdentificationDocumentTypeList, error) {
-
 	filter := bson.M{}
 
 	collection, klose, err := s.getCollection(ctx)
@@ -71,7 +70,6 @@ func (s *IdentificationDocumentTypeStore) list(ctx context.Context, listOptions 
 	return &IdentificationDocumentTypeList{
 		Items: list,
 	}, nil
-
 }
 
 func (s *IdentificationDocumentTypeStore) create(ctx context.Context, identificationDocumentType *IdentificationDocumentType) error {

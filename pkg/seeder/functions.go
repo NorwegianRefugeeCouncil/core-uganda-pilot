@@ -152,13 +152,13 @@ func identificationDocumentType(id, name string) iam.IdentificationDocumentType 
 	return idt
 }
 
-func identificationDocument(id, partyId, documentNumber, identificationDocumentTypeId string) iam.IdentificationDocument {
-	newId := iam.IdentificationDocument{
+func identificationDocument(id, partyID, documentNumber, identificationDocumentTypeId string) iam.IdentificationDocument {
+	newID := iam.IdentificationDocument{
 		ID:                           id,
-		PartyID:                      partyId,
+		PartyID:                      partyID,
 		DocumentNumber:               documentNumber,
 		IdentificationDocumentTypeID: identificationDocumentTypeId,
 	}
-	identificationDocuments = append(identificationDocuments, newId)
-	return newId
+	identificationDocuments = append(identificationDocuments, newID)
+	return newID
 }

@@ -11,17 +11,17 @@ func (s *Suite) TestIdentificationDocument() {
 
 func (s *Suite) testIdentificationDocumentAPI() {
 	// Create
-	partyId := newUUID()
-	identificationDocumentTypeId := newUUID()
+	partyID := newUUID()
+	identificationDocumentTypeID := newUUID()
 	documentNumber := newUUID()
 	created, err := s.client.IdentificationDocuments().Create(s.Ctx, &IdentificationDocument{
-		PartyID:                      partyId,
-		IdentificationDocumentTypeID: identificationDocumentTypeId,
+		PartyID:                      partyID,
+		IdentificationDocumentTypeID: identificationDocumentTypeID,
 		DocumentNumber:               documentNumber,
 	})
 	assert.NoError(s.T(), err)
-	assert.Equal(s.T(), partyId, created.PartyID)
-	assert.Equal(s.T(), identificationDocumentTypeId, created.IdentificationDocumentTypeID)
+	assert.Equal(s.T(), partyID, created.PartyID)
+	assert.Equal(s.T(), identificationDocumentTypeID, created.IdentificationDocumentTypeID)
 	assert.Equal(s.T(), documentNumber, created.DocumentNumber)
 	assert.NotEmpty(s.T(), created.ID)
 
@@ -31,12 +31,12 @@ func (s *Suite) testIdentificationDocumentAPI() {
 	assert.Equal(s.T(), get, created)
 
 	// Update
-	newPartyId := newUUID()
-	newIdentificationDocumentTypeId := newUUID()
+	newPartyID := newUUID()
+	newIdentificationDocumentTypeID := newUUID()
 	newDocumentNumber := newUUID()
 	updated := *created
-	updated.PartyID = newPartyId
-	updated.IdentificationDocumentTypeID = newIdentificationDocumentTypeId
+	updated.PartyID = newPartyID
+	updated.IdentificationDocumentTypeID = newIdentificationDocumentTypeID
 	updated.DocumentNumber = newDocumentNumber
 	_, err = s.client.IdentificationDocuments().Update(s.Ctx, &updated)
 	assert.NoError(s.T(), err)

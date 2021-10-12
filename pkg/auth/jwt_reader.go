@@ -23,7 +23,7 @@ func (d *DelegateTokenSource) GetToken() (string, error) {
 	return d.getToken()
 }
 
-func AuthHeaderTokenSource(req *http.Request) TokenSource {
+func HeaderTokenSource(req *http.Request) TokenSource {
 	return NewDelegateTokenSource(func() (string, error) {
 		authorization := req.Header.Get("Authorization")
 		if len(authorization) == 0 {

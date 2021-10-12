@@ -69,8 +69,8 @@ func (s *Suite) testRelationshipListFilter() {
 	const nParties = 4
 
 	relationships := mockRelationships(nRelationships)
-	relationshipTypes := []string{}
-	parties := []string{}
+	var relationshipTypes []string
+	var parties []string
 
 	for i := 0; i < nRelationshipTypes; i++ {
 		relationshipTypes = append(relationshipTypes, newUUID())

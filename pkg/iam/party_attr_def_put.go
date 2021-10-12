@@ -44,7 +44,6 @@ func (s *Server) putPartyAttributeDefinition(w http.ResponseWriter, req *http.Re
 	}
 
 	s.json(w, http.StatusOK, update)
-
 }
 
 func updatePartyAttributesDefinitionStruct(pAD *PartyAttributeDefinition, update *PartyAttributeDefinition) *PartyAttributeDefinition {

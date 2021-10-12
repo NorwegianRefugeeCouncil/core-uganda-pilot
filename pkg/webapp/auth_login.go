@@ -26,8 +26,6 @@ func (s *Server) Login(w http.ResponseWriter, req *http.Request) {
 		s.Error(w, err)
 		return
 	}
-
-	redirectUrl := s.publicOauth2Config.AuthCodeURL(state)
-	http.Redirect(w, req, redirectUrl, http.StatusTemporaryRedirect)
-
+	redirectURL := s.publicOauth2Config.AuthCodeURL(state)
+	http.Redirect(w, req, redirectURL, http.StatusTemporaryRedirect)
 }

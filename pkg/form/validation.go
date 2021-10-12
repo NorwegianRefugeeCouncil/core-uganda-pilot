@@ -26,34 +26,34 @@ func ValidateControlValue(control Control, value []string, path *validation.Path
 	// validate according to control type
 	switch control.Type {
 	case Text:
-		result = validateTextControl(control, value, path)
+		result = validateTextControl(value, path)
 	case Email:
-		result = validateEmailControl(control, value, path)
+		result = validateEmailControl(value, path)
 	case Phone:
-		result = validatePhoneControl(control, value, path)
+		result = validatePhoneControl(value, path)
 	case URL:
-		result = validateURLControl(control, value, path)
+		result = validateURLControl(value, path)
 	case Date:
-		result = validateDateControl(control, value, path)
+		result = validateDateControl(value, path)
 	case Textarea:
-		result = validateTextareaControl(control, value, path)
+		result = validateTextareaControl(value, path)
 	case Dropdown:
 		result = validateDropdownControl(control, value, path)
 	case Boolean, Checkbox, Radio:
 		result = validateCheckboxControl(control, value, path)
 	case Taxonomy:
-		result = validateTaxonomyControl(control, value, path)
+		result = validateTaxonomyControl(value, path)
 	case File:
-		result = validateFileControl(control, value, path)
+		result = validateFileControl(value, path)
 	case Time:
-		result = validateTimeControl(control, value, path)
+		result = validateTimeControl(value, path)
 	case Number:
-		result = validateNumberControl(control, value, path)
+		result = validateNumberControl(value, path)
 	}
 	return validation.ErrorList{}
 }
 
-func validateTextControl(control Control, value []string, path *validation.Path) validation.ErrorList {
+func validateTextControl(value []string, path *validation.Path) validation.ErrorList {
 	var result validation.ErrorList
 
 	result = validateSingleStringControl(value, path, result)
@@ -86,7 +86,7 @@ func validateSingleSliceValue(value []string, path *validation.Path, result vali
 	return result
 }
 
-func validateEmailControl(control Control, value []string, path *validation.Path) validation.ErrorList {
+func validateEmailControl(value []string, path *validation.Path) validation.ErrorList {
 	var result validation.ErrorList
 
 	result = validateSingleStringControl(value, path, result)
@@ -101,7 +101,7 @@ func validateEmailControl(control Control, value []string, path *validation.Path
 	return result
 }
 
-func validatePhoneControl(control Control, value []string, path *validation.Path) validation.ErrorList {
+func validatePhoneControl(value []string, path *validation.Path) validation.ErrorList {
 	var result validation.ErrorList
 
 	result = validateSingleStringControl(value, path, result)
@@ -116,7 +116,7 @@ func validatePhoneControl(control Control, value []string, path *validation.Path
 	return result
 }
 
-func validateURLControl(control Control, value []string, path *validation.Path) validation.ErrorList {
+func validateURLControl(value []string, path *validation.Path) validation.ErrorList {
 	var result validation.ErrorList
 
 	result = validateSingleStringControl(value, path, result)
@@ -130,7 +130,7 @@ func validateURLControl(control Control, value []string, path *validation.Path) 
 	return result
 }
 
-func validateDateControl(control Control, value []string, path *validation.Path) validation.ErrorList {
+func validateDateControl(value []string, path *validation.Path) validation.ErrorList {
 	var result validation.ErrorList
 
 	result = validateSingleStringControl(value, path, result)
@@ -144,7 +144,7 @@ func validateDateControl(control Control, value []string, path *validation.Path)
 	return result
 }
 
-func validateTimeControl(control Control, value []string, path *validation.Path) validation.ErrorList {
+func validateTimeControl(value []string, path *validation.Path) validation.ErrorList {
 	var result validation.ErrorList
 
 	result = validateSingleStringControl(value, path, result)
@@ -158,7 +158,7 @@ func validateTimeControl(control Control, value []string, path *validation.Path)
 	return result
 }
 
-func validateTextareaControl(control Control, value []string, path *validation.Path) validation.ErrorList {
+func validateTextareaControl(value []string, path *validation.Path) validation.ErrorList {
 	var result validation.ErrorList
 
 	result = validateSingleSliceValue(value, path, result)
@@ -197,7 +197,7 @@ func validateCheckboxControl(control Control, value []string, path *validation.P
 	return result
 }
 
-func validateTaxonomyControl(control Control, value []string, path *validation.Path) validation.ErrorList {
+func validateTaxonomyControl(value []string, path *validation.Path) validation.ErrorList {
 	var result validation.ErrorList
 
 	// TODO implement me
@@ -205,7 +205,7 @@ func validateTaxonomyControl(control Control, value []string, path *validation.P
 	return result
 }
 
-func validateFileControl(control Control, value []string, path *validation.Path) validation.ErrorList {
+func validateFileControl(value []string, path *validation.Path) validation.ErrorList {
 	var result validation.ErrorList
 
 	// TODO implement me
@@ -213,7 +213,7 @@ func validateFileControl(control Control, value []string, path *validation.Path)
 	return result
 }
 
-func validateNumberControl(control Control, value []string, path *validation.Path) validation.ErrorList {
+func validateNumberControl(value []string, path *validation.Path) validation.ErrorList {
 	var result validation.ErrorList
 
 	number, err := strconv.Atoi(value[0])

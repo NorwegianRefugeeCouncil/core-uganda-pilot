@@ -79,7 +79,7 @@ func mockParties(n int) []*Party {
 	return parties
 }
 
-//func (s *Suite) mockRelationshipTypes(n int) []*RelationshipType {
+// func (s *Suite) mockRelationshipTypes(n int) []*RelationshipType {
 //	var relationshipTypes []*RelationshipType
 //	for i := 0; i < n; i++ {
 //		relationshipTypes = append(relationshipTypes, &RelationshipType{
@@ -110,7 +110,6 @@ func mockIndividual() *Individual {
 	individual.Attributes.Add(FullNameAttribute.ID, "mock")
 	individual.Attributes.Add(DisplayNameAttribute.ID, "mock")
 	return individual
-
 }
 
 func mockIndividuals(n int) []*Individual {
@@ -123,14 +122,6 @@ func mockIndividuals(n int) []*Individual {
 
 func mockMembership() *Membership {
 	return &Membership{}
-}
-
-func mockMemberships(n int) []*Membership {
-	var memberships []*Membership
-	for i := 0; i < n; i++ {
-		memberships = append(memberships, mockMembership())
-	}
-	return memberships
 }
 
 func mockNationality() *Nationality {

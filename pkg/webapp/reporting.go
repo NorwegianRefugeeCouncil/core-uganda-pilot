@@ -8,7 +8,6 @@ import (
 )
 
 func (s *Server) Reporting(w http.ResponseWriter, req *http.Request) {
-
 	var iList *iam2.IndividualList
 	var cList *cms.CaseList
 	var ctList *cms.CaseTypeList

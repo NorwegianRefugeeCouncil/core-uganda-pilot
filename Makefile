@@ -23,6 +23,8 @@ test-integration:
 test-e2e:
 	@./scripts/test-e2e.sh
 
+test: test-integration test-e2e
+
 build:
 	@./scripts/build.sh
 
@@ -38,4 +40,4 @@ docker-build:
 docker-push: docker-build
 	@docker push digitalbackbonecr.azurecr.io/nrc-no/core:latest
 
-.PHONY: up down serve build
+.PHONY: up down serve build test

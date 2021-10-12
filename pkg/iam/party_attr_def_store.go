@@ -40,7 +40,6 @@ func newAttributeStore(ctx context.Context, mongoClientFn utils.MongoClientFn, d
 // list returns an PartyAttributeDefinitionList. If PartyAttributeDefinitionListOptions are supplied, list returns a filtered list containing
 // only those items whose PartyAttributeDefinition.PartyTypeIDs field contains all the elements given in the query.
 func (s *PartyAttributeDefinitionStore) list(ctx context.Context, listOptions PartyAttributeDefinitionListOptions) (*PartyAttributeDefinitionList, error) {
-
 	filter := bson.M{}
 
 	if len(listOptions.PartyTypeIDs) > 0 {
@@ -83,7 +82,6 @@ func (s *PartyAttributeDefinitionStore) list(ctx context.Context, listOptions Pa
 	return &PartyAttributeDefinitionList{
 		Items: list,
 	}, nil
-
 }
 
 func (s *PartyAttributeDefinitionStore) create(ctx context.Context, attribute *PartyAttributeDefinition) error {

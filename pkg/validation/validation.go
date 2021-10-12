@@ -5,8 +5,6 @@ import (
 	"net/mail"
 	"net/url"
 	"regexp"
-	"strconv"
-	"unicode"
 )
 
 type StatusType string
@@ -42,23 +40,7 @@ func IsValidAlpha(s string) bool {
 
 var InvalidAlphaDetail = "Accepted: letters, spaces"
 
-func IsValidNumeric(s string) bool {
-	_, err := strconv.Atoi(s)
-	return err == nil
-}
-
 var InvalidNumericDetail = "Accepted: numbers"
-
-func IsValidAlphaNumeric(s string) bool {
-	for _, r := range s {
-		if !unicode.IsLetter(r) && !unicode.IsDigit(r) && !unicode.IsSpace(r) {
-			return false
-		}
-	}
-	return true
-}
-
-var InvalidAlphaNumericDetail = "Accepted: letters, numbers, spaces"
 
 func IsValidEmail(s string) bool {
 	_, err := mail.ParseAddress(s)
@@ -66,11 +48,6 @@ func IsValidEmail(s string) bool {
 }
 
 var InvalidEmailDetail = "invalid email"
-
-func IsValidPassword(s string) bool {
-	// TODO
-	return true
-}
 
 var ugandaPhoneFormat = regexp.MustCompile(`^(\+?256(\s|-)?|0)\d{3}(\s|-)?\d{6}$`)
 
@@ -88,8 +65,6 @@ func IsValidDate(s string) bool {
 }
 
 var InvalidDateDetail = "invalid date"
-
-var timeFormat = regexp.MustCompile(`^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$`)
 
 func IsValidTime(s string) bool {
 	return dateFormat.MatchString(s)

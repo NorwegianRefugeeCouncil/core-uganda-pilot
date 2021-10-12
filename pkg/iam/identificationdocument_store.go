@@ -39,7 +39,6 @@ func newIdentificationDocumentStore(ctx context.Context, mongoClientFn utils.Mon
 }
 
 func (s *IdentificationDocumentStore) list(ctx context.Context, listOptions IdentificationDocumentListOptions) (*IdentificationDocumentList, error) {
-
 	filter := bson.M{}
 
 	if len(listOptions.PartyIDs) != 0 {
@@ -75,7 +74,6 @@ func (s *IdentificationDocumentStore) list(ctx context.Context, listOptions Iden
 	return &IdentificationDocumentList{
 		Items: list,
 	}, nil
-
 }
 
 func (s *IdentificationDocumentStore) create(ctx context.Context, identificationDocument *IdentificationDocument) error {

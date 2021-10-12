@@ -362,7 +362,11 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 
 	logrus.Infof("getting redis connection")
 	conn := pool.Get()
-	defer conn.Close()
+	defer func(conn redis.Conn) {
+		err := conn.Close()
+		if err != nil {
+		}
+	}(conn)
 
 	logrus.Infof("testing redis connection")
 	_, err = conn.Do("PING")

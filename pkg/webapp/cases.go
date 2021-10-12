@@ -9,7 +9,7 @@ import (
 	"github.com/nrc-no/core/pkg/iam"
 	"github.com/nrc-no/core/pkg/sessionmanager"
 	"github.com/nrc-no/core/pkg/validation"
-	"github.com/satori/go.uuid"
+	uuid "github.com/satori/go.uuid"
 	"github.com/xeonx/timeago"
 	"golang.org/x/sync/errgroup"
 	"net/http"
@@ -17,7 +17,6 @@ import (
 )
 
 func (s *Server) Cases(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 
 	cmsClient, err := s.CMSClient(req)
@@ -85,9 +84,7 @@ func (s *Server) Cases(w http.ResponseWriter, req *http.Request) {
 		s.Error(w, err)
 		return
 	}
-
 }
-
 func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 	var (
 		err              error
@@ -224,7 +221,6 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 }
 
 func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 	cmsClient, err := s.CMSClient(req)
 	if err != nil {
@@ -460,15 +456,14 @@ type CasesListOptions struct {
 }
 
 func (c *CasesListOptions) ClosedOnly() bool {
-	return c.Closed != nil && *c.Closed == true
+	return c.Closed != nil && *c.Closed
 }
 
 func (c *CasesListOptions) OpenOnly() bool {
-	return c.Closed != nil && *c.Closed == false
+	return c.Closed != nil && !*c.Closed
 }
 
 func (c *CasesListOptions) UnmarshalQueryParams(values url.Values) error {
-
 	if len(values["status"]) == 1 {
 		closed := values["status"][0] == "closed"
 		c.Closed = &closed
@@ -479,7 +474,6 @@ func (c *CasesListOptions) UnmarshalQueryParams(values url.Values) error {
 			c.TeamIDs = append(c.TeamIDs, teamId)
 		}
 	}
-
 	for _, caseTypeId := range values["caseTypeId"] {
 		if _, err := uuid.FromString(caseTypeId); err == nil {
 			c.CaseTypeIDs = append(c.CaseTypeIDs, caseTypeId)
@@ -487,5 +481,4 @@ func (c *CasesListOptions) UnmarshalQueryParams(values url.Values) error {
 	}
 
 	return nil
-
 }

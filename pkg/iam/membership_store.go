@@ -15,7 +15,6 @@ func NewMembershipStore(relationshipStore *RelationshipStore) *MembershipStore {
 }
 
 func (s *MembershipStore) list(ctx context.Context, listOptions MembershipListOptions) (*MembershipList, error) {
-
 	got, err := s.relationshipStore.list(ctx, RelationshipListOptions{
 		RelationshipTypeID: MembershipRelationshipType.ID,
 		FirstPartyID:       listOptions.IndividualID,
@@ -33,7 +32,6 @@ func (s *MembershipStore) list(ctx context.Context, listOptions MembershipListOp
 	return &MembershipList{
 		Items: items,
 	}, nil
-
 }
 
 func (s *MembershipStore) get(ctx context.Context, id string) (*Membership, error) {
@@ -46,13 +44,12 @@ func (s *MembershipStore) get(ctx context.Context, id string) (*Membership, erro
 	}
 
 	return MapRelationshipToMembership(got), nil
-
 }
 
-func (s *MembershipStore) find(ctx context.Context, individualId, teamId string) (*Membership, error) {
+func (s *MembershipStore) find(ctx context.Context, individualID, teamId string) (*Membership, error) {
 	got, err := s.relationshipStore.list(ctx, RelationshipListOptions{
 		RelationshipTypeID: MembershipRelationshipType.ID,
-		FirstPartyID:       individualId,
+		FirstPartyID:       individualID,
 		SecondPartyID:      teamId,
 	})
 	if err != nil {

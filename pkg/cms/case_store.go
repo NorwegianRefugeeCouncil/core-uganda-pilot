@@ -52,7 +52,6 @@ func (s *CaseStore) create(ctx context.Context, kase *Case) error {
 }
 
 func (s *CaseStore) get(ctx context.Context, id string) (*Case, error) {
-
 	collection, done, err := s.getCollection(ctx)
 	if err != nil {
 		return nil, err
@@ -73,7 +72,6 @@ func (s *CaseStore) get(ctx context.Context, id string) (*Case, error) {
 }
 
 func (s *CaseStore) list(ctx context.Context, listOptions CaseListOptions) (*CaseList, error) {
-
 	filter := bson.M{}
 
 	if len(listOptions.PartyIDs) > 0 {

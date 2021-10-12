@@ -27,7 +27,6 @@ type IndividualWithStatuses struct {
 }
 
 func (s *Server) Individuals(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 
 	iamClient, err := s.IAMClient(req)
@@ -83,7 +82,6 @@ func (s *Server) Individuals(w http.ResponseWriter, req *http.Request) {
 		s.Error(w, err)
 		return
 	}
-
 }
 
 func (s *Server) IndividualIdentificationDocuments(w http.ResponseWriter, req *http.Request) {
@@ -158,7 +156,6 @@ func (s *Server) IndividualIdentificationDocuments(w http.ResponseWriter, req *h
 }
 
 func (s *Server) PostIndividualIdentificationDocuments(w http.ResponseWriter, req *http.Request, partyID string) {
-
 	ctx := req.Context()
 
 	if err := req.ParseForm(); err != nil {
@@ -252,7 +249,6 @@ func (s *Server) IndividualCredentials(w http.ResponseWriter, req *http.Request)
 		s.Error(w, err)
 		return
 	}
-
 }
 
 func (s *Server) PostIndividualCredentials(w http.ResponseWriter, req *http.Request, partyID string) {
@@ -533,16 +529,13 @@ func shouldIgnoreValidationError(attribute *iam.PartyAttributeDefinition, values
 	return false
 }
 
-func PrepRelationshipTypeDropdown(relationshipTypes *iam.RelationshipTypeList) *iam.RelationshipTypeList {
-
-	// TODO:
+func PrepRelationshipTypeDropdown(relationshipTypes *iam.RelationshipTypeList) *iam.RelationshipTypeList { // TODO:
 	// Currently Core only works with individuals
 	// this function should be changed when this is no longer
 	// the case
 
 	var newList = iam.RelationshipTypeList{}
 	for _, relType := range relationshipTypes.Items {
-
 		relTypeOnlyForIndividuals := true
 
 		for _, rule := range relType.Rules {
@@ -602,7 +595,6 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDe
 	for attrId, value := range f {
 		// Retrieve party relationships
 		if strings.HasPrefix(attrId, "relationships[") {
-
 			keyParts := strings.Split(attrId, ".")
 			if len(keyParts) != 2 {
 				err := fmt.Errorf("unexpected form value key: %s", attrId)
@@ -673,28 +665,22 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDe
 	// Update, create or delete the relationships
 
 	for _, rel := range rels {
-
-		if len(rel.ID) == 0 {
-			// Create the relationship
+		switch {
+		case len(rel.ID) == 0:
 			relationship := rel.Relationship
 			relationship.FirstPartyID = individual.ID
 			if _, err := iamClient.Relationships().Create(ctx, rel.Relationship); err != nil {
 				return nil, err
 			}
-		} else if !rel.MarkedForDeletion {
-			// Update the relationship
+		case !rel.MarkedForDeletion:
 			relationship := rel.Relationship
 			relationship.FirstPartyID = individual.ID
 			if _, err := iamClient.Relationships().Update(ctx, rel.Relationship); err != nil {
 				return nil, err
 			}
-		} else {
-			// Delete the relationship
-			if err := iamClient.Relationships().Delete(ctx, rel.Relationship.ID); err != nil {
-				return nil, err
-			}
+		case err != nil:
+			return nil, err
 		}
-
 	}
 
 	// Set flash notification

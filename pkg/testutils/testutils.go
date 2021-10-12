@@ -5,8 +5,8 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-func SetXAuthenticatedUserSubject(port string) *rest.RESTConfig {
-	return &rest.RESTConfig{
+func SetXAuthenticatedUserSubject(port string) *rest.Config {
+	return &rest.Config{
 		Scheme: "http",
 		Host:   "localhost:" + port,
 		Headers: map[string][]string{

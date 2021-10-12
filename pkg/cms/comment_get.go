@@ -6,7 +6,6 @@ import (
 )
 
 func (s *Server) GetComment(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 	id := mux.Vars(req)["id"]
 
@@ -17,5 +16,4 @@ func (s *Server) GetComment(w http.ResponseWriter, req *http.Request) {
 	}
 
 	s.json(w, http.StatusOK, comment)
-
 }

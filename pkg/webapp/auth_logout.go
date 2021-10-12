@@ -8,8 +8,7 @@ import (
 )
 
 func (s *Server) Logout(w http.ResponseWriter, req *http.Request) {
-
-	logoutURL, err := url.Parse(strings.Replace(s.publicOauth2Config.Endpoint.TokenURL, "/oauth2/token", "/oauth2/sessions/logout", -1))
+	logoutURL, err := url.Parse(strings.ReplaceAll(s.publicOauth2Config.Endpoint.TokenURL, "/oauth2/token", "/oauth2/sessions/logout"))
 	if err != nil {
 		s.Error(w, err)
 		return

@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/validation"
@@ -27,30 +28,30 @@ func JSONResponse(w http.ResponseWriter, status int, data interface{}) {
 
 func ErrorResponse(w http.ResponseWriter, err error) {
 	logrus.WithError(err).Errorf("server error")
-	if status, ok := err.(*validation.Status); ok {
+	var status *validation.Status
+	ok := errors.Is(err, status)
+	if ok {
 		code := status.Code
 		if code == 0 {
 			code = http.StatusInternalServerError
 		}
 		JSONResponse(w, code, status)
 		return
-	} else {
-		status := &validation.Status{
-			Code: http.StatusInternalServerError,
-		}
-		JSONResponse(w, status.Code, status)
-		return
 	}
+	status = &validation.Status{
+		Code: http.StatusInternalServerError,
+	}
+	JSONResponse(w, status.Code, status)
 }
 
 func BindJSON(req *http.Request, into interface{}) error {
 	bodyBytes, err := ioutil.ReadAll(req.Body)
 	if err != nil {
-		return fmt.Errorf("failed to read request body: %v", err)
+		return fmt.Errorf("failed to read request body: %w", err)
 	}
 
 	if err := json.Unmarshal(bodyBytes, &into); err != nil {
-		return fmt.Errorf("failed to marshal request body: %v", err)
+		return fmt.Errorf("failed to marshal request body: %w", err)
 	}
 
 	return nil

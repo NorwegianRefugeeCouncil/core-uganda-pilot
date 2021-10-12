@@ -18,13 +18,13 @@ func (s *Server) PostCredentials(w http.ResponseWriter, req *http.Request) {
 
 	credentialsCollection, err := s.credentialsCollectionFn()
 	if err != nil {
-		err = fmt.Errorf("failed to get credentials collection: %v", err)
+		err = fmt.Errorf("failed to get credentials collection: %w", err)
 		s.Error(w, err)
 	}
 
 	res, err := credentialsCollection.Find(ctx, bson.M{"partyId": payload.PartyID})
 	if err != nil {
-		s.Error(w, fmt.Errorf("failed to get credentials: %v", err))
+		s.Error(w, fmt.Errorf("failed to get credentials: %w", err))
 		return
 	}
 
@@ -35,7 +35,7 @@ func (s *Server) PostCredentials(w http.ResponseWriter, req *http.Request) {
 		}
 		var c Credential
 		if err := res.Decode(&c); err != nil {
-			s.Error(w, fmt.Errorf("failed to decode credentials: %v", err))
+			s.Error(w, fmt.Errorf("failed to decode credentials: %w", err))
 			return
 		}
 		credentials = append(credentials, &c)
@@ -45,7 +45,7 @@ func (s *Server) PostCredentials(w http.ResponseWriter, req *http.Request) {
 	if len(credentials) == 0 {
 		err = s.CreatePassword(ctx, payload.PartyID, payload.PlaintextPassword)
 		if err != nil {
-			s.Error(w, fmt.Errorf("failed to create password: %v", err))
+			s.Error(w, fmt.Errorf("failed to create password: %w", err))
 			return
 		}
 	}
@@ -54,7 +54,7 @@ func (s *Server) PostCredentials(w http.ResponseWriter, req *http.Request) {
 	if len(credentials) == 1 {
 		err = s.SetPassword(ctx, payload.PartyID, payload.PlaintextPassword)
 		if err != nil {
-			s.Error(w, fmt.Errorf("failed to set password: %v", err))
+			s.Error(w, fmt.Errorf("failed to set password: %w", err))
 			return
 		}
 	}

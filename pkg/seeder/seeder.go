@@ -13,7 +13,6 @@ import (
 )
 
 func Clear(ctx context.Context, mongoClientFn utils.MongoClientFn, databaseName string) error {
-
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
@@ -26,7 +25,6 @@ func Clear(ctx context.Context, mongoClientFn utils.MongoClientFn, databaseName 
 }
 
 func Seed(ctx context.Context, mongoClientFn utils.MongoClientFn, databaseName string) error {
-
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 

@@ -49,7 +49,7 @@ func newUUID() string {
 }
 
 func uuidSlice(n int) []string {
-	s := []string{}
+	var s []string
 	for i := 0; i < n; i++ {
 		s = append(s, newUUID())
 	}

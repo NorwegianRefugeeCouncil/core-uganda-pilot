@@ -29,7 +29,7 @@ func GetPaginationMetaData(totalCount int, currentPage int, perPage int, sortVal
 	sortParam := fmt.Sprintf("&sort=%s", getSortDirection(sortValue))
 	links := getLinks(searchParam, currentPage, pageCount, perPageParam, sortParam)
 
-	return Pagination{currentPage, int(perPage), pageCount, totalCount, sortValue, links}
+	return Pagination{currentPage, perPage, pageCount, totalCount, sortValue, links}
 }
 
 func getLinks(searchParam string, currentPage int, pageCount int, perPageParam string, sortParam string) Links {
@@ -72,7 +72,7 @@ func getLastPageCount(totalCount int, maxPerPage int) int {
 	if totalCount <= GetMaxPerPage(maxPerPage) {
 		return 1
 	}
-	return int(math.Ceil(float64(float64(totalCount) / float64(GetMaxPerPage(maxPerPage)))))
+	return int(math.Ceil(float64(totalCount) / float64(GetMaxPerPage(maxPerPage))))
 }
 
 func GetCurrentPage(page int) int {

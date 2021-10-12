@@ -10,9 +10,8 @@ import (
 )
 
 func (s *Server) PostConsent(w http.ResponseWriter, req *http.Request) {
-
 	if err := req.ParseForm(); err != nil {
-		s.Error(w, fmt.Errorf("failed to parse form: %v", err))
+		s.Error(w, fmt.Errorf("failed to parse form: %w", err))
 		return
 	}
 
@@ -27,7 +26,7 @@ func (s *Server) PostConsent(w http.ResponseWriter, req *http.Request) {
 		WithHTTPClient(s.HydraHTTPClient).
 		WithConsentChallenge(consentChallenge))
 	if err != nil {
-		s.Error(w, fmt.Errorf("failed to get consent request: %v", err))
+		s.Error(w, fmt.Errorf("failed to get consent request: %w", err))
 		return
 	}
 
@@ -39,7 +38,7 @@ func (s *Server) PostConsent(w http.ResponseWriter, req *http.Request) {
 
 	individual, err := s.iam.Individuals().Get(req.Context(), subject)
 	if err != nil {
-		s.Error(w, fmt.Errorf("failed to get individual: %v", err))
+		s.Error(w, fmt.Errorf("failed to get individual: %w", err))
 		return
 	}
 
@@ -67,12 +66,11 @@ func (s *Server) PostConsent(w http.ResponseWriter, req *http.Request) {
 			},
 		}))
 	if err != nil {
-		s.Error(w, fmt.Errorf("failed to accept consent request: %v", err))
+		s.Error(w, fmt.Errorf("failed to accept consent request: %w", err))
 		return
 	}
 
 	logrus.Tracef("consent request accepted. Redirecting to %s", *consentAcceptResp.GetPayload().RedirectTo)
 
 	http.Redirect(w, req, *consentAcceptResp.GetPayload().RedirectTo, http.StatusFound)
-
 }
