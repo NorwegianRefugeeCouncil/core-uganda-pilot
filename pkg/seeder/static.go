@@ -1,9 +1,9 @@
 package seeder
 
 import (
-	"github.com/nrc-no/core/internal/registrationctrl"
 	"github.com/nrc-no/core/pkg/cms"
 	"github.com/nrc-no/core/pkg/iam"
+	"github.com/nrc-no/core/pkg/registrationctrl"
 )
 
 var (

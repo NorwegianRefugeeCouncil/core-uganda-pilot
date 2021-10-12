@@ -14,7 +14,7 @@ func (s *Server) searchParties(w http.ResponseWriter, req *http.Request) {
 	}
 
 	ret, err := s.partyStore.list(ctx, PartySearchOptions{
-		PartyIDs: listOptions.PartyIDs,
+		PartyIDs:     listOptions.PartyIDs,
 		PartyTypeIDs: listOptions.PartyTypeIDs,
 		Attributes:   listOptions.Attributes,
 		SearchParam:  listOptions.SearchParam,

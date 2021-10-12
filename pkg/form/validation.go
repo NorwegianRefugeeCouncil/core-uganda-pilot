@@ -1,8 +1,8 @@
 package form
 
 import (
-	"github.com/nrc-no/core/internal/utils"
-	"github.com/nrc-no/core/internal/validation"
+	"github.com/nrc-no/core/pkg/utils"
+	"github.com/nrc-no/core/pkg/validation"
 	"strconv"
 )
 

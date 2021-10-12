@@ -2,9 +2,9 @@ package webapp
 
 import (
 	"fmt"
-	"github.com/nrc-no/core/internal/registrationctrl"
-	"github.com/nrc-no/core/internal/seeder"
 	"github.com/nrc-no/core/pkg/iam"
+	"github.com/nrc-no/core/pkg/registrationctrl"
+	"github.com/nrc-no/core/pkg/seeder"
 	"net/http"
 )
 

@@ -3,13 +3,13 @@ package webapp
 import (
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core/internal/generic/server"
-	"github.com/nrc-no/core/internal/rest"
-	"github.com/nrc-no/core/internal/sessionmanager"
-	utils2 "github.com/nrc-no/core/internal/utils"
 	"github.com/nrc-no/core/pkg/cms"
-	iam2 "github.com/nrc-no/core/pkg/iam"
-	login2 "github.com/nrc-no/core/pkg/login"
+	"github.com/nrc-no/core/pkg/generic/server"
+	"github.com/nrc-no/core/pkg/iam"
+	"github.com/nrc-no/core/pkg/login"
+	"github.com/nrc-no/core/pkg/rest"
+	"github.com/nrc-no/core/pkg/sessionmanager"
+	"github.com/nrc-no/core/pkg/utils"
 	"github.com/ory/hydra-client-go/client/admin"
 	"github.com/ory/hydra-client-go/client/public"
 	"github.com/sirupsen/logrus"
@@ -21,13 +21,13 @@ type Server struct {
 	renderFactory       *RendererFactory
 	sessionManager      sessionmanager.Store
 	router              *mux.Router
-	login               login2.Interface
+	login               login.Interface
 	HydraAdmin          admin.ClientService
 	HydraPublic         public.ClientService
 	oidcVerifier        *oidc.IDTokenVerifier
 	privateOauth2Config *oauth2.Config
 	environment         string
-	iamAdminClient      iam2.Interface
+	iamAdminClient      iam.Interface
 	baseURL             string
 	iamScheme           string
 	iamHost             string
@@ -62,7 +62,7 @@ type ServerOptions struct {
 func NewServer(options *ServerOptions) (*Server, error) {
 
 	h := &Server{
-		login: login2.NewClientSet(&rest.RESTConfig{
+		login: login.NewClientSet(&rest.RESTConfig{
 			Scheme:     options.CMSScheme,
 			Host:       options.CMSHost,
 			HTTPClient: options.AdminHTTPClient,
@@ -73,7 +73,7 @@ func NewServer(options *ServerOptions) (*Server, error) {
 		privateOauth2Config: options.PrivateOAuth2Config,
 		publicOauth2Config:  options.PublicOauth2Config,
 		environment:         options.Environment,
-		iamAdminClient: iam2.NewClientSet(&rest.RESTConfig{
+		iamAdminClient: iam.NewClientSet(&rest.RESTConfig{
 			Scheme:     options.IAMScheme,
 			Host:       options.IAMHost,
 			HTTPClient: options.AdminHTTPClient,
@@ -151,12 +151,12 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	s.router.ServeHTTP(w, req)
 }
 
-func (s *Server) IAMClient(req *http.Request) (iam2.Interface, error) {
-	httpClient, err := utils2.GetOauth2HttpClient(s.sessionManager, req, s.privateOauth2Config, s.IAMHTTPClient)
+func (s *Server) IAMClient(req *http.Request) (iam.Interface, error) {
+	httpClient, err := utils.GetOauth2HttpClient(s.sessionManager, req, s.privateOauth2Config, s.IAMHTTPClient)
 	if err != nil {
 		return nil, err
 	}
-	return iam2.NewClientSet(&rest.RESTConfig{
+	return iam.NewClientSet(&rest.RESTConfig{
 		Scheme:     s.iamScheme,
 		Host:       s.iamHost,
 		HTTPClient: httpClient,
@@ -164,7 +164,7 @@ func (s *Server) IAMClient(req *http.Request) (iam2.Interface, error) {
 }
 
 func (s *Server) CMSClient(req *http.Request) (cms.Interface, error) {
-	httpClient, err := utils2.GetOauth2HttpClient(s.sessionManager, req, s.privateOauth2Config, s.CMSHTTPClient)
+	httpClient, err := utils.GetOauth2HttpClient(s.sessionManager, req, s.privateOauth2Config, s.CMSHTTPClient)
 	if err != nil {
 		return nil, err
 	}
@@ -176,12 +176,12 @@ func (s *Server) CMSClient(req *http.Request) (cms.Interface, error) {
 }
 
 func (s *Server) Error(w http.ResponseWriter, err error) {
-	utils2.ErrorResponse(w, err)
+	utils.ErrorResponse(w, err)
 }
 func (s *Server) GetPathParam(param string, w http.ResponseWriter, req *http.Request, into *string) bool {
-	return utils2.GetPathParam(param, w, req, into)
+	return utils.GetPathParam(param, w, req, into)
 }
 
 func (s *Server) json(w http.ResponseWriter, status int, data interface{}) {
-	utils2.JSONResponse(w, status, data)
+	utils.JSONResponse(w, status, data)
 }

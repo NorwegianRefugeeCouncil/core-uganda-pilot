@@ -2,7 +2,7 @@
     <!doctype html>
     <html lang="en">
     {{template "head"}}
-    <link href="https://cdn.webdatarocks.com/1.3.1/webdatarocks.min.css" rel="stylesheet" />
+    <link href="https://cdn.webdatarocks.com/1.3.1/webdatarocks.min.css" rel="stylesheet"/>
 
     <style>
         #chartContainer {
@@ -28,17 +28,22 @@
                 <div class="col">
                     <div class="d-flex flex-row py-1">
                         <nav class="nav">
-                            <button class="nav-link active" id="gender-tab" data-bs-toggle="tab" data-bs-target="#gender" type="button" role="tab" aria-controls="gender" aria-selected="true">
+                            <button class="nav-link active" id="gender-tab" data-bs-toggle="tab"
+                                    data-bs-target="#gender" type="button" role="tab" aria-controls="gender"
+                                    aria-selected="true">
                                 <i class="bi bi-gender-female"></i>
                                 <i class="bi bi-gender-male"></i>
                                 Cases Closed by Gender
                             </button>
-                            <button class="nav-link" id="displacement-tab" data-bs-toggle="tab" data-bs-target="#displacement" type="button" role="tab" aria-controls="displacement" aria-selected="false">
+                            <button class="nav-link" id="displacement-tab" data-bs-toggle="tab"
+                                    data-bs-target="#displacement" type="button" role="tab" aria-controls="displacement"
+                                    aria-selected="false">
                                 <i class="bi bi-arrow-left-right"></i>
                                 <i class="bi bi-person"></i>
                                 Cases Closed by Displacement Status
                             </button>
-                            <button class="nav-link" id="age-tab" data-bs-toggle="tab" data-bs-target="#age" type="button" role="tab" aria-controls="age" aria-selected="false">
+                            <button class="nav-link" id="age-tab" data-bs-toggle="tab" data-bs-target="#age"
+                                    type="button" role="tab" aria-controls="age" aria-selected="false">
                                 <i class="bi bi-calendar3-week"></i>
                                 <i class="bi bi-person"></i>
                                 Cases Closed by Age
@@ -177,30 +182,31 @@
             return returnData;
         };
         const makePivot = (pivotContainerId, title, slice) => {
-          return new WebDataRocks({
-              container: pivotContainerId,
-              toolbar: false,
-              height: 580,
-              width: '100%',
-              report: {
-                  'dataSource': {
-                      'dataSourceType': 'json',
-                      'data': parseData({{.Individuals.Items}}, {{.Cases.Items}}, {{.CaseTypes.Items}}),
-                  },
-                  'options': {
-                      'grid': {
-                          'title': title
-                      }
-                  },
-                  "slice": slice,
-              },
-              reportcomplete: function() {
-                  createPieChart();
-              },
-          });
+            return new WebDataRocks({
+                container: pivotContainerId,
+                toolbar: false,
+                height: 580,
+                width: '100%',
+                report: {
+                    'dataSource': {
+                        'dataSourceType': 'json',
+                        'data': parseData({{.Individuals.Items}}, {{.Cases.Items}}, {{.CaseTypes.Items}}),
+                    },
+                    'options': {
+                        'grid': {
+                            'title': title
+                        }
+                    },
+                    "slice": slice,
+                },
+                reportcomplete: function () {
+                    createPieChart();
+                },
+            });
         };
         var pivot = makePivot('#pivotContainer', 'Closed Cases by Gender', genderSlice);
         var chart
+
         function createPieChart() {
             // Get all the data from the pivot grid (alternatively, a slice can be passed to getData() as the first argument)
             pivot.amcharts.getData({}, drawChart, updateChart);

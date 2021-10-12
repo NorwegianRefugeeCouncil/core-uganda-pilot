@@ -3,8 +3,8 @@ package webapp
 import (
 	"context"
 	"fmt"
-	"github.com/nrc-no/core/internal/sessionmanager"
-	iam2 "github.com/nrc-no/core/pkg/iam"
+	"github.com/nrc-no/core/pkg/iam"
+	"github.com/nrc-no/core/pkg/sessionmanager"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -21,14 +21,14 @@ func (s *Server) RelationshipTypes(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	r := &iam2.RelationshipType{}
+	r := &iam.RelationshipType{}
 
 	if req.Method == "POST" {
 		s.PostRelationshipType(ctx, r, w, req)
 		return
 	}
 
-	relationshipTypes, err := iamClient.RelationshipTypes().List(ctx, iam2.RelationshipTypeListOptions{})
+	relationshipTypes, err := iamClient.RelationshipTypes().List(ctx, iam.RelationshipTypeListOptions{})
 	if err != nil {
 		s.Error(w, err)
 		return
@@ -50,7 +50,7 @@ func (s *Server) NewRelationshipType(w http.ResponseWriter, req *http.Request) {
 		s.Error(w, err)
 		return
 	}
-	p, err := iamClient.PartyTypes().List(ctx, iam2.PartyTypeListOptions{})
+	p, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
 		s.Error(w, err)
 		return
@@ -87,7 +87,7 @@ func (s *Server) RelationshipType(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	p, err := iamClient.PartyTypes().List(ctx, iam2.PartyTypeListOptions{})
+	p, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
 		s.Error(w, err)
 		return
@@ -109,7 +109,7 @@ func (s *Server) RelationshipType(w http.ResponseWriter, req *http.Request) {
 
 func (s *Server) PostRelationshipType(
 	ctx context.Context,
-	r *iam2.RelationshipType,
+	r *iam.RelationshipType,
 	w http.ResponseWriter,
 	req *http.Request,
 ) {
@@ -143,9 +143,9 @@ func (s *Server) PostRelationshipType(
 	r.FirstPartyRole = formValues.Get("firstPartyRole")
 	r.SecondPartyRole = formValues.Get("secondPartyRole")
 
-	r.Rules = []iam2.RelationshipTypeRule{
+	r.Rules = []iam.RelationshipTypeRule{
 		{
-			PartyTypeRule: &iam2.PartyTypeRule{
+			PartyTypeRule: &iam.PartyTypeRule{
 				FirstPartyTypeID:  formValues.Get("rules[0].firstPartyTypeId"),
 				SecondPartyTypeID: formValues.Get("rules[0].secondPartyTypeId"),
 			},

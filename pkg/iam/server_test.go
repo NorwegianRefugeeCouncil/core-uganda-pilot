@@ -1,10 +1,10 @@
 package iam_test
 
 import (
-	"github.com/nrc-no/core/internal/form"
-	"github.com/nrc-no/core/internal/generic/server"
-	"github.com/nrc-no/core/internal/testutils"
+	"github.com/nrc-no/core/pkg/form"
+	"github.com/nrc-no/core/pkg/generic/server"
 	. "github.com/nrc-no/core/pkg/iam"
+	"github.com/nrc-no/core/pkg/testutils"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/suite"
 	"testing"

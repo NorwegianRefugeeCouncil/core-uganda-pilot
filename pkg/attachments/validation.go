@@ -2,7 +2,7 @@ package attachments
 
 import (
 	"fmt"
-	"github.com/nrc-no/core/internal/validation"
+	"github.com/nrc-no/core/pkg/validation"
 )
 
 func ValidateAttachment(attachment *Attachment, path *validation.Path) validation.ErrorList {

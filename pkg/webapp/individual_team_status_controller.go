@@ -2,13 +2,13 @@ package webapp
 
 import (
 	"fmt"
-	"github.com/nrc-no/core/internal/teamstatusctrl"
 	"github.com/nrc-no/core/pkg/cms"
-	iam2 "github.com/nrc-no/core/pkg/iam"
+	"github.com/nrc-no/core/pkg/iam"
+	"github.com/nrc-no/core/pkg/teamstatusctrl"
 	"net/http"
 )
 
-func (s *Server) GetTeamStatusController(req *http.Request, individual *iam2.Individual) (teamstatusctrl.TeamStatusCtrl, error) {
+func (s *Server) GetTeamStatusController(req *http.Request, individual *iam.Individual) (teamstatusctrl.TeamStatusCtrl, error) {
 	tsc := teamstatusctrl.TeamStatusCtrl{}
 
 	// Get Cases For Individual
@@ -41,7 +41,7 @@ func (s *Server) GetTeamStatusController(req *http.Request, individual *iam2.Ind
 	if err != nil {
 		return tsc, err
 	}
-	memberships, err := iamClient.Memberships().List(req.Context(), iam2.MembershipListOptions{
+	memberships, err := iamClient.Memberships().List(req.Context(), iam.MembershipListOptions{
 		IndividualID: userSessionClaims.Subject,
 	})
 	if err != nil {

@@ -2,7 +2,7 @@ package cms
 
 import (
 	"encoding/json"
-	"github.com/nrc-no/core/internal/form"
+	"github.com/nrc-no/core/pkg/form"
 	"net/url"
 	"time"
 )

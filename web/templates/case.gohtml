@@ -39,7 +39,7 @@
 
         {{range $caseTypes.Items}}
             {{if eq .ID $caseTypeId}}
-                <input name="case-type" type="hidden" value="{{.ID}}" />
+                <input name="case-type" type="hidden" value="{{.ID}}"/>
                 <h2>{{.Name}}</h2>
             {{end}}
         {{end}}
@@ -195,7 +195,7 @@
 
     </div>
     <script type="module">
-        import { validateServerSide, validateClientSide } from '/static/js/validation.js';
+        import {validateServerSide, validateClientSide} from '/static/js/validation.js';
 
         const submitBtn = document.querySelector('#case-submit-btn');
         if (submitBtn != null) {

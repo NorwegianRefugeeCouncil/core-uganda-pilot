@@ -1,21 +1,19 @@
 package iam
 
 import (
-	auth2 "github.com/nrc-no/core/internal/auth"
+	"github.com/nrc-no/core/pkg/auth"
 	"github.com/ory/hydra-client-go/client/admin"
 	"net/http"
 )
 
 func (s *Server) withAuth() func(handler http.Handler) http.Handler {
-
 	return func(handler http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-
-			if s.environment == "Development" && auth2.DangerouslySetDevAuthenticatedUserSubject(handler, w, req) {
+			if s.environment == "Development" && auth.DangerouslySetDevAuthenticatedUserSubject(handler, w, req) {
 				return
 			}
 
-			token, err := auth2.AuthHeaderTokenSource(req).GetToken()
+			token, err := auth.AuthHeaderTokenSource(req).GetToken()
 			if err != nil {
 				s.error(w, err)
 				return

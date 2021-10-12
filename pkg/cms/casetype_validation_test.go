@@ -1,7 +1,7 @@
 package cms
 
 import (
-	"github.com/nrc-no/core/internal/validation"
+	"github.com/nrc-no/core/pkg/validation"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

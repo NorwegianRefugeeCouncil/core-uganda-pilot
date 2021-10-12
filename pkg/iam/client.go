@@ -1,7 +1,7 @@
 package iam
 
 import (
-	"github.com/nrc-no/core/internal/rest"
+	"github.com/nrc-no/core/pkg/rest"
 )
 
 type ClientSet struct {

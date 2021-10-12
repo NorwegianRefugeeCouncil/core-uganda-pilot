@@ -1,8 +1,8 @@
 package iam
 
 import (
-	"github.com/nrc-no/core/internal/form"
-	"github.com/nrc-no/core/internal/generic/pagination"
+	"github.com/nrc-no/core/pkg/form"
+	"github.com/nrc-no/core/pkg/generic/pagination"
 	"strings"
 	"time"
 )

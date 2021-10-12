@@ -1,4 +1,4 @@
-import { testId, URL } from '../helpers';
+import {testId, URL} from '../helpers';
 import CaseTypePage from './caseTypePage';
 
 const CASETYPE_ROWS = testId('casetype');

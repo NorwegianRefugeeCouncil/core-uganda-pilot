@@ -4,11 +4,11 @@ import (
 	"context"
 	"errors"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core/internal/form"
-	"github.com/nrc-no/core/internal/i18n"
-	"github.com/nrc-no/core/internal/sessionmanager"
-	"github.com/nrc-no/core/internal/validation"
-	iam2 "github.com/nrc-no/core/pkg/iam"
+	"github.com/nrc-no/core/pkg/form"
+	"github.com/nrc-no/core/pkg/i18n"
+	"github.com/nrc-no/core/pkg/iam"
+	"github.com/nrc-no/core/pkg/sessionmanager"
+	"github.com/nrc-no/core/pkg/validation"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
 )
@@ -18,7 +18,7 @@ func (s *Server) Attributes(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	if req.Method == "POST" {
-		s.PostAttribute(ctx, &iam2.PartyAttributeDefinition{}, w, req)
+		s.PostAttribute(ctx, &iam.PartyAttributeDefinition{}, w, req)
 		return
 	}
 
@@ -30,15 +30,15 @@ func (s *Server) Attributes(w http.ResponseWriter, req *http.Request) {
 
 	countryID := s.GetCountryFromLoginUser(w, req)
 
-	list, err := iamClient.PartyAttributeDefinitions().List(ctx, iam2.PartyAttributeDefinitionListOptions{
-		CountryIDs: []string{iam2.GlobalCountry.ID, countryID},
+	list, err := iamClient.PartyAttributeDefinitions().List(ctx, iam.PartyAttributeDefinitionListOptions{
+		CountryIDs: []string{iam.GlobalCountry.ID, countryID},
 	})
 	if err != nil {
 		s.Error(w, err)
 		return
 	}
 
-	partyTypes, err := iamClient.PartyTypes().List(ctx, iam2.PartyTypeListOptions{})
+	partyTypes, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
 		s.Error(w, err)
 		return
@@ -55,9 +55,9 @@ func (s *Server) Attributes(w http.ResponseWriter, req *http.Request) {
 
 func (s *Server) NewAttribute(w http.ResponseWriter, req *http.Request) {
 	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "attribute", map[string]interface{}{
-		"PartyTypes": iam2.PartyTypeList{
-			Items: []*iam2.PartyType{
-				&iam2.IndividualPartyType,
+		"PartyTypes": iam.PartyTypeList{
+			Items: []*iam.PartyType{
+				&iam.IndividualPartyType,
 			},
 		},
 		"ControlTypes": form.ControlTypes,
@@ -97,9 +97,9 @@ func (s *Server) Attribute(w http.ResponseWriter, req *http.Request) {
 	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "attribute", map[string]interface{}{
 		"PartyAttributeDefinition": partyAttributeDefinition,
 		"ControlTypes":             form.ControlTypes,
-		"PartyTypes": iam2.PartyTypeList{
-			Items: []*iam2.PartyType{
-				&iam2.IndividualPartyType,
+		"PartyTypes": iam.PartyTypeList{
+			Items: []*iam.PartyType{
+				&iam.IndividualPartyType,
 			},
 		},
 	}); err != nil {
@@ -109,7 +109,7 @@ func (s *Server) Attribute(w http.ResponseWriter, req *http.Request) {
 
 }
 
-func (s *Server) PostAttribute(ctx context.Context, attribute *iam2.PartyAttributeDefinition, w http.ResponseWriter, req *http.Request) {
+func (s *Server) PostAttribute(ctx context.Context, attribute *iam.PartyAttributeDefinition, w http.ResponseWriter, req *http.Request) {
 	iamClient, err := s.IAMClient(req)
 	if err != nil {
 		s.Error(w, err)
@@ -152,9 +152,9 @@ func (s *Server) PostAttribute(ctx context.Context, attribute *iam2.PartyAttribu
 	//	s.Error(w, err)
 	//	return
 	//}
-	attribute.CountryID = iam2.UgandaCountry.ID
+	attribute.CountryID = iam.UgandaCountry.ID
 
-	var storedAttribute *iam2.PartyAttributeDefinition
+	var storedAttribute *iam.PartyAttributeDefinition
 
 	if isNew {
 		storedAttribute, err = iamClient.PartyAttributeDefinitions().Create(ctx, attribute)
@@ -186,7 +186,7 @@ func (s *Server) PostAttribute(ctx context.Context, attribute *iam2.PartyAttribu
 }
 
 //zipAttributeAndErrors returns a form.Form containing the validation information, ie the faulty form elements only
-func zipAttributeAndErrors(attribute *iam2.PartyAttributeDefinition, errorList validation.ErrorList) form.Form {
+func zipAttributeAndErrors(attribute *iam.PartyAttributeDefinition, errorList validation.ErrorList) form.Form {
 	var result form.Form
 	var errs *validation.ErrorList
 	ctrl := attribute.FormControl

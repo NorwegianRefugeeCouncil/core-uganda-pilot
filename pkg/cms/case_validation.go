@@ -2,8 +2,8 @@ package cms
 
 import (
 	"fmt"
-	"github.com/nrc-no/core/internal/form"
-	"github.com/nrc-no/core/internal/validation"
+	"github.com/nrc-no/core/pkg/form"
+	"github.com/nrc-no/core/pkg/validation"
 )
 
 func ValidateCase(kase *Case, path *validation.Path) validation.ErrorList {

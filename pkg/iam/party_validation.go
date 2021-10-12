@@ -1,6 +1,6 @@
 package iam
 
-import "github.com/nrc-no/core/internal/validation"
+import "github.com/nrc-no/core/pkg/validation"
 
 func ValidateParty(party *Party, path *validation.Path) validation.ErrorList {
 	errs := validation.ErrorList{}

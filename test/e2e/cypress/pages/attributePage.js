@@ -1,4 +1,4 @@
-import { URL, testId } from '../helpers';
+import {testId, URL} from '../helpers';
 
 const NAME = testId('name');
 const LABEL = testId('label');

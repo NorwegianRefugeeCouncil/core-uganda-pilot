@@ -1,9 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-if [ ! -e "install_githooks.sh" ]; then
-	echo "This script needs to be run from within its directory"
-	exit 1
-fi
+cd "$(dirname "$0")" || exit
 
 gitconfig='../.git/config'
 

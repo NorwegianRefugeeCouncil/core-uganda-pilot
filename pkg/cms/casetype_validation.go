@@ -1,6 +1,6 @@
 package cms
 
-import "github.com/nrc-no/core/internal/validation"
+import "github.com/nrc-no/core/pkg/validation"
 
 func ValidateCaseType(caseType *CaseType, path *validation.Path) validation.ErrorList {
 	errList := validation.ErrorList{}

@@ -1,7 +1,7 @@
 package form
 
 import (
-	"github.com/nrc-no/core/internal/i18n"
+	"github.com/nrc-no/core/pkg/i18n"
 )
 
 //Section describes a sub-section of a form. It is simply a list of Control Names.

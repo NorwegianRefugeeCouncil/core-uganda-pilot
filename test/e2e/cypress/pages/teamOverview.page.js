@@ -1,4 +1,4 @@
-import { testId, URL } from '../helpers';
+import {testId, URL} from '../helpers';
 import TeamPage from './team.page';
 
 const TEAM_ROWS = testId('team');

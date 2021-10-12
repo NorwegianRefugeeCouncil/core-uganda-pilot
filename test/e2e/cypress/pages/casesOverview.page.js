@@ -1,4 +1,4 @@
-import { testId, URL } from '../helpers';
+import {testId, URL} from '../helpers';
 import NewCasePage from './newCase.page';
 import CasePage from './case.page';
 

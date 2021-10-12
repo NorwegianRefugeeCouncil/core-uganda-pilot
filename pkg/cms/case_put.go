@@ -1,7 +1,7 @@
 package cms
 
 import (
-	"github.com/nrc-no/core/internal/validation"
+	"github.com/nrc-no/core/pkg/validation"
 	"net/http"
 )
 
@@ -45,7 +45,6 @@ func (s *Server) PutCase(w http.ResponseWriter, req *http.Request) {
 	}
 
 	s.json(w, http.StatusOK, update)
-
 }
 
 func updateCaseStruct(kase *Case, update *Case) *Case {

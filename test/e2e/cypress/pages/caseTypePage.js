@@ -1,4 +1,4 @@
-import { testId, URL } from '../helpers';
+import {testId, URL} from '../helpers';
 
 const NAME = testId('name');
 const PARTY_TYPE = testId('partytype');

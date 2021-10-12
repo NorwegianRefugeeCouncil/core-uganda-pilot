@@ -1,4 +1,4 @@
-import { URL } from '../helpers';
+import {URL} from '../helpers';
 import NewPartyTypePage from './newPartyType.page';
 
 const PARTYTYPE_ROWS = '[data-testid=partytype]';

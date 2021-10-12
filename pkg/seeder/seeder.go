@@ -2,9 +2,9 @@ package seeder
 
 import (
 	"context"
-	"github.com/nrc-no/core/internal/utils"
 	"github.com/nrc-no/core/pkg/iam"
 	"github.com/nrc-no/core/pkg/login"
+	"github.com/nrc-no/core/pkg/utils"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"

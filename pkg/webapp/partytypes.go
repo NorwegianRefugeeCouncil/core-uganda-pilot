@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core/internal/sessionmanager"
-	iam2 "github.com/nrc-no/core/pkg/iam"
+	"github.com/nrc-no/core/pkg/iam"
+	"github.com/nrc-no/core/pkg/sessionmanager"
 	"net/http"
 )
 
@@ -20,11 +20,11 @@ func (s *Server) PartyTypes(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if req.Method == "POST" {
-		s.PostPartyType(ctx, &iam2.PartyType{}, w, req)
+		s.PostPartyType(ctx, &iam.PartyType{}, w, req)
 		return
 	}
 
-	partyTypes, err := iamClient.PartyTypes().List(ctx, iam2.PartyTypeListOptions{})
+	partyTypes, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
 		s.Error(w, err)
 		return
@@ -56,7 +56,7 @@ func (s *Server) PartyType(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var partyType = &iam2.PartyType{}
+	var partyType = &iam.PartyType{}
 	if id != "new" {
 		var err error
 		partyType, err = iamClient.PartyTypes().Get(ctx, id)
@@ -82,7 +82,7 @@ func (s *Server) PartyType(w http.ResponseWriter, req *http.Request) {
 
 func (s *Server) PostPartyType(
 	ctx context.Context,
-	partyType *iam2.PartyType,
+	partyType *iam.PartyType,
 	w http.ResponseWriter,
 	req *http.Request,
 ) {

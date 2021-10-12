@@ -1,8 +1,8 @@
 package iam_test
 
 import (
-	"github.com/nrc-no/core/internal/utils"
 	. "github.com/nrc-no/core/pkg/iam"
+	"github.com/nrc-no/core/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 

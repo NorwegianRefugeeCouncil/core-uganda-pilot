@@ -1,9 +1,9 @@
 package seeder
 
 import (
-	"github.com/nrc-no/core/internal/form"
-	"github.com/nrc-no/core/internal/i18n"
 	"github.com/nrc-no/core/pkg/cms"
+	"github.com/nrc-no/core/pkg/form"
+	"github.com/nrc-no/core/pkg/i18n"
 	"github.com/nrc-no/core/pkg/iam"
 )
 

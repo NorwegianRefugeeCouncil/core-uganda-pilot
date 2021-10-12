@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core/internal/form"
-	"github.com/nrc-no/core/internal/sessionmanager"
-	"github.com/nrc-no/core/internal/validation"
 	"github.com/nrc-no/core/pkg/cms"
-	iam2 "github.com/nrc-no/core/pkg/iam"
+	"github.com/nrc-no/core/pkg/form"
+	"github.com/nrc-no/core/pkg/iam"
+	"github.com/nrc-no/core/pkg/sessionmanager"
+	"github.com/nrc-no/core/pkg/validation"
 	"github.com/satori/go.uuid"
 	"github.com/xeonx/timeago"
 	"golang.org/x/sync/errgroup"
@@ -40,8 +40,8 @@ func (s *Server) Cases(w http.ResponseWriter, req *http.Request) {
 
 	var kases *cms.CaseList
 	var caseTypes *cms.CaseTypeList
-	var partyList *iam2.PartyList
-	var teams *iam2.TeamList
+	var partyList *iam.PartyList
+	var teams *iam.TeamList
 
 	caseListOptions := &cms.CaseListOptions{}
 	caseListOptions.Done = options.Closed
@@ -61,12 +61,12 @@ func (s *Server) Cases(w http.ResponseWriter, req *http.Request) {
 	})
 	wg.Go(func() error {
 		var err error
-		partyList, err = iamClient.Parties().List(wgCtx, iam2.PartyListOptions{})
+		partyList, err = iamClient.Parties().List(wgCtx, iam.PartyListOptions{})
 		return err
 	})
 	wg.Go(func() error {
 		var err error
-		teams, err = iamClient.Teams().List(wgCtx, iam2.TeamListOptions{})
+		teams, err = iamClient.Teams().List(wgCtx, iam.TeamListOptions{})
 		return err
 	})
 
@@ -91,17 +91,17 @@ func (s *Server) Cases(w http.ResponseWriter, req *http.Request) {
 func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 	var (
 		err              error
-		recipientParty   *iam2.Party
-		team             *iam2.Team
+		recipientParty   *iam.Party
+		team             *iam.Team
 		kase             *cms.Case
 		parent           *cms.Case
 		kaseTypes        *cms.CaseTypeList
 		referrals        *cms.CaseList
 		referralCaseType *cms.CaseType
-		creator          *iam2.Party
+		creator          *iam.Party
 		comments         *cms.CommentList
-		commentAuthors   *iam2.PartyList
-		commentAuthorMap = make(map[string]*iam2.Party)
+		commentAuthors   *iam.PartyList
+		commentAuthorMap = make(map[string]*iam.Party)
 	)
 
 	ctx := req.Context()
@@ -146,8 +146,8 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 			for authorID := range commentAuthorIDMap {
 				commentAuthorIDs = append(commentAuthorIDs, authorID)
 			}
-			commentAuthors, err = iamClient.Parties().Search(waitCtx, iam2.PartySearchOptions{
-				PartyTypeIDs: []string{iam2.IndividualPartyType.ID},
+			commentAuthors, err = iamClient.Parties().Search(waitCtx, iam.PartySearchOptions{
+				PartyTypeIDs: []string{iam.IndividualPartyType.ID},
 				PartyIDs:     commentAuthorIDs,
 			})
 			for _, author := range commentAuthors.Items {
@@ -239,7 +239,7 @@ func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var caseTypes *cms.CaseTypeList
-	var p *iam2.PartyList
+	var p *iam.PartyList
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
@@ -266,7 +266,7 @@ func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	listOptions := iam2.PartyListOptions{
+	listOptions := iam.PartyListOptions{
 		PartyTypeID: partyTypeID,
 	}
 
@@ -284,7 +284,7 @@ func (s *Server) NewCase(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	var team *iam2.Team
+	var team *iam.Team
 	if len(teamID) > 0 {
 		team, err = iamClient.Teams().Get(ctx, teamID)
 		if err != nil {
@@ -436,11 +436,11 @@ func (s *Server) redirectAfterPost(w http.ResponseWriter, req *http.Request, pos
 
 type displayComment struct {
 	*cms.Comment
-	Author  *iam2.Party
+	Author  *iam.Party
 	TimeAgo string
 }
 
-func displayComments(comments *cms.CommentList, authorMap map[string]*iam2.Party) []*displayComment {
+func displayComments(comments *cms.CommentList, authorMap map[string]*iam.Party) []*displayComment {
 	var displayComments []*displayComment
 	for _, item := range comments.Items {
 		c := &displayComment{

@@ -2,7 +2,7 @@ package server
 
 import (
 	"context"
-	"github.com/nrc-no/core/internal/generic/server"
+	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/login"
 	"github.com/ory/hydra-client-go/models"
 	"github.com/sirupsen/logrus"

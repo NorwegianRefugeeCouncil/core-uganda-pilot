@@ -1,30 +1,30 @@
 package webapp
 
 import (
-	"github.com/nrc-no/core/internal/sessionmanager"
 	"github.com/nrc-no/core/pkg/cms"
-	iam2 "github.com/nrc-no/core/pkg/iam"
+	"github.com/nrc-no/core/pkg/iam"
+	"github.com/nrc-no/core/pkg/sessionmanager"
 	"net/http"
 )
 
-func (s *Server) retrieveParties(req *http.Request) (*iam2.PartyList, error) {
+func (s *Server) retrieveParties(req *http.Request) (*iam.PartyList, error) {
 	cli, err := s.IAMClient(req)
 	if err != nil {
 		return nil, err
 	}
-	parties, err := cli.Parties().List(req.Context(), iam2.PartyListOptions{})
+	parties, err := cli.Parties().List(req.Context(), iam.PartyListOptions{})
 	if err != nil {
 		return nil, err
 	}
 	return parties, nil
 }
 
-func (s *Server) retrieveTeams(req *http.Request) (*iam2.TeamList, error) {
+func (s *Server) retrieveTeams(req *http.Request) (*iam.TeamList, error) {
 	cli, err := s.IAMClient(req)
 	if err != nil {
 		return nil, err
 	}
-	teams, err := cli.Teams().List(req.Context(), iam2.TeamListOptions{})
+	teams, err := cli.Teams().List(req.Context(), iam.TeamListOptions{})
 	if err != nil {
 		return nil, err
 	}

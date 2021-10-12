@@ -2,11 +2,11 @@ package server
 
 import (
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core/internal/utils"
 	"github.com/nrc-no/core/pkg/attachments"
 	"github.com/nrc-no/core/pkg/cms"
 	"github.com/nrc-no/core/pkg/iam"
 	"github.com/nrc-no/core/pkg/login"
+	"github.com/nrc-no/core/pkg/utils"
 	"github.com/nrc-no/core/pkg/webapp"
 	"github.com/ory/hydra-client-go/client"
 )

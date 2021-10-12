@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core/internal/form"
-	"github.com/nrc-no/core/internal/sessionmanager"
-	"github.com/nrc-no/core/internal/validation"
 	"github.com/nrc-no/core/pkg/cms"
-	iam2 "github.com/nrc-no/core/pkg/iam"
+	"github.com/nrc-no/core/pkg/form"
+	"github.com/nrc-no/core/pkg/iam"
+	"github.com/nrc-no/core/pkg/sessionmanager"
+	"github.com/nrc-no/core/pkg/validation"
 	"golang.org/x/sync/errgroup"
 	"net/http"
 	"net/url"
@@ -36,13 +36,13 @@ func (s *Server) CaseTypes(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	partyTypes, err := iamClient.PartyTypes().List(ctx, iam2.PartyTypeListOptions{})
+	partyTypes, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
 		s.Error(w, err)
 		return
 	}
 
-	teams, err := iamClient.Teams().List(ctx, iam2.TeamListOptions{})
+	teams, err := iamClient.Teams().List(ctx, iam.TeamListOptions{})
 	if err != nil {
 		s.Error(w, err)
 		return
@@ -86,8 +86,8 @@ func (s *Server) CaseType(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var caseType *cms.CaseType
-	var partyTypes *iam2.PartyTypeList
-	var teams *iam2.TeamList
+	var partyTypes *iam.PartyTypeList
+	var teams *iam.TeamList
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
@@ -103,13 +103,13 @@ func (s *Server) CaseType(w http.ResponseWriter, req *http.Request) {
 
 	g.Go(func() error {
 		var err error
-		partyTypes, err = iamClient.PartyTypes().List(waitCtx, iam2.PartyTypeListOptions{})
+		partyTypes, err = iamClient.PartyTypes().List(waitCtx, iam.PartyTypeListOptions{})
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
-		teams, err = iamClient.Teams().List(ctx, iam2.TeamListOptions{})
+		teams, err = iamClient.Teams().List(ctx, iam.TeamListOptions{})
 		return err
 	})
 
@@ -141,13 +141,13 @@ func (s *Server) NewCaseType(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	p, err := iamClient.PartyTypes().List(ctx, iam2.PartyTypeListOptions{})
+	p, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
 		s.Error(w, err)
 		return
 	}
 
-	teamsData, err := iamClient.Teams().List(ctx, iam2.TeamListOptions{})
+	teamsData, err := iamClient.Teams().List(ctx, iam.TeamListOptions{})
 	if err != nil {
 		s.Error(w, err)
 		return
@@ -165,8 +165,8 @@ func (s *Server) NewCaseType(w http.ResponseWriter, req *http.Request) {
 func (s *Server) PostCaseType(
 	ctx context.Context,
 	caseType *cms.CaseType,
-	partyTypes *iam2.PartyTypeList,
-	teams *iam2.TeamList,
+	partyTypes *iam.PartyTypeList,
+	teams *iam.TeamList,
 	w http.ResponseWriter,
 	req *http.Request,
 ) {
@@ -199,7 +199,7 @@ func (s *Server) PostCaseType(
 	s.processCaseTypeValidation(req, w, caseType, partyTypes, teams, err, action)
 }
 
-func (s *Server) processCaseTypeValidation(req *http.Request, w http.ResponseWriter, caseType *cms.CaseType, partyTypes *iam2.PartyTypeList, teams *iam2.TeamList, err error, action string) {
+func (s *Server) processCaseTypeValidation(req *http.Request, w http.ResponseWriter, caseType *cms.CaseType, partyTypes *iam.PartyTypeList, teams *iam.TeamList, err error, action string) {
 	// Examine the error argument
 	if err != nil {
 		if status, ok := err.(*validation.Status); ok {
@@ -215,7 +215,7 @@ func (s *Server) processCaseTypeValidation(req *http.Request, w http.ResponseWri
 	}
 }
 
-func (s *Server) renderCaseTypeValidation(req *http.Request, w http.ResponseWriter, caseType *cms.CaseType, partyTypes *iam2.PartyTypeList, teams *iam2.TeamList, status *validation.Status) {
+func (s *Server) renderCaseTypeValidation(req *http.Request, w http.ResponseWriter, caseType *cms.CaseType, partyTypes *iam.PartyTypeList, teams *iam.TeamList, status *validation.Status) {
 	// Set notification
 	if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
 		Message: "There seems to be an problem with the data you have submitted. See below for errors.",

@@ -15,9 +15,7 @@ import (
 func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 
 	return func(handler http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-
-			// When in development mode, the user may provide a custom header
+		return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) { // When in development mode, the user may provide a custom header
 			// containing the email of the user s.he wants to impersonate,
 			// effectively bypassing authorization
 			if s.environment == "Development" {
@@ -67,8 +65,8 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 
 				// create a hydra login flow redirect url with the new state
 				// variable, and redirect the user
-				redirectUrl := s.publicOauth2Config.AuthCodeURL(state)
-				http.Redirect(w, req, redirectUrl, http.StatusTemporaryRedirect)
+				redirectURL := s.publicOauth2Config.AuthCodeURL(state)
+				http.Redirect(w, req, redirectURL, http.StatusTemporaryRedirect)
 				return
 			}
 
@@ -121,7 +119,6 @@ func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
 			handler.ServeHTTP(w, req)
 		})
 	}
-
 }
 
 func (s *Server) createHydraStateVariable() (string, error) {

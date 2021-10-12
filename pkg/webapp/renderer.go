@@ -2,8 +2,8 @@ package webapp
 
 import (
 	"fmt"
-	"github.com/nrc-no/core/internal/auth"
-	"github.com/nrc-no/core/internal/sessionmanager"
+	"github.com/nrc-no/core/pkg/auth"
+	"github.com/nrc-no/core/pkg/sessionmanager"
 	"html/template"
 	"io"
 	"net/http"

@@ -1,7 +1,7 @@
 package cms
 
 import (
-	"github.com/nrc-no/core/internal/validation"
+	"github.com/nrc-no/core/pkg/validation"
 	"net/http"
 )
 

@@ -2,8 +2,8 @@ package iam
 
 import (
 	"context"
-	"github.com/nrc-no/core/internal/generic/pagination"
-	"github.com/nrc-no/core/internal/utils"
+	"github.com/nrc-no/core/pkg/generic/pagination"
+	"github.com/nrc-no/core/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )

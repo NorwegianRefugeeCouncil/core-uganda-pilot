@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core/internal/validation"
+	"github.com/nrc-no/core/pkg/validation"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"

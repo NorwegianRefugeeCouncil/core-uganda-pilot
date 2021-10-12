@@ -3,8 +3,8 @@ package cms
 import (
 	"context"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core/internal/generic/server"
-	utils2 "github.com/nrc-no/core/internal/utils"
+	"github.com/nrc-no/core/pkg/generic/server"
+	"github.com/nrc-no/core/pkg/utils"
 	"github.com/ory/hydra-client-go/client/admin"
 	"go.mongodb.org/mongo-driver/bson"
 	"net/http"
@@ -14,7 +14,7 @@ import (
 type Server struct {
 	environment     string
 	router          *mux.Router
-	mongoClientFn   utils2.MongoClientFn
+	mongoClientFn   utils.MongoClientFn
 	caseStore       *CaseStore
 	caseTypeStore   *CaseTypeStore
 	commentStore    *CommentStore
@@ -87,19 +87,19 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }
 
 func (s *Server) json(w http.ResponseWriter, status int, data interface{}) {
-	utils2.JSONResponse(w, status, data)
+	utils.JSONResponse(w, status, data)
 }
 
 func (s *Server) getPathParam(param string, w http.ResponseWriter, req *http.Request, into *string) bool {
-	return utils2.GetPathParam(param, w, req, into)
+	return utils.GetPathParam(param, w, req, into)
 }
 
 func (s *Server) error(w http.ResponseWriter, err error) {
-	utils2.ErrorResponse(w, err)
+	utils.ErrorResponse(w, err)
 }
 
 func (s *Server) bind(req *http.Request, into interface{}) error {
-	return utils2.BindJSON(req, into)
+	return utils.BindJSON(req, into)
 }
 
 func (s *Server) ResetDB(ctx context.Context, databaseName string) error {

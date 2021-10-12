@@ -1,8 +1,8 @@
 package form
 
 import (
-	"github.com/nrc-no/core/internal/i18n"
-	"github.com/nrc-no/core/internal/validation"
+	"github.com/nrc-no/core/pkg/i18n"
+	"github.com/nrc-no/core/pkg/validation"
 )
 
 // Control describes the attributes of a form input control. Some fields, like Name, Placeholder and Readonly are

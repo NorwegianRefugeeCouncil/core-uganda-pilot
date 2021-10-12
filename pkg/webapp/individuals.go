@@ -4,15 +4,15 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core/internal/form"
-	"github.com/nrc-no/core/internal/registrationctrl"
-	"github.com/nrc-no/core/internal/seeder"
-	"github.com/nrc-no/core/internal/sessionmanager"
-	"github.com/nrc-no/core/internal/teamstatusctrl"
-	"github.com/nrc-no/core/internal/utils"
-	"github.com/nrc-no/core/internal/validation"
 	"github.com/nrc-no/core/pkg/cms"
-	iam2 "github.com/nrc-no/core/pkg/iam"
+	"github.com/nrc-no/core/pkg/form"
+	"github.com/nrc-no/core/pkg/iam"
+	"github.com/nrc-no/core/pkg/registrationctrl"
+	"github.com/nrc-no/core/pkg/seeder"
+	"github.com/nrc-no/core/pkg/sessionmanager"
+	"github.com/nrc-no/core/pkg/teamstatusctrl"
+	"github.com/nrc-no/core/pkg/utils"
+	"github.com/nrc-no/core/pkg/validation"
 	"golang.org/x/sync/errgroup"
 	"net/http"
 	"net/url"
@@ -21,7 +21,7 @@ import (
 )
 
 type IndividualWithStatuses struct {
-	Individual         *iam2.Individual
+	Individual         *iam.Individual
 	RegistrationStatus *registrationctrl.Status
 	TeamStatusActions  []teamstatusctrl.TeamStatusAction
 }
@@ -41,12 +41,12 @@ func (s *Server) Individuals(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var listOptions iam2.IndividualListOptions
+	var listOptions iam.IndividualListOptions
 	if err := listOptions.UnmarshalQueryParameters(req.URL.Query()); err != nil {
 		s.Error(w, err)
 		return
 	}
-	listOptions.PartyTypeIDs = []string{iam2.BeneficiaryPartyType.ID}
+	listOptions.PartyTypeIDs = []string{iam.BeneficiaryPartyType.ID}
 
 	list, err := iamClient.Individuals().List(ctx, listOptions)
 	if err != nil {
@@ -102,16 +102,16 @@ func (s *Server) IndividualIdentificationDocuments(w http.ResponseWriter, req *h
 		return
 	}
 
-	var identificationDocuments *iam2.IdentificationDocumentList
-	var identificationDocumentTypes *iam2.IdentificationDocumentTypeList
+	var identificationDocuments *iam.IdentificationDocumentList
+	var identificationDocumentTypes *iam.IdentificationDocumentTypeList
 	var identificationDocumentTypesMap = map[string]string{}
-	var individual *iam2.Individual
+	var individual *iam.Individual
 
 	g, waitCtx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
 		var err error
-		identificationDocumentTypes, err = iamClient.IdentificationDocumentTypes().List(waitCtx, iam2.IdentificationDocumentTypeListOptions{})
+		identificationDocumentTypes, err = iamClient.IdentificationDocumentTypes().List(waitCtx, iam.IdentificationDocumentTypeListOptions{})
 		for _, idt := range identificationDocumentTypes.Items {
 			identificationDocumentTypesMap[idt.ID] = idt.Name
 		}
@@ -120,7 +120,7 @@ func (s *Server) IndividualIdentificationDocuments(w http.ResponseWriter, req *h
 
 	g.Go(func() error {
 		var err error
-		identificationDocuments, err = iamClient.IdentificationDocuments().List(waitCtx, iam2.IdentificationDocumentListOptions{PartyIDs: []string{id}})
+		identificationDocuments, err = iamClient.IdentificationDocuments().List(waitCtx, iam.IdentificationDocumentListOptions{PartyIDs: []string{id}})
 		return err
 	})
 
@@ -174,7 +174,7 @@ func (s *Server) PostIndividualIdentificationDocuments(w http.ResponseWriter, re
 		return
 	}
 
-	var newIdentificationDocument = &iam2.IdentificationDocument{
+	var newIdentificationDocument = &iam.IdentificationDocument{
 		PartyID:                      partyID,
 		DocumentNumber:               documentNumber,
 		IdentificationDocumentTypeID: documentTypeID,
@@ -296,15 +296,15 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var individual *iam2.Individual
-	var parties *iam2.IndividualList
+	var individual *iam.Individual
+	var parties *iam.IndividualList
 	var caseTypes *cms.CaseTypeList
 	var cList *cms.CaseList
-	var partyTypes *iam2.PartyTypeList
-	var relationshipsForIndividual *iam2.RelationshipList
-	var relationshipTypes *iam2.RelationshipTypeList
-	var attrs *iam2.PartyAttributeDefinitionList
-	var teams *iam2.TeamList
+	var partyTypes *iam.PartyTypeList
+	var relationshipsForIndividual *iam.RelationshipList
+	var relationshipTypes *iam.RelationshipTypeList
+	var attrs *iam.PartyAttributeDefinitionList
+	var teams *iam.TeamList
 	var situationAnalysis *cms.Case
 	var individualResponse *cms.Case
 	var saForm form.Form
@@ -314,7 +314,7 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 
 	g.Go(func() error {
 		if id == "new" {
-			individual = iam2.NewIndividual("")
+			individual = iam.NewIndividual("")
 			return nil
 		}
 		var err error
@@ -324,38 +324,38 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 
 	g.Go(func() error {
 		var err error
-		parties, err = iamClient.Individuals().List(waitCtx, iam2.IndividualListOptions{})
+		parties, err = iamClient.Individuals().List(waitCtx, iam.IndividualListOptions{})
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
-		teams, err = iamClient.Teams().List(waitCtx, iam2.TeamListOptions{})
+		teams, err = iamClient.Teams().List(waitCtx, iam.TeamListOptions{})
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
-		partyTypes, err = iamClient.PartyTypes().List(waitCtx, iam2.PartyTypeListOptions{})
+		partyTypes, err = iamClient.PartyTypes().List(waitCtx, iam.PartyTypeListOptions{})
 		return err
 	})
 
 	g.Go(func() error {
 		if id == "new" {
-			relationshipsForIndividual = &iam2.RelationshipList{
-				Items: []*iam2.Relationship{},
+			relationshipsForIndividual = &iam.RelationshipList{
+				Items: []*iam.Relationship{},
 			}
 			return nil
 		}
 		var err error
-		relationshipsForIndividual, err = iamClient.Relationships().List(waitCtx, iam2.RelationshipListOptions{EitherPartyID: id})
+		relationshipsForIndividual, err = iamClient.Relationships().List(waitCtx, iam.RelationshipListOptions{EitherPartyID: id})
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
-		relationshipTypes, err = iamClient.RelationshipTypes().List(waitCtx, iam2.RelationshipTypeListOptions{
-			PartyTypeID: iam2.IndividualPartyType.ID,
+		relationshipTypes, err = iamClient.RelationshipTypes().List(waitCtx, iam.RelationshipTypeListOptions{
+			PartyTypeID: iam.IndividualPartyType.ID,
 		})
 		return err
 	})
@@ -364,9 +364,9 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 
 	g.Go(func() error {
 		var err error
-		attrs, err = iamClient.PartyAttributeDefinitions().List(waitCtx, iam2.PartyAttributeDefinitionListOptions{
-			PartyTypeIDs: []string{iam2.IndividualPartyType.ID},
-			CountryIDs:   []string{iam2.GlobalCountry.ID, countryID},
+		attrs, err = iamClient.PartyAttributeDefinitions().List(waitCtx, iam.PartyAttributeDefinitionListOptions{
+			PartyTypeIDs: []string{iam.IndividualPartyType.ID},
+			CountryIDs:   []string{iam.GlobalCountry.ID, countryID},
 		})
 		return err
 	})
@@ -490,13 +490,13 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		"Attributes":                attributes,
 		"Cases":                     displayCases,
 		"CaseTypes":                 caseTypes,
-		"FullNameAttribute":         iam2.FullNameAttribute,
-		"DisplayNameAttribute":      iam2.DisplayNameAttribute,
+		"FullNameAttribute":         iam.FullNameAttribute,
+		"DisplayNameAttribute":      iam.DisplayNameAttribute,
 		"Page":                      "general",
 		"Constants":                 s.Constants,
-		"IndividualPartyTypeID":     iam2.IndividualPartyType.ID,
-		"HouseholdPartyTypeID":      iam2.HouseholdPartyType.ID,
-		"TeamPartyTypeID":           iam2.TeamPartyType.ID,
+		"IndividualPartyTypeID":     iam.IndividualPartyType.ID,
+		"HouseholdPartyTypeID":      iam.HouseholdPartyType.ID,
+		"TeamPartyTypeID":           iam.TeamPartyType.ID,
 		"SituationAnalysis":         situationAnalysis,
 		"SituationAnalysisForm":     saForm,
 		"IndividualResponse":        individualResponse,
@@ -511,7 +511,7 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 }
 
 // sumbittedFormFromErrors returns a slice of form.Control populated with validated attributes.
-func sumbittedFormFromErrors(errorList *validation.ErrorList, attributes *iam2.PartyAttributeDefinitionList, values url.Values) form.Form {
+func sumbittedFormFromErrors(errorList *validation.ErrorList, attributes *iam.PartyAttributeDefinitionList, values url.Values) form.Form {
 	var controls []form.Control
 	for _, attribute := range attributes.Items {
 		errs := errorList.FindFamily(attribute.ID)
@@ -525,7 +525,7 @@ func sumbittedFormFromErrors(errorList *validation.ErrorList, attributes *iam2.P
 	return form.Form{Controls: controls}
 }
 
-func shouldIgnoreValidationError(attribute *iam2.PartyAttributeDefinition, values []string) bool {
+func shouldIgnoreValidationError(attribute *iam.PartyAttributeDefinition, values []string) bool {
 	// Ignore validation errors on empty optional fields
 	if !attribute.FormControl.Validation.Required && utils.AllEmpty(values) {
 		return true
@@ -533,20 +533,20 @@ func shouldIgnoreValidationError(attribute *iam2.PartyAttributeDefinition, value
 	return false
 }
 
-func PrepRelationshipTypeDropdown(relationshipTypes *iam2.RelationshipTypeList) *iam2.RelationshipTypeList {
+func PrepRelationshipTypeDropdown(relationshipTypes *iam.RelationshipTypeList) *iam.RelationshipTypeList {
 
 	// TODO:
 	// Currently Core only works with individuals
 	// this function should be changed when this is no longer
 	// the case
 
-	var newList = iam2.RelationshipTypeList{}
+	var newList = iam.RelationshipTypeList{}
 	for _, relType := range relationshipTypes.Items {
 
 		relTypeOnlyForIndividuals := true
 
 		for _, rule := range relType.Rules {
-			if !(rule.PartyTypeRule.FirstPartyTypeID == iam2.IndividualPartyType.ID && rule.PartyTypeRule.SecondPartyTypeID == iam2.IndividualPartyType.ID) {
+			if !(rule.PartyTypeRule.FirstPartyTypeID == iam.IndividualPartyType.ID && rule.PartyTypeRule.SecondPartyTypeID == iam.IndividualPartyType.ID) {
 				relTypeOnlyForIndividuals = false
 			}
 		}
@@ -561,7 +561,7 @@ func PrepRelationshipTypeDropdown(relationshipTypes *iam2.RelationshipTypeList) 
 	return &newList
 }
 
-func (s *Server) PostIndividual(ctx context.Context, attrs *iam2.PartyAttributeDefinitionList, id string, w http.ResponseWriter, req *http.Request) (*iam2.Individual, error) {
+func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDefinitionList, id string, w http.ResponseWriter, req *http.Request) (*iam.Individual, error) {
 
 	iamClient, err := s.IAMClient(req)
 	if err != nil {
@@ -573,9 +573,9 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam2.PartyAttributeD
 	}
 	values := req.Form
 
-	var individual *iam2.Individual
+	var individual *iam.Individual
 	if len(id) == 0 {
-		individual = iam2.NewIndividual("")
+		individual = iam.NewIndividual("")
 	} else {
 		individual, err = iamClient.Individuals().Get(ctx, id)
 		if err != nil {
@@ -591,7 +591,7 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam2.PartyAttributeD
 	individual.Attributes = attributeMap
 
 	type RelationshipEntry struct {
-		*iam2.Relationship
+		*iam.Relationship
 		MarkedForDeletion bool
 	}
 
@@ -624,7 +624,7 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam2.PartyAttributeD
 			for {
 				if (relationshipIdx + 1) > len(rels) {
 					rels = append(rels, &RelationshipEntry{
-						Relationship: &iam2.Relationship{},
+						Relationship: &iam.Relationship{},
 					})
 				} else {
 					rel = rels[relationshipIdx]
@@ -653,7 +653,7 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam2.PartyAttributeD
 	// Update or create the individual
 	var storageAction string
 	if id == "" {
-		individual.PartyTypeIDs = append(individual.PartyTypeIDs, iam2.BeneficiaryPartyType.ID)
+		individual.PartyTypeIDs = append(individual.PartyTypeIDs, iam.BeneficiaryPartyType.ID)
 		individual, err = iamClient.Individuals().Create(ctx, individual)
 		if err != nil {
 			return nil, err
@@ -712,7 +712,7 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam2.PartyAttributeD
 	return individual, nil
 }
 
-func (s *Server) createDefaultIndividualIntakeCases(req *http.Request, individual *iam2.Individual) error {
+func (s *Server) createDefaultIndividualIntakeCases(req *http.Request, individual *iam.Individual) error {
 	var situationAnalysisCaseType = &seeder.UGSituationalAnalysisCaseType
 	var individualResponseCaseType = &seeder.UGIndividualResponseCaseType
 

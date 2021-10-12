@@ -59,9 +59,9 @@
     </div>
 
     <script>
-        let { Subject } = rxjs;
-        let { map, debounceTime, switchMap, distinctUntilChanged, filter } = rxjs.operators;
-        let { ajax } = rxjs.ajax;
+        let {Subject} = rxjs;
+        let {map, debounceTime, switchMap, distinctUntilChanged, filter} = rxjs.operators;
+        let {ajax} = rxjs.ajax;
 
         // Handles the search box for the parties dropdown
         let partySearchSubject = new Subject();
@@ -88,7 +88,7 @@
             });
             const reqUrl = `/teams/${teamId}/invitemember?` + searchParams.toString();
             console.log(reqUrl);
-            fetch(reqUrl, { method: 'POST', redirect: 'follow' })
+            fetch(reqUrl, {method: 'POST', redirect: 'follow'})
                 .then(response => {
                     window.location.href = response.headers.get('Location');
                 })

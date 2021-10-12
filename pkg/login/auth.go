@@ -2,17 +2,15 @@ package login
 
 import (
 	"fmt"
-	"github.com/nrc-no/core/internal/auth"
+	"github.com/nrc-no/core/pkg/auth"
 	"github.com/ory/hydra-client-go/client/admin"
 	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
 func (s *Server) WithAuth() func(handler http.Handler) http.Handler {
-
 	return func(handler http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-
 			logrus.Trace("retrieving Authorization header")
 
 			token, err := auth.AuthHeaderTokenSource(req).GetToken()

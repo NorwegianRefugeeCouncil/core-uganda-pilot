@@ -2,7 +2,7 @@ package utils
 
 import (
 	"context"
-	"github.com/nrc-no/core/internal/sessionmanager"
+	"github.com/nrc-no/core/pkg/sessionmanager"
 	"golang.org/x/oauth2"
 	"net/http"
 )

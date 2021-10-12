@@ -3,10 +3,10 @@ package login
 import (
 	"context"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core/internal/generic/server"
-	"github.com/nrc-no/core/internal/rest"
-	"github.com/nrc-no/core/internal/utils"
-	iam2 "github.com/nrc-no/core/pkg/iam"
+	"github.com/nrc-no/core/pkg/generic/server"
+	"github.com/nrc-no/core/pkg/iam"
+	"github.com/nrc-no/core/pkg/rest"
+	"github.com/nrc-no/core/pkg/utils"
 	"github.com/ory/hydra-client-go/client/admin"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -29,14 +29,14 @@ type Server struct {
 	BCryptCost              int
 	router                  *mux.Router
 	template                *template.Template
-	iam                     iam2.Interface
+	iam                     iam.Interface
 	HydraHTTPClient         *http.Client
 	credentialsCollectionFn func() (*mongo.Collection, error)
 }
 
 func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 
-	iamCli := iam2.NewClientSet(&rest.RESTConfig{
+	iamCli := iam.NewClientSet(&rest.RESTConfig{
 		Scheme:     o.IAMScheme,
 		Host:       o.IAMHost,
 		HTTPClient: o.AdminHTTPClient,

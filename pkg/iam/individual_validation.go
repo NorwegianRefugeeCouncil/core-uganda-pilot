@@ -2,7 +2,7 @@ package iam
 
 import (
 	"fmt"
-	"github.com/nrc-no/core/internal/validation"
+	"github.com/nrc-no/core/pkg/validation"
 )
 
 func ValidateIndividual(individual *Individual, path *validation.Path) validation.ErrorList {

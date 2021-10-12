@@ -1,7 +1,7 @@
 package testutils
 
 import (
-	"github.com/nrc-no/core/internal/rest"
+	"github.com/nrc-no/core/pkg/rest"
 	uuid "github.com/satori/go.uuid"
 )
 

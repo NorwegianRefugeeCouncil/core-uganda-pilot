@@ -1,7 +1,7 @@
 package iam
 
 import (
-	"github.com/nrc-no/core/internal/validation"
+	"github.com/nrc-no/core/pkg/validation"
 )
 
 func ValidatePartyAttributeDefinition(attribute *PartyAttributeDefinition, path *validation.Path) validation.ErrorList {

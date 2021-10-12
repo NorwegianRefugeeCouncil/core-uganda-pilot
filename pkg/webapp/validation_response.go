@@ -1,8 +1,8 @@
 package webapp
 
 import (
-	"github.com/nrc-no/core/internal/form"
-	"github.com/nrc-no/core/internal/validation"
+	"github.com/nrc-no/core/pkg/form"
+	"github.com/nrc-no/core/pkg/validation"
 	"strings"
 )
 

@@ -25,5 +25,5 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 Cypress.Commands.add('login', email => {
-    cy.intercept({ url: '*' }, req => (req.headers['X-E2E-Authenticated-User-Email'] = `${email}`));
+    cy.intercept({url: '*'}, req => (req.headers['X-E2E-Authenticated-User-Email'] = `${email}`));
 });

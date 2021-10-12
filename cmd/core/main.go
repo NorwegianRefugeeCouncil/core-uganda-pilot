@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/nrc-no/core/internal/server"
+	"github.com/nrc-no/core/pkg/server"
 	"github.com/spf13/cobra"
 )
 

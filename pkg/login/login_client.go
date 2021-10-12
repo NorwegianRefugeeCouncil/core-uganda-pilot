@@ -2,7 +2,7 @@ package login
 
 import (
 	"context"
-	"github.com/nrc-no/core/internal/rest"
+	"github.com/nrc-no/core/pkg/rest"
 )
 
 type RESTLoginClient struct {
