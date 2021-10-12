@@ -3,7 +3,7 @@ package seeder
 import (
 	"github.com/nrc-no/core/internal/form"
 	"github.com/nrc-no/core/pkg/cms"
-	iam2 "github.com/nrc-no/core/pkg/iam"
+	"github.com/nrc-no/core/pkg/iam"
 )
 
 func caseType(id, name, partyTypeID, teamID string, form form.Form, intakeCaseType bool) cms.CaseType {
@@ -19,8 +19,8 @@ func caseType(id, name, partyTypeID, teamID string, form form.Form, intakeCaseTy
 	return ct
 }
 
-func team(id, name string) iam2.Team {
-	t := iam2.Team{
+func team(id, name string) iam.Team {
+	t := iam.Team{
 		ID:   id,
 		Name: name,
 	}
@@ -28,8 +28,8 @@ func team(id, name string) iam2.Team {
 	return t
 }
 
-func country(id, name string) iam2.Country {
-	t := iam2.Country{
+func country(id, name string) iam.Country {
+	t := iam.Country{
 		ID:   id,
 		Name: name,
 	}
@@ -37,39 +37,39 @@ func country(id, name string) iam2.Country {
 	return t
 }
 
-func individual(id string, fullName string, displayName string, birthDate string, email string, displacementStatus string, gender string, consent string, consentProof string, anonymous string, minor string, protectionConcerns string, physicalImpairment string, physicalImpairmentIntensity string, sensoryImpairment string, sensoryImpairmentIntensity string, mentalImpairment string, mentalImpairmentIntensity string, nationality string, spokenLanguages string, preferredLanguage string, physicalAddress string, primaryPhoneNumber string, secondaryPhoneNumber string, preferredMeansOfContact string, requireAnInterpreter string) iam2.Individual {
-	var i = iam2.Individual{
-		Party: &iam2.Party{
+func individual(id string, fullName string, displayName string, birthDate string, email string, displacementStatus string, gender string, consent string, consentProof string, anonymous string, minor string, protectionConcerns string, physicalImpairment string, physicalImpairmentIntensity string, sensoryImpairment string, sensoryImpairmentIntensity string, mentalImpairment string, mentalImpairmentIntensity string, nationality string, spokenLanguages string, preferredLanguage string, physicalAddress string, primaryPhoneNumber string, secondaryPhoneNumber string, preferredMeansOfContact string, requireAnInterpreter string) iam.Individual {
+	var i = iam.Individual{
+		Party: &iam.Party{
 			ID: id,
 			PartyTypeIDs: []string{
-				iam2.IndividualPartyType.ID,
+				iam.IndividualPartyType.ID,
 			},
 			Attributes: map[string][]string{
-				iam2.FullNameAttribute.ID:                    {fullName},
-				iam2.DisplayNameAttribute.ID:                 {displayName},
-				iam2.EMailAttribute.ID:                       {email + "@email.com"},
-				iam2.BirthDateAttribute.ID:                   {birthDate},
-				iam2.DisplacementStatusAttribute.ID:          {displacementStatus},
-				iam2.GenderAttribute.ID:                      {gender},
-				iam2.ConsentToNrcDataUseAttribute.ID:         {consent},
-				iam2.ConsentToNrcDataUseProofAttribute.ID:    {consentProof},
-				iam2.AnonymousAttribute.ID:                   {anonymous},
-				iam2.MinorAttribute.ID:                       {minor},
-				iam2.ProtectionConcernsAttribute.ID:          {protectionConcerns},
-				iam2.PhysicalImpairmentAttribute.ID:          {physicalImpairment},
-				iam2.PhysicalImpairmentIntensityAttribute.ID: {physicalImpairmentIntensity},
-				iam2.SensoryImpairmentAttribute.ID:           {sensoryImpairment},
-				iam2.SensoryImpairmentIntensityAttribute.ID:  {sensoryImpairmentIntensity},
-				iam2.MentalImpairmentAttribute.ID:            {mentalImpairment},
-				iam2.MentalImpairmentIntensityAttribute.ID:   {mentalImpairmentIntensity},
-				iam2.UGNationalityAttribute.ID:               {nationality},
-				iam2.UGSpokenLanguagesAttribute.ID:           {spokenLanguages},
-				iam2.UGPreferredLanguageAttribute.ID:         {preferredLanguage},
-				iam2.UGPhysicalAddressAttribute.ID:           {physicalAddress},
-				iam2.PrimaryPhoneNumberAttribute.ID:          {primaryPhoneNumber},
-				iam2.SecondaryPhoneNumberAttribute.ID:        {secondaryPhoneNumber},
-				iam2.UGPreferredMeansOfContactAttribute.ID:   {preferredMeansOfContact},
-				iam2.UGRequireAnInterpreterAttribute.ID:      {requireAnInterpreter},
+				iam.FullNameAttribute.ID:                    {fullName},
+				iam.DisplayNameAttribute.ID:                 {displayName},
+				iam.EMailAttribute.ID:                       {email + "@email.com"},
+				iam.BirthDateAttribute.ID:                   {birthDate},
+				iam.DisplacementStatusAttribute.ID:          {displacementStatus},
+				iam.GenderAttribute.ID:                      {gender},
+				iam.ConsentToNrcDataUseAttribute.ID:         {consent},
+				iam.ConsentToNrcDataUseProofAttribute.ID:    {consentProof},
+				iam.AnonymousAttribute.ID:                   {anonymous},
+				iam.MinorAttribute.ID:                       {minor},
+				iam.ProtectionConcernsAttribute.ID:          {protectionConcerns},
+				iam.PhysicalImpairmentAttribute.ID:          {physicalImpairment},
+				iam.PhysicalImpairmentIntensityAttribute.ID: {physicalImpairmentIntensity},
+				iam.SensoryImpairmentAttribute.ID:           {sensoryImpairment},
+				iam.SensoryImpairmentIntensityAttribute.ID:  {sensoryImpairmentIntensity},
+				iam.MentalImpairmentAttribute.ID:            {mentalImpairment},
+				iam.MentalImpairmentIntensityAttribute.ID:   {mentalImpairmentIntensity},
+				iam.UGNationalityAttribute.ID:               {nationality},
+				iam.UGSpokenLanguagesAttribute.ID:           {spokenLanguages},
+				iam.UGPreferredLanguageAttribute.ID:         {preferredLanguage},
+				iam.UGPhysicalAddressAttribute.ID:           {physicalAddress},
+				iam.PrimaryPhoneNumberAttribute.ID:          {primaryPhoneNumber},
+				iam.SecondaryPhoneNumberAttribute.ID:        {secondaryPhoneNumber},
+				iam.UGPreferredMeansOfContactAttribute.ID:   {preferredMeansOfContact},
+				iam.UGRequireAnInterpreterAttribute.ID:      {requireAnInterpreter},
 			},
 		},
 	}
@@ -78,7 +78,7 @@ func individual(id string, fullName string, displayName string, birthDate string
 }
 
 func ugandaIndividual(
-	individual iam2.Individual,
+	individual iam.Individual,
 	identificationDate string,
 	identificationLocation string,
 	identificationSource string,
@@ -86,29 +86,29 @@ func ugandaIndividual(
 	admin3 string,
 	admin4 string,
 	admin5 string,
-) iam2.Individual {
-	individual.Attributes.Add(iam2.UGIdentificationDateAttribute.ID, identificationDate)
-	individual.Attributes.Add(iam2.UGIdentificationLocationAttribute.ID, identificationLocation)
-	individual.Attributes.Add(iam2.UGIdentificationSourceAttribute.ID, identificationSource)
-	individual.Attributes.Add(iam2.UGAdmin2Attribute.ID, admin2)
-	individual.Attributes.Add(iam2.UGAdmin3Attribute.ID, admin3)
-	individual.Attributes.Add(iam2.UGAdmin4Attribute.ID, admin4)
-	individual.Attributes.Add(iam2.UGAdmin5Attribute.ID, admin5)
+) iam.Individual {
+	individual.Attributes.Add(iam.UGIdentificationDateAttribute.ID, identificationDate)
+	individual.Attributes.Add(iam.UGIdentificationLocationAttribute.ID, identificationLocation)
+	individual.Attributes.Add(iam.UGIdentificationSourceAttribute.ID, identificationSource)
+	individual.Attributes.Add(iam.UGAdmin2Attribute.ID, admin2)
+	individual.Attributes.Add(iam.UGAdmin3Attribute.ID, admin3)
+	individual.Attributes.Add(iam.UGAdmin4Attribute.ID, admin4)
+	individual.Attributes.Add(iam.UGAdmin5Attribute.ID, admin5)
 	return individual
 }
 
-func staff(individual iam2.Individual) iam2.Individual {
-	individual.AddPartyType(iam2.StaffPartyType.ID)
+func staff(individual iam.Individual) iam.Individual {
+	individual.AddPartyType(iam.StaffPartyType.ID)
 	return individual
 }
 
-func beneficiary(individual iam2.Individual) iam2.Individual {
-	individual.AddPartyType(iam2.BeneficiaryPartyType.ID)
+func beneficiary(individual iam.Individual) iam.Individual {
+	individual.AddPartyType(iam.BeneficiaryPartyType.ID)
 	return individual
 }
 
-func membership(id string, individual iam2.Individual, team iam2.Team) iam2.Membership {
-	m := iam2.Membership{
+func membership(id string, individual iam.Individual, team iam.Team) iam.Membership {
+	m := iam.Membership{
 		ID:           id,
 		TeamID:       team.ID,
 		IndividualID: individual.ID,
@@ -117,8 +117,8 @@ func membership(id string, individual iam2.Individual, team iam2.Team) iam2.Memb
 	return m
 }
 
-func nationality(id string, team iam2.Team, country iam2.Country) iam2.Nationality {
-	m := iam2.Nationality{
+func nationality(id string, team iam.Team, country iam.Country) iam.Nationality {
+	m := iam.Nationality{
 		ID:        id,
 		CountryID: country.ID,
 		TeamID:    team.ID,
@@ -143,8 +143,8 @@ func kase(id, createdByID, partyID, teamID string, caseType cms.CaseType, done, 
 	return k
 }
 
-func identificationDocumentType(id, name string) iam2.IdentificationDocumentType {
-	idt := iam2.IdentificationDocumentType{
+func identificationDocumentType(id, name string) iam.IdentificationDocumentType {
+	idt := iam.IdentificationDocumentType{
 		ID:   id,
 		Name: name,
 	}
@@ -152,8 +152,8 @@ func identificationDocumentType(id, name string) iam2.IdentificationDocumentType
 	return idt
 }
 
-func identificationDocument(id, partyId, documentNumber, identificationDocumentTypeId string) iam2.IdentificationDocument {
-	newId := iam2.IdentificationDocument{
+func identificationDocument(id, partyId, documentNumber, identificationDocumentTypeId string) iam.IdentificationDocument {
+	newId := iam.IdentificationDocument{
 		ID:                           id,
 		PartyID:                      partyId,
 		DocumentNumber:               documentNumber,

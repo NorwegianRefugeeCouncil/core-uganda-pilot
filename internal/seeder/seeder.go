@@ -3,7 +3,7 @@ package seeder
 import (
 	"context"
 	"github.com/nrc-no/core/internal/utils"
-	iam2 "github.com/nrc-no/core/pkg/iam"
+	"github.com/nrc-no/core/pkg/iam"
 	"github.com/nrc-no/core/pkg/login"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
@@ -41,7 +41,7 @@ func Seed(ctx context.Context, mongoClientFn utils.MongoClientFn, databaseName s
 	}
 
 	for _, obj := range teams {
-		if err := seedMongo(ctx, mongoClient, databaseName, "parties", bson.M{"id": obj.ID}, iam2.MapTeamToParty(&obj)); err != nil {
+		if err := seedMongo(ctx, mongoClient, databaseName, "parties", bson.M{"id": obj.ID}, iam.MapTeamToParty(&obj)); err != nil {
 			return err
 		}
 	}
@@ -53,7 +53,7 @@ func Seed(ctx context.Context, mongoClientFn utils.MongoClientFn, databaseName s
 	}
 
 	for _, obj := range memberships {
-		if err := seedMongo(ctx, mongoClient, databaseName, "relationships", bson.M{"id": obj.ID}, iam2.MapMembershipToRelationship(&obj)); err != nil {
+		if err := seedMongo(ctx, mongoClient, databaseName, "relationships", bson.M{"id": obj.ID}, iam.MapMembershipToRelationship(&obj)); err != nil {
 			return err
 		}
 	}
@@ -83,13 +83,13 @@ func Seed(ctx context.Context, mongoClientFn utils.MongoClientFn, databaseName s
 	}
 
 	for _, obj := range countries {
-		if err := seedMongo(ctx, mongoClient, databaseName, "parties", bson.M{"id": obj.ID}, iam2.MapCountryToParty(&obj)); err != nil {
+		if err := seedMongo(ctx, mongoClient, databaseName, "parties", bson.M{"id": obj.ID}, iam.MapCountryToParty(&obj)); err != nil {
 			return err
 		}
 	}
 
 	for _, obj := range nationalities {
-		if err := seedMongo(ctx, mongoClient, databaseName, "relationships", bson.M{"id": obj.ID}, iam2.MapNationalityToRelationship(&obj)); err != nil {
+		if err := seedMongo(ctx, mongoClient, databaseName, "relationships", bson.M{"id": obj.ID}, iam.MapNationalityToRelationship(&obj)); err != nil {
 			return err
 		}
 	}
@@ -102,7 +102,7 @@ func initCollection(ctx context.Context, mongoClient *mongo.Client, databaseName
 		if err := seedMongo(ctx, mongoClient, databaseName, "parties", bson.M{"id": obj.ID}, obj.Party); err != nil {
 			return err
 		}
-		if obj.HasPartyType(iam2.StaffPartyType.ID) {
+		if obj.HasPartyType(iam.StaffPartyType.ID) {
 			hash, err := login.HashAndSalt(bcrypt.MinCost, []byte("password"))
 			if err != nil {
 				return err
