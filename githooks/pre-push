@@ -83,17 +83,6 @@ fi
 
 echo "$PREFIX Webapp is up and running!"
 
-# linting
-#
-echo "$PREFIX Running eslint on .js files..."
-cd "$DIR/test/e2e" || exit
-if ! npm run lint:fix; then
-	echo >&2 "$PREFIX Linting failed, see output above."
-	exit 1
-fi
-
-cd "$DIR" || exit
-
 echo "$PREFIX Running E2E tests..."
 if ! make test-e2e; then
 	echo >&2 "$PREFIX E2E tests failed, see output above."
