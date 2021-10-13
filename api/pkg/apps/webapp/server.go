@@ -15,6 +15,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
 	"net/http"
+	"strings"
 )
 
 type Server struct {
@@ -194,5 +195,12 @@ func (s *Server) addFlash(req *http.Request, w http.ResponseWriter, flash *sessi
 }
 
 func (s *Server) flashes(req *http.Request, w http.ResponseWriter) ([]*sessionmanager.FlashMessage, error) {
-	return s.sessionManager.ConsumeFlashes(req, w)
+	accepts := req.Header["Accept"]
+	for _, accept := range accepts {
+		if strings.Contains(accept, "text/html") {
+			return s.sessionManager.ConsumeFlashes(req, w)
+		}
+	}
+
+	return nil, nil
 }

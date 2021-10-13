@@ -123,15 +123,13 @@
     </div>
 
     <script type="module">
-        import { validateClientSide, validateServerSide } from '/static/js/validation.js';
+        import validate from '/static/js/validation.js';
 
         const form = document.getElementById('attributes-form');
         const submitBtn = document.getElementById('form-submit-btn');
         submitBtn.onclick = event => {
             event.preventDefault();
-            if (validateClientSide([form])) {
-                validateServerSide([form], form.action);
-            }
+            validate([form]);
         };
 
     </script>

@@ -107,9 +107,8 @@ func (r RedisSessionManager) ConsumeFlashes(req *http.Request, w http.ResponseWr
 
 	var flashes []*FlashMessage
 
-	if values := session.Flashes(); len(flashes) > 0 {
+	if values := session.Flashes(); len(values) > 0 {
 		for _, val := range values {
-			var flash = &FlashMessage{}
 			flash, ok := val.(*FlashMessage)
 			if !ok {
 				// TODO handle unexpected type

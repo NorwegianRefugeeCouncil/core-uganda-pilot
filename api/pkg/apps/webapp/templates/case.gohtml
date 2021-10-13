@@ -194,14 +194,14 @@
 
     </div>
     <script type="module">
-        import { validateServerSide, validateClientSide } from '/static/js/validation.js';
+        import validate from '/static/js/validation.js';
 
         const submitBtn = document.querySelector('#case-submit-btn');
         if (submitBtn != null) {
             const form = document.querySelector('#case-form');
             submitBtn.onclick = event => {
                 event.preventDefault();
-                if (validateClientSide([form])) validateServerSide([form], form.action);
+                validate([form]);
             };
         }
     </script>
