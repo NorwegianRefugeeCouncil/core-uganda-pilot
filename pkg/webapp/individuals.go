@@ -35,7 +35,7 @@ func (s *Server) Individuals(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if req.Method == "POST" {
+	if req.Method == http.MethodPost {
 		s.Individual(w, req)
 		return
 	}
@@ -133,12 +133,12 @@ func (s *Server) IndividualIdentificationDocuments(w http.ResponseWriter, req *h
 		return
 	}
 
-	if req.Method == "POST" {
+	if req.Method == http.MethodPost {
 		s.PostIndividualIdentificationDocuments(w, req, individual.ID)
 		return
 	}
 
-	if req.Method == "DELETE" {
+	if req.Method == http.MethodDelete {
 		s.DeleteIndividualIdentificationDocuments(w, req, individual.ID)
 	}
 
@@ -237,7 +237,7 @@ func (s *Server) IndividualCredentials(w http.ResponseWriter, req *http.Request)
 		return
 	}
 
-	if req.Method == "POST" {
+	if req.Method == http.MethodPost {
 		s.PostIndividualCredentials(w, req, individual.ID)
 		return
 	}
@@ -286,7 +286,7 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	}
 
 	id, ok := mux.Vars(req)["id"]
-	if (!ok || len(id) == 0) && req.Method != "POST" {
+	if (!ok || len(id) == 0) && req.Method != http.MethodPost {
 		err := fmt.Errorf("no id in path")
 		s.Error(w, err)
 		return
@@ -426,7 +426,7 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 
 	filteredRelationshipTypes := PrepRelationshipTypeDropdown(relationshipTypes)
 
-	if req.Method == "POST" {
+	if req.Method == http.MethodPost {
 		individual, err = s.PostIndividual(ctx, attrs, id, w, req)
 		if err != nil {
 			if status, ok := err.(*validation.Status); ok {
@@ -435,6 +435,7 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 			} else {
 				s.Error(w, err)
 			}
+
 			return
 		}
 	}
@@ -555,7 +556,6 @@ func PrepRelationshipTypeDropdown(relationshipTypes *iam.RelationshipTypeList) *
 }
 
 func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDefinitionList, id string, w http.ResponseWriter, req *http.Request) (*iam.Individual, error) {
-
 	iamClient, err := s.IAMClient(req)
 	if err != nil {
 		return nil, err
@@ -564,9 +564,11 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDe
 	if err := req.ParseForm(); err != nil {
 		return nil, err
 	}
+
 	values := req.Form
 
 	var individual *iam.Individual
+
 	if len(id) == 0 {
 		individual = iam.NewIndividual("")
 	} else {

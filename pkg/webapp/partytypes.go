@@ -18,7 +18,7 @@ func (s *Server) PartyTypes(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if req.Method == "POST" {
+	if req.Method == http.MethodPost {
 		s.PostPartyType(ctx, &iam.PartyType{}, w, req)
 		return
 	}
@@ -63,7 +63,7 @@ func (s *Server) PartyType(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	if req.Method == "POST" {
+	if req.Method == http.MethodPost {
 		s.PostPartyType(ctx, partyType, w, req)
 		return
 	}

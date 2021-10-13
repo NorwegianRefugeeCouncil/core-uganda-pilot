@@ -16,7 +16,7 @@ import (
 func (s *Server) Attributes(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	if req.Method == "POST" {
+	if req.Method == http.MethodPost {
 		s.PostAttribute(ctx, &iam.PartyAttributeDefinition{}, w, req)
 		return
 	}
@@ -87,7 +87,7 @@ func (s *Server) Attribute(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if req.Method == "POST" {
+	if req.Method == http.MethodPost {
 		s.PostAttribute(ctx, partyAttributeDefinition, w, req)
 		return
 	}

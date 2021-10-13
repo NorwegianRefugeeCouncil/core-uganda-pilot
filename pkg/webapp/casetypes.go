@@ -47,7 +47,7 @@ func (s *Server) CaseTypes(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if req.Method == "POST" {
+	if req.Method == http.MethodPost {
 		s.PostCaseType(ctx, &cms.CaseType{}, partyTypes, teams, w, req)
 		return
 	}
@@ -116,7 +116,7 @@ func (s *Server) CaseType(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if req.Method == "POST" {
+	if req.Method == http.MethodPost {
 		s.PostCaseType(ctx, caseType, partyTypes, teams, w, req)
 		return
 	}

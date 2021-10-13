@@ -192,7 +192,7 @@
 
     </div>
     <script type="module">
-        import {validateClientSide, validateServerSide} from '/static/js/validation.js';
+        import validate from '/static/js/validation.js';
 
         const currentStage = {{ .Status.CurrentStage }} +2; // CurrentStage starts at -1 to indicate no stage completed
         const forms = ['attributes-form', 'situation-analysis-form', 'response-form']
@@ -201,9 +201,7 @@
         const submitBtn = document.getElementById('form-submit-btn');
         submitBtn.onclick = event => {
             event.preventDefault();
-            if (forms != null && validateClientSide(forms)) {
-                validateServerSide(forms, '/individuals{{if not .IsNew}}/{{.Individual.ID}}{{end}}');
-            }
+            validate(forms);
         };
     </script>
 
@@ -480,13 +478,13 @@
                         const displayName = document.querySelector('input[name="displayName"]')?.value;
                         firstPartyName = displayName.toUpperCase();
                     } else {
-                        firstPartyName = parties.find(({id}) => id === relationship.firstParty)?.name;
+                        firstPartyName = parties.find(({ id }) => id === relationship.firstParty)?.name;
                     }
                     li.setAttribute('data-testid', 'relationship');
-                    const firstPartyRole = relationshipTypes.find(({id}) => id === relationship.relationshipTypeId)?.firstPartyRole;
-                    const secondPartyName = parties.find(({id}) => id === relationship.secondParty)?.name;
-                    const firstPartyTypeId = relationshipTypes.find(({id}) => id === relationship.relationshipTypeId).firstPartyTypeId;
-                    const secondPartyTypeId = relationshipTypes.find(({id}) => id === relationship.relationshipTypeId).secondPartyTypeId;
+                    const firstPartyRole = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId)?.firstPartyRole;
+                    const secondPartyName = parties.find(({ id }) => id === relationship.secondParty)?.name;
+                    const firstPartyTypeId = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId).firstPartyTypeId;
+                    const secondPartyTypeId = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId).secondPartyTypeId;
 
                     const firstPartyLinkNode = document.createElement('a');
                     firstPartyLinkNode.href = partyLink(firstPartyTypeId, relationship.firstParty);

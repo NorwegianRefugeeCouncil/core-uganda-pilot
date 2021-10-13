@@ -22,7 +22,7 @@ func (s *Server) RelationshipTypes(w http.ResponseWriter, req *http.Request) {
 
 	r := &iam.RelationshipType{}
 
-	if req.Method == "POST" {
+	if req.Method == http.MethodPost {
 		s.PostRelationshipType(ctx, r, w, req)
 		return
 	}
@@ -91,7 +91,7 @@ func (s *Server) RelationshipType(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if req.Method == "POST" {
+	if req.Method == http.MethodPost {
 		s.PostRelationshipType(ctx, r, w, req)
 		return
 	}

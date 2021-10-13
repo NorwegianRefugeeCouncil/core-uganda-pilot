@@ -105,15 +105,15 @@ func NewOptions() *Options {
 	defaultHost := "localhost"
 	defaultScheme := "http"
 	defaultPort := "9000"
-	defaultUrl := url.URL{
+	defaultURL := url.URL{
 		Scheme: defaultScheme,
 		Host:   defaultHost + ":" + defaultPort,
 	}
 	return &Options{
 		ClearDB:                 false,
 		Environment:             defaultEnv,
-		ListenAddress:           ":" + defaultUrl.Port(),
-		BaseURL:                 defaultUrl.String(),
+		ListenAddress:           ":" + defaultURL.Port(),
+		BaseURL:                 defaultURL.String(),
 		MongoDatabase:           "core",
 		MongoUsername:           "",
 		MongoPassword:           "",
@@ -128,10 +128,10 @@ func NewOptions() *Options {
 		WebAppClientID:          "webapp",
 		WebAppClientSecret:      "",
 		WebAppClientName:        "webapp",
-		WebAppIAMScheme:         defaultUrl.Scheme,
-		WebAppIAMHost:           defaultUrl.Host,
-		WebAppCMSScheme:         defaultUrl.Scheme,
-		WebAppCMSHost:           defaultUrl.Host,
+		WebAppIAMScheme:         defaultURL.Scheme,
+		WebAppIAMHost:           defaultURL.Host,
+		WebAppCMSScheme:         defaultURL.Scheme,
+		WebAppCMSHost:           defaultURL.Host,
 		WebAppStaticDir:         "",
 		CMSBasePath:             "/apis/cms",
 		IAMBasePath:             "/apis/iam",
@@ -140,8 +140,8 @@ func NewOptions() *Options {
 		LoginClientID:           "login",
 		LoginClientSecret:       "",
 		LoginTemplateDirectory:  "",
-		LoginIAMScheme:          defaultUrl.Scheme,
-		LoginIAMHost:            defaultUrl.Host,
+		LoginIAMScheme:          defaultURL.Scheme,
+		LoginIAMHost:            defaultURL.Host,
 	}
 }
 
@@ -340,6 +340,7 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 	}
 
 	logrus.Infof("creating redis pool for redis host %s", o.RedisAddress)
+
 	pool := &redis.Pool{
 		MaxActive:   500,
 		MaxIdle:     500,
@@ -349,6 +350,7 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 			if err != nil {
 				logrus.WithError(err).Errorf("failed to get connection")
 			}
+
 			return err
 		},
 		Dial: func() (redis.Conn, error) {
@@ -356,6 +358,7 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 			if len(o.RedisPassword) > 0 {
 				redisOptions = append(redisOptions, redis.DialPassword(o.RedisPassword))
 			}
+
 			return redis.Dial("tcp", o.RedisAddress, redisOptions...)
 		},
 	}

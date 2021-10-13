@@ -381,7 +381,7 @@ func (s *Server) getCaseIds(req *http.Request) (caseID string, referralCaseTypeI
 	referralCaseTypeID = qry.Get("referralCaseTypeId")
 	caseID, ok := mux.Vars(req)["id"]
 	if !ok || len(caseID) == 0 {
-		if req.Method != "POST" {
+		if req.Method != http.MethodPost {
 			err := fmt.Errorf("no id in path")
 			return "", "", err
 		}
