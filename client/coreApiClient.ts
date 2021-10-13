@@ -1,4 +1,4 @@
-import { Observable, OperatorFunction } from 'rxjs';
+import { map, Observable, of, OperatorFunction, Subject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import {
   Case,
@@ -57,41 +57,100 @@ global.XMLHttpRequest = global.XMLHttpRequest ? global.XMLHttpRequest : XMLHttpR
 // todo: should come from environment
 const shouldAddAuthHeader = true;
 
+function copyHeaders(from: Headers, to: Headers) {
+  for (let headerKey in from) {
+    if (from.hasOwnProperty(headerKey)) {
+      for (let headerValue of from[headerKey]) {
+        if (!to[headerKey]) {
+          to[headerKey] = [];
+        }
+        to[headerKey].push(headerValue);
+      }
+    }
+  }
+}
+
+// TODO
+function isErrorResponse(data: any): boolean {
+  return false;
+}
+
 class Client {
-  host: string;
+  private _host: string;
+  private _headers: Headers;
 
-  do(): OperatorFunction<Request, AjaxResponse<any>> {
+  verb(verb: string): Request {
+    return new Request(this);
+  }
+
+  get(): Request {
+    return this.verb('GET');
+  }
+
+  post(): Request {
+    return this.verb('POST');
+  }
+
+  put(): Request {
+    return this.verb('PUT');
+  }
+
+  delete(): Request {
+    return this.verb('DELETE');
+  }
+
+  do(): OperatorFunction<Request, Response> {
     return source => {
-      return source.pipe(switchMap(req => {
+      return source.pipe(
+        switchMap(req => {
 
-        let url = this.host;
-        if (req._path) {
-          url = url + req._path;
-        }
-        if (req._body && !req._headers && !req.headers['Content-Type']) {
-          req._headers['Content-Type'] = ['application/json'];
-        }
-        if (!req._headers && !req.headers['Accept']) {
-          req._headers['Accept'] = ['application/json'];
-        }
-
-        return ajax(
-          {
-            url: url,
-            headers: this.headers,
-            method: 'GET',
-            async: true,
-            timeout: 0,
-            crossDomain: true,
-            withCredentials: false,
-            responseType: 'json'
+          let url = this._host;
+          if (req._path) {
+            url = url + req._path;
           }
-        );
 
-      }));
+          let headers: Headers = {};
+
+          copyHeaders(req._client._headers, headers);
+          copyHeaders(req._headers, headers);
+
+          if (!headers['Content-Type']) {
+            headers['Content-Type'] = ['application/json'];
+          }
+
+          if (!headers['Accept']) {
+            headers['Accept'] = ['application/json'];
+          }
+
+          //TODO : append query parameters
+
+          //TODO: replace path params
+
+          return ajax(
+            {
+              url: url,
+              headers: headers,
+              method: req._verb,
+              async: true,
+              timeout: 0,
+              crossDomain: true,
+              withCredentials: false,
+              body: req._body
+            }
+          );
+        }),
+        map(ajaxResponse => {
+          if (ajaxResponse.status > 399) {
+            if (isErrorResponse(ajaxResponse.response)) {
+              return new Response(ajaxResponse.response);
+            } else {
+              return new Response({ error: 'server error', status: 500 });
+            }
+          }
+          return new Response(ajaxResponse.response);
+        })
+      );
     };
-
-
   }
 }
 
@@ -104,15 +163,18 @@ interface Headers {
 }
 
 class Response {
-  _error: any;
-  _body: any;
+  public constructor(readonly body: any) {
+
+  }
 
   as<T>(): T {
-    return this._body as T;
+    return this.body as T;
   }
 
 }
 
+
+// http:google.com/:pathParam?queryParam=1
 class Request {
   public _client: Client;
   public _error: Error;
@@ -120,7 +182,12 @@ class Request {
   public _verb: string;
   public _body: any;
   public _params: URLValues;
+  public _pathParams: URLValues;
   public _headers: Headers;
+
+  public constructor(client: Client) {
+    this._client = client;
+  }
 
   public verb(verb: string): Request {
     this._verb = verb;
@@ -158,26 +225,102 @@ class Request {
     return this;
   }
 
+  public pathParam(key: string, value: string): Request {
+    if (!this._pathParams) {
+      this._pathParams = {};
+    }
+    this._pathParams[key] = value;
+    return this;
+  }
+
   public headers(headers: Headers): Request {
     this._headers = headers;
     return this;
   }
 
-  public do(): Response {
-    let url = this._client.host;
-    if (this._path) {
-      url = url + this._path;
-    }
-    if (this._body && !this._headers && !this.headers['Content-Type']) {
-      this._headers['Content-Type'] = ['application/json'];
-    }
-    if (!this._headers && !this.headers['Accept']) {
-      this._headers['Accept'] = ['application/json'];
-    }
+}
 
+function responseAs<T>(): OperatorFunction<Response, T> {
+  return source => {
+    return source.pipe(map(resp => {
+      if (isErrorResponse(resp.body)) {
+        throw new Error(resp.body);
+      } else {
+        return resp.body;
+      }
+    });
+  };
+}
+
+class PartyClient2 {
+
+  private client: Client;
+
+  execute: () => OperatorFunction<Request, Response>;
+
+  public constructor(client: Client) {
+    this.execute = client.do;
+  }
+
+  get(): OperatorFunction<string, Party> {
+    return id$ => id$.pipe(
+      map(id => this.client.get().path('/apis/iam/v1/parties/:id').pathParam('id', id)),
+      this.execute(),
+      responseAs<Party>()
+    );
+  }
+
+  put(): OperatorFunction<Party, Party> {
+    return party$ => party$.pipe(
+      map(party => this.client.put().path('/apis/iam/v1/parties/:id').pathParam('id', party.id)),
+      this.execute(),
+      responseAs<Party>()
+    );
   }
 
 }
+
+
+function myTest() {
+
+  var client = new Client();
+  var partyClient = new PartyClient2(client);
+  partyClient.execute = () => {
+    return s => {
+      return of(new Response({ id: 'abcdef' }));
+    };
+  };
+  partyClient.execute = () => {
+    return s => {
+      return of(new Response({ status: 500, error: 'abcdef' }));
+    };
+  };
+  partyClient.execute = () => {
+    return s => {
+      s.subscribe(r => {
+
+      });
+    };
+  };
+
+}
+
+
+const myClient = new PartyClient2();
+const subject = new Subject<string>();
+const party$ = subject.pipe(myClient.get()).subscribe({
+    next: party => {
+
+    },
+    error: err => {
+
+    },
+    complete: () => {
+    }
+  }
+);
+
+subject.next('mynewid');
 
 
 class HttpClient<T> {
