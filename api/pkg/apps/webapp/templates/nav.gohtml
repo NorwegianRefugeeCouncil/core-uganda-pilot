@@ -1,5 +1,4 @@
 {{define "navbar"}}
-
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Core</a>
@@ -52,5 +51,7 @@
             </div>
         </div>
     </nav>
-
+    {{if .Notifications}}
+        {{template "notifications" .Notifications}}
+    {{end}}
 {{end}}

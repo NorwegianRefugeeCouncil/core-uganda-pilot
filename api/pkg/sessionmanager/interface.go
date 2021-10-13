@@ -14,8 +14,8 @@ type Options struct {
 }
 
 type Store interface {
-	AddNotification(req *http.Request, w http.ResponseWriter, notification *Notification) error
-	ConsumeNotifications(req *http.Request, w http.ResponseWriter) ([]*Notification, error)
+	AddFlash(req *http.Request, w http.ResponseWriter, notification *FlashMessage) error
+	ConsumeFlashes(req *http.Request, w http.ResponseWriter) ([]*FlashMessage, error)
 	Get(req *http.Request) (*sessions.Session, error)
 	GetString(req *http.Request, key string) (string, error)
 	FindString(req *http.Request, key string) (string, bool)
@@ -30,6 +30,7 @@ func (r *RedisSessionManager) FindString(req *http.Request, key string) (string,
 	if err != nil {
 		return "", false
 	}
+
 	return str, true
 }
 
@@ -56,13 +57,11 @@ func (r *RedisSessionManager) Get(req *http.Request) (*sessions.Session, error) 
 	session, err := r.Store.Get(req, varSession)
 	if err != nil {
 		logrus.WithError(err).Errorf("failed to get session")
+
 		return session, err
 	}
-	return session, nil
-}
 
-func init() {
-	gob.Register(&Notification{})
+	return session, nil
 }
 
 func New(redisStore *redistore.RediStore) (Store, error) {
@@ -71,51 +70,55 @@ func New(redisStore *redistore.RediStore) (Store, error) {
 	}, nil
 }
 
-// Notification contains "flash" messages shown to the user.
+// FlashMessage contains "flash" messages shown to the user.
 // The theme field should correspond to one of the bootstrap theme colors; eg. "success", "warning",
 // "danger", etc. https://getbootstrap.com/docs/5.0/customize/color/
-type Notification struct {
+type FlashMessage struct {
 	Message string
 	Theme   string
 }
 
-const (
-	varSession       = "session"
-	varNotifications = "notifications"
-)
-
-func (r RedisSessionManager) AddNotification(req *http.Request, w http.ResponseWriter, notification *Notification) error {
-	return nil
-	// FIXME was converted to noop because of securecookie error
-	// session, err := r.Store.Get(req, varNotifications)
-	// if err != nil {
-	// 	return err
-	// }
-	// session.AddFlash(notification)
-	// if err := session.Save(req, w); err != nil {
-	// 	return err
-	// }
-	// return nil
+// We must register the data type so that it can be encoded/decoded
+func init() {
+	gob.Register(&FlashMessage{})
 }
 
-func (r RedisSessionManager) ConsumeNotifications(req *http.Request, w http.ResponseWriter) ([]*Notification, error) {
-	return nil, nil
-	// FIXME was converted to noop because of securecookie error
-	// session, err := r.Store.Get(req, varNotifications)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// flashes := session.Flashes()
-	// var notifications []*Notification
-	// for _, flash := range flashes {
-	// 	flashNotification, ok := flash.(*Notification)
-	// 	if ok {
-	// 		notifications = append(notifications, flashNotification)
-	// 	}
-	// }
-	// err = session.Save(req, w)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// return notifications, nil
+const (
+	varSession = "session"
+	varFlashes = "flashes"
+)
+
+func (r RedisSessionManager) AddFlash(req *http.Request, w http.ResponseWriter, flash *FlashMessage) error {
+	session, err := r.Store.Get(req, varFlashes)
+	if err != nil {
+		return err
+	}
+
+	session.AddFlash(flash)
+
+	return session.Save(req, w)
+}
+
+func (r RedisSessionManager) ConsumeFlashes(req *http.Request, w http.ResponseWriter) ([]*FlashMessage, error) {
+	session, err := r.Store.Get(req, varFlashes)
+	if err != nil {
+		return nil, err
+	}
+
+	var flashes []*FlashMessage
+
+	if values := session.Flashes(); len(flashes) > 0 {
+		for _, val := range values {
+			var flash = &FlashMessage{}
+			flash, ok := val.(*FlashMessage)
+			if !ok {
+				// TODO handle unexpected type
+				continue
+			}
+
+			flashes = append(flashes, flash)
+		}
+	}
+
+	return flashes, session.Save(req, w)
 }

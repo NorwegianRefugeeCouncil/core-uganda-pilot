@@ -60,7 +60,6 @@ type ServerOptions struct {
 }
 
 func NewServer(options *ServerOptions) (*Server, error) {
-
 	h := &Server{
 		login: login.NewClientSet(&rest.RESTConfig{
 			Scheme:     options.CMSScheme,
@@ -94,12 +93,14 @@ func NewServer(options *ServerOptions) (*Server, error) {
 	sm, err := sessionmanager.New(options.RedisStore)
 	if err != nil {
 		logrus.WithError(err).Errorf("failed to create session manager")
+
 		return nil, err
 	}
 
 	renderFactory, err := NewRendererFactory(options.TemplateDirectory, sm)
 	if err != nil {
 		logrus.WithError(err).Errorf("failed to create renderer")
+
 		return nil, err
 	}
 
@@ -123,8 +124,8 @@ func NewServer(options *ServerOptions) (*Server, error) {
 	router.Path("/cases").Methods("GET").HandlerFunc(h.Cases)
 	router.Path("/cases/new").Methods("GET").HandlerFunc(h.NewCase)
 	router.Path("/cases/{id}").Methods("GET").HandlerFunc(h.Case)
-	router.Path("/cases").Methods("POST").HandlerFunc(h.PostCase)
-	router.Path("/cases/{id}").Methods("POST").HandlerFunc(h.PostCase)
+	router.Path("/cases").Methods(http.MethodPost).HandlerFunc(h.PostCase)
+	router.Path("/cases/{id}").Methods(http.MethodPost).HandlerFunc(h.PostCase)
 	router.Path("/settings").HandlerFunc(h.Settings)
 	router.Path("/settings/attributes").HandlerFunc(h.Attributes)
 	router.Path("/settings/attributes/new").HandlerFunc(h.NewAttribute)
@@ -137,7 +138,7 @@ func NewServer(options *ServerOptions) (*Server, error) {
 	router.Path("/settings/casetypes").HandlerFunc(h.CaseTypes)
 	router.Path("/settings/casetypes/new").HandlerFunc(h.NewCaseType)
 	router.Path("/settings/casetypes/{id}").HandlerFunc(h.CaseType)
-	router.Path("/comments").Methods("POST").HandlerFunc(h.PostComment)
+	router.Path("/comments").Methods(http.MethodPost).HandlerFunc(h.PostComment)
 	router.Path("/relationships/pickparty").HandlerFunc(h.PickRelationshipParty)
 	router.Path("/static/js/{file}").HandlerFunc(h.serveJS(options.StaticDir))
 	router.Path("/reporting").HandlerFunc(h.Reporting)
@@ -156,6 +157,7 @@ func (s *Server) IAMClient(req *http.Request) (iam.Interface, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return iam.NewClientSet(&rest.RESTConfig{
 		Scheme:     s.iamScheme,
 		Host:       s.iamHost,
@@ -168,6 +170,7 @@ func (s *Server) CMSClient(req *http.Request) (cms.Interface, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return cms.NewClientSet(&rest.RESTConfig{
 		Scheme:     s.cmsScheme,
 		Host:       s.cmsHost,
@@ -184,4 +187,12 @@ func (s *Server) GetPathParam(param string, w http.ResponseWriter, req *http.Req
 
 func (s *Server) json(w http.ResponseWriter, status int, data interface{}) {
 	utils.JSONResponse(w, status, data)
+}
+
+func (s *Server) addFlash(req *http.Request, w http.ResponseWriter, flash *sessionmanager.FlashMessage) error {
+	return s.sessionManager.AddFlash(req, w, flash)
+}
+
+func (s *Server) flashes(req *http.Request, w http.ResponseWriter) ([]*sessionmanager.FlashMessage, error) {
+	return s.sessionManager.ConsumeFlashes(req, w)
 }

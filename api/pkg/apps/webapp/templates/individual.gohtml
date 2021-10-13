@@ -5,9 +5,7 @@
     {{template "head"}}
     <body>
 
-    {{template "navbar"}}
-
-    {{template "notifications"}}
+    {{template "navbar" .}}
 
     {{template "individuals_nav" . }}
 
@@ -117,7 +115,7 @@
                                            type="checkbox"
                                            name="done"
                                            data-testid="done-check-situation"
-                                            {{if .SituationAnalysis.Done}}checked{{end}}>
+                                           {{if .SituationAnalysis.Done}}checked{{end}}>
                                     <label class="form-check-label" for="done-input">
                                         Done
                                     </label>
@@ -141,7 +139,7 @@
                                            type="checkbox"
                                            name="done"
                                            data-testid="done-check-response"
-                                            {{if .IndividualResponse.Done}}checked{{end}}>
+                                           {{if .IndividualResponse.Done}}checked{{end}}>
                                     <label class="form-check-label" for="done-input">
                                         Done
                                     </label>

@@ -12,25 +12,27 @@ import (
 )
 
 func (s *Server) RelationshipTypes(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 
 	iamClient, err := s.IAMClient(req)
 	if err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
 	r := &iam.RelationshipType{}
 
-	if req.Method == "POST" {
+	if req.Method == http.MethodPost {
 		s.PostRelationshipType(ctx, r, w, req)
+
 		return
 	}
 
 	relationshipTypes, err := iamClient.RelationshipTypes().List(ctx, iam.RelationshipTypeListOptions{})
 	if err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
@@ -38,6 +40,7 @@ func (s *Server) RelationshipTypes(w http.ResponseWriter, req *http.Request) {
 		"RelationshipTypes": relationshipTypes,
 	}); err != nil {
 		s.Error(w, err)
+
 		return
 	}
 }
@@ -48,11 +51,14 @@ func (s *Server) NewRelationshipType(w http.ResponseWriter, req *http.Request) {
 	iamClient, err := s.IAMClient(req)
 	if err != nil {
 		s.Error(w, err)
+
 		return
 	}
+
 	p, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
@@ -60,17 +66,18 @@ func (s *Server) NewRelationshipType(w http.ResponseWriter, req *http.Request) {
 		"PartyTypes": p,
 	}); err != nil {
 		s.Error(w, err)
+
 		return
 	}
 }
 
 func (s *Server) RelationshipType(w http.ResponseWriter, req *http.Request) {
-
 	ctx := req.Context()
 
 	iamClient, err := s.IAMClient(req)
 	if err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
@@ -78,31 +85,44 @@ func (s *Server) RelationshipType(w http.ResponseWriter, req *http.Request) {
 	if !ok || len(id) == 0 {
 		err := fmt.Errorf("no id found in path")
 		s.Error(w, err)
+
 		return
 	}
 
 	r, err := iamClient.RelationshipTypes().Get(ctx, id)
 	if err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
 	p, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
-	if req.Method == "POST" {
+	if req.Method == http.MethodPost {
 		s.PostRelationshipType(ctx, r, w, req)
+
+		return
+	}
+
+	notifications, err := s.flashes(req, w)
+	if err != nil {
+		s.Error(w, err)
+
 		return
 	}
 
 	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "relationshiptype", map[string]interface{}{
 		"RelationshipType": r,
 		"PartyTypes":       p,
+		"Notifications":    notifications,
 	}); err != nil {
 		s.Error(w, err)
+
 		return
 	}
 }
@@ -113,21 +133,23 @@ func (s *Server) PostRelationshipType(
 	w http.ResponseWriter,
 	req *http.Request,
 ) {
-
 	iamClient, err := s.IAMClient(req)
 	if err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
 	if err := req.ParseForm(); err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
 	formValues := req.Form
 
 	isNew := false
+
 	if len(r.ID) == 0 {
 		r.ID = uuid.NewV4().String()
 		isNew = true
@@ -140,6 +162,7 @@ func (s *Server) PostRelationshipType(
 	} else {
 		r.IsDirectional = false
 	}
+
 	r.FirstPartyRole = formValues.Get("firstPartyRole")
 	r.SecondPartyRole = formValues.Get("secondPartyRole")
 
@@ -156,14 +179,16 @@ func (s *Server) PostRelationshipType(
 		out, err := iamClient.RelationshipTypes().Create(ctx, r)
 		if err != nil {
 			s.Error(w, err)
+
 			return
 		}
 
-		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
+		if err := s.addFlash(req, w, &sessionmanager.FlashMessage{
 			Message: fmt.Sprintf("Relationship type \"%s\" successfully updated", r.Name),
 			Theme:   "success",
 		}); err != nil {
 			s.Error(w, err)
+
 			return
 		}
 
@@ -173,19 +198,20 @@ func (s *Server) PostRelationshipType(
 		out, err := iamClient.RelationshipTypes().Update(ctx, r)
 		if err != nil {
 			s.Error(w, err)
+
 			return
 		}
 
-		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
+		if err := s.addFlash(req, w, &sessionmanager.FlashMessage{
 			Message: fmt.Sprintf("Relationship type \"%s\" successfully updated", r.Name),
 			Theme:   "success",
 		}); err != nil {
 			s.Error(w, err)
+
 			return
 		}
 
 		w.Header().Set("Location", "/settings/relationshiptypes/"+out.ID)
 		w.WriteHeader(http.StatusSeeOther)
 	}
-
 }

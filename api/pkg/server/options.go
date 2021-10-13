@@ -361,10 +361,13 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 	}
 
 	logrus.Infof("getting redis connection")
+
 	conn := pool.Get()
+
 	defer conn.Close()
 
 	logrus.Infof("testing redis connection")
+
 	_, err = conn.Do("PING")
 	if err != nil {
 		logrus.WithError(err).Errorf("failed to test redis")
@@ -375,12 +378,14 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 	var blockKey1 []byte = nil
 	var sessionKey2 []byte = nil
 	var blockKey2 []byte = nil
+
 	if len(o.WebAppSessionKeyFile1) > 0 {
 		sessionKeyStr, err := readFile(o.WebAppSessionKeyFile1)
 		if err != nil {
 			logrus.WithError(err).Errorf("failed to read session hash key file ")
 			panic(err)
 		}
+
 		sessionKey1 = []byte(sessionKeyStr)[0:32]
 	} else {
 		_, err = rand.Read(sessionKey1)
@@ -395,6 +400,7 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 			logrus.WithError(err).Errorf("failed to read session block key file 1")
 			panic(err)
 		}
+
 		blockKey1 = []byte(fileValue)[0:32]
 	}
 
@@ -404,6 +410,7 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 			logrus.WithError(err).Errorf("failed to read session hash key file 2")
 			panic(err)
 		}
+
 		sessionKey2 = []byte(fileValue)[0:32]
 	}
 
@@ -413,10 +420,12 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 			logrus.WithError(err).Errorf("failed to read session block key file 2")
 			panic(err)
 		}
+
 		blockKey2 = []byte(fileValue)[0:32]
 	}
 
 	logrus.Infof("creating redis store")
+
 	redisStore, err := redistore.NewRediStoreWithPool(pool, sessionKey1, blockKey1, sessionKey2, blockKey2)
 	if err != nil {
 		logrus.WithError(err).Errorf("failed to create redis store")

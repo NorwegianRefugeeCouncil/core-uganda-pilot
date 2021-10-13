@@ -14,7 +14,6 @@ import (
 type RenderInterface interface {
 	IsLoggedIn() bool
 	Profile() (*Claims, error)
-	Notifications() ([]*sessionmanager.Notification, error)
 }
 
 // RendererFactory is a factory to create Renderer
@@ -37,10 +36,6 @@ func (r *RendererFactory) Profile() (*Claims, error) {
 	return nil, nil
 }
 
-func (r *RendererFactory) Notifications() ([]*sessionmanager.Notification, error) {
-	return []*sessionmanager.Notification{}, nil
-}
-
 // NewRendererFactory creates a new instance of the RendererFactory
 func NewRendererFactory(templateDirectory string, sessionManager sessionmanager.Store) (*RendererFactory, error) {
 	f := &RendererFactory{
@@ -48,12 +43,16 @@ func NewRendererFactory(templateDirectory string, sessionManager sessionmanager.
 	}
 	t := template.New("")
 	t = WithRenderInterface(t, f)
+
 	var err error
+
 	t, err = t.ParseGlob(path.Join(templateDirectory, "*.gohtml"))
 	if err != nil {
 		return nil, err
 	}
+
 	f.template = t
+
 	return f, nil
 }
 
@@ -65,6 +64,7 @@ func (r *RendererFactory) New(req *http.Request, w http.ResponseWriter) *Rendere
 		sessionManager: r.sessionManager,
 	}
 	renderer.template = WithRenderInterface(r.template, renderer)
+
 	return renderer
 }
 
@@ -90,7 +90,6 @@ func (r *Renderer) IsLoggedIn() bool {
 }
 
 func (r *Renderer) Profile() (*Claims, error) {
-
 	session, err := r.sessionManager.Get(r.req)
 	if err != nil {
 		return nil, err
@@ -109,15 +108,10 @@ func (r *Renderer) Profile() (*Claims, error) {
 	return profile, nil
 }
 
-func (r *Renderer) Notifications() ([]*sessionmanager.Notification, error) {
-	return r.sessionManager.ConsumeNotifications(r.req, r.w)
-}
-
 // WithRenderInterface adds the RenderInterface methods to the template
 func WithRenderInterface(t *template.Template, intf RenderInterface) *template.Template {
 	return t.Funcs(map[string]interface{}{
-		"IsLoggedIn":    intf.IsLoggedIn,
-		"Profile":       intf.Profile,
-		"Notifications": intf.Notifications,
+		"IsLoggedIn": intf.IsLoggedIn,
+		"Profile":    intf.Profile,
 	})
 }
