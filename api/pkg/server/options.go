@@ -511,14 +511,16 @@ func (c CompletedOptions) Generic() *server.GenericServerOptions {
 
 func (c CompletedOptions) New(ctx context.Context) *Server {
 
-	// Prep db
-	if c.ClearDB {
-		if err := seeder.Clear(ctx, c.MongoClientFn, c.MongoDatabase); err != nil {
-			panic(err)
-		}
-	}
-
 	genericServerOptions := c.Generic()
+	// Create Seeder Server
+	seederServer, err := seeder.NewServer(ctx, genericServerOptions)
+	if err != nil {
+		logrus.WithError(err).Errorf("faled to create attachment server")
+		panic(err)
+	}
+	if c.ClearDB {
+		seederServer.ClearDB()
+	}
 
 	// Create Attachment Server
 	attachmentServer, err := attachments.NewServer(ctx, genericServerOptions)
@@ -572,9 +574,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	}()
 
 	if c.SeedDB {
-		if err := seeder.Seed(ctx, c.MongoClientFn, c.MongoDatabase); err != nil {
-			panic(err)
-		}
+		seederServer.SeedDB()
 	}
 
 	return srv
