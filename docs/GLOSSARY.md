@@ -1,13 +1,13 @@
 ---
-layout: page
-title: "Glossary"
+layout: page title: "Glossary"
 permalink: /glossary/
 ---
 
 # Glossary of common terms
 
-Many of the terms used in this codebase may not be familiar to those who are not in the humanitarian sector. This document aims to define commonly used terms to allow for more consistency in naming and to clear up confusion for new contributers.
-
+Many of the terms used in this codebase may not be familiar to those who are not in the humanitarian sector. This
+document aims to define commonly used terms to allow for more consistency in naming and to clear up confusion for new
+contributers.
 
 | Term         | Explanation                                                                                                           | Contexts                    |
 |--------------|-----------------------------------------------------------------------------------------------------------------------|-----------------------------|
