@@ -724,7 +724,7 @@ describe("IAMClient - Party Types", () => {
   // Party Type List test omitted since party type list is not implemented
 })
 
-/*describe("IAMClient - Party Attribute Definitions", () => {
+describe.only("IAMClient - Party Attribute Definitions", () => {
   let testId: string
   let testAttribute = {
     countryId: "TESTCOUNTRYID",
@@ -786,12 +786,15 @@ describe("IAMClient - Party Types", () => {
   })
 
   it("Should return 200 on Get after Update", (done) => {
-    iamClient.PartyTypes().Get(testId)
+    iamClient.PartyAttributeDefinitions().Get(testId)
       .subscribe((response) => {
         if (response.status === 200) {
-          let gotPartyType = response.response as PartyType
-          expect(gotPartyType.name).to.equal(testPartyType.name)
-          expect(gotPartyType.isBuiltIn).to.equal(testPartyType.isBuiltIn)
+          let gotPartyAttributeDefinition = response.response as PartyAttributeDefinition
+          expect(gotPartyAttributeDefinition.countryId).to.equal(testAttribute.countryId)
+          testAttribute.partyTypeIds.forEach((id) => {
+            expect(gotPartyAttributeDefinition.partyTypeIds).to.include(id)
+          })
+          expect(gotPartyAttributeDefinition.isPii).to.equal(testAttribute.isPii)
           done()
         } else {
           done(expect(response.status).to.equal(200));
@@ -800,24 +803,26 @@ describe("IAMClient - Party Types", () => {
   })
 
   it("Should return 200 on List", (done) => {
-    iamClient.Relationships().List({} as RelationshipListOptions)
+    iamClient.PartyAttributeDefinitions().List({} as PartyAttributeDefinitionListOptions)
       .subscribe((response) => {
         if (response.status === 200) {
-          let gotRelationshipList = response.response as RelationshipList
-          let listContainsRelationship = false
-          gotRelationshipList.items.forEach((relationship) => {
-            if (relationship.id == testId) {
-              expect(relationship.relationshipTypeId).to.equal(testRelationship.relationshipTypeId)
-              expect(relationship.firstParty).to.equal(testRelationship.firstParty)
-              expect(relationship.secondParty).to.equal(testRelationship.secondParty)
-              listContainsRelationship = true
+          let gotPartyAttributeDefinitionList = response.response as PartyAttributeDefinitionList
+          let listContainsPartyAttributeDefinition = false
+          gotPartyAttributeDefinitionList.items.forEach((pad) => {
+            if (pad.id == testId) {
+              expect(pad.countryId).to.equal(testAttribute.countryId)
+              testAttribute.partyTypeIds.forEach((id) => {
+                expect(pad.partyTypeIds).to.include(id)
+              })
+              expect(pad.isPii).to.equal(testAttribute.isPii)
+              listContainsPartyAttributeDefinition = true
             }
           })
-          expect(listContainsRelationship).to.equal(true)
+          expect(listContainsPartyAttributeDefinition).to.equal(true)
           done()
         } else {
           done(expect(response.status).to.equal(200));
         }
       })
   })
-})*/
+})
