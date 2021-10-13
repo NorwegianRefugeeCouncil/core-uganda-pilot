@@ -1,0 +1,114 @@
+services:
+  mongo:
+    image: mongo
+    container_name: "core-mongo"
+    restart: on-failure
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
+  mongo-express:
+    image: mongo-express
+    container_name: "core-mongo-express"
+    restart: on-failure
+    links:
+      - "mongo"
+    depends_on:
+      - "mongo"
+    ports:
+      - "8090:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_SERVER: mongo
+
+  redis:
+    image: 'bitnami/redis:latest'
+    container_name: "core-redis"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - "6379:6379"
+    restart: on-failure
+
+  hydra_migrate:
+    image: oryd/hydra:v1.10.2
+    container_name: "core-hydra-migrate"
+    command:
+      - migrate
+      - sql
+      - --yes
+      - postgres://hydra:secret@hydra_db:5432/hydra?sslmode=disable&max_conns=20&max_idle_conns=4
+    restart: on-failure
+
+  hydra:
+    image: oryd/hydra:v1.10.2
+    container_name: "core-hydra"
+    ports:
+      - "4444:4444"
+      - "4445:4445"
+    command:
+      - serve
+      - all
+      - --dangerous-force-http
+    environment:
+      - DSN=postgres://hydra:secret@hydra_db:5432/hydra?sslmode=disable&max_conns=20&max_idle_conns=4
+      - SECRETS_SYSTEM=fVuJ0N1nFuymQjcnC4OWcIyo15gb0MYe
+      - URLS_SELF_ISSUER=http://localhost:4444
+      - URLS_CONSENT=http://localhost:9002/auth/consent
+      - URLS_LOGIN=http://localhost:9002/auth/login
+      - URLS_LOGOUT=http://localhost:9002/auth/logout
+      - LOG_LEAK_SENSITIVE_VALUES=true
+    restart: on-failure
+
+  hydra_db:
+    image: postgres:9.6
+    container_name: "core-hydra-db"
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=hydra
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=hydra
+    restart: on-failure
+
+  api:
+    container_name: core-api
+    build:
+      context: ../
+      dockerfile: build/package/Dockerfile
+    ports:
+      - "9002:9002"
+    restart: on-failure
+    command:
+      - /main
+      - --mongo-database=core
+      - --mongo-username=root
+      - --mongo-password=example
+      - --mongo-hosts=mongo:27017
+      - --redis-address=redis:6379
+      - --environment=Development
+      - --fresh=true
+      - --seed=true
+      - --tls-disable=true
+      - --hydra-admin-url=http://hydra:4445
+      - --hydra-public-url=http://hydra:4444
+      - --login-templates-directory=/static/webapp/templates/login
+      - --login-client-id=login
+      - --login-client-name=login
+      - --login-client-secret=somesecret
+      - --login-iam-host=localhost:9002
+      - --login-iam-scheme=http
+      - --web-templates-directory=/static/webapp/templates
+      - --web-static-directory=/static/webapp/static
+      - --web-client-id=webapp
+      - --web-client-secret=webapp
+      - --web-client-name=webapp
+      - --web-iam-host=localhost:9002
+      - --web-iam-scheme=http
+      - --web-cms-host=localhost:9002
+      - --web-cms-scheme=http
+      - --listen-address=:9002
+      - --base-url=http://localhost:9002

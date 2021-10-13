@@ -1,0 +1,16 @@
+import {testId, URL} from '../helpers';
+import TeamPage from './team.page';
+
+const TEAM_ROWS = testId('team');
+
+export default class TeamsOverviewPage {
+    visitPage = () => {
+        cy.visit(URL.teams);
+        return this;
+    };
+
+    visitTeam = () => {
+        cy.get(TEAM_ROWS).last().click();
+        return new TeamPage();
+    };
+}

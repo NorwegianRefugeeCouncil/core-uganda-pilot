@@ -1,0 +1,139 @@
+{{define "attribute"}}
+    <!doctype html>
+    <html lang="en">
+    {{template "head"}}
+    <body class="bg-light">
+
+    {{template "navbar" .}}
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+
+                <div class="card">
+                    <div class="card-body">
+
+                        <form id="attributes-form"
+                              action="/settings/attributes{{if .PartyAttributeDefinition}}/{{.PartyAttributeDefinition.ID}}{{end}}"
+                              method="post">
+
+                            <input type="hidden" id="id-input" name="id" value="{{.PartyAttributeDefinition.ID}}">
+
+                            <!-- Name -->
+                            <div class="mb-3 shadow-sm font-monospace">
+                                <label for="name" class="form-label">Name</label>
+                                <input id="id"
+                                       name="name"
+                                       type="text"
+                                       class="form-control"
+                                       value="{{.PartyAttributeDefinition.FormControl.Name}}"
+                                       data-testid="name"
+                                       required
+                                       maxlength="40"
+                                       aria-describedby="nameFeedback"
+                                >
+                                <div id="nameFeedback" class="invalid-feedback">This field is required</div>
+                            </div>
+
+                            <hr/>
+
+                            <div class="mb-3">
+                                <label for="label" class="form-label">Label</label>
+                                <input id="label" name="label"
+                                       value="{{if .PartyAttributeDefinition}}{{(index .PartyAttributeDefinition.FormControl.Label 0).Value}}{{end}}"
+                                       class="form-control" type="text" data-testid="label" required
+                                       aria-describedby="labelFeedback">
+                                <div id="labelFeedback" class="invalid-feedback">This field is required</div>
+                            </div>
+
+                            <!-- Control Type -->
+                            <div class="mb-3 shadow-sm">
+                                <label for="controlType">Control Type</label>
+                                <select id="controlType"
+                                        name="controlType"
+                                        class="form-select"
+                                        data-testid="control-type"
+                                        required
+                                        aria-describedby="controlTypeFeedback"
+                                >
+                                    {{range .ControlTypes}}
+                                        <option value="{{.}}"
+                                                {{if $.PartyAttributeDefinition}}{{if eq $.PartyAttributeDefinition.FormControl.Type .}}selected{{end}}{{end}}>{{.}}</option>
+                                    {{end}}
+                                </select>
+                                <div id="controlTypeFeedback" class="invalid-feedback">This field is required</div>
+                            </div>
+
+                            <!-- Subject Type -->
+                            <div class="mb-3 shadow-sm">
+                                <label for="subject-type-input">Subject Type</label>
+                                <select id="subject-type-input"
+                                        name="partyTypeIds"
+                                        class="form-select"
+                                        data-testid="subject"
+                                        required
+                                        multiple
+                                        aria-describedby="subjectTypeFeedback"
+                                >
+                                    {{range $option := .PartyTypes.Items}}
+                                        <option value="{{.ID}}"
+                                                {{range $id := $.PartyAttributeDefinition.PartyTypeIDs}}
+                                                    {{if eq $option.ID $id}}selected{{end}}
+                                                {{end}}
+                                        >{{.Name}}</option>
+                                    {{end}}
+                                </select>
+                                <div id="subjectTypeFeedback" class="invalid-feedback">Please choose at least one
+                                    option
+                                </div>
+                            </div>
+
+                            <!-- Required -->
+                            <div class="form-check form-switch mb-3">
+                                <input id="is-required"
+                                       name="isRequired"
+                                       type="checkbox"
+                                       class="form-check-input"
+                                       data-testid="required-checkbox"
+                                       {{if .PartyAttributeDefinition.FormControl.Validation.Required}}checked{{end}}
+                                >
+                                <label class="form-check-label" for="is-required">Is Required</label>
+                            </div>
+
+                            <!-- Personally Identifiable Info -->
+                            <div class="form-check form-switch mb-3">
+                                <input id="is-pii-input"
+                                       name="isPii"
+                                       type="checkbox"
+                                       class="form-check-input"
+                                       data-testid="personal-info-chkbx"
+                                       {{if .PartyAttributeDefinition.IsPersonallyIdentifiableInfo}}checked{{end}}
+                                >
+                                <label class="form-check-label" for="is-pii-input">Is Personally Identifiable
+                                    Information</label>
+                            </div>
+
+                            <button id="form-submit-btn" class="btn btn-primary" data-testid="save-btn">Save</button>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import validate from '/static/js/validation.js';
+
+        const form = document.getElementById('attributes-form');
+        const submitBtn = document.getElementById('form-submit-btn');
+        submitBtn.onclick = event => {
+            event.preventDefault();
+            validate([form]);
+        };
+
+    </script>
+    </body>
+
+    </html>
+{{end}}
