@@ -1,0 +1,91 @@
+{{define "casenew"}}
+    <!doctype html>
+    <html lang="en">
+    {{template "head"}}
+    <body class="bg-light">
+    {{template "navbar"}}
+    {{template "notifications"}}
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Create Case</h4>
+                <form id="case-form" data-testid='newCaseForm' action="/cases" method="post">
+                    <div class="form mb-3">
+                        <label for="case-type">Select Case Type</label>
+                        <select
+                                id="case-type"
+                                class="form-select"
+                                name="caseTypeId"
+                                data-testid="casetype-select"
+                                required
+                        >
+                            {{if .CaseTypes}}
+                                <option value="">Choose</option>
+                                {{range .CaseTypes.Items}}
+                                    <option value="{{.ID}}"
+                                            data-testid="caseTypeOption"
+                                            {{if $.CaseType}}{{if (eq .ID $.CaseType.ID)}}selected{{end}}{{end}}>
+                                        {{- .Name -}}
+                                    </option>
+                                {{end}}
+                            {{else}}
+                                <option selected disabled>No case types defined</option>
+                            {{end}}
+                        </select>
+                    </div>
+                    {{ if or .ValidatedForm .CaseType}}
+                        <div class="form mb-3">
+                            <label for="team">Corresponding Team</label>
+                            <select disabled id="team" class="form-select" name="teamId">
+                                <option selected value="{{.Team.ID}}">{{.Team.Name}}</option>
+                            </select>
+                        </div>
+
+                        <div class="form mb-3">
+                            <label for="party">Select Party</label>
+                            <select id="party" class="form-select" name="partyId" data-testid="party-select" required>
+                                {{if .Parties}}
+                                    <option {{if not $.PartyID}}selected{{end}}></option>
+                                    {{range .Parties.Items}}
+                                        <option value="{{.ID}}" data-testid="partyOption"
+                                                {{if eq .ID $.PartyID}}selected{{end}}>{{.}}</option>
+                                    {{end}}
+                                {{else}}
+                                    <option selected disabled>No parties defined</option>
+                                {{end}}
+                            </select>
+                        </div>
+                        {{template "form" .Form}}
+                    {{end}}
+                    <button id="case-submit-btn" class="btn btn-primary" data-testid="submitBtn">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        const caseTypeSelect = document.querySelector('#case-type');
+        caseTypeSelect.onchange = (event) => {
+            const caseTypeId = event.target.value;
+            if (caseTypeId === '') {
+                return;
+            }
+            location.assign(`/cases/new?caseTypeId=${caseTypeId}`);
+        };
+
+    </script>
+    <script type="module">
+        import {validateClientSide, validateServerSide} from '/static/js/validation.js';
+
+        const form = document.getElementById('case-form');
+        const submitBtn = document.getElementById('case-submit-btn');
+        submitBtn.onclick = event => {
+            event.preventDefault();
+            if (validateClientSide([form])) {
+                validateServerSide([form], form.action);
+            }
+        };
+    </script>
+    </body>
+    </html>
+{{end}}
