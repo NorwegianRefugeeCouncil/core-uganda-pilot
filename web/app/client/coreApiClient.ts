@@ -248,7 +248,7 @@ function responseAs<T>(): OperatorFunction<Response, T> {
       } else {
         return resp.body;
       }
-    });
+    }));
   };
 }
 
@@ -280,47 +280,47 @@ class PartyClient2 {
 
 }
 
+//
+// function myTest() {
+//
+//   var client = new Client();
+//   var partyClient = new PartyClient2(client);
+//   partyClient.execute = () => {
+//     return s => {
+//       return of(new Response({ id: 'abcdef' }));
+//     };
+//   };
+//   partyClient.execute = () => {
+//     return s => {
+//       return of(new Response({ status: 500, error: 'abcdef' }));
+//     };
+//   };
+//   partyClient.execute = () => {
+//     return s => {
+//       s.subscribe(r => {
+//
+//       });
+//     };
+//   };
+//
+// }
 
-function myTest() {
 
-  var client = new Client();
-  var partyClient = new PartyClient2(client);
-  partyClient.execute = () => {
-    return s => {
-      return of(new Response({ id: 'abcdef' }));
-    };
-  };
-  partyClient.execute = () => {
-    return s => {
-      return of(new Response({ status: 500, error: 'abcdef' }));
-    };
-  };
-  partyClient.execute = () => {
-    return s => {
-      s.subscribe(r => {
-
-      });
-    };
-  };
-
-}
-
-
-const myClient = new PartyClient2();
-const subject = new Subject<string>();
-const party$ = subject.pipe(myClient.get()).subscribe({
-    next: party => {
-
-    },
-    error: err => {
-
-    },
-    complete: () => {
-    }
-  }
-);
-
-subject.next('mynewid');
+// const myClient = new PartyClient2();
+// const subject = new Subject<string>();
+// const party$ = subject.pipe(myClient.get()).subscribe({
+//     next: party => {
+//
+//     },
+//     error: err => {
+//
+//     },
+//     complete: () => {
+//     }
+//   }
+// );
+//
+// subject.next('mynewid');
 
 
 class HttpClient<T> {

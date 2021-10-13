@@ -1,9 +1,9 @@
 import { Observable } from 'rxjs';
-import { Case, CaseList, CaseListOptions, Comment, CaseType, CaseTypeListOptions, CommentListOptions, Party, PartySearchOptions, PartyListOptions, PartyList, Country, CountryListOptions, CountryList, IdentificationDocument, IdentificationDocumentList, IdentificationDocumentListOptions, IdentificationDocumentType, IdentificationDocumentTypeList, IdentificationDocumentTypeListOptions, Individual, IndividualList, IndividualListOptions, Membership, MembershipList, MembershipListOptions, Nationality, NationalityList, NationalityListOptions, PartyAttributeDefinition, PartyAttributeDefinitionList, PartyAttributeDefinitionListOptions, PartyType, PartyTypeList, PartyTypeListOptions, Relationship, RelationshipList, RelationshipListOptions, RelationshipType, RelationshipTypeList, RelationshipTypeListOptions, Team, TeamList, TeamListOptions, CommentList, CaseTypeList } from './types/models';
+import { Case, CaseList, CaseListOptions, CaseType, CaseTypeList, CaseTypeListOptions, Comment, CommentList, CommentListOptions, Country, CountryList, CountryListOptions, IdentificationDocument, IdentificationDocumentList, IdentificationDocumentListOptions, IdentificationDocumentType, IdentificationDocumentTypeList, IdentificationDocumentTypeListOptions, Individual, IndividualList, IndividualListOptions, Membership, MembershipList, MembershipListOptions, Nationality, NationalityList, NationalityListOptions, Party, PartyAttributeDefinition, PartyAttributeDefinitionList, PartyAttributeDefinitionListOptions, PartyList, PartyListOptions, PartySearchOptions, PartyType, PartyTypeList, PartyTypeListOptions, Relationship, RelationshipList, RelationshipListOptions, RelationshipType, RelationshipTypeList, RelationshipTypeListOptions, Team, TeamList, TeamListOptions } from './types/models';
 import { AjaxResponse } from 'rxjs/ajax';
 declare class HttpClient<T> {
     headers: {
-        "X-Authenticated-User-Subject"?: string;
+        'X-Authenticated-User-Subject'?: string;
     };
     constructor(shouldAddAuthPassthroughHeader: boolean);
     get(url: string): Observable<AjaxResponse<T>>;

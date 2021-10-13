@@ -1,6 +1,3 @@
-/* Do not change, this code is generated from Golang structs */
-
-
 export interface Error {
     type: string;
     field: string;
@@ -45,15 +42,15 @@ export interface PartyAttributeDefinitionList {
     items: PartyAttributeDefinition[];
 }
 export interface PartyAttributeDefinitionListOptions {
-
 }
 export interface AttributeMap {
-
 }
 export interface Party {
     id: string;
     partyTypeIds: string[];
-    attributes: {[key: string]: string[]};
+    attributes: {
+        [key: string]: string[];
+    };
 }
 export interface PartyList {
     items: Party[];
@@ -64,7 +61,6 @@ export interface PartyType {
     isBuiltIn: boolean;
 }
 export interface PartyTypeList {
-
 }
 export interface Relationship {
     id: string;
@@ -80,9 +76,7 @@ export interface PartyTypeRule {
     secondPartyTypeId: string;
 }
 export interface RelationshipTypeRule {
-//    ?: PartyTypeRule;
 }
-
 export interface RelationshipType {
     id: string;
     isDirectional: boolean;
@@ -97,7 +91,9 @@ export interface RelationshipTypeList {
 export interface Individual {
     id: string;
     partyTypeIds: string[];
-    attributes: {[key: string]: string[]};
+    attributes: {
+        [key: string]: string[];
+    };
 }
 export interface Links {
     first: string;
@@ -149,47 +145,39 @@ export interface MembershipList {
 }
 export interface Nationality {
     id: string;
-    CountryId: string;
+    countryId: string;
     teamId: string;
 }
 export interface NationalityList {
     items: Nationality[];
 }
 export interface PartyListOptions {
-
 }
 export interface PartySearchOptions {
     partyIds: string[];
     partyTypeIds: string[];
-    attributes: {[key: string]: string};
+    attributes: {
+        [key: string]: string;
+    };
     searchParam: string;
 }
 export interface PartyTypeListOptions {
-
 }
 export interface RelationshipListOptions {
-
 }
 export interface RelationshipTypeListOptions {
-
 }
 export interface TeamListOptions {
-
 }
 export interface CountryListOptions {
-
 }
 export interface StaffListOptions {
-
 }
 export interface MembershipListOptions {
-
 }
 export interface NationalityListOptions {
-
 }
 export interface IndividualListOptions {
-
 }
 export interface IdentificationDocument {
     id: string;
@@ -201,7 +189,6 @@ export interface IdentificationDocumentList {
     items: IdentificationDocument[];
 }
 export interface IdentificationDocumentListOptions {
-
 }
 export interface IdentificationDocumentType {
     id: string;
@@ -211,7 +198,6 @@ export interface IdentificationDocumentTypeList {
     items: IdentificationDocumentType[];
 }
 export interface IdentificationDocumentTypeListOptions {
-
 }
 export interface Section {
     title: LocaleString[];
@@ -231,7 +217,9 @@ export interface Case {
     parentId: string;
     intakeCase: boolean;
     form: Form;
-    formData: {[key: string]: string[]};
+    formData: {
+        [key: string]: string[];
+    };
     done: boolean;
 }
 export interface CaseList {
@@ -249,7 +237,6 @@ export interface CaseTypeList {
     items: CaseType[];
 }
 export interface Time {
-
 }
 export interface Comment {
     id: string;
@@ -263,11 +250,8 @@ export interface CommentList {
     items: Comment[];
 }
 export interface CaseListOptions {
-
 }
 export interface CaseTypeListOptions {
-
 }
 export interface CommentListOptions {
-
 }

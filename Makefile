@@ -28,8 +28,11 @@ test: test-integration test-e2e
 build:
 	@./scripts/build.sh
 
-serve: build
+serve:
 	@./scripts/serve.sh
+
+frontend:
+	@./scripts/frontend.sh
 
 watch:
 	@./scripts/watch.sh
@@ -40,4 +43,4 @@ docker-build:
 docker-push: docker-build
 	@docker push digitalbackbonecr.azurecr.io/nrc-no/core:latest
 
-.PHONY: up down serve build test
+.PHONY: up down serve build test frontend
