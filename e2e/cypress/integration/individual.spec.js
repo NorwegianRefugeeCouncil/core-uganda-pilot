@@ -38,7 +38,6 @@ const data = {
         optionIdx: 0,
         priorityTxt: 'text content',
         commentStartingPoint: 'comment on service starting point',
-        commentOtherServices: 'comment on other services',
     },
 };
 

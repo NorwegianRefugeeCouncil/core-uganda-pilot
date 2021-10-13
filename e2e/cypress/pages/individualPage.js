@@ -32,6 +32,8 @@ const selector = {
     commentOtherServices: nameAttr('commentOtherServices'),
     responseTab: '#response-tab',
     response: '#response',
+    doneSituationAnalysis: testId('done-check-situation'),
+    doneResponse: testId('done-check-response'),
 };
 
 const ugandaAttributeNames = [
@@ -222,6 +224,7 @@ export default class IndividualPage {
         this.getSituationAnalysis()
             .find(selector.textArea)
             .each($t => cy.wrap($t).clear().type(data));
+        this.getSituationAnalysis().find(selector.doneSituationAnalysis).check();
         return this;
     };
     verifySituationAnalysis = data => {
@@ -242,7 +245,7 @@ export default class IndividualPage {
             cy.get(selector.taxonomyInput).each($t => this.fillTaxonomyInput($t, data.optionIdx));
             cy.get(selector.perceivedPriority).clear().type(data.priorityTxt);
             cy.get(selector.commentStartingPoint).clear().type(data.commentStartingPoint);
-            cy.get(selector.commentOtherServices).clear().type(data.commentOtherServices);
+            cy.get(selector.doneResponse).check();
         });
         return this;
     };
@@ -264,7 +267,6 @@ export default class IndividualPage {
             cy.get(selector.taxonomyInput).each($t => this.verifyTaxonomyInput($t, data.optionIdx));
             cy.get(selector.perceivedPriority).should('have.value', data.priorityTxt);
             cy.get(selector.commentStartingPoint).should('have.value', data.commentStartingPoint);
-            cy.get(selector.commentOtherServices).should('have.value', data.commentOtherServices);
         });
     };
 

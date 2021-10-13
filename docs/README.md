@@ -15,19 +15,10 @@ __nb__ Use your IDE of choice, but be aware this repository includes convenience
 
 #### 1. Install dependencies
 
-(GoLand should do this automatically the first time you open the directory)
-```bash
-cd api
-go get ./cmd
-cd ../e2e
-npm install
-```
-You will also need to install `air`: [https://github.com/cosmtrek/air](https://github.com/cosmtrek/air). Make sure `air` is available in `bash`'s `PATH
+- `nix`: https://nixos.org/guides/install-nix.html
+- `direnv`: https://direnv.net/ (make sure to [setup direnv to work with your shell](https://direnv.net/docs/hook.html))
 
-And Typescript: `npm install -g typescript`. -> make sure `tsc` is available from bash
-
-**note**, all the following commands are run from the `api` directory, unless otherwise specified
-
+*nb* If you use a shell other than `bash` you'll have to take some extra care to setup nix; lot's of guides available for `zsh` and `fish` shells
 
 #### 2. Generate certificates (you only have to do this once)
 
@@ -35,7 +26,7 @@ And Typescript: `npm install -g typescript`. -> make sure `tsc` is available fro
 make gen-certs
 ```
 
-#### 3. Install git hooks
+#### 3. Install git hooks (you only have to do this once)
 
 Navigate to the `actions` directory
 ```bash
