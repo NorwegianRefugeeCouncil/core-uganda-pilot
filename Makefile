@@ -28,7 +28,7 @@ test: test-integration test-e2e
 build:
 	@./scripts/build.sh
 
-serve: build
+serve:
 	@./scripts/serve.sh
 
 watch:

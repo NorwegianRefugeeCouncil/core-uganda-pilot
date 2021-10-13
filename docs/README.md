@@ -36,6 +36,11 @@ Navigate to the `actions` directory
 ./install_githooks.sh
 ```
 
+#### 4. Build
+```bash
+make build
+```
+
 ### Launch
 
 #### 1. Start the backend services
@@ -57,8 +62,6 @@ make up
  make watch
  ```
 
-These are also available as run configs from Goland
-
 ### Endpoints:
 
 - webapp: [http://localhost:9000](http://localhost:9000)
@@ -76,7 +79,5 @@ To log into the webapp, you may use the following credentials:
 With the git hook installed, tests will run locally automatically before every push. If any tests fail, the push
 operation will be aborted.
 
-You can run tests manually: with `make test-iam`, `make test-cms`, `make test-attachments` and `make test-e2e`
-
-Or via the run configurations available in Goland.
+You can run integration and e2e tests with `make test`
 
