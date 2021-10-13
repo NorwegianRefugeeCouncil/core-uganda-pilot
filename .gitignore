@@ -1,5 +1,5 @@
 .vscode/
-.idea/
+.idea/*
 !.idea/runConfigurations/
 actions/__tmp/
 api/tmp/
