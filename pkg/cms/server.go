@@ -121,5 +121,4 @@ func (s *Server) ResetDB(ctx context.Context, databaseName string) error {
 		return err
 	}
 	return mongoClient.Database(databaseName).Drop(ctx)
-	return nil
 }
