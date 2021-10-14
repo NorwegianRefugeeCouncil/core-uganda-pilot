@@ -11,39 +11,30 @@ interface ClientSideFormcontrolValidation {
     errors: string[];
 }
 
-// validateServerSide initiates and handles server-side validation for document form entities. The handler sends form
-// data to the provided endpoints and awaits a validation response object from the server. If validation is received,
-// the handler applies it to the concerned DOM elements. If no validation is received, the handler redirects the browser
-// to the appropriate location.
-export async function validateServerSide(forms: HTMLFormElement[], redirectPath = '') {
-    let redirect = redirectPath ?? location.origin;
-    const validations = await Promise.allSettled(forms.map(async (formcontrol) => {
-        try {
-            const validation = await validateSubForm(formcontrol);
-            removeFormValidation(formcontrol);
-            if (validation instanceof Response) {
-                if (validation.url.includes('individuals')) {
-                    redirect = validation.url;
-                }
-            } else {
-                formcontrol.classList.add('was-validated');
-                applyServerSideValidation(validation);
-                return Promise.resolve(true);
-            }
-        } catch (e) {
-            console.error(e);
-        }
-        return Promise.resolve(false);
-    }));
-
-    const passedValidation = validations.every(v => v.status !== 'rejected' && !v.value);
-
-    if (passedValidation) {
-        location.assign(redirect);
-    }
+interface ValidationOptions {
+    redirectPath?: string;
 }
 
-export function validateClientSide(forms: HTMLFormElement[]): boolean {
+export default function (forms: HTMLFormElement | HTMLFormElement[], submitBtn: HTMLButtonElement, options?: ValidationOptions) {
+    let redirect = options?.redirectPath;
+
+    const f: HTMLFormElement[] = forms instanceof HTMLFormElement ? [forms] : forms
+
+    submitBtn.addEventListener('click', event => {
+        event.preventDefault()
+        if (validateClientSide(f)) {
+            submitBtn.disabled = true;
+            validateServerSide(f).then(isValid => {
+                if (isValid) {
+                    submitBtn.disabled = false;
+                    if (redirect) location.assign(redirect);
+                }
+            });
+        }
+    })
+}
+
+function validateClientSide(forms: HTMLFormElement[]): boolean {
     // FIXME I'm really dumb.
     //  For instance, I validate input, select, and textarea elements but not custom form elements.
     let isValid = true;
@@ -54,6 +45,35 @@ export function validateClientSide(forms: HTMLFormElement[]): boolean {
         form.classList.add('was-validated');
     }
     return isValid;
+}
+
+// validateServerSide initiates and handles server-side validation for document form entities. The handler sends form
+// data to the provided endpoints and awaits a validation response object from the server. If validation is received,
+// the handler applies it to the concerned DOM elements. If no validation is received, the handler redirects the browser
+// to the appropriate location.
+async function validateServerSide(forms: HTMLFormElement[]): Promise<boolean> {
+    const validations = await Promise.allSettled(forms.map(async (formcontrol) => {
+        try {
+            const validation = await validateSubForm(formcontrol);
+
+            removeFormValidation(formcontrol);
+
+            if (validation instanceof Response) {
+                // follow redirect
+                location.assign(validation.url);
+            } else {
+                formcontrol.classList.add('was-validated');
+                applyServerSideValidation(validation);
+                return Promise.resolve(true);
+            }
+        } catch (e) {
+            console.error(e);
+        }
+
+        return Promise.resolve(false);
+    }));
+
+    return Promise.resolve(validations.every(v => v.status !== 'rejected' && !v.value));
 }
 
 function collectSearchParams(formcontrol: HTMLFormElement): URLSearchParams {
@@ -86,7 +106,8 @@ async function validateSubForm(formcontrol: HTMLFormElement): Promise<ServerSide
     const options = {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Accept': 'application/json'
         },
         body: collectSearchParams(formcontrol)
     };

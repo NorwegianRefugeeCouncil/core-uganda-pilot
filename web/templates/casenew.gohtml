@@ -75,16 +75,12 @@
 
     </script>
     <script type="module">
-        import {validateClientSide, validateServerSide} from '/static/js/validation.js';
+        import validate from '/static/js/validation.js';
 
         const form = document.getElementById('case-form');
         const submitBtn = document.getElementById('case-submit-btn');
-        submitBtn.onclick = event => {
-            event.preventDefault();
-            if (validateClientSide([form])) {
-                validateServerSide([form], form.action);
-            }
-        };
+
+        validate(form, submitBtn)
     </script>
     </body>
     </html>
