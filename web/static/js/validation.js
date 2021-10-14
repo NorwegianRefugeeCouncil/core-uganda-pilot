@@ -16,9 +16,11 @@ export default function (forms, submitBtn, options) {
             submitBtn.disabled = true;
             validateServerSide(f).then(isValid => {
                 if (isValid) {
-                    submitBtn.disabled = false;
                     if (redirect)
                         location.assign(redirect);
+                }
+                else {
+                    submitBtn.disabled = false;
                 }
             });
         }

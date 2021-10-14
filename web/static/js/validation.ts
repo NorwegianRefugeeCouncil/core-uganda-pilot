@@ -26,8 +26,9 @@ export default function (forms: HTMLFormElement | HTMLFormElement[], submitBtn: 
             submitBtn.disabled = true;
             validateServerSide(f).then(isValid => {
                 if (isValid) {
-                    submitBtn.disabled = false;
                     if (redirect) location.assign(redirect);
+                } else {
+                    submitBtn.disabled = false;
                 }
             });
         }
