@@ -107,6 +107,12 @@
                         <h1 class="display-4 me-3">Situation Analysis</h1>
                         <h5><span class="badge bg-primary">{{(index .Progress 1).StageStatus}}</span></h5>
                     </div>
+                    {{if .SituationAnalysisCreator}}
+                        <div class="p-3 bg-light mb-3 shadow-sm">
+                            <span>Created by </span>
+                            <a href="/individuals/{{.SituationAnalysisCreator.ID}}">{{.SituationAnalysisCreator}}</a>
+                        </div>
+                    {{end}}
                     <div class="card mb-3">
                         <div class="card-body">
                             <form id="situation-analysis-form" action="/cases/{{.SituationAnalysis.ID}}">
@@ -131,6 +137,12 @@
                         <h1 class="display-4 me-3">Response</h1>
                         <h5><span class="badge bg-primary">{{(index .Progress 2).StageStatus}}</span></h5>
                     </div>
+                    {{if .IndividualResponseCreator}}
+                        <div class="p-3 bg-light mb-3 shadow-sm">
+                            <span>Created by </span>
+                            <a href="/individuals/{{.IndividualResponseCreator.ID}}">{{.IndividualResponseCreator}}</a>
+                        </div>
+                    {{end}}
                     <div class="card mb-3">
                         <div class="card-body">
                             <form id="response-form" action="/cases/{{.IndividualResponse.ID}}">

@@ -293,17 +293,33 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var individual *iam.Individual
+
 	var parties *iam.IndividualList
+
 	var caseTypes *cms.CaseTypeList
+
 	var cList *cms.CaseList
+
 	var partyTypes *iam.PartyTypeList
+
 	var relationshipsForIndividual *iam.RelationshipList
+
 	var relationshipTypes *iam.RelationshipTypeList
+
 	var attrs *iam.PartyAttributeDefinitionList
+
 	var teams *iam.TeamList
+
 	var situationAnalysis *cms.Case
-	var individualResponse *cms.Case
+
 	var saForm form.Form
+
+	var saCreator *iam.Party;
+
+	var individualResponse *cms.Case
+
+	var irCreator *iam.Party;
+
 	var irForm form.Form
 
 	g, waitCtx := errgroup.WithContext(ctx)
@@ -390,8 +406,12 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		}
 		if len(returnedCases.Items) == 1 {
 			kase := returnedCases.Items[0]
+
 			situationAnalysis = kase
 			saForm = form.NewValidatedForm(kase.Form, kase.FormData, nil)
+
+			saCreator, err = iamClient.Parties().Get(ctx, situationAnalysis.CreatorID)
+			return err
 		}
 		return err
 	})
@@ -407,8 +427,12 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		}
 		if len(cases.Items) == 1 {
 			kase := cases.Items[0]
+
 			individualResponse = kase
 			irForm = form.NewValidatedForm(kase.Form, kase.FormData, nil)
+
+			irCreator, err = iamClient.Parties().Get(ctx, individualResponse.CreatorID)
+			return err
 		}
 		return err
 	})
@@ -494,8 +518,10 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		"HouseholdPartyTypeID":      iam.HouseholdPartyType.ID,
 		"TeamPartyTypeID":           iam.TeamPartyType.ID,
 		"SituationAnalysis":         situationAnalysis,
+		"SituationAnalysisCreator":  saCreator,
 		"SituationAnalysisForm":     saForm,
 		"IndividualResponse":        individualResponse,
+		"IndividualResponseCreator": irCreator,
 		"IndividualResponseForm":    irForm,
 		"Status":                    status,
 		"ProgressLabel":             progressLabel,
