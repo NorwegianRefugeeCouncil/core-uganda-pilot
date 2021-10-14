@@ -50,6 +50,8 @@ if [ ! "$?" ]; then
 fi
 
 echo ">>> Updated frontend"
+
+cd ../../../
 go build -o ./tmp/main ./cmd/core
 
 if [ ! "$?" ]; then
