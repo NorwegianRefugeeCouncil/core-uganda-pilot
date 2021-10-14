@@ -138,3 +138,4 @@ describe('IAMClient - Parties', () => {
     subject.next(partyId)
   })
 })
+
