@@ -54,6 +54,57 @@ import { XMLHttpRequest } from 'xhr2';
 // needed for rxjs/ajax compatibility outside the browser
 global.XMLHttpRequest = global.XMLHttpRequest ? global.XMLHttpRequest : XMLHttpRequest;
 
+export type AjaxRequestOptions = {
+    url: string,
+    headers: Headers,
+    method: string,
+    async: boolean,
+    timeout: number,
+    crossDomain: boolean,
+    withCredentials: boolean,
+    body: any
+}
+
+export function prepareRequestOptions(req: Request): AjaxRequestOptions {
+    let url = `${req._client._scheme}://${req._client._host}`
+    if (req._path) {
+        url = url + req._path;
+    }
+
+    let headers: Headers = {};
+
+    copyHeaders(req._client._headers, headers);
+    copyHeaders(req._headers, headers);
+
+    if (!headers['Content-Type']) {
+        headers['Content-Type'] = ['application/json'];
+    }
+
+    if (!headers['Accept']) {
+        headers['Accept'] = ['application/json'];
+    }
+
+    const queryParams = req._params
+    if (queryParams != null && Object.keys(queryParams as Object).length > 0) {
+        url = appendQueryParams(url, queryParams)
+    }
+    const pathParams = req._pathParams
+    if (pathParams != null && Object.keys(pathParams).length > 0) {
+        url = replacePathParams(url, pathParams)
+    }
+
+    return {
+        url: url,
+        headers: headers,
+        method: req._verb,
+        async: true,
+        timeout: 0,
+        crossDomain: true,
+        withCredentials: false,
+        body: req._body
+    } as AjaxRequestOptions
+}
+
 function copyHeaders(from: Headers, to: Headers) {
   for (let headerKey in from) {
     if (from.hasOwnProperty(headerKey)) {
@@ -94,9 +145,9 @@ function isErrorResponse(data: any): boolean {
 }
 
 class Client {
-  private readonly _scheme: string
-  private readonly _host: string
-  private _headers: Headers
+  readonly _scheme: string
+  readonly _host: string
+  _headers: Headers
 
   constructor(host: string, scheme: string, headers: Headers) {
     this._host = host
@@ -125,44 +176,18 @@ class Client {
     return source => {
       return source.pipe(
         switchMap(req => {
-
-          let url = `${req._client._scheme}://${req._client._host}`
-          if (req._path) {
-            url = url + req._path;
-          }
-
-          let headers: Headers = {};
-
-          copyHeaders(req._client._headers, headers);
-          copyHeaders(req._headers, headers);
-
-          if (!headers['Content-Type']) {
-            headers['Content-Type'] = ['application/json'];
-          }
-
-          if (!headers['Accept']) {
-            headers['Accept'] = ['application/json'];
-          }
-
-          const queryParams = req._params
-          if (queryParams != null && Object.keys(queryParams as Object).length > 0) {
-            url = appendQueryParams(url, queryParams)
-          }
-          const pathParams = req._pathParams
-          if (pathParams != null && Object.keys(pathParams).length > 0) {
-            url = replacePathParams(url, pathParams)
-          }
-
+          const tmpReq = req
+          const ro = prepareRequestOptions(tmpReq)
           return ajax(
             {
-              url: url,
-              headers: headers,
-              method: req._verb,
-              async: true,
-              timeout: 0,
-              crossDomain: true,
-              withCredentials: false,
-              body: req._body
+              url: ro.url,
+              headers: ro.headers,
+              method: ro.method,
+              async: ro.async,
+              timeout: ro.timeout,
+              crossDomain: ro.crossDomain,
+              withCredentials: ro.withCredentials,
+              body: ro.body
             }
           );
         }),
@@ -201,7 +226,7 @@ export class Response {
   }
 }
 
-class Request {
+export class Request {
   public _client: Client
   public _error: Error
   public _path: string
@@ -299,7 +324,7 @@ class PartyClient {
 
   Update(): OperatorFunction<Party, Party> {
     return party$ => party$.pipe(
-      map(party => this.client.put().path('/apis/iam/v1/parties/:id').pathParam('id', party.id)),
+      map(party => this.client.put().body(party).path('/apis/iam/v1/parties/:id').pathParam('id', party.id)),
       this.execute(),
       responseAs<Party>()
     )

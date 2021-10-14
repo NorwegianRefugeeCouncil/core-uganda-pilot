@@ -48,73 +48,93 @@ import {
   CaseTypeList, Control
 } from './types/models';
 import { expect } from 'chai'
-import { of, Subject } from 'rxjs';
+import { of, Subject, map, OperatorFunction } from 'rxjs';
 import { switchMap } from 'rxjs/operators'
-import { IAMClient, Headers, Response } from './coreApiClient';
+import { IAMClient, Headers, Response, Request, prepareRequestOptions, AjaxRequestOptions } from './coreApiClient';
 
-const defaultHost = "localhost:9000"
-const defaultScheme = "http"
-const defaultHeaders: Headers = {
-  'X-Authenticated-User-Subject': ['stephen.kabagambe@email.com']
+const defaults = {
+    global: {
+        scheme: 'testscheme',
+        host: 'testhost',
+        headers: {
+            'X-Authenticated-User-Subject': ['test@user.email']
+        }
+    },
+    parties: {
+        party: {
+            id: 'TESTPARTYID',
+            partyTypeIds: [
+                'TESTPARTYTYPEID'
+            ],
+            attributes: {'TESTATTRIBUTEKEY': ['TESTATTRIBUTEVALUE']}
+        },
+        partyGetRequestOptions: {
+            url: 'http://localhost:9000/apis/iam/v1/parties/TESTPARTYID',
+            headers: {
+                'X-Authenticated-User-Subject': ['test@user.email'],
+                'Content-Type': ['application/json'],
+                Accept: ['application/json']
+            },
+            method: 'GET',
+            async: true,
+            timeout: 0,
+            crossDomain: true,
+            withCredentials: false,
+            body: undefined
+        },
+        partyUpdateRequestOptions: {
+            url: 'testscheme://testhost/apis/iam/v1/parties/TESTPARTYID',
+            headers: {
+                'X-Authenticated-User-Subject': ['test@user.email'],
+                'Content-Type': ['application/json'],
+                Accept: ['application/json']
+            },
+            method: 'PUT',
+            async: true,
+            timeout: 0,
+            crossDomain: true,
+            withCredentials: false,
+            body: undefined
+        }
+    }
 }
 
 describe('IAMClient - Parties', () => {
   let subject
   let iamClient
   let partyClient
+  let partyId
+  let party
+
+  // sets up test variables and injects mock execute function
+  const init = (execute: () => OperatorFunction<Request, Response>) => {
+      partyId = defaults.parties.party.id
+      subject = new Subject<string>()
+      iamClient = new IAMClient(
+          defaults.global.scheme,
+          defaults.global.host,
+          defaults.global.headers
+      )
+      partyClient = iamClient.Parties()
+      partyClient.execute = execute
+  }
+
+  // GET
   before(() => {
-    subject = new Subject<string>()
-    iamClient = new IAMClient("http", "localhost:9000", {
-      'X-Authenticated-User-Subject': ['stephen.kabagambe@email.com']
+    init((): OperatorFunction<Request, Response> => {
+        return source => {
+            return source.pipe(
+                switchMap(req => {
+                    let ro = prepareRequestOptions(req)
+                    expect(ro).to.deep.equal(defaults.parties.partyGetRequestOptions)
+                    return of(new Response({ id: 'abcdef' }))
+                })
+            )
+        }
     })
-    partyClient = iamClient.Parties()
-    partyClient.execute = () => {
-      return s => {
-        console.log("Custom PartyClient Execute", s)
-        s.pipe(switchMap(req => {}))
-        return of(new Response({ id: 'abcdef' }));
-      };
-    }
   })
-  it('Should return expected value for get request', (done) => {
-    subject.pipe(partyClient.Get()).subscribe((party) => {
-      console.log(party)
-      done()
-    })
-    subject.next('78b494dc-7461-42f5-bf2d-1c9695e63ba8')
+  it('should correctly build GET request', (done) => {
+    subject.pipe(partyClient.Get()).subscribe((party) => {done()})
+    subject.next(partyId)
   })
 })
-
-// function myTest() {
-//
-//   var client = new Client();
-//   var partyClient = new PartyClient2(client);
-//   partyClient.execute = () => {
-//     return s => {
-//       return of(new Response({ id: 'abcdef' }));
-//     };
-//   };
-//   partyClient.execute = () => {
-//     return s => {
-//       return of(new Response({ status: 500, error: 'abcdef' }));
-//     };
-//   };
-//
-// }
-//
-// const client = new Client()
-// const myClient = new PartyClient2(client);
-// const subject = new Subject<string>();
-// const party$ = subject.pipe(myClient.get()).subscribe({
-//     next: party => {
-//
-//     },
-//     error: err => {
-//
-//     },
-//     complete: () => {
-//     }
-//   }
-// );
-//
-// subject.next('mynewid');
