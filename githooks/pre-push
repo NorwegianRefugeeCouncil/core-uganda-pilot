@@ -11,9 +11,6 @@ PREFIX="[pre-push]"
 trap 'jobs -p | xargs -r kill' EXIT
 
 
-#
-#
-#
 echo "$PREFIX Running hook..."
 
 #
