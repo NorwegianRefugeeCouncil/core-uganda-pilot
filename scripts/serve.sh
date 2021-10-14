@@ -1,17 +1,7 @@
 #!/usr/bin/env bash
 
-function cleanup() {
-	# kill all child processes
-	pkill -P $$
-}
 # cleanup on exit
-for sig in INT QUIT HUP TERM; do
-	trap "
-	cleanup
-	trap - $sig EXIT
-	kill -s $sig "'"$$"' "$sig"
-done
-trap cleanup EXIT
+trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 flags="--mongo-database=core \
        	--mongo-username=root \
