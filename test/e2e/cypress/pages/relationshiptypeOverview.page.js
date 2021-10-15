@@ -1,4 +1,4 @@
-import {URL} from '../helpers';
+import { URL } from '../helpers';
 import NewRelationshiptypePage from './newRelationshiptype.page';
 
 const RELATIONSHIPTYPE_ROWS = '[data-testid=relationshiptype]';

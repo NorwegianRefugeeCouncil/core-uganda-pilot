@@ -32,38 +32,46 @@ func (s *Server) Individuals(w http.ResponseWriter, req *http.Request) {
 	iamClient, err := s.IAMClient(req)
 	if err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
-	if req.Method == "POST" {
+	if req.Method == http.MethodPost {
 		s.Individual(w, req)
+
 		return
 	}
 
 	var listOptions iam.IndividualListOptions
 	if err := listOptions.UnmarshalQueryParameters(req.URL.Query()); err != nil {
 		s.Error(w, err)
+
 		return
 	}
+
 	listOptions.PartyTypeIDs = []string{iam.BeneficiaryPartyType.ID}
 
 	list, err := iamClient.Individuals().List(ctx, listOptions)
 	if err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
 	var beneficiaryWithStatuses []IndividualWithStatuses
+
 	for _, b := range list.Items {
 		rc, err := s.GetRegistrationController(w, req, b)
 		if err != nil {
 			s.Error(w, err)
+
 			return
 		}
 
 		tsc, err := s.GetTeamStatusController(req, b)
 		if err != nil {
 			s.Error(w, err)
+
 			return
 		}
 
@@ -80,6 +88,7 @@ func (s *Server) Individuals(w http.ResponseWriter, req *http.Request) {
 		"Page":                    "list",
 	}); err != nil {
 		s.Error(w, err)
+
 		return
 	}
 }
@@ -90,6 +99,7 @@ func (s *Server) IndividualIdentificationDocuments(w http.ResponseWriter, req *h
 	iamClient, err := s.IAMClient(req)
 	if err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
@@ -97,6 +107,7 @@ func (s *Server) IndividualIdentificationDocuments(w http.ResponseWriter, req *h
 	if !ok || len(id) == 0 {
 		err := fmt.Errorf("no id in path")
 		s.Error(w, err)
+
 		return
 	}
 
@@ -113,32 +124,37 @@ func (s *Server) IndividualIdentificationDocuments(w http.ResponseWriter, req *h
 		for _, idt := range identificationDocumentTypes.Items {
 			identificationDocumentTypesMap[idt.ID] = idt.Name
 		}
+
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
 		identificationDocuments, err = iamClient.IdentificationDocuments().List(waitCtx, iam.IdentificationDocumentListOptions{PartyIDs: []string{id}})
+
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
 		individual, err = iamClient.Individuals().Get(ctx, id)
+
 		return err
 	})
 
 	if err := g.Wait(); err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
-	if req.Method == "POST" {
+	if req.Method == http.MethodPost {
 		s.PostIndividualIdentificationDocuments(w, req, individual.ID)
+
 		return
 	}
 
-	if req.Method == "DELETE" {
+	if req.Method == http.MethodDelete {
 		s.DeleteIndividualIdentificationDocuments(w, req, individual.ID)
 	}
 
@@ -151,6 +167,7 @@ func (s *Server) IndividualIdentificationDocuments(w http.ResponseWriter, req *h
 		"IdentificationDocumentTypesMap": identificationDocumentTypesMap,
 	}); err != nil {
 		s.Error(w, err)
+
 		return
 	}
 }
@@ -160,14 +177,17 @@ func (s *Server) PostIndividualIdentificationDocuments(w http.ResponseWriter, re
 
 	if err := req.ParseForm(); err != nil {
 		s.Error(w, err)
+
 		return
 	}
+
 	values := req.Form
 	documentNumber := values.Get("documentNumber")
 	documentTypeID := values.Get("documentTypeId")
 
 	if len(documentNumber) == 0 || len(documentTypeID) == 0 {
 		s.Error(w, fmt.Errorf("invalid data"))
+
 		return
 	}
 
@@ -180,11 +200,13 @@ func (s *Server) PostIndividualIdentificationDocuments(w http.ResponseWriter, re
 	iamClient, err := s.IAMClient(req)
 	if err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
 	if _, err := iamClient.IdentificationDocuments().Create(ctx, newIdentificationDocument); err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
@@ -198,17 +220,20 @@ func (s *Server) DeleteIndividualIdentificationDocuments(w http.ResponseWriter, 
 
 	if len(id) == 0 {
 		s.Error(w, fmt.Errorf("invalid data"))
+
 		return
 	}
 
 	iamClient, err := s.IAMClient(req)
 	if err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
 	if err := iamClient.IdentificationDocuments().Delete(ctx, id); err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
@@ -221,6 +246,7 @@ func (s *Server) IndividualCredentials(w http.ResponseWriter, req *http.Request)
 	iamClient, err := s.IAMClient(req)
 	if err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
@@ -228,17 +254,20 @@ func (s *Server) IndividualCredentials(w http.ResponseWriter, req *http.Request)
 	if !ok || len(id) == 0 {
 		err := fmt.Errorf("no id in path")
 		s.Error(w, err)
+
 		return
 	}
 
 	individual, err := iamClient.Individuals().Get(ctx, id)
 	if err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
-	if req.Method == "POST" {
+	if req.Method == http.MethodPost {
 		s.PostIndividualCredentials(w, req, individual.ID)
+
 		return
 	}
 
@@ -247,6 +276,7 @@ func (s *Server) IndividualCredentials(w http.ResponseWriter, req *http.Request)
 		"Individual": individual,
 	}); err != nil {
 		s.Error(w, err)
+
 		return
 	}
 }
@@ -256,13 +286,16 @@ func (s *Server) PostIndividualCredentials(w http.ResponseWriter, req *http.Requ
 
 	if err := req.ParseForm(); err != nil {
 		s.Error(w, err)
+
 		return
 	}
+
 	values := req.Form
 	password := values.Get("password")
 
 	if err := s.login.Login().SetCredentials(ctx, partyID, password); err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
@@ -276,34 +309,53 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	iamClient, err := s.IAMClient(req)
 	if err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
 	cmsClient, err := s.CMSClient(req)
 	if err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
 	id, ok := mux.Vars(req)["id"]
-	if (!ok || len(id) == 0) && req.Method != "POST" {
+	if (!ok || len(id) == 0) && req.Method != http.MethodPost {
 		err := fmt.Errorf("no id in path")
 		s.Error(w, err)
+
 		return
 	}
 
 	var individual *iam.Individual
+
 	var parties *iam.IndividualList
+
 	var caseTypes *cms.CaseTypeList
+
 	var cList *cms.CaseList
+
 	var partyTypes *iam.PartyTypeList
+
 	var relationshipsForIndividual *iam.RelationshipList
+
 	var relationshipTypes *iam.RelationshipTypeList
+
 	var attrs *iam.PartyAttributeDefinitionList
+
 	var teams *iam.TeamList
+
 	var situationAnalysis *cms.Case
-	var individualResponse *cms.Case
+
 	var saForm form.Form
+
+	var saCreator *iam.Party;
+
+	var individualResponse *cms.Case
+
+	var irCreator *iam.Party;
+
 	var irForm form.Form
 
 	g, waitCtx := errgroup.WithContext(ctx)
@@ -311,28 +363,33 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	g.Go(func() error {
 		if id == "new" {
 			individual = iam.NewIndividual("")
+
 			return nil
 		}
 		var err error
 		individual, err = iamClient.Individuals().Get(waitCtx, id)
+
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
 		parties, err = iamClient.Individuals().List(waitCtx, iam.IndividualListOptions{})
+
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
 		teams, err = iamClient.Teams().List(waitCtx, iam.TeamListOptions{})
+
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
 		partyTypes, err = iamClient.PartyTypes().List(waitCtx, iam.PartyTypeListOptions{})
+
 		return err
 	})
 
@@ -341,10 +398,12 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 			relationshipsForIndividual = &iam.RelationshipList{
 				Items: []*iam.Relationship{},
 			}
+
 			return nil
 		}
 		var err error
 		relationshipsForIndividual, err = iamClient.Relationships().List(waitCtx, iam.RelationshipListOptions{EitherPartyID: id})
+
 		return err
 	})
 
@@ -353,6 +412,7 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		relationshipTypes, err = iamClient.RelationshipTypes().List(waitCtx, iam.RelationshipTypeListOptions{
 			PartyTypeID: iam.IndividualPartyType.ID,
 		})
+
 		return err
 	})
 
@@ -364,18 +424,21 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 			PartyTypeIDs: []string{iam.IndividualPartyType.ID},
 			CountryIDs:   []string{iam.GlobalCountry.ID, countryID},
 		})
+
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
 		caseTypes, err = cmsClient.CaseTypes().List(ctx, cms.CaseTypeListOptions{})
+
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
 		cList, err = cmsClient.Cases().List(ctx, cms.CaseListOptions{PartyIDs: []string{id}})
+
 		return err
 	})
 
@@ -388,11 +451,17 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			return err
 		}
+
 		if len(returnedCases.Items) == 1 {
 			kase := returnedCases.Items[0]
+
 			situationAnalysis = kase
 			saForm = form.NewValidatedForm(kase.Form, kase.FormData, nil)
+
+			saCreator, err = iamClient.Parties().Get(ctx, situationAnalysis.CreatorID)
+			return err
 		}
+
 		return err
 	})
 
@@ -405,28 +474,36 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			return err
 		}
+
 		if len(cases.Items) == 1 {
 			kase := cases.Items[0]
+
 			individualResponse = kase
 			irForm = form.NewValidatedForm(kase.Form, kase.FormData, nil)
+
+			irCreator, err = iamClient.Parties().Get(ctx, individualResponse.CreatorID)
+			return err
 		}
+
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
 		cList, err = cmsClient.Cases().List(ctx, cms.CaseListOptions{PartyIDs: []string{id}})
+
 		return err
 	})
 
 	if err := g.Wait(); err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
 	filteredRelationshipTypes := PrepRelationshipTypeDropdown(relationshipTypes)
 
-	if req.Method == "POST" {
+	if req.Method == http.MethodPost {
 		individual, err = s.PostIndividual(ctx, attrs, id, w, req)
 		if err != nil {
 			if status, ok := err.(*validation.Status); ok {
@@ -435,6 +512,7 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 			} else {
 				s.Error(w, err)
 			}
+
 			return
 		}
 	}
@@ -450,6 +528,7 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var displayCases []*DisplayCase
+
 	for _, item := range cList.Items {
 		d := DisplayCase{
 			item,
@@ -461,17 +540,27 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 	rc, err := s.GetRegistrationController(w, req, individual)
 	if err != nil {
 		s.Error(w, err)
+
 		return
 	}
+
 	status := rc.Status()
 	progressLabel := status.Label
 	progress := status.Progress
 
 	attributes := form.Form{}
+
 	for _, attribute := range attrs.Items {
 		ctrl := attribute.FormControl
 		ctrl.Value = individual.GetAttribute(attribute.ID)
 		attributes.Controls = append(attributes.Controls, ctrl)
+	}
+
+	notifications, err := s.flashes(req, w)
+	if err != nil {
+		s.Error(w, err)
+
+		return
 	}
 
 	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "individual", map[string]interface{}{
@@ -494,14 +583,18 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 		"HouseholdPartyTypeID":      iam.HouseholdPartyType.ID,
 		"TeamPartyTypeID":           iam.TeamPartyType.ID,
 		"SituationAnalysis":         situationAnalysis,
+		"SituationAnalysisCreator":  saCreator,
 		"SituationAnalysisForm":     saForm,
 		"IndividualResponse":        individualResponse,
+		"IndividualResponseCreator": irCreator,
 		"IndividualResponseForm":    irForm,
 		"Status":                    status,
 		"ProgressLabel":             progressLabel,
 		"Progress":                  progress,
+		"Notifications":             notifications,
 	}); err != nil {
 		s.Error(w, err)
+
 		return
 	}
 }
@@ -509,6 +602,7 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 // sumbittedFormFromErrors returns a slice of form.Control populated with validated attributes.
 func sumbittedFormFromErrors(errorList *validation.ErrorList, attributes *iam.PartyAttributeDefinitionList, values url.Values) form.Form {
 	var controls []form.Control
+
 	for _, attribute := range attributes.Items {
 		errs := errorList.FindFamily(attribute.ID)
 		value := values.Get(attribute.ID)
@@ -518,6 +612,7 @@ func sumbittedFormFromErrors(errorList *validation.ErrorList, attributes *iam.Pa
 			controls = append(controls, control)
 		}
 	}
+
 	return form.Form{Controls: controls}
 }
 
@@ -526,15 +621,17 @@ func shouldIgnoreValidationError(attribute *iam.PartyAttributeDefinition, values
 	if !attribute.FormControl.Validation.Required && utils.AllEmpty(values) {
 		return true
 	}
+
 	return false
 }
 
-func PrepRelationshipTypeDropdown(relationshipTypes *iam.RelationshipTypeList) *iam.RelationshipTypeList { // TODO:
+func PrepRelationshipTypeDropdown(relationshipTypes *iam.RelationshipTypeList) *iam.RelationshipTypeList {
+	// TODO:
 	// Currently Core only works with individuals
 	// this function should be changed when this is no longer
 	// the case
-
 	var newList = iam.RelationshipTypeList{}
+
 	for _, relType := range relationshipTypes.Items {
 		relTypeOnlyForIndividuals := true
 
@@ -551,11 +648,11 @@ func PrepRelationshipTypeDropdown(relationshipTypes *iam.RelationshipTypeList) *
 			}
 		}
 	}
+
 	return &newList
 }
 
 func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDefinitionList, id string, w http.ResponseWriter, req *http.Request) (*iam.Individual, error) {
-
 	iamClient, err := s.IAMClient(req)
 	if err != nil {
 		return nil, err
@@ -564,9 +661,11 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDe
 	if err := req.ParseForm(); err != nil {
 		return nil, err
 	}
+
 	values := req.Form
 
 	var individual *iam.Individual
+
 	if len(id) == 0 {
 		individual = iam.NewIndividual("")
 	} else {
@@ -577,10 +676,12 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDe
 	}
 
 	attributeMap := map[string][]string{}
+
 	for _, attribute := range attrs.Items {
 		value := values[attribute.FormControl.Name]
 		attributeMap[attribute.ID] = value
 	}
+
 	individual.Attributes = attributeMap
 
 	type RelationshipEntry struct {
@@ -592,27 +693,32 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDe
 	var rels = []*RelationshipEntry{}
 
 	f := req.Form
-	for attrId, value := range f {
+	for attrID, value := range f {
 		// Retrieve party relationships
-		if strings.HasPrefix(attrId, "relationships[") {
-			keyParts := strings.Split(attrId, ".")
+		if strings.HasPrefix(attrID, "relationships[") {
+
+			keyParts := strings.Split(attrID, ".")
 			if len(keyParts) != 2 {
-				err := fmt.Errorf("unexpected form value key: %s", attrId)
+				err := fmt.Errorf("unexpected form value key: %s", attrID)
+
 				return nil, err
 			}
 
 			if !strings.HasSuffix(keyParts[0], "]") {
-				err := fmt.Errorf("unexpected form value key: %s", attrId)
+				err := fmt.Errorf("unexpected form value key: %s", attrID)
+
 				return nil, err
 			}
 
 			relationshipIdxStr := keyParts[0][14 : len(keyParts[0])-1]
 			relationshipIdx, err := strconv.Atoi(relationshipIdxStr)
+
 			if err != nil {
 				return nil, err
 			}
 
 			var rel *RelationshipEntry
+
 			for {
 				if (relationshipIdx + 1) > len(rels) {
 					rels = append(rels, &RelationshipEntry{
@@ -620,6 +726,7 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDe
 					})
 				} else {
 					rel = rels[relationshipIdx]
+
 					break
 				}
 			}
@@ -637,6 +744,7 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDe
 				rel.RelationshipTypeID = value[0]
 			default:
 				err := fmt.Errorf("unexpected relationship attribute: %s", attrName)
+
 				return nil, err
 			}
 		}
@@ -644,16 +752,20 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDe
 
 	// Update or create the individual
 	var storageAction string
+
 	if id == "" {
 		individual.PartyTypeIDs = append(individual.PartyTypeIDs, iam.BeneficiaryPartyType.ID)
 		individual, err = iamClient.Individuals().Create(ctx, individual)
+
 		if err != nil {
 			return nil, err
 		}
+
 		err = s.createDefaultIndividualIntakeCases(req, individual)
 		if err != nil {
 			return nil, err
 		}
+
 		storageAction = "created"
 	} else {
 		if individual, err = iamClient.Individuals().Update(ctx, individual); err != nil {
@@ -663,28 +775,29 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDe
 	}
 
 	// Update, create or delete the relationships
-
 	for _, rel := range rels {
-		switch {
-		case len(rel.ID) == 0:
+		if len(rel.ID) == 0 {
+			// Create the relationship
 			relationship := rel.Relationship
 			relationship.FirstPartyID = individual.ID
+
 			if _, err := iamClient.Relationships().Create(ctx, rel.Relationship); err != nil {
 				return nil, err
 			}
-		case !rel.MarkedForDeletion:
+		} else if !rel.MarkedForDeletion {
+			// Update the relationship
 			relationship := rel.Relationship
 			relationship.FirstPartyID = individual.ID
 			if _, err := iamClient.Relationships().Update(ctx, rel.Relationship); err != nil {
 				return nil, err
 			}
-		case err != nil:
+		} else if err := iamClient.Relationships().Delete(ctx, rel.Relationship.ID); err != nil {
 			return nil, err
 		}
 	}
 
 	// Set flash notification
-	if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
+	if err := s.addFlash(req, w, &sessionmanager.FlashMessage{
 		Message: fmt.Sprintf("Individual \"%s\" successfully %s", individual.String(), storageAction),
 		Theme:   "success",
 	}); err != nil {
@@ -695,19 +808,23 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDe
 		w.Header().Set("Location", "/individuals/"+individual.ID)
 		w.WriteHeader(http.StatusSeeOther)
 	}
+
 	return individual, nil
 }
 
 func (s *Server) createDefaultIndividualIntakeCases(req *http.Request, individual *iam.Individual) error {
 	var situationAnalysisCaseType = &seeder.UGSituationalAnalysisCaseType
+
 	var individualResponseCaseType = &seeder.UGIndividualResponseCaseType
 
 	cmsClient, err := s.CMSClient(req)
 	if err != nil {
 		return err
 	}
+
 	creatorId := ""
 	ctx := req.Context()
+
 	subject := ctx.Value("Subject")
 	if subject != nil {
 		creatorId = subject.(string)
@@ -727,6 +844,7 @@ func (s *Server) createDefaultIndividualIntakeCases(req *http.Request, individua
 			return err
 		}
 	}
+
 	if individualResponseCaseType != nil {
 		_, err = cmsClient.Cases().Create(ctx, &cms.Case{
 			CaseTypeID: individualResponseCaseType.ID,
@@ -741,5 +859,6 @@ func (s *Server) createDefaultIndividualIntakeCases(req *http.Request, individua
 			return err
 		}
 	}
+
 	return nil
 }

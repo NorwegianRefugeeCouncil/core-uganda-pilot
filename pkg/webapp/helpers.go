@@ -44,7 +44,7 @@ func (s *Server) retrieveCaseTypes(req *http.Request) (*cms.CaseTypeList, error)
 }
 
 func (s *Server) validationErrorNotification(req *http.Request, w http.ResponseWriter) {
-	if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
+	if err := s.addFlash(req, w, &sessionmanager.FlashMessage{
 		Message: "There seems to be an problem with the data you have submitted. See below for errors.",
 		Theme:   "danger",
 	}); err != nil {

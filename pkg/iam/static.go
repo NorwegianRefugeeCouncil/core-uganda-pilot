@@ -153,6 +153,10 @@ var (
 					{"en", "Female"},
 					{"es", "Femenino"},
 				},
+				{
+					{"en", "Other"},
+					{"es", "Otro"},
+				},
 			},
 		},
 		IsPersonallyIdentifiableInfo: false,
