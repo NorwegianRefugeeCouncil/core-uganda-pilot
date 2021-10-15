@@ -1,4 +1,4 @@
-import {nameAttr, testId, URL} from '../helpers';
+import { nameAttr, testId, URL } from '../helpers';
 
 const selector = {
     fullName: nameAttr('fullName'),
@@ -127,7 +127,7 @@ export default class IndividualPage {
         this.selectIdentificationSource(identificationSource);
         this.selectAdmin2(admin2);
         this.typeAdmin3to5(admin3to5);
-        this.addRelationship({relationshipType, relatedParty});
+        this.addRelationship({ relationshipType, relatedParty });
         return this;
     };
     verifyAttributes = data => {
@@ -204,7 +204,7 @@ export default class IndividualPage {
     selectRelationshipType = value => this.getRelationshipType().select(value);
     typeRelatedParty = value => this.getRelatedParty().clear().type(value).wait(500);
     addRelatedParty = () => this.getSearchResult().click();
-    addRelationship = ({relationshipType, relatedParty}) => {
+    addRelationship = ({ relationshipType, relatedParty }) => {
         this.selectRelationshipType(relationshipType);
         this.typeRelatedParty(relatedParty);
         this.addRelatedParty();

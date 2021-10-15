@@ -5,9 +5,7 @@
     {{template "head"}}
     <body>
 
-    {{template "navbar"}}
-
-    {{template "notifications"}}
+    {{template "navbar" .}}
 
     {{template "individuals_nav" . }}
 
@@ -192,7 +190,7 @@
 
     </div>
     <script type="module">
-        import {validateClientSide, validateServerSide} from '/static/js/validation.js';
+        import validate from '/static/js/validation.js';
 
         const currentStage = {{ .Status.CurrentStage }} +2; // CurrentStage starts at -1 to indicate no stage completed
         const forms = ['attributes-form', 'situation-analysis-form', 'response-form']
@@ -201,9 +199,7 @@
         const submitBtn = document.getElementById('form-submit-btn');
         submitBtn.onclick = event => {
             event.preventDefault();
-            if (forms != null && validateClientSide(forms)) {
-                validateServerSide(forms, '/individuals{{if not .IsNew}}/{{.Individual.ID}}{{end}}');
-            }
+            validate(forms);
         };
     </script>
 

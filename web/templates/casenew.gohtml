@@ -3,8 +3,7 @@
     <html lang="en">
     {{template "head"}}
     <body class="bg-light">
-    {{template "navbar"}}
-    {{template "notifications"}}
+    {{template "navbar" .}}
     <div class="container">
         <div class="card">
             <div class="card-body">
@@ -75,15 +74,13 @@
 
     </script>
     <script type="module">
-        import {validateClientSide, validateServerSide} from '/static/js/validation.js';
+        import validate from '/static/js/validation.js';
 
         const form = document.getElementById('case-form');
         const submitBtn = document.getElementById('case-submit-btn');
         submitBtn.onclick = event => {
             event.preventDefault();
-            if (validateClientSide([form])) {
-                validateServerSide([form], form.action);
-            }
+            validate([form]);
         };
     </script>
     </body>

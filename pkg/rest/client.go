@@ -41,7 +41,7 @@ func (r *Client) Get() *Request {
 }
 
 func (r *Client) Post() *Request {
-	return r.Verb("POST")
+	return r.Verb(http.MethodPost)
 }
 
 func (r *Client) Put() *Request {
