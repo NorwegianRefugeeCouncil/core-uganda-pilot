@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "module": "CommonJS",
+    "moduleResolution": "Node",
     "esModuleInterop": true,
     "target": "ES6",
     "lib": [
@@ -9,17 +10,12 @@
     ],
     "typeRoots": [
       "./node_modules/@types",
-      "./types"
+      "./src/types"
     ],
     "declaration": true,
-    "outDir": "./lib"
+    "outDir": "lib",
   },
   "include": [
-    "coreApiClient.ts",
-    "coreApiClient.test.ts",
-    "types/models.ts"
+    "src/**/*",
   ],
-  "exclude": [
-    "node_modules"
-  ]
 }

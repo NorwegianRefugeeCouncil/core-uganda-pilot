@@ -13,12 +13,12 @@ echo ">>> Updated node dependencies"
 
 # Generate typescript types for go types
 go build -o ./tmp/gotypes2ts ./tools/gotypes2ts
-./tmp/gotypes2ts web/app/client/types/models.ts >/dev/null
+./tmp/gotypes2ts web/app/client/src/types/models.ts >/dev/null
 
 # remove problematic line
 # FIXME this shouldn't be necessary
-grep -v '?: PartyTypeRule;' web/app/client/types/models.ts >tmp/scratch
-cat tmp/scratch >web/app/client/types/models.ts
+grep -v '?: PartyTypeRule;' web/app/client/src/types/models.ts >tmp/scratch
+cat tmp/scratch >web/app/client/src/types/models.ts
 
 if [ ! "$?" ]; then
   exit 1
