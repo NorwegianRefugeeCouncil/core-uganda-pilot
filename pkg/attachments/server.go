@@ -44,10 +44,10 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 	router := mux.NewRouter()
 	router.Use(srv.WithAuth())
 
-	router.Path(server.AttachmentsEndpoint).Methods("GET").HandlerFunc(srv.ListAttachments)
-	router.Path(server.AttachmentsEndpoint).Methods("POST").HandlerFunc(srv.PostAttachment)
-	router.Path(path.Join(server.AttachmentsEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.GetAttachment)
-	router.Path(path.Join(server.AttachmentsEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.PutAttachment)
+	router.Path(server.AttachmentsEndpoint).Methods(http.MethodGet).HandlerFunc(srv.ListAttachments)
+	router.Path(server.AttachmentsEndpoint).Methods(http.MethodPost).HandlerFunc(srv.PostAttachment)
+	router.Path(path.Join(server.AttachmentsEndpoint, "{id}")).Methods(http.MethodGet).HandlerFunc(srv.GetAttachment)
+	router.Path(path.Join(server.AttachmentsEndpoint, "{id}")).Methods(http.MethodPut).HandlerFunc(srv.PutAttachment)
 
 	srv.router = router
 

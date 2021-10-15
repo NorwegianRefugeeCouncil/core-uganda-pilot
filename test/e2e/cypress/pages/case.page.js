@@ -1,4 +1,4 @@
-import {testId} from '../helpers';
+import { testId } from '../helpers';
 import testTemplate from '../fixtures/test_casetemplate.json';
 
 const ID = {
@@ -36,7 +36,7 @@ export default class CasePage {
     };
 
     verifyForm = value => {
-        for (const {type} of testTemplate.controls) {
+        for (const { type } of testTemplate.controls) {
             cy.get(testId('test-' + type)).then($el => {
                 switch (type) {
                     case 'text':

@@ -1,7 +1,7 @@
 import AttributePage from '../pages/attributePage';
 import AttributeOverviewPage from '../pages/attributeOverview.page';
 import ids from '../fixtures/ids.json';
-import {URL} from '../helpers';
+import { URL } from '../helpers';
 import '../support/commands';
 
 const DATA = {

@@ -58,13 +58,13 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 	}
 
 	router := mux.NewRouter()
-	router.Path("/auth/logout").Methods("GET").HandlerFunc(srv.GetLogoutForm)
-	router.Path("/auth/login").Methods("GET").HandlerFunc(srv.GetLoginForm)
-	router.Path("/auth/login").Methods("POST").HandlerFunc(srv.PostLoginForm)
-	router.Path("/auth/consent").Methods("GET").HandlerFunc(srv.GetConsent)
-	router.Path("/auth/consent").Methods("POST").HandlerFunc(srv.PostConsent)
+	router.Path("/auth/logout").Methods(http.MethodGet).HandlerFunc(srv.GetLogoutForm)
+	router.Path("/auth/login").Methods(http.MethodGet).HandlerFunc(srv.GetLoginForm)
+	router.Path("/auth/login").Methods(http.MethodPost).HandlerFunc(srv.PostLoginForm)
+	router.Path("/auth/consent").Methods(http.MethodGet).HandlerFunc(srv.GetConsent)
+	router.Path("/auth/consent").Methods(http.MethodPost).HandlerFunc(srv.PostConsent)
 	router.Path("/apis/login/v1/credentials").
-		Methods("POST").
+		Methods(http.MethodPost).
 		Handler(srv.WithAuth()(http.HandlerFunc(srv.PostCredentials)))
 
 	srv.router = router

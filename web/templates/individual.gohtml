@@ -5,9 +5,7 @@
     {{template "head"}}
     <body>
 
-    {{template "navbar"}}
-
-    {{template "notifications"}}
+    {{template "navbar" .}}
 
     {{template "individuals_nav" . }}
 
@@ -476,13 +474,13 @@
                         const displayName = document.querySelector('input[name="displayName"]')?.value;
                         firstPartyName = displayName.toUpperCase();
                     } else {
-                        firstPartyName = parties.find(({id}) => id === relationship.firstParty)?.name;
+                        firstPartyName = parties.find(({ id }) => id === relationship.firstParty)?.name;
                     }
                     li.setAttribute('data-testid', 'relationship');
-                    const firstPartyRole = relationshipTypes.find(({id}) => id === relationship.relationshipTypeId)?.firstPartyRole;
-                    const secondPartyName = parties.find(({id}) => id === relationship.secondParty)?.name;
-                    const firstPartyTypeId = relationshipTypes.find(({id}) => id === relationship.relationshipTypeId).firstPartyTypeId;
-                    const secondPartyTypeId = relationshipTypes.find(({id}) => id === relationship.relationshipTypeId).secondPartyTypeId;
+                    const firstPartyRole = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId)?.firstPartyRole;
+                    const secondPartyName = parties.find(({ id }) => id === relationship.secondParty)?.name;
+                    const firstPartyTypeId = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId).firstPartyTypeId;
+                    const secondPartyTypeId = relationshipTypes.find(({ id }) => id === relationship.relationshipTypeId).secondPartyTypeId;
 
                     const firstPartyLinkNode = document.createElement('a');
                     firstPartyLinkNode.href = partyLink(firstPartyTypeId, relationship.firstParty);
