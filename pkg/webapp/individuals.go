@@ -154,7 +154,7 @@ func (s *Server) IndividualIdentificationDocuments(w http.ResponseWriter, req *h
 		return
 	}
 
-	if req.Method == "DELETE" {
+	if req.Method == http.MethodDelete {
 		s.DeleteIndividualIdentificationDocuments(w, req, individual.ID)
 	}
 
@@ -627,7 +627,6 @@ func PrepRelationshipTypeDropdown(relationshipTypes *iam.RelationshipTypeList) *
 }
 
 func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDefinitionList, id string, w http.ResponseWriter, req *http.Request) (*iam.Individual, error) {
-
 	iamClient, err := s.IAMClient(req)
 	if err != nil {
 		return nil, err
@@ -640,6 +639,7 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDe
 	values := req.Form
 
 	var individual *iam.Individual
+
 	if len(id) == 0 {
 		individual = iam.NewIndividual("")
 	} else {
