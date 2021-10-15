@@ -10,7 +10,7 @@ import IndividualScreen from './screens/IndividualScreen';
 import routes from '../constants/routes';
 import CasesScreen from './screens/CasesScreen';
 import { NavigationTheme } from '../constants/theme';
-import { host } from '../../App';
+import {host} from "../constants/platform";
 
 const linkingConfig = {
   prefixes: [host],
