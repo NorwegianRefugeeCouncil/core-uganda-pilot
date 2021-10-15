@@ -364,14 +364,13 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 	}
 
 	logrus.Infof("getting redis connection")
+
 	conn := pool.Get()
-	defer func(conn redis.Conn) {
-		err := conn.Close()
-		if err != nil {
-		}
-	}(conn)
+
+	defer conn.Close()
 
 	logrus.Infof("testing redis connection")
+
 	_, err = conn.Do("PING")
 	if err != nil {
 		logrus.WithError(err).Errorf("failed to test redis")
@@ -379,51 +378,51 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 	}
 
 	var sessionKey1 = make([]byte, 32)
-	var blockKey1 []byte = nil
-	var sessionKey2 []byte = nil
-	var blockKey2 []byte = nil
-	if len(o.WebAppSessionKeyFile1) > 0 {
-		sessionKeyStr, err := readFile(o.WebAppSessionKeyFile1)
-		if err != nil {
-			logrus.WithError(err).Errorf("failed to read session hash key file ")
-			panic(err)
-		}
-		sessionKey1 = []byte(sessionKeyStr)[0:32]
-	} else {
-		_, err = rand.Read(sessionKey1)
-		if err != nil {
-			panic(err)
+
+	var blockKey1 = make([]byte, 32)
+
+	var sessionKey2 = make([]byte, 32)
+
+	var blockKey2 = make([]byte, 32)
+
+	var prepareKey = func(optKeyFile string, key []byte, fallback string) {
+		if len(optKeyFile) > 0 {
+			keyStr, err := readFile(optKeyFile)
+			if err != nil {
+				logrus.WithError(err).Errorf("failed to read session hash key file ")
+				panic(err)
+			}
+
+			key = []byte(keyStr)[0:32]
+		} else if _, err := os.Stat(fallback); err == nil {
+			key, err = ioutil.ReadFile(fallback)
+			if err != nil {
+				logrus.WithError(err).Errorf("failed to read session hash key file ")
+				panic(err)
+			}
+		} else {
+			_, err = rand.Read(key)
+			if err != nil {
+				panic(err)
+			}
+			err = os.MkdirAll("tmp", os.ModePerm)
+			if err != nil {
+				panic(err)
+			}
+			err := ioutil.WriteFile(fallback, key, os.ModePerm)
+			if err != nil {
+				panic(err)
+			}
 		}
 	}
 
-	if len(o.WebAppBlockKeyFile1) > 0 {
-		fileValue, err := readFile(o.WebAppBlockKeyFile1)
-		if err != nil {
-			logrus.WithError(err).Errorf("failed to read session block key file 1")
-			panic(err)
-		}
-		blockKey1 = []byte(fileValue)[0:32]
-	}
-
-	if len(o.WebAppSessionKeyFile2) > 0 {
-		fileValue, err := readFile(o.WebAppSessionKeyFile2)
-		if err != nil {
-			logrus.WithError(err).Errorf("failed to read session hash key file 2")
-			panic(err)
-		}
-		sessionKey2 = []byte(fileValue)[0:32]
-	}
-
-	if len(o.WebAppBlockKeyFile2) > 0 {
-		fileValue, err := readFile(o.WebAppBlockKeyFile2)
-		if err != nil {
-			logrus.WithError(err).Errorf("failed to read session block key file 2")
-			panic(err)
-		}
-		blockKey2 = []byte(fileValue)[0:32]
-	}
+	prepareKey(o.WebAppSessionKeyFile1, sessionKey1, "tmp/sessionkey1")
+	prepareKey(o.WebAppBlockKeyFile1, blockKey1, "tmp/blockkey1")
+	prepareKey(o.WebAppSessionKeyFile2, sessionKey2, "tmp/sessionkey2")
+	prepareKey(o.WebAppBlockKeyFile2, blockKey2, "tmp/blockkey2")
 
 	logrus.Infof("creating redis store")
+
 	redisStore, err := redistore.NewRediStoreWithPool(pool, sessionKey1, blockKey1, sessionKey2, blockKey2)
 	if err != nil {
 		logrus.WithError(err).Errorf("failed to create redis store")

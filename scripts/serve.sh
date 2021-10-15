@@ -1,17 +1,7 @@
 #!/usr/bin/env bash
 
-function cleanup() {
-	# kill all child processes
-	pkill -P $$
-}
 # cleanup on exit
-for sig in INT QUIT HUP TERM; do
-	trap "
-	cleanup
-	trap - $sig EXIT
-	kill -s $sig "'"$$"' "$sig"
-done
-trap cleanup EXIT
+trap 'jobs -p | xargs -r kill' EXIT
 
 flags="--mongo-database=core \
        	--mongo-username=root \
@@ -42,9 +32,7 @@ flags="--mongo-database=core \
        	--listen-address=:9000 \
        	--base-url=http://localhost:9000"
 
-if [ ! -f tmp/main ]; then
-  ./scripts/build.sh
-fi
+./scripts/build.sh
 
 # shellcheck disable=SC2086
 ./tmp/main $flags

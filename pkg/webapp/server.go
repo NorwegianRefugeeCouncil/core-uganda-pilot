@@ -16,6 +16,7 @@ import (
 	"golang.org/x/oauth2"
 	"net/http"
 	"path"
+	"strings"
 )
 
 type Server struct {
@@ -94,12 +95,14 @@ func NewServer(options *ServerOptions) (*Server, error) {
 	sm, err := sessionmanager.New(options.RedisStore)
 	if err != nil {
 		logrus.WithError(err).Errorf("failed to create session manager")
+
 		return nil, err
 	}
 
 	renderFactory, err := NewRendererFactory(options.TemplateDirectory, sm)
 	if err != nil {
 		logrus.WithError(err).Errorf("failed to create renderer")
+
 		return nil, err
 	}
 
@@ -156,6 +159,7 @@ func (s *Server) IAMClient(req *http.Request) (iam.Interface, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return iam.NewClientSet(&rest.Config{
 		Scheme:     s.iamScheme,
 		Host:       s.iamHost,
@@ -168,6 +172,7 @@ func (s *Server) CMSClient(req *http.Request) (cms.Interface, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return cms.NewClientSet(&rest.Config{
 		Scheme:     s.cmsScheme,
 		Host:       s.cmsHost,
@@ -184,4 +189,19 @@ func (s *Server) GetPathParam(param string, w http.ResponseWriter, req *http.Req
 
 func (s *Server) json(w http.ResponseWriter, status int, data interface{}) {
 	utils.JSONResponse(w, status, data)
+}
+
+func (s *Server) addFlash(req *http.Request, w http.ResponseWriter, flash *sessionmanager.FlashMessage) error {
+	return s.sessionManager.AddFlash(req, w, flash)
+}
+
+func (s *Server) flashes(req *http.Request, w http.ResponseWriter) ([]*sessionmanager.FlashMessage, error) {
+	accepts := req.Header["Accept"]
+	for _, accept := range accepts {
+		if strings.Contains(accept, "text/html") {
+			return s.sessionManager.ConsumeFlashes(req, w)
+		}
+	}
+
+	return nil, nil
 }
