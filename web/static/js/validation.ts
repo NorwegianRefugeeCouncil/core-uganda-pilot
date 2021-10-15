@@ -12,31 +12,40 @@ interface ClientSideFormcontrolValidation {
 }
 
 interface ValidationOptions {
-  redirectPath?: string;
+    redirectPath?: string;
 }
 
-export default function(forms: HTMLFormElement[], options?: ValidationOptions) {
-  let redirect = options?.redirectPath;
-  if (forms && validateClientSide(forms)) {
-    validateServerSide(forms).then(isValid => {
-      if (isValid) {
-        if (redirect) location.assign(redirect);
-      }
-    });
-  }
+export default function (forms: HTMLFormElement | HTMLFormElement[], submitBtn: HTMLButtonElement, options?: ValidationOptions) {
+    let redirect = options?.redirectPath;
+
+    const f: HTMLFormElement[] = forms instanceof HTMLFormElement ? [forms] : forms
+
+    submitBtn.addEventListener('click', event => {
+        event.preventDefault()
+        if (validateClientSide(f)) {
+            submitBtn.disabled = true;
+            validateServerSide(f).then(isValid => {
+                if (isValid) {
+                    if (redirect) location.assign(redirect);
+                } else {
+                    submitBtn.disabled = false;
+                }
+            });
+        }
+    })
 }
 
 function validateClientSide(forms: HTMLFormElement[]): boolean {
-  // FIXME I'm really dumb.
-  //  For instance, I validate input, select, and textarea elements but not custom form elements.
-  let isValid = true;
-  for (const form of forms) {
-    if (!form.reportValidity()) {
-      isValid = false;
+    // FIXME I'm really dumb.
+    //  For instance, I validate input, select, and textarea elements but not custom form elements.
+    let isValid = true;
+    for (const form of forms) {
+        if (!form.reportValidity()) {
+            isValid = false;
+        }
+        form.classList.add('was-validated');
     }
-    form.classList.add('was-validated');
-  }
-  return isValid;
+    return isValid;
 }
 
 // validateServerSide initiates and handles server-side validation for document form entities. The handler sends form
@@ -44,28 +53,28 @@ function validateClientSide(forms: HTMLFormElement[]): boolean {
 // the handler applies it to the concerned DOM elements. If no validation is received, the handler redirects the browser
 // to the appropriate location.
 async function validateServerSide(forms: HTMLFormElement[]): Promise<boolean> {
-  const validations = await Promise.allSettled(forms.map(async (formcontrol) => {
-    try {
-      const validation = await validateSubForm(formcontrol);
+    const validations = await Promise.allSettled(forms.map(async (formcontrol) => {
+        try {
+            const validation = await validateSubForm(formcontrol);
 
-      removeFormValidation(formcontrol);
+            removeFormValidation(formcontrol);
 
-      if (validation instanceof Response) {
-        // follow redirect
-        location.assign(validation.url);
-      } else {
-        formcontrol.classList.add('was-validated');
-        applyServerSideValidation(validation);
-        return Promise.resolve(true);
-      }
-    } catch (e) {
-      console.error(e);
-    }
+            if (validation instanceof Response) {
+                // follow redirect
+                location.assign(validation.url);
+            } else {
+                formcontrol.classList.add('was-validated');
+                applyServerSideValidation(validation);
+                return Promise.resolve(true);
+            }
+        } catch (e) {
+            console.error(e);
+        }
 
-    return Promise.resolve(false);
-  }));
+        return Promise.resolve(false);
+    }));
 
-  return Promise.resolve(validations.every(v => v.status !== 'rejected' && !v.value));
+    return Promise.resolve(validations.every(v => v.status !== 'rejected' && !v.value));
 }
 
 function collectSearchParams(formcontrol: HTMLFormElement): URLSearchParams {
@@ -95,28 +104,28 @@ function collectSearchParams(formcontrol: HTMLFormElement): URLSearchParams {
 }
 
 async function validateSubForm(formcontrol: HTMLFormElement): Promise<ServerSideFormcontrolValidation[] | Response> {
-  const options = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Accept': 'application/json'
-    },
-    body: collectSearchParams(formcontrol)
-  };
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Accept': 'application/json'
+        },
+        body: collectSearchParams(formcontrol)
+    };
 
-  const response = await fetch(formcontrol.action, options);
+    const response = await fetch(formcontrol.action, options);
 
-  if (response.ok) return response;
+    if (response.ok) return response;
 
-  let validation;
+    let validation;
 
-  try {
-    validation = await response.json();
-  } catch (e) {
-    console.error(`Fetch error: ${e}`);
-    return null;
-  }
-  return validation;
+    try {
+        validation = await response.json();
+    } catch (e) {
+        console.error(`Fetch error: ${e}`);
+        return null;
+    }
+    return validation;
 }
 
 function applyServerSideValidation(validation: ServerSideFormcontrolValidation[]) {

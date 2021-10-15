@@ -78,10 +78,8 @@
 
         const form = document.getElementById('case-form');
         const submitBtn = document.getElementById('case-submit-btn');
-        submitBtn.onclick = event => {
-            event.preventDefault();
-            validate([form]);
-        };
+
+        validate(form, submitBtn)
     </script>
     </body>
     </html>

@@ -127,11 +127,8 @@
 
         const form = document.getElementById('attributes-form');
         const submitBtn = document.getElementById('form-submit-btn');
-        submitBtn.onclick = event => {
-            event.preventDefault();
-            validate([form]);
-        };
 
+        validate(form, submitBtn);
     </script>
     </body>
 

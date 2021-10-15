@@ -196,14 +196,10 @@
     <script type="module">
         import validate from '/static/js/validation.js';
 
+        const form = document.querySelector('#case-form');
         const submitBtn = document.querySelector('#case-submit-btn');
-        if (submitBtn != null) {
-            const form = document.querySelector('#case-form');
-            submitBtn.onclick = event => {
-                event.preventDefault();
-                validate([form]);
-            };
-        }
+
+        validate(form, submitBtn)
     </script>
     </body>
     </html>

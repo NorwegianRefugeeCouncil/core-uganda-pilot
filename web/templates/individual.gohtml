@@ -197,10 +197,8 @@
             .slice(0, currentStage)
             .map(id => document.getElementById(id));
         const submitBtn = document.getElementById('form-submit-btn');
-        submitBtn.onclick = event => {
-            event.preventDefault();
-            validate(forms);
-        };
+
+        validate(forms, submitBtn)
     </script>
 
     <script type="application/javascript">

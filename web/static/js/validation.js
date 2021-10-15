@@ -7,16 +7,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-export default function (forms, options) {
+export default function (forms, submitBtn, options) {
     let redirect = options === null || options === void 0 ? void 0 : options.redirectPath;
-    if (forms && validateClientSide(forms)) {
-        validateServerSide(forms).then(isValid => {
-            if (isValid) {
-                if (redirect)
-                    location.assign(redirect);
-            }
-        });
-    }
+    const f = forms instanceof HTMLFormElement ? [forms] : forms;
+    submitBtn.addEventListener('click', event => {
+        event.preventDefault();
+        if (validateClientSide(f)) {
+            submitBtn.disabled = true;
+            validateServerSide(f).then(isValid => {
+                if (isValid) {
+                    if (redirect)
+                        location.assign(redirect);
+                }
+                else {
+                    submitBtn.disabled = false;
+                }
+            });
+        }
+    });
 }
 function validateClientSide(forms) {
     // FIXME I'm really dumb.
