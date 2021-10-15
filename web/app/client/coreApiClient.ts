@@ -303,6 +303,498 @@ function responseAs<T>(): OperatorFunction<Response, T> {
     }
 }
 
+// --- CMS ---
+
+function buildCMSPath(module: string, endpoint: string = ""): string {
+    return `/apis/cms/v1/${module}${endpoint}`
+}
+
+class CaseClient {
+
+    private client: Client;
+
+    execute: () => OperatorFunction<Request, Response>;
+
+    public constructor(client: Client) {
+        this.client = client
+        this.execute = client.do
+    }
+
+    Get(): OperatorFunction<string, Case> {
+        return id$ => id$.pipe(
+            map(id => this.client.get().path(buildCMSPath('cases', '/:id')).pathParam('id', id)),
+            this.execute(),
+            responseAs<Case>()
+        )
+    }
+
+    Create(): OperatorFunction<Case, Case> {
+        return c$ => c$.pipe(
+            map(c => this.client.post().body(c).path(buildCMSPath(('cases')))),
+            this.execute(),
+            responseAs<Case>()
+        )
+    }
+
+    Update(): OperatorFunction<Case, Case> {
+        return c$ => c$.pipe(
+            map(c => this.client.put().body(c).path(buildCMSPath('cases', '/:id')).pathParam('id', c.id)),
+            this.execute(),
+            responseAs<Case>()
+        )
+    }
+
+    List(): OperatorFunction<any, CaseList> {
+        return n$ => n$.pipe(
+            map(n => this.client.get().path(buildCMSPath('cases'))),
+            this.execute(),
+            responseAs<CaseList>()
+        )
+    }
+}
+
+class CaseTypeClient {
+
+    private client: Client;
+
+    execute: () => OperatorFunction<Request, Response>;
+
+    public constructor(client: Client) {
+        this.client = client
+        this.execute = client.do
+    }
+
+    Get(): OperatorFunction<string, CaseType> {
+        return id$ => id$.pipe(
+            map(id => this.client.get().path(buildCMSPath('casetypes', '/:id')).pathParam('id', id)),
+            this.execute(),
+            responseAs<CaseType>()
+        )
+    }
+
+    Create(): OperatorFunction<CaseType, CaseType> {
+        return c$ => c$.pipe(
+            map(c => this.client.post().body(c).path(buildCMSPath(('casetypes')))),
+            this.execute(),
+            responseAs<CaseType>()
+        )
+    }
+
+    Update(): OperatorFunction<CaseType, CaseType> {
+        return c$ => c$.pipe(
+            map(c => this.client.put().body(c).path(buildCMSPath('casetypes', '/:id')).pathParam('id', c.id)),
+            this.execute(),
+            responseAs<CaseType>()
+        )
+    }
+
+    List(): OperatorFunction<any, CaseTypeList> {
+        return n$ => n$.pipe(
+            map(n => this.client.get().path(buildCMSPath('casetypes'))),
+            this.execute(),
+            responseAs<CaseTypeList>()
+        )
+    }
+}
+
+class CommentClient {
+
+    private client: Client;
+
+    execute: () => OperatorFunction<Request, Response>;
+
+    public constructor(client: Client) {
+        this.client = client
+        this.execute = client.do
+    }
+
+    Get(): OperatorFunction<string, Comment> {
+        return id$ => id$.pipe(
+            map(id => this.client.get().path(buildCMSPath('comments', '/:id')).pathParam('id', id)),
+            this.execute(),
+            responseAs<Comment>()
+        )
+    }
+
+    Create(): OperatorFunction<Comment, Comment> {
+        return c$ => c$.pipe(
+            map(c => this.client.post().body(c).path(buildCMSPath(('comments')))),
+            this.execute(),
+            responseAs<Comment>()
+        )
+    }
+
+    Update(): OperatorFunction<Comment, Comment> {
+        return c$ => c$.pipe(
+            map(c => this.client.put().body(c).path(buildCMSPath('comments', '/:id')).pathParam('id', c.id)),
+            this.execute(),
+            responseAs<Comment>()
+        )
+    }
+
+    List(): OperatorFunction<any, CommentList> {
+        return n$ => n$.pipe(
+            map(n => this.client.get().path(buildCMSPath('comments'))),
+            this.execute(),
+            responseAs<CommentList>()
+        )
+    }
+
+    Delete(): OperatorFunction<string, any> {
+        return id$ => id$.pipe(
+            map(id => this.client.get().path(buildCMSPath('comments', '/:id')).pathParam('id', id)),
+            this.execute()
+        )
+    }
+}
+
+export class CMSClient {
+    private readonly _scheme: string
+    private readonly _host: string
+    private readonly _headers: Headers
+    private readonly _client: Client
+
+    public constructor(scheme: string, host: string, headers: Headers) {
+        this._host = host
+        this._scheme = scheme
+        this._headers = headers
+        this._client = new Client(this._host, this._scheme, this._headers)
+    }
+
+    public Cases(){
+        return new CaseClient(this._client)
+    }
+
+    public CaseTypes(){
+        return new CaseTypeClient(this._client)
+    }
+
+    public Comments(){
+        return new CommentClient(this._client)
+    }
+}
+
+// --- IAM ---
+
+function buildIAMPath(module: string, endpoint: string = ""): string {
+    return `/apis/iam/v1/${module}${endpoint}`
+}
+
+class CountryClient {
+
+    private client: Client;
+
+    execute: () => OperatorFunction<Request, Response>;
+
+    public constructor(client: Client) {
+        this.client = client
+        this.execute = client.do
+    }
+
+    Get(): OperatorFunction<string, Country> {
+        return id$ => id$.pipe(
+            map(id => this.client.get().path(buildIAMPath('countries', '/:id')).pathParam('id', id)),
+            this.execute(),
+            responseAs<Country>()
+        )
+    }
+
+    Create(): OperatorFunction<Country, Country> {
+        return country$ => country$.pipe(
+            map(country => this.client.post().body(country).path(buildIAMPath(('countries')))),
+            this.execute(),
+            responseAs<Country>()
+        )
+    }
+
+    Update(): OperatorFunction<Country, Country> {
+        return country$ => country$.pipe(
+            map(country => this.client.put().body(country).path(buildIAMPath('countries', '/:id')).pathParam('id', country.id)),
+            this.execute(),
+            responseAs<Country>()
+        )
+    }
+
+    List(): OperatorFunction<any, CountryList> {
+        return n$ => n$.pipe(
+            map(n => this.client.get().path(buildIAMPath('countries'))),
+            this.execute(),
+            responseAs<CountryList>()
+        )
+    }
+}
+
+class IdentificationDocumentClient {
+
+    private client: Client;
+
+    execute: () => OperatorFunction<Request, Response>;
+
+    public constructor(client: Client) {
+        this.client = client
+        this.execute = client.do
+    }
+
+    Get(): OperatorFunction<string, IdentificationDocument> {
+        return id$ => id$.pipe(
+            map(id => this.client.get().path(buildIAMPath('identificationdocuments', '/:id')).pathParam('id', id)),
+            this.execute(),
+            responseAs<IdentificationDocument>()
+        )
+    }
+
+    Create(): OperatorFunction<IdentificationDocument, IdentificationDocument> {
+        return id$ => id$.pipe(
+            map(id => this.client.post().body(id).path(buildIAMPath(('identificationdocuments')))),
+            this.execute(),
+            responseAs<IdentificationDocument>()
+        )
+    }
+
+    Update(): OperatorFunction<IdentificationDocument, IdentificationDocument> {
+        return id$ => id$.pipe(
+            map(id => this.client.put().body(id).path(buildIAMPath('identificationdocuments', '/:id')).pathParam('id', id.id)),
+            this.execute(),
+            responseAs<IdentificationDocument>()
+        )
+    }
+
+    List(): OperatorFunction<any, IdentificationDocumentList> {
+        return n$ => n$.pipe(
+            map(n => this.client.get().path(buildIAMPath('identificationdocuments'))),
+            this.execute(),
+            responseAs<IdentificationDocumentList>()
+        )
+    }
+
+    Delete(): OperatorFunction<string, any> {
+        return id$ => id$.pipe(
+            map(id => this.client.get().path(buildIAMPath('identificationdocuments', '/:id')).pathParam('id', id)),
+            this.execute()
+        )
+    }
+}
+
+class IdentificationDocumentTypeClient {
+
+    private client: Client;
+
+    execute: () => OperatorFunction<Request, Response>;
+
+    public constructor(client: Client) {
+        this.client = client
+        this.execute = client.do
+    }
+
+    Get(): OperatorFunction<string, IdentificationDocumentType> {
+        return id$ => id$.pipe(
+            map(id => this.client.get().path(buildIAMPath('identificationdocumenttypes', '/:id')).pathParam('id', id)),
+            this.execute(),
+            responseAs<IdentificationDocumentType>()
+        )
+    }
+
+    Create(): OperatorFunction<IdentificationDocumentType, IdentificationDocumentType> {
+        return idt$ => idt$.pipe(
+            map(idt => this.client.post().body(idt).path(buildIAMPath(('identificationdocumenttypes')))),
+            this.execute(),
+            responseAs<IdentificationDocumentType>()
+        )
+    }
+
+    Update(): OperatorFunction<IdentificationDocumentType, IdentificationDocumentType> {
+        return idt$ => idt$.pipe(
+            map(idt => this.client.put().body(idt).path(buildIAMPath('identificationdocumenttypes', '/:id')).pathParam('id', idt.id)),
+            this.execute(),
+            responseAs<IdentificationDocumentType>()
+        )
+    }
+
+    List(): OperatorFunction<any, IdentificationDocumentTypeList> {
+        return n$ => n$.pipe(
+            map(n => this.client.get().path(buildIAMPath('identificationdocumenttypes'))),
+            this.execute(),
+            responseAs<IdentificationDocumentTypeList>()
+        )
+    }
+}
+
+class IndividualClient {
+
+    private client: Client;
+
+    execute: () => OperatorFunction<Request, Response>;
+
+    public constructor(client: Client) {
+        this.client = client
+        this.execute = client.do
+    }
+
+    Get(): OperatorFunction<string, Individual> {
+        return id$ => id$.pipe(
+            map(id => this.client.get().path(buildIAMPath('individuals', '/:id')).pathParam('id', id)),
+            this.execute(),
+            responseAs<Individual>()
+        )
+    }
+
+    Create(): OperatorFunction<Individual, Individual> {
+        return ind$ => ind$.pipe(
+            map(ind => this.client.post().body(ind).path(buildIAMPath(('individuals')))),
+            this.execute(),
+            responseAs<Individual>()
+        )
+    }
+
+    Update(): OperatorFunction<Individual, Individual> {
+        return ind$ => ind$.pipe(
+            map(ind => this.client.put().body(ind).path(buildIAMPath('individuals', '/:id')).pathParam('id', ind.id)),
+            this.execute(),
+            responseAs<Individual>()
+        )
+    }
+
+    List(): OperatorFunction<any, IndividualList> {
+        return n$ => n$.pipe(
+            map(n => this.client.get().path(buildIAMPath('individuals'))),
+            this.execute(),
+            responseAs<IndividualList>()
+        )
+    }
+}
+
+class MembershipClient {
+
+    private client: Client;
+
+    execute: () => OperatorFunction<Request, Response>;
+
+    public constructor(client: Client) {
+        this.client = client
+        this.execute = client.do
+    }
+
+    Get(): OperatorFunction<string, Membership> {
+        return id$ => id$.pipe(
+            map(id => this.client.get().path(buildIAMPath('memberships', '/:id')).pathParam('id', id)),
+            this.execute(),
+            responseAs<Membership>()
+        )
+    }
+
+    Create(): OperatorFunction<Membership, Membership> {
+        return mem$ => mem$.pipe(
+            map(mem => this.client.post().body(mem).path(buildIAMPath(('memberships')))),
+            this.execute(),
+            responseAs<Membership>()
+        )
+    }
+
+    Update(): OperatorFunction<Membership, Membership> {
+        return mem$ => mem$.pipe(
+            map(mem => this.client.put().body(mem).path(buildIAMPath('memberships', '/:id')).pathParam('id', mem.id)),
+            this.execute(),
+            responseAs<Membership>()
+        )
+    }
+
+    List(): OperatorFunction<any, MembershipList> {
+        return n$ => n$.pipe(
+            map(n => this.client.get().path(buildIAMPath('memberships'))),
+            this.execute(),
+            responseAs<MembershipList>()
+        )
+    }
+}
+
+class NationalityClient {
+
+    private client: Client;
+
+    execute: () => OperatorFunction<Request, Response>;
+
+    public constructor(client: Client) {
+        this.client = client
+        this.execute = client.do
+    }
+
+    Get(): OperatorFunction<string, Nationality> {
+        return id$ => id$.pipe(
+            map(id => this.client.get().path(buildIAMPath('nationalities', '/:id')).pathParam('id', id)),
+            this.execute(),
+            responseAs<Nationality>()
+        )
+    }
+
+    Create(): OperatorFunction<Nationality, Nationality> {
+        return nat$ => nat$.pipe(
+            map(nat => this.client.post().body(nat).path(buildIAMPath(('nationalities')))),
+            this.execute(),
+            responseAs<Nationality>()
+        )
+    }
+
+    Update(): OperatorFunction<Nationality, Nationality> {
+        return nat$ => nat$.pipe(
+            map(nat => this.client.put().body(nat).path(buildIAMPath('nationalities', '/:id')).pathParam('id', nat.id)),
+            this.execute(),
+            responseAs<Nationality>()
+        )
+    }
+
+    List(): OperatorFunction<any, NationalityList> {
+        return n$ => n$.pipe(
+            map(n => this.client.get().path(buildIAMPath('nationalities'))),
+            this.execute(),
+            responseAs<NationalityList>()
+        )
+    }
+}
+
+class PartyAttributeDefinitionClient {
+
+    private client: Client;
+
+    execute: () => OperatorFunction<Request, Response>;
+
+    public constructor(client: Client) {
+        this.client = client
+        this.execute = client.do
+    }
+
+    Get(): OperatorFunction<string, PartyAttributeDefinition> {
+        return id$ => id$.pipe(
+            map(id => this.client.get().path(buildIAMPath('attributes', '/:id')).pathParam('id', id)),
+            this.execute(),
+            responseAs<PartyAttributeDefinition>()
+        )
+    }
+
+    Create(): OperatorFunction<PartyAttributeDefinition, PartyAttributeDefinition> {
+        return pad$ => pad$.pipe(
+            map(pad => this.client.post().body(pad).path(buildIAMPath(('attributes')))),
+            this.execute(),
+            responseAs<PartyAttributeDefinition>()
+        )
+    }
+
+    Update(): OperatorFunction<PartyAttributeDefinition, PartyAttributeDefinition> {
+        return pad$ => pad$.pipe(
+            map(pad => this.client.put().body(pad).path(buildIAMPath('attributes', '/:id')).pathParam('id', pad.id)),
+            this.execute(),
+            responseAs<PartyAttributeDefinition>()
+        )
+    }
+
+    List(): OperatorFunction<any, PartyAttributeDefinitionList> {
+        return n$ => n$.pipe(
+            map(n => this.client.get().path(buildIAMPath('attributes'))),
+            this.execute(),
+            responseAs<PartyAttributeDefinitionList>()
+        )
+    }
+}
+
 class PartyClient {
 
   private client: Client;
@@ -331,21 +823,248 @@ class PartyClient {
   }
 }
 
-export class IAMClient {
-  private readonly _scheme: string
-  private readonly _host: string
-  private readonly _headers: Headers
-  private readonly _client: Client
+class PartyTypeClient {
 
-  public constructor(scheme: string, host: string, headers: Headers) {
-    this._host = host
-    this._scheme = scheme
-    this._headers = headers
-    this._client = new Client(this._host, this._scheme, this._headers)
-  }
+    private client: Client;
 
-  public Parties(){
-    return new PartyClient(this._client)
-  }
+    execute: () => OperatorFunction<Request, Response>;
+
+    public constructor(client: Client) {
+        this.client = client
+        this.execute = client.do
+    }
+
+    Get(): OperatorFunction<string, PartyType> {
+        return id$ => id$.pipe(
+            map(id => this.client.get().path(buildIAMPath('partytypes', '/:id')).pathParam('id', id)),
+            this.execute(),
+            responseAs<PartyType>()
+        )
+    }
+
+    Create(): OperatorFunction<PartyType, PartyType> {
+        return pt$ => pt$.pipe(
+            map(pt => this.client.post().body(pt).path(buildIAMPath(('partytypes')))),
+            this.execute(),
+            responseAs<PartyType>()
+        )
+    }
+
+    Update(): OperatorFunction<PartyType, PartyType> {
+        return pt$ => pt$.pipe(
+            map(pt => this.client.put().body(pt).path(buildIAMPath('partytypes', '/:id')).pathParam('id', pt.id)),
+            this.execute(),
+            responseAs<PartyType>()
+        )
+    }
+
+    List(): OperatorFunction<any, PartyTypeList> {
+        return n$ => n$.pipe(
+            map(n => this.client.get().path(buildIAMPath('partytypes'))),
+            this.execute(),
+            responseAs<PartyTypeList>()
+        )
+    }
+}
+
+class RelationshipClient {
+
+    private client: Client;
+
+    execute: () => OperatorFunction<Request, Response>;
+
+    public constructor(client: Client) {
+        this.client = client
+        this.execute = client.do
+    }
+
+    Get(): OperatorFunction<string, Relationship> {
+        return id$ => id$.pipe(
+            map(id => this.client.get().path(buildIAMPath('relationships', '/:id')).pathParam('id', id)),
+            this.execute(),
+            responseAs<Relationship>()
+        )
+    }
+
+    Create(): OperatorFunction<Relationship, Relationship> {
+        return r$ => r$.pipe(
+            map(r => this.client.post().body(r).path(buildIAMPath(('relationships')))),
+            this.execute(),
+            responseAs<Relationship>()
+        )
+    }
+
+    Update(): OperatorFunction<Relationship, Relationship> {
+        return r$ => r$.pipe(
+            map(r => this.client.put().body(r).path(buildIAMPath('relationships', '/:id')).pathParam('id', r.id)),
+            this.execute(),
+            responseAs<Relationship>()
+        )
+    }
+
+    List(): OperatorFunction<any, RelationshipList> {
+        return n$ => n$.pipe(
+            map(n => this.client.get().path(buildIAMPath('relationships'))),
+            this.execute(),
+            responseAs<RelationshipList>()
+        )
+    }
+
+    Delete(): OperatorFunction<string, any> {
+        return id$ => id$.pipe(
+            map(id => this.client.get().path(buildIAMPath('relationships', '/:id')).pathParam('id', id)),
+            this.execute()
+        )
+    }
+}
+
+class RelationshipTypeClient {
+
+    private client: Client;
+
+    execute: () => OperatorFunction<Request, Response>;
+
+    public constructor(client: Client) {
+        this.client = client
+        this.execute = client.do
+    }
+
+    Get(): OperatorFunction<string, RelationshipType> {
+        return id$ => id$.pipe(
+            map(id => this.client.get().path(buildIAMPath('relationshiptypes', '/:id')).pathParam('id', id)),
+            this.execute(),
+            responseAs<RelationshipType>()
+        )
+    }
+
+    Create(): OperatorFunction<RelationshipType, RelationshipType> {
+        return rt$ => rt$.pipe(
+            map(rt => this.client.post().body(rt).path(buildIAMPath(('relationshiptypes')))),
+            this.execute(),
+            responseAs<RelationshipType>()
+        )
+    }
+
+    Update(): OperatorFunction<RelationshipType, RelationshipType> {
+        return rt$ => rt$.pipe(
+            map(rt => this.client.put().body(rt).path(buildIAMPath('relationshiptypes', '/:id')).pathParam('id', rt.id)),
+            this.execute(),
+            responseAs<RelationshipType>()
+        )
+    }
+
+    List(): OperatorFunction<any, RelationshipTypeList> {
+        return n$ => n$.pipe(
+            map(n => this.client.get().path(buildIAMPath('relationshiptypes'))),
+            this.execute(),
+            responseAs<RelationshipTypeList>()
+        )
+    }
+}
+
+class TeamClient {
+
+    private client: Client;
+
+    execute: () => OperatorFunction<Request, Response>;
+
+    public constructor(client: Client) {
+        this.client = client
+        this.execute = client.do
+    }
+
+    Get(): OperatorFunction<string, Team> {
+        return id$ => id$.pipe(
+            map(id => this.client.get().path(buildIAMPath('teams', '/:id')).pathParam('id', id)),
+            this.execute(),
+            responseAs<Team>()
+        )
+    }
+
+    Create(): OperatorFunction<Team, Team> {
+        return t$ => t$.pipe(
+            map(t => this.client.post().body(t).path(buildIAMPath(('teams')))),
+            this.execute(),
+            responseAs<Team>()
+        )
+    }
+
+    Update(): OperatorFunction<Team, Team> {
+        return t$ => t$.pipe(
+            map(t => this.client.put().body(t).path(buildIAMPath('teams', '/:id')).pathParam('id', t.id)),
+            this.execute(),
+            responseAs<Team>()
+        )
+    }
+
+    List(): OperatorFunction<any, TeamList> {
+        return n$ => n$.pipe(
+            map(n => this.client.get().path(buildIAMPath('teams'))),
+            this.execute(),
+            responseAs<TeamList>()
+        )
+    }
+}
+
+export class IAMClient{
+    private readonly _scheme: string
+    private readonly _host: string
+    private readonly _headers: Headers
+    private readonly _client: Client
+
+    public constructor(scheme: string, host: string, headers: Headers) {
+        this._host = host
+        this._scheme = scheme
+        this._headers = headers
+        this._client = new Client(this._host, this._scheme, this._headers)
+    }
+
+    public Countries(){
+        return new CountryClient(this._client)
+    }
+
+    public IdentificationDocuments(){
+        return new IdentificationDocumentClient(this._client)
+    }
+
+    public IdentificationDocumentTypes(){
+        return new IdentificationDocumentTypeClient(this._client)
+    }
+
+    public Individuals(){
+        return new IndividualClient(this._client)
+    }
+
+    public Memberships(){
+        return new MembershipClient(this._client)
+    }
+
+    public Nationalities(){
+        return new NationalityClient(this._client)
+    }
+
+    public PartyAttributeDefinitions(){
+        return new PartyAttributeDefinitionClient(this._client)
+    }
+
+    public Parties(){
+        return new PartyClient(this._client)
+    }
+
+    public PartyTypes(){
+        return new PartyTypeClient(this._client)
+    }
+
+    public Relationships(){
+        return new RelationshipClient(this._client)
+    }
+
+    public RelationshipTypes(){
+        return new RelationshipTypeClient(this._client)
+    }
+
+    public Teams(){
+        return new TeamClient(this._client)
+    }
 }
 
