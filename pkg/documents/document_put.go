@@ -29,7 +29,7 @@ func Put(
 			return
 		}
 
-		bucketId, err := getBucketIdFromHeader(req.URL.Query())
+		bucketId, err := requireBucketIDFromQueryParam(req.URL.Query())
 		if err != nil {
 			writeError(w, http.StatusBadRequest, fmt.Errorf("could not get bucketId: %v", err))
 			return
@@ -113,11 +113,11 @@ func Put(
 
 			// Update the previous version if it exists
 			result := collection.FindOneAndUpdate(sessCtx, bson.M{
-				"id":             id,
-				"isLastRevision": true,
+				keyID:             id,
+				keyIsLastRevision: true,
 			}, bson.M{
 				"$set": bson.M{
-					"isLastRevision": false,
+					keyIsLastRevision: false,
 				},
 			})
 			if result.Err() != nil {
@@ -144,10 +144,10 @@ func Put(
 			return
 		}
 
-		w.Header().Set("ETag", md5ChecksumStr)
-		w.Header().Set("x-object-key", doc.ID)
-		w.Header().Set("x-object-version", strconv.Itoa(doc.Revision))
-		w.Header().Set("x-object-bucket", bucketId)
+		w.Header().Set(headerETag, md5ChecksumStr)
+		w.Header().Set(headerObjectKey, doc.ID)
+		w.Header().Set(headerObjectVersion, strconv.Itoa(doc.Revision))
+		w.Header().Set(headerBucketID, bucketId)
 
 	}
 }

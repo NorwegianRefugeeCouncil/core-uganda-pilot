@@ -26,31 +26,42 @@ func writeError(w http.ResponseWriter, statusCode int, err error) {
 }
 
 func getMediaType(header http.Header) (string, map[string]string, error) {
-	mediaType, params, err := mime.ParseMediaType(header.Get("Content-Type"))
+	mediaType, params, err := mime.ParseMediaType(header.Get(headerContentType))
 	if err != nil {
 		return "", nil, fmt.Errorf("failed to parse media type: %v", err)
 	}
 	return mediaType, params, err
 }
 
-func getBucketIdFromHeader(header url.Values) (string, error) {
-	b := header.Get("bucketId")
+func requireBucketIDFromQueryParam(values url.Values) (string, error) {
+	b := values.Get(paramBucketID)
 	if len(b) == 0 {
-		return "", fmt.Errorf("bucketId request parameter is required")
+		return "", fmt.Errorf("request parameter '%s' is required", paramBucketID)
 	}
 	return b, nil
+}
+func findObjectVersionFromQueryParam(values url.Values) (*int, error) {
+	b := values.Get(paramVersion)
+	if len(b) == 0 {
+		return nil, nil
+	}
+	v, err := strconv.Atoi(b)
+	if err != nil {
+		return nil, err
+	}
+	return &v, nil
 }
 
 func encodeData(bodyBytes []byte, contentType string) (interface{}, error) {
 	var dataIntf interface{}
 	dataIntf = bodyBytes
-	if isMediaType(contentType, "application/json") {
+	if isMediaType(contentType, mimeTypeApplicationJson) {
 		dataMap := map[string]interface{}{}
 		if err := json.Unmarshal(bodyBytes, &dataMap); err != nil {
 			return nil, fmt.Errorf("failed to unmarshal json data: %v", err)
 		}
 		dataIntf = dataMap
-	} else if isMediaType(contentType, "text/plain", "text/html") {
+	} else if isMediaType(contentType, mimeTypeTextPlain, mimeTypeTextHtml) {
 		dataIntf = string(bodyBytes)
 	} else {
 		base64Data := base64.StdEncoding.EncodeToString(bodyBytes)
@@ -60,7 +71,7 @@ func encodeData(bodyBytes []byte, contentType string) (interface{}, error) {
 }
 
 func decodeData(data interface{}, contentType string) ([]byte, error) {
-	if isMediaType(contentType, "application/json") {
+	if isMediaType(contentType, mimeTypeApplicationJson) {
 		dataMap := data.(bson.D)
 		bsonBytes, err := bson.Marshal(dataMap)
 		if err != nil {
@@ -76,7 +87,7 @@ func decodeData(data interface{}, contentType string) ([]byte, error) {
 			return nil, fmt.Errorf("failed to marshal json data: %v", err)
 		}
 		return jsonBytes, nil
-	} else if isMediaType(contentType, "text/plain", "text/html") {
+	} else if isMediaType(contentType, mimeTypeTextPlain, mimeTypeTextHtml) {
 		dataStr := data.(string)
 		return []byte(dataStr), nil
 	} else {
@@ -99,7 +110,7 @@ func isMediaType(contentType string, mimeTypes ...string) bool {
 }
 
 func getContentLength(req *http.Request) (int32, error) {
-	contentLengthStr := req.Header.Get("Content-Length")
+	contentLengthStr := req.Header.Get(headerContentLength)
 	contentLength, err := strconv.ParseInt(contentLengthStr, 10, 32)
 	if err != nil {
 		return 0, fmt.Errorf("failed to parse Content-Length: %v", err)
@@ -111,7 +122,7 @@ func getMetadata(header http.Header) (map[string]string, error) {
 	if header == nil {
 		return map[string]string{}, nil
 	}
-	tags := header.Get("x-tags")
+	tags := header.Get(headerTags)
 	if len(tags) == 0 {
 		return map[string]string{}, nil
 	}

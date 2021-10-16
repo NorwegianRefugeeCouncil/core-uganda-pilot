@@ -13,6 +13,31 @@ import (
 const (
 	collDocuments = "documents"
 	collBuckets   = "document_buckets"
+
+	headerContentType    = "Content-Type"
+	headerContentLength  = "Content-Length"
+	headerETag           = "ETag"
+	headerLastModified   = "Last-Modified"
+	headerBucketID       = "x-bucket-id"
+	headerObjectVersion  = "x-object-version"
+	headerObjectKey      = "x-object-key"
+	headerSha512Checksum = "x-sha512-checksum"
+	headerTags           = "x-tags"
+
+	paramVersion  = "version"
+	paramBucketID = "bucketId"
+
+	keyID             = "id"
+	keyVersion        = "version"
+	keyBucketID       = "bucketId"
+	keyIsLastRevision = "isLastRevision"
+	keyRevision       = "revision"
+	keyIsDeleted      = "isDeleted"
+	keyDeletedAt      = "deletedAt"
+
+	mimeTypeApplicationJson = "application/json"
+	mimeTypeTextPlain       = "text/plain"
+	mimeTypeTextHtml        = "text/html"
 )
 
 type Server struct {

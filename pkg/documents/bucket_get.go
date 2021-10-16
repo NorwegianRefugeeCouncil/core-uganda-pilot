@@ -47,7 +47,7 @@ func GetBucket(
 func getBucket(ctx context.Context, mongoCli *mongo.Client, databaseName string, id string) (*Bucket, error) {
 	collection := mongoCli.Database(databaseName).Collection(collBuckets)
 	result := collection.FindOne(ctx, bson.M{
-		"id": id,
+		keyID: id,
 	})
 	if result.Err() != nil {
 		return nil, fmt.Errorf("failed to get bucket: %v", result.Err())

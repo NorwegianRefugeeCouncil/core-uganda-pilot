@@ -42,8 +42,8 @@ func (r RESTDocumentClient) Get(ctx context.Context, id string, options GetDocum
 	var obj Document
 	body, resp, err := r.c.Get().Path(path.Join(server.DocumentsEndpoint, id)).
 		WithParams(url.Values{
-			"bucketId": []string{options.BucketID},
-			"version":  []string{options.Version},
+			paramBucketID: []string{options.BucketID},
+			paramVersion:  []string{options.Version},
 		}).
 		Do(ctx).Raw()
 	if err != nil {
@@ -52,15 +52,15 @@ func (r RESTDocumentClient) Get(ctx context.Context, id string, options GetDocum
 
 	obj.ID = id
 
-	createdAt, err := parseLastModified(resp.Header.Get("Last-Modified"))
+	createdAt, err := parseLastModified(resp.Header.Get(headerLastModified))
 	if err != nil {
 		return nil, err
 	}
 	obj.CreatedAt = createdAt
 
-	obj.ContentType = resp.Header.Get("Content-Type")
+	obj.ContentType = resp.Header.Get(headerContentType)
 
-	contentLength, err := strconv.Atoi(resp.Header.Get("Content-Length"))
+	contentLength, err := strconv.Atoi(resp.Header.Get(headerContentLength))
 	if err != nil {
 		return nil, err
 	}
@@ -68,9 +68,9 @@ func (r RESTDocumentClient) Get(ctx context.Context, id string, options GetDocum
 
 	obj.Data = body
 
-	obj.MD5Checksum = resp.Header.Get("ETag")
+	obj.MD5Checksum = resp.Header.Get(headerETag)
 
-	obj.SHA512Checksum = resp.Header.Get("x-sha512-checksum")
+	obj.SHA512Checksum = resp.Header.Get(headerSha512Checksum)
 
 	metadata, err := getMetadata(resp.Header)
 	if err != nil {
@@ -78,8 +78,8 @@ func (r RESTDocumentClient) Get(ctx context.Context, id string, options GetDocum
 	}
 	obj.Metadata = metadata
 
-	if len(resp.Header.Get("x-revision")) != 0 {
-		revision, err := strconv.Atoi(resp.Header.Get("x-revision"))
+	if len(resp.Header.Get(headerObjectVersion)) != 0 {
+		revision, err := strconv.Atoi(resp.Header.Get(headerObjectVersion))
 		if err != nil {
 			return nil, err
 		}
@@ -107,9 +107,9 @@ func (r RESTDocumentClient) Put(ctx context.Context, document *Document, options
 
 	_, res, err := r.c.Put().
 		Path(path.Join(server.DocumentsEndpoint, document.ID)).
-		WithHeader("Content-Type", document.ContentType).
+		WithHeader(headerContentType, document.ContentType).
 		WithParams(url.Values{
-			"bucketId": []string{document.BucketId},
+			paramBucketID: []string{document.BucketId},
 		}).
 		Body(document.Data).
 		Do(ctx).
@@ -119,9 +119,9 @@ func (r RESTDocumentClient) Put(ctx context.Context, document *Document, options
 	}
 
 	return &PutDocumentResponse{
-		Bucket:  res.Header.Get("x-object-bucket"),
-		Key:     res.Header.Get("x-object-key"),
-		Version: res.Header.Get("x-object-version"),
+		Bucket:  res.Header.Get(headerBucketID),
+		Key:     res.Header.Get(headerObjectKey),
+		Version: res.Header.Get(headerObjectVersion),
 	}, nil
 
 }
@@ -140,8 +140,8 @@ func (r RESTDocumentClient) Delete(ctx context.Context, key string, options Dele
 		Delete().
 		Path(path.Join(server.DocumentsEndpoint, key)).
 		WithParams(url.Values{
-			"bucketId": []string{options.BucketID},
-			"version":  []string{options.Version},
+			paramBucketID: []string{options.BucketID},
+			paramVersion:  []string{options.Version},
 		}).
 		Do(ctx).
 		Raw()

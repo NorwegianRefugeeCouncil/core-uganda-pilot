@@ -35,7 +35,7 @@ func DeleteBucket(
 		collection := mongoCli.Database(databaseName).Collection(collBuckets)
 
 		deleteRes, err := collection.DeleteOne(ctx, bson.M{
-			"id": id,
+			keyID: id,
 		})
 		if err != nil {
 			utils.ErrorResponse(w, fmt.Errorf("failed to delete bucket: %v", err))

@@ -104,17 +104,17 @@ func (s *Suite) TestPutDocument() {
 
 			body := bytes.NewReader(tc.content)
 
-			req, err := http.NewRequest("PUT", fmt.Sprintf("http://%s/apis/documents/v1/documents%s?bucketId=%s", s.server.GetAddress(), tc.key, bucket.ID), body)
+			req, err := http.NewRequest(http.MethodPut, fmt.Sprintf("http://%s/apis/documents/v1/documents%s?bucketId=%s", s.server.GetAddress(), tc.key, bucket.ID), body)
 			if !assert.NoError(t, err) {
 				return
 			}
 
 			if len(tc.contentType) != 0 {
-				req.Header.Set("Content-Type", tc.contentType)
+				req.Header.Set(headerContentType, tc.contentType)
 			}
 
 			if len(tc.tags) != 0 {
-				req.Header.Set("x-tags", tc.tags)
+				req.Header.Set(headerTags, tc.tags)
 			}
 
 			res, err := http.DefaultClient.Do(req)
@@ -133,8 +133,8 @@ func (s *Suite) TestPutDocument() {
 				return
 			}
 
-			assert.Equal(t, getMD5Checksum(tc.content), res.Header.Get("ETag"))
-			assert.Equal(t, strconv.Itoa(tc.expectRevision), res.Header.Get("x-object-version"))
+			assert.Equal(t, getMD5Checksum(tc.content), res.Header.Get(headerETag))
+			assert.Equal(t, strconv.Itoa(tc.expectRevision), res.Header.Get(headerObjectVersion))
 
 			t.Log(string(responseBytes))
 

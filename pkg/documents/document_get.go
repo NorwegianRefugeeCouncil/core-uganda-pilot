@@ -19,7 +19,13 @@ func Get(
 
 		id := getObjectIDFromPath(req.URL.Path)
 
-		bucketId, err := getBucketIdFromHeader(req.URL.Query())
+		bucketId, err := requireBucketIDFromQueryParam(req.URL.Query())
+		if err != nil {
+			writeError(w, http.StatusBadRequest, err)
+			return
+		}
+
+		objectVersion, err := findObjectVersionFromQueryParam(req.URL.Query())
 		if err != nil {
 			writeError(w, http.StatusBadRequest, err)
 			return
@@ -41,21 +47,15 @@ func Get(
 		collection := mongoCli.Database(databaseName).Collection(collDocuments)
 
 		filter := bson.M{
-			"id":        id,
-			"bucketId":  bucketId,
-			"isDeleted": false,
+			keyID:        id,
+			keyBucketID:  bucketId,
+			keyIsDeleted: false,
 		}
 
-		versionStr := req.URL.Query().Get("version")
-		if len(versionStr) > 0 {
-			version, err := strconv.Atoi(versionStr)
-			if err != nil {
-				writeError(w, http.StatusNotFound, fmt.Errorf("could not parse version: %v", err))
-				return
-			}
-			filter["revision"] = version
+		if objectVersion != nil {
+			filter[keyRevision] = objectVersion
 		} else {
-			filter["isLastRevision"] = true
+			filter[keyIsLastRevision] = true
 		}
 
 		findOneResult := collection.FindOne(ctx, filter)
@@ -76,11 +76,11 @@ func Get(
 			return
 		}
 
-		w.Header().Set("Content-Type", doc.ContentType)
-		w.Header().Set("Content-Length", strconv.Itoa(int(doc.ContentLength)))
-		w.Header().Set("ETag", doc.MD5Checksum)
-		w.Header().Set("Last-Modified", getLastModified(doc.CreatedAt))
-		w.Header().Set("x-bucket-id", bucketId)
+		w.Header().Set(headerContentType, doc.ContentType)
+		w.Header().Set(headerContentLength, strconv.Itoa(int(doc.ContentLength)))
+		w.Header().Set(headerETag, doc.MD5Checksum)
+		w.Header().Set(headerLastModified, getLastModified(doc.CreatedAt))
+		w.Header().Set(headerBucketID, bucketId)
 		w.WriteHeader(http.StatusOK)
 
 		decoded, err := decodeData(doc.Data, doc.ContentType)

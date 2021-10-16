@@ -6,7 +6,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
-	"strconv"
 )
 
 func Delete(
@@ -19,13 +18,17 @@ func Delete(
 
 		id := getObjectIDFromPath(req.URL.Path)
 
-		bucketId, err := getBucketIdFromHeader(req.URL.Query())
+		bucketId, err := requireBucketIDFromQueryParam(req.URL.Query())
 		if err != nil {
 			writeError(w, http.StatusBadRequest, err)
 			return
 		}
 
-		versionIdStr := req.URL.Query().Get("version")
+		objectVersion, err := findObjectVersionFromQueryParam(req.URL.Query())
+		if err != nil {
+			writeError(w, http.StatusBadRequest, err)
+			return
+		}
 
 		mongoCli, err := mongoFn()
 		if err != nil {
@@ -43,26 +46,21 @@ func Delete(
 		collection := mongoCli.Database(databaseName).Collection(collDocuments)
 
 		filter := bson.M{
-			"id":        id,
-			"isDeleted": false,
+			keyID:        id,
+			keyIsDeleted: false,
 		}
 
-		if len(versionIdStr) > 0 {
-			versionId, err := strconv.Atoi(versionIdStr)
-			if err != nil {
-				writeError(w, http.StatusBadRequest, fmt.Errorf("could not parse version query parameter: %v", err))
-				return
-			}
-			filter["revision"] = versionId
+		if objectVersion != nil {
+			filter[keyRevision] = objectVersion
 		} else {
-			filter["isLastRevision"] = true
+			filter[keyIsLastRevision] = true
 		}
 
 		updateResult, err := collection.UpdateOne(ctx,
 			filter, bson.M{
 				"$set": bson.M{
-					"isDeleted": true,
-					"deletedAt": timeTeller.TellTime(),
+					keyIsDeleted: true,
+					keyDeletedAt: timeTeller.TellTime(),
 				},
 			})
 		if err != nil {
