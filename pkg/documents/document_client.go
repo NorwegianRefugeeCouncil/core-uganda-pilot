@@ -31,6 +31,7 @@ func NewDocumentsClientFromConfig(restConfig *rest.Config) *RESTDocumentClient {
 
 type GetDocumentOptions struct {
 	BucketID string
+	Version  string
 }
 
 // Get a document
@@ -39,7 +40,12 @@ func (r RESTDocumentClient) Get(ctx context.Context, id string, options GetDocum
 	id = normaliseKey(id)
 
 	var obj Document
-	body, resp, err := r.c.Get().Path(path.Join(server.DocumentsEndpoint, id)).WithParams(url.Values{"bucketId": []string{options.BucketID}}).Do(ctx).Raw()
+	body, resp, err := r.c.Get().Path(path.Join(server.DocumentsEndpoint, id)).
+		WithParams(url.Values{
+			"bucketId": []string{options.BucketID},
+			"version":  []string{options.Version},
+		}).
+		Do(ctx).Raw()
 	if err != nil {
 		return nil, err
 	}
@@ -86,6 +92,9 @@ func (r RESTDocumentClient) Get(ctx context.Context, id string, options GetDocum
 }
 
 type PutDocumentResponse struct {
+	Key     string
+	Version string
+	Bucket  string
 }
 
 type PutDocumentOptions struct {
@@ -96,7 +105,7 @@ func (r RESTDocumentClient) Put(ctx context.Context, document *Document, options
 
 	document.ID = normaliseKey(document.ID)
 
-	_, _, err := r.c.Put().
+	_, res, err := r.c.Put().
 		Path(path.Join(server.DocumentsEndpoint, document.ID)).
 		WithHeader("Content-Type", document.ContentType).
 		WithParams(url.Values{
@@ -109,12 +118,17 @@ func (r RESTDocumentClient) Put(ctx context.Context, document *Document, options
 		return nil, err
 	}
 
-	return &PutDocumentResponse{}, nil
+	return &PutDocumentResponse{
+		Bucket:  res.Header.Get("x-object-bucket"),
+		Key:     res.Header.Get("x-object-key"),
+		Version: res.Header.Get("x-object-version"),
+	}, nil
 
 }
 
 type DeleteDocumentOptions struct {
 	BucketID string
+	Version  string
 }
 
 // Delete a document
@@ -127,6 +141,7 @@ func (r RESTDocumentClient) Delete(ctx context.Context, key string, options Dele
 		Path(path.Join(server.DocumentsEndpoint, key)).
 		WithParams(url.Values{
 			"bucketId": []string{options.BucketID},
+			"version":  []string{options.Version},
 		}).
 		Do(ctx).
 		Raw()

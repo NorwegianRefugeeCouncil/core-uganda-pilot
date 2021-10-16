@@ -10,6 +10,11 @@ import (
 	"strings"
 )
 
+const (
+	collDocuments = "documents"
+	collBuckets   = "document_buckets"
+)
+
 type Server struct {
 	mongoFn        func() (*mongo.Client, error)
 	databaseName   string
@@ -35,7 +40,6 @@ func (s *Server) NewClient() Interface {
 func NewServer(
 	mongoFn func() (*mongo.Client, error),
 	databaseName string,
-	collectionName string,
 	timeTeller utils.TimeTeller,
 	uidGenerator utils.UIDGenerator,
 ) *Server {
@@ -44,9 +48,9 @@ func NewServer(
 		databaseName:   databaseName,
 		timeTeller:     timeTeller,
 		uidGenerator:   uidGenerator,
-		getDocument:    Get(databaseName, collectionName, mongoFn),
-		putDocument:    Put(timeTeller, mongoFn, databaseName, collectionName),
-		deleteDocument: Delete(mongoFn, databaseName, collectionName, timeTeller),
+		getDocument:    Get(databaseName, mongoFn),
+		putDocument:    Put(timeTeller, mongoFn, databaseName),
+		deleteDocument: Delete(mongoFn, databaseName, timeTeller),
 		getBucket:      GetBucket(mongoFn, databaseName),
 		createBucket:   CreateBucket(mongoFn, databaseName, uidGenerator),
 		deleteBucket:   DeleteBucket(mongoFn, databaseName),

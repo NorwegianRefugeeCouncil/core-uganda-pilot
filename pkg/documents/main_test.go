@@ -12,21 +12,19 @@ import (
 
 type Suite struct {
 	suite.Suite
-	server         *Server
-	mongoFn        func() (*mongo.Client, error)
-	mongoCli       *mongo.Client
-	databaseName   string
-	collectionName string
-	timeTeller     utils.TimeTeller
-	uidGenerator   utils.UIDGenerator
-	client         Interface
-	done           chan struct{}
+	server       *Server
+	mongoFn      func() (*mongo.Client, error)
+	mongoCli     *mongo.Client
+	databaseName string
+	timeTeller   utils.TimeTeller
+	uidGenerator utils.UIDGenerator
+	client       Interface
+	done         chan struct{}
 }
 
 func (s *Suite) SetupSuite() {
 
 	s.databaseName = "test"
-	s.collectionName = "documents"
 
 	var err error
 
@@ -42,7 +40,7 @@ func (s *Suite) SetupSuite() {
 	s.timeTeller = utils.NewMockTimeTeller(time.Now())
 	s.uidGenerator = utils.NewUIDGenerator()
 
-	s.server = NewServer(s.mongoFn, s.databaseName, s.collectionName, s.timeTeller, s.uidGenerator)
+	s.server = NewServer(s.mongoFn, s.databaseName, s.timeTeller, s.uidGenerator)
 
 	s.done = make(chan struct{}, 1)
 
@@ -52,7 +50,12 @@ func (s *Suite) SetupSuite() {
 
 	s.client = s.server.NewClient()
 
-	_, err = s.mongoCli.Database(s.databaseName).Collection(s.collectionName).DeleteMany(context.Background(), bson.M{})
+	_, err = s.mongoCli.Database(s.databaseName).Collection(collDocuments).DeleteMany(context.Background(), bson.M{})
+	if err != nil {
+		s.T().Fatal(err)
+	}
+
+	_, err = s.mongoCli.Database(s.databaseName).Collection(collBuckets).DeleteMany(context.Background(), bson.M{})
 	if err != nil {
 		s.T().Fatal(err)
 	}

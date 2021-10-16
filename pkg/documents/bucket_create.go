@@ -7,8 +7,6 @@ import (
 	"net/http"
 )
 
-const bucketCollName = "document_buckets"
-
 func CreateBucket(
 	mongoClientFn func() (*mongo.Client, error),
 	databaseName string,
@@ -31,7 +29,7 @@ func CreateBucket(
 			return
 		}
 
-		collection := mongoCli.Database(databaseName).Collection(bucketCollName)
+		collection := mongoCli.Database(databaseName).Collection(collBuckets)
 
 		if _, err := collection.InsertOne(ctx, bucket); err != nil {
 			utils.ErrorResponse(w, fmt.Errorf("failed to create bucket: %v", err))

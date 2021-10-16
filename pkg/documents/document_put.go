@@ -16,7 +16,6 @@ func Put(
 	timeTeller utils.TimeTeller,
 	mongoFn func() (*mongo.Client, error),
 	databaseName string,
-	collectionName string,
 ) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, req *http.Request) {
@@ -110,7 +109,7 @@ func Put(
 
 		_, err = session.WithTransaction(ctx, func(sessCtx mongo.SessionContext) (interface{}, error) {
 
-			collection := mongoClient.Database(databaseName).Collection(collectionName)
+			collection := mongoClient.Database(databaseName).Collection(collDocuments)
 
 			// Update the previous version if it exists
 			result := collection.FindOneAndUpdate(sessCtx, bson.M{
@@ -146,7 +145,9 @@ func Put(
 		}
 
 		w.Header().Set("ETag", md5ChecksumStr)
-		w.Header().Set("x-version", strconv.Itoa(doc.Revision))
+		w.Header().Set("x-object-key", doc.ID)
+		w.Header().Set("x-object-version", strconv.Itoa(doc.Revision))
+		w.Header().Set("x-object-bucket", bucketId)
 
 	}
 }

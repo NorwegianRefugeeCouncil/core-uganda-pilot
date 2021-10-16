@@ -17,6 +17,69 @@ func (s *Suite) TestGetocumentInvalidBucketShouldThrow() {
 	assert.Error(s.T(), err)
 }
 
+func (s *Suite) TestGetObjectVersionWithOtherVersionsDeleted() {
+
+	bucket, err := s.createBucket("TestGetObjectVersionWithOtherVersionsDeleted")
+	if !assert.NoError(s.T(), err) {
+		return
+	}
+
+	bucketId := bucket.ID
+	key := "/testObject"
+
+	firstVersion, err := s.putDocument(bucketId, key)
+	if !assert.NoError(s.T(), err) {
+		return
+	}
+
+	_, err = s.putDocument(bucketId, key)
+	if !assert.NoError(s.T(), err) {
+		return
+	}
+
+	err = s.deleteDocumentVersion(bucketId, key, firstVersion.Version)
+	if !assert.NoError(s.T(), err) {
+		return
+	}
+
+	_, err = s.getDocumentVersion(bucketId, key, firstVersion.Version)
+	assert.Error(s.T(), err)
+
+	_, err = s.getDocument(bucketId, key)
+	assert.NoError(s.T(), err)
+}
+
+func (s *Suite) TestGetObjectWithPreviousVersionsDeleted() {
+	bucket, err := s.createBucket("TestGetObjectWithPreviousVersionsDeleted")
+	if !assert.NoError(s.T(), err) {
+		return
+	}
+
+	bucketId := bucket.ID
+	key := "/testObject"
+
+	firstVersion, err := s.putDocument(bucketId, key)
+	if !assert.NoError(s.T(), err) {
+		return
+	}
+
+	secondVersion, err := s.putDocument(bucketId, key)
+	if !assert.NoError(s.T(), err) {
+		return
+	}
+
+	err = s.deleteDocumentVersion(bucketId, key, firstVersion.Version)
+	if !assert.NoError(s.T(), err) {
+		return
+	}
+
+	_, err = s.getDocumentVersion(bucketId, key, firstVersion.Version)
+	assert.Error(s.T(), err)
+
+	_, err = s.getDocumentVersion(bucketId, key, secondVersion.Version)
+	assert.NoError(s.T(), err)
+}
+
 func (s *Suite) TestGetDocument() {
 
 	ctx := context.Background()

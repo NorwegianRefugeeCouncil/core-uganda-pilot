@@ -134,7 +134,7 @@ func (s *Suite) TestPutDocument() {
 			}
 
 			assert.Equal(t, getMD5Checksum(tc.content), res.Header.Get("ETag"))
-			assert.Equal(t, strconv.Itoa(tc.expectRevision), res.Header.Get("x-version"))
+			assert.Equal(t, strconv.Itoa(tc.expectRevision), res.Header.Get("x-object-version"))
 
 			t.Log(string(responseBytes))
 

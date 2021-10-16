@@ -12,7 +12,6 @@ import (
 func Delete(
 	mongoFn func() (*mongo.Client, error),
 	databaseName string,
-	collectionName string,
 	timeTeller utils.TimeTeller,
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
@@ -26,7 +25,7 @@ func Delete(
 			return
 		}
 
-		versionIdStr := req.URL.Query().Get("version_id")
+		versionIdStr := req.URL.Query().Get("version")
 
 		mongoCli, err := mongoFn()
 		if err != nil {
@@ -41,7 +40,7 @@ func Delete(
 			return
 		}
 
-		collection := mongoCli.Database(databaseName).Collection(collectionName)
+		collection := mongoCli.Database(databaseName).Collection(collDocuments)
 
 		filter := bson.M{
 			"id":        id,
@@ -54,7 +53,7 @@ func Delete(
 				writeError(w, http.StatusBadRequest, fmt.Errorf("could not parse version query parameter: %v", err))
 				return
 			}
-			filter["version"] = versionId
+			filter["revision"] = versionId
 		} else {
 			filter["isLastRevision"] = true
 		}

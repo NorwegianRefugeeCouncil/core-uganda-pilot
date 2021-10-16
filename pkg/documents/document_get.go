@@ -11,7 +11,6 @@ import (
 
 func Get(
 	databaseName string,
-	collectionName string,
 	mongoClientFn func() (*mongo.Client, error),
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
@@ -39,14 +38,27 @@ func Get(
 			return
 		}
 
-		collection := mongoCli.Database(databaseName).Collection(collectionName)
+		collection := mongoCli.Database(databaseName).Collection(collDocuments)
 
-		findOneResult := collection.FindOne(ctx, bson.M{
-			"id":             id,
-			"bucketId":       bucketId,
-			"isDeleted":      false,
-			"isLastRevision": true,
-		})
+		filter := bson.M{
+			"id":        id,
+			"bucketId":  bucketId,
+			"isDeleted": false,
+		}
+
+		versionStr := req.URL.Query().Get("version")
+		if len(versionStr) > 0 {
+			version, err := strconv.Atoi(versionStr)
+			if err != nil {
+				writeError(w, http.StatusNotFound, fmt.Errorf("could not parse version: %v", err))
+				return
+			}
+			filter["revision"] = version
+		} else {
+			filter["isLastRevision"] = true
+		}
+
+		findOneResult := collection.FindOne(ctx, filter)
 		err = findOneResult.Err()
 		if err != nil {
 			if errors.Is(mongo.ErrNoDocuments, err) {
