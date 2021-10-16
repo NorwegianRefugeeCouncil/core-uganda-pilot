@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"net/url"
 	"path"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -151,5 +152,30 @@ func getObjectIDFromPath(objectPath string) string {
 	if strings.HasPrefix(id, path.Join(server.DocumentsEndpoint)) {
 		id = strings.TrimPrefix(id, server.DocumentsEndpoint)
 	}
+	if !strings.HasPrefix(id, "/") {
+		id = "/" + id
+	}
 	return id
+}
+
+var objectIDRegex = regexp.MustCompile("^([a-zA-Z0-9]+([/\\.\\-_][[a-zA-Z0-9]+)*)$")
+
+func validateObjectId(id string) error {
+	if strings.HasPrefix(id, "/") {
+		id = strings.TrimPrefix(id, "/")
+	}
+
+	parts := strings.Split(id, "/")
+	for _, part := range parts {
+		if len(part) == 0 {
+			return fmt.Errorf("invalid object key: %s", id)
+		}
+	}
+
+	if !objectIDRegex.MatchString(id) {
+		return fmt.Errorf("invalid object key format: %s", id)
+	}
+
+	return nil
+
 }

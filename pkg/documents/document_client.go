@@ -33,6 +33,7 @@ type GetDocumentOptions struct {
 	BucketID string
 }
 
+// Get a document
 func (r RESTDocumentClient) Get(ctx context.Context, id string, options GetDocumentOptions) (*Document, error) {
 
 	id = normaliseKey(id)
@@ -90,6 +91,7 @@ type PutDocumentResponse struct {
 type PutDocumentOptions struct {
 }
 
+// Put a document
 func (r RESTDocumentClient) Put(ctx context.Context, document *Document, options PutDocumentOptions) (*PutDocumentResponse, error) {
 
 	document.ID = normaliseKey(document.ID)
@@ -115,6 +117,7 @@ type DeleteDocumentOptions struct {
 	BucketID string
 }
 
+// Delete a document
 func (r RESTDocumentClient) Delete(ctx context.Context, key string, options DeleteDocumentOptions) error {
 
 	key = normaliseKey(key)

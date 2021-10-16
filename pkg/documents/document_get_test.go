@@ -7,11 +7,21 @@ import (
 	"testing"
 )
 
-func (s *Suite) TestGet() {
+func (s *Suite) TestGetDocumentWithNoBucketShouldThrow() {
+	_, err := s.client.Documents().Get(context.Background(), "some-document", GetDocumentOptions{BucketID: ""})
+	assert.Error(s.T(), err)
+}
+
+func (s *Suite) TestGetocumentInvalidBucketShouldThrow() {
+	_, err := s.client.Documents().Get(context.Background(), "some-document", GetDocumentOptions{BucketID: "non-existing"})
+	assert.Error(s.T(), err)
+}
+
+func (s *Suite) TestGetDocument() {
 
 	ctx := context.Background()
 
-	bucket, err := s.client.Buckets().Create(ctx, &Bucket{Name: "test-document-get"})
+	bucket, err := s.client.Buckets().Create(ctx, &Bucket{Name: "test-document-get"}, CreateBucketOptions{})
 	if !assert.NoError(s.T(), err) {
 		return
 	}

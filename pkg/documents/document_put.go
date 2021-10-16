@@ -10,7 +10,6 @@ import (
 	"mime"
 	"net/http"
 	"strconv"
-	"strings"
 )
 
 func Put(
@@ -25,8 +24,10 @@ func Put(
 		ctx := req.Context()
 
 		id := getObjectIDFromPath(req.URL.Path)
-		if !strings.HasPrefix(id, "/") {
-			id = fmt.Sprintf("/%s", id)
+
+		if err := validateObjectId(id); err != nil {
+			writeError(w, http.StatusBadRequest, fmt.Errorf("invalid object key: %v", err))
+			return
 		}
 
 		bucketId, err := getBucketIdFromHeader(req.URL.Query())

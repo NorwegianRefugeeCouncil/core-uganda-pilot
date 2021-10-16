@@ -8,11 +8,21 @@ import (
 	"testing"
 )
 
-func (s *Suite) TestDelete() {
+func (s *Suite) TestDeleteDocumentWithNoBucketShouldThrow() {
+	err := s.client.Documents().Delete(context.Background(), "some-document", DeleteDocumentOptions{BucketID: ""})
+	assert.Error(s.T(), err)
+}
+
+func (s *Suite) TestDeleteDocumentInvalidBucketShouldThrow() {
+	err := s.client.Documents().Delete(context.Background(), "some-document", DeleteDocumentOptions{BucketID: "non-existing"})
+	assert.Error(s.T(), err)
+}
+
+func (s *Suite) TestDeleteDocument() {
 
 	ctx := context.Background()
 
-	bucket, err := s.client.Buckets().Create(ctx, &Bucket{Name: "test-document-delete"})
+	bucket, err := s.client.Buckets().Create(ctx, &Bucket{Name: "test-document-delete"}, CreateBucketOptions{})
 	if !assert.NoError(s.T(), err) {
 		return
 	}

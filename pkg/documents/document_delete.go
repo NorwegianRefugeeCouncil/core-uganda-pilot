@@ -1,14 +1,12 @@
 package documents
 
 import (
-	"errors"
 	"fmt"
 	"github.com/nrc-no/core/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
 	"strconv"
-	"strings"
 )
 
 func Delete(
@@ -21,9 +19,6 @@ func Delete(
 		ctx := req.Context()
 
 		id := getObjectIDFromPath(req.URL.Path)
-		if !strings.HasPrefix(id, "/") {
-			id = fmt.Sprintf("/%s", id)
-		}
 
 		bucketId, err := getBucketIdFromHeader(req.URL.Query())
 		if err != nil {
@@ -72,13 +67,8 @@ func Delete(
 				},
 			})
 		if err != nil {
-			if errors.Is(err, mongo.ErrNoDocuments) {
-				writeError(w, http.StatusNotFound, fmt.Errorf("object not found: %v", err))
-				return
-			} else {
-				writeError(w, http.StatusInternalServerError, fmt.Errorf("could not delete the object: %v", err))
-				return
-			}
+			writeError(w, http.StatusInternalServerError, fmt.Errorf("could not delete the object: %v", err))
+			return
 		}
 		if updateResult.ModifiedCount == 0 {
 			writeError(w, http.StatusNotFound, fmt.Errorf("object not found"))

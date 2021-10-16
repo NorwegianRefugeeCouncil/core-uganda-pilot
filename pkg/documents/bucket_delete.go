@@ -1,7 +1,6 @@
 package documents
 
 import (
-	"errors"
 	"fmt"
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/utils"
@@ -35,14 +34,15 @@ func DeleteBucket(
 
 		collection := mongoCli.Database(databaseName).Collection(bucketCollName)
 
-		_, err = collection.DeleteOne(ctx, bson.M{
+		deleteRes, err := collection.DeleteOne(ctx, bson.M{
 			"id": id,
 		})
-		if err != nil && errors.Is(err, mongo.ErrNoDocuments) {
-			utils.ErrorResponse(w, fmt.Errorf("failed to delete bucket: bucket not found"))
-			return
-		} else if err != nil {
+		if err != nil {
 			utils.ErrorResponse(w, fmt.Errorf("failed to delete bucket: %v", err))
+			return
+		}
+		if deleteRes.DeletedCount == 0 {
+			utils.ErrorResponse(w, fmt.Errorf("failed to delete bucket: bucket not found"))
 			return
 		}
 

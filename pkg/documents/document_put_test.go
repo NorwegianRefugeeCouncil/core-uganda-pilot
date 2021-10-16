@@ -11,7 +11,27 @@ import (
 	"testing"
 )
 
-func (s *Suite) TestPut() {
+func (s *Suite) TestPutDocumentWithNoBucketShouldThrow() {
+	_, err := s.client.Documents().Put(context.Background(), &Document{
+		ID:          "some-id",
+		BucketId:    "",
+		Data:        []byte(`{"a": "b"}`),
+		ContentType: "application/json",
+	}, PutDocumentOptions{})
+	assert.Error(s.T(), err)
+}
+
+func (s *Suite) TestPutDocumentNonExistingBucketShouldThrow() {
+	_, err := s.client.Documents().Put(context.Background(), &Document{
+		ID:          "some-id",
+		BucketId:    "non-existing",
+		Data:        []byte(`{"a": "b"}`),
+		ContentType: "application/json",
+	}, PutDocumentOptions{})
+	assert.Error(s.T(), err)
+}
+
+func (s *Suite) TestPutDocument() {
 
 	ctx := context.Background()
 
@@ -25,7 +45,7 @@ func (s *Suite) TestPut() {
 		expectRevision   int
 	}
 
-	bucket, err := s.client.Buckets().Create(ctx, &Bucket{Name: "test-document-get"})
+	bucket, err := s.client.Buckets().Create(ctx, &Bucket{Name: "test-document-get"}, CreateBucketOptions{})
 	if !assert.NoError(s.T(), err) {
 		return
 	}
