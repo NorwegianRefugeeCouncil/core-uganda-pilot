@@ -3,9 +3,11 @@ package documents
 import (
 	"errors"
 	"fmt"
+	"github.com/nrc-no/core/pkg/generic/server"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
+	"path"
 	"strconv"
 	"strings"
 )
@@ -73,6 +75,7 @@ func Get(
 		w.Header().Set("ETag", doc.MD5Checksum)
 		w.Header().Set("Last-Modified", getLastModified(doc.CreatedAt))
 		w.Header().Set("x-bucket-id", bucketId)
+		w.Header().Set("Location", path.Join("https://%s/%s", req.Host, server.DocumentsEndpoint))
 		w.WriteHeader(http.StatusOK)
 
 		decoded, err := decodeData(doc.Data, doc.ContentType)
