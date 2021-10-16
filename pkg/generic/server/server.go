@@ -23,24 +23,28 @@ type GenericServerOptions struct {
 var cmsPath = "/apis/cms/v1"
 var iamPath = "/apis/iam/v1"
 var attachmentsPath = "/apis/attachments/v1"
+var documentsPath = "/apis/documents/v1"
 
 type Endpoint = string
 
 var (
 	AttachmentsEndpoint                 = path.Join(attachmentsPath, "attachments")
-	CasesEndpoint                       = path.Join(cmsPath, "cases")
-	CaseTypesEndpoint                   = path.Join(cmsPath, "casetypes")
-	CommentsEndpoint                    = path.Join(cmsPath, "comments")
 	AttributesEndpoint                  = path.Join(iamPath, "attributes")
+	BucketsEndpoint                     = path.Join(documentsPath, "buckets")
+	CaseTypesEndpoint                   = path.Join(cmsPath, "casetypes")
+	CasesEndpoint                       = path.Join(cmsPath, "cases")
+	CommentsEndpoint                    = path.Join(cmsPath, "comments")
+	CountriesEndpoint                   = path.Join(iamPath, "countries")
+	DocumentsEndpoint                   = path.Join(documentsPath, "documents")
+	FormDefinitionsEndpoint             = path.Join(documentsPath, "form_definitions")
 	IdentificationDocumentTypesEndpoint = path.Join(iamPath, "identificationdocumenttypes")
 	IdentificationDocumentsEndpoint     = path.Join(iamPath, "identificationdocuments")
 	IndividualsEndpoint                 = path.Join(iamPath, "individuals")
 	MembershipsEndpoint                 = path.Join(iamPath, "memberships")
+	NationalitiesEndpoint               = path.Join(iamPath, "nationalities")
 	PartiesEndpoint                     = path.Join(iamPath, "parties")
 	PartyTypesEndpoint                  = path.Join(iamPath, "partytypes")
-	RelationshipsEndpoint               = path.Join(iamPath, "relationships")
 	RelationshipTypesEndpoint           = path.Join(iamPath, "relationshiptypes")
+	RelationshipsEndpoint               = path.Join(iamPath, "relationships")
 	TeamsEndpoint                       = path.Join(iamPath, "teams")
-	CountriesEndpoint                   = path.Join(iamPath, "countries")
-	NationalitiesEndpoint               = path.Join(iamPath, "nationalities")
 )
