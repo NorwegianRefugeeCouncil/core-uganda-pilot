@@ -28,7 +28,6 @@ const (
 	paramBucketID = "bucketId"
 
 	keyID             = "id"
-	keyVersion        = "version"
 	keyBucketID       = "bucketId"
 	keyIsLastRevision = "isLastRevision"
 	keyRevision       = "revision"
@@ -106,25 +105,31 @@ func (s *Server) Start(done chan struct{}) error {
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	handler := s.getHandler(req)
+	handler.ServeHTTP(w, req)
+}
+
+func (s *Server) getHandler(req *http.Request) http.Handler {
 	if strings.HasPrefix(req.URL.Path, server.DocumentsEndpoint) {
-		if req.Method == "GET" {
-			s.getDocument(w, req)
-		} else if req.Method == "PUT" {
-			s.putDocument(w, req)
-		} else if req.Method == "DELETE" {
-			s.deleteDocument(w, req)
+		switch req.Method {
+		case http.MethodGet:
+			return s.getDocument
+		case http.MethodPut:
+			return s.putDocument
+		case http.MethodDelete:
+			return s.deleteDocument
 		}
 	} else if strings.HasPrefix(req.URL.Path, server.BucketsEndpoint) {
-		if req.Method == "GET" {
-			s.getBucket(w, req)
-		} else if req.Method == "POST" {
-			s.createBucket(w, req)
-		} else if req.Method == "DELETE" {
-			s.deleteBucket(w, req)
+		switch req.Method {
+		case http.MethodGet:
+			return s.getBucket
+		case http.MethodPost:
+			return s.createBucket
+		case http.MethodDelete:
+			return s.deleteBucket
 		}
-	} else {
-		w.WriteHeader(http.StatusNotFound)
 	}
+	return http.NotFoundHandler()
 }
 
 func (s *Server) GetAddress() string {
