@@ -17,7 +17,7 @@ func NewCaseStore(ctx context.Context, mongoClientFn utils.MongoClientFn, databa
 	defer cancel()
 
 	store := &CaseStore{
-		getCollection: utils.GetCollectionFn(database, "cases", mongoClientFn),
+		getCollection: utils.GetCollectionFn(database, CasesCollection, mongoClientFn),
 	}
 
 	collection, done, err := store.getCollection(ctx)

@@ -17,7 +17,7 @@ func GetCollectionFn(database, collection string, clientFn MongoClientFn) MongoC
 			return nil, nil, err
 		}
 		return mongoClient.Database(database).Collection(collection), func() {
-			mongoClient.Disconnect(ctx)
+			// mongoClient.Disconnect(ctx)
 		}, nil
 	}
 }

@@ -1,8 +1,10 @@
 package documents
 
 import (
+	"context"
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/rest"
+	"github.com/nrc-no/core/pkg/storage"
 	"github.com/nrc-no/core/pkg/utils"
 	"go.mongodb.org/mongo-driver/mongo"
 	"net"
@@ -11,7 +13,6 @@ import (
 )
 
 type Server struct {
-	mongoFn        func() (*mongo.Client, error)
 	databaseName   string
 	timeTeller     utils.TimeTeller
 	uidGenerator   utils.UIDGenerator
@@ -33,23 +34,21 @@ func (s *Server) NewClient() Interface {
 }
 
 func NewServer(
-	mongoFn func() (*mongo.Client, error),
+	dbFactory storage.Factory,
 	databaseName string,
-	collectionName string,
 	timeTeller utils.TimeTeller,
 	uidGenerator utils.UIDGenerator,
 ) *Server {
 	s := &Server{
-		mongoFn:        mongoFn,
 		databaseName:   databaseName,
 		timeTeller:     timeTeller,
 		uidGenerator:   uidGenerator,
-		getDocument:    Get(databaseName, collectionName, mongoFn),
-		putDocument:    Put(timeTeller, mongoFn, databaseName, collectionName),
-		deleteDocument: Delete(mongoFn, databaseName, collectionName, timeTeller),
-		getBucket:      GetBucket(mongoFn, databaseName),
-		createBucket:   CreateBucket(mongoFn, databaseName, uidGenerator),
-		deleteBucket:   DeleteBucket(mongoFn, databaseName),
+		getDocument:    Get(databaseName, dbFactory),
+		putDocument:    Put(timeTeller, dbFactory, databaseName),
+		deleteDocument: Delete(dbFactory, databaseName, timeTeller),
+		getBucket:      GetBucket(dbFactory, databaseName),
+		createBucket:   CreateBucket(dbFactory, databaseName, uidGenerator),
+		deleteBucket:   DeleteBucket(dbFactory, databaseName),
 	}
 	return s
 }
@@ -77,27 +76,37 @@ func (s *Server) Start(done chan struct{}) error {
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	handler := s.getHandler(req)
+	handler.ServeHTTP(w, req)
+}
+
+func (s *Server) getHandler(req *http.Request) http.Handler {
 	if strings.HasPrefix(req.URL.Path, server.DocumentsEndpoint) {
-		if req.Method == "GET" {
-			s.getDocument(w, req)
-		} else if req.Method == "PUT" {
-			s.putDocument(w, req)
-		} else if req.Method == "DELETE" {
-			s.deleteDocument(w, req)
+		switch req.Method {
+		case http.MethodGet:
+			return s.getDocument
+		case http.MethodPut:
+			return s.putDocument
+		case http.MethodDelete:
+			return s.deleteDocument
 		}
 	} else if strings.HasPrefix(req.URL.Path, server.BucketsEndpoint) {
-		if req.Method == "GET" {
-			s.getBucket(w, req)
-		} else if req.Method == "POST" {
-			s.createBucket(w, req)
-		} else if req.Method == "DELETE" {
-			s.deleteBucket(w, req)
+		switch req.Method {
+		case http.MethodGet:
+			return s.getBucket
+		case http.MethodPost:
+			return s.createBucket
+		case http.MethodDelete:
+			return s.deleteBucket
 		}
-	} else {
-		w.WriteHeader(http.StatusNotFound)
 	}
+	return http.NotFoundHandler()
 }
 
 func (s *Server) GetAddress() string {
 	return s.listener.Addr().String()
+}
+
+func ClearCollections(ctx context.Context, mongoCli *mongo.Client, databaseName string) error {
+	return storage.ClearCollections(ctx, mongoCli, databaseName, AllCollections...)
 }

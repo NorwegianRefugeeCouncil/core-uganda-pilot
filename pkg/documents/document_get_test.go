@@ -2,16 +2,89 @@ package documents
 
 import (
 	"context"
-	"github.com/nrc-no/core/pkg/validation"
+	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-func (s *Suite) TestGet() {
+func (s *Suite) TestGetDocumentWithNoBucketShouldThrow() {
+	_, err := s.client.Documents().Get(context.Background(), "some-document", GetDocumentOptions{BucketID: ""})
+	assert.Error(s.T(), err)
+}
+
+func (s *Suite) TestGetocumentInvalidBucketShouldThrow() {
+	_, err := s.client.Documents().Get(context.Background(), "some-document", GetDocumentOptions{BucketID: "non-existing"})
+	assert.Error(s.T(), err)
+}
+
+func (s *Suite) TestGetObjectVersionWithOtherVersionsDeleted() {
+
+	bucket, err := s.createVersionedBucket("TestGetObjectVersionWithOtherVersionsDeleted")
+	if !assert.NoError(s.T(), err) {
+		return
+	}
+
+	bucketId := bucket.ID
+	key := "/testObject"
+
+	firstVersion, err := s.putDocument(bucketId, key)
+	if !assert.NoError(s.T(), err) {
+		return
+	}
+
+	_, err = s.putDocument(bucketId, key)
+	if !assert.NoError(s.T(), err) {
+		return
+	}
+
+	err = s.deleteDocumentVersion(bucketId, key, firstVersion.Version)
+	if !assert.NoError(s.T(), err) {
+		return
+	}
+
+	_, err = s.getDocumentVersion(bucketId, key, firstVersion.Version)
+	assert.Error(s.T(), err)
+
+	_, err = s.getDocument(bucketId, key)
+	assert.NoError(s.T(), err)
+}
+
+func (s *Suite) TestGetObjectWithPreviousVersionsDeleted() {
+	bucket, err := s.createVersionedBucket("TestGetObjectWithPreviousVersionsDeleted")
+	if !assert.NoError(s.T(), err) {
+		return
+	}
+
+	bucketId := bucket.ID
+	key := "/testObject"
+
+	firstVersion, err := s.putDocument(bucketId, key)
+	if !assert.NoError(s.T(), err) {
+		return
+	}
+
+	secondVersion, err := s.putDocument(bucketId, key)
+	if !assert.NoError(s.T(), err) {
+		return
+	}
+
+	err = s.deleteDocumentVersion(bucketId, key, firstVersion.Version)
+	if !assert.NoError(s.T(), err) {
+		return
+	}
+
+	_, err = s.getDocumentVersion(bucketId, key, firstVersion.Version)
+	assert.Error(s.T(), err)
+
+	_, err = s.getDocumentVersion(bucketId, key, secondVersion.Version)
+	assert.NoError(s.T(), err)
+}
+
+func (s *Suite) TestGetDocument() {
 
 	ctx := context.Background()
 
-	bucket, err := s.client.Buckets().Create(ctx, &Bucket{Name: "test-document-get"})
+	bucket, err := s.client.Buckets().Create(ctx, &Bucket{Name: "test-document-get"}, CreateBucketOptions{})
 	if !assert.NoError(s.T(), err) {
 		return
 	}
@@ -65,13 +138,13 @@ func (s *Suite) TestGet() {
 	}
 
 	type args struct {
-		name                  string
-		path                  string
-		expectError           bool
-		expectErrorStatusCode int
-		expectEtag            string
-		expectLastModified    string
-		expectBody            []byte
+		name               string
+		path               string
+		expectError        bool
+		expectErrorReason  meta.StatusReason
+		expectEtag         string
+		expectLastModified string
+		expectBody         []byte
 	}
 
 	tcs := []args{
@@ -80,23 +153,23 @@ func (s *Suite) TestGet() {
 			path:               "/testobj",
 			expectError:        false,
 			expectEtag:         getMD5Checksum(existingObj.Data),
-			expectLastModified: getLastModified(s.timeTeller.TellTime()),
+			expectLastModified: formatHTTPLastModified(s.timeTeller.TellTime()),
 			expectBody:         existingObj.Data,
 		}, {
-			name:                  "getNonExistingObject",
-			path:                  "/nonExisting",
-			expectError:           true,
-			expectErrorStatusCode: 404,
+			name:              "getNonExistingObject",
+			path:              "/nonExisting",
+			expectError:       true,
+			expectErrorReason: meta.StatusReasonNotFound,
 		}, {
-			name:                  "getDeletedObject",
-			path:                  deletedObj.ID,
-			expectError:           true,
-			expectErrorStatusCode: 404,
+			name:              "getDeletedObject",
+			path:              deletedObj.ID,
+			expectError:       true,
+			expectErrorReason: meta.StatusReasonNotFound,
 		}, {
-			name:                  "getUpdatedThenDeletedObject",
-			path:                  updatedDeletedObj.ID,
-			expectError:           true,
-			expectErrorStatusCode: 404,
+			name:              "getUpdatedThenDeletedObject",
+			path:              updatedDeletedObj.ID,
+			expectError:       true,
+			expectErrorReason: meta.StatusReasonNotFound,
 		},
 	}
 
@@ -109,9 +182,8 @@ func (s *Suite) TestGet() {
 				if !assert.Error(t, err) {
 					return
 				}
-				status := validation.AsStatus(err)
-				assert.Equal(t, tc.expectErrorStatusCode, status.Code)
-
+				reason := meta.ReasonForError(err)
+				assert.Equal(t, tc.expectErrorReason, reason)
 			}
 			if !tc.expectError {
 				if !assert.NoError(t, err) {

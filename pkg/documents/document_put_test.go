@@ -11,9 +11,27 @@ import (
 	"testing"
 )
 
-func (s *Suite) TestPut() {
+func (s *Suite) TestPutDocumentWithNoBucketShouldThrow() {
+	_, err := s.client.Documents().Put(context.Background(), &Document{
+		ID:          "some-id",
+		BucketId:    "",
+		Data:        []byte(`{"a": "b"}`),
+		ContentType: "application/json",
+	}, PutDocumentOptions{})
+	assert.Error(s.T(), err)
+}
 
-	ctx := context.Background()
+func (s *Suite) TestPutDocumentNonExistingBucketShouldThrow() {
+	_, err := s.client.Documents().Put(context.Background(), &Document{
+		ID:          "some-id",
+		BucketId:    "non-existing",
+		Data:        []byte(`{"a": "b"}`),
+		ContentType: "application/json",
+	}, PutDocumentOptions{})
+	assert.Error(s.T(), err)
+}
+
+func (s *Suite) TestPutDocument() {
 
 	type args struct {
 		name             string
@@ -25,7 +43,7 @@ func (s *Suite) TestPut() {
 		expectRevision   int
 	}
 
-	bucket, err := s.client.Buckets().Create(ctx, &Bucket{Name: "test-document-get"})
+	bucket, err := s.createVersionedBucket("test-document-get")
 	if !assert.NoError(s.T(), err) {
 		return
 	}
@@ -48,21 +66,21 @@ func (s *Suite) TestPut() {
 			contentType:      "application/json",
 			content:          []byte(`{"a":"b"}`),
 			expectStatusCode: 200,
-			expectRevision:   0,
+			expectRevision:   1,
 		}, {
 			name:             "putTextDocument",
 			key:              "/text-document",
 			contentType:      "text/plain",
 			content:          []byte(`hello`),
 			expectStatusCode: 200,
-			expectRevision:   0,
+			expectRevision:   1,
 		}, {
 			name:             "putHtmlDocument",
 			key:              "/html-document",
 			contentType:      "text/html",
 			content:          []byte(`<html></html>`),
 			expectStatusCode: 200,
-			expectRevision:   0,
+			expectRevision:   1,
 		}, {
 			name:             "putBadJson",
 			key:              "/bad-json",
@@ -75,7 +93,7 @@ func (s *Suite) TestPut() {
 			contentType:      "application/json",
 			content:          []byte(`{"d":"a"}`),
 			expectStatusCode: 200,
-			expectRevision:   1,
+			expectRevision:   2,
 		},
 	}
 
@@ -84,17 +102,17 @@ func (s *Suite) TestPut() {
 
 			body := bytes.NewReader(tc.content)
 
-			req, err := http.NewRequest("PUT", fmt.Sprintf("http://%s/apis/documents/v1/documents%s?bucketId=%s", s.server.GetAddress(), tc.key, bucket.ID), body)
+			req, err := http.NewRequest(http.MethodPut, fmt.Sprintf("http://%s/apis/documents/v1/documents%s?bucketId=%s", s.server.GetAddress(), tc.key, bucket.ID), body)
 			if !assert.NoError(t, err) {
 				return
 			}
 
 			if len(tc.contentType) != 0 {
-				req.Header.Set("Content-Type", tc.contentType)
+				req.Header.Set(headerContentType, tc.contentType)
 			}
 
 			if len(tc.tags) != 0 {
-				req.Header.Set("x-tags", tc.tags)
+				req.Header.Set(headerTags, tc.tags)
 			}
 
 			res, err := http.DefaultClient.Do(req)
@@ -113,8 +131,8 @@ func (s *Suite) TestPut() {
 				return
 			}
 
-			assert.Equal(t, getMD5Checksum(tc.content), res.Header.Get("ETag"))
-			assert.Equal(t, strconv.Itoa(tc.expectRevision), res.Header.Get("x-version"))
+			assert.Equal(t, getMD5Checksum(tc.content), res.Header.Get(headerETag))
+			assert.Equal(t, strconv.Itoa(tc.expectRevision), res.Header.Get(headerObjectVersion))
 
 			t.Log(string(responseBytes))
 

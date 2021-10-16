@@ -2,7 +2,6 @@ package documents
 
 import (
 	"github.com/nrc-no/core/pkg/rest"
-	"strings"
 )
 
 type Interface interface {
@@ -28,14 +27,4 @@ func NewFromClient(c *rest.Client) Interface {
 
 func NewFromConfig(config *rest.Config) Interface {
 	return &client{c: rest.NewClient(config)}
-}
-
-func normaliseKey(key string) string {
-	if strings.HasPrefix(key, "/") {
-		key = strings.TrimPrefix(key, "/")
-	}
-	if strings.HasSuffix(key, "/") {
-		key = strings.TrimSuffix(key, "/")
-	}
-	return key
 }

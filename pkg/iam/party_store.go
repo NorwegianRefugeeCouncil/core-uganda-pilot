@@ -17,7 +17,7 @@ func newPartyStore(ctx context.Context, mongoClientFn utils.MongoClientFn, datab
 	defer cancel()
 
 	store := &PartyStore{
-		GetCollection: utils.GetCollectionFn(database, "parties", mongoClientFn),
+		GetCollection: utils.GetCollectionFn(database, PartiesCollection, mongoClientFn),
 	}
 
 	collection, done, err := store.GetCollection(ctx)

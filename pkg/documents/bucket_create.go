@@ -2,15 +2,14 @@ package documents
 
 import (
 	"fmt"
+	"github.com/nrc-no/core/pkg/api/meta"
+	"github.com/nrc-no/core/pkg/storage"
 	"github.com/nrc-no/core/pkg/utils"
-	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
 )
 
-const bucketCollName = "document_buckets"
-
 func CreateBucket(
-	mongoClientFn func() (*mongo.Client, error),
+	dbFactory storage.Factory,
 	databaseName string,
 	generator utils.UIDGenerator,
 ) http.HandlerFunc {
@@ -18,20 +17,28 @@ func CreateBucket(
 
 		ctx := req.Context()
 
-		var bucket Bucket
-		if err := utils.BindJSON(req, &bucket); err != nil {
-			utils.ErrorResponse(w, fmt.Errorf("failed to decode bucket from request body: %v", err))
+		bucket := &Bucket{}
+		if err := utils.BindJSON(req, bucket); err != nil {
+			utils.ErrorResponse(w, err)
 			return
 		}
+
 		bucket.ID = generator.GenUID()
 
-		mongoCli, err := mongoClientFn()
+		applyBucketDefaults(bucket)
+
+		if errs := validateBucket(bucket); errs.HasAny() {
+			utils.ErrorResponse(w, meta.NewInvalid(GroupVersion.WithResource("bucket"), "", errs))
+			return
+		}
+
+		mongoCli, err := dbFactory.New()
 		if err != nil {
 			utils.ErrorResponse(w, fmt.Errorf("failed to connect to database: %v", err))
 			return
 		}
 
-		collection := mongoCli.Database(databaseName).Collection(bucketCollName)
+		collection := mongoCli.Database(databaseName).Collection(BucketsCollection)
 
 		if _, err := collection.InsertOne(ctx, bucket); err != nil {
 			utils.ErrorResponse(w, fmt.Errorf("failed to create bucket: %v", err))

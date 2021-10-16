@@ -2,100 +2,74 @@ package documents
 
 import (
 	"context"
-	"github.com/nrc-no/core/pkg/validation"
+	"github.com/nrc-no/core/pkg/api/meta"
+	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"testing"
 )
 
-func (s *Suite) TestDelete() {
+func (s *Suite) TestDeleteDocumentWithNoBucketShouldThrow() {
+	err := s.client.Documents().Delete(context.Background(), "some-document", DeleteDocumentOptions{BucketID: ""})
+	assert.Error(s.T(), err)
+}
 
-	ctx := context.Background()
+func (s *Suite) TestDeleteDocumentInvalidBucketShouldThrow() {
+	err := s.client.Documents().Delete(context.Background(), "some-document", DeleteDocumentOptions{BucketID: "non-existing"})
+	assert.Error(s.T(), err)
+}
 
-	bucket, err := s.client.Buckets().Create(ctx, &Bucket{Name: "test-document-delete"})
-	if !assert.NoError(s.T(), err) {
-		return
-	}
+func (s *Suite) TestDeleteUnexistingDocShouldReturn404() {
+	bucketName := uuid.NewV4().String()
+	bucket := s.createVersionedBucketOrDie(bucketName)
+	s.assertDocumentNotFound(bucket.ID, "not-existing")
+}
 
-	existingObj := &Document{
-		ID:          "/testobj",
-		BucketId:    bucket.ID,
-		ContentType: "application/json",
-		Data:        []byte(`{"a":"b"}`),
-	}
+func (s *Suite) TestDeleteVersionedDoc() {
+	bucketName := uuid.NewV4().String()
+	bucket := s.createVersionedBucketOrDie(bucketName)
+	v1 := s.putDocumentOrDie(bucket.ID, "somedocument")
+	v2 := s.putDocumentOrDie(bucket.ID, "somedocument")
+	v3 := s.putDocumentOrDie(bucket.ID, "somedocument")
+	s.deleteDocumentVersionOrDie(bucket.ID, "somedocument", v2.Version)
+	s.getDocumentVersionOrDie(bucket.ID, "somedocument", v1.Version)
+	s.getDocumentVersionOrDie(bucket.ID, "somedocument", v3.Version)
+	_, err := s.getDocumentVersion(bucket.ID, "somedocument", v2.Version)
+	assert.Equal(s.T(), meta.StatusReasonNotFound, meta.ReasonForError(err))
+}
 
-	deletedObj := &Document{
-		ID:          "/deleted",
-		BucketId:    bucket.ID,
-		ContentType: "application/json",
-		Data:        []byte(`{"a":"b"}`),
-	}
+func (s *Suite) TestDeleteDeletedVersionShouldReturn404() {
+	bucketName := uuid.NewV4().String()
+	bucket := s.createVersionedBucketOrDie(bucketName)
+	v1 := s.putDocumentOrDie(bucket.ID, "somedocument")
+	v2 := s.putDocumentOrDie(bucket.ID, "somedocument")
+	s.deleteDocumentVersionOrDie(bucket.ID, "somedocument", v2.Version)
+	s.getDocumentVersionOrDie(bucket.ID, "somedocument", v1.Version)
+	s.assertDocumentVersionNotFound(bucket.ID, "somedocument", v2.Version)
+	s.deleteDocumentVersionOrDie(bucket.ID, "somedocument", v1.Version)
+	s.assertDocumentVersionNotFound(bucket.ID, "somedocument", v1.Version)
+}
 
-	updatedObj := &Document{
-		ID:          "/delete-updated",
-		BucketId:    bucket.ID,
-		ContentType: "application/json",
-		Data:        []byte(`{"a":"b"}`),
-	}
+func (s *Suite) TestDeleteWithoutVersionShouldDeleteLastVersion() {
+	bucketName := uuid.NewV4().String()
+	bucket := s.createVersionedBucketOrDie(bucketName)
+	v1 := s.putDocumentOrDie(bucket.ID, "somedocument")
+	v2 := s.putDocumentOrDie(bucket.ID, "somedocument")
+	s.deleteDocumentOrDie(bucket.ID, "somedocument")
+	s.getDocumentVersionOrDie(bucket.ID, "somedocument", v1.Version)
+	s.assertDocumentVersionNotFound(bucket.ID, "somedocument", v2.Version)
+}
 
-	for _, document := range []*Document{existingObj, deletedObj, updatedObj} {
-		if _, err := s.client.Documents().Put(ctx, document, PutDocumentOptions{}); !assert.NoError(s.T(), err) {
-			return
-		}
-	}
+func (s *Suite) TestDeleteNonVersionedDoc() {
+	bucketName := uuid.NewV4().String()
+	bucket := s.createUnversionedBucketOrDie(bucketName)
+	s.putDocumentOrDie(bucket.ID, "somedocument")
+	s.deleteDocumentOrDie(bucket.ID, "somedocument")
+	s.assertDocumentNotFound(bucket.ID, "somedocument")
+}
 
-	if err := s.client.Documents().Delete(ctx, deletedObj.ID, DeleteDocumentOptions{BucketID: bucket.ID}); !assert.NoError(s.T(), err) {
-		return
-	}
-
-	if _, err := s.client.Documents().Put(ctx, updatedObj, PutDocumentOptions{}); !assert.NoError(s.T(), err) {
-		return
-	}
-
-	type args struct {
-		name            string
-		key             string
-		expectError     bool
-		expectErrorCode int
-	}
-
-	tcs := []args{
-		{
-			name:        "deleteExistingObject",
-			key:         "/testobj",
-			expectError: false,
-		}, {
-			name:            "deleteNonExistingObject",
-			key:             "/nonExisting",
-			expectError:     true,
-			expectErrorCode: http.StatusNotFound,
-		}, {
-			name:            "deleteAlreadyDeleted",
-			key:             "/deleted",
-			expectError:     true,
-			expectErrorCode: http.StatusNotFound,
-		}, {
-			name:        "deleteUpdatedDocument",
-			key:         "/delete-updated",
-			expectError: false,
-		},
-	}
-
-	for _, tc := range tcs {
-		s.T().Run(tc.name, func(t *testing.T) {
-			err := s.client.Documents().Delete(context.Background(), tc.key, DeleteDocumentOptions{
-				BucketID: bucket.ID,
-			})
-
-			if tc.expectError {
-				if !assert.Error(t, err) {
-					return
-				}
-				status := validation.AsStatus(err)
-				assert.Equal(t, tc.expectErrorCode, status.Code)
-			}
-
-		})
-	}
-
+func (s *Suite) TestDeleteDocVersionInUnversionedBucketShouldThrow() {
+	bucketName := uuid.NewV4().String()
+	bucket := s.createUnversionedBucketOrDie(bucketName)
+	d := s.putDocumentOrDie(bucket.ID, "somedocument")
+	err := s.deleteDocumentVersion(bucket.ID, "somedocument", d.Version)
+	assert.Equal(s.T(), meta.StatusReasonBadRequest, meta.ReasonForError(err))
 }

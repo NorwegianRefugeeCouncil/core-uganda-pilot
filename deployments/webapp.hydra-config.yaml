@@ -1,0 +1,13 @@
+urls:
+  self:
+    public: http://localhost:4444
+    issuer: http://localhost:4444
+  consent: http://localhost:9000/auth/consent
+  login: http://localhost:9000/auth/login
+  logout: http://localhost:9000/auth/logout
+secrets:
+  system:
+    - fVuJ0N1nFuymQjcnC4OWcIyo15gb0MYe
+dsn: postgres://postgres:postgres@db:5432/hydra?sslmode=disable&max_conns=20&max_idle_conns=4
+log:
+  leak_sensitive_values: true

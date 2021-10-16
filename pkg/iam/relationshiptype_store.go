@@ -17,7 +17,7 @@ func newRelationshipTypeStore(ctx context.Context, mongoClientFn utils.MongoClie
 	defer cancel()
 
 	store := &RelationshipTypeStore{
-		getCollection: utils.GetCollectionFn(database, "relationshipTypes", mongoClientFn),
+		getCollection: utils.GetCollectionFn(database, RelationshipTypesCollection, mongoClientFn),
 	}
 
 	collection, done, err := store.getCollection(ctx)

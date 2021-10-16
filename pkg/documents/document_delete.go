@@ -1,91 +1,82 @@
 package documents
 
 import (
-	"errors"
 	"fmt"
+	"github.com/nrc-no/core/pkg/api/meta"
+	"github.com/nrc-no/core/pkg/storage"
 	"github.com/nrc-no/core/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
-	"strconv"
-	"strings"
 )
 
 func Delete(
-	mongoFn func() (*mongo.Client, error),
+	dbFactory storage.Factory,
 	databaseName string,
-	collectionName string,
 	timeTeller utils.TimeTeller,
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		ctx := req.Context()
 
-		id := getObjectIDFromPath(req.URL.Path)
-		if !strings.HasPrefix(id, "/") {
-			id = fmt.Sprintf("/%s", id)
-		}
-
-		bucketId, err := getBucketIdFromHeader(req.URL.Query())
+		docRef, err := getDocumentRefFromHTTPRequest(req)
 		if err != nil {
-			writeError(w, http.StatusBadRequest, err)
+			utils.ErrorResponse(w, err)
 			return
 		}
 
-		versionIdStr := req.URL.Query().Get("version_id")
-
-		mongoCli, err := mongoFn()
+		db, err := dbFactory.New()
 		if err != nil {
-			writeError(w, http.StatusInternalServerError, fmt.Errorf("could not connect to the database: %v", err))
+			utils.ErrorResponse(w, err)
 			return
 		}
 
-		// ensure bucket exists
-		_, err = getBucket(ctx, mongoCli, databaseName, bucketId)
+		bucket, err := getBucket(ctx, db, databaseName, docRef.GetBucketID())
 		if err != nil {
-			writeError(w, http.StatusInternalServerError, err)
+			utils.ErrorResponse(w, err)
 			return
 		}
 
-		collection := mongoCli.Database(databaseName).Collection(collectionName)
-
-		filter := bson.M{
-			"id":        id,
-			"isDeleted": false,
+		if docRef.HasVersion() && !bucket.HasVersions() {
+			utils.ErrorResponse(w, meta.NewBadRequest("cannot delete document version on unversioned bucket"))
+			return
 		}
 
-		if len(versionIdStr) > 0 {
-			versionId, err := strconv.Atoi(versionIdStr)
+		collection := db.Database(databaseName).Collection(DocumentsCollection)
+
+		switch bucket.Versioning {
+		case VersioningEnabled:
+			updateResult, err := collection.UpdateOne(ctx,
+				getDocumentDBFilter(docRef),
+				bson.M{
+					"$set": bson.M{
+						keyIsDeleted: true,
+						keyDeletedAt: timeTeller.TellTime(),
+					},
+				})
 			if err != nil {
-				writeError(w, http.StatusBadRequest, fmt.Errorf("could not parse version query parameter: %v", err))
+				utils.ErrorResponse(w, meta.NewInternalServerError(fmt.Errorf("could not delete document: %v", err)))
 				return
 			}
-			filter["version"] = versionId
-		} else {
-			filter["isLastRevision"] = true
-		}
-
-		updateResult, err := collection.UpdateOne(ctx,
-			filter, bson.M{
-				"$set": bson.M{
-					"isDeleted": true,
-					"deletedAt": timeTeller.TellTime(),
-				},
-			})
-		if err != nil {
-			if errors.Is(err, mongo.ErrNoDocuments) {
-				writeError(w, http.StatusNotFound, fmt.Errorf("object not found: %v", err))
-				return
-			} else {
-				writeError(w, http.StatusInternalServerError, fmt.Errorf("could not delete the object: %v", err))
+			if updateResult.ModifiedCount == 0 {
+				utils.ErrorResponse(w, docNotFound(docRef))
 				return
 			}
-		}
-		if updateResult.ModifiedCount == 0 {
-			writeError(w, http.StatusNotFound, fmt.Errorf("object not found"))
-			return
+		case VersioningDisabled:
+			deleteResult, err := collection.DeleteOne(ctx, getDocumentDBFilter(docRef))
+			if err != nil {
+				utils.ErrorResponse(w, meta.NewInternalServerError(fmt.Errorf("could not delete document: %v", err)))
+				return
+			}
+			if deleteResult.DeletedCount == 0 {
+				utils.ErrorResponse(w, docNotFound(docRef))
+				return
+			}
 		}
 
 		w.WriteHeader(http.StatusNoContent)
 
 	}
+}
+
+func docNotFound(docRef DocumentRef) *meta.StatusError {
+	return meta.NewNotFound(GroupVersion.WithResource("documents"), docRef.GetKey())
 }

@@ -7,10 +7,7 @@ import (
 
 func (s *Suite) TestCreateBucket() {
 	ctx := context.Background()
-	out, err := s.client.Buckets().Create(ctx, &Bucket{
-		Name: "test-create-bucket",
-	})
-
+	out, err := s.client.Buckets().Create(ctx, &Bucket{Name: "test-create-bucket"}, CreateBucketOptions{})
 	if !assert.NoError(s.T(), err) {
 		return
 	}

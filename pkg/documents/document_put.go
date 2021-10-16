@@ -1,78 +1,83 @@
 package documents
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"github.com/nrc-no/core/pkg/api/meta"
+	"github.com/nrc-no/core/pkg/storage"
 	"github.com/nrc-no/core/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readconcern"
+	"go.mongodb.org/mongo-driver/mongo/writeconcern"
 	"io/ioutil"
 	"mime"
 	"net/http"
 	"strconv"
-	"strings"
 )
 
 func Put(
 	timeTeller utils.TimeTeller,
-	mongoFn func() (*mongo.Client, error),
+	dbFactory storage.Factory,
 	databaseName string,
-	collectionName string,
 ) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, req *http.Request) {
 
 		ctx := req.Context()
 
-		id := getObjectIDFromPath(req.URL.Path)
-		if !strings.HasPrefix(id, "/") {
-			id = fmt.Sprintf("/%s", id)
-		}
-
-		bucketId, err := getBucketIdFromHeader(req.URL.Query())
+		docRef, err := getDocumentRefFromHTTPRequest(req)
 		if err != nil {
-			writeError(w, http.StatusBadRequest, fmt.Errorf("could not get bucketId: %v", err))
+			utils.ErrorResponse(w, err)
 			return
 		}
 
-		mediaType, mediaTypeParams, err := getMediaType(req.Header)
+		if docRef.HasVersion() {
+			reason := fmt.Sprintf("query parameter '%s' is illegal for %s operation", paramVersion, http.MethodPut)
+			utils.ErrorResponse(w, meta.NewBadRequest(reason))
+			return
+		}
+
+		mediaType, mediaTypeParams, err := getDocumentMediaTypeFromHTTPHeader(req.Header)
 		if err != nil {
-			writeError(w, http.StatusBadRequest, fmt.Errorf("failed to get media type: %v", err))
+			utils.ErrorResponse(w, err)
 			return
 		}
 
 		formattedMediaType := mime.FormatMediaType(mediaType, mediaTypeParams)
 
-		contentLength, err := getContentLength(req)
+		contentLength, err := getContentLengthFromHTTPHeader(req.Header)
 		if err != nil {
-			writeError(w, http.StatusBadRequest, fmt.Errorf("failed to get content-length: %v", err))
+			utils.ErrorResponse(w, err)
 			return
 		}
 
-		metadata, err := getMetadata(req.Header)
+		metadata, err := getDocumentMetadataFromHTTPHeader(req.Header)
 		if err != nil {
-			writeError(w, http.StatusBadRequest, fmt.Errorf("failed to get tags: %v", err))
+			utils.ErrorResponse(w, err)
 			return
 		}
 
 		bodyBytes, err := ioutil.ReadAll(req.Body)
 		if err != nil {
-			writeError(w, http.StatusInternalServerError, fmt.Errorf("failed to upload object: %v", err.Error()))
+			utils.ErrorResponse(w, meta.NewInternalServerError(fmt.Errorf("failed to read body: %v", err)))
 			return
 		}
 
 		sha512ChecksumStr := getSha512Checksum(bodyBytes)
 		md5ChecksumStr := getMD5Checksum(bodyBytes)
 
-		dataIntf, err := encodeData(bodyBytes, mediaType)
+		dataIntf, err := prepareDocumentDataForStorage(bodyBytes, mediaType)
 		if err != nil {
-			writeError(w, http.StatusBadRequest, fmt.Errorf("failed to get data: %v", err.Error()))
+			utils.ErrorResponse(w, err)
 			return
 		}
 
 		doc := &StoredDocument{
-			ID:             id,
-			BucketID:       bucketId,
+			ID:             docRef.GetKey(),
+			BucketID:       docRef.GetBucketID(),
 			CreatedAt:      timeTeller.TellTime(),
 			DeletedAt:      nil,
 			CreatedBy:      "",
@@ -85,67 +90,96 @@ func Put(
 			IsLastRevision: true,
 			Metadata:       metadata,
 			Data:           dataIntf,
+			Revision:       1,
 		}
 
-		mongoClient, err := mongoFn()
+		db, err := dbFactory.New()
 		if err != nil {
-			writeError(w, http.StatusInternalServerError, fmt.Errorf("failed to connect to database: %v", err))
+			utils.ErrorResponse(w, meta.NewInternalServerError(fmt.Errorf("database unreachable: %v", err)))
 			return
 		}
 
-		// ensure bucket exists
-		_, err = getBucket(ctx, mongoClient, databaseName, bucketId)
+		bucket, err := getBucket(ctx, db, databaseName, docRef.GetBucketID())
 		if err != nil {
-			writeError(w, http.StatusInternalServerError, err)
+			utils.ErrorResponse(w, err)
 			return
 		}
 
-		session, err := mongoClient.StartSession()
+		sess, err := db.StartSession()
 		if err != nil {
-			writeError(w, http.StatusInternalServerError, fmt.Errorf("failed to start database session: %v", err))
+			utils.ErrorResponse(w, meta.NewInternalServerError(fmt.Errorf("failed to start db session: %v", err.Error())))
 			return
 		}
-		defer session.EndSession(ctx)
+		defer sess.EndSession(ctx)
 
-		_, err = session.WithTransaction(ctx, func(sessCtx mongo.SessionContext) (interface{}, error) {
+		wc := writeconcern.New(writeconcern.WMajority())
+		rc := readconcern.Snapshot()
+		txnOpts := options.Transaction().SetWriteConcern(wc).SetReadConcern(rc)
 
-			collection := mongoClient.Database(databaseName).Collection(collectionName)
+		_, err = sess.WithTransaction(ctx, func(ctx mongo.SessionContext) (interface{}, error) {
 
-			// Update the previous version if it exists
-			result := collection.FindOneAndUpdate(sessCtx, bson.M{
-				"id":             id,
-				"isLastRevision": true,
-			}, bson.M{
-				"$set": bson.M{
-					"isLastRevision": false,
-				},
-			})
-			if result.Err() != nil {
-				if !errors.Is(result.Err(), mongo.ErrNoDocuments) {
-					return nil, fmt.Errorf("failed to update previous document version: %v", err)
+			collection := db.Database(databaseName).Collection(DocumentsCollection)
+
+			switch bucket.Versioning {
+			case VersioningEnabled:
+				if err := putVersionedDocument(ctx, collection, bucket, doc); err != nil {
+					return nil, err
 				}
-			} else {
-				oldDoc := StoredDocument{}
-				if err := result.Decode(&oldDoc); err != nil {
-					return nil, fmt.Errorf("failed to decode previous document: %v", err)
+			case VersioningDisabled:
+				_, err = collection.ReplaceOne(
+					ctx,
+					getDocumentDBFilter(docRef.WithCurrentVersion()),
+					doc,
+					options.Replace().SetUpsert(true))
+				if err != nil {
+					return nil, meta.NewInternalServerError(err)
 				}
-				doc.Revision = oldDoc.Revision + 1
-			}
-
-			// Insert new version
-			if _, err := collection.InsertOne(sessCtx, doc); err != nil {
-				return nil, err
 			}
 
 			return nil, nil
-		})
+
+		}, txnOpts)
+
 		if err != nil {
-			writeError(w, http.StatusInternalServerError, fmt.Errorf("failed to save document: %v", err))
+			utils.ErrorResponse(w, err)
 			return
 		}
 
-		w.Header().Set("ETag", md5ChecksumStr)
-		w.Header().Set("x-version", strconv.Itoa(doc.Revision))
+		w.Header().Set(headerETag, md5ChecksumStr)
+		w.Header().Set(headerObjectKey, doc.ID)
+		w.Header().Set(headerObjectVersion, strconv.Itoa(doc.Revision))
+		w.Header().Set(headerBucketID, docRef.GetBucketID())
 
 	}
+}
+
+// putVersionedDocument will put a new document version in the bucket
+func putVersionedDocument(ctx context.Context, collection *mongo.Collection, bucket *Bucket, doc *StoredDocument) error {
+
+	docRef := doc.DocumentRef().WithCurrentVersion()
+	filter := getDocumentDBFilter(docRef)
+
+	result := collection.FindOneAndUpdate(ctx, filter, bson.M{
+		"$set": bson.M{
+			keyIsLastRevision: false,
+		},
+	})
+
+	if result.Err() != nil {
+		if !errors.Is(result.Err(), mongo.ErrNoDocuments) {
+			return docNotFound(docRef)
+		}
+	} else {
+		oldDoc := StoredDocument{}
+		if err := result.Decode(&oldDoc); err != nil {
+			return meta.NewInternalServerError(err)
+		}
+		doc.Revision = oldDoc.Revision + 1
+	}
+
+	if _, err := collection.InsertOne(ctx, doc); err != nil {
+		return meta.NewInternalServerError(err)
+	}
+
+	return nil
 }

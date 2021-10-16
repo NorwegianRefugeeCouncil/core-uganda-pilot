@@ -6,6 +6,7 @@ import (
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/ory/hydra-client-go/client/admin"
+	"go.mongodb.org/mongo-driver/bson"
 	"net/http"
 	"path"
 )
@@ -80,5 +81,6 @@ func (s *Server) ResetDB(ctx context.Context, databaseName string) error {
 		return err
 	}
 	// Delete attachments
-	return mongoClient.Database(databaseName).Drop(ctx)
+	_, err = mongoClient.Database(databaseName).Collection("attachments").DeleteMany(ctx, bson.M{})
+	return err
 }

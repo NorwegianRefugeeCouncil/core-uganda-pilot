@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/nrc-no/core/pkg/validation"
+	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/sirupsen/logrus"
 	"io"
 	"io/ioutil"
@@ -236,34 +236,38 @@ func (r *Request) Do(ctx context.Context) *Response {
 		}
 		l.WithField("response", string(bodyBytes)).Errorf("unexpected status code: %d", res.StatusCode)
 
-		status := validation.Status{
-			Status:  validation.Failure,
-			Code:    res.StatusCode,
+		status := meta.Status{
+			Status:  meta.StatusFailure,
+			Code:    int32(res.StatusCode),
 			Message: "Unexpected error",
-			Errors:  nil,
 		}
 
 		if len(bodyBytes) == 0 {
 			return &Response{
-				err:  status,
+				err: &meta.StatusError{
+					ErrStatus: status,
+				},
 				body: bodyBytes,
 			}
 		}
 
 		if err := json.Unmarshal(bodyBytes, &status); err != nil {
 			return &Response{
-				err: &validation.Status{
-					Status:  validation.Failure,
-					Code:    res.StatusCode,
-					Message: string(bodyBytes),
-					Errors:  nil,
+				err: &meta.StatusError{
+					ErrStatus: meta.Status{
+						Status:  meta.StatusFailure,
+						Code:    int32(res.StatusCode),
+						Message: string(bodyBytes),
+					},
 				},
 				body: bodyBytes,
 			}
 		}
 
 		return &Response{
-			err:  &status,
+			err: &meta.StatusError{
+				ErrStatus: status,
+			},
 			body: bodyBytes,
 		}
 	}

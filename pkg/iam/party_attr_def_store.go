@@ -17,7 +17,7 @@ func newAttributeStore(ctx context.Context, mongoClientFn utils.MongoClientFn, d
 	defer cancel()
 
 	store := &PartyAttributeDefinitionStore{
-		getCollection: utils.GetCollectionFn(database, "attributes", mongoClientFn),
+		getCollection: utils.GetCollectionFn(database, AttributesCollection, mongoClientFn),
 	}
 
 	collection, done, err := store.getCollection(ctx)

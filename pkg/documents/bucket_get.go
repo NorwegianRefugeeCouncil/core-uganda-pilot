@@ -2,8 +2,11 @@ package documents
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/generic/server"
+	"github.com/nrc-no/core/pkg/storage"
 	"github.com/nrc-no/core/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -12,7 +15,7 @@ import (
 )
 
 func GetBucket(
-	mongoClientFn func() (*mongo.Client, error),
+	dbFactory storage.Factory,
 	databaseName string,
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
@@ -27,15 +30,15 @@ func GetBucket(
 			id = strings.TrimPrefix(id, "/")
 		}
 
-		mongoCli, err := mongoClientFn()
+		db, err := dbFactory.New()
 		if err != nil {
-			utils.ErrorResponse(w, fmt.Errorf("failed to connect to database: %v", err))
+			utils.ErrorResponse(w, err)
 			return
 		}
 
-		bucket, err := getBucket(ctx, mongoCli, databaseName, id)
+		bucket, err := getBucket(ctx, db, databaseName, id)
 		if err != nil {
-			utils.ErrorResponse(w, fmt.Errorf("failed to get bucket: %v", err))
+			utils.ErrorResponse(w, err)
 			return
 		}
 
@@ -44,17 +47,19 @@ func GetBucket(
 	}
 }
 
-func getBucket(ctx context.Context, mongoCli *mongo.Client, databaseName string, id string) (*Bucket, error) {
-	collection := mongoCli.Database(databaseName).Collection(bucketCollName)
-	result := collection.FindOne(ctx, bson.M{
-		"id": id,
-	})
+func getBucket(ctx context.Context, db *mongo.Client, databaseName string, id string) (*Bucket, error) {
+	collection := db.Database(databaseName).Collection(BucketsCollection)
+	result := collection.FindOne(ctx, bson.M{"id": id})
 	if result.Err() != nil {
-		return nil, fmt.Errorf("failed to get bucket: %v", result.Err())
+		if errors.Is(result.Err(), mongo.ErrNoDocuments) {
+			return nil, bucketNotFound(id)
+		} else {
+			return nil, meta.NewInternalServerError(result.Err())
+		}
 	}
 	var bucket Bucket
 	if err := result.Decode(&bucket); err != nil {
-		return nil, fmt.Errorf("failed to decode bucket: %v", err)
+		return nil, meta.NewInternalServerError(fmt.Errorf("failed to decode bucket: %v", err))
 	}
 	return &bucket, nil
 }

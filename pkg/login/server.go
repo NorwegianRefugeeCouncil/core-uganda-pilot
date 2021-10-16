@@ -6,6 +6,7 @@ import (
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/iam"
 	"github.com/nrc-no/core/pkg/rest"
+	"github.com/nrc-no/core/pkg/storage"
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/ory/hydra-client-go/client/admin"
 	"github.com/sirupsen/logrus"
@@ -52,7 +53,7 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 				logrus.WithError(err).Errorf("unable to get mongo client")
 				return nil, err
 			}
-			collection := mongoClient.Database(o.MongoDatabase).Collection("credentials")
+			collection := mongoClient.Database(o.MongoDatabase).Collection(CredentialsCollection)
 			return collection, nil
 		},
 	}
@@ -95,4 +96,8 @@ func (s *Server) Error(w http.ResponseWriter, err error) {
 
 func (s *Server) Bind(req *http.Request, into interface{}) error {
 	return utils.BindJSON(req, into)
+}
+
+func ClearCollections(ctx context.Context, mongoCli *mongo.Client, databaseName string) error {
+	return storage.ClearCollections(ctx, mongoCli, databaseName, AllCollections...)
 }
