@@ -215,3 +215,13 @@ func ensureBucketExists(ctx context.Context, db *mongo.Client, databaseName stri
 	_, err := getBucket(ctx, db, databaseName, docRef.GetBucketID())
 	return err
 }
+
+func normalizeDocumentKey(key string) string {
+	if strings.HasPrefix(key, "/") {
+		key = strings.TrimPrefix(key, "/")
+	}
+	if strings.HasSuffix(key, "/") {
+		key = strings.TrimSuffix(key, "/")
+	}
+	return key
+}

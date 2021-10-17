@@ -72,3 +72,36 @@ func (s *Suite) TearDownSuite() {
 func TestSuite(t *testing.T) {
 	suite.Run(t, &Suite{})
 }
+
+func (s *Suite) createBucket(name string) (*Bucket, error) {
+	return s.client.Buckets().Create(context.Background(), &Bucket{Name: name}, CreateBucketOptions{})
+}
+
+func (s *Suite) getDocumentVersion(bucketId, key, version string) (*Document, error) {
+	return s.client.Documents().Get(context.Background(), key, GetDocumentOptions{
+		BucketID: bucketId,
+		Version:  version,
+	})
+}
+
+func (s *Suite) getDocument(bucketId, key string) (*Document, error) {
+	return s.client.Documents().Get(context.Background(), key, GetDocumentOptions{
+		BucketID: bucketId,
+	})
+}
+
+func (s *Suite) deleteDocumentVersion(bucketId, key, version string) error {
+	return s.client.Documents().Delete(context.Background(), key, DeleteDocumentOptions{
+		BucketID: bucketId,
+		Version:  version,
+	})
+}
+
+func (s *Suite) putDocument(bucketId, key string) (*PutDocumentResponse, error) {
+	return s.client.Documents().Put(context.Background(), &Document{
+		ID:          key,
+		BucketId:    bucketId,
+		ContentType: "application/json",
+		Data:        []byte(`{"a":"b"}`),
+	}, PutDocumentOptions{})
+}

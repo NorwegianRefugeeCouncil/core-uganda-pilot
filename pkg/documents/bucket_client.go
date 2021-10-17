@@ -34,7 +34,7 @@ type GetBucketOptions struct {
 
 // Get a Bucket
 func (r RESTBucketClient) Get(ctx context.Context, id string, options GetBucketOptions) (*Bucket, error) {
-	id = normaliseKey(id)
+	id = normalizeDocumentKey(id)
 	var obj Bucket
 	err := r.c.Get().Path(path.Join(server.BucketsEndpoint, id)).Do(ctx).Into(&obj)
 	return &obj, err
@@ -45,7 +45,7 @@ type DeleteBucketOptions struct {
 
 // Delete a bucket
 func (r RESTBucketClient) Delete(ctx context.Context, key string, options DeleteBucketOptions) error {
-	key = normaliseKey(key)
+	key = normalizeDocumentKey(key)
 	return r.c.Delete().Path(path.Join(server.BucketsEndpoint, key)).Do(ctx).Into(nil)
 }
 

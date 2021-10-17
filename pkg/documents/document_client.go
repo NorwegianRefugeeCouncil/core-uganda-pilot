@@ -41,7 +41,7 @@ type GetDocumentOptions struct {
 // Get a document
 func (r RESTDocumentClient) Get(ctx context.Context, id string, options GetDocumentOptions) (*Document, error) {
 
-	id = normaliseKey(id)
+	id = normalizeDocumentKey(id)
 
 	var obj Document
 	body, resp, err := r.c.Get().Path(path.Join(server.DocumentsEndpoint, id)).
@@ -113,7 +113,7 @@ type PutDocumentOptions struct {
 // Put a document
 func (r RESTDocumentClient) Put(ctx context.Context, document *Document, options PutDocumentOptions) (*PutDocumentResponse, error) {
 
-	document.ID = normaliseKey(document.ID)
+	document.ID = normalizeDocumentKey(document.ID)
 
 	_, res, err := r.c.Put().
 		Path(path.Join(server.DocumentsEndpoint, document.ID)).
@@ -148,7 +148,7 @@ type DeleteDocumentOptions struct {
 // Delete a document
 func (r RESTDocumentClient) Delete(ctx context.Context, key string, options DeleteDocumentOptions) error {
 
-	key = normaliseKey(key)
+	key = normalizeDocumentKey(key)
 
 	_, _, err := r.c.
 		Delete().
