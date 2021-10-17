@@ -2,16 +2,17 @@ package documents
 
 import (
 	"fmt"
+	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/generic/server"
+	"github.com/nrc-no/core/pkg/storage"
 	"github.com/nrc-no/core/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
 	"strings"
 )
 
 func DeleteBucket(
-	mongoClientFn func() (*mongo.Client, error),
+	dbFactory storage.Factory,
 	databaseName string,
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
@@ -26,7 +27,7 @@ func DeleteBucket(
 			id = strings.TrimPrefix(id, "/")
 		}
 
-		mongoCli, err := mongoClientFn()
+		mongoCli, err := dbFactory.New()
 		if err != nil {
 			utils.ErrorResponse(w, fmt.Errorf("failed to connect to database: %v", err))
 			return
@@ -34,19 +35,21 @@ func DeleteBucket(
 
 		collection := mongoCli.Database(databaseName).Collection(collBuckets)
 
-		deleteRes, err := collection.DeleteOne(ctx, bson.M{
-			keyID: id,
-		})
+		deleteRes, err := collection.DeleteOne(ctx, bson.M{"id": id})
 		if err != nil {
 			utils.ErrorResponse(w, fmt.Errorf("failed to delete bucket: %v", err))
 			return
 		}
 		if deleteRes.DeletedCount == 0 {
-			utils.ErrorResponse(w, fmt.Errorf("failed to delete bucket: bucket not found"))
+			utils.ErrorResponse(w, bucketNotFound(id))
 			return
 		}
 
 		w.WriteHeader(http.StatusNoContent)
 
 	}
+}
+
+func bucketNotFound(id string) *meta.StatusError {
+	return meta.NewNotFound(GroupVersion.WithResource("buckets"), id)
 }

@@ -28,8 +28,8 @@ func GetEnvOrDefault(key, defaultValue string) string {
 }
 
 var (
-	mongoUsername = GetEnvOrDefault("MONGO_USERNAME", "root")
-	mongoPassword = GetEnvOrDefault("MONGO_PASSWORD", "example")
+	mongoUsername = GetEnvOrDefault("MONGO_USERNAME", "")
+	mongoPassword = GetEnvOrDefault("MONGO_PASSWORD", "")
 	mongoHost     = GetEnvOrDefault("MONGO_HOST", "localhost:27017")
 	mongoDatabase = GetEnvOrDefault("MONGO_DATABASE", "e2e")
 )
@@ -55,15 +55,26 @@ func NewGenericServerTestSetup() *GenericServerTestSetup { // Using a random por
 		panic(err)
 	}
 
+	mongoOpts := options.Client()
+	if len(mongoUsername) != 0 || len(mongoPassword) != 0 {
+		mongoOpts.SetAuth(options.Credential{Username: mongoUsername, Password: mongoPassword})
+	}
+
+	if len(mongoHost) > 0 {
+		mongoOpts.SetHosts([]string{mongoHost})
+	}
+
+	mongoClient, err := mongo.NewClient(mongoOpts)
+	if err != nil {
+		panic(err)
+	}
+
+	if err := mongoClient.Connect(context.Background()); err != nil {
+		logrus.WithError(err).Errorf("failed to connect to mongo")
+		panic(err)
+	}
+
 	var mongoClientFn = func(ctx context.Context) (*mongo.Client, error) {
-		mongoClient, err := mongo.NewClient(options.Client().SetAuth(options.Credential{Username: mongoUsername, Password: mongoPassword}).SetHosts([]string{mongoHost}))
-		if err != nil {
-			panic(err)
-		}
-		if err := mongoClient.Connect(ctx); err != nil {
-			logrus.WithError(err).Errorf("failed to connect to mongo")
-			return nil, err
-		}
 		return mongoClient, nil
 	}
 

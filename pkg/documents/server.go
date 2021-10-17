@@ -3,8 +3,8 @@ package documents
 import (
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/rest"
+	"github.com/nrc-no/core/pkg/storage"
 	"github.com/nrc-no/core/pkg/utils"
-	"go.mongodb.org/mongo-driver/mongo"
 	"net"
 	"net/http"
 	"strings"
@@ -29,8 +29,8 @@ const (
 
 	keyID             = "id"
 	keyBucketID       = "bucketId"
-	keyIsLastRevision = "isLastRevision"
-	keyRevision       = "revision"
+	keyIsLastRevision = "isLatestVersion"
+	keyRevision       = "resourceVersion"
 	keyIsDeleted      = "isDeleted"
 	keyDeletedAt      = "deletedAt"
 
@@ -40,7 +40,6 @@ const (
 )
 
 type Server struct {
-	mongoFn        func() (*mongo.Client, error)
 	databaseName   string
 	timeTeller     utils.TimeTeller
 	uidGenerator   utils.UIDGenerator
@@ -62,22 +61,21 @@ func (s *Server) NewClient() Interface {
 }
 
 func NewServer(
-	mongoFn func() (*mongo.Client, error),
+	dbFactory storage.Factory,
 	databaseName string,
 	timeTeller utils.TimeTeller,
 	uidGenerator utils.UIDGenerator,
 ) *Server {
 	s := &Server{
-		mongoFn:        mongoFn,
 		databaseName:   databaseName,
 		timeTeller:     timeTeller,
 		uidGenerator:   uidGenerator,
-		getDocument:    Get(databaseName, mongoFn),
-		putDocument:    Put(timeTeller, mongoFn, databaseName),
-		deleteDocument: Delete(mongoFn, databaseName, timeTeller),
-		getBucket:      GetBucket(mongoFn, databaseName),
-		createBucket:   CreateBucket(mongoFn, databaseName, uidGenerator),
-		deleteBucket:   DeleteBucket(mongoFn, databaseName),
+		getDocument:    Get(databaseName, dbFactory),
+		putDocument:    Put(timeTeller, dbFactory, databaseName),
+		deleteDocument: Delete(dbFactory, databaseName, timeTeller),
+		getBucket:      GetBucket(dbFactory, databaseName),
+		createBucket:   CreateBucket(dbFactory, databaseName, uidGenerator),
+		deleteBucket:   DeleteBucket(dbFactory, databaseName),
 	}
 	return s
 }

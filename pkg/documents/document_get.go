@@ -3,7 +3,9 @@ package documents
 import (
 	"errors"
 	"fmt"
-	"go.mongodb.org/mongo-driver/bson"
+	"github.com/nrc-no/core/pkg/api/meta"
+	"github.com/nrc-no/core/pkg/storage"
+	"github.com/nrc-no/core/pkg/utils"
 	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
 	"strconv"
@@ -11,68 +13,45 @@ import (
 
 func Get(
 	databaseName string,
-	mongoClientFn func() (*mongo.Client, error),
+	storageFactory storage.Factory,
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 
 		ctx := req.Context()
 
-		id := getObjectIDFromPath(req.URL.Path)
-
-		bucketId, err := requireBucketIDFromQueryParam(req.URL.Query())
+		docRef, err := getDocumentRefFromReq(req)
 		if err != nil {
-			writeError(w, http.StatusBadRequest, err)
+			utils.ErrorResponse(w, err)
 			return
 		}
 
-		objectVersion, err := findObjectVersionFromQueryParam(req.URL.Query())
+		db, err := storageFactory.New()
 		if err != nil {
-			writeError(w, http.StatusBadRequest, err)
+			utils.ErrorResponse(w, err)
 			return
 		}
 
-		mongoCli, err := mongoClientFn()
-		if err != nil {
-			writeError(w, http.StatusInternalServerError, fmt.Errorf("failed to connect to database: %v", err))
+		if err := ensureBucketExists(ctx, db, databaseName, docRef); err != nil {
+			utils.ErrorResponse(w, err)
 			return
 		}
 
-		// ensure bucket exists
-		_, err = getBucket(ctx, mongoCli, databaseName, bucketId)
-		if err != nil {
-			writeError(w, http.StatusInternalServerError, err)
-			return
-		}
-
-		collection := mongoCli.Database(databaseName).Collection(collDocuments)
-
-		filter := bson.M{
-			keyID:        id,
-			keyBucketID:  bucketId,
-			keyIsDeleted: false,
-		}
-
-		if objectVersion != nil {
-			filter[keyRevision] = objectVersion
-		} else {
-			filter[keyIsLastRevision] = true
-		}
-
+		collection := db.Database(databaseName).Collection(collDocuments)
+		filter := getDocumentFilter(docRef)
 		findOneResult := collection.FindOne(ctx, filter)
-		err = findOneResult.Err()
-		if err != nil {
-			if errors.Is(mongo.ErrNoDocuments, err) {
-				writeError(w, http.StatusNotFound, fmt.Errorf("object not found"))
+		if findOneResult.Err() != nil {
+			if errors.Is(findOneResult.Err(), mongo.ErrNoDocuments) {
+				utils.ErrorResponse(w, docNotFound(docRef))
 				return
 			} else {
-				writeError(w, http.StatusInternalServerError, fmt.Errorf("failed to get object: %v", err))
+				utils.ErrorResponse(w, meta.NewInternalServerError(findOneResult.Err()))
 				return
 			}
 		}
 
 		doc := &StoredDocument{}
 		if err := findOneResult.Decode(doc); err != nil {
-			writeError(w, http.StatusInternalServerError, fmt.Errorf("failed to unmarshal object: %v", err))
+			utils.ErrorResponse(w, meta.NewInternalServerError(fmt.Errorf("failed to decode document: %v", err)))
 			return
 		}
 
@@ -80,12 +59,12 @@ func Get(
 		w.Header().Set(headerContentLength, strconv.Itoa(int(doc.ContentLength)))
 		w.Header().Set(headerETag, doc.MD5Checksum)
 		w.Header().Set(headerLastModified, getLastModified(doc.CreatedAt))
-		w.Header().Set(headerBucketID, bucketId)
+		w.Header().Set(headerBucketID, docRef.GetBucketID())
 		w.WriteHeader(http.StatusOK)
 
 		decoded, err := decodeData(doc.Data, doc.ContentType)
 		if err != nil {
-			writeError(w, http.StatusInternalServerError, fmt.Errorf("failed to decode data: %v", err))
+			utils.ErrorResponse(w, meta.NewInternalServerError(fmt.Errorf("failed to decode document data: %v", err)))
 			return
 		}
 

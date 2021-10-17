@@ -1,14 +1,17 @@
 package documents
 
 import (
+	"context"
 	"crypto/md5"
 	"crypto/sha512"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/generic/server"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 	"mime"
 	"net/http"
 	"net/url"
@@ -36,20 +39,21 @@ func getMediaType(header http.Header) (string, map[string]string, error) {
 func requireBucketIDFromQueryParam(values url.Values) (string, error) {
 	b := values.Get(paramBucketID)
 	if len(b) == 0 {
-		return "", fmt.Errorf("request parameter '%s' is required", paramBucketID)
+		return "", meta.NewBadRequest(fmt.Sprintf("request parameter '%s' is required", paramBucketID))
 	}
 	return b, nil
 }
-func findObjectVersionFromQueryParam(values url.Values) (*int, error) {
-	b := values.Get(paramVersion)
-	if len(b) == 0 {
-		return nil, nil
+
+func findObjectVersionFromQueryParam(values url.Values) (*int64, error) {
+	v := values.Get(paramVersion)
+	if len(v) > 0 {
+		version, err := strconv.ParseInt(v, 10, 64)
+		if err != nil {
+			return nil, meta.NewBadRequest(fmt.Sprintf("failed to parse version: %s", v))
+		}
+		return &version, nil
 	}
-	v, err := strconv.Atoi(b)
-	if err != nil {
-		return nil, err
-	}
-	return &v, nil
+	return nil, nil
 }
 
 func encodeData(bodyBytes []byte, contentType string) (interface{}, error) {
@@ -172,6 +176,7 @@ func getObjectIDFromPath(objectPath string) string {
 var objectIDRegex = regexp.MustCompile("^([a-zA-Z0-9]+([/\\.\\-_][[a-zA-Z0-9]+)*)$")
 
 func validateObjectId(id string) error {
+
 	if strings.HasPrefix(id, "/") {
 		id = strings.TrimPrefix(id, "/")
 	}
@@ -179,14 +184,34 @@ func validateObjectId(id string) error {
 	parts := strings.Split(id, "/")
 	for _, part := range parts {
 		if len(part) == 0 {
-			return fmt.Errorf("invalid object key: %s", id)
+			return meta.NewBadRequest(fmt.Sprintf("invalid object key: %s", id))
 		}
 	}
 
 	if !objectIDRegex.MatchString(id) {
-		return fmt.Errorf("invalid object key format: %s", id)
+		return meta.NewBadRequest(fmt.Sprintf("invalid object key format: %s", id))
 	}
 
 	return nil
 
+}
+
+func getDocumentFilter(docRef DocumentRef) interface{} {
+	filter := bson.M{
+		keyID:        docRef.GetKey(),
+		keyIsDeleted: false,
+		keyBucketID:  docRef.GetBucketID(),
+	}
+	if docRef.HasVersion() {
+		filter[keyRevision] = docRef.GetVersion()
+	} else {
+		filter[keyIsLastRevision] = true
+	}
+	return filter
+}
+
+func ensureBucketExists(ctx context.Context, db *mongo.Client, databaseName string, docRef DocumentRef) error {
+	// ensure bucket exists
+	_, err := getBucket(ctx, db, databaseName, docRef.GetBucketID())
+	return err
 }

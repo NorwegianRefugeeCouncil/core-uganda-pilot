@@ -68,21 +68,21 @@ func (s *Suite) TestPutDocument() {
 			contentType:      "application/json",
 			content:          []byte(`{"a":"b"}`),
 			expectStatusCode: 200,
-			expectRevision:   0,
+			expectRevision:   1,
 		}, {
 			name:             "putTextDocument",
 			key:              "/text-document",
 			contentType:      "text/plain",
 			content:          []byte(`hello`),
 			expectStatusCode: 200,
-			expectRevision:   0,
+			expectRevision:   1,
 		}, {
 			name:             "putHtmlDocument",
 			key:              "/html-document",
 			contentType:      "text/html",
 			content:          []byte(`<html></html>`),
 			expectStatusCode: 200,
-			expectRevision:   0,
+			expectRevision:   1,
 		}, {
 			name:             "putBadJson",
 			key:              "/bad-json",
@@ -95,7 +95,7 @@ func (s *Suite) TestPutDocument() {
 			contentType:      "application/json",
 			content:          []byte(`{"d":"a"}`),
 			expectStatusCode: 200,
-			expectRevision:   1,
+			expectRevision:   2,
 		},
 	}
 

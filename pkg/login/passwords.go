@@ -22,7 +22,7 @@ func (s *Server) VerifyPassword(ctx context.Context, email, password string) (*i
 	}
 
 	if len(individualList.Items) == 0 {
-		logrus.Trace("no individuals found with email %s", email)
+		logrus.Tracef("no individuals found with email %s", email)
 		return nil, false
 	}
 

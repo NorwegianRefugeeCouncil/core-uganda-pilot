@@ -30,8 +30,12 @@ func NewDocumentsClientFromConfig(restConfig *rest.Config) *RESTDocumentClient {
 }
 
 type GetDocumentOptions struct {
+
+	// BucketID of the document (required)
 	BucketID string
-	Version  string
+
+	// Version of the document (optional)
+	Version string
 }
 
 // Get a document
@@ -92,9 +96,15 @@ func (r RESTDocumentClient) Get(ctx context.Context, id string, options GetDocum
 }
 
 type PutDocumentResponse struct {
-	Key     string
+
+	// Key of the document
+	Key string
+
+	// Version of the document
 	Version string
-	Bucket  string
+
+	// BucketID of the document
+	BucketID string
 }
 
 type PutDocumentOptions struct {
@@ -119,16 +129,20 @@ func (r RESTDocumentClient) Put(ctx context.Context, document *Document, options
 	}
 
 	return &PutDocumentResponse{
-		Bucket:  res.Header.Get(headerBucketID),
-		Key:     res.Header.Get(headerObjectKey),
-		Version: res.Header.Get(headerObjectVersion),
+		BucketID: res.Header.Get(headerBucketID),
+		Key:      res.Header.Get(headerObjectKey),
+		Version:  res.Header.Get(headerObjectVersion),
 	}, nil
 
 }
 
 type DeleteDocumentOptions struct {
+
+	// BucketID of the document (required)
 	BucketID string
-	Version  string
+
+	// Version of the document (optional)
+	Version string
 }
 
 // Delete a document

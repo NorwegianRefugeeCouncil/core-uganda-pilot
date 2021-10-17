@@ -2,13 +2,13 @@ package utils
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/core/pkg/validation"
+	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 )
 
 func JSONResponse(w http.ResponseWriter, status int, data interface{}) {
@@ -28,32 +28,31 @@ func JSONResponse(w http.ResponseWriter, status int, data interface{}) {
 
 func ErrorResponse(w http.ResponseWriter, err error) {
 	logrus.WithError(err).Errorf("server error")
-	var status *validation.Status
-	ok := errors.Is(err, status)
-	if ok {
-		code := status.Code
-		if code == 0 {
-			code = http.StatusInternalServerError
-		}
-		JSONResponse(w, code, status)
+
+	status := ErrorToAPIStatus(err)
+	code := int(status.Code)
+
+	if status.Details != nil && status.Details.RetryAfterSeconds > 0 {
+		delay := strconv.Itoa(int(status.Details.RetryAfterSeconds))
+		w.Header().Set("Retry-After", delay)
+	}
+
+	if code == http.StatusNoContent {
+		w.WriteHeader(code)
 		return
 	}
-	status = &validation.Status{
-		Code: http.StatusInternalServerError,
-	}
-	JSONResponse(w, status.Code, status)
+
+	JSONResponse(w, code, status)
 }
 
 func BindJSON(req *http.Request, into interface{}) error {
 	bodyBytes, err := ioutil.ReadAll(req.Body)
 	if err != nil {
-		return fmt.Errorf("failed to read request body: %w", err)
+		return meta.NewBadRequest(fmt.Errorf("failed to read request body: %w", err).Error())
 	}
-
 	if err := json.Unmarshal(bodyBytes, &into); err != nil {
-		return fmt.Errorf("failed to marshal request body: %w", err)
+		return meta.NewBadRequest(fmt.Errorf("failed to read request body: %w", err).Error())
 	}
-
 	return nil
 }
 
@@ -66,4 +65,44 @@ func GetPathParam(param string, w http.ResponseWriter, req *http.Request, into *
 	}
 	*into = id
 	return true
+}
+
+// ErrorToAPIStatus converts an error to an metav1.Status object.
+func ErrorToAPIStatus(err error) *meta.Status {
+	switch t := err.(type) {
+	case meta.APIStatus:
+		status := t.Status()
+		if len(status.Status) == 0 {
+			status.Status = meta.StatusFailure
+		}
+		switch status.Status {
+		case meta.StatusSuccess:
+			if status.Code == 0 {
+				status.Code = http.StatusOK
+			}
+		case meta.StatusFailure:
+			if status.Code == 0 {
+				status.Code = http.StatusInternalServerError
+			}
+		default:
+			//TODO log error
+			if status.Code == 0 {
+				status.Code = http.StatusInternalServerError
+			}
+		}
+		return &status
+	default:
+		status := http.StatusInternalServerError
+		// Log errors that were not converted to an error status
+		// by REST storage - these typically indicate programmer
+		// error by not using pkg/api/errors, or unexpected failure
+		// cases.
+		// TODO log error
+		return &meta.Status{
+			Status:  meta.StatusFailure,
+			Code:    int32(status),
+			Reason:  meta.StatusReasonUnknown,
+			Message: err.Error(),
+		}
+	}
 }

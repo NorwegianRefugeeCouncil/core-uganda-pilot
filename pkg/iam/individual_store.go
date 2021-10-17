@@ -14,7 +14,7 @@ type IndividualStore struct {
 
 func NewIndividualStore(mongoClientFn utils.MongoClientFn, database string) *IndividualStore {
 	store := &IndividualStore{
-		getCollection: utils.GetCollectionFn(database, "parties", mongoClientFn),
+		getCollection: utils.GetCollectionFn(database, PartiesCollection, mongoClientFn),
 	}
 	return store
 }

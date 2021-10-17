@@ -4,9 +4,10 @@ import (
 	"context"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/generic/server"
+	"github.com/nrc-no/core/pkg/storage"
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/ory/hydra-client-go/client/admin"
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
 	"path"
 )
@@ -105,20 +106,14 @@ func (s *Server) ResetDB(ctx context.Context, databaseName string) error {
 	if err != nil {
 		return err
 	}
-	// Delete CaseTypes
-	_, err = mongoClient.Database(databaseName).Collection("caseTypes").DeleteMany(ctx, bson.D{})
-	if err != nil {
+
+	if err := ClearCollections(ctx, mongoClient, databaseName); err != nil {
 		return err
 	}
-	// Delete Cases
-	_, err = mongoClient.Database(databaseName).Collection("cases").DeleteMany(ctx, bson.D{})
-	if err != nil {
-		return err
-	}
-	// Delete Comments
-	_, err = mongoClient.Database(databaseName).Collection("comments").DeleteMany(ctx, bson.D{})
-	if err != nil {
-		return err
-	}
-	return mongoClient.Database(databaseName).Drop(ctx)
+
+	return nil
+}
+
+func ClearCollections(ctx context.Context, mongoCli *mongo.Client, databaseName string) error {
+	return storage.ClearCollections(ctx, mongoCli, databaseName, AllCollections...)
 }

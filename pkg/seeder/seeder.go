@@ -2,6 +2,7 @@ package seeder
 
 import (
 	"context"
+	"github.com/nrc-no/core/pkg/cms"
 	"github.com/nrc-no/core/pkg/iam"
 	"github.com/nrc-no/core/pkg/login"
 	"github.com/nrc-no/core/pkg/utils"
@@ -10,6 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/crypto/bcrypt"
+	"golang.org/x/sync/errgroup"
 )
 
 func Clear(ctx context.Context, mongoClientFn utils.MongoClientFn, databaseName string) error {
@@ -21,7 +23,17 @@ func Clear(ctx context.Context, mongoClientFn utils.MongoClientFn, databaseName 
 		return err
 	}
 
-	return mongoClient.Database(databaseName).Drop(ctx)
+	g, ctx := errgroup.WithContext(ctx)
+	g.Go(func() error {
+		return iam.ClearCollections(ctx, mongoClient, databaseName)
+	})
+	g.Go(func() error {
+		return cms.ClearCollections(ctx, mongoClient, databaseName)
+	})
+	g.Go(func() error {
+		return login.ClearCollections(ctx, mongoClient, databaseName)
+	})
+	return g.Wait()
 }
 
 func Seed(ctx context.Context, mongoClientFn utils.MongoClientFn, databaseName string) error {
@@ -39,55 +51,55 @@ func Seed(ctx context.Context, mongoClientFn utils.MongoClientFn, databaseName s
 	}
 
 	for _, obj := range teams {
-		if err := seedMongo(ctx, mongoClient, databaseName, "parties", bson.M{"id": obj.ID}, iam.MapTeamToParty(&obj)); err != nil {
+		if err := seedMongo(ctx, mongoClient, databaseName, iam.PartiesCollection, bson.M{"id": obj.ID}, iam.MapTeamToParty(&obj)); err != nil {
 			return err
 		}
 	}
 
 	for _, obj := range relationships {
-		if err := seedMongo(ctx, mongoClient, databaseName, "relationships", bson.M{"id": obj.ID}, obj); err != nil {
+		if err := seedMongo(ctx, mongoClient, databaseName, iam.RelationshipsCollection, bson.M{"id": obj.ID}, obj); err != nil {
 			return err
 		}
 	}
 
 	for _, obj := range memberships {
-		if err := seedMongo(ctx, mongoClient, databaseName, "relationships", bson.M{"id": obj.ID}, iam.MapMembershipToRelationship(&obj)); err != nil {
+		if err := seedMongo(ctx, mongoClient, databaseName, iam.RelationshipsCollection, bson.M{"id": obj.ID}, iam.MapMembershipToRelationship(&obj)); err != nil {
 			return err
 		}
 	}
 
 	for _, obj := range identificationDocumentTypes {
-		if err := seedMongo(ctx, mongoClient, databaseName, "identificationDocumentTypes", bson.M{"id": obj.ID}, obj); err != nil {
+		if err := seedMongo(ctx, mongoClient, databaseName, iam.IdentificationDocumentTypesCollection, bson.M{"id": obj.ID}, obj); err != nil {
 			return err
 		}
 	}
 
 	for _, obj := range identificationDocuments {
-		if err := seedMongo(ctx, mongoClient, databaseName, "identificationDocuments", bson.M{"id": obj.ID}, obj); err != nil {
+		if err := seedMongo(ctx, mongoClient, databaseName, iam.IdentificationDocumentsCollection, bson.M{"id": obj.ID}, obj); err != nil {
 			return err
 		}
 	}
 
 	for _, obj := range caseTypes {
-		if err := seedMongo(ctx, mongoClient, databaseName, "caseTypes", bson.M{"id": obj.ID}, obj); err != nil {
+		if err := seedMongo(ctx, mongoClient, databaseName, cms.CaseTypesCollection, bson.M{"id": obj.ID}, obj); err != nil {
 			return err
 		}
 	}
 
 	for _, obj := range cases {
-		if err := seedMongo(ctx, mongoClient, databaseName, "cases", bson.M{"id": obj.ID}, obj); err != nil {
+		if err := seedMongo(ctx, mongoClient, databaseName, cms.CasesCollection, bson.M{"id": obj.ID}, obj); err != nil {
 			return err
 		}
 	}
 
 	for _, obj := range countries {
-		if err := seedMongo(ctx, mongoClient, databaseName, "parties", bson.M{"id": obj.ID}, iam.MapCountryToParty(&obj)); err != nil {
+		if err := seedMongo(ctx, mongoClient, databaseName, iam.PartiesCollection, bson.M{"id": obj.ID}, iam.MapCountryToParty(&obj)); err != nil {
 			return err
 		}
 	}
 
 	for _, obj := range nationalities {
-		if err := seedMongo(ctx, mongoClient, databaseName, "relationships", bson.M{"id": obj.ID}, iam.MapNationalityToRelationship(&obj)); err != nil {
+		if err := seedMongo(ctx, mongoClient, databaseName, iam.RelationshipsCollection, bson.M{"id": obj.ID}, iam.MapNationalityToRelationship(&obj)); err != nil {
 			return err
 		}
 	}
@@ -97,7 +109,7 @@ func Seed(ctx context.Context, mongoClientFn utils.MongoClientFn, databaseName s
 
 func initCollection(ctx context.Context, mongoClient *mongo.Client, databaseName string) error {
 	for _, obj := range individuals {
-		if err := seedMongo(ctx, mongoClient, databaseName, "parties", bson.M{"id": obj.ID}, obj.Party); err != nil {
+		if err := seedMongo(ctx, mongoClient, databaseName, iam.PartiesCollection, bson.M{"id": obj.ID}, obj.Party); err != nil {
 			return err
 		}
 		if obj.HasPartyType(iam.StaffPartyType.ID) {
@@ -105,7 +117,7 @@ func initCollection(ctx context.Context, mongoClient *mongo.Client, databaseName
 			if err != nil {
 				return err
 			}
-			if _, err := mongoClient.Database(databaseName).Collection("credentials").UpdateOne(ctx,
+			if _, err := mongoClient.Database(databaseName).Collection(login.CredentialsCollection).UpdateOne(ctx,
 				bson.M{
 					"partyId": obj.ID,
 				},

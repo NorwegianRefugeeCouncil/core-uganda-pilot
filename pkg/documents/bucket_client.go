@@ -24,7 +24,7 @@ func NewBucketsClient(c *rest.Client) *RESTBucketClient {
 	}
 }
 
-// NewBucketsClient returns a RESTBucketClient from a rest.Config
+// NewBucketsClientFromConfig returns a RESTBucketClient from a rest.Config
 func NewBucketsClientFromConfig(restConfig *rest.Config) *RESTBucketClient {
 	return NewBucketsClient(rest.NewClient(restConfig))
 }

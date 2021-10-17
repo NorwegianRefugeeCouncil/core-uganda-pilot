@@ -2,7 +2,7 @@ package documents
 
 import (
 	"context"
-	"github.com/nrc-no/core/pkg/validation"
+	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -138,13 +138,13 @@ func (s *Suite) TestGetDocument() {
 	}
 
 	type args struct {
-		name                  string
-		path                  string
-		expectError           bool
-		expectErrorStatusCode int
-		expectEtag            string
-		expectLastModified    string
-		expectBody            []byte
+		name               string
+		path               string
+		expectError        bool
+		expectErrorReason  meta.StatusReason
+		expectEtag         string
+		expectLastModified string
+		expectBody         []byte
 	}
 
 	tcs := []args{
@@ -156,20 +156,20 @@ func (s *Suite) TestGetDocument() {
 			expectLastModified: getLastModified(s.timeTeller.TellTime()),
 			expectBody:         existingObj.Data,
 		}, {
-			name:                  "getNonExistingObject",
-			path:                  "/nonExisting",
-			expectError:           true,
-			expectErrorStatusCode: 404,
+			name:              "getNonExistingObject",
+			path:              "/nonExisting",
+			expectError:       true,
+			expectErrorReason: meta.StatusReasonNotFound,
 		}, {
-			name:                  "getDeletedObject",
-			path:                  deletedObj.ID,
-			expectError:           true,
-			expectErrorStatusCode: 404,
+			name:              "getDeletedObject",
+			path:              deletedObj.ID,
+			expectError:       true,
+			expectErrorReason: meta.StatusReasonNotFound,
 		}, {
-			name:                  "getUpdatedThenDeletedObject",
-			path:                  updatedDeletedObj.ID,
-			expectError:           true,
-			expectErrorStatusCode: 404,
+			name:              "getUpdatedThenDeletedObject",
+			path:              updatedDeletedObj.ID,
+			expectError:       true,
+			expectErrorReason: meta.StatusReasonNotFound,
 		},
 	}
 
@@ -182,9 +182,8 @@ func (s *Suite) TestGetDocument() {
 				if !assert.Error(t, err) {
 					return
 				}
-				status := validation.AsStatus(err)
-				assert.Equal(t, tc.expectErrorStatusCode, status.Code)
-
+				reason := meta.ReasonForError(err)
+				assert.Equal(t, tc.expectErrorReason, reason)
 			}
 			if !tc.expectError {
 				if !assert.NoError(t, err) {

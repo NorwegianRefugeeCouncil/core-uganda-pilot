@@ -17,7 +17,7 @@ func newRelationshipStore(ctx context.Context, mongoClientFn utils.MongoClientFn
 	defer cancel()
 
 	store := &RelationshipStore{
-		getCollection: utils.GetCollectionFn(database, "relationships", mongoClientFn),
+		getCollection: utils.GetCollectionFn(database, RelationshipsCollection, mongoClientFn),
 	}
 
 	collection, done, err := store.getCollection(ctx)

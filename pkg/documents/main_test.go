@@ -2,6 +2,7 @@ package documents
 
 import (
 	"context"
+	"github.com/nrc-no/core/pkg/storage"
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/stretchr/testify/suite"
 	"go.mongodb.org/mongo-driver/bson"
@@ -40,7 +41,9 @@ func (s *Suite) SetupSuite() {
 	s.timeTeller = utils.NewMockTimeTeller(time.Now())
 	s.uidGenerator = utils.NewUIDGenerator()
 
-	s.server = NewServer(s.mongoFn, s.databaseName, s.timeTeller, s.uidGenerator)
+	dbFactory := storage.NewFactory(s.mongoFn)
+
+	s.server = NewServer(dbFactory, s.databaseName, s.timeTeller, s.uidGenerator)
 
 	s.done = make(chan struct{}, 1)
 

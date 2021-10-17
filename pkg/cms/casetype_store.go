@@ -17,7 +17,7 @@ func NewCaseTypeStore(ctx context.Context, mongoClientFn utils.MongoClientFn, da
 	defer cancel()
 
 	store := &CaseTypeStore{
-		getCollection: utils.GetCollectionFn(database, "caseTypes", mongoClientFn),
+		getCollection: utils.GetCollectionFn(database, CaseTypesCollection, mongoClientFn),
 	}
 
 	collection, done, err := store.getCollection(ctx)

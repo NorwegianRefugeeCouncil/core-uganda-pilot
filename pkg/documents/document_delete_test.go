@@ -2,9 +2,8 @@ package documents
 
 import (
 	"context"
-	"github.com/nrc-no/core/pkg/validation"
+	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/stretchr/testify/assert"
-	"net/http"
 	"testing"
 )
 
@@ -96,10 +95,10 @@ func (s *Suite) TestDeleteDocument() {
 	}
 
 	type args struct {
-		name            string
-		key             string
-		expectError     bool
-		expectErrorCode int
+		name         string
+		key          string
+		expectError  bool
+		expectReason meta.StatusReason
 	}
 
 	tcs := []args{
@@ -108,15 +107,15 @@ func (s *Suite) TestDeleteDocument() {
 			key:         "/testobj",
 			expectError: false,
 		}, {
-			name:            "deleteNonExistingObject",
-			key:             "/nonExisting",
-			expectError:     true,
-			expectErrorCode: http.StatusNotFound,
+			name:         "deleteNonExistingObject",
+			key:          "/nonExisting",
+			expectError:  true,
+			expectReason: meta.StatusReasonNotFound,
 		}, {
-			name:            "deleteAlreadyDeleted",
-			key:             "/deleted",
-			expectError:     true,
-			expectErrorCode: http.StatusNotFound,
+			name:         "deleteAlreadyDeleted",
+			key:          "/deleted",
+			expectError:  true,
+			expectReason: meta.StatusReasonNotFound,
 		}, {
 			name:        "deleteUpdatedDocument",
 			key:         "/delete-updated",
@@ -134,8 +133,9 @@ func (s *Suite) TestDeleteDocument() {
 				if !assert.Error(t, err) {
 					return
 				}
-				status := validation.AsStatus(err)
-				assert.Equal(t, tc.expectErrorCode, status.Code)
+
+				reason := meta.ReasonForError(err)
+				assert.Equal(t, tc.expectReason, reason)
 			}
 
 		})

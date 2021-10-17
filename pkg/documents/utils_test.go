@@ -1,6 +1,11 @@
 package documents
 
-import "testing"
+import (
+	"github.com/nrc-no/core/pkg/pointers"
+	"github.com/stretchr/testify/assert"
+	"go.mongodb.org/mongo-driver/bson"
+	"testing"
+)
 
 func Test_validateObjectId(t *testing.T) {
 	tests := []struct {
@@ -59,6 +64,40 @@ func Test_validateObjectId(t *testing.T) {
 			if err := validateObjectId(tt.id); (err != nil) != tt.wantErr {
 				t.Errorf("validateObjectId() error = %v, wantErr %v", err, tt.wantErr)
 			}
+		})
+	}
+}
+
+func Test_getDocumentFilter(t *testing.T) {
+	tests := []struct {
+		name string
+		args DocumentRef
+		want interface{}
+	}{
+		{
+			name: "withVersion",
+			args: NewDocumentVersionRef("bucket", "key", pointers.Int64(10)),
+			want: bson.M{
+				"id":              "key",
+				"bucketId":        "bucket",
+				"resourceVersion": int64(10),
+				"isDeleted":       false,
+			},
+		}, {
+			name: "withoutVersion",
+			args: NewDocumentVersionRef("bucket", "key", nil),
+			want: bson.M{
+				"id":              "key",
+				"bucketId":        "bucket",
+				"isLatestVersion": true,
+				"isDeleted":       false,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := getDocumentFilter(tt.args)
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }

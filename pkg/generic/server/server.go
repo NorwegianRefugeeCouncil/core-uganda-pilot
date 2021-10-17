@@ -20,12 +20,12 @@ type GenericServerOptions struct {
 	RedisStore        *redistore.RediStore
 }
 
-var cmsPath = "/apis/cms/v1"
-var iamPath = "/apis/iam/v1"
-var attachmentsPath = "/apis/attachments/v1"
-var documentsPath = "/apis/documents/v1"
-
-type Endpoint = string
+var (
+	cmsPath         = "/apis/cms/v1"
+	iamPath         = "/apis/iam/v1"
+	attachmentsPath = "/apis/attachments/v1"
+	documentsPath   = "/apis/documents/v1"
+)
 
 var (
 	AttachmentsEndpoint                 = path.Join(attachmentsPath, "attachments")

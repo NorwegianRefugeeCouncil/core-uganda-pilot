@@ -18,7 +18,7 @@ func NewCommentStore(ctx context.Context, mongoClientFn utils.MongoClientFn, dat
 	defer cancel()
 
 	store := &CommentStore{
-		getCollection: utils.GetCollectionFn(database, "comments", mongoClientFn),
+		getCollection: utils.GetCollectionFn(database, CommentsCollection, mongoClientFn),
 	}
 
 	collection, done, err := store.getCollection(ctx)

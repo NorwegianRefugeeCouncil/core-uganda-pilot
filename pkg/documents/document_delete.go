@@ -2,77 +2,64 @@ package documents
 
 import (
 	"fmt"
+	"github.com/nrc-no/core/pkg/api/meta"
+	"github.com/nrc-no/core/pkg/storage"
 	"github.com/nrc-no/core/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
 )
 
 func Delete(
-	mongoFn func() (*mongo.Client, error),
+	dbFactory storage.Factory,
 	databaseName string,
 	timeTeller utils.TimeTeller,
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		ctx := req.Context()
 
-		id := getObjectIDFromPath(req.URL.Path)
-
-		bucketId, err := requireBucketIDFromQueryParam(req.URL.Query())
+		docRef, err := getDocumentRefFromReq(req)
 		if err != nil {
-			writeError(w, http.StatusBadRequest, err)
+			utils.ErrorResponse(w, err)
 			return
 		}
 
-		objectVersion, err := findObjectVersionFromQueryParam(req.URL.Query())
+		db, err := dbFactory.New()
 		if err != nil {
-			writeError(w, http.StatusBadRequest, err)
-			return
-		}
-
-		mongoCli, err := mongoFn()
-		if err != nil {
-			writeError(w, http.StatusInternalServerError, fmt.Errorf("could not connect to the database: %v", err))
+			utils.ErrorResponse(w, err)
 			return
 		}
 
 		// ensure bucket exists
-		_, err = getBucket(ctx, mongoCli, databaseName, bucketId)
-		if err != nil {
-			writeError(w, http.StatusInternalServerError, err)
+		if err := ensureBucketExists(ctx, db, databaseName, docRef); err != nil {
+			utils.ErrorResponse(w, err)
 			return
 		}
 
-		collection := mongoCli.Database(databaseName).Collection(collDocuments)
-
-		filter := bson.M{
-			keyID:        id,
-			keyIsDeleted: false,
-		}
-
-		if objectVersion != nil {
-			filter[keyRevision] = objectVersion
-		} else {
-			filter[keyIsLastRevision] = true
-		}
-
+		collection := db.Database(databaseName).Collection(collDocuments)
 		updateResult, err := collection.UpdateOne(ctx,
-			filter, bson.M{
+			getDocumentFilter(docRef),
+			bson.M{
 				"$set": bson.M{
 					keyIsDeleted: true,
 					keyDeletedAt: timeTeller.TellTime(),
 				},
 			})
+
 		if err != nil {
-			writeError(w, http.StatusInternalServerError, fmt.Errorf("could not delete the object: %v", err))
+			utils.ErrorResponse(w, meta.NewInternalServerError(fmt.Errorf("could not delete bucket: %v", err)))
 			return
 		}
+
 		if updateResult.ModifiedCount == 0 {
-			writeError(w, http.StatusNotFound, fmt.Errorf("object not found"))
+			utils.ErrorResponse(w, docNotFound(docRef))
 			return
 		}
 
 		w.WriteHeader(http.StatusNoContent)
 
 	}
+}
+
+func docNotFound(docRef DocumentRef) *meta.StatusError {
+	return meta.NewNotFound(GroupVersion.WithResource("documents"), docRef.GetKey())
 }
