@@ -22,20 +22,17 @@ import (
 	"time"
 )
 
-func writeError(w http.ResponseWriter, statusCode int, err error) {
-	w.WriteHeader(statusCode)
-	_, _ = w.Write([]byte(err.Error()))
-	return
-}
-
-func getMediaType(header http.Header) (string, map[string]string, error) {
+//getMediaTypeFromHeader retrieves and parses the media type from the given header.
+func getMediaTypeFromHeader(header http.Header) (string, map[string]string, error) {
 	mediaType, params, err := mime.ParseMediaType(header.Get(headerContentType))
 	if err != nil {
-		return "", nil, fmt.Errorf("failed to parse media type: %v", err)
+		return "", nil, meta.NewBadRequest(fmt.Sprintf("failed to parse media type: %v", err))
 	}
 	return mediaType, params, err
 }
 
+// requireBucketIDFromQueryParam will ensure that the paramBucketID query parameter
+// is present, and will return it or an error
 func requireBucketIDFromQueryParam(values url.Values) (string, error) {
 	b := values.Get(paramBucketID)
 	if len(b) == 0 {
@@ -44,7 +41,10 @@ func requireBucketIDFromQueryParam(values url.Values) (string, error) {
 	return b, nil
 }
 
-func findObjectVersionFromQueryParam(values url.Values) (*int64, error) {
+// findVersionFromQueryParam will retrieve the document ID from the
+// given query parameters, will make sure that it is well-formed and will
+// return it.
+func findVersionFromQueryParam(values url.Values) (*int64, error) {
 	v := values.Get(paramVersion)
 	if len(v) > 0 {
 		version, err := strconv.ParseInt(v, 10, 64)
@@ -56,13 +56,16 @@ func findObjectVersionFromQueryParam(values url.Values) (*int64, error) {
 	return nil, nil
 }
 
+// encodeData will encode the given document data in the right format.
+// If the format it json, it will convert it to a json object.
+// this is used to store in the database
 func encodeData(bodyBytes []byte, contentType string) (interface{}, error) {
 	var dataIntf interface{}
 	dataIntf = bodyBytes
 	if isMediaType(contentType, mimeTypeApplicationJson) {
 		dataMap := map[string]interface{}{}
 		if err := json.Unmarshal(bodyBytes, &dataMap); err != nil {
-			return nil, fmt.Errorf("failed to unmarshal json data: %v", err)
+			return nil, meta.NewBadRequest(fmt.Sprintf("failed to decode json: %v", err))
 		}
 		dataIntf = dataMap
 	} else if isMediaType(contentType, mimeTypeTextPlain, mimeTypeTextHtml) {
@@ -74,6 +77,8 @@ func encodeData(bodyBytes []byte, contentType string) (interface{}, error) {
 	return dataIntf, nil
 }
 
+// decodeData will convert the given data to bytes.
+// this is used to retrieve data from the database
 func decodeData(data interface{}, contentType string) ([]byte, error) {
 	if isMediaType(contentType, mimeTypeApplicationJson) {
 		dataMap := data.(bson.D)
@@ -104,6 +109,7 @@ func decodeData(data interface{}, contentType string) ([]byte, error) {
 	}
 }
 
+// isMediaType will check if the given content-type is one of the given media types
 func isMediaType(contentType string, mimeTypes ...string) bool {
 	for _, mimeType := range mimeTypes {
 		if strings.HasPrefix(contentType, mimeType) {
@@ -113,15 +119,19 @@ func isMediaType(contentType string, mimeTypes ...string) bool {
 	return false
 }
 
+// getContentLength will retrieve the headerContentLength header from the request
 func getContentLength(req *http.Request) (int32, error) {
 	contentLengthStr := req.Header.Get(headerContentLength)
 	contentLength, err := strconv.ParseInt(contentLengthStr, 10, 32)
 	if err != nil {
-		return 0, fmt.Errorf("failed to parse Content-Length: %v", err)
+		return 0, meta.NewBadRequest(fmt.Sprintf("failed to parse Content-Length: %v", err))
 	}
 	return int32(contentLength), err
 }
 
+// getMetadata will extract the document metadata from the supplied headers
+// document metadata is in the form of
+// x-tags key1=value1,key2=value2,...
 func getMetadata(header http.Header) (map[string]string, error) {
 	if header == nil {
 		return map[string]string{}, nil
@@ -135,34 +145,42 @@ func getMetadata(header http.Header) (map[string]string, error) {
 	for _, part := range tagParts {
 		entryParts := strings.Split(part, "=")
 		if len(entryParts) != 2 {
-			return nil, fmt.Errorf("invalid tags")
+			reason := fmt.Sprintf("invalid tags: %s", tags)
+			return nil, meta.NewBadRequest(reason)
 		}
 		metadata[entryParts[0]] = entryParts[1]
 	}
 	return metadata, nil
 }
 
-func getLastModified(t time.Time) string {
+// formatHTTPLastModified formats the given time
+// to the HTTP (time.RFC1123) format
+func formatHTTPLastModified(t time.Time) string {
 	return t.Format(http.TimeFormat)
 }
 
-func parseLastModified(t string) (time.Time, error) {
+// parseHTTPLastModified parses the given string
+// to time.Time using (time.RFC1123) format
+func parseHTTPLastModified(t string) (time.Time, error) {
 	return time.Parse(http.TimeFormat, t)
 }
 
+// getMD5Checksum gets the md5 checksum for the given bytes
 func getMD5Checksum(bodyBytes []byte) string {
 	md5Checksum := md5.Sum(bodyBytes)
 	md5ChecksumStr := hex.EncodeToString(md5Checksum[:])
 	return md5ChecksumStr
 }
 
+// getSha512Checksum gets the SHA512 checksum from the given bytes
 func getSha512Checksum(bodyBytes []byte) string {
 	sha512Checksum := sha512.Sum512(bodyBytes)
 	sha512ChecksumStr := hex.EncodeToString(sha512Checksum[:])
 	return sha512ChecksumStr
 }
 
-func getObjectIDFromPath(objectPath string) string {
+//getDocumentIdFromPath retrieves the Document.ID from the path
+func getDocumentIdFromPath(objectPath string) string {
 	id := objectPath
 	if strings.HasPrefix(id, path.Join(server.DocumentsEndpoint)) {
 		id = strings.TrimPrefix(id, server.DocumentsEndpoint)
@@ -173,9 +191,11 @@ func getObjectIDFromPath(objectPath string) string {
 	return id
 }
 
+// objectIDRegex is the regex for valid document keys
 var objectIDRegex = regexp.MustCompile("^([a-zA-Z0-9]+([/\\.\\-_][[a-zA-Z0-9]+)*)$")
 
-func validateObjectId(id string) error {
+// validateDocumentID validates that the given document ID is valid
+func validateDocumentID(id string) error {
 
 	if strings.HasPrefix(id, "/") {
 		id = strings.TrimPrefix(id, "/")
@@ -196,6 +216,7 @@ func validateObjectId(id string) error {
 
 }
 
+// getDocumentFilter gets the appropriate database filter for the given DocumentRef
 func getDocumentFilter(docRef DocumentRef) interface{} {
 	filter := bson.M{
 		keyID:        docRef.GetKey(),
@@ -210,12 +231,14 @@ func getDocumentFilter(docRef DocumentRef) interface{} {
 	return filter
 }
 
+// ensureBucketExists checks that the given bucket exists
 func ensureBucketExists(ctx context.Context, db *mongo.Client, databaseName string, docRef DocumentRef) error {
 	// ensure bucket exists
 	_, err := getBucket(ctx, db, databaseName, docRef.GetBucketID())
 	return err
 }
 
+// normalizeDocumentKey will normalize trailing/leading slashes
 func normalizeDocumentKey(key string) string {
 	if strings.HasPrefix(key, "/") {
 		key = strings.TrimPrefix(key, "/")

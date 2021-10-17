@@ -58,7 +58,7 @@ func Get(
 		w.Header().Set(headerContentType, doc.ContentType)
 		w.Header().Set(headerContentLength, strconv.Itoa(int(doc.ContentLength)))
 		w.Header().Set(headerETag, doc.MD5Checksum)
-		w.Header().Set(headerLastModified, getLastModified(doc.CreatedAt))
+		w.Header().Set(headerLastModified, formatHTTPLastModified(doc.CreatedAt))
 		w.Header().Set(headerBucketID, docRef.GetBucketID())
 		w.WriteHeader(http.StatusOK)
 

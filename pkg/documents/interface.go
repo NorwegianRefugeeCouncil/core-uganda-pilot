@@ -76,9 +76,9 @@ func NewDocumentVersionRef(bucketID, key string, version *int64) DocumentRef {
 }
 
 func getDocumentRefFromReq(req *http.Request) (DocumentRef, error) {
-	id := getObjectIDFromPath(req.URL.Path)
+	id := getDocumentIdFromPath(req.URL.Path)
 
-	if err := validateObjectId(id); err != nil {
+	if err := validateDocumentID(id); err != nil {
 		return nil, err
 	}
 
@@ -87,7 +87,7 @@ func getDocumentRefFromReq(req *http.Request) (DocumentRef, error) {
 		return nil, err
 	}
 
-	objectVersion, err := findObjectVersionFromQueryParam(req.URL.Query())
+	objectVersion, err := findVersionFromQueryParam(req.URL.Query())
 	if err != nil {
 		return nil, err
 	}

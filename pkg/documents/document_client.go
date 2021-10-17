@@ -56,7 +56,7 @@ func (r RESTDocumentClient) Get(ctx context.Context, id string, options GetDocum
 
 	obj.ID = id
 
-	createdAt, err := parseLastModified(resp.Header.Get(headerLastModified))
+	createdAt, err := parseHTTPLastModified(resp.Header.Get(headerLastModified))
 	if err != nil {
 		return nil, err
 	}

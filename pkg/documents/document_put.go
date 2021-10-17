@@ -29,18 +29,19 @@ func Put(
 
 		docRef, err := getDocumentRefFromReq(req)
 		if err != nil {
-			writeError(w, http.StatusBadRequest, err)
+			utils.ErrorResponse(w, err)
 			return
 		}
 
 		if docRef.HasVersion() {
-			writeError(w, http.StatusBadRequest, fmt.Errorf("query parameter '%s' is illegal for %s operation", paramVersion, http.MethodPut))
+			reason := fmt.Sprintf("query parameter '%s' is illegal for %s operation", paramVersion, http.MethodPut)
+			utils.ErrorResponse(w, meta.NewBadRequest(reason))
 			return
 		}
 
-		mediaType, mediaTypeParams, err := getMediaType(req.Header)
+		mediaType, mediaTypeParams, err := getMediaTypeFromHeader(req.Header)
 		if err != nil {
-			writeError(w, http.StatusBadRequest, fmt.Errorf("failed to get media type: %v", err))
+			utils.ErrorResponse(w, err)
 			return
 		}
 
@@ -48,19 +49,19 @@ func Put(
 
 		contentLength, err := getContentLength(req)
 		if err != nil {
-			writeError(w, http.StatusBadRequest, fmt.Errorf("failed to get content-length: %v", err))
+			utils.ErrorResponse(w, err)
 			return
 		}
 
 		metadata, err := getMetadata(req.Header)
 		if err != nil {
-			writeError(w, http.StatusBadRequest, fmt.Errorf("failed to get tags: %v", err))
+			utils.ErrorResponse(w, err)
 			return
 		}
 
 		bodyBytes, err := ioutil.ReadAll(req.Body)
 		if err != nil {
-			writeError(w, http.StatusInternalServerError, fmt.Errorf("failed to upload object: %v", err.Error()))
+			utils.ErrorResponse(w, meta.NewInternalServerError(fmt.Errorf("failed to read body: %v", err)))
 			return
 		}
 
@@ -69,7 +70,7 @@ func Put(
 
 		dataIntf, err := encodeData(bodyBytes, mediaType)
 		if err != nil {
-			writeError(w, http.StatusBadRequest, fmt.Errorf("failed to get data: %v", err.Error()))
+			utils.ErrorResponse(w, err)
 			return
 		}
 
@@ -93,13 +94,13 @@ func Put(
 
 		db, err := dbFactory.New()
 		if err != nil {
-			writeError(w, http.StatusInternalServerError, fmt.Errorf("failed to connect to database: %v", err))
+			utils.ErrorResponse(w, meta.NewInternalServerError(fmt.Errorf("database unreachable: %v", err)))
 			return
 		}
 
 		// ensure bucket exists
 		if err := ensureBucketExists(ctx, db, databaseName, docRef); err != nil {
-			writeError(w, http.StatusInternalServerError, err)
+			utils.ErrorResponse(w, err)
 			return
 		}
 

@@ -153,7 +153,7 @@ func (s *Suite) TestGetDocument() {
 			path:               "/testobj",
 			expectError:        false,
 			expectEtag:         getMD5Checksum(existingObj.Data),
-			expectLastModified: getLastModified(s.timeTeller.TellTime()),
+			expectLastModified: formatHTTPLastModified(s.timeTeller.TellTime()),
 			expectBody:         existingObj.Data,
 		}, {
 			name:              "getNonExistingObject",

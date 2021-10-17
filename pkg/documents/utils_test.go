@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func Test_validateObjectId(t *testing.T) {
+func Test_validateDocumentID(t *testing.T) {
 	tests := []struct {
 		name    string
 		id      string
@@ -61,8 +61,8 @@ func Test_validateObjectId(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := validateObjectId(tt.id); (err != nil) != tt.wantErr {
-				t.Errorf("validateObjectId() error = %v, wantErr %v", err, tt.wantErr)
+			if err := validateDocumentID(tt.id); (err != nil) != tt.wantErr {
+				t.Errorf("validateDocumentID() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
