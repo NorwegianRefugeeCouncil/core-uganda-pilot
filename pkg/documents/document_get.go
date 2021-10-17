@@ -31,8 +31,14 @@ func Get(
 			return
 		}
 
-		if err := assertDocumentBucketExists(ctx, db, databaseName, docRef); err != nil {
+		bucket, err := getBucket(ctx, db, databaseName, docRef.GetBucketID())
+		if err != nil {
 			utils.ErrorResponse(w, err)
+			return
+		}
+
+		if docRef.HasVersion() && !bucket.HasVersions() {
+			utils.ErrorResponse(w, meta.NewBadRequest("cannot get document version on unversioned bucket"))
 			return
 		}
 

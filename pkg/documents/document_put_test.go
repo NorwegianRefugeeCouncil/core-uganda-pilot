@@ -33,8 +33,6 @@ func (s *Suite) TestPutDocumentNonExistingBucketShouldThrow() {
 
 func (s *Suite) TestPutDocument() {
 
-	ctx := context.Background()
-
 	type args struct {
 		name             string
 		key              string
@@ -45,7 +43,7 @@ func (s *Suite) TestPutDocument() {
 		expectRevision   int
 	}
 
-	bucket, err := s.client.Buckets().Create(ctx, &Bucket{Name: "test-document-get"}, CreateBucketOptions{})
+	bucket, err := s.createVersionedBucket("test-document-get")
 	if !assert.NoError(s.T(), err) {
 		return
 	}

@@ -17,18 +17,17 @@ func CreateBucket(
 
 		ctx := req.Context()
 
-		var bucket Bucket
-		if err := utils.BindJSON(req, &bucket); err != nil {
+		bucket := &Bucket{}
+		if err := utils.BindJSON(req, bucket); err != nil {
 			utils.ErrorResponse(w, err)
 			return
 		}
 
 		bucket.ID = generator.GenUID()
-		bucket.Revision = 1
-		bucket.IsLastRevision = true
-		bucket.IsDeleted = false
 
-		if errs := validateBucket(&bucket); errs.HasAny() {
+		applyBucketDefaults(bucket)
+
+		if errs := validateBucket(bucket); errs.HasAny() {
 			utils.ErrorResponse(w, meta.NewInvalid(GroupVersion.WithResource("bucket"), "", errs))
 			return
 		}

@@ -8,6 +8,7 @@ import (
 func validateBucket(bucket *Bucket) validation.ErrorList {
 	result := validation.ErrorList{}
 	result = append(result, validateBucketName(validation.NewPath("name"), bucket.Name)...)
+	result = append(result, validateBucketVersioning(validation.NewPath("versioning"), bucket.Versioning)...)
 	return result
 }
 
@@ -32,4 +33,14 @@ func validateBucketName(fieldPath *validation.Path, name string) validation.Erro
 	}
 
 	return result
+}
+
+func validateBucketVersioning(fieldPath *validation.Path, versioning BucketVersioning) validation.ErrorList {
+	switch versioning {
+	case VersioningDisabled:
+	case VersioningEnabled:
+	default:
+		return validation.ErrorList{validation.Invalid(fieldPath, versioning, "invalid versioning option")}
+	}
+	return validation.ErrorList{}
 }

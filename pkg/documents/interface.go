@@ -99,10 +99,19 @@ type Document struct {
 	Data           []byte
 }
 
+type BucketVersioning string
+
+const (
+	VersioningDisabled BucketVersioning = "disabled"
+	VersioningEnabled  BucketVersioning = "enabled"
+)
+
 type Bucket struct {
-	ID             string `bson:"id"`
-	Name           string `bson:"name"`
-	IsLastRevision bool   `bson:"isLatestVersion"`
-	Revision       int    `bson:"resourceVersion"`
-	IsDeleted      bool   `bson:"isDeleted"`
+	ID         string           `bson:"id"`
+	Name       string           `bson:"name"`
+	Versioning BucketVersioning `bson:"versioning"`
+}
+
+func (b *Bucket) HasVersions() bool {
+	return b.Versioning == VersioningEnabled
 }

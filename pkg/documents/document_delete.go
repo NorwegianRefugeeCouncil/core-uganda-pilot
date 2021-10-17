@@ -29,30 +29,47 @@ func Delete(
 			return
 		}
 
-		// ensure bucket exists
-		if err := assertDocumentBucketExists(ctx, db, databaseName, docRef); err != nil {
+		bucket, err := getBucket(ctx, db, databaseName, docRef.GetBucketID())
+		if err != nil {
 			utils.ErrorResponse(w, err)
 			return
 		}
 
-		collection := db.Database(databaseName).Collection(DocumentsCollection)
-		updateResult, err := collection.UpdateOne(ctx,
-			getDocumentDBFilter(docRef),
-			bson.M{
-				"$set": bson.M{
-					keyIsDeleted: true,
-					keyDeletedAt: timeTeller.TellTime(),
-				},
-			})
-
-		if err != nil {
-			utils.ErrorResponse(w, meta.NewInternalServerError(fmt.Errorf("could not delete bucket: %v", err)))
+		if docRef.HasVersion() && !bucket.HasVersions() {
+			utils.ErrorResponse(w, meta.NewBadRequest("cannot delete document version on unversioned bucket"))
 			return
 		}
 
-		if updateResult.ModifiedCount == 0 {
-			utils.ErrorResponse(w, docNotFound(docRef))
-			return
+		collection := db.Database(databaseName).Collection(DocumentsCollection)
+
+		switch bucket.Versioning {
+		case VersioningEnabled:
+			updateResult, err := collection.UpdateOne(ctx,
+				getDocumentDBFilter(docRef),
+				bson.M{
+					"$set": bson.M{
+						keyIsDeleted: true,
+						keyDeletedAt: timeTeller.TellTime(),
+					},
+				})
+			if err != nil {
+				utils.ErrorResponse(w, meta.NewInternalServerError(fmt.Errorf("could not delete document: %v", err)))
+				return
+			}
+			if updateResult.ModifiedCount == 0 {
+				utils.ErrorResponse(w, docNotFound(docRef))
+				return
+			}
+		case VersioningDisabled:
+			deleteResult, err := collection.DeleteOne(ctx, getDocumentDBFilter(docRef))
+			if err != nil {
+				utils.ErrorResponse(w, meta.NewInternalServerError(fmt.Errorf("could not delete document: %v", err)))
+				return
+			}
+			if deleteResult.DeletedCount == 0 {
+				utils.ErrorResponse(w, docNotFound(docRef))
+				return
+			}
 		}
 
 		w.WriteHeader(http.StatusNoContent)

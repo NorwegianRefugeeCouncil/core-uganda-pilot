@@ -19,7 +19,7 @@ func (s *Suite) TestGetocumentInvalidBucketShouldThrow() {
 
 func (s *Suite) TestGetObjectVersionWithOtherVersionsDeleted() {
 
-	bucket, err := s.createBucket("TestGetObjectVersionWithOtherVersionsDeleted")
+	bucket, err := s.createVersionedBucket("TestGetObjectVersionWithOtherVersionsDeleted")
 	if !assert.NoError(s.T(), err) {
 		return
 	}
@@ -50,7 +50,7 @@ func (s *Suite) TestGetObjectVersionWithOtherVersionsDeleted() {
 }
 
 func (s *Suite) TestGetObjectWithPreviousVersionsDeleted() {
-	bucket, err := s.createBucket("TestGetObjectWithPreviousVersionsDeleted")
+	bucket, err := s.createVersionedBucket("TestGetObjectWithPreviousVersionsDeleted")
 	if !assert.NoError(s.T(), err) {
 		return
 	}

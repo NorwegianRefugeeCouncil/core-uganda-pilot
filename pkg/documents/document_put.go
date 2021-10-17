@@ -99,8 +99,8 @@ func Put(
 			return
 		}
 
-		// ensure bucket exists
-		if err := assertDocumentBucketExists(ctx, db, databaseName, docRef); err != nil {
+		bucket, err := getBucket(ctx, db, databaseName, docRef.GetBucketID())
+		if err != nil {
 			utils.ErrorResponse(w, err)
 			return
 		}
@@ -120,12 +120,20 @@ func Put(
 
 			collection := db.Database(databaseName).Collection(DocumentsCollection)
 
-			if err := preparePuttingDocument(ctx, collection, doc); err != nil {
-				return nil, err
-			}
-
-			if _, err := collection.InsertOne(ctx, doc); err != nil {
-				return nil, meta.NewInternalServerError(err)
+			switch bucket.Versioning {
+			case VersioningEnabled:
+				if err := putVersionedDocument(ctx, collection, bucket, doc); err != nil {
+					return nil, err
+				}
+			case VersioningDisabled:
+				_, err = collection.ReplaceOne(
+					ctx,
+					getDocumentDBFilter(docRef.WithCurrentVersion()),
+					doc,
+					options.Replace().SetUpsert(true))
+				if err != nil {
+					return nil, meta.NewInternalServerError(err)
+				}
 			}
 
 			return nil, nil
@@ -145,10 +153,8 @@ func Put(
 	}
 }
 
-// preparePuttingDocument will check if a previous document at the given key exists.
-// If yes, it will update that document to indicate that this is not the current version.
-// The preparePuttingDocument will return the Document.Version for the next document.
-func preparePuttingDocument(ctx context.Context, collection *mongo.Collection, doc *StoredDocument) error {
+// putVersionedDocument will put a new document version in the bucket
+func putVersionedDocument(ctx context.Context, collection *mongo.Collection, bucket *Bucket, doc *StoredDocument) error {
 
 	docRef := doc.DocumentRef().WithCurrentVersion()
 	filter := getDocumentDBFilter(docRef)
@@ -170,5 +176,10 @@ func preparePuttingDocument(ctx context.Context, collection *mongo.Collection, d
 		}
 		doc.Revision = oldDoc.Revision + 1
 	}
+
+	if _, err := collection.InsertOne(ctx, doc); err != nil {
+		return meta.NewInternalServerError(err)
+	}
+
 	return nil
 }
