@@ -41,7 +41,7 @@ type GetDocumentOptions struct {
 // Get a document
 func (r RESTDocumentClient) Get(ctx context.Context, id string, options GetDocumentOptions) (*Document, error) {
 
-	id = normalizeDocumentKey(id)
+	id = removeLeadingTrailingSlashes(id)
 
 	var obj Document
 	body, resp, err := r.c.Get().Path(path.Join(server.DocumentsEndpoint, id)).
@@ -76,7 +76,7 @@ func (r RESTDocumentClient) Get(ctx context.Context, id string, options GetDocum
 
 	obj.SHA512Checksum = resp.Header.Get(headerSha512Checksum)
 
-	metadata, err := getMetadata(resp.Header)
+	metadata, err := getDocumentMetadataFromHTTPHeader(resp.Header)
 	if err != nil {
 		return nil, err
 	}
@@ -113,7 +113,7 @@ type PutDocumentOptions struct {
 // Put a document
 func (r RESTDocumentClient) Put(ctx context.Context, document *Document, options PutDocumentOptions) (*PutDocumentResponse, error) {
 
-	document.ID = normalizeDocumentKey(document.ID)
+	document.ID = removeLeadingTrailingSlashes(document.ID)
 
 	_, res, err := r.c.Put().
 		Path(path.Join(server.DocumentsEndpoint, document.ID)).
@@ -148,7 +148,7 @@ type DeleteDocumentOptions struct {
 // Delete a document
 func (r RESTDocumentClient) Delete(ctx context.Context, key string, options DeleteDocumentOptions) error {
 
-	key = normalizeDocumentKey(key)
+	key = removeLeadingTrailingSlashes(key)
 
 	_, _, err := r.c.
 		Delete().

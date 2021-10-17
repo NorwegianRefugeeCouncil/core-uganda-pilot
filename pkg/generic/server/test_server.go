@@ -10,6 +10,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -30,7 +31,7 @@ func GetEnvOrDefault(key, defaultValue string) string {
 var (
 	mongoUsername = GetEnvOrDefault("MONGO_USERNAME", "")
 	mongoPassword = GetEnvOrDefault("MONGO_PASSWORD", "")
-	mongoHost     = GetEnvOrDefault("MONGO_HOST", "localhost:27017")
+	mongoHost     = GetEnvOrDefault("MONGO_HOST", "localhost:27017,localhost:27018,localhost:27019")
 	mongoDatabase = GetEnvOrDefault("MONGO_DATABASE", "e2e")
 )
 
@@ -61,7 +62,7 @@ func NewGenericServerTestSetup() *GenericServerTestSetup { // Using a random por
 	}
 
 	if len(mongoHost) > 0 {
-		mongoOpts.SetHosts([]string{mongoHost})
+		mongoOpts.SetHosts(strings.Split(mongoHost, ","))
 	}
 
 	mongoClient, err := mongo.NewClient(mongoOpts)

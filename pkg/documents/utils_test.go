@@ -68,7 +68,7 @@ func Test_validateDocumentID(t *testing.T) {
 	}
 }
 
-func Test_getDocumentFilter(t *testing.T) {
+func Test_getDocumentDBFilter(t *testing.T) {
 	tests := []struct {
 		name string
 		args DocumentRef
@@ -76,7 +76,7 @@ func Test_getDocumentFilter(t *testing.T) {
 	}{
 		{
 			name: "withVersion",
-			args: NewDocumentVersionRef("bucket", "key", pointers.Int64(10)),
+			args: NewDocumentRef("bucket", "key", pointers.Int64(10)),
 			want: bson.M{
 				"id":              "key",
 				"bucketId":        "bucket",
@@ -85,7 +85,7 @@ func Test_getDocumentFilter(t *testing.T) {
 			},
 		}, {
 			name: "withoutVersion",
-			args: NewDocumentVersionRef("bucket", "key", nil),
+			args: NewDocumentRef("bucket", "key", nil),
 			want: bson.M{
 				"id":              "key",
 				"bucketId":        "bucket",
@@ -96,7 +96,7 @@ func Test_getDocumentFilter(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := getDocumentFilter(tt.args)
+			got := getDocumentDBFilter(tt.args)
 			assert.Equal(t, tt.want, got)
 		})
 	}

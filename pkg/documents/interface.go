@@ -2,7 +2,7 @@ package documents
 
 import (
 	"fmt"
-	"net/http"
+	"github.com/nrc-no/core/pkg/pointers"
 	"time"
 )
 
@@ -25,32 +25,46 @@ type StoredDocument struct {
 	Data           interface{}       `bson:"data"`
 }
 
-type documentRef struct {
+func (d *StoredDocument) DocumentRef() DocumentRef {
+	return NewDocumentRef(d.BucketID, d.ID, pointers.Int64(int64(d.Revision)))
+}
+
+type DocumentRef struct {
 	key      string
 	bucketID string
 	version  *int64
 }
 
-func (d documentRef) GetKey() string {
+func (d DocumentRef) GetKey() string {
 	return d.key
 }
 
-func (d documentRef) GetBucketID() string {
+func (d DocumentRef) GetBucketID() string {
 	return d.bucketID
 }
 
-func (d documentRef) HasVersion() bool {
+func (d DocumentRef) HasVersion() bool {
 	return d.version != nil
 }
 
-func (d documentRef) GetVersion() int64 {
+func (d DocumentRef) GetVersion() int64 {
 	if d.version != nil {
 		return *d.version
 	}
 	return 0
 }
 
-func (d documentRef) String() string {
+func (d DocumentRef) WithVersion(v int64) DocumentRef {
+	d.version = &v
+	return d
+}
+
+func (d DocumentRef) WithCurrentVersion() DocumentRef {
+	d.version = nil
+	return d
+}
+
+func (d DocumentRef) String() string {
 	if d.HasVersion() {
 		return fmt.Sprintf("%s, version=%d, bucket=%s", d.key, d.version, d.bucketID)
 	} else {
@@ -59,40 +73,12 @@ func (d documentRef) String() string {
 
 }
 
-type DocumentRef interface {
-	fmt.Stringer
-	GetKey() string
-	GetBucketID() string
-	HasVersion() bool
-	GetVersion() int64
-}
-
-func NewDocumentVersionRef(bucketID, key string, version *int64) DocumentRef {
-	return &documentRef{
+func NewDocumentRef(bucketID, key string, version *int64) DocumentRef {
+	return DocumentRef{
 		key:      key,
 		bucketID: bucketID,
 		version:  version,
 	}
-}
-
-func getDocumentRefFromReq(req *http.Request) (DocumentRef, error) {
-	id := getDocumentIdFromPath(req.URL.Path)
-
-	if err := validateDocumentID(id); err != nil {
-		return nil, err
-	}
-
-	bucketId, err := requireBucketIDFromQueryParam(req.URL.Query())
-	if err != nil {
-		return nil, err
-	}
-
-	objectVersion, err := findVersionFromQueryParam(req.URL.Query())
-	if err != nil {
-		return nil, err
-	}
-
-	return NewDocumentVersionRef(bucketId, id, objectVersion), nil
 }
 
 type Document struct {

@@ -1,6 +1,7 @@
 package documents
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"github.com/nrc-no/core/pkg/api/meta"
@@ -27,7 +28,7 @@ func Put(
 
 		ctx := req.Context()
 
-		docRef, err := getDocumentRefFromReq(req)
+		docRef, err := getDocumentRefFromHTTPRequest(req)
 		if err != nil {
 			utils.ErrorResponse(w, err)
 			return
@@ -39,7 +40,7 @@ func Put(
 			return
 		}
 
-		mediaType, mediaTypeParams, err := getMediaTypeFromHeader(req.Header)
+		mediaType, mediaTypeParams, err := getDocumentMediaTypeFromHTTPHeader(req.Header)
 		if err != nil {
 			utils.ErrorResponse(w, err)
 			return
@@ -47,13 +48,13 @@ func Put(
 
 		formattedMediaType := mime.FormatMediaType(mediaType, mediaTypeParams)
 
-		contentLength, err := getContentLength(req)
+		contentLength, err := getContentLengthFromHTTPHeader(req.Header)
 		if err != nil {
 			utils.ErrorResponse(w, err)
 			return
 		}
 
-		metadata, err := getMetadata(req.Header)
+		metadata, err := getDocumentMetadataFromHTTPHeader(req.Header)
 		if err != nil {
 			utils.ErrorResponse(w, err)
 			return
@@ -68,7 +69,7 @@ func Put(
 		sha512ChecksumStr := getSha512Checksum(bodyBytes)
 		md5ChecksumStr := getMD5Checksum(bodyBytes)
 
-		dataIntf, err := encodeData(bodyBytes, mediaType)
+		dataIntf, err := prepareDocumentDataForStorage(bodyBytes, mediaType)
 		if err != nil {
 			utils.ErrorResponse(w, err)
 			return
@@ -99,7 +100,7 @@ func Put(
 		}
 
 		// ensure bucket exists
-		if err := ensureBucketExists(ctx, db, databaseName, docRef); err != nil {
+		if err := assertDocumentBucketExists(ctx, db, databaseName, docRef); err != nil {
 			utils.ErrorResponse(w, err)
 			return
 		}
@@ -118,26 +119,11 @@ func Put(
 		_, err = sess.WithTransaction(ctx, func(ctx mongo.SessionContext) (interface{}, error) {
 
 			collection := db.Database(databaseName).Collection(DocumentsCollection)
-			// Update the previous version if it exists
-			result := collection.FindOneAndUpdate(ctx, getDocumentFilter(docRef), bson.M{
-				"$set": bson.M{
-					keyIsLastRevision: false,
-				},
-			})
 
-			if result.Err() != nil {
-				if !errors.Is(result.Err(), mongo.ErrNoDocuments) {
-					return nil, docNotFound(docRef)
-				}
-			} else {
-				oldDoc := StoredDocument{}
-				if err := result.Decode(&oldDoc); err != nil {
-					return nil, meta.NewInternalServerError(err)
-				}
-				doc.Revision = oldDoc.Revision + 1
+			if err := preparePuttingDocument(ctx, collection, doc); err != nil {
+				return nil, err
 			}
 
-			// Insert new version
 			if _, err := collection.InsertOne(ctx, doc); err != nil {
 				return nil, meta.NewInternalServerError(err)
 			}
@@ -157,4 +143,32 @@ func Put(
 		w.Header().Set(headerBucketID, docRef.GetBucketID())
 
 	}
+}
+
+// preparePuttingDocument will check if a previous document at the given key exists.
+// If yes, it will update that document to indicate that this is not the current version.
+// The preparePuttingDocument will return the Document.Version for the next document.
+func preparePuttingDocument(ctx context.Context, collection *mongo.Collection, doc *StoredDocument) error {
+
+	docRef := doc.DocumentRef().WithCurrentVersion()
+	filter := getDocumentDBFilter(docRef)
+
+	result := collection.FindOneAndUpdate(ctx, filter, bson.M{
+		"$set": bson.M{
+			keyIsLastRevision: false,
+		},
+	})
+
+	if result.Err() != nil {
+		if !errors.Is(result.Err(), mongo.ErrNoDocuments) {
+			return docNotFound(docRef)
+		}
+	} else {
+		oldDoc := StoredDocument{}
+		if err := result.Decode(&oldDoc); err != nil {
+			return meta.NewInternalServerError(err)
+		}
+		doc.Revision = oldDoc.Revision + 1
+	}
+	return nil
 }

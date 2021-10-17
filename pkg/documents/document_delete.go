@@ -17,7 +17,7 @@ func Delete(
 	return func(w http.ResponseWriter, req *http.Request) {
 		ctx := req.Context()
 
-		docRef, err := getDocumentRefFromReq(req)
+		docRef, err := getDocumentRefFromHTTPRequest(req)
 		if err != nil {
 			utils.ErrorResponse(w, err)
 			return
@@ -30,14 +30,14 @@ func Delete(
 		}
 
 		// ensure bucket exists
-		if err := ensureBucketExists(ctx, db, databaseName, docRef); err != nil {
+		if err := assertDocumentBucketExists(ctx, db, databaseName, docRef); err != nil {
 			utils.ErrorResponse(w, err)
 			return
 		}
 
 		collection := db.Database(databaseName).Collection(DocumentsCollection)
 		updateResult, err := collection.UpdateOne(ctx,
-			getDocumentFilter(docRef),
+			getDocumentDBFilter(docRef),
 			bson.M{
 				"$set": bson.M{
 					keyIsDeleted: true,

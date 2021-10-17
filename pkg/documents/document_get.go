@@ -19,7 +19,7 @@ func Get(
 
 		ctx := req.Context()
 
-		docRef, err := getDocumentRefFromReq(req)
+		docRef, err := getDocumentRefFromHTTPRequest(req)
 		if err != nil {
 			utils.ErrorResponse(w, err)
 			return
@@ -31,13 +31,13 @@ func Get(
 			return
 		}
 
-		if err := ensureBucketExists(ctx, db, databaseName, docRef); err != nil {
+		if err := assertDocumentBucketExists(ctx, db, databaseName, docRef); err != nil {
 			utils.ErrorResponse(w, err)
 			return
 		}
 
 		collection := db.Database(databaseName).Collection(DocumentsCollection)
-		filter := getDocumentFilter(docRef)
+		filter := getDocumentDBFilter(docRef)
 		findOneResult := collection.FindOne(ctx, filter)
 		if findOneResult.Err() != nil {
 			if errors.Is(findOneResult.Err(), mongo.ErrNoDocuments) {
@@ -62,7 +62,7 @@ func Get(
 		w.Header().Set(headerBucketID, docRef.GetBucketID())
 		w.WriteHeader(http.StatusOK)
 
-		decoded, err := decodeData(doc.Data, doc.ContentType)
+		decoded, err := transformDocumentDataFromStorage(doc.Data, doc.ContentType)
 		if err != nil {
 			utils.ErrorResponse(w, meta.NewInternalServerError(fmt.Errorf("failed to decode document data: %v", err)))
 			return
