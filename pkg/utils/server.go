@@ -51,7 +51,7 @@ func BindJSON(req *http.Request, into interface{}) error {
 		return meta.NewBadRequest(fmt.Errorf("failed to read request body: %w", err).Error())
 	}
 	if err := json.Unmarshal(bodyBytes, &into); err != nil {
-		return meta.NewBadRequest(fmt.Errorf("failed to read request body: %w", err).Error())
+		return meta.NewBadRequest(fmt.Errorf("failed to unmarshal json body: %w", err).Error())
 	}
 	return nil
 }

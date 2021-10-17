@@ -79,6 +79,10 @@ func (v ErrorList) HasMany() bool {
 	return len(v) > 1
 }
 
+func (v ErrorList) HasAny() bool {
+	return len(v) > 0
+}
+
 func (v *ErrorList) Length() int {
 	if v == nil {
 		return 0

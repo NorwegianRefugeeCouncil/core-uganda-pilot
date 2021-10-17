@@ -39,7 +39,8 @@ func NewAlreadyExists(qualifiedResource GroupResource, uid string) *StatusError 
 }
 
 // NewInvalid returns an error indicating the item is invalid and cannot be processed.
-func NewInvalid(qualifiedResource GroupResource, uid string, errs validation.ErrorList) *StatusError {
+func NewInvalid(qualifiedResource GroupResourcer, uid string, errs validation.ErrorList) *StatusError {
+	r := qualifiedResource.GroupResource()
 	causes := make([]StatusCause, 0, len(errs))
 	for i := range errs {
 		err := errs[i]
@@ -54,12 +55,12 @@ func NewInvalid(qualifiedResource GroupResource, uid string, errs validation.Err
 		Code:   http.StatusUnprocessableEntity,
 		Reason: StatusReasonInvalid,
 		Details: &StatusDetails{
-			Group:    qualifiedResource.Group,
-			Resource: qualifiedResource.Resource,
+			Group:    r.Group,
+			Resource: r.Resource,
 			UID:      uid,
 			Causes:   causes,
 		},
-		Message: fmt.Sprintf("%s %q is invalid: %v", qualifiedResource.String(), uid, errs.ToAggregate()),
+		Message: fmt.Sprintf("%s %q is invalid: %v", r.String(), uid, errs.ToAggregate()),
 	}}
 }
 

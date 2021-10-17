@@ -5,9 +5,9 @@ import (
 	"regexp"
 )
 
-func validateBucket(fieldPath validation.Path, bucket *Bucket) validation.ErrorList {
+func validateBucket(bucket *Bucket) validation.ErrorList {
 	result := validation.ErrorList{}
-	result = append(result, validateBucketName(fieldPath.Key("name"), bucket.Name)...)
+	result = append(result, validateBucketName(validation.NewPath("name"), bucket.Name)...)
 	return result
 }
 

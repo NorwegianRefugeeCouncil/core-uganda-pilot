@@ -2,6 +2,7 @@ package documents
 
 import (
 	"fmt"
+	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/storage"
 	"github.com/nrc-no/core/pkg/utils"
 	"net/http"
@@ -26,6 +27,11 @@ func CreateBucket(
 		bucket.Revision = 1
 		bucket.IsLastRevision = true
 		bucket.IsDeleted = false
+
+		if errs := validateBucket(&bucket); errs.HasAny() {
+			utils.ErrorResponse(w, meta.NewInvalid(GroupVersion.WithResource("bucket"), "", errs))
+			return
+		}
 
 		mongoCli, err := dbFactory.New()
 		if err != nil {
