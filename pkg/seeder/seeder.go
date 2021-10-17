@@ -3,6 +3,7 @@ package seeder
 import (
 	"context"
 	"github.com/nrc-no/core/pkg/cms"
+	"github.com/nrc-no/core/pkg/documents"
 	"github.com/nrc-no/core/pkg/iam"
 	"github.com/nrc-no/core/pkg/login"
 	"github.com/nrc-no/core/pkg/utils"
@@ -32,6 +33,9 @@ func Clear(ctx context.Context, mongoClientFn utils.MongoClientFn, databaseName 
 	})
 	g.Go(func() error {
 		return login.ClearCollections(ctx, mongoClient, databaseName)
+	})
+	g.Go(func() error {
+		return documents.ClearCollections(ctx, mongoClient, databaseName)
 	})
 	return g.Wait()
 }

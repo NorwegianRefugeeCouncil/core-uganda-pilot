@@ -35,7 +35,7 @@ func Delete(
 			return
 		}
 
-		collection := db.Database(databaseName).Collection(collDocuments)
+		collection := db.Database(databaseName).Collection(DocumentsCollection)
 		updateResult, err := collection.UpdateOne(ctx,
 			getDocumentFilter(docRef),
 			bson.M{

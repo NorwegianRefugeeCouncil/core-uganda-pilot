@@ -33,7 +33,7 @@ func CreateBucket(
 			return
 		}
 
-		collection := mongoCli.Database(databaseName).Collection(collBuckets)
+		collection := mongoCli.Database(databaseName).Collection(BucketsCollection)
 
 		if _, err := collection.InsertOne(ctx, bucket); err != nil {
 			utils.ErrorResponse(w, fmt.Errorf("failed to create bucket: %v", err))

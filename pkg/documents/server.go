@@ -1,19 +1,18 @@
 package documents
 
 import (
+	"context"
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/rest"
 	"github.com/nrc-no/core/pkg/storage"
 	"github.com/nrc-no/core/pkg/utils"
+	"go.mongodb.org/mongo-driver/mongo"
 	"net"
 	"net/http"
 	"strings"
 )
 
 const (
-	collDocuments = "documents"
-	collBuckets   = "document_buckets"
-
 	headerContentType    = "Content-Type"
 	headerContentLength  = "Content-Length"
 	headerETag           = "ETag"
@@ -132,4 +131,8 @@ func (s *Server) getHandler(req *http.Request) http.Handler {
 
 func (s *Server) GetAddress() string {
 	return s.listener.Addr().String()
+}
+
+func ClearCollections(ctx context.Context, mongoCli *mongo.Client, databaseName string) error {
+	return storage.ClearCollections(ctx, mongoCli, databaseName, AllCollections...)
 }

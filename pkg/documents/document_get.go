@@ -36,7 +36,7 @@ func Get(
 			return
 		}
 
-		collection := db.Database(databaseName).Collection(collDocuments)
+		collection := db.Database(databaseName).Collection(DocumentsCollection)
 		filter := getDocumentFilter(docRef)
 		findOneResult := collection.FindOne(ctx, filter)
 		if findOneResult.Err() != nil {

@@ -116,7 +116,7 @@ func Put(
 
 		_, err = sess.WithTransaction(ctx, func(ctx mongo.SessionContext) (interface{}, error) {
 
-			collection := db.Database(databaseName).Collection(collDocuments)
+			collection := db.Database(databaseName).Collection(DocumentsCollection)
 			// Update the previous version if it exists
 			result := collection.FindOneAndUpdate(ctx, getDocumentFilter(docRef), bson.M{
 				"$set": bson.M{

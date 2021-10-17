@@ -5,7 +5,6 @@ import (
 	"github.com/nrc-no/core/pkg/storage"
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/stretchr/testify/suite"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"testing"
 	"time"
@@ -53,13 +52,7 @@ func (s *Suite) SetupSuite() {
 
 	s.client = s.server.NewClient()
 
-	_, err = s.mongoCli.Database(s.databaseName).Collection(collDocuments).DeleteMany(context.Background(), bson.M{})
-	if err != nil {
-		s.T().Fatal(err)
-	}
-
-	_, err = s.mongoCli.Database(s.databaseName).Collection(collBuckets).DeleteMany(context.Background(), bson.M{})
-	if err != nil {
+	if err := ClearCollections(context.Background(), s.mongoCli, s.databaseName); err != nil {
 		s.T().Fatal(err)
 	}
 

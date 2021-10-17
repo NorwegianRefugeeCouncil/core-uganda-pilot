@@ -33,7 +33,7 @@ func DeleteBucket(
 			return
 		}
 
-		collection := mongoCli.Database(databaseName).Collection(collBuckets)
+		collection := mongoCli.Database(databaseName).Collection(BucketsCollection)
 
 		deleteRes, err := collection.DeleteOne(ctx, bson.M{"id": id})
 		if err != nil {
