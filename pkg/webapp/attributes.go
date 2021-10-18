@@ -16,14 +16,16 @@ import (
 func (s *Server) Attributes(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	if req.Method == "POST" {
+	if req.Method == http.MethodPost {
 		s.PostAttribute(ctx, &iam.PartyAttributeDefinition{}, w, req)
+
 		return
 	}
 
 	iamClient, err := s.IAMClient(req)
 	if err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
@@ -34,34 +36,52 @@ func (s *Server) Attributes(w http.ResponseWriter, req *http.Request) {
 	})
 	if err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
 	partyTypes, err := iamClient.PartyTypes().List(ctx, iam.PartyTypeListOptions{})
 	if err != nil {
 		s.Error(w, err)
+
+		return
+	}
+
+	notifications, err := s.flashes(req, w)
+	if err != nil {
+		s.Error(w, err)
+
 		return
 	}
 
 	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "attributes", map[string]interface{}{
-		"Attributes": list,
-		"PartyTypes": partyTypes,
+		"Attributes":    list,
+		"PartyTypes":    partyTypes,
+		"Notifications": notifications,
 	}); err != nil {
 		s.Error(w, err)
+
 		return
 	}
 }
 
 func (s *Server) NewAttribute(w http.ResponseWriter, req *http.Request) {
+	notifications, err := s.flashes(req, w)
+	if err != nil {
+		s.Error(w, err)
+	}
+
 	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "attribute", map[string]interface{}{
 		"PartyTypes": iam.PartyTypeList{
 			Items: []*iam.PartyType{
 				&iam.IndividualPartyType,
 			},
 		},
-		"ControlTypes": form.ControlTypes,
+		"ControlTypes":  form.ControlTypes,
+		"Notifications": notifications,
 	}); err != nil {
 		s.Error(w, err)
+
 		return
 	}
 }
@@ -69,8 +89,10 @@ func (s *Server) NewAttribute(w http.ResponseWriter, req *http.Request) {
 func (s *Server) Attribute(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	iamClient, err := s.IAMClient(req)
+
 	if err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
@@ -78,17 +100,27 @@ func (s *Server) Attribute(w http.ResponseWriter, req *http.Request) {
 	if !ok || len(id) == 0 {
 		err := errors.New("no id in path")
 		s.Error(w, err)
+
 		return
 	}
 
 	partyAttributeDefinition, err := iamClient.PartyAttributeDefinitions().Get(ctx, id)
 	if err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
-	if req.Method == "POST" {
+	if req.Method == http.MethodPost {
 		s.PostAttribute(ctx, partyAttributeDefinition, w, req)
+
+		return
+	}
+
+	notifications, err := s.flashes(req, w)
+	if err != nil {
+		s.Error(w, err)
+
 		return
 	}
 
@@ -100,8 +132,10 @@ func (s *Server) Attribute(w http.ResponseWriter, req *http.Request) {
 				&iam.IndividualPartyType,
 			},
 		},
+		"Notifications": notifications,
 	}); err != nil {
 		s.Error(w, err)
+
 		return
 	}
 }
@@ -109,17 +143,20 @@ func (s *Server) PostAttribute(ctx context.Context, attribute *iam.PartyAttribut
 	iamClient, err := s.IAMClient(req)
 	if err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
 	if err := req.ParseForm(); err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
 	values := req.Form
 
 	isNew := false
+
 	if len(attribute.ID) == 0 {
 		attribute.ID = uuid.NewV4().String()
 		isNew = true
@@ -157,6 +194,7 @@ func (s *Server) PostAttribute(ctx context.Context, attribute *iam.PartyAttribut
 	} else {
 		storedAttribute, err = iamClient.PartyAttributeDefinitions().Update(ctx, attribute)
 	}
+
 	if err != nil {
 		if status, ok := err.(*validation.Status); ok {
 			validatedElements := zipAttributeAndErrors(attribute, status.Errors)
@@ -164,15 +202,17 @@ func (s *Server) PostAttribute(ctx context.Context, attribute *iam.PartyAttribut
 		} else {
 			s.Error(w, err)
 		}
+
 		return
 	}
 
-	err = s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
+	err = s.addFlash(req, w, &sessionmanager.FlashMessage{
 		Message: "New attribute definition successfully saved",
 		Theme:   "success",
 	})
 	if err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
@@ -183,7 +223,9 @@ func (s *Server) PostAttribute(ctx context.Context, attribute *iam.PartyAttribut
 // zipAttributeAndErrors returns a form.Form containing the validation information, ie the faulty form elements only
 func zipAttributeAndErrors(attribute *iam.PartyAttributeDefinition, errorList validation.ErrorList) form.Form {
 	var result form.Form
+
 	var errs *validation.ErrorList
+
 	ctrl := attribute.FormControl
 
 	// name
@@ -198,5 +240,6 @@ func zipAttributeAndErrors(attribute *iam.PartyAttributeDefinition, errorList va
 	}
 
 	result.Controls = []form.Control{ctrl}
+
 	return result
 }
