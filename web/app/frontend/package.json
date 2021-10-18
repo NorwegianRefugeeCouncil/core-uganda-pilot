@@ -23,7 +23,8 @@
     "react-native-paper": "^4.9.2",
     "react-native-safe-area-context": "3.2.0",
     "react-native-screens": "~3.4.0",
-    "react-native-web": "~0.13.12"
+    "react-native-web": "~0.13.12",
+    "rxjs": "^7.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
