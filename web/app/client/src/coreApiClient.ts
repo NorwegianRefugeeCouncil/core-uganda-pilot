@@ -345,7 +345,10 @@ class CaseClient {
 
     List(): OperatorFunction<CaseListOptions, CaseList> {
         return clo$ => clo$.pipe(
-            map(clo => this.client.get().path(buildCMSPath('cases')).params(clo as URLValues)),
+            map(clo => clo ?
+                this.client.get().path(buildCMSPath('cases')).params(clo as URLValues)
+                : this.client.get().path(buildCMSPath('cases'))
+            ),
             this.execute(),
             responseAs<CaseList>()
         )
@@ -389,7 +392,10 @@ class CaseTypeClient {
 
     List(): OperatorFunction<CaseTypeListOptions, CaseTypeList> {
         return ctlo$ => ctlo$.pipe(
-            map(ctlo => this.client.get().path(buildCMSPath('casetypes')).params(ctlo as URLValues)),
+            map(ctlo => ctlo ?
+                this.client.get().path(buildCMSPath('casetypes')).params(ctlo as URLValues)
+                : this.client.get().path(buildCMSPath('casetypes'))
+            ),
             this.execute(),
             responseAs<CaseTypeList>()
         )
@@ -433,7 +439,10 @@ class CommentClient {
 
     List(): OperatorFunction<CommentListOptions, CommentList> {
         return clo$ => clo$.pipe(
-            map(clo => this.client.get().path(buildCMSPath('comments')).params(clo as URLValues)),
+            map(clo => clo ?
+                this.client.get().path(buildCMSPath('comments')).params(clo as URLValues)
+                : this.client.get().path(buildCMSPath('comments'))
+            ),
             this.execute(),
             responseAs<CommentList>()
         )
@@ -441,7 +450,7 @@ class CommentClient {
 
     Delete(): OperatorFunction<string, any> {
         return id$ => id$.pipe(
-            map(id => this.client.get().path(buildCMSPath('comments', '/:id')).pathParam('id', id)),
+            map(id => this.client.delete().path(buildCMSPath('comments', '/:id')).pathParam('id', id)),
             this.execute()
         )
     }
@@ -516,7 +525,10 @@ class CountryClient {
 
     List(): OperatorFunction<CountryListOptions, CountryList> {
         return clo$ => clo$.pipe(
-            map(clo => this.client.get().path(buildIAMPath('countries')).params(clo as URLValues)),
+            map(clo => clo ?
+                this.client.get().path(buildIAMPath('countries')).params(clo as URLValues)
+                : this.client.get().path(buildIAMPath('countries'))
+            ),
             this.execute(),
             responseAs<CountryList>()
         )
@@ -560,7 +572,10 @@ class IdentificationDocumentClient {
 
     List(): OperatorFunction<IdentificationDocumentListOptions, IdentificationDocumentList> {
         return idlo$ => idlo$.pipe(
-            map(idlo => this.client.get().path(buildIAMPath('identificationdocuments')).params(idlo as URLValues)),
+            map(idlo => idlo ?
+                this.client.get().path(buildIAMPath('identificationdocuments')).params(idlo as URLValues)
+                : this.client.get().path(buildIAMPath('identificationdocuments'))
+            ),
             this.execute(),
             responseAs<IdentificationDocumentList>()
         )
@@ -568,7 +583,7 @@ class IdentificationDocumentClient {
 
     Delete(): OperatorFunction<string, any> {
         return id$ => id$.pipe(
-            map(id => this.client.get().path(buildIAMPath('identificationdocuments', '/:id')).pathParam('id', id)),
+            map(id => this.client.delete().path(buildIAMPath('identificationdocuments', '/:id')).pathParam('id', id)),
             this.execute()
         )
     }
@@ -611,7 +626,10 @@ class IdentificationDocumentTypeClient {
 
     List(): OperatorFunction<IdentificationDocumentTypeListOptions, IdentificationDocumentTypeList> {
         return idtlo$ => idtlo$.pipe(
-            map(idtlo => this.client.get().path(buildIAMPath('identificationdocumenttypes')).params(idtlo as URLValues)),
+            map(idtlo => idtlo ?
+                this.client.get().path(buildIAMPath('identificationdocumenttypes')).params(idtlo as URLValues)
+                : this.client.get().path(buildIAMPath('identificationdocumenttypes'))
+            ),
             this.execute(),
             responseAs<IdentificationDocumentTypeList>()
         )
@@ -655,7 +673,10 @@ class IndividualClient {
 
     List(): OperatorFunction<IndividualListOptions, IndividualList> {
         return ilo$ => ilo$.pipe(
-            map(ilo => this.client.get().path(buildIAMPath('individuals')).params(ilo as URLValues)),
+            map(ilo => ilo ?
+                this.client.get().path(buildIAMPath('individuals')).params(ilo as URLValues)
+                : this.client.get().path(buildIAMPath('individuals'))
+            ),
             this.execute(),
             responseAs<IndividualList>()
         )
@@ -699,7 +720,10 @@ class MembershipClient {
 
     List(): OperatorFunction<MembershipListOptions, MembershipList> {
         return mlo$ => mlo$.pipe(
-            map(mlo => this.client.get().path(buildIAMPath('memberships')).params(mlo as URLValues)),
+            map(mlo => mlo ?
+                this.client.get().path(buildIAMPath('memberships')).params(mlo as URLValues)
+                : this.client.get().path(buildIAMPath('memberships'))
+            ),
             this.execute(),
             responseAs<MembershipList>()
         )
@@ -743,7 +767,10 @@ class NationalityClient {
 
     List(): OperatorFunction<NationalityListOptions, NationalityList> {
         return nlo$ => nlo$.pipe(
-            map(nlo => this.client.get().path(buildIAMPath('nationalities')).params(nlo as URLValues)),
+            map(nlo => nlo ?
+                this.client.get().path(buildIAMPath('nationalities')).params(nlo as URLValues)
+                : this.client.get().path(buildIAMPath('nationalities'))
+            ),
             this.execute(),
             responseAs<NationalityList>()
         )
@@ -787,7 +814,10 @@ class PartyAttributeDefinitionClient {
 
     List(): OperatorFunction<PartyAttributeDefinitionListOptions, PartyAttributeDefinitionList> {
         return padlo$ => padlo$.pipe(
-            map(padlo => this.client.get().path(buildIAMPath('attributes')).params(padlo as URLValues)),
+            map(padlo => padlo ?
+                this.client.get().path(buildIAMPath('attributes')).params(padlo as URLValues)
+                : this.client.get().path(buildIAMPath('attributes'))
+            ),
             this.execute(),
             responseAs<PartyAttributeDefinitionList>()
         )
@@ -831,7 +861,10 @@ class PartyClient {
 
     List(): OperatorFunction<PartyListOptions, PartyList> {
         return plo$ => plo$.pipe(
-            map(plo => this.client.get().path(buildIAMPath('parties')).params(plo as URLValues)),
+            map(plo => plo ?
+                this.client.get().path(buildIAMPath('parties')).params(plo as URLValues)
+                : this.client.get().path(buildIAMPath('parties'))
+            ),
             this.execute(),
             responseAs<PartyList>()
         )
@@ -875,7 +908,10 @@ class PartyTypeClient {
 
     List(): OperatorFunction<PartyTypeListOptions, PartyTypeList> {
         return ptlo$ => ptlo$.pipe(
-            map(ptlo => this.client.get().path(buildIAMPath('partytypes')).params(ptlo as URLValues)),
+            map(ptlo => ptlo ?
+                this.client.get().path(buildIAMPath('partytypes')).params(ptlo as URLValues)
+                : this.client.get().path(buildIAMPath('partytypes'))
+            ),
             this.execute(),
             responseAs<PartyTypeList>()
         )
@@ -919,7 +955,10 @@ class RelationshipClient {
 
     List(): OperatorFunction<RelationshipListOptions, RelationshipList> {
         return rlo$ => rlo$.pipe(
-            map(rlo => this.client.get().path(buildIAMPath('relationships')).params(rlo as URLValues)),
+            map(rlo => rlo ?
+                this.client.get().path(buildIAMPath('relationships')).params(rlo as URLValues)
+                : this.client.get().path(buildIAMPath('relationships'))
+            ),
             this.execute(),
             responseAs<RelationshipList>()
         )
@@ -927,7 +966,7 @@ class RelationshipClient {
 
     Delete(): OperatorFunction<string, any> {
         return id$ => id$.pipe(
-            map(id => this.client.get().path(buildIAMPath('relationships', '/:id')).pathParam('id', id)),
+            map(id => this.client.delete().path(buildIAMPath('relationships', '/:id')).pathParam('id', id)),
             this.execute()
         )
     }
@@ -970,7 +1009,10 @@ class RelationshipTypeClient {
 
     List(): OperatorFunction<RelationshipTypeListOptions, RelationshipTypeList> {
         return rtlo$ => rtlo$.pipe(
-            map(rtlo => this.client.get().path(buildIAMPath('relationshiptypes')).params(rtlo as URLValues)),
+            map(rtlo => rtlo ?
+                this.client.get().path(buildIAMPath('relationshiptypes')).params(rtlo as URLValues)
+                : this.client.get().path(buildIAMPath('relationshiptypes'))
+            ),
             this.execute(),
             responseAs<RelationshipTypeList>()
         )
@@ -1014,7 +1056,10 @@ class TeamClient {
 
     List(): OperatorFunction<TeamListOptions, TeamList> {
         return tlo$ => tlo$.pipe(
-            map(tlo => this.client.get().path(buildIAMPath('teams')).params(tlo as URLValues)),
+            map(tlo => tlo ?
+                this.client.get().path(buildIAMPath('teams')).params(tlo as URLValues)
+                : this.client.get().path(buildIAMPath('teams'))
+            ),
             this.execute(),
             responseAs<TeamList>()
         )
@@ -1082,4 +1127,3 @@ export class IAMClient {
         return new TeamClient(this._client)
     }
 }
-
