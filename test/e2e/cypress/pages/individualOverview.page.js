@@ -1,4 +1,4 @@
-import {testId, URL} from '../helpers';
+import { testId, URL } from '../helpers';
 
 const selector = {
     individualRows: testId('individual'),
