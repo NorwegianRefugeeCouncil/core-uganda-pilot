@@ -32,7 +32,7 @@ flags="--mongo-database=core \
        	--listen-address=:9000 \
        	--base-url=http://localhost:9000"
 
-./scripts/build.sh
+go build -o ./tmp/main ./cmd/core
 
 # shellcheck disable=SC2086
 ./tmp/main $flags
