@@ -58,7 +58,6 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 
 	router := mux.NewRouter()
 	router.Use(srv.WithAuth())
-
 	router.Path(server.CasesEndpoint).Methods(http.MethodGet).HandlerFunc(srv.ListCases)
 	router.Path(server.CasesEndpoint).Methods(http.MethodPost).HandlerFunc(srv.PostCase)
 	router.Path(path.Join(server.CasesEndpoint, "{id}")).Methods(http.MethodGet).HandlerFunc(srv.GetCase)
