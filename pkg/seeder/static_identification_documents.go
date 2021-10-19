@@ -7,6 +7,7 @@ var (
 	UNHCRID        = identificationDocumentType("6833cb6d-593f-4f3f-926d-498be74352d1", "UNHCR ID")
 	Passport       = identificationDocumentType("567d04e5-abf4-4899-848f-0395264309f0", "Passport")
 	AsylumSeekerID = identificationDocumentType("b09e8526-0182-4bcc-accc-cccfca835153", "Asylum Seeker ID")
+	OPMID		   = identificationDocumentType("bcb85d3d-7474-44e4-bbed-ac3d91737df0", "OPM ID")
 
 	_ = identificationDocument("20d194d6-a1ac-483e-8c24-38b5efbaca6f", BoDiddley.ID, "A0JBODIDDLEY129", Passport.ID)
 	_ = identificationDocument("0244b59e-5d5c-4e13-af96-da1ccf4e9499", MaryPoppins.ID, "LLP987MARYPOPPINS99", UNHCRID.ID)
