@@ -8,6 +8,14 @@ import (
 )
 
 var (
+	Low    = i18n.Strings{{"en", "Low"}}
+	Medium = i18n.Strings{{"en", "Medium"}}
+	High   = i18n.Strings{{"en", "High"}}
+)
+
+var Urgencies = []string{Low.ForLocale("en"), Medium.ForLocale("en"), High.ForLocale("en")}
+
+var (
 	caseTypes []cms.CaseType
 
 	// Case Templates for Uganda

@@ -8,6 +8,7 @@ import (
 	"github.com/nrc-no/core/pkg/cms"
 	"github.com/nrc-no/core/pkg/form"
 	"github.com/nrc-no/core/pkg/iam"
+	"github.com/nrc-no/core/pkg/seeder"
 	"github.com/nrc-no/core/pkg/sessionmanager"
 	"github.com/nrc-no/core/pkg/validation"
 	uuid "github.com/satori/go.uuid"
@@ -253,6 +254,7 @@ func (s *Server) Case(w http.ResponseWriter, req *http.Request) {
 		"Recipient":        recipientParty,
 		"ReferralCaseType": referralCaseType,
 		"Referrals":        referrals,
+		"Urgencies":        seeder.Urgencies,
 		"Team":             team,
 		"CreatedBy":        creator,
 		"Comments":         displayComments(comments, commentAuthorMap),
@@ -415,6 +417,7 @@ func (s *Server) PostCase(w http.ResponseWriter, req *http.Request) {
 
 	kase.TeamID = values.Get("teamId")
 	kase.PartyID = values.Get("partyId")
+	kase.Urgency = values.Get("urgency")
 	kase.Done = values.Get("done") == "on"
 	kase.Form = caseType.Form
 	kase.FormData = req.Form
