@@ -12,11 +12,11 @@ type Interface interface {
 }
 
 type CaseListOptions struct {
-	PartyIDs    []string
-	TeamIDs     []string
-	CaseTypeIDs []string
-	ParentID    string
-	Done        *bool
+	PartyIDs    []string `json:"partyId"`
+	TeamIDs     []string `json:"teamId"`
+	CaseTypeIDs []string `json:"caseTypeId"`
+	ParentID    string   `json:"parentId"`
+	Done        *bool    `json:"done"`
 }
 
 func (a *CaseListOptions) MarshalQueryParameters() (url.Values, error) {
@@ -64,8 +64,8 @@ type CaseClient interface {
 }
 
 type CaseTypeListOptions struct {
-	PartyTypeIDs []string
-	TeamIDs      []string
+	PartyTypeIDs []string `json:"partyTypeId"`
+	TeamIDs      []string `json:"teamId"`
 }
 
 func (a *CaseTypeListOptions) MarshalQueryParameters() (url.Values, error) {
@@ -93,7 +93,7 @@ type CaseTypeClient interface {
 }
 
 type CommentListOptions struct {
-	CaseID string
+	CaseID string `json:"caseId"`
 }
 
 func (a *CommentListOptions) MarshalQueryParameters() (url.Values, error) {
