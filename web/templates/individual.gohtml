@@ -201,6 +201,16 @@
 
 
     </div>
+	<script type="application/javascript">
+		// makeb displayName reative to fullName input to simplify things for users
+		const full = document.querySelector('input[name=fullName]');
+		const display = document.querySelector('input[name=displayName]');
+		full.addEventListener('input', event => {
+			const name = event.target.value;
+			// put first 3 words in displayName
+			display.value = name.split(' ').slice(0, 3).join(' ');
+		});
+	</script>
     <script type="module">
         import validate from '/static/js/validation.js';
 
