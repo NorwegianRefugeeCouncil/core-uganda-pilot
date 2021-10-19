@@ -10,12 +10,10 @@ import IndividualScreen from './screens/IndividualScreen';
 import routes from '../constants/routes';
 import CasesScreen from './screens/CasesScreen';
 import { NavigationTheme } from '../constants/theme';
+import host from "../constants/host";
 
-
-export default function Router(props: { host: string }) {
+export default function Router() {
     const Stack = createStackNavigator();
-
-    const { host } = props;
 
     const linkingConfig = {
         prefixes: [host],
