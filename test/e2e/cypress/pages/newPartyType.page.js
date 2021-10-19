@@ -1,4 +1,4 @@
-import {URL} from '../helpers';
+import { URL } from '../helpers';
 
 const NAME = '[data-testid=name]';
 const IS_BULITIN = '[data-testid=isBuiltIn]';

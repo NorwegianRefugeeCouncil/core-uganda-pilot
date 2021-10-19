@@ -1,4 +1,4 @@
-import {testId, URL} from '../helpers';
+import { testId, URL } from '../helpers';
 import AttributePage from './attributePage';
 
 const ATTRIBUTE_ROW = '[data-testid=attribute]';

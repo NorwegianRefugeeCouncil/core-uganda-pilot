@@ -7,21 +7,50 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+export default function (forms, submitBtn, options) {
+    let redirect = options === null || options === void 0 ? void 0 : options.redirectPath;
+    const f = forms instanceof HTMLFormElement ? [forms] : forms;
+    submitBtn.addEventListener('click', event => {
+        event.preventDefault();
+        if (validateClientSide(f)) {
+            submitBtn.disabled = true;
+            validateServerSide(f).then(isValid => {
+                if (isValid) {
+                    if (redirect)
+                        location.assign(redirect);
+                }
+                else {
+                    submitBtn.disabled = false;
+                }
+            });
+        }
+    });
+}
+function validateClientSide(forms) {
+    // FIXME I'm really dumb.
+    //  For instance, I validate input, select, and textarea elements but not custom form elements.
+    let isValid = true;
+    for (const form of forms) {
+        if (!form.reportValidity()) {
+            isValid = false;
+        }
+        form.classList.add('was-validated');
+    }
+    return isValid;
+}
 // validateServerSide initiates and handles server-side validation for document form entities. The handler sends form
 // data to the provided endpoints and awaits a validation response object from the server. If validation is received,
 // the handler applies it to the concerned DOM elements. If no validation is received, the handler redirects the browser
 // to the appropriate location.
-export function validateServerSide(forms, redirectPath = '') {
+function validateServerSide(forms) {
     return __awaiter(this, void 0, void 0, function* () {
-        let redirect = redirectPath !== null && redirectPath !== void 0 ? redirectPath : location.origin;
         const validations = yield Promise.allSettled(forms.map((formcontrol) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const validation = yield validateSubForm(formcontrol);
                 removeFormValidation(formcontrol);
                 if (validation instanceof Response) {
-                    if (validation.url.includes('individuals')) {
-                        redirect = validation.url;
-                    }
+                    // follow redirect
+                    location.assign(validation.url);
                 }
                 else {
                     formcontrol.classList.add('was-validated');
@@ -34,23 +63,8 @@ export function validateServerSide(forms, redirectPath = '') {
             }
             return Promise.resolve(false);
         })));
-        const passedValidation = validations.every(v => v.status !== 'rejected' && !v.value);
-        if (passedValidation) {
-            location.assign(redirect);
-        }
+        return Promise.resolve(validations.every(v => v.status !== 'rejected' && !v.value));
     });
-}
-export function validateClientSide(forms) {
-    // FIXME I'm really dumb.
-    //  For instance, I validate input, select, and textarea elements but not custom form elements.
-    let isValid = true;
-    for (const form of forms) {
-        if (!form.reportValidity()) {
-            isValid = false;
-        }
-        form.classList.add('was-validated');
-    }
-    return isValid;
 }
 function collectSearchParams(formcontrol) {
     const formInputElements = formcontrol.querySelectorAll('[name]');
@@ -82,7 +96,8 @@ function validateSubForm(formcontrol) {
         const options = {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json'
             },
             body: collectSearchParams(formcontrol)
         };

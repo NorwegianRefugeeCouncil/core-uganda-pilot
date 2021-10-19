@@ -1,5 +1,5 @@
 import { OperatorFunction } from 'rxjs';
-import { Case, CaseList, CaseType, CaseTypeList, Comment, CommentList, Country, CountryList, IdentificationDocument, IdentificationDocumentList, IdentificationDocumentType, IdentificationDocumentTypeList, Individual, IndividualList, Membership, MembershipList, Nationality, NationalityList, Party, PartyAttributeDefinition, PartyAttributeDefinitionList, PartyType, PartyTypeList, Relationship, RelationshipList, RelationshipType, RelationshipTypeList, Team, TeamList } from './types/models';
+import { Case, CaseList, CaseListOptions, CaseType, CaseTypeList, CaseTypeListOptions, Comment, CommentList, CommentListOptions, Country, CountryList, CountryListOptions, IdentificationDocument, IdentificationDocumentList, IdentificationDocumentListOptions, IdentificationDocumentType, IdentificationDocumentTypeList, IdentificationDocumentTypeListOptions, Individual, IndividualList, IndividualListOptions, Membership, MembershipList, MembershipListOptions, Nationality, NationalityList, NationalityListOptions, Party, PartyAttributeDefinition, PartyAttributeDefinitionList, PartyAttributeDefinitionListOptions, PartyList, PartyListOptions, PartyType, PartyTypeList, PartyTypeListOptions, Relationship, RelationshipList, RelationshipListOptions, RelationshipType, RelationshipTypeList, RelationshipTypeListOptions, Team, TeamList, TeamListOptions } from './types/models';
 export declare type AjaxRequestOptions = {
     url: string;
     headers: Headers;
@@ -62,7 +62,7 @@ declare class CaseClient {
     Get(): OperatorFunction<string, Case>;
     Create(): OperatorFunction<Case, Case>;
     Update(): OperatorFunction<Case, Case>;
-    List(): OperatorFunction<any, CaseList>;
+    List(): OperatorFunction<CaseListOptions, CaseList>;
 }
 declare class CaseTypeClient {
     private client;
@@ -71,7 +71,7 @@ declare class CaseTypeClient {
     Get(): OperatorFunction<string, CaseType>;
     Create(): OperatorFunction<CaseType, CaseType>;
     Update(): OperatorFunction<CaseType, CaseType>;
-    List(): OperatorFunction<any, CaseTypeList>;
+    List(): OperatorFunction<CaseTypeListOptions, CaseTypeList>;
 }
 declare class CommentClient {
     private client;
@@ -80,7 +80,7 @@ declare class CommentClient {
     Get(): OperatorFunction<string, Comment>;
     Create(): OperatorFunction<Comment, Comment>;
     Update(): OperatorFunction<Comment, Comment>;
-    List(): OperatorFunction<any, CommentList>;
+    List(): OperatorFunction<CommentListOptions, CommentList>;
     Delete(): OperatorFunction<string, any>;
 }
 export declare class CMSClient {
@@ -100,7 +100,7 @@ declare class CountryClient {
     Get(): OperatorFunction<string, Country>;
     Create(): OperatorFunction<Country, Country>;
     Update(): OperatorFunction<Country, Country>;
-    List(): OperatorFunction<any, CountryList>;
+    List(): OperatorFunction<CountryListOptions, CountryList>;
 }
 declare class IdentificationDocumentClient {
     private client;
@@ -109,7 +109,7 @@ declare class IdentificationDocumentClient {
     Get(): OperatorFunction<string, IdentificationDocument>;
     Create(): OperatorFunction<IdentificationDocument, IdentificationDocument>;
     Update(): OperatorFunction<IdentificationDocument, IdentificationDocument>;
-    List(): OperatorFunction<any, IdentificationDocumentList>;
+    List(): OperatorFunction<IdentificationDocumentListOptions, IdentificationDocumentList>;
     Delete(): OperatorFunction<string, any>;
 }
 declare class IdentificationDocumentTypeClient {
@@ -119,7 +119,7 @@ declare class IdentificationDocumentTypeClient {
     Get(): OperatorFunction<string, IdentificationDocumentType>;
     Create(): OperatorFunction<IdentificationDocumentType, IdentificationDocumentType>;
     Update(): OperatorFunction<IdentificationDocumentType, IdentificationDocumentType>;
-    List(): OperatorFunction<any, IdentificationDocumentTypeList>;
+    List(): OperatorFunction<IdentificationDocumentTypeListOptions, IdentificationDocumentTypeList>;
 }
 declare class IndividualClient {
     private client;
@@ -128,7 +128,7 @@ declare class IndividualClient {
     Get(): OperatorFunction<string, Individual>;
     Create(): OperatorFunction<Individual, Individual>;
     Update(): OperatorFunction<Individual, Individual>;
-    List(): OperatorFunction<any, IndividualList>;
+    List(): OperatorFunction<IndividualListOptions, IndividualList>;
 }
 declare class MembershipClient {
     private client;
@@ -137,7 +137,7 @@ declare class MembershipClient {
     Get(): OperatorFunction<string, Membership>;
     Create(): OperatorFunction<Membership, Membership>;
     Update(): OperatorFunction<Membership, Membership>;
-    List(): OperatorFunction<any, MembershipList>;
+    List(): OperatorFunction<MembershipListOptions, MembershipList>;
 }
 declare class NationalityClient {
     private client;
@@ -146,7 +146,7 @@ declare class NationalityClient {
     Get(): OperatorFunction<string, Nationality>;
     Create(): OperatorFunction<Nationality, Nationality>;
     Update(): OperatorFunction<Nationality, Nationality>;
-    List(): OperatorFunction<any, NationalityList>;
+    List(): OperatorFunction<NationalityListOptions, NationalityList>;
 }
 declare class PartyAttributeDefinitionClient {
     private client;
@@ -155,14 +155,16 @@ declare class PartyAttributeDefinitionClient {
     Get(): OperatorFunction<string, PartyAttributeDefinition>;
     Create(): OperatorFunction<PartyAttributeDefinition, PartyAttributeDefinition>;
     Update(): OperatorFunction<PartyAttributeDefinition, PartyAttributeDefinition>;
-    List(): OperatorFunction<any, PartyAttributeDefinitionList>;
+    List(): OperatorFunction<PartyAttributeDefinitionListOptions, PartyAttributeDefinitionList>;
 }
 declare class PartyClient {
     private client;
     execute: () => OperatorFunction<Request, Response>;
     constructor(client: Client);
     Get(): OperatorFunction<string, Party>;
+    Create(): OperatorFunction<Party, Party>;
     Update(): OperatorFunction<Party, Party>;
+    List(): OperatorFunction<PartyListOptions, PartyList>;
 }
 declare class PartyTypeClient {
     private client;
@@ -171,7 +173,7 @@ declare class PartyTypeClient {
     Get(): OperatorFunction<string, PartyType>;
     Create(): OperatorFunction<PartyType, PartyType>;
     Update(): OperatorFunction<PartyType, PartyType>;
-    List(): OperatorFunction<any, PartyTypeList>;
+    List(): OperatorFunction<PartyTypeListOptions, PartyTypeList>;
 }
 declare class RelationshipClient {
     private client;
@@ -180,7 +182,7 @@ declare class RelationshipClient {
     Get(): OperatorFunction<string, Relationship>;
     Create(): OperatorFunction<Relationship, Relationship>;
     Update(): OperatorFunction<Relationship, Relationship>;
-    List(): OperatorFunction<any, RelationshipList>;
+    List(): OperatorFunction<RelationshipListOptions, RelationshipList>;
     Delete(): OperatorFunction<string, any>;
 }
 declare class RelationshipTypeClient {
@@ -190,7 +192,7 @@ declare class RelationshipTypeClient {
     Get(): OperatorFunction<string, RelationshipType>;
     Create(): OperatorFunction<RelationshipType, RelationshipType>;
     Update(): OperatorFunction<RelationshipType, RelationshipType>;
-    List(): OperatorFunction<any, RelationshipTypeList>;
+    List(): OperatorFunction<RelationshipTypeListOptions, RelationshipTypeList>;
 }
 declare class TeamClient {
     private client;
@@ -199,7 +201,7 @@ declare class TeamClient {
     Get(): OperatorFunction<string, Team>;
     Create(): OperatorFunction<Team, Team>;
     Update(): OperatorFunction<Team, Team>;
-    List(): OperatorFunction<any, TeamList>;
+    List(): OperatorFunction<TeamListOptions, TeamList>;
 }
 export declare class IAMClient {
     private readonly _scheme;

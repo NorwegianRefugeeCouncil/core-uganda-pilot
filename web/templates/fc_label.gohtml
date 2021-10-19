@@ -1,7 +1,7 @@
 {{define "label"}}
     {{if .Label}}
-        <label class="mb-2 text-muted" style="font-weight: bold;" for="{{.Name}}">
-            {{- .Label.ForLocale "en" -}}
+        <label class="mb-2 {{if .Validation.Required}}text-black{{else}}text-muted{{end}} fw-bold" for="{{.Name}}">
+            {{- .Label.ForLocale "en"}}{{if .Validation.Required}} <span style="color: red">*</span>{{end -}}
         </label>
     {{end}}
 {{end}}

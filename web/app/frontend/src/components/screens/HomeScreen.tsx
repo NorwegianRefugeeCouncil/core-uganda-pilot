@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Subheading, Text, Title} from 'react-native-paper';
+import {Subheading, Title} from 'react-native-paper';
 import {layout} from '../../styles';
 import {View} from 'react-native';
 import {DateModal} from "../DateModal";

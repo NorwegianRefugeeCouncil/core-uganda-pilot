@@ -26,8 +26,8 @@ type (
 )
 
 type PartyListOptions struct {
-	PartyTypeID string
-	SearchParam string
+	PartyTypeID string `json:"partyTypeId"`
+	SearchParam string `json:"searchParam"`
 	Attributes  map[string]string
 }
 

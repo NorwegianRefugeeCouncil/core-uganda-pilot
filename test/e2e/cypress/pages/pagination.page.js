@@ -1,4 +1,4 @@
-import {URL} from '../helpers';
+import { URL } from '../helpers';
 
 const FIRST_PAGE_Btn = '[data-testid=firstPage]';
 const PREV_PAGE_Btn = '[data-testid=prevPage]';

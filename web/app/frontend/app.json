@@ -32,6 +32,11 @@
     },
     "androidStatusBar": {
       "hidden": true,
+      "backgroundColor": "#728346",
+      "barStyle": "dark-content"
+    },
+    "androidNavigationBar": {
+      "visible": "immersive",
       "barStyle": "dark-content"
     }
   }
