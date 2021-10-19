@@ -18,6 +18,7 @@ import (
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/ory/hydra-client-go/client"
 	"github.com/ory/hydra-client-go/client/public"
+	"github.com/rs/cors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -94,6 +95,13 @@ type Options struct {
 	LoginIAMHost           string
 	LoginIAMScheme         string
 	SeedDB                 bool
+
+	// Cors
+	CorsAllowedOrigins    []string
+	CorsAllowCredentials  bool
+	CorsAllowedHeaders    []string
+	CorsAllowedMethods    []string
+	CorsOptionPassthrough bool
 }
 
 func NewOptions() *Options {
@@ -109,6 +117,11 @@ func NewOptions() *Options {
 		Scheme: defaultScheme,
 		Host:   defaultHost + ":" + defaultPort,
 	}
+	defaultCorsAllowOrigin := []string{}
+	defaultCorsAllowCredentials := false
+	defaultCorsAllowedHeaders := []string{}
+	defaultCorsAllowedMethods := []string{}
+	defaultCorsOptionPassthrough := false
 	return &Options{
 		ClearDB:                 false,
 		Environment:             defaultEnv,
@@ -142,6 +155,11 @@ func NewOptions() *Options {
 		LoginTemplateDirectory:  "",
 		LoginIAMScheme:          defaultURL.Scheme,
 		LoginIAMHost:            defaultURL.Host,
+		CorsAllowedOrigins:      defaultCorsAllowOrigin,
+		CorsAllowCredentials:    defaultCorsAllowCredentials,
+		CorsAllowedHeaders:      defaultCorsAllowedHeaders,
+		CorsAllowedMethods:      defaultCorsAllowedMethods,
+		CorsOptionPassthrough:   defaultCorsOptionPassthrough,
 	}
 }
 
@@ -192,6 +210,13 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 
 	// CMS
 	fs.StringVar(&o.CMSBasePath, "cms-base-path", o.CMSBasePath, "Base path for the CMS module")
+
+	// CORS
+	fs.StringSliceVar(&o.CorsAllowedOrigins, "cors-allowed-origins", o.CorsAllowedOrigins, "CORS allowed origins")
+	fs.BoolVar(&o.CorsAllowCredentials, "cors-allow-credentials", o.CorsAllowCredentials, "CORS allow credentials")
+	fs.StringSliceVar(&o.CorsAllowedHeaders, "cors-allowed-headers", o.CorsAllowedHeaders, "CORS allowed headers")
+	fs.StringSliceVar(&o.CorsAllowedMethods, "cors-allowed-methods", o.CorsAllowedMethods, "CORS allowed methods")
+	fs.BoolVar(&o.CorsOptionPassthrough, "cors-options-passthrough", o.CorsOptionPassthrough, "CORS option passthrough")
 
 	// Web App
 	fs.StringVar(&o.WebAppBasePath, "web-base-path", o.WebAppBasePath, "Base path for the Web module")
@@ -573,7 +598,18 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	}
 
 	router := c.CreateRouter(srv)
-	srv.Router = router
+
+	crs := cors.New(cors.Options{
+		AllowedOrigins:     c.CorsAllowedOrigins,
+		AllowedMethods:     c.CorsAllowedMethods,
+		AllowedHeaders:     c.CorsAllowedHeaders,
+		AllowCredentials:   c.CorsAllowCredentials,
+		OptionsPassthrough: c.CorsOptionPassthrough,
+	})
+
+	handler := crs.Handler(router)
+
+	srv.Handler = handler
 
 	go func() {
 		c.StartServer(srv)
@@ -601,14 +637,14 @@ func (c CompletedOptions) CreateRouter(srv *Server) *mux.Router {
 
 func (c CompletedOptions) StartServer(server *Server) {
 	if c.TLSDisable {
-		if err := http.ListenAndServe(c.ListenAddress, server.Router); err != nil {
+		if err := http.ListenAndServe(c.ListenAddress, server.Handler); err != nil {
 			if errors.Is(err, context.Canceled) {
 				return
 			}
 			panic(err)
 		}
 	} else {
-		if err := http.ListenAndServeTLS(c.ListenAddress, c.TLSCertPath, c.TLSKeyPath, server.Router); err != nil {
+		if err := http.ListenAndServeTLS(c.ListenAddress, c.TLSCertPath, c.TLSKeyPath, server.Handler); err != nil {
 			if errors.Is(err, context.Canceled) {
 				return
 			}

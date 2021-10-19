@@ -155,7 +155,8 @@ export interface NationalityList {
     items: Nationality[];
 }
 export interface PartyListOptions {
-
+    partyTypeId: string;
+    searchParam: string;
 }
 export interface PartySearchOptions {
     partyIds: string[];
