@@ -112,3 +112,8 @@ services:
       - --web-cms-scheme=http
       - --listen-address=:9002
       - --base-url=http://localhost:9002
+      - --cors-allowed-origins='*'
+      - --cors-allowed-methods=GET,DELETE,PUT,POST,OPTIONS
+      - --cors-options-passthrough=true
+      - --cors-allowed-headers='*'
+      - --cors-allowed-methods='*'
