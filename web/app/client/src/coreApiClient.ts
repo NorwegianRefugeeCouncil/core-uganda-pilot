@@ -176,7 +176,7 @@ class Client {
             return source.pipe(
                 switchMap(req => {
                     const tmpReq = req
-                    const ro = prepareRequestOptions(tmpReq)
+                    const ro = prepareRequestOptions(tmpReq as Request)
                     return ajax(
                         {
                             url: ro.url,
@@ -346,7 +346,7 @@ class CaseClient {
     List(): OperatorFunction<CaseListOptions, CaseList> {
         return clo$ => clo$.pipe(
             map(clo => clo ?
-                this.client.get().path(buildCMSPath('cases')).params(clo as URLValues)
+                this.client.get().path(buildCMSPath('cases')).params(clo as unknown as URLValues)
                 : this.client.get().path(buildCMSPath('cases'))
             ),
             this.execute(),
@@ -393,7 +393,7 @@ class CaseTypeClient {
     List(): OperatorFunction<CaseTypeListOptions, CaseTypeList> {
         return ctlo$ => ctlo$.pipe(
             map(ctlo => ctlo ?
-                this.client.get().path(buildCMSPath('casetypes')).params(ctlo as URLValues)
+                this.client.get().path(buildCMSPath('casetypes')).params(ctlo as unknown as URLValues)
                 : this.client.get().path(buildCMSPath('casetypes'))
             ),
             this.execute(),
@@ -440,7 +440,7 @@ class CommentClient {
     List(): OperatorFunction<CommentListOptions, CommentList> {
         return clo$ => clo$.pipe(
             map(clo => clo ?
-                this.client.get().path(buildCMSPath('comments')).params(clo as URLValues)
+                this.client.get().path(buildCMSPath('comments')).params(clo as unknown as URLValues)
                 : this.client.get().path(buildCMSPath('comments'))
             ),
             this.execute(),

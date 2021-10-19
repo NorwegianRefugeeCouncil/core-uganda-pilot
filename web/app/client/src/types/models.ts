@@ -262,11 +262,16 @@ export interface CommentList {
     items: Comment[];
 }
 export interface CaseListOptions {
-
+    partyId: string[];
+    teamId: string[];
+    caseTypeId: string[];
+    parentId: string;
+    done?: boolean;
 }
 export interface CaseTypeListOptions {
-
+    partyTypeId: string[];
+    teamId: string[];
 }
 export interface CommentListOptions {
-
+    caseId: string;
 }

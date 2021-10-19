@@ -2,7 +2,7 @@ import {expect} from 'chai'
 import {of, OperatorFunction, Subject} from 'rxjs';
 import {switchMap} from 'rxjs/operators'
 import {IAMClient, CMSClient, prepareRequestOptions, Request, Response} from './coreApiClient';
-import {Control, Form, RelationshipTypeRule, Time} from "./types/models";
+import {CommentListOptions, Control, Form, RelationshipTypeRule, Time} from "./types/models";
 
 const defaults = {
     global: {
@@ -10,7 +10,8 @@ const defaults = {
         host: 'testhost',
         headers: {
             'X-Authenticated-User-Subject': ['test@user.email']
-        }
+        },
+        nullListOptions: null
     },
     cases: {
         case: {
@@ -195,7 +196,9 @@ const defaults = {
             createdAt: {} as Time,
             updatedAt: {} as Time,
         },
-        commentListOptions: null,
+        commentListOptions: {
+            caseId: "TESTCASEID"
+        },
         commentGetRequestOptions: {
             url: 'testscheme://testhost/apis/cms/v1/comments/TESTCOMMENTID',
             headers: {
@@ -226,6 +229,20 @@ const defaults = {
         },
         commentListRequestOptions: {
             url: 'testscheme://testhost/apis/cms/v1/comments',
+            headers: {
+                'X-Authenticated-User-Subject': ['test@user.email'],
+                'Content-Type': ['application/json'],
+                Accept: ['application/json']
+            },
+            method: 'GET',
+            async: true,
+            timeout: 0,
+            crossDomain: true,
+            withCredentials: false,
+            body: undefined
+        },
+        commentListRequestOptionsWithQueryParams: {
+            url: 'testscheme://testhost/apis/cms/v1/comments?caseId=TESTCASEID',
             headers: {
                 'X-Authenticated-User-Subject': ['test@user.email'],
                 'Content-Type': ['application/json'],
@@ -1229,7 +1246,7 @@ describe('Unit Tests: Case Management System Client Set, Request Creation', () =
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.cases.caseGetRequestOptions)
                                 return of(new Response(defaults.cases.case))
                             })
@@ -1251,7 +1268,7 @@ describe('Unit Tests: Case Management System Client Set, Request Creation', () =
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.cases.caseListRequestOptions)
                                 return of(new Response(defaults.cases.case))
                             })
@@ -1273,7 +1290,7 @@ describe('Unit Tests: Case Management System Client Set, Request Creation', () =
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.cases.caseUpdateRequestOptions)
                                 return of(new Response(defaults.cases.case))
                             })
@@ -1295,7 +1312,7 @@ describe('Unit Tests: Case Management System Client Set, Request Creation', () =
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.cases.caseCreateRequestOptions)
                                 return of(new Response(defaults.cases.case))
                             })
@@ -1341,7 +1358,7 @@ describe('Unit Tests: Case Management System Client Set, Request Creation', () =
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.cases.caseGetRequestOptions)
                                 return of(new Response(defaults.cases.case))
                             })
@@ -1363,7 +1380,7 @@ describe('Unit Tests: Case Management System Client Set, Request Creation', () =
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.cases.caseListRequestOptions)
                                 return of(new Response(defaults.cases.case))
                             })
@@ -1385,7 +1402,7 @@ describe('Unit Tests: Case Management System Client Set, Request Creation', () =
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.cases.caseUpdateRequestOptions)
                                 return of(new Response(defaults.cases.case))
                             })
@@ -1407,7 +1424,7 @@ describe('Unit Tests: Case Management System Client Set, Request Creation', () =
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.cases.caseCreateRequestOptions)
                                 return of(new Response(defaults.cases.case))
                             })
@@ -1454,7 +1471,7 @@ describe('Unit Tests: Case Management System Client Set, Request Creation', () =
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.comments.commentGetRequestOptions)
                                 return of(new Response(defaults.comments.comment))
                             })
@@ -1476,7 +1493,7 @@ describe('Unit Tests: Case Management System Client Set, Request Creation', () =
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.comments.commentListRequestOptions)
                                 return of(new Response(defaults.comments.comment))
                             })
@@ -1485,6 +1502,28 @@ describe('Unit Tests: Case Management System Client Set, Request Creation', () =
                 })
             })
             it('it should correctly a build list request', (done) => {
+                subject.pipe(commentListClient.List()).subscribe((comment) => {
+                    done()
+                })
+                subject.next(defaults.global.nullListOptions)
+            })
+        })
+
+        describe('When making a request to list comments, with list options', () => {
+            before(() => {
+                commentListClient = init((): OperatorFunction<Request, Response> => {
+                    return source => {
+                        return source.pipe(
+                            switchMap(req => {
+                                let ro = prepareRequestOptions(req as Request)
+                                expect(ro).to.deep.equal(defaults.comments.commentListRequestOptionsWithQueryParams)
+                                return of(new Response(defaults.comments.comment))
+                            })
+                        )
+                    }
+                })
+            })
+            it('it should correctly a build list request with query parameters', (done) => {
                 subject.pipe(commentListClient.List()).subscribe((comment) => {
                     done()
                 })
@@ -1498,7 +1537,7 @@ describe('Unit Tests: Case Management System Client Set, Request Creation', () =
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.comments.commentUpdateRequestOptions)
                                 return of(new Response(defaults.comments.comment))
                             })
@@ -1520,7 +1559,7 @@ describe('Unit Tests: Case Management System Client Set, Request Creation', () =
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.comments.commentCreateRequestOptions)
                                 return of(new Response(defaults.comments.comment))
                             })
@@ -1542,7 +1581,7 @@ describe('Unit Tests: Case Management System Client Set, Request Creation', () =
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.comments.commentDeleteRequestOptions)
                                 return of(new Response({}))
                             })
@@ -1590,7 +1629,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.countries.countryGetRequestOptions)
                                 return of(new Response(defaults.countries.country))
                             })
@@ -1612,7 +1651,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.countries.countryListRequestOptions)
                                 return of(new Response(defaults.countries.country))
                             })
@@ -1634,7 +1673,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.countries.countryUpdateRequestOptions)
                                 return of(new Response(defaults.countries.country))
                             })
@@ -1656,7 +1695,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.countries.countryCreateRequestOptions)
                                 return of(new Response(defaults.countries.country))
                             })
@@ -1703,7 +1742,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.identificationdocuments.identificationdocumentGetRequestOptions)
                                 return of(new Response(defaults.identificationdocuments.identificationdocument))
                             })
@@ -1725,7 +1764,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.identificationdocuments.identificationdocumentListRequestOptions)
                                 return of(new Response(defaults.identificationdocuments.identificationdocument))
                             })
@@ -1747,7 +1786,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.identificationdocuments.identificationdocumentUpdateRequestOptions)
                                 return of(new Response(defaults.identificationdocuments.identificationdocument))
                             })
@@ -1769,7 +1808,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.identificationdocuments.identificationdocumentCreateRequestOptions)
                                 return of(new Response(defaults.identificationdocuments.identificationdocument))
                             })
@@ -1791,7 +1830,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.identificationdocuments.identificationdocumentDeleteRequestOptions)
                                 return of(new Response({}))
                             })
@@ -1837,7 +1876,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.identificationdocumenttypes.identificationdocumenttypeGetRequestOptions)
                                 return of(new Response(defaults.identificationdocumenttypes.identificationdocumenttype))
                             })
@@ -1859,7 +1898,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.identificationdocumenttypes.identificationdocumenttypeListRequestOptions)
                                 return of(new Response(defaults.identificationdocumenttypes.identificationdocumenttype))
                             })
@@ -1881,7 +1920,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.identificationdocumenttypes.identificationdocumenttypeUpdateRequestOptions)
                                 return of(new Response(defaults.identificationdocumenttypes.identificationdocumenttype))
                             })
@@ -1903,7 +1942,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.identificationdocumenttypes.identificationdocumenttypeCreateRequestOptions)
                                 return of(new Response(defaults.identificationdocumenttypes.identificationdocumenttype))
                             })
@@ -1949,7 +1988,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.individuals.individualGetRequestOptions)
                                 return of(new Response(defaults.individuals.individual))
                             })
@@ -1971,7 +2010,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.individuals.individualListRequestOptions)
                                 return of(new Response(defaults.individuals.individual))
                             })
@@ -1993,7 +2032,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.individuals.individualUpdateRequestOptions)
                                 return of(new Response(defaults.individuals.individual))
                             })
@@ -2015,7 +2054,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.individuals.individualCreateRequestOptions)
                                 return of(new Response(defaults.individuals.individual))
                             })
@@ -2061,7 +2100,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.memberships.membershipGetRequestOptions)
                                 return of(new Response(defaults.memberships.membership))
                             })
@@ -2083,7 +2122,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.memberships.membershipListRequestOptions)
                                 return of(new Response(defaults.memberships.membership))
                             })
@@ -2105,7 +2144,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.memberships.membershipUpdateRequestOptions)
                                 return of(new Response(defaults.memberships.membership))
                             })
@@ -2127,7 +2166,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.memberships.membershipCreateRequestOptions)
                                 return of(new Response(defaults.memberships.membership))
                             })
@@ -2173,7 +2212,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.nationalities.nationalityGetRequestOptions)
                                 return of(new Response(defaults.nationalities.nationality))
                             })
@@ -2195,7 +2234,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.nationalities.nationalityListRequestOptions)
                                 return of(new Response(defaults.nationalities.nationality))
                             })
@@ -2217,7 +2256,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.nationalities.nationalityUpdateRequestOptions)
                                 return of(new Response(defaults.nationalities.nationality))
                             })
@@ -2239,7 +2278,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.nationalities.nationalityCreateRequestOptions)
                                 return of(new Response(defaults.nationalities.nationality))
                             })
@@ -2285,7 +2324,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.attributes.partyattributedefinitionGetRequestOptions)
                                 return of(new Response(defaults.attributes.partyattributedefinition))
                             })
@@ -2307,7 +2346,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.attributes.partyattributedefinitionListRequestOptions)
                                 return of(new Response(defaults.attributes.partyattributedefinition))
                             })
@@ -2329,7 +2368,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.attributes.partyattributedefinitionUpdateRequestOptions)
                                 return of(new Response(defaults.attributes.partyattributedefinition))
                             })
@@ -2351,7 +2390,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.attributes.partyattributedefinitionCreateRequestOptions)
                                 return of(new Response(defaults.attributes.partyattributedefinition))
                             })
@@ -2397,7 +2436,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.parties.partyGetRequestOptions)
                                 return of(new Response(defaults.parties.party))
                             })
@@ -2419,7 +2458,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.parties.partyListRequestOptions)
                                 return of(new Response(defaults.parties.party))
                             })
@@ -2441,7 +2480,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.parties.partyUpdateRequestOptions)
                                 return of(new Response(defaults.parties.party))
                             })
@@ -2463,7 +2502,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.parties.partyCreateRequestOptions)
                                 return of(new Response(defaults.parties.party))
                             })
@@ -2509,7 +2548,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.partytypes.partytypeGetRequestOptions)
                                 return of(new Response(defaults.partytypes.partytype))
                             })
@@ -2531,7 +2570,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.partytypes.partytypeListRequestOptions)
                                 return of(new Response(defaults.partytypes.partytype))
                             })
@@ -2553,7 +2592,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.partytypes.partytypeUpdateRequestOptions)
                                 return of(new Response(defaults.partytypes.partytype))
                             })
@@ -2575,7 +2614,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.partytypes.partytypeCreateRequestOptions)
                                 return of(new Response(defaults.partytypes.partytype))
                             })
@@ -2622,7 +2661,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.relationships.relationshipGetRequestOptions)
                                 return of(new Response(defaults.relationships.relationship))
                             })
@@ -2644,7 +2683,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.relationships.relationshipListRequestOptions)
                                 return of(new Response(defaults.relationships.relationship))
                             })
@@ -2666,7 +2705,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.relationships.relationshipUpdateRequestOptions)
                                 return of(new Response(defaults.relationships.relationship))
                             })
@@ -2688,7 +2727,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.relationships.relationshipCreateRequestOptions)
                                 return of(new Response(defaults.relationships.relationship))
                             })
@@ -2710,7 +2749,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.relationships.relationshipDeleteRequestOptions)
                                 return of(new Response({}))
                             })
@@ -2756,7 +2795,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.relationshiptypes.relationshiptypeGetRequestOptions)
                                 return of(new Response(defaults.relationshiptypes.relationshiptype))
                             })
@@ -2778,7 +2817,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.relationshiptypes.relationshiptypeListRequestOptions)
                                 return of(new Response(defaults.relationshiptypes.relationshiptype))
                             })
@@ -2800,7 +2839,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.relationshiptypes.relationshiptypeUpdateRequestOptions)
                                 return of(new Response(defaults.relationshiptypes.relationshiptype))
                             })
@@ -2822,7 +2861,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.relationshiptypes.relationshiptypeCreateRequestOptions)
                                 return of(new Response(defaults.relationshiptypes.relationshiptype))
                             })
@@ -2868,7 +2907,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.teams.teamGetRequestOptions)
                                 return of(new Response(defaults.teams.team))
                             })
@@ -2890,7 +2929,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.teams.teamListRequestOptions)
                                 return of(new Response(defaults.teams.team))
                             })
@@ -2912,7 +2951,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.teams.teamUpdateRequestOptions)
                                 return of(new Response(defaults.teams.team))
                             })
@@ -2934,7 +2973,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                     return source => {
                         return source.pipe(
                             switchMap(req => {
-                                let ro = prepareRequestOptions(req)
+                                let ro = prepareRequestOptions(req as Request)
                                 expect(ro).to.deep.equal(defaults.teams.teamCreateRequestOptions)
                                 return of(new Response(defaults.teams.team))
                             })
