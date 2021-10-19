@@ -862,7 +862,7 @@ class PartyClient {
     List(): OperatorFunction<PartyListOptions, PartyList> {
         return plo$ => plo$.pipe(
             map(plo => plo ?
-                this.client.get().path(buildIAMPath('parties')).params(plo as URLValues)
+                this.client.get().path(buildIAMPath('parties')).params(plo as unknown as URLValues)
                 : this.client.get().path(buildIAMPath('parties'))
             ),
             this.execute(),
