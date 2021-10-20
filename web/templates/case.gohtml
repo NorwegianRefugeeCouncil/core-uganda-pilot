@@ -14,7 +14,6 @@
     {{template "case_nav" .Case }}
 
     <div class="container my-4">
-
         {{if .Parent}}
             <div class="p-3 bg-light mb-3 shadow-sm">
                 <span>Referred from </span>
@@ -47,13 +46,15 @@
 
         <h3 class="mb-3">
             {{if .Case.Done}}
-                <span class="badge rounded-pill bg-danger" data-testid="done-pill">
-                            <span class='fs-6 fw-normal mb-1 d-inline-block'>Closed</span>
-                        </span>
+                Status: <span class="badge rounded-pill bg-danger" data-testid="done-pill">Closed</span>
             {{else}}
-                <span class="badge rounded-pill bg-success" data-testid="done-pill">
-                           <span class='fs-6 fw-normal mb-1 d-inline-block'>Open</span>
-                        </span>
+                Status: <span class="badge rounded-pill bg-success" data-testid="done-pill">Open</span>
+            {{end}}
+            {{if .Case.Urgency}}
+                {{with .Case.Urgency}}
+                    Urgency: <span
+                            class="badge rounded-pill bg-{{if (eq . "Low")}}success{{else if (eq . "Medium")}}warning{{else}}danger{{end}}">{{.}}</span>
+                {{end}}
             {{end}}
         </h3>
 
@@ -125,6 +126,15 @@
                                             disabled
                                     >
                                         <option>{{ .ReferralCaseType.Name }}</option>
+                                    </select>
+                                    <label for="referralUrgency">Urgency</label>
+                                    <select id="referralUrgency"
+                                            class="form-select"
+                                            name="urgency"
+                                    >
+                                        {{range .Urgencies}}
+                                            <option>{{.}}</option>
+                                        {{end}}
                                     </select>
                                 </div>
                                 <input type="hidden" name="partyId" value="{{$recipient.ID}}">
