@@ -605,6 +605,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 		AllowedHeaders:     c.CorsAllowedHeaders,
 		AllowCredentials:   c.CorsAllowCredentials,
 		OptionsPassthrough: c.CorsOptionPassthrough,
+		Debug: true,
 	})
 
 	handler := crs.Handler(router)

@@ -31,11 +31,11 @@ flags="--mongo-database=core \
        	--web-cms-scheme=http \
        	--listen-address=:9000 \
        	--base-url=http://localhost:9000 \
-       	--cors-allowed-origins='*' \
+       	--cors-allowed-origins=* \
        	--cors-allowed-methods=GET,DELETE,PUT,POST,OPTIONS \
-       	--cors-options-passthrough=true \
-       	--cors-allowed-headers='*' \
-       	--cors-allowed-methods='*'"
+       	--cors-options-passthrough=false \
+       	--cors-allowed-headers=* \
+       	--cors-allowed-methods=*"
 
 ./scripts/build.sh
 

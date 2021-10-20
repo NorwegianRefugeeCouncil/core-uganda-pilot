@@ -1,51 +1,94 @@
 import React from 'react';
-import {FAB, Text} from 'react-native-paper';
 import {common, layout} from '../../styles';
-import {testIndividuals} from './IndividualsListScreen';
-import {darkTheme} from '../../constants/theme';
-import {View} from 'react-native';
-import {useForm} from "react-hook-form";
+import {Button, ScrollView, TextInput, View} from 'react-native';
+import {Controller, useForm} from "react-hook-form";
 import {Individual} from "../../../../client/src/types/models";
-import {createIndividual, getIndividual} from "../../services/individuals";
+import {Subject} from 'rxjs';
+import iamClient from "../../utils/clients";
+import {PartyAttributeDefinition, PartyAttributeDefinitionList} from "core-js-api-client/lib/types/models";
+import FormControl from "../form/FormControl";
 
 const IndividualScreen: React.FC<any> = ({route}) => {
     const {id} = route.params;
+    const [attributes, setAttributes] = React.useState<PartyAttributeDefinition[]>([]);
+    const [individual, setIndividual] = React.useState<Individual>();
+    let attributesSubject = new Subject([]);
+    let individualsSubject = new Subject([]);
 
-    const person = getIndividual(id);
-
-    const {register, handleSubmit, watch, formState: {errors}} = useForm({
-        defaultValues: person
+    const {control, handleSubmit, watch, formState: {errors}, register, getValues} = useForm({
+        defaultValues: individual?.attributes
     });
 
-    const onSubmit = (data: Individual) => {
-        console.log(data);
-        createIndividual(data);
+    const onSubmit = (data: any) => {
+        console.log('SUBMITTING', data);
+        // createIndividual(data);
     };
 
+    React.useEffect(() => {
+        attributesSubject.pipe(iamClient.PartyAttributeDefinitions().List()).subscribe(
+            (data: PartyAttributeDefinitionList) => {
+                setAttributes(data.items)
+            }
+        );
+        individualsSubject.pipe(iamClient.Individuals().Get()).subscribe(
+            (data: Individual) => setIndividual(data)
+        );
+        attributesSubject.next(null);
+        individualsSubject.next(id);
+
+        return () => {
+            if (attributesSubject) {
+                attributesSubject.unsubscribe();
+            }
+            if (individualsSubject) {
+                individualsSubject.unsubscribe();
+            }
+        };
+    }, []);
+
     return (
-        <View style={[layout.container, layout.body, common.darkBackground]}>
-            <Text theme={darkTheme}>
-                {id == null ? 'new person' : testIndividuals[id].name}
-            </Text>
+        <ScrollView>
+            <View style={[layout.container, layout.body, common.darkBackground]}>
+                {/*{attributes.map((a) =>*/}
 
-            <form onSubmit={handleSubmit(onSubmit)}>
-                {/* register your input into the hook by invoking the "register" function */}
-                <input defaultValue="test" {...register("example")} />
+                {/*    <Controller*/}
+                {/*        key={a.id}*/}
+                {/*        control={control}*/}
+                {/*        rules={a.formControl.validation}*/}
+                {/*        render={({field: {onChange, onBlur, value}}) => (*/}
+                {/*            <TextInput*/}
+                {/*                onBlur={onBlur}*/}
+                {/*                onChangeText={onChange}*/}
+                {/*                value={value}*/}
+                {/*            />*/}
+                {/*        )}*/}
+                {/*        name={'8514da51-aad5-4fb4-a797-8bcc0c969b27'}*/}
+                {/*        defaultValue={a.formControl.value || a.formControl.defaultValue}*/}
+                {/*    />*/}
+                {/*)}*/}
 
-                {/* include validation with required or other standard HTML validation rules */}
-                <input {...register("exampleRequired", {required: true})} />
-                {/* errors will return when field validation fails  */}
-                {errors.exampleRequired && <span>This field is required</span>}
+                {/*<Button title="Submit" onPress={handleSubmit(onSubmit)}/>*/}
 
-                <input type="submit"/>
-            </form>
-            <FAB
-                style={layout.fab}
-                icon="chevron-right"
-                color={darkTheme.colors.white}
-                onPress={() => console.log('Pressed')}
-            />
-        </View>
+                {/*<form onSubmit={(a)=>{*/}
+                {/*    console.log('FORM', a)*/}
+                {/*}}>*/}
+
+                {attributes.map((a) =>
+                    <FormControl
+                        key={a.id}
+                        formControl={a.formControl}
+                        style={{width: '100%'}}
+                        value={individual?.attributes[a.id]}
+                        control={control}
+                        // name={a.id}
+                        {...register(a.id as '`${string}` | `${string}.${string}` | `${string}.${number}`')}
+                    />
+                )}
+                    <Button title="Submit" onPress={handleSubmit(onSubmit)} />
+
+                {/*</form>*/}
+            </View>
+        </ScrollView>
     );
 };
 
