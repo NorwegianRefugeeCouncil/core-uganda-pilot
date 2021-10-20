@@ -10,6 +10,7 @@
     {{template "individuals_nav" . }}
 
     <div class="container py-4">
+		<div class="position-sticky bg-white py-3" style="top:3.5rem; z-index:1000">
         <div class="mb-3">
             Registration progress
             <span class="badge rounded-pill bg-primary">Steps {{.ProgressLabel}}</span><br>
@@ -38,6 +39,10 @@
                 </button>
             </li>
         </ul>
+        <button id="form-submit-btn" type="button" class="btn btn-lg btn-primary position-absolute top-50 end-0 shadow" style="transform: translate(-25%, -50%)" data-testid="save-btn">
+            Submit
+        </button>
+		</div>
         <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="attributes" role="tabpanel"
                  aria-labelledby="attributes-tab">
@@ -162,9 +167,6 @@
                 </div>
             {{end}}
         </div>
-        <button id="form-submit-btn" type="button" class="btn btn-lg btn-primary my-3" data-testid="save-btn">
-            Save
-        </button>
 
         {{if not .IsNew}}
             {{if gt (len .Cases) 0}}
