@@ -35,7 +35,7 @@ var (
 				{"en", "Full Name"},
 				{"es", "Nombre completo"},
 			},
-			Validation: form.ControlValidation{Required: true},
+			Validation:  form.ControlValidation{Required: true},
 		},
 		IsPersonallyIdentifiableInfo: true,
 		PartyTypeIDs: []string{
@@ -52,7 +52,10 @@ var (
 				{"en", "Display Name"},
 				{"es", "Nombre para mostrar"},
 			},
-
+			Description: i18n.Strings{
+				{"en", "This is what you see in lists, dropdowns and search results"},
+				{"es", "Esto es lo que ves en listas, menús desplegables y resultados de búsqueda."},
+			},
 			Validation: form.ControlValidation{Required: true},
 		},
 		IsPersonallyIdentifiableInfo: true,
