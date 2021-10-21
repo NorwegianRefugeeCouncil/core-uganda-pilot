@@ -2,7 +2,7 @@ package cms
 
 import (
 	"context"
-	"github.com/nrc-no/core/pkg/utils"
+	"github.com/nrc-no/core/pkg/storage"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -10,22 +10,21 @@ import (
 )
 
 type CommentStore struct {
-	getCollection utils.MongoCollectionFn
+	getCollection func() (*mongo.Collection, error)
 }
 
-func NewCommentStore(ctx context.Context, mongoClientFn utils.MongoClientFn, database string) (*CommentStore, error) {
+func NewCommentStore(ctx context.Context, mongoClientSrc storage.MongoClientSrc, database string) (*CommentStore, error) {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
 	store := &CommentStore{
-		getCollection: utils.GetCollectionFn(database, "comments", mongoClientFn),
+		getCollection: storage.GetCollectionFn(mongoClientSrc, database, "comments"),
 	}
 
-	collection, done, err := store.getCollection(ctx)
+	collection, err := store.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	// Cases should have unique IDs
 	if _, err := collection.Indexes().CreateOne(ctx,
@@ -48,11 +47,10 @@ func NewCommentStore(ctx context.Context, mongoClientFn utils.MongoClientFn, dat
 }
 
 func (s *CommentStore) Get(ctx context.Context, id string) (*Comment, error) {
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	res := collection.FindOne(ctx, bson.M{
 		"id": id,
@@ -72,11 +70,10 @@ func (s *CommentStore) List(ctx context.Context, options CommentListOptions) (*C
 		"caseId": options.CaseID,
 	}
 
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	res, err := collection.Find(ctx, filter)
 	if err != nil {
@@ -116,11 +113,10 @@ func (s *CommentStore) Update(ctx context.Context, id string, updateFunc func(ol
 		return nil, err
 	}
 
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	_, err = collection.ReplaceOne(ctx, bson.M{
 		"id": id,
@@ -137,11 +133,10 @@ func (s *CommentStore) Create(ctx context.Context, comment *Comment) error {
 	comment.CreatedAt = now
 	comment.UpdatedAt = now
 
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return err
 	}
-	defer done()
 
 	_, err = collection.InsertOne(ctx, comment)
 	if err != nil {
@@ -151,11 +146,10 @@ func (s *CommentStore) Create(ctx context.Context, comment *Comment) error {
 }
 
 func (s *CommentStore) Delete(ctx context.Context, id string) error {
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return err
 	}
-	defer done()
 
 	_, err = collection.DeleteOne(ctx, bson.M{
 		"id": id,

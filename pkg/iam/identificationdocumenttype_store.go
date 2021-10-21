@@ -2,25 +2,25 @@ package iam
 
 import (
 	"context"
-	"github.com/nrc-no/core/pkg/utils"
+	"github.com/nrc-no/core/pkg/storage"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type IdentificationDocumentTypeStore struct {
-	getCollection utils.MongoCollectionFn
+	getCollection func() (*mongo.Collection, error)
 }
 
-func newIdentificationDocumentTypeStore(ctx context.Context, mongoClientFn utils.MongoClientFn, database string) (*IdentificationDocumentTypeStore, error) {
+func newIdentificationDocumentTypeStore(ctx context.Context, mongoClientSrc storage.MongoClientSrc, database string) (*IdentificationDocumentTypeStore, error) {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
 	store := &IdentificationDocumentTypeStore{
-		getCollection: utils.GetCollectionFn(database, "identificationDocumentTypes", mongoClientFn),
+		getCollection: storage.GetCollectionFn(mongoClientSrc, database, "identificationDocumentTypes"),
 	}
 
-	collection, klose, err := store.getCollection(ctx)
+	collection, err := store.getCollection()
 	if err != nil {
 		return nil, err
 	}
@@ -33,15 +33,13 @@ func newIdentificationDocumentTypeStore(ctx context.Context, mongoClientFn utils
 		return nil, err
 	}
 
-	klose()
-
 	return store, nil
 }
 
 func (s *IdentificationDocumentTypeStore) list(ctx context.Context, listOptions IdentificationDocumentTypeListOptions) (*IdentificationDocumentTypeList, error) {
 	filter := bson.M{}
 
-	collection, klose, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return nil, err
 	}
@@ -65,15 +63,13 @@ func (s *IdentificationDocumentTypeStore) list(ctx context.Context, listOptions 
 		return nil, cursor.Err()
 	}
 
-	klose()
-
 	return &IdentificationDocumentTypeList{
 		Items: list,
 	}, nil
 }
 
 func (s *IdentificationDocumentTypeStore) create(ctx context.Context, identificationDocumentType *IdentificationDocumentType) error {
-	collection, klose, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return err
 	}
@@ -81,12 +77,12 @@ func (s *IdentificationDocumentTypeStore) create(ctx context.Context, identifica
 	if err != nil {
 		return err
 	}
-	klose()
+
 	return nil
 }
 
 func (s *IdentificationDocumentTypeStore) get(ctx context.Context, id string) (*IdentificationDocumentType, error) {
-	collection, klose, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return nil, err
 	}
@@ -100,12 +96,12 @@ func (s *IdentificationDocumentTypeStore) get(ctx context.Context, id string) (*
 	if err := result.Decode(&a); err != nil {
 		return nil, err
 	}
-	klose()
+
 	return &a, nil
 }
 
 func (s *IdentificationDocumentTypeStore) update(ctx context.Context, identificationDocumentType *IdentificationDocumentType) error {
-	collection, klose, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return err
 	}
@@ -119,6 +115,6 @@ func (s *IdentificationDocumentTypeStore) update(ctx context.Context, identifica
 	if err != nil {
 		return err
 	}
-	klose()
+
 	return nil
 }

@@ -2,33 +2,28 @@ package attachments
 
 import (
 	"context"
-	"github.com/nrc-no/core/pkg/utils"
+	"github.com/nrc-no/core/pkg/storage"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type AttachmentStore struct {
-	getCollection utils.MongoCollectionFn
+	getCollection func() (*mongo.Collection , error)
 }
 
-func NewAttachmentStore(
-	ctx context.Context,
-	mongoClientFn utils.MongoClientFn,
-	database string,
-) (*AttachmentStore, error) {
+func NewAttachmentStore(ctx context.Context, mongoClientSrc storage.MongoClientSrc, database string, ) (*AttachmentStore, error) {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
 	store := &AttachmentStore{
-		getCollection: utils.GetCollectionFn(database, "attachments", mongoClientFn),
+		getCollection: storage.GetCollectionFn(mongoClientSrc, database, "attachments"),
 	}
 
-	collection, done, err := store.getCollection(ctx)
+	collection, err := store.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	if _, err := collection.Indexes().CreateOne(ctx,
 		mongo.IndexModel{
@@ -42,11 +37,10 @@ func NewAttachmentStore(
 }
 
 func (s *AttachmentStore) Get(ctx context.Context, id string) (*Attachment, error) {
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	res := collection.FindOne(ctx, bson.M{
 		"id": id,
@@ -70,11 +64,10 @@ func (s *AttachmentStore) List(ctx context.Context, options AttachmentListOption
 		}
 	}
 
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	res, err := collection.Find(ctx, filter)
 	if err != nil {
@@ -104,11 +97,10 @@ func (s *AttachmentStore) List(ctx context.Context, options AttachmentListOption
 }
 
 func (s *AttachmentStore) Update(ctx context.Context, attachment *Attachment) error {
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return err
 	}
-	defer done()
 
 	_, err = collection.UpdateOne(ctx, bson.M{
 		"id": attachment.ID,
@@ -125,11 +117,10 @@ func (s *AttachmentStore) Update(ctx context.Context, attachment *Attachment) er
 }
 
 func (s *AttachmentStore) Create(ctx context.Context, attachment *Attachment) error {
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return err
 	}
-	defer done()
 
 	_, err = collection.InsertOne(ctx, attachment)
 	if err != nil {

@@ -15,13 +15,11 @@ import (
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/middleware"
 	"github.com/nrc-no/core/pkg/seeder"
-	"github.com/nrc-no/core/pkg/utils"
+	"github.com/nrc-no/core/pkg/storage"
 	"github.com/ory/hydra-client-go/client"
 	"github.com/ory/hydra-client-go/client/public"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -213,7 +211,7 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 
 type CompletedOptions struct {
 	*Options
-	MongoClientFn              utils.MongoClientFn
+	MongoClientSrc             storage.MongoClientSrc
 	HydraAdminClient           *client.OryHydra
 	HydraPublicClient          *client.OryHydra
 	OAuthTokenEndpoint         string
@@ -271,40 +269,7 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		}
 	}
 
-	var mongoClientFn = func(ctx context.Context) (*mongo.Client, error) {
-
-		var mongoUsername = o.MongoUsername
-		if len(mongoUsername) == 0 && len(o.MongoUsernameFile) > 0 {
-			mongoUsername, err = readFile(o.MongoUsernameFile)
-			if err != nil {
-				logrus.WithError(err).Errorf("failed to read mongo username file")
-				return nil, err
-			}
-		}
-
-		var mongoPassword = o.MongoPassword
-		if len(mongoPassword) == 0 && len(o.MongoPasswordFile) > 0 {
-			mongoPassword, err = readFile(o.MongoPasswordFile)
-			if err != nil {
-				logrus.WithError(err).Errorf("failed to read mongo password file")
-				return nil, err
-			}
-		}
-
-		mongoClient, err := MongoClient(o.MongoHosts, mongoUsername, mongoPassword)
-		if err != nil {
-			logrus.WithError(err).Errorf("failed to create mongo client")
-			return nil, err
-		}
-
-		if err := mongoClient.Connect(ctx); err != nil {
-			logrus.WithError(err).Errorf("failed to connect to mongo")
-			return nil, err
-		}
-
-		return mongoClient, nil
-
-	}
+	var mongoClientSrc = storage.NewMongoClientSrc(ctx, o.MongoUsernameFile, o.MongoPasswordFile, o.MongoUsername, o.MongoPassword, o.MongoHosts)
 
 	hydraAdminClient, err := HydraClient(o.HydraAdminURL)
 	if err != nil {
@@ -326,8 +291,6 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 			return CompletedOptions{}, err
 		}
 	}
-
-	time.Sleep(2 * time.Second)
 
 	logrus.Infof("discovering openid configuration")
 	openIdConf, err := hydraPublicClient.Public.DiscoverOpenIDConfiguration(&public.DiscoverOpenIDConfigurationParams{
@@ -433,7 +396,7 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 
 	completedOptions := CompletedOptions{
 		Options:                    o,
-		MongoClientFn:              mongoClientFn,
+		MongoClientSrc:             mongoClientSrc,
 		HydraAdminClient:           hydraAdminClient,
 		HydraPublicClient:          hydraPublicClient,
 		HydraTLSClient:             hydraHttpClient,
@@ -488,24 +451,9 @@ func HydraClient(adminURL string) (*client.OryHydra, error) {
 	return hydraAdminClient, nil
 }
 
-func MongoClient(hosts []string, username, password string) (*mongo.Client, error) {
-	// Setup mongo client
-	mongoClient, err := mongo.NewClient(options.Client().
-		SetHosts(hosts).
-		SetAuth(
-			options.Credential{
-				Username: username,
-				Password: password,
-			}))
-	if err != nil {
-		return nil, err
-	}
-	return mongoClient, nil
-}
-
 func (c CompletedOptions) Generic() *server.GenericServerOptions {
 	return &server.GenericServerOptions{
-		MongoClientFn:     c.MongoClientFn,
+		MongoClientSrc:    c.MongoClientSrc,
 		MongoDatabase:     c.MongoDatabase,
 		Environment:       c.Environment,
 		HydraAdminClient:  c.HydraAdminClient,
@@ -562,7 +510,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	}
 
 	srv := &Server{
-		MongoClientFn:     c.MongoClientFn,
+		MongoClientSrc:    c.MongoClientSrc,
 		HydraPublicClient: c.HydraPublicClient,
 		HydraAdminClient:  c.HydraAdminClient,
 		WebAppServer:      webAppServer,
@@ -587,7 +535,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 
 }
 
-func (c CompletedOptions) CreateRouter(srv *Server) *mux.Router {
+func (c CompletedOptions) CreateRouter(srv *Server) http.Handler {
 	router := mux.NewRouter()
 	router.Use(middleware.UseLogging())
 	router.PathPrefix("/apis/attachments").Handler(srv.AttachmentServer)
@@ -596,7 +544,9 @@ func (c CompletedOptions) CreateRouter(srv *Server) *mux.Router {
 	router.PathPrefix("/auth").Handler(srv.LoginServer)
 	router.PathPrefix("/apis/login").Handler(srv.LoginServer)
 	router.PathPrefix("/").Handler(srv.WebAppServer)
-	return router
+	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		router.ServeHTTP(writer, request)
+	})
 }
 
 func (c CompletedOptions) StartServer(server *Server) {

@@ -230,6 +230,7 @@ export interface Case {
     creatorId: string;
     parentId: string;
     intakeCase: boolean;
+    urgency: string;
     form: Form;
     formData: {[key: string]: string[]};
     done: boolean;
