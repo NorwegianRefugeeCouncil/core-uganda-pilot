@@ -2,29 +2,28 @@ package iam
 
 import (
 	"context"
-	"github.com/nrc-no/core/pkg/utils"
+	"github.com/nrc-no/core/pkg/storage"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type PartyTypeStore struct {
-	getCollection utils.MongoCollectionFn
+	getCollection func() (*mongo.Collection, error)
 }
 
-func newPartyTypeStore(ctx context.Context, mongoClientFn utils.MongoClientFn, database string) (*PartyTypeStore, error) {
+func newPartyTypeStore(ctx context.Context, mongoClientSrc storage.MongoClientSrc, database string) (*PartyTypeStore, error) {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
 	store := &PartyTypeStore{
-		getCollection: utils.GetCollectionFn(database, "partyTypes", mongoClientFn),
+		getCollection: storage.GetCollectionFn(mongoClientSrc, database, "partyTypes"),
 	}
 
-	collection, done, err := store.getCollection(ctx)
+	collection, err := store.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	if _, err := collection.Indexes().CreateOne(ctx, mongo.IndexModel{
 		Keys: bson.M{
@@ -39,11 +38,10 @@ func newPartyTypeStore(ctx context.Context, mongoClientFn utils.MongoClientFn, d
 }
 
 func (s *PartyTypeStore) Get(ctx context.Context, id string) (*PartyType, error) {
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	res := collection.FindOne(ctx, bson.M{
 		"id": id,
@@ -61,11 +59,10 @@ func (s *PartyTypeStore) Get(ctx context.Context, id string) (*PartyType, error)
 func (s *PartyTypeStore) List(ctx context.Context, listOptions PartyTypeListOptions) (*PartyTypeList, error) {
 	filter := bson.M{}
 
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	res, err := collection.Find(ctx, filter)
 	if err != nil {
@@ -92,11 +89,10 @@ func (s *PartyTypeStore) List(ctx context.Context, listOptions PartyTypeListOpti
 }
 
 func (s *PartyTypeStore) Update(ctx context.Context, partyType *PartyType) error {
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return err
 	}
-	defer done()
 
 	_, err = collection.UpdateOne(ctx, bson.M{
 		"id": partyType.ID,
@@ -113,11 +109,10 @@ func (s *PartyTypeStore) Update(ctx context.Context, partyType *PartyType) error
 }
 
 func (s *PartyTypeStore) Create(ctx context.Context, partyType *PartyType) error {
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return err
 	}
-	defer done()
 
 	_, err = collection.InsertOne(ctx, partyType)
 	if err != nil {

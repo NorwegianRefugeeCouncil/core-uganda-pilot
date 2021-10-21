@@ -1,6 +1,7 @@
 package cms_test
 
 import (
+	"context"
 	. "github.com/nrc-no/core/pkg/cms"
 	"github.com/nrc-no/core/pkg/form"
 	"github.com/nrc-no/core/pkg/generic/server"
@@ -18,7 +19,7 @@ type Suite struct {
 }
 
 func (s *Suite) SetupSuite() {
-	s.GenericServerTestSetup = server.NewGenericServerTestSetup()
+	s.GenericServerTestSetup = server.NewGenericServerTestSetup(context.Background())
 	s.server = NewServerOrDie(s.Ctx, s.GenericServerOptions)
 	s.client = NewClientSet(testutils.SetXAuthenticatedUserSubject(s.Port))
 	s.Serve(s.T(), s.server)

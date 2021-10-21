@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/generic/server"
+	"github.com/nrc-no/core/pkg/storage"
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/ory/hydra-client-go/client/admin"
 	"go.mongodb.org/mongo-driver/bson"
@@ -14,7 +15,7 @@ import (
 type Server struct {
 	environment     string
 	router          *mux.Router
-	mongoClientFn   utils.MongoClientFn
+	mongoClientSrc  storage.MongoClientSrc
 	caseStore       *CaseStore
 	caseTypeStore   *CaseTypeStore
 	commentStore    *CommentStore
@@ -31,23 +32,23 @@ func NewServerOrDie(ctx context.Context, o *server.GenericServerOptions) *Server
 }
 
 func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, error) {
-	caseStore, err := NewCaseStore(ctx, o.MongoClientFn, o.MongoDatabase)
+	caseStore, err := NewCaseStore(ctx, o.MongoClientSrc, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	caseTypeStore, err := NewCaseTypeStore(ctx, o.MongoClientFn, o.MongoDatabase)
+	caseTypeStore, err := NewCaseTypeStore(ctx, o.MongoClientSrc, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	commentStore, err := NewCommentStore(ctx, o.MongoClientFn, o.MongoDatabase)
+	commentStore, err := NewCommentStore(ctx, o.MongoClientSrc, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
 	srv := &Server{
-		mongoClientFn:   o.MongoClientFn,
+		mongoClientSrc:  o.MongoClientSrc,
 		environment:     o.Environment,
 		caseStore:       caseStore,
 		caseTypeStore:   caseTypeStore,
@@ -100,7 +101,7 @@ func (s *Server) bind(req *http.Request, into interface{}) error {
 }
 
 func (s *Server) ResetDB(ctx context.Context, databaseName string) error {
-	mongoClient, err := s.mongoClientFn(ctx)
+	mongoClient, err := s.mongoClientSrc.GetMongoClient()
 	if err != nil {
 		return err
 	}

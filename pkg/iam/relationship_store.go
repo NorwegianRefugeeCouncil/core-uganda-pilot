@@ -2,29 +2,28 @@ package iam
 
 import (
 	"context"
-	"github.com/nrc-no/core/pkg/utils"
+	"github.com/nrc-no/core/pkg/storage"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type RelationshipStore struct {
-	getCollection utils.MongoCollectionFn
+	getCollection func() (*mongo.Collection, error)
 }
 
-func newRelationshipStore(ctx context.Context, mongoClientFn utils.MongoClientFn, database string) (*RelationshipStore, error) {
+func newRelationshipStore(ctx context.Context, mongoClientSrc storage.MongoClientSrc, database string) (*RelationshipStore, error) {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
 	store := &RelationshipStore{
-		getCollection: utils.GetCollectionFn(database, "relationships", mongoClientFn),
+		getCollection: storage.GetCollectionFn(mongoClientSrc, database, "relationships"),
 	}
 
-	collection, done, err := store.getCollection(ctx)
+	collection, err := store.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	if _, err := collection.Indexes().CreateOne(ctx, mongo.IndexModel{
 		Keys:    bson.M{"id": 1},
@@ -37,11 +36,10 @@ func newRelationshipStore(ctx context.Context, mongoClientFn utils.MongoClientFn
 }
 
 func (s *RelationshipStore) create(ctx context.Context, relationship *Relationship) error {
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return err
 	}
-	defer done()
 
 	_, err = collection.InsertOne(ctx, relationship)
 	if err != nil {
@@ -51,11 +49,10 @@ func (s *RelationshipStore) create(ctx context.Context, relationship *Relationsh
 }
 
 func (s *RelationshipStore) get(ctx context.Context, id string) (*Relationship, error) {
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	res := collection.FindOne(ctx, bson.M{
 		"id": id,
@@ -71,11 +68,10 @@ func (s *RelationshipStore) get(ctx context.Context, id string) (*Relationship, 
 }
 
 func (s *RelationshipStore) update(ctx context.Context, relationship *Relationship) error {
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return err
 	}
-	defer done()
 
 	_, err = collection.UpdateOne(ctx, bson.M{
 		"id": relationship.ID,
@@ -113,11 +109,10 @@ func (s *RelationshipStore) list(ctx context.Context, listOptions RelationshipLi
 		}
 	}
 
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	res, err := collection.Find(ctx, filter)
 	if err != nil {
@@ -144,11 +139,10 @@ func (s *RelationshipStore) list(ctx context.Context, listOptions RelationshipLi
 }
 
 func (s *RelationshipStore) delete(ctx context.Context, id string) error {
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return err
 	}
-	defer done()
 
 	_, err = collection.DeleteOne(ctx, bson.M{
 		"id": id,

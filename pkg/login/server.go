@@ -47,7 +47,7 @@ func NewServer(ctx context.Context, o *ServerOptions) (*Server, error) {
 		iam:             iamCli,
 		HydraHTTPClient: o.HydraHTTPClient,
 		credentialsCollectionFn: func() (*mongo.Collection, error) {
-			mongoClient, err := o.MongoClientFn(ctx)
+			mongoClient, err := o.MongoClientSrc.GetMongoClient()
 			if err != nil {
 				logrus.WithError(err).Errorf("unable to get mongo client")
 				return nil, err

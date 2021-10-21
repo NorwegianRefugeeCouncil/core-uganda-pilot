@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/nrc-no/core/pkg/iam"
 	"github.com/nrc-no/core/pkg/login"
-	"github.com/nrc-no/core/pkg/utils"
+	"github.com/nrc-no/core/pkg/storage"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -12,11 +12,11 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func Clear(ctx context.Context, mongoClientFn utils.MongoClientFn, databaseName string) error {
+func Clear(ctx context.Context, mongoClientSrc storage.MongoClientSrc, databaseName string) error {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	mongoClient, err := mongoClientFn(ctx)
+	mongoClient, err := mongoClientSrc.GetMongoClient()
 	if err != nil {
 		return err
 	}
@@ -24,11 +24,11 @@ func Clear(ctx context.Context, mongoClientFn utils.MongoClientFn, databaseName 
 	return mongoClient.Database(databaseName).Drop(ctx)
 }
 
-func Seed(ctx context.Context, mongoClientFn utils.MongoClientFn, databaseName string) error {
+func Seed(ctx context.Context, mongoClientSrc storage.MongoClientSrc, databaseName string) error {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	mongoClient, err := mongoClientFn(ctx)
+	mongoClient, err := mongoClientSrc.GetMongoClient()
 	if err != nil {
 		return err
 	}
