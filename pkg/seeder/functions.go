@@ -45,31 +45,31 @@ func individual(id string, fullName string, displayName string, birthDate string
 				iam.IndividualPartyType.ID,
 			},
 			Attributes: map[string][]string{
-				iam.FullNameAttribute.ID:                    {fullName},
-				iam.DisplayNameAttribute.ID:                 {displayName},
-				iam.EMailAttribute.ID:                       {email + "@email.com"},
-				iam.BirthDateAttribute.ID:                   {birthDate},
-				iam.DisplacementStatusAttribute.ID:          {displacementStatus},
-				iam.GenderAttribute.ID:                      {gender},
-				iam.ConsentToNrcDataUseAttribute.ID:         {consent},
-				iam.ConsentToNrcDataUseProofAttribute.ID:    {consentProof},
-				iam.AnonymousAttribute.ID:                   {anonymous},
-				iam.MinorAttribute.ID:                       {minor},
-				iam.ProtectionConcernsAttribute.ID:          {protectionConcerns},
-				iam.PhysicalImpairmentAttribute.ID:          {physicalImpairment},
-				iam.PhysicalImpairmentIntensityAttribute.ID: {physicalImpairmentIntensity},
-				iam.SensoryImpairmentAttribute.ID:           {sensoryImpairment},
-				iam.SensoryImpairmentIntensityAttribute.ID:  {sensoryImpairmentIntensity},
-				iam.MentalImpairmentAttribute.ID:            {mentalImpairment},
-				iam.MentalImpairmentIntensityAttribute.ID:   {mentalImpairmentIntensity},
-				iam.UGNationalityAttribute.ID:               {nationality},
-				iam.UGSpokenLanguagesAttribute.ID:           {spokenLanguages},
-				iam.UGPreferredLanguageAttribute.ID:         {preferredLanguage},
-				iam.UGPhysicalAddressAttribute.ID:           {physicalAddress},
-				iam.PrimaryPhoneNumberAttribute.ID:          {primaryPhoneNumber},
-				iam.SecondaryPhoneNumberAttribute.ID:        {secondaryPhoneNumber},
-				iam.UGPreferredMeansOfContactAttribute.ID:   {preferredMeansOfContact},
-				iam.UGRequireAnInterpreterAttribute.ID:      {requireAnInterpreter},
+				iam.FullNameAttribute.Alias:                    {fullName},
+				iam.DisplayNameAttribute.Alias:                 {displayName},
+				iam.EMailAttribute.Alias:                       {email + "@email.com"},
+				iam.BirthDateAttribute.Alias:                   {birthDate},
+				iam.DisplacementStatusAttribute.Alias:          {displacementStatus},
+				iam.GenderAttribute.Alias:                      {gender},
+				iam.ConsentToNrcDataUseAttribute.Alias:         {consent},
+				iam.ConsentToNrcDataUseProofAttribute.Alias:    {consentProof},
+				iam.AnonymousAttribute.Alias:                   {anonymous},
+				iam.MinorAttribute.Alias:                       {minor},
+				iam.ProtectionConcernsAttribute.Alias:          {protectionConcerns},
+				iam.PhysicalImpairmentAttribute.Alias:          {physicalImpairment},
+				iam.PhysicalImpairmentIntensityAttribute.Alias: {physicalImpairmentIntensity},
+				iam.SensoryImpairmentAttribute.Alias:           {sensoryImpairment},
+				iam.SensoryImpairmentIntensityAttribute.Alias:  {sensoryImpairmentIntensity},
+				iam.MentalImpairmentAttribute.Alias:            {mentalImpairment},
+				iam.MentalImpairmentIntensityAttribute.Alias:   {mentalImpairmentIntensity},
+				iam.UGNationalityAttribute.Alias:               {nationality},
+				iam.UGSpokenLanguagesAttribute.Alias:           {spokenLanguages},
+				iam.UGPreferredLanguageAttribute.Alias:         {preferredLanguage},
+				iam.UGPhysicalAddressAttribute.Alias:           {physicalAddress},
+				iam.PrimaryPhoneNumberAttribute.Alias:          {primaryPhoneNumber},
+				iam.SecondaryPhoneNumberAttribute.Alias:        {secondaryPhoneNumber},
+				iam.UGPreferredMeansOfContactAttribute.Alias:   {preferredMeansOfContact},
+				iam.UGRequireAnInterpreterAttribute.Alias:      {requireAnInterpreter},
 			},
 		},
 	}
@@ -87,13 +87,13 @@ func ugandaIndividual(
 	admin4 string,
 	admin5 string,
 ) iam.Individual {
-	individual.Attributes.Add(iam.UGIdentificationDateAttribute.ID, identificationDate)
-	individual.Attributes.Add(iam.UGIdentificationLocationAttribute.ID, identificationLocation)
-	individual.Attributes.Add(iam.UGIdentificationSourceAttribute.ID, identificationSource)
-	individual.Attributes.Add(iam.UGAdmin2Attribute.ID, admin2)
-	individual.Attributes.Add(iam.UGAdmin3Attribute.ID, admin3)
-	individual.Attributes.Add(iam.UGAdmin4Attribute.ID, admin4)
-	individual.Attributes.Add(iam.UGAdmin5Attribute.ID, admin5)
+	individual.Attributes.Add(iam.UGIdentificationDateAttribute.Alias, identificationDate)
+	individual.Attributes.Add(iam.UGIdentificationLocationAttribute.Alias, identificationLocation)
+	individual.Attributes.Add(iam.UGIdentificationSourceAttribute.Alias, identificationSource)
+	individual.Attributes.Add(iam.UGAdmin2Attribute.Alias, admin2)
+	individual.Attributes.Add(iam.UGAdmin3Attribute.Alias, admin3)
+	individual.Attributes.Add(iam.UGAdmin4Attribute.Alias, admin4)
+	individual.Attributes.Add(iam.UGAdmin5Attribute.Alias, admin5)
 	return individual
 }
 

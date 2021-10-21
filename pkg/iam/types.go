@@ -336,7 +336,7 @@ func (b *Individual) FindAge() *int {
 }
 
 func (b *Individual) String() string {
-	displayName, hasDisplayName := b.Attributes[DisplayNameAttribute.ID]
+	displayName, hasDisplayName := b.Attributes[DisplayNameAttribute.Alias]
 
 	if hasDisplayName {
 		return strings.ToUpper(displayName[0])
