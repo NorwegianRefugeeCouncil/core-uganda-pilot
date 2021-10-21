@@ -535,7 +535,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 
 }
 
-func (c CompletedOptions) CreateRouter(srv *Server) http.Handler {
+func (c CompletedOptions) CreateRouter(srv *Server) *mux.Router {
 	router := mux.NewRouter()
 	router.Use(middleware.UseLogging())
 	router.PathPrefix("/apis/attachments").Handler(srv.AttachmentServer)
@@ -544,9 +544,7 @@ func (c CompletedOptions) CreateRouter(srv *Server) http.Handler {
 	router.PathPrefix("/auth").Handler(srv.LoginServer)
 	router.PathPrefix("/apis/login").Handler(srv.LoginServer)
 	router.PathPrefix("/").Handler(srv.WebAppServer)
-	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
-		router.ServeHTTP(writer, request)
-	})
+	return router
 }
 
 func (c CompletedOptions) StartServer(server *Server) {
