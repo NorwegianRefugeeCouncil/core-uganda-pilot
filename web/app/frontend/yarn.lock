@@ -2437,6 +2437,7 @@ core-js-api-client@../client:
   version "0.0.1"
   dependencies:
     "@types/node" "^14.17.20"
+    lodash "^2.2.1"
     rxjs "^7.3.0"
     xhr2 "^0.2.1"
 
@@ -3924,6 +3925,11 @@ lodash.throttle@^4.1.1:
   version "4.1.1"
   resolved "https://registry.npmjs.org/lodash.throttle/-/lodash.throttle-4.1.1.tgz"
   integrity sha1-wj6RtxAkKscMN/HhzaknTMOb8vQ=
+
+lodash@^2.2.1:
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-2.4.2.tgz#fadd834b9683073da179b3eae6d9c0d15053f73e"
+  integrity sha1-+t2DS5aDBz2hebPq5tnA0VBT9z4=
 
 lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.3.0:
   version "4.17.21"
