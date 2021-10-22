@@ -1,9 +1,8 @@
 import {ViewStyle} from "react-native";
-import React, {RefCallback} from "react";
+import React from "react";
 import {Control as ControlType} from "core-js-api-client/lib/types/models";
 import TextInput from "./TextInput";
 import Switch from "./Switch";
-import RadioButtons from "./RadioButtons";
 import Select from "./Select";
 import CheckBox from "./Checkbox";
 import {Control, Controller} from "react-hook-form";
@@ -11,8 +10,9 @@ import {Control, Controller} from "react-hook-form";
 export type InputProps = {
     formControl: ControlType,
     style?: ViewStyle,
-    value?: any,
-    control: Control,
+    value: any,
+    onChange: any,
+    onBlur?: any,
 };
 
 type FormControlProps = {
@@ -36,7 +36,7 @@ const FormControl: React.FC<FormControlProps> = (
             name={name as '`${string}` | `${string}.${string}` | `${string}.${number}`'}
             control={control}
             defaultValue={value}
-            rules={{required: true}}
+            rules={formControl.validation}
             render={(
                 {
                     field: {onChange, onBlur, value, ref},
@@ -44,23 +44,14 @@ const FormControl: React.FC<FormControlProps> = (
                     formState,
                 }) => {
                 switch (formControl.type) {
-                    case 'radio':
-                        return (
-                            <RadioButtons
-                                formControl={formControl}
-                                control={control}
-                                value={value}
-                                style={style}
-                            />
-                        )
                     case 'checkbox':
                         return (
                             <CheckBox
                                 formControl={formControl}
                                 style={style}
                                 value={value}
-                                control={control}
-                            />
+                                onBlur={onBlur}
+                                onChange={onChange}/>
                         )
                     case 'boolean':
                         return (
@@ -68,8 +59,7 @@ const FormControl: React.FC<FormControlProps> = (
                                 formControl={formControl}
                                 style={style}
                                 value={value}
-                                control={control}
-                            />
+                                onChange={onChange}/>
                         )
                     case 'dropdown':
                         return (
@@ -77,8 +67,8 @@ const FormControl: React.FC<FormControlProps> = (
                                 formControl={formControl}
                                 style={style}
                                 value={value}
-                                control={control}
-                            />
+                                onBlur={onBlur}
+                                onChange={onChange}/>
                         )
                     default:
                         return (
@@ -86,7 +76,8 @@ const FormControl: React.FC<FormControlProps> = (
                                 formControl={formControl}
                                 style={style}
                                 value={value}
-                                control={control}
+                                onBlur={onBlur}
+                                onChange={onChange}
                             />
                         )
                 }

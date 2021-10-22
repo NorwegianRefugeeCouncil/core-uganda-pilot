@@ -9,7 +9,8 @@ const TextInput: React.FC<InputProps> = (
         formControl,
         style,
         value,
-        control
+        onChange,
+        onBlur,
     }) => {
 
     return (
@@ -25,7 +26,9 @@ const TextInput: React.FC<InputProps> = (
                 </Text>
             )}
             <TextInputRNP
+                onChangeText={onChange}
                 value={value}
+                onBlur={onBlur}
             />
         </View>
 

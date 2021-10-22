@@ -4,7 +4,7 @@ import {RadioButton, Text} from "react-native-paper";
 import {darkTheme} from "../../constants/theme";
 import {InputProps} from "./FormControl";
 
-const FormControl: React.FC<InputProps> = ({formControl}) => {
+const RadioButtons: React.FC<InputProps> = ({formControl}) => {
     const [checked, setChecked] = React.useState(formControl.value[0]);
     return (
         <View>
@@ -25,4 +25,4 @@ const FormControl: React.FC<InputProps> = ({formControl}) => {
     );
 };
 
-export default FormControl;
+export default RadioButtons;
