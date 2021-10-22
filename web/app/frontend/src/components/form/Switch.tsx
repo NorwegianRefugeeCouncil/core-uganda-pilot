@@ -29,7 +29,6 @@ const Switch: React.FC<InputProps> = (
                 onValueChange={onChange}
             />
         </View>
-
     );
 };
 

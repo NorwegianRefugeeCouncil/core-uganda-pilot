@@ -1,4 +1,4 @@
-import {ViewStyle} from "react-native";
+import {View, ViewStyle} from "react-native";
 import React from "react";
 import {Control as ControlType} from "core-js-api-client/lib/types/models";
 import TextInput from "./TextInput";
@@ -13,6 +13,10 @@ export type InputProps = {
     value: any,
     onChange: any,
     onBlur?: any,
+    error?: any,
+    invalid?: boolean,
+    isTouched?: boolean,
+    isDirty?: boolean
 };
 
 type FormControlProps = {
@@ -21,6 +25,7 @@ type FormControlProps = {
     style?: ViewStyle,
     value?: any,
     control: Control,
+    errors: object
 };
 
 const FormControl: React.FC<FormControlProps> = (
@@ -32,57 +37,62 @@ const FormControl: React.FC<FormControlProps> = (
         value,
     }) => {
     return (
-        <Controller
-            name={name as '`${string}` | `${string}.${string}` | `${string}.${number}`'}
-            control={control}
-            defaultValue={value}
-            rules={formControl.validation}
-            render={(
-                {
-                    field: {onChange, onBlur, value, ref},
-                    fieldState: {invalid, isTouched, isDirty, error},
-                    formState,
-                }) => {
-                switch (formControl.type) {
-                    case 'checkbox':
-                        return (
-                            <CheckBox
-                                formControl={formControl}
-                                style={style}
-                                value={value}
-                                onBlur={onBlur}
-                                onChange={onChange}/>
-                        )
-                    case 'boolean':
-                        return (
-                            <Switch
-                                formControl={formControl}
-                                style={style}
-                                value={value}
-                                onChange={onChange}/>
-                        )
-                    case 'dropdown':
-                        return (
-                            <Select
-                                formControl={formControl}
-                                style={style}
-                                value={value}
-                                onBlur={onBlur}
-                                onChange={onChange}/>
-                        )
-                    default:
-                        return (
-                            <TextInput
-                                formControl={formControl}
-                                style={style}
-                                value={value}
-                                onBlur={onBlur}
-                                onChange={onChange}
-                            />
-                        )
-                }
-            }}
-        />
+        <View style={{margin: 5}}>
+
+            <Controller
+                name={name as '`${string}` | `${string}.${string}` | `${string}.${number}`'}
+                control={control}
+                defaultValue={value}
+                rules={formControl.validation}
+                render={(
+                    {
+                        field: {onChange, onBlur, value, ref},
+                        fieldState,
+                        formState,
+                    }) => {
+                    switch (formControl.type) {
+                        case 'checkbox':
+                            return (
+                                <CheckBox
+                                    formControl={formControl}
+                                    style={style}
+                                    value={value}
+                                    onBlur={onBlur}
+                                    onChange={onChange}
+                                />
+                            )
+                        case 'boolean':
+                            return (
+                                <Switch
+                                    formControl={formControl}
+                                    style={style}
+                                    value={value}
+                                    onChange={onChange}/>
+                            )
+                        case 'dropdown':
+                            return (
+                                <Select
+                                    formControl={formControl}
+                                    style={style}
+                                    value={value}
+                                    onBlur={onBlur}
+                                    onChange={onChange}/>
+                            )
+                        default:
+                            return (
+                                <TextInput
+                                    formControl={formControl}
+                                    style={style}
+                                    value={value}
+                                    onBlur={onBlur}
+                                    onChange={onChange}
+                                    {...fieldState}
+                                />
+                            )
+                    }
+                }}
+            />
+        </View>
     )
 };
 

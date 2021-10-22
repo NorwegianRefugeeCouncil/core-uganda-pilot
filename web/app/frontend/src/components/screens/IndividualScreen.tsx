@@ -1,7 +1,7 @@
 import React from 'react';
 import {common, layout} from '../../styles';
-import {Button, ScrollView, TextInput, View} from 'react-native';
-import {Controller, useForm} from "react-hook-form";
+import {Button, ScrollView, View} from 'react-native';
+import {useForm} from "react-hook-form";
 import {Individual} from "../../../../client/src/types/models";
 import {Subject} from 'rxjs';
 import iamClient from "../../utils/clients";
@@ -21,15 +21,26 @@ const IndividualScreen: React.FC<any> = ({route}) => {
     let attributesSubject = new Subject([]);
     let individualsSubject = new Subject([]);
     let flatAttributes: { [p: string]: string } = {};
+    let submitData: { [p: string]: string[] } = {};
 
     const [isLoading, setIsLoading] = React.useState(true);
 
-    const {control, handleSubmit, watch, formState: {errors}, register, getValues} = useForm();
+    const {control, handleSubmit, formState} = useForm();
 
-    const onSubmit = (data: any) => {
-        console.log('SUBMITTING', data);
-        createIndividual(data);
+    const onSubmit = (data: string[]) => {
+        console.log('SUBMITTING', data)
+
+        _(data).forEach((value, key) => {
+            submitData[key] = [value];
+        });
+
+        createIndividual({
+            id,
+            attributes: submitData,
+            partyTypeIds: individual?.partyTypeIds || []
+        });
     };
+    // console.log('ERRORS', errors)
 
     React.useEffect(() => {
         attributesSubject.pipe(iamClient.PartyAttributeDefinitions().List()).subscribe(
@@ -67,57 +78,25 @@ const IndividualScreen: React.FC<any> = ({route}) => {
 
     return (
         <ScrollView>
-            {!isLoading &&
-            <View style={[layout.container, layout.body, common.darkBackground]}>
-
-
-                {/*<form onSubmit={handleSubmit(onSubmit)}>*/}
-                {attributes.map((a) =>
-                    // <Controller
-                    //     key={a.id}
-                    //     name={a.id as '`${string}` | `${string}.${string}` | `${string}.${number}`'}
-                    //     control={control}
-                    //     rules={a.formControl.validation}
-                    //     defaultValue={individual?.attributes[a.id] ? individual?.attributes[a.id] : undefined}
-                    //     render={({field: {onChange, onBlur, value, ref}}) => {
-                    //         return (
-                    //             <TextInput
-                    //                 onChangeText={onChange}
-                    //                 value={value}
-                    //                 onBlur={onBlur}
-                    //                 ref={ref}
-                    //             />
-                    //         )
-                    //     }}
-                    // />
-                    <FormControl
-                        key={a.id}
-                        formControl={a.formControl}
-                        style={{width: '100%'}}
-                        value={individual?.attributes[a.id]}
-                        control={control}
-                        name={a.id}
+            {!isLoading && (
+                <View style={[layout.container, layout.body, common.darkBackground]}>
+                    {attributes.map((a) =>
+                        <FormControl
+                            key={a.id}
+                            formControl={a.formControl}
+                            style={{width: '100%'}}
+                            value={individual?.attributes[a.id]}
+                            control={control}
+                            name={a.id}
+                            errors={formState.errors}
+                        />
+                    )}
+                    <Button
+                        title="Submit"
+                        onPress={handleSubmit(onSubmit)}
                     />
-
-                )}
-                {/*<Button title="Submit" onPress={handleSubmit(onSubmit)}/>*/}
-                {/*{attributes.map((a) =>*/}
-                {/*    <FormControl*/}
-                {/*        key={a.id}*/}
-                {/*        formControl={a.formControl}*/}
-                {/*        style={{width: '100%'}}*/}
-                {/*        value={individual?.attributes[a.id]}*/}
-                {/*        control={control}*/}
-                {/*        name={a.id}*/}
-                {/*    />*/}
-                {/*)}*/}
-                <Button title="Submit" onPress={(data) => {
-                    // console.log('ISFDPXVJOKsdlp;', getValues())
-                    onSubmit(getValues());
-                }}/>
-                {/*</form>*/}
-            </View>
-            }
+                </View>
+            )}
         </ScrollView>
     );
 };

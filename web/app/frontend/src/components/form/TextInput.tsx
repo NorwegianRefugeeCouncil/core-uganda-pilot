@@ -1,6 +1,6 @@
-import {TextInput as TextInputRNP, View} from "react-native";
+import {View} from "react-native";
 import React from "react";
-import {Text} from "react-native-paper";
+import {Text, TextInput as TextInputRNP} from "react-native-paper";
 import {darkTheme} from "../../constants/theme";
 import {InputProps} from "./FormControl";
 
@@ -11,7 +11,13 @@ const TextInput: React.FC<InputProps> = (
         value,
         onChange,
         onBlur,
+        error,
+        invalid,
+        isTouched,
+        isDirty
     }) => {
+
+    console.log(isDirty, isTouched, error)
 
     return (
         <View style={style}>
@@ -29,7 +35,13 @@ const TextInput: React.FC<InputProps> = (
                 onChangeText={onChange}
                 value={value}
                 onBlur={onBlur}
+                error={isTouched && isDirty && error}
             />
+            {isTouched && isDirty && error && (
+                <Text>
+                    {error.message == '' ? 'invalid' : error.message}
+                </Text>
+            )}
         </View>
 
     );

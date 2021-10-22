@@ -9,7 +9,7 @@ export function getIndividual(id: string) {
     return subject.next(id);
 }
 
-export function createIndividual(person: Individual) {
+export function createIndividual(individual: Individual) {
     subject.pipe(iamClient.Parties().Create()).subscribe(console.log);
-    return subject.next(person);
+    return subject.next(individual);
 }
