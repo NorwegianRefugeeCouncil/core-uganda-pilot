@@ -1,24 +1,21 @@
 import React from 'react';
-import {FAB, Text, Title} from 'react-native-paper';
+import {FAB, Title} from 'react-native-paper';
 import {layout} from '../../styles';
 import routes from '../../constants/routes';
-import {FlatList, Image, TouchableOpacity, View} from 'react-native';
+import {FlatList, Image, TouchableOpacity, View, Text} from 'react-native';
 import pngIndividual from '../../../assets/png/symbol_individuals.png';
 import theme from '../../constants/theme';
 
-type Individual = {
-    id: string,
-    name: string
+type TestIndividual = {
+    id: string
 }
 
-export const testIndividuals: Individual[] = [
+export const testIndividuals: TestIndividual[] = [
     {
-        id: 'c529d679-3bb6-4a20-8f06-c096f4d9adc1',
-        name: 'Person 1'
+        id: 'c529d679-3bb6-4a20-8f06-c096f4d9adc1'
     },
     {
-        id: 'c529d679-3bb6-4a20-8f06-c096f4d9adc2',
-        name: 'Person 2'
+        id: 'bbf539fd-ebaa-4438-ae4f-8aca8b327f42'
     }
 ];
 
@@ -41,7 +38,7 @@ const IndividualsListScreen: React.FC<any> = ({navigation}) => {
                             </View>
                             <View style={{justifyContent: 'center'}}>
                                 <Title>{index}</Title>
-                                <Text>{item.name}</Text>
+                                <Text>{item.id}</Text>
                             </View>
                         </View>
                     </TouchableOpacity>

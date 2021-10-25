@@ -34,7 +34,7 @@
       "barStyle": "dark-content"
     },
     "androidNavigationBar": {
-      "visible": "immersive"
+      "visible": "sticky-immersive"
     }
   }
 }

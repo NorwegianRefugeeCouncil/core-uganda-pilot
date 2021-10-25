@@ -7,6 +7,7 @@ import Select from "./Select";
 import CheckBox from "./Checkbox";
 import {Control, Controller} from "react-hook-form";
 
+// TODO: move & clean up types
 export type InputProps = {
     formControl: ControlType,
     style?: ViewStyle,
@@ -24,8 +25,8 @@ type FormControlProps = {
     formControl: ControlType,
     style?: ViewStyle,
     value?: any,
-    control: Control,
-    errors: object
+    control: Control<any, object>,
+    errors?: object
 };
 
 const FormControl: React.FC<FormControlProps> = (
@@ -37,10 +38,10 @@ const FormControl: React.FC<FormControlProps> = (
         value,
     }) => {
     return (
-        <View style={{margin: 5}}>
-
+        // TODO: apply errors to all input types
+        <View style={{margin: 10}}>
             <Controller
-                name={name as '`${string}` | `${string}.${string}` | `${string}.${number}`'}
+                name={name}
                 control={control}
                 defaultValue={value}
                 rules={formControl.validation}
@@ -67,7 +68,8 @@ const FormControl: React.FC<FormControlProps> = (
                                     formControl={formControl}
                                     style={style}
                                     value={value}
-                                    onChange={onChange}/>
+                                    onChange={onChange}
+                                />
                             )
                         case 'dropdown':
                             return (
@@ -76,7 +78,8 @@ const FormControl: React.FC<FormControlProps> = (
                                     style={style}
                                     value={value}
                                     onBlur={onBlur}
-                                    onChange={onChange}/>
+                                    onChange={onChange}
+                                />
                             )
                         default:
                             return (

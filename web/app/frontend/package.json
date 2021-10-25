@@ -8,32 +8,37 @@
     "eject": "node_modules/.bin/expo eject"
   },
   "dependencies": {
-    "@react-navigation/native": "^6.0.4",
-    "@react-navigation/stack": "^6.0.9",
+    "@react-navigation/native": "6.0.4",
+    "@react-navigation/stack": "6.0.9",
     "core-js-api-client": "../client",
-    "dotenv": "^10.0.0",
-    "expo": "~42.0.1",
-    "expo-constants": "~11.0.1",
-    "expo-status-bar": "~1.0.4",
-    "lodash": "^4.17.21",
+    "dotenv": "10.0.0",
+    "expo": "42.0.1",
+
+    "expo-constants": "11.0.1",
+    "expo-network": "3.2.0",
+    "expo-secure-store": "10.2.0",
+    "expo-status-bar": "1.0.4",
+    "lodash": "4.17.21",
     "react": "16.13.1",
-    "react-device-detect": "^2.0.1",
     "react-dom": "16.13.1",
-    "react-hook-form": "^7.17.4",
+    "react-hook-form": "7.17.4",
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
-    "react-native-gesture-handler": "^1.10.3",
-    "react-native-paper": "^4.9.2",
+    "react-native-gesture-handler": "1.10.3",
+    "react-native-paper": "4.9.2",
     "react-native-safe-area-context": "3.2.0",
-    "react-native-screens": "~3.4.0",
-    "react-native-web": "~0.13.12",
-    "rxjs": "^7.4.0"
+    "react-native-screens": "3.4.0",
+    "react-native-web": "0.13.12",
+    "rxjs": "7.4.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.0",
-    "@types/lodash": "^4.14.176",
-    "@types/react": "~16.9.35",
-    "@types/react-native": "~0.63.2",
+    "@babel/core": "7.9.0",
+    "@types/lodash": "4.14.176",
+    "@types/react": "16.9.35",
+    "@types/react-native": "0.63.2",
     "typescript": "~4.1.0"
+  },
+  "resolutions": {
+    "**/ua-parser-js": "0.7.28"
   },
   "private": true
 }

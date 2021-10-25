@@ -1,15 +1,15 @@
-import { View } from 'react-native';
-import { layout } from '../styles';
+import {View} from 'react-native';
+import {layout} from '../styles';
 import React from 'react';
 import NavigationBar from './NavigationBar';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
 import IndividualsListScreen from './screens/IndividualsListScreen';
 import HomeScreen from './screens/HomeScreen';
 import IndividualScreen from './screens/IndividualScreen';
 import routes from '../constants/routes';
 import CasesScreen from './screens/CasesScreen';
-import { NavigationTheme } from '../constants/theme';
+import {NavigationTheme} from '../constants/theme';
 import host from "../constants/host";
 
 export default function Router() {
@@ -58,7 +58,7 @@ export default function Router() {
                             }}
                         />
                     </Stack.Group>
-                    <Stack.Group screenOptions={{ presentation: 'modal' }}>
+                    <Stack.Group>
                         <Stack.Screen
                             name={routes.individual.name}
                             component={IndividualScreen}

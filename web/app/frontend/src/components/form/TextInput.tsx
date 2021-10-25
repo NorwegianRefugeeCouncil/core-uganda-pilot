@@ -17,7 +17,7 @@ const TextInput: React.FC<InputProps> = (
         isDirty
     }) => {
 
-    console.log(isDirty, isTouched, error)
+    // console.log(isDirty, isTouched, error)
 
     return (
         <View style={style}>
