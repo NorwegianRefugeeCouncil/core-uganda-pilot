@@ -26,7 +26,13 @@ const defaults = {
             formData: {} as FormData,
             done: false
         },
-        caseListOptions: null,
+        caseListOptions: {
+            partyId: ['TESTPARTYID'],
+            teamId: ['TESTTEAMID'],
+            caseTypeId: ['TESTCASETYPEID'],
+            parentId: 'TESTPARTENTID',
+            done: false
+        },
         caseGetRequestOptions: {
             url: 'testscheme://testhost/apis/cms/v1/cases/TESTCASEID',
             headers: {
@@ -43,6 +49,20 @@ const defaults = {
         },
         caseListRequestOptions: {
             url: 'testscheme://testhost/apis/cms/v1/cases',
+            headers: {
+                'X-Authenticated-User-Subject': ['test@user.email'],
+                'Content-Type': ['application/json'],
+                Accept: ['application/json']
+            },
+            method: 'GET',
+            async: true,
+            timeout: 0,
+            crossDomain: true,
+            withCredentials: false,
+            body: undefined
+        },
+        caseListRequestOptionsWithQueryParams: {
+            url: 'testscheme://testhost/apis/cms/v1/cases?partyId=TESTPARTYID&teamId=TESTTEAMID&caseTypeId=TESTCASETYPEID&parentId=TESTPARTENTID&done=false',
             headers: {
                 'X-Authenticated-User-Subject': ['test@user.email'],
                 'Content-Type': ['application/json'],
@@ -115,7 +135,10 @@ const defaults = {
             form: {} as Form,
             intakeCaseType: false
         },
-        casetypeListOptions: null,
+        casetypeListOptions: {
+            partyTypeId: ['TESTPARTYTYPEID'],
+            teamId: ['TESTTEAMID']
+        },
         casetypeGetRequestOptions: {
             url: 'testscheme://testhost/apis/cms/v1/casetypes/TESTCASETYPEID',
             headers: {
@@ -132,6 +155,20 @@ const defaults = {
         },
         casetypeListRequestOptions: {
             url: 'testscheme://testhost/apis/cms/v1/casetypes',
+            headers: {
+                'X-Authenticated-User-Subject': ['test@user.email'],
+                'Content-Type': ['application/json'],
+                Accept: ['application/json']
+            },
+            method: 'GET',
+            async: true,
+            timeout: 0,
+            crossDomain: true,
+            withCredentials: false,
+            body: undefined
+        },
+        casetypeListRequestOptionsWithQueryParams: {
+            url: 'testscheme://testhost/apis/cms/v1/casetypes?partyTypeId=TESTPARTYTYPEID&teamId=TESTTEAMID',
             headers: {
                 'X-Authenticated-User-Subject': ['test@user.email'],
                 'Content-Type': ['application/json'],
@@ -374,7 +411,9 @@ const defaults = {
             documentNumber: 'TESTDOCUMENTNUMBER',
             identificationDocumentTypeId: 'TESTIDENTIFICATIONDOCUMENTTYPE',
         },
-        identificationdocumentListOptions: null,
+        identificationdocumentListOptions: {
+            partyId: ['TESTPARTYID']
+        },
         identificationdocumentGetRequestOptions: {
             url: 'testscheme://testhost/apis/iam/v1/identificationdocuments/TESTIDENTIFICATIONDOCUMENTID',
             headers: {
@@ -405,6 +444,20 @@ const defaults = {
         },
         identificationdocumentListRequestOptions: {
             url: 'testscheme://testhost/apis/iam/v1/identificationdocuments',
+            headers: {
+                'X-Authenticated-User-Subject': ['test@user.email'],
+                'Content-Type': ['application/json'],
+                Accept: ['application/json']
+            },
+            method: 'GET',
+            async: true,
+            timeout: 0,
+            crossDomain: true,
+            withCredentials: false,
+            body: undefined
+        },
+        identificationdocumentListRequestOptionsWithQueryParams: {
+            url: 'testscheme://testhost/apis/iam/v1/identificationdocuments?partyId=TESTPARTYID',
             headers: {
                 'X-Authenticated-User-Subject': ['test@user.email'],
                 'Content-Type': ['application/json'],
@@ -533,7 +586,14 @@ const defaults = {
             ],
             attributes: {'TESTATTRIBUTEKEY': ['TESTATTRIBUTEVALUE']}
         },
-        individualListOptions: null,
+        individualListOptions: {
+            partyTypeId: ['TESTPARTYTYPEID'],
+            attributes: {'TESTATTRIBUTEKEY': 'TESTATTRIBUTEVALUE'},
+            searchParam: 'TESTSEARCHPARAM',
+            page: 0,
+            perPage: 0,
+            sort: 'TESTSORT'
+        },
         individualGetRequestOptions: {
             url: 'testscheme://testhost/apis/iam/v1/individuals/TESTINDIVIDUALID',
             headers: {
@@ -550,6 +610,20 @@ const defaults = {
         },
         individualListRequestOptions: {
             url: 'testscheme://testhost/apis/iam/v1/individuals',
+            headers: {
+                'X-Authenticated-User-Subject': ['test@user.email'],
+                'Content-Type': ['application/json'],
+                Accept: ['application/json']
+            },
+            method: 'GET',
+            async: true,
+            timeout: 0,
+            crossDomain: true,
+            withCredentials: false,
+            body: undefined
+        },
+        individualListRequestOptionsWithQueryParams: {
+            url: 'testscheme://testhost/apis/iam/v1/individuals?partyTypeId=TESTPARTYTYPEID&attributes[TESTATTRIBUTEKEY]=TESTATTRIBUTEVALUE&searchParam=TESTSEARCHPARAM&page=0&perPage=0&sort=TESTSORT',
             headers: {
                 'X-Authenticated-User-Subject': ['test@user.email'],
                 'Content-Type': ['application/json'],
@@ -609,7 +683,10 @@ const defaults = {
             teamId: 'TESTTEAMID',
             individualId: 'TESTINDIVIDUALID'
         },
-        membershipListOptions: null,
+        membershipListOptions: {
+            individualId: 'TESTINDIVIDUALID',
+            teamId: 'TESTTEAMID'
+        },
         membershipGetRequestOptions: {
             url: 'testscheme://testhost/apis/iam/v1/memberships/TESTMEMBERSHIPID',
             headers: {
@@ -626,6 +703,20 @@ const defaults = {
         },
         membershipListRequestOptions: {
             url: 'testscheme://testhost/apis/iam/v1/memberships',
+            headers: {
+                'X-Authenticated-User-Subject': ['test@user.email'],
+                'Content-Type': ['application/json'],
+                Accept: ['application/json']
+            },
+            method: 'GET',
+            async: true,
+            timeout: 0,
+            crossDomain: true,
+            withCredentials: false,
+            body: undefined
+        },
+        membershipListRequestOptionsWithQueryParams: {
+            url: 'testscheme://testhost/apis/iam/v1/memberships?individualId=TESTINDIVIDUALID&teamId=TESTTEAMID',
             headers: {
                 'X-Authenticated-User-Subject': ['test@user.email'],
                 'Content-Type': ['application/json'],
@@ -681,7 +772,10 @@ const defaults = {
             countryId: 'TESTCOUNTRYID',
             teamId: 'TESTTEAMID'
         },
-        nationalityListOptions: null,
+        nationalityListOptions: {
+            teamId: 'TESTTEAMID',
+            countryId: 'TESTCOUNTRYID'
+        },
         nationalityGetRequestOptions: {
             url: 'testscheme://testhost/apis/iam/v1/nationalities/TESTNATIONALITYID',
             headers: {
@@ -698,6 +792,20 @@ const defaults = {
         },
         nationalityListRequestOptions: {
             url: 'testscheme://testhost/apis/iam/v1/nationalities',
+            headers: {
+                'X-Authenticated-User-Subject': ['test@user.email'],
+                'Content-Type': ['application/json'],
+                Accept: ['application/json']
+            },
+            method: 'GET',
+            async: true,
+            timeout: 0,
+            crossDomain: true,
+            withCredentials: false,
+            body: undefined
+        },
+        nationalityListRequestOptionsWithQueryParams: {
+            url: 'testscheme://testhost/apis/iam/v1/nationalities?teamId=TESTTEAMID&countryId=TESTCOUNTRYID',
             headers: {
                 'X-Authenticated-User-Subject': ['test@user.email'],
                 'Content-Type': ['application/json'],
@@ -755,7 +863,10 @@ const defaults = {
             isPii: false,
             formControl: {} as Control
         },
-        partyattributedefinitionListOptions: null,
+        partyattributedefinitionListOptions: {
+            partyTypeId: ['TESTPARTYTYPEID'],
+            countryId: ['TESTCOUNTRYID']
+        },
         partyattributedefinitionGetRequestOptions: {
             url: 'testscheme://testhost/apis/iam/v1/attributes/TESTPARTYATTRIBUTEDEFINITIONID',
             headers: {
@@ -772,6 +883,20 @@ const defaults = {
         },
         partyattributedefinitionListRequestOptions: {
             url: 'testscheme://testhost/apis/iam/v1/attributes',
+            headers: {
+                'X-Authenticated-User-Subject': ['test@user.email'],
+                'Content-Type': ['application/json'],
+                Accept: ['application/json']
+            },
+            method: 'GET',
+            async: true,
+            timeout: 0,
+            crossDomain: true,
+            withCredentials: false,
+            body: undefined
+        },
+        partyattributedefinitionListRequestOptionsWithQueryParams: {
+            url: 'testscheme://testhost/apis/iam/v1/attributes?partyTypeId=TESTPARTYTYPEID&countryId=TESTCOUNTRYID',
             headers: {
                 'X-Authenticated-User-Subject': ['test@user.email'],
                 'Content-Type': ['application/json'],
@@ -833,7 +958,10 @@ const defaults = {
             ],
             attributes: {'TESTATTRIBUTEKEY': ['TESTATTRIBUTEVALUE']}
         },
-        partyListOptions: null,
+        partyListOptions: {
+            partyTypeId: 'TESTPARTYTYPEID',
+            searchParam: 'TESTSEARCHPARAM'
+        },
         partyGetRequestOptions: {
             url: 'testscheme://testhost/apis/iam/v1/parties/TESTPARTYID',
             headers: {
@@ -850,6 +978,20 @@ const defaults = {
         },
         partyListRequestOptions: {
             url: 'testscheme://testhost/apis/iam/v1/parties',
+            headers: {
+                'X-Authenticated-User-Subject': ['test@user.email'],
+                'Content-Type': ['application/json'],
+                Accept: ['application/json']
+            },
+            method: 'GET',
+            async: true,
+            timeout: 0,
+            crossDomain: true,
+            withCredentials: false,
+            body: undefined
+        },
+        partyListRequestOptionsWithQueryParams: {
+            url: 'testscheme://testhost/apis/iam/v1/parties?partyTypeId=TESTPARTYTYPEID&searchParam=TESTSEARCHPARAM',
             headers: {
                 'X-Authenticated-User-Subject': ['test@user.email'],
                 'Content-Type': ['application/json'],
@@ -982,7 +1124,12 @@ const defaults = {
             firstParty: 'TESTFIRSTPARTY',
             secondParty: 'TESTSECONDPARTY'
         },
-        relationshipListOptions: null,
+        relationshipListOptions: {
+            relationshipTypeId: 'TESTRELATIONSHIPTYPEID',
+            firstPartyId: 'TESTFIRSTPARTYID',
+            secondPartyId: 'TESTSECONDPARTYID',
+            eitherPartyId: 'TESTEITHERPARTYID'
+        },
         relationshipGetRequestOptions: {
             url: 'testscheme://testhost/apis/iam/v1/relationships/TESTRELATIONSHIPID',
             headers: {
@@ -1013,6 +1160,20 @@ const defaults = {
         },
         relationshipListRequestOptions: {
             url: 'testscheme://testhost/apis/iam/v1/relationships',
+            headers: {
+                'X-Authenticated-User-Subject': ['test@user.email'],
+                'Content-Type': ['application/json'],
+                Accept: ['application/json']
+            },
+            method: 'GET',
+            async: true,
+            timeout: 0,
+            crossDomain: true,
+            withCredentials: false,
+            body: undefined
+        },
+        relationshipListRequestOptionsWithQueryParams: {
+            url: 'testscheme://testhost/apis/iam/v1/relationships?relationshipTypeId=TESTRELATIONSHIPTYPEID&firstPartyId=TESTFIRSTPARTYID&secondPartyId=TESTSECONDPARTYID&eitherPartyId=TESTEITHERPARTYID',
             headers: {
                 'X-Authenticated-User-Subject': ['test@user.email'],
                 'Content-Type': ['application/json'],
@@ -1280,6 +1441,28 @@ describe('Unit Tests: Case Management System Client Set, Request Creation', () =
                 subject.pipe(caseListClient.List()).subscribe((kase) => {
                     done()
                 })
+                subject.next(defaults.global.nullListOptions)
+            })
+        })
+
+        describe('When making a request to list cases, with list options', () => {
+            before(() => {
+                caseListClient = init((): OperatorFunction<Request, Response> => {
+                    return source => {
+                        return source.pipe(
+                            switchMap(req => {
+                                let ro = prepareRequestOptions(req as Request)
+                                expect(ro).to.deep.equal(defaults.cases.caseListRequestOptionsWithQueryParams)
+                                return of(new Response(defaults.cases.case))
+                            })
+                        )
+                    }
+                })
+            })
+            it('it should correctly a build list request with query parameters', (done) => {
+                subject.pipe(caseListClient.List()).subscribe((kase) => {
+                    done()
+                })
                 subject.next(defaults.cases.caseListOptions)
             })
         })
@@ -1332,111 +1515,133 @@ describe('Unit Tests: Case Management System Client Set, Request Creation', () =
     describe('While using the Case Types Client', () => {
         let subject
         let cmsClient
-        let caseGetClient
-        let caseUpdateClient
-        let caseCreateClient
-        let caseListClient
-        let caseId
+        let caseTypeGetClient
+        let caseTypeUpdateClient
+        let caseTypeCreateClient
+        let caseTypeListClient
+        let caseTypeId
 
         // sets up test variables and injects mock execute function
         const init = (execute: () => OperatorFunction<Request, Response>) => {
-            caseId = defaults.cases.case.id
+            caseTypeId = defaults.casetypes.casetype.id
             subject = new Subject()
             cmsClient = new CMSClient(
                 defaults.global.scheme,
                 defaults.global.host,
                 defaults.global.headers
             )
-            let client = cmsClient.Cases()
+            let client = cmsClient.CaseTypes()
             client.execute = execute
             return client
         }
 
-        describe('When making a request to get a case', () => {
+        describe('When making a request to get a case type', () => {
             before(() => {
-                caseGetClient = init((): OperatorFunction<Request, Response> => {
+                caseTypeGetClient = init((): OperatorFunction<Request, Response> => {
                     return source => {
                         return source.pipe(
                             switchMap(req => {
                                 let ro = prepareRequestOptions(req as Request)
-                                expect(ro).to.deep.equal(defaults.cases.caseGetRequestOptions)
-                                return of(new Response(defaults.cases.case))
+                                expect(ro).to.deep.equal(defaults.casetypes.casetypeGetRequestOptions)
+                                return of(new Response(defaults.casetypes.casetype))
                             })
                         )
                     }
                 })
             })
             it('it should correctly build a get request', (done) => {
-                subject.pipe(caseGetClient.Get()).subscribe((kase) => {
+                subject.pipe(caseTypeGetClient.Get()).subscribe((casetype) => {
                     done()
                 })
-                subject.next(caseId)
+                subject.next(caseTypeId)
             })
         })
 
-        describe('When making a request to list cases', () => {
+        describe('When making a request to list case types', () => {
             before(() => {
-                caseListClient = init((): OperatorFunction<Request, Response> => {
+                caseTypeListClient = init((): OperatorFunction<Request, Response> => {
                     return source => {
                         return source.pipe(
                             switchMap(req => {
                                 let ro = prepareRequestOptions(req as Request)
-                                expect(ro).to.deep.equal(defaults.cases.caseListRequestOptions)
-                                return of(new Response(defaults.cases.case))
+                                expect(ro).to.deep.equal(defaults.casetypes.casetypeListRequestOptions)
+                                return of(new Response(defaults.casetypes.casetype))
                             })
                         )
                     }
                 })
             })
             it('it should correctly a build list request', (done) => {
-                subject.pipe(caseListClient.List()).subscribe((kase) => {
+                subject.pipe(caseTypeListClient.List()).subscribe((casetype) => {
                     done()
                 })
-                subject.next(defaults.cases.caseListOptions)
+                subject.next(defaults.global.nullListOptions)
             })
         })
 
-        describe('When making a request to update a case', () => {
+        describe('When making a request to list case types, with list options', () => {
             before(() => {
-                caseUpdateClient = init((): OperatorFunction<Request, Response> => {
+                caseTypeListClient = init((): OperatorFunction<Request, Response> => {
                     return source => {
                         return source.pipe(
                             switchMap(req => {
                                 let ro = prepareRequestOptions(req as Request)
-                                expect(ro).to.deep.equal(defaults.cases.caseUpdateRequestOptions)
-                                return of(new Response(defaults.cases.case))
+                                expect(ro).to.deep.equal(defaults.casetypes.casetypeListRequestOptionsWithQueryParams)
+                                return of(new Response(defaults.casetypes.casetype))
+                            })
+                        )
+                    }
+                })
+            })
+            it('it should correctly a build list request with query parameters', (done) => {
+                subject.pipe(caseTypeListClient.List()).subscribe((casetype) => {
+                    done()
+                })
+                subject.next(defaults.casetypes.casetypeListOptions)
+            })
+        })
+
+        describe('When making a request to update a case type', () => {
+            before(() => {
+                caseTypeUpdateClient = init((): OperatorFunction<Request, Response> => {
+                    return source => {
+                        return source.pipe(
+                            switchMap(req => {
+                                let ro = prepareRequestOptions(req as Request)
+                                expect(ro).to.deep.equal(defaults.casetypes.casetypeUpdateRequestOptions)
+                                return of(new Response(defaults.casetypes.casetype))
                             })
                         )
                     }
                 })
             })
             it('it should correctly build an update request', (done) => {
-                subject.pipe(caseUpdateClient.Update()).subscribe((kase) => {
+                subject.pipe(caseTypeUpdateClient.Update()).subscribe((casetype) => {
                     done()
                 })
-                subject.next(defaults.cases.case)
+                subject.next(defaults.casetypes.casetype)
             })
         })
 
-        describe('When making a request to create a case', () => {
+        describe('When making a request to create a case type', () => {
             before(() => {
-                caseCreateClient = init((): OperatorFunction<Request, Response> => {
+                caseTypeCreateClient = init((): OperatorFunction<Request, Response> => {
                     return source => {
                         return source.pipe(
                             switchMap(req => {
                                 let ro = prepareRequestOptions(req as Request)
-                                expect(ro).to.deep.equal(defaults.cases.caseCreateRequestOptions)
-                                return of(new Response(defaults.cases.case))
+                                expect(ro).to.deep.equal(defaults.casetypes.casetypeCreateRequestOptions)
+                                return of(new Response(defaults.casetypes.casetype))
                             })
                         )
                     }
                 })
             })
             it('it should correctly build a create request', (done) => {
-                subject.pipe(caseCreateClient.Create()).subscribe((kase) => {
+                subject.pipe(caseTypeCreateClient.Create()).subscribe((casetype) => {
                     done()
                 })
-                subject.next(defaults.cases.case)
+                subject.next(defaults.casetypes.casetype)
             })
         })
     })
@@ -1776,6 +1981,28 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                 subject.pipe(identificationDocumentListClient.List()).subscribe((identificationdocument) => {
                     done()
                 })
+                subject.next(defaults.global.nullListOptions)
+            })
+        })
+
+        describe('When making a request to list identification documents, with list options', () => {
+            before(() => {
+                identificationDocumentListClient = init((): OperatorFunction<Request, Response> => {
+                    return source => {
+                        return source.pipe(
+                            switchMap(req => {
+                                let ro = prepareRequestOptions(req as Request)
+                                expect(ro).to.deep.equal(defaults.identificationdocuments.identificationdocumentListRequestOptionsWithQueryParams)
+                                return of(new Response(defaults.identificationdocuments.identificationdocument))
+                            })
+                        )
+                    }
+                })
+            })
+            it('it should correctly a build list request with query parameters', (done) => {
+                subject.pipe(identificationDocumentListClient.List()).subscribe((identificationdocument) => {
+                    done()
+                })
                 subject.next(defaults.identificationdocuments.identificationdocumentListOptions)
             })
         })
@@ -2022,6 +2249,50 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                 subject.pipe(individualListClient.List()).subscribe((individual) => {
                     done()
                 })
+                subject.next(defaults.global.nullListOptions)
+            })
+        })
+
+        describe('When making a request to list individuals', () => {
+            before(() => {
+                individualListClient = init((): OperatorFunction<Request, Response> => {
+                    return source => {
+                        return source.pipe(
+                            switchMap(req => {
+                                let ro = prepareRequestOptions(req as Request)
+                                expect(ro).to.deep.equal(defaults.individuals.individualListRequestOptions)
+                                return of(new Response(defaults.individuals.individual))
+                            })
+                        )
+                    }
+                })
+            })
+            it('it should correctly a build list request', (done) => {
+                subject.pipe(individualListClient.List()).subscribe((individual) => {
+                    done()
+                })
+                subject.next(defaults.global.nullListOptions)
+            })
+        })
+
+        describe('When making a request to list individuals, with list options', () => {
+            before(() => {
+                individualListClient = init((): OperatorFunction<Request, Response> => {
+                    return source => {
+                        return source.pipe(
+                            switchMap(req => {
+                                let ro = prepareRequestOptions(req as Request)
+                                expect(ro).to.deep.equal(defaults.individuals.individualListRequestOptionsWithQueryParams)
+                                return of(new Response(defaults.individuals.individual))
+                            })
+                        )
+                    }
+                })
+            })
+            it('it should correctly a build list request with query parameters', (done) => {
+                subject.pipe(individualListClient.List()).subscribe((individual) => {
+                    done()
+                })
                 subject.next(defaults.individuals.individualListOptions)
             })
         })
@@ -2131,6 +2402,28 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                 })
             })
             it('it should correctly a build list request', (done) => {
+                subject.pipe(membershipListClient.List()).subscribe((membership) => {
+                    done()
+                })
+                subject.next(defaults.global.nullListOptions)
+            })
+        })
+
+        describe('When making a request to list memberships, with list options', () => {
+            before(() => {
+                membershipListClient = init((): OperatorFunction<Request, Response> => {
+                    return source => {
+                        return source.pipe(
+                            switchMap(req => {
+                                let ro = prepareRequestOptions(req as Request)
+                                expect(ro).to.deep.equal(defaults.memberships.membershipListRequestOptionsWithQueryParams)
+                                return of(new Response(defaults.memberships.membership))
+                            })
+                        )
+                    }
+                })
+            })
+            it('it should correctly a build list request with query parameters', (done) => {
                 subject.pipe(membershipListClient.List()).subscribe((membership) => {
                     done()
                 })
@@ -2246,6 +2539,28 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
                 subject.pipe(nationalityListClient.List()).subscribe((nationality) => {
                     done()
                 })
+                subject.next(defaults.global.nullListOptions)
+            })
+        })
+
+        describe('When making a request to list nationalities, with list options', () => {
+            before(() => {
+                nationalityListClient = init((): OperatorFunction<Request, Response> => {
+                    return source => {
+                        return source.pipe(
+                            switchMap(req => {
+                                let ro = prepareRequestOptions(req as Request)
+                                expect(ro).to.deep.equal(defaults.nationalities.nationalityListRequestOptionsWithQueryParams)
+                                return of(new Response(defaults.nationalities.nationality))
+                            })
+                        )
+                    }
+                })
+            })
+            it('it should correctly a build list request with query parameters', (done) => {
+                subject.pipe(nationalityListClient.List()).subscribe((nationality) => {
+                    done()
+                })
                 subject.next(defaults.nationalities.nationalityListOptions)
             })
         })
@@ -2272,7 +2587,7 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
             })
         })
 
-        describe('When making a request to create a membership', () => {
+        describe('When making a request to create a nationality', () => {
             before(() => {
                 nationalityCreateClient = init((): OperatorFunction<Request, Response> => {
                     return source => {
@@ -2356,6 +2671,28 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
             })
             it('it should correctly a build list request', (done) => {
                 subject.pipe(partyattributedefinitionListClient.List()).subscribe((partyattributedefinition) => {
+                    done()
+                })
+                subject.next(defaults.global.nullListOptions)
+            })
+        })
+
+        describe('When making a request to list party attribute definitions, with list options', () => {
+            before(() => {
+                partyattributedefinitionListClient = init((): OperatorFunction<Request, Response> => {
+                    return source => {
+                        return source.pipe(
+                            switchMap(req => {
+                                let ro = prepareRequestOptions(req as Request)
+                                expect(ro).to.deep.equal(defaults.attributes.partyattributedefinitionListRequestOptionsWithQueryParams)
+                                return of(new Response(defaults.attributes.partyattributedefinition))
+                            })
+                        )
+                    }
+                })
+            })
+            it('it should correctly a build list request with query parameters', (done) => {
+                subject.pipe(partyattributedefinitionListClient.List()).subscribe((partyattributedefinitions) => {
                     done()
                 })
                 subject.next(defaults.attributes.partyattributedefinitionListOptions)
@@ -2468,6 +2805,28 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
             })
             it('it should correctly a build list request', (done) => {
                 subject.pipe(partyListClient.List()).subscribe((party) => {
+                    done()
+                })
+                subject.next(defaults.global.nullListOptions)
+            })
+        })
+
+        describe('When making a request to list parties, with list options', () => {
+            before(() => {
+                partyListClient = init((): OperatorFunction<Request, Response> => {
+                    return source => {
+                        return source.pipe(
+                            switchMap(req => {
+                                let ro = prepareRequestOptions(req as Request)
+                                expect(ro).to.deep.equal(defaults.parties.partyListRequestOptionsWithQueryParams)
+                                return of(new Response(defaults.parties.party))
+                            })
+                        )
+                    }
+                })
+            })
+            it('it should correctly a build list request with query parameters', (done) => {
+                subject.pipe(partyListClient.List()).subscribe((parties) => {
                     done()
                 })
                 subject.next(defaults.parties.partyListOptions)
@@ -2693,6 +3052,28 @@ describe('Unit Tests: Identity & Access Management Client Set, Request Creation'
             })
             it('it should correctly a build list request', (done) => {
                 subject.pipe(relationshipListClient.List()).subscribe((relationship) => {
+                    done()
+                })
+                subject.next(defaults.global.nullListOptions)
+            })
+        })
+
+        describe('When making a request to list relationships, with list options', () => {
+            before(() => {
+                relationshipListClient = init((): OperatorFunction<Request, Response> => {
+                    return source => {
+                        return source.pipe(
+                            switchMap(req => {
+                                let ro = prepareRequestOptions(req as Request)
+                                expect(ro).to.deep.equal(defaults.relationships.relationshipListRequestOptionsWithQueryParams)
+                                return of(new Response(defaults.relationships.relationship))
+                            })
+                        )
+                    }
+                })
+            })
+            it('it should correctly a build list request with query parameters', (done) => {
+                subject.pipe(relationshipListClient.List()).subscribe((relationships) => {
                     done()
                 })
                 subject.next(defaults.relationships.relationshipListOptions)
