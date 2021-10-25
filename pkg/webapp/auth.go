@@ -137,7 +137,7 @@ func (s *Server) dangerouslySetAuthenticatedUserUsingEmail(w http.ResponseWriter
 
 	authUsers, err := s.iamAdminClient.Parties().Search(ctx, iam2.PartySearchOptions{
 		Attributes: map[string]string{
-			iam2.EMailAttribute.ID: authUserEmail,
+			iam2.EMailAttribute.Alias: authUserEmail,
 		},
 	})
 	if err != nil {
