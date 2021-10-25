@@ -552,7 +552,7 @@ func (s *Server) Individual(w http.ResponseWriter, req *http.Request) {
 
 	for _, attribute := range attrs.Items {
 		ctrl := attribute.FormControl
-		ctrl.Value = individual.GetAttribute(attribute.ID)
+		ctrl.Value = individual.GetAttribute(attribute.Alias)
 		attributes.Controls = append(attributes.Controls, ctrl)
 	}
 
@@ -604,8 +604,8 @@ func sumbittedFormFromErrors(errorList *validation.ErrorList, attributes *iam.Pa
 	var controls []form.Control
 
 	for _, attribute := range attributes.Items {
-		errs := errorList.FindFamily(attribute.ID)
-		value := values.Get(attribute.ID)
+		errs := errorList.FindFamily(attribute.Alias)
+		value := values.Get(attribute.Alias)
 		if len(*errs) > 0 && !shouldIgnoreValidationError(attribute, []string{value}) {
 			control := attribute.FormControl
 			control.Errors = errs
@@ -679,7 +679,7 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDe
 
 	for _, attribute := range attrs.Items {
 		value := values[attribute.FormControl.Name]
-		attributeMap[attribute.ID] = value
+		attributeMap[attribute.Alias] = value
 	}
 
 	individual.Attributes = attributeMap
@@ -693,19 +693,19 @@ func (s *Server) PostIndividual(ctx context.Context, attrs *iam.PartyAttributeDe
 	var rels = []*RelationshipEntry{}
 
 	f := req.Form
-	for attrID, value := range f {
+	for attrAlias, value := range f {
 		// Retrieve party relationships
-		if strings.HasPrefix(attrID, "relationships[") {
+		if strings.HasPrefix(attrAlias, "relationships[") {
 
-			keyParts := strings.Split(attrID, ".")
+			keyParts := strings.Split(attrAlias, ".")
 			if len(keyParts) != 2 {
-				err := fmt.Errorf("unexpected form value key: %s", attrID)
+				err := fmt.Errorf("unexpected form value key: %s", attrAlias)
 
 				return nil, err
 			}
 
 			if !strings.HasSuffix(keyParts[0], "]") {
-				err := fmt.Errorf("unexpected form value key: %s", attrID)
+				err := fmt.Errorf("unexpected form value key: %s", attrAlias)
 
 				return nil, err
 			}
