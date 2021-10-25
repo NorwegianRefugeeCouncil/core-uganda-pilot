@@ -42,7 +42,11 @@ function App() {
                 while (stmt.step()) {
                     console.log(stmt.getAsObject())
                 }
-                db.run("INSERT INTO users (id) VALUES (101);").run("INSERT INTO users (id) VALUES (102);")
+                for (let i = 0; i < 10000; i++) {
+                    db.run("INSERT INTO users (id) VALUES (" + i + ");")
+                    log.info("inserted entry " + i)
+                }
+
             } catch (err) {
                 console.log(err.toString())
             }
