@@ -49,7 +49,10 @@ func (r recordStore) Get(ctx context.Context, recordRef types.RecordRef) (*types
 		return nil, meta.NewNotFound(meta.GroupResource{
 			Group:    "nrc.no",
 			Resource: "records",
-		}, fmt.Sprintf("%s/%s/%s"))
+		}, fmt.Sprintf("%s/%s/%s",
+			recordRef.DatabaseID,
+			recordRef.FormID,
+			recordRef.ID))
 	}
 
 	query := strings.Builder{}

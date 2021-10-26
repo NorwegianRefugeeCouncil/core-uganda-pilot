@@ -197,6 +197,7 @@ const mapFields = (state: FormerState, fields: FormField[]): FieldDefinition[] =
             name: field.name,
             required: field.required,
             code: field.code,
+            key: field.key
         })
 
     }
@@ -218,7 +219,7 @@ function selectFormDefinition(databaseId: string | undefined, folderId: string |
                 name: rootForm.name,
                 id: "",
                 fields: mapFields(state, rootForm.fields),
-                code: ""
+                code: "",
             }
         } catch (err) {
             return undefined
@@ -320,6 +321,7 @@ export const formerSlice = createSlice({
             if (!fieldForm) {
                 return
             }
+            fieldForm.field.required = true
             fieldForm.field.key = action.payload.isKey
         },
         setFieldName(state, action: PayloadAction<{ fieldId: string, name: string }>) {

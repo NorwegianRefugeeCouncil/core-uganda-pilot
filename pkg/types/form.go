@@ -3,17 +3,17 @@ package types
 import "fmt"
 
 type FormDefinition struct {
-	ID         string             `json:"id"`
-	Code       string             `json:"code"`
-	DatabaseID string             `json:"databaseId,omitempty"`
-	FolderID   string             `json:"folderId"`
-	Name       string             `json:"name,omitempty"`
-	Fields     []*FieldDefinition `json:"fields,omitempty"`
+	ID         string           `json:"id"`
+	Code       string           `json:"code"`
+	DatabaseID string           `json:"databaseId,omitempty"`
+	FolderID   string           `json:"folderId"`
+	Name       string           `json:"name,omitempty"`
+	Fields     FieldDefinitions `json:"fields,omitempty"`
 }
 
 type FormInterface interface {
 	GetID() string
-	GetFields() []*FieldDefinition
+	GetFields() FieldDefinitions
 	GetParentID() *string
 }
 
@@ -21,7 +21,7 @@ func (f *FormDefinition) GetID() string {
 	return f.ID
 }
 
-func (f *FormDefinition) GetFields() []*FieldDefinition {
+func (f *FormDefinition) GetFields() FieldDefinitions {
 	return f.Fields
 }
 
@@ -38,7 +38,7 @@ func (f *formIntf) GetID() string {
 	return f.subForm.ID
 }
 
-func (f *formIntf) GetFields() []*FieldDefinition {
+func (f *formIntf) GetFields() FieldDefinitions {
 	return f.subForm.Fields
 }
 
@@ -78,6 +78,31 @@ func (f *FormDefinition) GetFormInterface(formOrSubFormID string) (FormInterface
 
 type FormDefinitionList struct {
 	Items []*FormDefinition `json:"items"`
+}
+
+func NewFormDefinitionList(items ...*FormDefinition) *FormDefinitionList {
+	return &FormDefinitionList{Items: append([]*FormDefinition{}, items...)}
+}
+
+func (f *FormDefinitionList) GetForm(formID string) (*FormDefinition, error) {
+	for _, item := range f.Items {
+		if item.ID == formID {
+			return item, nil
+		}
+	}
+	return nil, fmt.Errorf("form definition with id %s not found", formID)
+}
+
+func (f *FormDefinitionList) Len() int {
+	return len(f.Items)
+}
+
+func (f *FormDefinitionList) Empty() bool {
+	return f.Len() == 0
+}
+
+func (f *FormDefinitionList) GetAtIndex(index int) *FormDefinition {
+	return f.Items[index]
 }
 
 func (f FormDefinition) GetFieldByID(fieldID string) *FieldDefinition {

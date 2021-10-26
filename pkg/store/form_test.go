@@ -2,7 +2,7 @@ package store
 
 import (
 	"github.com/nrc-no/core/pkg/pointers"
-	types2 "github.com/nrc-no/core/pkg/types"
+	"github.com/nrc-no/core/pkg/types"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -12,16 +12,18 @@ func Test_mapToFormDefinitions(t *testing.T) {
 		name    string
 		forms   []*Form
 		fields  []*Field
-		want    []*types2.FormDefinition
+		want    []*types.FormDefinition
 		wantErr bool
 	}{
 		{
 			name: "simple",
 			forms: []*Form{
 				{
+					RootID:     "formId",
+					ParentID:   "formId",
 					ID:         "formId",
 					DatabaseID: "db",
-					FolderID:   "folder",
+					FolderID:   pointers.String("folder"),
 					Name:       "formName",
 				},
 			},
@@ -32,21 +34,21 @@ func Test_mapToFormDefinitions(t *testing.T) {
 					FormID:     "formId",
 					RootFormID: "formId",
 					Name:       "fieldName",
-					Type:       FieldTypeText,
+					Type:       types.FieldKindText,
 				},
 			},
-			want: []*types2.FormDefinition{
+			want: []*types.FormDefinition{
 				{
 					ID:         "formId",
 					DatabaseID: "db",
 					FolderID:   "folder",
 					Name:       "formName",
-					Fields: []*types2.FieldDefinition{
+					Fields: []*types.FieldDefinition{
 						{
 							ID:   "field1",
 							Name: "fieldName",
-							FieldType: types2.FieldType{
-								Text: &types2.FieldTypeText{},
+							FieldType: types.FieldType{
+								Text: &types.FieldTypeText{},
 							},
 						},
 					},
@@ -56,16 +58,18 @@ func Test_mapToFormDefinitions(t *testing.T) {
 			name: "with subform",
 			forms: []*Form{
 				{
+					RootID:     "formId1",
+					ParentID:   "formId1",
 					ID:         "formId1",
 					DatabaseID: "db",
-					FolderID:   "folder",
+					FolderID:   pointers.String("folder"),
 					Name:       "form1",
 				}, {
 					ID:         "formId2",
 					DatabaseID: "db",
-					FolderID:   "folder",
-					RootID:     pointers.String("formId1"),
-					ParentID:   pointers.String("formId1"),
+					FolderID:   pointers.String("folder"),
+					RootID:     "formId1",
+					ParentID:   "formId1",
 					Name:       "form2",
 				},
 			},
@@ -77,24 +81,24 @@ func Test_mapToFormDefinitions(t *testing.T) {
 					RootFormID: "formId1",
 					SubFormID:  pointers.String("formId2"),
 					Name:       "sub",
-					Type:       FieldTypeSubForm,
+					Type:       types.FieldKindSubForm,
 				},
 			},
-			want: []*types2.FormDefinition{
+			want: []*types.FormDefinition{
 				{
 					ID:         "formId1",
 					DatabaseID: "db",
 					FolderID:   "folder",
 					Name:       "form1",
-					Fields: []*types2.FieldDefinition{
+					Fields: []*types.FieldDefinition{
 						{
 							ID:   "field1",
 							Name: "sub",
-							FieldType: types2.FieldType{
-								SubForm: &types2.FieldTypeSubForm{
+							FieldType: types.FieldType{
+								SubForm: &types.FieldTypeSubForm{
 									ID:     "formId2",
 									Name:   "form2",
-									Fields: []*types2.FieldDefinition{},
+									Fields: []*types.FieldDefinition{},
 								},
 							},
 						},
@@ -105,23 +109,25 @@ func Test_mapToFormDefinitions(t *testing.T) {
 			name: "with multiple subforms",
 			forms: []*Form{
 				{
+					RootID:     "formId1",
+					ParentID:   "formId1",
 					ID:         "formId1",
 					DatabaseID: "db",
-					FolderID:   "folder",
+					FolderID:   pointers.String("folder"),
 					Name:       "form1",
 				}, {
 					ID:         "formId2",
 					DatabaseID: "db",
-					FolderID:   "folder",
-					RootID:     pointers.String("formId1"),
-					ParentID:   pointers.String("formId1"),
+					FolderID:   pointers.String("folder"),
+					RootID:     "formId1",
+					ParentID:   "formId1",
 					Name:       "form2",
 				}, {
 					ID:         "formId3",
 					DatabaseID: "db",
-					FolderID:   "folder",
-					RootID:     pointers.String("formId1"),
-					ParentID:   pointers.String("formId1"),
+					FolderID:   pointers.String("folder"),
+					RootID:     "formId1",
+					ParentID:   "formId1",
 					Name:       "form3",
 				},
 			},
@@ -133,7 +139,7 @@ func Test_mapToFormDefinitions(t *testing.T) {
 					RootFormID: "formId1",
 					SubFormID:  pointers.String("formId2"),
 					Name:       "field1",
-					Type:       FieldTypeSubForm,
+					Type:       types.FieldKindSubForm,
 				}, {
 					ID:         "fieldId2",
 					DatabaseID: "db",
@@ -141,34 +147,34 @@ func Test_mapToFormDefinitions(t *testing.T) {
 					RootFormID: "formId1",
 					SubFormID:  pointers.String("formId3"),
 					Name:       "field2",
-					Type:       FieldTypeSubForm,
+					Type:       types.FieldKindSubForm,
 				},
 			},
-			want: []*types2.FormDefinition{
+			want: []*types.FormDefinition{
 				{
 					ID:         "formId1",
 					DatabaseID: "db",
 					FolderID:   "folder",
 					Name:       "form1",
-					Fields: []*types2.FieldDefinition{
+					Fields: []*types.FieldDefinition{
 						{
 							ID:   "fieldId1",
 							Name: "field1",
-							FieldType: types2.FieldType{
-								SubForm: &types2.FieldTypeSubForm{
+							FieldType: types.FieldType{
+								SubForm: &types.FieldTypeSubForm{
 									ID:     "formId2",
 									Name:   "form2",
-									Fields: []*types2.FieldDefinition{},
+									Fields: []*types.FieldDefinition{},
 								},
 							},
 						}, {
 							ID:   "fieldId2",
 							Name: "field2",
-							FieldType: types2.FieldType{
-								SubForm: &types2.FieldTypeSubForm{
+							FieldType: types.FieldType{
+								SubForm: &types.FieldTypeSubForm{
 									ID:     "formId3",
 									Name:   "form3",
-									Fields: []*types2.FieldDefinition{},
+									Fields: []*types.FieldDefinition{},
 								},
 							},
 						},
@@ -180,22 +186,24 @@ func Test_mapToFormDefinitions(t *testing.T) {
 			forms: []*Form{
 				{
 					ID:         "formId1",
+					RootID:     "formId1",
+					ParentID:   "formId1",
 					DatabaseID: "db",
-					FolderID:   "folder",
+					FolderID:   pointers.String("folder"),
 					Name:       "form1",
 				}, {
 					ID:         "formId2",
 					DatabaseID: "db",
-					FolderID:   "folder",
-					RootID:     pointers.String("formId1"),
-					ParentID:   pointers.String("formId1"),
+					FolderID:   pointers.String("folder"),
+					RootID:     "formId1",
+					ParentID:   "formId1",
 					Name:       "form2",
 				}, {
 					ID:         "formId3",
 					DatabaseID: "db",
-					FolderID:   "folder",
-					RootID:     pointers.String("formId1"),
-					ParentID:   pointers.String("formId2"),
+					FolderID:   pointers.String("folder"),
+					RootID:     "formId1",
+					ParentID:   "formId2",
 					Name:       "form3",
 				},
 			},
@@ -207,7 +215,7 @@ func Test_mapToFormDefinitions(t *testing.T) {
 					RootFormID: "formId1",
 					SubFormID:  pointers.String("formId2"),
 					Name:       "field1Name",
-					Type:       FieldTypeSubForm,
+					Type:       types.FieldKindSubForm,
 				}, {
 					ID:         "field2",
 					DatabaseID: "db",
@@ -215,32 +223,32 @@ func Test_mapToFormDefinitions(t *testing.T) {
 					RootFormID: "formId1",
 					SubFormID:  pointers.String("formId3"),
 					Name:       "field2Name",
-					Type:       FieldTypeSubForm,
+					Type:       types.FieldKindSubForm,
 				},
 			},
-			want: []*types2.FormDefinition{
+			want: []*types.FormDefinition{
 				{
 					ID:         "formId1",
 					DatabaseID: "db",
 					FolderID:   "folder",
 					Name:       "form1",
-					Fields: []*types2.FieldDefinition{
+					Fields: []*types.FieldDefinition{
 						{
 							ID:   "field1",
 							Name: "field1Name",
-							FieldType: types2.FieldType{
-								SubForm: &types2.FieldTypeSubForm{
+							FieldType: types.FieldType{
+								SubForm: &types.FieldTypeSubForm{
 									ID:   "formId2",
 									Name: "form2",
-									Fields: []*types2.FieldDefinition{
+									Fields: []*types.FieldDefinition{
 										{
 											ID:   "field2",
 											Name: "field2Name",
-											FieldType: types2.FieldType{
-												SubForm: &types2.FieldTypeSubForm{
+											FieldType: types.FieldType{
+												SubForm: &types.FieldTypeSubForm{
 													ID:     "formId3",
 													Name:   "form3",
-													Fields: []*types2.FieldDefinition{},
+													Fields: []*types.FieldDefinition{},
 												},
 											},
 										},

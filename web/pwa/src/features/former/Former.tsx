@@ -133,7 +133,7 @@ export const Former: FC<FormerProps> = props => {
                     </div>
                 </div>
                 <div className={"row mt-3"}>
-                    <div className={"col-6 offset-2"}>
+                    <div className={"col-10 col-md-8 offset-md-2"}>
                         {formHeader()}
                         {mapField(selectedField, props)}
                     </div>

@@ -48,6 +48,7 @@ export class FieldDefinition {
     public name: string = ""
     public description: string = ""
     public required: boolean = false
+    public key: boolean = false
     public fieldType: FieldType = new FieldType()
 }
 
