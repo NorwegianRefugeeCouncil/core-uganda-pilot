@@ -160,11 +160,15 @@ func convertFieldToSqlField(formDef *types.FormDefinition, field *types.FieldDef
 		})
 	}
 
-	if field.FieldType.Text != nil || field.FieldType.Multiline != nil {
+	if field.FieldType.Text != nil {
 		result.DataType = sqlschema.SQLDataType{
 			VarChar: &sqlschema.SQLDataTypeVarChar{
 				Length: 1024,
 			},
+		}
+	} else if field.FieldType.Multiline != nil {
+		result.DataType = sqlschema.SQLDataType{
+			Text: &sqlschema.SQLDataTypeText{},
 		}
 	} else if field.FieldType.Reference != nil {
 		result.Constraints = append(result.Constraints, sqlschema.SQLColumnConstraint{

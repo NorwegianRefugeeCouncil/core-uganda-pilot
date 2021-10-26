@@ -21,6 +21,7 @@ type SQLDataType struct {
 	Date            *SQLDataTypeDate
 	Time            *SQLDataTypeTime
 	Interval        *SQLDataTypeInterval
+	Text *SQLDataTypeText
 }
 
 func (s SQLDataType) DDL() DDL {
@@ -54,6 +55,8 @@ func (s SQLDataType) DDL() DDL {
 type SQLDataTypeVarChar struct {
 	Length int
 }
+
+type SQLDataTypeText struct {}
 
 func (c SQLDataTypeVarChar) DDL() DDL {
 	return DDL{}.WriteF("varchar(%d)", c.Length)
