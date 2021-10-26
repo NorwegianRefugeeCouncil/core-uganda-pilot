@@ -7,7 +7,7 @@ import (
 	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/pointers"
 	"github.com/nrc-no/core/pkg/sqlconvert"
-	types2 "github.com/nrc-no/core/pkg/types"
+	"github.com/nrc-no/core/pkg/types"
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 	"strings"
@@ -15,9 +15,9 @@ import (
 )
 
 type FormStore interface {
-	Get(ctx context.Context, formID string) (*types2.FormDefinition, error)
-	List(ctx context.Context) (*types2.FormDefinitionList, error)
-	Create(ctx context.Context, form *types2.FormDefinition) (*types2.FormDefinition, error)
+	Get(ctx context.Context, formID string) (*types.FormDefinition, error)
+	List(ctx context.Context) (*types.FormDefinitionList, error)
+	Create(ctx context.Context, form *types.FormDefinition) (*types.FormDefinition, error)
 }
 
 func NewFormStore(db Factory) FormStore {
@@ -76,7 +76,7 @@ type formStore struct {
 
 var _ FormStore = &formStore{}
 
-func (d *formStore) Get(ctx context.Context, formID string) (*types2.FormDefinition, error) {
+func (d *formStore) Get(ctx context.Context, formID string) (*types.FormDefinition, error) {
 
 	db, err := d.db.Get()
 	if err != nil {
@@ -133,7 +133,7 @@ func (d *formStore) Get(ctx context.Context, formID string) (*types2.FormDefinit
 
 }
 
-func (d *formStore) List(ctx context.Context) (*types2.FormDefinitionList, error) {
+func (d *formStore) List(ctx context.Context) (*types.FormDefinitionList, error) {
 
 	db, err := d.db.Get()
 	if err != nil {
@@ -156,16 +156,16 @@ func (d *formStore) List(ctx context.Context) (*types2.FormDefinitionList, error
 		return nil, err
 	}
 	if result == nil {
-		result = []*types2.FormDefinition{}
+		result = []*types.FormDefinition{}
 	}
 
-	return &types2.FormDefinitionList{
+	return &types.FormDefinitionList{
 		Items: result,
 	}, nil
 
 }
 
-func (d *formStore) Create(ctx context.Context, form *types2.FormDefinition) (*types2.FormDefinition, error) {
+func (d *formStore) Create(ctx context.Context, form *types.FormDefinition) (*types.FormDefinition, error) {
 
 	db, err := d.db.Get()
 	if err != nil {
@@ -206,12 +206,12 @@ func (d *formStore) Create(ctx context.Context, form *types2.FormDefinition) (*t
 	return d.Get(ctx, form.ID)
 }
 
-func newFormIDs(form *types2.FormDefinition) {
+func newFormIDs(form *types.FormDefinition) {
 	form.ID = uuid.NewV4().String()
 	newFieldIDs(form.Fields)
 }
 
-func newFieldIDs(fields []*types2.FieldDefinition) {
+func newFieldIDs(fields []*types.FieldDefinition) {
 	for _, field := range fields {
 		field.ID = uuid.NewV4().String()
 		if field.FieldType.SubForm != nil {
@@ -221,7 +221,7 @@ func newFieldIDs(fields []*types2.FieldDefinition) {
 	}
 }
 
-func newFormCodes(form *types2.FormDefinition) {
+func newFormCodes(form *types.FormDefinition) {
 	if len(form.Code) > 0 {
 		form.Code = strcase.ToSnake(form.Code)
 	} else {
@@ -230,7 +230,7 @@ func newFormCodes(form *types2.FormDefinition) {
 	newFieldCodes(form.Fields)
 }
 
-func newFieldCodes(fields []*types2.FieldDefinition) {
+func newFieldCodes(fields []*types.FieldDefinition) {
 	for _, field := range fields {
 		field.Code = snake(field.Code, field.Name)
 		if field.FieldType.SubForm != nil {
@@ -249,7 +249,7 @@ func snake(vals ...string) string {
 	return ""
 }
 
-func mapToFormFields(fd *types2.FormDefinition) ([]*Form, []*Field, error) {
+func mapToFormFields(fd *types.FormDefinition) ([]*Form, []*Field, error) {
 	h, err := NewFormHierarchyFrom(fd)
 	if err != nil {
 		return nil, nil, err
@@ -259,14 +259,14 @@ func mapToFormFields(fd *types2.FormDefinition) ([]*Form, []*Field, error) {
 	return frms, flds, nil
 }
 
-func mapToFormDefinitions(forms []*Form, fields []*Field) ([]*types2.FormDefinition, error) {
+func mapToFormDefinitions(forms []*Form, fields []*Field) ([]*types.FormDefinition, error) {
 
 	hierarchies, err := buildHierarchies(forms, fields)
 	if err != nil {
 		return nil, err
 	}
 
-	var result []*types2.FormDefinition
+	var result []*types.FormDefinition
 	for _, formHierarchy := range hierarchies {
 		fd, err := formHierarchy.convertToFormDef()
 		if err != nil {
@@ -287,7 +287,7 @@ type FormHierarchy struct {
 	Children    []*FormHierarchy
 }
 
-func NewFormHierarchyFrom(fd *types2.FormDefinition) (*FormHierarchy, error) {
+func NewFormHierarchyFrom(fd *types.FormDefinition) (*FormHierarchy, error) {
 
 	var folderId *string = nil
 	if len(fd.FolderID) > 0 {
@@ -312,7 +312,7 @@ func newFormHierarchyFrom(
 	formId string,
 	formName string,
 	formCode string,
-	fields []*types2.FieldDefinition,
+	fields []*types.FieldDefinition,
 	parent *FormHierarchy,
 	parentField *Field,
 	root *FormHierarchy,
@@ -398,19 +398,19 @@ func newFormHierarchyFrom(
 
 }
 
-func (f *FormHierarchy) convertToFormDef() (*types2.FormDefinition, error) {
-	var flds []*types2.FieldDefinition
+func (f *FormHierarchy) convertToFormDef() (*types.FormDefinition, error) {
+	var flds []*types.FieldDefinition
 	for _, field := range f.Fields {
-		fd := &types2.FieldDefinition{
+		fd := &types.FieldDefinition{
 			ID:        field.ID,
 			Name:      field.Name,
 			Code:      field.Code,
 			Required:  false,
-			FieldType: types2.FieldType{},
+			FieldType: types.FieldType{},
 		}
 		switch field.Type {
 		case FieldTypeText:
-			fd.FieldType.Text = &types2.FieldTypeText{}
+			fd.FieldType.Text = &types.FieldTypeText{}
 		case FieldTypeSubForm:
 			child, err := f.GetSubFormForField(field)
 			if err != nil {
@@ -421,16 +421,16 @@ func (f *FormHierarchy) convertToFormDef() (*types2.FormDefinition, error) {
 				return nil, err
 			}
 			if childFd.Fields == nil {
-				childFd.Fields = []*types2.FieldDefinition{}
+				childFd.Fields = []*types.FieldDefinition{}
 			}
-			fd.FieldType.SubForm = &types2.FieldTypeSubForm{
+			fd.FieldType.SubForm = &types.FieldTypeSubForm{
 				ID:     childFd.ID,
 				Fields: childFd.Fields,
 				Name:   childFd.Name,
 				Code:   childFd.Code,
 			}
 		case FieldTypeReference:
-			fd.FieldType.Reference = &types2.FieldTypeReference{
+			fd.FieldType.Reference = &types.FieldTypeReference{
 				DatabaseID: *field.ReferencedDatabaseID,
 				FormID:     *field.ReferencedFormID,
 			}
@@ -443,7 +443,7 @@ func (f *FormHierarchy) convertToFormDef() (*types2.FormDefinition, error) {
 	if f.Form.FolderID != nil {
 		folderId = *f.Form.FolderID
 	}
-	formDef := &types2.FormDefinition{
+	formDef := &types.FormDefinition{
 		ID:         f.Form.ID,
 		DatabaseID: f.Form.DatabaseID,
 		FolderID:   folderId,
@@ -547,7 +547,7 @@ func (h *FormHierarchy) AllFields() []*Field {
 	return result
 }
 
-func getFieldType(field *types2.FieldDefinition) (FieldType, error) {
+func getFieldType(field *types.FieldDefinition) (FieldType, error) {
 	if field.FieldType.SubForm != nil {
 		return FieldTypeSubForm, nil
 	}

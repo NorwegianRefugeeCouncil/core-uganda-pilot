@@ -6,17 +6,17 @@ import (
 	"fmt"
 	"github.com/lib/pq"
 	"github.com/nrc-no/core/pkg/sqlschema"
-	types2 "github.com/nrc-no/core/pkg/types"
+	"github.com/nrc-no/core/pkg/types"
 )
 
-func CreateDatabase(db *sql.DB, database *types2.Database) error {
+func CreateDatabase(db *sql.DB, database *types.Database) error {
 	ddl := convertDatabaseToSqlSchema(*database).DDL()
 	fmt.Println(ddl)
 	_, err := db.Exec(ddl.Query, ddl.Args...)
 	return err
 }
 
-func CreateForm(ctx context.Context, db *sql.DB, form *types2.FormDefinition) error {
+func CreateForm(ctx context.Context, db *sql.DB, form *types.FormDefinition) error {
 	allForms := expandSubForms(form)
 	for _, expanded := range allForms {
 		table := convertFormToSqlTable(expanded)
@@ -53,7 +53,7 @@ func createTable(ctx context.Context, db *sql.DB, table sqlschema.SQLTable) erro
 
 }
 
-func deleteFormIfExists(db *sql.DB, formDef types2.FormDefinition) error {
+func deleteFormIfExists(db *sql.DB, formDef types.FormDefinition) error {
 	qry := fmt.Sprintf("drop table if exists %s.%s cascade",
 		pq.QuoteIdentifier(formDef.DatabaseID),
 		pq.QuoteIdentifier(formDef.ID),

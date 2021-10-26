@@ -3,8 +3,8 @@ package sqlconvert
 import (
 	"database/sql"
 	"fmt"
-	sqlschema2 "github.com/nrc-no/core/pkg/sqlschema"
-	types2 "github.com/nrc-no/core/pkg/types"
+	"github.com/nrc-no/core/pkg/sqlschema"
+	"github.com/nrc-no/core/pkg/types"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -12,19 +12,19 @@ import (
 func Test_createTable(t *testing.T) {
 	tests := []struct {
 		name    string
-		args    sqlschema2.SQLTable
+		args    sqlschema.SQLTable
 		wantErr bool
 	}{
 		{
 			name: "simple",
-			args: sqlschema2.SQLTable{
+			args: sqlschema.SQLTable{
 				Schema: "db",
 				Name:   "example",
-				Fields: []sqlschema2.SQLField{
+				Fields: []sqlschema.SQLField{
 					{
 						Name: "field",
-						DataType: sqlschema2.SQLDataType{
-							Int: &sqlschema2.SQLDataTypeInt{},
+						DataType: sqlschema.SQLDataType{
+							Int: &sqlschema.SQLDataTypeInt{},
 						},
 					},
 				},
@@ -32,15 +32,15 @@ func Test_createTable(t *testing.T) {
 			wantErr: false,
 		}, {
 			name: "primaryKey",
-			args: sqlschema2.NewSQLTable("db", "simple").
-				WithField(sqlschema2.NewSQLField("id").
+			args: sqlschema.NewSQLTable("db", "simple").
+				WithField(sqlschema.NewSQLField("id").
 					WithSerialDataType().
 					WithPrimaryKeyConstraint("pk_simple_id")),
 			wantErr: false,
 		}, {
 			name: "uniqueConstraint",
-			args: sqlschema2.NewSQLTable("db", "uniqueConstraint").
-				WithField(sqlschema2.NewSQLField("id").
+			args: sqlschema.NewSQLTable("db", "uniqueConstraint").
+				WithField(sqlschema.NewSQLField("id").
 					WithSerialDataType().
 					WithPrimaryKeyConstraint("pk_simple_id")).
 				WithUniqueConstraint("uq_simple_id", "id"),
@@ -66,12 +66,12 @@ func Test_createTable(t *testing.T) {
 func Test_createDatabase(t *testing.T) {
 	tests := []struct {
 		name    string
-		args    types2.Database
+		args    types.Database
 		wantErr bool
 	}{
 		{
 			name:    "simple",
-			args:    types2.Database{Name: "bla"},
+			args:    types.Database{Name: "bla"},
 			wantErr: false,
 		},
 	}
@@ -93,41 +93,41 @@ func Test_createDatabase(t *testing.T) {
 func Test_createForm(t *testing.T) {
 	tests := []struct {
 		name     string
-		database types2.Database
-		form     types2.FormDefinition
+		database types.Database
+		form     types.FormDefinition
 		wantErr  bool
 	}{
 		{
 			name: "simple",
-			form: types2.FormDefinition{
+			form: types.FormDefinition{
 				Name:         "form",
 				DatabaseName: "db",
-				Fields: []types2.FieldDefinition{
+				Fields: []types.FieldDefinition{
 					{
 						Name: "field",
-						FieldType: types2.FieldType{
-							Text: &types2.FieldTypeText{},
+						FieldType: types.FieldType{
+							Text: &types.FieldTypeText{},
 						},
 					},
 				},
 			},
-			database: types2.NewDatabase("db"),
+			database: types.NewDatabase("db"),
 			wantErr:  false,
 		}, {
 			name: "nested",
-			form: types2.FormDefinition{
+			form: types.FormDefinition{
 				Name:         "form",
 				DatabaseName: "db",
-				Fields: []types2.FieldDefinition{
+				Fields: []types.FieldDefinition{
 					{
 						Name: "nested",
-						FieldType: types2.FieldType{
-							SubForm: &types2.FieldTypeSubForm{
-								Fields: []types2.FieldDefinition{
+						FieldType: types.FieldType{
+							SubForm: &types.FieldTypeSubForm{
+								Fields: []types.FieldDefinition{
 									{
 										Name: "field",
-										FieldType: types2.FieldType{
-											Text: &types2.FieldTypeText{},
+										FieldType: types.FieldType{
+											Text: &types.FieldTypeText{},
 										},
 									},
 								},
@@ -136,7 +136,7 @@ func Test_createForm(t *testing.T) {
 					},
 				},
 			},
-			database: types2.NewDatabase("db"),
+			database: types.NewDatabase("db"),
 			wantErr:  false,
 		},
 	}

@@ -2,7 +2,7 @@ package store
 
 import (
 	"github.com/nrc-no/core/pkg/pointers"
-	types2 "github.com/nrc-no/core/pkg/types"
+	"github.com/nrc-no/core/pkg/types"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -12,7 +12,7 @@ func Test_mapToFormDefinitions(t *testing.T) {
 		name    string
 		forms   []*Form
 		fields  []*Field
-		want    []*types2.FormDefinition
+		want    []*types.FormDefinition
 		wantErr bool
 	}{
 		{
@@ -35,18 +35,18 @@ func Test_mapToFormDefinitions(t *testing.T) {
 					Type:       FieldTypeText,
 				},
 			},
-			want: []*types2.FormDefinition{
+			want: []*types.FormDefinition{
 				{
 					ID:         "formId",
 					DatabaseID: "db",
 					FolderID:   "folder",
 					Name:       "formName",
-					Fields: []*types2.FieldDefinition{
+					Fields: []*types.FieldDefinition{
 						{
 							ID:   "field1",
 							Name: "fieldName",
-							FieldType: types2.FieldType{
-								Text: &types2.FieldTypeText{},
+							FieldType: types.FieldType{
+								Text: &types.FieldTypeText{},
 							},
 						},
 					},
@@ -80,21 +80,21 @@ func Test_mapToFormDefinitions(t *testing.T) {
 					Type:       FieldTypeSubForm,
 				},
 			},
-			want: []*types2.FormDefinition{
+			want: []*types.FormDefinition{
 				{
 					ID:         "formId1",
 					DatabaseID: "db",
 					FolderID:   "folder",
 					Name:       "form1",
-					Fields: []*types2.FieldDefinition{
+					Fields: []*types.FieldDefinition{
 						{
 							ID:   "field1",
 							Name: "sub",
-							FieldType: types2.FieldType{
-								SubForm: &types2.FieldTypeSubForm{
+							FieldType: types.FieldType{
+								SubForm: &types.FieldTypeSubForm{
 									ID:     "formId2",
 									Name:   "form2",
-									Fields: []*types2.FieldDefinition{},
+									Fields: []*types.FieldDefinition{},
 								},
 							},
 						},
@@ -144,31 +144,31 @@ func Test_mapToFormDefinitions(t *testing.T) {
 					Type:       FieldTypeSubForm,
 				},
 			},
-			want: []*types2.FormDefinition{
+			want: []*types.FormDefinition{
 				{
 					ID:         "formId1",
 					DatabaseID: "db",
 					FolderID:   "folder",
 					Name:       "form1",
-					Fields: []*types2.FieldDefinition{
+					Fields: []*types.FieldDefinition{
 						{
 							ID:   "fieldId1",
 							Name: "field1",
-							FieldType: types2.FieldType{
-								SubForm: &types2.FieldTypeSubForm{
+							FieldType: types.FieldType{
+								SubForm: &types.FieldTypeSubForm{
 									ID:     "formId2",
 									Name:   "form2",
-									Fields: []*types2.FieldDefinition{},
+									Fields: []*types.FieldDefinition{},
 								},
 							},
 						}, {
 							ID:   "fieldId2",
 							Name: "field2",
-							FieldType: types2.FieldType{
-								SubForm: &types2.FieldTypeSubForm{
+							FieldType: types.FieldType{
+								SubForm: &types.FieldTypeSubForm{
 									ID:     "formId3",
 									Name:   "form3",
-									Fields: []*types2.FieldDefinition{},
+									Fields: []*types.FieldDefinition{},
 								},
 							},
 						},
@@ -218,29 +218,29 @@ func Test_mapToFormDefinitions(t *testing.T) {
 					Type:       FieldTypeSubForm,
 				},
 			},
-			want: []*types2.FormDefinition{
+			want: []*types.FormDefinition{
 				{
 					ID:         "formId1",
 					DatabaseID: "db",
 					FolderID:   "folder",
 					Name:       "form1",
-					Fields: []*types2.FieldDefinition{
+					Fields: []*types.FieldDefinition{
 						{
 							ID:   "field1",
 							Name: "field1Name",
-							FieldType: types2.FieldType{
-								SubForm: &types2.FieldTypeSubForm{
+							FieldType: types.FieldType{
+								SubForm: &types.FieldTypeSubForm{
 									ID:   "formId2",
 									Name: "form2",
-									Fields: []*types2.FieldDefinition{
+									Fields: []*types.FieldDefinition{
 										{
 											ID:   "field2",
 											Name: "field2Name",
-											FieldType: types2.FieldType{
-												SubForm: &types2.FieldTypeSubForm{
+											FieldType: types.FieldType{
+												SubForm: &types.FieldTypeSubForm{
 													ID:     "formId3",
 													Name:   "form3",
-													Fields: []*types2.FieldDefinition{},
+													Fields: []*types.FieldDefinition{},
 												},
 											},
 										},
