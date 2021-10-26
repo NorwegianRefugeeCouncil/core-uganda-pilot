@@ -8,12 +8,12 @@
     "eject": "node_modules/.bin/expo eject"
   },
   "dependencies": {
+    "@react-native-picker/picker": "^2.1.0",
     "@react-navigation/native": "6.0.4",
     "@react-navigation/stack": "6.0.9",
     "core-js-api-client": "../client",
     "dotenv": "10.0.0",
     "expo": "42.0.1",
-
     "expo-constants": "11.0.1",
     "expo-network": "3.2.0",
     "expo-secure-store": "10.2.0",

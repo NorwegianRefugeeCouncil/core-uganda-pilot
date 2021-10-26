@@ -5,6 +5,12 @@ import routes from '../../constants/routes';
 import {FlatList, Image, TouchableOpacity, View, Text} from 'react-native';
 import pngIndividual from '../../../assets/png/symbol_individuals.png';
 import theme from '../../constants/theme';
+import iamClient from "../../utils/clients";
+import {PartyAttributeDefinitionList} from "core-js-api-client/lib/types/models";
+import {Individual} from "../../../../client/src/types/models";
+import _ from "lodash";
+import {Subject} from "rxjs";
+import {FlatIndividual} from "./IndividualScreen";
 
 type TestIndividual = {
     id: string
@@ -20,12 +26,30 @@ export const testIndividuals: TestIndividual[] = [
 ];
 
 const IndividualsListScreen: React.FC<any> = ({navigation}) => {
+    const [individuals, setIndividuals] = React.useState<Individual[]>();
+    let individualsSubject = new Subject([]);
+
+    React.useEffect(() => {
+        individualsSubject.pipe(iamClient.Individuals().List()).subscribe(
+            (data: { items: Individual[] }) => {
+                setIndividuals(data.items)
+            }
+        );
+        individualsSubject.next();
+
+        return () => {
+            if (individualsSubject) {
+                individualsSubject.unsubscribe();
+            }
+        };
+    }, []);
+
     return (
         <View style={layout.body}>
             <Title>Individuals</Title>
             <FlatList
                 style={{flex: 1, width: '100%'}}
-                data={testIndividuals}
+                data={individuals}
                 renderItem={({item, index, separators}) => (
                     <TouchableOpacity
                         key={index}
@@ -37,8 +61,7 @@ const IndividualsListScreen: React.FC<any> = ({navigation}) => {
                                        style={{tintColor: theme.colors.text, width: 20, height: 20}}/>
                             </View>
                             <View style={{justifyContent: 'center'}}>
-                                <Title>{index}</Title>
-                                <Text>{item.id}</Text>
+                                <Text>{item.attributes['8514da51-aad5-4fb4-a797-8bcc0c969b27']}</Text>
                             </View>
                         </View>
                     </TouchableOpacity>
@@ -48,7 +71,7 @@ const IndividualsListScreen: React.FC<any> = ({navigation}) => {
                 style={layout.fab}
                 icon="plus"
                 color={'white'}
-                onPress={() => navigation.navigate(routes.individual.name, {id: null})}
+                onPress={() => navigation.navigate(routes.individual.name, {id: 'new'})}
             />
         </View>
     );

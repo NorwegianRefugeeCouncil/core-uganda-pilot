@@ -1,9 +1,12 @@
-import {View, Text} from "react-native";
+import {Text, View} from "react-native";
 import React from "react";
 import {Checkbox as CheckboxRNP} from "react-native-paper";
 import {darkTheme} from "../../constants/theme";
 import {InputProps} from "./FormControl";
+import _ from "lodash";
 
+
+// FIXME: reacts only on third click
 const CheckBox: React.FC<InputProps> = (
     {
         formControl,
@@ -11,10 +14,19 @@ const CheckBox: React.FC<InputProps> = (
         onChange
     }) => {
 
-    const [isChecked, setIsChecked] = React.useState(formControl.checkboxOptions.map((o) =>
-        o.value == 'yes'
-    ))
+    const [isChecked, setIsChecked] = React.useState(formControl.checkboxOptions.map((o) => {
+        if (formControl.value == null) {
 
+            return o.value == 'yes'
+        } else {
+
+            // console.log(formControl.value, o.value, _.find(formControl.value, o.value))
+            return !!_.find(formControl.value, (e) => {
+                return e == o.value
+            })
+        }
+    }))
+    console.log(formControl.checkboxOptions.length, isChecked.length)
     return (
         <View style={style}>
             {formControl.label && (

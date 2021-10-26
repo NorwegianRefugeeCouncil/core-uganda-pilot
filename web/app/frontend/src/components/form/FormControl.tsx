@@ -44,7 +44,7 @@ const FormControl: React.FC<FormControlProps> = (
                 name={name}
                 control={control}
                 defaultValue={value}
-                rules={formControl.validation}
+                // rules={formControl.validation}
                 render={(
                     {
                         field: {onChange, onBlur, value, ref},

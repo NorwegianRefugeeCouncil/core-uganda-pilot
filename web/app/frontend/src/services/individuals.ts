@@ -10,6 +10,6 @@ export function getIndividual(id: string) {
 }
 
 export function createIndividual(individual: Individual) {
-    subject.pipe(iamClient.Parties().Create()).subscribe(console.log);
+    subject.pipe(iamClient.Individuals().Create()).subscribe(console.log);
     return subject.next(individual);
 }

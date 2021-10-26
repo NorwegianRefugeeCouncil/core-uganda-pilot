@@ -5,13 +5,14 @@ import {useForm} from "react-hook-form";
 import {Individual} from "../../../../client/src/types/models";
 import {Subject} from 'rxjs';
 import iamClient from "../../utils/clients";
-import {PartyAttributeDefinition, PartyAttributeDefinitionList} from "core-js-api-client/lib/types/models";
+import {PartyAttributeDefinition, PartyAttributeDefinitionList, PartyType} from "core-js-api-client/lib/types/models";
 import _ from 'lodash';
 import {createIndividual} from "../../services/individuals";
 import FormControl from "../form/FormControl";
 import * as SecureStore from 'expo-secure-store';
 import * as Network from 'expo-network';
 import {Snackbar, Switch} from 'react-native-paper';
+import {v4 as uuidv4} from 'uuid';
 
 export interface FlatIndividual extends Omit<Individual, 'attributes'> {
     attributes: { [p: string]: string }
@@ -25,43 +26,47 @@ const IndividualScreen: React.FC<any> = ({route}) => {
     const [simulateOffline, setSimulateOffline] = React.useState(!isWeb); // TODO: for testing, remove
     const [attributes, setAttributes] = React.useState<PartyAttributeDefinition[]>([]);
     const [individual, setIndividual] = React.useState<FlatIndividual>();
+    const [partyTypes, setPartyTypes] = React.useState<PartyType[]>();
     const [isConnected, setIsConnected] = React.useState(!simulateOffline);
     const [showSnackbar, setShowSnackbar] = React.useState(!isConnected);
     const [hasLocalData, setHasLocalData] = React.useState(false);
 
     let attributesSubject = new Subject([]);
     let individualsSubject = new Subject([]);
+    let partyTypeSubject = new Subject([]);
     let flatAttributes: { [p: string]: string } = {};
-    let submitData: { [p: string]: string[] } = {};
+    let submittableAttributes: { [p: string]: string[] } = {};
 
     const {control, handleSubmit, formState, reset} = useForm({
         defaultValues: individual
     });
 
-    const onSubmitOffline = async (data: string[]) => {
+    const onSubmitOffline = async (data: { attributes: string[], partyTypeIds: string[] }) => {
+        console.log('submit offline', data)
         SecureStore.setItemAsync(id, JSON.stringify(data))
-            .then((data) => {
-                console.log('SBUMITTED!!!', data)
+            .then(() => {
                 setHasLocalData(true)
             })
-            .catch((e) => {
-                console.log('SUBMIT ERROR', e)
+            .catch(() => {
                 setHasLocalData(false)
             });
 
     }
-    const onSubmit = (data: string[]) => {
+    const onSubmit = (data: { attributes: string[], partyTypeIds: string[] }) => {
+        console.log('submit', data);
 
-        // wrap attributes in arrays, move somewhere else
-        _(data).forEach((value, key) => {
-            submitData[key] = [value];
+        // wrap attributes in arrays
+        // TODO: move somewhere else
+        _(data.attributes).forEach((value, key) => {
+            submittableAttributes[key] = [value];
         });
 
+        // TODO: move hardcoded ids somewhere else
         if (isConnected || isWeb) {
             createIndividual({
-                id,
-                attributes: submitData,
-                partyTypeIds: individual?.partyTypeIds || []
+                id: id == 'new' ? uuidv4() : id,
+                attributes: submittableAttributes,
+                partyTypeIds: ['a842e7cb-3777-423a-9478-f1348be3b4a5'] // individual?.partyTypeIds
             });
         } else {
             onSubmitOffline(data);
@@ -69,7 +74,8 @@ const IndividualScreen: React.FC<any> = ({route}) => {
 
     };
 
-    {/* check for locally stored data on mobile device */    }
+    {/* check for locally stored data on mobile device */
+    }
     React.useEffect(() => {
         if (!isWeb) {
             SecureStore.getItemAsync(id)
@@ -103,6 +109,11 @@ const IndividualScreen: React.FC<any> = ({route}) => {
                 setAttributes(data.items)
             }
         );
+        partyTypeSubject.pipe(iamClient.PartyTypes().List()).subscribe(
+            (data: { Items: PartyType[] }) => {
+                setPartyTypes(data.Items)
+            }
+        );
         individualsSubject.pipe(iamClient.Individuals().Get()).subscribe(
             (data: Individual) => {
                 _(data.attributes).forEach((value, key) => {
@@ -110,14 +121,24 @@ const IndividualScreen: React.FC<any> = ({route}) => {
                 });
                 const flatIndividual = {...data, attributes: flatAttributes};
                 setIndividual(flatIndividual)
+                data.partyTypeIds.forEach((p) => {
+                })
             }
         );
+
+        partyTypeSubject.next(null);
         attributesSubject.next(null);
-        individualsSubject.next(id);
+
+        if (id != 'new') {
+            individualsSubject.next(id);
+        }
 
         return () => {
             if (attributesSubject) {
                 attributesSubject.unsubscribe();
+            }
+            if (partyTypeSubject) {
+                partyTypeSubject.unsubscribe();
             }
             if (individualsSubject) {
                 individualsSubject.unsubscribe();
@@ -127,25 +148,27 @@ const IndividualScreen: React.FC<any> = ({route}) => {
 
     // check if data has been received
     React.useEffect(() => {
-        if (individual) {
+        if (individual || id == 'new') {
             setIsLoading(false);
         }
     }, [individual])
 
     return (
-        <View style={{paddingBottom: 26}}>
+        <View>
             {/* simulate network changes, for testing */}
-            <View style={{display: "flex", flexDirection: "row"}}>
-                <Switch
-                    value={simulateOffline}
-                    onValueChange={() => {
-                        setSimulateOffline(!simulateOffline)
-                        setIsConnected(simulateOffline)
-                        setShowSnackbar(!simulateOffline)
-                    }}
-                />
-                <Text> simulate being offline </Text>
-            </View>
+            {!isWeb && (
+                <View style={{display: "flex", flexDirection: "row"}}>
+                    <Switch
+                        value={simulateOffline}
+                        onValueChange={() => {
+                            setSimulateOffline(!simulateOffline)
+                            setIsConnected(simulateOffline)
+                            setShowSnackbar(!simulateOffline)
+                        }}
+                    />
+                    <Text> simulate being offline </Text>
+                </View>
+            )}
 
             {/* upload data collected offline */}
             {hasLocalData && (
@@ -174,12 +197,37 @@ const IndividualScreen: React.FC<any> = ({route}) => {
                                 key={a.id}
                                 formControl={a.formControl}
                                 style={{width: '100%'}}
-                                value={individual?.attributes[a.id]}
+                                value={individual?.attributes[a.id] || ''}
                                 control={control}
                                 name={`attributes.${a.id}`}
                                 errors={formState.errors}
                             />
                         )}
+
+                        <FormControl
+                            style={{width: '100%'}}
+                            control={control}
+                            name={`partyTypeIds`}
+                            errors={formState.errors}
+                            formControl={{
+                                label: [{value: 'party type', locale: 'en'}],
+                                description: [],
+                                placeholder: [],
+                                value: individual?.partyTypeIds || [],
+                                defaultValue: individual?.partyTypeIds || [],
+                                options: [],
+                                checkboxOptions: partyTypes?.map((p) => ({
+                                    label: [{value: p.name, locale: 'en'}],
+                                    value: p.id,
+                                    required: false
+                                })) || [],
+                                type: 'checkbox',
+                                name: 'partyTypeIds',
+                                multiple: true,
+                                readonly: false,
+                                validation: {required: true}
+                            }}
+                        />
                         <Button
                             title="Submit"
                             onPress={handleSubmit(onSubmit)}
