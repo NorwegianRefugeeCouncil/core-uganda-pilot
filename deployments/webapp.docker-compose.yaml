@@ -13,13 +13,14 @@ services:
     image: oryd/hydra:v1.10.2
     container_name: "core-hydra-migrate"
     volumes:
-      - ./webapp.hydra-config.yaml:/var/run/config.yaml:ro
+      - ./hydra.yaml:/var/run/config.yaml:ro
+      - ./hydra.custom.yaml:/var/run/config.custom.yaml:ro
     command:
       - migrate
       - sql
       - --yes
       - --read-from-env
-      - --config=/var/run/config.yaml
+      - --config=/var/run/config.yaml,/var/run/config.custom.yaml
     restart: on-failure
 
   hydra:
@@ -29,12 +30,13 @@ services:
       - "4444:4444"
       - "4445:4445"
     volumes:
-      - ./webapp.hydra-config.yaml:/var/run/config.yaml:ro
+      - ./hydra.yaml:/var/run/config.yaml:ro
+      - ./hydra.custom.yaml:/var/run/config.custom.yaml:ro
     command:
       - serve
       - all
       - --dangerous-force-http
-      - --config=/var/run/config.yaml
+      - --config=/var/run/config.yaml,/var/run/config.custom.yaml
     restart: on-failure
 
   db:
@@ -42,15 +44,8 @@ services:
     container_name: "core-hydra-db"
     ports:
       - "5433:5432"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - HYDRA_DB=hydra
-      - HYDRA_USERNAME=hydra
-      - HYDRA_PASSWORD=hydra
-      - CORE_DB=core
-      - CORE_USERNAME=core
-      - CORE_PASSWORD=core
+    env_file:
+      - postgres.env
     volumes:
       - ./webapp.postgres-init.sh:/docker-entrypoint-initdb.d/postgres-init.sh
     restart: on-failure

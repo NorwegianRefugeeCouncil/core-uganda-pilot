@@ -24,4 +24,3 @@ serve:
     port: "9002"
     urls:
       self: http://localhost:9002
-dsn: "host=localhost port=5433 user=core password=core dbname=core sslmode=disable"

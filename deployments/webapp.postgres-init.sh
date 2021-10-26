@@ -15,5 +15,5 @@ function create_user_and_database() {
 EOSQL
 }
 
-create_user_and_database $HYDRA_DB $HYDRA_USERNAME $HYDRA_PASSWORD
-create_user_and_database $CORE_DB $CORE_USERNAME $CORE_PASSWORD
+create_user_and_database "$HYDRA_DB" "$HYDRA_USERNAME" "$HYDRA_PASSWORD"
+create_user_and_database "$CORE_DB" "$CORE_USERNAME" "$CORE_PASSWORD"

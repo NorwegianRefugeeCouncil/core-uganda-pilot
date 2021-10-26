@@ -4,6 +4,8 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 set -e
 
+${SCRIPT_DIR}/init-local-config.sh
+
 docker-compose -f deployments/webapp.docker-compose.yaml up --build -d
 
 echo waiting for database
