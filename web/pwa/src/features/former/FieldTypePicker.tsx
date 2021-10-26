@@ -26,6 +26,11 @@ export const FieldTypePicker: FC<FieldTypePickerProps> = props => {
                     onClick={() => onSubmit(FieldKind.Reference)}>
                     Reference
                 </button>
+                <button
+                    className={"btn btn-primary m-2 border-light"}
+                    onClick={() => onSubmit(FieldKind.Date)}>
+                    Date
+                </button>
             </div>
         </div>
         <div className={"card-footer border-secondary"}>

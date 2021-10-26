@@ -3,6 +3,9 @@ package store
 import (
 	"context"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/iancoleman/strcase"
 	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/pointers"
@@ -11,8 +14,6 @@ import (
 	"github.com/nrc-no/core/pkg/types"
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
-	"strings"
-	"time"
 )
 
 type FormStore interface {
@@ -514,6 +515,8 @@ func (f *FormHierarchy) ToFormDefinition() (*types.FormDefinition, error) {
 		switch field.Type {
 		case types.FieldKindText:
 			fd.FieldType.Text = &types.FieldTypeText{}
+		case types.FieldKindDate:
+			fd.FieldType.Date = &types.FieldTypeDate{}
 		case types.FieldKindSubForm:
 			child, err := f.GetSubFormForField(field)
 			if err != nil {
@@ -659,6 +662,9 @@ func getFieldType(field *types.FieldDefinition) (types.FieldKind, error) {
 	}
 	if field.FieldType.Reference != nil {
 		return types.FieldKindReference, nil
+	}
+	if field.FieldType.Date != nil {
+		return types.FieldKindDate, nil
 	}
 	return types.FieldKindUnknown, fmt.Errorf("could not determine field type")
 }
