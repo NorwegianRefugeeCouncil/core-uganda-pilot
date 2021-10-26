@@ -515,6 +515,8 @@ func (f *FormHierarchy) ToFormDefinition() (*types.FormDefinition, error) {
 		switch field.Type {
 		case types.FieldKindText:
 			fd.FieldType.Text = &types.FieldTypeText{}
+		case types.FieldKindDate:
+			fd.FieldType.Date = &types.FieldTypeDate{}
 		case types.FieldKindSubForm:
 			child, err := f.GetSubFormForField(field)
 			if err != nil {
