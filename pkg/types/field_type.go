@@ -4,6 +4,7 @@ type FieldType struct {
 	Text      *FieldTypeText      `json:"text,omitempty"`
 	Reference *FieldTypeReference `json:"reference,omitempty"`
 	SubForm   *FieldTypeSubForm   `json:"subForm,omitempty"`
+	Multiline *FieldTypeMultiline `json:"multiline,omitempty"`
 }
 
 type FieldTypeReference struct {
@@ -13,7 +14,7 @@ type FieldTypeReference struct {
 
 type FieldTypeText struct{}
 
-type FieldTypeMultiLineText struct{}
+type FieldTypeMultiline struct{}
 
 type FieldTypeSubForm struct {
 	ID     string             `json:"id"`
@@ -37,4 +38,5 @@ const (
 	FieldKindText      FieldKind = "text"
 	FieldKindSubForm   FieldKind = "subform"
 	FieldKindReference FieldKind = "reference"
+	FieldKindMultiline FieldKind = "multiline"
 )

@@ -160,7 +160,7 @@ func convertFieldToSqlField(formDef *types.FormDefinition, field *types.FieldDef
 		})
 	}
 
-	if field.FieldType.Text != nil {
+	if field.FieldType.Text != nil || field.FieldType.Multiline != nil {
 		result.DataType = sqlschema.SQLDataType{
 			VarChar: &sqlschema.SQLDataTypeVarChar{
 				Length: 1024,

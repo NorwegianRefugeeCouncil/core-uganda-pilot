@@ -11,10 +11,15 @@ export const FieldTypePicker: FC<FieldTypePickerProps> = props => {
     return <div className={"card bg-dark text-light border-secondary"}>
         <div className={"card-body bg-primary"}>
             <div className={"d-flex flex-row"}>
+
                 <button
                     className={"btn btn-primary m-2 border-light"}
                     onClick={() => onSubmit(FieldKind.Text)}>
                     Text
+                </button>                <button
+                    className={"btn btn-primary m-2 border-light"}
+                    onClick={() => onSubmit(FieldKind.Multiline)}>
+                    Multiline Text
                 </button>
                 <button
                     className={"btn btn-primary m-2 border-light"}
