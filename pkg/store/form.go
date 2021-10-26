@@ -516,6 +516,8 @@ func (f *FormHierarchy) ToFormDefinition() (*types.FormDefinition, error) {
 			fd.FieldType.Text = &types.FieldTypeText{}
 		case types.FieldKindMultilineText:
 			fd.FieldType.MultilineText = &types.FieldTypeMultilineText{}
+		case types.FieldKindDate:
+			fd.FieldType.Date = &types.FieldTypeDate{}
 		case types.FieldKindSubForm:
 			child, err := f.GetSubFormForField(field)
 			if err != nil {
@@ -664,6 +666,9 @@ func getFieldType(field *types.FieldDefinition) (types.FieldKind, error) {
 	}
 	if field.FieldType.MultilineText != nil {
 		return types.FieldKindMultilineText, nil
+	}
+	if field.FieldType.Date != nil {
+		return types.FieldKindDate, nil
 	}
 	return types.FieldKindUnknown, fmt.Errorf("could not determine field type")
 }

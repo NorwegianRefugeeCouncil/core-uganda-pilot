@@ -56,6 +56,20 @@ export const MultilineTextFieldEditor: FC<FieldEditorProps> = props => {
     </div>
 }
 
+export const DateFieldEditor: FC<FieldEditorProps> = props => {
+    const {field, value, setValue} = props
+    return <div className={"form-group mb-2"}>
+        <label
+            className={"form-label opacity-75"}
+            htmlFor={field.id}>{field.name}</label>
+        <input
+            className={"form-control bg-dark text-light border-secondary"}
+            type={"date"}
+            id={field.id} value={value ? value : ""}
+            onChange={event => setValue(event.target.value)}/>
+        {mapFieldDescription(field)}
+    </div>
+}
 
 function subRecord(record: FormValue, select: () => void) {
     return <a href={"#"} key={record.recordId}
@@ -102,6 +116,8 @@ export const FieldEditor: FC<FieldEditorProps> = props => {
         return <ReferenceFieldEditor {...props} />
     } else if (fieldType.multilineText) {
         return <MultilineTextFieldEditor {...props} />
+    } else if (fieldType.date) {
+        return <DateFieldEditor {...props} />
     } else {
         return <Fragment/>
     }
