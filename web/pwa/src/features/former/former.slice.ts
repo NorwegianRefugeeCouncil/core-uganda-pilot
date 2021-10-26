@@ -155,7 +155,7 @@ const mapFields = (state: FormerState, fields: FormField[]): FieldDefinition[] =
 
         let fieldType: FieldType
 
-        if (field.type === "text") {
+        if (field.type === "text" || field.type === "date") {
             fieldType = {text: {}}
         } else if (field.type === "reference") {
             if (!field.referencedDatabaseId) {

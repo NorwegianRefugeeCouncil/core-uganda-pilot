@@ -3,6 +3,9 @@ package store
 import (
 	"context"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/iancoleman/strcase"
 	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/pointers"
@@ -10,8 +13,6 @@ import (
 	types2 "github.com/nrc-no/core/pkg/types"
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
-	"strings"
-	"time"
 )
 
 type FormStore interface {
@@ -49,6 +50,7 @@ const (
 	FieldTypeText      = "text"
 	FieldTypeSubForm   = "subform"
 	FieldTypeReference = "reference"
+	FieldTypeDate      = "date"
 )
 
 type Field struct {
@@ -556,6 +558,9 @@ func getFieldType(field *types2.FieldDefinition) (FieldType, error) {
 	}
 	if field.FieldType.Reference != nil {
 		return FieldTypeReference, nil
+	}
+	if field.FieldType.Date != nil {
+		return FieldTypeDate, nil
 	}
 	return FieldTypeUnknown, fmt.Errorf("could not determine field type")
 }
