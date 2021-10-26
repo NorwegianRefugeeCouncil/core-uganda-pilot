@@ -3,29 +3,29 @@ package iam
 import (
 	"context"
 	"github.com/nrc-no/core/pkg/generic/pagination"
-	"github.com/nrc-no/core/pkg/utils"
+	"github.com/nrc-no/core/pkg/storage"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type IndividualStore struct {
-	getCollection utils.MongoCollectionFn
+	getCollection func() (*mongo.Collection, error)
 }
 
-func NewIndividualStore(mongoClientFn utils.MongoClientFn, database string) *IndividualStore {
+func NewIndividualStore(mongoClientSrc storage.MongoClientSrc, database string) *IndividualStore {
 	store := &IndividualStore{
-		getCollection: utils.GetCollectionFn(database, "parties", mongoClientFn),
+		getCollection: storage.GetCollectionFn(mongoClientSrc, database, "parties"),
 	}
 	return store
 }
 
 func (s *IndividualStore) create(ctx context.Context, individual *Individual) (*Individual, error) {
 	individual.AddPartyType(IndividualPartyType.ID)
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	_, err = collection.InsertOne(ctx, individual)
 	if err != nil {
@@ -35,11 +35,10 @@ func (s *IndividualStore) create(ctx context.Context, individual *Individual) (*
 }
 
 func (s *IndividualStore) get(ctx context.Context, id string) (*Individual, error) {
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	findResult := collection.FindOne(ctx, bson.M{"id": id})
 	if findResult.Err() != nil {
@@ -53,11 +52,10 @@ func (s *IndividualStore) get(ctx context.Context, id string) (*Individual, erro
 }
 
 func (s *IndividualStore) upsert(ctx context.Context, individual *Individual) (*Individual, error) {
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	individual.AddPartyType(IndividualPartyType.ID)
 	_, err = collection.UpdateOne(ctx, bson.M{
@@ -102,11 +100,10 @@ func (s *IndividualStore) list(ctx context.Context, listOptions IndividualListOp
 		filter["$text"] = bson.M{"$search": listOptions.SearchParam}
 	}
 
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	maxPerPage := pagination.GetMaxPerPage(listOptions.PerPage)
 	currentPage := pagination.GetCurrentPage(listOptions.Page)

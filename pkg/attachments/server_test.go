@@ -1,6 +1,7 @@
 package attachments_test
 
 import (
+	"context"
 	. "github.com/nrc-no/core/pkg/attachments"
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/testutils"
@@ -17,7 +18,7 @@ type Suite struct {
 }
 
 func (s *Suite) SetupSuite() {
-	s.GenericServerTestSetup = server.NewGenericServerTestSetup()
+	s.GenericServerTestSetup = server.NewGenericServerTestSetup(context.Background())
 	s.server = NewServerOrDie(s.Ctx, s.GenericServerOptions)
 	s.client = NewClient(testutils.SetXAuthenticatedUserSubject(s.Port))
 	s.Serve(s.T(), s.server)

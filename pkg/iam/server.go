@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/generic/server"
+	"github.com/nrc-no/core/pkg/storage"
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/ory/hydra-client-go/client/admin"
 	"net/http"
@@ -25,9 +26,9 @@ type Server struct {
 	countryStore                    *CountryStore
 	membershipStore                 *MembershipStore
 	nationalityStore                *NationalityStore
-	hydraAdmin                      admin.ClientService
-	mongoClientFn                   utils.MongoClientFn
-	hydraHTTPClient                 *http.Client
+	hydraAdmin      admin.ClientService
+	mongoClientSrc  storage.MongoClientSrc
+	hydraHTTPClient *http.Client
 }
 
 func NewServerOrDie(ctx context.Context, o *server.GenericServerOptions) *Server {
@@ -39,37 +40,37 @@ func NewServerOrDie(ctx context.Context, o *server.GenericServerOptions) *Server
 }
 
 func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, error) {
-	relationshipStore, err := newRelationshipStore(ctx, o.MongoClientFn, o.MongoDatabase)
+	relationshipStore, err := newRelationshipStore(ctx, o.MongoClientSrc, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	partyStore, err := newPartyStore(ctx, o.MongoClientFn, o.MongoDatabase)
+	partyStore, err := newPartyStore(ctx, o.MongoClientSrc, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	attributeStore, err := newAttributeStore(ctx, o.MongoClientFn, o.MongoDatabase)
+	attributeStore, err := newAttributeStore(ctx, o.MongoClientSrc, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	partyTypeStore, err := newPartyTypeStore(ctx, o.MongoClientFn, o.MongoDatabase)
+	partyTypeStore, err := newPartyTypeStore(ctx, o.MongoClientSrc, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	relationshipTypeStore, err := newRelationshipTypeStore(ctx, o.MongoClientFn, o.MongoDatabase)
+	relationshipTypeStore, err := newRelationshipTypeStore(ctx, o.MongoClientSrc, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	identificationDocumentStore, err := newIdentificationDocumentStore(ctx, o.MongoClientFn, o.MongoDatabase)
+	identificationDocumentStore, err := newIdentificationDocumentStore(ctx, o.MongoClientSrc, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	identificationDocumentTypeStore, err := newIdentificationDocumentTypeStore(ctx, o.MongoClientFn, o.MongoDatabase)
+	identificationDocumentTypeStore, err := newIdentificationDocumentTypeStore(ctx, o.MongoClientSrc, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +79,7 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 
 	srv := &Server{
 		environment:                     o.Environment,
-		mongoClientFn:                   o.MongoClientFn,
+		mongoClientSrc:                  o.MongoClientSrc,
 		partyAttributeDefinitionStore:   attributeStore,
 		countryStore:                    NewCountryStore(partyStore),
 		partyStore:                      partyStore,
@@ -86,7 +87,7 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 		relationshipStore:               relationshipStore,
 		relationshipTypeStore:           relationshipTypeStore,
 		identificationDocumentStore:     identificationDocumentStore,
-		identificationDocumentTypeStore: identificationDocumentTypeStore, individualStore: NewIndividualStore(o.MongoClientFn, o.MongoDatabase),
+		identificationDocumentTypeStore: identificationDocumentTypeStore, individualStore: NewIndividualStore(o.MongoClientSrc, o.MongoDatabase),
 		teamStore:        NewTeamStore(partyStore),
 		membershipStore:  NewMembershipStore(relationshipStore),
 		nationalityStore: NewNationalityStore(relationshipStore),
@@ -184,7 +185,7 @@ func (s *Server) bind(req *http.Request, into interface{}) error {
 }
 
 func (s *Server) ResetDB(ctx context.Context, databaseName string) error {
-	mongoClient, err := s.mongoClientFn(ctx)
+	mongoClient, err := s.mongoClientSrc.GetMongoClient()
 	if err != nil {
 		return err
 	}
@@ -193,3 +194,4 @@ func (s *Server) ResetDB(ctx context.Context, databaseName string) error {
 	}
 	return s.Init(ctx)
 }
+

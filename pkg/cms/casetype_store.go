@@ -2,29 +2,28 @@ package cms
 
 import (
 	"context"
-	"github.com/nrc-no/core/pkg/utils"
+	"github.com/nrc-no/core/pkg/storage"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type CaseTypeStore struct {
-	getCollection utils.MongoCollectionFn
+	getCollection func() (*mongo.Collection, error)
 }
 
-func NewCaseTypeStore(ctx context.Context, mongoClientFn utils.MongoClientFn, database string) (*CaseTypeStore, error) {
+func NewCaseTypeStore(ctx context.Context, mongoClientSrc storage.MongoClientSrc, database string) (*CaseTypeStore, error) {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
 	store := &CaseTypeStore{
-		getCollection: utils.GetCollectionFn(database, "caseTypes", mongoClientFn),
+		getCollection: storage.GetCollectionFn(mongoClientSrc, database, "caseTypes"),
 	}
 
-	collection, done, err := store.getCollection(ctx)
+	collection, err := store.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	if _, err := collection.Indexes().CreateOne(ctx,
 		mongo.IndexModel{
@@ -38,11 +37,10 @@ func NewCaseTypeStore(ctx context.Context, mongoClientFn utils.MongoClientFn, da
 }
 
 func (s *CaseTypeStore) get(ctx context.Context, id string) (*CaseType, error) {
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	res := collection.FindOne(ctx, bson.M{
 		"id": id,
@@ -72,11 +70,10 @@ func (s *CaseTypeStore) list(ctx context.Context, options CaseTypeListOptions) (
 		}
 	}
 
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	res, err := collection.Find(ctx, filter)
 	if err != nil {
@@ -106,11 +103,10 @@ func (s *CaseTypeStore) list(ctx context.Context, options CaseTypeListOptions) (
 }
 
 func (s *CaseTypeStore) update(ctx context.Context, caseType *CaseType) error {
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return err
 	}
-	defer done()
 
 	_, err = collection.UpdateOne(ctx, bson.M{
 		"id": caseType.ID,
@@ -130,11 +126,10 @@ func (s *CaseTypeStore) update(ctx context.Context, caseType *CaseType) error {
 }
 
 func (s *CaseTypeStore) create(ctx context.Context, caseType *CaseType) error {
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return err
 	}
-	defer done()
 
 	_, err = collection.InsertOne(ctx, caseType)
 	if err != nil {
