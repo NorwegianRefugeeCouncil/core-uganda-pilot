@@ -11,11 +11,6 @@ serve:
         - openid
         - email
         - profile
-    secrets:
-      hash:
-        - f3442ad875ee26ab3b4122923929be3502bb21fd688bb5a5631146df509139193a1564ec4203f3320a83ab1162fdd81c9d93135b5eff90d60fb5e90bcaf0febb
-      block:
-        - f9ee9e63627d0b95c011b4c706a79dbad157deec0818888bf20336ac541591c5
   public:
     host: "127.0.0.1"
     port: "9000"
@@ -24,19 +19,9 @@ serve:
     oidc:
       issuer: http://localhost:4444/
       client_id: public
-    secrets:
-      hash:
-        - 15849b74256f9686d38a2093d4efd61cb5c67750d11c82f44174d233f8fe6a3592ad9e5e618c6719249dd7857f9468652b964cacf24334129041862043e88e7c
-      block:
-        - bfe5d1d653c715e4bb3ca079a4b29559a5830c7ee73ad00d409f937caf8e968d
   login:
     host: "127.0.0.1"
     port: "9002"
     urls:
       self: http://localhost:9002
-    secrets:
-      hash:
-        - 5ac4c1384efb62a972834b48b67e55daa5ac60df46246b0d819a34371c5b121e76d74ddc3f2d24648af25b30b185e4086107e0ce02298d44269e0babe9eada9c
-      block:
-        - 780178b2c5c433f5efea411ae451fd1e3290cce07ef5cd2d1d91cec750d8b9ae
 dsn: "host=localhost port=5433 user=core password=core dbname=core sslmode=disable"

@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/nrc-no/core/pkg/bla/server/admin"
-	"github.com/nrc-no/core/pkg/bla/server/public"
+	"github.com/nrc-no/core/pkg/server/admin"
+	"github.com/nrc-no/core/pkg/server/public"
 	"github.com/spf13/cobra"
 )
 

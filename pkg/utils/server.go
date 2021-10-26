@@ -3,7 +3,6 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
 	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
@@ -54,17 +53,6 @@ func BindJSON(req *http.Request, into interface{}) error {
 		return meta.NewBadRequest(fmt.Errorf("failed to unmarshal json body: %w", err).Error())
 	}
 	return nil
-}
-
-func GetPathParam(param string, w http.ResponseWriter, req *http.Request, into *string) bool {
-	id, ok := mux.Vars(req)[param]
-	if !ok || len(id) == 0 {
-		err := fmt.Errorf("path parameter '%s' not found in path", param)
-		ErrorResponse(w, err)
-		return false
-	}
-	*into = id
-	return true
 }
 
 // ErrorToAPIStatus converts an error to an metav1.Status object.

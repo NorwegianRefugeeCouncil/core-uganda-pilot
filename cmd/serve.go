@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"context"
-	"github.com/nrc-no/core/pkg/bla/options"
-	"github.com/nrc-no/core/pkg/bla/store"
+	"github.com/nrc-no/core/pkg/options"
+	"github.com/nrc-no/core/pkg/store"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"os"

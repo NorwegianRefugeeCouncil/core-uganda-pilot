@@ -3,7 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"github.com/nrc-no/core/pkg/bla/server/admin"
+	"github.com/nrc-no/core/pkg/server/admin"
 	"github.com/spf13/cobra"
 )
 
@@ -28,4 +28,3 @@ func serveAdmin(ctx context.Context, options admin.Options) error {
 	server.Start(ctx)
 	return nil
 }
-

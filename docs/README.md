@@ -1,18 +1,14 @@
 
 # Run the server
 
-1. Start the docker-compose
+1. Start docker resources
 
-`docker-compose -f ./deployments/webapp.docker-compose.yaml`
+`make up`
 
-2. Run the db migrations
+2. Run migrations & start the server
 
-`go run . migrate --config configs/config.yaml`
+`make serve`
 
-4. Start the server
+3. Start the frontend
 
-`go run . serve all --config configs/config.yaml`
-
-5. Start the frontend
-
-`cd web/pwa && npm i && npm start`
+`make pwa`

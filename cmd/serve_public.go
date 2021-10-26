@@ -3,7 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"github.com/nrc-no/core/pkg/bla/server/public"
+	"github.com/nrc-no/core/pkg/server/public"
 
 	"github.com/spf13/cobra"
 )
