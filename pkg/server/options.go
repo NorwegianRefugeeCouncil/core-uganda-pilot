@@ -15,13 +15,11 @@ import (
 	"github.com/nrc-no/core/pkg/generic/server"
 	"github.com/nrc-no/core/pkg/middleware"
 	"github.com/nrc-no/core/pkg/seeder"
-	"github.com/nrc-no/core/pkg/utils"
+	"github.com/nrc-no/core/pkg/storage"
 	"github.com/ory/hydra-client-go/client"
 	"github.com/ory/hydra-client-go/client/public"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -105,15 +103,15 @@ func NewOptions() *Options {
 	defaultHost := "localhost"
 	defaultScheme := "http"
 	defaultPort := "9000"
-	defaultUrl := url.URL{
+	defaultURL := url.URL{
 		Scheme: defaultScheme,
 		Host:   defaultHost + ":" + defaultPort,
 	}
 	return &Options{
 		ClearDB:                 false,
 		Environment:             defaultEnv,
-		ListenAddress:           ":" + defaultUrl.Port(),
-		BaseURL:                 defaultUrl.String(),
+		ListenAddress:           ":" + defaultURL.Port(),
+		BaseURL:                 defaultURL.String(),
 		MongoDatabase:           "core",
 		MongoUsername:           "",
 		MongoPassword:           "",
@@ -128,10 +126,10 @@ func NewOptions() *Options {
 		WebAppClientID:          "webapp",
 		WebAppClientSecret:      "",
 		WebAppClientName:        "webapp",
-		WebAppIAMScheme:         defaultUrl.Scheme,
-		WebAppIAMHost:           defaultUrl.Host,
-		WebAppCMSScheme:         defaultUrl.Scheme,
-		WebAppCMSHost:           defaultUrl.Host,
+		WebAppIAMScheme:         defaultURL.Scheme,
+		WebAppIAMHost:           defaultURL.Host,
+		WebAppCMSScheme:         defaultURL.Scheme,
+		WebAppCMSHost:           defaultURL.Host,
 		WebAppStaticDir:         "",
 		CMSBasePath:             "/apis/cms",
 		IAMBasePath:             "/apis/iam",
@@ -140,8 +138,8 @@ func NewOptions() *Options {
 		LoginClientID:           "login",
 		LoginClientSecret:       "",
 		LoginTemplateDirectory:  "",
-		LoginIAMScheme:          defaultUrl.Scheme,
-		LoginIAMHost:            defaultUrl.Host,
+		LoginIAMScheme:          defaultURL.Scheme,
+		LoginIAMHost:            defaultURL.Host,
 	}
 }
 
@@ -213,7 +211,7 @@ func (o *Options) Flags(fs *pflag.FlagSet) {
 
 type CompletedOptions struct {
 	*Options
-	MongoClientFn              utils.MongoClientFn
+	MongoClientSrc             storage.MongoClientSrc
 	HydraAdminClient           *client.OryHydra
 	HydraPublicClient          *client.OryHydra
 	OAuthTokenEndpoint         string
@@ -271,40 +269,7 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		}
 	}
 
-	var mongoClientFn = func(ctx context.Context) (*mongo.Client, error) {
-
-		var mongoUsername = o.MongoUsername
-		if len(mongoUsername) == 0 && len(o.MongoUsernameFile) > 0 {
-			mongoUsername, err = readFile(o.MongoUsernameFile)
-			if err != nil {
-				logrus.WithError(err).Errorf("failed to read mongo username file")
-				return nil, err
-			}
-		}
-
-		var mongoPassword = o.MongoPassword
-		if len(mongoPassword) == 0 && len(o.MongoPasswordFile) > 0 {
-			mongoPassword, err = readFile(o.MongoPasswordFile)
-			if err != nil {
-				logrus.WithError(err).Errorf("failed to read mongo password file")
-				return nil, err
-			}
-		}
-
-		mongoClient, err := MongoClient(o.MongoHosts, mongoUsername, mongoPassword)
-		if err != nil {
-			logrus.WithError(err).Errorf("failed to create mongo client")
-			return nil, err
-		}
-
-		if err := mongoClient.Connect(ctx); err != nil {
-			logrus.WithError(err).Errorf("failed to connect to mongo")
-			return nil, err
-		}
-
-		return mongoClient, nil
-
-	}
+	var mongoClientSrc = storage.NewMongoClientSrc(ctx, o.MongoUsernameFile, o.MongoPasswordFile, o.MongoUsername, o.MongoPassword, o.MongoHosts)
 
 	hydraAdminClient, err := HydraClient(o.HydraAdminURL)
 	if err != nil {
@@ -327,8 +292,6 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 		}
 	}
 
-	time.Sleep(2 * time.Second)
-
 	logrus.Infof("discovering openid configuration")
 	openIdConf, err := hydraPublicClient.Public.DiscoverOpenIDConfiguration(&public.DiscoverOpenIDConfigurationParams{
 		Context:    ctx,
@@ -340,6 +303,7 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 	}
 
 	logrus.Infof("creating redis pool for redis host %s", o.RedisAddress)
+
 	pool := &redis.Pool{
 		MaxActive:   500,
 		MaxIdle:     500,
@@ -349,6 +313,7 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 			if err != nil {
 				logrus.WithError(err).Errorf("failed to get connection")
 			}
+
 			return err
 		},
 		Dial: func() (redis.Conn, error) {
@@ -356,19 +321,19 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 			if len(o.RedisPassword) > 0 {
 				redisOptions = append(redisOptions, redis.DialPassword(o.RedisPassword))
 			}
+
 			return redis.Dial("tcp", o.RedisAddress, redisOptions...)
 		},
 	}
 
 	logrus.Infof("getting redis connection")
+
 	conn := pool.Get()
-	defer func(conn redis.Conn) {
-		err := conn.Close()
-		if err != nil {
-		}
-	}(conn)
+
+	defer conn.Close()
 
 	logrus.Infof("testing redis connection")
+
 	_, err = conn.Do("PING")
 	if err != nil {
 		logrus.WithError(err).Errorf("failed to test redis")
@@ -376,51 +341,51 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 	}
 
 	var sessionKey1 = make([]byte, 32)
-	var blockKey1 []byte = nil
-	var sessionKey2 []byte = nil
-	var blockKey2 []byte = nil
-	if len(o.WebAppSessionKeyFile1) > 0 {
-		sessionKeyStr, err := readFile(o.WebAppSessionKeyFile1)
-		if err != nil {
-			logrus.WithError(err).Errorf("failed to read session hash key file ")
-			panic(err)
-		}
-		sessionKey1 = []byte(sessionKeyStr)[0:32]
-	} else {
-		_, err = rand.Read(sessionKey1)
-		if err != nil {
-			panic(err)
+
+	var blockKey1 = make([]byte, 32)
+
+	var sessionKey2 = make([]byte, 32)
+
+	var blockKey2 = make([]byte, 32)
+
+	var prepareKey = func(optKeyFile string, key []byte, fallback string) {
+		if len(optKeyFile) > 0 {
+			keyStr, err := readFile(optKeyFile)
+			if err != nil {
+				logrus.WithError(err).Errorf("failed to read session hash key file ")
+				panic(err)
+			}
+
+			key = []byte(keyStr)[0:32]
+		} else if _, err := os.Stat(fallback); err == nil {
+			key, err = ioutil.ReadFile(fallback)
+			if err != nil {
+				logrus.WithError(err).Errorf("failed to read session hash key file ")
+				panic(err)
+			}
+		} else {
+			_, err = rand.Read(key)
+			if err != nil {
+				panic(err)
+			}
+			err = os.MkdirAll("tmp", os.ModePerm)
+			if err != nil {
+				panic(err)
+			}
+			err := ioutil.WriteFile(fallback, key, os.ModePerm)
+			if err != nil {
+				panic(err)
+			}
 		}
 	}
 
-	if len(o.WebAppBlockKeyFile1) > 0 {
-		fileValue, err := readFile(o.WebAppBlockKeyFile1)
-		if err != nil {
-			logrus.WithError(err).Errorf("failed to read session block key file 1")
-			panic(err)
-		}
-		blockKey1 = []byte(fileValue)[0:32]
-	}
-
-	if len(o.WebAppSessionKeyFile2) > 0 {
-		fileValue, err := readFile(o.WebAppSessionKeyFile2)
-		if err != nil {
-			logrus.WithError(err).Errorf("failed to read session hash key file 2")
-			panic(err)
-		}
-		sessionKey2 = []byte(fileValue)[0:32]
-	}
-
-	if len(o.WebAppBlockKeyFile2) > 0 {
-		fileValue, err := readFile(o.WebAppBlockKeyFile2)
-		if err != nil {
-			logrus.WithError(err).Errorf("failed to read session block key file 2")
-			panic(err)
-		}
-		blockKey2 = []byte(fileValue)[0:32]
-	}
+	prepareKey(o.WebAppSessionKeyFile1, sessionKey1, "tmp/sessionkey1")
+	prepareKey(o.WebAppBlockKeyFile1, blockKey1, "tmp/blockkey1")
+	prepareKey(o.WebAppSessionKeyFile2, sessionKey2, "tmp/sessionkey2")
+	prepareKey(o.WebAppBlockKeyFile2, blockKey2, "tmp/blockkey2")
 
 	logrus.Infof("creating redis store")
+
 	redisStore, err := redistore.NewRediStoreWithPool(pool, sessionKey1, blockKey1, sessionKey2, blockKey2)
 	if err != nil {
 		logrus.WithError(err).Errorf("failed to create redis store")
@@ -431,7 +396,7 @@ func (o *Options) Complete(ctx context.Context) (CompletedOptions, error) {
 
 	completedOptions := CompletedOptions{
 		Options:                    o,
-		MongoClientFn:              mongoClientFn,
+		MongoClientSrc:             mongoClientSrc,
 		HydraAdminClient:           hydraAdminClient,
 		HydraPublicClient:          hydraPublicClient,
 		HydraTLSClient:             hydraHttpClient,
@@ -486,24 +451,9 @@ func HydraClient(adminURL string) (*client.OryHydra, error) {
 	return hydraAdminClient, nil
 }
 
-func MongoClient(hosts []string, username, password string) (*mongo.Client, error) {
-	// Setup mongo client
-	mongoClient, err := mongo.NewClient(options.Client().
-		SetHosts(hosts).
-		SetAuth(
-			options.Credential{
-				Username: username,
-				Password: password,
-			}))
-	if err != nil {
-		return nil, err
-	}
-	return mongoClient, nil
-}
-
 func (c CompletedOptions) Generic() *server.GenericServerOptions {
 	return &server.GenericServerOptions{
-		MongoClientFn:     c.MongoClientFn,
+		MongoClientSrc:    c.MongoClientSrc,
 		MongoDatabase:     c.MongoDatabase,
 		Environment:       c.Environment,
 		HydraAdminClient:  c.HydraAdminClient,
@@ -560,7 +510,7 @@ func (c CompletedOptions) New(ctx context.Context) *Server {
 	}
 
 	srv := &Server{
-		MongoClientFn:     c.MongoClientFn,
+		MongoClientSrc:    c.MongoClientSrc,
 		HydraPublicClient: c.HydraPublicClient,
 		HydraAdminClient:  c.HydraAdminClient,
 		WebAppServer:      webAppServer,

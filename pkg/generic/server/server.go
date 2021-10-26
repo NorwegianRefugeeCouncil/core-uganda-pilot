@@ -3,14 +3,14 @@ package server
 import (
 	"github.com/boj/redistore"
 	"github.com/coreos/go-oidc/v3/oidc"
-	"github.com/nrc-no/core/pkg/utils"
+	"github.com/nrc-no/core/pkg/storage"
 	"github.com/ory/hydra-client-go/client"
 	"net/http"
 	"path"
 )
 
 type GenericServerOptions struct {
-	MongoClientFn     utils.MongoClientFn
+	MongoClientSrc    storage.MongoClientSrc
 	MongoDatabase     string
 	Environment       string
 	HydraAdminClient  *client.OryHydra

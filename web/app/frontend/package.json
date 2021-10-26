@@ -1,0 +1,58 @@
+{
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "node_modules/.bin/expo start",
+    "android": "node_modules/.bin/expo start --android",
+    "ios": "node_modules/.bin/expo start --ios",
+    "web": "node_modules/.bin/expo start --web",
+    "eject": "node_modules/.bin/expo eject"
+  },
+  "dependencies": {
+    "@config-plugins/android-jsc-intl": "^0.0.0",
+    "@formatjs/intl-datetimeformat": "^4.2.4",
+    "@formatjs/intl-displaynames": "^5.2.4",
+    "@formatjs/intl-getcanonicallocales": "^1.7.3",
+    "@formatjs/intl-listformat": "^6.3.4",
+    "@formatjs/intl-locale": "^2.4.38",
+    "@formatjs/intl-numberformat": "^7.2.4",
+    "@formatjs/intl-pluralrules": "^4.1.4",
+    "@formatjs/intl-relativetimeformat": "^9.3.1",
+    "@react-native-community/datetimepicker": "3.5.2",
+    "@react-navigation/native": "~6.0.4",
+    "@react-navigation/stack": "~6.0.9",
+    "core-js-api-client": "../client",
+    "dotenv": "^10.0.0",
+    "expo": "~42.0.1",
+    "expo-constants": "~11.0.1",
+    "expo-dev-client": "~0.6.0",
+    "expo-localization": "~10.2.0",
+    "expo-splash-screen": "~0.11.2",
+    "expo-updates": "~0.8.1",
+    "react-native-localize": "~2.1.5",
+    "react-native-paper-dates": "~0.4.6",
+    "react-native-reanimated": "~2.2.0",
+    "react-native-unimodules": "0.14.10",
+    "expo-status-bar": "~1.0.4",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
+    "react-native-gesture-handler": "~1.10.3",
+    "react-native-paper": "~4.9.2",
+    "react-native-safe-area-context": "3.2.0",
+    "react-native-screens": "~3.4.0",
+    "react-native-web": "~0.13.12",
+    "rxjs": "^7.4.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@types/react": "~16.9.35",
+    "@types/react-native": "~0.63.2",
+    "typescript": "~4.1.0"
+  },
+  "resolutions": {
+    "**/ua-parser-js": "0.7.28"
+  },
+  "private": true,
+  "name": "frontend",
+  "version": "1.0.0"
+}

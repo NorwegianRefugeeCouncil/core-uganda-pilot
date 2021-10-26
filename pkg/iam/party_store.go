@@ -2,29 +2,28 @@ package iam
 
 import (
 	"context"
-	"github.com/nrc-no/core/pkg/utils"
+	"github.com/nrc-no/core/pkg/storage"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type PartyStore struct {
-	GetCollection utils.MongoCollectionFn
+	getCollection func() (*mongo.Collection, error)
 }
 
-func newPartyStore(ctx context.Context, mongoClientFn utils.MongoClientFn, database string) (*PartyStore, error) {
+func newPartyStore(ctx context.Context, mongoClientSrc storage.MongoClientSrc, database string) (*PartyStore, error) {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
 	store := &PartyStore{
-		GetCollection: utils.GetCollectionFn(database, PartiesCollection, mongoClientFn),
+		getCollection: storage.GetCollectionFn(mongoClientSrc, database, "parties"),
 	}
 
-	collection, done, err := store.GetCollection(ctx)
+	collection, err := store.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	if _, err := collection.Indexes().CreateOne(ctx, mongo.IndexModel{
 		Keys:    bson.M{"id": 1},
@@ -51,11 +50,10 @@ func newPartyStore(ctx context.Context, mongoClientFn utils.MongoClientFn, datab
 }
 
 func (s *PartyStore) get(ctx context.Context, id string) (*Party, error) {
-	collection, done, err := s.GetCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	res := collection.FindOne(ctx, bson.M{
 		"id": id,
@@ -99,11 +97,10 @@ func (s *PartyStore) list(ctx context.Context, listOptions PartySearchOptions) (
 		filterItems["$text"] = bson.M{"$search": listOptions.SearchParam}
 	}
 
-	collection, done, err := s.GetCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	res, err := collection.Find(ctx, filterItems)
 	if err != nil {
@@ -133,11 +130,10 @@ func (s *PartyStore) list(ctx context.Context, listOptions PartySearchOptions) (
 }
 
 func (s *PartyStore) update(ctx context.Context, party *Party) error {
-	collection, done, err := s.GetCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return err
 	}
-	defer done()
 
 	_, err = collection.UpdateOne(ctx, bson.M{
 		"id": party.ID,
@@ -154,11 +150,10 @@ func (s *PartyStore) update(ctx context.Context, party *Party) error {
 }
 
 func (s *PartyStore) create(ctx context.Context, party *Party) error {
-	collection, done, err := s.GetCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return err
 	}
-	defer done()
 
 	_, err = collection.InsertOne(ctx, party)
 	if err != nil {

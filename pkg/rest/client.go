@@ -37,19 +37,19 @@ func (r *Client) Verb(verb string) *Request {
 }
 
 func (r *Client) Get() *Request {
-	return r.Verb("GET")
+	return r.Verb(http.MethodGet)
 }
 
 func (r *Client) Post() *Request {
-	return r.Verb("POST")
+	return r.Verb(http.MethodPost)
 }
 
 func (r *Client) Put() *Request {
-	return r.Verb("PUT")
+	return r.Verb(http.MethodPut)
 }
 
 func (r *Client) Delete() *Request {
-	return r.Verb("DELETE")
+	return r.Verb(http.MethodDelete)
 }
 
 func (r *Client) NewRequest() *Request {

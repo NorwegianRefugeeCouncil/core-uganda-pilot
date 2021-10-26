@@ -2,29 +2,28 @@ package iam
 
 import (
 	"context"
-	"github.com/nrc-no/core/pkg/utils"
+	"github.com/nrc-no/core/pkg/storage"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type RelationshipTypeStore struct {
-	getCollection utils.MongoCollectionFn
+	getCollection func() (*mongo.Collection, error)
 }
 
-func newRelationshipTypeStore(ctx context.Context, mongoClientFn utils.MongoClientFn, database string) (*RelationshipTypeStore, error) {
+func newRelationshipTypeStore(ctx context.Context, mongoClientSrc storage.MongoClientSrc, database string) (*RelationshipTypeStore, error) {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
 	store := &RelationshipTypeStore{
-		getCollection: utils.GetCollectionFn(database, RelationshipTypesCollection, mongoClientFn),
+		getCollection: storage.GetCollectionFn(mongoClientSrc, database, "relationships"),
 	}
 
-	collection, done, err := store.getCollection(ctx)
+	collection, err := store.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	if _, err := collection.Indexes().CreateOne(ctx, mongo.IndexModel{
 		Keys: bson.M{
@@ -39,11 +38,10 @@ func newRelationshipTypeStore(ctx context.Context, mongoClientFn utils.MongoClie
 }
 
 func (s *RelationshipTypeStore) Get(ctx context.Context, id string) (*RelationshipType, error) {
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	res := collection.FindOne(ctx, bson.M{
 		"id": id,
@@ -73,11 +71,10 @@ func (s *RelationshipTypeStore) List(ctx context.Context, listOptions Relationsh
 			},
 		}
 	}
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	res, err := collection.Find(ctx, filter)
 	if err != nil {
@@ -104,11 +101,10 @@ func (s *RelationshipTypeStore) List(ctx context.Context, listOptions Relationsh
 }
 
 func (s *RelationshipTypeStore) Update(ctx context.Context, relationshipType *RelationshipType) error {
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return err
 	}
-	defer done()
 
 	_, err = collection.UpdateOne(ctx, bson.M{
 		"id": relationshipType.ID,
@@ -128,11 +124,10 @@ func (s *RelationshipTypeStore) Update(ctx context.Context, relationshipType *Re
 }
 
 func (s *RelationshipTypeStore) Create(ctx context.Context, relationshipType *RelationshipType) error {
-	collection, done, err := s.getCollection(ctx)
+	collection,  err := s.getCollection()
 	if err != nil {
 		return err
 	}
-	defer done()
 
 	_, err = collection.InsertOne(ctx, relationshipType)
 	if err != nil {

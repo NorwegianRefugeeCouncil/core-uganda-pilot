@@ -18,7 +18,7 @@ func (s *Server) PartyTypes(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if req.Method == "POST" {
+	if req.Method == http.MethodPost {
 		s.PostPartyType(ctx, &iam.PartyType{}, w, req)
 		return
 	}
@@ -43,6 +43,7 @@ func (s *Server) PartyType(w http.ResponseWriter, req *http.Request) {
 	iamClient, err := s.IAMClient(req)
 	if err != nil {
 		s.Error(w, err)
+
 		return
 	}
 
@@ -50,26 +51,39 @@ func (s *Server) PartyType(w http.ResponseWriter, req *http.Request) {
 	if !ok || len(id) == 0 {
 		err := fmt.Errorf("no id found in path")
 		s.Error(w, err)
+
 		return
 	}
 
 	var partyType = &iam.PartyType{}
+
 	if id != "new" {
 		var err error
+
 		partyType, err = iamClient.PartyTypes().Get(ctx, id)
 		if err != nil {
 			s.Error(w, err)
+
 			return
 		}
 	}
 
-	if req.Method == "POST" {
+	if req.Method == http.MethodPost {
 		s.PostPartyType(ctx, partyType, w, req)
+
+		return
+	}
+
+	notifications, err := s.flashes(req, w)
+	if err != nil {
+		s.Error(w, err)
+
 		return
 	}
 
 	if err := s.renderFactory.New(req, w).ExecuteTemplate(w, "partytype", map[string]interface{}{
-		"PartyType": partyType,
+		"PartyType":     partyType,
+		"Notifications": notifications,
 	}); err != nil {
 		s.Error(w, err)
 		return
@@ -106,34 +120,41 @@ func (s *Server) PostPartyType(
 		created, err := iamClient.PartyTypes().Create(ctx, partyType)
 		if err != nil {
 			s.Error(w, err)
+
 			return
 		}
 
-		if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
+		if err := s.addFlash(req, w, &sessionmanager.FlashMessage{
 			Message: fmt.Sprintf("Party type \"%s\" successfully updated", partyType.Name),
 			Theme:   "success",
 		}); err != nil {
 			s.Error(w, err)
+
 			return
 		}
 
 		w.Header().Set("Location", "/settings/partytypes/"+created.ID)
 		w.WriteHeader(http.StatusSeeOther)
+
 		return
 	}
+
 	updated, err := iamClient.PartyTypes().Update(ctx, partyType)
 	if err != nil {
 		s.Error(w, err)
+
 		return
 	}
-	if err := s.sessionManager.AddNotification(req, w, &sessionmanager.Notification{
+
+	if err := s.addFlash(req, w, &sessionmanager.FlashMessage{
 		Message: fmt.Sprintf("Party type \"%s\" successfully updated", partyType.Name),
 		Theme:   "success",
 	}); err != nil {
 		s.Error(w, err)
+
 		return
 	}
+
 	w.Header().Set("Location", "/settings/partytypes/"+updated.ID)
 	w.WriteHeader(http.StatusSeeOther)
-	return
 }

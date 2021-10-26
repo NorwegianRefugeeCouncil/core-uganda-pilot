@@ -1,38 +1,131 @@
 package storage
 
 import (
+	"bytes"
 	"context"
-	"go.mongodb.org/mongo-driver/bson"
+	"crypto/sha256"
+	"errors"
 	"go.mongodb.org/mongo-driver/mongo"
-	"golang.org/x/sync/errgroup"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"hash"
+	"os"
+	"sync"
 )
 
-type Factory interface {
-	New() (*mongo.Client, error)
+type MongoClientSrc interface {
+	GetMongoClient() (*mongo.Client, error)
 }
 
-type MongoFn func() (*mongo.Client, error)
-
-type factory struct {
-	mongoFn MongoFn
+type fileMongoCLientSrc struct {
+	ctx context.Context
+	usernameFile string
+	passwordFile string
+	username string
+	password string
+	mongoHosts []string
+	mongoClient *mongo.Client
+	credentialsHash hash.Hash
+	lock sync.RWMutex
+	fileReader func(fn string) (string, error)
 }
 
-func (f factory) New() (*mongo.Client, error) {
-	return f.mongoFn()
-}
+func (f *fileMongoCLientSrc) GetMongoClient() (*mongo.Client, error) {
+	f.lock.Lock()
+	defer f.lock.Unlock()
 
-func NewFactory(fn MongoFn) Factory {
-	return factory{mongoFn: fn}
-}
+	var err error
 
-func ClearCollections(ctx context.Context, mongoCli *mongo.Client, databaseName string, collectionNames ...string) error {
-	g, ctx := errgroup.WithContext(ctx)
-	for _, collectionName := range collectionNames {
-		c := collectionName
-		g.Go(func() error {
-			_, err := mongoCli.Database(databaseName).Collection(c).DeleteMany(ctx, bson.M{})
-			return err
-		})
+	var username []byte
+	var password []byte
+
+	if len(f.usernameFile) > 0 {
+		if err = readFileInto(f.usernameFile, username); err != nil {
+			return nil, err
+		}
+	} else if len(f.username) > 0 {
+		username = []byte(f.username)
+	} else {
+		return nil, errors.New("missing mongo username")
 	}
-	return g.Wait()
+
+	if len(f.passwordFile) > 0 {
+		if err = readFileInto(f.passwordFile, password); err != nil {
+			return nil, err
+		}
+	} else if len(f.password) > 0 {
+		password = []byte(f.password)
+	} else {
+		return nil, errors.New("missing mongo password")
+	}
+
+	var h = sha256.New()
+
+	h.Write(bytes.Join([][]byte{username, password}, nil))
+
+	if f.mongoClient == nil || !bytes.Equal(h.Sum(nil), f.credentialsHash.Sum(nil)) {
+		 client, err := MongoClient(f.mongoHosts, string(username), string(password))
+		if err != nil {
+			return nil, err
+		}
+		err = client.Connect(f.ctx)
+		if err != nil {
+			return nil, err
+		}
+		err = client.Ping(f.ctx, nil)
+		if err != nil {
+			panic(err)
+		}
+		f.mongoClient = client
+		f.credentialsHash = h
+	}
+
+	return f.mongoClient, nil
+}
+
+func NewMongoClientSrc(ctx context.Context, usernameFile string, passwordFile string, username string, password string, mongoHosts []string) MongoClientSrc {
+	return &fileMongoCLientSrc{
+		ctx: ctx,
+		usernameFile: usernameFile,
+		passwordFile: passwordFile,
+		username:     username,
+		password:     password,
+		mongoHosts:   mongoHosts,
+		credentialsHash: sha256.New(),
+	}
+}
+
+func MongoClient(hosts []string, username, password string) (*mongo.Client, error) {
+	// Setup mongo client
+	mongoClient, err := mongo.NewClient(options.Client().
+		SetHosts(hosts).
+		SetAuth(
+			options.Credential{
+				Username: username,
+				Password: password,
+			}))
+	if err != nil {
+		return nil, err
+	}
+	return mongoClient, nil
+}
+
+func readFileInto(filename string, b []byte) error {
+	data, err := os.ReadFile(filename)
+	if err != nil {
+		return err
+	}
+	b = data
+	return nil
+}
+
+func GetCollectionFn(mongoClientSrc MongoClientSrc, database, collection string) func() (*mongo.Collection, error) {
+	return func() (*mongo.Collection, error) {
+		client, err := mongoClientSrc.GetMongoClient()
+		if err != nil {
+			return nil, err
+		}
+		collection := client.Database(database).Collection(collection)
+
+		return collection, nil
+	}
 }

@@ -2,25 +2,25 @@ package iam
 
 import (
 	"context"
-	"github.com/nrc-no/core/pkg/utils"
+	"github.com/nrc-no/core/pkg/storage"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type IdentificationDocumentStore struct {
-	getCollection utils.MongoCollectionFn
+	getCollection func() (*mongo.Collection, error)
 }
 
-func newIdentificationDocumentStore(ctx context.Context, mongoClientFn utils.MongoClientFn, database string) (*IdentificationDocumentStore, error) {
+func newIdentificationDocumentStore(ctx context.Context, mongoClientSrc storage.MongoClientSrc, database string) (*IdentificationDocumentStore, error) {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
 	store := &IdentificationDocumentStore{
-		getCollection: utils.GetCollectionFn(database, IdentificationDocumentsCollection, mongoClientFn),
+		getCollection: storage.GetCollectionFn(mongoClientSrc, database, "identificationDocuments"),
 	}
 
-	collection, klose, err := store.getCollection(ctx)
+	collection,  err := store.getCollection()
 	if err != nil {
 		return nil, err
 	}
@@ -33,8 +33,6 @@ func newIdentificationDocumentStore(ctx context.Context, mongoClientFn utils.Mon
 		return nil, err
 	}
 
-	klose()
-
 	return store, nil
 }
 
@@ -45,7 +43,7 @@ func (s *IdentificationDocumentStore) list(ctx context.Context, listOptions Iden
 		filter["partyId"] = bson.D{{Key: "$in", Value: BSONStringA(listOptions.PartyIDs)}}
 	}
 
-	collection, klose, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +67,6 @@ func (s *IdentificationDocumentStore) list(ctx context.Context, listOptions Iden
 		return nil, cursor.Err()
 	}
 
-	klose()
 
 	return &IdentificationDocumentList{
 		Items: list,
@@ -77,7 +74,7 @@ func (s *IdentificationDocumentStore) list(ctx context.Context, listOptions Iden
 }
 
 func (s *IdentificationDocumentStore) create(ctx context.Context, identificationDocument *IdentificationDocument) error {
-	collection, klose, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return err
 	}
@@ -85,12 +82,11 @@ func (s *IdentificationDocumentStore) create(ctx context.Context, identification
 	if err != nil {
 		return err
 	}
-	klose()
 	return nil
 }
 
 func (s *IdentificationDocumentStore) get(ctx context.Context, id string) (*IdentificationDocument, error) {
-	collection, klose, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return nil, err
 	}
@@ -104,12 +100,11 @@ func (s *IdentificationDocumentStore) get(ctx context.Context, id string) (*Iden
 	if err := result.Decode(&a); err != nil {
 		return nil, err
 	}
-	klose()
 	return &a, nil
 }
 
 func (s *IdentificationDocumentStore) update(ctx context.Context, identificationDocument *IdentificationDocument) error {
-	collection, klose, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return err
 	}
@@ -125,16 +120,14 @@ func (s *IdentificationDocumentStore) update(ctx context.Context, identification
 	if err != nil {
 		return err
 	}
-	klose()
 	return nil
 }
 
 func (s *IdentificationDocumentStore) delete(ctx context.Context, id string) error {
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return err
 	}
-	defer done()
 
 	_, err = collection.DeleteOne(ctx, bson.M{
 		"id": id,

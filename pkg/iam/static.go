@@ -27,6 +27,7 @@ var (
 var (
 	FullNameAttribute = PartyAttributeDefinition{
 		ID:        "8514da51-aad5-4fb4-a797-8bcc0c969b27",
+		Alias:     "global/fullName",
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
 			Name: "fullName",
@@ -44,6 +45,7 @@ var (
 	}
 	DisplayNameAttribute = PartyAttributeDefinition{
 		ID:        "21079bbc-e04b-4fe8-897f-644d73af0d9e",
+		Alias:     "global/displayName",
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
 			Name: "displayName",
@@ -52,7 +54,10 @@ var (
 				{"en", "Display Name"},
 				{"es", "Nombre para mostrar"},
 			},
-
+			Description: i18n.Strings{
+				{"en", "This is what you see in lists, dropdowns and search results"},
+				{"es", "Esto es lo que ves en listas, menús desplegables y resultados de búsqueda."},
+			},
 			Validation: form.ControlValidation{Required: true},
 		},
 		IsPersonallyIdentifiableInfo: true,
@@ -62,6 +67,7 @@ var (
 	}
 	BirthDateAttribute = PartyAttributeDefinition{
 		ID:        "87fe07d7-e6a7-4428-8086-3842b69f3665",
+		Alias:     "global/birthDate",
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
 			Name: "birthDate",
@@ -81,6 +87,7 @@ var (
 	}
 	EMailAttribute = PartyAttributeDefinition{
 		ID:        "0ca7fa2b-982b-4fa5-85be-a6ebee8d4912",
+		Alias:     "global/email",
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
 			Name: "email",
@@ -98,6 +105,7 @@ var (
 	}
 	DisplacementStatusAttribute = PartyAttributeDefinition{
 		ID:        "d1d824b2-d163-43ff-bc0a-527bd86b79bb",
+		Alias:     "global/displacementStatus",
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
 			Name: "displacementStatus",
@@ -135,6 +143,7 @@ var (
 	}
 	GenderAttribute = PartyAttributeDefinition{
 		ID:        "b43f630c-2eb6-4629-af89-44ded61f7f3e",
+		Alias:     "global/gender",
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
 			Name: "gender",
@@ -166,6 +175,7 @@ var (
 	}
 	ConsentToNrcDataUseAttribute = PartyAttributeDefinition{
 		ID:        "8463d701-f964-4454-b8b2-efc202e8007d",
+		Alias:     "global/consentToDataUse",
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
 			Name: "consentToDataUse",
@@ -182,9 +192,10 @@ var (
 	}
 	ConsentToNrcDataUseProofAttribute = PartyAttributeDefinition{
 		ID:        "1ac8cf17-49f3-4281-b9c9-6fd6036229c2",
+		Alias:     "global/consentToDataUseProof",
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
-			Name: "consentToNrcDataUseProof",
+			Name: "consentToDataUseProof",
 			Type: form.URL,
 			Label: i18n.Strings{
 				{"en", "Link to proof of beneficiary consent"},
@@ -198,6 +209,7 @@ var (
 	}
 	AnonymousAttribute = PartyAttributeDefinition{
 		ID:        "0ab6fd31-fa0e-4d53-b236-94bce6f67d4b",
+		Alias:     "global/anonymous",
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
 			Name: "anonymous",
@@ -214,9 +226,10 @@ var (
 	}
 	MinorAttribute = PartyAttributeDefinition{
 		ID:        "24be4f47-ba00-405a-9bc5-c6fe58ecd80c",
+		Alias:     "global/isMinor",
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
-			Name: "minor",
+			Name: "isMinor",
 			Type: form.Boolean,
 			Label: i18n.Strings{
 				{"en", "Is the beneficiary a minor?"},
@@ -230,9 +243,10 @@ var (
 	}
 	ProtectionConcernsAttribute = PartyAttributeDefinition{
 		ID:        "ae56b1fd-21f6-480a-9184-091a7093d8b8",
+		Alias:     "global/hasProtectionConcerns",
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
-			Name: "protectionConcerns",
+			Name: "hasPotectionConcerns",
 			Type: form.Boolean,
 			Label: i18n.Strings{
 				{"en", "Beneficiary presents protection concerns"},
@@ -246,22 +260,18 @@ var (
 	}
 	PhysicalImpairmentAttribute = PartyAttributeDefinition{
 		ID:        "cb51b2e8-27da-4375-b85f-c5c107f5d2b4",
+		Alias:     "global/hasPhysicalImpairment",
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
-			Name: "physicalImpairment",
-			Type: form.Checkbox,
+			Name: "hasPhysicalImpairment",
+			Type: form.Boolean,
 			Label: i18n.Strings{
 				{"en", "Physical impairment"},
 				{"es", "Discapacidad física"},
 			},
-			CheckboxOptions: []form.CheckboxOption{
-				{
-					Label: i18n.Strings{
-						{"en", "Would you say you experience some form of physical impairment?"},
-						{"es", "¿Diría que experimenta algún tipo de discapacidad física?"},
-					},
-					Value: "yes",
-				},
+			Description: i18n.Strings{
+				{"en", "Would you say you experience some form of physical impairment?"},
+				{"es", "¿Diría que experimenta algún tipo de discapacidad física?"},
 			},
 		},
 		IsPersonallyIdentifiableInfo: false,
@@ -271,6 +281,7 @@ var (
 	}
 	PhysicalImpairmentIntensityAttribute = PartyAttributeDefinition{
 		ID:        "98def70b-ee72-40eb-aed1-5a834bf8f579",
+		Alias:     "global/physicalImpairmentIntensity",
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
 			Name: "physicalImpairmentIntensity",
@@ -301,22 +312,18 @@ var (
 	}
 	SensoryImpairmentAttribute = PartyAttributeDefinition{
 		ID:        "972c0d7f-8fa9-436d-95ab-6773070bc451",
+		Alias:     "global/hasSensoryImpairment",
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
-			Name: "sensoryImpairment",
-			Type: form.Checkbox,
+			Name: "hasSensoryImpairment",
+			Type: form.Boolean,
 			Label: i18n.Strings{
 				{"en", "Sensory impairment"},
 				{"es", "Discapacidad sensorial"},
 			},
-			CheckboxOptions: []form.CheckboxOption{
-				{
-					Label: i18n.Strings{
-						{"en", "Would you say you experience some form of physical impairment?"},
-						{"es", "¿Diría que experimenta algún tipo de discapacidad sensorial?"},
-					},
-					Value: "yes",
-				},
+			Description: i18n.Strings{
+				{"en", "Would you say you experience some form of physical impairment?"},
+				{"es", "¿Diría que experimenta algún tipo de discapacidad sensorial?"},
 			},
 		},
 		IsPersonallyIdentifiableInfo: false,
@@ -326,6 +333,7 @@ var (
 	}
 	SensoryImpairmentIntensityAttribute = PartyAttributeDefinition{
 		ID:        "b1e6cfac-a8b9-4a0d-a5c7-f164fde99bcc",
+		Alias: "global/sensoryImpairmentIntensity",
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
 			Name: "sensoryImpairmentIntensity",
@@ -356,23 +364,19 @@ var (
 	}
 	MentalImpairmentAttribute = PartyAttributeDefinition{
 		ID:        "41b7eb87-6488-47e3-a4b0-1422c039d0c7",
+		Alias: "global/hasMentalImpairment",
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
-			Name: "mentalImpairment",
-			Type: form.Checkbox,
+			Name: "hasMentalImpairment",
+			Type: form.Boolean,
 			Label: i18n.Strings{
 				{"en", "Mental impairment"},
 				{"es", "Discapacidad mental"},
 			},
-			CheckboxOptions: []form.CheckboxOption{
-				{
-					Label: i18n.Strings{
+					Description: i18n.Strings{
 						{"en", "Would you say you experience some form of mental impairment?"},
 						{"es", "¿Diría que experimenta algún tipo de discapacidad mental?"},
 					},
-					Value: "yes",
-				},
-			},
 		},
 		IsPersonallyIdentifiableInfo: false,
 		PartyTypeIDs: []string{
@@ -381,6 +385,7 @@ var (
 	}
 	MentalImpairmentIntensityAttribute = PartyAttributeDefinition{
 		ID:        "9983188b-4f43-4cd5-a972-fde3a08f4810",
+		Alias: "global/mentalImpairmentIntensity",
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
 			Name: "mentalImpairmentIntensity",
@@ -416,6 +421,7 @@ var (
 var (
 	PrimaryPhoneNumberAttribute = PartyAttributeDefinition{
 		ID:        "8eae83a8-cbc7-4ab2-a21f-d57cb3bb29ff",
+		Alias: "global/primaryPhoneNumber",
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
 			Name: "primaryPhoneNumber",
@@ -433,6 +439,7 @@ var (
 
 	SecondaryPhoneNumberAttribute = PartyAttributeDefinition{
 		ID:        "1f3016af-ab39-422a-beb8-904b68a1619e",
+		Alias: "global/secondaryPhoneNumber",
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
 			Name: "secondaryPhoneNumber",
@@ -450,6 +457,7 @@ var (
 
 	TertiaryPhoneNumberAttribute = PartyAttributeDefinition{
 		ID:        "4a0ba072-66a5-403f-bea1-35e9427659fb",
+		Alias: "global/tertiaryPhoneNumber",
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
 			Name: "tertiaryPhoneNumber",
@@ -471,6 +479,7 @@ var (
 var (
 	UGIdentificationDateAttribute = PartyAttributeDefinition{
 		ID:        "c84b8b93-b974-4bec-b9f7-d437446b24a7",
+		Alias: "ug/identificationDate",
 		CountryID: UgandaCountry.ID,
 		FormControl: form.Control{
 			Name: "ugIdentificationDate",
@@ -491,6 +500,7 @@ var (
 
 	UGIdentificationLocationAttribute = PartyAttributeDefinition{
 		ID:        "06680252-1a1f-4c9d-85dd-56feef20019d",
+		Alias: "ug/identificationLocation",
 		CountryID: UgandaCountry.ID,
 		FormControl: form.Control{
 			Name: "ugIdentificationLocation",
@@ -546,6 +556,7 @@ var (
 
 	UGIdentificationSourceAttribute = PartyAttributeDefinition{
 		ID:        "a131a0fb-0270-4feb-8fc9-46e7dd6b5acb",
+		Alias: "ug/identificationSource",
 		CountryID: UgandaCountry.ID,
 		FormControl: form.Control{
 			Name:  "ugIdentificationSource",
@@ -578,6 +589,7 @@ var (
 
 	UGAdmin2Attribute = PartyAttributeDefinition{
 		ID:        "44dffbc4-7536-42b9-af84-32ea4e9ed493",
+		Alias: "ug/admin2",
 		CountryID: UgandaCountry.ID,
 		FormControl: form.Control{
 			Name:  "ugAdmin2",
@@ -712,6 +724,7 @@ var (
 
 	UGAdmin3Attribute = PartyAttributeDefinition{
 		ID:        "a17ffa5e-5d62-44cd-b89f-438eeba128ac",
+		Alias: "ug/admin3",
 		CountryID: UgandaCountry.ID,
 		FormControl: form.Control{
 			Name:       "ugAdmin3",
@@ -727,6 +740,7 @@ var (
 
 	UGAdmin4Attribute = PartyAttributeDefinition{
 		ID:        "f867c62a-dcd0-4778-9f4e-7309d044e905",
+		Alias: "ug/admin4",
 		CountryID: UgandaCountry.ID,
 		FormControl: form.Control{
 			Name:       "ugAdmin4",
@@ -742,6 +756,7 @@ var (
 
 	UGAdmin5Attribute = PartyAttributeDefinition{
 		ID:        "f0b34ffc-3e15-4195-8e90-a3e1e4b3940c",
+		Alias: "ug/admin5",
 		CountryID: UgandaCountry.ID,
 		FormControl: form.Control{
 			Name:       "ugAdmin5",
@@ -757,6 +772,7 @@ var (
 
 	UGNationalityAttribute = PartyAttributeDefinition{
 		ID:        "76aab836-73a6-4a1e-9c17-04b8a4c25d8d",
+		Alias: "ug/nationality",
 		CountryID: UgandaCountry.ID,
 		FormControl: form.Control{
 			Name:  "ugNationality",
@@ -784,6 +800,7 @@ var (
 
 	UGSpokenLanguagesAttribute = PartyAttributeDefinition{
 		ID:        "d041cba5-9486-4390-bc2b-ec7fb03d67ff",
+		Alias: "ug/spokenLanguages",
 		CountryID: UgandaCountry.ID,
 		FormControl: form.Control{
 			Name:        "ugSpokenLanguages",
@@ -799,6 +816,7 @@ var (
 
 	UGPreferredLanguageAttribute = PartyAttributeDefinition{
 		ID:        "da27a6e8-abe3-48d5-bfd9-46033e476a09",
+		Alias: "ug/preferredLanguage",
 		CountryID: UgandaCountry.ID,
 		FormControl: form.Control{
 			Name:        "ugPreferredLanguage",
@@ -814,6 +832,7 @@ var (
 
 	UGPhysicalAddressAttribute = PartyAttributeDefinition{
 		ID:        "ac2795e8-15a5-42a0-b11f-b9269ff2a309",
+		Alias: "ug/physicalAddress",
 		CountryID: UgandaCountry.ID,
 		FormControl: form.Control{
 			Name:  "ugPhysicalAddress",
@@ -828,6 +847,7 @@ var (
 
 	UGInstructionOnMakingContactAttribute = PartyAttributeDefinition{
 		ID:        "4d399cb3-6653-4a61-92eb-331f07e6c395",
+		Alias: "ug/instructionOnMakingContact",
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
 			Name:  "ugInstructionOnMakingContact",
@@ -842,6 +862,7 @@ var (
 
 	UGCanInitiateContactAttribute = PartyAttributeDefinition{
 		ID:        "7476fef0-d116-4b94-b981-ac647e16203d",
+		Alias: "ug/canInitiateContact",
 		CountryID: GlobalCountry.ID,
 		FormControl: form.Control{
 			Name:  "ugCanInitiateContact",
@@ -856,6 +877,7 @@ var (
 
 	UGPreferredMeansOfContactAttribute = PartyAttributeDefinition{
 		ID:        "1e7f2db9-eb63-46ae-b6d5-5c171a9e2534",
+		Alias: "ug/preferredMeansOfContact",
 		CountryID: UgandaCountry.ID,
 		FormControl: form.Control{
 			Name:  "ugPreferredMeansOfContact",
@@ -878,6 +900,7 @@ var (
 
 	UGRequireAnInterpreterAttribute = PartyAttributeDefinition{
 		ID:        "9b6ae87d-8935-49aa-9e32-26e7445d1afc",
+		Alias: "ug/requireAnInterpreter",
 		CountryID: UgandaCountry.ID,
 		FormControl: form.Control{
 			Name:  "ugRequireAnInterpreter",
@@ -896,6 +919,7 @@ var (
 var (
 	COPrimaryNationalityAttribute = PartyAttributeDefinition{
 		ID:        "d1ee17c5-a7c5-486f-a1e9-be4ec6d65700",
+		Alias: "co/primaryNationality",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coPrimaryNationality",
@@ -940,6 +964,7 @@ var (
 
 	COSecondaryNationalityAttribute = PartyAttributeDefinition{
 		ID:        "74f39024-a318-4c6a-bb07-dfe55679f78f",
+		Alias: "co/secondaryNationality",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coSecondaryNationality",
@@ -983,6 +1008,7 @@ var (
 
 	COMaritalStatusAttribute = PartyAttributeDefinition{
 		ID:        "8bf6b645-20c1-403b-93bc-c05bbc22f570",
+		Alias: "co/maritalStatus",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coMaritalStatus",
@@ -1023,6 +1049,7 @@ var (
 
 	COBeneficiaryTypeAttribute = PartyAttributeDefinition{
 		ID:        "796e4eb0-56a7-46bb-b81a-9727e674f1f8",
+		Alias: "co/beneficiaryType",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coBeneficiaryType",
@@ -1058,6 +1085,7 @@ var (
 
 	COEthnicityAttribute = PartyAttributeDefinition{
 		ID:        "fe26bc55-30b7-4c30-97f1-99e90a3367a8",
+		Alias: "co/ethnicity",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coEthnicity",
@@ -1076,6 +1104,7 @@ var (
 
 	CORegistrationDateAttribute = PartyAttributeDefinition{
 		ID:        "7623b9f3-c29e-479f-872f-bd008a37aca4",
+		Alias: "co/registrationDate",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coRegistrationDate",
@@ -1098,6 +1127,7 @@ var (
 
 	CORegistrationLocationAttribute = PartyAttributeDefinition{
 		ID:        "f5ea04e0-7073-45b3-aa9a-a08afaf503da",
+		Alias: "co/registrationLocation",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coRegistrationLocation",
@@ -1126,6 +1156,7 @@ var (
 
 	COSourceOfIdentificationAttribute = PartyAttributeDefinition{
 		ID:        "533dd5a3-8ab1-4eb0-9e20-8f4c7b02b2e9",
+		Alias: "co/sourceOfIdentification",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coSourceOfIdentification",
@@ -1164,6 +1195,7 @@ var (
 
 	COTypeOfSettlementAttribute = PartyAttributeDefinition{
 		ID:        "ac56561b-64e4-4d96-bbe8-813a0ed7060c",
+		Alias: "co/typeOfSettlement",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coTypeOfSettlement",
@@ -1182,9 +1214,10 @@ var (
 
 	COEmergencyCareAttribute = PartyAttributeDefinition{
 		ID:        "c425da4b-5af1-4dff-abab-058b1cf9b122",
+		Alias: "co/needsEmergencyCare",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
-			Name: "coEmergencyCare",
+			Name: "coNeedsEmergencyCare",
 			Type: form.Boolean,
 			Label: i18n.Strings{
 				{"en", "Beneficiary requires emergency care"},
@@ -1199,9 +1232,10 @@ var (
 
 	CODurableSolutionsAttribute = PartyAttributeDefinition{
 		ID:        "68241403-dd90-4e26-8d30-70db03b92c95",
+		Alias: "co/responseIsDurable",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
-			Name: "coDurableSolutions",
+			Name: "coResponseIsDurable",
 			Type: form.Boolean,
 			Label: i18n.Strings{
 				{"en", "Response is a durable solution?"},
@@ -1216,9 +1250,10 @@ var (
 
 	COHardToReachAttribute = PartyAttributeDefinition{
 		ID:        "0c327266-47fb-4557-b2fc-a6e394432254",
+		Alias: "co/isHardToReach",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
-			Name: "coHardToReach",
+			Name: "coIsHardToReach",
 			Type: form.Boolean,
 			Label: i18n.Strings{
 				{"en", "Is the beneficiary in a hard to reach location?"},
@@ -1233,6 +1268,7 @@ var (
 
 	COAttendedCovid19Attribute = PartyAttributeDefinition{
 		ID:        "d59241dc-384b-430d-a8f4-f7851ff28615",
+		Alias: "co/attendedCovid19",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coAttendedCovid19",
@@ -1250,6 +1286,7 @@ var (
 
 	COIntroSourceAttribute = PartyAttributeDefinition{
 		ID:        "dc7f97a3-b927-438e-9bdd-4374ae09b63a",
+		Alias: "co/introSource",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coIntroSource",
@@ -1267,6 +1304,7 @@ var (
 
 	COAdmin1Attribute = PartyAttributeDefinition{
 		ID:        "88a5c89a-9f09-4513-a8cb-f81190f9cc0c",
+		Alias: "co/admin1",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coAdmin1",
@@ -1311,6 +1349,7 @@ var (
 
 	COAdmin2Attribute = PartyAttributeDefinition{
 		ID:        "491d0ca0-0b63-4860-8e38-8139fcdccf51",
+		Alias: "co/admin2",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coAdmin2",
@@ -1329,6 +1368,7 @@ var (
 
 	COAdmin3Attribute = PartyAttributeDefinition{
 		ID:        "8e69cfdf-935e-43cb-81a0-79ebdda742ec",
+		Alias: "co/admin3",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coAdmin3",
@@ -1348,6 +1388,7 @@ var (
 
 	COAdmin4Attribute = PartyAttributeDefinition{
 		ID:        "cb132ade-f379-42a8-88b0-6c08b375e086",
+		Alias: "co/admin4",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coAdmin4",
@@ -1366,6 +1407,7 @@ var (
 
 	COAdmin5Attribute = PartyAttributeDefinition{
 		ID:        "faf65cc6-f5eb-4d18-91ca-00bbd3a3ab8e",
+		Alias: "co/admin5",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coAdmin5",
@@ -1383,6 +1425,7 @@ var (
 
 	COJobOrEnterpriseAttribute = PartyAttributeDefinition{
 		ID:        "dda85258-9ce2-41e3-a7f8-21b837d65a25",
+		Alias: "co/jobOrEnterprise",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coJobOrEnterprise",
@@ -1400,6 +1443,7 @@ var (
 
 	COTypeOfEnterpriseAttribute = PartyAttributeDefinition{
 		ID:        "94a9b0d8-8eb7-4165-ae3f-fcf7279da537",
+		Alias: "co/typeOfEnterprise",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coTypeOfEnterprise",
@@ -1436,6 +1480,7 @@ var (
 
 	COTimeInBusinessAttribute = PartyAttributeDefinition{
 		ID:        "31e6f25b-d0a8-47c5-8161-0fdfdb39d430",
+		Alias: "co/timeInBusiness",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coTimeInBusiness",
@@ -1454,6 +1499,7 @@ var (
 
 	COTypeOfEmploymentAttribute = PartyAttributeDefinition{
 		ID:        "fd992e38-2ac1-41ed-9efb-1962174a6438",
+		Alias: "co/typeOfEmployment",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coTypeOfEmployment",
@@ -1472,6 +1518,7 @@ var (
 
 	COFormsOfIncomeGenerationAttribute = PartyAttributeDefinition{
 		ID:        "0ac65773-d8ef-4f63-907b-9761e1630be8",
+		Alias: "co/formsOfIncomeGeneration",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coFormsOfIncomeGeneration",
@@ -1490,6 +1537,7 @@ var (
 
 	COLegalRepresentativeNameAttribue = PartyAttributeDefinition{
 		ID:        "48a22db2-e97d-44db-869b-0a192697c781",
+		Alias: "co/legalRepresentativeName",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coLegalRepresentativeName",
@@ -1508,6 +1556,7 @@ var (
 
 	COLegalRepresentativeAdditionalInfoAttribute = PartyAttributeDefinition{
 		ID:        "f82b59f4-3610-4869-91a3-13308361d153",
+		Alias: "co/legalRepresentativeAdditionalInfo",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coLegalRepresentativeAdditionalInfo",
@@ -1526,6 +1575,7 @@ var (
 
 	COReasonsForRepresentationAttribute = PartyAttributeDefinition{
 		ID:        "42673d92-48fb-4426-b13f-104d2625a8ff",
+		Alias: "co/reasonsForRepresentation",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coReasonsForRepresentation",
@@ -1544,6 +1594,7 @@ var (
 
 	COGuardianshipIsLegalAttribute = PartyAttributeDefinition{
 		ID:        "5af889e2-c3c9-4ceb-a6a4-d6fff7aa5747",
+		Alias: "co/guardianshipIsLegal",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coGuardianshipIsLegal",
@@ -1561,6 +1612,7 @@ var (
 
 	COAbleToGiveLegalConsentAttribute = PartyAttributeDefinition{
 		ID:        "6d96c1e3-9a3c-40c8-93ae-36636ced0b1a",
+		Alias: "co/ableToGiveLegalConsent",
 		CountryID: ColombiaCountry.ID,
 		FormControl: form.Control{
 			Name: "coAbleToGiveLegalConsent",
@@ -1618,6 +1670,7 @@ var CountryPartyType = PartyType{
 
 var TeamNameAttribute = PartyAttributeDefinition{
 	ID:        "18f410a3-6fde-45ce-80c7-fc5d92b85870",
+	Alias: "global/teamName",
 	CountryID: GlobalCountry.ID,
 	FormControl: form.Control{
 		Name: "teamName",
@@ -1628,6 +1681,7 @@ var TeamNameAttribute = PartyAttributeDefinition{
 
 var CountryNameAttribute = PartyAttributeDefinition{
 	ID:        "e011d638-864b-496e-b3e5-af89d0278e1e",
+	Alias: "global/countryName",
 	CountryID: GlobalCountry.ID,
 	FormControl: form.Control{
 		Name: "countryName",

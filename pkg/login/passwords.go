@@ -13,7 +13,7 @@ import (
 func (s *Server) VerifyPassword(ctx context.Context, email, password string) (*iam2.Individual, bool) {
 	individualList, err := s.iam.Individuals().List(ctx, iam2.IndividualListOptions{
 		Attributes: map[string]string{
-			iam2.EMailAttribute.ID: email,
+			iam2.EMailAttribute.Alias: email,
 		},
 	})
 	if err != nil {

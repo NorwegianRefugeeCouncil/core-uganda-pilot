@@ -3,14 +3,12 @@ package server
 import (
 	"context"
 	"errors"
+	"github.com/nrc-no/core/pkg/storage"
 	"github.com/ory/hydra-client-go/client"
-	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"net"
 	"net/http"
 	"os"
-	"strings"
 	"testing"
 )
 
@@ -29,9 +27,9 @@ func GetEnvOrDefault(key, defaultValue string) string {
 }
 
 var (
-	mongoUsername = GetEnvOrDefault("MONGO_USERNAME", "")
-	mongoPassword = GetEnvOrDefault("MONGO_PASSWORD", "")
-	mongoHost     = GetEnvOrDefault("MONGO_HOST", "localhost:27017,localhost:27018,localhost:27019")
+	mongoUsername = GetEnvOrDefault("MONGO_USERNAME", "root")
+	mongoPassword = GetEnvOrDefault("MONGO_PASSWORD", "example")
+	mongoHost     = GetEnvOrDefault("MONGO_HOST", "localhost:27017")
 	mongoDatabase = GetEnvOrDefault("MONGO_DATABASE", "e2e")
 )
 
@@ -42,7 +40,7 @@ type GenericServerTestSuiteArgs struct {
 	Options       GenericServerOptions
 }
 
-func NewGenericServerTestSetup() *GenericServerTestSetup { // Using a random port
+func NewGenericServerTestSetup(ctx context.Context) *GenericServerTestSetup { // Using a random port
 	ip := net.ParseIP("127.0.0.1")
 	listener, err := net.ListenTCP("tcp", &net.TCPAddr{
 		IP: ip,
@@ -56,34 +54,13 @@ func NewGenericServerTestSetup() *GenericServerTestSetup { // Using a random por
 		panic(err)
 	}
 
-	mongoOpts := options.Client()
-	if len(mongoUsername) != 0 || len(mongoPassword) != 0 {
-		mongoOpts.SetAuth(options.Credential{Username: mongoUsername, Password: mongoPassword})
-	}
-
-	if len(mongoHost) > 0 {
-		mongoOpts.SetHosts(strings.Split(mongoHost, ","))
-	}
-
-	mongoClient, err := mongo.NewClient(mongoOpts)
-	if err != nil {
-		panic(err)
-	}
-
-	if err := mongoClient.Connect(context.Background()); err != nil {
-		logrus.WithError(err).Errorf("failed to connect to mongo")
-		panic(err)
-	}
-
-	var mongoClientFn = func(ctx context.Context) (*mongo.Client, error) {
-		return mongoClient, nil
-	}
+	var mongoClientSrc = storage.NewMongoClientSrc(ctx, "", "", mongoUsername, mongoPassword, []string{mongoHost})
 
 	hydraClient := client.NewHTTPClient(nil)
 
 	return &GenericServerTestSetup{
 		GenericServerOptions: &GenericServerOptions{
-			MongoClientFn:    mongoClientFn,
+			MongoClientSrc:   mongoClientSrc,
 			MongoDatabase:    mongoDatabase,
 			Environment:      "Development",
 			HydraAdminClient: hydraClient,

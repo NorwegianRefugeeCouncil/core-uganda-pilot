@@ -20,8 +20,9 @@ type Case struct {
 	CreatorID string `json:"creatorId" bson:"creatorId"`
 	// ParentID refers to a "parent" case, if this case is a referral.
 	// ParentID is optional
-	ParentID   string `json:"parentId" bson:"parentId"`
-	IntakeCase bool   `json:"intakeCase" bson:"intakeCase"`
+	ParentID   string  `json:"parentId" bson:"parentId"`
+	IntakeCase bool    `json:"intakeCase" bson:"intakeCase"`
+	Urgency    string `json:"urgency" bson:"urgency"`
 	// Form is required
 	Form form.Form `json:"form" bson:"form"`
 	// FormData is optional

@@ -11,7 +11,8 @@ import (
 type PartyAttributeDefinition struct {
 	// ID is the unique ID of an attribute
 	ID string `json:"id" bson:"id"`
-
+	// Alias must be a unique, human-readable identifier
+	Alias string `json:"alias" bson:"alias"`
 	// Country ID represents the relevance of a PartyAttributeDefinition in a given country
 	CountryID string `json:"countryId" bson:"countryId"`
 
@@ -335,7 +336,7 @@ func (b *Individual) FindAge() *int {
 }
 
 func (b *Individual) String() string {
-	displayName, hasDisplayName := b.Attributes[DisplayNameAttribute.ID]
+	displayName, hasDisplayName := b.Attributes[DisplayNameAttribute.Alias]
 
 	if hasDisplayName {
 		return strings.ToUpper(displayName[0])

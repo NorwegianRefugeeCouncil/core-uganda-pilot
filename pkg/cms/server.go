@@ -15,7 +15,7 @@ import (
 type Server struct {
 	environment     string
 	router          *mux.Router
-	mongoClientFn   utils.MongoClientFn
+	mongoClientSrc  storage.MongoClientSrc
 	caseStore       *CaseStore
 	caseTypeStore   *CaseTypeStore
 	commentStore    *CommentStore
@@ -32,23 +32,23 @@ func NewServerOrDie(ctx context.Context, o *server.GenericServerOptions) *Server
 }
 
 func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, error) {
-	caseStore, err := NewCaseStore(ctx, o.MongoClientFn, o.MongoDatabase)
+	caseStore, err := NewCaseStore(ctx, o.MongoClientSrc, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	caseTypeStore, err := NewCaseTypeStore(ctx, o.MongoClientFn, o.MongoDatabase)
+	caseTypeStore, err := NewCaseTypeStore(ctx, o.MongoClientSrc, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
-	commentStore, err := NewCommentStore(ctx, o.MongoClientFn, o.MongoDatabase)
+	commentStore, err := NewCommentStore(ctx, o.MongoClientSrc, o.MongoDatabase)
 	if err != nil {
 		return nil, err
 	}
 
 	srv := &Server{
-		mongoClientFn:   o.MongoClientFn,
+		mongoClientSrc:  o.MongoClientSrc,
 		environment:     o.Environment,
 		caseStore:       caseStore,
 		caseTypeStore:   caseTypeStore,
@@ -59,22 +59,21 @@ func NewServer(ctx context.Context, o *server.GenericServerOptions) (*Server, er
 
 	router := mux.NewRouter()
 	router.Use(srv.WithAuth())
+	router.Path(server.CasesEndpoint).Methods(http.MethodGet).HandlerFunc(srv.ListCases)
+	router.Path(server.CasesEndpoint).Methods(http.MethodPost).HandlerFunc(srv.PostCase)
+	router.Path(path.Join(server.CasesEndpoint, "{id}")).Methods(http.MethodGet).HandlerFunc(srv.GetCase)
+	router.Path(path.Join(server.CasesEndpoint, "{id}")).Methods(http.MethodPut).HandlerFunc(srv.PutCase)
 
-	router.Path(server.CasesEndpoint).Methods("GET").HandlerFunc(srv.ListCases)
-	router.Path(server.CasesEndpoint).Methods("POST").HandlerFunc(srv.PostCase)
-	router.Path(path.Join(server.CasesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.GetCase)
-	router.Path(path.Join(server.CasesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.PutCase)
+	router.Path(server.CaseTypesEndpoint).Methods(http.MethodGet).HandlerFunc(srv.ListCaseTypes)
+	router.Path(server.CaseTypesEndpoint).Methods(http.MethodPost).HandlerFunc(srv.postCaseType)
+	router.Path(path.Join(server.CaseTypesEndpoint, "{id}")).Methods(http.MethodGet).HandlerFunc(srv.GetCaseType)
+	router.Path(path.Join(server.CaseTypesEndpoint, "{id}")).Methods(http.MethodPut).HandlerFunc(srv.putCaseType)
 
-	router.Path(server.CaseTypesEndpoint).Methods("GET").HandlerFunc(srv.ListCaseTypes)
-	router.Path(server.CaseTypesEndpoint).Methods("POST").HandlerFunc(srv.postCaseType)
-	router.Path(path.Join(server.CaseTypesEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.GetCaseType)
-	router.Path(path.Join(server.CaseTypesEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.putCaseType)
-
-	router.Path(server.CommentsEndpoint).Methods("GET").HandlerFunc(srv.ListComments)
-	router.Path(server.CommentsEndpoint).Methods("POST").HandlerFunc(srv.PostComment)
-	router.Path(path.Join(server.CommentsEndpoint, "{id}")).Methods("GET").HandlerFunc(srv.GetComment)
-	router.Path(path.Join(server.CommentsEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.PutComment)
-	router.Path(path.Join(server.CommentsEndpoint, "{id}")).Methods("PUT").HandlerFunc(srv.DeleteComment)
+	router.Path(server.CommentsEndpoint).Methods(http.MethodGet).HandlerFunc(srv.ListComments)
+	router.Path(server.CommentsEndpoint).Methods(http.MethodPost).HandlerFunc(srv.PostComment)
+	router.Path(path.Join(server.CommentsEndpoint, "{id}")).Methods(http.MethodGet).HandlerFunc(srv.GetComment)
+	router.Path(path.Join(server.CommentsEndpoint, "{id}")).Methods(http.MethodPut).HandlerFunc(srv.PutComment)
+	router.Path(path.Join(server.CommentsEndpoint, "{id}")).Methods(http.MethodPut).HandlerFunc(srv.DeleteComment)
 
 	srv.router = router
 
@@ -102,7 +101,7 @@ func (s *Server) bind(req *http.Request, into interface{}) error {
 }
 
 func (s *Server) ResetDB(ctx context.Context, databaseName string) error {
-	mongoClient, err := s.mongoClientFn(ctx)
+	mongoClient, err := s.mongoClientSrc.GetMongoClient()
 	if err != nil {
 		return err
 	}

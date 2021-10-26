@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "target": "ES6",
+    "lib": [
+      "DOM",
+      "ESNext"
+    ],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ],
+    "declaration": true,
+    "outDir": "lib",
+  },
+  "include": [
+    "src/**/*",
+  ],
+}

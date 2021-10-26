@@ -2,29 +2,28 @@ package iam
 
 import (
 	"context"
-	"github.com/nrc-no/core/pkg/utils"
+	"github.com/nrc-no/core/pkg/storage"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type PartyAttributeDefinitionStore struct {
-	getCollection utils.MongoCollectionFn
+	getCollection func() (*mongo.Collection, error)
 }
 
-func newAttributeStore(ctx context.Context, mongoClientFn utils.MongoClientFn, database string) (*PartyAttributeDefinitionStore, error) {
+func newAttributeStore(ctx context.Context, mongoClientSrc storage.MongoClientSrc, database string) (*PartyAttributeDefinitionStore, error) {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
 	store := &PartyAttributeDefinitionStore{
-		getCollection: utils.GetCollectionFn(database, AttributesCollection, mongoClientFn),
+		getCollection: storage.GetCollectionFn(mongoClientSrc, database, "attributes"),
 	}
 
-	collection, done, err := store.getCollection(ctx)
+	collection, err := store.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	if _, err := collection.Indexes().CreateOne(ctx,
 		mongo.IndexModel{
@@ -54,11 +53,10 @@ func (s *PartyAttributeDefinitionStore) list(ctx context.Context, listOptions Pa
 		}
 	}
 
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
@@ -85,11 +83,10 @@ func (s *PartyAttributeDefinitionStore) list(ctx context.Context, listOptions Pa
 }
 
 func (s *PartyAttributeDefinitionStore) create(ctx context.Context, attribute *PartyAttributeDefinition) error {
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return err
 	}
-	defer done()
 
 	_, err = collection.InsertOne(ctx, attribute)
 	if err != nil {
@@ -99,11 +96,10 @@ func (s *PartyAttributeDefinitionStore) create(ctx context.Context, attribute *P
 }
 
 func (s *PartyAttributeDefinitionStore) get(ctx context.Context, id string) (*PartyAttributeDefinition, error) {
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return nil, err
 	}
-	defer done()
 
 	result := collection.FindOne(ctx, bson.M{
 		"id": id,
@@ -119,11 +115,10 @@ func (s *PartyAttributeDefinitionStore) get(ctx context.Context, id string) (*Pa
 }
 
 func (s *PartyAttributeDefinitionStore) update(ctx context.Context, attribute *PartyAttributeDefinition) error {
-	collection, done, err := s.getCollection(ctx)
+	collection, err := s.getCollection()
 	if err != nil {
 		return err
 	}
-	defer done()
 
 	_, err = collection.UpdateOne(ctx, bson.M{
 		"id": attribute.ID,
