@@ -99,10 +99,10 @@ type PartyTypeClient interface {
 }
 
 type RelationshipListOptions struct {
-	RelationshipTypeID string
-	FirstPartyID       string
-	SecondPartyID      string
-	EitherPartyID      string
+	RelationshipTypeID string `json:"relationshipTypeId"`
+	FirstPartyID       string `json:"firstPartyId"`
+	SecondPartyID      string `json:"secondPartyId"`
+	EitherPartyID      string `json:"eitherPartyId"`
 }
 
 func (a *RelationshipListOptions) MarshalQueryParameters() (url.Values, error) {
@@ -139,7 +139,7 @@ type RelationshipClient interface {
 }
 
 type RelationshipTypeListOptions struct {
-	PartyTypeID string
+	PartyTypeID string `partyTypeId`
 }
 
 func (a *RelationshipTypeListOptions) MarshalQueryParameters() (url.Values, error) {
@@ -163,8 +163,8 @@ type RelationshipTypeClient interface {
 }
 
 type PartyAttributeDefinitionListOptions struct {
-	PartyTypeIDs []string
-	CountryIDs   []string
+	PartyTypeIDs []string `json:"partyTypeId"`
+	CountryIDs   []string `json:"countryId"`
 }
 
 func (a *PartyAttributeDefinitionListOptions) MarshalQueryParameters() (url.Values, error) {
@@ -222,7 +222,7 @@ type IdentificationDocumentClient interface {
 }
 
 type IdentificationDocumentListOptions struct {
-	PartyIDs []string
+	PartyIDs []string `json:"partyId"`
 }
 
 func (a *IdentificationDocumentListOptions) MarshalQueryParameters() (url.Values, error) {
@@ -278,8 +278,8 @@ type CountryClient interface {
 }
 
 type StaffListOptions struct {
-	IndividualID   string
-	OrganizationID string
+	IndividualID   string `json:"individualId"`
+	OrganizationID string `json:"organizationId"`
 }
 
 func (a *StaffListOptions) MarshalQueryParameters() (url.Values, error) {
@@ -306,13 +306,13 @@ type StaffClient interface {
 	List(ctx context.Context, listOptions StaffListOptions) (*StaffList, error)
 }
 type MembershipListOptions struct {
-	IndividualID string
-	TeamID       string
+	IndividualID string `json:"individualId"`
+	TeamID       string `json:"teamId"`
 }
 
 type NationalityListOptions struct {
-	TeamID    string
-	CountryID string
+	TeamID    string `json:"teamId"`
+	CountryID string `json:"countryId"`
 }
 
 func (a *NationalityListOptions) MarshalQueryParameters() (url.Values, error) {
@@ -364,12 +364,12 @@ type NationalityClient interface {
 }
 
 type IndividualListOptions struct {
-	PartyTypeIDs []string
-	Attributes   map[string]string
-	SearchParam  string
-	Page         int
-	PerPage      int
-	Sort         string
+	PartyTypeIDs []string          `json:"partyTypeId"`
+	Attributes   map[string]string `json:"attributes"`
+	SearchParam  string            `json:"searchParam"`
+	Page         int               `json:"page"`
+	PerPage      int               `json:"perPage"`
+	Sort         string            `json:"sort"`
 }
 
 func (a *IndividualListOptions) MarshalQueryParameters() (url.Values, error) {

@@ -45,7 +45,8 @@ export interface PartyAttributeDefinitionList {
     items: PartyAttributeDefinition[];
 }
 export interface PartyAttributeDefinitionListOptions {
-
+    partyTypeId: string[];
+    countryId: string[];
 }
 export interface AttributeMap {
 
@@ -168,7 +169,10 @@ export interface PartyTypeListOptions {
 
 }
 export interface RelationshipListOptions {
-
+    relationshipTypeId: string;
+    firstPartyId: string;
+    secondPartyId: string;
+    eitherPartyId: string;
 }
 export interface RelationshipTypeListOptions {
 
@@ -180,16 +184,24 @@ export interface CountryListOptions {
 
 }
 export interface StaffListOptions {
-
+    individualId: string;
+    organizationId: string;
 }
 export interface MembershipListOptions {
-
+    individualId: string;
+    teamId: string;
 }
 export interface NationalityListOptions {
-
+    teamId: string;
+    countryId: string;
 }
 export interface IndividualListOptions {
-
+    partyTypeId: string[];
+    attributes: {[key: string]: string};
+    searchParam: string;
+    page: number;
+    perPage: number;
+    sort: string;
 }
 export interface IdentificationDocument {
     id: string;
@@ -201,7 +213,7 @@ export interface IdentificationDocumentList {
     items: IdentificationDocument[];
 }
 export interface IdentificationDocumentListOptions {
-
+    partyId: string[];
 }
 export interface IdentificationDocumentType {
     id: string;
