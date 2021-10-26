@@ -2,32 +2,32 @@ package sqlconvert
 
 import (
 	"fmt"
-	sqlschema2 "github.com/nrc-no/core/pkg/sqlschema"
-	types2 "github.com/nrc-no/core/pkg/types"
+	"github.com/nrc-no/core/pkg/sqlschema"
+	"github.com/nrc-no/core/pkg/types"
 )
 
-func convertDatabaseToSqlSchema(database types2.Database) sqlschema2.SQLSchema {
-	return sqlschema2.SQLSchema{
+func convertDatabaseToSqlSchema(database types.Database) sqlschema.SQLSchema {
+	return sqlschema.SQLSchema{
 		Name: database.ID,
 	}
 }
 
-func expandSubForms(formDef *types2.FormDefinition) []*types2.FormDefinition {
-	var result []*types2.FormDefinition
+func expandSubForms(formDef *types.FormDefinition) []*types.FormDefinition {
+	var result []*types.FormDefinition
 	result = append(result, formDef)
 	for _, field := range formDef.Fields {
 		if field.FieldType.SubForm != nil {
-			result = append(result, expandSubForms2(formDef, field.Name, field.FieldType.SubForm)...)
+			result = append(result, expandSubFormsInternal(formDef, field.Name, field.FieldType.SubForm)...)
 			formDef.RemoveField(field.Name)
 		}
 	}
 	return result
 }
 
-func expandSubForms2(parentForm *types2.FormDefinition, fieldName string, subForm *types2.FieldTypeSubForm) []*types2.FormDefinition {
-	var result []*types2.FormDefinition
+func expandSubFormsInternal(parentForm *types.FormDefinition, fieldName string, subForm *types.FieldTypeSubForm) []*types.FormDefinition {
+	var result []*types.FormDefinition
 
-	formDef := &types2.FormDefinition{
+	formDef := &types.FormDefinition{
 		ID:         subForm.ID,
 		Code:       subForm.Code,
 		Name:       subForm.Name,
@@ -37,13 +37,13 @@ func expandSubForms2(parentForm *types2.FormDefinition, fieldName string, subFor
 
 	formDef.RemoveField(fieldName)
 
-	formDef.Fields = append(formDef.Fields, &types2.FieldDefinition{
+	formDef.Fields = append(formDef.Fields, &types.FieldDefinition{
 		ID:       "parent_id",
 		Code:     "parent_id",
 		Name:     "parent_id",
 		Required: true,
-		FieldType: types2.FieldType{
-			Reference: &types2.FieldTypeReference{
+		FieldType: types.FieldType{
+			Reference: &types.FieldTypeReference{
 				DatabaseID: parentForm.DatabaseID,
 				FormID:     parentForm.ID,
 			},
@@ -54,79 +54,79 @@ func expandSubForms2(parentForm *types2.FormDefinition, fieldName string, subFor
 
 	for _, field := range formDef.Fields {
 		if field.FieldType.SubForm != nil {
-			result = append(result, expandSubForms2(formDef, field.Name, field.FieldType.SubForm)...)
+			result = append(result, expandSubFormsInternal(formDef, field.Name, field.FieldType.SubForm)...)
 		}
 	}
 
 	return result
 }
 
-func getSubFormName(parentForm *types2.FormDefinition, fieldName string) string {
+func getSubFormName(parentForm *types.FormDefinition, fieldName string) string {
 	return fmt.Sprintf("%s_%ss", parentForm.Name, fieldName)
 }
 
-func convertFormToSqlTable(formDef *types2.FormDefinition) sqlschema2.SQLTable {
-	table := sqlschema2.SQLTable{}
+func convertFormToSqlTable(formDef *types.FormDefinition, referencedForms *types.FormDefinitionList) (sqlschema.SQLTable, error) {
+	table := sqlschema.SQLTable{}
 
 	table.Name = formDef.ID
 	table.Schema = formDef.DatabaseID
 
-	table.Fields = append(table.Fields, sqlschema2.SQLField{
+	table.Fields = append(table.Fields, sqlschema.SQLField{
 		Name: "id",
-		DataType: sqlschema2.SQLDataType{
-			VarChar: &sqlschema2.SQLDataTypeVarChar{Length: 36},
+		DataType: sqlschema.SQLDataType{
+			VarChar: &sqlschema.SQLDataTypeVarChar{Length: 36},
 		},
-		Constraints: []sqlschema2.SQLColumnConstraint{
+		Constraints: []sqlschema.SQLColumnConstraint{
 			{
 				Name:       fmt.Sprintf("pk_%s_%s", formDef.DatabaseID, formDef.ID),
-				PrimaryKey: &sqlschema2.PrimaryKeySQLColumnConstraint{},
+				PrimaryKey: &sqlschema.PrimaryKeySQLColumnConstraint{},
 			},
 		},
 	})
 
-	table.Fields = append(table.Fields, sqlschema2.SQLField{
+	table.Fields = append(table.Fields, sqlschema.SQLField{
 		Name: "seq",
-		DataType: sqlschema2.SQLDataType{
-			Serial: &sqlschema2.SQLDataTypeSerial{},
+		DataType: sqlschema.SQLDataType{
+			Serial: &sqlschema.SQLDataTypeSerial{},
 		},
 	})
 
-	table.Fields = append(table.Fields, sqlschema2.SQLField{
+	table.Fields = append(table.Fields, sqlschema.SQLField{
 		Name: "database_id",
-		DataType: sqlschema2.SQLDataType{
-			VarChar: &sqlschema2.SQLDataTypeVarChar{
+		DataType: sqlschema.SQLDataType{
+			VarChar: &sqlschema.SQLDataTypeVarChar{
 				Length: 36,
 			},
 		},
 	})
 
-	table.Fields = append(table.Fields, sqlschema2.SQLField{
+	table.Fields = append(table.Fields, sqlschema.SQLField{
 		Name: "form_id",
-		DataType: sqlschema2.SQLDataType{
-			VarChar: &sqlschema2.SQLDataTypeVarChar{
+		DataType: sqlschema.SQLDataType{
+			VarChar: &sqlschema.SQLDataTypeVarChar{
 				Length: 36,
 			},
 		},
 	})
 
-	table.Fields = append(table.Fields, sqlschema2.SQLField{
+	table.Fields = append(table.Fields, sqlschema.SQLField{
 		Name:    "created_at",
 		Default: "NOW()",
-		DataType: sqlschema2.SQLDataType{
-			Timestamp: &sqlschema2.SQLDataTypeTimestamp{
-				Timezone: &sqlschema2.TimestampWithoutTimeZone,
+		DataType: sqlschema.SQLDataType{
+			Timestamp: &sqlschema.SQLDataTypeTimestamp{
+				Timezone: &sqlschema.TimestampWithoutTimeZone,
 			},
 		},
-		Constraints: []sqlschema2.SQLColumnConstraint{
+		Constraints: []sqlschema.SQLColumnConstraint{
 			{
-				NotNull: &sqlschema2.NotNullSQLColumnConstraint{},
+				NotNull: &sqlschema.NotNullSQLColumnConstraint{},
 			},
 		},
 	})
 
-	table.Constraints = append(table.Constraints, sqlschema2.SQLTableConstraint{
+	table.Constraints = append(table.Constraints, sqlschema.SQLTableConstraint{
 		Name: fmt.Sprintf("fk_%s_forms", table.Name),
-		ForeignKey: &sqlschema2.SQLTableConstraintForeignKey{
+		ForeignKey: &sqlschema.SQLTableConstraintForeignKey{
 			ColumnNames: []string{
 				"database_id",
 				"form_id",
@@ -137,32 +137,37 @@ func convertFormToSqlTable(formDef *types2.FormDefinition) sqlschema2.SQLTable {
 		},
 	})
 
+	//expandedFields, err := formDef.Fields.Expand(referencedForms)
+	//if err != nil {
+	//	return sqlschema.SQLTable{}, err
+	//}
+
 	for _, field := range formDef.Fields {
 		table.Fields = append(table.Fields, convertFieldToSqlField(formDef, field))
 	}
 
-	return table
+	return table, nil
 }
 
-func convertFieldToSqlField(formDef *types2.FormDefinition, field *types2.FieldDefinition) sqlschema2.SQLField {
-	result := sqlschema2.SQLField{}
+func convertFieldToSqlField(formDef *types.FormDefinition, field *types.FieldDefinition) sqlschema.SQLField {
+	result := sqlschema.SQLField{}
 	result.Name = field.ID
 	result.Comment = field.Code
 
 	if field.Required {
-		result.Constraints = append(result.Constraints, sqlschema2.SQLColumnConstraint{
-			NotNull: &sqlschema2.NotNullSQLColumnConstraint{},
+		result.Constraints = append(result.Constraints, sqlschema.SQLColumnConstraint{
+			NotNull: &sqlschema.NotNullSQLColumnConstraint{},
 		})
 	}
 
 	if field.FieldType.Text != nil {
-		result.DataType = sqlschema2.SQLDataType{
-			VarChar: &sqlschema2.SQLDataTypeVarChar{
+		result.DataType = sqlschema.SQLDataType{
+			VarChar: &sqlschema.SQLDataTypeVarChar{
 				Length: 1024,
 			},
 		}
 	} else if field.FieldType.Reference != nil {
-		result.Constraints = append(result.Constraints, sqlschema2.SQLColumnConstraint{
+		result.Constraints = append(result.Constraints, sqlschema.SQLColumnConstraint{
 			Name: fmt.Sprintf("fk__%s_%s_%s__%s_%s_id",
 				formDef.DatabaseID,
 				formDef.ID,
@@ -170,29 +175,29 @@ func convertFieldToSqlField(formDef *types2.FormDefinition, field *types2.FieldD
 				field.FieldType.Reference.DatabaseID,
 				field.FieldType.Reference.FormID,
 			),
-			Reference: &sqlschema2.ReferenceSQLColumnConstraint{
+			Reference: &sqlschema.ReferenceSQLColumnConstraint{
 				Schema:   field.FieldType.Reference.DatabaseID,
 				Table:    field.FieldType.Reference.FormID,
 				Column:   "id",
-				OnUpdate: sqlschema2.ActionCascade,
-				OnDelete: sqlschema2.ActionCascade,
+				OnUpdate: sqlschema.ActionCascade,
+				OnDelete: sqlschema.ActionCascade,
 			},
 		})
-		result.DataType = sqlschema2.SQLDataType{
-			VarChar: &sqlschema2.SQLDataTypeVarChar{Length: 36},
+		result.DataType = sqlschema.SQLDataType{
+			VarChar: &sqlschema.SQLDataTypeVarChar{Length: 36},
 		}
 	} else if field.FieldType.SubForm != nil {
 		result.Name += "_id"
-		result.DataType = sqlschema2.SQLDataType{
-			VarChar: &sqlschema2.SQLDataTypeVarChar{Length: 36},
+		result.DataType = sqlschema.SQLDataType{
+			VarChar: &sqlschema.SQLDataTypeVarChar{Length: 36},
 		}
-		result.Constraints = append(result.Constraints, sqlschema2.SQLColumnConstraint{
-			Reference: &sqlschema2.ReferenceSQLColumnConstraint{
+		result.Constraints = append(result.Constraints, sqlschema.SQLColumnConstraint{
+			Reference: &sqlschema.ReferenceSQLColumnConstraint{
 				Schema:    formDef.DatabaseID,
 				Table:     field.FieldType.SubForm.ID,
 				Column:    "id",
-				OnDelete:  sqlschema2.ActionRestrict,
-				OnUpdate:  sqlschema2.ActionCascade,
+				OnDelete:  sqlschema.ActionRestrict,
+				OnUpdate:  sqlschema.ActionCascade,
 				MatchType: "",
 			},
 		})
