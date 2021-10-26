@@ -157,8 +157,8 @@ const mapFields = (state: FormerState, fields: FormField[]): FieldDefinition[] =
 
         if (field.type === "text") {
             fieldType = {text: {}}
-        } else if (field.type === "multiline") {
-           fieldType = {multiline: {}}
+        } else if (field.type === "multilineText") {
+           fieldType = {multilineText: {}}
         } else if (field.type === "reference") {
             if (!field.referencedDatabaseId) {
                 throw new Error(`field with id ${field.id} does not have referenced database id`)

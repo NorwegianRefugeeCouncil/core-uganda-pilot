@@ -9,7 +9,7 @@ export class DatabaseList {
 
 export enum FieldKind {
     Text = "text",
-    Multiline = "multiline",
+    MultilineText = "multilineText",
     Reference = "reference",
     SubForm = "subform",
 }
@@ -18,13 +18,13 @@ export class FieldType {
     public text?: FieldTypeText
     public reference?: FieldTypeReference
     public subForm?: FieldTypeSubForm
-    public multiline?: FieldTypeMultiline
+    public multilineText?: FieldTypeMultilineText
 }
 
 export class FieldTypeText {
 }
 
-export class FieldTypeMultiline {
+export class FieldTypeMultilineText {
 }
 
 export class FieldTypeReference {

@@ -42,7 +42,7 @@ export const TextFieldEditor: FC<FieldEditorProps> = props => {
     </div>
 }
 
-export const MultilineFieldEditor: FC<FieldEditorProps> = props => {
+export const MultilineTextFieldEditor: FC<FieldEditorProps> = props => {
     const {field, value, setValue} = props
     return <div className={"form-group mb-2"}>
         <label
@@ -100,8 +100,8 @@ export const FieldEditor: FC<FieldEditorProps> = props => {
         return <SubFormFieldEditor {...props} />
     } else if (fieldType.reference) {
         return <ReferenceFieldEditor {...props} />
-    } else if (fieldType.multiline) {
-        return <MultilineFieldEditor {...props} />
+    } else if (fieldType.multilineText) {
+        return <MultilineTextFieldEditor {...props} />
     } else {
         return <Fragment/>
     }

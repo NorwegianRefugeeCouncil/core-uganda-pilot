@@ -18,8 +18,8 @@ export const FieldTypePicker: FC<FieldTypePickerProps> = props => {
                     Text
                 </button>                <button
                     className={"btn btn-primary m-2 border-light"}
-                    onClick={() => onSubmit(FieldKind.Multiline)}>
-                    Multiline Text
+                    onClick={() => onSubmit(FieldKind.MultilineText)}>
+                    MultilineText Text
                 </button>
                 <button
                     className={"btn btn-primary m-2 border-light"}
