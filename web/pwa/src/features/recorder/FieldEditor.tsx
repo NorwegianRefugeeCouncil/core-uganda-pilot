@@ -42,6 +42,20 @@ export const TextFieldEditor: FC<FieldEditorProps> = props => {
     </div>
 }
 
+export const MultilineTextFieldEditor: FC<FieldEditorProps> = props => {
+    const {field, value, setValue} = props
+    return <div className={"form-group mb-2"}>
+        <label
+            className={"form-label opacity-75"}
+            htmlFor={field.id}>{field.name}</label>
+        <textarea
+            className={"form-control bg-dark text-light border-secondary"}
+            id={field.id} value={value ? value : ""}
+            onChange={event => setValue(event.target.value)}/>
+        {mapFieldDescription(field)}
+    </div>
+}
+
 export const DateFieldEditor: FC<FieldEditorProps> = props => {
     const {field, value, setValue} = props
     return <div className={"form-group mb-2"}>
@@ -100,8 +114,10 @@ export const FieldEditor: FC<FieldEditorProps> = props => {
         return <SubFormFieldEditor {...props} />
     } else if (fieldType.reference) {
         return <ReferenceFieldEditor {...props} />
+    } else if (fieldType.multilineText) {
+        return <MultilineTextFieldEditor {...props} />
     } else if (fieldType.date) {
-        return <DateFieldEditor {...props} /> 
+        return <DateFieldEditor {...props} />
     } else {
         return <Fragment/>
     }

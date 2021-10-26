@@ -42,11 +42,6 @@ function App() {
                 while (stmt.step()) {
                     console.log(stmt.getAsObject())
                 }
-                // for (let i = 0; i < 10000; i++) {
-                //     db.run("INSERT INTO users (id) VALUES (" + i + ");")
-                //     log.info("inserted entry " + i)
-                // }
-
             } catch (err) {
                 console.log(err.toString())
             }

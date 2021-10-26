@@ -1,10 +1,11 @@
 package types
 
 type FieldType struct {
-	Text      *FieldTypeText      `json:"text,omitempty"`
-	Reference *FieldTypeReference `json:"reference,omitempty"`
-	SubForm   *FieldTypeSubForm   `json:"subForm,omitempty"`
-	Date      *FieldTypeDate      `json:"date,omitempty"`
+	Text          *FieldTypeText          `json:"text,omitempty"`
+	Reference     *FieldTypeReference     `json:"reference,omitempty"`
+	SubForm       *FieldTypeSubForm       `json:"subForm,omitempty"`
+	MultilineText *FieldTypeMultilineText `json:"multilineText,omitempty"`
+	Date          *FieldTypeDate          `json:"date,omitempty"`
 }
 
 type FieldTypeReference struct {
@@ -14,7 +15,7 @@ type FieldTypeReference struct {
 
 type FieldTypeText struct{}
 
-type FieldTypeMultiLineText struct{}
+type FieldTypeMultilineText struct{}
 
 type FieldTypeDate struct{}
 
@@ -36,9 +37,10 @@ func (f *FieldTypeSubForm) GetFields() []*FieldDefinition {
 type FieldKind string
 
 const (
-	FieldKindUnknown   FieldKind = "unknown"
-	FieldKindText      FieldKind = "text"
-	FieldKindSubForm   FieldKind = "subform"
-	FieldKindReference FieldKind = "reference"
-	FieldKindDate      FieldKind = "date"
+	FieldKindUnknown       FieldKind = "unknown"
+	FieldKindText          FieldKind = "text"
+	FieldKindSubForm       FieldKind = "subform"
+	FieldKindReference     FieldKind = "reference"
+	FieldKindMultilineText FieldKind = "multilineText"
+	FieldKindDate          FieldKind = "date"
 )

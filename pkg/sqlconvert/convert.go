@@ -2,7 +2,6 @@ package sqlconvert
 
 import (
 	"fmt"
-
 	"github.com/nrc-no/core/pkg/sqlschema"
 	"github.com/nrc-no/core/pkg/types"
 )
@@ -166,6 +165,10 @@ func convertFieldToSqlField(formDef *types.FormDefinition, field *types.FieldDef
 			VarChar: &sqlschema.SQLDataTypeVarChar{
 				Length: 1024,
 			},
+		}
+	} else if field.FieldType.MultilineText != nil {
+		result.DataType = sqlschema.SQLDataType{
+			Text: &sqlschema.SQLDataTypeText{},
 		}
 	} else if field.FieldType.Date != nil {
 		result.DataType = sqlschema.SQLDataType{

@@ -1,8 +1,8 @@
 package sqlconvert
 
 import (
-	sqlschema2 "github.com/nrc-no/core/pkg/sqlschema"
-	types2 "github.com/nrc-no/core/pkg/types"
+	"github.com/nrc-no/core/pkg/sqlschema"
+	"github.com/nrc-no/core/pkg/types"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -10,46 +10,46 @@ import (
 func Test_convertFormToSqlTable(t *testing.T) {
 	tests := []struct {
 		name string
-		args types2.FormDefinition
-		want sqlschema2.SQLTable
+		args types.FormDefinition
+		want sqlschema.SQLTable
 	}{
 		{
 			name: "simple",
-			args: types2.FormDefinition{
+			args: types.FormDefinition{
 				DatabaseName: "database",
 				Name:         "form",
-				Fields: []types2.FieldDefinition{
+				Fields: []types.FieldDefinition{
 					{
 						Name: "field",
-						FieldType: types2.FieldType{
-							Text: &types2.FieldTypeText{},
+						FieldType: types.FieldType{
+							Text: &types.FieldTypeText{},
 						},
 						Required: true,
 					},
 				},
 			},
-			want: sqlschema2.SQLTable{
+			want: sqlschema.SQLTable{
 				Schema: "database",
 				Name:   `form`,
-				Fields: []sqlschema2.SQLField{
-					sqlschema2.NewSQLField("id").
+				Fields: []sqlschema.SQLField{
+					sqlschema.NewSQLField("id").
 						WithSerialDataType().
 						WithPrimaryKeyConstraint("pk_database_form"),
-					sqlschema2.NewSQLField("field").
+					sqlschema.NewSQLField("field").
 						WithVarCharDataType(1024).
 						WithNotNullConstraint(),
 				},
 			},
 		}, {
 			name: "reference",
-			args: types2.FormDefinition{
+			args: types.FormDefinition{
 				DatabaseName: "database",
 				Name:         "form",
-				Fields: []types2.FieldDefinition{
+				Fields: []types.FieldDefinition{
 					{
 						Name: "field",
-						FieldType: types2.FieldType{
-							Reference: &types2.FieldTypeReference{
+						FieldType: types.FieldType{
+							Reference: &types.FieldTypeReference{
 								DatabaseName: "remote",
 								FormName:     "other",
 							},
@@ -58,22 +58,22 @@ func Test_convertFormToSqlTable(t *testing.T) {
 					},
 				},
 			},
-			want: sqlschema2.SQLTable{
+			want: sqlschema.SQLTable{
 				Name:   "form",
 				Schema: "database",
-				Fields: []sqlschema2.SQLField{
-					sqlschema2.NewSQLField("id").
+				Fields: []sqlschema.SQLField{
+					sqlschema.NewSQLField("id").
 						WithSerialDataType().
 						WithPrimaryKeyConstraint("pk_database_form"),
-					sqlschema2.NewSQLField("field").
+					sqlschema.NewSQLField("field").
 						WithIntDataType().
 						WithNotNullConstraint().
 						WithReferenceConstraint("fk__database_form_field__remote_other_id",
 							"remote",
 							"other",
 							"id",
-							sqlschema2.ActionCascade,
-							sqlschema2.ActionCascade,
+							sqlschema.ActionCascade,
+							sqlschema.ActionCascade,
 						),
 				},
 			},
@@ -90,38 +90,38 @@ func Test_convertFormToSqlTable(t *testing.T) {
 func Test_expandSubForms(t *testing.T) {
 	tests := []struct {
 		name string
-		args types2.FormDefinition
-		want []types2.FormDefinition
+		args types.FormDefinition
+		want []types.FormDefinition
 	}{
 		{
 			name: "simple",
-			args: types2.FormDefinition{
+			args: types.FormDefinition{
 				DatabaseName: "db",
 				Name:         "name",
-				Fields:       []types2.FieldDefinition{},
+				Fields:       []types.FieldDefinition{},
 			},
-			want: []types2.FormDefinition{
+			want: []types.FormDefinition{
 				{
 					DatabaseName: "db",
 					Name:         "name",
-					Fields:       []types2.FieldDefinition{},
+					Fields:       []types.FieldDefinition{},
 				},
 			},
 		}, {
 			name: "nested",
-			args: types2.FormDefinition{
+			args: types.FormDefinition{
 				DatabaseName: "db",
 				Name:         "root",
-				Fields: []types2.FieldDefinition{
+				Fields: []types.FieldDefinition{
 					{
 						Name: "parent_field",
-						FieldType: types2.FieldType{
-							SubForm: &types2.FieldTypeSubForm{
-								Fields: []types2.FieldDefinition{
+						FieldType: types.FieldType{
+							SubForm: &types.FieldTypeSubForm{
+								Fields: []types.FieldDefinition{
 									{
 										Name: "child_field",
-										FieldType: types2.FieldType{
-											Text: &types2.FieldTypeText{},
+										FieldType: types.FieldType{
+											Text: &types.FieldTypeText{},
 										},
 									},
 								},
@@ -130,20 +130,20 @@ func Test_expandSubForms(t *testing.T) {
 					},
 				},
 			},
-			want: []types2.FormDefinition{
+			want: []types.FormDefinition{
 				{
 					DatabaseName: "db",
 					Name:         "root",
-					Fields: []types2.FieldDefinition{
+					Fields: []types.FieldDefinition{
 						{
 							Name: "parent_field",
-							FieldType: types2.FieldType{
-								SubForm: &types2.FieldTypeSubForm{
-									Fields: []types2.FieldDefinition{
+							FieldType: types.FieldType{
+								SubForm: &types.FieldTypeSubForm{
+									Fields: []types.FieldDefinition{
 										{
 											Name: "child_field",
-											FieldType: types2.FieldType{
-												Text: &types2.FieldTypeText{},
+											FieldType: types.FieldType{
+												Text: &types.FieldTypeText{},
 											},
 										},
 									},
@@ -154,11 +154,11 @@ func Test_expandSubForms(t *testing.T) {
 				}, {
 					DatabaseName: "db",
 					Name:         "root_parent_fields",
-					Fields: []types2.FieldDefinition{
+					Fields: []types.FieldDefinition{
 						{
 							Name: "child_field",
-							FieldType: types2.FieldType{
-								Text: &types2.FieldTypeText{},
+							FieldType: types.FieldType{
+								Text: &types.FieldTypeText{},
 							},
 						},
 					},

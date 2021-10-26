@@ -21,6 +21,7 @@ type SQLDataType struct {
 	Date            *SQLDataTypeDate
 	Time            *SQLDataTypeTime
 	Interval        *SQLDataTypeInterval
+	Text            *SQLDataTypeText
 }
 
 func (s SQLDataType) DDL() DDL {
@@ -40,6 +41,7 @@ func (s SQLDataType) DDL() DDL {
 		s.Date,
 		s.Time,
 		s.Interval,
+		s.Text,
 	} {
 		if ddLer != nil {
 			if reflect.ValueOf(ddLer).IsNil() {
@@ -53,6 +55,12 @@ func (s SQLDataType) DDL() DDL {
 
 type SQLDataTypeVarChar struct {
 	Length int
+}
+
+type SQLDataTypeText struct{}
+
+func (S SQLDataTypeText) DDL() DDL {
+	return NewDDL("text")
 }
 
 func (c SQLDataTypeVarChar) DDL() DDL {
