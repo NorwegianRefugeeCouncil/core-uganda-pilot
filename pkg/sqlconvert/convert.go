@@ -17,14 +17,14 @@ func expandSubForms(formDef *types.FormDefinition) []*types.FormDefinition {
 	result = append(result, formDef)
 	for _, field := range formDef.Fields {
 		if field.FieldType.SubForm != nil {
-			result = append(result, expandSubForms2(formDef, field.Name, field.FieldType.SubForm)...)
+			result = append(result, expandSubFormsInternal(formDef, field.Name, field.FieldType.SubForm)...)
 			formDef.RemoveField(field.Name)
 		}
 	}
 	return result
 }
 
-func expandSubForms2(parentForm *types.FormDefinition, fieldName string, subForm *types.FieldTypeSubForm) []*types.FormDefinition {
+func expandSubFormsInternal(parentForm *types.FormDefinition, fieldName string, subForm *types.FieldTypeSubForm) []*types.FormDefinition {
 	var result []*types.FormDefinition
 
 	formDef := &types.FormDefinition{
@@ -54,7 +54,7 @@ func expandSubForms2(parentForm *types.FormDefinition, fieldName string, subForm
 
 	for _, field := range formDef.Fields {
 		if field.FieldType.SubForm != nil {
-			result = append(result, expandSubForms2(formDef, field.Name, field.FieldType.SubForm)...)
+			result = append(result, expandSubFormsInternal(formDef, field.Name, field.FieldType.SubForm)...)
 		}
 	}
 
@@ -65,7 +65,7 @@ func getSubFormName(parentForm *types.FormDefinition, fieldName string) string {
 	return fmt.Sprintf("%s_%ss", parentForm.Name, fieldName)
 }
 
-func convertFormToSqlTable(formDef *types.FormDefinition) sqlschema.SQLTable {
+func convertFormToSqlTable(formDef *types.FormDefinition, referencedForms *types.FormDefinitionList) (sqlschema.SQLTable, error) {
 	table := sqlschema.SQLTable{}
 
 	table.Name = formDef.ID
@@ -137,11 +137,16 @@ func convertFormToSqlTable(formDef *types.FormDefinition) sqlschema.SQLTable {
 		},
 	})
 
+	//expandedFields, err := formDef.Fields.Expand(referencedForms)
+	//if err != nil {
+	//	return sqlschema.SQLTable{}, err
+	//}
+
 	for _, field := range formDef.Fields {
 		table.Fields = append(table.Fields, convertFieldToSqlField(formDef, field))
 	}
 
-	return table
+	return table, nil
 }
 
 func convertFieldToSqlField(formDef *types.FormDefinition, field *types.FieldDefinition) sqlschema.SQLField {

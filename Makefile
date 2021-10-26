@@ -6,7 +6,7 @@ up:
 	@./scripts/up.sh
 
 down:
-	@docker-compose -f deployments/webapp.docker-compose.yaml down --remove-orphans
+	@./scripts/down.sh
 
 migrate:
 	@./scripts/migrate.sh

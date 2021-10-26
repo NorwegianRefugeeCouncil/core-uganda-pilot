@@ -6,6 +6,7 @@ import (
 	"github.com/iancoleman/strcase"
 	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/pointers"
+	"github.com/nrc-no/core/pkg/sets"
 	"github.com/nrc-no/core/pkg/sqlconvert"
 	"github.com/nrc-no/core/pkg/types"
 	uuid "github.com/satori/go.uuid"
@@ -30,9 +31,9 @@ type Form struct {
 	ID         string `gorm:"index:idx_form_id_database_id,unique"`
 	DatabaseID string `gorm:"index:idx_form_id_database_id,unique"`
 	Database   Database
-	RootID     *string
+	RootID     string
 	Root       *Form
-	ParentID   *string
+	ParentID   string
 	Parent     *Form
 	FolderID   *string
 	Folder     *Folder
@@ -42,14 +43,39 @@ type Form struct {
 	UpdatedAt  time.Time
 }
 
-type FieldType string
+func (f *Form) IsRoot() bool {
+	return f.ID == f.RootID
+}
 
-const (
-	FieldTypeUnknown   = "unknown"
-	FieldTypeText      = "text"
-	FieldTypeSubForm   = "subform"
-	FieldTypeReference = "reference"
-)
+type Forms []*Form
+
+func (f Forms) FormIDs() sets.String {
+	result := sets.NewString()
+	for _, form := range f {
+		result.Insert(form.ID)
+	}
+	return result
+}
+
+func (f Forms) RootForms() Forms {
+	var result Forms
+	for _, form := range f {
+		if form.IsRoot() {
+			result = append(result, form)
+		}
+	}
+	return result
+}
+
+func (f Forms) RootFormIDs() sets.String {
+	result := sets.NewString()
+	for _, form := range f {
+		if form.IsRoot() {
+			result.Insert(form.ID)
+		}
+	}
+	return result
+}
 
 type Field struct {
 	ID                   string
@@ -65,9 +91,29 @@ type Field struct {
 	ReferencedDatabase   *Database
 	ReferencedFormID     *string
 	ReferencedForm       *Form
-	Type                 FieldType
+	Type                 types.FieldKind
 	CreatedAt            time.Time
 	UpdatedAt            time.Time
+}
+
+type Fields []*Field
+
+func (f Fields) OfType(fieldType types.FieldKind) Fields {
+	var result Fields
+	for _, field := range f {
+		if field.Type == fieldType {
+			result = append(result, field)
+		}
+	}
+	return result
+}
+
+func (f Fields) FormIDs() sets.String {
+	result := sets.NewString()
+	for _, field := range f {
+		result.Insert(field.FormID)
+	}
+	return result
 }
 
 type formStore struct {
@@ -83,54 +129,111 @@ func (d *formStore) Get(ctx context.Context, formID string) (*types.FormDefiniti
 		return nil, err
 	}
 
-	var forms []*Form
-	var fields []*Field
+	return d.getFormDefinitionInternal(ctx, db, formID)
 
-	var requestedForm *Form
-	if err := db.WithContext(ctx).Find(&requestedForm, "id = ?", formID).Error; err != nil {
-		return nil, meta.NewInternalServerError(err)
-	}
+}
 
-	var rootId = requestedForm.ID
-	if requestedForm.RootID != nil {
-		rootId = *requestedForm.RootID
-	}
+func (d *formStore) getFormDefinitionsInternal(ctx context.Context, db *gorm.DB, formOrSubFormIds sets.String) (*types.FormDefinitionList, error) {
 
-	err = db.WithContext(ctx).Find(&forms, "id = ? or root_id = ?", rootId, rootId).Error
-	if err != nil {
-		return nil, meta.NewInternalServerError(err)
-	}
-
-	var allParamValues []interface{}
-	var allParams []string
-	for _, form := range forms {
-		allParamValues = append(allParamValues, form.ID)
-		allParams = append(allParams, "?")
-	}
-
-	sqlQuery := fmt.Sprintf("form_id in (%s)", strings.Join(allParams, ","))
-	if err := db.WithContext(ctx).Where(sqlQuery, allParamValues...).Find(&fields).Error; err != nil {
-		return nil, meta.NewInternalServerError(err)
-	}
-
-	if len(forms) == 0 {
-		return nil, meta.NewNotFound(meta.GroupResource{
-			Group:    "nrc.no",
-			Resource: "forms",
-		}, formID)
-	}
-
-	fds, err := mapToFormDefinitions(forms, fields)
+	forms, err := findRelatedFormsInternal(ctx, db, formOrSubFormIds)
 	if err != nil {
 		return nil, err
 	}
 
-	if len(fds) != 1 {
-		return nil, meta.NewInternalServerError(fmt.Errorf("unexpected number of form definitions"))
+	if len(forms) == 0 {
+		return types.NewFormDefinitionList(), nil
 	}
 
-	return fds[0], nil
+	rootFormIDs := forms.RootForms().FormIDs().List()
 
+	fields, err := findAllFieldsUnderRootFormIds(ctx, rootFormIDs, db)
+	if err != nil {
+		return nil, err
+	}
+
+	formDefinitions, err := mapToFormDefinitions(forms, fields)
+	if err != nil {
+		return nil, err
+	}
+
+	return types.NewFormDefinitionList(formDefinitions...), nil
+
+}
+
+func (d *formStore) getFormDefinitionInternal(ctx context.Context, db *gorm.DB, formOrSubFormId string) (*types.FormDefinition, error) {
+
+	formDefinitions, err := d.getFormDefinitionsInternal(ctx, db, sets.NewString(formOrSubFormId))
+	if err != nil {
+		return nil, err
+	}
+
+	if formDefinitions.Empty() {
+		return nil, meta.NewNotFound(meta.GroupResource{
+			Group:    "nrc.no",
+			Resource: "forms",
+		}, formOrSubFormId)
+	}
+
+	return formDefinitions.GetAtIndex(0), nil
+}
+
+func findRelatedFormsInternal(ctx context.Context, db *gorm.DB, formIDs sets.String) (Forms, error) {
+
+	if formIDs.Len() == 0 {
+		return Forms{}, nil
+	}
+
+	// Will execute a query with a subquery like
+	// SELECT * FROM forms WHERE root_id in (SELECT root_id FROM forms WHERE id IN (id1, id2, ...))
+
+	subQuery := db.Model(&Form{}).
+		Select("root_id").
+		Where(fmt.Sprintf("id in (%s)", sqlPlaceholders(formIDs)), formIDs.ListIntf()...)
+
+	var forms []*Form
+
+	query := db.WithContext(ctx).
+		Model(&Form{}).
+		Where("root_id in (?)", subQuery).
+		Find(&forms)
+
+	if err := query.Error; err != nil {
+		return nil, meta.NewInternalServerError(err)
+	}
+
+	return forms, nil
+}
+
+func findFieldForFormIds(ctx context.Context, formIDs []string, db *gorm.DB) (Fields, error) {
+	var allParamValues []interface{}
+	var allParams []string
+	for _, formID := range formIDs {
+		allParamValues = append(allParamValues, formID)
+		allParams = append(allParams, "?")
+	}
+
+	var fields []*Field
+	sqlQuery := fmt.Sprintf("form_id in (%s)", strings.Join(allParams, ","))
+	if err := db.WithContext(ctx).Where(sqlQuery, allParamValues...).Find(&fields).Error; err != nil {
+		return nil, meta.NewInternalServerError(err)
+	}
+	return fields, nil
+}
+
+func findAllFieldsUnderRootFormIds(ctx context.Context, rootFormIDs []string, db *gorm.DB) ([]*Field, error) {
+	formIdSet := sets.NewString(rootFormIDs...)
+
+	var fields []*Field
+
+	query := db.WithContext(ctx).
+		Where(fmt.Sprintf("root_form_id in (%s)", sqlPlaceholders(formIdSet)), formIdSet.ListIntf()...).
+		Find(&fields)
+
+	if err := query.Error; err != nil {
+		return nil, meta.NewInternalServerError(err)
+	}
+
+	return fields, nil
 }
 
 func (d *formStore) List(ctx context.Context) (*types.FormDefinitionList, error) {
@@ -175,16 +278,25 @@ func (d *formStore) Create(ctx context.Context, form *types.FormDefinition) (*ty
 	newFormIDs(form)
 	newFormCodes(form)
 
-	frms, flds, err := mapToFormFields(form)
+	forms, fields, err := mapToFormFields(form)
 	if err != nil {
 		return nil, err
 	}
 
+	referencedFormIDs := fields.OfType(types.FieldKindReference).FormIDs()
+
 	err = db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		if err := tx.Create(frms).Error; err != nil {
+		if err := tx.Create(forms).Error; err != nil {
 			return meta.NewInternalServerError(err)
 		}
-		if err := tx.Create(flds).Error; err != nil {
+		if err := tx.Create(fields).Error; err != nil {
+			return meta.NewInternalServerError(err)
+		}
+		referencedForms, err := d.getFormDefinitionsInternal(ctx, tx, referencedFormIDs)
+		if err != nil {
+			return err
+		}
+		if err := sqlconvert.CreateForm(ctx, tx, form, referencedForms); err != nil {
 			return meta.NewInternalServerError(err)
 		}
 		return nil
@@ -192,15 +304,6 @@ func (d *formStore) Create(ctx context.Context, form *types.FormDefinition) (*ty
 
 	if err != nil {
 		return nil, err
-	}
-
-	sqlDB, err := db.DB()
-	if err != nil {
-		return nil, meta.NewInternalServerError(err)
-	}
-
-	if err := sqlconvert.CreateForm(ctx, sqlDB, form); err != nil {
-		return nil, meta.NewInternalServerError(err)
 	}
 
 	return d.Get(ctx, form.ID)
@@ -232,15 +335,15 @@ func newFormCodes(form *types.FormDefinition) {
 
 func newFieldCodes(fields []*types.FieldDefinition) {
 	for _, field := range fields {
-		field.Code = snake(field.Code, field.Name)
+		field.Code = firstSnake(field.Code, field.Name)
 		if field.FieldType.SubForm != nil {
-			field.FieldType.SubForm.Code = snake(field.FieldType.SubForm.Code, field.FieldType.SubForm.Name)
+			field.FieldType.SubForm.Code = firstSnake(field.FieldType.SubForm.Code, field.FieldType.SubForm.Name)
 			newFieldCodes(field.FieldType.SubForm.Fields)
 		}
 	}
 }
 
-func snake(vals ...string) string {
+func firstSnake(vals ...string) string {
 	for _, val := range vals {
 		if len(val) > 0 {
 			return strcase.ToSnake(val)
@@ -249,7 +352,7 @@ func snake(vals ...string) string {
 	return ""
 }
 
-func mapToFormFields(fd *types.FormDefinition) ([]*Form, []*Field, error) {
+func mapToFormFields(fd *types.FormDefinition) (Forms, Fields, error) {
 	h, err := NewFormHierarchyFrom(fd)
 	if err != nil {
 		return nil, nil, err
@@ -261,14 +364,14 @@ func mapToFormFields(fd *types.FormDefinition) ([]*Form, []*Field, error) {
 
 func mapToFormDefinitions(forms []*Form, fields []*Field) ([]*types.FormDefinition, error) {
 
-	hierarchies, err := buildHierarchies(forms, fields)
+	hierarchies, err := Build(forms, fields)
 	if err != nil {
 		return nil, err
 	}
 
 	var result []*types.FormDefinition
 	for _, formHierarchy := range hierarchies {
-		fd, err := formHierarchy.convertToFormDef()
+		fd, err := formHierarchy.ToFormDefinition()
 		if err != nil {
 			return nil, err
 		}
@@ -318,13 +421,13 @@ func newFormHierarchyFrom(
 	root *FormHierarchy,
 ) (*FormHierarchy, error) {
 
-	var rootIdForForm *string
+	var rootIdForForm = formId
 	if root != nil {
-		rootIdForForm = pointers.String(root.Form.ID)
+		rootIdForForm = root.Form.ID
 	}
-	var parentIdForForm *string
+	var parentIdForForm = formId
 	if parent != nil {
-		parentIdForForm = pointers.String(parent.Form.ID)
+		parentIdForForm = parent.Form.ID
 	}
 
 	hierarchy := &FormHierarchy{
@@ -398,7 +501,7 @@ func newFormHierarchyFrom(
 
 }
 
-func (f *FormHierarchy) convertToFormDef() (*types.FormDefinition, error) {
+func (f *FormHierarchy) ToFormDefinition() (*types.FormDefinition, error) {
 	var flds []*types.FieldDefinition
 	for _, field := range f.Fields {
 		fd := &types.FieldDefinition{
@@ -409,14 +512,14 @@ func (f *FormHierarchy) convertToFormDef() (*types.FormDefinition, error) {
 			FieldType: types.FieldType{},
 		}
 		switch field.Type {
-		case FieldTypeText:
+		case types.FieldKindText:
 			fd.FieldType.Text = &types.FieldTypeText{}
-		case FieldTypeSubForm:
+		case types.FieldKindSubForm:
 			child, err := f.GetSubFormForField(field)
 			if err != nil {
 				return nil, err
 			}
-			childFd, err := child.convertToFormDef()
+			childFd, err := child.ToFormDefinition()
 			if err != nil {
 				return nil, err
 			}
@@ -429,7 +532,7 @@ func (f *FormHierarchy) convertToFormDef() (*types.FormDefinition, error) {
 				Name:   childFd.Name,
 				Code:   childFd.Code,
 			}
-		case FieldTypeReference:
+		case types.FieldKindReference:
 			fd.FieldType.Reference = &types.FieldTypeReference{
 				DatabaseID: *field.ReferencedDatabaseID,
 				FormID:     *field.ReferencedFormID,
@@ -456,7 +559,7 @@ func (f *FormHierarchy) convertToFormDef() (*types.FormDefinition, error) {
 
 type FormHierarchies []*FormHierarchy
 
-func buildHierarchies(forms []*Form, fields []*Field) (FormHierarchies, error) {
+func Build(forms []*Form, fields []*Field) (FormHierarchies, error) {
 
 	var result FormHierarchies
 	hierarchyMap := map[string]*FormHierarchy{}
@@ -468,10 +571,10 @@ func buildHierarchies(forms []*Form, fields []*Field) (FormHierarchies, error) {
 	}
 
 	for _, hierarchy := range hierarchyMap {
-		isRoot := hierarchy.Form.RootID == nil
+		isRoot := hierarchy.Form.RootID == hierarchy.Form.ID
 		hierarchy.IsRoot = isRoot
 		if !isRoot {
-			parent := hierarchyMap[*hierarchy.Form.ParentID]
+			parent := hierarchyMap[hierarchy.Form.ParentID]
 			hierarchy.Parent = parent
 			parent.Children = append(parent.Children, hierarchy)
 		} else {
@@ -485,7 +588,7 @@ func buildHierarchies(forms []*Form, fields []*Field) (FormHierarchies, error) {
 	}
 
 	for _, field := range fields {
-		if field.Type == FieldTypeSubForm {
+		if field.Type == types.FieldKindSubForm {
 			hierarchyMap[*field.SubFormID].ParentField = field
 		}
 	}
@@ -547,15 +650,21 @@ func (h *FormHierarchy) AllFields() []*Field {
 	return result
 }
 
-func getFieldType(field *types.FieldDefinition) (FieldType, error) {
+func getFieldType(field *types.FieldDefinition) (types.FieldKind, error) {
 	if field.FieldType.SubForm != nil {
-		return FieldTypeSubForm, nil
+		return types.FieldKindSubForm, nil
 	}
 	if field.FieldType.Text != nil {
-		return FieldTypeText, nil
+		return types.FieldKindText, nil
 	}
 	if field.FieldType.Reference != nil {
-		return FieldTypeReference, nil
+		return types.FieldKindReference, nil
 	}
-	return FieldTypeUnknown, fmt.Errorf("could not determine field type")
+	return types.FieldKindUnknown, fmt.Errorf("could not determine field type")
+}
+
+func sqlPlaceholders(val sets.String) string {
+	return strings.Join(val.MapToSlice(func(val string) string {
+		return "?"
+	}), ",")
 }

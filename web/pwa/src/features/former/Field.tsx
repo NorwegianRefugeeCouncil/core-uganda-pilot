@@ -39,7 +39,11 @@ export const FormerField: FC<FormerFieldProps> = props => {
         setReferencedFormId,
         openSubForm,
         saveField,
-        cancel
+        cancel,
+        fieldIsKey,
+        setFieldIsKey,
+        fieldRequired,
+        setFieldRequired,
     } = props
 
     if (!isSelected) {
@@ -59,49 +63,121 @@ export const FormerField: FC<FormerFieldProps> = props => {
 
     return <div className={"card text-dark"}>
         <div className={"card-body"}>
+
+
+            {/* Form Title */}
+
             <h6 className={"card-title text-uppercase"}>{fieldType}</h6>
-            <div className={"form-group mb-2"}>
-                <label className={"form-label"} htmlFor={"fieldName"}>Field Name</label>
-                <input className={"form-control"}
-                       id={"database"}
-                       type={"text"}
-                       value={fieldName ? fieldName : ""}
-                       onChange={event => setFieldName(event.target.value)}/>
-            </div>
-            <div className={"form-group mb-2"}>
-                <label className={"form-label"} htmlFor={"fieldName"}>Description</label>
-                <textarea
-                    className={"form-control"}
-                    id={"fieldDescription"}
-                    onChange={(event) => setFieldDescription(event.target.value)}
-                    value={fieldDescription ? fieldDescription : ""}
-                />
-            </div>
-            {fieldType === "subform"
-                ? <button className={"btn btn-primary"} onClick={() => openSubForm()}>Open Sub Form</button>
-                : <Fragment/>
-            }
-            {fieldType === FieldKind.Reference
-                ? (
-                    <div>
-                        <div className={"form-group mb-2"}>
-                            <label className={"form-label"}>Database</label>
-                            <DatabasePickerContainer
-                                setDatabaseId={setReferencedDatabaseId}
-                                databaseId={referencedDatabaseId}/>
-                        </div>
-                        <div className={"form-group"}>
-                            <label className={"form-label"}>Form</label>
-                            <FormPickerContainer databaseId={referencedDatabaseId}
-                                                 formId={referencedFormId}
-                                                 setFormId={setReferencedFormId}/>
-                        </div>
+
+
+            <div className={"row"}>
+
+                {/* Left Hand Side Section */}
+
+                <div className={"col-8"}>
+
+
+                    {/* Form Name */}
+
+                    <div className={"form-group mb-2"}>
+                        <label className={"form-label"} htmlFor={"fieldName"}>Field Name</label>
+                        <input className={"form-control"}
+                               id={"database"}
+                               type={"text"}
+                               value={fieldName ? fieldName : ""}
+                               onChange={event => setFieldName(event.target.value)}/>
                     </div>
-                ) : <Fragment/>}
+
+
+                    {/* Form Description */}
+
+                    <div className={"form-group mb-2"}>
+                        <label className={"form-label"} htmlFor={"fieldName"}>Description</label>
+                        <textarea
+                            className={"form-control"}
+                            id={"fieldDescription"}
+                            onChange={(event) => setFieldDescription(event.target.value)}
+                            value={fieldDescription ? fieldDescription : ""}
+                        />
+                    </div>
+
+
+                    {/* Open Subform Button */}
+
+                    {fieldType === "subform"
+                        ? <button className={"btn btn-primary"} onClick={() => openSubForm()}>Open Sub Form</button>
+                        : <Fragment/>
+                    }
+
+
+                    {/* Configure Reference Field */}
+
+                    {fieldType === FieldKind.Reference
+                        ? (
+                            <div>
+                                <div className={"form-group mb-2"}>
+                                    <label className={"form-label"}>Database</label>
+                                    <DatabasePickerContainer
+                                        setDatabaseId={setReferencedDatabaseId}
+                                        databaseId={referencedDatabaseId}/>
+                                </div>
+                                <div className={"form-group"}>
+                                    <label className={"form-label"}>Form</label>
+                                    <FormPickerContainer databaseId={referencedDatabaseId}
+                                                         formId={referencedFormId}
+                                                         setFormId={setReferencedFormId}/>
+                                </div>
+                            </div>
+                        ) : <Fragment/>}
+
+                </div>
+
+
+                {/* Right Hand Side Section */}
+
+                <div className={"col-4"}>
+
+
+                    {/* Required Checkbox */}
+
+                    <div className="form-check">
+                        <input
+                            disabled={fieldIsKey}
+                            className="form-check-input"
+                            type="checkbox"
+                            value=""
+                            onClick={() => setFieldRequired(!fieldRequired)}
+                            checked={fieldRequired}
+                            id="required"/>
+                        <label className="form-check-label" htmlFor="required">
+                            Required
+                        </label>
+                    </div>
+
+
+                    {/* Key Checkbox */}
+
+                    <div className="form-check">
+                        <input
+                            className="form-check-input"
+                            type="checkbox"
+                            value=""
+                            onClick={() => setFieldIsKey(!fieldIsKey)}
+                            checked={fieldIsKey}
+                            id="key"/>
+                        <label className="form-check-label" htmlFor="key">
+                            Key
+                        </label>
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
         <div className={"card-footer"}>
-            <button onClick={() => saveField()} className={"btn btn-primary"}>Save</button>
-            <button onClick={() => cancel()} className={"btn btn-secondary"}>Cancel</button>
+            <button onClick={() => saveField()} className={"btn btn-primary me-2 shadow"}>Save</button>
+            <button onClick={() => cancel()} className={"btn btn-secondary shadow"}>Cancel</button>
         </div>
     </div>
 }

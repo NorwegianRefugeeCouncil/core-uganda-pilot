@@ -57,6 +57,26 @@ func (s String) Join(separator string) string {
 	return strings.Join(s.List(), separator)
 }
 
+func (s String) MapToSlice(fn func(val string) string) []string {
+	var result = make([]string, s.Len())
+	var i = 0
+	for item := range s {
+		result[i] = fn(item)
+		i++
+	}
+	return result
+}
+
+func (s String) MapToIntfSlice(fn func(val string) interface{}) []interface{} {
+	var result = make([]interface{}, s.Len())
+	var i = 0
+	for item := range s {
+		result[i] = fn(item)
+		i++
+	}
+	return result
+}
+
 func (s String) UnsortedList() []string {
 	result := make([]string, len(s), len(s))
 	i := 0

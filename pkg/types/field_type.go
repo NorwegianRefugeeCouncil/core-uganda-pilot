@@ -25,6 +25,16 @@ type FieldTypeSubForm struct {
 func (f *FieldTypeSubForm) GetID() string {
 	return f.ID
 }
+
 func (f *FieldTypeSubForm) GetFields() []*FieldDefinition {
 	return f.Fields
 }
+
+type FieldKind string
+
+const (
+	FieldKindUnknown   FieldKind = "unknown"
+	FieldKindText      FieldKind = "text"
+	FieldKindSubForm   FieldKind = "subform"
+	FieldKindReference FieldKind = "reference"
+)
