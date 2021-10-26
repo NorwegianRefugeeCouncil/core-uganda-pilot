@@ -174,6 +174,10 @@ func convertFieldToSqlField(formDef *types.FormDefinition, field *types.FieldDef
 		result.DataType = sqlschema.SQLDataType{
 			Date: &sqlschema.SQLDataTypeDate{},
 		}
+	} else if field.FieldType.Quantity != nil {
+		result.DataType = sqlschema.SQLDataType{
+			Int: &sqlschema.SQLDataTypeInt{},
+		}
 	} else if field.FieldType.Reference != nil {
 		result.Constraints = append(result.Constraints, sqlschema.SQLColumnConstraint{
 			Name: fmt.Sprintf("fk__%s_%s_%s__%s_%s_id",

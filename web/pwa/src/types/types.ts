@@ -12,7 +12,8 @@ export enum FieldKind {
     MultilineText = "multilineText",
     Reference = "reference",
     SubForm = "subform",
-    Date = "date"
+    Date = "date",
+    Quantity = "quantity",
 }
 
 export class FieldType {
@@ -21,6 +22,7 @@ export class FieldType {
     public subForm?: FieldTypeSubForm
     public multilineText?: FieldTypeMultilineText
     public date?: FieldTypeDate
+    public quantity?: FieldTypeQuantity
 }
 
 export class FieldTypeText {
@@ -30,6 +32,9 @@ export class FieldTypeMultilineText {
 }
 
 export class FieldTypeDate {
+}
+
+export class FieldTypeQuantity {
 }
 
 export class FieldTypeMultiLineText {
