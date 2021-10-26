@@ -3,7 +3,7 @@ layout: page title: "Contributing"
 permalink: /contributing/
 ---
 
-First make sure you've [setup your development environment](README.md) properly :)
+First make sure you've [setup your development environment](README_old.md) properly :)
 
 # Issues and pull requests
 

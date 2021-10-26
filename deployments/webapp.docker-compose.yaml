@@ -1,0 +1,56 @@
+services:
+
+  redis:
+    image: 'bitnami/redis:latest'
+    container_name: "core-redis"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - "6379:6379"
+    restart: on-failure
+
+  hydra_migrate:
+    image: oryd/hydra:v1.10.2
+    container_name: "core-hydra-migrate"
+    volumes:
+      - ./webapp.hydra-config.yaml:/var/run/config.yaml:ro
+    command:
+      - migrate
+      - sql
+      - --yes
+      - --read-from-env
+      - --config=/var/run/config.yaml
+    restart: on-failure
+
+  hydra:
+    image: oryd/hydra:v1.10.2
+    container_name: "core-hydra"
+    ports:
+      - "4444:4444"
+      - "4445:4445"
+    volumes:
+      - ./webapp.hydra-config.yaml:/var/run/config.yaml:ro
+    command:
+      - serve
+      - all
+      - --dangerous-force-http
+      - --config=/var/run/config.yaml
+    restart: on-failure
+
+  db:
+    image: postgres:9.6
+    container_name: "core-hydra-db"
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - HYDRA_DB=hydra
+      - HYDRA_USERNAME=hydra
+      - HYDRA_PASSWORD=hydra
+      - CORE_DB=core
+      - CORE_USERNAME=core
+      - CORE_PASSWORD=core
+    volumes:
+      - ./webapp.postgres-init.sh:/docker-entrypoint-initdb.d/postgres-init.sh
+    restart: on-failure
