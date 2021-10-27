@@ -12,7 +12,7 @@ func convertDatabaseToSqlSchema(database types.Database) sqlschema.SQLSchema {
 	}
 }
 
-func expandSubForms(formDef *types.FormDefinition) []*types.FormDefinition {
+	func expandSubForms(formDef *types.FormDefinition) []*types.FormDefinition {
 	var result []*types.FormDefinition
 	result = append(result, formDef)
 	for _, field := range formDef.Fields {
@@ -177,6 +177,12 @@ func convertFieldToSqlField(formDef *types.FormDefinition, field *types.FieldDef
 	} else if field.FieldType.Quantity != nil {
 		result.DataType = sqlschema.SQLDataType{
 			Int: &sqlschema.SQLDataTypeInt{},
+		}
+	} else if field.FieldType.SingleSelect != nil {
+		result.DataType = sqlschema.SQLDataType{
+			VarChar: &sqlschema.SQLDataTypeVarChar{
+				Length: 1024,
+			},
 		}
 	} else if field.FieldType.Reference != nil {
 		result.Constraints = append(result.Constraints, sqlschema.SQLColumnConstraint{

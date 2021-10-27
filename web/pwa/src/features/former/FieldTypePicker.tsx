@@ -19,7 +19,7 @@ export const FieldTypePicker: FC<FieldTypePickerProps> = props => {
                 </button>                <button
                     className={"btn btn-primary m-2 border-light"}
                     onClick={() => onSubmit(FieldKind.MultilineText)}>
-                    MultilineText Text
+                    Multiline Text
                 </button>
                 <button
                     className={"btn btn-primary m-2 border-light"}
@@ -41,7 +41,11 @@ export const FieldTypePicker: FC<FieldTypePickerProps> = props => {
                     onClick={() => onSubmit(FieldKind.Quantity)}>
                     Quantity
                 </button>
-
+                <button
+                    className={"btn btn-primary m-2 border-light"}
+                    onClick={() => onSubmit(FieldKind.SingleSelect)}>
+                    Single Select
+                </button>
             </div>
         </div>
         <div className={"card-footer border-secondary"}>

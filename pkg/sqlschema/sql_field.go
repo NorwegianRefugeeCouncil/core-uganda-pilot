@@ -9,6 +9,7 @@ type SQLField struct {
 	DataType    SQLDataType
 	Collate     string
 	Default     string
+	Options     []string
 	Constraints []SQLColumnConstraint
 	Comment     string
 }

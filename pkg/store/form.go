@@ -84,6 +84,7 @@ type Field struct {
 	RootFormID           string
 	RootForm             *Form
 	Name                 string
+	Options              []Option
 	Code                 string
 	SubFormID            *string
 	SubForm              *Form
@@ -94,6 +95,11 @@ type Field struct {
 	Type                 types.FieldKind
 	CreatedAt            time.Time
 	UpdatedAt            time.Time
+}
+
+type Option struct {
+	Value string `gorm:"primarykey"`
+	FieldID string `gorm:"primarykey"`
 }
 
 type Fields []*Field
@@ -250,7 +256,7 @@ func (d *formStore) List(ctx context.Context) (*types.FormDefinitionList, error)
 		return nil, meta.NewInternalServerError(err)
 	}
 
-	if err := db.Find(&fields).Error; err != nil {
+	if err := db.Preload("Options").Find(&fields).Error; err != nil {
 		return nil, meta.NewInternalServerError(err)
 	}
 
@@ -461,6 +467,10 @@ func newFormHierarchyFrom(
 		if err != nil {
 			return nil, err
 		}
+		var opts []Option
+		for _, option := range field.Options {
+			opts = append(opts, Option{Value:option})
+		}
 		f := &Field{
 			ID:         field.ID,
 			DatabaseID: databaseId,
@@ -468,6 +478,7 @@ func newFormHierarchyFrom(
 			RootFormID: rootIdForField,
 			Name:       field.Name,
 			Code:       field.Code,
+			Options:    opts,
 			Type:       ft,
 		}
 		hierarchy.Fields = append(hierarchy.Fields, f)
@@ -504,10 +515,15 @@ func newFormHierarchyFrom(
 func (f *FormHierarchy) ToFormDefinition() (*types.FormDefinition, error) {
 	var flds []*types.FieldDefinition
 	for _, field := range f.Fields {
+		var options []string
+		for _, option := range field.Options {
+			options = append(options, option.Value)
+		}
 		fd := &types.FieldDefinition{
 			ID:        field.ID,
 			Name:      field.Name,
 			Code:      field.Code,
+			Options:   options,
 			Required:  false,
 			FieldType: types.FieldType{},
 		}
@@ -520,6 +536,8 @@ func (f *FormHierarchy) ToFormDefinition() (*types.FormDefinition, error) {
 			fd.FieldType.Date = &types.FieldTypeDate{}
 		case types.FieldKindQuantity:
 			fd.FieldType.Quantity = &types.FieldTypeQuantity{}
+		case types.FieldKindSingleSelect:
+			fd.FieldType.SingleSelect = &types.FieldTypeSingleSelect{}
 		case types.FieldKindSubForm:
 			child, err := f.GetSubFormForField(field)
 			if err != nil {
@@ -548,7 +566,7 @@ func (f *FormHierarchy) ToFormDefinition() (*types.FormDefinition, error) {
 		}
 		flds = append(flds, fd)
 	}
-	var folderId string = ""
+	var folderId = ""
 	if f.Form.FolderID != nil {
 		folderId = *f.Form.FolderID
 	}
@@ -674,6 +692,9 @@ func getFieldType(field *types.FieldDefinition) (types.FieldKind, error) {
 	}
 	if field.FieldType.Quantity != nil {
 		return types.FieldKindQuantity, nil
+	}
+	if field.FieldType.SingleSelect != nil {
+		return types.FieldKindSingleSelect, nil
 	}
 	return types.FieldKindUnknown, fmt.Errorf("could not determine field type")
 }

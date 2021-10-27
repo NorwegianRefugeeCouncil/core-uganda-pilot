@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	store2 "github.com/nrc-no/core/pkg/store"
+	"github.com/nrc-no/core/pkg/store"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -15,7 +15,7 @@ var migrateCmd = &cobra.Command{
 		if err := viper.Unmarshal(&coreOptions); err != nil {
 			return err
 		}
-		factory, err := store2.NewFactory(coreOptions.DSN)
+		factory, err := store.NewFactory(coreOptions.DSN)
 		if err != nil {
 			return err
 		}
@@ -23,7 +23,7 @@ var migrateCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if err := store2.Migrate(db); err != nil {
+		if err := store.Migrate(db); err != nil {
 			return err
 		}
 		logrus.Info("Successfully applied migrations")
