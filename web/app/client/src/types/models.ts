@@ -36,6 +36,7 @@ export interface Control {
 }
 export interface PartyAttributeDefinition {
     id: string;
+    alias: string;
     countryId: string;
     partyTypeIds: string[];
     isPii: boolean;
@@ -230,6 +231,7 @@ export interface Case {
     creatorId: string;
     parentId: string;
     intakeCase: boolean;
+    urgency: string;
     form: Form;
     formData: {[key: string]: string[]};
     done: boolean;

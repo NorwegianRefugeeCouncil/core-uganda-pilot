@@ -4,6 +4,9 @@
 cd web/app/client || exit
 npm install
 
+cd ../designSystem || exit
+npm install
+
 cd ../../../test/e2e || exit
 npm install
 
@@ -34,6 +37,12 @@ if [ ! "$?" ]; then
 fi
 
 tsc --build web/app/client/tsconfig.json
+
+if [ ! "$?" ]; then
+  exit 1
+fi
+
+tsc --build web/app/designSystem/tsconfig.json
 
 if [ ! "$?" ]; then
   exit 1
