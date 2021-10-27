@@ -6,7 +6,6 @@ describe('App', () => {
     
     it('<App /> has 1 child', () => {
       const tree = Renderer.create(<App />).toJSON();
-      console.log(tree)
       expect(tree.children.length).toBe(1);
     });
 
