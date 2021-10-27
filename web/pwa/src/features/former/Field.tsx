@@ -7,6 +7,10 @@ type FormerFieldProps = {
     isSelected: boolean
     selectField: () => void
     fieldType: FieldKind
+    fieldOptions?: string[]
+    setFieldOption: (i: number, value: string) => void
+    addOption: () => void
+    removeOption: (index: number) => void
     fieldName: string
     setFieldName: (fieldName: string) => void
     fieldRequired: boolean,
@@ -27,6 +31,10 @@ export const FormerField: FC<FormerFieldProps> = props => {
 
     const {
         fieldName,
+        fieldOptions,
+        setFieldOption,
+        addOption,
+        removeOption,
         setFieldName,
         isSelected,
         selectField,
@@ -88,6 +96,28 @@ export const FormerField: FC<FormerFieldProps> = props => {
                                onChange={event => setFieldName(event.target.value)}/>
                     </div>
 
+                    {/* Options */}
+
+                    {fieldType == "singleSelect" &&
+                    (
+                        <div className={"form-group mb-2"}>
+                            <label className={"form-label"} htmlFor={"fieldName"}>Field Options</label>
+                            <button type="button" className="btn btn-outline-primary" onClick={() => addOption()}>Add option</button>
+                            {fieldOptions?.map((opt, i) => (
+                                <>
+                                    <input className={"form-control"}
+                                           id={`fieldOption-${i}`}
+                                           type={"text"}
+                                           value={opt ? opt : ""}
+                                           onChange={event => setFieldOption(i, event.target.value)}/>
+                                    <button type="button" className="btn btn-outline-danger"
+                                            onClick={() => removeOption(i)}>-
+                                    </button>
+                                </>
+                            ))}
+                        </div>
+                    )
+                    }
 
                     {/* Form Description */}
 
