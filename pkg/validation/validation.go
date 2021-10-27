@@ -1,6 +1,7 @@
 package validation
 
 import (
+	"fmt"
 	uuid "github.com/satori/go.uuid"
 	"net/mail"
 	"net/url"
@@ -21,8 +22,12 @@ type Status struct {
 	Errors  ErrorList  `json:"errors"`
 }
 
-func (s *Status) Error() string {
+func (s Status) Error() string {
 	return s.Message
+}
+
+func (s Status) Unwrap() error {
+	return fmt.Errorf("%s", s.Message)
 }
 
 func IsValidUUID(s string) bool {

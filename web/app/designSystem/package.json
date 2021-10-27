@@ -3,8 +3,7 @@
   "version": "0.0.1",
   "main": "lib/designSystem.js",
   "types": "./lib/designSystem.d.ts",
-  "scripts": {
-  },
+  "scripts": {},
   "dependencies": {
     "@types/node": "^14.17.20",
     "react": "^17.0.2",

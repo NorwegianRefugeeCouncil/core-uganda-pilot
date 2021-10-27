@@ -10,5 +10,6 @@ pkgs.mkShell {
 		pkgs.air
 		pkgs.gnumake
 		pkgs.watchman
+    pkgs.openssl
 	];
 }

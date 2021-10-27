@@ -63,3 +63,8 @@ buck-out/
 /ios/Pods/
 
 # @end expo-cli
+
+
+# jest testing output
+__snapshots__/
+coverage/

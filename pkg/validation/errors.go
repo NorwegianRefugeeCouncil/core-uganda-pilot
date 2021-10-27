@@ -1,7 +1,9 @@
 package validation
 
 import (
+	"errors"
 	"fmt"
+	"github.com/nrc-no/core/pkg/sets"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -75,6 +77,10 @@ func (v ErrorList) Status(code int, msg string) Status {
 
 func (v ErrorList) HasMany() bool {
 	return len(v) > 1
+}
+
+func (v ErrorList) HasAny() bool {
+	return len(v) > 0
 }
 
 func (v *ErrorList) Length() int {
@@ -174,6 +180,10 @@ const (
 	// This is similar to ErrorTypeInvalid, but the error will not include the
 	// too-long value.  See TooLong().
 	ErrorTypeTooLong ErrorType = "FieldValueTooLong"
+	// ErrorTypeTooShort is used to report that the given value is too short.
+	// This is similar to ErrorTypeInvalid, but the error will not include the
+	// too-long value.  See TooShort().
+	ErrorTypeTooShort ErrorType = "FieldValueTooShort"
 	// ErrorTypeTooMany is used to report "too many". This is used to
 	// report that a given list has too many items. This is similar to FieldValueTooLong,
 	// but the error indicates quantity instead of length.
@@ -265,6 +275,14 @@ func TooLong(field *Path, value interface{}, maxLength int) *Error {
 	return &Error{ErrorTypeTooLong, field.String(), value, fmt.Sprintf("must have at most %d bytes", maxLength)}
 }
 
+// TooShort returns a *Error indicating "too short".  This is used to
+// report that the given value is too short.  This is similar to
+// Invalid, but the returned error will not include the too-short
+// value.
+func TooShort(field *Path, value interface{}, minLength int) *Error {
+	return &Error{ErrorTypeTooLong, field.String(), value, fmt.Sprintf("must have at minimum %d bytes", minLength)}
+}
+
 // TooMany returns a *Error indicating "too many". This is used to
 // report that a given list has too many items. This is similar to TooLong,
 // but the returned error indicates quantity instead of length.
@@ -283,3 +301,114 @@ func InternalError(field *Path, err error) *Error {
 // non-field errors in this same umbrella package, but for now we don't, so
 // we can keep it simple and leave ErrorList here.
 type ErrorList []*Error
+
+// ToAggregate converts the ErrorList into an errors.Aggregate.
+func (list ErrorList) ToAggregate() Aggregate {
+	errs := make([]error, 0, len(list))
+	errorMsgs := sets.NewString()
+	for _, err := range list {
+		msg := fmt.Sprintf("%v", err)
+		if errorMsgs.Has(msg) {
+			continue
+		}
+		errorMsgs.Insert(msg)
+		errs = append(errs, err)
+	}
+	return NewAggregate(errs)
+}
+
+type Aggregate interface {
+	error
+	Errors() []error
+	Is(error) bool
+}
+
+// NewAggregate converts a slice of errors into an Aggregate interface, which
+// is itself an implementation of the error interface.  If the slice is empty,
+// this returns nil.
+// It will check if any of the element of input error list is nil, to avoid
+// nil pointer panic when call Error().
+func NewAggregate(errlist []error) Aggregate {
+	if len(errlist) == 0 {
+		return nil
+	}
+	// In case of input error list contains nil
+	var errs []error
+	for _, e := range errlist {
+		if e != nil {
+			errs = append(errs, e)
+		}
+	}
+	if len(errs) == 0 {
+		return nil
+	}
+	return aggregate(errs)
+}
+
+// This helper implements the error and Errors interfaces.  Keeping it private
+// prevents people from making an aggregate of 0 errors, which is not
+// an error, but does satisfy the error interface.
+type aggregate []error
+
+// Error is part of the error interface.
+func (agg aggregate) Error() string {
+	if len(agg) == 0 {
+		// This should never happen, really.
+		return ""
+	}
+	if len(agg) == 1 {
+		return agg[0].Error()
+	}
+	seenerrs := sets.NewString()
+	result := ""
+	agg.visit(func(err error) bool {
+		msg := err.Error()
+		if seenerrs.Has(msg) {
+			return false
+		}
+		seenerrs.Insert(msg)
+		if len(seenerrs) > 1 {
+			result += ", "
+		}
+		result += msg
+		return false
+	})
+	if len(seenerrs) == 1 {
+		return result
+	}
+	return "[" + result + "]"
+}
+
+func (agg aggregate) Is(target error) bool {
+	return agg.visit(func(err error) bool {
+		return errors.Is(err, target)
+	})
+}
+
+func (agg aggregate) visit(f func(err error) bool) bool {
+	for _, err := range agg {
+		switch err := err.(type) {
+		case aggregate:
+			if match := err.visit(f); match {
+				return match
+			}
+		case Aggregate:
+			for _, nestedErr := range err.Errors() {
+				if match := f(nestedErr); match {
+					return match
+				}
+			}
+		default:
+			if match := f(err); match {
+				return match
+			}
+		}
+	}
+
+	return false
+}
+
+// Errors is part of the Aggregate interface.
+func (agg aggregate) Errors() []error {
+	return []error(agg)
+}

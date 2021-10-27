@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/nrc-no/core/pkg/validation"
+	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/sirupsen/logrus"
 	"io"
 	"io/ioutil"
@@ -161,7 +161,11 @@ type TokenIntrospectionResponse struct {
 }
 
 func (r *Request) Do(ctx context.Context) *Response {
-	l := logrus.WithField("scheme", r.c.config.Scheme).WithField("host", r.c.config.Host).WithField("path", r.path)
+	l := logrus.
+		WithField("scheme", r.c.config.Scheme).
+		WithField("host", r.c.config.Host).
+		WithField("path", r.path).
+		WithField("verb", r.verb)
 
 	if r.err != nil {
 		l.WithError(r.err).Errorf("could not send request")
@@ -228,37 +232,42 @@ func (r *Request) Do(ctx context.Context) *Response {
 		bodyBytes, err := ioutil.ReadAll(res.Body)
 		if err != nil {
 			l.Errorf("error status code received")
-			return &Response{err: fmt.Errorf("unexpected status code")}
+			return &Response{err: fmt.Errorf("unexpected status code: %d", res.StatusCode)}
 		}
-		l.WithField("response", string(bodyBytes)).Errorf("unexpected status code")
+		l.WithField("response", string(bodyBytes)).Errorf("unexpected status code: %d", res.StatusCode)
+
+		status := meta.Status{
+			Status:  meta.StatusFailure,
+			Code:    int32(res.StatusCode),
+			Message: "Unexpected error",
+		}
 
 		if len(bodyBytes) == 0 {
 			return &Response{
-				err: &validation.Status{
-					Status:  validation.Failure,
-					Code:    http.StatusInternalServerError,
-					Message: "Unexpected error",
-					Errors:  nil,
+				err: &meta.StatusError{
+					ErrStatus: status,
 				},
 				body: bodyBytes,
 			}
 		}
 
-		var status validation.Status
 		if err := json.Unmarshal(bodyBytes, &status); err != nil {
 			return &Response{
-				err: &validation.Status{
-					Status:  validation.Failure,
-					Code:    http.StatusInternalServerError,
-					Message: "Unexpected error",
-					Errors:  nil,
+				err: &meta.StatusError{
+					ErrStatus: meta.Status{
+						Status:  meta.StatusFailure,
+						Code:    int32(res.StatusCode),
+						Message: string(bodyBytes),
+					},
 				},
 				body: bodyBytes,
 			}
 		}
 
 		return &Response{
-			err:  &status,
+			err: &meta.StatusError{
+				ErrStatus: status,
+			},
 			body: bodyBytes,
 		}
 	}
@@ -270,23 +279,32 @@ func (r *Request) Do(ctx context.Context) *Response {
 	}
 
 	return &Response{
-		body: bodyBytes,
+		response: res,
+		body:     bodyBytes,
 	}
 }
 
 type Response struct {
-	err  error
-	body []byte
+	err      error
+	response *http.Response
+	body     []byte
 }
 
 func (r *Response) Into(into interface{}) error {
 	if r.err != nil {
 		return r.err
 	}
+	if into == nil {
+		return nil
+	}
 	if len(r.body) == 0 {
 		return fmt.Errorf("0-length body")
 	}
 	return json.Unmarshal(r.body, &into)
+}
+
+func (r *Response) Raw() ([]byte, *http.Response, error) {
+	return r.body, r.response, r.err
 }
 
 func (r *Response) Error() error {

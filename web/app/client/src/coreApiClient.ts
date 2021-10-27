@@ -49,6 +49,7 @@ import {
 } from './types/models';
 import {ajax} from 'rxjs/ajax';
 import {XMLHttpRequest} from 'xhr2';
+import {objectToQueryString} from "./queryParamBuilder";
 
 // needed for rxjs/ajax compatibility outside the browser
 global.XMLHttpRequest = global.XMLHttpRequest ? global.XMLHttpRequest : XMLHttpRequest;
@@ -125,12 +126,9 @@ function replacePathParams(s: string, params: URLValues): string {
     return tmp
 }
 
-function appendQueryParams(s: string, params: URLValues): string {
-    let paramStrings = []
-    for (const [key, value] of Object.entries(params)) {
-        paramStrings.push(`${key}=${value}`)
-    }
-    return paramStrings.length > 0 ? `${s}?${paramStrings.join("&")}` : s
+function appendQueryParams(s: string, params: any): string {
+    const qp = objectToQueryString(params)
+    return qp ? `${s}?${qp}` : s
 }
 
 function urlValuesNotEmpty(u: URLValues): boolean {
@@ -231,7 +229,7 @@ export class Request {
     public _path: string
     public _verb: string
     public _body: any
-    public _params: URLValues
+    public _params: any
     public _pathParams: URLValues
     public _headers: Headers
 
@@ -270,7 +268,7 @@ export class Request {
         return this
     }
 
-    public params(params: URLValues): Request {
+    public params(params: any): Request {
         this._params = params
         return this
     }
@@ -346,7 +344,7 @@ class CaseClient {
     List(): OperatorFunction<CaseListOptions, CaseList> {
         return clo$ => clo$.pipe(
             map(clo => clo ?
-                this.client.get().path(buildCMSPath('cases')).params(clo as unknown as URLValues)
+                this.client.get().path(buildCMSPath('cases')).params(clo)
                 : this.client.get().path(buildCMSPath('cases'))
             ),
             this.execute(),
@@ -393,7 +391,7 @@ class CaseTypeClient {
     List(): OperatorFunction<CaseTypeListOptions, CaseTypeList> {
         return ctlo$ => ctlo$.pipe(
             map(ctlo => ctlo ?
-                this.client.get().path(buildCMSPath('casetypes')).params(ctlo as unknown as URLValues)
+                this.client.get().path(buildCMSPath('casetypes')).params(ctlo)
                 : this.client.get().path(buildCMSPath('casetypes'))
             ),
             this.execute(),
@@ -440,7 +438,7 @@ class CommentClient {
     List(): OperatorFunction<CommentListOptions, CommentList> {
         return clo$ => clo$.pipe(
             map(clo => clo ?
-                this.client.get().path(buildCMSPath('comments')).params(clo as unknown as URLValues)
+                this.client.get().path(buildCMSPath('comments')).params(clo)
                 : this.client.get().path(buildCMSPath('comments'))
             ),
             this.execute(),
@@ -526,7 +524,7 @@ class CountryClient {
     List(): OperatorFunction<CountryListOptions, CountryList> {
         return clo$ => clo$.pipe(
             map(clo => clo ?
-                this.client.get().path(buildIAMPath('countries')).params(clo as URLValues)
+                this.client.get().path(buildIAMPath('countries')).params(clo)
                 : this.client.get().path(buildIAMPath('countries'))
             ),
             this.execute(),
@@ -573,7 +571,7 @@ class IdentificationDocumentClient {
     List(): OperatorFunction<IdentificationDocumentListOptions, IdentificationDocumentList> {
         return idlo$ => idlo$.pipe(
             map(idlo => idlo ?
-                this.client.get().path(buildIAMPath('identificationdocuments')).params(idlo as URLValues)
+                this.client.get().path(buildIAMPath('identificationdocuments')).params(idlo)
                 : this.client.get().path(buildIAMPath('identificationdocuments'))
             ),
             this.execute(),
@@ -627,7 +625,7 @@ class IdentificationDocumentTypeClient {
     List(): OperatorFunction<IdentificationDocumentTypeListOptions, IdentificationDocumentTypeList> {
         return idtlo$ => idtlo$.pipe(
             map(idtlo => idtlo ?
-                this.client.get().path(buildIAMPath('identificationdocumenttypes')).params(idtlo as URLValues)
+                this.client.get().path(buildIAMPath('identificationdocumenttypes')).params(idtlo)
                 : this.client.get().path(buildIAMPath('identificationdocumenttypes'))
             ),
             this.execute(),
@@ -674,7 +672,7 @@ class IndividualClient {
     List(): OperatorFunction<IndividualListOptions, IndividualList> {
         return ilo$ => ilo$.pipe(
             map(ilo => ilo ?
-                this.client.get().path(buildIAMPath('individuals')).params(ilo as URLValues)
+                this.client.get().path(buildIAMPath('individuals')).params(ilo)
                 : this.client.get().path(buildIAMPath('individuals'))
             ),
             this.execute(),
@@ -721,7 +719,7 @@ class MembershipClient {
     List(): OperatorFunction<MembershipListOptions, MembershipList> {
         return mlo$ => mlo$.pipe(
             map(mlo => mlo ?
-                this.client.get().path(buildIAMPath('memberships')).params(mlo as URLValues)
+                this.client.get().path(buildIAMPath('memberships')).params(mlo)
                 : this.client.get().path(buildIAMPath('memberships'))
             ),
             this.execute(),
@@ -768,7 +766,7 @@ class NationalityClient {
     List(): OperatorFunction<NationalityListOptions, NationalityList> {
         return nlo$ => nlo$.pipe(
             map(nlo => nlo ?
-                this.client.get().path(buildIAMPath('nationalities')).params(nlo as URLValues)
+                this.client.get().path(buildIAMPath('nationalities')).params(nlo)
                 : this.client.get().path(buildIAMPath('nationalities'))
             ),
             this.execute(),
@@ -815,7 +813,7 @@ class PartyAttributeDefinitionClient {
     List(): OperatorFunction<PartyAttributeDefinitionListOptions, PartyAttributeDefinitionList> {
         return padlo$ => padlo$.pipe(
             map(padlo => padlo ?
-                this.client.get().path(buildIAMPath('attributes')).params(padlo as URLValues)
+                this.client.get().path(buildIAMPath('attributes')).params(padlo)
                 : this.client.get().path(buildIAMPath('attributes'))
             ),
             this.execute(),
@@ -862,7 +860,7 @@ class PartyClient {
     List(): OperatorFunction<PartyListOptions, PartyList> {
         return plo$ => plo$.pipe(
             map(plo => plo ?
-                this.client.get().path(buildIAMPath('parties')).params(plo as unknown as URLValues)
+                this.client.get().path(buildIAMPath('parties')).params(plo)
                 : this.client.get().path(buildIAMPath('parties'))
             ),
             this.execute(),
@@ -909,7 +907,7 @@ class PartyTypeClient {
     List(): OperatorFunction<PartyTypeListOptions, PartyTypeList> {
         return ptlo$ => ptlo$.pipe(
             map(ptlo => ptlo ?
-                this.client.get().path(buildIAMPath('partytypes')).params(ptlo as URLValues)
+                this.client.get().path(buildIAMPath('partytypes')).params(ptlo)
                 : this.client.get().path(buildIAMPath('partytypes'))
             ),
             this.execute(),
@@ -956,7 +954,7 @@ class RelationshipClient {
     List(): OperatorFunction<RelationshipListOptions, RelationshipList> {
         return rlo$ => rlo$.pipe(
             map(rlo => rlo ?
-                this.client.get().path(buildIAMPath('relationships')).params(rlo as URLValues)
+                this.client.get().path(buildIAMPath('relationships')).params(rlo)
                 : this.client.get().path(buildIAMPath('relationships'))
             ),
             this.execute(),
@@ -1010,7 +1008,7 @@ class RelationshipTypeClient {
     List(): OperatorFunction<RelationshipTypeListOptions, RelationshipTypeList> {
         return rtlo$ => rtlo$.pipe(
             map(rtlo => rtlo ?
-                this.client.get().path(buildIAMPath('relationshiptypes')).params(rtlo as URLValues)
+                this.client.get().path(buildIAMPath('relationshiptypes')).params(rtlo)
                 : this.client.get().path(buildIAMPath('relationshiptypes'))
             ),
             this.execute(),
@@ -1057,7 +1055,7 @@ class TeamClient {
     List(): OperatorFunction<TeamListOptions, TeamList> {
         return tlo$ => tlo$.pipe(
             map(tlo => tlo ?
-                this.client.get().path(buildIAMPath('teams')).params(tlo as URLValues)
+                this.client.get().path(buildIAMPath('teams')).params(tlo)
                 : this.client.get().path(buildIAMPath('teams'))
             ),
             this.execute(),
