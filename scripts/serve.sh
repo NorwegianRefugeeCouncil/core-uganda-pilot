@@ -1,38 +1,12 @@
 #!/usr/bin/env bash
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+
+set -e
+
 # cleanup on exit
 trap 'jobs -p | xargs -r kill' EXIT
 
-flags="--mongo-database=core \
-       	--mongo-username=root \
-       	--mongo-password=example \
-       	--mongo-hosts=localhost:27017 \
-       	--redis-address=localhost:6379 \
-       	--environment=Development \
-       	--fresh=true \
-       	--seed=true \
-       	--tls-disable=true \
-       	--hydra-admin-url=http://localhost:4445 \
-       	--hydra-public-url=http://localhost:4444 \
-       	--login-templates-directory=web/templates/login \
-       	--login-client-id=login \
-       	--login-client-name=login \
-       	--login-client-secret=somesecret \
-       	--login-iam-host=localhost:9000 \
-       	--login-iam-scheme=http \
-       	--web-templates-directory=web/templates \
-       	--web-static-directory=web/static \
-       	--web-client-id=webapp \
-       	--web-client-secret=webapp \
-       	--web-client-name=webapp \
-       	--web-iam-host=localhost:9000 \
-       	--web-iam-scheme=http \
-       	--web-cms-host=localhost:9000 \
-       	--web-cms-scheme=http \
-       	--listen-address=:9000 \
-       	--base-url=http://localhost:9000"
+(cd "${SCRIPT_DIR}" && ./init_secrets.sh)
 
-go build -o ./tmp/main ./cmd/core
-
-# shellcheck disable=SC2086
-./tmp/main $flags
+(cd "${SCRIPT_DIR}/.." && go run . serve all --config=configs/config.yaml,configs/config.custom.yaml)

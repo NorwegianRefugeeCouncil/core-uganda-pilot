@@ -3,27 +3,13 @@ SHELL := bash
 .SHELLFLAGS := -eu -o pipefail -c # fail on errors
 
 up:
-	@docker-compose -f deployments/docker-compose.yaml up --build -d
+	@./scripts/up.sh
 
 down:
-	@docker-compose -f deployments/docker-compose.yaml down --remove-orphans
+	@./scripts/down.sh
 
-up-all:
-	@docker-compose -f deployments/docker-compose-all.yaml up --build -d
-
-down-all:
-	@docker-compose -f deployments/docker-compose-all.yaml down --remove-orphans
-
-gen-certs:
-	@./scripts/gen-certs.sh
-
-test-integration:
-	@./scripts/test-integration.sh
-
-test-e2e:
-	@./scripts/test-e2e.sh
-
-test: test-integration test-e2e
+migrate:
+	@./scripts/migrate.sh
 
 build:
 	@./scripts/build.sh
@@ -37,10 +23,10 @@ frontend:
 watch:
 	@./scripts/watch.sh
 
-docker-build:
-	@docker build -t digitalbackbonecr.azurecr.io/nrc-no/core:latest -f build/package/Dockerfile .
+package:
+	@./scripts/package.sh
 
-docker-push: docker-build
-	@docker push digitalbackbonecr.azurecr.io/nrc-no/core:latest
+pwa:
+	@./scripts/pwa.sh
 
 .PHONY: up down serve build test frontend
