@@ -257,7 +257,7 @@ export const selectFormOrSubFormById = (state: RootState, formOrSubFormId: strin
 
 export const selectByFolderOrDBId = (state: RootState, folderOrDbId?: string): FormDefinition[] => {
     return formGlobalSelectors.selectAll(state).filter(f => {
-        return f.folderId === folderOrDbId || f.databaseId === folderOrDbId && !f.folderId
+        return (f.folderId === folderOrDbId || f.databaseId === folderOrDbId) && !f.folderId
     })
 }
 

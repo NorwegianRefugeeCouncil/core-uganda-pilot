@@ -2,8 +2,7 @@ import React, {FC, useCallback, useEffect, useState} from "react";
 import {Record} from "../types/types";
 import {useAppDispatch, useAppSelector} from "../app/hooks";
 import {fetchRecords, recordGlobalSelectors, selectRecords} from "../reducers/records";
-import {useDispatch} from "react-redux";
-import {formGlobalSelectors, selectFormOrSubFormById, selectRootForm} from "../reducers/form";
+import {selectFormOrSubFormById, selectRootForm} from "../reducers/form";
 
 export type RecordPickerProps = {
     disabled?: boolean
