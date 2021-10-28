@@ -22,7 +22,6 @@ type SQLDataType struct {
 	Time            *SQLDataTypeTime
 	Interval        *SQLDataTypeInterval
 	Text            *SQLDataTypeText
-	StringArray     *SQLDataTypeStringArray
 }
 
 func (s SQLDataType) DDL() DDL {
@@ -43,7 +42,6 @@ func (s SQLDataType) DDL() DDL {
 		s.Time,
 		s.Interval,
 		s.Text,
-		s.StringArray,
 	} {
 		if ddLer != nil {
 			if reflect.ValueOf(ddLer).IsNil() {
@@ -73,12 +71,6 @@ type SQLDataTypeInt struct{}
 
 func (c SQLDataTypeInt) DDL() DDL {
 	return NewDDL("int")
-}
-
-type SQLDataTypeStringArray struct{}
-
-func (c SQLDataTypeStringArray) DDL() DDL {
-	return DDL{Query: "string[]"}
 }
 
 type SQLDataTypeSmallInt struct{}

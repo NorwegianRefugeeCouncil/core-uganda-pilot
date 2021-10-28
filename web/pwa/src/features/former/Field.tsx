@@ -98,7 +98,7 @@ export const FormerField: FC<FormerFieldProps> = props => {
 
                     {/* Options */}
 
-                    {fieldType == "singleSelect" &&
+                    {fieldType === "singleSelect" &&
                     (
                         <div className={"form-group mb-2"}>
                             <div className="d-flex justify-content-between align-items-center mb-2">
@@ -108,7 +108,7 @@ export const FormerField: FC<FormerFieldProps> = props => {
                                 </button>
                             </div>
                             {fieldOptions?.map((opt, i) => (
-                                <div className="d-flex mb-2">
+                                <div key={i} className="d-flex mb-2">
                                     <input className="form-control me-3"
                                            id={`fieldOption-${i}`}
                                            type={"text"}
@@ -180,7 +180,7 @@ export const FormerField: FC<FormerFieldProps> = props => {
                             className="form-check-input"
                             type="checkbox"
                             value=""
-                            onClick={() => setFieldRequired(!fieldRequired)}
+                            onChange={() => setFieldRequired(!fieldRequired)}
                             checked={fieldRequired}
                             id="required"/>
                         <label className="form-check-label" htmlFor="required">
@@ -196,7 +196,7 @@ export const FormerField: FC<FormerFieldProps> = props => {
                             className="form-check-input"
                             type="checkbox"
                             value=""
-                            onClick={() => setFieldIsKey(!fieldIsKey)}
+                            onChange={() => setFieldIsKey(!fieldIsKey)}
                             checked={fieldIsKey}
                             id="key"/>
                         <label className="form-check-label" htmlFor="key">

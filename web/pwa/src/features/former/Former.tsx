@@ -236,19 +236,19 @@ export const FormerContainer: FC = props => {
 
     const setFieldOption = useCallback((fieldId: string, i: number, value: string) => {
         dispatch(formerActions.setFieldOption({fieldId, i, value}))
-    }, [dispatch, form])
+    }, [dispatch])
 
     const addOption = useCallback((fieldId: string) => {
         dispatch(formerActions.addOption({fieldId}))
-    }, [dispatch, form])
+    }, [dispatch])
 
     const removeOption = useCallback((fieldId:string, i: number) => {
         dispatch(formerActions.removeOption({fieldId, i}))
-    }, [dispatch, form])
+    }, [dispatch])
 
     const cancelField = useCallback((fieldId: string) => {
         dispatch(formerActions.cancelFieldChanges({fieldId}))
-    }, [dispatch, form])
+    }, [dispatch])
 
     const setFieldRequired = useCallback((fieldId: string, required: boolean) => {
         dispatch(formerActions.setFieldRequired({fieldId, required}))
