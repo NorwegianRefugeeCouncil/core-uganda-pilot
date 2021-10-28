@@ -7,6 +7,7 @@ type FieldType struct {
 	MultilineText *FieldTypeMultilineText `json:"multilineText,omitempty"`
 	Date          *FieldTypeDate          `json:"date,omitempty"`
 	Quantity      *FieldTypeQuantity      `json:"quantity,omitempty"`
+	Month         *FieldTypeMonth         `json:"month,omitempty"`
 }
 
 type FieldTypeReference struct {
@@ -19,6 +20,8 @@ type FieldTypeText struct{}
 type FieldTypeMultilineText struct{}
 
 type FieldTypeDate struct{}
+
+type FieldTypeMonth struct{}
 
 type FieldTypeQuantity struct{}
 
@@ -47,4 +50,5 @@ const (
 	FieldKindMultilineText FieldKind = "multilineText"
 	FieldKindDate          FieldKind = "date"
 	FieldKindQuantity      FieldKind = "quantity"
+	FieldKindMonth         FieldKind = "month"
 )

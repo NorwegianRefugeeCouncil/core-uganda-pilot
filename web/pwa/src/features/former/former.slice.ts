@@ -161,6 +161,8 @@ const mapFields = (state: FormerState, fields: FormField[]): FieldDefinition[] =
            fieldType = {multilineText: {}}
         } else if (field.type === "date") {
             fieldType = {date: {}}
+        } else if (field.type === "month") {
+            fieldType = {month: {}}
         } else if (field.type === "quantity") {
             fieldType = {quantity: {}}
         } else if (field.type === "reference") {
