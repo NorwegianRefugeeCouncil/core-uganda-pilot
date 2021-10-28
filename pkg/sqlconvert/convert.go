@@ -12,7 +12,7 @@ func convertDatabaseToSqlSchema(database types.Database) sqlschema.SQLSchema {
 	}
 }
 
-	func expandSubForms(formDef *types.FormDefinition) []*types.FormDefinition {
+func expandSubForms(formDef *types.FormDefinition) []*types.FormDefinition {
 	var result []*types.FormDefinition
 	result = append(result, formDef)
 	for _, field := range formDef.Fields {
