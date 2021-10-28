@@ -13,6 +13,10 @@ import * as SecureStore from 'expo-secure-store';
 import * as Network from 'expo-network';
 import {Snackbar, Switch} from 'react-native-paper';
 import {v4 as uuidv4} from 'uuid';
+import {getEncryptionKey} from "../../utils/getEncryptionKey";
+import CryptoJS from "react-native-crypto-js";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 export interface FlatIndividual extends Omit<Individual, 'attributes'> {
     attributes: { [p: string]: string }
@@ -42,8 +46,18 @@ const IndividualScreen: React.FC<any> = ({route}) => {
     });
 
     const onSubmitOffline = async (data: { attributes: string[], partyTypeIds: string[] }) => {
+        const key = await getEncryptionKey();
+
         console.log('submit offline', data)
-        SecureStore.setItemAsync(id, JSON.stringify(data))
+        SecureStore.setItemAsync(id, key)
+            .then(async () => {
+                const encryptedData = await CryptoJS.encrypt('AES', key, JSON.stringify(data));
+                return AsyncStorage.setItem(id, encryptedData.toString(), (error) => {
+                    if (error) {
+                        setHasLocalData(false)
+                    }
+                })
+            })
             .then(() => {
                 setHasLocalData(true)
             })
@@ -66,7 +80,7 @@ const IndividualScreen: React.FC<any> = ({route}) => {
             createIndividual({
                 id: id == 'new' ? uuidv4() : id,
                 attributes: submittableAttributes,
-                partyTypeIds: ['a842e7cb-3777-423a-9478-f1348be3b4a5'] // individual?.partyTypeIds
+                partyTypeIds: ['a842e7cb-3777-423a-9478-f1348be3b4a5'] // individual?.partyTypeIdsnpm i react-native-securerandom
             });
         } else {
             onSubmitOffline(data);
@@ -74,20 +88,30 @@ const IndividualScreen: React.FC<any> = ({route}) => {
 
     };
 
-    {/* check for locally stored data on mobile device */
-    }
+    // check for locally stored data on mobile device
     React.useEffect(() => {
         if (!isWeb) {
             SecureStore.getItemAsync(id)
-                .then((data) => {
-                    setHasLocalData(data != null)
+                .then(async (key) => {
+                    if (key == null) {
+                        return;
+                    }
+
+                    const data = await AsyncStorage.getItem(id);
+                    if (data == null) {
+                        return;
+                    }
+                    const bytes = CryptoJS.decrypt('AES', key, data);
+                    const decryptedData = JSON.parse(bytes.toString());
+
+                    setHasLocalData(true)
                     const newIndividual: FlatIndividual = {
                         id: id,
-                        partyTypeIds: individual?.partyTypeIds || [],
-                        attributes: data == null ? individual?.attributes : JSON.parse(data)
+                        partyTypeIds: decryptedData?.partyTypeIds || [],
+                        attributes: decryptedData?.attributes
                     };
                     reset(newIndividual);
-                    // TODO: delete data, once extracted to save space. or only after submit?
+                    // TODO: delete data, once extracted to save space. or only after online submit?
                 })
         }
     }, [isWeb])
