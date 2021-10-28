@@ -81,6 +81,7 @@ export const MonthFieldEditor: FC<FieldEditorProps> = props => {
             className={"form-control bg-dark text-light border-secondary"}
             type={"month"}
             id={field.id} value={value ? value : ""}
+            pattern={"[0-9]{4}-[0-9]{2}"}
             onChange={event => setValue(event.target.value)}/>
         {mapFieldDescription(field)}
     </div>
