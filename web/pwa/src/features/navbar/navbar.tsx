@@ -86,7 +86,7 @@ export const NavBar: FC<NavBarProps> = props => {
 
     return (
         <Fragment>
-            <nav className="navbar navbar-expand-lg navbar-light bg-light">
+            <nav className="navbar navbar-expand-sm navbar-light bg-light">
                 <div className="container-fluid">
                     <Link className="navbar-brand" to="/">Core</Link>
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
