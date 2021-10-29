@@ -11,3 +11,7 @@
 2. You are redirected to the homepage of your new database
 
 ![add database](images/add_database_success.png)
+
+3. Your database will show on the database list as well
+
+![add database](images/add_database_success_list.png)
