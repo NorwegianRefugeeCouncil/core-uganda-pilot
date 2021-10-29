@@ -2,6 +2,7 @@ package sqlconvert
 
 import (
 	"fmt"
+	"github.com/nrc-no/core/pkg/sets"
 	"github.com/nrc-no/core/pkg/sqlschema"
 	"github.com/nrc-no/core/pkg/types"
 )
@@ -142,8 +143,21 @@ func convertFormToSqlTable(formDef *types.FormDefinition, referencedForms *types
 	//	return sqlschema.SQLTable{}, err
 	//}
 
+	keyFieldIDs := sets.NewString()
 	for _, field := range formDef.Fields {
 		table.Fields = append(table.Fields, convertFieldToSqlField(formDef, field))
+		if field.Key {
+			keyFieldIDs.Insert(field.ID)
+		}
+	}
+
+	if !keyFieldIDs.IsEmpty() {
+		table.Constraints = append(table.Constraints, sqlschema.SQLTableConstraint{
+			Name: fmt.Sprintf("uq_%s", table.Name),
+			Unique: &sqlschema.SQLTableConstraintUnique{
+				ColumnNames: keyFieldIDs.List(),
+			},
+		})
 	}
 
 	return table, nil
@@ -154,7 +168,7 @@ func convertFieldToSqlField(formDef *types.FormDefinition, field *types.FieldDef
 	result.Name = field.ID
 	result.Comment = field.Code
 
-	if field.Required {
+	if field.Required || field.Key {
 		result.Constraints = append(result.Constraints, sqlschema.SQLColumnConstraint{
 			NotNull: &sqlschema.NotNullSQLColumnConstraint{},
 		})

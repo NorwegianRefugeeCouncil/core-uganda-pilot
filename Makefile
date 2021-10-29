@@ -11,6 +11,11 @@ down:
 migrate:
 	@./scripts/migrate.sh
 
+clear-db:
+	@./scripts/clear-db.sh
+
+reset-db: clear-db migrate
+
 build:
 	@./scripts/build.sh
 

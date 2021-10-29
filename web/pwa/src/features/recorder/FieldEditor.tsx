@@ -96,6 +96,7 @@ export const SingleSelectFieldEditor: FC<FieldEditorProps> = props => {
             className={"form-control bg-dark text-light border-secondary"}
             id={field.id} value={value ? value : ""}
             onChange={event => setValue(event.target.value)}>
+            <option disabled={field.required || field.key} value={""}/>
             {field.options.map(o => <option value={o}>{o}</option>)}
         </select>
         {mapFieldDescription(field)}

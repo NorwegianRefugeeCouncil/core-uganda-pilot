@@ -33,6 +33,10 @@ func (s String) Len() int {
 	return len(s)
 }
 
+func (s String) IsEmpty() bool {
+	return s.Len() == 0
+}
+
 func (s String) List() []string {
 	result := make([]string, len(s), len(s))
 	i := 0

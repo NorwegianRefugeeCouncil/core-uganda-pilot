@@ -18,6 +18,10 @@ func Clear(db *gorm.DB) error {
 		}
 	}
 
+	if err := db.Where("field_id = field_id").Delete(&Option{}).Error; err != nil {
+		return err
+	}
+
 	if err := db.Where("id = id").Delete(&Field{}).Error; err != nil {
 		return err
 	}
