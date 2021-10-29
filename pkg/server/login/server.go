@@ -1,8 +1,8 @@
 package login
 
 import (
-	"github.com/nrc-no/core/pkg/options"
 	"github.com/nrc-no/core/pkg/server/generic"
+	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/store"
 )
 

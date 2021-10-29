@@ -2,7 +2,6 @@ import React, {useEffect} from 'react';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import {Database, SqlJsStatic} from 'sql.js'
 import {NavBarContainer} from "./features/navbar/navbar";
 import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom";
 import {useAppDispatch} from "./app/hooks";
@@ -17,40 +16,14 @@ import {FormerContainer} from "./features/former/Former";
 import {AdminPanel} from "./features/admin/AdminPanel";
 import {useAuth} from 'oidc-react';
 import {DatabaseEditor} from "./features/databases/DatabaseEditor";
-import {deflate, inflate} from "pako"
 import {FolderEditor} from "./features/folders/FolderEditor";
 import {RecordBrowser} from "./features/browser/RecordBrowser";
+import {useSqlDB} from "./app/db";
 
 function App() {
 
-    // useEffect(() => {
-    //     SQL.default({
-    //         locateFile(url: string): string {
-    //             log.debug("locating sql file at url", url)
-    //             return `/${url}`
-    //         }
-    //     }).then((sql) => {
-    //
-    //         const db = getDb(sql)
-    //
-    //         try {
-    //             db.run(`CREATE TABLE IF NOT EXISTS users  (id int primary key);`)
-    //             const stmt = db.prepare("select * from users")
-    //             stmt.bind({0: "id"})
-    //             while (stmt.step()) {
-    //                 console.log(stmt.getAsObject())
-    //             }
-    //         } catch (err) {
-    //             console.log(err.toString())
-    //         }
-    //
-    //         saveDb(db)
-    //
-    //     })
-    // }, [])
-
-
     const dispatch = useAppDispatch()
+    const {database, saveDatabase} = useSqlDB()
 
     useEffect(() => {
         dispatch(fetchDatabases())
@@ -74,21 +47,13 @@ function App() {
                     <NavBarContainer/>
                     <Switch>
 
-                        <Route path={`/edit/forms/:formId/record`} render={p => {
-                            return <RecordEditorContainer/>
-                        }}/>
+                        <Route path={`/edit/forms/:formId/record`} component={RecordEditorContainer}/>
 
-                        <Route path={`/edit/forms`} render={p => {
-                            return <FormerContainer/>
-                        }}/>
+                        <Route path={`/edit/forms`} component={FormerContainer}/>
 
-                        <Route path={`/add/folders`} render={p => {
-                            return <FolderEditor/>
-                        }}/>
+                        <Route path={`/add/folders`} component={FolderEditor}/>
 
-                        <Route path={`/edit/databases`} render={p => {
-                            return <DatabaseEditor/>
-                        }}/>
+                        <Route path={`/edit/databases`} component={DatabaseEditor}/>
 
                         <Route path={`/browse/databases/:databaseId`} render={p => {
                             const {databaseId} = p.match.params
@@ -109,15 +74,11 @@ function App() {
                                 formId={formId ? formId : ""}/>
                         }}/>
 
-                        <Route path={`/browse/databases`}>
-                            <DatabasesContainer/>
-                        </Route>
+                        <Route path={`/browse/databases`} component={DatabasesContainer}/>
 
                         <Route path={`/browse/records/:recordId`} component={RecordBrowser}/>
 
-                        <Route path={`/admin`}>
-                            <AdminPanel/>
-                        </Route>
+                        <Route path={`/admin`} component={AdminPanel}/>
 
                         <Route path="/">
                             <Redirect to="/browse/databases"/>
@@ -134,43 +95,3 @@ function App() {
 
 export default App;
 
-/**
- * Convert an Uint8Array into a string.
- *
- * @returns {String}
- */
-function DecodeUint8arr(uint8array: Uint8Array) {
-    return uint8array.join(",")
-}
-
-/**
- * Convert a string into a Uint8Array.
- *
- * @returns {Uint8Array}
- */
-function EncodeUint8arr(myString: string) {
-    return Uint8Array.from(myString.split(","), v => parseInt(v))
-}
-
-function saveDb(db: Database) {
-    const rawSqlBytes = db.export()
-    const compressedSqlBytes = deflate(rawSqlBytes)
-    const compressedSqlStr = DecodeUint8arr(compressedSqlBytes)
-    localStorage.setItem("db", compressedSqlStr)
-}
-
-
-function getDb(sql: SqlJsStatic): Database {
-    let db: Database
-    const compressedStrFromStore = localStorage.getItem("db")
-    if (compressedStrFromStore !== null) {
-        console.log("loading file from local storage")
-        const compressedBytesFromStore = EncodeUint8arr(compressedStrFromStore)
-        const decompressedBytesFromStore = inflate(compressedBytesFromStore)
-        db = new sql.Database(decompressedBytesFromStore)
-    } else {
-        console.log("creating new database")
-        db = new sql.Database()
-    }
-    return db
-}

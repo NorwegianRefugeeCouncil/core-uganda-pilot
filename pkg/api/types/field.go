@@ -2,7 +2,7 @@ package types
 
 import (
 	"fmt"
-	"github.com/nrc-no/core/pkg/sets"
+	"github.com/nrc-no/core/pkg/utils/sets"
 )
 
 type FieldDefinition struct {

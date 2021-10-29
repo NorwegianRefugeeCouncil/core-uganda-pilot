@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"github.com/cenkalti/backoff/v4"
 	"github.com/coreos/go-oidc/v3/oidc"
-	"github.com/nrc-no/core/pkg/options"
 	authn2 "github.com/nrc-no/core/pkg/server/admin/handlers/authn"
 	"github.com/nrc-no/core/pkg/server/admin/handlers/identityprovider"
 	"github.com/nrc-no/core/pkg/server/admin/handlers/organization"
 	"github.com/nrc-no/core/pkg/server/generic"
+	"github.com/nrc-no/core/pkg/server/options"
 	store2 "github.com/nrc-no/core/pkg/store"
 	"golang.org/x/oauth2"
 )

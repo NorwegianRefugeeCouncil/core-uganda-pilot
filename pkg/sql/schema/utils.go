@@ -1,4 +1,4 @@
-package sqlschema
+package schema
 
 func getFKActionDDL(action SQLForeignKeyAction) string {
 	switch action {

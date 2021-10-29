@@ -2,8 +2,8 @@ package identityprovider
 
 import (
 	"github.com/emicklei/go-restful/v3"
+	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/store"
-	"github.com/nrc-no/core/pkg/types"
 	"github.com/nrc-no/core/pkg/utils"
 	"net/http"
 )

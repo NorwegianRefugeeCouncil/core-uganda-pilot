@@ -9,7 +9,7 @@ import (
 	"github.com/emicklei/go-restful/v3"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/sessions"
-	"github.com/nrc-no/core/pkg/options"
+	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/rs/cors"
 	"github.com/sirupsen/logrus"
 	"net"

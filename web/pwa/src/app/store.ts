@@ -19,7 +19,7 @@ export const store = configureStore({
         organizations: organizationsReducer,
         identityProviders: identityProvidersReducer,
     },
-    devTools: true
+    devTools: true,
 });
 
 export type AppDispatch = typeof store.dispatch;

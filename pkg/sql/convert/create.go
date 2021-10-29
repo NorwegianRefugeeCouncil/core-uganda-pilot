@@ -1,12 +1,12 @@
-package sqlconvert
+package convert
 
 import (
 	"context"
 	"database/sql"
 	"fmt"
 	"github.com/lib/pq"
-	"github.com/nrc-no/core/pkg/sqlschema"
-	"github.com/nrc-no/core/pkg/types"
+	"github.com/nrc-no/core/pkg/api/types"
+	"github.com/nrc-no/core/pkg/sql/schema"
 	"gorm.io/gorm"
 )
 
@@ -144,7 +144,7 @@ func CreateForm(ctx context.Context, db *gorm.DB, form *types.FormDefinition, re
 	return nil
 }
 
-func createTable(ctx context.Context, db *gorm.DB, table sqlschema.SQLTable) error {
+func createTable(ctx context.Context, db *gorm.DB, table schema.SQLTable) error {
 
 	ddl := table.DDL()
 

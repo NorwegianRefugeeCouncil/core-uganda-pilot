@@ -3,7 +3,7 @@ package validation
 import (
 	"errors"
 	"fmt"
-	"github.com/nrc-no/core/pkg/sets"
+	"github.com/nrc-no/core/pkg/utils/sets"
 	"reflect"
 	"regexp"
 	"strconv"

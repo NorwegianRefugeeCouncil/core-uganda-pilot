@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/lib/pq"
 	"github.com/nrc-no/core/pkg/api/meta"
-	"github.com/nrc-no/core/pkg/types"
+	"github.com/nrc-no/core/pkg/api/types"
 	uuid "github.com/satori/go.uuid"
 	"strings"
 )

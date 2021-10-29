@@ -7,6 +7,7 @@ import {Provider} from 'react-redux';
 import * as serviceWorker from './serviceWorker';
 import {AuthProvider} from 'oidc-react';
 import * as log from "loglevel"
+import {SQLContextProvider} from "./app/db";
 
 log.setDefaultLevel(log.levels.TRACE)
 
@@ -27,7 +28,9 @@ ReactDOM.render(
             autoSignIn={false}
             {...oidcConfig} >
             <Provider store={store}>
-                <App/>
+                <SQLContextProvider>
+                    <App/>
+                </SQLContextProvider>
             </Provider>
         </AuthProvider>
     </React.StrictMode>,

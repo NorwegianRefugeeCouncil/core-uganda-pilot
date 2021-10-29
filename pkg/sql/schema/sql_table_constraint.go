@@ -1,4 +1,4 @@
-package sqlschema
+package schema
 
 import (
 	"fmt"

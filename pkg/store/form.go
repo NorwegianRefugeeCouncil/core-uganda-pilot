@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"github.com/iancoleman/strcase"
 	"github.com/nrc-no/core/pkg/api/meta"
-	"github.com/nrc-no/core/pkg/pointers"
-	"github.com/nrc-no/core/pkg/sets"
-	"github.com/nrc-no/core/pkg/sqlconvert"
-	"github.com/nrc-no/core/pkg/types"
+	"github.com/nrc-no/core/pkg/api/types"
+	"github.com/nrc-no/core/pkg/sql/convert"
+	"github.com/nrc-no/core/pkg/utils/pointers"
+	"github.com/nrc-no/core/pkg/utils/sets"
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 	"strings"
@@ -101,7 +101,7 @@ type Field struct {
 }
 
 type Option struct {
-	Value string `gorm:"primarykey"`
+	Value   string `gorm:"primarykey"`
 	FieldID string `gorm:"primarykey"`
 }
 
@@ -308,7 +308,7 @@ func (d *formStore) Create(ctx context.Context, form *types.FormDefinition) (*ty
 		if err != nil {
 			return err
 		}
-		if err := sqlconvert.CreateForm(ctx, tx, form, referencedForms); err != nil {
+		if err := convert.CreateForm(ctx, tx, form, referencedForms); err != nil {
 			return meta.NewInternalServerError(err)
 		}
 		return nil
@@ -475,7 +475,7 @@ func newFormHierarchyFrom(
 		}
 		var opts []Option
 		for _, option := range field.Options {
-			opts = append(opts, Option{Value:option})
+			opts = append(opts, Option{Value: option})
 		}
 		f := &Field{
 			ID:          field.ID,
@@ -487,7 +487,7 @@ func newFormHierarchyFrom(
 			Description: field.Description,
 			Code:        field.Code,
 			Key:         field.Key,
-			Options:    opts,
+			Options:     opts,
 			Type:        ft,
 		}
 		hierarchy.Fields = append(hierarchy.Fields, f)
@@ -536,8 +536,7 @@ func (f *FormHierarchy) ToFormDefinition() (*types.FormDefinition, error) {
 			Key:         field.Key,
 			Required:    field.Required,
 			FieldType:   types.FieldType{},
-			Options:   options,
-
+			Options:     options,
 		}
 		switch field.Type {
 		case types.FieldKindText:

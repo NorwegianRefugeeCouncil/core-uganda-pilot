@@ -1,7 +1,7 @@
 package store
 
 import (
-	"github.com/nrc-no/core/pkg/sqlconvert"
+	"github.com/nrc-no/core/pkg/sql/convert"
 	"gorm.io/gorm"
 )
 
@@ -13,7 +13,7 @@ func Clear(db *gorm.DB) error {
 	}
 
 	for _, database := range databases {
-		if err := sqlconvert.DeleteDatabaseIfExists(db, database.ID); err != nil {
+		if err := convert.DeleteDatabaseIfExists(db, database.ID); err != nil {
 			return err
 		}
 	}

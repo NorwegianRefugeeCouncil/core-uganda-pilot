@@ -1,7 +1,7 @@
-package sqlschema
+package schema
 
 import (
-	"github.com/nrc-no/core/pkg/pointers"
+	"github.com/nrc-no/core/pkg/utils/pointers"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

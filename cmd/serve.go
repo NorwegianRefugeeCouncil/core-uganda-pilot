@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"context"
-	"github.com/nrc-no/core/pkg/options"
+	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/store"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"

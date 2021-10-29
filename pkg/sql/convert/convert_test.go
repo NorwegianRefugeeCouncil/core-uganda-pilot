@@ -1,8 +1,8 @@
-package sqlconvert
+package convert
 
 import (
-	"github.com/nrc-no/core/pkg/sqlschema"
-	"github.com/nrc-no/core/pkg/types"
+	"github.com/nrc-no/core/pkg/api/types"
+	sqlschema2 "github.com/nrc-no/core/pkg/sql/schema"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -11,7 +11,7 @@ func Test_convertFormToSqlTable(t *testing.T) {
 	tests := []struct {
 		name string
 		args types.FormDefinition
-		want sqlschema.SQLTable
+		want sqlschema2.SQLTable
 	}{
 		{
 			name: "simple",
@@ -28,14 +28,14 @@ func Test_convertFormToSqlTable(t *testing.T) {
 					},
 				},
 			},
-			want: sqlschema.SQLTable{
+			want: sqlschema2.SQLTable{
 				Schema: "database",
 				Name:   `form`,
-				Fields: []sqlschema.SQLField{
-					sqlschema.NewSQLField("id").
+				Fields: []sqlschema2.SQLField{
+					sqlschema2.NewSQLField("id").
 						WithSerialDataType().
 						WithPrimaryKeyConstraint("pk_database_form"),
-					sqlschema.NewSQLField("field").
+					sqlschema2.NewSQLField("field").
 						WithVarCharDataType(1024).
 						WithNotNullConstraint(),
 				},
@@ -58,22 +58,22 @@ func Test_convertFormToSqlTable(t *testing.T) {
 					},
 				},
 			},
-			want: sqlschema.SQLTable{
+			want: sqlschema2.SQLTable{
 				Name:   "form",
 				Schema: "database",
-				Fields: []sqlschema.SQLField{
-					sqlschema.NewSQLField("id").
+				Fields: []sqlschema2.SQLField{
+					sqlschema2.NewSQLField("id").
 						WithSerialDataType().
 						WithPrimaryKeyConstraint("pk_database_form"),
-					sqlschema.NewSQLField("field").
+					sqlschema2.NewSQLField("field").
 						WithIntDataType().
 						WithNotNullConstraint().
 						WithReferenceConstraint("fk__database_form_field__remote_other_id",
 							"remote",
 							"other",
 							"id",
-							sqlschema.ActionCascade,
-							sqlschema.ActionCascade,
+							sqlschema2.ActionCascade,
+							sqlschema2.ActionCascade,
 						),
 				},
 			},

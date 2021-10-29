@@ -3,7 +3,7 @@ package store
 import (
 	"context"
 	"github.com/nrc-no/core/pkg/api/meta"
-	"github.com/nrc-no/core/pkg/types"
+	"github.com/nrc-no/core/pkg/api/types"
 	uuid "github.com/satori/go.uuid"
 )
 

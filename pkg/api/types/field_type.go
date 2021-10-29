@@ -23,7 +23,7 @@ type FieldTypeDate struct{}
 
 type FieldTypeQuantity struct{}
 
-type FieldTypeSingleSelect struct {}
+type FieldTypeSingleSelect struct{}
 
 type FieldTypeSubForm struct {
 	ID     string             `json:"id"`
