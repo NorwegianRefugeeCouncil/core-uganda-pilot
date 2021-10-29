@@ -15,6 +15,10 @@ type FormerProps = {
     formName: string,
     setFormName: (formName: string) => void,
     fields: FormField[]
+    fieldOptions?: string[]
+    setFieldOption: (fieldId: string, i: number, value: string) => void
+    addOption: (fieldId: string) => void
+    removeOption: (fieldId: string, index: number) => void
     selectedFieldId: string | undefined
     setSelectedField: (fieldId: string | undefined) => void
     addField: (kind: FieldKind) => void
@@ -36,6 +40,9 @@ function mapField(f: FormField, props: FormerProps) {
         selectedFieldId,
         setSelectedField,
         setFieldName,
+        setFieldOption,
+        addOption,
+        removeOption,
         setFieldDescription,
         setFieldIsKey,
         setFieldRequired,
@@ -51,6 +58,10 @@ function mapField(f: FormField, props: FormerProps) {
         isSelected={f.id === selectedFieldId}
         selectField={() => setSelectedField(f.id)}
         fieldType={f.type}
+        fieldOptions={f.options}
+        setFieldOption={(i: number, value: string) => setFieldOption(f.id, i, value)}
+        addOption={() => addOption(f.id)}
+        removeOption={(i: number) => removeOption(f.id, i)}
         fieldName={f.name}
         setFieldName={(name) => setFieldName(f.id, name)}
         fieldRequired={f.required}
@@ -223,9 +234,21 @@ export const FormerContainer: FC = props => {
         }
     }, [dispatch, form])
 
+    const setFieldOption = useCallback((fieldId: string, i: number, value: string) => {
+        dispatch(formerActions.setFieldOption({fieldId, i, value}))
+    }, [dispatch])
+
+    const addOption = useCallback((fieldId: string) => {
+        dispatch(formerActions.addOption({fieldId}))
+    }, [dispatch])
+
+    const removeOption = useCallback((fieldId:string, i: number) => {
+        dispatch(formerActions.removeOption({fieldId, i}))
+    }, [dispatch])
+
     const cancelField = useCallback((fieldId: string) => {
         dispatch(formerActions.cancelFieldChanges({fieldId}))
-    }, [dispatch, form])
+    }, [dispatch])
 
     const setFieldRequired = useCallback((fieldId: string, required: boolean) => {
         dispatch(formerActions.setFieldRequired({fieldId, required}))
@@ -282,6 +305,9 @@ export const FormerContainer: FC = props => {
         selectedFieldId={selectedField?.id}
         setSelectedField={setSelectedField}
         addField={addField}
+        setFieldOption={setFieldOption}
+        addOption={addOption}
+        removeOption={removeOption}
         setFieldRequired={setFieldRequired}
         setFieldIsKey={setFieldIsKey}
         setFieldName={setFieldName}

@@ -10,6 +10,7 @@ type FieldDefinition struct {
 	Code        string    `json:"code"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
+	Options     []string  `json:"options"`
 	Key         bool      `json:"key"`
 	Required    bool      `json:"required"`
 	FieldType   FieldType `json:"fieldType"`

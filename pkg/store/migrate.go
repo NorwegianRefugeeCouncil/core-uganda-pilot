@@ -7,6 +7,7 @@ func Migrate(db *gorm.DB) error {
 		&Database{},
 		&Form{},
 		&Field{},
+		&Option{},
 		&Folder{},
 		&Organization{},
 		&IdentityProvider{})

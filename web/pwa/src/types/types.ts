@@ -14,6 +14,7 @@ export enum FieldKind {
     SubForm = "subform",
     Date = "date",
     Quantity = "quantity",
+    SingleSelect = "singleSelect",
 }
 
 export class FieldType {
@@ -23,6 +24,7 @@ export class FieldType {
     public multilineText?: FieldTypeMultilineText
     public date?: FieldTypeDate
     public quantity?: FieldTypeQuantity
+    public singleSelect?: FieldTypeSingleSelect
 }
 
 export class FieldTypeText {
@@ -37,7 +39,7 @@ export class FieldTypeDate {
 export class FieldTypeQuantity {
 }
 
-export class FieldTypeMultiLineText {
+export class FieldTypeSingleSelect {
 }
 
 export class FieldTypeReference {
@@ -58,6 +60,7 @@ export class FieldDefinition {
     public name: string = ""
     public description: string = ""
     public required: boolean = false
+    public options: string[] = []
     public key: boolean = false
     public fieldType: FieldType = new FieldType()
 }
