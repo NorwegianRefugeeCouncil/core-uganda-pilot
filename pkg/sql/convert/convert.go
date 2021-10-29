@@ -62,10 +62,6 @@ func expandSubFormsInternal(parentForm *types.FormDefinition, fieldName string, 
 	return result
 }
 
-func getSubFormName(parentForm *types.FormDefinition, fieldName string) string {
-	return fmt.Sprintf("%s_%ss", parentForm.Name, fieldName)
-}
-
 func convertFormToSqlTable(formDef *types.FormDefinition, referencedForms *types.FormDefinitionList) (sqlschema2.SQLTable, error) {
 	table := sqlschema2.SQLTable{}
 

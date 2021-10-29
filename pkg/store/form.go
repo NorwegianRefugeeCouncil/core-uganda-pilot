@@ -213,22 +213,6 @@ func findRelatedFormsInternal(ctx context.Context, db *gorm.DB, formIDs sets.Str
 	return forms, nil
 }
 
-func findFieldForFormIds(ctx context.Context, formIDs []string, db *gorm.DB) (Fields, error) {
-	var allParamValues []interface{}
-	var allParams []string
-	for _, formID := range formIDs {
-		allParamValues = append(allParamValues, formID)
-		allParams = append(allParams, "?")
-	}
-
-	var fields []*Field
-	sqlQuery := fmt.Sprintf("form_id in (%s)", strings.Join(allParams, ","))
-	if err := db.WithContext(ctx).Where(sqlQuery, allParamValues...).Find(&fields).Error; err != nil {
-		return nil, meta.NewInternalServerError(err)
-	}
-	return fields, nil
-}
-
 func findAllFieldsUnderRootFormIds(ctx context.Context, rootFormIDs []string, db *gorm.DB) ([]*Field, error) {
 	formIdSet := sets.NewString(rootFormIDs...)
 
@@ -254,6 +238,8 @@ func (d *formStore) List(ctx context.Context) (*types.FormDefinitionList, error)
 
 	var forms []*Form
 	var fields []*Field
+
+	db = db.WithContext(ctx)
 
 	if err := db.Find(&forms).Error; err != nil {
 		return nil, meta.NewInternalServerError(err)
@@ -631,18 +617,18 @@ func Build(forms []*Form, fields []*Field) (FormHierarchies, error) {
 	return result, nil
 }
 
-func (h *FormHierarchy) GetFormName() string {
-	walk := h
+func (f *FormHierarchy) GetFormName() string {
+	walk := f
 	result := ""
 	for walk != nil {
-		result = h.Form.Name + "_" + result
+		result = f.Form.Name + "_" + result
 		walk = walk.Parent
 	}
 	return result
 }
 
-func (h *FormHierarchy) GetSubFormByName(subFormName string) (*FormHierarchy, error) {
-	for _, child := range h.Children {
+func (f *FormHierarchy) GetSubFormByName(subFormName string) (*FormHierarchy, error) {
+	for _, child := range f.Children {
 		if child.Form.Name == subFormName {
 			return child, nil
 		}
@@ -650,8 +636,8 @@ func (h *FormHierarchy) GetSubFormByName(subFormName string) (*FormHierarchy, er
 	return nil, fmt.Errorf("could not find child with name " + subFormName)
 }
 
-func (h *FormHierarchy) GetSubFormForField(field *Field) (*FormHierarchy, error) {
-	for _, child := range h.Children {
+func (f *FormHierarchy) GetSubFormForField(field *Field) (*FormHierarchy, error) {
+	for _, child := range f.Children {
 		if child.ParentField == field {
 			return child, nil
 		}
@@ -659,8 +645,8 @@ func (h *FormHierarchy) GetSubFormForField(field *Field) (*FormHierarchy, error)
 	return nil, fmt.Errorf("could not find child for field " + field.ID)
 }
 
-func (h *FormHierarchy) GetSubFormByID(subFormID string) (*FormHierarchy, error) {
-	for _, child := range h.Children {
+func (f *FormHierarchy) GetSubFormByID(subFormID string) (*FormHierarchy, error) {
+	for _, child := range f.Children {
 		if child.Form.ID == subFormID {
 			return child, nil
 		}
@@ -668,18 +654,18 @@ func (h *FormHierarchy) GetSubFormByID(subFormID string) (*FormHierarchy, error)
 	return nil, fmt.Errorf("could not find child with id " + subFormID)
 }
 
-func (h *FormHierarchy) AllForms() []*Form {
-	result := []*Form{h.Form}
-	for _, child := range h.Children {
+func (f *FormHierarchy) AllForms() []*Form {
+	result := []*Form{f.Form}
+	for _, child := range f.Children {
 		result = append(result, child.AllForms()...)
 	}
 	return result
 }
 
-func (h *FormHierarchy) AllFields() []*Field {
+func (f *FormHierarchy) AllFields() []*Field {
 	var result []*Field
-	result = append(result, h.Fields...)
-	for _, child := range h.Children {
+	result = append(result, f.Fields...)
+	for _, child := range f.Children {
 		result = append(result, child.AllFields()...)
 	}
 	return result

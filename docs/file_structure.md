@@ -1,8 +1,3 @@
----
-layout: page title: "File Structure"
-permalink: /file_structure
----
-
 ```
 ├── build                  # Dockerfiles
 ├── cmd                    # startup commands
