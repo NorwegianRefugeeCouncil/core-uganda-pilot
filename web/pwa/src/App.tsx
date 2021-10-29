@@ -2,9 +2,9 @@ import React, {useEffect} from 'react';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import * as SQL from 'sql.js'
+import {Database, SqlJsStatic} from 'sql.js'
 import {NavBarContainer} from "./features/navbar/navbar";
-import {BrowserRouter, Switch, Route, Redirect} from "react-router-dom";
+import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom";
 import {useAppDispatch} from "./app/hooks";
 import {fetchDatabases} from "./reducers/database";
 import {fetchForms} from "./reducers/form";
@@ -17,39 +17,37 @@ import {FormerContainer} from "./features/former/Former";
 import {AdminPanel} from "./features/admin/AdminPanel";
 import {useAuth} from 'oidc-react';
 import {DatabaseEditor} from "./features/databases/DatabaseEditor";
-import {Database, SqlJsStatic} from "sql.js";
-import {inflate, deflate} from "pako"
+import {deflate, inflate} from "pako"
 import {FolderEditor} from "./features/folders/FolderEditor";
-import log from "loglevel"
 import {RecordBrowser} from "./features/browser/RecordBrowser";
 
 function App() {
 
-    useEffect(() => {
-        SQL.default({
-            locateFile(url: string): string {
-                log.debug("locating sql file at url", url)
-                return `/${url}`
-            }
-        }).then((sql) => {
-
-            const db = getDb(sql)
-
-            try {
-                db.run(`CREATE TABLE IF NOT EXISTS users  (id int primary key);`)
-                const stmt = db.prepare("select * from users")
-                stmt.bind({0: "id"})
-                while (stmt.step()) {
-                    console.log(stmt.getAsObject())
-                }
-            } catch (err) {
-                console.log(err.toString())
-            }
-
-            saveDb(db)
-
-        })
-    }, [])
+    // useEffect(() => {
+    //     SQL.default({
+    //         locateFile(url: string): string {
+    //             log.debug("locating sql file at url", url)
+    //             return `/${url}`
+    //         }
+    //     }).then((sql) => {
+    //
+    //         const db = getDb(sql)
+    //
+    //         try {
+    //             db.run(`CREATE TABLE IF NOT EXISTS users  (id int primary key);`)
+    //             const stmt = db.prepare("select * from users")
+    //             stmt.bind({0: "id"})
+    //             while (stmt.step()) {
+    //                 console.log(stmt.getAsObject())
+    //             }
+    //         } catch (err) {
+    //             console.log(err.toString())
+    //         }
+    //
+    //         saveDb(db)
+    //
+    //     })
+    // }, [])
 
 
     const dispatch = useAppDispatch()

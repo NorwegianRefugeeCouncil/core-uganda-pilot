@@ -66,15 +66,10 @@ func (d *databaseStore) Delete(ctx context.Context, databaseID string) error {
 
 	err = db.Transaction(func(tx *gorm.DB) error {
 
-		sqlDB, err := tx.DB()
-		if err != nil {
-			return meta.NewInternalServerError(err)
-		}
-
 		g, ctx := errgroup.WithContext(ctx)
 
 		g.Go(func() error {
-			if err := sqlconvert.DeleteDatabaseIfExists(sqlDB, databaseID); err != nil {
+			if err := sqlconvert.DeleteDatabaseIfExists(tx, databaseID); err != nil {
 				return meta.NewInternalServerError(err)
 			}
 			return nil

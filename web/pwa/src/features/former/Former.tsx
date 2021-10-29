@@ -121,9 +121,9 @@ export const Former: FC<FormerProps> = props => {
 
     if (selectedField) {
         return <div className={"flex-grow-1 bg-dark text-light overflow-scroll"}>
-            <div className={"container mt-4"}>
+            <div className={"container-fluid mt-4"}>
                 <div className={"row"}>
-                    <div className={"col-8 offset-2"}>
+                    <div className={"col-12 col-md-8 offset-md-1"}>
                         <h3>Add Form</h3>
                         <h6>
                             {parentFormName
@@ -133,7 +133,7 @@ export const Former: FC<FormerProps> = props => {
                     </div>
                 </div>
                 <div className={"row mt-3"}>
-                    <div className={"col-10 col-md-8 offset-md-2"}>
+                    <div className={"col-10 col-md-8 offset-md-1"}>
                         {formHeader()}
                         {mapField(selectedField, props)}
                     </div>

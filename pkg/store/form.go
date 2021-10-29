@@ -84,7 +84,10 @@ type Field struct {
 	RootFormID           string
 	RootForm             *Form
 	Name                 string
+	Description          string
 	Code                 string
+	Key                  bool
+	Required             bool
 	SubFormID            *string
 	SubForm              *Form
 	ReferencedDatabaseID *string
@@ -283,7 +286,10 @@ func (d *formStore) Create(ctx context.Context, form *types.FormDefinition) (*ty
 		return nil, err
 	}
 
-	referencedFormIDs := fields.OfType(types.FieldKindReference).FormIDs()
+	referencedFormIDs := sets.NewString()
+	for _, field := range fields.OfType(types.FieldKindReference) {
+		referencedFormIDs.Insert(*field.ReferencedFormID)
+	}
 
 	err = db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(forms).Error; err != nil {
@@ -462,13 +468,16 @@ func newFormHierarchyFrom(
 			return nil, err
 		}
 		f := &Field{
-			ID:         field.ID,
-			DatabaseID: databaseId,
-			FormID:     formId,
-			RootFormID: rootIdForField,
-			Name:       field.Name,
-			Code:       field.Code,
-			Type:       ft,
+			ID:          field.ID,
+			DatabaseID:  databaseId,
+			FormID:      formId,
+			RootFormID:  rootIdForField,
+			Name:        field.Name,
+			Required:    field.Required,
+			Description: field.Description,
+			Code:        field.Code,
+			Key:         field.Key,
+			Type:        ft,
 		}
 		hierarchy.Fields = append(hierarchy.Fields, f)
 
@@ -505,11 +514,13 @@ func (f *FormHierarchy) ToFormDefinition() (*types.FormDefinition, error) {
 	var flds []*types.FieldDefinition
 	for _, field := range f.Fields {
 		fd := &types.FieldDefinition{
-			ID:        field.ID,
-			Name:      field.Name,
-			Code:      field.Code,
-			Required:  false,
-			FieldType: types.FieldType{},
+			ID:          field.ID,
+			Name:        field.Name,
+			Code:        field.Code,
+			Description: field.Description,
+			Key:         field.Key,
+			Required:    field.Required,
+			FieldType:   types.FieldType{},
 		}
 		switch field.Type {
 		case types.FieldKindText:

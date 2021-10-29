@@ -93,7 +93,11 @@ type SQLTableConstraintUnique struct {
 }
 
 func (u SQLTableConstraintUnique) DDL() DDL {
-	return NewDDL(fmt.Sprintf("unique (%s)", strings.Join(u.ColumnNames, ", ")))
+	var columnNames []string
+	for _, columnName := range u.ColumnNames {
+		columnNames = append(columnNames, pq.QuoteIdentifier(columnName))
+	}
+	return NewDDL(fmt.Sprintf("unique (%s)", strings.Join(columnNames, ", ")))
 }
 
 type SQLTableConstraintPrimaryKey struct {
@@ -101,11 +105,11 @@ type SQLTableConstraintPrimaryKey struct {
 }
 
 func (k SQLTableConstraintPrimaryKey) DDL() DDL {
-	var args []interface{}
-	for _, name := range k.ColumnNames {
-		args = append(args, name)
+	var columnNames []string
+	for _, columnName := range k.ColumnNames {
+		columnNames = append(columnNames, pq.QuoteIdentifier(columnName))
 	}
-	return NewDDL(fmt.Sprintf("primary key (%s)", writeParamPlaceholders(len(k.ColumnNames))), args...)
+	return NewDDL(fmt.Sprintf("primary key (%s)", strings.Join(columnNames, ",")))
 }
 
 type SQLForeignKeyAction string

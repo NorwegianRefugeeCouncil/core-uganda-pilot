@@ -186,11 +186,11 @@ func deleteTableIfExists(db *sql.DB, schemaName, tableName string) error {
 	return err
 }
 
-func DeleteDatabaseIfExists(db *sql.DB, databaseID string) error {
+func DeleteDatabaseIfExists(db *gorm.DB, databaseID string) error {
 	return deleteSchemaIfExists(db, databaseID)
 }
 
-func deleteSchemaIfExists(db *sql.DB, schemaName string) error {
-	_, err := db.Exec(fmt.Sprintf("drop schema if exists %s cascade", pq.QuoteIdentifier(schemaName)))
+func deleteSchemaIfExists(db *gorm.DB, schemaName string) error {
+	err := db.Exec(fmt.Sprintf("drop schema if exists %s cascade", pq.QuoteIdentifier(schemaName))).Error
 	return err
 }

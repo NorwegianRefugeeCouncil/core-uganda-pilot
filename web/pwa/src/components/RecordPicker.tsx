@@ -10,6 +10,7 @@ export type RecordPickerProps = {
     recordId: string | undefined
     setRecordId: (recordId: string | undefined) => void
     records: Record[]
+    getDisplayStr: (record: Record) => string
 }
 
 export const RecordPicker: FC<RecordPickerProps> = props => {
@@ -17,7 +18,8 @@ export const RecordPicker: FC<RecordPickerProps> = props => {
         disabled,
         recordId,
         setRecordId,
-        records
+        records,
+        getDisplayStr
     } = props
 
     return <div>
@@ -31,7 +33,7 @@ export const RecordPicker: FC<RecordPickerProps> = props => {
             {records.map(r => {
                 return (
                     <option
-                        value={r.id}>{r.id}
+                        value={r.id}>{getDisplayStr(r)}
                     </option>
                 );
             })}
@@ -101,6 +103,20 @@ export const RecordPickerContainer: FC<RecordPickerContainerProps> = props => {
         disabled={false}
         recordId={recordId}
         setRecordId={callback}
-        records={records}/>
+        records={records}
+        getDisplayStr={r => {
+            let result = ""
+            if (!form) {
+                return result
+            }
+            for (const field of form?.fields) {
+                if (field.key) {
+                    result += r.values[field.id]
+                }
+            }
+            return result
+        }
+        }
+    />
 
 }

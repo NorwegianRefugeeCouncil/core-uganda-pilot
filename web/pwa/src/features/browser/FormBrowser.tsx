@@ -43,6 +43,14 @@ function mapRecordCell(field: FieldDefinition, record: Record, getSubFormCount: 
         </td>
     }
 
+    if (field.fieldType.reference) {
+        return <td key={field.id}>
+            <span>
+                <Link to={`/browse/forms/${field.fieldType.reference.formId}`}>View</Link>
+            </span>
+        </td>
+    }
+
     return <td key={field.id}>
         <span className={"text-secondary"}>
         {record.values[field.id]}
