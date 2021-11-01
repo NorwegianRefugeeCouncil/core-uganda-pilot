@@ -1,7 +1,7 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import {FieldDefinition, Record} from "../types/types";
 import {RootState} from "../app/store";
-import {defaultClient, RecordListRequest, RecordListResponse} from "../data/client";
+import {defaultClient, RecordListRequest, RecordListResponse} from "core-js-api-client";
 import {
     formGlobalSelectors,
     selectFieldForSubForm,

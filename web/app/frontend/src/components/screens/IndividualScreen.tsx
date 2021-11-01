@@ -2,12 +2,12 @@ import React from 'react';
 import {common, layout} from '../../styles';
 import {Button, Platform, ScrollView, Text, View} from 'react-native';
 import {useForm} from "react-hook-form";
-import {Individual} from "../../../../client/src/types/models";
+// import {Individual} from "../../../../client/src/types_old/modls.";
 import {Subject} from 'rxjs';
-import iamClient from "../../utils/clients";
-import {PartyAttributeDefinition, PartyAttributeDefinitionList, PartyType} from "core-js-api-client/lib/types/models";
+import useApiClient from "../../utils/clients";
+// import {PartyAttributeDefinition, PartyAttributeDefinitionList, PartyType} from "core-js-api-client/lib/types_old/models";
 import _ from 'lodash';
-import {createIndividual} from "../../services/individuals";
+// import {createIndividual} from "../../services/individuals";
 import FormControl from "../form/FormControl";
 import * as SecureStore from 'expo-secure-store';
 import * as Network from 'expo-network';
@@ -17,10 +17,10 @@ import {getEncryptionKey} from "../../utils/getEncryptionKey";
 import CryptoJS from "react-native-crypto-js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-
-export interface FlatIndividual extends Omit<Individual, 'attributes'> {
-    attributes: { [p: string]: string }
-}
+//
+// export interface FlatIndividual extends Omit<Individual, 'attributes'> {
+//     attributes: { [p: string]: string }
+// }
 
 const IndividualScreen: React.FC<any> = ({route}) => {
     const {id} = route.params;
@@ -28,12 +28,13 @@ const IndividualScreen: React.FC<any> = ({route}) => {
 
     const [isLoading, setIsLoading] = React.useState(true);
     const [simulateOffline, setSimulateOffline] = React.useState(!isWeb); // TODO: for testing, remove
-    const [attributes, setAttributes] = React.useState<PartyAttributeDefinition[]>([]);
-    const [individual, setIndividual] = React.useState<FlatIndividual>();
-    const [partyTypes, setPartyTypes] = React.useState<PartyType[]>();
+    const [attributes, setAttributes] = React.useState<any[]>([]);
+    const [individual, setIndividual] = React.useState<any>();
+    const [partyTypes, setPartyTypes] = React.useState<any[]>();
     const [isConnected, setIsConnected] = React.useState(!simulateOffline);
     const [showSnackbar, setShowSnackbar] = React.useState(!isConnected);
     const [hasLocalData, setHasLocalData] = React.useState(false);
+    const client = useApiClient();
 
     let attributesSubject = new Subject([]);
     let individualsSubject = new Subject([]);
@@ -77,11 +78,11 @@ const IndividualScreen: React.FC<any> = ({route}) => {
 
         // TODO: move hardcoded ids somewhere else
         if (isConnected || isWeb) {
-            createIndividual({
-                id: id == 'new' ? uuidv4() : id,
-                attributes: submittableAttributes,
-                partyTypeIds: ['a842e7cb-3777-423a-9478-f1348be3b4a5'] // individual?.partyTypeIdsnpm i react-native-securerandom
-            });
+            // createIndividual({
+            //     id: id == 'new' ? uuidv4() : id,
+            //     attributes: submittableAttributes,
+            //     partyTypeIds: ['a842e7cb-3777-423a-9478-f1348be3b4a5'] // individual?.partyTypeIdsnpm i react-native-securerandom
+            // });
         } else {
             onSubmitOffline(data);
         }
@@ -105,7 +106,7 @@ const IndividualScreen: React.FC<any> = ({route}) => {
                     const decryptedData = JSON.parse(bytes.toString());
 
                     setHasLocalData(true)
-                    const newIndividual: FlatIndividual = {
+                    const newIndividual: any = {
                         id: id,
                         partyTypeIds: decryptedData?.partyTypeIds || [],
                         attributes: decryptedData?.attributes
@@ -128,27 +129,29 @@ const IndividualScreen: React.FC<any> = ({route}) => {
 
     // get data for form and individual
     React.useEffect(() => {
-        attributesSubject.pipe(iamClient.PartyAttributeDefinitions().List()).subscribe(
-            (data: PartyAttributeDefinitionList) => {
-                setAttributes(data.items)
-            }
-        );
-        partyTypeSubject.pipe(iamClient.PartyTypes().List()).subscribe(
-            (data: { Items: PartyType[] }) => {
-                setPartyTypes(data.Items)
-            }
-        );
-        individualsSubject.pipe(iamClient.Individuals().Get()).subscribe(
-            (data: Individual) => {
-                _(data.attributes).forEach((value, key) => {
-                    flatAttributes[key] = value[0];
-                });
-                const flatIndividual = {...data, attributes: flatAttributes};
-                setIndividual(flatIndividual)
-                data.partyTypeIds.forEach((p) => {
-                })
-            }
-        );
+        // apiClient().listForms();
+        client.listForms({});
+        // attributesSubject.pipe(iamClient.PartyAttributeDefinitions().List()).subscribe(
+        //     (data: PartyAttributeDefinitionList) => {
+        //         setAttributes(data.items)
+        //     }
+        // );
+        // partyTypeSubject.pipe(iamClient.PartyTypes().List()).subscribe(
+        //     (data: { Items: PartyType[] }) => {
+        //         setPartyTypes(data.Items)
+        //     }
+        // );
+        // individualsSubject.pipe(iamClient.Individuals().Get()).subscribe(
+        //     (data: Individual) => {
+        //         _(data.attributes).forEach((value, key) => {
+        //             flatAttributes[key] = value[0];
+        //         });
+        //         const flatIndividual = {...data, attributes: flatAttributes};
+        //         setIndividual(flatIndividual)
+        //         data.partyTypeIds.forEach((p) => {
+        //         })
+        //     }
+        // );
 
         partyTypeSubject.next(null);
         attributesSubject.next(null);

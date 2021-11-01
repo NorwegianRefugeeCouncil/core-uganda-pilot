@@ -127,7 +127,7 @@ func (v *Error) ErrorBody() string {
 		}
 		switch t := value.(type) {
 		case int64, int32, float64, float32, bool:
-			// use simple printer for simple types
+			// use simple printer for simple types_old
 			s = fmt.Sprintf("%s: %v", v.Type, value)
 		case string:
 			s = fmt.Sprintf("%s: %q", v.Type, t)
@@ -136,8 +136,8 @@ func (v *Error) ErrorBody() string {
 			s = fmt.Sprintf("%s: %s", v.Type, t.String())
 		default:
 			// fallback to raw struct
-			// TODO: internal types have panic guards against json.Marshalling to prevent
-			// accidental use of internal types in external serialized form.  For now, use
+			// TODO: internal types_old have panic guards against json.Marshalling to prevent
+			// accidental use of internal types_old in external serialized form.  For now, use
 			// %#v, although it would be better to show a more expressive output in the future
 			s = fmt.Sprintf("%s: %#v", v.Type, value)
 		}

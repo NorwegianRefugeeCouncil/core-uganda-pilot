@@ -1,13 +1,13 @@
 import {View, ViewStyle} from "react-native";
 import React from "react";
-import {Control as ControlType} from "core-js-api-client/lib/types/models";
+import {Control as ControlType} from "core-js-api-client/lib/types_old/models";
 import TextInput from "./TextInput";
 import Switch from "./Switch";
 import Select from "./Select";
 import CheckBox from "./Checkbox";
 import {Control, Controller} from "react-hook-form";
 
-// TODO: move & clean up types
+// TODO: move & clean up types_old
 export type InputProps = {
     formControl: ControlType,
     style?: ViewStyle,
@@ -38,7 +38,7 @@ const FormControl: React.FC<FormControlProps> = (
         value,
     }) => {
     return (
-        // TODO: apply errors to all input types
+        // TODO: apply errors to all input types_old
         <View style={{margin: 10}}>
             <Controller
                 name={name}

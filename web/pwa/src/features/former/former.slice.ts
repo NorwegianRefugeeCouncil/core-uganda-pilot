@@ -4,7 +4,7 @@ import {RootState} from "../../app/store";
 import {Database, FieldDefinition, FieldKind, FieldType, Folder, FormDefinition} from "../../types/types";
 import {databaseGlobalSelectors} from "../../reducers/database";
 import {folderGlobalSelectors} from "../../reducers/folder";
-import {defaultClient} from "../../data/client";
+import {defaultClient} from "core-js-api-client";
 
 export interface FormField {
     id: string

@@ -8,7 +8,8 @@ import {
     FormDefinitionList,
     Record,
     RecordList
-} from "../types/types";
+} from "./types/types";
+import {useAuth} from "../../../admin/src/app/hooks";
 
 export type Response<TRequest, TResponse> = {
     request: TRequest
@@ -182,3 +183,4 @@ export class client implements Client {
 }
 
 export const defaultClient: Client = new client()
+

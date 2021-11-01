@@ -12,7 +12,7 @@ import {SQLContextProvider} from "./app/db";
 log.setDefaultLevel(log.levels.TRACE)
 
 const oidcConfig = {
-    authority: 'http://localhost:4444',
+    authority: 'http://localhost:4444', // okta domain
     clientId: '93799402-a173-43ad-b003-64cbacc0dfe5',
     redirectUri: 'http://localhost:3000'
 };

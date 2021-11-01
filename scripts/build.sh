@@ -2,10 +2,10 @@
 
 # Update node packages
 cd web/app/client || exit
-npm install
+yarn install
 
 cd ../designSystem || exit
-npm install
+yarn install
 
 cd ../../../
 

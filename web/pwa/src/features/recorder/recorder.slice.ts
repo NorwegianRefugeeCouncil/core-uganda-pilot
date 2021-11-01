@@ -3,7 +3,7 @@ import {RootState} from "../../app/store";
 import {FormInterface, selectFormOrSubFormById, selectRootForm} from "../../reducers/form";
 import {v4 as uuidv4} from "uuid"
 import {FormDefinition, Record} from "../../types/types";
-import {defaultClient} from "../../data/client";
+import {defaultClient} from "core-js-api-client";
 import {recordGlobalSelectors} from "../../reducers/records";
 
 export interface FormValue {

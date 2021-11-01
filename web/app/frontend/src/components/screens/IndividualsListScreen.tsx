@@ -6,11 +6,10 @@ import {FlatList, Image, TouchableOpacity, View, Text} from 'react-native';
 import pngIndividual from '../../../assets/png/symbol_individuals.png';
 import theme from '../../constants/theme';
 import iamClient from "../../utils/clients";
-import {PartyAttributeDefinitionList} from "core-js-api-client/lib/types/models";
-import {Individual} from "../../../../client/src/types/models";
+// import {PartyAttributeDefinitionList} from "core-js-api-client/lib/types_old/models";
+// import {Individual} from "../../../../client/src/types_old/models";
 import _ from "lodash";
 import {Subject} from "rxjs";
-import {FlatIndividual} from "./IndividualScreen";
 
 type TestIndividual = {
     id: string
@@ -26,16 +25,16 @@ export const testIndividuals: TestIndividual[] = [
 ];
 
 const IndividualsListScreen: React.FC<any> = ({navigation}) => {
-    const [individuals, setIndividuals] = React.useState<Individual[]>();
+    const [individuals, setIndividuals] = React.useState<any[]>();
     let individualsSubject = new Subject([]);
 
     React.useEffect(() => {
-        individualsSubject.pipe(iamClient.Individuals().List()).subscribe(
-            (data: { items: Individual[] }) => {
-                setIndividuals(data.items)
-            }
-        );
-        individualsSubject.next();
+        // individualsSubject.pipe(iamClient.Individuals().List()).subscribe(
+        //     (data: { items: Individual[] }) => {
+        //         setIndividuals(data.items)
+        //     }
+        // );
+        // individualsSubject.next();
 
         return () => {
             if (individualsSubject) {
