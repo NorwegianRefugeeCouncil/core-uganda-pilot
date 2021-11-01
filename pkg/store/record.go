@@ -145,6 +145,10 @@ func mapRecordList(result *sql.Rows) (*types.RecordList, error) {
 		records = append(records, record)
 	}
 
+	if records == nil {
+		records = []*types.Record{}
+	}
+
 	recordList := &types.RecordList{
 		Items: records,
 	}

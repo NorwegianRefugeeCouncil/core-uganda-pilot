@@ -21,22 +21,30 @@ func (h *Handler) WebService() *restful.WebService {
 func NewHandler(store store.IdentityProviderStore) *Handler {
 	h := &Handler{store: store}
 
-	ws := new(restful.WebService).Path("/identityproviders").
+	ws := new(restful.WebService).Path("/admin/identityproviders").
 		Consumes("application/json").
 		Produces("application/json")
 	h.webService = ws
 
-	identityProviderPath := fmt.Sprintf("/{%s}", constants.ParamOrganizationID)
-
 	ws.Route(ws.GET("/").To(h.RestfulList).
 		Doc("lists all identity providers").
 		Operation("listIdentityProviders").
-		Param(restful.PathParameter(constants.ParamOrganizationID, "organization id").
+		Param(restful.QueryParameter(constants.ParamOrganizationID, "organization id").
 			DataType("string").
 			DataFormat("uuid").
 			Required(true)).
 		Writes(types.IdentityProviderList{}).
 		Returns(http.StatusOK, "OK", types.IdentityProviderList{}))
+
+	ws.Route(ws.GET(fmt.Sprintf("/{%s}", constants.ParamIdentityProviderID)).To(h.RestfulGet).
+		Doc("gets an identity provider").
+		Operation("getIdentityProvider").
+		Param(restful.PathParameter(constants.ParamIdentityProviderID, "identity provider id").
+			DataType("string").
+			DataFormat("uuid").
+			Required(true)).
+		Writes(types.IdentityProvider{}).
+		Returns(http.StatusOK, "OK", types.IdentityProvider{}))
 
 	ws.Route(ws.POST("/").To(h.RestfulCreate).
 		Doc("create an identity provider").
@@ -45,7 +53,7 @@ func NewHandler(store store.IdentityProviderStore) *Handler {
 		Writes(types.IdentityProvider{}).
 		Returns(http.StatusOK, "OK", types.IdentityProvider{}))
 
-	ws.Route(ws.POST(identityProviderPath).To(h.RestfulUpdate).
+	ws.Route(ws.PUT(fmt.Sprintf("/{%s}", constants.ParamIdentityProviderID)).To(h.RestfulUpdate).
 		Doc("update an identity provider").
 		Operation("updateIdentityProvider").
 		Param(restful.PathParameter(constants.ParamIdentityProviderID, "identity provider id").

@@ -87,7 +87,7 @@ func idTokenFromHeader(req *http.Request) (string, bool) {
 		return "", false
 	}
 
-	if parts[0] != "Bearer " {
+	if parts[0] != "Bearer" {
 		return "", false
 	}
 

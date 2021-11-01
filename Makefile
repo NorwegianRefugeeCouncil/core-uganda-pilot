@@ -45,7 +45,21 @@ package:
 serve-pwa:
 	@./scripts/serve-pwa.sh
 
+.PHONY: serve-admin
+serve-admin:
+	@./scripts/serve-admin.sh
+
 .PHONY: docs
 docs:
 	@./scripts/render-dot-graphs.sh
+
+.PHONY: install-all
+install-all:
+	@./scripts/install-all.sh
+
+.PHONY: open-all
+open-all:
+	@open http://localhost:3000
+	@open http://localhost:9000
+	@open http://localhost:9001
 

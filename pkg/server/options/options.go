@@ -1,49 +1,49 @@
 package options
 
 type CorsOptions struct {
-	AllowedOrigins     []string `yaml:"allowed_origins"`
-	AllowedMethods     []string `yaml:"allowed_methods"`
-	AllowedHeaders     []string `yaml:"allowed_headers"`
-	ExposedHeaders     []string `yaml:"exposed_headers"`
-	AllowCredentials   bool     `yaml:"allow_credentials"`
-	OptionsPassthrough bool     `yaml:"options_passthrough"`
-	MaxAge             int      `yaml:"max_age"`
-	Debug              bool     `yaml:"debug"`
-	Enabled            bool     `yaml:"enabled"`
+	AllowedOrigins     []string `mapstructure:"allowed_origins"`
+	AllowedMethods     []string `mapstructure:"allowed_methods"`
+	AllowedHeaders     []string `mapstructure:"allowed_headers"`
+	ExposedHeaders     []string `mapstructure:"exposed_headers"`
+	AllowCredentials   bool     `mapstructure:"allow_credentials"`
+	OptionsPassthrough bool     `mapstructure:"options_passthrough"`
+	MaxAge             int      `mapstructure:"max_age"`
+	Debug              bool     `mapstructure:"debug"`
+	Enabled            bool     `mapstructure:"enabled"`
 }
 
 type SecretOptions struct {
-	Hash  []string `yaml:"hash"`
-	Block []string `yaml:"block"`
+	Hash  []string `mapstructure:"hash"`
+	Block []string `mapstructure:"block"`
 }
 
 type URLOptions struct {
-	Self string `yaml:"self"`
+	Self string `mapstructure:"self"`
 }
 
 type OIDCOptions struct {
-	Issuer       string   `yaml:"issuer"`
-	ClientID     string   `yaml:"clientid"`
-	ClientSecret string   `yaml:"clientsecret"`
-	Scopes       []string `yaml:"scopes"`
+	Issuer       string   `mapstructure:"issuer"`
+	ClientID     string   `mapstructure:"clientid"`
+	ClientSecret string   `mapstructure:"clientsecret"`
+	Scopes       []string `mapstructure:"scopes"`
 }
 
 type ServerOptions struct {
-	Host    string        `yaml:"address"`
-	Port    int           `yaml:"port"`
-	Cors    CorsOptions   `yaml:"cors"`
-	Secrets SecretOptions `yaml:"secrets"`
-	URLs    URLOptions    `yaml:"urls"`
-	Oidc    OIDCOptions   `yaml:"oidc"`
+	Host    string        `mapstructure:"address"`
+	Port    int           `mapstructure:"port"`
+	Cors    CorsOptions   `mapstructure:"cors"`
+	Secrets SecretOptions `mapstructure:"secrets"`
+	URLs    URLOptions    `mapstructure:"urls"`
+	Oidc    OIDCOptions   `mapstructure:"oidc"`
 }
 
 type ServeOptions struct {
-	Public ServerOptions `yaml:"public"`
-	Admin  ServerOptions `yaml:"admin"`
-	Login  ServerOptions `yaml:"login"`
+	Public ServerOptions `mapstructure:"public"`
+	Admin  ServerOptions `mapstructure:"admin"`
+	Login  ServerOptions `mapstructure:"login"`
 }
 
 type Options struct {
-	Serve ServeOptions `yaml:"serve"`
-	DSN   string       `yaml:"dsn"`
+	Serve ServeOptions `mapstructure:"serve"`
+	DSN   string       `mapstructure:"dsn"`
 }

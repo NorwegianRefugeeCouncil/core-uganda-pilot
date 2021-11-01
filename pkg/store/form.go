@@ -253,9 +253,6 @@ func (d *formStore) List(ctx context.Context) (*types.FormDefinitionList, error)
 	if err != nil {
 		return nil, err
 	}
-	if result == nil {
-		result = []*types.FormDefinition{}
-	}
 
 	return &types.FormDefinitionList{
 		Items: result,
@@ -376,6 +373,9 @@ func mapToFormDefinitions(forms []*Form, fields []*Field) ([]*types.FormDefiniti
 		result = append(result, fd)
 	}
 
+	if result == nil {
+		result = []*types.FormDefinition{}
+	}
 	return result, nil
 }
 

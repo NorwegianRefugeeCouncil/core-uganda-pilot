@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/nrc-no/core/pkg/server/admin"
+	"github.com/nrc-no/core/pkg/server/login"
 	"github.com/nrc-no/core/pkg/server/public"
 	"github.com/spf13/cobra"
 )
@@ -11,7 +12,6 @@ var serveAllCmd = &cobra.Command{
 	Use:   "all",
 	Short: "Starts the admin, public and login servers",
 	RunE: func(cmd *cobra.Command, args []string) error {
-
 		if err := servePublic(serveCtx,
 			public.Options{
 				ServerOptions: coreOptions.Serve.Public,
@@ -19,7 +19,6 @@ var serveAllCmd = &cobra.Command{
 			}); err != nil {
 			return err
 		}
-
 		if err := serveAdmin(serveCtx,
 			admin.Options{
 				ServerOptions: coreOptions.Serve.Admin,
@@ -27,7 +26,13 @@ var serveAllCmd = &cobra.Command{
 			}); err != nil {
 			return err
 		}
-
+		if err := serveLogin(serveCtx,
+			login.Options{
+				ServerOptions: coreOptions.Serve.Login,
+				StoreFactory:  factory,
+			}); err != nil {
+			return err
+		}
 		<-doneSignal
 		return nil
 	},
