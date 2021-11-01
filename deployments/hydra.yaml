@@ -1,0 +1,9 @@
+urls:
+  self:
+    public: http://localhost:4444
+    issuer: http://localhost:4444
+  consent: http://localhost:9000/auth/consent
+  login: http://localhost:9000/auth/login
+  logout: http://localhost:9000/auth/logout
+log:
+  leak_sensitive_values: true

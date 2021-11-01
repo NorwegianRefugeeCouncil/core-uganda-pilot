@@ -2,45 +2,50 @@ SHELL := bash
 .ONESHELL: # ensures each Make recipe is ran as one single shell session, rather than one new shell per line
 .SHELLFLAGS := -eu -o pipefail -c # fail on errors
 
+.PHONY: up
 up:
-	@docker-compose -f deployments/docker-compose.yaml up --build -d
+	@./scripts/up.sh
 
+.PHONY: down
 down:
-	@docker-compose -f deployments/docker-compose.yaml down --remove-orphans
+	@./scripts/down.sh
 
-up-all:
-	@docker-compose -f deployments/docker-compose-all.yaml up --build -d
+.PHONY: migrate
+migrate:
+	@./scripts/migrate.sh
 
-down-all:
-	@docker-compose -f deployments/docker-compose-all.yaml down --remove-orphans
+.PHONY: clear-db
+clear-db:
+	@./scripts/clear-db.sh
 
-gen-certs:
-	@./scripts/gen-certs.sh
+.PHONY: reset-db
+reset-db: clear-db migrate
 
-test-integration:
-	@./scripts/test-integration.sh
-
-test-e2e:
-	@./scripts/test-e2e.sh
-
-test: test-integration test-e2e
-
+.PHONY: build
 build:
 	@./scripts/build.sh
 
+.PHONY: serve
 serve:
 	@./scripts/serve.sh
 
+.PHONY: frontend
 frontend:
 	@./scripts/frontend.sh
 
+.PHONY: watch
 watch:
 	@./scripts/watch.sh
 
-docker-build:
-	@docker build -t digitalbackbonecr.azurecr.io/nrc-no/core:latest -f build/package/Dockerfile .
+.PHONY: package
+package:
+	@./scripts/package.sh
 
-docker-push: docker-build
-	@docker push digitalbackbonecr.azurecr.io/nrc-no/core:latest
+.PHONY: serve-pwa
+serve-pwa:
+	@./scripts/serve-pwa.sh
 
-.PHONY: up down serve build test frontend
+.PHONY: docs
+docs:
+	@./scripts/render-dot-graphs.sh
+

@@ -1,8 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="test integration" type="CompoundRunConfigurationType">
-    <toRun name="test iam integration" type="GoTestRunConfiguration" />
-    <toRun name="test cms integration" type="GoTestRunConfiguration" />
-    <toRun name="test attachments integration" type="GoTestRunConfiguration" />
-    <method v="2" />
-  </configuration>
-</component>

@@ -17,9 +17,11 @@
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "dev.core.nrc",
       "supportsTablet": true
     },
     "android": {
+      "package": "dev.core.nrc",
       "adaptiveIcon": {
         "foregroundImage": "./assets/png/nrc.png",
         "backgroundColor": "#FFFFFF"
@@ -34,7 +36,8 @@
       "barStyle": "dark-content"
     },
     "androidNavigationBar": {
-      "visible": "sticky-immersive"
+      "visible": "sticky-immersive",
+      "barStyle": "dark-content"
     }
   }
 }

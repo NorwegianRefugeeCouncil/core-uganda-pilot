@@ -40,7 +40,7 @@ export declare class Request {
     _path: string;
     _verb: string;
     _body: any;
-    _params: URLValues;
+    _params: any;
     _pathParams: URLValues;
     _headers: Headers;
     constructor(client: Client);
@@ -51,7 +51,7 @@ export declare class Request {
     delete(): Request;
     path(path: string): Request;
     body(body: any): Request;
-    params(params: URLValues): Request;
+    params(params: any): Request;
     pathParam(key: string, value: string): Request;
     headers(headers: Headers): Request;
 }

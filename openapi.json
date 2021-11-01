@@ -1,0 +1,482 @@
+{
+ "swagger": "2.0",
+ "paths": {
+  "/databases": {
+   "get": {
+    "consumes": [
+     "application/json"
+    ],
+    "produces": [
+     "application/json"
+    ],
+    "summary": "lists all databases",
+    "operationId": "listDatabases",
+    "responses": {
+     "200": {
+      "description": "OK",
+      "schema": {
+       "$ref": "#/definitions/DatabaseList"
+      }
+     }
+    }
+   },
+   "post": {
+    "consumes": [
+     "application/json"
+    ],
+    "produces": [
+     "application/json"
+    ],
+    "summary": "create a database",
+    "operationId": "createDatabase",
+    "parameters": [
+     {
+      "name": "body",
+      "in": "body",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/Database"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK",
+      "schema": {
+       "$ref": "#/definitions/Database"
+      }
+     }
+    }
+   }
+  },
+  "/databases/{databaseId}": {
+   "delete": {
+    "consumes": [
+     "application/json"
+    ],
+    "produces": [
+     "application/json"
+    ],
+    "summary": "deletes databases",
+    "operationId": "deleteDatabase",
+    "parameters": [
+     {
+      "type": "string",
+      "format": "uuid",
+      "description": "id of the database",
+      "name": "databaseId",
+      "in": "path",
+      "required": true
+     }
+    ],
+    "responses": {
+     "204": {
+      "description": "OK"
+     }
+    }
+   }
+  },
+  "/folders": {
+   "get": {
+    "summary": "list all folders",
+    "operationId": "listFolders",
+    "responses": {
+     "200": {
+      "description": "OK",
+      "schema": {
+       "$ref": "#/definitions/FolderList"
+      }
+     }
+    }
+   },
+   "post": {
+    "summary": "create a folder",
+    "operationId": "createFolder",
+    "parameters": [
+     {
+      "name": "body",
+      "in": "body",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/Folder"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK",
+      "schema": {
+       "$ref": "#/definitions/Folder"
+      }
+     }
+    }
+   }
+  },
+  "/folders/{folderId}": {
+   "delete": {
+    "summary": "delete a folder",
+    "operationId": "deleteFolder",
+    "parameters": [
+     {
+      "type": "string",
+      "format": "uuid",
+      "description": "id of the folder",
+      "name": "folderId",
+      "in": "path",
+      "required": true
+     }
+    ],
+    "responses": {
+     "204": {
+      "description": "OK"
+     }
+    }
+   }
+  },
+  "/forms": {
+   "get": {
+    "summary": "list forms",
+    "operationId": "listForms",
+    "responses": {
+     "200": {
+      "description": "OK",
+      "schema": {
+       "$ref": "#/definitions/FormDefinitionList"
+      }
+     }
+    }
+   },
+   "post": {
+    "summary": "create a form",
+    "operationId": "createForm",
+    "parameters": [
+     {
+      "name": "body",
+      "in": "body",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/FormDefinition"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK",
+      "schema": {
+       "$ref": "#/definitions/FormDefinition"
+      }
+     }
+    }
+   }
+  },
+  "/records": {
+   "get": {
+    "summary": "list records",
+    "operationId": "listRecords",
+    "parameters": [
+     {
+      "type": "string",
+      "format": "uuid",
+      "description": "id of the database",
+      "name": "databaseId",
+      "in": "query",
+      "required": true
+     },
+     {
+      "type": "string",
+      "format": "uuid",
+      "description": "id of the form",
+      "name": "formId",
+      "in": "query",
+      "required": true
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK",
+      "schema": {
+       "$ref": "#/definitions/RecordList"
+      }
+     }
+    }
+   },
+   "post": {
+    "summary": "create a record",
+    "operationId": "createRecord",
+    "parameters": [
+     {
+      "name": "body",
+      "in": "body",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/Record"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK",
+      "schema": {
+       "$ref": "#/definitions/Record"
+      }
+     }
+    }
+   }
+  },
+  "/records/{recordId}": {
+   "put": {
+    "summary": "update a record",
+    "operationId": "updateRecord",
+    "parameters": [
+     {
+      "type": "string",
+      "description": "id of the record",
+      "name": "recordId",
+      "in": "path",
+      "required": true
+     },
+     {
+      "name": "body",
+      "in": "body",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/Record"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK",
+      "schema": {
+       "$ref": "#/definitions/Record"
+      }
+     }
+    }
+   }
+  }
+ },
+ "definitions": {
+  "Database": {
+   "required": [
+    "id",
+    "name"
+   ],
+   "properties": {
+    "id": {
+     "type": "string"
+    },
+    "name": {
+     "type": "string"
+    }
+   }
+  },
+  "DatabaseList": {
+   "required": [
+    "items"
+   ],
+   "properties": {
+    "items": {
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/Database"
+     }
+    }
+   }
+  },
+  "FieldDefinition": {
+   "required": [
+    "id",
+    "code",
+    "name",
+    "required",
+    "fieldType"
+   ],
+   "properties": {
+    "code": {
+     "type": "string"
+    },
+    "fieldType": {
+     "$ref": "#/definitions/FieldType"
+    },
+    "id": {
+     "type": "string"
+    },
+    "name": {
+     "type": "string"
+    },
+    "required": {
+     "type": "boolean"
+    }
+   }
+  },
+  "FieldType": {
+   "properties": {
+    "reference": {
+     "$ref": "#/definitions/FieldTypeReference"
+    },
+    "subForm": {
+     "$ref": "#/definitions/FieldTypeSubForm"
+    },
+    "text": {
+     "$ref": "#/definitions/FieldTypeText"
+    }
+   }
+  },
+  "FieldTypeReference": {
+   "properties": {
+    "databaseId": {
+     "type": "string"
+    },
+    "formId": {
+     "type": "string"
+    }
+   }
+  },
+  "FieldTypeSubForm": {
+   "required": [
+    "id",
+    "name",
+    "code"
+   ],
+   "properties": {
+    "code": {
+     "type": "string"
+    },
+    "fields": {
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/FieldDefinition"
+     }
+    },
+    "id": {
+     "type": "string"
+    },
+    "name": {
+     "type": "string"
+    }
+   }
+  },
+  "FieldTypeText": {},
+  "Folder": {
+   "required": [
+    "id",
+    "databaseId",
+    "name"
+   ],
+   "properties": {
+    "databaseId": {
+     "type": "string"
+    },
+    "id": {
+     "type": "string"
+    },
+    "name": {
+     "type": "string"
+    },
+    "parentId": {
+     "type": "string"
+    }
+   }
+  },
+  "FolderList": {
+   "required": [
+    "items"
+   ],
+   "properties": {
+    "items": {
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/Folder"
+     }
+    }
+   }
+  },
+  "FormDefinition": {
+   "required": [
+    "id",
+    "code",
+    "folderId"
+   ],
+   "properties": {
+    "code": {
+     "type": "string"
+    },
+    "databaseId": {
+     "type": "string"
+    },
+    "fields": {
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/FieldDefinition"
+     }
+    },
+    "folderId": {
+     "type": "string"
+    },
+    "id": {
+     "type": "string"
+    },
+    "name": {
+     "type": "string"
+    }
+   }
+  },
+  "FormDefinitionList": {
+   "required": [
+    "items"
+   ],
+   "properties": {
+    "items": {
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/FormDefinition"
+     }
+    }
+   }
+  },
+  "Record": {
+   "required": [
+    "id",
+    "seq",
+    "databaseId",
+    "formId",
+    "parentId",
+    "values"
+   ],
+   "properties": {
+    "databaseId": {
+     "type": "string"
+    },
+    "formId": {
+     "type": "string"
+    },
+    "id": {
+     "type": "string"
+    },
+    "parentId": {
+     "type": "string"
+    },
+    "seq": {
+     "type": "integer",
+     "format": "int64"
+    },
+    "values": {
+     "type": "object"
+    }
+   }
+  },
+  "RecordList": {
+   "required": [
+    "items"
+   ],
+   "properties": {
+    "items": {
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/Record"
+     }
+    }
+   }
+  }
+ }
+}

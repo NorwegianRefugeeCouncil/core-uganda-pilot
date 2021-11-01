@@ -9,5 +9,7 @@ pkgs.mkShell {
 		pkgs.go
 		pkgs.air
 		pkgs.gnumake
+		pkgs.watchman
+    pkgs.openssl
 	];
 }
