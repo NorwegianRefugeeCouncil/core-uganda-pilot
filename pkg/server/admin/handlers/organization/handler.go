@@ -21,7 +21,7 @@ func (h *Handler) WebService() *restful.WebService {
 func NewHandler(store store.OrganizationStore) *Handler {
 	h := &Handler{store: store}
 
-	ws := new(restful.WebService).Path("/organizations").
+	ws := new(restful.WebService).Path("/admin/organizations").
 		Consumes("application/json").
 		Produces("application/json")
 	h.webService = ws
@@ -45,7 +45,7 @@ func NewHandler(store store.OrganizationStore) *Handler {
 		Writes(types.Organization{}).
 		Returns(http.StatusOK, "OK", types.Organization{}))
 
-	ws.Route(ws.POST(OrganizationPath).To(h.RestfulGet).
+	ws.Route(ws.GET(OrganizationPath).To(h.RestfulGet).
 		Doc("get an organization").
 		Operation("getOrganization").
 		Param(restful.PathParameter(constants.ParamOrganizationID, "organization id").

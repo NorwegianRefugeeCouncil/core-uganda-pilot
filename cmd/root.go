@@ -43,6 +43,8 @@ func initConfig() {
 		}
 	}
 
-	viper.WatchConfig()
+	if len(cfgFiles) > 0 {
+		viper.WatchConfig()
+	}
 
 }

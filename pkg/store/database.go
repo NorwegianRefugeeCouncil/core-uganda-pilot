@@ -118,6 +118,9 @@ func (d *databaseStore) List() (*types.DatabaseList, error) {
 	for i, database := range databases {
 		result[i] = mapDatabaseTo(&database)
 	}
+	if result == nil {
+		result = []*types.Database{}
+	}
 	return &types.DatabaseList{
 		Items: result,
 	}, nil

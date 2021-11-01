@@ -73,12 +73,15 @@ func (d *folderStore) List(ctx context.Context) (*types.FolderList, error) {
 		return nil, meta.NewInternalServerError(err)
 	}
 	var result = make([]*types.Folder, len(folders))
+
 	for i, folder := range folders {
 		result[i] = mapFolderTo(&folder)
 	}
+
 	if result == nil {
 		result = []*types.Folder{}
 	}
+
 	return &types.FolderList{
 		Items: result,
 	}, nil
