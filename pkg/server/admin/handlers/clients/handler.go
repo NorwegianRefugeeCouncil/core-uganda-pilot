@@ -45,7 +45,6 @@ func NewHandler() (*Handler, error) {
 		Doc(`gets oauth2 client`).
 		Param(ws.PathParameter("clientId", "client id").Required(true)).
 		Operation("getClient").
-		Reads(nil).
 		Writes(&Client{}).
 		Returns(http.StatusOK, "OK", &Client{}),
 	)
@@ -54,15 +53,12 @@ func NewHandler() (*Handler, error) {
 		Doc(`deletes oauth2 client`).
 		Param(ws.PathParameter("clientId", "client id").Required(true)).
 		Operation("deleteClient").
-		Reads(nil).
-		Writes(nil).
-		Returns(http.StatusOK, "OK", &Client{}),
+		Returns(http.StatusOK, "OK", nil),
 	)
 
 	ws.Route(ws.GET("/").To(restfulList(hydraAdmin)).
 		Doc(`gets oauth2 clients`).
 		Operation("listClients").
-		Reads(nil).
 		Writes(&ClientList{}).
 		Returns(http.StatusOK, "OK", &ClientList{}),
 	)

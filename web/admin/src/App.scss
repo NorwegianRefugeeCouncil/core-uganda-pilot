@@ -2,34 +2,20 @@
 $darkula-bg: rgb(57, 64, 71);
 $darkula-color: rgb(180, 180, 180);
 $darkula-border: rgb(57, 64, 71);
-
-
 $theme-colors: (
   "darkula": $darkula-bg,
 );
 
-//
-// $darkula-bg: rgb(57, 64, 71);
-// $darkula-color: rgb(180, 180, 180);
-// $darkula-border: rgb(57, 64, 71);
-//
-// .list-group-darkula > .list-group-item {
-//     background-color: rgba($darkula-bg, 0.8);
-//     color: $darkula-color;
-//     border-color: $darkula-border;
-// }
-//
-// .list-group-darkula > .list-group-item.active {
-//     background-color: $darkula-bg;
-//     color: $darkula-color;
-// }
-//
-// .list-group-darkula > .list-group-item:hover {
-//     background-color: $darkula-bg;
-//     color: $darkula-color;
-// }
-
 @import "node_modules/bootstrap/scss/bootstrap";
+
+.card.card-darkula {
+    background-color: darken($darkula-bg, 5%);
+    border-color: $darkula-border;
+}
+
+.card.card-darkula > .card-body {
+    color: darken($light, 25%);
+}
 
 .list-group.list-group-darkula > .list-group-item ,
 .btn.btn-darkula,

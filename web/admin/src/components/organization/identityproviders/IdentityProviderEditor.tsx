@@ -1,7 +1,7 @@
-import {FC, useCallback, useEffect} from "react";
+import {FC, useCallback, useEffect, useMemo} from "react";
 import {useForm} from "react-hook-form";
 import classNames from "classnames"
-import {useApiClient} from "../../../app/hooks";
+import {useApiClient, useFormValidation} from "../../../app/hooks";
 import {Organization} from "../../../client/client";
 
 type Props = {
@@ -25,14 +25,20 @@ export const IdentityProviderEditor: FC<Props> = props => {
         organization
     } = props
 
+    const isNew = useMemo(() => !id, [id])
+
     const apiClient = useApiClient()
+
+    const form = useForm<FormData>({mode: "onChange"})
 
     const {
         register,
         handleSubmit,
         setValue,
-        formState: {errors, touchedFields, dirtyFields, isSubmitting, isSubmitted},
-    } = useForm<FormData>({mode: "onChange"});
+        formState: {isSubmitting},
+    } = form;
+
+    const {fieldErrors, fieldClasses} = useFormValidation(isNew, form)
 
     useEffect(() => {
         if (id) {
@@ -71,23 +77,6 @@ export const IdentityProviderEditor: FC<Props> = props => {
 
     }, [apiClient, id, organization.id])
 
-    const fieldClassNames = useCallback((field: keyof FormData) => {
-        let cls = classNames("form-control form-control-darkula")
-        if (isSubmitted || (!id && touchedFields[field]) || (!id && dirtyFields[field])) {
-            if (errors[field]) {
-                return classNames(cls, "is-invalid")
-            }
-        }
-        return cls
-    }, [dirtyFields, errors, id, isSubmitted, touchedFields])
-
-    const fieldErrors = (field: keyof FormData) => {
-        return errors[field] && (isSubmitted || (!id && touchedFields[field]) || (!id && dirtyFields[field])) &&
-            <div className={"invalid-feedback"}>
-                {errors[field]?.type === "required" && <span>This field is required</span>}
-                {errors[field]?.type === "pattern" && <span>Invalid value</span>}
-            </div>
-    }
 
     return (
         <div className={classNames("card bg-dark border-secondary")}>
@@ -100,7 +89,7 @@ export const IdentityProviderEditor: FC<Props> = props => {
                                 required: true,
                                 pattern: /^[a-zA-Z0-9\-_ ]+$/,
                             })}
-                            className={fieldClassNames("name")}
+                            className={classNames("form-control form-control-darkula", fieldClasses("name"))}
                         />
                         {fieldErrors("name")}
                     </div>
@@ -110,7 +99,7 @@ export const IdentityProviderEditor: FC<Props> = props => {
                             required: true,
                             pattern: /^https?:\/\/[a-zA-Z0-9.\-_]+(:[0-9]+)?$/,
                         })}
-                               className={fieldClassNames("issuer")}
+                               className={classNames("form-control form-control-darkula", fieldClasses("issuer"))}
                         />
                         {fieldErrors("issuer")}
                     </div>
@@ -119,7 +108,7 @@ export const IdentityProviderEditor: FC<Props> = props => {
                         <input {...register("emailDomain", {
                             required: true,
                         })}
-                               className={fieldClassNames("emailDomain")}
+                               className={classNames("form-control form-control-darkula", fieldClasses("emailDomain"))}
                         />
                         {fieldErrors("emailDomain")}
                     </div>
@@ -128,7 +117,7 @@ export const IdentityProviderEditor: FC<Props> = props => {
                         <input {...register("clientId", {
                             required: true
                         })}
-                               className={fieldClassNames("clientId")}
+                               className={classNames("form-control form-control-darkula", fieldClasses("clientId"))}
                         />
                         {fieldErrors("clientId")}
                     </div>
@@ -137,10 +126,10 @@ export const IdentityProviderEditor: FC<Props> = props => {
                         <input
                             type={"password"}
                             {...register("clientSecret", {
-                                required: !id
+                                required: isNew
                             })}
-                            className={fieldClassNames("clientSecret")}
-                            placeholder={id ? "*****" : ""}
+                            className={classNames("form-control form-control-darkula", fieldClasses("clientSecret"))}
+                            placeholder={isNew ? "" : "********"}
                         />
                         {fieldErrors("clientSecret")}
                     </div>

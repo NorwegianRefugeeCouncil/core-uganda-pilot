@@ -9,6 +9,7 @@ import {BrowserRouter, Switch} from "react-router-dom";
 import {Organizations} from "./components/organizations/Organizations";
 import {ProtectedRoute} from "./components/guard/ProtectedRoute";
 import {OrganizationPortal} from "./components/organization/OrganizationPortal";
+import {OrganizationEditor} from "./components/organization/OrganizationEditor";
 
 const oidcConfig = {
     authority: 'https://dev-53701279.okta.com',
@@ -27,6 +28,7 @@ function App() {
                     <BrowserRouter>
                         <NavBar/>
                         <Switch>
+                            <ProtectedRoute path={"/organizations/add"} component={OrganizationEditor}/>
                             <ProtectedRoute path={"/organizations/:organizationId"} component={OrganizationPortal}/>
                             <ProtectedRoute path={"/organizations"} component={Organizations}/>
                         </Switch>

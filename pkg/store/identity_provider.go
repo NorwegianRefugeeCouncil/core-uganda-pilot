@@ -62,6 +62,9 @@ func (i identityProviderStore) List(ctx context.Context, organizationID string, 
 	if err := db.WithContext(ctx).Find(&idps, "organization_id = ?", organizationID).Error; err != nil {
 		return nil, meta.NewInternalServerError(err)
 	}
+	if idps == nil {
+		idps = []*IdentityProvider{}
+	}
 	return mapList(idps, options.ReturnClientSecret), nil
 }
 
@@ -137,6 +140,9 @@ func mapList(i []*IdentityProvider, keepClientSecrets bool) []*types.IdentityPro
 	var result []*types.IdentityProvider
 	for _, provider := range i {
 		result = append(result, mapTo(provider, keepClientSecrets))
+	}
+	if result == nil {
+		result = []*types.IdentityProvider{}
 	}
 	return result
 }

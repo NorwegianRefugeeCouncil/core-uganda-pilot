@@ -121,5 +121,8 @@ func (o organizationStore) List(ctx context.Context) ([]*types.Organization, err
 	if err := db.WithContext(ctx).Find(&orgList).Error; err != nil {
 		return nil, meta.NewInternalServerError(err)
 	}
+	if orgList == nil {
+		orgList = []*Organization{}
+	}
 	return mapAllToOrg(orgList), nil
 }

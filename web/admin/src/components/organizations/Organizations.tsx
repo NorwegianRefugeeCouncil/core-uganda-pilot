@@ -3,6 +3,7 @@ import {Organization} from "../../client/client";
 import {Column, useTable} from "react-table"
 import {useApiClient} from "../../app/hooks";
 import {Link} from "react-router-dom"
+import {SectionTitle} from "../sectiontitle/SectionTitle";
 
 export const Organizations: FC = props => {
 
@@ -42,10 +43,13 @@ export const Organizations: FC = props => {
         <div className={"container mt-3"}>
             <div className={"row"}>
                 <div className={"col"}>
-                    <div className={"card shadow bg-darkula "}>
+                    <div className={"card card-darkula "}>
                         <div className={"card-body"}>
-                            <table className={"table bg-darkula text-light"} {...getTableProps()}>
-                                <thead className={"text-light"}>
+                            <SectionTitle title={"Organizations"}>
+                                <Link className={"btn btn-darkula btn-sm"} to={`organizations/add`}>Add Organization</Link>
+                            </SectionTitle>
+                            <table className={"table table-darkula text-light"} {...getTableProps()}>
+                                <thead>
                                 {// Loop over the header rows
                                     headerGroups.map(headerGroup => (
                                         // Apply the header row props
