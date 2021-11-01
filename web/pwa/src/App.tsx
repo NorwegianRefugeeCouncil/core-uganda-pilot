@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min';
 import './App.css';
 import {NavBarContainer} from "./features/navbar/navbar";
 import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom";
@@ -13,17 +14,14 @@ import {FormBrowserContainer} from "./features/browser/FormBrowser";
 import {DatabasesContainer} from "./features/browser/Databases";
 import {RecordEditorContainer} from "./features/recorder/RecordEditor";
 import {FormerContainer} from "./features/former/Former";
-import {AdminPanel} from "./features/admin/AdminPanel";
 import {useAuth} from 'oidc-react';
 import {DatabaseEditor} from "./features/databases/DatabaseEditor";
 import {FolderEditor} from "./features/folders/FolderEditor";
 import {RecordBrowser} from "./features/browser/RecordBrowser";
-import {useSqlDB} from "./app/db";
 
 function App() {
 
     const dispatch = useAppDispatch()
-    const {database, saveDatabase} = useSqlDB()
 
     useEffect(() => {
         dispatch(fetchDatabases())
@@ -77,8 +75,6 @@ function App() {
                         <Route path={`/browse/databases`} component={DatabasesContainer}/>
 
                         <Route path={`/browse/records/:recordId`} component={RecordBrowser}/>
-
-                        <Route path={`/admin`} component={AdminPanel}/>
 
                         <Route path="/">
                             <Redirect to="/browse/databases"/>

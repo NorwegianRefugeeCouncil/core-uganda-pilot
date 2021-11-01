@@ -99,20 +99,21 @@ func EmptyDDL() DDL {
 	return DDL{}
 }
 
-func (d1 DDL) Merge(d2 DDLGenerator) DDL {
-	d1.Query += d2.DDL().Query
-	d1.Args = append(d1.Args, d2.DDL().Args...)
-	return d1
+func (d DDL) Merge(d2 DDLGenerator) DDL {
+	d.Query += d2.DDL().Query
+	d.Args = append(d.Args, d2.DDL().Args...)
+	return d
 }
 
-func (d1 DDL) MergeAll(separator string, d ...DDLGenerator) DDL {
-	for i, generator := range d {
-		d1 = d1.Merge(generator)
-		if i != len(d)-1 {
-			d1 = d1.WriteString(separator)
+func (d DDL) MergeAll(separator string, generators ...DDLGenerator) DDL {
+	ddl := d
+	for i, generator := range generators {
+		ddl = ddl.Merge(generator)
+		if i != len(generators)-1 {
+			ddl = ddl.WriteString(separator)
 		}
 	}
-	return d1
+	return ddl
 }
 
 func writeParamPlaceholders(count int) string {

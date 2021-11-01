@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"errors"
 	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/api/types"
 	uuid "github.com/satori/go.uuid"
@@ -9,31 +10,17 @@ import (
 
 type Permission string
 
-const (
-	SuperAdmin = "super_admin"
-
-	ReadDatabase   = "database_read"
-	ManageDatabase = "database_manage"
-
-	ReadFolder   = "folder_read"
-	ManageFolder = "folder_manage"
-
-	ReadForm   = "form_read"
-	ManageForm = "form_manage"
-
-	ReadRecords = "record_read"
-	WriteRecord = "record_write"
-)
-
 type Organization struct {
-	ID   string
-	Name string
-	Key  string
+	ID          string
+	Name        string
+	EmailDomain string
+	Key         string
 }
 
 type OrganizationStore interface {
 	Get(ctx context.Context, id string) (*types.Organization, error)
 	Create(ctx context.Context, organiztion *types.Organization) (*types.Organization, error)
+	Update(ctx context.Context, organization *types.Organization) (*types.Organization, error)
 	List(ctx context.Context) ([]*types.Organization, error)
 }
 
@@ -101,6 +88,29 @@ func (o organizationStore) Create(ctx context.Context, organiztion *types.Organi
 	return mapToOrg(org), nil
 }
 
+func (o organizationStore) Update(ctx context.Context, organization *types.Organization) (*types.Organization, error) {
+	db, err := o.db.Get()
+	if err != nil {
+		return nil, err
+	}
+
+	qry := db.WithContext(ctx).
+		Where("id = ?", organization.ID).
+		Model(&Organization{}).
+		Updates(map[string]interface{}{
+			"name": organization.Name,
+		})
+	if qry.Error != nil {
+		return nil, meta.NewInternalServerError(qry.Error)
+	}
+
+	if qry.RowsAffected == 0 {
+		return nil, meta.NewInternalServerError(errors.New("record not found"))
+	}
+
+	return o.Get(ctx, organization.ID)
+}
+
 func (o organizationStore) List(ctx context.Context) ([]*types.Organization, error) {
 	db, err := o.db.Get()
 	if err != nil {
@@ -111,51 +121,8 @@ func (o organizationStore) List(ctx context.Context) ([]*types.Organization, err
 	if err := db.WithContext(ctx).Find(&orgList).Error; err != nil {
 		return nil, meta.NewInternalServerError(err)
 	}
+	if orgList == nil {
+		orgList = []*Organization{}
+	}
 	return mapAllToOrg(orgList), nil
-}
-
-type User struct {
-	ID                  string
-	Email               string
-	EmailVerified       bool
-	PhoneNumber         string
-	PhoneNumberVerified bool
-}
-
-type UserProfile struct {
-	ID                  string
-	UserID              string
-	User                User
-	Provider            string
-	Email               string
-	EmailVerified       bool
-	PhoneNumber         string
-	PhoneNumberVerified bool
-}
-
-type OrganizationRole struct {
-	ID             string
-	OrganizationID string
-	Organization   Organization
-	Name           string
-}
-
-type OrganizationRolePermission struct {
-	ID                 string
-	OrganizationID     string
-	Organization       Organization
-	OrganizationRoleID string
-	OrganizationRole   OrganizationRole
-	Permission         Permission
-	Scope              string
-}
-
-type OrganizationUser struct {
-	UserID         string
-	OrganizationID string
-}
-
-type OrganizationDatabase struct {
-	OrganizationID string
-	DatabaseID     string
 }

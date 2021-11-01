@@ -24,10 +24,11 @@ func NewPath(name string, moreNames ...string) *Path {
 
 // Root returns the root element of this Path.
 func (p *Path) Root() *Path {
-	for ; p.parent != nil; p = p.parent {
+	walk := p
+	for ; walk.parent != nil; walk = walk.parent {
 		// Do nothing.
 	}
-	return p
+	return walk
 }
 
 // Child creates a new Path that is a child of the method receiver.

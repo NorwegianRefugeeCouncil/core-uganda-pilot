@@ -106,22 +106,3 @@ export class LocalRecord extends Record {
 }
 
 export type RecordList = { items: Record[] }
-
-export class Organization {
-    public id: string = ""
-    public key: string = ""
-    public name: string = ""
-}
-
-export type OrganizationList = { items: Organization[] }
-
-export class IdentityProvider {
-    public id: string = ""
-    public organizationId: string = ""
-    public kind: string = ""
-    public domain: string = ""
-    public clientId: string = ""
-    public clientSecret: string = ""
-}
-
-export type IdentityProviderList = { items: IdentityProvider[] }

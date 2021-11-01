@@ -1,8 +1,9 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
-
+	"github.com/nrc-no/core/pkg/server/login"
 	"github.com/spf13/cobra"
 )
 
@@ -17,4 +18,13 @@ var serveLoginCmd = &cobra.Command{
 
 func init() {
 	serveCmd.AddCommand(serveLoginCmd)
+}
+
+func serveLogin(ctx context.Context, options login.Options) error {
+	server, err := login.NewServer(options)
+	if err != nil {
+		return err
+	}
+	server.Start(ctx)
+	return nil
 }

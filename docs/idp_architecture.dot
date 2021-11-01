@@ -1,0 +1,21 @@
+digraph A {
+
+  idp [label="Staff Identity Provider (Okta)"]
+
+  pwd [label="Other Users (Username/Password)"]
+
+  server [label="Core Identity Provider"]
+
+  client [label="Core Client"]
+
+  otherApps [label="Other Applications"]
+
+  client -> server [label="Authenticate"]
+
+  server -> idp [label="Staff Authentication"]
+
+  server -> pwd [label="Other Personnel Authentication"]
+
+  otherApps -> server [label="Authenticate"]
+
+}

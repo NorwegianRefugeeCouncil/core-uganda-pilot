@@ -66,18 +66,6 @@ func createStateVariable() (string, error) {
 	return state, nil
 }
 
-func generateKeyPair() ([][]byte, error) {
-	k1, err := generateBytes(32)
-	if err != nil {
-		return nil, err
-	}
-	k2, err := generateBytes(32)
-	if err != nil {
-		return nil, err
-	}
-	return [][]byte{k1, k2}, nil
-}
-
 func generateBytes(count int) ([]byte, error) {
 	b := make([]byte, count)
 	_, err := rand.Read(b)
