@@ -2,7 +2,7 @@
   <configuration default="false" name="core serve all" type="GoApplicationRunConfiguration" factoryName="Go Application">
     <module name="core" />
     <working_directory value="$PROJECT_DIR$" />
-    <parameters value="serve all --config configs/config.yaml,configs/config.custom.yaml" />
+    <parameters value="serve all --config configs/config.custom.yaml,configs/config.yaml" />
     <kind value="PACKAGE" />
     <package value="github.com/nrc-no/core" />
     <directory value="$PROJECT_DIR$" />

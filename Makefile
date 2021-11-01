@@ -49,3 +49,9 @@ serve-pwa:
 docs:
 	@./scripts/render-dot-graphs.sh
 
+.PHONY: open-all
+open-all:
+	@open http://localhost:3000
+	@open http://localhost:9000
+	@open http://localhost:9001
+

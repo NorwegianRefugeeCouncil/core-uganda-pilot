@@ -15,9 +15,9 @@ const oidcConfig = {
     onSignIn: () => {
         // Redirect?
     },
-    authority: 'https://dev-53701279.okta.com',
-    clientId: '0oa2c6odfoi6s2JXH5d7',
-    redirectUri: 'http://localhost:3001'
+    authority: 'http://localhost:4444',
+    clientId: '93799402-a173-43ad-b003-64cbacc0dfe5',
+    redirectUri: 'http://localhost:3000'
 
 };
 
@@ -25,7 +25,7 @@ ReactDOM.render(
     <React.StrictMode>
         <AuthProvider
             scope={"openid profile email"}
-            autoSignIn={false}
+            autoSignIn={true}
             {...oidcConfig} >
             <Provider store={store}>
                 <SQLContextProvider>
