@@ -17,7 +17,7 @@ export const IdentityProviders: FC<Props> = props => {
         <div>
 
             <SectionTitle className={"text-light"} title={"Identity Providers"}>
-                <Link className={"btn btn-darkula btn-sm"} to={`${match.path}/add`}>Add Identity Provider</Link>
+                <Link className={"btn btn-success btn-sm"} to={`${match.path}/add`}>Add Identity Provider</Link>
             </SectionTitle>
 
             <div className={"list-group list-group-darkula"}>

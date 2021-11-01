@@ -10,6 +10,7 @@ import {Organizations} from "./components/organizations/Organizations";
 import {ProtectedRoute} from "./components/guard/ProtectedRoute";
 import {OrganizationPortal} from "./components/organization/OrganizationPortal";
 import {OrganizationEditor} from "./components/organization/OrganizationEditor";
+import {Clients} from "./components/clients/Clients";
 
 const oidcConfig = {
     authority: 'https://dev-53701279.okta.com',
@@ -31,6 +32,7 @@ function App() {
                             <ProtectedRoute path={"/organizations/add"} component={OrganizationEditor}/>
                             <ProtectedRoute path={"/organizations/:organizationId"} component={OrganizationPortal}/>
                             <ProtectedRoute path={"/organizations"} component={Organizations}/>
+                            <ProtectedRoute path={"/clients"} component={Clients}/>
                         </Switch>
                     </BrowserRouter>
                 </div>

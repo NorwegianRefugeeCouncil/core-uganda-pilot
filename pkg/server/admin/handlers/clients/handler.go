@@ -2,6 +2,7 @@ package clients
 
 import (
 	"github.com/emicklei/go-restful/v3"
+	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/ory/hydra-client-go/client"
 	"github.com/ory/hydra-client-go/client/admin"
 	"net/http"
@@ -28,25 +29,25 @@ func NewHandler() (*Handler, error) {
 		Doc(`updates oauth2 client`).
 		Param(ws.PathParameter("clientId", "client id").Required(true)).
 		Operation("updateClient").
-		Reads(&Client{}).
-		Writes(&Client{}).
-		Returns(http.StatusOK, "OK", &Client{}),
+		Reads(&types.Oauth2Client{}).
+		Writes(&types.Oauth2Client{}).
+		Returns(http.StatusOK, "OK", &types.Oauth2Client{}),
 	)
 
 	ws.Route(ws.POST("/").To(restfulCreate(hydraAdmin)).
 		Doc(`creates oauth2 client`).
 		Operation("createClient").
-		Reads(&Client{}).
-		Writes(&Client{}).
-		Returns(http.StatusOK, "OK", &Client{}),
+		Reads(&types.Oauth2Client{}).
+		Writes(&types.Oauth2Client{}).
+		Returns(http.StatusOK, "OK", &types.Oauth2Client{}),
 	)
 
 	ws.Route(ws.GET("/{clientId}").To(restfulGet(hydraAdmin)).
 		Doc(`gets oauth2 client`).
 		Param(ws.PathParameter("clientId", "client id").Required(true)).
 		Operation("getClient").
-		Writes(&Client{}).
-		Returns(http.StatusOK, "OK", &Client{}),
+		Writes(&types.Oauth2Client{}).
+		Returns(http.StatusOK, "OK", &types.Oauth2Client{}),
 	)
 
 	ws.Route(ws.DELETE("/{clientId}").To(restfulDelete(hydraAdmin)).
@@ -59,8 +60,8 @@ func NewHandler() (*Handler, error) {
 	ws.Route(ws.GET("/").To(restfulList(hydraAdmin)).
 		Doc(`gets oauth2 clients`).
 		Operation("listClients").
-		Writes(&ClientList{}).
-		Returns(http.StatusOK, "OK", &ClientList{}),
+		Writes(&types.Oauth2ClientList{}).
+		Returns(http.StatusOK, "OK", &types.Oauth2ClientList{}),
 	)
 
 	h.ws = ws

@@ -25,13 +25,6 @@ func handleGet(hydraAdmin admin.ClientService, clientID string) http.HandlerFunc
 			utils.ErrorResponse(w, meta.NewInternalServerError(err))
 			return
 		}
-
-		if err != nil {
-			utils.ErrorResponse(w, meta.NewInternalServerError(err))
-			return
-		}
-
-		w.Header().Set("Content-Type", "text/html")
-		renderClient(w, oauth2Client.Payload, "", false, "")
+		utils.JSONResponse(w, http.StatusOK, mapFromHydraClient(oauth2Client.Payload))
 	}
 }
