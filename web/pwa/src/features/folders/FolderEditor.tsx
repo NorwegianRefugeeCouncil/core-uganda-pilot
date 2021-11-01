@@ -46,7 +46,7 @@ export const FolderEditor: FC = props => {
         return <Redirect to={`/browse/folders/${folder.id}`}/>
     }
 
-    return <div className={"flex-grow-1 bg-dark text-white pt-3"}>
+    return <div className={"flex-grow-1 pt-3"}>
         <div className={"container"}>
             <div className={"row"}>
                 <div className={"col"}>

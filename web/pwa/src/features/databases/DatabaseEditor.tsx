@@ -27,7 +27,7 @@ export const DatabaseEditor: FC = props => {
     if (database) {
         return <Redirect to={`/browse/databases/${database.id}`}/>
     }
-    return <div className={"flex-grow-1 bg-dark text-white pt-3"}>
+    return <div className={"flex-grow-1 pt-3"}>
         <div className={"container"}>
             <div className={"row"}>
                 <div className={"col"}>

@@ -32,12 +32,12 @@ export const RecordEditor: FC<RecordEditorProps> = props => {
         return <Fragment/>
     }
 
-    return <div className={"flex-grow-1 w-100 h-100 bg-dark text-light py-3 overflow-scroll"}>
+    return <div className={"flex-grow-1 w-100 h-100 py-3 overflow-scroll"}>
         <div className={"container-fluid"}>
             <div className={"row justify-content-center"}>
                 <div className={"col-12 col-lg-8"}>
                     <h4 className={"mb-4"}>Add record</h4>
-                    <div className={"card bg-dark text-light border-secondary"}>
+                    <div className={"card border-secondary"}>
                         <div className={"card-body"}>
                             {props.fields.map(field => {
                                 const value = props.values[field.id]

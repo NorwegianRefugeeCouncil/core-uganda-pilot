@@ -198,6 +198,12 @@ func convertFieldToSqlField(formDef *types.FormDefinition, field *types.FieldDef
 				Length: 1024,
 			},
 		}
+	} else if field.FieldType.MultiSelect != nil {
+		result.DataType = sqlschema2.SQLDataType{
+			VarChar: &sqlschema2.SQLDataTypeVarChar{
+				Length: 1024,
+			},
+		}
 	} else if field.FieldType.Reference != nil {
 		result.Constraints = append(result.Constraints, sqlschema2.SQLColumnConstraint{
 			Name: fmt.Sprintf("fk__%s_%s_%s__%s_%s_id",

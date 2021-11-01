@@ -2,6 +2,7 @@ import {FieldDefinition} from "../../types/types";
 import React, {FC, Fragment} from "react";
 import {FormValue} from "./recorder.slice";
 import {RecordPickerContainer} from "../../components/RecordPicker";
+import Select from 'react-select';
 
 export type FieldEditorProps = {
     field: FieldDefinition
@@ -34,7 +35,7 @@ export const TextFieldEditor: FC<FieldEditorProps> = props => {
             className={"form-label opacity-75"}
             htmlFor={field.id}>{field.name}</label>
         <input
-            className={"form-control bg-dark text-light border-secondary"}
+            className={"form-control border-secondary"}
             type={"text"}
             id={field.id} value={value ? value : ""}
             onChange={event => setValue(event.target.value)}/>
@@ -49,7 +50,7 @@ export const MultilineTextFieldEditor: FC<FieldEditorProps> = props => {
             className={"form-label opacity-75"}
             htmlFor={field.id}>{field.name}</label>
         <textarea
-            className={"form-control bg-dark text-light border-secondary"}
+            className={"form-control border-secondary"}
             id={field.id} value={value ? value : ""}
             onChange={event => setValue(event.target.value)}/>
         {mapFieldDescription(field)}
@@ -63,7 +64,7 @@ export const DateFieldEditor: FC<FieldEditorProps> = props => {
             className={"form-label opacity-75"}
             htmlFor={field.id}>{field.name}</label>
         <input
-            className={"form-control bg-dark text-light border-secondary"}
+            className={"form-control border-secondary"}
             type={"date"}
             id={field.id} value={value ? value : ""}
             onChange={event => setValue(event.target.value)}/>
@@ -78,7 +79,7 @@ export const QuantityFieldEditor: FC<FieldEditorProps> = props => {
             className={"form-label opacity-75"}
             htmlFor={field.id}>{field.name}</label>
         <input
-            className={"form-control bg-dark text-light border-secondary"}
+            className={"form-control border-secondary"}
             type="number"
             id={field.id} value={value ? value : ""}
             onChange={event => setValue(event.target.value)}/>
@@ -93,12 +94,33 @@ export const SingleSelectFieldEditor: FC<FieldEditorProps> = props => {
             className={"form-label opacity-75"}
             htmlFor={field.id}>{field.name}</label>
         <select
-            className={"form-control bg-dark text-light border-secondary"}
+            className={"form-control border-secondary"}
             id={field.id} value={value ? value : ""}
             onChange={event => setValue(event.target.value)}>
             <option disabled={field.required || field.key} value={""}/>
             {field.options.map(o => <option value={o}>{o}</option>)}
         </select>
+        {mapFieldDescription(field)}
+    </div>
+}
+
+export const MultiSelectFieldEditor: FC<FieldEditorProps> = props => {
+    const {field, value, setValue} = props
+
+    console.log("value: ", value)
+    const handleChange = (option: readonly { label: string, value: string }[]) => option.length > 0 ? setValue(option.map(({value}) => value).join(';;')) : setValue(null)
+
+    return <div className={"mb-2"}>
+        <label
+            className={"form-label opacity-75"}
+            htmlFor={field.id}>{field.name}</label>
+        <Select
+            id={field.id}
+            options={field.options.map((o: string) => ({label: o, value: o}))}
+            value={value?.split(';;').map((v: string) => ({label: v, value: v}))}
+            onChange={handleChange}
+            isMulti
+        />
         {mapFieldDescription(field)}
     </div>
 }
@@ -109,13 +131,13 @@ function subRecord(record: FormValue, select: () => void) {
                   e.preventDefault()
                   select()
               }}
-              className={"list-group-item list-group-item-action bg-dark border-secondary text-secondary"}>
+              className={"list-group-item list-group-item-action border-secondary text-secondary"}>
         View Record
     </a>
 }
 
 function subRecords(records: FormValue[], select: (id: string) => void) {
-    return <div className={"list-group bg-dark mb-3"}>
+    return <div className={"list-group mb-3"}>
         {records.map(r => subRecord(r, () => {
             select(r.recordId)
         }))}
@@ -154,6 +176,8 @@ export const FieldEditor: FC<FieldEditorProps> = props => {
         return <QuantityFieldEditor {...props} />
     } else if (fieldType.singleSelect) {
         return <SingleSelectFieldEditor {...props} />
+    } else if (fieldType.multiSelect) {
+        return <MultiSelectFieldEditor {...props} />
     } else {
         return <Fragment/>
     }

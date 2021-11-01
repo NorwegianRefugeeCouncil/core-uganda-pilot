@@ -549,6 +549,8 @@ func (f *FormHierarchy) ToFormDefinition() (*types.FormDefinition, error) {
 			fd.FieldType.Quantity = &types.FieldTypeQuantity{}
 		case types.FieldKindSingleSelect:
 			fd.FieldType.SingleSelect = &types.FieldTypeSingleSelect{}
+		case types.FieldKindMultiSelect:
+			fd.FieldType.MultiSelect = &types.FieldTypeMultiSelect{}
 		case types.FieldKindSubForm:
 			child, err := f.GetSubFormForField(field)
 			if err != nil {
@@ -706,6 +708,9 @@ func getFieldType(field *types.FieldDefinition) (types.FieldKind, error) {
 	}
 	if field.FieldType.SingleSelect != nil {
 		return types.FieldKindSingleSelect, nil
+	}
+	if field.FieldType.MultiSelect != nil {
+		return types.FieldKindMultiSelect, nil
 	}
 	return types.FieldKindUnknown, fmt.Errorf("could not determine field type")
 }

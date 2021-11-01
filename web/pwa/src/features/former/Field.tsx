@@ -1,5 +1,5 @@
 import {FieldKind} from "../../types/types";
-import React, {FC, Fragment} from "react";
+import React, {FC, Fragment, useEffect} from "react";
 import DatabasePickerContainer from "../../components/DatabasePicker";
 import FormPickerContainer from "../../components/FormPicker";
 
@@ -7,7 +7,7 @@ type FormerFieldProps = {
     isSelected: boolean
     selectField: () => void
     fieldType: FieldKind
-    fieldOptions?: string[]
+    fieldOptions: string[]
     setFieldOption: (i: number, value: string) => void
     addOption: () => void
     removeOption: (index: number) => void
@@ -58,7 +58,7 @@ export const FormerField: FC<FormerFieldProps> = props => {
         return <div
             onClick={() => selectField()}
             style={{cursor: "pointer"}}
-            className={"card bg-dark text-light border-light mb-2"}>
+            className={"card border-light mb-2"}>
             <div className={"card-body p-3"}>
                 <div className={"d-flex flex-row"}>
                     <span className={"flex-grow-1"}>{fieldName}</span>
@@ -98,7 +98,7 @@ export const FormerField: FC<FormerFieldProps> = props => {
 
                     {/* Options */}
 
-                    {fieldType === "singleSelect" &&
+                    {(fieldType === "singleSelect" || fieldType === "multiSelect") &&
                     (
                         <div className={"form-group mb-2"}>
                             <div className="d-flex justify-content-between align-items-center mb-2">
@@ -107,13 +107,17 @@ export const FormerField: FC<FormerFieldProps> = props => {
                                         onClick={() => addOption()}>Add option
                                 </button>
                             </div>
-                            {fieldOptions?.map((opt, i) => (
+                            {fieldOptions.map((opt, i) => (
                                 <div key={i} className="d-flex mb-2">
                                     <input className="form-control me-3"
                                            id={`fieldOption-${i}`}
                                            type={"text"}
                                            value={opt ? opt : ""}
-                                           onChange={event => setFieldOption(i, event.target.value)}/>
+                                           onChange={event => setFieldOption(i, event.target.value)}
+                                           onKeyDown={event => {
+                                               if (event.key === "Enter") addOption()
+                                           }}
+                                    />
                                     <button type="button" className="btn btn-outline-danger"
                                             onClick={() => removeOption(i)}><i className="bi bi-x"/>
                                     </button>

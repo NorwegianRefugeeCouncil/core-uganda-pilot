@@ -33,13 +33,13 @@ export const Organization: FC = props => {
                         to={`${match.url}/identityproviders`}>Identity Providers</Link>
                 </li>
             </ul>
-            <div className={"flex-grow-1 bg-dark text-white"}>
+            <div className={"flex-grow-1 "}>
 
                 <h6 className={"border-bottom w-100 p-3"}>
                     <code className={"fw-bold"}>{organization.key}</code> {organization.name}
                 </h6>
 
-                <div className={"d-flex flex-column flex-grow-1 bg-dark p-3"}>
+                <div className={"d-flex flex-column flex-grow-1 p-3"}>
                     <Switch>
                         <Route exact path={`${match.url}/identityproviders/new`}>
                             <IdentityProviderEditorContainer organization={organization}/>

@@ -15,6 +15,7 @@ export enum FieldKind {
     Date = "date",
     Quantity = "quantity",
     SingleSelect = "singleSelect",
+    MultiSelect = "multiSelect",
 }
 
 export class FieldType {
@@ -25,6 +26,7 @@ export class FieldType {
     public date?: FieldTypeDate
     public quantity?: FieldTypeQuantity
     public singleSelect?: FieldTypeSingleSelect
+    public multiSelect?: FieldTypeMultiSelect
 }
 
 export class FieldTypeText {
@@ -41,6 +43,8 @@ export class FieldTypeQuantity {
 
 export class FieldTypeSingleSelect {
 }
+
+export class FieldTypeMultiSelect {}
 
 export class FieldTypeReference {
     public databaseId: string = ""

@@ -8,7 +8,7 @@ export type FieldTypePickerProps = {
 
 export const FieldTypePicker: FC<FieldTypePickerProps> = props => {
     const {onSubmit, onCancel} = props
-    return <div className={"card bg-dark text-light border-secondary"}>
+    return <div className={"card border-secondary"}>
         <div className={"card-body bg-primary"}>
             <div className={"d-flex flex-wrap"}>
                 <button
@@ -44,6 +44,11 @@ export const FieldTypePicker: FC<FieldTypePickerProps> = props => {
                     className={"btn btn-primary m-2 border-light"}
                     onClick={() => onSubmit(FieldKind.SingleSelect)}>
                     Single Select
+                </button>
+                <button
+                    className={"btn btn-primary m-2 border-light"}
+                    onClick={() => onSubmit(FieldKind.MultiSelect)}>
+                    Multi Select
                 </button>
             </div>
         </div>

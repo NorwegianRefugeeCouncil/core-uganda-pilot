@@ -131,7 +131,7 @@ export const Former: FC<FormerProps> = props => {
 
 
     if (selectedField) {
-        return <div className={"flex-grow-1 bg-dark text-light overflow-scroll"}>
+        return <div className={"flex-grow-1 overflow-scroll"}>
             <div className={"container-fluid mt-4"}>
                 <div className={"row"}>
                     <div className={"col-12 col-md-8 offset-md-1"}>
@@ -157,7 +157,7 @@ export const Former: FC<FormerProps> = props => {
     }
 
     return (
-        <div className={"h-100 w-100 bg-dark text-light flex-grow-1 overflow-scroll"}>
+        <div className={"h-100 w-100 flex-grow-1 overflow-scroll"}>
             <div className={"container mt-4"}>
                 <div className={"row"}>
                     <div className={"col-8 offset-2"}>
