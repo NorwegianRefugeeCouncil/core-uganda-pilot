@@ -31,16 +31,22 @@ export class IdentityProvider {
 
 export type IdentityProviderList = { items: IdentityProvider[] }
 
+export type TokenEndpointAuthMethod = "client_secret_post" | "client_secret_basic" | "private_key_jwt" | "none"
+
+export type ResponseType = "code" | "token" | "id_token"
+
+export type GrantType = "authorization_code" | "refresh_token" | "client_credentials" | "implicit"
+
 export class OAuth2Client {
     public id: string = ""
     public clientName: string = ""
     public uri: string = ""
-    public grantTypes: string[] = []
-    public responseTypes: string[] = []
+    public grantTypes: GrantType[] = ["authorization_code"]
+    public responseTypes: ResponseType[] = ["code"]
     public scope: string = ""
     public redirectUris: string[] = []
     public allowedCorsOrigins: string[] = []
-    public tokenEndpointAuthMethod: string = ""
+    public tokenEndpointAuthMethod: TokenEndpointAuthMethod = "client_secret_basic"
 }
 
 export type OAuth2ClientList = {

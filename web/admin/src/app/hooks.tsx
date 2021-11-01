@@ -1,11 +1,11 @@
-import {useCallback, useContext, useEffect, useMemo, useState} from "react";
+import {Fragment, useCallback, useContext, useEffect, useMemo, useState} from "react";
 import {AuthContext} from "oidc-react";
 import {client, IdentityProvider, Organization} from "../client/client";
 import {AuthContextProps} from "oidc-react/build/src/AuthContextInterface";
 import {useParams} from "react-router-dom";
-import {OrganizationRoute} from "../components/organization/OrganizationPortal";
+import {OrganizationRoute} from "../components/organizations/OrganizationPortal";
 import classNames from "classnames";
-import {UseFormReturn} from "react-hook-form";
+import {Path, UseFormReturn} from "react-hook-form";
 
 export function useAuth(): AuthContextProps | undefined {
     return useContext(AuthContext)
@@ -60,11 +60,14 @@ export function useFormValidation<T extends object = { [key: string]: any }>(isN
 
     const {formState: {dirtyFields, errors, isSubmitted, touchedFields}} = form
 
-    const fieldClasses = useCallback((field: keyof T) => {
+    console.log(isNew, touchedFields)
+
+    const fieldClasses = useCallback((field: Path<T>) => {
         let cls = classNames("form-control form-control-darkula")
-        const touched = touchedFields.hasOwnProperty(field)
-        const dirty = dirtyFields.hasOwnProperty(field)
-        const hasError = errors.hasOwnProperty(field)
+        const touched = (touchedFields as any)[field]
+        const dirty = (dirtyFields as any)[field]
+        const hasError = !!(errors as any)[field]
+        console.log(errors)
         if (isSubmitted || (isNew && touched) || (isNew && dirty)) {
             if (hasError) {
                 return classNames(cls, "is-invalid")
@@ -74,16 +77,17 @@ export function useFormValidation<T extends object = { [key: string]: any }>(isN
     }, [dirtyFields, errors, isNew, isSubmitted, touchedFields])
 
     const fieldErrors = useCallback((field: keyof T) => {
-        const touched = touchedFields.hasOwnProperty(field)
-        const dirty = dirtyFields.hasOwnProperty(field)
-        const hasError = errors.hasOwnProperty(field)
+        const touched = (touchedFields as any)[field]
+        const dirty = (dirtyFields as any)[field]
+        const hasError = (errors as any)[field]
         const err = (errors as any)[field]
         return hasError && (isSubmitted || (isNew && touched) || (isNew && dirty)) &&
             <div className={"invalid-feedback"}>
-                {err?.type === "required" && <span>This field is required</span>}
-                {err?.type === "pattern" && <span>Invalid value</span>}
+                {err?.type === "required" ? <span>This field is required</span> : <Fragment/>}
+                {err?.type === "pattern" ? <span>Invalid value</span> : <Fragment/>}
             </div>
-    }, [touchedFields, dirtyFields, errors, isNew])
+    }, [touchedFields, dirtyFields, errors, isNew, isSubmitted])
+
 
     return {fieldErrors, fieldClasses}
 

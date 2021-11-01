@@ -12,20 +12,16 @@ import {SQLContextProvider} from "./app/db";
 log.setDefaultLevel(log.levels.TRACE)
 
 const oidcConfig = {
-    onSignIn: () => {
-        // Redirect?
-    },
     authority: 'http://localhost:4444',
     clientId: '93799402-a173-43ad-b003-64cbacc0dfe5',
     redirectUri: 'http://localhost:3000'
-
 };
 
 ReactDOM.render(
     <React.StrictMode>
         <AuthProvider
             scope={"openid profile email"}
-            autoSignIn={true}
+            autoSignIn={false}
             {...oidcConfig} >
             <Provider store={store}>
                 <SQLContextProvider>

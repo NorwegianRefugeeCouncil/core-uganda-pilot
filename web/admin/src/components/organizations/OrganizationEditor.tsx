@@ -13,7 +13,7 @@ export type FormData = {
 }
 
 export type RouteParams = {
-    organizationId: string
+    organizationId?: string
 }
 
 export const OrganizationEditor: FC<OrganizationEditorProps> = props => {
@@ -38,7 +38,7 @@ export const OrganizationEditor: FC<OrganizationEditorProps> = props => {
         if (!setValue) {
             return
         }
-        if (params.organizationId === "add") {
+        if (!params.organizationId) {
             setId(undefined)
             setIsNew(true)
         } else if (params.organizationId) {

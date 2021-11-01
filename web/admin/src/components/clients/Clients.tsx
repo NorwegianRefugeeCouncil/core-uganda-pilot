@@ -2,6 +2,7 @@ import {FC, useEffect, useState} from "react";
 import {SectionTitle} from "../sectiontitle/SectionTitle";
 import {useApiClient} from "../../app/hooks";
 import {OAuth2Client} from "../../client/client";
+import {Link} from "react-router-dom";
 
 export const Clients: FC = props => {
 
@@ -25,7 +26,7 @@ export const Clients: FC = props => {
                     <div className={"card card-darkula"}>
                         <div className={"card-body"}>
                             <SectionTitle title={"OAuth2 Clients"}>
-                                <button className={"btn btn-sm btn-success"}>Add OAuth2 Client</button>
+                                <Link to={"/clients/add"} className={"btn btn-sm btn-success"}>Add OAuth2 Client</Link>
                             </SectionTitle>
                             <div className={"list-group list-group-darkula"}>
                                 {clients.length === 0 && <div className={"list-group-item"}>No Clients</div>}
