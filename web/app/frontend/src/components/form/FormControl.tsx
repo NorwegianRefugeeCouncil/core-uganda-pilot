@@ -1,10 +1,12 @@
-import {View, ViewStyle, Text} from "react-native";
+import {Text, View, ViewStyle} from "react-native";
 import React from "react";
 import TextInput from "./TextInput";
 import Select from "./Select";
 import {Control, Controller} from "react-hook-form";
 import {FieldDefinition, FieldKind} from "core-js-api-client/lib/types/types";
 import {getFieldKind} from "core-js-api-client/lib/client";
+import ReferenceInput from "./ReferenceInput";
+import DateInput from "./DateInput";
 // import {FieldKind} from "../../../../client/src/types/types";
 
 // TODO: move & clean up types
@@ -17,7 +19,9 @@ export type InputProps = {
     error?: any,
     invalid?: boolean,
     isTouched?: boolean,
-    isDirty?: boolean
+    isDirty?: boolean,
+    isMultiple?: boolean,
+    isQuantity?: boolean
 };
 
 type FormControlProps = {
@@ -77,39 +81,38 @@ const FormControl: React.FC<FormControlProps> = (
                         case FieldKind.SubForm:
                             console.log('subform', fieldDefinition)
                             return <Text>sdf</Text>
-                                // <TextInput
-                                //     formControl={formControl}
-                                //     style={style}
-                                //     value={value}
-                                //     onBlur={onBlur}
-                                //     onChange={onChange}
-                                //     {...fieldState}
-                                // />
+                        // <TextInput
+                        //     formControl={formControl}
+                        //     style={style}
+                        //     value={value}
+                        //     onBlur={onBlur}
+                        //     onChange={onChange}
+                        //     {...fieldState}
+                        // />
 
                         case FieldKind.Date:
-                            console.log('date', fieldDefinition)
+                            console.log('date', value, fieldDefinition)
                             return <Text>sdf</Text>
-                                // <Select
-                                //     fieldDefinition={fieldDefinition}
-                                //     style={style}
-                                //     value={value}
-                                //     onBlur={onBlur}
-                                //     onChange={onChange}
-                                // />
+                        // <Select
+                        //     fieldDefinition={fieldDefinition}
+                        //     style={style}
+                        //     value={value}
+                        //     onBlur={onBlur}
+                        //     onChange={onChange}
+                        // />
 
                         case FieldKind.Reference:
-                            console.log('reference', fieldDefinition)
-                            return <Text>sdf</Text>
-                                // <Select
-                                //     fieldDefinition={fieldDefinition}
-                                //     style={style}
-                                //     value={value}
-                                //     onBlur={onBlur}
-                                //     onChange={onChange}
-                                // />
-
+                            // console.log('reference', fieldDefinition)
+                            return (
+                                <ReferenceInput
+                                    fieldDefinition={fieldDefinition}
+                                    style={style}
+                                    value={value}
+                                    onBlur={onBlur}
+                                    onChange={onChange}
+                                />
+                            )
                         case FieldKind.Quantity:
-                            console.log('Quantity', fieldDefinition)
                             return (
                                 <TextInput
                                     fieldDefinition={fieldDefinition}
@@ -117,11 +120,11 @@ const FormControl: React.FC<FormControlProps> = (
                                     value={value}
                                     onBlur={onBlur}
                                     onChange={onChange}
+                                    isQuantity={true}
                                     {...fieldState}
                                 />
                             )
                         case FieldKind.MultilineText:
-                            console.log('MultilineText', fieldDefinition)
                             return (
                                 <TextInput
                                     fieldDefinition={fieldDefinition}
@@ -129,6 +132,7 @@ const FormControl: React.FC<FormControlProps> = (
                                     value={value}
                                     onBlur={onBlur}
                                     onChange={onChange}
+                                    isMultiple={true}
                                     {...fieldState}
                                 />
                             )

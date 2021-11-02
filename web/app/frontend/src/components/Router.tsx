@@ -4,25 +4,26 @@ import React from 'react';
 import NavigationBar from './NavigationBar';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import IndividualsListScreen from './screens/IndividualsListScreen';
-import HomeScreen from './screens/HomeScreen';
-import IndividualScreen from './screens/IndividualScreen';
+import FormsScreen from './screens/FormsScreen';
 import routes from '../constants/routes';
-import CasesScreen from './screens/CasesScreen';
 import {NavigationTheme} from '../constants/theme';
 import host from "../constants/host";
+import DesignSystemDemoScreen from "./screens/DesignSystemDemoScreen";
+import RecordsScreen from "./screens/RecordsScreen";
+import AddRecordScreen from "./screens/AddRecordScreen";
+import ViewRecordScreen from "./screens/ViewRecordScreen";
 
 export default function Router() {
     const Stack = createStackNavigator();
-console.log('HOST', host)
+
     const linkingConfig = {
         prefixes: [host],
         config: {
             screens: {
-                Individual: routes.individual.name,
-                Individuals: routes.individuals.name,
-                Home: routes.home.name,
-                Cases: routes.cases.name
+                Forms: routes.forms.name,
+                Records: routes.records.name,
+                Record: routes.addRecord.name,
+                DesignSystem: routes.designSystem.name
             }
         }
     };
@@ -30,40 +31,45 @@ console.log('HOST', host)
     return (
         <View style={layout.container}>
             <NavigationContainer theme={NavigationTheme} linking={linkingConfig}>
-                <Stack.Navigator initialRouteName={routes.individuals.name}>
+                <Stack.Navigator initialRouteName={routes.forms.name}>
                     <Stack.Group
                         screenOptions={{
                             header: (props) => <NavigationBar {...props} />
                         }}
                     >
                         <Stack.Screen
-                            name={routes.home.name}
-                            component={HomeScreen}
+                            name={routes.forms.name}
+                            component={FormsScreen}
                             options={{
-                                title: routes.home.title
+                                title: routes.forms.title
                             }}
                         />
                         <Stack.Screen
-                            name={routes.individuals.name}
-                            component={IndividualsListScreen}
+                            name={routes.records.name}
+                            component={RecordsScreen}
                             options={{
-                                title: routes.individuals.title
+                                title: routes.records.title
                             }}
                         />
                         <Stack.Screen
-                            name={routes.cases.name}
-                            component={CasesScreen}
+                            name={routes.addRecord.name}
+                            component={AddRecordScreen}
                             options={{
-                                title: routes.cases.title
+                                title: routes.addRecord.title
                             }}
                         />
-                    </Stack.Group>
-                    <Stack.Group>
                         <Stack.Screen
-                            name={routes.individual.name}
-                            component={IndividualScreen}
+                            name={routes.viewRecord.name}
+                            component={ViewRecordScreen}
                             options={{
-                                title: routes.individual.title
+                                title: routes.viewRecord.title
+                            }}
+                        />
+                        <Stack.Screen
+                            name={routes.designSystem.name}
+                            component={DesignSystemDemoScreen}
+                            options={{
+                                title: routes.designSystem.title
                             }}
                         />
                     </Stack.Group>

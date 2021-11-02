@@ -1,0 +1,185 @@
+import React from 'react';
+import {FAB, Snackbar, Switch, Title} from 'react-native-paper';
+import {common, layout} from '../../styles';
+import routes from '../../constants/routes';
+import {Button, FlatList, Platform, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import useApiClient from "../../utils/clients";
+import {FormDefinition} from "core-js-api-client/lib/types/types";
+import {useForm} from "react-hook-form";
+import {getEncryptionKey} from "../../utils/getEncryptionKey";
+import * as SecureStore from "expo-secure-store";
+import CryptoJS from "react-native-crypto-js";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import _ from "lodash";
+import * as Network from "expo-network";
+import FormControl from "../form/FormControl";
+
+const AddRecordScreen: React.FC<any> = ({navigation, route}) => {
+    const isWeb = Platform.OS === 'web';
+    const {formId, recordId} = route.params;
+
+    const [record, setRecord] = React.useState<any[]>();
+    const [isLoading, setIsLoading] = React.useState(true);
+    const [form, setForm] = React.useState<FormDefinition>();
+    const [simulateOffline, setSimulateOffline] = React.useState(!isWeb); // TODO: for testing, remove
+    const [isConnected, setIsConnected] = React.useState(!simulateOffline);
+    const [showSnackbar, setShowSnackbar] = React.useState(!isConnected);
+    const [hasLocalData, setHasLocalData] = React.useState(false);
+
+    const client = useApiClient();
+    const {control, handleSubmit, formState, reset} = useForm();
+
+    React.useEffect(() => {
+        client.getForm({id: formId})
+            .then((data) => {
+                setRecord(data.response?.fields)
+                setForm(data.response)
+                setIsLoading(false)
+            })
+    }, []);
+
+    const onSubmitOffline = async (data: any) => {
+        const key = await getEncryptionKey();
+
+        console.log('submit offline', data)
+        SecureStore.setItemAsync(recordId, key)
+            .then(async () => {
+                const encryptedData = await CryptoJS.encrypt('AES', key, JSON.stringify(data));
+                return AsyncStorage.setItem(recordId, encryptedData.toString(), (error) => {
+                    if (error) {
+                        setHasLocalData(false)
+                    }
+                })
+            })
+            .then(() => {
+                setHasLocalData(true)
+            })
+            .catch(() => {
+                setHasLocalData(false)
+            });
+
+    }
+    const onSubmit = (data: any) => {
+        console.log('submit', data);
+
+        if (isConnected || isWeb) {
+            client.createRecord(data)
+        } else {
+            onSubmitOffline(data);
+        }
+    };
+
+    // check for locally stored data on mobile device
+    React.useEffect(() => {
+        if (!isWeb) {
+            SecureStore.getItemAsync(recordId)
+                .then(async (key) => {
+                    if (key == null) {
+                        return;
+                    }
+
+                    const data = await AsyncStorage.getItem(recordId);
+                    if (data == null) {
+                        return;
+                    }
+                    const bytes = CryptoJS.decrypt('AES', key, data);
+                    const decryptedData = JSON.parse(bytes.toString());
+
+                    setHasLocalData(true)
+                    const newIndividual: any = {
+                        id: recordId,
+                        partyTypeIds: decryptedData?.partyTypeIds || [],
+                        attributes: decryptedData?.attributes
+                    };
+                    reset(newIndividual);
+                    // TODO: delete data, once extracted to save space. or only after online submit?
+                })
+        }
+    }, [isWeb, recordId])
+
+    // react to network changes
+    React.useEffect(() => {
+        Network.getNetworkStateAsync()
+            .then((networkState) => {
+                // TODO: uncomment, use real network state
+                // setIsConnected(networkState.type != NetworkStateType.NONE); // NONE
+            })
+            .catch(() => setIsLoading(true))
+    }, [simulateOffline])
+
+    return (
+        <View style={[layout.container, layout.body, common.darkBackground]}>
+            {/* simulate network changes, for testing */}
+            {!isWeb && (
+                <View style={{display: "flex", flexDirection: "row"}}>
+                    <Switch
+                        value={simulateOffline}
+                        onValueChange={() => {
+                            setSimulateOffline(!simulateOffline)
+                            setIsConnected(simulateOffline)
+                            setShowSnackbar(!simulateOffline)
+                        }}
+                    />
+                    <Text> simulate being offline </Text>
+                </View>
+            )}
+
+            {/* upload data collected offline */}
+            {hasLocalData && (
+                <View style={{display: "flex", flexDirection: "column"}}>
+                    <Text>
+                        There is locally stored data for this individual.
+                    </Text>
+                </View>
+            )}
+            {hasLocalData && isConnected && (
+                <View style={{display: "flex", flexDirection: "column"}}>
+                    <Text>
+                        Do you want to upload it?
+                    </Text>
+                    <Button
+                        title="Submit local data"
+                        onPress={handleSubmit(onSubmit)}
+                    />
+                </View>
+            )}
+            <ScrollView>
+                {!isLoading && (
+                    <View>
+                        {form?.fields.map((field) => {
+                            console.log(field)
+                            return (
+                                <FormControl
+                                    key={field.code}
+                                    fieldDefinition={field}
+                                    style={{width: '100%'}}
+                                    // value={''} // take value from record
+                                    control={control}
+                                    name={field.id}
+                                    errors={formState.errors}
+                                />
+                            )
+                        })}
+                        <Button
+                            title="Submit"
+                            onPress={handleSubmit(onSubmit)}
+                        />
+
+                    </View>
+                )}
+            </ScrollView>
+            <Snackbar
+                visible={showSnackbar}
+                onDismiss={() => setShowSnackbar(false)}
+                action={{
+                    label: 'Got it',
+                    onPress: () => setShowSnackbar(false)
+                }}
+            >
+                No internet connection. Submitted data will be stored locally.
+            </Snackbar>
+        </View>
+    );
+};
+
+export default AddRecordScreen;

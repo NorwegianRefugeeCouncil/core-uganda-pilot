@@ -14,21 +14,17 @@ const TextInput: React.FC<InputProps> = (
         error,
         invalid,
         isTouched,
-        isDirty
+        isDirty,
+        isMultiple,
+        isQuantity
     }) => {
-
-    // console.log(isDirty, isTouched, error)
 
     return (
         <View style={style}>
-            {fieldDefinition.label && (
-                <Text theme={darkTheme}>
-                    {fieldDefinition.label[0].value}
-                </Text>
-            )}
-            {fieldDefinition.description && (
+            {fieldDefinition.name && <Text theme={darkTheme}>{fieldDefinition.name}</Text>}
+            {fieldDefinition.description &&(
                 <Text theme={darkTheme} style={{fontSize: 10}}>
-                    {fieldDefinition.description[0].value}
+                    {fieldDefinition.description}
                 </Text>
             )}
             <TextInputRNP
@@ -36,6 +32,8 @@ const TextInput: React.FC<InputProps> = (
                 value={value}
                 onBlur={onBlur}
                 error={isTouched && isDirty && error}
+                multiline={isMultiple}
+                keyboardType={isQuantity ? "numeric" : "default"}
             />
             {isTouched && isDirty && error && (
                 <Text>

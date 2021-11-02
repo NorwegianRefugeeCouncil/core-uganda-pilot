@@ -4,21 +4,25 @@ type Route = {
 }
 
 const routes: { [key: string]: Route; } = {
-  home: {
-    title: 'Home',
-    name: 'home',
+  designSystem: {
+    title: 'Design System',
+    name: 'designSystem',
   },
-  individuals: {
-    title: 'Individuals List',
-    name: 'individuals'
+  forms: {
+    title: 'Forms',
+    name: 'forms',
   },
-  individual: {
-    title: 'Edit Individual',
-    name: 'individual',
+  addRecord: {
+    title: 'Add Record',
+    name: 'addRecord'
   },
-  cases: {
-    title: 'Cases',
-    name: 'cases',
+  viewRecord: {
+    title: 'View Record',
+    name: 'viewRecord'
+  },
+  records: {
+    title: 'Records',
+    name: 'records'
   }
 };
 

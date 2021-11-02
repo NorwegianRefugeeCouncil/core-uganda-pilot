@@ -132,7 +132,7 @@ function clientResponse<TRequest, TBody>(r: AxiosResponse<TBody>, request: TRequ
 
 export class client implements Client {
     defaultAddress = "http://localhost:9000"
-    address;
+    address = this.defaultAddress;
 
     constructor(address?: string) {
         this.address = address || this.defaultAddress;
@@ -146,7 +146,6 @@ export class client implements Client {
         }).then(value => {
             return clientResponse<TRequest, TBody>(value, request, expectStatusCode);
         }).catch((err) => {
-            // console.log('ERROR', JSON.stringify(err))
             return {
                 request: request,
                 response: undefined,
@@ -184,7 +183,6 @@ export class client implements Client {
     }
 
     listForms(request: {} | undefined): Promise<FormListResponse> {
-        console.log('GET FORMS', this.address)
         return this.do(request, `${this.address}/forms`, "get", undefined, 200)
     }
 
