@@ -82,6 +82,7 @@ export const MonthFieldEditor: FC<FieldEditorProps> = props => {
             type={"month"}
             id={field.id} value={value ? value : ""}
             pattern={"[0-9]{4}-[0-9]{2}"}
+            placeholder={"YYYY-MM"}
             onChange={event => setValue(event.target.value)}/>
         {mapFieldDescription(field)}
     </div>
