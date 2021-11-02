@@ -3,8 +3,8 @@ services:
   redis:
     image: 'bitnami/redis:latest'
     container_name: "core-redis"
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
+    env_file:
+      - redis.env
     ports:
       - "6379:6379"
     restart: on-failure

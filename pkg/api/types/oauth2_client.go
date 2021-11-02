@@ -3,6 +3,7 @@ package types
 type Oauth2Client struct {
 	ID                      string   `json:"id"`
 	ClientName              string   `json:"clientName"`
+	ClientSecret            string   `json:"clientSecret"`
 	URI                     string   `json:"uri"`
 	GrantTypes              []string `json:"grantTypes"`
 	ResponseTypes           []string `json:"responseTypes"`

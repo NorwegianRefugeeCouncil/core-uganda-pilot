@@ -5,8 +5,10 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"github.com/boj/redistore"
 	restfulspec "github.com/emicklei/go-restful-openapi/v2"
 	"github.com/emicklei/go-restful/v3"
+	"github.com/gomodule/redigo/redis"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/sessions"
 	"github.com/nrc-no/core/pkg/server/options"
@@ -16,6 +18,7 @@ import (
 	"net/http"
 	"os"
 	"reflect"
+	"time"
 )
 
 type Server struct {
@@ -25,15 +28,16 @@ type Server struct {
 	Container    *restful.Container
 	handler      http.Handler
 	sessionStore sessions.Store
-	logger       *logrus.Logger
+	logger       logrus.FieldLogger
 }
 
 type Middleware func(next http.Handler) http.Handler
 
 func NewGenericServer(options options.ServerOptions, name string) (*Server, error) {
 
-	logger := logrus.StandardLogger()
-	logger.SetFormatter(&logrus.JSONFormatter{})
+	stdLogger := logrus.StandardLogger()
+	stdLogger.SetFormatter(&logrus.JSONFormatter{})
+	logger := stdLogger.WithField("server_name", name)
 
 	srv := &Server{
 		name:   name,
@@ -60,7 +64,51 @@ func NewGenericServer(options options.ServerOptions, name string) (*Server, erro
 		keyPairs = append(keyPairs, blockBytes[0:32])
 	}
 
-	srv.sessionStore = sessions.NewCookieStore(keyPairs...)
+	if options.Cache.Redis != nil {
+		pool := &redis.Pool{
+			MaxActive:   500,
+			MaxIdle:     500,
+			IdleTimeout: 5 * time.Second,
+			TestOnBorrow: func(c redis.Conn, t time.Time) error {
+				_, err := c.Do("PING")
+				if err != nil {
+					logger.WithError(err).Errorf("failed to get connection")
+				}
+				return err
+			},
+			Dial: func() (redis.Conn, error) {
+				var redisOptions []redis.DialOption
+				if len(options.Cache.Redis.Password) > 0 {
+					redisOptions = append(redisOptions, redis.DialPassword(options.Cache.Redis.Password))
+				}
+				return redis.Dial("tcp", options.Cache.Redis.Address, redisOptions...)
+			},
+		}
+		conn := pool.Get()
+		defer conn.Close()
+
+		logger.Infof("testing redis connection")
+		_, err := conn.Do("PING")
+		if err != nil {
+			logger.WithError(err).Errorf("failed to test redis")
+			return nil, err
+		}
+
+		redisStore, err := redistore.NewRediStoreWithPool(pool, keyPairs...)
+		if err != nil {
+			logger.WithError(err).Errorf("failed to create redis store")
+			panic(err)
+
+		}
+		if options.Cache.Redis.MaxLength != 0 {
+			redisStore.SetMaxLength(options.Cache.Redis.MaxLength)
+		}
+
+		srv.sessionStore = redisStore
+
+	} else {
+		srv.sessionStore = sessions.NewCookieStore(keyPairs...)
+	}
 
 	address := fmt.Sprintf("%s:%d", options.Host, options.Port)
 	srv.address = address
@@ -119,7 +167,7 @@ func (g Server) SessionStore() sessions.Store {
 	return g.sessionStore
 }
 
-func (g Server) Logger() *logrus.Logger {
+func (g Server) Logger() logrus.FieldLogger {
 	return g.logger
 }
 
@@ -134,11 +182,11 @@ func (g Server) Start(ctx context.Context) {
 	}
 	g.Container.Add(restfulspec.NewOpenAPIService(config))
 
-	logrus.
-		WithField("server", g.name).
+	g.logger = g.logger.
 		WithField("address", g.listener.Addr().String()).
-		WithField("tls", false).
-		Info("starting server")
+		WithField("tls", false)
+
+	g.logger.Info("starting server")
 
 	go func() {
 		if err := http.Serve(g.listener, g.handler); err != nil {

@@ -60,3 +60,6 @@ Example **Organization** <-> **Organization**
 
 ## User Login Sequence
 ![login sequence](images/login_sequence.jpg)
+
+## User Login States
+![login sequence](images/login_state.png)

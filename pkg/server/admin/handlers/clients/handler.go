@@ -23,7 +23,7 @@ func NewHandler() (*Handler, error) {
 	hydraAdmin := client.NewHTTPClientWithConfig(nil, &client.TransportConfig{Schemes: []string{adminURL.Scheme}, Host: adminURL.Host, BasePath: adminURL.Path}).Admin
 	h.hydraAdmin = hydraAdmin
 
-	ws := new(restful.WebService).Path("/admin/clients/")
+	ws := new(restful.WebService).Path("/admin/clients")
 
 	ws.Route(ws.PUT("/{clientId}").To(restfulUpdate(hydraAdmin)).
 		Doc(`updates oauth2 client`).
@@ -34,7 +34,7 @@ func NewHandler() (*Handler, error) {
 		Returns(http.StatusOK, "OK", &types.Oauth2Client{}),
 	)
 
-	ws.Route(ws.POST("/").To(restfulCreate(hydraAdmin)).
+	ws.Route(ws.POST("").To(restfulCreate(hydraAdmin)).
 		Doc(`creates oauth2 client`).
 		Operation("createClient").
 		Reads(&types.Oauth2Client{}).
@@ -57,7 +57,7 @@ func NewHandler() (*Handler, error) {
 		Returns(http.StatusOK, "OK", nil),
 	)
 
-	ws.Route(ws.GET("/").To(restfulList(hydraAdmin)).
+	ws.Route(ws.GET("").To(restfulList(hydraAdmin)).
 		Doc(`gets oauth2 clients`).
 		Operation("listClients").
 		Writes(&types.Oauth2ClientList{}).

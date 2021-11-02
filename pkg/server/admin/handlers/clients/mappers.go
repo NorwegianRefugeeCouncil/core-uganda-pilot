@@ -24,6 +24,7 @@ func mapFromHydraClient(client *models.OAuth2Client) *types.Oauth2Client {
 		ID:                      client.ClientID,
 		AllowedCorsOrigins:      client.AllowedCorsOrigins,
 		ClientName:              client.ClientName,
+		ClientSecret:            client.ClientSecret,
 		URI:                     client.ClientURI,
 		GrantTypes:              client.GrantTypes,
 		RedirectURIs:            client.RedirectUris,

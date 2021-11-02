@@ -7,8 +7,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 CORE_CONFIG_FILE="${SCRIPT_DIR}/../configs/config.custom.yaml"
 HYDRA_CONFIG_FILE="${SCRIPT_DIR}/../deployments/hydra.custom.yaml"
 POSTGRES_ENV_FILE="${SCRIPT_DIR}/../deployments/postgres.env"
+REDIS_ENV_FILE="${SCRIPT_DIR}/../deployments/redis.env"
 
-if [ ! -f "${CORE_CONFIG_FILE}" ] || [ ! -f "${POSTGRES_ENV_FILE}" ] || [ ! -f "${HYDRA_CONFIG_FILE}" ]; then
+if [ ! -f "${REDIS_ENV_FILE}"  ] || [ ! -f "${CORE_CONFIG_FILE}" ] || [ ! -f "${POSTGRES_ENV_FILE}" ] || [ ! -f "${HYDRA_CONFIG_FILE}" ]; then
 
   POSTGRES_USER=postgres
   POSTGRES_PASSWORD=$(openssl rand -hex 16)
@@ -18,6 +19,12 @@ if [ ! -f "${CORE_CONFIG_FILE}" ] || [ ! -f "${POSTGRES_ENV_FILE}" ] || [ ! -f "
   CORE_DB=core
   CORE_USERNAME=core
   CORE_PASSWORD=$(openssl rand -hex 16)
+  REDIS_PASSWORD=$(openssl rand -hex 16)
+
+  touch "${REDIS_ENV_FILE}"
+  cat <<EOF > "${REDIS_ENV_FILE}"
+REDIS_PASSWORD=${REDIS_PASSWORD}
+EOF
 
   touch "${HYDRA_CONFIG_FILE}"
   cat <<EOF > "${HYDRA_CONFIG_FILE}"
@@ -43,18 +50,27 @@ EOF
   cat <<EOF >"${CORE_CONFIG_FILE}"
 serve:
   admin:
+    cache:
+      redis:
+        password: ${REDIS_PASSWORD}
     secrets:
       hash:
       - $(openssl rand -hex 64)
       block:
       - $(openssl rand -hex 32)
   public:
+    cache:
+      redis:
+        password: ${REDIS_PASSWORD}
     secrets:
       hash:
       - $(openssl rand -hex 64)
       block:
       - $(openssl rand -hex 32)
   login:
+    cache:
+      redis:
+        password: ${REDIS_PASSWORD}
     secrets:
       hash:
       - $(openssl rand -hex 64)

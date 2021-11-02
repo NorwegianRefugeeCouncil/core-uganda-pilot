@@ -30,6 +30,7 @@ export const Clients: FC = props => {
                             </SectionTitle>
                             <div className={"list-group list-group-darkula"}>
                                 {clients.length === 0 && <div className={"list-group-item"}>No Clients</div>}
+                                {clients.map(c => <Link to={`/clients/${c.id}`} className={"list-group-item"}>{c.clientName}</Link>)}
                             </div>
                         </div>
                     </div>

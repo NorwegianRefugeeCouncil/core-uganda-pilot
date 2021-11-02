@@ -13,15 +13,18 @@ log.setDefaultLevel(log.levels.TRACE)
 
 const oidcConfig = {
     authority: 'http://localhost:4444',
-    clientId: '93799402-a173-43ad-b003-64cbacc0dfe5',
-    redirectUri: 'http://localhost:3000'
+    clientId: '68a07e2a-261d-4649-ae2c-5817fcb20f23',
+    redirectUri: 'http://localhost:3000',
+    silentRedirectUri: "http://localhost:3000"
 };
 
 ReactDOM.render(
     <React.StrictMode>
         <AuthProvider
             scope={"openid profile email"}
-            autoSignIn={false}
+            autoSignIn={true}
+            automaticSilentRenew={true}
+
             {...oidcConfig} >
             <Provider store={store}>
                 <SQLContextProvider>

@@ -40,6 +40,7 @@ export type GrantType = "authorization_code" | "refresh_token" | "client_credent
 export class OAuth2Client {
     public id: string = ""
     public clientName: string = ""
+    public clientSecret: string = ""
     public uri: string = ""
     public grantTypes: GrantType[] = ["authorization_code"]
     public responseTypes: ResponseType[] = ["code"]
@@ -86,6 +87,9 @@ export type OAuth2ClientUpdater = { updateOAuth2Client: DataOperation<OAuth2Clie
 export type OAuth2ClientCreateRequest = { object: Partial<OAuth2Client> }
 export type OAuth2ClientCreateResponse = Response<OAuth2ClientCreateRequest, OAuth2Client>
 export type OAuth2ClientCreator = { createOAuth2Client: DataOperation<OAuth2ClientCreateRequest, OAuth2ClientCreateResponse> }
+export type OAuth2ClientDeleteRequest = { id: string }
+export type OAuth2ClientDeleteResponse = Response<OAuth2ClientDeleteRequest, void>
+export type OAuth2ClientDeleter = { deleteOAuth2Client: DataOperation<OAuth2ClientDeleteRequest, OAuth2ClientDeleteResponse> }
 
 
 export interface Client
@@ -99,7 +103,8 @@ export interface Client
         OAuth2ClientGetter,
         OAuth2ClientLister,
         OAuth2ClientUpdater,
-        OAuth2ClientCreator {
+        OAuth2ClientCreator,
+        OAuth2ClientDeleter {
 }
 
 function errorResponse<TRequest, TBody>(request: TRequest, r: AxiosResponse<TBody>): Response<TRequest, TBody> {
@@ -184,6 +189,10 @@ export class client implements Client {
 
     createOAuth2Client(request: OAuth2ClientCreateRequest): Promise<OAuth2ClientCreateResponse> {
         return this.do(request, `${this.address}/clients`, "post", request.object, 200)
+    }
+
+    deleteOAuth2Client(request: OAuth2ClientDeleteRequest): Promise<OAuth2ClientDeleteResponse> {
+        return this.do(request, `${this.address}/clients/${request.id}`, "delete", undefined, 204)
     }
 
     getIdentityProvider(request: IdentityProviderGetRequest): Promise<IdentityProviderGetResponse> {

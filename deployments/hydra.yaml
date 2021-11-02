@@ -6,7 +6,7 @@ urls:
   self:
     public: http://localhost:4444
     issuer: http://localhost:4444
-  consent: http://localhost:9000/auth/consent
+  consent: http://localhost:9002/consent
   login: http://localhost:9002/login
   logout: http://localhost:9002/logout
 log:

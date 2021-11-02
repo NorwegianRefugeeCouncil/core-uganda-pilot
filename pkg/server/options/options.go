@@ -17,6 +17,21 @@ type SecretOptions struct {
 	Block []string `mapstructure:"block"`
 }
 
+type CacheOptions struct {
+	Cookie *CookieOptions `mapstructure:"cookie,omitempty"`
+	Redis  *RedisOptions  `mapstructure:"redis,omitempty"`
+}
+
+type CookieOptions struct {
+}
+
+type RedisOptions struct {
+	MaxIdleConnections int    `mapstructure:"max_idle_connections"`
+	Address            string `mapstructure:"address"`
+	Password           string `mapstructure:"password"`
+	MaxLength          int    `mapstructure:"max_length"`
+}
+
 type URLOptions struct {
 	Self string `mapstructure:"self"`
 }
@@ -35,6 +50,7 @@ type ServerOptions struct {
 	Secrets SecretOptions `mapstructure:"secrets"`
 	URLs    URLOptions    `mapstructure:"urls"`
 	Oidc    OIDCOptions   `mapstructure:"oidc"`
+	Cache   CacheOptions  `mapstructure:"cache"`
 }
 
 type ServeOptions struct {

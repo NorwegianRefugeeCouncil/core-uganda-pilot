@@ -31,9 +31,6 @@ const tplText = `
 	<h5 class="card-title">Login</h5>
 
 	<form method="post">
-
-	<input type="hidden" name="login_challenge" value="{{.LoginChallenge}}"/>
-
 	<div class="form-group mb-3">
 	<label class="form-label">Enter your email address</label>
 	<input class="form-control" name="email" type="text" placeholder="Email Address"/>
@@ -72,8 +69,43 @@ const tplText = `
 	<h5 class="card-title">{{.OrganizationName}}</h5>
 
 	{{ range $idp := .IdentityProviders}}
-		<a class="btn btn-primary mb-2 w-100" href="#">Login with {{ $idp.Name }}</a>
+		<form method="post" action="/login/oidc/{{ $idp.ID }}">
+		<button type="submit" class="btn btn-primary mb-2 w-100">Login with {{ $idp.Name }}</a>
+		</form>
 	{{end}}
+
+	{{ if .Error }}
+    <div class="text-danger my-2 fw-bold">{{.Error}}</p>
+	{{ end }}
+
+	</div>
+	</div>
+	</div>
+	</div>
+	</div>
+	</div>
+
+	</body>
+	</html>
+{{end}}
+
+{{define "challenge"}}
+	<html>
+	{{template "header"}}
+	<body class="bg-light">
+	<div class="d-flex flex-col vh-100 vw-100 align-items-center">
+	<div class="container">
+	<div class="row">
+	<div class="col">
+	<div class="card shadow mb-5">
+	<div class="card-body">
+
+	<h5 class="card-title">Client {{.ClientName}} would like to access your information</h5>
+
+	<form method="post">
+	<button type="submit" class="btn btn-success" formaction="/consent/approve" >Approve</button>
+	<button type="submit" class="btn btn-secondary" formaction="/consent/decline">Decline</button>
+	</form>
 
 	{{ if .Error }}
     <div class="text-danger my-2 fw-bold">{{.Error}}</p>

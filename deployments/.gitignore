@@ -1,3 +1,4 @@
 webapp.env
 hydra.custom.yaml
 postgres.env
+redis.env
