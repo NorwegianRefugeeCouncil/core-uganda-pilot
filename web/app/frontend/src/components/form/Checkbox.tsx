@@ -9,32 +9,32 @@ import _ from "lodash";
 // FIXME: reacts only on third click
 const CheckBox: React.FC<InputProps> = (
     {
-        formControl,
+        fieldDefinition,
         style,
         onChange
     }) => {
 
-    const [isChecked, setIsChecked] = React.useState(formControl.checkboxOptions.map((o) => {
-        if (formControl.value == null) {
+    const [isChecked, setIsChecked] = React.useState(fieldDefinition.checkboxOptions.map((o) => {
+        if (fieldDefinition.value == null) {
 
             return o.value == 'yes'
         } else {
 
             // console.log(formControl.value, o.value, _.find(formControl.value, o.value))
-            return !!_.find(formControl.value, (e) => {
+            return !!_.find(fieldDefinition.value, (e) => {
                 return e == o.value
             })
         }
     }))
-    console.log(formControl.checkboxOptions.length, isChecked.length)
+    console.log(fieldDefinition.checkboxOptions.length, isChecked.length)
     return (
         <View style={style}>
-            {formControl.label && (
+            {fieldDefinition.label && (
                 <Text>
-                    {formControl.label[0].value}
+                    {fieldDefinition.label[0].value}
                 </Text>
             )}
-            {formControl.checkboxOptions.map((option, i) => (
+            {fieldDefinition.checkboxOptions.map((option, i) => (
                 <View key={option.label[0].value}>
                     <View style={{
                         display: 'flex',

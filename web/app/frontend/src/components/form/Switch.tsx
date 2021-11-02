@@ -6,7 +6,7 @@ import {InputProps} from "./FormControl";
 
 const Switch: React.FC<InputProps> = (
     {
-        formControl,
+        fieldDefinition,
         style,
         value,
         onChange,
@@ -14,14 +14,14 @@ const Switch: React.FC<InputProps> = (
 
     return (
         <View style={style}>
-            {formControl.label &&(
+            {fieldDefinition.label &&(
                 <Text theme={darkTheme}>
-                    {formControl.label[0].value}
+                    {fieldDefinition.label[0].value}
                 </Text>
             )}
-            {formControl.description &&
+            {fieldDefinition.description &&
             <Text theme={darkTheme} style={{fontSize: 10}}>
-                {formControl.description[0].value}
+                {fieldDefinition.description[0].value}
             </Text>
             }
             <SwitchRNP

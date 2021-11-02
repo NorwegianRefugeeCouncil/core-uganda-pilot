@@ -2,20 +2,20 @@ import React from 'react';
 import {common, layout} from '../../styles';
 import {Button, Platform, ScrollView, Text, View} from 'react-native';
 import {useForm} from "react-hook-form";
-// import {Individual} from "../../../../client/src/types_old/modls.";
+// import {Individual} from "../../../../client/src/types/modls.";
 import {Subject} from 'rxjs';
 import useApiClient from "../../utils/clients";
-// import {PartyAttributeDefinition, PartyAttributeDefinitionList, PartyType} from "core-js-api-client/lib/types_old/models";
+// import {PartyAttributeDefinition, PartyAttributeDefinitionList, PartyType} from "core-js-api-client/lib/types/models";
 import _ from 'lodash';
 // import {createIndividual} from "../../services/individuals";
 import FormControl from "../form/FormControl";
 import * as SecureStore from 'expo-secure-store';
 import * as Network from 'expo-network';
 import {Snackbar, Switch} from 'react-native-paper';
-import {v4 as uuidv4} from 'uuid';
 import {getEncryptionKey} from "../../utils/getEncryptionKey";
 import CryptoJS from "react-native-crypto-js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {FormDefinition} from "core-js-api-client/lib/types/types";
 
 //
 // export interface FlatIndividual extends Omit<Individual, 'attributes'> {
@@ -24,12 +24,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const IndividualScreen: React.FC<any> = ({route}) => {
     const {id} = route.params;
+    console.log()
     const isWeb = Platform.OS === 'web';
 
     const [isLoading, setIsLoading] = React.useState(true);
     const [simulateOffline, setSimulateOffline] = React.useState(!isWeb); // TODO: for testing, remove
     const [attributes, setAttributes] = React.useState<any[]>([]);
     const [individual, setIndividual] = React.useState<any>();
+    const [form, setForm] = React.useState<FormDefinition>();
     const [partyTypes, setPartyTypes] = React.useState<any[]>();
     const [isConnected, setIsConnected] = React.useState(!simulateOffline);
     const [showSnackbar, setShowSnackbar] = React.useState(!isConnected);
@@ -130,7 +132,10 @@ const IndividualScreen: React.FC<any> = ({route}) => {
     // get data for form and individual
     React.useEffect(() => {
         // apiClient().listForms();
-        client.listForms({});
+        client.getForm({id})
+            .then((data) => {
+                setForm(data.response);
+            });
         // attributesSubject.pipe(iamClient.PartyAttributeDefinitions().List()).subscribe(
         //     (data: PartyAttributeDefinitionList) => {
         //         setAttributes(data.items)
@@ -175,13 +180,13 @@ const IndividualScreen: React.FC<any> = ({route}) => {
 
     // check if data has been received
     React.useEffect(() => {
-        if (individual || id == 'new') {
+        if (form || id == 'new') {
             setIsLoading(false);
         }
-    }, [individual])
+    }, [form])
 
     return (
-        <View>
+        <View style={[layout.container, layout.body, common.darkBackground]}>
             {/* simulate network changes, for testing */}
             {!isWeb && (
                 <View style={{display: "flex", flexDirection: "row"}}>
@@ -218,43 +223,58 @@ const IndividualScreen: React.FC<any> = ({route}) => {
             )}
             <ScrollView>
                 {!isLoading && (
-                    <View style={[layout.container, layout.body, common.darkBackground]}>
-                        {attributes.map((a) =>
-                            <FormControl
-                                key={a.id}
-                                formControl={a.formControl}
-                                style={{width: '100%'}}
-                                value={individual?.attributes[a.id] || ''}
-                                control={control}
-                                name={`attributes.${a.id}`}
-                                errors={formState.errors}
-                            />
-                        )}
+                    <View>
+                        {form?.fields.map((field) => {
+                            console.log(field)
+                            return (
+                                <FormControl
+                                    key={field.code}
+                                    fieldDefinition={field}
+                                    style={{width: '100%'}}
+                                    value={''} // take value from record
+                                    control={control}
+                                    name={field.id}
+                                    errors={formState.errors}
+                                />
+                            )
+                        })}
 
-                        <FormControl
-                            style={{width: '100%'}}
-                            control={control}
-                            name={`partyTypeIds`}
-                            errors={formState.errors}
-                            formControl={{
-                                label: [{value: 'party type', locale: 'en'}],
-                                description: [],
-                                placeholder: [],
-                                value: individual?.partyTypeIds || [],
-                                defaultValue: individual?.partyTypeIds || [],
-                                options: [],
-                                checkboxOptions: partyTypes?.map((p) => ({
-                                    label: [{value: p.name, locale: 'en'}],
-                                    value: p.id,
-                                    required: false
-                                })) || [],
-                                type: 'checkbox',
-                                name: 'partyTypeIds',
-                                multiple: true,
-                                readonly: false,
-                                validation: {required: true}
-                            }}
-                        />
+                        {/*        {attributes.map((a) =>*/}
+                        {/*            <FormControl*/}
+                        {/*                key={a.id}*/}
+                        {/*                fieldDefinition={a.formControl}*/}
+                        {/*                style={{width: '100%'}}*/}
+                        {/*                value={individual?.attributes[a.id] || ''}*/}
+                        {/*                control={control}*/}
+                        {/*                name={`attributes.${a.id}`}*/}
+                        {/*                errors={formState.errors}*/}
+                        {/*            />*/}
+                        {/*        )}*/}
+
+                        {/*        <FormControl*/}
+                        {/*            style={{width: '100%'}}*/}
+                        {/*            control={control}*/}
+                        {/*            name={`partyTypeIds`}*/}
+                        {/*            errors={formState.errors}*/}
+                        {/*            fieldDefinition={{*/}
+                        {/*                label: [{value: 'party type', locale: 'en'}],*/}
+                        {/*                description: [],*/}
+                        {/*                placeholder: [],*/}
+                        {/*                value: individual?.partyTypeIds || [],*/}
+                        {/*                defaultValue: individual?.partyTypeIds || [],*/}
+                        {/*                options: [],*/}
+                        {/*                checkboxOptions: partyTypes?.map((p) => ({*/}
+                        {/*                    label: [{value: p.name, locale: 'en'}],*/}
+                        {/*                    value: p.id,*/}
+                        {/*                    required: false*/}
+                        {/*                })) || [],*/}
+                        {/*                type: 'checkbox',*/}
+                        {/*                name: 'partyTypeIds',*/}
+                        {/*                multiple: true,*/}
+                        {/*                readonly: false,*/}
+                        {/*                validation: {required: true}*/}
+                        {/*            }}*/}
+                        {/*        />*/}
                         <Button
                             title="Submit"
                             onPress={handleSubmit(onSubmit)}

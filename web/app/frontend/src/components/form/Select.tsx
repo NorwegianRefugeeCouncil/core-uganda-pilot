@@ -7,7 +7,7 @@ import {Picker} from '@react-native-picker/picker';
 
 const Select: React.FC<InputProps> = (
     {
-        formControl,
+        fieldDefinition,
         style,
         value,
         onChange,
@@ -17,9 +17,12 @@ const Select: React.FC<InputProps> = (
 
     return (
         <View style={style}>
-            {formControl.label && <Text theme={darkTheme}>{formControl.label[0].value}</Text>}
-            {formControl.description &&
-            <Text theme={darkTheme} style={{fontSize: 10}}>{formControl.description[0].value}</Text>}
+            {fieldDefinition.name && <Text theme={darkTheme}>{fieldDefinition.name}</Text>}
+            {fieldDefinition.description &&(
+                <Text theme={darkTheme} style={{fontSize: 10}}>
+                    {fieldDefinition.description}
+                </Text>
+            )}
             <Picker
                 selectedValue={selectedValue}
                 style={{height: 50, width: 150}}
@@ -28,11 +31,11 @@ const Select: React.FC<InputProps> = (
                     onChange(itemValue)
                 }}
             >
-                {formControl.options.map((option) => (
+                {fieldDefinition.options?.map((option) => (
                     <Picker.Item
-                        key={option[0].value}
-                        label={option[0].value}
-                        value={option[0].value}
+                        key={option}
+                        label={option}
+                        value={option}
                     />
                 ))}
             </Picker>

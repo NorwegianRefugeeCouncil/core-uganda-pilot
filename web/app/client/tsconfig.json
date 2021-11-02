@@ -10,7 +10,7 @@
     ],
     "typeRoots": [
       "./node_modules/@types",
-      "./src/types_old"
+      "./src/types"
     ],
     "declaration": true,
     "outDir": "lib",

@@ -14,7 +14,7 @@ import host from "../constants/host";
 
 export default function Router() {
     const Stack = createStackNavigator();
-
+console.log('HOST', host)
     const linkingConfig = {
         prefixes: [host],
         config: {

@@ -6,10 +6,11 @@ import {FlatList, Image, TouchableOpacity, View, Text} from 'react-native';
 import pngIndividual from '../../../assets/png/symbol_individuals.png';
 import theme from '../../constants/theme';
 import iamClient from "../../utils/clients";
-// import {PartyAttributeDefinitionList} from "core-js-api-client/lib/types_old/models";
-// import {Individual} from "../../../../client/src/types_old/models";
+// import {PartyAttributeDefinitionList} from "core-js-api-client/lib/types/models";
+// import {Individual} from "../../../../client/src/types/models";
 import _ from "lodash";
 import {Subject} from "rxjs";
+import useApiClient from "../../utils/clients";
 
 type TestIndividual = {
     id: string
@@ -26,9 +27,22 @@ export const testIndividuals: TestIndividual[] = [
 
 const IndividualsListScreen: React.FC<any> = ({navigation}) => {
     const [individuals, setIndividuals] = React.useState<any[]>();
+    const [forms, setForms] = React.useState<any[]>();
     let individualsSubject = new Subject([]);
+    const client = useApiClient();
 
     React.useEffect(() => {
+        console.log(client)
+
+        client.listForms({})
+            .then((data)=>{
+                console.log('DATA',data)
+                setForms(data.response?.items)
+            })
+            .catch((e)=>{
+                console.log(e)
+            })
+
         // individualsSubject.pipe(iamClient.Individuals().List()).subscribe(
         //     (data: { items: Individual[] }) => {
         //         setIndividuals(data.items)
@@ -45,10 +59,10 @@ const IndividualsListScreen: React.FC<any> = ({navigation}) => {
 
     return (
         <View style={layout.body}>
-            <Title>Individuals</Title>
+            <Title>Forms</Title>
             <FlatList
                 style={{flex: 1, width: '100%'}}
-                data={individuals}
+                data={forms}
                 renderItem={({item, index, separators}) => (
                     <TouchableOpacity
                         key={index}
@@ -56,16 +70,37 @@ const IndividualsListScreen: React.FC<any> = ({navigation}) => {
                     >
                         <View style={{flexDirection: 'row', flex: 1}}>
                             <View style={{justifyContent: 'center', paddingRight: 12}}>
-                                <Image source={pngIndividual}
-                                       style={{tintColor: theme.colors.text, width: 20, height: 20}}/>
+                                <Text>{item.code}</Text>
+                                {/*<Image source={pngIndividual}*/}
+                                {/*       style={{tintColor: theme.colors.text, width: 20, height: 20}}/>*/}
                             </View>
                             <View style={{justifyContent: 'center'}}>
-                                <Text>{item.attributes['8514da51-aad5-4fb4-a797-8bcc0c969b27']}</Text>
+                                <Text>{item.name}</Text>
                             </View>
                         </View>
                     </TouchableOpacity>
                 )}
             />
+            {/*<FlatList*/}
+            {/*    style={{flex: 1, width: '100%'}}*/}
+            {/*    data={individuals}*/}
+            {/*    renderItem={({item, index, separators}) => (*/}
+            {/*        <TouchableOpacity*/}
+            {/*            key={index}*/}
+            {/*            onPress={() => navigation.navigate(routes.individual.name, {id: item.id})}*/}
+            {/*        >*/}
+            {/*            <View style={{flexDirection: 'row', flex: 1}}>*/}
+            {/*                <View style={{justifyContent: 'center', paddingRight: 12}}>*/}
+            {/*                    <Image source={pngIndividual}*/}
+            {/*                           style={{tintColor: theme.colors.text, width: 20, height: 20}}/>*/}
+            {/*                </View>*/}
+            {/*                <View style={{justifyContent: 'center'}}>*/}
+            {/*                    <Text>{item.attributes['8514da51-aad5-4fb4-a797-8bcc0c969b27']}</Text>*/}
+            {/*                </View>*/}
+            {/*            </View>*/}
+            {/*        </TouchableOpacity>*/}
+            {/*    )}*/}
+            {/*/>*/}
             <FAB
                 style={layout.fab}
                 icon="plus"

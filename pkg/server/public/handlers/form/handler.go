@@ -1,8 +1,10 @@
 package form
 
 import (
+	"fmt"
 	"github.com/emicklei/go-restful/v3"
 	"github.com/nrc-no/core/pkg/api/types"
+	"github.com/nrc-no/core/pkg/constants"
 	"github.com/nrc-no/core/pkg/store"
 	"net/http"
 )
@@ -30,6 +32,19 @@ func NewHandler(store store.FormStore) *Handler {
 		Operation("listForms").
 		Writes(types.FormDefinitionList{}).
 		Returns(http.StatusOK, "OK", types.FormDefinitionList{}))
+
+	ws.Route(ws.GET(fmt.Sprintf("/{%s}", constants.ParamFormID)).To(h.RestfulGet).
+		Doc("get form").
+		Operation("getForm").
+		Param(
+			ws.
+				PathParameter(constants.ParamFormID, "id of the form").
+				Required(true).
+				DataType("string").
+				DataFormat("uuid"),
+			).
+		Writes(types.FormDefinition{}).
+		Returns(http.StatusOK, "OK", types.FormDefinition{}))
 
 	return h
 }

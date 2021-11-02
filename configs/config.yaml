@@ -24,10 +24,23 @@ serve:
     host: "127.0.0.1"
     port: "9000"
     urls:
-      self: http://localhost:9000
+      self: http://127.0.0.1:9000
     oidc:
-      issuer: http://localhost:4444/
+      issuer: http://127.0.0.1:4444/
       client_id: public
+    cors:
+      allowed_origins: ["*"]
+      allowed_headers:
+        - Authorization
+        - Content-Type
+      allowed_methods:
+        - "GET"
+        - "POST"
+        - "PUT"
+        - "OPTIONS"
+        - "DELETE"
+      debug: true
+      enabled: true
   login:
     host: "127.0.0.1"
     port: "9002"

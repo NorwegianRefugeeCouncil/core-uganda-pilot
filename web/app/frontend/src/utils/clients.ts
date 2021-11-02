@@ -1,6 +1,7 @@
 // import {useApiClient} from "core-js-api-client";
 import {client} from "core-js-api-client";
 import {useMemo} from "react";
+import host from "../constants/host";
 // import {useAuth} from "../../../../admin/src/app/hooks";
 // import host from "../constants/host";
 
@@ -8,8 +9,9 @@ import {useMemo} from "react";
 
 export default function useApiClient(): client {
     // const authCtx = useAuth()
+    console.log(process.env, host)
     return useMemo(() => {
-        return new client()
+        return new client(host)
     }, [1])
 }
 

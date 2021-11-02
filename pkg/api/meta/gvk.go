@@ -6,7 +6,7 @@ import (
 )
 
 // GroupKind specifies a Group and a Kind, but does not force a version.  This is useful for identifying
-// concepts during lookup stages without having partially valid types_old
+// concepts during lookup stages without having partially valid types
 type GroupKind struct {
 	Group string
 	Kind  string
@@ -99,7 +99,7 @@ func (gv GroupVersion) KindForGroupVersionKinds(kinds []GroupVersionKind) (targe
 // ParseGroupVersion turns "group/version" string into a GroupVersion struct. It reports error
 // if it cannot parse the string.
 func ParseGroupVersion(gv string) (GroupVersion, error) {
-	// this can be the internal version for the legacy kube types_old
+	// this can be the internal version for the legacy kube types
 	// TODO once we've cleared the last uses as strings, this special case should be removed.
 	if (len(gv) == 0) || (gv == "/") {
 		return GroupVersion{}, nil
@@ -174,7 +174,7 @@ func bestMatch(kinds []GroupVersionKind, targets []GroupVersionKind) GroupVersio
 	return targets[0]
 }
 
-// ToAPIVersionAndKind is a convenience method for satisfying runtime.Object on types_old that
+// ToAPIVersionAndKind is a convenience method for satisfying runtime.Object on types that
 // do not use TypeMeta.
 func (gvk GroupVersionKind) ToAPIVersionAndKind() (string, string) {
 	if gvk.Empty() {
@@ -183,8 +183,8 @@ func (gvk GroupVersionKind) ToAPIVersionAndKind() (string, string) {
 	return gvk.GroupVersion().String(), gvk.Kind
 }
 
-// FromAPIVersionAndKind returns a GVK representing the provided fields for types_old that
-// do not use TypeMeta. This method exists to support test types_old and legacy serializations
+// FromAPIVersionAndKind returns a GVK representing the provided fields for types that
+// do not use TypeMeta. This method exists to support test types and legacy serializations
 // that have a distinct group and kind.
 // TODO: further reduce usage of this method.
 func FromAPIVersionAndKind(apiVersion, kind string) GroupVersionKind {

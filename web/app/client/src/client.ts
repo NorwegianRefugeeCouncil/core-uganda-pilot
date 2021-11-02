@@ -1,7 +1,7 @@
 import axios, {AxiosResponse, Method} from "axios";
 import {
     Database,
-    DatabaseList,
+    DatabaseList, FieldKind, FieldType,
     Folder,
     FolderList,
     FormDefinition,
@@ -9,7 +9,6 @@ import {
     Record,
     RecordList
 } from "./types/types";
-import {useAuth} from "../../../admin/src/app/hooks";
 
 export type Response<TRequest, TResponse> = {
     request: TRequest
@@ -39,6 +38,13 @@ export interface DatabaseLister {
 
 export type FormListRequest = {} | undefined
 export type FormListResponse = Response<FormListRequest, FormDefinitionList>
+
+export type FormGetRequest = {id: string}
+export type FormGetResponse = Response<FormGetRequest, FormDefinition>
+
+export interface FormGetter {
+    getForm: DataOperation<FormGetRequest, FormGetResponse>
+}
 
 export interface FormLister {
     listForms: DataOperation<FormListRequest, FormListResponse>
@@ -88,6 +94,7 @@ export interface Client
     extends DatabaseCreator,
         DatabaseLister,
         FormLister,
+        FormGetter,
         FormCreator,
         RecordCreator,
         RecordLister,
@@ -124,7 +131,12 @@ function clientResponse<TRequest, TBody>(r: AxiosResponse<TBody>, request: TRequ
 }
 
 export class client implements Client {
-    public address = "http://localhost:9000"
+    defaultAddress = "http://localhost:9000"
+    address;
+
+    constructor(address?: string) {
+        this.address = address || this.defaultAddress;
+    }
 
     do<TRequest, TBody>(request: TRequest, url: string, method: Method, data: any, expectStatusCode: number): Promise<Response<TRequest, TBody>> {
         return axios.request<TBody>({
@@ -134,6 +146,7 @@ export class client implements Client {
         }).then(value => {
             return clientResponse<TRequest, TBody>(value, request, expectStatusCode);
         }).catch((err) => {
+            // console.log('ERROR', JSON.stringify(err))
             return {
                 request: request,
                 response: undefined,
@@ -171,6 +184,7 @@ export class client implements Client {
     }
 
     listForms(request: {} | undefined): Promise<FormListResponse> {
+        console.log('GET FORMS', this.address)
         return this.do(request, `${this.address}/forms`, "get", undefined, 200)
     }
 
@@ -180,7 +194,35 @@ export class client implements Client {
         return this.do(request, url, "get", undefined, 200)
     }
 
+    getForm(request: FormGetRequest): Promise<FormGetResponse> {
+        return this.do(request, `${this.address}/forms/${request.id}`, "get", undefined, 200)
+    }
+
 }
 
 export const defaultClient: Client = new client()
 
+export function getFieldKind(fieldType: FieldType): FieldKind {
+    if (fieldType.text) {
+        return FieldKind.Text
+    }
+    if (fieldType.multilineText) {
+        return FieldKind.MultilineText
+    }
+    if (fieldType.date){
+        return FieldKind.Date
+    }
+    if (fieldType.subForm){
+        return FieldKind.SubForm
+    }
+    if (fieldType.reference){
+        return FieldKind.Reference
+    }
+    if (fieldType.quantity){
+        return FieldKind.Quantity
+    }
+    if (fieldType.singleSelect){
+        return FieldKind.SingleSelect
+    }
+    throw new Error("unknown field kind")
+}

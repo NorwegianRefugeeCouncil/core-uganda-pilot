@@ -99,7 +99,7 @@ const (
 	// Status code 405
 	StatusReasonMethodNotAllowed StatusReason = "MethodNotAllowed"
 
-	// StatusReasonNotAcceptable means that the accept types_old indicated by the client were not acceptable
+	// StatusReasonNotAcceptable means that the accept types indicated by the client were not acceptable
 	// to the server - for instance, attempting to receive protobuf for a resource that supports only json and yaml.
 	// API calls that return NotAcceptable can never succeed.
 	// Status code 406

@@ -1,15 +1,15 @@
-import {View, ViewStyle} from "react-native";
+import {View, ViewStyle, Text} from "react-native";
 import React from "react";
-import {Control as ControlType} from "core-js-api-client/lib/types_old/models";
 import TextInput from "./TextInput";
-import Switch from "./Switch";
 import Select from "./Select";
-import CheckBox from "./Checkbox";
 import {Control, Controller} from "react-hook-form";
+import {FieldDefinition, FieldKind} from "core-js-api-client/lib/types/types";
+import {getFieldKind} from "core-js-api-client/lib/client";
+// import {FieldKind} from "../../../../client/src/types/types";
 
-// TODO: move & clean up types_old
+// TODO: move & clean up types
 export type InputProps = {
-    formControl: ControlType,
+    fieldDefinition: FieldDefinition,
     style?: ViewStyle,
     value: any,
     onChange: any,
@@ -22,7 +22,7 @@ export type InputProps = {
 
 type FormControlProps = {
     name: string,
-    formControl: ControlType,
+    fieldDefinition: FieldDefinition,
     style?: ViewStyle,
     value?: any,
     control: Control<any, object>,
@@ -31,14 +31,14 @@ type FormControlProps = {
 
 const FormControl: React.FC<FormControlProps> = (
     {
-        formControl,
+        fieldDefinition,
         style,
         control,
         name,
         value,
     }) => {
     return (
-        // TODO: apply errors to all input types_old
+        // TODO: apply errors to all input types
         <View style={{margin: 10}}>
             <Controller
                 name={name}
@@ -51,30 +51,91 @@ const FormControl: React.FC<FormControlProps> = (
                         fieldState,
                         formState,
                     }) => {
-                    switch (formControl.type) {
-                        case 'checkbox':
+
+                    const fieldKind = getFieldKind(fieldDefinition.fieldType);
+
+                    switch (fieldKind) {
+                        // case 'checkbox':
+                        //     return (
+                        //         <CheckBox
+                        //             formControl={formControl}
+                        //             style={style}
+                        //             value={value}
+                        //             onBlur={onBlur}
+                        //             onChange={onChange}
+                        //         />
+                        //     )
+                        // case 'boolean':
+                        //     return (
+                        //         <Switch
+                        //             formControl={formControl}
+                        //             style={style}
+                        //             value={value}
+                        //             onChange={onChange}
+                        //         />
+                        //     )
+                        case FieldKind.SubForm:
+                            console.log('subform', fieldDefinition)
+                            return <Text>sdf</Text>
+                                // <TextInput
+                                //     formControl={formControl}
+                                //     style={style}
+                                //     value={value}
+                                //     onBlur={onBlur}
+                                //     onChange={onChange}
+                                //     {...fieldState}
+                                // />
+
+                        case FieldKind.Date:
+                            console.log('date', fieldDefinition)
+                            return <Text>sdf</Text>
+                                // <Select
+                                //     fieldDefinition={fieldDefinition}
+                                //     style={style}
+                                //     value={value}
+                                //     onBlur={onBlur}
+                                //     onChange={onChange}
+                                // />
+
+                        case FieldKind.Reference:
+                            console.log('reference', fieldDefinition)
+                            return <Text>sdf</Text>
+                                // <Select
+                                //     fieldDefinition={fieldDefinition}
+                                //     style={style}
+                                //     value={value}
+                                //     onBlur={onBlur}
+                                //     onChange={onChange}
+                                // />
+
+                        case FieldKind.Quantity:
+                            console.log('Quantity', fieldDefinition)
                             return (
-                                <CheckBox
-                                    formControl={formControl}
+                                <TextInput
+                                    fieldDefinition={fieldDefinition}
                                     style={style}
                                     value={value}
                                     onBlur={onBlur}
                                     onChange={onChange}
+                                    {...fieldState}
                                 />
                             )
-                        case 'boolean':
+                        case FieldKind.MultilineText:
+                            console.log('MultilineText', fieldDefinition)
                             return (
-                                <Switch
-                                    formControl={formControl}
+                                <TextInput
+                                    fieldDefinition={fieldDefinition}
                                     style={style}
                                     value={value}
+                                    onBlur={onBlur}
                                     onChange={onChange}
+                                    {...fieldState}
                                 />
                             )
-                        case 'dropdown':
+                        case FieldKind.SingleSelect:
                             return (
                                 <Select
-                                    formControl={formControl}
+                                    fieldDefinition={fieldDefinition}
                                     style={style}
                                     value={value}
                                     onBlur={onBlur}
@@ -84,7 +145,7 @@ const FormControl: React.FC<FormControlProps> = (
                         default:
                             return (
                                 <TextInput
-                                    formControl={formControl}
+                                    fieldDefinition={fieldDefinition}
                                     style={style}
                                     value={value}
                                     onBlur={onBlur}
