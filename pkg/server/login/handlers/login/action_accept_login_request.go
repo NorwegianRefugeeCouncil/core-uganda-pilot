@@ -32,7 +32,7 @@ func handleAcceptLoginRequest(
 			Body: &models.AcceptLoginRequest{
 				Acr:         "",
 				Context:     nil,
-				Remember:    false,
+				Remember:    true,
 				RememberFor: 0,
 				Subject:     pointers.String(authRequest.Identity.ID),
 			},

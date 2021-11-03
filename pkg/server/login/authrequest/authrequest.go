@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/looplab/fsm"
 	loginstore "github.com/nrc-no/core/pkg/server/login/store"
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"strings"
 	"time"
@@ -14,6 +15,7 @@ import (
 const (
 	StateStart                        = ""
 	StateLoginRequested               = "login_requested"
+	StateRefreshingIdentity           = "refreshing_identity"
 	StatePromptingForIdentifier       = "prompting_for_identifier"
 	StateValidatingIdentifier         = "validating_identifier"
 	StateFindingAuthMethod            = "finding_auth_method"
@@ -54,6 +56,7 @@ const (
 	EventPresentConsentChallenge  = "present_consent_challenge"
 	EventApproveConsentChallenge  = "approve_consent_challenge"
 	EventDeclineConsentChallenge  = "decline_consent_challenge"
+	EventSetRefreshedIdentity     = "set_refreshed_identity"
 	EventFail                     = "fail"
 	EventAccept                   = "accept"
 	EventDecline                  = "decline"
@@ -93,6 +96,7 @@ type Handlers struct {
 	OnReceivedConsentChallenge     func(authRequest *AuthRequest, evt *fsm.Event)
 	OnPresentingConsentChallenge   func(authRequest *AuthRequest, evt *fsm.Event)
 	OnConsentRequestApproved       func(authRequest *AuthRequest, evt *fsm.Event)
+	OnRefreshingIdentity           func(authRequest *AuthRequest, evt *fsm.Event)
 
 	OnApproveConsentRequest  func(authRequest *AuthRequest, evt *fsm.Event)
 	OnConsentRequestDeclined func(authRequest *AuthRequest, evt *fsm.Event)
@@ -121,8 +125,12 @@ func newAuthRequest(state string, handlers Handlers) *AuthRequest {
 			// START
 			// start -- request login --> login requested
 			{Src: []string{StateStart}, Name: EventRequestLogin, Dst: StateLoginRequested},
+			// accepted -- request login --> awaiting consent challenge
+			{Src: []string{StateAccepted}, Name: EventRequestLogin, Dst: StateLoginRequested},
+			// login requested -- skip login --> refreshing identity
+			{Src: []string{StateLoginRequested}, Name: EventSkipLoginRequest, Dst: StateRefreshingIdentity},
 			// login requested -- skip login --> awaiting consent challenge
-			{Src: []string{StateLoginRequested}, Name: EventSkipLoginRequest, Dst: StateAwaitingConsentChallenge},
+			{Src: []string{StateRefreshingIdentity}, Name: EventSetRefreshedIdentity, Dst: StateAwaitingConsentChallenge},
 			// login requested -- perform login --> identifier needed
 			{Src: []string{StateLoginRequested}, Name: EventPerformLogin, Dst: StatePromptingForIdentifier},
 
@@ -164,7 +172,7 @@ func newAuthRequest(state string, handlers Handlers) *AuthRequest {
 			// awaiting consent challenge -- receive consent challenge --> received consent challenge
 			{Src: []string{StateAwaitingConsentChallenge}, Name: EventReceiveConsentChallenge, Dst: StateReceivedConsentChallenge},
 			// received consent challenge -- skip consent challenge --> accepted
-			{Src: []string{StateReceivedConsentChallenge}, Name: EventSkipConsentChallenge, Dst: StateAccepted},
+			{Src: []string{StateReceivedConsentChallenge}, Name: EventSkipConsentChallenge, Dst: StateConsentRequestApproved},
 			// received consent challenge -- present consent challenge --> presenting consent challenge
 			{Src: []string{StateReceivedConsentChallenge}, Name: EventPresentConsentChallenge, Dst: StatePresentingConsent},
 			// presenting consent challenge -- decline consent --> declined
@@ -245,6 +253,11 @@ func newAuthRequest(state string, handlers Handlers) *AuthRequest {
 					handlers.OnConsentRequestDeclined(authRequest, event)
 				}
 			},
+			StateRefreshingIdentity: func(event *fsm.Event) {
+				if handlers.OnRefreshingIdentity != nil {
+					handlers.OnRefreshingIdentity(authRequest, event)
+				}
+			},
 			StateAccepted: func(event *fsm.Event) {
 				if handlers.OnApproved != nil {
 					handlers.OnApproved(authRequest, event)
@@ -303,10 +316,13 @@ type AuthRequest struct {
 	IDToken            string
 	AccessToken        string
 	RefreshToken       string
-	Claims             Claims
+	TokenExpiry        time.Time
+	TokenType          string
+	Claims             *Claims
 	Identity           *loginstore.Identity
 	ConsentChallenge   string
 	PostConsentURL     string
+	Error              error
 }
 
 func (a *AuthRequest) ToDotGraph() string {
@@ -367,10 +383,12 @@ type StoredAuthRequest struct {
 	IDToken            string
 	AccessToken        string
 	RefreshToken       string
-	Claims             Claims
+	Claims             *Claims
 	Identity           *StoredIdentity
 	ConsentChallenge   string
 	PostConsentURL     string
+	TokenExpiry        time.Time
+	TokenType          string
 }
 
 func init() {
@@ -403,6 +421,8 @@ func (a *AuthRequest) Save(w http.ResponseWriter, req *http.Request, session *se
 		IdentityProviderId: a.IdentityProviderId,
 		IDToken:            a.IDToken,
 		AccessToken:        a.AccessToken,
+		TokenExpiry:        a.TokenExpiry,
+		TokenType:          a.TokenType,
 		RefreshToken:       a.RefreshToken,
 		Claims:             a.Claims,
 		ConsentChallenge:   a.ConsentChallenge,
@@ -464,6 +484,8 @@ func CreateOrRestore(session *sessions.Session, handlers Handlers) *AuthRequest 
 	authRequest.Claims = storedAuthRequest.Claims
 	authRequest.ConsentChallenge = storedAuthRequest.ConsentChallenge
 	authRequest.PostConsentURL = storedAuthRequest.PostConsentURL
+	authRequest.TokenExpiry = storedAuthRequest.TokenExpiry
+	authRequest.TokenType = storedAuthRequest.TokenType
 
 	if storedAuthRequest.Identity != nil {
 		iden := &loginstore.Identity{}
@@ -602,7 +624,13 @@ func (a *AuthRequest) Decline() error {
 	return a.fsm.Event(EventDecline)
 }
 
+func (a *AuthRequest) SetRefreshedIdentity() error {
+	return a.fsm.Event(EventSetRefreshedIdentity)
+}
+
 func (a *AuthRequest) Fail(err error) error {
+	logrus.WithError(err).Errorf("failed")
+	a.Error = err
 	return a.fsm.Event(EventFail)
 }
 

@@ -36,8 +36,11 @@ func handleConsentRequestApproved(w http.ResponseWriter, req *http.Request, user
 			Context:          ctx,
 			ConsentChallenge: authRequest.ConsentChallenge,
 			Body: &models.AcceptConsentRequest{
+
 				GrantAccessTokenAudience: consentRequest.RequestedAccessTokenAudience,
 				GrantScope:               consentRequest.RequestedScope,
+				Remember:                 true,
+				RememberFor:              0,
 			},
 		})
 		if err != nil {

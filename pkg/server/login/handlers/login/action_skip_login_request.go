@@ -11,7 +11,14 @@ import (
 	"net/http"
 )
 
-func handleAwaitingConsentChallenge(w http.ResponseWriter, req *http.Request, hydraAdmin admin.ClientService, userSession *sessions.Session, enqueue func(fn func())) func(authRequest *authrequest.AuthRequest, evt *fsm.Event) {
+func handleSkipLoginRequest(
+	w http.ResponseWriter,
+	req *http.Request,
+	userSession *sessions.Session,
+	enqueue func(fn func()),
+	hydraAdmin admin.ClientService,
+) func(authRequest *authrequest.AuthRequest, evt *fsm.Event) {
+
 	return func(authRequest *authrequest.AuthRequest, evt *fsm.Event) {
 
 		if err := authRequest.Save(w, req, userSession); err != nil {

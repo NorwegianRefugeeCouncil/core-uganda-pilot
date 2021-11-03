@@ -2,10 +2,14 @@ package login
 
 import (
 	"github.com/nrc-no/core/pkg/server/login/authrequest"
+	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
 func dispatchAction(w http.ResponseWriter, action string, enqueue func(fn func()), authRequest *authrequest.AuthRequest) {
+
+	logrus.Infof("dispatching login action: %s", action)
+
 	switch action {
 	case authrequest.EventRequestLogin:
 		enqueue(func() {

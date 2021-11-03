@@ -15,10 +15,10 @@ log:
 cookies:
   same_site_mode: Strict
 ttl:
-  access_token: 5m
-  refresh_token: 10m
-  id_token: 5m
-  auth_code: 5m
+  access_token: 3m
+  refresh_token: 6m
+  id_token: 3m
+  auth_code: 3m
   login_consent_request: 10m
 oauth2:
   session:

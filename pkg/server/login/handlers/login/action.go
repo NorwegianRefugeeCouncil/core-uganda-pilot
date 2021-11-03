@@ -15,6 +15,7 @@ import (
 )
 
 func handleError(w http.ResponseWriter, status int, err error) {
+	logrus.WithError(err).Errorf("login error")
 	w.Write([]byte(err.Error()))
 	w.WriteHeader(status)
 }
@@ -94,6 +95,7 @@ func handleAuthRequestAction(
 					w.Write([]byte("error"))
 				},
 				OnLoginRequested:               handleLoginRequested(w, req, userSession, enqueue, getLoginRequest),
+				OnRefreshingIdentity:           handleRefreshingIdentity(w, req, userSession, idpStore, selfURL, enqueue, getLoginRequest),
 				OnPromptingForIdentifier:       handlePromptingForIdentifier(w, req, userSession, enqueue),
 				OnValidatingIdentifier:         handleValidatingIdentifier(w, req, userSession, enqueue),
 				OnFindingAuthMethod:            handleFindingAuthMethod(w, req, userSession, enqueue),
@@ -102,8 +104,7 @@ func handleAuthRequestAction(
 				OnAwaitingIDPCallback:          handleAwaitingIDPCallback(w, req, userSession, enqueue),
 				OnPerformingAuthCodeExchange:   handlePerformingAuthCodeExchange(w, req, userSession, enqueue, idpStore, ctx, selfURL),
 				OnAuthCodeExchangeSucceeded:    handleAuthCodeExchangeSucceeded(w, req, userSession, enqueue, idpStore, ctx, loginStore),
-				OnAcceptLoginRequest:           handleAcceptLoginRequest(w, req, userSession, enqueue, hydraAdmin),
-				OnAwaitingConsentChallenge:     handleAwaitingConsentChallenge(w, req, userSession, enqueue),
+				OnAwaitingConsentChallenge:     handleAwaitingConsentChallenge(w, req, hydraAdmin, userSession, enqueue),
 				OnReceivedConsentChallenge:     handleReceivedConsentChallenge(w, req, userSession, enqueue, requestParameters, getConsentRequest),
 				OnPresentingConsentChallenge:   handlePresentingConsentChallenge(w, req, userSession, enqueue, getConsentRequest),
 				OnConsentRequestApproved:       handleConsentRequestApproved(w, req, userSession, enqueue, getConsentRequest, hydraAdmin, ctx),
@@ -126,7 +127,12 @@ func handleAuthRequestAction(
 func getAuthRequest(action string, authHandlers authrequest.Handlers, userSession *sessions.Session) *authrequest.AuthRequest {
 	var authRequest *authrequest.AuthRequest
 	if action == authrequest.EventRequestLogin {
-		authRequest = authrequest.NewAuthRequest(authHandlers)
+		prevAuthRequest := authrequest.CreateOrRestore(userSession, authHandlers)
+		if prevAuthRequest.State() == authrequest.StateAccepted {
+			return prevAuthRequest
+		} else {
+			authRequest = authrequest.NewAuthRequest(authHandlers)
+		}
 	} else {
 		authRequest = authrequest.CreateOrRestore(userSession, authHandlers)
 		if authRequest == nil {

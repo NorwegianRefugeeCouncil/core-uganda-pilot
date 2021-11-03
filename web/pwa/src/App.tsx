@@ -35,12 +35,14 @@ function AuthenticatedApp() {
     const {login, oidcUser, events} = useReactOidc()
 
     useEffect(() => {
-        setTimeout(() => {
-            if (!oidcUser) {
-                login()
-            }
-        }, 10000)
+       if (!oidcUser){
+           login()
+       }
     }, [oidcUser])
+
+    events.addSilentRenewError(error => {
+        login()
+    })
 
     if (!oidcUser) {
         return <Fragment>Authenticating...</Fragment>

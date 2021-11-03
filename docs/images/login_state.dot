@@ -17,11 +17,13 @@ received_consent_challenge
 presenting_consent_challenge
 consent_request_accepted
 consent_request_declined
+refreshing_identity
 accepted
 declined
 
 start -> login_requested [label = "request_login"]
-login_requested -> awaiting_consent_challenge [label="skip_login_request"]
+login_requested -> refreshing_identity [label="skip_login_request"]
+refreshing_identity -> awaiting_consent_challenge [label="set_refreshed_identity"]
 login_requested -> prompting_for_identifier [label="perform_login"]
 prompting_for_identifier -> validating_identifier [label="provide_identifier"]
 validating_identifier -> prompting_for_identifier [label="provide_invalid_identifier"]
@@ -46,4 +48,5 @@ presenting_consent_challenge -> consent_request_declined [label="decline_consent
 presenting_consent_challenge -> consent_request_accepted [label="accept_consent_challenge"]
 consent_request_declined -> declined [label="decline"]
 consent_request_accepted -> accepted [label="accept"]
+accepted -> login_requested [label="request_login"]
 }

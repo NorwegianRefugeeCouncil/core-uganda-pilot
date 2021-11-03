@@ -42,7 +42,7 @@ func handleLoginRequested(
 			return
 		}
 
-		if loginRequest.Skip != nil && *loginRequest.Skip {
+		if authRequest.Identity != nil && loginRequest.Skip != nil && *loginRequest.Skip {
 			enqueue(func() {
 				err := authRequest.SkipLoginRequest()
 				if err != nil {
