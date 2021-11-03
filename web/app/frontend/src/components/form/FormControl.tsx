@@ -6,7 +6,6 @@ import {Control, Controller} from "react-hook-form";
 import {FieldDefinition, FieldKind} from "core-js-api-client/lib/types/types";
 import {getFieldKind} from "core-js-api-client/lib/client";
 import ReferenceInput from "./ReferenceInput";
-import DateInput from "./DateInput";
 // import {FieldKind} from "../../../../client/src/types/types";
 
 // TODO: move & clean up types
@@ -79,7 +78,7 @@ const FormControl: React.FC<FormControlProps> = (
                         //         />
                         //     )
                         case FieldKind.SubForm:
-                            console.log('subform', fieldDefinition)
+                            // console.log('subform', fieldDefinition)
                             return <Text>sdf</Text>
                         // <TextInput
                         //     formControl={formControl}
@@ -91,7 +90,7 @@ const FormControl: React.FC<FormControlProps> = (
                         // />
 
                         case FieldKind.Date:
-                            console.log('date', value, fieldDefinition)
+                            // console.log('date', value, fieldDefinition)
                             return <Text>sdf</Text>
                         // <Select
                         //     fieldDefinition={fieldDefinition}

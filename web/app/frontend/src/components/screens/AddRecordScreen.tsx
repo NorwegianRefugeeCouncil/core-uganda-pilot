@@ -1,8 +1,7 @@
 import React from 'react';
-import {FAB, Snackbar, Switch, Title} from 'react-native-paper';
+import {Snackbar, Switch} from 'react-native-paper';
 import {common, layout} from '../../styles';
-import routes from '../../constants/routes';
-import {Button, FlatList, Platform, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {Button, Platform, ScrollView, Text, View} from 'react-native';
 import useApiClient from "../../utils/clients";
 import {FormDefinition} from "core-js-api-client/lib/types/types";
 import {useForm} from "react-hook-form";
@@ -10,9 +9,9 @@ import {getEncryptionKey} from "../../utils/getEncryptionKey";
 import * as SecureStore from "expo-secure-store";
 import CryptoJS from "react-native-crypto-js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import _ from "lodash";
 import * as Network from "expo-network";
 import FormControl from "../form/FormControl";
+import {getEncryptedLocalData, storeEncryptedLocalData} from "../../utils/storage";
 
 const AddRecordScreen: React.FC<any> = ({navigation, route}) => {
     const isWeb = Platform.OS === 'web';
@@ -39,31 +38,26 @@ const AddRecordScreen: React.FC<any> = ({navigation, route}) => {
     }, []);
 
     const onSubmitOffline = async (data: any) => {
-        const key = await getEncryptionKey();
-
         console.log('submit offline', data)
-        SecureStore.setItemAsync(recordId, key)
-            .then(async () => {
-                const encryptedData = await CryptoJS.encrypt('AES', key, JSON.stringify(data));
-                return AsyncStorage.setItem(recordId, encryptedData.toString(), (error) => {
-                    if (error) {
-                        setHasLocalData(false)
-                    }
-                })
-            })
+        const key = getEncryptionKey();
+        console.log('created key', key)
+
+        storeEncryptedLocalData(recordId, key, data)
             .then(() => {
+                console.log('stored encrypted data in async storage')
                 setHasLocalData(true)
             })
-            .catch(() => {
+            .catch((e) => {
+                console.log('storing data in async storage has failed', e)
                 setHasLocalData(false)
             });
 
     }
     const onSubmit = (data: any) => {
-        console.log('submit', data);
+        console.log('submit', formId, data);
 
         if (isConnected || isWeb) {
-            client.createRecord(data)
+            client.createRecord({object: {formId, values: data}})
         } else {
             onSubmitOffline(data);
         }
@@ -72,28 +66,11 @@ const AddRecordScreen: React.FC<any> = ({navigation, route}) => {
     // check for locally stored data on mobile device
     React.useEffect(() => {
         if (!isWeb) {
-            SecureStore.getItemAsync(recordId)
-                .then(async (key) => {
-                    if (key == null) {
-                        return;
-                    }
-
-                    const data = await AsyncStorage.getItem(recordId);
-                    if (data == null) {
-                        return;
-                    }
-                    const bytes = CryptoJS.decrypt('AES', key, data);
-                    const decryptedData = JSON.parse(bytes.toString());
-
-                    setHasLocalData(true)
-                    const newIndividual: any = {
-                        id: recordId,
-                        partyTypeIds: decryptedData?.partyTypeIds || [],
-                        attributes: decryptedData?.attributes
-                    };
-                    reset(newIndividual);
-                    // TODO: delete data, once extracted to save space. or only after online submit?
-                })
+            console.log('checking for local data', recordId)
+            getEncryptedLocalData(recordId)
+                .then((data) => {
+                    setHasLocalData(!!data);
+                });
         }
     }, [isWeb, recordId])
 
@@ -147,7 +124,7 @@ const AddRecordScreen: React.FC<any> = ({navigation, route}) => {
                 {!isLoading && (
                     <View>
                         {form?.fields.map((field) => {
-                            console.log(field)
+                            // console.log(field)
                             return (
                                 <FormControl
                                     key={field.code}

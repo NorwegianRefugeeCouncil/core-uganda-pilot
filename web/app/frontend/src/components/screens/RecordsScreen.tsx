@@ -19,7 +19,7 @@ const RecordsScreen: React.FC<any> = ({navigation, route}) => {
                 setIsLoading(false)
             })
     }, []);
-    console.log('RECORDS', records)
+    // console.log('RECORDS', records)
 
     return (
         <View style={layout.body}>

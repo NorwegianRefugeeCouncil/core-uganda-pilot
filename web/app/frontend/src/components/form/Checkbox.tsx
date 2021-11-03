@@ -26,7 +26,7 @@ const CheckBox: React.FC<InputProps> = (
             })
         }
     }))
-    console.log(fieldDefinition.checkboxOptions.length, isChecked.length)
+    // console.log(fieldDefinition.checkboxOptions.length, isChecked.length)
     return (
         <View style={style}>
             {fieldDefinition.label && (
