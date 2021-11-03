@@ -22,6 +22,8 @@ type FieldType struct {
 	Date *FieldTypeDate `json:"date,omitempty" yaml:"date,omitempty"`
 	// Quantity represents the configuration for a quantity field
 	Quantity *FieldTypeQuantity `json:"quantity,omitempty" yaml:"quantity,omitempty"`
+	// Week represents the configuration for a week field
+	Week *FieldTypeWeek `json:"week,omitempty" yaml:"week,omitempty"`
 	// Month represents the configuration for a month field
 	Month *FieldTypeMonth `json:"month,omitempty" yaml:"month,omitempty"`
 	// SingleSelect represents the configuration for a single select field
@@ -84,6 +86,9 @@ type FieldTypeMultilineText struct{}
 // FieldTypeDate represents a Date field (calendar date, no time/timezone)
 type FieldTypeDate struct{}
 
+// FieldTypeWeek represents a Week field (YYYYKWww)
+type FieldTypeWeek struct{}
+
 // FieldTypeMonth represents a Month field (YYYY-mm)
 type FieldTypeMonth struct{}
 
@@ -134,15 +139,30 @@ type FieldKind int
 //go:generate go run golang.org/x/tools/cmd/stringer -type=FieldKind
 
 const (
-	FieldKindUnknown FieldKind = iota
-	FieldKindText
-	FieldKindSubForm
-	FieldKindReference
-	FieldKindMultilineText
-	FieldKindDate
-	FieldKindQuantity
-	FieldKindMonth
-	FieldKindSingleSelect
+<<<<<<< HEAD
+FieldKindUnknown FieldKind = iota
+FieldKindText
+FieldKindSubForm
+FieldKindReference
+FieldKindMultilineText
+FieldKindDate
+FieldKindQuantity
+FieldKindMonth
+FieldKindSingleSelect
+====== =
+FieldKindUnknown       FieldKind = "unknown"
+FieldKindText          FieldKind = "text"
+FieldKindSubForm       FieldKind = "subform"
+FieldKindReference     FieldKind = "reference"
+FieldKindMultilineText FieldKind = "multilineText"
+FieldKindDate          FieldKind = "date"
+FieldKindQuantity      FieldKind = "quantity"
+FieldKindMonth         FieldKind = "month"
+FieldKindSingleSelect  FieldKind = "singleSelect"
+FieldKindWeek          FieldKind = "week"
+>>>>>>> 55f0f62d (
+progress
+)
 )
 
 var fieldAccessors = map[FieldKind]func(fieldType FieldType) interface{}{

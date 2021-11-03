@@ -114,6 +114,22 @@ export const MonthFieldEditor: FC<FieldEditorProps> = props => {
                 setValue(date);
             }}
         />
+
+        {mapFieldDescription(field)}
+    </div>
+}
+
+export const WeekFieldEditor: FC<FieldEditorProps> = props => {
+    const {field, value, setValue} = props
+    return <div className={"form-group mb-2"}>
+        <label
+            className={"form-label opacity-75"}
+            htmlFor={field.id}>{field.name}</label>
+        <input
+            className={"form-control bg-dark text-light border-secondary"}
+            type={"week"}
+            id={field.id} value={value ? value : ""}
+            onChange={event => setValue(event.target.value)}/>
         {mapFieldDescription(field)}
     </div>
 }
@@ -188,6 +204,8 @@ export const FieldEditor: FC<FieldEditorProps> = props => {
     const {fieldType} = props.field
     if (fieldType.text) {
         return <TextFieldEditor {...props} />
+    } else if (fieldType.week) {
+        return <WeekFieldEditor {...props} />
     } else if (fieldType.subForm) {
         return <SubFormFieldEditor {...props} />
     } else if (fieldType.reference) {
