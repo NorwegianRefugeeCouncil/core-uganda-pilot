@@ -3,6 +3,7 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+. "${SCRIPT_DIR}/utils.sh"
 
 CORE_CONFIG_FILE="${SCRIPT_DIR}/../configs/config.custom.yaml"
 HYDRA_CONFIG_FILE="${SCRIPT_DIR}/../deployments/hydra.custom.yaml"
@@ -10,56 +11,65 @@ POSTGRES_ENV_FILE="${SCRIPT_DIR}/../deployments/postgres.env"
 REDIS_ENV_FILE="${SCRIPT_DIR}/../deployments/redis.env"
 OIDC_CONFIG_FILE="${SCRIPT_DIR}/../deployments/oidc.config.json"
 OIDC_USERS_FILE="${SCRIPT_DIR}/../deployments/oidc.users.json"
-ADMIN_APP_ENV_FILE="${SCRIPT_DIR}/../web/admin/.env"
 
-if [ ! -f "${OIDC_USERS_FILE}" ] || [ ! -f "${OIDC_CONFIG_FILE}" ] || [ ! -f "${REDIS_ENV_FILE}" ] || [ ! -f "${CORE_CONFIG_FILE}" ] || [ ! -f "${POSTGRES_ENV_FILE}" ] || [ ! -f "${HYDRA_CONFIG_FILE}" ]; then
+CREDS_DIR="${SCRIPT_DIR}/../creds"
 
-  POSTGRES_USER=postgres
-  POSTGRES_PASSWORD=$(openssl rand -hex 16)
-  HYDRA_DB=hydra
-  HYDRA_USERNAME=hydra
-  HYDRA_PASSWORD=$(openssl rand -hex 16)
-  CORE_DB=core
-  CORE_USERNAME=core
-  CORE_PASSWORD=$(openssl rand -hex 16)
-  REDIS_PASSWORD=$(openssl rand -hex 16)
+function createUserPassword() {
+  filePath="${CREDS_DIR}/user_$1_password"
+  createFileIfNotExists "${filePath}" "$(openssl rand -hex 32)"
+}
 
-  OIDC_ADMIN_CLIENT_SECRET=$(openssl rand -hex 16)
-  OIDC_ADMIN_CLIENT_ID="core-admin"
-  OIDC_ADMIN_REDIRECT_URI="http://localhost:3001"
+POSTGRES_ROOT_PASSWORD=$(createFileIfNotExists "${CREDS_DIR}/postgres_root_password" "$(openssl rand -hex 32)")
+POSTGRES_ROOT_USERNAME=$(createFileIfNotExists "${CREDS_DIR}/postgres_root_username" postgres)
+POSTGRES_CORE_DB=$(createFileIfNotExists "${CREDS_DIR}/postgres_core_db" core)
+POSTGRES_CORE_USERNAME=$(createFileIfNotExists "${CREDS_DIR}/postgres_core_username" core)
+POSTGRES_CORE_PASSWORD=$(createFileIfNotExists "${CREDS_DIR}/postgres_core_password" "$(openssl rand -hex 32)")
+POSTGRES_HYDRA_DB=$(createFileIfNotExists "${CREDS_DIR}/postgres_hydra_db" hydra)
+POSTGRES_HYDRA_USERNAME=$(createFileIfNotExists "${CREDS_DIR}/postgres_hydra_username" hydra)
+POSTGRES_HYDRA_PASSWORD=$(createFileIfNotExists "${CREDS_DIR}/postgres_hydra_password" "$(openssl rand -hex 32)")
+REDIS_PASSWORD=$(createFileIfNotExists "${CREDS_DIR}/redis_password" "$(openssl rand -hex 32)")
+OAUTH_CORE_ADMIN_CLIENT_ID=$(createFileIfNotExists "${CREDS_DIR}/core_admin_client_id" core-admin)
+OAUTH_CORE_ADMIN_CLIENT_SECRET=$(createFileIfNotExists "${CREDS_DIR}/core_admin_client_secret" "$(openssl rand -hex 32)")
+OAUTH_CORE_ADMIN_REDIRECT_URI=$(createFileIfNotExists "${CREDS_DIR}/core_admin_redirect_uri" "http://localhost:3001")
+OAUTH_CORE_ADMIN_ISSUER=$(createFileIfNotExists "${CREDS_DIR}/core_admin_issuer" "http://localhost:9005")
+OAUTH_CORE_APP_CLIENT_ID=$(createFileIfNotExists "${CREDS_DIR}/core_app_client_id" "core-app")
+OAUTH_CORE_APP_CLIENT_SECRET=$(createFileIfNotExists "${CREDS_DIR}/core_app_client_secret" "$(openssl rand -hex 32)")
+OAUTH_CORE_APP_REDIRECT_URI=$(createFileIfNotExists "${CREDS_DIR}/core_app_redirect_uri" "http://localhost:9000/oidc/callback")
+OAUTH_CORE_APP_ISSUER=$(createFileIfNotExists "${CREDS_DIR}/core_app_issuer" "http://localhost:4444/")
+OAUTH_NRC_CLIENT_ID=$(createFileIfNotExists "${CREDS_DIR}/nrc_idp_client_id" "nrc-idp")
+OAUTH_NRC_CLIENT_SECRET=$(createFileIfNotExists "${CREDS_DIR}/nrc_idp_client_secret" "$(openssl rand -hex 32)")
+OAUTH_NRC_REDIRECT_URI=$(createFileIfNotExists "${CREDS_DIR}/nrc_idp_redirect_uri" "http://localhost:9002/oidc/callback")
+OAUTH_NRC_ISSUER=$(createFileIfNotExists "${CREDS_DIR}/nrc_idp_issuer" "http://localhost:9005")
+CORE_ADMIN_HASH_KEY=$(createFileIfNotExists "${CREDS_DIR}/core_admin_hash_key" "$(openssl rand -hex 64)")
+CORE_ADMIN_BLOCK_KEY=$(createFileIfNotExists "${CREDS_DIR}/core_admin_block_key" "$(openssl rand -hex 32)")
+CORE_LOGIN_HASH_KEY=$(createFileIfNotExists "${CREDS_DIR}/core_login_hash_key" "$(openssl rand -hex 64)")
+CORE_LOGIN_BLOCK_KEY=$(createFileIfNotExists "${CREDS_DIR}/core_login_block_key" "$(openssl rand -hex 32)")
+CORE_APP_HASH_KEY=$(createFileIfNotExists "${CREDS_DIR}/core_app_hash_key" "$(openssl rand -hex 64)")
+CORE_APP_BLOCK_KEY=$(createFileIfNotExists "${CREDS_DIR}/core_app_block_key" "$(openssl rand -hex 32)")
 
-  OIDC_LOGIN_CLIENT_SECRET=$(openssl rand -hex 16)
-  OIDC_LOGIN_CLIENT_ID="core-login"
-  OIDC_LOGIN_REDIRECT_URI="http://localhost:9002/oidc/callback"
+echo ">> Creating Simple-OIDC Clients"
 
-  touch "${ADMIN_APP_ENV_FILE}"
-  cat <<EOF >"${ADMIN_APP_ENV_FILE}"
-REACT_APP_CLIENT_ID=${OIDC_ADMIN_CLIENT_ID}
-REACT_APP_ISSUER=http://localhost:9005
-REACT_APP_REDIRECT_URI=http://localhost:3001/auth/authentication/callback
-REACT_APP_SILENT_REDIRECT_URI=http://localhost:3001/authentication/silent_callback
-EOF
-
-  touch "${OIDC_CONFIG_FILE}"
-  cat <<EOF >"${OIDC_CONFIG_FILE}"
+touch "${OIDC_CONFIG_FILE}"
+cat <<EOF >"${OIDC_CONFIG_FILE}"
 {
   "client_config": [
     {
-      "client_id": "${OIDC_ADMIN_CLIENT_ID}",
-      "client_secret": "${OIDC_ADMIN_CLIENT_SECRET}",
-      "redirect_uris": [ "${OIDC_ADMIN_REDIRECT_URI}" ],
+      "client_id": "${OAUTH_CORE_ADMIN_CLIENT_ID}",
+      "client_secret": "${OAUTH_CORE_ADMIN_CLIENT_SECRET}",
+      "redirect_uris": [ "${OAUTH_CORE_ADMIN_REDIRECT_URI}" ],
       "grant_types": [
-        "authorization_code"
+        "authorization_code",
+        "refresh_token"
       ],
-      "token_endpoint_auth_method": "none",
+      "token_endpoint_auth_method": "client_secret_post",
       "scope": "openid offline_access",
       "response_types": [
         "code"
       ]
     },{
-      "client_id": "${OIDC_LOGIN_CLIENT_ID}",
-      "client_secret": "${OIDC_LOGIN_CLIENT_SECRET}",
-      "redirect_uris": [ "${OIDC_LOGIN_REDIRECT_URI}" ],
+      "client_id": "${OAUTH_NRC_CLIENT_ID}",
+      "client_secret": "${OAUTH_NRC_CLIENT_SECRET}",
+      "redirect_uris": [ "${OAUTH_NRC_REDIRECT_URI}" ],
       "grant_types": [
         "authorization_code",
         "refresh_token"
@@ -74,8 +84,10 @@ EOF
 }
 EOF
 
-  touch "${OIDC_USERS_FILE}"
-  cat <<EOF >"${OIDC_USERS_FILE}"
+echo ">> Creating Simple-OIDC Users"
+
+touch "${OIDC_USERS_FILE}"
+cat <<EOF >"${OIDC_USERS_FILE}"
 [
   {
     "id": "admin",
@@ -83,7 +95,7 @@ EOF
     "email_verified": true,
     "name": "Harley Kiffe",
     "nickname": "harley",
-    "password": "$(openssl rand -hex 16)"
+    "password": "$(createUserPassword admin)"
   },
   {
     "id": "barb",
@@ -91,7 +103,7 @@ EOF
     "email_verified": true,
     "name": "Barb Stovin",
     "nickname": "barb",
-    "password": "$(openssl rand -hex 16)"
+    "password": "$(createUserPassword barb)"
   },
   {
     "id": "quinn",
@@ -99,7 +111,7 @@ EOF
     "email_verified": true,
     "name": "Quinn Leeming",
     "nickname": "quinn",
-    "password": "$(openssl rand -hex 16)"
+    "password": "$(createUserPassword quinn)"
   },
   {
     "id": "sim",
@@ -107,7 +119,7 @@ EOF
     "email_verified": true,
     "name": "Sim Cleaton",
     "nickname": "sim",
-    "password": "$(openssl rand -hex 16)"
+    "password": "$(createUserPassword sim)"
   },
   {
     "id": "phillie",
@@ -115,7 +127,7 @@ EOF
     "email_verified": true,
     "name": "Phillie Smeed",
     "nickname": "phillie",
-    "password": "$(openssl rand -hex 16)"
+    "password": "$(createUserPassword phillie)"
   },
   {
     "id": "peta",
@@ -123,7 +135,7 @@ EOF
     "email_verified": true,
     "name": "Peta Sammon",
     "nickname": "peta",
-    "password": "$(openssl rand -hex 16)"
+    "password": "$(createUserPassword peta)"
   },
   {
     "id": "marne",
@@ -131,7 +143,7 @@ EOF
     "email_verified": true,
     "name": "Marne Probetts",
     "nickname": "marne",
-    "password": "$(openssl rand -hex 16)"
+    "password": "$(createUserPassword marne)"
   },
   {
     "id": "sibylla",
@@ -139,7 +151,7 @@ EOF
     "email_verified": true,
     "name": "Sibylla Meadows",
     "nickname": "sibylla",
-    "password": "$(openssl rand -hex 16)"
+    "password": "$(createUserPassword sibylla)"
   },
   {
     "id": "evan",
@@ -147,7 +159,7 @@ EOF
     "email_verified": true,
     "name": "Evan Highman",
     "nickname": "evan",
-    "password": "$(openssl rand -hex 16)"
+    "password": "$(createUserPassword evan)"
   },
   {
     "id": "franklin",
@@ -155,38 +167,46 @@ EOF
     "email_verified": true,
     "name": "Franklin Glamart",
     "nickname": "franklin",
-    "password": "$(openssl rand -hex 16)"
+    "password": "$(createUserPassword franklin)"
   }
 ]
 EOF
 
-  touch "${REDIS_ENV_FILE}"
-  cat <<EOF >"${REDIS_ENV_FILE}"
+echo ">> Creating Redis Env File"
+
+touch "${REDIS_ENV_FILE}"
+cat <<EOF >"${REDIS_ENV_FILE}"
 REDIS_PASSWORD=${REDIS_PASSWORD}
 EOF
 
-  touch "${HYDRA_CONFIG_FILE}"
-  cat <<EOF >"${HYDRA_CONFIG_FILE}"
+echo ">> Creating Hydra Config File"
+
+touch "${HYDRA_CONFIG_FILE}"
+cat <<EOF >"${HYDRA_CONFIG_FILE}"
 secrets:
   system:
     - $(openssl rand -hex 16 | base64)
-dsn: postgres://${HYDRA_USERNAME}:${HYDRA_PASSWORD}@db:5432/${HYDRA_DB}?sslmode=disable&max_conns=20&max_idle_conns=4
+dsn: postgres://${POSTGRES_HYDRA_USERNAME}:${POSTGRES_HYDRA_PASSWORD}@db:5432/${POSTGRES_HYDRA_DB}?sslmode=disable&max_conns=20&max_idle_conns=4
 EOF
 
-  touch "${POSTGRES_ENV_FILE}"
-  cat <<EOF >"${POSTGRES_ENV_FILE}"
-POSTGRES_USER=${POSTGRES_USER}
-POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-HYDRA_DB=${HYDRA_DB}
-HYDRA_USERNAME=${HYDRA_USERNAME}
-HYDRA_PASSWORD=${HYDRA_PASSWORD}
-CORE_DB=${CORE_DB}
-CORE_USERNAME=${CORE_USERNAME}
-CORE_PASSWORD=${CORE_PASSWORD}
+echo ">> Creating Postgres Env File"
+
+touch "${POSTGRES_ENV_FILE}"
+cat <<EOF >"${POSTGRES_ENV_FILE}"
+POSTGRES_USER=${POSTGRES_ROOT_USERNAME}
+POSTGRES_PASSWORD=${POSTGRES_ROOT_PASSWORD}
+HYDRA_DB=${POSTGRES_HYDRA_DB}
+HYDRA_USERNAME=${POSTGRES_HYDRA_USERNAME}
+HYDRA_PASSWORD=${POSTGRES_HYDRA_PASSWORD}
+CORE_DB=${POSTGRES_CORE_DB}
+CORE_USERNAME=${POSTGRES_CORE_USERNAME}
+CORE_PASSWORD=${POSTGRES_CORE_PASSWORD}
 EOF
 
-  touch "${CORE_CONFIG_FILE}"
-  cat <<EOF >"${CORE_CONFIG_FILE}"
+echo ">> Creating Core Config File"
+
+touch "${CORE_CONFIG_FILE}"
+cat <<EOF >"${CORE_CONFIG_FILE}"
 serve:
   admin:
     cache:
@@ -194,27 +214,34 @@ serve:
         password: ${REDIS_PASSWORD}
     secrets:
       hash:
-      - $(openssl rand -hex 64)
+      - ${CORE_ADMIN_HASH_KEY}
       block:
-      - $(openssl rand -hex 32)
+      - ${CORE_ADMIN_BLOCK_KEY}
+    oidc:
+      client_id: ${OAUTH_CORE_ADMIN_CLIENT_ID}
+      client_secret: ${OAUTH_CORE_ADMIN_CLIENT_SECRET}
+      issuer: ${OAUTH_CORE_ADMIN_ISSUER}
   public:
     cache:
       redis:
         password: ${REDIS_PASSWORD}
     secrets:
       hash:
-      - $(openssl rand -hex 64)
+      - ${CORE_APP_HASH_KEY}
       block:
-      - $(openssl rand -hex 32)
+      - ${CORE_APP_BLOCK_KEY}
+    oidc:
+      client_id: ${OAUTH_CORE_APP_CLIENT_ID}
+      client_secret: ${OAUTH_CORE_APP_CLIENT_SECRET}
+      issuer: ${OAUTH_CORE_APP_ISSUER}
   login:
     cache:
       redis:
         password: ${REDIS_PASSWORD}
     secrets:
       hash:
-      - $(openssl rand -hex 64)
+      - ${CORE_LOGIN_HASH_KEY}
       block:
-      - $(openssl rand -hex 32)
-dsn: "host=localhost port=5433 user=${CORE_USERNAME} password=${CORE_PASSWORD} dbname=core sslmode=disable"
+      - ${CORE_LOGIN_BLOCK_KEY}
+dsn: "host=localhost port=5433 user=${POSTGRES_CORE_USERNAME} password=${POSTGRES_CORE_PASSWORD} dbname=${POSTGRES_CORE_DB} sslmode=disable"
 EOF
-fi

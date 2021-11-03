@@ -11,11 +11,11 @@ import (
 	"net/http"
 )
 
-func (h *Handler) Callback() http.HandlerFunc {
+func (h *Handler) Callback(redirectURL string, sessionKey string) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		ctx := req.Context()
 
-		userSession, err := h.sessionStore.Get(req, constants.SessionKey)
+		userSession, err := h.sessionStore.Get(req, sessionKey)
 		if err != nil {
 			logrus.WithError(err).Error("failed to retrieve session from store")
 			utils.ErrorResponse(w, meta.NewInternalServerError(err))
@@ -101,6 +101,9 @@ func (h *Handler) Callback() http.HandlerFunc {
 
 		userSession.Values[constants.SessionIDToken] = rawIDToken
 		userSession.Values[constants.SessionRefreshToken] = tokenFromExchange.RefreshToken
+		userSession.Values[constants.SessionAccessToken] = tokenFromExchange.AccessToken
+		userSession.Values[constants.SessionTokenExpiry] = tokenFromExchange.Expiry
+		userSession.Values[constants.SessionTokenType] = tokenFromExchange.TokenType
 		userSession.Values[constants.SessionProfile] = userProfile
 
 		if err := userSession.Save(req, w); err != nil {
@@ -120,7 +123,7 @@ func (h *Handler) Callback() http.HandlerFunc {
 			}
 		}
 
-		w.Header().Set("Location", "/")
+		w.Header().Set("Location", redirectURL)
 		w.WriteHeader(http.StatusTemporaryRedirect)
 		return
 
@@ -131,9 +134,10 @@ func init() {
 	gob.Register(&Claims{})
 }
 
-func (h *Handler) RestfulCallback(request *restful.Request, response *restful.Response) {
-	handler := h.Callback()
-	handler(response.ResponseWriter, request.Request)
+func (h *Handler) RestfulCallback(sessionKey, redirectURL string) restful.RouteFunction {
+	return func(r *restful.Request, response *restful.Response) {
+		h.Callback(redirectURL, sessionKey)(response.ResponseWriter, r.Request)
+	}
 }
 
 type Claims struct {

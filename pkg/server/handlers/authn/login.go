@@ -12,11 +12,11 @@ import (
 	"net/http"
 )
 
-func (h *Handler) Login() http.HandlerFunc {
+func (h *Handler) Login(sessionKey string) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 
 		clearSession := func() {
-			userSession, err := h.sessionStore.New(req, constants.SessionKey)
+			userSession, err := h.sessionStore.New(req, sessionKey)
 			if err != nil {
 				return
 			}
@@ -31,11 +31,10 @@ func (h *Handler) Login() http.HandlerFunc {
 			return
 		}
 
-		userSession, err := h.sessionStore.Get(req, constants.SessionKey)
+		userSession, err := h.sessionStore.Get(req, sessionKey)
 		if err != nil {
 			logrus.WithError(err).Errorf("failed to retrieve user session: %s", err)
 			clearSession()
-			utils.ErrorResponse(w, meta.NewInternalServerError(errors.New("failed to retrieve session")))
 			return
 		}
 
@@ -52,9 +51,10 @@ func (h *Handler) Login() http.HandlerFunc {
 	}
 }
 
-func (h *Handler) RestfulLogin(request *restful.Request, response *restful.Response) {
-	handler := h.Login()
-	handler(response.ResponseWriter, request.Request)
+func (h *Handler) RestfulLogin(sessionKey string) restful.RouteFunction {
+	return func(req *restful.Request, res *restful.Response) {
+		h.Login(sessionKey)(res.ResponseWriter, req.Request)
+	}
 }
 
 func createStateVariable() (string, error) {

@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"github.com/cenkalti/backoff/v4"
 	"github.com/coreos/go-oidc/v3/oidc"
-	"github.com/nrc-no/core/pkg/server/admin/handlers/authn"
 	"github.com/nrc-no/core/pkg/server/admin/handlers/clients"
 	"github.com/nrc-no/core/pkg/server/admin/handlers/identityprovider"
 	"github.com/nrc-no/core/pkg/server/admin/handlers/organization"
 	"github.com/nrc-no/core/pkg/server/generic"
+	authn2 "github.com/nrc-no/core/pkg/server/handlers/authn"
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/store"
 	"golang.org/x/oauth2"
@@ -77,7 +77,7 @@ func (s *Server) Start(ctx context.Context) {
 		panic(err)
 	}
 
-	oauth2Config := oauth2.Config{
+	oauth2Config := &oauth2.Config{
 		ClientID:     s.options.Oidc.ClientID,
 		ClientSecret: s.options.Oidc.ClientSecret,
 		Endpoint:     provider.Endpoint(),
@@ -94,13 +94,15 @@ func (s *Server) Start(ctx context.Context) {
 		Now:                  nil,
 	})
 
-	authnHandler := authn.NewHandler(
+	authnHandler := authn2.NewHandler(
+		"admin-session",
+		s.options.Oidc.RedirectURI,
 		s.Server.SessionStore(),
-		&oauth2Config,
+		oauth2Config,
 		verifier,
 	)
 
-	s.Container.Filter(authn.RestfulAuthnMiddleware(s.SessionStore(), verifier, s.options.URLs.Self, "/"))
+	s.Container.Filter(authn2.RestfulAuthnMiddleware(s.SessionStore(), verifier, oauth2Config, s.options.URLs.Self, "admin-session"))
 
 	s.Container.Add(authnHandler.WebService())
 

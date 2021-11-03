@@ -4,8 +4,16 @@ serve:
     port: "9001"
     urls:
       self: "http://localhost:9001"
+    oidc:
+      redirect_uri: http://localhost:3001
+      scopes:
+        - openid
+        - profile
+        - email
+        - offline_access
     cors:
       allowed_origins: [ "http://localhost:3001" ]
+      allow_credentials: true
       allowed_headers:
         - Authorization
         - Content-Type
@@ -17,9 +25,8 @@ serve:
         - "DELETE"
       debug: true
       enabled: true
-    oidc:
-      issuer: http://localhost:9005
-      clientid: core-admin
+      exposed_headers:
+        - Location
     cache:
       redis:
         address: localhost:6379
@@ -31,13 +38,32 @@ serve:
     urls:
       self: http://localhost:9000
     oidc:
-      issuer: http://localhost:4444/
-      client_id: public
+      redirect_uri: http://localhost:3000
+      scopes:
+        - openid
+        - profile
+        - email
+        - offline_access
     cache:
       redis:
         address: localhost:6379
         max_idle_connections: 10
         max_length: 65536
+    cors:
+      allowed_origins: [ "http://localhost:3000" ]
+      allow_credentials: true
+      allowed_headers:
+        - Content-Type
+      allowed_methods:
+        - "GET"
+        - "POST"
+        - "PUT"
+        - "OPTIONS"
+        - "DELETE"
+      debug: true
+      enabled: true
+      exposed_headers:
+        - Location
   login:
     host: "127.0.0.1"
     port: "9002"

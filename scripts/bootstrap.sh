@@ -4,49 +4,59 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 
-PWA_ENV_FILE="${SCRIPT_DIR}/../web/pwa/.env"
+echo ">> Creating Core Server OAuth Client..."
 
-echo Creating Core App Hydra Client
-CLIENT=$(
+RESP=$(
   curl --request POST -sL \
     --url 'http://localhost:4445/clients' \
     --data-binary @- <<EOF
 {
-  "allowed_cors_origins":["http://localhost:3000"],
-  "redirect_uris":["http://localhost:3000/authentication/callback","http://localhost:3000/authentication/silent_callback"],
-  "client_name":"Core React App",
+  "allowed_cors_origins":[],
+  "redirect_uris":["$(cat "${SCRIPT_DIR}/../creds/core_app_redirect_uri")"],
+  "client_name":"Core App",
   "client_uri":"http://localhost:3000",
+  "client_id":"$(cat "${SCRIPT_DIR}/../creds/core_app_client_id")",
+  "client_secret":"$(cat "${SCRIPT_DIR}/../creds/core_app_client_secret")",
   "grant_types":["authorization_code"],
-  "token_endpoint_auth_method":"none",
   "scope":"openid offline offline_access email profile",
-  "response_types":["id_token","refresh_token","code"]
+  "response_types":["code"]
 }
 EOF
 )
 
-echo Creating Core App env file
-touch "${PWA_ENV_FILE}"
-cat <<EOF >"${PWA_ENV_FILE}"
-REACT_APP_CLIENT_ID=$(echo "${CLIENT}" | jq -r ".client_id")
-REACT_APP_ISSUER=http://localhost:4444
-REACT_APP_REDIRECT_URI=http://localhost:3000/authentication/callback
-REACT_APP_SILENT_REDIRECT_URI=http://localhost:3000/authentication/silent_callback
+echo "${RESP}" | grep "a resource with that value exists already" &&
+  echo "Found Hydra OAuth client with same id. Updating..." &&
+  curl --request PUT -sL \
+    --url "http://localhost:4445/clients/$(cat "${SCRIPT_DIR}/../creds/core_app_client_id")" \
+    --data-binary @- <<EOF
+{
+ "allowed_cors_origins":[],
+ "redirect_uris":["$(cat "${SCRIPT_DIR}/../creds/core_app_redirect_uri")"],
+ "client_name":"Core App",
+ "client_uri":"http://localhost:3000",
+ "client_secret":"$(cat "${SCRIPT_DIR}/../creds/core_app_client_secret")",
+ "grant_types":["authorization_code"],
+ "scope":"openid offline offline_access email profile",
+ "response_types":["code"]
+}
 EOF
 
-echo Registering Organization
+echo ">> Creating Core Server OAuth Client...Done!"
+
+echo ">> Registering Organization..."
+
 ORG_UUID="$(uuidgen)"
 docker exec -it "$(docker ps -aqf "name=core_db")" /usr/bin/psql \
-  -d core \
-  -U core \
+  -d "$(cat "${SCRIPT_DIR}/../creds/postgres_core_db")" \
+  -U "$(cat "${SCRIPT_DIR}/../creds/postgres_root_username")" \
   -c "
     INSERT INTO organizations (id, name, email_domain)
     values ('${ORG_UUID}','Norwegian Refugee Council','nrc.no');"
 
-CLIENT_INFO=$(jq '.client_config | .[] | select( .client_id == "core-login" )' <"${SCRIPT_DIR}/../deployments/oidc.config.json")
-CLIENT_ID=$(echo "${CLIENT_INFO}" | jq -r .client_id)
-CLIENT_SECRET=$(echo "${CLIENT_INFO}" | jq -r .client_secret)
+echo ">> Registering Organization... Done!"
 
-echo Registering Organization Identity Provider
+echo ">> Registering Organization Identity Provider..."
+
 docker exec -it "$(docker ps -aqf "name=core_db")" /usr/bin/psql \
   -d core \
   -U core \
@@ -66,8 +76,10 @@ docker exec -it "$(docker ps -aqf "name=core_db")" /usr/bin/psql \
       '$(uuidgen)',
       '${ORG_UUID}',
       'http://localhost:9005',
-      '${CLIENT_ID}',
-      '${CLIENT_SECRET}',
+      '$(cat "${SCRIPT_DIR}/../creds/nrc_idp_client_id")',
+      '$(cat "${SCRIPT_DIR}/../creds/nrc_idp_client_secret")',
       'nrc.no',
       'Simple Oidc Provider'
     );"
+
+echo ">> Registering Organization Identity Provider...Done!"

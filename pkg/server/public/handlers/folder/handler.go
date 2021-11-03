@@ -35,6 +35,8 @@ func NewHandler(store store.FolderStore) *Handler {
 	ws.Route(ws.POST("/").To(h.RestfulCreate).
 		Doc("create a folder").
 		Operation("createFolder").
+		Consumes("application/json").
+		Produces("application/json").
 		Reads(types.Folder{}).
 		Writes(types.Folder{}).
 		Returns(http.StatusOK, "OK", types.Folder{}))
@@ -42,6 +44,7 @@ func NewHandler(store store.FolderStore) *Handler {
 	ws.Route(ws.GET("/").To(h.RestfulList).
 		Doc("list all folders").
 		Operation("listFolders").
+		Produces("application/json").
 		Writes(types.FolderList{}).
 		Returns(http.StatusOK, "OK", types.FolderList{}))
 

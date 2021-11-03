@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
@@ -17,36 +17,8 @@ import {FormerContainer} from "./features/former/Former";
 import {DatabaseEditor} from "./features/databases/DatabaseEditor";
 import {FolderEditor} from "./features/folders/FolderEditor";
 import {RecordBrowser} from "./features/browser/RecordBrowser";
-import {AuthenticationProvider, InMemoryWebStorage, oidcLog, useReactOidc} from '@axa-fr/react-oidc-context';
-import {UserManagerSettings} from "oidc-client";
-
-const oidcConfig: UserManagerSettings = {
-    authority: process.env.REACT_APP_ISSUER,
-    client_id: process.env.REACT_APP_CLIENT_ID || "",
-    redirect_uri: process.env.REACT_APP_REDIRECT_URI,
-    silent_redirect_uri: process.env.REACT_APP_SILENT_REDIRECT_URI,
-    scope: "openid profile email",
-    automaticSilentRenew: true,
-    response_type: "code",
-};
 
 function AuthenticatedApp() {
-
-    const {login, oidcUser, events} = useReactOidc()
-
-    useEffect(() => {
-       if (!oidcUser){
-           login()
-       }
-    }, [oidcUser])
-
-    events.addSilentRenewError(error => {
-        login()
-    })
-
-    if (!oidcUser) {
-        return <Fragment>Authenticating...</Fragment>
-    }
 
     return (
         <div className="App">
@@ -111,13 +83,7 @@ function App() {
 
     return (
         <BrowserRouter>
-            <AuthenticationProvider
-                UserStore={InMemoryWebStorage}
-                isEnabled={true}
-                configuration={oidcConfig}
-                loggerLevel={oidcLog.DEBUG}>
-                <AuthenticatedApp/>
-            </AuthenticationProvider>
+            <AuthenticatedApp/>
         </BrowserRouter>
     );
 }

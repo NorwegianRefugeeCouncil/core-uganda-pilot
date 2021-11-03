@@ -37,12 +37,15 @@ func NewHandler(store store.DatabaseStore) *Handler {
 	ws.Route(ws.GET("/").To(h.RestfulList).
 		Doc("lists all databases").
 		Operation("listDatabases").
+		Produces("application/json").
 		Writes(types.DatabaseList{}).
 		Returns(http.StatusOK, "OK", types.DatabaseList{}))
 
 	ws.Route(ws.POST("/").To(h.RestfulCreate).
 		Doc("create a database").
 		Operation("createDatabase").
+		Consumes("application/json").
+		Produces("application/json").
 		Reads(types.Database{}).
 		Writes(types.Database{}).
 		Returns(http.StatusOK, "OK", types.Database{}))

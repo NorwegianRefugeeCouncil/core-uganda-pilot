@@ -21,6 +21,8 @@ func NewHandler(store store.FormStore) *Handler {
 	ws.Route(ws.POST("/").To(h.RestfulCreate).
 		Doc("create a form").
 		Operation("createForm").
+		Consumes("application/json").
+		Produces("application/json").
 		Reads(types.FormDefinition{}).
 		Writes(types.FormDefinition{}).
 		Returns(http.StatusOK, "OK", types.FormDefinition{}))
@@ -28,6 +30,7 @@ func NewHandler(store store.FormStore) *Handler {
 	ws.Route(ws.GET("/").To(h.RestfulList).
 		Doc("list forms").
 		Operation("listForms").
+		Produces("application/json").
 		Writes(types.FormDefinitionList{}).
 		Returns(http.StatusOK, "OK", types.FormDefinitionList{}))
 

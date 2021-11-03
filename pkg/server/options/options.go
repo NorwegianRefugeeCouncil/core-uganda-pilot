@@ -38,9 +38,10 @@ type URLOptions struct {
 
 type OIDCOptions struct {
 	Issuer       string   `mapstructure:"issuer"`
-	ClientID     string   `mapstructure:"clientid"`
-	ClientSecret string   `mapstructure:"clientsecret"`
+	ClientID     string   `mapstructure:"client_id"`
+	ClientSecret string   `mapstructure:"client_secret"`
 	Scopes       []string `mapstructure:"scopes"`
+	RedirectURI  string   `mapstructure:"redirect_uri"`
 }
 
 type ServerOptions struct {

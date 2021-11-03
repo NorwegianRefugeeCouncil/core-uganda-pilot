@@ -1,4 +1,4 @@
-import axios, {AxiosResponse, Method} from "axios";
+import axios, {AxiosError, AxiosResponse, Method} from "axios";
 import {
     Database,
     DatabaseList,
@@ -127,12 +127,21 @@ export class client implements Client {
 
     do<TRequest, TBody>(request: TRequest, url: string, method: Method, data: any, expectStatusCode: number): Promise<Response<TRequest, TBody>> {
         return axios.request<TBody>({
+            responseType: "json",
             method,
             url,
-            data
+            data,
+            headers: {
+                "Accept": "application/json",
+            },
+            withCredentials: true,
         }).then(value => {
+            console.log(value)
             return clientResponse<TRequest, TBody>(value, request, expectStatusCode);
-        }).catch((err) => {
+        }).catch((err: AxiosError) => {
+            if (err.response?.status == 401 && err.response?.headers["location"]) {
+                window.location.href = err.response?.headers["location"]
+            }
             return {
                 request: request,
                 response: undefined,
@@ -140,6 +149,7 @@ export class client implements Client {
                 statusCode: 500,
                 error: err.message,
                 success: false,
+
             }
         })
     }

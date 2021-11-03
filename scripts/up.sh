@@ -11,7 +11,7 @@ docker-compose -f deployments/webapp.docker-compose.yaml up --build -d
 echo "Waiting for database"
 (cd "${SCRIPT_DIR}" && ./waitforit.sh -h localhost -p 5433)
 
-sleep 5
+sleep 15
 
 echo "Database ready. migrating"
 (cd "${SCRIPT_DIR}" && ./migrate.sh -h localhost -p 5433)

@@ -14,7 +14,13 @@ type Handler struct {
 	webService    *restful.WebService
 }
 
-func NewHandler(sessionStore sessions.Store, oauth2Config *oauth2.Config, tokenVerifier *oidc.IDTokenVerifier) *Handler {
+func NewHandler(
+	sessionKey string,
+	redirectURL string,
+	sessionStore sessions.Store,
+	oauth2Config *oauth2.Config,
+	tokenVerifier *oidc.IDTokenVerifier,
+) *Handler {
 	h := &Handler{
 		sessionStore:  sessionStore,
 		oauth2Config:  oauth2Config,
@@ -24,10 +30,10 @@ func NewHandler(sessionStore sessions.Store, oauth2Config *oauth2.Config, tokenV
 	ws := new(restful.WebService).Path("/oidc")
 	h.webService = ws
 
-	ws.Route(ws.GET("/login").To(h.RestfulLogin).
+	ws.Route(ws.GET("/login").To(h.RestfulLogin(sessionKey)).
 		Doc("initiates login flow"))
 
-	ws.Route(ws.GET("/callback").To(h.RestfulCallback).
+	ws.Route(ws.GET("/callback").To(h.RestfulCallback(sessionKey, redirectURL)).
 		Doc("oauth2 callback"))
 
 	return h

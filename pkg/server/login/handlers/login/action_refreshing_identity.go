@@ -60,7 +60,13 @@ func handleRefreshingIdentity(
 				return
 			}
 
-			restoredToken := restoreToken(ctx, authRequest, oauth2Config)
+			previousToken := &oauth2.Token{
+				AccessToken:  authRequest.AccessToken,
+				RefreshToken: authRequest.RefreshToken,
+				Expiry:       authRequest.TokenExpiry,
+				TokenType:    authRequest.TokenType,
+			}
+			restoredToken := restoreToken(ctx, previousToken, oauth2Config)
 			newToken, err := restoredToken.Token()
 			if err != nil {
 				enqueue(func() {
@@ -100,11 +106,6 @@ func handleRefreshingIdentity(
 	}
 }
 
-func restoreToken(ctx context.Context, authRequest *authrequest.AuthRequest, oauth2Config *oauth2.Config) oauth2.TokenSource {
-	return oauth2Config.TokenSource(ctx, &oauth2.Token{
-		AccessToken:  authRequest.AccessToken,
-		RefreshToken: authRequest.RefreshToken,
-		Expiry:       authRequest.TokenExpiry,
-		TokenType:    authRequest.TokenType,
-	})
+func restoreToken(ctx context.Context, previousToken *oauth2.Token, oauth2Config *oauth2.Config) oauth2.TokenSource {
+	return oauth2Config.TokenSource(ctx, previousToken)
 }
