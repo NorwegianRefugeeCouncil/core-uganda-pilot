@@ -2,10 +2,12 @@ package authrequest
 
 import (
 	"encoding/gob"
+	"fmt"
 	"github.com/gorilla/sessions"
 	"github.com/looplab/fsm"
 	loginstore "github.com/nrc-no/core/pkg/server/login/store"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -287,23 +289,7 @@ func newAuthRequest(state string, handlers Handlers) *AuthRequest {
 
 	return authRequest
 
-} /**
-// 1. before_<EVENT> - called before event named <EVENT>
-//
-// 2. before_event - called before all events
-//
-// 3. leave_<OLD_STATE> - called before leaving <OLD_STATE>
-//
-// 4. leave_state - called before leaving all states
-//
-// 5. enter_<NEW_STATE> - called after entering <NEW_STATE>
-//
-// 6. enter_state - called after entering all states
-//
-// 7. after_<EVENT> - called after event named <EVENT>
-//
-// 8. after_event - called after all events
-*/
+}
 
 type AuthRequest struct {
 	fsm                *fsm.FSM
@@ -321,6 +307,27 @@ type AuthRequest struct {
 	Identity           *loginstore.Identity
 	ConsentChallenge   string
 	PostConsentURL     string
+}
+
+func (a *AuthRequest) ToDotGraph() string {
+	result := strings.Builder{}
+	result.WriteString("digraph A {\n")
+
+	for _, state := range allStates {
+		result.WriteString(fmt.Sprintf("  %s\n", state))
+	}
+	for _, state := range allStates {
+		for _, trans := range a.fsm.AvailableTransitions() {
+			a.fsm.SetState(state)
+			_ = a.fsm.Event(trans)
+			currentState := a.currentState()
+			result.WriteString(fmt.Sprintf("%s -> %s [label=\"%s\"]", state, currentState, trans))
+		}
+	}
+
+	result.WriteString("}\n")
+	return result.String()
+
 }
 
 type StoredIdentity struct {

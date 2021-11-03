@@ -12,3 +12,19 @@ urls:
 log:
   leak_sensitive_values: true
   level: debug
+cookies:
+  same_site_mode: Strict
+ttl:
+  access_token: 5m
+  refresh_token: 10m
+  id_token: 5m
+  auth_code: 5m
+  login_consent_request: 10m
+oauth2:
+  session:
+    encrypt_at_rest: true
+  pkce:
+    enforced_for_public_clients: true
+  client_credentials:
+    default_grant_allowed_scope: false
+  expose_internal_errors: true

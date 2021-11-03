@@ -7,6 +7,7 @@ import (
 	"github.com/nrc-no/core/pkg/server/login/authrequest"
 	"github.com/nrc-no/core/pkg/store"
 	"github.com/ory/hydra-client-go/models"
+	"golang.org/x/oauth2"
 	"net/http"
 )
 
@@ -71,7 +72,7 @@ func handleUseIdentityProvider(w http.ResponseWriter, req *http.Request, userSes
 			return
 		}
 
-		authCodeURL := oauth2Config.AuthCodeURL(stateVar)
+		authCodeURL := oauth2Config.AuthCodeURL(stateVar, oauth2.SetAuthURLParam("login_hint", authRequest.Identifier))
 		http.Redirect(w, req, authCodeURL, http.StatusSeeOther)
 
 	}

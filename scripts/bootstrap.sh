@@ -7,7 +7,6 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 PWA_ENV_FILE="${SCRIPT_DIR}/../web/pwa/.env"
 
 echo Creating Core App Hydra Client
-
 CLIENT=$(
   curl --request POST -sL \
     --url 'http://localhost:4445/clients' \
@@ -26,7 +25,6 @@ EOF
 )
 
 echo Creating Core App env file
-
 touch "${PWA_ENV_FILE}"
 cat <<EOF >"${PWA_ENV_FILE}"
 REACT_APP_CLIENT_ID=$(echo "${CLIENT}" | jq -r ".client_id")
@@ -36,9 +34,7 @@ REACT_APP_SILENT_REDIRECT_URI=http://localhost:3000
 EOF
 
 echo Registering Organization
-
 ORG_UUID="$(uuidgen)"
-
 docker exec -it "$(docker ps -aqf "name=core_db")" /usr/bin/psql \
   -d core \
   -U core \
@@ -46,12 +42,11 @@ docker exec -it "$(docker ps -aqf "name=core_db")" /usr/bin/psql \
     INSERT INTO organizations (id, name, email_domain)
     values ('${ORG_UUID}','Norwegian Refugee Council','nrc.no');"
 
-OIDC_CONFIG=$(jq '.client_config' < "${SCRIPT_DIR}/../deployments/oidc.config.json" | jq '.[0]')
-CLIENT_SECRET=$(echo "${OIDC_CONFIG}" | jq .client_secret)
-CLIENT_ID=$(echo "${OIDC_CONFIG}" | jq .client_id)
+CLIENT_INFO=$(jq '.client_config | .[] | select( .client_id == "core-login" )' <"${SCRIPT_DIR}/../deployments/oidc.config.json")
+CLIENT_ID=$(echo "${CLIENT_INFO}" | jq -r .client_id)
+CLIENT_SECRET=$(echo "${CLIENT_INFO}" | jq -r .client_secret)
 
 echo Registering Organization Identity Provider
-
 docker exec -it "$(docker ps -aqf "name=core_db")" /usr/bin/psql \
   -d core \
   -U core \

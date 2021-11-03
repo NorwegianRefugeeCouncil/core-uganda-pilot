@@ -28,7 +28,9 @@ if [ ! -f "${OIDC_USERS_FILE}" ] || [ ! -f "${OIDC_CONFIG_FILE}" ] || [ ! -f "${
   OIDC_ADMIN_CLIENT_ID="core-admin"
   OIDC_ADMIN_REDIRECT_URI="http://localhost:3001"
 
-  ADMIN_USERNAME=admin
+  OIDC_LOGIN_CLIENT_SECRET=$(openssl rand -hex 16)
+  OIDC_LOGIN_CLIENT_ID="core-login"
+  OIDC_LOGIN_REDIRECT_URI="http://localhost:9002/oidc/callback"
 
   touch "${ADMIN_APP_ENV_FILE}"
   cat <<EOF >"${ADMIN_APP_ENV_FILE}"
@@ -51,6 +53,19 @@ EOF
       ],
       "token_endpoint_auth_method": "none",
       "scope": "openid offline_access",
+      "response_types": [
+        "code"
+      ]
+    },{
+      "client_id": "${OIDC_LOGIN_CLIENT_ID}",
+      "client_secret": "${OIDC_LOGIN_CLIENT_SECRET}",
+      "redirect_uris": [ "${OIDC_LOGIN_REDIRECT_URI}" ],
+      "grant_types": [
+        "authorization_code",
+        "refresh_token"
+      ],
+      "token_endpoint_auth_method": "client_secret_post",
+      "scope": "openid email profile offline_access",
       "response_types": [
         "code"
       ]
