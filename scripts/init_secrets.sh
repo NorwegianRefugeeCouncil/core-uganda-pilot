@@ -36,8 +36,8 @@ if [ ! -f "${OIDC_USERS_FILE}" ] || [ ! -f "${OIDC_CONFIG_FILE}" ] || [ ! -f "${
   cat <<EOF >"${ADMIN_APP_ENV_FILE}"
 REACT_APP_CLIENT_ID=${OIDC_ADMIN_CLIENT_ID}
 REACT_APP_ISSUER=http://localhost:9005
-REACT_APP_REDIRECT_URI=http://localhost:3001
-REACT_APP_SILENT_REDIRECT_URI=http://localhost:3001
+REACT_APP_REDIRECT_URI=http://localhost:3001/auth/authentication/callback
+REACT_APP_SILENT_REDIRECT_URI=http://localhost:3001/authentication/silent_callback
 EOF
 
   touch "${OIDC_CONFIG_FILE}"

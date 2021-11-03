@@ -139,9 +139,14 @@ func getAuthRequest(action string, authHandlers authrequest.Handlers, userSessio
 func getUserSession(w http.ResponseWriter, req *http.Request, sessionStore sessions.Store) (*sessions.Session, bool) {
 	userSession, err := sessionStore.Get(req, "login-session")
 	if err != nil {
-		logrus.WithError(err).Warnf("failed to get login request")
-		handleError(w, http.StatusBadRequest, err)
-		return nil, true
+		logrus.WithError(err).Warnf("failed to restore session")
+		userSession, err := sessionStore.New(req, "login-session")
+		if err != nil {
+			logrus.WithError(err).Warnf("failed to create new session session")
+			handleError(w, http.StatusBadRequest, err)
+			return nil, true
+		}
+		return userSession, false
 	}
 	return userSession, false
 }

@@ -13,7 +13,7 @@ CLIENT=$(
     --data-binary @- <<EOF
 {
   "allowed_cors_origins":["http://localhost:3000"],
-  "redirect_uris":["http://localhost:3000"],
+  "redirect_uris":["http://localhost:3000/authentication/callback","http://localhost:3000/authentication/silent_callback"],
   "client_name":"Core React App",
   "client_uri":"http://localhost:3000",
   "grant_types":["authorization_code"],
@@ -29,8 +29,8 @@ touch "${PWA_ENV_FILE}"
 cat <<EOF >"${PWA_ENV_FILE}"
 REACT_APP_CLIENT_ID=$(echo "${CLIENT}" | jq -r ".client_id")
 REACT_APP_ISSUER=http://localhost:4444
-REACT_APP_REDIRECT_URI=http://localhost:3000
-REACT_APP_SILENT_REDIRECT_URI=http://localhost:3000
+REACT_APP_REDIRECT_URI=http://localhost:3000/authentication/callback
+REACT_APP_SILENT_REDIRECT_URI=http://localhost:3000/authentication/silent_callback
 EOF
 
 echo Registering Organization
