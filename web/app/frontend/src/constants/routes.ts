@@ -13,11 +13,11 @@ const routes: { [key: string]: Route; } = {
     name: 'forms',
   },
   addRecord: {
-    title: 'Add Record',
+    title: 'Add',
     name: 'addRecord'
   },
   viewRecord: {
-    title: 'View Record',
+    title: 'View',
     name: 'viewRecord'
   },
   records: {

@@ -131,11 +131,10 @@ function clientResponse<TRequest, TBody>(r: AxiosResponse<TBody>, request: TRequ
 }
 
 export class client implements Client {
-    defaultAddress = "http://localhost:9000"
-    address = this.defaultAddress;
+    private readonly address: string;
 
-    constructor(address?: string) {
-        this.address = address || this.defaultAddress;
+    constructor(address= 'http://localhost:9000') {
+        this.address = address;
     }
 
     do<TRequest, TBody>(request: TRequest, url: string, method: Method, data: any, expectStatusCode: number): Promise<Response<TRequest, TBody>> {

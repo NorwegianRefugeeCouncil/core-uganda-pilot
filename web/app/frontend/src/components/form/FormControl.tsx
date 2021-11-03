@@ -6,7 +6,6 @@ import {Control, Controller} from "react-hook-form";
 import {FieldDefinition, FieldKind} from "core-js-api-client/lib/types/types";
 import {getFieldKind} from "core-js-api-client/lib/client";
 import ReferenceInput from "./ReferenceInput";
-// import {FieldKind} from "../../../../client/src/types/types";
 
 // TODO: move & clean up types
 export type InputProps = {
@@ -47,7 +46,7 @@ const FormControl: React.FC<FormControlProps> = (
                 name={name}
                 control={control}
                 defaultValue={value}
-                // rules={formControl.validation}
+                rules={{}}
                 render={(
                     {
                         field: {onChange, onBlur, value, ref},

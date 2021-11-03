@@ -6,14 +6,12 @@ import useApiClient from "../../utils/clients";
 import {FormDefinition} from "core-js-api-client/lib/types/types";
 import {useForm} from "react-hook-form";
 import {getEncryptionKey} from "../../utils/getEncryptionKey";
-import * as SecureStore from "expo-secure-store";
-import CryptoJS from "react-native-crypto-js";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Network from "expo-network";
 import FormControl from "../form/FormControl";
 import {getEncryptedLocalData, storeEncryptedLocalData} from "../../utils/storage";
+import {RECORD_ACTIONS} from "../../reducers/recordsReducers";
 
-const AddRecordScreen: React.FC<any> = ({navigation, route}) => {
+const AddRecordScreen: React.FC<any> = ({route, dispatch}) => {
     const isWeb = Platform.OS === 'web';
     const {formId, recordId} = route.params;
 
@@ -26,7 +24,7 @@ const AddRecordScreen: React.FC<any> = ({navigation, route}) => {
     const [hasLocalData, setHasLocalData] = React.useState(false);
 
     const client = useApiClient();
-    const {control, handleSubmit, formState, reset} = useForm();
+    const {control, handleSubmit, formState} = useForm();
 
     React.useEffect(() => {
         client.getForm({id: formId})
@@ -38,24 +36,24 @@ const AddRecordScreen: React.FC<any> = ({navigation, route}) => {
     }, []);
 
     const onSubmitOffline = async (data: any) => {
-        console.log('submit offline', data)
         const key = getEncryptionKey();
-        console.log('created key', key)
 
         storeEncryptedLocalData(recordId, key, data)
             .then(() => {
-                console.log('stored encrypted data in async storage')
                 setHasLocalData(true)
+                dispatch({
+                    type: RECORD_ACTIONS.ADD_LOCAL_RECORD, payload: {
+                        formId,
+                        localRecords: [recordId]
+                    }
+                })
             })
-            .catch((e) => {
-                console.log('storing data in async storage has failed', e)
+            .catch(() => {
                 setHasLocalData(false)
             });
 
     }
     const onSubmit = (data: any) => {
-        console.log('submit', formId, data);
-
         if (isConnected || isWeb) {
             client.createRecord({object: {formId, values: data}})
         } else {
@@ -66,7 +64,6 @@ const AddRecordScreen: React.FC<any> = ({navigation, route}) => {
     // check for locally stored data on mobile device
     React.useEffect(() => {
         if (!isWeb) {
-            console.log('checking for local data', recordId)
             getEncryptedLocalData(recordId)
                 .then((data) => {
                     setHasLocalData(!!data);
@@ -124,7 +121,6 @@ const AddRecordScreen: React.FC<any> = ({navigation, route}) => {
                 {!isLoading && (
                     <View>
                         {form?.fields.map((field) => {
-                            // console.log(field)
                             return (
                                 <FormControl
                                     key={field.code}

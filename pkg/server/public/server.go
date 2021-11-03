@@ -41,7 +41,7 @@ func NewServer(options Options) (*Server, error) {
 	container.Add(formHandler.WebService())
 
 	recordStore := store2.NewRecordStore(options.StoreFactory, formStore)
-	recordHandler := record.NewHandler(recordStore)
+	recordHandler := record.NewHandler(recordStore, formStore)
 	container.Add(recordHandler.WebService())
 
 	s := &Server{

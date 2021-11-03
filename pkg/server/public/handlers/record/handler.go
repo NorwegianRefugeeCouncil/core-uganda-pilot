@@ -11,11 +11,12 @@ import (
 
 type Handler struct {
 	store      store.RecordStore
+	formStore      store.FormStore
 	webService *restful.WebService
 }
 
-func NewHandler(store store.RecordStore) *Handler {
-	h := &Handler{store: store}
+func NewHandler(store store.RecordStore, formStore store.FormStore) *Handler {
+	h := &Handler{store: store, formStore: formStore}
 
 	ws := new(restful.WebService).Path("/records")
 	h.webService = ws

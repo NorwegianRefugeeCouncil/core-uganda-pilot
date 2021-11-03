@@ -8,7 +8,6 @@
     <directory value="$PROJECT_DIR$" />
     <filePath value="$PROJECT_DIR$/main.go" />
     <method v="2">
-      <option name="ToolBeforeRunTask" enabled="true" actionId="Tool_External Tools_init-secrets" />
       <option name="GoBeforeRunTask" command="run . migrate --config configs/config.yaml,configs/config.custom.yaml" />
     </method>
   </configuration>

@@ -16,6 +16,14 @@ func (h *Handler) Create() http.HandlerFunc {
 			return
 		}
 
+		form, err := h.formStore.Get(req.Context(), input.FormID)
+		if err != nil {
+			utils.ErrorResponse(w, err)
+			return
+		}
+
+		input.DatabaseID = form.DatabaseID
+
 		resultRecord, err := h.store.Create(req.Context(), &input)
 		if err != nil {
 			utils.ErrorResponse(w, err)

@@ -1,6 +1,6 @@
 import {View} from 'react-native';
 import {layout} from '../styles';
-import React from 'react';
+import React, {useReducer} from 'react';
 import NavigationBar from './NavigationBar';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -12,9 +12,20 @@ import DesignSystemDemoScreen from "./screens/DesignSystemDemoScreen";
 import RecordsScreen from "./screens/RecordsScreen";
 import AddRecordScreen from "./screens/AddRecordScreen";
 import ViewRecordScreen from "./screens/ViewRecordScreen";
+import {initialRecordsState, recordsReducer, RecordsStoreProps} from "../reducers/recordsReducers";
+
+export type ScreenProps = {
+    navigation: any,
+    route: any,
+    state: RecordsStoreProps,
+    dispatch: any
+}
 
 export default function Router() {
     const Stack = createStackNavigator();
+    const [state, dispatch] = useReducer(recordsReducer, initialRecordsState);
+
+    console.log('STATE', state)
 
     const linkingConfig = {
         prefixes: [host],
@@ -22,7 +33,8 @@ export default function Router() {
             screens: {
                 Forms: routes.forms.name,
                 Records: routes.records.name,
-                Record: routes.addRecord.name,
+                AddRecord: routes.addRecord.name,
+                ViewRecord: routes.viewRecord.name,
                 DesignSystem: routes.designSystem.name
             }
         }
@@ -41,30 +53,40 @@ export default function Router() {
                             name={routes.forms.name}
                             component={FormsScreen}
                             options={{
-                                title: routes.forms.title
+                                title: routes.forms.title,
+
                             }}
                         />
                         <Stack.Screen
                             name={routes.records.name}
-                            component={RecordsScreen}
                             options={{
                                 title: routes.records.title
                             }}
-                        />
+                        >
+                            {(props) =>
+                                <RecordsScreen {...props} state={state} dispatch={dispatch}/>
+                            }
+                        </Stack.Screen>
                         <Stack.Screen
                             name={routes.addRecord.name}
-                            component={AddRecordScreen}
                             options={{
                                 title: routes.addRecord.title
                             }}
-                        />
+                        >
+                            {(props) =>
+                                <AddRecordScreen {...props} state={state} dispatch={dispatch}/>
+                            }
+                        </Stack.Screen>
                         <Stack.Screen
                             name={routes.viewRecord.name}
-                            component={ViewRecordScreen}
                             options={{
                                 title: routes.viewRecord.title
                             }}
-                        />
+                        >
+                            {(props) =>
+                                <ViewRecordScreen {...props} state={state} dispatch={dispatch}/>
+                            }
+                        </Stack.Screen>
                         <Stack.Screen
                             name={routes.designSystem.name}
                             component={DesignSystemDemoScreen}

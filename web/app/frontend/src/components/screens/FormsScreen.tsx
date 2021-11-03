@@ -30,7 +30,7 @@ const FormsScreen: React.FC<any> = ({navigation}) => {
                         <TouchableOpacity
                             key={index}
                             onPress={() => navigation.navigate(routes.records.name, {
-                                id: item.id,
+                                formId: item.id,
                                 databaseId: item.databaseId
                             })}
                         >
