@@ -14,9 +14,10 @@ import {Clients} from "./components/clients/Clients";
 import {ClientEditor} from "./components/clients/ClientEditor";
 
 const oidcConfig = {
-    authority: 'https://dev-53701279.okta.com',
-    clientId: '0oa2gb25jhuFDIkhd5d7',
-    redirectUri: 'http://localhost:3001'
+    authority: process.env.REACT_APP_ISSUER,
+    clientId: process.env.REACT_APP_CLIENT_ID,
+    redirectUri: process.env.REACT_APP_REDIRECT_URI,
+    silentRedirectUri: process.env.REACT_APP_SILENT_REDIRECT_URI,
 };
 
 function App() {

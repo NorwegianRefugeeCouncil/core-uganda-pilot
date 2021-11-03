@@ -6,6 +6,10 @@ SHELL := bash
 up:
 	@./scripts/up.sh
 
+.PHONY: bootstrap
+bootstrap:
+	@./scripts/bootstrap.sh
+
 .PHONY: down
 down:
 	@./scripts/down.sh

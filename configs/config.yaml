@@ -18,8 +18,8 @@ serve:
       debug: true
       enabled: true
     oidc:
-      issuer: https://dev-53701279.okta.com
-      clientid: 0oa2gb25jhuFDIkhd5d7
+      issuer: http://localhost:9005
+      clientid: core-admin
     cache:
       redis:
         address: localhost:6379

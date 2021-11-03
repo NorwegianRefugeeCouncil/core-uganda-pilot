@@ -12,10 +12,10 @@ import {SQLContextProvider} from "./app/db";
 log.setDefaultLevel(log.levels.TRACE)
 
 const oidcConfig = {
-    authority: 'http://localhost:4444',
-    clientId: '68a07e2a-261d-4649-ae2c-5817fcb20f23',
-    redirectUri: 'http://localhost:3000',
-    silentRedirectUri: "http://localhost:3000"
+    authority: process.env.REACT_APP_ISSUER,
+    clientId: process.env.REACT_APP_CLIENT_ID,
+    redirectUri: process.env.REACT_APP_REDIRECT_URI,
+    silentRedirectUri: process.env.REACT_APP_SILENT_REDIRECT_URI,
 };
 
 ReactDOM.render(

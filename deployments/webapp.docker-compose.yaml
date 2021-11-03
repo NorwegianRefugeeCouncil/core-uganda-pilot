@@ -1,5 +1,21 @@
 services:
 
+  oidc:
+    container_name: oidc
+    hostname: oidc
+    image: qlik/simple-oidc-provider
+    ports:
+      - 9005:9005
+    environment:
+      REDIRECTS: http://localhost:9002/oidc/callback
+      IDP_NAME: http://localhost:9005
+      CONFIG_FILE: /var/run/config.json
+      USERS_FILE: /var/run/users.json
+      PORT: "9005"
+    volumes:
+      - ./oidc.config.json:/var/run/config.json
+      - ./oidc.users.json:/var/run/users.json
+
   redis:
     image: 'bitnami/redis:latest'
     container_name: "core-redis"
@@ -41,7 +57,7 @@ services:
 
   db:
     image: postgres:9.6
-    container_name: "core-hydra-db"
+    container_name: "core_db"
     ports:
       - "5433:5432"
     env_file:

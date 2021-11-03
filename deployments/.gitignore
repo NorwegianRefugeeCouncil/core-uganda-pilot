@@ -2,3 +2,5 @@ webapp.env
 hydra.custom.yaml
 postgres.env
 redis.env
+oidc.config.json
+oidc.users.json
