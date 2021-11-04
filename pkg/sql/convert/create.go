@@ -10,10 +10,10 @@ import (
 	"gorm.io/gorm"
 )
 
-func CreateDatabase(db *sql.DB, database *types.Database) error {
+func CreateDatabase(db *gorm.DB, database *types.Database) error {
 	ddl := convertDatabaseToSqlSchema(*database).DDL()
 	fmt.Println(ddl)
-	_, err := db.Exec(ddl.Query, ddl.Args...)
+	err := db.Exec(ddl.Query, ddl.Args...).Error
 	return err
 }
 
@@ -186,7 +186,7 @@ func deleteTableIfExists(db *sql.DB, schemaName, tableName string) error {
 	return err
 }
 
-func DeleteDatabaseIfExists(db *gorm.DB, databaseID string) error {
+func DeleteDatabaseSchemaIfExist(db *gorm.DB, databaseID string) error {
 	return deleteSchemaIfExists(db, databaseID)
 }
 

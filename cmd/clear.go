@@ -24,7 +24,7 @@ var clearCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if err := store.Clear(db); err != nil {
+		if err := store.Clear(ctx, db); err != nil {
 			return err
 		}
 		if err := loginstore.Clear(db); err != nil {

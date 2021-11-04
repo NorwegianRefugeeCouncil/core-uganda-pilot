@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"github.com/emicklei/go-restful/v3"
 	"github.com/felixge/httpsnoop"
-	uuid "github.com/satori/go.uuid"
+	"github.com/lithammer/shortuuid/v3"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"net"
@@ -24,7 +24,7 @@ func UseRequestID(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		reqId := req.Header.Get("X-Request-Id")
 		if len(reqId) == 0 {
-			newId := uuid.NewV4().String()
+			newId := shortuuid.New()
 			req.Header.Set("X-Request-Id", newId)
 		}
 		ctx := WithRequestID(req.Context(), req.Header.Get("X-Request-Id"))

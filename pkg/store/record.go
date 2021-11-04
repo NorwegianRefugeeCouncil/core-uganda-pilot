@@ -8,6 +8,7 @@ import (
 	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/api/types"
 	uuid "github.com/satori/go.uuid"
+	"go.uber.org/zap"
 	"strings"
 )
 
@@ -29,23 +30,29 @@ func NewRecordStore(db Factory, formStore FormStore) RecordStore {
 }
 
 func (r recordStore) Get(ctx context.Context, recordRef types.RecordRef) (*types.Record, error) {
-
-	db, err := r.db.Get()
+	ctx, db, l, done, err := actionContext(ctx, r.db, "record", "get", zap.String("record_id", recordRef.ID))
 	if err != nil {
 		return nil, err
 	}
+	defer done()
 
+	l.Debug("getting record form")
 	rootForm, err := r.formStore.Get(ctx, recordRef.FormID)
 	if err != nil {
+		l.Error("failed to get record form")
 		return nil, err
 	}
 
+	l.Debug("getting form interface")
 	form, err := rootForm.GetFormInterface(recordRef.FormID)
 	if err != nil {
+		l.Error("failed to get form interface")
 		return nil, meta.NewInternalServerError(err)
 	}
 
+	l.Debug("ensuring record database id match")
 	if rootForm.DatabaseID != recordRef.DatabaseID {
+		l.Error("failed to verify record database id match")
 		return nil, meta.NewNotFound(meta.GroupResource{
 			Group:    "nrc.no",
 			Resource: "records",
@@ -61,23 +68,31 @@ func (r recordStore) Get(ctx context.Context, recordRef types.RecordRef) (*types
 		pq.QuoteIdentifier(form.GetID()),
 	))
 
+	l.Debug("getting raw sql database")
 	sqlDB, err := db.DB()
 	if err != nil {
+		l.Error("failed to get raw sql database", zap.Error(err))
 		return nil, meta.NewInternalServerError(err)
 	}
 
+	l.Debug("finding records")
 	result, err := sqlDB.Query(query.String(), recordRef.ID)
 	if err != nil {
+		l.Error("failed to find records", zap.Error(err))
 		return nil, meta.NewInternalServerError(err)
 	}
 
+	l.Debug("mapping records")
 	recordList, err := mapRecordList(result)
 	if err != nil {
+		l.Error("failed to map records", zap.Error(err))
 		return nil, err
 	}
 
 	if len(recordList.Items) != 1 {
-		return nil, meta.NewInternalServerError(fmt.Errorf("unexpected number of records"))
+		err := meta.NewInternalServerError(fmt.Errorf("unexpected number of records"))
+		l.Error("should only have 1 record in result", zap.Error(err))
+		return nil, err
 	}
 
 	return recordList.Items[0], nil
@@ -85,19 +100,33 @@ func (r recordStore) Get(ctx context.Context, recordRef types.RecordRef) (*types
 }
 
 func (r recordStore) List(ctx context.Context, options types.RecordListOptions) (*types.RecordList, error) {
+	ctx, db, l, done, err := actionContext(ctx, r.db, "record", "list",
+		zap.String("database_id", options.DatabaseID),
+		zap.String("form_Id", options.FormID))
 
-	rootForm, err := r.formStore.Get(ctx, options.FormID)
 	if err != nil {
 		return nil, err
 	}
+	defer done()
 
+	l.Debug("getting record form")
+	rootForm, err := r.formStore.Get(ctx, options.FormID)
+	if err != nil {
+		l.Error("failed to get record form", zap.Error(err))
+		return nil, err
+	}
+
+	l.Debug("verifying form database id match")
 	if rootForm.DatabaseID != options.DatabaseID {
+		l.Error("failed to verify form database id match")
 		return nil, fmt.Errorf("wrong database id: %s", options.DatabaseID)
 	}
 
+	l.Debug("getting form interface")
 	form, err := rootForm.GetFormInterface(options.FormID)
 	if err != nil {
-		return nil, fmt.Errorf("wrong database id: %s", options.DatabaseID)
+		l.Error("failed to get form interface", zap.Error(err))
+		return nil, err
 	}
 
 	query := strings.Builder{}
@@ -106,23 +135,24 @@ func (r recordStore) List(ctx context.Context, options types.RecordListOptions) 
 		pq.QuoteIdentifier(form.GetID()),
 	))
 
-	db, err := r.db.Get()
-	if err != nil {
-		return nil, err
-	}
-
+	l.Debug("getting raw sql database")
 	sqlDB, err := db.DB()
 	if err != nil {
+		l.Error("failed to get raw sql database", zap.Error(err))
 		return nil, meta.NewInternalServerError(err)
 	}
 
+	l.Debug("listing records")
 	result, err := sqlDB.Query(query.String())
 	if err != nil {
+		l.Error("failed to list records", zap.Error(err))
 		return nil, meta.NewInternalServerError(err)
 	}
 
+	l.Debug("mapping records")
 	recordList, err := mapRecordList(result)
 	if err != nil {
+		l.Error("failed to map records", zap.Error(err))
 		return nil, err
 	}
 
@@ -191,19 +221,29 @@ func mapRecord(cols []string, result *sql.Rows) (*types.Record, error) {
 }
 
 func (r recordStore) Create(ctx context.Context, record *types.Record) (*types.Record, error) {
+	ctx, db, l, done, err := actionContext(ctx, r.db, "record", "create", zap.String("form_id", record.FormID))
+	if err != nil {
+		return nil, err
+	}
+	defer done()
+
 	var keys []string
 	var values []interface{}
 	var params []string
 	i := 1
 
+	l.Debug("getting root form")
 	rootform, err := r.formStore.Get(ctx, record.FormID)
 	if err != nil {
+		l.Error("failed to get record root form", zap.Error(err))
 		return nil, err
 	}
 	databaseId := rootform.DatabaseID
 
+	l.Debug("getting form interface")
 	form, err := rootform.GetFormInterface(record.FormID)
 	if err != nil {
+		l.Error("failed to get form interface", zap.Error(err))
 		return nil, err
 	}
 
@@ -248,19 +288,18 @@ func (r recordStore) Create(ctx context.Context, record *types.Record) (*types.R
 		strings.Join(params, ","),
 	))
 
-	db, err := r.db.Get()
-	if err != nil {
-		return nil, err
-	}
-
+	l.Debug("getting raw sql database")
 	sqlDB, err := db.DB()
 	if err != nil {
+		l.Error("failed to get raw sql database", zap.Error(err))
 		return nil, meta.NewInternalServerError(err)
 	}
 
+	l.Debug("inserting record")
 	var lastInsertedId string
 	insertSQLQuery := insertQry.String()
 	if err := sqlDB.QueryRow(insertSQLQuery, values...).Scan(&lastInsertedId); err != nil {
+		l.Error("failed to insert record", zap.Error(err))
 		return nil, meta.NewInternalServerError(err)
 	}
 

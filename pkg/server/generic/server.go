@@ -135,6 +135,12 @@ func NewGenericServer(options options.ServerOptions, name string) (*Server, erro
 
 	middleware := chainMiddleware(
 		func(next http.Handler) http.Handler {
+			return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+				req = req.WithContext(logging.WithServerName(req.Context(), name))
+				next.ServeHTTP(w, req)
+			})
+		},
+		func(next http.Handler) http.Handler {
 			return handlers.RecoveryHandler()(next)
 		},
 		func(next http.Handler) http.Handler {

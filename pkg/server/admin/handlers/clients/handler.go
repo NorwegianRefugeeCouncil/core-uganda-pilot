@@ -29,6 +29,8 @@ func NewHandler() (*Handler, error) {
 		Doc(`updates oauth2 client`).
 		Param(ws.PathParameter("clientId", "client id").Required(true)).
 		Operation("updateClient").
+		Consumes("application/json").
+		Produces("application/json").
 		Reads(&types.Oauth2Client{}).
 		Writes(&types.Oauth2Client{}).
 		Returns(http.StatusOK, "OK", &types.Oauth2Client{}),
@@ -37,6 +39,8 @@ func NewHandler() (*Handler, error) {
 	ws.Route(ws.POST("").To(restfulCreate(hydraAdmin)).
 		Doc(`creates oauth2 client`).
 		Operation("createClient").
+		Consumes("application/json").
+		Produces("application/json").
 		Reads(&types.Oauth2Client{}).
 		Writes(&types.Oauth2Client{}).
 		Returns(http.StatusOK, "OK", &types.Oauth2Client{}),
@@ -45,6 +49,7 @@ func NewHandler() (*Handler, error) {
 	ws.Route(ws.GET("/{clientId}").To(restfulGet(hydraAdmin)).
 		Doc(`gets oauth2 client`).
 		Param(ws.PathParameter("clientId", "client id").Required(true)).
+		Consumes("application/json").
 		Operation("getClient").
 		Writes(&types.Oauth2Client{}).
 		Returns(http.StatusOK, "OK", &types.Oauth2Client{}),
@@ -60,6 +65,7 @@ func NewHandler() (*Handler, error) {
 	ws.Route(ws.GET("").To(restfulList(hydraAdmin)).
 		Doc(`gets oauth2 clients`).
 		Operation("listClients").
+		Produces("application/json").
 		Writes(&types.Oauth2ClientList{}).
 		Returns(http.StatusOK, "OK", &types.Oauth2ClientList{}),
 	)

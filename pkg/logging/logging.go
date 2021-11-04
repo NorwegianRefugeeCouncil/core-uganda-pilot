@@ -20,19 +20,22 @@ const (
 	middlewareKey
 	handlerKey
 	subjectKey
+	storeKey
+	storeActionKey
+	fieldsKey
 )
 
 var encoderCfg = zapcore.EncoderConfig{
 	MessageKey:     "msg",
 	LevelKey:       "level",
 	NameKey:        "logger",
-	EncodeLevel:    zapcore.CapitalColorLevelEncoder,
+	EncodeLevel:    zapcore.LowercaseLevelEncoder,
 	EncodeTime:     zapcore.ISO8601TimeEncoder,
 	EncodeDuration: zapcore.StringDurationEncoder,
 }
 var level = zap.NewAtomicLevel()
-var core = zapcore.NewCore(zapcore.NewConsoleEncoder(encoderCfg), os.Stdout, level)
-var logger = zap.New(core)
+var core = zapcore.NewCore(zapcore.NewJSONEncoder(encoderCfg), os.Stdout, level)
+var logger = zap.New(core).With(zap.Int("pid", os.Getpid()))
 
 func init() {
 	level.SetLevel(zapcore.DebugLevel)
@@ -65,8 +68,30 @@ func WithAuthnSubject(ctx context.Context, subject string) context.Context {
 func WithMiddleware(ctx context.Context, middleware string) context.Context {
 	return context.WithValue(ctx, middlewareKey, middleware)
 }
+func WithFields(ctx context.Context, fields ...zap.Field) context.Context {
+	if currentFields, ok := ctx.Value(fieldsKey).([]zap.Field); ok {
+		fields = append(fields, currentFields...)
+	}
+	return context.WithValue(ctx, fieldsKey, fields)
+}
+
+func WithStore(ctx context.Context, storeName, actionName string, fields ...zap.Field) context.Context {
+	ctx = context.WithValue(ctx, storeKey, storeName)
+	ctx = context.WithValue(ctx, storeActionKey, actionName)
+	if len(fields) > 0 {
+		return WithFields(ctx, fields...)
+	}
+	return ctx
+}
+
 func SetLogLevel(l zapcore.Level) {
 	level.SetLevel(l)
+}
+
+func NewStoreLogger(ctx context.Context, storeName, actionName string, fields ...zap.Field) (context.Context, *zap.Logger) {
+	ctx = WithStore(ctx, storeName, actionName, fields...)
+	l := NewLogger(ctx)
+	return ctx, l
 }
 
 func NewLogger(ctx context.Context) *zap.Logger {
@@ -95,5 +120,15 @@ func NewLogger(ctx context.Context) *zap.Logger {
 	if sub, ok := ctx.Value(subjectKey).(string); ok {
 		newLogger = newLogger.With(zap.String("subject", sub))
 	}
+	if store, ok := ctx.Value(storeKey).(string); ok {
+		newLogger = newLogger.With(zap.String("store", store))
+	}
+	if storeAction, ok := ctx.Value(storeActionKey).(string); ok {
+		newLogger = newLogger.With(zap.String("store_action", storeAction))
+	}
+	if fields, ok := ctx.Value(fieldsKey).([]zap.Field); ok {
+		newLogger = newLogger.With(fields...)
+	}
+
 	return newLogger
 }

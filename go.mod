@@ -14,6 +14,7 @@ require (
 	github.com/gorilla/sessions v1.2.1
 	github.com/iancoleman/strcase v0.2.0
 	github.com/lib/pq v1.10.3
+	github.com/lithammer/shortuuid/v3 v3.0.7 // indirect
 	github.com/looplab/fsm v0.3.0
 	github.com/ory/hydra-client-go v1.10.6
 	github.com/rs/cors v1.8.0
