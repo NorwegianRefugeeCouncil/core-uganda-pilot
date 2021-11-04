@@ -7,4 +7,5 @@ import (
 
 func init() {
 	gob.Register(&time.Time{})
+	gob.Register(&Claims{})
 }

@@ -35,6 +35,18 @@ func handleAuthRequestAction(
 
 			ctx := req.Context()
 
+			logger := logrus.
+				WithField("server", "core-login").
+				WithField("name", "login_action")
+
+			logger.
+				WithField("action", action).
+				WithField("path_parameters", pathParameters).
+				WithField("request_parameters", requestParameters).
+				Tracef("received login action")
+
+			logger.Tracef("getting user session")
+
 			// getting user session
 			userSession, done := getUserSession(w, req, sessionStore)
 			if done {
@@ -44,14 +56,19 @@ func handleAuthRequestAction(
 			// cache login request
 			var _loginRequest *models.LoginRequest
 			getLoginRequest := func(loginChallenge string) (*models.LoginRequest, error) {
+
 				if _loginRequest != nil {
+					logger.Tracef("returning cached login request")
 					return _loginRequest, nil
 				}
+
+				logger.Tracef("getting login request")
 				loginRequestResp, err := hydraAdmin.GetLoginRequest(&admin.GetLoginRequestParams{
 					Context:        ctx,
 					LoginChallenge: loginChallenge,
 				})
 				if err != nil {
+					logger.WithError(err).Errorf("failed to get login request")
 					return nil, err
 				}
 				_loginRequest = loginRequestResp.Payload
@@ -62,13 +79,16 @@ func handleAuthRequestAction(
 			var _consentRequest *models.ConsentRequest
 			getConsentRequest := func(consentChallenge string) (*models.ConsentRequest, error) {
 				if _consentRequest != nil {
+					logger.Tracef("returning cached consent request")
 					return _consentRequest, nil
 				}
+				logger.Tracef("getting consent request")
 				consentRequestResp, err := hydraAdmin.GetConsentRequest(&admin.GetConsentRequestParams{
 					Context:          ctx,
 					ConsentChallenge: consentChallenge,
 				})
 				if err != nil {
+					logger.WithError(err).Errorf("failed to get consent request")
 					return nil, err
 				}
 				_consentRequest = consentRequestResp.Payload
@@ -115,9 +135,12 @@ func handleAuthRequestAction(
 
 			authRequest := getAuthRequest(action, authHandlers, userSession)
 
+			logger.WithField("action", action).Tracef("dispatching login action")
 			dispatchAction(w, action, enqueue, authRequest)
 
 			wg.Wait()
+
+			logger.Tracef("done dispatching login actions")
 
 		}
 

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/cenkalti/backoff/v4"
 	"github.com/coreos/go-oidc/v3/oidc"
+	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/server/generic"
 	authn2 "github.com/nrc-no/core/pkg/server/handlers/authn"
 	"github.com/nrc-no/core/pkg/server/options"
@@ -13,6 +14,7 @@ import (
 	"github.com/nrc-no/core/pkg/server/public/handlers/form"
 	"github.com/nrc-no/core/pkg/server/public/handlers/record"
 	store2 "github.com/nrc-no/core/pkg/store"
+	"go.uber.org/zap"
 	"golang.org/x/oauth2"
 )
 
@@ -61,12 +63,14 @@ func NewServer(options Options) (*Server, error) {
 
 func (s *Server) Start(ctx context.Context) {
 
+	l := logging.NewLogger(ctx)
+
 	var provider *oidc.Provider
 	err := backoff.Retry(func() error {
 		var err error
 		provider, err = oidc.NewProvider(ctx, s.options.Oidc.Issuer)
 		if err != nil {
-			s.Logger().WithError(err).Warnf("failed to get oidc provider")
+			l.With(zap.Error(err)).Warn("failed to get oidc provider")
 			return err
 		}
 		return err
@@ -103,8 +107,8 @@ func (s *Server) Start(ctx context.Context) {
 
 	s.Container.Filter(authn2.RestfulAuthnMiddleware(
 		s.SessionStore(),
-		verifier,
 		oauth2Config,
+		verifier,
 		s.options.URLs.Self,
 		"core-app-session"),
 	)

@@ -11,12 +11,14 @@ import (
 	"github.com/gomodule/redigo/redis"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/sessions"
+	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/rs/cors"
+	uuid "github.com/satori/go.uuid"
 	"github.com/sirupsen/logrus"
+	"go.uber.org/zap"
 	"net"
 	"net/http"
-	"os"
 	"reflect"
 	"time"
 )
@@ -28,20 +30,16 @@ type Server struct {
 	Container    *restful.Container
 	handler      http.Handler
 	sessionStore sessions.Store
-	logger       logrus.FieldLogger
 }
 
 type Middleware func(next http.Handler) http.Handler
 
 func NewGenericServer(options options.ServerOptions, name string) (*Server, error) {
 
-	stdLogger := logrus.StandardLogger()
-	stdLogger.SetFormatter(&logrus.JSONFormatter{})
-	logger := stdLogger.WithField("server_name", name)
+	logger := logrus.WithField("server_name", name)
 
 	srv := &Server{
-		name:   name,
-		logger: logger,
+		name: name,
 	}
 
 	if len(options.Secrets.Hash) != len(options.Secrets.Block) {
@@ -120,6 +118,7 @@ func NewGenericServer(options options.ServerOptions, name string) (*Server, erro
 	srv.listener = listener
 
 	container := restful.NewContainer()
+	container.Filter(logging.UseOperationLogging())
 	srv.Container = container
 
 	c := cors.New(cors.Options{
@@ -132,12 +131,24 @@ func NewGenericServer(options options.ServerOptions, name string) (*Server, erro
 		MaxAge:             options.Cors.MaxAge,
 		ExposedHeaders:     options.Cors.ExposedHeaders,
 	})
+	c.Log = &CorsLogger{}
 
 	middleware := chainMiddleware(
-		handlers.RecoveryHandler(),
-		handlers.CompressHandler,
-		withLogging(),
-		withCors(c),
+		func(next http.Handler) http.Handler {
+			return handlers.RecoveryHandler()(next)
+		},
+		func(next http.Handler) http.Handler {
+			return logging.UseRequestID(next)
+		},
+		func(next http.Handler) http.Handler {
+			return handlers.CompressHandler(next)
+		},
+		func(next http.Handler) http.Handler {
+			return c.Handler(next)
+		},
+		func(next http.Handler) http.Handler {
+			return logging.UseRequestLogging(next)
+		},
 	)
 
 	handler := middleware(container)
@@ -147,28 +158,31 @@ func NewGenericServer(options options.ServerOptions, name string) (*Server, erro
 
 }
 
-func withLogging() func(next http.Handler) http.Handler {
-	return func(next http.Handler) http.Handler {
-		return handlers.LoggingHandler(os.Stdout, next)
-	}
+type CorsLogger struct {
 }
 
-func withCors(c *cors.Cors) func(next http.Handler) http.Handler {
-	return func(next http.Handler) http.Handler {
-		return c.Handler(next)
-	}
+func (c CorsLogger) Printf(s string, i ...interface{}) {
+	logging.NewLogger(context.TODO()).Debug(fmt.Sprintf(s, i...), zap.String("middleware", "cors"))
 }
+
+var _ cors.Logger = CorsLogger{}
 
 func (g Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+
+	reqId := req.Header.Get("X-Request-Id")
+	if len(reqId) == 0 {
+		reqId = uuid.NewV4().String()
+	}
+
+	ctx := logging.WithServerName(req.Context(), g.name)
+	ctx = logging.WithRequestID(ctx, reqId)
+
+	req = req.WithContext(ctx)
 	g.handler.ServeHTTP(w, req)
 }
 
 func (g Server) SessionStore() sessions.Store {
 	return g.sessionStore
-}
-
-func (g Server) Logger() logrus.FieldLogger {
-	return g.logger
 }
 
 func (g Server) Start(ctx context.Context) {
@@ -182,14 +196,15 @@ func (g Server) Start(ctx context.Context) {
 	}
 	g.Container.Add(restfulspec.NewOpenAPIService(config))
 
-	g.logger = g.logger.
-		WithField("address", g.listener.Addr().String()).
-		WithField("tls", false)
+	l := logging.NewLogger(ctx).
+		With(zap.String("address", g.listener.Addr().String())).
+		With(zap.Bool("tls", false))
 
-	g.logger.Info("starting server")
+	l.Info("starting server")
 
 	go func() {
 		if err := http.Serve(g.listener, g.handler); err != nil {
+			l.With(zap.Error(err)).Info("server stopped")
 			if !errors.Is(err, net.ErrClosed) {
 				panic(err)
 			}

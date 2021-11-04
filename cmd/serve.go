@@ -22,11 +22,20 @@ var serveCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "base command for starting servers",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		logrus.SetFormatter(&logrus.JSONFormatter{})
+		logrus.SetFormatter(&logrus.TextFormatter{})
 		setupSignal()
 		if err := viper.Unmarshal(&coreOptions); err != nil {
 			return err
 		}
+
+		if len(coreOptions.Log.Level) > 0 {
+			logLevel, err := logrus.ParseLevel(coreOptions.Log.Level)
+			if err != nil {
+				return err
+			}
+			logrus.SetLevel(logLevel)
+		}
+
 		var err error
 		factory, err = store.NewFactory(coreOptions.DSN)
 		if err != nil {

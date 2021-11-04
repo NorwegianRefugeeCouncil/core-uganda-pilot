@@ -30,8 +30,9 @@ func NewHandler(
 	ws := new(restful.WebService).Path("/oidc")
 	h.webService = ws
 
-	ws.Route(ws.GET("/login").To(h.RestfulLogin(sessionKey)).
-		Doc("initiates login flow"))
+	ws.Route(ws.GET("/login").
+		Doc("initiates login flow").
+		To(h.RestfulLogin(sessionKey)))
 
 	ws.Route(ws.GET("/callback").To(h.RestfulCallback(sessionKey, redirectURL)).
 		Doc("oauth2 callback"))

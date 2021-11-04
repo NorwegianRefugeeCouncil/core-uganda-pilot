@@ -60,7 +60,12 @@ type ServeOptions struct {
 	Login  ServerOptions `mapstructure:"login"`
 }
 
+type LogOptions struct {
+	Level string `mapstructure:"level"`
+}
+
 type Options struct {
 	Serve ServeOptions `mapstructure:"serve"`
 	DSN   string       `mapstructure:"dsn"`
+	Log   LogOptions   `mapstructure:"log"`
 }
