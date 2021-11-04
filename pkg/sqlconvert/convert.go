@@ -177,9 +177,7 @@ func convertFieldToSqlField(formDef *types.FormDefinition, field *types.FieldDef
 		}
 	} else if field.FieldType.Month != nil {
 		result.DataType = sqlschema.SQLDataType{
-			VarChar: &sqlschema.SQLDataTypeVarChar{
-				Length: 1024,
-			},
+			Date: &sqlschema.SQLDataTypeDate{},
 		}
 	} else if field.FieldType.Quantity != nil {
 		result.DataType = sqlschema.SQLDataType{

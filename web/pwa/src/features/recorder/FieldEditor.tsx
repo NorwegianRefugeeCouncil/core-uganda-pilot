@@ -80,10 +80,14 @@ export const MonthFieldEditor: FC<FieldEditorProps> = props => {
         <input
             className={"form-control bg-dark text-light border-secondary"}
             type={"month"}
-            id={field.id} value={value ? value : ""}
+            id={field.id} value={value ? (value as Date).toISOString().slice(0, 7) : ""}
             pattern={"[0-9]{4}-[0-9]{2}"}
             placeholder={"YYYY-MM"}
-            onChange={event => setValue(event.target.value)}/>
+            onChange={event => {
+                const v = event.target.value;
+                const date = new Date(+v.slice(0, 4), +v.slice(5, 7), 1)
+                setValue(date);
+            }}/>
         {mapFieldDescription(field)}
     </div>
 }
