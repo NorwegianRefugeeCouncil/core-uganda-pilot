@@ -2,13 +2,14 @@ package authrequest
 
 import (
 	"errors"
+	"github.com/looplab/fsm"
 	"github.com/nrc-no/core/pkg/utils/sets"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestAuthRequestPasswordFlow(t *testing.T) {
-	a := NewAuthRequest(Handlers{})
+	a := NewAuthRequest(map[string]fsm.Callback{})
 
 	// start
 	assert.Equal(t, StateStart, a.currentState())
@@ -80,7 +81,7 @@ func TestAuthRequestPasswordFlow(t *testing.T) {
 }
 
 func TestAuthRequestOidcFlow(t *testing.T) {
-	a := NewAuthRequest(Handlers{})
+	a := NewAuthRequest(map[string]fsm.Callback{})
 
 	// start
 	assert.Equal(t, StateStart, a.currentState())
@@ -140,7 +141,7 @@ func TestAuthRequestOidcFlow(t *testing.T) {
 }
 
 func TestTransitions(t *testing.T) {
-	a := NewAuthRequest(Handlers{})
+	a := NewAuthRequest(map[string]fsm.Callback{})
 	assertOnlyEventAccepted(t, a, StateStart, sets.NewString(EventRequestLogin, EventFail))
 	assertOnlyEventAccepted(t, a, StateLoginRequested, sets.NewString(EventSkipLoginRequest, EventPerformLogin, EventFail))
 	assertOnlyEventAccepted(t, a, StatePromptingForIdentifier, sets.NewString(EventProvideIdentifier, EventFail))

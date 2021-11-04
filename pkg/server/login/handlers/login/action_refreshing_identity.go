@@ -2,7 +2,6 @@ package login
 
 import (
 	"context"
-	"github.com/gorilla/sessions"
 	"github.com/looplab/fsm"
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/server/login/authrequest"
@@ -10,31 +9,18 @@ import (
 	"github.com/ory/hydra-client-go/models"
 	"go.uber.org/zap"
 	"golang.org/x/oauth2"
-	"net/http"
 )
 
 func handleRefreshingIdentity(
-	w http.ResponseWriter,
-	req *http.Request,
-	userSession *sessions.Session,
+	ctx context.Context,
 	idpStore store.IdentityProviderStore,
 	selfURL string,
-	enqueue func(fn func()),
+	dispatch func(evt string),
 	getLoginRequest func(loginChallenge string) (*models.LoginRequest, error),
-) func(authRequest *authrequest.AuthRequest, evt *fsm.Event) {
-	return func(authRequest *authrequest.AuthRequest, evt *fsm.Event) {
-		ctx := req.Context()
-		l := logging.NewLogger(ctx).With(zap.String("state", authrequest.StateRefreshingIdentity))
-		l.Debug("entered state")
+) func(authRequest *authrequest.AuthRequest, evt *fsm.Event) error {
+	return func(authRequest *authrequest.AuthRequest, evt *fsm.Event) error {
 
-		l.Debug("saving auth request")
-		if err := authRequest.Save(w, req, userSession); err != nil {
-			l.Error("failed to save auth request", zap.Error(err))
-			enqueue(func() {
-				_ = authRequest.Fail(err)
-			})
-			return
-		}
+		l := logging.NewLogger(ctx).With(zap.String("state", authrequest.StateRefreshingIdentity))
 
 		if len(authRequest.IdentityProviderId) > 0 {
 
@@ -44,31 +30,21 @@ func handleRefreshingIdentity(
 			loginRequest, err := getLoginRequest(authRequest.LoginChallenge)
 			if err != nil {
 				l.Error("failed to get login request", zap.Error(err))
-				enqueue(func() {
-					_ = authRequest.Fail(err)
-				})
-				return
+				return err
 			}
 
 			l.Debug("getting identity provider")
 			idp, err := idpStore.Get(ctx, authRequest.IdentityProviderId, store.IdentityProviderGetOptions{ReturnClientSecret: true})
 			if err != nil {
 				l.Error("failed to get identity provider", zap.Error(err))
-				enqueue(func() {
-					_ = authRequest.Fail(err)
-				})
-				return
+				return err
 			}
 
-			// Getting Identity Provider Client Config
 			l.Debug("getting identity provider oauth config")
 			oauth2Config, _, _, err := getOauthProvider(ctx, idp, selfURL, loginRequest)
 			if err != nil {
 				l.Error("failed to get identity provider oauth config")
-				enqueue(func() {
-					_ = authRequest.Fail(err)
-				})
-				return
+				return err
 			}
 
 			previousToken := &oauth2.Token{
@@ -83,42 +59,23 @@ func handleRefreshingIdentity(
 			newToken, err := restoredToken.Token()
 			if err != nil {
 				l.Error("failed to refresh token", zap.Error(err))
-				enqueue(func() {
-					_ = authRequest.Fail(err)
-				})
-				return
+				return err
 			}
 
 			l.Debug("saving token in session")
 			authRequest.AccessToken = newToken.AccessToken
 			authRequest.RefreshToken = newToken.RefreshToken
 			authRequest.TokenExpiry = newToken.Expiry
-			if err := authRequest.Save(w, req, userSession); err != nil {
-				l.Error("failed to save token in session", zap.Error(err))
-				enqueue(func() {
-					_ = authRequest.Fail(err)
-				})
-				return
-			}
 
 			l.Debug("set refreshed identity")
-			enqueue(func() {
-				if err := authRequest.SetRefreshedIdentity(); err != nil {
-					l.Error("failed to set refreshed identity", zap.Error(err))
-					enqueue(func() {
-						_ = authRequest.Fail(err)
-					})
-				}
-			})
-			return
+			dispatch(authrequest.EventSetRefreshedIdentity)
+
+			return nil
 
 		} else {
-
 			// refreshing identity using password credential
-
+			return nil
 		}
-
-		// noop
 	}
 }
 

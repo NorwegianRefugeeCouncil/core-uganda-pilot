@@ -1,7 +1,6 @@
 package login
 
 import (
-	"github.com/gorilla/sessions"
 	"github.com/looplab/fsm"
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/server/login/authrequest"
@@ -11,29 +10,22 @@ import (
 	"net/http"
 )
 
-func handlePresentingConsentChallenge(w http.ResponseWriter, req *http.Request, userSession *sessions.Session, enqueue func(fn func()), getConsentRequest func(consentChallenge string) (*models.ConsentRequest, error)) func(authRequest *authrequest.AuthRequest, evt *fsm.Event) {
-	return func(authRequest *authrequest.AuthRequest, evt *fsm.Event) {
+func handlePresentingConsentChallenge(
+	w http.ResponseWriter,
+	req *http.Request,
+	getConsentRequest func(consentChallenge string) (*models.ConsentRequest, error),
+) func(authRequest *authrequest.AuthRequest, evt *fsm.Event) error {
+
+	return func(authRequest *authrequest.AuthRequest, evt *fsm.Event) error {
+
 		ctx := req.Context()
 		l := logging.NewLogger(ctx).With(zap.String("state", authrequest.StatePresentingConsent))
-		l.Debug("entered state")
-
-		l.Debug("saving auth request")
-		if err := authRequest.Save(w, req, userSession); err != nil {
-			l.Error("failed to save auth request")
-			enqueue(func() {
-				_ = authRequest.Fail(err)
-			})
-			return
-		}
 
 		l.Debug("getting consent request")
 		consentRequest, err := getConsentRequest(authRequest.ConsentChallenge)
 		if err != nil {
 			l.Error("failed to get consent request", zap.Error(err))
-			enqueue(func() {
-				_ = authRequest.Fail(err)
-			})
-			return
+			return err
 		}
 
 		l.Debug("prompting user for consent")
@@ -43,7 +35,10 @@ func handlePresentingConsentChallenge(w http.ResponseWriter, req *http.Request, 
 		})
 		if err != nil {
 			l.Error("failed to prompt user for consent", zap.Error(err))
+			return err
 		}
+
+		return nil
 
 	}
 }

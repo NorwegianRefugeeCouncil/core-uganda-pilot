@@ -4,15 +4,16 @@ import (
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
 	"github.com/looplab/fsm"
+	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/server/login/authrequest"
 	loginstore "github.com/nrc-no/core/pkg/server/login/store"
 	"github.com/nrc-no/core/pkg/store"
 	"github.com/ory/hydra-client-go/client/admin"
 	"github.com/ory/hydra-client-go/models"
 	"github.com/sirupsen/logrus"
+	"go.uber.org/zap"
 	"net/http"
 	"net/url"
-	"sync"
 )
 
 func handleError(w http.ResponseWriter, status int, err error) {
@@ -36,19 +37,14 @@ func handleAuthRequestAction(
 
 			ctx := req.Context()
 
-			logger := logrus.
-				WithField("server", "core-login").
-				WithField("name", "login_action")
+			l := logging.NewLogger(ctx).With(
+				zap.String("login_action", action),
+				zap.Any("path_parameters", pathParameters),
+				zap.Any("request_parameters", requestParameters))
 
-			logger.
-				WithField("action", action).
-				WithField("path_parameters", pathParameters).
-				WithField("request_parameters", requestParameters).
-				Tracef("received login action")
+			l.Debug("received request for login action")
 
-			logger.Tracef("getting user session")
-
-			// getting user session
+			l.Debug("getting user session")
 			userSession, done := getUserSession(w, req, sessionStore)
 			if done {
 				return
@@ -59,17 +55,17 @@ func handleAuthRequestAction(
 			getLoginRequest := func(loginChallenge string) (*models.LoginRequest, error) {
 
 				if _loginRequest != nil {
-					logger.Tracef("returning cached login request")
+					l.Debug("returning cached login request")
 					return _loginRequest, nil
 				}
 
-				logger.Tracef("getting login request")
+				l.Debug("getting login request")
 				loginRequestResp, err := hydraAdmin.GetLoginRequest(&admin.GetLoginRequestParams{
 					Context:        ctx,
 					LoginChallenge: loginChallenge,
 				})
 				if err != nil {
-					logger.WithError(err).Errorf("failed to get login request")
+					l.Error("failed to get login request", zap.Error(err))
 					return nil, err
 				}
 				_loginRequest = loginRequestResp.Payload
@@ -80,75 +76,169 @@ func handleAuthRequestAction(
 			var _consentRequest *models.ConsentRequest
 			getConsentRequest := func(consentChallenge string) (*models.ConsentRequest, error) {
 				if _consentRequest != nil {
-					logger.Tracef("returning cached consent request")
+					l.Debug("using cached consent request")
 					return _consentRequest, nil
 				}
-				logger.Tracef("getting consent request")
+
+				l.Debug("getting consent request")
 				consentRequestResp, err := hydraAdmin.GetConsentRequest(&admin.GetConsentRequestParams{
 					Context:          ctx,
 					ConsentChallenge: consentChallenge,
 				})
 				if err != nil {
-					logger.WithError(err).Errorf("failed to get consent request")
+					l.Error("failed go get consent request", zap.Error(err))
 					return nil, err
 				}
 				_consentRequest = consentRequestResp.Payload
 				return _consentRequest, nil
 			}
 
-			wg := sync.WaitGroup{}
-			var queue = make(chan func(), 100)
-			defer close(queue)
-			go func() {
-				for f := range queue {
-					f()
-					wg.Done()
-				}
-			}()
+			var events []string
 
-			var enqueue = func(fn func()) {
-				wg.Add(1)
-				queue <- fn
+			var authRequest *authrequest.AuthRequest
+
+			dispatch := func(evt string) {
+				events = append(events, evt)
 			}
 
-			authHandlers := authrequest.Handlers{
-				OnFailed: func(authRequest *authrequest.AuthRequest, evt *fsm.Event) {
-					w.Write([]byte("error"))
+			loginRequestedHandler := handleLoginRequested(ctx, req.URL.Query(), dispatch, getLoginRequest)
+			refreshingIdentityHandler := handleRefreshingIdentity(ctx, idpStore, selfURL, dispatch, getLoginRequest)
+			promptingForIdentifierHandler := handlePromptingForIdentifier(w, req)
+			validatingIdentifierHandler := handleValidatingIdentifier(ctx, req, dispatch)
+			findingAuthMethodHandler := handleFindingAuthMethod(ctx, dispatch)
+			promptingForIdentityProviderHandler := handlePromptingForIdentityProvider(ctx, w, idpStore, orgStore)
+			useIdentityProviderHandler := handleUseIdentityProvider(w, req, getLoginRequest, pathParameters, idpStore, selfURL)
+			awaitingIdpCallbackHandler := handleAwaitingIDPCallback()
+			performingAuthCodeExchangeHandler := handlePerformingAuthCodeExchange(req, dispatch, idpStore, selfURL)
+			authCodeExchangeHandler := handleAuthCodeExchangeSucceeded(req, dispatch, idpStore, loginStore)
+			awaitingConsentChallengeHandler := handleAwaitingConsentChallenge(w, req, hydraAdmin)
+			receivedConsentChallengeHandler := handleReceivedConsentChallenge(ctx, dispatch, requestParameters, getConsentRequest)
+			presentingConsentChallengeHandler := handlePresentingConsentChallenge(w, req, getConsentRequest)
+			consentRequestApprovedHandler := handleConsentRequestApproved(ctx, dispatch, getConsentRequest, hydraAdmin)
+			consentRequestDeclinedHandler := handleConsentRequestDenied(ctx, dispatch, hydraAdmin)
+			approvedHandler := handleApproved(w, req)
+			declinedHandler := handleDeclined(w, req)
+
+			callbacks := map[string]fsm.Callback{
+				authrequest.StateFailed: func(evt *fsm.Event) {
+
 				},
-				OnLoginRequested:               handleLoginRequested(w, req, userSession, enqueue, getLoginRequest),
-				OnRefreshingIdentity:           handleRefreshingIdentity(w, req, userSession, idpStore, selfURL, enqueue, getLoginRequest),
-				OnPromptingForIdentifier:       handlePromptingForIdentifier(w, req, userSession, enqueue),
-				OnValidatingIdentifier:         handleValidatingIdentifier(w, req, userSession, enqueue),
-				OnFindingAuthMethod:            handleFindingAuthMethod(w, req, userSession, enqueue),
-				OnPromptingForIdentityProvider: handlePromptingForIdentityProvider(w, req, userSession, enqueue, idpStore, ctx, orgStore),
-				OnUseIdentityProvider:          handleUseIdentityProvider(w, req, userSession, enqueue, getLoginRequest, pathParameters, idpStore, ctx, selfURL),
-				OnAwaitingIDPCallback:          handleAwaitingIDPCallback(w, req, userSession, enqueue),
-				OnPerformingAuthCodeExchange:   handlePerformingAuthCodeExchange(w, req, userSession, enqueue, idpStore, ctx, selfURL),
-				OnAuthCodeExchangeSucceeded:    handleAuthCodeExchangeSucceeded(w, req, userSession, enqueue, idpStore, ctx, loginStore),
-				OnAwaitingConsentChallenge:     handleAwaitingConsentChallenge(w, req, hydraAdmin, userSession, enqueue),
-				OnReceivedConsentChallenge:     handleReceivedConsentChallenge(w, req, userSession, enqueue, requestParameters, getConsentRequest),
-				OnPresentingConsentChallenge:   handlePresentingConsentChallenge(w, req, userSession, enqueue, getConsentRequest),
-				OnConsentRequestApproved:       handleConsentRequestApproved(w, req, userSession, enqueue, getConsentRequest, hydraAdmin, ctx),
-				OnConsentRequestDeclined:       handleConsentRequestDenied(w, req, userSession, enqueue, hydraAdmin, ctx),
-				OnApproved:                     handleApproved(w, req, userSession, enqueue),
-				OnDeclined:                     handleDeclined(w, req, userSession, enqueue),
+				authrequest.StateLoginRequested: func(evt *fsm.Event) {
+					if err := loginRequestedHandler(authRequest, evt); err != nil {
+						dispatch(authrequest.EventFail)
+					}
+				},
+				authrequest.StateRefreshingIdentity: func(evt *fsm.Event) {
+					if err := refreshingIdentityHandler(authRequest, evt); err != nil {
+						dispatch(authrequest.EventFail)
+					}
+				},
+				authrequest.StatePromptingForIdentifier: func(evt *fsm.Event) {
+					if err := promptingForIdentifierHandler(authRequest, evt); err != nil {
+						dispatch(authrequest.EventFail)
+					}
+				},
+				authrequest.StateValidatingIdentifier: func(evt *fsm.Event) {
+					if err := validatingIdentifierHandler(authRequest, evt); err != nil {
+						dispatch(authrequest.EventFail)
+					}
+				},
+				authrequest.StateFindingAuthMethod: func(evt *fsm.Event) {
+					if err := findingAuthMethodHandler(authRequest, evt); err != nil {
+						dispatch(authrequest.EventFail)
+					}
+				},
+				authrequest.StatePromptingForIdentityProvider: func(evt *fsm.Event) {
+					if err := promptingForIdentityProviderHandler(authRequest, evt); err != nil {
+						dispatch(authrequest.EventFail)
+					}
+				},
+				authrequest.EventUseIdentityProvider: func(evt *fsm.Event) {
+					if err := useIdentityProviderHandler(authRequest, evt); err != nil {
+						dispatch(authrequest.EventFail)
+					}
+				},
+				authrequest.StateAwaitingIdpCallback: func(evt *fsm.Event) {
+					if err := awaitingIdpCallbackHandler(authRequest, evt); err != nil {
+						dispatch(authrequest.EventFail)
+					}
+				},
+				authrequest.StatePerformingAuthCodeExchange: func(evt *fsm.Event) {
+					if err := performingAuthCodeExchangeHandler(authRequest, evt); err != nil {
+						dispatch(authrequest.EventFail)
+					}
+				},
+				authrequest.StateAuthCodeExchangeSucceeded: func(evt *fsm.Event) {
+					if err := authCodeExchangeHandler(authRequest, evt); err != nil {
+						dispatch(authrequest.EventFail)
+					}
+				},
+				authrequest.StateAwaitingConsentChallenge: func(evt *fsm.Event) {
+					if err := awaitingConsentChallengeHandler(authRequest, evt); err != nil {
+						dispatch(authrequest.EventFail)
+					}
+				},
+				authrequest.StateReceivedConsentChallenge: func(evt *fsm.Event) {
+					if err := receivedConsentChallengeHandler(authRequest, evt); err != nil {
+						dispatch(authrequest.EventFail)
+					}
+				},
+				authrequest.StatePresentingConsent: func(evt *fsm.Event) {
+					if err := presentingConsentChallengeHandler(authRequest, evt); err != nil {
+						dispatch(authrequest.EventFail)
+					}
+				},
+				authrequest.StateConsentRequestApproved: func(evt *fsm.Event) {
+					if err := consentRequestApprovedHandler(authRequest, evt); err != nil {
+						dispatch(authrequest.EventFail)
+					}
+				},
+				authrequest.StateConsentRequestDeclined: func(evt *fsm.Event) {
+					if err := consentRequestDeclinedHandler(authRequest, evt); err != nil {
+						dispatch(authrequest.EventFail)
+					}
+				},
+				authrequest.StateAccepted: func(evt *fsm.Event) {
+					if err := approvedHandler(authRequest, evt); err != nil {
+						dispatch(authrequest.EventFail)
+					}
+				},
+				authrequest.StateDeclined: func(evt *fsm.Event) {
+					if err := declinedHandler(authRequest, evt); err != nil {
+						dispatch(authrequest.EventFail)
+					}
+				},
 			}
 
-			authRequest := getAuthRequest(action, authHandlers, userSession)
+			authRequest = getAuthRequest(action, callbacks, userSession)
 
-			logger.WithField("action", action).Tracef("dispatching login action")
-			dispatchAction(w, action, enqueue, authRequest)
+			l.Debug("dispatching action")
+			dispatch(action)
 
-			wg.Wait()
-
-			logger.Tracef("done dispatching login actions")
-
+			i := -1
+			for {
+				i++
+				if i > len(events)-1 {
+					break
+				}
+				evt := events[i]
+				l.Debug("dispatching action", zap.String("action", evt))
+				if err := authRequest.Event(evt); err != nil {
+					authRequest.Fail(err)
+					break
+				}
+				if err := authRequest.Save(w, req, userSession); err != nil {
+					authRequest.Fail(err)
+					break
+				}
+			}
+			l.Debug("done dispatching action")
 		}
 
 	}
 }
 
-func getAuthRequest(action string, authHandlers authrequest.Handlers, userSession *sessions.Session) *authrequest.AuthRequest {
+func getAuthRequest(action string, authHandlers fsm.Callbacks, userSession *sessions.Session) *authrequest.AuthRequest {
 	var authRequest *authrequest.AuthRequest
 	if action == authrequest.EventRequestLogin {
 		prevAuthRequest := authrequest.CreateOrRestore(userSession, authHandlers)

@@ -1,7 +1,7 @@
 package login
 
 import (
-	"github.com/gorilla/sessions"
+	"context"
 	"github.com/looplab/fsm"
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/server/login/authrequest"
@@ -9,35 +9,18 @@ import (
 	"net/http"
 )
 
-func handleValidatingIdentifier(w http.ResponseWriter, req *http.Request, userSession *sessions.Session, enqueue func(fn func())) func(authRequest *authrequest.AuthRequest, evt *fsm.Event) {
-	return func(authRequest *authrequest.AuthRequest, evt *fsm.Event) {
-		ctx := req.Context()
-		l := logging.NewLogger(ctx).With(zap.String("event", authrequest.EventUseIdentityProvider))
-		l.Debug("entered state")
+func handleValidatingIdentifier(ctx context.Context, req *http.Request, dispatch func(evt string)) func(authRequest *authrequest.AuthRequest, evt *fsm.Event) error {
+	return func(authRequest *authrequest.AuthRequest, evt *fsm.Event) error {
 
-		l.Debug("saving auth request")
-		if err := authRequest.Save(w, req, userSession); err != nil {
-			l.Error("failed to save auth request", zap.Error(err))
-			enqueue(func() {
-				_ = authRequest.Fail(err)
-			})
-			return
-		}
+		l := logging.NewLogger(ctx).With(zap.String("event", authrequest.EventUseIdentityProvider))
 
 		l.Debug("parsing form data")
 		if err := req.ParseForm(); err != nil {
 			l.Error("failed to parse form data", zap.Error(err))
-			enqueue(func() {
-				l.Debug("failing identifier validation")
-				if err := authRequest.FailIdentifierValidation(err); err != nil {
-					l.Error("failed to fail identifier validation", zap.Error(err))
-					enqueue(func() {
-						_ = authRequest.Fail(err)
-					})
-				}
-			})
-			return
+			dispatch(authrequest.EventProvideInvalidIdentifier)
+			return nil
 		}
+
 		q := req.Form
 
 		l.Debug("getting email domain")
@@ -45,43 +28,14 @@ func handleValidatingIdentifier(w http.ResponseWriter, req *http.Request, userSe
 		emailDomain, err := getEmailDomain(email)
 		if err != nil {
 			l.Error("failed to get email domain", zap.Error(err))
-			enqueue(func() {
-				if err := authRequest.FailIdentifierValidation(err); err != nil {
-					l.Error("failed to fail identifier validation", zap.Error(err))
-					enqueue(func() {
-						_ = authRequest.Fail(err)
-					})
-				}
-			})
-			return
+			dispatch(authrequest.EventProvideInvalidIdentifier)
+			return nil
 		}
 
 		authRequest.Identifier = email
 		authRequest.EmailDomain = emailDomain
 
-		l.Debug("saving auth request")
-		if err := authRequest.Save(w, req, userSession); err != nil {
-			l.Error("failed to save auth request", zap.Error(err))
-			enqueue(func() {
-				_ = authRequest.Fail(err)
-			})
-			return
-		}
-
-		enqueue(func() {
-			l.Debug("succeeding identifier validation")
-			if err := authRequest.SucceedIdentifierValidation(); err != nil {
-				enqueue(func() {
-					l.Error("failed to succeed identifier validation", zap.Error(err))
-					if err := authRequest.FailIdentifierValidation(err); err != nil {
-						l.Error("failed to fail identifier validation", zap.Error(err))
-						enqueue(func() {
-							_ = authRequest.Fail(err)
-						})
-					}
-				})
-			}
-		})
-
+		dispatch(authrequest.EventProvideValidIdentifier)
+		return nil
 	}
 }

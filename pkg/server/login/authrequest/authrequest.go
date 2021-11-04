@@ -114,44 +114,12 @@ var allEvents = []string{
 	EventDecline,
 }
 
-type Handlers struct {
-	OnRequestLogin                 func(authRequest *AuthRequest, evt *fsm.Event)
-	OnLoginRequested               func(authRequest *AuthRequest, evt *fsm.Event)
-	OnPromptingForIdentifier       func(authRequest *AuthRequest, evt *fsm.Event)
-	OnValidatingIdentifier         func(authRequest *AuthRequest, evt *fsm.Event)
-	OnFindingAuthMethod            func(authRequest *AuthRequest, evt *fsm.Event)
-	OnPromptingForIdentityProvider func(authRequest *AuthRequest, evt *fsm.Event)
-	OnAwaitingIDPCallback          func(authRequest *AuthRequest, evt *fsm.Event)
-	OnPerformingAuthCodeExchange   func(authRequest *AuthRequest, evt *fsm.Event)
-	OnAuthCodeExchangeSucceeded    func(authRequest *AuthRequest, evt *fsm.Event)
-	OnAuthCodeExchangeFailed       func(authRequest *AuthRequest, evt *fsm.Event)
-	OnAwaitingConsentChallenge     func(authRequest *AuthRequest, evt *fsm.Event)
-	OnReceivedConsentChallenge     func(authRequest *AuthRequest, evt *fsm.Event)
-	OnPresentingConsentChallenge   func(authRequest *AuthRequest, evt *fsm.Event)
-	OnConsentRequestApproved       func(authRequest *AuthRequest, evt *fsm.Event)
-	OnRefreshingIdentity           func(authRequest *AuthRequest, evt *fsm.Event)
-
-	OnApproveConsentRequest  func(authRequest *AuthRequest, evt *fsm.Event)
-	OnConsentRequestDeclined func(authRequest *AuthRequest, evt *fsm.Event)
-	OnApproved               func(authRequest *AuthRequest, evt *fsm.Event)
-	OnDeclined               func(authRequest *AuthRequest, evt *fsm.Event)
-
-	OnSkipLoginRequest    func(authRequest *AuthRequest, evt *fsm.Event)
-	OnPerformLogin        func(authRequest *AuthRequest, evt *fsm.Event)
-	OnUseIdentityProvider func(authRequest *AuthRequest, evt *fsm.Event)
-	OnAcceptLoginRequest  func(authRequest *AuthRequest, evt *fsm.Event)
-
-	OnFailed func(authRequest *AuthRequest, evt *fsm.Event)
+func NewAuthRequest(callbacks fsm.Callbacks) *AuthRequest {
+	return newAuthRequest(StateStart, callbacks)
 }
 
-func NewAuthRequest(handlers Handlers) *AuthRequest {
-	return newAuthRequest(StateStart, handlers)
-}
-
-func newAuthRequest(state string, handlers Handlers) *AuthRequest {
-	authRequest := &AuthRequest{
-		handlers: handlers,
-	}
+func newAuthRequest(state string, callbacks fsm.Callbacks) *AuthRequest {
+	authRequest := &AuthRequest{}
 	authRequest.fsm = fsm.NewFSM(state,
 		[]fsm.EventDesc{
 
@@ -220,118 +188,8 @@ func newAuthRequest(state string, handlers Handlers) *AuthRequest {
 			// GENERIC FAIL
 			{Src: allStates, Name: EventFail, Dst: StateFailed},
 		},
-		map[string]fsm.Callback{
-			StateLoginRequested: func(evt *fsm.Event) {
-				if handlers.OnLoginRequested != nil {
-					handlers.OnLoginRequested(authRequest, evt)
-				}
-			},
-			StatePromptingForIdentifier: func(event *fsm.Event) {
-				if handlers.OnPromptingForIdentifier != nil {
-					handlers.OnPromptingForIdentifier(authRequest, event)
-				}
-			},
-			StateValidatingIdentifier: func(event *fsm.Event) {
-				if handlers.OnValidatingIdentifier != nil {
-					handlers.OnValidatingIdentifier(authRequest, event)
-				}
-			},
-			StateFindingAuthMethod: func(event *fsm.Event) {
-				if handlers.OnFindingAuthMethod != nil {
-					handlers.OnFindingAuthMethod(authRequest, event)
-				}
-			},
-			StatePromptingForIdentityProvider: func(event *fsm.Event) {
-				if handlers.OnPromptingForIdentityProvider != nil {
-					handlers.OnPromptingForIdentityProvider(authRequest, event)
-				}
-			},
-			StateAwaitingIdpCallback: func(event *fsm.Event) {
-				if handlers.OnAwaitingIDPCallback != nil {
-					handlers.OnAwaitingIDPCallback(authRequest, event)
-				}
-			},
-			StatePerformingAuthCodeExchange: func(event *fsm.Event) {
-				if handlers.OnPerformingAuthCodeExchange != nil {
-					handlers.OnPerformingAuthCodeExchange(authRequest, event)
-				}
-			},
-			StateAuthCodeExchangeSucceeded: func(event *fsm.Event) {
-				if handlers.OnAuthCodeExchangeSucceeded != nil {
-					handlers.OnAuthCodeExchangeSucceeded(authRequest, event)
-				}
-			},
-			StateAwaitingConsentChallenge: func(event *fsm.Event) {
-				if handlers.OnAwaitingConsentChallenge != nil {
-					handlers.OnAwaitingConsentChallenge(authRequest, event)
-				}
-			},
-			StateReceivedConsentChallenge: func(event *fsm.Event) {
-				if handlers.OnReceivedConsentChallenge != nil {
-					handlers.OnReceivedConsentChallenge(authRequest, event)
-				}
-			},
-			StatePresentingConsent: func(event *fsm.Event) {
-				if handlers.OnPresentingConsentChallenge != nil {
-					handlers.OnPresentingConsentChallenge(authRequest, event)
-				}
-			},
-			StateConsentRequestApproved: func(event *fsm.Event) {
-				if handlers.OnConsentRequestApproved != nil {
-					handlers.OnConsentRequestApproved(authRequest, event)
-				}
-			},
-			StateConsentRequestDeclined: func(event *fsm.Event) {
-				if handlers.OnConsentRequestDeclined != nil {
-					handlers.OnConsentRequestDeclined(authRequest, event)
-				}
-			},
-			StateRefreshingIdentity: func(event *fsm.Event) {
-				if handlers.OnRefreshingIdentity != nil {
-					handlers.OnRefreshingIdentity(authRequest, event)
-				}
-			},
-			StateAccepted: func(event *fsm.Event) {
-				if handlers.OnApproved != nil {
-					handlers.OnApproved(authRequest, event)
-				}
-			},
-			StateDeclined: func(event *fsm.Event) {
-				if handlers.OnDeclined != nil {
-					handlers.OnDeclined(authRequest, event)
-				}
-			},
-			StateFailed: func(event *fsm.Event) {
-				if handlers.OnFailed != nil {
-					handlers.OnFailed(authRequest, event)
-				}
-			},
-			EventUseIdentityProvider: func(event *fsm.Event) {
-				if handlers.OnUseIdentityProvider != nil {
-					handlers.OnUseIdentityProvider(authRequest, event)
-				}
-			},
-			EventRequestLogin: func(event *fsm.Event) {
-				if handlers.OnRequestLogin != nil {
-					handlers.OnRequestLogin(authRequest, event)
-				}
-			},
-			EventSkipLoginRequest: func(event *fsm.Event) {
-				if handlers.OnSkipLoginRequest != nil {
-					handlers.OnSkipLoginRequest(authRequest, event)
-				}
-			},
-			EventPerformLogin: func(event *fsm.Event) {
-				if handlers.OnPerformLogin != nil {
-					handlers.OnPerformLogin(authRequest, event)
-				}
-			},
-			EventAcceptLoginRequest: func(event *fsm.Event) {
-				if handlers.OnAcceptLoginRequest != nil {
-					handlers.OnAcceptLoginRequest(authRequest, event)
-				}
-			},
-		})
+		callbacks,
+	)
 
 	return authRequest
 
@@ -342,7 +200,6 @@ type AuthRequest struct {
 	Identifier         string
 	IdentifierError    error
 	EmailDomain        string
-	handlers           Handlers
 	LoginChallenge     string
 	StateVariable      string
 	IdentityProviderId string
@@ -495,16 +352,16 @@ func (a *AuthRequest) Save(w http.ResponseWriter, req *http.Request, session *se
 	return session.Save(req, w)
 }
 
-func CreateOrRestore(session *sessions.Session, handlers Handlers) *AuthRequest {
+func CreateOrRestore(session *sessions.Session, callbacks fsm.Callbacks) *AuthRequest {
 	authRequestIntf, ok := session.Values["auth-request"]
 	if !ok {
-		return NewAuthRequest(handlers)
+		return NewAuthRequest(callbacks)
 	}
 	storedAuthRequest, ok := authRequestIntf.(*StoredAuthRequest)
 	if !ok {
-		return NewAuthRequest(handlers)
+		return NewAuthRequest(callbacks)
 	}
-	authRequest := newAuthRequest(storedAuthRequest.CurrentState, handlers)
+	authRequest := newAuthRequest(storedAuthRequest.CurrentState, callbacks)
 	authRequest.Identifier = storedAuthRequest.Identifier
 	authRequest.IdentifierError = storedAuthRequest.IdentifierError
 	authRequest.EmailDomain = storedAuthRequest.EmailDomain
@@ -563,6 +420,10 @@ type RequestLoginProps struct {
 	ClientID       string
 	Scope          string
 	Subject        *string
+}
+
+func (a *AuthRequest) Event(evt string) error {
+	return a.fsm.Event(evt)
 }
 
 func (a *AuthRequest) RequestLogin() error {
