@@ -14,8 +14,8 @@ export enum FieldKind {
     SubForm = "subform",
     Date = "date",
     Quantity = "quantity",
-    Month = "month"
-    SingleSelect = "singleSelect",
+    Month = "month",
+    SingleSelect = "singleSelect"
 }
 
 export class FieldType {
