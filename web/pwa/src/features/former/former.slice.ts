@@ -348,25 +348,25 @@ export const formerSlice = createSlice({
             }
             fieldForm.field.description = action.payload.description
         },
-        setFieldOption(state, action: PayloadAction<{fieldId: string, i: number, value: string}>) {
+        setFieldOption(state, action: PayloadAction<{ fieldId: string, i: number, value: string }>) {
             const fieldForm = selectFieldForm(state, action.payload.fieldId)
             const {i, value} = action.payload
             if (!fieldForm || !fieldForm.field.options) return
 
             fieldForm.field.options[i] = value
         },
-        addOption(state, action: PayloadAction<{fieldId: string}>) {
+        addOption(state, action: PayloadAction<{ fieldId: string }>) {
             const fieldForm = selectFieldForm(state, action.payload.fieldId)
             if (!fieldForm) return
 
             fieldForm.field.options = [...fieldForm.field?.options ?? [], ""]
         },
-        removeOption(state, action: PayloadAction<{fieldId: string, i: number}>) {
+        removeOption(state, action: PayloadAction<{ fieldId: string, i: number }>) {
             const fieldForm = selectFieldForm(state, action.payload.fieldId)
             if (!fieldForm || !fieldForm.field.options) return
 
             const {i} = action.payload
-            fieldForm.field.options = fieldForm.field.options.slice(0 , i).concat(fieldForm.field.options.slice(i + 1))
+            fieldForm.field.options = fieldForm.field.options.slice(0, i).concat(fieldForm.field.options.slice(i + 1))
         },
         setFieldCode(state, action: PayloadAction<{ fieldId: string, code: string }>) {
             const fieldForm = selectFieldForm(state, action.payload.fieldId)
@@ -481,7 +481,7 @@ export const formerSlice = createSlice({
             }
             adapter.addOne(state, newForm)
         },
-        openSubForm(state, action: PayloadAction<{ fieldId: string }>) {
+        openSubForm(state, action: PayloadAction<{ fieldId: string, fieldName: string }>) {
             const fieldForm = selectFieldForm(state, action.payload.fieldId)
             if (!fieldForm) {
                 return
@@ -493,7 +493,8 @@ export const formerSlice = createSlice({
             if (!subForm) {
                 return
             }
-            state.selectedFormId = subForm.formId
+            state.selectedFormId = subForm.formId;
+            state.entities[state.selectedFormId] = {...subForm, name: action.payload.fieldName}
         },
         selectForm(state, action: PayloadAction<{ formId: string }>) {
             const {formId} = action.payload

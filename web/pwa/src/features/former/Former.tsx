@@ -28,7 +28,7 @@ type FormerProps = {
     setFieldDescription: (fieldId: string, description: string) => void
     setFieldReferencedDatabaseId: (fieldId: string, databaseId: string) => void
     setFieldReferencedFormId: (fieldId: string, formId: string) => void
-    openSubForm: (fieldId: string) => void
+    openSubForm: (fieldId: string, fieldName: string) => void
     saveField: (fieldId: string) => void
     saveForm: () => void
     parentFormName: string | undefined
@@ -70,7 +70,7 @@ function mapField(f: FormField, props: FormerProps) {
         setFieldIsKey={(isKey) => setFieldIsKey(f.id, isKey)}
         fieldDescription={f.description}
         setFieldDescription={(d) => setFieldDescription(f.id, d)}
-        openSubForm={() => openSubForm(f.id)}
+        openSubForm={(fieldName: string) => openSubForm(f.id, fieldName)}
         cancel={() => cancelField(f.id)}
         saveField={() => saveField(f.id)}
         referencedDatabaseId={f.referencedDatabaseId}
@@ -145,7 +145,7 @@ export const Former: FC<FormerProps> = props => {
                 </div>
                 <div className={"row mt-3"}>
                     <div className={"col-10 col-md-8 offset-md-1"}>
-                        {formHeader()}
+                        {parentFormName == null && formHeader()}
                         {mapField(selectedField, props)}
                     </div>
                     <div className={"col-2"}>
@@ -172,7 +172,7 @@ export const Former: FC<FormerProps> = props => {
                 </div>
                 <div className={"row mt-3"}>
                     <div className={"col-6 offset-2"}>
-                        {formHeader()}
+                        {parentFormName == null && formHeader()}
                         {fieldSections()}
                     </div>
                     <div className={"col-2"}>
@@ -274,8 +274,8 @@ export const FormerContainer: FC = props => {
         dispatch(formerActions.setFieldReferencedFormId({fieldId, formId}))
     }, [dispatch])
 
-    const openSubForm = useCallback((fieldId: string) => {
-        dispatch(formerActions.openSubForm({fieldId: fieldId}))
+    const openSubForm = useCallback((fieldId: string, fieldName: string) => {
+        dispatch(formerActions.openSubForm({fieldId: fieldId, fieldName }))
     }, [dispatch])
 
     const saveField = useCallback((fieldId: string) => {

@@ -19,7 +19,7 @@ type FormerFieldProps = {
     setFieldIsKey: (isKey: boolean) => void
     fieldDescription: string,
     setFieldDescription: (description: string) => void
-    openSubForm: () => void
+    openSubForm: (fieldName: string) => void
     saveField: () => void
     setReferencedDatabaseId: (databaseId: string) => void
     referencedDatabaseId: string | undefined
@@ -139,7 +139,7 @@ export const FormerField: FC<FormerFieldProps> = props => {
                     {/* Open Subform Button */}
 
                     {fieldType === "subform"
-                        ? <button className={"btn btn-primary"} onClick={() => openSubForm()}>Open Sub Form</button>
+                        ? <button className={"btn btn-primary"} onClick={() => openSubForm(fieldName)}>Open Sub Form</button>
                         : <Fragment/>
                     }
 
