@@ -680,6 +680,9 @@ func (f *FormHierarchy) ToFormDefinition() (*types.FormDefinition, error) {
 	if f.Form.FolderID != nil {
 		folderId = *f.Form.FolderID
 	}
+	if len(flds) == 0 {
+		flds = []*types.FieldDefinition{}
+	}
 	formDef := &types.FormDefinition{
 		ID:         f.Form.ID,
 		DatabaseID: f.Form.DatabaseID,

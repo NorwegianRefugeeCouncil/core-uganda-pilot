@@ -10,7 +10,7 @@ type FormDefinition struct {
 	DatabaseID string           `json:"databaseId,omitempty"`
 	FolderID   string           `json:"folderId"`
 	Name       string           `json:"name,omitempty"`
-	Fields     FieldDefinitions `json:"fields,omitempty"`
+	Fields     FieldDefinitions `json:"fields"`
 }
 
 type FormInterface interface {
