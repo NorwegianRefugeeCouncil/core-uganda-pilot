@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/rest"
+	"net/url"
 )
 
 type Client interface {
@@ -73,9 +74,9 @@ func (c *client) DeleteForm(ctx context.Context, id string) error {
 }
 
 func (c *client) CreateRecord(ctx context.Context, obj *types.Record, into *types.Record) error {
-	return c.c.Post().Body(obj.Values).Path(fmt.Sprintf("/databases/%s/forms/%s/records", obj.DatabaseID, obj.FormID)).Do(ctx).Into(into)
+	return c.c.Post().Body(obj).Path(fmt.Sprintf("/records")).Do(ctx).Into(into)
 }
 
 func (c *client) ListRecords(ctx context.Context, options types.RecordListOptions, into *types.RecordList) error {
-	return c.c.Get().Path(fmt.Sprintf("/databases/%s/forms/%s/records", options.DatabaseID, options.FormID)).Do(ctx).Into(into)
+	return c.c.Get().WithParams(url.Values{"databaseId": []string{options.DatabaseID}, "formId": []string{options.FormID}}).Path("/records").Do(ctx).Into(into)
 }

@@ -31,7 +31,7 @@ func NewHandler(store store.RecordStore) *Handler {
 		Writes(types.Record{}).
 		Returns(http.StatusOK, "OK", types.Record{}))
 
-	ws.Route(ws.POST("/").To(h.RestfulCreate).
+	ws.Route(ws.POST("").To(h.RestfulCreate).
 		Doc("create a record").
 		Operation("createRecord").
 		Consumes("application/json").
@@ -40,7 +40,7 @@ func NewHandler(store store.RecordStore) *Handler {
 		Writes(types.Record{}).
 		Returns(http.StatusOK, "OK", types.Record{}))
 
-	ws.Route(ws.GET("/").To(h.RestfulList).
+	ws.Route(ws.GET("").To(h.RestfulList).
 		Doc("list records").
 		Operation("listRecords").
 		Param(restful.QueryParameter(constants.ParamDatabaseID, "id of the database").

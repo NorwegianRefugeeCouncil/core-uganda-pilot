@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func (s *Suite) TestFormsApi() {
+func (s *Suite) TestRecordsApi() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -18,7 +18,7 @@ func (s *Suite) TestFormsApi() {
 	}
 	defer cli.DeleteDatabase(ctx, db.ID)
 
-	created := &types.FormDefinition{}
+	form := &types.FormDefinition{}
 	if err := cli.CreateForm(ctx, &types.FormDefinition{
 		DatabaseID: db.ID,
 		Name:       "my-form",
@@ -32,12 +32,28 @@ func (s *Suite) TestFormsApi() {
 				},
 			},
 		},
+	}, form); !assert.NoError(s.T(), err) {
+		return
+	}
+
+	defer cli.DeleteForm(ctx, form.ID)
+
+	created := &types.Record{}
+	if err := cli.CreateRecord(ctx, &types.Record{
+		DatabaseID: db.ID,
+		FormID:     form.ID,
+		Values: map[string]interface{}{
+			form.Fields[0].ID: "somevalue",
+		},
 	}, created); !assert.NoError(s.T(), err) {
 		return
 	}
 
-	if err := cli.DeleteForm(ctx, created.ID); !assert.NoError(s.T(), err) {
+	list := &types.RecordList{}
+	if err := cli.ListRecords(ctx, types.RecordListOptions{FormID: form.ID, DatabaseID: db.ID}, list); !assert.NoError(s.T(), err) {
 		return
 	}
+
+	assert.Len(s.T(), list.Items, 1)
 
 }

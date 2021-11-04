@@ -6,7 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/nrc-no/core/pkg/api/meta"
-	"github.com/sirupsen/logrus"
+	"github.com/nrc-no/core/pkg/logging"
+	"go.uber.org/zap"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -161,14 +162,16 @@ type TokenIntrospectionResponse struct {
 }
 
 func (r *Request) Do(ctx context.Context) *Response {
-	l := logrus.
-		WithField("scheme", r.c.config.Scheme).
-		WithField("host", r.c.config.Host).
-		WithField("path", r.path).
-		WithField("verb", r.verb)
+
+	l := logging.NewLogger(ctx).With(
+		zap.String("scheme", r.c.config.Scheme),
+		zap.String("host", r.c.config.Host),
+		zap.String("path", r.path),
+		zap.Any("params", r.params),
+		zap.String("verb", r.verb))
 
 	if r.err != nil {
-		l.WithError(r.err).Errorf("could not send request")
+		l.Error("could not send request", zap.Error(r.err))
 		return &Response{err: r.err}
 	}
 
@@ -187,7 +190,7 @@ func (r *Request) Do(ctx context.Context) *Response {
 
 	req, err := http.NewRequestWithContext(ctx, r.verb, u.String(), r.body)
 	if err != nil {
-		l.WithError(r.err).Errorf("could not create http request")
+		l.Error("could not create http request", zap.Error(err))
 		return &Response{err: err}
 	}
 
@@ -211,30 +214,31 @@ func (r *Request) Do(ctx context.Context) *Response {
 		req.Header.Set("Content-Type", "application/json")
 	}
 
-	if xAuthUserSubject, ok := ctx.Value("Subject").(string); ok {
-		req.Header.Set("X-Authenticated-User-Subject", xAuthUserSubject)
-	}
+	l = l.With(zap.Any("headers", req.Header))
 
 	httpClient := r.c.config.HTTPClient
 	if httpClient == nil {
 		httpClient = http.DefaultClient
 	}
 
+	l.Debug("sending request")
+
 	res, err := httpClient.Do(req)
 	if err != nil {
-		l.WithError(err).Errorf("could not send http request")
+		l.Error("could not send http request", zap.Error(err))
 		return &Response{err: err}
 	}
 
-	l = l.WithField("statusCode", res.StatusCode)
+	l = l.With(zap.Int("status_code", res.StatusCode))
 
 	if res.StatusCode < 200 || res.StatusCode > 399 {
 		bodyBytes, err := ioutil.ReadAll(res.Body)
 		if err != nil {
-			l.Errorf("error status code received")
+			l.Error("error status code received")
 			return &Response{err: fmt.Errorf("unexpected status code: %d", res.StatusCode)}
 		}
-		l.WithField("response", string(bodyBytes)).Errorf("unexpected status code: %d", res.StatusCode)
+		l = l.With(zap.String("response", string(bodyBytes)))
+		l.Error("unexpected status code")
 
 		status := meta.Status{
 			Status:  meta.StatusFailure,
@@ -274,7 +278,7 @@ func (r *Request) Do(ctx context.Context) *Response {
 
 	bodyBytes, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		l.WithError(r.err).Errorf("failed to read response body")
+		l.Error("failed to read response body", zap.Error(err))
 		return &Response{err: err}
 	}
 
