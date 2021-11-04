@@ -3,9 +3,10 @@ package login
 import (
 	"github.com/gorilla/sessions"
 	"github.com/looplab/fsm"
+	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/server/login/authrequest"
 	"github.com/ory/hydra-client-go/models"
-	"github.com/sirupsen/logrus"
+	"go.uber.org/zap"
 	"net/http"
 )
 
@@ -18,26 +19,23 @@ func handleLoginRequested(
 ) func(authRequest *authrequest.AuthRequest, evt *fsm.Event) {
 	return func(authRequest *authrequest.AuthRequest, evt *fsm.Event) {
 
-		logger := logrus.
-			WithField("server", "core-login").
-			WithField("handler", "login").
-			WithField("state", authrequest.StateLoginRequested)
+		ctx := req.Context()
+		l := logging.NewLogger(ctx).With(zap.String("state", authrequest.StateLoginRequested))
+		l.Debug("entered state")
 
-		logger.Trace("handling login requested")
-
-		logger.Trace("saving auth request")
+		l.Debug("saving auth request")
 		if err := authRequest.Save(w, req, userSession); err != nil {
-			logger.WithError(err).Errorf("failed to save auth request")
+			l.Error("failed to save auth request", zap.Error(err))
 			enqueue(func() {
 				_ = authRequest.Fail(err)
 			})
 		}
 
-		logger.Tracef("getting login challenge")
+		l.Debug("getting login challenge")
 		loginChallenge := req.URL.Query().Get("login_challenge")
 		loginRequest, err := getLoginRequest(loginChallenge)
 		if err != nil {
-			logger.WithError(err).Tracef("failed to get login challenge")
+			l.Error("failed to get login challenge", zap.Error(err))
 			enqueue(func() {
 				_ = authRequest.Fail(err)
 			})
@@ -46,23 +44,23 @@ func handleLoginRequested(
 
 		authRequest.LoginChallenge = loginChallenge
 
-		logger.Trace("saving auth request")
+		l.Debug("saving auth request")
 		if err := authRequest.Save(w, req, userSession); err != nil {
-			logger.WithError(err).Errorf("failed to save auth request")
+			l.Error("failed to save auth request", zap.Error(err))
 			enqueue(func() {
 				_ = authRequest.Fail(err)
 			})
 			return
 		}
 
-		logger.Tracef("checking if should skip login request or not")
+		l.Debug("checking if should skip login request or not")
 		if authRequest.Identity != nil && loginRequest.Skip != nil && *loginRequest.Skip {
 
-			logrus.Tracef("skipping login request")
+			l.Debug("skipping login request")
 			enqueue(func() {
 				err := authRequest.SkipLoginRequest()
-				logrus.WithError(err).Tracef("failed to invoke skipping login request")
 				if err != nil {
+					l.Debug("failed to skip login request", zap.Error(err))
 					enqueue(func() {
 						_ = authRequest.Fail(err)
 					})
@@ -70,11 +68,11 @@ func handleLoginRequested(
 			})
 			return
 		} else {
-			logrus.Tracef("performing login request")
+			l.Debug("performing login request")
 			enqueue(func() {
 				err := authRequest.PerformLogin()
 				if err != nil {
-					logrus.WithError(err).Tracef("failed to invoke perform login request")
+					l.Error("failed to perform login request", zap.Error(err))
 					enqueue(func() {
 						_ = authRequest.Fail(err)
 					})
