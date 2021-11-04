@@ -57,50 +57,7 @@ const FormControl: React.FC<FormControlProps> = (
                     const fieldKind = getFieldKind(fieldDefinition.fieldType);
 
                     switch (fieldKind) {
-                        // case 'checkbox':
-                        //     return (
-                        //         <CheckBox
-                        //             formControl={formControl}
-                        //             style={style}
-                        //             value={value}
-                        //             onBlur={onBlur}
-                        //             onChange={onChange}
-                        //         />
-                        //     )
-                        // case 'boolean':
-                        //     return (
-                        //         <Switch
-                        //             formControl={formControl}
-                        //             style={style}
-                        //             value={value}
-                        //             onChange={onChange}
-                        //         />
-                        //     )
-                        case FieldKind.SubForm:
-                            // console.log('subform', fieldDefinition)
-                            return <Text>sdf</Text>
-                        // <TextInput
-                        //     formControl={formControl}
-                        //     style={style}
-                        //     value={value}
-                        //     onBlur={onBlur}
-                        //     onChange={onChange}
-                        //     {...fieldState}
-                        // />
-
-                        case FieldKind.Date:
-                            // console.log('date', value, fieldDefinition)
-                            return <Text>sdf</Text>
-                        // <Select
-                        //     fieldDefinition={fieldDefinition}
-                        //     style={style}
-                        //     value={value}
-                        //     onBlur={onBlur}
-                        //     onChange={onChange}
-                        // />
-
                         case FieldKind.Reference:
-                            // console.log('reference', fieldDefinition)
                             return (
                                 <ReferenceInput
                                     fieldDefinition={fieldDefinition}

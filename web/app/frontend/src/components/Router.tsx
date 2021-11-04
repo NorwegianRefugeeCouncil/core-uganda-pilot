@@ -25,8 +25,6 @@ export default function Router() {
     const Stack = createStackNavigator();
     const [state, dispatch] = useReducer(recordsReducer, initialRecordsState);
 
-    console.log('STATE', state)
-
     const linkingConfig = {
         prefixes: [host],
         config: {

@@ -28,7 +28,7 @@ const RecordsScreen: React.FC<ScreenProps> = ({navigation, route, state, dispatc
     }, []);
 
     return (
-        <View style={layout.body}>
+        <View style={[layout.container, layout.body]}>
             <Title>{routes.records.title}</Title>
             {!isLoading && (
                 <View>
@@ -38,7 +38,7 @@ const RecordsScreen: React.FC<ScreenProps> = ({navigation, route, state, dispatc
                         renderItem={({item}) => (
                             <TouchableOpacity
                                 key={item.id}
-                                onPress={() => navigation.navigate(routes.viewRecord.name, {id: item.id, formId})}
+                                onPress={() => navigation.navigate(routes.viewRecord.name, {recordId: item.id, formId})}
                             >
                                 <View style={{flexDirection: 'row', flex: 1}}>
                                     <View style={{justifyContent: 'center', paddingRight: 12}}>
@@ -54,7 +54,7 @@ const RecordsScreen: React.FC<ScreenProps> = ({navigation, route, state, dispatc
                         renderItem={({item, index}) => (
                             <TouchableOpacity
                                 key={index}
-                                onPress={() => navigation.navigate(routes.viewRecord.name, {id: item, formId})}
+                                onPress={() => navigation.navigate(routes.addRecord.name, {recordId: item, formId})}
                             >
                                 <View style={{flexDirection: 'row', flex: 1}}>
                                     <View style={{justifyContent: 'center', paddingRight: 12}}>

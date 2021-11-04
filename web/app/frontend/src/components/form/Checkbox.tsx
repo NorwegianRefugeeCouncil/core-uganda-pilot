@@ -20,13 +20,11 @@ const CheckBox: React.FC<InputProps> = (
             return o.value == 'yes'
         } else {
 
-            // console.log(formControl.value, o.value, _.find(formControl.value, o.value))
             return !!_.find(fieldDefinition.value, (e) => {
                 return e == o.value
             })
         }
     }))
-    // console.log(fieldDefinition.checkboxOptions.length, isChecked.length)
     return (
         <View style={style}>
             {fieldDefinition.label && (

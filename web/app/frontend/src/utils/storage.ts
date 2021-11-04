@@ -1,11 +1,11 @@
 import * as SecureStore from "expo-secure-store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import CryptoJS from "react-native-crypto-js";
+import * as CryptoJS from "react-native-crypto-js";
 
 export const storeEncryptedLocalData = (recordId: string, key: string, data: Record<any, any>) => {
     return SecureStore.setItemAsync(recordId, key)
         .then(async () => {
-            const encryptedData = await CryptoJS.AES.encrypt(key, JSON.stringify(data));
+            const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(data), key);
             return AsyncStorage.setItem(recordId, encryptedData.toString())
         })
 }
@@ -21,8 +21,8 @@ export const getEncryptedLocalData = (recordId: string) => {
             if (data == null) {
                 return;
             }
-            const bytes = CryptoJS.AES.decrypt(key, data);
-            return JSON.parse(bytes.toString());
+            const bytes = await CryptoJS.AES.decrypt(data, key);
+            return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
             // TODO: delete data, once extracted to save space. or only after online submit?
         })
 }

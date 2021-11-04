@@ -57,12 +57,14 @@ export const recordsReducer: Reducer<RecordsStoreProps, RecordsAction> = (state:
                 }
             }
         case RECORD_ACTIONS.ADD_LOCAL_RECORD:
+            const currentList = state.formsById[formId].localRecords || []
+            const newList = currentList.concat([action.payload.localRecord])
             return {
                 formsById: {
                     ...state.formsById,
                     [formId]: {
                         ...state.formsById[formId],
-                        localRecords: action.payload.localRecords
+                        localRecords: newList
                     }
                 }
             }

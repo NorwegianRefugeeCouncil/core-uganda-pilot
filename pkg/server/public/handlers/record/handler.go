@@ -51,6 +51,20 @@ func NewHandler(store store.RecordStore, formStore store.FormStore) *Handler {
 		Writes(types.RecordList{}).
 		Returns(http.StatusOK, "OK", types.RecordList{}))
 
+	ws.Route(ws.GET(fmt.Sprintf("/{%s}", constants.ParamRecordID)).To(h.RestfulGet).
+		Doc("get record").
+		Operation("getRecord").
+		Param(restful.QueryParameter(constants.ParamDatabaseID, "id of the database").
+			DataType("string").
+			DataFormat("uuid").
+			Required(true)).
+		Param(restful.QueryParameter(constants.ParamFormID, "id of the form").
+			DataType("string").
+			DataFormat("uuid").
+			Required(true)).
+		Writes(types.Record{}).
+		Returns(http.StatusOK, "OK", types.Record{}))
+
 	return h
 }
 

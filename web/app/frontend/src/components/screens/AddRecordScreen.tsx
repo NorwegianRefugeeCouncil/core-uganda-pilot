@@ -5,17 +5,16 @@ import {Button, Platform, ScrollView, Text, View} from 'react-native';
 import useApiClient from "../../utils/clients";
 import {FormDefinition} from "core-js-api-client/lib/types/types";
 import {useForm} from "react-hook-form";
-import {getEncryptionKey} from "../../utils/getEncryptionKey";
 import * as Network from "expo-network";
 import FormControl from "../form/FormControl";
 import {getEncryptedLocalData, storeEncryptedLocalData} from "../../utils/storage";
 import {RECORD_ACTIONS} from "../../reducers/recordsReducers";
+import {getEncryptionKey} from "../../utils/getEncryptionKey";
 
 const AddRecordScreen: React.FC<any> = ({route, dispatch}) => {
     const isWeb = Platform.OS === 'web';
     const {formId, recordId} = route.params;
 
-    const [record, setRecord] = React.useState<any[]>();
     const [isLoading, setIsLoading] = React.useState(true);
     const [form, setForm] = React.useState<FormDefinition>();
     const [simulateOffline, setSimulateOffline] = React.useState(!isWeb); // TODO: for testing, remove
@@ -24,12 +23,11 @@ const AddRecordScreen: React.FC<any> = ({route, dispatch}) => {
     const [hasLocalData, setHasLocalData] = React.useState(false);
 
     const client = useApiClient();
-    const {control, handleSubmit, formState} = useForm();
+    const {control, handleSubmit, formState, reset} = useForm();
 
     React.useEffect(() => {
         client.getForm({id: formId})
             .then((data) => {
-                setRecord(data.response?.fields)
                 setForm(data.response)
                 setIsLoading(false)
             })
@@ -44,7 +42,7 @@ const AddRecordScreen: React.FC<any> = ({route, dispatch}) => {
                 dispatch({
                     type: RECORD_ACTIONS.ADD_LOCAL_RECORD, payload: {
                         formId,
-                        localRecords: [recordId]
+                        localRecord: recordId
                     }
                 })
             })
@@ -63,12 +61,14 @@ const AddRecordScreen: React.FC<any> = ({route, dispatch}) => {
 
     // check for locally stored data on mobile device
     React.useEffect(() => {
-        if (!isWeb) {
+        if (!isWeb && recordId) {
+
             getEncryptedLocalData(recordId)
                 .then((data) => {
                     setHasLocalData(!!data);
+                    reset(data);
                 });
-        }
+            }
     }, [isWeb, recordId])
 
     // react to network changes
@@ -82,44 +82,45 @@ const AddRecordScreen: React.FC<any> = ({route, dispatch}) => {
     }, [simulateOffline])
 
     return (
-        <View style={[layout.container, layout.body, common.darkBackground]}>
-            {/* simulate network changes, for testing */}
-            {!isWeb && (
-                <View style={{display: "flex", flexDirection: "row"}}>
-                    <Switch
-                        value={simulateOffline}
-                        onValueChange={() => {
-                            setSimulateOffline(!simulateOffline)
-                            setIsConnected(simulateOffline)
-                            setShowSnackbar(!simulateOffline)
-                        }}
-                    />
-                    <Text> simulate being offline </Text>
-                </View>
-            )}
+        <ScrollView contentContainerStyle={[layout.container, layout.body, common.darkBackground]}>
 
-            {/* upload data collected offline */}
-            {hasLocalData && (
-                <View style={{display: "flex", flexDirection: "column"}}>
-                    <Text>
-                        There is locally stored data for this individual.
-                    </Text>
-                </View>
-            )}
-            {hasLocalData && isConnected && (
-                <View style={{display: "flex", flexDirection: "column"}}>
-                    <Text>
-                        Do you want to upload it?
-                    </Text>
-                    <Button
-                        title="Submit local data"
-                        onPress={handleSubmit(onSubmit)}
-                    />
-                </View>
-            )}
-            <ScrollView>
+            <View style={[]}>
+                {/* simulate network changes, for testing */}
+                {!isWeb && (
+                    <View style={{display: "flex", flexDirection: "row"}}>
+                        <Switch
+                            value={simulateOffline}
+                            onValueChange={() => {
+                                setSimulateOffline(!simulateOffline)
+                                setIsConnected(simulateOffline)
+                                setShowSnackbar(!simulateOffline)
+                            }}
+                        />
+                        <Text> simulate being offline </Text>
+                    </View>
+                )}
+
+                {/* upload data collected offline */}
+                {hasLocalData && (
+                    <View style={{display: "flex", flexDirection: "column"}}>
+                        <Text>
+                            There is locally stored data for this individual.
+                        </Text>
+                    </View>
+                )}
+                {hasLocalData && isConnected && (
+                    <View style={{display: "flex", flexDirection: "column"}}>
+                        <Text>
+                            Do you want to upload it?
+                        </Text>
+                        <Button
+                            title="Submit local data"
+                            onPress={handleSubmit(onSubmit)}
+                        />
+                    </View>
+                )}
                 {!isLoading && (
-                    <View>
+                    <View style={{width: '100%'}}>
                         {form?.fields.map((field) => {
                             return (
                                 <FormControl
@@ -137,10 +138,9 @@ const AddRecordScreen: React.FC<any> = ({route, dispatch}) => {
                             title="Submit"
                             onPress={handleSubmit(onSubmit)}
                         />
-
                     </View>
                 )}
-            </ScrollView>
+            </View>
             <Snackbar
                 visible={showSnackbar}
                 onDismiss={() => setShowSnackbar(false)}
@@ -151,7 +151,7 @@ const AddRecordScreen: React.FC<any> = ({route, dispatch}) => {
             >
                 No internet connection. Submitted data will be stored locally.
             </Snackbar>
-        </View>
+        </ScrollView>
     );
 };
 

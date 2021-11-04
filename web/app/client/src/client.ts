@@ -39,7 +39,7 @@ export interface DatabaseLister {
 export type FormListRequest = {} | undefined
 export type FormListResponse = Response<FormListRequest, FormDefinitionList>
 
-export type FormGetRequest = {id: string}
+export type FormGetRequest = { id: string }
 export type FormGetResponse = Response<FormGetRequest, FormDefinition>
 
 export interface FormGetter {
@@ -85,8 +85,11 @@ export interface RecordLister {
     listRecords: DataOperation<RecordListRequest, RecordListResponse>
 }
 
-export interface RecordLister {
-    listRecords: DataOperation<RecordListRequest, RecordListResponse>
+export type RecordGetRequest = { databaseId: string, formId: string, recordId: string }
+export type RecordGetResponse = Response<RecordGetRequest, Record>
+
+export interface RecordGetter {
+    getRecord: DataOperation<RecordGetRequest, RecordGetResponse>
 }
 
 
@@ -98,6 +101,7 @@ export interface Client
         FormCreator,
         RecordCreator,
         RecordLister,
+        RecordGetter,
         FolderLister,
         FolderCreator {
 }
@@ -133,7 +137,7 @@ function clientResponse<TRequest, TBody>(r: AxiosResponse<TBody>, request: TRequ
 export class client implements Client {
     private readonly address: string;
 
-    constructor(address= 'http://localhost:9000') {
+    constructor(address = 'http://localhost:9000') {
         this.address = address;
     }
 
@@ -195,6 +199,12 @@ export class client implements Client {
         return this.do(request, `${this.address}/forms/${request.id}`, "get", undefined, 200)
     }
 
+    getRecord(request: RecordGetRequest): Promise<RecordGetResponse> {
+        const {databaseId, formId, recordId} = request
+        const url = `${this.address}/records/${recordId}?databaseId=${databaseId}&formId=${formId}`
+        return this.do(request, url, "get", undefined, 200)
+    }
+
 }
 
 export const defaultClient: Client = new client()
@@ -206,19 +216,19 @@ export function getFieldKind(fieldType: FieldType): FieldKind {
     if (fieldType.multilineText) {
         return FieldKind.MultilineText
     }
-    if (fieldType.date){
+    if (fieldType.date) {
         return FieldKind.Date
     }
-    if (fieldType.subForm){
+    if (fieldType.subForm) {
         return FieldKind.SubForm
     }
-    if (fieldType.reference){
+    if (fieldType.reference) {
         return FieldKind.Reference
     }
-    if (fieldType.quantity){
+    if (fieldType.quantity) {
         return FieldKind.Quantity
     }
-    if (fieldType.singleSelect){
+    if (fieldType.singleSelect) {
         return FieldKind.SingleSelect
     }
     throw new Error("unknown field kind")
