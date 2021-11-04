@@ -49,7 +49,7 @@ func NewHandler() (*Handler, error) {
 	ws.Route(ws.GET("/{clientId}").To(restfulGet(hydraAdmin)).
 		Doc(`gets oauth2 client`).
 		Param(ws.PathParameter("clientId", "client id").Required(true)).
-		Consumes("application/json").
+		Produces("application/json").
 		Operation("getClient").
 		Writes(&types.Oauth2Client{}).
 		Returns(http.StatusOK, "OK", &types.Oauth2Client{}),

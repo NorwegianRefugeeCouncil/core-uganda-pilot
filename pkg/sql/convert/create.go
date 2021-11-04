@@ -2,7 +2,6 @@ package convert
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"github.com/lib/pq"
 	"github.com/nrc-no/core/pkg/api/types"
@@ -169,20 +168,10 @@ func createTable(ctx context.Context, db *gorm.DB, table schema.SQLTable) error 
 
 }
 
-func deleteFormIfExists(db *sql.DB, formDef types.FormDefinition) error {
-	qry := fmt.Sprintf("drop table if exists %s.%s cascade",
-		pq.QuoteIdentifier(formDef.DatabaseID),
-		pq.QuoteIdentifier(formDef.ID),
-	)
-	fmt.Println(qry)
-	_, err := db.Exec(qry)
-	return err
-}
-
-func deleteTableIfExists(db *sql.DB, schemaName, tableName string) error {
-	_, err := db.Exec(fmt.Sprintf("drop table if exists %s.%s cascade",
+func DeleteTableIfExists(db *gorm.DB, schemaName, tableName string) error {
+	err := db.Exec(fmt.Sprintf("drop table if exists %s.%s cascade",
 		pq.QuoteIdentifier(schemaName),
-		pq.QuoteIdentifier(tableName)))
+		pq.QuoteIdentifier(tableName))).Error
 	return err
 }
 

@@ -8,7 +8,6 @@ import (
 	"github.com/nrc-no/core/pkg/sql/convert"
 	uuid "github.com/satori/go.uuid"
 	"go.uber.org/zap"
-	"golang.org/x/sync/errgroup"
 	"gorm.io/gorm"
 	"time"
 )
@@ -47,7 +46,7 @@ func (d *databaseStore) Get(ctx context.Context, databaseID string) (*types.Data
 
 	l.Debug("getting database")
 	var database Database
-	if err := db.First(&database, databaseID).Error; err != nil {
+	if err := db.First(&database, "id = ?", databaseID).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			l.Error("database not found")
 			return nil, meta.NewNotFound(meta.GroupResource{
@@ -73,52 +72,33 @@ func (d *databaseStore) Delete(ctx context.Context, databaseID string) error {
 	l.Debug("starting transaction")
 	err = db.Transaction(func(tx *gorm.DB) error {
 
-		g, ctx := errgroup.WithContext(ctx)
-
-		g.Go(func() error {
-			l.Debug("deleting database schema")
-			if err := convert.DeleteDatabaseSchemaIfExist(tx, databaseID); err != nil {
-				l.Error("failed to delete database schema", zap.Error(err))
-				return meta.NewInternalServerError(err)
-			}
-			l.Debug("successfully deleted database schema")
-			return nil
-		})
-
-		g.Go(func() error {
-			l.Debug("deleting database")
-			if err := db.WithContext(ctx).Delete(&Database{}, "id = ?", databaseID).Error; err != nil {
-				l.Error("failed to delete database", zap.Error(err))
-				return meta.NewInternalServerError(err)
-			}
-			l.Debug("successfully deleted database")
-			return nil
-		})
-
-		g.Go(func() error {
-			l.Debug("deleting forms")
-			if err := db.WithContext(ctx).Delete(&Form{}, "database_id = ?", databaseID).Error; err != nil {
-				l.Error("failed to delete forms", zap.Error(err))
-				return meta.NewInternalServerError(err)
-			}
-			l.Debug("successfully deleted forms")
-			return nil
-		})
-
-		g.Go(func() error {
-			l.Debug("deleting fields")
-			if err := db.WithContext(ctx).Delete(&Field{}, "database_id = ?", databaseID).Error; err != nil {
-				l.Error("failed to delete fields", zap.Error(err))
-				return meta.NewInternalServerError(err)
-			}
-			l.Debug("successfully deleted fields")
-			return nil
-		})
-
-		if err := g.Wait(); err != nil {
-			l.Error("failed to delete database", zap.Error(err))
-			return err
+		l.Debug("deleting database schema")
+		if err := convert.DeleteDatabaseSchemaIfExist(tx, databaseID); err != nil {
+			l.Error("failed to delete database schema", zap.Error(err))
+			return meta.NewInternalServerError(err)
 		}
+		l.Debug("successfully deleted database schema")
+
+		l.Debug("deleting database")
+		if err := db.Delete(&Database{}, "id = ?", databaseID).Error; err != nil {
+			l.Error("failed to delete database", zap.Error(err))
+			return meta.NewInternalServerError(err)
+		}
+		l.Debug("successfully deleted database")
+
+		l.Debug("deleting forms")
+		if err := db.Delete(&Form{}, "database_id = ?", databaseID).Error; err != nil {
+			l.Error("failed to delete forms", zap.Error(err))
+			return meta.NewInternalServerError(err)
+		}
+		l.Debug("successfully deleted forms")
+
+		l.Debug("deleting fields")
+		if err := db.Delete(&Field{}, "database_id = ?", databaseID).Error; err != nil {
+			l.Error("failed to delete fields", zap.Error(err))
+			return meta.NewInternalServerError(err)
+		}
+		l.Debug("successfully deleted fields")
 
 		return nil
 

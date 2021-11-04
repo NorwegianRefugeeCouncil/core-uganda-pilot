@@ -203,11 +203,11 @@ func (r *Request) Do(ctx context.Context) *Response {
 		}
 	}
 
-	if len(req.Header.Get("Accept")) == 0 {
+	if len(req.Header.Get("Accept")) == 0 && req.Method != http.MethodDelete {
 		req.Header.Set("Accept", "application/json")
 	}
 
-	if len(req.Header.Get("Content-Type")) == 0 {
+	if len(req.Header.Get("Content-Type")) == 0 && r.body != nil {
 		req.Header.Set("Content-Type", "application/json")
 	}
 

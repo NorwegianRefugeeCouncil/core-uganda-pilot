@@ -17,6 +17,7 @@ func actionContext(ctx context.Context, factory Factory, storeName, actionName s
 		l.Error("failed to get database connection", zap.Error(err))
 		return nil, nil, nil, nil, err
 	}
+	db = db.WithContext(ctx)
 	start := time.Now()
 	return ctx, db, l, func() {
 		l.Debug(fmt.Sprintf("%s.%s completed", storeName, actionName), zap.Duration("duration", time.Now().Sub(start)))

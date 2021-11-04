@@ -1,8 +1,10 @@
 package form
 
 import (
+	"fmt"
 	"github.com/emicklei/go-restful/v3"
 	"github.com/nrc-no/core/pkg/api/types"
+	"github.com/nrc-no/core/pkg/constants"
 	"github.com/nrc-no/core/pkg/store"
 	"net/http"
 )
@@ -17,6 +19,8 @@ func NewHandler(store store.FormStore) *Handler {
 
 	ws := new(restful.WebService).Path("/forms")
 	h.webService = ws
+
+	formRoute := fmt.Sprintf("/{%s}", constants.ParamFormID)
 
 	ws.Route(ws.POST("/").To(h.RestfulCreate).
 		Doc("create a form").
@@ -33,6 +37,15 @@ func NewHandler(store store.FormStore) *Handler {
 		Produces("application/json").
 		Writes(types.FormDefinitionList{}).
 		Returns(http.StatusOK, "OK", types.FormDefinitionList{}))
+
+	ws.Route(ws.DELETE(formRoute).To(h.RestfulDelete).
+		Doc("deletes a form").
+		Operation("deleteForm").
+		Param(restful.PathParameter(constants.ParamFormID, "id of the form").
+			DataType("string").
+			DataFormat("uuid").
+			Required(true)).
+		Returns(http.StatusNoContent, "OK", nil))
 
 	return h
 }

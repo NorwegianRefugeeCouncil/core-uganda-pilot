@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"github.com/emicklei/go-restful/v3"
+	"github.com/gorilla/securecookie"
 	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/constants"
 	"github.com/nrc-no/core/pkg/utils"
@@ -32,10 +33,20 @@ func (h *Handler) Login(sessionKey string) http.HandlerFunc {
 		}
 
 		userSession, err := h.sessionStore.Get(req, sessionKey)
+		securecookie.MultiError{}.IsDecode()
 		if err != nil {
-			logrus.WithError(err).Errorf("failed to retrieve user session: %s", err)
-			clearSession()
-			return
+			if cookieErr, ok := err.(securecookie.MultiError); ok {
+				if !cookieErr.IsDecode() {
+					logrus.WithError(err).Errorf("failed to retrieve user session: %s", err)
+					clearSession()
+					return
+				}
+			}
+			if err := userSession.Save(req, w); err != nil {
+				logrus.WithError(err).Errorf("failed to clear user session: %s", err)
+				clearSession()
+				return
+			}
 		}
 
 		userSession.Values[constants.SessionState] = state

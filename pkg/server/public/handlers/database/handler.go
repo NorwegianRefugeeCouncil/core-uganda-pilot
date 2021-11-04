@@ -22,9 +22,9 @@ func NewHandler(store store.DatabaseStore) *Handler {
 		Produces("application/json")
 	h.webService = ws
 
-	databasesPath := fmt.Sprintf("/{%s}", constants.ParamDatabaseID)
+	dbPath := fmt.Sprintf("/{%s}", constants.ParamDatabaseID)
 
-	ws.Route(ws.DELETE(databasesPath).To(h.RestfulDelete).
+	ws.Route(ws.DELETE(dbPath).To(h.RestfulDelete).
 		Param(restful.PathParameter(constants.ParamDatabaseID, "id of the database").
 			DataType("string").
 			DataFormat("uuid").
@@ -40,6 +40,17 @@ func NewHandler(store store.DatabaseStore) *Handler {
 		Produces("application/json").
 		Writes(types.DatabaseList{}).
 		Returns(http.StatusOK, "OK", types.DatabaseList{}))
+
+	ws.Route(ws.GET(dbPath).To(h.RestfulGet).
+		Doc("gets a databases").
+		Operation("getDatabase").
+		Param(restful.PathParameter(constants.ParamDatabaseID, "id of the database").
+			DataType("string").
+			DataFormat("uuid").
+			Required(true)).
+		Produces("application/json").
+		Writes(types.Database{}).
+		Returns(http.StatusOK, "OK", types.Database{}))
 
 	ws.Route(ws.POST("/").To(h.RestfulCreate).
 		Doc("create a database").

@@ -19,6 +19,7 @@ serve:
       allowed_headers:
         - Authorization
         - Content-Type
+        - Accept
       allowed_methods:
         - "GET"
         - "POST"
@@ -55,7 +56,9 @@ serve:
       allowed_origins: [ "http://localhost:3000" ]
       allow_credentials: true
       allowed_headers:
+        - Authorization
         - Content-Type
+        - Accept
       allowed_methods:
         - "GET"
         - "POST"

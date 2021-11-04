@@ -14,7 +14,14 @@ import (
 
 func UseOperationLogging() func(request *restful.Request, response *restful.Response, chain *restful.FilterChain) {
 	return func(request *restful.Request, response *restful.Response, chain *restful.FilterChain) {
-		ctx := WithOperation(request.Request.Context(), request.SelectedRoute().Operation())
+		route := request.SelectedRoute()
+		var operation string
+		if route != nil {
+			operation = route.Operation()
+		} else {
+			operation = ""
+		}
+		ctx := WithOperation(request.Request.Context(), operation)
 		request.Request = request.Request.WithContext(ctx)
 		chain.ProcessFilter(request, response)
 	}

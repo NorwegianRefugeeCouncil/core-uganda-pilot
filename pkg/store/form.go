@@ -9,6 +9,7 @@ import (
 	"github.com/nrc-no/core/pkg/sql/convert"
 	"github.com/nrc-no/core/pkg/utils/pointers"
 	"github.com/nrc-no/core/pkg/utils/sets"
+	"github.com/nrc-no/core/pkg/utils/slices"
 	uuid "github.com/satori/go.uuid"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -20,6 +21,7 @@ type FormStore interface {
 	Get(ctx context.Context, formID string) (*types.FormDefinition, error)
 	List(ctx context.Context) (*types.FormDefinitionList, error)
 	Create(ctx context.Context, form *types.FormDefinition) (*types.FormDefinition, error)
+	Delete(ctx context.Context, id string) error
 }
 
 func NewFormStore(db Factory) FormStore {
@@ -285,6 +287,70 @@ func (d *formStore) List(ctx context.Context) (*types.FormDefinitionList, error)
 	return &types.FormDefinitionList{
 		Items: result,
 	}, nil
+
+}
+
+func (d *formStore) Delete(ctx context.Context, id string) error {
+
+	ctx, db, l, done, err := actionContext(ctx, d.db, "form", "delete")
+	if err != nil {
+		return err
+	}
+	defer done()
+
+	l.Debug("getting form definition")
+	formDef, err := d.getFormDefinitionInternal(ctx, db, id, l)
+	if err != nil {
+		l.Error("failed to get form definition", zap.Error(err))
+		return err
+	}
+
+	err = db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+
+		formIds := formDef.GetAllFormsAndSubFormIDs()
+		if len(formIds) == 0 {
+			return nil
+		}
+		var formIdsIntf []interface{}
+
+		var params []string
+		for _, formId := range formIds {
+			formIdsIntf = append(formIdsIntf, formId)
+			params = append(params, "?")
+		}
+
+		l.Debug("deleting database tables")
+		reversed := slices.ReversedStrings(formIds)
+		for _, formId := range reversed {
+			if err := convert.DeleteTableIfExists(tx, formDef.DatabaseID, formId); err != nil {
+				l.Error("failed to delete database table",
+					zap.Error(err),
+					zap.String("database_id", formDef.DatabaseID),
+					zap.String("form_id", formId))
+				return err
+			}
+		}
+
+		l.Debug("deleting fields", zap.Strings("form_ids", formIds))
+		fieldsWhereClause := fmt.Sprintf("root_form_id in (%s)", strings.Join(params, ","))
+		if err := tx.Where(fieldsWhereClause, formIdsIntf...).Delete(&Field{}).Error; err != nil {
+			l.Error("failed to delete fields", zap.Error(err))
+			return err
+		}
+
+		l.Debug("deleting forms", zap.Strings("form_ids", formIds))
+		formsWhereClause := fmt.Sprintf("id in (%s)", strings.Join(params, ","))
+		if err := tx.Where(formsWhereClause, formIdsIntf...).Delete(&Form{}).Error; err != nil {
+			l.Error("failed to delete fields", zap.Error(err))
+			return err
+		}
+
+		return nil
+
+	})
+
+	l.Debug("transaction ended")
+	return err
 
 }
 

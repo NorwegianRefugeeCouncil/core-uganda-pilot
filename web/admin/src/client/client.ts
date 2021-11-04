@@ -1,4 +1,4 @@
-import axios, {AxiosResponse, Method} from "axios";
+import axios, {AxiosError, AxiosResponse, Method} from "axios";
 
 export type DataOperation<TRequest, TResponse> = (request: TRequest) => Promise<TResponse>
 
@@ -136,38 +136,34 @@ function clientResponse<TRequest, TBody>(r: AxiosResponse<TBody>, request: TRequ
 }
 
 export type clientProps = {
-    idToken?: string
     address?: string
 }
 
 export class client implements Client {
     public address = "http://localhost:9001/admin"
-    public idToken = ""
 
     public constructor(private clientProps?: clientProps) {
-        if (clientProps?.idToken) {
-            this.idToken = clientProps?.idToken
-        }
         if (clientProps?.address) {
             this.address = clientProps?.address
         }
     }
 
     do<TRequest, TBody>(request: TRequest, url: string, method: Method, data: any, expectStatusCode: number): Promise<Response<TRequest, TBody>> {
-
-        const headers: { [key: string]: string } = {}
-        if (this.idToken) {
-            headers["Authorization"] = `Bearer ${this.idToken}`
-        }
-
         return axios.request<TBody>({
             method,
             url,
             data,
-            headers
+            responseType: "json",
+            headers: {
+                "Accept": "application/json"
+            },
+            withCredentials: true,
         }).then(value => {
             return clientResponse<TRequest, TBody>(value, request, expectStatusCode);
-        }).catch((err) => {
+        }).catch((err: AxiosError) => {
+            if (err.response?.status == 401 && err.response?.headers["location"]) {
+                window.location.href = err.response?.headers["location"]
+            }
             return {
                 request: request,
                 response: undefined,

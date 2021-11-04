@@ -11,6 +11,7 @@ require (
 	github.com/felixge/httpsnoop v1.0.2 // indirect
 	github.com/gomodule/redigo v2.0.0+incompatible
 	github.com/gorilla/handlers v1.5.1
+	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/gorilla/sessions v1.2.1
 	github.com/iancoleman/strcase v0.2.0
 	github.com/lib/pq v1.10.3

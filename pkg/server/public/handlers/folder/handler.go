@@ -29,7 +29,6 @@ func NewHandler(store store.FolderStore) *Handler {
 			DataType("string").
 			DataFormat("uuid").
 			Required(true)).
-		Writes(nil).
 		Returns(http.StatusNoContent, "OK", nil))
 
 	ws.Route(ws.POST("/").To(h.RestfulCreate).

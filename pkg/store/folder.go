@@ -148,51 +148,55 @@ func (d *folderStore) Delete(ctx context.Context, id string) error {
 			rootFormIdParams = rootFormIdParams.Insert("?")
 		}
 
-		l.Debug("finding all fields for forms in folder")
-		fieldFormMatcher := fmt.Sprintf("root_form_id in (%s)", fieldParams.Join(","))
-		qry := tx.Where(fieldFormMatcher, formIds.ListIntf()...).Delete(&Field{})
-		if err := qry.Error; err != nil {
-			l.Error("failed to find all fields for forms in folder", zap.Error(err))
-			return meta.NewInternalServerError(err)
-		}
-		l.Debug("deleted fields", zap.Int64("deleted_count", qry.RowsAffected))
+		if len(formIds) != 0 {
 
-		formMatcher := fmt.Sprintf("id in (%s) or root_id in (%s)",
-			formIdParams.Join(","),
-			rootFormIdParams.Join(","),
-		)
-		var formParams []interface{}
-		for formId := range formIdParams {
-			formParams = append(formParams, formId)
-		}
-		for rootFormIdParam := range rootFormIdParams {
-			formParams = append(formParams, rootFormIdParam)
-		}
-		var formMatcherArgs []interface{}
-		for formId := range formIds {
-			formMatcherArgs = append(formMatcherArgs, formId)
-		}
-		for formId := range formIds {
-			formMatcherArgs = append(formMatcherArgs, formId)
-		}
+			l.Debug("finding all fields for forms in folder")
+			fieldFormMatcher := fmt.Sprintf("root_form_id in (%s)", fieldParams.Join(","))
+			qry := tx.Where(fieldFormMatcher, formIds.ListIntf()...).Delete(&Field{})
+			if err := qry.Error; err != nil {
+				l.Error("failed to find all fields for forms in folder", zap.Error(err))
+				return meta.NewInternalServerError(err)
+			}
+			l.Debug("deleted fields", zap.Int64("deleted_count", qry.RowsAffected))
 
-		l.Debug("deleting all forms in folder (by form_id or root_id)",
-			zap.Strings("form_ids", formIdParams.List()),
-			zap.Strings("root_form_ids", rootFormIdParams.List()))
+			formMatcher := fmt.Sprintf("id in (%s) or root_id in (%s)",
+				formIdParams.Join(","),
+				rootFormIdParams.Join(","),
+			)
+			var formParams []interface{}
+			for formId := range formIdParams {
+				formParams = append(formParams, formId)
+			}
+			for rootFormIdParam := range rootFormIdParams {
+				formParams = append(formParams, rootFormIdParam)
+			}
+			var formMatcherArgs []interface{}
+			for formId := range formIds {
+				formMatcherArgs = append(formMatcherArgs, formId)
+			}
+			for formId := range formIds {
+				formMatcherArgs = append(formMatcherArgs, formId)
+			}
 
-		qry = tx.Where(formMatcher, formParams...).Delete(&Form{})
-		if err := qry.Error; err != nil {
-			l.Error("failed to delete all forms and subforms in folder", zap.Error(err))
-			return meta.NewInternalServerError(err)
-		}
-		l.Debug("deleted forms", zap.Int64("deleted_count", qry.RowsAffected))
+			l.Debug("deleting all forms in folder (by form_id or root_id)",
+				zap.Strings("form_ids", formIdParams.List()),
+				zap.Strings("root_form_ids", rootFormIdParams.List()))
 
-		l.Debug("deleting all forms in folder (by folder id)")
-		qry = tx.Delete(&Form{}, "folder_id = ?", id)
-		if err := qry.Error; err != nil {
-			return meta.NewInternalServerError(err)
+			qry = tx.Where(formMatcher, formParams...).Delete(&Form{})
+			if err := qry.Error; err != nil {
+				l.Error("failed to delete all forms and subforms in folder", zap.Error(err))
+				return meta.NewInternalServerError(err)
+			}
+			l.Debug("deleted forms", zap.Int64("deleted_count", qry.RowsAffected))
+
+			l.Debug("deleting all forms in folder (by folder id)")
+			qry = tx.Delete(&Form{}, "folder_id = ?", id)
+			if err := qry.Error; err != nil {
+				return meta.NewInternalServerError(err)
+			}
+			l.Debug("deleted forms", zap.Int64("deleted_count", qry.RowsAffected))
+
 		}
-		l.Debug("deleted forms", zap.Int64("deleted_count", qry.RowsAffected))
 
 		l.Debug("deleting folder")
 		if err := tx.Delete(&Folder{}, "id = ?", id).Error; err != nil {

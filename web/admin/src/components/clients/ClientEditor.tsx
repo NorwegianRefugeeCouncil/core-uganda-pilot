@@ -33,6 +33,7 @@ export const ClientEditor: FC = props => {
     const [clientSecret, setClientSecret] = useState("")
 
     const setClient = useCallback((args: OAuth2Client) => {
+        console.log(args)
         form.setValue("clientName", args.clientName)
         form.setValue("uri", args.uri)
         form.setValue("scope", args.scope)
@@ -47,7 +48,10 @@ export const ClientEditor: FC = props => {
     // gets the oauth2 client
     useEffect(() => {
         clientId && apiClient.getOAuth2Client({id: clientId})
-            .then(result => result.response && setClient(result.response))
+            .then(result => {
+                console.log(result)
+                result.response && setClient(result.response)
+            })
     }, [form, clientId, setClient])
 
     // updates or creates the oauth2 client on submit

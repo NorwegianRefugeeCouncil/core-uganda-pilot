@@ -141,7 +141,7 @@ func NewGenericServer(options options.ServerOptions, name string) (*Server, erro
 			})
 		},
 		func(next http.Handler) http.Handler {
-			return handlers.RecoveryHandler()(next)
+			return handlers.RecoveryHandler(handlers.PrintRecoveryStack(true))(next)
 		},
 		func(next http.Handler) http.Handler {
 			return logging.UseRequestID(next)

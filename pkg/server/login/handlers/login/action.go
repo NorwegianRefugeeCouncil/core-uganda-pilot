@@ -1,6 +1,7 @@
 package login
 
 import (
+	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
 	"github.com/looplab/fsm"
 	"github.com/nrc-no/core/pkg/server/login/authrequest"
@@ -168,14 +169,18 @@ func getAuthRequest(action string, authHandlers authrequest.Handlers, userSessio
 func getUserSession(w http.ResponseWriter, req *http.Request, sessionStore sessions.Store) (*sessions.Session, bool) {
 	userSession, err := sessionStore.Get(req, "login-session")
 	if err != nil {
-		logrus.WithError(err).Warnf("failed to restore session")
-		userSession, err := sessionStore.New(req, "login-session")
-		if err != nil {
-			logrus.WithError(err).Warnf("failed to create new session session")
+		if cookieErr, ok := err.(securecookie.MultiError); ok {
+			if !cookieErr.IsDecode() {
+				logrus.WithError(err).Errorf("failed to retrieve user session: %s", err)
+				handleError(w, http.StatusBadRequest, err)
+				return nil, true
+			}
+		}
+		if err := userSession.Save(req, w); err != nil {
+			logrus.WithError(err).Errorf("failed to clear user session: %s", err)
 			handleError(w, http.StatusBadRequest, err)
 			return nil, true
 		}
-		return userSession, false
 	}
 	return userSession, false
 }

@@ -9,9 +9,12 @@ import (
 	"github.com/nrc-no/core/pkg/constants"
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/utils"
+	"github.com/ory/hydra-client-go/client"
+	"github.com/ory/hydra-client-go/client/admin"
 	"go.uber.org/zap"
 	"golang.org/x/oauth2"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -22,6 +25,12 @@ func RestfulAuthnMiddleware(
 	selfURL string,
 	sessionKey string,
 ) func(request *restful.Request, response *restful.Response, chain *restful.FilterChain) {
+
+	hydraAdmin := client.NewHTTPClientWithConfig(nil, &client.TransportConfig{
+		Host:     "localhost:4445",
+		BasePath: "",
+		Schemes:  []string{"http"},
+	}).Admin
 
 	return func(request *restful.Request, response *restful.Response, chain *restful.FilterChain) {
 
@@ -54,6 +63,41 @@ func RestfulAuthnMiddleware(
 				utils.JSONResponse(response.ResponseWriter, http.StatusTemporaryRedirect, meta.NewUnauthorized("not logged in"))
 			}
 			return
+		}
+
+		authorizationHeader := request.HeaderParameter("Authorization")
+		if len(authorizationHeader) > 0 {
+			l.Debug("authorization header present. introspecting...")
+			if authorizationHeader[:7] != "Bearer " {
+				l.Error("malformed authorization header")
+				redirectToLogin(request, response)
+				return
+			}
+			parts := strings.Split(authorizationHeader, " ")
+			if len(parts) == 2 && parts[0] == "Bearer" {
+				token := parts[1]
+				tokenIntrospectionResult, err := hydraAdmin.IntrospectOAuth2Token(&admin.IntrospectOAuth2TokenParams{
+					Token:   token,
+					Context: ctx,
+				})
+				if err != nil {
+					l.Error("failed to introspect token", zap.Error(err))
+					redirectToLogin(request, response)
+					return
+				}
+				if !*tokenIntrospectionResult.Payload.Active {
+					l.Error("token is not active", zap.Error(err))
+					redirectToLogin(request, response)
+					return
+				}
+				l.Debug("valid authorization token found")
+				chain.ProcessFilter(request, response)
+				return
+			} else {
+				l.Error("malformed authorization header")
+				redirectToLogin(request, response)
+				return
+			}
 		}
 
 		l.Debug("getting user session")
