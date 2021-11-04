@@ -91,7 +91,9 @@ export const Former: FC<FormerProps> = (props) => {
   const selectedField = selectedFieldId ? fields.find((f) => f.id === selectedFieldId) : undefined;
 
   function formHeader() {
-    return <FormName formName={formName} setFormName={setFormName} />;
+    console.log({formName, ownerFormName})
+    const name = formName ? formName : ownerFormName ? ownerFormName : '';
+    return <FormName formName={name} setFormName={setFormName} />;
   }
 
   function addFieldButton() {
@@ -133,12 +135,12 @@ export const Former: FC<FormerProps> = (props) => {
           <div className="row">
             <div className="col-12 col-md-8 offset-md-1">
               <h3>Add Form</h3>
-              <h6>{ownerFormName ? <div className="mb-2">Editing child form of {ownerFormName}</div> : <></>}</h6>
+              <h6>{ownerFormName ? <div className="mb-2">Editing child form of {ownerFormName} !!!!</div> : <></>}</h6>
             </div>
           </div>
           <div className="row mt-3">
             <div className="col-10 col-md-8 offset-md-1">
-              {formHeader()}
+              {ownerFormName == null && formHeader()}
               {mapField(selectedField, props)}
             </div>
             <div className="col-2">
@@ -165,7 +167,7 @@ export const Former: FC<FormerProps> = (props) => {
         </div>
         <div className="row mt-3">
           <div className="col-6 offset-2">
-            {formHeader()}
+            {ownerFormName == null && formHeader()}
             {fieldSections()}
           </div>
           <div className="col-2">
