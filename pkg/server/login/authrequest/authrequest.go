@@ -6,7 +6,6 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/looplab/fsm"
 	loginstore "github.com/nrc-no/core/pkg/server/login/store"
-	"github.com/sirupsen/logrus"
 	"net/http"
 	"strings"
 	"time"
@@ -302,7 +301,7 @@ type Claims struct {
 func (a *AuthRequest) Save(w http.ResponseWriter, req *http.Request, session *sessions.Session) error {
 
 	stored := StoredAuthRequest{
-		CurrentState:       a.State(),
+		CurrentState:       a.fsm.Current(),
 		Identifier:         a.Identifier,
 		IdentifierError:    a.IdentifierError,
 		EmailDomain:        a.EmailDomain,
@@ -424,108 +423,6 @@ type RequestLoginProps struct {
 
 func (a *AuthRequest) Event(evt string) error {
 	return a.fsm.Event(evt)
-}
-
-func (a *AuthRequest) RequestLogin() error {
-	return a.fsm.Event(EventRequestLogin)
-}
-
-func (a *AuthRequest) SkipLoginRequest() error {
-	return a.fsm.Event(EventSkipLoginRequest)
-}
-
-func (a *AuthRequest) PerformLogin() error {
-	return a.fsm.Event(EventPerformLogin)
-}
-
-func (a *AuthRequest) ProvideIdentifier() error {
-	return a.fsm.Event(EventProvideIdentifier)
-}
-
-func (a *AuthRequest) FailIdentifierValidation(err error) error {
-	return a.fsm.Event(EventProvideInvalidIdentifier, err)
-}
-
-func (a *AuthRequest) SucceedIdentifierValidation() error {
-	return a.fsm.Event(EventProvideValidIdentifier)
-}
-
-func (a *AuthRequest) UsePasswordAuth() error {
-	return a.fsm.Event(EventUsePasswordLogin)
-}
-
-func (a *AuthRequest) UseOidcAuth() error {
-	return a.fsm.Event(EventUseOidcLogin)
-}
-
-func (a *AuthRequest) UseIdentityProvider() error {
-	return a.fsm.Event(EventUseIdentityProvider)
-}
-
-func (a *AuthRequest) CallIdentityProviderCallback() error {
-	return a.fsm.Event(EventCallOidcCallback)
-}
-
-func (a *AuthRequest) FailAuthCodeExchange(err error) error {
-	return a.fsm.Event(EventFailCodeExchange)
-}
-
-func (a *AuthRequest) SucceedAuthCodeExchange() error {
-	return a.fsm.Event(EventSucceedCodeExchange)
-}
-
-func (a *AuthRequest) ProvidePassword() error {
-	return a.fsm.Event(EventProvidePassword)
-}
-
-func (a *AuthRequest) FailPasswordValidation() error {
-	return a.fsm.Event(EventProvideInvalidPassword)
-}
-
-func (a *AuthRequest) SucceedPasswordValidation() error {
-	return a.fsm.Event(EventProvideValidPassword)
-}
-
-func (a *AuthRequest) AcceptLoginRequest() error {
-	return a.fsm.Event(EventAcceptLoginRequest)
-}
-
-func (a *AuthRequest) SkipConsentRequest() error {
-	return a.fsm.Event(EventSkipConsentChallenge)
-}
-
-func (a *AuthRequest) ReceiveConsentChallenge() error {
-	return a.fsm.Event(EventReceiveConsentChallenge)
-}
-
-func (a *AuthRequest) PresentConsentChallenge() error {
-	return a.fsm.Event(EventPresentConsentChallenge)
-}
-
-func (a *AuthRequest) ApproveConsentRequest() error {
-	return a.fsm.Event(EventApproveConsentChallenge)
-}
-
-func (a *AuthRequest) DeclineConsentRequest() error {
-	return a.fsm.Event(EventDeclineConsentChallenge)
-}
-
-func (a *AuthRequest) Accept() error {
-	return a.fsm.Event(EventAccept)
-}
-
-func (a *AuthRequest) Decline() error {
-	return a.fsm.Event(EventDecline)
-}
-
-func (a *AuthRequest) SetRefreshedIdentity() error {
-	return a.fsm.Event(EventSetRefreshedIdentity)
-}
-
-func (a *AuthRequest) Fail(err error) error {
-	logrus.WithError(err).Errorf("failed")
-	a.Error = err
-	return a.fsm.Event(EventFail)
 }
 
 func (a *AuthRequest) State() string {

@@ -7,18 +7,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/coreos/go-oidc/v3/oidc"
-	"github.com/gorilla/sessions"
 	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/ory/hydra-client-go/models"
 	"golang.org/x/oauth2"
-	"net/http"
 	"strings"
 )
-
-func getSession(req *http.Request, sessionStore sessions.Store) (*sessions.Session, error) {
-	return sessionStore.Get(req, "login-session")
-}
 
 func getEmailDomain(val string) (string, error) {
 	components := strings.Split(val, "@")
@@ -47,15 +41,6 @@ func generateBytes(count int) ([]byte, error) {
 		return nil, meta.NewInternalServerError(err)
 	}
 	return b, nil
-}
-
-func getStringFromSession(userSession *sessions.Session, key string) (string, error) {
-	valueIntf := userSession.Values[key]
-	value, ok := valueIntf.(string)
-	if !ok {
-		return "", errors.New(key + " should be a string")
-	}
-	return value, nil
 }
 
 func getOauthProvider(

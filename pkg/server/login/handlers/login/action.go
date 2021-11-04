@@ -224,11 +224,11 @@ func handleAuthRequestAction(
 				evt := events[i]
 				l.Debug("dispatching action", zap.String("action", evt))
 				if err := authRequest.Event(evt); err != nil {
-					authRequest.Fail(err)
+					authRequest.Event(authrequest.EventFail)
 					break
 				}
 				if err := authRequest.Save(w, req, userSession); err != nil {
-					authRequest.Fail(err)
+					authRequest.Event(authrequest.EventFail)
 					break
 				}
 			}
