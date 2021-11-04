@@ -3,7 +3,7 @@ package validation
 import (
 	"errors"
 	"fmt"
-	"github.com/nrc-no/core/pkg/sets"
+	"github.com/nrc-no/core/pkg/utils/sets"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -303,10 +303,10 @@ func InternalError(field *Path, err error) *Error {
 type ErrorList []*Error
 
 // ToAggregate converts the ErrorList into an errors.Aggregate.
-func (list ErrorList) ToAggregate() Aggregate {
-	errs := make([]error, 0, len(list))
+func (v ErrorList) ToAggregate() Aggregate {
+	errs := make([]error, 0, len(v))
 	errorMsgs := sets.NewString()
-	for _, err := range list {
+	for _, err := range v {
 		msg := fmt.Sprintf("%v", err)
 		if errorMsgs.Has(msg) {
 			continue
@@ -410,5 +410,5 @@ func (agg aggregate) visit(f func(err error) bool) bool {
 
 // Errors is part of the Aggregate interface.
 func (agg aggregate) Errors() []error {
-	return []error(agg)
+	return agg
 }

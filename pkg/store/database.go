@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"github.com/nrc-no/core/pkg/api/meta"
-	"github.com/nrc-no/core/pkg/sqlconvert"
-	"github.com/nrc-no/core/pkg/types"
+	"github.com/nrc-no/core/pkg/api/types"
+	"github.com/nrc-no/core/pkg/sql/convert"
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/sync/errgroup"
 	"gorm.io/gorm"
@@ -66,15 +66,10 @@ func (d *databaseStore) Delete(ctx context.Context, databaseID string) error {
 
 	err = db.Transaction(func(tx *gorm.DB) error {
 
-		sqlDB, err := tx.DB()
-		if err != nil {
-			return meta.NewInternalServerError(err)
-		}
-
 		g, ctx := errgroup.WithContext(ctx)
 
 		g.Go(func() error {
-			if err := sqlconvert.DeleteDatabaseIfExists(sqlDB, databaseID); err != nil {
+			if err := convert.DeleteDatabaseIfExists(tx, databaseID); err != nil {
 				return meta.NewInternalServerError(err)
 			}
 			return nil
@@ -123,6 +118,9 @@ func (d *databaseStore) List() (*types.DatabaseList, error) {
 	for i, database := range databases {
 		result[i] = mapDatabaseTo(&database)
 	}
+	if result == nil {
+		result = []*types.Database{}
+	}
 	return &types.DatabaseList{
 		Items: result,
 	}, nil
@@ -151,7 +149,7 @@ func (d *databaseStore) Create(database *types.Database) (*types.Database, error
 			return err
 		}
 
-		if err := sqlconvert.CreateDatabase(sqlDB, database); err != nil {
+		if err := convert.CreateDatabase(sqlDB, database); err != nil {
 			return err
 		}
 

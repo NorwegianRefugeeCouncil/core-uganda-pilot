@@ -1,8 +1,8 @@
 package store
 
 import (
-	"github.com/nrc-no/core/pkg/pointers"
-	"github.com/nrc-no/core/pkg/types"
+	"github.com/nrc-no/core/pkg/api/types"
+	"github.com/nrc-no/core/pkg/utils/pointers"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

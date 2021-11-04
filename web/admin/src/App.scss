@@ -1,0 +1,62 @@
+
+$darkula-bg: rgb(57, 64, 71);
+$darkula-color: rgb(180, 180, 180);
+$darkula-border: rgb(57, 64, 71);
+$theme-colors: (
+  "darkula": $darkula-bg,
+);
+
+@import "node_modules/bootstrap/scss/bootstrap";
+
+.card.card-darkula {
+    background-color: darken($darkula-bg, 5%);
+    border-color: $darkula-border;
+}
+
+.card.card-darkula > .card-body {
+    color: darken($light, 25%);
+}
+
+.list-group.list-group-darkula > .list-group-item ,
+.btn.btn-darkula,
+.form-control.form-control-darkula,
+{
+    color: $darkula-color;
+    border-color: $darkula-border;
+    background-color: $darkula-bg;
+}
+
+.list-group.list-group-darkula > .list-group-item.active,
+.btn.btn-darkula.active,
+.btn.btn-darkula:active,
+.btn.btn-darkula:focus,
+ {
+    color: lighten($darkula-color, 10%);
+    background-color: mix(purple, mix(#fff, $darkula-bg, 10), 3);
+    border-color: $darkula-border;
+    box-shadow: 0 0 0.35rem 0.13rem rgba(mix(purple, lighten($darkula-border, 10%), 10), 0.7);
+}
+
+.form-control.form-control-darkula:focus,
+.form-control.form-control-darkula:active,
+{
+    color: lighten($darkula-color, 10%);
+    background-color: $darkula-bg;
+    border-color: lighten($darkula-border, 10);
+    box-shadow: 0 0 0.35rem 0.13rem rgba(mix(purple, lighten($darkula-border, 10%), 10), 0.7);
+}
+
+.list-group.list-group-darkula > .list-group-item:hover:not(.active),
+.btn.btn-darkula:hover:not(.active),
+ {
+    color: lighten($darkula-color, 10%);
+    background-color: mix(#fff, $darkula-bg, 5);
+}
+
+.list-group.list-group-darkula > .list-group-item.disabled,
+.btn.btn-darkula:disabled,
+.form-control.form-control-darkula:disabled
+ {
+    background-color: $darkula-bg;
+    color: darken($darkula-color, 20%);
+}

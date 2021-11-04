@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"github.com/cenkalti/backoff/v4"
 	"github.com/coreos/go-oidc/v3/oidc"
-	"github.com/nrc-no/core/pkg/options"
-	authn2 "github.com/nrc-no/core/pkg/server/admin/handlers/authn"
+	"github.com/nrc-no/core/pkg/server/admin/handlers/authn"
+	"github.com/nrc-no/core/pkg/server/admin/handlers/clients"
 	"github.com/nrc-no/core/pkg/server/admin/handlers/identityprovider"
 	"github.com/nrc-no/core/pkg/server/admin/handlers/organization"
 	"github.com/nrc-no/core/pkg/server/generic"
-	store2 "github.com/nrc-no/core/pkg/store"
+	"github.com/nrc-no/core/pkg/server/options"
+	"github.com/nrc-no/core/pkg/store"
 	"golang.org/x/oauth2"
 )
 
@@ -21,7 +22,7 @@ type Server struct {
 
 type Options struct {
 	options.ServerOptions
-	StoreFactory store2.Factory
+	StoreFactory store.Factory
 }
 
 func NewServer(options Options) (*Server, error) {
@@ -33,13 +34,23 @@ func NewServer(options Options) (*Server, error) {
 
 	container := genericServer.Container
 
-	organizationStore := store2.NewOrganizationStore(options.StoreFactory)
-	organizationHandler := organization.NewHandler(organizationStore)
-	container.Add(organizationHandler.WebService())
+	clientsHandler, err := clients.NewHandler()
+	if err != nil {
+		return nil, err
+	}
+	container.Add(clientsHandler.WebService())
 
-	identityProviderStore := store2.NewIdentityProviderStore(options.StoreFactory)
-	identityProviderHandler := identityprovider.NewHandler(identityProviderStore)
-	container.Add(identityProviderHandler.WebService())
+	organizationStore := store.NewOrganizationStore(options.StoreFactory)
+	// idpStore := store.NewIdentityProviderStore(options.StoreFactory)
+	organizationsHandler := organization.NewHandler(organizationStore)
+	if err != nil {
+		return nil, err
+	}
+	container.Add(organizationsHandler.WebService())
+
+	idpStore := store.NewIdentityProviderStore(options.StoreFactory)
+	idpHandler := identityprovider.NewHandler(idpStore)
+	container.Add(idpHandler.WebService())
 
 	s := &Server{
 		Server:  genericServer,
@@ -83,13 +94,13 @@ func (s *Server) Start(ctx context.Context) {
 		Now:                  nil,
 	})
 
-	authnHandler := authn2.NewHandler(
+	authnHandler := authn.NewHandler(
 		s.Server.SessionStore(),
 		&oauth2Config,
 		verifier,
 	)
 
-	s.Container.Filter(authn2.RestfulAuthnMiddleware(s.SessionStore(), verifier, s.options.URLs.Self, "/"))
+	s.Container.Filter(authn.RestfulAuthnMiddleware(s.SessionStore(), verifier, s.options.URLs.Self, "/"))
 
 	s.Container.Add(authnHandler.WebService())
 

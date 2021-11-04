@@ -1,8 +1,8 @@
 package public
 
 import (
-	"github.com/nrc-no/core/pkg/options"
 	"github.com/nrc-no/core/pkg/server/generic"
+	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/server/public/handlers/database"
 	"github.com/nrc-no/core/pkg/server/public/handlers/folder"
 	"github.com/nrc-no/core/pkg/server/public/handlers/form"

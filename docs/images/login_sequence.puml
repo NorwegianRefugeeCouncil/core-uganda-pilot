@@ -1,0 +1,27 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+User -> "AppServer": Authentication Request
+AppServer -> User: Temporary redirect to Login
+
+User -> LoginServer: Follows redirect
+LoginServer -> User: Prompt email
+User -> LoginServer: Provide Email
+LoginServer -> LoginServer: Find suitable identity provider
+LoginServer -> User: Redirect to Identity provider
+User -> IdentityProvider: Follows redirect & Login
+IdentityProvider -> User: Redirect to LoginServer
+User -> LoginServer: Follow redirect
+LoginServer <-> IdentityProvider: Authorization code exchange
+LoginServer -> LoginServer: Verify token
+LoginServer -> LoginServer: Produce ID token
+LoginServer -> User: Temporary Redirect
+User -> AppServer: Follow redirect
+AppServer <-> LoginServer: Authorization code exchange
+AppServer -> AppServer: Verify token
+AppServer -> User: Authenticated
+
+
+@enduml

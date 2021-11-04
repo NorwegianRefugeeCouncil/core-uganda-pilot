@@ -10,8 +10,7 @@ export const FieldTypePicker: FC<FieldTypePickerProps> = props => {
     const {onSubmit, onCancel} = props
     return <div className={"card bg-dark text-light border-secondary"}>
         <div className={"card-body bg-primary"}>
-            <div className={"d-flex flex-row"}>
-
+            <div className={"d-flex flex-wrap"}>
                 <button
                     className={"btn btn-primary m-2 border-light"}
                     onClick={() => onSubmit(FieldKind.Text)}>
@@ -19,7 +18,7 @@ export const FieldTypePicker: FC<FieldTypePickerProps> = props => {
                 </button>                <button
                     className={"btn btn-primary m-2 border-light"}
                     onClick={() => onSubmit(FieldKind.MultilineText)}>
-                    MultilineText Text
+                    Multiline Text
                 </button>
                 <button
                     className={"btn btn-primary m-2 border-light"}
@@ -45,6 +44,11 @@ export const FieldTypePicker: FC<FieldTypePickerProps> = props => {
                     className={"btn btn-primary m-2 border-light"}
                     onClick={() => onSubmit(FieldKind.Month)}>
                     Month
+                </button>
+                <button
+                    className={"btn btn-primary m-2 border-light"}
+                    onClick={() => onSubmit(FieldKind.SingleSelect)}>
+                    Single Select
                 </button>
             </div>
         </div>

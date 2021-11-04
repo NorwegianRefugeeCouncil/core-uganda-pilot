@@ -9,6 +9,7 @@ import {defaultClient} from "../../data/client";
 export interface FormField {
     id: string
     type: FieldKind
+    options: string[]
     required: boolean
     key: boolean
     name: string
@@ -158,13 +159,15 @@ const mapFields = (state: FormerState, fields: FormField[]): FieldDefinition[] =
         if (field.type === "text") {
             fieldType = {text: {}}
         } else if (field.type === "multilineText") {
-           fieldType = {multilineText: {}}
+            fieldType = {multilineText: {}}
         } else if (field.type === "date") {
             fieldType = {date: {}}
         } else if (field.type === "month") {
             fieldType = {month: {}}
         } else if (field.type === "quantity") {
             fieldType = {quantity: {}}
+        } else if (field.type === "singleSelect") {
+            fieldType = {singleSelect: {}}
         } else if (field.type === "reference") {
             if (!field.referencedDatabaseId) {
                 throw new Error(`field with id ${field.id} does not have referenced database id`)
@@ -203,6 +206,7 @@ const mapFields = (state: FormerState, fields: FormField[]): FieldDefinition[] =
             id: "",
             description: field.description,
             name: field.name,
+            options: field.options,
             required: field.required,
             code: field.code,
             key: field.key
@@ -346,6 +350,26 @@ export const formerSlice = createSlice({
             }
             fieldForm.field.description = action.payload.description
         },
+        setFieldOption(state, action: PayloadAction<{fieldId: string, i: number, value: string}>) {
+            const fieldForm = selectFieldForm(state, action.payload.fieldId)
+            const {i, value} = action.payload
+            if (!fieldForm || !fieldForm.field.options) return
+
+            fieldForm.field.options[i] = value
+        },
+        addOption(state, action: PayloadAction<{fieldId: string}>) {
+            const fieldForm = selectFieldForm(state, action.payload.fieldId)
+            if (!fieldForm) return
+
+            fieldForm.field.options = [...fieldForm.field?.options ?? [], ""]
+        },
+        removeOption(state, action: PayloadAction<{fieldId: string, i: number}>) {
+            const fieldForm = selectFieldForm(state, action.payload.fieldId)
+            if (!fieldForm || !fieldForm.field.options) return
+
+            const {i} = action.payload
+            fieldForm.field.options = fieldForm.field.options.slice(0 , i).concat(fieldForm.field.options.slice(i + 1))
+        },
         setFieldCode(state, action: PayloadAction<{ fieldId: string, code: string }>) {
             const fieldForm = selectFieldForm(state, action.payload.fieldId)
             if (!fieldForm) {
@@ -437,6 +461,7 @@ export const formerSlice = createSlice({
                 name: "",
                 required: false,
                 type: kind,
+                options: [],
                 subFormId: subFormId,
                 code: "",
                 description: "",

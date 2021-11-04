@@ -3,9 +3,9 @@ package identityprovider
 import (
 	"github.com/emicklei/go-restful/v3"
 	"github.com/nrc-no/core/pkg/api/meta"
+	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/constants"
 	"github.com/nrc-no/core/pkg/store"
-	"github.com/nrc-no/core/pkg/types"
 	"github.com/nrc-no/core/pkg/utils"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
@@ -43,7 +43,7 @@ func (h *Handler) Update(identityProviderID string) http.HandlerFunc {
 }
 
 func (h *Handler) RestfulUpdate(request *restful.Request, response *restful.Response) {
-	recordID := request.PathParameter(constants.ParamRecordID)
-	handler := h.Update(recordID)
+	identityProviderID := request.PathParameter(constants.ParamIdentityProviderID)
+	handler := h.Update(identityProviderID)
 	handler(response.ResponseWriter, request.Request)
 }

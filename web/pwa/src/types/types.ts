@@ -15,6 +15,7 @@ export enum FieldKind {
     Date = "date",
     Quantity = "quantity",
     Month = "month"
+    SingleSelect = "singleSelect",
 }
 
 export class FieldType {
@@ -25,10 +26,10 @@ export class FieldType {
     public date?: FieldTypeDate
     public quantity?: FieldTypeQuantity
     public month?: FieldTypeMonth
+    public singleSelect?: FieldTypeSingleSelect
 }
 
 export class FieldTypeMonth {
-    
 }
 
 export class FieldTypeText {
@@ -43,7 +44,7 @@ export class FieldTypeDate {
 export class FieldTypeQuantity {
 }
 
-export class FieldTypeMultiLineText {
+export class FieldTypeSingleSelect {
 }
 
 export class FieldTypeReference {
@@ -64,6 +65,7 @@ export class FieldDefinition {
     public name: string = ""
     public description: string = ""
     public required: boolean = false
+    public options: string[] = []
     public key: boolean = false
     public fieldType: FieldType = new FieldType()
 }
@@ -105,22 +107,3 @@ export class LocalRecord extends Record {
 }
 
 export type RecordList = { items: Record[] }
-
-export class Organization {
-    public id: string = ""
-    public key: string = ""
-    public name: string = ""
-}
-
-export type OrganizationList = { items: Organization[] }
-
-export class IdentityProvider {
-    public id: string = ""
-    public organizationId: string = ""
-    public kind: string = ""
-    public domain: string = ""
-    public clientId: string = ""
-    public clientSecret: string = ""
-}
-
-export type IdentityProviderList = { items: IdentityProvider[] }

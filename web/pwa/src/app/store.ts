@@ -5,8 +5,6 @@ import databaseReducer from "../reducers/database";
 import recordsReducer from "../reducers/records";
 import recorerReducer from "../features/recorder/recorder.slice";
 import formerReducer from "../features/former/former.slice";
-import organizationsReducer from "../reducers/organizations";
-import identityProvidersReducer from "../reducers/identityproviders";
 
 export const store = configureStore({
     reducer: {
@@ -16,10 +14,8 @@ export const store = configureStore({
         records: recordsReducer,
         recorder: recorerReducer,
         former: formerReducer,
-        organizations: organizationsReducer,
-        identityProviders: identityProvidersReducer,
     },
-    devTools: true
+    devTools: true,
 });
 
 export type AppDispatch = typeof store.dispatch;

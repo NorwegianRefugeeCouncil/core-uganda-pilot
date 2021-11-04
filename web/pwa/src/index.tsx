@@ -7,17 +7,14 @@ import {Provider} from 'react-redux';
 import * as serviceWorker from './serviceWorker';
 import {AuthProvider} from 'oidc-react';
 import * as log from "loglevel"
+import {SQLContextProvider} from "./app/db";
 
 log.setDefaultLevel(log.levels.TRACE)
 
 const oidcConfig = {
-    onSignIn: () => {
-        // Redirect?
-    },
-    authority: 'https://dev-53701279.okta.com',
-    clientId: '0oa2c6odfoi6s2JXH5d7',
-    redirectUri: 'http://localhost:3001'
-
+    authority: 'http://localhost:4444',
+    clientId: '93799402-a173-43ad-b003-64cbacc0dfe5',
+    redirectUri: 'http://localhost:3000'
 };
 
 ReactDOM.render(
@@ -27,7 +24,9 @@ ReactDOM.render(
             autoSignIn={false}
             {...oidcConfig} >
             <Provider store={store}>
-                <App/>
+                <SQLContextProvider>
+                    <App/>
+                </SQLContextProvider>
             </Provider>
         </AuthProvider>
     </React.StrictMode>,

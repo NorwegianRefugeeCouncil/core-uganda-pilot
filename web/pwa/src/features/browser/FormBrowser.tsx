@@ -7,30 +7,45 @@ import {fetchFolders} from "../../reducers/folder";
 import {fetchRecords, selectRecordsForForm, selectRecordsSubFormCounts} from "../../reducers/records";
 import {Link} from "react-router-dom";
 
-export type FormBrowserProps = {
-    formId: string
-    fields: FieldDefinition[]
-    records: Record[]
-    getSubFormSum: (recordId: string, fieldId: string) => number
-    parentRecordId: string | undefined
-}
-
 type subFormCountFn = (recordId: string, fieldId: string) => number
 
-function mapHeaderField(field: FieldDefinition) {
+type HeaderFieldProps = {
+    field: FieldDefinition
+    columnWidth: number
+}
+
+const HeaderField: FC<HeaderFieldProps> = props => {
+    const {field, columnWidth} = props
+
     return <th key={field.id}
-               style={{minWidth: field.name.length * 15}}>
-        <small
-            style={{fontSize: "0.75rem"}}
-            className={"text-muted text-uppercase"}>{field.name}</small>
+               className={"position-relative"}
+               style={{minWidth: columnWidth, maxWidth: columnWidth}}>
+        <div className={"d-flex flex-row align-items-center"}>
+            <small
+                style={{fontSize: "0.75rem"}}
+                className={"text-muted text-uppercase"}>{field.name}</small>
+        </div>
     </th>
 }
 
-function mapHeaderFields(fields: FieldDefinition[]) {
-    return <tr>
-        <th/>
-        {fields.map(f => mapHeaderField(f))}
-    </tr>
+type HeaderFieldsProps = {
+    fields: FieldDefinition[]
+    columnWidths: { [fieldId: string]: number }
+}
+
+export const HeaderFields: FC<HeaderFieldsProps> = props => {
+    const {fields, columnWidths} = props
+    return (
+        <tr>
+            <th style={{width: 35}}/>
+            {fields.map(f => {
+                return <HeaderField
+                    field={f}
+                    columnWidth={columnWidths[f.id]}
+                />
+            })}
+        </tr>
+    )
 }
 
 function mapRecordCell(field: FieldDefinition, record: Record, getSubFormCount: subFormCountFn) {
@@ -38,15 +53,23 @@ function mapRecordCell(field: FieldDefinition, record: Record, getSubFormCount: 
         const count = getSubFormCount(record.id, field.id)
         return <td key={field.id}>
             <span>
-                <Link to={`/browse/forms/${field.fieldType.subForm.id}?parentRecordId=${record.id}`}>{count} records</Link>
+                <Link
+                    to={`/browse/forms/${field.fieldType.subForm.id}?parentRecordId=${record.id}`}>{count} records</Link>
             </span>
         </td>
     }
 
-    return <td key={field.id}>
-        <span className={"text-secondary"}>
+    if (field.fieldType.reference) {
+        return <td key={field.id}>
+            <span>
+                <Link to={`/browse/forms/${field.fieldType.reference.formId}`}>View</Link>
+            </span>
+        </td>
+    }
+
+    return <td key={field.id} className={"text-secondary"}
+               style={{overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", wordBreak: "break-all"}}>
         {record.values[field.id]}
-        </span>
     </td>
 }
 
@@ -64,26 +87,37 @@ function mapRecords(fields: FieldDefinition[], records: Record[], getSubFormCoun
     return records.map(r => mapRecord(fields, r, getSubFormCount))
 }
 
+export type FormBrowserProps = {
+    formId: string
+    fields: FieldDefinition[]
+    records: Record[]
+    getSubFormSum: (recordId: string, fieldId: string) => number
+    parentRecordId: string | undefined
+    columnWidths: { [fieldId: string]: number }
+}
+
 export const FormBrowser: FC<FormBrowserProps> = props => {
-    const {fields, records, formId, getSubFormSum, parentRecordId} = props
+    const {fields, records, formId, getSubFormSum, parentRecordId, columnWidths} = props
 
     let addRecordURL = `/edit/forms/${formId}/record`;
     if (parentRecordId) {
         addRecordURL += `?parentRecordId=${parentRecordId}`
     }
 
-    return <div className={"flex-grow-1 w-100 h-100 overflow-scroll"}>
+    return <div className={"flex-grow-1 w-100 h-100 overflow-scroll bg-light"}>
         <div className={"py-3 px-2"}>
             <Link className={"btn btn-primary"} to={addRecordURL}>Add Record</Link>
         </div>
-        <table className={"table table-bordered w-100"}>
-            <thead style={{lineHeight: "0.75rem"}}>
-            {mapHeaderFields(fields)}
-            </thead>
-            <tbody style={{borderColor: "#dee2e6"}}>
-            {mapRecords(fields, records, getSubFormSum)}
-            </tbody>
-        </table>
+        <div className={"px-2"}>
+            <table className={"table shadow bg-white table-bordered w-100"} style={{tableLayout: "fixed"}}>
+                <thead style={{lineHeight: "0.75rem"}}>
+                <HeaderFields fields={fields} columnWidths={columnWidths}/>
+                </thead>
+                <tbody style={{borderColor: "#dee2e6", borderTop: "none"}}>
+                {mapRecords(fields, records, getSubFormSum)}
+                </tbody>
+            </table>
+        </div>
     </div>
 
 }
@@ -145,16 +179,31 @@ export const FormBrowserContainer: FC<FormBrowserContainerProps> = props => {
         }
     }, [dispatch, rootForm, form, fetched])
 
+
+    const [columnWidths, setColumnWidths] = useState<{ [key: string]: number }>({})
+
+    useEffect(() => {
+        if (!form?.fields) {
+            return
+        }
+        const widths: { [key: string]: number } = {}
+        for (let field of form?.fields) {
+            widths[field.id] = 200
+        }
+        setColumnWidths(widths)
+    }, [form?.fields])
+
     if (!form) {
         return <Fragment/>
     }
-
 
     return <FormBrowser
         getSubFormSum={getSubFormTotal}
         parentRecordId={props.parentRecordId}
         formId={form.id}
         fields={form?.fields}
-        records={records}/>
+        records={records}
+        columnWidths={columnWidths}
+    />
 
 }

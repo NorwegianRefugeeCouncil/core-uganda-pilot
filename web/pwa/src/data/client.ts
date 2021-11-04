@@ -5,7 +5,7 @@ import {
     Folder,
     FolderList,
     FormDefinition,
-    FormDefinitionList, IdentityProvider, IdentityProviderList, Organization, OrganizationList,
+    FormDefinitionList,
     Record,
     RecordList
 } from "../types/types";
@@ -82,48 +82,6 @@ export interface RecordLister {
     listRecords: DataOperation<RecordListRequest, RecordListResponse>
 }
 
-export type OrganizationListRequest = void
-export type OrganizationListResponse = Response<OrganizationListRequest, OrganizationList>
-
-export interface OrganizationLister {
-    listOrganizations: DataOperation<OrganizationListRequest, OrganizationListResponse>
-}
-
-export type OrganizationCreateRequest = { object: Partial<Organization> }
-export type OrganizationCreateResponse = Response<OrganizationCreateRequest, Organization>
-
-export interface OrganizationCreator {
-    createOrganization: DataOperation<OrganizationCreateRequest, OrganizationCreateResponse>
-}
-
-
-export type OrganizationGetRequest = { id: string }
-export type OrganizationGetResponse = Response<OrganizationGetRequest, Organization>
-
-export interface OrganizationGetter {
-    getOrganization: DataOperation<OrganizationGetRequest, OrganizationGetResponse>
-}
-
-export type IdentityProviderListRequest = { organizationId: string }
-export type IdentityProviderListResponse = Response<IdentityProviderListRequest, IdentityProviderList>
-
-export interface IdentityProviderLister {
-    listIdentityProviders: DataOperation<IdentityProviderListRequest, IdentityProviderListResponse>
-}
-
-export type IdentityProviderCreateRequest = { object: Partial<IdentityProvider> }
-export type IdentityProviderCreateResponse = Response<IdentityProviderCreateRequest, IdentityProvider>
-
-export interface IdentityProviderCreator {
-    createIdentityProvider: DataOperation<IdentityProviderCreateRequest, IdentityProviderCreateResponse>
-}
-
-export type IdentityProviderUpdateRequest = { object: Partial<IdentityProvider> }
-export type IdentityProviderUpdateResponse = Response<IdentityProviderUpdateRequest, IdentityProvider>
-
-export interface IdentityProviderUpdater {
-    updateIdentityProvider: DataOperation<IdentityProviderUpdateRequest, IdentityProviderUpdateResponse>
-}
 
 export interface Client
     extends DatabaseCreator,
@@ -133,13 +91,7 @@ export interface Client
         RecordCreator,
         RecordLister,
         FolderLister,
-        FolderCreator,
-        OrganizationLister,
-        OrganizationCreator,
-        OrganizationGetter,
-        IdentityProviderLister,
-        IdentityProviderCreator,
-        IdentityProviderUpdater {
+        FolderCreator {
 }
 
 function errorResponse<TRequest, TBody>(request: TRequest, r: AxiosResponse<TBody>): Response<TRequest, TBody> {
@@ -204,21 +156,9 @@ export class client implements Client {
         return this.do(request, `${this.address}/forms`, "post", request.object, 200)
     }
 
-    createIdentityProvider(request: IdentityProviderCreateRequest): Promise<IdentityProviderCreateResponse> {
-        return this.do(request, `${this.address}/organizations/${request.object.organizationId}/identityproviders`, "post", request.object, 200)
-    }
-
-    createOrganization(request: OrganizationCreateRequest): Promise<OrganizationCreateResponse> {
-        return this.do(request, `${this.address}/organizations`, "post", request.object, 200)
-    }
-
     createRecord(request: RecordCreateRequest): Promise<RecordCreateResponse> {
         const url = `${this.address}/records`
         return this.do(request, url, "post", request.object, 200)
-    }
-
-    getOrganization(request: { id: string }): Promise<OrganizationGetResponse> {
-        return this.do(request, `${this.address}/organizations/${request.id}`, "get", undefined, 200)
     }
 
     listDatabases(request: {} | undefined): Promise<DatabaseListResponse> {
@@ -233,22 +173,10 @@ export class client implements Client {
         return this.do(request, `${this.address}/forms`, "get", undefined, 200)
     }
 
-    listIdentityProviders(request: IdentityProviderListRequest): Promise<IdentityProviderListResponse> {
-        return this.do(request, `${this.address}/organizations/${request.organizationId}/identityproviders`, "get", undefined, 200)
-    }
-
-    listOrganizations(request: void): Promise<OrganizationListResponse> {
-        return this.do(request, `${this.address}/organizations`, "get", undefined, 200)
-    }
-
     listRecords(request: RecordListRequest): Promise<RecordListResponse> {
         const {databaseId, formId} = request
         const url = `${this.address}/records?databaseId=${databaseId}&formId=${formId}`
         return this.do(request, url, "get", undefined, 200)
-    }
-
-    updateIdentityProvider(request: IdentityProviderCreateRequest): Promise<IdentityProviderCreateResponse> {
-        return this.do(request, `${this.address}/organizations/${request.object.organizationId}/identityproviders/${request.object.id}`, "put", request.object, 200)
     }
 
 }

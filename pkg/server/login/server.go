@@ -1,8 +1,9 @@
 package login
 
 import (
-	"github.com/nrc-no/core/pkg/options"
 	"github.com/nrc-no/core/pkg/server/generic"
+	"github.com/nrc-no/core/pkg/server/login/handlers/login"
+	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/store"
 )
 
@@ -21,6 +22,16 @@ func NewServer(options Options) (*Server, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	container := genericServer.Container
+
+	organizationStore := store.NewOrganizationStore(options.StoreFactory)
+	idpStore := store.NewIdentityProviderStore(options.StoreFactory)
+	loginHandler, err := login.NewHandler(organizationStore, idpStore)
+	if err != nil {
+		return nil, err
+	}
+	container.Add(loginHandler.WebService())
 
 	return &Server{
 		Server: genericServer,

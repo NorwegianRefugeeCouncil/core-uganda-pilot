@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/nrc-no/core/pkg/api/meta"
-	"github.com/nrc-no/core/pkg/sets"
-	"github.com/nrc-no/core/pkg/types"
+	"github.com/nrc-no/core/pkg/api/types"
+	"github.com/nrc-no/core/pkg/utils/sets"
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 	"time"
@@ -48,7 +48,7 @@ func (d *folderStore) Get(ctx context.Context, folderID string) (*types.Folder, 
 	}
 
 	var folder Folder
-	if err := db.First(&folder, folderID).Error; err != nil {
+	if err := db.WithContext(ctx).First(&folder, folderID).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, meta.NewNotFound(meta.GroupResource{
 				Group:    "nrc.no",
@@ -69,16 +69,19 @@ func (d *folderStore) List(ctx context.Context) (*types.FolderList, error) {
 	}
 
 	var folders []Folder
-	if err := db.Find(&folders).Error; err != nil {
+	if err := db.WithContext(ctx).Find(&folders).Error; err != nil {
 		return nil, meta.NewInternalServerError(err)
 	}
 	var result = make([]*types.Folder, len(folders))
+
 	for i, folder := range folders {
 		result[i] = mapFolderTo(&folder)
 	}
+
 	if result == nil {
 		result = []*types.Folder{}
 	}
+
 	return &types.FolderList{
 		Items: result,
 	}, nil
@@ -94,7 +97,7 @@ func (d *folderStore) Create(ctx context.Context, folder *types.Folder) (*types.
 	folder.ID = uuid.NewV4().String()
 	database := mapFolderFrom(folder)
 	database.CreatedAt = time.Now()
-	if err := db.Create(database).Error; err != nil {
+	if err := db.WithContext(ctx).Create(database).Error; err != nil {
 		return nil, meta.NewInternalServerError(err)
 	}
 	return mapFolderTo(database), nil
@@ -107,7 +110,7 @@ func (d *folderStore) Delete(ctx context.Context, id string) error {
 		return err
 	}
 
-	err = db.Transaction(func(tx *gorm.DB) error {
+	err = db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 
 		var folderForms []*Form
 		if err := tx.Find(&folderForms, "folder_id = ?", id).Error; err != nil {

@@ -107,8 +107,25 @@ export const QuantityFieldEditor: FC<FieldEditorProps> = props => {
     </div>
 }
 
+export const SingleSelectFieldEditor: FC<FieldEditorProps> = props => {
+    const {field, value, setValue} = props
+    return <div className={"form-group mb-2"}>
+        <label
+            className={"form-label opacity-75"}
+            htmlFor={field.id}>{field.name}</label>
+        <select
+            className={"form-control bg-dark text-light border-secondary"}
+            id={field.id} value={value ? value : ""}
+            onChange={event => setValue(event.target.value)}>
+            <option disabled={field.required || field.key} value={""}/>
+            {field.options.map(o => <option value={o}>{o}</option>)}
+        </select>
+        {mapFieldDescription(field)}
+    </div>
+}
+
 function subRecord(record: FormValue, select: () => void) {
-    return <a href={"#"} key={record.recordId}
+    return <a href="#" key={record.recordId}
               onClick={(e) => {
                   e.preventDefault()
                   select()
@@ -158,6 +175,8 @@ export const FieldEditor: FC<FieldEditorProps> = props => {
         return <MonthFieldEditor {...props} />
     } else if (fieldType.quantity) {
         return <QuantityFieldEditor {...props} />
+    } else if (fieldType.singleSelect) {
+        return <SingleSelectFieldEditor {...props} />
     } else {
         return <Fragment/>
     }

@@ -36,6 +36,7 @@ export interface Control {
 }
 export interface PartyAttributeDefinition {
     id: string;
+    alias: string;
     countryId: string;
     partyTypeIds: string[];
     isPii: boolean;

@@ -3,6 +3,10 @@
 # Update node packages
 cd web/app/client || exit
 npm install
+
+cd ../designSystem || exit
+npm install
+
 cd ../../../
 
 echo ">>> Updated node dependencies"
@@ -10,6 +14,12 @@ echo ">>> Updated node dependencies"
 echo ">>> Generated typescript types"
 
 tsc --build web/app/client/tsconfig.json
+
+if [ ! "$?" ]; then
+  exit 1
+fi
+
+tsc --build web/app/designSystem/tsconfig.json
 
 if [ ! "$?" ]; then
   exit 1

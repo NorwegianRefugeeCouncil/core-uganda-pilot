@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/lib/pq"
 	"github.com/nrc-no/core/pkg/api/meta"
-	"github.com/nrc-no/core/pkg/types"
+	"github.com/nrc-no/core/pkg/api/types"
 	uuid "github.com/satori/go.uuid"
 	"strings"
 )
@@ -145,6 +145,10 @@ func mapRecordList(result *sql.Rows) (*types.RecordList, error) {
 		records = append(records, record)
 	}
 
+	if records == nil {
+		records = []*types.Record{}
+	}
+
 	recordList := &types.RecordList{
 		Items: records,
 	}
@@ -160,6 +164,7 @@ func mapRecord(cols []string, result *sql.Rows) (*types.Record, error) {
 	recordID := recordValues["id"].(string)
 	recordDatabaseID := recordValues["database_id"].(string)
 	recordFormID := recordValues["form_id"].(string)
+	recordSeq := recordValues["seq"].(int64)
 	var parentId *string = nil
 	if parentIdIntf, ok := recordValues["parent_id"]; ok {
 		if parentIdStr, ok := parentIdIntf.(string); ok {
@@ -168,12 +173,15 @@ func mapRecord(cols []string, result *sql.Rows) (*types.Record, error) {
 	}
 
 	delete(recordValues, "id")
+	delete(recordValues, "seq")
 	delete(recordValues, "database_id")
 	delete(recordValues, "form_id")
 	delete(recordValues, "parent_id")
+	delete(recordValues, "created_at")
 
 	record := &types.Record{
 		ID:         recordID,
+		Seq:        recordSeq,
 		DatabaseID: recordDatabaseID,
 		FormID:     recordFormID,
 		ParentID:   parentId,

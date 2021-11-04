@@ -3,8 +3,8 @@ package client
 import (
 	"context"
 	"fmt"
+	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/rest"
-	"github.com/nrc-no/core/pkg/types"
 )
 
 type Client interface {

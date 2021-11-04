@@ -7,6 +7,10 @@ type FormerFieldProps = {
     isSelected: boolean
     selectField: () => void
     fieldType: FieldKind
+    fieldOptions?: string[]
+    setFieldOption: (i: number, value: string) => void
+    addOption: () => void
+    removeOption: (index: number) => void
     fieldName: string
     setFieldName: (fieldName: string) => void
     fieldRequired: boolean,
@@ -27,6 +31,10 @@ export const FormerField: FC<FormerFieldProps> = props => {
 
     const {
         fieldName,
+        fieldOptions,
+        setFieldOption,
+        addOption,
+        removeOption,
         setFieldName,
         isSelected,
         selectField,
@@ -88,6 +96,32 @@ export const FormerField: FC<FormerFieldProps> = props => {
                                onChange={event => setFieldName(event.target.value)}/>
                     </div>
 
+                    {/* Options */}
+
+                    {fieldType === "singleSelect" &&
+                    (
+                        <div className={"form-group mb-2"}>
+                            <div className="d-flex justify-content-between align-items-center mb-2">
+                                <label className={"form-label"} htmlFor={"fieldName"}>Field Options</label>
+                                <button type="button" className="btn btn-outline-primary"
+                                        onClick={() => addOption()}>Add option
+                                </button>
+                            </div>
+                            {fieldOptions?.map((opt, i) => (
+                                <div key={i} className="d-flex mb-2">
+                                    <input className="form-control me-3"
+                                           id={`fieldOption-${i}`}
+                                           type={"text"}
+                                           value={opt ? opt : ""}
+                                           onChange={event => setFieldOption(i, event.target.value)}/>
+                                    <button type="button" className="btn btn-outline-danger"
+                                            onClick={() => removeOption(i)}><i className="bi bi-x"/>
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )
+                    }
 
                     {/* Form Description */}
 
@@ -146,7 +180,7 @@ export const FormerField: FC<FormerFieldProps> = props => {
                             className="form-check-input"
                             type="checkbox"
                             value=""
-                            onClick={() => setFieldRequired(!fieldRequired)}
+                            onChange={() => setFieldRequired(!fieldRequired)}
                             checked={fieldRequired}
                             id="required"/>
                         <label className="form-check-label" htmlFor="required">
@@ -162,7 +196,7 @@ export const FormerField: FC<FormerFieldProps> = props => {
                             className="form-check-input"
                             type="checkbox"
                             value=""
-                            onClick={() => setFieldIsKey(!fieldIsKey)}
+                            onChange={() => setFieldIsKey(!fieldIsKey)}
                             checked={fieldIsKey}
                             id="key"/>
                         <label className="form-check-label" htmlFor="key">

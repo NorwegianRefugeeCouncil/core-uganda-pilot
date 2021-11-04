@@ -36,6 +36,7 @@
     "@react-native-community/datetimepicker": "3.5.2",
     "@react-navigation/native": "~6.0.4",
     "@react-navigation/stack": "~6.0.9",
+    "core-design-system": "../designSystem",
     "core-js-api-client": "../client",
     "dotenv": "^10.0.0",
     "expo": "~42.0.1",
