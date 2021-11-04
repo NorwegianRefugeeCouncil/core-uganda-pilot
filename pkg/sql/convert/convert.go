@@ -151,9 +151,7 @@ func convertFieldToSqlField(formDef *types.FormDefinition, field *types.FieldDef
 		}
 	} else if field.FieldType.Week != nil {
 		result.DataType = sqlschema2.SQLDataType{
-			VarChar: &sqlschema2.SQLDataTypeVarChar{
-				Length: 1024,
-			},
+			Date: &sqlschema2.SQLDataTypeDate{},
 		}
 	} else if field.FieldType.MultilineText != nil {
 		result.DataType = sqlschema2.SQLDataType{

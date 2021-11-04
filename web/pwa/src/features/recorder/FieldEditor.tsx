@@ -121,15 +121,55 @@ export const MonthFieldEditor: FC<FieldEditorProps> = props => {
 
 export const WeekFieldEditor: FC<FieldEditorProps> = props => {
     const {field, value, setValue} = props
+    const expectedLength = 8;
+
+    const [localValue, setLocalValue] = useState(value != null ? getFormattedWeekStringFromDate(value) : "")
+
+    const isValidLength = () => localValue.length === expectedLength;
+
+    function getDateFromWeekN(w: number, y: number) {
+        const d = (1 + (w - 1) * 7); // 1st of January + 7 days for each week
+        return new Date(y, 0, d);
+    }
+
+    function getWeekFromDate(date: Date) {
+        const oneJan = new Date(date.getFullYear(), 0, 1);
+        // @ts-ignore
+        const numberOfDays = Math.floor((date - oneJan) / (24 * 60 * 60 * 1000));
+        return Math.ceil((date.getDay() + 1 + numberOfDays) / 7);
+    }
+
+    function getFormattedWeekStringFromDate(date: Date) {
+        const w = getWeekFromDate(date);
+        const y = date.getFullYear();
+        return `${y}-W${w}`
+    }
+
+    function isValid(s: string) {
+        const valid = /^(?:19|20|21)\d{2}-W[0-5]\d$/
+        return valid.test(s) && +s.slice(6) <= 52;
+    }
+
     return <div className={"form-group mb-2"}>
         <label
             className={"form-label opacity-75"}
             htmlFor={field.id}>{field.name}</label>
         <input
-            className={"form-control bg-dark text-light border-secondary"}
+            className={`form-control bg-dark text-light border-secondary ${!isValid(localValue) && isValidLength() ? " is-invalid" : ""}`}
             type={"week"}
-            id={field.id} value={value ? value : ""}
-            onChange={event => setValue(event.target.value)}/>
+            maxLength={8}
+            placeholder={"2021-W52"}
+            id={field.id} value={localValue}
+            onChange={event => {
+                const v = event.target.value;
+                setLocalValue(v);
+                if (!isValid(v)) return;
+                const w = +v.slice(6);
+                const y = +v.slice(0, 4);
+                const date = getDateFromWeekN(w, y);
+                setValue(date);
+            }}
+        />
         {mapFieldDescription(field)}
     </div>
 }
