@@ -2,6 +2,7 @@ import {FieldDefinition} from "../../types/types";
 import React, {FC, Fragment, useState} from "react";
 import {FormValue} from "./recorder.slice";
 import {RecordPickerContainer} from "../../components/RecordPicker";
+import format from "date-fns/format"
 
 export type FieldEditorProps = {
     field: FieldDefinition
@@ -75,7 +76,7 @@ export const MonthFieldEditor: FC<FieldEditorProps> = props => {
     const {field, value, setValue} = props
     const expectedLength = 7;
 
-    const [localValue, setLocalValue] = useState(value != null ? (value as Date).toISOString().slice(0, 7) : "")
+    const [localValue, setLocalValue] = useState(value != null ? format(value as Date, "yyyy-MM") : "")
 
     const isValidLength = () => localValue.length === expectedLength;
 

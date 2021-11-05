@@ -2,6 +2,7 @@ import {Fragment, FC} from "react";
 import {useFormOrSubForm, useParentRecord, useRecordFromPath, useSubRecords} from "../../app/hooks";
 import {FieldDefinition, Record} from "../../types/types";
 import {Link} from "react-router-dom";
+import format from "date-fns/format"
 
 type RecordFieldProps = {
     field: FieldDefinition
@@ -10,11 +11,20 @@ type RecordFieldProps = {
 }
 const RecordField: FC<RecordFieldProps> = props => {
     const {field, value} = props
+    function renderField(f: FieldDefinition, v: any) {
+        if (f.fieldType.reference) {
+            return <div><Link to={`/browse/records/${v}`}>View</Link></div>
+        } else if (f.fieldType.month) {
+            return <div className={"fw-bold"}>{format(new Date(v), "yyyy-MM")}</div>
+        } else {
+            return <div className={"fw-bold"}>{v}</div>
+        }
+    }
     return <div className={"form-group mb-3"}>
         <label className={"form-label"}>{field.name}</label>
-        {field.fieldType.reference
-            ? (<div><Link to={`/browse/records/${value}`}>View</Link></div>)
-            : <div className={"fw-bold"}>{value}</div>}
+        {
+            renderField(field, value)
+        }
         {props.subRecords?.map(r => <Link to={`/browse/records/${r.id}`}>Sub Record</Link>)}
     </div>
 }

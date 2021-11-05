@@ -3,8 +3,8 @@ package convert
 import (
 	"fmt"
 
-	"github.com/nrc-no/core/pkg/sqlschema"
-	"github.com/nrc-no/core/pkg/types"
+	"github.com/nrc-no/core/pkg/api/types"
+	sqlschema2 "github.com/nrc-no/core/pkg/sql/schema"
 	"github.com/nrc-no/core/pkg/utils/sets"
 )
 
@@ -186,8 +186,8 @@ func convertFieldToSqlField(formDef *types.FormDefinition, field *types.FieldDef
 			Date: &sqlschema2.SQLDataTypeDate{},
 		}
 	} else if field.FieldType.Month != nil {
-		result.DataType = sqlschema.SQLDataType{
-			Date: &sqlschema.SQLDataTypeDate{},
+		result.DataType = sqlschema2.SQLDataType{
+			Date: &sqlschema2.SQLDataTypeDate{},
 		}
 	} else if field.FieldType.Quantity != nil {
 		result.DataType = sqlschema2.SQLDataType{
