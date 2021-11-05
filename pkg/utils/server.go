@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/nrc-no/core/pkg/api/meta"
+	"github.com/nrc-no/core/pkg/api/mimetypes"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
@@ -17,7 +18,7 @@ func JSONResponse(w http.ResponseWriter, status int, data interface{}) {
 		ErrorResponse(w, err)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", mimetypes.ApplicationJson)
 	w.WriteHeader(status)
 	_, err = w.Write(responseBytes)
 	if err != nil {

@@ -29,12 +29,13 @@ func UseOperationLogging() func(request *restful.Request, response *restful.Resp
 
 func UseRequestID(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		reqId := req.Header.Get("X-Request-Id")
+		const keyRequestId = "X-Request-Id"
+		reqId := req.Header.Get(keyRequestId)
 		if len(reqId) == 0 {
 			newId := shortuuid.New()
-			req.Header.Set("X-Request-Id", newId)
+			req.Header.Set(keyRequestId, newId)
 		}
-		ctx := WithRequestID(req.Context(), req.Header.Get("X-Request-Id"))
+		ctx := WithRequestID(req.Context(), req.Header.Get(keyRequestId))
 		req = req.WithContext(ctx)
 		next.ServeHTTP(w, req)
 	})

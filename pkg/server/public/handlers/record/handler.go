@@ -3,6 +3,7 @@ package record
 import (
 	"fmt"
 	"github.com/emicklei/go-restful/v3"
+	"github.com/nrc-no/core/pkg/api/mimetypes"
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/constants"
 	"github.com/nrc-no/core/pkg/store"
@@ -25,8 +26,8 @@ func NewHandler(store store.RecordStore) *Handler {
 		Doc("update a record").
 		Operation("updateRecord").
 		Param(restful.PathParameter(constants.ParamRecordID, "id of the record")).
-		Consumes("application/json").
-		Produces("application/json").
+		Consumes(mimetypes.ApplicationJson).
+		Produces(mimetypes.ApplicationJson).
 		Reads(types.Record{}).
 		Writes(types.Record{}).
 		Returns(http.StatusOK, "OK", types.Record{}))
@@ -34,8 +35,8 @@ func NewHandler(store store.RecordStore) *Handler {
 	ws.Route(ws.POST("").To(h.RestfulCreate).
 		Doc("create a record").
 		Operation("createRecord").
-		Consumes("application/json").
-		Produces("application/json").
+		Consumes(mimetypes.ApplicationJson).
+		Produces(mimetypes.ApplicationJson).
 		Reads(types.Record{}).
 		Writes(types.Record{}).
 		Returns(http.StatusOK, "OK", types.Record{}))
@@ -51,7 +52,7 @@ func NewHandler(store store.RecordStore) *Handler {
 			DataType("string").
 			DataFormat("uuid").
 			Required(true)).
-		Produces("application/json").
+		Produces(mimetypes.ApplicationJson).
 		Writes(types.RecordList{}).
 		Returns(http.StatusOK, "OK", types.RecordList{}))
 

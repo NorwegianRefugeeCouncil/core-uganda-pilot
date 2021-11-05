@@ -14,7 +14,6 @@ import (
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/rs/cors"
-	uuid "github.com/satori/go.uuid"
 	"github.com/sirupsen/logrus"
 	"go.uber.org/zap"
 	"net"
@@ -135,6 +134,9 @@ func NewGenericServer(options options.ServerOptions, name string) (*Server, erro
 
 	middleware := chainMiddleware(
 		func(next http.Handler) http.Handler {
+			return logging.UseRequestID(next)
+		},
+		func(next http.Handler) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 				req = req.WithContext(logging.WithServerName(req.Context(), name))
 				next.ServeHTTP(w, req)
@@ -142,9 +144,6 @@ func NewGenericServer(options options.ServerOptions, name string) (*Server, erro
 		},
 		func(next http.Handler) http.Handler {
 			return handlers.RecoveryHandler(handlers.PrintRecoveryStack(true))(next)
-		},
-		func(next http.Handler) http.Handler {
-			return logging.UseRequestID(next)
 		},
 		func(next http.Handler) http.Handler {
 			return handlers.CompressHandler(next)
@@ -174,16 +173,6 @@ func (c CorsLogger) Printf(s string, i ...interface{}) {
 var _ cors.Logger = CorsLogger{}
 
 func (g Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-
-	reqId := req.Header.Get("X-Request-Id")
-	if len(reqId) == 0 {
-		reqId = uuid.NewV4().String()
-	}
-
-	ctx := logging.WithServerName(req.Context(), g.name)
-	ctx = logging.WithRequestID(ctx, reqId)
-
-	req = req.WithContext(ctx)
 	g.handler.ServeHTTP(w, req)
 }
 

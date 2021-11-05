@@ -3,6 +3,7 @@ package identityprovider
 import (
 	"fmt"
 	"github.com/emicklei/go-restful/v3"
+	"github.com/nrc-no/core/pkg/api/mimetypes"
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/constants"
 	"github.com/nrc-no/core/pkg/store"
@@ -22,8 +23,8 @@ func NewHandler(store store.IdentityProviderStore) *Handler {
 	h := &Handler{store: store}
 
 	ws := new(restful.WebService).Path("/identityproviders").
-		Consumes("application/json").
-		Produces("application/json")
+		Consumes(mimetypes.ApplicationJson).
+		Produces(mimetypes.ApplicationJson)
 	h.webService = ws
 
 	ws.Route(ws.GET("/").To(h.RestfulList).

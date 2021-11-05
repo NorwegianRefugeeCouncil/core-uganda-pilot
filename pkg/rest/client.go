@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/nrc-no/core/pkg/api/meta"
+	"github.com/nrc-no/core/pkg/api/mimetypes"
 	"github.com/nrc-no/core/pkg/logging"
 	"go.uber.org/zap"
 	"io"
@@ -207,11 +208,11 @@ func (r *Request) Do(ctx context.Context) *Response {
 	}
 
 	if len(req.Header.Get("Accept")) == 0 && req.Method != http.MethodDelete {
-		req.Header.Set("Accept", "application/json")
+		req.Header.Set("Accept", mimetypes.ApplicationJson)
 	}
 
 	if len(req.Header.Get("Content-Type")) == 0 && r.body != nil {
-		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Content-Type", mimetypes.ApplicationJson)
 	}
 
 	l = l.With(zap.Any("headers", req.Header))

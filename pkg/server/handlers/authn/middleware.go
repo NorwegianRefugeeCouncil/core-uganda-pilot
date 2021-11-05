@@ -6,6 +6,7 @@ import (
 	"github.com/emicklei/go-restful/v3"
 	"github.com/gorilla/sessions"
 	"github.com/nrc-no/core/pkg/api/meta"
+	"github.com/nrc-no/core/pkg/api/mimetypes"
 	"github.com/nrc-no/core/pkg/constants"
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/utils"
@@ -48,7 +49,7 @@ func RestfulAuthnMiddleware(
 		redirectToLogin := func(req *restful.Request, response *restful.Response) {
 			l.Debug("redirecting to login")
 			response.Header().Set("Location", fmt.Sprintf("%s/oidc/login", selfURL))
-			if req.HeaderParameter("Accept") == "application/json" {
+			if req.HeaderParameter("Accept") == mimetypes.ApplicationJson {
 				utils.JSONResponse(response.ResponseWriter, http.StatusUnauthorized, meta.NewUnauthorized("not logged in"))
 			} else {
 				utils.JSONResponse(response.ResponseWriter, http.StatusTemporaryRedirect, meta.NewUnauthorized("not logged in"))

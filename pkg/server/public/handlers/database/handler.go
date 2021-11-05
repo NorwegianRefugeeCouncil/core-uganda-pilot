@@ -3,6 +3,7 @@ package database
 import (
 	"fmt"
 	"github.com/emicklei/go-restful/v3"
+	"github.com/nrc-no/core/pkg/api/mimetypes"
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/constants"
 	"github.com/nrc-no/core/pkg/store"
@@ -18,8 +19,8 @@ func NewHandler(store store.DatabaseStore) *Handler {
 	h := &Handler{store: store}
 
 	ws := new(restful.WebService).Path("/databases").
-		Consumes("application/json").
-		Produces("application/json")
+		Consumes(mimetypes.ApplicationJson).
+		Produces(mimetypes.ApplicationJson)
 	h.webService = ws
 
 	dbPath := fmt.Sprintf("/{%s}", constants.ParamDatabaseID)
@@ -37,7 +38,7 @@ func NewHandler(store store.DatabaseStore) *Handler {
 	ws.Route(ws.GET("/").To(h.RestfulList).
 		Doc("lists all databases").
 		Operation("listDatabases").
-		Produces("application/json").
+		Produces(mimetypes.ApplicationJson).
 		Writes(types.DatabaseList{}).
 		Returns(http.StatusOK, "OK", types.DatabaseList{}))
 
@@ -48,15 +49,15 @@ func NewHandler(store store.DatabaseStore) *Handler {
 			DataType("string").
 			DataFormat("uuid").
 			Required(true)).
-		Produces("application/json").
+		Produces(mimetypes.ApplicationJson).
 		Writes(types.Database{}).
 		Returns(http.StatusOK, "OK", types.Database{}))
 
 	ws.Route(ws.POST("/").To(h.RestfulCreate).
 		Doc("create a database").
 		Operation("createDatabase").
-		Consumes("application/json").
-		Produces("application/json").
+		Consumes(mimetypes.ApplicationJson).
+		Produces(mimetypes.ApplicationJson).
 		Reads(types.Database{}).
 		Writes(types.Database{}).
 		Returns(http.StatusOK, "OK", types.Database{}))

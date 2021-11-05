@@ -3,6 +3,7 @@ package form
 import (
 	"fmt"
 	"github.com/emicklei/go-restful/v3"
+	"github.com/nrc-no/core/pkg/api/mimetypes"
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/constants"
 	"github.com/nrc-no/core/pkg/store"
@@ -25,8 +26,8 @@ func NewHandler(store store.FormStore) *Handler {
 	ws.Route(ws.POST("/").To(h.RestfulCreate).
 		Doc("create a form").
 		Operation("createForm").
-		Consumes("application/json").
-		Produces("application/json").
+		Consumes(mimetypes.ApplicationJson).
+		Produces(mimetypes.ApplicationJson).
 		Reads(types.FormDefinition{}).
 		Writes(types.FormDefinition{}).
 		Returns(http.StatusOK, "OK", types.FormDefinition{}))
@@ -34,7 +35,7 @@ func NewHandler(store store.FormStore) *Handler {
 	ws.Route(ws.GET("/").To(h.RestfulList).
 		Doc("list forms").
 		Operation("listForms").
-		Produces("application/json").
+		Produces(mimetypes.ApplicationJson).
 		Writes(types.FormDefinitionList{}).
 		Returns(http.StatusOK, "OK", types.FormDefinitionList{}))
 

@@ -3,6 +3,7 @@ package organization
 import (
 	"fmt"
 	"github.com/emicklei/go-restful/v3"
+	"github.com/nrc-no/core/pkg/api/mimetypes"
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/constants"
 	"github.com/nrc-no/core/pkg/store"
@@ -22,8 +23,8 @@ func NewHandler(store store.OrganizationStore) *Handler {
 	h := &Handler{store: store}
 
 	ws := new(restful.WebService).Path("/organizations").
-		Consumes("application/json").
-		Produces("application/json")
+		Consumes(mimetypes.ApplicationJson).
+		Produces(mimetypes.ApplicationJson)
 	h.webService = ws
 
 	OrganizationPath := fmt.Sprintf("/{%s}", constants.ParamOrganizationID)
