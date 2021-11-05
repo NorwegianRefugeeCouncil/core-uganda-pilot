@@ -4,7 +4,6 @@ import (
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/emicklei/go-restful/v3"
 	"github.com/gorilla/sessions"
-	"github.com/ory/hydra-client-go/client/admin"
 	"golang.org/x/oauth2"
 )
 
@@ -21,7 +20,6 @@ func NewHandler(
 	sessionStore sessions.Store,
 	oauth2Config *oauth2.Config,
 	tokenVerifier *oidc.IDTokenVerifier,
-	hydraAdmin admin.ClientService,
 ) *Handler {
 	h := &Handler{
 		sessionStore:  sessionStore,
@@ -44,7 +42,7 @@ func NewHandler(
 		Doc("oauth2 callback").
 		Param(ws.QueryParameter("redirect_uri", "redirection uri after successful authentication").Required(false)))
 
-	ws.Route(ws.GET("/session").To(h.RestfulSession(sessionKey, hydraAdmin)).
+	ws.Route(ws.GET("/session").To(h.RestfulSession(sessionKey)).
 		Doc("gets session").
 		Param(ws.QueryParameter("redirect_uri", "redirection uri after successful authentication").Required(false)))
 

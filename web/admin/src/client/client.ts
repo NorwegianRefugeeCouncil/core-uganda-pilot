@@ -1,5 +1,13 @@
 import axios, {AxiosError, AxiosResponse, Method} from "axios";
 
+export type Session = {
+    active: boolean
+    expiry: string
+    expiredInSeconds: number
+    subject: string
+    username: string
+}
+
 export type DataOperation<TRequest, TResponse> = (request: TRequest) => Promise<TResponse>
 
 export type Response<TRequest, TResponse> = {
@@ -54,6 +62,9 @@ export type OAuth2ClientList = {
     items: OAuth2Client[]
 }
 
+export type SessionGetRequest = void
+export type SessionGetResponse = Response<SessionGetRequest, Session>
+export type SessionGetter = { getSession: DataOperation<SessionGetRequest, SessionGetResponse> }
 export type OrganizationListRequest = void
 export type OrganizationListResponse = Response<OrganizationListRequest, OrganizationList>
 export type OrganizationLister = { listOrganizations: DataOperation<OrganizationListRequest, OrganizationListResponse> }
@@ -104,7 +115,8 @@ export interface Client
         OAuth2ClientLister,
         OAuth2ClientUpdater,
         OAuth2ClientCreator,
-        OAuth2ClientDeleter {
+        OAuth2ClientDeleter,
+        SessionGetter{
 }
 
 function errorResponse<TRequest, TBody>(request: TRequest, r: AxiosResponse<TBody>): Response<TRequest, TBody> {
@@ -139,8 +151,14 @@ export type clientProps = {
     address?: string
 }
 
+export type RequestOptions = {
+    headers: { [key: string]: string },
+    silentRedirect?: boolean,
+}
+
+
 export class client implements Client {
-    public address = "http://localhost:9001/admin"
+    public address = "http://localhost:9001"
 
     public constructor(private clientProps?: clientProps) {
         if (clientProps?.address) {
@@ -148,22 +166,25 @@ export class client implements Client {
         }
     }
 
-    do<TRequest, TBody>(request: TRequest, url: string, method: Method, data: any, expectStatusCode: number): Promise<Response<TRequest, TBody>> {
+    do<TRequest, TBody>(request: TRequest, url: string, method: Method, data: any, expectStatusCode: number, options?: RequestOptions): Promise<Response<TRequest, TBody>> {
+
+        let headers: { [key: string]: string } = {
+            "Accept": "application/json",
+        }
+        if (options?.headers) {
+            headers = options?.headers
+        }
+
         return axios.request<TBody>({
             method,
             url,
             data,
             responseType: "json",
-            headers: {
-                "Accept": "application/json"
-            },
+            headers,
             withCredentials: true,
         }).then(value => {
             return clientResponse<TRequest, TBody>(value, request, expectStatusCode);
         }).catch((err: AxiosError) => {
-            if (err.response?.status == 401 && err.response?.headers["location"]) {
-                window.location.href = err.response?.headers["location"]
-            }
             return {
                 request: request,
                 response: undefined,
@@ -223,6 +244,9 @@ export class client implements Client {
         return this.do(request, `${this.address}/clients/${request.object.id}`, "put", request.object, 200)
     }
 
+    getSession(request: void): Promise<SessionGetResponse> {
+        return this.do(request, `${this.address}/oidc/session`, "get", undefined, 200, {headers: {}})
+    }
 
 }
 

@@ -21,7 +21,7 @@ func (h *Handler) WebService() *restful.WebService {
 func NewHandler(store store.OrganizationStore) *Handler {
 	h := &Handler{store: store}
 
-	ws := new(restful.WebService).Path("/admin/organizations").
+	ws := new(restful.WebService).Path("/organizations").
 		Consumes("application/json").
 		Produces("application/json")
 	h.webService = ws

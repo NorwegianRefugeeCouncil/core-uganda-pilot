@@ -10,7 +10,6 @@ import (
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/nrc-no/core/pkg/utils/sets"
-	"github.com/ory/hydra-client-go/client/admin"
 	"go.uber.org/zap"
 	"golang.org/x/oauth2"
 	"net/http"
@@ -30,7 +29,7 @@ func RestfulAuthnMiddleware(
 	verifier *oidc.IDTokenVerifier,
 	selfURL string,
 	sessionKey string,
-	hydraAdmin admin.ClientService,
+	tokenVerifier *oidc.IDTokenVerifier,
 ) func(request *restful.Request, response *restful.Response, chain *restful.FilterChain) {
 
 	return func(request *restful.Request, response *restful.Response, chain *restful.FilterChain) {
@@ -68,20 +67,14 @@ func RestfulAuthnMiddleware(
 			parts := strings.Split(authorizationHeader, " ")
 			if len(parts) == 2 && parts[0] == "Bearer" {
 				token := parts[1]
-				tokenIntrospectionResult, err := hydraAdmin.IntrospectOAuth2Token(&admin.IntrospectOAuth2TokenParams{
-					Token:   token,
-					Context: ctx,
-				})
+
+				_, err := tokenVerifier.Verify(ctx, token)
 				if err != nil {
-					l.Error("failed to introspect token", zap.Error(err))
+					l.Error("token is invalid", zap.Error(err))
 					redirectToLogin(request, response)
 					return
 				}
-				if !*tokenIntrospectionResult.Payload.Active {
-					l.Error("token is not active", zap.Error(err))
-					redirectToLogin(request, response)
-					return
-				}
+
 				l.Debug("valid authorization token found")
 				chain.ProcessFilter(request, response)
 				return

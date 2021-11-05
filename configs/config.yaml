@@ -13,7 +13,7 @@ serve:
         - profile
         - email
     cors:
-      allowed_origins: [ "*" ]
+      allowed_origins: [ "http://localhost:3001" ]
       allow_credentials: true
       allowed_headers:
         - Authorization

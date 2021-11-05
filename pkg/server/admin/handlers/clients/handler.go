@@ -23,7 +23,7 @@ func NewHandler() (*Handler, error) {
 	hydraAdmin := client.NewHTTPClientWithConfig(nil, &client.TransportConfig{Schemes: []string{adminURL.Scheme}, Host: adminURL.Host, BasePath: adminURL.Path}).Admin
 	h.hydraAdmin = hydraAdmin
 
-	ws := new(restful.WebService).Path("/admin/clients")
+	ws := new(restful.WebService).Path("/clients")
 
 	ws.Route(ws.PUT("/{clientId}").To(restfulUpdate(hydraAdmin)).
 		Doc(`updates oauth2 client`).

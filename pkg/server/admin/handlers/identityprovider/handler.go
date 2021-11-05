@@ -21,7 +21,7 @@ func (h *Handler) WebService() *restful.WebService {
 func NewHandler(store store.IdentityProviderStore) *Handler {
 	h := &Handler{store: store}
 
-	ws := new(restful.WebService).Path("/admin/identityproviders").
+	ws := new(restful.WebService).Path("/identityproviders").
 		Consumes("application/json").
 		Produces("application/json")
 	h.webService = ws

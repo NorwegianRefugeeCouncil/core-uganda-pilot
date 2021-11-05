@@ -114,7 +114,6 @@ func (s *Server) Start(ctx context.Context) {
 		s.Server.SessionStore(),
 		oauth2Config,
 		verifier,
-		s.hydraAdmin,
 	)
 
 	s.Container.Filter(authn2.RestfulAuthnMiddleware(
@@ -123,7 +122,7 @@ func (s *Server) Start(ctx context.Context) {
 		verifier,
 		s.options.URLs.Self,
 		"admin-session",
-		s.hydraAdmin))
+		verifier))
 
 	s.Container.Add(authnHandler.WebService())
 

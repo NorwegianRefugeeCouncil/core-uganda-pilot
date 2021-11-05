@@ -30,13 +30,6 @@ export interface SessionGetter {
     getSession: DataOperation<SessionGetRequest, SessionGetResponse>
 }
 
-export type SessionRenewRequest = void
-export type SessionRenewResponse = Response<SessionRenewRequest, { location: string }>
-
-export interface SessionRenewer {
-    renewSession: DataOperation<SessionRenewRequest, SessionRenewResponse>
-}
-
 export type DatabaseCreateRequest = PartialObjectWrapper<Database>
 export type DatabaseCreateResponse = Response<DatabaseCreateRequest, Database>
 
@@ -107,8 +100,7 @@ export interface Client
         RecordLister,
         FolderLister,
         FolderCreator,
-        SessionGetter,
-        SessionRenewer {
+        SessionGetter {
     address: string
 }
 
@@ -217,9 +209,6 @@ export class client implements Client {
         return this.do(request, `${this.address}/oidc/session`, "get", undefined, 200, {headers: {}})
     }
 
-    renewSession(request: void): Promise<SessionRenewResponse> {
-        return this.do(request, `${this.address}/oidc/renew`, "get", undefined, 200, {headers: {},})
-    }
 
 }
 
