@@ -2,6 +2,21 @@ serve:
   public:
     cors:
       enabled: true
+      debug: true
+      allow_credentials: true
+      allowed_methods:
+        - POST
+        - GET
+        - PUT
+        - PATCH
+        - DELETE
+      allowed_origins:
+        - "*"
+      allowed_headers:
+        - Authorization
+        - Content-Type
+      exposed_headers:
+        - Content-Type
 urls:
   self:
     public: http://localhost:4444
@@ -11,7 +26,7 @@ urls:
   logout: http://localhost:9002/logout
 log:
   leak_sensitive_values: true
-  level: debug
+  level: trace
 cookies:
   same_site_mode: Strict
 ttl:

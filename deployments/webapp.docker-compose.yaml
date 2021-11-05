@@ -1,20 +1,22 @@
 services:
 
   oidc:
+    image: node:16
     container_name: oidc
     hostname: oidc
-    image: qlik/simple-oidc-provider
+    volumes:
+      - ../tools/local-oidc-provider/package.json:/app/package.json:ro
+      - ../tools/local-oidc-provider/index.js:/app/index.js:ro
+      - ./oidc.config.json:/config.json:ro
     ports:
       - 9005:9005
     environment:
-      REDIRECTS: http://localhost:9002/oidc/callback
-      IDP_NAME: http://localhost:9005
-      CONFIG_FILE: /var/run/config.json
-      USERS_FILE: /var/run/users.json
       PORT: "9005"
-    volumes:
-      - ./oidc.config.json:/var/run/config.json
-      - ./oidc.users.json:/var/run/users.json
+      CONFIG_FILE: /config.json
+    command:
+      - bash
+      - -c
+      - "cd /app && npm install && node index.js"
 
   redis:
     image: 'bitnami/redis:latest'

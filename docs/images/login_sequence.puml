@@ -3,25 +3,108 @@
 
 autonumber
 
-User -> "AppServer": Authentication Request
-AppServer -> User: Temporary redirect to Login
+group initial exchange
+Agent -> "Core Server": Request for Resource
+"Core Server" -> Agent: 401 Unauthorized. Redirect to /login
+Agent -> "Core Server" : Follows redirect to /login
+group authorization_code flow
+"Core Server" -> Agent: Sends redirect to Hydra w client_id, redirect_uri
+Agent -> Hydra: Follows redirect
+Hydra -> Agent: Redirects to Login Server with ?login_challenge
+group login request
+Agent -> "Login": Follows redirect with ?login_challenge
+"Login" -> "Agent": Prompt for email
+Agent -> Login: Provide email
+Login -> Login: Find suitable IDP
+Login -> Agent: Prompt to select IDP
+Agent -> Login: Select IDP
+group federation
+group authorization_code flow
+Login -> Agent: Redirect to IDP
+Agent -> IDP: Follows redirect
+IDP -> Agent: Prompt for credentials
+Agent -> IDP: Provide credentials
+IDP -> IDP: Verify credenrials
+IDP -> Agent: Redirect to Login w/ ?code
+Agent -> Login: Follows redirect w/ ?code
+Login -> IDP: Auth code exchange
+IDP -> Login: Access, Refresh, ID Tokens
+end
+Login -> Login: Store Access, Refresh, ID Tokens
+note right
+Token Exchange
+end note
+end
+Login -> Hydra: Accept login request
+end
+group consent request
+Login -> Agent: Redirect to Hydra for consent
+Agent -> Hydra: Follows redirect
+Hydra -> Agent: Redirect to Login for consent
+Agent -> Login: Follows redirect with ?consent_challenge
+Login -> Agent: Present consent request
+Agent -> Login: Accept consent request
+Login -> Hydra: Accept consent request
+Login -> Agent: Redirect to post_consent_uri (Hydra)
+end
+Agent -> Hydra: Follows redirect
+Hydra -> Hydra: Produce ID, Refresh, Access Tokens
+Hydra -> Hydra: Produce cookie session
+Hydra -> Agent: Redirect to Login
+Agent -> "Core Server": Follows redirect w ?code
+"Core Server" -> Hydra: Auth code exchange
+Hydra -> "Core Server": ID, Refresh, Access tokens
+end
+"Core Server" -> "Core Server": Store ID, Refresh, Access tokens
+note right
+Token Exchange
+end note
+"Core Server" -> "Core Server": Produce cookie session
+"Core Server" -> Agent: Receives cookie
+Agent -> "Core Server": Request for resource (includes cookie)
+"Core Server" -> "Core Server": Retrieve access token from session
+"Core Server" -> Hydra: Verify access token
+Hydra -> "Core Server": Verified
+"Core Server" -> Agent: Protected resource
+end
+group Renewal
 
-User -> LoginServer: Follows redirect
-LoginServer -> User: Prompt email
-User -> LoginServer: Provide Email
-LoginServer -> LoginServer: Find suitable identity provider
-LoginServer -> User: Redirect to Identity provider
-User -> IdentityProvider: Follows redirect & Login
-IdentityProvider -> User: Redirect to LoginServer
-User -> LoginServer: Follow redirect
-LoginServer <-> IdentityProvider: Authorization code exchange
-LoginServer -> LoginServer: Verify token
-LoginServer -> LoginServer: Produce ID token
-LoginServer -> User: Temporary Redirect
-User -> AppServer: Follow redirect
-AppServer <-> LoginServer: Authorization code exchange
-AppServer -> AppServer: Verify token
-AppServer -> User: Authenticated
+Agent -> Agent: Time passes
+Agent -> "Core Server": Polls for silent renewal
+"Core Server" -> Agent: Redirect to Hydra w/ prompt=none
+Agent -> Hydra: Follows redirect
+group login request
+Hydra -> Agent: Redirects to Login w/ prompt=none
+Agent -> Login: Follows redirect
+Login -> Login: Retrieves IDP Refresh Token
+Login -> IDP: Uses IDP Refresh Token
+IDP -> Login: ID, Access, Refresh Token
+note right
+Token Exchange
+end note
+Login -> Login: Stores Tokens
+Login -> Hydra: Accept Login Request
+end
+Hydra -> Login: Post Login URL
+Login -> Agent: Redirects to Post Login URL (consent)
+group consent request
+Agent -> Login: Follows redirect
+Login -> Hydra: Accept Consent Request
+Hydra -> Login: Post Consent URL
+end
+Login -> Agent: Redirect to Post Consent URL
+Agent -> "Core Server": Follows Redirect (w/ ?code)
+"Core Server" -> Hydra: Perform Auth Code Exchange
+Hydra -> "Core Server": ID, Access, Refresh tokens
+note right
+Token Exchange
+end note
+"Core Server" -> "Core Server": Stores Tokens in session
+"Core Server" -> Agent: New Cookie
+
+end
+
+
 
 
 @enduml

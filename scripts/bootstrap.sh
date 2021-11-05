@@ -18,7 +18,7 @@ RESP=$(
   "client_id":"$(cat "${SCRIPT_DIR}/../creds/core_app_client_id")",
   "client_secret":"$(cat "${SCRIPT_DIR}/../creds/core_app_client_secret")",
   "grant_types":["authorization_code"],
-  "scope":"openid offline offline_access email profile",
+  "scope":"openid offline email profile",
   "response_types":["code"]
 }
 EOF
@@ -36,7 +36,7 @@ echo "${RESP}" | grep "a resource with that value exists already" &&
  "client_uri":"http://localhost:3000",
  "client_secret":"$(cat "${SCRIPT_DIR}/../creds/core_app_client_secret")",
  "grant_types":["authorization_code"],
- "scope":"openid offline offline_access email profile",
+ "scope":"openid offline email profile",
  "response_types":["code"]
 }
 EOF

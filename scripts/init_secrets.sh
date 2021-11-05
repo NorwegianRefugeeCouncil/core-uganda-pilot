@@ -19,6 +19,8 @@ function createUserPassword() {
   createFileIfNotExists "${filePath}" "$(openssl rand -hex 32)"
 }
 
+HYDRA_SYSTEM_SECRET=$(createFileIfNotExists "${CREDS_DIR}/hydra_system_secret" "$(openssl rand -hex 32)")
+HYDRA_COOKIE_SECRET=$(createFileIfNotExists "${CREDS_DIR}/hydra_cookie_secret" "$(openssl rand -hex 32)")
 POSTGRES_ROOT_PASSWORD=$(createFileIfNotExists "${CREDS_DIR}/postgres_root_password" "$(openssl rand -hex 32)")
 POSTGRES_ROOT_USERNAME=$(createFileIfNotExists "${CREDS_DIR}/postgres_root_username" postgres)
 POSTGRES_CORE_DB=$(createFileIfNotExists "${CREDS_DIR}/postgres_core_db" core)
@@ -52,7 +54,13 @@ echo ">> Creating Simple-OIDC Clients"
 touch "${OIDC_CONFIG_FILE}"
 cat <<EOF >"${OIDC_CONFIG_FILE}"
 {
-  "client_config": [
+  "scopes":[
+    "openid",
+    "profile",
+    "email",
+    "offline_access"
+  ],
+  "clients": [
     {
       "client_id": "${OAUTH_CORE_ADMIN_CLIENT_ID}",
       "client_secret": "${OAUTH_CORE_ADMIN_CLIENT_SECRET}",
@@ -62,7 +70,7 @@ cat <<EOF >"${OIDC_CONFIG_FILE}"
         "refresh_token"
       ],
       "token_endpoint_auth_method": "client_secret_post",
-      "scope": "openid offline_access",
+      "scope": "openid",
       "response_types": [
         "code"
       ]
@@ -75,7 +83,7 @@ cat <<EOF >"${OIDC_CONFIG_FILE}"
         "refresh_token"
       ],
       "token_endpoint_auth_method": "client_secret_post",
-      "scope": "openid email profile offline_access",
+      "scope": "openid email profile",
       "response_types": [
         "code"
       ]
@@ -185,7 +193,9 @@ touch "${HYDRA_CONFIG_FILE}"
 cat <<EOF >"${HYDRA_CONFIG_FILE}"
 secrets:
   system:
-    - $(openssl rand -hex 16 | base64)
+    - ${HYDRA_SYSTEM_SECRET}
+  cookie:
+    - ${HYDRA_COOKIE_SECRET}
 dsn: postgres://${POSTGRES_HYDRA_USERNAME}:${POSTGRES_HYDRA_PASSWORD}@db:5432/${POSTGRES_HYDRA_DB}?sslmode=disable&max_conns=20&max_idle_conns=4
 EOF
 

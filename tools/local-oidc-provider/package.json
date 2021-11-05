@@ -1,0 +1,14 @@
+{
+  "name": "local-oidc-provider",
+  "version": "1.0.0",
+  "description": "Local OIDC Provider for developers",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "oidc-provider": "^7.10.0"
+  }
+}

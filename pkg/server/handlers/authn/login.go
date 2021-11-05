@@ -10,10 +10,11 @@ import (
 	"github.com/nrc-no/core/pkg/constants"
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/sirupsen/logrus"
+	"golang.org/x/oauth2"
 	"net/http"
 )
 
-func (h *Handler) Login(sessionKey string) http.HandlerFunc {
+func (h *Handler) Login(sessionKey string, silent bool, redirectUri string) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 
 		clearSession := func() {
@@ -50,6 +51,7 @@ func (h *Handler) Login(sessionKey string) http.HandlerFunc {
 		}
 
 		userSession.Values[constants.SessionState] = state
+		userSession.Values[constants.SessionDesiredURL] = redirectUri
 		if err := userSession.Save(req, w); err != nil {
 			logrus.WithError(err).Errorf("failed to save user session: %s", err)
 			clearSession()
@@ -57,14 +59,21 @@ func (h *Handler) Login(sessionKey string) http.HandlerFunc {
 			return
 		}
 
-		authCodeURL := h.oauth2Config.AuthCodeURL(state)
+		var authCodeOptions []oauth2.AuthCodeOption
+		if silent {
+			authCodeOptions = append(authCodeOptions, oauth2.SetAuthURLParam("prompt", "none"))
+		}
+		authCodeURL := h.oauth2Config.AuthCodeURL(state, authCodeOptions...)
+
 		http.Redirect(w, req, authCodeURL, http.StatusTemporaryRedirect)
+
 	}
 }
 
-func (h *Handler) RestfulLogin(sessionKey string) restful.RouteFunction {
+func (h *Handler) RestfulLogin(sessionKey string, silent bool) restful.RouteFunction {
 	return func(req *restful.Request, res *restful.Response) {
-		h.Login(sessionKey)(res.ResponseWriter, req.Request)
+		redirectUri := req.QueryParameter("redirect_uri")
+		h.Login(sessionKey, silent, redirectUri)(res.ResponseWriter, req.Request)
 	}
 }
 

@@ -139,7 +139,6 @@ export const recorderSlice = createSlice({
     },
     extraReducers: builder => {
         builder.addCase(resetForm.fulfilled, (state, action) => {
-            console.log(action)
             adapter.removeAll(state)
             state.baseFormId = action.payload.formValue.formId
             state.editingValues = {}

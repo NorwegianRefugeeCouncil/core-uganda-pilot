@@ -13,13 +13,16 @@ import (
 	authn2 "github.com/nrc-no/core/pkg/server/handlers/authn"
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/store"
+	"github.com/ory/hydra-client-go/client"
+	"github.com/ory/hydra-client-go/client/admin"
 	"go.uber.org/zap"
 	"golang.org/x/oauth2"
 )
 
 type Server struct {
 	*generic.Server
-	options Options
+	options    Options
+	hydraAdmin admin.ClientService
 }
 
 type Options struct {
@@ -54,9 +57,16 @@ func NewServer(options Options) (*Server, error) {
 	idpHandler := identityprovider.NewHandler(idpStore)
 	container.Add(idpHandler.WebService())
 
+	hydraAdmin := client.NewHTTPClientWithConfig(nil, &client.TransportConfig{
+		Host:     "localhost:4445",
+		BasePath: "",
+		Schemes:  []string{"http"},
+	}).Admin
+
 	s := &Server{
-		Server:  genericServer,
-		options: options,
+		Server:     genericServer,
+		options:    options,
+		hydraAdmin: hydraAdmin,
 	}
 
 	return s, nil
@@ -104,6 +114,7 @@ func (s *Server) Start(ctx context.Context) {
 		s.Server.SessionStore(),
 		oauth2Config,
 		verifier,
+		s.hydraAdmin,
 	)
 
 	s.Container.Filter(authn2.RestfulAuthnMiddleware(
@@ -111,7 +122,8 @@ func (s *Server) Start(ctx context.Context) {
 		oauth2Config,
 		verifier,
 		s.options.URLs.Self,
-		"admin-session"))
+		"admin-session",
+		s.hydraAdmin))
 
 	s.Container.Add(authnHandler.WebService())
 

@@ -9,13 +9,19 @@ import (
 	"github.com/nrc-no/core/pkg/constants"
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/utils"
-	"github.com/ory/hydra-client-go/client"
+	"github.com/nrc-no/core/pkg/utils/sets"
 	"github.com/ory/hydra-client-go/client/admin"
 	"go.uber.org/zap"
 	"golang.org/x/oauth2"
 	"net/http"
 	"strings"
-	"time"
+)
+
+var unprotectedPaths = sets.NewString(
+	"/oidc/login",
+	"/oidc/renew",
+	"/oidc/callback",
+	"/oidc/session",
 )
 
 func RestfulAuthnMiddleware(
@@ -24,32 +30,18 @@ func RestfulAuthnMiddleware(
 	verifier *oidc.IDTokenVerifier,
 	selfURL string,
 	sessionKey string,
+	hydraAdmin admin.ClientService,
 ) func(request *restful.Request, response *restful.Response, chain *restful.FilterChain) {
-
-	hydraAdmin := client.NewHTTPClientWithConfig(nil, &client.TransportConfig{
-		Host:     "localhost:4445",
-		BasePath: "",
-		Schemes:  []string{"http"},
-	}).Admin
 
 	return func(request *restful.Request, response *restful.Response, chain *restful.FilterChain) {
 
 		ctx := logging.WithMiddleware(request.Request.Context(), "auth")
 		l := logging.NewLogger(ctx)
 
-		loginPath := "/oidc/login"
-		callbackPath := "/oidc/callback"
-
 		l.Debug("authn callback called")
 
-		if request.Request.URL.Path == loginPath {
-			l.Debug("ignoring authentication because request is for the /oidc/login path")
-			chain.ProcessFilter(request, response)
-			return
-		}
-
-		if request.Request.URL.Path == callbackPath {
-			l.Debug("ignoring authentication because request is for the /oidc/callback path")
+		if unprotectedPaths.Has(request.Request.URL.Path) {
+			l.Debug("ignoring authentication because request is for an unprotected path", zap.String("path", request.Request.URL.Path))
 			chain.ProcessFilter(request, response)
 			return
 		}
@@ -180,63 +172,7 @@ func RestfulAuthnMiddleware(
 	}
 }
 
-func strFromSession(session *sessions.Session, key string) (string, bool) {
-	valueIntf, ok := session.Values[key]
-	if !ok {
-		return "", false
-	}
-	value, ok := valueIntf.(string)
-	if !ok {
-		return "", false
-	}
-	return value, true
-}
-
-func timeFromSession(session *sessions.Session, key string) (*time.Time, bool) {
-	valueIntf, ok := session.Values[key]
-	if !ok {
-		return nil, false
-	}
-	value, ok := valueIntf.(*time.Time)
-	if !ok {
-		return nil, false
-	}
-	return value, true
-}
-
 type StoredToken struct {
 	*oauth2.Token
 	IDToken string
-}
-
-func tokenFromSession(userSession *sessions.Session) (*StoredToken, bool) {
-	idToken, ok := strFromSession(userSession, constants.SessionIDToken)
-	if !ok {
-		return nil, false
-	}
-	accessToken, ok := strFromSession(userSession, constants.SessionAccessToken)
-	if !ok {
-		return nil, false
-	}
-	refreshToken, ok := strFromSession(userSession, constants.SessionRefreshToken)
-	if !ok {
-		return nil, false
-	}
-	tokenType, ok := strFromSession(userSession, constants.SessionTokenType)
-	if !ok {
-		return nil, false
-	}
-	tokenExpiry, ok := timeFromSession(userSession, constants.SessionTokenExpiry)
-	if !ok {
-		return nil, false
-	}
-	return &StoredToken{
-		Token: &oauth2.Token{
-			AccessToken:  accessToken,
-			TokenType:    tokenType,
-			RefreshToken: refreshToken,
-			Expiry:       *tokenExpiry,
-		},
-		IDToken: idToken,
-	}, true
 }

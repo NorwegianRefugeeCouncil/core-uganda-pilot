@@ -12,9 +12,8 @@ serve:
         - openid
         - profile
         - email
-        - offline_access
     cors:
-      allowed_origins: [ "http://localhost:3001" ]
+      allowed_origins: [ "*" ]
       allow_credentials: true
       allowed_headers:
         - Authorization
@@ -46,7 +45,6 @@ serve:
         - openid
         - profile
         - email
-        - offline_access
     cache:
       redis:
         address: localhost:6379

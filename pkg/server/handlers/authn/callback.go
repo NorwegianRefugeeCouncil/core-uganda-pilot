@@ -23,9 +23,10 @@ func (h *Handler) Callback(redirectURL string, sessionKey string) http.HandlerFu
 		l.Debug("beginning oidc callback")
 
 		l.Debug("getting user session")
-		userSession, err := h.sessionStore.Get(req, sessionKey)
+		userSession, err := getSession(w, req, h.sessionStore, sessionKey)
 		if err != nil {
 			l.With(zap.Error(err)).Error("failed to retrieve session from store")
+			clearSession(w, req, h.sessionStore, sessionKey)
 			utils.ErrorResponse(w, meta.NewInternalServerError(err))
 			return
 		}
@@ -34,6 +35,7 @@ func (h *Handler) Callback(redirectURL string, sessionKey string) http.HandlerFu
 		stateFromSessionIntf, ok := userSession.Values[constants.SessionState]
 		if !ok {
 			l.Warn("state was not present in session")
+			clearSession(w, req, h.sessionStore, sessionKey)
 			utils.ErrorResponse(w, meta.NewInternalServerError(fmt.Errorf("no state found in session: unable to read state from session values")))
 			return
 		}
@@ -42,6 +44,7 @@ func (h *Handler) Callback(redirectURL string, sessionKey string) http.HandlerFu
 		delete(userSession.Values, "state")
 		if err := userSession.Save(req, w); err != nil {
 			l.Error("failed to save state into session", zap.Error(err))
+			clearSession(w, req, h.sessionStore, sessionKey)
 			utils.ErrorResponse(w, meta.NewInternalServerError(err))
 			return
 		}
@@ -50,12 +53,14 @@ func (h *Handler) Callback(redirectURL string, sessionKey string) http.HandlerFu
 		stateFromSession, ok := stateFromSessionIntf.(string)
 		if !ok {
 			l.Warn("state from session was not a string", zap.Error(err), zap.Any("unexpected_type", stateFromSessionIntf))
+			clearSession(w, req, h.sessionStore, sessionKey)
 			utils.ErrorResponse(w, meta.NewInternalServerError(fmt.Errorf("no state found in session: unable to get string of session state value")))
 			return
 		}
 
 		if len(stateFromSession) == 0 {
 			l.Warn("empty session state on oauth callback", zap.Error(err))
+			clearSession(w, req, h.sessionStore, sessionKey)
 			utils.ErrorResponse(w, meta.NewInternalServerError(fmt.Errorf("state in session was found to be empty")))
 			return
 		}
@@ -66,6 +71,7 @@ func (h *Handler) Callback(redirectURL string, sessionKey string) http.HandlerFu
 		l.Debug("comparing query and session states")
 		if stateFromQuery != stateFromSession {
 			l.Warn("auth state mismatch", zap.String("expected", stateFromSession), zap.String("actual", stateFromQuery))
+			clearSession(w, req, h.sessionStore, sessionKey)
 			utils.ErrorResponse(w, meta.NewUnauthorized(fmt.Sprintf("state mismatch")))
 			return
 		}
@@ -74,6 +80,7 @@ func (h *Handler) Callback(redirectURL string, sessionKey string) http.HandlerFu
 		authorizationCode := req.URL.Query().Get(constants.QueryParamCode)
 		if len(authorizationCode) == 0 {
 			l.Warn("authorization code not present in query")
+			clearSession(w, req, h.sessionStore, sessionKey)
 			utils.ErrorResponse(w, meta.NewUnauthorized(fmt.Sprintf("authorization code not present in query")))
 			return
 		}
@@ -82,6 +89,7 @@ func (h *Handler) Callback(redirectURL string, sessionKey string) http.HandlerFu
 		tokenFromExchange, err := h.oauth2Config.Exchange(ctx, authorizationCode)
 		if err != nil {
 			l.Error("failed to exchange authorization code", zap.Error(err))
+			clearSession(w, req, h.sessionStore, sessionKey)
 			utils.ErrorResponse(w, meta.NewUnauthorized(fmt.Sprintf("failed to exchange authorization code")))
 			return
 		}
@@ -90,6 +98,7 @@ func (h *Handler) Callback(redirectURL string, sessionKey string) http.HandlerFu
 		rawIDToken, idToken, err := verifyToken(ctx, h.tokenVerifier, tokenFromExchange)
 		if err != nil {
 			l.Error("failed to verify token", zap.Error(err))
+			clearSession(w, req, h.sessionStore, sessionKey)
 			utils.ErrorResponse(w, err)
 			return
 		}
@@ -98,6 +107,7 @@ func (h *Handler) Callback(redirectURL string, sessionKey string) http.HandlerFu
 		var userProfile Claims
 		if err := idToken.Claims(&userProfile); err != nil {
 			l.Error("failed to unmarshal claims from id token", zap.Error(err))
+			clearSession(w, req, h.sessionStore, sessionKey)
 			utils.ErrorResponse(w, meta.NewInternalServerError(err))
 			return
 		}
@@ -111,11 +121,14 @@ func (h *Handler) Callback(redirectURL string, sessionKey string) http.HandlerFu
 		userSession.Values[constants.SessionProfile] = userProfile
 		if err := userSession.Save(req, w); err != nil {
 			l.Warn("failed to save user session", zap.Error(err))
+			clearSession(w, req, h.sessionStore, sessionKey)
 			utils.ErrorResponse(w, meta.NewInternalServerError(err))
 			return
 		}
 
-		w.Header().Set("Location", redirectURL)
+		redirectUri := userSession.Values[constants.SessionDesiredURL].(string)
+
+		w.Header().Set("Location", redirectUri)
 		w.WriteHeader(http.StatusTemporaryRedirect)
 		return
 
