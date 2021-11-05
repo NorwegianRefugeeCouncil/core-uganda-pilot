@@ -4,10 +4,12 @@ import (
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
 	"github.com/looplab/fsm"
+	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/server/login/authrequest"
 	loginstore "github.com/nrc-no/core/pkg/server/login/store"
 	"github.com/nrc-no/core/pkg/store"
+	"github.com/nrc-no/core/pkg/utils"
 	"github.com/ory/hydra-client-go/client/admin"
 	"github.com/ory/hydra-client-go/models"
 	"github.com/sirupsen/logrus"
@@ -121,7 +123,8 @@ func handleAuthRequestAction(
 
 			callbacks := map[string]fsm.Callback{
 				authrequest.StateFailed: func(evt *fsm.Event) {
-
+					utils.ErrorResponse(w, meta.NewUnauthorized("not authorized"))
+					return
 				},
 				authrequest.StateLoginRequested: func(evt *fsm.Event) {
 					if err := loginRequestedHandler(authRequest, evt); err != nil {

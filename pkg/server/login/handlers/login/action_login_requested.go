@@ -2,6 +2,7 @@ package login
 
 import (
 	"context"
+	"fmt"
 	"github.com/looplab/fsm"
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/server/login/authrequest"
@@ -31,9 +32,14 @@ func handleLoginRequested(
 		authRequest.LoginChallenge = loginChallenge
 
 		l.Debug("checking if should skip login request or not")
-		if authRequest.Identity != nil && loginRequest.Skip != nil && *loginRequest.Skip {
-			l.Debug("skipping login request")
-			dispatch(authrequest.EventSkipLoginRequest)
+		if loginRequest.Skip != nil && *loginRequest.Skip {
+			if authRequest.Identity != nil {
+				l.Debug("skipping login request")
+				dispatch(authrequest.EventSkipLoginRequest)
+			} else {
+				l.Debug("cannot skip login request when no identity in session")
+				return fmt.Errorf("impossible to skip login request")
+			}
 		} else {
 			l.Debug("performing login request")
 			dispatch(authrequest.EventPerformLogin)
