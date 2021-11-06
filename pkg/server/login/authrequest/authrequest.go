@@ -128,7 +128,7 @@ func newAuthRequest(state string, callbacks fsm.Callbacks) *AuthRequest {
 			// accepted -- request login --> awaiting consent challenge
 			{Src: []string{StateAccepted}, Name: EventRequestLogin, Dst: StateLoginRequested},
 			// login requested -- skip login --> refreshing identity
-			{Src: []string{StateLoginRequested}, Name: EventSkipLoginRequest, Dst: StateRefreshingIdentity},
+			{Src: []string{StateLoginRequested}, Name: EventSkipLoginRequest, Dst: StateAwaitingConsentChallenge},
 			// login requested -- skip login --> awaiting consent challenge
 			{Src: []string{StateRefreshingIdentity}, Name: EventSetRefreshedIdentity, Dst: StateAwaitingConsentChallenge},
 			// login requested -- perform login --> identifier needed
@@ -212,6 +212,7 @@ type AuthRequest struct {
 	ConsentChallenge   string
 	PostConsentURL     string
 	Error              error
+	Subject            string
 }
 
 func (a *AuthRequest) ToDotGraph() string {
@@ -278,6 +279,7 @@ type StoredAuthRequest struct {
 	PostConsentURL     string
 	TokenExpiry        time.Time
 	TokenType          string
+	Subject            string
 }
 
 func init() {
@@ -316,6 +318,7 @@ func (a *AuthRequest) Save(w http.ResponseWriter, req *http.Request, session *se
 		Claims:             a.Claims,
 		ConsentChallenge:   a.ConsentChallenge,
 		PostConsentURL:     a.PostConsentURL,
+		Subject:            a.Subject,
 	}
 
 	if a.Identity != nil {
@@ -375,6 +378,7 @@ func CreateOrRestore(session *sessions.Session, callbacks fsm.Callbacks) *AuthRe
 	authRequest.PostConsentURL = storedAuthRequest.PostConsentURL
 	authRequest.TokenExpiry = storedAuthRequest.TokenExpiry
 	authRequest.TokenType = storedAuthRequest.TokenType
+	authRequest.Subject = storedAuthRequest.Subject
 
 	if storedAuthRequest.Identity != nil {
 		iden := &loginstore.Identity{}

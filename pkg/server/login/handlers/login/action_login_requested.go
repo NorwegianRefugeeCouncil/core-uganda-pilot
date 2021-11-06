@@ -31,8 +31,9 @@ func handleLoginRequested(
 		authRequest.LoginChallenge = loginChallenge
 
 		l.Debug("checking if should skip login request or not")
-		if loginRequest.Skip != nil && *loginRequest.Skip && authRequest.Identity != nil {
+		if loginRequest.Skip != nil && *loginRequest.Skip {
 			l.Debug("skipping login request")
+			authRequest.Subject = *loginRequest.Subject
 			dispatch(authrequest.EventSkipLoginRequest)
 		} else {
 			l.Debug("performing login request")

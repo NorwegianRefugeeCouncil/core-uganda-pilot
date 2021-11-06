@@ -52,6 +52,7 @@ func handleAuthCodeExchangeSucceeded(
 		}
 
 		authRequest.Identity = identifier.Credential.Identity
+		authRequest.Subject = identifier.Credential.IdentityID
 
 		dispatch(authrequest.EventAcceptLoginRequest)
 		return nil

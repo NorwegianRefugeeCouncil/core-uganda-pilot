@@ -27,7 +27,7 @@ func handleAwaitingConsentChallenge(
 				Context:     nil,
 				Remember:    true,
 				RememberFor: 0,
-				Subject:     pointers.String(authRequest.Identity.ID),
+				Subject:     pointers.String(authRequest.Subject),
 			},
 			LoginChallenge: authRequest.LoginChallenge,
 			Context:        req.Context(),

@@ -40,7 +40,6 @@ func handleAuthRequestAction(
 			ctx := req.Context()
 
 			l := logging.NewLogger(ctx).With(
-				zap.String("login_action", action),
 				zap.Any("path_parameters", pathParameters),
 				zap.Any("request_parameters", requestParameters))
 
@@ -105,17 +104,17 @@ func handleAuthRequestAction(
 
 			loginRequestedHandler := handleLoginRequested(ctx, req.URL.Query(), dispatch, getLoginRequest)
 			refreshingIdentityHandler := handleRefreshingIdentity(ctx, idpStore, selfURL, dispatch, getLoginRequest)
-			promptingForIdentifierHandler := handlePromptingForIdentifier(w, req)
+			promptingForIdentifierHandler := handlePromptingForIdentifier(w, userSession, req)
 			validatingIdentifierHandler := handleValidatingIdentifier(ctx, req, dispatch)
 			findingAuthMethodHandler := handleFindingAuthMethod(ctx, dispatch)
-			promptingForIdentityProviderHandler := handlePromptingForIdentityProvider(ctx, w, idpStore, orgStore)
+			promptingForIdentityProviderHandler := handlePromptingForIdentityProvider(ctx, w, req, userSession, idpStore, orgStore)
 			useIdentityProviderHandler := handleUseIdentityProvider(w, req, getLoginRequest, pathParameters, idpStore, selfURL)
 			awaitingIdpCallbackHandler := handleAwaitingIDPCallback()
 			performingAuthCodeExchangeHandler := handlePerformingAuthCodeExchange(req, dispatch, idpStore, selfURL)
 			authCodeExchangeHandler := handleAuthCodeExchangeSucceeded(req, dispatch, idpStore, loginStore)
 			awaitingConsentChallengeHandler := handleAwaitingConsentChallenge(w, req, hydraAdmin)
 			receivedConsentChallengeHandler := handleReceivedConsentChallenge(ctx, dispatch, requestParameters, getConsentRequest)
-			presentingConsentChallengeHandler := handlePresentingConsentChallenge(w, req, getConsentRequest)
+			presentingConsentChallengeHandler := handlePresentingConsentChallenge(w, req, userSession, getConsentRequest)
 			consentRequestApprovedHandler := handleConsentRequestApproved(ctx, dispatch, getConsentRequest, hydraAdmin)
 			consentRequestDeclinedHandler := handleConsentRequestDenied(ctx, dispatch, hydraAdmin)
 			approvedHandler := handleApproved(w, req)
@@ -214,8 +213,6 @@ func handleAuthRequestAction(
 			}
 
 			authRequest = getAuthRequest(action, callbacks, userSession)
-
-			l.Debug("dispatching action")
 			dispatch(action)
 
 			i := -1
@@ -225,20 +222,25 @@ func handleAuthRequestAction(
 					break
 				}
 				evt := events[i]
-				l.Info("dispatching action", zap.String("action", evt))
+
+				l.Info("dispatching action",
+					zap.String("action", evt),
+					zap.String("state", authRequest.State()))
+
 				if err := authRequest.Event(evt); err != nil {
-					l.Error("failed to dispatch action", zap.Error(err))
-					authRequest.Event(authrequest.EventFail)
+					l.Error("failed to dispatch action",
+						zap.Error(err),
+						zap.String("action", evt),
+						zap.String("state", authRequest.State()))
+					_ = authRequest.Event(authrequest.EventFail)
 					break
 				}
-				l = l.With(zap.String("state", authRequest.State()))
-				l.Info("entered state")
+				l.Info("entered state", zap.String("state", authRequest.State()))
 			}
 			if err := authRequest.Save(w, req, userSession); err != nil {
 				l.Error("failed to save session", zap.Error(err))
 				_ = authRequest.Event(authrequest.EventFail)
 			}
-			l.Debug("done dispatching action")
 		}
 	}
 }
