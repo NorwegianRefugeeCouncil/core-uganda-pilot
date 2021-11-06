@@ -225,19 +225,21 @@ func handleAuthRequestAction(
 					break
 				}
 				evt := events[i]
-				l.Debug("dispatching action", zap.String("action", evt))
+				l.Info("dispatching action", zap.String("action", evt))
 				if err := authRequest.Event(evt); err != nil {
+					l.Error("failed to dispatch action", zap.Error(err))
 					authRequest.Event(authrequest.EventFail)
 					break
 				}
-				if err := authRequest.Save(w, req, userSession); err != nil {
-					authRequest.Event(authrequest.EventFail)
-					break
-				}
+				l = l.With(zap.String("state", authRequest.State()))
+				l.Info("entered state")
+			}
+			if err := authRequest.Save(w, req, userSession); err != nil {
+				l.Error("failed to save session", zap.Error(err))
+				_ = authRequest.Event(authrequest.EventFail)
 			}
 			l.Debug("done dispatching action")
 		}
-
 	}
 }
 

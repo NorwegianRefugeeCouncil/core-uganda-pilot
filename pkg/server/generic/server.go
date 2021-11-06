@@ -100,6 +100,9 @@ func NewGenericServer(options options.ServerOptions, name string) (*Server, erro
 		if options.Cache.Redis.MaxLength != 0 {
 			redisStore.SetMaxLength(options.Cache.Redis.MaxLength)
 		}
+		redisStore.Options.Secure = true
+		redisStore.Options.HttpOnly = true
+		redisStore.Options.SameSite = http.SameSiteStrictMode
 
 		srv.sessionStore = redisStore
 

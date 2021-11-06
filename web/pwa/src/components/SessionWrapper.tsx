@@ -20,9 +20,7 @@ export const SessionWrapper: FC<SessionWrapperProps> = props => {
         apiClient.getSession().then(session => {
             setSession(session.response)
             if (!session.response?.active) {
-                setTimeout(() => {
-                    window.location.href = `${apiClient.address}/oidc/login?redirect_uri=${window.location.href}`
-                }, 2000)
+                window.location.href = `${apiClient.address}/oidc/login?redirect_uri=${window.location.href}`
             }
         }).finally(() => {
             setIsRefreshing(false)

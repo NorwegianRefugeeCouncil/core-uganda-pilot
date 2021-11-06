@@ -1,12 +1,15 @@
 import {FC, Fragment, useCallback, useEffect, useState} from "react";
 import {useApiClient} from "../app/hooks";
 import {Session} from "../types/types";
+import {useLocation} from "react-router-dom";
 
 export const SessionRenewer: FC = props => {
 
     const apiClient = useApiClient()
     const [session, setSession] = useState<Session>()
     const [refresh, setRefresh] = useState(true)
+
+    const location = useLocation()
 
     const refreshSession = useCallback(() => {
         if (apiClient && refresh) {
@@ -22,6 +25,13 @@ export const SessionRenewer: FC = props => {
     }, [refreshSession])
 
     useEffect(() => {
+        const params = new URLSearchParams(location.search)
+        if (params.get("error") == "login_required") {
+            window.parent.location.href = `${apiClient.address}/oidc/login?redirect_uri=${window.parent.location.href}`
+        }
+    }, [location.search])
+
+    useEffect(() => {
         if (!session) {
             return
         }
@@ -32,9 +42,7 @@ export const SessionRenewer: FC = props => {
             const renewalInSeconds = expiresInSeconds - 150
             console.log("session renews in :", renewalInSeconds)
             if (renewalInSeconds < 0) {
-                setTimeout(() => {
-                    window.location.href = `${apiClient.address}/oidc/renew?redirect_uri=${window.location.href}`
-                }, 2000)
+                window.location.href = `${apiClient.address}/oidc/renew?redirect_uri=${window.location.href}`
             }
         }, 2000)
         return () => {

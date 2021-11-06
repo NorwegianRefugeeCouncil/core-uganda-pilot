@@ -13,6 +13,7 @@ import (
 	"go.uber.org/zap"
 	"golang.org/x/oauth2"
 	"net/http"
+	"net/url"
 )
 
 func (h *Handler) Callback(redirectURL string, sessionKey string) http.HandlerFunc {
@@ -31,21 +32,27 @@ func (h *Handler) Callback(redirectURL string, sessionKey string) http.HandlerFu
 			return
 		}
 
+		callbackErr := req.URL.Query().Get("error")
+		if len(callbackErr) > 0 {
+			redirectUri, err := url.Parse(userSession.Values[constants.SessionDesiredURL].(string))
+			if err != nil {
+				utils.ErrorResponse(w, meta.NewBadRequest("bad redirect uri"))
+				return
+			}
+			qry := redirectUri.Query()
+			qry.Set("error", callbackErr)
+			redirectUri.RawQuery = qry.Encode()
+			w.Header().Set("Location", redirectUri.String())
+			w.WriteHeader(http.StatusFound)
+			return
+		}
+
 		l.Debug("getting state from session")
 		stateFromSessionIntf, ok := userSession.Values[constants.SessionState]
 		if !ok {
 			l.Warn("state was not present in session")
 			clearSession(w, req, h.sessionStore, sessionKey)
 			utils.ErrorResponse(w, meta.NewInternalServerError(fmt.Errorf("no state found in session: unable to read state from session values")))
-			return
-		}
-
-		l.Debug("saving user session")
-		delete(userSession.Values, "state")
-		if err := userSession.Save(req, w); err != nil {
-			l.Error("failed to save state into session", zap.Error(err))
-			clearSession(w, req, h.sessionStore, sessionKey)
-			utils.ErrorResponse(w, meta.NewInternalServerError(err))
 			return
 		}
 
