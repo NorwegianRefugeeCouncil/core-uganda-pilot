@@ -107,7 +107,6 @@ export const SingleSelectFieldEditor: FC<FieldEditorProps> = props => {
 export const MultiSelectFieldEditor: FC<FieldEditorProps> = props => {
     const {field, value, setValue} = props
 
-    console.log("value: ", value)
     const handleChange = (option: readonly { label: string, value: string }[]) => option.length > 0 ? setValue(option.map(({value}) => value).join(';;')) : setValue(null)
 
     return <div className={"mb-2"}>
