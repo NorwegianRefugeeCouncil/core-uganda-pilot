@@ -31,11 +31,11 @@ serve:
         path: /var/run/tls/admin/tls.key
 urls:
   self:
-    public: https://localhost:4444
-    issuer: https://localhost:4444
-  consent: https://localhost:9002/consent
-  login: https://localhost:9002/login
-  logout: https://localhost:9002/logout
+    public: https://hydra.dev:4444
+    issuer: https://hydra.dev:4444
+  consent: https://core-login.dev:9002/consent
+  login: https://core-login.dev:9002/login
+  logout: https://core-login.dev:9002/logout
 log:
   leak_sensitive_values: true
   level: trace

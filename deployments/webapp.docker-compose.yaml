@@ -3,7 +3,7 @@ services:
   oidc:
     image: node:16
     container_name: core_oidc
-    hostname: oidc
+    hostname: oidc.dev
     volumes:
       - ../tools/local-oidc-provider/package.json:/app/package.json:ro
       - ../tools/local-oidc-provider/index.js:/app/index.js:ro
@@ -17,7 +17,8 @@ services:
       CONFIG_FILE: /var/run/config.json
       TLS_KEY: /var/run/tls.key
       TLS_CERT: /var/run/tls.cert
-      ISSUER: https://localhost:9005
+      ADDRESS: 0.0.0.0
+      ISSUER: https://oidc.dev:9005
     command:
       - bash
       - -c

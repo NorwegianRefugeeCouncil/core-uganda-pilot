@@ -138,7 +138,7 @@ export type RequestOptions = {
 }
 
 export class client implements Client {
-    public address = "https://localhost:9000"
+    public address = "https://core-app-api.dev:9000"
 
     do<TRequest, TBody>(request: TRequest, url: string, method: Method, data: any, expectStatusCode: number, options?: RequestOptions): Promise<Response<TRequest, TBody>> {
 

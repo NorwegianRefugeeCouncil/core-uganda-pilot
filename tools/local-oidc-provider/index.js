@@ -3,7 +3,6 @@ const fs = require("fs");
 const express = require('express');
 const Provider = require('oidc-provider');
 
-
 let PORT = 3000
 if (process.env.PORT) {
     PORT = process.env.PORT
@@ -39,16 +38,14 @@ config.renderError = async (ctx, out, error) => {
     </body>
     </html>`;
 }
+const app = express();
+
+https.createServer({
+    key: fs.readFileSync(process.env.TLS_KEY),
+    cert: fs.readFileSync(process.env.TLS_CERT),
+}, app).listen(PORT)
 
 console.log("config", config)
 
 const provider = new Provider(issuer, config);
-
-const app = express();
 app.use(provider.callback())
-
-const server = https.createServer({
-    key: fs.readFileSync(process.env.TLS_KEY),
-    cert: fs.readFileSync(process.env.TLS_CERT),
-}, app)
-server.listen(PORT)

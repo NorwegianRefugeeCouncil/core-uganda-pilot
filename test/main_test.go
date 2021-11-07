@@ -27,7 +27,7 @@ func (s *Suite) Client(ctx context.Context) *http.Client {
 func (s *Suite) PublicClient(ctx context.Context) client.Client {
 	return client.NewClientFromConfig(rest.Config{
 		Scheme:     "http",
-		Host:       "localhost:9000",
+		Host:       "core-app-api.dev:9000",
 		HTTPClient: s.Client(ctx),
 	})
 }
@@ -36,7 +36,7 @@ func (s *Suite) SetupSuite() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	hydraAdmin := hydra.NewHTTPClientWithConfig(nil, &hydra.TransportConfig{Schemes: []string{"http"}, Host: "localhost:4445"}).Admin
+	hydraAdmin := hydra.NewHTTPClientWithConfig(nil, &hydra.TransportConfig{Schemes: []string{"http"}, Host: "hydra-admin.dev:4445"}).Admin
 	_, err := hydraAdmin.DeleteOAuth2Client(&admin.DeleteOAuth2ClientParams{Context: ctx, ID: "integration-testing"})
 	oauth2Client, err := hydraAdmin.CreateOAuth2Client(&admin.CreateOAuth2ClientParams{
 		Body: &models.OAuth2Client{
@@ -52,7 +52,7 @@ func (s *Suite) SetupSuite() {
 		return
 	}
 
-	oidcProvider, err := oidc.NewProvider(ctx, "https://localhost:4444/")
+	oidcProvider, err := oidc.NewProvider(ctx, "https://hydra.dev:4444/")
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 		return

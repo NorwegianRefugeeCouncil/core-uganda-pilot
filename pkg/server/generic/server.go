@@ -104,7 +104,7 @@ func NewGenericServer(options options.ServerOptions, name string) (*Server, erro
 		}
 		redisStore.Options.Secure = true
 		redisStore.Options.HttpOnly = true
-		redisStore.Options.SameSite = http.SameSiteStrictMode
+		redisStore.Options.SameSite = http.SameSiteNoneMode
 
 		srv.sessionStore = redisStore
 

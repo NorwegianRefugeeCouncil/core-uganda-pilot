@@ -67,7 +67,6 @@ install-all:
 
 .PHONY: open-all
 open-all:
-	@open https://localhost:3000
-	@open https://localhost:9000
-	@open https://localhost:9001
+	@open https://core-app-frontend.dev:3000
+	@open https://core-admin-frontend.dev:3000
 
