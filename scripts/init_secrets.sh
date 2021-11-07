@@ -2,7 +2,7 @@
 
 set -e
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "${SCRIPT_DIR}/utils.sh"
 
 CORE_CONFIG_FILE="${SCRIPT_DIR}/../configs/config.custom.yaml"
@@ -16,38 +16,76 @@ CREDS_DIR="${SCRIPT_DIR}/../creds"
 
 function createUserPassword() {
   filePath="${CREDS_DIR}/user_$1_password"
-  createFileIfNotExists "${filePath}" "$(openssl rand -hex 32)"
+  createFileIfNotExists "${filePath}" "openssl rand -hex 32"
 }
 
-HYDRA_SYSTEM_SECRET=$(createFileIfNotExists "${CREDS_DIR}/hydra_system_secret" "$(openssl rand -hex 32)")
-HYDRA_COOKIE_SECRET=$(createFileIfNotExists "${CREDS_DIR}/hydra_cookie_secret" "$(openssl rand -hex 32)")
-POSTGRES_ROOT_PASSWORD=$(createFileIfNotExists "${CREDS_DIR}/postgres_root_password" "$(openssl rand -hex 32)")
-POSTGRES_ROOT_USERNAME=$(createFileIfNotExists "${CREDS_DIR}/postgres_root_username" postgres)
-POSTGRES_CORE_DB=$(createFileIfNotExists "${CREDS_DIR}/postgres_core_db" core)
-POSTGRES_CORE_USERNAME=$(createFileIfNotExists "${CREDS_DIR}/postgres_core_username" core)
-POSTGRES_CORE_PASSWORD=$(createFileIfNotExists "${CREDS_DIR}/postgres_core_password" "$(openssl rand -hex 32)")
-POSTGRES_HYDRA_DB=$(createFileIfNotExists "${CREDS_DIR}/postgres_hydra_db" hydra)
-POSTGRES_HYDRA_USERNAME=$(createFileIfNotExists "${CREDS_DIR}/postgres_hydra_username" hydra)
-POSTGRES_HYDRA_PASSWORD=$(createFileIfNotExists "${CREDS_DIR}/postgres_hydra_password" "$(openssl rand -hex 32)")
-REDIS_PASSWORD=$(createFileIfNotExists "${CREDS_DIR}/redis_password" "$(openssl rand -hex 32)")
-OAUTH_CORE_ADMIN_CLIENT_ID=$(createFileIfNotExists "${CREDS_DIR}/core_admin_client_id" core-admin)
-OAUTH_CORE_ADMIN_CLIENT_SECRET=$(createFileIfNotExists "${CREDS_DIR}/core_admin_client_secret" "$(openssl rand -hex 32)")
-OAUTH_CORE_ADMIN_REDIRECT_URI=$(createFileIfNotExists "${CREDS_DIR}/core_admin_redirect_uri" "http://localhost:9001/oidc/callback")
-OAUTH_CORE_ADMIN_ISSUER=$(createFileIfNotExists "${CREDS_DIR}/core_admin_issuer" "http://localhost:9005")
+HYDRA_SYSTEM_SECRET=$(createFileIfNotExists "${CREDS_DIR}/hydra_system_secret" "openssl rand -hex 32")
+HYDRA_COOKIE_SECRET=$(createFileIfNotExists "${CREDS_DIR}/hydra_cookie_secret" "openssl rand -hex 32")
+POSTGRES_ROOT_PASSWORD=$(createFileIfNotExists "${CREDS_DIR}/postgres_root_password" "openssl rand -hex 32")
+POSTGRES_ROOT_USERNAME=$(createFileIfNotExists "${CREDS_DIR}/postgres_root_username" "echo -n postgres")
+POSTGRES_CORE_DB=$(createFileIfNotExists "${CREDS_DIR}/postgres_core_db" "echo -n core")
+POSTGRES_CORE_USERNAME=$(createFileIfNotExists "${CREDS_DIR}/postgres_core_username" "echo core")
+POSTGRES_CORE_PASSWORD=$(createFileIfNotExists "${CREDS_DIR}/postgres_core_password" "openssl rand -hex 32")
+POSTGRES_HYDRA_DB=$(createFileIfNotExists "${CREDS_DIR}/postgres_hydra_db" "echo -n hydra")
+POSTGRES_HYDRA_USERNAME=$(createFileIfNotExists "${CREDS_DIR}/postgres_hydra_username" "echo -n hydra")
+POSTGRES_HYDRA_PASSWORD=$(createFileIfNotExists "${CREDS_DIR}/postgres_hydra_password" "openssl rand -hex 32")
+REDIS_PASSWORD=$(createFileIfNotExists "${CREDS_DIR}/redis_password" "openssl rand -hex 32")
+OAUTH_CORE_ADMIN_CLIENT_ID=$(createFileIfNotExists "${CREDS_DIR}/core_admin_client_id" "echo -n core-admin")
+OAUTH_CORE_ADMIN_CLIENT_SECRET=$(createFileIfNotExists "${CREDS_DIR}/core_admin_client_secret" "openssl rand -hex 32")
+OAUTH_CORE_ADMIN_REDIRECT_URI=$(createFileIfNotExists "${CREDS_DIR}/core_admin_redirect_uri" "echo -n http://localhost:9001/oidc/callback")
+OAUTH_CORE_ADMIN_ISSUER=$(createFileIfNotExists "${CREDS_DIR}/core_admin_issuer" "echo -n http://localhost:9005")
 OAUTH_CORE_APP_CLIENT_ID=$(createFileIfNotExists "${CREDS_DIR}/core_app_client_id" "core-app")
-OAUTH_CORE_APP_CLIENT_SECRET=$(createFileIfNotExists "${CREDS_DIR}/core_app_client_secret" "$(openssl rand -hex 32)")
-OAUTH_CORE_APP_REDIRECT_URI=$(createFileIfNotExists "${CREDS_DIR}/core_app_redirect_uri" "http://localhost:9000/oidc/callback")
-OAUTH_CORE_APP_ISSUER=$(createFileIfNotExists "${CREDS_DIR}/core_app_issuer" "http://localhost:4444/")
+OAUTH_CORE_APP_CLIENT_SECRET=$(createFileIfNotExists "${CREDS_DIR}/core_app_client_secret" "openssl rand -hex 32")
+OAUTH_CORE_APP_REDIRECT_URI=$(createFileIfNotExists "${CREDS_DIR}/core_app_redirect_uri" "echo -n http://localhost:9000/oidc/callback")
+OAUTH_CORE_APP_ISSUER=$(createFileIfNotExists "${CREDS_DIR}/core_app_issuer" "echo -n http://localhost:4444/")
 OAUTH_NRC_CLIENT_ID=$(createFileIfNotExists "${CREDS_DIR}/nrc_idp_client_id" "nrc-idp")
-OAUTH_NRC_CLIENT_SECRET=$(createFileIfNotExists "${CREDS_DIR}/nrc_idp_client_secret" "$(openssl rand -hex 32)")
-OAUTH_NRC_REDIRECT_URI=$(createFileIfNotExists "${CREDS_DIR}/nrc_idp_redirect_uri" "http://localhost:9002/oidc/callback")
-OAUTH_NRC_ISSUER=$(createFileIfNotExists "${CREDS_DIR}/nrc_idp_issuer" "http://localhost:9005")
-CORE_ADMIN_HASH_KEY=$(createFileIfNotExists "${CREDS_DIR}/core_admin_hash_key" "$(openssl rand -hex 64)")
-CORE_ADMIN_BLOCK_KEY=$(createFileIfNotExists "${CREDS_DIR}/core_admin_block_key" "$(openssl rand -hex 32)")
-CORE_LOGIN_HASH_KEY=$(createFileIfNotExists "${CREDS_DIR}/core_login_hash_key" "$(openssl rand -hex 64)")
-CORE_LOGIN_BLOCK_KEY=$(createFileIfNotExists "${CREDS_DIR}/core_login_block_key" "$(openssl rand -hex 32)")
-CORE_APP_HASH_KEY=$(createFileIfNotExists "${CREDS_DIR}/core_app_hash_key" "$(openssl rand -hex 64)")
-CORE_APP_BLOCK_KEY=$(createFileIfNotExists "${CREDS_DIR}/core_app_block_key" "$(openssl rand -hex 32)")
+OAUTH_NRC_CLIENT_SECRET=$(createFileIfNotExists "${CREDS_DIR}/nrc_idp_client_secret" "openssl rand -hex 32")
+OAUTH_NRC_REDIRECT_URI=$(createFileIfNotExists "${CREDS_DIR}/nrc_idp_redirect_uri" "echo -n http://localhost:9002/oidc/callback")
+OAUTH_NRC_ISSUER=$(createFileIfNotExists "${CREDS_DIR}/nrc_idp_issuer" "echo -n http://localhost:9005")
+CORE_ADMIN_HASH_KEY=$(createFileIfNotExists "${CREDS_DIR}/core_admin_hash_key" "openssl rand -hex 64")
+CORE_ADMIN_BLOCK_KEY=$(createFileIfNotExists "${CREDS_DIR}/core_admin_block_key" "openssl rand -hex 32")
+CORE_LOGIN_HASH_KEY=$(createFileIfNotExists "${CREDS_DIR}/core_login_hash_key" "openssl rand -hex 64")
+CORE_LOGIN_BLOCK_KEY=$(createFileIfNotExists "${CREDS_DIR}/core_login_block_key" "openssl rand -hex 32")
+CORE_APP_HASH_KEY=$(createFileIfNotExists "${CREDS_DIR}/core_app_hash_key" "openssl rand -hex 64")
+CORE_APP_BLOCK_KEY=$(createFileIfNotExists "${CREDS_DIR}/core_app_block_key" "openssl rand -hex 32")
+
+# TLS
+createFileIfNotExists "${CREDS_DIR}/ca_key" "openssl genrsa 2048"
+createFileIfNotExists "${CREDS_DIR}/ca_csr" "openssl req -new -key ${CREDS_DIR}/ca_key -subj '/C=DE/ST=Berlin/L=Berlin/O=NRC/CN=core.dev'"
+createFileIfNotExists "${CREDS_DIR}/ca_cert" "openssl x509 -in ${CREDS_DIR}/ca_csr -req -signkey ${CREDS_DIR}/ca_key -days 365"
+
+function createCert() {
+  local NAME
+  local DOMAIN
+  local SSL_CONF
+  NAME=$1
+  DOMAIN=$2
+  SSL_CONF="${CREDS_DIR}/${NAME}_ssl.conf"
+  if [ ! -f "${SSL_CONF}" ]; then
+    cat <<EOF > "${SSL_CONF}"
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = localhost
+DNS.2 = ${DOMAIN}
+IP.1 = 127.0.0.1
+EOF
+  fi
+  createFileIfNotExists "${CREDS_DIR}/${NAME}_key" "openssl genrsa 2048"
+  createFileIfNotExists "${CREDS_DIR}/${NAME}_csr" "openssl req -new -key ${CREDS_DIR}/${NAME}_key -subj '/C=DE/ST=Berlin/L=Berlin/O=NRC/CN=${DOMAIN}'"
+  createFileIfNotExists "${CREDS_DIR}/${NAME}_cert" "openssl x509 -req -in ${CREDS_DIR}/${NAME}_csr -CA ${CREDS_DIR}/ca_cert -CAkey ${CREDS_DIR}/ca_key -CAcreateserial -CAserial ${CREDS_DIR}/${NAME}_serial -days 1825 -sha256 -extfile ${SSL_CONF}"
+}
+
+createCert core_admin_api core-admin-api.dev
+createCert core_admin_frontend core-admin-frontend.dev
+createCert core_app_api core-app-api.dev
+createCert core_app_frontend core-app-frontend.dev
+createCert core_login core-login.dev
+createCert hydra hydra.dev
+createCert hydra_admin hydra-admin.dev
 
 echo ">> Creating Simple-OIDC Clients"
 

@@ -50,10 +50,13 @@ services:
     volumes:
       - ./hydra.yaml:/var/run/config.yaml:ro
       - ./hydra.custom.yaml:/var/run/config.custom.yaml:ro
+      - ./../creds/hydra_cert:/var/run/tls/public/tls.cert:ro
+      - ./../creds/hydra_key:/var/run/tls/public/tls.key:ro
+      - ./../creds/hydra_admin_cert:/var/run/tls/admin/tls.cert:ro
+      - ./../creds/hydra_admin_key:/var/run/tls/admin/tls.key:ro
     command:
       - serve
       - all
-      - --dangerous-force-http
       - --config=/var/run/config.yaml,/var/run/config.custom.yaml
     restart: on-failure
 

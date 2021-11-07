@@ -1,5 +1,10 @@
 serve:
   public:
+    tls:
+      cert:
+        path: /var/run/tls/public/tls.cert
+      key:
+        path: /var/run/tls/public/tls.key
     cors:
       enabled: true
       debug: true
@@ -17,10 +22,16 @@ serve:
         - Content-Type
       exposed_headers:
         - Content-Type
+  admin:
+    tls:
+      cert:
+        path: /var/run/tls/admin/tls.cert
+      key:
+        path: /var/run/tls/admin/tls.key
 urls:
   self:
-    public: http://localhost:4444
-    issuer: http://localhost:4444
+    public: https://localhost:4444
+    issuer: https://localhost:4444
   consent: http://localhost:9002/consent
   login: http://localhost:9002/login
   logout: http://localhost:9002/logout

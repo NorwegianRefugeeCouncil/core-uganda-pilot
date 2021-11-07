@@ -28,8 +28,8 @@ export const SessionRenewer: FC = props => {
         const timeout = setInterval(() => {
             const expiry = new Date(session.expiry)
             const now = new Date()
-            const expiresInSeconds = (expiry.getTime() - now.getTime()) / 1000
-            const renewalInSeconds = expiresInSeconds - 150
+            const expiresInSeconds = Math.round((expiry.getTime() - now.getTime()) / 1000)
+            const renewalInSeconds = expiresInSeconds - 60
             console.log("session renews in :", renewalInSeconds)
             if (renewalInSeconds < 0) {
                 window.location.href = `${apiClient.address}/oidc/renew?redirect_uri=${window.location.href}`
