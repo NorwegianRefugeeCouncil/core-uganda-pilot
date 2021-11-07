@@ -4,16 +4,22 @@ serve:
   admin:
     host: "127.0.0.1"
     port: "9001"
+    tls:
+      enabled: true
+      cert:
+        path: creds/core/admin_api/admin_api_tls.cert
+      key:
+        path: creds/core/admin_api/admin_api_tls.key
     urls:
-      self: "http://localhost:9001"
+      self: "https://localhost:9001"
     oidc:
-      redirect_uri: http://localhost:3001
+      redirect_uri: https://localhost:3001
       scopes:
         - openid
         - profile
         - email
     cors:
-      allowed_origins: [ "http://localhost:3001" ]
+      allowed_origins: [ "https://localhost:3001" ]
       allow_credentials: true
       allowed_headers:
         - Authorization
@@ -37,10 +43,16 @@ serve:
   public:
     host: "127.0.0.1"
     port: "9000"
+    tls:
+      enabled: true
+      cert:
+        path: creds/core/app_api/app_api_tls.cert
+      key:
+        path: creds/core/app_api/app_api_tls.key
     urls:
-      self: http://localhost:9000
+      self: https://localhost:9000
     oidc:
-      redirect_uri: http://localhost:3000
+      redirect_uri: https://localhost:3000
       scopes:
         - openid
         - profile
@@ -51,7 +63,7 @@ serve:
         max_idle_connections: 10
         max_length: 65536
     cors:
-      allowed_origins: [ "http://localhost:3000" ]
+      allowed_origins: [ "https://localhost:3000" ]
       allow_credentials: true
       allowed_headers:
         - Authorization
@@ -70,10 +82,21 @@ serve:
   login:
     host: "127.0.0.1"
     port: "9002"
+    tls:
+      enabled: true
+      cert:
+        path: creds/core/login/login_tls.cert
+      key:
+        path: creds/core/login/login_tls.key
     urls:
-      self: http://localhost:9002
+      self: https://localhost:9002
     cache:
       redis:
         address: localhost:6379
         max_idle_connections: 10
         max_length: 65536
+hydra:
+  admin:
+    host: localhost:4445
+    schemes:
+      - https

@@ -32,9 +32,9 @@ urls:
   self:
     public: https://localhost:4444
     issuer: https://localhost:4444
-  consent: http://localhost:9002/consent
-  login: http://localhost:9002/login
-  logout: http://localhost:9002/logout
+  consent: https://localhost:9002/consent
+  login: https://localhost:9002/login
+  logout: https://localhost:9002/logout
 log:
   leak_sensitive_values: true
   level: trace

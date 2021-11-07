@@ -13,7 +13,6 @@ import (
 	authn2 "github.com/nrc-no/core/pkg/server/handlers/authn"
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/store"
-	"github.com/ory/hydra-client-go/client"
 	"github.com/ory/hydra-client-go/client/admin"
 	"go.uber.org/zap"
 	"golang.org/x/oauth2"
@@ -21,16 +20,18 @@ import (
 
 type Server struct {
 	*generic.Server
-	options    Options
-	hydraAdmin admin.ClientService
+	options Options
 }
 
 type Options struct {
 	options.ServerOptions
 	StoreFactory store.Factory
+	HydraAdmin   admin.ClientService
 }
 
 func NewServer(options Options) (*Server, error) {
+
+	hydraAdmin := options.HydraAdmin
 
 	genericServer, err := generic.NewGenericServer(options.ServerOptions, "admin")
 	if err != nil {
@@ -39,7 +40,7 @@ func NewServer(options Options) (*Server, error) {
 
 	container := genericServer.Container
 
-	clientsHandler, err := clients.NewHandler()
+	clientsHandler, err := clients.NewHandler(hydraAdmin)
 	if err != nil {
 		return nil, err
 	}
@@ -57,16 +58,9 @@ func NewServer(options Options) (*Server, error) {
 	idpHandler := identityprovider.NewHandler(idpStore)
 	container.Add(idpHandler.WebService())
 
-	hydraAdmin := client.NewHTTPClientWithConfig(nil, &client.TransportConfig{
-		Host:     "localhost:4445",
-		BasePath: "",
-		Schemes:  []string{"http"},
-	}).Admin
-
 	s := &Server{
-		Server:     genericServer,
-		options:    options,
-		hydraAdmin: hydraAdmin,
+		Server:  genericServer,
+		options: options,
 	}
 
 	return s, nil

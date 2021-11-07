@@ -7,12 +7,17 @@ services:
     volumes:
       - ../tools/local-oidc-provider/package.json:/app/package.json:ro
       - ../tools/local-oidc-provider/index.js:/app/index.js:ro
-      - ./oidc.config.json:/config.json:ro
+      - ../creds/oidc/config.json:/var/run/config.json:ro
+      - ../creds/oidc/oidc_tls.cert:/var/run/tls.cert:ro
+      - ../creds/oidc/oidc_tls.key:/var/run/tls.key:ro
     ports:
       - 9005:9005
     environment:
       PORT: "9005"
-      CONFIG_FILE: /config.json
+      CONFIG_FILE: /var/run/config.json
+      TLS_KEY: /var/run/tls.key
+      TLS_CERT: /var/run/tls.cert
+      ISSUER: https://localhost:9005
     command:
       - bash
       - -c
@@ -22,7 +27,7 @@ services:
     image: 'bitnami/redis:latest'
     container_name: "core-redis"
     env_file:
-      - redis.env
+      - ../creds/redis/env
     ports:
       - "6379:6379"
     restart: on-failure
@@ -32,7 +37,7 @@ services:
     container_name: "core-hydra-migrate"
     volumes:
       - ./hydra.yaml:/var/run/config.yaml:ro
-      - ./hydra.custom.yaml:/var/run/config.custom.yaml:ro
+      - ../creds/hydra/config.yaml:/var/run/config.custom.yaml:ro
     command:
       - migrate
       - sql
@@ -49,11 +54,11 @@ services:
       - "4445:4445"
     volumes:
       - ./hydra.yaml:/var/run/config.yaml:ro
-      - ./hydra.custom.yaml:/var/run/config.custom.yaml:ro
-      - ./../creds/hydra_cert:/var/run/tls/public/tls.cert:ro
-      - ./../creds/hydra_key:/var/run/tls/public/tls.key:ro
-      - ./../creds/hydra_admin_cert:/var/run/tls/admin/tls.cert:ro
-      - ./../creds/hydra_admin_key:/var/run/tls/admin/tls.key:ro
+      - ../creds/hydra/config.yaml:/var/run/config.custom.yaml:ro
+      - ../creds/hydra/hydra_public_tls.cert:/var/run/tls/public/tls.cert:ro
+      - ../creds/hydra/hydra_public_tls.key:/var/run/tls/public/tls.key:ro
+      - ../creds/hydra/hydra_admin_tls.cert:/var/run/tls/admin/tls.cert:ro
+      - ../creds/hydra/hydra_admin_tls.key:/var/run/tls/admin/tls.key:ro
     command:
       - serve
       - all
@@ -62,11 +67,11 @@ services:
 
   db:
     image: postgres:9.6
-    container_name: "core_db"
+    container_name: db
     ports:
       - "5433:5432"
     env_file:
-      - postgres.env
+      - ../creds/postgres/env
     volumes:
-      - ./webapp.postgres-init.sh:/docker-entrypoint-initdb.d/postgres-init.sh
+      - ../creds/postgres/init.sh:/docker-entrypoint-initdb.d/postgres-init.sh
     restart: on-failure

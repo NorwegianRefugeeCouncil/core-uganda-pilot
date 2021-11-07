@@ -6,14 +6,11 @@ import (
 	"github.com/nrc-no/core/pkg/server/login/authrequest"
 	loginstore "github.com/nrc-no/core/pkg/server/login/store"
 	"github.com/nrc-no/core/pkg/store"
-	"github.com/ory/hydra-client-go/client"
 	"github.com/ory/hydra-client-go/client/admin"
-	"net/url"
 )
 
 type Handler struct {
-	hydraAdmin admin.ClientService
-	ws         *restful.WebService
+	ws *restful.WebService
 }
 
 func NewHandler(
@@ -22,14 +19,9 @@ func NewHandler(
 	idpStore store.IdentityProviderStore,
 	loginStore loginstore.Interface,
 	selfURL string,
+	hydraAdmin admin.ClientService,
 ) (*Handler, error) {
 	h := &Handler{}
-	adminURL, err := url.Parse("http://localhost:4445")
-	if err != nil {
-		return nil, err
-	}
-	hydraAdmin := client.NewHTTPClientWithConfig(nil, &client.TransportConfig{Schemes: []string{adminURL.Scheme}, Host: adminURL.Host, BasePath: adminURL.Path}).Admin
-	h.hydraAdmin = hydraAdmin
 
 	ws := new(restful.WebService)
 

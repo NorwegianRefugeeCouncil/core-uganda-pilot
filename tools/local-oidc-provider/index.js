@@ -1,8 +1,14 @@
+const https = require("https")
+const fs = require("fs");
+const express = require('express');
 const Provider = require('oidc-provider');
+
+
 let PORT = 3000
 if (process.env.PORT) {
     PORT = process.env.PORT
 }
+
 let issuer = `http://localhost:${PORT}`
 if (process.env.ISSUER) {
     issuer = process.env.ISSUER
@@ -16,7 +22,7 @@ if (process.env.CONFIG_FILE) {
 config.pkce = {}
 config.pkce.required = () => false
 
-config.renderError = async(ctx, out, error) => {
+config.renderError = async (ctx, out, error) => {
     ctx.type = 'html';
     ctx.body = `<!DOCTYPE html>
     <head>
@@ -36,8 +42,13 @@ config.renderError = async(ctx, out, error) => {
 
 console.log("config", config)
 
-const oidc = new Provider(issuer, config);
-oidc.listen(PORT, () => {
-    console.log(`issuer ${issuer}`)
-    console.log(`port ${PORT}`)
-})
+const provider = new Provider(issuer, config);
+
+const app = express();
+app.use(provider.callback())
+
+const server = https.createServer({
+    key: fs.readFileSync(process.env.TLS_KEY),
+    cert: fs.readFileSync(process.env.TLS_CERT),
+}, app)
+server.listen(PORT)

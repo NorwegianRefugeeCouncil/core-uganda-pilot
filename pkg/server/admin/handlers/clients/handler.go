@@ -4,10 +4,8 @@ import (
 	"github.com/emicklei/go-restful/v3"
 	"github.com/nrc-no/core/pkg/api/mimetypes"
 	"github.com/nrc-no/core/pkg/api/types"
-	"github.com/ory/hydra-client-go/client"
 	"github.com/ory/hydra-client-go/client/admin"
 	"net/http"
-	"net/url"
 )
 
 type Handler struct {
@@ -15,14 +13,8 @@ type Handler struct {
 	ws         *restful.WebService
 }
 
-func NewHandler() (*Handler, error) {
+func NewHandler(hydraAdmin admin.ClientService) (*Handler, error) {
 	h := &Handler{}
-	adminURL, err := url.Parse("http://localhost:4445")
-	if err != nil {
-		return nil, err
-	}
-	hydraAdmin := client.NewHTTPClientWithConfig(nil, &client.TransportConfig{Schemes: []string{adminURL.Scheme}, Host: adminURL.Host, BasePath: adminURL.Path}).Admin
-	h.hydraAdmin = hydraAdmin
 
 	ws := new(restful.WebService).Path("/clients")
 

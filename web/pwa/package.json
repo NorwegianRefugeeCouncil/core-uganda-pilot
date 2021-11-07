@@ -33,7 +33,7 @@
     "uuid": "^8.3.2"
   },
   "scripts": {
-    "start": "cp node_modules/sql.js/dist/sql-wasm.wasm public/sql-wasm.wasm && react-scripts start",
+    "start": "cp node_modules/sql.js/dist/sql-wasm.wasm public/sql-wasm.wasm && HTTPS=true SSL_CRT_FILE=../../creds/core/app_frontend/app_frontend_tls.cert SSL_KEY_FILE=../../creds/core/app_frontend/app_frontend_tls.key react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

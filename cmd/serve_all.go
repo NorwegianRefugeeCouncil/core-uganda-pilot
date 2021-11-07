@@ -23,6 +23,7 @@ var serveAllCmd = &cobra.Command{
 			admin.Options{
 				ServerOptions: coreOptions.Serve.Admin,
 				StoreFactory:  factory,
+				HydraAdmin:    coreOptions.Hydra.Admin.AdminClient(),
 			}); err != nil {
 			return err
 		}
@@ -30,6 +31,7 @@ var serveAllCmd = &cobra.Command{
 			login.Options{
 				ServerOptions: coreOptions.Serve.Login,
 				StoreFactory:  factory,
+				HydraAdmin:    coreOptions.Hydra.Admin.AdminClient(),
 			}); err != nil {
 			return err
 		}

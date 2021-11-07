@@ -30,7 +30,7 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "PORT=3001 react-scripts start",
+    "start": "PORT=3001 HTTPS=true SSL_CRT_FILE=../../creds/core/admin_frontend/admin_frontend_tls.cert SSL_KEY_FILE=../../creds/core/admin_frontend/admin_frontend_tls.key react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

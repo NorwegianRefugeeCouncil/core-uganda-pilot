@@ -158,7 +158,7 @@ export type RequestOptions = {
 
 
 export class client implements Client {
-    public address = "http://localhost:9001"
+    public address = "https://localhost:9001"
 
     public constructor(private clientProps?: clientProps) {
         if (clientProps?.address) {

@@ -23,6 +23,7 @@ import (
 )
 
 type Server struct {
+	options      options.ServerOptions
 	name         string
 	address      string
 	listener     net.Listener
@@ -38,7 +39,8 @@ func NewGenericServer(options options.ServerOptions, name string) (*Server, erro
 	logger := logrus.WithField("server_name", name)
 
 	srv := &Server{
-		name: name,
+		name:    name,
+		options: options,
 	}
 
 	if len(options.Secrets.Hash) != len(options.Secrets.Block) {
@@ -196,12 +198,18 @@ func (g Server) Start(ctx context.Context) {
 
 	l := logging.NewLogger(ctx).
 		With(zap.String("address", g.listener.Addr().String())).
-		With(zap.Bool("tls", false))
+		With(zap.Bool("tls", g.options.TLS.Enabled))
 
 	l.Info("starting server")
 
 	go func() {
-		if err := http.Serve(g.listener, g.handler); err != nil {
+		var err error
+		if g.options.TLS.Enabled {
+			err = http.ServeTLS(g.listener, g.handler, g.options.TLS.Cert.Path, g.options.TLS.Key.Path)
+		} else {
+			err = http.Serve(g.listener, g.handler)
+		}
+		if err != nil {
 			l.With(zap.Error(err)).Info("server stopped")
 			if !errors.Is(err, net.ErrClosed) {
 				panic(err)

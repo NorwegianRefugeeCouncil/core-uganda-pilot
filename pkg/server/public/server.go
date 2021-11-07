@@ -14,16 +14,13 @@ import (
 	"github.com/nrc-no/core/pkg/server/public/handlers/form"
 	"github.com/nrc-no/core/pkg/server/public/handlers/record"
 	store2 "github.com/nrc-no/core/pkg/store"
-	"github.com/ory/hydra-client-go/client"
-	"github.com/ory/hydra-client-go/client/admin"
 	"go.uber.org/zap"
 	"golang.org/x/oauth2"
 )
 
 type Server struct {
 	*generic.Server
-	options    Options
-	HydraAdmin admin.ClientService
+	options Options
 }
 
 type Options struct {
@@ -56,16 +53,9 @@ func NewServer(options Options) (*Server, error) {
 	recordHandler := record.NewHandler(recordStore)
 	container.Add(recordHandler.WebService())
 
-	hydraAdmin := client.NewHTTPClientWithConfig(nil, &client.TransportConfig{
-		Host:     "localhost:4445",
-		BasePath: "",
-		Schemes:  []string{"http"},
-	}).Admin
-
 	s := &Server{
-		options:    options,
-		Server:     genericServer,
-		HydraAdmin: hydraAdmin,
+		options: options,
+		Server:  genericServer,
 	}
 
 	return s, nil

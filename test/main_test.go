@@ -52,7 +52,7 @@ func (s *Suite) SetupSuite() {
 		return
 	}
 
-	oidcProvider, err := oidc.NewProvider(ctx, "http://localhost:4444/")
+	oidcProvider, err := oidc.NewProvider(ctx, "https://localhost:4444/")
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 		return
