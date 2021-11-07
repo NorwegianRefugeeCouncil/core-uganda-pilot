@@ -6,4 +6,4 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 # down would fail because env_file not found
 (cd $SCRIPT_DIR && ./init_secrets.sh)
 
-docker-compose -f deployments/webapp.docker-compose.yaml down --remove-orphans
+COMPOSE_PROJECT_NAME=core docker-compose -f deployments/webapp.docker-compose.yaml down --remove-orphans

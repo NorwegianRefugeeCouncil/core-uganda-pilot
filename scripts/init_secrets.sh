@@ -274,6 +274,8 @@ create_user_and_database "${POSTGRES_CORE_DB}" "${POSTGRES_CORE_USERNAME}" "${PO
 
 EOF
 
+chmod +x "${POSTGRES_INIT_FILE}"
+
 echo ">> Creating Core Config File"
 
 touch "${CORE_CONFIG_FILE}"

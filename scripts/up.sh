@@ -6,4 +6,4 @@ set -e
 
 "${SCRIPT_DIR}/init_secrets.sh"
 
-docker-compose -f deployments/webapp.docker-compose.yaml up --build -d
+COMPOSE_PROJECT_NAME=core docker-compose -f deployments/webapp.docker-compose.yaml up --build -d

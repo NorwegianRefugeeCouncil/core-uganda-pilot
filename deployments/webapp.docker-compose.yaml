@@ -2,7 +2,7 @@ services:
 
   oidc:
     image: node:16
-    container_name: oidc
+    container_name: core_oidc
     hostname: oidc
     volumes:
       - ../tools/local-oidc-provider/package.json:/app/package.json:ro
@@ -25,7 +25,8 @@ services:
 
   redis:
     image: 'bitnami/redis:latest'
-    container_name: "core-redis"
+    container_name: "core_redis"
+    hostname: redis
     env_file:
       - ../creds/redis/env
     ports:
@@ -34,7 +35,7 @@ services:
 
   hydra_migrate:
     image: oryd/hydra:v1.10.2
-    container_name: "core-hydra-migrate"
+    container_name: "core_hydra_migrate"
     volumes:
       - ./hydra.yaml:/var/run/config.yaml:ro
       - ../creds/hydra/config.yaml:/var/run/config.custom.yaml:ro
@@ -48,7 +49,8 @@ services:
 
   hydra:
     image: oryd/hydra:v1.10.2
-    container_name: "core-hydra"
+    container_name: "core_hydra"
+    hostname: hydra
     ports:
       - "4444:4444"
       - "4445:4445"
@@ -67,7 +69,8 @@ services:
 
   db:
     image: postgres:9.6
-    container_name: db
+    container_name: core_db
+    hostname: db
     ports:
       - "5433:5432"
     env_file:
