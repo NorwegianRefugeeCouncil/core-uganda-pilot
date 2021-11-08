@@ -3,6 +3,7 @@ package authn
 import (
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
+	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/constants"
 	"github.com/nrc-no/core/pkg/logging"
 	"go.uber.org/zap"
@@ -94,12 +95,12 @@ func getSession(
 		if cookieErr, ok := err.(securecookie.MultiError); ok {
 			if !cookieErr.IsDecode() {
 				l.Error("failed to retrieve user session", zap.Error(err))
-				return nil, cookieErr
+				return nil, meta.NewInternalServerError(err)
 			}
 		}
 		if err := userSession.Save(req, w); err != nil {
 			l.Error("failed to clear user session", zap.Error(err))
-			return nil, err
+			return nil, meta.NewInternalServerError(err)
 		}
 	}
 

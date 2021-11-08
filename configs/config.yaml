@@ -40,7 +40,7 @@ serve:
       # Default redirect after oauth flow
       post_login_default_redirect_uri: https://core-admin-frontend.dev:3001
       # Authorized redirect URIs after oauth flow
-      allowed_post_login_redirect_uris:
+      post_login_allowed_redirect_uris:
         - https://core-admin-frontend.dev:3001
         - https://core-admin-frontend.dev:3001/session-renew
 
@@ -114,7 +114,7 @@ serve:
       # Default redirect after oauth flow
       post_login_default_redirect_uri: https://core-app-frontend.dev:3000
       # Authorized redirect URIs after oauth flow
-      allowed_post_login_redirect_uris:
+      post_login_allowed_redirect_uris:
         - https://core-app-frontend.dev:3000
         - https://core-app-frontend.dev:3000/session-renew
 

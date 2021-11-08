@@ -19,7 +19,9 @@ type ExposedSession struct {
 	Username         string    `json:"username,omitempty"`
 }
 
-func (h *Handler) Session(sessionKey string) http.HandlerFunc {
+func (h *Handler) Session(
+	sessionKey string,
+) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 
 		ctx := req.Context()
@@ -64,7 +66,9 @@ func (h *Handler) Session(sessionKey string) http.HandlerFunc {
 	}
 }
 
-func (h *Handler) RestfulSession(sessionKey string) restful.RouteFunction {
+func (h *Handler) RestfulSession(
+	sessionKey string,
+) restful.RouteFunction {
 	return func(req *restful.Request, res *restful.Response) {
 		h.Session(sessionKey)(res.ResponseWriter, req.Request)
 	}

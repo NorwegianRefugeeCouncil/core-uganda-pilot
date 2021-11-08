@@ -4,6 +4,7 @@ import (
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/emicklei/go-restful/v3"
 	"github.com/gorilla/sessions"
+	"github.com/nrc-no/core/pkg/utils/sets"
 	"golang.org/x/oauth2"
 )
 
@@ -17,6 +18,8 @@ type Handler struct {
 func NewHandler(
 	sessionKey string,
 	redirectURL string,
+	defaultPostLoginRedirectURI string,
+	allowedPostLoginRedirectURIs sets.String,
 	sessionStore sessions.Store,
 	oauth2Config *oauth2.Config,
 	tokenVerifier *oidc.IDTokenVerifier,
@@ -32,15 +35,16 @@ func NewHandler(
 
 	ws.Route(ws.GET("/login").
 		Doc("initiates login flow").
-		To(h.RestfulLogin(sessionKey, false)))
+		To(h.RestfulLogin(sessionKey, false, defaultPostLoginRedirectURI, allowedPostLoginRedirectURIs)).
+		Param(ws.QueryParameter("redirect_uri", "redirection uri after successful authentication").Required(false)))
 
 	ws.Route(ws.GET("/renew").
 		Doc("renews session").
-		To(h.RestfulLogin(sessionKey, true)))
+		To(h.RestfulLogin(sessionKey, true, defaultPostLoginRedirectURI, allowedPostLoginRedirectURIs)).
+		Param(ws.QueryParameter("redirect_uri", "redirection uri after successful authentication").Required(false)))
 
 	ws.Route(ws.GET("/callback").To(h.RestfulCallback(sessionKey, redirectURL)).
-		Doc("oauth2 callback").
-		Param(ws.QueryParameter("redirect_uri", "redirection uri after successful authentication").Required(false)))
+		Doc("oauth2 callback"))
 
 	ws.Route(ws.GET("/session").To(h.RestfulSession(sessionKey)).
 		Doc("gets session").

@@ -14,6 +14,7 @@ import (
 
 func (h *Handler) Update(recordId string) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
+
 		ctx := req.Context()
 		l := logging.NewLogger(ctx).With(zap.String("record_id", recordId))
 

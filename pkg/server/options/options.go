@@ -42,11 +42,14 @@ type URLOptions struct {
 }
 
 type OIDCOptions struct {
-	Issuer       string   `mapstructure:"issuer"`
-	ClientID     string   `mapstructure:"client_id"`
-	ClientSecret string   `mapstructure:"client_secret"`
-	Scopes       []string `mapstructure:"scopes"`
-	RedirectURI  string   `mapstructure:"redirect_uri"`
+	Disable                      bool     `mapstructure:"disable"`
+	Issuer                       string   `mapstructure:"issuer"`
+	ClientID                     string   `mapstructure:"client_id"`
+	ClientSecret                 string   `mapstructure:"client_secret"`
+	Scopes                       []string `mapstructure:"scopes"`
+	RedirectURI                  string   `mapstructure:"redirect_uri"`
+	PostLoginDefaultRedirectURI  string   `mapstructure:"post_login_default_redirect_uri"`
+	PostLoginAllowedRedirectURIs []string `mapstructure:"post_login_allowed_redirect_uris"`
 }
 
 type ServerOptions struct {

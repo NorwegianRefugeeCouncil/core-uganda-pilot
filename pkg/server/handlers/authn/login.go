@@ -5,17 +5,27 @@ import (
 	"encoding/base64"
 	"errors"
 	"github.com/emicklei/go-restful/v3"
-	"github.com/gorilla/securecookie"
 	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/constants"
+	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/utils"
-	"github.com/sirupsen/logrus"
+	"github.com/nrc-no/core/pkg/utils/sets"
+	"go.uber.org/zap"
 	"golang.org/x/oauth2"
 	"net/http"
 )
 
-func (h *Handler) Login(sessionKey string, silent bool, redirectUri string) http.HandlerFunc {
+func (h *Handler) Login(
+	sessionKey string,
+	silent bool,
+	redirectUri string,
+	defaultRedirectUri string,
+	allowedRedirectUris sets.String,
+) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
+
+		ctx := req.Context()
+		l := logging.NewLogger(ctx)
 
 		clearSession := func() {
 			userSession, err := h.sessionStore.New(req, sessionKey)
@@ -25,35 +35,33 @@ func (h *Handler) Login(sessionKey string, silent bool, redirectUri string) http
 			_ = userSession.Save(req, w)
 		}
 
+		if len(redirectUri) == 0 {
+			redirectUri = defaultRedirectUri
+		}
+		if !allowedRedirectUris.Has(redirectUri) {
+			l.Warn("illegal redirect uri passed to login endpoint", zap.String("redirect_uri", redirectUri))
+			utils.ErrorResponse(w, meta.NewBadRequest("illegal redirect uri"))
+			return
+		}
+
 		state, err := createStateVariable()
 		if err != nil {
-			logrus.WithError(err).Errorf("failed ot create state variable: %s", err)
+			l.Error("failed to create state variable", zap.Error(err))
 			clearSession()
 			utils.ErrorResponse(w, meta.NewInternalServerError(errors.New("failed to create state variable")))
 			return
 		}
 
-		userSession, err := h.sessionStore.Get(req, sessionKey)
-		securecookie.MultiError{}.IsDecode()
+		userSession, err := getSession(w, req, h.sessionStore, sessionKey)
 		if err != nil {
-			if cookieErr, ok := err.(securecookie.MultiError); ok {
-				if !cookieErr.IsDecode() {
-					logrus.WithError(err).Errorf("failed to retrieve user session: %s", err)
-					clearSession()
-					return
-				}
-			}
-			if err := userSession.Save(req, w); err != nil {
-				logrus.WithError(err).Errorf("failed to clear user session: %s", err)
-				clearSession()
-				return
-			}
+			utils.ErrorResponse(w, err)
+			return
 		}
 
 		userSession.Values[constants.SessionState] = state
 		userSession.Values[constants.SessionDesiredURL] = redirectUri
 		if err := userSession.Save(req, w); err != nil {
-			logrus.WithError(err).Errorf("failed to save user session: %s", err)
+			l.Error("failed to save user session", zap.Error(err))
 			clearSession()
 			utils.ErrorResponse(w, meta.NewInternalServerError(errors.New("failed to save session")))
 			return
@@ -70,10 +78,15 @@ func (h *Handler) Login(sessionKey string, silent bool, redirectUri string) http
 	}
 }
 
-func (h *Handler) RestfulLogin(sessionKey string, silent bool) restful.RouteFunction {
+func (h *Handler) RestfulLogin(
+	sessionKey string,
+	silent bool,
+	defaultRedirectUri string,
+	allowedRedirectUris sets.String,
+) restful.RouteFunction {
 	return func(req *restful.Request, res *restful.Response) {
 		redirectUri := req.QueryParameter("redirect_uri")
-		h.Login(sessionKey, silent, redirectUri)(res.ResponseWriter, req.Request)
+		h.Login(sessionKey, silent, redirectUri, defaultRedirectUri, allowedRedirectUris)(res.ResponseWriter, req.Request)
 	}
 }
 

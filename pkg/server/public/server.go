@@ -7,13 +7,14 @@ import (
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/server/generic"
-	authn2 "github.com/nrc-no/core/pkg/server/handlers/authn"
+	"github.com/nrc-no/core/pkg/server/handlers/authn"
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/server/public/handlers/database"
 	"github.com/nrc-no/core/pkg/server/public/handlers/folder"
 	"github.com/nrc-no/core/pkg/server/public/handlers/form"
 	"github.com/nrc-no/core/pkg/server/public/handlers/record"
-	store2 "github.com/nrc-no/core/pkg/store"
+	"github.com/nrc-no/core/pkg/store"
+	"github.com/nrc-no/core/pkg/utils/sets"
 	"go.uber.org/zap"
 	"golang.org/x/oauth2"
 )
@@ -25,7 +26,7 @@ type Server struct {
 
 type Options struct {
 	options.ServerOptions
-	StoreFactory store2.Factory
+	StoreFactory store.Factory
 }
 
 func NewServer(options Options) (*Server, error) {
@@ -37,19 +38,19 @@ func NewServer(options Options) (*Server, error) {
 
 	container := genericServer.Container
 
-	databaseStore := store2.NewDatabaseStore(options.StoreFactory)
+	databaseStore := store.NewDatabaseStore(options.StoreFactory)
 	databaseHandler := database.NewHandler(databaseStore)
 	container.Add(databaseHandler.WebService())
 
-	folderStore := store2.NewFolderStore(options.StoreFactory)
+	folderStore := store.NewFolderStore(options.StoreFactory)
 	folderHandler := folder.NewHandler(folderStore)
 	container.Add(folderHandler.WebService())
 
-	formStore := store2.NewFormStore(options.StoreFactory)
+	formStore := store.NewFormStore(options.StoreFactory)
 	formHandler := form.NewHandler(formStore)
 	container.Add(formHandler.WebService())
 
-	recordStore := store2.NewRecordStore(options.StoreFactory, formStore)
+	recordStore := store.NewRecordStore(options.StoreFactory, formStore)
 	recordHandler := record.NewHandler(recordStore)
 	container.Add(recordHandler.WebService())
 
@@ -97,15 +98,17 @@ func (s *Server) Start(ctx context.Context) {
 		Now:                  nil,
 	})
 
-	authnHandler := authn2.NewHandler(
+	s.Container.Add(authn.NewHandler(
 		"core-app-session",
 		s.options.Oidc.RedirectURI,
+		s.options.Oidc.PostLoginDefaultRedirectURI,
+		sets.NewString(s.options.Oidc.PostLoginAllowedRedirectURIs...),
 		s.Server.SessionStore(),
 		oauth2Config,
 		verifier,
-	)
+	).WebService())
 
-	s.Container.Filter(authn2.RestfulAuthnMiddleware(
+	s.Container.Filter(authn.RestfulAuthnMiddleware(
 		s.SessionStore(),
 		oauth2Config,
 		verifier,
@@ -113,8 +116,6 @@ func (s *Server) Start(ctx context.Context) {
 		"core-app-session",
 		verifier,
 	))
-
-	s.Container.Add(authnHandler.WebService())
 
 	s.Server.Start(ctx)
 }

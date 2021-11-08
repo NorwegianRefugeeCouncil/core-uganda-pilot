@@ -13,6 +13,7 @@ import (
 	authn2 "github.com/nrc-no/core/pkg/server/handlers/authn"
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/store"
+	"github.com/nrc-no/core/pkg/utils/sets"
 	"github.com/ory/hydra-client-go/client/admin"
 	"go.uber.org/zap"
 	"golang.org/x/oauth2"
@@ -105,6 +106,8 @@ func (s *Server) Start(ctx context.Context) {
 	authnHandler := authn2.NewHandler(
 		"admin-session",
 		s.options.Oidc.RedirectURI,
+		s.options.Oidc.PostLoginDefaultRedirectURI,
+		sets.NewString(s.options.Oidc.PostLoginAllowedRedirectURIs...),
 		s.Server.SessionStore(),
 		oauth2Config,
 		verifier,
