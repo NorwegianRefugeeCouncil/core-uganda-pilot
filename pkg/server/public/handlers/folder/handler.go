@@ -3,6 +3,7 @@ package folder
 import (
 	"fmt"
 	"github.com/emicklei/go-restful/v3"
+	"github.com/nrc-no/core/pkg/api/mimetypes"
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/constants"
 	"github.com/nrc-no/core/pkg/store"
@@ -29,12 +30,13 @@ func NewHandler(store store.FolderStore) *Handler {
 			DataType("string").
 			DataFormat("uuid").
 			Required(true)).
-		Writes(nil).
 		Returns(http.StatusNoContent, "OK", nil))
 
 	ws.Route(ws.POST("/").To(h.RestfulCreate).
 		Doc("create a folder").
 		Operation("createFolder").
+		Consumes(mimetypes.ApplicationJson).
+		Produces(mimetypes.ApplicationJson).
 		Reads(types.Folder{}).
 		Writes(types.Folder{}).
 		Returns(http.StatusOK, "OK", types.Folder{}))
@@ -42,6 +44,7 @@ func NewHandler(store store.FolderStore) *Handler {
 	ws.Route(ws.GET("/").To(h.RestfulList).
 		Doc("list all folders").
 		Operation("listFolders").
+		Produces(mimetypes.ApplicationJson).
 		Writes(types.FolderList{}).
 		Returns(http.StatusOK, "OK", types.FolderList{}))
 

@@ -5,39 +5,42 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"github.com/boj/redistore"
 	restfulspec "github.com/emicklei/go-restful-openapi/v2"
 	"github.com/emicklei/go-restful/v3"
+	"github.com/gomodule/redigo/redis"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/sessions"
+	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/rs/cors"
 	"github.com/sirupsen/logrus"
+	"go.uber.org/zap"
 	"net"
 	"net/http"
-	"os"
 	"reflect"
+	"time"
 )
 
 type Server struct {
+	options      options.ServerOptions
 	name         string
 	address      string
 	listener     net.Listener
 	Container    *restful.Container
 	handler      http.Handler
 	sessionStore sessions.Store
-	logger       *logrus.Logger
 }
 
 type Middleware func(next http.Handler) http.Handler
 
 func NewGenericServer(options options.ServerOptions, name string) (*Server, error) {
 
-	logger := logrus.StandardLogger()
-	logger.SetFormatter(&logrus.JSONFormatter{})
+	logger := logrus.WithField("server_name", name)
 
 	srv := &Server{
-		name:   name,
-		logger: logger,
+		name:    name,
+		options: options,
 	}
 
 	if len(options.Secrets.Hash) != len(options.Secrets.Block) {
@@ -60,7 +63,54 @@ func NewGenericServer(options options.ServerOptions, name string) (*Server, erro
 		keyPairs = append(keyPairs, blockBytes[0:32])
 	}
 
-	srv.sessionStore = sessions.NewCookieStore(keyPairs...)
+	if options.Cache.Redis != nil {
+		pool := &redis.Pool{
+			MaxActive:   500,
+			MaxIdle:     500,
+			IdleTimeout: 5 * time.Second,
+			TestOnBorrow: func(c redis.Conn, t time.Time) error {
+				_, err := c.Do("PING")
+				if err != nil {
+					logger.WithError(err).Errorf("failed to get connection")
+				}
+				return err
+			},
+			Dial: func() (redis.Conn, error) {
+				var redisOptions []redis.DialOption
+				if len(options.Cache.Redis.Password) > 0 {
+					redisOptions = append(redisOptions, redis.DialPassword(options.Cache.Redis.Password))
+				}
+				return redis.Dial("tcp", options.Cache.Redis.Address, redisOptions...)
+			},
+		}
+		conn := pool.Get()
+		defer conn.Close()
+
+		logger.Infof("testing redis connection")
+		_, err := conn.Do("PING")
+		if err != nil {
+			logger.WithError(err).Errorf("failed to test redis")
+			return nil, err
+		}
+
+		redisStore, err := redistore.NewRediStoreWithPool(pool, keyPairs...)
+		if err != nil {
+			logger.WithError(err).Errorf("failed to create redis store")
+			panic(err)
+
+		}
+		if options.Cache.Redis.MaxLength != 0 {
+			redisStore.SetMaxLength(options.Cache.Redis.MaxLength)
+		}
+		redisStore.Options.Secure = true
+		redisStore.Options.HttpOnly = true
+		redisStore.Options.SameSite = http.SameSiteNoneMode
+
+		srv.sessionStore = redisStore
+
+	} else {
+		srv.sessionStore = sessions.NewCookieStore(keyPairs...)
+	}
 
 	address := fmt.Sprintf("%s:%d", options.Host, options.Port)
 	srv.address = address
@@ -72,6 +122,7 @@ func NewGenericServer(options options.ServerOptions, name string) (*Server, erro
 	srv.listener = listener
 
 	container := restful.NewContainer()
+	container.Filter(logging.UseOperationLogging())
 	srv.Container = container
 
 	c := cors.New(cors.Options{
@@ -84,12 +135,30 @@ func NewGenericServer(options options.ServerOptions, name string) (*Server, erro
 		MaxAge:             options.Cors.MaxAge,
 		ExposedHeaders:     options.Cors.ExposedHeaders,
 	})
+	c.Log = &CorsLogger{}
 
 	middleware := chainMiddleware(
-		handlers.RecoveryHandler(),
-		handlers.CompressHandler,
-		withLogging(),
-		withCors(c),
+		func(next http.Handler) http.Handler {
+			return logging.UseRequestID(next)
+		},
+		func(next http.Handler) http.Handler {
+			return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+				req = req.WithContext(logging.WithServerName(req.Context(), name))
+				next.ServeHTTP(w, req)
+			})
+		},
+		func(next http.Handler) http.Handler {
+			return handlers.RecoveryHandler(handlers.PrintRecoveryStack(true))(next)
+		},
+		func(next http.Handler) http.Handler {
+			return handlers.CompressHandler(next)
+		},
+		func(next http.Handler) http.Handler {
+			return c.Handler(next)
+		},
+		func(next http.Handler) http.Handler {
+			return logging.UseRequestLogging(next)
+		},
 	)
 
 	handler := middleware(container)
@@ -99,17 +168,14 @@ func NewGenericServer(options options.ServerOptions, name string) (*Server, erro
 
 }
 
-func withLogging() func(next http.Handler) http.Handler {
-	return func(next http.Handler) http.Handler {
-		return handlers.LoggingHandler(os.Stdout, next)
-	}
+type CorsLogger struct {
 }
 
-func withCors(c *cors.Cors) func(next http.Handler) http.Handler {
-	return func(next http.Handler) http.Handler {
-		return c.Handler(next)
-	}
+func (c CorsLogger) Printf(s string, i ...interface{}) {
+	logging.NewLogger(context.TODO()).Debug(fmt.Sprintf(s, i...), zap.String("middleware", "cors"))
 }
+
+var _ cors.Logger = CorsLogger{}
 
 func (g Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	g.handler.ServeHTTP(w, req)
@@ -117,10 +183,6 @@ func (g Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 func (g Server) SessionStore() sessions.Store {
 	return g.sessionStore
-}
-
-func (g Server) Logger() *logrus.Logger {
-	return g.logger
 }
 
 func (g Server) Start(ctx context.Context) {
@@ -134,14 +196,21 @@ func (g Server) Start(ctx context.Context) {
 	}
 	g.Container.Add(restfulspec.NewOpenAPIService(config))
 
-	logrus.
-		WithField("server", g.name).
-		WithField("address", g.listener.Addr().String()).
-		WithField("tls", false).
-		Info("starting server")
+	l := logging.NewLogger(ctx).
+		With(zap.String("address", g.listener.Addr().String())).
+		With(zap.Bool("tls", g.options.TLS.Enabled))
+
+	l.Info("starting server")
 
 	go func() {
-		if err := http.Serve(g.listener, g.handler); err != nil {
+		var err error
+		if g.options.TLS.Enabled {
+			err = http.ServeTLS(g.listener, g.handler, g.options.TLS.Cert.Path, g.options.TLS.Key.Path)
+		} else {
+			err = http.Serve(g.listener, g.handler)
+		}
+		if err != nil {
+			l.With(zap.Error(err)).Info("server stopped")
 			if !errors.Is(err, net.ErrClosed) {
 				panic(err)
 			}

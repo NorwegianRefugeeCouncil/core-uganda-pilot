@@ -5,30 +5,18 @@ import App from './App';
 import {store} from './app/store';
 import {Provider} from 'react-redux';
 import * as serviceWorker from './serviceWorker';
-import {AuthProvider} from 'oidc-react';
 import * as log from "loglevel"
 import {SQLContextProvider} from "./app/db";
 
 log.setDefaultLevel(log.levels.TRACE)
 
-const oidcConfig = {
-    authority: 'http://localhost:4444', // okta domain
-    clientId: '93799402-a173-43ad-b003-64cbacc0dfe5',
-    redirectUri: 'http://localhost:3000'
-};
-
 ReactDOM.render(
     <React.StrictMode>
-        <AuthProvider
-            scope={"openid profile email"}
-            autoSignIn={false}
-            {...oidcConfig} >
-            <Provider store={store}>
-                <SQLContextProvider>
-                    <App/>
-                </SQLContextProvider>
-            </Provider>
-        </AuthProvider>
+        <Provider store={store}>
+            <SQLContextProvider>
+                <App/>
+            </SQLContextProvider>
+        </Provider>
     </React.StrictMode>,
     document.getElementById('root')
 );

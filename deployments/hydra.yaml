@@ -1,14 +1,57 @@
+
 serve:
   public:
+    tls:
+      cert:
+        path: /var/run/tls/public/tls.cert
+      key:
+        path: /var/run/tls/public/tls.key
     cors:
       enabled: true
+      debug: true
+      allow_credentials: true
+      allowed_methods:
+        - POST
+        - GET
+        - PUT
+        - PATCH
+        - DELETE
+      allowed_origins:
+        - "*"
+      allowed_headers:
+        - Authorization
+        - Content-Type
+      exposed_headers:
+        - Content-Type
+  admin:
+    tls:
+      cert:
+        path: /var/run/tls/admin/tls.cert
+      key:
+        path: /var/run/tls/admin/tls.key
 urls:
   self:
-    public: http://localhost:4444
-    issuer: http://localhost:4444
-  consent: http://localhost:9000/auth/consent
-  login: http://localhost:9002/login
-  logout: http://localhost:9002/logout
+    public: https://hydra.dev:4444
+    issuer: https://hydra.dev:4444
+  consent: https://core-login.dev:9002/consent
+  login: https://core-login.dev:9002/login
+  logout: https://core-login.dev:9002/logout
 log:
   leak_sensitive_values: true
-  level: debug
+  level: trace
+cookies:
+  same_site_mode: Strict
+ttl:
+  access_token: 3m
+  refresh_token: 6m
+  id_token: 3m
+  auth_code: 3m
+  login_consent_request: 10m
+oauth2:
+  session:
+    encrypt_at_rest: true
+  pkce:
+    enforced_for_public_clients: true
+  client_credentials:
+    default_grant_allowed_scope: false
+  expose_internal_errors: true
