@@ -25,6 +25,7 @@ var unprotectedPaths = sets.NewString(
 )
 
 func RestfulAuthnMiddleware(
+	disable bool,
 	sessionStore sessions.Store,
 	oauth2Config *oauth2.Config,
 	verifier *oidc.IDTokenVerifier,
@@ -38,7 +39,11 @@ func RestfulAuthnMiddleware(
 		ctx := logging.WithMiddleware(request.Request.Context(), "auth")
 		l := logging.NewLogger(ctx)
 
-		l.Debug("authn callback called")
+		if disable {
+			l.Warn("auth middleware is disabled. allowing request")
+			chain.ProcessFilter(request, response)
+			return
+		}
 
 		if unprotectedPaths.Has(request.Request.URL.Path) {
 			l.Debug("ignoring authentication because request is for an unprotected path", zap.String("path", request.Request.URL.Path))
@@ -59,35 +64,38 @@ func RestfulAuthnMiddleware(
 
 		authorizationHeader := request.HeaderParameter("Authorization")
 		if len(authorizationHeader) > 0 {
-			l.Debug("authorization header present. introspecting...")
+
+			l.Debug("verifying authorization header")
+
 			if authorizationHeader[:7] != "Bearer " {
 				l.Error("malformed authorization header")
-				redirectToLogin(request, response)
+				utils.ErrorResponse(response.ResponseWriter, meta.NewUnauthorized("malformed authorization header"))
 				return
 			}
+
 			parts := strings.Split(authorizationHeader, " ")
-			if len(parts) == 2 && parts[0] == "Bearer" {
-				token := parts[1]
 
-				_, err := tokenVerifier.Verify(ctx, token)
-				if err != nil {
-					l.Error("token is invalid", zap.Error(err))
-					redirectToLogin(request, response)
-					return
-				}
-
-				l.Debug("valid authorization token found")
-				chain.ProcessFilter(request, response)
-				return
-			} else {
+			if len(parts) != 2 || parts[0] != "Bearer" {
 				l.Error("malformed authorization header")
-				redirectToLogin(request, response)
+				utils.ErrorResponse(response.ResponseWriter, meta.NewUnauthorized("malformed authorization header"))
 				return
 			}
+
+			token := parts[1]
+			_, err := tokenVerifier.Verify(ctx, token)
+			if err != nil {
+				l.Error("token is invalid", zap.Error(err))
+				utils.ErrorResponse(response.ResponseWriter, meta.NewUnauthorized("invalid token"))
+				return
+			}
+
+			l.Debug("valid authorization token found")
+			chain.ProcessFilter(request, response)
+			return
+
 		}
 
 		l.Debug("getting user session")
-
 		userSession, err := sessionStore.Get(request.Request, sessionKey)
 		if err != nil {
 			l.Error("failed to get user session", zap.Error(err))
@@ -96,7 +104,6 @@ func RestfulAuthnMiddleware(
 		}
 
 		l.Debug("getting token from session")
-
 		previousTokenFromSession, ok := tokenFromSession(userSession)
 		if !ok {
 			l.Warn("redirecting to login as previous token was not found in session")
@@ -104,12 +111,10 @@ func RestfulAuthnMiddleware(
 			return
 		}
 
+		l.Debug("refreshing token if necessary")
 		previousRefreshToken := previousTokenFromSession.RefreshToken
 		previousAccessToken := previousTokenFromSession.AccessToken
 		tokenSource := oauth2Config.TokenSource(ctx, previousTokenFromSession.Token)
-
-		l.Debug("refreshing token if necessary")
-
 		newToken, err := tokenSource.Token()
 		if err != nil {
 			l.Warn("failed to get token. perhaps token was expired", zap.Error(err))
@@ -118,7 +123,6 @@ func RestfulAuthnMiddleware(
 		}
 
 		l.Debug("checking if token was refreshed")
-
 		if newToken.RefreshToken == previousRefreshToken && newToken.AccessToken == previousAccessToken {
 			l.Debug("refresh and access token are identical. proceeding")
 			chain.ProcessFilter(request, response)
@@ -126,7 +130,6 @@ func RestfulAuthnMiddleware(
 		}
 
 		l.Debug("verifying token")
-
 		rawIdToken, idToken, err := verifyToken(ctx, verifier, newToken)
 		if err != nil {
 			l.Error("failed to verify new token", zap.Error(err))
@@ -135,7 +138,6 @@ func RestfulAuthnMiddleware(
 		}
 
 		l.Debug("populating session with new token")
-
 		// here we re-store the token because it was refreshed
 		userSession.Values[constants.SessionIDToken] = rawIdToken
 		userSession.Values[constants.SessionAccessToken] = newToken.AccessToken
@@ -148,10 +150,7 @@ func RestfulAuthnMiddleware(
 			return
 		}
 
-		l.Debug("unmarshaled token claims")
-
 		l.Debug("saving user session")
-
 		userSession.Values[constants.SessionProfile] = userProfile
 		if err := userSession.Save(request.Request, response.ResponseWriter); err != nil {
 			l.Error("failed to save user session with new token", zap.Error(err))
@@ -160,7 +159,6 @@ func RestfulAuthnMiddleware(
 		}
 
 		l.Debug("done")
-
 		chain.ProcessFilter(request, response)
 		return
 	}

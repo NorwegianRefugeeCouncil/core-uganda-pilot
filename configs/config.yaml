@@ -42,7 +42,9 @@ serve:
       # Authorized redirect URIs after oauth flow
       post_login_allowed_redirect_uris:
         - https://core-admin-frontend.dev:3001
+        - https://core-admin-frontend.dev:3001/
         - https://core-admin-frontend.dev:3001/session-renew
+        - https://core-admin-frontend.dev:3001/session-renew/
 
     # CORS settings
     cors:
@@ -116,7 +118,9 @@ serve:
       # Authorized redirect URIs after oauth flow
       post_login_allowed_redirect_uris:
         - https://core-app-frontend.dev:3000
+        - https://core-app-frontend.dev:3000/
         - https://core-app-frontend.dev:3000/session-renew
+        - https://core-app-frontend.dev:3000/session-renew/
 
 
     cache:

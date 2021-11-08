@@ -114,6 +114,7 @@ func (s *Server) Start(ctx context.Context) {
 	)
 
 	s.Container.Filter(authn2.RestfulAuthnMiddleware(
+		s.options.Oidc.Disable,
 		s.SessionStore(),
 		oauth2Config,
 		verifier,
