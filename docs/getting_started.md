@@ -4,35 +4,24 @@
 - Add these entries to your `/etc/hosts` file
 
 ```
-127.0.0.1 core-admin-api.dev
-127.0.0.1 core-admin-frontend.dev
-127.0.0.1 core-app-api.dev
-127.0.0.1 core-app-frontend.dev
-127.0.0.1 core-login.dev
-127.0.0.1 hydra.dev
-127.0.0.1 hydra-admin.dev
-127.0.0.1 oidc.dev
-
-::1  core-admin-api.dev
-::1  core-admin-frontend.dev
-::1  core-app-api.dev
-::1  core-app-frontend.dev
-::1  core-login.dev
-::1  hydra.dev
-::1  hydra-admin.dev
-::1  oidc.dev
+127.0.0.1 core-admin-api.dev core-admin-frontend.dev core-app-api.dev core-app-frontend.dev core-login.dev hydra.dev hydra-admin.dev oidc.dev
+::1       core-admin-api.dev core-admin-frontend.dev core-app-api.dev core-app-frontend.dev core-login.dev hydra.dev hydra-admin.dev oidc.dev
 ```
 
-- Start docker resources `make up`
-- Create initial configuration `make bootstrap`
-- Start the server `make serve`
-- Start the frontend `make serve-pwa`
-- Open the browser https://core-app-frontend.dev:3000
-- Credentials will be generated in `creds/`
+- Create your secrets `make init-secrets`
 - **Add the generated CA Certificate to your trust store**
   - Fedora: `sudo cp creds/ca/tls.cert /etc/pki/ca-trust/source/anchors/nrc_core_dev.pem && sudo update-ca-trust`
   - Ubuntu: `sudo cp creds/ca/tls.cert /usr/local/share/ca-certificates/nrc_core_dev.pem && sudo update-ca-certificates`
   - Mac: `sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain creds/ca/tls.cert`
+- Start docker resources `make up`
+- Migrate the database `make migrate`
+- Create initial configuration `make bootstrap`
+- Start the server `make serve`
+- Start the frontend `make serve-pwa`
+- Start the admin frontend `make serve-admin`
+- Open the browser https://core-app-frontend.dev:3000
+- Open the browser https://core-admin-frontend.dev:3001
+- Credentials will be generated in `creds/`
 
 # Component Overview
 

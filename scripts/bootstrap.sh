@@ -7,7 +7,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 echo ">> Creating Core Server OAuth Client..."
 
 RESP=$(
-  curl --request POST -sL \
+  curl --request POST -L \
     --url 'https://hydra-admin.dev:4445/clients' \
     --data-binary @- <<EOF
 {
@@ -26,7 +26,7 @@ EOF
 
 echo "${RESP}" | grep "a resource with that value exists already" &&
   echo "Found Hydra OAuth client with same id. Updating..." &&
-  curl --request PUT -sL \
+  curl --request PUT -L \
     --url "https://hydra-admin.dev:4445/clients/$(cat "${SCRIPT_DIR}/../creds/core/app_api/oauth_client_id")" \
     --data-binary @- <<EOF
 {
