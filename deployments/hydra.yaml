@@ -1,4 +1,3 @@
-
 serve:
   public:
     tls:
@@ -14,7 +13,8 @@ serve:
         - PATCH
         - DELETE
       allowed_origins:
-        - "*"
+        - http://localhost:3000
+        - http://localhost:19006
       allowed_headers:
         - Authorization
         - Content-Type

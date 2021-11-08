@@ -6,7 +6,7 @@ RESP=$(
     --data-binary @- <<EOF
 {
   "allowed_cors_origins":[],
-  "redirect_uris":["nrccore://"],
+  "redirect_uris":["http://localhost:19006"],
   "client_name":"Core Native App",
   "client_uri":"http://localhost:3000",
   "client_id":"react-native",
@@ -25,7 +25,7 @@ echo "${RESP}" | grep "a resource with that value exists already" &&
     --data-binary @- <<EOF
 {
   "allowed_cors_origins":[],
-  "redirect_uris":["nrccore://"],
+  "redirect_uris":["http://localhost:19006"],
   "client_name":"Core Native App",
   "client_uri":"http://localhost:3000",
   "client_id":"react-native",
