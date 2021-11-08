@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {FC, Fragment, useCallback, useMemo, useState} from 'react';
 import {Provider as PaperProvider} from 'react-native-paper';
 import theme from './src/constants/theme';
 import Router from './src/components/Router';
@@ -8,68 +8,97 @@ import {
     makeRedirectUri,
     ResponseType,
     useAuthRequest,
-    useAutoDiscovery
+    useAutoDiscovery,
 } from 'expo-auth-session';
 import {Button, Platform} from "react-native";
 import * as WebBrowser from 'expo-web-browser';
 
 WebBrowser.maybeCompleteAuthSession();
 
-export default function App() {
 
-    // const [loggedIn, setLoggedIn] = React.useState(false);
-    const useProxy = Platform.select({web: false, default: true});
+export const AuthWrapper: FC = props => {
+    const {children} = props
+    const clientId = 'react-native'
+    const useProxy = useMemo(() => Platform.select({web: false, default: true}), []);
+    const redirectUri = useMemo(() => makeRedirectUri({scheme: 'nrccore'}), [])
     const discovery = useAutoDiscovery('http://localhost:4444');
+    const [loggedIn, setLoggedIn] = useState(false)
 
     const [request, response, promptAsync] = useAuthRequest(
         {
-            clientId: 'react-native',
+            clientId,
             usePKCE: true,
             responseType: ResponseType.Code,
             codeChallengeMethod: CodeChallengeMethod.S256,
-            codeChallenge:
             scopes: ['openid', 'profile'],
-            // For usage in managed apps using the proxy
-            redirectUri: makeRedirectUri({
-                scheme: 'nrccore',
-
-                // path: '/callback'
-            }),
-
-
+            redirectUri,
         },
         discovery
     );
 
     React.useEffect(() => {
         console.log('RESPONSE', response)
-        if (response && response.type === 'success') {
-            if (discovery==null) {
-                return
-            }
-            const token = response.params.access_token;
-            exchangeCodeAsync({
-                code: response.params.code,
-                clientId: 'react-native',
-                redirectUri: makeRedirectUri({
-                    scheme: 'nrccore',
-                })
-            }, discovery)
-            console.log('TOKEN', token)
+
+        if (!discovery) {
+            return
         }
-    }, [response, discovery]);
+        if (!request || !request.codeVerifier) {
+            return
+        }
+        if (!response || response.type !== "success") {
+            return
+        }
 
+        exchangeCodeAsync({
+            code: response.params.code,
+            clientId,
+            redirectUri,
+            extraParams: {
+                "code_verifier": request?.codeVerifier,
+            }
+        }, discovery)
+            .then(a => {
+                console.log("EXCHANGE SUCCESS", a)
+                if (a.idToken) {
+                    setLoggedIn(true)
+                } else {
+                    setLoggedIn(false)
+                }
+            })
+            .catch((err) => {
+                console.log("EXCHANGE ERROR", err)
+            })
+    }, [request, response, discovery]);
 
-    return (
-        <PaperProvider theme={theme}>
-            <Router/>
+    const handleLogin = useCallback(() => {
+        promptAsync({useProxy,}).then(response => {
+            console.log("PROMPT RESPONSE", response)
+        }).catch((err) => {
+            console.log("PROMPT ERROR", err)
+        })
+    }, [useProxy, promptAsync])
+
+    if (!loggedIn) {
+        return <PaperProvider theme={theme}>
             <Button
                 title={"Login"}
                 disabled={!request}
-                onPress={() => {
-                    promptAsync({useProxy});
-                }}
+                onPress={handleLogin}
             />
+        </PaperProvider>
+    }
+
+    return <Fragment>
+        {children}
+    </Fragment>
+}
+
+export default function App() {
+    return (
+        <PaperProvider theme={theme}>
+            <AuthWrapper>
+                <Router/>
+            </AuthWrapper>
         </PaperProvider>
     );
 }
