@@ -70,7 +70,7 @@ function mapField(f: FormField, props: FormerProps) {
         setFieldIsKey={(isKey) => setFieldIsKey(f.id, isKey)}
         fieldDescription={f.description}
         setFieldDescription={(d) => setFieldDescription(f.id, d)}
-        openSubForm={(fieldName: string) => openSubForm(f.id, fieldName)}
+        openSubForm={() => openSubForm(f.id, f.name)}
         cancel={() => cancelField(f.id)}
         saveField={() => saveField(f.id)}
         referencedDatabaseId={f.referencedDatabaseId}

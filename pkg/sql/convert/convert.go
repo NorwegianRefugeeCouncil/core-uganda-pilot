@@ -31,7 +31,6 @@ func expandSubFormsInternal(parentForm *types.FormDefinition, fieldName string, 
 	formDef := &types.FormDefinition{
 		ID:         subForm.ID,
 		Code:       subForm.Code,
-		Name:       subForm.Name,
 		DatabaseID: parentForm.DatabaseID,
 		Fields:     subForm.Fields,
 	}
@@ -215,7 +214,6 @@ func convertFieldToSqlField(formDef *types.FormDefinition, field *types.FieldDef
 			VarChar: &sqlschema2.SQLDataTypeVarChar{Length: 36},
 		}
 	} else if field.FieldType.SubForm != nil {
-		result.Name += "_id"
 		result.DataType = sqlschema2.SQLDataType{
 			VarChar: &sqlschema2.SQLDataTypeVarChar{Length: 36},
 		}

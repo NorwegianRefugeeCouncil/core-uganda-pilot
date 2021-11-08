@@ -27,7 +27,6 @@ type FieldTypeSingleSelect struct{}
 
 type FieldTypeSubForm struct {
 	ID     string             `json:"id"`
-	Name   string             `json:"name"`
 	Code   string             `json:"code"`
 	Fields []*FieldDefinition `json:"fields,omitempty"`
 }

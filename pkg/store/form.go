@@ -332,7 +332,7 @@ func newFieldCodes(fields []*types.FieldDefinition) {
 	for _, field := range fields {
 		field.Code = firstSnake(field.Code, field.Name)
 		if field.FieldType.SubForm != nil {
-			field.FieldType.SubForm.Code = firstSnake(field.FieldType.SubForm.Code, field.FieldType.SubForm.Name)
+			field.FieldType.SubForm.Code = firstSnake(field.FieldType.SubForm.Code)
 			newFieldCodes(field.FieldType.SubForm.Fields)
 		}
 	}
@@ -486,7 +486,7 @@ func newFormHierarchyFrom(
 				databaseId,
 				folderId,
 				field.FieldType.SubForm.ID,
-				field.FieldType.SubForm.Name,
+				"",
 				field.FieldType.SubForm.Code,
 				field.FieldType.SubForm.Fields,
 				hierarchy,
@@ -550,7 +550,6 @@ func (f *FormHierarchy) ToFormDefinition() (*types.FormDefinition, error) {
 			fd.FieldType.SubForm = &types.FieldTypeSubForm{
 				ID:     childFd.ID,
 				Fields: childFd.Fields,
-				Name:   childFd.Name,
 				Code:   childFd.Code,
 			}
 		case types.FieldKindReference:
