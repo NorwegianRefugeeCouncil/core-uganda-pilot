@@ -34,7 +34,7 @@ echo "${RESP}" | grep "a resource with that value exists already" &&
  "redirect_uris":["$(cat "${SCRIPT_DIR}/../creds/core/app_api/oauth_redirect_uri")"],
  "client_name":"Core App",
  "client_uri":"https://localhost:3000",
- "client_secret":"$(cat "${SCRIPT_DIR}/../creds/cpre/app_api/oauth_client_secret")",
+ "client_secret":"$(cat "${SCRIPT_DIR}/../creds/core/app_api/oauth_client_secret")",
  "grant_types":["authorization_code"],
  "scope":"openid offline email profile",
  "response_types":["code"]
@@ -46,7 +46,7 @@ echo ">> Creating Core Server OAuth Client...Done!"
 echo ">> Registering Organization..."
 
 ORG_UUID="$(uuidgen)"
-docker exec -it "$(docker ps -aqf "name=db")" /usr/bin/psql \
+docker exec -it "$(docker ps -aqf "name=core_db")" /usr/bin/psql \
   -d "$(cat "${SCRIPT_DIR}/../creds/core/db_name")" \
   -U "$(cat "${SCRIPT_DIR}/../creds/core/db_username")" \
   -c "
@@ -57,7 +57,7 @@ echo ">> Registering Organization... Done!"
 
 echo ">> Registering Organization Identity Provider..."
 
-docker exec -it "$(docker ps -aqf "name=db")" /usr/bin/psql \
+docker exec -it "$(docker ps -aqf "name=core_db")" /usr/bin/psql \
   -d core \
   -U core \
   -c "
