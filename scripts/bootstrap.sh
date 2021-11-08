@@ -8,13 +8,13 @@ echo ">> Creating Core Server OAuth Client..."
 
 RESP=$(
   curl --request POST -L \
-    --url 'https://hydra-admin.dev:4445/clients' \
+    --url 'http://localhost:4445/clients' \
     --data-binary @- <<EOF
 {
   "allowed_cors_origins":[],
   "redirect_uris":["$(cat "${SCRIPT_DIR}/../creds/core/app_api/oauth_redirect_uri")"],
   "client_name":"Core App",
-  "client_uri":"https://core-app-frontend.dev:3000",
+  "client_uri":"http://localhost:3000",
   "client_id":"$(cat "${SCRIPT_DIR}/../creds/core/app_api/oauth_client_id")",
   "client_secret":"$(cat "${SCRIPT_DIR}/../creds/core/app_api/oauth_client_secret")",
   "grant_types":["authorization_code"],
@@ -27,7 +27,7 @@ EOF
 echo "${RESP}" | grep "a resource with that value exists already" &&
   echo "Found Hydra OAuth client with same id. Updating..." &&
   curl --request PUT -L \
-    --url "https://hydra-admin.dev:4445/clients/$(cat "${SCRIPT_DIR}/../creds/core/app_api/oauth_client_id")" \
+    --url "http://localhost:4445/clients/$(cat "${SCRIPT_DIR}/../creds/core/app_api/oauth_client_id")" \
     --data-binary @- <<EOF
 {
  "allowed_cors_origins":[],
@@ -75,7 +75,7 @@ docker exec -it "$(docker ps -aqf "name=db")" /usr/bin/psql \
     (
       '$(uuidgen)',
       '${ORG_UUID}',
-      'https://oidc.dev:9005',
+      'http://localhost:9005',
       '$(cat "${SCRIPT_DIR}/../creds/nrc_idp/oauth_client_id")',
       '$(cat "${SCRIPT_DIR}/../creds/nrc_idp/oauth_client_secret")',
       'nrc.no',

@@ -21,16 +21,16 @@ POSTGRES_HYDRA_PASSWORD=$(createFileIfNotExists "${CREDS_DIR}/hydra/db_password"
 REDIS_PASSWORD=$(createFileIfNotExists "${CREDS_DIR}/redis/password" "openssl rand -hex 32")
 OAUTH_CORE_ADMIN_CLIENT_ID=$(createFileIfNotExists "${CREDS_DIR}/core/admin_api/oauth_client_id" "echo -n core-admin")
 OAUTH_CORE_ADMIN_CLIENT_SECRET=$(createFileIfNotExists "${CREDS_DIR}/core/admin_api/oauth_client_secret" "openssl rand -hex 32")
-OAUTH_CORE_ADMIN_REDIRECT_URI=$(createFileIfNotExists "${CREDS_DIR}/core/admin_api/oauth_redirect_uri" "echo -n https://core-admin-api.dev:9001/oidc/callback")
-OAUTH_CORE_ADMIN_ISSUER=$(createFileIfNotExists "${CREDS_DIR}/core/admin_api/oauth_issuer" "echo -n https://oidc.dev:9005")
+OAUTH_CORE_ADMIN_REDIRECT_URI=$(createFileIfNotExists "${CREDS_DIR}/core/admin_api/oauth_redirect_uri" "echo -n http://localhost:9001/oidc/callback")
+OAUTH_CORE_ADMIN_ISSUER=$(createFileIfNotExists "${CREDS_DIR}/core/admin_api/oauth_issuer" "echo -n http://localhost:9005")
 OAUTH_CORE_APP_CLIENT_ID=$(createFileIfNotExists "${CREDS_DIR}/core/app_api/oauth_client_id" "echo -n core-app")
 OAUTH_CORE_APP_CLIENT_SECRET=$(createFileIfNotExists "${CREDS_DIR}/core/app_api/oauth_client_secret" "openssl rand -hex 32")
-OAUTH_CORE_APP_REDIRECT_URI=$(createFileIfNotExists "${CREDS_DIR}/core/app_api/oauth_redirect_uri" "echo -n https://core-app-api.dev:9000/oidc/callback")
-OAUTH_CORE_APP_ISSUER=$(createFileIfNotExists "${CREDS_DIR}/core/app_api/oauth_issuer" "echo -n https://hydra.dev:4444/")
+OAUTH_CORE_APP_REDIRECT_URI=$(createFileIfNotExists "${CREDS_DIR}/core/app_api/oauth_redirect_uri" "echo -n http://localhost:9000/oidc/callback")
+OAUTH_CORE_APP_ISSUER=$(createFileIfNotExists "${CREDS_DIR}/core/app_api/oauth_issuer" "echo -n http://localhost:4444/")
 OAUTH_NRC_CLIENT_ID=$(createFileIfNotExists "${CREDS_DIR}/nrc_idp/oauth_client_id" "echo -n nrc-idp")
 OAUTH_NRC_CLIENT_SECRET=$(createFileIfNotExists "${CREDS_DIR}/nrc_idp/oauth_client_secret" "openssl rand -hex 32")
-OAUTH_NRC_REDIRECT_URI=$(createFileIfNotExists "${CREDS_DIR}/nrc_idp/oauth_redirect_uri" "echo -n https://core-login.dev:9002/oidc/callback")
-OAUTH_NRC_ISSUER=$(createFileIfNotExists "${CREDS_DIR}/nrc_idp/oauth_issuer" "echo -n https://oidc.dev:9005")
+OAUTH_NRC_REDIRECT_URI=$(createFileIfNotExists "${CREDS_DIR}/nrc_idp/oauth_redirect_uri" "echo -n http://localhost:9002/oidc/callback")
+OAUTH_NRC_ISSUER=$(createFileIfNotExists "${CREDS_DIR}/nrc_idp/oauth_issuer" "echo -n http://localhost:9005")
 CORE_ADMIN_HASH_KEY=$(createFileIfNotExists "${CREDS_DIR}/core/admin_api/secret_hash_key" "openssl rand -hex 64")
 CORE_ADMIN_BLOCK_KEY=$(createFileIfNotExists "${CREDS_DIR}/core/admin_api/secret_block_key" "openssl rand -hex 32")
 CORE_LOGIN_HASH_KEY=$(createFileIfNotExists "${CREDS_DIR}/core/login/secret_hash_key" "openssl rand -hex 64")
@@ -45,59 +45,6 @@ HYDRA_CONFIG_FILE="${CREDS_DIR}/hydra/config.yaml"
 POSTGRES_ENV_FILE="${CREDS_DIR}/postgres/env"
 POSTGRES_INIT_FILE="${CREDS_DIR}/postgres/init.sh"
 CORE_CONFIG_FILE="${SCRIPT_DIR}/../creds/core/config.yaml"
-
-# TLS
-echo ">> Generating root CA"
-CA_KEY_FILE="${CREDS_DIR}/ca/tls.key"
-CA_CSR_FILE="${CREDS_DIR}/ca/cert.csr"
-CA_CERT_FILE="${CREDS_DIR}/ca/tls.cert"
-createFileIfNotExists "${CA_KEY_FILE}" "openssl genrsa 2048"
-createFileIfNotExists "${CA_CSR_FILE}" "openssl req -new -key ${CA_KEY_FILE} -subj '/C=DE/ST=Berlin/L=Berlin/O=NRC/CN=core.dev'"
-createFileIfNotExists "${CA_CERT_FILE}" "openssl x509 -in ${CA_CSR_FILE} -req -signkey ${CA_KEY_FILE} -days 365"
-
-function createCert() {
-  local DIR
-  local NAME
-  local DOMAIN
-  local KEY_FILE
-  local CSR_FILE
-  local CERT_FILE
-  local SERIAL_FILE
-  DIR=$1
-  NAME=$2
-  DOMAIN=$3
-  echo ">> Generating Server Certificate for ${NAME} (${DOMAIN})"
-  mkdir -p "${CREDS_DIR}/${DIR}"
-  KEY_FILE="${CREDS_DIR}/${DIR}/${NAME}_tls.key"
-  CSR_FILE="${CREDS_DIR}/${DIR}/${NAME}.csr"
-  CERT_FILE="${CREDS_DIR}/${DIR}/${NAME}_tls.cert"
-  SERIAL_FILE="${CREDS_DIR}/${DIR}/${NAME}_serial"
-  SSL_CONF_FILE="${CREDS_DIR}/${DIR}/${NAME}_ssl.conf"
-  if [ ! -f "${SSL_CONF_FILE}" ]; then
-    cat <<EOF >"${SSL_CONF_FILE}"
-authorityKeyIdentifier=keyid,issuer
-basicConstraints=CA:FALSE
-keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
-subjectAltName = @alt_names
-[alt_names]
-DNS.1 = localhost
-DNS.2 = ${DOMAIN}
-IP.1 = 127.0.0.1
-EOF
-  fi
-  createFileIfNotExists "${KEY_FILE}" "openssl genrsa 2048"
-  createFileIfNotExists "${CSR_FILE}" "openssl req -new -key ${KEY_FILE} -subj '/C=DE/ST=Berlin/L=Berlin/O=NRC/CN=${DOMAIN}'"
-  createFileIfNotExists "${CERT_FILE}" "openssl x509 -req -in ${CSR_FILE} -CA ${CA_CERT_FILE} -CAkey ${CA_KEY_FILE} -CAcreateserial -CAserial ${SERIAL_FILE} -days 365 -sha256 -extfile ${SSL_CONF_FILE}"
-}
-
-createCert core/admin_api admin_api core-admin-api.dev
-createCert core/admin_frontend admin_frontend core-admin-frontend.dev
-createCert core/app_api app_api core-app-api.dev
-createCert core/app_frontend app_frontend core-app-frontend.dev
-createCert core/login login core-login.dev
-createCert hydra hydra_public hydra.dev
-createCert hydra hydra_admin hydra-admin.dev
-createCert oidc oidc oidc.dev
 
 echo ">> Creating Simple-OIDC Clients"
 

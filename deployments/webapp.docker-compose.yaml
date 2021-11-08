@@ -8,17 +8,13 @@ services:
       - ../tools/local-oidc-provider/package.json:/app/package.json:ro
       - ../tools/local-oidc-provider/index.js:/app/index.js:ro
       - ../creds/oidc/config.json:/var/run/config.json:ro
-      - ../creds/oidc/oidc_tls.cert:/var/run/tls.cert:ro
-      - ../creds/oidc/oidc_tls.key:/var/run/tls.key:ro
     ports:
       - 9005:9005
     environment:
       PORT: "9005"
       CONFIG_FILE: /var/run/config.json
-      TLS_KEY: /var/run/tls.key
-      TLS_CERT: /var/run/tls.cert
       ADDRESS: 0.0.0.0
-      ISSUER: https://oidc.dev:9005
+      ISSUER: http://localhost:9005
     command:
       - bash
       - -c
@@ -58,14 +54,11 @@ services:
     volumes:
       - ./hydra.yaml:/var/run/config.yaml:ro
       - ../creds/hydra/config.yaml:/var/run/config.custom.yaml:ro
-      - ../creds/hydra/hydra_public_tls.cert:/var/run/tls/public/tls.cert:ro
-      - ../creds/hydra/hydra_public_tls.key:/var/run/tls/public/tls.key:ro
-      - ../creds/hydra/hydra_admin_tls.cert:/var/run/tls/admin/tls.cert:ro
-      - ../creds/hydra/hydra_admin_tls.key:/var/run/tls/admin/tls.key:ro
     command:
       - serve
       - all
       - --config=/var/run/config.yaml,/var/run/config.custom.yaml
+      - --dangerous-force-http
     restart: on-failure
 
   db:

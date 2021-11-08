@@ -150,7 +150,7 @@ export type RequestOptions = {
 }
 
 export class client implements Client {
-    constructor(public readonly address = 'https://core-app-api.dev:9000') {
+    constructor(public readonly address = 'http://localhost:9000') {
     }
 
     do<TRequest, TBody>(request: TRequest, url: string, method: Method, data: any, expectStatusCode: number, options?: RequestOptions): Promise<Response<TRequest, TBody>> {

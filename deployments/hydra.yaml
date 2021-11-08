@@ -2,10 +2,7 @@
 serve:
   public:
     tls:
-      cert:
-        path: /var/run/tls/public/tls.cert
-      key:
-        path: /var/run/tls/public/tls.key
+      enabled: false
     cors:
       enabled: true
       debug: true
@@ -25,17 +22,14 @@ serve:
         - Content-Type
   admin:
     tls:
-      cert:
-        path: /var/run/tls/admin/tls.cert
-      key:
-        path: /var/run/tls/admin/tls.key
+      enabled: false
 urls:
   self:
-    public: https://hydra.dev:4444
-    issuer: https://hydra.dev:4444
-  consent: https://core-login.dev:9002/consent
-  login: https://core-login.dev:9002/login
-  logout: https://core-login.dev:9002/logout
+    public: http://localhost:4444
+    issuer: http://localhost:4444
+  consent: http://localhost:9002/consent
+  login: http://localhost:9002/login
+  logout: http://localhost:9002/logout
 log:
   leak_sensitive_values: true
   level: trace
