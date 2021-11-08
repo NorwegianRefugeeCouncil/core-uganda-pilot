@@ -11,12 +11,12 @@ const (
 	QueryParamState = "state"
 	QueryParamCode  = "code"
 
-	SessionKey          = "session"
 	SessionState        = "state"
 	SessionIDToken      = "idToken"
 	SessionRefreshToken = "refreshToken"
+	SessionAccessToken  = "accessToken"
+	SessionTokenExpiry  = "tokenExpiry"
+	SessionTokenType    = "tokenType"
 	SessionProfile      = "profile"
 	SessionDesiredURL   = "desiredUrl"
-
-	HeaderAuthorization = "Authorization"
 )

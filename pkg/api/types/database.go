@@ -8,7 +8,3 @@ type Database struct {
 type DatabaseList struct {
 	Items []*Database `json:"items"`
 }
-
-func NewDatabase(name string) Database {
-	return Database{Name: name}
-}

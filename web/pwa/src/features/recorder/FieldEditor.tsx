@@ -125,7 +125,6 @@ function subRecords(records: FormValue[], select: (id: string) => void) {
 
 export const SubFormFieldEditor: FC<FieldEditorProps> = props => {
     const {field, addSubRecord} = props
-    console.log(props.subRecords)
     return <div className={"mb-2"}>
         <div className={"bg-primary border-2"}/>
         <label className={"form-label opacity-75"}>{field.name}</label>

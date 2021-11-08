@@ -10,3 +10,12 @@ type Folder struct {
 type FolderList struct {
 	Items []*Folder `json:"items"`
 }
+
+func (f *FolderList) HasFolderWithID(id string) bool {
+	for _, item := range f.Items {
+		if item.ID == id {
+			return true
+		}
+	}
+	return false
+}

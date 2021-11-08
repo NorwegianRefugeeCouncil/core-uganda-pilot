@@ -5,13 +5,17 @@ import (
 	"fmt"
 	"github.com/cenkalti/backoff/v4"
 	"github.com/coreos/go-oidc/v3/oidc"
-	"github.com/nrc-no/core/pkg/server/admin/handlers/authn"
+	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/server/admin/handlers/clients"
 	"github.com/nrc-no/core/pkg/server/admin/handlers/identityprovider"
 	"github.com/nrc-no/core/pkg/server/admin/handlers/organization"
 	"github.com/nrc-no/core/pkg/server/generic"
+	authn2 "github.com/nrc-no/core/pkg/server/handlers/authn"
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/store"
+	"github.com/nrc-no/core/pkg/utils/sets"
+	"github.com/ory/hydra-client-go/client/admin"
+	"go.uber.org/zap"
 	"golang.org/x/oauth2"
 )
 
@@ -23,9 +27,12 @@ type Server struct {
 type Options struct {
 	options.ServerOptions
 	StoreFactory store.Factory
+	HydraAdmin   admin.ClientService
 }
 
 func NewServer(options Options) (*Server, error) {
+
+	hydraAdmin := options.HydraAdmin
 
 	genericServer, err := generic.NewGenericServer(options.ServerOptions, "admin")
 	if err != nil {
@@ -34,7 +41,7 @@ func NewServer(options Options) (*Server, error) {
 
 	container := genericServer.Container
 
-	clientsHandler, err := clients.NewHandler()
+	clientsHandler, err := clients.NewHandler(hydraAdmin)
 	if err != nil {
 		return nil, err
 	}
@@ -62,12 +69,14 @@ func NewServer(options Options) (*Server, error) {
 
 func (s *Server) Start(ctx context.Context) {
 
+	l := logging.NewLogger(ctx)
+
 	var provider *oidc.Provider
 	err := backoff.Retry(func() error {
 		var err error
 		provider, err = oidc.NewProvider(ctx, s.options.Oidc.Issuer)
 		if err != nil {
-			s.Logger().WithError(err).Warnf("failed to get oidc provider")
+			l.With(zap.Error(err)).Warn("failed to get oidc provider")
 			return err
 		}
 		return err
@@ -77,7 +86,7 @@ func (s *Server) Start(ctx context.Context) {
 		panic(err)
 	}
 
-	oauth2Config := oauth2.Config{
+	oauth2Config := &oauth2.Config{
 		ClientID:     s.options.Oidc.ClientID,
 		ClientSecret: s.options.Oidc.ClientSecret,
 		Endpoint:     provider.Endpoint(),
@@ -94,13 +103,24 @@ func (s *Server) Start(ctx context.Context) {
 		Now:                  nil,
 	})
 
-	authnHandler := authn.NewHandler(
+	authnHandler := authn2.NewHandler(
+		"admin-session",
+		s.options.Oidc.RedirectURI,
+		s.options.Oidc.PostLoginDefaultRedirectURI,
+		sets.NewString(s.options.Oidc.PostLoginAllowedRedirectURIs...),
 		s.Server.SessionStore(),
-		&oauth2Config,
+		oauth2Config,
 		verifier,
 	)
 
-	s.Container.Filter(authn.RestfulAuthnMiddleware(s.SessionStore(), verifier, s.options.URLs.Self, "/"))
+	s.Container.Filter(authn2.RestfulAuthnMiddleware(
+		s.options.Oidc.Disable,
+		s.SessionStore(),
+		oauth2Config,
+		verifier,
+		s.options.URLs.Self,
+		"admin-session",
+		verifier))
 
 	s.Container.Add(authnHandler.WebService())
 

@@ -5,6 +5,7 @@ import (
 	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/api/types"
 	uuid "github.com/satori/go.uuid"
+	"go.uber.org/zap"
 )
 
 type IdentityProvider struct {
@@ -53,86 +54,115 @@ type identityProviderStore struct {
 var _ IdentityProviderStore = &identityProviderStore{}
 
 func (i identityProviderStore) List(ctx context.Context, organizationID string, options IdentityProviderListOptions) ([]*types.IdentityProvider, error) {
-	db, err := i.db.Get()
+	ctx, db, l, done, err := actionContext(ctx, i.db, "identity_provider", "list", zap.String("organization_id", organizationID))
 	if err != nil {
 		return nil, err
 	}
+	defer done()
 
+	l.Debug("listing identity providers")
 	var idps []*IdentityProvider
 	if err := db.WithContext(ctx).Find(&idps, "organization_id = ?", organizationID).Error; err != nil {
+		l.Error("failed to list identity providers", zap.Error(err))
 		return nil, meta.NewInternalServerError(err)
 	}
 	if idps == nil {
 		idps = []*IdentityProvider{}
 	}
+
+	l.Debug("successfully listed identity providers")
 	return mapList(idps, options.ReturnClientSecret), nil
 }
 
 func (i identityProviderStore) Get(ctx context.Context, identityProviderId string, options IdentityProviderGetOptions) (*types.IdentityProvider, error) {
-	db, err := i.db.Get()
+	ctx, db, l, done, err := actionContext(ctx, i.db, "identity_provider", "get", zap.String("identity_provider_id", identityProviderId))
 	if err != nil {
 		return nil, err
 	}
+	defer done()
+
+	l.Debug("listing identity providers")
 	var idp *IdentityProvider
 	if err := db.WithContext(ctx).First(&idp, "id = ?", identityProviderId).Error; err != nil {
+		l.Error("failed to list identity providers", zap.Error(err))
 		return nil, meta.NewInternalServerError(err)
 	}
+
+	l.Debug("successfully listed identity providers")
 	return mapTo(idp, options.ReturnClientSecret), nil
 }
 
 func (i identityProviderStore) FindForEmailDomain(ctx context.Context, emailDomain string, options IdentityProviderListOptions) ([]*types.IdentityProvider, error) {
-	db, err := i.db.Get()
+	ctx, db, l, done, err := actionContext(ctx, i.db, "identity_provider", "find_for_email_domain", zap.String("email_domain", emailDomain))
 	if err != nil {
 		return nil, err
 	}
+	defer done()
 
+	l.Debug("finding identity providers for email domain")
 	var idps []*IdentityProvider
 	if err := db.WithContext(ctx).Find(&idps, "email_domain = ?", emailDomain).Error; err != nil {
+		l.Error("failed to find identity providers for email domain", zap.Error(err))
 		return nil, meta.NewInternalServerError(err)
 	}
+
+	l.Debug("successfully found identity providers for email domain", zap.Int("count", len(idps)))
 	return mapList(idps, options.ReturnClientSecret), nil
 }
 
 func (i identityProviderStore) Create(ctx context.Context, identityProvidr *types.IdentityProvider, options IdentityProviderCreateOptions) (*types.IdentityProvider, error) {
-	db, err := i.db.Get()
+	ctx, db, l, done, err := actionContext(ctx, i.db, "identity_provider", "create")
 	if err != nil {
 		return nil, err
 	}
+	defer done()
 
 	idp := mapFrom(identityProvidr)
 	idp.ID = uuid.NewV4().String()
+
+	l.Debug("creating identity provider")
 	if err := db.WithContext(ctx).Create(idp).Error; err != nil {
+		l.Error("failed to create identity provider", zap.Error(err))
 		return nil, meta.NewInternalServerError(err)
 	}
+
+	l.Debug("successfully created identity provider")
 	return mapTo(idp, options.ReturnClientSecret), nil
 }
 
-func (i identityProviderStore) Update(ctx context.Context, identityProvidr *types.IdentityProvider, options IdentityProviderUpdateOptions) (*types.IdentityProvider, error) {
-	db, err := i.db.Get()
+func (i identityProviderStore) Update(ctx context.Context, identityProvider *types.IdentityProvider, options IdentityProviderUpdateOptions) (*types.IdentityProvider, error) {
+	ctx, db, l, done, err := actionContext(ctx, i.db, "identity_provider", "create", zap.String("identity_provider_id", identityProvider.ID))
 	if err != nil {
 		return nil, err
 	}
+	defer done()
 
-	idp := mapFrom(identityProvidr)
+	idp := mapFrom(identityProvider)
 	updates := map[string]interface{}{
-		"name":         identityProvidr.Name,
-		"client_id":    identityProvidr.ClientID,
-		"domain":       identityProvidr.Domain,
-		"email_domain": identityProvidr.EmailDomain,
+		"name":         identityProvider.Name,
+		"client_id":    identityProvider.ClientID,
+		"domain":       identityProvider.Domain,
+		"email_domain": identityProvider.EmailDomain,
 	}
-	if len(identityProvidr.ClientSecret) != 0 {
-		updates["client_secret"] = identityProvidr.ClientSecret
+	if len(identityProvider.ClientSecret) != 0 {
+		updates["client_secret"] = identityProvider.ClientSecret
 	}
+
+	l.Debug("updating identity provider")
 	result := db.WithContext(ctx).Model(&IdentityProvider{}).Where("id = ?", idp.ID).UpdateColumns(updates)
 	if err := result.Error; err != nil {
+		l.Error("failed to update identity provider", zap.Error(err))
 		return nil, meta.NewInternalServerError(err)
 	}
 	if result.RowsAffected == 0 {
+		l.Error("identity provider not found")
 		return nil, meta.NewNotFound(meta.GroupResource{
 			Group:    "nrc.no",
 			Resource: "identityproviders",
-		}, identityProvidr.ID)
+		}, identityProvider.ID)
 	}
+
+	l.Debug("successfully updated identity provider")
 	return mapTo(idp, options.ReturnClientSecret), nil
 }
 

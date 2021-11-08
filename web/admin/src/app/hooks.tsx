@@ -1,26 +1,14 @@
-import {Fragment, useCallback, useContext, useEffect, useMemo, useState} from "react";
-import {AuthContext} from "oidc-react";
+import {Fragment, useCallback, useEffect, useMemo, useState} from "react";
 import {client, IdentityProvider, Organization} from "../client/client";
-import {AuthContextProps} from "oidc-react/build/src/AuthContextInterface";
 import {useParams} from "react-router-dom";
 import {OrganizationRoute} from "../components/organizations/OrganizationPortal";
 import classNames from "classnames";
 import {Path, UseFormReturn} from "react-hook-form";
 
-export function useAuth(): AuthContextProps | undefined {
-    return useContext(AuthContext)
-}
-
-export function useIsAuthenticated(): boolean {
-    let authCtx = useAuth();
-    return !!(authCtx?.userData)
-}
-
 export function useApiClient(): client {
-    const authCtx = useAuth()
     return useMemo(() => {
-        return new client({idToken: authCtx?.userData?.id_token})
-    }, [authCtx?.userData?.id_token])
+        return new client()
+    }, [])
 }
 
 export function usePathOrganization(): Organization | undefined {

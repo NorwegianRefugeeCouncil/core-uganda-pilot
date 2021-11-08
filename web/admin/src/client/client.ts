@@ -1,4 +1,12 @@
-import axios, {AxiosResponse, Method} from "axios";
+import axios, {AxiosError, AxiosResponse, Method} from "axios";
+
+export type Session = {
+    active: boolean
+    expiry: string
+    expiredInSeconds: number
+    subject: string
+    username: string
+}
 
 export type DataOperation<TRequest, TResponse> = (request: TRequest) => Promise<TResponse>
 
@@ -40,6 +48,7 @@ export type GrantType = "authorization_code" | "refresh_token" | "client_credent
 export class OAuth2Client {
     public id: string = ""
     public clientName: string = ""
+    public clientSecret: string = ""
     public uri: string = ""
     public grantTypes: GrantType[] = ["authorization_code"]
     public responseTypes: ResponseType[] = ["code"]
@@ -53,6 +62,9 @@ export type OAuth2ClientList = {
     items: OAuth2Client[]
 }
 
+export type SessionGetRequest = void
+export type SessionGetResponse = Response<SessionGetRequest, Session>
+export type SessionGetter = { getSession: DataOperation<SessionGetRequest, SessionGetResponse> }
 export type OrganizationListRequest = void
 export type OrganizationListResponse = Response<OrganizationListRequest, OrganizationList>
 export type OrganizationLister = { listOrganizations: DataOperation<OrganizationListRequest, OrganizationListResponse> }
@@ -86,6 +98,9 @@ export type OAuth2ClientUpdater = { updateOAuth2Client: DataOperation<OAuth2Clie
 export type OAuth2ClientCreateRequest = { object: Partial<OAuth2Client> }
 export type OAuth2ClientCreateResponse = Response<OAuth2ClientCreateRequest, OAuth2Client>
 export type OAuth2ClientCreator = { createOAuth2Client: DataOperation<OAuth2ClientCreateRequest, OAuth2ClientCreateResponse> }
+export type OAuth2ClientDeleteRequest = { id: string }
+export type OAuth2ClientDeleteResponse = Response<OAuth2ClientDeleteRequest, void>
+export type OAuth2ClientDeleter = { deleteOAuth2Client: DataOperation<OAuth2ClientDeleteRequest, OAuth2ClientDeleteResponse> }
 
 
 export interface Client
@@ -99,7 +114,9 @@ export interface Client
         OAuth2ClientGetter,
         OAuth2ClientLister,
         OAuth2ClientUpdater,
-        OAuth2ClientCreator {
+        OAuth2ClientCreator,
+        OAuth2ClientDeleter,
+        SessionGetter{
 }
 
 function errorResponse<TRequest, TBody>(request: TRequest, r: AxiosResponse<TBody>): Response<TRequest, TBody> {
@@ -131,38 +148,43 @@ function clientResponse<TRequest, TBody>(r: AxiosResponse<TBody>, request: TRequ
 }
 
 export type clientProps = {
-    idToken?: string
     address?: string
 }
 
+export type RequestOptions = {
+    headers: { [key: string]: string },
+    silentRedirect?: boolean,
+}
+
+
 export class client implements Client {
-    public address = "http://localhost:9001/admin"
-    public idToken = ""
+    public address = "http://localhost:9001"
 
     public constructor(private clientProps?: clientProps) {
-        if (clientProps?.idToken) {
-            this.idToken = clientProps?.idToken
-        }
         if (clientProps?.address) {
             this.address = clientProps?.address
         }
     }
 
-    do<TRequest, TBody>(request: TRequest, url: string, method: Method, data: any, expectStatusCode: number): Promise<Response<TRequest, TBody>> {
+    do<TRequest, TBody>(request: TRequest, url: string, method: Method, data: any, expectStatusCode: number, options?: RequestOptions): Promise<Response<TRequest, TBody>> {
 
-        const headers: { [key: string]: string } = {}
-        if (this.idToken) {
-            headers["Authorization"] = `Bearer ${this.idToken}`
+        let headers: { [key: string]: string } = {
+            "Accept": "application/json",
+        }
+        if (options?.headers) {
+            headers = options?.headers
         }
 
         return axios.request<TBody>({
             method,
             url,
             data,
-            headers
+            responseType: "json",
+            headers,
+            withCredentials: true,
         }).then(value => {
             return clientResponse<TRequest, TBody>(value, request, expectStatusCode);
-        }).catch((err) => {
+        }).catch((err: AxiosError) => {
             return {
                 request: request,
                 response: undefined,
@@ -184,6 +206,10 @@ export class client implements Client {
 
     createOAuth2Client(request: OAuth2ClientCreateRequest): Promise<OAuth2ClientCreateResponse> {
         return this.do(request, `${this.address}/clients`, "post", request.object, 200)
+    }
+
+    deleteOAuth2Client(request: OAuth2ClientDeleteRequest): Promise<OAuth2ClientDeleteResponse> {
+        return this.do(request, `${this.address}/clients/${request.id}`, "delete", undefined, 204)
     }
 
     getIdentityProvider(request: IdentityProviderGetRequest): Promise<IdentityProviderGetResponse> {
@@ -218,6 +244,9 @@ export class client implements Client {
         return this.do(request, `${this.address}/clients/${request.object.id}`, "put", request.object, 200)
     }
 
+    getSession(request: void): Promise<SessionGetResponse> {
+        return this.do(request, `${this.address}/oidc/session`, "get", undefined, 200, {headers: {}})
+    }
 
 }
 

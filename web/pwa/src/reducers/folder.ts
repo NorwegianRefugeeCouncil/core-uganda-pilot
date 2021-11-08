@@ -1,7 +1,7 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import {Folder} from "../types/types";
 import {RootState} from "../app/store";
-import {defaultClient, FolderListResponse} from "../data/client";
+import {defaultClient, FolderListResponse} from "core-js-api-client";
 
 const adapter = createEntityAdapter<Folder>({
     // Assume IDs are stored in a field other than `book.id`

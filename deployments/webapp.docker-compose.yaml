@@ -1,20 +1,41 @@
 services:
 
+  oidc:
+    image: node:16
+    container_name: core_oidc
+    hostname: oidc.dev
+    volumes:
+      - ../tools/local-oidc-provider/package.json:/app/package.json:ro
+      - ../tools/local-oidc-provider/index.js:/app/index.js:ro
+      - ../creds/oidc/config.json:/var/run/config.json:ro
+    ports:
+      - 9005:9005
+    environment:
+      PORT: "9005"
+      CONFIG_FILE: /var/run/config.json
+      ADDRESS: 0.0.0.0
+      ISSUER: http://localhost:9005
+    command:
+      - bash
+      - -c
+      - "cd /app && npm install && node index.js"
+
   redis:
     image: 'bitnami/redis:latest'
-    container_name: "core-redis"
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
+    container_name: "core_redis"
+    hostname: redis
+    env_file:
+      - ../creds/redis/env
     ports:
       - "6379:6379"
     restart: on-failure
 
   hydra_migrate:
     image: oryd/hydra:v1.10.2
-    container_name: "core-hydra-migrate"
+    container_name: "core_hydra_migrate"
     volumes:
       - ./hydra.yaml:/var/run/config.yaml:ro
-      - ./hydra.custom.yaml:/var/run/config.custom.yaml:ro
+      - ../creds/hydra/config.yaml:/var/run/config.custom.yaml:ro
     command:
       - migrate
       - sql
@@ -25,27 +46,29 @@ services:
 
   hydra:
     image: oryd/hydra:v1.10.2
-    container_name: "core-hydra"
+    container_name: "core_hydra"
+    hostname: hydra
     ports:
       - "4444:4444"
       - "4445:4445"
     volumes:
       - ./hydra.yaml:/var/run/config.yaml:ro
-      - ./hydra.custom.yaml:/var/run/config.custom.yaml:ro
+      - ../creds/hydra/config.yaml:/var/run/config.custom.yaml:ro
     command:
       - serve
       - all
-      - --dangerous-force-http
       - --config=/var/run/config.yaml,/var/run/config.custom.yaml
+      - --dangerous-force-http
     restart: on-failure
 
   db:
     image: postgres:9.6
-    container_name: "core-hydra-db"
+    container_name: core_db
+    hostname: db
     ports:
       - "5433:5432"
     env_file:
-      - postgres.env
+      - ../creds/postgres/env
     volumes:
-      - ./webapp.postgres-init.sh:/docker-entrypoint-initdb.d/postgres-init.sh
+      - ../creds/postgres/init.sh:/docker-entrypoint-initdb.d/postgres-init.sh
     restart: on-failure

@@ -1,30 +1,39 @@
-import { View } from 'react-native';
-import { layout } from '../styles';
-import React from 'react';
+import {View} from 'react-native';
+import {layout} from '../styles';
+import React, {useReducer} from 'react';
 import NavigationBar from './NavigationBar';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import IndividualsListScreen from './screens/IndividualsListScreen';
-import HomeScreen from './screens/HomeScreen';
-import IndividualScreen from './screens/IndividualScreen';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import FormsScreen from './screens/FormsScreen';
 import routes from '../constants/routes';
-import CasesScreen from './screens/CasesScreen';
-import { NavigationTheme } from '../constants/theme';
+import {NavigationTheme} from '../constants/theme';
+import host from "../constants/host";
+import DesignSystemDemoScreen from "./screens/DesignSystemDemoScreen";
+import RecordsScreen from "./screens/RecordsScreen";
+import AddRecordScreen from "./screens/AddRecordScreen";
+import ViewRecordScreen from "./screens/ViewRecordScreen";
+import {initialRecordsState, recordsReducer, RecordsStoreProps} from "../reducers/recordsReducers";
 
+export type ScreenProps = {
+    navigation: any,
+    route: any,
+    state: RecordsStoreProps,
+    dispatch: any
+}
 
-export default function Router(props: { host: string }) {
+export default function Router() {
     const Stack = createStackNavigator();
-
-    const { host } = props;
+    const [state, dispatch] = useReducer(recordsReducer, initialRecordsState);
 
     const linkingConfig = {
         prefixes: [host],
         config: {
             screens: {
-                Individual: routes.individual.name,
-                Individuals: routes.individuals.name,
-                Home: routes.home.name,
-                Cases: routes.cases.name
+                Forms: routes.forms.name,
+                Records: routes.records.name,
+                AddRecord: routes.addRecord.name,
+                ViewRecord: routes.viewRecord.name,
+                DesignSystem: routes.designSystem.name
             }
         }
     };
@@ -32,40 +41,55 @@ export default function Router(props: { host: string }) {
     return (
         <View style={layout.container}>
             <NavigationContainer theme={NavigationTheme} linking={linkingConfig}>
-                <Stack.Navigator initialRouteName={routes.home.name}>
+                <Stack.Navigator initialRouteName={routes.forms.name}>
                     <Stack.Group
                         screenOptions={{
                             header: (props) => <NavigationBar {...props} />
                         }}
                     >
                         <Stack.Screen
-                            name={routes.home.name}
-                            component={HomeScreen}
+                            name={routes.forms.name}
+                            component={FormsScreen}
                             options={{
-                                title: routes.home.title
+                                title: routes.forms.title,
+
                             }}
                         />
                         <Stack.Screen
-                            name={routes.individuals.name}
-                            component={IndividualsListScreen}
+                            name={routes.records.name}
                             options={{
-                                title: routes.individuals.title
+                                title: routes.records.title
                             }}
-                        />
+                        >
+                            {(props) =>
+                                <RecordsScreen {...props} state={state} dispatch={dispatch}/>
+                            }
+                        </Stack.Screen>
                         <Stack.Screen
-                            name={routes.cases.name}
-                            component={CasesScreen}
+                            name={routes.addRecord.name}
                             options={{
-                                title: routes.cases.title
+                                title: routes.addRecord.title
                             }}
-                        />
-                    </Stack.Group>
-                    <Stack.Group screenOptions={{ presentation: 'modal' }}>
+                        >
+                            {(props) =>
+                                <AddRecordScreen {...props} state={state} dispatch={dispatch}/>
+                            }
+                        </Stack.Screen>
                         <Stack.Screen
-                            name={routes.individual.name}
-                            component={IndividualScreen}
+                            name={routes.viewRecord.name}
                             options={{
-                                title: routes.individual.title
+                                title: routes.viewRecord.title
+                            }}
+                        >
+                            {(props) =>
+                                <ViewRecordScreen {...props} state={state} dispatch={dispatch}/>
+                            }
+                        </Stack.Screen>
+                        <Stack.Screen
+                            name={routes.designSystem.name}
+                            component={DesignSystemDemoScreen}
+                            options={{
+                                title: routes.designSystem.title
                             }}
                         />
                     </Stack.Group>

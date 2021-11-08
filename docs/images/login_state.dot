@@ -1,0 +1,52 @@
+digraph A {
+
+start
+login_requested
+prompting_for_identifier
+validating_identifier
+finding_auth_method
+prompting_for_password
+validating_password
+password_login_succeeded
+prompting_for_identity_provider
+awaiting_idp_callback
+performing_auth_code_exchange
+auth_code_exchange_succeeded
+awaiting_consent_challenge
+received_consent_challenge
+presenting_consent_challenge
+consent_request_accepted
+consent_request_declined
+refreshing_identity
+accepted
+declined
+
+start -> login_requested [label = "request_login"]
+login_requested -> refreshing_identity [label="skip_login_request"]
+refreshing_identity -> awaiting_consent_challenge [label="set_refreshed_identity"]
+login_requested -> prompting_for_identifier [label="perform_login"]
+prompting_for_identifier -> validating_identifier [label="provide_identifier"]
+validating_identifier -> prompting_for_identifier [label="provide_invalid_identifier"]
+validating_identifier -> finding_auth_method [label="provide_valid_identifier"]
+finding_auth_method -> prompting_for_password [label="use_password_login"]
+prompting_for_password -> validating_password [label="provide_password"]
+validating_password -> prompting_for_password [label="provide_invalid_password"]
+validating_password -> password_login_succeeded [label="provide_valid_password"]
+password_login_succeeded -> awaiting_consent_challenge [label="accept_login_request"]
+
+finding_auth_method -> prompting_for_identity_provider [label="use_oidc_login"]
+prompting_for_identity_provider -> awaiting_idp_callback [label="use_identity_provider"]
+awaiting_idp_callback -> performing_auth_code_exchange [label="call_oidc_callback"]
+performing_auth_code_exchange -> finding_auth_method [label="fail_auth_code_exchange"]
+performing_auth_code_exchange -> auth_code_exchange_succeeded [label="succeed_auth_code_exchange"]
+auth_code_exchange_succeeded -> awaiting_consent_challenge [label="accept_login_request"]
+
+awaiting_consent_challenge -> received_consent_challenge [label="receive_consent_challenge"]
+received_consent_challenge -> presenting_consent_challenge [label="present_consent_challenge"]
+received_consent_challenge -> consent_request_accepted [label="skip_consent_challenge"]
+presenting_consent_challenge -> consent_request_declined [label="decline_consent_challenge"]
+presenting_consent_challenge -> consent_request_accepted [label="accept_consent_challenge"]
+consent_request_declined -> declined [label="decline"]
+consent_request_accepted -> accepted [label="accept"]
+accepted -> login_requested [label="request_login"]
+}

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	loginstore "github.com/nrc-no/core/pkg/server/login/store"
 	"github.com/nrc-no/core/pkg/store"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -23,7 +24,10 @@ var clearCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if err := store.Clear(db); err != nil {
+		if err := store.Clear(ctx, db); err != nil {
+			return err
+		}
+		if err := loginstore.Clear(db); err != nil {
 			return err
 		}
 		logrus.Info("Successfully cleared database!")

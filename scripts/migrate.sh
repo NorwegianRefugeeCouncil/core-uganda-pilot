@@ -7,4 +7,4 @@ set -e
 # cleanup on exit
 trap 'jobs -p | xargs -r kill' EXIT
 
-(cd "${SCRIPT_DIR}/.." && go run . migrate --config=configs/config.yaml,configs/config.custom.yaml)
+(cd "${SCRIPT_DIR}/.." && go run . migrate --config=configs/config.yaml,creds/core/config.yaml)
