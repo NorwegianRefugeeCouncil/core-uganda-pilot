@@ -38,6 +38,7 @@
     "androidNavigationBar": {
       "visible": "sticky-immersive",
       "barStyle": "dark-content"
-    }
+    },
+    "scheme": "nrccore"
   }
 }
