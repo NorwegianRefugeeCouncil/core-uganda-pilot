@@ -1,10 +1,10 @@
 import {FC, Fragment} from "react";
 import {match, Route, Switch, useRouteMatch} from "react-router-dom";
-import {usePathOrganization} from "../../app/hooks";
+import {usePathOrganization} from "../../hooks/hooks";
 import {OrganizationOverview} from "./OrganizationOverview";
 import {OrganizationSideBar} from "./OrganizationSideBar";
 import {IdentityProviders} from "./identityproviders/IdentityProviders";
-import {Organization} from "../../client/client";
+import {Organization} from "../../types/types";
 import {IdentityProviderEditor} from "./identityproviders/IdentityProviderEditor";
 
 export type OrganizationRoute = {

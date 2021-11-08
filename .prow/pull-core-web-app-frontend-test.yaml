@@ -1,0 +1,9 @@
+postsubmits:
+  - name: pull-core-web-auth-test
+    run_if_changed: "web/auth/*"
+    decorate: true
+    spec:
+      containers:
+        - image: node
+          command: [ "bash", "-c" ]
+          args: [ "cd web/auth && yarn install --frozen-lockfile && yarn test"]

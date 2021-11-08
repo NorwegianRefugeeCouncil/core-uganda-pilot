@@ -3,6 +3,7 @@ package options
 import (
 	"github.com/ory/hydra-client-go/client"
 	"github.com/ory/hydra-client-go/client/admin"
+	"github.com/ory/hydra-client-go/client/public"
 )
 
 type CorsOptions struct {
@@ -41,15 +42,8 @@ type URLOptions struct {
 	Self string `mapstructure:"self"`
 }
 
-type OIDCOptions struct {
-	Disable                      bool     `mapstructure:"disable"`
-	Issuer                       string   `mapstructure:"issuer"`
-	ClientID                     string   `mapstructure:"client_id"`
-	ClientSecret                 string   `mapstructure:"client_secret"`
-	Scopes                       []string `mapstructure:"scopes"`
-	RedirectURI                  string   `mapstructure:"redirect_uri"`
-	PostLoginDefaultRedirectURI  string   `mapstructure:"post_login_default_redirect_uri"`
-	PostLoginAllowedRedirectURIs []string `mapstructure:"post_login_allowed_redirect_uris"`
+type Claims struct {
+	Subject string
 }
 
 type ServerOptions struct {
@@ -58,7 +52,6 @@ type ServerOptions struct {
 	Cors    CorsOptions   `mapstructure:"cors"`
 	Secrets SecretOptions `mapstructure:"secrets"`
 	URLs    URLOptions    `mapstructure:"urls"`
-	Oidc    OIDCOptions   `mapstructure:"oidc"`
 	Cache   CacheOptions  `mapstructure:"cache"`
 	TLS     TLSOptions    `mapstructure:"tls"`
 }
@@ -67,6 +60,7 @@ type ServeOptions struct {
 	Public ServerOptions `mapstructure:"public"`
 	Admin  ServerOptions `mapstructure:"admin"`
 	Login  ServerOptions `mapstructure:"login"`
+	Auth   ServerOptions `mapstructure:"auth"`
 }
 
 type CertOptions struct {
@@ -97,8 +91,17 @@ func (h HydraEndpoint) AdminClient() admin.ClientService {
 	}).Admin
 }
 
+func (h HydraEndpoint) PublicClient() public.ClientService {
+	return client.NewHTTPClientWithConfig(nil, &client.TransportConfig{
+		Host:     h.Host,
+		BasePath: h.BasePath,
+		Schemes:  h.Schemes,
+	}).Public
+}
+
 type HydraOptions struct {
-	Admin HydraEndpoint `mapstructure:"admin"`
+	Admin  HydraEndpoint `mapstructure:"admin"`
+	Public HydraEndpoint `mapstructure:"public"`
 }
 
 type Options struct {

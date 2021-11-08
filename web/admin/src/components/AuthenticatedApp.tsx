@@ -1,0 +1,25 @@
+import {NavBar} from "./navbar/NavBar";
+import {Route, Switch} from "react-router-dom";
+import {OrganizationEditor} from "./organizations/OrganizationEditor";
+import {OrganizationPortal} from "./organizations/OrganizationPortal";
+import {Organizations} from "./organizations/Organizations";
+import {ClientEditor} from "./clients/ClientEditor";
+import {Clients} from "./clients/Clients";
+import React, {FC} from "react";
+
+const AuthenticatedApp: FC = () => {
+    return (
+        <div className={"d-flex flex-column vh-100 vw-100 bg-dark"}>
+            <NavBar/>
+            <Switch>
+                <Route path={"/organizations/add"} component={OrganizationEditor}/>
+                <Route path={"/organizations/:organizationId"} component={OrganizationPortal}/>
+                <Route path={"/organizations"} component={Organizations}/>
+                <Route path={"/clients/add"} component={ClientEditor}/>
+                <Route path={"/clients/:clientId"} component={ClientEditor}/>
+                <Route path={"/clients"} component={Clients}/>
+            </Switch>
+        </div>
+    )
+}
+export default AuthenticatedApp;

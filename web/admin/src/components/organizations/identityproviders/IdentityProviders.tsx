@@ -1,6 +1,6 @@
 import {FC, Fragment} from "react";
-import {Organization} from "../../../client/client";
-import {useIdentityProviders} from "../../../app/hooks";
+import {Organization} from "../../../types/types";
+import {useIdentityProviders} from "../../../hooks/hooks";
 import {Link, useRouteMatch} from "react-router-dom";
 import {SectionTitle} from "../../sectiontitle/SectionTitle";
 

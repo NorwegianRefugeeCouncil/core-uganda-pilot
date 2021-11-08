@@ -12,6 +12,7 @@ import DesignSystemDemoScreen from "./screens/DesignSystemDemoScreen";
 import RecordsScreen from "./screens/RecordsScreen";
 import AddRecordScreen from "./screens/AddRecordScreen";
 import ViewRecordScreen from "./screens/ViewRecordScreen";
+import LoginCallbackScreen from "./screens/LoginCallbackScreen";
 import {initialRecordsState, recordsReducer, RecordsStoreProps} from "../reducers/recordsReducers";
 
 export type ScreenProps = {
@@ -33,7 +34,8 @@ export default function Router() {
                 Records: routes.records.name,
                 AddRecord: routes.addRecord.name,
                 ViewRecord: routes.viewRecord.name,
-                DesignSystem: routes.designSystem.name
+                DesignSystem: routes.designSystem.name,
+                LoginCallback: 'callback'
             }
         }
     };
@@ -53,6 +55,13 @@ export default function Router() {
                             options={{
                                 title: routes.forms.title,
 
+                            }}
+                        />
+                        <Stack.Screen
+                            name={'callback'}
+                            component={LoginCallbackScreen}
+                            options={{
+                                title: routes.forms.title,
                             }}
                         />
                         <Stack.Screen

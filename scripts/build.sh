@@ -8,14 +8,22 @@ set -e
 echo ">> Installing web/app/client npm dependencies"
 (cd "${ROOT_DIR}/web/app/client" && yarn install)
 
-echo ">> Installing web/app/designSystem npm dependencies"
-(cd "${ROOT_DIR}/web/app/designSystem" && yarn install)
+echo ">> Installing web/designSystem npm dependencies"
+rm -rf "${ROOT_DIR}/web/designSystem/node_modules"
+(cd "${ROOT_DIR}/web/designSystem" && yarn install)
 
 echo ">> Transpiling web/app/client"
 tsc --build "${ROOT_DIR}/web/app/client/tsconfig.json"
 
-echo ">> Transpiling web/app/designSystem"
-tsc --build "${ROOT_DIR}/web/app/designSystem/tsconfig.json"
+echo ">> Installing web/auth npm dependencies"
+rm -rf "${ROOT_DIR}/web/auth/node_modules"
+(cd "${ROOT_DIR}/web/auth" && yarn install)
+
+echo ">> Transpiling web/auth"
+tsc --build "${ROOT_DIR}/web/auth/tsconfig.json"
+
+echo ">> Transpiling web/designSystem"
+tsc --build "${ROOT_DIR}/web/designSystem/tsconfig.json"
 
 echo ">> Building web/app/frontend"
 rm -rf "${ROOT_DIR}/web/app/frontend/node_modules"

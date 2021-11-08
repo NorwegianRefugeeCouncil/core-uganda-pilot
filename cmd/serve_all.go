@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/nrc-no/core/pkg/server/admin"
+	"github.com/nrc-no/core/pkg/server/auth"
 	"github.com/nrc-no/core/pkg/server/login"
 	"github.com/nrc-no/core/pkg/server/public"
 	"github.com/spf13/cobra"
@@ -32,6 +33,14 @@ var serveAllCmd = &cobra.Command{
 				ServerOptions: coreOptions.Serve.Login,
 				StoreFactory:  factory,
 				HydraAdmin:    coreOptions.Hydra.Admin.AdminClient(),
+			}); err != nil {
+			return err
+		}
+		if err := serveAuth(ctx,
+			auth.Options{
+				ServerOptions: coreOptions.Serve.Auth,
+				HydraAdmin:    coreOptions.Hydra.Admin.AdminClient(),
+				HydraPublic:   coreOptions.Hydra.Public.PublicClient(),
 			}); err != nil {
 			return err
 		}

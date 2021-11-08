@@ -20,7 +20,6 @@ const ReferenceInput: React.FC<InputProps> = (
         isQuantity
     }) => {
 
-    // console.log(isDirty, isTouched, error)
     const [selectedValue, setSelectedValue] = React.useState(value);
 
     return (

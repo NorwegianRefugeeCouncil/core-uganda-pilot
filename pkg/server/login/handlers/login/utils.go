@@ -57,7 +57,7 @@ func getOauthProvider(
 	}
 
 	// getting oauth2 config
-	redirectUri := fmt.Sprintf("%s/oidc/callback", selfURL)
+	redirectUri := fmt.Sprintf("%s/login/oidc/callback", selfURL)
 	oauthConfig := &oauth2.Config{
 		ClientID:     client.ClientID,
 		ClientSecret: client.ClientSecret,

@@ -1,8 +1,11 @@
-
 serve:
   public:
     tls:
-      enabled: false
+      enabled: true
+      cert:
+        path: /var/run/tls/public/tls.crt
+      key:
+        path: /var/run/tls/public/tls.key
     cors:
       enabled: true
       debug: true
@@ -14,7 +17,8 @@ serve:
         - PATCH
         - DELETE
       allowed_origins:
-        - "*"
+        - http://localhost:3000
+        - http://localhost:19006
       allowed_headers:
         - Authorization
         - Content-Type
@@ -22,25 +26,22 @@ serve:
         - Content-Type
   admin:
     tls:
-      enabled: false
-urls:
-  self:
-    public: http://localhost:4444
-    issuer: http://localhost:4444
-  consent: http://localhost:9002/consent
-  login: http://localhost:9002/login
-  logout: http://localhost:9002/logout
+      enabled: true
+      cert:
+        path: /var/run/tls/admin/tls.crt
+      key:
+        path: /var/run/tls/admin/tls.key
 log:
   leak_sensitive_values: true
   level: trace
 cookies:
   same_site_mode: Strict
 ttl:
-  access_token: 3m
-  refresh_token: 6m
-  id_token: 3m
-  auth_code: 3m
-  login_consent_request: 10m
+  access_token: 15m
+  refresh_token: 30m
+  id_token: 15m
+  auth_code: 5m
+  login_consent_request: 5m
 oauth2:
   session:
     encrypt_at_rest: true

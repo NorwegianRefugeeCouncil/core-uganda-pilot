@@ -1,7 +1,6 @@
 import {FC} from "react";
 import {NavLink, useRouteMatch} from "react-router-dom"
-import {Organization} from "../../client/client";
-import styled from "styled-components"
+import {Organization} from "../../types/types";
 
 type Props = {
     organization: Organization

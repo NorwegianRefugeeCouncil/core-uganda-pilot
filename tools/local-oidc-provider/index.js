@@ -21,6 +21,12 @@ if (process.env.CONFIG_FILE) {
 
 config.pkce = {}
 config.pkce.required = () => false
+config.features = {
+    introspection: {
+        enabled: true
+    }
+}
+config.clientBasedCORS = () => true;
 
 config.renderError = async (ctx, out, error) => {
     ctx.type = 'html';
@@ -41,7 +47,7 @@ config.renderError = async (ctx, out, error) => {
 }
 const app = express();
 
-if (process.env.TLS_KEY || process.env.TLS_CERT){
+if (process.env.TLS_KEY || process.env.TLS_CERT) {
     https.createServer({
         key: fs.readFileSync(process.env.TLS_KEY),
         cert: fs.readFileSync(process.env.TLS_CERT),
@@ -53,4 +59,21 @@ if (process.env.TLS_KEY || process.env.TLS_CERT){
 console.log("config", config)
 
 const provider = new Provider(issuer, config);
+
+function handleClientAuthErrors(req, err) {
+    console.log(req, err)
+}
+
+provider.on('grant.error', handleClientAuthErrors);
+provider.on('introspection.error', handleClientAuthErrors);
+provider.on('revocation.error', handleClientAuthErrors);
+provider.on('authorization.error', handleClientAuthErrors);
+provider.on('server_error', handleClientAuthErrors);
+
+app.use(function (req, res, next) {
+    console.log(req.headers)
+    console.log(req.query)
+    next()
+})
+
 app.use(provider.callback())
