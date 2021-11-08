@@ -2,7 +2,9 @@ package database
 
 import (
 	"github.com/emicklei/go-restful/v3"
+	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/api/types"
+	"github.com/nrc-no/core/pkg/api/types/validation"
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/utils"
 	"go.uber.org/zap"
@@ -18,6 +20,17 @@ func (h *Handler) Create() http.HandlerFunc {
 		var db types.Database
 		if err := utils.BindJSON(req, &db); err != nil {
 			l.Error("failed to unmarshal database", zap.Error(err))
+			utils.ErrorResponse(w, err)
+			return
+		}
+
+		l.Debug("validating database")
+		if validationErrs := validation.ValidateDatabase(&db); validationErrs.HasAny() {
+			err := meta.NewInvalid(meta.GroupResource{
+				Group:    "core.nrc.no",
+				Resource: "databases",
+			}, "", validationErrs)
+			l.Warn("database is invalid", zap.Error(err))
 			utils.ErrorResponse(w, err)
 			return
 		}
