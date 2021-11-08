@@ -36,6 +36,12 @@ export const AuthWrapper: FC = props => {
         discovery
     );
 
+    const [accessToken, setAccessToken] = useState("")
+    const [idToken, setIdToken] = useState("")
+    const [refreshToken, setRefreshToken] = useState("")
+    const [expiresIn, setExpiresIn] = useState<number | undefined>(undefined)
+    const [issuedAt, setIssuedAt] = useState<number | undefined>(undefined)
+
     React.useEffect(() => {
         console.log('RESPONSE', response)
 
@@ -59,11 +65,12 @@ export const AuthWrapper: FC = props => {
         }, discovery)
             .then(a => {
                 console.log("EXCHANGE SUCCESS", a)
-                if (a.idToken) {
-                    setLoggedIn(true)
-                } else {
-                    setLoggedIn(false)
-                }
+                setIdToken(a.idToken ? a.idToken : "")
+                setAccessToken(a.idToken ? a.accessToken : "")
+                setRefreshToken(a.refreshToken ? a.refreshToken : "")
+                setExpiresIn(a.expiresIn)
+                setLoggedIn(true)
+                setIssuedAt(a.issuedAt)
             })
             .catch((err) => {
                 console.log("EXCHANGE ERROR", err)
