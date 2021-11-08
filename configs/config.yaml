@@ -1,14 +1,144 @@
+log:
+  # Possible values are (debug, info, warn, error, dpanic, panic, fatal)
+  level: info
+
+
 serve:
   admin:
+
+    # Admin server serving address
     host: "127.0.0.1"
+    # Admin server serving port
     port: "9001"
+
+
+    # Admin server TLS options
+    tls:
+      # Enables/Disables TLS
+      enabled: true
+      cert:
+        # TLS certificate path
+        path: creds/core/admin_api/admin_api_tls.cert
+      key:
+        # TLS key path
+        path: creds/core/admin_api/admin_api_tls.key
+
+
     urls:
-      self: "http://localhost:9001"
+      # Address where the server can be publicly accessed
+      self: https://core-admin-api.dev:9001
+
+
+    oidc:
+      # Oauth2 callback URL
+      redirect_uri: https://core-admin-api.dev:9001/oidc/callback
+      # OAuth2 required scopes
+      scopes:
+        - openid
+        - profile
+        - email
+      # Default redirect after oauth flow
+      post_login_default_redirect_uri: https://core-admin-frontend.dev:3001
+      # Authorized redirect URIs after oauth flow
+      post_login_allowed_redirect_uris:
+        - https://core-admin-frontend.dev:3001
+        - https://core-admin-frontend.dev:3001/
+        - https://core-admin-frontend.dev:3001/session-renew
+        - https://core-admin-frontend.dev:3001/session-renew/
+
+    # CORS settings
     cors:
-      allowed_origins: ["http://localhost:3001"]
+      # Enable/Disable CORS
+      enabled: true
+      # Cors Allowed-Origins header config
+      allowed_origins:
+        - https://core-admin-frontend.dev:3001
+        - https://localhost:3001
+      # Allow credentials in CORS
+      allow_credentials: true
+      # Allowed CORS headers
       allowed_headers:
         - Authorization
         - Content-Type
+        - Accept
+      # Allowed CORS methods
+      allowed_methods:
+        - "GET"
+        - "POST"
+        - "PUT"
+        - "OPTIONS"
+        - "DELETE"
+      # Print debug information on CORS
+      debug: true
+      # Exposed CORS headers
+      exposed_headers:
+        - Location
+
+
+    # Cache settings
+    cache:
+      redis:
+        # Redis address
+        address: localhost:6379
+        # Redis max idle connections
+        max_idle_connections: 10
+        # Redis cache max body length
+        max_length: 65536
+
+
+  public:
+
+
+    host: "127.0.0.1"
+    port: "9000"
+
+
+    tls:
+      enabled: true
+      cert:
+        path: creds/core/app_api/app_api_tls.cert
+      key:
+        path: creds/core/app_api/app_api_tls.key
+
+
+    urls:
+      self: https://core-app-api.dev:9000
+
+
+    oidc:
+      # Redirect URI for OAuth2 Callback
+      redirect_uri: https://core-app-api.dev:9000/oidc/callback
+      # OAuth2 Scopes
+      scopes:
+        - openid
+        - profile
+        - email
+      # Default redirect after oauth flow
+      post_login_default_redirect_uri: https://core-app-frontend.dev:3000
+      # Authorized redirect URIs after oauth flow
+      post_login_allowed_redirect_uris:
+        - https://core-app-frontend.dev:3000
+        - https://core-app-frontend.dev:3000/
+        - https://core-app-frontend.dev:3000/session-renew
+        - https://core-app-frontend.dev:3000/session-renew/
+
+
+    cache:
+      redis:
+        address: localhost:6379
+        max_idle_connections: 10
+        max_length: 65536
+
+
+    cors:
+      allowed_origins:
+        - https://core-app-frontend.dev:3000
+        - https://localhost:3000
+      allow_credentials: true
+      allowed_headers:
+        - Authorization
+        - Content-Type
+        - Accept
       allowed_methods:
         - "GET"
         - "POST"
@@ -17,19 +147,30 @@ serve:
         - "DELETE"
       debug: true
       enabled: true
-    oidc:
-      issuer: https://dev-53701279.okta.com
-      clientid: 0oa2gb25jhuFDIkhd5d7
-  public:
-    host: "127.0.0.1"
-    port: "9000"
-    urls:
-      self: http://localhost:9000
-    oidc:
-      issuer: http://localhost:4444/
-      client_id: public
+      exposed_headers:
+        - Location
+
+
   login:
     host: "127.0.0.1"
     port: "9002"
+    tls:
+      enabled: true
+      cert:
+        path: creds/core/login/login_tls.cert
+      key:
+        path: creds/core/login/login_tls.key
     urls:
-      self: http://localhost:9002
+      self: https://core-login.dev:9002
+    cache:
+      redis:
+        address: localhost:6379
+        max_idle_connections: 10
+        max_length: 65536
+
+
+hydra:
+  admin:
+    host: hydra-admin.dev:4445
+    schemes:
+      - https

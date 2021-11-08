@@ -1,4 +1,4 @@
-import axios, {AxiosResponse, Method} from "axios";
+import axios, {AxiosError, AxiosResponse, Method} from "axios";
 import {
     Database,
     DatabaseList,
@@ -7,7 +7,8 @@ import {
     FormDefinition,
     FormDefinitionList,
     Record,
-    RecordList
+    RecordList,
+    Session
 } from "../types/types";
 
 export type Response<TRequest, TResponse> = {
@@ -21,6 +22,13 @@ export type Response<TRequest, TResponse> = {
 
 export type PartialObjectWrapper<T> = { object: Partial<T> }
 export type DataOperation<TRequest, TResponse> = (request: TRequest) => Promise<TResponse>
+
+export type SessionGetRequest = void
+export type SessionGetResponse = Response<SessionGetRequest, Session>
+
+export interface SessionGetter {
+    getSession: DataOperation<SessionGetRequest, SessionGetResponse>
+}
 
 export type DatabaseCreateRequest = PartialObjectWrapper<Database>
 export type DatabaseCreateResponse = Response<DatabaseCreateRequest, Database>
@@ -91,7 +99,9 @@ export interface Client
         RecordCreator,
         RecordLister,
         FolderLister,
-        FolderCreator {
+        FolderCreator,
+        SessionGetter {
+    address: string
 }
 
 function errorResponse<TRequest, TBody>(request: TRequest, r: AxiosResponse<TBody>): Response<TRequest, TBody> {
@@ -122,17 +132,33 @@ function clientResponse<TRequest, TBody>(r: AxiosResponse<TBody>, request: TRequ
         : successResponse<TRequest, TBody>(request, r)
 }
 
-export class client implements Client {
-    public address = "http://localhost:9000"
+export type RequestOptions = {
+    headers: { [key: string]: string },
+    silentRedirect?: boolean,
+}
 
-    do<TRequest, TBody>(request: TRequest, url: string, method: Method, data: any, expectStatusCode: number): Promise<Response<TRequest, TBody>> {
+export class client implements Client {
+    public address = "https://core-app-api.dev:9000"
+
+    do<TRequest, TBody>(request: TRequest, url: string, method: Method, data: any, expectStatusCode: number, options?: RequestOptions): Promise<Response<TRequest, TBody>> {
+
+        let headers: { [key: string]: string } = {
+            "Accept": "application/json",
+        }
+        if (options?.headers) {
+            headers = options?.headers
+        }
+
         return axios.request<TBody>({
+            responseType: "json",
             method,
             url,
-            data
+            data,
+            headers,
+            withCredentials: true,
         }).then(value => {
             return clientResponse<TRequest, TBody>(value, request, expectStatusCode);
-        }).catch((err) => {
+        }).catch((err: AxiosError) => {
             return {
                 request: request,
                 response: undefined,
@@ -178,6 +204,11 @@ export class client implements Client {
         const url = `${this.address}/records?databaseId=${databaseId}&formId=${formId}`
         return this.do(request, url, "get", undefined, 200)
     }
+
+    getSession(request: void): Promise<SessionGetResponse> {
+        return this.do(request, `${this.address}/oidc/session`, "get", undefined, 200, {headers: {}})
+    }
+
 
 }
 

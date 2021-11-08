@@ -2,17 +2,25 @@ SHELL := bash
 .ONESHELL: # ensures each Make recipe is ran as one single shell session, rather than one new shell per line
 .SHELLFLAGS := -eu -o pipefail -c # fail on errors
 
-.PHONY: up
-up:
-	@./scripts/up.sh
+.PHONY: init-secrets
+init-secrets:
+	@./scripts/init_secrets.sh
 
-.PHONY: down
-down:
-	@./scripts/down.sh
+.PHONY: up
+up: init-secrets
+	@./scripts/up.sh
 
 .PHONY: migrate
 migrate:
 	@./scripts/migrate.sh
+
+.PHONY: bootstrap
+bootstrap: migrate
+	@./scripts/bootstrap.sh
+
+.PHONY: down
+down:
+	@./scripts/down.sh
 
 .PHONY: clear-db
 clear-db:
@@ -59,7 +67,6 @@ install-all:
 
 .PHONY: open-all
 open-all:
-	@open http://localhost:3000
-	@open http://localhost:9000
-	@open http://localhost:9001
+	@open https://core-app-frontend.dev:3000
+	@open https://core-admin-frontend.dev:3000
 

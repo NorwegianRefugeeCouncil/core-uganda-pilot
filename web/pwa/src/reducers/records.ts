@@ -187,10 +187,14 @@ export const selectRecordsSubFormCounts: (formId?: string) => ((rootState: RootS
             return {}
         }
 
+        if (!form.fields){
+            return {}
+        }
+
         // maps which form ids correspond to which field ids [formId] -> [fieldId]
         const formIdFieldIdMap: { [formId: string]: string } = {}
-        for (let formField of form.fields) {
-            if (!formField.fieldType.subForm) {
+        for (let formField of form?.fields) {
+            if (!formField?.fieldType?.subForm) {
                 continue
             }
             formIdFieldIdMap[formField.fieldType.subForm.id] = formField.id

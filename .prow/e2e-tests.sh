@@ -107,7 +107,7 @@ go run ./cmd \
   --login-client-id=login \
   --login-client-name=login \
   --login-client-secret=somesecret \
-  --login-iam-host=localhost:9000 \
+  --login-iam-host=core-app-api.dev:9000 \
   --login-iam-scheme=https \
   --web-templates-directory=pkg/apps/webapp/templates \
   --web-client-id=webapp \

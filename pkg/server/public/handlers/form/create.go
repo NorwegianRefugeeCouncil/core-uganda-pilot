@@ -3,23 +3,34 @@ package form
 import (
 	"github.com/emicklei/go-restful/v3"
 	"github.com/nrc-no/core/pkg/api/types"
+	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/utils"
+	"go.uber.org/zap"
 	"net/http"
 )
 
 func (h *Handler) Create() http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		ctx := req.Context()
+		l := logging.NewLogger(ctx)
+
+		l.Debug("unmarshaling form")
 		var form types.FormDefinition
 		if err := utils.BindJSON(req, &form); err != nil {
+			l.Error("failed to unmarshal form", zap.Error(err))
 			utils.ErrorResponse(w, err)
 			return
 		}
+
+		l.Debug("storing form")
 		respForm, err := h.store.Create(ctx, &form)
 		if err != nil {
+			l.Error("failed to store form", zap.Error(err))
 			utils.ErrorResponse(w, err)
 			return
 		}
+
+		l.Debug("successfully created form")
 		utils.JSONResponse(w, http.StatusOK, respForm)
 	}
 }
