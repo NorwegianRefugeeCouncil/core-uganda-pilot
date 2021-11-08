@@ -174,9 +174,9 @@ export class client implements Client {
             return {
                 request: request,
                 response: undefined,
-                status: "500 Internal Server Error",
-                statusCode: 500,
-                error: err.message,
+                status: err.response?.statusText,
+                statusCode: err.response?.status,
+                error: err.response,
                 success: false,
             }
         })

@@ -119,6 +119,7 @@ serve:
     cors:
       allowed_origins:
         - http://localhost:3000
+        - http://localhost:19006
       allow_credentials: true
       allowed_headers:
         - Authorization
