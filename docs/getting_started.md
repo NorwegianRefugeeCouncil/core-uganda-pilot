@@ -10,9 +10,9 @@
 
 - Create your secrets `make init-secrets`
 - **Add the generated CA Certificate to your trust store**
-  - Fedora: `sudo cp creds/ca/tls.cert /etc/pki/ca-trust/source/anchors/nrc_core_dev.pem && sudo update-ca-trust`
-  - Ubuntu: `sudo cp creds/ca/tls.cert /usr/local/share/ca-certificates/nrc_core_dev.pem && sudo update-ca-certificates`
-  - Mac: `sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain creds/ca/tls.cert`
+    - Fedora: `sudo cp creds/ca/tls.cert /etc/pki/ca-trust/source/anchors/nrc_core_dev.pem && sudo update-ca-trust`
+    - Ubuntu: `sudo cp creds/ca/tls.cert /usr/local/share/ca-certificates/nrc_core_dev.pem && sudo update-ca-certificates`
+    - Mac: `sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain creds/ca/tls.cert`
 - Start docker resources `make up`
 - Migrate the database `make migrate`
 - Create initial configuration `make bootstrap`
@@ -20,8 +20,15 @@
 - Start the frontend `make serve-pwa`
 - Start the admin frontend `make serve-admin`
 - Open the browser https://core-app-frontend.dev:3000
+	- Authenticate with \<whatever\>`@nrc.no` (any email ending with `nrc.no`)
+	- Click `Login with Norwegian Refugee Council`
+	- Put any password (there is no password verification for this development oidc-provider)
 - Open the browser https://core-admin-frontend.dev:3001
 - Credentials will be generated in `creds/`
+
+## What is my user/password?
+
+You can put any password you want in the fake oidc provider.
 
 # Component Overview
 
