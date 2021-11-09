@@ -80,6 +80,15 @@ export class FormDefinition {
     public folderId: string = ""
     public name: string = ""
     public fields: FieldDefinition[] = []
+
+    constructor(id = "", code = "", databaseId = "", folderId = "", name = "", fields = []) {
+        this.id = id;
+        this.code = code;
+        this.databaseId = databaseId;
+        this.folderId = folderId;
+        this.name = name;
+        this.fields = fields;
+    }
 }
 
 export class FormDefinitionList {

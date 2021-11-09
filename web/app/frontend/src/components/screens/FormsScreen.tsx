@@ -2,9 +2,10 @@ import React from 'react';
 import {Title} from 'react-native-paper';
 import {layout} from '../../styles';
 import {FlatList, Text, TouchableOpacity, View} from 'react-native';
-import useApiClient from "../../utils/clients";
+import {useApiClient} from "../../utils/useApiClient";
 import routes from "../../constants/routes";
 import {FormDefinition} from "core-js-api-client/lib/types/types";
+import testIds from '../../testIds'
 
 const FormsScreen: React.FC<any> = ({navigation}) => {
     const [forms, setForms] = React.useState<FormDefinition[]>();
@@ -29,6 +30,7 @@ const FormsScreen: React.FC<any> = ({navigation}) => {
                     renderItem={({item, index, separators}) => (
                         <TouchableOpacity
                             key={index}
+                            testID={testIds.formListItem}
                             onPress={() => navigation.navigate(routes.records.name, {
                                 formId: item.id,
                                 databaseId: item.databaseId

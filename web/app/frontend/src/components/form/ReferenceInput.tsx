@@ -1,6 +1,6 @@
 import {View} from "react-native";
 import React from "react";
-import {DataTable, Text} from "react-native-paper";
+import {Text} from "react-native-paper";
 import {darkTheme} from "../../constants/theme";
 import {InputProps} from "./FormControl";
 // import {Picker} from "@react-native-picker/picker";

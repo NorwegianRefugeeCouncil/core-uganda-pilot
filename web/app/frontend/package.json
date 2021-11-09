@@ -8,27 +8,6 @@
     "eject": "node_modules/.bin/expo eject",
     "test": "jest"
   },
-  "jest": {
-    "timers": "fake",
-    "preset": "jest-expo",
-    "setupFiles": [
-      "./jest.setup.js"
-    ],
-    "setupFilesAfterEnv": [
-      "@testing-library/jest-native/extend-expect"
-    ],
-    "transformIgnorePatterns": [
-      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|core-js-api-client|core-design-system)"
-    ],
-    "collectCoverage": false,
-    "collectCoverageFrom": [
-      "**/*.{ts,tsx}",
-      "!**/coverage/**",
-      "!**/node_modules/**",
-      "!**/babel.config.js",
-      "!**/jest.setup.js"
-    ]
-  },
   "dependencies": {
     "@config-plugins/android-jsc-intl": "^0.0.0",
     "@formatjs/intl-datetimeformat": "^4.2.4",
@@ -68,7 +47,6 @@
     "react-native": "0.64.2",
     "react-native-crypto-js": "^1.0.0",
     "react-native-gesture-handler": "~1.10.2",
-    "react-native-get-random-values": "~1.7.0",
     "react-native-keychain": "^8.0.0",
     "react-native-localize": "^2.1.5",
     "react-native-paper": "4.9.2",

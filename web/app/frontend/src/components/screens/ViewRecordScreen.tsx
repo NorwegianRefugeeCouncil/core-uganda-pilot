@@ -1,7 +1,7 @@
 import React from 'react';
 import {common, layout} from '../../styles';
 import {ScrollView, View} from 'react-native';
-import useApiClient from "../../utils/clients";
+import {useApiClient} from "../../utils/useApiClient";
 import {FormDefinition} from "core-js-api-client/lib/types/types";
 import {useForm} from "react-hook-form";
 import FormControl from "../form/FormControl";

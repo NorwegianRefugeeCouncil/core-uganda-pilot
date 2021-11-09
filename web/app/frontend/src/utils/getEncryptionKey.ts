@@ -1,6 +1,6 @@
-import 'react-native-get-random-values'
+import * as Random from 'expo-random';
 
 export const getEncryptionKey = () => {
-    const array = new Uint32Array(10);
-    return crypto.getRandomValues(array).toString()
+    const bytes = Random.getRandomBytes(40);
+    return new TextDecoder().decode(bytes);
 };

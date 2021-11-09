@@ -3,7 +3,7 @@ import {FAB, Title} from 'react-native-paper';
 import {layout} from '../../styles';
 import routes from '../../constants/routes';
 import {FlatList, Text, TouchableOpacity, View} from 'react-native';
-import useApiClient from "../../utils/clients";
+import useApiClient from "../../utils/useApiClient";
 import uuidv4 from 'uuid';
 import {ScreenProps} from "../Router";
 import {RECORD_ACTIONS} from "../../reducers/recordsReducers";

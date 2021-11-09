@@ -30,6 +30,7 @@ export enum RECORD_ACTIONS {
 }
 
 export const recordsReducer: Reducer<RecordsStoreProps, RecordsAction> = (state: RecordsStoreProps, action: RecordsAction) => {
+    if (state == null) state = initialRecordsState;
     const {formId} = action.payload
 
     switch (action.type) {
@@ -69,6 +70,6 @@ export const recordsReducer: Reducer<RecordsStoreProps, RecordsAction> = (state:
                 }
             }
         default:
-            throw new Error();
+            return state;
     }
 }
