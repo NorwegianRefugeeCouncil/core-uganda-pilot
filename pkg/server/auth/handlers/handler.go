@@ -14,6 +14,11 @@ func HandleAuth(
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 
+		if req.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
 		authenticationResponse, err := authenticator.Authenticate(req)
 		if err != nil {
 			utils.ErrorResponse(w, err)

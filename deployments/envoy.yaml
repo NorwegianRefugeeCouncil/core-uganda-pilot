@@ -39,8 +39,8 @@ static_resources:
                               allow_origin_string_match:
                                 - exact: "http://localhost:3000"
                                 - exact: "http://localhost:19006"
-                              allow_methods: "GET,POST,PUT,OPTIONS,DELETE"
-                              allow_headers: "Authorization,Content-Type,Accept"
+                              allow_methods: "GET, POST, PUT, OPTIONS, DELETE"
+                              allow_headers: "Authorization, Content-Type, Accept"
                               allow_credentials: true
                               expose_headers: "Location"
                         - match:
@@ -51,8 +51,8 @@ static_resources:
                               allow_origin_string_match:
                                 - exact: "http://localhost:3000"
                                 - exact: "http://localhost:19006"
-                              allow_methods: "GET,POST,PUT,OPTIONS,DELETE"
-                              allow_headers: "Authorization,Content-Type,Accept"
+                              allow_methods: "GET, POST, PUT, OPTIONS, DELETE"
+                              allow_headers: "Authorization, Content-Type, Accept"
                               allow_credentials: true
                               expose_headers: "Location"
                 http_filters:
