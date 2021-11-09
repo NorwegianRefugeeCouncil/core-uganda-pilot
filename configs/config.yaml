@@ -156,6 +156,25 @@ serve:
       enabled: false
     urls:
       self: http://localhost:9004
+    cors:
+      allowed_origins:
+        - http://localhost:3000
+        - http://localhost:19006
+      allow_credentials: true
+      allowed_headers:
+        - Authorization
+        - Content-Type
+        - Accept
+      allowed_methods:
+        - "GET"
+        - "POST"
+        - "PUT"
+        - "OPTIONS"
+        - "DELETE"
+      debug: true
+      enabled: true
+      exposed_headers:
+        - Location
 
 hydra:
   admin:

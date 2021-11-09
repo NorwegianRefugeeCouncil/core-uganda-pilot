@@ -2,7 +2,6 @@ import React, {FC, Fragment, useCallback, useEffect, useMemo, useState} from 're
 import {Provider as PaperProvider} from 'react-native-paper';
 import theme from './src/constants/theme';
 import Router from './src/components/Router';
-import axios from "axios"
 import {axiosInstance} from "./src/utils/clients"
 import {
     CodeChallengeMethod,
@@ -20,7 +19,7 @@ WebBrowser.maybeCompleteAuthSession();
 
 export const AuthWrapper: FC = props => {
     const {children} = props
-    const clientId = 'react-native'
+    const clientId = 'react-native' //TODO
     const useProxy = useMemo(() => Platform.select({web: false, default: true}), []);
     const redirectUri = useMemo(() => makeRedirectUri({scheme: 'nrccore'}), [])
     const discovery = useAutoDiscovery('http://localhost:4444');
@@ -94,13 +93,14 @@ export const AuthWrapper: FC = props => {
             if (!value) {
                 return
             }
-            if (!accessToken){
+            if (!accessToken) {
                 return
             }
-            if (!value.headers){
+            if (!value.headers) {
                 value.headers = {}
             }
             value.headers["Authorization"] = `Bearer ${accessToken}`
+            console.log("NEW REQUEST", value)
             return value
         }, error => {
             console.error(error)
@@ -121,7 +121,7 @@ export const AuthWrapper: FC = props => {
             />
         </PaperProvider>
     }
-    if (!accessToken){
+    if (!accessToken) {
         return <Fragment/>
     }
 
