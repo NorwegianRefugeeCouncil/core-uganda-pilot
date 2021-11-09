@@ -17,8 +17,7 @@ import {FormerContainer} from "./features/former/Former";
 import {DatabaseEditor} from "./features/databases/DatabaseEditor";
 import {FolderEditor} from "./features/folders/FolderEditor";
 import {RecordBrowser} from "./features/browser/RecordBrowser";
-import {SessionRenewer} from "./components/SessionRenewer";
-import {SessionWrapper} from "./components/SessionWrapper";
+import {AuthWrapper} from "./components/AuthWrapper";
 
 function AuthenticatedApp() {
 
@@ -85,18 +84,15 @@ function App() {
     return (
         <BrowserRouter>
             <Switch>
-                <Route path={"/session-renew"} exact render={props => {
-                    return <SessionRenewer/>
-                }}/>
                 <Route path={""} render={props => {
-                    return <SessionWrapper>
+                    return <AuthWrapper>
                         <iframe
                             title={"login"}
                             style={{position: "absolute", top: 0, left: 0, visibility: "hidden"}}
                             src={`${window.location.protocol}//${window.location.host}/session-renew`}>
                         </iframe>
                         <AuthenticatedApp/>
-                    </SessionWrapper>
+                    </AuthWrapper>
                 }}/>
             </Switch>
         </BrowserRouter>

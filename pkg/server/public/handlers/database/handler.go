@@ -18,9 +18,10 @@ type Handler struct {
 func NewHandler(store store.DatabaseStore) *Handler {
 	h := &Handler{store: store}
 
-	ws := new(restful.WebService).Path("/databases").
-		Consumes(mimetypes.ApplicationJson).
-		Produces(mimetypes.ApplicationJson)
+	ws := new(restful.WebService).
+		Path("/apis/core.nrc.no/v1/databases").
+		Doc("databases.core.nrc.no API")
+
 	h.webService = ws
 
 	dbPath := fmt.Sprintf("/{%s}", constants.ParamDatabaseID)
@@ -32,7 +33,6 @@ func NewHandler(store store.DatabaseStore) *Handler {
 			Required(true)).
 		Doc("deletes databases").
 		Operation("deleteDatabase").
-		Writes(nil).
 		Returns(http.StatusNoContent, "OK", nil))
 
 	ws.Route(ws.GET("/").To(h.RestfulList).

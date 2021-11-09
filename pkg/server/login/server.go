@@ -28,7 +28,7 @@ func NewServer(options Options) (*Server, error) {
 		return nil, err
 	}
 
-	container := genericServer.Container
+	container := genericServer.GoRestfulContainer
 	sessionStore := genericServer.SessionStore()
 
 	organizationStore := store.NewOrganizationStore(options.StoreFactory)
@@ -45,7 +45,10 @@ func NewServer(options Options) (*Server, error) {
 	if err != nil {
 		return nil, err
 	}
-	container.Add(loginHandler.WebService())
+
+	for _, service := range loginHandler.WebServices() {
+		container.Add(service)
+	}
 
 	return &Server{
 		Server: genericServer,

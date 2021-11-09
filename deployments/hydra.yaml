@@ -27,8 +27,8 @@ urls:
   self:
     public: http://localhost:4444
     issuer: http://localhost:4444
-  consent: http://localhost:9002/consent
-  login: http://localhost:9002/login
+  consent: http://localhost:9002/login/consent
+  login: http://localhost:9002/login/identify
   logout: http://localhost:9002/logout
 log:
   leak_sensitive_values: true

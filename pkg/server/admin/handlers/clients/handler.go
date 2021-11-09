@@ -16,7 +16,9 @@ type Handler struct {
 func NewHandler(hydraAdmin admin.ClientService) (*Handler, error) {
 	h := &Handler{}
 
-	ws := new(restful.WebService).Path("/clients")
+	ws := new(restful.WebService).
+		Path("/apis/admin.nrc.no/v1/clients").
+		Doc("clients.admin.nrc.no API")
 
 	ws.Route(ws.PUT("/{clientId}").To(restfulUpdate(hydraAdmin)).
 		Doc(`updates oauth2 client`).

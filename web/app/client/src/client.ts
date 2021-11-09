@@ -1,14 +1,15 @@
-import axios, {AxiosError, AxiosResponse, Method} from "axios";
+import axios, {AxiosError, AxiosInstance, AxiosResponse, Method} from "axios";
 import {
     Database,
-    DatabaseList, FieldKind, FieldType,
+    DatabaseList,
+    FieldKind,
+    FieldType,
     Folder,
     FolderList,
     FormDefinition,
     FormDefinitionList,
     Record,
-    RecordList,
-    Session
+    RecordList
 } from "./types/types";
 
 export type Response<TRequest, TResponse> = {
@@ -22,13 +23,6 @@ export type Response<TRequest, TResponse> = {
 
 export type PartialObjectWrapper<T> = { object: Partial<T> }
 export type DataOperation<TRequest, TResponse> = (request: TRequest) => Promise<TResponse>
-
-export type SessionGetRequest = void
-export type SessionGetResponse = Response<SessionGetRequest, Session>
-
-export interface SessionGetter {
-    getSession: DataOperation<SessionGetRequest, SessionGetResponse>
-}
 
 export type DatabaseCreateRequest = PartialObjectWrapper<Database>
 export type DatabaseCreateResponse = Response<DatabaseCreateRequest, Database>
@@ -111,8 +105,7 @@ export interface Client
         RecordLister,
         RecordGetter,
         FolderLister,
-        FolderCreator,
-        SessionGetter {
+        FolderCreator {
     address: string
 }
 
@@ -144,24 +137,17 @@ function clientResponse<TRequest, TBody>(r: AxiosResponse<TBody>, request: TRequ
         : successResponse<TRequest, TBody>(request, r)
 }
 
-export type RequestOptions = {
-    headers: { [key: string]: string },
-    silentRedirect?: boolean,
-}
-
 export class client implements Client {
-    constructor(public readonly address = 'http://localhost:9000') {
+    constructor(
+        public readonly address = 'http://localhost:9000',
+        public readonly axiosInstance: AxiosInstance = axios.create()) {
     }
 
-    do<TRequest, TBody>(request: TRequest, url: string, method: Method, data: any, expectStatusCode: number, options?: RequestOptions): Promise<Response<TRequest, TBody>> {
+    do<TRequest, TBody>(request: TRequest, url: string, method: Method, data: any, expectStatusCode: number): Promise<Response<TRequest, TBody>> {
         let headers: { [key: string]: string } = {
             "Accept": "application/json",
         }
-        if (options?.headers) {
-            headers = options?.headers
-        }
-
-        return axios.request<TBody>({
+        return this.axiosInstance.request<TBody>({
             responseType: "json",
             method,
             url,
@@ -183,54 +169,49 @@ export class client implements Client {
     }
 
     createDatabase(request: DatabaseCreateRequest): Promise<DatabaseCreateResponse> {
-        return this.do(request, `${this.address}/databases`, "post", request.object, 200)
+        return this.do(request, `${this.address}/apis/core.nrc.no/v1/databases`, "post", request.object, 200)
     }
 
     createFolder(request: FolderCreateRequest): Promise<FolderCreateResponse> {
-        return this.do(request, `${this.address}/folders`, "post", request.object, 200)
+        return this.do(request, `${this.address}/apis/core.nrc.no/v1/folders`, "post", request.object, 200)
     }
 
     createForm(request: FormCreateRequest): Promise<FormCreateResponse> {
-        return this.do(request, `${this.address}/forms`, "post", request.object, 200)
+        return this.do(request, `${this.address}/apis/core.nrc.no/v1/forms`, "post", request.object, 200)
     }
 
     createRecord(request: RecordCreateRequest): Promise<RecordCreateResponse> {
-        const url = `${this.address}/records`
+        const url = `${this.address}/apis/core.nrc.no/v1/records`
         return this.do(request, url, "post", request.object, 200)
     }
 
     listDatabases(request: {} | undefined): Promise<DatabaseListResponse> {
-        return this.do(request, `${this.address}/databases`, "get", undefined, 200)
+        return this.do(request, `${this.address}/apis/core.nrc.no/v1/databases`, "get", undefined, 200)
     }
 
     listFolders(request: {} | undefined): Promise<FolderListResponse> {
-        return this.do(request, `${this.address}/folders`, "get", undefined, 200)
+        return this.do(request, `${this.address}/apis/core.nrc.no/v1/folders`, "get", undefined, 200)
     }
 
     listForms(request: {} | undefined): Promise<FormListResponse> {
-        return this.do(request, `${this.address}/forms`, "get", undefined, 200)
+        return this.do(request, `${this.address}/apis/core.nrc.no/v1/forms`, "get", undefined, 200)
     }
 
     listRecords(request: RecordListRequest): Promise<RecordListResponse> {
         const {databaseId, formId} = request
-        const url = `${this.address}/records?databaseId=${databaseId}&formId=${formId}`
+        const url = `${this.address}/apis/core.nrc.no/v1/records?databaseId=${databaseId}&formId=${formId}`
         return this.do(request, url, "get", undefined, 200)
     }
 
     getForm(request: FormGetRequest): Promise<FormGetResponse> {
-        return this.do(request, `${this.address}/forms/${request.id}`, "get", undefined, 200)
+        return this.do(request, `${this.address}/apis/core.nrc.no/v1/forms/${request.id}`, "get", undefined, 200)
     }
 
     getRecord(request: RecordGetRequest): Promise<RecordGetResponse> {
         const {databaseId, formId, recordId} = request
-        const url = `${this.address}/records/${recordId}?databaseId=${databaseId}&formId=${formId}`
+        const url = `${this.address}/apis/core.nrc.no/v1/records/${recordId}?databaseId=${databaseId}&formId=${formId}`
         return this.do(request, url, "get", undefined, 200)
     }
-
-    getSession(request: void): Promise<SessionGetResponse> {
-        return this.do(request, `${this.address}/oidc/session`, "get", undefined, 200, {headers: {}})
-    }
-
 
 }
 

@@ -20,7 +20,6 @@ serve:
       # Address where the server can be publicly accessed
       self: http://localhost:9001
 
-
     oidc:
       # Oauth2 callback URL
       redirect_uri: http://localhost:9001/oidc/callback
@@ -150,9 +149,21 @@ serve:
         max_idle_connections: 10
         max_length: 65536
 
+  auth:
+    host: "127.0.0.1"
+    port: "9004"
+    tls:
+      enabled: false
+    urls:
+      self: http://localhost:9004
 
 hydra:
   admin:
     host: localhost:4445
     schemes:
       - http
+  public:
+    host: localhost:4444
+    schemes:
+      - http
+

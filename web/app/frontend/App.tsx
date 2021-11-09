@@ -1,7 +1,9 @@
-import React, {FC, Fragment, useCallback, useMemo, useState} from 'react';
+import React, {FC, Fragment, useCallback, useEffect, useMemo, useState} from 'react';
 import {Provider as PaperProvider} from 'react-native-paper';
 import theme from './src/constants/theme';
 import Router from './src/components/Router';
+import axios from "axios"
+import {axiosInstance} from "./src/utils/clients"
 import {
     CodeChallengeMethod,
     exchangeCodeAsync,
@@ -85,6 +87,31 @@ export const AuthWrapper: FC = props => {
         })
     }, [useProxy, promptAsync])
 
+    useEffect(() => {
+        console.log("SETTING UP INTERCEPTOR")
+        const interceptor = axiosInstance.interceptors.request.use(value => {
+            console.log("INTERCEPTED VALUE")
+            if (!value) {
+                return
+            }
+            if (!accessToken){
+                return
+            }
+            if (!value.headers){
+                value.headers = {}
+            }
+            value.headers["Authorization"] = `Bearer ${accessToken}`
+            return value
+        }, error => {
+            console.error(error)
+            return error
+        })
+        return () => {
+            console.log("EJECTING INTERCEPTOR")
+            axiosInstance.interceptors.request.eject(interceptor)
+        }
+    }, [accessToken])
+
     if (!loggedIn) {
         return <PaperProvider theme={theme}>
             <Button
@@ -93,6 +120,9 @@ export const AuthWrapper: FC = props => {
                 onPress={handleLogin}
             />
         </PaperProvider>
+    }
+    if (!accessToken){
+        return <Fragment/>
     }
 
     return <Fragment>

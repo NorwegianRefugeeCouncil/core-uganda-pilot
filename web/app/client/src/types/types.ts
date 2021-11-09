@@ -1,11 +1,3 @@
-export type Session = {
-    active: boolean
-    expiry: string
-    expiredInSeconds: number
-    subject: string
-    username: string
-}
-
 export class Database {
     public id: string = ""
     public name: string = ""

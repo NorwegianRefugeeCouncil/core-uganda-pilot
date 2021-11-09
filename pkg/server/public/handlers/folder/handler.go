@@ -18,7 +18,10 @@ type Handler struct {
 func NewHandler(store store.FolderStore) *Handler {
 	h := &Handler{store: store}
 
-	ws := new(restful.WebService).Path("/folders")
+	ws := new(restful.WebService).
+		Path("/apis/core.nrc.no/v1/folders").
+		Doc("folders.core.nrc.no API")
+
 	h.webService = ws
 
 	folderPath := fmt.Sprintf("/{%s}", constants.ParamFolderID)

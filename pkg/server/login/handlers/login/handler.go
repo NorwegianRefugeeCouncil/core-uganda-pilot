@@ -10,7 +10,7 @@ import (
 )
 
 type Handler struct {
-	ws *restful.WebService
+	loginWs *restful.WebService
 }
 
 func NewHandler(
@@ -23,8 +23,6 @@ func NewHandler(
 ) (*Handler, error) {
 	h := &Handler{}
 
-	ws := new(restful.WebService)
-
 	requestActionHandler := handleAuthRequestAction(
 		sessionStore,
 		idpStore,
@@ -34,52 +32,56 @@ func NewHandler(
 		selfURL,
 	)
 
-	ws.Route(ws.GET("/login").
+	loginWs := new(restful.WebService).Path("/login")
+	h.loginWs = loginWs
+
+	loginWs.Route(loginWs.GET("/identify").
 		Operation("login").
 		To(func(req *restful.Request, res *restful.Response) {
 			requestActionHandler(authrequest.EventRequestLogin, req.PathParameters(), req.Request.URL.Query())(res.ResponseWriter, req.Request)
 		}))
 
-	ws.Route(ws.POST("/login").
+	loginWs.Route(loginWs.POST("/identify").
 		Operation("provide_credentials").
 		To(func(req *restful.Request, res *restful.Response) {
 			requestActionHandler(authrequest.EventProvideIdentifier, req.PathParameters(), req.Request.URL.Query())(res.ResponseWriter, req.Request)
 		}))
 
-	ws.Route(ws.POST("/login/oidc/{identityProviderId}").
+	loginWs.Route(loginWs.POST("/oidc/{identityProviderId}").
 		Operation("use_identity_provider").
 		To(func(req *restful.Request, res *restful.Response) {
 			requestActionHandler(authrequest.EventUseIdentityProvider, req.PathParameters(), req.Request.URL.Query())(res.ResponseWriter, req.Request)
 		}))
 
-	ws.Route(ws.GET("/oidc/callback").
+	loginWs.Route(loginWs.GET("/callback").
 		Operation("call_oidc_callback").
 		To(func(req *restful.Request, res *restful.Response) {
 			requestActionHandler(authrequest.EventCallOidcCallback, req.PathParameters(), req.Request.URL.Query())(res.ResponseWriter, req.Request)
 		}))
 
-	ws.Route(ws.POST("/consent/approve").
+	loginWs.Route(loginWs.POST("/consent/approve").
 		Operation("approve_consent_request").
 		To(func(req *restful.Request, res *restful.Response) {
 			requestActionHandler(authrequest.EventApproveConsentChallenge, req.PathParameters(), req.Request.URL.Query())(res.ResponseWriter, req.Request)
 		}))
 
-	ws.Route(ws.POST("/consent/decline").
+	loginWs.Route(loginWs.POST("/consent/decline").
 		Operation("decline_consent_request").
 		To(func(req *restful.Request, res *restful.Response) {
 			requestActionHandler(authrequest.EventDeclineConsentChallenge, req.PathParameters(), req.Request.URL.Query())(res.ResponseWriter, req.Request)
 		}))
 
-	ws.Route(ws.GET("/consent").
+	loginWs.Route(loginWs.GET("/consent").
 		Operation("receive_consent_request").
 		To(func(req *restful.Request, res *restful.Response) {
 			requestActionHandler(authrequest.EventReceiveConsentChallenge, req.PathParameters(), req.Request.URL.Query())(res.ResponseWriter, req.Request)
 		}))
 
-	h.ws = ws
 	return h, nil
 }
 
-func (h *Handler) WebService() *restful.WebService {
-	return h.ws
+func (h *Handler) WebServices() []*restful.WebService {
+	return []*restful.WebService{
+		h.loginWs,
+	}
 }

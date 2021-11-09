@@ -10,26 +10,31 @@ import (
 	"github.com/emicklei/go-restful/v3"
 	"github.com/gomodule/redigo/redis"
 	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
+	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/server/options"
+	"github.com/nrc-no/core/pkg/utils"
 	"github.com/rs/cors"
 	"github.com/sirupsen/logrus"
 	"go.uber.org/zap"
 	"net"
 	"net/http"
 	"reflect"
+	"strings"
 	"time"
 )
 
 type Server struct {
-	options      options.ServerOptions
-	name         string
-	address      string
-	listener     net.Listener
-	Container    *restful.Container
-	handler      http.Handler
-	sessionStore sessions.Store
+	options            options.ServerOptions
+	name               string
+	address            string
+	listener           net.Listener
+	GoRestfulContainer *restful.Container
+	NonGoRestfulMux    *mux.Router
+	handler            http.Handler
+	sessionStore       sessions.Store
 }
 
 type Middleware func(next http.Handler) http.Handler
@@ -123,9 +128,20 @@ func NewGenericServer(options options.ServerOptions, name string) (*Server, erro
 
 	container := restful.NewContainer()
 	container.Filter(logging.UseOperationLogging())
-	srv.Container = container
+	srv.GoRestfulContainer = container
+	srv.NonGoRestfulMux = mux.NewRouter()
+	srv.NonGoRestfulMux.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		utils.ErrorResponse(w, &meta.StatusError{
+			ErrStatus: meta.Status{
+				Status:  meta.StatusFailure,
+				Message: "Not found",
+				Reason:  meta.StatusReasonNotFound,
+				Code:    http.StatusNotFound,
+			},
+		})
+	})
 
-	c := cors.New(cors.Options{
+	corsHandler := cors.New(cors.Options{
 		AllowedOrigins:     options.Cors.AllowedOrigins,
 		AllowCredentials:   options.Cors.AllowCredentials,
 		AllowedMethods:     options.Cors.AllowedMethods,
@@ -135,11 +151,17 @@ func NewGenericServer(options options.ServerOptions, name string) (*Server, erro
 		MaxAge:             options.Cors.MaxAge,
 		ExposedHeaders:     options.Cors.ExposedHeaders,
 	})
-	c.Log = &CorsLogger{}
+	corsHandler.Log = &CorsLogger{}
 
 	middleware := chainMiddleware(
 		func(next http.Handler) http.Handler {
-			return logging.UseRequestID(next)
+			return logging.UseRequestLogging(next)
+		},
+		func(next http.Handler) http.Handler {
+			return corsHandler.Handler(next)
+		},
+		func(next http.Handler) http.Handler {
+			return handlers.CompressHandler(next)
 		},
 		func(next http.Handler) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
@@ -148,20 +170,38 @@ func NewGenericServer(options options.ServerOptions, name string) (*Server, erro
 			})
 		},
 		func(next http.Handler) http.Handler {
+			return logging.UseRequestID(next)
+		},
+		func(next http.Handler) http.Handler {
 			return handlers.RecoveryHandler(handlers.PrintRecoveryStack(true))(next)
-		},
-		func(next http.Handler) http.Handler {
-			return handlers.CompressHandler(next)
-		},
-		func(next http.Handler) http.Handler {
-			return c.Handler(next)
-		},
-		func(next http.Handler) http.Handler {
-			return logging.UseRequestLogging(next)
 		},
 	)
 
-	handler := middleware(container)
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+
+		ctx := req.Context()
+		l := logging.NewLogger(ctx)
+		path := req.URL.Path
+
+		// check if go-restful can handle this request
+		for _, ws := range container.RegisteredWebServices() {
+			if strings.HasPrefix(path, ws.RootPath()) && (len(path) == len(ws.RootPath()) || path[len(ws.RootPath())] == '/') {
+				l.Debug("satisfied by GoRestful with webservice",
+					zap.String("path", path),
+					zap.String("root_path", ws.RootPath()),
+				)
+				container.ServeHTTP(w, req)
+				return
+			}
+		}
+
+		// skip go-restful
+		l.Debug("satisfied by NonGoRestful",
+			zap.String("path", path),
+		)
+		srv.NonGoRestfulMux.ServeHTTP(w, req)
+
+	}))
 	srv.handler = handler
 
 	return srv, nil
@@ -188,13 +228,13 @@ func (g Server) SessionStore() sessions.Store {
 func (g Server) Start(ctx context.Context) {
 
 	config := restfulspec.Config{
-		WebServices: g.Container.RegisteredWebServices(), // you control what services are visible
+		WebServices: g.GoRestfulContainer.RegisteredWebServices(), // you control what services are visible
 		APIPath:     "/openapi.json",
 		ModelTypeNameHandler: func(t reflect.Type) (string, bool) {
 			return t.Name(), true
 		},
 	}
-	g.Container.Add(restfulspec.NewOpenAPIService(config))
+	g.GoRestfulContainer.Add(restfulspec.NewOpenAPIService(config))
 
 	l := logging.NewLogger(ctx).
 		With(zap.String("address", g.listener.Addr().String())).

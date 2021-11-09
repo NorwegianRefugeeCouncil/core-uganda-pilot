@@ -21,6 +21,11 @@ if (process.env.CONFIG_FILE) {
 
 config.pkce = {}
 config.pkce.required = () => false
+config.features = {
+    introspection: {
+        enabled: true
+    }
+}
 
 config.renderError = async (ctx, out, error) => {
     ctx.type = 'html';
@@ -53,4 +58,5 @@ if (process.env.TLS_KEY || process.env.TLS_CERT){
 console.log("config", config)
 
 const provider = new Provider(issuer, config);
+
 app.use(provider.callback())

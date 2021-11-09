@@ -1,6 +1,11 @@
-SHELL := bash
+SHELL=bash
 .ONESHELL: # ensures each Make recipe is ran as one single shell session, rather than one new shell per line
 .SHELLFLAGS := -eu -o pipefail -c # fail on errors
+
+args = `arg="$(filter-out $@,$(MAKECMDGOALS))" && echo $${arg:-${1}}`
+
+%:
+    @:
 
 .PHONY: init-secrets
 init-secrets:
@@ -64,6 +69,54 @@ docs:
 .PHONY: install-all
 install-all:
 	@./scripts/install-all.sh
+
+.PHONY: restart-all
+restart-all:
+	@./scripts/restart.sh
+
+.PHONY: restart-proxy
+restart-proxy:
+	@./scripts/restart.sh proxy
+
+.PHONY: restart-oidc
+restart-oidc:
+	@./scripts/restart.sh oidc
+
+.PHONY: restart-redis
+restart-redis:
+	@./scripts/restart.sh redis
+
+.PHONY: restart-hydra
+restart-hydra:
+	@./scripts/restart.sh hydra
+
+.PHONY: restart-db
+restart-db:
+	@./scripts/restart.sh db
+
+.PHONY: logs-all
+logs-all:
+	@./scripts/logs.sh
+
+.PHONY: logs-proxy
+logs-proxy:
+	@./scripts/logs.sh proxy
+
+.PHONY: logs-oidc
+logs-oidc:
+	@./scripts/logs.sh oidc
+
+.PHONY: logs-redis
+logs-redis:
+	@./scripts/logs.sh redis
+
+.PHONY: logs-hydra
+logs-hydra:
+	@./scripts/logs.sh hydra
+
+.PHONY: logs-db
+logs-db:
+	@./scripts/logs.sh db
 
 .PHONY: open-all
 open-all:

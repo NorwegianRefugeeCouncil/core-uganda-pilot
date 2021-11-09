@@ -1,5 +1,19 @@
 services:
 
+  proxy:
+    image: envoyproxy/envoy-dev
+    container_name: envoy
+    hostname: envoy
+    volumes:
+      - ./envoy.yaml:/etc/envoy.yaml
+    network_mode: host
+    command:
+      - /usr/local/bin/envoy
+      - -c
+      - /etc/envoy.yaml
+      - -l
+      - debug
+
   oidc:
     image: node:16
     container_name: core_oidc

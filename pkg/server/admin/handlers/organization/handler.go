@@ -22,12 +22,13 @@ func (h *Handler) WebService() *restful.WebService {
 func NewHandler(store store.OrganizationStore) *Handler {
 	h := &Handler{store: store}
 
-	ws := new(restful.WebService).Path("/organizations").
-		Consumes(mimetypes.ApplicationJson).
-		Produces(mimetypes.ApplicationJson)
+	ws := new(restful.WebService).
+		Path("/apis/admin.nrc.no/v1/organizations").
+		Doc("organizations.admin.nrc.no api")
+
 	h.webService = ws
 
-	OrganizationPath := fmt.Sprintf("/{%s}", constants.ParamOrganizationID)
+	orgPath := fmt.Sprintf("/{%s}", constants.ParamOrganizationID)
 
 	ws.Route(ws.GET("/").To(h.RestfulList).
 		Doc("lists all organizations").
@@ -36,23 +37,27 @@ func NewHandler(store store.OrganizationStore) *Handler {
 			DataType("string").
 			DataFormat("uuid").
 			Required(true)).
+		Produces(mimetypes.ApplicationJson).
 		Writes(types.OrganizationList{}).
 		Returns(http.StatusOK, "OK", types.OrganizationList{}))
 
 	ws.Route(ws.POST("/").To(h.RestfulCreate).
 		Doc("create an organization").
 		Operation("createOrganization").
+		Consumes(mimetypes.ApplicationJson).
+		Produces(mimetypes.ApplicationJson).
 		Reads(types.Organization{}).
 		Writes(types.Organization{}).
 		Returns(http.StatusOK, "OK", types.Organization{}))
 
-	ws.Route(ws.GET(OrganizationPath).To(h.RestfulGet).
+	ws.Route(ws.GET(orgPath).To(h.RestfulGet).
 		Doc("get an organization").
 		Operation("getOrganization").
 		Param(restful.PathParameter(constants.ParamOrganizationID, "organization id").
 			DataType("string").
 			DataFormat("uuid").
 			Required(true)).
+		Produces(mimetypes.ApplicationJson).
 		Reads(types.Organization{}).
 		Writes(types.Organization{}).
 		Returns(http.StatusOK, "OK", types.Organization{}))

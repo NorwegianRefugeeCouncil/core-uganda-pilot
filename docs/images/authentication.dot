@@ -1,0 +1,22 @@
+digraph A {
+
+  client
+  proxy
+  api
+  auth
+  hydra
+  login
+
+  client -> hydra [label="1. oidc"]
+  hydra -> login [label="2. login"]
+  login -> hydra [label="3. accept"]
+  hydra -> client [label="4. tokens"]
+  client -> proxy [label="5. access token"]
+  proxy -> auth [label="6. access token"]
+  auth -> hydra [label="7. authentication (/userinfo) accesstoken"]
+  auth -> hydra [label="7. authorization (/introspect) accesstoken"]
+  auth -> spicedb [label="8. verify acls"]
+  auth -> proxy [label="9. authorized"]
+  proxy -> api
+
+}
