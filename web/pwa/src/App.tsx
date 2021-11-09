@@ -19,6 +19,8 @@ import {FolderEditor} from "./features/folders/FolderEditor";
 import {RecordBrowser} from "./features/browser/RecordBrowser";
 import {AuthWrapper} from "./components/AuthWrapper";
 
+// TODO: https://betterprogramming.pub/building-secure-login-flow-with-oauth-2-openid-in-react-apps-ce6e8e29630a
+
 function AuthenticatedApp() {
 
     const dispatch = useAppDispatch()
