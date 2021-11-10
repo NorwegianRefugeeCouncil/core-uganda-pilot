@@ -20,9 +20,9 @@ WebBrowser.maybeCompleteAuthSession();
 export const AuthWrapper: FC = props => {
     const {children} = props
     const clientId = 'react-native' //TODO
-    const useProxy = useMemo(() => Platform.select({web: false, default: true}), []);
+    const useProxy = useMemo(() => Platform.select({web: false, default: false}), []);
     const redirectUri = useMemo(() => makeRedirectUri({scheme: 'nrccore'}), [])
-    const discovery = useAutoDiscovery('http://localhost:4444');
+    const discovery = useAutoDiscovery('https://oidc.dev:8443');
     const [loggedIn, setLoggedIn] = useState(false)
 
     const [request, response, promptAsync] = useAuthRequest(
