@@ -1,19 +1,17 @@
+import { Button } from 'core-design-system';
 import React from 'react';
-import {Title} from 'react-native-paper';
-import {layout} from '../../styles';
-import {Text, View} from 'react-native';
-import {Button} from 'core-design-system'
+import { Text, View } from 'react-native';
+import { Title } from 'react-native-paper';
+
+import { layout } from '../../styles';
 
 const DesignSystemDemoScreen = () => {
-
     return (
         <View style={layout.body}>
             <Title>Design System Demo</Title>
 
             <Button onPress={() => console.log('integrated design system')}>
-                <Text>
-                    button
-                </Text>
+                <Text>button</Text>
             </Button>
         </View>
     );

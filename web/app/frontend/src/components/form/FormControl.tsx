@@ -1,59 +1,57 @@
-import {View, ViewStyle} from "react-native";
-import React from "react";
-import TextInput from "./TextInput";
-import Select from "./Select";
-import {Control, Controller} from "react-hook-form";
-import {FieldDefinition, FieldKind} from "core-js-api-client/lib/types/types";
-import {getFieldKind} from "core-js-api-client/lib/client";
-import ReferenceInput from "./ReferenceInput";
+import { getFieldKind } from 'core-js-api-client/lib/client';
+import { FieldDefinition, FieldKind } from 'core-js-api-client/lib/types/types';
+import React from 'react';
+import { Control, Controller } from 'react-hook-form';
+import { View, ViewStyle } from 'react-native';
+
+import ReferenceInput from './ReferenceInput';
+import Select from './Select';
+import TextInput from './TextInput';
 
 // TODO: move & clean up types
 export type InputProps = {
-    fieldDefinition: FieldDefinition,
-    style?: ViewStyle,
-    value: any,
-    onChange: any,
-    onBlur?: any,
-    error?: any,
-    invalid?: boolean,
-    isTouched?: boolean,
-    isDirty?: boolean,
-    isMultiple?: boolean,
-    isQuantity?: boolean
+    fieldDefinition: FieldDefinition;
+    style?: ViewStyle;
+    value: any;
+    onChange: any;
+    onBlur?: any;
+    error?: any;
+    invalid?: boolean;
+    isTouched?: boolean;
+    isDirty?: boolean;
+    isMultiple?: boolean;
+    isQuantity?: boolean;
 };
 
 type FormControlProps = {
-    name: string,
-    fieldDefinition: FieldDefinition,
-    style?: ViewStyle,
-    value?: any,
-    control: Control<any, object>,
-    errors?: object
+    name: string;
+    fieldDefinition: FieldDefinition;
+    style?: ViewStyle;
+    value?: any;
+    control: Control<any, object>;
+    errors?: object;
 };
 
-const FormControl: React.FC<FormControlProps> = (
-    {
-        fieldDefinition,
-        style,
-        control,
-        name,
-        value,
-    }) => {
+const FormControl: React.FC<FormControlProps> = ({
+    fieldDefinition,
+    style,
+    control,
+    name,
+    value,
+}) => {
     return (
         // TODO: apply errors to all input types
-        <View style={{margin: 10}}>
+        <View style={{ margin: 10 }}>
             <Controller
                 name={name}
                 control={control}
                 defaultValue={value}
                 rules={{}}
-                render={(
-                    {
-                        field: {onChange, onBlur, value, ref},
-                        fieldState,
-                        formState,
-                    }) => {
-
+                render={({
+                    field: { onChange, onBlur, value, ref },
+                    fieldState,
+                    formState,
+                }) => {
                     const fieldKind = getFieldKind(fieldDefinition.fieldType);
 
                     switch (fieldKind) {
@@ -66,7 +64,7 @@ const FormControl: React.FC<FormControlProps> = (
                                     onBlur={onBlur}
                                     onChange={onChange}
                                 />
-                            )
+                            );
                         case FieldKind.Quantity:
                             return (
                                 <TextInput
@@ -78,7 +76,7 @@ const FormControl: React.FC<FormControlProps> = (
                                     isQuantity={true}
                                     {...fieldState}
                                 />
-                            )
+                            );
                         case FieldKind.MultilineText:
                             return (
                                 <TextInput
@@ -90,7 +88,7 @@ const FormControl: React.FC<FormControlProps> = (
                                     isMultiple={true}
                                     {...fieldState}
                                 />
-                            )
+                            );
                         case FieldKind.SingleSelect:
                             return (
                                 <Select
@@ -100,7 +98,7 @@ const FormControl: React.FC<FormControlProps> = (
                                     onBlur={onBlur}
                                     onChange={onChange}
                                 />
-                            )
+                            );
                         default:
                             return (
                                 <TextInput
@@ -111,12 +109,12 @@ const FormControl: React.FC<FormControlProps> = (
                                     onChange={onChange}
                                     {...fieldState}
                                 />
-                            )
+                            );
                     }
                 }}
             />
         </View>
-    )
+    );
 };
 
 export default FormControl;

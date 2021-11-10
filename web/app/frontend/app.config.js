@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import 'dotenv/config';
 
 export default ({ config }) => {
     switch (process.env.NODE_ENV) {
@@ -6,21 +6,18 @@ export default ({ config }) => {
         case 'dev':
             return {
                 ...config,
-                plugins: [
-                    '@config-plugins/android-jsc-intl'
-                ],
+                plugins: ['@config-plugins/android-jsc-intl'],
                 extra: {
                     server_default_hostname: 'http://localhost:9000',
                     server_hostname: process.env.SERVER_HOSTNAME,
                 },
-            }
+            };
         case 'production':
         case 'prod':
-            return config
+            return config;
         case 'staging':
-            return config
+            return config;
         default:
-            return config
+            return config;
     }
-}
-
+};

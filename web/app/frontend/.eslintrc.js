@@ -4,8 +4,8 @@ module.exports = {
         es2021: true,
     },
     extends: [
-        'universe',
         'eslint:recommended',
+        'universe',
         'plugin:react/recommended',
         'plugin:react-hooks/recommended',
         'plugin:@typescript-eslint/recommended',

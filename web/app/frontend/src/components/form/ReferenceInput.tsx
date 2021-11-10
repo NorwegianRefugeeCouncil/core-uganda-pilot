@@ -1,33 +1,34 @@
-import {View} from "react-native";
-import React from "react";
-import {Text} from "react-native-paper";
-import {darkTheme} from "../../constants/theme";
-import {InputProps} from "./FormControl";
+import React from 'react';
+import { View } from 'react-native';
+import { Text } from 'react-native-paper';
+
+import { darkTheme } from '../../constants/theme';
+import { InputProps } from './FormControl';
 // import {Picker} from "@react-native-picker/picker";
 
-const ReferenceInput: React.FC<InputProps> = (
-    {
-        fieldDefinition,
-        style,
-        value,
-        onChange,
-        onBlur,
-        error,
-        invalid,
-        isTouched,
-        isDirty,
-        isMultiple,
-        isQuantity
-    }) => {
-
+const ReferenceInput: React.FC<InputProps> = ({
+    fieldDefinition,
+    style,
+    value,
+    onChange,
+    onBlur,
+    error,
+    invalid,
+    isTouched,
+    isDirty,
+    isMultiple,
+    isQuantity,
+}) => {
     // console.log(isDirty, isTouched, error)
     const [selectedValue, setSelectedValue] = React.useState(value);
 
     return (
         <View style={style}>
-            {fieldDefinition.name && <Text theme={darkTheme}>{fieldDefinition.name}</Text>}
-            {fieldDefinition.description &&(
-                <Text theme={darkTheme} style={{fontSize: 10}}>
+            {fieldDefinition.name && (
+                <Text theme={darkTheme}>{fieldDefinition.name}</Text>
+            )}
+            {fieldDefinition.description && (
+                <Text theme={darkTheme} style={{ fontSize: 10 }}>
                     {fieldDefinition.description}
                 </Text>
             )}
@@ -63,12 +64,9 @@ const ReferenceInput: React.FC<InputProps> = (
             {/*    />*/}
             {/*</DataTable>*/}
             {isTouched && isDirty && error && (
-                <Text>
-                    {error.message == '' ? 'invalid' : error.message}
-                </Text>
+                <Text>{error.message == '' ? 'invalid' : error.message}</Text>
             )}
         </View>
-
     );
 };
 

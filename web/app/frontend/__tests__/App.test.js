@@ -1,6 +1,7 @@
-import React from 'react';
-import App from '../App.tsx';
 import { render, cleanup } from '@testing-library/react-native';
+import React from 'react';
+
+import App from '../App.tsx';
 
 describe('App', () => {
     afterEach(cleanup);
@@ -14,5 +15,4 @@ describe('App', () => {
         const tree = render(<App />).toJSON();
         expect(tree).toMatchSnapshot();
     });
-
 });

@@ -1,8 +1,11 @@
-import {initialRecordsState, recordsReducer} from '../../src/reducers/recordsReducers';
+import {
+    initialRecordsState,
+    recordsReducer,
+} from '../../src/reducers/recordsReducers';
 
 describe('records reducer', () => {
     test('should return the initial state', () => {
-        const action = {type: "UNKNOWN_ACTION", payload: {}}
+        const action = { type: 'UNKNOWN_ACTION', payload: {} };
         expect(recordsReducer(null, action)).toEqual(initialRecordsState);
     });
     test.todo('should handle GET_RECORDS');

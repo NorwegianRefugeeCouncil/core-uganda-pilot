@@ -14,7 +14,7 @@ jest.mock('react-native-crypto-js', () => {
             ...CryptoJS.AES,
             encrypt: jest.fn(CryptoJS.AES.encrypt),
             decrypt: jest.fn(CryptoJS.AES.decrypt),
-        }
+        },
     };
 });
 
@@ -23,8 +23,7 @@ jest.mock('react-native-reanimated', () => {
 
     // The mock for `call` immediately calls the callback which is incorrect
     // So we override it with a no-op
-    Reanimated.default.call = () => {
-    };
+    Reanimated.default.call = () => {};
 
     return Reanimated;
 });
@@ -33,15 +32,19 @@ jest.mock('react-native-reanimated', () => {
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
 
 jest.mock('core-js-api-client', () => {
-    const {FormDefinition} = jest.requireActual('core-js-api-client/lib/types/types');
-    const formsList = {response: {items: new Array(10).map(() => new FormDefinition())}};
+    const { FormDefinition } = jest.requireActual(
+        'core-js-api-client/lib/types/types'
+    );
+    const formsList = {
+        response: { items: new Array(10).map(() => new FormDefinition()) },
+    };
 
     function client(host) {
         this.host = host;
-        this.listForms = () => new Promise((resolve) => {
-            resolve(formsList);
-        });
-
+        this.listForms = () =>
+            new Promise(resolve => {
+                resolve(formsList);
+            });
     }
 
     return { client };
