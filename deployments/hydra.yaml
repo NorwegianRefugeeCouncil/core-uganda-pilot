@@ -1,7 +1,11 @@
 serve:
   public:
     tls:
-      enabled: false
+      enabled: true
+      cert:
+        path: /var/run/tls/public/tls.crt
+      key:
+        path: /var/run/tls/public/tls.key
     cors:
       enabled: true
       debug: true
@@ -15,6 +19,7 @@ serve:
       allowed_origins:
         - http://localhost:3000
         - http://localhost:19006
+        - https://core.dev:8443
       allowed_headers:
         - Authorization
         - Content-Type
@@ -22,14 +27,11 @@ serve:
         - Content-Type
   admin:
     tls:
-      enabled: false
-urls:
-  self:
-    public: http://localhost:4444
-    issuer: http://localhost:4444
-  consent: http://localhost:9002/login/consent
-  login: http://localhost:9002/login/identify
-  logout: http://localhost:9002/logout
+      enabled: true
+      cert:
+        path: /var/run/tls/admin/tls.crt
+      key:
+        path: /var/run/tls/admin/tls.key
 log:
   leak_sensitive_values: true
   level: trace

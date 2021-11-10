@@ -4,7 +4,6 @@ go 1.17
 
 require (
 	github.com/boj/redistore v0.0.0-20180917114910-cd5dcc76aeff
-	github.com/cenkalti/backoff/v4 v4.1.1
 	github.com/coreos/go-oidc/v3 v3.0.0
 	github.com/emicklei/go-restful-openapi/v2 v2.6.0
 	github.com/emicklei/go-restful/v3 v3.7.1
@@ -38,4 +37,6 @@ require (
 	go.mongodb.org/mongo-driver v1.5.3 // indirect
 	golang.org/x/sys v0.0.0-20211023085530-d6a326fbbf70 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
+	software.sslmate.com/src/go-pkcs12 v0.0.0-20210415151418-c5206de65a78
 )

@@ -10,7 +10,7 @@ export default ({ config }) => {
                     '@config-plugins/android-jsc-intl'
                 ],
                 extra: {
-                    server_default_hostname: 'http://localhost:8080',
+                    server_default_hostname: 'https://core.dev:8443',
                     server_hostname: process.env.SERVER_HOSTNAME,
                 },
             }

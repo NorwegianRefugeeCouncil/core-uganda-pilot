@@ -3,8 +3,8 @@ import {RootState} from "../../app/store";
 import {FormInterface, selectFormOrSubFormById, selectRootForm} from "../../reducers/form";
 import {v4 as uuidv4} from "uuid"
 import {FormDefinition, Record} from "../../types/types";
-import {defaultClient} from "core-js-api-client";
 import {recordGlobalSelectors} from "../../reducers/records";
+import client from "../../app/client";
 
 export interface FormValue {
     // the unique id of the record
@@ -245,7 +245,7 @@ export const postRecord = createAsyncThunk<Record[], Record[]>("records/post", a
     const result: Record[] = []
     for (let record of arg) {
         try {
-            const response = await defaultClient.createRecord({object: record})
+            const response = await client.createRecord({object: record})
             if (!response.success) {
                 return thunkAPI.rejectWithValue(response.error)
             }

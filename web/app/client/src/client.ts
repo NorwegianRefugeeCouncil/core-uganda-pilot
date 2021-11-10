@@ -107,6 +107,7 @@ export interface Client
         FolderLister,
         FolderCreator {
     address: string
+    axiosInstance: AxiosInstance
 }
 
 function errorResponse<TRequest, TBody>(request: TRequest, r: AxiosResponse<TBody>): Response<TRequest, TBody> {
@@ -139,7 +140,7 @@ function clientResponse<TRequest, TBody>(r: AxiosResponse<TBody>, request: TRequ
 
 export class client implements Client {
     constructor(
-        public readonly address = 'http://localhost:9000',
+        public readonly address = 'https://core.dev:8443',
         public readonly axiosInstance: AxiosInstance = axios.create()) {
     }
 

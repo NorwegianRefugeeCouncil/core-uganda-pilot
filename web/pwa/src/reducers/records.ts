@@ -1,7 +1,7 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import {FieldDefinition, Record} from "../types/types";
 import {RootState} from "../app/store";
-import {defaultClient, RecordListRequest, RecordListResponse} from "core-js-api-client";
+import {RecordListRequest, RecordListResponse} from "core-js-api-client";
 import {
     formGlobalSelectors,
     selectFieldForSubForm,
@@ -9,6 +9,7 @@ import {
     selectRootForm,
     selectSubFormForField
 } from "./form";
+import client from "../app/client";
 
 const adapter = createEntityAdapter<Record>({
     // Assume IDs are stored in a field other than `book.id`
@@ -22,7 +23,7 @@ export const fetchRecords = createAsyncThunk<RecordListResponse, RecordListReque
     'records/fetch',
     async (request, thunkAPI) => {
         try {
-            const response = await defaultClient.listRecords(request)
+            const response = await client.listRecords(request)
             if (response.success) {
                 return response
             } else {

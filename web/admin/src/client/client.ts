@@ -250,4 +250,3 @@ export class client implements Client {
 
 }
 
-export const defaultClient: Client = new client()

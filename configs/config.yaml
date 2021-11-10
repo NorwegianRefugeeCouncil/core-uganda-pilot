@@ -1,124 +1,59 @@
 log:
-  # Possible values are (debug, info, warn, error, dpanic, panic, fatal)
   level: info
-
-
 serve:
   admin:
-
-    # Admin server serving address
     host: "0.0.0.0"
-    # Admin server serving port
     port: "9001"
-
-
-    # Admin server TLS options
     tls:
-      enabled: false
-
-    urls:
-      # Address where the server can be publicly accessed
-      self: http://localhost:9001
-
-    oidc:
-      # Oauth2 callback URL
-      redirect_uri: http://localhost:9001/oidc/callback
-      # OAuth2 required scopes
-      scopes:
-        - openid
-        - profile
-        - email
-      # Default redirect after oauth flow
-      post_login_default_redirect_uri: http://localhost:3001
-      # Authorized redirect URIs after oauth flow
-      post_login_allowed_redirect_uris:
-        - http://localhost:3001
-        - http://localhost:3001/
-        - http://localhost:3001/session-renew
-        - http://localhost:3001/session-renew/
-
-    # CORS settings
-    cors:
-      # Enable/Disable CORS
       enabled: true
-      # Cors Allowed-Origins header config
+      cert:
+        path: creds/core/admin_api/tls.crt
+      key:
+        path: creds/core/admin_api/tls.key
+    urls:
+      self: https://core.dev:8443
+    cors:
+      enabled: true
       allowed_origins:
         - http://localhost:3001
-      # Allow credentials in CORS
       allow_credentials: true
-      # Allowed CORS headers
       allowed_headers:
         - Authorization
         - Content-Type
         - Accept
-      # Allowed CORS methods
       allowed_methods:
         - "GET"
         - "POST"
         - "PUT"
         - "OPTIONS"
         - "DELETE"
-      # Print debug information on CORS
       debug: true
-      # Exposed CORS headers
       exposed_headers:
         - Location
-
-
-    # Cache settings
     cache:
       redis:
-        # Redis address
         address: localhost:6379
-        # Redis max idle connections
         max_idle_connections: 10
-        # Redis cache max body length
         max_length: 65536
-
-
   public:
-
-
     host: "0.0.0.0"
     port: "9000"
-
-
     tls:
-      enabled: false
-
+      enabled: true
+      cert:
+        path: creds/core/api/tls.crt
+      key:
+        path: creds/core/api/tls.key
     urls:
-      self: http://localhost:9000
-
-
-    oidc:
-      # Redirect URI for OAuth2 Callback
-      redirect_uri: http://localhost:9000/oidc/callback
-      # OAuth2 Scopes
-      scopes:
-        - openid
-        - profile
-        - email
-      # Default redirect after oauth flow
-      post_login_default_redirect_uri: http://localhost:3000
-      # Authorized redirect URIs after oauth flow
-      post_login_allowed_redirect_uris:
-        - http://localhost:3000
-        - http://localhost:3000/
-        - http://localhost:3000/session-renew
-        - http://localhost:3000/session-renew/
-
-
+      self: https://core.dev:8080
     cache:
       redis:
         address: localhost:6379
         max_idle_connections: 10
         max_length: 65536
-
-
     cors:
       allowed_origins:
-        - http://localhost:3000
-        - http://localhost:19006
+        - https://localhost:3000
       allow_credentials: true
       allowed_headers:
         - Authorization
@@ -134,32 +69,36 @@ serve:
       enabled: true
       exposed_headers:
         - Location
-
-
   login:
     host: "127.0.0.1"
     port: "9002"
     tls:
-      enabled: false
+      enabled: true
+      cert:
+        path: creds/core/login/tls.crt
+      key:
+        path: creds/core/login/tls.key
     urls:
-      self: http://localhost:9002
+      self: https://core.dev:8443/login
     cache:
       redis:
         address: localhost:6379
         max_idle_connections: 10
         max_length: 65536
-
   auth:
     host: "127.0.0.1"
     port: "9004"
     tls:
-      enabled: false
+      enabled: true
+      cert:
+        path: creds/core/auth/tls.crt
+      key:
+        path: creds/core/auth/tls.key
     urls:
-      self: http://localhost:9004
+      self: https://core.dev:8443
     cors:
       allowed_origins:
-        - http://localhost:3000
-        - http://localhost:19006
+        - https://localhost:3001
       allow_credentials: true
       allowed_headers:
         - Authorization
@@ -175,14 +114,14 @@ serve:
       enabled: true
       exposed_headers:
         - Location
-
 hydra:
   admin:
-    host: localhost:4445
+    host: core.dev:8443
+    base_path: hydra-admin/
     schemes:
-      - http
+      - https
   public:
-    host: localhost:4444
+    host: core.dev:8443
+    base_path: hydra/
     schemes:
-      - http
-
+      - https

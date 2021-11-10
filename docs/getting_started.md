@@ -2,6 +2,10 @@
 
 - Install dependencies `make install-all`
 - Create your secrets `make init-secrets`
+- **Add the generated CA Certificate to your trust store**
+	- Fedora: `sudo cp certs/ca.crt /etc/pki/ca-trust/source/anchors/nrc_core_dev.crt && sudo update-ca-trust`
+	- Ubuntu: `sudo cp certs/ca.crt /usr/local/share/ca-certificates/nrc_core_dev.crt && sudo update-ca-certificates`
+	- Mac: `sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain certs/ca.crt`
 - Start docker resources `make up`
 - Migrate the database `make migrate`
 - Create initial configuration `make bootstrap`

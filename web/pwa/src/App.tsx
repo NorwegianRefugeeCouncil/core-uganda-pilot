@@ -84,15 +84,10 @@ function AuthenticatedApp() {
 
 function App() {
     return (
-        <BrowserRouter>
+        <BrowserRouter basename={"/app"}>
             <Switch>
                 <Route path={""} render={props => {
                     return <AuthWrapper>
-                        <iframe
-                            title={"login"}
-                            style={{position: "absolute", top: 0, left: 0, visibility: "hidden"}}
-                            src={`${window.location.protocol}//${window.location.host}/session-renew`}>
-                        </iframe>
                         <AuthenticatedApp/>
                     </AuthWrapper>
                 }}/>

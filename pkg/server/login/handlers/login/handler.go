@@ -53,7 +53,7 @@ func NewHandler(
 			requestActionHandler(authrequest.EventUseIdentityProvider, req.PathParameters(), req.Request.URL.Query())(res.ResponseWriter, req.Request)
 		}))
 
-	loginWs.Route(loginWs.GET("/callback").
+	loginWs.Route(loginWs.GET("/oidc/callback").
 		Operation("call_oidc_callback").
 		To(func(req *restful.Request, res *restful.Response) {
 			requestActionHandler(authrequest.EventCallOidcCallback, req.PathParameters(), req.Request.URL.Query())(res.ResponseWriter, req.Request)

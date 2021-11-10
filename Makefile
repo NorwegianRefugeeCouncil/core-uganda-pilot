@@ -120,6 +120,14 @@ logs-db:
 
 .PHONY: open-all
 open-all:
-	@open http://localhost:3000
-	@open http://localhost:3001
+	@open https://core.nrc-tech.dev:3000
+	@open https://admin.core.nrc-tech.dev:3001
 
+.PHONY: spawn
+spawn: down up _sleep bootstrap build
+
+_sleep:
+	sleep 20
+
+.PHONY: respawn
+respawn: down spawn

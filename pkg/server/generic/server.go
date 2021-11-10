@@ -2,7 +2,6 @@ package generic
 
 import (
 	"context"
-	"encoding/hex"
 	"errors"
 	"fmt"
 	"github.com/boj/redistore"
@@ -55,17 +54,9 @@ func NewGenericServer(options options.ServerOptions, name string) (*Server, erro
 	var keyPairs [][]byte
 	for i := range options.Secrets.Hash {
 		hashKey := options.Secrets.Hash[i]
-		hashBytes, err := hex.DecodeString(hashKey)
-		if err != nil {
-			return nil, err
-		}
-		keyPairs = append(keyPairs, hashBytes[0:32])
+		keyPairs = append(keyPairs, []byte(hashKey)[0:32])
 		blockKey := options.Secrets.Block[i]
-		blockBytes, err := hex.DecodeString(blockKey)
-		if err != nil {
-			return nil, err
-		}
-		keyPairs = append(keyPairs, blockBytes[0:32])
+		keyPairs = append(keyPairs, []byte(blockKey)[0:32])
 	}
 
 	if options.Cache.Redis != nil {
