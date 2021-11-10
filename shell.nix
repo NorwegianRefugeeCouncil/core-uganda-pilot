@@ -6,6 +6,7 @@ pkgs.mkShell {
 		pkgs.nodejs-14_x
 		pkgs.yarn
 		pkgs.nodePackages.typescript
+    pkgs.nodePackages.prettier
 		pkgs.go
 		pkgs.air
 		pkgs.gnumake

@@ -3,15 +3,18 @@
   "version": "0.0.1",
   "main": "lib/designSystem.js",
   "types": "./lib/designSystem.d.ts",
-  "scripts": {},
+  "scripts": {
+    "build": "tsc"
+  },
+  "files": ["lib/**/*"],
   "dependencies": {
-    "@types/node": "^14.17.20",
     "react": "^17.0.2",
-    "react-native": "^0.66.1",
+    "react-native": "^0.64.3",
     "rxjs": "^7.3.0",
     "xhr2": "^0.2.1"
   },
   "devDependencies": {
+    "@types/node": "^14.17.20",
     "@types/chai": "^4.2.22",
     "@types/mocha": "^9.0.0",
     "chai": "^4.3.4",

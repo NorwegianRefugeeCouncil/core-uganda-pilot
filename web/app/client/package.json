@@ -5,13 +5,15 @@
   "types": "./lib/client.d.ts",
   "scripts": {
     "test": "mocha -r ts-node/register src/coreApiClient.test.ts",
-    "testQueryParams": "mocha -r ts-node/register src/queryParamBuilder.test.ts"
+    "testQueryParams": "mocha -r ts-node/register src/queryParamBuilder.test.ts",
+    "build": "tsc"
   },
+  "files": ["lib/**/*"],
   "dependencies": {
-    "@types/node": "^14.17.20",
     "axios": "^0.23.0"
   },
   "devDependencies": {
+    "@types/node": "^14.17.20",
     "@types/chai": "^4.2.22",
     "@types/mocha": "^9.0.0",
     "chai": "^4.3.4",

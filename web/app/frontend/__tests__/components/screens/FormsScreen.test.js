@@ -1,11 +1,12 @@
-import React from 'react';
-import FormsScreen from '../../../src/components/screens/FormsScreen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { cleanup, render, waitFor } from '@testing-library/react-native';
-import testIds from '../../../src/testIds';
+import { cleanup, render } from '@testing-library/react-native';
+import React from 'react';
 import { Provider as PaperProvider } from 'react-native-paper';
+
+import FormsScreen from '../../../src/components/screens/FormsScreen';
 import theme, { NavigationTheme } from '../../../src/constants/theme';
+import testIds from '../../../src/testIds';
 
 const SingleScreenWrapper = ({ screen }) => {
     const Stack = createStackNavigator();
@@ -13,7 +14,7 @@ const SingleScreenWrapper = ({ screen }) => {
         <PaperProvider theme={theme}>
             <NavigationContainer them={NavigationTheme}>
                 <Stack.Navigator>
-                    <Stack.Screen name={'test'} component={screen}/>
+                    <Stack.Screen name={'test'} component={screen} />
                 </Stack.Navigator>
             </NavigationContainer>
         </PaperProvider>
@@ -24,13 +25,19 @@ describe(FormsScreen.name, () => {
     afterEach(cleanup);
 
     test.only('renders correctly', async () => {
-        const tree = render(<SingleScreenWrapper screen={FormsScreen}/>).toJSON();
-        await waitFor(() => expect(tree).toMatchSnapshot());
+        const tree = render(
+            <SingleScreenWrapper screen={FormsScreen} />
+        ).toJSON();
+        expect(tree).toMatchSnapshot();
     });
 
     test('renders a list of forms', async () => {
-        const { findAllByTestId } = render(<SingleScreenWrapper screen={FormsScreen}/>);
-        const formListItems = await findAllByTestId(testIds.formListItem, { timeout: 3000 });
+        const { findAllByTestId } = render(
+            <SingleScreenWrapper screen={FormsScreen} />
+        );
+        const formListItems = await findAllByTestId(testIds.formListItem, {
+            timeout: 3000,
+        });
         expect(formListItems.length).toBeGreaterThan(0);
     });
 
