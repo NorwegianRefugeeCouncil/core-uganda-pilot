@@ -205,7 +205,7 @@ export const AuthWrapper: FC<SessionWrapperProps> = props => {
             value.headers["Authorization"] = `Bearer ${accessToken}`
             return value
         })
-        return () => axios.interceptors.request.eject(int)
+        return () => axiosInstance.interceptors.request.eject(int)
     }, [accessToken])
 
     if (!isLoggedIn) {
