@@ -6,15 +6,15 @@ import uuidv4 from 'uuid';
 import routes from '../../constants/routes';
 import { RECORD_ACTIONS } from '../../reducers/recordsReducers';
 import { layout } from '../../styles';
+import { RecordsScreenProps } from '../../types';
 import { useApiClient } from '../../utils/useApiClient';
-import { ScreenProps } from '../Router';
 
-const RecordsScreen: React.FC<ScreenProps> = ({
+const RecordsScreen = ({
     navigation,
     route,
     state,
     dispatch,
-}) => {
+}: RecordsScreenProps) => {
     const { formId, databaseId } = route.params;
     const [isLoading, setIsLoading] = React.useState(true);
 

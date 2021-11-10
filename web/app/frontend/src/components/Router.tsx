@@ -11,7 +11,7 @@ import {
     recordsReducer,
 } from '../reducers/recordsReducers';
 import { layout } from '../styles';
-import { StackParamList } from '../types';
+import { RecordsScreenProps, StackParamList } from '../types';
 import NavigationBar from './NavigationBar';
 import AddRecordScreen from './screens/AddRecordScreen';
 import DesignSystemDemoScreen from './screens/DesignSystemDemoScreen';
@@ -57,13 +57,15 @@ export default function Router() {
                         />
                         <Stack.Screen
                             name={routes.records.name}
+                            initialParams={{ formId: '', databaseId: '' }}
                             options={{
                                 title: routes.records.title,
                             }}
                         >
-                            {props => (
+                            {({ navigation, route }) => (
                                 <RecordsScreen
-                                    {...props}
+                                    navigation={navigation}
+                                    route={route as RecordsScreenProps['route']}
                                     state={state}
                                     dispatch={dispatch}
                                 />

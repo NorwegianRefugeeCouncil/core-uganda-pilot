@@ -14,7 +14,7 @@ export type RecordsStoreProps = {
     };
 };
 
-type RecordsAction = {
+export type RecordsAction = {
     type: string;
     payload: any;
 };

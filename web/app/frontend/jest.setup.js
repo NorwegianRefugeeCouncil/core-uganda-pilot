@@ -18,8 +18,13 @@ jest.mock('react-native-crypto-js', () => {
     };
 });
 
+jest.mock('@react-native-community/datetimepicker', function () {
+    const mockComponent = jest.requireActual('react-native/jest/mockComponent');
+    return mockComponent('@react-native-community/datetimepicker');
+});
+
 jest.mock('react-native-reanimated', () => {
-    const Reanimated = require('react-native-reanimated/mock');
+    const Reanimated = jest.requireActual('react-native-reanimated/mock');
 
     // The mock for `call` immediately calls the callback which is incorrect
     // So we override it with a no-op

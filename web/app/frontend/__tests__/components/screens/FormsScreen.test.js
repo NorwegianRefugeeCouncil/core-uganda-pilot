@@ -35,9 +35,7 @@ describe(FormsScreen.name, () => {
         const { findAllByTestId } = render(
             <SingleScreenWrapper screen={FormsScreen} />
         );
-        const formListItems = await findAllByTestId(testIds.formListItem, {
-            timeout: 3000,
-        });
+        const formListItems = await findAllByTestId(testIds.formListItem);
         expect(formListItems.length).toBeGreaterThan(0);
     });
 
