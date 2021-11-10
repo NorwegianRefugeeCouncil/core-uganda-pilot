@@ -1,6 +1,6 @@
 const config = {
     timers: 'fake',
-    preset: 'jest-expo/android',
+    preset: 'jest-expo',
     setupFiles: ['./jest.setup.js'],
     setupFilesAfterEnv: ['@testing-library/jest-native/extend-expect'],
     transformIgnorePatterns: [

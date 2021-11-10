@@ -24,7 +24,7 @@ const SingleScreenWrapper = ({ screen }) => {
 describe(FormsScreen.name, () => {
     afterEach(cleanup);
 
-    test.only('renders correctly', async () => {
+    test('renders correctly', async () => {
         const tree = render(
             <SingleScreenWrapper screen={FormsScreen} />
         ).toJSON();
