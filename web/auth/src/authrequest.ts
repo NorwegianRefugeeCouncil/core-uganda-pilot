@@ -4,7 +4,7 @@ import {generateRandom, openAuthSessionAsync, WebBrowserAuthSessionResult, WebBr
 import {AuthError, AuthRequestConfig, AuthSessionResult, CodeChallengeMethod, Prompt, ResponseType} from "./types";
 import {TokenResponse} from "./tokenrequest";
 import {buildQueryString, getQueryParams} from "./queryparams";
-import {CodedError} from "../core/error";
+import {CodedError} from "../pwa/src/core/error";
 
 let _authLock: boolean = false
 

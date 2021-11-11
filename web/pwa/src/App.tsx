@@ -17,11 +17,11 @@ import {FormerContainer} from "./features/former/Former";
 import {DatabaseEditor} from "./features/databases/DatabaseEditor";
 import {FolderEditor} from "./features/folders/FolderEditor";
 import {RecordBrowser} from "./features/browser/RecordBrowser";
-import {AuthWrapper} from "./components/AuthWrapper";
+import AuthWrapper from "core-auth/lib/components/AuthWrapper";
 
 // TODO: https://betterprogramming.pub/building-secure-login-flow-with-oauth-2-openid-in-react-apps-ce6e8e29630a
 
-function AuthenticatedApp() {
+const AuthenticatedApp: React.FC = () => {
 
     const dispatch = useAppDispatch()
 
@@ -82,14 +82,17 @@ function AuthenticatedApp() {
     )
 }
 
-function App() {
+export const App: React.FC = () => {
+
     return (
         <BrowserRouter basename={"/app"}>
             <Switch>
                 <Route path={""} render={props => {
-                    return <AuthWrapper>
-                        <AuthenticatedApp/>
-                    </AuthWrapper>
+                    return (
+                        <AuthWrapper>
+                            <AuthenticatedApp/>
+                        </AuthWrapper>
+                    )
                 }}/>
             </Switch>
         </BrowserRouter>

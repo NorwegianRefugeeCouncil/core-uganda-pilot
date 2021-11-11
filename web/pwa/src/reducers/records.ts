@@ -9,7 +9,7 @@ import {
     selectRootForm,
     selectSubFormForField
 } from "./form";
-import client from "../app/client";
+import client from "core-auth/lib/client";
 
 const adapter = createEntityAdapter<Record>({
     // Assume IDs are stored in a field other than `book.id`

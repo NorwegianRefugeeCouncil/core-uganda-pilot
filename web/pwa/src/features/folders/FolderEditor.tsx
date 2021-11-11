@@ -4,7 +4,7 @@ import {databaseActions} from "../../reducers/database";
 import {Folder} from "../../types/types";
 import {Redirect} from "react-router-dom"
 import {useDatabaseFromQueryParam, useFolderFromQueryParam} from "../../app/hooks";
-import client from "../../app/client";
+import client from "core-auth/lib/client";
 
 type FormData = {
     name: string

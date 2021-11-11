@@ -4,7 +4,7 @@ import {RootState} from "../../app/store";
 import {Database, FieldDefinition, FieldKind, FieldType, Folder, FormDefinition} from "../../types/types";
 import {databaseGlobalSelectors} from "../../reducers/database";
 import {folderGlobalSelectors} from "../../reducers/folder";
-import client from "../../app/client";
+import client from "core-auth/lib/client";
 
 export interface FormField {
     id: string

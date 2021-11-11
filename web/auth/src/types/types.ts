@@ -1,4 +1,4 @@
-import {CodedError} from "../core/error";
+import {CodedError} from "./error";
 import {TokenResponse} from "./tokenrequest";
 import {WebBrowserResultType} from "./browser";
 

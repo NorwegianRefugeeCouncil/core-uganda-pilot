@@ -104,7 +104,7 @@ export const SingleSelectFieldEditor: FC<FieldEditorProps> = props => {
 }
 
 function subRecord(record: FormValue, select: () => void) {
-    return <a href="#" key={record.recordId}
+    return <a href="/#" key={record.recordId}
               onClick={(e) => {
                   e.preventDefault()
                   select()

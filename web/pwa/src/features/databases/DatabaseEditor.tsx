@@ -3,7 +3,7 @@ import {useForm} from "react-hook-form";
 import {databaseActions} from "../../reducers/database";
 import {Database} from "../../types/types";
 import {Redirect} from "react-router-dom"
-import client from "../../app/client";
+import client from "core-auth/lib/client";
 
 type FormData = {
     name: string
