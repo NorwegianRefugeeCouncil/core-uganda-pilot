@@ -42,17 +42,18 @@ export const AuthWrapper: FC = props => {
     const [tokenResponse, setTokenResponse] = useState<TokenResponse>()
 
     React.useEffect(() => {
-        console.log('RESPONSE', response)
 
         if (!discovery) {
             return
         }
-        if (!request || !request.codeVerifier) {
+        if (!request?.codeVerifier) {
             return
         }
         if (!response || response.type !== "success") {
             return
         }
+
+        console.log('RESPONSE', response)
 
         const exchangeConfig = {
             code: response.params.code,
@@ -72,7 +73,8 @@ export const AuthWrapper: FC = props => {
                 console.log("EXCHANGE ERROR", err)
                 setTokenResponse(undefined)
             })
-    }, [request, response, discovery]);
+
+    }, [request?.codeVerifier, response, discovery]);
 
     useEffect(() => {
         if (!discovery) {
@@ -109,6 +111,24 @@ export const AuthWrapper: FC = props => {
         }
     }, [tokenResponse, loggedIn])
 
+
+    useEffect(() => {
+        console.log("SETTING UP INTERCEPTOR")
+        const interceptor = axiosInstance.interceptors.request.use(value => {
+            if (!tokenResponse?.accessToken) {
+                return value
+            }
+            if (!value.headers) {
+                value.headers = {}
+            }
+            value.headers["Authorization"] = `Bearer ${tokenResponse.accessToken}`
+            return value
+        })
+        return () => {
+            axiosInstance.interceptors.request.eject(interceptor)
+        }
+    }, [tokenResponse?.accessToken])
+
     const handleLogin = useCallback(() => {
         promptAsync({useProxy}).then(response => {
             console.log("PROMPT RESPONSE", response)
@@ -116,32 +136,6 @@ export const AuthWrapper: FC = props => {
             console.log("PROMPT ERROR", err)
         })
     }, [useProxy, promptAsync])
-
-    useEffect(() => {
-        console.log("SETTING UP INTERCEPTOR")
-        const interceptor = axiosInstance.interceptors.request.use(value => {
-            console.log("INTERCEPTED VALUE")
-            if (!value) {
-                return
-            }
-            if (!tokenResponse?.accessToken) {
-                return
-            }
-            if (!value.headers) {
-                value.headers = {}
-            }
-            value.headers["Authorization"] = `Bearer ${tokenResponse.accessToken}`
-            console.log("NEW REQUEST", value)
-            return value
-        }, error => {
-            console.error(error)
-            return error
-        })
-        return () => {
-            console.log("EJECTING INTERCEPTOR")
-            axiosInstance.interceptors.request.eject(interceptor)
-        }
-    }, [tokenResponse?.accessToken])
 
     if (!loggedIn) {
         return <PaperProvider theme={theme}>

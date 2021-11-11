@@ -1,9 +1,13 @@
 import {FC, Fragment, useCallback, useEffect, useState} from "react";
-import axios, {AxiosRequestConfig} from "axios";
-import getPkce from "oauth-pkce"
 import {axiosInstance} from "../app/client";
+import {maybeCompleteAuthSession} from "../auth/browser";
+import {useAuthRequest, useDiscovery} from "../auth/hooks";
+import {CodeChallengeMethod, ResponseType} from "../auth/types";
+import {exchangeCodeAsync, TokenResponse} from "../auth/tokenrequest";
 
 type SessionWrapperProps = {}
+
+maybeCompleteAuthSession()
 
 type Metadata = {
     authorization_endpoint: string
@@ -21,172 +25,122 @@ type ExchangeResponse = {
 
 export const AuthWrapper: FC<SessionWrapperProps> = props => {
     const {children} = props
-    const [pkce, setPkce] = useState<{ challenge: string, verifier: string }>()
-    const [metadata, setMetadata] = useState<Metadata>()
-    const [state, setState] = useState("")
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [accessToken, setAccessToken] = useState("")
-    const [idToken, setIdToken] = useState("")
-    const [refreshToken, setRefreshToken] = useState("")
-    const [expiresIn, setExpiresIn] = useState(0)
-    const [pending, setPending] = useState(false)
+
+    const discovery = useDiscovery(`${process.env.REACT_APP_ISSUER}`)
+    const clientId = `${process.env.REACT_APP_CLIENT_ID}`
+    const redirectUri = `${window.location.protocol}//${window.location.host}/app`;
+
+    const [request, response, promptAsync] = useAuthRequest(
+        {
+            clientId,
+            usePKCE: true,
+            responseType: ResponseType.Code,
+            codeChallengeMethod: CodeChallengeMethod.S256,
+            scopes: ['openid', 'profile', 'offline_access'],
+            redirectUri
+        },
+        discovery
+    );
+
+    const [tokenResponse, setTokenResponse] = useState<TokenResponse>()
 
     useEffect(() => {
-        getPkce(43, (error, {verifier, challenge}) => {
-            if (error) {
-                console.log("PKCE ERROR", error)
-                return
-            }
-            setPkce({verifier, challenge})
-        })
-    }, [])
 
-    useEffect(() => {
-        const metadataEndpoint = `${process.env.REACT_APP_ISSUER}/.well-known/openid-configuration`;
-        axios.get(metadataEndpoint)
-            .then(value => value.data as Metadata)
-            .then(value => setMetadata(value))
-    }, [])
-
-    useEffect(() => {
-        const arr = new Uint8Array(32)
-        setState(btoa(crypto.getRandomValues(arr).toString()))
-    }, [])
-
-    const doLogin = useCallback(() => {
-        if (!metadata) {
+        if (!discovery) {
             return
         }
-        if (!pkce) {
+        if (!request?.codeVerifier) {
             return
         }
-        if (!state) {
+        if (!response || response?.type !== "success") {
             return
         }
-        if (pending) {
-            return
-        }
-        const redirectUri = `${window.location.protocol}//${window.location.host}/app`;
-        const params = [
-            {
-                key: "scope",
-                value: "openid profile email offline_access"
-            }, {
-                key: "state",
-                value: state,
-            }, {
-                key: "redirect_uri",
-                value: redirectUri,
-            }, {
-                key: "response_type",
-                value: "code",
-            }, {
-                key: "client_id",
-                value: `${process.env.REACT_APP_CLIENT_ID}`,
-            }, {
-                key: "code_challenge",
-                value: `${pkce.challenge}`,
-            }, {
-                key: "code_challenge_method",
-                value: `S256`,
-            },
-        ]
-            .map(({key, value}) => ({key: key, value: encodeURIComponent(value)}))
-            .map(({key, value}) => `${key}=${value}`)
-            .join("&")
 
-        const authURL = `${metadata.authorization_endpoint}?${params}`
-        const tokenURL = `${metadata.token_endpoint}?${params}`
+        console.log('RESPONSE', response)
 
-        const popupWidth = 380
-        const popupHeight = 480
-        const left = window.screen.width / 2 - popupWidth / 2
-        const top = window.screen.height / 2 - popupHeight / 2
-        const popup = window.open(
-            authURL,
-            "Core Login",
-            "menubar=no,location=no,resizable=no,scrollbars=no,status=no, width=" +
-            popupWidth +
-            ", height=" +
-            popupHeight +
-            ", top=" +
-            top +
-            ", left=" +
-            left
-        )
-        setPending(true)
-
-        if (popup !== null) {
-
-            popup.onunload = (ev : Event) => {
-                console.log(ev)
-                const outParams = new URLSearchParams(popup.location.search)
-                const code = outParams.get("code")
-                if (!code) {
-                    return
-                }
-                const params = new URLSearchParams()
-                params.set("code", `${code}`)
-                params.set("grant_type", "authorization_code")
-                params.set("client_id", `${process.env.REACT_APP_CLIENT_ID}`)
-                params.set("code_verifier", `${pkce.verifier}`)
-                params.set("redirect_uri", `${redirectUri}`)
-                const config: AxiosRequestConfig = {
-                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
-                }
-                axios.post<ExchangeResponse>(tokenURL, params, config).then((resp) => {
-                    console.log("TOKEN EXCHANGE SUCCESS", resp.data)
-                    setAccessToken(resp.data.access_token)
-                    setIdToken(resp.data.id_token)
-                    setExpiresIn(resp.data.expires_in)
-                    setRefreshToken(resp.data.refresh_token)
-                    setPending(false)
-                }, err => {
-                    console.log("TOKEN EXCHANGE ERROR", err)
-                    setPending(false)
-                })
+        const exchangeConfig = {
+            code: response.params.code,
+            clientId,
+            redirectUri,
+            extraParams: {
+                "code_verifier": request?.codeVerifier,
             }
         }
-    }, [metadata, pkce, state, pending])
 
-    useEffect(() => {
-        if (!expiresIn) {
-            return
-        }
-        if (!metadata) {
-            return
-        }
-        console.log("EXPIRES IN", expiresIn)
-        const renewalIn = Math.abs(Math.round(expiresIn / 2))
-        console.log("RENEWAL IN", renewalIn)
-        const timeout = setTimeout(() => {
-
-            const params = new URLSearchParams()
-            params.set("refresh_token", `${refreshToken}`)
-            params.set("grant_type", "refresh_token")
-            params.set("client_id", `${process.env.REACT_APP_CLIENT_ID}`)
-            const config: AxiosRequestConfig = {
-                headers: {"Content-Type": "application/x-www-form-urlencoded"},
-            }
-            axios.post<ExchangeResponse>(metadata.token_endpoint, params, config).then(resp => {
-                console.log("TOKEN RENEWAL SUCCESS", resp)
-                if (resp.data.access_token) {
-                    setAccessToken(resp.data.access_token)
-                }
-                if (resp.data.refresh_token) {
-                    setRefreshToken(resp.data.refresh_token)
-                }
-                if (resp.data.id_token) {
-                    setIdToken(resp.data.id_token)
-                }
-                setExpiresIn(resp.data.expires_in)
-            }, err => {
-                console.log("TOKEN RENEWAL ERROR", err)
+        exchangeCodeAsync(exchangeConfig, discovery)
+            .then(a => {
+                console.log("EXCHANGE SUCCESS", a)
+                setTokenResponse(a)
+            })
+            .catch((err) => {
+                console.log("EXCHANGE ERROR", err)
+                setTokenResponse(undefined)
             })
 
-        }, renewalIn * 1000)
-        return () => clearTimeout(timeout)
-    }, [metadata, expiresIn, refreshToken])
+    }, [request?.codeVerifier, response, discovery]);
+
+    useEffect(() => {
+        if (!discovery) {
+            return
+        }
+        if (tokenResponse?.shouldRefresh()) {
+            console.log("REFRESHING TOKEN")
+            const refreshConfig = {
+                clientId: clientId,
+                scopes: ["openid", "profile", "offline_access"],
+                extraParams: {}
+            }
+            tokenResponse?.refreshAsync(refreshConfig, discovery)
+                .then(resp => {
+                    console.log("TOKEN REFRESH SUCCESS", resp)
+                    setTokenResponse(resp)
+                })
+                .catch((err) => {
+                    console.log("TOKEN REFRESH ERROR", err)
+                    setTokenResponse(undefined)
+                })
+        }
+    }, [tokenResponse?.shouldRefresh(), discovery])
+
+    useEffect(() => {
+        if (tokenResponse) {
+            if (!isLoggedIn) {
+                setIsLoggedIn(true)
+            }
+        } else {
+            if (isLoggedIn) {
+                setIsLoggedIn(false)
+            }
+        }
+    }, [tokenResponse, isLoggedIn])
+
+    useEffect(() => {
+        console.log("SETTING UP INTERCEPTOR")
+        const interceptor = axiosInstance.interceptors.request.use(value => {
+            if (!tokenResponse?.accessToken) {
+                return value
+            }
+            if (!value.headers) {
+                value.headers = {}
+            }
+            value.headers["Authorization"] = `Bearer ${tokenResponse.accessToken}`
+            return value
+        })
+        return () => {
+            axiosInstance.interceptors.request.eject(interceptor)
+        }
+    }, [tokenResponse?.accessToken])
+
+    const handleLogin = useCallback(() => {
+        promptAsync().then(response => {
+            console.log("PROMPT RESPONSE", response)
+        }).catch((err) => {
+            console.log("PROMPT ERROR", err)
+        })
+    }, [promptAsync])
+
 
     useEffect(() => {
         if (accessToken) {
@@ -210,9 +164,7 @@ export const AuthWrapper: FC<SessionWrapperProps> = props => {
 
     if (!isLoggedIn) {
         return <Fragment>
-            {isLoggedIn ? "logged in" : "not logged in"}
-            {pending ? "pending" : ""}
-            <button onClick={doLogin} disabled={pending}>Login</button>
+            <button onClick={handleLogin}>Login</button>
         </Fragment>
     }
 
