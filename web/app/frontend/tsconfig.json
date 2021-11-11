@@ -3,6 +3,11 @@
   "compilerOptions": {
     "strict": true,
     "isolatedModules": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "jsx": "react-jsx"
   },
   "include": [
     "src"

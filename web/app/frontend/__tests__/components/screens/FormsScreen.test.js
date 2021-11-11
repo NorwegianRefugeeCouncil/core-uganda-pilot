@@ -1,43 +1,33 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { cleanup, render } from '@testing-library/react-native';
+import {render} from '@testing-library/react-native';
 import React from 'react';
-import { Provider as PaperProvider } from 'react-native-paper';
 
 import FormsScreen from '../../../src/components/screens/FormsScreen';
-import theme, { NavigationTheme } from '../../../src/constants/theme';
 import testIds from '../../../src/testIds';
+import * as hooks from "../../../src/utils/useApiClient";
 
-const SingleScreenWrapper = ({ screen }) => {
-    const Stack = createStackNavigator();
-    return (
-        <PaperProvider theme={theme}>
-            <NavigationContainer them={NavigationTheme}>
-                <Stack.Navigator>
-                    <Stack.Screen name={'test'} component={screen} />
-                </Stack.Navigator>
-            </NavigationContainer>
-        </PaperProvider>
-    );
-};
+const fakeForms = {response: {items: [{id: "formId"}]}}
+const formsPromise = Promise.resolve(fakeForms)
+const mock = jest.fn();
+hooks.useApiClient = mock
+mock.mockImplementation(() => ({
+    listForms: jest.fn(() => formsPromise)
+}))
 
 describe(FormsScreen.name, () => {
-    afterEach(cleanup);
+    const mockNavigation = {
+        navigate: () => {
+        }
+    }
 
     test('renders correctly', async () => {
-        const tree = render(
-            <SingleScreenWrapper screen={FormsScreen} />
-        ).toJSON();
-        expect(tree).toMatchSnapshot();
+        const {toJSON, findAllByTestId} = render(<FormsScreen route={""} navigation={mockNavigation}/>)
+        await findAllByTestId(testIds.formListItem)
+        expect(toJSON()).toMatchSnapshot();
     });
 
     test('renders a list of forms', async () => {
-        const { findAllByTestId } = render(
-            <SingleScreenWrapper screen={FormsScreen} />
-        );
-        const formListItems = await findAllByTestId(testIds.formListItem);
-        expect(formListItems.length).toBeGreaterThan(0);
+        const {findAllByTestId} = render(<FormsScreen route={""} navigation={mockNavigation}/>)
+        expect((await findAllByTestId(testIds.formListItem)).length).toEqual(1);
     });
 
-    test.todo('lets the user navigate to a form by pressing it');
 });

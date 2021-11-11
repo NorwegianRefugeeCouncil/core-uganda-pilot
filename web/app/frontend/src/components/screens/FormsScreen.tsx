@@ -1,23 +1,23 @@
-import { FormDefinition } from 'core-js-api-client/lib/types/types';
+import {FormDefinition} from 'core-js-api-client/lib/types/types';
 import React from 'react';
-import { FlatList, Text, TouchableOpacity, View } from 'react-native';
-import { Title } from 'react-native-paper';
+import {FlatList, Text, TouchableOpacity, View} from 'react-native';
+import {Title} from 'react-native-paper';
 
 import routes from '../../constants/routes';
-import { layout } from '../../styles';
+import {layout} from '../../styles';
 import testIds from '../../testIds';
-import { FormsScreenProps } from '../../types';
-import { useApiClient } from '../../utils/useApiClient';
+import {FormsScreenProps} from '../../types';
+import {useApiClient} from '../../utils/useApiClient';
 
-const FormsScreen = ({ navigation }: FormsScreenProps) => {
+const FormsScreen = ({navigation}: FormsScreenProps) => {
     const [forms, setForms] = React.useState<FormDefinition[]>();
     const [isLoading, setIsLoading] = React.useState(true);
     const client = useApiClient();
 
     React.useEffect(() => {
         client.listForms({}).then(data => {
-            setForms(data.response?.items);
             setIsLoading(false);
+            setForms(data.response?.items);
         });
     }, [client]);
 
@@ -26,9 +26,9 @@ const FormsScreen = ({ navigation }: FormsScreenProps) => {
             <Title>{routes.forms.title}</Title>
             {!isLoading && (
                 <FlatList
-                    style={{ flex: 1, width: '100%' }}
+                    style={{flex: 1, width: '100%'}}
                     data={forms}
-                    renderItem={({ item, index, separators }) => (
+                    renderItem={({item, index, separators}) => (
                         <TouchableOpacity
                             key={index}
                             testID={testIds.formListItem}
@@ -39,7 +39,7 @@ const FormsScreen = ({ navigation }: FormsScreenProps) => {
                                 })
                             }
                         >
-                            <View style={{ flexDirection: 'row', flex: 1 }}>
+                            <View style={{flexDirection: 'row', flex: 1}}>
                                 <View
                                     style={{
                                         justifyContent: 'center',
@@ -48,7 +48,7 @@ const FormsScreen = ({ navigation }: FormsScreenProps) => {
                                 >
                                     <Text>{item.code}</Text>
                                 </View>
-                                <View style={{ justifyContent: 'center' }}>
+                                <View style={{justifyContent: 'center'}}>
                                     <Text>{item.name}</Text>
                                 </View>
                             </View>

@@ -28,29 +28,11 @@ jest.mock('react-native-reanimated', () => {
 
     // The mock for `call` immediately calls the callback which is incorrect
     // So we override it with a no-op
-    Reanimated.default.call = () => {};
+    Reanimated.default.call = () => {
+    };
 
     return Reanimated;
 });
 
 // Silence the warning: Animated: `useNativeDriver` is not supported because the native animated module is missing
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
-
-jest.mock('core-js-api-client', () => {
-    const { FormDefinition } = jest.requireActual(
-        'core-js-api-client/lib/types/types'
-    );
-    const formsList = {
-        response: { items: new Array(10).map(() => new FormDefinition()) },
-    };
-
-    function client(host) {
-        this.host = host;
-        this.listForms = () =>
-            new Promise(resolve => {
-                resolve(formsList);
-            });
-    }
-
-    return { client };
-});
