@@ -69,8 +69,8 @@ const AuthWrapper: FC<AuthWrapperProps> = ({
         }
         if (tokenResponse?.shouldRefresh()) {
             const refreshConfig = {
-                clientId: clientId,
-                scopes: ["openid", "profile", "offline_access"],
+                clientId,
+                scopes,
                 extraParams: {}
             }
             tokenResponse?.refreshAsync(refreshConfig, discovery)
