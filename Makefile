@@ -118,11 +118,6 @@ logs-hydra:
 logs-db:
 	@./scripts/logs.sh db
 
-.PHONY: open-all
-open-all:
-	@open https://core.nrc-tech.dev:3000
-	@open https://admin.core.nrc-tech.dev:3001
-
 .PHONY: spawn
 spawn: down up _sleep bootstrap build
 
