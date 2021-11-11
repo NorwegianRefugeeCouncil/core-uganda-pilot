@@ -59,4 +59,10 @@ console.log("config", config)
 
 const provider = new Provider(issuer, config);
 
+app.use(function (req, res, next) {
+    console.log(req.headers)
+    console.log(req.query)
+    next()
+})
+
 app.use(provider.callback())

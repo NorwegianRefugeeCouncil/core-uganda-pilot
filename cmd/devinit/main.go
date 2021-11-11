@@ -6,16 +6,21 @@ import (
 	"crypto/x509"
 	"encoding/json"
 	"fmt"
+	"github.com/dustinkirkland/golang-petname"
+	"github.com/manifoldco/promptui"
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/store"
+	"github.com/nrc-no/core/pkg/utils/files"
 	"github.com/ory/hydra-client-go/client"
 	"github.com/ory/hydra-client-go/client/admin"
 	"github.com/ory/hydra-client-go/models"
 	"go.uber.org/zap"
+	"golang.org/x/sync/errgroup"
 	"gopkg.in/yaml.v3"
 	"math/rand"
 	"os"
+	"os/exec"
 	"path"
 	"time"
 )
@@ -40,10 +45,39 @@ var (
 )
 
 var (
-	OidcIssuer = fmt.Sprintf("https://localhost:8444")
-	CoreIssuer = fmt.Sprintf("https://localhost:8443/hydra")
-	CoreHost   = fmt.Sprintf("https://localhost:8443")
+	CoreLocalHost = fmt.Sprintf("https://localhost:8443")
+	OidcIssuer    = fmt.Sprintf("https://nrc-core-oidc.loca.lt")
+	CoreHost      = fmt.Sprintf("https://nrc-core-server.loca.lt")
+	HydraHost     = fmt.Sprintf("https://nrc-core-server.loca.lt/hydra")
+	WorkDir       = ""
 )
+
+func getPetName() (string, error) {
+	petNameFile := path.Join(WorkDir, "creds", "pet")
+	petNameExists, err := files.FileExists(petNameFile)
+	if err != nil {
+		return "", err
+	}
+	if !petNameExists {
+		prompt := promptui.Prompt{
+			Label:   "Select Name for your Pet Computer:",
+			Default: petname.Generate(3, "-"),
+		}
+		result, err := prompt.Run()
+		if err != nil {
+			return "", err
+		}
+		if err := os.WriteFile(petNameFile, []byte(result), os.ModePerm); err != nil {
+			return "", err
+		}
+	}
+	petNameBytes, err := os.ReadFile(petNameFile)
+	if err != nil {
+		return "", err
+	}
+	petName := string(petNameBytes)
+	return petName, nil
+}
 
 type dbUser struct {
 	username string
@@ -82,7 +116,6 @@ type Config struct {
 	idpClientId               string
 	idpClientSecret           string
 	idpIssuer                 string
-	idpRedirectUri            string
 	loginBlockKey             string
 	loginHashKey              string
 	loginTlsCert              *x509.Certificate
@@ -103,19 +136,57 @@ type Config struct {
 }
 
 func Init() error {
-	_, err := createConfig()
+	_, err := getPetName()
+	if err != nil {
+		return err
+	}
+	_, err = createConfig()
 	return err
 }
 
-func createConfig() (*Config, error) {
-
-	wd, err := os.Getwd()
+func StartTunnels() error {
+	petName, err := getPetName()
 	if err != nil {
-		return nil, err
+		return err
 	}
+	serverSubDomain := getServerTunnelName(petName)
+	oidcSubDomain := getOidcTunnelName(petName)
+	g, _ := errgroup.WithContext(context.Background())
+	g.Go(func() error {
+		cmd := exec.Command("lt", "--port", "8444", "--subdomain", oidcSubDomain, "--local-https", "--allow-invalid-cert", "--print-requests")
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		return cmd.Run()
+	})
+	g.Go(func() error {
+		cmd := exec.Command("lt", "--port", "8443", "--subdomain", serverSubDomain, "--local-https", "--allow-invalid-cert", "--print-requests")
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		return cmd.Run()
+	})
+	return g.Wait()
+}
+
+func getOidcTunnelName(petName string) string {
+	return petName + "-oidc"
+}
+
+func getServerTunnelName(petName string) string {
+	return petName + "-server"
+}
+
+func getOidcHost(petName string) string {
+	return fmt.Sprintf("https://%s.loca.lt", getOidcTunnelName(petName))
+}
+
+func getServerHost(petName string) string {
+	return fmt.Sprintf("https://%s.loca.lt", getServerTunnelName(petName))
+}
+
+func createConfig() (*Config, error) {
 	config := &Config{
 		oidcConfig: &OidcConfig{},
-		rootDir:    wd,
+		rootDir:    WorkDir,
 	}
 
 	if err := config.makeRootCert(); err != nil {
@@ -197,6 +268,20 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+	wd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	WorkDir = wd
+
+	petName, err := getPetName()
+	if err != nil {
+		panic(err)
+	}
+
+	OidcIssuer = getOidcHost(petName)
+	CoreHost = getServerHost(petName)
+	HydraHost = fmt.Sprintf("%s/hydra", CoreHost)
 }
 
 func Bootstrap() error {

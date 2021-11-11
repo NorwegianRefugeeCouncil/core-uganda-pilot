@@ -34,7 +34,7 @@ func (c *Config) makeAppFrontend() error {
 
 	// env file
 	sb := &strings.Builder{}
-	sb.WriteString(fmt.Sprintf("REACT_APP_ISSUER=%s\n", CoreIssuer))
+	sb.WriteString(fmt.Sprintf("REACT_APP_ISSUER=%s\n", HydraHost))
 	sb.WriteString(fmt.Sprintf("REACT_APP_CLIENT_ID=%s\n", c.coreAppFrontendClientId))
 	sb.WriteString(fmt.Sprintf("REACT_APP_SERVER_URL=https://localhost:8443\n"))
 	envPath := path.Join(c.rootDir, "web", "pwa", ".env")

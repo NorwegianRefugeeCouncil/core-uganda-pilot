@@ -121,6 +121,10 @@ logs-db:
 .PHONY: spawn
 spawn: down up _sleep bootstrap build
 
+.PHONY: tunnels
+tunnels:
+	@./scripts/tunnels.sh
+
 _sleep:
 	sleep 20
 

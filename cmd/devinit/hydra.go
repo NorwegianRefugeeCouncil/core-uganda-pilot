@@ -46,8 +46,8 @@ func (c *Config) makeHydraSecrets() error {
 	hydraConfig := map[string]interface{}{
 		"urls": map[string]interface{}{
 			"self": map[string]interface{}{
-				"public": fmt.Sprintf(CoreIssuer),
-				"issuer": fmt.Sprintf(CoreIssuer),
+				"public": fmt.Sprintf(HydraHost),
+				"issuer": fmt.Sprintf(HydraHost),
 			},
 			"consent": fmt.Sprintf("%s/login/consent", CoreHost),
 			"login":   fmt.Sprintf("%s/login/identify", CoreHost),
