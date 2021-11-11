@@ -22,6 +22,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"time"
 )
 
@@ -70,6 +71,10 @@ func getPetName() (string, error) {
 		if err := os.WriteFile(petNameFile, []byte(result), os.ModePerm); err != nil {
 			return "", err
 		}
+	}
+	dir := filepath.Dir(petNameFile)
+	if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+		return "", err
 	}
 	petNameBytes, err := os.ReadFile(petNameFile)
 	if err != nil {
