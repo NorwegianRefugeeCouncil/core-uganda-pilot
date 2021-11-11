@@ -6,7 +6,8 @@
     "target": "ES6",
     "lib": [
       "DOM",
-      "ESNext"
+      "ESNext",
+      "ES2015"
     ],
     "typeRoots": [
       "./node_modules/@types",
@@ -14,8 +15,9 @@
     ],
     "declaration": true,
     "outDir": "lib",
+    "jsx": "react-jsx"
   },
   "include": [
-    "src/**/*",
-  ],
+    "src/**/*"
+  ]
 }

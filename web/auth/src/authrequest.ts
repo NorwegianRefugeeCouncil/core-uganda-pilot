@@ -1,10 +1,17 @@
 import getPkce from "oauth-pkce";
-import {DiscoveryDocument} from "./discovery";
-import {generateRandom, openAuthSessionAsync, WebBrowserAuthSessionResult, WebBrowserResultType} from "./browser";
-import {AuthError, AuthRequestConfig, AuthSessionResult, CodeChallengeMethod, Prompt, ResponseType} from "./types";
+import {generateRandom, openAuthSessionAsync} from "./browser";
+import {
+    AuthError,
+    AuthRequestConfig,
+    AuthSessionResult,
+    CodeChallengeMethod, DiscoveryDocument,
+    Prompt,
+    ResponseType,
+    WebBrowserAuthSessionResult, WebBrowserResultType
+} from "./types/types";
 import {TokenResponse} from "./tokenrequest";
 import {buildQueryString, getQueryParams} from "./queryparams";
-import {CodedError} from "../pwa/src/core/error";
+import {CodedError} from "./error";
 
 let _authLock: boolean = false
 

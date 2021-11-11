@@ -29,6 +29,7 @@ func (c *Config) makeNativeApp() error {
 		RedirectUris: []string{
 			"http://localhost:19006",
 			"exp://192.168.0.185:19000",
+			"exp://127.0.0.1:19000",
 		},
 		GrantTypes: []string{
 			"authorization_code",

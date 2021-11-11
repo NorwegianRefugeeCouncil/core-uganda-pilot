@@ -1,3 +1,5 @@
+import {WebBrowserAuthSessionResult, WebBrowserResultType} from "./types/types";
+
 let popupWindow: Window | null
 type listenerMapEntry = { listener: (event: MessageEvent) => void, interval: ReturnType<typeof setTimeout> }
 const listenerMap = new Map<Window, listenerMapEntry>()
@@ -126,25 +128,6 @@ export async function openAuthSessionAsync(args: { url: string }) {
     })
 
 }
-
-export enum WebBrowserResultType {
-    CANCEL = 'cancel',
-    DISMISS = 'dismiss',
-    OPENED = 'opened',
-    LOCKED = 'locked',
-    SUCCESS = 'success',
-}
-
-export type WebBrowserAuthSessionResult = WebBrowserRedirectResult | WebBrowserResult;
-
-export type WebBrowserRedirectResult = {
-    type: WebBrowserResultType.SUCCESS;
-    url: string;
-};
-
-export type WebBrowserResult = {
-    type: WebBrowserResultType;
-};
 
 async function getStateFromUrlOrGenerateAsync(inputUrl: string): Promise<string> {
     const url = new URL(inputUrl);

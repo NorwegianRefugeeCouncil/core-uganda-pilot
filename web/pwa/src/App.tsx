@@ -18,6 +18,7 @@ import {DatabaseEditor} from "./features/databases/DatabaseEditor";
 import {FolderEditor} from "./features/folders/FolderEditor";
 import {RecordBrowser} from "./features/browser/RecordBrowser";
 import AuthWrapper from "core-auth/lib/components/AuthWrapper";
+import constants from "./constants/constants";
 
 // TODO: https://betterprogramming.pub/building-secure-login-flow-with-oauth-2-openid-in-react-apps-ce6e8e29630a
 
@@ -89,7 +90,12 @@ export const App: React.FC = () => {
             <Switch>
                 <Route path={""} render={props => {
                     return (
-                        <AuthWrapper>
+                        <AuthWrapper
+                            clientId={process?.env?.REACT_APP_CLIENT_ID || constants.defaultClient}
+                            scopes={['openid', 'profile', 'offline_access']}
+                            issuer={process?.env?.REACT_APP_ISSUER || constants.defaultIssuer}
+                            redirectUriSuffix={'app'}
+                        >
                             <AuthenticatedApp/>
                         </AuthWrapper>
                     )

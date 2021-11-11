@@ -1,5 +1,5 @@
 import {
-    AccessTokenRequestConfig,
+    AccessTokenRequestConfig, DiscoveryDocument,
     GrantType,
     RefreshTokenRequestConfig,
     ResponseErrorConfig,
@@ -8,11 +8,8 @@ import {
     TokenRequestConfig,
     TokenResponseConfig,
     TokenType
-} from "./types";
-import {DiscoveryDocument} from "./discovery";
+} from "./types/types";
 import axios, {AxiosRequestHeaders, AxiosResponse} from "axios"
-import qs from "qs";
-
 
 export function getCurrentTimeInSeconds(): number {
     return Math.floor(Date.now() / 1000);
@@ -274,14 +271,5 @@ export function exchangeCodeAsync(
 ): Promise<TokenResponse> {
     const request = new AccessTokenRequest(config);
     console.log("ACCESS TOKEN EXCHANGE CONFIG", config)
-    return request.performAsync(discovery);
-}
-
-
-export function refreshAsync(
-    config: RefreshTokenRequestConfig,
-    discovery: Pick<DiscoveryDocument, 'token_endpoint'>
-): Promise<TokenResponse> {
-    const request = new RefreshTokenRequest(config);
     return request.performAsync(discovery);
 }

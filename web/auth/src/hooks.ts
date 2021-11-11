@@ -1,6 +1,12 @@
 import {useCallback, useEffect, useMemo, useState} from "react";
-import {DiscoveryDocument, IssuerOrDiscovery, resolveDiscoveryAsync} from "./discovery";
-import {AuthRequestConfig, AuthRequestPromptOptions, AuthSessionResult} from "./types";
+import {resolveDiscoveryAsync} from "./discovery";
+import {
+    AuthRequestConfig,
+    AuthRequestPromptOptions,
+    AuthSessionResult,
+    DiscoveryDocument,
+    IssuerOrDiscovery, PromptMethod
+} from "./types/types";
 import {AuthRequest} from "./authrequest";
 
 export function useDiscovery(issuerOrDiscovery: IssuerOrDiscovery): DiscoveryDocument | null {
@@ -63,12 +69,12 @@ export function useLoadedAuthRequest(
     return request;
 }
 
-type PromptMethod = (options?: AuthRequestPromptOptions) => Promise<AuthSessionResult>;
 
 export function useAuthRequestResult(
     request: AuthRequest | null,
     discovery: DiscoveryDocument | null
 ): [AuthSessionResult | null, PromptMethod] {
+
     const [result, setResult] = useState<AuthSessionResult | null>(null);
 
     const promptAsync = useCallback(
