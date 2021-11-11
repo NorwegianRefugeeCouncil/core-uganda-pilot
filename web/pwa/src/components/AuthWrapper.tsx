@@ -118,8 +118,8 @@ export const AuthWrapper: FC<SessionWrapperProps> = props => {
 
         if (popup !== null) {
 
-            popup.onunload = ev => {
-                console.log(popup.location)
+            popup.onunload = (ev : Event) => {
+                console.log(ev)
                 const outParams = new URLSearchParams(popup.location.search)
                 const code = outParams.get("code")
                 if (!code) {

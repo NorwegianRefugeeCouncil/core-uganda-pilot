@@ -10,12 +10,13 @@ serve:
         path: creds/core/admin_api/tls.crt
       key:
         path: creds/core/admin_api/tls.key
-    urls:
-      self: https://core.dev:8443
     cors:
       enabled: true
       allowed_origins:
         - http://localhost:3001
+        - https://localhost:3001
+        - http://localhost:19006
+        - https://localhost:19006
       allow_credentials: true
       allowed_headers:
         - Authorization
@@ -44,8 +45,6 @@ serve:
         path: creds/core/api/tls.crt
       key:
         path: creds/core/api/tls.key
-    urls:
-      self: https://core.dev:8080
     cache:
       redis:
         address: localhost:6379
@@ -54,6 +53,9 @@ serve:
     cors:
       allowed_origins:
         - https://localhost:3000
+        - http://localhost:3000
+        - https://localhost:19006
+        - http://localhost:19006
       allow_credentials: true
       allowed_headers:
         - Authorization
@@ -78,8 +80,6 @@ serve:
         path: creds/core/login/tls.crt
       key:
         path: creds/core/login/tls.key
-    urls:
-      self: https://core.dev:8443/login
     cache:
       redis:
         address: localhost:6379
@@ -94,11 +94,10 @@ serve:
         path: creds/core/auth/tls.crt
       key:
         path: creds/core/auth/tls.key
-    urls:
-      self: https://core.dev:8443
     cors:
       allowed_origins:
         - https://localhost:3001
+        - http://localhost:3001
       allow_credentials: true
       allowed_headers:
         - Authorization
@@ -114,14 +113,3 @@ serve:
       enabled: true
       exposed_headers:
         - Location
-hydra:
-  admin:
-    host: core.dev:8443
-    base_path: hydra-admin/
-    schemes:
-      - https
-  public:
-    host: core.dev:8443
-    base_path: hydra/
-    schemes:
-      - https

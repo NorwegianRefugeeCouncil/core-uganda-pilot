@@ -13,16 +13,17 @@ import {
 } from 'expo-auth-session';
 import {Button, Platform} from "react-native";
 import * as WebBrowser from 'expo-web-browser';
+import Constants from "expo-constants";
 
 WebBrowser.maybeCompleteAuthSession();
 
 
 export const AuthWrapper: FC = props => {
     const {children} = props
-    const clientId = 'react-native' //TODO
+    const clientId = `${Constants.manifest?.extra?.client_id}`
     const useProxy = useMemo(() => Platform.select({web: false, default: false}), []);
     const redirectUri = useMemo(() => makeRedirectUri({scheme: 'nrccore'}), [])
-    const discovery = useAutoDiscovery('https://oidc.dev:8443');
+    const discovery = useAutoDiscovery(`${Constants.manifest?.extra?.issuer}`);
     const [loggedIn, setLoggedIn] = useState(false)
 
     const [request, response, promptAsync] = useAuthRequest(
@@ -79,7 +80,7 @@ export const AuthWrapper: FC = props => {
     }, [request, response, discovery]);
 
     const handleLogin = useCallback(() => {
-        promptAsync({useProxy,}).then(response => {
+        promptAsync({useProxy}).then(response => {
             console.log("PROMPT RESPONSE", response)
         }).catch((err) => {
             console.log("PROMPT ERROR", err)

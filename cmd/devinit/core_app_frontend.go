@@ -34,8 +34,9 @@ func (c *Config) makeAppFrontend() error {
 
 	// env file
 	sb := &strings.Builder{}
-	sb.WriteString(fmt.Sprintf("REACT_APP_ISSUER=https://core.dev:%d/hydra\n", ProxyPort))
+	sb.WriteString(fmt.Sprintf("REACT_APP_ISSUER=%s\n", CoreIssuer))
 	sb.WriteString(fmt.Sprintf("REACT_APP_CLIENT_ID=%s\n", c.coreAppFrontendClientId))
+	sb.WriteString(fmt.Sprintf("REACT_APP_SERVER_URL=https://localhost:8443\n"))
 	envPath := path.Join(c.rootDir, "web", "pwa", ".env")
 	fmt.Println(envPath)
 	if err := ioutil.WriteFile(envPath, []byte(sb.String()), os.ModePerm); err != nil {
@@ -45,7 +46,8 @@ func (c *Config) makeAppFrontend() error {
 	c.hydraClients = append(c.hydraClients, ClientConfig{
 		ClientId: c.coreAppFrontendClientId,
 		RedirectUris: []string{
-			"https://core.dev:8443/app",
+			fmt.Sprintf("%s/app", CoreHost),
+			fmt.Sprintf("http://localhost:3000/app"),
 		},
 		GrantTypes: []string{
 			"authorization_code",

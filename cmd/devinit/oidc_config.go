@@ -2,6 +2,7 @@ package devinit
 
 import (
 	"encoding/json"
+	"fmt"
 	"net"
 	"os"
 	"path"
@@ -40,6 +41,13 @@ func (c *Config) makeOidcConfig() error {
 	}
 
 	if err := os.WriteFile(path.Join(OIDCDir, "config.json"), jsonBytes, os.ModePerm); err != nil {
+		return err
+	}
+
+	if err := os.WriteFile(
+		path.Join(OIDCDir, "env"),
+		[]byte(fmt.Sprintf("ISSUER=%s", OidcIssuer)),
+		os.ModePerm); err != nil {
 		return err
 	}
 

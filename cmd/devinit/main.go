@@ -5,6 +5,7 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/json"
+	"fmt"
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/store"
@@ -38,10 +39,10 @@ var (
 	ProxyDir             string
 )
 
-const (
-	OidcHost  string = "oidc.dev"
-	LoginHost string = "core.dev/login"
-	ProxyPort int    = 8443
+var (
+	OidcIssuer = fmt.Sprintf("https://localhost:8444")
+	CoreIssuer = fmt.Sprintf("https://localhost:8443/hydra")
+	CoreHost   = fmt.Sprintf("https://localhost:8443")
 )
 
 type dbUser struct {
@@ -62,12 +63,17 @@ type Config struct {
 	coreApiHashKey            string
 	coreApiTlsCert            *x509.Certificate
 	coreApiTlsKey             *rsa.PrivateKey
+	coreAppFrontendClientId   string
 	coreAppFrontendTlsCert    *x509.Certificate
 	coreAppFrontendTlsKey     *rsa.PrivateKey
+	coreAuthTlsCert           *x509.Certificate
+	coreAuthTlsKey            *rsa.PrivateKey
 	coreDbName                string
 	coreDbPassword            string
 	coreDbUsername            string
+	coreNativeClientId        string
 	dbUsers                   []dbUser
+	hydraClients              []ClientConfig
 	hydraCookieSecret         string
 	hydraDbName               string
 	hydraDbPassword           string
@@ -82,22 +88,18 @@ type Config struct {
 	loginTlsCert              *x509.Certificate
 	loginTlsKey               *rsa.PrivateKey
 	oidcConfig                *OidcConfig
-	hydraClients              []ClientConfig
 	oidcTlsCert               *x509.Certificate
 	oidcTlsKey                *rsa.PrivateKey
 	postgresRootPassword      string
 	postgresUsername          string
+	proxyTlsCert              *x509.Certificate
+	proxyTlsKey               *rsa.PrivateKey
 	redisPassword             string
 	rootCa                    *x509.Certificate
 	rootCaKey                 *rsa.PrivateKey
 	rootCaKeyPath             string
 	rootCaPath                string
-	proxyTlsKey               *rsa.PrivateKey
-	proxyTlsCert              *x509.Certificate
 	rootDir                   string
-	coreAuthTlsKey            *rsa.PrivateKey
-	coreAuthTlsCert           *x509.Certificate
-	coreAppFrontendClientId   string
 }
 
 func Init() error {
@@ -161,6 +163,10 @@ func createConfig() (*Config, error) {
 	}
 
 	if err := config.makeCoreAuth(); err != nil {
+		return nil, err
+	}
+
+	if err := config.makeNativeApp(); err != nil {
 		return nil, err
 	}
 
@@ -280,7 +286,7 @@ func Bootstrap() error {
 	idp := &types.IdentityProvider{
 		Name:           "Fake OIDC",
 		OrganizationID: orgId,
-		Domain:         "https://oidc.dev:8443",
+		Domain:         OidcIssuer,
 		ClientID:       envCfg.idpClientId,
 		ClientSecret:   envCfg.idpClientSecret,
 		EmailDomain:    "nrc.no",

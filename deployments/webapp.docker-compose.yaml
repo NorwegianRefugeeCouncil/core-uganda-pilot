@@ -20,7 +20,7 @@ services:
   oidc:
     image: node:16
     container_name: core_oidc
-    hostname: oidc.dev
+    hostname: oidc
     volumes:
       - ../tools/local-oidc-provider/package.json:/app/package.json:ro
       - ../tools/local-oidc-provider/index.js:/app/index.js:ro
@@ -29,11 +29,12 @@ services:
       - ../creds/oidc/tls.crt:/var/run/tls.crt
     ports:
       - 9005:9005
+    env_file:
+      - ../creds/oidc/env
     environment:
       PORT: "9005"
       CONFIG_FILE: /var/run/config.json
       ADDRESS: 0.0.0.0
-      ISSUER: https://oidc.dev:8443
       TLS_KEY: /var/run/tls.key
       TLS_CERT: /var/run/tls.crt
     command:

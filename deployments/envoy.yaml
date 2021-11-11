@@ -3,13 +3,9 @@ static_resources:
     - address:
         socket_address:
           address: 0.0.0.0
-          port_value: 8443
-      listener_filters:
-        - name: "envoy.filters.listener.tls_inspector"
+          port_value: 8444
       filter_chains:
-        - filter_chain_match:
-            server_names: [ "oidc.dev" ]
-          transport_socket:
+        - transport_socket:
             name: envoy.transport_sockets.tls
             typed_config:
               "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
@@ -43,9 +39,12 @@ static_resources:
                             prefix: ""
                           route:
                             cluster: oidc
-        - filter_chain_match:
-            server_names: [ "core.dev" ]
-          transport_socket:
+    - address:
+        socket_address:
+          address: 0.0.0.0
+          port_value: 8443
+      filter_chains:
+        - transport_socket:
             name: envoy.transport_sockets.tls
             typed_config:
               "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext

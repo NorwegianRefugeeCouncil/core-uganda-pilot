@@ -1,6 +1,6 @@
 import 'dotenv/config'
 
-export default ({ config }) => {
+export default ({config}) => {
     switch (process.env.NODE_ENV) {
         case 'development':
         case 'dev':
@@ -12,6 +12,8 @@ export default ({ config }) => {
                 extra: {
                     server_default_hostname: 'https://core.dev:8443',
                     server_hostname: process.env.SERVER_HOSTNAME,
+                    client_id: process.env.REACT_APP_CLIENT_ID,
+                    issuer: process.env.REACT_APP_ISSUER,
                 },
             }
         case 'production':

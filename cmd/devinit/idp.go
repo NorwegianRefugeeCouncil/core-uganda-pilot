@@ -5,9 +5,9 @@ import "fmt"
 func (c *Config) makeIdp() error {
 
 	var err error
-	c.idpIssuer = fmt.Sprintf("https://%s:%d", OidcHost, ProxyPort)
+	c.idpIssuer = OidcIssuer
 	c.idpClientId = "nrc-external-idp"
-	c.idpRedirectUri = fmt.Sprintf("https://core.dev:%d/login/oidc/callback", ProxyPort)
+	c.idpRedirectUri = fmt.Sprintf("%s/login/oidc/callback", CoreHost)
 	c.idpClientSecret, err = getOrCreateRandomSecretStr(32, IDPDir, "client-secret")
 	if err != nil {
 		return err

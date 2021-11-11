@@ -46,12 +46,12 @@ func (c *Config) makeHydraSecrets() error {
 	hydraConfig := map[string]interface{}{
 		"urls": map[string]interface{}{
 			"self": map[string]interface{}{
-				"public": fmt.Sprintf("https://core.dev:%d/hydra/", ProxyPort),
-				"issuer": fmt.Sprintf("https://core.dev:%d/hydra/", ProxyPort),
+				"public": fmt.Sprintf(CoreIssuer),
+				"issuer": fmt.Sprintf(CoreIssuer),
 			},
-			"consent": fmt.Sprintf("https://core.dev:%d/login/consent", ProxyPort),
-			"login":   fmt.Sprintf("https://core.dev:%d/login/identify", ProxyPort),
-			"logout":  fmt.Sprintf("https://core.dev:%d/login/logout", ProxyPort),
+			"consent": fmt.Sprintf("%s/login/consent", CoreHost),
+			"login":   fmt.Sprintf("%s/login/identify", CoreHost),
+			"logout":  fmt.Sprintf("%s/login/logout", CoreHost),
 		},
 		"secrets": map[string]interface{}{
 			"system": []string{

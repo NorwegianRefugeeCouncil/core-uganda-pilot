@@ -40,6 +40,9 @@ func (c *Config) makeCore() error {
 						c.coreAdminApiBlockKey,
 					},
 				},
+				"urls": map[string]interface{}{
+					"self": "https://localhost:8443",
+				},
 			},
 			"public": map[string]interface{}{
 				"cache": map[string]interface{}{
@@ -54,6 +57,9 @@ func (c *Config) makeCore() error {
 					"block": []string{
 						c.coreApiBlockKey,
 					},
+				},
+				"urls": map[string]interface{}{
+					"self": "https://localhost:8443",
 				},
 			},
 			"login": map[string]interface{}{
@@ -70,9 +76,29 @@ func (c *Config) makeCore() error {
 						c.loginBlockKey,
 					},
 				},
+				"urls": map[string]interface{}{
+					"self": "https://localhost:8443",
+				},
+			},
+			"auth": map[string]interface{}{
+				"urls": map[string]interface{}{
+					"self": "https://localhost:8443",
+				},
 			},
 		},
 		"dsn": fmt.Sprintf("host=localhost port=5433 user=%s password=%s dbname=%s sslmode=disable", c.coreDbUsername, c.coreDbPassword, c.coreDbName),
+		"hydra": map[string]interface{}{
+			"admin": map[string]interface{}{
+				"host":      "localhost:8443",
+				"base_path": "hydra-admin/",
+				"schemes":   []string{"https"},
+			},
+			"public": map[string]interface{}{
+				"host":      "localhost:8443",
+				"base_path": "hydra/",
+				"schemes":   []string{"https"},
+			},
+		},
 	}
 
 	yamlBytes, err := yaml.Marshal(coreConfig)
