@@ -8,6 +8,7 @@ import {
     exchangeCodeAsync,
     makeRedirectUri,
     ResponseType,
+    TokenResponse,
     useAuthRequest,
     useAutoDiscovery,
 } from 'expo-auth-session';
@@ -32,17 +33,13 @@ export const AuthWrapper: FC = props => {
             usePKCE: true,
             responseType: ResponseType.Code,
             codeChallengeMethod: CodeChallengeMethod.S256,
-            scopes: ['openid', 'profile'],
+            scopes: ['openid', 'profile', 'offline_access'],
             redirectUri,
         },
         discovery
     );
 
-    const [accessToken, setAccessToken] = useState("")
-    const [idToken, setIdToken] = useState("")
-    const [refreshToken, setRefreshToken] = useState("")
-    const [expiresIn, setExpiresIn] = useState<number | undefined>(undefined)
-    const [issuedAt, setIssuedAt] = useState<number | undefined>(undefined)
+    const [tokenResponse, setTokenResponse] = useState<TokenResponse>()
 
     React.useEffect(() => {
         console.log('RESPONSE', response)
@@ -57,27 +54,60 @@ export const AuthWrapper: FC = props => {
             return
         }
 
-        exchangeCodeAsync({
+        const exchangeConfig = {
             code: response.params.code,
             clientId,
             redirectUri,
             extraParams: {
                 "code_verifier": request?.codeVerifier,
             }
-        }, discovery)
+        }
+
+        exchangeCodeAsync(exchangeConfig, discovery)
             .then(a => {
                 console.log("EXCHANGE SUCCESS", a)
-                setIdToken(a.idToken ? a.idToken : "")
-                setAccessToken(a.idToken ? a.accessToken : "")
-                setRefreshToken(a.refreshToken ? a.refreshToken : "")
-                setExpiresIn(a.expiresIn)
-                setLoggedIn(true)
-                setIssuedAt(a.issuedAt)
+                setTokenResponse(a)
             })
             .catch((err) => {
                 console.log("EXCHANGE ERROR", err)
+                setTokenResponse(undefined)
             })
     }, [request, response, discovery]);
+
+    useEffect(() => {
+        if (!discovery) {
+            return
+        }
+        if (tokenResponse?.shouldRefresh()) {
+            console.log("REFRESHING TOKEN")
+            const refreshConfig = {
+                clientId: clientId,
+                scopes: ["openid", "profile", "offline_access"],
+                extraParams: {}
+            }
+            tokenResponse?.refreshAsync(refreshConfig, discovery)
+                .then(resp => {
+                    console.log("TOKEN REFRESH SUCCESS", resp)
+                    setTokenResponse(resp)
+                })
+                .catch((err) => {
+                    console.log("TOKEN REFRESH ERROR", err)
+                    setTokenResponse(undefined)
+                })
+        }
+    }, [tokenResponse?.shouldRefresh(), discovery])
+
+    useEffect(() => {
+        if (tokenResponse) {
+            if (!loggedIn) {
+                setLoggedIn(true)
+            }
+        } else {
+            if (loggedIn) {
+                setLoggedIn(false)
+            }
+        }
+    }, [tokenResponse, loggedIn])
 
     const handleLogin = useCallback(() => {
         promptAsync({useProxy}).then(response => {
@@ -94,13 +124,13 @@ export const AuthWrapper: FC = props => {
             if (!value) {
                 return
             }
-            if (!accessToken) {
+            if (!tokenResponse?.accessToken) {
                 return
             }
             if (!value.headers) {
                 value.headers = {}
             }
-            value.headers["Authorization"] = `Bearer ${accessToken}`
+            value.headers["Authorization"] = `Bearer ${tokenResponse.accessToken}`
             console.log("NEW REQUEST", value)
             return value
         }, error => {
@@ -111,7 +141,7 @@ export const AuthWrapper: FC = props => {
             console.log("EJECTING INTERCEPTOR")
             axiosInstance.interceptors.request.eject(interceptor)
         }
-    }, [accessToken])
+    }, [tokenResponse?.accessToken])
 
     if (!loggedIn) {
         return <PaperProvider theme={theme}>
@@ -122,10 +152,6 @@ export const AuthWrapper: FC = props => {
             />
         </PaperProvider>
     }
-    if (!accessToken) {
-        return <Fragment/>
-    }
-
     return <Fragment>
         {children}
     </Fragment>

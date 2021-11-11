@@ -5,8 +5,10 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 	"github.com/nrc-no/core/pkg/api/meta"
+	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/utils/authorization"
 	"github.com/ory/hydra-client-go/client/public"
+	"go.uber.org/zap"
 	"net/http"
 )
 
@@ -47,9 +49,11 @@ type Authenticator interface {
 func (h *hydraAuthenticator) Authenticate(req *http.Request) (AuthenticationResponse, error) {
 
 	ctx := req.Context()
+	l := logging.NewLogger(ctx)
 
 	bearerToken, err := authorization.ExtractBearerToken(req)
 	if err != nil {
+		l.Error("failed to extract bearer token from request", zap.Error(err))
 		return AuthenticationResponse{}, err
 	}
 
@@ -58,11 +62,13 @@ func (h *hydraAuthenticator) Authenticate(req *http.Request) (AuthenticationResp
 		HTTPClient: nil,
 	}, runtime.ClientAuthInfoWriterFunc(func(req runtime.ClientRequest, reg strfmt.Registry) error {
 		if err := req.SetHeaderParam("Authorization", fmt.Sprintf("Bearer %s", bearerToken)); err != nil {
+			l.Error("failed to prepare userinfo request", zap.Error(err))
 			return err
 		}
 		return nil
 	}))
 	if err != nil {
+		l.Error("failed to get user info", zap.Error(err))
 		return AuthenticationResponse{}, meta.NewUnauthorized("failed to get user info")
 	}
 

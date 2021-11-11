@@ -19,7 +19,6 @@ serve:
       allowed_origins:
         - http://localhost:3000
         - http://localhost:19006
-        - https://core.dev:8443
       allowed_headers:
         - Authorization
         - Content-Type
@@ -38,11 +37,11 @@ log:
 cookies:
   same_site_mode: Strict
 ttl:
-  access_token: 3m
-  refresh_token: 6m
-  id_token: 3m
-  auth_code: 3m
-  login_consent_request: 10m
+  access_token: 15m
+  refresh_token: 30m
+  id_token: 15m
+  auth_code: 5m
+  login_consent_request: 5m
 oauth2:
   session:
     encrypt_at_rest: true
