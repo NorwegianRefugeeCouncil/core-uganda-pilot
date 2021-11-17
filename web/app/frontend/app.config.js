@@ -14,6 +14,7 @@ export default ({config}) => {
                     server_hostname: process.env.SERVER_HOSTNAME,
                     client_id: process.env.REACT_APP_CLIENT_ID,
                     issuer: process.env.REACT_APP_ISSUER,
+                    scopes: ['openid', 'profile', 'offline_access']
                 },
             }
         case 'production':

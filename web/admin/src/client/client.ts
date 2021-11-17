@@ -1,169 +1,37 @@
-import axios, {AxiosError, AxiosResponse, Method} from "axios";
+import axios, {AxiosError, AxiosInstance, Method} from "axios";
+import {Client} from '../types/types';
+import {clientResponse} from "../utils/responses";
+import {
+    IdentityProviderCreateRequest,
+    IdentityProviderCreateResponse,
+    IdentityProviderGetRequest,
+    IdentityProviderGetResponse,
+    IdentityProviderListRequest,
+    IdentityProviderListResponse,
+    OAuth2ClientCreateRequest,
+    OAuth2ClientCreateResponse,
+    OAuth2ClientDeleteRequest,
+    OAuth2ClientDeleteResponse,
+    OAuth2ClientGetRequest,
+    OAuth2ClientGetResponse,
+    OAuth2ClientListRequest,
+    OAuth2ClientListResponse,
+    OAuth2ClientUpdateRequest,
+    OAuth2ClientUpdateResponse,
+    OrganizationCreateRequest,
+    OrganizationCreateResponse,
+    OrganizationGetResponse,
+    OrganizationListResponse,
+    SessionGetResponse
+} from "../types/restTypes";
+import {RequestOptions, Response} from "../types/utils";
 
-export type Session = {
-    active: boolean
-    expiry: string
-    expiredInSeconds: number
-    subject: string
-    username: string
-}
+export default class client implements Client {
+    private apiDomain = 'apis/admin.nrc.no';
 
-export type DataOperation<TRequest, TResponse> = (request: TRequest) => Promise<TResponse>
-
-export type Response<TRequest, TResponse> = {
-    request: TRequest
-    response: TResponse | undefined
-    status: string
-    statusCode: number
-    success: boolean
-    error: any
-}
-
-export class Organization {
-    public id: string = ""
-    public key: string = ""
-    public name: string = ""
-}
-
-export type OrganizationList = { items: Organization[] }
-
-export class IdentityProvider {
-    public id: string = ""
-    public name: string = ""
-    public organizationId: string = ""
-    public domain: string = ""
-    public clientId: string = ""
-    public clientSecret: string = ""
-    public emailDomain: string = ""
-}
-
-export type IdentityProviderList = { items: IdentityProvider[] }
-
-export type TokenEndpointAuthMethod = "client_secret_post" | "client_secret_basic" | "private_key_jwt" | "none"
-
-export type ResponseType = "code" | "token" | "id_token"
-
-export type GrantType = "authorization_code" | "refresh_token" | "client_credentials" | "implicit"
-
-export class OAuth2Client {
-    public id: string = ""
-    public clientName: string = ""
-    public clientSecret: string = ""
-    public uri: string = ""
-    public grantTypes: GrantType[] = ["authorization_code"]
-    public responseTypes: ResponseType[] = ["code"]
-    public scope: string = ""
-    public redirectUris: string[] = []
-    public allowedCorsOrigins: string[] = []
-    public tokenEndpointAuthMethod: TokenEndpointAuthMethod = "client_secret_basic"
-}
-
-export type OAuth2ClientList = {
-    items: OAuth2Client[]
-}
-
-export type SessionGetRequest = void
-export type SessionGetResponse = Response<SessionGetRequest, Session>
-export type SessionGetter = { getSession: DataOperation<SessionGetRequest, SessionGetResponse> }
-export type OrganizationListRequest = void
-export type OrganizationListResponse = Response<OrganizationListRequest, OrganizationList>
-export type OrganizationLister = { listOrganizations: DataOperation<OrganizationListRequest, OrganizationListResponse> }
-export type OrganizationCreateRequest = { object: Partial<Organization> }
-export type OrganizationCreateResponse = Response<OrganizationCreateRequest, Organization>
-export type OrganizationCreator = { createOrganization: DataOperation<OrganizationCreateRequest, OrganizationCreateResponse> }
-export type OrganizationGetRequest = { id: string }
-export type OrganizationGetResponse = Response<OrganizationGetRequest, Organization>
-export type OrganizationGetter = { getOrganization: DataOperation<OrganizationGetRequest, OrganizationGetResponse> }
-export type IdentityProviderGetRequest = { id: string }
-export type IdentityProviderGetResponse = Response<IdentityProviderGetRequest, IdentityProvider>
-export type IdentityProviderGetter = { getIdentityProvider: DataOperation<IdentityProviderGetRequest, IdentityProviderGetResponse> }
-export type IdentityProviderListRequest = { organizationId: string }
-export type IdentityProviderListResponse = Response<IdentityProviderListRequest, IdentityProviderList>
-export type IdentityProviderLister = { listIdentityProviders: DataOperation<IdentityProviderListRequest, IdentityProviderListResponse> }
-export type IdentityProviderCreateRequest = { object: Partial<IdentityProvider> }
-export type IdentityProviderCreateResponse = Response<IdentityProviderCreateRequest, IdentityProvider>
-export type IdentityProviderCreator = { createIdentityProvider: DataOperation<IdentityProviderCreateRequest, IdentityProviderCreateResponse> }
-export type IdentityProviderUpdateRequest = { object: Partial<IdentityProvider> }
-export type IdentityProviderUpdateResponse = Response<IdentityProviderUpdateRequest, IdentityProvider>
-export type IdentityProviderUpdater = { updateIdentityProvider: DataOperation<IdentityProviderUpdateRequest, IdentityProviderUpdateResponse> }
-export type OAuth2ClientListRequest = {}
-export type OAuth2ClientListResponse = Response<OAuth2ClientListRequest, OAuth2ClientList>
-export type OAuth2ClientLister = { listOAuth2Clients: DataOperation<OAuth2ClientListRequest, OAuth2ClientListResponse> }
-export type OAuth2ClientGetRequest = { id: string }
-export type OAuth2ClientGetResponse = Response<OAuth2ClientGetRequest, OAuth2Client>
-export type OAuth2ClientGetter = { getOAuth2Client: DataOperation<OAuth2ClientGetRequest, OAuth2ClientGetResponse> }
-export type OAuth2ClientUpdateRequest = { object: Partial<OAuth2Client> }
-export type OAuth2ClientUpdateResponse = Response<OAuth2ClientUpdateRequest, OAuth2Client>
-export type OAuth2ClientUpdater = { updateOAuth2Client: DataOperation<OAuth2ClientUpdateRequest, OAuth2ClientUpdateResponse> }
-export type OAuth2ClientCreateRequest = { object: Partial<OAuth2Client> }
-export type OAuth2ClientCreateResponse = Response<OAuth2ClientCreateRequest, OAuth2Client>
-export type OAuth2ClientCreator = { createOAuth2Client: DataOperation<OAuth2ClientCreateRequest, OAuth2ClientCreateResponse> }
-export type OAuth2ClientDeleteRequest = { id: string }
-export type OAuth2ClientDeleteResponse = Response<OAuth2ClientDeleteRequest, void>
-export type OAuth2ClientDeleter = { deleteOAuth2Client: DataOperation<OAuth2ClientDeleteRequest, OAuth2ClientDeleteResponse> }
-
-
-export interface Client
-    extends OrganizationLister,
-        OrganizationCreator,
-        OrganizationGetter,
-        IdentityProviderGetter,
-        IdentityProviderLister,
-        IdentityProviderCreator,
-        IdentityProviderUpdater,
-        OAuth2ClientGetter,
-        OAuth2ClientLister,
-        OAuth2ClientUpdater,
-        OAuth2ClientCreator,
-        OAuth2ClientDeleter,
-        SessionGetter{
-}
-
-function errorResponse<TRequest, TBody>(request: TRequest, r: AxiosResponse<TBody>): Response<TRequest, TBody> {
-    return {
-        request: request,
-        response: undefined,
-        status: r.request,
-        statusCode: r.status,
-        error: r.data as any,
-        success: false,
-    };
-}
-
-function successResponse<TRequest, TBody>(request: TRequest, r: AxiosResponse<TBody>): Response<TRequest, TBody> {
-    return {
-        request: request,
-        response: r.data as TBody,
-        status: r.statusText,
-        statusCode: r.status,
-        error: undefined,
-        success: true,
-    };
-}
-
-function clientResponse<TRequest, TBody>(r: AxiosResponse<TBody>, request: TRequest, expectedStatusCode: number): Response<TRequest, TBody> {
-    return r.status !== expectedStatusCode
-        ? errorResponse<TRequest, TBody>(request, r)
-        : successResponse<TRequest, TBody>(request, r)
-}
-
-export type clientProps = {
-    address?: string
-}
-
-export type RequestOptions = {
-    headers: { [key: string]: string },
-    silentRedirect?: boolean,
-}
-
-
-export class client implements Client {
-    public address = "http://localhost:9001"
-
-    public constructor(private clientProps?: clientProps) {
-        if (clientProps?.address) {
-            this.address = clientProps?.address
-        }
+    public constructor(
+        public readonly address = 'https://localhost:9001/',
+        public readonly axiosInstance: AxiosInstance = axios.create()) {
     }
 
     do<TRequest, TBody>(request: TRequest, url: string, method: Method, data: any, expectStatusCode: number, options?: RequestOptions): Promise<Response<TRequest, TBody>> {
@@ -197,56 +65,55 @@ export class client implements Client {
     }
 
     createIdentityProvider(request: IdentityProviderCreateRequest): Promise<IdentityProviderCreateResponse> {
-        return this.do(request, `${this.address}/identityproviders`, "post", request.object, 200)
+        return this.do(request, `${this.address}/${this.apiDomain}/v1/identityproviders`, "post", request.object, 200)
     }
 
     createOrganization(request: OrganizationCreateRequest): Promise<OrganizationCreateResponse> {
-        return this.do(request, `${this.address}/organizations`, "post", request.object, 200)
+        return this.do(request, `${this.address}/${this.apiDomain}/v1/organizations`, "post", request.object, 200)
     }
 
     createOAuth2Client(request: OAuth2ClientCreateRequest): Promise<OAuth2ClientCreateResponse> {
-        return this.do(request, `${this.address}/clients`, "post", request.object, 200)
+        return this.do(request, `${this.address}/${this.apiDomain}/v1/clients`, "post", request.object, 200)
     }
 
     deleteOAuth2Client(request: OAuth2ClientDeleteRequest): Promise<OAuth2ClientDeleteResponse> {
-        return this.do(request, `${this.address}/clients/${request.id}`, "delete", undefined, 204)
+        return this.do(request, `${this.address}/${this.apiDomain}/v1/clients/${request.id}`, "delete", undefined, 204)
     }
 
     getIdentityProvider(request: IdentityProviderGetRequest): Promise<IdentityProviderGetResponse> {
-        return this.do(request, `${this.address}/identityproviders/${request.id}`, "get", undefined, 200)
+        return this.do(request, `${this.address}/${this.apiDomain}/v1/identityproviders/${request.id}`, "get", undefined, 200)
     }
 
     getOrganization(request: { id: string }): Promise<OrganizationGetResponse> {
-        return this.do(request, `${this.address}/organizations/${request.id}`, "get", undefined, 200)
+        return this.do(request, `${this.address}/${this.apiDomain}/v1/organizations/${request.id}`, "get", undefined, 200)
     }
 
     getOAuth2Client(request: OAuth2ClientGetRequest): Promise<OAuth2ClientGetResponse> {
-        return this.do(request, `${this.address}/clients/${request.id}`, "get", undefined, 200)
+        return this.do(request, `${this.address}/${this.apiDomain}/v1/clients/${request.id}`, "get", undefined, 200)
     }
 
     listIdentityProviders(request: IdentityProviderListRequest): Promise<IdentityProviderListResponse> {
-        return this.do(request, `${this.address}/identityproviders?organizationId=${request.organizationId}`, "get", undefined, 200)
+        return this.do(request, `${this.address}/${this.apiDomain}/v1/identityproviders?organizationId=${request.organizationId}`, "get", undefined, 200)
     }
 
     listOAuth2Clients(request: OAuth2ClientListRequest): Promise<OAuth2ClientListResponse> {
-        return this.do(request, `${this.address}/clients`, "get", undefined, 200)
+        return this.do(request, `${this.address}/${this.apiDomain}/v1/clients`, "get", undefined, 200)
     }
 
     listOrganizations(request: void): Promise<OrganizationListResponse> {
-        return this.do(request, `${this.address}/organizations`, "get", undefined, 200)
+        return this.do(request, `${this.address}/${this.apiDomain}/v1/organizations`, "get", undefined, 200)
     }
 
     updateIdentityProvider(request: IdentityProviderCreateRequest): Promise<IdentityProviderCreateResponse> {
-        return this.do(request, `${this.address}/identityproviders/${request.object.id}`, "put", request.object, 200)
+        return this.do(request, `${this.address}/${this.apiDomain}/v1/identityproviders/${request.object.id}`, "put", request.object, 200)
     }
 
     updateOAuth2Client(request: OAuth2ClientUpdateRequest): Promise<OAuth2ClientUpdateResponse> {
-        return this.do(request, `${this.address}/clients/${request.object.id}`, "put", request.object, 200)
+        return this.do(request, `${this.address}/${this.apiDomain}/v1/clients/${request.object.id}`, "put", request.object, 200)
     }
 
     getSession(request: void): Promise<SessionGetResponse> {
-        return this.do(request, `${this.address}/oidc/session`, "get", undefined, 200, {headers: {}})
+        return this.do(request, `${this.address}/${this.apiDomain}/v1/oidc/session`, "get", undefined, 200, {headers: {}})
     }
-
 }
 

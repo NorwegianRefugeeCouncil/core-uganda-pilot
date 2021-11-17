@@ -7,10 +7,9 @@ import {databaseGlobalSelectors} from "../reducers/database";
 import {recordGlobalSelectors, selectSubRecords, SubRecordResult} from "../reducers/records";
 import {formGlobalSelectors, selectFormOrSubFormById} from "../reducers/form";
 import {Database, FormDefinition, Record} from "../types/types";
-import {Client} from "core-js-api-client";
-import client from "core-auth/lib/client";
+import client, {ClientDefinition} from "core-js-api-client";
 
-// Use throughout your app instead of plain `useDispatch` and `useSelector`
+// Use throughout your hooks instead of plain `useDispatch` and `useSelector`
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
@@ -120,8 +119,8 @@ export const useForms: (options: { databaseId?: string | undefined }) => FormDef
 }
 
 
-export function useApiClient(): Client {
+export function useApiClient(): ClientDefinition {
     return useMemo(() => {
-        return client
+        return new client()
     }, [])
 }

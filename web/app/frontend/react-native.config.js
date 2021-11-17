@@ -1,4 +1,4 @@
-// File created by expo-dev-client/app.plugin.js
+// File created by expo-dev-client/hooks.plugin.js
 
 module.exports = {
   dependencies: {

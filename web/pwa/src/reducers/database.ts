@@ -2,7 +2,7 @@ import {createAsyncThunk, createEntityAdapter, createSlice, EntityState} from "@
 import {Database, DatabaseList} from "../types/types";
 import {RootState} from "../app/store";
 import {DatabaseListRequest, Response} from "core-js-api-client";
-import client from "core-auth/lib/client";
+import client from "../app/client";
 
 const adapter = createEntityAdapter<Database>({
     // Assume IDs are stored in a field other than `book.id`

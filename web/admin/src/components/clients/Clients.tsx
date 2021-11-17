@@ -1,7 +1,7 @@
 import {FC, useEffect, useState} from "react";
 import {SectionTitle} from "../sectiontitle/SectionTitle";
-import {useApiClient} from "../../app/hooks";
-import {OAuth2Client} from "../../client/client";
+import {useApiClient} from "../../hooks/hooks";
+import {OAuth2Client} from "../../types/types";
 import {Link} from "react-router-dom";
 
 export const Clients: FC = props => {

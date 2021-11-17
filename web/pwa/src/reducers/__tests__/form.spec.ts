@@ -1,6 +1,6 @@
-import {findSubForm, hasSubFormWithId, selectFormOrSubFormById, selectRootForm} from "./form";
-import {FieldDefinition} from "../types/types";
-import {RootState} from "../app/store";
+import {findSubForm, hasSubFormWithId, selectFormOrSubFormById, selectRootForm} from "../form";
+import {FieldDefinition} from "../../types/types";
+import {RootState} from "../../app/store";
 
 
 describe("form reducer", () => {

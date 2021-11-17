@@ -4,7 +4,7 @@ import {FormInterface, selectFormOrSubFormById, selectRootForm} from "../../redu
 import {v4 as uuidv4} from "uuid"
 import {FormDefinition, Record} from "../../types/types";
 import {recordGlobalSelectors} from "../../reducers/records";
-import client from "core-auth/lib/client";
+import client from "../../app/client";
 
 export interface FormValue {
     // the unique id of the record

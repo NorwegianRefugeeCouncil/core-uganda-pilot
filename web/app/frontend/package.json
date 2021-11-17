@@ -38,8 +38,7 @@
     "@react-native-picker/picker": "2.1.0",
     "@react-navigation/native": "~6.0.4",
     "@react-navigation/stack": "~6.0.9",
-    "core-design-system": "../designSystem",
-    "core-js-api-client": "../client",
+    "core-js-api-client": "file:../client",
     "dotenv": "~10.0.0",
     "expo": "^43.0.0",
     "expo-auth-session": "~3.4.2",
@@ -56,8 +55,8 @@
     "install": "^0.13.0",
     "lodash": "4.17.21",
     "npm": "^8.1.1",
-    "react": "17.0.1",
-    "react-dom": "17.0.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "react-hook-form": "7.17.4",
     "react-native": "0.64.3",
     "react-native-crypto-js": "^1.0.0",
@@ -71,18 +70,19 @@
     "react-native-safe-area-context": "3.3.2",
     "react-native-screens": "~3.8.0",
     "react-native-unimodules": "~0.15.0",
-    "react-native-web": "0.17.1",
-    "rxjs": "7.4.0"
+    "react-native-web": "0.17.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
     "@types/lodash": "4.14.176",
     "@types/react": "~17.0.21",
     "@types/react-native": "~0.64.12",
+    "install-peers": "^1.0.3",
     "jest-expo": "^43.0.0",
     "react-test-renderer": "^17.0.2",
     "typescript": "~4.3.5"
   },
+  "peerDependencies": {},
   "resolutions": {
     "**/ua-parser-js": "0.7.28"
   },

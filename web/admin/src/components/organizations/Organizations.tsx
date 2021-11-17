@@ -1,7 +1,7 @@
 import React, {FC, useEffect, useMemo, useState} from "react";
-import {Organization} from "../../client/client";
+import {Organization} from "../../types/types";
 import {Column, useTable} from "react-table"
-import {useApiClient} from "../../app/hooks";
+import {useApiClient} from "../../hooks/hooks";
 import {Link} from "react-router-dom"
 import {SectionTitle} from "../sectiontitle/SectionTitle";
 

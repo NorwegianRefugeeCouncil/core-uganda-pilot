@@ -25,7 +25,7 @@ const RecordsScreen: React.FC<ScreenProps> = ({navigation, route, state, dispatc
                 })
                 setIsLoading(false)
             })
-    }, []);
+    }, [client]);
 
     return (
         <View style={[layout.container, layout.body]}>

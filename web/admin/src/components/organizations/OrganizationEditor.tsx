@@ -1,9 +1,9 @@
 import {FC, useCallback, useEffect, useState} from "react";
 import {SectionTitle} from "../sectiontitle/SectionTitle";
 import {useForm} from "react-hook-form";
-import {useApiClient, useFormValidation} from "../../app/hooks";
+import {useApiClient, useFormValidation} from "../../hooks/hooks";
 import classNames from "classnames";
-import {Organization} from "../../client/client";
+import {Organization} from "../../types/types";
 import {useParams} from "react-router-dom";
 
 export type  OrganizationEditorProps = {}

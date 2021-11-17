@@ -31,6 +31,7 @@ const AddRecordScreen: React.FC<any> = ({route, dispatch}) => {
                 setForm(data.response)
                 setIsLoading(false)
             })
+        // TODO add catch
     }, []);
 
     const onSubmitOffline = async (data: any) => {

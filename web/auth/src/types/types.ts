@@ -1,5 +1,7 @@
 import {CodedError} from "../error";
 import {TokenResponse} from "../tokenrequest";
+import React from "react";
+import {AxiosInstance} from "axios";
 
 export interface ResponseErrorConfig extends Record<string, any> {
     error: string;
@@ -400,9 +402,16 @@ export type WebBrowserResult = {
 
 export type PromptMethod = (options?: AuthRequestPromptOptions) => Promise<AuthSessionResult>;
 
+export type LoginComponentProps = {
+    login: () => void
+}
+
 export type AuthWrapperProps = {
     clientId: string,
     issuer: string,
-    scopes: string[],
-    redirectUriSuffix: string
+    scopes?: string[],
+    redirectUriSuffix?: string,
+    customLoginComponent?: React.FC<LoginComponentProps>
+    handleLoginErr?: (err: any)=>void,
+    axiosInstance?: AxiosInstance
 }

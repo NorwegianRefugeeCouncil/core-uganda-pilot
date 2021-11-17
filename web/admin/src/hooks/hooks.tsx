@@ -1,13 +1,14 @@
 import {Fragment, useCallback, useEffect, useMemo, useState} from "react";
-import {client, IdentityProvider, Organization} from "../client/client";
+import Client from "../client/client";
 import {useParams} from "react-router-dom";
 import {OrganizationRoute} from "../components/organizations/OrganizationPortal";
 import classNames from "classnames";
 import {Path, UseFormReturn} from "react-hook-form";
+import {IdentityProvider, Organization} from "../types/types";
 
-export function useApiClient(): client {
+export function useApiClient(): Client {
     return useMemo(() => {
-        return new client()
+        return new Client()
     }, [])
 }
 

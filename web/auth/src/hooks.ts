@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo, useState} from "react";
+import React from "react";
 import {resolveDiscoveryAsync} from "./discovery";
 import {
     AuthRequestConfig,
@@ -10,8 +10,8 @@ import {
 import {AuthRequest} from "./authrequest";
 
 export function useDiscovery(issuerOrDiscovery: IssuerOrDiscovery): DiscoveryDocument | null {
-    const [discoveryDocument, setDiscoveryDocument] = useState<DiscoveryDocument | null>(null)
-    useEffect(() => {
+    const [discoveryDocument, setDiscoveryDocument] = React.useState<DiscoveryDocument | null>(null)
+    React.useEffect(() => {
         let isAllowed = true
         resolveDiscoveryAsync(issuerOrDiscovery).then(discovery => {
             if (isAllowed) {
@@ -31,13 +31,13 @@ export function useLoadedAuthRequest(
     discovery: DiscoveryDocument | null,
     AuthRequestInstance: typeof AuthRequest
 ): AuthRequest | null {
-    const [request, setRequest] = useState<AuthRequest | null>(null);
-    const scopeString = useMemo(() => config.scopes?.join(','), [config.scopes]);
-    const extraParamsString = useMemo(
+    const [request, setRequest] = React.useState<AuthRequest | null>(null);
+    const scopeString = React.useMemo(() => config.scopes?.join(','), [config.scopes]);
+    const extraParamsString = React.useMemo(
         () => JSON.stringify(config.extraParams || {}),
         [config.extraParams]
     );
-    useEffect(
+    React.useEffect(
         () => {
             let isMounted = true;
             if (discovery) {
@@ -75,9 +75,9 @@ export function useAuthRequestResult(
     discovery: DiscoveryDocument | null
 ): [AuthSessionResult | null, PromptMethod] {
 
-    const [result, setResult] = useState<AuthSessionResult | null>(null);
+    const [result, setResult] = React.useState<AuthSessionResult | null>(null);
 
-    const promptAsync = useCallback(
+    const promptAsync = React.useCallback(
         async () => {
             if (!discovery || !request) {
                 throw new Error('Cannot prompt to authenticate until the request has finished loading.');

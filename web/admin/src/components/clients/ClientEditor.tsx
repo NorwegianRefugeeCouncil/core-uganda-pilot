@@ -2,9 +2,9 @@ import {FC, Fragment, useCallback, useEffect, useState} from "react";
 import {SectionTitle} from "../sectiontitle/SectionTitle";
 import {FormControl} from "../formcontrol/FormControl";
 import {useForm} from "react-hook-form";
-import {useApiClient, useFormValidation} from "../../app/hooks";
-import {GrantType, OAuth2Client, ResponseType, TokenEndpointAuthMethod} from "../../client/client";
+import {useApiClient, useFormValidation} from "../../hooks/hooks";
 import {Redirect, useParams} from "react-router-dom";
+import {GrantType, OAuth2Client, ResponseType, TokenEndpointAuthMethod} from "../../types/types";
 
 export type FormData = {
     clientName: string
@@ -33,7 +33,6 @@ export const ClientEditor: FC = props => {
     const [clientSecret, setClientSecret] = useState("")
 
     const setClient = useCallback((args: OAuth2Client) => {
-        console.log(args)
         form.setValue("clientName", args.clientName)
         form.setValue("uri", args.uri)
         form.setValue("scope", args.scope)
@@ -49,7 +48,6 @@ export const ClientEditor: FC = props => {
     useEffect(() => {
         clientId && apiClient.getOAuth2Client({id: clientId})
             .then(result => {
-                console.log(result)
                 result.response && setClient(result.response)
             })
     }, [form, clientId, setClient])

@@ -1,24 +1,32 @@
-import React, {FC, Fragment, useCallback, useEffect, useState} from "react";
+import React from "react";
 import {maybeCompleteAuthSession} from "../browser";
 import {exchangeCodeAsync, TokenResponse} from "../tokenrequest";
 import {AuthWrapperProps, CodeChallengeMethod, ResponseType} from "../types/types";
 import {useAuthRequest, useDiscovery} from "../hooks";
-import {axiosInstance} from "../client";
+import axios from "axios";
 
 maybeCompleteAuthSession()
 
-const AuthWrapper: FC<AuthWrapperProps> = ({
-    children,
-    scopes,
-    clientId,
-    issuer,
-    redirectUriSuffix
-}) => {
+// TODO: https://betterprogramming.pub/building-secure-login-flow-with-oauth-2-openid-in-react-apps-ce6e8e29630a
+
+const AuthWrapper: React.FC<AuthWrapperProps> = (
+    {
+        children,
+        scopes = [],
+        clientId,
+        axiosInstance = axios.create(),
+        issuer,
+        redirectUriSuffix='/',
+        customLoginComponent,
+        handleLoginErr = console.log,
+    }
+) => {
+
     const redirectUri = `${window.location.protocol}//${window.location.host}/${redirectUriSuffix}`;
 
     const discovery = useDiscovery(issuer)
-    const [tokenResponse, setTokenResponse] = useState<TokenResponse>()
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [tokenResponse, setTokenResponse] = React.useState<TokenResponse>()
+    const [isLoggedIn, setIsLoggedIn] = React.useState(false)
 
     const [request, response, promptAsync] = useAuthRequest(
         {
@@ -32,7 +40,7 @@ const AuthWrapper: FC<AuthWrapperProps> = ({
         discovery
     );
 
-    useEffect(() => {
+    React.useEffect(() => {
 
         if (!discovery) {
             return
@@ -63,7 +71,7 @@ const AuthWrapper: FC<AuthWrapperProps> = ({
 
     }, [request?.codeVerifier, response, discovery]);
 
-    useEffect(() => {
+    React.useEffect(() => {
         if (!discovery) {
             return
         }
@@ -83,7 +91,7 @@ const AuthWrapper: FC<AuthWrapperProps> = ({
         }
     }, [tokenResponse?.shouldRefresh(), discovery])
 
-    useEffect(() => {
+    React.useEffect(() => {
         if (tokenResponse) {
             if (!isLoggedIn) {
                 setIsLoggedIn(true)
@@ -95,7 +103,7 @@ const AuthWrapper: FC<AuthWrapperProps> = ({
         }
     }, [tokenResponse, isLoggedIn])
 
-    useEffect(() => {
+    React.useEffect(() => {
         const interceptor = axiosInstance.interceptors.request.use(value => {
             if (!tokenResponse?.accessToken) {
                 return value
@@ -112,26 +120,29 @@ const AuthWrapper: FC<AuthWrapperProps> = ({
         }
     }, [tokenResponse?.accessToken])
 
-    const handleLogin = useCallback(() => {
-        promptAsync().then(response => {
-            console.log("PROMPT RESPONSE", response)
-        }).catch((err) => {
-            console.log("PROMPT ERROR", err)
+    const handleLogin = React.useCallback(() => {
+        promptAsync().catch((err) => {
+            handleLoginErr(err);
         })
     }, [discovery, request, promptAsync])
 
     if (!isLoggedIn) {
         return (
-            <Fragment>
-                <button onClick={handleLogin}>Login</button>
-            </Fragment>
+            <React.Fragment>
+                {customLoginComponent
+                    ?
+                    customLoginComponent({login: handleLogin})
+                    :
+                    <button onClick={handleLogin}>Login</button>
+                }
+            </React.Fragment>
         )
     }
 
     return (
-        <Fragment>
+        <React.Fragment>
             {children}
-        </Fragment>
+        </React.Fragment>
     )
 
 }

@@ -1,7 +1,7 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import {FieldDefinition, FieldTypeSubForm, FormDefinition} from "../types/types";
 import {RootState} from "../app/store";
-import client from "core-auth/lib/client";
+import client from "../app/client";
 import {FormListResponse} from "core-js-api-client";
 
 const adapter = createEntityAdapter<FormDefinition>({

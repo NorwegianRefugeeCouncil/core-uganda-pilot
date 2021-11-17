@@ -38,6 +38,18 @@ reset-db: clear-db migrate
 build:
 	@./scripts/build.sh
 
+.PHONY: build-pwa
+build-pwa:
+	@./scripts/build-pwa.sh
+
+.PHONY: build-admin
+build-admin:
+	@./scripts/build-admin.sh
+
+.PHONY: build-frontend
+build-frontend:
+	@./scripts/build-frontend.sh
+
 .PHONY: serve
 serve:
 	@./scripts/serve.sh

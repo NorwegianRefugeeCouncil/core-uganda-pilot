@@ -1,144 +1,28 @@
-import axios, {AxiosError, AxiosInstance, AxiosResponse, Method} from "axios";
+import axios, {AxiosError, AxiosInstance, Method} from "axios";
 import {
-    Database,
-    DatabaseList,
-    FieldKind,
-    FieldType,
-    Folder,
-    FolderList,
-    FormDefinition,
-    FormDefinitionList,
-    Record,
-    RecordList
+    ClientDefinition,
+    DatabaseCreateRequest,
+    DatabaseCreateResponse,
+    DatabaseListResponse,
+    FolderCreateRequest,
+    FolderCreateResponse,
+    FolderListResponse,
+    FormCreateRequest,
+    FormCreateResponse,
+    FormGetRequest,
+    FormGetResponse,
+    FormListResponse,
+    RecordCreateRequest,
+    RecordCreateResponse,
+    RecordGetRequest,
+    RecordGetResponse,
+    RecordListRequest,
+    RecordListResponse,
+    Response
 } from "./types/types";
+import {clientResponse} from "./utils/responses";
 
-export type Response<TRequest, TResponse> = {
-    request: TRequest
-    response: TResponse | undefined
-    status: string
-    statusCode: number
-    success: boolean
-    error: any
-}
-
-export type PartialObjectWrapper<T> = { object: Partial<T> }
-export type DataOperation<TRequest, TResponse> = (request: TRequest) => Promise<TResponse>
-
-export type DatabaseCreateRequest = PartialObjectWrapper<Database>
-export type DatabaseCreateResponse = Response<DatabaseCreateRequest, Database>
-
-export interface DatabaseCreator {
-    createDatabase: DataOperation<DatabaseCreateRequest, DatabaseCreateResponse>
-}
-
-export type DatabaseListRequest = {} | undefined
-export type DatabaseListResponse = Response<DatabaseListRequest, DatabaseList>
-
-export interface DatabaseLister {
-    listDatabases: DataOperation<DatabaseListRequest, DatabaseListResponse>
-}
-
-export type FormListRequest = {} | undefined
-export type FormListResponse = Response<FormListRequest, FormDefinitionList>
-
-export type FormGetRequest = { id: string }
-export type FormGetResponse = Response<FormGetRequest, FormDefinition>
-
-export interface FormGetter {
-    getForm: DataOperation<FormGetRequest, FormGetResponse>
-}
-
-export interface FormLister {
-    listForms: DataOperation<FormListRequest, FormListResponse>
-}
-
-export type FormCreateRequest = PartialObjectWrapper<FormDefinition>
-export type FormCreateResponse = Response<FormCreateRequest, FormDefinition>
-
-export interface FormCreator {
-    createForm: DataOperation<FormCreateRequest, FormCreateResponse>
-}
-
-export type RecordCreateRequest = PartialObjectWrapper<Record>
-export type RecordCreateResponse = Response<RecordCreateRequest, Record>
-
-export interface RecordCreator {
-    createRecord: DataOperation<RecordCreateRequest, RecordCreateResponse>
-}
-
-export type FolderListRequest = {} | undefined
-export type FolderListResponse = Response<FolderListRequest, FolderList>
-
-export interface FolderLister {
-    listFolders: DataOperation<FolderListRequest, FolderListResponse>
-}
-
-export type FolderCreateRequest = PartialObjectWrapper<Folder>
-export type FolderCreateResponse = Response<FolderCreateRequest, Folder>
-
-export interface FolderCreator {
-    createFolder: DataOperation<FolderCreateRequest, FolderCreateResponse>
-}
-
-export type RecordListRequest = { databaseId: string, formId: string }
-export type RecordListResponse = Response<RecordListRequest, RecordList>
-
-export interface RecordLister {
-    listRecords: DataOperation<RecordListRequest, RecordListResponse>
-}
-
-export type RecordGetRequest = { databaseId: string, formId: string, recordId: string }
-export type RecordGetResponse = Response<RecordGetRequest, Record>
-
-export interface RecordGetter {
-    getRecord: DataOperation<RecordGetRequest, RecordGetResponse>
-}
-
-
-export interface Client
-    extends DatabaseCreator,
-        DatabaseLister,
-        FormLister,
-        FormGetter,
-        FormCreator,
-        RecordCreator,
-        RecordLister,
-        RecordGetter,
-        FolderLister,
-        FolderCreator {
-    address: string
-    axiosInstance: AxiosInstance
-}
-
-function errorResponse<TRequest, TBody>(request: TRequest, r: AxiosResponse<TBody>): Response<TRequest, TBody> {
-    return {
-        request: request,
-        response: undefined,
-        status: r.request,
-        statusCode: r.status,
-        error: r.data as any,
-        success: false,
-    };
-}
-
-function successResponse<TRequest, TBody>(request: TRequest, r: AxiosResponse<TBody>): Response<TRequest, TBody> {
-    return {
-        request: request,
-        response: r.data as TBody,
-        status: r.statusText,
-        statusCode: r.status,
-        error: undefined,
-        success: true,
-    };
-}
-
-function clientResponse<TRequest, TBody>(r: AxiosResponse<TBody>, request: TRequest, expectedStatusCode: number): Response<TRequest, TBody> {
-    return r.status !== expectedStatusCode
-        ? errorResponse<TRequest, TBody>(request, r)
-        : successResponse<TRequest, TBody>(request, r)
-}
-
-export class client implements Client {
+export default class client implements ClientDefinition {
     constructor(
         public readonly address = 'https://core.dev:8443',
         public readonly axiosInstance: AxiosInstance = axios.create()) {
@@ -216,29 +100,6 @@ export class client implements Client {
 
 }
 
-export const defaultClient: Client = new client()
+export const defaultClient: ClientDefinition = new client()
 
-export function getFieldKind(fieldType: FieldType): FieldKind {
-    if (fieldType.text) {
-        return FieldKind.Text
-    }
-    if (fieldType.multilineText) {
-        return FieldKind.MultilineText
-    }
-    if (fieldType.date) {
-        return FieldKind.Date
-    }
-    if (fieldType.subForm) {
-        return FieldKind.SubForm
-    }
-    if (fieldType.reference) {
-        return FieldKind.Reference
-    }
-    if (fieldType.quantity) {
-        return FieldKind.Quantity
-    }
-    if (fieldType.singleSelect) {
-        return FieldKind.SingleSelect
-    }
-    throw new Error("unknown field kind")
-}
+export * from './types/types'

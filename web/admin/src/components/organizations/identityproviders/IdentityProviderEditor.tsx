@@ -1,8 +1,8 @@
 import {FC, useCallback, useEffect, useMemo} from "react";
 import {useForm} from "react-hook-form";
 import classNames from "classnames"
-import {useApiClient, useFormValidation} from "../../../app/hooks";
-import {Organization} from "../../../client/client";
+import {useApiClient, useFormValidation} from "../../../hooks/hooks";
+import {Organization} from "../../../types/types";
 
 type Props = {
     id?: string
