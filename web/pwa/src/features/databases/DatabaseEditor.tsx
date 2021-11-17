@@ -1,6 +1,6 @@
 import React, {FC, useState} from "react";
 import {useForm} from "react-hook-form";
-import {defaultClient} from "../../data/client";
+import {defaultClient} from "core-js-api-client";
 import {databaseActions} from "../../reducers/database";
 import {Database} from "../../types/types";
 import {Redirect} from "react-router-dom"

@@ -3,6 +3,7 @@ package record
 import (
 	"fmt"
 	"github.com/emicklei/go-restful/v3"
+	"github.com/nrc-no/core/pkg/api/mimetypes"
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/constants"
 	"github.com/nrc-no/core/pkg/store"
@@ -11,11 +12,12 @@ import (
 
 type Handler struct {
 	store      store.RecordStore
+	formStore      store.FormStore
 	webService *restful.WebService
 }
 
-func NewHandler(store store.RecordStore) *Handler {
-	h := &Handler{store: store}
+func NewHandler(store store.RecordStore, formStore store.FormStore) *Handler {
+	h := &Handler{store: store, formStore: formStore}
 
 	ws := new(restful.WebService).Path("/records")
 	h.webService = ws
@@ -25,18 +27,22 @@ func NewHandler(store store.RecordStore) *Handler {
 		Doc("update a record").
 		Operation("updateRecord").
 		Param(restful.PathParameter(constants.ParamRecordID, "id of the record")).
+		Consumes(mimetypes.ApplicationJson).
+		Produces(mimetypes.ApplicationJson).
 		Reads(types.Record{}).
 		Writes(types.Record{}).
 		Returns(http.StatusOK, "OK", types.Record{}))
 
-	ws.Route(ws.POST("/").To(h.RestfulCreate).
+	ws.Route(ws.POST("").To(h.RestfulCreate).
 		Doc("create a record").
 		Operation("createRecord").
+		Consumes(mimetypes.ApplicationJson).
+		Produces(mimetypes.ApplicationJson).
 		Reads(types.Record{}).
 		Writes(types.Record{}).
 		Returns(http.StatusOK, "OK", types.Record{}))
 
-	ws.Route(ws.GET("/").To(h.RestfulList).
+	ws.Route(ws.GET("").To(h.RestfulList).
 		Doc("list records").
 		Operation("listRecords").
 		Param(restful.QueryParameter(constants.ParamDatabaseID, "id of the database").
@@ -47,8 +53,23 @@ func NewHandler(store store.RecordStore) *Handler {
 			DataType("string").
 			DataFormat("uuid").
 			Required(true)).
+		Produces(mimetypes.ApplicationJson).
 		Writes(types.RecordList{}).
 		Returns(http.StatusOK, "OK", types.RecordList{}))
+
+	ws.Route(ws.GET(fmt.Sprintf("/{%s}", constants.ParamRecordID)).To(h.RestfulGet).
+		Doc("get record").
+		Operation("getRecord").
+		Param(restful.QueryParameter(constants.ParamDatabaseID, "id of the database").
+			DataType("string").
+			DataFormat("uuid").
+			Required(true)).
+		Param(restful.QueryParameter(constants.ParamFormID, "id of the form").
+			DataType("string").
+			DataFormat("uuid").
+			Required(true)).
+		Writes(types.Record{}).
+		Returns(http.StatusOK, "OK", types.Record{}))
 
 	return h
 }

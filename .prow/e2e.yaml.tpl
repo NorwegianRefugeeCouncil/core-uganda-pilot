@@ -319,13 +319,13 @@ spec:
                   key: hydraSecret
                   name: ${ID}
             - name: URLS_SELF_ISSUER
-              value: https://localhost:4444
+              value: http://localhost:4444
             - name: URLS_CONSENT
-              value: https://localhost:9000/auth/consent
+              value: http://localhost:9000/auth/consent
             - name: URLS_LOGIN
-              value: https://localhost:9000/auth/login
+              value: http://localhost:9000/auth/login
             - name: URLS_LOGOUT
-              value: https://localhost:9000/auth/logout
+              value: http://localhost:9000/auth/logout
             - name: LOG_LEAK_SENSITIVE_VALUES
               value: "true"
             - name: SERVE_TLS_KEY_PATH

@@ -12,7 +12,9 @@ import (
 	"github.com/nrc-no/core/pkg/sql/convert"
 	"github.com/nrc-no/core/pkg/utils/pointers"
 	"github.com/nrc-no/core/pkg/utils/sets"
+	"github.com/nrc-no/core/pkg/utils/slices"
 	uuid "github.com/satori/go.uuid"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -20,6 +22,7 @@ type FormStore interface {
 	Get(ctx context.Context, formID string) (*types.FormDefinition, error)
 	List(ctx context.Context) (*types.FormDefinitionList, error)
 	Create(ctx context.Context, form *types.FormDefinition) (*types.FormDefinition, error)
+	Delete(ctx context.Context, id string) error
 }
 
 func NewFormStore(db Factory) FormStore {
@@ -133,61 +136,77 @@ type formStore struct {
 var _ FormStore = &formStore{}
 
 func (d *formStore) Get(ctx context.Context, formID string) (*types.FormDefinition, error) {
-
-	db, err := d.db.Get()
+	ctx, db, l, done, err := actionContext(ctx, d.db, "form", "get", zap.String("form_id", formID))
 	if err != nil {
 		return nil, err
 	}
+	defer done()
 
-	return d.getFormDefinitionInternal(ctx, db, formID)
+	return d.getFormDefinitionInternal(ctx, db, formID, l)
 
 }
 
-func (d *formStore) getFormDefinitionsInternal(ctx context.Context, db *gorm.DB, formOrSubFormIds sets.String) (*types.FormDefinitionList, error) {
+func (d *formStore) getFormDefinitionsInternal(ctx context.Context, db *gorm.DB, formOrSubFormIds sets.String, l *zap.Logger) (*types.FormDefinitionList, error) {
 
-	forms, err := findRelatedFormsInternal(ctx, db, formOrSubFormIds)
+	l.Debug("getting form definitions")
+	forms, err := findRelatedFormsInternal(ctx, db, formOrSubFormIds, l)
 	if err != nil {
+		l.Error("failed to get form definitions", zap.Error(err))
 		return nil, err
 	}
 
 	if len(forms) == 0 {
+		l.Debug("no form definitions found")
 		return types.NewFormDefinitionList(), nil
 	}
 
 	rootFormIDs := forms.RootForms().FormIDs().List()
 
+	l.Debug("finding all fields form form")
 	fields, err := findAllFieldsUnderRootFormIds(ctx, rootFormIDs, db)
 	if err != nil {
+		l.Error("failed to find fields for form", zap.Error(err))
 		return nil, err
 	}
 
+	l.Debug("mapping form definitions")
 	formDefinitions, err := mapToFormDefinitions(forms, fields)
 	if err != nil {
+		l.Error("failed to map form definitions", zap.Error(err))
 		return nil, err
 	}
 
+	l.Debug("successfully listed form definitions")
 	return types.NewFormDefinitionList(formDefinitions...), nil
 
 }
 
-func (d *formStore) getFormDefinitionInternal(ctx context.Context, db *gorm.DB, formOrSubFormId string) (*types.FormDefinition, error) {
+func (d *formStore) getFormDefinitionInternal(ctx context.Context, db *gorm.DB, formOrSubFormId string, l *zap.Logger) (*types.FormDefinition, error) {
 
-	formDefinitions, err := d.getFormDefinitionsInternal(ctx, db, sets.NewString(formOrSubFormId))
+	l.Debug("getting form definition")
+
+	formDefinitions, err := d.getFormDefinitionsInternal(ctx, db, sets.NewString(formOrSubFormId), l)
 	if err != nil {
+		l.Error("failed to get form definition", zap.Error(err))
 		return nil, err
 	}
 
 	if formDefinitions.Empty() {
+		l.Debug("form definition not found")
 		return nil, meta.NewNotFound(meta.GroupResource{
 			Group:    "nrc.no",
 			Resource: "forms",
 		}, formOrSubFormId)
 	}
 
+	l.Debug("found form definition")
+
 	return formDefinitions.GetAtIndex(0), nil
 }
 
-func findRelatedFormsInternal(ctx context.Context, db *gorm.DB, formIDs sets.String) (Forms, error) {
+func findRelatedFormsInternal(ctx context.Context, db *gorm.DB, formIDs sets.String, l *zap.Logger) (Forms, error) {
+
+	l = l.With(zap.Strings("form_ids", formIDs.List()))
 
 	if formIDs.Len() == 0 {
 		return Forms{}, nil
@@ -202,14 +221,18 @@ func findRelatedFormsInternal(ctx context.Context, db *gorm.DB, formIDs sets.Str
 
 	var forms []*Form
 
+	l.Debug("finding related forms")
 	query := db.WithContext(ctx).
 		Model(&Form{}).
 		Where("root_id in (?)", subQuery).
 		Find(&forms)
 
 	if err := query.Error; err != nil {
+		l.Error("failed to find related forms", zap.Error(err))
 		return nil, meta.NewInternalServerError(err)
 	}
+
+	l.Debug("successfully found related forms")
 
 	return forms, nil
 }
@@ -231,48 +254,121 @@ func findAllFieldsUnderRootFormIds(ctx context.Context, rootFormIDs []string, db
 }
 
 func (d *formStore) List(ctx context.Context) (*types.FormDefinitionList, error) {
-
-	db, err := d.db.Get()
+	ctx, db, l, done, err := actionContext(ctx, d.db, "form", "list")
 	if err != nil {
 		return nil, err
 	}
+	defer done()
 
 	var forms []*Form
 	var fields []*Field
 
 	db = db.WithContext(ctx)
 
+	l.Debug("finding forms")
 	if err := db.Find(&forms).Error; err != nil {
+		l.Error("failed to find forms", zap.Error(err))
 		return nil, meta.NewInternalServerError(err)
 	}
 
+	l.Debug("finding fields")
 	if err := db.Preload("Options").Find(&fields).Error; err != nil {
+		l.Error("failed to find fields", zap.Error(err))
 		return nil, meta.NewInternalServerError(err)
 	}
 
+	l.Debug("mapping forms", zap.Int("field_count", len(fields)), zap.Int("form_count", len(forms)))
 	result, err := mapToFormDefinitions(forms, fields)
 	if err != nil {
+		l.Error("failed to map forms", zap.Error(err))
 		return nil, err
 	}
 
+	l.Debug("successfully listed forms", zap.Int("count", len(result)))
 	return &types.FormDefinitionList{
 		Items: result,
 	}, nil
 
 }
 
-func (d *formStore) Create(ctx context.Context, form *types.FormDefinition) (*types.FormDefinition, error) {
+func (d *formStore) Delete(ctx context.Context, id string) error {
 
-	db, err := d.db.Get()
+	ctx, db, l, done, err := actionContext(ctx, d.db, "form", "delete")
+	if err != nil {
+		return err
+	}
+	defer done()
+
+	l.Debug("getting form definition")
+	formDef, err := d.getFormDefinitionInternal(ctx, db, id, l)
+	if err != nil {
+		l.Error("failed to get form definition", zap.Error(err))
+		return err
+	}
+
+	err = db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+
+		formIds := formDef.GetAllFormsAndSubFormIDs()
+		if len(formIds) == 0 {
+			return nil
+		}
+		var formIdsIntf []interface{}
+
+		var params []string
+		for _, formId := range formIds {
+			formIdsIntf = append(formIdsIntf, formId)
+			params = append(params, "?")
+		}
+
+		l.Debug("deleting database tables")
+		reversed := slices.ReversedStrings(formIds)
+		for _, formId := range reversed {
+			if err := convert.DeleteTableIfExists(tx, formDef.DatabaseID, formId); err != nil {
+				l.Error("failed to delete database table",
+					zap.Error(err),
+					zap.String("database_id", formDef.DatabaseID),
+					zap.String("form_id", formId))
+				return err
+			}
+		}
+
+		l.Debug("deleting fields", zap.Strings("form_ids", formIds))
+		fieldsWhereClause := fmt.Sprintf("root_form_id in (%s)", strings.Join(params, ","))
+		if err := tx.Where(fieldsWhereClause, formIdsIntf...).Delete(&Field{}).Error; err != nil {
+			l.Error("failed to delete fields", zap.Error(err))
+			return err
+		}
+
+		l.Debug("deleting forms", zap.Strings("form_ids", formIds))
+		formsWhereClause := fmt.Sprintf("id in (%s)", strings.Join(params, ","))
+		if err := tx.Where(formsWhereClause, formIdsIntf...).Delete(&Form{}).Error; err != nil {
+			l.Error("failed to delete fields", zap.Error(err))
+			return err
+		}
+
+		return nil
+
+	})
+
+	l.Debug("transaction ended")
+	return err
+
+}
+
+func (d *formStore) Create(ctx context.Context, form *types.FormDefinition) (*types.FormDefinition, error) {
+	ctx, db, l, done, err := actionContext(ctx, d.db, "form", "create")
 	if err != nil {
 		return nil, err
 	}
+	defer done()
 
 	newFormIDs(form)
 	newFormCodes(form)
 
+	l.Debug("mapping form definition")
 	forms, fields, err := mapToFormFields(form)
 	if err != nil {
+		l.Error("failed to map form definition", zap.Error(err))
 		return nil, err
 	}
 
@@ -281,27 +377,44 @@ func (d *formStore) Create(ctx context.Context, form *types.FormDefinition) (*ty
 		referencedFormIDs.Insert(*field.ReferencedFormID)
 	}
 
+	l.Debug("starting transaction")
 	err = db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+
+		l.Debug("storing form")
 		if err := tx.Create(forms).Error; err != nil {
+			l.Error("failed to store form", zap.Error(err))
 			return meta.NewInternalServerError(err)
 		}
+
+		l.Debug("storing fields")
 		if err := tx.Create(fields).Error; err != nil {
+			l.Error("failed to store fields", zap.Error(err))
 			return meta.NewInternalServerError(err)
 		}
-		referencedForms, err := d.getFormDefinitionsInternal(ctx, tx, referencedFormIDs)
+
+		l.Debug("getting referenced forms")
+		referencedForms, err := d.getFormDefinitionsInternal(ctx, tx, referencedFormIDs, l)
 		if err != nil {
+			l.Error("failed to get referenced form")
 			return err
 		}
+
+		l.Debug("creating form database schema")
 		if err := convert.CreateForm(ctx, tx, form, referencedForms); err != nil {
+			l.Error("failed to create form database schema")
 			return meta.NewInternalServerError(err)
 		}
+
 		return nil
 	})
+	l.Debug("transaction ended")
 
 	if err != nil {
+		l.Error("failed to execute transaction", zap.Error(err))
 		return nil, err
 	}
 
+	l.Debug("successfully created form")
 	return d.Get(ctx, form.ID)
 }
 
@@ -569,6 +682,9 @@ func (f *FormHierarchy) ToFormDefinition() (*types.FormDefinition, error) {
 	var folderId = ""
 	if f.Form.FolderID != nil {
 		folderId = *f.Form.FolderID
+	}
+	if len(flds) == 0 {
+		flds = []*types.FieldDefinition{}
 	}
 	formDef := &types.FormDefinition{
 		ID:         f.Form.ID,

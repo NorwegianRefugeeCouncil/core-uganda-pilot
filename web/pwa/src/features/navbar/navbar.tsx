@@ -102,11 +102,6 @@ export const NavBar: FC<NavBarProps> = props => {
                                     <i className="bi bi-box"/> Databases
                                 </Link>
                             </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" to={"/admin"}>
-                                    <i className="bi bi-key"/>
-                                </Link>
-                            </li>
                         </ul>
                     </div>
                 </div>

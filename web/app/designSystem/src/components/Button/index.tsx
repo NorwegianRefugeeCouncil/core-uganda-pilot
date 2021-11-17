@@ -1,18 +1,37 @@
 import React from 'react';
-import {TouchableHighlight} from 'react-native';
+import {Button as ButtonRN} from 'react-native';
 
 type ButtonProps = {
     onPress: () => void,
-    children: any
+    children: any,
+    variant: 'primary' | 'secondary'
+    disabled: boolean,
+    text: string
 }
 
-const Button: React.FC<ButtonProps> = ({onPress, children}) => {
+const Button: React.FC<ButtonProps> = (
+    {
+        onPress,
+        variant,
+        disabled,
+        text
+    }
+) => {
+
+    const backgroundColor = {
+        primary: 'orange',
+        secondary: 'blue'
+    }
+
     return (
-        <TouchableHighlight
+        <ButtonRN
             onPress={onPress}
+            color={backgroundColor[variant]}
+            title={text}
+            disabled={disabled}
+            style={{borderColor: 'red'}}
         >
-            {children}
-        </TouchableHighlight>
+        </ButtonRN>
     );
 }
 

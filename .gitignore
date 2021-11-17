@@ -26,3 +26,6 @@ certs/
 
 # build output
 tmp/
+
+# all user credentials
+creds/

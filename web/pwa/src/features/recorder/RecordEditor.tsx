@@ -45,7 +45,6 @@ export const RecordEditor: FC<RecordEditorProps> = props => {
                                     props.setValue(field.id, value)
                                 }
                                 const addSubRecord = () => {
-                                    console.log("add sub record")
                                     props.addSubRecord(field.id)
                                 }
                                 return <FieldEditor
@@ -116,11 +115,6 @@ export const RecordEditorContainer: FC<{}> = props => {
         }
 
         if (rootFormFromPath.id !== currentRootForm?.id) {
-
-            console.log(`browser formId: ${formIdFromPath}.`)
-            console.log(`root formId (from path): ${rootFormFromPath.id}.`)
-            console.log(`current root form: ${currentRootForm?.id}.`)
-
             dispatch(resetForm({
                 formId: formIdFromPath,
                 parentId: parentRecordId,
@@ -176,10 +170,7 @@ export const RecordEditorContainer: FC<{}> = props => {
                 dispatch(recorderActions.selectRecord({recordId: currentRecord.parentRecordId}))
             }
         } else {
-            console.log("posting records: ", recordsToPost)
-            dispatch(postRecord(recordsToPost)).then(r => {
-                console.log("!success")
-            })
+            dispatch(postRecord(recordsToPost))
         }
 
     }, [dispatch, formIdFromPath, currentRecord, recordsToPost, currentForm])

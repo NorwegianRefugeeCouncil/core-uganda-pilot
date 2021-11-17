@@ -26,8 +26,8 @@ const NavigationBar: React.FC<NavigationProps> = (
       {back ? <Appbar.BackAction onPress={navigation.goBack} /> : null}
       <Appbar.Action
         icon={pngIndividuals}
-        accessibilityLabel={routes.individuals.title}
-        onPress={() => navigation.navigate(routes.individuals.name)}
+        accessibilityLabel={routes.addRecord.title}
+        onPress={() => navigation.navigate(routes.addRecord.name)}
       />
       <Appbar.Action
         icon={pngSearch}
@@ -35,7 +35,7 @@ const NavigationBar: React.FC<NavigationProps> = (
       <Appbar.Content
         title={options.title}
         titleStyle={common.textCentered}
-        onPress={() => navigation.navigate(routes.home.name)}
+        onPress={() => navigation.navigate(routes.forms.name)}
       />
       <Appbar.Action
         icon={pngFilter}

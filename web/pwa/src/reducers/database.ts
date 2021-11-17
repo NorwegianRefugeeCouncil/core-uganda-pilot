@@ -1,7 +1,7 @@
 import {createAsyncThunk, createEntityAdapter, createSlice, EntityState} from "@reduxjs/toolkit";
 import {Database, DatabaseList} from "../types/types";
 import {RootState} from "../app/store";
-import {DatabaseListRequest, defaultClient, Response} from "../data/client";
+import {DatabaseListRequest, defaultClient, Response} from "core-js-api-client";
 
 const adapter = createEntityAdapter<Database>({
     // Assume IDs are stored in a field other than `book.id`

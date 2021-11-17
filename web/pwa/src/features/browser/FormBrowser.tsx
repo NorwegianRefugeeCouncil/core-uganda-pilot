@@ -209,7 +209,7 @@ export const FormBrowserContainer: FC<FormBrowserContainerProps> = props => {
         getSubFormSum={getSubFormTotal}
         parentRecordId={props.parentRecordId}
         formId={form.id}
-        fields={form?.fields}
+        fields={form.fields}
         records={records}
         columnWidths={columnWidths}
     />

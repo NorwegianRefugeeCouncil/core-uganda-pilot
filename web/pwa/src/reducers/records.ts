@@ -1,7 +1,7 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import {FieldDefinition, Record} from "../types/types";
 import {RootState} from "../app/store";
-import {defaultClient, RecordListRequest, RecordListResponse} from "../data/client";
+import {defaultClient, RecordListRequest, RecordListResponse} from "core-js-api-client";
 import {
     formGlobalSelectors,
     selectFieldForSubForm,
@@ -187,10 +187,14 @@ export const selectRecordsSubFormCounts: (formId?: string) => ((rootState: RootS
             return {}
         }
 
+        if (!form.fields){
+            return {}
+        }
+
         // maps which form ids correspond to which field ids [formId] -> [fieldId]
         const formIdFieldIdMap: { [formId: string]: string } = {}
-        for (let formField of form.fields) {
-            if (!formField.fieldType.subForm) {
+        for (let formField of form?.fields) {
+            if (!formField?.fieldType?.subForm) {
                 continue
             }
             formIdFieldIdMap[formField.fieldType.subForm.id] = formField.id

@@ -1,47 +1,34 @@
 #!/usr/bin/env bash
 
-# Update node packages
-cd web/app/client || exit
-npm install
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
-cd ../designSystem || exit
-npm install
+set -e
 
-cd ../../../
+echo ">> Installing web/app/client npm dependencies"
+(cd "${ROOT_DIR}/web/app/client" && yarn install)
 
-echo ">>> Updated node dependencies"
+echo ">> Installing web/app/designSystem npm dependencies"
+(cd "${ROOT_DIR}/web/app/designSystem" && yarn install)
 
-echo ">>> Generated typescript types"
+echo ">> Transpiling web/app/client"
+tsc --build "${ROOT_DIR}/web/app/client/tsconfig.json"
 
-tsc --build web/app/client/tsconfig.json
+echo ">> Transpiling web/app/designSystem"
+tsc --build "${ROOT_DIR}/web/app/designSystem/tsconfig.json"
 
-if [ ! "$?" ]; then
-  exit 1
-fi
+echo ">> Building web/app/frontend"
+rm -rf "${ROOT_DIR}/web/app/frontend/node_modules"
+(cd "${ROOT_DIR}/web/app/frontend" && yarn install)
 
-tsc --build web/app/designSystem/tsconfig.json
+echo ">> Building web/pwa"
+rm -rf "${ROOT_DIR}/web/pwa/node_modules"
+(cd "${ROOT_DIR}/web/pwa" && yarn install)
 
-if [ ! "$?" ]; then
-  exit 1
-fi
+echo ">> Building web/admin"
+rm -rf "${ROOT_DIR}/web/admin/node_modules"
+(cd "${ROOT_DIR}/web/admin" && yarn install)
 
-echo ">>> Transpiled typescript files"
+echo ">> Building core server"
+go build -o "${ROOT_DIR}/tmp/main" "${ROOT_DIR}/cmd"
 
-cd web/app/frontend || exit
-rm -rf node_modules/
-yarn install
-
-if [ ! "$?" ]; then
-  exit 1
-fi
-
-echo ">>> Updated frontend"
-
-cd ../../../
-go build -o ./tmp/main ./cmd/core
-
-if [ ! "$?" ]; then
-  exit 1
-fi
-
-echo ">>> Built core"

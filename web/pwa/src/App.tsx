@@ -14,12 +14,13 @@ import {FormBrowserContainer} from "./features/browser/FormBrowser";
 import {DatabasesContainer} from "./features/browser/Databases";
 import {RecordEditorContainer} from "./features/recorder/RecordEditor";
 import {FormerContainer} from "./features/former/Former";
-import {useAuth} from 'oidc-react';
 import {DatabaseEditor} from "./features/databases/DatabaseEditor";
 import {FolderEditor} from "./features/folders/FolderEditor";
 import {RecordBrowser} from "./features/browser/RecordBrowser";
+import {SessionRenewer} from "./components/SessionRenewer";
+import {SessionWrapper} from "./components/SessionWrapper";
 
-function App() {
+function AuthenticatedApp() {
 
     const dispatch = useAppDispatch()
 
@@ -29,62 +30,75 @@ function App() {
         dispatch(fetchFolders())
     }, [dispatch])
 
-    const auth = useAuth()
-
-    if (auth.isLoading) {
-        return <div>Loading...</div>
-    }
 
     return (
-        <BrowserRouter>
-            <div className="App">
-                <div
-                    style={{maxHeight: "100vh", maxWidth: "100vw"}}
-                    className={"d-flex flex-column wh-100 vh-100"}>
+        <div className="App">
+            <div
+                style={{maxHeight: "100vh", maxWidth: "100vw"}}
+                className={"d-flex flex-column wh-100 vh-100"}>
 
-                    <NavBarContainer/>
-                    <Switch>
+                <NavBarContainer/>
 
-                        <Route path={`/edit/forms/:formId/record`} component={RecordEditorContainer}/>
+                <Switch>
 
-                        <Route path={`/edit/forms`} component={FormerContainer}/>
+                    <Route path={`/edit/forms/:formId/record`} component={RecordEditorContainer}/>
 
-                        <Route path={`/add/folders`} component={FolderEditor}/>
+                    <Route path={`/edit/forms`} component={FormerContainer}/>
 
-                        <Route path={`/edit/databases`} component={DatabaseEditor}/>
+                    <Route path={`/add/folders`} component={FolderEditor}/>
 
-                        <Route path={`/browse/databases/:databaseId`} render={p => {
-                            const {databaseId} = p.match.params
-                            return <FolderBrowserContainer databaseId={databaseId}/>
-                        }}/>
+                    <Route path={`/edit/databases`} component={DatabaseEditor}/>
 
-                        <Route path={`/browse/folders/:folderId`} render={p => {
-                            const {folderId} = p.match.params
-                            return <FolderBrowserContainer folderId={folderId}/>
-                        }}/>
+                    <Route path={`/browse/databases/:databaseId`} render={p => {
+                        const {databaseId} = p.match.params
+                        return <FolderBrowserContainer databaseId={databaseId}/>
+                    }}/>
 
-                        <Route path={`/browse/forms/:formId`} render={p => {
-                            const search = new URLSearchParams(p.location.search)
-                            const parentRecordId = search.get("parentRecordId")
-                            const {formId} = p.match.params
-                            return <FormBrowserContainer
-                                parentRecordId={parentRecordId ? parentRecordId : ""}
-                                formId={formId ? formId : ""}/>
-                        }}/>
+                    <Route path={`/browse/folders/:folderId`} render={p => {
+                        const {folderId} = p.match.params
+                        return <FolderBrowserContainer folderId={folderId}/>
+                    }}/>
 
-                        <Route path={`/browse/databases`} component={DatabasesContainer}/>
+                    <Route path={`/browse/forms/:formId`} render={p => {
+                        const search = new URLSearchParams(p.location.search)
+                        const parentRecordId = search.get("parentRecordId")
+                        const {formId} = p.match.params
+                        return <FormBrowserContainer
+                            parentRecordId={parentRecordId ? parentRecordId : ""}
+                            formId={formId ? formId : ""}/>
+                    }}/>
 
-                        <Route path={`/browse/records/:recordId`} component={RecordBrowser}/>
+                    <Route path={`/browse/databases`} component={DatabasesContainer}/>
 
-                        <Route path="/">
-                            <Redirect to="/browse/databases"/>
-                        </Route>
-                    </Switch>
+                    <Route path={`/browse/records/:recordId`} component={RecordBrowser}/>
 
-                </div>
+                    <Route path={`/`}>
+                        <Redirect to="/browse/databases"/>
+                    </Route>
+                </Switch>
             </div>
+        </div>
+    )
+}
 
-
+function App() {
+    return (
+        <BrowserRouter>
+            <Switch>
+                <Route path={"/session-renew"} exact render={props => {
+                    return <SessionRenewer/>
+                }}/>
+                <Route path={""} render={props => {
+                    return <SessionWrapper>
+                        <iframe
+                            title={"login"}
+                            style={{position: "absolute", top: 0, left: 0, visibility: "hidden"}}
+                            src={`${window.location.protocol}//${window.location.host}/session-renew`}>
+                        </iframe>
+                        <AuthenticatedApp/>
+                    </SessionWrapper>
+                }}/>
+            </Switch>
         </BrowserRouter>
     );
 }

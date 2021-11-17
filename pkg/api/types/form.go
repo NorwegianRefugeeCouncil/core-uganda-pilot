@@ -1,6 +1,8 @@
 package types
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type FormDefinition struct {
 	ID         string           `json:"id"`
@@ -8,7 +10,7 @@ type FormDefinition struct {
 	DatabaseID string           `json:"databaseId,omitempty"`
 	FolderID   string           `json:"folderId"`
 	Name       string           `json:"name,omitempty"`
-	Fields     FieldDefinitions `json:"fields,omitempty"`
+	Fields     FieldDefinitions `json:"fields"`
 }
 
 type FormInterface interface {
@@ -112,6 +114,21 @@ func (f FormDefinition) GetFieldByID(fieldID string) *FieldDefinition {
 		}
 	}
 	return &FieldDefinition{}
+}
+
+func (f FormDefinition) GetAllFormsAndSubFormIDs() []string {
+	ids := []string{f.ID}
+	return getAllFormsAndSubFormIDsInternal(f.Fields, ids)
+}
+
+func getAllFormsAndSubFormIDsInternal(fields []*FieldDefinition, ids []string) []string {
+	for _, field := range fields {
+		if field.FieldType.SubForm != nil {
+			ids = append(ids, field.FieldType.SubForm.ID)
+			ids = append(ids, getAllFormsAndSubFormIDsInternal(field.FieldType.SubForm.Fields, ids)...)
+		}
+	}
+	return ids
 }
 
 func (f FormDefinition) GetFieldByName(fieldName string) *FieldDefinition {
