@@ -22,7 +22,8 @@ export enum FieldKind {
     SubForm = "subform",
     Date = "date",
     Quantity = "quantity",
-    SingleSelect = "singleSelect",
+    Month = "month",
+    SingleSelect = "singleSelect"
 }
 
 export class FieldType {
@@ -32,7 +33,11 @@ export class FieldType {
     public multilineText?: FieldTypeMultilineText
     public date?: FieldTypeDate
     public quantity?: FieldTypeQuantity
+    public month?: FieldTypeMonth
     public singleSelect?: FieldTypeSingleSelect
+}
+
+export class FieldTypeMonth {
 }
 
 export class FieldTypeText {

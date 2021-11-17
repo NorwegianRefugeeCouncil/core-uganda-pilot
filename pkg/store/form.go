@@ -3,6 +3,9 @@ package store
 import (
 	"context"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/iancoleman/strcase"
 	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/api/types"
@@ -13,8 +16,6 @@ import (
 	uuid "github.com/satori/go.uuid"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
-	"strings"
-	"time"
 )
 
 type FormStore interface {
@@ -644,6 +645,8 @@ func (f *FormHierarchy) ToFormDefinition() (*types.FormDefinition, error) {
 			fd.FieldType.MultilineText = &types.FieldTypeMultilineText{}
 		case types.FieldKindDate:
 			fd.FieldType.Date = &types.FieldTypeDate{}
+		case types.FieldKindMonth:
+			fd.FieldType.Month = &types.FieldTypeMonth{}
 		case types.FieldKindQuantity:
 			fd.FieldType.Quantity = &types.FieldTypeQuantity{}
 		case types.FieldKindSingleSelect:
@@ -805,6 +808,9 @@ func getFieldType(field *types.FieldDefinition) (types.FieldKind, error) {
 	}
 	if field.FieldType.Quantity != nil {
 		return types.FieldKindQuantity, nil
+	}
+	if field.FieldType.Month != nil {
+		return types.FieldKindMonth, nil
 	}
 	if field.FieldType.SingleSelect != nil {
 		return types.FieldKindSingleSelect, nil
