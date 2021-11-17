@@ -2,6 +2,7 @@
 
 - Install dependencies `make install-all`
 - Create your secrets `make init-secrets`
+- Start tunnels `make tunnels` (install localtunnels if you don't have it `npm i -g localtunnel)
 - **Add the generated CA Certificate to your trust store**
     - Fedora: `sudo cp certs/ca.crt /etc/pki/ca-trust/source/anchors/nrc_core_dev.crt && sudo update-ca-trust`
     - Ubuntu: `sudo cp certs/ca.crt /usr/local/share/ca-certificates/nrc_core_dev.crt && sudo update-ca-certificates`
@@ -13,6 +14,7 @@
       - trust anchors
       - select certs/ca.crt
       - trust for identifying websites
+  	- Do the same sort of think in firefox if you use that
 - Start docker resources `make up`
 - Migrate the database `make migrate`
 - Create initial configuration `make bootstrap`
