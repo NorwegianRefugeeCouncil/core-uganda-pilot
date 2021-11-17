@@ -14,7 +14,7 @@
       - trust anchors
       - select certs/ca.crt
       - trust for identifying websites
-  	- Do the same sort of think in firefox if you use that
+  	- Do the same sort of thing in firefox if you use that
 - Start docker resources `make up`
 - Migrate the database `make migrate`
 - Create initial configuration `make bootstrap`
