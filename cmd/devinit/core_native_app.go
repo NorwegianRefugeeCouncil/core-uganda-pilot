@@ -18,7 +18,7 @@ func (c *Config) makeNativeApp() error {
 	sb.WriteString(fmt.Sprintf("SERVER_HOSTNAME=%s\n", CoreHost))
 	sb.WriteString(fmt.Sprintf("REACT_APP_ISSUER=%s\n", HydraHost))
 	sb.WriteString(fmt.Sprintf("REACT_APP_CLIENT_ID=%s\n", c.coreNativeClientId))
-	envPath := path.Join(c.rootDir, "web", "app", "frontend", ".env")
+	envPath := path.Join(c.rootDir, "web", "apps", "intake-app", ".env")
 	fmt.Println(envPath)
 	if err := ioutil.WriteFile(envPath, []byte(sb.String()), os.ModePerm); err != nil {
 		return err

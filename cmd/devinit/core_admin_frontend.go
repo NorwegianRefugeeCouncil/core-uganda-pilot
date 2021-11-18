@@ -46,7 +46,7 @@ func (c *Config) makeAdminFrontend() error {
 	sb := &strings.Builder{}
 	sb.WriteString(fmt.Sprintf("REACT_APP_ISSUER=%s\n", OidcIssuer))
 	sb.WriteString(fmt.Sprintf("REACT_APP_CLIENT_ID=%s\n", c.coreAdminFrontendClientId))
-	envPath := path.Join(c.rootDir, "web", "admin", ".env")
+	envPath := path.Join(c.rootDir, "web", "apps", "admin", ".env")
 	fmt.Println(envPath)
 	if err := ioutil.WriteFile(envPath, []byte(sb.String()), os.ModePerm); err != nil {
 		return err

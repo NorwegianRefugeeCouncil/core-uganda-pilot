@@ -1,0 +1,27 @@
+{
+  "name": "web",
+  "packageManager": "yarn@3.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "libs/*"
+  ],
+  "scripts": {
+    "start:pwa": "yarn workspace @core/pwa start",
+    "test:pwa": "yarn workspace @core/pwa start",
+    "start:intake-app": "yarn workspace @core/intake-app start",
+    "test:intake-app": "yarn workspace @core/intake-app test",
+    "test:api-client": "yarn workspace @core/api-client test",
+    "test:auth-client": "yarn workspace @core/auth-client test",
+    "start:storybook": "yarn workspace @core/storybook storybook",
+    "start:admin": "yarn workspace @core/admin start",
+    "test:admin": "yarn workspace @core/admin test"
+  },
+  "resolutions": {
+    "ua-parser-js": "^0.7.30",
+    "typescript": "4.4.4"
+  },
+  "devDependencies": {
+    "typescript": "4.4.4"
+  }
+}

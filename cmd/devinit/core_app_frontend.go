@@ -37,7 +37,7 @@ func (c *Config) makeAppFrontend() error {
 	sb.WriteString(fmt.Sprintf("REACT_APP_ISSUER=%s\n", HydraHost))
 	sb.WriteString(fmt.Sprintf("REACT_APP_CLIENT_ID=%s\n", c.coreAppFrontendClientId))
 	sb.WriteString(fmt.Sprintf("REACT_APP_SERVER_URL=https://localhost:8443\n"))
-	envPath := path.Join(c.rootDir, "web", "pwa", ".env")
+	envPath := path.Join(c.rootDir, "web", "apps", "pwa", ".env")
 	fmt.Println(envPath)
 	if err := ioutil.WriteFile(envPath, []byte(sb.String()), os.ModePerm); err != nil {
 		return err
