@@ -6,6 +6,7 @@ import {fetchDatabases} from "../../reducers/database";
 import {fetchFolders} from "../../reducers/folder";
 import {fetchRecords, selectRecordsForForm, selectRecordsSubFormCounts} from "../../reducers/records";
 import {Link} from "react-router-dom";
+import format from "date-fns/format"
 
 type subFormCountFn = (recordId: string, fieldId: string) => number
 
@@ -56,6 +57,13 @@ function mapRecordCell(field: FieldDefinition, record: Record, getSubFormCount: 
                 <Link
                     to={`/browse/forms/${field.fieldType.subForm.id}?parentRecordId=${record.id}`}>{count} records</Link>
             </span>
+        </td>
+    }
+
+    if (field.fieldType.month) {
+        return <td key={field.id} className={"text-secondary"}
+               style={{overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", wordBreak: "break-all"}}>
+            {format(new Date(record.values[field.id]), "yyyy-MM")}
         </td>
     }
 
