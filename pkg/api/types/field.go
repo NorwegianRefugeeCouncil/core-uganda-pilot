@@ -35,6 +35,18 @@ func (f FieldDefinition) GetKind() FieldKind {
 	if f.FieldType.Text != nil {
 		return FieldKindText
 	}
+	if f.FieldType.Date != nil {
+		return FieldKindDate
+	}
+	if f.FieldType.Quantity != nil {
+		return FieldKindQuantity
+	}
+	if f.FieldType.MultilineText != nil {
+		return FieldKindMultilineText
+	}
+	if f.FieldType.Month != nil {
+		return FieldKindMonth
+	}
 	if f.FieldType.SubForm != nil {
 		return FieldKindSubForm
 	}
