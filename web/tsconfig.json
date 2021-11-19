@@ -1,7 +1,15 @@
 {
+  "compilerOptions": {
+    "esModuleInterop": true
+  },
   "exclude": [
     "**/dist/*",
     "**/__test__/*",
     ".*"
+  ],
+  "references": [
+    {"path": "libs/api-client"},
+    {"path": "libs/auth-client"},
+    {"path": "libs/design-system"}
   ]
 }

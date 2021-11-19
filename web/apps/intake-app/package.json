@@ -87,5 +87,8 @@
     "install-peers": "^1.0.3",
     "jest-expo": "^43.0.0",
     "react-test-renderer": "17.0.1"
+  },
+  "installConfig": {
+    "hoistingLimits": "workspaces"
   }
 }
