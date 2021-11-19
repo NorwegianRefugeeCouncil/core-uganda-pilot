@@ -8,7 +8,7 @@ import {
     TokenRequestConfig,
     TokenResponseConfig,
     TokenType
-} from "./types/types";
+} from "../types/types";
 import axios, {AxiosRequestHeaders, AxiosResponse} from "axios"
 
 export function getCurrentTimeInSeconds(): number {

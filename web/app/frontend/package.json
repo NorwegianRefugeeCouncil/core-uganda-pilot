@@ -39,6 +39,7 @@
     "@react-navigation/native": "~6.0.4",
     "@react-navigation/stack": "~6.0.9",
     "core-js-api-client": "file:../client",
+    "core-design-system": "file:../../designSystem",
     "dotenv": "~10.0.0",
     "expo": "^43.0.0",
     "expo-auth-session": "~3.4.2",

@@ -1,5 +1,5 @@
 import axios from "axios";
-import {DiscoveryDocument, IssuerOrDiscovery} from "./types/types";
+import {DiscoveryDocument, IssuerOrDiscovery} from "../types/types";
 
 export async function resolveDiscoveryAsync(issuerOrDiscovery: IssuerOrDiscovery): Promise<DiscoveryDocument | null> {
     let issuer: string

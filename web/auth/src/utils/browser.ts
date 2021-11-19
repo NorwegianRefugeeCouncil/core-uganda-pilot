@@ -1,4 +1,4 @@
-import {WebBrowserAuthSessionResult, WebBrowserResultType} from "./types/types";
+import {WebBrowserAuthSessionResult, WebBrowserResultType} from "../types/types";
 
 let popupWindow: Window | null
 type listenerMapEntry = { listener: (event: MessageEvent) => void, interval: ReturnType<typeof setTimeout> }

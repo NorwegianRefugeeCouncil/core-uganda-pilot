@@ -1,8 +1,8 @@
-import React from "react";
-import {maybeCompleteAuthSession} from "../browser";
-import {exchangeCodeAsync, TokenResponse} from "../tokenrequest";
+import React, {useCallback, useEffect, Fragment} from "react";
+import {maybeCompleteAuthSession} from "../utils/browser";
+import {exchangeCodeAsync, TokenResponse} from "../utils/tokenrequest";
 import {AuthWrapperProps, CodeChallengeMethod, ResponseType} from "../types/types";
-import {useAuthRequest, useDiscovery} from "../hooks";
+import {useAuthRequest, useDiscovery} from "../utils/hooks";
 import axios from "axios";
 
 maybeCompleteAuthSession()
@@ -40,7 +40,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = (
         discovery
     );
 
-    React.useEffect(() => {
+    useEffect(() => {
 
         if (!discovery) {
             return
@@ -71,7 +71,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = (
 
     }, [request?.codeVerifier, response, discovery]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (!discovery) {
             return
         }
@@ -91,7 +91,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = (
         }
     }, [tokenResponse?.shouldRefresh(), discovery])
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (tokenResponse) {
             if (!isLoggedIn) {
                 setIsLoggedIn(true)
@@ -103,7 +103,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = (
         }
     }, [tokenResponse, isLoggedIn])
 
-    React.useEffect(() => {
+    useEffect(() => {
         const interceptor = axiosInstance.interceptors.request.use(value => {
             if (!tokenResponse?.accessToken) {
                 return value
@@ -120,7 +120,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = (
         }
     }, [tokenResponse?.accessToken])
 
-    const handleLogin = React.useCallback(() => {
+    const handleLogin = useCallback(() => {
         promptAsync().catch((err) => {
             handleLoginErr(err);
         })
@@ -128,21 +128,21 @@ const AuthWrapper: React.FC<AuthWrapperProps> = (
 
     if (!isLoggedIn) {
         return (
-            <React.Fragment>
+            <Fragment>
                 {customLoginComponent
                     ?
                     customLoginComponent({login: handleLogin})
                     :
                     <button onClick={handleLogin}>Login</button>
                 }
-            </React.Fragment>
+            </Fragment>
         )
     }
 
     return (
-        <React.Fragment>
+        <Fragment>
             {children}
-        </React.Fragment>
+        </Fragment>
     )
 
 }
