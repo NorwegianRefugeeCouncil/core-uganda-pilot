@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "target": "ES6",
+    "lib": [
+      "DOM",
+      "ESNext",
+      "ES2015"
+    ],
+    "declaration": true,
+    "composite": true,
+    "outDir": "dist",
+    "jsx": "react-jsx"
+  },
+  "include": [
+    "src/**/*"
+  ]
+}

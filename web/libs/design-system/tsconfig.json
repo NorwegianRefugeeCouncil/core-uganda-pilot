@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "target": "ES6",
+    "lib": [
+      "DOM",
+      "ESNext"
+    ],
+    "declaration": true,
+    "composite": true,
+    "outDir": "dist",
+    "jsx": "react"
+  },
+  "include": [
+    "src/**/*"
+  ]
+}
