@@ -103,7 +103,10 @@ export const MonthFieldEditor: FC<FieldEditorProps> = props => {
             className={`form-control bg-dark text-light border-secondary ${!isValid(localValue) && isValidLength() ? " is-invalid" : ""}`}
             type={"month"}
             maxLength={expectedLength}
-            id={field.id} value={localValue ? localValue : ""}
+            id={field.id}
+            value={localValue ? localValue : ""}
+            role={"input"}
+            name={field.name}
             pattern={"[0-9]{4}-[0-9]{2}"}
             placeholder={"YYYY-MM"}
             onChange={event => {
@@ -140,9 +143,11 @@ export const WeekFieldEditor: FC<FieldEditorProps> = props => {
     }
 
     function getFormattedWeekStringFromDate(date: Date) {
-        const w = getWeekFromDate(date);
-        const y = date.getFullYear();
-        return `${y}-W${w}`
+        let w = `${getWeek(date)}`
+        if (w.length === 1) {
+            w = `0${w}`
+        }
+        return `${date.getFullYear()}-W${w}`
     }
 
     function isValid(s: string) {
@@ -157,9 +162,12 @@ export const WeekFieldEditor: FC<FieldEditorProps> = props => {
         <input
             className={`form-control bg-dark text-light border-secondary ${!isValid(localValue) && isValidLength() ? " is-invalid" : ""}`}
             type={"week"}
+            name={field.name}
             maxLength={8}
             placeholder={"2021-W52"}
-            id={field.id} value={localValue}
+            id={field.id}
+            value={localValue}
+            role={"input"}
             onChange={event => {
                 const v = event.target.value;
                 setLocalValue(v);
