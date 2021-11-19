@@ -1,6 +1,9 @@
 package database
 
 import (
+	"fmt"
+	"net/http"
+
 	"github.com/emicklei/go-restful/v3"
 	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/api/types"
@@ -8,7 +11,6 @@ import (
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/utils"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 func (h *Handler) Create() http.HandlerFunc {
@@ -21,6 +23,12 @@ func (h *Handler) Create() http.HandlerFunc {
 		if err := utils.BindJSON(req, &db); err != nil {
 			l.Error("failed to unmarshal database", zap.Error(err))
 			utils.ErrorResponse(w, err)
+			return
+		}
+
+		if !ValidateDBStruct(&db) {
+			l.Error("invalid data")
+			utils.ErrorResponse(w, fmt.Errorf("invalid data"))
 			return
 		}
 
