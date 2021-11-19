@@ -24,6 +24,6 @@
     {"path": "../../libs/auth-client"}
   ],
   "include": [
-    "src"
+    "src/**/*"
   ]
 }

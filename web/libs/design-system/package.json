@@ -1,8 +1,8 @@
 {
   "name": "@core/design-system",
   "version": "0.0.1",
-  "main": "dist/designSystem.js",
-  "types": "dist/designSystem.d.ts",
+  "main": "dist/src/designSystem.js",
+  "types": "dist/src/designSystem.d.ts",
   "devDependencies": {
     "@types/chai": "^4.2.22",
     "@types/mocha": "^9.0.0",
