@@ -8,7 +8,7 @@ import {
     Prompt,
     ResponseType,
     WebBrowserAuthSessionResult, WebBrowserResultType
-} from "./types/types";
+} from "../types/types";
 import {TokenResponse} from "./tokenrequest";
 import {buildQueryString, getQueryParams} from "./queryparams";
 import {CodedError} from "./error";

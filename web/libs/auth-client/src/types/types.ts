@@ -1,5 +1,5 @@
-import {CodedError} from "../error";
-import {TokenResponse} from "../tokenrequest";
+import {CodedError} from "../utils/error";
+import {TokenResponse} from "../utils/tokenrequest";
 import React from "react";
 import {AxiosInstance} from "axios";
 

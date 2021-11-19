@@ -1885,7 +1885,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@core/api-client@workspace:*, @core/api-client@workspace:libs/api-client":
+"@core/api-client@*, @core/api-client@workspace:libs/api-client":
   version: 0.0.0-use.local
   resolution: "@core/api-client@workspace:libs/api-client"
   dependencies:
@@ -1895,7 +1895,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@core/auth-client@workspace:*, @core/auth-client@workspace:libs/auth-client":
+"@core/auth-client@*, @core/auth-client@workspace:*, @core/auth-client@workspace:libs/auth-client":
   version: 0.0.0-use.local
   resolution: "@core/auth-client@workspace:libs/auth-client"
   dependencies:
@@ -1920,16 +1920,18 @@ __metadata:
     jest: ^27.3.1
     oauth-pkce: ^0.0.6
     qs: ^6.10.1
+    react-scripts: 4.0.3
     react-test-renderer: ^17.0.2
     ts-jest: ^27.0.7
     typescript: ^4.5.2
+    web-vitals: ^1.0.1
   peerDependencies:
     react: ^17.0.2
     react-dom: 17.0.2
   languageName: unknown
   linkType: soft
 
-"@core/design-system@workspace:*, @core/design-system@workspace:libs/design-system":
+"@core/design-system@*, @core/design-system@workspace:*, @core/design-system@workspace:libs/design-system":
   version: 0.0.0-use.local
   resolution: "@core/design-system@workspace:libs/design-system"
   dependencies:
@@ -1958,7 +1960,8 @@ __metadata:
   dependencies:
     "@babel/core": ^7.12.9
     "@config-plugins/android-jsc-intl": ^0.0.0
-    "@core/api-client": "workspace:*"
+    "@core/api-client": "*"
+    "@core/design-system": "*"
     "@formatjs/intl-datetimeformat": ^4.2.4
     "@formatjs/intl-displaynames": ^5.2.4
     "@formatjs/intl-getcanonicallocales": ^1.7.3
@@ -2020,8 +2023,8 @@ __metadata:
   resolution: "@core/pwa@workspace:apps/pwa"
   dependencies:
     "@axa-fr/react-oidc-context": ^3.1.7
-    "@core/api-client": "workspace:*"
-    "@core/auth-client": "workspace:*"
+    "@core/api-client": "*"
+    "@core/auth-client": "*"
     "@popperjs/core": ^2.10.2
     "@reduxjs/toolkit": ^1.5.1
     "@testing-library/dom": ^8.11.1
@@ -5123,9 +5126,9 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*, @types/node@npm:^16.11.7, @types/node@npm:^16.11.8":
-  version: 16.11.8
-  resolution: "@types/node@npm:16.11.8"
-  checksum: c60418498f0affd0fb69351fd04ec0d8c684d1892d6d548d95fc2288b157c4e2e3e0bd3b6da6802ba128cb34ea2144c08e8683469e08cf58c61d5fb6ab9db4b5
+  version: 16.11.9
+  resolution: "@types/node@npm:16.11.9"
+  checksum: baec2e6471ee58fd1e9874e6f47ab95a918a0f46b42424392e4c13e3e07f078f8b72b6b48073b0b14f710ed66c5f1b2e497df43f28151000f11f5f299382cfe2
   languageName: node
   linkType: hard
 
@@ -9679,9 +9682,9 @@ __metadata:
   linkType: hard
 
 "date-fns@npm:^2.25.0":
-  version: 2.25.0
-  resolution: "date-fns@npm:2.25.0"
-  checksum: 8896dc1dde0ee5ef77616942423bfa11fa2017a5ac19457293b7aaedc8822ff94f0a14eaf93da573b09b601dc0149eb430988a046cc9f79a2eb15f8c66c9c50c
+  version: 2.26.0
+  resolution: "date-fns@npm:2.26.0"
+  checksum: 49ad59bc788134a6552ef4e4af0d18792001c1ca0070d543de4f36aba5761058b6e6a57b8ca51dd3b0f07f3bd55376b8bc69602bd7940648ba3869c5253c6ae8
   languageName: node
   linkType: hard
 
@@ -10353,9 +10356,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.3.247, electron-to-chromium@npm:^1.3.564, electron-to-chromium@npm:^1.3.896":
-  version: 1.3.902
-  resolution: "electron-to-chromium@npm:1.3.902"
-  checksum: d5a10392598151187149f8eee95025147ed98a2c734f8dfc8eb1b68aa393d984e2e551de97d24ce936ba32ca6130a9eee54b1d622d89fb1cb347afc5ad64e199
+  version: 1.3.903
+  resolution: "electron-to-chromium@npm:1.3.903"
+  checksum: 0f96af03efee4691c6e4cf76524baf8ea5dc38cb2e74282e5c6d2dad65bc2aa0e99afdcb386bf26eed4512a2356457fddbd6963167a1ee381fd41e5b29be90ee
   languageName: node
   linkType: hard
 
@@ -10851,8 +10854,8 @@ __metadata:
   linkType: hard
 
 "eslint-plugin-react@npm:^7.21.5":
-  version: 7.27.0
-  resolution: "eslint-plugin-react@npm:7.27.0"
+  version: 7.27.1
+  resolution: "eslint-plugin-react@npm:7.27.1"
   dependencies:
     array-includes: ^3.1.4
     array.prototype.flatmap: ^1.2.5
@@ -10870,7 +10873,7 @@ __metadata:
     string.prototype.matchall: ^4.0.6
   peerDependencies:
     eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
-  checksum: 47d75e003898129a56ca2416d3aa038b4c4a752df3edf71174c3017788eb8b83d786091fc6c3702abf870a2abe5d25cc367d5aa7c1417153cf5b5b707aec6446
+  checksum: db1ce303b597ede0bc8873d3f575b05873b06a058162c80f76604c9096eee8f72f299d7f849a86ac2e59f269c196575e6bcfb1ef9d7cbb23f533d081bcc15ea0
   languageName: node
   linkType: hard
 
@@ -18605,8 +18608,8 @@ __metadata:
   linkType: hard
 
 "npm@npm:^8.1.1":
-  version: 8.1.3
-  resolution: "npm@npm:8.1.3"
+  version: 8.1.4
+  resolution: "npm@npm:8.1.4"
   dependencies:
     "@isaacs/string-locale-compare": "*"
     "@npmcli/arborist": "*"
@@ -18681,7 +18684,7 @@ __metadata:
   bin:
     npm: bin/npm-cli.js
     npx: bin/npx-cli.js
-  checksum: 8e1bc0a4cb9ea935e0842ecfc486549dbf77a8feb3f0b1e4e916bbb0ae51428e4af2aff83d4c6b652e623fa1362f3bb39e03bfa5706ae43ccb73ecb7c28da268
+  checksum: d35d12f2e80c2f66b731fa1ca5f6bf908aa2ffeb382a265476634a9855648b09ccc806e167bc5f637ca24e53b252ebc5f48bff70a62ba0df41307ee998460362
   languageName: node
   linkType: hard
 
@@ -21349,11 +21352,11 @@ __metadata:
   linkType: hard
 
 "react-hook-form@npm:^7.17.5, react-hook-form@npm:^7.18.0":
-  version: 7.19.5
-  resolution: "react-hook-form@npm:7.19.5"
+  version: 7.20.1
+  resolution: "react-hook-form@npm:7.20.1"
   peerDependencies:
     react: ^16.8.0 || ^17
-  checksum: 129bcb530187e76a013d8a44dc4557261f6833e5627153229db598a93b333f6735879842134b24e61ec95f5f41d81b067454a86193a5caeb41bb3961c3aa4fc5
+  checksum: cd3ffd9fcf868e94c7f4b77f6f0a8225f359ef16ce6923769c0b29f11c2c248e99abd4c75937f764e571e425db65dbc6c2dd82c9b501a18bd4ff5c3ac5b64620
   languageName: node
   linkType: hard
 
@@ -23636,12 +23639,12 @@ __metadata:
   linkType: hard
 
 "source-map-support@npm:^0.5.16, source-map-support@npm:^0.5.6, source-map-support@npm:~0.5.12, source-map-support@npm:~0.5.20":
-  version: 0.5.20
-  resolution: "source-map-support@npm:0.5.20"
+  version: 0.5.21
+  resolution: "source-map-support@npm:0.5.21"
   dependencies:
     buffer-from: ^1.0.0
     source-map: ^0.6.0
-  checksum: 43946aff452011960d16154304b11011e0185549493e65dd90da045959409fb2d266ba1c854fff3d5949f8e59382e3fcc7f7c5fa66136007a6750ad06c6c0baa
+  checksum: 43e98d700d79af1d36f859bdb7318e601dfc918c7ba2e98456118ebc4c4872b327773e5a1df09b0524e9e5063bb18f0934538eace60cca2710d1fa687645d137
   languageName: node
   linkType: hard
 

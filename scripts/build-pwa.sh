@@ -6,17 +6,11 @@ ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 set -e
 
 echo ">> Installing web/app/client npm dependencies"
-(cd "${ROOT_DIR}/web/app/client" && yarn install)
-
-echo ">> Transpiling web/app/client"
-tsc --build "${ROOT_DIR}/web/app/client/tsconfig.json"
+(cd "${ROOT_DIR}/web/app/client" && yarn install && tsc)
 
 echo ">> Installing web/auth npm dependencies"
 rm -rf "${ROOT_DIR}/web/auth/node_modules"
-(cd "${ROOT_DIR}/web/auth" && yarn install)
-
-echo ">> Transpiling web/auth"
-tsc --build "${ROOT_DIR}/web/auth/tsconfig.json"
+(cd "${ROOT_DIR}/web/auth" && yarn install && tsc)
 
 echo ">> Building web/pwa"
 rm -rf "${ROOT_DIR}/web/pwa/node_modules"

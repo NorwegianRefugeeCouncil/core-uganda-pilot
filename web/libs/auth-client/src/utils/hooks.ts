@@ -6,7 +6,7 @@ import {
     AuthSessionResult,
     DiscoveryDocument,
     IssuerOrDiscovery, PromptMethod
-} from "./types/types";
+} from "../types/types";
 import {AuthRequest} from "./authrequest";
 
 export function useDiscovery(issuerOrDiscovery: IssuerOrDiscovery): DiscoveryDocument | null {
