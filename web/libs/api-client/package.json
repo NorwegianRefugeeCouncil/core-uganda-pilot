@@ -1,6 +1,7 @@
 {
   "name": "@core/api-client",
   "version": "0.0.1",
+  "private": true,
   "license": "Apache-2.0",
   "main": "dist/index",
   "types": "dist/index",

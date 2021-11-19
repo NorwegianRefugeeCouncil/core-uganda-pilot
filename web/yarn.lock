@@ -2044,7 +2044,6 @@ __metadata:
     axios: ^0.23.0
     bootstrap: ^5.1.3
     bootstrap-icons: ^1.6.1
-    customize-cra: ^1.0.0
     date-fns: ^2.25.0
     loglevel: ^1.7.1
     oauth-pkce: ^0.0.6
@@ -2053,7 +2052,6 @@ __metadata:
     pako: ^2.0.4
     qs: ^6.10.1
     react: 17.0.2
-    react-app-rewired: ^2.1.8
     react-dom: 17.0.2
     react-hook-form: ^7.17.5
     react-redux: ^7.2.0
@@ -9639,15 +9637,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"customize-cra@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "customize-cra@npm:1.0.0"
-  dependencies:
-    lodash.flow: ^3.5.0
-  checksum: b38c48a607efc2321e6f2f12a3b53f3497b2f9b0008b48242524a92a1f26f8ae50bd73c97526e7d89c32b51f53711948e0da8f7e3618c9875087227a11a5feeb
-  languageName: node
-  linkType: hard
-
 "cyclist@npm:^1.0.1":
   version: 1.0.1
   resolution: "cyclist@npm:1.0.1"
@@ -16463,13 +16452,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash.flow@npm:^3.5.0":
-  version: 3.5.0
-  resolution: "lodash.flow@npm:3.5.0"
-  checksum: a9a62ad344e3c5a1f42bc121da20f64dd855aaafecee24b1db640f29b88bd165d81c37ff7e380a7191de6f70b26f5918abcebbee8396624f78f3618a0b18634c
-  languageName: node
-  linkType: hard
-
 "lodash.frompairs@npm:^4.0.1":
   version: 4.0.1
   resolution: "lodash.frompairs@npm:4.0.1"
@@ -21155,19 +21137,6 @@ __metadata:
     regenerator-runtime: ^0.13.7
     whatwg-fetch: ^3.4.1
   checksum: 99e52a6b2229c7ca730cfd44ac95640f955be71d144225bd6c24fa47922a742658a371d0a2f0876d732533f1055b7cd7e9d534c89c29f8ca889ecd1b8d15f065
-  languageName: node
-  linkType: hard
-
-"react-app-rewired@npm:^2.1.8":
-  version: 2.1.8
-  resolution: "react-app-rewired@npm:2.1.8"
-  dependencies:
-    semver: ^5.6.0
-  peerDependencies:
-    react-scripts: ">=2.1.3"
-  bin:
-    react-app-rewired: bin/index.js
-  checksum: eb4a3003b8a5950a8cad73f459b3dc944be9569291cb9374ba61b837f89329301eff68cf3d42b7d7b2f6e583c6e9229440d98d2aac002e1e31a6c549a1574d7a
   languageName: node
   linkType: hard
 

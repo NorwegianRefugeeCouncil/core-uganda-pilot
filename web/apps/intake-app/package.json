@@ -1,7 +1,7 @@
 {
-  "private": true,
   "name": "@core/intake-app",
   "version": "1.0.0",
+  "private": true,
   "license": "Apache-2.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
