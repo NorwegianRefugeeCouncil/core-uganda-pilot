@@ -6,4 +6,3 @@
 - [identity](identity.md)
 - [getting started](getting_started.md)
 - [contributing](contributing.md)
-
