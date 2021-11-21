@@ -1,6 +1,5 @@
 postsubmits:
   - name: push-core-test-pipeline
-    decorate: true
     agent: tekton-pipeline
     branches:
       - main
