@@ -1,6 +1,7 @@
 postsubmits:
   - name: push-core-test-pipeline
     agent: tekton-pipeline
+    decorate: false
     branches:
       - main
     pipeline_run_spec:
