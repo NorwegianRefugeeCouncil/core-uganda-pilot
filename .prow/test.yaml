@@ -1,0 +1,16 @@
+postsubmits:
+  - name: push-core-test-pipeline
+    decorate: true
+    branches:
+      - main
+    pipeline_run_spec:
+      pipelineSpec:
+        tasks:
+          - name: echo
+            taskSpec:
+              steps:
+                - name: echo
+                  image: ubuntu
+                  script: |
+                    #!/usr/bin/env bash
+                    echo hello
