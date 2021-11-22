@@ -19,6 +19,7 @@ presubmits:
   - name: pull-core-test-pipeline
     agent: tekton-pipeline
     decorate: false
+    always_run: true
     pipeline_run_spec:
       pipelineSpec:
         tasks:
