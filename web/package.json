@@ -7,23 +7,24 @@
     "apps/*",
     "libs/*"
   ],
+  "devDependencies": {
+    "esbuild": "^0.13.15",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.2"
+  },
   "scripts": {
-    "start:pwa": "yarn workspace @core/pwa start",
-    "test:pwa": "yarn workspace @core/pwa start",
-    "start:intake-app": "yarn workspace @core/intake-app start",
-    "test:intake-app": "yarn workspace @core/intake-app test",
-    "test:api-client": "yarn workspace @core/api-client test",
-    "test:auth-client": "yarn workspace @core/auth-client test",
-    "start:storybook": "yarn workspace @core/storybook storybook",
-    "start:admin": "yarn workspace @core/admin start",
-    "test:admin": "yarn workspace @core/admin test"
+    "build": "ts-node ./scripts/clean.ts && ts-node ./scripts/build.ts",
+    "pwa:serve": "yarn workspace @core/pwa start",
+    "pwa:test": "yarn workspace @core/pwa start",
+    "intake-app:serve": "yarn workspace @core/intake-app start",
+    "intake-app:test": "yarn workspace @core/intake-app test",
+    "api-client:test": "yarn workspace @core/api-client test",
+    "auth-client:test": "yarn workspace @core/auth-client test",
+    "storybook:serve": "yarn workspace @core/storybook storybook",
+    "admin:serve": "yarn workspace @core/admin start",
+    "admin:test": "yarn workspace @core/admin test"
   },
   "resolutions": {
-    "ua-parser-js": "^0.7.30",
-    "typescript": "4.4.4"
-  },
-  "devDependencies": {
-    "@types/jest": "^27.0.3",
-    "typescript": "4.4.4"
+    "ua-parser-js": "^0.7.30"
   }
 }

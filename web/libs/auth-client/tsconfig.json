@@ -3,11 +3,11 @@
     "module": "esnext",
     "moduleResolution": "Node",
     "esModuleInterop": true,
-    "target": "ES6",
+    "target": "es6",
     "lib": [
-      "DOM",
-      "ESNext",
-      "ES2015"
+      "dom",
+      "esnext",
+      "es2015"
     ],
     "declaration": true,
     "composite": true,
