@@ -1,8 +1,7 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true,
-    "noEmit": true
+    "outDir": "dist"
   },
   "references": [
     {"path": "../../libs/design-system"}

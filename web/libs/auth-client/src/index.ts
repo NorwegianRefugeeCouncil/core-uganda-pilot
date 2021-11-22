@@ -1,2 +1,4 @@
-export { default as AuthWrapper } from './components/AuthWrapper';
+import AuthWrapper from './components/AuthWrapper';
+
+export {AuthWrapper};
 export * from './types/types';

@@ -6,7 +6,7 @@ type BuildOptions = {
 
 const baseConfig = {
     bundle: true,
-    target: ["es6"],
+    target: ['es6', 'node16'],
 };
 
 export async function buildAuthClient(options: BuildOptions = { env: 'development' }) {
@@ -56,9 +56,9 @@ export async function buildDesignSystem(options: BuildOptions = { env: 'developm
 
 async function buildAll() {
     await Promise.all([
-        buildAuthClient({ env: 'production' }),
-        buildApiClient({ env: 'production' }),
-        buildDesignSystem({ env: 'production' })
+        buildAuthClient(),
+        buildApiClient(),
+        buildDesignSystem()
     ]);
 }
 

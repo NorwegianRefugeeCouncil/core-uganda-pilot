@@ -1,5 +1,7 @@
 {
-  "name": "web",
+  "name": "@core/web",
+  "description": "Web applications and libraries for NRC Core",
+  "author": "Norwegian Refugee Council",
   "license": "Apache-2.0",
   "packageManager": "yarn@3.1.0",
   "private": true,
@@ -8,21 +10,26 @@
     "libs/*"
   ],
   "devDependencies": {
+    "@types/jest": "^27.0.3",
+    "@types/node": "^16.11.9",
     "esbuild": "^0.13.15",
+    "jest": "^27.3.1",
+    "rimraf": "^3.0.2",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.2"
   },
   "scripts": {
-    "build": "ts-node ./scripts/clean.ts && ts-node ./scripts/build.ts",
-    "pwa:serve": "yarn workspace @core/pwa start",
-    "pwa:test": "yarn workspace @core/pwa start",
-    "intake-app:serve": "yarn workspace @core/intake-app start",
-    "intake-app:test": "yarn workspace @core/intake-app test",
-    "api-client:test": "yarn workspace @core/api-client test",
-    "auth-client:test": "yarn workspace @core/auth-client test",
-    "storybook:serve": "yarn workspace @core/storybook storybook",
-    "admin:serve": "yarn workspace @core/admin start",
-    "admin:test": "yarn workspace @core/admin test"
+    "build-clean": "rimraf './apps/*/dist' './apps/*/tsconfig.tsbuildinfo' './libs/*/dist' './libs/*/tsconfig.tsbuildinfo'",
+    "build": "yarn build-clean && tsc -b -f && ts-node ./scripts/build.ts",
+    "start:pwa": "yarn workspace @core/pwa start",
+    "test:pwa": "yarn workspace @core/pwa start",
+    "start:intake-app": "yarn workspace @core/intake-app start",
+    "test:intake-app": "yarn workspace @core/intake-app test",
+    "start:admin": "yarn workspace @core/admin start",
+    "start:storybook": "yarn workspace @core/storybook storybook",
+    "test:admin": "yarn workspace @core/admin test",
+    "test:api-client": "yarn workspace @core/api-client test",
+    "test:auth-client": "yarn workspace @core/auth-client test"
   },
   "resolutions": {
     "ua-parser-js": "^0.7.30"

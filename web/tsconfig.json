@@ -1,18 +1,13 @@
 {
-  "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
-    "lib": ["dom","esnext"],
-    "strict": true,
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "baseUrl": "./",
-    "paths": {
-      "@core/*": ["apps/*", "libs/*"]
-    },
-    "jsx": "react",
-    "experimentalDecorators": true,
-    "resolveJsonModule": true
-  },
-  "exclude": ["**/dist/*", "**/__test__/*"]
+  "files": [],
+  "include": [],
+  "references": [
+    { "path": "./libs/api-client" },
+    { "path": "./libs/auth-client" },
+    { "path": "./libs/design-system" },
+    { "path": "./apps/admin" },
+    { "path": "./apps/intake-app" },
+    { "path": "./apps/pwa" },
+    { "path": "./apps/storybook" }
+  ]
 }

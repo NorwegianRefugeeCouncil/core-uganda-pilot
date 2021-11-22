@@ -1,9 +1,8 @@
 {
-  "extends": "expo/tsconfig.base",
+  "extends": "../../tsconfig-base.json",
   "compilerOptions": {
     "jsx": "react-native",
-    "strict": true,
-    "noEmit": true
+    "outDir": "dist"
   },
   "references": [
     {"path": "../../libs/api-client"},

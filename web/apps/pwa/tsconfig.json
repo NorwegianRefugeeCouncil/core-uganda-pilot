@@ -1,24 +1,10 @@
 {
+  "extends": "../../tsconfig-base.json",
   "compilerOptions": {
-    "target": "es6",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "jsx": "react-jsx",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
     "downlevelIteration": true,
+    "rootDir": "src",
+    "outDir": "dist",
+    "module": "esnext",
     "noEmit": true
   },
   "references": [
@@ -28,8 +14,5 @@
     {
       "path": "../../libs/auth-client"
     }
-  ],
-  "include": [
-    "src/**/*"
   ]
 }

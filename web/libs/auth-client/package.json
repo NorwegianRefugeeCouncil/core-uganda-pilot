@@ -6,7 +6,6 @@
   "main": "dist/index",
   "types": "dist/index",
   "scripts": {
-    "build": "node scripts/build.js",
     "test": "jest"
   },
   "dependencies": {

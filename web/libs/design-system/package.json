@@ -3,8 +3,7 @@
   "version": "0.0.1",
   "license": "Apache-2.0",
   "private": true,
-  "main": "dist/index",
-  "types": "dist/index",
+  "main": "src/index",
   "devDependencies": {
     "@types/node": "^14.17.20",
     "install-peers": "^1.0.3",
