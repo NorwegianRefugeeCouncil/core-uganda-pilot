@@ -19,8 +19,6 @@ presubmits:
   - name: pull-core-test-pipeline
     agent: tekton-pipeline
     decorate: false
-    branches:
-      - main
     pipeline_run_spec:
       pipelineSpec:
         tasks:
