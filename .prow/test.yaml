@@ -15,3 +15,20 @@ postsubmits:
                   script: |
                     #!/usr/bin/env bash
                     echo hello
+presubmits:
+  - name: pull-core-test-pipeline
+    agent: tekton-pipeline
+    decorate: false
+    branches:
+      - main
+    pipeline_run_spec:
+      pipelineSpec:
+        tasks:
+          - name: echo
+            taskSpec:
+              steps:
+                - name: echo
+                  image: ubuntu
+                  script: |
+                    #!/usr/bin/env bash
+                    echo hello
