@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "license": "Apache-2.0",
-  "main": "node_modules/expo/AppEntry.js",
+  "main": "__generated__/AppEntry.js",
   "scripts": {
-    "start": "node_modules/.bin/expo start",
-    "android": "node_modules/.bin/expo start --android",
-    "ios": "node_modules/.bin/expo start --ios",
-    "web": "node_modules/.bin/expo start --web",
-    "eject": "node_modules/.bin/expo eject",
-    "test": "jest"
+    "start": "expo start",
+    "android": "expo start --android",
+    "web": "expo start --web",
+    "eject": "expo eject",
+    "test": "jest",
+    "postinstall": "expo-yarn-workspaces postinstall"
   },
   "jest": {
     "timers": "fake",
@@ -85,6 +85,7 @@
     "@types/node": "^16.11.8",
     "@types/react": "~17.0.21",
     "@types/react-native": "~0.64.12",
+    "expo-yarn-workspaces": "^1.6.0",
     "install-peers": "^1.0.3",
     "jest-expo": "^43.0.0",
     "react-test-renderer": "17.0.1"

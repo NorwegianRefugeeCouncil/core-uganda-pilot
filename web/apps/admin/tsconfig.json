@@ -3,9 +3,20 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
-    "types": ["node", "jest"]
+    "types": [
+      "node",
+      "jest"
+    ],
+    "module": "esnext",
+    "emitDeclarationOnly": false,
+    "noEmit": true
   },
   "references": [
-    {"path": "../../libs/auth-client"}
+    {
+      "path": "../../libs/auth-client"
+    }
+  ],
+  "include": [
+    "src"
   ]
 }

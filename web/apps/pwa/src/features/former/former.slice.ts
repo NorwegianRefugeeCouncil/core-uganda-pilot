@@ -279,8 +279,6 @@ interface FormerState extends EntityState<Form> {
     savePending: boolean
     saveSuccess: boolean
     saveError: any
-    ids: string[]
-    entities: Record<string, Form>
 }
 
 export const formerSlice = createSlice({

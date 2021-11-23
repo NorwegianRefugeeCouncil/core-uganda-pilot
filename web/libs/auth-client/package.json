@@ -21,8 +21,6 @@
   },
   "devDependencies": {
     "@testing-library/react": "^12.1.2",
-    "@types/node": "^16.11.9",
-    "esbuild-jest": "^0.5.0",
-    "jest": "^27.3.1"
+    "@types/node": "^16.11.9"
   }
 }
