@@ -4,8 +4,12 @@
     "downlevelIteration": true,
     "rootDir": "src",
     "outDir": "dist",
-    "module": "esnext",
-    "noEmit": true
+    "types": [
+      "jest"
+    ],
+    "emitDeclarationOnly": false,
+    "noEmit": true,
+    "module": "esnext"
   },
   "references": [
     {
@@ -14,5 +18,8 @@
     {
       "path": "../../libs/auth-client"
     }
+  ],
+  "include": [
+    "src"
   ]
 }

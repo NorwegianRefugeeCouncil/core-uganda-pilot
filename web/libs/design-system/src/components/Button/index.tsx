@@ -29,7 +29,6 @@ const Button: React.FC<ButtonProps> = (
             color={backgroundColor[variant]}
             title={text}
             disabled={disabled}
-            style={{borderColor: 'red'}}
         >
         </ButtonRN>
     );

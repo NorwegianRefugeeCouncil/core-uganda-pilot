@@ -40,7 +40,7 @@
     "@formatjs/intl-pluralrules": "^4.1.4",
     "@formatjs/intl-relativetimeformat": "^9.3.1",
     "@react-native-async-storage/async-storage": "~1.15.0",
-    "@react-native-community/datetimepicker": "3.5.2",
+    "@react-native-community/datetimepicker": "4.0.0",
     "@react-native-picker/picker": "2.1.0",
     "@react-navigation/native": "~6.0.4",
     "@react-navigation/stack": "~6.0.9",
@@ -59,7 +59,7 @@
     "expo-web-browser": "~10.0.3",
     "install": "^0.13.0",
     "lodash": "4.17.21",
-    "npm": "^8.1.1",
+    "npm": "^8.1.4",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-hook-form": "7.17.4",
@@ -80,6 +80,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
+    "@types/hammerjs": "^2.0.40",
     "@types/lodash": "4.14.176",
     "@types/node": "^16.11.8",
     "@types/react": "~17.0.21",
@@ -87,8 +88,5 @@
     "install-peers": "^1.0.3",
     "jest-expo": "^43.0.0",
     "react-test-renderer": "17.0.1"
-  },
-  "installConfig": {
-    "hoistingLimits": "workspaces"
   }
 }

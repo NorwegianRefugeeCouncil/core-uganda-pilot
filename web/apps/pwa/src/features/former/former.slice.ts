@@ -4,7 +4,7 @@ import {RootState} from "../../app/store";
 import {Database, FieldDefinition, FieldKind, FieldType, Folder, FormDefinition} from "../../types/types";
 import {databaseGlobalSelectors} from "../../reducers/database";
 import {folderGlobalSelectors} from "../../reducers/folder";
-import client from "../../app/client";
+import Client from "../../app/client";
 
 export interface FormField {
     id: string
@@ -39,7 +39,7 @@ const adapter = createEntityAdapter<Form>({
 })
 
 export const postForm = createAsyncThunk<FormDefinition, Partial<FormDefinition>>("former/createForm", async (arg, thunkAPI) => {
-    const resp = await client.createForm({object: arg})
+    const resp = await Client.createForm({object: arg})
     if (resp.success) {
         return resp.response as FormDefinition
     }
@@ -279,6 +279,8 @@ interface FormerState extends EntityState<Form> {
     savePending: boolean
     saveSuccess: boolean
     saveError: any
+    ids: string[]
+    entities: Record<string, Form>
 }
 
 export const formerSlice = createSlice({

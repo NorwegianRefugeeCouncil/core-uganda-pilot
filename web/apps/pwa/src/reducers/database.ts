@@ -2,7 +2,7 @@ import {createAsyncThunk, createEntityAdapter, createSlice, EntityState} from "@
 import {Database, DatabaseList} from "../types/types";
 import {RootState} from "../app/store";
 import {DatabaseListRequest, Response} from "@core/api-client";
-import client from "../app/client";
+import Client from "../app/client";
 
 const adapter = createEntityAdapter<Database>({
     // Assume IDs are stored in a field other than `book.id`
@@ -16,7 +16,7 @@ export const fetchDatabases = createAsyncThunk<Response<DatabaseListRequest, Dat
     'databases/fetch',
     async (_, thunkAPI) => {
         try {
-            const response = await client.listDatabases({})
+            const response = await Client.listDatabases({})
             if (response.success) {
                 return response
             } else {

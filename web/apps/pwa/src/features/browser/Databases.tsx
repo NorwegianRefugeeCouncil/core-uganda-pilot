@@ -38,7 +38,7 @@ export const DatabasesContainer: FC<DatabaseBrowserContainerProps> = props => {
         dispatch(fetchDatabases())
     }, [dispatch])
 
-    const databases = useAppSelector(databaseGlobalSelectors.selectAll)
+    const databases: Database[] = useAppSelector(databaseGlobalSelectors.selectAll)
     return <div className={"flex-grow-1 bg-light"}>
         <div className={"container"}>
             <div className={"row"}>

@@ -1,13 +1,12 @@
 {
   "files": [],
   "include": [],
+  "exclude": ["scripts", "node_modules"],
   "references": [
     { "path": "./libs/api-client" },
     { "path": "./libs/auth-client" },
     { "path": "./libs/design-system" },
     { "path": "./apps/admin" },
-    { "path": "./apps/intake-app" },
-    { "path": "./apps/pwa" },
-    { "path": "./apps/storybook" }
+    { "path": "./apps/pwa" }
   ]
 }

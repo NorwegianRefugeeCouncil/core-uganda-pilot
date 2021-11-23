@@ -3,7 +3,7 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
-    "types": ["node"]
+    "types": ["node", "jest"]
   },
   "references": [
     {"path": "../../libs/auth-client"}

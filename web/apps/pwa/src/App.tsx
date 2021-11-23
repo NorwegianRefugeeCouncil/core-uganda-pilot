@@ -6,7 +6,7 @@ import {BrowserRouter, Route, Switch} from "react-router-dom";
 import {AuthWrapper} from "@core/auth-client";
 import defaultAuth from "./constants/defaultAuth";
 import AuthenticatedApp from "./components/AuthenticatedApp";
-import client from "./app/client";
+import Client from "./app/client";
 
 const App: React.FC = () => {
     return (
@@ -15,7 +15,7 @@ const App: React.FC = () => {
                 <Route path={""} render={() =>
                     <AuthWrapper
                         clientId={process?.env?.REACT_APP_CLIENT_ID || defaultAuth.clientId}
-                        axiosInstance={client.axiosInstance}
+                        axiosInstance={Client.axiosInstance}
                         scopes={defaultAuth.scopes}
                         issuer={process?.env?.REACT_APP_ISSUER || defaultAuth.issuer}
                         redirectUriSuffix={defaultAuth.redirectUriSuffix}

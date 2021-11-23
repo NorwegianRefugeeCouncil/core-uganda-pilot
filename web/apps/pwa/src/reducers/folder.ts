@@ -1,7 +1,7 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import {Folder} from "../types/types";
 import {RootState} from "../app/store";
-import client from "../app/client";
+import Client from "../app/client";
 import {FolderListResponse} from "@core/api-client";
 
 const adapter = createEntityAdapter<Folder>({
@@ -15,7 +15,7 @@ export const fetchFolders = createAsyncThunk<FolderListResponse>(
     'folders/fetch',
     async (_, thunkAPI) => {
         try {
-            const response = await client.listFolders({})
+            const response = await Client.listFolders({})
             if (response.success) {
                 return response
             } else {

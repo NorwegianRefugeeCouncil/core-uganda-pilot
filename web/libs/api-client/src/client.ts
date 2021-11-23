@@ -22,7 +22,7 @@ import {
 } from "./types/types";
 import {clientResponse} from "./utils/responses";
 
-export default class client implements ClientDefinition {
+class Client implements ClientDefinition {
     constructor(
         public readonly address = 'https://core.dev:8443',
         public readonly axiosInstance: AxiosInstance = axios.create()) {
@@ -45,8 +45,8 @@ export default class client implements ClientDefinition {
             return {
                 request: request,
                 response: undefined,
-                status: err.response?.statusText,
-                statusCode: err.response?.status,
+                status: err.response?.statusText ?? "",
+                statusCode: err.response?.status ?? 418,
                 error: err.response,
                 success: false,
             }
@@ -100,5 +100,6 @@ export default class client implements ClientDefinition {
 
 }
 
-export const defaultClient: ClientDefinition = new client()
+const defaultClient: ClientDefinition = new Client()
 
+export {Client, defaultClient};

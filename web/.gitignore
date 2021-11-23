@@ -10,3 +10,4 @@
 /.pnp.*
 
 **/dist/
+tsconfig.tsbuildinfo

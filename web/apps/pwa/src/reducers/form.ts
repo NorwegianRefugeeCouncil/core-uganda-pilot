@@ -1,7 +1,7 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import {FieldDefinition, FieldTypeSubForm, FormDefinition} from "../types/types";
 import {RootState} from "../app/store";
-import client from "../app/client";
+import Client from "../app/client";
 import {FormListResponse} from "@core/api-client";
 
 const adapter = createEntityAdapter<FormDefinition>({
@@ -15,7 +15,7 @@ export const fetchForms = createAsyncThunk<FormListResponse>(
     'forms/fetch',
     async (_, thunkAPI) => {
         try {
-            const response = await client.listForms({})
+            const response = await Client.listForms({})
             if (response.success) {
                 return response
             } else {

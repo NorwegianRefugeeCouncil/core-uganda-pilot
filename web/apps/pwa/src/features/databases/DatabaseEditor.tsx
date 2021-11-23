@@ -3,7 +3,7 @@ import {useForm} from "react-hook-form";
 import {databaseActions} from "../../reducers/database";
 import {Database} from "../../types/types";
 import {Redirect} from "react-router-dom"
-import client from "../../app/client";
+import Client from "../../app/client";
 
 type FormData = {
     name: string
@@ -15,7 +15,7 @@ export const DatabaseEditor: FC = props => {
     const [database, setDatabase] = useState<Database | undefined>(undefined)
 
     const onSubmit = (data: FormData) => {
-        client.createDatabase({object: {name: data.name}}).then(resp => {
+        Client.createDatabase({object: {name: data.name}}).then(resp => {
             if (resp.response) {
                 databaseActions.addOne(resp.response)
                 setDatabase(resp.response)

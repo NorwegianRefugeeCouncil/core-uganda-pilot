@@ -5,11 +5,10 @@
   "private": true,
   "homepage": "/app/",
   "main": "./src/index.tsx",
-  "cracoConfig": "../../craco.config.js",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },
   "dependencies": {
@@ -40,7 +39,6 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@craco/craco": "^6.4.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -54,6 +52,8 @@
     "@types/react-router-dom": "^5.3.1",
     "@types/sql.js": "^1.4.3",
     "@types/uuid": "^8.3.1",
+    "customize-cra": "^1.0.0",
+    "react-app-rewired": "^2.1.8",
     "typescript": "^4.5.2"
   },
   "eslintConfig": {

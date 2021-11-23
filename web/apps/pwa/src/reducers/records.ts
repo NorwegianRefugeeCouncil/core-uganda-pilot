@@ -9,7 +9,7 @@ import {
     selectRootForm,
     selectSubFormForField
 } from "./form";
-import client from "../app/client";
+import Client from "../app/client";
 
 const adapter = createEntityAdapter<Record>({
     // Assume IDs are stored in a field other than `book.id`
@@ -23,7 +23,7 @@ export const fetchRecords = createAsyncThunk<RecordListResponse, RecordListReque
     'records/fetch',
     async (request, thunkAPI) => {
         try {
-            const response = await client.listRecords(request)
+            const response = await Client.listRecords(request)
             if (response.success) {
                 return response
             } else {

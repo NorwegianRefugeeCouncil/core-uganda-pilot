@@ -1,21 +1,14 @@
-import { readdir, rm } from 'fs/promises'
-import path from 'path';
+import { spawn } from 'child_process';
 
-const parents = ['apps', 'libs'];
-const root = path.join(__dirname, '..')
+console.log('>> Removing build artifacts')
 
-parents.forEach(async dir => {
-    const p = path.join(root, dir);
-    const pkgs = await readdir(p, { withFileTypes: true });
-    for (const pkg of pkgs) {
-        if (pkg.isDirectory()) {
-            try {
-                const dist = path.join(p, pkg.name, 'dist');
-                await rm(dist, { recursive: true, force: true })
-            } catch (e) {
-                console.error(e);
-                process.exit();
-            }
-        }
-    }
-})
+const toRm = ['apps/*/dist', 'libs/*/dist', 'apps/*/tsconfig.tsbuildinfo', 'libs/*/tsconfig.tsbuildinfo'];
+
+const rm = spawn('rm', ['-rf', ...toRm], {shell: true});
+
+rm.stdout.on('data', data => console.log(data.toString()));
+rm.stderr.on('data', data => console.error(data.toString()));
+rm.on('close', code => {
+    if (code > 0) console.error('process exited with errors');
+    else console.log('done!');
+});
