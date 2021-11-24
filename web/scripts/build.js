@@ -1,39 +1,38 @@
 const { build } = require('esbuild');
-const { spawn } = require('child_process')
+const { exec } = require('child_process')
 const path = require('path');
+const { pnpPlugin } = require('@yarnpkg/esbuild-plugin-pnp');
 
-export async function buildTs() {
+async function buildTs() {
     return await new Promise((resolve, reject) => {
-        const tsc = spawn('tsc', ['-b', '-f'], { shell: true })
-        tsc.stdout.on('data', (data: Buffer) => console.log(data.toString()))
-        tsc.stderr.on('data', (data: Buffer) => console.error(data.toString()))
-        tsc.on('close', code => {
-            if (code === 0) resolve('done');
-            else reject(new Error('errors encountered trying while building ts projects'));
+        exec('yarn tsc -b -f', (error, stdout) => {
+            console.log(stdout);
+            if (error) {
+                reject('failed to build ts projects');
+                return
+            }
+            resolve('done!')
         })
     })
 }
 
-type BuildOptions = {
-    env: 'production' | 'development'
-};
-
 const baseLibConfig = {
-    entryPoints: ['src/index.ts'],
-    outdir: 'dist',
-    tsconfig: 'tsconfig.json',
     bundle: true,
-    target: ['es6', 'node16'],
+    format: 'esm',
+    target: ['es6'],
+    plugins: [pnpPlugin()],
 };
 
-export async function buildAuthClient(options: BuildOptions = { env: 'development' }) {
+async function buildAuthClient(options = { env: 'development' }) {
     const { env } = options;
 
+    const p = path.resolve('libs/auth-client');
     console.log('>> Building auth-client')
     try {
         await build({
             ...baseLibConfig,
-            absWorkingDir: path.join(process.cwd(), 'libs/auth-client'),
+            entryPoints: [path.resolve(p, 'src/index.ts')],
+            outdir: path.join(p, 'dist'),
             define: {
                 'process.env.NODE_ENV': `"${env}"`
             },
@@ -43,14 +42,17 @@ export async function buildAuthClient(options: BuildOptions = { env: 'developmen
     } catch (e) { throw e }
 }
 
-export async function buildApiClient(options: BuildOptions = { env: 'development' }) {
+async function buildApiClient(options = { env: 'development' }) {
     const { env } = options;
 
+    const p = path.resolve('libs/api-client');
     console.log('>> Building api-client')
     try {
         await build({
             ...baseLibConfig,
-            absWorkingDir: path.join(process.cwd(), 'libs/api-client'),
+            entryPoints: [path.resolve(p, 'src/index.ts')],
+            outdir: path.join(p, 'dist'),
+            entryPoints: ['libs/auth-client/src/index.ts'],
             define: {
                 'process.env.NODE_ENV': `"${env}"`
             },

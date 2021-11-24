@@ -60,8 +60,6 @@
     "install": "^0.13.0",
     "lodash": "4.17.21",
     "npm": "^8.1.4",
-    "react": "17.0.1",
-    "react-dom": "17.0.1",
     "react-hook-form": "7.17.4",
     "react-native": "0.64.3",
     "react-native-crypto-js": "^1.0.0",
@@ -83,11 +81,10 @@
     "@types/hammerjs": "^2.0.40",
     "@types/lodash": "4.14.176",
     "@types/node": "^16.11.8",
-    "@types/react": "~17.0.21",
     "@types/react-native": "~0.64.12",
     "expo-yarn-workspaces": "^1.6.0",
     "install-peers": "^1.0.3",
     "jest-expo": "^43.0.0",
-    "react-test-renderer": "17.0.1"
+    "react-test-renderer": "17.0.2"
   }
 }
