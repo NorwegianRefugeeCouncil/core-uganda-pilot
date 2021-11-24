@@ -12,13 +12,15 @@
   "dependencies": {
     "expo": "~43.0.0",
     "expo-status-bar": "~1.1.0",
-    "react": "17.0.1",
-    "react-dom": "17.0.1",
-    "react-native": "0.64.2",
-    "react-native-web": "0.17.1"
+    "native-base": "^3.2.2",
+    "react": "~17.0.2",
+    "react-dom": "~17.0.2",
+    "react-native": "~0.66.1",
+    "react-native-safe-area-context": "3.3.2",
+    "react-native-svg": "12.1.1",
+    "react-native-web": "~0.17.5"
   },
   "devDependencies": {
-    "core-design-system": "../designSystem",
     "@babel/core": "^7.12.9",
     "@storybook/addon-actions": "^5.3",
     "@storybook/addon-knobs": "^5.3",
@@ -30,7 +32,11 @@
     "@types/react": "~17.0.21",
     "@types/react-native": "~0.64.12",
     "babel-loader": "^8.2.3",
+    "core-design-system": "../designsystem",
     "typescript": "~4.3.5"
+  },
+  "resolutions": {
+    "**/ua-parser-js": "0.7.28"
   },
   "private": true
 }

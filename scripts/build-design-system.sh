@@ -5,5 +5,5 @@ ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 set -e
 
-echo ">> Building web/designSystem"
-(cd "${ROOT_DIR}/web/designSystem" && yarn install && tsc)
+echo ">> Building web/designsystem"
+(cd "${ROOT_DIR}/web/designsystem" && yarn install && tsc)
