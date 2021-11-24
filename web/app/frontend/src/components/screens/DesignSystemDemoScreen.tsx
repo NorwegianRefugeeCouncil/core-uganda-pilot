@@ -4,8 +4,9 @@ import { Text, View } from 'react-native';
 import { Title } from 'react-native-paper';
 
 import { layout } from '../../styles';
+import { DesignSystemScreenProps } from '../../types/screens';
 
-const DesignSystemDemoScreen = () => {
+const DesignSystemDemoScreen = ({}: DesignSystemScreenProps) => {
     return (
         <View style={layout.body}>
             <Title>Design System Demo</Title>

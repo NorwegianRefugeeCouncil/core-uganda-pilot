@@ -2,7 +2,7 @@ import {render} from '@testing-library/react-native';
 import React from 'react';
 
 import FormsScreen from '../../../src/components/screens/FormsScreen';
-import testIds from '../../../src/testIds';
+import testIds from '../../../src/constants/testIds';
 import * as hooks from "../../../src/utils/useApiClient";
 
 const fakeForms = {response: {items: [{id: "formId"}]}}

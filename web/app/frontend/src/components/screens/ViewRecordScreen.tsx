@@ -6,8 +6,9 @@ import { ScrollView, View } from 'react-native';
 import { common, layout } from '../../styles';
 import { useApiClient } from '../../utils/useApiClient';
 import FormControl from '../form/FormControl';
+import { ViewRecordScreenProps } from '../../types/screens';
 
-const ViewRecordScreen: React.FC<any> = ({ route, state }) => {
+const ViewRecordScreen = ({ route, state }: ViewRecordScreenProps) => {
     const { formId, recordId } = route.params;
 
     const [isLoading, setIsLoading] = React.useState(true);

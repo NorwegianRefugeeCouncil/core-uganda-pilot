@@ -3,7 +3,7 @@
 pkgs.mkShell {
 	buildInputs = [
 		pkgs.git
-		pkgs.nodejs-14_x
+		pkgs.nodejs-16_x
 		pkgs.yarn
 		pkgs.nodePackages.typescript
     pkgs.nodePackages.prettier

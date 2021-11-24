@@ -14,15 +14,13 @@ const data = { something: 'ok' };
 SecureStore.getItemAsync.mockResolvedValue(key);
 CryptoJS.AES.decrypt.mockResolvedValue(JSON.stringify(data));
 let encryptedData;
-(async () => {
+
+describe('utils/storage', async () => {
     encryptedData = (
         await CryptoJS.AES.encrypt(JSON.stringify(data), key)
     ).toString();
     CryptoJS.AES.encrypt.mockResolvedValue(encryptedData);
     AsyncStorage.getItem.mockResolvedValue(encryptedData);
-})();
-
-describe('utils/storage', () => {
     describe(storeEncryptedLocalData.name, () => {
         it('should call internal fns with the correct params', async () => {
             const succeeded = await storeEncryptedLocalData(

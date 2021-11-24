@@ -4,9 +4,9 @@ import {Button as ButtonRN} from 'react-native';
 type ButtonProps = {
     onPress: () => void,
     children: any,
-    variant: 'primary' | 'secondary'
-    disabled: boolean,
-    text: string
+    variant?: 'primary' | 'secondary'
+    disabled?: boolean,
+    text?: string
 }
 
 const Button: React.FC<ButtonProps> = (

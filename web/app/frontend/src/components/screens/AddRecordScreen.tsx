@@ -14,8 +14,9 @@ import {
 } from '../../utils/storage';
 import { useApiClient } from '../../utils/useApiClient';
 import FormControl from '../form/FormControl';
+import { AddRecordScreenProps } from '../../types/screens';
 
-const AddRecordScreen: React.FC<any> = ({ route, dispatch }) => {
+const AddRecordScreen = ({ route, dispatch }: AddRecordScreenProps) => {
     const isWeb = Platform.OS === 'web';
     const { formId, recordId } = route.params;
 

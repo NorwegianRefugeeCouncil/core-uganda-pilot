@@ -7,7 +7,7 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "module": "esnext",
-    "jsx": "react-jsx"
+    "jsx": "react-native"
   },
   "include": [
     "src"

@@ -11,7 +11,12 @@ import {
     recordsReducer,
 } from '../reducers/recordsReducers';
 import { layout } from '../styles';
-import { RecordsScreenProps, StackParamList } from '../types';
+import {
+    AddRecordScreenProps,
+    RecordsScreenProps,
+    StackParamList,
+    ViewRecordScreenProps,
+} from '../types/screens';
 import NavigationBar from './NavigationBar';
 import AddRecordScreen from './screens/AddRecordScreen';
 import DesignSystemDemoScreen from './screens/DesignSystemDemoScreen';
@@ -77,9 +82,12 @@ export default function Router() {
                                 title: routes.addRecord.title,
                             }}
                         >
-                            {props => (
+                            {({ navigation, route }) => (
                                 <AddRecordScreen
-                                    {...props}
+                                    navigation={navigation}
+                                    route={
+                                        route as AddRecordScreenProps['route']
+                                    }
                                     state={state}
                                     dispatch={dispatch}
                                 />
@@ -91,9 +99,12 @@ export default function Router() {
                                 title: routes.viewRecord.title,
                             }}
                         >
-                            {props => (
+                            {({ navigation, route }) => (
                                 <ViewRecordScreen
-                                    {...props}
+                                    navigation={navigation}
+                                    route={
+                                        route as ViewRecordScreenProps['route']
+                                    }
                                     state={state}
                                     dispatch={dispatch}
                                 />

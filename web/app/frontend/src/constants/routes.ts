@@ -1,4 +1,4 @@
-import { StackParamList } from '../types';
+import { StackParamList } from '../types/screens';
 
 type Route = {
     title: string;

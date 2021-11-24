@@ -6,7 +6,7 @@ import uuidv4 from 'uuid';
 import routes from '../../constants/routes';
 import { RECORD_ACTIONS } from '../../reducers/recordsReducers';
 import { layout } from '../../styles';
-import { RecordsScreenProps } from '../../types';
+import { RecordsScreenProps } from '../../types/screens';
 import { useApiClient } from '../../utils/useApiClient';
 
 const RecordsScreen = ({
