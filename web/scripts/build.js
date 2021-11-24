@@ -52,7 +52,6 @@ async function buildApiClient(options = { env: 'development' }) {
             ...baseLibConfig,
             entryPoints: [path.resolve(p, 'src/index.ts')],
             outdir: path.join(p, 'dist'),
-            entryPoints: ['libs/auth-client/src/index.ts'],
             define: {
                 'process.env.NODE_ENV': `"${env}"`
             },
