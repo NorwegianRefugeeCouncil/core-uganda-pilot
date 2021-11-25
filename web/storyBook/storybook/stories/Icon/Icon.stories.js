@@ -7,18 +7,20 @@ import {select} from "@storybook/addon-knobs";
 
 storiesOf('Icon', module)
     .addDecorator((getStory) =>
-        <CenterView>{getStory()}</CenterView>
+        <CenterView>
+            {getStory()}
+        </CenterView>
     )
     .add('Icon', () => {
         const IconNameList = Object.entries(IconName)
-            .map(([key, value]) => (value));
+            .map(([_, value]) => (value));
         const IconVariantList = Object.entries(IconVariants)
-            .map(([key, value]) => (value));
+            .map(([_, value]) => (value));
 
         return (
             <Icon
                 name={select('icon name', IconNameList, IconName.ATTACHMENT)}
-                variant={select('variant', IconVariantList, IconVariants.LIGHT)}
+                variant={select('variant', IconVariantList, IconVariants.DARK)}
             />
         )
     });
