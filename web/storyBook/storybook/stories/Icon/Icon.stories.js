@@ -1,25 +1,24 @@
 import {storiesOf} from '@storybook/react-native';
 import React from 'react';
-import {View} from 'react-native';
 import {Icon} from 'core-design-system'
-import {IconName} from "core-design-system/lib/types/icons";
+import {IconName, IconVariants} from "core-design-system/lib/types/icons";
+import CenterView from "../CenterView";
+import {select} from "@storybook/addon-knobs";
 
 storiesOf('Icon', module)
-    // .addDecorator((getStory) =>
-    //     <CenterView>{getStory()}</CenterView>
-    // )
+    .addDecorator((getStory) =>
+        <CenterView>{getStory()}</CenterView>
+    )
     .add('Icon', () => {
-        console.log('ICON story', typeof Icon, Icon)
+        const IconNameList = Object.entries(IconName)
+            .map(([key, value]) => (value));
+        const IconVariantList = Object.entries(IconVariants)
+            .map(([key, value]) => (value));
+
         return (
-            <View>
-                <Icon name={IconName.ATTACHMENT}/>
-                <Icon name={IconName.BENEFICIARY}/>
-                <Icon name={IconName.CALL}/>
-                <Icon name={IconName.CALENDAR}/>
-                <Icon name={IconName.CASE}/>
-                <Icon name={IconName.CHAT}/>
-                <Icon name={IconName.DELETE}/>
-                <Icon name={IconName.EDIT}/>
-            </View>
+            <Icon
+                name={select('icon name', IconNameList, IconName.ATTACHMENT)}
+                variant={select('variant', IconVariantList, IconVariants.LIGHT)}
+            />
         )
     });

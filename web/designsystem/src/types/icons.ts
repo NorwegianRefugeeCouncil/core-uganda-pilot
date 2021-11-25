@@ -1,5 +1,12 @@
 export type IconProps = {
-    name: IconName
+    name: IconName,
+    variant: IconVariants
+}
+
+export enum IconVariants {
+    DARK= '#000000',
+    LIGHT= '#FFFFFF',
+    LINK= '#1E4A7D'
 }
 
 export enum IconName {
