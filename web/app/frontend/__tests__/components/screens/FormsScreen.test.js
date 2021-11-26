@@ -1,33 +1,40 @@
-import {render} from '@testing-library/react-native';
 import React from 'react';
+import { create } from 'react-test-renderer';
 
-import FormsScreen from '../../../src/components/screens/FormsScreen';
+import { FormsScreen } from '../../../src/components/screens/FormsScreen';
 import testIds from '../../../src/constants/testIds';
-import * as hooks from "../../../src/utils/useApiClient";
+import { v4 as uuid } from 'uuid';
+import { NativeBaseTestWrapper } from '../../../src/utils/NativeBaseTestWrapper';
 
-const fakeForms = {response: {items: [{id: "formId"}]}}
-const formsPromise = Promise.resolve(fakeForms)
-const mock = jest.fn();
-hooks.useApiClient = mock
-mock.mockImplementation(() => ({
-    listForms: jest.fn(() => formsPromise)
-}))
-
+let renderer;
 describe(FormsScreen.name, () => {
+    const fakeForms = Array(10)
+        .fill(null)
+        .map(() => ({ id: uuid(), name: 'snazzy name' }));
     const mockNavigation = {
-        navigate: () => {
-        }
-    }
-
-    test('renders correctly', async () => {
-        const {toJSON, findAllByTestId} = render(<FormsScreen route={""} navigation={mockNavigation}/>)
-        await findAllByTestId(testIds.formListItem)
-        expect(toJSON()).toMatchSnapshot();
+        navigate: () => {},
+    };
+    beforeAll(() => {
+        renderer = create(
+            <NativeBaseTestWrapper>
+                <FormsScreen
+                    forms={fakeForms}
+                    isLoading={false}
+                    navigation={mockNavigation}
+                />
+            </NativeBaseTestWrapper>
+        );
     });
 
-    test('renders a list of forms', async () => {
-        const {findAllByTestId} = render(<FormsScreen route={""} navigation={mockNavigation}/>)
-        expect((await findAllByTestId(testIds.formListItem)).length).toEqual(1);
+    test('renders correctly', () => {
+        const tree = renderer.toJSON();
+        expect(tree).toMatchSnapshot();
     });
 
+    test('renders a list of forms', () => {
+        const forms = renderer.root.findAll(
+            el => el.type === 'View' && el.props.testID === testIds.formListItem
+        );
+        expect(forms.length).toEqual(fakeForms.length);
+    });
 });

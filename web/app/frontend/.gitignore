@@ -68,3 +68,11 @@ buck-out/
 # jest testing output
 __snapshots__/
 coverage/*
+
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

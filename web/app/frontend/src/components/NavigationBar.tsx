@@ -1,13 +1,11 @@
 import { StackHeaderProps } from '@react-navigation/stack';
 import React from 'react';
-import { Appbar } from 'react-native-paper';
-
-import pngSearch from '../../assets/png/search_white.png';
-import pngFilter from '../../assets/png/symbol_filter.png';
-import pngIndividuals from '../../assets/png/symbol_individuals.png';
 import routes from '../constants/routes';
-import { common } from '../styles';
 import NavigationDropdown from './NavigationDropdown';
+import { AppBar } from './AppBar';
+import { Button, Icon, IconButton } from 'native-base';
+import { AntDesign } from '@expo/vector-icons';
+import theme from "../constants/theme";
 
 type NavigationProps = StackHeaderProps;
 
@@ -21,27 +19,33 @@ const NavigationBar: React.FC<NavigationProps> = ({
     const closeMenu = () => setVisible(false);
 
     return (
-        <Appbar.Header>
-            {back ? <Appbar.BackAction onPress={navigation.goBack} /> : null}
-            <Appbar.Action
-                icon={pngIndividuals}
-                accessibilityLabel={routes.addRecord.title}
+        <AppBar navigation={navigation} back={back} options={options}>
+            <IconButton
+                _icon={{ as: AntDesign, name: 'user', color: theme.colors.white }}
+                size={'sm'}
                 onPress={() => navigation.navigate(routes.addRecord.name)}
+                accessibilityLabel={routes.addRecord.title}
             />
-            <Appbar.Action icon={pngSearch} />
-            <Appbar.Content
-                title={options.title}
-                titleStyle={common.textCentered}
+            <Button
+                endIcon={
+                    <Icon
+                        as={AntDesign}
+                        name={'form'}
+                        size={'sm'}
+                        color={'white'}
+                    />
+                }
                 onPress={() => navigation.navigate(routes.forms.name)}
-            />
-            <Appbar.Action icon={pngFilter} />
+            >
+                {options.title}
+            </Button>
             <NavigationDropdown
                 visible={visible}
                 closeMenu={closeMenu}
                 openMenu={openMenu}
                 navigation={navigation}
             />
-        </Appbar.Header>
+        </AppBar>
     );
 };
 

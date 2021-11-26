@@ -21,18 +21,18 @@ func handleGet(hydraAdmin admin.ClientService, clientID string) http.HandlerFunc
 	return func(w http.ResponseWriter, req *http.Request) {
 		l := logging.NewLogger(req.Context()).With(zap.String("client_id", clientID))
 
-		l.Debug("getting oauth2 client")
+		l.Debug("getting oauth2 api-client")
 		oauth2Client, err := hydraAdmin.GetOAuth2Client(&admin.GetOAuth2ClientParams{
 			Context: req.Context(),
 			ID:      clientID,
 		})
 		if err != nil {
-			l.Error("failed to get hydra client", zap.Error(err))
+			l.Error("failed to get hydra api-client", zap.Error(err))
 			utils.ErrorResponse(w, meta.NewInternalServerError(err))
 			return
 		}
 
-		l.Debug("successfully got hydra client")
+		l.Debug("successfully got hydra api-client")
 		utils.JSONResponse(w, http.StatusOK, mapFromHydraClient(oauth2Client.Payload))
 	}
 }

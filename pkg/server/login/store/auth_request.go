@@ -10,7 +10,7 @@ type AuthRequest struct {
 	ID string
 	// CreatedAt is the time the Auth request was created
 	CreatedAt time.Time
-	// ClientID is the client id requesting authentication
+	// ClientID is the api-client id requesting authentication
 	ClientID string
 	// Identifier is the user-provided identifier
 	Identifier string
@@ -18,7 +18,7 @@ type AuthRequest struct {
 	IdentityProviderID *string
 	// IdentityProvider is the upstream identity provider
 	IdentityProvider *store.IdentityProvider
-	// Scope is the client requested scope
+	// Scope is the api-client requested scope
 	Scope string
 	// LoginChallenge is the hydra login challenge
 	LoginChallenge *string

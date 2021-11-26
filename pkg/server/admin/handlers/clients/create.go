@@ -20,27 +20,27 @@ func handleCreate(hydraAdmin admin.ClientService) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		l := logging.NewLogger(req.Context())
 
-		l.Debug("unmarshaling client")
+		l.Debug("unmarshaling api-client")
 		var client types.Oauth2Client
 		if err := utils.BindJSON(req, &client); err != nil {
-			l.Error("failed to unmarshal client", zap.Error(err))
+			l.Error("failed to unmarshal api-client", zap.Error(err))
 			utils.ErrorResponse(w, err)
 			return
 		}
 
-		l.Debug("creating hydra client")
+		l.Debug("creating hydra api-client")
 		resp, err := hydraAdmin.CreateOAuth2Client(&admin.CreateOAuth2ClientParams{
 			Body:       mapToHydraClient(client),
 			Context:    req.Context(),
 			HTTPClient: nil,
 		})
 		if err != nil {
-			l.Error("failed to create hydra client", zap.Error(err))
+			l.Error("failed to create hydra api-client", zap.Error(err))
 			utils.ErrorResponse(w, err)
 			return
 		}
 
-		l.Debug("successfully created hydra client")
+		l.Debug("successfully created hydra api-client")
 		utils.JSONResponse(w, http.StatusOK, mapFromHydraClient(resp.Payload))
 	}
 }

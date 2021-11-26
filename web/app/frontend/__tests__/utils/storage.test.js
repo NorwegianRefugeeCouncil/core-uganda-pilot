@@ -8,26 +8,21 @@ import {
     storeEncryptedLocalData,
 } from '../../src/utils/storage';
 
-const recordId = 'mock';
-const key = 'whatever';
-const data = { something: 'ok' };
-SecureStore.getItemAsync.mockResolvedValue(key);
-CryptoJS.AES.decrypt.mockResolvedValue(JSON.stringify(data));
-let encryptedData;
 
-describe('utils/storage', async () => {
-    encryptedData = (
-        await CryptoJS.AES.encrypt(JSON.stringify(data), key)
-    ).toString();
+describe('utils/storage', () => {
+    const recordId = 'mock';
+    const key = 'whatever';
+    const data = { something: 'ok' };
+    SecureStore.getItemAsync.mockResolvedValue(key);
+    CryptoJS.AES.decrypt.mockResolvedValue(JSON.stringify(data));
+    let encryptedData;
     CryptoJS.AES.encrypt.mockResolvedValue(encryptedData);
     AsyncStorage.getItem.mockResolvedValue(encryptedData);
+
     describe(storeEncryptedLocalData.name, () => {
         it('should call internal fns with the correct params', async () => {
-            const succeeded = await storeEncryptedLocalData(
-                recordId,
-                key,
-                data
-            );
+            encryptedData = (await CryptoJS.AES.encrypt(JSON.stringify(data), key)).toString();
+            const succeeded = await storeEncryptedLocalData(recordId, key, data);
 
             expect(succeeded).toBeTruthy();
             expect(SecureStore.setItemAsync).toHaveBeenCalledWith(
@@ -48,6 +43,7 @@ describe('utils/storage', async () => {
     describe(getEncryptedLocalData.name, () => {
         it('should call internal fns with the correct params', async () => {
             const data = await getEncryptedLocalData(recordId);
+            encryptedData = (await CryptoJS.AES.encrypt(JSON.stringify(data), key)).toString();
 
             expect(data).toBeDefined();
             expect(SecureStore.getItemAsync).toHaveBeenCalledWith(recordId);

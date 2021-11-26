@@ -1,7 +1,6 @@
 import { Picker } from '@react-native-picker/picker';
 import React from 'react';
 import { View } from 'react-native';
-import { Text } from 'react-native-paper';
 
 import { darkTheme } from '../../constants/theme';
 import { InputProps } from './FormControl';

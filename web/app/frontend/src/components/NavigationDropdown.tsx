@@ -1,9 +1,6 @@
 import React from 'react';
-import { Appbar, Menu } from 'react-native-paper';
-
-import pngMore from '../../assets/png/symbol_more.png';
 import routes from '../constants/routes';
-import theme from '../constants/theme';
+import {HamburgerIcon, Menu, Pressable, theme} from 'native-base';
 
 type DropdownProps = {
     visible: boolean;
@@ -20,33 +17,21 @@ const NavigationDropdown: React.FC<DropdownProps> = ({
 }) => {
     return (
         <Menu
-            visible={visible}
-            onDismiss={closeMenu}
-            anchor={
-                <Appbar.Action
-                    icon={pngMore}
-                    onPress={openMenu}
-                    color={theme.colors.white}
-                />
-            }
+            isOpen={visible}
+            onOpen={openMenu}
+            onClose={closeMenu}
+            trigger={triggerProps => (
+                <Pressable
+                    accessibilityLabel={'more options'}
+                    {...triggerProps}
+                >
+                    <HamburgerIcon color={theme.colors.white}/>
+                </Pressable>
+            )}
         >
-            <Menu.Item
-                title="Cases"
-                onPress={() => navigation.navigate(routes.cases.name)}
-            />
-            <Menu.Item
-                onPress={() => {
-                    console.log('Option 2 was pressed');
-                }}
-                title="Option 2"
-            />
-            <Menu.Item
-                onPress={() => {
-                    console.log('Option 3 was pressed');
-                }}
-                title="Option 3"
-                disabled
-            />
+            <Menu.Item onPress={() => navigation.navigate(routes.cases.name)}>
+                Cases
+            </Menu.Item>
         </Menu>
     );
 };

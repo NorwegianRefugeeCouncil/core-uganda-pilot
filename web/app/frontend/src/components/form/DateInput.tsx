@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { Platform } from 'react-native';
-import { Button, Text } from 'react-native-paper';
-import { DatePickerModal } from 'react-native-paper-dates';
 
 import { darkTheme } from '../../constants/theme';
 import { InputProps } from './FormControl';
@@ -40,25 +38,25 @@ const DateInput: React.FC<InputProps> = ({
     } else {
         datePicker = (
             <>
-                {fieldDefinition.name && (
-                    <Text theme={darkTheme}>{fieldDefinition.name}</Text>
-                )}
-                {fieldDefinition.description && (
-                    <Text theme={darkTheme} style={{ fontSize: 10 }}>
-                        {fieldDefinition.description}
-                    </Text>
-                )}
-                <Button onPress={show}>{toDateString(value)}</Button>
-                <DatePickerModal
-                    locale="en"
-                    mode={'single'}
-                    onConfirm={p => {
-                        hide();
-                        onChange(p.date as Date);
-                    }}
-                    onDismiss={hide}
-                    visible={isOpen}
-                />
+                {/*{fieldDefinition.name && (*/}
+                {/*    <Text theme={darkTheme}>{fieldDefinition.name}</Text>*/}
+                {/*)}*/}
+                {/*{fieldDefinition.description && (*/}
+                {/*    <Text theme={darkTheme} style={{ fontSize: 10 }}>*/}
+                {/*        {fieldDefinition.description}*/}
+                {/*    </Text>*/}
+                {/*)}*/}
+                {/*<Button onPress={show}>{toDateString(value)}</Button>*/}
+                {/*<DatePickerModal*/}
+                {/*    locale="en"*/}
+                {/*    mode={'single'}*/}
+                {/*    onConfirm={p => {*/}
+                {/*        hide();*/}
+                {/*        onChange(p.date as Date);*/}
+                {/*    }}*/}
+                {/*    onDismiss={hide}*/}
+                {/*    visible={isOpen}*/}
+                {/*/>*/}
             </>
         );
     }

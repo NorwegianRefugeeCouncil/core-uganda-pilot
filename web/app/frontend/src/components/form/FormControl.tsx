@@ -1,5 +1,4 @@
-import { getFieldKind } from 'core-js-api-client/lib/client';
-import { FieldDefinition, FieldKind } from 'core-js-api-client/lib/types/types';
+import { FieldDefinition, FieldKind, getFieldKind } from 'core-js-api-client';
 import React from 'react';
 import { Control, Controller } from 'react-hook-form';
 import { View, ViewStyle } from 'react-native';

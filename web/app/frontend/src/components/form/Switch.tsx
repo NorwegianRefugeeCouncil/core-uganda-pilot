@@ -1,6 +1,5 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Switch as SwitchRNP, Text } from 'react-native-paper';
 
 import { darkTheme } from '../../constants/theme';
 import { InputProps } from './FormControl';

@@ -16,8 +16,8 @@ type ReducerProps = {
     dispatch: React.Dispatch<RecordsAction>
 }
 
-export type FormsScreenProps = StackScreenProps<StackParamList, 'forms'>;
-export type RecordsScreenProps = StackScreenProps<StackParamList, 'records'> & ReducerProps;
-export type AddRecordScreenProps = StackScreenProps<StackParamList, 'addRecord'> & ReducerProps;
-export type ViewRecordScreenProps = StackScreenProps<StackParamList, 'viewRecord'> & ReducerProps
+export type FormsScreenContainerProps = StackScreenProps<StackParamList, 'forms'>;
+export type RecordsScreenContainerProps = StackScreenProps<StackParamList, 'records'> & ReducerProps;
+export type AddRecordScreenContainerProps = StackScreenProps<StackParamList, 'addRecord'> & ReducerProps;
+export type ViewRecordScreenContainerProps = StackScreenProps<StackParamList, 'viewRecord'> & ReducerProps
 export type DesignSystemScreenProps = StackScreenProps<StackParamList, 'designSystem'>

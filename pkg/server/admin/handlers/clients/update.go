@@ -21,14 +21,14 @@ func handleUpdate(hydraAdmin admin.ClientService, clientID string) http.HandlerF
 	return func(w http.ResponseWriter, req *http.Request) {
 		l := logging.NewLogger(req.Context()).With(zap.String("client_id", clientID))
 
-		l.Debug("unmarshaling client")
+		l.Debug("unmarshaling api-client")
 		var client types.Oauth2Client
 		if err := utils.BindJSON(req, &client); err != nil {
 			utils.ErrorResponse(w, err)
 			return
 		}
 
-		l.Debug("updating hydra client")
+		l.Debug("updating hydra api-client")
 		resp, err := hydraAdmin.UpdateOAuth2Client(&admin.UpdateOAuth2ClientParams{
 			ID:         clientID,
 			Body:       mapToHydraClient(client),
@@ -36,12 +36,12 @@ func handleUpdate(hydraAdmin admin.ClientService, clientID string) http.HandlerF
 			HTTPClient: nil,
 		})
 		if err != nil {
-			l.Error("failed to update hydra client", zap.Error(err))
+			l.Error("failed to update hydra api-client", zap.Error(err))
 			utils.ErrorResponse(w, err)
 			return
 		}
 
-		l.Debug("successfully updated hydra client")
+		l.Debug("successfully updated hydra api-client")
 		utils.JSONResponse(w, http.StatusOK, mapFromHydraClient(resp.Payload))
 	}
 }

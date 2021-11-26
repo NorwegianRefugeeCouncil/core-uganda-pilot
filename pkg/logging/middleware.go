@@ -68,7 +68,7 @@ func UseRequestLogging(next http.Handler) http.Handler {
 		case n >= 500:
 			l.Error("server error", fields...)
 		case n >= 400:
-			l.Error("client error", fields...)
+			l.Error("api-client error", fields...)
 		case n >= 300:
 			l.Info("redirection", fields...)
 		default:

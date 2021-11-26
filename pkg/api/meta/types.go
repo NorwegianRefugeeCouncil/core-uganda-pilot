@@ -27,7 +27,7 @@ const (
 
 	// StatusReasonForbidden means the server can be reached and understood the request, but refuses
 	// to take any further action.  It is the result of the server being configured to deny access for some reason
-	// to the requested resource by the client.
+	// to the requested resource by the api-client.
 	// Status code 403
 	StatusReasonForbidden StatusReason = "Forbidden"
 
@@ -41,7 +41,7 @@ const (
 	StatusReasonAlreadyExists StatusReason = "AlreadyExists"
 
 	// StatusReasonConflict means the requested operation cannot be completed
-	// due to a conflict in the operation. The client may need to alter the
+	// due to a conflict in the operation. The api-client may need to alter the
 	// request. Each resource may define custom details that indicate the
 	// nature of the conflict.
 	// Status code 409
@@ -53,8 +53,8 @@ const (
 	StatusReasonGone StatusReason = "Gone"
 
 	// StatusReasonInvalid means the requested create or update operation cannot be
-	// completed due to invalid data provided as part of the request. The client may
-	// need to alter the request. When set, the client may use the StatusDetails
+	// completed due to invalid data provided as part of the request. The api-client may
+	// need to alter the request. When set, the api-client may use the StatusDetails
 	// message field as a summary of the issues encountered.
 	// Details (optional):
 	//   "causes"      - one or more StatusCause entries indicating the data in the
@@ -64,24 +64,24 @@ const (
 	StatusReasonInvalid StatusReason = "Invalid"
 
 	// StatusReasonServerTimeout means the server can be reached and understood the request,
-	// but cannot complete the action in a reasonable time. The client should retry the request.
+	// but cannot complete the action in a reasonable time. The api-client should retry the request.
 	// This is may be due to temporary server load or a transient communication issue with
 	// another server. Status code 500 is used because the HTTP spec provides no suitable
-	// server-requested client retry and the 5xx class represents actionable errors.
+	// server-requested api-client retry and the 5xx class represents actionable errors.
 	// Status code 500
 	StatusReasonServerTimeout StatusReason = "ServerTimeout"
 
 	// StatusReasonTimeout means that the request could not be completed within the given time.
 	// Clients can get this response only when they specified a timeout param in the request,
 	// or if the server cannot complete the operation within a reasonable amount of time.
-	// The request might succeed with an increased value of timeout param. The client *should*
+	// The request might succeed with an increased value of timeout param. The api-client *should*
 	// wait at least the number of seconds specified by the retryAfterSeconds field.
 	// Status code 504
 	StatusReasonTimeout StatusReason = "Timeout"
 
 	// StatusReasonTooManyRequests means the server experienced too many requests within a
-	// given window and that the client must wait to perform the action again. A client may
-	// always retry the request that led to this error, although the client should wait at least
+	// given window and that the api-client must wait to perform the action again. A api-client may
+	// always retry the request that led to this error, although the api-client should wait at least
 	// the number of seconds specified by the retryAfterSeconds field.
 	// Status code 429
 	StatusReasonTooManyRequests StatusReason = "TooManyRequests"
@@ -93,13 +93,13 @@ const (
 	// Status code 400
 	StatusReasonBadRequest StatusReason = "BadRequest"
 
-	// StatusReasonMethodNotAllowed means that the action the client attempted to perform on the
+	// StatusReasonMethodNotAllowed means that the action the api-client attempted to perform on the
 	// resource was not supported by the code - for instance, attempting to delete a resource that
 	// can only be created. API calls that return MethodNotAllowed can never succeed.
 	// Status code 405
 	StatusReasonMethodNotAllowed StatusReason = "MethodNotAllowed"
 
-	// StatusReasonNotAcceptable means that the accept types indicated by the client were not acceptable
+	// StatusReasonNotAcceptable means that the accept types indicated by the api-client were not acceptable
 	// to the server - for instance, attempting to receive protobuf for a resource that supports only json and yaml.
 	// API calls that return NotAcceptable can never succeed.
 	// Status code 406
@@ -109,7 +109,7 @@ const (
 	// Status code 413
 	StatusReasonRequestEntityTooLarge StatusReason = "RequestEntityTooLarge"
 
-	// StatusReasonUnsupportedMediaType means that the content type sent by the client is not acceptable
+	// StatusReasonUnsupportedMediaType means that the content type sent by the api-client is not acceptable
 	// to the server - for instance, attempting to send protobuf for a resource that supports only json and yaml.
 	// API calls that return UnsupportedMediaType can never succeed.
 	// Status code 415
@@ -182,7 +182,7 @@ const (
 	// CauseTypeFieldValueNotSupported is used to report valid (as per formatting rules)
 	// values that can not be handled (e.g. an enumerated string).
 	CauseTypeFieldValueNotSupported CauseType = "FieldValueNotSupported"
-	// CauseTypeUnexpectedServerResponse is used to report when the server responded to the client
+	// CauseTypeUnexpectedServerResponse is used to report when the server responded to the api-client
 	// without the expected return type. The presence of this cause indicates the error may be
 	// due to an intervening proxy or the server software malfunctioning.
 	CauseTypeUnexpectedServerResponse CauseType = "UnexpectedServerResponse"
@@ -231,7 +231,7 @@ type StatusDetails struct {
 	// +optional
 	Causes []StatusCause `json:"causes,omitempty"`
 	// If specified, the time in seconds before the operation should be retried. Some errors may indicate
-	// the client must take an alternate action - for those errors this field may indicate how long to wait
+	// the api-client must take an alternate action - for those errors this field may indicate how long to wait
 	// before taking the alternate action.
 	// +optional
 	RetryAfterSeconds int32 `json:"retryAfterSeconds,omitempty"`

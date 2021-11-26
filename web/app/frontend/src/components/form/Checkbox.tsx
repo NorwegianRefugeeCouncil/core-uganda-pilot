@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
 import { Text, View } from 'react-native';
-import { Checkbox as CheckboxRNP } from 'react-native-paper';
 
 import { darkTheme } from '../../constants/theme';
 import { InputProps } from './FormControl';

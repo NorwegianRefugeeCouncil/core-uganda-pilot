@@ -12,17 +12,17 @@ import {
 } from '../reducers/recordsReducers';
 import { layout } from '../styles';
 import {
-    AddRecordScreenProps,
-    RecordsScreenProps,
+    AddRecordScreenContainerProps,
+    RecordsScreenContainerProps,
     StackParamList,
-    ViewRecordScreenProps,
+    ViewRecordScreenContainerProps,
 } from '../types/screens';
 import NavigationBar from './NavigationBar';
-import AddRecordScreen from './screens/AddRecordScreen';
 import DesignSystemDemoScreen from './screens/DesignSystemDemoScreen';
-import FormsScreen from './screens/FormsScreen';
-import RecordsScreen from './screens/RecordsScreen';
-import ViewRecordScreen from './screens/ViewRecordScreen';
+import { AddRecordScreenContainer } from './screen_containers/AddRecordScreenContainer';
+import { FormsScreenContainer } from './screen_containers/FormsScreenContainer';
+import { RecordsScreenContainer } from './screen_containers/RecordsScreenContainer';
+import { ViewRecordScreenContainer } from './screen_containers/ViewRecordScreenContainer';
 
 export default function Router() {
     const Stack = createStackNavigator<StackParamList>();
@@ -55,7 +55,7 @@ export default function Router() {
                     >
                         <Stack.Screen
                             name={routes.forms.name}
-                            component={FormsScreen}
+                            component={FormsScreenContainer}
                             options={{
                                 title: routes.forms.title,
                             }}
@@ -68,9 +68,11 @@ export default function Router() {
                             }}
                         >
                             {({ navigation, route }) => (
-                                <RecordsScreen
+                                <RecordsScreenContainer
                                     navigation={navigation}
-                                    route={route as RecordsScreenProps['route']}
+                                    route={
+                                        route as RecordsScreenContainerProps['route']
+                                    }
                                     state={state}
                                     dispatch={dispatch}
                                 />
@@ -83,10 +85,10 @@ export default function Router() {
                             }}
                         >
                             {({ navigation, route }) => (
-                                <AddRecordScreen
+                                <AddRecordScreenContainer
                                     navigation={navigation}
                                     route={
-                                        route as AddRecordScreenProps['route']
+                                        route as AddRecordScreenContainerProps['route']
                                     }
                                     state={state}
                                     dispatch={dispatch}
@@ -100,10 +102,10 @@ export default function Router() {
                             }}
                         >
                             {({ navigation, route }) => (
-                                <ViewRecordScreen
+                                <ViewRecordScreenContainer
                                     navigation={navigation}
                                     route={
-                                        route as ViewRecordScreenProps['route']
+                                        route as ViewRecordScreenContainerProps['route']
                                     }
                                     state={state}
                                     dispatch={dispatch}

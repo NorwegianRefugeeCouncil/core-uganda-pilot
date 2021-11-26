@@ -19,8 +19,8 @@ func NewHandler(hydraAdmin admin.ClientService) (*Handler, error) {
 	ws := new(restful.WebService).Path("/clients")
 
 	ws.Route(ws.PUT("/{clientId}").To(restfulUpdate(hydraAdmin)).
-		Doc(`updates oauth2 client`).
-		Param(ws.PathParameter("clientId", "client id").Required(true)).
+		Doc(`updates oauth2 api-client`).
+		Param(ws.PathParameter("clientId", "api-client id").Required(true)).
 		Operation("updateClient").
 		Consumes(mimetypes.ApplicationJson).
 		Produces(mimetypes.ApplicationJson).
@@ -30,7 +30,7 @@ func NewHandler(hydraAdmin admin.ClientService) (*Handler, error) {
 	)
 
 	ws.Route(ws.POST("").To(restfulCreate(hydraAdmin)).
-		Doc(`creates oauth2 client`).
+		Doc(`creates oauth2 api-client`).
 		Operation("createClient").
 		Consumes(mimetypes.ApplicationJson).
 		Produces(mimetypes.ApplicationJson).
@@ -40,8 +40,8 @@ func NewHandler(hydraAdmin admin.ClientService) (*Handler, error) {
 	)
 
 	ws.Route(ws.GET("/{clientId}").To(restfulGet(hydraAdmin)).
-		Doc(`gets oauth2 client`).
-		Param(ws.PathParameter("clientId", "client id").Required(true)).
+		Doc(`gets oauth2 api-client`).
+		Param(ws.PathParameter("clientId", "api-client id").Required(true)).
 		Produces(mimetypes.ApplicationJson).
 		Operation("getClient").
 		Writes(&types.Oauth2Client{}).
@@ -49,8 +49,8 @@ func NewHandler(hydraAdmin admin.ClientService) (*Handler, error) {
 	)
 
 	ws.Route(ws.DELETE("/{clientId}").To(restfulDelete(hydraAdmin)).
-		Doc(`deletes oauth2 client`).
-		Param(ws.PathParameter("clientId", "client id").Required(true)).
+		Doc(`deletes oauth2 api-client`).
+		Param(ws.PathParameter("clientId", "api-client id").Required(true)).
 		Operation("deleteClient").
 		Returns(http.StatusOK, "OK", nil),
 	)

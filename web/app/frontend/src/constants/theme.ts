@@ -1,8 +1,6 @@
 import { DefaultTheme as NavigationDefaultTheme } from '@react-navigation/native';
-import { DefaultTheme as RNPDefaultTheme } from 'react-native-paper';
 
 const lightTheme = {
-    ...RNPDefaultTheme,
     colors: {
         primary: '#24303E',
         accent: '#FF7602',
@@ -27,7 +25,6 @@ const lightTheme = {
 export default lightTheme;
 
 export const darkTheme = {
-    ...RNPDefaultTheme,
     ...lightTheme,
     dark: true,
     colors: {

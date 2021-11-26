@@ -100,7 +100,7 @@ const tplText = `
 	<div class="card shadow mb-5">
 	<div class="card-body">
 
-	<h5 class="card-title">Client {{.ClientName}} would like to access your information</h5>
+	<h5 class="card-title">ApiClient {{.ClientName}} would like to access your information</h5>
 
 	<form method="post">
 	<button type="submit" class="btn btn-success" formaction="/consent/approve" >Approve</button>

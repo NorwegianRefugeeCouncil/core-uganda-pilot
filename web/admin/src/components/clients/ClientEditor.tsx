@@ -45,7 +45,7 @@ export const ClientEditor: FC = props => {
         setClientSecret(args.clientSecret)
     }, [form])
 
-    // gets the oauth2 client
+    // gets the oauth2 api-client
     useEffect(() => {
         clientId && apiClient.getOAuth2Client({id: clientId})
             .then(result => {
@@ -54,7 +54,7 @@ export const ClientEditor: FC = props => {
             })
     }, [form, clientId, setClient])
 
-    // updates or creates the oauth2 client on submit
+    // updates or creates the oauth2 api-client on submit
     const onSubmit = useCallback((args: FormData) => {
         clientId
             ? apiClient.updateOAuth2Client({object: {...args, id: clientId}})
@@ -63,7 +63,7 @@ export const ClientEditor: FC = props => {
                 .then(resp => resp.response && setClient(resp.response))
     }, [clientId, apiClient, setClient])
 
-    // deletes the oauth2 client && redirects to list
+    // deletes the oauth2 api-client && redirects to list
     const onDelete = useCallback(() => clientId && apiClient.deleteOAuth2Client({id: clientId})
             .then(() => {
                 setRedirect("/clients")
@@ -78,7 +78,7 @@ export const ClientEditor: FC = props => {
                     <div className={"col"}>
                         <div className={"card card-darkula shadow"}>
                             <div className={"card-body"}>
-                                <SectionTitle title={"Create OAuth2 Client"}/>
+                                <SectionTitle title={"Create OAuth2 ApiClient"}/>
 
                                 <form noValidate={true} autoComplete={"off"} onSubmit={handleSubmit(onSubmit)}>
                                     <input type={"hidden"} autoComplete={"false"}/>
@@ -86,7 +86,7 @@ export const ClientEditor: FC = props => {
                                     {clientSecret && (
                                         <div className={"p-3 border border-warning shadow my-3"}>
                                             <FormControl
-                                                label={"Client Secret"}
+                                                label={"ApiClient Secret"}
                                                 value={clientSecret}
                                                 sensitive={true}
                                                 allowCopy={true}
@@ -123,8 +123,8 @@ export const ClientEditor: FC = props => {
                                         })}
                                         options={[
                                             {disabled: true, value: "", label: "Select token endpoint auth method"},
-                                            {value: "client_secret_post", label: "Client Secret (post)"},
-                                            {value: "client_secret_basic", label: "Client Secret (basic)"},
+                                            {value: "client_secret_post", label: "ApiClient Secret (post)"},
+                                            {value: "client_secret_basic", label: "ApiClient Secret (basic)"},
                                             {value: "private_key_jwt", label: "Private Key JWT"},
                                             {value: "none", label: "None"},
                                         ]}
@@ -155,7 +155,7 @@ export const ClientEditor: FC = props => {
                                         options={[
                                             {value: "authorization_code", label: "Authorization Code"},
                                             {value: "refresh_token", label: "Refresh Token"},
-                                            {value: "client_credentials", label: "Client Credentials"},
+                                            {value: "client_credentials", label: "ApiClient Credentials"},
                                             {value: "implicit", label: "Implicit"},
                                         ]}
                                         multiple={true}
@@ -203,7 +203,7 @@ export const ClientEditor: FC = props => {
 
                                     <div className={"my-3"}>
                                         <button type={"submit"} className={"btn btn-success me-2"}>
-                                            {clientId ? "Update OAuth2 Client" : "Create OAuth2 Client"}
+                                            {clientId ? "Update OAuth2 ApiClient" : "Create OAuth2 ApiClient"}
                                         </button>
                                         {clientId && (
                                             <button

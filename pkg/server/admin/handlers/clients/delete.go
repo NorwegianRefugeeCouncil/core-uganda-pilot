@@ -20,19 +20,19 @@ func handleDelete(hydraAdmin admin.ClientService, clientID string) http.HandlerF
 	return func(w http.ResponseWriter, req *http.Request) {
 		l := logging.NewLogger(req.Context()).With(zap.String("client_id", clientID))
 
-		l.Debug("deleting hydra client")
+		l.Debug("deleting hydra api-client")
 		_, err := hydraAdmin.DeleteOAuth2Client(&admin.DeleteOAuth2ClientParams{
 			ID:         clientID,
 			Context:    req.Context(),
 			HTTPClient: nil,
 		})
 		if err != nil {
-			l.Error("failed to delete hydra client", zap.Error(err))
+			l.Error("failed to delete hydra api-client", zap.Error(err))
 			utils.ErrorResponse(w, err)
 			return
 		}
 
-		l.Debug("successfully deleted hydra client")
+		l.Debug("successfully deleted hydra api-client")
 		w.WriteHeader(http.StatusNoContent)
 	}
 }

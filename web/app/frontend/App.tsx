@@ -1,13 +1,12 @@
 import React from 'react';
-import { Provider as PaperProvider } from 'react-native-paper';
+import {NativeBaseProvider} from 'native-base';
 
 import Router from './src/components/Router';
-import theme from './src/constants/theme';
 
-export default function App() {
+export default function App({inset}) {
     return (
-        <PaperProvider theme={theme}>
-            <Router />
-        </PaperProvider>
+        <NativeBaseProvider initialWindowMetrics={inset}>
+            <Router/>
+        </NativeBaseProvider>
     );
 }

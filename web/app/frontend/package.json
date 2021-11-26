@@ -1,15 +1,18 @@
 {
-  "main": "node_modules/expo/AppEntry.js",
   "private": true,
   "name": "frontend",
   "version": "1.0.0",
+  "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "node_modules/.bin/expo start",
     "android": "node_modules/.bin/expo start --android",
     "ios": "node_modules/.bin/expo start --ios",
     "web": "node_modules/.bin/expo start --web",
     "eject": "node_modules/.bin/expo eject",
-    "test": "clear && node_modules/.bin/jest"
+    "test": "clear && jest"
+  },
+  "installConfig": {
+    "hoistingLimits": "workspaces"
   },
   "dependencies": {
     "@config-plugins/android-jsc-intl": "^0.0.0",
@@ -27,8 +30,8 @@
     "@react-navigation/native": "~6.0.4",
     "@react-navigation/native-stack": "^6.2.5",
     "@react-navigation/stack": "~6.0.9",
-    "core-design-system": "../designSystem",
-    "core-js-api-client": "../client",
+    "core-design-system": "file:../designSystem",
+    "core-js-api-client": "file:../api-client",
     "dotenv": "~10.0.0",
     "expo": "^43.0.0",
     "expo-auth-session": "~3.4.2",
@@ -43,6 +46,7 @@
     "expo-updates": "~0.10.14",
     "install": "^0.13.0",
     "lodash": "4.17.21",
+    "native-base": "^3.2.2",
     "npm": "^8.1.1",
     "react": "17.0.1",
     "react-dom": "17.0.1",
@@ -52,23 +56,21 @@
     "react-native-gesture-handler": "~1.10.2",
     "react-native-keychain": "^8.0.0",
     "react-native-localize": "^2.1.5",
-    "react-native-paper": "^4.10.0",
-    "react-native-paper-dates": "~0.5.1",
     "react-native-reanimated": "~2.2.0",
     "react-native-safe-area-context": "3.3.2",
     "react-native-screens": "~3.8.0",
+    "react-native-svg": "12.1.1",
     "react-native-unimodules": "~0.15.0",
     "react-native-web": "0.17.1",
     "rxjs": "7.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
-    "@testing-library/jest-native": "^4.0.4",
-    "@testing-library/react-native": "^8.0.0",
     "@types/lodash": "4.14.176",
     "@types/node": "14",
     "@types/react": "~17.0.21",
     "@types/react-native": "~0.64.12",
+    "@types/uuid": "^8",
     "@typescript-eslint/eslint-plugin": "^5.3.1",
     "@typescript-eslint/parser": "^5.3.1",
     "eslint": "^7.0.0",
@@ -79,11 +81,9 @@
     "eslint-plugin-testing-library": "^5.0.0",
     "jest-expo": "^43.0.0",
     "prettier": "^2.4.1",
-    "react-test-renderer": "17.0.1",
-    "typescript": "~4.3.5"
-  },
-  "resolutions": {
-    "**/ua-parser-js": "^0.7.30"
+    "react-test-renderer": "^17.0.2",
+    "typescript": "~4.3.5",
+    "uuid": "^8.3.2"
   },
   "eslintConfig": {
     "extends": "universe/native"

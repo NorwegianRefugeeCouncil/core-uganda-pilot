@@ -6,7 +6,7 @@ digraph A {
 
   server [label="Core Identity Provider"]
 
-  client [label="Core Client"]
+  client [label="Core ApiClient"]
 
   otherApps [label="Other Applications"]
 
