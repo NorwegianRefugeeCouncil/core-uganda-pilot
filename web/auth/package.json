@@ -18,7 +18,8 @@
     "@types/qs": "^6.9.7",
     "@types/react": "^17.0.34",
     "@types/react-dom": "^17.0.11",
-    "install-peer": "^1.4.0"
+    "install-peers": "^1.0.3",
+    "install-peers-cli": "^2.2.0"
   },
   "peerDependencies": {
     "react": "^17.0.2",
@@ -27,8 +28,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "npx install-peer && npx react-scripts test --coverage --env=./custom-test-env.ts",
-    "eject": "react-scripts eject"
+    "test": "npx react-scripts test --coverage --env=./custom-test-env.ts",
+    "eject": "react-scripts eject",
+    "prepare": "install-peers"
   },
   "jest": {
     "resetMocks": false
