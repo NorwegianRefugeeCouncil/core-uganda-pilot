@@ -3,18 +3,21 @@
 - Install dependencies `make install-all`
 - Create your secrets `make init-secrets`
 - Start tunnels `make tunnels` (install localtunnels if you don't have it `npm i -g localtunnel`)
+	- When you start the tunnels for the first time, you will see 2 URLs that correspond to your tunnel URI. Open the
+	  links, and approve the dialog that will be presented to you. Otherwise all calls through the tunnels will fail.
+	  This has to be done every ~1 week as they are reset.
 - **Add the generated CA Certificate to your trust store**
-    - Fedora: `sudo cp certs/ca.crt /etc/pki/ca-trust/source/anchors/nrc_core_dev.crt && sudo update-ca-trust`
-    - Ubuntu: `sudo cp certs/ca.crt /usr/local/share/ca-certificates/nrc_core_dev.crt && sudo update-ca-certificates`
-    - Mac: `sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain certs/ca.crt`
-    - If you are using chrome
-      - settings
-      - privacy and security
-      - manage certificates
-      - trust anchors
-      - select certs/ca.crt
-      - trust for identifying websites
-  	- Do the same sort of thing in firefox if you use that
+	- Fedora: `sudo cp certs/ca.crt /etc/pki/ca-trust/source/anchors/nrc_core_dev.crt && sudo update-ca-trust`
+	- Ubuntu: `sudo cp certs/ca.crt /usr/local/share/ca-certificates/nrc_core_dev.crt && sudo update-ca-certificates`
+	- Mac: `sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain certs/ca.crt`
+	- If you are using chrome
+		- settings
+		- privacy and security
+		- manage certificates
+		- trust anchors
+		- select certs/ca.crt
+		- trust for identifying websites
+		- Do the same sort of thing in firefox if you use that
 - Start docker resources `make up`
 - Migrate the database `make migrate`
 - Create initial configuration `make bootstrap`
@@ -22,9 +25,9 @@
 - Start the frontend `make serve-pwa`
 - Start the admin frontend `make serve-admin`
 - Open the browser http://localhost:3000
-    - Authenticate with \<whatever\>`@nrc.no` (any email ending with `nrc.no`)
-    - Click `Login with Norwegian Refugee Council`
-    - Put any password (there is no password verification for this development oidc-provider)
+	- Authenticate with \<whatever\>`@nrc.no` (any email ending with `nrc.no`)
+	- Click `Login with Norwegian Refugee Council`
+	- Put any password (there is no password verification for this development oidc-provider)
 - Open the browser http://localhost:3001
 - Credentials will be generated in `creds/`
 

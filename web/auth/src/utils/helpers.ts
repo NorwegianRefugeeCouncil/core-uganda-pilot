@@ -31,7 +31,6 @@ export const handler = (
     resolve: Resolve,
     browser: Browser
 ) => {
-    // console.log('RESOLVED interval', browser)
     const localListener = (event: MessageEvent) => listener(event, browser, resolve)
 
     window.addEventListener(

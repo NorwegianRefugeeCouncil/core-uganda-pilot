@@ -42,7 +42,6 @@ const AuthWrapper: React.FC<AuthWrapperProps> = (
     );
 
     useEffect(() => {
-        console.log('useEffect', request?.codeVerifier, discovery, response)
 
         if (!discovery) {
             return
@@ -62,22 +61,19 @@ const AuthWrapper: React.FC<AuthWrapperProps> = (
                 "code_verifier": request?.codeVerifier,
             }
         }
-        console.log('exchange?', exchangeConfig)
 
         exchangeCodeAsync(exchangeConfig, discovery)
             .then(resp => {
-                console.log('EXCHANGE', resp)
                 setTokenResponse(resp)
             })
             .catch((err) => {
-                console.log('EXCHANGEERROR', err)
+                console.log('Code Exchange Error', err)
                 setTokenResponse(undefined)
             })
 
     }, [request?.codeVerifier, response, discovery]);
 
     useEffect(() => {
-        console.log('useEffect 2', tokenResponse, discovery)
         if (!discovery) {
             return
         }
@@ -98,7 +94,6 @@ const AuthWrapper: React.FC<AuthWrapperProps> = (
     }, [tokenResponse?.shouldRefresh(), discovery])
 
     useEffect(() => {
-        console.log('useEffect 3', tokenResponse, isLoggedIn)
         if (tokenResponse) {
             if (!isLoggedIn) {
                 setIsLoggedIn(true)
@@ -111,7 +106,6 @@ const AuthWrapper: React.FC<AuthWrapperProps> = (
     }, [tokenResponse, isLoggedIn])
 
     useEffect(() => {
-        console.log('useEffect 4', tokenResponse?.accessToken)
         const interceptor = axiosInstance.interceptors.request.use(value => {
             if (!tokenResponse?.accessToken) {
                 return value
@@ -129,7 +123,6 @@ const AuthWrapper: React.FC<AuthWrapperProps> = (
     }, [tokenResponse?.accessToken])
 
     const handleLogin = useCallback(() => {
-        console.log('handle login', discovery, request, promptAsync())
         promptAsync().catch((err) => {
             handleLoginErr(err);
         })

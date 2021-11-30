@@ -47,9 +47,6 @@ class TokenRequest<T extends TokenRequestConfig> extends Request<T, TokenRespons
     }
 
     async performAsync(discovery: Pick<DiscoveryDocument, 'token_endpoint'>) {
-
-        console.log('PERFORM ASYNC', axios)
-
         const response = await axios.post<ServerTokenResponseConfig>(
             discovery.token_endpoint,
             this.getQueryBody().toString(),

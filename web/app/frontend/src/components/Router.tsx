@@ -7,13 +7,12 @@ import {createStackNavigator} from '@react-navigation/stack';
 import FormsScreen from './screens/FormsScreen';
 import routes from '../constants/routes';
 import {NavigationTheme} from '../constants/theme';
-import host from "../constants/host";
 import DesignSystemDemoScreen from "./screens/DesignSystemDemoScreen";
 import RecordsScreen from "./screens/RecordsScreen";
 import AddRecordScreen from "./screens/AddRecordScreen";
 import ViewRecordScreen from "./screens/ViewRecordScreen";
-import LoginCallbackScreen from "./screens/LoginCallbackScreen";
 import {initialRecordsState, recordsReducer, RecordsStoreProps} from "../reducers/recordsReducers";
+import Constants from "expo-constants";
 
 export type ScreenProps = {
     navigation: any,
@@ -27,7 +26,8 @@ export default function Router() {
     const [state, dispatch] = useReducer(recordsReducer, initialRecordsState);
 
     const linkingConfig = {
-        prefixes: [host],
+        // TODO : revisit this
+        prefixes: [Constants.manifest?.extra?.server_uri],
         config: {
             screens: {
                 Forms: routes.forms.name,
@@ -55,13 +55,6 @@ export default function Router() {
                             options={{
                                 title: routes.forms.title,
 
-                            }}
-                        />
-                        <Stack.Screen
-                            name={'callback'}
-                            component={LoginCallbackScreen}
-                            options={{
-                                title: routes.forms.title,
                             }}
                         />
                         <Stack.Screen

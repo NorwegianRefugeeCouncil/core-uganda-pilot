@@ -1,4 +1,4 @@
-import {Text, View, ViewStyle} from "react-native";
+import {View, ViewStyle} from "react-native";
 import React from "react";
 import TextInput from "./TextInput";
 import Select from "./Select";

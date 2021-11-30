@@ -16,7 +16,7 @@ export const AuthWrapper: FC = props => {
     const {children} = props
     const clientId = Constants.manifest?.extra?.client_id
     const useProxy = useMemo(() => Platform.select({web: false, default: false}), []);
-    const redirectUri = useMemo(() => makeRedirectUri({scheme: 'nrccore'}), [])
+    const redirectUri = useMemo(() => makeRedirectUri({scheme: Constants.manifest?.scheme}), [])
     const discovery = useAutoDiscovery(Constants.manifest?.extra?.issuer);
     const [loggedIn, setLoggedIn] = useState(false)
     const [tokenResponse, setTokenResponse] = useState<TokenResponse>()

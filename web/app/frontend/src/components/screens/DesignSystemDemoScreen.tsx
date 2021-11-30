@@ -1,8 +1,7 @@
 import React from 'react';
 import {Title} from 'react-native-paper';
 import {layout} from '../../styles';
-import {Text, View} from 'react-native';
-// import {Button} from 'core-design-system'
+import {View} from 'react-native';
 
 const DesignSystemDemoScreen = () => {
 

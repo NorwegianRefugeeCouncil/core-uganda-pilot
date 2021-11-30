@@ -54,7 +54,6 @@ export class AuthRequest {
         try {
             _authLock = true
             result = await this.browser.openAuthSessionAsync({url})
-            // result = this.browser.getWebBrowserAuthSessionResult()
         } finally {
             _authLock = false
         }
