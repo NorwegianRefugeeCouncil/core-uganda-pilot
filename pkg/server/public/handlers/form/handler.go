@@ -18,7 +18,10 @@ type Handler struct {
 func NewHandler(store store.FormStore) *Handler {
 	h := &Handler{store: store}
 
-	ws := new(restful.WebService).Path("/forms")
+	ws := new(restful.WebService).
+		Path("/apis/core.nrc.no/v1/forms").
+		Doc("forms.core.nrc.no API")
+
 	h.webService = ws
 
 	formRoute := fmt.Sprintf("/{%s}", constants.ParamFormID)

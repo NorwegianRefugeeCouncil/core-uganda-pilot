@@ -102,6 +102,12 @@ func handleAuthRequestAction(
 				events = append(events, evt)
 			}
 
+			reqScheme := "http://"
+			if req.TLS != nil {
+				reqScheme = "https://"
+			}
+			selfURL = reqScheme + req.Host
+
 			loginRequestedHandler := handleLoginRequested(ctx, req.URL.Query(), dispatch, getLoginRequest)
 			refreshingIdentityHandler := handleRefreshingIdentity(ctx, idpStore, selfURL, dispatch, getLoginRequest)
 			promptingForIdentifierHandler := handlePromptingForIdentifier(w, userSession, req)
@@ -232,14 +238,18 @@ func handleAuthRequestAction(
 						zap.Error(err),
 						zap.String("action", evt),
 						zap.String("state", authRequest.State()))
-					_ = authRequest.Event(authrequest.EventFail)
-					break
+					if authRequest.State() == authrequest.StateFailed {
+						utils.ErrorResponse(w, meta.NewBadRequest("invalid action"))
+						break
+					}
+					dispatch(authrequest.EventFail)
+
 				}
 				l.Info("entered state", zap.String("state", authRequest.State()))
 			}
 			if err := authRequest.Save(w, req, userSession); err != nil {
 				l.Error("failed to save session", zap.Error(err))
-				_ = authRequest.Event(authrequest.EventFail)
+				dispatch(authrequest.EventFail)
 			}
 		}
 	}

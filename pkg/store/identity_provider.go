@@ -131,7 +131,7 @@ func (i identityProviderStore) Create(ctx context.Context, identityProvidr *type
 }
 
 func (i identityProviderStore) Update(ctx context.Context, identityProvider *types.IdentityProvider, options IdentityProviderUpdateOptions) (*types.IdentityProvider, error) {
-	ctx, db, l, done, err := actionContext(ctx, i.db, "identity_provider", "create", zap.String("identity_provider_id", identityProvider.ID))
+	ctx, db, l, done, err := actionContext(ctx, i.db, "identity_provider", "update", zap.String("identity_provider_id", identityProvider.ID))
 	if err != nil {
 		return nil, err
 	}

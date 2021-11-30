@@ -1,10 +1,10 @@
-import {Text, View, ViewStyle} from "react-native";
+import {View, ViewStyle} from "react-native";
 import React from "react";
 import TextInput from "./TextInput";
 import Select from "./Select";
 import {Control, Controller} from "react-hook-form";
 import {FieldDefinition, FieldKind} from "core-js-api-client/lib/types/types";
-import {getFieldKind} from "core-js-api-client/lib/client";
+import {getFieldKind} from "core-js-api-client";
 import ReferenceInput from "./ReferenceInput";
 
 // TODO: move & clean up types

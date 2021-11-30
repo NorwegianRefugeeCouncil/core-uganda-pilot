@@ -1,7 +1,8 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import {FieldDefinition, FieldTypeSubForm, FormDefinition} from "../types/types";
 import {RootState} from "../app/store";
-import {defaultClient, FormListResponse} from "core-js-api-client";
+import client from "../app/client";
+import {FormListResponse} from "core-js-api-client";
 
 const adapter = createEntityAdapter<FormDefinition>({
     // Assume IDs are stored in a field other than `book.id`
@@ -14,7 +15,7 @@ export const fetchForms = createAsyncThunk<FormListResponse>(
     'forms/fetch',
     async (_, thunkAPI) => {
         try {
-            const response = await defaultClient.listForms({})
+            const response = await client.listForms({})
             if (response.success) {
                 return response
             } else {

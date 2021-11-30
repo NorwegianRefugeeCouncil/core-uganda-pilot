@@ -1,14 +1,23 @@
 import React from 'react';
-import { Provider as PaperProvider } from 'react-native-paper';
+import {Provider as PaperProvider} from 'react-native-paper';
 import theme from './src/constants/theme';
 import Router from './src/components/Router';
+import * as WebBrowser from 'expo-web-browser';
+import {AuthWrapper} from "./src/components/AuthWrapper";
+import {ErrorBoundary} from "./src/components/ErrorBoundary";
+
+WebBrowser.maybeCompleteAuthSession();
 
 export default function App() {
-	return (
-		<PaperProvider theme={theme}>
-			<Router />
-		</PaperProvider>
-	);
+    return (
+        <PaperProvider theme={theme}>
+            <ErrorBoundary>
+                <AuthWrapper>
+                    <Router/>
+                </AuthWrapper>
+            </ErrorBoundary>
+        </PaperProvider>
+    );
 }
 
 

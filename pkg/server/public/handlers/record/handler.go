@@ -12,14 +12,17 @@ import (
 
 type Handler struct {
 	store      store.RecordStore
-	formStore      store.FormStore
+	formStore  store.FormStore
 	webService *restful.WebService
 }
 
 func NewHandler(store store.RecordStore, formStore store.FormStore) *Handler {
 	h := &Handler{store: store, formStore: formStore}
 
-	ws := new(restful.WebService).Path("/records")
+	ws := new(restful.WebService).
+		Path("/apis/core.nrc.no/v1/records").
+		Doc("records.core.nrc.no API")
+
 	h.webService = ws
 
 	recordPath := fmt.Sprintf("/{%s}", constants.ParamRecordID)

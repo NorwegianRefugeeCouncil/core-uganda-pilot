@@ -15,6 +15,12 @@ const RecordsScreen: React.FC<ScreenProps> = ({navigation, route, state, dispatc
     const client = useApiClient();
 
     React.useEffect(() => {
+        if (!formId){
+            return
+        }
+        if (!databaseId){
+            return
+        }
         client.listRecords({formId, databaseId})
             .then((data) => {
                 dispatch({
@@ -25,7 +31,7 @@ const RecordsScreen: React.FC<ScreenProps> = ({navigation, route, state, dispatc
                 })
                 setIsLoading(false)
             })
-    }, []);
+    }, [client, formId, databaseId]);
 
     return (
         <View style={[layout.container, layout.body]}>

@@ -7,12 +7,12 @@ import {createStackNavigator} from '@react-navigation/stack';
 import FormsScreen from './screens/FormsScreen';
 import routes from '../constants/routes';
 import {NavigationTheme} from '../constants/theme';
-import host from "../constants/host";
 import DesignSystemDemoScreen from "./screens/DesignSystemDemoScreen";
 import RecordsScreen from "./screens/RecordsScreen";
 import AddRecordScreen from "./screens/AddRecordScreen";
 import ViewRecordScreen from "./screens/ViewRecordScreen";
 import {initialRecordsState, recordsReducer, RecordsStoreProps} from "../reducers/recordsReducers";
+import Constants from "expo-constants";
 
 export type ScreenProps = {
     navigation: any,
@@ -26,14 +26,16 @@ export default function Router() {
     const [state, dispatch] = useReducer(recordsReducer, initialRecordsState);
 
     const linkingConfig = {
-        prefixes: [host],
+        // TODO : revisit this
+        prefixes: [Constants.manifest?.extra?.server_uri],
         config: {
             screens: {
                 Forms: routes.forms.name,
                 Records: routes.records.name,
                 AddRecord: routes.addRecord.name,
                 ViewRecord: routes.viewRecord.name,
-                DesignSystem: routes.designSystem.name
+                DesignSystem: routes.designSystem.name,
+                LoginCallback: 'callback'
             }
         }
     };

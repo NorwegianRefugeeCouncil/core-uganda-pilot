@@ -1,6 +1,6 @@
 import 'dotenv/config'
 
-export default ({ config }) => {
+export default ({config}) => {
     switch (process.env.NODE_ENV) {
         case 'development':
         case 'dev':
@@ -10,8 +10,10 @@ export default ({ config }) => {
                     '@config-plugins/android-jsc-intl'
                 ],
                 extra: {
-                    server_default_hostname: 'http://localhost:9000',
-                    server_hostname: process.env.SERVER_HOSTNAME,
+                    server_uri: process.env.REACT_APP_SERVER_URL,
+                    client_id: process.env.REACT_APP_OAUTH_CLIENT_ID,
+                    issuer: process.env.REACT_APP_OIDC_ISSUER,
+                    scopes: process.env.REACT_APP_OAUTH_SCOPE.split(" ")
                 },
             }
         case 'production':

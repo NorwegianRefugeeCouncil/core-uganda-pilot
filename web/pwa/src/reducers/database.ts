@@ -1,7 +1,8 @@
 import {createAsyncThunk, createEntityAdapter, createSlice, EntityState} from "@reduxjs/toolkit";
 import {Database, DatabaseList} from "../types/types";
 import {RootState} from "../app/store";
-import {DatabaseListRequest, defaultClient, Response} from "core-js-api-client";
+import {DatabaseListRequest, Response} from "core-js-api-client";
+import client from "../app/client";
 
 const adapter = createEntityAdapter<Database>({
     // Assume IDs are stored in a field other than `book.id`
@@ -15,7 +16,7 @@ export const fetchDatabases = createAsyncThunk<Response<DatabaseListRequest, Dat
     'databases/fetch',
     async (_, thunkAPI) => {
         try {
-            const response = await defaultClient.listDatabases({})
+            const response = await client.listDatabases({})
             if (response.success) {
                 return response
             } else {

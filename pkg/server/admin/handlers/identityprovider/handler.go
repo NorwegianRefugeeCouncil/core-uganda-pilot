@@ -22,9 +22,10 @@ func (h *Handler) WebService() *restful.WebService {
 func NewHandler(store store.IdentityProviderStore) *Handler {
 	h := &Handler{store: store}
 
-	ws := new(restful.WebService).Path("/identityproviders").
-		Consumes(mimetypes.ApplicationJson).
-		Produces(mimetypes.ApplicationJson)
+	ws := new(restful.WebService).
+		Path("/apis/admin.nrc.no/v1/identityproviders").
+		Doc("identityproviders.admin.nrc.no API")
+
 	h.webService = ws
 
 	ws.Route(ws.GET("/").To(h.RestfulList).
@@ -34,6 +35,7 @@ func NewHandler(store store.IdentityProviderStore) *Handler {
 			DataType("string").
 			DataFormat("uuid").
 			Required(true)).
+		Produces(mimetypes.ApplicationJson).
 		Writes(types.IdentityProviderList{}).
 		Returns(http.StatusOK, "OK", types.IdentityProviderList{}))
 
@@ -44,12 +46,15 @@ func NewHandler(store store.IdentityProviderStore) *Handler {
 			DataType("string").
 			DataFormat("uuid").
 			Required(true)).
+		Produces(mimetypes.ApplicationJson).
 		Writes(types.IdentityProvider{}).
 		Returns(http.StatusOK, "OK", types.IdentityProvider{}))
 
 	ws.Route(ws.POST("/").To(h.RestfulCreate).
 		Doc("create an identity provider").
 		Operation("createIdentityProvider").
+		Consumes(mimetypes.ApplicationJson).
+		Produces(mimetypes.ApplicationJson).
 		Reads(types.IdentityProvider{}).
 		Writes(types.IdentityProvider{}).
 		Returns(http.StatusOK, "OK", types.IdentityProvider{}))
@@ -61,6 +66,8 @@ func NewHandler(store store.IdentityProviderStore) *Handler {
 			DataType("string").
 			DataFormat("uuid").
 			Required(true)).
+		Consumes(mimetypes.ApplicationJson).
+		Produces(mimetypes.ApplicationJson).
 		Reads(types.IdentityProvider{}).
 		Writes(types.IdentityProvider{}).
 		Returns(http.StatusOK, "OK", types.IdentityProvider{}))

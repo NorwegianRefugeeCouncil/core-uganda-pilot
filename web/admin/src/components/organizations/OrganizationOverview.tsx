@@ -1,5 +1,5 @@
 import {FC} from "react";
-import {Organization} from "../../client/client";
+import {Organization} from "../../types/types";
 
 type Props = {
     organization: Organization

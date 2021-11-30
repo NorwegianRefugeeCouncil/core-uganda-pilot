@@ -1,10 +1,10 @@
 import React, {Fragment, FC, useState} from "react";
 import {useForm} from "react-hook-form";
-import {defaultClient} from "core-js-api-client";
 import {databaseActions} from "../../reducers/database";
 import {Folder} from "../../types/types";
 import {Redirect} from "react-router-dom"
 import {useDatabaseFromQueryParam, useFolderFromQueryParam} from "../../app/hooks";
+import client from "../../app/client";
 
 type FormData = {
     name: string
@@ -22,7 +22,7 @@ export const FolderEditor: FC = props => {
         if (!database?.id) {
             return
         }
-        defaultClient.createFolder({
+        client.createFolder({
             object: {
                 name: data.name,
                 databaseId: database?.id,

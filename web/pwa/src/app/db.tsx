@@ -36,7 +36,7 @@ export const SQLContextProvider: FC = props => {
         SQL.default({
             locateFile(url: string): string {
                 log.debug("locating sql.js resource at url", url)
-                return `/${url}`
+                return `${process.env.PUBLIC_URL}/${url}`
             }
         }).then((sql) => {
             log.debug("loaded static sql context")

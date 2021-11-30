@@ -103,8 +103,8 @@ const tplText = `
 	<h5 class="card-title">Client {{.ClientName}} would like to access your information</h5>
 
 	<form method="post">
-	<button type="submit" class="btn btn-success" formaction="/consent/approve" >Approve</button>
-	<button type="submit" class="btn btn-secondary" formaction="/consent/decline">Decline</button>
+	<button type="submit" class="btn btn-success" formaction="/login/consent/approve" >Approve</button>
+	<button type="submit" class="btn btn-secondary" formaction="/login/consent/decline">Decline</button>
 	</form>
 
 	{{ if .Error }}
