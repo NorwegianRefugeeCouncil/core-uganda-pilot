@@ -30,11 +30,11 @@ tmp/
 # all user credentials
 creds/
 
-.pnp.*
+# yarn zero-install
 .yarn/*
+!.yarn/cache
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-node_modules

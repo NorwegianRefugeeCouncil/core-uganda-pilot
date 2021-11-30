@@ -1,10 +1,10 @@
 {
-  "packageManager": "yarn@3.2.0-rc.5",
-  "dependencies": {
-    "eslint": "^8.3.0",
-    "expo-cli": "^4.13.0",
-    "jest": "^27.3.1",
-    "prettier": "^2.5.0",
+  "packageManager": "yarn@3.1.1",
+  "workspaces": [
+    "web/packages/**",
+    "web/nm-packages/**"
+  ],
+  "devDependencies": {
     "typescript": "^4.5.2"
   }
 }
