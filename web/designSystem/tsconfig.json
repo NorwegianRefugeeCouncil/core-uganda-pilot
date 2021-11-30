@@ -8,9 +8,6 @@
       "DOM",
       "ESNext"
     ],
-    "typeRoots": [
-      "./node_modules/@types"
-    ],
     "declaration": true,
     "outDir": "lib",
     "jsx": "react"

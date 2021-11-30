@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "axios": "^0.23.0",
-    "core-js-api-client": "file:../app/client",
     "oauth-pkce": "^0.0.6",
     "qs": "^6.10.1",
     "react-scripts": "4.0.3",

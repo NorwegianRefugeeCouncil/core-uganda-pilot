@@ -1,4 +1,4 @@
-import Browser, {handler} from "../browser";
+import Browser from "../browser";
 
 jest.mock('../../utils/helpers', () => ({
     handler: jest.fn(() => ({
@@ -109,7 +109,6 @@ describe('utils/browser', () => {
         })
 
         it('should set popup window', () => {
-            // expect(browser.getPopup()).toBeNull();
             windowFocusMock = jest.fn();
             windowOpenMock = jest.fn(() => ({
                 focus: windowFocusMock

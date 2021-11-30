@@ -1,6 +1,5 @@
 import resolveDiscoveryAsync from "../resolveDiscoveryAsync";
 import axios from "axios";
-import {IssuerOrDiscovery} from "../../types/types";
 
 jest.mock('axios', () => ({
     ...jest.requireActual('axios'),

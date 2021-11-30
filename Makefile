@@ -34,21 +34,32 @@ clear-db:
 .PHONY: reset-db
 reset-db: clear-db migrate
 
-.PHONY: build
-build:
-	@./scripts/build.sh
+.PHONY: build-client
+build-client:
+	@./scripts/build-client.sh
 
-.PHONY: build-pwa
-build-pwa:
-	@./scripts/build-pwa.sh
+.PHONY: build-auth
+build-auth:
+	@./scripts/build-auth.sh
+
+.PHONY: build-design-system
+build-design-system:
+	@./scripts/build-design-system.sh
 
 .PHONY: build-admin
-build-admin:
+build-admin: build-client build-auth
 	@./scripts/build-admin.sh
 
 .PHONY: build-frontend
-build-frontend:
+build-frontend: build-client build-design-system
 	@./scripts/build-frontend.sh
+
+.PHONY: build-pwa
+build-pwa: build-client build-auth
+	@./scripts/build-pwa.sh
+
+.PHONY: build-all
+build-all: build-frontend build-pwa build-admin
 
 .PHONY: serve
 serve:

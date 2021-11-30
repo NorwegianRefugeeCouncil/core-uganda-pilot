@@ -1,6 +1,6 @@
 import {FC, Fragment} from "react";
 import {match, Route, Switch, useRouteMatch} from "react-router-dom";
-import {usePathOrganization} from "../../hooks/hooks";
+import {useOrganization} from "../../hooks/hooks";
 import {OrganizationOverview} from "./OrganizationOverview";
 import {OrganizationSideBar} from "./OrganizationSideBar";
 import {IdentityProviders} from "./identityproviders/IdentityProviders";
@@ -11,11 +11,11 @@ export type OrganizationRoute = {
     organizationId: string
 }
 
-
 export const OrganizationPortal: FC = props => {
 
-    const match = useRouteMatch()
-    const organization = usePathOrganization()
+    const routeMatch = useRouteMatch<OrganizationRoute>()
+    const {organizationId} = routeMatch.params
+    const organization = useOrganization(organizationId)
 
     if (!organization) {
         return <Fragment/>
@@ -32,10 +32,10 @@ export const OrganizationPortal: FC = props => {
                 </div>
                 <div className={"flex-grow-1 ps-4 pe-2"}>
                     <Switch>
-                        {addIdentityProvidersRoute(match, organization)}
-                        {identityProviderRoute(match, organization)}
-                        {identityProvidersRoute(match, organization)}
-                        {overviewRoute(match, organization)}
+                        {addIdentityProvidersRoute(routeMatch, organization)}
+                        {identityProviderRoute(routeMatch, organization)}
+                        {identityProvidersRoute(routeMatch, organization)}
+                        {overviewRoute(routeMatch, organization)}
                     </Switch>
                 </div>
             </div>

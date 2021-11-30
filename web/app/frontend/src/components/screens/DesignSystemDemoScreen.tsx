@@ -9,12 +9,6 @@ const DesignSystemDemoScreen = () => {
     return (
         <View style={layout.body}>
             <Title>Design System Demo</Title>
-
-            {/*<Button onPress={() => console.log('integrated design system')}>*/}
-            {/*    <Text>*/}
-            {/*        button*/}
-            {/*    </Text>*/}
-            {/*</Button>*/}
         </View>
     );
 };

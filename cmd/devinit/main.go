@@ -46,11 +46,24 @@ var (
 )
 
 var (
-	CoreLocalHost = fmt.Sprintf("https://localhost:8443")
-	OidcIssuer    = fmt.Sprintf("https://nrc-core-oidc.loca.lt")
-	CoreHost      = fmt.Sprintf("https://nrc-core-server.loca.lt")
-	HydraHost     = fmt.Sprintf("https://nrc-core-server.loca.lt/hydra")
-	WorkDir       = ""
+	AdminURI      = "http://localhost:3001/app"
+	AdminScope    = "openid email profile"
+	PwaURI        = "http://localhost:3000/app"
+	CoreLocalHost = "https://localhost:8443"
+
+	WorkDir = ""
+
+	// OidcIssuer is the oidc issuer of the fake-oidc-provider
+	// This is initialized by the init() method
+	OidcIssuer = ""
+
+	// CoreHost is the core hostname
+	// This is initialized by the init() method
+	CoreHost = ""
+
+	// HydraHost is the hydra hostname
+	// This is initialized by the init() method
+	HydraHost = ""
 )
 
 func getPetName() (string, error) {
@@ -194,72 +207,32 @@ func createConfig() (*Config, error) {
 		rootDir:    WorkDir,
 	}
 
-	if err := config.makeRootCert(); err != nil {
-		return nil, err
+	type errFunc func() error
+
+	var funcs = []errFunc{
+		config.makeRootCert,
+		config.makeProxyConfig,
+		config.makeRedis,
+		config.makePostgres,
+		config.makeIdp,
+		config.makeLogin,
+		config.makeHydra,
+		config.makeCoreApi,
+		config.makeCoreAdminApi,
+		config.makeAppFrontend,
+		config.makeAdminFrontend,
+		config.makeCoreAuth,
+		config.makeNativeApp,
+		config.makeOidcConfig,
+		config.makeCore,
+		config.makePostgresInit,
+		config.makePostgres,
 	}
 
-	if err := config.makeProxyConfig(); err != nil {
-		return nil, err
-	}
-
-	if err := config.makeRedis(); err != nil {
-		return nil, err
-	}
-
-	if err := config.makePostgres(); err != nil {
-		return nil, err
-	}
-
-	if err := config.makeIdp(); err != nil {
-		return nil, err
-	}
-
-	if err := config.makeLogin(); err != nil {
-		return nil, err
-	}
-
-	if err := config.makeHydra(); err != nil {
-		return nil, err
-	}
-
-	if err := config.makeCoreApi(); err != nil {
-		return nil, err
-	}
-
-	if err := config.makeCoreAdminApi(); err != nil {
-		return nil, err
-	}
-
-	if err := config.makeAppFrontend(); err != nil {
-		return nil, err
-	}
-
-	if err := config.makeAdminFrontend(); err != nil {
-		return nil, err
-	}
-
-	if err := config.makeCoreAuth(); err != nil {
-		return nil, err
-	}
-
-	if err := config.makeNativeApp(); err != nil {
-		return nil, err
-	}
-
-	if err := config.makeOidcConfig(); err != nil {
-		return nil, err
-	}
-
-	if err := config.makeCore(); err != nil {
-		return nil, err
-	}
-
-	if err := config.makePostgresInit(); err != nil {
-		return nil, err
-	}
-
-	if err := config.makeHydraInit(); err != nil {
-		return nil, err
+	for _, f := range funcs {
+		if err := f(); err != nil {
+			return nil, err
+		}
 	}
 
 	return config, nil
@@ -298,17 +271,109 @@ func Bootstrap() error {
 		return err
 	}
 
+	if err := createHydraClients(); err != nil {
+		return err
+	}
+
+	factory, err := createDbFactory(err)
+	if err != nil {
+		return err
+	}
+
+	orgId, err := createOrganization(factory, err)
+	if err != nil {
+		return err
+	}
+
+	if err := createIdentityProviders(factory, err, orgId, envCfg); err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
+func createIdentityProviders(factory store.Factory, err error, orgId string, envCfg *Config) error {
+	idpStore := store.NewIdentityProviderStore(factory)
+	idps, err := idpStore.List(context.Background(), orgId, store.IdentityProviderListOptions{})
+	if err != nil {
+		return err
+	}
+	idp := &types.IdentityProvider{
+		Name:           "Fake OIDC",
+		OrganizationID: orgId,
+		Domain:         OidcIssuer,
+		ClientID:       envCfg.idpClientId,
+		ClientSecret:   envCfg.idpClientSecret,
+		EmailDomain:    "nrc.no",
+	}
+	if len(idps) == 0 {
+		_, err := idpStore.Create(context.Background(), idp, store.IdentityProviderCreateOptions{})
+		if err != nil {
+			return err
+		}
+	} else {
+		idp.ID = idps[0].ID
+		_, err := idpStore.Update(context.Background(), idp, store.IdentityProviderUpdateOptions{})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func createOrganization(factory store.Factory, err error) (string, error) {
+	orgStore := store.NewOrganizationStore(factory)
+	existing, err := orgStore.List(context.Background())
+	var orgId string
+	if len(existing) == 0 {
+		created, err := orgStore.Create(context.Background(), &types.Organization{
+			Name: "Norwegian Refugee Council",
+		})
+		if err != nil {
+			return "", err
+		}
+		orgId = created.ID
+	} else {
+		orgId = existing[0].ID
+	}
+	return orgId, nil
+}
+
+func createDbFactory(err error) (store.Factory, error) {
+	coreConfig, err := parseCoreConfig(err)
+	if err != nil {
+		return nil, err
+	}
+
+	factory, err := store.NewFactory(coreConfig.DSN)
+	if err != nil {
+		return nil, err
+	}
+	return factory, nil
+}
+
+func parseCoreConfig(err error) (options.Options, error) {
+	configBytes, err := os.ReadFile(path.Join(CoreDir, "config.yaml"))
+	if err != nil {
+		return options.Options{}, err
+	}
+	var cfg = options.Options{}
+	if err := yaml.Unmarshal(configBytes, &cfg); err != nil {
+		return options.Options{}, err
+	}
+	return cfg, nil
+}
+
+func createHydraClients() error {
+
 	adminCli := client.NewHTTPClientWithConfig(nil, &client.TransportConfig{
 		Host:    "localhost:4445",
 		Schemes: []string{"https"},
 	}).Admin
 
-	jsonBytes, err := os.ReadFile(path.Join(HydraCredsDir, "clients.json"))
+	clients, err := parseHydraClients()
 	if err != nil {
-		return err
-	}
-	var clients HydraClients
-	if err := json.Unmarshal(jsonBytes, &clients); err != nil {
 		return err
 	}
 
@@ -337,65 +402,19 @@ func Bootstrap() error {
 			}
 		}
 	}
-
-	configBytes, err := os.ReadFile(path.Join(CoreDir, "config.yaml"))
-	if err != nil {
-		return err
-	}
-	var cfg = options.Options{}
-	if err := yaml.Unmarshal(configBytes, &cfg); err != nil {
-		return err
-	}
-	factory, err := store.NewFactory(cfg.DSN)
-	if err != nil {
-		return err
-	}
-
-	orgStore := store.NewOrganizationStore(factory)
-
-	existing, err := orgStore.List(context.Background())
-	var orgId string
-	if len(existing) == 0 {
-		created, err := orgStore.Create(context.Background(), &types.Organization{
-			Name: "Norwegian Refugee Council",
-		})
-		if err != nil {
-			return err
-		}
-		orgId = created.ID
-	} else {
-		orgId = existing[0].ID
-	}
-
-	idpStore := store.NewIdentityProviderStore(factory)
-
-	idps, err := idpStore.List(context.Background(), orgId, store.IdentityProviderListOptions{})
-	if err != nil {
-		return err
-	}
-	idp := &types.IdentityProvider{
-		Name:           "Fake OIDC",
-		OrganizationID: orgId,
-		Domain:         OidcIssuer,
-		ClientID:       envCfg.idpClientId,
-		ClientSecret:   envCfg.idpClientSecret,
-		EmailDomain:    "nrc.no",
-	}
-	if len(idps) == 0 {
-		_, err := idpStore.Create(context.Background(), idp, store.IdentityProviderCreateOptions{})
-		if err != nil {
-			return err
-		}
-	} else {
-		idp.ID = idps[0].ID
-		_, err := idpStore.Update(context.Background(), idp, store.IdentityProviderUpdateOptions{})
-		if err != nil {
-			return err
-		}
-	}
-
 	return nil
+}
 
+func parseHydraClients() (HydraClients, error) {
+	jsonBytes, err := os.ReadFile(path.Join(HydraCredsDir, "clients.json"))
+	if err != nil {
+		return HydraClients{}, err
+	}
+	var clients HydraClients
+	if err := json.Unmarshal(jsonBytes, &clients); err != nil {
+		return HydraClients{}, err
+	}
+	return clients, nil
 }
 
 func init() {

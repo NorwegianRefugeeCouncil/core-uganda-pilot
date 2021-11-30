@@ -9,7 +9,7 @@ export default function useLoadedAuthRequest(
     AuthRequestInstance: typeof AuthRequest,
     browser: Browser
 ): AuthRequest | null {
-    const [request, setRequest] = React.useState<AuthRequest | null>(null);
+    const [authRequest, setAuthRequest] = React.useState<AuthRequest | null>(null);
     const scopeString = React.useMemo(() => config.scopes?.join(','), [config.scopes]);
     const extraParamsString = React.useMemo(
         () => JSON.stringify(config.extraParams || {}),
@@ -22,7 +22,7 @@ export default function useLoadedAuthRequest(
                 const request = new AuthRequestInstance(config, browser);
                 request.makeAuthUrlAsync(discovery).then(() => {
                     if (isMounted) {
-                        setRequest(request);
+                        setAuthRequest(request);
                     }
                 });
             }
@@ -44,7 +44,7 @@ export default function useLoadedAuthRequest(
             extraParamsString,
         ]
     );
-    return request;
+    return authRequest;
 }
 
 

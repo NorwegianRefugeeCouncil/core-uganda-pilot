@@ -24,6 +24,8 @@ func (c *Config) makeCore() error {
 		database: c.coreDbName,
 	})
 
+	const proxyUrl = "https://localhost:8443"
+
 	coreConfig := map[string]interface{}{
 		"serve": map[string]interface{}{
 			"admin": map[string]interface{}{
@@ -41,7 +43,7 @@ func (c *Config) makeCore() error {
 					},
 				},
 				"urls": map[string]interface{}{
-					"self": "https://localhost:8443",
+					"self": proxyUrl,
 				},
 			},
 			"public": map[string]interface{}{
@@ -59,7 +61,7 @@ func (c *Config) makeCore() error {
 					},
 				},
 				"urls": map[string]interface{}{
-					"self": "https://localhost:8443",
+					"self": proxyUrl,
 				},
 			},
 			"login": map[string]interface{}{
@@ -77,12 +79,12 @@ func (c *Config) makeCore() error {
 					},
 				},
 				"urls": map[string]interface{}{
-					"self": "https://localhost:8443",
+					"self": proxyUrl,
 				},
 			},
 			"auth": map[string]interface{}{
 				"urls": map[string]interface{}{
-					"self": "https://localhost:8443",
+					"self": proxyUrl,
 				},
 			},
 		},

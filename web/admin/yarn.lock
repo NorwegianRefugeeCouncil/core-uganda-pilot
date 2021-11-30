@@ -1918,11 +1918,6 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-12.20.36.tgz#5bd54d2383e714fc4d2c258107ee70c5bad86d0c"
   integrity sha512-+5haRZ9uzI7rYqzDznXgkuacqb6LJhAti8mzZKWxIXn/WEtvB+GHVJ7AuMwcN1HMvXOSJcrvA6PPoYHYOYYebA==
 
-"@types/node@^14.17.20":
-  version "14.17.33"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.17.33.tgz#011ee28e38dc7aee1be032ceadf6332a0ab15b12"
-  integrity sha512-noEeJ06zbn3lOh4gqe2v7NMGS33jrulfNqYFDjjEbhpDEHR5VTxgYNQSBqBlJIsBJW3uEYDgD6kvMnrrhGzq8g==
-
 "@types/normalize-package-data@^2.4.0":
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/@types/normalize-package-data/-/normalize-package-data-2.4.1.tgz#d3357479a0fdfdd5907fe67e17e0a85c906e1301"
@@ -3838,18 +3833,11 @@ copy-descriptor@^0.1.0:
   version "0.1.0"
   dependencies:
     axios "^0.23.0"
-    core-js-api-client "file:../../../../../../../../.cache/yarn/v6/npm-core-auth-0.1.0-7bcf6bc6-b8ad-44a3-8b0e-30be9e37b70c-1637659362543/node_modules/app/client"
     oauth-pkce "^0.0.6"
     qs "^6.10.1"
     react-scripts "4.0.3"
     typescript "^4.5.2"
     web-vitals "^1.0.1"
-
-"core-js-api-client@file:../app/client":
-  version "0.0.1"
-  dependencies:
-    "@types/node" "^14.17.20"
-    axios "^0.23.0"
 
 core-js-compat@^3.18.0, core-js-compat@^3.19.0, core-js-compat@^3.6.2:
   version "3.19.1"

@@ -22,7 +22,7 @@ import {
 } from "./types/types";
 import {clientResponse} from "./utils/responses";
 
-export default class client implements ClientDefinition {
+export default class Client implements ClientDefinition {
     constructor(
         public readonly address = 'https://core.dev:8443',
         public readonly axiosInstance: AxiosInstance = axios.create()) {
@@ -99,7 +99,5 @@ export default class client implements ClientDefinition {
     }
 
 }
-
-export const defaultClient: ClientDefinition = new client()
 
 export * from './types/types'

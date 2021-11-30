@@ -1,7 +1,5 @@
 import {Fragment, useCallback, useEffect, useMemo, useState} from "react";
 import Client from "../client/client";
-import {useParams} from "react-router-dom";
-import {OrganizationRoute} from "../components/organizations/OrganizationPortal";
 import classNames from "classnames";
 import {Path, UseFormReturn} from "react-hook-form";
 import {IdentityProvider, Organization} from "../types/types";
@@ -12,9 +10,8 @@ export function useApiClient(): Client {
     }, [])
 }
 
-export function usePathOrganization(): Organization | undefined {
+export function useOrganization(organizationId: string): Organization | undefined {
     const apiClient = useApiClient()
-    const {organizationId} = useParams<OrganizationRoute>()
     const [organization, setOrganization] = useState<Organization>()
     useEffect(() => {
         if (!organizationId) {
@@ -28,6 +25,7 @@ export function usePathOrganization(): Organization | undefined {
     }, [apiClient, organizationId])
     return organization
 }
+
 
 export function useIdentityProviders(organizationId: string): IdentityProvider[] {
     const apiClient = useApiClient()

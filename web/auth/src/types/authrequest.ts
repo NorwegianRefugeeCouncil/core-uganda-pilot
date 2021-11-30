@@ -60,8 +60,7 @@ export class AuthRequest {
         }
 
         if (result?.type !== WebBrowserResultType.SUCCESS) {
-            const ret = {type: result?.type} as AuthSessionResult
-            return ret
+            return {type: result?.type} as AuthSessionResult
         }
 
         if ("url" in result) {

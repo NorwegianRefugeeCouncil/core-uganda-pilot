@@ -1,13 +1,14 @@
 import {
     AccessTokenRequestConfig,
     DiscoveryDocument,
-    GrantType, RefreshTokenRequestConfig,
+    GrantType,
+    RefreshTokenRequestConfig,
     ResponseErrorConfig,
     ServerTokenResponseConfig,
     TokenError,
     TokenRequestConfig
 } from "./types";
-import axios, {AxiosRequestHeaders, AxiosResponse} from "axios";
+import axios, {AxiosRequestHeaders} from "axios";
 import {TokenResponse} from "./response";
 
 class Request<T, B> {
@@ -49,19 +50,18 @@ class TokenRequest<T extends TokenRequestConfig> extends Request<T, TokenRespons
 
         console.log('PERFORM ASYNC', axios)
 
-        const response = await axios({
-            method: "POST",
-            headers: this.getHeaders(),
-            data: this.getQueryBody().toString(),
-            url: discovery.token_endpoint,
-        }).catch(err => {
-            if (axios.isAxiosError(err)) {
-                if (err.response && err.response.data && "error" in (err.response.data as ResponseErrorConfig)) {
-                    throw new TokenError(err.response.data as ResponseErrorConfig);
+        const response = await axios.post<ServerTokenResponseConfig>(
+            discovery.token_endpoint,
+            this.getQueryBody().toString(),
+            {headers: this.getHeaders()})
+            .catch(err => {
+                if (axios.isAxiosError(err)) {
+                    if (err.response && err.response.data && "error" in (err.response.data as ResponseErrorConfig)) {
+                        throw new TokenError(err.response.data as ResponseErrorConfig);
+                    }
                 }
-            }
-            throw err
-        }) as AxiosResponse<ServerTokenResponseConfig>;
+                throw err
+            });
 
         return new TokenResponse({
             accessToken: response.data.access_token,

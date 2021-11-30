@@ -158,7 +158,7 @@ export default class Browser {
         if (url.searchParams.has('state') && typeof url.searchParams.get('state') === 'string') {
             return url.searchParams.get('state')!;
         }
-        return await this.generateStateAsync();
+        return this.generateStateAsync();
     }
 
 }

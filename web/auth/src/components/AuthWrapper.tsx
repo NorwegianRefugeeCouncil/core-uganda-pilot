@@ -7,8 +7,6 @@ import useAuthRequest from "../hooks/useAuthRequest";
 import {AuthWrapperProps, CodeChallengeMethod, ResponseType} from "../types/types";
 import {TokenResponse} from "../types/response";
 
-// TODO: https://betterprogramming.pub/building-secure-login-flow-with-oauth-2-openid-in-react-apps-ce6e8e29630a
-
 const AuthWrapper: React.FC<AuthWrapperProps> = (
     {
         children,
@@ -16,15 +14,13 @@ const AuthWrapper: React.FC<AuthWrapperProps> = (
         clientId,
         axiosInstance = axios.create(),
         issuer,
-        redirectUriSuffix='/',
+        redirectUri,
         customLoginComponent,
         handleLoginErr = console.log,
     }
 ) => {
     const browser = new Browser();
     browser.maybeCompleteAuthSession();
-
-    const redirectUri = `${window.location.protocol}//${window.location.host}/${redirectUriSuffix}`;
 
     const discovery = useDiscovery(issuer)
 

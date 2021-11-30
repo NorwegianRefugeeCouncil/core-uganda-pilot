@@ -6,4 +6,4 @@ postsubmits:
       containers:
         - image: node
           command: [ "bash", "-c" ]
-          args: [ "cd web/auth && yarn install --frozen-lockfile && yarn test"]
+          args: [ "cd web/auth && yarn install --frozen-lockfile && yarn test --all"]

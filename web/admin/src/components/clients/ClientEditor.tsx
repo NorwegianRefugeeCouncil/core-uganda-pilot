@@ -18,7 +18,7 @@ export type FormData = {
     bla: string[]
 }
 
-export type RouteParams = {
+export type ClientEditorRoute = {
     clientId?: string
 }
 
@@ -28,7 +28,7 @@ export const ClientEditor: FC = props => {
     const {register, handleSubmit, formState: {isSubmitSuccessful}} = form
     const {fieldClasses, fieldErrors} = useFormValidation(true, form)
     const apiClient = useApiClient()
-    const {clientId} = useParams<RouteParams>()
+    const {clientId} = useParams<ClientEditorRoute>()
     const [redirect, setRedirect] = useState("")
     const [clientSecret, setClientSecret] = useState("")
 

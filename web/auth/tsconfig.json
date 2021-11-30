@@ -9,13 +9,9 @@
       "ESNext",
       "ES2015"
     ],
-    "typeRoots": [
-      "./node_modules/@types",
-      "./src/types/*.ts"
-    ],
     "declaration": true,
     "outDir": "lib",
-    "jsx": "react-jsx",
+    "jsx": "react",
     "allowJs": true,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,

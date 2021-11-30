@@ -1,21 +1,9 @@
 import React from 'react';
 import {act, render} from '@testing-library/react';
 import AuthWrapper from "../AuthWrapper";
-import axios from 'axios'
 import {ErrorBoundary} from "../ErrorBoundary";
-import {TokenResponse} from "../../types/response";
-import {TokenType} from "../../types/types";
 
-// import {maybeCompleteAuthSession} from "../../types/browser";
 import exchangeCodeAsync from "../../utils/exchangeCodeAsync";
-
-// jest.mock('../../types/response', ()=>({
-//     TokenResponse: jest.fn(()=>({
-//         ...jest.requireActual('../../types/response'),
-//         shouldRefresh: jest.fn(()=>true),
-//         isTokenFresh: jest.fn(()=>true),
-//     }))
-// }));
 
 jest.mock('axios', () => ({
     ...jest.requireActual('axios'),
@@ -23,14 +11,14 @@ jest.mock('axios', () => ({
         interceptors: {
             request: {
                 use: jest.fn(),
-                eject: () => {
+                eject() {
                 }
             }
         }
     }))
 }));
 
-jest.mock('../../types/browser', ()=>({
+jest.mock('../../types/browser', () => ({
     maybeCompleteAuthSession: jest.fn()
 }))
 
@@ -57,16 +45,12 @@ jest.mock('../../hooks/useDiscovery', () => {
         return Symbol('discovery')
     })
 })
-// const tokenResponse = new TokenResponse({
-//     accessToken: Symbol('accessToken'),
-//     tokenType: TokenType.Bearer
-// });
+
 jest.mock('../../utils/exchangeCodeAsync', () => {
     return jest.fn()
-        // .mockResolvedValue({})
         .mockResolvedValue({
             ...jest.requireActual('../../types/response'),
-            shouldRefresh: jest.fn(()=>{
+            shouldRefresh: jest.fn(() => {
                 return false;
             }),
             refreshAsync: jest.fn()
@@ -77,11 +61,11 @@ jest.mock('../../utils/exchangeCodeAsync', () => {
                 })
                 .mockRejectedValue(undefined),
         })
-        // .mockRejectedValue({error: 'error'})
+    // .mockRejectedValue({error: 'error'})
 })
 
 describe.skip('Components: AuthWrapper', () => {
-    beforeEach(()=>{
+    beforeEach(() => {
         maybeCompleteAuthSession.mockClear();
         exchangeCodeAsync.mockClear();
     })
@@ -111,8 +95,6 @@ describe.skip('Components: AuthWrapper', () => {
     })
 
     it('should render the app content when logged in', () => {
-        // console.log(TokenResponse());
-
         const {getByText, container, debug} = render(
             <ErrorBoundary>
                 <AuthWrapper clientId={'clientId'} issuer={'issuer'}>

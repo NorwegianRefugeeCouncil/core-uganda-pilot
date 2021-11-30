@@ -35,17 +35,19 @@ func (c *Config) makeAdminFrontend() error {
 
 	c.oidcConfig.Clients = append(c.oidcConfig.Clients, ClientConfig{
 		ClientId:                c.coreAdminFrontendClientId,
-		RedirectUris:            []string{"http://localhost:3001/app"},
+		RedirectUris:            []string{AdminURI},
 		GrantTypes:              []string{"authorization_code", "refresh_token"},
 		TokenEndpointAuthMethod: "none",
-		Scope:                   "openid email profile",
+		Scope:                   AdminScope,
 		ResponseTypes:           []string{"code"},
 	})
 
 	// env file
 	sb := &strings.Builder{}
-	sb.WriteString(fmt.Sprintf("REACT_APP_ISSUER=%s\n", OidcIssuer))
-	sb.WriteString(fmt.Sprintf("REACT_APP_CLIENT_ID=%s\n", c.coreAdminFrontendClientId))
+	sb.WriteString(fmt.Sprintf("REACT_APP_OIDC_ISSUER=%s\n", OidcIssuer))
+	sb.WriteString(fmt.Sprintf("REACT_APP_OAUTH_SCOPE=%s\n", AdminScope))
+	sb.WriteString(fmt.Sprintf("REACT_APP_OAUTH_REDIRECT_URI=%s\n", AdminURI))
+	sb.WriteString(fmt.Sprintf("REACT_APP_OAUTH_CLIENT_ID=%s\n", c.coreAdminFrontendClientId))
 	envPath := path.Join(c.rootDir, "web", "admin", ".env")
 	fmt.Println(envPath)
 	if err := ioutil.WriteFile(envPath, []byte(sb.String()), os.ModePerm); err != nil {

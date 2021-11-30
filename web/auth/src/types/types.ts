@@ -231,7 +231,7 @@ export type AuthSessionResult =
 export enum TokenType {
     Bearer = 'bearer',
     Mac = 'mac'
-};
+}
 
 /**
  * A hint about the type of the token submitted for revocation.
@@ -417,8 +417,8 @@ export type LoginComponentProps = {
 export type AuthWrapperProps = {
     clientId: string,
     issuer: string,
-    scopes?: string[],
-    redirectUriSuffix?: string,
+    scopes: string[],
+    redirectUri: string,
     customLoginComponent?: React.FC<LoginComponentProps>
     handleLoginErr?: (err: any) => void,
     axiosInstance?: AxiosInstance

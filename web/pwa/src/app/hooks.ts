@@ -9,7 +9,7 @@ import {formGlobalSelectors, selectFormOrSubFormById} from "../reducers/form";
 import {Database, FormDefinition, Record} from "../types/types";
 import client, {ClientDefinition} from "core-js-api-client";
 
-// Use throughout your hooks instead of plain `useDispatch` and `useSelector`
+// Use throughout your app instead of plain `useDispatch` and `useSelector`
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 

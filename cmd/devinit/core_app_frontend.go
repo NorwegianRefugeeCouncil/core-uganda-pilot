@@ -31,30 +31,34 @@ func (c *Config) makeAppFrontend() error {
 	}
 
 	c.coreAppFrontendClientId = "core-app-frontend"
+	const scope = "openid profile email offline_access"
 
 	// env file
 	sb := &strings.Builder{}
-	sb.WriteString(fmt.Sprintf("REACT_APP_ISSUER=%s\n", HydraHost))
-	sb.WriteString(fmt.Sprintf("REACT_APP_CLIENT_ID=%s\n", c.coreAppFrontendClientId))
+	sb.WriteString(fmt.Sprintf("REACT_APP_OIDC_ISSUER=%s\n", HydraHost))
+	sb.WriteString(fmt.Sprintf("REACT_APP_OAUTH_SCOPE=%s\n", scope))
+	sb.WriteString(fmt.Sprintf("REACT_APP_OAUTH_REDIRECT_URI=%s\n", AdminURI))
+	sb.WriteString(fmt.Sprintf("REACT_APP_OAUTH_CLIENT_ID=%s\n", c.coreAppFrontendClientId))
 	sb.WriteString(fmt.Sprintf("REACT_APP_SERVER_URL=https://localhost:8443\n"))
+
 	envPath := path.Join(c.rootDir, "web", "pwa", ".env")
 	fmt.Println(envPath)
 	if err := ioutil.WriteFile(envPath, []byte(sb.String()), os.ModePerm); err != nil {
 		return err
 	}
 
+
 	c.hydraClients = append(c.hydraClients, ClientConfig{
 		ClientId: c.coreAppFrontendClientId,
 		RedirectUris: []string{
-			fmt.Sprintf("%s/app", CoreHost),
-			fmt.Sprintf("http://localhost:3000/app"),
+			fmt.Sprintf(PwaURI),
 		},
 		GrantTypes: []string{
 			"authorization_code",
 			"refresh_token",
 		},
 		TokenEndpointAuthMethod: "none",
-		Scope:                   "openid profile email offline_access",
+		Scope:                   scope,
 		ResponseTypes:           []string{"code", "code id_token token"},
 	})
 

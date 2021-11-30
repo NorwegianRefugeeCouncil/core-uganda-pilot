@@ -14,7 +14,8 @@ describe('utils/helpers', () => {
 
     describe('handler', () => {
         it('should call getPopup', () => {
-            handler(({type}) => {
+            handler(() => {
+                //noop
             }, browser)
             expect(browser.getPopup).toHaveBeenCalled()
         })

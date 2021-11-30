@@ -1,5 +1,5 @@
 import axios, {AxiosError, AxiosInstance, Method} from "axios";
-import {Client} from '../types/types';
+import {Client as ApiClient} from '../types/types';
 import {clientResponse} from "../utils/responses";
 import {
     IdentityProviderCreateRequest,
@@ -26,7 +26,7 @@ import {
 } from "../types/restTypes";
 import {RequestOptions, Response} from "../types/utils";
 
-export default class client implements Client {
+export default class Client implements ApiClient {
     private apiDomain = 'apis/admin.nrc.no';
 
     public constructor(
