@@ -3792,7 +3792,6 @@ copy-descriptor@^0.1.0:
   version "0.1.0"
   dependencies:
     axios "^0.23.0"
-    core-js-api-client "file:../../../../../../../../.cache/yarn/v6/npm-core-auth-0.1.0-f280ae71-4432-4a18-a502-38b7bf61feba-1637860060471/node_modules/app/client"
     oauth-pkce "^0.0.6"
     qs "^6.10.1"
     react-scripts "4.0.3"

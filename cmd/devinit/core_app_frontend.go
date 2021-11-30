@@ -37,7 +37,7 @@ func (c *Config) makeAppFrontend() error {
 	sb := &strings.Builder{}
 	sb.WriteString(fmt.Sprintf("REACT_APP_OIDC_ISSUER=%s\n", HydraHost))
 	sb.WriteString(fmt.Sprintf("REACT_APP_OAUTH_SCOPE=%s\n", scope))
-	sb.WriteString(fmt.Sprintf("REACT_APP_OAUTH_REDIRECT_URI=%s\n", AdminURI))
+	sb.WriteString(fmt.Sprintf("REACT_APP_OAUTH_REDIRECT_URI=%s\n", PwaURI))
 	sb.WriteString(fmt.Sprintf("REACT_APP_OAUTH_CLIENT_ID=%s\n", c.coreAppFrontendClientId))
 	sb.WriteString(fmt.Sprintf("REACT_APP_SERVER_URL=https://localhost:8443\n"))
 
