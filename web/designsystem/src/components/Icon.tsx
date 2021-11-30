@@ -1,190 +1,146 @@
 import React from 'react';
 import {IconName, IconProps} from "../types/icons";
-import {extendTheme, Icon as IconNB, NativeBaseProvider} from "native-base";
-import ActivityCamp from './icons/ActivityCamp';
-import ActivityEducation from './icons/ActivityEducation';
-import ActivityFood from './icons/ActivityFood';
-import ActivityIcla from './icons/ActivityIcla';
-import ActivityShelter from './icons/ActivityShelter';
-import ActivityWash from './icons/ActivityWash';
-import Attachment from './icons/Attachment';
-import Beneficiary from "./icons/Beneficiary";
-import Calender from "./icons/Calender";
-import Call from "./icons/Call";
-import Case from "./icons/Case";
-import Delete from "./icons/Delete";
-import Edit from "./icons/Edit";
-import Email from "./icons/Email";
-import FaceError from "./icons/FaceError";
-import FaceGeneral from "./icons/FaceGeneral";
-import FaceSuccess from "./icons/FaceSuccess";
-import Female from "./icons/Female";
-import Filter from "./icons/Filter";
-import Home from "./icons/Home";
-import Image from "./icons/Image";
-import Lock from "./icons/Lock";
-import Male from "./icons/Male";
-import Menu from "./icons/Menu";
-import More from "./icons/More";
-import Next from "./icons/Next";
-import Notification from "./icons/Notification";
-import Plus from "./icons/Plus";
-import Print from "./icons/Print";
-import Protection from "./icons/Protection";
-import Registration from "./icons/Registration";
-import Reload from "./icons/Reload";
-import Save from "./icons/Save";
-import Search from "./icons/Search";
-import Setting from "./icons/Setting";
-import Share from "./icons/Share";
-import Sync from "./icons/Sync";
-import Thumbnail from "./icons/Thumbnail";
-import Unlock from "./icons/Unlock";
-import Upload from "./icons/Upload";
-import UserAdd from "./icons/UserAdd";
-import UserDelete from "./icons/UserDelete";
-import UserGroup from "./icons/UserGroup";
-import UserGroupAdd from "./icons/UserGroupAdd";
-import Whatsapp from "./icons/Whatsapp";
+import {Icon as IconNB, NativeBaseProvider} from "native-base";
+import * as icons from './icons';
 import {Path} from "react-native-svg";
 
 const Icon = ({name, variant}: IconProps) => {
     let iconComponent;
     switch (name) {
         case IconName.ATTACHMENT:
-            iconComponent = Attachment;
+            iconComponent = icons.Attachment;
             break;
         case IconName.BENEFICIARY:
-            iconComponent = Beneficiary;
+            iconComponent = icons.Beneficiary;
             break;
         case IconName.CALENDAR:
-            iconComponent = Calender;
+            iconComponent = icons.Calender;
             break;
         case IconName.CALL:
-            iconComponent = Call;
+            iconComponent = icons.Call;
             break;
         case IconName.CASE:
-            iconComponent = Case;
+            iconComponent = icons.Case;
             break;
         case IconName.DELETE:
-            iconComponent = Delete;
+            iconComponent = icons.Delete;
             break;
         case IconName.EDIT:
-            iconComponent = Edit;
+            iconComponent = icons.Edit;
             break;
         case IconName.EMAIL:
-            iconComponent = Email;
+            iconComponent = icons.Email;
             break;
         case IconName.FACE_ERROR:
-            iconComponent = FaceError;
+            iconComponent = icons.FaceError;
             break;
         case IconName.FACE_GENERAL:
-            iconComponent = FaceGeneral;
+            iconComponent = icons.FaceGeneral;
             break;
         case IconName.FACE_SUCCESS:
-            iconComponent = FaceSuccess;
+            iconComponent = icons.FaceSuccess;
             break;
         case IconName.FEMALE:
-            iconComponent = Female;
+            iconComponent = icons.Female;
             break;
         case IconName.FILTER:
-            iconComponent = Filter;
+            iconComponent = icons.Filter;
             break;
         case IconName.HOME:
-            iconComponent = Home;
+            iconComponent = icons.Home;
             break;
         case IconName.IMAGE:
-            iconComponent = Image;
+            iconComponent = icons.Image;
             break;
         case IconName.LOCK:
-            iconComponent = Lock;
+            iconComponent = icons.Lock;
             break;
         case IconName.MALE:
-            iconComponent = Male;
+            iconComponent = icons.Male;
             break;
         case IconName.MENU:
-            iconComponent = Menu;
+            iconComponent = icons.Menu;
             break;
         case IconName.MORE:
-            iconComponent = More;
+            iconComponent = icons.More;
             break;
         case IconName.NEXT:
-            iconComponent = Next;
+            iconComponent = icons.Next;
             break;
         case IconName.NOTIFICATION:
-            iconComponent = Notification;
+            iconComponent = icons.Notification;
             break;
         case IconName.PLUS:
-            iconComponent = Plus;
+            iconComponent = icons.Plus;
             break;
         case IconName.PRINT:
-            iconComponent = Print;
+            iconComponent = icons.Print;
             break;
         case IconName.PROTECTION:
-            iconComponent = Protection;
+            iconComponent = icons.Protection;
             break;
         case IconName.REGISTRATION:
-            iconComponent = Registration;
+            iconComponent = icons.Registration;
             break;
         case IconName.RELOAD:
-            iconComponent = Reload;
+            iconComponent = icons.Reload;
             break;
         case IconName.SAVE:
-            iconComponent = Save;
+            iconComponent = icons.Save;
             break;
         case IconName.SEARCH:
-            iconComponent = Search;
+            iconComponent = icons.Search;
             break;
         case IconName.SETTING:
-            iconComponent = Setting;
+            iconComponent = icons.Setting;
             break;
         case IconName.SHARE:
-            iconComponent = Share;
+            iconComponent = icons.Share;
             break;
         case IconName.SYNC:
-            iconComponent = Sync;
+            iconComponent = icons.Sync;
             break;
         case IconName.THUMBNAIL:
-            iconComponent = Thumbnail;
+            iconComponent = icons.Thumbnail;
             break;
         case IconName.UNLOCK:
-            iconComponent = Unlock;
+            iconComponent = icons.Unlock;
             break;
         case IconName.UPLOAD:
-            iconComponent = Upload;
+            iconComponent = icons.Upload;
             break;
         case IconName.USER_ADD:
-            iconComponent = UserAdd;
+            iconComponent = icons.UserAdd;
             break;
         case IconName.USER_DELETE:
-            iconComponent = UserDelete;
+            iconComponent = icons.UserDelete;
             break;
         case IconName.USER_GROUP:
-            iconComponent = UserGroup;
+            iconComponent = icons.UserGroup;
             break;
         case IconName.USER_GROUP_ADD:
-            iconComponent = UserGroupAdd;
+            iconComponent = icons.UserGroupAdd;
             break;
         case IconName.WHATSAPP:
-            iconComponent = Whatsapp;
+            iconComponent = icons.Whatsapp;
             break;
         case IconName.ACTIVITY_CAMP:
-            iconComponent = ActivityCamp;
+            iconComponent = icons.ActivityCamp;
             break;
         case IconName.ACTIVITY_EDUCATION:
-            iconComponent = ActivityEducation;
+            iconComponent = icons.ActivityEducation;
             break;
         case IconName.ACTIVITY_FOOD:
-            iconComponent = ActivityFood;
+            iconComponent = icons.ActivityFood;
             break;
         case IconName.ACTIVITY_ICLA:
-            iconComponent = ActivityIcla;
+            iconComponent = icons.ActivityIcla;
             break;
         case IconName.ACTIVITY_SHELTER:
-            iconComponent = ActivityShelter;
+            iconComponent = icons.ActivityShelter;
             break;
         case IconName.ACTIVITY_WASH:
-            iconComponent = ActivityWash;
+            iconComponent = icons.ActivityWash;
             break;
         default:
             iconComponent = () => {
