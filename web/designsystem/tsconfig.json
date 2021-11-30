@@ -24,8 +24,7 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
-    "isolatedModules": true,
-//    "noEmit": true
+    "isolatedModules": true
   },
   "include": [
     "src/**/*"

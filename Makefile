@@ -61,19 +61,15 @@ build-pwa: build-client build-auth
 .PHONY: build-all
 build-all: build-frontend build-pwa build-admin
 
-.PHONY: build-frontend
-build-frontend:
-	@./scripts/build-frontend.sh
-
 .PHONY: build-storybook
-build-storybook:
+build-storybook: build-design-system
 	@./scripts/build-storybook.sh
 
 .PHONY: serve
 serve:
 	@./scripts/serve.sh
 
-.PHONY: frontend
+.PHONY: serve-frontend
 frontend:
 	@./scripts/frontend.sh
 

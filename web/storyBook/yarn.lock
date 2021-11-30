@@ -6044,7 +6044,7 @@ copy-to-clipboard@^3.0.8:
   dependencies:
     toggle-selection "^1.0.6"
 
-core-design-system@../designsystem:
+"core-design-system@file:../designsystem":
   version "0.1.0"
   dependencies:
     native-base "~3.2.2"
