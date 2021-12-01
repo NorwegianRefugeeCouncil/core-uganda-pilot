@@ -1,9 +1,16 @@
 postsubmits:
-  - name: pull-core-web-auth-test
-    run_if_changed: "web/auth/*"
+  - name: pull-core-web-frontend-test
+    run_if_changed: "^web/app/frontend|^web/designsystem|^web/auth|^web/client"
     decorate: true
     spec:
       containers:
         - image: node
           command: [ "bash", "-c" ]
-          args: [ "cd web/auth && yarn install --frozen-lockfile && yarn test --all"]
+          args:
+            - >
+              ./scripts/build-client.sh &&
+              ./scripts/build-auth.sh &&
+              ./scripts/build-design-system.sh &&
+              ./scripts/build-frontend.sh &&
+              cd web/app/frontend &&
+              yarn test
