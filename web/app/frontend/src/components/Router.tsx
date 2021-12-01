@@ -4,7 +4,6 @@ import React, {useReducer} from 'react';
 import NavigationBar from './NavigationBar';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import FormsScreen from './screens/FormsScreen';
 import routes from '../constants/routes';
 import {NavigationTheme} from '../constants/theme';
 import DesignSystemDemoScreen from "./screens/DesignSystemDemoScreen";
@@ -13,6 +12,7 @@ import AddRecordScreen from "./screens/AddRecordScreen";
 import ViewRecordScreen from "./screens/ViewRecordScreen";
 import {initialRecordsState, recordsReducer, RecordsStoreProps} from "../reducers/recordsReducers";
 import Constants from "expo-constants";
+import { FormsScreenContainer } from './screen_containers/FormsScreenContainer';
 
 export type ScreenProps = {
     navigation: any,
@@ -51,7 +51,7 @@ export default function Router() {
                     >
                         <Stack.Screen
                             name={routes.forms.name}
-                            component={FormsScreen}
+                            component={FormsScreenContainer}
                             options={{
                                 title: routes.forms.title,
 
