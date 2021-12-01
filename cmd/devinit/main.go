@@ -242,6 +242,7 @@ func createConfig() (*Config, error) {
 		config.makeCore,
 		config.makePostgresInit,
 		config.makePostgres,
+		config.makeHydraInit,
 	}
 
 	for _, f := range funcs {
