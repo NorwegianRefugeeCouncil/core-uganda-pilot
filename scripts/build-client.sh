@@ -6,4 +6,4 @@ ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 set -e
 
 echo ">> Building web/app/client"
-(cd "${ROOT_DIR}/web/app/client" && yarn install && tsc)
+(cd "${ROOT_DIR}/web/app/client" && yarn install && yarn build)
