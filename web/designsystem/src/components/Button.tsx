@@ -1,20 +1,14 @@
 import React from 'react';
 import {Button as ButtonRN} from 'react-native';
+import {ButtonProps, ButtonVariant} from "../types/types";
 
-type ButtonProps = {
-    onPress: () => void,
-    children: any,
-    variant: 'primary' | 'secondary'
-    disabled: boolean,
-    text: string
-}
 
 const Button: React.FC<ButtonProps> = (
     {
         onPress,
-        variant,
-        disabled,
-        text
+        variant = ButtonVariant.PRIMARY,
+        disabled = false,
+        text= ''
     }
 ) => {
 
@@ -29,9 +23,7 @@ const Button: React.FC<ButtonProps> = (
             color={backgroundColor[variant]}
             title={text}
             disabled={disabled}
-            style={{borderColor: 'red'}}
-        >
-        </ButtonRN>
+        />
     );
 }
 

@@ -7,4 +7,3 @@ set -e
 
 echo ">> Building web/app/frontend"
 (cd "${ROOT_DIR}/web/app/frontend" && yarn install)
-
