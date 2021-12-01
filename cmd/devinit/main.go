@@ -66,7 +66,22 @@ var (
 	HydraHost = ""
 )
 
+func initCredsDir() error {
+	credsDir := path.Join(WorkDir, "creds")
+	dirExists, err := files.DirectoryExists(credsDir)
+	if err != nil {
+		return err
+	}
+	if !dirExists {
+		if err := os.MkdirAll(credsDir, os.ModePerm); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func getPetName() (string, error) {
+
 	petNameFile := path.Join(WorkDir, "creds", "pet")
 	petNameExists, err := files.FileExists(petNameFile)
 	if err != nil {
@@ -251,6 +266,10 @@ func init() {
 		panic(err)
 	}
 	WorkDir = wd
+
+	if err := initCredsDir(); err != nil {
+		panic(err)
+	}
 
 	petName, err := getPetName()
 	if err != nil {
