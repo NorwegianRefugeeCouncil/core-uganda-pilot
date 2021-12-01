@@ -4,6 +4,7 @@
   "main": "./lib/client.js",
   "types": "./lib/client.d.ts",
   "scripts": {
+    "build": "tsc --build tsconfig.build.json",
     "test": "mocha -r ts-node/register src/client.test.ts"
   },
   "dependencies": {
