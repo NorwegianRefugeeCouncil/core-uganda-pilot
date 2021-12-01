@@ -14,13 +14,10 @@ export type StackParamList = {
 type ReducerProps = {
     state: RecordsStoreProps;
     dispatch: React.Dispatch<RecordsAction>;
-};
+}
 
-export type FormsScreenContainerProps = StackScreenProps<StackParamList, "forms">;
-export type RecordsScreenContainerProps = StackScreenProps<StackParamList, "records"> &
-    ReducerProps;
-export type AddRecordScreenContainerProps = StackScreenProps<StackParamList, "addRecord"> &
-    ReducerProps;
-export type ViewRecordScreenContainerProps = StackScreenProps<StackParamList, "viewRecord"> &
-    ReducerProps;
-export type DesignSystemScreenProps = StackScreenProps<StackParamList, "designSystem">;
+export type FormsScreenContainerProps = StackScreenProps<StackParamList, 'forms'>;
+export type RecordsScreenContainerProps = StackScreenProps<StackParamList, 'records'> & ReducerProps;
+export type AddRecordScreenContainerProps = StackScreenProps<StackParamList, 'addRecord'> & ReducerProps;
+export type ViewRecordScreenContainerProps = StackScreenProps<StackParamList, 'viewRecord'> & ReducerProps
+export type DesignSystemScreenProps = StackScreenProps<StackParamList, 'designSystem'>
