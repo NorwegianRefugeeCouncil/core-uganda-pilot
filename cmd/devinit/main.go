@@ -233,7 +233,6 @@ func createConfig() (*Config, error) {
 		config.makeLogin,
 		config.makeHydra,
 		config.makeCoreApi,
-		config.makeHydraInit,
 		config.makeCoreAdminApi,
 		config.makeAppFrontend,
 		config.makeAdminFrontend,
@@ -243,6 +242,7 @@ func createConfig() (*Config, error) {
 		config.makeCore,
 		config.makePostgresInit,
 		config.makePostgres,
+		config.makeHydraInit,
 	}
 
 	for _, f := range funcs {
