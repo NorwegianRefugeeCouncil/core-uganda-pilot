@@ -2,7 +2,8 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "lib",
-    "noEmit": false
+    "noEmit": false,
+    "rootDir": "src"
   },
   "exclude": [
     "**/*.test.tsx",

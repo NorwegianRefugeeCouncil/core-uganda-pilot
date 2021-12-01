@@ -16,6 +16,7 @@
       "./src/lib/types"
     ],
     "declaration": true,
+    "sourceMap": true,
     "outDir": "lib/esm",
     "jsx": "react",
     "jsxFactory": "React.createElement",
