@@ -233,6 +233,7 @@ func createConfig() (*Config, error) {
 		config.makeLogin,
 		config.makeHydra,
 		config.makeCoreApi,
+		config.makeHydraInit,
 		config.makeCoreAdminApi,
 		config.makeAppFrontend,
 		config.makeAdminFrontend,
