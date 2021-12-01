@@ -8,21 +8,6 @@
     "eject": "node_modules/.bin/expo eject",
     "test": "jest"
   },
-  "jest": {
-    "timers": "fake",
-    "preset": "jest-expo",
-    "transformIgnorePatterns": [
-      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg)"
-    ],
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "**/*.{ts,tsx}",
-      "!**/coverage/**",
-      "!**/node_modules/**",
-      "!**/babel.config.js",
-      "!**/jest.setup.js"
-    ]
-  },
   "dependencies": {
     "@config-plugins/android-jsc-intl": "^0.0.0",
     "@formatjs/intl-datetimeformat": "^4.2.4",
@@ -38,8 +23,8 @@
     "@react-native-picker/picker": "2.1.0",
     "@react-navigation/native": "~6.0.4",
     "@react-navigation/stack": "~6.0.9",
-    "core-design-system": "file:../../designsystem",
-    "core-js-api-client": "file:../client",
+    "core-design-system": "link:../../designsystem",
+    "core-js-api-client": "link:../client",
     "dotenv": "~10.0.0",
     "expo": "^43.0.0",
     "expo-auth-session": "~3.4.2",
@@ -75,6 +60,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
+    "@testing-library/jest-native": "^4.0.4",
+    "@testing-library/react-native": "^8.0.0",
     "@types/lodash": "4.14.176",
     "@types/react": "~17.0.21",
     "@types/react-native": "~0.64.12",

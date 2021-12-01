@@ -1,5 +1,6 @@
 {
   "name": "core-js-api-client",
+  "private": true,
   "version": "0.0.1",
   "main": "./lib/client.js",
   "types": "./lib/client.d.ts",
