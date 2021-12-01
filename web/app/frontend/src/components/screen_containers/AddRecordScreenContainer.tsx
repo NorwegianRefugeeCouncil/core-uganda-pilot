@@ -1,15 +1,18 @@
-import { FormDefinition } from 'core-js-api-client/lib/types/types';
-import { NetworkStateType } from 'expo-network';
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { Platform } from 'react-native';
-import { RECORD_ACTIONS } from '../../reducers/recordsReducers';
-import { AddRecordScreenContainerProps } from '../../types/screens';
-import client from '../../utils/clients';
-import { getEncryptionKey } from '../../utils/getEncryptionKey';
-import { getNetworkState } from '../../utils/getNetworkState';
-import { getEncryptedLocalData, storeEncryptedLocalData } from '../../utils/storage';
-import AddRecordScreen from '../screens/AddRecordScreen';
+import { FormDefinition } from "core-js-api-client";
+import { NetworkStateType } from "expo-network";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { Platform } from "react-native";
+import { RECORD_ACTIONS } from "../../reducers/recordsReducers";
+import { AddRecordScreenContainerProps } from "../../types/screens";
+import client from "../../utils/clients";
+import { getEncryptionKey } from "../../utils/getEncryptionKey";
+import { getNetworkState } from "../../utils/getNetworkState";
+import {
+    getEncryptedLocalData,
+    storeEncryptedLocalData,
+} from "../../utils/storage";
+import AddRecordScreen from "../screens/AddRecordScreen";
 
 export const AddRecordScreenContainer = ({
     route,
@@ -17,7 +20,7 @@ export const AddRecordScreenContainer = ({
 }: AddRecordScreenContainerProps) => {
     const { formId, recordId } = route.params;
 
-    const isWeb = Platform.OS === 'web';
+    const isWeb = Platform.OS === "web";
 
     const [isLoading, setIsLoading] = React.useState(true);
     const [form, setForm] = React.useState<FormDefinition>();
@@ -91,7 +94,9 @@ export const AddRecordScreenContainer = ({
     const onSubmit = (data: any) => {
         handleSubmit(async () => {
             if (isConnected || isWeb) {
-                await client().createRecord({ object: { formId, values: data } });
+                await client().createRecord({
+                    object: { formId, values: data },
+                });
             } else {
                 await onSubmitOffline(data);
             }

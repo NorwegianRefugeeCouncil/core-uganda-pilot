@@ -1,7 +1,7 @@
-import { StackScreenProps } from "@react-navigation/stack";
-import React from "react";
+import {StackScreenProps} from '@react-navigation/stack';
+import React from 'react';
 
-import { RecordsAction, RecordsStoreProps } from "../reducers/recordsReducers";
+import {RecordsAction, RecordsStoreProps} from '../reducers/recordsReducers';
 
 export type StackParamList = {
     forms: undefined;
@@ -13,14 +13,11 @@ export type StackParamList = {
 
 type ReducerProps = {
     state: RecordsStoreProps;
-    dispatch: React.Dispatch<RecordsAction>;
-};
+    dispatch: React.Dispatch<RecordsAction>
+}
 
-export type FormsScreenContainerProps = StackScreenProps<StackParamList, "forms">;
-export type RecordsScreenContainerProps = StackScreenProps<StackParamList, "records"> &
-    ReducerProps;
-export type AddRecordScreenContainerProps = StackScreenProps<StackParamList, "addRecord"> &
-    ReducerProps;
-export type ViewRecordScreenContainerProps = StackScreenProps<StackParamList, "viewRecord"> &
-    ReducerProps;
-export type DesignSystemScreenProps = StackScreenProps<StackParamList, "designSystem">;
+export type FormsScreenContainerProps = StackScreenProps<StackParamList, 'forms'>;
+export type RecordsScreenContainerProps = StackScreenProps<StackParamList, 'records'> & ReducerProps;
+export type AddRecordScreenContainerProps = StackScreenProps<StackParamList, 'addRecord'> & ReducerProps;
+export type ViewRecordScreenContainerProps = StackScreenProps<StackParamList, 'viewRecord'> & ReducerProps
+export type DesignSystemScreenProps = StackScreenProps<StackParamList, 'designSystem'>

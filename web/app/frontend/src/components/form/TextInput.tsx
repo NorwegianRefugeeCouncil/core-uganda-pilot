@@ -4,7 +4,7 @@ import {Text, TextInput as TextInputRNP} from "react-native-paper";
 import {darkTheme} from "../../constants/theme";
 import {InputProps} from "./FormControl";
 
-const TextInput: React.FC<InputProps> = (
+const TextInput = (
     {
         fieldDefinition,
         style,
@@ -17,7 +17,7 @@ const TextInput: React.FC<InputProps> = (
         isDirty,
         isMultiple,
         isQuantity
-    }) => {
+    }: InputProps) => {
 
     return (
         <View style={style}>

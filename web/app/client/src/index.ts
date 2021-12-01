@@ -1,4 +1,4 @@
-import Client from './client'
+import Client from './lib/client'
 
 export default Client
 export * from './lib/types'
