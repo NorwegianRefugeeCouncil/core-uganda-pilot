@@ -22,6 +22,8 @@
         - trust for identifying websites
         - Do the same sort of thing in firefox if you use that
 - Start docker resources `make up`
+- If you are running on MAC
+  - `make proxy-local`
 - Migrate the database `make migrate`
 - Create initial configuration `make bootstrap`
 - Start the server `make serve`
