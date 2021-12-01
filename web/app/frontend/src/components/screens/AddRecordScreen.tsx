@@ -26,10 +26,26 @@ export const AddRecordScreen = ({
     hasLocalData,
     isConnected,
     isLoading,
-}: AddRecordScreenProps) => {
+}: AddRecordScreenProps)=> {
     return (
         <ScrollView contentContainerStyle={[layout.container, layout.body, common.darkBackground]}>
-            <View>
+
+            <View style={[]}>
+                {/* simulate network changes, for testing */}
+                {!isWeb && (
+                    <View style={{display: "flex", flexDirection: "row"}}>
+                        {/*<Switch
+                            value={simulateOffline}
+                            onValueChange={() => {
+                                setSimulateOffline(!simulateOffline)
+                                setIsConnected(simulateOffline)
+                                setShowSnackbar(!simulateOffline)
+                            }}
+                        />*/}
+                        <Text> simulate being offline </Text>
+                    </View>
+                )}
+
                 {/* upload data collected offline */}
                 {hasLocalData && (
                     <View style={{ display: "flex", flexDirection: "column" }}>
@@ -37,9 +53,15 @@ export const AddRecordScreen = ({
                     </View>
                 )}
                 {hasLocalData && isConnected && (
-                    <View style={{ display: "flex", flexDirection: "column" }}>
-                        <Text>Do you want to upload it?</Text>
-                        <Button accessibilityLabel="Submit local data" title="Submit local data" onPress={onSubmit} />
+                    <View style={{display: "flex", flexDirection: "column"}}>
+                        <Text>
+                            Do you want to upload it?
+                        </Text>
+                        <Button
+                            accessibilityLabel="Submit local data"
+                            title="Submit local data"
+                            onPress={onSubmit}
+                        />
                     </View>
                 )}
                 {isLoading ? (
