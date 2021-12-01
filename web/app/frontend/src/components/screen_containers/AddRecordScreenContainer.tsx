@@ -9,7 +9,7 @@ import client from "../../utils/clients";
 import { getEncryptionKey } from "../../utils/getEncryptionKey";
 import { getNetworkState } from "../../utils/getNetworkState";
 import { getEncryptedLocalData, storeEncryptedLocalData } from "../../utils/storage";
-import AddRecordScreen from "../screens/AddRecordScreen";
+import { AddRecordScreen } from "../screens/AddRecordScreen";
 
 export const AddRecordScreenContainer = ({ route, dispatch }: AddRecordScreenContainerProps) => {
     const { formId, recordId } = route.params;
