@@ -23,7 +23,7 @@ import {
 import {clientResponse} from "./utils/responses";
 
 export default class Client implements ClientDefinition {
-    private corev1 = "${this.corev1}"
+    private corev1 = "apis/core.nrc.no/v1"
     constructor(
         public readonly address = 'https://core.dev:8443',
         public readonly axiosInstance: AxiosInstance = axios.create()) {
