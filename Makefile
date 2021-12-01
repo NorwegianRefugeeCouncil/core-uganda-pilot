@@ -148,6 +148,10 @@ spawn: down up _sleep bootstrap build
 tunnels:
 	@./scripts/tunnels.sh
 
+.PHONY: proxy-local
+proxy-local:
+	@./scripts/proxy-local.sh
+
 _sleep:
 	sleep 20
 
