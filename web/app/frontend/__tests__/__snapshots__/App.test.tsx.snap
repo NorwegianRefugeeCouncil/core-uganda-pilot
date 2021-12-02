@@ -1,0 +1,63 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`App renders correctly 1`] = `
+<View
+  collapsable={false}
+  pointerEvents="box-none"
+  style={
+    Object {
+      "flex": 1,
+    }
+  }
+>
+  <View
+    accessibilityRole="button"
+    accessibilityState={
+      Object {
+        "disabled": true,
+      }
+    }
+    accessible={true}
+    focusable={false}
+    nativeBackgroundAndroid={
+      Object {
+        "attribute": "selectableItemBackground",
+        "rippleRadius": undefined,
+        "type": "ThemeAttrAndroid",
+      }
+    }
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      Array [
+        Object {},
+        Object {},
+      ]
+    }
+  >
+    <Text
+      disabled={true}
+      style={
+        Array [
+          Object {
+            "color": "#007AFF",
+            "fontSize": 18,
+            "margin": 8,
+            "textAlign": "center",
+          },
+          Object {
+            "color": "#cdcdcd",
+          },
+        ]
+      }
+    >
+      LOGIN
+    </Text>
+  </View>
+</View>
+`;
