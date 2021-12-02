@@ -31,7 +31,7 @@ type FieldDefinition struct {
 	FieldType FieldType `json:"fieldType"`
 }
 
-// IsKind is a helper method that returns the field type for that field.
+// IsKind is a helper method that checks if the field is of the given FieldKind
 func (f FieldDefinition) IsKind(kind FieldKind) bool {
 	return f.GetKind() == kind
 }
