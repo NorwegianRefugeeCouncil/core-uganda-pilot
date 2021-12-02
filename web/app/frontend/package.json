@@ -71,8 +71,6 @@
         "@typescript-eslint/parser": "^5.5.0",
         "eslint": "^8.3.0",
         "eslint-config-prettier": "^8.3.0",
-        "eslint-config-universe": "^8.0.0",
-        "eslint-plugin-jest": "^25.3.0",
         "eslint-plugin-prettier": "^4.0.0",
         "jest-expo": "^43.0.0",
         "jest-mock": "^27.4.2",
