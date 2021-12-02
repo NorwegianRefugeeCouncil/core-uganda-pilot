@@ -5,29 +5,48 @@ import (
 	"github.com/nrc-no/core/pkg/utils/sets"
 )
 
+// FieldDefinition usually represents a question in a FormDefinition.
+// A FieldDefinition defines the name, description, boundaries of data collection.
 type FieldDefinition struct {
-	ID          string    `json:"id"`
-	Code        string    `json:"code"`
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	Options     []string  `json:"options"`
-	Key         bool      `json:"key"`
-	Required    bool      `json:"required"`
-	FieldType   FieldType `json:"fieldType"`
+	// ID is the ID of the FieldDefinition
+	ID string `json:"id"`
+	// Code is the unique Code of the FieldDefinition within the FormDefinition
+	Code string `json:"code"`
+	// Name is the Name of the FieldDefinition
+	Name string `json:"name"`
+	// Description is a helpful text helping the users to understand the question
+	Description string `json:"description"`
+	// Options TODO: Remove this, put inside of FieldTypeMultiSelect / FieldTypeSelect
+	Options []string `json:"options"`
+	// Key indicates that the FieldDefinition is part of the Unique Keys for the FormDefinition.
+	// When a FormDefinition is created with Key fields, this means that there will be no
+	// two records with the same combination of Key field values.
+	//
+	// For example, if a FormDefinition has 2 key fields, "Year" and "Month", then there could
+	// be no two records with "2021" and "January".
+	Key bool `json:"key"`
+	// Required indicates that the user must enter data for that FieldDefinition
+	Required bool `json:"required"`
+	// FieldType contains the type of FieldDefinition
+	FieldType FieldType `json:"fieldType"`
 }
 
+// IsKind is a helper method that returns the field type for that field.
 func (f FieldDefinition) IsKind(kind FieldKind) bool {
 	return f.GetKind() == kind
 }
 
+// IsReferenceField returns whether the field is a FieldTypeReference field or not
 func (f FieldDefinition) IsReferenceField() bool {
 	return f.IsKind(FieldKindReference)
 }
 
+// IsSubFormField returns whether a the field is a FieldTypeSubForm or not
 func (f FieldDefinition) IsSubFormField() bool {
 	return f.IsKind(FieldKindSubForm)
 }
 
+// GetKind returns the FieldKind of the field
 func (f FieldDefinition) GetKind() FieldKind {
 	if f.FieldType.Reference != nil {
 		return FieldKindReference
@@ -53,8 +72,10 @@ func (f FieldDefinition) GetKind() FieldKind {
 	return FieldKindUnknown
 }
 
+// FieldDefinitions represent a list of FieldDefinition
 type FieldDefinitions []*FieldDefinition
 
+// GetByID returns a FieldDefinition by its FieldDefinition.ID
 func (f FieldDefinitions) GetByID(fieldId string) (*FieldDefinition, error) {
 	for _, definition := range f {
 		if definition.ID == fieldId {
@@ -64,6 +85,7 @@ func (f FieldDefinitions) GetByID(fieldId string) (*FieldDefinition, error) {
 	return nil, fmt.Errorf("field definition with id %s not found", fieldId)
 }
 
+// OfKind filters and returns the FieldDefinitions that are of the given FieldKind
 func (f FieldDefinitions) OfKind(fieldKind FieldKind) FieldDefinitions {
 	var result FieldDefinitions
 	for _, definition := range f {
@@ -74,6 +96,7 @@ func (f FieldDefinitions) OfKind(fieldKind FieldKind) FieldDefinitions {
 	return result
 }
 
+// ThatAreKeys filters and returns the FieldDefinitions that have FieldDefinition.Key = true
 func (f FieldDefinitions) ThatAreKeys(isKey bool) FieldDefinitions {
 	var result FieldDefinitions
 	for _, definition := range f {
@@ -84,57 +107,11 @@ func (f FieldDefinitions) ThatAreKeys(isKey bool) FieldDefinitions {
 	return result
 }
 
+// FieldIDs returns the of FieldDefinition.ID for all the FieldDefinitions
 func (f FieldDefinitions) FieldIDs() sets.String {
 	result := sets.NewString()
 	for _, definition := range f {
 		result.Insert(definition.ID)
 	}
 	return result
-}
-
-func (f FieldDefinitions) Expand(referencedForms *FormDefinitionList) (FieldDefinitions, error) {
-
-	result := append(f[:])
-	walk := 0
-	for {
-		if walk == len(result) {
-			break
-		}
-		field := result[walk]
-		if !field.IsReferenceField() {
-			walk++
-			continue
-		}
-
-		referencedForm, err := referencedForms.GetForm(field.FieldType.Reference.FormID)
-		if err != nil {
-			return nil, err
-		}
-
-		referencedFormKeyFields := referencedForm.GetFields().ThatAreKeys(true)
-
-		newFieldLen := walk - 1
-		if newFieldLen < 0 {
-			newFieldLen = 0
-		}
-		newFields := make(FieldDefinitions, newFieldLen)
-		if walk > 0 {
-			copy(newFields, result[:walk])
-		}
-		newFields = append(newFields, referencedFormKeyFields...)
-		if walk < len(result) {
-			for _, definition := range result[walk+1:] {
-				newFields = append(newFields, definition)
-			}
-		}
-		result = newFields
-
-		for _, definition := range result {
-			fmt.Println(definition.ID)
-		}
-		fmt.Println("\n==========")
-
-	}
-
-	return result, nil
 }

@@ -4,13 +4,23 @@ import (
 	"fmt"
 )
 
+// FormDefinition represents the definition of a Form for data collection.
 type FormDefinition struct {
-	ID         string           `json:"id"`
-	Code       string           `json:"code"`
-	DatabaseID string           `json:"databaseId,omitempty"`
-	FolderID   string           `json:"folderId"`
-	Name       string           `json:"name,omitempty"`
-	Fields     FieldDefinitions `json:"fields"`
+	// ID is the unique ID of the FormDefinition
+	ID string `json:"id"`
+	// Code of the FormDefinition
+	// TODO remove this. It's not used yet.
+	Code string `json:"code"`
+	// DatabaseID of the FormDefinition
+	DatabaseID string `json:"databaseId,omitempty"`
+	// FolderID of the FormDefinition. If the FolderID is empty,
+	// this means that the FormDefinition exists at the root
+	// of the DatabaseID
+	FolderID string `json:"folderId"`
+	// Name of the FormDefinition
+	Name string `json:"name,omitempty"`
+	// Fields that constitute the FormDefinition
+	Fields FieldDefinitions `json:"fields"`
 }
 
 type FormInterface interface {
