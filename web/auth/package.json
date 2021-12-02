@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/dom": ">=7.21.4",
     "axios": "^0.23.0",
     "oauth-pkce": "^0.0.6",
     "qs": "^6.10.1",
@@ -11,6 +10,7 @@
     "web-vitals": "^1.0.1"
   },
   "devDependencies": {
+    "@testing-library/dom": ">=7.21.4",
     "@babel/core": "^7.16.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
