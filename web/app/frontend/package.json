@@ -6,7 +6,9 @@
         "ios": "node_modules/.bin/expo start --ios",
         "web": "node_modules/.bin/expo start --web",
         "eject": "node_modules/.bin/expo eject",
-        "test": "jest"
+        "test": "jest",
+        "lint": "yarn eslint .",
+        "lint:fix": "yarn eslint --fix ."
     },
     "dependencies": {
         "@config-plugins/android-jsc-intl": "^0.0.0",
@@ -72,6 +74,7 @@
         "eslint": "^8.3.0",
         "eslint-config-prettier": "^8.3.0",
         "eslint-plugin-prettier": "^4.0.0",
+        "eslint-plugin-react": "^7.27.1",
         "jest-expo": "^43.0.0",
         "jest-mock": "^27.4.2",
         "prettier": "^2.5.0",
