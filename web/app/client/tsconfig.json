@@ -13,7 +13,7 @@
     ],
     "typeRoots": [
       "./node_modules/@types",
-      "./src/types"
+      "./src/lib/types"
     ],
     "declaration": true,
     "outDir": "lib/esm",

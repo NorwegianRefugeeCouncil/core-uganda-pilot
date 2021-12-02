@@ -1,4 +1,4 @@
-import {FieldKind, FieldType} from "../types/types";
+import {FieldKind, FieldType} from "../types";
 
 export function getFieldKind(fieldType: FieldType): FieldKind {
     if (fieldType.text) {

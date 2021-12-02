@@ -3,8 +3,7 @@ import React from "react";
 import TextInput from "./TextInput";
 import Select from "./Select";
 import {Control, Controller} from "react-hook-form";
-import {FieldDefinition, FieldKind} from "core-js-api-client/lib/types/types";
-import {getFieldKind} from "core-js-api-client";
+import {FieldDefinition, FieldKind, getFieldKind} from "core-js-api-client";
 import ReferenceInput from "./ReferenceInput";
 
 // TODO: move & clean up types

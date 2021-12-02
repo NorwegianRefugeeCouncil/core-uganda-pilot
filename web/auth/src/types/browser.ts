@@ -23,6 +23,7 @@ export default class Browser {
     getListenerMap() {
         return this.listenerMap;
     }
+
     getHandle() {
         return this.handle;
     }
@@ -81,7 +82,7 @@ export default class Browser {
         const left = window.screen.width / 2 - popupWidth / 2
         const top = window.screen.height / 2 - popupHeight / 2
         const popupFeaturesString =
-            `menubar=no,location=no,resizable=no,scrollbars=no,status=no,`+
+            `menubar=no,location=no,resizable=no,scrollbars=no,status=no,` +
             `width=${popupWidth},height=${popupHeight},top=${top},left=${left}`;
         this.popupWindow = window.open(url, "Core Login", popupFeaturesString)
         if (this.popupWindow) {
@@ -100,7 +101,7 @@ export default class Browser {
 
         window.sessionStorage.setItem(this.handle, state)
 
-        const popup= this.getPopup();
+        const popup = this.getPopup();
         if (popup == null || popup.closed) {
             this.createPopup(url)
         }
