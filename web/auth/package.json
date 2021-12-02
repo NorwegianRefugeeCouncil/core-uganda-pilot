@@ -3,32 +3,37 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@babel/preset-env": "^7.16.4",
     "axios": "^0.23.0",
+    "jest": "^27.4.3",
     "oauth-pkce": "^0.0.6",
     "qs": "^6.10.1",
-    "react-scripts": "4.0.3",
     "typescript": "^4.5.2",
     "web-vitals": "^1.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.16.0",
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.1.0",
+    "@babel/preset-typescript": "^7.16.0",
+    "@testing-library/dom": ">=7.21.4",
+    "@testing-library/jest-dom": "^5.15.1",
+    "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^12.1.10",
+    "@types/jest": "^27.0.3",
     "@types/qs": "^6.9.7",
-    "@types/react": "^17.0.34",
-    "@types/react-dom": "^17.0.11"
+    "@types/react": "^17.0.37",
+    "@types/react-dom": "^17.0.11",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "ts-jest": "^27.0.7"
   },
   "peerDependencies": {
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   },
   "scripts": {
-    "start": "react-scripts start",
     "build": "tsc --build tsconfig.build.json",
     "prepare-tests": "yarn add --peer react@^17.0.2 react-dom@^17.0.2",
-    "test": "yarn run prepare-tests && npx react-scripts test --coverage --env=./custom-test-env.ts",
-    "eject": "react-scripts eject"
+    "test": "yarn run prepare-tests && jest --coverage --env=./custom-test-env.ts"
   },
   "jest": {
     "resetMocks": false

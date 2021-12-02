@@ -1,21 +1,38 @@
 {
   "compilerOptions": {
-    "module": "CommonJS",
+    "module": "esnext",
     "moduleResolution": "Node",
     "esModuleInterop": true,
-    "target": "ES6",
+    "target": "ES5",
     "lib": [
+      "ES6",
       "DOM",
-      "ESNext"
+      "ES2015",
+      "ES2016",
+      "ES2017"
     ],
     "typeRoots": [
       "./node_modules/@types",
-      "./src/types"
+      "./src/lib/types"
     ],
     "declaration": true,
-    "outDir": "lib",
+    "outDir": "lib/esm",
+    "jsx": "react",
+    "jsxFactory": "React.createElement",
+    "allowJs": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true
   },
   "include": [
-    "src/**/*",
+    "src/**/*"
   ],
+  "exclude": [
+    "node_modules",
+    "lib"
+  ]
 }

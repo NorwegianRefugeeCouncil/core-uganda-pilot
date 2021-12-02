@@ -1,4 +1,4 @@
-import axios, {AxiosError, AxiosInstance, Method} from "axios";
+import axios, {AxiosInstance, Method} from "axios";
 import {
     ClientDefinition,
     DatabaseCreateRequest,
@@ -19,11 +19,13 @@ import {
     RecordListRequest,
     RecordListResponse,
     Response
-} from "./types/types";
+} from "./types";
+
 import {clientResponse} from "./utils/responses";
 
 export default class Client implements ClientDefinition {
     private corev1 = "apis/core.nrc.no/v1"
+
     constructor(
         public readonly address = 'https://core.dev:8443',
         public readonly axiosInstance: AxiosInstance = axios.create()) {
@@ -42,15 +44,6 @@ export default class Client implements ClientDefinition {
             withCredentials: true,
         }).then(value => {
             return clientResponse<TRequest, TBody>(value, request, expectStatusCode);
-        }).catch((err: AxiosError) => {
-            return {
-                request: request,
-                response: undefined,
-                status: err.response?.statusText,
-                statusCode: err.response?.status,
-                error: err.response,
-                success: false,
-            }
         })
     }
 
@@ -100,5 +93,3 @@ export default class Client implements ClientDefinition {
     }
 
 }
-
-export * from './types/types'

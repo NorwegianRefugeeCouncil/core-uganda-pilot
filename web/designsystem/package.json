@@ -2,8 +2,13 @@
   "name": "core-design-system",
   "version": "0.1.0",
   "private": true,
-  "main": "lib/index.js",
-  "types": "./lib/index.d.ts",
+  "main": "lib/cjs/index.js",
+  "module": "lib/esm/index.js",
+  "types": "./lib/esm/index.d.ts",
+  "files": [
+    "README.md",
+    "lib"
+  ],
   "dependencies": {
     "native-base": "~3.2.2",
     "react-native-safe-area-context": "~3.3.2",
@@ -13,23 +18,28 @@
     "web-vitals": "~1.0.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.16.0",
+    "@babel/preset-env": "^7.1.6",
+    "@testing-library/dom": ">=7.21.4",
     "@testing-library/jest-dom": "~5.11.4",
     "@testing-library/react": "~11.1.0",
     "@testing-library/user-event": "~12.1.10",
-    "@types/react": "~17.0.34",
-    "@types/react-dom": "~17.0.11",
+    "@types/react": "^17.0.37",
+    "@types/react-dom": "^17.0.11",
     "@types/react-native": "~0.64.19",
+    "react": "17.0.1",
+    "react-dom": "17.0.1",
+    "react-native": "~0.64.3",
     "typescript": "^4.5.2"
   },
   "peerDependencies": {
-    "react": "~17.0.2",
+    "react": "~17.0.1",
     "react-native": "~0.64.3"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "tsc --build tsconfig.build.json",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "build": "yarn build:esm && yarn build:cjs",
+    "build:esm": "tsc",
+    "build:cjs": "tsc --module commonjs --outDir lib/cjs"
   },
   "eslintConfig": {
     "extends": [

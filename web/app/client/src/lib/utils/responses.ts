@@ -1,5 +1,5 @@
 import {AxiosResponse} from "axios";
-import {Response} from "../types/types";
+import {Response} from "../types";
 
 function errorResponse<TRequest, TBody>(request: TRequest, r: AxiosResponse<TBody>): Response<TRequest, TBody> {
     return {
