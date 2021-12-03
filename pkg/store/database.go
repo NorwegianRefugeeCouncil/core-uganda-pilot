@@ -51,10 +51,10 @@ type createDatabaseFn func(db *gorm.DB, database *types.Database) error
 type databaseStore struct {
 	// db is the database Factory
 	db Factory
-	// deleteDatabase is a function for deleting the backing sql database
+	// deleteDatabase is a function for deleting the actual sql database
 	// we add a variable since we want to mock this function
 	deleteDatabase deleteDatabaseFn
-	// createDatabase is a function for creating the backing sql database
+	// createDatabase is a function for creating the actual sql database
 	// we add a variable since we want to mock this function
 	createDatabase createDatabaseFn
 }
