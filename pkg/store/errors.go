@@ -6,6 +6,11 @@ import (
 	"github.com/mattn/go-sqlite3"
 )
 
+const (
+	// https://www.postgresql.org/docs/13/errcodes-appendix.html
+	errPgUniqueViolation = "23505"
+)
+
 func IsUniqueConstraintErr(err error) bool {
 	if dbErr, ok := castDbErr(err); ok {
 		return dbErr.IsUniqueConstraintErr()
@@ -38,7 +43,7 @@ func (s *pgErr) IsErrCode(code string) bool {
 }
 
 func (s *pgErr) IsUniqueConstraintErr() bool {
-	return s.IsErrCode("23505")
+	return s.IsErrCode(errPgUniqueViolation)
 }
 
 type sqliteErr struct {
