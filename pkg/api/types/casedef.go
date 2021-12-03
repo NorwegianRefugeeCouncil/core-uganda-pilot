@@ -7,7 +7,7 @@ package types
 // (Extensibility)
 type CaseRecipientDefinition struct {
 	// FormRef represents a recipient that is a record in another form
-	FormRef *FormRef `json:"form,omitempty"`
+	FormRef *FormRef `json:"formRef,omitempty"`
 }
 
 // CaseDefinition represents a special type of FormDefinition that represents a Case.
@@ -17,9 +17,9 @@ type CaseDefinition struct {
 	// FormDefinition represents the specification of the form for collecting
 	// data about this case.
 	// We embed the FormDefinition here since a Case is also a Form.
-	FormDefinition FormDefinition `json:"formSpec"`
+	FormDefinition FormDefinition `json:"formDefinition"`
 	// RecipientDefinitions represents the types of recipient that this case allows.
 	// For example, if the CaseDefinition is Colombia Individual Intake, then
 	// the RecipientDefinitions could be a link to a ColombiaIndividualRecipient form.
-	RecipientDefinitions []CaseRecipientDefinition `json:"recipient,omitempty"`
+	RecipientDefinitions []CaseRecipientDefinition `json:"recipientDefinition,omitempty"`
 }
