@@ -64,6 +64,7 @@
         "@babel/core": "^7.12.9",
         "@testing-library/jest-native": "^4.0.4",
         "@testing-library/react-native": "^8.0.0",
+        "@types/jest": "^27.0.3",
         "@types/lodash": "4.14.176",
         "@types/react": "^17.0.37",
         "@types/react-dom": "^17.0.11",
