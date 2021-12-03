@@ -6,7 +6,8 @@ package types
 // For example, we might have a recipient that is a link to multiple people
 // (Extensibility)
 type CaseRecipientDefinition struct {
-	// FormRef represents a recipient that is a record in another form
+	// FormRef indicates that the recipient is a record in the form referenced
+	// by the FormRef.DatabaseID and FormRef.FormID
 	FormRef *FormRef `json:"formRef,omitempty"`
 }
 

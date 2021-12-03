@@ -1,14 +1,14 @@
 package types
 
 type RecordRef struct {
-	ID         string
-	DatabaseID string
-	FormID     string
+	ID         string `json:"id"`
+	DatabaseID string `json:"databaseId"`
+	FormID     string `json:"formId"`
 }
 
 type FormRef struct {
-	DatabaseID string
-	FormID     string
+	DatabaseID string `json:"databaseId"`
+	FormID     string `json:"formId"`
 }
 
 type Record struct {
