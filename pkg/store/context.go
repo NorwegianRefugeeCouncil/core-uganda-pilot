@@ -24,7 +24,7 @@ import (
 // gorm.DB the database connection
 // zap.Logger the logger
 // doneFunc the function that logs the execution time
-func actionContext(ctx context.Context, factory Factory, storeName, actionName string, fields ...zap.Field) (context.Context, *gorm.DB, *zap.Logger, func(), error) {
+func actionContext(ctx context.Context, factory Factory, storeName, actionName string, fields ...zap.Field) (context.Context, *gorm.DB, *zap.Logger, doneFunc func(), error) {
 	ctx, l := logging.NewStoreLogger(ctx, storeName, actionName, fields...)
 	l.Debug("getting database connection")
 	db, err := factory.Get()
