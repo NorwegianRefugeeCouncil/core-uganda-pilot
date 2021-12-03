@@ -8,6 +8,8 @@ import (
 	"gorm.io/gorm"
 )
 
+// Clear deletes everything from the database. Useful for development.
+// Be careful in production...
 func Clear(ctx context.Context, db *gorm.DB) error {
 
 	l := logging.NewLogger(ctx)

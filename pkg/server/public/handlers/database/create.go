@@ -7,6 +7,7 @@ import (
 	"github.com/nrc-no/core/pkg/api/types/validation"
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/utils"
+	uuid "github.com/satori/go.uuid"
 	"go.uber.org/zap"
 	"net/http"
 )
@@ -34,6 +35,8 @@ func (h *Handler) Create() http.HandlerFunc {
 			utils.ErrorResponse(w, err)
 			return
 		}
+
+		db.ID = uuid.NewV4().String()
 
 		l.Debug("storing database")
 		respDB, err := h.store.Create(ctx, &db)
