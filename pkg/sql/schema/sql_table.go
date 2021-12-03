@@ -7,10 +7,10 @@ import (
 type SQLTableName string
 
 type SQLTable struct {
-	Schema      string
-	Name        string
-	Fields      []SQLField
-	Constraints []SQLTableConstraint
+	Schema      string               `json:"schema,omitempty" yaml:"schema,omitempty"`
+	Name        string               `json:"name,omitempty" yaml:"name,omitempty"`
+	Fields      []SQLField           `json:"fields,omitempty" yaml:"fields,omitempty"`
+	Constraints []SQLTableConstraint `json:"constraints,omitempty" yaml:"constraints,omitempty"`
 }
 
 func (s SQLTable) WithField(field SQLField) SQLTable {

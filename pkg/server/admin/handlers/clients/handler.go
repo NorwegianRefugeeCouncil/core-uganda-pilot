@@ -26,9 +26,9 @@ func NewHandler(hydraAdmin admin.ClientService) (*Handler, error) {
 		Operation("updateClient").
 		Consumes(mimetypes.ApplicationJson).
 		Produces(mimetypes.ApplicationJson).
-		Reads(&types.Oauth2Client{}).
-		Writes(&types.Oauth2Client{}).
-		Returns(http.StatusOK, "OK", &types.Oauth2Client{}),
+		Reads(&types.OAuth2Client{}).
+		Writes(&types.OAuth2Client{}).
+		Returns(http.StatusOK, "OK", &types.OAuth2Client{}),
 	)
 
 	ws.Route(ws.POST("").To(restfulCreate(hydraAdmin)).
@@ -36,9 +36,9 @@ func NewHandler(hydraAdmin admin.ClientService) (*Handler, error) {
 		Operation("createClient").
 		Consumes(mimetypes.ApplicationJson).
 		Produces(mimetypes.ApplicationJson).
-		Reads(&types.Oauth2Client{}).
-		Writes(&types.Oauth2Client{}).
-		Returns(http.StatusOK, "OK", &types.Oauth2Client{}),
+		Reads(&types.OAuth2Client{}).
+		Writes(&types.OAuth2Client{}).
+		Returns(http.StatusOK, "OK", &types.OAuth2Client{}),
 	)
 
 	ws.Route(ws.GET("/{clientId}").To(restfulGet(hydraAdmin)).
@@ -46,8 +46,8 @@ func NewHandler(hydraAdmin admin.ClientService) (*Handler, error) {
 		Param(ws.PathParameter("clientId", "client id").Required(true)).
 		Produces(mimetypes.ApplicationJson).
 		Operation("getClient").
-		Writes(&types.Oauth2Client{}).
-		Returns(http.StatusOK, "OK", &types.Oauth2Client{}),
+		Writes(&types.OAuth2Client{}).
+		Returns(http.StatusOK, "OK", &types.OAuth2Client{}),
 	)
 
 	ws.Route(ws.DELETE("/{clientId}").To(restfulDelete(hydraAdmin)).

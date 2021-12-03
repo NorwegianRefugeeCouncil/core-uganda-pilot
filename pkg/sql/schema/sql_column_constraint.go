@@ -10,7 +10,7 @@ type NotNullSQLColumnConstraint struct{}
 type NullSQLColumnConstraint struct{}
 
 type CheckSQLColumnConstraint struct {
-	Expression string
+	Expression string `json:"expression,omitempty" yaml:"expression,omitempty"`
 }
 
 type UniqueSQLColumnConstraint struct{}
@@ -26,22 +26,22 @@ const (
 )
 
 type ReferenceSQLColumnConstraint struct {
-	Schema    string
-	Table     string
-	Column    string
-	OnDelete  SQLForeignKeyAction
-	OnUpdate  SQLForeignKeyAction
-	MatchType SQLMatchType
+	Schema    string              `json:"schema,omitempty" yaml:"schema,omitempty"`
+	Table     string              `json:"table,omitempty" yaml:"table,omitempty"`
+	Column    string              `json:"column,omitempty" yaml:"column,omitempty"`
+	OnDelete  SQLForeignKeyAction `json:"onDelete,omitempty" yaml:"onDelete,omitempty"`
+	OnUpdate  SQLForeignKeyAction `json:"onUpdate,omitempty" yaml:"onUpdate,omitempty"`
+	MatchType SQLMatchType        `json:"matchType,omitempty" yaml:"matchType,omitempty"`
 }
 
 type SQLColumnConstraint struct {
-	Name       string
-	NotNull    *NotNullSQLColumnConstraint
-	Null       *NullSQLColumnConstraint
-	Check      *CheckSQLColumnConstraint
-	Unique     *UniqueSQLColumnConstraint
-	PrimaryKey *PrimaryKeySQLColumnConstraint
-	Reference  *ReferenceSQLColumnConstraint
+	Name       string                         `json:"name,omitempty" yaml:"name,omitempty"`
+	NotNull    *NotNullSQLColumnConstraint    `json:"notNull,omitempty" yaml:"notNull,omitempty"`
+	Null       *NullSQLColumnConstraint       `json:"null,omitempty" yaml:"null,omitempty"`
+	Check      *CheckSQLColumnConstraint      `json:"check,omitempty" yaml:"check,omitempty"`
+	Unique     *UniqueSQLColumnConstraint     `json:"unique,omitempty" yaml:"unique,omitempty"`
+	PrimaryKey *PrimaryKeySQLColumnConstraint `json:"primaryKey,omitempty" yaml:"primaryKey,omitempty"`
+	Reference  *ReferenceSQLColumnConstraint  `json:"reference,omitempty" yaml:"reference,omitempty"`
 }
 
 func (c SQLColumnConstraint) DDL() DDL {

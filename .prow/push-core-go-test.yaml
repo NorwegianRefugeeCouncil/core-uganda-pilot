@@ -1,0 +1,9 @@
+presubmits:
+  - name: pull-core-go-test
+    run_if_changed: ".go$|^go.mod$|^go.sum$"
+    decorate: true
+    spec:
+      containers:
+        - image: golang:1.16
+          command: [ "bash", "-c" ]
+          args: [ "go mod download && go test ./pkg/..." ]

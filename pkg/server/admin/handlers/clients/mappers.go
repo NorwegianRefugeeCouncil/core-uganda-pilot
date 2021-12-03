@@ -5,11 +5,11 @@ import (
 	"github.com/ory/hydra-client-go/models"
 )
 
-func mapToHydraClient(client types.Oauth2Client) *models.OAuth2Client {
+func mapToHydraClient(client types.OAuth2Client) *models.OAuth2Client {
 	return &models.OAuth2Client{
 		ClientID:                client.ID,
 		AllowedCorsOrigins:      client.AllowedCorsOrigins,
-		ClientName:              client.ClientName,
+		ClientName:              client.Name,
 		ClientURI:               client.URI,
 		GrantTypes:              client.GrantTypes,
 		RedirectUris:            client.RedirectURIs,
@@ -19,12 +19,12 @@ func mapToHydraClient(client types.Oauth2Client) *models.OAuth2Client {
 	}
 }
 
-func mapFromHydraClient(client *models.OAuth2Client) *types.Oauth2Client {
-	return &types.Oauth2Client{
+func mapFromHydraClient(client *models.OAuth2Client) *types.OAuth2Client {
+	return &types.OAuth2Client{
 		ID:                      client.ClientID,
 		AllowedCorsOrigins:      client.AllowedCorsOrigins,
-		ClientName:              client.ClientName,
-		ClientSecret:            client.ClientSecret,
+		Name:                    client.ClientName,
+		Secret:                  client.ClientSecret,
 		URI:                     client.ClientURI,
 		GrantTypes:              client.GrantTypes,
 		RedirectURIs:            client.RedirectUris,
@@ -36,7 +36,7 @@ func mapFromHydraClient(client *models.OAuth2Client) *types.Oauth2Client {
 
 func mapFromHydraClients(clients []*models.OAuth2Client) *types.Oauth2ClientList {
 	clientList := types.Oauth2ClientList{
-		Items: []*types.Oauth2Client{},
+		Items: []*types.OAuth2Client{},
 	}
 	for _, hydraClient := range clients {
 		clientList.Items = append(clientList.Items, mapFromHydraClient(hydraClient))

@@ -32,7 +32,7 @@ func TestSQLDataType_DDL(t *testing.T) {
 		{
 			name:   "varchar",
 			fields: fields{VarChar: &SQLDataTypeVarChar{Length: 10}},
-			want:   NewDDL("varchar(?)", 10),
+			want:   NewDDL("varchar(10)"),
 		}, {
 			name:   "int",
 			fields: fields{Int: &SQLDataTypeInt{}},

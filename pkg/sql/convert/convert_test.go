@@ -4,85 +4,137 @@ import (
 	"github.com/nrc-no/core/pkg/api/types"
 	sqlschema2 "github.com/nrc-no/core/pkg/sql/schema"
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v3"
 	"testing"
 )
 
 func Test_convertFormToSqlTable(t *testing.T) {
 	tests := []struct {
-		name string
-		args types.FormDefinition
-		want sqlschema2.SQLTable
+		name    string
+		form    string
+		want    string
+		wantErr bool
 	}{
 		{
 			name: "simple",
-			args: types.FormDefinition{
-				DatabaseName: "database",
-				Name:         "form",
-				Fields: []types.FieldDefinition{
-					{
-						Name: "field",
-						FieldType: types.FieldType{
-							Text: &types.FieldTypeText{},
-						},
-						Required: true,
-					},
-				},
-			},
-			want: sqlschema2.SQLTable{
-				Schema: "database",
-				Name:   `form`,
-				Fields: []sqlschema2.SQLField{
-					sqlschema2.NewSQLField("id").
-						WithSerialDataType().
-						WithPrimaryKeyConstraint("pk_database_form"),
-					sqlschema2.NewSQLField("field").
-						WithVarCharDataType(1024).
-						WithNotNullConstraint(),
-				},
-			},
+			form: `
+id: form
+databaseId: database
+fields:
+- id: field
+  required: true
+  fieldType:
+    text: { }
+`,
+			want: `
+schema: database
+name: form
+fields:
+- name: id
+  dataType:
+    varChar:
+      length: 36
+  constraints:
+    - name: pk_database_form
+      primaryKey: { }
+- name: seq
+  dataType:
+    serial: { }
+- name: created_at
+  dataType:
+    timestamp:
+      timezone: WithoutTimezone
+  default: NOW()
+  constraints:
+    - notNull: { }
+- name: field
+  dataType:
+    varChar:
+      length: 1024
+  constraints:
+    - notNull: { }
+`,
 		}, {
 			name: "reference",
-			args: types.FormDefinition{
-				DatabaseName: "database",
-				Name:         "form",
-				Fields: []types.FieldDefinition{
-					{
-						Name: "field",
-						FieldType: types.FieldType{
-							Reference: &types.FieldTypeReference{
-								DatabaseName: "remote",
-								FormName:     "other",
-							},
-						},
-						Required: true,
-					},
-				},
-			},
-			want: sqlschema2.SQLTable{
-				Name:   "form",
-				Schema: "database",
-				Fields: []sqlschema2.SQLField{
-					sqlschema2.NewSQLField("id").
-						WithSerialDataType().
-						WithPrimaryKeyConstraint("pk_database_form"),
-					sqlschema2.NewSQLField("field").
-						WithIntDataType().
-						WithNotNullConstraint().
-						WithReferenceConstraint("fk__database_form_field__remote_other_id",
-							"remote",
-							"other",
-							"id",
-							sqlschema2.ActionCascade,
-							sqlschema2.ActionCascade,
-						),
-				},
-			},
+			form: `
+id: form
+databaseId: database
+fields:
+- id: field
+  fieldType:
+    reference:
+      formId: otherform
+      databaseId: otherdatabase
+`,
+			want: `
+schema: database
+name: form
+fields:
+- name: id
+  dataType:
+    varChar:
+      length: 36
+  constraints:
+    - name: pk_database_form
+      primaryKey: { }
+- name: seq
+  dataType:
+    serial: { }
+- name: created_at
+  dataType:
+    timestamp:
+      timezone: WithoutTimezone
+  default: NOW()
+  constraints:
+    - notNull: { }
+- name: field
+  dataType:
+    varChar:
+      length: 36
+  constraints:
+    - name: fkref__form_field__otherform_id
+      reference:
+        column: id
+        onDelete: ActionCascade
+        onUpdate: ActionCascade
+        schema: otherdatabase
+        table: otherform
+`,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.want, convertFormToSqlTable(tt.args))
+
+			var form types.FormDefinition
+			if err := yaml.Unmarshal([]byte(tt.form), &form); !assert.NoError(t, err) {
+				return
+			}
+
+			var want sqlschema2.SQLTable
+			if err := yaml.Unmarshal([]byte(tt.want), &want); !assert.NoError(t, err) {
+				return
+			}
+
+			got, err := convertFormToSqlTable(&form, &types.FormDefinitionList{})
+			if tt.wantErr {
+				if !assert.Error(t, err) {
+					return
+				}
+				return
+			}
+			if !tt.wantErr {
+				if !assert.NoError(t, err) {
+					return
+				}
+			}
+
+			gotYaml, err := yaml.Marshal(got)
+			if !assert.NoError(t, err) {
+				return
+			}
+
+			assert.YAMLEq(t, tt.want, string(gotYaml))
 		})
 	}
 }
@@ -91,35 +143,35 @@ func Test_expandSubForms(t *testing.T) {
 	tests := []struct {
 		name string
 		args types.FormDefinition
-		want []types.FormDefinition
+		want []*types.FormDefinition
 	}{
 		{
 			name: "simple",
 			args: types.FormDefinition{
-				DatabaseName: "db",
-				Name:         "name",
-				Fields:       []types.FieldDefinition{},
+				DatabaseID: "db",
+				ID:         "name",
+				Fields:     []*types.FieldDefinition{},
 			},
-			want: []types.FormDefinition{
+			want: []*types.FormDefinition{
 				{
-					DatabaseName: "db",
-					Name:         "name",
-					Fields:       []types.FieldDefinition{},
+					DatabaseID: "db",
+					ID:         "name",
+					Fields:     []*types.FieldDefinition{},
 				},
 			},
 		}, {
 			name: "nested",
 			args: types.FormDefinition{
-				DatabaseName: "db",
-				Name:         "root",
-				Fields: []types.FieldDefinition{
+				DatabaseID: "db",
+				ID:         "root",
+				Fields: []*types.FieldDefinition{
 					{
-						Name: "parent_field",
+						ID: "parent_field",
 						FieldType: types.FieldType{
 							SubForm: &types.FieldTypeSubForm{
-								Fields: []types.FieldDefinition{
+								Fields: []*types.FieldDefinition{
 									{
-										Name: "child_field",
+										ID: "child_field",
 										FieldType: types.FieldType{
 											Text: &types.FieldTypeText{},
 										},
@@ -130,35 +182,28 @@ func Test_expandSubForms(t *testing.T) {
 					},
 				},
 			},
-			want: []types.FormDefinition{
+			want: []*types.FormDefinition{
 				{
-					DatabaseName: "db",
-					Name:         "root",
-					Fields: []types.FieldDefinition{
-						{
-							Name: "parent_field",
-							FieldType: types.FieldType{
-								SubForm: &types.FieldTypeSubForm{
-									Fields: []types.FieldDefinition{
-										{
-											Name: "child_field",
-											FieldType: types.FieldType{
-												Text: &types.FieldTypeText{},
-											},
-										},
-									},
-								},
-							},
-						},
-					},
+					DatabaseID: "db",
+					ID:         "root",
 				}, {
-					DatabaseName: "db",
-					Name:         "root_parent_fields",
-					Fields: []types.FieldDefinition{
+					DatabaseID: "db",
+					Fields: []*types.FieldDefinition{
 						{
-							Name: "child_field",
+							ID: "child_field",
 							FieldType: types.FieldType{
 								Text: &types.FieldTypeText{},
+							},
+						}, {
+							ID:       "parent_id",
+							Name:     "parent_id",
+							Code:     "parent_id",
+							Required: true,
+							FieldType: types.FieldType{
+								Reference: &types.FieldTypeReference{
+									DatabaseID: "db",
+									FormID:     "root",
+								},
 							},
 						},
 					},
@@ -168,7 +213,15 @@ func Test_expandSubForms(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.want, expandSubForms(tt.args))
+			got, err := expandSubForms(&tt.args)
+			if !assert.NoError(t, err) {
+				return
+			}
+
+			gotYaml, _ := yaml.Marshal(got)
+			wantYaml, _ := yaml.Marshal(tt.want)
+
+			assert.YAMLEq(t, string(wantYaml), string(gotYaml))
 		})
 	}
 }
