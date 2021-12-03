@@ -116,3 +116,18 @@ func reasonAndCodeForError(err error) (StatusReason, int32) {
 	}
 	return StatusReasonUnknown, 0
 }
+
+func HasCauseForError(err error, field string, cause CauseType) bool {
+	if status := APIStatus(nil); errors.As(err, &status) {
+		details := status.Status().Details
+		if details == nil {
+			return false
+		}
+		for _, statusCause := range details.Causes {
+			if statusCause.Type == cause && statusCause.Field == field {
+				return true
+			}
+		}
+	}
+	return false
+}

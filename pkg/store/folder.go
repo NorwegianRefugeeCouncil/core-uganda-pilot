@@ -6,6 +6,7 @@ import (
 	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/utils/sets"
+	"github.com/nrc-no/core/pkg/validation"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"time"
@@ -28,8 +29,8 @@ type Folder struct {
 	ID         string
 	DatabaseID string
 	Database   Database
-	ParentID   string
-	Parent     *Folder
+	ParentID   *string
+	Parent     *Folder `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Name       string
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
@@ -37,7 +38,9 @@ type Folder struct {
 
 // NewFolderStore creates a FolderStore
 func NewFolderStore(db Factory) FolderStore {
-	return &folderStore{db: db}
+	return &folderStore{
+		db: db,
+	}
 }
 
 // folderStore is the implementation of FolderStore
@@ -110,12 +113,40 @@ func (d *folderStore) Create(ctx context.Context, folder *types.Folder) (*types.
 	storedFolder := mapFolderFrom(folder)
 	storedFolder.CreatedAt = time.Now()
 
-	if err := db.Create(storedFolder).Error; err != nil {
-		l.Error("failed to create folder", zap.Error(err))
-		if IsUniqueConstraintErr(err) {
-			return nil, meta.NewAlreadyExists(types.FolderGR, folder.ID)
+	err = db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.First(&Database{}, "id = ?", folder.DatabaseID).Error; err != nil {
+			if IsNotFoundErr(err) {
+				err := meta.NewInvalid(types.FolderGR, "", validation.ErrorList{validation.NotFound(validation.NewPath("databaseId"), folder.DatabaseID)})
+				l.Error("database not found", zap.Error(err))
+				return err
+			}
+			l.Error("failed to lookup database", zap.Error(err))
+			return meta.NewInternalServerError(err)
 		}
-		return nil, meta.NewInternalServerError(err)
+		if len(folder.ParentID) != 0 {
+			if err := tx.First(&Folder{}, "id = ?", folder.ParentID).Error; err != nil {
+				if IsNotFoundErr(err) {
+					err := meta.NewInvalid(types.FolderGR, "", validation.ErrorList{validation.NotFound(validation.NewPath("parentId"), folder.ParentID)})
+					l.Error("parent folder not found", zap.Error(err))
+					return err
+				}
+				l.Error("failed to lookup parent folder", zap.Error(err))
+				return meta.NewInternalServerError(err)
+			}
+		}
+		if err := tx.Create(storedFolder).Error; err != nil {
+			l.Error("failed to create folder", zap.Error(err))
+			if IsUniqueConstraintErr(err) {
+				err := meta.NewAlreadyExists(types.FolderGR, folder.ID)
+				l.Error("folder already exists", zap.Error(err))
+				return err
+			}
+			return meta.NewInternalServerError(err)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
 	}
 
 	return mapFolderTo(storedFolder), nil
@@ -204,9 +235,13 @@ func (d *folderStore) Delete(ctx context.Context, id string) error {
 		}
 
 		l.Debug("deleting folder")
-		if err := tx.Delete(&Folder{}, "id = ?", id).Error; err != nil {
+		deleteQry := tx.Delete(&Folder{}, "id = ?", id)
+		if err := deleteQry.Error; err != nil {
 			l.Error("failed to delete folder", zap.Error(err))
 			return meta.NewInternalServerError(err)
+		}
+		if deleteQry.RowsAffected == 0 {
+			return meta.NewNotFound(types.FolderGR, id)
 		}
 
 		return nil
@@ -223,20 +258,28 @@ func (d *folderStore) Delete(ctx context.Context, id string) error {
 
 // mapFolderTo maps Folder to a types.Folder
 func mapFolderTo(folder *Folder) *types.Folder {
+	var parentId = ""
+	if folder.ParentID != nil {
+		parentId = *folder.ParentID
+	}
 	return &types.Folder{
 		ID:         folder.ID,
 		Name:       folder.Name,
 		DatabaseID: folder.DatabaseID,
-		ParentID:   folder.ParentID,
+		ParentID:   parentId,
 	}
 }
 
 // mapFolderFrom maps a types.Folder to a Folder for storage
 func mapFolderFrom(folder *types.Folder) *Folder {
+	var parentId *string = nil
+	if len(folder.ParentID) != 0 {
+		parentId = &folder.ParentID
+	}
 	return &Folder{
 		ID:         folder.ID,
 		DatabaseID: folder.DatabaseID,
-		ParentID:   folder.ParentID,
+		ParentID:   parentId,
 		Name:       folder.Name,
 	}
 }
