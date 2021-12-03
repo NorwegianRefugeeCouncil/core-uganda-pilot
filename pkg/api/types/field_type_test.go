@@ -10,6 +10,8 @@ Check that the accessor returns the proper value`
 
 const nilAccessorMSg = `The accessor for FieldKind %s returned a nil value. That should not happen`
 
+const unregisteredAccessor = `The field kind %s is not in the list of all field kinds. Run make gen to regenerate.`
+
 func TestAccessor(t *testing.T) {
 
 	text := &FieldTypeText{}
@@ -33,7 +35,8 @@ func TestAccessor(t *testing.T) {
 	}
 
 	var foundValues []interface{}
-	for _, kind := range GetAllFieldKinds() {
+	allKinds := GetAllFieldKinds()
+	for _, kind := range allKinds {
 		t.Run(kind.String(), func(t *testing.T) {
 			k := kind
 			field, err := ft.GetFieldType(k)
@@ -51,4 +54,18 @@ func TestAccessor(t *testing.T) {
 			foundValues = append(foundValues, field)
 		})
 	}
+
+	for kind, _ := range fieldAccessors {
+		found := false
+		for _, registeredKind := range allKinds {
+			if kind == registeredKind {
+				found = true
+				break
+			}
+		}
+		if !assert.True(t, found, unregisteredAccessor, kind){
+			return
+		}
+	}
+
 }
