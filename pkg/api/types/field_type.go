@@ -1,5 +1,7 @@
 package types
 
+import "fmt"
+
 // FieldType is a struct that contains the FieldType for a given FieldDefinition
 // Only one of the fields might be specified. For example, a FieldType
 // cannot have both FieldType.Text and FieldType.Reference defined. Only one is allowed.
@@ -20,6 +22,22 @@ type FieldType struct {
 	Month *FieldTypeMonth `json:"month,omitempty"`
 	// SingleSelect represents the configuration for a single select field
 	SingleSelect *FieldTypeSingleSelect `json:"singleSelect,omitempty"`
+}
+
+const accessorMessage = `
+No accessor for field %s is defined in types.FieldAccessors.
+This means that you added a field type, but did not add the accessor for it.
+Add the accessor in pkg/api/field_type`
+
+func (f FieldType) GetFieldType(kind FieldKind) (interface{}, error) {
+	accessor, ok := fieldAccessors[kind]
+	if !ok {
+		return nil, fmt.Errorf(accessorMessage, kind)
+	}
+	if accessor == nil {
+		return nil, fmt.Errorf("the accessor for field kind %v is nil", kind)
+	}
+	return accessor(f), nil
 }
 
 // FieldTypeReference represents a field that is a reference to a record in another FormDefinition
@@ -85,17 +103,63 @@ func (f *FieldTypeSubForm) GetFields() []*FieldDefinition {
 	return f.Fields
 }
 
+var allFieldKinds []FieldKind
+
+func GetAllFieldKinds() []FieldKind {
+	result := make([]FieldKind, len(allFieldKinds))
+	_ = copy(result, allFieldKinds)
+	return result
+}
+
+func init() {
+	for i := 0; i < len(_FieldKind_index)-1; i++ {
+		allFieldKinds = append(allFieldKinds, FieldKind(i))
+	}
+}
+
 // FieldKind is a struct that contains the different types of fields
-type FieldKind string
+type FieldKind int
+
+//go:generate go run golang.org/x/tools/cmd/stringer -type=FieldKind
 
 const (
-	FieldKindUnknown       FieldKind = "unknown"
-	FieldKindText          FieldKind = "text"
-	FieldKindSubForm       FieldKind = "subform"
-	FieldKindReference     FieldKind = "reference"
-	FieldKindMultilineText FieldKind = "multilineText"
-	FieldKindDate          FieldKind = "date"
-	FieldKindQuantity      FieldKind = "quantity"
-	FieldKindMonth         FieldKind = "month"
-	FieldKindSingleSelect  FieldKind = "singleSelect"
+	FieldKindUnknown FieldKind = iota
+	FieldKindText
+	FieldKindSubForm
+	FieldKindReference
+	FieldKindMultilineText
+	FieldKindDate
+	FieldKindQuantity
+	FieldKindMonth
+	FieldKindSingleSelect
 )
+
+var fieldAccessors = map[FieldKind]func(fieldType FieldType) interface{}{
+	FieldKindUnknown: func(fieldType FieldType) interface{} {
+		return nil
+	},
+	FieldKindText: func(fieldType FieldType) interface{} {
+		return fieldType.Text
+	},
+	FieldKindSubForm: func(fieldType FieldType) interface{} {
+		return fieldType.SubForm
+	},
+	FieldKindReference: func(fieldType FieldType) interface{} {
+		return fieldType.Reference
+	},
+	FieldKindMultilineText: func(fieldType FieldType) interface{} {
+		return fieldType.MultilineText
+	},
+	FieldKindDate: func(fieldType FieldType) interface{} {
+		return fieldType.Date
+	},
+	FieldKindQuantity: func(fieldType FieldType) interface{} {
+		return fieldType.Quantity
+	},
+	FieldKindMonth: func(fieldType FieldType) interface{} {
+		return fieldType.Month
+	},
+	FieldKindSingleSelect: func(fieldType FieldType) interface{} {
+		return fieldType.SingleSelect
+	},
+}
