@@ -8,6 +8,7 @@ import (
 	"github.com/nrc-no/core/pkg/utils/sets"
 	"github.com/nrc-no/core/pkg/validation"
 	"go.uber.org/zap"
+	"golang.org/x/sync/errgroup"
 	"gorm.io/gorm"
 	"time"
 )
@@ -114,26 +115,40 @@ func (d *folderStore) Create(ctx context.Context, folder *types.Folder) (*types.
 	storedFolder.CreatedAt = time.Now()
 
 	err = db.Transaction(func(tx *gorm.DB) error {
-		if err := tx.First(&Database{}, "id = ?", folder.DatabaseID).Error; err != nil {
-			if IsNotFoundErr(err) {
-				err := meta.NewInvalid(types.FolderGR, "", validation.ErrorList{validation.NotFound(validation.NewPath("databaseId"), folder.DatabaseID)})
-				l.Error("database not found", zap.Error(err))
-				return err
-			}
-			l.Error("failed to lookup database", zap.Error(err))
-			return meta.NewInternalServerError(err)
-		}
-		if len(folder.ParentID) != 0 {
-			if err := tx.First(&Folder{}, "id = ?", folder.ParentID).Error; err != nil {
+
+		// lookup on the databaseId and parentId can be done in parallel
+
+		g, ctx := errgroup.WithContext(ctx)
+		g.Go(func() error {
+			if err := tx.WithContext(ctx).First(&Database{}, "id = ?", folder.DatabaseID).Error; err != nil {
 				if IsNotFoundErr(err) {
-					err := meta.NewInvalid(types.FolderGR, "", validation.ErrorList{validation.NotFound(validation.NewPath("parentId"), folder.ParentID)})
-					l.Error("parent folder not found", zap.Error(err))
+					err := meta.NewInvalid(types.FolderGR, "", validation.ErrorList{validation.NotFound(validation.NewPath("databaseId"), folder.DatabaseID)})
+					l.Error("database not found", zap.Error(err))
 					return err
 				}
-				l.Error("failed to lookup parent folder", zap.Error(err))
+				l.Error("failed to lookup database", zap.Error(err))
 				return meta.NewInternalServerError(err)
 			}
+			return nil
+		})
+		g.Go(func() error {
+			if len(folder.ParentID) != 0 {
+				if err := tx.WithContext(ctx).First(&Folder{}, "id = ?", folder.ParentID).Error; err != nil {
+					if IsNotFoundErr(err) {
+						err := meta.NewInvalid(types.FolderGR, "", validation.ErrorList{validation.NotFound(validation.NewPath("parentId"), folder.ParentID)})
+						l.Error("parent folder not found", zap.Error(err))
+						return err
+					}
+					l.Error("failed to lookup parent folder", zap.Error(err))
+					return meta.NewInternalServerError(err)
+				}
+			}
+			return nil
+		})
+		if err := g.Wait(); err != nil {
+			return err
 		}
+
 		if err := tx.Create(storedFolder).Error; err != nil {
 			l.Error("failed to create folder", zap.Error(err))
 			if IsUniqueConstraintErr(err) {
@@ -143,6 +158,7 @@ func (d *folderStore) Create(ctx context.Context, folder *types.Folder) (*types.
 			}
 			return meta.NewInternalServerError(err)
 		}
+
 		return nil
 	})
 	if err != nil {
