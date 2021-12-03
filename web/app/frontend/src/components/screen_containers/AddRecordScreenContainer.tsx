@@ -24,9 +24,7 @@ export const AddRecordScreenContainer = ({
 
     const [isLoading, setIsLoading] = React.useState(true);
     const [form, setForm] = React.useState<FormDefinition>();
-    // const [simulateOffline, setSimulateOffline] = React.useState(!isWeb); // TODO: for testing, remove
     const [isConnected, setIsConnected] = React.useState(false);
-    // const [showSnackbar, setShowSnackbar] = React.useState(!isConnected);
     const [hasLocalData, setHasLocalData] = React.useState(false);
 
     const { control, handleSubmit, formState, reset } = useForm();
