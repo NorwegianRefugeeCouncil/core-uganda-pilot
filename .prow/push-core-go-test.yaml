@@ -6,4 +6,9 @@ presubmits:
       containers:
         - image: golang:1.16
           command: [ "bash", "-c" ]
-          args: [ "go mod download && go test ./pkg/..." ]
+          args:
+            - |
+              go mod download &&
+              make gen &&
+              (git diff --exit-code || echo "Changes detected. You have to re-run `make gen`!." && exit 1) &&
+              go test ./pkg/...
