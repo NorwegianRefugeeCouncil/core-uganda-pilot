@@ -7,7 +7,7 @@ presubmits:
         - image: golang:1.16
           command: [ "bash", "-c" ]
           args:
-            - >
+            - |
               go mod download &&
               make gen &&
               git diff --exit-code &&
