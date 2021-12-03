@@ -13,7 +13,7 @@ type FieldDefinition struct {
 	// Code is the unique Code of the FieldDefinition within the FormDefinition
 	Code string `json:"code,omitempty" yaml:"code,omitempty"`
 	// Name is the Name of the FieldDefinition
-	Name string `json:"name,omitempty" yaml:"name,omitempty"`
+	Name string `json:"name" yaml:"name"`
 	// Description is a helpful text helping the users to understand the question
 	Description string `json:"description,omitempty" yaml:"description,omitempty"`
 	// Options TODO: Remove this, put inside of FieldTypeMultiSelect / FieldTypeSelect
