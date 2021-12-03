@@ -240,3 +240,137 @@ func TestValidateFieldType(t *testing.T) {
 		})
 	}
 }
+
+func TestValidateFieldNameRegex(t *testing.T) {
+	valid := []string{
+		"fieldName",
+		"field name",
+		"Field Name",
+		"007",
+	}
+	invalid := []string{
+		" invalid ",
+		" Field",
+		"Field ",
+		"Field  Field",
+		"!Field",
+		"    ",
+	}
+	for _, s := range valid {
+		assert.True(t, fieldNameRegex.MatchString(s))
+	}
+	for _, s := range invalid {
+		assert.False(t, fieldNameRegex.MatchString(s))
+	}
+}
+
+func TestValidateFieldName(t *testing.T) {
+	p := validation.NewPath("")
+	tests := []struct {
+		name string
+		obj  string
+		want validation.ErrorList
+	}{
+		{
+			name: "valid",
+			obj:  "fieldName",
+			want: []*validation.Error{},
+		},
+		{
+			name: "empty",
+			obj:  "",
+			want: []*validation.Error{
+				validation.Required(p, errFieldNameRequired),
+			},
+		},
+		{
+			name: "tooShort",
+			obj:  "a",
+			want: []*validation.Error{
+				validation.TooShort(p, "a", fieldNameMinLength),
+			},
+		},
+		{
+			name: "tooLong",
+			obj:  strings.Repeat("a", fieldNameMaxLength+1),
+			want: []*validation.Error{
+				validation.TooLong(p, strings.Repeat("a", fieldNameMaxLength+1), fieldNameMaxLength),
+			},
+		},
+		{
+			name: "invalid",
+			obj:  "&&!",
+			want: []*validation.Error{
+				validation.Invalid(p, "&&!", errFieldNameInvalid),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := ValidateFieldName(tt.obj, p)
+			assert.ElementsMatchf(t, tt.want, got, "")
+		})
+	}
+}
+
+func TestFieldCodeRegex(t *testing.T) {
+	valid := []string{
+		"code",
+		"CODE",
+		"code0",
+	}
+	invalid := []string{
+		" ",
+		" code",
+		"code ",
+		"code code",
+		"!code",
+		"0code",
+	}
+	for _, s := range valid {
+		assert.True(t, fieldCodeRegex.MatchString(s))
+	}
+	for _, s := range invalid {
+		assert.False(t, fieldCodeRegex.MatchString(s))
+	}
+}
+
+func TestValidateFieldCode(t *testing.T) {
+	p := validation.NewPath("")
+	tests := []struct {
+		name string
+		obj  string
+		want validation.ErrorList
+	}{
+		{
+			name: "valid",
+			obj:  "CODE",
+			want: []*validation.Error{},
+		},
+		{
+			name: "empty",
+			obj:  "",
+			want: []*validation.Error{},
+		},
+		{
+			name: "tooLong",
+			obj:  strings.Repeat("A", fieldCodeMaxLength+1),
+			want: []*validation.Error{
+				validation.TooLong(p, strings.Repeat("A", fieldCodeMaxLength+1), fieldCodeMaxLength),
+			},
+		},
+		{
+			name: "invalid",
+			obj:  "!!!!!",
+			want: []*validation.Error{
+				validation.Invalid(p, "!!!!!", errInvalidFieldCode),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := ValidateFieldCode(tt.obj, p)
+			assert.ElementsMatchf(t, tt.want, got, "")
+		})
+	}
+}
