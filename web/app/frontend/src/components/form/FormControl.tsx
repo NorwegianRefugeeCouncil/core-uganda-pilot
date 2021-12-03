@@ -2,8 +2,8 @@ import { View, ViewStyle } from "react-native";
 import React from "react";
 import TextInput from "./TextInput";
 import Select from "./Select";
-import {Control, Controller} from "react-hook-form";
-import {FieldDefinition, FieldKind, getFieldKind} from "core-js-api-client";
+import { Control, Controller } from "react-hook-form";
+import { FieldDefinition, FieldKind, getFieldKind } from "core-js-api-client";
 import ReferenceInput from "./ReferenceInput";
 
 // TODO: move & clean up types
@@ -46,11 +46,7 @@ const FormControl = ({
                 name={name}
                 control={control}
                 defaultValue={value}
-                render={({
-                    field: { onChange, onBlur, value, ref },
-                    fieldState,
-                    formState,
-                }) => {
+                render={({ field: { onChange, onBlur, value, ref }, fieldState, formState }) => {
                     const fieldKind = getFieldKind(fieldDefinition.fieldType);
 
                     switch (fieldKind) {

@@ -1,12 +1,9 @@
-import { FieldTypeText } from "core-js-api-client";
 import React from "react";
-import { Provider } from "react-native-paper";
-import { render } from "@testing-library/react-native"
-import {ErrorBoundary} from "../../src/components/ErrorBoundary"
+import { render } from "@testing-library/react-native";
 
 import AddRecordScreen from "../../src/components/screens/AddRecordScreen";
 import testIds from "../../src/constants/testIds";
-import { useForm, FormProvider, useFormContext } from "react-hook-form"
+import { useForm } from "react-hook-form";
 
 const mockField = {
     name: "something",
@@ -14,8 +11,9 @@ const mockField = {
     required: true,
     options: [],
     key: false,
-    fieldType: {text:{}}
+    fieldType: { text: {} },
 };
+
 const mockForm = {
     id: "something",
     code: "something",
@@ -24,8 +22,9 @@ const mockForm = {
     name: "something",
     fields: Array(2)
         .fill(mockField)
-        .map((field, index) => ({ ...field, id: index.toString(), code: index.toString()})),
+        .map((field, index) => ({ ...field, id: index.toString(), code: index.toString() })),
 };
+
 const mockOnSubmit = jest.fn();
 
 const mockProps = {
@@ -38,11 +37,10 @@ const mockProps = {
 };
 
 export const WrappedComponent = () => {
-  const { control, formState } = useForm();
-  const props = {...mockProps, control, formState}
-  return (
-        <AddRecordScreen {...props} />
-)};
+    const { control, formState } = useForm();
+    const props = { ...mockProps, control, formState };
+    return <AddRecordScreen {...props} />;
+};
 
 describe(AddRecordScreen.name, () => {
     test("renders correctly", () => {

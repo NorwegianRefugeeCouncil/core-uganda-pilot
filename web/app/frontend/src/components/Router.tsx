@@ -4,6 +4,10 @@ import React, { useReducer } from "react";
 import NavigationBar from "./NavigationBar";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+<<<<<<< HEAD
+=======
+import FormsScreen from "./screens/FormsScreen";
+>>>>>>> 42b11197 (lint and pr tweaks)
 import routes from "../constants/routes";
 import { NavigationTheme } from "../constants/theme";
 import DesignSystemDemoScreen from "./screens/DesignSystemDemoScreen";
@@ -72,12 +76,16 @@ export default function Router() {
                         <Stack.Screen
                             name={routes.addRecord.name}
                             options={{
-                                title: routes.addRecord.title
-                            }}
-                        >
-                            {({navigation, route}) =>
-                                <AddRecordScreenContainer navigation={navigation} route={route as AddRecordScreenContainerProps['route']} state={state} dispatch={dispatch}/>
-                            }
+                                title: routes.addRecord.title,
+                            }}>
+                            {({ navigation, route }) => (
+                                <AddRecordScreenContainer
+                                    navigation={navigation}
+                                    route={route as AddRecordScreenContainerProps["route"]}
+                                    state={state}
+                                    dispatch={dispatch}
+                                />
+                            )}
                         </Stack.Screen>
                         <Stack.Screen
                             name={routes.viewRecord.name}

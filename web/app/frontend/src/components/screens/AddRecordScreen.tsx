@@ -1,14 +1,14 @@
-import React from 'react';
-import {common, layout} from '../../styles';
-import {Button, ScrollView, Text, View} from 'react-native';
+import React from "react";
+import { common, layout } from "../../styles";
+import { Button, ScrollView, Text, View } from "react-native";
 import FormControl from "../form/FormControl";
-import { FormDefinition } from 'core-js-api-client';
-import { Control, FieldValues, FormState } from 'react-hook-form';
-import testIds from '../../constants/testIds';
+import { FormDefinition } from "core-js-api-client";
+import { Control, FieldValues, FormState } from "react-hook-form";
+import testIds from "../../constants/testIds";
 
 export type AddRecordScreenProps = {
     form?: FormDefinition;
-    control: Control<any, Object>;
+    control: Control<FieldValues, object>;
     onSubmit: (data: any) => void;
     formState: FormState<FieldValues>;
     isWeb: boolean;
@@ -17,58 +17,48 @@ export type AddRecordScreenProps = {
     isLoading: boolean;
 };
 
-export const AddRecordScreen =({
+export const AddRecordScreen = ({
     form,
     control,
     onSubmit,
     formState,
-    isWeb,
+    isWeb, // TODO remove this?
     hasLocalData,
     isConnected,
     isLoading,
-}: AddRecordScreenProps)=> {
+}: AddRecordScreenProps) => {
     return (
         <ScrollView contentContainerStyle={[layout.container, layout.body, common.darkBackground]}>
             <View>
                 {/* upload data collected offline */}
                 {hasLocalData && (
-                    <View style={{display: "flex", flexDirection: "column"}}>
-                        <Text>
-                            There is locally stored data for this individual.
-                        </Text>
+                    <View style={{ display: "flex", flexDirection: "column" }}>
+                        <Text>There is locally stored data for this individual.</Text>
                     </View>
                 )}
                 {hasLocalData && isConnected && (
-                    <View style={{display: "flex", flexDirection: "column"}}>
-                        <Text>
-                            Do you want to upload it?
-                        </Text>
-                        <Button
-                            title="Submit local data"
-                            onPress={onSubmit}
-                        />
+                    <View style={{ display: "flex", flexDirection: "column" }}>
+                        <Text>Do you want to upload it?</Text>
+                        <Button title="Submit local data" onPress={onSubmit} />
                     </View>
                 )}
                 {!isLoading && (
-                    <View style={{width: '100%'}}>
-                        {form?.fields.map((field) => {
+                    <View style={{ width: "100%" }}>
+                        {form?.fields.map(field => {
                             return (
                                 <FormControl
                                     key={field.code}
                                     fieldDefinition={field}
-                                    style={{width: '100%'}}
+                                    style={{ width: "100%" }}
                                     // value={''} // take value from record
                                     control={control}
                                     name={field.id}
                                     errors={formState?.errors}
-                                    testID={testIds.formControl}                                    
+                                    testID={testIds.formControl}
                                 />
-                            )
+                            );
                         })}
-                        <Button
-                            title="Submit"
-                            onPress={onSubmit}
-                        />
+                        <Button title="Submit" onPress={onSubmit} />
                     </View>
                 )}
             </View>

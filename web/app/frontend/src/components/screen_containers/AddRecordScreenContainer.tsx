@@ -8,16 +8,10 @@ import { AddRecordScreenContainerProps } from "../../types/screens";
 import client from "../../utils/clients";
 import { getEncryptionKey } from "../../utils/getEncryptionKey";
 import { getNetworkState } from "../../utils/getNetworkState";
-import {
-    getEncryptedLocalData,
-    storeEncryptedLocalData,
-} from "../../utils/storage";
+import { getEncryptedLocalData, storeEncryptedLocalData } from "../../utils/storage";
 import AddRecordScreen from "../screens/AddRecordScreen";
 
-export const AddRecordScreenContainer = ({
-    route,
-    dispatch,
-}: AddRecordScreenContainerProps) => {
+export const AddRecordScreenContainer = ({ route, dispatch }: AddRecordScreenContainerProps) => {
     const { formId, recordId } = route.params;
 
     const isWeb = Platform.OS === "web";
