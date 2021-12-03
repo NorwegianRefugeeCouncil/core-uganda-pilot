@@ -45,11 +45,7 @@ const FormControl = ({
                 name={name}
                 control={control}
                 defaultValue={value}
-                render={({
-                    field: { onChange, onBlur, value, ref },
-                    fieldState,
-                    formState,
-                }) => {
+                render={({ field: { onChange, onBlur, value, ref }, fieldState, formState }) => {
                     const fieldKind = getFieldKind(fieldDefinition.fieldType);
 
                     switch (fieldKind) {

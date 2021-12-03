@@ -1,24 +1,22 @@
 import { View } from "react-native";
 import React from "react";
-import {Text, TextInput as TextInputRNP} from "react-native-paper";
-import {darkTheme} from "../../constants/theme";
-import {InputProps} from "./FormControl";
+import { Text, TextInput as TextInputRNP } from "react-native-paper";
+import { darkTheme } from "../../constants/theme";
+import { InputProps } from "./FormControl";
 
-const TextInput = (
-    {
-        fieldDefinition,
-        style,
-        value,
-        onChange,
-        onBlur,
-        error,
-        invalid,
-        isTouched,
-        isDirty,
-        isMultiple,
-        isQuantity
-    }: InputProps) => {
-
+const TextInput = ({
+    fieldDefinition,
+    style,
+    value,
+    onChange,
+    onBlur,
+    error,
+    invalid,
+    isTouched,
+    isDirty,
+    isMultiple,
+    isQuantity,
+}: InputProps) => {
     return (
         <View style={style}>
             {fieldDefinition.name && <Text theme={darkTheme}>{fieldDefinition.name}</Text>}

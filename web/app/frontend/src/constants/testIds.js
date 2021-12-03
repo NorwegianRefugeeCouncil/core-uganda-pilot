@@ -1,4 +1,4 @@
 export default {
-    formListItem: 'formItem', // a form item in a list
-    formControl: 'formControl',
+    formListItem: "formItem", // a form item in a list
+    formControl: "formControl",
 };
