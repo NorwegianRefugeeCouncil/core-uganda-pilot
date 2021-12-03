@@ -9,7 +9,7 @@ import (
 // A FieldDefinition defines the name, description, boundaries of data collection.
 type FieldDefinition struct {
 	// ID is the ID of the FieldDefinition
-	ID string `json:"id,omitempty" yaml:"id,omitempty"`
+	ID string `json:"id" yaml:"id"`
 	// Code is the unique Code of the FieldDefinition within the FormDefinition
 	Code string `json:"code,omitempty" yaml:"code,omitempty"`
 	// Name is the Name of the FieldDefinition
@@ -24,11 +24,11 @@ type FieldDefinition struct {
 	//
 	// For example, if a FormDefinition has 2 key fields, "Year" and "Month", then there could
 	// be no two records with "2021" and "January".
-	Key bool `json:"key" yaml:"key,omitempty"`
+	Key bool `json:"key" yaml:"key"`
 	// Required indicates that the user must enter data for that FieldDefinition
 	Required bool `json:"required" yaml:"required"`
 	// FieldType contains the type of FieldDefinition
-	FieldType FieldType `json:"fieldType,omitempty" yaml:"fieldType,omitempty"`
+	FieldType FieldType `json:"fieldType" yaml:"fieldType"`
 }
 
 // IsKind is a helper method that checks if the field is of the given FieldKind

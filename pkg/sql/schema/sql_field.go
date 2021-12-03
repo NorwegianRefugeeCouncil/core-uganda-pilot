@@ -5,8 +5,8 @@ import (
 )
 
 type SQLField struct {
-	Name        string                `json:"name,omitempty" yaml:"name,omitempty"`
-	DataType    SQLDataType           `json:"dataType,omitempty" yaml:"dataType,omitempty"`
+	Name        string                `json:"name" yaml:"name"`
+	DataType    SQLDataType           `json:"dataType" yaml:"dataType"`
 	Collate     string                `json:"collate,omitempty" yaml:"collate,omitempty"`
 	Default     string                `json:"default,omitempty" yaml:"default,omitempty"`
 	Options     []string              `json:"options,omitempty" yaml:"options,omitempty"`

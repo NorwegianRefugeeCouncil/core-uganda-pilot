@@ -8,20 +8,20 @@ import (
 // FormDefinition represents the definition of a Form for data collection.
 type FormDefinition struct {
 	// ID is the unique ID of the FormDefinition
-	ID string `json:"id,omitempty" yaml:"id,omitempty"`
+	ID string `json:"id" yaml:"id"`
 	// Code of the FormDefinition
 	// TODO remove this. It's not used yet.
 	Code string `json:"code,omitempty" yaml:"code,omitempty"`
 	// DatabaseID of the FormDefinition
-	DatabaseID string `json:"databaseId,omitempty" yaml:"databaseId,omitempty"`
+	DatabaseID string `json:"databaseId" yaml:"databaseId"`
 	// FolderID of the FormDefinition. If the FolderID is empty,
 	// this means that the FormDefinition exists at the root
 	// of the DatabaseID
-	FolderID string `json:"folderId" yaml:"folderId,omitempty"`
+	FolderID string `json:"folderId,omitempty" yaml:"folderId,omitempty"`
 	// Name of the FormDefinition
-	Name string `json:"name,omitempty" yaml:"name,omitempty"`
+	Name string `json:"name" yaml:"name"`
 	// Fields that constitute the FormDefinition
-	Fields FieldDefinitions `json:"fields" yaml:"fields,omitempty"`
+	Fields FieldDefinitions `json:"fields" yaml:"fields"`
 }
 
 // GetID implements FormInterface.GetID

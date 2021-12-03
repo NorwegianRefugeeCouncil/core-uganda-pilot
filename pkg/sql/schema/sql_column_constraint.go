@@ -10,7 +10,7 @@ type NotNullSQLColumnConstraint struct{}
 type NullSQLColumnConstraint struct{}
 
 type CheckSQLColumnConstraint struct {
-	Expression string `json:"expression,omitempty" yaml:"expression,omitempty"`
+	Expression string `json:"expression" yaml:"expression"`
 }
 
 type UniqueSQLColumnConstraint struct{}

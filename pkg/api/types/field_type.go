@@ -48,9 +48,9 @@ func (f FieldType) GetFieldType(kind FieldKind) (interface{}, error) {
 // country.
 type FieldTypeReference struct {
 	// DatabaseID represents the DatabaseID of the referenced FormDefinition
-	DatabaseID string `json:"databaseId,omitempty" yaml:"databaseId,omitempty"`
+	DatabaseID string `json:"databaseId" yaml:"databaseId"`
 	// FormID represents the FormID of the referenced FormDefinition
-	FormID string `json:"formId,omitempty" yaml:"formId,omitempty"`
+	FormID string `json:"formId" yaml:"formId"`
 }
 
 // FieldTypeText represents a textual field
@@ -84,9 +84,9 @@ type FieldTypeSingleSelect struct {
 // The "Monthly Deliveries". There could be multiple "Monthly Deliveries" for a single "Project".
 type FieldTypeSubForm struct {
 	// ID represents the ID of the sub form
-	ID string `json:"id,omitempty" yaml:"id,omitempty"`
+	ID string `json:"id" yaml:"id"`
 	// Name represents the Name of the sub form
-	Name string `json:"name,omitempty" yaml:"name,omitempty"`
+	Name string `json:"name" yaml:"name"`
 	// Code represents the unique Code for the subform Field
 	Code string `json:"code,omitempty" yaml:"code,omitempty"`
 	// Fields represent the fields for the SubForm
