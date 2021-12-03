@@ -34,8 +34,8 @@ func mapFromHydraClient(client *models.OAuth2Client) *types.OAuth2Client {
 	}
 }
 
-func mapFromHydraClients(clients []*models.OAuth2Client) *types.Oauth2ClientList {
-	clientList := types.Oauth2ClientList{
+func mapFromHydraClients(clients []*models.OAuth2Client) *types.OAuth2ClientList {
+	clientList := types.OAuth2ClientList{
 		Items: []*types.OAuth2Client{},
 	}
 	for _, hydraClient := range clients {

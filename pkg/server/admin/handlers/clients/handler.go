@@ -61,8 +61,8 @@ func NewHandler(hydraAdmin admin.ClientService) (*Handler, error) {
 		Doc(`gets oauth2 clients`).
 		Operation("listClients").
 		Produces(mimetypes.ApplicationJson).
-		Writes(&types.Oauth2ClientList{}).
-		Returns(http.StatusOK, "OK", &types.Oauth2ClientList{}),
+		Writes(&types.OAuth2ClientList{}).
+		Returns(http.StatusOK, "OK", &types.OAuth2ClientList{}),
 	)
 
 	h.ws = ws

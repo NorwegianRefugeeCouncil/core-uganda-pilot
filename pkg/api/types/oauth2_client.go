@@ -30,7 +30,7 @@ type OAuth2Client struct {
 	TokenEndpointAuthMethod string `json:"tokenEndpointAuthMethod"`
 }
 
-// Oauth2ClientList represents a list of OAuth2Client
-type Oauth2ClientList struct {
+// OAuth2ClientList represents a list of OAuth2Client
+type OAuth2ClientList struct {
 	Items []*OAuth2Client `json:"items"`
 }
