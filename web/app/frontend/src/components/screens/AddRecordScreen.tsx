@@ -29,7 +29,7 @@ export const AddRecordScreen =({
 }: AddRecordScreenProps)=> {
     return (
         <ScrollView contentContainerStyle={[layout.container, layout.body, common.darkBackground]}>
-            <View style={[]}>
+            <View>
                 {/* upload data collected offline */}
                 {hasLocalData && (
                     <View style={{display: "flex", flexDirection: "column"}}>
