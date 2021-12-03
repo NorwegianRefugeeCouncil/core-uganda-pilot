@@ -31,21 +31,6 @@ export const AddRecordScreen =({
     return (
         <ScrollView contentContainerStyle={[layout.container, layout.body, common.darkBackground]}>
             <View style={[]}>
-                {/* simulate network changes, for testing */}
-                {!isWeb && (
-                    <View style={{display: "flex", flexDirection: "row"}}>
-                        {/*<Switch
-                            value={simulateOffline}
-                            onValueChange={() => {
-                                setSimulateOffline(!simulateOffline)
-                                setIsConnected(simulateOffline)
-                                setShowSnackbar(!simulateOffline)
-                            }}
-                        />*/}
-                        <Text> simulate being offline </Text>
-                    </View>
-                )}
-
                 {/* upload data collected offline */}
                 {hasLocalData && (
                     <View style={{display: "flex", flexDirection: "column"}}>
@@ -88,16 +73,6 @@ export const AddRecordScreen =({
                     </View>
                 )}
             </View>
-            {/*<Snackbar
-                visible={showSnackbar}
-                onDismiss={() => setShowSnackbar(false)}
-                action={{
-                    label: 'Got it',
-                    onPress: () => setShowSnackbar(false)
-                }}
-            >
-                No internet connection. Submitted data will be stored locally.
-            </Snackbar>*/}
         </ScrollView>
     );
 };
