@@ -27,7 +27,6 @@ export const AddRecordScreen =({
     isConnected,
     isLoading,
 }: AddRecordScreenProps)=> {
-  // console.log(form?.fields)
     return (
         <ScrollView contentContainerStyle={[layout.container, layout.body, common.darkBackground]}>
             <View style={[]}>
