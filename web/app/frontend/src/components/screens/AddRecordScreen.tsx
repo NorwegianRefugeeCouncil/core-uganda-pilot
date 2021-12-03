@@ -60,7 +60,7 @@ export const AddRecordScreen = ({
                                 />
                             );
                         })}
-                        <Button title="Submit" onPress={onSubmit} />
+                        <Button accessibilityLabel="Submit" title="Submit" onPress={onSubmit} />
                     </View>
                 )}
             </View>

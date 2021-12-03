@@ -1,0 +1,90 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AddRecordScreenContainer renders correctly 1`] = `
+<RCTScrollView
+  contentContainerStyle={
+    Array [
+      Object {
+        "flex": 1,
+        "flexGrow": 1,
+      },
+      Object {
+        "alignItems": "flex-start",
+        "flexGrow": 1,
+        "justifyContent": "flex-start",
+        "padding": 18,
+      },
+      Object {
+        "backgroundColor": "#24303E",
+        "color": "#000000",
+      },
+    ]
+  }
+>
+  <View>
+    <View>
+      <View
+        style={
+          Object {
+            "display": "flex",
+            "flexDirection": "column",
+          }
+        }
+      >
+        <Text>
+          There is locally stored data for this individual.
+        </Text>
+      </View>
+      <View
+        style={
+          Object {
+            "width": "100%",
+          }
+        }
+      >
+        <View
+          accessibilityLabel="Submit"
+          accessibilityRole="button"
+          accessibilityState={Object {}}
+          accessible={true}
+          focusable={true}
+          nativeBackgroundAndroid={
+            Object {
+              "attribute": "selectableItemBackground",
+              "rippleRadius": undefined,
+              "type": "ThemeAttrAndroid",
+            }
+          }
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            Array [
+              Object {},
+            ]
+          }
+        >
+          <Text
+            style={
+              Array [
+                Object {
+                  "color": "#007AFF",
+                  "fontSize": 18,
+                  "margin": 8,
+                  "textAlign": "center",
+                },
+              ]
+            }
+          >
+            SUBMIT
+          </Text>
+        </View>
+      </View>
+    </View>
+  </View>
+</RCTScrollView>
+`;

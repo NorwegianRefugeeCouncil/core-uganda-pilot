@@ -66,21 +66,19 @@ export const AddRecordScreenContainer = ({ route, dispatch }: AddRecordScreenCon
 
     const onSubmitOffline = async (data: any) => {
         const key = getEncryptionKey();
-
-        storeEncryptedLocalData(recordId, key, data)
-            .then(() => {
-                setHasLocalData(true);
-                dispatch({
-                    type: RECORD_ACTIONS.ADD_LOCAL_RECORD,
-                    payload: {
-                        formId,
-                        localRecord: recordId,
-                    },
-                });
-            })
-            .catch(() => {
-                setHasLocalData(false);
+        try {
+            await storeEncryptedLocalData(recordId, key, data);
+            dispatch({
+                type: RECORD_ACTIONS.ADD_LOCAL_RECORD,
+                payload: {
+                    formId,
+                    localRecord: recordId,
+                },
             });
+            setHasLocalData(true);
+        } catch (e) {
+            setHasLocalData(false);
+        }
     };
 
     const onSubmit = (data: any) => {
