@@ -2,13 +2,34 @@ package store
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/sql/convert"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
+	"os"
 )
 
+const clearProtectionEnvVar = "VERY_DANGEROUSLY_ALLOW_TO_CLEAR_DB"
+
+func checkClearProtection(ctx context.Context) error {
+	l := logging.NewLogger(ctx)
+	requiredEnvVar, ok := os.LookupEnv(clearProtectionEnvVar)
+	if len(requiredEnvVar) == 0 || !ok || requiredEnvVar != "yes" {
+		l.Error(fmt.Sprintf("Cannot run the Clear method. You must set the %s=yes environment variable\n", clearProtectionEnvVar))
+		return errors.New("required environment variable not present")
+	}
+	return nil
+}
+
+// Clear deletes everything from the database. Useful for development.
+// Be careful in production...
 func Clear(ctx context.Context, db *gorm.DB) error {
+
+	if err := checkClearProtection(ctx); err != nil {
+		return err
+	}
 
 	l := logging.NewLogger(ctx)
 

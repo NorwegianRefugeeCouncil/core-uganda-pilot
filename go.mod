@@ -17,10 +17,12 @@ require (
 	github.com/gorilla/securecookie v1.1.1
 	github.com/gorilla/sessions v1.2.1
 	github.com/iancoleman/strcase v0.2.0
+	github.com/jackc/pgconn v1.10.1 // indirect
 	github.com/lib/pq v1.10.3
 	github.com/lithammer/shortuuid/v3 v3.0.7
 	github.com/looplab/fsm v0.3.0
 	github.com/manifoldco/promptui v0.9.0
+	github.com/mattn/go-sqlite3 v1.14.9 // indirect
 	github.com/ory/hydra-client-go v1.10.6
 	github.com/rs/cors v1.8.0
 	github.com/satori/go.uuid v1.2.0
@@ -37,5 +39,5 @@ require (
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 	gorm.io/driver/postgres v1.2.1
 	gorm.io/driver/sqlite v1.2.3
-	gorm.io/gorm v1.22.2
+	gorm.io/gorm v1.22.4
 )
