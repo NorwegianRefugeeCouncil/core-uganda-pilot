@@ -229,7 +229,7 @@ func TestValidateFieldType(t *testing.T) {
 				validation.Invalid(p, types.FieldType{
 					Text:          &types.FieldTypeText{},
 					MultilineText: &types.FieldTypeMultilineText{},
-				}, fmt.Sprintf(errFieldTypesMultipleF, []string{"text", "multilineText"})),
+				}, fmt.Sprintf(errFieldTypesMultipleF, []string{"FieldKindText", "FieldKindMultilineText"})),
 			},
 		},
 	}

@@ -165,3 +165,7 @@ _sleep:
 
 .PHONY: respawn
 respawn: down spawn
+
+.PHONY: gen
+gen:
+	@./scripts/gen.sh

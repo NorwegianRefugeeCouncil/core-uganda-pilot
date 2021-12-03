@@ -175,37 +175,26 @@ func ValidateFieldCode(fieldCode string, path *validation.Path) validation.Error
 
 func ValidateFieldType(fieldType types.FieldType, path *validation.Path) validation.ErrorList {
 	var result validation.ErrorList
-
-	type val struct {
-		name  string
-		value interface{}
-	}
-	candidates := []val{
-		{name: "text", value: fieldType.Text},
-		{name: "subForm", value: fieldType.SubForm},
-		{name: "date", value: fieldType.Date},
-		{name: "reference", value: fieldType.Reference},
-		{name: "month", value: fieldType.Month},
-		{name: "multilineText", value: fieldType.MultilineText},
-		{name: "quantity", value: fieldType.Quantity},
-		{name: "singleSelect", value: fieldType.SingleSelect},
-	}
-	var vals []val
-	var valNames []string
-	for _, candidate := range candidates {
-		if !reflect.ValueOf(candidate.value).IsNil() {
-			vals = append(vals, candidate)
-			valNames = append(valNames, candidate.name)
+	var found []types.FieldKind
+	for _, kind := range types.GetAllFieldKinds() {
+		field, err := fieldType.GetFieldType(kind)
+		if err != nil {
+			result = append(result, validation.InternalError(path, err))
+			return result
+		}
+		value := reflect.ValueOf(field)
+		if value.Kind() == reflect.Ptr && !value.IsNil() {
+			found = append(found, kind)
 		}
 	}
 
-	if len(vals) == 0 {
+	if len(found) == 0 {
 		result = append(result, validation.Invalid(path, fieldType, errOneFieldTypeRequired))
 		return result
 	}
 
-	if len(vals) > 1 {
-		result = append(result, validation.Invalid(path, fieldType, fmt.Sprintf(errFieldTypesMultipleF, valNames)))
+	if len(found) > 1 {
+		result = append(result, validation.Invalid(path, fieldType, fmt.Sprintf(errFieldTypesMultipleF, found)))
 		return result
 	}
 
