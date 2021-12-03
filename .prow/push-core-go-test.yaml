@@ -10,5 +10,5 @@ presubmits:
             - >
               go mod download &&
               make gen &&
-              (git diff --exit-code || echo 'Changes detected. You have to re-run make gen' && exit 1) &&
+              git diff --exit-code &&
               go test ./pkg/...
