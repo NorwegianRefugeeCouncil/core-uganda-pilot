@@ -24,10 +24,18 @@ type FieldType struct {
 	SingleSelect *FieldTypeSingleSelect `json:"singleSelect,omitempty"`
 }
 
+const accessorMessage = `
+No accessor for field %s is defined in types.FieldAccessors.
+This means that you added a field type, but did not add the accessor for it.
+Add the accessor in pkg/api/field_type`
+
 func (f FieldType) GetFieldType(kind FieldKind) (interface{}, error) {
-	accessor, ok := FieldAccessors[kind]
+	accessor, ok := fieldAccessors[kind]
 	if !ok {
-		return nil, fmt.Errorf("accessor for field kind %v is not specified in FieldAccessors", kind)
+		return nil, fmt.Errorf(accessorMessage, kind)
+	}
+	if accessor == nil {
+		return nil, fmt.Errorf("the accessor for field kind %v is nil", kind)
 	}
 	return accessor(f), nil
 }
@@ -126,7 +134,7 @@ const (
 	FieldKindSingleSelect
 )
 
-var FieldAccessors = map[FieldKind]func(fieldType FieldType) interface{}{
+var fieldAccessors = map[FieldKind]func(fieldType FieldType) interface{}{
 	FieldKindUnknown: func(fieldType FieldType) interface{} {
 		return nil
 	},
