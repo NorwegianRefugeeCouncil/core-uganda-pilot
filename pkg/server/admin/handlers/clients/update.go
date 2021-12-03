@@ -22,7 +22,7 @@ func handleUpdate(hydraAdmin admin.ClientService, clientID string) http.HandlerF
 		l := logging.NewLogger(req.Context()).With(zap.String("client_id", clientID))
 
 		l.Debug("unmarshaling client")
-		var client types.Oauth2Client
+		var client types.OAuth2Client
 		if err := utils.BindJSON(req, &client); err != nil {
 			utils.ErrorResponse(w, err)
 			return

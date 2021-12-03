@@ -191,7 +191,7 @@ func (d *formStore) getFormDefinitionInternal(ctx context.Context, db *gorm.DB, 
 		return nil, err
 	}
 
-	if formDefinitions.Empty() {
+	if formDefinitions.IsEmpty() {
 		l.Debug("form definition not found")
 		return nil, meta.NewNotFound(meta.GroupResource{
 			Group:    "nrc.no",
@@ -308,21 +308,21 @@ func (d *formStore) Delete(ctx context.Context, id string) error {
 
 	err = db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 
-		formIds := formDef.GetAllFormsAndSubFormIDs()
-		if len(formIds) == 0 {
+		formIdSet := formDef.GetAllFormsAndSubFormIDs()
+		if formIdSet.IsEmpty() {
 			return nil
 		}
 		var formIdsIntf []interface{}
 
 		var params []string
-		for _, formId := range formIds {
+		for _, formId := range formIdSet.List() {
 			formIdsIntf = append(formIdsIntf, formId)
 			params = append(params, "?")
 		}
 
 		l.Debug("deleting database tables")
-		reversed := slices.ReversedStrings(formIds)
-		for _, formId := range reversed {
+		formIds := slices.ReversedStrings(formIdSet.List())
+		for _, formId := range formIds {
 			if err := convert.DeleteTableIfExists(tx, formDef.DatabaseID, formId); err != nil {
 				l.Error("failed to delete database table",
 					zap.Error(err),

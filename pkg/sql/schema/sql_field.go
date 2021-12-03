@@ -5,13 +5,13 @@ import (
 )
 
 type SQLField struct {
-	Name        string
-	DataType    SQLDataType
-	Collate     string
-	Default     string
-	Options     []string
-	Constraints []SQLColumnConstraint
-	Comment     string
+	Name        string                `json:"name" yaml:"name"`
+	DataType    SQLDataType           `json:"dataType" yaml:"dataType"`
+	Collate     string                `json:"collate,omitempty" yaml:"collate,omitempty"`
+	Default     string                `json:"default,omitempty" yaml:"default,omitempty"`
+	Options     []string              `json:"options,omitempty" yaml:"options,omitempty"`
+	Constraints []SQLColumnConstraint `json:"constraints,omitempty" yaml:"constraints,omitempty"`
+	Comment     string                `json:"comment,omitempty" yaml:"comment,omitempty"`
 }
 
 func NewSQLField(name string) SQLField {
@@ -30,6 +30,11 @@ func (s SQLField) WithSerialDataType() SQLField {
 
 func (s SQLField) WithVarCharDataType(length int) SQLField {
 	s.DataType.VarChar = &SQLDataTypeVarChar{Length: length}
+	return s
+}
+
+func (s SQLField) WithTimeStampDataType(tzMode *SQLDataTypeTimestampTZMode) SQLField {
+	s.DataType.Timestamp = &SQLDataTypeTimestamp{Timezone: tzMode}
 	return s
 }
 

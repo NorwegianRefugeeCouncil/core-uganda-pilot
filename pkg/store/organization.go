@@ -15,7 +15,6 @@ type Organization struct {
 	ID          string
 	Name        string
 	EmailDomain string
-	Key         string
 }
 
 type OrganizationStore interface {
@@ -39,7 +38,6 @@ func mapFromOrg(org *types.Organization) *Organization {
 	return &Organization{
 		ID:   org.ID,
 		Name: org.Name,
-		Key:  org.Key,
 	}
 }
 
@@ -47,7 +45,6 @@ func mapToOrg(org *Organization) *types.Organization {
 	return &types.Organization{
 		ID:   org.ID,
 		Name: org.Name,
-		Key:  org.Key,
 	}
 }
 

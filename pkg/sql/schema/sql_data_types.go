@@ -6,22 +6,22 @@ import (
 )
 
 type SQLDataType struct {
-	VarChar         *SQLDataTypeVarChar
-	Int             *SQLDataTypeInt
-	SmallInt        *SQLDataTypeSmallInt
-	BigInt          *SQLDataTypeBigInt
-	Numeric         *SQLDataTypeNumeric
-	DoublePrecision *SQLDataTypeDoublePrecision
-	Serial          *SQLDataTypeSerial
-	SmallSerial     *SQLDataTypeSmallSerial
-	BigSerial       *SQLDataTypeBigSerial
-	Boolean         *SQLDataTypeBoolean
-	Float           *SQLDataTypeFloat
-	Timestamp       *SQLDataTypeTimestamp
-	Date            *SQLDataTypeDate
-	Time            *SQLDataTypeTime
-	Interval        *SQLDataTypeInterval
-	Text            *SQLDataTypeText
+	VarChar         *SQLDataTypeVarChar         `json:"varChar,omitempty" yaml:"varChar,omitempty"`
+	Int             *SQLDataTypeInt             `json:"int,omitempty" yaml:"int,omitempty"`
+	SmallInt        *SQLDataTypeSmallInt        `json:"smallInt,omitempty" yaml:"smallInt,omitempty"`
+	BigInt          *SQLDataTypeBigInt          `json:"bigInt,omitempty" yaml:"bigInt,omitempty"`
+	Numeric         *SQLDataTypeNumeric         `json:"numeric,omitempty" yaml:"numeric,omitempty"`
+	DoublePrecision *SQLDataTypeDoublePrecision `json:"doublePrecision,omitempty" yaml:"doublePrecision,omitempty"`
+	Serial          *SQLDataTypeSerial          `json:"serial,omitempty" yaml:"serial,omitempty"`
+	SmallSerial     *SQLDataTypeSmallSerial     `json:"smallSerial,omitempty" yaml:"smallSerial,omitempty"`
+	BigSerial       *SQLDataTypeBigSerial       `json:"bigSerial,omitempty" yaml:"bigSerial,omitempty"`
+	Boolean         *SQLDataTypeBoolean         `json:"boolean,omitempty" yaml:"boolean,omitempty"`
+	Float           *SQLDataTypeFloat           `json:"float,omitempty" yaml:"float,omitempty"`
+	Timestamp       *SQLDataTypeTimestamp       `json:"timestamp,omitempty" yaml:"timestamp,omitempty"`
+	Date            *SQLDataTypeDate            `json:"date,omitempty" yaml:"date,omitempty"`
+	Time            *SQLDataTypeTime            `json:"time,omitempty" yaml:"time,omitempty"`
+	Interval        *SQLDataTypeInterval        `json:"interval,omitempty" yaml:"interval,omitempty"`
+	Text            *SQLDataTypeText            `json:"text,omitempty" yaml:"text,omitempty"`
 }
 
 func (s SQLDataType) DDL() DDL {
@@ -165,8 +165,8 @@ var (
 )
 
 type SQLDataTypeTimestamp struct {
-	Timezone *SQLDataTypeTimestampTZMode
-	Digits   *int
+	Timezone *SQLDataTypeTimestampTZMode `json:"timezone,omitempty" yaml:"timezone,omitempty"`
+	Digits   *int                        `json:"digits,omitempty" yaml:"digits,omitempty"`
 }
 
 func (c SQLDataTypeTimestamp) DDL() DDL {

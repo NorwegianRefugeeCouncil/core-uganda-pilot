@@ -129,7 +129,10 @@ func CreateDatabase(db *gorm.DB, database *types.Database) error {
 // ```
 //
 func CreateForm(ctx context.Context, db *gorm.DB, form *types.FormDefinition, referencedForms *types.FormDefinitionList) error {
-	allForms := expandSubForms(form)
+	allForms, err := expandSubForms(form)
+	if err != nil {
+		return err
+	}
 	for _, expanded := range allForms {
 		table, err := convertFormToSqlTable(expanded, referencedForms)
 		if err != nil {
