@@ -21,5 +21,5 @@ type CaseDefinition struct {
 	// RecipientDefinitions represents the types of recipient that this case allows.
 	// For example, if the CaseDefinition is Colombia Individual Intake, then
 	// the RecipientDefinitions could be a link to a ColombiaIndividualRecipient form.
-	RecipientDefinitions []CaseRecipientDefinition `json:"recipientDefinition,omitempty"`
+	RecipientDefinitions []CaseRecipientDefinition `json:"recipientDefinition"`
 }
