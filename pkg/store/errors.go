@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/jackc/pgconn"
 	"github.com/mattn/go-sqlite3"
+	"gorm.io/gorm"
 )
 
 const (
@@ -16,6 +17,10 @@ func IsUniqueConstraintErr(err error) bool {
 		return dbErr.IsUniqueConstraintErr()
 	}
 	return false
+}
+
+func IsNotFoundErr(err error) bool{
+	return errors.Is(err, gorm.ErrRecordNotFound)
 }
 
 func castDbErr(err error) (dbErr, bool) {

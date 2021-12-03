@@ -5,6 +5,7 @@ import (
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/utils"
+	uuid "github.com/satori/go.uuid"
 	"go.uber.org/zap"
 	"net/http"
 )
@@ -21,6 +22,8 @@ func (h *Handler) Create() http.HandlerFunc {
 			utils.ErrorResponse(w, err)
 			return
 		}
+
+		folder.ID = uuid.NewV4().String()
 
 		l.Debug("storing folder")
 		respForm, err := h.store.Create(ctx, &folder)

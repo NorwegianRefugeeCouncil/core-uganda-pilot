@@ -2,28 +2,32 @@ package store
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/utils/sets"
-	uuid "github.com/satori/go.uuid"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"time"
 )
 
+// FolderStore is the store for types.Folder
 type FolderStore interface {
+	// Get a folder
 	Get(ctx context.Context, folderID string) (*types.Folder, error)
+	// List folders
 	List(ctx context.Context) (*types.FolderList, error)
+	// Create a folder
 	Create(ctx context.Context, folder *types.Folder) (*types.Folder, error)
+	// Delete a folder
 	Delete(ctx context.Context, id string) error
 }
 
+// Folder is the store model for types.Folder
 type Folder struct {
 	ID         string
 	DatabaseID string
-	Database   *Database
+	Database   Database
 	ParentID   string
 	Parent     *Folder
 	Name       string
@@ -31,16 +35,20 @@ type Folder struct {
 	UpdatedAt  time.Time
 }
 
+// NewFolderStore creates a FolderStore
 func NewFolderStore(db Factory) FolderStore {
 	return &folderStore{db: db}
 }
 
+// folderStore is the implementation of FolderStore
 type folderStore struct {
 	db Factory
 }
 
+// Make sure that folderStore implements FolderStore
 var _ FolderStore = &folderStore{}
 
+// Get implements FolderStore.Get
 func (d *folderStore) Get(ctx context.Context, folderID string) (*types.Folder, error) {
 	ctx, db, l, done, err := actionContext(ctx, d.db, "folder", "get", zap.String("folder_id", folderID))
 	if err != nil {
@@ -48,25 +56,20 @@ func (d *folderStore) Get(ctx context.Context, folderID string) (*types.Folder, 
 	}
 	defer done()
 
-	l.Debug("getting folder")
 	var folder Folder
-	if err := db.WithContext(ctx).First(&folder, folderID).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
+	if err := db.First(&folder, "id = ?", folderID).Error; err != nil {
+		if IsNotFoundErr(err) {
 			l.Error("folder not found", zap.Error(err))
-			return nil, meta.NewNotFound(meta.GroupResource{
-				Group:    "nrc.no",
-				Resource: "folders",
-			}, folderID)
-		} else {
-			l.Error("failed to get folder", zap.Error(err))
-			return nil, meta.NewInternalServerError(err)
+			return nil, meta.NewNotFound(types.FolderGR, folderID)
 		}
+		l.Error("failed to get folder", zap.Error(err))
+		return nil, meta.NewInternalServerError(err)
 	}
 
-	l.Debug("successfully got folder")
 	return mapFolderTo(&folder), nil
 }
 
+// List implements FolderStore.List
 func (d *folderStore) List(ctx context.Context) (*types.FolderList, error) {
 	ctx, db, l, done, err := actionContext(ctx, d.db, "folder", "list")
 	if err != nil {
@@ -96,27 +99,29 @@ func (d *folderStore) List(ctx context.Context) (*types.FolderList, error) {
 	}, nil
 }
 
+// Create implements FolderStore.Create
 func (d *folderStore) Create(ctx context.Context, folder *types.Folder) (*types.Folder, error) {
-	ctx, db, l, done, err := actionContext(ctx, d.db, "folder", "create")
+	ctx, db, l, done, err := actionContext(ctx, d.db, "folder", "create", zap.String("folder_id", folder.ID))
 	if err != nil {
 		return nil, err
 	}
 	defer done()
 
-	folder.ID = uuid.NewV4().String()
 	storedFolder := mapFolderFrom(folder)
 	storedFolder.CreatedAt = time.Now()
 
-	l.Debug("creating folder")
-	if err := db.WithContext(ctx).Create(storedFolder).Error; err != nil {
+	if err := db.Create(storedFolder).Error; err != nil {
 		l.Error("failed to create folder", zap.Error(err))
+		if IsUniqueConstraintErr(err) {
+			return nil, meta.NewAlreadyExists(types.FolderGR, folder.ID)
+		}
 		return nil, meta.NewInternalServerError(err)
 	}
 
-	l.Debug("successfully created folder", zap.String("folder_id", folder.ID))
 	return mapFolderTo(storedFolder), nil
 }
 
+// Delete implements FolderStore.Delete
 func (d *folderStore) Delete(ctx context.Context, id string) error {
 	ctx, db, l, done, err := actionContext(ctx, d.db, "folder", "delete", zap.String("folder_id", id))
 	if err != nil {
@@ -216,6 +221,7 @@ func (d *folderStore) Delete(ctx context.Context, id string) error {
 
 }
 
+// mapFolderTo maps Folder to a types.Folder
 func mapFolderTo(folder *Folder) *types.Folder {
 	return &types.Folder{
 		ID:         folder.ID,
@@ -225,6 +231,7 @@ func mapFolderTo(folder *Folder) *types.Folder {
 	}
 }
 
+// mapFolderFrom maps a types.Folder to a Folder for storage
 func mapFolderFrom(folder *types.Folder) *Folder {
 	return &Folder{
 		ID:         folder.ID,

@@ -21,7 +21,7 @@ type DatabaseSuite struct {
 }
 
 func (d *DatabaseSuite) SetupSuite() {
-	db, err := gorm.Open(sqlite.Dialector{DSN: "file::memory:?cache=shared"}, &gorm.Config{
+	db, err := gorm.Open(sqlite.Dialector{DSN: "file::memory:?cache=shared&_foreign_keys=1"}, &gorm.Config{
 		SkipDefaultTransaction: true,
 	})
 	if err != nil {
