@@ -39,10 +39,12 @@ export const AddRecordScreen = ({
                 {hasLocalData && isConnected && (
                     <View style={{ display: "flex", flexDirection: "column" }}>
                         <Text>Do you want to upload it?</Text>
-                        <Button title="Submit local data" onPress={onSubmit} />
+                        <Button accessibilityLabel="Submit local data" title="Submit local data" onPress={onSubmit} />
                     </View>
                 )}
-                {!isLoading && (
+                {isLoading ? (
+                    <Text>Loading...</Text>
+                ) : (
                     <View style={{ width: "100%" }}>
                         {form?.fields.map(field => {
                             return (
