@@ -7,8 +7,8 @@ presubmits:
         - image: golang:1.16
           command: [ "bash", "-c" ]
           args:
-            - |
+            - >
               go mod download &&
               make gen &&
-              (git diff --exit-code || echo ">>\n>> Changes detected. You have to re-run 'make gen'\n>>\n" && exit 1) &&
+              (git diff --exit-code || echo 'Changes detected. You have to re-run make gen' && exit 1) &&
               go test ./pkg/...
