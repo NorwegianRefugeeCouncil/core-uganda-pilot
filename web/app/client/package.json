@@ -1,7 +1,7 @@
 {
   "name": "core-js-api-client",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.0.1",
   "main": "./lib/cjs/index.js",
   "module": "./lib/esm/index.js",
   "types": "./lib/esm/index.d.ts",
