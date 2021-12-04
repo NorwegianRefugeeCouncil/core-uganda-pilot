@@ -55,10 +55,10 @@ const AuthenticatedApp: React.FC = () => {
 
                     <Route path={`/browse/forms/:formId`} render={p => {
                         const search = new URLSearchParams(p.location.search)
-                        const parentRecordId = search.get("parentRecordId")
+                        const ownerRecordId = search.get("ownerRecordId")
                         const {formId} = p.match.params
                         return <FormBrowserContainer
-                            parentRecordId={parentRecordId ? parentRecordId : ""}
+                            ownerRecordId={ownerRecordId ? ownerRecordId : ""}
                             formId={formId ? formId : ""}/>
                     }}/>
 

@@ -1,7 +1,6 @@
 import { FormDefinition } from "core-js-api-client";
 import React from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
-
 import routes from "../../constants/routes";
 import { layout } from "../../styles";
 import testIds from "../../constants/testIds";

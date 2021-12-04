@@ -14,6 +14,17 @@ type SQLTableConstraint struct {
 	ForeignKey *SQLTableConstraintForeignKey `json:"foreignKey,omitempty" yaml:"foreignKey,omitempty"`
 }
 
+type SQLTableConstraints []SQLTableConstraint
+
+func (s SQLTableConstraints) GetConstraint(name string) (SQLTableConstraint, error){
+	for _, constraint := range s {
+		if constraint.Name == name{
+			return constraint, nil
+		}
+	}
+	return SQLTableConstraint{}, newTableConstraintNotFoundErr(name)
+}
+
 func NewCheckTableConstraint(name string, expression string) SQLTableConstraint {
 	return SQLTableConstraint{
 		Name: name,
@@ -64,7 +75,7 @@ func NewForeignKeyTableConstraint(
 
 func (c SQLTableConstraint) DDL() DDL {
 	ddl := DDL{}
-	ddl.WriteF("constraint %s", pq.QuoteIdentifier(c.Name))
+	ddl = ddl.WriteF("constraint %s", pq.QuoteIdentifier(c.Name))
 	if c.Unique != nil {
 		ddl = ddl.WriteString(" ").Merge(c.Unique)
 	}

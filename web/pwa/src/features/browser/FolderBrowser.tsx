@@ -5,7 +5,7 @@ import {Link} from 'react-router-dom'
 import {databaseGlobalSelectors, fetchDatabases} from "../../reducers/database";
 import {fetchFolders, folderGlobalSelectors} from "../../reducers/folder";
 import {fetchForms} from "../../reducers/form";
-import {Folder, FormDefinition} from "../../types/types";
+import {Folder, FormDefinition} from "core-js-api-client";
 import {FormRow} from "./FormRow";
 import {FolderRow} from "./FolderRow";
 

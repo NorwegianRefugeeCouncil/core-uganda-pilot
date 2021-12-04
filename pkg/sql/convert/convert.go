@@ -19,7 +19,7 @@ func expandSubForms(formDef *types.FormDefinition) ([]*types.FormDefinition, err
 	result = append(result, formDef)
 	for _, field := range formDef.Fields {
 		if field.FieldType.SubForm != nil {
-			expanded, err := expandSubFormsInternal(formDef, field.ID, field.FieldType.SubForm)
+			expanded, err := expandSubFormsInternal(formDef, field)
 			if err != nil {
 				return nil, err
 			}
@@ -29,25 +29,24 @@ func expandSubForms(formDef *types.FormDefinition) ([]*types.FormDefinition, err
 	return result, nil
 }
 
-func expandSubFormsInternal(parentForm *types.FormDefinition, subFormFieldId string, subForm *types.FieldTypeSubForm) ([]*types.FormDefinition, error) {
+func expandSubFormsInternal(parentForm *types.FormDefinition, subFormField *types.FieldDefinition) ([]*types.FormDefinition, error) {
 	var result []*types.FormDefinition
 
 	formDef := &types.FormDefinition{
-		ID:         subForm.ID,
-		Code:       subForm.Code,
-		Name:       subForm.Name,
+		ID:         subFormField.ID,
+		Name:       subFormField.Name,
 		DatabaseID: parentForm.DatabaseID,
-		Fields:     subForm.Fields,
+		Fields:     subFormField.FieldType.SubForm.Fields,
 	}
 
-	if _, err := parentForm.RemoveFieldByID(subFormFieldId); err != nil {
+	if _, err := parentForm.RemoveFieldByID(subFormField.ID); err != nil {
 		return nil, err
 	}
 
 	formDef.Fields = append(formDef.Fields, &types.FieldDefinition{
-		ID:       "parent_id",
-		Code:     "parent_id",
-		Name:     "parent_id",
+		ID:       "owner_id",
+		Code:     "owner_id",
+		Name:     "owner_id",
 		Required: true,
 		FieldType: types.FieldType{
 			Reference: &types.FieldTypeReference{
@@ -61,7 +60,7 @@ func expandSubFormsInternal(parentForm *types.FormDefinition, subFormFieldId str
 
 	for _, field := range formDef.Fields {
 		if field.FieldType.SubForm != nil {
-			expanded, err := expandSubFormsInternal(formDef, field.ID, field.FieldType.SubForm)
+			expanded, err := expandSubFormsInternal(formDef, field)
 			if err != nil {
 				return nil, err
 			}
@@ -78,7 +77,7 @@ func convertFormToSqlTable(formDef *types.FormDefinition, referencedForms *types
 	table.Name = formDef.ID
 	table.Schema = formDef.DatabaseID
 
-	table.Fields = append(table.Fields, sqlschema2.SQLField{
+	table.Columns = append(table.Columns, sqlschema2.SQLColumn{
 		Name: "id",
 		DataType: sqlschema2.SQLDataType{
 			VarChar: &sqlschema2.SQLDataTypeVarChar{Length: 36},
@@ -91,14 +90,14 @@ func convertFormToSqlTable(formDef *types.FormDefinition, referencedForms *types
 		},
 	})
 
-	table.Fields = append(table.Fields, sqlschema2.SQLField{
+	table.Columns = append(table.Columns, sqlschema2.SQLColumn{
 		Name: "seq",
 		DataType: sqlschema2.SQLDataType{
 			Serial: &sqlschema2.SQLDataTypeSerial{},
 		},
 	})
 
-	table.Fields = append(table.Fields, sqlschema2.SQLField{
+	table.Columns = append(table.Columns, sqlschema2.SQLColumn{
 		Name:    "created_at",
 		Default: "NOW()",
 		DataType: sqlschema2.SQLDataType{
@@ -115,7 +114,7 @@ func convertFormToSqlTable(formDef *types.FormDefinition, referencedForms *types
 
 	keyFieldIDs := sets.NewString()
 	for _, field := range formDef.Fields {
-		table.Fields = append(table.Fields, convertFieldToSqlField(formDef, field))
+		table.Columns = append(table.Columns, convertFieldToSqlField(formDef, field))
 		if field.Key {
 			keyFieldIDs.Insert(field.ID)
 		}
@@ -133,8 +132,8 @@ func convertFormToSqlTable(formDef *types.FormDefinition, referencedForms *types
 	return table, nil
 }
 
-func convertFieldToSqlField(formDef *types.FormDefinition, field *types.FieldDefinition) sqlschema2.SQLField {
-	result := sqlschema2.SQLField{}
+func convertFieldToSqlField(formDef *types.FormDefinition, field *types.FieldDefinition) sqlschema2.SQLColumn {
+	result := sqlschema2.SQLColumn{}
 	result.Name = field.ID
 	result.Comment = field.Code
 
@@ -198,7 +197,7 @@ func convertFieldToSqlField(formDef *types.FormDefinition, field *types.FieldDef
 		result.Constraints = append(result.Constraints, sqlschema2.SQLColumnConstraint{
 			Reference: &sqlschema2.ReferenceSQLColumnConstraint{
 				Schema:    formDef.DatabaseID,
-				Table:     field.FieldType.SubForm.ID,
+				Table:     field.ID,
 				Column:    "id",
 				OnDelete:  sqlschema2.ActionRestrict,
 				OnUpdate:  sqlschema2.ActionCascade,

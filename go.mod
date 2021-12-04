@@ -10,6 +10,7 @@ require (
 	github.com/emicklei/go-restful-openapi/v2 v2.6.0
 	github.com/emicklei/go-restful/v3 v3.7.1
 	github.com/felixge/httpsnoop v1.0.2
+	github.com/fergusstrange/embedded-postgres v1.12.0 // indirect
 	github.com/go-openapi/runtime v0.19.31
 	github.com/go-openapi/strfmt v0.20.2
 	github.com/gomodule/redigo v2.0.0+incompatible
@@ -19,7 +20,7 @@ require (
 	github.com/gorilla/sessions v1.2.1
 	github.com/iancoleman/strcase v0.2.0
 	github.com/jackc/pgconn v1.10.1 // indirect
-	github.com/lib/pq v1.10.3
+	github.com/lib/pq v1.10.4
 	github.com/lithammer/shortuuid/v3 v3.0.7
 	github.com/looplab/fsm v0.3.0
 	github.com/manifoldco/promptui v0.9.0

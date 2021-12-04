@@ -18,6 +18,16 @@ type FormRef struct {
 	FormID string `json:"formId"`
 }
 
+// GetDatabaseID implements FormReference.GetDatabaseID
+func (f FormRef) GetDatabaseID() string {
+	return f.DatabaseID
+}
+
+// GetFormID implements FormReference.GetFormID
+func (f FormRef) GetFormID() string {
+	return f.FormID
+}
+
 // Record represents an entry in a Form.
 type Record struct {
 	// ID of the record
@@ -29,9 +39,9 @@ type Record struct {
 	DatabaseID string `json:"databaseId"`
 	// FormID of the Record. Represents in which Form this record belongs.
 	FormID string `json:"formId"`
-	// ParentID represents the parent of the Record. In cases where
-	// a Record is part of a SubForm, this field records the "Parent" form ID.
-	ParentID *string `json:"parentId"`
+	// OwnerID represents the owner of the Record. In cases where
+	// a Record is part of a SubForm, this field records the "Owner" form ID.
+	OwnerID *string `json:"ownerId"`
 	// Values is an arbitrary map of values that correspond to the FormDefinition.Fields.
 	// The key of the map is the FieldDefinition.ID ! (not the FormDefinition.Name, not
 	// the FormDefinition.Code)

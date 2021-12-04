@@ -11,91 +11,104 @@ import (
 )
 
 const (
-	formDefinitionMinNameLength              = 3
-	formDefinitionMaxNameLength              = 64
-	formNameRequired                         = "form name is required"
-	formNameNoLeadingTrailingWhitespaces     = "form name cannot have leading or trailing whitespaces"
-	formDatabaseIdRequired                   = "database id is required"
-	uuidInvalid                              = "invalid uuid"
-	formFieldsRequired                       = "must have at least 1 field"
-	fieldNameMinLength                       = 2
-	fieldNameMaxLength                       = 64
-	errFieldNameRequired                     = "field name is required"
-	errFieldNameInvalid                      = "field name is invalid. It can only contain alphanumeric characters and spaces"
-	fieldCodeMinLength                       = 1
+	errDatabaseIdRequired                    = "Database id is required"
+	errFieldNameInvalid                      = "Field name is invalid. It can only contain alphanumeric characters and spaces"
+	errFieldNameNoLeadingTrailingWhitespaces = "Field name cannot have leading or trailing whitespaces"
+	errFieldNameRequired                     = "Field name is required"
+	errFieldsRequired                        = "Form must have at least 1 field"
+	errFieldTypesMultipleF                   = "Only one field type can be specified but received %v"
+	errFormNameRequired                      = "Form name is required"
+	errFormNameWhitespace                    = "Form name cannot have leading or trailing whitespaces"
+	errInvalidFieldCode                      = "Field code can only contain alphanumeric characters. It also can only start with a letter"
+	errInvalidUUID                           = "Invalid uuid"
+	errKeyFieldMustBeRequired                = "Field marked as key must be have required = true"
+	errMultiLineTextFieldCannotBeKeyField    = "Multiline text fields cannot key marked as key fields"
+	errOneFieldTypeRequired                  = "At least one field type must be specified"
+	errReferenceFieldDatabaseIdInvalid       = "Invalid database id"
+	errReferenceFieldDatabaseIdRequired      = "Database id is required"
+	errReferenceFieldFormIdInvalid           = "Invalid form id"
+	errReferenceFieldFormIdRequired          = "Form id is required"
+	errSubFormCannotBeKeyOrRequiredField     = "Sub form fields cannot key marked as key or required fields"
 	fieldCodeMaxLength                       = 32
-	errInvalidFieldCode                      = "field code can only contain alphanumeric characters. It also can only start with a letter"
-	errFieldNameNoLeadingTrailingWhitespaces = "field name cannot have leading or trailing whitespaces"
-	errKeyFieldMustBeRequired                = "field marked as key must be have required = true"
-	errFieldTypesMultipleF                   = "only one field type can be specified but received %v"
-	errOneFieldTypeRequired                  = "at least one field type must be specified"
-	referenceFieldDatabaseIdRequired         = "database id is required"
-	referenceFieldDatabaseIdInvalid          = "invalid database id"
-	referenceFieldFormIdRequired             = "form id is required"
-	referenceFieldFormIdInvalid              = "invalid form id"
+	fieldCodeMinLength                       = 1
+	fieldNameMaxLength                       = 128
+	fieldNameMinLength                       = 2
+	formNameMaxLength                        = 128
+	formNameMinLength                        = 3
+	formMaxFieldCount                        = 60
+	// todo: add maximum total number of fields (form fields + subform fields)
+)
+
+var (
+	fieldNameRegex = regexp.MustCompile("^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$")
+	fieldCodeRegex = regexp.MustCompile("^[a-zA-Z]+[a-zA-Z0-9]*$")
 )
 
 func ValidateForm(form *types.FormDefinition) validation.ErrorList {
 	var result validation.ErrorList
-	result = append(result, validateFormNameFn(form.Name, validation.NewPath("name"))...)
-	result = append(result, validateDatabaseIdFn(form.DatabaseID, validation.NewPath("databaseId"))...)
-	result = append(result, validateFolderIdFn(form.FolderID, validation.NewPath("folderId"))...)
+	result = append(result, ValidateFormName(form.Name, validation.NewPath("name"))...)
+	result = append(result, ValidateFormDatabaseID(form.DatabaseID, validation.NewPath("databaseId"))...)
+	result = append(result, ValidateFormFolderID(form.FolderID, validation.NewPath("folderId"))...)
 	result = append(result, ValidateFormFields(form.Fields, validation.NewPath("fields"))...)
 	return result
 }
 
-type validateStrFn func(str string, path *validation.Path) validation.ErrorList
-
-var (
-	validateFormNameFn   validateStrFn
-	validateDatabaseIdFn validateStrFn
-	validateFolderIdFn   validateStrFn
-)
-
-func init() {
-	validateFormNameFn = ValidateFormName
-	validateDatabaseIdFn = ValidateDatabaseName
-	validateFolderIdFn = ValidateFormFolderID
-}
-
 func ValidateFormName(formName string, path *validation.Path) validation.ErrorList {
 	var result validation.ErrorList
+
+	// validate that the form name is not empty
 	if len(formName) == 0 {
-		result = append(result, validation.Required(path, formNameRequired))
+		result = append(result, validation.Required(path, errFormNameRequired))
 		return result
 	}
+
+	// validates that the form name does not contain surrounding whitespaces
 	if strings.TrimSpace(formName) != formName {
-		result = append(result, validation.Invalid(path, formName, formNameNoLeadingTrailingWhitespaces))
+		result = append(result, validation.Invalid(path, formName, errFormNameWhitespace))
 	}
-	if len(formName) < formDefinitionMinNameLength {
-		result = append(result, validation.TooShort(path, formName, formDefinitionMinNameLength))
+
+	// validates that the form name does not exceed the max size
+	if len(formName) < formNameMinLength {
+		result = append(result, validation.TooShort(path, formName, formNameMinLength))
 	}
-	if len(formName) > formDefinitionMaxNameLength {
-		result = append(result, validation.TooLong(path, formName, formDefinitionMaxNameLength))
+
+	// validates that the form name is long enough
+	if len(formName) > formNameMaxLength {
+		result = append(result, validation.TooLong(path, formName, formNameMaxLength))
 	}
+
 	return result
 }
 
 func ValidateFormDatabaseID(databaseID string, path *validation.Path) validation.ErrorList {
 	var result validation.ErrorList
+
+	// validates that the databaseId is present
 	if len(databaseID) == 0 {
-		result = append(result, validation.Required(path, formDatabaseIdRequired))
+		result = append(result, validation.Required(path, errDatabaseIdRequired))
 		return result
 	}
+
+	// validates that the databaseId is a valid uui
 	if _, err := uuid.FromString(databaseID); err != nil {
-		result = append(result, validation.Invalid(path, databaseID, uuidInvalid))
+		result = append(result, validation.Invalid(path, databaseID, errInvalidUUID))
 		return result
 	}
+
 	return result
 }
 
 func ValidateFormFolderID(folderId string, path *validation.Path) validation.ErrorList {
 	var result validation.ErrorList
+
+	// the folderId is optional
 	if len(folderId) == 0 {
 		return result
 	}
+
+	// validates that the folderId is a valid uuid
 	if _, err := uuid.FromString(folderId); err != nil {
-		result = append(result, validation.Invalid(path, folderId, uuidInvalid))
+		result = append(result, validation.Invalid(path, folderId, errInvalidUUID))
 		return result
 	}
 	return result
@@ -103,78 +116,149 @@ func ValidateFormFolderID(folderId string, path *validation.Path) validation.Err
 
 func ValidateFormFields(fields types.FieldDefinitions, path *validation.Path) validation.ErrorList {
 	var result validation.ErrorList
+
+	// validates that the form has at least 1 field
 	if len(fields) == 0 {
-		result = append(result, validation.Required(path, formFieldsRequired))
+		result = append(result, validation.Required(path, errFieldsRequired))
 		return result
 	}
+
+	if len(fields) > formMaxFieldCount {
+		result = append(result, validation.TooMany(path, len(fields), formMaxFieldCount))
+		return result
+	}
+
+	// validates each field
 	for i, field := range fields {
 		result = append(result, ValidateFieldDefinition(field, path.Index(i))...)
 	}
+
 	return result
 }
 
 func ValidateFieldDefinition(field *types.FieldDefinition, path *validation.Path) validation.ErrorList {
 	var result validation.ErrorList
-	result = append(result, ValidateFieldName(field.Name, path.Child("name"))...)
-	result = append(result, ValidateFieldCode(field.Code, path.Child("code"))...)
 
-	// Fields with key = true must have required = true
+	namePath := path.Child("name")
+	codePath := path.Child("code")
+	requiredPath := path.Child("required")
+	keyPath := path.Child("key")
+	fieldTypePath := path.Child("fieldType")
+
+	// validates the field name
+	result = append(result, ValidateFieldName(field.Name, namePath)...)
+
+	// validates the field code
+	result = append(result, ValidateFieldCode(field.Code, codePath)...)
+
+	// key fields must be required as well
 	if field.Key && !field.Required {
-		result = append(result, validation.Invalid(path.Child("required"), field.Required, errKeyFieldMustBeRequired))
+		result = append(result, validation.Invalid(requiredPath, field.Required, errKeyFieldMustBeRequired))
 	}
 
-	result = append(result, ValidateFieldType(field.FieldType, path.Child("fieldType"))...)
+	if field.Required || field.Key && field.FieldType.SubForm != nil {
+		// sub form fields cannot be marked as required/key fields
+		// sub form fields do not have a corresponding column on the form's sql table
+		// our implementation uses NOT NULL and UNIQUE constraint, for which we need an actual SQL Column
+		if field.FieldType.SubForm != nil {
+			result = append(result, validation.Invalid(requiredPath, field.Key, errSubFormCannotBeKeyOrRequiredField))
+		}
+	}
+
+	if field.Key {
+		// prevent putting a key on a multiline text field.
+		// This field type is for user textual input, which would never really be unique anyways.
+		if field.FieldType.MultilineText != nil {
+			result = append(result, validation.Invalid(keyPath, field.Key, errMultiLineTextFieldCannotBeKeyField))
+		}
+	}
+
+	// validates that the field name is a valid form name if the field is a subform field
+	if field.FieldType.SubForm != nil {
+		result = append(result, ValidateFormName(field.Name, namePath)...)
+	}
+
+	// validates the field type
+	result = append(result, ValidateFieldType(field.FieldType, fieldTypePath)...)
 
 	return result
 }
 
-var fieldNameRegex = regexp.MustCompile("^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$")
-
 func ValidateFieldName(fieldName string, path *validation.Path) validation.ErrorList {
 	var result validation.ErrorList
+
+	// validates that the field name is not empty
 	if len(fieldName) == 0 {
 		result = append(result, validation.Required(path, errFieldNameRequired))
 		return result
 	}
+
+	// validates that the field name is long enough
 	if len(fieldName) < fieldNameMinLength {
 		result = append(result, validation.TooShort(path, fieldName, fieldNameMinLength))
 	}
+
+	// validates that the field name is not too short
 	if len(fieldName) > fieldNameMaxLength {
 		result = append(result, validation.TooLong(path, fieldName, fieldNameMaxLength))
 		// stop processing here in case we have a crazy long field name
 		return result
 	}
+
+	// validates that the field name does not contain surrounding whitespaces
 	if strings.TrimSpace(fieldName) != fieldName {
 		result = append(result, validation.Invalid(path, fieldName, errFieldNameNoLeadingTrailingWhitespaces))
+		return result
 	}
+
+	// validates that the field name matches the regex
 	if !fieldNameRegex.MatchString(fieldName) {
 		result = append(result, validation.Invalid(path, fieldName, errFieldNameInvalid))
 	}
+
 	return result
 }
 
-var fieldCodeRegex = regexp.MustCompile("^[a-zA-Z]+[a-zA-Z0-9]*$")
-
 func ValidateFieldCode(fieldCode string, path *validation.Path) validation.ErrorList {
 	var result validation.ErrorList
-	// code is optional
+
+	// field code is optional
 	if len(fieldCode) == 0 {
 		return result
 	}
-	if len(fieldCode) < fieldCodeMinLength {
+
+	// keeping this in the case that we change the fieldCodeMinLength, which is = 1
+	//goland:noinspection GoBoolExpressions
+	if fieldCodeMinLength > 1 && len(fieldCode) < fieldCodeMinLength {
 		result = append(result, validation.TooShort(path, fieldCode, fieldCodeMinLength))
 	}
+
+	// validates that the field code is not too long
 	if len(fieldCode) > fieldCodeMaxLength {
 		result = append(result, validation.TooLong(path, fieldCode, fieldCodeMaxLength))
 	}
+
+	// validates that the field code matches the regex
 	if !fieldCodeRegex.MatchString(fieldCode) {
 		result = append(result, validation.Invalid(path, fieldCode, errInvalidFieldCode))
 	}
+
 	return result
 }
 
 func ValidateFieldType(fieldType types.FieldType, path *validation.Path) validation.ErrorList {
 	var result validation.ErrorList
+
+	textPath := path.Child("text")
+	multiLineTextPath := path.Child("multilineText")
+	monthPath := path.Child("month")
+	datePath := path.Child("date")
+	quantityPath := path.Child("quantity")
+	referencePath := path.Child("reference")
+	subFormPath := path.Child("subForm")
+	singleSelectPath := path.Child("singleSelect")
+
+	// finds what kind of field type is defined
 	var found []types.FieldKind
 	for _, kind := range types.GetAllFieldKinds() {
 		field, err := fieldType.GetFieldType(kind)
@@ -188,39 +272,40 @@ func ValidateFieldType(fieldType types.FieldType, path *validation.Path) validat
 		}
 	}
 
+	// validates that the field type must be defined
 	if len(found) == 0 {
-		result = append(result, validation.Invalid(path, fieldType, errOneFieldTypeRequired))
+		result = append(result, validation.Required(path, errOneFieldTypeRequired))
 		return result
 	}
 
+	// validates that there is not more than 1 field type defined
 	if len(found) > 1 {
-		result = append(result, validation.Invalid(path, fieldType, fmt.Sprintf(errFieldTypesMultipleF, found)))
+		result = append(result, validation.TooLong(path, fmt.Sprintf(errFieldTypesMultipleF, found), 1))
 		return result
 	}
 
-	if fieldType.Text != nil {
-		result = append(result, ValidateFieldTypeText(fieldType.Text, path.Child("text"))...)
-	}
-	if fieldType.SubForm != nil {
-		result = append(result, ValidateFieldTypeSubForm(fieldType.SubForm, path.Child("subForm"))...)
-	}
-	if fieldType.Date != nil {
-		result = append(result, ValidateFieldTypeDate(fieldType.Date, path.Child("date"))...)
-	}
-	if fieldType.Reference != nil {
-		result = append(result, ValidateFieldTypeReference(fieldType.Reference, path.Child("reference"))...)
-	}
-	if fieldType.Month != nil {
-		result = append(result, ValidateFieldTypeMonth(fieldType.Month, path.Child("month"))...)
-	}
-	if fieldType.MultilineText != nil {
-		result = append(result, ValidateFieldTypeMultilineText(fieldType.MultilineText, path.Child("multilineText"))...)
-	}
-	if fieldType.Quantity != nil {
-		result = append(result, ValidateFieldTypeQuantity(fieldType.Quantity, path.Child("quantity"))...)
-	}
-	if fieldType.SingleSelect != nil {
-		result = append(result, ValidateFieldTypeSingleSelect(fieldType.SingleSelect, path.Child("singleSelect"))...)
+	fieldKind := found[0]
+
+	// validates the field type
+	switch fieldKind {
+	case types.FieldKindText:
+		result = append(result, ValidateFieldTypeText(fieldType.Text, textPath)...)
+	case types.FieldKindMultilineText:
+		result = append(result, ValidateFieldTypeMultilineText(fieldType.MultilineText, multiLineTextPath)...)
+	case types.FieldKindMonth:
+		result = append(result, ValidateFieldTypeMonth(fieldType.Month, monthPath)...)
+	case types.FieldKindDate:
+		result = append(result, ValidateFieldTypeDate(fieldType.Date, datePath)...)
+	case types.FieldKindQuantity:
+		result = append(result, ValidateFieldTypeQuantity(fieldType.Quantity, quantityPath)...)
+	case types.FieldKindReference:
+		result = append(result, ValidateFieldTypeReference(fieldType.Reference, referencePath)...)
+	case types.FieldKindSubForm:
+		result = append(result, ValidateFieldTypeSubForm(fieldType.SubForm, subFormPath)...)
+	case types.FieldKindSingleSelect:
+		result = append(result, ValidateFieldTypeSingleSelect(fieldType.SingleSelect, singleSelectPath)...)
+	default:
+		result = append(result, validation.InternalError(path, fmt.Errorf("unknown field kind %v", fieldKind)))
 	}
 
 	return result
@@ -234,9 +319,11 @@ func ValidateFieldTypeText(ftText *types.FieldTypeText, path *validation.Path) v
 
 func ValidateFieldTypeSubForm(ftSF *types.FieldTypeSubForm, path *validation.Path) validation.ErrorList {
 	var result []*validation.Error
-	result = append(result, ValidateFormName(ftSF.Name, path.Child("name"))...)
 
-	result = append(result, ValidateFormFields(ftSF.Fields, path.Child("fields"))...)
+	// validates the sub form fields
+	fieldsPath := path.Child("fields")
+	result = append(result, ValidateFormFields(ftSF.Fields, fieldsPath)...)
+
 	return result
 }
 
@@ -248,18 +335,26 @@ func ValidateFieldTypeDate(ftDate *types.FieldTypeDate, path *validation.Path) v
 
 func ValidateFieldTypeReference(ftRef *types.FieldTypeReference, path *validation.Path) validation.ErrorList {
 	var result []*validation.Error
+	databaseIdPath := path.Child("databaseId")
+	formIdPath := path.Child("formId")
+
 	if len(ftRef.DatabaseID) == 0 {
-		result = append(result, validation.Required(path, referenceFieldDatabaseIdRequired))
+		// validates that the database id is present
+		result = append(result, validation.Required(databaseIdPath, errReferenceFieldDatabaseIdRequired))
 		return result
 	} else if _, err := uuid.FromString(ftRef.DatabaseID); err != nil {
-		result = append(result, validation.Required(path, referenceFieldDatabaseIdInvalid))
+		// validates that the database id is a well-formed uuid
+		result = append(result, validation.Invalid(databaseIdPath, ftRef.DatabaseID, errReferenceFieldDatabaseIdInvalid))
 		return result
 	}
+
 	if len(ftRef.FormID) == 0 {
-		result = append(result, validation.Required(path, referenceFieldFormIdRequired))
+		// validates that the form id is present
+		result = append(result, validation.Required(formIdPath, errReferenceFieldFormIdRequired))
 		return result
 	} else if _, err := uuid.FromString(ftRef.FormID); err != nil {
-		result = append(result, validation.Required(path, referenceFieldFormIdInvalid))
+		// validates that the form id is a well-formed uuid
+		result = append(result, validation.Invalid(formIdPath, ftRef.FormID, errReferenceFieldFormIdInvalid))
 		return result
 	}
 	return result

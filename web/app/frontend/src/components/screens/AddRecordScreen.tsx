@@ -3,7 +3,7 @@ import {Snackbar, Switch} from 'react-native-paper';
 import {common, layout} from '../../styles';
 import {Button, Platform, ScrollView, Text, View} from 'react-native';
 import useApiClient from "../../utils/clients";
-import {FormDefinition} from "core-js-api-client/lib/types/types";
+import {FormDefinition} from "core-js-api-client";
 import {useForm} from "react-hook-form";
 import * as Network from "expo-network";
 import FormControl from "../form/FormControl";

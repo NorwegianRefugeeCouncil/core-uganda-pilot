@@ -1,7 +1,6 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
-import {FieldDefinition, Record} from "../types/types";
 import {RootState} from "../app/store";
-import {RecordListRequest, RecordListResponse} from "core-js-api-client";
+import {FieldDefinition, Record, RecordListRequest, RecordListResponse} from "core-js-api-client";
 import {
     formGlobalSelectors,
     selectFieldForSubForm,
@@ -83,10 +82,10 @@ export const recordSelectors = adapter.getSelectors();
 export const recordGlobalSelectors = adapter.getSelectors<RootState>(state => state.records)
 export default recordsSlice.reducer
 
-export const selectRecordsForForm = (state: RootState, formId: string, parentRecordId?: string) => {
+export const selectRecordsForForm = (state: RootState, formId: string, ownerRecordId?: string) => {
     return recordGlobalSelectors.selectAll(state).filter(r => {
-        return parentRecordId
-            ? r.formId === formId && r.parentId === parentRecordId
+        return ownerRecordId
+            ? r.formId === formId && r.ownerId === ownerRecordId
             : r.formId === formId;
     })
 }
@@ -101,10 +100,10 @@ export const selectSubFormCount = (recordId: string, fieldId: string): ((rootSta
         if (!subForm) {
             return 0
         }
-        const subFormId = subForm.id
+        const subFormId = fieldId
         const allRecords = recordGlobalSelectors.selectAll(rootState)
         return allRecords.reduce((prec, current) => {
-            if (current.parentId === recordId && current.formId === subFormId) {
+            if (current.ownerId === recordId && current.formId === subFormId) {
                 return prec++
             }
             return prec
@@ -144,17 +143,17 @@ export const selectSubRecords: (state: RootState, recordId: string) => SubRecord
     const subFormIds = new Set<string>()
     for (let field of form.fields) {
         if (field.fieldType.subForm) {
-            let fieldForSubForm = selectFieldForSubForm(rootForm, field.fieldType.subForm.id);
+            let fieldForSubForm = selectFieldForSubForm(rootForm, field.id);
             if (fieldForSubForm) {
-                fieldMap[field.fieldType.subForm.id] = fieldForSubForm
+                fieldMap[field.id] = fieldForSubForm
             }
-            subFormIds.add(field.fieldType.subForm.id)
+            subFormIds.add(field.id)
         }
     }
 
     const allRecords = recordGlobalSelectors.selectAll(state)
     for (let candidateRecord of allRecords) {
-        if (candidateRecord.parentId === recordId && subFormIds.has(candidateRecord.formId)) {
+        if (candidateRecord.ownerId === recordId && subFormIds.has(candidateRecord.formId)) {
             const fieldForSubform = fieldMap[candidateRecord.formId]
             if (fieldForSubform) {
                 if (!result.byFieldId.hasOwnProperty(fieldForSubform.id)) {
@@ -198,7 +197,7 @@ export const selectRecordsSubFormCounts: (formId?: string) => ((rootState: RootS
             if (!formField?.fieldType?.subForm) {
                 continue
             }
-            formIdFieldIdMap[formField.fieldType.subForm.id] = formField.id
+            formIdFieldIdMap[formField.id] = formField.id
         }
 
         // records for the given form
@@ -218,12 +217,12 @@ export const selectRecordsSubFormCounts: (formId?: string) => ((rootState: RootS
 
         for (let record of allRecords) {
 
-            // record does not have a parent record, does not qualify as subform
-            if (!record.parentId) {
+            // record does not have a owner record, does not qualify as subform
+            if (!record.ownerId) {
                 continue
             }
-            // parent record is not part of the current form
-            if (!formRecordsMap.hasOwnProperty(record.parentId)) {
+            // owner record is not part of the current form
+            if (!formRecordsMap.hasOwnProperty(record.ownerId)) {
                 continue
             }
             // field is not part of the current form
@@ -234,15 +233,15 @@ export const selectRecordsSubFormCounts: (formId?: string) => ((rootState: RootS
             const recordFieldId = formIdFieldIdMap[record.formId]
 
             // construct result
-            if (!result.hasOwnProperty(record.parentId)) {
-                result[record.parentId] = {}
+            if (!result.hasOwnProperty(record.ownerId)) {
+                result[record.ownerId] = {}
             }
-            if (!result[record.parentId].hasOwnProperty(recordFieldId)) {
-                result[record.parentId][recordFieldId] = 0
+            if (!result[record.ownerId].hasOwnProperty(recordFieldId)) {
+                result[record.ownerId][recordFieldId] = 0
             }
 
             // increase
-            result[record.parentId][recordFieldId]++
+            result[record.ownerId][recordFieldId]++
         }
 
         return result
@@ -250,14 +249,14 @@ export const selectRecordsSubFormCounts: (formId?: string) => ((rootState: RootS
     }
 }
 
-export function selectRecords(state: RootState, options: { formId?: string, parentId?: string }) {
+export function selectRecords(state: RootState, options: { formId?: string, ownerId?: string }) {
     const allRecords = recordGlobalSelectors.selectAll(state)
     const result: Record[] = []
     for (let record of allRecords) {
         if (options.formId && record.formId !== options.formId) {
             continue
         }
-        if (options.parentId && record.parentId !== options.parentId) {
+        if (options.ownerId && record.ownerId !== options.ownerId) {
             continue
         }
         result.push(record)

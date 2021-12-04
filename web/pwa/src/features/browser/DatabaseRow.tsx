@@ -1,5 +1,5 @@
 import React, {FC} from "react";
-import {Database} from "../../types/types";
+import {Database} from "core-js-api-client";
 import {Link} from "react-router-dom";
 
 export const DatabaseRow : FC<{database: Database}> = ({database}) => {

@@ -1,7 +1,7 @@
 import {createAsyncThunk, createEntityAdapter, createSlice, EntityState, PayloadAction} from "@reduxjs/toolkit";
 import {v4 as uuidv4} from "uuid";
 import {RootState} from "../../app/store";
-import {Database, FieldDefinition, FieldKind, FieldType, Folder, FormDefinition} from "../../types/types";
+import {Database, FieldDefinition, FieldKind, FieldType, Folder, FormDefinition} from "core-js-api-client";
 import {databaseGlobalSelectors} from "../../reducers/database";
 import {folderGlobalSelectors} from "../../reducers/folder";
 import client from "../../app/client";
@@ -106,7 +106,7 @@ const selectCurrentField = (state: FormerState): FormField | undefined => {
 }
 
 
-const selectParentForm = (state: FormerState, subFormId: string): Form | undefined => {
+const selectOwnerForm = (state: FormerState, subFormId: string): Form | undefined => {
     const allForms = selectors.selectAll(state)
     for (let form of allForms) {
         for (let field of form.fields) {
@@ -118,13 +118,12 @@ const selectParentForm = (state: FormerState, subFormId: string): Form | undefin
     return undefined
 }
 
-const selectCurrentFormParent = (state: FormerState): Form | undefined => {
-    return selectParentForm(state, state.selectedFormId)
+const selectCurrentFormOwner = (state: FormerState): Form | undefined => {
+    return selectOwnerForm(state, state.selectedFormId)
 }
 
 const selectIsSubForm = (state: FormerState, formId: string): boolean => {
-    const parentForm = selectParentForm(state, formId)
-    return !!parentForm
+    return !!selectOwnerForm(state, formId)
 }
 
 const selectIsRootForm = (state: FormerState, formId: string): boolean => {
@@ -191,9 +190,6 @@ const mapFields = (state: FormerState, fields: FormField[]): FieldDefinition[] =
             }
             fieldType = {
                 subForm: {
-                    id: "",
-                    name: subForm.name,
-                    code: "",
                     fields: mapFields(state, subForm.fields)
                 }
             }
@@ -248,8 +244,8 @@ export const formerSelectors = {
     selectCurrentField,
     selectIsSubForm,
     selectIsRootForm,
-    selectParentForm,
-    selectCurrentFormParent,
+    selectOwnerForm,
+    selectCurrentFormOwner,
     selectFormDefinition
 }
 
@@ -264,8 +260,8 @@ export const formerGlobalSelectors = {
     selectCurrentField: (state: RootState) => selectCurrentField(state.former),
     selectIsSubForm: (state: RootState, formId: string) => selectIsSubForm(state.former, formId),
     selectIsRootForm: (state: RootState, formId: string) => selectIsRootForm(state.former, formId),
-    selectParentForm: (state: RootState, formId: string) => selectParentForm(state.former, formId),
-    selectCurrentFormParent: (state: RootState) => selectCurrentFormParent(state.former),
+    selectOwnerForm: (state: RootState, formId: string) => selectOwnerForm(state.former, formId),
+    selectCurrentFormOwner: (state: RootState) => selectCurrentFormOwner(state.former),
     selectFormDefinition: (databaseId: string | undefined, folderId: string | undefined) => (state: RootState) => {
         return selectFormDefinition(databaseId, folderId)(state.former)
     },
@@ -474,7 +470,7 @@ export const formerSlice = createSlice({
             }
             state.selectedFieldId = fieldId
         },
-        addSubForm(state, action: PayloadAction<{ parentFieldId: string }>) {
+        addSubForm(state, action: PayloadAction<{ ownerFieldId: string }>) {
             const newForm: Form = {
                 formId: uuidv4(),
                 fields: [],
@@ -506,10 +502,10 @@ export const formerSlice = createSlice({
             state.selectedFormId = form.formId
         },
         saveForm(state) {
-            const parentForm = selectParentForm(state, state.selectedFormId)
-            if (parentForm) {
+            const ownerForm = selectOwnerForm(state, state.selectedFormId)
+            if (ownerForm) {
                 state.selectedFieldId = undefined
-                state.selectedFormId = parentForm.formId
+                state.selectedFormId = ownerForm.formId
             } else {
 
             }

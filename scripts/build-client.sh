@@ -6,4 +6,4 @@ ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 set -e
 
 echo ">> Building web/app/client"
-(cd "${ROOT_DIR}/web/app/client" && yarn install && yarn build)
+(cd "${ROOT_DIR}/web/app/client" && yarn install && yarn build && rm -rf node_modules)

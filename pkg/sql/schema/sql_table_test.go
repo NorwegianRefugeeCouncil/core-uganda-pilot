@@ -8,7 +8,7 @@ import (
 func TestSQLTable_DDL(t *testing.T) {
 	type args struct {
 		Name        string
-		Fields      []SQLField
+		Fields      []SQLColumn
 		Constraints []SQLTableConstraint
 	}
 	tests := []struct {
@@ -19,10 +19,10 @@ func TestSQLTable_DDL(t *testing.T) {
 		{
 			name:   "empty",
 			fields: args{Name: "empty"},
-			want:   NewDDL(`create table "public"."empty";`),
+			want:   NewDDL(`create table "public"."empty"();`),
 		}, {
 			name: "single field",
-			fields: args{Name: "singleField", Fields: []SQLField{
+			fields: args{Name: "singleField", Fields: []SQLColumn{
 				{
 					Name:     "field",
 					DataType: SQLDataType{Int: &SQLDataTypeInt{}},
@@ -34,7 +34,7 @@ func TestSQLTable_DDL(t *testing.T) {
 );`),
 		}, {
 			name: "multi field",
-			fields: args{Name: "multiField", Fields: []SQLField{
+			fields: args{Name: "multiField", Fields: []SQLColumn{
 				{
 					Name:     "field1",
 					DataType: SQLDataType{Int: &SQLDataTypeInt{}},
@@ -50,7 +50,7 @@ func TestSQLTable_DDL(t *testing.T) {
 );`),
 		}, {
 			name: "multi field and constraints",
-			fields: args{Name: "multiFieldConstraint", Fields: []SQLField{
+			fields: args{Name: "multiFieldConstraint", Fields: []SQLColumn{
 				{
 					Name:     "field1",
 					DataType: SQLDataType{Int: &SQLDataTypeInt{}},
@@ -91,7 +91,7 @@ func TestSQLTable_DDL(t *testing.T) {
 			s := SQLTable{
 				Schema:      "public",
 				Name:        tt.fields.Name,
-				Fields:      tt.fields.Fields,
+				Columns:     tt.fields.Fields,
 				Constraints: tt.fields.Constraints,
 			}
 			assert.Equal(t, tt.want, s.DDL())

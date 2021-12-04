@@ -8,7 +8,19 @@ presubmits:
           command: [ "bash", "-c" ]
           args:
             - >
-              go mod download &&
-              make gen &&
-              git diff --exit-code &&
-              go test ./pkg/...
+              echo "Creating user" &&
+              useradd go --create-home &&
+              echo "Setting permissions" &&
+              chown -R go:go . &&
+              echo "Running as user 'go'" &&
+              su go -c '
+                echo "Downloading modules" &&
+                go mod download &&
+                echo "Running make gen" &&
+                make gen &&
+                echo "Checking make gen changes" &&
+                git diff --exit-code &&
+                echo "Running tests" &&
+                go test ./pkg/...
+              ' &&
+              echo "Done"

@@ -1,6 +1,6 @@
-import {Fragment, FC} from "react";
-import {useFormOrSubForm, useParentRecord, useRecordFromPath, useSubRecords} from "../../app/hooks";
-import {FieldDefinition, Record} from "../../types/types";
+import {FC, Fragment} from "react";
+import {useFormOrSubForm, useRecordFromPath, useOwnerRecord, useSubRecords} from "../../app/hooks";
+import {FieldDefinition, Record} from "core-js-api-client";
 import {Link} from "react-router-dom";
 import format from "date-fns/format"
 
@@ -11,6 +11,7 @@ type RecordFieldProps = {
 }
 const RecordField: FC<RecordFieldProps> = props => {
     const {field, value} = props
+
     function renderField(f: FieldDefinition, v: any) {
         if (f.fieldType.reference) {
             return <div><Link to={`/browse/records/${v}`}>View</Link></div>
@@ -20,6 +21,7 @@ const RecordField: FC<RecordFieldProps> = props => {
             return <div className={"fw-bold"}>{v}</div>
         }
     }
+
     return <div className={"form-group mb-3"}>
         <label className={"form-label"}>{field.name}</label>
         {
@@ -39,7 +41,7 @@ export const RecordBrowser: FC = props => {
     const record = useRecordFromPath("recordId")
     const form = useFormOrSubForm(record?.formId)
     const subRecords = useSubRecords(record?.id)
-    const parentRecord = useParentRecord(record?.id)
+    const ownerRecord = useOwnerRecord(record?.id)
 
     if (!record) {
         return <div>Record not found</div>
@@ -53,11 +55,9 @@ export const RecordBrowser: FC = props => {
                 <div className={"col"}>
                     <div className={"card shadow"}>
                         <div className={"card-body"}>
-                            {parentRecord
+                            {ownerRecord
                                 ? <div className={"mb-2"}>
-                                    <Link to={`/browse/records/${parentRecord.id}`}>Back to Parent
-                                        Record
-                                    </Link>
+                                    <Link to={`/browse/records/${ownerRecord.id}`}>Back to Parent Record</Link>
                                 </div>
                                 : <Fragment/>}
                             {form?.fields.map(f => mapRecordField(record, f, subRecords?.byFieldId[f.id]))}

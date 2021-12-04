@@ -1,5 +1,5 @@
 import React, {FC, Fragment, useEffect} from "react";
-import {Database} from "../../types/types";
+import {Database} from "core-js-api-client";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {databaseGlobalSelectors, fetchDatabases,} from "../../reducers/database";
 import {Link} from "react-router-dom";

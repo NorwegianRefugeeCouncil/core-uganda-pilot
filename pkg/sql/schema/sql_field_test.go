@@ -23,12 +23,12 @@ func TestSQLField_DDL(t *testing.T) {
 		}, {
 			name:   "with collate",
 			fields: fields{Name: "field", Collate: "collate", DataType: SQLDataType{Int: &SQLDataTypeInt{}}},
-			want:   NewDDL("\"field\" int collate ?",  "collate"),
+			want:   NewDDL("\"field\" int collate ?", "collate"),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := SQLField{
+			s := SQLColumn{
 				Name:     tt.fields.Name,
 				DataType: tt.fields.DataType,
 				Collate:  tt.fields.Collate,

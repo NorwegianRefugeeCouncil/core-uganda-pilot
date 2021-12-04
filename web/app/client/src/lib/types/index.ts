@@ -17,6 +17,7 @@ export enum FieldKind {
     Date = "date",
     Quantity = "quantity",
     SingleSelect = "singleSelect",
+    Month = "month"
 }
 
 export class FieldType {
@@ -25,6 +26,7 @@ export class FieldType {
     public subForm?: FieldTypeSubForm
     public multilineText?: FieldTypeMultilineText
     public date?: FieldTypeDate
+    public month?: FieldTypeMonth
     public quantity?: FieldTypeQuantity
     public singleSelect?: FieldTypeSingleSelect
 }
@@ -36,6 +38,9 @@ export class FieldTypeMultilineText {
 }
 
 export class FieldTypeDate {
+}
+
+export class FieldTypeMonth {
 }
 
 export class FieldTypeQuantity {
@@ -50,9 +55,6 @@ export class FieldTypeReference {
 }
 
 export class FieldTypeSubForm {
-    public id: string = ""
-    public name: string = ""
-    public code: string = ""
     public fields: FieldDefinition[] = []
 }
 
@@ -95,7 +97,7 @@ export class Record {
     public id: string = ""
     public databaseId: string = ""
     public formId: string = ""
-    public parentId: string | undefined = undefined
+    public ownerId: string | undefined = undefined
     public values: { [key: string]: any } = {}
 }
 
