@@ -28,15 +28,15 @@ func DirectoryExists(path string) (bool, error) {
 	return true, nil
 }
 
-func CreateDirectoryIfNotExists(path string) error {
+func CreateDirectoryIfNotExists(path string) (bool, error) {
 	crdsDirExists, err := DirectoryExists(path)
 	if err != nil {
-		return err
+		return false, err
 	}
 	if !crdsDirExists {
 		if err := os.MkdirAll(path, os.ModePerm); err != nil {
-			return err
+			return true, err
 		}
 	}
-	return nil
+	return false, nil
 }
