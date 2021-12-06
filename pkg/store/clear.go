@@ -79,15 +79,15 @@ func Clear(ctx context.Context, db *gorm.DB) error {
 		return err
 	}
 
-	l.Info("deleting organizations")
-	if err := db.Where("id = id").Delete(&Organization{}).Error; err != nil {
-		l.Error("failed to delete organizations", zap.Error(err))
-		return err
-	}
-
 	l.Info("deleting identity providers")
 	if err := db.Where("id = id").Delete(&IdentityProvider{}).Error; err != nil {
 		l.Error("failed to delete identity providers", zap.Error(err))
+		return err
+	}
+
+	l.Info("deleting organizations")
+	if err := db.Where("id = id").Delete(&Organization{}).Error; err != nil {
+		l.Error("failed to delete organizations", zap.Error(err))
 		return err
 	}
 
