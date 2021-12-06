@@ -22,6 +22,7 @@ jest.mock('@react-native-community/datetimepicker', function () {
     return mockComponent('@react-native-community/datetimepicker');
 });
 
+// https://reactnavigation.org/docs/testing
 jest.mock('react-native-reanimated', () => {
     const Reanimated = jest.requireActual('react-native-reanimated/mock');
 

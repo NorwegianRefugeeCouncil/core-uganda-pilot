@@ -1,0 +1,661 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FormsScreen renders correctly 1`] = `
+<View
+  style={
+    Object {
+      "alignItems": "flex-start",
+      "flexGrow": 1,
+      "justifyContent": "flex-start",
+      "padding": 18,
+    }
+  }
+>
+  <RCTScrollView
+    data={
+      Array [
+        Object {
+          "code": "0",
+          "formId": "blabla",
+          "id": "0",
+          "name": "whatever",
+        },
+        Object {
+          "code": "1",
+          "formId": "blabla",
+          "id": "1",
+          "name": "whatever",
+        },
+        Object {
+          "code": "2",
+          "formId": "blabla",
+          "id": "2",
+          "name": "whatever",
+        },
+        Object {
+          "code": "3",
+          "formId": "blabla",
+          "id": "3",
+          "name": "whatever",
+        },
+        Object {
+          "code": "4",
+          "formId": "blabla",
+          "id": "4",
+          "name": "whatever",
+        },
+        Object {
+          "code": "5",
+          "formId": "blabla",
+          "id": "5",
+          "name": "whatever",
+        },
+        Object {
+          "code": "6",
+          "formId": "blabla",
+          "id": "6",
+          "name": "whatever",
+        },
+        Object {
+          "code": "7",
+          "formId": "blabla",
+          "id": "7",
+          "name": "whatever",
+        },
+        Object {
+          "code": "8",
+          "formId": "blabla",
+          "id": "8",
+          "name": "whatever",
+        },
+        Object {
+          "code": "9",
+          "formId": "blabla",
+          "id": "9",
+          "name": "whatever",
+        },
+      ]
+    }
+    disableVirtualization={false}
+    getItem={[Function]}
+    getItemCount={[Function]}
+    horizontal={false}
+    initialNumToRender={10}
+    keyExtractor={[Function]}
+    maxToRenderPerBatch={10}
+    onContentSizeChange={[Function]}
+    onEndReachedThreshold={2}
+    onLayout={[Function]}
+    onMomentumScrollEnd={[Function]}
+    onScroll={[Function]}
+    onScrollBeginDrag={[Function]}
+    onScrollEndDrag={[Function]}
+    removeClippedSubviews={true}
+    renderItem={[Function]}
+    scrollEventThrottle={50}
+    stickyHeaderIndices={Array []}
+    style={
+      Object {
+        "flex": 1,
+        "width": "100%",
+      }
+    }
+    updateCellsBatchingPeriod={50}
+    viewabilityConfigCallbackPairs={Array []}
+    windowSize={21}
+  >
+    <View>
+      <View
+        onLayout={[Function]}
+        style={null}
+      >
+        <View
+          accessible={true}
+          focusable={true}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            Object {
+              "opacity": 1,
+            }
+          }
+        >
+          <View
+            style={
+              Object {
+                "flex": 1,
+                "flexDirection": "row",
+              }
+            }
+            testID="formItem"
+          >
+            <View
+              style={
+                Object {
+                  "justifyContent": "center",
+                  "paddingRight": 12,
+                }
+              }
+            >
+              <Text>
+                0
+              </Text>
+            </View>
+            <View
+              style={
+                Object {
+                  "justifyContent": "center",
+                }
+              }
+            >
+              <Text>
+                whatever
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+      <View
+        onLayout={[Function]}
+        style={null}
+      >
+        <View
+          accessible={true}
+          focusable={true}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            Object {
+              "opacity": 1,
+            }
+          }
+        >
+          <View
+            style={
+              Object {
+                "flex": 1,
+                "flexDirection": "row",
+              }
+            }
+            testID="formItem"
+          >
+            <View
+              style={
+                Object {
+                  "justifyContent": "center",
+                  "paddingRight": 12,
+                }
+              }
+            >
+              <Text>
+                1
+              </Text>
+            </View>
+            <View
+              style={
+                Object {
+                  "justifyContent": "center",
+                }
+              }
+            >
+              <Text>
+                whatever
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+      <View
+        onLayout={[Function]}
+        style={null}
+      >
+        <View
+          accessible={true}
+          focusable={true}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            Object {
+              "opacity": 1,
+            }
+          }
+        >
+          <View
+            style={
+              Object {
+                "flex": 1,
+                "flexDirection": "row",
+              }
+            }
+            testID="formItem"
+          >
+            <View
+              style={
+                Object {
+                  "justifyContent": "center",
+                  "paddingRight": 12,
+                }
+              }
+            >
+              <Text>
+                2
+              </Text>
+            </View>
+            <View
+              style={
+                Object {
+                  "justifyContent": "center",
+                }
+              }
+            >
+              <Text>
+                whatever
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+      <View
+        onLayout={[Function]}
+        style={null}
+      >
+        <View
+          accessible={true}
+          focusable={true}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            Object {
+              "opacity": 1,
+            }
+          }
+        >
+          <View
+            style={
+              Object {
+                "flex": 1,
+                "flexDirection": "row",
+              }
+            }
+            testID="formItem"
+          >
+            <View
+              style={
+                Object {
+                  "justifyContent": "center",
+                  "paddingRight": 12,
+                }
+              }
+            >
+              <Text>
+                3
+              </Text>
+            </View>
+            <View
+              style={
+                Object {
+                  "justifyContent": "center",
+                }
+              }
+            >
+              <Text>
+                whatever
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+      <View
+        onLayout={[Function]}
+        style={null}
+      >
+        <View
+          accessible={true}
+          focusable={true}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            Object {
+              "opacity": 1,
+            }
+          }
+        >
+          <View
+            style={
+              Object {
+                "flex": 1,
+                "flexDirection": "row",
+              }
+            }
+            testID="formItem"
+          >
+            <View
+              style={
+                Object {
+                  "justifyContent": "center",
+                  "paddingRight": 12,
+                }
+              }
+            >
+              <Text>
+                4
+              </Text>
+            </View>
+            <View
+              style={
+                Object {
+                  "justifyContent": "center",
+                }
+              }
+            >
+              <Text>
+                whatever
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+      <View
+        onLayout={[Function]}
+        style={null}
+      >
+        <View
+          accessible={true}
+          focusable={true}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            Object {
+              "opacity": 1,
+            }
+          }
+        >
+          <View
+            style={
+              Object {
+                "flex": 1,
+                "flexDirection": "row",
+              }
+            }
+            testID="formItem"
+          >
+            <View
+              style={
+                Object {
+                  "justifyContent": "center",
+                  "paddingRight": 12,
+                }
+              }
+            >
+              <Text>
+                5
+              </Text>
+            </View>
+            <View
+              style={
+                Object {
+                  "justifyContent": "center",
+                }
+              }
+            >
+              <Text>
+                whatever
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+      <View
+        onLayout={[Function]}
+        style={null}
+      >
+        <View
+          accessible={true}
+          focusable={true}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            Object {
+              "opacity": 1,
+            }
+          }
+        >
+          <View
+            style={
+              Object {
+                "flex": 1,
+                "flexDirection": "row",
+              }
+            }
+            testID="formItem"
+          >
+            <View
+              style={
+                Object {
+                  "justifyContent": "center",
+                  "paddingRight": 12,
+                }
+              }
+            >
+              <Text>
+                6
+              </Text>
+            </View>
+            <View
+              style={
+                Object {
+                  "justifyContent": "center",
+                }
+              }
+            >
+              <Text>
+                whatever
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+      <View
+        onLayout={[Function]}
+        style={null}
+      >
+        <View
+          accessible={true}
+          focusable={true}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            Object {
+              "opacity": 1,
+            }
+          }
+        >
+          <View
+            style={
+              Object {
+                "flex": 1,
+                "flexDirection": "row",
+              }
+            }
+            testID="formItem"
+          >
+            <View
+              style={
+                Object {
+                  "justifyContent": "center",
+                  "paddingRight": 12,
+                }
+              }
+            >
+              <Text>
+                7
+              </Text>
+            </View>
+            <View
+              style={
+                Object {
+                  "justifyContent": "center",
+                }
+              }
+            >
+              <Text>
+                whatever
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+      <View
+        onLayout={[Function]}
+        style={null}
+      >
+        <View
+          accessible={true}
+          focusable={true}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            Object {
+              "opacity": 1,
+            }
+          }
+        >
+          <View
+            style={
+              Object {
+                "flex": 1,
+                "flexDirection": "row",
+              }
+            }
+            testID="formItem"
+          >
+            <View
+              style={
+                Object {
+                  "justifyContent": "center",
+                  "paddingRight": 12,
+                }
+              }
+            >
+              <Text>
+                8
+              </Text>
+            </View>
+            <View
+              style={
+                Object {
+                  "justifyContent": "center",
+                }
+              }
+            >
+              <Text>
+                whatever
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+      <View
+        onLayout={[Function]}
+        style={null}
+      >
+        <View
+          accessible={true}
+          focusable={true}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            Object {
+              "opacity": 1,
+            }
+          }
+        >
+          <View
+            style={
+              Object {
+                "flex": 1,
+                "flexDirection": "row",
+              }
+            }
+            testID="formItem"
+          >
+            <View
+              style={
+                Object {
+                  "justifyContent": "center",
+                  "paddingRight": 12,
+                }
+              }
+            >
+              <Text>
+                9
+              </Text>
+            </View>
+            <View
+              style={
+                Object {
+                  "justifyContent": "center",
+                }
+              }
+            >
+              <Text>
+                whatever
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </RCTScrollView>
+</View>
+`;
