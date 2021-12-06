@@ -149,16 +149,6 @@ func ValidateRecordValue(path *validation.Path, value interface{}, field *types.
 	var result validation.ErrorList
 	fieldKind, _ := field.FieldType.GetFieldKind()
 
-	found := false
-	for _, kind := range supportedRecordFieldKinds {
-		if kind == fieldKind {
-			found = true
-		}
-	}
-	if !found {
-		return append(result, validation.NotSupported(path, fieldKind, supportedFieldKindNames))
-	}
-
 	switch fieldKind {
 	case types.FieldKindText:
 		result = append(result, ValidateRecordStringValue(path, value, field)...)
