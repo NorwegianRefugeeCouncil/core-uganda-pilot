@@ -21,7 +21,7 @@ func handleCreate(hydraAdmin admin.ClientService) http.HandlerFunc {
 		l := logging.NewLogger(req.Context())
 
 		l.Debug("unmarshaling client")
-		var client types.Oauth2Client
+		var client types.OAuth2Client
 		if err := utils.BindJSON(req, &client); err != nil {
 			l.Error("failed to unmarshal client", zap.Error(err))
 			utils.ErrorResponse(w, err)

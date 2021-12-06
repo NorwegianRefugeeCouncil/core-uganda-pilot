@@ -64,7 +64,8 @@ func (s String) Join(separator string) string {
 func (s String) MapToSlice(fn func(val string) string) []string {
 	var result = make([]string, s.Len())
 	var i = 0
-	for item := range s {
+	list := s.List()
+	for _, item := range list {
 		result[i] = fn(item)
 		i++
 	}
@@ -74,7 +75,8 @@ func (s String) MapToSlice(fn func(val string) string) []string {
 func (s String) MapToIntfSlice(fn func(val string) interface{}) []interface{} {
 	var result = make([]interface{}, s.Len())
 	var i = 0
-	for item := range s {
+	list := s.List()
+	for _, item := range list {
 		result[i] = fn(item)
 		i++
 	}

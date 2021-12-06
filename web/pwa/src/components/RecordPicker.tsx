@@ -1,5 +1,5 @@
 import React, {FC, useCallback, useEffect, useState} from "react";
-import {Record} from "../types/types";
+import {Record} from "core-js-api-client";
 import {useAppDispatch, useAppSelector} from "../app/hooks";
 import {fetchRecords, recordGlobalSelectors, selectRecords} from "../reducers/records";
 import {selectFormOrSubFormById, selectRootForm} from "../reducers/form";
@@ -45,14 +45,14 @@ export type RecordPickerContainerProps = {
     recordId: string | undefined
     setRecordId?: (recordId: string | undefined) => void
     setRecord?: (record: Record | undefined) => void
-    parentId?: string
+    ownerId?: string
     formId?: string
 }
 
 export const RecordPickerContainer: FC<RecordPickerContainerProps> = props => {
 
     const {
-        parentId,
+        ownerId,
         formId,
         recordId,
         setRecordId,
@@ -82,7 +82,7 @@ export const RecordPickerContainer: FC<RecordPickerContainerProps> = props => {
     }, [dispatch, form, pending, rootForm])
 
     const records = useAppSelector(state => {
-        return selectRecords(state, {parentId, formId})
+        return selectRecords(state, {ownerId: ownerId, formId})
     })
 
     const record = useAppSelector(state => {

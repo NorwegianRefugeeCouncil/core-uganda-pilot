@@ -6,8 +6,7 @@ import {folderGlobalSelectors} from "../reducers/folder";
 import {databaseGlobalSelectors} from "../reducers/database";
 import {recordGlobalSelectors, selectSubRecords, SubRecordResult} from "../reducers/records";
 import {formGlobalSelectors, selectFormOrSubFormById} from "../reducers/form";
-import {Database, FormDefinition, Record} from "../types/types";
-import client, {ClientDefinition} from "core-js-api-client";
+import {Client, ClientDefinition, Database, FormDefinition, Record} from "core-js-api-client";
 
 // Use throughout your app instead of plain `useDispatch` and `useSelector`
 export const useAppDispatch = () => useDispatch<AppDispatch>();
@@ -77,7 +76,7 @@ export const useSubRecords: (recordId: string | undefined) => SubRecordResult | 
     })
 }
 
-export const useParentRecord: (childRecordId: string | undefined) => Record | undefined = (recordId) => {
+export const useOwnerRecord: (childRecordId: string | undefined) => Record | undefined = (recordId) => {
     return useAppSelector(state => {
         if (!recordId) {
             return undefined
@@ -86,10 +85,10 @@ export const useParentRecord: (childRecordId: string | undefined) => Record | un
         if (!childRecord) {
             return undefined
         }
-        if (!childRecord.parentId) {
+        if (!childRecord.ownerId) {
             return undefined
         }
-        return recordGlobalSelectors.selectById(state, childRecord.parentId)
+        return recordGlobalSelectors.selectById(state, childRecord.ownerId)
     })
 }
 
@@ -121,6 +120,6 @@ export const useForms: (options: { databaseId?: string | undefined }) => FormDef
 
 export function useApiClient(): ClientDefinition {
     return useMemo(() => {
-        return new client()
+        return new Client()
     }, [])
 }

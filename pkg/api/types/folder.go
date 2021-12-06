@@ -1,5 +1,6 @@
 package types
 
+
 // Folder is a namespace for Forms.
 // Folder can be used to group FormDefinitions together.
 type Folder struct {

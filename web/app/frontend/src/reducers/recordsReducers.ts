@@ -1,6 +1,6 @@
 import { Reducer } from "react";
 import _ from "lodash";
-import { FormDefinition, Record } from "core-js-api-client/lib/types/types";
+import { FormDefinition, Record } from "core-js-api-client";
 
 export type RecordsStoreProps = {
     formsById: {
@@ -14,7 +14,7 @@ export type RecordsStoreProps = {
 };
 
 export type RecordsAction = {
-    type: string; // TODO use enum type
+    type: RECORD_ACTIONS;
     payload: any;
 };
 

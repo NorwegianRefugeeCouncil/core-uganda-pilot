@@ -1,4 +1,4 @@
-import {FieldKind} from "../../types/types";
+import {FieldKind} from "core-js-api-client";
 import React, {FC, Fragment} from "react";
 import DatabasePickerContainer from "../../components/DatabasePicker";
 import FormPickerContainer from "../../components/FormPicker";

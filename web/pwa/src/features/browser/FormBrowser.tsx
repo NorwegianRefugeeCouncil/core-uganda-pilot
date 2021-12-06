@@ -1,7 +1,7 @@
 import React, {FC, Fragment, useCallback, useEffect, useState} from "react";
 import {fetchForms, selectFormOrSubFormById, selectRootForm} from "../../reducers/form";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
-import {FieldDefinition, Record} from "../../types/types";
+import {FieldDefinition, Record} from "core-js-api-client";
 import {fetchDatabases} from "../../reducers/database";
 import {fetchFolders} from "../../reducers/folder";
 import {fetchRecords, selectRecordsForForm, selectRecordsSubFormCounts} from "../../reducers/records";
@@ -55,7 +55,7 @@ function mapRecordCell(field: FieldDefinition, record: Record, getSubFormCount: 
         return <td key={field.id}>
             <span>
                 <Link
-                    to={`/browse/forms/${field.fieldType.subForm.id}?parentRecordId=${record.id}`}>{count} records</Link>
+                    to={`/browse/forms/${field.id}?ownerRecordId=${record.id}`}>{count} records</Link>
             </span>
         </td>
     }
@@ -100,16 +100,16 @@ export type FormBrowserProps = {
     fields: FieldDefinition[]
     records: Record[]
     getSubFormSum: (recordId: string, fieldId: string) => number
-    parentRecordId: string | undefined
+    ownerRecordId: string | undefined
     columnWidths: { [fieldId: string]: number }
 }
 
 export const FormBrowser: FC<FormBrowserProps> = props => {
-    const {fields, records, formId, getSubFormSum, parentRecordId, columnWidths} = props
+    const {fields, records, formId, getSubFormSum, ownerRecordId, columnWidths} = props
 
     let addRecordURL = `/edit/forms/${formId}/record`;
-    if (parentRecordId) {
-        addRecordURL += `?parentRecordId=${parentRecordId}`
+    if (ownerRecordId) {
+        addRecordURL += `?ownerRecordId=${ownerRecordId}`
     }
 
     return <div className={"flex-grow-1 w-100 h-100 overflow-scroll bg-light"}>
@@ -132,7 +132,7 @@ export const FormBrowser: FC<FormBrowserProps> = props => {
 
 export type FormBrowserContainerProps = {
     formId: string
-    parentRecordId: string
+    ownerRecordId: string
 }
 
 export const FormBrowserContainer: FC<FormBrowserContainerProps> = props => {
@@ -153,7 +153,7 @@ export const FormBrowserContainer: FC<FormBrowserContainerProps> = props => {
         return selectRootForm(s, props.formId)
     })
 
-    const records = useAppSelector((s) => selectRecordsForForm(s, props.formId, props.parentRecordId))
+    const records = useAppSelector((s) => selectRecordsForForm(s, props.formId, props.ownerRecordId))
     const subFormTotals = useAppSelector(selectRecordsSubFormCounts(form?.id))
 
     const getSubFormTotal = useCallback((recordId, fieldId) => {
@@ -182,7 +182,7 @@ export const FormBrowserContainer: FC<FormBrowserContainerProps> = props => {
         dispatch(fetchRecords({databaseId: rootForm.databaseId, formId: form?.id}))
         for (let field of form.fields) {
             if (field.fieldType.subForm) {
-                dispatch(fetchRecords({databaseId: rootForm.databaseId, formId: field.fieldType.subForm.id}))
+                dispatch(fetchRecords({databaseId: rootForm.databaseId, formId: field.id}))
             }
         }
     }, [dispatch, rootForm, form, fetched])
@@ -207,7 +207,7 @@ export const FormBrowserContainer: FC<FormBrowserContainerProps> = props => {
 
     return <FormBrowser
         getSubFormSum={getSubFormTotal}
-        parentRecordId={props.parentRecordId}
+        ownerRecordId={props.ownerRecordId}
         formId={form.id}
         fields={form.fields}
         records={records}

@@ -12,6 +12,80 @@ const nilAccessorMSg = `The accessor for FieldKind %s returned a nil value. That
 
 const unregisteredAccessor = `The field kind %s is not in the list of all field kinds. Run make gen to regenerate.`
 
+func TestGetFieldKind(t *testing.T) {
+
+	tests := []struct {
+		name       string
+		fieldType  FieldType
+		expectErr  bool
+		expectKind FieldKind
+	}{
+		{
+			name:       "text",
+			fieldType:  FieldType{Text: &FieldTypeText{}},
+			expectKind: FieldKindText,
+		}, {
+			name:       "multilineText",
+			fieldType:  FieldType{MultilineText: &FieldTypeMultilineText{}},
+			expectKind: FieldKindMultilineText,
+		}, {
+			name:       "month",
+			fieldType:  FieldType{Month: &FieldTypeMonth{}},
+			expectKind: FieldKindMonth,
+		}, {
+			name:       "date",
+			fieldType:  FieldType{Date: &FieldTypeDate{}},
+			expectKind: FieldKindDate,
+		}, {
+			name:       "reference",
+			fieldType:  FieldType{Reference: &FieldTypeReference{}},
+			expectKind: FieldKindReference,
+		}, {
+			name:       "quantity",
+			fieldType:  FieldType{Quantity: &FieldTypeQuantity{}},
+			expectKind: FieldKindQuantity,
+		}, {
+			name:       "subform",
+			fieldType:  FieldType{SubForm: &FieldTypeSubForm{}},
+			expectKind: FieldKindSubForm,
+		}, {
+			name:       "singleSelect",
+			fieldType:  FieldType{SingleSelect: &FieldTypeSingleSelect{}},
+			expectKind: FieldKindSingleSelect,
+		},
+	}
+
+	var handledFieldKinds []FieldKind
+	for _, tc := range tests {
+		test := tc
+		handledFieldKinds = append(handledFieldKinds, test.expectKind)
+		t.Run(test.name, func(t *testing.T) {
+			kind, err := test.fieldType.GetFieldKind()
+			if test.expectErr && !assert.Error(t, err) {
+				return
+			}
+			if !test.expectErr && !assert.NoError(t, err) {
+				return
+			}
+			assert.Equal(t, test.expectKind, kind)
+		})
+	}
+
+	for _, kind := range GetAllFieldKinds() {
+		found := false
+		for _, handled := range handledFieldKinds {
+			if handled == kind {
+				found = true
+				break
+			}
+		}
+		if kind != FieldKindUnknown {
+			assert.True(t, found, "FieldKind %s does not have a test for FieldType.GetFieldKind", kind)
+		}
+	}
+
+}
+
 func TestAccessor(t *testing.T) {
 
 	text := &FieldTypeText{}
@@ -55,7 +129,7 @@ func TestAccessor(t *testing.T) {
 		})
 	}
 
-	for kind, _ := range fieldAccessors {
+	for kind := range fieldAccessors {
 		found := false
 		for _, registeredKind := range allKinds {
 			if kind == registeredKind {
@@ -63,7 +137,7 @@ func TestAccessor(t *testing.T) {
 				break
 			}
 		}
-		if !assert.True(t, found, unregisteredAccessor, kind){
+		if !assert.True(t, found, unregisteredAccessor, kind) {
 			return
 		}
 	}

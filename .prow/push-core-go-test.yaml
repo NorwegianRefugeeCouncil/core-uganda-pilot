@@ -1,0 +1,26 @@
+presubmits:
+  - name: pull-core-go-test
+    run_if_changed: ".go$|^go.mod$|^go.sum$"
+    decorate: true
+    spec:
+      containers:
+        - image: golang:1.16
+          command: [ "bash", "-c" ]
+          args:
+            - >
+              echo "Creating user" &&
+              useradd go --create-home &&
+              echo "Setting permissions" &&
+              chown -R go:go . &&
+              echo "Running as user 'go'" &&
+              su go -c '
+                echo "Downloading modules" &&
+                go mod download &&
+                echo "Running make gen" &&
+                make gen &&
+                echo "Checking make gen changes" &&
+                git diff --exit-code &&
+                echo "Running tests" &&
+                go test ./pkg/...
+              ' &&
+              echo "Done"

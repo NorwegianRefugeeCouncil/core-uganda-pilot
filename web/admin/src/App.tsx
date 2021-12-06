@@ -5,7 +5,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import {BrowserRouter, Switch} from "react-router-dom";
 import AuthenticatedApp from "./components/AuthenticatedApp";
-import AuthWrapper from "core-auth/lib/components/AuthWrapper";
+import {AuthWrapper} from "core-auth";
 import Client from "../src/client/client";
 
 function App() {

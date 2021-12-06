@@ -1,5 +1,5 @@
 import React, {FC} from "react";
-import {Folder} from "../../types/types";
+import {Folder} from "core-js-api-client";
 import {Link} from "react-router-dom";
 
 export const FolderRow : FC<{folder: Folder}> = ({folder}) => {

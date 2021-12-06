@@ -1,5 +1,5 @@
 import React, {FC} from "react";
-import {FormDefinition} from "../../types/types";
+import {FormDefinition} from "core-js-api-client";
 import {Link} from "react-router-dom";
 
 export const FormRow : FC<{form: FormDefinition}> = ({form}) => {

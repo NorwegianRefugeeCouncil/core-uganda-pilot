@@ -1,4 +1,4 @@
-import {FieldDefinition} from "../../types/types";
+import {FieldDefinition} from "core-js-api-client";
 import React, {FC, Fragment, useState} from "react";
 import {FormValue} from "./recorder.slice";
 import {RecordPickerContainer} from "../../components/RecordPicker";

@@ -44,8 +44,8 @@ func (r recordStore) Get(ctx context.Context, recordRef types.RecordRef) (*types
 	}
 
 	l.Debug("getting form interface")
-	form, err := rootForm.GetFormInterface(recordRef.FormID)
-	if err != nil {
+	form, err := rootForm.GetFormOrSubForm(recordRef.FormID)
+	if err != nil || form == nil {
 		l.Error("failed to get form interface")
 		return nil, meta.NewInternalServerError(err)
 	}
@@ -65,7 +65,7 @@ func (r recordStore) Get(ctx context.Context, recordRef types.RecordRef) (*types
 	query := strings.Builder{}
 	query.WriteString(fmt.Sprintf("select * from %s.%s where id = $1",
 		pq.QuoteIdentifier(rootForm.DatabaseID),
-		pq.QuoteIdentifier(form.GetID()),
+		pq.QuoteIdentifier(form.GetFormID()),
 	))
 
 	l.Debug("getting raw sql database")
@@ -83,7 +83,7 @@ func (r recordStore) Get(ctx context.Context, recordRef types.RecordRef) (*types
 	}
 
 	l.Debug("mapping records")
-	recordList, err := mapRecordList(result)
+	recordList, err := mapRecordList(form.GetDatabaseID(), form.GetFormID(), result)
 	if err != nil {
 		l.Error("failed to map records", zap.Error(err))
 		return nil, err
@@ -123,16 +123,16 @@ func (r recordStore) List(ctx context.Context, options types.RecordListOptions) 
 	}
 
 	l.Debug("getting form interface")
-	form, err := rootForm.GetFormInterface(options.FormID)
-	if err != nil {
-		l.Error("failed to get form interface", zap.Error(err))
-		return nil, err
+	form, err := rootForm.GetFormOrSubForm(options.FormID)
+	if err != nil || form == nil {
+		l.Error("failed to get form interface")
+		return nil, meta.NewInternalServerError(err)
 	}
 
 	query := strings.Builder{}
 	query.WriteString(fmt.Sprintf("select * from %s.%s",
 		pq.QuoteIdentifier(rootForm.DatabaseID),
-		pq.QuoteIdentifier(form.GetID()),
+		pq.QuoteIdentifier(form.GetFormID()),
 	))
 
 	l.Debug("getting raw sql database")
@@ -150,7 +150,7 @@ func (r recordStore) List(ctx context.Context, options types.RecordListOptions) 
 	}
 
 	l.Debug("mapping records")
-	recordList, err := mapRecordList(result)
+	recordList, err := mapRecordList(form.GetDatabaseID(), form.GetFormID(), result)
 	if err != nil {
 		l.Error("failed to map records", zap.Error(err))
 		return nil, err
@@ -159,7 +159,7 @@ func (r recordStore) List(ctx context.Context, options types.RecordListOptions) 
 	return recordList, nil
 }
 
-func mapRecordList(result *sql.Rows) (*types.RecordList, error) {
+func mapRecordList(databaseId, formId string, result *sql.Rows) (*types.RecordList, error) {
 
 	cols, err := result.Columns()
 	if err != nil {
@@ -168,7 +168,7 @@ func mapRecordList(result *sql.Rows) (*types.RecordList, error) {
 
 	var records []*types.Record
 	for result.Next() {
-		record, err := mapRecord(cols, result)
+		record, err := mapRecord(databaseId, formId, cols, result)
 		if err != nil {
 			return nil, err
 		}
@@ -185,20 +185,18 @@ func mapRecordList(result *sql.Rows) (*types.RecordList, error) {
 	return recordList, nil
 }
 
-func mapRecord(cols []string, result *sql.Rows) (*types.Record, error) {
+func mapRecord(databaseId, formId string, cols []string, result *sql.Rows) (*types.Record, error) {
 	var recordValues = map[string]interface{}{}
 	if err := mapRecordRow(cols, result, recordValues); err != nil {
 		return nil, err
 	}
 
 	recordID := recordValues["id"].(string)
-	recordDatabaseID := recordValues["database_id"].(string)
-	recordFormID := recordValues["form_id"].(string)
 	recordSeq := recordValues["seq"].(int64)
-	var parentId *string = nil
-	if parentIdIntf, ok := recordValues["parent_id"]; ok {
-		if parentIdStr, ok := parentIdIntf.(string); ok {
-			parentId = &parentIdStr
+	var ownerId *string = nil
+	if ownerIdIntf, ok := recordValues["owner_id"]; ok {
+		if ownerIdStr, ok := ownerIdIntf.(string); ok {
+			ownerId = &ownerIdStr
 		}
 	}
 
@@ -206,15 +204,15 @@ func mapRecord(cols []string, result *sql.Rows) (*types.Record, error) {
 	delete(recordValues, "seq")
 	delete(recordValues, "database_id")
 	delete(recordValues, "form_id")
-	delete(recordValues, "parent_id")
+	delete(recordValues, "owner_id")
 	delete(recordValues, "created_at")
 
 	record := &types.Record{
 		ID:         recordID,
 		Seq:        recordSeq,
-		DatabaseID: recordDatabaseID,
-		FormID:     recordFormID,
-		ParentID:   parentId,
+		DatabaseID: databaseId,
+		FormID:     formId,
+		OwnerID:    ownerId,
 		Values:     recordValues,
 	}
 	return record, nil
@@ -233,18 +231,18 @@ func (r recordStore) Create(ctx context.Context, record *types.Record) (*types.R
 	i := 1
 
 	l.Debug("getting root form")
-	rootform, err := r.formStore.Get(ctx, record.FormID)
+	rootForm, err := r.formStore.Get(ctx, record.FormID)
 	if err != nil {
 		l.Error("failed to get record root form", zap.Error(err))
 		return nil, err
 	}
-	databaseId := rootform.DatabaseID
+	databaseId := rootForm.DatabaseID
 
 	l.Debug("getting form interface")
-	form, err := rootform.GetFormInterface(record.FormID)
-	if err != nil {
-		l.Error("failed to get form interface", zap.Error(err))
-		return nil, err
+	form, err := rootForm.GetFormOrSubForm(record.FormID)
+	if err != nil || form == nil {
+		l.Error("failed to get form interface")
+		return nil, meta.NewInternalServerError(err)
 	}
 
 	record.ID = uuid.NewV4().String()
@@ -263,19 +261,9 @@ func (r recordStore) Create(ctx context.Context, record *types.Record) (*types.R
 	params = append(params, fmt.Sprintf("$%d", i))
 	i++
 
-	keys = append(keys, "database_id")
-	values = append(values, record.DatabaseID)
-	params = append(params, fmt.Sprintf("$%d", i))
-	i++
-
-	keys = append(keys, "form_id")
-	values = append(values, record.FormID)
-	params = append(params, fmt.Sprintf("$%d", i))
-	i++
-
-	if record.ParentID != nil {
-		keys = append(keys, "parent_id")
-		values = append(values, record.ParentID)
+	if record.OwnerID != nil {
+		keys = append(keys, "owner_id")
+		values = append(values, record.OwnerID)
 		params = append(params, fmt.Sprintf("$%d", i))
 		i++
 	}
@@ -283,7 +271,7 @@ func (r recordStore) Create(ctx context.Context, record *types.Record) (*types.R
 	insertQry := strings.Builder{}
 	insertQry.WriteString(fmt.Sprintf("insert into %s.%s (%s) values (%s) returning id",
 		pq.QuoteIdentifier(databaseId),
-		pq.QuoteIdentifier(form.GetID()),
+		pq.QuoteIdentifier(form.GetFormID()),
 		strings.Join(keys, ","),
 		strings.Join(params, ","),
 	))

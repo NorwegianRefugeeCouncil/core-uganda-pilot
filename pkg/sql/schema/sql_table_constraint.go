@@ -7,11 +7,22 @@ import (
 )
 
 type SQLTableConstraint struct {
-	Name       string
-	Check      *SQLTableConstraintCheck
-	Unique     *SQLTableConstraintUnique
-	PrimaryKey *SQLTableConstraintPrimaryKey
-	ForeignKey *SQLTableConstraintForeignKey
+	Name       string                        `json:"name,omitempty" yaml:"name,omitempty"`
+	Check      *SQLTableConstraintCheck      `json:"check,omitempty" yaml:"check,omitempty"`
+	Unique     *SQLTableConstraintUnique     `json:"unique,omitempty" yaml:"unique,omitempty"`
+	PrimaryKey *SQLTableConstraintPrimaryKey `json:"primaryKey,omitempty" yaml:"primaryKey,omitempty"`
+	ForeignKey *SQLTableConstraintForeignKey `json:"foreignKey,omitempty" yaml:"foreignKey,omitempty"`
+}
+
+type SQLTableConstraints []SQLTableConstraint
+
+func (s SQLTableConstraints) GetConstraint(name string) (SQLTableConstraint, error){
+	for _, constraint := range s {
+		if constraint.Name == name{
+			return constraint, nil
+		}
+	}
+	return SQLTableConstraint{}, newTableConstraintNotFoundErr(name)
 }
 
 func NewCheckTableConstraint(name string, expression string) SQLTableConstraint {
@@ -64,7 +75,7 @@ func NewForeignKeyTableConstraint(
 
 func (c SQLTableConstraint) DDL() DDL {
 	ddl := DDL{}
-	ddl.WriteF("constraint %s", pq.QuoteIdentifier(c.Name))
+	ddl = ddl.WriteF("constraint %s", pq.QuoteIdentifier(c.Name))
 	if c.Unique != nil {
 		ddl = ddl.WriteString(" ").Merge(c.Unique)
 	}
@@ -81,7 +92,7 @@ func (c SQLTableConstraint) DDL() DDL {
 }
 
 type SQLTableConstraintCheck struct {
-	Expression string
+	Expression string `json:"expression,omitempty" yaml:"expression,omitempty"`
 }
 
 func (c SQLTableConstraintCheck) DDL() DDL {
@@ -89,7 +100,7 @@ func (c SQLTableConstraintCheck) DDL() DDL {
 }
 
 type SQLTableConstraintUnique struct {
-	ColumnNames []string
+	ColumnNames []string `json:"columnNames,omitempty" yaml:"columnNames,omitempty"`
 }
 
 func (u SQLTableConstraintUnique) DDL() DDL {
@@ -101,7 +112,7 @@ func (u SQLTableConstraintUnique) DDL() DDL {
 }
 
 type SQLTableConstraintPrimaryKey struct {
-	ColumnNames []string
+	ColumnNames []string `json:"columnNames,omitempty" yaml:"columnNames,omitempty"`
 }
 
 func (k SQLTableConstraintPrimaryKey) DDL() DDL {
@@ -123,13 +134,13 @@ const (
 )
 
 type SQLTableConstraintForeignKey struct {
-	ColumnNames       []string
-	ReferencesTable   string
-	ReferencesSchema  string
-	ReferencesColumns []string
-	MatchType         SQLMatchType
-	OnDelete          SQLForeignKeyAction
-	OnUpdate          SQLForeignKeyAction
+	ColumnNames       []string            `json:"columnNames,omitempty" yaml:"columnNames,omitempty"`
+	ReferencesTable   string              `json:"referencesTable,omitempty" yaml:"referencesTable,omitempty"`
+	ReferencesSchema  string              `json:"referencesSchema,omitempty" yaml:"referencesSchema,omitempty"`
+	ReferencesColumns []string            `json:"referencesColumns,omitempty" yaml:"referencesColumns,omitempty"`
+	MatchType         SQLMatchType        `json:"matchType,omitempty" yaml:"matchType,omitempty"`
+	OnDelete          SQLForeignKeyAction `json:"onDelete,omitempty" yaml:"onDelete,omitempty"`
+	OnUpdate          SQLForeignKeyAction `json:"onUpdate,omitempty" yaml:"onUpdate,omitempty"`
 }
 
 func (k SQLTableConstraintForeignKey) DDL() DDL {

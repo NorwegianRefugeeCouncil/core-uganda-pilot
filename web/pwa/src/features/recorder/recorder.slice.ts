@@ -2,7 +2,7 @@ import {createAsyncThunk, createEntityAdapter, createSlice, PayloadAction} from 
 import {RootState} from "../../app/store";
 import {FormInterface, selectFormOrSubFormById, selectRootForm} from "../../reducers/form";
 import {v4 as uuidv4} from "uuid"
-import {FormDefinition, Record} from "../../types/types";
+import {FormDefinition, Record} from "core-js-api-client";
 import {recordGlobalSelectors} from "../../reducers/records";
 import client from "../../app/client";
 
@@ -11,10 +11,10 @@ export interface FormValue {
     recordId: string
     // the id of the form for that record
     formId: string
-    // records the parent record, if any
-    parentRecordId?: string
+    // records the owner record, if any
+    ownerRecordId?: string
     // records the sub form field that the record belongs to, if any
-    parentFieldId?: string
+    ownerFieldId?: string
     // records the record values
     values: { [key: string]: any }
 }
@@ -27,8 +27,8 @@ const adapter = createEntityAdapter<FormValue>({
 })
 
 export const resetForm = createAsyncThunk<{ formValue: FormValue },
-    { formId: string, parentId: string | undefined }>
-("records/resetForm", ({formId, parentId}, {rejectWithValue, fulfillWithValue, getState}) => {
+    { formId: string, ownerId: string | undefined }>
+("records/resetForm", ({formId, ownerId}, {rejectWithValue, fulfillWithValue, getState}) => {
 
     const state = getState() as RootState
 
@@ -43,31 +43,31 @@ export const resetForm = createAsyncThunk<{ formValue: FormValue },
         values: {},
     }
 
-    if (parentId) {
+    if (ownerId) {
 
-        const baseRecord = recordGlobalSelectors.selectById(state, parentId)
+        const baseRecord = recordGlobalSelectors.selectById(state, ownerId)
         if (!baseRecord) {
-            return rejectWithValue("cannot find record with id " + parentId)
+            return rejectWithValue("cannot find record with id " + ownerId)
         }
-        newRecord.parentRecordId = parentId
+        newRecord.ownerRecordId = ownerId
 
-        const parentFormId = baseRecord.formId
-        const parentForm = selectFormOrSubFormById(state, parentFormId)
-        if (!parentForm) {
-            return rejectWithValue("cannot find form with id " + parentId)
+        const ownerFormId = baseRecord.formId
+        const ownerForm = selectFormOrSubFormById(state, ownerFormId)
+        if (!ownerForm) {
+            return rejectWithValue("cannot find form with id " + ownerId)
         }
 
-        const parentField = parentForm.fields.find(f => {
+        const ownerField = ownerForm.fields.find(f => {
             if (!f.fieldType.subForm) {
                 return false
             }
-            return f.fieldType.subForm.id === formId
+            return f.id === formId
         })
-        if (!parentField) {
+        if (!ownerField) {
             return rejectWithValue("cannot find subform field with id " + formId)
         }
 
-        newRecord.parentFieldId = parentField.id
+        newRecord.ownerFieldId = ownerField.id
 
     }
 
@@ -113,13 +113,13 @@ export const recorderSlice = createSlice({
             adapter.addOne(state, newRecord)
             state.selectedRecordId = newRecord.recordId
         },
-        addSubRecord(state, action: PayloadAction<{ formId: string, parentFieldId: string, parentRecordId: string }>) {
+        addSubRecord(state, action: PayloadAction<{ formId: string, ownerFieldId: string, ownerRecordId: string }>) {
             const newRecord: FormValue = {
                 recordId: uuidv4(),
                 formId: action.payload.formId,
                 values: {},
-                parentFieldId: action.payload.parentFieldId,
-                parentRecordId: action.payload.parentRecordId
+                ownerFieldId: action.payload.ownerFieldId,
+                ownerRecordId: action.payload.ownerRecordId
             }
             adapter.addOne(state, newRecord)
             state.selectedRecordId = newRecord.recordId
@@ -163,11 +163,11 @@ export const selectSubRecords = (state: RootState, recordId: string): RecordMap 
     const result: RecordMap = {}
     const allRecords = recorderGlobalSelectors.selectAll(state)
     for (let record of allRecords) {
-        if (record.parentRecordId === recordId && record.parentFieldId) {
-            if (!result.hasOwnProperty(record.parentFieldId)) {
-                result[record.parentFieldId] = []
+        if (record.ownerRecordId === recordId && record.ownerFieldId) {
+            if (!result.hasOwnProperty(record.ownerFieldId)) {
+                result[record.ownerFieldId] = []
             }
-            result[record.parentFieldId].push(record)
+            result[record.ownerFieldId].push(record)
         }
     }
     return result
@@ -218,11 +218,11 @@ export const selectPostRecords = (state: RootState): Record[] => {
         const entry = allEntries[i]
 
         if (baseFormId !== rootForm.id) {
-            if (entry.parentRecordId && entry.formId !== baseFormId && !handledRecords[entry.parentRecordId]) {
+            if (entry.ownerRecordId && entry.formId !== baseFormId && !handledRecords[entry.ownerRecordId]) {
                 continue
             }
         } else {
-            if (entry.parentRecordId && !handledRecords[entry.parentRecordId]) {
+            if (entry.ownerRecordId && !handledRecords[entry.ownerRecordId]) {
                 continue
             }
         }
@@ -232,7 +232,7 @@ export const selectPostRecords = (state: RootState): Record[] => {
             id: entry.recordId,
             databaseId: databaseId,
             values: entry.values,
-            parentId: entry.parentRecordId,
+            ownerId: entry.ownerRecordId,
         }
         result.push(record)
         handledRecords[record.id] = true
@@ -254,8 +254,8 @@ export const postRecord = createAsyncThunk<Record[], Record[]>("records/post", a
             }
             for (let i = 1; i < arg.length; i++) {
                 const otherRecord = arg[i]
-                if (otherRecord.parentId === record.id) {
-                    otherRecord.parentId = response.response.id
+                if (otherRecord.ownerId === record.id) {
+                    otherRecord.ownerId = response.response.id
                 }
             }
             result.push(response.response)

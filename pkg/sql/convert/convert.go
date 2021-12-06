@@ -14,35 +14,39 @@ func convertDatabaseToSqlSchema(database types.Database) sqlschema2.SQLSchema {
 	}
 }
 
-func expandSubForms(formDef *types.FormDefinition) []*types.FormDefinition {
+func expandSubForms(formDef *types.FormDefinition) ([]*types.FormDefinition, error) {
 	var result []*types.FormDefinition
 	result = append(result, formDef)
 	for _, field := range formDef.Fields {
 		if field.FieldType.SubForm != nil {
-			result = append(result, expandSubFormsInternal(formDef, field.Name, field.FieldType.SubForm)...)
-			formDef.RemoveField(field.Name)
+			expanded, err := expandSubFormsInternal(formDef, field)
+			if err != nil {
+				return nil, err
+			}
+			result = append(result, expanded...)
 		}
 	}
-	return result
+	return result, nil
 }
 
-func expandSubFormsInternal(parentForm *types.FormDefinition, fieldName string, subForm *types.FieldTypeSubForm) []*types.FormDefinition {
+func expandSubFormsInternal(parentForm *types.FormDefinition, subFormField *types.FieldDefinition) ([]*types.FormDefinition, error) {
 	var result []*types.FormDefinition
 
 	formDef := &types.FormDefinition{
-		ID:         subForm.ID,
-		Code:       subForm.Code,
-		Name:       subForm.Name,
+		ID:         subFormField.ID,
+		Name:       subFormField.Name,
 		DatabaseID: parentForm.DatabaseID,
-		Fields:     subForm.Fields,
+		Fields:     subFormField.FieldType.SubForm.Fields,
 	}
 
-	formDef.RemoveField(fieldName)
+	if _, err := parentForm.RemoveFieldByID(subFormField.ID); err != nil {
+		return nil, err
+	}
 
 	formDef.Fields = append(formDef.Fields, &types.FieldDefinition{
-		ID:       "parent_id",
-		Code:     "parent_id",
-		Name:     "parent_id",
+		ID:       "owner_id",
+		Code:     "owner_id",
+		Name:     "owner_id",
 		Required: true,
 		FieldType: types.FieldType{
 			Reference: &types.FieldTypeReference{
@@ -56,11 +60,15 @@ func expandSubFormsInternal(parentForm *types.FormDefinition, fieldName string, 
 
 	for _, field := range formDef.Fields {
 		if field.FieldType.SubForm != nil {
-			result = append(result, expandSubFormsInternal(formDef, field.Name, field.FieldType.SubForm)...)
+			expanded, err := expandSubFormsInternal(formDef, field)
+			if err != nil {
+				return nil, err
+			}
+			result = append(result, expanded...)
 		}
 	}
 
-	return result
+	return result, nil
 }
 
 func convertFormToSqlTable(formDef *types.FormDefinition, referencedForms *types.FormDefinitionList) (sqlschema2.SQLTable, error) {
@@ -69,7 +77,7 @@ func convertFormToSqlTable(formDef *types.FormDefinition, referencedForms *types
 	table.Name = formDef.ID
 	table.Schema = formDef.DatabaseID
 
-	table.Fields = append(table.Fields, sqlschema2.SQLField{
+	table.Columns = append(table.Columns, sqlschema2.SQLColumn{
 		Name: "id",
 		DataType: sqlschema2.SQLDataType{
 			VarChar: &sqlschema2.SQLDataTypeVarChar{Length: 36},
@@ -82,32 +90,14 @@ func convertFormToSqlTable(formDef *types.FormDefinition, referencedForms *types
 		},
 	})
 
-	table.Fields = append(table.Fields, sqlschema2.SQLField{
+	table.Columns = append(table.Columns, sqlschema2.SQLColumn{
 		Name: "seq",
 		DataType: sqlschema2.SQLDataType{
 			Serial: &sqlschema2.SQLDataTypeSerial{},
 		},
 	})
 
-	table.Fields = append(table.Fields, sqlschema2.SQLField{
-		Name: "database_id",
-		DataType: sqlschema2.SQLDataType{
-			VarChar: &sqlschema2.SQLDataTypeVarChar{
-				Length: 36,
-			},
-		},
-	})
-
-	table.Fields = append(table.Fields, sqlschema2.SQLField{
-		Name: "form_id",
-		DataType: sqlschema2.SQLDataType{
-			VarChar: &sqlschema2.SQLDataTypeVarChar{
-				Length: 36,
-			},
-		},
-	})
-
-	table.Fields = append(table.Fields, sqlschema2.SQLField{
+	table.Columns = append(table.Columns, sqlschema2.SQLColumn{
 		Name:    "created_at",
 		Default: "NOW()",
 		DataType: sqlschema2.SQLDataType{
@@ -122,27 +112,9 @@ func convertFormToSqlTable(formDef *types.FormDefinition, referencedForms *types
 		},
 	})
 
-	table.Constraints = append(table.Constraints, sqlschema2.SQLTableConstraint{
-		Name: fmt.Sprintf("fk_%s_forms", table.Name),
-		ForeignKey: &sqlschema2.SQLTableConstraintForeignKey{
-			ColumnNames: []string{
-				"database_id",
-				"form_id",
-			},
-			ReferencesSchema:  "public",
-			ReferencesTable:   "forms",
-			ReferencesColumns: []string{"database_id", "id"},
-		},
-	})
-
-	//expandedFields, err := formDef.Fields.Expand(referencedForms)
-	//if err != nil {
-	//	return schema.SQLTable{}, err
-	//}
-
 	keyFieldIDs := sets.NewString()
 	for _, field := range formDef.Fields {
-		table.Fields = append(table.Fields, convertFieldToSqlField(formDef, field))
+		table.Columns = append(table.Columns, convertFieldToSqlField(formDef, field))
 		if field.Key {
 			keyFieldIDs.Insert(field.ID)
 		}
@@ -160,8 +132,8 @@ func convertFormToSqlTable(formDef *types.FormDefinition, referencedForms *types
 	return table, nil
 }
 
-func convertFieldToSqlField(formDef *types.FormDefinition, field *types.FieldDefinition) sqlschema2.SQLField {
-	result := sqlschema2.SQLField{}
+func convertFieldToSqlField(formDef *types.FormDefinition, field *types.FieldDefinition) sqlschema2.SQLColumn {
+	result := sqlschema2.SQLColumn{}
 	result.Name = field.ID
 	result.Comment = field.Code
 
@@ -201,11 +173,9 @@ func convertFieldToSqlField(formDef *types.FormDefinition, field *types.FieldDef
 		}
 	} else if field.FieldType.Reference != nil {
 		result.Constraints = append(result.Constraints, sqlschema2.SQLColumnConstraint{
-			Name: fmt.Sprintf("fk__%s_%s_%s__%s_%s_id",
-				formDef.DatabaseID,
+			Name: fmt.Sprintf("fkref__%s_%s__%s_id",
 				formDef.ID,
 				field.ID,
-				field.FieldType.Reference.DatabaseID,
 				field.FieldType.Reference.FormID,
 			),
 			Reference: &sqlschema2.ReferenceSQLColumnConstraint{
@@ -227,7 +197,7 @@ func convertFieldToSqlField(formDef *types.FormDefinition, field *types.FieldDef
 		result.Constraints = append(result.Constraints, sqlschema2.SQLColumnConstraint{
 			Reference: &sqlschema2.ReferenceSQLColumnConstraint{
 				Schema:    formDef.DatabaseID,
-				Table:     field.FieldType.SubForm.ID,
+				Table:     field.ID,
 				Column:    "id",
 				OnDelete:  sqlschema2.ActionRestrict,
 				OnUpdate:  sqlschema2.ActionCascade,

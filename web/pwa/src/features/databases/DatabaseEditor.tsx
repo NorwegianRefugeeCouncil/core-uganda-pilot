@@ -1,7 +1,7 @@
 import React, {FC, useState} from "react";
 import {useForm} from "react-hook-form";
 import {databaseActions} from "../../reducers/database";
-import {Database} from "../../types/types";
+import {Database} from "core-js-api-client";
 import {Redirect} from "react-router-dom"
 import client from "../../app/client";
 

@@ -1,10 +1,10 @@
 import React, {FC, Fragment, useEffect, useState} from "react";
 import {useAppSelector} from "../../app/hooks";
 import {Link, NavLink, useLocation} from "react-router-dom"
-import {Database, Folder} from "../../types/types";
+import {Database, Folder} from "core-js-api-client";
 import {databaseGlobalSelectors} from "../../reducers/database";
 import {folderGlobalSelectors, selectParents} from "../../reducers/folder";
-import {FormInterface, selectFormOrSubFormById, selectRootForm, selectSubFormParents} from "../../reducers/form";
+import {FormInterface, selectFormOrSubFormById, selectRootForm, selectSubFormOwners} from "../../reducers/form";
 import {getLogger} from "loglevel"
 
 const log = getLogger("navbar")
@@ -161,7 +161,7 @@ export const NavBarContainer: React.FC = () => {
     const folder = useAppSelector(state => folderGlobalSelectors.selectById(state, folderId))
     const folderChain = useAppSelector(state => selectParents(state, folder?.id, true))
     const form = useAppSelector(state => selectFormOrSubFormById(state, formId))
-    const formChain = useAppSelector(state => selectSubFormParents(state, form?.id, true))
+    const formChain = useAppSelector(state => selectSubFormOwners(state, form?.id, true))
     const rootForm = useAppSelector(state => {
         if (form) {
             return selectRootForm(state, form.id)

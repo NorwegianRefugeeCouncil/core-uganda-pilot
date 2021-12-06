@@ -8,7 +8,7 @@ import {
     selectCurrentRootForm, selectPostRecords, selectSubRecords
 } from "./recorder.slice";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
-import {FieldDefinition} from "../../types/types";
+import {FieldDefinition} from "core-js-api-client";
 import {FieldEditor} from "./FieldEditor";
 import {fetchDatabases} from "../../reducers/database";
 import {fetchFolders} from "../../reducers/folder";
@@ -21,7 +21,7 @@ export type RecordEditorProps = {
     values: { [key: string]: any }
     setValue: (key: string, value: any) => void
     selectSubRecord: (subRecordId: string) => void
-    addSubRecord: (parentFieldId: string) => void
+    addSubRecord: (ownerFieldId: string) => void
     subRecords: {[key: string]: FormValue[]}
     saveRecord: () => void
 }
@@ -86,7 +86,7 @@ export const RecordEditorContainer: FC<{}> = props => {
     const params = useParams<{ formId: string }>()
     const location = useLocation()
 
-    const [parentRecordId, setParentRecordId] = useState<string | undefined>(undefined)
+    const [ownerRecordId, setOwnerRecordId] = useState<string | undefined>(undefined)
     const formIdFromPath = params.formId
     const currentRootForm = useAppSelector(selectCurrentRootForm)
     const rootFormFromPath = useAppSelector(s => selectRootForm(s, formIdFromPath))
@@ -101,11 +101,11 @@ export const RecordEditorContainer: FC<{}> = props => {
 
     useEffect(() => {
         const search = new URLSearchParams(location.search)
-        let parentRecordIdFromQryParam = search.get("parentRecordId");
-        if (parentRecordIdFromQryParam !== parentRecordId) {
-            setParentRecordId(parentRecordIdFromQryParam ? parentRecordIdFromQryParam : undefined)
+        let ownerRecordIdFromQryParam = search.get("ownerRecordId");
+        if (ownerRecordIdFromQryParam !== ownerRecordId) {
+            setOwnerRecordId(ownerRecordIdFromQryParam ? ownerRecordIdFromQryParam : undefined)
         }
-    }, [parentRecordId, location])
+    }, [ownerRecordId, location])
 
     // make sure the form being edited is the one selected in the path
     useEffect(() => {
@@ -117,11 +117,11 @@ export const RecordEditorContainer: FC<{}> = props => {
         if (rootFormFromPath.id !== currentRootForm?.id) {
             dispatch(resetForm({
                 formId: formIdFromPath,
-                parentId: parentRecordId,
+                ownerId: ownerRecordId,
             }))
         }
 
-    }, [dispatch, parentRecordId, formIdFromPath, currentRootForm, rootFormFromPath])
+    }, [dispatch, ownerRecordId, formIdFromPath, currentRootForm, rootFormFromPath])
 
     const setFieldValue = useCallback((key: string, value: any) => {
         if (currentRecord) {
@@ -129,26 +129,26 @@ export const RecordEditorContainer: FC<{}> = props => {
         }
     }, [dispatch, currentRecord])
 
-    const addSubRecord = useCallback((parentFieldId: string) => {
+    const addSubRecord = useCallback((ownerFieldId: string) => {
         if (!currentRecord) {
             return
         }
         if (!currentForm) {
             return
         }
-        const field = currentForm.fields.find(f => f.id === parentFieldId)
+        const field = currentForm.fields.find(f => f.id === ownerFieldId)
         if (!field) {
             return
         }
         if (!field.fieldType.subForm) {
             return
         }
-        const subFormId = field.fieldType.subForm.id
+        const subFormId = field.id
 
         dispatch(recorderActions.addSubRecord({
             formId: subFormId,
-            parentFieldId,
-            parentRecordId: currentRecord.recordId
+            ownerFieldId: ownerFieldId,
+            ownerRecordId: currentRecord.recordId
         }))
 
     }, [dispatch, currentForm, currentRecord])
@@ -166,8 +166,8 @@ export const RecordEditorContainer: FC<{}> = props => {
         }
 
         if (currentRecord.formId !== formIdFromPath) {
-            if (currentRecord.parentRecordId) {
-                dispatch(recorderActions.selectRecord({recordId: currentRecord.parentRecordId}))
+            if (currentRecord.ownerRecordId) {
+                dispatch(recorderActions.selectRecord({recordId: currentRecord.ownerRecordId}))
             }
         } else {
             dispatch(postRecord(recordsToPost))

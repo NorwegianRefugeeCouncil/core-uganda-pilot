@@ -1,4 +1,4 @@
-import { FormDefinition } from "core-js-api-client/lib/types/types";
+import { FormDefinition } from "core-js-api-client";
 import React from "react";
 
 import { FormsScreenContainerProps } from "../../types/screens";
@@ -9,10 +9,12 @@ export const FormsScreenContainer = ({ navigation, route }: FormsScreenContainer
     const [forms, setForms] = React.useState<FormDefinition[]>();
     const [isLoading, setIsLoading] = React.useState(true);
     React.useEffect(() => {
-        client.listForms({}).then(data => {
-            setIsLoading(false);
-            setForms(data.response?.items);
-        });
-    });
+        client()
+            .listForms({})
+            .then(data => {
+                setIsLoading(false);
+                setForms(data.response?.items);
+            });
+    }, [client]);
     return <FormsScreen isLoading={isLoading} forms={forms} navigation={navigation} />;
 };

@@ -7,7 +7,22 @@ import (
 )
 
 func ExtractBearerToken(req *http.Request) (string, error) {
-	authHeader := req.Header.Get("Authorization")
+
+	if req.Header == nil {
+		return "", meta.NewUnauthorized("missing header")
+	}
+
+	authHeaderParts := req.Header["Authorization"]
+
+	if len(authHeaderParts) == 0 {
+		return "", meta.NewUnauthorized("missing token")
+	}
+
+	if len(authHeaderParts) != 1 {
+		return "", meta.NewUnauthorized("invalid authorization header")
+	}
+
+	authHeader := authHeaderParts[0]
 
 	if len(authHeader) == 0 {
 		return "", meta.NewUnauthorized("no Authorization header in request")

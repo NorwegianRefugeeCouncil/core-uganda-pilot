@@ -1,27 +1,31 @@
 package types
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+	"reflect"
+)
 
 // FieldType is a struct that contains the FieldType for a given FieldDefinition
 // Only one of the fields might be specified. For example, a FieldType
 // cannot have both FieldType.Text and FieldType.Reference defined. Only one is allowed.
 type FieldType struct {
 	// Text represents the configuration for a text field
-	Text *FieldTypeText `json:"text,omitempty"`
+	Text *FieldTypeText `json:"text,omitempty" yaml:"text,omitempty"`
 	// Reference represents the configuration for a reference field
-	Reference *FieldTypeReference `json:"reference,omitempty"`
+	Reference *FieldTypeReference `json:"reference,omitempty" yaml:"reference,omitempty"`
 	// SubForm represents the configuration for a sub form field
-	SubForm *FieldTypeSubForm `json:"subForm,omitempty"`
+	SubForm *FieldTypeSubForm `json:"subForm,omitempty" yaml:"subForm,omitempty"`
 	// MultilineText represents the configuration for a multiline text field
-	MultilineText *FieldTypeMultilineText `json:"multilineText,omitempty"`
+	MultilineText *FieldTypeMultilineText `json:"multilineText,omitempty" yaml:"multilineText,omitempty"`
 	// Date represents the configuration for a date field
-	Date *FieldTypeDate `json:"date,omitempty"`
+	Date *FieldTypeDate `json:"date,omitempty" yaml:"date,omitempty"`
 	// Quantity represents the configuration for a quantity field
-	Quantity *FieldTypeQuantity `json:"quantity,omitempty"`
+	Quantity *FieldTypeQuantity `json:"quantity,omitempty" yaml:"quantity,omitempty"`
 	// Month represents the configuration for a month field
-	Month *FieldTypeMonth `json:"month,omitempty"`
+	Month *FieldTypeMonth `json:"month,omitempty" yaml:"month,omitempty"`
 	// SingleSelect represents the configuration for a single select field
-	SingleSelect *FieldTypeSingleSelect `json:"singleSelect,omitempty"`
+	SingleSelect *FieldTypeSingleSelect `json:"singleSelect,omitempty" yaml:"singleSelect,omitempty"`
 }
 
 const accessorMessage = `
@@ -40,6 +44,24 @@ func (f FieldType) GetFieldType(kind FieldKind) (interface{}, error) {
 	return accessor(f), nil
 }
 
+func (f FieldType) GetFieldKind() (FieldKind, error) {
+	for kind, accessor := range fieldAccessors {
+		field := accessor(f)
+		value := reflect.ValueOf(field)
+		if value.Kind() == reflect.Ptr && !value.IsNil() {
+			return kind, nil
+		}
+	}
+	return FieldKindUnknown, errors.New("failed to get field kind")
+}
+func (f FieldType) IsKind(kind FieldKind) (bool, error) {
+	fieldKind, err := f.GetFieldKind()
+	if err != nil {
+		return false, err
+	}
+	return fieldKind == kind, nil
+}
+
 // FieldTypeReference represents a field that is a reference to a record in another FormDefinition
 //
 // For example, given a form "Countries" and a form "Projects".
@@ -48,9 +70,9 @@ func (f FieldType) GetFieldType(kind FieldKind) (interface{}, error) {
 // country.
 type FieldTypeReference struct {
 	// DatabaseID represents the DatabaseID of the referenced FormDefinition
-	DatabaseID string `json:"databaseId,omitempty"`
+	DatabaseID string `json:"databaseId" yaml:"databaseId"`
 	// FormID represents the FormID of the referenced FormDefinition
-	FormID string `json:"formId,omitempty"`
+	FormID string `json:"formId" yaml:"formId"`
 }
 
 // FieldTypeText represents a textual field
@@ -83,23 +105,12 @@ type FieldTypeSingleSelect struct {
 // For example, given a form "Projects", this form could have a subform "Monthly Deliveries".
 // The "Monthly Deliveries". There could be multiple "Monthly Deliveries" for a single "Project".
 type FieldTypeSubForm struct {
-	// ID represents the ID of the sub form
-	ID string `json:"id"`
-	// Name represents the Name of the sub form
-	Name string `json:"name"`
-	// Code represents the unique Code for the subform Field
-	Code string `json:"code"`
 	// Fields represent the fields for the SubForm
-	Fields []*FieldDefinition `json:"fields,omitempty"`
-}
-
-// GetID returns the ID of the sub form
-func (f *FieldTypeSubForm) GetID() string {
-	return f.ID
+	Fields FieldDefinitions `json:"fields,omitempty" yaml:"fields,omitempty"`
 }
 
 // GetFields  returns the FieldDefinitions for the subform
-func (f *FieldTypeSubForm) GetFields() []*FieldDefinition {
+func (f *FieldTypeSubForm) GetFields() FieldDefinitions {
 	return f.Fields
 }
 

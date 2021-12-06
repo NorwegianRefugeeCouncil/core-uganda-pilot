@@ -12,12 +12,12 @@ func TestSQLSchema_DDL(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
-		want   string
+		want   DDL
 	}{
 		{
 			name:   "simple",
 			fields: fields{Name: "schema"},
-			want:   "CREATE SCHEMA schema;",
+			want:   NewDDL("CREATE SCHEMA \"schema\";"),
 		},
 	}
 	for _, tt := range tests {
