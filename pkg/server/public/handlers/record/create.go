@@ -31,6 +31,7 @@ func (h *Handler) Create() http.HandlerFunc {
 			utils.ErrorResponse(w, err)
 			return
 		}
+
 		input.DatabaseID = form.DatabaseID
 
 		l.Debug("validating record")

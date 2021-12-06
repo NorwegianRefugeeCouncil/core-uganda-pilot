@@ -4,6 +4,7 @@ import (
 	"github.com/emicklei/go-restful/v3"
 	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/api/types"
+	"github.com/nrc-no/core/pkg/api/types/validation"
 	"github.com/nrc-no/core/pkg/constants"
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/utils"
@@ -38,6 +39,22 @@ func (h *Handler) Update(recordId string) http.HandlerFunc {
 		if len(input.ID) > 0 && input.ID != recordId {
 			l.Error("failed to match record id in path and in body")
 			utils.ErrorResponse(w, meta.NewBadRequest("record id mismatch"))
+			return
+		}
+
+		l.Debug("getting form for record", zap.String("form_id", input.FormID))
+		form, err := h.formStore.Get(req.Context(), input.FormID)
+		if err != nil {
+			l.Error("failed to get record form", zap.Error(err))
+			utils.ErrorResponse(w, err)
+			return
+		}
+
+		l.Debug("validating record")
+		if validationErrs := validation.ValidateRecord(&input, form); validationErrs.HasAny() {
+			err := meta.NewInvalid(types.RecordGR, "", validationErrs)
+			l.Warn("record is invalid", zap.Error(err))
+			utils.ErrorResponse(w, err)
 			return
 		}
 
