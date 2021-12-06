@@ -218,7 +218,13 @@ func getOrCreateRandomSecret(length int, filePaths ...string) ([]byte, error) {
 	}
 
 	if exists {
-		return os.ReadFile(filePath)
+		fileContent, err := os.ReadFile(filePath)
+		if err != nil {
+			return nil, err
+		}
+		if len(fileContent) != 0 {
+			return fileContent, nil
+		}
 	}
 
 	if _, err := files.CreateDirectoryIfNotExists(filepath.Dir(filePath)); err != nil {
@@ -229,17 +235,6 @@ func getOrCreateRandomSecret(length int, filePaths ...string) ([]byte, error) {
 		return nil, err
 	}
 	return value, nil
-}
-
-func createRandomSecretIfNotExists(length int, filePaths ...string) error {
-	filePath := path.Join(filePaths...)
-	if _, err := files.CreateDirectoryIfNotExists(filepath.Dir(filePath)); err != nil {
-		return err
-	}
-	if err := os.WriteFile(filePath, []byte(randomStringBase64(length)), os.ModePerm); err != nil {
-		return err
-	}
-	return nil
 }
 
 func randomStringBase64(length int) string {
