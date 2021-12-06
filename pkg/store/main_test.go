@@ -19,36 +19,36 @@ type Suite struct {
 	folderStore *folderStore
 }
 
-func (d *Suite) SetupSuite() {
+func (s *Suite) SetupSuite() {
 	db, err := gorm.Open(sqlite.Dialector{DSN: "file::memory:?cache=shared&_foreign_keys=1"}, &gorm.Config{
 		SkipDefaultTransaction: true,
 	})
 	db = db.Debug()
 	if err != nil {
-		d.FailNow(err.Error())
+		s.FailNow(err.Error())
 	}
-	d.db = db
-	if err := db.AutoMigrate(&Database{}, &Form{}, &Field{}); !assert.NoError(d.T(), err) {
-		d.FailNow(err.Error())
+	s.db = db
+	if err := db.AutoMigrate(&Database{}, &Form{}, &Field{}); !assert.NoError(s.T(), err) {
+		s.FailNow(err.Error())
 	}
 	dbFactory := &factory{
 		db: db,
 	}
-	d.dbFactory = dbFactory
+	s.dbFactory = dbFactory
 }
 
-func (d *Suite) SetupTest() {
-	d.dbStore = &databaseStore{
+func (s *Suite) SetupTest() {
+	s.dbStore = &databaseStore{
 		createDatabaseSchema: func(db *gorm.DB, database *types.Database) error {
 			return nil
 		},
 		deleteDatabaseSchema: func(db *gorm.DB, databaseId string) error {
 			return nil
 		},
-		db: d.dbFactory,
+		db: s.dbFactory,
 	}
-	d.folderStore = &folderStore{
-		db: d.dbFactory,
+	s.folderStore = &folderStore{
+		db: s.dbFactory,
 	}
 }
 
