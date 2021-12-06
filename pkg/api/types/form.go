@@ -9,9 +9,6 @@ import (
 type FormDefinition struct {
 	// ID is the unique ID of the FormDefinition
 	ID string `json:"id" yaml:"id"`
-	// Code of the FormDefinition
-	// TODO remove this. It's not used yet.
-	Code string `json:"code,omitempty" yaml:"code,omitempty"`
 	// DatabaseID of the FormDefinition
 	DatabaseID string `json:"databaseId" yaml:"databaseId"`
 	// FolderID of the FormDefinition. If the FolderID is empty,
@@ -24,8 +21,13 @@ type FormDefinition struct {
 	Fields FieldDefinitions `json:"fields" yaml:"fields"`
 }
 
-// GetID implements FormInterface.GetID
-func (f *FormDefinition) GetID() string {
+// GetDatabaseID implements FormInterface.GetDatabaseID
+func (f *FormDefinition) GetDatabaseID() string {
+	return f.DatabaseID
+}
+
+// GetFormID implements FormInterface.GetFormID
+func (f *FormDefinition) GetFormID() string {
 	return f.ID
 }
 
@@ -34,24 +36,19 @@ func (f *FormDefinition) GetFields() FieldDefinitions {
 	return f.Fields
 }
 
-// GetParentID implements FormInterface.GetParentID
-func (f *FormDefinition) GetParentID() *string {
+// GetOwner implements FormInterface.GetOwner
+func (f *FormDefinition) GetOwner() FormInterface {
 	return nil
 }
 
-// GetFieldByID finds and returns a field by ID
-func (f FormDefinition) GetFieldByID(fieldID string) (*FieldDefinition, error) {
-	for _, field := range f.Fields {
-		if field.ID == fieldID {
-			return field, nil
-		}
-	}
-	return nil, fmt.Errorf("could not find field with id %s", fieldID)
+// HasOwner implements FormInterface.HasOwner
+func (f *FormDefinition) HasOwner() bool {
+	return false
 }
 
 // RemoveFieldByID removes a field from the form
 func (f *FormDefinition) RemoveFieldByID(fieldID string) (*FieldDefinition, error) {
-	var result []*FieldDefinition
+	var result FieldDefinitions
 	var fld *FieldDefinition
 	for _, field := range f.Fields {
 		if field.ID == fieldID {
@@ -67,18 +64,25 @@ func (f *FormDefinition) RemoveFieldByID(fieldID string) (*FieldDefinition, erro
 	return fld, nil
 }
 
-// GetFormInterface will return a FormInterface for the given form or sub form ID.
-func (f *FormDefinition) GetFormInterface(formOrSubFormID string) (FormInterface, error) {
-	// if the given form ID == the root form ID, just return the root form ID
-	if f.ID == formOrSubFormID {
+// FindSubForm implements FormInterface.FindFormInterface
+func (f *FormDefinition) FindSubForm(subFormID string) (FormInterface, error) {
+	formIntf := newFormInterface(f, f.DatabaseID, f.ID, f.Fields)
+	return formIntf.FindSubForm(subFormID)
+}
+
+// GetFormOrSubForm gets the form or subForm for the given id
+func (f *FormDefinition) GetFormOrSubForm(formOrSubFormID string) (FormInterface, error) {
+	if f.GetFormID() == formOrSubFormID {
 		return f, nil
 	}
-	// recursively find the sub form with the given ID
-	subFormInterface := findSubFormInterface(f.ID, formOrSubFormID, f.Fields)
-	if subFormInterface == nil {
-		return nil, fmt.Errorf("could not find form or subform with id %s", formOrSubFormID)
+	subForm, err := f.FindSubForm(formOrSubFormID)
+	if err != nil {
+		return nil, err
 	}
-	return subFormInterface, nil
+	if subForm == nil {
+		return nil, fmt.Errorf("failed to get form with id %s", formOrSubFormID)
+	}
+	return subForm, nil
 }
 
 // FormDefinitionList represents a list of FormDefinition
@@ -124,10 +128,10 @@ func (f FormDefinition) GetAllFormsAndSubFormIDs() sets.String {
 
 // addFormsAndSubFormIDsInternal is an internal method used by GetAllFormsAndSubFormIDs to recursively
 // add the form and subform ids.
-func addFormsAndSubFormIDsInternal(fields []*FieldDefinition, ids sets.String) sets.String {
+func addFormsAndSubFormIDsInternal(fields FieldDefinitions, ids sets.String) sets.String {
 	for _, field := range fields {
 		if field.FieldType.SubForm != nil {
-			ids.Insert(field.FieldType.SubForm.ID)
+			ids.Insert(field.ID)
 			addFormsAndSubFormIDsInternal(field.FieldType.SubForm.Fields, ids)
 		}
 	}

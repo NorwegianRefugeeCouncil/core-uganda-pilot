@@ -10,7 +10,7 @@ describe("selectPostRecords", () => {
                     "record1": {
                         recordId: "record1",
                         formId: "form1",
-                        parentRecordId: undefined,
+                        ownerRecordId: undefined,
                         values: {
                             "a": "b"
                         }
@@ -18,7 +18,7 @@ describe("selectPostRecords", () => {
                     "record2": {
                         recordId: "record2",
                         formId: "form2",
-                        parentRecordId: "record1",
+                        ownerRecordId: "record1",
                         values: {
                             "a": "b"
                         }

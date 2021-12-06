@@ -6,16 +6,13 @@ import {store} from './app/store';
 import {Provider} from 'react-redux';
 import * as serviceWorker from './serviceWorker';
 import * as log from "loglevel"
-import {SQLContextProvider} from "./app/db";
 
 log.setDefaultLevel(log.levels.TRACE)
 
 ReactDOM.render(
     <React.StrictMode>
         <Provider store={store}>
-            <SQLContextProvider>
-                <App/>
-            </SQLContextProvider>
+            <App/>
         </Provider>
     </React.StrictMode>,
     document.getElementById('root')

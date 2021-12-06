@@ -1,6 +1,10 @@
 package types
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+	"reflect"
+)
 
 // FieldType is a struct that contains the FieldType for a given FieldDefinition
 // Only one of the fields might be specified. For example, a FieldType
@@ -38,6 +42,24 @@ func (f FieldType) GetFieldType(kind FieldKind) (interface{}, error) {
 		return nil, fmt.Errorf("the accessor for field kind %v is nil", kind)
 	}
 	return accessor(f), nil
+}
+
+func (f FieldType) GetFieldKind() (FieldKind, error) {
+	for kind, accessor := range fieldAccessors {
+		field := accessor(f)
+		value := reflect.ValueOf(field)
+		if value.Kind() == reflect.Ptr && !value.IsNil() {
+			return kind, nil
+		}
+	}
+	return FieldKindUnknown, errors.New("failed to get field kind")
+}
+func (f FieldType) IsKind(kind FieldKind) (bool, error) {
+	fieldKind, err := f.GetFieldKind()
+	if err != nil {
+		return false, err
+	}
+	return fieldKind == kind, nil
 }
 
 // FieldTypeReference represents a field that is a reference to a record in another FormDefinition
@@ -83,23 +105,12 @@ type FieldTypeSingleSelect struct {
 // For example, given a form "Projects", this form could have a subform "Monthly Deliveries".
 // The "Monthly Deliveries". There could be multiple "Monthly Deliveries" for a single "Project".
 type FieldTypeSubForm struct {
-	// ID represents the ID of the sub form
-	ID string `json:"id" yaml:"id"`
-	// Name represents the Name of the sub form
-	Name string `json:"name" yaml:"name"`
-	// Code represents the unique Code for the subform Field
-	Code string `json:"code,omitempty" yaml:"code,omitempty"`
 	// Fields represent the fields for the SubForm
-	Fields []*FieldDefinition `json:"fields,omitempty" yaml:"fields,omitempty"`
-}
-
-// GetID returns the ID of the sub form
-func (f *FieldTypeSubForm) GetID() string {
-	return f.ID
+	Fields FieldDefinitions `json:"fields,omitempty" yaml:"fields,omitempty"`
 }
 
 // GetFields  returns the FieldDefinitions for the subform
-func (f *FieldTypeSubForm) GetFields() []*FieldDefinition {
+func (f *FieldTypeSubForm) GetFields() FieldDefinitions {
 	return f.Fields
 }
 

@@ -1,5 +1,5 @@
 import React, {FC} from "react";
-import {FieldKind} from "../../types/types";
+import {FieldKind} from "core-js-api-client";
 
 export type FieldTypePickerProps = {
     onSubmit: (fieldKind: FieldKind) => void

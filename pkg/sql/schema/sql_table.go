@@ -7,35 +7,32 @@ import (
 type SQLTableName string
 
 type SQLTable struct {
-	Schema      string               `json:"schema,omitempty" yaml:"schema,omitempty"`
-	Name        string               `json:"name,omitempty" yaml:"name,omitempty"`
-	Fields      []SQLField           `json:"fields,omitempty" yaml:"fields,omitempty"`
-	Constraints []SQLTableConstraint `json:"constraints,omitempty" yaml:"constraints,omitempty"`
+	Schema      string              `json:"schema,omitempty" yaml:"schema,omitempty"`
+	Name        string              `json:"name,omitempty" yaml:"name,omitempty"`
+	Columns     SQLColumns          `json:"columns,omitempty" yaml:"columns,omitempty"`
+	Constraints SQLTableConstraints `json:"constraints,omitempty" yaml:"constraints,omitempty"`
 }
 
-func (s SQLTable) WithField(field SQLField) SQLTable {
-	s.Fields = append(s.Fields, field)
-	return s
+type SQLTables []SQLTable
+
+func (s SQLTables) GetTable(name string) (SQLTable, error) {
+	for _, table := range s {
+		if table.Name == name {
+			return table, nil
+		}
+	}
+	return SQLTable{}, newTableNotFoundErr(name)
 }
 
-func (s SQLTable) WithConstraint(constraint SQLTableConstraint) SQLTable {
-	s.Constraints = append(s.Constraints, constraint)
-	return s
-}
-
-func (s SQLTable) WithCheckConstraint(name, expression string) SQLTable {
-	s.Constraints = append(s.Constraints, NewCheckTableConstraint(name, expression))
-	return s
-}
-
-func (s SQLTable) WithUniqueConstraint(name string, columnNames ...string) SQLTable {
-	s.Constraints = append(s.Constraints, NewUniqueTableConstraint(name, columnNames...))
-	return s
-}
-
-func (s SQLTable) WithPrimaryKeyConstraint(name string, columnNames ...string) SQLTable {
-	s.Constraints = append(s.Constraints, NewPrimaryKeyTableConstraint(name, columnNames...))
-	return s
+func (s SQLTables) ReplaceTable(table SQLTable) (SQLTables, error) {
+	for i := 0; i < len(s); i++ {
+		current := s[i]
+		if current.Name == table.Name {
+			s[i] = table
+			return s, nil
+		}
+	}
+	return nil, newTableNotFoundErr(table.Name)
 }
 
 func (s SQLTable) WithForeignKeyConstraint(
@@ -50,10 +47,6 @@ func (s SQLTable) WithForeignKeyConstraint(
 	return s
 }
 
-func NewSQLTable(schema, name string) SQLTable {
-	return SQLTable{Schema: schema, Name: name}
-}
-
 func (s SQLTable) DDL() DDL {
 	ddl := DDL{}
 
@@ -62,19 +55,19 @@ func (s SQLTable) DDL() DDL {
 		pq.QuoteIdentifier(s.Name),
 	)
 
-	if len(s.Fields) == 0 && len(s.Constraints) == 0 {
-		return ddl.Write(";")
+	if len(s.Columns) == 0 && len(s.Constraints) == 0 {
+		return ddl.Write("();")
 	}
 
 	ddl = ddl.Write("\n(\n")
 
 	var statements []DDLGenerator
 
-	for _, field := range s.Fields {
-		statements = append(statements, field.DDL().WriteBefore("  "))
+	for _, column := range s.Columns {
+		statements = append(statements, column.DDL().WriteBefore("  "))
 	}
 	for _, constraint := range s.Constraints {
-		statements = append(statements, constraint.DDL().WriteBeforeF("  constraint %s", pq.QuoteIdentifier(constraint.Name)))
+		statements = append(statements, NewDDL("  ").Merge(constraint.DDL()))
 	}
 
 	ddl = ddl.

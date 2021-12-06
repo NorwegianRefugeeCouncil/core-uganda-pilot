@@ -211,7 +211,7 @@ func (d *folderStore) Delete(ctx context.Context, id string) error {
 			}
 			l.Debug("deleted fields", zap.Int64("deleted_count", qry.RowsAffected))
 
-			formMatcher := fmt.Sprintf("id in (%s) or root_id in (%s)",
+			formMatcher := fmt.Sprintf("id in (%s) or root_owner_id in (%s)",
 				formIdParams.Join(","),
 				rootFormIdParams.Join(","),
 			)
@@ -230,7 +230,7 @@ func (d *folderStore) Delete(ctx context.Context, id string) error {
 				formMatcherArgs = append(formMatcherArgs, formId)
 			}
 
-			l.Debug("deleting all forms in folder (by form_id or root_id)",
+			l.Debug("deleting all forms in folder (by form_id or root_owner_id)",
 				zap.Strings("form_ids", formIdParams.List()),
 				zap.Strings("root_form_ids", rootFormIdParams.List()))
 
@@ -274,7 +274,7 @@ func (d *folderStore) Delete(ctx context.Context, id string) error {
 
 // mapFolderTo maps Folder to a types.Folder
 func mapFolderTo(folder *Folder) *types.Folder {
-	var parentId = ""
+	var parentId string
 	if folder.ParentID != nil {
 		parentId = *folder.ParentID
 	}
@@ -288,7 +288,7 @@ func mapFolderTo(folder *Folder) *types.Folder {
 
 // mapFolderFrom maps a types.Folder to a Folder for storage
 func mapFolderFrom(folder *types.Folder) *Folder {
-	var parentId *string = nil
+	var parentId *string
 	if len(folder.ParentID) != 0 {
 		parentId = &folder.ParentID
 	}

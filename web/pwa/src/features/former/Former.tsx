@@ -5,7 +5,7 @@ import {fetchFolders} from "../../reducers/folder";
 import {fetchForms} from "../../reducers/form";
 import {useLocation} from "react-router-dom"
 import {formerActions, formerGlobalSelectors, FormField, postForm} from "./former.slice";
-import {FieldKind} from "../../types/types";
+import {FieldKind} from "core-js-api-client";
 import {FormerField} from "./Field";
 import {FormName} from "./FormName";
 import {FieldTypePicker} from "./FieldTypePicker";
@@ -31,7 +31,7 @@ type FormerProps = {
     openSubForm: (fieldId: string) => void
     saveField: (fieldId: string) => void
     saveForm: () => void
-    parentFormName: string | undefined
+    ownerFormName: string | undefined
     cancelField: (fieldId: string) => void
 }
 
@@ -90,7 +90,7 @@ export const Former: FC<FormerProps> = props => {
         selectedFieldId,
         addField,
         saveForm,
-        parentFormName
+        ownerFormName
     } = props
 
     const [isAddingField, setIsAddingField] = useState(false)
@@ -137,8 +137,8 @@ export const Former: FC<FormerProps> = props => {
                     <div className={"col-12 col-md-8 offset-md-1"}>
                         <h3>Add Form</h3>
                         <h6>
-                            {parentFormName
-                                ? <div className={"mb-2"}>Editing child form of {parentFormName}</div>
+                            {ownerFormName
+                                ? <div className={"mb-2"}>Editing child form of {ownerFormName}</div>
                                 : <Fragment/>}
                         </h6>
                     </div>
@@ -163,9 +163,9 @@ export const Former: FC<FormerProps> = props => {
                     <div className={"col-8 offset-2"}>
                         <h3>Add Form</h3>
                         <h6>
-                            {parentFormName
+                            {ownerFormName
                                 ? <div className={"mb-2 p-2 border-secondary"}>Editing child form
-                                    of {parentFormName}</div>
+                                    of {ownerFormName}</div>
                                 : <Fragment/>}
                         </h6>
                     </div>
@@ -199,7 +199,7 @@ export const FormerContainer: FC = props => {
     const location = useLocation()
 
     const form = useAppSelector(formerGlobalSelectors.selectCurrentForm)
-    const parentForm = useAppSelector(formerGlobalSelectors.selectCurrentFormParent)
+    const ownerForm = useAppSelector(formerGlobalSelectors.selectCurrentFormOwner)
     const folder = useAppSelector(formerGlobalSelectors.selectFolder)
     const database = useAppSelector(formerGlobalSelectors.selectDatabase)
     const selectedField = useAppSelector(formerGlobalSelectors.selectCurrentField)
@@ -283,7 +283,7 @@ export const FormerContainer: FC = props => {
     }, [dispatch])
 
     const saveForm = useCallback(() => {
-        if (parentForm) {
+        if (ownerForm) {
             dispatch(formerActions.saveForm())
         } else {
             if (formDefinition) {
@@ -291,7 +291,7 @@ export const FormerContainer: FC = props => {
             }
         }
 
-    }, [dispatch, formDefinition, parentForm])
+    }, [dispatch, formDefinition, ownerForm])
 
     if (!form) {
         return <Fragment/>
@@ -315,7 +315,7 @@ export const FormerContainer: FC = props => {
         openSubForm={openSubForm}
         saveField={saveField}
         saveForm={saveForm}
-        parentFormName={parentForm?.name}
+        ownerFormName={ownerForm?.name}
         cancelField={(fieldId: string) => cancelField(fieldId)}
         setFieldReferencedDatabaseId={setFieldReferencedDatabaseId}
         setFieldReferencedFormId={setFieldRefernecedFormId}

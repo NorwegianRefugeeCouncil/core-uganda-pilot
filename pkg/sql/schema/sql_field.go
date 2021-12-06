@@ -4,7 +4,7 @@ import (
 	"github.com/lib/pq"
 )
 
-type SQLField struct {
+type SQLColumn struct {
 	Name        string                `json:"name" yaml:"name"`
 	DataType    SQLDataType           `json:"dataType" yaml:"dataType"`
 	Collate     string                `json:"collate,omitempty" yaml:"collate,omitempty"`
@@ -14,77 +14,18 @@ type SQLField struct {
 	Comment     string                `json:"comment,omitempty" yaml:"comment,omitempty"`
 }
 
-func NewSQLField(name string) SQLField {
-	return SQLField{Name: name}
+type SQLColumns []SQLColumn
+
+func (s SQLColumns) GetColumn(name string) (SQLColumn, error) {
+	for _, field := range s {
+		if field.Name == name {
+			return field, nil
+		}
+	}
+	return SQLColumn{}, newColumnNotFoundErr(name)
 }
 
-func (s SQLField) WithCollate(collate string) SQLField {
-	s.Collate = collate
-	return s
-}
-
-func (s SQLField) WithSerialDataType() SQLField {
-	s.DataType.Serial = &SQLDataTypeSerial{}
-	return s
-}
-
-func (s SQLField) WithVarCharDataType(length int) SQLField {
-	s.DataType.VarChar = &SQLDataTypeVarChar{Length: length}
-	return s
-}
-
-func (s SQLField) WithTimeStampDataType(tzMode *SQLDataTypeTimestampTZMode) SQLField {
-	s.DataType.Timestamp = &SQLDataTypeTimestamp{Timezone: tzMode}
-	return s
-}
-
-func (s SQLField) WithIntDataType() SQLField {
-	s.DataType.Int = &SQLDataTypeInt{}
-	return s
-}
-
-func (s SQLField) WithConstraints(constraints ...SQLColumnConstraint) SQLField {
-	s.Constraints = append(s.Constraints, constraints...)
-	return s
-}
-
-func (s SQLField) WithPrimaryKeyConstraint(name string) SQLField {
-	s.Constraints = append(s.Constraints, SQLColumnConstraint{
-		Name:       name,
-		PrimaryKey: &PrimaryKeySQLColumnConstraint{},
-	})
-	return s
-}
-
-func (s SQLField) WithNotNullConstraint() SQLField {
-	s.Constraints = append(s.Constraints, SQLColumnConstraint{
-		NotNull: &NotNullSQLColumnConstraint{},
-	})
-	return s
-}
-
-func (s SQLField) WithReferenceConstraint(
-	name string,
-	schema string,
-	table string,
-	column string,
-	onDelete SQLForeignKeyAction,
-	onUpdate SQLForeignKeyAction,
-) SQLField {
-	s.Constraints = append(s.Constraints, SQLColumnConstraint{
-		Name: name,
-		Reference: &ReferenceSQLColumnConstraint{
-			Schema:   schema,
-			Table:    table,
-			Column:   column,
-			OnDelete: onDelete,
-			OnUpdate: onUpdate,
-		},
-	})
-	return s
-}
-
-func (s SQLField) DDL() DDL {
+func (s SQLColumn) DDL() DDL {
 	ddl := DDL{}
 	ddl = ddl.
 		WriteF("%s ", pq.QuoteIdentifier(s.Name)).

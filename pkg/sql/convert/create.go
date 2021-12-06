@@ -150,7 +150,7 @@ func createTable(ctx context.Context, db *gorm.DB, table schema.SQLTable) error 
 
 	ddl := table.DDL()
 
-	for _, field := range table.Fields {
+	for _, field := range table.Columns {
 		if len(field.Comment) != 0 {
 			ddl.WriteF("\ncomment on %s.%s.%s is $1;",
 				pq.QuoteIdentifier(table.Schema),

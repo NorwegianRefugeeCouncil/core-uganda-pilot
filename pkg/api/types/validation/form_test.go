@@ -10,235 +10,435 @@ import (
 	"testing"
 )
 
-// TestValidateForm checks that all the validation methods are called and that,
-// if these validation methods return errors, that they are included in the response
-func TestValidateForm(t *testing.T) {
+func TestValidateForm2(t *testing.T) {
+
+	textFieldType := types.FieldType{
+		Text: &types.FieldTypeText{},
+	}
+	validTextField := &types.FieldDefinition{
+		Name:      "My Field",
+		FieldType: textFieldType,
+	}
+
+	const validFormName = "My Form"
+	const validFieldName = "My Field"
+	validDatabaseID := uuid.NewV4().String()
+	validFolderID := uuid.NewV4().String()
+
+	validFields := types.FieldDefinitions{
+		validTextField,
+	}
+
+	formWithFields := func(fields types.FieldDefinitions) *types.FormDefinition {
+		return &types.FormDefinition{
+			Name:       validFormName,
+			DatabaseID: validDatabaseID,
+			Fields:     fields,
+		}
+	}
+
+	repeatFields := func(count int) types.FieldDefinitions {
+		result := types.FieldDefinitions{}
+		for i := 0; i < count; i++ {
+			result = append(result, validTextField)
+		}
+		return result
+	}
 
 	tests := []struct {
-		name       string
-		expectPath string
-		expectStr  func(form *types.FormDefinition) string
-		validateFn *validateStrFn
+		name   string
+		expect validation.ErrorList
+		form   *types.FormDefinition
 	}{
 		{
-			name:       "formName",
-			expectPath: "name",
-			expectStr: func(form *types.FormDefinition) string {
-				return form.Name
+			name:   "valid",
+			expect: nil,
+			form:   formWithFields(validFields),
+		}, {
+			name: "missing database id",
+			expect: validation.ErrorList{
+				validation.Required(validation.NewPath("databaseId"), errDatabaseIdRequired),
 			},
-			validateFn: &validateFormNameFn,
-		},
-		{
-			name:       "folderId",
-			expectPath: "folderId",
-			expectStr: func(form *types.FormDefinition) string {
-				return form.FolderID
+			form: &types.FormDefinition{
+				Name:       validFormName,
+				DatabaseID: "",
+				Fields:     validFields,
 			},
-			validateFn: &validateFolderIdFn,
-		},
-		{
-			name:       "databaseId",
-			expectPath: "databaseId",
-			expectStr: func(form *types.FormDefinition) string {
-				return form.DatabaseID
+		}, {
+			name: "form name with surrounding whitespaces",
+			expect: validation.ErrorList{
+				validation.Invalid(validation.NewPath("name"), " My Form ", errFormNameWhitespace),
 			},
-			validateFn: &validateDatabaseIdFn,
+			form: &types.FormDefinition{
+				Name:       " My Form ",
+				DatabaseID: validDatabaseID,
+				Fields:     validFields,
+			},
+		}, {
+			name: "form name missing",
+			expect: validation.ErrorList{
+				validation.Required(validation.NewPath("name"), errFormNameRequired),
+			},
+			form: &types.FormDefinition{
+				Name:       "",
+				DatabaseID: validDatabaseID,
+				Fields:     validFields,
+			},
+		}, {
+			name: "form name too long",
+			expect: validation.ErrorList{
+				validation.TooLong(validation.NewPath("name"), strings.Repeat("a", formNameMaxLength+1), formNameMaxLength),
+			},
+			form: &types.FormDefinition{
+				Name:       strings.Repeat("a", formNameMaxLength+1),
+				DatabaseID: validDatabaseID,
+				Fields:     validFields,
+			},
+		}, {
+			name: "form name too short",
+			expect: validation.ErrorList{
+				validation.TooShort(validation.NewPath("name"), strings.Repeat("a", formNameMinLength-1), formNameMinLength),
+			},
+			form: &types.FormDefinition{
+				Name:       strings.Repeat("a", formNameMinLength-1),
+				DatabaseID: validDatabaseID,
+				Fields:     validFields,
+			},
+		}, {
+			name: "bad database id",
+			expect: validation.ErrorList{
+				validation.Invalid(validation.NewPath("databaseId"), "abc", errInvalidUUID),
+			},
+			form: &types.FormDefinition{
+				Name:       validFormName,
+				DatabaseID: "abc",
+				Fields:     validFields,
+			},
+		}, {
+			name: "bad folder id",
+			expect: validation.ErrorList{
+				validation.Invalid(validation.NewPath("folderId"), "abc", errInvalidUUID),
+			},
+			form: &types.FormDefinition{
+				Name:       validFormName,
+				DatabaseID: validDatabaseID,
+				FolderID:   "abc",
+				Fields:     validFields,
+			},
+		}, {
+			name:   "valid folder id",
+			expect: nil,
+			form: &types.FormDefinition{
+				Name:       validFormName,
+				DatabaseID: validDatabaseID,
+				FolderID:   validFolderID,
+				Fields:     validFields,
+			},
+		}, {
+			name: "empty fields",
+			expect: validation.ErrorList{
+				validation.Required(validation.NewPath("fields"), errFieldsRequired),
+			},
+			form: formWithFields(types.FieldDefinitions{}),
+		}, {
+			name: "too many fields",
+			expect: validation.ErrorList{
+				validation.TooMany(validation.NewPath("fields"), formMaxFieldCount+1, formMaxFieldCount),
+			},
+			form: formWithFields(repeatFields(formMaxFieldCount + 1)),
+		}, {
+			name: "field is key but not required",
+			expect: validation.ErrorList{
+				validation.Invalid(validation.NewPath("fields[0].required"), false, errKeyFieldMustBeRequired),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name:      validFieldName,
+					Key:       true,
+					Required:  false,
+					FieldType: textFieldType,
+				},
+			}),
+		}, {
+			name: "sub form field cannot be required",
+			expect: validation.ErrorList{
+				validation.Invalid(validation.NewPath("fields[0].required"), true, errSubFormCannotBeKeyOrRequiredField),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name:     validFieldName,
+					Key:      true,
+					Required: true,
+					FieldType: types.FieldType{
+						SubForm: &types.FieldTypeSubForm{
+							Fields: types.FieldDefinitions{
+								validTextField,
+							},
+						},
+					},
+				},
+			}),
+		}, {
+			name: "multiline text field cannot be key",
+			expect: validation.ErrorList{
+				validation.Invalid(validation.NewPath("fields[0].key"), true, errMultiLineTextFieldCannotBeKeyField),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name:     validFieldName,
+					Key:      true,
+					Required: true,
+					FieldType: types.FieldType{
+						MultilineText: &types.FieldTypeMultilineText{},
+					},
+				},
+			}),
+		}, {
+			name: "field name cannot be empty",
+			expect: validation.ErrorList{
+				validation.Required(validation.NewPath("fields[0].name"), errFieldNameRequired),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name:      "",
+					FieldType: textFieldType,
+				},
+			}),
+		}, {
+			name: "field name cannot be too long",
+			expect: validation.ErrorList{
+				validation.TooLong(validation.NewPath("fields[0].name"), strings.Repeat("a", fieldNameMaxLength+1), fieldNameMaxLength),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name:      strings.Repeat("a", fieldNameMaxLength+1),
+					FieldType: textFieldType,
+				},
+			}),
+		}, {
+			name: "field name cannot be too short",
+			expect: validation.ErrorList{
+				validation.TooShort(validation.NewPath("fields[0].name"), strings.Repeat("a", fieldNameMinLength-1), fieldNameMinLength),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name:      strings.Repeat("a", fieldNameMinLength-1),
+					FieldType: textFieldType,
+				},
+			}),
+		}, {
+			name: "field name cannot contain invalid characters",
+			expect: validation.ErrorList{
+				validation.Invalid(validation.NewPath("fields[0].name"), "!!!", errFieldNameInvalid),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name:      "!!!",
+					FieldType: textFieldType,
+				},
+			}),
+		}, {
+			name: "field name cannot have surrounding whitespace",
+			expect: validation.ErrorList{
+				validation.Invalid(validation.NewPath("fields[0].name"), " fieldName ", errFieldNameNoLeadingTrailingWhitespaces),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name:      " fieldName ",
+					FieldType: textFieldType,
+				},
+			}),
+		}, {
+			name: "field code cannot have invalid characters",
+			expect: validation.ErrorList{
+				validation.Invalid(validation.NewPath("fields[0].code"), "!!!", errInvalidFieldCode),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name:      validFieldName,
+					Code:      "!!!",
+					FieldType: textFieldType,
+				},
+			}),
+		}, {
+			name: "field code cannot be too long",
+			expect: validation.ErrorList{
+				validation.TooLong(validation.NewPath("fields[0].code"), strings.Repeat("a", fieldCodeMaxLength+1), fieldCodeMaxLength),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name:      validFieldName,
+					Code:      strings.Repeat("a", fieldCodeMaxLength+1),
+					FieldType: textFieldType,
+				},
+			}),
+		}, {
+			name: "field must have field type",
+			expect: validation.ErrorList{
+				validation.Required(validation.NewPath("fields[0].fieldType"), errOneFieldTypeRequired),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+				},
+			}),
+		}, {
+			name: "field cannot have multiple field types",
+			expect: validation.ErrorList{
+				validation.TooLong(validation.NewPath("fields[0].fieldType"), fmt.Sprintf(errFieldTypesMultipleF, []types.FieldKind{types.FieldKindText, types.FieldKindMultilineText}), 1),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+					FieldType: types.FieldType{
+						Text:          &types.FieldTypeText{},
+						MultilineText: &types.FieldTypeMultilineText{},
+					},
+				},
+			}),
+		}, {
+			name:   "field with valid text field",
+			expect: nil,
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+					FieldType: types.FieldType{
+						Text: &types.FieldTypeText{},
+					},
+				},
+			}),
+		}, {
+			name:   "field with valid date field",
+			expect: nil,
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+					FieldType: types.FieldType{
+						Date: &types.FieldTypeDate{},
+					},
+				},
+			}),
+		}, {
+			name:   "field with valid month field",
+			expect: nil,
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+					FieldType: types.FieldType{
+						Month: &types.FieldTypeMonth{},
+					},
+				},
+			}),
+		}, {
+			name:   "field with valid multiline text field",
+			expect: nil,
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+					FieldType: types.FieldType{
+						MultilineText: &types.FieldTypeMultilineText{},
+					},
+				},
+			}),
+		}, {
+			name:   "field with valid quantity field",
+			expect: nil,
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+					FieldType: types.FieldType{
+						Quantity: &types.FieldTypeQuantity{},
+					},
+				},
+			}),
+		}, {
+			name:   "field with valid reference field",
+			expect: nil,
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+					FieldType: types.FieldType{
+						Reference: &types.FieldTypeReference{
+							DatabaseID: uuid.NewV4().String(),
+							FormID:     uuid.NewV4().String(),
+						},
+					},
+				},
+			}),
+		}, {
+			name: "reference field with invalid database id",
+			expect: validation.ErrorList{
+				validation.Invalid(validation.NewPath("fields[0].fieldType.reference.databaseId"), "abc", errReferenceFieldDatabaseIdInvalid),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+					FieldType: types.FieldType{
+						Reference: &types.FieldTypeReference{
+							DatabaseID: "abc",
+							FormID:     uuid.NewV4().String(),
+						},
+					},
+				},
+			}),
+		}, {
+			name: "reference field with empty database id",
+			expect: validation.ErrorList{
+				validation.Required(validation.NewPath("fields[0].fieldType.reference.databaseId"), errReferenceFieldDatabaseIdRequired),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+					FieldType: types.FieldType{
+						Reference: &types.FieldTypeReference{
+							DatabaseID: "",
+							FormID:     uuid.NewV4().String(),
+						},
+					},
+				},
+			}),
+		}, {
+			name: "reference field with invalid form id",
+			expect: validation.ErrorList{
+				validation.Invalid(validation.NewPath("fields[0].fieldType.reference.formId"), "abc", errReferenceFieldFormIdInvalid),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+					FieldType: types.FieldType{
+						Reference: &types.FieldTypeReference{
+							DatabaseID: uuid.NewV4().String(),
+							FormID:     "abc",
+						},
+					},
+				},
+			}),
+		}, {
+			name: "reference field with empty form id",
+			expect: validation.ErrorList{
+				validation.Required(validation.NewPath("fields[0].fieldType.reference.formId"), errReferenceFieldFormIdRequired),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+					FieldType: types.FieldType{
+						Reference: &types.FieldTypeReference{
+							DatabaseID: uuid.NewV4().String(),
+							FormID:     "",
+						},
+					},
+				},
+			}),
 		},
 	}
 
 	for _, test := range tests {
-		err := &validation.Error{}
-		called := false
-		var calledPath string
-		var calledStr string
-		oldFn := *test.validateFn
-		*test.validateFn = func(str string, path *validation.Path) validation.ErrorList {
-			called = true
-			calledPath = path.String()
-			calledStr = str
-			return []*validation.Error{err}
-		}
-		form := &types.FormDefinition{
-			ID:         "id",
-			Code:       "code",
-			DatabaseID: "databaseId",
-			FolderID:   "folderId",
-			Name:       "name",
-			Fields:     nil,
-		}
-		errs := ValidateForm(form)
-		*test.validateFn = oldFn
-		assert.True(t, called)
-		assert.Contains(t, errs, err)
-		assert.Equal(t, test.expectPath, calledPath)
-		assert.Equal(t, test.expectStr(form), calledStr)
-	}
-}
-
-func TestValidateFormName(t *testing.T) {
-	p := validation.NewPath("")
-	tests := []struct {
-		name     string
-		formName string
-		want     validation.ErrorList
-	}{
-		{
-			name:     "valid",
-			formName: "my form name",
-			want:     []*validation.Error{},
-		},
-		{
-			name:     "tooLong",
-			formName: strings.Repeat("a", 65),
-			want: []*validation.Error{
-				validation.TooLong(p, strings.Repeat("a", 65), 64),
-			},
-		},
-		{
-			name:     "tooShort",
-			formName: "a",
-			want: []*validation.Error{
-				validation.TooShort(p, "a", 3),
-			},
-		},
-		{
-			name:     "leadingWhiteSpaces",
-			formName: " myForm",
-			want: []*validation.Error{
-				validation.Invalid(p, " myForm", formNameNoLeadingTrailingWhitespaces),
-			},
-		},
-		{
-			name:     "trailingWhiteSpaces",
-			formName: "myForm ",
-			want: []*validation.Error{
-				validation.Invalid(p, "myForm ", formNameNoLeadingTrailingWhitespaces),
-			},
-		},
-		{
-			name:     "empty",
-			formName: "",
-			want: []*validation.Error{
-				validation.Required(p, formNameRequired),
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := ValidateFormName(tt.formName, p)
-			assert.ElementsMatchf(t, tt.want, got, "")
+		t.Run(test.name, func(t *testing.T) {
+			errs := ValidateForm(test.form)
+			assert.Equal(t, test.expect, errs)
 		})
 	}
-}
 
-func TestValidateFormDatabaseID(t *testing.T) {
-	p := validation.NewPath("")
-	tests := []struct {
-		name       string
-		databaseID string
-		want       validation.ErrorList
-	}{
-		{
-			name:       "valid",
-			databaseID: uuid.NewV4().String(),
-			want:       []*validation.Error{},
-		},
-		{
-			name:       "empty",
-			databaseID: "",
-			want: []*validation.Error{
-				validation.Required(p, formDatabaseIdRequired),
-			},
-		},
-		{
-			name:       "invalid uuid",
-			databaseID: "abc",
-			want: []*validation.Error{
-				validation.Invalid(p, "abc", uuidInvalid),
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			t.Run(tt.name, func(t *testing.T) {
-				got := ValidateFormDatabaseID(tt.databaseID, p)
-				assert.ElementsMatchf(t, tt.want, got, "")
-			})
-		})
-	}
-}
-
-func TestValidateFormFolderID(t *testing.T) {
-	p := validation.NewPath("")
-	tests := []struct {
-		name     string
-		folderId string
-		want     validation.ErrorList
-	}{
-		{
-			name:     "valid",
-			folderId: uuid.NewV4().String(),
-			want:     []*validation.Error{},
-		},
-		{
-			name:     "empty",
-			folderId: "",
-			want:     []*validation.Error{},
-		},
-		{
-			name:     "invalid uuid",
-			folderId: "abc",
-			want: []*validation.Error{
-				validation.Invalid(p, "abc", uuidInvalid),
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			t.Run(tt.name, func(t *testing.T) {
-				got := ValidateFormFolderID(tt.folderId, p)
-				assert.ElementsMatchf(t, tt.want, got, "")
-			})
-		})
-	}
-}
-
-func TestValidateFieldType(t *testing.T) {
-	p := validation.NewPath("")
-	tests := []struct {
-		name string
-		obj  types.FieldType
-		want validation.ErrorList
-	}{
-		{
-			name: "valid",
-			obj:  types.FieldType{Text: &types.FieldTypeText{}},
-			want: []*validation.Error{},
-		},
-		{
-			name: "empty",
-			obj:  types.FieldType{},
-			want: []*validation.Error{
-				validation.Invalid(p, types.FieldType{}, errOneFieldTypeRequired),
-			},
-		},
-		{
-			name: "multipleSpecified",
-			obj:  types.FieldType{Text: &types.FieldTypeText{}, MultilineText: &types.FieldTypeMultilineText{}},
-			want: []*validation.Error{
-				validation.Invalid(p, types.FieldType{
-					Text:          &types.FieldTypeText{},
-					MultilineText: &types.FieldTypeMultilineText{},
-				}, fmt.Sprintf(errFieldTypesMultipleF, []string{"FieldKindText", "FieldKindMultilineText"})),
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := ValidateFieldType(tt.obj, p)
-			assert.ElementsMatchf(t, tt.want, got, "")
-		})
-	}
 }
 
 func TestValidateFieldNameRegex(t *testing.T) {
@@ -264,55 +464,6 @@ func TestValidateFieldNameRegex(t *testing.T) {
 	}
 }
 
-func TestValidateFieldName(t *testing.T) {
-	p := validation.NewPath("")
-	tests := []struct {
-		name string
-		obj  string
-		want validation.ErrorList
-	}{
-		{
-			name: "valid",
-			obj:  "fieldName",
-			want: []*validation.Error{},
-		},
-		{
-			name: "empty",
-			obj:  "",
-			want: []*validation.Error{
-				validation.Required(p, errFieldNameRequired),
-			},
-		},
-		{
-			name: "tooShort",
-			obj:  "a",
-			want: []*validation.Error{
-				validation.TooShort(p, "a", fieldNameMinLength),
-			},
-		},
-		{
-			name: "tooLong",
-			obj:  strings.Repeat("a", fieldNameMaxLength+1),
-			want: []*validation.Error{
-				validation.TooLong(p, strings.Repeat("a", fieldNameMaxLength+1), fieldNameMaxLength),
-			},
-		},
-		{
-			name: "invalid",
-			obj:  "&&!",
-			want: []*validation.Error{
-				validation.Invalid(p, "&&!", errFieldNameInvalid),
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := ValidateFieldName(tt.obj, p)
-			assert.ElementsMatchf(t, tt.want, got, "")
-		})
-	}
-}
-
 func TestFieldCodeRegex(t *testing.T) {
 	valid := []string{
 		"code",
@@ -332,45 +483,5 @@ func TestFieldCodeRegex(t *testing.T) {
 	}
 	for _, s := range invalid {
 		assert.False(t, fieldCodeRegex.MatchString(s))
-	}
-}
-
-func TestValidateFieldCode(t *testing.T) {
-	p := validation.NewPath("")
-	tests := []struct {
-		name string
-		obj  string
-		want validation.ErrorList
-	}{
-		{
-			name: "valid",
-			obj:  "CODE",
-			want: []*validation.Error{},
-		},
-		{
-			name: "empty",
-			obj:  "",
-			want: []*validation.Error{},
-		},
-		{
-			name: "tooLong",
-			obj:  strings.Repeat("A", fieldCodeMaxLength+1),
-			want: []*validation.Error{
-				validation.TooLong(p, strings.Repeat("A", fieldCodeMaxLength+1), fieldCodeMaxLength),
-			},
-		},
-		{
-			name: "invalid",
-			obj:  "!!!!!",
-			want: []*validation.Error{
-				validation.Invalid(p, "!!!!!", errInvalidFieldCode),
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := ValidateFieldCode(tt.obj, p)
-			assert.ElementsMatchf(t, tt.want, got, "")
-		})
 	}
 }

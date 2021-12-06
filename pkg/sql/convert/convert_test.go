@@ -29,7 +29,7 @@ fields:
 			want: `
 schema: database
 name: form
-fields:
+columns:
 - name: id
   dataType:
     varChar:
@@ -69,7 +69,7 @@ fields:
 			want: `
 schema: database
 name: form
-fields:
+columns:
 - name: id
   dataType:
     varChar:
@@ -188,6 +188,7 @@ func Test_expandSubForms(t *testing.T) {
 					ID:         "root",
 				}, {
 					DatabaseID: "db",
+					ID:         "parent_field",
 					Fields: []*types.FieldDefinition{
 						{
 							ID: "child_field",
@@ -195,9 +196,9 @@ func Test_expandSubForms(t *testing.T) {
 								Text: &types.FieldTypeText{},
 							},
 						}, {
-							ID:       "parent_id",
-							Name:     "parent_id",
-							Code:     "parent_id",
+							ID:       "owner_id",
+							Name:     "owner_id",
+							Code:     "owner_id",
 							Required: true,
 							FieldType: types.FieldType{
 								Reference: &types.FieldTypeReference{
@@ -218,10 +219,7 @@ func Test_expandSubForms(t *testing.T) {
 				return
 			}
 
-			gotYaml, _ := yaml.Marshal(got)
-			wantYaml, _ := yaml.Marshal(tt.want)
-
-			assert.YAMLEq(t, string(wantYaml), string(gotYaml))
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }
