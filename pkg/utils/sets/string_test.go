@@ -1,9 +1,64 @@
 package sets
 
 import (
+	"github.com/stretchr/testify/assert"
 	"reflect"
 	"testing"
 )
+
+func TestStringKeySet(t *testing.T) {
+	s := StringKeySet(map[string]Empty{
+		"a": {},
+		"b": {},
+	})
+	assert.Equal(t, []string{"a", "b"}, s.List())
+}
+
+func TestIsEmpty(t *testing.T) {
+	s := NewString()
+	assert.True(t, s.IsEmpty())
+	s.Insert("a")
+	assert.False(t, s.IsEmpty())
+}
+
+func TestListInterface(t *testing.T) {
+	s := NewString("a", "b")
+	assert.Equal(t, []interface{}{"a", "b"}, s.ListIntf())
+}
+
+func TestJoin(t *testing.T) {
+	s := NewString("a", "b")
+	assert.Equal(t, "a,b", s.Join(","))
+}
+
+func TestMapToSlice(t *testing.T) {
+	s := NewString("a", "b")
+	assert.Equal(t, []string{"!a", "!b"}, s.MapToSlice(func(val string) string {
+		return "!" + val
+	}))
+}
+
+func TestMapToIntfSlice(t *testing.T) {
+	s := NewString("a", "b")
+	assert.Equal(t, []interface{}{"!a", "!b"}, s.MapToIntfSlice(func(val string) interface{} {
+		return "!" + val
+	}))
+}
+
+func TestUnsortedList(t *testing.T) {
+	s := NewString("a", "b")
+	assert.ElementsMatch(t, []string{"a", "b"}, s.UnsortedList())
+}
+
+func TestPopAny(t *testing.T) {
+	s := NewString("a")
+	actual, ok := s.PopAny()
+	assert.Equal(t, "a", actual)
+	assert.True(t, ok)
+	actual, ok = s.PopAny()
+	assert.Equal(t, "", actual)
+	assert.False(t, ok)
+}
 
 func TestString_Len(t *testing.T) {
 	tests := []struct {
@@ -283,6 +338,16 @@ func TestString_Intersection(t *testing.T) {
 			name: "common",
 			s:    NewString("a", "b"),
 			args: NewString("b", "c"),
+			want: NewString("b"),
+		}, {
+			name: "longer",
+			s:    NewString("a", "b", "c"),
+			args: NewString("b", "c"),
+			want: NewString("b", "c"),
+		}, {
+			name: "shorter",
+			s:    NewString("a", "b"),
+			args: NewString("b", "c", "d"),
 			want: NewString("b"),
 		},
 	}
