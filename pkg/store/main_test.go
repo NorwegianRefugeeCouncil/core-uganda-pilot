@@ -52,7 +52,7 @@ func (d *Suite) SetupTest() {
 	}
 }
 
-func TestDatabaseSuite(t *testing.T) {
+func TestSuite(t *testing.T) {
 	suite.Run(t, new(Suite))
 }
 
