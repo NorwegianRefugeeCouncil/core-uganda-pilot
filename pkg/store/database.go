@@ -26,9 +26,9 @@ type DatabaseStore interface {
 // NewDatabaseStore returns a new DatabaseStore
 func NewDatabaseStore(db Factory) DatabaseStore {
 	return &databaseStore{
-		db:             db,
-		deleteDatabase: convert.DeleteDatabaseSchemaIfExist,
-		createDatabase: convert.CreateDatabase,
+		db:                   db,
+		deleteDatabaseSchema: convert.DeleteDatabaseSchemaIfExist,
+		createDatabaseSchema: convert.CreateDatabase,
 	}
 }
 
@@ -51,12 +51,12 @@ type createDatabaseFn func(db *gorm.DB, database *types.Database) error
 type databaseStore struct {
 	// db is the database Factory
 	db Factory
-	// deleteDatabase is a function for deleting the actual sql database
+	// deleteDatabaseSchema is a function for deleting the actual sql database
 	// we add a variable since we want to mock this function
-	deleteDatabase deleteDatabaseFn
-	// createDatabase is a function for creating the actual sql database
+	deleteDatabaseSchema deleteDatabaseFn
+	// createDatabaseSchema is a function for creating the actual sql database
 	// we add a variable since we want to mock this function
-	createDatabase createDatabaseFn
+	createDatabaseSchema createDatabaseFn
 }
 
 // Ensure that databaseStore implements DatabaseStore
@@ -101,7 +101,7 @@ func (d *databaseStore) Delete(ctx context.Context, databaseID string) error {
 	err = db.Transaction(func(tx *gorm.DB) error {
 
 		l.Debug("deleting database schema")
-		if err := d.deleteDatabase(tx, databaseID); err != nil {
+		if err := d.deleteDatabaseSchema(tx, databaseID); err != nil {
 			l.Error("failed to delete database schema", zap.Error(err))
 			return meta.NewInternalServerError(err)
 		}
@@ -199,7 +199,7 @@ func (d *databaseStore) Create(ctx context.Context, database *types.Database) (*
 		}
 
 		l.Debug("creating database schema")
-		if err := d.createDatabase(tx, database); err != nil {
+		if err := d.createDatabaseSchema(tx, database); err != nil {
 			l.Error("failed to create database schema", zap.Error(err))
 			tx.Rollback()
 			return err

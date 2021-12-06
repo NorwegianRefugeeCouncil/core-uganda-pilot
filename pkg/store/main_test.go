@@ -39,10 +39,10 @@ func (d *Suite) SetupSuite() {
 
 func (d *Suite) SetupTest() {
 	d.dbStore = &databaseStore{
-		createDatabase: func(db *gorm.DB, database *types.Database) error {
+		createDatabaseSchema: func(db *gorm.DB, database *types.Database) error {
 			return nil
 		},
-		deleteDatabase: func(db *gorm.DB, databaseId string) error {
+		deleteDatabaseSchema: func(db *gorm.DB, databaseId string) error {
 			return nil
 		},
 		db: d.dbFactory,
@@ -56,13 +56,19 @@ func TestDatabaseSuite(t *testing.T) {
 	suite.Run(t, new(Suite))
 }
 
-func (s *Suite) mustCreateDatabase(ctx context.Context) *types.Database {
+func (s *Suite) createDatabase(ctx context.Context) (*types.Database, error) {
 	db := &types.Database{
 		ID:   uuid.NewV4().String(),
 		Name: "my-db",
 	}
-	if _, err := s.dbStore.Create(ctx, db); !assert.NoError(s.T(), err) {
-		s.T().FailNow()
+	return s.dbStore.Create(ctx, db)
+}
+
+func (s *Suite) mustCreateDatabase(ctx context.Context) *types.Database {
+	db, err := s.createDatabase(ctx)
+	if !assert.NoError(s.T(), err) {
+		s.T().Fail()
+		return nil
 	}
 	return db
 }

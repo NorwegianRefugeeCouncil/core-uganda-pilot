@@ -10,28 +10,29 @@ import (
 	"gorm.io/gorm"
 )
 
+// TestDatabaseCreate tests that we can create a database successfully
 func (d *Suite) TestDatabaseCreate() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	var err error
-	var databaseId = uuid.NewV4().String()
-	var out *types.Database
-	var in = &types.Database{ID: databaseId, Name: "my-database"}
-
-	if out, err = d.dbStore.Create(ctx, in); !assert.NoError(d.T(), err) {
+	db := d.mustCreateDatabase(ctx)
+	got, err := d.dbStore.Get(ctx, db.ID)
+	if !assert.NoError(d.T(), err) {
 		return
 	}
 
-	assert.Equal(d.T(), databaseId, out.ID)
-	assert.Equal(d.T(), "my-database", out.Name)
+	assert.Equal(d.T(), db, got)
 }
 
+// TestDatabaseCreateShouldFailIfCreateSchemaFails tests that when creating a database,
+// the transaction will be rolled out in case that we fail to create the actual
+// SQL Schema for that database.
 func (d *Suite) TestDatabaseCreateShouldFailIfCreateSchemaFails() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	d.dbStore.createDatabase = func(db *gorm.DB, database *types.Database) error {
+	// mock failure to create the SQL Schema
+	d.dbStore.createDatabaseSchema = func(db *gorm.DB, database *types.Database) error {
 		return errors.New("mock error")
 	}
 
@@ -47,71 +48,82 @@ func (d *Suite) TestDatabaseCreateShouldFailIfCreateSchemaFails() {
 	}
 
 }
+
+// TestDatabaseCreateShouldFailIfNonUniqueDatabaseID tests that it's not possible
+// to create two databases with the same ID, and that we get a
+// meta.StatusReasonAlreadyExists error
 func (d *Suite) TestDatabaseCreateShouldFailIfNonUniqueDatabaseID() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	var in = &types.Database{ID: uuid.NewV4().String(), Name: "my-database"}
-	if _, err := d.dbStore.Create(ctx, in); !assert.NoError(d.T(), err) {
-		return
-	}
-	_, err := d.dbStore.Create(ctx, in)
+
+	db := d.mustCreateDatabase(ctx)
+
+	// try recreating the same database
+	_, err := d.dbStore.Create(ctx, db)
 	if !assert.Error(d.T(), err) {
 		return
 	}
+
 	assert.Equal(d.T(), meta.StatusReasonAlreadyExists, meta.ReasonForError(err))
 }
 
+// TestDatabaseGet tests that we can get a database after creating it
 func (d *Suite) TestDatabaseGet() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	in, err := d.dbStore.Create(ctx, &types.Database{ID: uuid.NewV4().String(), Name: "my-database"})
+	db := d.mustCreateDatabase(ctx)
+
+	out, err := d.dbStore.Get(ctx, db.ID)
 	if !assert.NoError(d.T(), err) {
 		return
 	}
 
-	out, err := d.dbStore.Get(ctx, in.ID)
-	if !assert.NoError(d.T(), err) {
-		return
-	}
-
-	assert.Equal(d.T(), in, out)
+	assert.Equal(d.T(), db, out)
 }
 
+// TestDatabaseGetShouldFailIfDatabaseDoesNotExist tests that we cannot get
+// a database if it does not exist, and that we get a
+// meta.StatusReasonNotFound
 func (d *Suite) TestDatabaseGetShouldFailIfDatabaseDoesNotExist() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+
 	_, err := d.dbStore.Get(ctx, uuid.NewV4().String())
 	if !assert.Error(d.T(), err) {
 		return
 	}
+
 	assert.Equal(d.T(), meta.StatusReasonNotFound, meta.ReasonForError(err))
 }
 
+// TestDatabaseListShouldReturnEmptyArrayIfNoDatabases tests that listing databases
+// returns an empty list if there are no databases
 func (d *Suite) TestDatabaseListShouldReturnEmptyArrayIfNoDatabases() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+
+	// clearing the databases beforehand
 	if err := d.db.Where("id = id").Delete(&Database{}).Error; !assert.NoError(d.T(), err) {
 		return
 	}
+
 	dbList, err := d.dbStore.List(ctx)
 	if !assert.NoError(d.T(), err) {
 		return
 	}
+
 	assert.Equal(d.T(), &types.DatabaseList{Items: []*types.Database{}}, dbList)
 }
 
+// TestDatabaseListShouldReturnDatabases tests that we can list the databases
 func (d *Suite) TestDatabaseListShouldReturnDatabases() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	db1, err := d.dbStore.Create(ctx, &types.Database{ID: uuid.NewV4().String(), Name: "my-database"})
-	if !assert.NoError(d.T(), err) {
-		return
-	}
-	db2, err := d.dbStore.Create(ctx, &types.Database{ID: uuid.NewV4().String(), Name: "my-database"})
-	if !assert.NoError(d.T(), err) {
-		return
-	}
+
+	db1 := d.mustCreateDatabase(ctx)
+	db2 := d.mustCreateDatabase(ctx)
+
 	dbList, err := d.dbStore.List(ctx)
 	if !assert.NoError(d.T(), err) {
 		return
@@ -121,21 +133,21 @@ func (d *Suite) TestDatabaseListShouldReturnDatabases() {
 	assert.Contains(d.T(), dbList.Items, db2)
 }
 
+// TestDatabaseDelete tests that it's possible to delete a database, and that
+// trying to GET the database should result in
+// meta.StatusReasonNotFound
 func (d *Suite) TestDatabaseDelete() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	out, err := d.dbStore.Create(ctx, &types.Database{ID: uuid.NewV4().String(), Name: "my-database"})
-	if !assert.NoError(d.T(), err) {
-		return
-	}
+	db := d.mustCreateDatabase(ctx)
 
-	if err := d.dbStore.Delete(ctx, out.ID); !assert.NoError(d.T(), err) {
+	if err := d.dbStore.Delete(ctx, db.ID); !assert.NoError(d.T(), err) {
 		return
 	}
 
 	// test that we cannot get the database after deleting
-	_, err = d.dbStore.Get(ctx, out.ID)
+	_, err := d.dbStore.Get(ctx, db.ID)
 	if !assert.Error(d.T(), err) {
 		return
 	}
@@ -143,25 +155,26 @@ func (d *Suite) TestDatabaseDelete() {
 	assert.Equal(d.T(), meta.StatusReasonNotFound, meta.ReasonForError(err))
 }
 
+// TestDatabaseDeleteFailsIfSchemaFailsToDelete tests that when deleting a database,
+// the transaction should roll back if deleting the SQL Schema fails to delete,
+// and that we can still get the database afterwards
 func (d *Suite) TestDatabaseDeleteFailsIfSchemaFailsToDelete() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	out, err := d.dbStore.Create(ctx, &types.Database{ID: uuid.NewV4().String(), Name: "my-database"})
-	if !assert.NoError(d.T(), err) {
-		return
-	}
+	db := d.mustCreateDatabase(ctx)
 
-	d.dbStore.deleteDatabase = func(db *gorm.DB, databaseId string) error {
+	// mock that deleting the SQL Schema fails
+	d.dbStore.deleteDatabaseSchema = func(db *gorm.DB, databaseId string) error {
 		return errors.New("mock failure")
 	}
 
-	if err := d.dbStore.Delete(ctx, out.ID); !assert.Error(d.T(), err) {
+	if err := d.dbStore.Delete(ctx, db.ID); !assert.Error(d.T(), err) {
 		return
 	}
 
 	// test that we can still get the database after deleting (ensure no transaction error)
-	_, err = d.dbStore.Get(ctx, out.ID)
+	_, err := d.dbStore.Get(ctx, db.ID)
 	assert.NoError(d.T(), err)
 
 }
