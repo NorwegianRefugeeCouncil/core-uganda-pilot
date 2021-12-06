@@ -103,13 +103,13 @@ describe(AddRecordScreenContainer.name, () => {
   });
 
   // FIX ME
-  test.skip("stores local data on user submit when offline", async () => {
+  test.only("stores local data on user submit when offline", async () => {
     jest.mock("../../src/utils/getNetworkState", () => ({
-      getNetworState: () => mockGetNetworkStateOffline(),
+      getNetworkState: () => mockGetNetworkStateOffline(),
     }));
     const { getByA11yLabel } = await waitFor(async () => render(<Component {...mockProps} />));
 
-    fireEvent.press(getByA11yLabel("Submit"), mockLocalData);
+    await fireEvent.press(getByA11yLabel("Submit"), mockLocalData);
 
     expect(mockHandleSubmit).toHaveBeenCalled();
     expect(mockGetEncryptionKey).toHaveBeenCalled();
@@ -125,7 +125,6 @@ describe(AddRecordScreenContainer.name, () => {
         localRecord: mockRoute.params.recordId,
       },
     };
-    expect(mockDispatch).toHaveBeenCalled();
-    expect(mockDispatch).toHaveBeenCalledWith(expectedAddRecordAction);
+    await waitFor(() => expect(mockDispatch).toHaveBeenCalledWith(expectedAddRecordAction));
   });
 });
