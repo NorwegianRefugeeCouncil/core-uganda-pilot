@@ -76,6 +76,13 @@ function mapRecordCell(field: FieldDefinition, record: Record, getSubFormCount: 
         </td>
     }
 
+    if (field.fieldType.week) {
+        return <td key={field.id} className={"text-secondary"}
+               style={{overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", wordBreak: "break-all"}}>
+            {format(new Date(record.values[field.id]), "yyyy-'W'ww")}
+        </td>
+    }
+
     if (field.fieldType.reference) {
         return <td key={field.id}>
             <span>

@@ -139,30 +139,16 @@ type FieldKind int
 //go:generate go run golang.org/x/tools/cmd/stringer -type=FieldKind
 
 const (
-<<<<<<< HEAD
-FieldKindUnknown FieldKind = iota
-FieldKindText
-FieldKindSubForm
-FieldKindReference
-FieldKindMultilineText
-FieldKindDate
-FieldKindQuantity
-FieldKindMonth
-FieldKindSingleSelect
-====== =
-FieldKindUnknown       FieldKind = "unknown"
-FieldKindText          FieldKind = "text"
-FieldKindSubForm       FieldKind = "subform"
-FieldKindReference     FieldKind = "reference"
-FieldKindMultilineText FieldKind = "multilineText"
-FieldKindDate          FieldKind = "date"
-FieldKindQuantity      FieldKind = "quantity"
-FieldKindMonth         FieldKind = "month"
-FieldKindSingleSelect  FieldKind = "singleSelect"
-FieldKindWeek          FieldKind = "week"
->>>>>>> 55f0f62d (
-progress
-)
+	FieldKindUnknown FieldKind = iota
+	FieldKindText
+	FieldKindSubForm
+	FieldKindReference
+	FieldKindMultilineText
+	FieldKindDate
+	FieldKindQuantity
+	FieldKindMonth
+	FieldKindWeek
+	FieldKindSingleSelect
 )
 
 var fieldAccessors = map[FieldKind]func(fieldType FieldType) interface{}{
@@ -189,6 +175,9 @@ var fieldAccessors = map[FieldKind]func(fieldType FieldType) interface{}{
 	},
 	FieldKindMonth: func(fieldType FieldType) interface{} {
 		return fieldType.Month
+	},
+	FieldKindWeek: func(fieldType FieldType) interface{} {
+		return fieldType.Week
 	},
 	FieldKindSingleSelect: func(fieldType FieldType) interface{} {
 		return fieldType.SingleSelect

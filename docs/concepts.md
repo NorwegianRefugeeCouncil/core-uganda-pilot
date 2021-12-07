@@ -67,7 +67,7 @@ Allows the user to select a month `2021-12`
 
 ### Week Field
 
-Allows the user to select a week `2021W52`
+Allows the user to select a week `2021-W52`
 
 ### Reference Field
 

@@ -17,6 +17,8 @@ const RecordField: FC<RecordFieldProps> = props => {
             return <div><Link to={`/browse/records/${v}`}>View</Link></div>
         } else if (f.fieldType.month) {
             return <div className={"fw-bold"}>{format(new Date(v), "yyyy-MM")}</div>
+        } else if (f.fieldType.week) {
+            return <div className={"fw-bold"}>{format(new Date(v), "yyyy-'W'ww")}</div>
         } else {
             return <div className={"fw-bold"}>{v}</div>
         }

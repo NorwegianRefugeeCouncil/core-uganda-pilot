@@ -2,7 +2,7 @@ import {FieldDefinition} from "core-js-api-client";
 import React, {FC, Fragment, useState} from "react";
 import {FormValue} from "./recorder.slice";
 import {RecordPickerContainer} from "../../components/RecordPicker";
-import {addHours, addMinutes, addWeeks, format, getWeek, nextMonday, previousMonday, startOfYear} from "date-fns"
+import {addHours, addWeeks, format, previousMonday, startOfYear} from "date-fns"
 
 export type FieldEditorProps = {
     field: FieldDefinition
@@ -130,8 +130,7 @@ export const WeekFieldEditor: FC<FieldEditorProps> = props => {
 
     function getDateFromWeekN(w: number) {
         const oneJan = previousMonday(startOfYear(Date.now()));
-        const ret = addHours(addWeeks(oneJan, w), 12)
-        return ret;
+        return addHours(addWeeks(oneJan, w), 12);
     }
 
     function isValidWeek(weekString: string) {

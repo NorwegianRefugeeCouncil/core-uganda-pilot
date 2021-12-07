@@ -20,6 +20,7 @@ const (
 	errRecordValuesRequired      = "Record values are required"
 	errRecordInvalidDate         = "Invalid date. Expected YYYY-mm-DD"
 	errRecordInvalidMonth        = "Invalid date. Expected YYYY-mm"
+	errRecordInvalidWeek         = "Invalid date. Expected YYYY-Www"
 	errRecordInvalidQuantity     = "Invalid quantity"
 	errRecordInvalidReferenceUid = "Invalid reference"
 	errFieldValueRequired        = "Field value is required"
@@ -172,6 +173,8 @@ func ValidateRecordValue(path *validation.Path, value *string, field *types.Fiel
 		result = append(result, ValidateRecordQuantityValue(path, value, field)...)
 	case types.FieldKindMonth:
 		result = append(result, ValidateRecordMonthValue(path, value, field)...)
+	case types.FieldKindWeek:
+		result = append(result, ValidateRecordWeekValue(path, value, field)...)
 	case types.FieldKindSingleSelect:
 	}
 	return result
@@ -207,6 +210,19 @@ func ValidateRecordMonthValue(path *validation.Path, value *string, field *types
 	if err != nil {
 		valuePath := path.Child("value")
 		return append(result, validation.Invalid(valuePath, value, errRecordInvalidMonth))
+	}
+	return result
+}
+
+func ValidateRecordWeekValue(path *validation.Path, value *string, field *types.FieldDefinition) validation.ErrorList {
+	stringValue, result, done := getStringValue(path, value, field, validation.ErrorList{})
+	if done {
+		return result
+	}
+	_, err := time.Parse("2006-W01", stringValue)
+	if err != nil {
+		valuePath := path.Child("value")
+		return append(result, validation.Invalid(valuePath, value, errRecordInvalidWeek))
 	}
 	return result
 }

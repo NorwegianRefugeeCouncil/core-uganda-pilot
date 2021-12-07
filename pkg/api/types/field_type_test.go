@@ -33,6 +33,10 @@ func TestGetFieldKind(t *testing.T) {
 			fieldType:  FieldType{Month: &FieldTypeMonth{}},
 			expectKind: FieldKindMonth,
 		}, {
+			name:       "week",
+			fieldType:  FieldType{Week: &FieldTypeWeek{}},
+			expectKind: FieldKindWeek,
+		}, {
 			name:       "date",
 			fieldType:  FieldType{Date: &FieldTypeDate{}},
 			expectKind: FieldKindDate,
@@ -95,6 +99,7 @@ func TestAccessor(t *testing.T) {
 	date := &FieldTypeDate{}
 	quantity := &FieldTypeQuantity{}
 	month := &FieldTypeMonth{}
+	week := &FieldTypeWeek{}
 	singleSelect := &FieldTypeSingleSelect{}
 
 	ft := FieldType{
@@ -105,6 +110,7 @@ func TestAccessor(t *testing.T) {
 		Date:          date,
 		Quantity:      quantity,
 		Month:         month,
+		Week:          week,
 		SingleSelect:  singleSelect,
 	}
 

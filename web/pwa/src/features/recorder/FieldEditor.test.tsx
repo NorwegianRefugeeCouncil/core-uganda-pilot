@@ -1,5 +1,5 @@
 import { render } from "@testing-library/react";
-import { FieldDefinition } from "../../types/types";
+import { FieldDefinition } from "core-js-api-client";
 import { WeekFieldEditor, MonthFieldEditor } from "./FieldEditor";
 import { screen } from '@testing-library/dom'
 import Enzyme, { shallow } from 'enzyme';
@@ -41,9 +41,9 @@ test("Week Field Editor should set attributes correctly when initialised with a 
     const mockSetValue = jest.fn();
     const fd = getGenericFieldDefinition();
     const {container, debug} = render(
-        <WeekFieldEditor 
+        <WeekFieldEditor
             field={fd}
-            value={null} 
+            value={null}
             setValue={mockSetValue}
             addSubRecord={noOp}
             selectSubRecord={noOp}
@@ -61,9 +61,9 @@ test("Week Field Editor should set attributes correctly when initialised with a 
     const fd = getGenericFieldDefinition();
     const testValue = new Date(2021, 0, 1);
     const rendered = render(
-        <WeekFieldEditor 
+        <WeekFieldEditor
             field={fd}
-            value={testValue} 
+            value={testValue}
             setValue={mockSetValue}
             addSubRecord={noOp}
             selectSubRecord={noOp}
@@ -80,9 +80,9 @@ test("Week Field Editor should behave as expected when entering correct data", (
     const mockSetValue = jest.fn();
     const fd = getGenericFieldDefinition();
     const shallowed = shallow(
-        <WeekFieldEditor 
+        <WeekFieldEditor
             field={fd}
-            value={null} 
+            value={null}
             setValue={mockSetValue}
             addSubRecord={noOp}
             selectSubRecord={noOp}
@@ -97,9 +97,9 @@ test("Month Field Editor should set atttributes correctly when initialised with 
     const mockSetValue = jest.fn()
     const fd = getGenericFieldDefinition();
     const monthFieldEditor = render(
-        <MonthFieldEditor 
+        <MonthFieldEditor
             field={fd}
-            value={null} 
+            value={null}
             setValue={mockSetValue}
             addSubRecord={noOp}
             selectSubRecord={noOp}
@@ -117,9 +117,9 @@ test("Month Field Editor should set attributes correctly when initialised with a
     const fd = getGenericFieldDefinition();
     const testValue = new Date(2021, 0, 1);
     const monthFieldEditor = render(
-        <MonthFieldEditor 
+        <MonthFieldEditor
             field={fd}
-            value={testValue} 
+            value={testValue}
             setValue={mockSetValue}
             addSubRecord={noOp}
             selectSubRecord={noOp}
@@ -136,9 +136,9 @@ test("Month Field Editor should behave as expected when entering correct data", 
     const mockSetValue = jest.fn();
     const fd = getGenericFieldDefinition();
     const shallowed = shallow(
-        <MonthFieldEditor 
+        <MonthFieldEditor
             field={fd}
-            value={null} 
+            value={null}
             setValue={mockSetValue}
             addSubRecord={noOp}
             selectSubRecord={noOp}
