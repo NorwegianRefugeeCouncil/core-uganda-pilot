@@ -1,0 +1,10 @@
+{
+  "packages": [
+    "apps/*",
+    "packages/*",
+    "storybook"
+  ],
+  "version": "independent",
+  "npmClient": "yarn",
+  "useWorkspaces": true
+}
