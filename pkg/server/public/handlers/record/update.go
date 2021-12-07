@@ -51,8 +51,8 @@ func (h *Handler) Update(recordId string) http.HandlerFunc {
 		}
 
 		l.Debug("validating record")
-		if validationErrs := validation.ValidateRecord(&input, form); validationErrs.HasAny() {
-			err := meta.NewInvalid(types.RecordGR, "", validationErrs)
+		if errList := validation.ValidateRecord(&input, form); !errList.IsEmpty() {
+			err := meta.NewInvalid(types.RecordGR, "", errList)
 			l.Warn("record is invalid", zap.Error(err))
 			utils.ErrorResponse(w, err)
 			return
