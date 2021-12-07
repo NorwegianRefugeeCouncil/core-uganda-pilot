@@ -36,6 +36,7 @@ var supportedRecordFieldKinds = []types.FieldKind{
 	types.FieldKindDate,
 	types.FieldKindQuantity,
 	types.FieldKindMonth,
+	types.FieldKindWeek,
 	types.FieldKindSingleSelect,
 }
 
