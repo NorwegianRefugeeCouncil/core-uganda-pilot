@@ -34,7 +34,7 @@ export const AddRecordScreenContainer = ({ route, dispatch }: AddRecordScreenCon
                 console.error(error);
                 setIsLoading(true);
             } finally {
-                setIsConnected(networkState === NetworkStateType.NONE);
+                setIsConnected(networkState !== NetworkStateType.NONE);
             }
 
             //
