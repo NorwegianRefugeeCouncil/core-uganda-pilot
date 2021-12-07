@@ -2,7 +2,9 @@ package record
 
 import (
 	"github.com/emicklei/go-restful/v3"
+	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/api/types"
+	"github.com/nrc-no/core/pkg/api/types/validation"
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/utils"
 	"go.uber.org/zap"
@@ -29,7 +31,16 @@ func (h *Handler) Create() http.HandlerFunc {
 			utils.ErrorResponse(w, err)
 			return
 		}
+
 		input.DatabaseID = form.DatabaseID
+
+		l.Debug("validating record")
+		if errList := validation.ValidateRecord(&input, form); !errList.IsEmpty() {
+			err := meta.NewInvalid(types.RecordGR, "", errList)
+			l.Warn("record is invalid", zap.Error(err))
+			utils.ErrorResponse(w, err)
+			return
+		}
 
 		l.Debug("storing record")
 		resultRecord, err := h.store.Create(req.Context(), &input)
