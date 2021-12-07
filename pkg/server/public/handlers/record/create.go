@@ -7,6 +7,7 @@ import (
 	"github.com/nrc-no/core/pkg/api/types/validation"
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/utils"
+	uuid "github.com/satori/go.uuid"
 	"go.uber.org/zap"
 	"net/http"
 )
@@ -23,6 +24,8 @@ func (h *Handler) Create() http.HandlerFunc {
 			utils.ErrorResponse(w, err)
 			return
 		}
+
+		input.ID = uuid.NewV4().String()
 
 		l.Debug("getting form for record", zap.String("form_id", input.FormID))
 		form, err := h.formStore.Get(req.Context(), input.FormID)
