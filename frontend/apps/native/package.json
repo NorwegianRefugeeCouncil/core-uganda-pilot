@@ -86,6 +86,6 @@
         "**/ua-parser-js": "0.7.28"
     },
     "private": true,
-    "name": "frontend",
+    "name": "core-native",
     "version": "1.0.0"
 }
