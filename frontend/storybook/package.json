@@ -1,4 +1,5 @@
 {
+  "name": "core-design-system-storybook",
   "main": "node_modules/expo/AppEntry.js",
   "homepage": "https://github.com/nrc-no/core",
   "scripts": {
