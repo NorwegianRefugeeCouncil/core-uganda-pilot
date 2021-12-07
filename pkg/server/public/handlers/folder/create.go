@@ -27,7 +27,7 @@ func (h *Handler) Create() http.HandlerFunc {
 
 		folder.ID = uuid.NewV4().String()
 
-		if errList := validation.ValidateFolder(&folder); errList.HasAny() {
+		if errList := validation.ValidateFolder(&folder); !errList.IsEmpty() {
 			err := meta.NewInvalid(types.FolderGR, "", errList)
 			l.Warn("folder is invalid", zap.Error(err))
 			utils.ErrorResponse(w, err)
