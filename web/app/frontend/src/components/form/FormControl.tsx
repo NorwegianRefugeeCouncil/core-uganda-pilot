@@ -5,6 +5,7 @@ import Select from "./Select";
 import { Control, Controller } from "react-hook-form";
 import { FieldDefinition, FieldKind, getFieldKind } from "core-js-api-client";
 import ReferenceInput from "./ReferenceInput";
+import testIds from "../../constants/testIds";
 
 // TODO: move & clean up types
 export type InputProps = {
@@ -28,7 +29,6 @@ type FormControlProps = {
     value?: any;
     control: Control<any, object>;
     errors?: object;
-    testID?: string;
 };
 
 const FormControl = ({
@@ -37,11 +37,10 @@ const FormControl = ({
     control,
     name,
     value,
-    testID,
 }: FormControlProps) => {
     return (
         // TODO: apply errors to all input types
-        <View style={{ margin: 10 }} testID={testID}>
+        <View style={{ margin: 10 }} testID={testIds.formControl}>
             <Controller
                 name={name}
                 control={control}

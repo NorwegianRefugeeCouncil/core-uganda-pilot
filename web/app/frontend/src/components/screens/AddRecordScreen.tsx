@@ -4,7 +4,6 @@ import { Button, ScrollView, Text, View } from "react-native";
 import FormControl from "../form/FormControl";
 import { FormDefinition } from "core-js-api-client";
 import { Control, FieldValues, FormState } from "react-hook-form";
-import testIds from "../../constants/testIds";
 
 export type AddRecordScreenProps = {
     form?: FormDefinition;
@@ -56,7 +55,6 @@ export const AddRecordScreen = ({
                                     control={control}
                                     name={field.id}
                                     errors={formState?.errors}
-                                    testID={testIds.formControl}
                                 />
                             );
                         })}
