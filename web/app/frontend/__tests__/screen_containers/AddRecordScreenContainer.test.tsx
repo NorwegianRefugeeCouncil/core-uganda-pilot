@@ -4,11 +4,10 @@ import { fireEvent, render, waitFor } from "@testing-library/react-native";
 import { AddRecordScreenContainer } from "../../src/components/screen_containers/AddRecordScreenContainer";
 import { RECORD_ACTIONS } from "../../src/reducers/recordsReducers";
 
-const mockGetNetworkStateCellular = jest.fn().mockResolvedValue(NetworkStateType.CELLULAR);
-const mockGetNetworkStateOffline = jest.fn().mockResolvedValue(NetworkStateType.NONE);
+const mockGetNetworkState = jest.fn();
 jest.mock("../../src/utils/getNetworkState", () => {
     return {
-        getNetworkState: () => mockGetNetworkStateCellular(),
+        getNetworkState: () => mockGetNetworkState(),
     };
 });
 
@@ -77,6 +76,12 @@ const mockProps = {
 const Component = (props: any) => <AddRecordScreenContainer {...props} />;
 
 describe(AddRecordScreenContainer.name, () => {
+    beforeEach(() => {
+        // reset this before each test so we don't have to reset it manually when setting a
+        // different NetworkStateType for a test
+        mockGetNetworkState.mockReset().mockResolvedValue(NetworkStateType.CELLULAR);
+      })
+
     test("renders correctly", async () => {
         const { toJSON } = await waitFor(async () => render(<Component {...mockProps} />));
         expect(toJSON()).toMatchSnapshot();
@@ -84,7 +89,7 @@ describe(AddRecordScreenContainer.name, () => {
 
     test("gets network state", async () => {
         await waitFor(async () => render(<Component {...mockProps} />));
-        expect(mockGetNetworkStateCellular).toHaveBeenCalledTimes(1);
+        expect(mockGetNetworkState).toHaveBeenCalled();
     });
 
     test("fetches a form with the supplied formId", async () => {
@@ -99,20 +104,18 @@ describe(AddRecordScreenContainer.name, () => {
 
     test("fetches locally stored date when on mobile", async () => {
         await waitFor(async () => render(<Component {...mockProps} />));
-        expect(mockGetEncryptedLocalData).toHaveBeenCalledTimes(1);
+        expect(mockGetEncryptedLocalData).toHaveBeenCalled();
     });
 
     test("stores local data on user submit when offline", async () => {
-        jest.mock("../../src/utils/getNetworkState", () => ({
-            getNetworkState: () => mockGetNetworkStateOffline(),
-        }));
+        mockGetNetworkState.mockReset().mockResolvedValue(NetworkStateType.NONE);
 
         const { getByA11yLabel } = await waitFor(async () => render(<Component {...mockProps} />));
 
         await fireEvent.press(getByA11yLabel("Submit"), mockLocalData);
 
-        expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
-        expect(mockGetEncryptionKey).toHaveBeenCalledTimes(1);
+        expect(mockHandleSubmit).toHaveBeenCalled();
+        expect(mockGetEncryptionKey).toHaveBeenCalled();
         expect(mockStoreEncryptedLocalData).toHaveBeenCalledWith(
             mockRoute.params.recordId,
             mockEncryptionKey,
@@ -128,22 +131,17 @@ describe(AddRecordScreenContainer.name, () => {
         await waitFor(() => expect(mockDispatch).toHaveBeenCalledWith(expectedAddRecordAction));
     });
 
-    test.only("creates a db record on user submit when online", async () => {
-        jest.mock("../../src/utils/getNetworkState", () => ({
-            getNetworkState: () => mockGetNetworkStateCellular(),
-        }));
-
+    test("creates a db record on user submit when online", async () => {
         const { getByA11yLabel } = await waitFor(async () => render(<Component {...mockProps} />));
 
         await fireEvent.press(getByA11yLabel("Submit"), mockLocalData);
 
-        expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
+        expect(mockHandleSubmit).toHaveBeenCalled();
 
         const expectedCreateRecordArg = {
             object: { formId: mockRoute.params.formId, values: mockLocalData },
         };
 
         await waitFor(() => expect(mockCreateRecord).toHaveBeenCalledWith(expectedCreateRecordArg));
-        await waitFor(() => expect(mockCreateRecord).toHaveBeenCalledTimes(1));
     });
 });
