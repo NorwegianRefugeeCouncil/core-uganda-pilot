@@ -7,6 +7,7 @@ import uuidv4 from "uuid";
 import { RecordsStoreProps } from "../../reducers/recordsReducers";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RecordsScreenContainerProps, StackParamList } from "../../types/screens";
+import testIds from "../../constants/testIds";
 
 interface RecordsScreenProps {
     isLoading: boolean;
@@ -21,14 +22,20 @@ const RecordsScreen = ({ isLoading, navigation, route, state }: RecordsScreenPro
     return (
         <View style={[layout.container, layout.body]}>
             <Title>{routes.records.title}</Title>
-            {!isLoading && (
+            {isLoading ? (
+                <View>
+                    <Text>Loading...</Text>
+                </View>
+            ) : (
                 <View>
                     <FlatList
                         style={{ width: "100%" }}
                         data={state.formsById[formId].records}
+                        keyExtractor={(_, index) => index.toString()}
                         renderItem={({ item }) => (
                             <TouchableOpacity
-                                key={item.id}
+                                testID={testIds.remoteRecord}
+                                accessibilityLabel={"view record"}
                                 onPress={() =>
                                     navigation.navigate(routes.viewRecord.name, {
                                         recordId: item.id,
@@ -46,9 +53,11 @@ const RecordsScreen = ({ isLoading, navigation, route, state }: RecordsScreenPro
                     <FlatList
                         style={{ width: "100%" }}
                         data={state.formsById[formId].localRecords}
-                        renderItem={({ item, index }) => (
+                        keyExtractor={(_, index) => index.toString()}
+                        renderItem={({ item }) => (
                             <TouchableOpacity
-                                key={index}
+                                testID={testIds.localRecord}
+                                accessibilityLabel={"add record"}
                                 onPress={() =>
                                     navigation.navigate(routes.addRecord.name, {
                                         recordId: item,
