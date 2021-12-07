@@ -151,6 +151,22 @@ func TestValidateRecord(t *testing.T) {
 				validation.Invalid(validation.NewPath("values").Key("textField"), 123, fmt.Sprintf(errInvalidFieldValueTypeF, "", 123)),
 			},
 		}, {
+			name: "required text field with nil value",
+			form: aTextForm(
+				FormField(AField(FieldID("textField"), FieldTypeText(), FieldRequired(true))),
+			),
+			recordOptions: RecordValue("textField", nil),
+			expect: validation.ErrorList{
+				validation.Required(validation.NewPath("values").Key("textField"), errFieldValueRequired),
+			},
+		}, {
+			name: "optional text field with nil value",
+			form: aTextForm(
+				FormField(AField(FieldID("textField"), FieldTypeText())),
+			),
+			recordOptions: RecordValue("textField", nil),
+			expect:        nil,
+		}, {
 			name: "invalid multiline field",
 			form: aTextForm(
 				FormField(AField(FieldID("multiLineTextField"), FieldTypeMultilineText())),
@@ -159,6 +175,22 @@ func TestValidateRecord(t *testing.T) {
 			expect: validation.ErrorList{
 				validation.Invalid(validation.NewPath("values").Key("multiLineTextField"), 123, fmt.Sprintf(errInvalidFieldValueTypeF, "", 123)),
 			},
+		}, {
+			name: "required multiline text field with nil value",
+			form: aTextForm(
+				FormField(AField(FieldID("textField"), FieldTypeMultilineText(), FieldRequired(true))),
+			),
+			recordOptions: RecordValue("textField", nil),
+			expect: validation.ErrorList{
+				validation.Required(validation.NewPath("values").Key("textField"), errFieldValueRequired),
+			},
+		}, {
+			name: "optional multiline text field with nil value",
+			form: aTextForm(
+				FormField(AField(FieldID("textField"), FieldTypeMultilineText())),
+			),
+			recordOptions: RecordValue("textField", nil),
+			expect:        nil,
 		}, {
 			name: "date field",
 			form: aTextForm(
@@ -193,6 +225,22 @@ func TestValidateRecord(t *testing.T) {
 				validation.Required(validation.NewPath("values").Key("dateField"), errFieldValueRequired),
 			},
 		}, {
+			name: "required date field with nil value",
+			form: aTextForm(
+				FormField(AField(FieldID("dateField"), FieldTypeDate(), FieldRequired(true))),
+			),
+			recordOptions: RecordValue("dateField", nil),
+			expect: validation.ErrorList{
+				validation.Required(validation.NewPath("values").Key("dateField"), errFieldValueRequired),
+			},
+		}, {
+			name: "optional date field with nil value",
+			form: aTextForm(
+				FormField(AField(FieldID("dateField"), FieldTypeDate())),
+			),
+			recordOptions: RecordValue("dateField", nil),
+			expect:        nil,
+		}, {
 			name: "month field",
 			form: aTextForm(
 				FormField(AField(FieldID("dateField"), FieldTypeDate())),
@@ -226,13 +274,29 @@ func TestValidateRecord(t *testing.T) {
 				validation.Required(validation.NewPath("values").Key("monthField"), errFieldValueRequired),
 			},
 		}, {
-			name: "int field",
+			name: "required month field with nil value",
+			form: aTextForm(
+				FormField(AField(FieldID("monthField"), FieldTypeMonth(), FieldRequired(true))),
+			),
+			recordOptions: RecordValue("monthField", nil),
+			expect: validation.ErrorList{
+				validation.Required(validation.NewPath("values").Key("monthField"), errFieldValueRequired),
+			},
+		}, {
+			name: "optional month field with nil value",
+			form: aTextForm(
+				FormField(AField(FieldID("monthField"), FieldTypeMonth())),
+			),
+			recordOptions: RecordValue("monthField", nil),
+			expect:        nil,
+		}, {
+			name: "quantity field",
 			form: aTextForm(
 				FormField(AField(FieldID("dateField"), FieldTypeDate())),
 			),
 			expect: nil,
 		}, {
-			name: "invalid int field",
+			name: "invalid quantity field value",
 			form: aTextForm(
 				FormField(AField(FieldID("quantityField"), FieldTypeQuantity())),
 			),
@@ -240,6 +304,62 @@ func TestValidateRecord(t *testing.T) {
 			expect: validation.ErrorList{
 				validation.Invalid(validation.NewPath("values").Key("quantityField"), "someValue", errRecordInvalidQuantity),
 			},
+		}, {
+			name: "required quantity field with nil value",
+			form: aTextForm(
+				FormField(AField(FieldID("quantityField"), FieldTypeQuantity(), FieldRequired(true))),
+			),
+			recordOptions: RecordValue("quantityField", nil),
+			expect: validation.ErrorList{
+				validation.Required(validation.NewPath("values").Key("quantityField"), errFieldValueRequired),
+			},
+		}, {
+			name: "optional quantity field with nil value",
+			form: aTextForm(
+				FormField(AField(FieldID("quantityField"), FieldTypeQuantity())),
+			),
+			recordOptions: RecordValue("quantityField", nil),
+			expect:        nil,
+		}, {
+			name: "reference field",
+			form: aTextForm(
+				FormField(AField(FieldID("dateField"), FieldTypeReference())),
+			),
+			expect: nil,
+		}, {
+			name: "invalid reference field value",
+			form: aTextForm(
+				FormField(AField(FieldID("referenceField"), FieldTypeReference())),
+			),
+			recordOptions: RecordValue("referenceField", "someValue"),
+			expect: validation.ErrorList{
+				validation.Invalid(validation.NewPath("values").Key("referenceField"), "someValue", errRecordInvalidReferenceUid),
+			},
+		}, {
+			name: "non-string reference field value",
+			form: aTextForm(
+				FormField(AField(FieldID("referenceField"), FieldTypeReference())),
+			),
+			recordOptions: RecordValue("referenceField", 123),
+			expect: validation.ErrorList{
+				validation.Invalid(validation.NewPath("values").Key("referenceField"), 123, fmt.Sprintf(errInvalidFieldValueTypeF, "", 123)),
+			},
+		}, {
+			name: "required reference field with nil value",
+			form: aTextForm(
+				FormField(AField(FieldID("referenceField"), FieldTypeReference(), FieldRequired(true))),
+			),
+			recordOptions: RecordValue("referenceField", nil),
+			expect: validation.ErrorList{
+				validation.Required(validation.NewPath("values").Key("referenceField"), errFieldValueRequired),
+			},
+		}, {
+			name: "optional reference field with nil value",
+			form: aTextForm(
+				FormField(AField(FieldID("referenceField"), FieldTypeReference())),
+			),
+			recordOptions: RecordValue("referenceField", nil),
+			expect:        nil,
 		},
 	}
 
@@ -471,6 +591,18 @@ func FieldTypeDate() FieldOption {
 	return func(fieldDefinition *types.FieldDefinition) *types.FieldDefinition {
 		fieldDefinition.FieldType = types.FieldType{
 			Date: &types.FieldTypeDate{},
+		}
+		return fieldDefinition
+	}
+}
+
+func FieldTypeReference() FieldOption {
+	return func(fieldDefinition *types.FieldDefinition) *types.FieldDefinition {
+		fieldDefinition.FieldType = types.FieldType{
+			Reference: &types.FieldTypeReference{
+				DatabaseID: uuid.NewV4().String(),
+				FormID:     uuid.NewV4().String(),
+			},
 		}
 		return fieldDefinition
 	}

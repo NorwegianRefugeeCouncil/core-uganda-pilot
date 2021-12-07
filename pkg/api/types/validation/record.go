@@ -11,18 +11,19 @@ import (
 )
 
 const (
-	errRecordInvalidDatabaseId  = "Invalid database ID"
-	errRecordDatabaseIdRequired = "Database ID is required"
-	errRecordInvalidFormId      = "Invalid form ID"
-	errRecordFormIdRequired     = "Record form ID is required"
-	errRecordOwnerIdRequired    = "Record owner ID is required"
-	errRecordInvalidOwnerID     = "Record owner ID is invalid"
-	errRecordValuesRequired     = "Record values are required"
-	errInvalidFieldValueTypeF   = "Invalid value type for field. Expected %T, got %T"
-	errRecordInvalidDate        = "Invalid date. Expected YYYY-mm-DD"
-	errRecordInvalidMonth       = "Invalid date. Expected YYYY-mm"
-	errRecordInvalidQuantity    = "Invalid quantity"
-	errFieldValueRequired       = "Field value is required"
+	errRecordInvalidDatabaseId   = "Invalid database ID"
+	errRecordDatabaseIdRequired  = "Database ID is required"
+	errRecordInvalidFormId       = "Invalid form ID"
+	errRecordFormIdRequired      = "Record form ID is required"
+	errRecordOwnerIdRequired     = "Record owner ID is required"
+	errRecordInvalidOwnerID      = "Record owner ID is invalid"
+	errRecordValuesRequired      = "Record values are required"
+	errInvalidFieldValueTypeF    = "Invalid value type for field. Expected %T, got %T"
+	errRecordInvalidDate         = "Invalid date. Expected YYYY-mm-DD"
+	errRecordInvalidMonth        = "Invalid date. Expected YYYY-mm"
+	errRecordInvalidQuantity     = "Invalid quantity"
+	errRecordInvalidReferenceUid = "Invalid reference"
+	errFieldValueRequired        = "Field value is required"
 )
 
 // supportedRecordFieldKinds are the types of field for which a Record can specify values for
@@ -153,7 +154,7 @@ func ValidateRecordValue(path *validation.Path, value interface{}, field *types.
 	case types.FieldKindText:
 		result = append(result, ValidateRecordStringValue(path, value, field)...)
 	case types.FieldKindReference:
-		// TODO
+		result = append(result, ValidateRecordReferenceValue(path, value, field)...)
 	case types.FieldKindMultilineText:
 		result = append(result, ValidateRecordStringValue(path, value, field)...)
 	case types.FieldKindDate:
@@ -169,19 +170,37 @@ func ValidateRecordValue(path *validation.Path, value interface{}, field *types.
 
 func ValidateRecordStringValue(path *validation.Path, value interface{}, field *types.FieldDefinition) validation.ErrorList {
 	var result validation.ErrorList
+
+	if value == nil {
+		if field.Required {
+			result = append(result, validation.Required(path, errFieldValueRequired))
+		}
+		return result
+	}
+
 	stringValue, ok := value.(string)
 	if !ok {
 		result = append(result, validation.Invalid(path, value, fmt.Sprintf(errInvalidFieldValueTypeF, "", value)))
 		return result
 	}
+
 	if field.Required && strings.TrimSpace(stringValue) == "" {
 		result = append(result, validation.Required(path, errFieldValueRequired))
 	}
+
 	return result
 }
 
 func ValidateRecordDateValue(path *validation.Path, value interface{}, field *types.FieldDefinition) validation.ErrorList {
 	var result validation.ErrorList
+
+	if value == nil {
+		if field.Required {
+			result = append(result, validation.Required(path, errFieldValueRequired))
+		}
+		return result
+	}
+
 	stringValue, ok := value.(string)
 	if !ok {
 		return append(result, validation.Invalid(path, value, fmt.Sprintf(errInvalidFieldValueTypeF, "", value)))
@@ -198,6 +217,14 @@ func ValidateRecordDateValue(path *validation.Path, value interface{}, field *ty
 
 func ValidateRecordMonthValue(path *validation.Path, value interface{}, field *types.FieldDefinition) validation.ErrorList {
 	var result validation.ErrorList
+
+	if value == nil {
+		if field.Required {
+			result = append(result, validation.Required(path, errFieldValueRequired))
+		}
+		return result
+	}
+
 	stringValue, ok := value.(string)
 	if !ok {
 		return append(result, validation.Invalid(path, value, fmt.Sprintf(errInvalidFieldValueTypeF, "", value)))
@@ -214,10 +241,38 @@ func ValidateRecordMonthValue(path *validation.Path, value interface{}, field *t
 
 func ValidateRecordQuantityValue(path *validation.Path, value interface{}, field *types.FieldDefinition) validation.ErrorList {
 	var result validation.ErrorList
+
+	if value == nil {
+		if field.Required {
+			result = append(result, validation.Required(path, errFieldValueRequired))
+		}
+		return result
+	}
+
 	_, ok := value.(int)
 	if !ok {
 		return append(result, validation.Invalid(path, value, errRecordInvalidQuantity))
 	}
 	// we don't assert the zero value for an int field
+	return result
+}
+
+func ValidateRecordReferenceValue(path *validation.Path, value interface{}, field *types.FieldDefinition) validation.ErrorList {
+	var result validation.ErrorList
+
+	if value == nil {
+		if field.Required {
+			result = append(result, validation.Required(path, errFieldValueRequired))
+		}
+		return result
+	}
+
+	stringValue, ok := value.(string)
+	if !ok {
+		return append(result, validation.Invalid(path, value, fmt.Sprintf(errInvalidFieldValueTypeF, "", value)))
+	}
+	if _, err := uuid.FromString(stringValue); err != nil {
+		return append(result, validation.Invalid(path, value, errRecordInvalidReferenceUid))
+	}
 	return result
 }
