@@ -16,7 +16,8 @@
   },
   "workspaces": [
     "apps/*",
-    "packages/*"
+    "packages/*",
+    "storybook"
   ],
   "devDependencies": {
     "lerna": "^4.0.0"

@@ -1,7 +1,8 @@
 {
   "packages": [
     "apps/*",
-    "packages/*"
+    "packages/*",
+    "storybook"
   ],
   "version": "independent",
   "npmClient": "yarn",
