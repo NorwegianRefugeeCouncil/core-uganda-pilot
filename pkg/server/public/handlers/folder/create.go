@@ -2,7 +2,9 @@ package folder
 
 import (
 	"github.com/emicklei/go-restful/v3"
+	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/api/types"
+	"github.com/nrc-no/core/pkg/api/types/validation"
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/utils"
 	uuid "github.com/satori/go.uuid"
@@ -24,6 +26,13 @@ func (h *Handler) Create() http.HandlerFunc {
 		}
 
 		folder.ID = uuid.NewV4().String()
+
+		if errList := validation.ValidateFolder(&folder); !errList.IsEmpty() {
+			err := meta.NewInvalid(types.FolderGR, "", errList)
+			l.Warn("folder is invalid", zap.Error(err))
+			utils.ErrorResponse(w, err)
+			return
+		}
 
 		l.Debug("storing folder")
 		respForm, err := h.store.Create(ctx, &folder)
