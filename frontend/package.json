@@ -1,0 +1,24 @@
+{
+  "name": "frontend-root",
+  "private": true,
+  "scripts": {
+    "start:admin": "lerna run --scope admin start",
+    "start:native": "lerna run --scope native start",
+    "start:pwa": "lerna run --scope pwa start",
+    "build": "lerna run build",
+    "build:admin": "lerna run --scope admin build",
+    "build:native": "lerna run --scope native build",
+    "build:pwa": "lerna run --scope pwa build",
+    "build:core-api-client": "lerna run --scope core-api-client build",
+    "build:core-auth": "lerna run --scope core-auth build",
+    "lint": "lerna run lint",
+    "test": "lerna run test"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "lerna": "^4.0.0"
+  }
+}
