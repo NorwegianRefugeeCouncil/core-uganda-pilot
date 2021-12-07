@@ -169,44 +169,17 @@ func ValidateRecordValue(path *validation.Path, value interface{}, field *types.
 }
 
 func ValidateRecordStringValue(path *validation.Path, value interface{}, field *types.FieldDefinition) validation.ErrorList {
-	var result validation.ErrorList
-
-	if value == nil {
-		if field.Required {
-			result = append(result, validation.Required(path, errFieldValueRequired))
-		}
+	_, result, done := getStringValue(path, value, field, validation.ErrorList{})
+	if done {
 		return result
 	}
-
-	stringValue, ok := value.(string)
-	if !ok {
-		result = append(result, validation.Invalid(path, value, fmt.Sprintf(errInvalidFieldValueTypeF, "", value)))
-		return result
-	}
-
-	if field.Required && strings.TrimSpace(stringValue) == "" {
-		result = append(result, validation.Required(path, errFieldValueRequired))
-	}
-
 	return result
 }
 
 func ValidateRecordDateValue(path *validation.Path, value interface{}, field *types.FieldDefinition) validation.ErrorList {
-	var result validation.ErrorList
-
-	if value == nil {
-		if field.Required {
-			result = append(result, validation.Required(path, errFieldValueRequired))
-		}
+	stringValue, result, done := getStringValue(path, value, field, validation.ErrorList{})
+	if done {
 		return result
-	}
-
-	stringValue, ok := value.(string)
-	if !ok {
-		return append(result, validation.Invalid(path, value, fmt.Sprintf(errInvalidFieldValueTypeF, "", value)))
-	}
-	if field.Required && stringValue == "" {
-		return append(result, validation.Required(path, errFieldValueRequired))
 	}
 	_, err := time.Parse("2006-01-02", stringValue)
 	if err != nil {
@@ -216,21 +189,9 @@ func ValidateRecordDateValue(path *validation.Path, value interface{}, field *ty
 }
 
 func ValidateRecordMonthValue(path *validation.Path, value interface{}, field *types.FieldDefinition) validation.ErrorList {
-	var result validation.ErrorList
-
-	if value == nil {
-		if field.Required {
-			result = append(result, validation.Required(path, errFieldValueRequired))
-		}
+	stringValue, result, done := getStringValue(path, value, field, validation.ErrorList{})
+	if done {
 		return result
-	}
-
-	stringValue, ok := value.(string)
-	if !ok {
-		return append(result, validation.Invalid(path, value, fmt.Sprintf(errInvalidFieldValueTypeF, "", value)))
-	}
-	if field.Required && stringValue == "" {
-		return append(result, validation.Required(path, errFieldValueRequired))
 	}
 	_, err := time.Parse("2006-01", stringValue)
 	if err != nil {
@@ -258,21 +219,34 @@ func ValidateRecordQuantityValue(path *validation.Path, value interface{}, field
 }
 
 func ValidateRecordReferenceValue(path *validation.Path, value interface{}, field *types.FieldDefinition) validation.ErrorList {
-	var result validation.ErrorList
-
-	if value == nil {
-		if field.Required {
-			result = append(result, validation.Required(path, errFieldValueRequired))
-		}
+	stringValue, result, done := getStringValue(path, value, field, validation.ErrorList{})
+	if done {
 		return result
-	}
-
-	stringValue, ok := value.(string)
-	if !ok {
-		return append(result, validation.Invalid(path, value, fmt.Sprintf(errInvalidFieldValueTypeF, "", value)))
 	}
 	if _, err := uuid.FromString(stringValue); err != nil {
 		return append(result, validation.Invalid(path, value, errRecordInvalidReferenceUid))
 	}
 	return result
+}
+
+func getStringValue(path *validation.Path, value interface{}, field *types.FieldDefinition, result validation.ErrorList) (string, validation.ErrorList, bool) {
+	if value == nil {
+		if field.Required {
+			result = append(result, validation.Required(path, errFieldValueRequired))
+		}
+		return "", result, true
+	}
+
+	stringValue, ok := value.(string)
+	if !ok {
+		result = append(result, validation.Invalid(path, value, fmt.Sprintf(errInvalidFieldValueTypeF, "", value)))
+		return "", result, true
+	}
+
+	if field.Required && strings.TrimSpace(stringValue) == "" {
+		result = append(result, validation.Required(path, errFieldValueRequired))
+		return "", result, true
+	}
+
+	return stringValue, result, false
 }
