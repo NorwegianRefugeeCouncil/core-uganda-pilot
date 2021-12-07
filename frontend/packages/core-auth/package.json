@@ -1,0 +1,20 @@
+{
+  "name": "core-auth",
+  "version": "0.1.0",
+  "description": "> TODO: description",
+  "author": "Ben McAlindin <bmcalindin@gmail.com>",
+  "homepage": "https://github.com/nrc-no/core#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nrc-no/core.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nrc-no/core/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  }
+}
