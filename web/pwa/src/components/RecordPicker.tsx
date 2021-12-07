@@ -110,7 +110,7 @@ export const RecordPickerContainer: FC<RecordPickerContainerProps> = props => {
             }
             for (const field of form?.fields) {
                 if (field.key) {
-                    result += r.values[field.id]
+                    result += r.values.find(v => v.fieldId === field.id)
                 }
             }
             return result

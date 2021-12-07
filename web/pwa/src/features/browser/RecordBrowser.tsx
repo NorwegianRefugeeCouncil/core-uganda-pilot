@@ -1,5 +1,5 @@
 import {FC, Fragment} from "react";
-import {useFormOrSubForm, useRecordFromPath, useOwnerRecord, useSubRecords} from "../../app/hooks";
+import {useFormOrSubForm, useOwnerRecord, useRecordFromPath, useSubRecords} from "../../app/hooks";
 import {FieldDefinition, Record} from "core-js-api-client";
 import {Link} from "react-router-dom";
 import format from "date-fns/format"
@@ -33,8 +33,12 @@ const RecordField: FC<RecordFieldProps> = props => {
 
 
 function mapRecordField(record: Record, field: FieldDefinition, subRecords: Record[] | undefined) {
-    const value = record.values[field.id]
-    return <RecordField field={field} value={value} subRecords={subRecords}/>
+    let value = ""
+    const fieldValue = record.values.find(v => v.fieldId === field.id)
+    if (fieldValue) {
+        value = fieldValue.value
+    }
+    return <RecordField field={field} value={`${value}`} subRecords={subRecords}/>
 }
 
 export const RecordBrowser: FC = props => {

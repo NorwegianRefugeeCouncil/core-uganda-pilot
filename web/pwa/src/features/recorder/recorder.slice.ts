@@ -2,7 +2,7 @@ import {createAsyncThunk, createEntityAdapter, createSlice, PayloadAction} from 
 import {RootState} from "../../app/store";
 import {FormInterface, selectFormOrSubFormById, selectRootForm} from "../../reducers/form";
 import {v4 as uuidv4} from "uuid"
-import {FormDefinition, Record} from "core-js-api-client";
+import {FieldValue, FormDefinition, Record} from "core-js-api-client";
 import {recordGlobalSelectors} from "../../reducers/records";
 import client from "../../app/client";
 
@@ -16,7 +16,7 @@ export interface FormValue {
     // records the sub form field that the record belongs to, if any
     ownerFieldId?: string
     // records the record values
-    values: { [key: string]: any }
+    values: FieldValue[]
 }
 
 const adapter = createEntityAdapter<FormValue>({
@@ -40,7 +40,7 @@ export const resetForm = createAsyncThunk<{ formValue: FormValue },
     const newRecord: FormValue = {
         recordId: uuidv4(),
         formId: form.id,
-        values: {},
+        values: [],
     }
 
     if (ownerId) {
@@ -88,10 +88,19 @@ export const recorderSlice = createSlice({
         setFieldValue(state, action: PayloadAction<{ recordId: string, fieldId: string, value: any }>) {
             const {recordId, fieldId, value} = action.payload
             const record = state.entities[recordId]
+            console.log("SETFIELDVALUE RECORD", record)
             if (!record) {
                 return
             }
-            record.values[fieldId] = value
+            
+            const idx = record.values.findIndex(v => v.fieldId === fieldId)
+            if (idx === -1) {
+                record.values = [...record.values, {fieldId, value}]
+            } else {
+                record.values[idx] = {...record.values[idx], ...{value}}
+                console.log(record.values)
+
+            }
         },
         clearFieldValue(state, action: PayloadAction<{ recordId: string, fieldId: string }>) {
             const {recordId, fieldId} = action.payload
@@ -99,7 +108,7 @@ export const recorderSlice = createSlice({
             if (!record) {
                 return
             }
-            delete record.values[fieldId]
+            record.values = record.values.filter(v => v.fieldId !== fieldId)
         },
         selectRecord(state, action: PayloadAction<{ recordId: string }>) {
             state.selectedRecordId = action.payload.recordId
@@ -108,7 +117,7 @@ export const recorderSlice = createSlice({
             const newRecord: FormValue = {
                 recordId: uuidv4(),
                 formId: action.payload.formId,
-                values: {},
+                values: [],
             }
             adapter.addOne(state, newRecord)
             state.selectedRecordId = newRecord.recordId
@@ -117,7 +126,7 @@ export const recorderSlice = createSlice({
             const newRecord: FormValue = {
                 recordId: uuidv4(),
                 formId: action.payload.formId,
-                values: {},
+                values: [],
                 ownerFieldId: action.payload.ownerFieldId,
                 ownerRecordId: action.payload.ownerRecordId
             }

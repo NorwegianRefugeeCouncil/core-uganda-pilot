@@ -1,12 +1,12 @@
 import {AxiosInstance} from "axios";
 
-export class Database {
-    public id: string = ""
-    public name: string = ""
+export type Database = {
+    id: string
+    name: string
 }
 
-export class DatabaseList {
-    public items: Database[] = []
+export type DatabaseList = {
+    items: Database[]
 }
 
 export enum FieldKind {
@@ -20,89 +20,87 @@ export enum FieldKind {
     Month = "month"
 }
 
-export class FieldType {
-    public text?: FieldTypeText
-    public reference?: FieldTypeReference
-    public subForm?: FieldTypeSubForm
-    public multilineText?: FieldTypeMultilineText
-    public date?: FieldTypeDate
-    public month?: FieldTypeMonth
-    public quantity?: FieldTypeQuantity
-    public singleSelect?: FieldTypeSingleSelect
+export type FieldType = {
+    text?: FieldTypeText
+    reference?: FieldTypeReference
+    subForm?: FieldTypeSubForm
+    multilineText?: FieldTypeMultilineText
+    date?: FieldTypeDate
+    month?: FieldTypeMonth
+    quantity?: FieldTypeQuantity
+    singleSelect?: FieldTypeSingleSelect
 }
 
-export class FieldTypeText {
+export type FieldTypeText = {}
+
+export type FieldTypeMultilineText = {}
+
+export type FieldTypeDate = {}
+
+export type FieldTypeMonth = {}
+
+export type FieldTypeQuantity = {}
+
+export type FieldTypeSingleSelect = {}
+
+export type FieldTypeReference = {
+    databaseId: string
+    formId: string
 }
 
-export class FieldTypeMultilineText {
+export type FieldTypeSubForm = {
+    fields: FieldDefinition[]
 }
 
-export class FieldTypeDate {
+export type FieldDefinition = {
+    id: string
+    code: string
+    name: string
+    description: string
+    required: boolean
+    key: boolean
+    fieldType: FieldType
 }
 
-export class FieldTypeMonth {
+export type FormDefinition = {
+    id: string
+    code: string
+    databaseId: string
+    folderId: string
+    name: string
+    fields: FieldDefinition[]
 }
 
-export class FieldTypeQuantity {
+export type FormDefinitionList = {
+    items: FormDefinition[]
 }
 
-export class FieldTypeSingleSelect {
+export type Folder = {
+    id: string
+    databaseId: string
+    parentId: string
+    name: string
 }
 
-export class FieldTypeReference {
-    public databaseId: string = ""
-    public formId: string = ""
+export type FolderList = {
+    items: Folder[]
 }
 
-export class FieldTypeSubForm {
-    public fields: FieldDefinition[] = []
+export type FieldValue = {
+    fieldId: string
+    value: string
 }
 
-export class FieldDefinition {
-    public id: string = ""
-    public code: string = ""
-    public name: string = ""
-    public description: string = ""
-    public required: boolean = false
-    public options: string[] = []
-    public key: boolean = false
-    public fieldType: FieldType = new FieldType()
+export type Record = {
+    id: string
+    databaseId: string
+    formId: string
+    ownerId: string | undefined
+    values: FieldValue[]
 }
 
-export class FormDefinition {
-    public id: string = ""
-    public code: string = ""
-    public databaseId: string = ""
-    public folderId: string = ""
-    public name: string = ""
-    public fields: FieldDefinition[] = []
-}
-
-export class FormDefinitionList {
-    public items: FormDefinition[] = []
-}
-
-export class Folder {
-    public id: string = ""
-    public databaseId: string = ""
-    public parentId: string = ""
-    public name: string = ""
-}
-
-export class FolderList {
-    public items: Folder[] = []
-}
-
-export class Record {
-    public id: string = ""
-    public databaseId: string = ""
-    public formId: string = ""
-    public ownerId: string | undefined = undefined
-    public values: { [key: string]: any } = {}
-}
-
-export class LocalRecord extends Record {
-    public isNew: boolean = false
+export type LocalRecord = Record & {
+    isNew: boolean
 }
 
 export type RecordList = { items: Record[] }
