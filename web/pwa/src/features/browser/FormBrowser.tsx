@@ -41,6 +41,7 @@ export const HeaderFields: FC<HeaderFieldsProps> = props => {
             <th style={{width: 35}}/>
             {fields.map(f => {
                 return <HeaderField
+                    key={f.id}
                     field={f}
                     columnWidth={columnWidths[f.id]}
                 />

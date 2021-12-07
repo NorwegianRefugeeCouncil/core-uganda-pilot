@@ -2,7 +2,7 @@ import {FieldDefinition} from "core-js-api-client";
 import React, {FC, Fragment, useState} from "react";
 import {FormValue} from "./recorder.slice";
 import {RecordPickerContainer} from "../../components/RecordPicker";
-import format from "date-fns/format"
+import {addHours, addMinutes, addWeeks, format, getWeek, nextMonday, previousMonday, startOfYear} from "date-fns"
 
 export type FieldEditorProps = {
     field: FieldDefinition
@@ -26,7 +26,6 @@ export const ReferenceFieldEditor: FC<FieldEditorProps> = props => {
         {mapFieldDescription(field)}
     </div>
 }
-
 
 export const TextFieldEditor: FC<FieldEditorProps> = props => {
     const {field, value, setValue} = props
@@ -105,7 +104,6 @@ export const MonthFieldEditor: FC<FieldEditorProps> = props => {
             maxLength={expectedLength}
             id={field.id}
             value={localValue ? localValue : ""}
-            role={"input"}
             name={field.name}
             pattern={"[0-9]{4}-[0-9]{2}"}
             placeholder={"YYYY-MM"}
@@ -117,42 +115,37 @@ export const MonthFieldEditor: FC<FieldEditorProps> = props => {
                 setValue(date);
             }}
         />
-
         {mapFieldDescription(field)}
     </div>
 }
+
 
 export const WeekFieldEditor: FC<FieldEditorProps> = props => {
     const {field, value, setValue} = props
     const expectedLength = 8;
 
-    const [localValue, setLocalValue] = useState(value != null ? getFormattedWeekStringFromDate(value) : "")
+    const [localValue, setLocalValue] = useState(value != null ? format(value, "yyyy-'W'ww") : "")
 
     const isValidLength = () => localValue.length === expectedLength;
 
-    function getDateFromWeekN(w: number, y: number) {
-        const d = (1 + (w - 1) * 7); // 1st of January + 7 days for each week
-        return new Date(y, 0, d);
+    function getDateFromWeekN(w: number) {
+        const oneJan = previousMonday(startOfYear(Date.now()));
+        const ret = addHours(addWeeks(oneJan, w), 12)
+        return ret;
     }
 
-    function getWeekFromDate(date: Date) {
-        const oneJan = new Date(date.getFullYear(), 0, 1);
-        // @ts-ignore
-        const numberOfDays = Math.floor((date - oneJan) / (24 * 60 * 60 * 1000));
-        return Math.ceil((date.getDay() + 1 + numberOfDays) / 7);
+    function isValidWeek(weekString: string) {
+        const weekRegex = /^(?:19|20|21)\d{2}-W[0-5]\d$/
+        return weekRegex.test(weekString) && +weekString.slice(6) <= 52;
     }
 
-    function getFormattedWeekStringFromDate(date: Date) {
-        let w = `${getWeek(date)}`
-        if (w.length === 1) {
-            w = `0${w}`
-        }
-        return `${date.getFullYear()}-W${w}`
-    }
-
-    function isValid(s: string) {
-        const valid = /^(?:19|20|21)\d{2}-W[0-5]\d$/
-        return valid.test(s) && +s.slice(6) <= 52;
+    function onChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
+        const value = event.target.value;
+        setLocalValue(value);
+        if (!isValidWeek(value)) return;
+        const week = +value.slice(6);
+        const date = getDateFromWeekN(week);
+        setValue(date);
     }
 
     return <div className={"form-group mb-2"}>
@@ -160,23 +153,14 @@ export const WeekFieldEditor: FC<FieldEditorProps> = props => {
             className={"form-label opacity-75"}
             htmlFor={field.id}>{field.name}</label>
         <input
-            className={`form-control bg-dark text-light border-secondary ${!isValid(localValue) && isValidLength() ? " is-invalid" : ""}`}
+            className={`form-control bg-dark text-light border-secondary ${!isValidWeek(localValue) && isValidLength() ? " is-invalid" : ""}`}
             type={"week"}
             name={field.name}
             maxLength={8}
             placeholder={"2021-W52"}
             id={field.id}
             value={localValue}
-            role={"input"}
-            onChange={event => {
-                const v = event.target.value;
-                setLocalValue(v);
-                if (!isValid(v)) return;
-                const w = +v.slice(6);
-                const y = +v.slice(0, 4);
-                const date = getDateFromWeekN(w, y);
-                setValue(date);
-            }}
+            onChange={onChangeHandler}
         />
         {mapFieldDescription(field)}
     </div>
