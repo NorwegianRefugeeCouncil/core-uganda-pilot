@@ -26,7 +26,7 @@ func (h *Handler) Create() http.HandlerFunc {
 		}
 
 		l.Debug("validating database")
-		if validationErrs := validation.ValidateDatabase(&db); validationErrs.HasAny() {
+		if validationErrs := validation.ValidateDatabase(&db); !validationErrs.IsEmpty() {
 			err := meta.NewInvalid(meta.GroupResource{
 				Group:    "core.nrc.no",
 				Resource: "databases",

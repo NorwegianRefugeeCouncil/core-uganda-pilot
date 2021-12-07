@@ -25,7 +25,7 @@ func (h *Handler) Create() http.HandlerFunc {
 		}
 
 		l.Debug("validating form")
-		if errs := validation.ValidateForm(&form); errs.HasAny() {
+		if errs := validation.ValidateForm(&form); !errs.IsEmpty() {
 			l.Error("failed to validate form", zap.Error(errs.ToAggregate()))
 			utils.ErrorResponse(w, meta.NewInvalid(meta.GroupResource{
 				Group:    "core.nrc.no/v1",
