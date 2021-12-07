@@ -1,9 +1,11 @@
+import { StackParamList } from "../types/screens";
+
 type Route = {
   title: string,
-  name: string
+  name: keyof StackParamList
 }
 
-const routes: { [key: string]: Route; } = {
+const routes: { [key in keyof StackParamList]: Route; } = {
   designSystem: {
     title: 'Design System',
     name: 'designSystem',

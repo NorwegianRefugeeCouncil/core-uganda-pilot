@@ -2021,9 +2021,15 @@
     fastq "^1.6.0"
 
 "@npmcli/arborist@^4.0.0", "@npmcli/arborist@^4.0.5":
+<<<<<<< HEAD:frontend/apps/native/yarn.lock
   version "4.0.5"
   resolved "https://registry.yarnpkg.com/@npmcli/arborist/-/arborist-4.0.5.tgz#7cdcfed28cad03803f5d75caf2b0f3051165ee70"
   integrity sha512-WR2cqxzjsvmHJ9sKCdqBYG/qeiAXB9ev1iq1W2Rry7LxeJ7eDtTr4mOWe/TBvp6xFzevGecQc2YEWwExTuLZLg==
+=======
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@npmcli/arborist/-/arborist-4.1.0.tgz#436464664bcfb3b180963383c410ff9180351c59"
+  integrity sha512-bkaOqCuTUtpVOe1vaAP7TUihu64wIbnSDpsbqBJUsGFTLYXbjKwi6xj8Zx5cfHkM3nqyeEEbPYlGkt0TXjKrUg==
+>>>>>>> c20e896a (separate screen and container):web/app/frontend/yarn.lock
   dependencies:
     "@isaacs/string-locale-compare" "^1.1.0"
     "@npmcli/installed-package-contents" "^1.0.7"
@@ -2063,7 +2069,11 @@
   resolved "https://registry.yarnpkg.com/@npmcli/ci-detect/-/ci-detect-1.4.0.tgz#18478bbaa900c37bfbd8a2006a6262c62e8b0fe1"
   integrity sha512-3BGrt6FLjqM6br5AhWRKTr3u5GIVkjRYeAFrMp3HjnfICrg4xOrVRwFavKT6tsp++bq5dluL5t8ME/Nha/6c1Q==
 
+<<<<<<< HEAD:frontend/apps/native/yarn.lock
 "@npmcli/config@^2.3.0":
+=======
+"@npmcli/config@^2.3.2":
+>>>>>>> c20e896a (separate screen and container):web/app/frontend/yarn.lock
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/@npmcli/config/-/config-2.3.2.tgz#6027efc132fcc809abef749c2f2e13dc4dcd6e0b"
   integrity sha512-2/9dj143BFgQR8qxJbYptd8k+4+Po2uHYq3H6498ynZcRu4LrsDlngov5HGrvo2+f0pe0fBJwDEP2rRtaW8bkw==
@@ -11476,7 +11486,11 @@ node-gyp@^7.1.0:
     tar "^6.0.2"
     which "^2.0.2"
 
+<<<<<<< HEAD:frontend/apps/native/yarn.lock
 node-gyp@^8.2.0, node-gyp@^8.4.0:
+=======
+node-gyp@^8.2.0, node-gyp@^8.4.1:
+>>>>>>> c20e896a (separate screen and container):web/app/frontend/yarn.lock
   version "8.4.1"
   resolved "https://registry.yarnpkg.com/node-gyp/-/node-gyp-8.4.1.tgz#3d49308fc31f768180957d6b5746845fbd429937"
   integrity sha512-olTJRgUtAb/hOXG0E93wZDs5YiJlgbXxTwQAFHyNlRsXQnYzUaF2aGgujZbw+hR8aF4ZG/rST57bWMWD16jr9w==
