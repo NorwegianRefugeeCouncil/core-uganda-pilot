@@ -4,10 +4,8 @@ import React, { useReducer } from "react";
 import NavigationBar from "./NavigationBar";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-<<<<<<< HEAD
-=======
+
 import FormsScreen from "./screens/FormsScreen";
->>>>>>> 42b11197 (lint and pr tweaks)
 import routes from "../constants/routes";
 import { NavigationTheme } from "../constants/theme";
 import DesignSystemDemoScreen from "./screens/DesignSystemDemoScreen";
