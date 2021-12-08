@@ -22,7 +22,9 @@ exports[`AddRecordScreenContainer renders correctly 1`] = `
   }
 >
   <View>
-    <View>
+    <View
+      style={Array []}
+    >
       <View
         style={
           Object {
