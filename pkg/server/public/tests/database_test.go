@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func (s *Suite) TestCanCreateDatabase() {
+func (s *Suite) TestDatabaseCreateGetList() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -14,4 +14,17 @@ func (s *Suite) TestCanCreateDatabase() {
 	if err := s.cli.CreateDatabase(ctx, &types.Database{Name: "My Database"}, &out); !assert.NoError(s.T(), err) {
 		return
 	}
+
+	var got types.Database
+	if err := s.cli.GetDatabase(ctx, out.ID, &got); !assert.NoError(s.T(), err) {
+		return
+	}
+	assert.Equal(s.T(), out, got)
+
+	var list types.DatabaseList
+	if err := s.cli.ListDatabases(ctx, &list); !assert.NoError(s.T(), err) {
+		return
+	}
+	assert.Contains(s.T(), list.Items, &got)
+
 }

@@ -51,6 +51,20 @@ func NewHandler(store store.FolderStore) *Handler {
 		Writes(types.FolderList{}).
 		Returns(http.StatusOK, "OK", types.FolderList{}))
 
+	ws.Route(ws.GET(fmt.Sprintf("/{%s}", constants.ParamFolderID)).To(h.RestfulGet).
+		Doc("get a folder").
+		Operation("getFolder").
+		Produces(mimetypes.ApplicationJson).
+		Writes(types.Folder{}).
+		Param(
+			ws.
+				PathParameter(constants.ParamFolderID, "id of the folder").
+				Required(true).
+				DataType("string").
+				DataFormat("uuid"),
+		).
+		Returns(http.StatusOK, "OK", types.Folder{}))
+
 	return h
 }
 

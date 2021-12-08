@@ -7,8 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// TestFormCreate tests that we can create forms with different field kinds
-func (s *Suite) TestFormCreate() {
+// TestFormCreateGetList tests that we can create forms with different field kinds
+func (s *Suite) TestFormCreateGetList() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -162,16 +162,28 @@ func (s *Suite) TestFormCreate() {
 	for _, tc := range tcs {
 		testCase := tc
 		s.Run(testCase.name, func() {
-			var form *types.FormDefinition
+			var form types.FormDefinition
 			in := &types.FormDefinition{
 				Name:       testCase.name,
 				DatabaseID: db.ID,
 				Fields:     testCase.fields,
 			}
-			if err := s.cli.CreateForm(ctx, in, form); !assert.NoError(s.T(), err) {
+			if err := s.cli.CreateForm(ctx, in, &form); !assert.NoError(s.T(), err) {
 				return
 			}
+			var got types.FormDefinition
+			if err := s.cli.GetForm(ctx, form.ID, &got); !assert.NoError(s.T(), err) {
+				return
+			}
+			assert.Equal(s.T(), form, got)
 		})
 	}
+
+	s.Run("can list forms", func() {
+		var list types.FormDefinitionList
+		if err := s.cli.ListForms(ctx, &list); !assert.NoError(s.T(), err) {
+			return
+		}
+	})
 
 }

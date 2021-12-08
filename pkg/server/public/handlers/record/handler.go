@@ -63,6 +63,7 @@ func NewHandler(store store.RecordStore, formStore store.FormStore) *Handler {
 	ws.Route(ws.GET(fmt.Sprintf("/{%s}", constants.ParamRecordID)).To(h.RestfulGet).
 		Doc("get record").
 		Operation("getRecord").
+		Produces(mimetypes.ApplicationJson).
 		Param(restful.QueryParameter(constants.ParamDatabaseID, "id of the database").
 			DataType("string").
 			DataFormat("uuid").
