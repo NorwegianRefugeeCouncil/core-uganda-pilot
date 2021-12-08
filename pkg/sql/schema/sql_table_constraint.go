@@ -16,40 +16,13 @@ type SQLTableConstraint struct {
 
 type SQLTableConstraints []SQLTableConstraint
 
-func (s SQLTableConstraints) GetConstraint(name string) (SQLTableConstraint, error){
+func (s SQLTableConstraints) GetConstraint(name string) (SQLTableConstraint, error) {
 	for _, constraint := range s {
-		if constraint.Name == name{
+		if constraint.Name == name {
 			return constraint, nil
 		}
 	}
 	return SQLTableConstraint{}, newTableConstraintNotFoundErr(name)
-}
-
-func NewCheckTableConstraint(name string, expression string) SQLTableConstraint {
-	return SQLTableConstraint{
-		Name: name,
-		Check: &SQLTableConstraintCheck{
-			Expression: expression,
-		},
-	}
-}
-
-func NewPrimaryKeyTableConstraint(name string, columnNames ...string) SQLTableConstraint {
-	return SQLTableConstraint{
-		Name: name,
-		PrimaryKey: &SQLTableConstraintPrimaryKey{
-			ColumnNames: columnNames,
-		},
-	}
-}
-
-func NewUniqueTableConstraint(name string, columnNames ...string) SQLTableConstraint {
-	return SQLTableConstraint{
-		Name: name,
-		Unique: &SQLTableConstraintUnique{
-			ColumnNames: columnNames,
-		},
-	}
 }
 
 func NewForeignKeyTableConstraint(

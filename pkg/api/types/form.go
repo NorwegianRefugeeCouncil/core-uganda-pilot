@@ -36,16 +36,6 @@ func (f *FormDefinition) GetFields() FieldDefinitions {
 	return f.Fields
 }
 
-// GetOwner implements FormInterface.GetOwner
-func (f *FormDefinition) GetOwner() FormInterface {
-	return nil
-}
-
-// HasOwner implements FormInterface.HasOwner
-func (f *FormDefinition) HasOwner() bool {
-	return false
-}
-
 // RemoveFieldByID removes a field from the form
 func (f *FormDefinition) RemoveFieldByID(fieldID string) (*FieldDefinition, error) {
 	var result FieldDefinitions
@@ -66,7 +56,7 @@ func (f *FormDefinition) RemoveFieldByID(fieldID string) (*FieldDefinition, erro
 
 // FindSubForm implements FormInterface.FindFormInterface
 func (f *FormDefinition) FindSubForm(subFormID string) (FormInterface, error) {
-	formIntf := newFormInterface(f, f.DatabaseID, f.ID, f.Fields)
+	formIntf := newFormInterface(f.ID, f.DatabaseID, f.ID, f.Fields)
 	return formIntf.FindSubForm(subFormID)
 }
 

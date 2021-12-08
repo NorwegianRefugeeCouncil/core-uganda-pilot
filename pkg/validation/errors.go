@@ -280,7 +280,7 @@ func TooLong(field *Path, value interface{}, maxLength int) *Error {
 // Invalid, but the returned error will not include the too-short
 // value.
 func TooShort(field *Path, value interface{}, minLength int) *Error {
-	return &Error{ErrorTypeTooLong, field.String(), value, fmt.Sprintf("must have at minimum %d bytes", minLength)}
+	return &Error{ErrorTypeTooShort, field.String(), value, fmt.Sprintf("must have at minimum %d bytes", minLength)}
 }
 
 // TooMany returns a *Error indicating "too many". This is used to

@@ -11,7 +11,6 @@ import (
 
 const (
 	errInvalidSQLDataType = "invalid sql data type"
-	errUnknownFieldF      = "unknown field '%s'"
 )
 
 func NewFormReader(form types.FormInterface, rows sqlReader) FormReader {

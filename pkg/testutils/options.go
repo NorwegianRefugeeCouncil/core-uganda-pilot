@@ -100,12 +100,19 @@ func ARecord(options ...RecordOption) *types.Record {
 	return r
 }
 
+type mockSubForm struct {
+	*mockForm
+	ownerId string
+}
+
+func (m mockSubForm) GetOwnerFormID() string {
+	return m.ownerId
+}
+
 type mockForm struct {
 	formId        string
 	databaseId    string
 	fields        types.FieldDefinitions
-	owner         types.FormInterface
-	hasOwner      bool
 	findSubFormFn func() (types.FormInterface, error)
 }
 
@@ -121,14 +128,6 @@ func (m mockForm) GetFields() types.FieldDefinitions {
 	return m.fields
 }
 
-func (m mockForm) GetOwner() types.FormInterface {
-	return m.owner
-}
-
-func (m mockForm) HasOwner() bool {
-	return m.hasOwner
-}
-
 func (m mockForm) FindSubForm(subFormId string) (types.FormInterface, error) {
 	return m.findSubFormFn()
 }
@@ -136,16 +135,6 @@ func (m mockForm) FindSubForm(subFormId string) (types.FormInterface, error) {
 var _ types.FormInterface = &mockForm{}
 
 type FormOption func(form *mockForm) *mockForm
-
-func FormOptions(options ...FormOption) FormOption {
-	return func(form *mockForm) *mockForm {
-		walk := form
-		for _, option := range options {
-			walk = option(walk)
-		}
-		return walk
-	}
-}
 
 func FormID(id string) FormOption {
 	return func(form *mockForm) *mockForm {
@@ -157,20 +146,6 @@ func FormID(id string) FormOption {
 func FormDatabaseID(databaseId string) FormOption {
 	return func(form *mockForm) *mockForm {
 		form.databaseId = databaseId
-		return form
-	}
-}
-
-func FormHasOwner(hasOwner bool) FormOption {
-	return func(form *mockForm) *mockForm {
-		form.hasOwner = hasOwner
-		return form
-	}
-}
-
-func FormOwner(owner types.FormInterface) FormOption {
-	return func(form *mockForm) *mockForm {
-		form.owner = owner
 		return form
 	}
 }
@@ -195,6 +170,17 @@ func AForm(options ...FormOption) *mockForm {
 		r = option(r)
 	}
 	return r
+}
+
+func ASubForm(ownerId string, options ...FormOption) *mockSubForm {
+	r := &mockForm{}
+	for _, option := range options {
+		r = option(r)
+	}
+	return &mockSubForm{
+		ownerId:  ownerId,
+		mockForm: r,
+	}
 }
 
 type FieldOption func(fieldDefinition *types.FieldDefinition) *types.FieldDefinition
@@ -329,7 +315,7 @@ func RecordForForm(form types.FormInterface) RecordOption {
 		if r.Values == nil {
 			r.Values = types.FieldValues{}
 		}
-		if form.HasOwner() {
+		if _, ok := form.(types.SubFormInterface); ok {
 			r.OwnerID = pointers.String(uuid.NewV4().String())
 		}
 		for _, field := range form.GetFields() {

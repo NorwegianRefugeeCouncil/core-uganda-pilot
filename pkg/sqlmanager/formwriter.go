@@ -49,7 +49,7 @@ func (f *formWriter) writeRecord(record *types.Record) (schema.DDL, error) {
 	columnNames := []string{keyIdColumn}
 	args := []interface{}{record.ID}
 
-	if f.form.HasOwner() {
+	if _, ok := f.form.(types.SubFormInterface); ok {
 		if record.OwnerID == nil {
 			return schema.DDL{}, errors.New("no owner id on record")
 		}

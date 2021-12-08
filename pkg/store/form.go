@@ -2,8 +2,12 @@ package store
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"github.com/nrc-no/core/pkg/logging"
+	"github.com/nrc-no/core/pkg/sqlmanager"
 	"github.com/nrc-no/core/pkg/utils/pointers"
+	"golang.org/x/sync/errgroup"
 	"strings"
 	"time"
 
@@ -12,24 +16,40 @@ import (
 	"github.com/nrc-no/core/pkg/sql/convert"
 	"github.com/nrc-no/core/pkg/utils/sets"
 	"github.com/nrc-no/core/pkg/utils/slices"
-	uuid "github.com/satori/go.uuid"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
+// FormStore is the store implementation for types.FormDefinition
+//
+// The responsibility of the FormStore is twofold.
+//
+// When creating new forms, the FormStore must be able to "flatten" the
+// structure of the FormDefinition into entities that are storable in SQL Tables.
+// It must also be able to re-hydrate the entities  into the tree-like structure of a FormDefinition.
+// The "flatten-" and "hydrate-" method do that, respectively.
+//
+// The next responsibility of the FormStore is the create the underlying SQL Tables
+// that will store the records for the created FormDefinitions.
 type FormStore interface {
+	// Get a single Form Definition
 	Get(ctx context.Context, formID string) (*types.FormDefinition, error)
+	// List FormDefinitions
 	List(ctx context.Context) (*types.FormDefinitionList, error)
+	// Create a FormDefinition
 	Create(ctx context.Context, form *types.FormDefinition) (*types.FormDefinition, error)
+	// Delete a FormDefinition
 	Delete(ctx context.Context, id string) error
 }
 
+// NewFormStore returns a new FormStore
 func NewFormStore(db Factory) FormStore {
 	return &formStore{
 		db: db,
 	}
 }
 
+// Form represents the data structure used to store a types.FormDefinition
 type Form struct {
 	ID          string `gorm:"index:idx_form_id_database_id,unique"`
 	DatabaseID  string `gorm:"index:idx_form_id_database_id,unique"`
@@ -46,6 +66,9 @@ type Form struct {
 	UpdatedAt   time.Time
 }
 
+type Forms []*Form
+
+// Field represents the data structure used to store a types.FieldDefinition
 type Field struct {
 	ID                   string
 	DatabaseID           string
@@ -69,217 +92,66 @@ type Field struct {
 	UpdatedAt            time.Time
 }
 
-type Option struct {
-	Value   string `gorm:"primarykey"`
-	FieldID string `gorm:"primarykey"`
-}
-
-func (f *Form) IsRoot() bool {
-	return f.ID == f.RootOwnerID
-}
-
-type Forms []*Form
-
-func (f Forms) FormIDs() sets.String {
-	result := sets.NewString()
-	for _, form := range f {
-		result.Insert(form.ID)
-	}
-	return result
-}
-
-func (f Forms) RootForms() Forms {
-	var result Forms
-	for _, form := range f {
-		if form.IsRoot() {
-			result = append(result, form)
-		}
-	}
-	return result
-}
-
 type Fields []*Field
 
-func (f Fields) OfType(fieldType types.FieldKind) Fields {
-	var result Fields
-	for _, field := range f {
-		if field.Type == fieldType {
-			result = append(result, field)
-		}
-	}
-	return result
+// Option represents the data structure used to store options for a types.FieldTypeMultiSelect or types.FieldTypeSingleSelect
+type Option struct {
+	DatabaseID string `gorm:"primarykey"`
+	RootFormID string `gorm:"primarykey"`
+	FormID     string `gorm:"primarykey"`
+	FieldID    string `gorm:"primarykey"`
+	Value      string `gorm:"primarykey"`
 }
 
-func (f Fields) FormIDs() sets.String {
-	result := sets.NewString()
-	for _, field := range f {
-		result.Insert(field.FormID)
-	}
-	return result
-}
+type Options []*Option
 
+// formStore is the implementation of FormStore
 type formStore struct {
 	db Factory
 }
 
+// Make sure that formStore implements FormStore
 var _ FormStore = &formStore{}
 
+// Get implements FormStore.Get
 func (d *formStore) Get(ctx context.Context, formID string) (*types.FormDefinition, error) {
-	ctx, db, l, done, err := actionContext(ctx, d.db, "form", "get", zap.String("form_id", formID))
+	ctx, db, _, done, err := actionContext(ctx, d.db, "form", "get", zap.String("form_id", formID))
 	if err != nil {
 		return nil, err
 	}
 	defer done()
-
-	return d.getFormDefinitionInternal(ctx, db, formID, l)
-
+	return d.getFormDefinitionInternal(ctx, db, formID)
 }
 
-func (d *formStore) getFormDefinitionsInternal(ctx context.Context, db *gorm.DB, formOrSubFormIds sets.String, l *zap.Logger) (*types.FormDefinitionList, error) {
-
-	l.Debug("getting form definitions")
-	forms, err := findRelatedFormsInternal(ctx, db, formOrSubFormIds, l)
-	if err != nil {
-		l.Error("failed to get form definitions", zap.Error(err))
-		return nil, err
-	}
-
-	if len(forms) == 0 {
-		l.Debug("no form definitions found")
-		return types.NewFormDefinitionList(), nil
-	}
-
-	rootFormIDs := forms.RootForms().FormIDs().List()
-
-	l.Debug("finding all fields form form")
-	fields, err := findAllFieldsUnderRootFormIds(ctx, rootFormIDs, db)
-	if err != nil {
-		l.Error("failed to find fields for form", zap.Error(err))
-		return nil, err
-	}
-
-	l.Debug("mapping form definitions")
-	formDefinitions, err := mapToFormDefinitions(forms, fields)
-	if err != nil {
-		l.Error("failed to map form definitions", zap.Error(err))
-		return nil, err
-	}
-
-	l.Debug("successfully listed form definitions")
-	return types.NewFormDefinitionList(formDefinitions...), nil
-
-}
-
-func (d *formStore) getFormDefinitionInternal(ctx context.Context, db *gorm.DB, formOrSubFormId string, l *zap.Logger) (*types.FormDefinition, error) {
-
-	l.Debug("getting form definition")
-
-	formDefinitions, err := d.getFormDefinitionsInternal(ctx, db, sets.NewString(formOrSubFormId), l)
-	if err != nil {
-		l.Error("failed to get form definition", zap.Error(err))
-		return nil, err
-	}
-
-	if formDefinitions.IsEmpty() {
-		l.Debug("form definition not found")
-		return nil, meta.NewNotFound(meta.GroupResource{
-			Group:    "nrc.no",
-			Resource: "forms",
-		}, formOrSubFormId)
-	}
-
-	l.Debug("found form definition")
-
-	return formDefinitions.GetAtIndex(0), nil
-}
-
-func findRelatedFormsInternal(ctx context.Context, db *gorm.DB, formIDs sets.String, l *zap.Logger) (Forms, error) {
-
-	l = l.With(zap.Strings("form_ids", formIDs.List()))
-
-	if formIDs.Len() == 0 {
-		return Forms{}, nil
-	}
-
-	// Will execute a query with a subquery like
-	// SELECT * FROM forms WHERE root_owner_id in (SELECT root_owner_id FROM forms WHERE id IN (id1, id2, ...))
-
-	subQuery := db.Model(&Form{}).
-		Select("root_owner_id").
-		Where(fmt.Sprintf("id in (%s)", sqlPlaceholders(formIDs)), formIDs.ListIntf()...)
-
-	var forms []*Form
-
-	l.Debug("finding related forms")
-	query := db.WithContext(ctx).
-		Model(&Form{}).
-		Where("root_owner_id in (?)", subQuery).
-		Find(&forms)
-
-	if err := query.Error; err != nil {
-		l.Error("failed to find related forms", zap.Error(err))
-		return nil, meta.NewInternalServerError(err)
-	}
-
-	l.Debug("successfully found related forms")
-
-	return forms, nil
-}
-
-func findAllFieldsUnderRootFormIds(ctx context.Context, rootFormIDs []string, db *gorm.DB) ([]*Field, error) {
-	formIdSet := sets.NewString(rootFormIDs...)
-
-	var fields []*Field
-
-	query := db.WithContext(ctx).
-		Where(fmt.Sprintf("root_form_id in (%s)", sqlPlaceholders(formIdSet)), formIdSet.ListIntf()...).
-		Find(&fields)
-
-	if err := query.Error; err != nil {
-		return nil, meta.NewInternalServerError(err)
-	}
-
-	return fields, nil
-}
-
+// List implements FormStore.List
 func (d *formStore) List(ctx context.Context) (*types.FormDefinitionList, error) {
-	ctx, db, l, done, err := actionContext(ctx, d.db, "form", "list")
+	ctx, db, _, done, err := actionContext(ctx, d.db, "form", "list")
 	if err != nil {
 		return nil, err
 	}
 	defer done()
-
-	var forms []*Form
-	var fields []*Field
 
 	db = db.WithContext(ctx)
 
-	l.Debug("finding forms")
-	if err := db.Find(&forms).Error; err != nil {
-		l.Error("failed to find forms", zap.Error(err))
-		return nil, meta.NewInternalServerError(err)
-	}
-
-	l.Debug("finding fields")
-	if err := db.Preload("Options").Find(&fields).Error; err != nil {
-		l.Error("failed to find fields", zap.Error(err))
-		return nil, meta.NewInternalServerError(err)
-	}
-
-	l.Debug("mapping forms", zap.Int("field_count", len(fields)), zap.Int("form_count", len(forms)))
-	result, err := mapToFormDefinitions(forms, fields)
+	// Finding the flattened structure of the forms
+	flatForms, err := findFlattenedForms(ctx, db, nil)
 	if err != nil {
-		l.Error("failed to map forms", zap.Error(err))
 		return nil, err
 	}
 
-	l.Debug("successfully listed forms", zap.Int("count", len(result)))
+	// Hydrating the flat structure into a tree structure
+	formDefs, err := flatForms.hydrateForms()
+	if err != nil {
+		return nil, err
+	}
+
 	return &types.FormDefinitionList{
-		Items: result,
+		Items: formDefs,
 	}, nil
 
 }
 
+// Delete implements FormStore.Delete
 func (d *formStore) Delete(ctx context.Context, id string) error {
 
 	ctx, db, l, done, err := actionContext(ctx, d.db, "form", "delete")
@@ -288,8 +160,7 @@ func (d *formStore) Delete(ctx context.Context, id string) error {
 	}
 	defer done()
 
-	l.Debug("getting form definition")
-	formDef, err := d.getFormDefinitionInternal(ctx, db, id, l)
+	formDef, err := d.getFormDefinitionInternal(ctx, db, id)
 	if err != nil {
 		l.Error("failed to get form definition", zap.Error(err))
 		return err
@@ -344,6 +215,7 @@ func (d *formStore) Delete(ctx context.Context, id string) error {
 
 }
 
+// Create implements FormStore.Create
 func (d *formStore) Create(ctx context.Context, form *types.FormDefinition) (*types.FormDefinition, error) {
 	ctx, db, l, done, err := actionContext(ctx, d.db, "form", "create")
 	if err != nil {
@@ -351,46 +223,48 @@ func (d *formStore) Create(ctx context.Context, form *types.FormDefinition) (*ty
 	}
 	defer done()
 
-	newFormIDs(form)
-
-	l.Debug("mapping form definition")
-	forms, fields, err := mapToFormFields(form)
+	// Flattens the types.FormDefinition into a flat storage structure
+	flatForm, err := flattenForm(form)
 	if err != nil {
-		l.Error("failed to map form definition", zap.Error(err))
+		l.Error("failed to flatten form: %v", zap.Error(err))
 		return nil, err
 	}
 
-	referencedFormIDs := sets.NewString()
-	for _, field := range fields.OfType(types.FieldKindReference) {
-		referencedFormIDs.Insert(*field.ReferencedFormID)
-	}
-
-	l.Debug("starting transaction")
 	err = db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 
-		l.Debug("storing form")
-		if err := tx.Create(forms).Error; err != nil {
+		// Storing the forms
+		if err := tx.Create(flatForm.Forms).Error; err != nil {
 			l.Error("failed to store form", zap.Error(err))
 			return meta.NewInternalServerError(err)
 		}
 
-		l.Debug("storing fields")
-		if err := tx.Create(fields).Error; err != nil {
+		// Storing the fields
+		if err := tx.Create(flatForm.Fields).Error; err != nil {
 			l.Error("failed to store fields", zap.Error(err))
 			return meta.NewInternalServerError(err)
 		}
 
-		l.Debug("getting referenced forms")
-		referencedForms, err := d.getFormDefinitionsInternal(ctx, tx, referencedFormIDs, l)
+		// Storing the options
+		if err := tx.Create(flatForm.Options).Error; err != nil {
+			l.Error("failed to store fields", zap.Error(err))
+			return meta.NewInternalServerError(err)
+		}
+
+		// Creating the actual SQL Tables to contain records for the form
+		m, err := sqlmanager.New().PutForms(&types.FormDefinitionList{
+			Items: []*types.FormDefinition{form},
+		})
 		if err != nil {
-			l.Error("failed to get referenced form")
+			l.Error("failed to create form migrations", zap.Error(err))
 			return err
 		}
 
-		l.Debug("creating form database schema")
-		if err := convert.CreateForm(ctx, tx, form, referencedForms); err != nil {
-			l.Error("failed to create form database schema")
-			return meta.NewInternalServerError(err)
+		// Executing the SQL statements
+		for _, ddl := range m.GetStatements() {
+			if err := tx.Raw(ddl.Query, ddl.Args...).Error; err != nil {
+				l.Error("failed to execute form migration statement", zap.String("statement", ddl.Query), zap.Error(err))
+				return err
+			}
 		}
 
 		return nil
@@ -406,376 +280,513 @@ func (d *formStore) Create(ctx context.Context, form *types.FormDefinition) (*ty
 	return d.Get(ctx, form.ID)
 }
 
-func newFormIDs(form *types.FormDefinition) {
-	form.ID = uuid.NewV4().String()
-	newFieldIDs(form.Fields)
-}
+// getFormDefinitionsInternal is an internal method to retrieve multiple form definitions by form or subForm id
+func (d *formStore) getFormDefinitionsInternal(
+	ctx context.Context,
+	db *gorm.DB,
+	formOrSubFormIds sets.String,
+) (*types.FormDefinitionList, error) {
 
-func newFieldIDs(fields []*types.FieldDefinition) {
-	for _, field := range fields {
-		field.ID = uuid.NewV4().String()
-		if field.FieldType.SubForm != nil {
-			newFieldIDs(field.FieldType.SubForm.Fields)
-		}
+	// Do not execute any query if the formOrSubFormIds is empty
+	if formOrSubFormIds.Len() == 0 {
+		return &types.FormDefinitionList{
+			Items: []*types.FormDefinition{},
+		}, nil
 	}
-}
 
-func mapToFormFields(fd *types.FormDefinition) (Forms, Fields, error) {
-	h, err := NewFormHierarchyFrom(fd)
+	l := logging.NewLogger(ctx)
+
+	// this is the query to retrieve the root form ids
+	subQuery := db.Model(&Form{}).
+		Select("root_owner_id").
+		Where(fmt.Sprintf("id in (%s)",
+			sqlPlaceholders(formOrSubFormIds)),
+			formOrSubFormIds.ListIntf()...)
+
+	// find the flattened structure for the given form definition query
+	flattenedForms, err := findFlattenedForms(ctx, db, subQuery)
 	if err != nil {
-		return nil, nil, err
-	}
-	flds := h.AllFields()
-	frms := h.AllForms()
-	return frms, flds, nil
-}
-
-func mapToFormDefinitions(forms []*Form, fields []*Field) ([]*types.FormDefinition, error) {
-
-	hierarchies, err := Build(forms, fields)
-	if err != nil {
+		l.Error("failed to get form definitions", zap.Error(err))
 		return nil, err
 	}
 
-	var result []*types.FormDefinition
-	for _, formHierarchy := range hierarchies {
-		fd, err := formHierarchy.ToFormDefinition()
-		if err != nil {
-			return nil, err
-		}
-		result = append(result, fd)
+	// return empty result if we don't have any forms returned
+	if len(flattenedForms.Forms) == 0 {
+		l.Debug("no form definitions found")
+		return types.NewFormDefinitionList(), nil
 	}
 
-	if result == nil {
-		result = []*types.FormDefinition{}
-	}
-	return result, nil
-}
-
-type FormHierarchy struct {
-	Form       *Form
-	Fields     []*Field
-	Owner      *FormHierarchy
-	OwnerField *Field
-	IsRoot     bool
-	Children   []*FormHierarchy
-}
-
-func NewFormHierarchyFrom(fd *types.FormDefinition) (*FormHierarchy, error) {
-
-	var folderId *string = nil
-	if len(fd.FolderID) > 0 {
-		folderId = pointers.String(fd.FolderID)
+	// hydrate back the form definitions
+	formDefinitions, err := flattenedForms.hydrateForms()
+	if err != nil {
+		l.Error("failed to unflatten forms", zap.Error(err))
+		return nil, err
 	}
 
-	return newFormHierarchyFrom(
-		fd.DatabaseID,
-		folderId,
-		fd.ID,
-		fd.Name,
-		fd.Fields,
-		nil,
-		nil,
-		nil)
-}
-
-func newFormHierarchyFrom(
-	databaseId string,
-	folderId *string,
-	formId string,
-	formName string,
-	fields []*types.FieldDefinition,
-	owner *FormHierarchy,
-	parentField *Field,
-	root *FormHierarchy,
-) (*FormHierarchy, error) {
-
-	var rootIdForForm = formId
-	if root != nil {
-		rootIdForForm = root.Form.ID
-	}
-	var ownerIdForForm = formId
-	if owner != nil {
-		ownerIdForForm = owner.Form.ID
-	}
-
-	hierarchy := &FormHierarchy{
-		Form: &Form{
-			ID:          formId,
-			DatabaseID:  databaseId,
-			FolderID:    folderId,
-			Name:        formName,
-			OwnerID:     ownerIdForForm,
-			RootOwnerID: rootIdForForm,
-		},
-		Owner:      owner,
-		OwnerField: parentField,
-		IsRoot:     false,
-		Children:   []*FormHierarchy{},
-	}
-
-	rootIdForField := formId
-	if root != nil {
-		rootIdForField = root.Form.ID
-	}
-
-	rootForField := hierarchy
-	if root != nil {
-		rootForField = root
-	}
-
-	for _, field := range fields {
-		ft, err := getFieldType(field)
-		if err != nil {
-			return nil, err
-		}
-		var opts []Option
-		for _, option := range field.Options {
-			opts = append(opts, Option{Value: option})
-		}
-		f := &Field{
-			ID:          field.ID,
-			DatabaseID:  databaseId,
-			FormID:      formId,
-			RootFormID:  rootIdForField,
-			Name:        field.Name,
-			Required:    field.Required,
-			Description: field.Description,
-			Code:        field.Code,
-			Key:         field.Key,
-			Options:     opts,
-			Type:        ft,
-		}
-		hierarchy.Fields = append(hierarchy.Fields, f)
-
-		if field.FieldType.SubForm != nil {
-
-			f.SubFormID = pointers.String(field.ID)
-
-			child, err := newFormHierarchyFrom(
-				databaseId,
-				folderId,
-				field.ID,
-				field.Name,
-				field.FieldType.SubForm.Fields,
-				hierarchy,
-				f,
-				rootForField,
-			)
-			if err != nil {
-				return nil, err
-			}
-			hierarchy.Children = append(hierarchy.Children, child)
-		} else if field.FieldType.Reference != nil {
-			f.ReferencedDatabaseID = &field.FieldType.Reference.DatabaseID
-			f.ReferencedFormID = &field.FieldType.Reference.FormID
-		}
-	}
-
-	return hierarchy, nil
+	return &types.FormDefinitionList{
+		Items: formDefinitions,
+	}, nil
 
 }
 
-func (f *FormHierarchy) ToFormDefinition() (*types.FormDefinition, error) {
-	var flds []*types.FieldDefinition
-	for _, field := range f.Fields {
-		var options []string
-		for _, option := range field.Options {
-			options = append(options, option.Value)
-		}
-		fd := &types.FieldDefinition{
-			ID:          field.ID,
-			Name:        field.Name,
-			Code:        field.Code,
-			Description: field.Description,
-			Key:         field.Key,
-			Required:    field.Required,
-			FieldType:   types.FieldType{},
-			Options:     options,
-		}
-		switch field.Type {
-		case types.FieldKindText:
-			fd.FieldType.Text = &types.FieldTypeText{}
-		case types.FieldKindMultilineText:
-			fd.FieldType.MultilineText = &types.FieldTypeMultilineText{}
-		case types.FieldKindWeek:
-			fd.FieldType.Week = &types.FieldTypeWeek{}
-		case types.FieldKindDate:
-			fd.FieldType.Date = &types.FieldTypeDate{}
-		case types.FieldKindMonth:
-			fd.FieldType.Month = &types.FieldTypeMonth{}
-		case types.FieldKindQuantity:
-			fd.FieldType.Quantity = &types.FieldTypeQuantity{}
-		case types.FieldKindSingleSelect:
-			fd.FieldType.SingleSelect = &types.FieldTypeSingleSelect{}
-		case types.FieldKindSubForm:
-			child, err := f.GetSubFormForField(field)
-			if err != nil {
-				return nil, err
-			}
-			childFd, err := child.ToFormDefinition()
-			if err != nil {
-				return nil, err
-			}
-			if childFd.Fields == nil {
-				childFd.Fields = []*types.FieldDefinition{}
-			}
-			fd.FieldType.SubForm = &types.FieldTypeSubForm{
-				Fields: childFd.Fields,
-			}
-		case types.FieldKindReference:
-			fd.FieldType.Reference = &types.FieldTypeReference{
-				DatabaseID: *field.ReferencedDatabaseID,
-				FormID:     *field.ReferencedFormID,
-			}
-		default:
-			return nil, fmt.Errorf("cannot map field type %v", fd.FieldType)
-		}
-		flds = append(flds, fd)
+// getFormDefinitionInternal returns a single form definition given the form or sub form id
+func (d *formStore) getFormDefinitionInternal(ctx context.Context, db *gorm.DB, formOrSubFormId string) (*types.FormDefinition, error) {
+
+	l := logging.NewLogger(ctx)
+	l.Debug("getting form definition")
+
+	formDefinitions, err := d.getFormDefinitionsInternal(ctx, db, sets.NewString(formOrSubFormId))
+	if err != nil {
+		l.Error("failed to get form definition", zap.Error(err))
+		return nil, err
 	}
-	var folderId = ""
-	if f.Form.FolderID != nil {
-		folderId = *f.Form.FolderID
+
+	if formDefinitions.IsEmpty() {
+		l.Debug("form definition not found")
+		return nil, meta.NewNotFound(meta.GroupResource{
+			Group:    "nrc.no",
+			Resource: "forms",
+		}, formOrSubFormId)
 	}
-	if len(flds) == 0 {
-		flds = []*types.FieldDefinition{}
-	}
-	formDef := &types.FormDefinition{
-		ID:         f.Form.ID,
-		DatabaseID: f.Form.DatabaseID,
-		FolderID:   folderId,
-		Name:       f.Form.Name,
-		Fields:     flds,
-	}
-	return formDef, nil
+
+	l.Debug("found form definition")
+
+	return formDefinitions.GetAtIndex(0), nil
 }
 
-type FormHierarchies []*FormHierarchy
+// findFlattenedForms will retrieve the flattened FormDefinition structure
+// the passed formIdsCondition is optional, all is used to restrict which FormDefinitions
+// are we looking for
+func findFlattenedForms(
+	ctx context.Context,
+	db *gorm.DB,
+	formIdsCondition *gorm.DB,
+) (FlatForms, error) {
 
-func Build(forms []*Form, fields []*Field) (FormHierarchies, error) {
+	l := logging.NewLogger(ctx)
 
-	var result FormHierarchies
-	hierarchyMap := map[string]*FormHierarchy{}
-	for _, form := range forms {
-		hierarchyMap[form.ID] = &FormHierarchy{
-			Form:     form,
-			Children: []*FormHierarchy{},
+	var forms []*Form
+	var fields []*Field
+	var options []*Option
+
+	// We are querying for forms, fields and options in parallel
+	g, ctx := errgroup.WithContext(ctx)
+
+	// Retrieve the Forms
+	g.Go(func() error {
+		qry := db.WithContext(ctx).Model(&Form{})
+		if formIdsCondition != nil {
+			qry = qry.Where("root_owner_id in (?)", formIdsCondition)
 		}
-	}
-
-	for _, hierarchy := range hierarchyMap {
-		isRoot := hierarchy.Form.RootOwnerID == hierarchy.Form.ID
-		hierarchy.IsRoot = isRoot
-		if !isRoot {
-			parent := hierarchyMap[hierarchy.Form.OwnerID]
-			hierarchy.Owner = parent
-			parent.Children = append(parent.Children, hierarchy)
-		} else {
-			result = append(result, hierarchy)
+		if err := qry.Find(&forms).Error; err != nil {
+			l.Error("failed to find forms", zap.Error(err))
+			return meta.NewInternalServerError(err)
 		}
-	}
-
-	for _, field := range fields {
-		hierarchy := hierarchyMap[field.FormID]
-		hierarchy.Fields = append(hierarchy.Fields, field)
-	}
-
-	for _, field := range fields {
-		if field.Type == types.FieldKindSubForm {
-			hierarchyMap[*field.SubFormID].OwnerField = field
+		return nil
+	})
+	// Retrieve the Fields
+	g.Go(func() error {
+		qry := db.WithContext(ctx).Model(&Field{})
+		if formIdsCondition != nil {
+			qry = qry.Where("root_form_id in (?)", formIdsCondition)
 		}
-	}
-
-	return result, nil
-}
-
-func (f *FormHierarchy) GetFormName() string {
-	walk := f
-	result := ""
-	for walk != nil {
-		result = f.Form.Name + "_" + result
-		walk = walk.Owner
-	}
-	return result
-}
-
-func (f *FormHierarchy) GetSubFormByName(subFormName string) (*FormHierarchy, error) {
-	for _, child := range f.Children {
-		if child.Form.Name == subFormName {
-			return child, nil
+		if err := qry.Find(&fields).Error; err != nil {
+			l.Error("failed to find fields", zap.Error(err))
+			return meta.NewInternalServerError(err)
 		}
-	}
-	return nil, fmt.Errorf("could not find child with name " + subFormName)
-}
-
-func (f *FormHierarchy) GetSubFormForField(field *Field) (*FormHierarchy, error) {
-	for _, child := range f.Children {
-		if child.OwnerField == field {
-			return child, nil
+		return nil
+	})
+	// Retrieve the Options
+	g.Go(func() error {
+		qry := db.WithContext(ctx).Model(&Option{})
+		if formIdsCondition != nil {
+			qry = qry.Where("root_form_id in (?)", formIdsCondition)
 		}
-	}
-	return nil, fmt.Errorf("could not find child for field " + field.ID)
-}
-
-func (f *FormHierarchy) GetSubFormByID(subFormID string) (*FormHierarchy, error) {
-	for _, child := range f.Children {
-		if child.Form.ID == subFormID {
-			return child, nil
+		if err := qry.Find(&options).Error; err != nil {
+			l.Error("failed to find options", zap.Error(err))
+			return meta.NewInternalServerError(err)
 		}
-	}
-	return nil, fmt.Errorf("could not find child with id " + subFormID)
-}
+		return nil
+	})
 
-func (f *FormHierarchy) AllForms() []*Form {
-	result := []*Form{f.Form}
-	for _, child := range f.Children {
-		result = append(result, child.AllForms()...)
+	// Waiting for the parallel execution to finish
+	if err := g.Wait(); err != nil {
+		return FlatForms{}, err
 	}
-	return result
-}
 
-func (f *FormHierarchy) AllFields() []*Field {
-	var result []*Field
-	result = append(result, f.Fields...)
-	for _, child := range f.Children {
-		result = append(result, child.AllFields()...)
-	}
-	return result
-}
-
-func getFieldType(field *types.FieldDefinition) (types.FieldKind, error) {
-	if field.FieldType.SubForm != nil {
-		return types.FieldKindSubForm, nil
-	}
-	if field.FieldType.Text != nil {
-		return types.FieldKindText, nil
-	}
-	if field.FieldType.Reference != nil {
-		return types.FieldKindReference, nil
-	}
-	if field.FieldType.MultilineText != nil {
-		return types.FieldKindMultilineText, nil
-	}
-	if field.FieldType.Date != nil {
-		return types.FieldKindDate, nil
-	}
-	if field.FieldType.Quantity != nil {
-		return types.FieldKindQuantity, nil
-	}
-	if field.FieldType.Month != nil {
-		return types.FieldKindMonth, nil
-	}
-	if field.FieldType.SingleSelect != nil {
-		return types.FieldKindSingleSelect, nil
-	}
-	if field.FieldType.Week != nil {
-		return types.FieldKindWeek, nil
-	}
-	return types.FieldKindUnknown, fmt.Errorf("could not determine field type")
+	return FlatForms{
+		Fields:  fields,
+		Forms:   forms,
+		Options: options,
+	}, nil
 }
 
 func sqlPlaceholders(val sets.String) string {
 	return strings.Join(val.MapToSlice(func(val string) string {
 		return "?"
 	}), ",")
+}
+
+type FlatForms struct {
+	Fields  Fields
+	Forms   Forms
+	Options Options
+}
+
+// Add concatenates two FlatForms together
+func (f FlatForms) Add(flatForm FlatForms) FlatForms {
+	f.Fields = append(f.Fields, flatForm.Fields...)
+	f.Forms = append(f.Forms, flatForm.Forms...)
+	f.Options = append(f.Options, flatForm.Options...)
+	return f
+}
+
+// hydrateForms will rehydrate a flattened types.FormDefinition
+func (f FlatForms) hydrateForms() ([]*types.FormDefinition, error) {
+	var forms []*types.FormDefinition
+	for _, form := range f.Forms {
+		if form.ID != form.RootOwnerID {
+			continue
+		}
+		formDef, err := f.hydrateForm(form)
+		if err != nil {
+			return nil, err
+		}
+		forms = append(forms, formDef)
+	}
+	return forms, nil
+}
+
+// hydrateForm rehydrates a single types.FormDefinition
+func (f FlatForms) hydrateForm(form *Form) (*types.FormDefinition, error) {
+	folderId := ""
+	if form.FolderID != nil {
+		folderId = *form.FolderID
+	}
+	result := &types.FormDefinition{
+		ID:         form.ID,
+		DatabaseID: form.DatabaseID,
+		FolderID:   folderId,
+		Name:       form.Name,
+	}
+	fields, err := f.hydrateFormFields(form.ID)
+	if err != nil {
+		return nil, err
+	}
+	result.Fields = fields
+	return result, nil
+}
+
+// hydrateFormFields rehydrates the fields for the given formId
+func (f FlatForms) hydrateFormFields(formId string) ([]*types.FieldDefinition, error) {
+	var result []*types.FieldDefinition
+	for _, field := range f.Fields {
+		if field.FormID != formId {
+			continue
+		}
+		fieldDef, err := f.hydrateField(field)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, fieldDef)
+	}
+	if result == nil {
+		result = []*types.FieldDefinition{}
+	}
+	return result, nil
+}
+
+func hydrateFieldDefaults(field *Field) *types.FieldDefinition {
+	return &types.FieldDefinition{
+		ID:          field.ID,
+		Code:        field.Code,
+		Name:        field.Name,
+		Description: field.Description,
+		Key:         field.Key,
+		Required:    field.Required,
+	}
+}
+
+// hydrateField rehydrates a single types.FieldDefinition
+func (f FlatForms) hydrateField(field *Field) (*types.FieldDefinition, error) {
+	switch field.Type {
+	case types.FieldKindText:
+		return f.hydrateTextField(field)
+	case types.FieldKindSubForm:
+		return f.hydrateSubFormField(field)
+	case types.FieldKindReference:
+		return f.hydrateReferenceField(field)
+	case types.FieldKindMultilineText:
+		return f.hydrateMultilineTextField(field)
+	case types.FieldKindDate:
+		return f.hydrateDateField(field)
+	case types.FieldKindQuantity:
+		return f.hydrateQuantityField(field)
+	case types.FieldKindMonth:
+		return f.hydrateMonthField(field)
+	case types.FieldKindWeek:
+		return f.hydrateWeekField(field)
+	case types.FieldKindSingleSelect:
+		return f.hydrateSingleSelectField(field)
+	}
+	return nil, errors.New("unprocessable field type")
+}
+
+// hydrateSubFormField hydrates a types.FieldTypeSubForm
+func (f FlatForms) hydrateSubFormField(field *Field) (*types.FieldDefinition, error) {
+	fieldDef := hydrateFieldDefaults(field)
+	fieldDef.FieldType = types.FieldType{
+		SubForm: &types.FieldTypeSubForm{},
+	}
+	subFormFields, err := f.hydrateFormFields(field.ID)
+	if err != nil {
+		return nil, err
+	}
+	fieldDef.FieldType.SubForm.Fields = subFormFields
+	return fieldDef, nil
+}
+
+// hydrateTextField hydrates a types.FieldTypeText
+func (f FlatForms) hydrateTextField(field *Field) (*types.FieldDefinition, error) {
+	fieldDef := hydrateFieldDefaults(field)
+	fieldDef.FieldType = types.FieldType{
+		Text: &types.FieldTypeText{},
+	}
+	return fieldDef, nil
+}
+
+// hydrateMultilineTextField hydrates a types.FieldTypeMultilineText
+func (f FlatForms) hydrateMultilineTextField(field *Field) (*types.FieldDefinition, error) {
+	fieldDef := hydrateFieldDefaults(field)
+	fieldDef.FieldType = types.FieldType{
+		MultilineText: &types.FieldTypeMultilineText{},
+	}
+	return fieldDef, nil
+}
+
+// hydrateDateField hydrates a types.FieldTypeDate
+func (f FlatForms) hydrateDateField(field *Field) (*types.FieldDefinition, error) {
+	fieldDef := hydrateFieldDefaults(field)
+	fieldDef.FieldType = types.FieldType{
+		Date: &types.FieldTypeDate{},
+	}
+	return fieldDef, nil
+}
+
+// hydrateMonthField hydrates a types.FieldTypeMonth
+func (f FlatForms) hydrateMonthField(field *Field) (*types.FieldDefinition, error) {
+	fieldDef := hydrateFieldDefaults(field)
+	fieldDef.FieldType = types.FieldType{
+		Month: &types.FieldTypeMonth{},
+	}
+	return fieldDef, nil
+}
+
+// hydrateWeekField hydrates a types.FieldTypeWeek
+func (f FlatForms) hydrateWeekField(field *Field) (*types.FieldDefinition, error) {
+	fieldDef := hydrateFieldDefaults(field)
+	fieldDef.FieldType = types.FieldType{
+		Week: &types.FieldTypeWeek{},
+	}
+	return fieldDef, nil
+}
+
+// hydrateSingleSelectField hydrates a types.FieldTypeSingleSelect
+func (f FlatForms) hydrateSingleSelectField(field *Field) (*types.FieldDefinition, error) {
+	fieldDef := hydrateFieldDefaults(field)
+	fieldDef.FieldType = types.FieldType{
+		SingleSelect: &types.FieldTypeSingleSelect{},
+	}
+	return fieldDef, nil
+}
+
+// hydrateQuantityField hydrates a types.FieldTypeQuantity
+func (f FlatForms) hydrateQuantityField(field *Field) (*types.FieldDefinition, error) {
+	fieldDef := hydrateFieldDefaults(field)
+	fieldDef.FieldType = types.FieldType{
+		Quantity: &types.FieldTypeQuantity{},
+	}
+	return fieldDef, nil
+}
+
+// hydrateReferenceField hydrates a types.FieldTypeReference
+func (f FlatForms) hydrateReferenceField(field *Field) (*types.FieldDefinition, error) {
+	fieldDef := hydrateFieldDefaults(field)
+	fieldDef.FieldType = types.FieldType{
+		Reference: &types.FieldTypeReference{
+			DatabaseID: *field.ReferencedDatabaseID,
+			FormID:     *field.ReferencedFormID,
+		},
+	}
+	return fieldDef, nil
+}
+
+// flattenForm will flatten a types.FormDefinition into a FlatForms
+func flattenForm(form *types.FormDefinition) (FlatForms, error) {
+	var folderId *string
+	if len(form.FolderID) != 0 {
+		folderId = pointers.String(form.FolderID)
+	}
+	var flattenedForm = &Form{
+		ID:          form.ID,
+		DatabaseID:  form.DatabaseID,
+		RootOwnerID: form.ID,
+		OwnerID:     form.ID,
+		FolderID:    folderId,
+		Name:        form.Name,
+	}
+	result := FlatForms{
+		Forms: []*Form{flattenedForm},
+	}
+	for _, field := range form.GetFields() {
+		flatField, err := flattenField(form, form, field)
+		if err != nil {
+			return FlatForms{}, err
+		}
+		result = result.Add(flatField)
+	}
+	return result, nil
+}
+
+// flattenSubForm will flatten a types.FieldTypeSubForm into a FlatForms
+func flattenSubForm(rootForm, owner, subForm types.FormInterface, field *types.FieldDefinition) (FlatForms, error) {
+	var flattenedForm = &Form{
+		ID:          field.ID,
+		DatabaseID:  rootForm.GetDatabaseID(),
+		RootOwnerID: rootForm.GetFormID(),
+		OwnerID:     owner.GetFormID(),
+		Name:        field.Name,
+	}
+	result := FlatForms{
+		Forms: []*Form{flattenedForm},
+	}
+	for _, field := range field.FieldType.SubForm.GetFields() {
+		flatField, err := flattenField(rootForm, subForm, field)
+		if err != nil {
+			return FlatForms{}, err
+		}
+		result = result.Add(flatField)
+	}
+	return result, nil
+}
+
+// flattenField converts a types.FieldDefinition into a flat storage structure
+func flattenField(rootForm, form types.FormInterface, field *types.FieldDefinition) (FlatForms, error) {
+	fieldKind, err := field.FieldType.GetFieldKind()
+	if err != nil {
+		return FlatForms{}, err
+	}
+	switch fieldKind {
+	case types.FieldKindText:
+		return flattenTextField(rootForm, form, field)
+	case types.FieldKindSubForm:
+		return flattenSubFormField(rootForm, form, field)
+	case types.FieldKindReference:
+		return flattenReferenceField(rootForm, form, field)
+	case types.FieldKindMultilineText:
+		return flattenMultilineTextField(rootForm, form, field)
+	case types.FieldKindDate:
+		return flattenDateField(rootForm, form, field)
+	case types.FieldKindQuantity:
+		return flattenQuantityField(rootForm, form, field)
+	case types.FieldKindMonth:
+		return flattenMonthField(rootForm, form, field)
+	case types.FieldKindWeek:
+		return flattenWeekField(rootForm, form, field)
+	case types.FieldKindSingleSelect:
+		return flattenSingleSelectField(rootForm, form, field)
+	}
+	return FlatForms{}, fmt.Errorf("unprocessable field kind %v", fieldKind)
+}
+
+// getFieldsDefault returns the default storage representation for a types.FieldDefinition
+func getFieldsDefault(rootForm, form types.FormInterface, textField *types.FieldDefinition) *Field {
+	return &Field{
+		ID:          textField.ID,
+		DatabaseID:  form.GetDatabaseID(),
+		FormID:      form.GetFormID(),
+		RootFormID:  rootForm.GetFormID(),
+		Name:        textField.Name,
+		Description: textField.Description,
+		Code:        textField.Code,
+		Key:         textField.Key,
+		Required:    textField.Required,
+	}
+}
+
+// flattenTextField flattens a types.FieldTypeText
+func flattenTextField(rootForm, form types.FormInterface, field *types.FieldDefinition) (FlatForms, error) {
+	storedField := getFieldsDefault(rootForm, form, field)
+	storedField.Type = types.FieldKindText
+	return FlatForms{Fields: []*Field{storedField}}, nil
+}
+
+// flattenMultilineTextField flattens a types.FieldTypeMultilineText
+func flattenMultilineTextField(rootForm, form types.FormInterface, field *types.FieldDefinition) (FlatForms, error) {
+	storedField := getFieldsDefault(rootForm, form, field)
+	storedField.Type = types.FieldKindMultilineText
+	return FlatForms{Fields: []*Field{storedField}}, nil
+}
+
+// flattenDateField flattens a types.FieldTypeDate
+func flattenDateField(rootForm, form types.FormInterface, field *types.FieldDefinition) (FlatForms, error) {
+	storedField := getFieldsDefault(rootForm, form, field)
+	storedField.Type = types.FieldKindDate
+	return FlatForms{Fields: []*Field{storedField}}, nil
+}
+
+// flattenMonthField flattens a types.FieldTypeMonth
+func flattenMonthField(rootForm, form types.FormInterface, field *types.FieldDefinition) (FlatForms, error) {
+	storedField := getFieldsDefault(rootForm, form, field)
+	storedField.Type = types.FieldKindMonth
+	return FlatForms{Fields: []*Field{storedField}}, nil
+}
+
+// flattenWeekField flattens a types.FieldTypeWeek
+func flattenWeekField(rootForm, form types.FormInterface, field *types.FieldDefinition) (FlatForms, error) {
+	storedField := getFieldsDefault(rootForm, form, field)
+	storedField.Type = types.FieldKindWeek
+	return FlatForms{Fields: []*Field{storedField}}, nil
+}
+
+// flattenQuantityField flattens a types.FieldTypeQuantity
+func flattenQuantityField(rootForm, form types.FormInterface, field *types.FieldDefinition) (FlatForms, error) {
+	storedField := getFieldsDefault(rootForm, form, field)
+	storedField.Type = types.FieldKindQuantity
+	return FlatForms{Fields: []*Field{storedField}}, nil
+}
+
+// flattenReferenceField flattens a types.FieldTypeReference
+func flattenReferenceField(rootForm, form types.FormInterface, field *types.FieldDefinition) (FlatForms, error) {
+	storedField := getFieldsDefault(rootForm, form, field)
+	storedField.Type = types.FieldKindReference
+	storedField.ReferencedDatabaseID = pointers.String(field.FieldType.Reference.DatabaseID)
+	storedField.ReferencedFormID = pointers.String(field.FieldType.Reference.FormID)
+	return FlatForms{Fields: []*Field{storedField}}, nil
+}
+
+// flattenSingleSelectField flattens a types.FieldTypeSingleSelect
+func flattenSingleSelectField(rootForm, form types.FormInterface, field *types.FieldDefinition) (FlatForms, error) {
+	storedField := getFieldsDefault(rootForm, form, field)
+	storedField.Type = types.FieldKindSingleSelect
+	storedField.ReferencedDatabaseID = pointers.String(field.FieldType.Reference.DatabaseID)
+	storedField.ReferencedFormID = pointers.String(field.FieldType.Reference.FormID)
+	return FlatForms{Fields: []*Field{storedField}}, nil
+}
+
+// flattenSubFormField flattens a types.FieldTypeSubForm
+func flattenSubFormField(rootForm, form types.FormInterface, field *types.FieldDefinition) (FlatForms, error) {
+	storedField := getFieldsDefault(rootForm, form, field)
+	storedField.Type = types.FieldKindSubForm
+	storedField.SubFormID = pointers.String(field.ID)
+	flatField := FlatForms{Fields: []*Field{storedField}}
+	subForm, err := form.FindSubForm(field.ID)
+	if err != nil {
+		return FlatForms{}, err
+	}
+	flatSubForm, err := flattenSubForm(rootForm, form, subForm, field)
+	if err != nil {
+		return FlatForms{}, err
+	}
+	return flatField.Add(flatSubForm), nil
 }

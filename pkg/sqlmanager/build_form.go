@@ -17,8 +17,8 @@ func getSQLActionsForForm(formInterface types.FormInterface) (sqlActions, error)
 	}
 
 	// If the form is a subform, then we also add the "owner_id" column
-	if formInterface.HasOwner() {
-		columns = append(columns, buildSubFormOwnerColumn(formInterface))
+	if subForm, ok := formInterface.(types.SubFormInterface); ok {
+		columns = append(columns, buildSubFormOwnerColumn(subForm))
 	}
 
 	// Append the sqlActionCreateTable to the list of actions

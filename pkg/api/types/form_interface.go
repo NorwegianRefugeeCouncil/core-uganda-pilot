@@ -2,7 +2,6 @@ package types
 
 import (
 	"fmt"
-	"reflect"
 )
 
 // FormInterface is a common interface between a FormDefinition and a FieldTypeSubForm.
@@ -10,54 +9,52 @@ import (
 // a single type.
 type FormInterface interface {
 	FormReference
+
 	// GetFields returns the form/subform fields
 	GetFields() FieldDefinitions
-	// GetOwner returns the parent of the FormInterface, in the case that this is a SubForm
-	GetOwner() FormInterface
-	// HasOwner returns whether the FormInterface has a parent or not
-	// This would be true if the form is a SubForm
-	HasOwner() bool
+
 	// FindSubForm will recursively try to find a form or subform
 	// with the given ID
+	// TODO remove this from the FormInterface. Add a method without received FindSubForm(f FormInterface) SubFormInterface
+	// Also dont make it recursive
 	FindSubForm(subFormId string) (FormInterface, error)
 }
 
-// formInterface is the implementation of FormInterface
-type formInterface struct {
-	parent     FormInterface
-	id         string
-	databaseId string
-	fields     FieldDefinitions
+type SubFormInterface interface {
+	FormInterface
+	GetOwnerFormID() string
+}
+
+// subFormInterface is the implementation of FormInterface
+type subFormInterface struct {
+	ownerFormID string
+	id          string
+	databaseId  string
+	fields      FieldDefinitions
 }
 
 // GetFormID implements FormInterface.GetID
-func (f *formInterface) GetFormID() string {
+func (f *subFormInterface) GetFormID() string {
 	return f.id
 }
 
 // GetFields implements FormInterface.GetFields
-func (f *formInterface) GetFields() FieldDefinitions {
+func (f *subFormInterface) GetFields() FieldDefinitions {
 	return f.fields
 }
 
-// GetOwner implements FormInterface.GetOwner
-func (f *formInterface) GetOwner() FormInterface {
-	return f.parent
-}
-
-// HasOwner implements FormInterface.HasOwner
-func (f *formInterface) HasOwner() bool {
-	parentValue := reflect.ValueOf(f.parent)
-	return parentValue.Kind() == reflect.Ptr && !parentValue.IsNil()
-}
-
 // GetDatabaseID implements FormInterface.GetDatabaseID
-func (f *formInterface) GetDatabaseID() string {
+func (f *subFormInterface) GetDatabaseID() string {
 	return f.databaseId
 }
 
+// GetOwnerFormID implements SubFormInterface.GetOwnerFormID
+func (f *subFormInterface) GetOwnerFormID() string {
+	return f.ownerFormID
+}
+
 // FindSubForm implements FormInterface.FindSubForm
-func (f *formInterface) FindSubForm(subFormId string) (FormInterface, error) {
+func (f *subFormInterface) FindSubForm(subFormId string) (FormInterface, error) {
 	var foundInterface FormInterface
 	for _, field := range f.fields {
 		isSubForm, err := field.FieldType.IsKind(FieldKindSubForm)
@@ -87,16 +84,16 @@ func (f *formInterface) FindSubForm(subFormId string) (FormInterface, error) {
 }
 
 // childFormInterface returns a FormInterface for the given SubForm field
-func (f *formInterface) childFormInterface(field *FieldDefinition) FormInterface {
-	return newFormInterface(f, f.databaseId, field.ID, field.FieldType.SubForm.Fields)
+func (f *subFormInterface) childFormInterface(field *FieldDefinition) FormInterface {
+	return newFormInterface(f.GetFormID(), f.databaseId, field.ID, field.FieldType.SubForm.Fields)
 }
 
 // newFormInterface returns a new instance of a FormInterface
-func newFormInterface(parent FormInterface, databaseId, id string, fields FieldDefinitions) FormInterface {
-	return &formInterface{
-		databaseId: databaseId,
-		parent:     parent,
-		id:         id,
-		fields:     fields,
+func newFormInterface(ownerId string, databaseId, id string, fields FieldDefinitions) FormInterface {
+	return &subFormInterface{
+		databaseId:  databaseId,
+		ownerFormID: ownerId,
+		id:          id,
+		fields:      fields,
 	}
 }

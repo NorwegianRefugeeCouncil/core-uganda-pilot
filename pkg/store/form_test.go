@@ -67,7 +67,6 @@ func Test_mapToFormDefinitions(t *testing.T) {
 				}, {
 					ID:          "formId2",
 					DatabaseID:  "db",
-					FolderID:    pointers.String("folder"),
 					RootOwnerID: "formId1",
 					OwnerID:     "formId1",
 					Name:        "form2",
@@ -116,14 +115,12 @@ func Test_mapToFormDefinitions(t *testing.T) {
 				}, {
 					ID:          "formId2",
 					DatabaseID:  "db",
-					FolderID:    pointers.String("folder"),
 					RootOwnerID: "formId1",
 					OwnerID:     "formId1",
 					Name:        "form2",
 				}, {
 					ID:          "formId3",
 					DatabaseID:  "db",
-					FolderID:    pointers.String("folder"),
 					RootOwnerID: "formId1",
 					OwnerID:     "formId1",
 					Name:        "form3",
@@ -188,14 +185,12 @@ func Test_mapToFormDefinitions(t *testing.T) {
 				}, {
 					ID:          "formId2",
 					DatabaseID:  "db",
-					FolderID:    pointers.String("folder"),
 					RootOwnerID: "formId1",
 					OwnerID:     "formId1",
 					Name:        "form2",
 				}, {
 					ID:          "formId3",
 					DatabaseID:  "db",
-					FolderID:    pointers.String("folder"),
 					RootOwnerID: "formId1",
 					OwnerID:     "formId2",
 					Name:        "form3",
@@ -253,22 +248,27 @@ func Test_mapToFormDefinitions(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotFd, err := mapToFormDefinitions(tt.forms, tt.fields)
-			if tt.wantErr && !assert.Error(t, err) {
+
+			flatForm := FlatForms{
+				Fields: tt.fields,
+				Forms:  tt.forms,
+			}
+			gotFd, err := flatForm.hydrateForms()
+			if tt.wantErr {
+				assert.Error(t, err)
 				return
 			}
 			if !tt.wantErr && !assert.NoError(t, err) {
 				return
 			}
+
 			assert.Equal(t, tt.want, gotFd)
 
-			frms, flds, err := mapToFormFields(gotFd[0])
-			for i, form := range tt.forms {
-				assert.Equal(t, form, frms[i])
+			reFlattened, err := flattenForm(gotFd[0])
+			if !assert.NoError(t, err) {
+				return
 			}
-			for i, fld := range tt.fields {
-				assert.Equal(t, fld, flds[i])
-			}
+			assert.Equal(t, flatForm, reFlattened)
 
 		})
 	}
