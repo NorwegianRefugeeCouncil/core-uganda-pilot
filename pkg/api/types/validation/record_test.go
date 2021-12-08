@@ -14,24 +14,30 @@ import (
 func TestValidateRecord(t *testing.T) {
 
 	var (
-		formId     = uuid.NewV4().String()
-		fieldId    = uuid.NewV4().String()
-		databaseId = uuid.NewV4().String()
+		formId      = uuid.NewV4().String()
+		fieldId     = uuid.NewV4().String()
+		databaseId  = uuid.NewV4().String()
+		ownerFormId = uuid.NewV4().String()
 	)
 
+	textFormOpts := []tu.FormOption{
+		tu.FormID(formId),
+		tu.FormDatabaseID(databaseId),
+		tu.FormField(&types.FieldDefinition{
+			ID: fieldId,
+			FieldType: types.FieldType{
+				Text: &types.FieldTypeText{},
+			},
+		}),
+	}
+
 	aTextForm := func(options ...tu.FormOption) types.FormInterface {
-		opts := []tu.FormOption{
-			tu.FormID(formId),
-			tu.FormDatabaseID(databaseId),
-			tu.FormField(&types.FieldDefinition{
-				ID: fieldId,
-				FieldType: types.FieldType{
-					Text: &types.FieldTypeText{},
-				},
-			}),
-		}
-		opts = append(opts, options...)
-		f := tu.AForm(opts...)
+		f := tu.AForm(append(textFormOpts, options...)...)
+		return f
+	}
+
+	aTextSubForm := func(options ...tu.FormOption) types.FormInterface {
+		f := tu.ASubForm(ownerFormId, append(textFormOpts, options...)...)
 		return f
 	}
 
@@ -81,21 +87,21 @@ func TestValidateRecord(t *testing.T) {
 			},
 		}, {
 			name:          "missing ownerId",
-			form:          aTextForm(tu.FormIsSubForm(true)),
+			form:          aTextSubForm(),
 			recordOptions: tu.RecordOwnerID(nil),
 			expect: validation.ErrorList{
 				validation.Required(validation.NewPath("ownerId"), errRecordOwnerIdRequired),
 			},
 		}, {
 			name:          "empty ownerId",
-			form:          aTextForm(tu.FormIsSubForm(true)),
+			form:          aTextSubForm(),
 			recordOptions: tu.RecordOwnerID(pointers.String("")),
 			expect: validation.ErrorList{
 				validation.Required(validation.NewPath("ownerId"), errRecordOwnerIdRequired),
 			},
 		}, {
 			name:          "invalid ownerId",
-			form:          aTextForm(tu.FormIsSubForm(true)),
+			form:          aTextSubForm(),
 			recordOptions: tu.RecordOwnerID(pointers.String("abc")),
 			expect: validation.ErrorList{
 				validation.Invalid(validation.NewPath("ownerId"), "abc", errRecordInvalidOwnerID),

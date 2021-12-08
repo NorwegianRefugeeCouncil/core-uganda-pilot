@@ -279,33 +279,3 @@ func (m *mockSqlReader) Scan(intf ...interface{}) error {
 }
 
 var _ sqlReader = &mockSqlReader{}
-
-type mockForm struct {
-	id         string
-	databaseId string
-	owner      types.FormInterface
-	isSubForm  bool
-	fields     []*types.FieldDefinition
-}
-
-func (m mockForm) GetFormID() string {
-	return m.id
-}
-
-func (m mockForm) GetDatabaseID() string {
-	return m.databaseId
-}
-
-func (m mockForm) GetFields() types.FieldDefinitions {
-	return m.fields
-}
-
-func (m mockForm) IsSubForm() bool {
-	return m.isSubForm
-}
-
-func (m mockForm) FindSubForm(subFormId string) (types.FormInterface, error) {
-	panic("not implemented")
-}
-
-var _ types.FormInterface = &mockForm{}

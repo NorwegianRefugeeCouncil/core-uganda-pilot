@@ -14,17 +14,22 @@ import (
 func Test_formWriter_WriteRecords(t *testing.T) {
 
 	const (
-		formId     = "formId"
-		databaseId = "databaseId"
+		formId      = "formId"
+		databaseId  = "databaseId"
+		ownerFormId = "ownerFormId"
 	)
 
+	formOpts := []tu.FormOption{
+		tu.FormID(formId),
+		tu.FormDatabaseID(databaseId),
+	}
+
 	formWithFields := func(options ...tu.FormOption) types.FormInterface {
-		opts := []tu.FormOption{
-			tu.FormID(formId),
-			tu.FormDatabaseID(databaseId),
-		}
-		f := tu.AForm(append(opts, options...)...)
-		return f
+		return tu.AForm(append(formOpts, options...)...)
+	}
+
+	subFormWithFields := func(options ...tu.FormOption) types.FormInterface {
+		return tu.ASubForm(ownerFormId, append(formOpts, options...)...)
 	}
 
 	aRecord := func(options ...tu.RecordOption) *types.Record {
@@ -222,8 +227,7 @@ func Test_formWriter_WriteRecords(t *testing.T) {
 			wantErr: true,
 		}, {
 			name: "record with owner",
-			form: formWithFields(
-				tu.FormIsSubForm(true),
+			form: subFormWithFields(
 				tu.FormField(tu.AField(tu.FieldID("fieldId"), tu.FieldTypeQuantity())),
 			),
 			records: aSingleRecord(

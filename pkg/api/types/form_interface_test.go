@@ -75,12 +75,12 @@ func TestFindSubForm3(t *testing.T) {
 					},
 				},
 			},
-		},  {
-			name:        "formInterface child",
+		}, {
+			name:        "subFormInterface child",
 			expectFound: true,
 			id:          "subForm",
-			form: &formInterface{
-				id: "formInterface",
+			form: &subFormInterface{
+				id: "subFormInterface",
 				fields: FieldDefinitions{
 					{
 						ID: "subForm",
@@ -91,15 +91,15 @@ func TestFindSubForm3(t *testing.T) {
 						},
 					},
 				},
-				databaseId: "databaseId",
-				parent:     nil,
+				databaseId:  "databaseId",
+				ownerFormID: "",
 			},
 		}, {
-			name:        "formInterface nested child",
+			name:        "subFormInterface nested child",
 			expectFound: true,
 			id:          "nestedSubForm",
-			form: &formInterface{
-				id: "formInterface",
+			form: &subFormInterface{
+				id: "subFormInterface",
 				fields: FieldDefinitions{
 					{
 						ID: "subForm",
@@ -121,11 +121,11 @@ func TestFindSubForm3(t *testing.T) {
 				},
 			},
 		}, {
-			name:      "formInterface missing field type",
+			name:      "subFormInterface missing field type",
 			expectErr: true,
 			id:        "missingType",
-			form: &formInterface{
-				id: "formInterface",
+			form: &subFormInterface{
+				id: "subFormInterface",
 				fields: FieldDefinitions{
 					{
 						ID: "missingType",
@@ -133,11 +133,11 @@ func TestFindSubForm3(t *testing.T) {
 				},
 			},
 		}, {
-			name:      "formInterface missing nested field type",
+			name:      "subFormInterface missing nested field type",
 			expectErr: true,
 			id:        "missing-field-type",
-			form: &formInterface{
-				id: "formInterface",
+			form: &subFormInterface{
+				id: "subFormInterface",
 				fields: FieldDefinitions{
 					{
 						ID: "subForm",

@@ -32,7 +32,7 @@ func subFormFieldActions(formInterface types.FormInterface, fieldDefinition *typ
 }
 
 // buildSubFormOwnerColumn creates the "owner_id" column. This is only applicable for SubForms.
-func buildSubFormOwnerColumn(formInterface types.FormInterface) schema.SQLColumn {
+func buildSubFormOwnerColumn(formInterface types.SubFormInterface) schema.SQLColumn {
 	return schema.SQLColumn{
 		Name: keyOwnerIdColumn,
 		DataType: schema.SQLDataType{
@@ -49,7 +49,7 @@ func buildSubFormOwnerColumn(formInterface types.FormInterface) schema.SQLColumn
 				// This adds a "foreign_key" constraint to the parent table
 				Reference: &schema.ReferenceSQLColumnConstraint{
 					Schema:   formInterface.GetDatabaseID(),
-					Table:    formInterface.GetFormID(),
+					Table:    formInterface.GetOwnerFormID(),
 					Column:   keyIdColumn,
 					OnDelete: schema.ActionCascade,
 					OnUpdate: schema.ActionCascade,
