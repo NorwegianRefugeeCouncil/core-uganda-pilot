@@ -113,8 +113,7 @@ export const WeekFieldEditor: FC<FieldEditorProps> = props => {
     }
 
     function onChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
-        const value = event.target.value;
-        if (!isValidWeek(value)) return;
+        if (!isValidWeek(event.target.value)) return;
         setValue(event.target.value);
     }
 

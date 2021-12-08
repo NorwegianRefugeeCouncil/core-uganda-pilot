@@ -6,7 +6,6 @@ import {fetchDatabases} from "../../reducers/database";
 import {fetchFolders} from "../../reducers/folder";
 import {fetchRecords, selectRecordsForForm, selectRecordsSubFormCounts} from "../../reducers/records";
 import {Link} from "react-router-dom";
-import format from "date-fns/format"
 
 type subFormCountFn = (recordId: string, fieldId: string) => number
 
