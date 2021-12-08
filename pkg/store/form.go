@@ -51,33 +51,45 @@ func NewFormStore(db Factory) FormStore {
 
 // Form represents the data structure used to store a types.FormDefinition
 type Form struct {
+
 	// ID stores the types.FormDefinition ID
 	ID string `gorm:"index:idx_form_id_database_id,unique"`
+
 	// DatabaseID stores the types.FormDefinition DatabaseID
 	DatabaseID string `gorm:"index:idx_form_id_database_id,unique"`
+
 	// Database is used so that gorm creates a (not nullable) Foreign Key on the Database table
 	Database Database
+
 	// RootOwnerID is present because when we want to fetch the root form and all SubForms
 	// for a given FormDefinition, we can simply query WHERE root_owner_id = <RootFormID>.
 	// This will retrieve all the forms, subforms and nested subforms that are part
 	// of the same FormDefinition
 	RootOwnerID string
+
 	// RootOwner is the gorm hack to create a (not nullable) Foreign Key on the Form table
 	RootOwner *Form
+
 	// OwnerID represents a SubForm owner OR, when the form is the root form (FormDefinition)
 	// then the OwnerID == ID. It's nice like this because we can query all root FormDefinitions
 	// with a query like "SELECT * FROM forms where id == owner_id"
 	OwnerID string
+
 	// Owner is the same gorm hack to create a (not nullable) foreign key on the Form table
 	Owner *Form
+
 	// FolderID stores the types.FormDefinition FolderID
 	FolderID *string
+
 	// Folder is the gorm hack to create a (nullable) foreign key on the Folder table
 	Folder *Folder
+
 	// Name stores the types.FormDefinition Name
 	Name string
+
 	// CreatedAt represents when this form was created
 	CreatedAt time.Time
+
 	// UpdatedAt represents when this form was updated
 	UpdatedAt time.Time
 }
@@ -151,14 +163,19 @@ type Fields []*Field
 
 // Option represents the data structure used to store options for a types.FieldTypeMultiSelect or types.FieldTypeSingleSelect
 type Option struct {
+
 	// DatabaseID stores the Form's DatabaseID
 	DatabaseID string `gorm:"primarykey"`
+
 	// RootFormID stores the root FormID. See Form.RootOwnerID
 	RootFormID string `gorm:"primarykey"`
+
 	// FormID stores the FormID of the single/multi select field
 	FormID string `gorm:"primarykey"`
+
 	// FieldID stores the single/multi select Field.ID
 	FieldID string `gorm:"primarykey"`
+
 	// Value stores the value for that option
 	Value string `gorm:"primarykey"`
 }
