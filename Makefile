@@ -34,52 +34,18 @@ clear-db:
 .PHONY: reset-db
 reset-db: clear-db migrate
 
-.PHONY: build-client
-build-client:
-	@./scripts/build-client.sh
 
-.PHONY: build-auth
-build-auth:
-	@./scripts/build-auth.sh
-
-.PHONY: build-design-system
-build-design-system:
-	@./scripts/build-design-system.sh
-
-.PHONY: build-admin
-build-admin: build-client build-auth
-	@./scripts/build-admin.sh
-
-.PHONY: build-frontend
-build-frontend: build-client build-design-system
+.PHONY: build-frontend 
+build-frontend:
 	@./scripts/build-frontend.sh
 
-.PHONY: build-pwa
-build-pwa: build-client build-auth
-	@./scripts/build-pwa.sh
+.PHONY: prepare-frontend 
+prepare-frontend:
+	@./scripts/prepare-frontend.sh
 
-.PHONY: build-all
-build-all: build-frontend build-pwa build-admin
-
-.PHONY: build-storybook
-build-storybook: build-design-system
-	@./scripts/build-storybook.sh
-
-.PHONY: serve
-serve:
-	@./scripts/serve.sh
-
-.PHONY: serve-frontend
-frontend:
-	@./scripts/frontend.sh
-
-.PHONY: watch
-watch:
-	@./scripts/watch.sh
-
-.PHONY: package
-package:
-	@./scripts/package.sh
+.PHONY: serve-native
+serve-native:
+	@./scripts/serve-native.sh
 
 .PHONY: serve-pwa
 serve-pwa:
@@ -92,6 +58,18 @@ serve-admin:
 .PHONY: serve-storybook
 serve-storybook:
 	@./scripts/serve-storybook.sh
+
+.PHONY: serve
+serve:
+	@./scripts/serve.sh
+
+.PHONY: watch
+watch:
+	@./scripts/watch.sh
+
+.PHONY: package
+package:
+	@./scripts/package.sh
 
 .PHONY: docs
 docs:

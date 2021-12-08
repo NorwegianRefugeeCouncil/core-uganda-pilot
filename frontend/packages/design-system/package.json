@@ -1,19 +1,63 @@
 {
-  "name": "design-system",
-  "version": "0.1.0",
-  "description": "> TODO: description",
-  "homepage": "https://github.com/nrc-no/core#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/nrc-no/core.git"
+  "name": "core-design-system",
+  "version": "0.0.1",
+  "private": true,
+  "main": "lib/cjs/index.js",
+  "module": "lib/esm/index.js",
+  "types": "./lib/esm/index.d.ts",
+  "files": [
+    "README.md",
+    "lib"
+  ],
+  "dependencies": {
+    "native-base": "~3.2.2",
+    "react-native-safe-area-context": "~3.3.2",
+    "react-native-svg": "~12.1.1",
+    "react-native-web": "~0.17.5",
+    "react-scripts": "4.0.3",
+    "web-vitals": "~1.0.1"
   },
-  "bugs": {
-    "url": "https://github.com/nrc-no/core/issues"
+  "devDependencies": {
+    "@babel/core": "^7.16.0",
+    "@babel/preset-env": "^7.1.6",
+    "@testing-library/dom": ">=7.21.4",
+    "@testing-library/jest-dom": "~5.11.4",
+    "@testing-library/react": "~11.1.0",
+    "@testing-library/user-event": "~12.1.10",
+    "@types/react-native": "~0.64.19",
+    "react-native": "~0.64.3"
   },
-  "publishConfig": {
-    "access": "public"
+  "peerDependencies": {
+    "react": "17.x",
+    "react-native": "17.x",
+    "@types/react": "17.x",
+    "@types/react-dom": "17.x",
+    "typescript": "4.x"
   },
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "build": "yarn build:esm && yarn build:cjs",
+    "build:esm": "tsc",
+    "build:cjs": "tsc --module commonjs --outDir lib/cjs"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "resolutions": {
+    "**/ua-parser-js": "0.7.28"
   }
 }

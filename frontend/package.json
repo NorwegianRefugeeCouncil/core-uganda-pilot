@@ -3,16 +3,20 @@
   "private": true,
   "scripts": {
     "start:admin": "lerna run --scope admin start",
-    "start:native": "lerna run --scope native start",
-    "start:pwa": "lerna run --scope pwa start",
+    "start:native": "lerna run --scope core-native start",
+    "start:pwa": "lerna run --scope core-pwa start",
+    "start:storybook": "lerna run --scope core-design-system-storybook start",
     "build": "lerna run build",
+    "build:packages": "lerna run --scope core-js-api-client --scope core-auth --scope core-design-system build",
     "build:admin": "lerna run --scope admin build",
     "build:native": "lerna run --scope native build",
     "build:pwa": "lerna run --scope pwa build",
-    "build:core-api-client": "lerna run --scope core-api-client build",
+    "build:core-api-client": "lerna run --scope core-js-api-client build",
     "build:core-auth": "lerna run --scope core-auth build",
+    "build:design-system": "lerna run --scope core-design-system build",
     "lint": "lerna run lint",
-    "test": "lerna run test"
+    "test": "lerna run test",
+    "test:stable": "lerna run --scope core-native --scope core-auth test"
   },
   "workspaces": [
     "apps/*",
@@ -20,6 +24,17 @@
     "storybook"
   ],
   "devDependencies": {
-    "lerna": "^4.0.0"
+    "@types/react": "^17.0.37",
+    "@types/react-dom": "^17.0.11",
+    "lerna": "^4.0.0",
+    "typescript": "^4.5.2"
+  },
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "resolutions": {
+    "babel-loader": "8.1.0",
+    "jest": "26.6.0"
   }
 }

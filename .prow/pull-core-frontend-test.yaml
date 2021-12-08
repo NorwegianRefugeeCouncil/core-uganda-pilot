@@ -1,0 +1,13 @@
+postsubmits:
+  - name: pull-core-frontend-test
+    run_if_changed: "^frontend"
+    decorate: true
+    spec:
+      containers:
+        - image: node
+          command: [ "bash", "-c" ]
+          args:
+            - >
+              ./scripts/prepare-frontend.sh &&
+              cd frontend &&
+              yarn test:stable

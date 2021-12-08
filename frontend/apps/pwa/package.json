@@ -1,17 +1,73 @@
 {
-  "name": "pwa",
+  "name": "core-pwa",
+  "version": "0.0.1",
   "private": true,
-  "version": "0.1.0",
-  "description": "> TODO: description",
-  "homepage": "https://github.com/nrc-no/core#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/nrc-no/core.git"
-  },
-  "bugs": {
-    "url": "https://github.com/nrc-no/core/issues"
-  },
+  "homepage": "/app/",
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "postinstall": "cp ../../node_modules/sql.js/dist/sql-wasm.wasm public/sql-wasm.wasm",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^1.5.1",
+    "axios": "^0.23.0",
+    "bootstrap": "^5.1.3",
+    "bootstrap-icons": "^1.6.1",
+    "core-js-api-client": "0.0.1",
+    "core-auth": "0.0.1",
+    "date-fns": "^2.25.0",
+    "loglevel": "^1.7.1",
+    "oauth-pkce": "^0.0.6",
+    "oidc-react": "^1.5.1",
+    "pako": "^2.0.4",
+    "qs": "^6.10.1",
+    "react-hook-form": "^7.17.5",
+    "react-redux": "^7.2.0",
+    "react-router-dom": "^5.3.0",
+    "react-scripts": "4.0.3",
+    "react-table": "^7.7.0",
+    "sql.js": "^1.6.2",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^8.11.1",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "@types/jest": "^24.0.0",
+    "@types/node": "^12.0.0",
+    "@types/pako": "^1.0.2",
+    "@types/qs": "^6.9.7",
+    "@types/react-redux": "^7.1.7",
+    "@types/react-router-dom": "^5.3.1",
+    "@types/sql.js": "^1.4.3",
+    "@types/uuid": "^8.3.1"
+  },
+  "peerDependencies": {
+    "react": "17.x",
+    "react-native": "17.x",
+    "@types/react": "17.x",
+    "@types/react-dom": "17.x",
+    "typescript": "4.x"
+  },
+  "resolutions": {
+    "**/ua-parser-js": "0.7.28"
   }
 }

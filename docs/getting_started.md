@@ -27,7 +27,7 @@
 - Migrate the database `make migrate`
 - Create initial configuration `make bootstrap`
 - Start the server `make serve`
-- Start the frontend `make serve-pwa`
+- Start the pwa frontend `make serve-pwa`
 - Start the admin frontend `make serve-admin`
 - Open the browser http://localhost:3000
     - Authenticate with \<whatever\>`@nrc.no` (any email ending with `nrc.no`)
