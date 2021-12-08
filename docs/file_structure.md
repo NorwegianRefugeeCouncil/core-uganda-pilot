@@ -34,8 +34,14 @@
 │     │     └── sets       # set utilities
 │     └── validation       # validation utilities
 ├── scripts                # various scripts
-└── web                    # web application
-    ├── app                # mobile app
-    └── pwa                # portal app
+└── frontend               # frontend lerna monorepo 
+    ├── apps               # frontend applications
+    |   ├── native         # core react native application
+    |   ├── pwa            # core pwa
+    |   ├── admin          # identity provider admin application 
+    └── packages           # frontend shared packages
+        ├── core-api-client# core api client
+        ├── core-auth      # core authentication react component
+        ├── design-system  # core react native desgin system
 
 ```
