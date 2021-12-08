@@ -5,6 +5,7 @@
     "start:admin": "lerna run --scope admin start",
     "start:native": "lerna run --scope core-native start",
     "start:pwa": "lerna run --scope core-pwa start",
+    "start:storybook": "lerna run --scope core-design-system-storybook start",
     "build": "lerna run build",
     "build:packages": "lerna run --scope core-js-api-client --scope core-auth --scope core-design-system build",
     "build:admin": "lerna run --scope admin build",

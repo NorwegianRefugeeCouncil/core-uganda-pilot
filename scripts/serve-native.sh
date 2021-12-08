@@ -1,5 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/bash
+set -e
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 
-cd web/app/frontend || exit
+(cd "${SCRIPT_DIR}/../frontend" && yarn start:pwa)
 
-yarn start

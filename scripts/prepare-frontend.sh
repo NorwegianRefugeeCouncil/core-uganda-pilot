@@ -5,7 +5,5 @@ ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 set -e
 
-echo ">> Building web/admin"
-(cd "${ROOT_DIR}/web/admin" && yarn install)
-
-
+(cd "${ROOT_DIR}/frontend" && yarn install)
+(cd "${ROOT_DIR}/frontend" && yarn build:packages)
