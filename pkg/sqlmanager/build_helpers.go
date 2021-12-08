@@ -41,7 +41,7 @@ func buildKeyFieldActions(formInterface types.FormInterface) sqlActions {
 // the ID column is also configured to be the primary key
 func buildTableIDColumn() schema.SQLColumn {
 	return schema.SQLColumn{
-		Name: "id",
+		Name: keyIdColumn,
 		DataType: schema.SQLDataType{
 			VarChar: &schema.SQLDataTypeVarChar{
 				Length: 36,
@@ -59,7 +59,7 @@ func buildTableIDColumn() schema.SQLColumn {
 // The value for this column has a default value of NOW()
 func buildTableCreatedAtColumn() schema.SQLColumn {
 	return schema.SQLColumn{
-		Name:    "created_at",
+		Name:    keyCreatedAtColumn,
 		Default: "NOW()",
 		DataType: schema.SQLDataType{
 			Timestamp: &schema.SQLDataTypeTimestamp{

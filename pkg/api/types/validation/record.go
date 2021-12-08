@@ -1,11 +1,11 @@
 package validation
 
 import (
-	"fmt"
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/utils/sets"
 	"github.com/nrc-no/core/pkg/validation"
 	uuid "github.com/satori/go.uuid"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -18,7 +18,6 @@ const (
 	errRecordOwnerIdRequired     = "Record owner ID is required"
 	errRecordInvalidOwnerID      = "Record owner ID is invalid"
 	errRecordValuesRequired      = "Record values are required"
-	errInvalidFieldValueTypeF    = "Invalid value type for field. Expected %T, got %T"
 	errRecordInvalidDate         = "Invalid date. Expected YYYY-mm-DD"
 	errRecordInvalidMonth        = "Invalid date. Expected YYYY-mm"
 	errRecordInvalidQuantity     = "Invalid quantity"
@@ -86,7 +85,7 @@ func ValidateRecord(record *types.Record, form types.FormInterface) validation.E
 	return result
 }
 
-func ValidateRecordValues(path *validation.Path, recordValues map[string]interface{}, form types.FormInterface) validation.ErrorList {
+func ValidateRecordValues(path *validation.Path, recordValues types.FieldValues, form types.FormInterface) validation.ErrorList {
 	var result validation.ErrorList
 	if recordValues == nil {
 		return append(result, validation.Required(path, errRecordValuesRequired))
@@ -94,8 +93,17 @@ func ValidateRecordValues(path *validation.Path, recordValues map[string]interfa
 
 	// Keep track of what fields were sent as values
 	recordFieldIDs := sets.NewString()
-	for recordFieldID := range recordValues {
-		recordFieldIDs.Insert(recordFieldID)
+	recordFieldIndexes := map[string]int{}
+	recordValueMap := map[string]types.FieldValue{}
+	for i, recordValue := range recordValues {
+		recordValueFieldID := recordValue.FieldID
+		if recordFieldIDs.Has(recordValueFieldID) {
+			result = append(result, validation.Duplicate(path.Index(i).Child("fieldId"), recordValueFieldID))
+		} else {
+			recordValueMap[recordValueFieldID] = recordValue
+			recordFieldIndexes[recordValueFieldID] = i
+			recordFieldIDs.Insert(recordValueFieldID)
+		}
 	}
 
 	// Keep a map of the expected fields for that form
@@ -116,36 +124,37 @@ func ValidateRecordValues(path *validation.Path, recordValues map[string]interfa
 	}
 
 	// checking for values that the user sent that should not have been provided
-	extraneousFields := recordFieldIDs.Difference(expectedFieldIDs)
-	if !extraneousFields.IsEmpty() {
-		for _, extraneousItem := range extraneousFields.List() {
-			valuePath := path.Key(extraneousItem)
-			result = append(result, validation.NotSupported(valuePath, extraneousItem, expectedFieldIDs.List()))
+	extraneousFieldIDs := recordFieldIDs.Difference(expectedFieldIDs)
+	if !extraneousFieldIDs.IsEmpty() {
+		for _, extraneousFieldID := range extraneousFieldIDs.List() {
+			extraneousFieldValueIndex := recordFieldIndexes[extraneousFieldID]
+			valuePath := path.Index(extraneousFieldValueIndex)
+			result = append(result, validation.NotSupported(valuePath, extraneousFieldID, expectedFieldIDs.List()))
 		}
 	}
 
 	// checking for required fields that the user did not send
 	missingFieldIDs := expectedFieldIDs.Difference(recordFieldIDs)
 	for _, missingFieldID := range missingFieldIDs.List() {
-		fieldPath := path.Key(missingFieldID)
 		expectedField := expectedFieldMap[missingFieldID]
 		if expectedField.Required {
-			result = append(result, validation.Required(fieldPath, errFieldValueRequired))
+			result = append(result, validation.Required(path, errFieldValueRequired))
 		}
 	}
 
 	// validate the field values that the user provided
-	for _, fieldKey := range expectedFieldIDs.Intersection(recordFieldIDs).List() {
-		fieldPath := path.Key(fieldKey)
-		recordFieldValue := recordValues[fieldKey]
-		expectedField := expectedFieldMap[fieldKey]
+	for _, fieldID := range expectedFieldIDs.Intersection(recordFieldIDs).List() {
+		recordFieldIndex := recordFieldIndexes[fieldID]
+		fieldPath := path.Index(recordFieldIndex)
+		recordFieldValue := recordValueMap[fieldID].Value
+		expectedField := expectedFieldMap[fieldID]
 		result = append(result, ValidateRecordValue(fieldPath, recordFieldValue, expectedField)...)
 	}
 
 	return result
 }
 
-func ValidateRecordValue(path *validation.Path, value interface{}, field *types.FieldDefinition) validation.ErrorList {
+func ValidateRecordValue(path *validation.Path, value *string, field *types.FieldDefinition) validation.ErrorList {
 
 	var result validation.ErrorList
 	fieldKind, _ := field.FieldType.GetFieldKind()
@@ -168,7 +177,7 @@ func ValidateRecordValue(path *validation.Path, value interface{}, field *types.
 	return result
 }
 
-func ValidateRecordStringValue(path *validation.Path, value interface{}, field *types.FieldDefinition) validation.ErrorList {
+func ValidateRecordStringValue(path *validation.Path, value *string, field *types.FieldDefinition) validation.ErrorList {
 	_, result, done := getStringValue(path, value, field, validation.ErrorList{})
 	if done {
 		return result
@@ -176,75 +185,79 @@ func ValidateRecordStringValue(path *validation.Path, value interface{}, field *
 	return result
 }
 
-func ValidateRecordDateValue(path *validation.Path, value interface{}, field *types.FieldDefinition) validation.ErrorList {
+func ValidateRecordDateValue(path *validation.Path, value *string, field *types.FieldDefinition) validation.ErrorList {
 	stringValue, result, done := getStringValue(path, value, field, validation.ErrorList{})
 	if done {
 		return result
 	}
 	_, err := time.Parse("2006-01-02", stringValue)
 	if err != nil {
-		return append(result, validation.Invalid(path, value, errRecordInvalidDate))
+		valuePath := path.Child("value")
+		return append(result, validation.Invalid(valuePath, value, errRecordInvalidDate))
 	}
 	return result
 }
 
-func ValidateRecordMonthValue(path *validation.Path, value interface{}, field *types.FieldDefinition) validation.ErrorList {
+func ValidateRecordMonthValue(path *validation.Path, value *string, field *types.FieldDefinition) validation.ErrorList {
 	stringValue, result, done := getStringValue(path, value, field, validation.ErrorList{})
 	if done {
 		return result
 	}
 	_, err := time.Parse("2006-01", stringValue)
 	if err != nil {
-		return append(result, validation.Invalid(path, value, errRecordInvalidMonth))
+		valuePath := path.Child("value")
+		return append(result, validation.Invalid(valuePath, value, errRecordInvalidMonth))
 	}
 	return result
 }
 
-func ValidateRecordQuantityValue(path *validation.Path, value interface{}, field *types.FieldDefinition) validation.ErrorList {
+func ValidateRecordQuantityValue(path *validation.Path, value *string, field *types.FieldDefinition) validation.ErrorList {
 	var result validation.ErrorList
+	valuePath := path.Child("value")
 
 	if value == nil {
 		if field.Required {
-			result = append(result, validation.Required(path, errFieldValueRequired))
+			result = append(result, validation.Required(valuePath, errFieldValueRequired))
 		}
 		return result
 	}
 
-	_, ok := value.(int)
-	if !ok {
-		return append(result, validation.Invalid(path, value, errRecordInvalidQuantity))
+	stringValue := *value
+
+	_, err := strconv.Atoi(stringValue)
+	if err != nil {
+		return append(result, validation.Invalid(valuePath, value, errRecordInvalidQuantity))
 	}
+
 	// we don't assert the zero value for an int field
 	return result
 }
 
-func ValidateRecordReferenceValue(path *validation.Path, value interface{}, field *types.FieldDefinition) validation.ErrorList {
+func ValidateRecordReferenceValue(path *validation.Path, value *string, field *types.FieldDefinition) validation.ErrorList {
 	stringValue, result, done := getStringValue(path, value, field, validation.ErrorList{})
 	if done {
 		return result
 	}
+	valuePath := path.Child("value")
 	if _, err := uuid.FromString(stringValue); err != nil {
-		return append(result, validation.Invalid(path, value, errRecordInvalidReferenceUid))
+		return append(result, validation.Invalid(valuePath, value, errRecordInvalidReferenceUid))
 	}
 	return result
 }
 
-func getStringValue(path *validation.Path, value interface{}, field *types.FieldDefinition, result validation.ErrorList) (string, validation.ErrorList, bool) {
+func getStringValue(path *validation.Path, value *string, field *types.FieldDefinition, result validation.ErrorList) (string, validation.ErrorList, bool) {
+	valuePath := path.Child("value")
 	if value == nil {
 		if field.Required {
-			result = append(result, validation.Required(path, errFieldValueRequired))
+			result = append(result, validation.Required(valuePath, errFieldValueRequired))
 		}
 		return "", result, true
 	}
 
-	stringValue, ok := value.(string)
-	if !ok {
-		result = append(result, validation.Invalid(path, value, fmt.Sprintf(errInvalidFieldValueTypeF, "", value)))
-		return "", result, true
-	}
+	stringValue := *value
 
 	if field.Required && strings.TrimSpace(stringValue) == "" {
-		result = append(result, validation.Required(path, errFieldValueRequired))
+		result = append(result, validation.Required(valuePath, errFieldValueRequired))
 		return "", result, true
 	}
 

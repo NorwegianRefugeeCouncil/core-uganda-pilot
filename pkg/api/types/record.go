@@ -42,10 +42,26 @@ type Record struct {
 	// OwnerID represents the owner of the Record. In cases where
 	// a Record is part of a SubForm, this field records the "Owner" form ID.
 	OwnerID *string `json:"ownerId"`
-	// Values is an arbitrary map of values that correspond to the FormDefinition.Fields.
-	// The key of the map is the FieldDefinition.ID ! (not the FormDefinition.Name, not
-	// the FormDefinition.Code)
-	Values map[string]interface{} `json:"values"`
+	// Values is a list of values that correspond to the FormDefinition.Fields.
+	Values FieldValues `json:"values"`
+}
+
+type Records []Record
+
+type FieldValue struct {
+	FieldID string  `json:"fieldId"`
+	Value   *string `json:"value"`
+}
+
+type FieldValues []FieldValue
+
+func (f FieldValues) Find(fieldID string) (FieldValue, bool) {
+	for _, value := range f {
+		if value.FieldID == fieldID {
+			return value, true
+		}
+	}
+	return FieldValue{}, false
 }
 
 // RecordList represents a list of Record

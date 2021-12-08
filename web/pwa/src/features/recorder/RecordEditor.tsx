@@ -2,27 +2,30 @@ import React, {FC, Fragment, useCallback, useEffect, useState} from "react";
 import {
     FormValue,
     postRecord,
-    recorderActions, resetForm,
+    recorderActions,
+    resetForm,
     selectCurrentForm,
     selectCurrentRecord,
-    selectCurrentRootForm, selectPostRecords, selectSubRecords
+    selectCurrentRootForm,
+    selectPostRecords,
+    selectSubRecords
 } from "./recorder.slice";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
-import {FieldDefinition} from "core-js-api-client";
+import {FieldDefinition, FieldValue} from "core-js-api-client";
 import {FieldEditor} from "./FieldEditor";
 import {fetchDatabases} from "../../reducers/database";
 import {fetchFolders} from "../../reducers/folder";
 import {fetchForms, selectRootForm} from "../../reducers/form";
-import {useParams, useLocation} from "react-router-dom"
+import {useLocation, useParams} from "react-router-dom"
 
 export type RecordEditorProps = {
     formName: string
     fields: FieldDefinition[]
-    values: { [key: string]: any }
+    values: FieldValue[]
     setValue: (key: string, value: any) => void
     selectSubRecord: (subRecordId: string) => void
     addSubRecord: (ownerFieldId: string) => void
-    subRecords: {[key: string]: FormValue[]}
+    subRecords: { [key: string]: FormValue[] }
     saveRecord: () => void
 }
 
@@ -40,7 +43,8 @@ export const RecordEditor: FC<RecordEditorProps> = props => {
                     <div className={"card bg-dark text-light border-secondary"}>
                         <div className={"card-body"}>
                             {props.fields.map(field => {
-                                const value = props.values[field.id]
+                                const fieldValue = props.values.find(v => v.fieldId === field.id)
+                                const value = fieldValue?.value ? fieldValue.value : ""
                                 const setValue = (value: any) => {
                                     props.setValue(field.id, value)
                                 }
@@ -93,7 +97,7 @@ export const RecordEditorContainer: FC<{}> = props => {
     const currentForm = useAppSelector(selectCurrentForm)
     const currentRecord = useAppSelector(selectCurrentRecord)
     const subRecords = useAppSelector(state => {
-        if (currentRecord){
+        if (currentRecord) {
             return selectSubRecords(state, currentRecord.recordId)
         }
         return {}

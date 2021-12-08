@@ -60,10 +60,18 @@ function mapRecordCell(field: FieldDefinition, record: Record, getSubFormCount: 
         </td>
     }
 
+    const fieldValue = record.values.find((v: any) => v.fieldId === field.id)
+
     if (field.fieldType.month) {
+
+        let date: Date | undefined
+        if (fieldValue) {
+            date = new Date(fieldValue.value)
+        }
+
         return <td key={field.id} className={"text-secondary"}
-               style={{overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", wordBreak: "break-all"}}>
-            {format(new Date(record.values[field.id]), "yyyy-MM")}
+                   style={{overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", wordBreak: "break-all"}}>
+            {date ? format(date, "yyyy-MM") : ""}
         </td>
     }
 
@@ -77,7 +85,7 @@ function mapRecordCell(field: FieldDefinition, record: Record, getSubFormCount: 
 
     return <td key={field.id} className={"text-secondary"}
                style={{overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", wordBreak: "break-all"}}>
-        {record.values[field.id]}
+        {fieldValue?.value}
     </td>
 }
 

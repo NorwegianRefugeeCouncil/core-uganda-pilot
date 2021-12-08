@@ -76,7 +76,16 @@ export const MonthFieldEditor: FC<FieldEditorProps> = props => {
     const {field, value, setValue} = props
     const expectedLength = 7;
 
-    const [localValue, setLocalValue] = useState(value != null ? format(value as Date, "yyyy-MM") : "")
+    const [localValue, setLocalValue] = useState<string>(() => {
+        if (!value) {
+            return ""
+        }
+        try {
+            return format(value, "yyyy-MM")
+        } catch (e) {
+            return ""
+        }
+    })
 
     const isValidLength = () => localValue.length === expectedLength;
 
@@ -135,7 +144,7 @@ export const SingleSelectFieldEditor: FC<FieldEditorProps> = props => {
             id={field.id} value={value ? value : ""}
             onChange={event => setValue(event.target.value)}>
             <option disabled={field.required || field.key} value={""}/>
-            {field.options.map(o => <option value={o}>{o}</option>)}
+            {/** TODO field.options.map(o => <option value={o}>{o}</option>)**/}
         </select>
         {mapFieldDescription(field)}
     </div>

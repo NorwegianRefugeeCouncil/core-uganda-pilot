@@ -34,7 +34,7 @@ func subFormFieldActions(formInterface types.FormInterface, fieldDefinition *typ
 // buildSubFormOwnerColumn creates the "owner_id" column. This is only applicable for SubForms.
 func buildSubFormOwnerColumn(formInterface types.FormInterface) schema.SQLColumn {
 	return schema.SQLColumn{
-		Name: "owner_id",
+		Name: keyOwnerIdColumn,
 		DataType: schema.SQLDataType{
 			VarChar: &schema.SQLDataTypeVarChar{
 				Length: 36,
@@ -50,7 +50,7 @@ func buildSubFormOwnerColumn(formInterface types.FormInterface) schema.SQLColumn
 				Reference: &schema.ReferenceSQLColumnConstraint{
 					Schema:   formInterface.GetOwner().GetDatabaseID(),
 					Table:    formInterface.GetOwner().GetFormID(),
-					Column:   "id",
+					Column:   keyIdColumn,
 					OnDelete: schema.ActionCascade,
 					OnUpdate: schema.ActionCascade,
 				},
