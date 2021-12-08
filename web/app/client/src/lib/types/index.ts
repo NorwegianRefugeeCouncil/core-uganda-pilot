@@ -17,6 +17,7 @@ export enum FieldKind {
     Date = "date",
     Quantity = "quantity",
     SingleSelect = "singleSelect",
+    Week = "week",
     Month = "month"
 }
 
@@ -27,6 +28,7 @@ export type FieldType = {
     multilineText?: FieldTypeMultilineText
     date?: FieldTypeDate
     month?: FieldTypeMonth
+    week?: FieldTypeWeek
     quantity?: FieldTypeQuantity
     singleSelect?: FieldTypeSingleSelect
 }
@@ -42,6 +44,8 @@ export type FieldTypeMonth = {}
 export type FieldTypeQuantity = {}
 
 export type FieldTypeSingleSelect = {}
+
+export class FieldTypeWeek {}
 
 export type FieldTypeReference = {
     databaseId: string

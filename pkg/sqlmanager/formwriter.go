@@ -6,6 +6,7 @@ import (
 	"github.com/lib/pq"
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/sql/schema"
+	"github.com/nrc-no/core/pkg/utils/dates"
 	"strconv"
 	"strings"
 	"time"
@@ -94,6 +95,20 @@ func (f *formWriter) writeRecord(record *types.Record) (schema.DDL, error) {
 					args = append(args, nil)
 				}
 			}
+		case types.FieldKindWeek:
+			if fieldValue, ok := record.Values.Find(field.ID); ok {
+				paramCount++
+				columnNames = append(columnNames, field.ID)
+				if fieldValue.Value != nil {
+					t, err := dates.ParseIsoWeekTime(*fieldValue.Value)
+					if err != nil {
+						return schema.DDL{}, err
+					}
+					args = append(args, t)
+				} else {
+					args = append(args, nil)
+				}
+			}
 		case types.FieldKindQuantity:
 			if fieldValue, ok := record.Values.Find(field.ID); ok {
 				paramCount++
@@ -109,6 +124,10 @@ func (f *formWriter) writeRecord(record *types.Record) (schema.DDL, error) {
 				}
 			}
 		}
+	}
+
+	for i := 0; i < len(columnNames); i++ {
+		columnNames[i] = pq.QuoteIdentifier(columnNames[i])
 	}
 
 	ddl = ddl + strings.Join(columnNames, ",")

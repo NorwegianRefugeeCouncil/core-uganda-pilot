@@ -5,6 +5,7 @@ import (
 	"github.com/nrc-no/core/pkg/sql/schema"
 	tu "github.com/nrc-no/core/pkg/testutils"
 	"github.com/nrc-no/core/pkg/utils/pointers"
+	"github.com/snabb/isoweek"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
@@ -65,7 +66,7 @@ func Test_formWriter_WriteRecords(t *testing.T) {
 			records: aSingleRecord(tu.RecordValue("fieldId", pointers.String("myValue"))),
 			want: []schema.DDL{
 				{
-					Query: `insert into "databaseId"."formId" (id,fieldId) values ($1,$2);`,
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
 					Args:  []interface{}{"recordId", "myValue"},
 				},
 			},
@@ -75,7 +76,7 @@ func Test_formWriter_WriteRecords(t *testing.T) {
 			records: aSingleRecord(tu.RecordValue("fieldId", nil)),
 			want: []schema.DDL{
 				{
-					Query: `insert into "databaseId"."formId" (id,fieldId) values ($1,$2);`,
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
 					Args:  []interface{}{"recordId", nil},
 				},
 			},
@@ -85,7 +86,7 @@ func Test_formWriter_WriteRecords(t *testing.T) {
 			records: aSingleRecord(tu.RecordValue("fieldId", pointers.String("myValue"))),
 			want: []schema.DDL{
 				{
-					Query: `insert into "databaseId"."formId" (id,fieldId) values ($1,$2);`,
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
 					Args:  []interface{}{"recordId", "myValue"},
 				},
 			},
@@ -95,7 +96,7 @@ func Test_formWriter_WriteRecords(t *testing.T) {
 			records: aSingleRecord(tu.RecordValue("fieldId", nil)),
 			want: []schema.DDL{
 				{
-					Query: `insert into "databaseId"."formId" (id,fieldId) values ($1,$2);`,
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
 					Args:  []interface{}{"recordId", nil},
 				},
 			},
@@ -105,7 +106,7 @@ func Test_formWriter_WriteRecords(t *testing.T) {
 			records: aSingleRecord(tu.RecordValue("fieldId", pointers.String("2020-01"))),
 			want: []schema.DDL{
 				{
-					Query: `insert into "databaseId"."formId" (id,fieldId) values ($1,$2);`,
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
 					Args:  []interface{}{"recordId", mustParseTime(monthFieldFormat, "2020-01")},
 				},
 			},
@@ -115,7 +116,7 @@ func Test_formWriter_WriteRecords(t *testing.T) {
 			records: aSingleRecord(tu.RecordValue("fieldId", nil)),
 			want: []schema.DDL{
 				{
-					Query: `insert into "databaseId"."formId" (id,fieldId) values ($1,$2);`,
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
 					Args:  []interface{}{"recordId", nil},
 				},
 			},
@@ -125,12 +126,37 @@ func Test_formWriter_WriteRecords(t *testing.T) {
 			records: aSingleRecord(tu.RecordValue("fieldId", pointers.String("abc"))),
 			wantErr: true,
 		}, {
+			name:    "record with week value",
+			form:    formWithFields(tu.FormField(tu.AField(tu.FieldID("fieldId"), tu.FieldTypeWeek()))),
+			records: aSingleRecord(tu.RecordValue("fieldId", pointers.String("2020-W01"))),
+			want: []schema.DDL{
+				{
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
+					Args:  []interface{}{"recordId", isoweek.StartTime(2020, 1, time.UTC)},
+				},
+			},
+		}, {
+			name:    "record with nil week value",
+			form:    formWithFields(tu.FormField(tu.AField(tu.FieldID("fieldId"), tu.FieldTypeWeek()))),
+			records: aSingleRecord(tu.RecordValue("fieldId", nil)),
+			want: []schema.DDL{
+				{
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
+					Args:  []interface{}{"recordId", nil},
+				},
+			},
+		}, {
+			name:    "record with bad week value",
+			form:    formWithFields(tu.FormField(tu.AField(tu.FieldID("fieldId"), tu.FieldTypeWeek()))),
+			records: aSingleRecord(tu.RecordValue("fieldId", pointers.String("2020-W75"))),
+			wantErr: true,
+		}, {
 			name:    "record with date value",
 			form:    formWithFields(tu.FormField(tu.AField(tu.FieldID("fieldId"), tu.FieldTypeDate()))),
 			records: aSingleRecord(tu.RecordValue("fieldId", pointers.String("2020-01-01"))),
 			want: []schema.DDL{
 				{
-					Query: `insert into "databaseId"."formId" (id,fieldId) values ($1,$2);`,
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
 					Args:  []interface{}{"recordId", mustParseTime(dateFieldFormat, "2020-01-01")},
 				},
 			},
@@ -140,7 +166,7 @@ func Test_formWriter_WriteRecords(t *testing.T) {
 			records: aSingleRecord(tu.RecordValue("fieldId", nil)),
 			want: []schema.DDL{
 				{
-					Query: `insert into "databaseId"."formId" (id,fieldId) values ($1,$2);`,
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
 					Args:  []interface{}{"recordId", nil},
 				},
 			},
@@ -155,7 +181,7 @@ func Test_formWriter_WriteRecords(t *testing.T) {
 			records: aSingleRecord(tu.RecordValue("fieldId", pointers.String("refId"))),
 			want: []schema.DDL{
 				{
-					Query: `insert into "databaseId"."formId" (id,fieldId) values ($1,$2);`,
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
 					Args:  []interface{}{"recordId", "refId"},
 				},
 			},
@@ -165,7 +191,7 @@ func Test_formWriter_WriteRecords(t *testing.T) {
 			records: aSingleRecord(tu.RecordValue("fieldId", nil)),
 			want: []schema.DDL{
 				{
-					Query: `insert into "databaseId"."formId" (id,fieldId) values ($1,$2);`,
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
 					Args:  []interface{}{"recordId", nil},
 				},
 			},
@@ -175,7 +201,7 @@ func Test_formWriter_WriteRecords(t *testing.T) {
 			records: aSingleRecord(tu.RecordValue("fieldId", pointers.String("3"))),
 			want: []schema.DDL{
 				{
-					Query: `insert into "databaseId"."formId" (id,fieldId) values ($1,$2);`,
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
 					Args:  []interface{}{"recordId", 3},
 				},
 			},
@@ -185,7 +211,7 @@ func Test_formWriter_WriteRecords(t *testing.T) {
 			records: aSingleRecord(tu.RecordValue("fieldId", nil)),
 			want: []schema.DDL{
 				{
-					Query: `insert into "databaseId"."formId" (id,fieldId) values ($1,$2);`,
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
 					Args:  []interface{}{"recordId", nil},
 				},
 			},
@@ -206,7 +232,7 @@ func Test_formWriter_WriteRecords(t *testing.T) {
 			),
 			want: []schema.DDL{
 				{
-					Query: `insert into "databaseId"."formId" (id,owner_id,fieldId) values ($1,$2,$3);`,
+					Query: `insert into "databaseId"."formId" ("id","owner_id","fieldId") values ($1,$2,$3);`,
 					Args:  []interface{}{"recordId", "ownerId", 123},
 				},
 			},

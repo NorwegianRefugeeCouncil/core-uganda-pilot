@@ -1,8 +1,7 @@
 import {FieldDefinition} from "core-js-api-client";
-import React, {FC, Fragment, useState} from "react";
+import React, {FC, Fragment} from "react";
 import {FormValue} from "./recorder.slice";
 import {RecordPickerContainer} from "../../components/RecordPicker";
-import format from "date-fns/format"
 
 export type FieldEditorProps = {
     field: FieldDefinition
@@ -26,7 +25,6 @@ export const ReferenceFieldEditor: FC<FieldEditorProps> = props => {
         {mapFieldDescription(field)}
     </div>
 }
-
 
 export const TextFieldEditor: FC<FieldEditorProps> = props => {
     const {field, value, setValue} = props
@@ -76,19 +74,6 @@ export const MonthFieldEditor: FC<FieldEditorProps> = props => {
     const {field, value, setValue} = props
     const expectedLength = 7;
 
-    const [localValue, setLocalValue] = useState<string>(() => {
-        if (!value) {
-            return ""
-        }
-        try {
-            return format(value, "yyyy-MM")
-        } catch (e) {
-            return ""
-        }
-    })
-
-    const isValidLength = () => localValue.length === expectedLength;
-
     function isValid(s: string) {
         const valid = /^(?:19|20|21)\d{2}-[01]\d$/
         const m = +s.slice(5)
@@ -100,19 +85,51 @@ export const MonthFieldEditor: FC<FieldEditorProps> = props => {
             className={"form-label opacity-75"}
             htmlFor={field.id}>{field.name}</label>
         <input
-            className={`form-control bg-dark text-light border-secondary ${!isValid(localValue) && isValidLength() ? " is-invalid" : ""}`}
+            className={`form-control bg-dark text-light border-secondary`}
             type={"month"}
             maxLength={expectedLength}
-            id={field.id} value={localValue ? localValue : ""}
+            id={field.id}
+            value={value}
+            name={field.name}
             pattern={"[0-9]{4}-[0-9]{2}"}
             placeholder={"YYYY-MM"}
             onChange={event => {
                 const v = event.target.value;
-                setLocalValue(v);
                 if (!isValid(v)) return
-                const date = new Date(+v.slice(0, 4), +v.slice(5, 7) - 1, 1)
-                setValue(date);
+                setValue(v);
             }}
+        />
+        {mapFieldDescription(field)}
+    </div>
+}
+
+
+export const WeekFieldEditor: FC<FieldEditorProps> = props => {
+    const {field, value, setValue} = props
+
+    function isValidWeek(weekString: string) {
+        const weekRegex = /^(?:19|20|21)\d{2}-W[0-5]\d$/
+        return weekRegex.test(weekString) && +weekString.slice(6) <= 52;
+    }
+
+    function onChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
+        if (!isValidWeek(event.target.value)) return;
+        setValue(event.target.value);
+    }
+
+    return <div className={"form-group mb-2"}>
+        <label
+            className={"form-label opacity-75"}
+            htmlFor={field.id}>{field.name}</label>
+        <input
+            className={`form-control bg-dark text-light border-secondary`}
+            type={"week"}
+            name={field.name}
+            maxLength={8}
+            placeholder={"2021-W52"}
+            id={field.id}
+            value={value}
+            onChange={onChangeHandler}
         />
         {mapFieldDescription(field)}
     </div>
@@ -188,6 +205,8 @@ export const FieldEditor: FC<FieldEditorProps> = props => {
     const {fieldType} = props.field
     if (fieldType.text) {
         return <TextFieldEditor {...props} />
+    } else if (fieldType.week) {
+        return <WeekFieldEditor {...props} />
     } else if (fieldType.subForm) {
         return <SubFormFieldEditor {...props} />
     } else if (fieldType.reference) {

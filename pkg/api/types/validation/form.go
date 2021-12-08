@@ -252,6 +252,7 @@ func ValidateFieldType(fieldType types.FieldType, path *validation.Path) validat
 	textPath := path.Child("text")
 	multiLineTextPath := path.Child("multilineText")
 	monthPath := path.Child("month")
+	weekPath := path.Child("week")
 	datePath := path.Child("date")
 	quantityPath := path.Child("quantity")
 	referencePath := path.Child("reference")
@@ -294,6 +295,8 @@ func ValidateFieldType(fieldType types.FieldType, path *validation.Path) validat
 		result = append(result, ValidateFieldTypeMultilineText(fieldType.MultilineText, multiLineTextPath)...)
 	case types.FieldKindMonth:
 		result = append(result, ValidateFieldTypeMonth(fieldType.Month, monthPath)...)
+	case types.FieldKindWeek:
+		result = append(result, ValidateFieldTypeWeek(fieldType.Week, weekPath)...)
 	case types.FieldKindDate:
 		result = append(result, ValidateFieldTypeDate(fieldType.Date, datePath)...)
 	case types.FieldKindQuantity:
@@ -361,6 +364,12 @@ func ValidateFieldTypeReference(ftRef *types.FieldTypeReference, path *validatio
 }
 
 func ValidateFieldTypeMonth(ftMonth *types.FieldTypeMonth, path *validation.Path) validation.ErrorList {
+	// noop
+	var result []*validation.Error
+	return result
+}
+
+func ValidateFieldTypeWeek(ftWeek *types.FieldTypeWeek, path *validation.Path) validation.ErrorList {
 	// noop
 	var result []*validation.Error
 	return result

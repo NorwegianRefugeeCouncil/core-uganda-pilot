@@ -174,6 +174,25 @@ func TestFormConversion(t *testing.T) {
 			},
 		},
 		{
+			name: "form with week field",
+			args: []*types.FormDefinition{{
+				ID:         formId,
+				DatabaseID: databaseId,
+				Fields: []*types.FieldDefinition{
+					{
+						ID: "weekField",
+						FieldType: types.FieldType{
+							Week: &types.FieldTypeWeek{},
+						},
+					},
+				},
+			}},
+			want: []schema.DDL{
+				{Query: createTableDDL},
+				{Query: `alter table "databaseId"."formId" add "weekField" date;`},
+			},
+		},
+		{
 			name: "form with month field",
 			args: []*types.FormDefinition{{
 				ID:         formId,

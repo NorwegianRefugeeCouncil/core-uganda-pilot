@@ -319,6 +319,17 @@ func TestValidateForm2(t *testing.T) {
 				},
 			}),
 		}, {
+			name:   "field with valid week field",
+			expect: nil,
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+					FieldType: types.FieldType{
+						Week: &types.FieldTypeWeek{},
+					},
+				},
+			}),
+		}, {
 			name:   "field with valid month field",
 			expect: nil,
 			form: formWithFields(types.FieldDefinitions{

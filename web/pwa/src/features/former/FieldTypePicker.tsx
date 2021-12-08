@@ -50,6 +50,11 @@ export const FieldTypePicker: FC<FieldTypePickerProps> = props => {
                     onClick={() => onSubmit(FieldKind.SingleSelect)}>
                     Single Select
                 </button>
+                <button
+                    className={"btn btn-primary m-2 border-light"}
+                    onClick={() => onSubmit(FieldKind.Week)}>
+                    Week
+                </button>
             </div>
         </div>
         <div className={"card-footer border-secondary"}>

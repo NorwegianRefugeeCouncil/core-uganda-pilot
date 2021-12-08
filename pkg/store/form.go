@@ -598,6 +598,8 @@ func (f *FormHierarchy) ToFormDefinition() (*types.FormDefinition, error) {
 			fd.FieldType.Text = &types.FieldTypeText{}
 		case types.FieldKindMultilineText:
 			fd.FieldType.MultilineText = &types.FieldTypeMultilineText{}
+		case types.FieldKindWeek:
+			fd.FieldType.Week = &types.FieldTypeWeek{}
 		case types.FieldKindDate:
 			fd.FieldType.Date = &types.FieldTypeDate{}
 		case types.FieldKindMonth:
@@ -765,6 +767,9 @@ func getFieldType(field *types.FieldDefinition) (types.FieldKind, error) {
 	}
 	if field.FieldType.SingleSelect != nil {
 		return types.FieldKindSingleSelect, nil
+	}
+	if field.FieldType.Week != nil {
+		return types.FieldKindWeek, nil
 	}
 	return types.FieldKindUnknown, fmt.Errorf("could not determine field type")
 }

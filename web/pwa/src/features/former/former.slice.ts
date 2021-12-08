@@ -163,6 +163,8 @@ const mapFields = (state: FormerState, fields: FormField[]): FieldDefinition[] =
             fieldType = {date: {}}
         } else if (field.type === "month") {
             fieldType = {month: {}}
+        } else if (field.type === "week") {
+            fieldType = {week: {}}
         } else if (field.type === "quantity") {
             fieldType = {quantity: {}}
         } else if (field.type === "singleSelect") {

@@ -6,7 +6,6 @@ import {fetchDatabases} from "../../reducers/database";
 import {fetchFolders} from "../../reducers/folder";
 import {fetchRecords, selectRecordsForForm, selectRecordsSubFormCounts} from "../../reducers/records";
 import {Link} from "react-router-dom";
-import format from "date-fns/format"
 
 type subFormCountFn = (recordId: string, fieldId: string) => number
 
@@ -41,6 +40,7 @@ export const HeaderFields: FC<HeaderFieldsProps> = props => {
             <th style={{width: 35}}/>
             {fields.map(f => {
                 return <HeaderField
+                    key={f.id}
                     field={f}
                     columnWidth={columnWidths[f.id]}
                 />
@@ -63,17 +63,19 @@ function mapRecordCell(field: FieldDefinition, record: Record, getSubFormCount: 
     const fieldValue = record.values.find((v: any) => v.fieldId === field.id)
 
     if (field.fieldType.month) {
-
-        let date: Date | undefined
-        if (fieldValue) {
-            date = new Date(fieldValue.value)
-        }
-
         return <td key={field.id} className={"text-secondary"}
                    style={{overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", wordBreak: "break-all"}}>
-            {date ? format(date, "yyyy-MM") : ""}
+            {fieldValue?.value}
         </td>
     }
+
+    if (field.fieldType.week) {
+        return <td key={field.id} className={"text-secondary"}
+                   style={{overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", wordBreak: "break-all"}}>
+            {fieldValue?.value}
+        </td>
+    }
+
 
     if (field.fieldType.reference) {
         return <td key={field.id}>

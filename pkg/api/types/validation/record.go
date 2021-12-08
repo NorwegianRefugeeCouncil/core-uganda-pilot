@@ -2,6 +2,7 @@ package validation
 
 import (
 	"github.com/nrc-no/core/pkg/api/types"
+	"github.com/nrc-no/core/pkg/utils/dates"
 	"github.com/nrc-no/core/pkg/utils/sets"
 	"github.com/nrc-no/core/pkg/validation"
 	uuid "github.com/satori/go.uuid"
@@ -20,6 +21,7 @@ const (
 	errRecordValuesRequired      = "Record values are required"
 	errRecordInvalidDate         = "Invalid date. Expected YYYY-mm-DD"
 	errRecordInvalidMonth        = "Invalid date. Expected YYYY-mm"
+	errRecordInvalidWeek         = "Invalid date. Expected YYYY-Www"
 	errRecordInvalidQuantity     = "Invalid quantity"
 	errRecordInvalidReferenceUid = "Invalid reference"
 	errFieldValueRequired        = "Field value is required"
@@ -35,6 +37,7 @@ var supportedRecordFieldKinds = []types.FieldKind{
 	types.FieldKindDate,
 	types.FieldKindQuantity,
 	types.FieldKindMonth,
+	types.FieldKindWeek,
 	types.FieldKindSingleSelect,
 }
 
@@ -172,6 +175,8 @@ func ValidateRecordValue(path *validation.Path, value *string, field *types.Fiel
 		result = append(result, ValidateRecordQuantityValue(path, value, field)...)
 	case types.FieldKindMonth:
 		result = append(result, ValidateRecordMonthValue(path, value, field)...)
+	case types.FieldKindWeek:
+		result = append(result, ValidateRecordWeekValue(path, value, field)...)
 	case types.FieldKindSingleSelect:
 	}
 	return result
@@ -207,6 +212,21 @@ func ValidateRecordMonthValue(path *validation.Path, value *string, field *types
 	if err != nil {
 		valuePath := path.Child("value")
 		return append(result, validation.Invalid(valuePath, value, errRecordInvalidMonth))
+	}
+	return result
+}
+
+func ValidateRecordWeekValue(path *validation.Path, value *string, field *types.FieldDefinition) validation.ErrorList {
+	stringValue, result, done := getStringValue(path, value, field, validation.ErrorList{})
+	if done {
+		return result
+	}
+	valuePath := path.Child("value")
+
+	_, err := dates.ParseIsoWeekTime(stringValue)
+
+	if err != nil {
+		return append(result, validation.Invalid(valuePath, value, errRecordInvalidWeek))
 	}
 	return result
 }

@@ -26,6 +26,8 @@ func getSQLActionsForField(formInterface types.FormInterface, fieldDefinition *t
 		return dateFieldActions(formInterface, fieldDefinition), nil
 	case types.FieldKindMonth:
 		return monthFieldActions(formInterface, fieldDefinition), nil
+	case types.FieldKindWeek:
+		return weekFieldActions(formInterface, fieldDefinition), nil
 	case types.FieldKindMultilineText:
 		return multilineTextFieldActions(formInterface, fieldDefinition), nil
 	case types.FieldKindText:
