@@ -6,6 +6,7 @@
     "start:native": "lerna run --scope core-native start",
     "start:pwa": "lerna run --scope core-pwa start",
     "build": "lerna run build",
+    "build:packages": "lerna run --scope core-js-api-client --scope core-auth --scope core-design-system build",
     "build:admin": "lerna run --scope admin build",
     "build:native": "lerna run --scope native build",
     "build:pwa": "lerna run --scope pwa build",
@@ -30,5 +31,9 @@
   "dependencies": {
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
+  },
+  "resolutions": {
+    "babel-loader": "8.1.0",
+    "jest": "26.6.0"
   }
 }
