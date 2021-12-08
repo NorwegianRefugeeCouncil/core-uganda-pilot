@@ -5,6 +5,7 @@ import (
 	"github.com/nrc-no/core/pkg/sql/schema"
 	tu "github.com/nrc-no/core/pkg/testutils"
 	"github.com/nrc-no/core/pkg/utils/pointers"
+	uuid "github.com/satori/go.uuid"
 	"github.com/snabb/isoweek"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -56,6 +57,11 @@ func Test_formWriter_WriteRecords(t *testing.T) {
 			panic(err)
 		}
 		return tm
+	}
+
+	aFormReference := types.FormRef{
+		DatabaseID: uuid.NewV4().String(),
+		FormID:     uuid.NewV4().String(),
 	}
 
 	tests := []struct {
@@ -182,7 +188,7 @@ func Test_formWriter_WriteRecords(t *testing.T) {
 			wantErr: true,
 		}, {
 			name:    "record with reference value",
-			form:    formWithFields(tu.FormField(tu.AField(tu.FieldID("fieldId"), tu.FieldTypeReference()))),
+			form:    formWithFields(tu.FormField(tu.AField(tu.FieldID("fieldId"), tu.FieldTypeReference(aFormReference)))),
 			records: aSingleRecord(tu.RecordValue("fieldId", pointers.String("refId"))),
 			want: []schema.DDL{
 				{
@@ -192,7 +198,7 @@ func Test_formWriter_WriteRecords(t *testing.T) {
 			},
 		}, {
 			name:    "record with nil reference value",
-			form:    formWithFields(tu.FormField(tu.AField(tu.FieldID("fieldId"), tu.FieldTypeReference()))),
+			form:    formWithFields(tu.FormField(tu.AField(tu.FieldID("fieldId"), tu.FieldTypeReference(aFormReference)))),
 			records: aSingleRecord(tu.RecordValue("fieldId", nil)),
 			want: []schema.DDL{
 				{

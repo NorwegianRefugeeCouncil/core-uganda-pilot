@@ -76,10 +76,7 @@ func (d *databaseStore) Get(ctx context.Context, databaseID string) (*types.Data
 	if err := db.First(&database, "id = ?", databaseID).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			l.Error("database not found")
-			return nil, meta.NewNotFound(meta.GroupResource{
-				Group:    "nrc.no",
-				Resource: "databases",
-			}, databaseID)
+			return nil, meta.NewNotFound(types.DatabaseGR, databaseID)
 		} else {
 			l.Error("failed to get database", zap.Error(err))
 			return nil, meta.NewInternalServerError(err)
@@ -190,10 +187,7 @@ func (d *databaseStore) Create(ctx context.Context, database *types.Database) (*
 		if err := tx.Create(storeDb).Error; err != nil {
 			l.Error("failed to store database", zap.Error(err))
 			if IsUniqueConstraintErr(err) {
-				return meta.NewAlreadyExists(meta.GroupResource{
-					Group:    "core.nrc.no/v1",
-					Resource: database.ID,
-				}, database.ID)
+				return meta.NewAlreadyExists(types.DatabaseGR, database.ID)
 			}
 			return meta.NewInternalServerError(err)
 		}
@@ -215,7 +209,7 @@ func (d *databaseStore) Create(ctx context.Context, database *types.Database) (*
 		return nil, err
 	}
 
-	return mapDatabaseTo(storeDb), nil
+	return d.Get(ctx, storeDb.ID)
 }
 
 // mapDatabaseTo maps a store Database to a types.Database

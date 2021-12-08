@@ -54,6 +54,7 @@ func NewHandler(store store.FormStore) *Handler {
 			To(h.RestfulGet).
 			Doc("get form").
 			Operation("getForm").
+			Produces(mimetypes.ApplicationJson).
 			Param(
 				ws.
 					PathParameter(constants.ParamFormID, "id of the form").

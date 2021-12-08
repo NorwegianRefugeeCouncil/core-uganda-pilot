@@ -35,8 +35,3 @@ func NewFactory(dsn string) (Factory, error) {
 		db: db,
 	}, nil
 }
-
-// NewMockFactory returns a mock Factory
-func NewMockFactory(db *gorm.DB) Factory {
-	return &factory{db: db}
-}

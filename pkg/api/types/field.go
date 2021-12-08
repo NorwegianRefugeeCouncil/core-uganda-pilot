@@ -1,5 +1,7 @@
 package types
 
+import "fmt"
+
 // FieldDefinition usually represents a question in a FormDefinition.
 // A FieldDefinition defines the name, description, boundaries of data collection.
 type FieldDefinition struct {
@@ -28,3 +30,12 @@ type FieldDefinition struct {
 
 // FieldDefinitions represent a list of FieldDefinition
 type FieldDefinitions []*FieldDefinition
+
+func (f FieldDefinitions) GetFieldByName(name string) (*FieldDefinition, error) {
+	for _, field := range f {
+		if field.Name == name {
+			return field, nil
+		}
+	}
+	return nil, fmt.Errorf("field %s not found", name)
+}

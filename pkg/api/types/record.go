@@ -64,6 +64,28 @@ func (f FieldValues) Find(fieldID string) (FieldValue, bool) {
 	return FieldValue{}, false
 }
 
+func (f FieldValues) SetValue(fieldID string, value *string) FieldValues {
+	values := f
+	for i, v := range values {
+		if v.FieldID == fieldID {
+			values[i].Value = value
+			return values
+		}
+	}
+	values = append(values, FieldValue{FieldID: fieldID, Value: value})
+	return values
+}
+
+func (f FieldValues) SetValueForFieldName(formDefinition *FormDefinition, fieldName string, value *string) (FieldValues, error) {
+	values := f
+	field, err := formDefinition.Fields.GetFieldByName(fieldName)
+	if err != nil {
+		return FieldValues{}, err
+	}
+	values = values.SetValue(field.ID, value)
+	return values, nil
+}
+
 // RecordList represents a list of Record
 type RecordList struct {
 	Items []*Record `json:"items"`

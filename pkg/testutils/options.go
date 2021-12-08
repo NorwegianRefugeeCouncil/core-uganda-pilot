@@ -217,7 +217,11 @@ func FieldTypeKind(kind types.FieldKind) FieldOption {
 			return FieldTypeText()(fieldDefinition)
 		case types.FieldKindSubForm:
 		case types.FieldKindReference:
-			return FieldTypeReference()(fieldDefinition)
+			aFormRef := types.FormRef{
+				DatabaseID: uuid.NewV4().String(),
+				FormID:     uuid.NewV4().String(),
+			}
+			return FieldTypeReference(aFormRef)(fieldDefinition)
 		case types.FieldKindMultilineText:
 			return FieldTypeMultilineText()(fieldDefinition)
 		case types.FieldKindDate:
@@ -251,6 +255,13 @@ func FieldRequired(required bool) FieldOption {
 	}
 }
 
+func FieldKey(key bool) FieldOption {
+	return func(fieldDefinition *types.FieldDefinition) *types.FieldDefinition {
+		fieldDefinition.Key = true
+		return fieldDefinition
+	}
+}
+
 func FieldTypeMultilineText() FieldOption {
 	return func(fieldDefinition *types.FieldDefinition) *types.FieldDefinition {
 		fieldDefinition.FieldType = types.FieldType{
@@ -269,12 +280,12 @@ func FieldTypeDate() FieldOption {
 	}
 }
 
-func FieldTypeReference() FieldOption {
+func FieldTypeReference(formRef types.FormReference) FieldOption {
 	return func(fieldDefinition *types.FieldDefinition) *types.FieldDefinition {
 		fieldDefinition.FieldType = types.FieldType{
 			Reference: &types.FieldTypeReference{
-				DatabaseID: uuid.NewV4().String(),
-				FormID:     uuid.NewV4().String(),
+				DatabaseID: formRef.GetDatabaseID(),
+				FormID:     formRef.GetFormID(),
 			},
 		}
 		return fieldDefinition
@@ -305,6 +316,52 @@ func AField(options ...FieldOption) *types.FieldDefinition {
 		f = option(f)
 	}
 	return f
+}
+
+func ATextField(options ...FieldOption) *types.FieldDefinition {
+	opts := []FieldOption{FieldTypeText()}
+	opts = append(opts, options...)
+	return AField(opts...)
+}
+
+func AMultilineTextField(options ...FieldOption) *types.FieldDefinition {
+	opts := []FieldOption{FieldTypeMultilineText()}
+	opts = append(opts, options...)
+	return AField(opts...)
+}
+
+func AMonthField(options ...FieldOption) *types.FieldDefinition {
+	opts := []FieldOption{FieldTypeMonth()}
+	opts = append(opts, options...)
+	return AField(opts...)
+}
+
+func ADateField(options ...FieldOption) *types.FieldDefinition {
+	opts := []FieldOption{FieldTypeDate()}
+	opts = append(opts, options...)
+	return AField(opts...)
+}
+
+func AWeekField(options ...FieldOption) *types.FieldDefinition {
+	opts := []FieldOption{FieldTypeWeek()}
+	opts = append(opts, options...)
+	return AField(opts...)
+}
+
+func AReferenceField(formRef types.FormReference, options ...FieldOption) *types.FieldDefinition {
+	opts := []FieldOption{FieldTypeReference(formRef)}
+	opts = append(opts, options...)
+	return AField(opts...)
+}
+
+func AQuantityField(options ...FieldOption) *types.FieldDefinition {
+	opts := []FieldOption{FieldTypeQuantity()}
+	opts = append(opts, options...)
+	return AField(opts...)
+}
+
+func Fields(fields ...*types.FieldDefinition) []*types.FieldDefinition {
+	return fields
 }
 
 func RecordForForm(form types.FormInterface) RecordOption {

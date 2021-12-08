@@ -47,6 +47,11 @@ func TestValidateRecord(t *testing.T) {
 	firstFieldPath := valuePath.Index(1)
 	firstFieldValuePath := firstFieldPath.Child("value")
 
+	aFormRef := types.FormRef{
+		DatabaseID: uuid.NewV4().String(),
+		FormID:     uuid.NewV4().String(),
+	}
+
 	tests := []struct {
 		name          string
 		recordOptions tu.RecordOption
@@ -343,13 +348,13 @@ func TestValidateRecord(t *testing.T) {
 		}, {
 			name: "reference field",
 			form: aTextForm(
-				tu.FormField(tu.AField(tu.FieldID("dateField"), tu.FieldTypeReference())),
+				tu.FormField(tu.AField(tu.FieldID("dateField"), tu.FieldTypeReference(aFormRef))),
 			),
 			expect: nil,
 		}, {
 			name: "invalid reference field value",
 			form: aTextForm(
-				tu.FormField(tu.AField(tu.FieldID("referenceField"), tu.FieldTypeReference())),
+				tu.FormField(tu.AField(tu.FieldID("referenceField"), tu.FieldTypeReference(aFormRef))),
 			),
 			recordOptions: tu.RecordValue("referenceField", pointers.String("someValue")),
 			expect: validation.ErrorList{
@@ -358,7 +363,7 @@ func TestValidateRecord(t *testing.T) {
 		}, {
 			name: "required reference field with nil value",
 			form: aTextForm(
-				tu.FormField(tu.AField(tu.FieldID("referenceField"), tu.FieldTypeReference(), tu.FieldRequired(true))),
+				tu.FormField(tu.AField(tu.FieldID("referenceField"), tu.FieldTypeReference(aFormRef), tu.FieldRequired(true))),
 			),
 			recordOptions: tu.RecordValue("referenceField", nil),
 			expect: validation.ErrorList{
@@ -367,7 +372,7 @@ func TestValidateRecord(t *testing.T) {
 		}, {
 			name: "optional reference field with nil value",
 			form: aTextForm(
-				tu.FormField(tu.AField(tu.FieldID("referenceField"), tu.FieldTypeReference())),
+				tu.FormField(tu.AField(tu.FieldID("referenceField"), tu.FieldTypeReference(aFormRef))),
 			),
 			recordOptions: tu.RecordValue("referenceField", nil),
 			expect:        nil,
