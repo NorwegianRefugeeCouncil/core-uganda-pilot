@@ -1,4 +1,3 @@
-// Learn more https://docs.expo.io/guides/customizing-metro
-const { getDefaultConfig } = require('expo/metro-config');
+const { createMetroConfiguration } = require('expo-yarn-workspaces');
 
-module.exports = getDefaultConfig(__dirname);
+module.exports = createMetroConfiguration(__dirname);
