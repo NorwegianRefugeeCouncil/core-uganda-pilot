@@ -18,8 +18,9 @@ import {
 } from "../reducers/recordsReducers";
 import Constants from "expo-constants";
 import { FormsScreenContainer } from "./screen_containers/FormsScreenContainer";
-import { AddRecordScreenContainer } from './screen_containers/AddRecordScreenContainer';
-import { AddRecordScreenContainerProps } from '../types/screens';
+import { AddRecordScreenContainer } from "./screen_containers/AddRecordScreenContainer";
+import { AddRecordScreenContainerProps, ViewRecordScreenContainerProps } from "../types/screens";
+import { ViewRecordScreenContainer } from "./screen_containers/ViewRecordScreenContainer";
 
 export type ScreenProps = {
     navigation: any;
@@ -90,8 +91,13 @@ export default function Router() {
                             options={{
                                 title: routes.viewRecord.title,
                             }}>
-                            {props => (
-                                <ViewRecordScreen {...props} state={state} dispatch={dispatch} />
+                            {({ navigation, route }) => (
+                                <ViewRecordScreenContainer
+                                    navigation={navigation}
+                                    route={route as ViewRecordScreenContainerProps["route"]}
+                                    state={state}
+                                    dispatch={dispatch}
+                                />
                             )}
                         </Stack.Screen>
                         <Stack.Screen
