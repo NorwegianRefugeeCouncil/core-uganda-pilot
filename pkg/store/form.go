@@ -245,9 +245,11 @@ func (d *formStore) Create(ctx context.Context, form *types.FormDefinition) (*ty
 		}
 
 		// Storing the options
-		if err := tx.Create(flatForm.Options).Error; err != nil {
-			l.Error("failed to store fields", zap.Error(err))
-			return meta.NewInternalServerError(err)
+		if len(flatForm.Options) != 0 {
+			if err := tx.Create(flatForm.Options).Error; err != nil {
+				l.Error("failed to store fields", zap.Error(err))
+				return meta.NewInternalServerError(err)
+			}
 		}
 
 		// Creating the actual SQL Tables to contain records for the form
@@ -261,7 +263,7 @@ func (d *formStore) Create(ctx context.Context, form *types.FormDefinition) (*ty
 
 		// Executing the SQL statements
 		for _, ddl := range m.GetStatements() {
-			if err := tx.Raw(ddl.Query, ddl.Args...).Error; err != nil {
+			if err := tx.Exec(ddl.Query, ddl.Args...).Error; err != nil {
 				l.Error("failed to execute form migration statement", zap.String("statement", ddl.Query), zap.Error(err))
 				return err
 			}
