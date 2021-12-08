@@ -41,12 +41,11 @@ func (c *Config) makeAppFrontend() error {
 	sb.WriteString(fmt.Sprintf("REACT_APP_OAUTH_CLIENT_ID=%s\n", c.coreAppFrontendClientId))
 	sb.WriteString(fmt.Sprintf("REACT_APP_SERVER_URL=https://localhost:8443\n"))
 
-	envPath := path.Join(c.rootDir, "web", "pwa", ".env")
+	envPath := path.Join(c.rootDir, "frontend", "apps", "pwa", ".env")
 	fmt.Println(envPath)
 	if err := ioutil.WriteFile(envPath, []byte(sb.String()), os.ModePerm); err != nil {
 		return err
 	}
-
 
 	c.hydraClients = append(c.hydraClients, ClientConfig{
 		ClientId: c.coreAppFrontendClientId,

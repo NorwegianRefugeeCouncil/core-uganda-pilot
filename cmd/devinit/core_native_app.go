@@ -20,7 +20,7 @@ func (c *Config) makeNativeApp() error {
 	sb.WriteString(fmt.Sprintf("REACT_APP_OAUTH_CLIENT_ID=%s\n", c.coreNativeClientId))
 	sb.WriteString(fmt.Sprintf("REACT_APP_SERVER_URL=https://localhost:8443\n"))
 
-	envPath := path.Join(c.rootDir, "web", "app", "frontend", ".env")
+	envPath := path.Join(c.rootDir, "frontend", "apps", "native", ".env")
 	fmt.Println(envPath)
 	if err := ioutil.WriteFile(envPath, []byte(sb.String()), os.ModePerm); err != nil {
 		return err
