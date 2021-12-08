@@ -22,12 +22,12 @@ type FormDefinition struct {
 }
 
 // GetDatabaseID implements FormInterface.GetDatabaseID
-func (f *FormDefinition) GetDatabaseID() string {
+func (f FormDefinition) GetDatabaseID() string {
 	return f.DatabaseID
 }
 
 // GetFormID implements FormInterface.GetFormID
-func (f *FormDefinition) GetFormID() string {
+func (f FormDefinition) GetFormID() string {
 	return f.ID
 }
 

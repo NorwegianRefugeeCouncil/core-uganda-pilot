@@ -1,6 +1,7 @@
 package store
 
 import (
+	"github.com/nrc-no/core/pkg/mocks"
 	"github.com/nrc-no/core/pkg/store"
 	"github.com/nrc-no/core/pkg/utils/pointers"
 	"github.com/stretchr/testify/assert"
@@ -117,7 +118,7 @@ func getStore(t *testing.T) (loginStore, *gorm.DB) {
 		t.Fatal(err)
 	}
 	prepDb(t, db)
-	return loginStore{db: store.NewMockFactory(db)}, db
+	return loginStore{db: mocks.NewMockFactory(db)}, db
 }
 
 func prepDb(t *testing.T, db *gorm.DB) {

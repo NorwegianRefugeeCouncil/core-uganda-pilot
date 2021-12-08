@@ -108,13 +108,26 @@ func NewGenericServer(options options.ServerOptions, name string) (*Server, erro
 		srv.sessionStore = sessions.NewCookieStore(keyPairs...)
 	}
 
-	address := fmt.Sprintf("%s:%d", options.Host, options.Port)
-	srv.address = address
+	var address string
+	// If we have both host and port, use that as the address for the net listener
+	if len(options.Host) != 0 && options.Port != 0 {
+		address = fmt.Sprintf("%s:%d", options.Host, options.Port)
+	} else if len(options.Host) != 0 {
+		// if we have only an address, let the newListener give us a random port
+		address = fmt.Sprintf("%s:0", options.Host)
+	} else if options.Port != 0 {
+		// if we have only a port, we listen to 0.0.0.0
+		address = fmt.Sprintf(":%d", options.Port)
+	}
 
 	listener, err := net.Listen("tcp", address)
 	if err != nil {
 		return nil, err
 	}
+
+	// Retrieve the address from the listener. Perhaps the listener
+	// listens on a random port (if options.Port = 0)
+	srv.address = listener.Addr().String()
 	srv.listener = listener
 
 	container := restful.NewContainer()
@@ -214,6 +227,10 @@ func (g Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 func (g Server) SessionStore() sessions.Store {
 	return g.sessionStore
+}
+
+func (g Server) Address() string {
+	return g.address
 }
 
 func (g Server) Start(ctx context.Context) {

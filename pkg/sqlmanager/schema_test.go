@@ -1,41 +1,56 @@
 package sqlmanager
 
 import (
-	embeddedpostgres "github.com/fergusstrange/embedded-postgres"
+	"fmt"
 	"github.com/nrc-no/core/pkg/api/types"
+	"github.com/nrc-no/core/pkg/mocks"
 	"github.com/nrc-no/core/pkg/sql/schema"
+	"github.com/nrc-no/core/pkg/testutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"os"
 	"strings"
 	"testing"
 )
 
 type Suite struct {
 	suite.Suite
-	pg *embeddedpostgres.EmbeddedPostgres
-	db *gorm.DB
+	db   *gorm.DB
+	done func()
 }
 
 func TestSuite(t *testing.T) {
 	suite.Run(t, new(Suite))
 }
 
+func TestMain(m *testing.M) {
+	// embedded-postgres runs as a separate process altogether
+	// We must setup/teardown here, otherwise the process does
+	// not get properly cleaned up
+	done, err := testutils.TryGetPostgres()
+	defer done()
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+	exitVal := m.Run()
+	done()
+	os.Exit(exitVal)
+}
+
 func (s *Suite) SetupSuite() {
 
-	pg := embeddedpostgres.NewDatabase()
-	if err := pg.Start(); !assert.NoError(s.T(), err) {
-		s.T().FailNow()
-		return
-	}
-	s.pg = pg
-
-	dsn := "host=localhost user=postgres password=postgres dbname=postgres port=5432 sslmode=disable"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	sqlDb, err := gorm.Open(postgres.Open("host=localhost port=15432 user=postgres password=postgres dbname=postgres sslmode=disable"))
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
-		return
+	}
+	dbFactory := mocks.NewMockFactory(sqlDb)
+
+	db, err := dbFactory.Get()
+	if !assert.NoError(s.T(), err) {
+		s.T().FailNow()
 	}
 
 	s.db = db
@@ -43,8 +58,8 @@ func (s *Suite) SetupSuite() {
 }
 
 func (s *Suite) TearDownSuite() {
-	if s.pg != nil {
-		s.pg.Stop()
+	if s.done != nil {
+		s.done()
 	}
 }
 
