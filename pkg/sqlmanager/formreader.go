@@ -54,7 +54,11 @@ func readRecords(form types.FormInterface, rows sqlReader) (*types.RecordList, e
 
 	for rows.Next() {
 		values := make([]interface{}, len(columns))
-		if err := rows.Scan(&values); err != nil {
+		valuePointers := make([]interface{}, len(values))
+		for i := range values {
+			valuePointers[i] = &values[i]
+		}
+		if err := rows.Scan(valuePointers...); err != nil {
 			return nil, err
 		}
 		record := &types.Record{
@@ -107,7 +111,7 @@ func readInRecord(record *types.Record, form types.FormInterface, columns []stri
 		default:
 			formField, ok := formFieldMap[column]
 			if !ok {
-				return fmt.Errorf(errUnknownFieldF, column)
+				continue
 			}
 			if err := readInRecordField(record, formField, columnValue); err != nil {
 				return err
@@ -133,7 +137,7 @@ func readInRecordField(
 	}
 
 	switch fieldKind {
-	case types.FieldKindMonth, types.FieldKindDate:
+	case types.FieldKindMonth, types.FieldKindDate, types.FieldKindWeek:
 		readInDateField(record, field, value, fieldKind)
 	case types.FieldKindQuantity:
 		readInQuantityField(record, field, value)
@@ -151,25 +155,42 @@ func readInRecordField(
 // readInReferenceField will populate a record types.FieldValue for a types.FieldTypeDate or types.FieldTypeMonth field from
 // an  SQL value
 func readInDateField(record *types.Record, field *types.FieldDefinition, value interface{}, fieldKind types.FieldKind) {
-	var timeFormat string
+	var valueStr *string
 	switch fieldKind {
 	case types.FieldKindMonth:
-		timeFormat = monthFieldFormat
+		switch t := value.(type) {
+		case time.Time:
+			valueStr = pointers.String(t.Format(monthFieldFormat))
+		case *time.Time:
+			if t != nil {
+				valueStr = pointers.String(t.Format(monthFieldFormat))
+			}
+		}
+	case types.FieldKindWeek:
+		switch t := value.(type) {
+		case time.Time:
+			year, week := t.ISOWeek()
+			valueStr = pointers.String(fmt.Sprintf("%d-W%d", year, week))
+		case *time.Time:
+			if t != nil {
+				year, week := t.ISOWeek()
+				valueStr = pointers.String(fmt.Sprintf("%d-W%d", year, week))
+			}
+		}
+
 	case types.FieldKindDate:
-		timeFormat = dateFieldFormat
-	}
-	var monthStr *string
-	switch t := value.(type) {
-	case time.Time:
-		monthStr = pointers.String(t.Format(timeFormat))
-	case *time.Time:
-		if t != nil {
-			monthStr = pointers.String(t.Format(timeFormat))
+		switch t := value.(type) {
+		case time.Time:
+			valueStr = pointers.String(t.Format(dateFieldFormat))
+		case *time.Time:
+			if t != nil {
+				valueStr = pointers.String(t.Format(dateFieldFormat))
+			}
 		}
 	}
 	record.Values = append(record.Values, types.FieldValue{
 		FieldID: field.ID,
-		Value:   monthStr,
+		Value:   valueStr,
 	})
 }
 

@@ -143,6 +143,18 @@ func Test_readRecords(t *testing.T) {
 			values:  singleRow(recordId, pointers.Time(time.Date(2020, 6, 26, 10, 20, 30, 0, time.UTC))),
 			want:    singleRecord(recordWithValue(pointers.String("2020-06"))),
 		}, {
+			name:    "form with week field",
+			form:    formWithField(types.FieldKindWeek),
+			columns: columns(keyIdColumn, keyMyFieldID),
+			values:  singleRow(recordId, time.Date(2020, 6, 26, 10, 20, 30, 0, time.UTC)),
+			want:    singleRecord(recordWithValue(pointers.String("2020-W26"))),
+		}, {
+			name:    "form with nullable week field",
+			form:    formWithField(types.FieldKindWeek),
+			columns: columns(keyIdColumn, keyMyFieldID),
+			values:  singleRow(recordId, pointers.Time(time.Date(2020, 6, 26, 10, 20, 30, 0, time.UTC))),
+			want:    singleRecord(recordWithValue(pointers.String("2020-W26"))),
+		}, {
 			name:    "form with reference field",
 			form:    formWithField(types.FieldKindReference),
 			columns: columns(keyIdColumn, keyMyFieldID),
@@ -183,12 +195,6 @@ func Test_readRecords(t *testing.T) {
 			form:    formWithField(types.FieldKindText),
 			columns: columns(keyIdColumn, keyCreatedAtColumn, keyMyFieldID),
 			values:  singleRow(recordId, 123, "abc"),
-			wantErr: true,
-		}, {
-			name:    "record with unknown field name",
-			form:    formWithField(types.FieldKindText),
-			columns: columns(keyIdColumn, "someField"),
-			values:  singleRow(recordId, "abc"),
 			wantErr: true,
 		}, {
 			name:    "record with unknown field type",
@@ -263,9 +269,12 @@ func (m *mockSqlReader) Scan(intf ...interface{}) error {
 	if m.scanThrows {
 		return fmt.Errorf("mock error")
 	}
-	first := intf[0]
-	firstValue := reflect.ValueOf(first)
-	firstValue.Elem().Set(reflect.ValueOf(m.values[m.i]))
+
+	for i, a := range intf {
+		firstValue := reflect.ValueOf(a)
+		firstValue.Elem().Set(reflect.ValueOf(m.values[m.i][i]))
+	}
+
 	return nil
 }
 

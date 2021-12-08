@@ -2,6 +2,7 @@ package validation
 
 import (
 	"github.com/nrc-no/core/pkg/api/types"
+	"github.com/nrc-no/core/pkg/utils/dates"
 	"github.com/nrc-no/core/pkg/utils/sets"
 	"github.com/nrc-no/core/pkg/validation"
 	uuid "github.com/satori/go.uuid"
@@ -220,9 +221,11 @@ func ValidateRecordWeekValue(path *validation.Path, value *string, field *types.
 	if done {
 		return result
 	}
-	_, err := time.Parse("2006-W01", stringValue)
+	valuePath := path.Child("value")
+
+	_, err := dates.ParseIsoWeekTime(stringValue)
+
 	if err != nil {
-		valuePath := path.Child("value")
 		return append(result, validation.Invalid(valuePath, value, errRecordInvalidWeek))
 	}
 	return result

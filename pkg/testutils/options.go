@@ -240,6 +240,8 @@ func FieldTypeKind(kind types.FieldKind) FieldOption {
 			return FieldTypeQuantity()(fieldDefinition)
 		case types.FieldKindMonth:
 			return FieldTypeMonth()(fieldDefinition)
+		case types.FieldKindWeek:
+			return FieldTypeWeek()(fieldDefinition)
 		case types.FieldKindSingleSelect:
 			// todo
 		}
@@ -302,6 +304,15 @@ func FieldTypeMonth() FieldOption {
 	}
 }
 
+func FieldTypeWeek() FieldOption {
+	return func(fieldDefinition *types.FieldDefinition) *types.FieldDefinition {
+		fieldDefinition.FieldType = types.FieldType{
+			Week: &types.FieldTypeWeek{},
+		}
+		return fieldDefinition
+	}
+}
+
 func AField(options ...FieldOption) *types.FieldDefinition {
 	f := &types.FieldDefinition{}
 	for _, option := range options {
@@ -331,6 +342,11 @@ func RecordForForm(form types.FormInterface) RecordOption {
 				r.Values = append(r.Values, types.FieldValue{
 					FieldID: field.ID,
 					Value:   pointers.String("2020-01"),
+				})
+			} else if field.FieldType.Week != nil {
+				r.Values = append(r.Values, types.FieldValue{
+					FieldID: field.ID,
+					Value:   pointers.String("2020-W01"),
 				})
 			} else if field.FieldType.Text != nil {
 				r.Values = append(r.Values, types.FieldValue{

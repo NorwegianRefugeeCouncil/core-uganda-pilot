@@ -226,7 +226,7 @@ func TestValidateRecord(t *testing.T) {
 		}, {
 			name: "month field",
 			form: aTextForm(
-				tu.FormField(tu.AField(tu.FieldID("dateField"), tu.FieldTypeDate())),
+				tu.FormField(tu.AField(tu.FieldID("monthField"), tu.FieldTypeMonth())),
 			),
 			expect: nil,
 		}, {
@@ -262,6 +262,46 @@ func TestValidateRecord(t *testing.T) {
 				tu.FormField(tu.AField(tu.FieldID("monthField"), tu.FieldTypeMonth())),
 			),
 			recordOptions: tu.RecordValue("monthField", nil),
+			expect:        nil,
+		}, {
+			name: "week field",
+			form: aTextForm(
+				tu.FormField(tu.AField(tu.FieldID("weekField"), tu.FieldTypeWeek())),
+			),
+			expect: nil,
+		}, {
+			name: "invalid week field",
+			form: aTextForm(
+				tu.FormField(tu.AField(tu.FieldID("weekField"), tu.FieldTypeWeek())),
+			),
+			recordOptions: tu.RecordValue("weekField", pointers.String("someValue")),
+			expect: validation.ErrorList{
+				validation.Invalid(firstFieldValuePath, pointers.String("someValue"), errRecordInvalidWeek),
+			},
+		}, {
+			name: "required empty week field",
+			form: aTextForm(
+				tu.FormField(tu.AField(tu.FieldID("weekField"), tu.FieldTypeWeek(), tu.FieldRequired(true))),
+			),
+			recordOptions: tu.RecordValue("weekField", pointers.String("")),
+			expect: validation.ErrorList{
+				validation.Required(firstFieldValuePath, errFieldValueRequired),
+			},
+		}, {
+			name: "required week field with nil value",
+			form: aTextForm(
+				tu.FormField(tu.AField(tu.FieldID("weekField"), tu.FieldTypeWeek(), tu.FieldRequired(true))),
+			),
+			recordOptions: tu.RecordValue("weekField", nil),
+			expect: validation.ErrorList{
+				validation.Required(firstFieldValuePath, errFieldValueRequired),
+			},
+		}, {
+			name: "optional week field with nil value",
+			form: aTextForm(
+				tu.FormField(tu.AField(tu.FieldID("weekField"), tu.FieldTypeWeek())),
+			),
+			recordOptions: tu.RecordValue("weekField", nil),
 			expect:        nil,
 		}, {
 			name: "quantity field",
