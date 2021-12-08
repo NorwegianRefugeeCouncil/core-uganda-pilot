@@ -1,48 +1,120 @@
 import {findSubForm, hasSubFormWithId, selectFormOrSubFormById, selectRootForm} from "../form";
-import {FieldDefinition} from "../../types/types";
 import {RootState} from "../../app/store";
-
 
 describe("form reducer", () => {
     describe("findSubForm", () => {
         it('should find the first level sub form', function () {
-            const found = findSubForm("subform", [{fieldType: {subForm: {id: "subform"}}}] as FieldDefinition[])
-            expect(found?.id).toEqual("subform")
+            const found = findSubForm("subformId", [{
+                fieldType: {subForm: {fields: []}},
+                id: 'subformId',
+                code: 'code',
+                name: 'name',
+                description: 'description',
+                required: false,
+                key: false,
+                options: []
+            }])
+            expect(found?.id).toEqual("subformId")
         });
         it('should find a nested sub form', function () {
             const found = findSubForm("nested", [{
                 fieldType: {
                     subForm: {
-                        id: "subform",
-                        fields: [{fieldType: {subForm: {id: "nested"}}}] as FieldDefinition[]
+                        fields: [{
+                            fieldType: {
+                                subForm: {
+                                    fields: []
+                                }
+                            },
+                            id: 'nested',
+                            code: 'code',
+                            name: 'name',
+                            description: 'description',
+                            required: false,
+                            key: false,
+                            options: []
+                        }]
                     }
-                }
-            }] as FieldDefinition[])
+                },
+                id: 'mainSubform',
+                code: 'code',
+                name: 'name',
+                description: 'description',
+                required: false,
+                key: false,
+                options: []
+            }])
             expect(found?.id).toEqual("nested")
         });
         it('should return undefined if not found', function () {
-            const found = findSubForm("bla", [{fieldType: {subForm: {id: "subform"}}}] as FieldDefinition[])
+            const found = findSubForm("bla", [{
+                fieldType: {subForm: {fields: []}},
+                id: 'foo',
+                code: 'code',
+                name: 'name',
+                description: 'description',
+                required: false,
+                key: false,
+                options: []
+            }])
             expect(found?.id).toBeUndefined()
         });
     })
     describe("hasSubFormWithId", () => {
         it('should return true if has subform with id', function () {
-            const found = hasSubFormWithId("subform", [{fieldType: {subForm: {id: "subform"}}}] as FieldDefinition[])
+            const found = hasSubFormWithId("subformId", [{
+                fieldType: {subForm: {fields: []}},
+                id: 'subformId',
+                code: 'code',
+                name: 'name',
+                description: 'description',
+                required: false,
+                key: false,
+                options: []
+            }])
             expect(found).toBeTruthy()
         });
-        it('should return false if has subform with id', function () {
-            const found = hasSubFormWithId("bla", [{fieldType: {subForm: {id: "subform"}}}] as FieldDefinition[])
+        it('should return false if has subform with no such id', function () {
+            const found = hasSubFormWithId("bla", [{
+                fieldType: {subForm: {fields: []}},
+                id: 'subformId',
+                code: 'code',
+                name: 'name',
+                description: 'description',
+                required: false,
+                key: false,
+                options: []
+            }])
             expect(found).toBeFalsy()
         });
         it('should return true with a nested subform', function () {
             const found = hasSubFormWithId("nested", [{
                 fieldType: {
                     subForm: {
-                        id: "subform",
-                        fields: [{fieldType: {subForm: {id: "nested"}}}] as FieldDefinition[]
+                        fields: [{
+                            fieldType: {
+                                subForm: {
+                                    fields: []
+                                }
+                            },
+                            id: 'nested',
+                            code: 'code',
+                            name: 'name',
+                            description: 'description',
+                            required: false,
+                            key: false,
+                            options: []
+                        }]
                     }
-                }
-            }] as FieldDefinition[])
+                },
+                id: 'mainSubform',
+                code: 'code',
+                name: 'name',
+                description: 'description',
+                required: false,
+                key: false,
+                options: []
+            }])
             expect(found).toBeTruthy()
         });
     })
@@ -64,7 +136,12 @@ describe("form reducer", () => {
                 forms: {
                     ids: ["form"],
                     entities: {
-                        "form": {id: "form", fields: [{fieldType: {subForm: {id: "subform"}}}]}
+                        "form": {
+                            id: "form", fields: [{
+                                fieldType: {subForm: {}},
+                                id: "subform"
+                            }]
+                        }
                     }
                 }
             } as unknown;
@@ -90,7 +167,12 @@ describe("form reducer", () => {
                 forms: {
                     ids: ["form"],
                     entities: {
-                        "form": {id: "form", fields: [{fieldType: {subForm: {id: "subform"}}}]}
+                        "form": {
+                            id: "form", fields: [{
+                                fieldType: {subForm: {}},
+                                id: "subform"
+                            }]
+                        }
                     }
                 }
             } as unknown;
