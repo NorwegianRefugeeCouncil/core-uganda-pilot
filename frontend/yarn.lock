@@ -4742,7 +4742,7 @@
     "@svgr/plugin-svgo" "^5.5.0"
     loader-utils "^2.0.0"
 
-"@testing-library/dom@*", "@testing-library/dom@>=7.21.4", "@testing-library/dom@^8.0.0":
+"@testing-library/dom@*", "@testing-library/dom@>=7.21.4", "@testing-library/dom@^8.0.0", "@testing-library/dom@^8.11.1":
   version "8.11.1"
   resolved "https://registry.yarnpkg.com/@testing-library/dom/-/dom-8.11.1.tgz#03fa2684aa09ade589b460db46b4c7be9fc69753"
   integrity sha512-3KQDyx9r0RKYailW2MiYrSSKEfH0GTkI51UGEvJenvcoDoeRYs0PZpi2SXqtnMClQvCqdtTTpOfFETDTVADpAg==
@@ -8308,7 +8308,13 @@ copy-webpack-plugin@~6.0.3:
     react-scripts "4.0.3"
     web-vitals "~1.0.1"
 
-"core-js-api-client@file:packages/core-api-client", "core-js-api-client@link:packages/core-api-client":
+"core-js-api-client@file:packages/core-api-client":
+  version "0.0.1"
+  dependencies:
+    "@types/node" "^14.17.20"
+    axios "^0.23.0"
+
+"core-js-api-client@link:packages/core-api-client":
   version "0.0.1"
   dependencies:
     "@types/node" "^14.17.20"
