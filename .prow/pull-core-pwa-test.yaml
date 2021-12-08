@@ -1,6 +1,6 @@
 postsubmits:
   - name: pull-core-pwa-test
-    run_if_changed: "^web/pwa"
+    run_if_changed: "^web/pwa|^web/auth|^web/client"
     decorate: true
     spec:
       containers:
