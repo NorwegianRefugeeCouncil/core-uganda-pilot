@@ -1,7 +1,7 @@
 import React from "react";
 import { fireEvent, render } from "@testing-library/react-native";
 
-import AddRecordScreen from "../../src/components/screens/AddRecordScreen";
+import { AddRecordScreen } from "../../src/components/screens/AddRecordScreen";
 import testIds from "../../src/constants/testIds";
 import { useForm } from "react-hook-form";
 

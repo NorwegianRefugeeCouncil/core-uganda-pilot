@@ -22,7 +22,9 @@ exports[`AddRecordScreen renders correctly 1`] = `
   }
 >
   <View>
-    <View>
+    <View
+      style={Array []}
+    >
       <View
         style={
           Object {
@@ -1326,6 +1328,7 @@ exports[`AddRecordScreen renders correctly 1`] = `
           </View>
         </View>
         <View
+          accessibilityLabel="Submit"
           accessibilityRole="button"
           accessibilityState={Object {}}
           accessible={true}

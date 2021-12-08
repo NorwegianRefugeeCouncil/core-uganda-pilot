@@ -9,7 +9,7 @@ import client from "../../utils/clients";
 import { getEncryptionKey } from "../../utils/getEncryptionKey";
 import { getNetworkState } from "../../utils/getNetworkState";
 import { getEncryptedLocalData, storeEncryptedLocalData } from "../../utils/storage";
-import AddRecordScreen from "../screens/AddRecordScreen";
+import { AddRecordScreen } from "../screens/AddRecordScreen";
 
 export const AddRecordScreenContainer = ({ route, dispatch }: AddRecordScreenContainerProps) => {
     const { formId, recordId } = route.params;
@@ -34,7 +34,7 @@ export const AddRecordScreenContainer = ({ route, dispatch }: AddRecordScreenCon
                 console.error(error);
                 setIsLoading(true);
             } finally {
-                setIsConnected(networkState === NetworkStateType.NONE);
+                setIsConnected(networkState !== NetworkStateType.NONE);
             }
 
             //
@@ -66,21 +66,19 @@ export const AddRecordScreenContainer = ({ route, dispatch }: AddRecordScreenCon
 
     const onSubmitOffline = async (data: any) => {
         const key = getEncryptionKey();
-
-        storeEncryptedLocalData(recordId, key, data)
-            .then(() => {
-                setHasLocalData(true);
-                dispatch({
-                    type: RECORD_ACTIONS.ADD_LOCAL_RECORD,
-                    payload: {
-                        formId,
-                        localRecord: recordId,
-                    },
-                });
-            })
-            .catch(() => {
-                setHasLocalData(false);
+        try {
+            await storeEncryptedLocalData(recordId, key, data);
+            dispatch({
+                type: RECORD_ACTIONS.ADD_LOCAL_RECORD,
+                payload: {
+                    formId,
+                    localRecord: recordId,
+                },
             });
+            setHasLocalData(true);
+        } catch (e) {
+            setHasLocalData(false);
+        }
     };
 
     const onSubmit = (data: any) => {

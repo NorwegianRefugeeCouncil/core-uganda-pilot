@@ -25,10 +25,11 @@ export const AddRecordScreen = ({
     hasLocalData,
     isConnected,
     isLoading,
-}: AddRecordScreenProps) => {
+}: AddRecordScreenProps)=> {
+  // console.log(form?.fields)
     return (
         <ScrollView contentContainerStyle={[layout.container, layout.body, common.darkBackground]}>
-            <View>
+            <View style={[]}>
                 {/* upload data collected offline */}
                 {hasLocalData && (
                     <View style={{ display: "flex", flexDirection: "column" }}>
@@ -36,9 +37,15 @@ export const AddRecordScreen = ({
                     </View>
                 )}
                 {hasLocalData && isConnected && (
-                    <View style={{ display: "flex", flexDirection: "column" }}>
-                        <Text>Do you want to upload it?</Text>
-                        <Button accessibilityLabel="Submit local data" title="Submit local data" onPress={onSubmit} />
+                    <View style={{display: "flex", flexDirection: "column"}}>
+                        <Text>
+                            Do you want to upload it?
+                        </Text>
+                        <Button
+                            accessibilityLabel="Submit local data"
+                            title="Submit local data"
+                            onPress={onSubmit}
+                        />
                     </View>
                 )}
                 {isLoading ? (
@@ -58,7 +65,7 @@ export const AddRecordScreen = ({
                                 />
                             );
                         })}
-                        <Button title="Submit" onPress={onSubmit} />
+                        <Button accessibilityLabel="Submit" title="Submit" onPress={onSubmit} />
                     </View>
                 )}
             </View>
