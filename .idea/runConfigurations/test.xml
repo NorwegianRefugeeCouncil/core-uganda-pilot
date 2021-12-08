@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="test" type="GoTestRunConfiguration" factoryName="Go Test" show_console_on_std_err="true" show_console_on_std_out="true">
+    <module name="core" />
+    <working_directory value="$PROJECT_DIR$/pkg" />
+    <go_parameters value="-coverpkg=./... -v" />
+    <root_directory value="$PROJECT_DIR$" />
+    <kind value="DIRECTORY" />
+    <package value="github.com/nrc-no/core/..." />
+    <directory value="$PROJECT_DIR$/pkg" />
+    <filePath value="$PROJECT_DIR$" />
+    <framework value="gotest" />
+    <method v="2" />
+  </configuration>
+</component>
