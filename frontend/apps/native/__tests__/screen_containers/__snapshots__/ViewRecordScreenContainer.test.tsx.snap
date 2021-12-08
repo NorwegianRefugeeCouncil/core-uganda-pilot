@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ViewRecordScreenContainer renders correctly 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "flex": 1,
+        "flexGrow": 1,
+      },
+      Object {
+        "alignItems": "flex-start",
+        "flexGrow": 1,
+        "justifyContent": "flex-start",
+        "padding": 18,
+      },
+      Object {
+        "backgroundColor": "#24303E",
+        "color": "#000000",
+      },
+    ]
+  }
+>
+  <RCTScrollView>
+    <View>
+      <View />
+    </View>
+  </RCTScrollView>
+</View>
+`;

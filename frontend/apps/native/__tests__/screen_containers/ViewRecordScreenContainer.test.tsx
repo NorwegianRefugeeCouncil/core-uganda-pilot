@@ -1,6 +1,6 @@
 import { render, waitFor } from "@testing-library/react-native";
 import React from "react";
-import { FormDefinition } from "../../../client/lib/esm";
+import { FormDefinition } from "core-js-api-client";
 import { ViewRecordScreenContainer } from "../../src/components/screen_containers/ViewRecordScreenContainer";
 
 const mockFormId = "a form id";
@@ -21,9 +21,13 @@ mockState.formsById[mockFormId] = {
     recordsById: {},
 };
 
-const mockValues = Array(10).fill("a value");
+const mockValue = {
+    fieldId: "a field id",
+    value: "a value"
+}
+const mockValues = Array(10).fill(mockValue);
 
-mockState.formsById[mockFormId].recordsById[mockRecordId] = {values: mockValues};
+mockState.formsById[mockFormId].recordsById[mockRecordId] = { values: mockValues };
 
 const mockForm: FormDefinition = {
     id: mockFormId,
@@ -49,14 +53,16 @@ jest.mock("react-hook-form", () => {
     const rhf = jest.requireActual("react-hook-form");
     return {
         ...rhf,
-        control: mockControl,
-        reset: mockReset,
+        useForm: () => ({
+            control: mockControl,
+            reset: mockReset,
+        }),
     };
 });
 
 const mockProps: any = {
     route: mockRoute,
-    satate: mockState,
+    state: mockState,
 };
 
 describe(ViewRecordScreenContainer.name, () => {
@@ -76,6 +82,6 @@ describe(ViewRecordScreenContainer.name, () => {
 
     test("call react-hook-form's reset method with form data", async () => {
         await waitFor(() => render(<ViewRecordScreenContainer {...mockProps} />));
-        expect(mockReset).toHaveBeenCalledWith(mockValues);
+        await waitFor(() => expect(mockReset).toHaveBeenCalledWith(mockValues));
     });
 });
