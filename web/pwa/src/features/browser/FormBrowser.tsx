@@ -60,7 +60,7 @@ function mapRecordCell(field: FieldDefinition, record: Record, getSubFormCount: 
         </td>
     }
 
-    const fieldValue = record.values.find(v => v.fieldId === field.id)
+    const fieldValue = record.values.find((v: any) => v.fieldId === field.id)
 
     if (field.fieldType.month) {
 

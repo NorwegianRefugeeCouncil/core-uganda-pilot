@@ -59,6 +59,7 @@ export type FieldDefinition = {
     description: string
     required: boolean
     key: boolean
+    options: string[]
     fieldType: FieldType
 }
 

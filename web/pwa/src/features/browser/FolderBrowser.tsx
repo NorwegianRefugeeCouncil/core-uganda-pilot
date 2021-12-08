@@ -36,8 +36,8 @@ export const FolderBrowser: FC<FolderBrowserProps> = props => {
         forms,
     } = props
 
-    const formEntries = forms.map(f => <FormRow form={f}/>)
-    const folderEntries = folders.map(f => <FolderRow folder={f}/>)
+    const formEntries = forms.map(f => <FormRow key={f.id} form={f}/>)
+    const folderEntries = folders.map(f => <FolderRow key={f.id} folder={f}/>)
 
     const isEmpty = forms.length === 0 && folders.length === 0
     const isEmptyDatabase = folderId === undefined && isEmpty

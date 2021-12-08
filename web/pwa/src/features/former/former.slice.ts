@@ -202,7 +202,7 @@ const mapFields = (state: FormerState, fields: FormField[]): FieldDefinition[] =
             id: "",
             description: field.description,
             name: field.name,
-            options: "",
+            options: [],
             required: field.required,
             code: field.code,
             key: field.key
