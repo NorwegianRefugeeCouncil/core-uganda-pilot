@@ -36,13 +36,8 @@ func (f *FormDefinition) GetFields() FieldDefinitions {
 	return f.Fields
 }
 
-// GetOwner implements FormInterface.GetOwner
-func (f *FormDefinition) GetOwner() FormInterface {
-	return nil
-}
-
 // HasOwner implements FormInterface.HasOwner
-func (f *FormDefinition) HasOwner() bool {
+func (f *FormDefinition) IsSubForm() bool {
 	return false
 }
 

@@ -300,11 +300,7 @@ func (m mockForm) GetFields() types.FieldDefinitions {
 	return m.fields
 }
 
-func (m mockForm) GetOwner() types.FormInterface {
-	return m.owner
-}
-
-func (m mockForm) HasOwner() bool {
+func (m mockForm) IsSubForm() bool {
 	return m.hasOwner
 }
 

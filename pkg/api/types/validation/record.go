@@ -75,7 +75,7 @@ func ValidateRecord(record *types.Record, form types.FormInterface) validation.E
 		result = append(result, validation.Invalid(formIdPath, record.FormID, errRecordInvalidFormId))
 	}
 
-	if form.HasOwner() {
+	if form.IsSubForm() {
 		if record.OwnerID == nil || len(*record.OwnerID) == 0 {
 			result = append(result, validation.Required(ownerIdPath, errRecordOwnerIdRequired))
 		} else if _, err := uuid.FromString(*record.OwnerID); err != nil {

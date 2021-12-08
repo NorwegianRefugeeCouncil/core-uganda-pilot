@@ -48,8 +48,8 @@ func buildSubFormOwnerColumn(formInterface types.FormInterface) schema.SQLColumn
 				// The owner_id SQL column must reference an existing parent
 				// This adds a "foreign_key" constraint to the parent table
 				Reference: &schema.ReferenceSQLColumnConstraint{
-					Schema:   formInterface.GetOwner().GetDatabaseID(),
-					Table:    formInterface.GetOwner().GetFormID(),
+					Schema:   formInterface.GetDatabaseID(),
+					Table:    formInterface.GetFormID(),
 					Column:   keyIdColumn,
 					OnDelete: schema.ActionCascade,
 					OnUpdate: schema.ActionCascade,

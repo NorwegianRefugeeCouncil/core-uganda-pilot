@@ -121,11 +121,7 @@ func (m mockForm) GetFields() types.FieldDefinitions {
 	return m.fields
 }
 
-func (m mockForm) GetOwner() types.FormInterface {
-	return m.owner
-}
-
-func (m mockForm) HasOwner() bool {
+func (m mockForm) IsSubForm() bool {
 	return m.hasOwner
 }
 
@@ -329,7 +325,7 @@ func RecordForForm(form types.FormInterface) RecordOption {
 		if r.Values == nil {
 			r.Values = types.FieldValues{}
 		}
-		if form.HasOwner() {
+		if form.IsSubForm() {
 			r.OwnerID = pointers.String(uuid.NewV4().String())
 		}
 		for _, field := range form.GetFields() {

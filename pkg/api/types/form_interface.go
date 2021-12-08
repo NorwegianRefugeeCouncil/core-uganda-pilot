@@ -10,15 +10,16 @@ import (
 // a single type.
 type FormInterface interface {
 	FormReference
+
 	// GetFields returns the form/subform fields
 	GetFields() FieldDefinitions
-	// GetOwner returns the parent of the FormInterface, in the case that this is a SubForm
-	GetOwner() FormInterface
-	// HasOwner returns whether the FormInterface has a parent or not
-	// This would be true if the form is a SubForm
-	HasOwner() bool
+
+	// IsSubForm returns whether the FormInterface is a sub form or not
+	IsSubForm() bool
+
 	// FindSubForm will recursively try to find a form or subform
 	// with the given ID
+	// TODO remove this from the FormInterface. Perhaps add a SubFormInterface
 	FindSubForm(subFormId string) (FormInterface, error)
 }
 
@@ -40,13 +41,8 @@ func (f *formInterface) GetFields() FieldDefinitions {
 	return f.fields
 }
 
-// GetOwner implements FormInterface.GetOwner
-func (f *formInterface) GetOwner() FormInterface {
-	return f.parent
-}
-
 // HasOwner implements FormInterface.HasOwner
-func (f *formInterface) HasOwner() bool {
+func (f *formInterface) IsSubForm() bool {
 	parentValue := reflect.ValueOf(f.parent)
 	return parentValue.Kind() == reflect.Ptr && !parentValue.IsNil()
 }
