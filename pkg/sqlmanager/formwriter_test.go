@@ -223,7 +223,7 @@ func Test_formWriter_WriteRecords(t *testing.T) {
 		}, {
 			name: "record with owner",
 			form: formWithFields(
-				tu.FormHasOwner(true),
+				tu.FormIsSubForm(true),
 				tu.FormField(tu.AField(tu.FieldID("fieldId"), tu.FieldTypeQuantity())),
 			),
 			records: aSingleRecord(

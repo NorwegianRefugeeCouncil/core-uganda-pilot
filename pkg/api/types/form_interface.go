@@ -41,7 +41,7 @@ func (f *formInterface) GetFields() FieldDefinitions {
 	return f.fields
 }
 
-// HasOwner implements FormInterface.HasOwner
+// IsSubForm implements FormInterface.IsSubForm
 func (f *formInterface) IsSubForm() bool {
 	parentValue := reflect.ValueOf(f.parent)
 	return parentValue.Kind() == reflect.Ptr && !parentValue.IsNil()

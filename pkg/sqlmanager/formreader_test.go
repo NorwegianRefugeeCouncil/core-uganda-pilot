@@ -284,7 +284,7 @@ type mockForm struct {
 	id         string
 	databaseId string
 	owner      types.FormInterface
-	hasOwner   bool
+	isSubForm  bool
 	fields     []*types.FieldDefinition
 }
 
@@ -301,7 +301,7 @@ func (m mockForm) GetFields() types.FieldDefinitions {
 }
 
 func (m mockForm) IsSubForm() bool {
-	return m.hasOwner
+	return m.isSubForm
 }
 
 func (m mockForm) FindSubForm(subFormId string) (types.FormInterface, error) {

@@ -81,21 +81,21 @@ func TestValidateRecord(t *testing.T) {
 			},
 		}, {
 			name:          "missing ownerId",
-			form:          aTextForm(tu.FormHasOwner(true)),
+			form:          aTextForm(tu.FormIsSubForm(true)),
 			recordOptions: tu.RecordOwnerID(nil),
 			expect: validation.ErrorList{
 				validation.Required(validation.NewPath("ownerId"), errRecordOwnerIdRequired),
 			},
 		}, {
 			name:          "empty ownerId",
-			form:          aTextForm(tu.FormHasOwner(true)),
+			form:          aTextForm(tu.FormIsSubForm(true)),
 			recordOptions: tu.RecordOwnerID(pointers.String("")),
 			expect: validation.ErrorList{
 				validation.Required(validation.NewPath("ownerId"), errRecordOwnerIdRequired),
 			},
 		}, {
 			name:          "invalid ownerId",
-			form:          aTextForm(tu.FormHasOwner(true)),
+			form:          aTextForm(tu.FormIsSubForm(true)),
 			recordOptions: tu.RecordOwnerID(pointers.String("abc")),
 			expect: validation.ErrorList{
 				validation.Invalid(validation.NewPath("ownerId"), "abc", errRecordInvalidOwnerID),
