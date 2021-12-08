@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Renderer, {ReactTestRendererJSON} from 'react-test-renderer';
-import App from '../App';
+import App from '../App.tsx';
 
 describe('App', () => {
 
