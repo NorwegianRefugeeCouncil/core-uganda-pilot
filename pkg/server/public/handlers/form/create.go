@@ -7,6 +7,7 @@ import (
 	"github.com/nrc-no/core/pkg/api/types/validation"
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/utils"
+	uuid "github.com/satori/go.uuid"
 	"go.uber.org/zap"
 	"net/http"
 )
@@ -34,8 +35,11 @@ func (h *Handler) Create() http.HandlerFunc {
 			return
 		}
 
+		f := &form
+		newFormIDs(f)
+
 		l.Debug("storing form")
-		respForm, err := h.store.Create(ctx, &form)
+		respForm, err := h.store.Create(ctx, f)
 		if err != nil {
 			l.Error("failed to store form", zap.Error(err))
 			utils.ErrorResponse(w, err)
@@ -44,6 +48,20 @@ func (h *Handler) Create() http.HandlerFunc {
 
 		l.Debug("successfully created form")
 		utils.JSONResponse(w, http.StatusOK, respForm)
+	}
+}
+
+func newFormIDs(form *types.FormDefinition) {
+	form.ID = uuid.NewV4().String()
+	newFieldIDs(form.Fields)
+}
+
+func newFieldIDs(fields []*types.FieldDefinition) {
+	for _, field := range fields {
+		field.ID = uuid.NewV4().String()
+		if field.FieldType.SubForm != nil {
+			newFieldIDs(field.FieldType.SubForm.Fields)
+		}
 	}
 }
 
