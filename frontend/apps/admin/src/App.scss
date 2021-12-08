@@ -6,7 +6,7 @@ $theme-colors: (
   "darkula": $darkula-bg,
 );
 
-@import "node_modules/bootstrap/scss/bootstrap";
+@import "bootstrap/scss/bootstrap";
 
 .card.card-darkula {
     background-color: darken($darkula-bg, 5%);
