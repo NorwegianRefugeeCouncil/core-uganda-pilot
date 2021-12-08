@@ -51,56 +51,133 @@ func NewFormStore(db Factory) FormStore {
 
 // Form represents the data structure used to store a types.FormDefinition
 type Form struct {
-	ID          string `gorm:"index:idx_form_id_database_id,unique"`
-	DatabaseID  string `gorm:"index:idx_form_id_database_id,unique"`
-	Database    Database
+
+	// ID stores the types.FormDefinition ID
+	ID string `gorm:"index:idx_form_id_database_id,unique"`
+
+	// DatabaseID stores the types.FormDefinition DatabaseID
+	DatabaseID string `gorm:"index:idx_form_id_database_id,unique"`
+
+	// Database is used so that gorm creates a (not nullable) Foreign Key on the Database table
+	Database Database
+
+	// RootOwnerID is present because when we want to fetch the root form and all SubForms
+	// for a given FormDefinition, we can simply query WHERE root_owner_id = <RootFormID>.
+	// This will retrieve all the forms, subforms and nested subforms that are part
+	// of the same FormDefinition
 	RootOwnerID string
-	RootOwner   *Form
-	OwnerID     string
-	Owner       *Form
-	FolderID    *string
-	Folder      *Folder
-	Name        string
-	Code        string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+
+	// RootOwner is the gorm hack to create a (not nullable) Foreign Key on the Form table
+	RootOwner *Form
+
+	// OwnerID represents a SubForm owner OR, when the form is the root form (FormDefinition)
+	// then the OwnerID == ID. It's nice like this because we can query all root FormDefinitions
+	// with a query like "SELECT * FROM forms where id == owner_id"
+	OwnerID string
+
+	// Owner is the same gorm hack to create a (not nullable) foreign key on the Form table
+	Owner *Form
+
+	// FolderID stores the types.FormDefinition FolderID
+	FolderID *string
+
+	// Folder is the gorm hack to create a (nullable) foreign key on the Folder table
+	Folder *Folder
+
+	// Name stores the types.FormDefinition Name
+	Name string
+
+	// CreatedAt represents when this form was created
+	CreatedAt time.Time
+
+	// UpdatedAt represents when this form was updated
+	UpdatedAt time.Time
 }
 
 type Forms []*Form
 
 // Field represents the data structure used to store a types.FieldDefinition
 type Field struct {
-	ID                   string
-	DatabaseID           string
-	FormID               string
-	RootFormID           string
-	RootForm             *Form
-	Name                 string
-	Options              []Option
-	Description          string
-	Code                 string
-	Key                  bool
-	Required             bool
-	SubFormID            *string
-	SubForm              *Form
+
+	// ID stores the types.FieldDefinition ID
+	ID string
+
+	// DatabaseID stores the types.FieldDefinition DatabaseID
+	DatabaseID string
+
+	// FormID stores the types.FieldDefinition FormID
+	FormID string
+
+	// RootFormID stores the root form definition ID for this field.
+	// See comment on Form.RootOwnerID
+	RootFormID string
+
+	// RootForm is the gorm hack to create a foreign key
+	RootForm *Form
+
+	// Name stores the types.FieldDefinition Name
+	Name string
+
+	// Description stores the types.FieldDefinition Description
+	Description string
+
+	// Code stores the types.FieldDefinition Code
+	Code string
+
+	// Key stores the types.FieldDefinition Key
+	Key bool
+
+	// Required stores the types.FieldDefinition Required
+	Required bool
+
+	// SubFormID stores the SubForm ID. This should be equal to the Field.ID.
+	// Merely keeping a duplicate value so we can have a foreign key
+	SubFormID *string
+
+	// SubForm creates a gorm ForeignKey
+	SubForm *Form
+
+	// ReferencedDatabaseID stores the referenced DatabaseID when the field is a Reference field
 	ReferencedDatabaseID *string
-	ReferencedDatabase   *Database
-	ReferencedFormID     *string
-	ReferencedForm       *Form
-	Type                 types.FieldKind
-	CreatedAt            time.Time
-	UpdatedAt            time.Time
+
+	// ReferencedDatabase allows gorm to create a foreign key
+	ReferencedDatabase *Database
+
+	// ReferencedFormID stores the referenced FormID when the field is a Reference field
+	ReferencedFormID *string
+
+	// ReferencedForm allows gorm to create a foreign key
+	ReferencedForm *Form
+
+	// Type stores the field type
+	Type types.FieldKind
+
+	// CreatedAt stores the time the Field was created
+	CreatedAt time.Time
+
+	// UpdatedAt stores the time the field was updated
+	UpdatedAt time.Time
 }
 
 type Fields []*Field
 
 // Option represents the data structure used to store options for a types.FieldTypeMultiSelect or types.FieldTypeSingleSelect
 type Option struct {
+
+	// DatabaseID stores the Form's DatabaseID
 	DatabaseID string `gorm:"primarykey"`
+
+	// RootFormID stores the root FormID. See Form.RootOwnerID
 	RootFormID string `gorm:"primarykey"`
-	FormID     string `gorm:"primarykey"`
-	FieldID    string `gorm:"primarykey"`
-	Value      string `gorm:"primarykey"`
+
+	// FormID stores the FormID of the single/multi select field
+	FormID string `gorm:"primarykey"`
+
+	// FieldID stores the single/multi select Field.ID
+	FieldID string `gorm:"primarykey"`
+
+	// Value stores the value for that option
+	Value string `gorm:"primarykey"`
 }
 
 type Options []*Option
