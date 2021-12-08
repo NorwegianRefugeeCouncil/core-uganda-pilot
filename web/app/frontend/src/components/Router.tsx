@@ -4,11 +4,12 @@ import React, { useReducer } from "react";
 import NavigationBar from "./NavigationBar";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+
+import FormsScreen from "./screens/FormsScreen";
 import routes from "../constants/routes";
 import { NavigationTheme } from "../constants/theme";
 import DesignSystemDemoScreen from "./screens/DesignSystemDemoScreen";
 import RecordsScreen from "./screens/RecordsScreen";
-import AddRecordScreen from "./screens/AddRecordScreen";
 import ViewRecordScreen from "./screens/ViewRecordScreen";
 import {
     initialRecordsState,
@@ -17,6 +18,8 @@ import {
 } from "../reducers/recordsReducers";
 import Constants from "expo-constants";
 import { FormsScreenContainer } from "./screen_containers/FormsScreenContainer";
+import { AddRecordScreenContainer } from './screen_containers/AddRecordScreenContainer';
+import { AddRecordScreenContainerProps } from '../types/screens';
 
 export type ScreenProps = {
     navigation: any;
@@ -73,8 +76,13 @@ export default function Router() {
                             options={{
                                 title: routes.addRecord.title,
                             }}>
-                            {props => (
-                                <AddRecordScreen {...props} state={state} dispatch={dispatch} />
+                            {({ navigation, route }) => (
+                                <AddRecordScreenContainer
+                                    navigation={navigation}
+                                    route={route as AddRecordScreenContainerProps["route"]}
+                                    state={state}
+                                    dispatch={dispatch}
+                                />
                             )}
                         </Stack.Screen>
                         <Stack.Screen
