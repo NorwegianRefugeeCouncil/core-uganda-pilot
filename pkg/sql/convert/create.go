@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/lib/pq"
 	"github.com/nrc-no/core/pkg/api/types"
-	sqlschema2 "github.com/nrc-no/core/pkg/sql/schema"
+	"github.com/nrc-no/core/pkg/sql/schema"
 	"gorm.io/gorm"
 )
 
@@ -31,8 +31,8 @@ func deleteSchemaIfExists(db *gorm.DB, schemaName string) error {
 	return err
 }
 
-func convertDatabaseToSqlSchema(database types.Database) sqlschema2.SQLSchema {
-	return sqlschema2.SQLSchema{
+func convertDatabaseToSqlSchema(database types.Database) schema.SQLSchema {
+	return schema.SQLSchema{
 		Name: database.ID,
 	}
 }
