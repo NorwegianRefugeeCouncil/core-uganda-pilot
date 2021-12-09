@@ -1,14 +1,14 @@
-import React from "react";
+import React from 'react';
 
 export enum ButtonVariant {
-    PRIMARY = 'primary',
-    SECONDARY = 'secondary'
+  PRIMARY = 'primary',
+  SECONDARY = 'secondary',
 }
 
 export type ButtonProps = {
-    children?: React.ReactNode,
-    onPress: () => void,
-    variant?: ButtonVariant
-    disabled?: boolean,
-    text?: string
-}
+  children?: React.ReactNode;
+  onPress: () => void;
+  variant?: ButtonVariant;
+  disabled?: boolean;
+  text?: string;
+};

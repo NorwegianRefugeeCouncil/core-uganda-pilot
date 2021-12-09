@@ -12,7 +12,6 @@ storiesOf('Icon', module)
     const IconNameList = Object.entries(IconName).map(([_, value]) => value);
     const IconVariantList = Object.entries(IconVariants).map(([_, value]) => value);
 
-    console.log(IconNameList, IconVariantList);
     return (
       <Icon
         name={select('icon name', IconNameList, IconName.ATTACHMENT)}

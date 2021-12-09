@@ -1,109 +1,112 @@
-import {FormDefinition} from "core-api-client";
-import {NetworkStateType} from "expo-network";
-import React from "react";
-import {useForm} from "react-hook-form";
-import {Platform} from "react-native";
-import {RECORD_ACTIONS} from "../../reducers/recordsReducers";
-import {AddRecordScreenContainerProps} from "../../types/screens";
-import client from "../../utils/clients";
-import {getEncryptionKey} from "../../utils/getEncryptionKey";
-import {getNetworkState} from "../../utils/getNetworkState";
-import {getEncryptedLocalData, storeEncryptedLocalData} from "../../utils/storage";
-import {AddRecordScreen} from "../screens/AddRecordScreen";
+import { FormDefinition } from 'core-api-client';
+import { NetworkStateType } from 'expo-network';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { Platform } from 'react-native';
 
-export const AddRecordScreenContainer = ({route, dispatch}: AddRecordScreenContainerProps) => {
-    const {formId, recordId} = route.params;
+import { RECORD_ACTIONS } from '../../reducers/recordsReducers';
+import { AddRecordScreenContainerProps } from '../../types/screens';
+import client from '../../utils/clients';
+import { getEncryptionKey } from '../../utils/getEncryptionKey';
+import { getNetworkState } from '../../utils/getNetworkState';
+import { getEncryptedLocalData, storeEncryptedLocalData } from '../../utils/storage';
+import { AddRecordScreen } from '../screens/AddRecordScreen';
 
-    const isWeb = Platform.OS === "web";
+export const AddRecordScreenContainer = ({ route, dispatch }: AddRecordScreenContainerProps) => {
+  const { formId, recordId } = route.params;
 
-    const [isLoading, setIsLoading] = React.useState(true);
-    const [form, setForm] = React.useState<FormDefinition>();
-    const [isConnected, setIsConnected] = React.useState(false);
-    const [hasLocalData, setHasLocalData] = React.useState(false);
+  const isWeb = Platform.OS === 'web';
 
-    const {control, handleSubmit, formState, reset} = useForm();
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [form, setForm] = React.useState<FormDefinition>();
+  const [isConnected, setIsConnected] = React.useState(false);
+  const [hasLocalData, setHasLocalData] = React.useState(false);
 
-    React.useEffect(() => {
-        async function fetches() {
-            let form, localData, networkState;
+  const { control, handleSubmit, formState, reset } = useForm();
 
-            // react to network changes
-            try {
-                networkState = await getNetworkState();
-            } catch (error) {
-                console.error(error);
-                setIsLoading(true);
-            } finally {
-                setIsConnected(networkState !== NetworkStateType.NONE);
-            }
+  React.useEffect(() => {
+    async function fetches() {
+      let form;
+      let localData;
+      let networkState;
 
-            //
-            try {
-                const data = await client().getForm({id: formId});
-                form = data?.response;
-            } catch (error) {
-                console.error(error);
-                setIsLoading(true);
-            } finally {
-                setForm(form);
-                setIsLoading(false);
-            }
+      // react to network changes
+      try {
+        networkState = await getNetworkState();
+      } catch (error) {
+        console.error(error);
+        setIsLoading(true);
+      } finally {
+        setIsConnected(networkState !== NetworkStateType.NONE);
+      }
 
-            // check for locally stored data on mobile device
-            if (!isWeb && recordId) {
-                try {
-                    localData = await getEncryptedLocalData(recordId);
-                } catch (error) {
-                    console.error(error);
-                } finally {
-                    setHasLocalData(!!localData);
-                    reset(localData);
-                }
-            }
-        }
+      //
+      try {
+        const data = await client().getForm({ id: formId });
+        form = data?.response;
+      } catch (error) {
+        console.error(error);
+        setIsLoading(true);
+      } finally {
+        setForm(form);
+        setIsLoading(false);
+      }
 
-        fetches();
-    });
-
-    const onSubmitOffline = async (data: any) => {
-        const key = getEncryptionKey();
+      // check for locally stored data on mobile device
+      if (!isWeb && recordId) {
         try {
-            await storeEncryptedLocalData(recordId, key, data);
-            dispatch({
-                type: RECORD_ACTIONS.ADD_LOCAL_RECORD,
-                payload: {
-                    formId,
-                    localRecord: recordId,
-                },
-            });
-            setHasLocalData(true);
-        } catch (e) {
-            setHasLocalData(false);
+          localData = await getEncryptedLocalData(recordId);
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setHasLocalData(!!localData);
+          reset(localData);
         }
-    };
+      }
+    }
 
-    const onSubmit = (data: any) => {
-        handleSubmit(async () => {
-            if (isConnected || isWeb) {
-                await client().createRecord({
-                    object: {formId, values: data},
-                });
-            } else {
-                await onSubmitOffline(data);
-            }
+    fetches();
+  });
+
+  const onSubmitOffline = async (data: any) => {
+    const key = getEncryptionKey();
+    try {
+      await storeEncryptedLocalData(recordId, key, data);
+      dispatch({
+        type: RECORD_ACTIONS.ADD_LOCAL_RECORD,
+        payload: {
+          formId,
+          localRecord: recordId,
+        },
+      });
+      setHasLocalData(true);
+    } catch (e) {
+      setHasLocalData(false);
+    }
+  };
+
+  const onSubmit = (data: any) => {
+    handleSubmit(async () => {
+      if (isConnected || isWeb) {
+        await client().createRecord({
+          object: { formId, values: data },
         });
-    };
+      } else {
+        await onSubmitOffline(data);
+      }
+    });
+  };
 
-    return (
-        <AddRecordScreen
-            form={form}
-            control={control}
-            onSubmit={onSubmit}
-            formState={formState}
-            isWeb={isWeb}
-            hasLocalData={hasLocalData}
-            isConnected={isConnected}
-            isLoading={isLoading}
-        />
-    );
+  return (
+    <AddRecordScreen
+      form={form}
+      control={control}
+      onSubmit={onSubmit}
+      formState={formState}
+      isWeb={isWeb}
+      hasLocalData={hasLocalData}
+      isConnected={isConnected}
+      isLoading={isLoading}
+    />
+  );
 };

@@ -1,12 +1,12 @@
-import {Client, ClientDefinition} from "core-api-client";
-import {useMemo} from "react";
-import axios from "axios";
-import Constants from "expo-constants";
+import { Client, ClientDefinition } from 'core-api-client';
+import { useMemo } from 'react';
+import axios from 'axios';
+import Constants from 'expo-constants';
 
-export const axiosInstance = axios.create()
+export const axiosInstance = axios.create();
 
 export default function useApiClient(): ClientDefinition {
-    return useMemo(() => {
-        return new Client(Constants.manifest?.extra?.server_uri, axiosInstance)
-    }, [1])
+  return useMemo(() => {
+    return new Client(Constants.manifest?.extra?.server_uri, axiosInstance);
+  }, [1]);
 }

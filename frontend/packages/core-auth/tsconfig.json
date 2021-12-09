@@ -28,7 +28,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "downlevelIteration": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "jsxFragmentFactory": "React.Fragment"
   },
   "include": [
     "src/**/*"

@@ -1,11 +1,11 @@
-import { StackParamList } from "../types/screens";
+import { StackParamList } from '../types/screens';
 
 type Route = {
-  title: string,
-  name: keyof StackParamList
-}
+  title: string;
+  name: keyof StackParamList;
+};
 
-const routes: { [key in keyof StackParamList]: Route; } = {
+const routes: { [key in keyof StackParamList]: Route } = {
   designSystem: {
     title: 'Design System',
     name: 'designSystem',
@@ -16,16 +16,16 @@ const routes: { [key in keyof StackParamList]: Route; } = {
   },
   addRecord: {
     title: 'Add',
-    name: 'addRecord'
+    name: 'addRecord',
   },
   viewRecord: {
     title: 'View',
-    name: 'viewRecord'
+    name: 'viewRecord',
   },
   records: {
     title: 'Records',
-    name: 'records'
-  }
+    name: 'records',
+  },
 };
 
 export default routes;

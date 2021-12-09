@@ -1,4 +1,4 @@
-export {default as Button} from './components/Button';
+export { default as Button } from './components/Button';
 
 // this breaks the web/app/frontend.
 // it seems like this import is importing a native library that jest cannot run

@@ -16,8 +16,8 @@
     "build:design-system": "lerna run --scope core-design-system build",
     "lint": "eslint --ext js,ts,tsx .",
     "lint:fix": "eslint --ext js,ts,tsx --fix .",
-    "test": "lerna run test --stream -- --watchAll=false",
-    "test:stable": "lerna run --scope core-native --scope core-auth --scope core-pwa test --stream -- --watchAll=false"
+    "test": "lerna run test",
+    "test:stable": "lerna run --scope core-native --scope core-auth --scope core-pwa test"
   },
   "husky": {
     "hooks": {
