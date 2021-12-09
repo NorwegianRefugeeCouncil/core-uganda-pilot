@@ -60,7 +60,7 @@ describe('utils/helpers', () => {
       const event = {
         data: { sender: browser.getHandle() },
         isTrusted: true,
-        origin: 'http://randomOrigin',
+        origin: 'https://randomOrigin',
       };
       listener(event, browser, resolveMock);
       expect(resolveMock).not.toHaveBeenCalled();
