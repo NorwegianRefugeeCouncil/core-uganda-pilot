@@ -1,15 +1,16 @@
-import React from "react";
-import {Path} from "react-native-svg"
-import {IconVariants} from "../../types/icons";
+import React from 'react';
+import { Path } from 'react-native-svg';
+
+import { IconVariants } from '../../types/icons';
 
 export default (variant: IconVariants) => {
-    return (
-        <Path
-            fill={variant}
-            d="M28.5,10.8h-5.9c-0.1,0-0.1,0.1-0.1,0.1v1.3c0,0.1,0.1,0.1,0.1,0.1h3.8l-4.7,4.7c-1.2-0.9-2.6-1.4-4.1-1.4
+  return (
+    <Path
+      fill={variant}
+      d="M28.5,10.8h-5.9c-0.1,0-0.1,0.1-0.1,0.1v1.3c0,0.1,0.1,0.1,0.1,0.1h3.8l-4.7,4.7c-1.2-0.9-2.6-1.4-4.1-1.4
 	c-1.8,0-3.5,0.7-4.8,2c-1.3,1.3-2,3-2,4.8s0.7,3.5,2,4.8c1.3,1.3,3,2,4.8,2s3.5-0.7,4.8-2c1.3-1.3,2-3,2-4.8c0-1.5-0.5-2.9-1.4-4.1
 	l4.7-4.7v3.8c0,0.1,0.1,0.1,0.1,0.1H29c0.1,0,0.1-0.1,0.1-0.1v-5.9C29.2,11.1,28.9,10.8,28.5,10.8z M17.6,27.4c-2.7,0-5-2.2-5-5
 	s2.2-5,5-5s5,2.2,5,5S20.3,27.4,17.6,27.4z"
-        />
-    )
-}
+    />
+  );
+};

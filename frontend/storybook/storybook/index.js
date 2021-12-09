@@ -1,6 +1,5 @@
 // if you use expo remove this line
 import { AppRegistry } from 'react-native';
-
 import { getStorybookUI, configure, addDecorator } from '@storybook/react-native';
 import { withKnobs } from '@storybook/addon-knobs';
 

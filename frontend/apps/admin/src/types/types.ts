@@ -1,6 +1,26 @@
 import {
+  OrganizationCreator,
+  OrganizationLister,
+  OrganizationGetter,
+  IdentityProviderGetter,
+  IdentityProviderLister,
+  IdentityProviderCreator,
+  IdentityProviderUpdater,
+  OAuth2ClientGetter,
+  OAuth2ClientLister,
+  OAuth2ClientUpdater,
+  OAuth2ClientCreator,
+  OAuth2ClientDeleter,
+  SessionGetter,
+} from './restTypes';
+
+export type ClientProps = {
+  address?: string;
+};
+
+export interface Client
+  extends OrganizationLister,
     OrganizationCreator,
-    OrganizationLister,
     OrganizationGetter,
     IdentityProviderGetter,
     IdentityProviderLister,
@@ -11,76 +31,72 @@ import {
     OAuth2ClientUpdater,
     OAuth2ClientCreator,
     OAuth2ClientDeleter,
-    SessionGetter
-} from "./restTypes";
+    SessionGetter {}
 
-export type ClientProps = {
-    address?: string
-}
+export type IdentityProviderList = { items: IdentityProvider[] };
 
-export interface Client
-    extends OrganizationLister,
-        OrganizationCreator,
-        OrganizationGetter,
-        IdentityProviderGetter,
-        IdentityProviderLister,
-        IdentityProviderCreator,
-        IdentityProviderUpdater,
-        OAuth2ClientGetter,
-        OAuth2ClientLister,
-        OAuth2ClientUpdater,
-        OAuth2ClientCreator,
-        OAuth2ClientDeleter,
-        SessionGetter {
-}
+export type TokenEndpointAuthMethod = 'client_secret_post' | 'client_secret_basic' | 'private_key_jwt' | 'none';
 
-export type IdentityProviderList = { items: IdentityProvider[] }
+export type ResponseType = 'code' | 'token' | 'id_token';
 
-export type TokenEndpointAuthMethod = "client_secret_post" | "client_secret_basic" | "private_key_jwt" | "none"
-
-export type ResponseType = "code" | "token" | "id_token"
-
-export type GrantType = "authorization_code" | "refresh_token" | "client_credentials" | "implicit"
+export type GrantType = 'authorization_code' | 'refresh_token' | 'client_credentials' | 'implicit';
 
 export class OAuth2Client {
-    public id: string = ""
-    public clientName: string = ""
-    public clientSecret: string = ""
-    public uri: string = ""
-    public grantTypes: GrantType[] = ["authorization_code"]
-    public responseTypes: ResponseType[] = ["code"]
-    public scope: string = ""
-    public redirectUris: string[] = []
-    public allowedCorsOrigins: string[] = []
-    public tokenEndpointAuthMethod: TokenEndpointAuthMethod = "client_secret_basic"
+  public id = '';
+
+  public clientName = '';
+
+  public clientSecret = '';
+
+  public uri = '';
+
+  public grantTypes: GrantType[] = ['authorization_code'];
+
+  public responseTypes: ResponseType[] = ['code'];
+
+  public scope = '';
+
+  public redirectUris: string[] = [];
+
+  public allowedCorsOrigins: string[] = [];
+
+  public tokenEndpointAuthMethod: TokenEndpointAuthMethod = 'client_secret_basic';
 }
 
 export type OAuth2ClientList = {
-    items: OAuth2Client[]
-}
+  items: OAuth2Client[];
+};
 
 export class Organization {
-    public id: string = ""
-    public key: string = ""
-    public name: string = ""
+  public id = '';
+
+  public key = '';
+
+  public name = '';
 }
 
-export type OrganizationList = { items: Organization[] }
+export type OrganizationList = { items: Organization[] };
 
 export class IdentityProvider {
-    public id: string = ""
-    public name: string = ""
-    public organizationId: string = ""
-    public domain: string = ""
-    public clientId: string = ""
-    public clientSecret: string = ""
-    public emailDomain: string = ""
+  public id = '';
+
+  public name = '';
+
+  public organizationId = '';
+
+  public domain = '';
+
+  public clientId = '';
+
+  public clientSecret = '';
+
+  public emailDomain = '';
 }
 
 export type Session = {
-    active: boolean
-    expiry: string
-    expiredInSeconds: number
-    subject: string
-    username: string
-}
+  active: boolean;
+  expiry: string;
+  expiredInSeconds: number;
+  subject: string;
+  username: string;
+};

@@ -1,1 +1,1 @@
-export {default as AuthWrapper} from './components/AuthWrapper';
+export { default as AuthWrapper } from './components/AuthWrapper';

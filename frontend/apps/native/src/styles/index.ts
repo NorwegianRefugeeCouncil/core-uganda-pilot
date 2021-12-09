@@ -1,4 +1,4 @@
-import layout from "./layout";
-import common from "./common";
+import layout from './layout';
+import common from './common';
 
-export {layout, common};
+export { layout, common };

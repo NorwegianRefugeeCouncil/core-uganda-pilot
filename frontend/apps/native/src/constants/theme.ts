@@ -20,8 +20,8 @@ const lightTheme = {
     blue: '#00ADD0',
     yellow: '#FDC82F',
     red: '#CE3616',
-    white: '#FFFFFF'
-  }
+    white: '#FFFFFF',
+  },
 };
 
 export default lightTheme;
@@ -40,9 +40,8 @@ export const darkTheme = {
     onSurface: '#FF7602',
     backdrop: '#808080',
     notification: '#808080',
-  }
+  },
 };
-
 
 export const NavigationTheme = {
   ...NavigationDefaultTheme,
