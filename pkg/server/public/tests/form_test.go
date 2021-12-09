@@ -33,6 +33,11 @@ func (s *Suite) TestFormCreateGetList() {
 		return
 	}
 
+	selectOptions := []*types.SelectOption{
+		{Name: "Option 1"},
+		{Name: "Option 2"},
+	}
+
 	tcs := []struct {
 		name   string
 		fields []*types.FieldDefinition
@@ -136,6 +141,33 @@ func (s *Suite) TestFormCreateGetList() {
 			name: "With Key Reference Field",
 			fields: tu.Fields(
 				tu.AReferenceField(otherForm, tu.FieldName("My Field"), tu.FieldRequired(true), tu.FieldKey(true)),
+			),
+		}, {
+			name: "With Single Select Field",
+			fields: tu.Fields(
+				tu.ASingleSelectField(
+					selectOptions,
+					tu.FieldName("My Field"),
+				),
+			),
+		}, {
+			name: "With Required Single Select Field",
+			fields: tu.Fields(
+				tu.ASingleSelectField(
+					selectOptions,
+					tu.FieldName("My Field"),
+					tu.FieldRequired(true),
+				),
+			),
+		}, {
+			name: "With Key Single Select Field",
+			fields: tu.Fields(
+				tu.ASingleSelectField(
+					selectOptions,
+					tu.FieldName("My Field"),
+					tu.FieldKey(true),
+					tu.FieldRequired(true),
+				),
 			),
 		}, {
 			name: "With Sub Form Field",

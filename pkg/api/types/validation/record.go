@@ -164,20 +164,21 @@ func ValidateRecordValue(path *validation.Path, value *string, field *types.Fiel
 
 	switch fieldKind {
 	case types.FieldKindText:
-		result = append(result, ValidateRecordStringValue(path, value, field)...)
+		return ValidateRecordStringValue(path, value, field)
 	case types.FieldKindReference:
-		result = append(result, ValidateRecordReferenceValue(path, value, field)...)
+		return ValidateRecordReferenceValue(path, value, field)
 	case types.FieldKindMultilineText:
-		result = append(result, ValidateRecordStringValue(path, value, field)...)
+		return ValidateRecordStringValue(path, value, field)
 	case types.FieldKindDate:
-		result = append(result, ValidateRecordDateValue(path, value, field)...)
+		return ValidateRecordDateValue(path, value, field)
 	case types.FieldKindQuantity:
-		result = append(result, ValidateRecordQuantityValue(path, value, field)...)
+		return ValidateRecordQuantityValue(path, value, field)
 	case types.FieldKindMonth:
-		result = append(result, ValidateRecordMonthValue(path, value, field)...)
+		return ValidateRecordMonthValue(path, value, field)
 	case types.FieldKindWeek:
-		result = append(result, ValidateRecordWeekValue(path, value, field)...)
+		return ValidateRecordWeekValue(path, value, field)
 	case types.FieldKindSingleSelect:
+		return ValidateRecordSingleSelectValue(path, value, field)
 	}
 	return result
 }
@@ -262,6 +263,25 @@ func ValidateRecordReferenceValue(path *validation.Path, value *string, field *t
 	if _, err := uuid.FromString(stringValue); err != nil {
 		return append(result, validation.Invalid(valuePath, value, errRecordInvalidReferenceUid))
 	}
+	return result
+}
+
+func ValidateRecordSingleSelectValue(path *validation.Path, value *string, field *types.FieldDefinition) validation.ErrorList {
+	stringValue, result, done := getStringValue(path, value, field, validation.ErrorList{})
+	if done {
+		return result
+	}
+	valuePath := path.Child("value")
+
+	acceptedOptionIDs := sets.NewString()
+	for _, option := range field.FieldType.SingleSelect.Options {
+		acceptedOptionIDs.Insert(option.ID)
+	}
+
+	if !acceptedOptionIDs.Has(stringValue) {
+		result = append(result, validation.NotSupported(valuePath, stringValue, acceptedOptionIDs.List()))
+	}
+
 	return result
 }
 

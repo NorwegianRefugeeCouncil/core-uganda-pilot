@@ -292,6 +292,28 @@ func FieldTypeReference(formRef types.FormReference) FieldOption {
 	}
 }
 
+func FieldTypeSubForm(fields []*types.FieldDefinition) FieldOption {
+	return func(fieldDefinition *types.FieldDefinition) *types.FieldDefinition {
+		fieldDefinition.FieldType = types.FieldType{
+			SubForm: &types.FieldTypeSubForm{
+				Fields: fields,
+			},
+		}
+		return fieldDefinition
+	}
+}
+
+func FieldTypeSingleSelect(options []*types.SelectOption) FieldOption {
+	return func(fieldDefinition *types.FieldDefinition) *types.FieldDefinition {
+		fieldDefinition.FieldType = types.FieldType{
+			SingleSelect: &types.FieldTypeSingleSelect{
+				Options: options,
+			},
+		}
+		return fieldDefinition
+	}
+}
+
 func FieldTypeMonth() FieldOption {
 	return func(fieldDefinition *types.FieldDefinition) *types.FieldDefinition {
 		fieldDefinition.FieldType = types.FieldType{
@@ -354,6 +376,18 @@ func AReferenceField(formRef types.FormReference, options ...FieldOption) *types
 	return AField(opts...)
 }
 
+func ASubFormField(fields []*types.FieldDefinition, options ...FieldOption) *types.FieldDefinition {
+	opts := []FieldOption{FieldTypeSubForm(fields)}
+	opts = append(opts, options...)
+	return AField(opts...)
+}
+
+func ASingleSelectField(selectOptions []*types.SelectOption, options ...FieldOption) *types.FieldDefinition {
+	opts := []FieldOption{FieldTypeSingleSelect(selectOptions)}
+	opts = append(opts, options...)
+	return AField(opts...)
+}
+
 func AQuantityField(options ...FieldOption) *types.FieldDefinition {
 	opts := []FieldOption{FieldTypeQuantity()}
 	opts = append(opts, options...)
@@ -410,6 +444,11 @@ func RecordForForm(form types.FormInterface) RecordOption {
 				r.Values = append(r.Values, types.FieldValue{
 					FieldID: field.ID,
 					Value:   pointers.String("10"),
+				})
+			} else if field.FieldType.SingleSelect != nil {
+				r.Values = append(r.Values, types.FieldValue{
+					FieldID: field.ID,
+					Value:   pointers.String(field.FieldType.SingleSelect.Options[0].ID),
 				})
 			}
 		}

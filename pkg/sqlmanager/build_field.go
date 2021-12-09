@@ -1,7 +1,6 @@
 package sqlmanager
 
 import (
-	"errors"
 	"fmt"
 	"github.com/nrc-no/core/pkg/api/types"
 )
@@ -15,7 +14,7 @@ func getSQLActionsForField(formInterface types.FormInterface, fieldDefinition *t
 	}
 	switch fieldKind {
 	case types.FieldKindSingleSelect:
-		return nil, errors.New("not implemented")
+		return singleSelectFieldActions(formInterface, fieldDefinition)
 	case types.FieldKindSubForm:
 		return subFormFieldActions(formInterface, fieldDefinition)
 	case types.FieldKindReference:

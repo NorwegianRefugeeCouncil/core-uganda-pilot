@@ -62,5 +62,8 @@ func (s sqlManager) handleAction(action sqlAction) (sqlManager, error) {
 	if action.createUniqueConstraint != nil {
 		return s.handleCreateConstraint(*action.createUniqueConstraint)
 	}
+	if action.insertRow != nil {
+		return s.handleInsertRow(*action.insertRow)
+	}
 	return sqlManager{}, errors.New("could not handle action")
 }

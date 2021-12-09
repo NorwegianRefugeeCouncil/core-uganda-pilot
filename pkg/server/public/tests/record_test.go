@@ -25,6 +25,7 @@ func (s *Suite) TestRecordCreateReadList() {
 		weekFieldName          = "Week Field"
 		multilineTextFieldName = "Multiline Text Field"
 		quantityFieldName      = "Quantity Field"
+		singleSelectFieldName  = "Single Select"
 	)
 
 	if err := s.cli.CreateForm(ctx, &types.FormDefinition{
@@ -37,6 +38,10 @@ func (s *Suite) TestRecordCreateReadList() {
 			tu.AWeekField(tu.FieldName(weekFieldName)),
 			tu.AMultilineTextField(tu.FieldName(multilineTextFieldName)),
 			tu.AQuantityField(tu.FieldName(quantityFieldName)),
+			tu.ASingleSelectField([]*types.SelectOption{
+				{Name: "option1"},
+				{Name: "option2"},
+			}, tu.FieldName(singleSelectFieldName)),
 		},
 	}, &form); !assert.NoError(s.T(), err) {
 		return
@@ -49,6 +54,9 @@ func (s *Suite) TestRecordCreateReadList() {
 	values, _ = values.SetValueForFieldName(&form, weekFieldName, pointers.String("2020-W10"))
 	values, _ = values.SetValueForFieldName(&form, multilineTextFieldName, pointers.String("text\nvalue"))
 	values, _ = values.SetValueForFieldName(&form, quantityFieldName, pointers.String("10"))
+
+	singleSelectField, _ := form.Fields.GetFieldByName(singleSelectFieldName)
+	values, _ = values.SetValueForFieldName(&form, singleSelectFieldName, pointers.String(singleSelectField.FieldType.SingleSelect.Options[0].ID))
 
 	var record types.Record
 	if err := s.cli.CreateRecord(ctx, &types.Record{

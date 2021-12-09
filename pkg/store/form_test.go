@@ -2,274 +2,167 @@ package store
 
 import (
 	"github.com/nrc-no/core/pkg/api/types"
-	"github.com/nrc-no/core/pkg/utils/pointers"
+	"github.com/nrc-no/core/pkg/testutils"
+	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-func Test_mapToFormDefinitions(t *testing.T) {
+// TestFlattenHydrateFormDefinition tests that we can flatten and re-hydrate a FormDefinition
+// with various field types
+func TestFlattenHydrateFormDefinition(t *testing.T) {
+
+	aFormWithFields := func(fields ...*types.FieldDefinition) *types.FormDefinition {
+		return &types.FormDefinition{
+			ID:         "formId",
+			DatabaseID: "databaseId",
+			FolderID:   "folderId",
+			Name:       "formName",
+			Fields:     fields,
+		}
+	}
+
+	const fieldName = "fieldName"
+	const fieldId = "fieldId"
+
+	aFormRef := &types.FormRef{
+		DatabaseID: uuid.NewV4().String(),
+		FormID:     uuid.NewV4().String(),
+	}
+
 	tests := []struct {
-		name    string
-		forms   []*Form
-		fields  []*Field
-		want    []*types.FormDefinition
-		wantErr bool
+		name           string
+		formDefinition *types.FormDefinition
 	}{
 		{
-			name: "simple",
-			forms: []*Form{
-				{
-					RootOwnerID: "formId",
-					OwnerID:     "formId",
-					ID:          "formId",
-					DatabaseID:  "db",
-					FolderID:    pointers.String("folder"),
-					Name:        "formName",
-				},
-			},
-			fields: []*Field{
-				{
-					ID:         "field1",
-					DatabaseID: "db",
-					FormID:     "formId",
-					RootFormID: "formId",
-					Name:       "fieldName",
-					Type:       types.FieldKindText,
-				},
-			},
-			want: []*types.FormDefinition{
-				{
-					ID:         "formId",
-					DatabaseID: "db",
-					FolderID:   "folder",
-					Name:       "formName",
-					Fields: []*types.FieldDefinition{
-						{
-							ID:   "field1",
-							Name: "fieldName",
-							FieldType: types.FieldType{
-								Text: &types.FieldTypeText{},
-							},
-						},
-					},
-				},
-			},
+			name: "with text field",
+			formDefinition: aFormWithFields(
+				testutils.ATextField(
+					testutils.FieldID(fieldId),
+					testutils.FieldName(fieldName),
+				),
+			),
 		}, {
-			name: "with subform",
-			forms: []*Form{
-				{
-					RootOwnerID: "formId1",
-					OwnerID:     "formId1",
-					ID:          "formId1",
-					DatabaseID:  "db",
-					FolderID:    pointers.String("folder"),
-					Name:        "form1",
-				}, {
-					ID:          "formId2",
-					DatabaseID:  "db",
-					RootOwnerID: "formId1",
-					OwnerID:     "formId1",
-					Name:        "form2",
-				},
-			},
-			fields: []*Field{
-				{
-					ID:         "formId2",
-					DatabaseID: "db",
-					FormID:     "formId1",
-					RootFormID: "formId1",
-					SubFormID:  pointers.String("formId2"),
-					Name:       "form2",
-					Type:       types.FieldKindSubForm,
-				},
-			},
-			want: []*types.FormDefinition{
-				{
-					ID:         "formId1",
-					DatabaseID: "db",
-					FolderID:   "folder",
-					Name:       "form1",
-					Fields: []*types.FieldDefinition{
-						{
-							ID:   "formId2",
-							Name: "form2",
-							FieldType: types.FieldType{
-								SubForm: &types.FieldTypeSubForm{
-									Fields: []*types.FieldDefinition{},
-								},
-							},
-						},
-					},
-				},
-			},
+			name: "with multiline field",
+			formDefinition: aFormWithFields(
+				testutils.AMultilineTextField(
+					testutils.FieldID(fieldId),
+					testutils.FieldName(fieldName),
+				),
+			),
 		}, {
-			name: "with multiple subforms",
-			forms: []*Form{
-				{
-					RootOwnerID: "formId1",
-					OwnerID:     "formId1",
-					ID:          "formId1",
-					DatabaseID:  "db",
-					FolderID:    pointers.String("folder"),
-					Name:        "form1",
-				}, {
-					ID:          "formId2",
-					DatabaseID:  "db",
-					RootOwnerID: "formId1",
-					OwnerID:     "formId1",
-					Name:        "form2",
-				}, {
-					ID:          "formId3",
-					DatabaseID:  "db",
-					RootOwnerID: "formId1",
-					OwnerID:     "formId1",
-					Name:        "form3",
-				},
-			},
-			fields: []*Field{
-				{
-					ID:         "formId2",
-					DatabaseID: "db",
-					FormID:     "formId1",
-					RootFormID: "formId1",
-					SubFormID:  pointers.String("formId2"),
-					Name:       "form2",
-					Type:       types.FieldKindSubForm,
-				}, {
-					ID:         "formId3",
-					DatabaseID: "db",
-					FormID:     "formId1",
-					RootFormID: "formId1",
-					SubFormID:  pointers.String("formId3"),
-					Name:       "form3",
-					Type:       types.FieldKindSubForm,
-				},
-			},
-			want: []*types.FormDefinition{
-				{
-					ID:         "formId1",
-					DatabaseID: "db",
-					FolderID:   "folder",
-					Name:       "form1",
-					Fields: []*types.FieldDefinition{
-						{
-							ID:   "formId2",
-							Name: "form2",
-							FieldType: types.FieldType{
-								SubForm: &types.FieldTypeSubForm{
-									Fields: []*types.FieldDefinition{},
-								},
-							},
-						}, {
-							ID:   "formId3",
-							Name: "form3",
-							FieldType: types.FieldType{
-								SubForm: &types.FieldTypeSubForm{
-									Fields: []*types.FieldDefinition{},
-								},
-							},
-						},
-					},
-				},
-			},
+			name: "with date field",
+			formDefinition: aFormWithFields(
+				testutils.ADateField(
+					testutils.FieldID(fieldId),
+					testutils.FieldName(fieldName),
+				),
+			),
 		}, {
-			name: "with nested subform",
-			forms: []*Form{
-				{
-					ID:          "formId1",
-					RootOwnerID: "formId1",
-					OwnerID:     "formId1",
-					DatabaseID:  "db",
-					FolderID:    pointers.String("folder"),
-					Name:        "form1",
-				}, {
-					ID:          "formId2",
-					DatabaseID:  "db",
-					RootOwnerID: "formId1",
-					OwnerID:     "formId1",
-					Name:        "form2",
-				}, {
-					ID:          "formId3",
-					DatabaseID:  "db",
-					RootOwnerID: "formId1",
-					OwnerID:     "formId2",
-					Name:        "form3",
-				},
-			},
-			fields: []*Field{
-				{
-					ID:         "formId2",
-					DatabaseID: "db",
-					FormID:     "formId1",
-					RootFormID: "formId1",
-					SubFormID:  pointers.String("formId2"),
-					Name:       "form2",
-					Type:       types.FieldKindSubForm,
-				}, {
-					ID:         "formId3",
-					DatabaseID: "db",
-					FormID:     "formId2",
-					RootFormID: "formId1",
-					SubFormID:  pointers.String("formId3"),
-					Name:       "form3",
-					Type:       types.FieldKindSubForm,
-				},
-			},
-			want: []*types.FormDefinition{
-				{
-					ID:         "formId1",
-					DatabaseID: "db",
-					FolderID:   "folder",
-					Name:       "form1",
-					Fields: []*types.FieldDefinition{
-						{
-							ID:   "formId2",
-							Name: "form2",
-							FieldType: types.FieldType{
-								SubForm: &types.FieldTypeSubForm{
-									Fields: []*types.FieldDefinition{
-										{
-											ID:   "formId3",
-											Name: "form3",
-											FieldType: types.FieldType{
-												SubForm: &types.FieldTypeSubForm{
-													Fields: []*types.FieldDefinition{},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
+			name: "with month field",
+			formDefinition: aFormWithFields(
+				testutils.AMonthField(
+					testutils.FieldID(fieldId),
+					testutils.FieldName(fieldName),
+				),
+			),
+		}, {
+			name: "with week field",
+			formDefinition: aFormWithFields(
+				testutils.AWeekField(
+					testutils.FieldID(fieldId),
+					testutils.FieldName(fieldName),
+				),
+			),
+		}, {
+			name: "with quantity field",
+			formDefinition: aFormWithFields(
+				testutils.AQuantityField(
+					testutils.FieldID(fieldId),
+					testutils.FieldName(fieldName),
+				),
+			),
+		}, {
+			name: "with reference field",
+			formDefinition: aFormWithFields(
+				testutils.AReferenceField(aFormRef,
+					testutils.FieldID(fieldId),
+					testutils.FieldName(fieldName),
+				),
+			),
+		}, {
+			name: "with subform field",
+			formDefinition: aFormWithFields(
+				testutils.ASubFormField([]*types.FieldDefinition{
+					testutils.ATextField(
+						testutils.FieldID(fieldId),
+						testutils.FieldName("sub field"),
+					),
+				}, testutils.FieldID(fieldId)),
+			),
+		}, {
+			name: "with multiple sub forms",
+			formDefinition: aFormWithFields(
+				testutils.ASubFormField([]*types.FieldDefinition{
+					testutils.ATextField(
+						testutils.FieldID("subField1"),
+						testutils.FieldName("sub field 1"),
+					),
+				}, testutils.FieldID("field1")),
+				testutils.ASubFormField([]*types.FieldDefinition{
+					testutils.ATextField(
+						testutils.FieldID("subField2"),
+						testutils.FieldName("sub field 2"),
+					),
+				}, testutils.FieldID("field2")),
+			),
+		}, {
+			name: "with nested sub forms",
+			formDefinition: aFormWithFields(
+				testutils.ASubFormField([]*types.FieldDefinition{
+					testutils.ASubFormField([]*types.FieldDefinition{
+						testutils.ASubFormField([]*types.FieldDefinition{
+							testutils.ATextField(
+								testutils.FieldID("subField3"),
+								testutils.FieldName("sub field 3"),
+							),
+						}, testutils.FieldID("field3")),
+					}, testutils.FieldID("field2")),
+				}, testutils.FieldID("field1")),
+			),
+		}, {
+			name: "with single select field",
+			formDefinition: aFormWithFields(
+				testutils.ASingleSelectField([]*types.SelectOption{
+					{
+						ID:   "option 1",
+						Name: "name 1",
+					}, {
+						ID:   "option 2",
+						Name: "name 2",
 					},
 				},
-			},
+					testutils.FieldName(fieldName),
+					testutils.FieldID(fieldId)),
+			),
 		},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
 
-			flatForm := FlatForms{
-				Fields: tt.fields,
-				Forms:  tt.forms,
-			}
-			gotFd, err := flatForm.hydrateForms()
-			if tt.wantErr {
-				assert.Error(t, err)
-				return
-			}
-			if !tt.wantErr && !assert.NoError(t, err) {
-				return
-			}
-
-			assert.Equal(t, tt.want, gotFd)
-
-			reFlattened, err := flattenForm(gotFd[0])
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			flat, err := flattenForm(test.formDefinition)
 			if !assert.NoError(t, err) {
 				return
 			}
-			assert.Equal(t, flatForm, reFlattened)
-
+			forms, err := flat.hydrateForms()
+			if !assert.NoError(t, err) {
+				return
+			}
+			if !assert.Len(t, forms, 1) {
+				return
+			}
+			assert.Equal(t, test.formDefinition, forms[0])
 		})
 	}
+
 }

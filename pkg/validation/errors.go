@@ -182,12 +182,16 @@ const (
 	ErrorTypeTooLong ErrorType = "FieldValueTooLong"
 	// ErrorTypeTooShort is used to report that the given value is too short.
 	// This is similar to ErrorTypeInvalid, but the error will not include the
-	// too-long value.  See TooShort().
+	// too-short value. See TooShort().
 	ErrorTypeTooShort ErrorType = "FieldValueTooShort"
 	// ErrorTypeTooMany is used to report "too many". This is used to
 	// report that a given list has too many items. This is similar to FieldValueTooLong,
 	// but the error indicates quantity instead of length.
 	ErrorTypeTooMany ErrorType = "FieldValueTooMany"
+	// ErrorTypeTooFew is used to report "too few". This is used to
+	// report that a given list has too few items. This is similar to FieldValueTooShort,
+	// but the error indicates quantity instead of length.
+	ErrorTypeTooFew ErrorType = "FieldValueTooFew"
 	// ErrorTypeInternal is used to report other errors that are not related
 	// to user input.  See InternalError().
 	ErrorTypeInternal ErrorType = "InternalError"
@@ -210,8 +214,12 @@ func (t ErrorType) String() string {
 		return "Forbidden"
 	case ErrorTypeTooLong:
 		return "Too long"
+	case ErrorTypeTooShort:
+		return "Too short"
 	case ErrorTypeTooMany:
 		return "Too many"
+	case ErrorTypeTooFew:
+		return "Too few"
 	case ErrorTypeInternal:
 		return "Internal error"
 	default:
@@ -287,6 +295,13 @@ func TooShort(field *Path, value interface{}, minLength int) *Error {
 // report that a given list has too many items. This is similar to TooLong,
 // but the returned error indicates quantity instead of length.
 func TooMany(field *Path, actualQuantity, maxQuantity int) *Error {
+	return &Error{ErrorTypeTooMany, field.String(), actualQuantity, fmt.Sprintf("must have at most %d items", maxQuantity)}
+}
+
+// TooFew returns a *Error indicating "too few". This is used to
+// report that a given list has too few items. This is similar to TooShort,
+// but the returned error indicates quantity instead of length.
+func TooFew(field *Path, actualQuantity, maxQuantity int) *Error {
 	return &Error{ErrorTypeTooMany, field.String(), actualQuantity, fmt.Sprintf("must have at most %d items", maxQuantity)}
 }
 

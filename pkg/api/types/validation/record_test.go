@@ -52,6 +52,16 @@ func TestValidateRecord(t *testing.T) {
 		FormID:     uuid.NewV4().String(),
 	}
 
+	selectOptions := []*types.SelectOption{
+		{
+			ID:   "option1",
+			Name: "Option 1",
+		}, {
+			ID:   "option2",
+			Name: "Option 2",
+		},
+	}
+
 	tests := []struct {
 		name          string
 		recordOptions tu.RecordOption
@@ -376,6 +386,60 @@ func TestValidateRecord(t *testing.T) {
 			),
 			recordOptions: tu.RecordValue("referenceField", nil),
 			expect:        nil,
+		}, {
+			name: "single select field",
+			form: aTextForm(
+				tu.FormField(
+					tu.ASingleSelectField(
+						selectOptions,
+						tu.FieldID("singleSelectField"),
+					),
+				),
+			),
+			expect: nil,
+		}, {
+			name: "single select field with unknown value",
+			form: aTextForm(
+				tu.FormField(
+					tu.ASingleSelectField(
+						selectOptions,
+						tu.FieldID("singleSelectField"),
+					),
+				),
+			),
+			recordOptions: tu.RecordValue("singleSelectField", pointers.String("someRandomValue")),
+			expect: validation.ErrorList{
+				validation.NotSupported(firstFieldValuePath, "someRandomValue", []string{
+					"option1",
+					"option2",
+				}),
+			},
+		}, {
+			name: "required single select field with nil value",
+			form: aTextForm(
+				tu.FormField(
+					tu.ASingleSelectField(
+						selectOptions,
+						tu.FieldID("singleSelectField"),
+						tu.FieldRequired(true),
+					),
+				),
+			),
+			recordOptions: tu.RecordValue("singleSelectField", nil),
+			expect: validation.ErrorList{
+				validation.Required(firstFieldValuePath, errFieldValueRequired),
+			},
+		}, {
+			name: "optional single select field with nil value",
+			form: aTextForm(
+				tu.FormField(
+					tu.ASingleSelectField(
+						selectOptions,
+						tu.FieldID("singleSelectField"),
+					),
+				),
+			),
+			recordOptions: tu.RecordValue("singleSelectField", nil),
 		},
 	}
 
@@ -386,7 +450,8 @@ func TestValidateRecord(t *testing.T) {
 				opts = append(opts, test.recordOptions)
 			}
 			rec := tu.ARecord(opts...)
-			assert.Equal(t, test.expect, ValidateRecord(rec, test.form))
+			got := ValidateRecord(rec, test.form)
+			assert.Equal(t, test.expect, got)
 		})
 	}
 

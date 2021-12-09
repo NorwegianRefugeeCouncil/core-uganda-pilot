@@ -27,4 +27,8 @@ func (s *Suite) TestDatabaseCreateGetList() {
 	}
 	assert.Contains(s.T(), list.Items, &got)
 
+	if err := s.cli.DeleteDatabase(ctx, out.ID); !assert.NoError(s.T(), err) {
+		return
+	}
+
 }

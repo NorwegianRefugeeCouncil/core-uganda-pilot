@@ -11,6 +11,8 @@ type sqlAction struct {
 	createTable *sqlActionCreateTable
 	// createUniqueConstraint represents an action that creates an SQL Index
 	createUniqueConstraint *sqlActionCreateConstraint
+	// insertRow represents an action that adds a row in an SQL table
+	insertRow *sqlActionInsertRow
 }
 
 // sqlActions is a list of sqlAction
@@ -40,4 +42,12 @@ type sqlActionCreateConstraint struct {
 	schemaName string
 	// sqlConstraint represents the configuration of the schema.SQLTableConstraint
 	sqlConstraint schema.SQLTableConstraint
+}
+
+// sqlActionInsertRow contains the parameters for inserting a new row
+type sqlActionInsertRow struct {
+	schemaName string
+	tableName  string
+	columns    []string
+	values     []interface{}
 }

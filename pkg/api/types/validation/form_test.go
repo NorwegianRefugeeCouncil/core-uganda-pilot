@@ -6,11 +6,12 @@ import (
 	"github.com/nrc-no/core/pkg/validation"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
+	"strconv"
 	"strings"
 	"testing"
 )
 
-func TestValidateForm2(t *testing.T) {
+func TestValidateForm(t *testing.T) {
 
 	textFieldType := types.FieldType{
 		Text: &types.FieldTypeText{},
@@ -41,6 +42,16 @@ func TestValidateForm2(t *testing.T) {
 		result := types.FieldDefinitions{}
 		for i := 0; i < count; i++ {
 			result = append(result, validTextField)
+		}
+		return result
+	}
+
+	repeatOptions := func(count int) []*types.SelectOption {
+		var result []*types.SelectOption
+		for i := 0; i < count; i++ {
+			result = append(result, &types.SelectOption{
+				Name: strconv.Itoa(i),
+			})
 		}
 		return result
 	}
@@ -436,6 +447,139 @@ func TestValidateForm2(t *testing.T) {
 						Reference: &types.FieldTypeReference{
 							DatabaseID: uuid.NewV4().String(),
 							FormID:     "",
+						},
+					},
+				},
+			}),
+		}, {
+			name:   "field with single select field",
+			expect: nil,
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+					FieldType: types.FieldType{
+						SingleSelect: &types.FieldTypeSingleSelect{
+							Options: []*types.SelectOption{
+								{Name: "option 1"},
+								{Name: "option 2"},
+							},
+						},
+					},
+				},
+			}),
+		}, {
+			name: "single select field with no options",
+			expect: validation.ErrorList{
+				validation.Required(
+					validation.NewPath("fields").Index(0).Child("fieldType", "singleSelect", "options"),
+					errSelectOptionsRequired,
+				),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+					FieldType: types.FieldType{
+						SingleSelect: &types.FieldTypeSingleSelect{
+							Options: []*types.SelectOption{},
+						},
+					},
+				},
+			}),
+		}, {
+			name: "single select field with duplicate option name",
+			expect: validation.ErrorList{
+				validation.Duplicate(
+					// fields[0].fieldType.singleSelect.options[1].name
+					validation.NewPath("fields").
+						Index(0).
+						Child("fieldType", "singleSelect", "options").
+						Index(1).
+						Child("name"),
+					"option 1",
+				),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+					FieldType: types.FieldType{
+						SingleSelect: &types.FieldTypeSingleSelect{
+							Options: []*types.SelectOption{
+								{Name: "option 1"},
+								{Name: "option 1"},
+							},
+						},
+					},
+				},
+			}),
+		}, {
+			name: "single select field with missing option name",
+			expect: validation.ErrorList{
+				validation.Required(
+					// fields[0].fieldType.singleSelect.options[1].name
+					validation.NewPath("fields").
+						Index(0).
+						Child("fieldType", "singleSelect", "options").
+						Index(0).
+						Child("name"),
+					errSelectOptionNameRequired,
+				),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+					FieldType: types.FieldType{
+						SingleSelect: &types.FieldTypeSingleSelect{
+							Options: []*types.SelectOption{
+								{Name: ""},
+							},
+						},
+					},
+				},
+			}),
+		}, {
+			name: "single select field with invalid option name",
+			expect: validation.ErrorList{
+				validation.Invalid(
+					// fields[0].fieldType.singleSelect.options[1].name
+					validation.NewPath("fields").
+						Index(0).
+						Child("fieldType", "singleSelect", "options").
+						Index(0).
+						Child("name"),
+					"!!",
+					errSelectOptionNameInvalid,
+				),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+					FieldType: types.FieldType{
+						SingleSelect: &types.FieldTypeSingleSelect{
+							Options: []*types.SelectOption{
+								{Name: "!!"},
+							},
+						},
+					},
+				},
+			}),
+		}, {
+			name: "single select field with too many options",
+			expect: validation.ErrorList{
+				validation.TooMany(
+					// fields[0].fieldType.singleSelect.options[1].name
+					validation.NewPath("fields").
+						Index(0).
+						Child("fieldType", "singleSelect", "options"),
+					selectFieldMaxOptions+1,
+					selectFieldMaxOptions,
+				),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+					FieldType: types.FieldType{
+						SingleSelect: &types.FieldTypeSingleSelect{
+							Options: repeatOptions(selectFieldMaxOptions + 1),
 						},
 					},
 				},

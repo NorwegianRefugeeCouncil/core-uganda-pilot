@@ -164,20 +164,23 @@ type Fields []*Field
 // Option represents the data structure used to store options for a types.FieldTypeMultiSelect or types.FieldTypeSingleSelect
 type Option struct {
 
+	// ID stores the types.SelectOption ID
+	ID string `gorm:"primarykey"`
+
 	// DatabaseID stores the Form's DatabaseID
-	DatabaseID string `gorm:"primarykey"`
+	DatabaseID string
 
 	// RootFormID stores the root FormID. See Form.RootOwnerID
-	RootFormID string `gorm:"primarykey"`
+	RootFormID string
 
 	// FormID stores the FormID of the single/multi select field
-	FormID string `gorm:"primarykey"`
+	FormID string
 
 	// FieldID stores the single/multi select Field.ID
-	FieldID string `gorm:"primarykey"`
+	FieldID string
 
-	// Value stores the value for that option
-	Value string `gorm:"primarykey"`
+	// Name stores the types.SelectOption Name
+	Name string
 }
 
 type Options []*Option
@@ -674,9 +677,26 @@ func (f FlatForms) hydrateWeekField(field *Field) (*types.FieldDefinition, error
 func (f FlatForms) hydrateSingleSelectField(field *Field) (*types.FieldDefinition, error) {
 	fieldDef := hydrateFieldDefaults(field)
 	fieldDef.FieldType = types.FieldType{
-		SingleSelect: &types.FieldTypeSingleSelect{},
+		SingleSelect: &types.FieldTypeSingleSelect{
+			Options: f.hydrateSelectOptions(field.ID),
+		},
 	}
 	return fieldDef, nil
+}
+
+// hydrateSelectOptions hydrates a list of single/multi select options
+func (f FlatForms) hydrateSelectOptions(fieldId string) []*types.SelectOption {
+	var result []*types.SelectOption
+	for _, option := range f.Options {
+		if option.FieldID != fieldId {
+			continue
+		}
+		result = append(result, &types.SelectOption{
+			ID:   option.ID,
+			Name: option.Name,
+		})
+	}
+	return result
 }
 
 // hydrateQuantityField hydrates a types.FieldTypeQuantity
@@ -848,9 +868,24 @@ func flattenReferenceField(rootForm, form types.FormInterface, field *types.Fiel
 func flattenSingleSelectField(rootForm, form types.FormInterface, field *types.FieldDefinition) (FlatForms, error) {
 	storedField := getFieldsDefault(rootForm, form, field)
 	storedField.Type = types.FieldKindSingleSelect
-	storedField.ReferencedDatabaseID = pointers.String(field.FieldType.Reference.DatabaseID)
-	storedField.ReferencedFormID = pointers.String(field.FieldType.Reference.FormID)
-	return FlatForms{Fields: []*Field{storedField}}, nil
+	flattened := FlatForms{Fields: []*Field{storedField}}
+
+	for _, option := range field.FieldType.SingleSelect.Options {
+		flattened = flattened.Add(FlatForms{
+			Options: []*Option{
+				{
+					ID:         option.ID,
+					DatabaseID: form.GetDatabaseID(),
+					RootFormID: rootForm.GetFormID(),
+					FormID:     form.GetFormID(),
+					FieldID:    field.ID,
+					Name:       option.Name,
+				},
+			},
+		})
+	}
+
+	return flattened, nil
 }
 
 // flattenSubFormField flattens a types.FieldTypeSubForm

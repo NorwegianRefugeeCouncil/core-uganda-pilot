@@ -3,6 +3,7 @@ package validation
 import (
 	"fmt"
 	"github.com/nrc-no/core/pkg/api/types"
+	"github.com/nrc-no/core/pkg/utils/sets"
 	"github.com/nrc-no/core/pkg/validation"
 	uuid "github.com/satori/go.uuid"
 	"reflect"
@@ -29,6 +30,9 @@ const (
 	errReferenceFieldFormIdInvalid           = "Invalid form id"
 	errReferenceFieldFormIdRequired          = "Form id is required"
 	errSubFormCannotBeKeyOrRequiredField     = "Sub form fields cannot key marked as key or required fields"
+	errSelectOptionNameRequired              = "Name of the option is required"
+	errSelectOptionsRequired                 = "At least 1 option must be specified"
+	errSelectOptionNameInvalid               = "Name of the select option is invalid"
 	fieldCodeMaxLength                       = 32
 	fieldCodeMinLength                       = 1
 	fieldNameMaxLength                       = 128
@@ -36,12 +40,15 @@ const (
 	formNameMaxLength                        = 128
 	formNameMinLength                        = 3
 	formMaxFieldCount                        = 60
+	selectFieldMaxNameLength                 = 128
+	selectFieldMaxOptions                    = 100
 	// todo: add maximum total number of fields (form fields + subform fields)
 )
 
 var (
-	fieldNameRegex = regexp.MustCompile("^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$")
-	fieldCodeRegex = regexp.MustCompile("^[a-zA-Z]+[a-zA-Z0-9]*$")
+	fieldNameRegex  = regexp.MustCompile("^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$")
+	fieldCodeRegex  = regexp.MustCompile("^[a-zA-Z]+[a-zA-Z0-9]*$")
+	optionNameRegex = regexp.MustCompile("^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$")
 )
 
 func ValidateForm(form *types.FormDefinition) validation.ErrorList {
@@ -387,8 +394,46 @@ func ValidateFieldTypeQuantity(ftQuantity *types.FieldTypeQuantity, path *valida
 	return result
 }
 
+// ValidateFieldTypeSingleSelect validate a FieldTypeSingleSelect field
 func ValidateFieldTypeSingleSelect(ftSingleSelect *types.FieldTypeSingleSelect, path *validation.Path) validation.ErrorList {
-	// TODO
 	var result []*validation.Error
+
+	optionsCount := len(ftSingleSelect.Options)
+	optionsPath := path.Child("options")
+	if optionsCount == 0 {
+		// checking that we have at least one option
+		result = append(result, validation.Required(optionsPath, errSelectOptionsRequired))
+	} else if optionsCount > selectFieldMaxOptions {
+		// checking that we don't exceed the max option count
+		// we also don't process this further since this might be a crazy long list
+		return append(result, validation.TooMany(optionsPath, optionsCount, selectFieldMaxOptions))
+	}
+
+	seenNames := sets.NewString()
+	for i, option := range ftSingleSelect.Options {
+
+		optionName := option.Name
+		optionPath := optionsPath.Index(i)
+		namePath := optionPath.Child("name")
+
+		if len(optionName) == 0 {
+			// option name is empty
+			result = append(result, validation.Required(namePath, errSelectOptionNameRequired))
+		} else if len(optionName) > selectFieldMaxNameLength {
+			// option name is too long
+			result = append(result, validation.TooLong(namePath, optionName, selectFieldMaxNameLength))
+		} else if !optionNameRegex.MatchString(optionName) {
+			// option name does not match regex
+			result = append(result, validation.Invalid(namePath, optionName, errSelectOptionNameInvalid))
+		} else if seenNames.Has(optionName) {
+			// option name was seen in another option for the same field
+			result = append(result, validation.Duplicate(namePath, optionName))
+		} else {
+			// valid name
+			seenNames.Insert(optionName)
+		}
+
+	}
+
 	return result
 }

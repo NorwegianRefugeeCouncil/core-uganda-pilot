@@ -13,8 +13,6 @@ type FieldDefinition struct {
 	Name string `json:"name" yaml:"name"`
 	// Description is a helpful text helping the users to understand the question
 	Description string `json:"description,omitempty" yaml:"description,omitempty"`
-	// Options TODO: Remove this, put inside of FieldTypeMultiSelect / FieldTypeSelect
-	Options []string `json:"options,omitempty" yaml:"options,omitempty"`
 	// Key indicates that the FieldDefinition is part of the Unique Keys for the FormDefinition.
 	// When a FormDefinition is created with Key fields, this means that there will be no
 	// two records with the same combination of Key field values.
