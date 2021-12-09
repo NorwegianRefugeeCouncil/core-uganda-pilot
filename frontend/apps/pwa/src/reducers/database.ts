@@ -1,7 +1,6 @@
 import {createAsyncThunk, createEntityAdapter, createSlice, EntityState} from "@reduxjs/toolkit";
-import {Database, DatabaseList} from "core-js-api-client";
+import {Database, DatabaseList, DatabaseListRequest, Response} from "core-api-client";
 import {RootState} from "../app/store";
-import {DatabaseListRequest, Response} from "core-js-api-client";
 import client from "../app/client";
 
 const adapter = createEntityAdapter<Database>({

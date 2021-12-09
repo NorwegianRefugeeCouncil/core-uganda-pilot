@@ -1,6 +1,6 @@
-import { Reducer } from "react";
+import {Reducer} from "react";
 import _ from "lodash";
-import { FormDefinition, Record } from "core-js-api-client";
+import {FormDefinition, Record} from "core-api-client";
 
 export type RecordsStoreProps = {
     formsById: {
@@ -32,11 +32,11 @@ export const recordsReducer: Reducer<RecordsStoreProps, RecordsAction> = (
     state: RecordsStoreProps,
     action: RecordsAction
 ) => {
-    const { formId } = action.payload;
+    const {formId} = action.payload;
 
     switch (action.type) {
         case RECORD_ACTIONS.GET_RECORDS:
-            const { records } = action.payload;
+            const {records} = action.payload;
             return {
                 formsById: {
                     ...state.formsById,
@@ -48,7 +48,7 @@ export const recordsReducer: Reducer<RecordsStoreProps, RecordsAction> = (
                 },
             };
         case RECORD_ACTIONS.GET_LOCAL_RECORDS:
-            const { localRecords } = action.payload;
+            const {localRecords} = action.payload;
             return {
                 formsById: {
                     ...state.formsById,

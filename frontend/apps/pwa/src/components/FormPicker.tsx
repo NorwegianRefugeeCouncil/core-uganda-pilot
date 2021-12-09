@@ -1,5 +1,5 @@
 import {FC, useCallback} from "react";
-import {FormDefinition} from "core-js-api-client";
+import {FormDefinition} from "core-api-client";
 import {useDatabase, useForms} from "../app/hooks";
 
 export type FormPickerProps = {

@@ -1,8 +1,8 @@
 import React, {FC} from "react";
-import {FormDefinition} from "core-js-api-client";
+import {FormDefinition} from "core-api-client";
 import {Link} from "react-router-dom";
 
-export const FormRow : FC<{form: FormDefinition}> = ({form}) => {
+export const FormRow: FC<{ form: FormDefinition }> = ({form}) => {
 
     return <Link
         to={`/browse/forms/${form.id}`}

@@ -1,7 +1,7 @@
 import React, {FC, Fragment, useCallback, useEffect, useState} from "react";
 import {fetchForms, selectFormOrSubFormById, selectRootForm} from "../../reducers/form";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
-import {FieldDefinition, Record} from "core-js-api-client";
+import {FieldDefinition, Record} from "core-api-client";
 import {fetchDatabases} from "../../reducers/database";
 import {fetchFolders} from "../../reducers/folder";
 import {fetchRecords, selectRecordsForForm, selectRecordsSubFormCounts} from "../../reducers/records";
@@ -82,6 +82,17 @@ function mapRecordCell(field: FieldDefinition, record: Record, getSubFormCount: 
             <span>
                 <Link to={`/browse/forms/${field.fieldType.reference.formId}`}>View</Link>
             </span>
+        </td>
+    }
+
+    if (field.fieldType.singleSelect) {
+        let value = fieldValue?.value
+        const option = field.fieldType.singleSelect.options.find(o => o.id === fieldValue?.value)
+        if (option) {
+            value = option.name
+        }
+        return <td key={field.id}>
+            {value}
         </td>
     }
 

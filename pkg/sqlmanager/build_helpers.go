@@ -44,7 +44,7 @@ func buildTableIDColumn() schema.SQLColumn {
 		Name: keyIdColumn,
 		DataType: schema.SQLDataType{
 			VarChar: &schema.SQLDataTypeVarChar{
-				Length: 36,
+				Length: uuidFieldLength,
 			},
 		},
 		Constraints: []schema.SQLColumnConstraint{

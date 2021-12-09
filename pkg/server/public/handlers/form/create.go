@@ -62,6 +62,11 @@ func newFieldIDs(fields []*types.FieldDefinition) {
 		if field.FieldType.SubForm != nil {
 			newFieldIDs(field.FieldType.SubForm.Fields)
 		}
+		if field.FieldType.SingleSelect != nil {
+			for _, option := range field.FieldType.SingleSelect.Options {
+				option.ID = uuid.NewV4().String()
+			}
+		}
 	}
 }
 

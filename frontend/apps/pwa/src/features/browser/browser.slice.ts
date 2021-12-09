@@ -1,4 +1,4 @@
-import {Folder, FormDefinition} from "core-js-api-client";
+import {Folder, FormDefinition} from "core-api-client";
 import {RootState} from "../../app/store";
 import {selectByFolderOrDBId} from "../../reducers/form";
 import {selectByParentId, selectDatabaseRootFolders} from "../../reducers/folder";

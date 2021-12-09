@@ -101,7 +101,16 @@ type FieldTypeQuantity struct {
 
 // FieldTypeSingleSelect represents a field from which the user can select a single option
 type FieldTypeSingleSelect struct {
-	// todo: move FieldDefinition.Options here
+	// Options represent the different options that the user can select from
+	Options []*SelectOption `json:"options,omitempty" yaml:"options,omitempty"`
+}
+
+// SelectOption represent an option for a FieldTypeSingleSelect or FieldTypeMultiSelect
+type SelectOption struct {
+	// ID of the option
+	ID string `json:"id" yaml:"id"`
+	// Name of the option
+	Name string `json:"name" yaml:"name"`
 }
 
 // FieldTypeSubForm represents a field that contains a nested form.

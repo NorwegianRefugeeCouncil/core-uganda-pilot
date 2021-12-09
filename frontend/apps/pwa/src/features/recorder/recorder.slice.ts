@@ -2,7 +2,7 @@ import {createAsyncThunk, createEntityAdapter, createSlice, PayloadAction} from 
 import {RootState} from "../../app/store";
 import {FormInterface, selectFormOrSubFormById, selectRootForm} from "../../reducers/form";
 import {v4 as uuidv4} from "uuid"
-import {FieldValue, FormDefinition, Record} from "core-js-api-client";
+import {FieldValue, FormDefinition, Record} from "core-api-client";
 import {recordGlobalSelectors} from "../../reducers/records";
 import client from "../../app/client";
 
@@ -92,7 +92,7 @@ export const recorderSlice = createSlice({
             if (!record) {
                 return
             }
-            
+
             const idx = record.values.findIndex(v => v.fieldId === fieldId)
             if (idx === -1) {
                 record.values = [...record.values, {fieldId, value}]

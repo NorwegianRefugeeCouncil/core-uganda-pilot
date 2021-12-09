@@ -1,5 +1,5 @@
 presubmits:
-  - name: pull-core-go-test
+  - name: pull-core-backend-test
     run_if_changed: ".go$|^go.mod$|^go.sum$"
     decorate: true
     spec:

@@ -1,9 +1,9 @@
 import React from "react";
-import { common, layout } from "../../styles";
-import { Button, ScrollView, Text, View } from "react-native";
+import {common, layout} from "../../styles";
+import {Button, ScrollView, Text, View} from "react-native";
 import FormControl from "../form/FormControl";
-import { FormDefinition } from "core-js-api-client";
-import { Control, FieldValues, FormState } from "react-hook-form";
+import {FormDefinition} from "core-api-client";
+import {Control, FieldValues, FormState} from "react-hook-form";
 
 export type AddRecordScreenProps = {
     form?: FormDefinition;
@@ -17,22 +17,22 @@ export type AddRecordScreenProps = {
 };
 
 export const AddRecordScreen = ({
-    form,
-    control,
-    onSubmit,
-    formState,
-    isWeb, // TODO remove this?
-    hasLocalData,
-    isConnected,
-    isLoading,
-}: AddRecordScreenProps)=> {
-  // console.log(form?.fields)
+                                    form,
+                                    control,
+                                    onSubmit,
+                                    formState,
+                                    isWeb, // TODO remove this?
+                                    hasLocalData,
+                                    isConnected,
+                                    isLoading,
+                                }: AddRecordScreenProps) => {
+    // console.log(form?.fields)
     return (
         <ScrollView contentContainerStyle={[layout.container, layout.body, common.darkBackground]}>
             <View style={[]}>
                 {/* upload data collected offline */}
                 {hasLocalData && (
-                    <View style={{ display: "flex", flexDirection: "column" }}>
+                    <View style={{display: "flex", flexDirection: "column"}}>
                         <Text>There is locally stored data for this individual.</Text>
                     </View>
                 )}
@@ -51,13 +51,13 @@ export const AddRecordScreen = ({
                 {isLoading ? (
                     <Text>Loading...</Text>
                 ) : (
-                    <View style={{ width: "100%" }}>
+                    <View style={{width: "100%"}}>
                         {form?.fields.map(field => {
                             return (
                                 <FormControl
                                     key={field.code}
                                     fieldDefinition={field}
-                                    style={{ width: "100%" }}
+                                    style={{width: "100%"}}
                                     // value={''} // take value from record
                                     control={control}
                                     name={field.id}
@@ -65,7 +65,7 @@ export const AddRecordScreen = ({
                                 />
                             );
                         })}
-                        <Button accessibilityLabel="Submit" title="Submit" onPress={onSubmit} />
+                        <Button accessibilityLabel="Submit" title="Submit" onPress={onSubmit}/>
                     </View>
                 )}
             </View>

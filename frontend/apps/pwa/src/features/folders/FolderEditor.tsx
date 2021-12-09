@@ -1,7 +1,7 @@
-import React, {Fragment, FC, useState} from "react";
+import React, {FC, Fragment, useState} from "react";
 import {useForm} from "react-hook-form";
 import {databaseActions} from "../../reducers/database";
-import {Folder} from "core-js-api-client";
+import {Folder} from "core-api-client";
 import {Redirect} from "react-router-dom"
 import {useDatabaseFromQueryParam, useFolderFromQueryParam} from "../../app/hooks";
 import client from "../../app/client";
@@ -57,7 +57,8 @@ export const FolderEditor: FC = props => {
                             <input className={"form-control"} {...register("name")}/>
                         </div>
                         <button
-                            className={"btn btn-primary"}>Create New Folder</button>
+                            className={"btn btn-primary"}>Create New Folder
+                        </button>
                     </form>
                 </div>
             </div>

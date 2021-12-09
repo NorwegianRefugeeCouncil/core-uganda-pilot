@@ -1,5 +1,5 @@
 import {FC, useCallback} from "react";
-import {Database} from "core-js-api-client";
+import {Database} from "core-api-client";
 import {useDatabases} from "../app/hooks";
 
 type DatabasePickerProps = {

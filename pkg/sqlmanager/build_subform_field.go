@@ -37,7 +37,7 @@ func buildSubFormOwnerColumn(formInterface types.SubFormInterface) schema.SQLCol
 		Name: keyOwnerIdColumn,
 		DataType: schema.SQLDataType{
 			VarChar: &schema.SQLDataTypeVarChar{
-				Length: 36,
+				Length: uuidFieldLength,
 			},
 		},
 		Constraints: []schema.SQLColumnConstraint{

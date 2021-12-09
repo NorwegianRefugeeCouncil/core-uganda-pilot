@@ -1,7 +1,7 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import {RootState} from "../app/store";
 import client from "../app/client";
-import {FieldDefinition, FieldTypeSubForm, FormDefinition, FormListResponse} from "core-js-api-client";
+import {FieldDefinition, FieldTypeSubForm, FormDefinition, FormListResponse} from "core-api-client";
 
 const adapter = createEntityAdapter<FormDefinition>({
     // Assume IDs are stored in a field other than `book.id`

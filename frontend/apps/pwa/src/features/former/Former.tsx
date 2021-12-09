@@ -5,7 +5,7 @@ import {fetchFolders} from "../../reducers/folder";
 import {fetchForms} from "../../reducers/form";
 import {useLocation} from "react-router-dom"
 import {formerActions, formerGlobalSelectors, FormField, postForm} from "./former.slice";
-import {FieldKind} from "core-js-api-client";
+import {FieldKind} from "core-api-client";
 import {FormerField} from "./Field";
 import {FormName} from "./FormName";
 import {FieldTypePicker} from "./FieldTypePicker";
@@ -52,7 +52,7 @@ function mapField(f: FormField, props: FormerProps) {
         setFieldReferencedDatabaseId,
         setFieldReferencedFormId
     } = props
-
+    
     return <FormerField
         key={f.id}
         isSelected={f.id === selectedFieldId}
@@ -242,7 +242,7 @@ export const FormerContainer: FC = props => {
         dispatch(formerActions.addOption({fieldId}))
     }, [dispatch])
 
-    const removeOption = useCallback((fieldId:string, i: number) => {
+    const removeOption = useCallback((fieldId: string, i: number) => {
         dispatch(formerActions.removeOption({fieldId, i}))
     }, [dispatch])
 

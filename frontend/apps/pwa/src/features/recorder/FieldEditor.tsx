@@ -1,4 +1,4 @@
-import {FieldDefinition} from "core-js-api-client";
+import {FieldDefinition} from "core-api-client";
 import React, {FC, Fragment} from "react";
 import {FormValue} from "./recorder.slice";
 import {RecordPickerContainer} from "../../components/RecordPicker";
@@ -25,6 +25,7 @@ export const ReferenceFieldEditor: FC<FieldEditorProps> = props => {
         {mapFieldDescription(field)}
     </div>
 }
+
 
 export const TextFieldEditor: FC<FieldEditorProps> = props => {
     const {field, value, setValue} = props
@@ -161,7 +162,7 @@ export const SingleSelectFieldEditor: FC<FieldEditorProps> = props => {
             id={field.id} value={value ? value : ""}
             onChange={event => setValue(event.target.value)}>
             <option disabled={field.required || field.key} value={""}/>
-            {/** TODO field.options.map(o => <option value={o}>{o}</option>)**/}
+            {field?.fieldType?.singleSelect?.options.map(o => <option value={o.id}>{o.name}</option>)}
         </select>
         {mapFieldDescription(field)}
     </div>

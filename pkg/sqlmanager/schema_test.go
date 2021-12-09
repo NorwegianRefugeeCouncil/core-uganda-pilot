@@ -303,6 +303,38 @@ create table "databaseId"."subFormField"(
 				{Query: `alter table "databaseId"."formId" add "referenceField" varchar(36) references "otherDatabaseId"."otherFormId" ("id");`},
 			},
 		},
+		{
+			name: "form with single select field",
+			args: []*types.FormDefinition{{
+				ID:         formId,
+				DatabaseID: databaseId,
+				Fields: []*types.FieldDefinition{
+					{
+						ID: "singleSelectField",
+						FieldType: types.FieldType{
+							SingleSelect: &types.FieldTypeSingleSelect{
+								Options: []*types.SelectOption{
+									{
+										ID:   "option1",
+										Name: "Option 1",
+									}, {
+										ID:   "option2",
+										Name: "Option 2",
+									},
+								},
+							},
+						},
+					},
+				},
+			}},
+			want: []schema.DDL{
+				{Query: createTableDDL},
+				{Query: `create table "databaseId"."singleSelectField_options"( "id" varchar(36) primary key, "name" varchar(128) not null unique);`},
+				{Query: `insert into "databaseId"."singleSelectField_options" ("id","name") values ($1,$2);`, Args: []interface{}{"option1", "Option 1"}},
+				{Query: `insert into "databaseId"."singleSelectField_options" ("id","name") values ($1,$2);`, Args: []interface{}{"option2", "Option 2"}},
+				{Query: `alter table "databaseId"."formId" add "singleSelectField" varchar(36) references "databaseId"."singleSelectField_options" ("id");`},
+			},
+		},
 	}
 
 	for _, test := range tests {

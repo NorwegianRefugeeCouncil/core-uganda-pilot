@@ -1,18 +1,18 @@
-import { FormDefinition } from "core-js-api-client";
-import { NetworkStateType } from "expo-network";
+import {FormDefinition} from "core-api-client";
+import {NetworkStateType} from "expo-network";
 import React from "react";
-import { useForm } from "react-hook-form";
-import { Platform } from "react-native";
-import { RECORD_ACTIONS } from "../../reducers/recordsReducers";
-import { AddRecordScreenContainerProps } from "../../types/screens";
+import {useForm} from "react-hook-form";
+import {Platform} from "react-native";
+import {RECORD_ACTIONS} from "../../reducers/recordsReducers";
+import {AddRecordScreenContainerProps} from "../../types/screens";
 import client from "../../utils/clients";
-import { getEncryptionKey } from "../../utils/getEncryptionKey";
-import { getNetworkState } from "../../utils/getNetworkState";
-import { getEncryptedLocalData, storeEncryptedLocalData } from "../../utils/storage";
-import { AddRecordScreen } from "../screens/AddRecordScreen";
+import {getEncryptionKey} from "../../utils/getEncryptionKey";
+import {getNetworkState} from "../../utils/getNetworkState";
+import {getEncryptedLocalData, storeEncryptedLocalData} from "../../utils/storage";
+import {AddRecordScreen} from "../screens/AddRecordScreen";
 
-export const AddRecordScreenContainer = ({ route, dispatch }: AddRecordScreenContainerProps) => {
-    const { formId, recordId } = route.params;
+export const AddRecordScreenContainer = ({route, dispatch}: AddRecordScreenContainerProps) => {
+    const {formId, recordId} = route.params;
 
     const isWeb = Platform.OS === "web";
 
@@ -21,7 +21,7 @@ export const AddRecordScreenContainer = ({ route, dispatch }: AddRecordScreenCon
     const [isConnected, setIsConnected] = React.useState(false);
     const [hasLocalData, setHasLocalData] = React.useState(false);
 
-    const { control, handleSubmit, formState, reset } = useForm();
+    const {control, handleSubmit, formState, reset} = useForm();
 
     React.useEffect(() => {
         async function fetches() {
@@ -39,7 +39,7 @@ export const AddRecordScreenContainer = ({ route, dispatch }: AddRecordScreenCon
 
             //
             try {
-                const data = await client().getForm({ id: formId });
+                const data = await client().getForm({id: formId});
                 form = data?.response;
             } catch (error) {
                 console.error(error);
@@ -61,6 +61,7 @@ export const AddRecordScreenContainer = ({ route, dispatch }: AddRecordScreenCon
                 }
             }
         }
+
         fetches();
     });
 
@@ -85,7 +86,7 @@ export const AddRecordScreenContainer = ({ route, dispatch }: AddRecordScreenCon
         handleSubmit(async () => {
             if (isConnected || isWeb) {
                 await client().createRecord({
-                    object: { formId, values: data },
+                    object: {formId, values: data},
                 });
             } else {
                 await onSubmitOffline(data);
