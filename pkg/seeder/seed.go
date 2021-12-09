@@ -2,6 +2,7 @@ package seeder
 
 import (
 	"context"
+	"errors"
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/store"
 	"gorm.io/driver/sqlite"
@@ -11,12 +12,64 @@ import (
 type CountryContext = string
 
 const (
-	GlobalContext CountryContext = "global"
-	UgandaContext CountryContext = "uganda"
+	GlobalContext           CountryContext = "Global"
+	UgandaContext           CountryContext = "Uganda"
+	GlobalDatabaseName                     = "Global"
+	GlobalBioDataFolderName                = "Global Bio Information"
 )
 
-func Seed(countryContext CountryContext, dbFactory store.Factory) error {
+type Seed struct {
+	ctx                         context.Context
+	dbStore                     store.DatabaseStore
+	folderStore                 store.FolderStore
+	formStore                   store.FormStore
+	globalDatabaseId            string
+	globalBioDataFolderId       string
+	globalRootIndividualFormId  string
+	globalRootHouseholdFormId   string
+	globalRootBeneficiaryFormId string
+	globalForms                 *types.FormDefinitionList
+}
 
+func NewSeed(ctx context.Context, dbFactory store.Factory) (*Seed, error) {
+	dbStore := store.NewDatabaseStore(dbFactory)
+	folderStore := store.NewFolderStore(dbFactory)
+	formStore := store.NewFormStore(dbFactory)
+
+	dbs, err := dbStore.List(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var seed = &Seed{
+		ctx:         ctx,
+		dbStore:     dbStore,
+		folderStore: folderStore,
+		formStore:   formStore,
+	}
+
+	// find existing Global DB and Folder, if any
+	for _, db := range dbs.Items {
+		if db.Name == GlobalDatabaseName {
+			seed.globalDatabaseId = db.ID
+			folders, err := folderStore.List(ctx)
+			if err != nil {
+				return nil, err
+			}
+			for _, folder := range folders.Items {
+				if folder.Name == GlobalBioDataFolderName {
+					seed.globalBioDataFolderId = folder.ID
+				}
+			}
+			forms, err := formStore.List(ctx)
+			seed.globalForms = forms
+		}
+	}
+
+	return seed, nil
+}
+
+func (s *Seed) Seed(countryContext CountryContext) error {
 	db, err := gorm.Open(sqlite.Dialector{DSN: "file::memory:?cache=shared&_foreign_keys=1"}, &gorm.Config{
 		SkipDefaultTransaction: true,
 	})
@@ -28,70 +81,20 @@ func Seed(countryContext CountryContext, dbFactory store.Factory) error {
 	if err := db.AutoMigrate(&store.Database{}, &store.Form{}, &store.Field{}); err != nil {
 		return err
 	}
+
+	var globalWasSeeded = len(s.globalDatabaseId) > 0 && len(s.globalBioDataFolderId) > 0 && s.globalForms.Len() > 0
+
+	// if not global context, ensure global context has been seeded before proceeding
+	if countryContext != GlobalContext && !globalWasSeeded {
+		return errors.New("the global database hase not been seeded")
+	}
+
+	switch countryContext {
+	case GlobalContext:
+		err = s.seedGlobal()
+	case UgandaContext:
+		err = s.seedUganda()
+	}
+
 	return err
-}
-
-dbStore := store.NewDatabaseStore(dbFactory)
-folderStore := store.NewFolderStore(dbFactory)
-formStore := store.NewFormStore(dbFactory)
-
-switch countryContext {
-case GlobalContext:
-err = seedGlobal(ctx, dbStore, folderStore, formStore)
-case UgandaContext:
-err = seedUganda(ctx, dbStore, folderStore, formStore)
-}
-
-return err
-}
-
-func seedGlobal(ctx context.Context, dbStore store.DatabaseStore, folderStore store.FolderStore, formStore store.FormStore) error {
-	// TODO
-	return nil
-}
-func seedUganda(ctx context.Context, dbStore store.DatabaseStore, folderStore store.FolderStore, formStore store.FormStore) error {
-	var dbConfig = &types.Database{
-		Name: "Uganda",
-	}
-	ugDB, err := dbStore.Create(ctx, dbConfig)
-	if err != nil {
-		return err
-	}
-
-	coFolder, err := folderStore.Create(ctx, &types.Folder{
-		DatabaseID: ugDB.ID,
-		Name:       "Uganda Bio Information Folder",
-	})
-	if err != nil {
-		return err
-	}
-
-	iclaFolder, err := folderStore.Create(ctx, &types.Folder{
-		DatabaseID: ugDB.ID,
-		Name:       "Uganda ICLA Folder",
-	})
-	if err != nil {
-		return err
-	}
-
-	intakeFolder, err := folderStore.Create(ctx, &types.Folder{
-		DatabaseID: ugDB.ID,
-		Name:       "Uganda Intake Folder",
-	})
-	if err != nil {
-		return err
-	}
-
-	protectionFolder, err := folderStore.Create(ctx, &types.Folder{
-		DatabaseID: ugDB.ID,
-		Name:       "Uganda Protection Folder",
-	})
-	if err != nil {
-		return err
-	}
-
-	if err := seedUgandaForms(ctx, formStore, ugDB.ID, coFolder.ID, iclaFolder.ID, intakeFolder.ID, protectionFolder.ID); err != nil {
-		return err
-	}
-	return nil
 }
