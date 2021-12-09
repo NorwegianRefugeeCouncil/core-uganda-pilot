@@ -153,8 +153,6 @@ const mapFields = (state: FormerState, fields: FormField[]): FieldDefinition[] =
 
     for (let field of fields) {
 
-        console.log("FIELD", field)
-
         let fieldType: FieldType
 
         if (field.type === "text") {

@@ -33,7 +33,7 @@ func singleSelectFieldActions(formInterface types.FormInterface, fieldDefinition
 	sqlField := getStandardSQLColumnForField(fieldDefinition)
 	sqlField.DataType = schema.SQLDataType{
 		VarChar: &schema.SQLDataTypeVarChar{
-			Length: 36,
+			Length: uuidFieldLength,
 		},
 	}
 	sqlField.Constraints = append(sqlField.Constraints, schema.SQLColumnConstraint{
@@ -73,7 +73,7 @@ func buildSelectOptionsTable(formInterface types.FormInterface, fieldDefinition 
 						Name: keyIdColumn,
 						DataType: schema.SQLDataType{
 							VarChar: &schema.SQLDataTypeVarChar{
-								Length: 36,
+								Length: uuidFieldLength,
 							},
 						},
 						Constraints: []schema.SQLColumnConstraint{
@@ -106,7 +106,7 @@ func buildSelectOptionsTable(formInterface types.FormInterface, fieldDefinition 
 			insertRow: &sqlActionInsertRow{
 				schemaName: formInterface.GetDatabaseID(),
 				tableName:  getFieldOptionsTableName(fieldDefinition.ID),
-				columns:    []string{"id", "name"},
+				columns:    []string{keyIdColumn, keyNameColumn},
 				values:     []interface{}{option.ID, option.Name},
 			},
 		})

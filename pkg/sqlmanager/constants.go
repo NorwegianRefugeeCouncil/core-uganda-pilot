@@ -7,4 +7,5 @@ const (
 	keyNameColumn      = "name"
 	monthFieldFormat   = "2006-01"
 	dateFieldFormat    = "2006-01-02"
+	uuidFieldLength    = 36
 )

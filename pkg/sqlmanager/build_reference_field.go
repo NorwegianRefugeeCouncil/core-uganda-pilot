@@ -13,7 +13,7 @@ func referenceFieldActions(formReference types.FormReference, fieldDefinition *t
 	sqlField := getStandardSQLColumnForField(fieldDefinition)
 	sqlField.DataType = schema.SQLDataType{
 		VarChar: &schema.SQLDataTypeVarChar{
-			Length: 36,
+			Length: uuidFieldLength,
 		},
 	}
 
@@ -29,7 +29,7 @@ func referenceFieldActions(formReference types.FormReference, fieldDefinition *t
 		Reference: &schema.ReferenceSQLColumnConstraint{
 			Schema:   fieldDefinition.FieldType.Reference.DatabaseID,
 			Table:    fieldDefinition.FieldType.Reference.FormID,
-			Column:   "id",
+			Column:   keyIdColumn,
 			OnDelete: onDeleteAction,
 			OnUpdate: schema.ActionCascade,
 		},
