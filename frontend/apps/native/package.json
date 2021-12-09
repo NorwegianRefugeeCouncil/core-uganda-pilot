@@ -10,9 +10,7 @@
     "ios": "node_modules/.bin/expo start --ios",
     "web": "node_modules/.bin/expo start --web",
     "eject": "node_modules/.bin/expo eject",
-    "test": "jest",
-    "lint": "yarn eslint .",
-    "lint:fix": "yarn eslint --fix ."
+    "test": "jest"
   },
   "dependencies": {
     "@config-plugins/android-jsc-intl": "^0.0.0",
@@ -72,14 +70,9 @@
     "@types/react-test-renderer": "^17.0.1",
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "@typescript-eslint/parser": "^5.5.0",
-    "eslint": "^8.3.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-react": "^7.27.1",
     "expo-yarn-workspaces": "^1.6.0",
     "jest-expo": "^43.0.0",
     "jest-mock": "^27.4.2",
-    "prettier": "^2.5.0",
     "react-test-renderer": "^17.0.2"
   },
   "peerDependencies": {

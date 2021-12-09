@@ -14,9 +14,18 @@
     "build:core-api-client": "lerna run --scope core-api-client build",
     "build:core-auth": "lerna run --scope core-auth build",
     "build:design-system": "lerna run --scope core-design-system build",
-    "lint": "lerna run lint",
+    "lint": "eslint --ext js,ts,tsx .",
+    "lint:fix": "eslint --ext js,ts,tsx --fix .",
     "test": "lerna run test",
     "test:stable": "lerna run --scope core-native --scope core-auth test"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": ["eslint  --ext js,ts,tsx —-fix", "git add"]
   },
   "workspaces": [
     "apps/*",
@@ -26,7 +35,25 @@
   "devDependencies": {
     "@types/react": "^17.0.37",
     "@types/react-dom": "^17.0.11",
+    "eslint": "^6.6.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-config-prettier": "^6.7.0",
+    "eslint-import-resolver-typescript": "^2.3.0",
+    "eslint-import-resolver-webpack": "^0.12.2",
+    "eslint-plugin-flowtype": "^5.2.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jest": "^23.20.0",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-react": "^7.20.5",
+    "eslint-plugin-react-hooks": "^4.0.8",
+    "husky": "^7.0.4",
     "lerna": "^4.0.0",
+    "lint-staged": "^12.1.2",
+    "openapi-types": "^9.3.0",
+    "prettier": "^2.0.5",
+    "prettier-eslint": "^11.0.0",
+    "prettycli": "^1.4.3",
     "typescript": "^4.5.2"
   },
   "dependencies": {
