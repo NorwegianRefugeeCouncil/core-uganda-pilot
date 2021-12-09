@@ -244,7 +244,8 @@ export const selectSubFormOwners = (state: RootState, subFormId?: string, includ
 }
 
 export const selectFormOrSubFormById = (state: RootState, formOrSubFormId: string): FormInterface | undefined => {
-    for (let f of formGlobalSelectors.selectAll(state)) {
+    const bla = formGlobalSelectors.selectAll(state)
+    for (let f of bla) {
         if (f.id === formOrSubFormId) {
             return {
                 ...f,

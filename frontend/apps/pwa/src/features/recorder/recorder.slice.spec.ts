@@ -24,12 +24,24 @@ describe("selectPostRecords", () => {
                         }
                     }
                 },
-            }
+                baseFormId: 'form1'
+            },
+            forms: {
+                ids: ['form1', 'form2'],
+                entities: {
+                    "form1": {
+                        id: 'form1'
+                    },
+                    "form2": {
+                        id: 'form2'
+                    },
+                }
+            },
         } as any)
 
         expect(got).toHaveLength(2)
         expect(got[0].id).toEqual("record1")
-        expect(got[1].id).toEqual("record1")
+        expect(got[1].id).toEqual("record2")
 
     });
 })
