@@ -1,6 +1,6 @@
 postsubmits:
   - name: pull-core-frontend-test
-    run_if_changed: "^frontend"
+    run_if_changed: "^frontend/.*"
     decorate: true
     spec:
       containers:
