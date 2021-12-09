@@ -17,7 +17,7 @@
     "lint": "eslint --ext js,ts,tsx .",
     "lint:fix": "eslint --ext js,ts,tsx --fix .",
     "test": "lerna run test",
-    "test:stable": "lerna run --scope core-native --scope core-auth test"
+    "test:stable": "lerna run --scope core-native --scope core-auth --scope core-pwa test"
   },
   "husky": {
     "hooks": {
