@@ -2,9 +2,10 @@
   "name": "core-design-system-storybook",
   "private": true,
   "version": "0.0.1",
-  "main": "node_modules/expo/AppEntry.js",
+  "main": "__generated__/AppEntry.js",
   "homepage": "https://github.com/nrc-no/core",
   "scripts": {
+    "postinstall": "expo-yarn-workspaces postinstall",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
@@ -39,6 +40,7 @@
     "@types/react-native": "~0.64.12",
     "babel-loader": "~8.2.3",
     "core-design-system": "0.0.1",
+    "expo-yarn-workspaces": "^1.6.0",
     "gh-pages": "^3.2.3",
     "typescript": "~4.3.5"
   },
