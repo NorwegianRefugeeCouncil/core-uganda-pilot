@@ -2,10 +2,10 @@
   "name": "frontend-root",
   "private": true,
   "scripts": {
-    "start:admin": "lerna run --scope admin start",
-    "start:native": "lerna run --scope core-native start",
-    "start:pwa": "lerna run --scope core-pwa start",
-    "start:storybook": "lerna run --scope core-design-system-storybook start",
+    "start:admin": "lerna run --scope admin start --stream",
+    "start:native": "lerna run --scope core-native start --stream",
+    "start:pwa": "lerna run --scope core-pwa start --stream",
+    "start:storybook": "lerna run --scope core-design-system-storybook start --stream",
     "build": "lerna run build",
     "build:packages": "lerna run --scope core-api-client --scope core-auth --scope core-design-system build",
     "build:admin": "lerna run --scope admin build",
@@ -16,8 +16,8 @@
     "build:design-system": "lerna run --scope core-design-system build",
     "lint": "eslint --ext js,ts,tsx .",
     "lint:fix": "eslint --ext js,ts,tsx --fix .",
-    "test": "lerna run test",
-    "test:stable": "lerna run --scope core-native --scope core-auth --scope core-pwa test"
+    "test": "lerna run test --stream",
+    "test:stable": "lerna run --scope core-native --scope core-auth --scope core-pwa test --stream"
   },
   "husky": {
     "hooks": {
