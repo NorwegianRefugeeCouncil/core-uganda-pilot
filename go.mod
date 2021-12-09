@@ -25,7 +25,6 @@ require (
 	github.com/looplab/fsm v0.3.0
 	github.com/manifoldco/promptui v0.9.0
 	github.com/matryer/try v0.0.0-20161228173917-9ac251b645a2 // indirect
-	github.com/mattn/go-sqlite3 v1.14.9
 	github.com/ory/hydra-client-go v1.10.6
 	github.com/rs/cors v1.8.0
 	github.com/satori/go.uuid v1.2.0
@@ -44,6 +43,5 @@ require (
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 	gorm.io/driver/postgres v1.2.1
-	gorm.io/driver/sqlite v1.2.3
 	gorm.io/gorm v1.22.4
 )

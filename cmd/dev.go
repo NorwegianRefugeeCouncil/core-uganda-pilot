@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/spf13/cobra"
 )
 
@@ -9,9 +8,6 @@ import (
 var devCmd = &cobra.Command{
 	Use:   "dev",
 	Short: "developer tools",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("admin called")
-	},
 }
 
 func init() {

@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"github.com/nrc-no/core/pkg/server/auth"
 	"github.com/spf13/cobra"
 )
@@ -11,13 +10,22 @@ import (
 var serveAuthCmd = &cobra.Command{
 	Use:   "auth",
 	Short: "starts the auth server",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("auth called")
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := serveAuth(ctx,
+			auth.Options{
+				ServerOptions: coreOptions.Serve.Auth,
+				HydraPublic:   coreOptions.Hydra.Public.PublicClient(),
+				HydraAdmin:    coreOptions.Hydra.Admin.AdminClient(),
+			}); err != nil {
+			return err
+		}
+		<-doneSignal
+		return nil
 	},
 }
 
 func init() {
-	serveCmd.AddCommand(serveAdminCmd)
+	serveCmd.AddCommand(serveAuthCmd)
 }
 
 func serveAuth(ctx context.Context, options auth.Options) error {

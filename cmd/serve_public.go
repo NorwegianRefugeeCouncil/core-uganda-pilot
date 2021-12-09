@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"github.com/nrc-no/core/pkg/server/public"
 
 	"github.com/spf13/cobra"
@@ -12,8 +11,16 @@ import (
 var servePublicCmd = &cobra.Command{
 	Use:   "public",
 	Short: "starts the public server",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("public called")
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := servePublic(ctx,
+			public.Options{
+				ServerOptions: coreOptions.Serve.Public,
+				StoreFactory:  factory,
+			}); err != nil {
+			return err
+		}
+		<-doneSignal
+		return nil
 	},
 }
 

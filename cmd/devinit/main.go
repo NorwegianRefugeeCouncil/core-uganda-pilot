@@ -169,15 +169,40 @@ type Config struct {
 }
 
 func Init() error {
-	_, err := getPetName()
+
+	var err error
+	l, err = zap.NewDevelopment()
+	if err != nil {
+		panic(err)
+	}
+	wd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	WorkDir = wd
+
+	if err := initCredsDir(); err != nil {
+		panic(err)
+	}
+
+	petName, err := getPetName()
 	if err != nil {
 		return err
 	}
+
+	OidcIssuer = getOidcHost(petName)
+	CoreHost = getServerHost(petName)
+	HydraHost = fmt.Sprintf("%s/hydra", CoreHost)
+
 	_, err = createConfig()
 	return err
 }
 
 func StartTunnels() error {
+	if err := Init(); err != nil {
+		return err
+	}
+
 	petName, err := getPetName()
 	if err != nil {
 		return err
@@ -256,33 +281,11 @@ func createConfig() (*Config, error) {
 
 var l *zap.Logger
 
-func init() {
-	var err error
-	l, err = zap.NewDevelopment()
-	if err != nil {
-		panic(err)
-	}
-	wd, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-	WorkDir = wd
-
-	if err := initCredsDir(); err != nil {
-		panic(err)
-	}
-
-	petName, err := getPetName()
-	if err != nil {
-		panic(err)
-	}
-
-	OidcIssuer = getOidcHost(petName)
-	CoreHost = getServerHost(petName)
-	HydraHost = fmt.Sprintf("%s/hydra", CoreHost)
-}
-
 func Bootstrap() error {
+
+	if err := Init(); err != nil {
+		return err
+	}
 
 	l.Info("Bootstrapping...")
 
