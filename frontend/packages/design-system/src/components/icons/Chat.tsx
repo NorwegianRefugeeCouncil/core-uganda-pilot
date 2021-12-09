@@ -2,7 +2,9 @@ import React from 'react';
 import { Icon } from 'native-base';
 import { Path } from 'react-native-svg';
 
-export default () => {
+import { IconVariants } from '../../types/icons';
+
+export default (variant: IconVariants) => {
   return (
     <Path
       d="M18.9,19c0,0.3,0.1,0.6,0.3,0.8c0.2,0.2,0.5,0.3,0.8,0.3c0.3,0,0.6-0.1,0.8-0.3c0.2-0.2,0.3-0.5,0.3-0.8s-0.1-0.6-0.3-0.8

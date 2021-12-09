@@ -24,6 +24,9 @@ const Icon = ({ name, variant }: IconProps) => {
     case IconName.CASE:
       iconComponent = icons.Case;
       break;
+    case IconName.CHAT:
+      iconComponent = icons.Chat;
+      break;
     case IconName.DELETE:
       iconComponent = icons.Delete;
       break;
@@ -41,6 +44,9 @@ const Icon = ({ name, variant }: IconProps) => {
       break;
     case IconName.FACE_SUCCESS:
       iconComponent = icons.FaceSuccess;
+      break;
+    case IconName.FAVORITE:
+      iconComponent = icons.Favorite;
       break;
     case IconName.FEMALE:
       iconComponent = icons.Female;
@@ -151,9 +157,7 @@ const Icon = ({ name, variant }: IconProps) => {
   }
 
   return (
-    <NativeBaseProvider>
-      <IconNB viewBox="0 0 40 40" style={{ height: '40px', width: '40px', display: 'flex' }} children={iconComponent(variant)} />
-    </NativeBaseProvider>
+    <IconNB viewBox="0 0 40 40" style={{ height: '40px', width: '40px', display: 'flex' }} children={iconComponent(variant)} />
   );
 };
 
