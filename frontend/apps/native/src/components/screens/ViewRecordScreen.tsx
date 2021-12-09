@@ -1,8 +1,8 @@
 import React from "react";
-import { common, layout } from "../../styles";
-import { ScrollView, View, Text } from "react-native";
-import { FormDefinition } from "core-js-api-client";
-import { Control } from "react-hook-form";
+import {common, layout} from "../../styles";
+import {ScrollView, Text, View} from "react-native";
+import {FormDefinition} from "core-api-client";
+import {Control} from "react-hook-form";
 import FormControl from "../form/FormControl";
 
 export interface ViewRecordScreenProps {
@@ -11,7 +11,7 @@ export interface ViewRecordScreenProps {
     control: Control;
 }
 
-const ViewRecordScreen = ({ isLoading, form, control }: ViewRecordScreenProps) => {
+const ViewRecordScreen = ({isLoading, form, control}: ViewRecordScreenProps) => {
     return (
         <View style={[layout.container, layout.body, common.darkBackground]}>
             <ScrollView>
@@ -22,7 +22,7 @@ const ViewRecordScreen = ({ isLoading, form, control }: ViewRecordScreenProps) =
                                 <FormControl
                                     key={field.code}
                                     fieldDefinition={field}
-                                    style={{ width: "100%" }}
+                                    style={{width: "100%"}}
                                     control={control}
                                     name={field.id}
                                 />

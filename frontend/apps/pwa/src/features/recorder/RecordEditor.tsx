@@ -11,7 +11,7 @@ import {
     selectSubRecords
 } from "./recorder.slice";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
-import {FieldDefinition, FieldValue} from "core-js-api-client";
+import {FieldDefinition, FieldValue} from "core-api-client";
 import {FieldEditor} from "./FieldEditor";
 import {fetchDatabases} from "../../reducers/database";
 import {fetchFolders} from "../../reducers/folder";

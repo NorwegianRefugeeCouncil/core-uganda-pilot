@@ -1,8 +1,8 @@
 import React, {FC} from "react";
-import {Folder} from "core-js-api-client";
+import {Folder} from "core-api-client";
 import {Link} from "react-router-dom";
 
-export const FolderRow : FC<{folder: Folder}> = ({folder}) => {
+export const FolderRow: FC<{ folder: Folder }> = ({folder}) => {
     return <Link
         to={`/browse/folders/${folder.id}`}
         key={folder.id}

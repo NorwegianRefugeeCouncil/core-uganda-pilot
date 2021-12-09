@@ -1,5 +1,5 @@
 {
-  "name": "core-js-api-client",
+  "name": "core-api-client",
   "private": true,
   "version": "0.0.1",
   "main": "lib/cjs/index.js",

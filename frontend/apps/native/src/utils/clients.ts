@@ -1,4 +1,4 @@
-import {Client, ClientDefinition} from "core-js-api-client";
+import {Client, ClientDefinition} from "core-api-client";
 import {useMemo} from "react";
 import axios from "axios";
 import Constants from "expo-constants";

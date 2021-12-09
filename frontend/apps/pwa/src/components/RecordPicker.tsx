@@ -1,5 +1,5 @@
 import React, {FC, useCallback, useEffect, useState} from "react";
-import {Record} from "core-js-api-client";
+import {Record} from "core-api-client";
 import {useAppDispatch, useAppSelector} from "../app/hooks";
 import {fetchRecords, recordGlobalSelectors, selectRecords} from "../reducers/records";
 import {selectFormOrSubFormById, selectRootForm} from "../reducers/form";

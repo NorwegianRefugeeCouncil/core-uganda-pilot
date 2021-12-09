@@ -1,4 +1,4 @@
-import {FieldKind} from "core-js-api-client";
+import {FieldKind, SelectOption} from "core-api-client";
 import React, {FC, Fragment} from "react";
 import DatabasePickerContainer from "../../components/DatabasePicker";
 import FormPickerContainer from "../../components/FormPicker";
@@ -7,7 +7,7 @@ type FormerFieldProps = {
     isSelected: boolean
     selectField: () => void
     fieldType: FieldKind
-    fieldOptions?: string[]
+    fieldOptions?: SelectOption[]
     setFieldOption: (i: number, value: string) => void
     addOption: () => void
     removeOption: (index: number) => void
@@ -112,7 +112,7 @@ export const FormerField: FC<FormerFieldProps> = props => {
                                     <input className="form-control me-3"
                                            id={`fieldOption-${i}`}
                                            type={"text"}
-                                           value={opt ? opt : ""}
+                                           value={opt ? opt.name : ""}
                                            onChange={event => setFieldOption(i, event.target.value)}/>
                                     <button type="button" className="btn btn-outline-danger"
                                             onClick={() => removeOption(i)}><i className="bi bi-x"/>

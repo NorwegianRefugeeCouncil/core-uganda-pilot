@@ -6,7 +6,7 @@ import {folderGlobalSelectors} from "../reducers/folder";
 import {databaseGlobalSelectors} from "../reducers/database";
 import {recordGlobalSelectors, selectSubRecords, SubRecordResult} from "../reducers/records";
 import {formGlobalSelectors, selectFormOrSubFormById} from "../reducers/form";
-import {Client, ClientDefinition, Database, FormDefinition, Record} from "core-js-api-client";
+import {Client, ClientDefinition, Database, FormDefinition, Record} from "core-api-client";
 
 // Use throughout your app instead of plain `useDispatch` and `useSelector`
 export const useAppDispatch = () => useDispatch<AppDispatch>();

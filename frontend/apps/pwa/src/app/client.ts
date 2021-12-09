@@ -1,4 +1,4 @@
-import {Client} from "core-js-api-client";
+import {Client} from "core-api-client";
 import axios from "axios";
 
 export const axiosInstance = axios.create()

@@ -1,6 +1,6 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import {RootState} from "../app/store";
-import {FieldDefinition, Record, RecordListRequest, RecordListResponse} from "core-js-api-client";
+import {FieldDefinition, Record, RecordListRequest, RecordListResponse} from "core-api-client";
 import {
     formGlobalSelectors,
     selectFieldForSubForm,
@@ -187,7 +187,7 @@ export const selectRecordsSubFormCounts: (formId?: string) => ((rootState: RootS
             return {}
         }
 
-        if (!form.fields){
+        if (!form.fields) {
             return {}
         }
 

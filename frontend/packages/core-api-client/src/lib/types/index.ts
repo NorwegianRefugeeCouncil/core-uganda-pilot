@@ -43,9 +43,17 @@ export type FieldTypeMonth = {}
 
 export type FieldTypeQuantity = {}
 
-export type FieldTypeSingleSelect = {}
+export type SelectOption = {
+    name: string
+    id: string
+}
 
-export class FieldTypeWeek {}
+export type FieldTypeSingleSelect = {
+    options: SelectOption[]
+}
+
+export class FieldTypeWeek {
+}
 
 export type FieldTypeReference = {
     databaseId: string
@@ -63,7 +71,6 @@ export type FieldDefinition = {
     description: string
     required: boolean
     key: boolean
-    options: string[]
     fieldType: FieldType
 }
 

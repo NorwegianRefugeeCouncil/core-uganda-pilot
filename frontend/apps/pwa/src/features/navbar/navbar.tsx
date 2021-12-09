@@ -1,7 +1,7 @@
 import React, {FC, Fragment, useEffect, useState} from "react";
 import {useAppSelector} from "../../app/hooks";
 import {Link, NavLink, useLocation} from "react-router-dom"
-import {Database, Folder} from "core-js-api-client";
+import {Database, Folder} from "core-api-client";
 import {databaseGlobalSelectors} from "../../reducers/database";
 import {folderGlobalSelectors, selectParents} from "../../reducers/folder";
 import {FormInterface, selectFormOrSubFormById, selectRootForm, selectSubFormOwners} from "../../reducers/form";

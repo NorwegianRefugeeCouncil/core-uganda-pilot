@@ -1,6 +1,6 @@
 import {FC, Fragment} from "react";
 import {useFormOrSubForm, useOwnerRecord, useRecordFromPath, useSubRecords} from "../../app/hooks";
-import {FieldDefinition, Record} from "core-js-api-client";
+import {FieldDefinition, Record} from "core-api-client";
 import {Link} from "react-router-dom";
 import format from "date-fns/format"
 

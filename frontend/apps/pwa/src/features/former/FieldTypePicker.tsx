@@ -1,5 +1,5 @@
 import React, {FC} from "react";
-import {FieldKind} from "core-js-api-client";
+import {FieldKind} from "core-api-client";
 
 export type FieldTypePickerProps = {
     onSubmit: (fieldKind: FieldKind) => void
@@ -15,7 +15,8 @@ export const FieldTypePicker: FC<FieldTypePickerProps> = props => {
                     className={"btn btn-primary m-2 border-light"}
                     onClick={() => onSubmit(FieldKind.Text)}>
                     Text
-                </button>                <button
+                </button>
+                <button
                     className={"btn btn-primary m-2 border-light"}
                     onClick={() => onSubmit(FieldKind.MultilineText)}>
                     Multiline Text

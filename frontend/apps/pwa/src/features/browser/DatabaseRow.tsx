@@ -1,8 +1,8 @@
 import React, {FC} from "react";
-import {Database} from "core-js-api-client";
+import {Database} from "core-api-client";
 import {Link} from "react-router-dom";
 
-export const DatabaseRow : FC<{database: Database}> = ({database}) => {
+export const DatabaseRow: FC<{ database: Database }> = ({database}) => {
 
     return <Link
         to={`/browse/databases/${database.id}`}

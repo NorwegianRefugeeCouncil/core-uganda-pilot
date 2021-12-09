@@ -1,7 +1,7 @@
 import {createAsyncThunk, createEntityAdapter, createSlice, EntityState, PayloadAction} from "@reduxjs/toolkit";
 import {v4 as uuidv4} from "uuid";
 import {RootState} from "../../app/store";
-import {Database, FieldDefinition, FieldKind, FieldType, Folder, FormDefinition} from "core-js-api-client";
+import {Database, FieldDefinition, FieldKind, FieldType, Folder, FormDefinition, SelectOption} from "core-api-client";
 import {databaseGlobalSelectors} from "../../reducers/database";
 import {folderGlobalSelectors} from "../../reducers/folder";
 import client from "../../app/client";
@@ -9,7 +9,7 @@ import client from "../../app/client";
 export interface FormField {
     id: string
     type: FieldKind
-    options: string[]
+    options: SelectOption[]
     required: boolean
     key: boolean
     name: string
@@ -153,6 +153,8 @@ const mapFields = (state: FormerState, fields: FormField[]): FieldDefinition[] =
 
     for (let field of fields) {
 
+        console.log("FIELD", field)
+
         let fieldType: FieldType
 
         if (field.type === "text") {
@@ -168,7 +170,7 @@ const mapFields = (state: FormerState, fields: FormField[]): FieldDefinition[] =
         } else if (field.type === "quantity") {
             fieldType = {quantity: {}}
         } else if (field.type === "singleSelect") {
-            fieldType = {singleSelect: {}}
+            fieldType = {singleSelect: {options: field.options}}
         } else if (field.type === "reference") {
             if (!field.referencedDatabaseId) {
                 throw new Error(`field with id ${field.id} does not have referenced database id`)
@@ -204,7 +206,6 @@ const mapFields = (state: FormerState, fields: FormField[]): FieldDefinition[] =
             id: "",
             description: field.description,
             name: field.name,
-            options: [],
             required: field.required,
             code: field.code,
             key: field.key
@@ -353,13 +354,19 @@ export const formerSlice = createSlice({
             const {i, value} = action.payload
             if (!fieldForm || !fieldForm.field.options) return
 
-            fieldForm.field.options[i] = value
+            fieldForm.field.options[i] = {
+                id: fieldForm.field.options[i].id,
+                name: value,
+            }
         },
         addOption(state, action: PayloadAction<{ fieldId: string }>) {
             const fieldForm = selectFieldForm(state, action.payload.fieldId)
             if (!fieldForm) return
 
-            fieldForm.field.options = [...fieldForm.field?.options ?? [], ""]
+            fieldForm.field.options = [...fieldForm.field.options, {
+                id: uuidv4(),
+                name: "",
+            }]
         },
         removeOption(state, action: PayloadAction<{ fieldId: string, i: number }>) {
             const fieldForm = selectFieldForm(state, action.payload.fieldId)
