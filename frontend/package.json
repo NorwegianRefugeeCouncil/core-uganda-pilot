@@ -9,8 +9,8 @@
     "build": "lerna run build",
     "build:packages": "lerna run --scope core-api-client --scope core-auth --scope core-design-system build",
     "build:admin": "lerna run --scope admin build",
-    "build:native": "lerna run --scope native build",
-    "build:pwa": "lerna run --scope pwa build",
+    "build:native": "lerna run --scope core-native build",
+    "build:pwa": "lerna run --scope core-pwa build",
     "build:core-api-client": "lerna run --scope core-api-client build",
     "build:core-auth": "lerna run --scope core-auth build",
     "build:design-system": "lerna run --scope core-design-system build",
@@ -35,7 +35,7 @@
   "devDependencies": {
     "@types/react": "^17.0.37",
     "@types/react-dom": "^17.0.11",
-    "eslint": "^6.6.0",
+    "eslint": "^7.11.0",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-config-prettier": "^6.7.0",
     "eslint-import-resolver-typescript": "^2.3.0",
@@ -61,6 +61,7 @@
     "react-dom": "^17.0.2"
   },
   "resolutions": {
+    "eslint": "^7.11.0",
     "babel-loader": "8.1.0",
     "jest": "26.6.0"
   }
