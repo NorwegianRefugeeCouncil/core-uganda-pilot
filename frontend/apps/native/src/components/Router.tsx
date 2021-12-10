@@ -48,7 +48,7 @@ export default function Router() {
   return (
     <View style={layout.container}>
       <NavigationContainer theme={NavigationTheme} linking={linkingConfig}>
-        <Stack.Navigator initialRouteName={routes.designSystem.name}>
+        <Stack.Navigator initialRouteName={routes.forms.name}>
           <Stack.Group
             screenOptions={{
               header: (props) => <NavigationBar {...props} />,

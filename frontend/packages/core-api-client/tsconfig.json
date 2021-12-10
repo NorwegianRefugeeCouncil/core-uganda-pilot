@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "module": "esnext",
     "moduleResolution": "Node",
     "esModuleInterop": true,
     "target": "ES5",
@@ -17,7 +16,6 @@
     ],
     "declaration": true,
     "sourceMap": true,
-    "outDir": "lib/esm",
     "jsx": "react",
     "jsxFactory": "React.createElement",
     "allowJs": true,
@@ -34,6 +32,9 @@
   ],
   "exclude": [
     "node_modules",
-    "lib"
+    "lib",
+    "**/*.test.tsx",
+    "**/*.stories.tsx",
+    "src/**/*.test.js"
   ]
 }
