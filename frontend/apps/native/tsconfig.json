@@ -1,7 +1,12 @@
 {
-    "extends": "expo/tsconfig.base",
-    "compilerOptions": {
-        "jsx": "react-native",
-        "strict": true
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "jsx": "react-native",
+    "strict": true,
+    "paths": {
+      "core-api-client": ["../../packages/core-api-client/src"],
+      "core-auth": ["../../packages/core-auth/src"],
+      "core-design-system": ["../../packages/design-system/src"],
     }
+  }
 }
