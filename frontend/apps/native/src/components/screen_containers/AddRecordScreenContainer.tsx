@@ -6,7 +6,7 @@ import { Platform } from 'react-native';
 
 import { RECORD_ACTIONS } from '../../reducers/recordsReducers';
 import { AddRecordScreenContainerProps } from '../../types/screens';
-import client from '../../utils/clients';
+import useApiClient from '../../utils/clients';
 import { getEncryptionKey } from '../../utils/getEncryptionKey';
 import { getNetworkState } from '../../utils/getNetworkState';
 import { getEncryptedLocalData, storeEncryptedLocalData } from '../../utils/storage';
@@ -23,6 +23,8 @@ export const AddRecordScreenContainer = ({ route, dispatch }: AddRecordScreenCon
   const [hasLocalData, setHasLocalData] = React.useState(false);
 
   const { control, handleSubmit, formState, reset } = useForm();
+
+  const apiClient = useApiClient();
 
   React.useEffect(() => {
     async function fetches() {
@@ -42,7 +44,7 @@ export const AddRecordScreenContainer = ({ route, dispatch }: AddRecordScreenCon
 
       //
       try {
-        const data = await client().getForm({ id: formId });
+        const data = await apiClient.getForm({ id: formId });
         form = data?.response;
       } catch (error) {
         console.error(error);
@@ -88,7 +90,7 @@ export const AddRecordScreenContainer = ({ route, dispatch }: AddRecordScreenCon
   const onSubmit = (data: any) => {
     handleSubmit(async () => {
       if (isConnected || isWeb) {
-        await client().createRecord({
+        await apiClient.createRecord({
           object: { formId, values: data },
         });
       } else {

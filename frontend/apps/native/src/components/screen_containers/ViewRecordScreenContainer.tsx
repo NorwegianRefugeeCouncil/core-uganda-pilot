@@ -4,7 +4,7 @@ import { FormDefinition } from 'core-api-client';
 
 import ViewRecordScreen, { ViewRecordScreenProps } from '../screens/ViewRecordScreen';
 import { ViewRecordScreenContainerProps } from '../../types/screens';
-import client from '../../utils/clients';
+import useApiClient from '../../utils/clients';
 
 export const ViewRecordScreenContainer = ({ route, state }: ViewRecordScreenContainerProps) => {
   const { formId, recordId } = route.params;
@@ -14,10 +14,12 @@ export const ViewRecordScreenContainer = ({ route, state }: ViewRecordScreenCont
 
   const { control, reset } = useForm();
 
+  const apiClient = useApiClient();
+
   React.useEffect(() => {
     const getForm = async () => {
       try {
-        const { response } = await client().getForm({ id: formId });
+        const { response } = await apiClient.getForm({ id: formId });
         setForm(response);
       } catch (err) {
         console.error(err);
