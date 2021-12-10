@@ -1,7 +1,13 @@
 # Core
 
-**Core** is a set of modern applications that try to solve the problem of **data collection**, **beneficiary identity**,
-and **case management** and **reporting** for the humanitarian sector.
+**Core** is a set of components that attempt to solve the problem of
+
+- **data collection**
+- **beneficiary identity**
+- **case management**
+- **reporting**
+
+for the humanitarian sector.
 
 Humanitarian organizations offer services to beneficiaries, usually in multiple countries. These services might be the
 

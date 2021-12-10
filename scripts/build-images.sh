@@ -19,10 +19,10 @@ GIT_TS="$(git show -s --format=%ct)"
 CORE_TAG="sandies.azurecr.io/core:${GIT_TS}-${GIT_COMMIT}"
 
 # Tag for the authnz-frontend app
-AUTHNZ_FRONTEND_TAG="sandies.azurecr.io/authnz-frontend:${GIT_TS}-${GIT_COMMIT}"
+AUTHNZ_FRONTEND_TAG="sandies.azurecr.io/core/authnz-frontend:${GIT_TS}-${GIT_COMMIT}"
 
 # Tag for the core-frontend app
-CORE_FRONTEND_TAG="sandies.azurecr.io/core-frontend:${GIT_TS}-${GIT_COMMIT}"
+CORE_FRONTEND_TAG="sandies.azurecr.io/core/frontend:${GIT_TS}-${GIT_COMMIT}"
 
 # Moving to the root source dir
 cd "${ROOT_DIR}" || exit 1
