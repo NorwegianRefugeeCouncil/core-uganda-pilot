@@ -18,12 +18,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
-    "paths": {
-      "core-api-client": ["../../packages/core-api-client/src"],
-      "core-auth": ["../../packages/core-auth/src"],
-      "core-design-system": ["../../packages/design-system/src"],
-    }
+    "jsx": "react-jsx"
   },
   "include": [
     "src"
