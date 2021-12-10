@@ -11,3 +11,10 @@ postsubmits:
               ./scripts/prepare-frontend.sh &&
               cd frontend &&
               yarn test:stable
+          env:
+            REACT_APP_OIDC_ISSUER: https://fake.oidc.issuer.nrc.no
+            REACT_APP_OAUTH_SCOPE: "openid profile email offline_access"
+            REACT_APP_OAUTH_REDIRECT_URI: http://localhost:3000/app
+            REACT_APP_OAUTH_CLIENT_ID: core-app-frontend
+            REACT_APP_SERVER_URL: https://localhost:8443
+
