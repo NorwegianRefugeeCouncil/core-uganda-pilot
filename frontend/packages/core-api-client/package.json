@@ -15,7 +15,6 @@
     "build:cjs": "tsc --project tsconfig.cjs.json",
   },
   "dependencies": {
-    "@types/node": "^14.17.20",
     "axios": "^0.23.0"
   },
   "devDependencies": {
