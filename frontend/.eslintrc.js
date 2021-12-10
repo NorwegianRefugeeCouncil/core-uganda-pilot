@@ -32,6 +32,11 @@ module.exports = {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
   },
+  env: {
+    jest: true,
+    browser: true,
+    node: true,
+  },
   rules: {
     'no-use-before-define': 'off',
     '@typescript-eslint/no-use-before-define': ['error'],
@@ -49,7 +54,17 @@ module.exports = {
     ],
     'max-len': ['error', { code: 130, tabWidth: 2, ignorePattern: '^import\\s.+\\sfrom\\s.+;$' }],
     'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
-    'no-unused-vars': ['error', { varsIgnorePattern: '_' }],
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_',
+      },
+    ],
+    'no-shadow': 'off',
+    '@typescript-eslint/no-shadow': 'error',
     'import/prefer-default-export': 0,
     'react/jsx-filename-extension': 0,
     'react/require-default-props': 0,
