@@ -40,7 +40,7 @@ services:
     command:
       - bash
       - -c
-      - "cd /app && npm install && node index.js"
+      - "cd /app && yarn install && node index.js"
 
   redis:
     image: 'bitnami/redis:latest'
