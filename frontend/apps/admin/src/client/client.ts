@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosInstance, Method } from 'axios';
+import { AxiosError, AxiosInstance, Method } from 'axios';
 
 import { Client as ApiClient } from '../types/types';
 import { clientResponse } from '../utils/responses';
@@ -30,10 +30,14 @@ import { RequestOptions, Response } from '../types/utils';
 export default class Client implements ApiClient {
   private adminv1 = 'apis/admin.nrc.no/v1';
 
-  public constructor(
-    public readonly address = 'https://localhost:9001/',
-    public readonly axiosInstance: AxiosInstance = axios.create(),
-  ) {}
+  private readonly address: string;
+
+  private axiosInstance: AxiosInstance;
+
+  public constructor(address: string, axiosInstance: AxiosInstance) {
+    this.address = address;
+    this.axiosInstance = axiosInstance;
+  }
 
   do<TRequest, TBody>(
     request: TRequest,
@@ -50,7 +54,7 @@ export default class Client implements ApiClient {
       headers = options?.headers;
     }
 
-    return axios
+    return this.axiosInstance
       .request<TBody>({
         method,
         url,

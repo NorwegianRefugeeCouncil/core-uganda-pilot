@@ -428,6 +428,7 @@ export type AuthWrapperProps = {
   customLoginComponent?: React.FC<LoginComponentProps>;
   handleLoginErr?: (err: any) => void;
   axiosInstance?: AxiosInstance;
+  injectToken?: 'access_token' | 'id_token';
 };
 
 export type listenerMapEntry = {

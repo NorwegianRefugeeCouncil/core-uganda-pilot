@@ -6,12 +6,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// serveAuthCmd represents the admin command
-var serveAuthCmd = &cobra.Command{
-	Use:   "auth",
-	Short: "starts the auth server",
+// serveAuthnzBouncerCmd represents the admin command
+var serveAuthnzBouncerCmd = &cobra.Command{
+	Use:   "bouncer",
+	Short: "starts the authnz-bouncer server",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if err := serveAuth(ctx,
+		if err := serveAuthnzBouncer(ctx,
 			auth.Options{
 				ServerOptions: coreOptions.Serve.Auth,
 				HydraPublic:   coreOptions.Hydra.Public.PublicClient(),
@@ -25,10 +25,10 @@ var serveAuthCmd = &cobra.Command{
 }
 
 func init() {
-	serveCmd.AddCommand(serveAuthCmd)
+	serveCmd.AddCommand(serveAuthnzBouncerCmd)
 }
 
-func serveAuth(ctx context.Context, options auth.Options) error {
+func serveAuthnzBouncer(ctx context.Context, options auth.Options) error {
 	server, err := auth.NewServer(options)
 	if err != nil {
 		return err

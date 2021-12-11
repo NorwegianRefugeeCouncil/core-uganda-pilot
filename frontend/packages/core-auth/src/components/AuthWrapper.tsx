@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useCallback, useEffect, Fragment, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import Browser from '../types/browser';
 import exchangeCodeAsync from '../utils/exchangeCodeAsync';
@@ -17,6 +17,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
   redirectUri,
   customLoginComponent,
   handleLoginErr = console.log,
+  injectToken = 'access_token',
 }) => {
   const browser = new Browser();
   browser.maybeCompleteAuthSession();
@@ -103,14 +104,22 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
 
   useEffect(() => {
     const interceptor = axiosInstance.interceptors.request.use((value) => {
-      if (!tokenResponse?.accessToken) {
-        return value;
+      const result = value;
+      if (!tokenResponse) {
+        return result;
       }
-      if (!value.headers) {
-        value.headers = {};
+      if (injectToken === 'access_token' && !tokenResponse.accessToken) {
+        return result;
       }
-      value.headers.Authorization = `Bearer ${tokenResponse.accessToken}`;
-
+      if (injectToken === 'id_token' && !tokenResponse.idToken) {
+        return result;
+      }
+      if (!result.headers) {
+        result.headers = {};
+      }
+      result.headers.Authorization = `Bearer ${
+        injectToken === 'access_token' ? tokenResponse?.accessToken : tokenResponse?.idToken
+      }`;
       return value;
     });
     return () => {
@@ -130,7 +139,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
         {customLoginComponent ? (
           customLoginComponent({ login: handleLogin })
         ) : (
-          <button onClick={handleLogin} role="button">
+          <button type="button" onClick={handleLogin}>
             Login
           </button>
         )}
