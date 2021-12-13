@@ -30,7 +30,6 @@ func handleAuthRequestAction(
 	orgStore store.OrganizationStore,
 	loginStore loginstore.Interface,
 	hydraAdmin admin.ClientService,
-	selfURL string,
 ) func(action string, pathParameters map[string]string, requestParameters url.Values) http.HandlerFunc {
 
 	return func(action string, pathParameters map[string]string, requestParameters url.Values) http.HandlerFunc {
@@ -102,11 +101,12 @@ func handleAuthRequestAction(
 				events = append(events, evt)
 			}
 
+			//goland:noinspection ALL
 			reqScheme := "http://"
-			if req.TLS != nil {
+			if req.TLS != nil || req.Header.Get("X-Forwarded-Proto") == "https" {
 				reqScheme = "https://"
 			}
-			selfURL = reqScheme + req.Host
+			selfURL := reqScheme + req.Host
 
 			loginRequestedHandler := handleLoginRequested(ctx, req.URL.Query(), dispatch, getLoginRequest)
 			refreshingIdentityHandler := handleRefreshingIdentity(ctx, idpStore, selfURL, dispatch, getLoginRequest)

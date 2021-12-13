@@ -18,7 +18,6 @@ func NewHandler(
 	orgStore store.OrganizationStore,
 	idpStore store.IdentityProviderStore,
 	loginStore loginstore.Interface,
-	selfURL string,
 	hydraAdmin admin.ClientService,
 ) (*Handler, error) {
 	h := &Handler{}
@@ -29,7 +28,6 @@ func NewHandler(
 		orgStore,
 		loginStore,
 		hydraAdmin,
-		selfURL,
 	)
 
 	loginWs := new(restful.WebService).Path("/login")

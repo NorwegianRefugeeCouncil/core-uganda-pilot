@@ -38,10 +38,6 @@ type RedisOptions struct {
 	MaxLength          int    `mapstructure:"max_length"`
 }
 
-type URLOptions struct {
-	Self string `mapstructure:"self"`
-}
-
 type Claims struct {
 	Subject string
 }
@@ -51,7 +47,6 @@ type ServerOptions struct {
 	Port    int           `mapstructure:"port"`
 	Cors    CorsOptions   `mapstructure:"cors"`
 	Secrets SecretOptions `mapstructure:"secrets"`
-	URLs    URLOptions    `mapstructure:"urls"`
 	Cache   CacheOptions  `mapstructure:"cache"`
 	TLS     TLSOptions    `mapstructure:"tls"`
 }
