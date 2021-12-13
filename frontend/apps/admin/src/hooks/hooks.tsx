@@ -1,14 +1,13 @@
-import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { Path, UseFormReturn } from 'react-hook-form';
 
 import Client from '../client/client';
 import { IdentityProvider, Organization } from '../types/types';
+import { client } from '../app/client';
 
 export function useApiClient(): Client {
-  return useMemo(() => {
-    return new Client();
-  }, []);
+  return useMemo(() => client, []);
 }
 
 export function useOrganization(organizationId: string): Organization | undefined {
@@ -43,7 +42,10 @@ export function useIdentityProviders(organizationId: string): IdentityProvider[]
   return idps;
 }
 
-export function useFormValidation<T extends object = { [key: string]: any }>(isNew: boolean, form: UseFormReturn<T>) {
+export function useFormValidation<T extends Record<string, unknown> = { [key: string]: any }>(
+  isNew: boolean,
+  form: UseFormReturn<T>,
+) {
   const {
     formState: { dirtyFields, errors, isSubmitted, touchedFields },
   } = form;

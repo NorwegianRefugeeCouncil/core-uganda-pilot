@@ -420,6 +420,8 @@ export type LoginComponentProps = {
   login: () => void;
 };
 
+export type InjectToken = 'access_token' | 'id_token';
+
 export type AuthWrapperProps = {
   clientId: string;
   issuer: string;
@@ -428,6 +430,7 @@ export type AuthWrapperProps = {
   customLoginComponent?: React.FC<LoginComponentProps>;
   handleLoginErr?: (err: any) => void;
   axiosInstance?: AxiosInstance;
+  injectToken?: InjectToken;
 };
 
 export type listenerMapEntry = {
