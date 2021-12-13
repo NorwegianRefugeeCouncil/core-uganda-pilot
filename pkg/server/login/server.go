@@ -40,7 +40,6 @@ func NewServer(options Options) (*Server, error) {
 		organizationStore,
 		idpStore,
 		loginStore,
-		options.URLs.Self,
 		hydraAdmin)
 	if err != nil {
 		return nil, err

@@ -24,16 +24,9 @@ func (c *Config) makeCore() error {
 		database: c.coreDbName,
 	})
 
-	const proxyUrl = "https://localhost:8443"
-
 	coreConfig := map[string]interface{}{
 		"serve": map[string]interface{}{
 			"admin": map[string]interface{}{
-				"cache": map[string]interface{}{
-					"redis": map[string]interface{}{
-						"password": c.redisPassword,
-					},
-				},
 				"secrets": map[string]interface{}{
 					"hash": []string{
 						c.coreAdminApiHashKey,
@@ -41,9 +34,6 @@ func (c *Config) makeCore() error {
 					"block": []string{
 						c.coreAdminApiBlockKey,
 					},
-				},
-				"urls": map[string]interface{}{
-					"self": proxyUrl,
 				},
 			},
 			"public": map[string]interface{}{
@@ -60,9 +50,6 @@ func (c *Config) makeCore() error {
 						c.coreApiBlockKey,
 					},
 				},
-				"urls": map[string]interface{}{
-					"self": proxyUrl,
-				},
 			},
 			"login": map[string]interface{}{
 				"cache": map[string]interface{}{
@@ -77,14 +64,6 @@ func (c *Config) makeCore() error {
 					"block": []string{
 						c.loginBlockKey,
 					},
-				},
-				"urls": map[string]interface{}{
-					"self": proxyUrl,
-				},
-			},
-			"auth": map[string]interface{}{
-				"urls": map[string]interface{}{
-					"self": proxyUrl,
 				},
 			},
 		},
