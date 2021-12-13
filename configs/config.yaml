@@ -31,11 +31,6 @@ serve:
       debug: true
       exposed_headers:
         - Location
-    cache:
-      redis:
-        address: localhost:6379
-        max_idle_connections: 10
-        max_length: 65536
   public:
     host: "0.0.0.0"
     port: "9000"
@@ -45,11 +40,6 @@ serve:
         path: creds/core/api/tls.crt
       key:
         path: creds/core/api/tls.key
-    cache:
-      redis:
-        address: localhost:6379
-        max_idle_connections: 10
-        max_length: 65536
     cors:
       allowed_origins:
         - https://localhost:3000
