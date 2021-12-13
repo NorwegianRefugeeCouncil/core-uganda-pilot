@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"github.com/nrc-no/core/pkg/server/login"
 	"github.com/spf13/cobra"
 )
@@ -11,8 +10,20 @@ import (
 var serveLoginCmd = &cobra.Command{
 	Use:   "login",
 	Short: "starts the login server",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("login called")
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := initStoreFactory(); err != nil {
+			return err
+		}
+		if err := serveLogin(ctx,
+			login.Options{
+				ServerOptions: coreOptions.Serve.Login,
+				StoreFactory:  factory,
+				HydraAdmin:    coreOptions.Hydra.Admin.AdminClient(),
+			}); err != nil {
+			return err
+		}
+		<-doneSignal
+		return nil
 	},
 }
 

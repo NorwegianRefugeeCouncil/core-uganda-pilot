@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"github.com/nrc-no/core/pkg/server/admin"
 	"github.com/spf13/cobra"
 )
@@ -11,8 +10,20 @@ import (
 var serveAdminCmd = &cobra.Command{
 	Use:   "admin",
 	Short: "starts the admin server",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("admin called")
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := initStoreFactory(); err != nil {
+			return err
+		}
+		if err := serveAdmin(ctx,
+			admin.Options{
+				ServerOptions: coreOptions.Serve.Admin,
+				StoreFactory:  factory,
+				HydraAdmin:    coreOptions.Hydra.Admin.AdminClient(),
+			}); err != nil {
+			return err
+		}
+		<-doneSignal
+		return nil
 	},
 }
 

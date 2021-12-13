@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/viper"
 	"go.uber.org/zap/zapcore"
 	"os"
+	"sync"
 
 	"github.com/spf13/cobra"
 )
@@ -55,13 +56,24 @@ var serveCmd = &cobra.Command{
 			logrus.SetLevel(logLevel)
 		}
 
-		var err error
-		factory, err = store.NewFactory(coreOptions.DSN)
-		if err != nil {
-			return err
-		}
 		return nil
 	},
+}
+
+var factoryLock sync.Mutex
+
+func initStoreFactory() error {
+	factoryLock.Lock()
+	defer factoryLock.Unlock()
+	if factory != nil {
+		return nil
+	}
+	f, err := store.NewFactory(coreOptions.DSN)
+	if err != nil {
+		return err
+	}
+	factory = f
+	return nil
 }
 
 func init() {

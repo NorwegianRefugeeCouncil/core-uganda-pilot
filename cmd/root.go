@@ -3,8 +3,6 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"os"
-
 	"github.com/spf13/viper"
 )
 
@@ -39,7 +37,10 @@ func initConfig() {
 			err = viper.MergeInConfig()
 		}
 		if err == nil {
-			fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+			fmt.Println("Using config file: " + viper.ConfigFileUsed())
+		} else {
+			fmt.Println(err.Error())
+			panic(err)
 		}
 	}
 
