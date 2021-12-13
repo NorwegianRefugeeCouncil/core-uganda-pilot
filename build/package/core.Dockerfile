@@ -14,7 +14,10 @@ RUN go mod download
 ADD . .
 
 RUN go mod verify
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main .
+RUN CGO_ENABLED=1 \
+    GOOS=linux \
+    GOARCH=amd64 \
+    go build -a -ldflags '-linkmode external -extldflags "-static"' -o main .
 
 # Build a small image
 FROM scratch
