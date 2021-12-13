@@ -1,29 +1,25 @@
 FROM golang:1.16 AS builder
 
-# Set necessary environmet variables needed for our image
-ENV GO111MODULE=on \
-    CGO_ENABLED=0 \
-    GOOS=linux \
-    GOARCH=amd64
+ARG git_tag
+ARG git_commit
 
-# Move to working directory /build
-WORKDIR /build
+WORKDIR /go/src/github.com/nrc-no/core
 
-# Copy and download dependency using go mod
-COPY go.mod .
-COPY go.sum .
+ENV GO111MODULE=on
+ADD go.mod .
+ADD go.sum .
+
 RUN go mod download
 
-# Copy the code into the container
-COPY . .
+ADD . .
 
-# Build the application
-RUN go build -o main .
+RUN go mod verify
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main .
 
 # Build a small image
-FROM scratch
+FROM golang:alpine
 
-COPY --from=builder /build/main /
+COPY --from=builder /go/src/github.com/nrc-no/core/main /core
 
 # Command to run
-ENTRYPOINT ["/main"]
+ENTRYPOINT ["/core"]
