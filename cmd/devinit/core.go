@@ -26,31 +26,6 @@ func (c *Config) makeCore() error {
 
 	coreConfig := map[string]interface{}{
 		"serve": map[string]interface{}{
-			"admin": map[string]interface{}{
-				"secrets": map[string]interface{}{
-					"hash": []string{
-						c.coreAdminApiHashKey,
-					},
-					"block": []string{
-						c.coreAdminApiBlockKey,
-					},
-				},
-			},
-			"public": map[string]interface{}{
-				"cache": map[string]interface{}{
-					"redis": map[string]interface{}{
-						"password": c.redisPassword,
-					},
-				},
-				"secrets": map[string]interface{}{
-					"hash": []string{
-						c.coreApiHashKey,
-					},
-					"block": []string{
-						c.coreApiBlockKey,
-					},
-				},
-			},
 			"login": map[string]interface{}{
 				"cache": map[string]interface{}{
 					"redis": map[string]interface{}{
