@@ -160,7 +160,14 @@ serve:
   	
 
 # Database connection string
-dsn: host=localhost port=5432 user=core password=postgres= dbname=core sslmode=disable
+# Additional query parameters can be passed to configure the database connection
+#
+# max_open_conns=10 set the sql.DB max open connections
+# max_idle_conns=10 set the sql.DB max idle connections
+# conn_max_idle_time=10 set the sql.DB connection max idle time (seconds)
+# conn_max_lifetime=10 set the sql.DB connection max lifetime (seconds)
+#
+dsn: postgres://user:password@localhost:5432/dbname?sslmode=disable
 
 # Logging configuration
 log:
