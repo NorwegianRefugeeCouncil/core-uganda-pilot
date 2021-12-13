@@ -1,0 +1,4 @@
+*/**
+!frontend/
+**/node_modules
+!configs/core-frontend
