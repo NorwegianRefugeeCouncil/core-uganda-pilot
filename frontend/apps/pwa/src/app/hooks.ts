@@ -1,7 +1,7 @@
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { useLocation, useParams } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
-import { Client, ClientDefinition, Database, FormDefinition, Record } from 'core-api-client';
+import { ClientDefinition, Database, FormDefinition, Record } from 'core-api-client';
 
 import { folderGlobalSelectors } from '../reducers/folder';
 import { databaseGlobalSelectors } from '../reducers/database';
@@ -9,6 +9,7 @@ import { recordGlobalSelectors, selectSubRecords, SubRecordResult } from '../red
 import { formGlobalSelectors, selectFormOrSubFormById } from '../reducers/form';
 
 import type { AppDispatch, RootState } from './store';
+import client from './client';
 
 // Use throughout your app instead of plain `useDispatch` and `useSelector`
 export const useAppDispatch = () => useDispatch<AppDispatch>();
@@ -117,6 +118,6 @@ export const useForms: (options: { databaseId?: string | undefined }) => FormDef
 
 export function useApiClient(): ClientDefinition {
   return useMemo(() => {
-    return new Client();
+    return client;
   }, []);
 }

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useCallback, useEffect, Fragment, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import Browser from '../types/browser';
 import exchangeCodeAsync from '../utils/exchangeCodeAsync';
@@ -17,8 +17,10 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
   redirectUri,
   customLoginComponent,
   handleLoginErr = console.log,
+  injectToken = 'access_token',
 }) => {
-  const browser = new Browser();
+  const browser = useMemo(() => new Browser(), []);
+
   browser.maybeCompleteAuthSession();
 
   const discovery = useDiscovery(issuer);
@@ -103,15 +105,32 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
 
   useEffect(() => {
     const interceptor = axiosInstance.interceptors.request.use((value) => {
-      if (!tokenResponse?.accessToken) {
-        return value;
+      const result = value;
+      if (!tokenResponse) {
+        return result;
       }
-      if (!value.headers) {
-        value.headers = {};
+      let token: string;
+      switch (injectToken) {
+        case 'access_token':
+          if (!tokenResponse.accessToken) {
+            return result;
+          }
+          token = tokenResponse.accessToken;
+          break;
+        case 'id_token':
+          if (!tokenResponse.idToken) {
+            return result;
+          }
+          token = tokenResponse.idToken;
+          break;
+        default:
+          return result;
       }
-      value.headers.Authorization = `Bearer ${tokenResponse.accessToken}`;
-
-      return value;
+      result.headers = {
+        ...result.headers,
+        Authorization: `Bearer ${token}`,
+      };
+      return result;
     });
     return () => {
       axiosInstance.interceptors.request.eject(interceptor);
@@ -130,7 +149,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
         {customLoginComponent ? (
           customLoginComponent({ login: handleLogin })
         ) : (
-          <button onClick={handleLogin} role="button">
+          <button type="button" onClick={handleLogin}>
             Login
           </button>
         )}
