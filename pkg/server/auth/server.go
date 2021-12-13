@@ -29,7 +29,7 @@ func NewServer(options Options) (*Server, error) {
 	}
 	authenticator := authenticators.NewHydraAuthenticator(options.HydraPublic)
 	authorizer := authorizers.NewHydraAuthorizer(options.HydraAdmin)
-	genericServer.NonGoRestfulMux.PathPrefix("/apis/authorization.nrc.no/v1/").Handler(handlers.HandleAuth(authenticator, authorizer))
+	genericServer.NonGoRestfulMux.PathPrefix("/").Handler(handlers.HandleAuth(authenticator, authorizer))
 	s := &Server{
 		options: options,
 		Server:  genericServer,
