@@ -13,7 +13,6 @@ server {
 
   location ~ $/(static)/ {
     gzip on;
-    gzip_http_version  1.0;
     gzip_comp_level    5; # 1-9
     gzip_min_length    256;
     gzip_proxied       any;
