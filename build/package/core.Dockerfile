@@ -14,13 +14,14 @@ RUN go mod download
 ADD . .
 
 RUN go mod verify
+
 RUN CGO_ENABLED=1 \
     GOOS=linux \
     GOARCH=amd64 \
-    go build -a -ldflags '-linkmode external -extldflags "-static"' -o main .
+    go build -o main .
 
 # Build a small image
-FROM scratch
+FROM golang:1.16
 
 COPY --from=builder /go/src/github.com/nrc-no/core/main /core
 
