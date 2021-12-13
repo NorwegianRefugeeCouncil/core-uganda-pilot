@@ -13,6 +13,9 @@ var serveAllCmd = &cobra.Command{
 	Use:   "all",
 	Short: "Starts the admin, public and login servers",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := initStoreFactory(); err != nil {
+			return err
+		}
 		if err := servePublic(ctx,
 			public.Options{
 				ServerOptions: coreOptions.Serve.Public,
@@ -36,7 +39,7 @@ var serveAllCmd = &cobra.Command{
 			}); err != nil {
 			return err
 		}
-		if err := serveAuth(ctx,
+		if err := serveAuthnzBouncer(ctx,
 			auth.Options{
 				ServerOptions: coreOptions.Serve.Auth,
 				HydraAdmin:    coreOptions.Hydra.Admin.AdminClient(),
