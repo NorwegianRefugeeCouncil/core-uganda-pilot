@@ -41,7 +41,7 @@ func TestMain(m *testing.M) {
 
 func (s *Suite) SetupSuite() {
 
-	dbFactory, err := store.NewFactory("host=localhost port=15432 user=postgres password=postgres dbname=postgres sslmode=disable")
+	dbFactory, err := store.NewFactory("postgres://postgres:postgres@localhost:15432/postgres?sslmode=disable")
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 	}

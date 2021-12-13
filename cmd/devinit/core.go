@@ -42,7 +42,7 @@ func (c *Config) makeCore() error {
 				},
 			},
 		},
-		"dsn": fmt.Sprintf("host=localhost port=5433 user=%s password=%s dbname=%s sslmode=disable", c.coreDbUsername, c.coreDbPassword, c.coreDbName),
+		"dsn": fmt.Sprintf("postgres://%s:%s@localhost:5433/%s?sslmode=disable", c.coreDbUsername, c.coreDbPassword, c.coreDbName),
 		"hydra": map[string]interface{}{
 			"admin": map[string]interface{}{
 				"host":      "localhost:8443",

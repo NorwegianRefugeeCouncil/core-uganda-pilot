@@ -2,11 +2,13 @@ package cmd
 
 import (
 	"context"
+	"github.com/fsnotify/fsnotify"
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/store"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"os"
 	"sync"
@@ -30,6 +32,17 @@ var serveCmd = &cobra.Command{
 		if err := viper.Unmarshal(&coreOptions); err != nil {
 			return err
 		}
+		configCtx := context.Background()
+		configLog := logging.NewLogger(configCtx)
+		viper.OnConfigChange(func(in fsnotify.Event) {
+			var changedConfig options.Options
+			configLog.Info("detected configuration change")
+			if err := viper.Unmarshal(&changedConfig); err != nil {
+				configLog.Error("failed to unmarshal on config change", zap.Error(err))
+				return
+			}
+			coreOptions = changedConfig
+		})
 
 		switch coreOptions.Log.Level {
 		case "debug":
@@ -68,7 +81,9 @@ func initStoreFactory() error {
 	if factory != nil {
 		return nil
 	}
-	f, err := store.NewFactory(coreOptions.DSN)
+	f, err := store.NewDynamicFactory(func() (string, error) {
+		return coreOptions.DSN, nil
+	})
 	if err != nil {
 		return err
 	}
