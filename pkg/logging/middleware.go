@@ -63,6 +63,15 @@ func UseRequestLogging(next http.Handler) http.Handler {
 			zap.String("remote_address", req.RemoteAddr),
 		}
 
+		for key, strings := range req.Header {
+			logKey := "header." + key
+			if len(strings) == 1 {
+				fields = append(fields, zap.String(logKey, strings[0]))
+			} else {
+				fields = append(fields, zap.Strings(logKey, strings))
+			}
+		}
+
 		n := statusCode
 		switch {
 		case n >= 500:

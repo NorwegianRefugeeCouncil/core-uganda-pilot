@@ -11,6 +11,9 @@ var serveLoginCmd = &cobra.Command{
 	Use:   "login",
 	Short: "starts the login server",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := initStoreFactory(); err != nil {
+			return err
+		}
 		if err := serveLogin(ctx,
 			login.Options{
 				ServerOptions: coreOptions.Serve.Login,
@@ -29,7 +32,7 @@ func init() {
 }
 
 func serveLogin(ctx context.Context, options login.Options) error {
-	server, err := login.NewServer(options)
+	server, err := login.NewServer(ctx, options)
 	if err != nil {
 		return err
 	}

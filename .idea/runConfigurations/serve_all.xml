@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="serve" type="GoApplicationRunConfiguration" factoryName="Go Application">
+  <configuration default="false" name="serve all" type="GoApplicationRunConfiguration" factoryName="Go Application">
     <module name="core" />
     <working_directory value="$PROJECT_DIR$" />
     <parameters value="serve all --config configs/config.yaml,creds/core/config.yaml" />

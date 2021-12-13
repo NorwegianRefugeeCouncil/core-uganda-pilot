@@ -7,4 +7,5 @@ find /usr/share/nginx/html/ \
   -exec sed -i "s~%{OIDC_ISSUER}%~${OIDC_ISSUER}~g" {} + \
   -exec sed -i "s~%{OAUTH_SCOPE}%~${OAUTH_SCOPE}~g" {} + \
   -exec sed -i "s~%{OAUTH_REDIRECT_URI}%~${OAUTH_REDIRECT_URI}~g" {} + \
-  -exec sed -i "s~%{OAUTH_CLIENT_ID}%~${OAUTH_CLIENT_ID}~g" {} +
+  -exec sed -i "s~%{OAUTH_CLIENT_ID}%~${OAUTH_CLIENT_ID}~g" {} + \
+  -exec sed -i "s~%{SERVER_URL}%~${SERVER_URL}~g" {} +

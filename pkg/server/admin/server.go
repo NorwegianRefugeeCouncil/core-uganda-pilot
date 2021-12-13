@@ -22,7 +22,7 @@ type Options struct {
 	HydraAdmin   admin.ClientService
 }
 
-func NewServer(options Options) (*Server, error) {
+func NewServer(ctx context.Context, options Options) (*Server, error) {
 
 	hydraAdmin := options.HydraAdmin
 

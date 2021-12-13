@@ -11,6 +11,9 @@ var serveAdminCmd = &cobra.Command{
 	Use:   "admin",
 	Short: "starts the admin server",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := initStoreFactory(); err != nil {
+			return err
+		}
 		if err := serveAdmin(ctx,
 			admin.Options{
 				ServerOptions: coreOptions.Serve.Admin,
@@ -29,7 +32,7 @@ func init() {
 }
 
 func serveAdmin(ctx context.Context, options admin.Options) error {
-	server, err := admin.NewServer(options)
+	server, err := admin.NewServer(ctx, options)
 	if err != nil {
 		return err
 	}

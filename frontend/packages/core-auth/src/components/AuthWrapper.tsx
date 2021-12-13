@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import Browser from '../types/browser';
 import exchangeCodeAsync from '../utils/exchangeCodeAsync';
@@ -19,7 +19,8 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
   handleLoginErr = console.log,
   injectToken = 'access_token',
 }) => {
-  const browser = new Browser();
+  const browser = useMemo(() => new Browser(), []);
+
   browser.maybeCompleteAuthSession();
 
   const discovery = useDiscovery(issuer);
@@ -43,12 +44,15 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
 
   useEffect(() => {
     if (!discovery) {
+      console.log('No discovery document present');
       return;
     }
     if (!request?.codeVerifier) {
+      console.log('No code verifier present');
       return;
     }
     if (!response || response?.type !== 'success') {
+      console.log('No response or response not successful', response);
       return;
     }
 
@@ -63,6 +67,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
 
     exchangeCodeAsync(exchangeConfig, discovery)
       .then((resp) => {
+        console.log('code exchange success');
         setTokenResponse(resp);
       })
       .catch((err) => {
@@ -109,9 +114,11 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
         return result;
       }
       if (injectToken === 'access_token' && !tokenResponse.accessToken) {
+        console.log('no access token in response');
         return result;
       }
       if (injectToken === 'id_token' && !tokenResponse.idToken) {
+        console.log('no id token in response');
         return result;
       }
       if (!result.headers) {

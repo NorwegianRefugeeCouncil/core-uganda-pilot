@@ -21,7 +21,7 @@ type Options struct {
 	StoreFactory store.Factory
 }
 
-func NewServer(options Options) (*Server, error) {
+func NewServer(ctx context.Context, options Options) (*Server, error) {
 
 	genericServer, err := generic.NewGenericServer(options.ServerOptions, "public")
 	if err != nil {

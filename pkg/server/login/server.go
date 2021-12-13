@@ -1,12 +1,15 @@
 package login
 
 import (
+	"context"
+	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/server/generic"
 	"github.com/nrc-no/core/pkg/server/login/handlers/login"
 	loginstore "github.com/nrc-no/core/pkg/server/login/store"
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/store"
 	"github.com/ory/hydra-client-go/client/admin"
+	"go.uber.org/zap"
 )
 
 type Server struct {
@@ -19,7 +22,15 @@ type Options struct {
 	HydraAdmin   admin.ClientService
 }
 
-func NewServer(options Options) (*Server, error) {
+func NewServer(ctx context.Context, options Options) (*Server, error) {
+
+	l := logging.NewLogger(ctx)
+
+	l.Info("using configuration",
+		zap.String("host", options.Host),
+		zap.Int("port", options.Port),
+		zap.String("urls.self", options.URLs.Self),
+	)
 
 	hydraAdmin := options.HydraAdmin
 

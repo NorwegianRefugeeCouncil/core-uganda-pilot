@@ -102,12 +102,6 @@ func handleAuthRequestAction(
 				events = append(events, evt)
 			}
 
-			reqScheme := "http://"
-			if req.TLS != nil {
-				reqScheme = "https://"
-			}
-			selfURL = reqScheme + req.Host
-
 			loginRequestedHandler := handleLoginRequested(ctx, req.URL.Query(), dispatch, getLoginRequest)
 			refreshingIdentityHandler := handleRefreshingIdentity(ctx, idpStore, selfURL, dispatch, getLoginRequest)
 			promptingForIdentifierHandler := handlePromptingForIdentifier(w, userSession, req)

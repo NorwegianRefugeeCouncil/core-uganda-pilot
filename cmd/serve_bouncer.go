@@ -29,7 +29,7 @@ func init() {
 }
 
 func serveAuthnzBouncer(ctx context.Context, options auth.Options) error {
-	server, err := auth.NewServer(options)
+	server, err := auth.NewServer(ctx, options)
 	if err != nil {
 		return err
 	}

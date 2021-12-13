@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
@@ -6,7 +6,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { AuthWrapper } from 'core-auth';
 
 import AuthenticatedApp from './components/AuthenticatedApp';
-import client from './app/client';
+import { axiosInstance } from './app/client';
 
 const App: React.FC = () => {
   const scope = process?.env?.REACT_APP_OAUTH_SCOPE;
@@ -18,6 +18,14 @@ const App: React.FC = () => {
   }
   const scopes = scope.split(' ');
   const baseUrl = new URL(redirectUri);
+
+  console.log({
+    scope,
+    clientId,
+    issuer,
+    redirectUri,
+  });
+
   return (
     <BrowserRouter basename={`${baseUrl.pathname}`}>
       <Switch>
@@ -26,7 +34,7 @@ const App: React.FC = () => {
           render={() => (
             <AuthWrapper
               clientId={clientId}
-              axiosInstance={client.axiosInstance}
+              axiosInstance={axiosInstance}
               scopes={scopes}
               issuer={issuer}
               redirectUri={redirectUri}

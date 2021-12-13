@@ -12,6 +12,9 @@ var servePublicCmd = &cobra.Command{
 	Use:   "public",
 	Short: "starts the public server",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := initStoreFactory(); err != nil {
+			return err
+		}
 		if err := servePublic(ctx,
 			public.Options{
 				ServerOptions: coreOptions.Serve.Public,
@@ -29,7 +32,7 @@ func init() {
 }
 
 func servePublic(ctx context.Context, options public.Options) error {
-	server, err := public.NewServer(options)
+	server, err := public.NewServer(ctx, options)
 	if err != nil {
 		return err
 	}

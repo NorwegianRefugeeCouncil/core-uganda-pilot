@@ -41,6 +41,8 @@ func TestMain(m *testing.M) {
 
 func (s *Suite) SetupSuite() {
 
+	s.ctx, s.cancel = context.WithCancel(context.Background())
+
 	dbFactory, err := store.NewFactory("host=localhost port=15432 user=postgres password=postgres dbname=postgres sslmode=disable")
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
@@ -53,7 +55,7 @@ func (s *Suite) SetupSuite() {
 		s.T().FailNow()
 	}
 
-	s.srv, err = public.NewServer(public.Options{
+	s.srv, err = public.NewServer(s.ctx, public.Options{
 		ServerOptions: options.ServerOptions{
 			Host: "localhost",
 			Port: 0,
@@ -66,7 +68,6 @@ func (s *Suite) SetupSuite() {
 		s.T().FailNow()
 	}
 
-	s.ctx, s.cancel = context.WithCancel(context.Background())
 	s.srv.Start(s.ctx)
 	s.cli = client.NewClientFromConfig(rest.Config{
 		Scheme: "http",

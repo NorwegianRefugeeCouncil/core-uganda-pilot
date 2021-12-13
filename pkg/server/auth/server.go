@@ -22,14 +22,14 @@ type Options struct {
 	HydraPublic public.ClientService
 }
 
-func NewServer(options Options) (*Server, error) {
+func NewServer(ctx context.Context, options Options) (*Server, error) {
 	genericServer, err := generic.NewGenericServer(options.ServerOptions, "auth")
 	if err != nil {
 		return nil, err
 	}
 	authenticator := authenticators.NewHydraAuthenticator(options.HydraPublic)
 	authorizer := authorizers.NewHydraAuthorizer(options.HydraAdmin)
-	genericServer.NonGoRestfulMux.PathPrefix("/apis/authorization.nrc.no/v1/").Handler(handlers.HandleAuth(authenticator, authorizer))
+	genericServer.NonGoRestfulMux.PathPrefix("/").Handler(handlers.HandleAuth(authenticator, authorizer))
 	s := &Server{
 		options: options,
 		Server:  genericServer,

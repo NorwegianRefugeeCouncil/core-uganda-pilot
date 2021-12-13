@@ -9,7 +9,9 @@ import (
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/api/types"
+	"github.com/nrc-no/core/pkg/logging"
 	"github.com/ory/hydra-client-go/models"
+	"go.uber.org/zap"
 	"golang.org/x/oauth2"
 	"strings"
 )
@@ -50,6 +52,8 @@ func getOauthProvider(
 	loginRequest *models.LoginRequest,
 ) (*oauth2.Config, *oidc.Provider, *oidc.IDTokenVerifier, error) {
 
+	l := logging.NewLogger(ctx)
+
 	// getting oidc provider
 	oidcProvider, err := oidc.NewProvider(ctx, client.Domain)
 	if err != nil {
@@ -58,6 +62,11 @@ func getOauthProvider(
 
 	// getting oauth2 config
 	redirectUri := fmt.Sprintf("%s/login/oidc/callback", selfURL)
+	l.Info("OAuth2 config redirect uri",
+		zap.String("self_url", selfURL),
+		zap.String("redirect_uri", redirectUri),
+	)
+
 	oauthConfig := &oauth2.Config{
 		ClientID:     client.ClientID,
 		ClientSecret: client.ClientSecret,
