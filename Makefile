@@ -35,11 +35,11 @@ clear-db:
 reset-db: clear-db migrate
 
 
-.PHONY: build-frontend 
+.PHONY: build-frontend
 build-frontend:
 	@./scripts/build-frontend.sh
 
-.PHONY: prepare-frontend 
+.PHONY: prepare-frontend
 prepare-frontend:
 	@./scripts/prepare-frontend.sh
 
@@ -147,3 +147,7 @@ respawn: down spawn
 .PHONY: gen
 gen:
 	@./scripts/gen.sh
+
+.PHONY: images
+images:
+	@./scripts/build-images.sh
