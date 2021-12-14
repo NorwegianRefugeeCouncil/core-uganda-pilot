@@ -113,7 +113,7 @@ func TestSchema(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func TestFormConversion(t *testing.T) {
+func TestWriterFormConversion(t *testing.T) {
 
 	const createTableDDL = `create table "databaseId"."formId"( "id" varchar(36) primary key, "created_at" timestamp with time zone not null default NOW());`
 	const formId = "formId"
@@ -371,7 +371,7 @@ create table "databaseId"."subFormField"(
 
 }
 
-func (s *Suite) TestSchemaActions() {
+func (s *Suite) TestWriterActions() {
 
 	const publicSchema = "public"
 	const formId = "formId"
@@ -477,7 +477,7 @@ func (s *Suite) TestSchemaActions() {
 
 }
 
-func Test_formWriter_WriteRecords(t *testing.T) {
+func TestWriterPutRecords(t *testing.T) {
 
 	const (
 		formId      = "formId"

@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func Test_readRecords(t *testing.T) {
+func TestReader(t *testing.T) {
 
 	const (
 		formId       = "formId"
@@ -45,7 +45,7 @@ func Test_readRecords(t *testing.T) {
 		} else {
 			val = types.NewStringValue(*value)
 		}
-		
+
 		r := &types.Record{
 			ID:         recordId,
 			DatabaseID: databaseId,
