@@ -7,8 +7,8 @@ import { selectFormOrSubFormById, selectRootForm } from '../reducers/form';
 
 export type RecordPickerProps = {
   disabled?: boolean;
-  recordId: string | undefined;
-  setRecordId: (recordId: string | undefined) => void;
+  recordId: string | null;
+  setRecordId: (recordId: string | null) => void;
   records: Record[];
   getDisplayStr: (record: Record) => string;
 };
@@ -29,7 +29,11 @@ export const RecordPicker: FC<RecordPickerProps> = (props) => {
           No Records
         </option>
         {records.map((r) => {
-          return <option value={r.id}>{getDisplayStr(r)}</option>;
+          return (
+            <option key={r.id} value={r.id}>
+              {getDisplayStr(r)}
+            </option>
+          );
         })}
       </select>
     </div>
@@ -37,8 +41,8 @@ export const RecordPicker: FC<RecordPickerProps> = (props) => {
 };
 
 export type RecordPickerContainerProps = {
-  recordId: string | undefined;
-  setRecordId?: (recordId: string | undefined) => void;
+  recordId: string | null;
+  setRecordId?: (recordId: string | null) => void;
   setRecord?: (record: Record | undefined) => void;
   ownerId?: string;
   formId?: string;
@@ -50,7 +54,7 @@ export const RecordPickerContainer: FC<RecordPickerContainerProps> = (props) => 
   const dispatch = useAppDispatch();
 
   const form = useAppSelector((state) => {
-    return selectFormOrSubFormById(state, props.formId ? props.formId : '');
+    return selectFormOrSubFormById(state, formId || '');
   });
 
   const rootForm = useAppSelector((state) => {
@@ -80,12 +84,12 @@ export const RecordPickerContainer: FC<RecordPickerContainerProps> = (props) => 
   });
 
   const callback = useCallback(
-    (recordId: string | undefined) => {
+    (recId: string | null) => {
       if (setRecord) {
         setRecord(record);
       }
       if (setRecordId) {
-        setRecordId(recordId);
+        setRecordId(recId);
       }
     },
     [record, setRecord, setRecordId],
@@ -98,16 +102,11 @@ export const RecordPickerContainer: FC<RecordPickerContainerProps> = (props) => 
       setRecordId={callback}
       records={records}
       getDisplayStr={(r) => {
-        let result = '';
-        if (!form) {
-          return result;
-        }
-        for (const field of form?.fields) {
-          if (field.key) {
-            result += r.values.find((v: any) => v.fieldId === field.id);
-          }
-        }
-        return result;
+        const result = form?.fields.reduce((prev, next) => {
+          const fieldVal = r.values.find((v) => v.fieldId === next.id)?.value;
+          return fieldVal ? `${prev} ${fieldVal}` : prev;
+        }, '');
+        return result || '';
       }}
     />
   );
