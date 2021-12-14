@@ -180,13 +180,17 @@ func (r recordStore) Create(ctx context.Context, record *types.Record) (*types.R
 		return nil, meta.NewInternalServerError(err)
 	}
 
-	formWriter := sqlmanager.NewFormWriter(form)
-	ddl, err := formWriter.WriteRecords(&types.RecordList{
+	formWriter := sqlmanager.New()
+	formWriter, err = formWriter.PutRecords(form, &types.RecordList{
 		Items: []*types.Record{record},
 	})
+	if err != nil {
+		l.Error("failed to put records", zap.Error(err))
+		return nil, meta.NewInternalServerError(err)
+	}
 
 	err = db.Transaction(func(tx *gorm.DB) error {
-		for _, ddlItem := range ddl {
+		for _, ddlItem := range formWriter.GetStatements() {
 			if err := tx.Exec(ddlItem.Query, ddlItem.Args...).Error; err != nil {
 				return err
 			}

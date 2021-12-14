@@ -317,7 +317,7 @@ create table "databaseId"."subFormField"(
 				DatabaseID: databaseId,
 				Fields: []*types.FieldDefinition{
 					{
-						ID: "multiSelectField",
+						ID: "singleSelectField",
 						FieldType: types.FieldType{
 							SingleSelect: &types.FieldTypeSingleSelect{
 								Options: []*types.SelectOption{
