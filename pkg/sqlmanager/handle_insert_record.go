@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func (s sqlManager) handleInsertRow(insertRow sqlActionInsertRow) (sqlManager, error) {
+func (s writer) handleInsertRow(insertRow sqlActionInsertRow) (writer, error) {
 
 	var placeholders = make([]string, len(insertRow.columns))
 	var columnNames = make([]string, len(insertRow.columns))
