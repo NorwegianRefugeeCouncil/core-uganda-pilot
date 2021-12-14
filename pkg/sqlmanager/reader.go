@@ -210,7 +210,7 @@ func readInRecordField(
 
 	switch fieldKind {
 	case types.FieldKindMonth, types.FieldKindDate, types.FieldKindWeek:
-		readInDateField(record, field, value, fieldKind)
+		return readInDateField(record, field, value, fieldKind)
 	case types.FieldKindQuantity:
 		return readInQuantityField(record, field, value)
 	case types.FieldKindSingleSelect:
@@ -226,7 +226,7 @@ func readInRecordField(
 
 // readInReferenceField will populate a record types.FieldValue for a types.FieldTypeDate or types.FieldTypeMonth field from
 // an  SQL value
-func readInDateField(record *types.Record, field *types.FieldDefinition, value interface{}, fieldKind types.FieldKind) {
+func readInDateField(record *types.Record, field *types.FieldDefinition, value interface{}, fieldKind types.FieldKind) error {
 	var valueStr *string
 	switch fieldKind {
 	case types.FieldKindMonth:
@@ -267,6 +267,7 @@ func readInDateField(record *types.Record, field *types.FieldDefinition, value i
 		record.Values = append(record.Values, types.NewFieldStringValue(field.ID, *valueStr))
 	}
 
+	return nil
 }
 
 // readInReferenceField will populate a record types.FieldValue for a types.FieldTypeReference field from
