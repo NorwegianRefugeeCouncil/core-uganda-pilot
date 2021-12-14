@@ -7,6 +7,7 @@ import { AuthWrapper } from 'core-auth';
 
 import AuthenticatedApp from './components/AuthenticatedApp';
 import client from './app/client';
+import { Foo } from './Foo';
 
 const App: React.FC = () => {
   const scope = process?.env?.REACT_APP_OAUTH_SCOPE;
@@ -31,7 +32,7 @@ const App: React.FC = () => {
               issuer={issuer}
               redirectUri={redirectUri}
             >
-              <AuthenticatedApp />
+              <Foo />
             </AuthWrapper>
           )}
         />
