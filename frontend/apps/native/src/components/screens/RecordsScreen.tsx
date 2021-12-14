@@ -31,7 +31,7 @@ const RecordsScreen = ({ isLoading, navigation, route, state }: RecordsScreenPro
         <View>
           <FlatList
             style={{ width: '100%' }}
-            data={state.formsById[formId].records}
+            data={state?.formsById?.[formId]?.records}
             keyExtractor={(_, index) => index.toString()}
             renderItem={({ item }) => (
               <TouchableOpacity
