@@ -1,11 +1,17 @@
 package sqlmanager
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"github.com/lib/pq"
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/utils/pointers"
+	"golang.org/x/sync/errgroup"
+	"gorm.io/gorm"
 	"strconv"
+	"strings"
+	"sync"
 	"time"
 )
 
@@ -13,30 +19,98 @@ const (
 	errInvalidSQLDataType = "invalid sql data type"
 )
 
-func NewFormReader(form types.FormInterface, rows sqlReader) Reader {
+func NewFormReader(db *gorm.DB) Reader {
 	return &reader{
-		form:      form,
-		sqlReader: rows,
+		db: db,
 	}
 }
 
 type Reader interface {
-	GetRecords() (*types.RecordList, error)
+	GetRecords(ctx context.Context, form types.FormInterface) (*types.RecordList, error)
 }
 
 type reader struct {
-	form      types.FormInterface
-	sqlReader sqlReader
+	db *gorm.DB
 }
 
-func (f reader) GetRecords() (*types.RecordList, error) {
-	return readRecords(f.form, f.sqlReader)
+func (f reader) GetRecords(ctx context.Context, form types.FormInterface) (*types.RecordList, error) {
+	return queryRecords(ctx, f.db, form)
 }
 
 type sqlReader interface {
 	Columns() ([]string, error)
 	Next() bool
 	Scan(...interface{}) error
+}
+
+// readRecords will iterate through a series of SQL Rows and return a list of populated records
+func queryRecords(ctx context.Context, db *gorm.DB, form types.FormInterface) (*types.RecordList, error) {
+	qry := db.Raw(fmt.Sprintf("select * from %s.%s",
+		pq.QuoteIdentifier(form.GetDatabaseID()),
+		pq.QuoteIdentifier(form.GetFormID()),
+	))
+	rows, err := qry.Rows()
+	if err != nil {
+		return nil, err
+	}
+	records, err := readRecords(form, rows)
+	if err != nil {
+		return nil, err
+	}
+	if err := readInRecordOptions(ctx, db, form, records); err != nil {
+		return nil, err
+	}
+	return records, nil
+}
+
+func readInRecordOptions(ctx context.Context, db *gorm.DB, form types.FormInterface, records *types.RecordList) error {
+	var recordIds = make([]interface{}, len(records.Items))
+	var placeholders = make([]string, len(records.Items))
+	recordMap := map[string]*types.Record{}
+	for i, record := range records.Items {
+		recordIds[i] = record.ID
+		placeholders[i] = "?"
+		recordMap[record.ID] = record
+	}
+	type association struct {
+		ID       string
+		OptionID string
+	}
+	g, ctx := errgroup.WithContext(ctx)
+	lock := &sync.Mutex{}
+	for _, field := range form.GetFields() {
+		f := field
+		// reading record options in parallel
+		g.Go(func() error {
+			fieldKind, err := f.FieldType.GetFieldKind()
+			if err != nil {
+				return err
+			}
+			if fieldKind == types.FieldKindMultiSelect {
+				qry := fmt.Sprintf(`select * from %s.%s where "id" in (%s)`,
+					pq.QuoteIdentifier(form.GetDatabaseID()),
+					pq.QuoteIdentifier(getMultiSelectAssociationTableName(f.ID)),
+					strings.Join(placeholders, ","),
+				)
+				var associations []association
+				if err := db.Raw(qry, recordIds...).Scan(&associations).Error; err != nil {
+					return err
+				}
+				valueMap := map[string][]string{}
+				for _, association := range associations {
+					valueMap[association.ID] = append(valueMap[association.ID], association.OptionID)
+				}
+				lock.Lock()
+				defer lock.Unlock()
+				for recordId, associations := range valueMap {
+					record := recordMap[recordId]
+					record.Values.SetValue(f.ID, types.NewArrayValue(associations))
+				}
+			}
+			return nil
+		})
+	}
+	return g.Wait()
 }
 
 // readRecords will iterate through a series of SQL Rows and return a list of populated records
@@ -116,7 +190,6 @@ func readInRecord(record *types.Record, form types.FormInterface, columns []stri
 				return err
 			}
 		}
-
 	}
 
 	return nil

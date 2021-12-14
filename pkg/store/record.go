@@ -68,22 +68,9 @@ func (r recordStore) Get(ctx context.Context, recordRef types.RecordRef) (*types
 		pq.QuoteIdentifier(form.GetFormID()),
 	))
 
-	l.Debug("getting raw sql database")
-	sqlDB, err := db.DB()
-	if err != nil {
-		l.Error("failed to get raw sql database", zap.Error(err))
-		return nil, meta.NewInternalServerError(err)
-	}
-
 	l.Debug("finding records")
-	result, err := sqlDB.Query(query.String(), recordRef.ID)
-	if err != nil {
-		l.Error("failed to find records", zap.Error(err))
-		return nil, meta.NewInternalServerError(err)
-	}
-
-	formReader := sqlmanager.NewFormReader(form, result)
-	records, err := formReader.GetRecords()
+	formReader := sqlmanager.NewFormReader(db)
+	records, err := formReader.GetRecords(ctx, form)
 	if err != nil {
 		l.Error("failed to list records", zap.Error(err))
 		return nil, err
@@ -135,22 +122,8 @@ func (r recordStore) List(ctx context.Context, options types.RecordListOptions) 
 		pq.QuoteIdentifier(form.GetFormID()),
 	))
 
-	l.Debug("getting raw sql database")
-	sqlDB, err := db.DB()
-	if err != nil {
-		l.Error("failed to get raw sql database", zap.Error(err))
-		return nil, meta.NewInternalServerError(err)
-	}
-
-	l.Debug("listing records")
-	result, err := sqlDB.Query(query.String())
-	if err != nil {
-		l.Error("failed to list records", zap.Error(err))
-		return nil, meta.NewInternalServerError(err)
-	}
-
-	formReader := sqlmanager.NewFormReader(form, result)
-	records, err := formReader.GetRecords()
+	formReader := sqlmanager.NewFormReader(db)
+	records, err := formReader.GetRecords(ctx, form)
 	if err != nil {
 		l.Error("failed to list records", zap.Error(err))
 		return nil, err

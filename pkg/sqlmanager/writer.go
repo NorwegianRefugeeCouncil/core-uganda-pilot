@@ -140,6 +140,8 @@ func (s writer) writeRecord(form types.FormInterface, record *types.Record) (sql
 			sqlParams, err = prepareWeekFieldColumn(fieldValue, sqlParams)
 		case types.FieldKindQuantity:
 			sqlParams, err = prepareQuantityFieldColumn(fieldValue, sqlParams)
+		case types.FieldKindMultiSelect:
+			continue
 		default:
 			err = fmt.Errorf("unhandled field kind %v", fieldKind)
 		}

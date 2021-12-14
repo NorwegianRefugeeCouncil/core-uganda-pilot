@@ -162,6 +162,15 @@ func (f FieldValues) Find(fieldID string) (FieldValue, bool) {
 	return FieldValue{}, false
 }
 
+func (f FieldValues) FindIndex(fieldID string) int {
+	for i, value := range f {
+		if value.FieldID == fieldID {
+			return i
+		}
+	}
+	return -1
+}
+
 func (f FieldValues) SetValue(fieldID string, value StringOrArray) FieldValues {
 	values := f
 	for i, v := range values {

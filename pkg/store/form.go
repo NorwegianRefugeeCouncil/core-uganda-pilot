@@ -610,6 +610,8 @@ func (f FlatForms) hydrateField(field *Field) (*types.FieldDefinition, error) {
 		return f.hydrateWeekField(field)
 	case types.FieldKindSingleSelect:
 		return f.hydrateSingleSelectField(field)
+	case types.FieldKindMultiSelect:
+		return f.hydrateMultiSelectField(field)
 	}
 	return nil, errors.New("unprocessable field type")
 }
@@ -678,6 +680,17 @@ func (f FlatForms) hydrateSingleSelectField(field *Field) (*types.FieldDefinitio
 	fieldDef := hydrateFieldDefaults(field)
 	fieldDef.FieldType = types.FieldType{
 		SingleSelect: &types.FieldTypeSingleSelect{
+			Options: f.hydrateSelectOptions(field.ID),
+		},
+	}
+	return fieldDef, nil
+}
+
+// hydrateMultiSelectField hydrates a types.FieldTypeMultiSelect
+func (f FlatForms) hydrateMultiSelectField(field *Field) (*types.FieldDefinition, error) {
+	fieldDef := hydrateFieldDefaults(field)
+	fieldDef.FieldType = types.FieldType{
+		MultiSelect: &types.FieldTypeMultiSelect{
 			Options: f.hydrateSelectOptions(field.ID),
 		},
 	}
@@ -794,6 +807,8 @@ func flattenField(rootForm, form types.FormInterface, field *types.FieldDefiniti
 		return flattenWeekField(rootForm, form, field)
 	case types.FieldKindSingleSelect:
 		return flattenSingleSelectField(rootForm, form, field)
+	case types.FieldKindMultiSelect:
+		return flattenMultiSelectField(rootForm, form, field)
 	}
 	return FlatForms{}, fmt.Errorf("unprocessable field kind %v", fieldKind)
 }
@@ -869,8 +884,29 @@ func flattenSingleSelectField(rootForm, form types.FormInterface, field *types.F
 	storedField := getFieldsDefault(rootForm, form, field)
 	storedField.Type = types.FieldKindSingleSelect
 	flattened := FlatForms{Fields: []*Field{storedField}}
+	flattenedOptions, err := flattenSelectOptions(rootForm, form, field.ID, field.FieldType.SingleSelect.Options)
+	if err != nil {
+		return FlatForms{}, err
+	}
+	return flattened.Add(flattenedOptions), nil
+}
 
-	for _, option := range field.FieldType.SingleSelect.Options {
+// flattenMultiSelectField flattens a types.FieldTypeMultiSelect
+func flattenMultiSelectField(rootForm, form types.FormInterface, field *types.FieldDefinition) (FlatForms, error) {
+	storedField := getFieldsDefault(rootForm, form, field)
+	storedField.Type = types.FieldKindMultiSelect
+	flattened := FlatForms{Fields: []*Field{storedField}}
+	flattenedOptions, err := flattenSelectOptions(rootForm, form, field.ID, field.FieldType.MultiSelect.Options)
+	if err != nil {
+		return FlatForms{}, err
+	}
+	return flattened.Add(flattenedOptions), nil
+}
+
+// flattenSelectOptions flattens the options of a multi or single select field
+func flattenSelectOptions(rootForm, form types.FormInterface, fieldID string, options []*types.SelectOption) (FlatForms, error) {
+	flattened := FlatForms{}
+	for _, option := range options {
 		flattened = flattened.Add(FlatForms{
 			Options: []*Option{
 				{
@@ -878,13 +914,12 @@ func flattenSingleSelectField(rootForm, form types.FormInterface, field *types.F
 					DatabaseID: form.GetDatabaseID(),
 					RootFormID: rootForm.GetFormID(),
 					FormID:     form.GetFormID(),
-					FieldID:    field.ID,
+					FieldID:    fieldID,
 					Name:       option.Name,
 				},
 			},
 		})
 	}
-
 	return flattened, nil
 }
 
