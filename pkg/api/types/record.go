@@ -68,6 +68,15 @@ type StringOrArray struct {
 	ArrayValue  []string
 }
 
+func (s StringOrArray) GetValue() interface{} {
+	if s.Kind == StringValue {
+		return s.StringValue
+	} else if s.Kind == ArrayValue {
+		return s.ArrayValue
+	}
+	return nil
+}
+
 func NewStringValue(value string) StringOrArray {
 	return StringOrArray{
 		Kind:        StringValue,

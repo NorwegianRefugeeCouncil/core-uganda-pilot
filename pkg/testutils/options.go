@@ -314,6 +314,16 @@ func FieldTypeSingleSelect(options []*types.SelectOption) FieldOption {
 		return fieldDefinition
 	}
 }
+func FieldTypeMultiSelect(options []*types.SelectOption) FieldOption {
+	return func(fieldDefinition *types.FieldDefinition) *types.FieldDefinition {
+		fieldDefinition.FieldType = types.FieldType{
+			MultiSelect: &types.FieldTypeMultiSelect{
+				Options: options,
+			},
+		}
+		return fieldDefinition
+	}
+}
 
 func FieldTypeMonth() FieldOption {
 	return func(fieldDefinition *types.FieldDefinition) *types.FieldDefinition {
@@ -389,6 +399,12 @@ func ASingleSelectField(selectOptions []*types.SelectOption, options ...FieldOpt
 	return AField(opts...)
 }
 
+func AMultiSelectField(selectOptions []*types.SelectOption, options ...FieldOption) *types.FieldDefinition {
+	opts := []FieldOption{FieldTypeMultiSelect(selectOptions)}
+	opts = append(opts, options...)
+	return AField(opts...)
+}
+
 func AQuantityField(options ...FieldOption) *types.FieldDefinition {
 	opts := []FieldOption{FieldTypeQuantity()}
 	opts = append(opts, options...)
@@ -427,6 +443,8 @@ func RecordForForm(form types.FormInterface) RecordOption {
 				r.Values = append(r.Values, types.NewFieldStringValue(field.ID, "10"))
 			} else if field.FieldType.SingleSelect != nil {
 				r.Values = append(r.Values, types.NewFieldStringValue(field.ID, field.FieldType.SingleSelect.Options[0].ID))
+			} else if field.FieldType.MultiSelect != nil {
+				r.Values = append(r.Values, types.NewFieldArrayValue(field.ID, []string{field.FieldType.MultiSelect.Options[0].ID}))
 			}
 		}
 		return r

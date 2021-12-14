@@ -189,21 +189,39 @@ func TestValidateRecord(t *testing.T) {
 			recordOptions: tu.RecordValue("textField", types.NewNullValue()),
 			expect:        nil,
 		}, {
+			name: "text field with array value",
+			form: aTextForm(
+				tu.FormField(tu.AField(tu.FieldID("textField"), tu.FieldTypeText())),
+			),
+			recordOptions: tu.RecordValue("textField", types.NewArrayValue([]string{"a", "b"})),
+			expect: validation.ErrorList{
+				validation.Invalid(firstFieldValuePath, []string{"a", "b"}, errFieldValueMustBeString),
+			},
+		}, {
 			name: "required multiline text field with nil value",
 			form: aTextForm(
-				tu.FormField(tu.AField(tu.FieldID("textField"), tu.FieldTypeMultilineText(), tu.FieldRequired(true))),
+				tu.FormField(tu.AField(tu.FieldID("multilineTextField"), tu.FieldTypeMultilineText(), tu.FieldRequired(true))),
 			),
-			recordOptions: tu.RecordValue("textField", types.NewNullValue()),
+			recordOptions: tu.RecordValue("multilineTextField", types.NewNullValue()),
 			expect: validation.ErrorList{
 				validation.Required(firstFieldValuePath, errFieldValueRequired),
 			},
 		}, {
 			name: "optional multiline text field with nil value",
 			form: aTextForm(
-				tu.FormField(tu.AField(tu.FieldID("textField"), tu.FieldTypeMultilineText())),
+				tu.FormField(tu.AField(tu.FieldID("multilineTextField"), tu.FieldTypeMultilineText())),
 			),
-			recordOptions: tu.RecordValue("textField", types.NewNullValue()),
+			recordOptions: tu.RecordValue("multilineTextField", types.NewNullValue()),
 			expect:        nil,
+		}, {
+			name: "multiline text field with array value",
+			form: aTextForm(
+				tu.FormField(tu.AField(tu.FieldID("multilineTextField"), tu.FieldTypeMultilineText())),
+			),
+			recordOptions: tu.RecordValue("multilineTextField", types.NewArrayValue([]string{"a", "b"})),
+			expect: validation.ErrorList{
+				validation.Invalid(firstFieldValuePath, []string{"a", "b"}, errFieldValueMustBeString),
+			},
 		}, {
 			name: "date field",
 			form: aTextForm(
@@ -218,6 +236,15 @@ func TestValidateRecord(t *testing.T) {
 			recordOptions: tu.RecordValue("dateField", types.NewStringValue("someValue")),
 			expect: validation.ErrorList{
 				validation.Invalid(firstFieldValuePath, types.NewStringValue("someValue"), errRecordInvalidDate),
+			},
+		}, {
+			name: "date field with array value",
+			form: aTextForm(
+				tu.FormField(tu.AField(tu.FieldID("dateField"), tu.FieldTypeDate())),
+			),
+			recordOptions: tu.RecordValue("dateField", types.NewArrayValue([]string{"a", "b"})),
+			expect: validation.ErrorList{
+				validation.Invalid(firstFieldValuePath, []string{"a", "b"}, errFieldValueMustBeString),
 			},
 		}, {
 			name: "required empty date field",
@@ -260,6 +287,15 @@ func TestValidateRecord(t *testing.T) {
 				validation.Invalid(firstFieldValuePath, types.NewStringValue("someValue"), errRecordInvalidMonth),
 			},
 		}, {
+			name: "month field with array value",
+			form: aTextForm(
+				tu.FormField(tu.AField(tu.FieldID("monthField"), tu.FieldTypeMonth())),
+			),
+			recordOptions: tu.RecordValue("monthField", types.NewArrayValue([]string{"a", "b"})),
+			expect: validation.ErrorList{
+				validation.Invalid(firstFieldValuePath, []string{"a", "b"}, errFieldValueMustBeString),
+			},
+		}, {
 			name: "required empty month field",
 			form: aTextForm(
 				tu.FormField(tu.AField(tu.FieldID("monthField"), tu.FieldTypeMonth(), tu.FieldRequired(true))),
@@ -298,6 +334,15 @@ func TestValidateRecord(t *testing.T) {
 			recordOptions: tu.RecordValue("weekField", types.NewStringValue("someValue")),
 			expect: validation.ErrorList{
 				validation.Invalid(firstFieldValuePath, types.NewStringValue("someValue"), errRecordInvalidWeek),
+			},
+		}, {
+			name: "week field with array value",
+			form: aTextForm(
+				tu.FormField(tu.AField(tu.FieldID("weekField"), tu.FieldTypeWeek())),
+			),
+			recordOptions: tu.RecordValue("weekField", types.NewArrayValue([]string{"a", "b"})),
+			expect: validation.ErrorList{
+				validation.Invalid(firstFieldValuePath, []string{"a", "b"}, errFieldValueMustBeString),
 			},
 		}, {
 			name: "required empty week field",
@@ -340,6 +385,15 @@ func TestValidateRecord(t *testing.T) {
 				validation.Invalid(firstFieldValuePath, types.NewStringValue("someValue"), errRecordInvalidQuantity),
 			},
 		}, {
+			name: "quantity field with array value",
+			form: aTextForm(
+				tu.FormField(tu.AField(tu.FieldID("quantityField"), tu.FieldTypeQuantity())),
+			),
+			recordOptions: tu.RecordValue("quantityField", types.NewArrayValue([]string{"a", "b"})),
+			expect: validation.ErrorList{
+				validation.Invalid(firstFieldValuePath, []string{"a", "b"}, errFieldValueMustBeString),
+			},
+		}, {
 			name: "required quantity field with nil value",
 			form: aTextForm(
 				tu.FormField(tu.AField(tu.FieldID("quantityField"), tu.FieldTypeQuantity(), tu.FieldRequired(true))),
@@ -378,6 +432,15 @@ func TestValidateRecord(t *testing.T) {
 			recordOptions: tu.RecordValue("referenceField", types.NewNullValue()),
 			expect: validation.ErrorList{
 				validation.Required(firstFieldValuePath, errFieldValueRequired),
+			},
+		}, {
+			name: "reference field with array value",
+			form: aTextForm(
+				tu.FormField(tu.AField(tu.FieldID("referenceField"), tu.FieldTypeReference(aFormRef))),
+			),
+			recordOptions: tu.RecordValue("referenceField", types.NewArrayValue([]string{"a", "b"})),
+			expect: validation.ErrorList{
+				validation.Invalid(firstFieldValuePath, []string{"a", "b"}, errFieldValueMustBeString),
 			},
 		}, {
 			name: "optional reference field with nil value",
@@ -430,6 +493,20 @@ func TestValidateRecord(t *testing.T) {
 				validation.Required(firstFieldValuePath, errFieldValueRequired),
 			},
 		}, {
+			name: "single select field with array value",
+			form: aTextForm(
+				tu.FormField(
+					tu.ASingleSelectField(
+						selectOptions,
+						tu.FieldID("singleSelectField"),
+					),
+				),
+			),
+			recordOptions: tu.RecordValue("singleSelectField", types.NewArrayValue([]string{"a", "b"})),
+			expect: validation.ErrorList{
+				validation.Invalid(firstFieldValuePath, []string{"a", "b"}, errFieldValueMustBeString),
+			},
+		}, {
 			name: "optional single select field with nil value",
 			form: aTextForm(
 				tu.FormField(
@@ -440,6 +517,102 @@ func TestValidateRecord(t *testing.T) {
 				),
 			),
 			recordOptions: tu.RecordValue("singleSelectField", types.NewNullValue()),
+		}, {
+			name: "multi select field",
+			form: aTextForm(
+				tu.FormField(
+					tu.AMultiSelectField(
+						selectOptions,
+						tu.FieldID("multiSelectField"),
+					),
+				),
+			),
+			expect: nil,
+		}, {
+			name: "multi select field with unknown value",
+			form: aTextForm(
+				tu.FormField(
+					tu.AMultiSelectField(
+						selectOptions,
+						tu.FieldID("multiSelectField"),
+					),
+				),
+			),
+			recordOptions: tu.RecordValue("multiSelectField", types.NewArrayValue([]string{"someRandomValue"})),
+			expect: validation.ErrorList{
+				validation.NotSupported(firstFieldValuePath, "someRandomValue", []string{
+					"option1",
+					"option2",
+				}),
+			},
+		}, {
+			name: "required multi select field with nil value",
+			form: aTextForm(
+				tu.FormField(
+					tu.AMultiSelectField(
+						selectOptions,
+						tu.FieldID("multiSelectField"),
+						tu.FieldRequired(true),
+					),
+				),
+			),
+			recordOptions: tu.RecordValue("multiSelectField", types.NewNullValue()),
+			expect: validation.ErrorList{
+				validation.Required(firstFieldValuePath, errFieldValueRequired),
+			},
+		}, {
+			name: "optional multi select field with nil value",
+			form: aTextForm(
+				tu.FormField(
+					tu.AMultiSelectField(
+						selectOptions,
+						tu.FieldID("multiSelectField"),
+					),
+				),
+			),
+			recordOptions: tu.RecordValue("multiSelectField", types.NewNullValue()),
+			expect:        nil,
+		}, {
+			name: "required multi select field with empty values",
+			form: aTextForm(
+				tu.FormField(
+					tu.AMultiSelectField(
+						selectOptions,
+						tu.FieldID("multiSelectField"),
+						tu.FieldRequired(true),
+					),
+				),
+			),
+			recordOptions: tu.RecordValue("multiSelectField", types.NewArrayValue([]string{})),
+			expect: validation.ErrorList{
+				validation.Required(firstFieldValuePath, errFieldValueRequired),
+			},
+		}, {
+			name: "optional multi select field with empty value",
+			form: aTextForm(
+				tu.FormField(
+					tu.AMultiSelectField(
+						selectOptions,
+						tu.FieldID("multiSelectField"),
+					),
+				),
+			),
+			recordOptions: tu.RecordValue("multiSelectField", types.NewArrayValue([]string{})),
+			expect:        nil,
+		}, {
+			name: "required multi select field with duplicate values",
+			form: aTextForm(
+				tu.FormField(
+					tu.AMultiSelectField(
+						selectOptions,
+						tu.FieldID("multiSelectField"),
+					),
+				),
+			),
+			recordOptions: tu.RecordValue("multiSelectField", types.NewArrayValue([]string{"option1", "option1"})),
+			expect: validation.ErrorList{
+				validation.Duplicate(firstFieldValuePath, "option1"),
+			},
 		},
 	}
 

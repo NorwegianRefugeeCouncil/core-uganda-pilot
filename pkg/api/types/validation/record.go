@@ -25,6 +25,8 @@ const (
 	errRecordInvalidQuantity     = "Invalid quantity"
 	errRecordInvalidReferenceUid = "Invalid reference"
 	errFieldValueRequired        = "Field value is required"
+	errFieldValueMustBeString    = "Field value must be a string"
+	errFieldValueMustBeArray     = "Field value must be a string array"
 )
 
 // supportedRecordFieldKinds are the types of field for which a Record can specify values for
@@ -39,6 +41,7 @@ var supportedRecordFieldKinds = []types.FieldKind{
 	types.FieldKindMonth,
 	types.FieldKindWeek,
 	types.FieldKindSingleSelect,
+	types.FieldKindMultiSelect,
 }
 
 // supportedRecordFieldKindMap is a map of the supportedRecordFieldKinds for faster lookup
@@ -179,6 +182,8 @@ func ValidateRecordValue(path *validation.Path, value types.StringOrArray, field
 		return ValidateRecordWeekValue(path, value, field)
 	case types.FieldKindSingleSelect:
 		return ValidateRecordSingleSelectValue(path, value, field)
+	case types.FieldKindMultiSelect:
+		return ValidateRecordMultiSelectValue(path, value, field)
 	}
 	return result
 }
@@ -243,6 +248,11 @@ func ValidateRecordQuantityValue(path *validation.Path, value types.StringOrArra
 		return result
 	}
 
+	if value.Kind != types.StringValue {
+		result = append(result, validation.Invalid(valuePath, value.GetValue(), errFieldValueMustBeString))
+		return result
+	}
+
 	_, err := strconv.Atoi(value.StringValue)
 	if err != nil {
 		return append(result, validation.Invalid(valuePath, value, errRecordInvalidQuantity))
@@ -283,12 +293,58 @@ func ValidateRecordSingleSelectValue(path *validation.Path, value types.StringOr
 	return result
 }
 
+func ValidateRecordMultiSelectValue(path *validation.Path, value types.StringOrArray, field *types.FieldDefinition) validation.ErrorList {
+	var result validation.ErrorList
+	valuePath := path.Child("value")
+
+	if value.Kind == types.ArrayValue {
+		if len(value.ArrayValue) == 0 {
+			if field.Required {
+				return append(result, validation.Required(valuePath, errFieldValueRequired))
+			} else {
+				return result
+			}
+		}
+	} else if value.Kind == types.NullValue {
+		if field.Required {
+			return append(result, validation.Required(valuePath, errFieldValueRequired))
+		} else {
+			return result
+		}
+	} else {
+		return append(result, validation.Invalid(valuePath, value.GetValue(), errFieldValueMustBeArray))
+	}
+
+	acceptedOptionIDs := sets.NewString()
+	for _, option := range field.FieldType.MultiSelect.Options {
+		acceptedOptionIDs.Insert(option.ID)
+	}
+
+	seenValues := sets.NewString()
+	for _, selectedOption := range value.ArrayValue {
+		if !acceptedOptionIDs.Has(selectedOption) {
+			result = append(result, validation.NotSupported(valuePath, selectedOption, acceptedOptionIDs.List()))
+		}
+		if seenValues.Has(selectedOption) {
+			result = append(result, validation.Duplicate(valuePath, selectedOption))
+		}
+		seenValues.Insert(selectedOption)
+	}
+
+	return result
+}
+
 func getStringValue(path *validation.Path, value types.StringOrArray, field *types.FieldDefinition, result validation.ErrorList) (string, validation.ErrorList, bool) {
 	valuePath := path.Child("value")
 	if value.Kind == types.NullValue {
 		if field.Required {
 			result = append(result, validation.Required(valuePath, errFieldValueRequired))
 		}
+		return "", result, true
+	}
+
+	if value.Kind != types.StringValue {
+		result = append(result, validation.Invalid(valuePath, value.GetValue(), errFieldValueMustBeString))
 		return "", result, true
 	}
 
