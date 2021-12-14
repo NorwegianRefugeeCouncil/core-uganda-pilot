@@ -2,17 +2,17 @@ package cmd
 
 import (
 	"context"
+	"os"
+	"sync"
+
 	"github.com/fsnotify/fsnotify"
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/store"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"os"
-	"sync"
-
-	"github.com/spf13/cobra"
 )
 
 var coreOptions options.Options
@@ -26,7 +26,40 @@ var serveCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "base command for starting servers",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		return storeSetup()
+		setupSignal()
+		if err := viper.Unmarshal(&coreOptions); err != nil {
+			return err
+		}
+		configCtx := context.Background()
+		configLog := logging.NewLogger(configCtx)
+		viper.OnConfigChange(func(in fsnotify.Event) {
+			var changedConfig options.Options
+			configLog.Info("detected configuration change")
+			if err := viper.Unmarshal(&changedConfig); err != nil {
+				configLog.Error("failed to unmarshal on config change", zap.Error(err))
+				return
+			}
+			coreOptions = changedConfig
+		})
+
+		switch coreOptions.Log.Level {
+		case "debug":
+			logging.SetLogLevel(zapcore.DebugLevel)
+		case "info":
+			logging.SetLogLevel(zapcore.InfoLevel)
+		case "warn":
+			logging.SetLogLevel(zapcore.WarnLevel)
+		case "error":
+			logging.SetLogLevel(zapcore.ErrorLevel)
+		case "dpanic":
+			logging.SetLogLevel(zapcore.DPanicLevel)
+		case "panic":
+			logging.SetLogLevel(zapcore.PanicLevel)
+		case "fatal":
+			logging.SetLogLevel(zapcore.FatalLevel)
+		}
+
+		return nil
 	},
 }
 
@@ -56,44 +89,4 @@ func setupSignal() {
 		<-osSignal
 		doneSignal <- struct{}{}
 	}()
-}
-
-func storeSetup() error {
-	logrus.SetFormatter(&logrus.TextFormatter{})
-	setupSignal()
-	if err := viper.Unmarshal(&coreOptions); err != nil {
-		return err
-	}
-
-	switch coreOptions.Log.Level {
-	case "debug":
-		logging.SetLogLevel(zapcore.DebugLevel)
-	case "info":
-		logging.SetLogLevel(zapcore.InfoLevel)
-	case "warn":
-		logging.SetLogLevel(zapcore.WarnLevel)
-	case "error":
-		logging.SetLogLevel(zapcore.ErrorLevel)
-	case "dpanic":
-		logging.SetLogLevel(zapcore.DPanicLevel)
-	case "panic":
-		logging.SetLogLevel(zapcore.PanicLevel)
-	case "fatal":
-		logging.SetLogLevel(zapcore.FatalLevel)
-	}
-
-	if len(coreOptions.Log.Level) > 0 {
-		logLevel, err := logrus.ParseLevel(coreOptions.Log.Level)
-		if err != nil {
-			return err
-		}
-		logrus.SetLevel(logLevel)
-	}
-
-	var err error
-	factory, err = store.NewFactory(coreOptions.DSN)
-	if err != nil {
-		return err
-	}
-	return nil
 }
