@@ -5,16 +5,17 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/nrc-no/core/pkg/api/meta"
-	"github.com/nrc-no/core/pkg/api/mimetypes"
-	"github.com/nrc-no/core/pkg/logging"
-	"go.uber.org/zap"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"reflect"
 	"strings"
+
+	"github.com/nrc-no/core/pkg/api/meta"
+	"github.com/nrc-no/core/pkg/api/mimetypes"
+	"github.com/nrc-no/core/pkg/logging"
+	"go.uber.org/zap"
 )
 
 type Config struct {

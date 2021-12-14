@@ -2,13 +2,14 @@ package validation
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
+	"testing"
+
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/validation"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
-	"strconv"
-	"strings"
-	"testing"
 )
 
 var textFieldType = types.FieldType{
@@ -625,6 +626,8 @@ func TestValidateFieldNameRegex(t *testing.T) {
 		"field name",
 		"Field Name",
 		"007",
+		"Non-Binary",
+		"Physical Disability - Intensity",
 	}
 	invalid := []string{
 		" invalid ",
@@ -635,10 +638,14 @@ func TestValidateFieldNameRegex(t *testing.T) {
 		"    ",
 	}
 	for _, s := range valid {
-		assert.True(t, fieldNameRegex.MatchString(s))
+		t.Run(s, func(t *testing.T) {
+			assert.True(t, fieldNameRegex.MatchString(s))
+		})
 	}
 	for _, s := range invalid {
-		assert.False(t, fieldNameRegex.MatchString(s))
+		t.Run(s, func(t *testing.T) {
+			assert.False(t, fieldNameRegex.MatchString(s))
+		})
 	}
 }
 

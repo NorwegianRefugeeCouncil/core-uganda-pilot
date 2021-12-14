@@ -2,13 +2,14 @@ package validation
 
 import (
 	"fmt"
+	"reflect"
+	"regexp"
+	"strings"
+
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/utils/sets"
 	"github.com/nrc-no/core/pkg/validation"
 	uuid "github.com/satori/go.uuid"
-	"reflect"
-	"regexp"
-	"strings"
 )
 
 const (
@@ -47,9 +48,9 @@ const (
 )
 
 var (
-	fieldNameRegex  = regexp.MustCompile("^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$")
+	fieldNameRegex  = regexp.MustCompile(`^[a-zA-Z0-9]+(( |_)?([a-zA-Z0-9\-\[\]\(\)]+))*[a-zA-Z0-9\)\]]$`)
 	fieldCodeRegex  = regexp.MustCompile("^[a-zA-Z]+[a-zA-Z0-9]*$")
-	optionNameRegex = regexp.MustCompile("^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$")
+	optionNameRegex = regexp.MustCompile(`^[a-zA-Z0-9]+(( |_)?([a-zA-Z0-9\-\[\]\(\)]+))*[a-zA-Z0-9\)\]]$`)
 )
 
 func ValidateForm(form *types.FormDefinition) validation.ErrorList {
