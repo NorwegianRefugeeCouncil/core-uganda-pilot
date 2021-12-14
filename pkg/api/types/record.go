@@ -1,5 +1,11 @@
 package types
 
+import (
+	"encoding/json"
+	"fmt"
+	"strings"
+)
+
 // RecordRef represents a key that allows referencing a single Record.
 type RecordRef struct {
 	// ID is the Record.ID
@@ -48,9 +54,92 @@ type Record struct {
 
 type Records []Record
 
+type StringOrArrayValue uint8
+
+const (
+	StringValue StringOrArrayValue = iota + 1
+	ArrayValue
+	NullValue
+)
+
+type StringOrArray struct {
+	Kind        StringOrArrayValue
+	StringValue string
+	ArrayValue  []string
+}
+
+func NewStringValue(value string) StringOrArray {
+	return StringOrArray{
+		Kind:        StringValue,
+		StringValue: value,
+	}
+}
+
+func NewArrayValue(value []string) StringOrArray {
+	return StringOrArray{
+		Kind:       ArrayValue,
+		ArrayValue: value,
+	}
+}
+
+func NewNullValue() StringOrArray {
+	return StringOrArray{
+		Kind: NullValue,
+	}
+}
+
+func (s StringOrArray) MarshalJSON() ([]byte, error) {
+	switch s.Kind {
+	case NullValue:
+		return json.Marshal(nil)
+	case ArrayValue:
+		return json.Marshal(append(s.ArrayValue))
+	case StringValue:
+		return json.Marshal(s.StringValue)
+	default:
+		return nil, fmt.Errorf("unknown value kind")
+	}
+}
+
+func (s *StringOrArray) UnmarshalJSON(b []byte) error {
+	jsonStr := string(b)
+	if jsonStr == "null" {
+		s.Kind = NullValue
+		return nil
+	}
+
+	if strings.HasPrefix(jsonStr, "[") {
+		s.Kind = ArrayValue
+		return json.Unmarshal(b, &s.ArrayValue)
+	}
+
+	s.Kind = StringValue
+	return json.Unmarshal(b, &s.StringValue)
+}
+
 type FieldValue struct {
-	FieldID string  `json:"fieldId"`
-	Value   *string `json:"value"`
+	FieldID string        `json:"fieldId"`
+	Value   StringOrArray `json:"value"`
+}
+
+func NewFieldStringValue(fieldID string, value string) FieldValue {
+	return FieldValue{
+		FieldID: fieldID,
+		Value:   NewStringValue(value),
+	}
+}
+
+func NewFieldArrayValue(fieldID string, value []string) FieldValue {
+	return FieldValue{
+		FieldID: fieldID,
+		Value:   NewArrayValue(value),
+	}
+}
+func NewFieldNullValue(fieldID string) FieldValue {
+	return FieldValue{
+		FieldID: fieldID,
+		Value:   NewNullValue(),
+	}
 }
 
 type FieldValues []FieldValue
@@ -64,7 +153,7 @@ func (f FieldValues) Find(fieldID string) (FieldValue, bool) {
 	return FieldValue{}, false
 }
 
-func (f FieldValues) SetValue(fieldID string, value *string) FieldValues {
+func (f FieldValues) SetValue(fieldID string, value StringOrArray) FieldValues {
 	values := f
 	for i, v := range values {
 		if v.FieldID == fieldID {
@@ -76,7 +165,7 @@ func (f FieldValues) SetValue(fieldID string, value *string) FieldValues {
 	return values
 }
 
-func (f FieldValues) SetValueForFieldName(formDefinition *FormDefinition, fieldName string, value *string) (FieldValues, error) {
+func (f FieldValues) SetValueForFieldName(formDefinition *FormDefinition, fieldName string, value StringOrArray) (FieldValues, error) {
 	values := f
 	field, err := formDefinition.Fields.GetFieldByName(fieldName)
 	if err != nil {

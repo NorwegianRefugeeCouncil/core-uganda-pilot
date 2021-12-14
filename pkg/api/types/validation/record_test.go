@@ -131,14 +131,14 @@ func TestValidateRecord(t *testing.T) {
 		}, {
 			name:          "missing field type",
 			form:          aTextForm(tu.FormField(tu.AField(tu.FieldID("someField")))),
-			recordOptions: tu.RecordValue("bla", pointers.String("snip")),
+			recordOptions: tu.RecordValue("bla", types.NewStringValue("snip")),
 			expect: validation.ErrorList{
 				validation.InternalError(valuePath, errors.New("failed to get field kind")),
 			},
 		}, {
 			name:          "extraneous field",
 			form:          aTextForm(),
-			recordOptions: tu.RecordValue("bla", pointers.String("snip")),
+			recordOptions: tu.RecordValue("bla", types.NewStringValue("snip")),
 			expect: validation.ErrorList{
 				validation.NotSupported(firstFieldPath, "bla", []string{fieldId}),
 			},
@@ -162,7 +162,7 @@ func TestValidateRecord(t *testing.T) {
 					),
 				),
 			),
-			recordOptions: tu.RecordValue("requiredField", pointers.String("")),
+			recordOptions: tu.RecordValue("requiredField", types.NewStringValue("")),
 			expect: validation.ErrorList{
 				validation.Required(firstFieldValuePath, errFieldValueRequired),
 			},
@@ -177,7 +177,7 @@ func TestValidateRecord(t *testing.T) {
 			form: aTextForm(
 				tu.FormField(tu.AField(tu.FieldID("textField"), tu.FieldTypeText(), tu.FieldRequired(true))),
 			),
-			recordOptions: tu.RecordValue("textField", nil),
+			recordOptions: tu.RecordValue("textField", types.NewNullValue()),
 			expect: validation.ErrorList{
 				validation.Required(firstFieldValuePath, errFieldValueRequired),
 			},
@@ -186,14 +186,14 @@ func TestValidateRecord(t *testing.T) {
 			form: aTextForm(
 				tu.FormField(tu.AField(tu.FieldID("textField"), tu.FieldTypeText())),
 			),
-			recordOptions: tu.RecordValue("textField", nil),
+			recordOptions: tu.RecordValue("textField", types.NewNullValue()),
 			expect:        nil,
 		}, {
 			name: "required multiline text field with nil value",
 			form: aTextForm(
 				tu.FormField(tu.AField(tu.FieldID("textField"), tu.FieldTypeMultilineText(), tu.FieldRequired(true))),
 			),
-			recordOptions: tu.RecordValue("textField", nil),
+			recordOptions: tu.RecordValue("textField", types.NewNullValue()),
 			expect: validation.ErrorList{
 				validation.Required(firstFieldValuePath, errFieldValueRequired),
 			},
@@ -202,7 +202,7 @@ func TestValidateRecord(t *testing.T) {
 			form: aTextForm(
 				tu.FormField(tu.AField(tu.FieldID("textField"), tu.FieldTypeMultilineText())),
 			),
-			recordOptions: tu.RecordValue("textField", nil),
+			recordOptions: tu.RecordValue("textField", types.NewNullValue()),
 			expect:        nil,
 		}, {
 			name: "date field",
@@ -215,16 +215,16 @@ func TestValidateRecord(t *testing.T) {
 			form: aTextForm(
 				tu.FormField(tu.AField(tu.FieldID("dateField"), tu.FieldTypeDate())),
 			),
-			recordOptions: tu.RecordValue("dateField", pointers.String("someValue")),
+			recordOptions: tu.RecordValue("dateField", types.NewStringValue("someValue")),
 			expect: validation.ErrorList{
-				validation.Invalid(firstFieldValuePath, pointers.String("someValue"), errRecordInvalidDate),
+				validation.Invalid(firstFieldValuePath, types.NewStringValue("someValue"), errRecordInvalidDate),
 			},
 		}, {
 			name: "required empty date field",
 			form: aTextForm(
 				tu.FormField(tu.AField(tu.FieldID("dateField"), tu.FieldTypeDate(), tu.FieldRequired(true))),
 			),
-			recordOptions: tu.RecordValue("dateField", pointers.String("")),
+			recordOptions: tu.RecordValue("dateField", types.NewStringValue("")),
 			expect: validation.ErrorList{
 				validation.Required(firstFieldValuePath, errFieldValueRequired),
 			},
@@ -233,7 +233,7 @@ func TestValidateRecord(t *testing.T) {
 			form: aTextForm(
 				tu.FormField(tu.AField(tu.FieldID("dateField"), tu.FieldTypeDate(), tu.FieldRequired(true))),
 			),
-			recordOptions: tu.RecordValue("dateField", nil),
+			recordOptions: tu.RecordValue("dateField", types.NewNullValue()),
 			expect: validation.ErrorList{
 				validation.Required(firstFieldValuePath, errFieldValueRequired),
 			},
@@ -242,7 +242,7 @@ func TestValidateRecord(t *testing.T) {
 			form: aTextForm(
 				tu.FormField(tu.AField(tu.FieldID("dateField"), tu.FieldTypeDate())),
 			),
-			recordOptions: tu.RecordValue("dateField", nil),
+			recordOptions: tu.RecordValue("dateField", types.NewNullValue()),
 			expect:        nil,
 		}, {
 			name: "month field",
@@ -255,16 +255,16 @@ func TestValidateRecord(t *testing.T) {
 			form: aTextForm(
 				tu.FormField(tu.AField(tu.FieldID("monthField"), tu.FieldTypeMonth())),
 			),
-			recordOptions: tu.RecordValue("monthField", pointers.String("someValue")),
+			recordOptions: tu.RecordValue("monthField", types.NewStringValue("someValue")),
 			expect: validation.ErrorList{
-				validation.Invalid(firstFieldValuePath, pointers.String("someValue"), errRecordInvalidMonth),
+				validation.Invalid(firstFieldValuePath, types.NewStringValue("someValue"), errRecordInvalidMonth),
 			},
 		}, {
 			name: "required empty month field",
 			form: aTextForm(
 				tu.FormField(tu.AField(tu.FieldID("monthField"), tu.FieldTypeMonth(), tu.FieldRequired(true))),
 			),
-			recordOptions: tu.RecordValue("monthField", pointers.String("")),
+			recordOptions: tu.RecordValue("monthField", types.NewStringValue("")),
 			expect: validation.ErrorList{
 				validation.Required(firstFieldValuePath, errFieldValueRequired),
 			},
@@ -273,7 +273,7 @@ func TestValidateRecord(t *testing.T) {
 			form: aTextForm(
 				tu.FormField(tu.AField(tu.FieldID("monthField"), tu.FieldTypeMonth(), tu.FieldRequired(true))),
 			),
-			recordOptions: tu.RecordValue("monthField", nil),
+			recordOptions: tu.RecordValue("monthField", types.NewNullValue()),
 			expect: validation.ErrorList{
 				validation.Required(firstFieldValuePath, errFieldValueRequired),
 			},
@@ -282,7 +282,7 @@ func TestValidateRecord(t *testing.T) {
 			form: aTextForm(
 				tu.FormField(tu.AField(tu.FieldID("monthField"), tu.FieldTypeMonth())),
 			),
-			recordOptions: tu.RecordValue("monthField", nil),
+			recordOptions: tu.RecordValue("monthField", types.NewNullValue()),
 			expect:        nil,
 		}, {
 			name: "week field",
@@ -295,16 +295,16 @@ func TestValidateRecord(t *testing.T) {
 			form: aTextForm(
 				tu.FormField(tu.AField(tu.FieldID("weekField"), tu.FieldTypeWeek())),
 			),
-			recordOptions: tu.RecordValue("weekField", pointers.String("someValue")),
+			recordOptions: tu.RecordValue("weekField", types.NewStringValue("someValue")),
 			expect: validation.ErrorList{
-				validation.Invalid(firstFieldValuePath, pointers.String("someValue"), errRecordInvalidWeek),
+				validation.Invalid(firstFieldValuePath, types.NewStringValue("someValue"), errRecordInvalidWeek),
 			},
 		}, {
 			name: "required empty week field",
 			form: aTextForm(
 				tu.FormField(tu.AField(tu.FieldID("weekField"), tu.FieldTypeWeek(), tu.FieldRequired(true))),
 			),
-			recordOptions: tu.RecordValue("weekField", pointers.String("")),
+			recordOptions: tu.RecordValue("weekField", types.NewStringValue("")),
 			expect: validation.ErrorList{
 				validation.Required(firstFieldValuePath, errFieldValueRequired),
 			},
@@ -313,7 +313,7 @@ func TestValidateRecord(t *testing.T) {
 			form: aTextForm(
 				tu.FormField(tu.AField(tu.FieldID("weekField"), tu.FieldTypeWeek(), tu.FieldRequired(true))),
 			),
-			recordOptions: tu.RecordValue("weekField", nil),
+			recordOptions: tu.RecordValue("weekField", types.NewNullValue()),
 			expect: validation.ErrorList{
 				validation.Required(firstFieldValuePath, errFieldValueRequired),
 			},
@@ -322,7 +322,7 @@ func TestValidateRecord(t *testing.T) {
 			form: aTextForm(
 				tu.FormField(tu.AField(tu.FieldID("weekField"), tu.FieldTypeWeek())),
 			),
-			recordOptions: tu.RecordValue("weekField", nil),
+			recordOptions: tu.RecordValue("weekField", types.NewNullValue()),
 			expect:        nil,
 		}, {
 			name: "quantity field",
@@ -335,16 +335,16 @@ func TestValidateRecord(t *testing.T) {
 			form: aTextForm(
 				tu.FormField(tu.AField(tu.FieldID("quantityField"), tu.FieldTypeQuantity())),
 			),
-			recordOptions: tu.RecordValue("quantityField", pointers.String("someValue")),
+			recordOptions: tu.RecordValue("quantityField", types.NewStringValue("someValue")),
 			expect: validation.ErrorList{
-				validation.Invalid(firstFieldValuePath, pointers.String("someValue"), errRecordInvalidQuantity),
+				validation.Invalid(firstFieldValuePath, types.NewStringValue("someValue"), errRecordInvalidQuantity),
 			},
 		}, {
 			name: "required quantity field with nil value",
 			form: aTextForm(
 				tu.FormField(tu.AField(tu.FieldID("quantityField"), tu.FieldTypeQuantity(), tu.FieldRequired(true))),
 			),
-			recordOptions: tu.RecordValue("quantityField", nil),
+			recordOptions: tu.RecordValue("quantityField", types.NewNullValue()),
 			expect: validation.ErrorList{
 				validation.Required(firstFieldValuePath, errFieldValueRequired),
 			},
@@ -353,7 +353,7 @@ func TestValidateRecord(t *testing.T) {
 			form: aTextForm(
 				tu.FormField(tu.AField(tu.FieldID("quantityField"), tu.FieldTypeQuantity())),
 			),
-			recordOptions: tu.RecordValue("quantityField", nil),
+			recordOptions: tu.RecordValue("quantityField", types.NewNullValue()),
 			expect:        nil,
 		}, {
 			name: "reference field",
@@ -366,16 +366,16 @@ func TestValidateRecord(t *testing.T) {
 			form: aTextForm(
 				tu.FormField(tu.AField(tu.FieldID("referenceField"), tu.FieldTypeReference(aFormRef))),
 			),
-			recordOptions: tu.RecordValue("referenceField", pointers.String("someValue")),
+			recordOptions: tu.RecordValue("referenceField", types.NewStringValue("someValue")),
 			expect: validation.ErrorList{
-				validation.Invalid(firstFieldValuePath, pointers.String("someValue"), errRecordInvalidReferenceUid),
+				validation.Invalid(firstFieldValuePath, types.NewStringValue("someValue"), errRecordInvalidReferenceUid),
 			},
 		}, {
 			name: "required reference field with nil value",
 			form: aTextForm(
 				tu.FormField(tu.AField(tu.FieldID("referenceField"), tu.FieldTypeReference(aFormRef), tu.FieldRequired(true))),
 			),
-			recordOptions: tu.RecordValue("referenceField", nil),
+			recordOptions: tu.RecordValue("referenceField", types.NewNullValue()),
 			expect: validation.ErrorList{
 				validation.Required(firstFieldValuePath, errFieldValueRequired),
 			},
@@ -384,7 +384,7 @@ func TestValidateRecord(t *testing.T) {
 			form: aTextForm(
 				tu.FormField(tu.AField(tu.FieldID("referenceField"), tu.FieldTypeReference(aFormRef))),
 			),
-			recordOptions: tu.RecordValue("referenceField", nil),
+			recordOptions: tu.RecordValue("referenceField", types.NewNullValue()),
 			expect:        nil,
 		}, {
 			name: "single select field",
@@ -407,7 +407,7 @@ func TestValidateRecord(t *testing.T) {
 					),
 				),
 			),
-			recordOptions: tu.RecordValue("singleSelectField", pointers.String("someRandomValue")),
+			recordOptions: tu.RecordValue("singleSelectField", types.NewStringValue("someRandomValue")),
 			expect: validation.ErrorList{
 				validation.NotSupported(firstFieldValuePath, "someRandomValue", []string{
 					"option1",
@@ -425,7 +425,7 @@ func TestValidateRecord(t *testing.T) {
 					),
 				),
 			),
-			recordOptions: tu.RecordValue("singleSelectField", nil),
+			recordOptions: tu.RecordValue("singleSelectField", types.NewNullValue()),
 			expect: validation.ErrorList{
 				validation.Required(firstFieldValuePath, errFieldValueRequired),
 			},
@@ -439,7 +439,7 @@ func TestValidateRecord(t *testing.T) {
 					),
 				),
 			),
-			recordOptions: tu.RecordValue("singleSelectField", nil),
+			recordOptions: tu.RecordValue("singleSelectField", types.NewNullValue()),
 		},
 	}
 

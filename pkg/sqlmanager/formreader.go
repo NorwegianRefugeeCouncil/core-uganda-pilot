@@ -13,23 +13,23 @@ const (
 	errInvalidSQLDataType = "invalid sql data type"
 )
 
-func NewFormReader(form types.FormInterface, rows sqlReader) FormReader {
-	return &formReader{
+func NewFormReader(form types.FormInterface, rows sqlReader) Reader {
+	return &reader{
 		form:      form,
 		sqlReader: rows,
 	}
 }
 
-type FormReader interface {
+type Reader interface {
 	GetRecords() (*types.RecordList, error)
 }
 
-type formReader struct {
+type reader struct {
 	form      types.FormInterface
 	sqlReader sqlReader
 }
 
-func (f formReader) GetRecords() (*types.RecordList, error) {
+func (f reader) GetRecords() (*types.RecordList, error) {
 	return readRecords(f.form, f.sqlReader)
 }
 
@@ -139,13 +139,13 @@ func readInRecordField(
 	case types.FieldKindMonth, types.FieldKindDate, types.FieldKindWeek:
 		readInDateField(record, field, value, fieldKind)
 	case types.FieldKindQuantity:
-		readInQuantityField(record, field, value)
+		return readInQuantityField(record, field, value)
 	case types.FieldKindSingleSelect:
-		readInSingleSelectField(record, field, value)
+		return readInSingleSelectField(record, field, value)
 	case types.FieldKindReference:
-		readInReferenceField(record, field, value)
+		return readInReferenceField(record, field, value)
 	case types.FieldKindText, types.FieldKindMultilineText:
-		readInTextField(record, field, value)
+		return readInTextField(record, field, value)
 	}
 
 	return nil
@@ -187,71 +187,108 @@ func readInDateField(record *types.Record, field *types.FieldDefinition, value i
 			}
 		}
 	}
-	record.Values = append(record.Values, types.FieldValue{
-		FieldID: field.ID,
-		Value:   valueStr,
-	})
+
+	if valueStr == nil {
+		record.Values = append(record.Values, types.NewFieldNullValue(field.ID))
+	} else {
+		record.Values = append(record.Values, types.NewFieldStringValue(field.ID, *valueStr))
+	}
+
 }
 
 // readInReferenceField will populate a record types.FieldValue for a types.FieldTypeReference field from
 // an  SQL value
-func readInReferenceField(record *types.Record, field *types.FieldDefinition, value interface{}) {
+func readInReferenceField(record *types.Record, field *types.FieldDefinition, value interface{}) error {
+	fieldValue, err := getStringValue(value)
+	if err != nil {
+		return err
+	}
 	record.Values = append(record.Values, types.FieldValue{
 		FieldID: field.ID,
-		Value:   getStringColumnStringPtr(value),
+		Value:   fieldValue,
 	})
+	return nil
 }
 
 // readInSingleSelectField will populate a record types.FieldValue for a types.FieldTypeSingleSelect field from
 // an  SQL value
-func readInSingleSelectField(record *types.Record, field *types.FieldDefinition, value interface{}) {
+func readInSingleSelectField(record *types.Record, field *types.FieldDefinition, value interface{}) error {
+	fieldValue, err := getStringValue(value)
+	if err != nil {
+		return err
+	}
 	record.Values = append(record.Values, types.FieldValue{
 		FieldID: field.ID,
-		Value:   getStringColumnStringPtr(value),
+		Value:   fieldValue,
 	})
+	return nil
 }
 
 // readInReferenceField will populate a record types.FieldValue for a types.FieldTypeText or
 // types.FieldTypeMultilineText field from an  SQL value
-func readInTextField(record *types.Record, field *types.FieldDefinition, value interface{}) {
+func readInTextField(record *types.Record, field *types.FieldDefinition, value interface{}) error {
+	fieldValue, err := getStringValue(value)
+	if err != nil {
+		return err
+	}
 	record.Values = append(record.Values, types.FieldValue{
 		FieldID: field.ID,
-		Value:   getStringColumnStringPtr(value),
+		Value:   fieldValue,
 	})
+	return nil
 }
 
 // readInQuantityField will populate a record types.FieldValue for a types.FieldTypeQuantity from an  SQL value
-func readInQuantityField(record *types.Record, field *types.FieldDefinition, value interface{}) {
+func readInQuantityField(record *types.Record, field *types.FieldDefinition, value interface{}) error {
+	fieldValue, err := getIntValue(value)
+	if err != nil {
+		return err
+	}
 	record.Values = append(record.Values, types.FieldValue{
 		FieldID: field.ID,
-		Value:   getIntColumnStringPtr(value),
+		Value:   fieldValue,
 	})
+	return nil
 }
 
-// getStringColumnStringPtr will coerce a string or *string into a *string
-func getStringColumnStringPtr(value interface{}) *string {
-	var textStr *string
+// getStringValue will coerce a string or *string into a *string
+func getStringValue(value interface{}) (types.StringOrArray, error) {
 	switch t := value.(type) {
 	case string:
-		textStr = pointers.String(t)
+		return types.NewStringValue(t), nil
 	case *string:
-		textStr = t
+		if t == nil {
+			return types.NewNullValue(), nil
+		} else {
+			return types.NewStringValue(*t), nil
+		}
+	default:
+		return types.StringOrArray{}, fmt.Errorf("cannot convert type %T to types.StringOrArray", value)
 	}
-	return textStr
 }
 
-// getIntColumnStringPtr will convert an int or *int into a *string
-func getIntColumnStringPtr(value interface{}) *string {
-	var intStr *string
+// getIntValue will convert an int or *int into a *string
+func getIntValue(value interface{}) (types.StringOrArray, error) {
 	switch t := value.(type) {
 	case int:
-		intStr = pointers.String(strconv.Itoa(t))
+		return types.NewStringValue(strconv.Itoa(t)), nil
 	case *int:
-		if t != nil {
-			intStr = pointers.String(strconv.Itoa(*t))
+		if t == nil {
+			return types.NewNullValue(), nil
+		} else {
+			return types.NewStringValue(strconv.Itoa(*t)), nil
 		}
+	case int64:
+		return types.NewStringValue(strconv.FormatInt(t, 10)), nil
+	case *int64:
+		if t == nil {
+			return types.NewNullValue(), nil
+		} else {
+			return types.NewStringValue(strconv.FormatInt(*t, 10)), nil
+		}
+	default:
+		return types.StringOrArray{}, fmt.Errorf("cannot convert type %T to types.StringOrArray", value)
 	}
-	return intStr
 }
 
 // mapStringValue will return a string value from an interface
