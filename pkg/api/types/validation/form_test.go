@@ -584,6 +584,143 @@ func TestValidateForm(t *testing.T) {
 					},
 				},
 			}),
+		}, {
+			name: "multi select field cannot be key",
+			expect: validation.ErrorList{
+				validation.Invalid(validation.NewPath("fields[0].key"), true, errMultiSelectCannotBeKeyField),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name:     validFieldName,
+					Key:      true,
+					Required: true,
+					FieldType: types.FieldType{
+						MultiSelect: &types.FieldTypeMultiSelect{
+							Options: []*types.SelectOption{
+								{Name: "option 1"},
+								{Name: "option 2"},
+							},
+						},
+					},
+				},
+			}),
+		}, {
+			name: "multi select field with no options",
+			expect: validation.ErrorList{
+				validation.Required(
+					validation.NewPath("fields").Index(0).Child("fieldType", "multiSelect", "options"),
+					errSelectOptionsRequired,
+				),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+					FieldType: types.FieldType{
+						MultiSelect: &types.FieldTypeMultiSelect{
+							Options: []*types.SelectOption{},
+						},
+					},
+				},
+			}),
+		}, {
+			name: "multi select field with duplicate option name",
+			expect: validation.ErrorList{
+				validation.Duplicate(
+					// fields[0].fieldType.singleSelect.options[1].name
+					validation.NewPath("fields").
+						Index(0).
+						Child("fieldType", "multiSelect", "options").
+						Index(1).
+						Child("name"),
+					"option 1",
+				),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+					FieldType: types.FieldType{
+						MultiSelect: &types.FieldTypeMultiSelect{
+							Options: []*types.SelectOption{
+								{Name: "option 1"},
+								{Name: "option 1"},
+							},
+						},
+					},
+				},
+			}),
+		}, {
+			name: "multi select field with missing option name",
+			expect: validation.ErrorList{
+				validation.Required(
+					// fields[0].fieldType.singleSelect.options[1].name
+					validation.NewPath("fields").
+						Index(0).
+						Child("fieldType", "multiSelect", "options").
+						Index(0).
+						Child("name"),
+					errSelectOptionNameRequired,
+				),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+					FieldType: types.FieldType{
+						MultiSelect: &types.FieldTypeMultiSelect{
+							Options: []*types.SelectOption{
+								{Name: ""},
+							},
+						},
+					},
+				},
+			}),
+		}, {
+			name: "multi select field with invalid option name",
+			expect: validation.ErrorList{
+				validation.Invalid(
+					// fields[0].fieldType.singleSelect.options[1].name
+					validation.NewPath("fields").
+						Index(0).
+						Child("fieldType", "multiSelect", "options").
+						Index(0).
+						Child("name"),
+					"!!",
+					errSelectOptionNameInvalid,
+				),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+					FieldType: types.FieldType{
+						MultiSelect: &types.FieldTypeMultiSelect{
+							Options: []*types.SelectOption{
+								{Name: "!!"},
+							},
+						},
+					},
+				},
+			}),
+		}, {
+			name: "multi select field with too many options",
+			expect: validation.ErrorList{
+				validation.TooMany(
+					// fields[0].fieldType.singleSelect.options[1].name
+					validation.NewPath("fields").
+						Index(0).
+						Child("fieldType", "multiSelect", "options"),
+					selectFieldMaxOptions+1,
+					selectFieldMaxOptions,
+				),
+			},
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+					FieldType: types.FieldType{
+						MultiSelect: &types.FieldTypeMultiSelect{
+							Options: repeatOptions(selectFieldMaxOptions + 1),
+						},
+					},
+				},
+			}),
 		},
 	}
 

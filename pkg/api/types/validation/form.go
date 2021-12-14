@@ -16,30 +16,31 @@ const (
 	errFieldNameInvalid                      = "Field name is invalid. It can only contain alphanumeric characters and spaces"
 	errFieldNameNoLeadingTrailingWhitespaces = "Field name cannot have leading or trailing whitespaces"
 	errFieldNameRequired                     = "Field name is required"
-	errFieldsRequired                        = "Form must have at least 1 field"
 	errFieldTypesMultipleF                   = "Only one field type can be specified but received %v"
+	errFieldsRequired                        = "Form must have at least 1 field"
 	errFormNameRequired                      = "Form name is required"
 	errFormNameWhitespace                    = "Form name cannot have leading or trailing whitespaces"
 	errInvalidFieldCode                      = "Field code can only contain alphanumeric characters. It also can only start with a letter"
 	errInvalidUUID                           = "Invalid uuid"
 	errKeyFieldMustBeRequired                = "Field marked as key must be have required = true"
 	errMultiLineTextFieldCannotBeKeyField    = "Multiline text fields cannot key marked as key fields"
+	errMultiSelectCannotBeKeyField           = "Multi select fields cannot key marked as key field"
 	errOneFieldTypeRequired                  = "At least one field type must be specified"
 	errReferenceFieldDatabaseIdInvalid       = "Invalid database id"
 	errReferenceFieldDatabaseIdRequired      = "Database id is required"
 	errReferenceFieldFormIdInvalid           = "Invalid form id"
 	errReferenceFieldFormIdRequired          = "Form id is required"
-	errSubFormCannotBeKeyOrRequiredField     = "Sub form fields cannot key marked as key or required fields"
+	errSelectOptionNameInvalid               = "Name of the select option is invalid"
 	errSelectOptionNameRequired              = "Name of the option is required"
 	errSelectOptionsRequired                 = "At least 1 option must be specified"
-	errSelectOptionNameInvalid               = "Name of the select option is invalid"
+	errSubFormCannotBeKeyOrRequiredField     = "Sub form fields cannot key marked as key or required fields"
 	fieldCodeMaxLength                       = 32
 	fieldCodeMinLength                       = 1
 	fieldNameMaxLength                       = 128
 	fieldNameMinLength                       = 2
+	formMaxFieldCount                        = 60
 	formNameMaxLength                        = 128
 	formNameMinLength                        = 3
-	formMaxFieldCount                        = 60
 	selectFieldMaxNameLength                 = 128
 	selectFieldMaxOptions                    = 100
 	// todo: add maximum total number of fields (form fields + subform fields)
@@ -163,7 +164,7 @@ func ValidateFieldDefinition(field *types.FieldDefinition, path *validation.Path
 		result = append(result, validation.Invalid(requiredPath, field.Required, errKeyFieldMustBeRequired))
 	}
 
-	if field.Required || field.Key && field.FieldType.SubForm != nil {
+	if field.Required || field.Key {
 		// sub form fields cannot be marked as required/key fields
 		// sub form fields do not have a corresponding column on the form's sql table
 		// our implementation uses NOT NULL and UNIQUE constraint, for which we need an actual SQL Column
@@ -177,6 +178,12 @@ func ValidateFieldDefinition(field *types.FieldDefinition, path *validation.Path
 		// This field type is for user textual input, which would never really be unique anyways.
 		if field.FieldType.MultilineText != nil {
 			result = append(result, validation.Invalid(keyPath, field.Key, errMultiLineTextFieldCannotBeKeyField))
+		}
+		// multi select fields cannot be marked as required/key fields
+		// multi select fields do not have a corresponding column on the form's sql table
+		// our implementation uses NOT NULL and UNIQUE constraint, for which we need an actual SQL Column
+		if field.FieldType.MultiSelect != nil {
+			result = append(result, validation.Invalid(keyPath, field.Key, errMultiSelectCannotBeKeyField))
 		}
 	}
 
@@ -265,6 +272,7 @@ func ValidateFieldType(fieldType types.FieldType, path *validation.Path) validat
 	referencePath := path.Child("reference")
 	subFormPath := path.Child("subForm")
 	singleSelectPath := path.Child("singleSelect")
+	multiSelect := path.Child("multiSelect")
 
 	// finds what kind of field type is defined
 	var found []types.FieldKind
@@ -314,6 +322,8 @@ func ValidateFieldType(fieldType types.FieldType, path *validation.Path) validat
 		result = append(result, ValidateFieldTypeSubForm(fieldType.SubForm, subFormPath)...)
 	case types.FieldKindSingleSelect:
 		result = append(result, ValidateFieldTypeSingleSelect(fieldType.SingleSelect, singleSelectPath)...)
+	case types.FieldKindMultiSelect:
+		result = append(result, ValidateFieldTypeMultiSelect(fieldType.MultiSelect, multiSelect)...)
 	default:
 		result = append(result, validation.InternalError(path, fmt.Errorf("unknown field kind %v", fieldKind)))
 	}
@@ -396,9 +406,18 @@ func ValidateFieldTypeQuantity(ftQuantity *types.FieldTypeQuantity, path *valida
 
 // ValidateFieldTypeSingleSelect validate a FieldTypeSingleSelect field
 func ValidateFieldTypeSingleSelect(ftSingleSelect *types.FieldTypeSingleSelect, path *validation.Path) validation.ErrorList {
+	return ValidateSelectOptions(ftSingleSelect.Options, path)
+}
+
+// ValidateFieldTypeMultiSelect validate a types.FieldTypeMultiSelect field
+func ValidateFieldTypeMultiSelect(ftMultiSelect *types.FieldTypeMultiSelect, path *validation.Path) validation.ErrorList {
+	return ValidateSelectOptions(ftMultiSelect.Options, path)
+}
+
+func ValidateSelectOptions(options []*types.SelectOption, path *validation.Path) validation.ErrorList {
 	var result []*validation.Error
 
-	optionsCount := len(ftSingleSelect.Options)
+	optionsCount := len(options)
 	optionsPath := path.Child("options")
 	if optionsCount == 0 {
 		// checking that we have at least one option
@@ -410,7 +429,7 @@ func ValidateFieldTypeSingleSelect(ftSingleSelect *types.FieldTypeSingleSelect, 
 	}
 
 	seenNames := sets.NewString()
-	for i, option := range ftSingleSelect.Options {
+	for i, option := range options {
 
 		optionName := option.Name
 		optionPath := optionsPath.Index(i)
