@@ -157,7 +157,7 @@ func ValidateRecordValues(path *validation.Path, recordValues types.FieldValues,
 	return result
 }
 
-func ValidateRecordValue(path *validation.Path, value *string, field *types.FieldDefinition) validation.ErrorList {
+func ValidateRecordValue(path *validation.Path, value types.StringOrArray, field *types.FieldDefinition) validation.ErrorList {
 
 	var result validation.ErrorList
 	fieldKind, _ := field.FieldType.GetFieldKind()
@@ -183,7 +183,7 @@ func ValidateRecordValue(path *validation.Path, value *string, field *types.Fiel
 	return result
 }
 
-func ValidateRecordStringValue(path *validation.Path, value *string, field *types.FieldDefinition) validation.ErrorList {
+func ValidateRecordStringValue(path *validation.Path, value types.StringOrArray, field *types.FieldDefinition) validation.ErrorList {
 	_, result, done := getStringValue(path, value, field, validation.ErrorList{})
 	if done {
 		return result
@@ -191,7 +191,7 @@ func ValidateRecordStringValue(path *validation.Path, value *string, field *type
 	return result
 }
 
-func ValidateRecordDateValue(path *validation.Path, value *string, field *types.FieldDefinition) validation.ErrorList {
+func ValidateRecordDateValue(path *validation.Path, value types.StringOrArray, field *types.FieldDefinition) validation.ErrorList {
 	stringValue, result, done := getStringValue(path, value, field, validation.ErrorList{})
 	if done {
 		return result
@@ -204,7 +204,7 @@ func ValidateRecordDateValue(path *validation.Path, value *string, field *types.
 	return result
 }
 
-func ValidateRecordMonthValue(path *validation.Path, value *string, field *types.FieldDefinition) validation.ErrorList {
+func ValidateRecordMonthValue(path *validation.Path, value types.StringOrArray, field *types.FieldDefinition) validation.ErrorList {
 	stringValue, result, done := getStringValue(path, value, field, validation.ErrorList{})
 	if done {
 		return result
@@ -217,7 +217,7 @@ func ValidateRecordMonthValue(path *validation.Path, value *string, field *types
 	return result
 }
 
-func ValidateRecordWeekValue(path *validation.Path, value *string, field *types.FieldDefinition) validation.ErrorList {
+func ValidateRecordWeekValue(path *validation.Path, value types.StringOrArray, field *types.FieldDefinition) validation.ErrorList {
 	stringValue, result, done := getStringValue(path, value, field, validation.ErrorList{})
 	if done {
 		return result
@@ -232,20 +232,18 @@ func ValidateRecordWeekValue(path *validation.Path, value *string, field *types.
 	return result
 }
 
-func ValidateRecordQuantityValue(path *validation.Path, value *string, field *types.FieldDefinition) validation.ErrorList {
+func ValidateRecordQuantityValue(path *validation.Path, value types.StringOrArray, field *types.FieldDefinition) validation.ErrorList {
 	var result validation.ErrorList
 	valuePath := path.Child("value")
 
-	if value == nil {
+	if value.Kind == types.NullValue {
 		if field.Required {
 			result = append(result, validation.Required(valuePath, errFieldValueRequired))
 		}
 		return result
 	}
 
-	stringValue := *value
-
-	_, err := strconv.Atoi(stringValue)
+	_, err := strconv.Atoi(value.StringValue)
 	if err != nil {
 		return append(result, validation.Invalid(valuePath, value, errRecordInvalidQuantity))
 	}
@@ -254,7 +252,7 @@ func ValidateRecordQuantityValue(path *validation.Path, value *string, field *ty
 	return result
 }
 
-func ValidateRecordReferenceValue(path *validation.Path, value *string, field *types.FieldDefinition) validation.ErrorList {
+func ValidateRecordReferenceValue(path *validation.Path, value types.StringOrArray, field *types.FieldDefinition) validation.ErrorList {
 	stringValue, result, done := getStringValue(path, value, field, validation.ErrorList{})
 	if done {
 		return result
@@ -266,7 +264,7 @@ func ValidateRecordReferenceValue(path *validation.Path, value *string, field *t
 	return result
 }
 
-func ValidateRecordSingleSelectValue(path *validation.Path, value *string, field *types.FieldDefinition) validation.ErrorList {
+func ValidateRecordSingleSelectValue(path *validation.Path, value types.StringOrArray, field *types.FieldDefinition) validation.ErrorList {
 	stringValue, result, done := getStringValue(path, value, field, validation.ErrorList{})
 	if done {
 		return result
@@ -285,21 +283,19 @@ func ValidateRecordSingleSelectValue(path *validation.Path, value *string, field
 	return result
 }
 
-func getStringValue(path *validation.Path, value *string, field *types.FieldDefinition, result validation.ErrorList) (string, validation.ErrorList, bool) {
+func getStringValue(path *validation.Path, value types.StringOrArray, field *types.FieldDefinition, result validation.ErrorList) (string, validation.ErrorList, bool) {
 	valuePath := path.Child("value")
-	if value == nil {
+	if value.Kind == types.NullValue {
 		if field.Required {
 			result = append(result, validation.Required(valuePath, errFieldValueRequired))
 		}
 		return "", result, true
 	}
 
-	stringValue := *value
-
-	if field.Required && strings.TrimSpace(stringValue) == "" {
+	if field.Required && strings.TrimSpace(value.StringValue) == "" {
 		result = append(result, validation.Required(valuePath, errFieldValueRequired))
 		return "", result, true
 	}
 
-	return stringValue, result, false
+	return value.StringValue, result, false
 }

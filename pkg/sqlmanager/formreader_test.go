@@ -39,6 +39,13 @@ func Test_readRecords(t *testing.T) {
 	}
 
 	recordWithValue := func(value *string, options ...testutils.RecordOption) types.Record {
+		var val types.StringOrArray
+		if value == nil {
+			val = types.NewNullValue()
+		} else {
+			val = types.NewStringValue(*value)
+		}
+		
 		r := &types.Record{
 			ID:         recordId,
 			DatabaseID: databaseId,
@@ -46,7 +53,7 @@ func Test_readRecords(t *testing.T) {
 			Values: []types.FieldValue{
 				{
 					FieldID: keyMyFieldID,
-					Value:   value,
+					Value:   val,
 				},
 			},
 		}
