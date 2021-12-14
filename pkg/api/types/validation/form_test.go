@@ -11,50 +11,52 @@ import (
 	"testing"
 )
 
+var textFieldType = types.FieldType{
+	Text: &types.FieldTypeText{},
+}
+
+var validTextField = &types.FieldDefinition{
+	Name:      "My Field",
+	FieldType: textFieldType,
+}
+
+const validFormName = "My Form"
+const validFieldName = "My Field"
+
+var validDatabaseID = uuid.NewV4().String()
+var validFolderID = uuid.NewV4().String()
+
+var validFields = types.FieldDefinitions{
+	validTextField,
+}
+
+var formWithFields = func(fields types.FieldDefinitions) *types.FormDefinition {
+	return &types.FormDefinition{
+		Name:       validFormName,
+		DatabaseID: validDatabaseID,
+		Fields:     fields,
+	}
+}
+
+var repeatFields = func(count int) types.FieldDefinitions {
+	result := types.FieldDefinitions{}
+	for i := 0; i < count; i++ {
+		result = append(result, validTextField)
+	}
+	return result
+}
+
+var repeatOptions = func(count int) []*types.SelectOption {
+	var result []*types.SelectOption
+	for i := 0; i < count; i++ {
+		result = append(result, &types.SelectOption{
+			Name: strconv.Itoa(i),
+		})
+	}
+	return result
+}
+
 func TestValidateForm(t *testing.T) {
-
-	textFieldType := types.FieldType{
-		Text: &types.FieldTypeText{},
-	}
-	validTextField := &types.FieldDefinition{
-		Name:      "My Field",
-		FieldType: textFieldType,
-	}
-
-	const validFormName = "My Form"
-	const validFieldName = "My Field"
-	validDatabaseID := uuid.NewV4().String()
-	validFolderID := uuid.NewV4().String()
-
-	validFields := types.FieldDefinitions{
-		validTextField,
-	}
-
-	formWithFields := func(fields types.FieldDefinitions) *types.FormDefinition {
-		return &types.FormDefinition{
-			Name:       validFormName,
-			DatabaseID: validDatabaseID,
-			Fields:     fields,
-		}
-	}
-
-	repeatFields := func(count int) types.FieldDefinitions {
-		result := types.FieldDefinitions{}
-		for i := 0; i < count; i++ {
-			result = append(result, validTextField)
-		}
-		return result
-	}
-
-	repeatOptions := func(count int) []*types.SelectOption {
-		var result []*types.SelectOption
-		for i := 0; i < count; i++ {
-			result = append(result, &types.SelectOption{
-				Name: strconv.Itoa(i),
-			})
-		}
-		return result
-	}
 
 	tests := []struct {
 		name   string
@@ -452,139 +454,6 @@ func TestValidateForm(t *testing.T) {
 				},
 			}),
 		}, {
-			name:   "field with single select field",
-			expect: nil,
-			form: formWithFields(types.FieldDefinitions{
-				{
-					Name: validFieldName,
-					FieldType: types.FieldType{
-						SingleSelect: &types.FieldTypeSingleSelect{
-							Options: []*types.SelectOption{
-								{Name: "option 1"},
-								{Name: "option 2"},
-							},
-						},
-					},
-				},
-			}),
-		}, {
-			name: "single select field with no options",
-			expect: validation.ErrorList{
-				validation.Required(
-					validation.NewPath("fields").Index(0).Child("fieldType", "singleSelect", "options"),
-					errSelectOptionsRequired,
-				),
-			},
-			form: formWithFields(types.FieldDefinitions{
-				{
-					Name: validFieldName,
-					FieldType: types.FieldType{
-						SingleSelect: &types.FieldTypeSingleSelect{
-							Options: []*types.SelectOption{},
-						},
-					},
-				},
-			}),
-		}, {
-			name: "single select field with duplicate option name",
-			expect: validation.ErrorList{
-				validation.Duplicate(
-					// fields[0].fieldType.singleSelect.options[1].name
-					validation.NewPath("fields").
-						Index(0).
-						Child("fieldType", "singleSelect", "options").
-						Index(1).
-						Child("name"),
-					"option 1",
-				),
-			},
-			form: formWithFields(types.FieldDefinitions{
-				{
-					Name: validFieldName,
-					FieldType: types.FieldType{
-						SingleSelect: &types.FieldTypeSingleSelect{
-							Options: []*types.SelectOption{
-								{Name: "option 1"},
-								{Name: "option 1"},
-							},
-						},
-					},
-				},
-			}),
-		}, {
-			name: "single select field with missing option name",
-			expect: validation.ErrorList{
-				validation.Required(
-					// fields[0].fieldType.singleSelect.options[1].name
-					validation.NewPath("fields").
-						Index(0).
-						Child("fieldType", "singleSelect", "options").
-						Index(0).
-						Child("name"),
-					errSelectOptionNameRequired,
-				),
-			},
-			form: formWithFields(types.FieldDefinitions{
-				{
-					Name: validFieldName,
-					FieldType: types.FieldType{
-						SingleSelect: &types.FieldTypeSingleSelect{
-							Options: []*types.SelectOption{
-								{Name: ""},
-							},
-						},
-					},
-				},
-			}),
-		}, {
-			name: "single select field with invalid option name",
-			expect: validation.ErrorList{
-				validation.Invalid(
-					// fields[0].fieldType.singleSelect.options[1].name
-					validation.NewPath("fields").
-						Index(0).
-						Child("fieldType", "singleSelect", "options").
-						Index(0).
-						Child("name"),
-					"!!",
-					errSelectOptionNameInvalid,
-				),
-			},
-			form: formWithFields(types.FieldDefinitions{
-				{
-					Name: validFieldName,
-					FieldType: types.FieldType{
-						SingleSelect: &types.FieldTypeSingleSelect{
-							Options: []*types.SelectOption{
-								{Name: "!!"},
-							},
-						},
-					},
-				},
-			}),
-		}, {
-			name: "single select field with too many options",
-			expect: validation.ErrorList{
-				validation.TooMany(
-					// fields[0].fieldType.singleSelect.options[1].name
-					validation.NewPath("fields").
-						Index(0).
-						Child("fieldType", "singleSelect", "options"),
-					selectFieldMaxOptions+1,
-					selectFieldMaxOptions,
-				),
-			},
-			form: formWithFields(types.FieldDefinitions{
-				{
-					Name: validFieldName,
-					FieldType: types.FieldType{
-						SingleSelect: &types.FieldTypeSingleSelect{
-							Options: repeatOptions(selectFieldMaxOptions + 1),
-						},
-					},
-				},
-			}),
-		}, {
 			name: "multi select field cannot be key",
 			expect: validation.ErrorList{
 				validation.Invalid(validation.NewPath("fields[0].key"), true, errMultiSelectCannotBeKeyField),
@@ -604,123 +473,6 @@ func TestValidateForm(t *testing.T) {
 					},
 				},
 			}),
-		}, {
-			name: "multi select field with no options",
-			expect: validation.ErrorList{
-				validation.Required(
-					validation.NewPath("fields").Index(0).Child("fieldType", "multiSelect", "options"),
-					errSelectOptionsRequired,
-				),
-			},
-			form: formWithFields(types.FieldDefinitions{
-				{
-					Name: validFieldName,
-					FieldType: types.FieldType{
-						MultiSelect: &types.FieldTypeMultiSelect{
-							Options: []*types.SelectOption{},
-						},
-					},
-				},
-			}),
-		}, {
-			name: "multi select field with duplicate option name",
-			expect: validation.ErrorList{
-				validation.Duplicate(
-					// fields[0].fieldType.singleSelect.options[1].name
-					validation.NewPath("fields").
-						Index(0).
-						Child("fieldType", "multiSelect", "options").
-						Index(1).
-						Child("name"),
-					"option 1",
-				),
-			},
-			form: formWithFields(types.FieldDefinitions{
-				{
-					Name: validFieldName,
-					FieldType: types.FieldType{
-						MultiSelect: &types.FieldTypeMultiSelect{
-							Options: []*types.SelectOption{
-								{Name: "option 1"},
-								{Name: "option 1"},
-							},
-						},
-					},
-				},
-			}),
-		}, {
-			name: "multi select field with missing option name",
-			expect: validation.ErrorList{
-				validation.Required(
-					// fields[0].fieldType.singleSelect.options[1].name
-					validation.NewPath("fields").
-						Index(0).
-						Child("fieldType", "multiSelect", "options").
-						Index(0).
-						Child("name"),
-					errSelectOptionNameRequired,
-				),
-			},
-			form: formWithFields(types.FieldDefinitions{
-				{
-					Name: validFieldName,
-					FieldType: types.FieldType{
-						MultiSelect: &types.FieldTypeMultiSelect{
-							Options: []*types.SelectOption{
-								{Name: ""},
-							},
-						},
-					},
-				},
-			}),
-		}, {
-			name: "multi select field with invalid option name",
-			expect: validation.ErrorList{
-				validation.Invalid(
-					// fields[0].fieldType.singleSelect.options[1].name
-					validation.NewPath("fields").
-						Index(0).
-						Child("fieldType", "multiSelect", "options").
-						Index(0).
-						Child("name"),
-					"!!",
-					errSelectOptionNameInvalid,
-				),
-			},
-			form: formWithFields(types.FieldDefinitions{
-				{
-					Name: validFieldName,
-					FieldType: types.FieldType{
-						MultiSelect: &types.FieldTypeMultiSelect{
-							Options: []*types.SelectOption{
-								{Name: "!!"},
-							},
-						},
-					},
-				},
-			}),
-		}, {
-			name: "multi select field with too many options",
-			expect: validation.ErrorList{
-				validation.TooMany(
-					// fields[0].fieldType.singleSelect.options[1].name
-					validation.NewPath("fields").
-						Index(0).
-						Child("fieldType", "multiSelect", "options"),
-					selectFieldMaxOptions+1,
-					selectFieldMaxOptions,
-				),
-			},
-			form: formWithFields(types.FieldDefinitions{
-				{
-					Name: validFieldName,
-					FieldType: types.FieldType{
-						MultiSelect: &types.FieldTypeMultiSelect{
-							Options: repeatOptions(selectFieldMaxOptions + 1),
-						},
-					},
-				},
-			}),
 		},
 	}
 
@@ -731,6 +483,140 @@ func TestValidateForm(t *testing.T) {
 		})
 	}
 
+}
+
+func TestValidateFormOptions(t *testing.T) {
+	tests := []struct {
+		name    string
+		options []*types.SelectOption
+		expect  func(fieldPath *validation.Path) validation.ErrorList
+	}{
+		{
+			name: "valid",
+			expect: func(fieldPath *validation.Path) validation.ErrorList {
+				return nil
+			},
+			options: []*types.SelectOption{
+				{
+					Name: "option1",
+					ID:   "option1",
+				}, {
+					Name: "option2",
+					ID:   "option2",
+				},
+			},
+		}, {
+			name: "no options",
+			expect: func(fieldPath *validation.Path) validation.ErrorList {
+				return validation.ErrorList{
+					validation.Required(
+						fieldPath.Child("options"),
+						errSelectOptionsRequired,
+					),
+				}
+			},
+			options: []*types.SelectOption{},
+		}, {
+			name: "duplicate option name",
+			expect: func(fieldPath *validation.Path) validation.ErrorList {
+				return validation.ErrorList{
+					validation.Duplicate(
+						fieldPath.
+							Child("options").
+							Index(1).
+							Child("name"),
+						"option 1",
+					),
+				}
+			},
+			options: []*types.SelectOption{
+				{Name: "option 1"},
+				{Name: "option 1"},
+			},
+		}, {
+			name: "missing option name",
+			expect: func(fieldPath *validation.Path) validation.ErrorList {
+				return validation.ErrorList{
+					validation.Required(
+						fieldPath.
+							Child("options").
+							Index(0).
+							Child("name"),
+						errSelectOptionNameRequired,
+					),
+				}
+			},
+			options: []*types.SelectOption{
+				{Name: ""},
+			},
+		}, {
+			name: "invalid option name",
+			expect: func(fieldPath *validation.Path) validation.ErrorList {
+				return validation.ErrorList{
+					validation.Invalid(
+						fieldPath.Child("options").
+							Index(0).
+							Child("name"),
+						"!!",
+						errSelectOptionNameInvalid,
+					),
+				}
+			},
+			options: []*types.SelectOption{
+				{Name: "!!"},
+			},
+		}, {
+			name: "too many options",
+			expect: func(fieldPath *validation.Path) validation.ErrorList {
+				return validation.ErrorList{
+					validation.TooMany(
+						fieldPath.Child("options"),
+						selectFieldMaxOptions+1,
+						selectFieldMaxOptions,
+					),
+				}
+			},
+			options: repeatOptions(selectFieldMaxOptions + 1),
+		},
+	}
+	t.Run("multiSelect", func(t *testing.T) {
+		for _, test := range tests {
+			form := formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+					FieldType: types.FieldType{
+						MultiSelect: &types.FieldTypeMultiSelect{
+							Options: test.options,
+						},
+					},
+				},
+			})
+			t.Run(test.name, func(t *testing.T) {
+				errs := ValidateForm(form)
+				path := validation.NewPath("fields").Index(0).Child("fieldType", "multiSelect")
+				assert.Equal(t, test.expect(path), errs)
+			})
+		}
+	})
+	t.Run("singleSelect", func(t *testing.T) {
+		for _, test := range tests {
+			form := formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+					FieldType: types.FieldType{
+						SingleSelect: &types.FieldTypeSingleSelect{
+							Options: test.options,
+						},
+					},
+				},
+			})
+			t.Run(test.name, func(t *testing.T) {
+				errs := ValidateForm(form)
+				path := validation.NewPath("fields").Index(0).Child("fieldType", "singleSelect")
+				assert.Equal(t, test.expect(path), errs)
+			})
+		}
+	})
 }
 
 func TestValidateFieldNameRegex(t *testing.T) {
