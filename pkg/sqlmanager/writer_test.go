@@ -34,11 +34,14 @@ func TestMain(m *testing.M) {
 	// We must setup/teardown here, otherwise the process does
 	// not get properly cleaned up
 	done, err := testutils.TryGetPostgres()
-	defer done()
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
+	defer func() {
+		recover()
+		done()
+	}()
 	exitVal := m.Run()
 	done()
 	os.Exit(exitVal)
@@ -366,6 +369,43 @@ create table "databaseId"."subFormField"(
 				{Query: `alter table "databaseId"."formId" add "singleSelectField" varchar(36) not null check ("singleSelectField" in ('option1','option2'));`},
 			},
 		},
+		{
+			name: "form with multi select field",
+			args: []*types.FormDefinition{{
+				ID:         formId,
+				DatabaseID: databaseId,
+				Fields: []*types.FieldDefinition{
+					{
+						ID: "multiSelectField",
+						FieldType: types.FieldType{
+							MultiSelect: &types.FieldTypeMultiSelect{
+								Options: []*types.SelectOption{
+									{
+										ID:   "option1",
+										Name: "Option 1",
+									}, {
+										ID:   "option2",
+										Name: "Option 2",
+									},
+								},
+							},
+						},
+					},
+				},
+			}},
+			want: []schema.DDL{
+				{Query: createTableDDL},
+				{Query: `create table "databaseId"."multiSelectField_options"( "id" varchar(36) primary key, "name" varchar(128) not null unique);`},
+				{Query: `insert into "databaseId"."multiSelectField_options" ("id","name") values ($1,$2);`, Args: []interface{}{"option1", "Option 1"}},
+				{Query: `insert into "databaseId"."multiSelectField_options" ("id","name") values ($1,$2);`, Args: []interface{}{"option2", "Option 2"}},
+				{Query: `
+create table "databaseId"."multiSelectField_associations"(
+  "id" varchar(36) not null references "databaseId"."formId" ("id"),
+  "option_id" varchar(36) not null references "databaseId"."multiSelectField_options" ("id"),
+  constraint "uk_key_multiSelectField" unique ("id", "option_id")
+);`},
+			},
+		},
 	}
 
 	for _, test := range tests {
@@ -395,7 +435,6 @@ create table "databaseId"."subFormField"(
 			assert.Equal(t, test.want, statements)
 		})
 	}
-
 }
 
 func (s *Suite) TestWriterActions() {

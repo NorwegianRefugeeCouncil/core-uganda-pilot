@@ -56,6 +56,10 @@ func TestGetFieldKind(t *testing.T) {
 			name:       "singleSelect",
 			fieldType:  FieldType{SingleSelect: &FieldTypeSingleSelect{}},
 			expectKind: FieldKindSingleSelect,
+		}, {
+			name:       "multiSelect",
+			fieldType:  FieldType{MultiSelect: &FieldTypeMultiSelect{}},
+			expectKind: FieldKindMultiSelect,
 		},
 	}
 
@@ -101,6 +105,7 @@ func TestAccessor(t *testing.T) {
 	month := &FieldTypeMonth{}
 	week := &FieldTypeWeek{}
 	singleSelect := &FieldTypeSingleSelect{}
+	multiSelect := &FieldTypeMultiSelect{}
 
 	ft := FieldType{
 		Text:          text,
@@ -112,6 +117,7 @@ func TestAccessor(t *testing.T) {
 		Month:         month,
 		Week:          week,
 		SingleSelect:  singleSelect,
+		MultiSelect:   multiSelect,
 	}
 
 	var foundValues []interface{}

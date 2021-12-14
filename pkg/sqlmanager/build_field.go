@@ -15,6 +15,8 @@ func getSQLActionsForField(formInterface types.FormInterface, fieldDefinition *t
 	switch fieldKind {
 	case types.FieldKindSingleSelect:
 		return singleSelectFieldActions(formInterface, fieldDefinition)
+	case types.FieldKindMultiSelect:
+		return multiSelectFieldActions(formInterface, fieldDefinition)
 	case types.FieldKindSubForm:
 		return subFormFieldActions(formInterface, fieldDefinition)
 	case types.FieldKindReference:
