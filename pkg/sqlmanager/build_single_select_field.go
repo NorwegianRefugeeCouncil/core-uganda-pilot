@@ -28,7 +28,7 @@ import (
 //
 func singleSelectFieldActions(formInterface types.FormInterface, fieldDefinition *types.FieldDefinition) (sqlActions, error) {
 	result := sqlActions{}
-	result = append(result, buildSelectOptionsTable(formInterface, fieldDefinition)...)
+	result = append(result, buildSelectOptionsTable(formInterface, fieldDefinition.ID, fieldDefinition.FieldType.SingleSelect.Options)...)
 
 	sqlField := getStandardSQLColumnForField(fieldDefinition)
 	sqlField.DataType = schema.SQLDataType{
@@ -60,13 +60,13 @@ func getFieldOptionsTableName(fieldID string) string {
 	return fmt.Sprintf("%s_options", fieldID)
 }
 
-func buildSelectOptionsTable(formInterface types.FormInterface, fieldDefinition *types.FieldDefinition) sqlActions {
+func buildSelectOptionsTable(formInterface types.FormInterface, fieldID string, options []*types.SelectOption) sqlActions {
 	var result sqlActions
 	// creating the SQL Table to hold the possible options for the single select field
 	result = append(result, sqlAction{
 		createTable: &sqlActionCreateTable{
 			sqlTable: schema.SQLTable{
-				Name:   getFieldOptionsTableName(fieldDefinition.ID),
+				Name:   getFieldOptionsTableName(fieldID),
 				Schema: formInterface.GetDatabaseID(),
 				Columns: []schema.SQLColumn{
 					{
@@ -101,11 +101,11 @@ func buildSelectOptionsTable(formInterface types.FormInterface, fieldDefinition 
 		},
 	})
 
-	for _, option := range fieldDefinition.FieldType.SingleSelect.Options {
+	for _, option := range options {
 		result = append(result, sqlAction{
 			insertRow: &sqlActionInsertRow{
 				schemaName: formInterface.GetDatabaseID(),
-				tableName:  getFieldOptionsTableName(fieldDefinition.ID),
+				tableName:  getFieldOptionsTableName(fieldID),
 				columns:    []string{keyIdColumn, keyNameColumn},
 				values:     []interface{}{option.ID, option.Name},
 			},

@@ -18,11 +18,12 @@ func _() {
 	_ = x[FieldKindMonth-7]
 	_ = x[FieldKindWeek-8]
 	_ = x[FieldKindSingleSelect-9]
+	_ = x[FieldKindMultiSelect-10]
 }
 
-const _FieldKind_name = "FieldKindUnknownFieldKindTextFieldKindSubFormFieldKindReferenceFieldKindMultilineTextFieldKindDateFieldKindQuantityFieldKindMonthFieldKindWeekFieldKindSingleSelect"
+const _FieldKind_name = "FieldKindUnknownFieldKindTextFieldKindSubFormFieldKindReferenceFieldKindMultilineTextFieldKindDateFieldKindQuantityFieldKindMonthFieldKindWeekFieldKindSingleSelectFieldKindMultiSelect"
 
-var _FieldKind_index = [...]uint8{0, 16, 29, 45, 63, 85, 98, 115, 129, 142, 163}
+var _FieldKind_index = [...]uint8{0, 16, 29, 45, 63, 85, 98, 115, 129, 142, 163, 183}
 
 func (i FieldKind) String() string {
 	if i < 0 || i >= FieldKind(len(_FieldKind_index)-1) {
