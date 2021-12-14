@@ -39,11 +39,8 @@ func TestMain(m *testing.M) {
 		os.Exit(1)
 	}
 	defer func() {
-		if r := recover(); r != nil {
-			done()
-		} else {
-			done()
-		}
+		recover()
+		done()
 	}()
 	exitVal := m.Run()
 	done()
