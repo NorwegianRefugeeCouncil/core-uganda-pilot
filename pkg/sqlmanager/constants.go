@@ -2,6 +2,7 @@ package sqlmanager
 
 const (
 	keyIdColumn        = "id"
+	keyOptionIdColumn  = "option_id"
 	keyOwnerIdColumn   = "owner_id"
 	keyCreatedAtColumn = "created_at"
 	keyNameColumn      = "name"

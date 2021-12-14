@@ -28,6 +28,8 @@ type FieldType struct {
 	Month *FieldTypeMonth `json:"month,omitempty" yaml:"month,omitempty"`
 	// SingleSelect represents the configuration for a single select field
 	SingleSelect *FieldTypeSingleSelect `json:"singleSelect,omitempty" yaml:"singleSelect,omitempty"`
+	// SingleSelect represents the configuration for a single select field
+	MultiSelect *FieldTypeMultiSelect `json:"multiSelect,omitempty" yaml:"multiSelect,omitempty"`
 }
 
 const accessorMessage = `
@@ -105,6 +107,12 @@ type FieldTypeSingleSelect struct {
 	Options []*SelectOption `json:"options,omitempty" yaml:"options,omitempty"`
 }
 
+// FieldTypeMultiSelect represents a field from which the user can select multiple options
+type FieldTypeMultiSelect struct {
+	// Options represent the different options that the user can select from
+	Options []*SelectOption `json:"options,omitempty" yaml:"options,omitempty"`
+}
+
 // SelectOption represent an option for a FieldTypeSingleSelect or FieldTypeMultiSelect
 type SelectOption struct {
 	// ID of the option
@@ -158,6 +166,7 @@ const (
 	FieldKindMonth
 	FieldKindWeek
 	FieldKindSingleSelect
+	FieldKindMultiSelect
 )
 
 var fieldAccessors = map[FieldKind]func(fieldType FieldType) interface{}{
@@ -190,5 +199,8 @@ var fieldAccessors = map[FieldKind]func(fieldType FieldType) interface{}{
 	},
 	FieldKindSingleSelect: func(fieldType FieldType) interface{} {
 		return fieldType.SingleSelect
+	},
+	FieldKindMultiSelect: func(fieldType FieldType) interface{} {
+		return fieldType.MultiSelect
 	},
 }
