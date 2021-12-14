@@ -1,6 +1,7 @@
 package login
 
 import (
+	"context"
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
 	"github.com/looplab/fsm"
@@ -12,14 +13,13 @@ import (
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/ory/hydra-client-go/client/admin"
 	"github.com/ory/hydra-client-go/models"
-	"github.com/sirupsen/logrus"
 	"go.uber.org/zap"
 	"net/http"
 	"net/url"
 )
 
 func handleError(w http.ResponseWriter, status int, err error) {
-	logrus.WithError(err).Errorf("login error")
+	logging.NewLogger(context.TODO()).Error("login error", zap.Error(err))
 	w.Write([]byte(err.Error()))
 	w.WriteHeader(status)
 }
@@ -274,17 +274,18 @@ func getAuthRequest(action string, authHandlers fsm.Callbacks, userSession *sess
 }
 
 func getUserSession(w http.ResponseWriter, req *http.Request, sessionStore sessions.Store) (*sessions.Session, bool) {
+	l := logging.NewLogger(req.Context())
 	userSession, err := sessionStore.Get(req, "login-session")
 	if err != nil {
 		if cookieErr, ok := err.(securecookie.MultiError); ok {
 			if !cookieErr.IsDecode() {
-				logrus.WithError(err).Errorf("failed to retrieve user session: %s", err)
+				l.Error("failed to retrieve user session", zap.Error(err))
 				handleError(w, http.StatusBadRequest, err)
 				return nil, true
 			}
 		}
 		if err := userSession.Save(req, w); err != nil {
-			logrus.WithError(err).Errorf("failed to clear user session: %s", err)
+			l.Error("failed to clear user session", zap.Error(err))
 			handleError(w, http.StatusBadRequest, err)
 			return nil, true
 		}

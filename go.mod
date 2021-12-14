@@ -30,7 +30,6 @@ require (
 	github.com/ory/hydra-client-go v1.10.6
 	github.com/rs/cors v1.8.0
 	github.com/satori/go.uuid v1.2.0
-	github.com/sirupsen/logrus v1.8.1
 	github.com/snabb/isoweek v1.0.1
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.9.0

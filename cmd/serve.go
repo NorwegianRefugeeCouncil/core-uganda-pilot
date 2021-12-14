@@ -6,7 +6,6 @@ import (
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/store"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -27,7 +26,6 @@ var serveCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "base command for starting servers",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		logrus.SetFormatter(&logrus.TextFormatter{})
 		setupSignal()
 		if err := viper.Unmarshal(&coreOptions); err != nil {
 			return err
@@ -59,14 +57,6 @@ var serveCmd = &cobra.Command{
 			logging.SetLogLevel(zapcore.PanicLevel)
 		case "fatal":
 			logging.SetLogLevel(zapcore.FatalLevel)
-		}
-
-		if len(coreOptions.Log.Level) > 0 {
-			logLevel, err := logrus.ParseLevel(coreOptions.Log.Level)
-			if err != nil {
-				return err
-			}
-			logrus.SetLevel(logLevel)
 		}
 
 		return nil

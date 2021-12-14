@@ -1,11 +1,13 @@
 package utils
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/api/mimetypes"
-	"github.com/sirupsen/logrus"
+	"github.com/nrc-no/core/pkg/logging"
+	"go.uber.org/zap"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -14,7 +16,8 @@ import (
 func JSONResponse(w http.ResponseWriter, status int, data interface{}) {
 	responseBytes, err := json.Marshal(data)
 	if err != nil {
-		logrus.WithError(err).Errorf("failed to marshal response")
+		logger := logging.NewLogger(context.TODO())
+		logger.Error("failed to unmarshal response", zap.Error(err))
 		ErrorResponse(w, err)
 		return
 	}
@@ -27,7 +30,8 @@ func JSONResponse(w http.ResponseWriter, status int, data interface{}) {
 }
 
 func ErrorResponse(w http.ResponseWriter, err error) {
-	logrus.WithError(err).Errorf("server error")
+	logger := logging.NewLogger(context.TODO())
+	logger.Error("server error", zap.Error(err))
 
 	status := ErrorToAPIStatus(err)
 	code := int(status.Code)

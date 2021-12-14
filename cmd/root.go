@@ -1,9 +1,10 @@
 package cmd
 
 import (
-	"fmt"
+	"github.com/nrc-no/core/pkg/logging"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 )
 
 var cfgFiles []string
@@ -26,6 +27,8 @@ func init() {
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
 
+	l := logging.NewLogger(ctx)
+
 	viper.AutomaticEnv() // read in environment variables that match
 
 	for i, file := range cfgFiles {
@@ -37,15 +40,19 @@ func initConfig() {
 			err = viper.MergeInConfig()
 		}
 		if err == nil {
-			fmt.Println("Using config file: " + viper.ConfigFileUsed())
+			l.Info("using config file", zap.String("config_file", viper.ConfigFileUsed()))
 		} else {
-			fmt.Println(err.Error())
+			l.Error("failed to use config file", zap.Error(err))
 			panic(err)
 		}
 	}
 
+	l.Info("finished init config. Start watch")
+
 	if len(cfgFiles) > 0 {
 		viper.WatchConfig()
 	}
+
+	l.Info("watch started")
 
 }
