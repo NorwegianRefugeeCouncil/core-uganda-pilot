@@ -1,4 +1,4 @@
-import { FC, Fragment } from 'react';
+import { FC } from 'react';
 import { FieldDefinition, Record } from 'core-api-client';
 import { Link } from 'react-router-dom';
 import format from 'date-fns/format';
@@ -11,7 +11,7 @@ type RecordFieldProps = {
   subRecords: Record[] | undefined;
 };
 const RecordField: FC<RecordFieldProps> = (props) => {
-  const { field, value } = props;
+  const { field, value, subRecords } = props;
 
   function renderField(f: FieldDefinition, v: any) {
     if (f.fieldType.reference) {
@@ -32,10 +32,12 @@ const RecordField: FC<RecordFieldProps> = (props) => {
 
   return (
     <div className="form-group mb-3">
-      <label className="form-label">{field.name}</label>
+      <span className="form-label">{field.name}</span>
       {renderField(field, value)}
-      {props.subRecords?.map((r) => (
-        <Link to={`/browse/records/${r.id}`}>Sub Record</Link>
+      {subRecords?.map((r) => (
+        <Link key={r.id} to={`/browse/records/${r.id}`}>
+          Sub Record
+        </Link>
       ))}
     </div>
   );
@@ -44,13 +46,13 @@ const RecordField: FC<RecordFieldProps> = (props) => {
 function mapRecordField(record: Record, field: FieldDefinition, subRecords: Record[] | undefined) {
   let value = '';
   const fieldValue = record.values.find((v: any) => v.fieldId === field.id);
-  if (fieldValue) {
+  if (fieldValue && typeof fieldValue.value === 'string') {
     value = fieldValue.value;
   }
   return <RecordField field={field} value={`${value}`} subRecords={subRecords} />;
 }
 
-export const RecordBrowser: FC = (props) => {
+export const RecordBrowser: FC = () => {
   const record = useRecordFromPath('recordId');
   const form = useFormOrSubForm(record?.formId);
   const subRecords = useSubRecords(record?.id);
