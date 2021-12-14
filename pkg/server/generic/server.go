@@ -16,8 +16,8 @@ import (
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/utils"
 	"github.com/rs/cors"
-	"github.com/sirupsen/logrus"
 	"go.uber.org/zap"
+	"gopkg.in/matryer/try.v1"
 	"net"
 	"net/http"
 	"reflect"
@@ -40,7 +40,7 @@ type Middleware func(next http.Handler) http.Handler
 
 func NewGenericServer(options options.ServerOptions, name string) (*Server, error) {
 
-	logger := logrus.WithField("server_name", name)
+	l := logging.NewLogger(context.Background())
 
 	srv := &Server{
 		name:    name,
@@ -67,7 +67,7 @@ func NewGenericServer(options options.ServerOptions, name string) (*Server, erro
 			TestOnBorrow: func(c redis.Conn, t time.Time) error {
 				_, err := c.Do("PING")
 				if err != nil {
-					logger.WithError(err).Errorf("failed to get connection")
+					l.Error("failed to get redis connection", zap.Error(err))
 				}
 				return err
 			},
@@ -79,19 +79,31 @@ func NewGenericServer(options options.ServerOptions, name string) (*Server, erro
 				return redis.Dial("tcp", options.Cache.Redis.Address, redisOptions...)
 			},
 		}
+
+		l.Debug("getting redis pool")
+		
 		conn := pool.Get()
 		defer conn.Close()
 
-		logger.Infof("testing redis connection")
-		_, err := conn.Do("PING")
+		err := try.Do(func(attempt int) (retry bool, err error) {
+			l.Debug("testing redis connection")
+			_, err = conn.Do("PING")
+			if err != nil {
+				l.Error("redis connection test failed", zap.Error(err))
+				time.Sleep(time.Duration(attempt) * time.Second)
+				return attempt < 5, err
+			}
+			return false, nil
+		})
+
 		if err != nil {
-			logger.WithError(err).Errorf("failed to test redis")
-			return nil, err
+			l.Error("failed to test redis connection. reached max attempts", zap.Error(err))
+			panic(err)
 		}
 
 		redisStore, err := redistore.NewRediStoreWithPool(pool, keyPairs...)
 		if err != nil {
-			logger.WithError(err).Errorf("failed to create redis store")
+			l.Error("failed to create redis store", zap.Error(err))
 			panic(err)
 
 		}

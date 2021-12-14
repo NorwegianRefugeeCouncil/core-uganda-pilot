@@ -3,12 +3,12 @@ package login
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/looplab/fsm"
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/server/login/authrequest"
 	"github.com/nrc-no/core/pkg/store"
-	"github.com/sirupsen/logrus"
 	"go.uber.org/zap"
 	"golang.org/x/oauth2"
 	"net/http"
@@ -108,10 +108,12 @@ func processOidcToken(
 	verifier *oidc.IDTokenVerifier,
 ) (*ProcessedToken, error) {
 
+	l := logging.NewLogger(ctx)
+
 	// getting id token from exchange
 	rawIDTokenIntf := token.Extra("id_token")
 	if rawIDTokenIntf == nil {
-		logrus.Warnf("id token not present in token")
+		l.Warn("id token not present in token")
 		var err = errors.New("id token not present in token exchange response")
 		return nil, err
 	}
@@ -119,7 +121,7 @@ func processOidcToken(
 	// converting id token to string
 	rawIDToken, ok := rawIDTokenIntf.(string)
 	if !ok {
-		logrus.Warnf("id token in response was not a string but was: %T", rawIDTokenIntf)
+		l.Warn(fmt.Sprintf("id token in response was not a string but was: %T", rawIDTokenIntf))
 		var err = errors.New("id token in exchange response was not a string")
 		return nil, err
 	}
@@ -127,14 +129,14 @@ func processOidcToken(
 	// verifying id token
 	idToken, err := verifier.Verify(ctx, rawIDToken)
 	if err != nil {
-		logrus.Warnf("failed to verify ID token: %v", err)
+		l.Warn("failed to verify ID token", zap.Error(err))
 		return nil, err
 	}
 
 	// unmarshal claims
 	var userProfile authrequest.Claims
 	if err := idToken.Claims(&userProfile); err != nil {
-		logrus.WithError(err).Warnf("failed to unmarshal claims from ID token")
+		l.Error("failed to unmarshal claims from ID token", zap.Error(err))
 		return nil, err
 	}
 
