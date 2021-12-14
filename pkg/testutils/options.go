@@ -63,7 +63,7 @@ func RecordValues(values types.FieldValues) RecordOption {
 	}
 }
 
-func RecordValue(fieldID string, value *string) RecordOption {
+func RecordValue(fieldID string, value types.StringOrArray) RecordOption {
 	return func(record *types.Record) *types.Record {
 		val := types.FieldValue{
 			FieldID: fieldID,
@@ -79,6 +79,7 @@ func RecordValue(fieldID string, value *string) RecordOption {
 		return record
 	}
 }
+
 func RecordOmitValue(fieldID string) RecordOption {
 	return func(record *types.Record) *types.Record {
 		res := types.FieldValues{}
@@ -411,45 +412,21 @@ func RecordForForm(form types.FormInterface) RecordOption {
 		}
 		for _, field := range form.GetFields() {
 			if field.FieldType.Date != nil {
-				r.Values = append(r.Values, types.FieldValue{
-					FieldID: field.ID,
-					Value:   pointers.String("2020-01-01"),
-				})
+				r.Values = append(r.Values, types.NewFieldStringValue(field.ID, "2020-01-01"))
 			} else if field.FieldType.Month != nil {
-				r.Values = append(r.Values, types.FieldValue{
-					FieldID: field.ID,
-					Value:   pointers.String("2020-01"),
-				})
+				r.Values = append(r.Values, types.NewFieldStringValue(field.ID, "2020-01"))
 			} else if field.FieldType.Week != nil {
-				r.Values = append(r.Values, types.FieldValue{
-					FieldID: field.ID,
-					Value:   pointers.String("2020-W01"),
-				})
+				r.Values = append(r.Values, types.NewFieldStringValue(field.ID, "2020-W01"))
 			} else if field.FieldType.Text != nil {
-				r.Values = append(r.Values, types.FieldValue{
-					FieldID: field.ID,
-					Value:   pointers.String("abc"),
-				})
+				r.Values = append(r.Values, types.NewFieldStringValue(field.ID, "abc"))
 			} else if field.FieldType.MultilineText != nil {
-				r.Values = append(r.Values, types.FieldValue{
-					FieldID: field.ID,
-					Value:   pointers.String("abc\ndef"),
-				})
+				r.Values = append(r.Values, types.NewFieldStringValue(field.ID, "abc\ndef"))
 			} else if field.FieldType.Reference != nil {
-				r.Values = append(r.Values, types.FieldValue{
-					FieldID: field.ID,
-					Value:   pointers.String(uuid.NewV4().String()),
-				})
+				r.Values = append(r.Values, types.NewFieldStringValue(field.ID, uuid.NewV4().String()))
 			} else if field.FieldType.Quantity != nil {
-				r.Values = append(r.Values, types.FieldValue{
-					FieldID: field.ID,
-					Value:   pointers.String("10"),
-				})
+				r.Values = append(r.Values, types.NewFieldStringValue(field.ID, "10"))
 			} else if field.FieldType.SingleSelect != nil {
-				r.Values = append(r.Values, types.FieldValue{
-					FieldID: field.ID,
-					Value:   pointers.String(field.FieldType.SingleSelect.Options[0].ID),
-				})
+				r.Values = append(r.Values, types.NewFieldStringValue(field.ID, field.FieldType.SingleSelect.Options[0].ID))
 			}
 		}
 		return r

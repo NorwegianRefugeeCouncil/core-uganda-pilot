@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/nrc-no/core/pkg/api/types"
 	tu "github.com/nrc-no/core/pkg/testutils"
-	"github.com/nrc-no/core/pkg/utils/pointers"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -48,15 +47,15 @@ func (s *Suite) TestRecordCreateReadList() {
 	}
 
 	var values types.FieldValues
-	values, _ = values.SetValueForFieldName(&form, textFieldName, pointers.String("text value"))
-	values, _ = values.SetValueForFieldName(&form, monthFieldName, pointers.String("2010-01"))
-	values, _ = values.SetValueForFieldName(&form, dateFieldName, pointers.String("2010-12-31"))
-	values, _ = values.SetValueForFieldName(&form, weekFieldName, pointers.String("2020-W10"))
-	values, _ = values.SetValueForFieldName(&form, multilineTextFieldName, pointers.String("text\nvalue"))
-	values, _ = values.SetValueForFieldName(&form, quantityFieldName, pointers.String("10"))
+	values, _ = values.SetValueForFieldName(&form, textFieldName, types.NewStringValue("text value"))
+	values, _ = values.SetValueForFieldName(&form, monthFieldName, types.NewStringValue("2010-01"))
+	values, _ = values.SetValueForFieldName(&form, dateFieldName, types.NewStringValue("2010-12-31"))
+	values, _ = values.SetValueForFieldName(&form, weekFieldName, types.NewStringValue("2020-W10"))
+	values, _ = values.SetValueForFieldName(&form, multilineTextFieldName, types.NewStringValue("text\nvalue"))
+	values, _ = values.SetValueForFieldName(&form, quantityFieldName, types.NewStringValue("10"))
 
 	singleSelectField, _ := form.Fields.GetFieldByName(singleSelectFieldName)
-	values, _ = values.SetValueForFieldName(&form, singleSelectFieldName, pointers.String(singleSelectField.FieldType.SingleSelect.Options[0].ID))
+	values, _ = values.SetValueForFieldName(&form, singleSelectFieldName, types.NewStringValue(singleSelectField.FieldType.SingleSelect.Options[0].ID))
 
 	var record types.Record
 	if err := s.cli.CreateRecord(ctx, &types.Record{
