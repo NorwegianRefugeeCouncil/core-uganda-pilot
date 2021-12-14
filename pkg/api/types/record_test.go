@@ -11,9 +11,10 @@ import (
 func TestStringOrArrayMarshaling(t *testing.T) {
 
 	tests := []struct {
-		name string
-		json string
-		val  StringOrArray
+		name      string
+		json      string
+		val       StringOrArray
+		expectErr bool
 	}{
 		{
 			name: "array",
@@ -35,12 +36,28 @@ func TestStringOrArrayMarshaling(t *testing.T) {
 			val: StringOrArray{
 				Kind: NullValue,
 			},
+		}, {
+			name:      "bad value",
+			json:      `123`,
+			expectErr: true,
+		}, {
+			name:      "bad string",
+			json:      `"ab`,
+			expectErr: true,
+		}, {
+			name:      "bad slice",
+			json:      `["a","b"`,
+			expectErr: true,
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			jsonBytes, err := json.Marshal(test.val)
+			if test.expectErr {
+				assert.Error(t, err)
+				return
+			}
 			if !assert.NoError(t, err) {
 				return
 			}
