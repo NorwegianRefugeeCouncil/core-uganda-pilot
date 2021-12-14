@@ -7,6 +7,7 @@ const version = "v1"
 const folders = "folders"
 const databases = "databases"
 const records = "records"
+const foos = "foos"
 
 var FolderGR = meta.GroupResource{
 	Group:    group,
@@ -21,4 +22,9 @@ var DatabaseGR = meta.GroupResource{
 var RecordGR = meta.GroupResource{
 	Group:    group,
 	Resource: records,
+}
+
+var FooGR = meta.GroupResource{
+	Group:    group,
+	Resource: foos,
 }

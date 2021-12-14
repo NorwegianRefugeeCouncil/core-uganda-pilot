@@ -10,5 +10,6 @@ func Migrate(db *gorm.DB) error {
 		&Option{},
 		&Folder{},
 		&Organization{},
-		&IdentityProvider{})
+		&IdentityProvider{},
+		&Foo{})
 }

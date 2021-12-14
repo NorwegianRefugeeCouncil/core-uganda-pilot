@@ -2,8 +2,10 @@ package formsapi
 
 import (
 	"context"
+
 	"github.com/nrc-no/core/pkg/server/formsapi/handlers/database"
 	"github.com/nrc-no/core/pkg/server/formsapi/handlers/folder"
+	"github.com/nrc-no/core/pkg/server/formsapi/handlers/foo"
 	"github.com/nrc-no/core/pkg/server/formsapi/handlers/form"
 	"github.com/nrc-no/core/pkg/server/formsapi/handlers/record"
 	"github.com/nrc-no/core/pkg/server/generic"
@@ -20,6 +22,8 @@ type Options struct {
 	options.ServerOptions
 	StoreFactory store.Factory
 }
+
+var v1ApiPath string = "/apis/core.nrc.no/v1"
 
 func NewServer(options Options) (*Server, error) {
 
@@ -45,6 +49,10 @@ func NewServer(options Options) (*Server, error) {
 	recordStore := store.NewRecordStore(options.StoreFactory, formStore)
 	recordHandler := record.NewHandler(recordStore, formStore)
 	container.Add(recordHandler.WebService())
+
+	fooStore := store.NewFooStore(options.StoreFactory)
+	fooHandler := foo.NewHandler(fooStore, v1ApiPath)
+	container.Add(fooHandler.WebService())
 
 	s := &Server{
 		options: options,
