@@ -67,6 +67,11 @@ func newFieldIDs(fields []*types.FieldDefinition) {
 				option.ID = uuid.NewV4().String()
 			}
 		}
+		if field.FieldType.MultiSelect != nil {
+			for _, option := range field.FieldType.MultiSelect.Options {
+				option.ID = uuid.NewV4().String()
+			}
+		}
 	}
 }
 

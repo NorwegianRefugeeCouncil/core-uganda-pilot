@@ -25,6 +25,7 @@ func (s *Suite) TestRecordCreateReadList() {
 		multilineTextFieldName = "Multiline Text Field"
 		quantityFieldName      = "Quantity Field"
 		singleSelectFieldName  = "Single Select"
+		multiSelectFieldName   = "Multi Select"
 	)
 
 	if err := s.cli.CreateForm(ctx, &types.FormDefinition{
@@ -41,6 +42,11 @@ func (s *Suite) TestRecordCreateReadList() {
 				{Name: "option1"},
 				{Name: "option2"},
 			}, tu.FieldName(singleSelectFieldName)),
+			tu.AMultiSelectField([]*types.SelectOption{
+				{Name: "option1"},
+				{Name: "option2"},
+				{Name: "option3"},
+			}, tu.FieldName(multiSelectFieldName)),
 		},
 	}, &form); !assert.NoError(s.T(), err) {
 		return
@@ -56,6 +62,12 @@ func (s *Suite) TestRecordCreateReadList() {
 
 	singleSelectField, _ := form.Fields.GetFieldByName(singleSelectFieldName)
 	values, _ = values.SetValueForFieldName(&form, singleSelectFieldName, types.NewStringValue(singleSelectField.FieldType.SingleSelect.Options[0].ID))
+
+	multiSelectField, _ := form.Fields.GetFieldByName(multiSelectFieldName)
+	values, _ = values.SetValueForFieldName(&form, multiSelectFieldName, types.NewArrayValue([]string{
+		multiSelectField.FieldType.MultiSelect.Options[0].ID,
+		multiSelectField.FieldType.MultiSelect.Options[1].ID,
+	}))
 
 	var record types.Record
 	if err := s.cli.CreateRecord(ctx, &types.Record{

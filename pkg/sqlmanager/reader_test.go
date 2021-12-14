@@ -21,7 +21,7 @@ func TestReader(t *testing.T) {
 		recordId     = "recordId"
 	)
 
-	formWithField := func(kind types.FieldKind, ) types.FormInterface {
+	formWithField := func(kind types.FieldKind) types.FormInterface {
 		fldOpt := []testutils.FieldOption{
 			testutils.FieldID(keyMyFieldID),
 			testutils.FieldTypeKind(kind),
@@ -230,8 +230,7 @@ func TestReader(t *testing.T) {
 			mockSql := newMockSQLReader(tt.columns, tt.values)
 			mockSql.columnsThrows = tt.columnsThrows
 			mockSql.scanThrows = tt.scanThrows
-			reader := NewFormReader(tt.form, mockSql)
-			got, err := reader.GetRecords()
+			got, err := readRecords(tt.form, mockSql)
 			if tt.wantErr {
 				assert.Error(t, err)
 				return
