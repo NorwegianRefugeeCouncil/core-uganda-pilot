@@ -7,6 +7,8 @@ import (
 	"github.com/nrc-no/core/pkg/utils"
 	"golang.org/x/sync/errgroup"
 	"net/http"
+	"net/url"
+	"sync"
 )
 
 func HandleAuth(
@@ -29,6 +31,21 @@ func HandleAuth(
 		// Saving a few ms here and there on all requests will add up.
 		g, _ := errgroup.WithContext(req.Context())
 
+		// we do not write directly to the response headers.
+		// if we run authorization and authentication in parallel,
+		// those might add headers to the response even if
+		// one of the goroutines fail.
+		// To prevent leaking any authorization/authentication
+		// in the case of a failure, we delay writing to the
+		// headers until both the authorization and authentication
+		// are successful
+		respHeaders := url.Values{}
+
+		// We also ensure a thread-safe writing to the response headers
+		// using a mutex. The authorization part does not write any
+		// headers yet, but the implementation is there for when it does.
+		respLock := sync.Mutex{}
+
 		// Authorizing the request
 		g.Go(func() error {
 			authorizationResponse, err := authorizer.Authorize(req)
@@ -47,14 +64,23 @@ func HandleAuth(
 			if err != nil {
 				return err
 			}
-			w.Header().Set("X-Remote-Subject", authenticationResponse.Sub)
-			w.Header().Set("X-Remote-Username", authenticationResponse.PreferredUsername)
+
+			respLock.Lock()
+			defer respLock.Unlock()
+			respHeaders.Set("X-Remote-Subject", authenticationResponse.Sub)
+			respHeaders.Set("X-Remote-Username", authenticationResponse.PreferredUsername)
+
 			return nil
 		})
 
+		// Waiting for both authorization and authentication to finish.
 		if err := g.Wait(); err != nil {
 			utils.ErrorResponse(w, err)
 			return
+		}
+
+		for key, values := range respHeaders {
+			w.Header()[key] = values
 		}
 		w.WriteHeader(http.StatusOK)
 	}
