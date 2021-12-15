@@ -9,7 +9,7 @@ import (
 // servePublicCmd represents the public command
 var servePublicCmd = &cobra.Command{
 	Use:   "forms-api",
-	Short: "starts the public server",
+	Short: "starts the forms-api server",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := initStoreFactory(); err != nil {
 			return err
