@@ -92,7 +92,7 @@ serve:
   	    path: /key.pem  	    
   	 
   	
-  # authn api server options
+  # authnz api server options
   authnz_api: 
   
   	# listener host
