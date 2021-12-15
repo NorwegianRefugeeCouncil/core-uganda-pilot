@@ -1,13 +1,13 @@
-package public
+package forms
 
 import (
 	"context"
+	"github.com/nrc-no/core/pkg/server/forms/handlers/database"
+	"github.com/nrc-no/core/pkg/server/forms/handlers/folder"
+	"github.com/nrc-no/core/pkg/server/forms/handlers/form"
+	"github.com/nrc-no/core/pkg/server/forms/handlers/record"
 	"github.com/nrc-no/core/pkg/server/generic"
 	"github.com/nrc-no/core/pkg/server/options"
-	"github.com/nrc-no/core/pkg/server/public/handlers/database"
-	"github.com/nrc-no/core/pkg/server/public/handlers/folder"
-	"github.com/nrc-no/core/pkg/server/public/handlers/form"
-	"github.com/nrc-no/core/pkg/server/public/handlers/record"
 	"github.com/nrc-no/core/pkg/store"
 )
 

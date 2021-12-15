@@ -4,7 +4,6 @@ import (
 	"github.com/nrc-no/core/pkg/server/admin"
 	"github.com/nrc-no/core/pkg/server/auth"
 	"github.com/nrc-no/core/pkg/server/login"
-	"github.com/nrc-no/core/pkg/server/public"
 	"github.com/spf13/cobra"
 )
 
@@ -17,7 +16,7 @@ var serveAllCmd = &cobra.Command{
 			return err
 		}
 		if err := servePublic(ctx,
-			public.Options{
+			forms.Options{
 				ServerOptions: coreOptions.Serve.Public,
 				StoreFactory:  factory,
 			}); err != nil {
