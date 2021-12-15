@@ -36,7 +36,7 @@ var (
 	CoreAppFrontendDir   string
 	CoreAdminFrontendDir string
 	CoreFormsApiDir      string
-	CoreAdminApiDir      string
+	CoreAuthnzApiDir     string
 	CoreAuthnzBouncerDir string
 	LoginDir             string
 	RedisDir             string
@@ -119,10 +119,10 @@ type dbUser struct {
 }
 
 type Config struct {
-	coreAdminApiBlockKey      string
-	coreAdminApiHashKey       string
-	coreAdminApiTlsCert       *x509.Certificate
-	coreAdminApiTlsKey        *rsa.PrivateKey
+	coreAuthnzApiBlockKey     string
+	coreAuthnzApiHashKey      string
+	coreAuthnzApiTlsCert      *x509.Certificate
+	coreAuthnzApiTlsKey       *rsa.PrivateKey
 	coreAdminFrontendClientId string
 	coreAdminFrontendTlsCert  *x509.Certificate
 	coreAdminFrontendTlsKey   *rsa.PrivateKey
@@ -258,7 +258,7 @@ func createConfig() (*Config, error) {
 		config.makeLogin,
 		config.makeHydra,
 		config.makeCoreFormsApi,
-		config.makeCoreAdminApi,
+		config.makeCoreAuthnzApi,
 		config.makeAppFrontend,
 		config.makeAdminFrontend,
 		config.makeCoreAuth,
@@ -460,6 +460,6 @@ func init() {
 	CoreAppFrontendDir = path.Join(CoreDir, "app_frontend")
 	CoreAdminFrontendDir = path.Join(CoreDir, "admin_frontend")
 	CoreFormsApiDir = path.Join(CoreDir, "forms_api")
-	CoreAdminApiDir = path.Join(CoreDir, "admin_api")
+	CoreAuthnzApiDir = path.Join(CoreDir, "authnz_api")
 	CoreAuthnzBouncerDir = path.Join(CoreDir, "authnz_bouncer")
 }
