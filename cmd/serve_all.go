@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/nrc-no/core/pkg/server/authnzapi"
-	authnzbouncer "github.com/nrc-no/core/pkg/server/authnzbouncer"
+	authnzapiserver "github.com/nrc-no/core/pkg/server/authnzapi"
+	"github.com/nrc-no/core/pkg/server/authnzbouncer"
 	formsapiserver "github.com/nrc-no/core/pkg/server/formsapi"
 	"github.com/nrc-no/core/pkg/server/login"
 	"github.com/spf13/cobra"
@@ -24,7 +24,7 @@ var serveAllCmd = &cobra.Command{
 			return err
 		}
 		if err := serveAuthnzApi(ctx,
-			authnzapi.Options{
+			authnzapiserver.Options{
 				ServerOptions: coreOptions.Serve.AuthnzApi,
 				StoreFactory:  factory,
 				HydraAdmin:    coreOptions.Hydra.Admin.AdminClient(),
