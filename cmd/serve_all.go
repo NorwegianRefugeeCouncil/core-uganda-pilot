@@ -3,7 +3,7 @@ package cmd
 import (
 	"github.com/nrc-no/core/pkg/server/admin"
 	"github.com/nrc-no/core/pkg/server/auth"
-	"github.com/nrc-no/core/pkg/server/forms"
+	formsapiserver "github.com/nrc-no/core/pkg/server/formsapi"
 	"github.com/nrc-no/core/pkg/server/login"
 	"github.com/spf13/cobra"
 )
@@ -17,7 +17,7 @@ var serveAllCmd = &cobra.Command{
 			return err
 		}
 		if err := servePublic(ctx,
-			forms.Options{
+			formsapiserver.Options{
 				ServerOptions: coreOptions.Serve.Public,
 				StoreFactory:  factory,
 			}); err != nil {

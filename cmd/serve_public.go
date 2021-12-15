@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"context"
-	"github.com/nrc-no/core/pkg/server/forms"
+	"github.com/nrc-no/core/pkg/server/formsapi"
 	"github.com/spf13/cobra"
 )
 
@@ -15,7 +15,7 @@ var servePublicCmd = &cobra.Command{
 			return err
 		}
 		if err := servePublic(ctx,
-			forms.Options{
+			formsapi.Options{
 				ServerOptions: coreOptions.Serve.Public,
 				StoreFactory:  factory,
 			}); err != nil {
@@ -30,8 +30,8 @@ func init() {
 	serveCmd.AddCommand(servePublicCmd)
 }
 
-func servePublic(ctx context.Context, options forms.Options) error {
-	server, err := forms.NewServer(options)
+func servePublic(ctx context.Context, options formsapi.Options) error {
+	server, err := formsapi.NewServer(options)
 	if err != nil {
 		return err
 	}

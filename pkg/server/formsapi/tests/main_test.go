@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/nrc-no/core/pkg/client"
 	"github.com/nrc-no/core/pkg/rest"
-	"github.com/nrc-no/core/pkg/server/forms"
+	"github.com/nrc-no/core/pkg/server/formsapi"
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/store"
 	"github.com/nrc-no/core/pkg/testutils"
@@ -18,7 +18,7 @@ import (
 type Suite struct {
 	suite.Suite
 	cli    client.Client
-	srv    *forms.Server
+	srv    *formsapi.Server
 	cancel context.CancelFunc
 	ctx    context.Context
 	done   func()
@@ -53,7 +53,7 @@ func (s *Suite) SetupSuite() {
 		s.T().FailNow()
 	}
 
-	s.srv, err = forms.NewServer(forms.Options{
+	s.srv, err = formsapi.NewServer(formsapi.Options{
 		ServerOptions: options.ServerOptions{
 			Host: "localhost",
 			Port: 0,
