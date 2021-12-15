@@ -16,6 +16,7 @@ type Foo struct {
 	ID         uuid.UUID `gorm:"type:uuid;primary_key;"`
 	Name       string    `gorm:"column:name;size:128;not null;"`
 	OtherField int       `gorm:"column:other_field;not null"`
+	UUIDField  uuid.UUID `gorm:"type:uuid;column:uuid_field;"`
 	Valid      bool      `gorm:"column:valid;not null;default:true"`
 }
 

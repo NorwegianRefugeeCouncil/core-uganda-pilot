@@ -8,11 +8,13 @@ export const Foo = () => {
   const [sendId, setSendId] = React.useState(false);
   const [sendName, setSendName] = React.useState(true);
   const [sendOtherField, setSendOtherField] = React.useState(true);
+  const [sendUUIDField, setSendUUIDField] = React.useState(true);
   const [sendValid, setSendValid] = React.useState(true);
 
   const [id, setId] = React.useState(uuid);
   const [name, setName] = React.useState('A name');
   const [otherField, setOtherField] = React.useState(10);
+  const [uuidField, setUUIDField] = React.useState(uuid);
   const [valid, setValid] = React.useState(true);
 
   const send = () => {
@@ -20,6 +22,7 @@ export const Foo = () => {
     if (sendId) body.id = id;
     if (sendName) body.name = name;
     if (sendOtherField) body.otherField = otherField;
+    if (sendUUIDField) body.uuidField = uuidField;
     if (sendValid) body.valid = valid;
     const resposne = client.createFoo(body);
     console.log(resposne);
@@ -37,6 +40,9 @@ export const Foo = () => {
       <input id="sendOtherField" type="checkbox" checked={sendOtherField} onChange={() => setSendOtherField(!sendOtherField)} />
       <label htmlFor="sendOtherField">sendOtherField</label>
       <br />
+      <input id="sendUUIDField" type="checkbox" checked={sendUUIDField} onChange={() => setSendUUIDField(!sendUUIDField)} />
+      <label htmlFor="sendUUIDField">sendUUIDField</label>
+      <br />
       <input id="sendValid" type="checkbox" checked={sendValid} onChange={() => setSendValid(!sendValid)} />
       <label htmlFor="sendValid">sendValid</label>
       <br />
@@ -50,6 +56,9 @@ export const Foo = () => {
       <br />
       <input id="otherField" type="number" value={otherField} onChange={(e) => setOtherField(Number(e.target.value))} />
       <label htmlFor="otherField">otherField</label>
+      <br />
+      <input id="uuidField" type="text" value={uuidField} onChange={(e) => setUUIDField(e.target.value)} />
+      <label htmlFor="uuidField">uuidField</label>
       <br />
       <input id="valid" type="checkbox" checked={valid} onChange={() => setValid(!valid)} />
       <label htmlFor="sendId">valid</label>

@@ -11,14 +11,19 @@ func ValidateFooReads(foo *types.FooReads) validation.ErrorList {
 
 	namePath := validation.NewPath("name")
 	otherFieldPath := validation.NewPath("otherField")
+	uuidFieldPath := validation.NewPath("uuidField")
 	validPath := validation.NewPath("valid")
 
 	if foo.Name == nil || len(*foo.Name) == 0 {
 		result = append(result, validation.Required(namePath, "name is required"))
 	}
 
-	if foo.OtherField == nil {
+	if foo.OtherField == nil || *foo.OtherField <= 0 || *foo.OtherField >= 100 {
 		result = append(result, validation.Required(otherFieldPath, "otherField is required"))
+	}
+
+	if foo.UUIDField == nil || *foo.UUIDField == uuid.Nil {
+		result = append(result, validation.Required(uuidFieldPath, "uuidField is required"))
 	}
 
 	if foo.Valid == nil {
@@ -33,6 +38,7 @@ func ValidateFoo(foo *types.Foo) validation.ErrorList {
 
 	idPath := validation.NewPath("id")
 	namePath := validation.NewPath("name")
+	uuidFieldPath := validation.NewPath("uuidField")
 	otherFieldPath := validation.NewPath("otherField")
 	// validPath := validation.NewPath("valid") // No validation required?
 
@@ -42,6 +48,10 @@ func ValidateFoo(foo *types.Foo) validation.ErrorList {
 
 	if len(foo.Name) == 0 {
 		result = append(result, validation.Required(namePath, "name is required"))
+	}
+
+	if foo.UUIDField == uuid.Nil {
+		result = append(result, validation.Required(uuidFieldPath, "uuidField is required"))
 	}
 
 	if foo.OtherField <= 0 || foo.OtherField >= 100 {
