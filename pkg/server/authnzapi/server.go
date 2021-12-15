@@ -1,10 +1,10 @@
-package admin
+package authnzapi
 
 import (
 	"context"
-	"github.com/nrc-no/core/pkg/server/admin/handlers/clients"
-	"github.com/nrc-no/core/pkg/server/admin/handlers/identityprovider"
-	"github.com/nrc-no/core/pkg/server/admin/handlers/organization"
+	"github.com/nrc-no/core/pkg/server/authnzapi/handlers/clients"
+	"github.com/nrc-no/core/pkg/server/authnzapi/handlers/identityprovider"
+	"github.com/nrc-no/core/pkg/server/authnzapi/handlers/organization"
 	"github.com/nrc-no/core/pkg/server/generic"
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/store"
@@ -26,7 +26,7 @@ func NewServer(options Options) (*Server, error) {
 
 	hydraAdmin := options.HydraAdmin
 
-	genericServer, err := generic.NewGenericServer(options.ServerOptions, "admin")
+	genericServer, err := generic.NewGenericServer(options.ServerOptions, "authnz-api")
 	if err != nil {
 		return nil, err
 	}

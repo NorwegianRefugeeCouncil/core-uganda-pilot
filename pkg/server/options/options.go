@@ -52,9 +52,9 @@ type ServerOptions struct {
 }
 
 type ServeOptions struct {
-	FormsApi ServerOptions `mapstructure:"forms_api"`
-	Admin    ServerOptions `mapstructure:"admin"`
-	Login    ServerOptions `mapstructure:"login"`
+	FormsApi      ServerOptions `mapstructure:"forms_api"`
+	AuthnzApi     ServerOptions `mapstructure:"authnz_api"`
+	Login         ServerOptions `mapstructure:"login"`
 	AuthnzBouncer ServerOptions `mapstructure:"authnz_bouncer"`
 }
 
