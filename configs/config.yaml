@@ -31,7 +31,7 @@ serve:
       debug: true
       exposed_headers:
         - Location
-  public:
+  forms_api:
     host: "0.0.0.0"
     port: "9000"
     tls:
