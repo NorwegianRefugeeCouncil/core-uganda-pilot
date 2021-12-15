@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/nrc-no/core/pkg/client"
 	"github.com/nrc-no/core/pkg/rest"
+	"github.com/nrc-no/core/pkg/server/forms"
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/store"
 	"github.com/nrc-no/core/pkg/testutils"
