@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"github.com/nrc-no/core/pkg/api/meta"
-	"github.com/nrc-no/core/pkg/server/auth/authenticators"
-	"github.com/nrc-no/core/pkg/server/auth/authorizers"
+	"github.com/nrc-no/core/pkg/server/authnzbouncer/authenticators"
+	"github.com/nrc-no/core/pkg/server/authnzbouncer/authorizers"
 	"github.com/nrc-no/core/pkg/utils"
 	"net/http"
 )
