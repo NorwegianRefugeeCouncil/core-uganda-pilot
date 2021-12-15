@@ -18,7 +18,7 @@ var serveAllCmd = &cobra.Command{
 		}
 		if err := servePublic(ctx,
 			formsapiserver.Options{
-				ServerOptions: coreOptions.Serve.Public,
+				ServerOptions: coreOptions.Serve.FormsApi,
 				StoreFactory:  factory,
 			}); err != nil {
 			return err
