@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Core - api dev",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceRoot}",
+      "args": [
+        "serve",
+        "all",
+        "--config",
+        "configs/config.yaml,creds/core/config.yaml"
+      ],
+    }
+  ]
+}
