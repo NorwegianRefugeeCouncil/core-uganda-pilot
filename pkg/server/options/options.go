@@ -52,10 +52,10 @@ type ServerOptions struct {
 }
 
 type ServeOptions struct {
-	Public ServerOptions `mapstructure:"public"`
-	Admin  ServerOptions `mapstructure:"admin"`
-	Login  ServerOptions `mapstructure:"login"`
-	Auth   ServerOptions `mapstructure:"auth"`
+	FormsApi ServerOptions `mapstructure:"forms_api"`
+	Admin    ServerOptions `mapstructure:"admin"`
+	Login    ServerOptions `mapstructure:"login"`
+	Auth     ServerOptions `mapstructure:"auth"`
 }
 
 type CertOptions struct {

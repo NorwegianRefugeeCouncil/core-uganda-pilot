@@ -35,7 +35,7 @@ var (
 	CoreDir              string
 	CoreAppFrontendDir   string
 	CoreAdminFrontendDir string
-	CoreApiDir           string
+	CoreFormsApiDir      string
 	CoreAdminApiDir      string
 	CoreAuthApiDir       string
 	LoginDir             string
@@ -128,8 +128,8 @@ type Config struct {
 	coreAdminFrontendTlsKey   *rsa.PrivateKey
 	coreApiBlockKey           string
 	coreApiHashKey            string
-	coreApiTlsCert            *x509.Certificate
-	coreApiTlsKey             *rsa.PrivateKey
+	coreFormsApiTlsCert       *x509.Certificate
+	coreFormsApiTlsKey        *rsa.PrivateKey
 	coreAppFrontendClientId   string
 	coreAppFrontendTlsCert    *x509.Certificate
 	coreAppFrontendTlsKey     *rsa.PrivateKey
@@ -257,7 +257,7 @@ func createConfig() (*Config, error) {
 		config.makeIdp,
 		config.makeLogin,
 		config.makeHydra,
-		config.makeCoreApi,
+		config.makeCoreFormsApi,
 		config.makeCoreAdminApi,
 		config.makeAppFrontend,
 		config.makeAdminFrontend,
@@ -459,7 +459,7 @@ func init() {
 	LoginDir = path.Join(CoreDir, "login")
 	CoreAppFrontendDir = path.Join(CoreDir, "app_frontend")
 	CoreAdminFrontendDir = path.Join(CoreDir, "admin_frontend")
-	CoreApiDir = path.Join(CoreDir, "api")
+	CoreFormsApiDir = path.Join(CoreDir, "forms_api")
 	CoreAdminApiDir = path.Join(CoreDir, "admin_api")
 	CoreAuthApiDir = path.Join(CoreDir, "auth")
 }

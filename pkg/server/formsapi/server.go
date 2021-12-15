@@ -1,13 +1,13 @@
-package public
+package formsapi
 
 import (
 	"context"
+	"github.com/nrc-no/core/pkg/server/formsapi/handlers/database"
+	"github.com/nrc-no/core/pkg/server/formsapi/handlers/folder"
+	"github.com/nrc-no/core/pkg/server/formsapi/handlers/form"
+	"github.com/nrc-no/core/pkg/server/formsapi/handlers/record"
 	"github.com/nrc-no/core/pkg/server/generic"
 	"github.com/nrc-no/core/pkg/server/options"
-	"github.com/nrc-no/core/pkg/server/public/handlers/database"
-	"github.com/nrc-no/core/pkg/server/public/handlers/folder"
-	"github.com/nrc-no/core/pkg/server/public/handlers/form"
-	"github.com/nrc-no/core/pkg/server/public/handlers/record"
 	"github.com/nrc-no/core/pkg/store"
 )
 
@@ -23,7 +23,7 @@ type Options struct {
 
 func NewServer(options Options) (*Server, error) {
 
-	genericServer, err := generic.NewGenericServer(options.ServerOptions, "public")
+	genericServer, err := generic.NewGenericServer(options.ServerOptions, "forms-api")
 	if err != nil {
 		return nil, err
 	}
