@@ -2,12 +2,13 @@ package cmd
 
 import (
 	"context"
+	"github.com/nrc-no/core/pkg/server/forms"
 	"github.com/spf13/cobra"
 )
 
 // servePublicCmd represents the public command
 var servePublicCmd = &cobra.Command{
-	Use:   "public",
+	Use:   "forms",
 	Short: "starts the public server",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := initStoreFactory(); err != nil {

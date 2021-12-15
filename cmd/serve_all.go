@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/nrc-no/core/pkg/server/admin"
 	"github.com/nrc-no/core/pkg/server/auth"
+	"github.com/nrc-no/core/pkg/server/forms"
 	"github.com/nrc-no/core/pkg/server/login"
 	"github.com/spf13/cobra"
 )
