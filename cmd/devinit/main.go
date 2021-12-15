@@ -37,7 +37,7 @@ var (
 	CoreAdminFrontendDir string
 	CoreFormsApiDir      string
 	CoreAdminApiDir      string
-	CoreAuthApiDir       string
+	CoreAuthnzBouncerDir string
 	LoginDir             string
 	RedisDir             string
 	PostgresDir          string
@@ -133,8 +133,8 @@ type Config struct {
 	coreAppFrontendClientId   string
 	coreAppFrontendTlsCert    *x509.Certificate
 	coreAppFrontendTlsKey     *rsa.PrivateKey
-	coreAuthTlsCert           *x509.Certificate
-	coreAuthTlsKey            *rsa.PrivateKey
+	coreAuthnzBouncerTlsCert  *x509.Certificate
+	coreAuthnzBouncerTlsKey   *rsa.PrivateKey
 	coreDbName                string
 	coreDbPassword            string
 	coreDbUsername            string
@@ -461,5 +461,5 @@ func init() {
 	CoreAdminFrontendDir = path.Join(CoreDir, "admin_frontend")
 	CoreFormsApiDir = path.Join(CoreDir, "forms_api")
 	CoreAdminApiDir = path.Join(CoreDir, "admin_api")
-	CoreAuthApiDir = path.Join(CoreDir, "auth")
+	CoreAuthnzBouncerDir = path.Join(CoreDir, "authnz_bouncer")
 }

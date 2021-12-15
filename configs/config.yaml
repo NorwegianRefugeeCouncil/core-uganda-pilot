@@ -75,7 +75,7 @@ serve:
         address: localhost:6379
         max_idle_connections: 10
         max_length: 65536
-  auth:
+  authnz_bouncer:
     host: "127.0.0.1"
     port: "9004"
     tls:

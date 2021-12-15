@@ -8,7 +8,7 @@ import (
 type AuthRequest struct {
 	// ID is the unique id of the auth request
 	ID string
-	// CreatedAt is the time the Auth request was created
+	// CreatedAt is the time the AuthRequest was created
 	CreatedAt time.Time
 	// ClientID is the client id requesting authentication
 	ClientID string

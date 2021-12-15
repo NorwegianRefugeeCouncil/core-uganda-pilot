@@ -1,10 +1,10 @@
-package auth
+package authnzbouncer
 
 import (
 	"context"
-	"github.com/nrc-no/core/pkg/server/auth/authenticators"
-	"github.com/nrc-no/core/pkg/server/auth/authorizers"
-	"github.com/nrc-no/core/pkg/server/auth/handlers"
+	"github.com/nrc-no/core/pkg/server/authnzbouncer/authenticators"
+	"github.com/nrc-no/core/pkg/server/authnzbouncer/authorizers"
+	"github.com/nrc-no/core/pkg/server/authnzbouncer/handlers"
 	"github.com/nrc-no/core/pkg/server/generic"
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/ory/hydra-client-go/client/admin"
@@ -23,7 +23,7 @@ type Options struct {
 }
 
 func NewServer(options Options) (*Server, error) {
-	genericServer, err := generic.NewGenericServer(options.ServerOptions, "auth")
+	genericServer, err := generic.NewGenericServer(options.ServerOptions, "authnz-bouncer")
 	if err != nil {
 		return nil, err
 	}

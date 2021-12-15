@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/nrc-no/core/pkg/server/admin"
-	"github.com/nrc-no/core/pkg/server/auth"
+	authnzbouncer "github.com/nrc-no/core/pkg/server/authnzbouncer"
 	formsapiserver "github.com/nrc-no/core/pkg/server/formsapi"
 	"github.com/nrc-no/core/pkg/server/login"
 	"github.com/spf13/cobra"
@@ -40,8 +40,8 @@ var serveAllCmd = &cobra.Command{
 			return err
 		}
 		if err := serveAuthnzBouncer(ctx,
-			auth.Options{
-				ServerOptions: coreOptions.Serve.Auth,
+			authnzbouncer.Options{
+				ServerOptions: coreOptions.Serve.AuthnzBouncer,
 				HydraAdmin:    coreOptions.Hydra.Admin.AdminClient(),
 				HydraPublic:   coreOptions.Hydra.Public.PublicClient(),
 			}); err != nil {
