@@ -3,10 +3,10 @@
 Core is composed of multiple backend servers.
 
 ```
-login    Server that handles user login and identity federation 
-public   Handles form definitions and records
-bouncer  Authorizes requests
-admin    Manages organizations, identity providers, OAuth2 clients
+login           Server that handles user login and identity federation 
+forms-api       Handles form definitions and records
+authnz-bouncer  Authorizes requests
+authnz-api      Manages organizations, identity providers, OAuth2 clients
 ```
 
 The servers can all be run simultaneously, using a single command
@@ -18,9 +18,9 @@ core serve all
 Or ran separately
 
 ```
-core serve public
-core serve admin
-core serve bouncer
+core serve forms-api
+core serve authnz-api
+core serve authnz-bouncer
 core serve login
 ```
 
@@ -29,7 +29,7 @@ core serve login
 Core must be configured using a configuration file
 
 ```
-core serve public --config=my-config-file.yaml,my-other-config.yaml
+core serve forms-api --config=my-config-file.yaml,my-other-config.yaml
 ```
 
 ### Configuration options
@@ -37,8 +37,8 @@ core serve public --config=my-config-file.yaml,my-other-config.yaml
 ```
 serve:
   
-  # public server options
-  public:
+  # forms api server options
+  forms_api:
   	
   	# listener host
   	host: 0.0.0.0
@@ -49,27 +49,51 @@ serve:
   	# cors options
   	cors:
   	  
+  	  # enable/disable cors
   	  enabled: false
+  	  
+  	  # cors allowed origins
   	  allowed_origins: []
+  	  
+  	  # cors allowed methods
   	  allowed_methods: []
+  	  
+  	  # cors allowed headers
   	  allowed_headers: []
-  	  exposed_headers: []
+  	  
+  	  # cors exposed headers
+  	  exposed_headers: []  
+  	  
+  	  # cors allow credentials	  
   	  allow_credentials: false
+  	  
+  	  # cors passthrough options requests
   	  options_passthrough: false
+  	  
+  	  # cors max age
   	  max_age: 0
+  	  
+  	  # debug cors requests
   	  debug: false
   	  
   	# tls options
   	tls:
+  	
+  	  # enables/disables TLS
   	  enabled: false
   	  cert:
-  	    path: /cert.pem
+  	  
+  	    # path to the TLS cert
+  	    path: /cert.pem  	 
+  	      
   	  key:
+  	  
+  	  	# path to the TLS key
   	    path: /key.pem  	    
   	 
   	
-  # admin server options
-  admin: 
+  # authnz api server options
+  authnz_api: 
   
   	# listener host
   	host: 0.0.0.0
@@ -80,23 +104,47 @@ serve:
   	# cors options
   	cors:
   	  
+  	  # enable/disable cors
   	  enabled: false
+  	  
+  	  # cors allowed origins
   	  allowed_origins: []
+  	  
+  	  # cors allowed methods
   	  allowed_methods: []
+  	  
+  	  # cors allowed headers
   	  allowed_headers: []
-  	  exposed_headers: []
+  	  
+  	  # cors exposed headers
+  	  exposed_headers: []  
+  	  
+  	  # cors allow credentials	  
   	  allow_credentials: false
+  	  
+  	  # cors passthrough options requests
   	  options_passthrough: false
+  	  
+  	  # cors max age
   	  max_age: 0
+  	  
+  	  # debug cors requests
   	  debug: false
   	  
   	# tls options
   	tls:
+  	
+  	  # enables/disables TLS
   	  enabled: false
   	  cert:
-  	    path: /cert.pem
+  	  
+  	    # path to the TLS cert
+  	    path: /cert.pem  	 
+  	      
   	  key:
-  	    path: /key.pem  	    
+  	  
+  	  	# path to the TLS key
+  	    path: /key.pem  	     
   	 
   # login server options
   login:
@@ -110,26 +158,50 @@ serve:
   	# cors options
   	cors:
   	  
+  	  # enable/disable cors
   	  enabled: false
+  	  
+  	  # cors allowed origins
   	  allowed_origins: []
+  	  
+  	  # cors allowed methods
   	  allowed_methods: []
+  	  
+  	  # cors allowed headers
   	  allowed_headers: []
-  	  exposed_headers: []
+  	  
+  	  # cors exposed headers
+  	  exposed_headers: []  
+  	  
+  	  # cors allow credentials	  
   	  allow_credentials: false
+  	  
+  	  # cors passthrough options requests
   	  options_passthrough: false
+  	  
+  	  # cors max age
   	  max_age: 0
+  	  
+  	  # debug cors requests
   	  debug: false
   	  
   	# tls options
   	tls:
+  	
+  	  # enables/disables TLS
   	  enabled: false
   	  cert:
-  	    path: /cert.pem
+  	  
+  	    # path to the TLS cert
+  	    path: /cert.pem  	 
+  	      
   	  key:
-  	    path: /key.pem  	    
-  	 
-  # auth bouncer options
-  auth:
+  	  
+  	  	# path to the TLS key
+  	    path: /key.pem  	 	    
+  	   	 
+  # authnz_bouncer server options
+  authnz_bouncer:
  
   	# listener host
   	host: 0.0.0.0
@@ -139,23 +211,48 @@ serve:
   	
   	# cors options
   	cors:  	
+  	
+  	  # enable/disable cors
   	  enabled: false
+  	  
+  	  # cors allowed origins
   	  allowed_origins: []
+  	  
+  	  # cors allowed methods
   	  allowed_methods: []
+  	  
+  	  # cors allowed headers
   	  allowed_headers: []
-  	  exposed_headers: []
+  	  
+  	  # cors exposed headers
+  	  exposed_headers: []  
+  	  
+  	  # cors allow credentials	  
   	  allow_credentials: false
+  	  
+  	  # cors passthrough options requests
   	  options_passthrough: false
+  	  
+  	  # cors max age
   	  max_age: 0
+  	  
+  	  # debug cors requests
   	  debug: false
   	  
   	# tls options
   	tls:
+  	
+  	  # enables/disables TLS
   	  enabled: false
   	  cert:
-  	    path: /cert.pem
+  	  
+  	    # path to the TLS cert
+  	    path: /cert.pem  	 
+  	      
   	  key:
-  	    path: /key.pem  	    
+  	  
+  	  	# path to the TLS key
+  	    path: /key.pem  	     
   	 
   	
 
