@@ -14,7 +14,7 @@ var servePublicCmd = &cobra.Command{
 		if err := initStoreFactory(); err != nil {
 			return err
 		}
-		if err := servePublic(ctx,
+		if err := serveFormsApi(ctx,
 			formsapiserver.Options{
 				ServerOptions: coreOptions.Serve.FormsApi,
 				StoreFactory:  factory,
@@ -30,7 +30,7 @@ func init() {
 	serveCmd.AddCommand(servePublicCmd)
 }
 
-func servePublic(ctx context.Context, options formsapiserver.Options) error {
+func serveFormsApi(ctx context.Context, options formsapiserver.Options) error {
 	server, err := formsapiserver.NewServer(options)
 	if err != nil {
 		return err

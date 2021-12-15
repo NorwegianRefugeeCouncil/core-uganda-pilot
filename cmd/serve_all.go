@@ -16,7 +16,7 @@ var serveAllCmd = &cobra.Command{
 		if err := initStoreFactory(); err != nil {
 			return err
 		}
-		if err := servePublic(ctx,
+		if err := serveFormsApi(ctx,
 			formsapiserver.Options{
 				ServerOptions: coreOptions.Serve.FormsApi,
 				StoreFactory:  factory,
