@@ -13,38 +13,65 @@ import (
 	"go.uber.org/zap"
 )
 
+func ReadFoo(req *http.Request, l *zap.Logger) (*types.FooReads, error) {
+	var foo types.FooReads
+	if err := utils.BindJSON(req, &foo); err != nil {
+		l.Error("Failed to bind request body", zap.Error(err))
+		return nil, err
+	}
+
+	if errList := validation.ValidateFooReads(&foo); !errList.IsEmpty() {
+		err := meta.NewInvalid(types.FooGR, "", errList)
+		l.Error("Failed to validate request body", zap.Error(err))
+		return nil, err
+	}
+	return &foo, nil
+}
+
+func NewFoo(id uuid.UUID, name string, otherField int, uuidField uuid.UUID, valid bool, l *zap.Logger) (*types.Foo, error) {
+	foo := types.Foo{
+		ID:         id,
+		Name:       name,
+		OtherField: otherField,
+		UUIDField:  uuidField,
+		Valid:      valid,
+	}
+
+	// This is probably excessive
+	if errList := validation.ValidateFoo(&foo); !errList.IsEmpty() {
+		err := meta.NewInvalid(types.FooGR, "", errList)
+		l.Error("Failed to validate foo", zap.Error(err))
+		return nil, err
+	}
+
+	return &foo, nil
+}
+
 func (h *Handler) Create() http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		ctx := req.Context()
 		l := logging.NewLogger(ctx)
 
-		var reads types.FooReads
-		if err := utils.BindJSON(req, &reads); err != nil {
-			l.Error("Failed to bind request body", zap.Error(err))
+		fooReads, err := ReadFoo(req, l)
+		if err != nil {
 			utils.ErrorResponse(w, err)
 			return
 		}
 
-		if errList := validation.ValidateFooReads(&reads); !errList.IsEmpty() {
-			err := meta.NewInvalid(types.FooGR, "", errList)
-			l.Error("Failed to validate request body", zap.Error(err))
+		foo, err := NewFoo(
+			uuid.NewV4(),
+			*fooReads.Name,
+			*fooReads.OtherField,
+			*fooReads.UUIDField,
+			*fooReads.Valid,
+			l,
+		)
+		if err != nil {
 			utils.ErrorResponse(w, err)
 			return
 		}
 
-		// I don't like how there's no validation that each field is set.
-		// I get that they will default to a zero value
-		// But that isn't the same as forgetting to set it.
-		// Eg. here the validation will pass if I forget to set "valid"
-		// because it will default to false.
-		foo := types.Foo{
-			ID:         uuid.NewV4(),
-			Name:       *reads.Name,
-			OtherField: *reads.OtherField,
-			Valid:      *reads.Valid,
-		}
-
-		createdFoo, err := h.store.Create(ctx, &foo)
+		createdFoo, err := h.store.Create(ctx, foo)
 		if err != nil {
 			l.Error("Failed to create foo", zap.Error(err))
 			utils.ErrorResponse(w, err)
