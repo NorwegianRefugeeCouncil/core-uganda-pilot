@@ -25,6 +25,7 @@ func (s *Suite) TestRecordCreateReadList() {
 		multilineTextFieldName = "Multiline Text Field"
 		quantityFieldName      = "Quantity Field"
 		singleSelectFieldName  = "Single Select"
+		singleSelectNullFieldName     = "Single Select 2"
 		singleSelectRequiredFieldName = "Single Select 3"
 		multiSelectFieldName   = "Multi Select"
 	)
@@ -44,6 +45,12 @@ func (s *Suite) TestRecordCreateReadList() {
 				{Name: "option2"},
 			}, tu.FieldName(singleSelectFieldName)),
 
+			tu.ASingleSelectField([]*types.SelectOption{
+				{Name: "option1"},
+				{Name: "option2"},
+			},
+				tu.FieldName(singleSelectNullFieldName),
+			),
 			tu.ASingleSelectField([]*types.SelectOption{
 				{Name: "option1"},
 				{Name: "option2"},
@@ -74,6 +81,8 @@ func (s *Suite) TestRecordCreateReadList() {
 	singleSelectFieldRequired, _ := form.Fields.GetFieldByName(singleSelectRequiredFieldName)
 	values, _ = values.SetValueForFieldName(&form, singleSelectRequiredFieldName, types.NewStringValue(
 		singleSelectFieldRequired.FieldType.SingleSelect.Options[1].ID))
+
+	values, _ = values.SetValueForFieldName(&form, singleSelectNullFieldName, types.NewNullValue())
 
 	multiSelectField, _ := form.Fields.GetFieldByName(multiSelectFieldName)
 	values, _ = values.SetValueForFieldName(&form, multiSelectFieldName, types.NewArrayValue([]string{
