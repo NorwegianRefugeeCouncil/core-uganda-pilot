@@ -64,5 +64,10 @@ func (c SQLColumnConstraint) DDL() DDL {
 			pq.QuoteIdentifier(c.Reference.Column),
 		))
 	}
+	if c.Check != nil {
+		return NewDDL(fmt.Sprintf("check (%s)",
+			c.Check.Expression,
+		))
+	}
 	return EmptyDDL()
 }
