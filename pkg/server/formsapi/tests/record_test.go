@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/nrc-no/core/pkg/api/types"
 	tu "github.com/nrc-no/core/pkg/testutils"
-	"github.com/nrc-no/core/pkg/utils/pointers"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -19,15 +18,16 @@ func (s *Suite) TestRecordCreateReadList() {
 
 	var form types.FormDefinition
 	const (
-		textFieldName                 = "Text Field"
-		monthFieldName                = "Month Field"
-		dateFieldName                 = "Date Field"
-		weekFieldName                 = "Week Field"
-		multilineTextFieldName        = "Multiline Text Field"
-		quantityFieldName             = "Quantity Field"
-		singleSelectFieldName         = "Single Select 1"
+		textFieldName          = "Text Field"
+		monthFieldName         = "Month Field"
+		dateFieldName          = "Date Field"
+		weekFieldName          = "Week Field"
+		multilineTextFieldName = "Multiline Text Field"
+		quantityFieldName      = "Quantity Field"
+		singleSelectFieldName  = "Single Select"
 		singleSelectNullFieldName     = "Single Select 2"
 		singleSelectRequiredFieldName = "Single Select 3"
+		multiSelectFieldName   = "Multi Select"
 	)
 
 	if err := s.cli.CreateForm(ctx, &types.FormDefinition{
@@ -40,13 +40,10 @@ func (s *Suite) TestRecordCreateReadList() {
 			tu.AWeekField(tu.FieldName(weekFieldName)),
 			tu.AMultilineTextField(tu.FieldName(multilineTextFieldName)),
 			tu.AQuantityField(tu.FieldName(quantityFieldName)),
-
 			tu.ASingleSelectField([]*types.SelectOption{
 				{Name: "option1"},
 				{Name: "option2"},
-			},
-				tu.FieldName(singleSelectFieldName),
-			),
+			}, tu.FieldName(singleSelectFieldName)),
 
 			tu.ASingleSelectField([]*types.SelectOption{
 				{Name: "option1"},
@@ -54,34 +51,44 @@ func (s *Suite) TestRecordCreateReadList() {
 			},
 				tu.FieldName(singleSelectNullFieldName),
 			),
-
 			tu.ASingleSelectField([]*types.SelectOption{
 				{Name: "option1"},
 				{Name: "option2"},
 			},
 				tu.FieldName(singleSelectRequiredFieldName),
-				tu.FieldRequired(true),
 			),
+			tu.AMultiSelectField([]*types.SelectOption{
+				{Name: "option1"},
+				{Name: "option2"},
+				{Name: "option3"},
+			}, tu.FieldName(multiSelectFieldName)),
 		},
 	}, &form); !assert.NoError(s.T(), err) {
 		return
 	}
 
 	var values types.FieldValues
-	values, _ = values.SetValueForFieldName(&form, textFieldName, pointers.String("text value"))
-	values, _ = values.SetValueForFieldName(&form, monthFieldName, pointers.String("2010-01"))
-	values, _ = values.SetValueForFieldName(&form, dateFieldName, pointers.String("2010-12-31"))
-	values, _ = values.SetValueForFieldName(&form, weekFieldName, pointers.String("2020-W10"))
-	values, _ = values.SetValueForFieldName(&form, multilineTextFieldName, pointers.String("text\nvalue"))
-	values, _ = values.SetValueForFieldName(&form, quantityFieldName, pointers.String("10"))
+	values, _ = values.SetValueForFieldName(&form, textFieldName, types.NewStringValue("text value"))
+	values, _ = values.SetValueForFieldName(&form, monthFieldName, types.NewStringValue("2010-01"))
+	values, _ = values.SetValueForFieldName(&form, dateFieldName, types.NewStringValue("2010-12-31"))
+	values, _ = values.SetValueForFieldName(&form, weekFieldName, types.NewStringValue("2020-W10"))
+	values, _ = values.SetValueForFieldName(&form, multilineTextFieldName, types.NewStringValue("text\nvalue"))
+	values, _ = values.SetValueForFieldName(&form, quantityFieldName, types.NewStringValue("10"))
 
 	singleSelectFieldSimple, _ := form.Fields.GetFieldByName(singleSelectFieldName)
-	values, _ = values.SetValueForFieldName(&form, singleSelectFieldName, pointers.String(singleSelectFieldSimple.FieldType.SingleSelect.Options[0].ID))
+	values, _ = values.SetValueForFieldName(&form, singleSelectFieldName, types.NewStringValue(singleSelectFieldSimple.FieldType.SingleSelect.Options[0].ID))
 
 	singleSelectFieldRequired, _ := form.Fields.GetFieldByName(singleSelectRequiredFieldName)
-	values, _ = values.SetValueForFieldName(&form, singleSelectRequiredFieldName, pointers.String(singleSelectFieldRequired.FieldType.SingleSelect.Options[0].ID))
+	values, _ = values.SetValueForFieldName(&form, singleSelectRequiredFieldName, types.NewStringValue(
+		singleSelectFieldRequired.FieldType.SingleSelect.Options[1].ID))
 
-	values, _ = values.SetValueForFieldName(&form, singleSelectNullFieldName, nil)
+	values, _ = values.SetValueForFieldName(&form, singleSelectNullFieldName, types.NewNullValue())
+
+	multiSelectField, _ := form.Fields.GetFieldByName(multiSelectFieldName)
+	values, _ = values.SetValueForFieldName(&form, multiSelectFieldName, types.NewArrayValue([]string{
+		multiSelectField.FieldType.MultiSelect.Options[0].ID,
+		multiSelectField.FieldType.MultiSelect.Options[1].ID,
+	}))
 
 	var record types.Record
 	if err := s.cli.CreateRecord(ctx, &types.Record{
@@ -101,7 +108,6 @@ func (s *Suite) TestRecordCreateReadList() {
 		return
 	}
 	assert.Equal(s.T(), record, got)
-	s.T().Logf("%v", got)
 
 	var list types.RecordList
 	if err := s.cli.ListRecords(ctx, types.RecordListOptions{

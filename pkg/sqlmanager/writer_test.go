@@ -6,6 +6,9 @@ import (
 	"github.com/nrc-no/core/pkg/mocks"
 	"github.com/nrc-no/core/pkg/sql/schema"
 	"github.com/nrc-no/core/pkg/testutils"
+	"github.com/nrc-no/core/pkg/utils/pointers"
+	uuid "github.com/satori/go.uuid"
+	"github.com/snabb/isoweek"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/driver/postgres"
@@ -13,6 +16,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 )
 
 type Suite struct {
@@ -30,11 +34,14 @@ func TestMain(m *testing.M) {
 	// We must setup/teardown here, otherwise the process does
 	// not get properly cleaned up
 	done, err := testutils.TryGetPostgres()
-	defer done()
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
+	defer func() {
+		recover()
+		done()
+	}()
 	exitVal := m.Run()
 	done()
 	os.Exit(exitVal)
@@ -64,7 +71,7 @@ func (s *Suite) TearDownSuite() {
 }
 
 func TestSchema(t *testing.T) {
-	s := sqlManager{}
+	s := writer{}
 	var err error
 
 	s, err = s.handleCreateTable(sqlActionCreateTable{
@@ -109,7 +116,7 @@ func TestSchema(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func TestFormConversion(t *testing.T) {
+func TestWriterFormConversion(t *testing.T) {
 
 	const createTableDDL = `create table "databaseId"."formId"( "id" varchar(36) primary key, "created_at" timestamp with time zone not null default NOW());`
 	const formId = "formId"
@@ -362,6 +369,37 @@ create table "databaseId"."subFormField"(
 				{Query: `alter table "databaseId"."formId" add "singleSelectField" varchar(36) not null check ("singleSelectField" in ('option1','option2'));`},
 			},
 		},
+		{
+			name: "form with multi select field",
+			args: []*types.FormDefinition{{
+				ID:         formId,
+				DatabaseID: databaseId,
+				Fields: []*types.FieldDefinition{
+					{
+						ID: "multiSelectField",
+						FieldType: types.FieldType{
+							MultiSelect: &types.FieldTypeMultiSelect{
+								Options: []*types.SelectOption{
+									{
+										ID:   "option1",
+										Name: "Option 1",
+									}, {
+										ID:   "option2",
+										Name: "Option 2",
+									},
+								},
+							},
+						},
+					},
+				},
+			}},
+			want: []schema.DDL{
+				{Query: createTableDDL},
+				{Query: `
+alter table "databaseId"."formId"
+ add "multiSelectField" varchar(36)[] check ("multiSelectField" is null or "multiSelectField" <@ array['option1','option2']::varchar[]);`},
+			},
+		},
 	}
 
 	for _, test := range tests {
@@ -391,10 +429,9 @@ create table "databaseId"."subFormField"(
 			assert.Equal(t, test.want, statements)
 		})
 	}
-
 }
 
-func (s *Suite) TestSchemaActions() {
+func (s *Suite) TestWriterActions() {
 
 	const publicSchema = "public"
 	const formId = "formId"
@@ -498,4 +535,259 @@ func (s *Suite) TestSchemaActions() {
 		return
 	}
 
+}
+
+func TestWriterPutRecords(t *testing.T) {
+
+	const (
+		formId      = "formId"
+		databaseId  = "databaseId"
+		ownerFormId = "ownerFormId"
+	)
+
+	formOpts := []testutils.FormOption{
+		testutils.FormID(formId),
+		testutils.FormDatabaseID(databaseId),
+	}
+
+	formWithFields := func(options ...testutils.FormOption) types.FormInterface {
+		return testutils.AForm(append(formOpts, options...)...)
+	}
+
+	subFormWithFields := func(options ...testutils.FormOption) types.FormInterface {
+		return testutils.ASubForm(ownerFormId, append(formOpts, options...)...)
+	}
+
+	aRecord := func(options ...testutils.RecordOption) *types.Record {
+		opts := []testutils.RecordOption{
+			testutils.RecordID("recordId"),
+			testutils.RecordFormID(formId),
+			testutils.RecordDatabaseID(databaseId),
+		}
+		opts = append(opts, options...)
+		return testutils.RecordOptions(opts...)(&types.Record{})
+	}
+
+	aSingleRecord := func(options ...testutils.RecordOption) *types.RecordList {
+		return &types.RecordList{
+			Items: []*types.Record{
+				aRecord(options...),
+			},
+		}
+	}
+
+	mustParseTime := func(layout string, str string) time.Time {
+		tm, err := time.Parse(layout, str)
+		if err != nil {
+			panic(err)
+		}
+		return tm
+	}
+
+	aFormReference := types.FormRef{
+		DatabaseID: uuid.NewV4().String(),
+		FormID:     uuid.NewV4().String(),
+	}
+
+	tests := []struct {
+		name    string
+		form    types.FormInterface
+		records *types.RecordList
+		want    []schema.DDL
+		wantErr bool
+	}{
+		{
+			name:    "record with text value",
+			form:    formWithFields(testutils.FormField(testutils.AField(testutils.FieldID("fieldId"), testutils.FieldTypeText()))),
+			records: aSingleRecord(testutils.RecordValue("fieldId", types.NewStringValue("myValue"))),
+			want: []schema.DDL{
+				{
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
+					Args:  []interface{}{"recordId", "myValue"},
+				},
+			},
+		}, {
+			name:    "record with null text value",
+			form:    formWithFields(testutils.FormField(testutils.AField(testutils.FieldID("fieldId"), testutils.FieldTypeText()))),
+			records: aSingleRecord(testutils.RecordValue("fieldId", types.NewNullValue())),
+			want: []schema.DDL{
+				{
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
+					Args:  []interface{}{"recordId", nil},
+				},
+			},
+		}, {
+			name:    "record with multiline text value",
+			form:    formWithFields(testutils.FormField(testutils.AField(testutils.FieldID("fieldId"), testutils.FieldTypeMultilineText()))),
+			records: aSingleRecord(testutils.RecordValue("fieldId", types.NewStringValue("myValue"))),
+			want: []schema.DDL{
+				{
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
+					Args:  []interface{}{"recordId", "myValue"},
+				},
+			},
+		}, {
+			name:    "record with nil multiline text value",
+			form:    formWithFields(testutils.FormField(testutils.AField(testutils.FieldID("fieldId"), testutils.FieldTypeMultilineText()))),
+			records: aSingleRecord(testutils.RecordValue("fieldId", types.NewNullValue())),
+			want: []schema.DDL{
+				{
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
+					Args:  []interface{}{"recordId", nil},
+				},
+			},
+		}, {
+			name:    "record with month value",
+			form:    formWithFields(testutils.FormField(testutils.AField(testutils.FieldID("fieldId"), testutils.FieldTypeMonth()))),
+			records: aSingleRecord(testutils.RecordValue("fieldId", types.NewStringValue("2020-01"))),
+			want: []schema.DDL{
+				{
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
+					Args:  []interface{}{"recordId", mustParseTime(monthFieldFormat, "2020-01")},
+				},
+			},
+		}, {
+			name:    "record with nil month value",
+			form:    formWithFields(testutils.FormField(testutils.AField(testutils.FieldID("fieldId"), testutils.FieldTypeMonth()))),
+			records: aSingleRecord(testutils.RecordValue("fieldId", types.NewNullValue())),
+			want: []schema.DDL{
+				{
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
+					Args:  []interface{}{"recordId", nil},
+				},
+			},
+		}, {
+			name:    "record with bad month value",
+			form:    formWithFields(testutils.FormField(testutils.AField(testutils.FieldID("fieldId"), testutils.FieldTypeMonth()))),
+			records: aSingleRecord(testutils.RecordValue("fieldId", types.NewStringValue("abc"))),
+			wantErr: true,
+		}, {
+			name:    "record with week value",
+			form:    formWithFields(testutils.FormField(testutils.AField(testutils.FieldID("fieldId"), testutils.FieldTypeWeek()))),
+			records: aSingleRecord(testutils.RecordValue("fieldId", types.NewStringValue("2020-W01"))),
+			want: []schema.DDL{
+				{
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
+					Args:  []interface{}{"recordId", isoweek.StartTime(2020, 1, time.UTC)},
+				},
+			},
+		}, {
+			name:    "record with nil week value",
+			form:    formWithFields(testutils.FormField(testutils.AField(testutils.FieldID("fieldId"), testutils.FieldTypeWeek()))),
+			records: aSingleRecord(testutils.RecordValue("fieldId", types.NewNullValue())),
+			want: []schema.DDL{
+				{
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
+					Args:  []interface{}{"recordId", nil},
+				},
+			},
+		}, {
+			name:    "record with bad week value",
+			form:    formWithFields(testutils.FormField(testutils.AField(testutils.FieldID("fieldId"), testutils.FieldTypeWeek()))),
+			records: aSingleRecord(testutils.RecordValue("fieldId", types.NewStringValue("2020-W75"))),
+			wantErr: true,
+		}, {
+			name:    "record with date value",
+			form:    formWithFields(testutils.FormField(testutils.AField(testutils.FieldID("fieldId"), testutils.FieldTypeDate()))),
+			records: aSingleRecord(testutils.RecordValue("fieldId", types.NewStringValue("2020-01-01"))),
+			want: []schema.DDL{
+				{
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
+					Args:  []interface{}{"recordId", mustParseTime(dateFieldFormat, "2020-01-01")},
+				},
+			},
+		}, {
+			name:    "record with nil date value",
+			form:    formWithFields(testutils.FormField(testutils.AField(testutils.FieldID("fieldId"), testutils.FieldTypeDate()))),
+			records: aSingleRecord(testutils.RecordValue("fieldId", types.NewNullValue())),
+			want: []schema.DDL{
+				{
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
+					Args:  []interface{}{"recordId", nil},
+				},
+			},
+		}, {
+			name:    "record with bad date value",
+			form:    formWithFields(testutils.FormField(testutils.AField(testutils.FieldID("fieldId"), testutils.FieldTypeDate()))),
+			records: aSingleRecord(testutils.RecordValue("fieldId", types.NewStringValue("abc"))),
+			wantErr: true,
+		}, {
+			name:    "record with reference value",
+			form:    formWithFields(testutils.FormField(testutils.AField(testutils.FieldID("fieldId"), testutils.FieldTypeReference(aFormReference)))),
+			records: aSingleRecord(testutils.RecordValue("fieldId", types.NewStringValue("refId"))),
+			want: []schema.DDL{
+				{
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
+					Args:  []interface{}{"recordId", "refId"},
+				},
+			},
+		}, {
+			name:    "record with nil reference value",
+			form:    formWithFields(testutils.FormField(testutils.AField(testutils.FieldID("fieldId"), testutils.FieldTypeReference(aFormReference)))),
+			records: aSingleRecord(testutils.RecordValue("fieldId", types.NewNullValue())),
+			want: []schema.DDL{
+				{
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
+					Args:  []interface{}{"recordId", nil},
+				},
+			},
+		}, {
+			name:    "record with quantity value",
+			form:    formWithFields(testutils.FormField(testutils.AField(testutils.FieldID("fieldId"), testutils.FieldTypeQuantity()))),
+			records: aSingleRecord(testutils.RecordValue("fieldId", types.NewStringValue("3"))),
+			want: []schema.DDL{
+				{
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
+					Args:  []interface{}{"recordId", 3},
+				},
+			},
+		}, {
+			name:    "record with nil quantity value",
+			form:    formWithFields(testutils.FormField(testutils.AField(testutils.FieldID("fieldId"), testutils.FieldTypeQuantity()))),
+			records: aSingleRecord(testutils.RecordValue("fieldId", types.NewNullValue())),
+			want: []schema.DDL{
+				{
+					Query: `insert into "databaseId"."formId" ("id","fieldId") values ($1,$2);`,
+					Args:  []interface{}{"recordId", nil},
+				},
+			},
+		}, {
+			name:    "record with bad quantity value",
+			form:    formWithFields(testutils.FormField(testutils.AField(testutils.FieldID("fieldId"), testutils.FieldTypeQuantity()))),
+			records: aSingleRecord(testutils.RecordValue("fieldId", types.NewStringValue("abc"))),
+			wantErr: true,
+		}, {
+			name: "record with owner",
+			form: subFormWithFields(
+				testutils.FormField(testutils.AField(testutils.FieldID("fieldId"), testutils.FieldTypeQuantity())),
+			),
+			records: aSingleRecord(
+				testutils.RecordOwnerID(pointers.String("ownerId")),
+				testutils.RecordValue("fieldId", types.NewStringValue("123")),
+			),
+			want: []schema.DDL{
+				{
+					Query: `insert into "databaseId"."formId" ("id","owner_id","fieldId") values ($1,$2,$3);`,
+					Args:  []interface{}{"recordId", "ownerId", 123},
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var f Writer = &writer{}
+			var err error
+			f, err = f.PutRecords(tt.form, tt.records)
+			if tt.wantErr {
+				assert.Error(t, err)
+				return
+			}
+			if !assert.NoError(t, err) {
+				return
+			}
+			got := f.GetStatements()
+			t.Log(got)
+			assert.Equal(t, tt.want, got)
+		})
+	}
 }

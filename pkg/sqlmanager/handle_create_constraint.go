@@ -7,14 +7,14 @@ import (
 	"github.com/nrc-no/core/pkg/sql/schema"
 )
 
-func (s sqlManager) handleCreateConstraint(constraint sqlActionCreateConstraint) (sqlManager, error) {
+func (s writer) handleCreateConstraint(constraint sqlActionCreateConstraint) (writer, error) {
 
 	state := s.State
 
 	// getting the table on which to append the new constraint
 	table, err := state.Tables.GetTable(constraint.tableName)
 	if err != nil {
-		return sqlManager{}, err
+		return writer{}, err
 	}
 
 	// checking if the constraint already exists
@@ -26,7 +26,7 @@ func (s sqlManager) handleCreateConstraint(constraint sqlActionCreateConstraint)
 			table.Constraints = append(table.Constraints, constraint.sqlConstraint)
 			state.Tables, err = state.Tables.ReplaceTable(table)
 			if err != nil {
-				return sqlManager{}, err
+				return writer{}, err
 			}
 
 			// create the DDL Statement for creating the constraint
@@ -40,7 +40,7 @@ func (s sqlManager) handleCreateConstraint(constraint sqlActionCreateConstraint)
 			s.Statements = append(s.Statements, addConstraintDDL)
 
 		} else {
-			return sqlManager{}, err
+			return writer{}, err
 		}
 
 	} else {

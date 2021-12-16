@@ -68,34 +68,15 @@ func (r recordStore) Get(ctx context.Context, recordRef types.RecordRef) (*types
 		pq.QuoteIdentifier(form.GetFormID()),
 	))
 
-	l.Debug("getting raw sql database")
-	sqlDB, err := db.DB()
-	if err != nil {
-		l.Error("failed to get raw sql database", zap.Error(err))
-		return nil, meta.NewInternalServerError(err)
-	}
-
 	l.Debug("finding records")
-	result, err := sqlDB.Query(query.String(), recordRef.ID)
+	formReader := sqlmanager.NewFormReader(db)
+	record, err := formReader.GetRecord(ctx, form, recordRef)
 	if err != nil {
-		l.Error("failed to find records", zap.Error(err))
-		return nil, meta.NewInternalServerError(err)
-	}
-
-	formReader := sqlmanager.NewFormReader(form, result)
-	records, err := formReader.GetRecords()
-	if err != nil {
-		l.Error("failed to list records", zap.Error(err))
+		l.Error("failed to get record", zap.Error(err))
 		return nil, err
 	}
 
-	if len(records.Items) != 1 {
-		err := meta.NewInternalServerError(fmt.Errorf("unexpected number of records"))
-		l.Error("should only have 1 record in result", zap.Error(err))
-		return nil, err
-	}
-
-	return records.Items[0], nil
+	return record, nil
 
 }
 
@@ -135,22 +116,8 @@ func (r recordStore) List(ctx context.Context, options types.RecordListOptions) 
 		pq.QuoteIdentifier(form.GetFormID()),
 	))
 
-	l.Debug("getting raw sql database")
-	sqlDB, err := db.DB()
-	if err != nil {
-		l.Error("failed to get raw sql database", zap.Error(err))
-		return nil, meta.NewInternalServerError(err)
-	}
-
-	l.Debug("listing records")
-	result, err := sqlDB.Query(query.String())
-	if err != nil {
-		l.Error("failed to list records", zap.Error(err))
-		return nil, meta.NewInternalServerError(err)
-	}
-
-	formReader := sqlmanager.NewFormReader(form, result)
-	records, err := formReader.GetRecords()
+	formReader := sqlmanager.NewFormReader(db)
+	records, err := formReader.GetRecords(ctx, form)
 	if err != nil {
 		l.Error("failed to list records", zap.Error(err))
 		return nil, err
@@ -180,13 +147,17 @@ func (r recordStore) Create(ctx context.Context, record *types.Record) (*types.R
 		return nil, meta.NewInternalServerError(err)
 	}
 
-	formWriter := sqlmanager.NewFormWriter(form)
-	ddl, err := formWriter.WriteRecords(&types.RecordList{
+	formWriter := sqlmanager.New()
+	formWriter, err = formWriter.PutRecords(form, &types.RecordList{
 		Items: []*types.Record{record},
 	})
+	if err != nil {
+		l.Error("failed to put records", zap.Error(err))
+		return nil, meta.NewInternalServerError(err)
+	}
 
 	err = db.Transaction(func(tx *gorm.DB) error {
-		for _, ddlItem := range ddl {
+		for _, ddlItem := range formWriter.GetStatements() {
 			if err := tx.Exec(ddlItem.Query, ddlItem.Args...).Error; err != nil {
 				return err
 			}

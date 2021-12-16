@@ -36,6 +36,9 @@ export const FieldTypePicker: FC<FieldTypePickerProps> = (props) => {
           <button className="btn btn-primary m-2 border-light" onClick={() => onSubmit(FieldKind.SingleSelect)}>
             Single Select
           </button>
+          <button className="btn btn-primary m-2 border-light" onClick={() => onSubmit(FieldKind.MultiSelect)}>
+            Multi Select
+          </button>
           <button className="btn btn-primary m-2 border-light" onClick={() => onSubmit(FieldKind.Week)}>
             Week
           </button>

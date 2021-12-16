@@ -7,14 +7,14 @@ import (
 	"github.com/nrc-no/core/pkg/sql/schema"
 )
 
-func (s sqlManager) handleCreateColumn(createColumn sqlActionCreateColumn) (sqlManager, error) {
+func (s writer) handleCreateColumn(createColumn sqlActionCreateColumn) (writer, error) {
 
 	state := s.State
 
 	// finding the table on which to append the column
 	table, err := state.Tables.GetTable(createColumn.tableName)
 	if err != nil {
-		return sqlManager{}, err
+		return writer{}, err
 	}
 
 	// checking if the column already exists
@@ -27,7 +27,7 @@ func (s sqlManager) handleCreateColumn(createColumn sqlActionCreateColumn) (sqlM
 			table.Columns = append(table.Columns, createColumn.sqlColumn)
 			state.Tables, err = state.Tables.ReplaceTable(table)
 			if err != nil {
-				return sqlManager{}, err
+				return writer{}, err
 			}
 
 			// add the DDL statement to create the column
@@ -40,7 +40,7 @@ func (s sqlManager) handleCreateColumn(createColumn sqlActionCreateColumn) (sqlM
 
 			s.Statements = append(s.Statements, addColumnDDL)
 		} else {
-			return sqlManager{}, err
+			return writer{}, err
 		}
 
 	} else {

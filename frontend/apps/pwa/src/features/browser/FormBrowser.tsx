@@ -1,5 +1,5 @@
 import React, { FC, Fragment, useCallback, useEffect, useState } from 'react';
-import { FieldDefinition, Record } from 'core-api-client';
+import { FieldDefinition, Record, SelectOption } from 'core-api-client';
 import { Link } from 'react-router-dom';
 
 import { fetchForms, selectFormOrSubFormById, selectRootForm } from '../../reducers/form';
@@ -111,6 +111,16 @@ function mapRecordCell(field: FieldDefinition, record: Record, getSubFormCount: 
       value = option.name;
     }
     return <td key={field.id}>{value}</td>;
+  }
+
+  if (field.fieldType.multiSelect) {
+    const selected = field.fieldType.multiSelect.options.filter((o: SelectOption) => {
+      if (fieldValue?.value == null) {
+        return false;
+      }
+      return fieldValue.value.includes(o.id);
+    });
+    return <td key={field.id}>{selected.map((s) => s.name).join(', ')}</td>;
   }
 
   return (

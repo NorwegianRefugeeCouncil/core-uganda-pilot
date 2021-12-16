@@ -5,7 +5,7 @@ import (
 	"github.com/nrc-no/core/pkg/sql/schema"
 )
 
-func (s sqlManager) handleCreateTable(createTable sqlActionCreateTable) (sqlManager, error) {
+func (s writer) handleCreateTable(createTable sqlActionCreateTable) (writer, error) {
 	state := s.State
 
 	// checking if there is already a table existing
@@ -16,7 +16,7 @@ func (s sqlManager) handleCreateTable(createTable sqlActionCreateTable) (sqlMana
 			state.Tables = append(state.Tables, createTable.sqlTable)
 			s.Statements = append(s.Statements, createTable.sqlTable.DDL())
 		} else {
-			return sqlManager{}, err
+			return writer{}, err
 		}
 	} else {
 		// todo update an existing table to match the desired state

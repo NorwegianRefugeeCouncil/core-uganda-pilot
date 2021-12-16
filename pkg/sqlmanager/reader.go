@@ -1,11 +1,16 @@
 package sqlmanager
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"github.com/lib/pq"
+	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/utils/pointers"
+	"gorm.io/gorm"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -13,30 +18,61 @@ const (
 	errInvalidSQLDataType = "invalid sql data type"
 )
 
-func NewFormReader(form types.FormInterface, rows sqlReader) FormReader {
-	return &formReader{
-		form:      form,
-		sqlReader: rows,
+func NewFormReader(db *gorm.DB) Reader {
+	return &reader{
+		db: db,
 	}
 }
 
-type FormReader interface {
-	GetRecords() (*types.RecordList, error)
+type Reader interface {
+	GetRecords(ctx context.Context, form types.FormInterface) (*types.RecordList, error)
+	GetRecord(ctx context.Context, form types.FormInterface, recordRef types.RecordRef) (*types.Record, error)
 }
 
-type formReader struct {
-	form      types.FormInterface
-	sqlReader sqlReader
+type reader struct {
+	db *gorm.DB
 }
 
-func (f formReader) GetRecords() (*types.RecordList, error) {
-	return readRecords(f.form, f.sqlReader)
+func (f reader) GetRecords(ctx context.Context, form types.FormInterface) (*types.RecordList, error) {
+	return queryRecords(ctx, f.db, form, "")
+}
+
+func (f reader) GetRecord(ctx context.Context, form types.FormInterface, recordRef types.RecordRef) (*types.Record, error) {
+	recs, err := queryRecords(ctx, f.db, form, "where id = ?", recordRef.ID)
+	if err != nil {
+		return nil, err
+	}
+	if len(recs.Items) == 0 {
+		return nil, meta.NewNotFound(types.RecordGR, recordRef.ID)
+	}
+	if len(recs.Items) > 1 {
+		return nil, meta.NewInternalServerError(fmt.Errorf("unexpected number of records"))
+	}
+	return recs.Items[0], nil
 }
 
 type sqlReader interface {
 	Columns() ([]string, error)
 	Next() bool
 	Scan(...interface{}) error
+}
+
+// queryRecords will iterate through a series of SQL Rows and return a list of populated records
+func queryRecords(ctx context.Context, db *gorm.DB, form types.FormInterface, sqlQuery string, args ...interface{}) (*types.RecordList, error) {
+	qry := db.Raw(fmt.Sprintf("select * from %s.%s %s",
+		pq.QuoteIdentifier(form.GetDatabaseID()),
+		pq.QuoteIdentifier(form.GetFormID()),
+		sqlQuery,
+	), args...)
+	rows, err := qry.Rows()
+	if err != nil {
+		return nil, err
+	}
+	records, err := readRecords(form, rows)
+	if err != nil {
+		return nil, err
+	}
+	return records, nil
 }
 
 // readRecords will iterate through a series of SQL Rows and return a list of populated records
@@ -116,7 +152,6 @@ func readInRecord(record *types.Record, form types.FormInterface, columns []stri
 				return err
 			}
 		}
-
 	}
 
 	return nil
@@ -137,15 +172,17 @@ func readInRecordField(
 
 	switch fieldKind {
 	case types.FieldKindMonth, types.FieldKindDate, types.FieldKindWeek:
-		readInDateField(record, field, value, fieldKind)
+		return readInDateField(record, field, value, fieldKind)
 	case types.FieldKindQuantity:
-		readInQuantityField(record, field, value)
+		return readInQuantityField(record, field, value)
 	case types.FieldKindSingleSelect:
-		readInSingleSelectField(record, field, value)
+		return readInSingleSelectField(record, field, value)
+	case types.FieldKindMultiSelect:
+		return readInMultiSelectField(record, field, value)
 	case types.FieldKindReference:
-		readInReferenceField(record, field, value)
+		return readInReferenceField(record, field, value)
 	case types.FieldKindText, types.FieldKindMultilineText:
-		readInTextField(record, field, value)
+		return readInTextField(record, field, value)
 	}
 
 	return nil
@@ -153,7 +190,7 @@ func readInRecordField(
 
 // readInReferenceField will populate a record types.FieldValue for a types.FieldTypeDate or types.FieldTypeMonth field from
 // an  SQL value
-func readInDateField(record *types.Record, field *types.FieldDefinition, value interface{}, fieldKind types.FieldKind) {
+func readInDateField(record *types.Record, field *types.FieldDefinition, value interface{}, fieldKind types.FieldKind) error {
 	var valueStr *string
 	switch fieldKind {
 	case types.FieldKindMonth:
@@ -187,71 +224,151 @@ func readInDateField(record *types.Record, field *types.FieldDefinition, value i
 			}
 		}
 	}
-	record.Values = append(record.Values, types.FieldValue{
-		FieldID: field.ID,
-		Value:   valueStr,
-	})
+
+	if valueStr == nil {
+		record.Values = append(record.Values, types.NewFieldNullValue(field.ID))
+	} else {
+		record.Values = append(record.Values, types.NewFieldStringValue(field.ID, *valueStr))
+	}
+
+	return nil
 }
 
 // readInReferenceField will populate a record types.FieldValue for a types.FieldTypeReference field from
 // an  SQL value
-func readInReferenceField(record *types.Record, field *types.FieldDefinition, value interface{}) {
+func readInReferenceField(record *types.Record, field *types.FieldDefinition, value interface{}) error {
+	fieldValue, err := getStringValue(value)
+	if err != nil {
+		return err
+	}
 	record.Values = append(record.Values, types.FieldValue{
 		FieldID: field.ID,
-		Value:   getStringColumnStringPtr(value),
+		Value:   fieldValue,
 	})
+	return nil
 }
 
 // readInSingleSelectField will populate a record types.FieldValue for a types.FieldTypeSingleSelect field from
 // an  SQL value
-func readInSingleSelectField(record *types.Record, field *types.FieldDefinition, value interface{}) {
+func readInSingleSelectField(record *types.Record, field *types.FieldDefinition, value interface{}) error {
+	fieldValue, err := getStringValue(value)
+	if err != nil {
+		return err
+	}
 	record.Values = append(record.Values, types.FieldValue{
 		FieldID: field.ID,
-		Value:   getStringColumnStringPtr(value),
+		Value:   fieldValue,
 	})
+	return nil
+}
+
+// readInMultiSelectField will populate a record types.FieldValue for a types.FieldTypeMultiSelect field from
+// an  SQL value
+func readInMultiSelectField(record *types.Record, field *types.FieldDefinition, value interface{}) error {
+	fieldValue, err := getStringListValue(value)
+	if err != nil {
+		return err
+	}
+	record.Values = append(record.Values, types.FieldValue{
+		FieldID: field.ID,
+		Value:   fieldValue,
+	})
+	return nil
 }
 
 // readInReferenceField will populate a record types.FieldValue for a types.FieldTypeText or
 // types.FieldTypeMultilineText field from an  SQL value
-func readInTextField(record *types.Record, field *types.FieldDefinition, value interface{}) {
+func readInTextField(record *types.Record, field *types.FieldDefinition, value interface{}) error {
+	fieldValue, err := getStringValue(value)
+	if err != nil {
+		return err
+	}
 	record.Values = append(record.Values, types.FieldValue{
 		FieldID: field.ID,
-		Value:   getStringColumnStringPtr(value),
+		Value:   fieldValue,
 	})
+	return nil
 }
 
 // readInQuantityField will populate a record types.FieldValue for a types.FieldTypeQuantity from an  SQL value
-func readInQuantityField(record *types.Record, field *types.FieldDefinition, value interface{}) {
+func readInQuantityField(record *types.Record, field *types.FieldDefinition, value interface{}) error {
+	fieldValue, err := getIntValue(value)
+	if err != nil {
+		return err
+	}
 	record.Values = append(record.Values, types.FieldValue{
 		FieldID: field.ID,
-		Value:   getIntColumnStringPtr(value),
+		Value:   fieldValue,
 	})
+	return nil
 }
 
-// getStringColumnStringPtr will coerce a string or *string into a *string
-func getStringColumnStringPtr(value interface{}) *string {
-	var textStr *string
+// getStringValue will coerce a string or *string into a *string
+func getStringValue(value interface{}) (types.StringOrArray, error) {
 	switch t := value.(type) {
 	case string:
-		textStr = pointers.String(t)
+		return types.NewStringValue(t), nil
 	case *string:
-		textStr = t
+		if t == nil {
+			return types.NewNullValue(), nil
+		} else {
+			return types.NewStringValue(*t), nil
+		}
+	case nil:
+		return types.NewNullValue(), nil
+	default:
+		return types.StringOrArray{}, fmt.Errorf("cannot convert type %T to types.StringOrArray", value)
 	}
-	return textStr
 }
 
-// getIntColumnStringPtr will convert an int or *int into a *string
-func getIntColumnStringPtr(value interface{}) *string {
-	var intStr *string
+// getStringListValue will coerce an interface{} into a []string
+func getStringListValue(value interface{}) (types.StringOrArray, error) {
+	switch t := value.(type) {
+	case string:
+		return types.NewArrayValue(parseArrayStr(t)), nil
+	case *string:
+		if t == nil {
+			return types.NewNullValue(), nil
+		} else {
+			return types.NewArrayValue(parseArrayStr(*t)), nil
+		}
+	case nil:
+		return types.NewNullValue(), nil
+	default:
+		return types.StringOrArray{}, fmt.Errorf("cannot convert type %T to types.StringOrArray", value)
+	}
+}
+
+func parseArrayStr(str string) []string {
+	str = strings.TrimPrefix(str, "{")
+	str = strings.TrimSuffix(str, "}")
+	return strings.Split(str, ",")
+}
+
+// getIntValue will convert an int or *int into a *string
+func getIntValue(value interface{}) (types.StringOrArray, error) {
 	switch t := value.(type) {
 	case int:
-		intStr = pointers.String(strconv.Itoa(t))
+		return types.NewStringValue(strconv.Itoa(t)), nil
 	case *int:
-		if t != nil {
-			intStr = pointers.String(strconv.Itoa(*t))
+		if t == nil {
+			return types.NewNullValue(), nil
+		} else {
+			return types.NewStringValue(strconv.Itoa(*t)), nil
 		}
+	case int64:
+		return types.NewStringValue(strconv.FormatInt(t, 10)), nil
+	case *int64:
+		if t == nil {
+			return types.NewNullValue(), nil
+		} else {
+			return types.NewStringValue(strconv.FormatInt(*t, 10)), nil
+		}
+	case nil:
+		return types.NewNullValue(), nil
+	default:
+		return types.StringOrArray{}, fmt.Errorf("cannot convert type %T to types.StringOrArray", value)
 	}
-	return intStr
 }
 
 // mapStringValue will return a string value from an interface

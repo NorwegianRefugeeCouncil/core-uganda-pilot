@@ -6,7 +6,7 @@
   "scripts": {
     "start": "env DISABLE_ESLINT_PLUGIN=true react-scripts start",
     "build": "env DISABLE_ESLINT_PLUGIN=true react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --coverage",
     "eject": "react-scripts eject"
   },
   "browserslist": {

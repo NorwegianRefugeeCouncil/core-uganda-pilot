@@ -85,7 +85,6 @@ export const recorderSlice = createSlice({
     setFieldValue(state, action: PayloadAction<{ recordId: string; fieldId: string; value: any }>) {
       const { recordId, fieldId, value } = action.payload;
       const record = state.entities[recordId];
-      console.log('SETFIELDVALUE RECORD', record);
       if (!record) {
         return;
       }
@@ -95,7 +94,6 @@ export const recorderSlice = createSlice({
         record.values = [...record.values, { fieldId, value }];
       } else {
         record.values[idx] = { ...record.values[idx], ...{ value } };
-        console.log(record.values);
       }
     },
     clearFieldValue(state, action: PayloadAction<{ recordId: string; fieldId: string }>) {
