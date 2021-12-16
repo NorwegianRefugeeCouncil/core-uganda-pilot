@@ -329,7 +329,37 @@ create table "databaseId"."subFormField"(
 			}},
 			want: []schema.DDL{
 				{Query: createTableDDL},
-				{Query: `alter table "databaseId"."formId" add "singleSelectField" varchar(36) check ("singleSelectField" IN ('option1','option2'));`},
+				{Query: `alter table "databaseId"."formId" add "singleSelectField" varchar(36) check ("singleSelectField" is null or "singleSelectField" in ('option1','option2'));`},
+			},
+		},
+		{
+			name: "form with required single select field",
+			args: []*types.FormDefinition{{
+				ID:         formId,
+				DatabaseID: databaseId,
+				Fields: []*types.FieldDefinition{
+					{
+						ID:       "singleSelectField",
+						Required: true,
+						FieldType: types.FieldType{
+							SingleSelect: &types.FieldTypeSingleSelect{
+								Options: []*types.SelectOption{
+									{
+										ID:   "option1",
+										Name: "Option 1",
+									}, {
+										ID:   "option2",
+										Name: "Option 2",
+									},
+								},
+							},
+						},
+					},
+				},
+			}},
+			want: []schema.DDL{
+				{Query: createTableDDL},
+				{Query: `alter table "databaseId"."formId" add "singleSelectField" varchar(36) not null check ("singleSelectField" in ('option1','option2'));`},
 			},
 		},
 	}
