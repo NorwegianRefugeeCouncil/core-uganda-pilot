@@ -2,7 +2,7 @@
 
 Base: `nginx:alpine`
 
-The Dockerfile for this app is at `/build/package/authnz-frontend.Dockerfile`
+The Dockerfile for this app is at `/build/package/core-authnz-frontend.Dockerfile`
 
 ### Environment Variables
 

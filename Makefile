@@ -52,8 +52,8 @@ serve-pwa:
 	@./scripts/serve-pwa.sh
 
 .PHONY: serve-admin
-serve-admin:
-	@./scripts/serve-admin.sh
+serve-authnz-frontend:
+	@./scripts/serve-authnz-frontend.sh
 
 .PHONY: serve-storybook
 serve-storybook:
