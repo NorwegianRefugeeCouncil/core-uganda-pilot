@@ -31,7 +31,7 @@ cd "${ROOT_DIR}" || exit 1
 DOCKER_BUILDKIT=1 docker build . --build-arg git_commit='${GIT_COMMIT}' -f build/package/core.Dockerfile --progress=plain --tag "${CORE_TAG}"
 
 # Building authnz-frontend app
-DOCKER_BUILDKIT=1 docker build . --build-arg git_commit='${GIT_COMMIT}' -f build/package/authnz-frontend.Dockerfile --progress=plain --tag "${AUTHNZ_FRONTEND_TAG}"
+DOCKER_BUILDKIT=1 docker build . --build-arg git_commit='${GIT_COMMIT}' -f build/package/core-authnz-frontend.Dockerfile --progress=plain --tag "${AUTHNZ_FRONTEND_TAG}"
 
 # Building core-frontend app
 DOCKER_BUILDKIT=1 docker build . --build-arg git_commit='${GIT_COMMIT}' -f build/package/core-frontend.Dockerfile --progress=plain --tag "${CORE_FRONTEND_TAG}"

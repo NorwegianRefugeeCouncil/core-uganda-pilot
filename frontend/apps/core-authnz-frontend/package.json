@@ -1,9 +1,9 @@
 {
-  "name": "admin",
+  "name": "@nrc.no/core-authnz-frontend",
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "env DISABLE_ESLINT_PLUGIN=true  PORT=3001 react-scripts start",
+    "start": "env DISABLE_ESLINT_PLUGIN=true PORT=3001 react-scripts start",
     "build": "env DISABLE_ESLINT_PLUGIN=true react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

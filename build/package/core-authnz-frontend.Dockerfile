@@ -9,7 +9,7 @@ ADD --chown=node:node frontend/yarn.lock .
 ADD --chown=node:node frontend/lerna.json .
 ADD --chown=node:node frontend/packages/core-api-client/package.json ./packages/core-api-client/package.json
 ADD --chown=node:node frontend/packages/core-auth/package.json ./packages/core-auth/package.json
-ADD --chown=node:node frontend/apps/admin/package.json ./apps/admin/package.json
+ADD --chown=node:node frontend/apps/core-authnz-frontend/package.json ./apps/core-authnz-frontend/package.json
 
 RUN yarn --immutable
 
@@ -25,7 +25,7 @@ ENV REACT_APP_AUTHNZ_API_SERVER_URI='%{AUTHNZ_API_SERVER_URI}%'
 
 RUN yarn build:core-auth && \
     yarn build:core-api-client && \
-    yarn build:admin
+    yarn build:core-authnz-frontend
 
 FROM nginx:alpine
 
@@ -37,8 +37,8 @@ RUN  touch /var/run/nginx.pid && \
 
 USER nginx
 
-ADD --chown=nginx:nginx configs/authnz-frontend/nginx.conf.template  /etc/nginx/templates/nginx.conf.template
-ADD --chown=nginx:nginx configs/authnz-frontend/replace-env-vars.sh /docker-entrypoint.d/40-subst-on-assets.sh
-COPY --from=build --chown=nginx:nginx /home/node/app/apps/admin/build /usr/share/nginx/html
+ADD --chown=nginx:nginx configs/core-authnz-frontend/nginx.conf.template  /etc/nginx/templates/nginx.conf.template
+ADD --chown=nginx:nginx configs/core-authnz-frontend/replace-env-vars.sh /docker-entrypoint.d/40-subst-on-assets.sh
+COPY --from=build --chown=nginx:nginx /home/node/app/apps/core-authnz-frontend/build /usr/share/nginx/html
 
 
