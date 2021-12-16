@@ -218,11 +218,15 @@ export const MultiSelectFieldEditor: FC<FieldEditorProps> = (props) => {
       <select
         className="form-control bg-dark text-light border-secondary"
         id={field.id}
-        value={value || ''}
+        value={value || []}
         multiple
-        onChange={(event) => setValue(event.target.value)}
+        onChange={(event) => {
+          const { options } = event.target;
+          const selected = Object.entries(options).filter((o) => o[1].selected);
+          setValue(selected.map((s) => s[1].value));
+        }}
       >
-        {mapSelectOptions(field.required, field.key, field.fieldType?.singleSelect?.options)}
+        {mapSelectOptions(field.required, field.key, field.fieldType?.multiSelect?.options)}
       </select>
       {mapFieldDescription(field)}
     </div>

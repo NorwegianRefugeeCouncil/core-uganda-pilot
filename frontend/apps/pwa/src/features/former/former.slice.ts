@@ -167,6 +167,8 @@ const mapFields = (state: FormerState, fields: FormField[]): FieldDefinition[] =
       fieldType = { quantity: {} };
     } else if (field.type === 'singleSelect') {
       fieldType = { singleSelect: { options: field.options } };
+    } else if (field.type === 'multiSelect') {
+      fieldType = { multiSelect: { options: field.options } };
     } else if (field.type === 'reference') {
       if (!field.referencedDatabaseId) {
         throw new Error(`field with id ${field.id} does not have referenced database id`);

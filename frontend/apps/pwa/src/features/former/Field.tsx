@@ -95,7 +95,7 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
 
             {/* Options */}
 
-            {fieldType === 'singleSelect' && (
+            {(fieldType === 'singleSelect' || fieldType === 'multiSelect') && (
               <div className="form-group mb-2">
                 <div className="d-flex justify-content-between align-items-center mb-2">
                   <label className="form-label" htmlFor="fieldName">
