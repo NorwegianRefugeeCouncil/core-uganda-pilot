@@ -40,7 +40,8 @@ type Middleware func(next http.Handler) http.Handler
 
 func NewGenericServer(options options.ServerOptions, name string) (*Server, error) {
 
-	l := logging.NewLogger(context.Background())
+	ctx := logging.WithServerName(context.Background(), name)
+	l := logging.NewLogger(ctx)
 
 	srv := &Server{
 		name:    name,
@@ -60,6 +61,9 @@ func NewGenericServer(options options.ServerOptions, name string) (*Server, erro
 	}
 
 	if options.Cache.Redis != nil {
+
+		l.Info("configuring redis store")
+
 		pool := &redis.Pool{
 			MaxActive:   500,
 			MaxIdle:     500,
@@ -80,8 +84,6 @@ func NewGenericServer(options options.ServerOptions, name string) (*Server, erro
 			},
 		}
 
-		l.Debug("getting redis pool")
-		
 		conn := pool.Get()
 		defer conn.Close()
 
@@ -134,6 +136,7 @@ func NewGenericServer(options options.ServerOptions, name string) (*Server, erro
 
 	listener, err := net.Listen("tcp", address)
 	if err != nil {
+		l.Error("failed to start listener", zap.Error(err), zap.String("address", address))
 		return nil, err
 	}
 
@@ -247,6 +250,11 @@ func (g Server) Address() string {
 
 func (g Server) Start(ctx context.Context) {
 
+	ctx = logging.WithServerName(ctx, g.name)
+	l := logging.NewLogger(ctx).
+		With(zap.String("address", g.listener.Addr().String())).
+		With(zap.Bool("tls", g.options.TLS.Enabled))
+
 	config := restfulspec.Config{
 		WebServices: g.GoRestfulContainer.RegisteredWebServices(), // you control what services are visible
 		APIPath:     "/openapi.json",
@@ -255,10 +263,6 @@ func (g Server) Start(ctx context.Context) {
 		},
 	}
 	g.GoRestfulContainer.Add(restfulspec.NewOpenAPIService(config))
-
-	l := logging.NewLogger(ctx).
-		With(zap.String("address", g.listener.Addr().String())).
-		With(zap.Bool("tls", g.options.TLS.Enabled))
 
 	l.Info("starting server")
 
@@ -279,6 +283,7 @@ func (g Server) Start(ctx context.Context) {
 	go func() {
 		<-ctx.Done()
 		if err := g.listener.Close(); err != nil {
+			l.Error("failed to close listener", zap.Error(err))
 			panic(err)
 		}
 	}()
