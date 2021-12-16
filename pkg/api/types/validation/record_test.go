@@ -43,9 +43,13 @@ func TestValidateRecord(t *testing.T) {
 
 	textForm := aTextForm()
 
-	valuePath := validation.NewPath("values")
-	firstFieldPath := valuePath.Index(1)
+	formIdPath := validation.NewPath("formId")
+	databaseIdPath := validation.NewPath("databaseId")
+	ownerIdPath := validation.NewPath("ownerId")
+	valuesPath := validation.NewPath("values")
+	firstFieldPath := valuesPath.Index(1)
 	firstFieldValuePath := firstFieldPath.Child("value")
+	firstFieldFieldIdPath := firstFieldPath.Child("fieldId")
 
 	aFormRef := types.FormRef{
 		DatabaseID: uuid.NewV4().String(),
@@ -77,70 +81,70 @@ func TestValidateRecord(t *testing.T) {
 			form:          aTextForm(),
 			recordOptions: tu.RecordFormID(""),
 			expect: validation.ErrorList{
-				validation.Required(validation.NewPath("formId"), errRecordFormIdRequired),
+				validation.Required(formIdPath, errRecordFormIdRequired),
 			},
 		}, {
 			name:          "invalid form id",
 			form:          textForm,
 			recordOptions: tu.RecordFormID("bla"),
 			expect: validation.ErrorList{
-				validation.Invalid(validation.NewPath("formId"), "bla", errRecordInvalidFormId),
+				validation.Invalid(formIdPath, "bla", errRecordInvalidFormId),
 			},
 		}, {
 			name:          "missing database id",
 			form:          textForm,
 			recordOptions: tu.RecordDatabaseID(""),
 			expect: validation.ErrorList{
-				validation.Required(validation.NewPath("databaseId"), errRecordDatabaseIdRequired),
+				validation.Required(databaseIdPath, errRecordDatabaseIdRequired),
 			},
 		}, {
 			name:          "invalid database id",
 			form:          textForm,
 			recordOptions: tu.RecordDatabaseID("bla"),
 			expect: validation.ErrorList{
-				validation.Invalid(validation.NewPath("databaseId"), "bla", errRecordInvalidDatabaseId),
+				validation.Invalid(databaseIdPath, "bla", errRecordInvalidDatabaseId),
 			},
 		}, {
 			name:          "missing ownerId",
 			form:          aTextSubForm(),
 			recordOptions: tu.RecordOwnerID(nil),
 			expect: validation.ErrorList{
-				validation.Required(validation.NewPath("ownerId"), errRecordOwnerIdRequired),
+				validation.Required(ownerIdPath, errRecordOwnerIdRequired),
 			},
 		}, {
 			name:          "empty ownerId",
 			form:          aTextSubForm(),
 			recordOptions: tu.RecordOwnerID(pointers.String("")),
 			expect: validation.ErrorList{
-				validation.Required(validation.NewPath("ownerId"), errRecordOwnerIdRequired),
+				validation.Required(ownerIdPath, errRecordOwnerIdRequired),
 			},
 		}, {
 			name:          "invalid ownerId",
 			form:          aTextSubForm(),
 			recordOptions: tu.RecordOwnerID(pointers.String("abc")),
 			expect: validation.ErrorList{
-				validation.Invalid(validation.NewPath("ownerId"), "abc", errRecordInvalidOwnerID),
+				validation.Invalid(ownerIdPath, "abc", errRecordInvalidOwnerID),
 			},
 		}, {
 			name:          "nil values",
 			form:          aTextForm(),
 			recordOptions: tu.RecordValues(nil),
 			expect: validation.ErrorList{
-				validation.Required(valuePath, errRecordValuesRequired),
+				validation.Required(valuesPath, errRecordValuesRequired),
 			},
 		}, {
 			name:          "missing field type",
 			form:          aTextForm(tu.FormField(tu.AField(tu.FieldID("someField")))),
 			recordOptions: tu.RecordValue("bla", types.NewStringValue("snip")),
 			expect: validation.ErrorList{
-				validation.InternalError(valuePath, errors.New("failed to get field kind")),
+				validation.InternalError(valuesPath, errors.New("failed to get field kind")),
 			},
 		}, {
 			name:          "extraneous field",
 			form:          aTextForm(),
 			recordOptions: tu.RecordValue("bla", types.NewStringValue("snip")),
 			expect: validation.ErrorList{
-				validation.NotSupported(firstFieldPath, "bla", []string{fieldId}),
+				validation.NotSupported(firstFieldFieldIdPath, "bla", []string{fieldId}),
 			},
 		}, {
 			name: "missing required field",
@@ -149,7 +153,7 @@ func TestValidateRecord(t *testing.T) {
 			),
 			recordOptions: tu.RecordOmitValue("requiredField"),
 			expect: validation.ErrorList{
-				validation.Required(valuePath, errFieldValueRequired),
+				validation.Required(valuesPath, errFieldValueRequired),
 			},
 		}, {
 			name: "zero-valued required field",
