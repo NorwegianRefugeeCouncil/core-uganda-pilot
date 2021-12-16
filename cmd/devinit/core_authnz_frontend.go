@@ -49,7 +49,7 @@ func (c *Config) makeAdminFrontend() error {
 	sb.WriteString(fmt.Sprintf("REACT_APP_OAUTH_REDIRECT_URI=%s\n", AdminURI))
 	sb.WriteString(fmt.Sprintf("REACT_APP_OAUTH_CLIENT_ID=%s\n", c.coreAdminFrontendClientId))
 	sb.WriteString(fmt.Sprintf("REACT_APP_AUTHNZ_API_SERVER_URI=%s\n", "https://localhost:9001"))
-	envPath := path.Join(c.rootDir, "frontend", "apps", "admin", ".env")
+	envPath := path.Join(c.rootDir, "frontend", "apps", "core-authnz-frontend", ".env")
 	fmt.Println(envPath)
 	if err := ioutil.WriteFile(envPath, []byte(sb.String()), os.ModePerm); err != nil {
 		return err
