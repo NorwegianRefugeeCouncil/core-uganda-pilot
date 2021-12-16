@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { FieldDefinition, Record } from 'core-api-client';
+import { FieldDefinition, Record, SelectOption } from 'core-api-client';
 import { Link } from 'react-router-dom';
 import format from 'date-fns/format';
 
@@ -48,6 +48,16 @@ function mapRecordField(record: Record, field: FieldDefinition, subRecords: Reco
   const fieldValue = record.values.find((v: any) => v.fieldId === field.id);
   if (fieldValue && typeof fieldValue.value === 'string') {
     value = fieldValue.value;
+  }
+  if (fieldValue && field.fieldType.multiSelect) {
+    const selected = field.fieldType.multiSelect.options.filter((o: SelectOption) => {
+      if (fieldValue?.value == null) {
+        return false;
+      }
+      return fieldValue.value.includes(o.id);
+    });
+
+    value = selected.map((s) => s.name).join(', ');
   }
   return <RecordField field={field} value={`${value}`} subRecords={subRecords} />;
 }

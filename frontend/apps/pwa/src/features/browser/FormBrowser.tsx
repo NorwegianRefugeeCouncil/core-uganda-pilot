@@ -115,7 +115,7 @@ function mapRecordCell(field: FieldDefinition, record: Record, getSubFormCount: 
 
   if (field.fieldType.multiSelect) {
     const selected = field.fieldType.multiSelect.options.filter((o: SelectOption) => {
-      if (fieldValue == null || fieldValue.value == null) {
+      if (fieldValue?.value == null) {
         return false;
       }
       return fieldValue.value.includes(o.id);
