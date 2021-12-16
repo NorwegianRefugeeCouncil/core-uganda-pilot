@@ -67,7 +67,7 @@ static_resources:
                       http_service:
                         server_uri:
                           uri: 127.0.0.1:9004
-                          cluster: core-auth-api
+                          cluster: core-authnz-api
                           timeout: 0.250s
                         path_prefix: /apis/authorization.nrc.no/v1
                   - name: envoy.filters.http.router
@@ -86,7 +86,7 @@ static_resources:
                         - match:
                             prefix: "/app"
                           route:
-                            cluster: core-app
+                            cluster: core-frontend
                             prefix_rewrite: ""
                           typed_per_filter_config:
                             envoy.filters.http.ext_authz:
@@ -95,7 +95,7 @@ static_resources:
                         - match:
                             prefix: "/sockjs-node"
                           route:
-                            cluster: core-app
+                            cluster: core-frontend
                           typed_per_filter_config:
                             envoy.filters.http.ext_authz:
                               "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthzPerRoute
@@ -103,7 +103,7 @@ static_resources:
                         - match:
                             prefix: "/admin"
                           route:
-                            cluster: core-admin-app
+                            cluster: core-authnz-frontend
                             prefix_rewrite: ""
                           typed_per_filter_config:
                             envoy.filters.http.ext_authz:
@@ -138,7 +138,7 @@ static_resources:
                         - match:
                             prefix: "/apis/core.nrc.no/v1/"
                           route:
-                            cluster: core-api
+                            cluster: core-forms-api
                             cors:
                               allow_origin_string_match:
                                 - exact: "http://localhost:3000"
@@ -209,11 +209,11 @@ static_resources:
         name: envoy.transport_sockets.tls
         typed_config:
           "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
-    - name: core-api
+    - name: core-forms-api
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
       load_assignment:
-        cluster_name: core-api
+        cluster_name: core-forms-api
         endpoints:
           - lb_endpoints:
               - endpoint:
@@ -257,12 +257,12 @@ static_resources:
         name: envoy.transport_sockets.tls
         typed_config:
           "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
-    - name: core-auth-api
+    - name: core-authnz-api
       connect_timeout: 0.25s
       type: logical_dns
       lb_policy: round_robin
       load_assignment:
-        cluster_name: core-auth-api
+        cluster_name: core-authnz-api
         endpoints:
           - lb_endpoints:
               - endpoint:
@@ -274,12 +274,12 @@ static_resources:
         name: envoy.transport_sockets.tls
         typed_config:
           "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
-    - name: core-app
+    - name: core-frontend
       connect_timeout: 0.25s
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
       load_assignment:
-        cluster_name: core-app
+        cluster_name: core-frontend
         endpoints:
           - lb_endpoints:
               - endpoint:
@@ -287,12 +287,12 @@ static_resources:
                     socket_address:
                       address: 127.0.0.1
                       port_value: 3000
-    - name: core-admin-app
+    - name: core-authnz-frontend
       connect_timeout: 0.25s
       type: logical_dns
       lb_policy: round_robin
       load_assignment:
-        cluster_name: core-admin-app
+        cluster_name: core-authnz-frontend
         endpoints:
           - lb_endpoints:
               - endpoint:
