@@ -70,19 +70,13 @@ func (r recordStore) Get(ctx context.Context, recordRef types.RecordRef) (*types
 
 	l.Debug("finding records")
 	formReader := sqlmanager.NewFormReader(db)
-	records, err := formReader.GetRecords(ctx, form)
+	record, err := formReader.GetRecord(ctx, form, recordRef)
 	if err != nil {
-		l.Error("failed to list records", zap.Error(err))
+		l.Error("failed to get record", zap.Error(err))
 		return nil, err
 	}
 
-	if len(records.Items) != 1 {
-		err := meta.NewInternalServerError(fmt.Errorf("unexpected number of records"))
-		l.Error("should only have 1 record in result", zap.Error(err))
-		return nil, err
-	}
-
-	return records.Items[0], nil
+	return record, nil
 
 }
 

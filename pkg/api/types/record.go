@@ -47,7 +47,7 @@ type Record struct {
 	FormID string `json:"formId"`
 	// OwnerID represents the owner of the Record. In cases where
 	// a Record is part of a SubForm, this field records the "Owner" form ID.
-	OwnerID *string `json:"ownerFormID"`
+	OwnerID *string `json:"ownerId"`
 	// Values is a list of values that correspond to the FormDefinition.Fields.
 	Values FieldValues `json:"values"`
 }

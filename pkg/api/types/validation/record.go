@@ -134,8 +134,8 @@ func ValidateRecordValues(path *validation.Path, recordValues types.FieldValues,
 	if !extraneousFieldIDs.IsEmpty() {
 		for _, extraneousFieldID := range extraneousFieldIDs.List() {
 			extraneousFieldValueIndex := recordFieldIndexes[extraneousFieldID]
-			valuePath := path.Index(extraneousFieldValueIndex)
-			result = append(result, validation.NotSupported(valuePath, extraneousFieldID, expectedFieldIDs.List()))
+			fieldIdPath := path.Index(extraneousFieldValueIndex).Child("fieldId")
+			result = append(result, validation.NotSupported(fieldIdPath, extraneousFieldID, expectedFieldIDs.List()))
 		}
 	}
 

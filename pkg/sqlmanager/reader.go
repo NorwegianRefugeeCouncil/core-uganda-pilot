@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/lib/pq"
+	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/utils/pointers"
 	"gorm.io/gorm"
@@ -25,6 +26,7 @@ func NewFormReader(db *gorm.DB) Reader {
 
 type Reader interface {
 	GetRecords(ctx context.Context, form types.FormInterface) (*types.RecordList, error)
+	GetRecord(ctx context.Context, form types.FormInterface, recordRef types.RecordRef) (*types.Record, error)
 }
 
 type reader struct {
@@ -32,7 +34,21 @@ type reader struct {
 }
 
 func (f reader) GetRecords(ctx context.Context, form types.FormInterface) (*types.RecordList, error) {
-	return queryRecords(ctx, f.db, form)
+	return queryRecords(ctx, f.db, form, "")
+}
+
+func (f reader) GetRecord(ctx context.Context, form types.FormInterface, recordRef types.RecordRef) (*types.Record, error) {
+	recs, err := queryRecords(ctx, f.db, form, "where id = ?", recordRef.ID)
+	if err != nil {
+		return nil, err
+	}
+	if len(recs.Items) == 0 {
+		return nil, meta.NewNotFound(types.RecordGR, recordRef.ID)
+	}
+	if len(recs.Items) > 1 {
+		return nil, meta.NewInternalServerError(fmt.Errorf("unexpected number of records"))
+	}
+	return recs.Items[0], nil
 }
 
 type sqlReader interface {
@@ -41,12 +57,13 @@ type sqlReader interface {
 	Scan(...interface{}) error
 }
 
-// readRecords will iterate through a series of SQL Rows and return a list of populated records
-func queryRecords(ctx context.Context, db *gorm.DB, form types.FormInterface) (*types.RecordList, error) {
-	qry := db.Raw(fmt.Sprintf("select * from %s.%s",
+// queryRecords will iterate through a series of SQL Rows and return a list of populated records
+func queryRecords(ctx context.Context, db *gorm.DB, form types.FormInterface, sqlQuery string, args ...interface{}) (*types.RecordList, error) {
+	qry := db.Raw(fmt.Sprintf("select * from %s.%s %s",
 		pq.QuoteIdentifier(form.GetDatabaseID()),
 		pq.QuoteIdentifier(form.GetFormID()),
-	))
+		sqlQuery,
+	), args...)
 	rows, err := qry.Rows()
 	if err != nil {
 		return nil, err
@@ -297,6 +314,8 @@ func getStringValue(value interface{}) (types.StringOrArray, error) {
 		} else {
 			return types.NewStringValue(*t), nil
 		}
+	case nil:
+		return types.NewNullValue(), nil
 	default:
 		return types.StringOrArray{}, fmt.Errorf("cannot convert type %T to types.StringOrArray", value)
 	}
@@ -313,6 +332,8 @@ func getStringListValue(value interface{}) (types.StringOrArray, error) {
 		} else {
 			return types.NewArrayValue(parseArrayStr(*t)), nil
 		}
+	case nil:
+		return types.NewNullValue(), nil
 	default:
 		return types.StringOrArray{}, fmt.Errorf("cannot convert type %T to types.StringOrArray", value)
 	}
@@ -343,6 +364,8 @@ func getIntValue(value interface{}) (types.StringOrArray, error) {
 		} else {
 			return types.NewStringValue(strconv.FormatInt(*t, 10)), nil
 		}
+	case nil:
+		return types.NewNullValue(), nil
 	default:
 		return types.StringOrArray{}, fmt.Errorf("cannot convert type %T to types.StringOrArray", value)
 	}

@@ -35,10 +35,17 @@ func (h *Handler) Create() http.HandlerFunc {
 			return
 		}
 
+		formIntf, err := form.GetFormOrSubForm(input.FormID)
+		if err != nil {
+			l.Error("failed to get form for record", zap.Error(err))
+			utils.ErrorResponse(w, err)
+			return
+		}
+
 		input.DatabaseID = form.DatabaseID
 
 		l.Debug("validating record")
-		if errList := validation.ValidateRecord(&input, form); !errList.IsEmpty() {
+		if errList := validation.ValidateRecord(&input, formIntf); !errList.IsEmpty() {
 			err := meta.NewInvalid(types.RecordGR, "", errList)
 			l.Warn("record is invalid", zap.Error(err))
 			utils.ErrorResponse(w, err)
