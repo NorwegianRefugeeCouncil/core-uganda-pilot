@@ -94,8 +94,9 @@ When one or multiple [fields](#fields) are marked as `key` fields, that means th
 
 #### Notes
 
-- `Reference` fields can be marked as `key` fields.
-- `Sub Form` fields **cannot** be marked as `key` fields
+- `Reference` fields **can** be marked as `key` fields.
+- `Sub Form` fields **cannot** be marked as `key` or `required` fields
+- `Multiple Selection` fields **cannot** be marked as `key` fields
 - `Header` fields **cannot** be marked as `key` fields
 - `Key` fields are always `required`
 
