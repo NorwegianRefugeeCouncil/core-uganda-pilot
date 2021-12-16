@@ -7,9 +7,9 @@ serve:
     tls:
       enabled: true
       cert:
-        path: creds/core/admin_api/tls.crt
+        path: creds/core/authnz_api/tls.crt
       key:
-        path: creds/core/admin_api/tls.key
+        path: creds/core/authnz_api/tls.key
     cors:
       enabled: true
       allowed_origins:
@@ -37,9 +37,9 @@ serve:
     tls:
       enabled: true
       cert:
-        path: creds/core/api/tls.crt
+        path: creds/core/forms_api/tls.crt
       key:
-        path: creds/core/api/tls.key
+        path: creds/core/forms_api/tls.key
     cors:
       allowed_origins:
         - https://localhost:3000
@@ -81,9 +81,9 @@ serve:
     tls:
       enabled: true
       cert:
-        path: creds/core/auth/tls.crt
+        path: creds/core/authnz_bouncer/tls.crt
       key:
-        path: creds/core/auth/tls.key
+        path: creds/core/authnz_bouncer/tls.key
     cors:
       allowed_origins:
         - https://localhost:3001
