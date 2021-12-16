@@ -132,6 +132,8 @@ func (s writer) writeRecord(form types.FormInterface, record *types.Record) (sql
 			sqlParams, err = prepareReferenceFieldColumn(fieldValue, sqlParams)
 		case types.FieldKindSingleSelect:
 			sqlParams, err = prepareSingleSelectFieldColumn(fieldValue, sqlParams)
+		case types.FieldKindMultiSelect:
+			sqlParams, err = prepareMultiSelectFieldColumn(fieldValue, sqlParams)
 		case types.FieldKindDate:
 			sqlParams, err = prepareDateFieldColumn(fieldValue, sqlParams)
 		case types.FieldKindMonth:
@@ -140,8 +142,6 @@ func (s writer) writeRecord(form types.FormInterface, record *types.Record) (sql
 			sqlParams, err = prepareWeekFieldColumn(fieldValue, sqlParams)
 		case types.FieldKindQuantity:
 			sqlParams, err = prepareQuantityFieldColumn(fieldValue, sqlParams)
-		case types.FieldKindMultiSelect:
-			continue
 		default:
 			err = fmt.Errorf("unhandled field kind %v", fieldKind)
 		}
@@ -207,6 +207,16 @@ func prepareReferenceFieldColumn(fieldValue types.FieldValue, sqlParams sqlArgs)
 
 func prepareSingleSelectFieldColumn(fieldValue types.FieldValue, sqlParams sqlArgs) (sqlArgs, error) {
 	return writeGenericTextValue("single select", fieldValue, sqlParams)
+}
+
+func prepareMultiSelectFieldColumn(fieldValue types.FieldValue, sqlParams sqlArgs) (sqlArgs, error) {
+	if err := assertStringArrayValueType("multiSelect", fieldValue); err != nil {
+		return nil, err
+	}
+	return append(sqlParams, sqlArg{
+		columnName: fieldValue.FieldID,
+		value:      fieldValue.Value.ArrayValue,
+	}), nil
 }
 
 func writeGenericTextValue(fieldType string, fieldValue types.FieldValue, sqlParams sqlArgs) (sqlArgs, error) {
@@ -277,6 +287,13 @@ func prepareQuantityFieldColumn(fieldValue types.FieldValue, sqlParams sqlArgs) 
 
 func assertStringValueType(fieldType string, value types.FieldValue) error {
 	if value.Value.Kind != types.StringValue {
+		return fmt.Errorf("unsupported value kind %v for %s column", value.Value.Kind, fieldType)
+	}
+	return nil
+}
+
+func assertStringArrayValueType(fieldType string, value types.FieldValue) error {
+	if value.Value.Kind != types.ArrayValue {
 		return fmt.Errorf("unsupported value kind %v for %s column", value.Value.Kind, fieldType)
 	}
 	return nil

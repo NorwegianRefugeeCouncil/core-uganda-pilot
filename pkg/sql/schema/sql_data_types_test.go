@@ -8,6 +8,7 @@ import (
 
 func TestSQLDataType_DDL(t *testing.T) {
 	type fields struct {
+		Array           *SQLDataTypeArray
 		VarChar         *SQLDataTypeVarChar
 		Int             *SQLDataTypeInt
 		SmallInt        *SQLDataTypeSmallInt
@@ -145,11 +146,59 @@ func TestSQLDataType_DDL(t *testing.T) {
 			name:   "interval with fields with p",
 			fields: fields{Interval: &SQLDataTypeInterval{Fields: []string{"A"}, Digits: pointers.Int(10)}},
 			want:   NewDDL("interval ? ?", "A", 10),
+		}, {
+			name: "array",
+			fields: fields{
+				Array: &SQLDataTypeArray{
+					DataType: SQLDataType{VarChar: &SQLDataTypeVarChar{Length: 10}},
+				},
+			},
+			want: NewDDL("varchar(10)[]"),
+		}, {
+			name: "array with length",
+			fields: fields{
+				Array: &SQLDataTypeArray{
+					Length:   5,
+					DataType: SQLDataType{VarChar: &SQLDataTypeVarChar{Length: 10}},
+				},
+			},
+			want: NewDDL("varchar(10)[5]"),
+		}, {
+			name: "multi dimensional array",
+			fields: fields{
+				Array: &SQLDataTypeArray{
+					DataType: SQLDataType{
+						Array: &SQLDataTypeArray{
+							DataType: SQLDataType{
+								VarChar: &SQLDataTypeVarChar{Length: 10},
+							},
+						},
+					},
+				},
+			},
+			want: NewDDL("varchar(10)[][]"),
+		}, {
+			name: "multi dimensional array with length",
+			fields: fields{
+				Array: &SQLDataTypeArray{
+					Length: 1,
+					DataType: SQLDataType{
+						Array: &SQLDataTypeArray{
+							Length: 3,
+							DataType: SQLDataType{
+								VarChar: &SQLDataTypeVarChar{Length: 10},
+							},
+						},
+					},
+				},
+			},
+			want: NewDDL("varchar(10)[3][1]"),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := SQLDataType{
+				Array:           tt.fields.Array,
 				VarChar:         tt.fields.VarChar,
 				Int:             tt.fields.Int,
 				SmallInt:        tt.fields.SmallInt,

@@ -395,15 +395,9 @@ create table "databaseId"."subFormField"(
 			}},
 			want: []schema.DDL{
 				{Query: createTableDDL},
-				{Query: `create table "databaseId"."multiSelectField_options"( "id" varchar(36) primary key, "name" varchar(128) not null unique);`},
-				{Query: `insert into "databaseId"."multiSelectField_options" ("id","name") values ($1,$2);`, Args: []interface{}{"option1", "Option 1"}},
-				{Query: `insert into "databaseId"."multiSelectField_options" ("id","name") values ($1,$2);`, Args: []interface{}{"option2", "Option 2"}},
 				{Query: `
-create table "databaseId"."multiSelectField_associations"(
-  "id" varchar(36) not null references "databaseId"."formId" ("id"),
-  "option_id" varchar(36) not null references "databaseId"."multiSelectField_options" ("id"),
-  constraint "uk_key_multiSelectField" unique ("id", "option_id")
-);`},
+alter table "databaseId"."formId"
+ add "multiSelectField" varchar(36)[] check ("multiSelectField" is null or "multiSelectField" <@ array['option1','option2']::varchar[]);`},
 			},
 		},
 	}

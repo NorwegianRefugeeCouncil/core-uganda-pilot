@@ -7,11 +7,9 @@ import (
 	"github.com/lib/pq"
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/utils/pointers"
-	"golang.org/x/sync/errgroup"
 	"gorm.io/gorm"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 )
 
@@ -57,60 +55,7 @@ func queryRecords(ctx context.Context, db *gorm.DB, form types.FormInterface) (*
 	if err != nil {
 		return nil, err
 	}
-	if err := readInRecordOptions(ctx, db, form, records); err != nil {
-		return nil, err
-	}
 	return records, nil
-}
-
-func readInRecordOptions(ctx context.Context, db *gorm.DB, form types.FormInterface, records *types.RecordList) error {
-	var recordIds = make([]interface{}, len(records.Items))
-	var placeholders = make([]string, len(records.Items))
-	recordMap := map[string]*types.Record{}
-	for i, record := range records.Items {
-		recordIds[i] = record.ID
-		placeholders[i] = "?"
-		recordMap[record.ID] = record
-	}
-	type association struct {
-		ID       string
-		OptionID string
-	}
-	g, ctx := errgroup.WithContext(ctx)
-	lock := &sync.Mutex{}
-	for _, field := range form.GetFields() {
-		f := field
-		// reading record options in parallel
-		g.Go(func() error {
-			fieldKind, err := f.FieldType.GetFieldKind()
-			if err != nil {
-				return err
-			}
-			if fieldKind == types.FieldKindMultiSelect {
-				qry := fmt.Sprintf(`select * from %s.%s where "id" in (%s)`,
-					pq.QuoteIdentifier(form.GetDatabaseID()),
-					pq.QuoteIdentifier(getMultiSelectAssociationTableName(f.ID)),
-					strings.Join(placeholders, ","),
-				)
-				var associations []association
-				if err := db.Raw(qry, recordIds...).Scan(&associations).Error; err != nil {
-					return err
-				}
-				valueMap := map[string][]string{}
-				for _, association := range associations {
-					valueMap[association.ID] = append(valueMap[association.ID], association.OptionID)
-				}
-				lock.Lock()
-				defer lock.Unlock()
-				for recordId, associations := range valueMap {
-					record := recordMap[recordId]
-					record.Values.SetValue(f.ID, types.NewArrayValue(associations))
-				}
-			}
-			return nil
-		})
-	}
-	return g.Wait()
 }
 
 // readRecords will iterate through a series of SQL Rows and return a list of populated records
@@ -215,6 +160,8 @@ func readInRecordField(
 		return readInQuantityField(record, field, value)
 	case types.FieldKindSingleSelect:
 		return readInSingleSelectField(record, field, value)
+	case types.FieldKindMultiSelect:
+		return readInMultiSelectField(record, field, value)
 	case types.FieldKindReference:
 		return readInReferenceField(record, field, value)
 	case types.FieldKindText, types.FieldKindMultilineText:
@@ -298,6 +245,20 @@ func readInSingleSelectField(record *types.Record, field *types.FieldDefinition,
 	return nil
 }
 
+// readInMultiSelectField will populate a record types.FieldValue for a types.FieldTypeMultiSelect field from
+// an  SQL value
+func readInMultiSelectField(record *types.Record, field *types.FieldDefinition, value interface{}) error {
+	fieldValue, err := getStringListValue(value)
+	if err != nil {
+		return err
+	}
+	record.Values = append(record.Values, types.FieldValue{
+		FieldID: field.ID,
+		Value:   fieldValue,
+	})
+	return nil
+}
+
 // readInReferenceField will populate a record types.FieldValue for a types.FieldTypeText or
 // types.FieldTypeMultilineText field from an  SQL value
 func readInTextField(record *types.Record, field *types.FieldDefinition, value interface{}) error {
@@ -339,6 +300,28 @@ func getStringValue(value interface{}) (types.StringOrArray, error) {
 	default:
 		return types.StringOrArray{}, fmt.Errorf("cannot convert type %T to types.StringOrArray", value)
 	}
+}
+
+// getStringListValue will coerce an interface{} into a []string
+func getStringListValue(value interface{}) (types.StringOrArray, error) {
+	switch t := value.(type) {
+	case string:
+		return types.NewArrayValue(parseArrayStr(t)), nil
+	case *string:
+		if t == nil {
+			return types.NewNullValue(), nil
+		} else {
+			return types.NewArrayValue(parseArrayStr(*t)), nil
+		}
+	default:
+		return types.StringOrArray{}, fmt.Errorf("cannot convert type %T to types.StringOrArray", value)
+	}
+}
+
+func parseArrayStr(str string) []string {
+	str = strings.TrimPrefix(str, "{")
+	str = strings.TrimSuffix(str, "}")
+	return strings.Split(str, ",")
 }
 
 // getIntValue will convert an int or *int into a *string

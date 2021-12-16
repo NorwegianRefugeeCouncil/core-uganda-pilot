@@ -2,10 +2,12 @@ package schema
 
 import (
 	"reflect"
+	"strconv"
 	"strings"
 )
 
 type SQLDataType struct {
+	Array           *SQLDataTypeArray           `json:"array,omitempty" yaml:"array,omitempty"`
 	VarChar         *SQLDataTypeVarChar         `json:"varChar,omitempty" yaml:"varChar,omitempty"`
 	Int             *SQLDataTypeInt             `json:"int,omitempty" yaml:"int,omitempty"`
 	SmallInt        *SQLDataTypeSmallInt        `json:"smallInt,omitempty" yaml:"smallInt,omitempty"`
@@ -25,7 +27,9 @@ type SQLDataType struct {
 }
 
 func (s SQLDataType) DDL() DDL {
+
 	for _, ddLer := range []DDLGenerator{
+		s.Array,
 		s.VarChar,
 		s.SmallInt,
 		s.BigInt,
@@ -242,4 +246,19 @@ func (c SQLDataTypeInterval) DDL() DDL {
 	}
 
 	return NewDDL(sb.String(), args...)
+}
+
+type SQLDataTypeArray struct {
+	DataType SQLDataType
+	Length   uint
+}
+
+func (s SQLDataTypeArray) DDL() DDL {
+	arrDDL := s.DataType.DDL()
+	arrDDL.Query += "["
+	if s.Length != 0 {
+		arrDDL.Query += strconv.Itoa(int(s.Length))
+	}
+	arrDDL.Query += "]"
+	return arrDDL
 }
