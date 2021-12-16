@@ -6,6 +6,7 @@ import (
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/sql/schema"
 	"github.com/nrc-no/core/pkg/utils/dates"
+	"github.com/nrc-no/core/pkg/utils/sets"
 	"strconv"
 	"time"
 )
@@ -213,9 +214,11 @@ func prepareMultiSelectFieldColumn(fieldValue types.FieldValue, sqlParams sqlArg
 	if err := assertStringArrayValueType("multiSelect", fieldValue); err != nil {
 		return nil, err
 	}
+	var selectedOptions = sets.NewString(fieldValue.Value.ArrayValue...)
 	return append(sqlParams, sqlArg{
 		columnName: fieldValue.FieldID,
-		value:      fieldValue.Value.ArrayValue,
+		// sets.String.List() sorts the values
+		value: selectedOptions.List(),
 	}), nil
 }
 
