@@ -101,9 +101,7 @@ describe('utils/browser', () => {
       windowOpenMock = jest.fn(() => undefined);
 
       const wrapperFunction = () => browser.createPopup('url');
-      expect(wrapperFunction).toThrow(
-        'ERR_WEB_BROWSER_LOCKED: Popup window was blocked by the browser of failed to open.',
-      );
+      expect(wrapperFunction).toThrow('ERR_WEB_BROWSER_LOCKED: Popup window was blocked by the browser of failed to open.');
       expect(browser.getPopup()).not.toBeNull();
       expect(windowOpenMock).toHaveBeenCalled();
     });
@@ -213,9 +211,7 @@ describe('utils/browser', () => {
     });
 
     it('should return state if present in url', async () => {
-      const result = await browser.getStateFromUrlOrGenerateAsync(
-        'https://www.google.com?state=state',
-      );
+      const result = await browser.getStateFromUrlOrGenerateAsync('https://www.google.com?state=state');
       expect(spy).not.toHaveBeenCalled();
       expect(result).toEqual('state');
     });
