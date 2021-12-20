@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "nrc-core",
+    "slug": "nrc-core",
+    "version": "0.0.1",
+    "orientation": "portrait",
+    "icon": "./assets/png/nrc.png",
+    "splash": {
+      "image": "./assets/png/nrc.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "bundleIdentifier": "no.nrc.core",
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "no.nrc.core",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/png/nrc.png",
+        "backgroundColor": "#FFFFFF"
+      }
+    },
+    "web": {
+      "favicon": "./assets/png/nrc.png"
+    },
+    "androidStatusBar": {
+      "hidden": true,
+      "backgroundColor": "#728346",
+      "barStyle": "dark-content"
+    },
+    "androidNavigationBar": {
+      "visible": "sticky-immersive",
+      "barStyle": "dark-content"
+    },
+    "scheme": "nrccore"
+  }
+}
