@@ -1,17 +1,11 @@
 import * as React from 'react';
 import { Platform } from 'react-native';
-import {
-  CodeChallengeMethod,
-  exchangeCodeAsync,
-  makeRedirectUri,
-  ResponseType,
-  TokenResponse,
-  useAuthRequest,
-  useAutoDiscovery,
-} from 'expo-auth-session';
+import { CodeChallengeMethod, makeRedirectUri, ResponseType, useAuthRequest, useAutoDiscovery } from 'expo-auth-session';
 import Constants from 'expo-constants';
 
 import { LoginScreen } from '../../screens/LoginScreen';
+
+import { useTokenResponse } from './useTokenResponse';
 
 type Props = {
   onTokenChange: (accessToken: string) => any;
@@ -20,7 +14,6 @@ type Props = {
 
 export const AuthWrapper: React.FC<Props> = ({ onTokenChange, children }) => {
   const [loggedIn, setLoggedIn] = React.useState(false);
-  const [tokenResponse, setTokenResponse] = React.useState<TokenResponse>();
 
   const shouldUseProxy = React.useMemo(() => Platform.select({ web: false, default: false }), []);
   const redirectUri = React.useMemo(() => makeRedirectUri({ scheme: Constants.manifest?.scheme }), []);
@@ -40,50 +33,7 @@ export const AuthWrapper: React.FC<Props> = ({ onTokenChange, children }) => {
     discovery,
   );
 
-  React.useEffect(() => {
-    (async () => {
-      if (!discovery) return;
-      if (!request?.codeVerifier) return;
-      if (!response || response.type !== 'success') return;
-
-      const exchangeConfig = {
-        code: response.params.code,
-        clientId,
-        redirectUri,
-        extraParams: {
-          code_verifier: request?.codeVerifier,
-        },
-      };
-
-      try {
-        const tr = await exchangeCodeAsync(exchangeConfig, discovery);
-        setTokenResponse(tr);
-      } catch {
-        setTokenResponse(undefined);
-      }
-    })();
-  }, [request?.codeVerifier, JSON.stringify(response), JSON.stringify(discovery)]);
-
-  React.useEffect(() => {
-    (async () => {
-      if (!discovery) return;
-
-      if (tokenResponse?.shouldRefresh()) {
-        const refreshConfig = {
-          clientId,
-          scopes: Constants.manifest?.extra?.scopes,
-          extraParams: {},
-        };
-
-        try {
-          const resp = await tokenResponse?.refreshAsync(refreshConfig, discovery);
-          setTokenResponse(resp);
-        } catch {
-          setTokenResponse(undefined);
-        }
-      }
-    })();
-  }, [tokenResponse?.shouldRefresh(), discovery]);
+  const tokenResponse = useTokenResponse(discovery, request, response, clientId, redirectUri);
 
   React.useEffect(() => {
     if (tokenResponse) {
