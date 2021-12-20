@@ -9,7 +9,7 @@ import { AuthWrapper } from 'core-auth';
 import AuthenticatedApp from './components/AuthenticatedApp';
 import { client } from './app/client';
 
-function App() {
+const App: React.FC = () => {
   const scope = process?.env?.REACT_APP_OAUTH_SCOPE;
   const clientId = process?.env?.REACT_APP_OAUTH_CLIENT_ID;
   const issuer = process?.env?.REACT_APP_OIDC_ISSUER;
@@ -24,7 +24,7 @@ function App() {
       <Switch>
         <AuthWrapper
           injectToken="id_token"
-          axiosInstance={client.axiosInstance}
+          onTokenChange={client.setAuth}
           clientId={clientId}
           issuer={issuer}
           scopes={scopes}
@@ -35,6 +35,6 @@ function App() {
       </Switch>
     </BrowserRouter>
   );
-}
+};
 
 export default App;

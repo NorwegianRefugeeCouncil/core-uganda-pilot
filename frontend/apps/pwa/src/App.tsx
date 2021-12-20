@@ -26,7 +26,7 @@ const App: React.FC = () => {
           render={() => (
             <AuthWrapper
               clientId={clientId}
-              axiosInstance={client.axiosInstance}
+              onTokenChange={client.setAuth}
               scopes={scopes}
               issuer={issuer}
               redirectUri={redirectUri}

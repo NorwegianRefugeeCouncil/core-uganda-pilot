@@ -12,11 +12,11 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
   children,
   scopes = [],
   clientId,
-  axiosInstance = axios.create(),
   issuer,
   redirectUri,
   customLoginComponent,
   handleLoginErr = console.log,
+  onTokenChange,
   injectToken = 'access_token',
 }) => {
   const browser = useMemo(() => new Browser(), []);
@@ -41,6 +41,17 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
     discovery,
     browser,
   );
+
+  const token = (() => {
+    switch (injectToken) {
+      case 'access_token':
+        return tokenResponse?.accessToken ?? '';
+      case 'id_token':
+        return tokenResponse?.idToken ?? '';
+      default:
+        return '';
+    }
+  })();
 
   useEffect(() => {
     if (!discovery) {
@@ -104,38 +115,8 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
   }, [tokenResponse, isLoggedIn]);
 
   useEffect(() => {
-    const interceptor = axiosInstance.interceptors.request.use((value) => {
-      const result = value;
-      if (!tokenResponse) {
-        return result;
-      }
-      let token: string;
-      switch (injectToken) {
-        case 'access_token':
-          if (!tokenResponse.accessToken) {
-            return result;
-          }
-          token = tokenResponse.accessToken;
-          break;
-        case 'id_token':
-          if (!tokenResponse.idToken) {
-            return result;
-          }
-          token = tokenResponse.idToken;
-          break;
-        default:
-          return result;
-      }
-      result.headers = {
-        ...result.headers,
-        Authorization: `Bearer ${token}`,
-      };
-      return result;
-    });
-    return () => {
-      axiosInstance.interceptors.request.eject(interceptor);
-    };
-  }, [tokenResponse?.accessToken]);
+    onTokenChange(token);
+  }, [token]);
 
   const handleLogin = useCallback(() => {
     promptAsync().catch((err) => {

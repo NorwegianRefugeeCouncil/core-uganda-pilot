@@ -1,3 +1,5 @@
+import { DataOperation, Response } from 'core-api-client';
+
 import {
   IdentityProvider,
   IdentityProviderList,
@@ -7,7 +9,6 @@ import {
   OrganizationList,
   Session,
 } from './types';
-import { DataOperation, Response } from './utils';
 
 export type SessionGetRequest = void;
 export type SessionGetResponse = Response<SessionGetRequest, Session>;

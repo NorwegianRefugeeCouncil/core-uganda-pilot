@@ -1,4 +1,4 @@
-import React, { FC, Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   CodeChallengeMethod,
   exchangeCodeAsync,
@@ -11,10 +11,12 @@ import {
 import { Button, Platform } from 'react-native';
 import Constants from 'expo-constants';
 
-import { axiosInstance } from '../utils/clients';
+type Props = {
+  onTokenChange: (token: string) => any;
+  children: React.ReactNode;
+};
 
-export const AuthWrapper: FC = (props) => {
-  const { children } = props;
+export const AuthWrapper: FC<Props> = ({ onTokenChange, children }) => {
   const clientId = Constants.manifest?.extra?.client_id;
   const useProxy = useMemo(() => Platform.select({ web: false, default: false }), []);
   const redirectUri = useMemo(() => makeRedirectUri({ scheme: Constants.manifest?.scheme }), []);
@@ -95,19 +97,7 @@ export const AuthWrapper: FC = (props) => {
   }, [tokenResponse, loggedIn]);
 
   useEffect(() => {
-    const interceptor = axiosInstance.interceptors.request.use((value) => {
-      if (!tokenResponse?.accessToken) {
-        return value;
-      }
-      if (!value.headers) {
-        value.headers = {};
-      }
-      value.headers.Authorization = `Bearer ${tokenResponse.accessToken}`;
-      return value;
-    });
-    return () => {
-      axiosInstance.interceptors.request.eject(interceptor);
-    };
+    onTokenChange(tokenResponse?.accessToken ?? '');
   }, [tokenResponse?.accessToken]);
 
   const handleLogin = useCallback(() => {
