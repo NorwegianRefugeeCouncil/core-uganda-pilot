@@ -3,15 +3,18 @@ export default {
     major: ({ colorScheme }: any) => {
       return {
         backgroundColor: `${colorScheme}.500`,
-
+        fill: colorScheme === 'secondary' ? 'white' : `${colorScheme}.500`,
         _text: {
+          fill: colorScheme === 'secondary' ? 'white' : `${colorScheme}.500`,
           color: 'white',
           bold: true,
         },
         _hover: {
           backgroundColor: colorScheme === 'secondary' ? 'link' : `${colorScheme}.200`,
+          fill: colorScheme === 'secondary' ? 'white' : `${colorScheme}.500`,
           _text: {
             color: colorScheme === 'secondary' ? 'white' : `${colorScheme}.500`,
+            fill: colorScheme === 'secondary' ? 'white' : `${colorScheme}.500`,
           },
           // icon: { fill: colorScheme === 'secondary' ? 'white' : `${colorScheme}.500` },
         },

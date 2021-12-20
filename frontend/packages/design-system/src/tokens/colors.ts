@@ -34,6 +34,11 @@ export default {
     400: '#404040',
     500: '#000000',
   },
+  icons: {
+    dark: '#000000',
+    light: '#FFFFFF',
+    link: '#1E4B7D',
+  },
   link: '#1E4B7D',
   signalDanger: '#CE3616',
   signalSuccess: '#006605',

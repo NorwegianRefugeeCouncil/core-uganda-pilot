@@ -1,13 +1,7 @@
 export type IconProps = {
   name: IconName;
-  variant: IconVariants;
+  color: string;
 };
-
-export enum IconVariants {
-  DARK = '#000000',
-  LIGHT = '#FFFFFF',
-  LINK = '#1E4A7D',
-}
 
 export enum IconName {
   ATTACHMENT = 'attachment',
@@ -19,9 +13,9 @@ export enum IconName {
   DELETE = 'delete',
   EDIT = 'edit',
   EMAIL = 'email',
-  FACE_ERROR = 'face_error',
-  FACE_GENERAL = 'face_general',
-  FACE_SUCCESS = 'face_success',
+  FACE_ERROR = 'faceError',
+  FACE_GENERAL = 'faceGeneral',
+  FACE_SUCCESS = 'faceSuccess',
   FAVORITE = 'favorite',
   FEMALE = 'female',
   FILTER = 'filter',
@@ -46,15 +40,15 @@ export enum IconName {
   THUMBNAIL = 'thumbnail',
   UNLOCK = 'unlock',
   UPLOAD = 'upload',
-  USER_ADD = 'user_add',
-  USER_DELETE = 'user_delete',
-  USER_GROUP = 'user_group',
-  USER_GROUP_ADD = 'user_group_add',
+  USER_ADD = 'userAdd',
+  USER_DELETE = 'userDelete',
+  USER_GROUP = 'userGroup',
+  USER_GROUP_ADD = 'userGroupAdd',
   WHATSAPP = 'whatsapp',
-  ACTIVITY_CAMP = 'activity_camp',
-  ACTIVITY_EDUCATION = 'activity_education',
-  ACTIVITY_FOOD = 'activity_food',
-  ACTIVITY_ICLA = 'activity_icla',
-  ACTIVITY_SHELTER = 'activity_shelter',
-  ACTIVITY_WASH = 'activity_wash',
+  ACTIVITY_CAMP = 'activityCamp',
+  ACTIVITY_EDUCATION = 'activityEducation',
+  ACTIVITY_FOOD = 'activityFood',
+  ACTIVITY_ICLA = 'activityIcla',
+  ACTIVITY_SHELTER = 'activityShelter',
+  ACTIVITY_WASH = 'activityWash',
 }

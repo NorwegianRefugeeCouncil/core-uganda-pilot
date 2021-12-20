@@ -61,7 +61,11 @@ module.exports = {
     ],
     'max-len': [
       'error',
-      { code: 80, tabWidth: 2, ignorePattern: '^import\\s.+\\sfrom\\s.+;$' },
+      {
+        code: 80,
+        tabWidth: 2,
+        ignorePattern: '^import\\s.+\\sfrom\\s.+;$||^d="."$',
+      },
     ],
     'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
     'no-unused-vars': 'off',
