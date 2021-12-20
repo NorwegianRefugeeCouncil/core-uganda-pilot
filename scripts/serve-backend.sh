@@ -55,3 +55,5 @@ echo "Serving backend..."
 make serve &
 SERVE_PID=$!
 echo "Backend running on PID ${SERVE_PID}"
+
+wait
