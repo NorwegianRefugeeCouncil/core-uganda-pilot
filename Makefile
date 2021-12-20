@@ -63,6 +63,10 @@ serve-storybook:
 serve:
 	@./scripts/serve.sh
 
+.PHONY: serve-backend
+serve-backend:
+	@./scripts/serve-backend.sh
+
 .PHONY: watch
 watch:
 	@./scripts/watch.sh
