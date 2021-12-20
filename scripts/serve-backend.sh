@@ -33,7 +33,7 @@ trap cleanup SIGINT EXIT ERR HUP INT QUIT TERM
 
 echo "Starting tunnels..."
 make tunnels > /dev/null 2>&1 &
-TUNNELL_PID=$!
+TUNNEL_PID=$!
 echo "Tunnel running on PID ${TUNNEL_PID}"
 
 echo "Starting proxy..."
