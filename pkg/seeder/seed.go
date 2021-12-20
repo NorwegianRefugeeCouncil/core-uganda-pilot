@@ -13,7 +13,6 @@ type CountryContext = string
 
 const (
 	GlobalContext                       CountryContext = "Global"
-	UgandaContext                       CountryContext = "Uganda"
 	GlobalDatabaseName                                 = "Global"
 	GlobalBioDataFolderName                            = "Global Bio Information"
 	GlobalIndividualFormName                           = "Individual"
@@ -28,6 +27,7 @@ type Seed struct {
 	globalRootHouseholdForm   types.FormDefinition
 	globalRootBeneficiaryForm types.FormDefinition
 	globalForms               []types.FormDefinition
+	globalBeneficiaryRefField *types.FieldDefinition
 }
 
 func NewSeed(ctx context.Context, client client.Client) (*Seed, error) {

@@ -7,6 +7,8 @@ import (
 	"github.com/nrc-no/core/pkg/client"
 )
 
+// TODO include Spanish translations
+
 func (s *Seed) seedGlobal(ctx context.Context, client client.Client) error {
 
 	emptyDb := types.Database{}
@@ -28,7 +30,24 @@ func (s *Seed) seedGlobal(ctx context.Context, client client.Client) error {
 		}
 	}
 
-	return s.seedGlobalForms(ctx, client)
+	if err := s.seedGlobalForms(ctx, client); err != nil {
+		return err
+	}
+
+	// keed a reference to the global beneficiary form for easy reference
+	s.globalBeneficiaryRefField = &types.FieldDefinition{
+		Name:     "Individual Beneficiary",
+		Key:      true,
+		Required: true,
+		FieldType: types.FieldType{
+			Reference: &types.FieldTypeReference{
+				DatabaseID: s.globalDatabase.ID,
+				FormID:     s.globalRootBeneficiaryForm.ID,
+			},
+		},
+	}
+
+	return nil
 }
 
 func (s *Seed) seedGlobalForms(ctx context.Context, client client.Client) error {
@@ -67,13 +86,7 @@ func (s *Seed) seedGlobalForms(ctx context.Context, client client.Client) error 
 			FolderID:   s.globalBioDataFolder.ID,
 			Name:       GlobalHouseholdFormName,
 			Fields: types.FieldDefinitions{
-				{
-					Name:     "Household Name",
-					Required: true,
-					FieldType: types.FieldType{
-						Text: &types.FieldTypeText{},
-					},
-				},
+				text("Household name", true),
 			},
 		}, &s.globalRootHouseholdForm); err != nil {
 			return err
@@ -85,10 +98,10 @@ func (s *Seed) seedGlobalForms(ctx context.Context, client client.Client) error 
 			FolderID:   s.globalBioDataFolder.ID,
 			Name:       GlobalIndividualBeneficiaryFormName,
 			Fields: types.FieldDefinitions{
-				{
+				&types.FieldDefinition{
 					Name:     "Individual",
-					Required: true,
 					Key:      true,
+					Required: true,
 					FieldType: types.FieldType{
 						Reference: &types.FieldTypeReference{
 							DatabaseID: s.globalDatabase.ID,
@@ -96,52 +109,32 @@ func (s *Seed) seedGlobalForms(ctx context.Context, client client.Client) error 
 						},
 					},
 				},
-				yesNoQuestion("Has the beneficiary consented to NRC using their data?"),
-				newFieldDefinition("URL to proof of beneficiary consent", "", false, true, types.FieldType{
-					Text: &types.FieldTypeText{},
-				}),
-				yesNoQuestion("Beneficiary prefers to remain anonymous?"),
-				yesNoQuestion("Is the beneficiary a minor?"),
-				yesNoQuestion("Beneficiary presents protection concerns?"),
-				yesNoQuestion("Would you say you experience some form of physical challenges?"),
-				newFieldDefinition("How would you define the intensity of such challenges?", "", false, true, types.FieldType{
-					SingleSelect: &types.FieldTypeSingleSelect{
-						Options: wgShortSet,
-					},
-				}),
-				yesNoQuestion("Would you say you experience some form of sensory challenges?"),
-				newFieldDefinition("How would you define the intensity of such challenges?", "", false, true, types.FieldType{
-					SingleSelect: &types.FieldTypeSingleSelect{
-						Options: wgShortSet,
-					},
-				}),
-				yesNoQuestion("Would you say you experience some form of mental challenges?"),
-				newFieldDefinition("How would you define the intensity of such challenges?", "", false, true, types.FieldType{
-					SingleSelect: &types.FieldTypeSingleSelect{
-						Options: wgShortSet,
-					},
-				}),
-				newFieldDefinition("Displacement Status", "", false, true, types.FieldType{
-					SingleSelect: &types.FieldTypeSingleSelect{
-						Options: globalDisplacementStatuses,
-					},
-				}),
-				newFieldDefinition("Gender", "", false, true, types.FieldType{
-					SingleSelect: &types.FieldTypeSingleSelect{
-						Options: globalGenders,
-					},
-				}),
-				newFieldDefinition("Affiliated Household", "", false, true, types.FieldType{
-					Reference: &types.FieldTypeReference{
-						DatabaseID: s.globalDatabase.ID,
-						FormID:     s.globalRootHouseholdForm.ID,
-					},
-				}),
-				yesNoQuestion("Are you a representative for the household?"),
+				yesNo("Has the beneficiary consented to NRC using their data?", true),
+				text("URL to proof of beneficiary consent", true),
+				yesNo("Beneficiary prefers to remain anonymous?", true),
+				yesNo("Is the beneficiary a minor?", true),
+				yesNo("Beneficiary presents protection concerns?", true),
+				yesNo("Would you say you experience some form of physical challenges?", true),
+				dropdown("How would you define the intensity of such challenges?", wgShortSet, true),
+				yesNo("Would you say you experience some form of sensory challenges?", true),
+				dropdown("How would you define the intensity of such challenges?", wgShortSet, true),
+				yesNo("Would you say you experience some form of mental challenges?", true),
+				dropdown("How would you define the intensity of such challenges?", wgShortSet, true),
+				dropdown("Displacement Status", globalDisplacementStatuses, true),
+				dropdown("Gender", globalGenders, true),
+				&types.FieldDefinition{
+					Name:     "Affiliated Household",
+					Required: true,
+					FieldType: types.FieldType{
+						Reference: &types.FieldTypeReference{
+							DatabaseID: s.globalDatabase.ID,
+							FormID:     s.globalRootHouseholdForm.ID,
+						},
+					}},
+				yesNo("Are you a representative for the household?", true),
 			},
 		}, &s.globalRootBeneficiaryForm); err != nil {
 			return err
-
 		}
 	}
 
