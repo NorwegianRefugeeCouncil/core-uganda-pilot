@@ -12,7 +12,7 @@ func (s *Seed) seedColombia(ctx context.Context, client client.Client) error {
 
 	var co_db types.Database
 
-	err = client.CreateDatabase(ctx, &types.Database{Name: "Colombia"}, &co_db)
+	err = client.CreateDatabase(ctx, &types.Database{Name: ColombiaDatabaseName}, &co_db)
 
 	if err != nil {
 		return err
