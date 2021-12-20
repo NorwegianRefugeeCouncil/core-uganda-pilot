@@ -29,7 +29,7 @@ function cleanup {
   fi
 }
 
-trap cleanup SIGINT EXIT ERR HUP INT QUIT TERM
+trap cleanup EXIT
 
 echo "Starting tunnels..."
 make tunnels > /dev/null 2>&1 &
