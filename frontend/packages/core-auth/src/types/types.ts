@@ -429,7 +429,7 @@ export type AuthWrapperProps = {
   redirectUri: string;
   customLoginComponent?: React.FC<LoginComponentProps>;
   handleLoginErr?: (err: any) => void;
-  axiosInstance?: AxiosInstance;
+  onTokenChange: (token: string) => any;
   injectToken?: InjectToken;
 };
 
