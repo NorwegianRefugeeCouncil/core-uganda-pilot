@@ -120,6 +120,11 @@ export type LocalRecord = Record & {
 
 export type RecordList = { items: Record[] };
 
+export type RequestOptions = {
+  headers: { [key: string]: string };
+  silentRedirect?: boolean;
+};
+
 export type Response<TRequest, TResponse> = {
   request: TRequest;
   response: TResponse | undefined;

@@ -1,5 +1,4 @@
-import axios, { AxiosInstance, Method } from 'axios';
-
+import { BaseRESTClient } from './BaseRESTClient';
 import {
   ClientDefinition,
   DatabaseCreateRequest,
@@ -19,59 +18,13 @@ import {
   RecordGetResponse,
   RecordListRequest,
   RecordListResponse,
-  Response,
 } from './types';
-import { clientResponse } from './utils/responses';
 
-export default class Client implements ClientDefinition {
-  private readonly axiosInstance: AxiosInstance;
-
-  private readonly corev1 = 'apis/core.nrc.no/v1';
+export default class Client extends BaseRESTClient implements ClientDefinition {
+  static corev1 = 'apis/core.nrc.no/v1';
 
   constructor(address: string) {
-    this.axiosInstance = axios.create({
-      baseURL: `${address}/${this.corev1}`,
-    });
-  }
-
-  public setAuth = (token: string): void => {
-    this.axiosInstance.interceptors.request.use((value: any) => {
-      const result = { ...value };
-      if (!token) {
-        return value;
-      }
-      return {
-        ...result,
-        headers: {
-          ...result.headers,
-          Authorization: `Bearer ${token}`,
-        },
-      };
-    });
-  };
-
-  do<TRequest, TBody>(
-    request: TRequest,
-    url: string,
-    method: Method,
-    data: any,
-    expectStatusCode: number,
-  ): Promise<Response<TRequest, TBody>> {
-    const headers: { [key: string]: string } = {
-      Accept: 'application/json',
-    };
-    return this.axiosInstance
-      .request<TBody>({
-        responseType: 'json',
-        method,
-        url,
-        data,
-        headers,
-        withCredentials: true,
-      })
-      .then((value) => {
-        return clientResponse<TRequest, TBody>(value, request, expectStatusCode);
-      });
+    super(`${address}/${Client.corev1}`);
   }
 
   createDatabase(request: DatabaseCreateRequest): Promise<DatabaseCreateResponse> {

@@ -1,7 +1,6 @@
-import axios, { AxiosError, AxiosInstance, Method } from 'axios';
+import { BaseRESTClient } from 'core-api-client';
 
 import { Client as ApiClient } from '../types/types';
-import { clientResponse } from '../utils/responses';
 import {
   IdentityProviderCreateRequest,
   IdentityProviderCreateResponse,
@@ -25,72 +24,12 @@ import {
   OrganizationListResponse,
   SessionGetResponse,
 } from '../types/restTypes';
-import { RequestOptions, Response } from '../types/utils';
 
-export default class Client implements ApiClient {
-  private axiosInstance: AxiosInstance;
-
-  private readonly adminv1 = 'apis/admin.nrc.no/v1';
+export default class Client extends BaseRESTClient implements ApiClient {
+  static adminv1 = 'apis/admin.nrc.no/v1';
 
   public constructor(address: string) {
-    this.axiosInstance = axios.create({
-      baseURL: `${address}/${this.adminv1}`,
-    });
-  }
-
-  public setAuth = (token: string): void => {
-    this.axiosInstance.interceptors.request.use((value: any) => {
-      const result = { ...value };
-      if (!token) {
-        return value;
-      }
-      return {
-        ...result,
-        headers: {
-          ...result.headers,
-          Authorization: `Bearer ${token}`,
-        },
-      };
-    });
-  };
-
-  do<TRequest, TBody>(
-    request: TRequest,
-    url: string,
-    method: Method,
-    data: any,
-    expectStatusCode: number,
-    options?: RequestOptions,
-  ): Promise<Response<TRequest, TBody>> {
-    let headers: { [key: string]: string } = {
-      Accept: 'application/json',
-    };
-    if (options?.headers) {
-      headers = options?.headers;
-    }
-
-    return this.axiosInstance
-      .request<TBody>({
-        method,
-        url,
-        data,
-        responseType: 'json',
-        headers,
-        withCredentials: true,
-      })
-      .then((value) => {
-        return clientResponse<TRequest, TBody>(value, request, expectStatusCode);
-      })
-      .catch((err: AxiosError) => {
-        return {
-          request,
-          response: undefined,
-          status: '500 Internal Server Error',
-          statusCode: 500,
-          error: err.message,
-          success: false,
-        };
-      });
+    super(`${address}/${Client.adminv1}`);
   }
 
   createIdentityProvider(request: IdentityProviderCreateRequest): Promise<IdentityProviderCreateResponse> {
