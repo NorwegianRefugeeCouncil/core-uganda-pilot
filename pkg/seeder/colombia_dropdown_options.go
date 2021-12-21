@@ -8,7 +8,7 @@ var (
 	co_nationality1                = Options{}
 	co_nationality2                = Options{}
 	co_marital_status              = Options{}
-	relationship_to_hh             = Options{}
+	co_relationship_to_hh          = Options{}
 	co_beneficiary_type            = Options{}
 	co_ethnicity                   = Options{}
 	co_identification_type         = Options{}
