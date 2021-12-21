@@ -17,7 +17,7 @@ export const FormName: FC<FormNameProps> = (props) => {
           className="form-control"
           id="formName"
           type="text"
-          value={formName ?? ''}
+          value={formName || ''}
           onChange={(event) => setFormName(event.target.value)}
         />
       </div>
