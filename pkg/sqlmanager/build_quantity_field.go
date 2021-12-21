@@ -21,4 +21,3 @@ func quantityFieldActions(formReference types.FormReference, fieldDefinition *ty
 		},
 	}
 }
-

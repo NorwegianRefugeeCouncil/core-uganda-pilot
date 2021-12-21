@@ -22,4 +22,3 @@ func multilineTextFieldActions(formReference types.FormReference, fieldDefinitio
 		},
 	}
 }
-
