@@ -5,7 +5,7 @@ import "github.com/nrc-no/core/pkg/api/types"
 type Options = []*types.SelectOption
 
 var (
-  co_nationality1                = Options{{Name: "dummy option"}}
+	co_nationality1                = Options{{Name: "dummy option"}}
 	co_nationality2                = Options{{Name: "dummy option"}}
 	co_marital_status              = Options{{Name: "dummy option"}}
 	co_relationship_to_hh          = Options{{Name: "dummy option"}}

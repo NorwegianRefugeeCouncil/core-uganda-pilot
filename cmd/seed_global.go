@@ -15,7 +15,7 @@ import (
 var seedGlobal = &cobra.Command{
 	Use:   "global",
 	Short: "Seed the database with default forms and fields for the Global context",
-	RunE: seedRun(seeder.GlobalContext),
+	RunE:  seedRun(seeder.GlobalContext),
 }
 
 func init() {

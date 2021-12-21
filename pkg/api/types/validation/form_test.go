@@ -240,7 +240,7 @@ func TestValidateForm(t *testing.T) {
 				},
 			}),
 		},
-    {
+		{
 			name: "field name cannot have surrounding whitespace",
 			expect: validation.ErrorList{
 				validation.Invalid(validation.NewPath("fields[0].name"), " fieldName ", errFieldNameNoLeadingTrailingWhitespaces),
@@ -252,7 +252,7 @@ func TestValidateForm(t *testing.T) {
 				},
 			}),
 		},
-    {
+		{
 			name: "field code cannot be too long",
 			expect: validation.ErrorList{
 				validation.TooLong(validation.NewPath("fields[0].code"), strings.Repeat("a", fieldCodeMaxLength+1), fieldCodeMaxLength),
@@ -529,7 +529,7 @@ func TestValidateFormOptions(t *testing.T) {
 				{Name: ""},
 			},
 		},
-    {
+		{
 			name: "too many options",
 			expect: func(fieldPath *validation.Path) validation.ErrorList {
 				return validation.ErrorList{
@@ -590,7 +590,7 @@ func TestValidateFieldNameRegex(t *testing.T) {
 		"# Field Name",
 		"James Bond!- 007",
 		"2+2=5",
-    "Number of 60+ years old males",
+		"Number of 60+ years old males",
 	}
 	invalid := []string{
 		" invalid ",
