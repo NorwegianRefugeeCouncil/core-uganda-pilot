@@ -73,7 +73,7 @@ func (s *Seed) seedCoIntake(ctx context.Context, client client.Client, dbID stri
 			dropdown("Nationality (1)", co_nationality1, false),
 			dropdown("Nationality (2)", co_nationality2, false),
 			dropdown("Marital status", co_marital_status, true),
-			dropdown("Relationship to HH representative", relationship_to_hh, true),
+			dropdown("Relationship to HH representative", co_relationship_to_hh, true),
 			dropdown("Beneficiary type", co_beneficiary_type, true),
 			dropdown("Ethnicity", co_ethnicity, true),
 			yesNo("Do you have a job or entrepreneurship", true),
