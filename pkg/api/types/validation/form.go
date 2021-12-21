@@ -46,10 +46,15 @@ const (
 	// todo: add maximum total number of fields (form fields + subform fields)
 )
 
+// userFacingLettersAndSymbols matches user-facing strings that start with a letter followed by
+// single-space-separated groups of letters/numbers/punctuation/currency.
+// see https://pkg.go.dev/unicode#Categories for syntax
+var userFacingLettersAndSymbols = regexp.MustCompile(`^\p{L}+[\p{L}\p{N}\p{P}\p{Sc}]*(?: [\p{L}\p{N}\p{P}\p{Sc}]+)*$`);
+
 var (
-	fieldNameRegex  = regexp.MustCompile("^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$")
-	fieldCodeRegex  = regexp.MustCompile("^[a-zA-Z]+[a-zA-Z0-9]*$")
-	optionNameRegex = regexp.MustCompile("^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$")
+  fieldNameRegex  = userFacingLettersAndSymbols
+  fieldCodeRegex  = regexp.MustCompile(`^[[:alpha:]]{1}\w*$`)
+	optionNameRegex = userFacingLettersAndSymbols
 )
 
 func ValidateForm(form *types.FormDefinition) validation.ErrorList {

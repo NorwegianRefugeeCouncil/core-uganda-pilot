@@ -624,7 +624,7 @@ func TestValidateFieldNameRegex(t *testing.T) {
 		"fieldName",
 		"field name",
 		"Field Name",
-		"007",
+		"James Bond!- 007",
 	}
 	invalid := []string{
 		" invalid ",
