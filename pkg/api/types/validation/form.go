@@ -49,11 +49,11 @@ const (
 // userFacingLettersAndSymbols matches user-facing strings that start with a letter followed by
 // single-space-separated groups of letters/numbers/punctuation/currency.
 // see https://pkg.go.dev/unicode#Categories for syntax
-var userFacingLettersAndSymbols = regexp.MustCompile(`^\p{L}+[\p{L}\p{N}\p{P}\p{Sc}]*(?: [\p{L}\p{N}\p{P}\p{Sc}]+)*$`);
+var userFacingLettersAndSymbols = regexp.MustCompile(`^\p{L}+[\p{L}\p{N}\p{P}\p{Sc}]*(?: [\p{L}\p{N}\p{P}\p{Sc}]+)*$`)
 
 var (
-  fieldNameRegex  = userFacingLettersAndSymbols
-  fieldCodeRegex  = regexp.MustCompile(`^[[:alpha:]]{1}\w*$`)
+	fieldNameRegex  = userFacingLettersAndSymbols
+	fieldCodeRegex  = regexp.MustCompile(`^[[:alpha:]]{1}\w*$`)
 	optionNameRegex = userFacingLettersAndSymbols
 )
 

@@ -23,4 +23,3 @@ func dateFieldActions(formReference types.FormReference, fieldDefinition *types.
 		},
 	}
 }
-
