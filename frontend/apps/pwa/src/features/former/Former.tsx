@@ -91,7 +91,6 @@ export const Former: FC<FormerProps> = (props) => {
   const selectedField = selectedFieldId ? fields.find((f) => f.id === selectedFieldId) : undefined;
 
   function formHeader() {
-    console.log({formName, ownerFormName})
     const name = formName ? formName : ownerFormName ? ownerFormName : '';
     return <FormName formName={name} setFormName={setFormName} />;
   }
