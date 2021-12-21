@@ -90,8 +90,6 @@ func (s *Seed) Seed(ctx context.Context, client client.Client, countryContext Co
 	switch countryContext {
 	case GlobalContext:
 		return s.seedGlobal(ctx, client)
-	case UgandaContext:
-		/* return s.seedUganda() */
 	default:
 		return fmt.Errorf("invalid country context")
 	}
