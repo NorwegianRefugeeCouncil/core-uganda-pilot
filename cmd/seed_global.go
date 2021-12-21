@@ -15,7 +15,15 @@ import (
 var seedGlobal = &cobra.Command{
 	Use:   "global",
 	Short: "Seed the database with default forms and fields for the Global context",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: seedRun(seeder.GlobalContext),
+}
+
+func init() {
+	seedCmd.AddCommand(seedGlobal)
+}
+
+func seedRun(seederContext seeder.CountryContext) func(cmd *cobra.Command, args []string) error {
+	return func(cmd *cobra.Command, args []string) error {
 		logging.SetLogLevel(zap.DebugLevel)
 		ctx := context.Background()
 		url, err := url.Parse(endpoint)
@@ -31,10 +39,6 @@ var seedGlobal = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		return s.Seed(ctx, client, seeder.GlobalContext)
-	},
-}
-
-func init() {
-	seedCmd.AddCommand(seedGlobal)
+		return s.Seed(ctx, client, seederContext)
+	}
 }
