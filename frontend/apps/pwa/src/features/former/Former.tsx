@@ -1,13 +1,7 @@
-import React, { FC, Fragment, useCallback, useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { FC, useCallback, useState } from 'react';
 import { FieldKind } from 'core-api-client';
 
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { fetchDatabases } from '../../reducers/database';
-import { fetchFolders } from '../../reducers/folder';
-import { fetchForms } from '../../reducers/form';
-
-import { formerActions, formerGlobalSelectors, FormField, postForm } from './former.slice';
+import { FormField } from './former.slice';
 import { FormerField } from './Field';
 import { FormName } from './FormName';
 import { FieldTypePicker } from './FieldTypePicker';
@@ -91,7 +85,8 @@ export const Former: FC<FormerProps> = (props) => {
   const selectedField = selectedFieldId ? fields.find((f) => f.id === selectedFieldId) : undefined;
 
   function formHeader() {
-    return <FormName formName={formName} setFormName={setFormName} />;
+    const name = formName || ownerFormName || '';
+    return <FormName formName={name} setFormName={setFormName} />;
   }
 
   function addFieldButton() {
@@ -138,7 +133,7 @@ export const Former: FC<FormerProps> = (props) => {
           </div>
           <div className="row mt-3">
             <div className="col-10 col-md-8 offset-md-1">
-              {formHeader()}
+              {ownerFormName == null && formHeader()}
               {mapField(selectedField, props)}
             </div>
             <div className="col-2">
@@ -165,7 +160,7 @@ export const Former: FC<FormerProps> = (props) => {
         </div>
         <div className="row mt-3">
           <div className="col-6 offset-2">
-            {formHeader()}
+            {ownerFormName == null && formHeader()}
             {fieldSections()}
           </div>
           <div className="col-2">
@@ -176,185 +171,5 @@ export const Former: FC<FormerProps> = (props) => {
         </div>
       </div>
     </div>
-  );
-};
-
-export const FormerContainer: FC = (props) => {
-  const dispatch = useAppDispatch();
-
-  // load data
-  useEffect(() => {
-    dispatch(formerActions.reset());
-    dispatch(fetchDatabases());
-    dispatch(fetchFolders());
-    dispatch(fetchForms());
-  }, [dispatch]);
-
-  const location = useLocation();
-
-  const form = useAppSelector(formerGlobalSelectors.selectCurrentForm);
-  const ownerForm = useAppSelector(formerGlobalSelectors.selectCurrentFormOwner);
-  const folder = useAppSelector(formerGlobalSelectors.selectFolder);
-  const database = useAppSelector(formerGlobalSelectors.selectDatabase);
-  const selectedField = useAppSelector(formerGlobalSelectors.selectCurrentField);
-
-  const formDefinition = useAppSelector(formerGlobalSelectors.selectFormDefinition(database?.id, folder?.id));
-
-  useEffect(() => {
-    const search = new URLSearchParams(location.search);
-    const databaseId = search.get('databaseId');
-    if (databaseId) {
-      dispatch(formerActions.setDatabase({ databaseId }));
-    }
-    const folderId = search.get('folderId');
-    if (folderId) {
-      dispatch(formerActions.setFolder({ folderId }));
-    }
-  }, [dispatch, location]);
-
-  const setFormName = useCallback(
-    (formName: string) => {
-      if (form) {
-        dispatch(formerActions.setFormName({ formId: form.formId, formName }));
-      }
-    },
-    [dispatch, form],
-  );
-
-  const setSelectedField = useCallback(
-    (fieldId: string | undefined) => {
-      dispatch(formerActions.selectField({ fieldId }));
-    },
-    [dispatch],
-  );
-
-  const addField = useCallback(
-    (kind: FieldKind) => {
-      if (form) {
-        dispatch(formerActions.addField({ formId: form.formId, kind }));
-      }
-    },
-    [dispatch, form],
-  );
-
-  const setFieldOption = useCallback(
-    (fieldId: string, i: number, value: string) => {
-      dispatch(formerActions.setFieldOption({ fieldId, i, value }));
-    },
-    [dispatch],
-  );
-
-  const addOption = useCallback(
-    (fieldId: string) => {
-      dispatch(formerActions.addOption({ fieldId }));
-    },
-    [dispatch],
-  );
-
-  const removeOption = useCallback(
-    (fieldId: string, i: number) => {
-      dispatch(formerActions.removeOption({ fieldId, i }));
-    },
-    [dispatch],
-  );
-
-  const cancelField = useCallback(
-    (fieldId: string) => {
-      dispatch(formerActions.cancelFieldChanges({ fieldId }));
-    },
-    [dispatch],
-  );
-
-  const setFieldRequired = useCallback(
-    (fieldId: string, required: boolean) => {
-      dispatch(formerActions.setFieldRequired({ fieldId, required }));
-    },
-    [dispatch],
-  );
-
-  const setFieldIsKey = useCallback(
-    (fieldId: string, isKey: boolean) => {
-      dispatch(formerActions.setFieldIsKey({ fieldId, isKey }));
-    },
-    [dispatch],
-  );
-
-  const setFieldName = useCallback(
-    (fieldId: string, name: string) => {
-      dispatch(formerActions.setFieldName({ fieldId, name }));
-    },
-    [dispatch],
-  );
-
-  const setFieldDescription = useCallback(
-    (fieldId: string, description: string) => {
-      dispatch(formerActions.setFieldDescription({ fieldId, description }));
-    },
-    [dispatch],
-  );
-
-  const setFieldReferencedDatabaseId = useCallback(
-    (fieldId: string, databaseId: string) => {
-      dispatch(formerActions.setFieldReferencedDatabaseId({ fieldId, databaseId }));
-    },
-    [dispatch],
-  );
-
-  const setFieldRefernecedFormId = useCallback(
-    (fieldId: string, formId: string) => {
-      dispatch(formerActions.setFieldReferencedFormId({ fieldId, formId }));
-    },
-    [dispatch],
-  );
-
-  const openSubForm = useCallback(
-    (fieldId: string) => {
-      dispatch(formerActions.openSubForm({ fieldId }));
-    },
-    [dispatch],
-  );
-
-  const saveField = useCallback(
-    (fieldId: string) => {
-      dispatch(formerActions.selectField({ fieldId: undefined }));
-    },
-    [dispatch],
-  );
-
-  const saveForm = useCallback(() => {
-    if (ownerForm) {
-      dispatch(formerActions.saveForm());
-    } else if (formDefinition) {
-      dispatch(postForm(formDefinition));
-    }
-  }, [dispatch, formDefinition, ownerForm]);
-
-  if (!form) {
-    return <></>;
-  }
-
-  return (
-    <Former
-      formName={form.name}
-      setFormName={setFormName}
-      fields={form.fields}
-      selectedFieldId={selectedField?.id}
-      setSelectedField={setSelectedField}
-      addField={addField}
-      setFieldOption={setFieldOption}
-      addOption={addOption}
-      removeOption={removeOption}
-      setFieldRequired={setFieldRequired}
-      setFieldIsKey={setFieldIsKey}
-      setFieldName={setFieldName}
-      setFieldDescription={setFieldDescription}
-      openSubForm={openSubForm}
-      saveField={saveField}
-      saveForm={saveForm}
-      ownerFormName={ownerForm?.name}
-      cancelField={(fieldId: string) => cancelField(fieldId)}
-      setFieldReferencedDatabaseId={setFieldReferencedDatabaseId}
-      setFieldReferencedFormId={setFieldRefernecedFormId}
-    />
   );
 };

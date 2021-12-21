@@ -7,13 +7,13 @@ import { fetchForms } from '../reducers/form';
 import { fetchFolders } from '../reducers/folder';
 import { NavBarContainer } from '../features/navbar/navbar';
 import { RecordEditorContainer } from '../features/recorder/RecordEditor';
-import { FormerContainer } from '../features/former/Former';
 import { FolderEditor } from '../features/folders/FolderEditor';
 import { DatabaseEditor } from '../features/databases/DatabaseEditor';
 import { FolderBrowserContainer } from '../features/browser/FolderBrowser';
 import { FormBrowserContainer } from '../features/browser/FormBrowser';
 import { DatabasesContainer } from '../features/browser/Databases';
 import { RecordBrowser } from '../features/browser/RecordBrowser';
+import { FormerContainer } from '../features/former/FormerContainer';
 
 const AuthenticatedApp: React.FC = () => {
   const dispatch = useAppDispatch();
