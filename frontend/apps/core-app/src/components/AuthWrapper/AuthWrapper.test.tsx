@@ -9,7 +9,7 @@ import { AuthWrapper } from './AuthWrapper';
 
 describe('Unauthenticated', () => {
   it('should render the login button', () => {
-    const onTokenChangeSpy = jest.fn();
+    const onTokenChangeMock = jest.fn();
     const loginSpy = jest.fn();
 
     jest
@@ -17,7 +17,7 @@ describe('Unauthenticated', () => {
       .mockImplementationOnce(() => [undefined, loginSpy]);
 
     const { getByText } = render(
-      <AuthWrapper onTokenChange={onTokenChangeSpy}>
+      <AuthWrapper onTokenChange={onTokenChangeMock}>
         <Text>Success</Text>
       </AuthWrapper>,
     );
@@ -28,7 +28,7 @@ describe('Unauthenticated', () => {
   });
 
   it('should call "login" when the button is clicked', () => {
-    const onTokenChangeSpy = jest.fn();
+    const onTokenChangeMock = jest.fn();
     const loginSpy = jest.fn();
 
     jest
@@ -36,7 +36,7 @@ describe('Unauthenticated', () => {
       .mockImplementationOnce(() => [undefined, loginSpy]);
 
     const { getByText } = render(
-      <AuthWrapper onTokenChange={onTokenChangeSpy}>
+      <AuthWrapper onTokenChange={onTokenChangeMock}>
         <Text>Success</Text>
       </AuthWrapper>,
     );
@@ -49,7 +49,7 @@ describe('Unauthenticated', () => {
 
 describe('Authenticated', () => {
   it('should call "onTokenChange" when loggedIn', () => {
-    const onTokenChangeSpy = jest.fn();
+    const onTokenChangeMock = jest.fn();
     const loginSpy = jest.fn();
 
     const fakeTokenResponse = new TokenResponse({ accessToken: 'fakeToken' });
@@ -58,16 +58,16 @@ describe('Authenticated', () => {
       .mockImplementation(() => [fakeTokenResponse, loginSpy]);
 
     render(
-      <AuthWrapper onTokenChange={onTokenChangeSpy}>
+      <AuthWrapper onTokenChange={onTokenChangeMock}>
         <Text>Success</Text>
       </AuthWrapper>,
     );
 
-    expect(onTokenChangeSpy).toHaveBeenCalledWith('fakeToken');
+    expect(onTokenChangeMock).toHaveBeenCalledWith('fakeToken');
   });
 
   it('should render the children', () => {
-    const onTokenChangeSpy = jest.fn();
+    const onTokenChangeMock = jest.fn();
     const loginSpy = jest.fn();
 
     const fakeTokenResponse = new TokenResponse({ accessToken: 'fakeToken' });
@@ -76,7 +76,7 @@ describe('Authenticated', () => {
       .mockImplementation(() => [fakeTokenResponse, loginSpy]);
 
     const { getByText } = render(
-      <AuthWrapper onTokenChange={onTokenChangeSpy}>
+      <AuthWrapper onTokenChange={onTokenChangeMock}>
         <Text>Success</Text>
       </AuthWrapper>,
     );
