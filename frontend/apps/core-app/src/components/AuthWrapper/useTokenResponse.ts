@@ -1,15 +1,45 @@
 import * as React from 'react';
-import { AuthRequest, AuthSessionResult, DiscoveryDocument, exchangeCodeAsync, TokenResponse } from 'expo-auth-session';
+import {
+  CodeChallengeMethod,
+  exchangeCodeAsync,
+  makeRedirectUri,
+  ResponseType,
+  TokenResponse,
+  useAuthRequest,
+  useAutoDiscovery,
+} from 'expo-auth-session';
 import Constants from 'expo-constants';
+import { Platform } from 'react-native';
 
-export const useTokenResponse = (
-  discovery: DiscoveryDocument | null,
-  request: AuthRequest | null,
-  response: AuthSessionResult | null,
-  clientId: string,
-  redirectUri: string,
-): TokenResponse | undefined => {
+export const useTokenResponse = (): [
+  TokenResponse | undefined,
+  () => Promise<void>,
+] => {
   const [tokenResponse, setTokenResponse] = React.useState<TokenResponse>();
+
+  const shouldUseProxy = React.useMemo(
+    () => Platform.select({ web: false, default: false }),
+    [],
+  );
+  const redirectUri = React.useMemo(
+    () => makeRedirectUri({ scheme: Constants.manifest?.scheme }),
+    [],
+  );
+
+  const discovery = useAutoDiscovery(Constants.manifest?.extra?.issuer);
+  const clientId = Constants.manifest?.extra?.client_id;
+
+  const [request, response, promptAsync] = useAuthRequest(
+    {
+      clientId,
+      usePKCE: true,
+      responseType: ResponseType.Code,
+      codeChallengeMethod: CodeChallengeMethod.S256,
+      scopes: Constants.manifest?.extra?.scopes,
+      redirectUri,
+    },
+    discovery,
+  );
 
   React.useEffect(() => {
     (async () => {
@@ -33,7 +63,11 @@ export const useTokenResponse = (
         setTokenResponse(undefined);
       }
     })();
-  }, [request?.codeVerifier, JSON.stringify(response), JSON.stringify(discovery)]);
+  }, [
+    request?.codeVerifier,
+    JSON.stringify(response),
+    JSON.stringify(discovery),
+  ]);
 
   React.useEffect(() => {
     (async () => {
@@ -47,7 +81,10 @@ export const useTokenResponse = (
         };
 
         try {
-          const resp = await tokenResponse?.refreshAsync(refreshConfig, discovery);
+          const resp = await tokenResponse?.refreshAsync(
+            refreshConfig,
+            discovery,
+          );
           setTokenResponse(resp);
         } catch {
           setTokenResponse(undefined);
@@ -56,5 +93,9 @@ export const useTokenResponse = (
     })();
   }, [tokenResponse?.shouldRefresh(), discovery]);
 
-  return tokenResponse;
+  const login = React.useCallback(async () => {
+    promptAsync({ useProxy: shouldUseProxy });
+  }, [shouldUseProxy, promptAsync]);
+
+  return [tokenResponse, login];
 };
