@@ -14,6 +14,8 @@ type CountryContext = string
 const (
 	GlobalContext                       CountryContext = "Global"
 	GlobalDatabaseName                                 = "Global"
+	ColombiaContext                     CountryContext = "Colombia"
+	ColombiaDatabaseName                               = "Colombia"
 	GlobalBioDataFolderName                            = "Global Bio Information"
 	GlobalIndividualFormName                           = "Individual"
 	GlobalHouseholdFormName                            = "Household"
@@ -90,6 +92,8 @@ func (s *Seed) Seed(ctx context.Context, client client.Client, countryContext Co
 	switch countryContext {
 	case GlobalContext:
 		return s.seedGlobal(ctx, client)
+	case ColombiaContext:
+		return s.seedColombia(ctx, client)
 	default:
 		return fmt.Errorf("invalid country context")
 	}
