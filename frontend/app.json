@@ -1,6 +1,12 @@
 {
   "HACK-description": "jest-expo looks for an app.json in this location. The tests fail without a scheme.",
   "expo": {
-    "scheme": "nrccore"
+    "scheme": "nrccore",
+    "extra": {
+      "server_uri": "http://localhost:1234",
+      "client_id": "fake-client-id",
+      "issuer": "fake-issuer",
+      "scopes": ["fake-scope"]
+    }
   }
 }

@@ -48,11 +48,21 @@ module.exports = {
     'import/order': [
       'error',
       {
-        groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+        groups: [
+          'builtin',
+          'external',
+          'internal',
+          'parent',
+          'sibling',
+          'index',
+        ],
         'newlines-between': 'always',
       },
     ],
-    'max-len': ['error', { code: 130, tabWidth: 2, ignorePattern: '^import\\s.+\\sfrom\\s.+;$' }],
+    'max-len': [
+      'error',
+      { code: 80, tabWidth: 2, ignorePattern: '^import\\s.+\\sfrom\\s.+;$' },
+    ],
     'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': [

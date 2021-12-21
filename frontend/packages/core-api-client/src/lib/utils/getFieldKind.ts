@@ -1,29 +1,29 @@
-import {FieldKind, FieldType} from "../types";
+import { FieldKind, FieldType } from '../types';
 
 export function getFieldKind(fieldType: FieldType): FieldKind {
   if (fieldType.text) {
-    return FieldKind.Text
+    return FieldKind.Text;
   }
   if (fieldType.multilineText) {
-    return FieldKind.MultilineText
+    return FieldKind.MultilineText;
   }
   if (fieldType.date) {
-    return FieldKind.Date
+    return FieldKind.Date;
   }
   if (fieldType.subForm) {
-    return FieldKind.SubForm
+    return FieldKind.SubForm;
   }
   if (fieldType.reference) {
-    return FieldKind.Reference
+    return FieldKind.Reference;
   }
   if (fieldType.quantity) {
-    return FieldKind.Quantity
+    return FieldKind.Quantity;
   }
   if (fieldType.singleSelect) {
-    return FieldKind.SingleSelect
+    return FieldKind.SingleSelect;
   }
   if (fieldType.multiSelect) {
-    return FieldKind.MultiSelect
+    return FieldKind.MultiSelect;
   }
-  throw new Error("unknown field kind")
+  throw new Error('unknown field kind');
 }

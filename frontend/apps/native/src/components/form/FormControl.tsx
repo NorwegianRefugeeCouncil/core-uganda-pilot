@@ -45,6 +45,18 @@ const FormControl = ({ fieldDefinition, style, control, name, value }: FormContr
           const fieldKind = getFieldKind(fieldDefinition.fieldType);
 
           switch (fieldKind) {
+            case FieldKind.Text:
+            case FieldKind.Date:
+              return (
+                <TextInput
+                  fieldDefinition={fieldDefinition}
+                  style={style}
+                  value={value}
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  {...fieldState}
+                />
+              );
             case FieldKind.Reference:
               return (
                 <ReferenceInput
@@ -82,16 +94,7 @@ const FormControl = ({ fieldDefinition, style, control, name, value }: FormContr
             case FieldKind.SingleSelect:
               return <Select fieldDefinition={fieldDefinition} style={style} value={value} onBlur={onBlur} onChange={onChange} />;
             default:
-              return (
-                <TextInput
-                  fieldDefinition={fieldDefinition}
-                  style={style}
-                  value={value}
-                  onBlur={onBlur}
-                  onChange={onChange}
-                  {...fieldState}
-                />
-              );
+              return <div />;
           }
         }}
       />

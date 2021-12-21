@@ -12,16 +12,22 @@ DOCKER_UP=0
 function cleanup {
   echo "Cleaning up..."
   if [ -n "${TUNNEL_PID}" ]; then
-    echo "Killing tunnel..."
-    kill "${TUNNEL_PID}"
+    if ps -p $TUNNEL_PID > /dev/null; then
+      echo "Killing tunnel..."
+      kill "${TUNNEL_PID}"
+    fi
   fi
   if [ -n "${PROXY_PID}" ]; then
-    echo "Killing proxy..."
-    kill "${PROXY_PID}"
+    if ps -p $PROXY_PID > /dev/null; then
+      echo "Killing proxy..."
+      kill "${PROXY_PID}"
+    fi
   fi
   if [ -n "${SERVE_PID}" ]; then
-    echo "Killing backend..."
-    kill "${SERVE_PID}"
+    if ps -p $SERVE_PID > /dev/null; then
+      echo "Killing backend..."
+      kill "${SERVE_PID}"
+    fi
   fi
   if [ "${DOCKER_UP}" -eq 1 ]; then
     echo "Stopping docker..."
