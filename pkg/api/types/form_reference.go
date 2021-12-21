@@ -7,4 +7,3 @@ type FormReference interface {
 	// GetDatabaseID returns the form Database ID
 	GetDatabaseID() string
 }
-

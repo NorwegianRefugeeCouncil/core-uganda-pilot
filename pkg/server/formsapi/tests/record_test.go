@@ -18,16 +18,16 @@ func (s *Suite) TestRecordCreateReadList() {
 
 	var form types.FormDefinition
 	const (
-		textFieldName          = "Text Field"
-		monthFieldName         = "Month Field"
-		dateFieldName          = "Date Field"
-		weekFieldName          = "Week Field"
-		multilineTextFieldName = "Multiline Text Field"
-		quantityFieldName      = "Quantity Field"
-		singleSelectFieldName  = "Single Select"
+		textFieldName                 = "Text Field"
+		monthFieldName                = "Month Field"
+		dateFieldName                 = "Date Field"
+		weekFieldName                 = "Week Field"
+		multilineTextFieldName        = "Multiline Text Field"
+		quantityFieldName             = "Quantity Field"
+		singleSelectFieldName         = "Single Select"
 		singleSelectNullFieldName     = "Single Select 2"
 		singleSelectRequiredFieldName = "Single Select 3"
-		multiSelectFieldName   = "Multi Select"
+		multiSelectFieldName          = "Multi Select"
 	)
 
 	if err := s.cli.CreateForm(ctx, &types.FormDefinition{

@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func ParseIsoWeekTime(valueString string) (time.Time, error)  {
+func ParseIsoWeekTime(valueString string) (time.Time, error) {
 	parts := strings.Split(valueString, "-W")
 	if len(parts) != 2 {
 		return time.Time{}, errors.New("unexpected week field format")

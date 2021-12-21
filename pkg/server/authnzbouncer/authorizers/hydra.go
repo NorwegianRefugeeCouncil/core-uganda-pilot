@@ -16,7 +16,7 @@ func NewHydraAuthorizer(hydraAdmin admin.ClientService) Authorizer {
 }
 
 type AuthorizationResponse struct {
-	Active            bool       `json:"active"`
+	Active            bool        `json:"active"`
 	Aud               []string    `json:"aud"`
 	ClientID          string      `json:"client_id,omitempty"`
 	Exp               int64       `json:"exp,omitempty"`
