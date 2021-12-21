@@ -134,7 +134,7 @@ export const Former: FC<FormerProps> = (props) => {
           <div className="row">
             <div className="col-12 col-md-8 offset-md-1">
               <h3>Add Form</h3>
-              <h6>{ownerFormName ? <div className="mb-2">Editing child form of {ownerFormName} !!!!</div> : <></>}</h6>
+              <h6>{ownerFormName ? <div className="mb-2">Editing child form of {ownerFormName}</div> : <></>}</h6>
             </div>
           </div>
           <div className="row mt-3">
