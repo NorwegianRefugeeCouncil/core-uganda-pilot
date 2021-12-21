@@ -34,19 +34,6 @@ func (s *Seed) seedGlobal(ctx context.Context, client client.Client) error {
 		return err
 	}
 
-	// keed a reference to the global beneficiary form for easy reference
-	s.globalBeneficiaryRefField = &types.FieldDefinition{
-		Name:     "Individual Beneficiary",
-		Key:      true,
-		Required: true,
-		FieldType: types.FieldType{
-			Reference: &types.FieldTypeReference{
-				DatabaseID: s.globalDatabase.ID,
-				FormID:     s.globalRootBeneficiaryForm.ID,
-			},
-		},
-	}
-
 	return nil
 }
 

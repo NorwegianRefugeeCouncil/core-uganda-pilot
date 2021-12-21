@@ -46,10 +46,10 @@ const (
 	// todo: add maximum total number of fields (form fields + subform fields)
 )
 
-// userFacingLettersAndSymbols matches user-facing strings that start with a letter followed by
-// single-space-separated groups of letters/numbers/punctuation/currency.
-// see https://pkg.go.dev/unicode#Categories for syntax
-var userFacingLettersAndSymbols = regexp.MustCompile(`^\p{L}+[\p{L}\p{N}\p{P}\p{Sc}]*(?: [\p{L}\p{N}\p{P}\p{Sc}]+)*$`)
+// userFacingLettersAndSymbols matches user-facing strings composed of
+// single-space-separated groups of letters/numbers/punctuation/symbols.
+// see https://pkg.go.dev/unicode#pkg-variables for syntax
+var userFacingLettersAndSymbols = regexp.MustCompile(`^[\p{L}\p{N}\p{P}\p{S}\S]+(?: [\p{L}\p{N}\p{P}\p{S}\S]+)*$`)
 
 var (
 	fieldNameRegex  = userFacingLettersAndSymbols
