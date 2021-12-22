@@ -1,7 +1,7 @@
 import React from 'react';
 import { Path } from 'react-native-svg';
 
-export const Call = (
+export const Call = () => (
   <Path
     fill="currentColor"
     d="M28.6,13.6l-2.5-2.5c-0.3-0.3-0.7-0.5-1.1-0.5c-0.4,0-0.8,0.2-1.1,0.5l-2.7,2.7c-0.3,0.3-0.5,0.7-0.5,1.1

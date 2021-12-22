@@ -1,7 +1,7 @@
 import React from 'react';
 import { Path } from 'react-native-svg';
 
-export const ActivityCamp = (
+export const ActivityCamp = () => (
   <Path
     fill="currentColor"
     d="M12,18.2l8-4.6l8,4.6c0.2,0.1,0.4,0.2,0.6,0.2c0.4,0,0.8-0.2,1.1-0.6c0.3-0.6,0.1-1.3-0.5-1.7l-8.6-4.9

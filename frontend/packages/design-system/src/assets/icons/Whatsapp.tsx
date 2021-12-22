@@ -1,7 +1,7 @@
 import React from 'react';
 import { G, Path } from 'react-native-svg';
 
-export const Whatsapp = (
+export const Whatsapp = () => (
   <G>
     <Path
       fill="currentColor"

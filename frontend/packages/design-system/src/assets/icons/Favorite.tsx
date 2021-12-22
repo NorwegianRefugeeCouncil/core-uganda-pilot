@@ -1,7 +1,7 @@
 import React from 'react';
 import { Path } from 'react-native-svg';
 
-export const Favorite = (
+export const Favorite = () => (
   <Path
     fill="currentColor"
     d="M29.3,16.3l-6-0.9L20.7,10c-0.1-0.1-0.2-0.3-0.3-0.3c-0.4-0.2-0.8,0-1,0.3l-2.7,5.4l-6,0.9c-0.2,0-0.3,0.1-0.4,0.2

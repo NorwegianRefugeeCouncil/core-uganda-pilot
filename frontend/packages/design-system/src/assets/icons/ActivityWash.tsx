@@ -1,7 +1,7 @@
 import React from 'react';
 import { Path } from 'react-native-svg';
 
-export const ActivityWash = (
+export const ActivityWash = () => (
   <Path
     fill="currentColor"
     d="M27.1,11.4h1.1c0.4,0,0.7,0.3,0.7,0.7v6.7c0,0.4-0.3,0.7-0.7,0.7h-1.1c-0.4,0-0.7-0.3-0.7-0.7V17H16.2

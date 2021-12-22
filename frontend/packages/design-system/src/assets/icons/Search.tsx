@@ -1,7 +1,7 @@
 import React from 'react';
 import { Path } from 'react-native-svg';
 
-export const Search = (
+export const Search = () => (
   <Path
     fill="currentColor"
     d="M28.9,27.7l-5.8-5.8c0.9-1.2,1.4-2.6,1.4-4.1c0-1.8-0.7-3.5-2-4.8c-1.3-1.3-3-2-4.8-2c-1.8,0-3.5,0.7-4.8,2

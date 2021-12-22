@@ -1,7 +1,7 @@
 import React from 'react';
 import { G, Path } from 'react-native-svg';
 
-export const Edit = (
+export const Edit = () => (
   <G>
     <Path
       fill="currentColor"

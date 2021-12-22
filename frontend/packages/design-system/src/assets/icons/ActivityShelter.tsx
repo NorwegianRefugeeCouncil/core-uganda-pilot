@@ -1,7 +1,7 @@
 import React from 'react';
 import { Path } from 'react-native-svg';
 
-export const ActivityShelter = (
+export const ActivityShelter = () => (
   <Path
     fill="currentColor"
     d="M20.5,11.1l8.1,4.7c0.3,0.2,0.5,0.5,0.5,0.8v11.4c0,0.5-0.4,0.9-0.9,0.9c-0.5,0-0.9-0.4-0.9-0.9V17.2L20,13

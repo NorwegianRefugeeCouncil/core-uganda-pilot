@@ -1,7 +1,7 @@
 import React from 'react';
 import { Path } from 'react-native-svg';
 
-export const Attachment = (
+export const Attachment = () => (
   <Path
     fill="currentColor"
     d="M26.2,12.6c-2.2-2.2-5.8-2.2-8,0l-6.1,6.1c0,0-0.1,0.1-0.1,0.1c0,0.1,0,0.1,0.1,0.1l0.9,0.9c0,0,0.1,0.1,0.1,0.1

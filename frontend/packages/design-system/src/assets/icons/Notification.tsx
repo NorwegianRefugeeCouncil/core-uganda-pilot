@@ -1,7 +1,7 @@
 import React from 'react';
 import { Path } from 'react-native-svg';
 
-export const Notification = (
+export const Notification = () => (
   <Path
     fill="currentColor"
     d="M22.7,10.7c-0.1,0-0.3,0-0.4,0.1L14,16.2h-3.8c-0.2,0-0.4,0.2-0.4,0.4v6.8c0,0.2,0.2,0.4,0.4,0.4H14l8.3,5.4

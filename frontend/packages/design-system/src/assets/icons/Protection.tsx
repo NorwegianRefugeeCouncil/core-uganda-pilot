@@ -1,7 +1,7 @@
 import React from 'react';
 import { Path } from 'react-native-svg';
 
-export const Protection = (
+export const Protection = () => (
   <Path
     fill="currentColor"
     d="M27.7,14.5c0-0.2-0.1-0.3-0.3-0.4C27.3,14.1,27.1,14,27,14h-1.7v-2.6c0-0.4-0.3-0.8-0.8-0.8h-9c-0.4,0-0.8,0.3-0.8,0.8V14

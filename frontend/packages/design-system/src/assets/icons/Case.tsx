@@ -1,7 +1,7 @@
 import React from 'react';
 import { Path } from 'react-native-svg';
 
-export const Case = (
+export const Case = () => (
   <Path
     fill="currentColor"
     d="M23.8,21.2c-1.2,0-2.2,1-2.2,2.2c0,1.2,1,2.2,2.2,2.2c1.2,0,2.2-1,2.2-2.2C26,22.2,25,21.2,23.8,21.2z M23.8,24.2

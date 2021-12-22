@@ -1,7 +1,7 @@
 import React from 'react';
 import { Path } from 'react-native-svg';
 
-export const Print = (
+export const Print = () => (
   <Path
     fill="currentColor"
     d="M27.2,18.2h-0.9c-0.1,0-0.2,0.1-0.2,0.2v0.9c0,0.1,0.1,0.2,0.2,0.2h0.9c0.1,0,0.2-0.1,0.2-0.2v-0.9

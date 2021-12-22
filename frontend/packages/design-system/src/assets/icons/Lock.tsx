@@ -1,7 +1,7 @@
 import React from 'react';
 import { Path } from 'react-native-svg';
 
-export const Lock = (
+export const Lock = () => (
   <Path
     fill="currentColor"
     d="M27.5,18.9h-1.6v-5.2c0-1.7-1.3-3-3-3h-5.8c-1.7,0-3,1.3-3,3v5.2h-1.6c-0.4,0-0.8,0.3-0.8,0.8v9c0,0.4,0.3,0.8,0.8,0.8h15

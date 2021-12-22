@@ -1,7 +1,7 @@
 import React from 'react';
 import { Path } from 'react-native-svg';
 
-export const Calendar = (
+export const Calendar = () => (
   <Path
     fill="currentColor"
     d="M29.8,13.2H26v-1.3c0-0.1-0.1-0.2-0.2-0.2h-1.3c-0.1,0-0.2,0.1-0.2,0.2v1.3h-3.5v-1.3c0-0.1-0.1-0.2-0.2-0.2h-1.3
