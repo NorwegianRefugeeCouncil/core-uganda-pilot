@@ -19,7 +19,7 @@ export const selectChildFolders =
   };
 
 export const selectChildForms =
-  (dbOrFolderId?: string) =>
+  (ids: {dbId?: string, folderId?: string}) =>
   (state: RootState): FormDefinition[] => {
-    return selectByFolderOrDBId(state, dbOrFolderId);
+    return selectByFolderOrDBId(state, ids);
   };

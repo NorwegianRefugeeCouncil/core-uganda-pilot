@@ -1,5 +1,14 @@
-import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
-import { FieldDefinition, FieldTypeSubForm, FormDefinition, FormListResponse } from 'core-api-client';
+import {
+  createAsyncThunk,
+  createEntityAdapter,
+  createSlice,
+} from '@reduxjs/toolkit';
+import {
+  FieldDefinition,
+  FieldTypeSubForm,
+  FormDefinition,
+  FormListResponse,
+} from 'core-api-client';
 
 import { RootState } from '../app/store';
 import client from '../app/client';
@@ -11,17 +20,20 @@ const adapter = createEntityAdapter<FormDefinition>({
   sortComparer: (a, b) => a.name.localeCompare(b.name),
 });
 
-export const fetchForms = createAsyncThunk<FormListResponse>('forms/fetch', async (_, thunkAPI) => {
-  try {
-    const response = await client.listForms({});
-    if (response.success) {
-      return response;
+export const fetchForms = createAsyncThunk<FormListResponse>(
+  'forms/fetch',
+  async (_, thunkAPI) => {
+    try {
+      const response = await client.listForms({});
+      if (response.success) {
+        return response;
+      }
+      return thunkAPI.rejectWithValue(response);
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err);
     }
-    return thunkAPI.rejectWithValue(response);
-  } catch (err) {
-    return thunkAPI.rejectWithValue(err);
-  }
-});
+  },
+);
 
 export const formsSlice = createSlice({
   name: 'forms',
@@ -68,7 +80,9 @@ export const formsSlice = createSlice({
 
 export const formActions = formsSlice.actions;
 export const formSelectors = adapter.getSelectors();
-export const formGlobalSelectors = adapter.getSelectors<RootState>((state) => state.forms);
+export const formGlobalSelectors = adapter.getSelectors<RootState>(
+  (state) => state.forms,
+);
 
 export type FormInterface = {
   id: string;
@@ -88,7 +102,10 @@ export const mapSubForm = (field: FieldDefinition): FormInterface => {
   };
 };
 
-export const findSubForm = (id: string, fields: FieldDefinition[]): FormInterface | undefined => {
+export const findSubForm = (
+  id: string,
+  fields: FieldDefinition[],
+): FormInterface | undefined => {
   if (!fields) {
     return undefined;
   }
@@ -107,7 +124,10 @@ export const findSubForm = (id: string, fields: FieldDefinition[]): FormInterfac
   return undefined;
 };
 
-export const hasSubFormWithId = (id: string, fields: FieldDefinition[]): boolean => {
+export const hasSubFormWithId = (
+  id: string,
+  fields: FieldDefinition[],
+): boolean => {
   if (!fields) {
     return false;
   }
@@ -127,7 +147,10 @@ export const hasSubFormWithId = (id: string, fields: FieldDefinition[]): boolean
   return false;
 };
 
-export const selectRootForm = (state: RootState, formOrSubFormId: string | undefined): FormDefinition | undefined => {
+export const selectRootForm = (
+  state: RootState,
+  formOrSubFormId: string | undefined,
+): FormDefinition | undefined => {
   if (!formOrSubFormId) {
     return undefined;
   }
@@ -150,7 +173,12 @@ interface FlatForms {
   ids: string[];
 }
 
-function flattenSubForms(result: FlatForms, rootId: string, ownerId: string, fields: FieldDefinition[]): void {
+function flattenSubForms(
+  result: FlatForms,
+  rootId: string,
+  ownerId: string,
+  fields: FieldDefinition[],
+): void {
   if (!fields) {
     return;
   }
@@ -174,7 +202,10 @@ function flattenSubForms(result: FlatForms, rootId: string, ownerId: string, fie
   }
 }
 
-const selectFlattenedForms = (state: RootState, rootFormId?: string): FlatForms => {
+const selectFlattenedForms = (
+  state: RootState,
+  rootFormId?: string,
+): FlatForms => {
   const result: FlatForms = {
     idMap: {},
     rootMap: {},
@@ -206,7 +237,11 @@ const selectFlattenedForms = (state: RootState, rootFormId?: string): FlatForms 
   return result;
 };
 
-export const selectSubFormOwners = (state: RootState, subFormId?: string, includeSelf = false): FormInterface[] => {
+export const selectSubFormOwners = (
+  state: RootState,
+  subFormId?: string,
+  includeSelf = false,
+): FormInterface[] => {
   if (!subFormId) {
     return [];
   }
@@ -235,7 +270,10 @@ export const selectSubFormOwners = (state: RootState, subFormId?: string, includ
   return result;
 };
 
-export const selectFormOrSubFormById = (state: RootState, formOrSubFormId: string): FormInterface | undefined => {
+export const selectFormOrSubFormById = (
+  state: RootState,
+  formOrSubFormId: string,
+): FormInterface | undefined => {
   const bla = formGlobalSelectors.selectAll(state);
   for (const f of bla) {
     if (f.id === formOrSubFormId) {
@@ -252,13 +290,28 @@ export const selectFormOrSubFormById = (state: RootState, formOrSubFormId: strin
   return undefined;
 };
 
-export const selectByFolderOrDBId = (state: RootState, folderOrDbId?: string): FormDefinition[] => {
+export const selectByFolderOrDBId = (
+  state: RootState,
+  { dbId, folderId }: { dbId?: string; folderId?: string },
+): FormDefinition[] => {
   return formGlobalSelectors.selectAll(state).filter((f) => {
-    return f.folderId === folderOrDbId || f.databaseId === folderOrDbId;
+    if (dbId != null && folderId != null) {
+      return f.folderId === folderId && f.databaseId === dbId;
+    }
+    if (dbId != null) {
+      return f.databaseId === dbId && f.folderId == null;
+    }
+    if (folderId != null) {
+      return f.folderId === folderId;
+    }
+    return false;
   });
 };
 
-function findField(fieldId: string, fields: FieldDefinition[]): FieldDefinition | undefined {
+function findField(
+  fieldId: string,
+  fields: FieldDefinition[],
+): FieldDefinition | undefined {
   for (const field of fields) {
     if (field.id === fieldId) {
       return field;
@@ -273,7 +326,9 @@ function findField(fieldId: string, fields: FieldDefinition[]): FieldDefinition 
   return undefined;
 }
 
-export const selectField = (fieldId: string): ((rootState: RootState) => FieldDefinition | undefined) => {
+export const selectField = (
+  fieldId: string,
+): ((rootState: RootState) => FieldDefinition | undefined) => {
   return (rootState) => {
     const allForms = formGlobalSelectors.selectAll(rootState);
     let field: FieldDefinition | undefined;
@@ -290,7 +345,9 @@ export const selectField = (fieldId: string): ((rootState: RootState) => FieldDe
   };
 };
 
-export const selectSubFormForField = (fieldId: string): ((rootState: RootState) => FieldTypeSubForm | undefined) => {
+export const selectSubFormForField = (
+  fieldId: string,
+): ((rootState: RootState) => FieldTypeSubForm | undefined) => {
   return (rootState) => {
     const field = selectField(fieldId)(rootState);
     if (!field) {
@@ -303,16 +360,19 @@ export const selectSubFormForField = (fieldId: string): ((rootState: RootState) 
   };
 };
 
-export const findFieldForSubForm: (fields: FieldDefinition[], subFormId: string) => FieldDefinition | undefined = (
-  fields,
-  subFormId,
-) => {
+export const findFieldForSubForm: (
+  fields: FieldDefinition[],
+  subFormId: string,
+) => FieldDefinition | undefined = (fields, subFormId) => {
   for (const field of fields) {
     if (field.fieldType.subForm) {
       if (field?.id === subFormId) {
         return field;
       }
-      const childField = findFieldForSubForm(field.fieldType.subForm?.fields, subFormId);
+      const childField = findFieldForSubForm(
+        field.fieldType.subForm?.fields,
+        subFormId,
+      );
       if (childField) {
         return childField;
       }
@@ -321,14 +381,17 @@ export const findFieldForSubForm: (fields: FieldDefinition[], subFormId: string)
   return undefined;
 };
 
-export const selectFieldForSubForm: (form: FormDefinition, subFormId: string) => FieldDefinition | undefined = (
-  form,
-  subFormId,
-) => {
+export const selectFieldForSubForm: (
+  form: FormDefinition,
+  subFormId: string,
+) => FieldDefinition | undefined = (form, subFormId) => {
   return findFieldForSubForm(form.fields, subFormId);
 };
 
-export const selectSubFormFields: (rootState: RootState, formId: string) => FieldDefinition[] = (rootState, formId) => {
+export const selectSubFormFields: (
+  rootState: RootState,
+  formId: string,
+) => FieldDefinition[] = (rootState, formId) => {
   const form = formGlobalSelectors.selectById(rootState, formId);
   if (!form) {
     return [];

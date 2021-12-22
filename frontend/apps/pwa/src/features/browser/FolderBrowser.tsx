@@ -123,7 +123,7 @@ export const FolderBrowserContainer: FC<FolderBrowserContainerProps> = (props) =
   }, [dispatch]);
 
   const childFolders = useAppSelector(selectChildFolders(props.folderId ? props.folderId : props.databaseId));
-  const childForms = useAppSelector(selectChildForms(props.folderId ? props.folderId : props.databaseId));
+  const childForms = useAppSelector(selectChildForms({dbId: props.databaseId, folderId: props.folderId}));
 
   const databaseId = useAppSelector((state) => {
     if (props.folderId) {
