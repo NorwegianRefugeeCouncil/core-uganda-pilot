@@ -10,12 +10,11 @@ storiesOf('Icon', module)
   .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .add('Icon', () => {
     const IconNameList = Object.entries(IconName).map(([_, value]) => value);
-    // const IconNameList = Object.entries(IconName).map(([_, value]) => value);
 
     return (
       <Icon
         name={select('name', IconNameList, IconName.ATTACHMENT)}
-        color={select('color', tokens.colors.icons, theme.colors.primary[500])}
+        color={select('color', tokens.colors.icons, theme.colors.icons.dark)}
       />
     );
   });
