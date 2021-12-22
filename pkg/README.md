@@ -34,6 +34,15 @@ core serve forms-api --config=my-config-file.yaml,my-other-config.yaml
 
 ### Configuration options
 
+The values for the configuration options can use environment variable substitution. It uses
+the https://github.com/drone/envsubst package.
+
+For example
+
+```
+dsn: ${MY_DSN:-postgres://...}
+```
+
 ```
 serve:
   

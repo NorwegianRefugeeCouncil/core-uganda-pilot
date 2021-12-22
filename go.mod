@@ -6,6 +6,7 @@ require (
 	github.com/boj/redistore v0.0.0-20180917114910-cd5dcc76aeff
 	github.com/cheekybits/is v0.0.0-20150225183255-68e9c0620927 // indirect
 	github.com/coreos/go-oidc/v3 v3.0.0
+	github.com/drone/envsubst v1.0.3 // indirect
 	github.com/dustinkirkland/golang-petname v0.0.0-20191129215211-8e5a1ed0cff0
 	github.com/emicklei/go-restful-openapi/v2 v2.6.0
 	github.com/emicklei/go-restful/v3 v3.7.1
@@ -27,6 +28,7 @@ require (
 	github.com/manifoldco/promptui v0.9.0
 	github.com/matryer/try v0.0.0-20161228173917-9ac251b645a2 // indirect
 	github.com/mattn/go-sqlite3 v1.14.9
+	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	github.com/ory/hydra-client-go v1.10.6
 	github.com/rs/cors v1.8.0
 	github.com/satori/go.uuid v1.2.0

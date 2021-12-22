@@ -6,7 +6,6 @@ import (
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/store"
-	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"os"
@@ -27,21 +26,17 @@ var serveCmd = &cobra.Command{
 	Short: "base command for starting servers",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		setupSignal()
-		if err := viper.Unmarshal(&coreOptions); err != nil {
-			return err
-		}
 		configCtx := context.Background()
 		configLog := logging.NewLogger(configCtx)
-		viper.OnConfigChange(func(in fsnotify.Event) {
+		v.OnConfigChange(func(in fsnotify.Event) {
 			var changedConfig options.Options
 			configLog.Info("detected configuration change")
-			if err := viper.Unmarshal(&changedConfig); err != nil {
+			if err := unmarshalConfig(&changedConfig); err != nil {
 				configLog.Error("failed to unmarshal on config change", zap.Error(err))
 				return
 			}
 			coreOptions = changedConfig
 		})
-
 		switch coreOptions.Log.Level {
 		case "debug":
 			logging.SetLogLevel(zapcore.DebugLevel)

@@ -5,7 +5,6 @@ import (
 	loginstore "github.com/nrc-no/core/pkg/server/login/store"
 	"github.com/nrc-no/core/pkg/store"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
 
@@ -15,9 +14,6 @@ var migrateCmd = &cobra.Command{
 	Short: "Executes migrations",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		l := logging.NewLogger(ctx)
-		if err := viper.Unmarshal(&coreOptions); err != nil {
-			return err
-		}
 		factory, err := store.NewFactory(coreOptions.DSN)
 		if err != nil {
 			l.Error("failed to create factory", zap.Error(err))

@@ -5,7 +5,6 @@ import (
 	loginstore "github.com/nrc-no/core/pkg/server/login/store"
 	"github.com/nrc-no/core/pkg/store"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
 
@@ -15,10 +14,6 @@ var clearCmd = &cobra.Command{
 	Short: "Clears the database",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		l := logging.NewLogger(ctx)
-		if err := viper.Unmarshal(&coreOptions); err != nil {
-			l.Error("failed to unmarshal core options", zap.Error(err))
-			return err
-		}
 		factory, err := store.NewFactory(coreOptions.DSN)
 		if err != nil {
 			l.Error("failed to get factory", zap.Error(err))
