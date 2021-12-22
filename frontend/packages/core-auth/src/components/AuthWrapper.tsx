@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import Browser from '../types/browser';
@@ -26,8 +25,6 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
   const discovery = useDiscovery(issuer);
 
   const [tokenResponse, setTokenResponse] = useState<TokenResponse>();
-
-  const [tokenIsFresh, setTokenIsFresh] = useState(false);
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -80,7 +77,6 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
         setTokenResponse(resp);
       })
       .catch((err) => {
-        console.log('Code Exchange Error', err);
         setTokenResponse(undefined);
       });
   }, [request?.codeVerifier, response, discovery]);
@@ -105,8 +101,8 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
         });
     }
   };
-
   let refreshTokenIntervalId: NodeJS.Timeout | null = null;
+
   useEffect(() => {
     if (tokenResponse) {
       if (!isLoggedIn) {
