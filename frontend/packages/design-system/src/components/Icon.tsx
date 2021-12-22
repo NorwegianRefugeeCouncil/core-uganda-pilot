@@ -13,7 +13,7 @@ const Icon: FC<IconProps> = ({ name, ...props }) => {
       style={{ height: '40px', width: '40px' }}
       {...props}
     >
-      <MappedIcon />
+      {MappedIcon && <MappedIcon />}
     </IconNB>
   );
 };
