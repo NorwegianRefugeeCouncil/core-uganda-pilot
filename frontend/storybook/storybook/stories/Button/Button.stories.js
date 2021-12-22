@@ -3,12 +3,11 @@ import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react-native';
 import { boolean, select, text } from '@storybook/addon-knobs';
 import { Button as ButtonNB, HStack } from 'native-base';
-import { Icon } from 'core-design-system';
-import { IconName } from 'core-design-system/lib/cjs/types/icons';
+import { Icon, icons } from 'core-design-system';
 
 import CenterView from '../CenterView';
 
-const IconNameList = Object.entries(IconName).map(([_, value]) => value);
+const IconNameList = Object.keys(icons);
 
 storiesOf('Button', module)
   .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
@@ -56,7 +55,7 @@ storiesOf('Button', module)
           colorScheme="primary"
           variant="major"
           startIcon={
-            <Icon name={select('icon name', IconNameList, 'sdfdsf')} />
+            <Icon name={select('icon name', IconNameList, IconNameList[0])} />
           }
         >
           With Icon
@@ -92,7 +91,7 @@ storiesOf('Button', module)
         isDisabled={boolean('disabled', false)}
         variant={select('Variant', ['major', 'minor'], 'major')}
         startIcon={
-          <Icon name={select('icon name', IconNameList, IconName.ATTACHMENT)} />
+          <Icon name={select('icon name', IconNameList, IconNameList[0])} />
         }
       >
         {text('Button text', 'Submit')}
