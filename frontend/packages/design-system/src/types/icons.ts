@@ -1,7 +1,10 @@
+import { IIconProps } from 'native-base';
+
+import { iconMap } from '../assets/iconMap';
+
 export type IconProps = {
-  name: IconName;
-  color: string;
-};
+  name: keyof typeof iconMap;
+} & Omit<IIconProps, 'name'>;
 
 export enum IconName {
   ATTACHMENT = 'attachment',

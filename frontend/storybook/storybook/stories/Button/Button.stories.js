@@ -56,9 +56,7 @@ storiesOf('Button', module)
           colorScheme="primary"
           variant="major"
           startIcon={
-            <Icon
-              name={select('icon name', IconNameList, IconName.ATTACHMENT)}
-            />
+            <Icon name={select('icon name', IconNameList, 'sdfdsf')} />
           }
         >
           With Icon

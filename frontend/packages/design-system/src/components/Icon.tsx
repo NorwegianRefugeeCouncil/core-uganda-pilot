@@ -1,27 +1,16 @@
 import React, { FC } from 'react';
-import { Icon as IconNB, IIconProps } from 'native-base';
+import { Icon as IconNB } from 'native-base';
 
+import { IconProps } from '../types/icons';
 import { iconMap } from '../assets/iconMap';
-import { IconName } from '../types/icons';
 
-type Props = {
-  name: keyof typeof iconMap;
-} & Omit<IIconProps, 'name'> & { name: IconName };
-
-const Icon: FC<Props> = (props) => {
-  const { name } = props;
+const Icon: FC<IconProps> = ({ name, ...props }) => {
   const MappedIcon = iconMap[name];
 
   return (
     <IconNB
       viewBox="0 0 40 40"
-      style={{
-        height: '40px',
-        width: '40px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
+      style={{ height: '40px', width: '40px' }}
       {...props}
     >
       {MappedIcon}
