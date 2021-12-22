@@ -7,6 +7,7 @@ import useDiscovery from '../hooks/useDiscovery';
 import useAuthRequest from '../hooks/useAuthRequest';
 import { AuthWrapperProps, CodeChallengeMethod, ResponseType } from '../types/types';
 import { TokenResponse } from '../types/response';
+import getCurrentTimeInSeconds from '../utils/getCurrentTimeInSeconds';
 
 const AuthWrapper: React.FC<AuthWrapperProps> = ({
   children,
@@ -26,6 +27,8 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
   const discovery = useDiscovery(issuer);
 
   const [tokenResponse, setTokenResponse] = useState<TokenResponse>();
+
+  const [tokenIsFresh, setTokenIsFresh] = useState(false);
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -83,7 +86,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
       });
   }, [request?.codeVerifier, response, discovery]);
 
-  useEffect(() => {
+  const refreshToken = () => {
     if (!discovery) {
       return;
     }
@@ -98,17 +101,20 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
         .then((resp) => {
           setTokenResponse(resp);
         })
-        .catch((err) => {
+        .catch(() => {
           setTokenResponse(undefined);
         });
     }
-  }, [tokenResponse?.shouldRefresh(), discovery]);
+  };
 
+  let refreshTokenIntervalId: NodeJS.Timeout | null = null;
   useEffect(() => {
     if (tokenResponse) {
       if (!isLoggedIn) {
         setIsLoggedIn(true);
       }
+      if (refreshTokenIntervalId != null) clearInterval(refreshTokenIntervalId);
+      refreshTokenIntervalId = setInterval(()=>refreshToken(), 5000);
     } else if (isLoggedIn) {
       setIsLoggedIn(false);
     }
