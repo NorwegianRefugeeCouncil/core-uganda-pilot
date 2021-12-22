@@ -13,7 +13,7 @@ storiesOf('Icon', module)
 
     return (
       <Icon
-        name={select('name', IconNameList, IconName.ATTACHMENT)}
+        name={select('name', IconNameList, IconNameList[0])}
         color={select('color', tokens.colors.icons, theme.colors.icons.dark)}
       />
     );
