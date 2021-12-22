@@ -1,7 +1,6 @@
 import { storiesOf } from '@storybook/react-native';
 import React from 'react';
 import { Icon, icons, theme, tokens } from 'core-design-system';
-import { IconName } from 'core-design-system/lib/esm/types/icons';
 import { select } from '@storybook/addon-knobs';
 
 import CenterView from '../CenterView';
