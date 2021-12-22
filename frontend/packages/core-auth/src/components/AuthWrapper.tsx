@@ -7,7 +7,6 @@ import useDiscovery from '../hooks/useDiscovery';
 import useAuthRequest from '../hooks/useAuthRequest';
 import { AuthWrapperProps, CodeChallengeMethod, ResponseType } from '../types/types';
 import { TokenResponse } from '../types/response';
-import getCurrentTimeInSeconds from '../utils/getCurrentTimeInSeconds';
 
 const AuthWrapper: React.FC<AuthWrapperProps> = ({
   children,
