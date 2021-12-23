@@ -1,10 +1,20 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useRef,
+} from 'react';
 
 import Browser from '../types/browser';
 import exchangeCodeAsync from '../utils/exchangeCodeAsync';
 import useDiscovery from '../hooks/useDiscovery';
 import useAuthRequest from '../hooks/useAuthRequest';
-import { AuthWrapperProps, CodeChallengeMethod, ResponseType } from '../types/types';
+import {
+  AuthWrapperProps,
+  CodeChallengeMethod,
+  ResponseType,
+} from '../types/types';
 import { TokenResponse } from '../types/response';
 
 const AuthWrapper: React.FC<AuthWrapperProps> = ({
@@ -77,6 +87,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
         setTokenResponse(resp);
       })
       .catch((err) => {
+        console.log('Code Exchange Error', err);
         setTokenResponse(undefined);
       });
   }, [request?.codeVerifier, response, discovery]);
@@ -86,6 +97,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
       return;
     }
     if (tokenResponse?.shouldRefresh()) {
+      console.log('Refreshing token...');
       const refreshConfig = {
         clientId,
         scopes,
@@ -95,21 +107,22 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
         ?.refreshAsync(refreshConfig, discovery)
         .then((resp) => {
           setTokenResponse(resp);
+          console.log('Refreshed token...', resp);
         })
         .catch(() => {
           setTokenResponse(undefined);
         });
     }
   };
-  let refreshTokenIntervalId: NodeJS.Timeout | null = null;
 
+  const refreshTokenIntervalId = useRef<number | null>(null);
   useEffect(() => {
     if (tokenResponse) {
       if (!isLoggedIn) {
         setIsLoggedIn(true);
       }
-      if (refreshTokenIntervalId != null) clearInterval(refreshTokenIntervalId);
-      refreshTokenIntervalId = setInterval(()=>refreshToken(), 5000);
+      if (refreshTokenIntervalId.current != null) window.clearInterval(refreshTokenIntervalId.current);
+      refreshTokenIntervalId.current = window.setInterval(() => refreshToken(), 5000);
     } else if (isLoggedIn) {
       setIsLoggedIn(false);
     }
