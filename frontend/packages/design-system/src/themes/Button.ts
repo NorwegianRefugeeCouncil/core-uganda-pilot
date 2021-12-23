@@ -3,14 +3,16 @@ export default {
     major: ({ colorScheme }: any) => {
       return {
         backgroundColor: `${colorScheme}.500`,
+
         _text: {
           color: 'white',
           bold: true,
         },
         _hover: {
-          backgroundColor: `${colorScheme}.100`,
+          backgroundColor:
+            colorScheme === 'secondary' ? 'link' : `${colorScheme}.200`,
           _text: {
-            color: `${colorScheme}.500`,
+            color: colorScheme === 'secondary' ? 'white' : `${colorScheme}.500`,
           },
         },
         _disabled: {
@@ -44,9 +46,14 @@ export default {
         borderStyle: 'solid',
         borderColor: `${colorScheme}.500`,
         _hover: {
-          backgroundColor: `${colorScheme}.100`,
+          backgroundColor:
+            colorScheme === 'secondary'
+              ? `${colorScheme}.100`
+              : `${colorScheme}.200`,
+          borderColor:
+            colorScheme === 'secondary' ? 'link' : `${colorScheme}.500`,
           _text: {
-            color: `${colorScheme}.500`,
+            color: colorScheme === 'secondary' ? 'link' : `${colorScheme}.500`,
           },
         },
         _disabled: {
@@ -58,12 +65,14 @@ export default {
         },
         _pressed: {
           backgroundColor: `${colorScheme}.300`,
+          borderWidth: 0,
           _text: {
             color: 'white',
           },
         },
         _focus: {
           backgroundColor: `${colorScheme}.300`,
+          borderWidth: 0,
           _text: {
             color: 'white',
           },

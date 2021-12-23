@@ -1,3 +1,5 @@
+const secondaryLight = '#1E4B7D';
+
 export default {
   primary: {
     100: '#FFF0E6',
@@ -10,6 +12,7 @@ export default {
     200: '#435263',
     300: '#334457',
     500: '#24303E',
+    light: secondaryLight,
   },
   tertiary1: {
     100: '#FFFAE6',
@@ -34,7 +37,12 @@ export default {
     400: '#404040',
     500: '#000000',
   },
-  link: '#1E4B7D',
+  icons: {
+    dark: '#000000',
+    light: '#FFFFFF',
+    link: secondaryLight,
+  },
+  link: secondaryLight,
   signalDanger: '#CE3616',
   signalSuccess: '#006605',
   themeLight: '#EAE7DD',
