@@ -97,6 +97,4 @@ func (s *Seed) Seed(ctx context.Context, client client.Client, countryContext Co
 	default:
 		return fmt.Errorf("invalid country context")
 	}
-	return nil
-
 }

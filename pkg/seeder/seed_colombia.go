@@ -18,6 +18,19 @@ func (s *Seed) seedColombia(ctx context.Context, client client.Client) error {
 		return err
 	}
 
+	// keep a reference to the global beneficiary form as a reference field for use in the forms
+	s.globalBeneficiaryRefField = &types.FieldDefinition{
+		Name:     "Individual Beneficiary",
+		Key:      true,
+		Required: true,
+		FieldType: types.FieldType{
+			Reference: &types.FieldTypeReference{
+				DatabaseID: s.globalDatabase.ID,
+				FormID:     s.globalRootBeneficiaryForm.ID,
+			},
+		},
+	}
+
 	err = s.seedCoIntake(ctx, client, co_db.ID)
 
 	if err != nil {
@@ -36,7 +49,7 @@ func (s *Seed) seedColombia(ctx context.Context, client client.Client) error {
 func (s *Seed) seedCoIntake(ctx context.Context, client client.Client, dbID string) error {
 	var (
 		err                    error
-		intake_folder          *types.Folder
+		intake_folder          types.Folder
 		intake_pii             *types.FormDefinition
 		intake_id_details      *types.FormDefinition
 		intake_nrc_details     *types.FormDefinition
@@ -45,19 +58,10 @@ func (s *Seed) seedCoIntake(ctx context.Context, client client.Client, dbID stri
 		intake_hh_information  *types.FormDefinition
 	)
 
-	var forms = []*types.FormDefinition{
-		intake_pii,
-		intake_id_details,
-		intake_nrc_details,
-		intake_contact_info,
-		intake_ind_cc_specific,
-		intake_hh_information,
-	}
-
 	err = client.CreateFolder(ctx, &types.Folder{
 		Name:       "Intake",
 		DatabaseID: dbID,
-	}, intake_folder)
+	}, &intake_folder)
 
 	if err != nil {
 		return err
@@ -182,6 +186,15 @@ func (s *Seed) seedCoIntake(ctx context.Context, client client.Client, dbID stri
 		},
 	}
 
+	var forms = []*types.FormDefinition{
+		intake_pii,
+		intake_id_details,
+		intake_nrc_details,
+		intake_contact_info,
+		intake_ind_cc_specific,
+		intake_hh_information,
+	}
+
 	for _, form := range forms {
 		err = client.CreateForm(ctx, form, nil)
 		if err != nil {
@@ -195,14 +208,14 @@ func (s *Seed) seedCoIntake(ctx context.Context, client client.Client, dbID stri
 func (s *Seed) seedCoConsent(ctx context.Context, client client.Client, dbID string) error {
 	var (
 		err                error
-		consent_folder     *types.Folder
+		consent_folder     types.Folder
 		consent_individual *types.FormDefinition
 	)
 
 	err = client.CreateFolder(ctx, &types.Folder{
 		Name:       "Consent",
 		DatabaseID: dbID,
-	}, consent_folder)
+	}, &consent_folder)
 
 	if err != nil {
 		return err

@@ -239,18 +239,8 @@ func TestValidateForm(t *testing.T) {
 					FieldType: textFieldType,
 				},
 			}),
-		}, {
-			name: "field name cannot contain invalid characters",
-			expect: validation.ErrorList{
-				validation.Invalid(validation.NewPath("fields[0].name"), "!!!", errFieldNameInvalid),
-			},
-			form: formWithFields(types.FieldDefinitions{
-				{
-					Name:      "!!!",
-					FieldType: textFieldType,
-				},
-			}),
-		}, {
+		},
+		{
 			name: "field name cannot have surrounding whitespace",
 			expect: validation.ErrorList{
 				validation.Invalid(validation.NewPath("fields[0].name"), " fieldName ", errFieldNameNoLeadingTrailingWhitespaces),
@@ -261,19 +251,8 @@ func TestValidateForm(t *testing.T) {
 					FieldType: textFieldType,
 				},
 			}),
-		}, {
-			name: "field code cannot have invalid characters",
-			expect: validation.ErrorList{
-				validation.Invalid(validation.NewPath("fields[0].code"), "!!!", errInvalidFieldCode),
-			},
-			form: formWithFields(types.FieldDefinitions{
-				{
-					Name:      validFieldName,
-					Code:      "!!!",
-					FieldType: textFieldType,
-				},
-			}),
-		}, {
+		},
+		{
 			name: "field code cannot be too long",
 			expect: validation.ErrorList{
 				validation.TooLong(validation.NewPath("fields[0].code"), strings.Repeat("a", fieldCodeMaxLength+1), fieldCodeMaxLength),
@@ -549,23 +528,8 @@ func TestValidateFormOptions(t *testing.T) {
 			options: []*types.SelectOption{
 				{Name: ""},
 			},
-		}, {
-			name: "invalid option name",
-			expect: func(fieldPath *validation.Path) validation.ErrorList {
-				return validation.ErrorList{
-					validation.Invalid(
-						fieldPath.Child("options").
-							Index(0).
-							Child("name"),
-						"!!",
-						errSelectOptionNameInvalid,
-					),
-				}
-			},
-			options: []*types.SelectOption{
-				{Name: "!!"},
-			},
-		}, {
+		},
+		{
 			name: "too many options",
 			expect: func(fieldPath *validation.Path) validation.ErrorList {
 				return validation.ErrorList{
@@ -623,15 +587,17 @@ func TestValidateFieldNameRegex(t *testing.T) {
 	valid := []string{
 		"fieldName",
 		"field name",
-		"Field Name",
+		"# Field Name",
 		"James Bond!- 007",
+		"2+2=5",
+		"Number of 60+ years old males",
 	}
 	invalid := []string{
 		" invalid ",
 		" Field",
 		"Field ",
 		"Field  Field",
-		"!Field",
+		"F  ield",
 		"    ",
 	}
 	for _, s := range valid {
