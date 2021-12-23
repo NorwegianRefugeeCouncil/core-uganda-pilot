@@ -1,6 +1,11 @@
 import getCurrentTimeInSeconds from '../utils/getCurrentTimeInSeconds';
 
-import { DiscoveryDocument, TokenRequestConfig, TokenResponseConfig, TokenType } from './types';
+import {
+  DiscoveryDocument,
+  TokenRequestConfig,
+  TokenResponseConfig,
+  TokenType,
+} from './types';
 import { RefreshTokenRequest } from './request';
 
 export class TokenResponse implements TokenResponseConfig {
@@ -23,7 +28,7 @@ export class TokenResponse implements TokenResponseConfig {
   public constructor(response: TokenResponseConfig) {
     this.accessToken = response.accessToken;
     this.tokenType = response.tokenType ?? TokenType.Bearer;
-    this.expiresIn = response.expiresIn;
+    this.expiresIn = 10; // response.expiresIn;
     this.refreshToken = response.refreshToken;
     this.scope = response.scope;
     this.state = response.state;
@@ -31,7 +36,10 @@ export class TokenResponse implements TokenResponseConfig {
     this.issuedAt = response.issuedAt ?? getCurrentTimeInSeconds();
   }
 
-  static isTokenFresh(token: Pick<TokenResponse, 'expiresIn' | 'issuedAt'>, secondsMargin: number = 60 * 10 - 1): boolean {
+  static isTokenFresh(
+    token: Pick<TokenResponse, 'expiresIn' | 'issuedAt'>,
+    secondsMargin: number = 60 * 10 - 1,
+  ): boolean {
     if (!token) {
       return false;
     }
@@ -63,7 +71,8 @@ export class TokenResponse implements TokenResponseConfig {
     this.scope = response.scope ?? this.scope;
     this.state = response.state ?? this.state;
     this.idToken = response.idToken ?? this.idToken;
-    this.issuedAt = response.issuedAt ?? this.issuedAt ?? getCurrentTimeInSeconds();
+    this.issuedAt =
+      response.issuedAt ?? this.issuedAt ?? getCurrentTimeInSeconds();
   }
 
   getRequestConfig(): TokenResponseConfig {
@@ -83,11 +92,19 @@ export class TokenResponse implements TokenResponseConfig {
     return !(TokenResponse.isTokenFresh(this) || !this.refreshToken);
   }
 
+  getExpiryMs(): number {
+    const tenPercentMargin = 0.9;
+    return 1000 * (this.issuedAt + (this.expiresIn ?? 0) * tenPercentMargin);
+  }
+
   async refreshAsync(
     config: Omit<TokenRequestConfig, 'grantType' | 'refreshToken'>,
     discovery: Pick<DiscoveryDocument, 'token_endpoint'>,
   ) {
-    const request = new RefreshTokenRequest({ ...config, refreshToken: this.refreshToken });
+    const request = new RefreshTokenRequest({
+      ...config,
+      refreshToken: this.refreshToken,
+    });
     const response = await request.performAsync(discovery);
     response.refreshToken = response.refreshToken ?? this.refreshToken;
     const json = response.getRequestConfig();

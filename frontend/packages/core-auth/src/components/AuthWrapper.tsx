@@ -51,27 +51,15 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
     browser,
   );
 
-  const token = (() => {
-    switch (injectToken) {
-      case 'access_token':
-        return tokenResponse?.accessToken ?? '';
-      case 'id_token':
-        return tokenResponse?.idToken ?? '';
-      default:
-        return '';
-    }
-  })();
-
+  // Make initial token request
   useEffect(() => {
-    if (!discovery) {
+    if (
+      discovery == null ||
+      request?.codeVerifier == null ||
+      response == null ||
+      response?.type !== 'success'
+    )
       return;
-    }
-    if (!request?.codeVerifier) {
-      return;
-    }
-    if (!response || response?.type !== 'success') {
-      return;
-    }
 
     const exchangeConfig = {
       code: response.params.code,
@@ -92,51 +80,87 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
       });
   }, [request?.codeVerifier, response, discovery]);
 
-  const refreshToken = () => {
-    if (!discovery) {
-      return;
-    }
-    if (tokenResponse?.shouldRefresh()) {
-      console.log('Refreshing token...');
-      const refreshConfig = {
-        clientId,
-        scopes,
-        extraParams: {},
-      };
-      tokenResponse
-        ?.refreshAsync(refreshConfig, discovery)
-        .then((resp) => {
-          setTokenResponse(resp);
-          console.log('Refreshed token...', resp);
-        })
-        .catch(() => {
-          setTokenResponse(undefined);
-        });
-    }
-  };
-
-  const refreshTokenIntervalId = useRef<number | null>(null);
+  // Trigger onTokenChange callback when TokenResponse is received
   useEffect(() => {
-    if (tokenResponse) {
+    console.log('tokenResponse has changed...');
+
+    if (tokenResponse == null) return;
+
+    let token;
+    switch (injectToken) {
+      case 'access_token':
+        token = tokenResponse?.accessToken ?? '';
+        break;
+      case 'id_token':
+        token = tokenResponse?.idToken ?? '';
+        break;
+      default:
+        token = '';
+    }
+    onTokenChange(token);
+  }, [JSON.stringify(tokenResponse)]);
+
+  // Update logged in status accordingly
+  useEffect(() => {
+    if (tokenResponse != null) {
       if (!isLoggedIn) {
         setIsLoggedIn(true);
       }
-      if (refreshTokenIntervalId.current != null) window.clearInterval(refreshTokenIntervalId.current);
-      refreshTokenIntervalId.current = window.setInterval(() => refreshToken(), 5000);
     } else if (isLoggedIn) {
       setIsLoggedIn(false);
     }
   }, [tokenResponse, isLoggedIn]);
 
+  // Schedule a token refresh before it expires (or use an existing schedule)
+  const refreshTokenTimeout = useRef<number | null>(null);
   useEffect(() => {
-    onTokenChange(token);
-  }, [token]);
+    if (
+      tokenResponse != null &&
+      tokenResponse.expiresIn != null &&
+      tokenResponse.expiresIn > 0
+    ) {
+      if (refreshTokenTimeout.current != null)
+        window.clearTimeout(refreshTokenTimeout.current);
+
+      const delay = tokenResponse.getExpiryMs() - Date.now();
+      console.log({ delay });
+
+      if (delay <= 0) {
+        refreshToken();
+      } else {
+        refreshTokenTimeout.current = window.setTimeout(
+          () => refreshToken(),
+          delay,
+        );
+      }
+    }
+  }, [JSON.stringify(tokenResponse), discovery]);
 
   const handleLogin = useCallback(() => {
     promptAsync().catch((err) => {
       handleLoginErr(err);
     });
   }, [discovery, request, promptAsync]);
+
+  async function refreshToken() {
+    if (tokenResponse != null && discovery != null) {
+      const refreshConfig = {
+        clientId,
+        scopes,
+        extraParams: {},
+      };
+      let response;
+      try {
+        response = await tokenResponse.refreshAsync(refreshConfig, discovery);
+      } catch (err) {
+        console.error('Problem encountered while refreshing token', err);
+        setTokenResponse(undefined);
+      } finally {
+        console.log('Refreshed Token: ', response?.accessToken);
+        setTokenResponse(response);
+      }
+    }
+  }
 
   if (!isLoggedIn) {
     return (

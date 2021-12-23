@@ -1,11 +1,20 @@
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { useLocation, useParams } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
-import { ClientDefinition, Database, FormDefinition, Record } from 'core-api-client';
+import {
+  ClientDefinition,
+  Database,
+  FormDefinition,
+  Record,
+} from 'core-api-client';
 
 import { folderGlobalSelectors } from '../reducers/folder';
 import { databaseGlobalSelectors } from '../reducers/database';
-import { recordGlobalSelectors, selectSubRecords, SubRecordResult } from '../reducers/records';
+import {
+  recordGlobalSelectors,
+  selectSubRecords,
+  SubRecordResult,
+} from '../reducers/records';
 import { formGlobalSelectors, selectFormOrSubFormById } from '../reducers/form';
 
 import type { AppDispatch, RootState } from './store';
@@ -68,7 +77,9 @@ export const useFormOrSubForm = (formId: string | undefined) => {
   });
 };
 
-export const useSubRecords: (recordId: string | undefined) => SubRecordResult | undefined = (recordId) => {
+export const useSubRecords: (
+  recordId: string | undefined,
+) => SubRecordResult | undefined = (recordId) => {
   return useAppSelector((state) => {
     if (!recordId) {
       return undefined;
@@ -77,7 +88,9 @@ export const useSubRecords: (recordId: string | undefined) => SubRecordResult | 
   });
 };
 
-export const useOwnerRecord: (childRecordId: string | undefined) => Record | undefined = (recordId) => {
+export const useOwnerRecord: (
+  childRecordId: string | undefined,
+) => Record | undefined = (recordId) => {
   return useAppSelector((state) => {
     if (!recordId) {
       return undefined;
@@ -97,7 +110,9 @@ export const useDatabases: () => Database[] = () => {
   return useAppSelector(databaseGlobalSelectors.selectAll);
 };
 
-export const useDatabase: (databaseId: string | undefined) => Database | undefined = (databaseId) => {
+export const useDatabase: (
+  databaseId: string | undefined,
+) => Database | undefined = (databaseId) => {
   return useAppSelector((state) => {
     if (!databaseId) {
       return undefined;
@@ -106,7 +121,9 @@ export const useDatabase: (databaseId: string | undefined) => Database | undefin
   });
 };
 
-export const useForms: (options: { databaseId?: string | undefined }) => FormDefinition[] = ({ databaseId }) => {
+export const useForms: (options: {
+  databaseId?: string | undefined;
+}) => FormDefinition[] = ({ databaseId }) => {
   return useAppSelector((state) => {
     let allForms = formGlobalSelectors.selectAll(state);
     if (databaseId) {
