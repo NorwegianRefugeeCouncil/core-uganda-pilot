@@ -100,15 +100,22 @@ export class TokenResponse implements TokenResponseConfig {
   async refreshAsync(
     config: Omit<TokenRequestConfig, 'grantType' | 'refreshToken'>,
     discovery: Pick<DiscoveryDocument, 'token_endpoint'>,
-  ) {
+  ): Promise<this> {
     const request = new RefreshTokenRequest({
       ...config,
       refreshToken: this.refreshToken,
     });
-    const response = await request.performAsync(discovery);
+    let response: TokenResponse;
+    try {
+      response = await request.performAsync(discovery);
+    } catch (e) {
+      throw new Error(`Error encountered while performing token refresh: ${e}`);
+    }
+
     response.refreshToken = response.refreshToken ?? this.refreshToken;
     const json = response.getRequestConfig();
     this.applyResponseConfig(json);
+
     return this;
   }
 }

@@ -6,42 +6,44 @@ import { clientResponse } from './utils/responses';
 export class BaseRESTClient {
   protected readonly axiosInstance: AxiosInstance;
 
+  private token = '';
+
   lastInterceptorId: number | undefined;
 
   constructor(baseURL: string) {
     this.axiosInstance = axios.create({
       baseURL,
     });
+    this.axiosInstance.interceptors.request.use((value: AxiosRequestConfig) => {
+      if (!this.getToken()) {
+        return value;
+      }
+      return {
+        ...value,
+        headers: {
+          ...value.headers,
+          Authorization: `Bearer ${this.getToken()}`,
+        },
+      };
+    });
   }
 
+  // this method became redundant, could be removed
   public setAuth = (token: string): void => {
-    console.log('Setting token to:', token);
+    this.setToken(token);
+  };
 
-    if (this.lastInterceptorId != null)
-      this.axiosInstance.interceptors.request.eject(this.lastInterceptorId);
+  public getToken = (): string => this.token;
 
-    this.lastInterceptorId = this.axiosInstance.interceptors.request.use(
-      (value: AxiosRequestConfig) => {
-        if (!token) {
-          return value;
-        }
-        const headers = {
-          ...value.headers,
-          Authorization: `Bearer ${token}`,
-        };
-        value.headers = headers;
-        console.log(value.headers.Authorization);
-        console.log(value.url);
-        return value;
-      },
-    );
+  public setToken = (token: string): void => {
+    this.token = token;
   };
 
   protected async do<TRequest, TBody>(
     request: TRequest,
     url: string,
     method: Method,
-    data: any,
+    data: unknown,
     expectStatusCode: number,
     options?: RequestOptions,
   ): Promise<Response<TRequest, TBody>> {

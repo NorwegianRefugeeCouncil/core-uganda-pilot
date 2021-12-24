@@ -54,9 +54,9 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
   // Make initial token request
   useEffect(() => {
     if (
-      discovery == null ||
+      !discovery ||
       request?.codeVerifier == null ||
-      response == null ||
+      !response ||
       response?.type !== 'success'
     )
       return;
@@ -82,27 +82,25 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
 
   // Trigger onTokenChange callback when TokenResponse is received
   useEffect(() => {
-    console.log('tokenResponse has changed...');
-
-    if (tokenResponse == null) return;
+    if (!tokenResponse) return;
 
     let token;
     switch (injectToken) {
       case 'access_token':
-        token = tokenResponse?.accessToken ?? '';
+        token = tokenResponse?.accessToken || '';
         break;
       case 'id_token':
-        token = tokenResponse?.idToken ?? '';
+        token = tokenResponse?.idToken || '';
         break;
       default:
         token = '';
     }
     onTokenChange(token);
-  }, [JSON.stringify(tokenResponse)]);
+  }, [tokenResponse?.accessToken, tokenResponse?.idToken]);
 
   // Update logged in status accordingly
   useEffect(() => {
-    if (tokenResponse != null) {
+    if (tokenResponse) {
       if (!isLoggedIn) {
         setIsLoggedIn(true);
       }
@@ -111,56 +109,56 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
     }
   }, [tokenResponse, isLoggedIn]);
 
+  async function refreshToken() {
+    if (tokenResponse && discovery) {
+      const refreshConfig = {
+        clientId,
+        scopes,
+        extraParams: {},
+      };
+      let newTokenResponse;
+      try {
+        newTokenResponse = await tokenResponse.refreshAsync(
+          refreshConfig,
+          discovery,
+        );
+      } catch (err) {
+        setTokenResponse(undefined);
+        throw err;
+      }
+
+      setTokenResponse(newTokenResponse);
+    }
+  }
+
   // Schedule a token refresh before it expires (or use an existing schedule)
-  const refreshTokenTimeout = useRef<number | null>(null);
+  const refreshTokenInterval = useRef<number | null>(null);
   useEffect(() => {
     if (
-      tokenResponse != null &&
+      tokenResponse &&
       tokenResponse.expiresIn != null &&
       tokenResponse.expiresIn > 0
     ) {
-      if (refreshTokenTimeout.current != null)
-        window.clearTimeout(refreshTokenTimeout.current);
+      if (refreshTokenInterval.current != null)
+        window.clearInterval(refreshTokenInterval.current);
 
       const delay = tokenResponse.getExpiryMs() - Date.now();
-      console.log({ delay });
-
       if (delay <= 0) {
         refreshToken();
       } else {
-        refreshTokenTimeout.current = window.setTimeout(
+        refreshTokenInterval.current = window.setInterval(
           () => refreshToken(),
-          delay,
+          delay / 3,
         );
       }
     }
-  }, [JSON.stringify(tokenResponse), discovery]);
+  }, [tokenResponse?.accessToken, discovery]);
 
   const handleLogin = useCallback(() => {
     promptAsync().catch((err) => {
       handleLoginErr(err);
     });
   }, [discovery, request, promptAsync]);
-
-  async function refreshToken() {
-    if (tokenResponse != null && discovery != null) {
-      const refreshConfig = {
-        clientId,
-        scopes,
-        extraParams: {},
-      };
-      let response;
-      try {
-        response = await tokenResponse.refreshAsync(refreshConfig, discovery);
-      } catch (err) {
-        console.error('Problem encountered while refreshing token', err);
-        setTokenResponse(undefined);
-      } finally {
-        console.log('Refreshed Token: ', response?.accessToken);
-        setTokenResponse(response);
-      }
-    }
-  }
 
   if (!isLoggedIn) {
     return (
