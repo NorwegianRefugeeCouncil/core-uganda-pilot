@@ -10,6 +10,7 @@ import {
   ResponseType,
 } from '../types/types';
 import { TokenResponse } from '../types/response';
+import { getSessionStorage } from '../utils/getSessionStorage';
 
 const AuthWrapper: React.FC<AuthWrapperProps> = ({
   children,
@@ -28,8 +29,10 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
 
   const discovery = useDiscovery(issuer);
 
-  const [tokenResponse, setTokenResponse] = useState<TokenResponse>();
-
+  // initialize token from session storage if present
+  const [tokenResponse, setTokenResponse] = useState<TokenResponse | null>(
+    getSessionStorage(injectToken),
+  );
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [request, response, promptAsync] = useAuthRequest(
@@ -44,6 +47,13 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
     discovery,
     browser,
   );
+
+  // store tokenresponse in session storage
+  useEffect(() => {
+    if (tokenResponse != null) {
+      sessionStorage.setItem(injectToken, JSON.stringify(tokenResponse));
+    }
+  }, [tokenResponse]);
 
   // Make initial token request
   useEffect(() => {
@@ -69,7 +79,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
         const tr = await exchangeCodeAsync(exchangeConfig, discovery);
         setTokenResponse(tr);
       } catch {
-        setTokenResponse(undefined);
+        setTokenResponse(null);
       }
     })();
   }, [request?.codeVerifier, response, discovery]);
@@ -122,7 +132,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
         const resp = await tokenResponse.refreshAsync(refreshConfig, discovery);
         setTokenResponse(resp);
       } catch (err) {
-        setTokenResponse(undefined);
+        setTokenResponse(null);
         throw err;
       }
     };
