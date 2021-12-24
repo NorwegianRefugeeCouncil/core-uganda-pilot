@@ -203,7 +203,7 @@ describe('form reducer', () => {
       expect(found?.id).toEqual('subform');
     });
   });
-  describe(selectByFolderOrDBId.name, () => {
+  describe('selectByFolderOrDBId', () => {
     const state = {
       forms: {
         ids: ['form0', 'form1', 'form2'],
