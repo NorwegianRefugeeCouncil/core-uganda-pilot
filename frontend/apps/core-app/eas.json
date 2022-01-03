@@ -6,32 +6,14 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "releaseChannel": "development",
-      "env": {
-        "REACT_APP_SERVER_URL": "",
-        "REACT_APP_OAUTH_CLIENT_ID": "",
-        "REACT_APP_OIDC_ISSUER": "",
-        "REACT_APP_OAUTH_SCOPE": ""
-      }
+      "releaseChannel": "development"
     },
     "staging": {
       "distribution": "internal",
-      "releaseChannel": "staging",
-      "env": {
-        "REACT_APP_SERVER_URL": "",
-        "REACT_APP_OAUTH_CLIENT_ID": "",
-        "REACT_APP_OIDC_ISSUER": "",
-        "REACT_APP_OAUTH_SCOPE": ""
-      }
+      "releaseChannel": "staging"
     },
     "production": {
-      "releaseChannel": "production",
-      "env": {
-        "REACT_APP_SERVER_URL": "",
-        "REACT_APP_OAUTH_CLIENT_ID": "",
-        "REACT_APP_OIDC_ISSUER": "",
-        "REACT_APP_OAUTH_SCOPE": ""
-      }
+      "releaseChannel": "production"
     }
   },
   "submit": {
