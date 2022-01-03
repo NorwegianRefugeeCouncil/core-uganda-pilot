@@ -161,14 +161,12 @@ export const FormerContainer: FC = () => {
     [dispatch],
   );
 
-  const saveForm = useCallback(() => {
+  const saveForm = useCallback(async () => {
     if (ownerForm) {
       dispatch(formerActions.saveForm());
     } else if (formDefinition) {
-      const postFormPromise = dispatch(postForm(formDefinition)).unwrap();
-      postFormPromise.then((data) => {
-        history.push(`/browse/forms/${data.id}`);
-      });
+      const data = await dispatch(postForm(formDefinition)).unwrap();
+      history.push(`/browse/forms/${data.id}`);
     }
   }, [dispatch, formDefinition, ownerForm]);
 
