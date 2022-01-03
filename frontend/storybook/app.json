@@ -3,6 +3,7 @@
     "name": "storybook",
     "slug": "storybook",
     "version": "1.0.0",
+    "owner": "nrc-no",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {

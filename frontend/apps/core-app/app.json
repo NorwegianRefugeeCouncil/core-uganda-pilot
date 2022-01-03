@@ -1,8 +1,10 @@
 {
   "expo": {
-    "name": "nrc-core",
-    "slug": "nrc-core",
+    "name": "core",
+    "slug": "core",
+    "owner": "nrc-no",
     "version": "0.0.1",
+    "scheme": "nrccore",
     "orientation": "portrait",
     "icon": "./assets/png/nrc.png",
     "splash": {
@@ -38,7 +40,6 @@
     "androidNavigationBar": {
       "visible": "sticky-immersive",
       "barStyle": "dark-content"
-    },
-    "scheme": "nrccore"
+    }
   }
 }
