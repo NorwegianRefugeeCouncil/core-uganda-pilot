@@ -1,0 +1,40 @@
+{
+  "cli": {
+    "version": ">= 0.43.0"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "releaseChannel": "development",
+      "env": {
+        "REACT_APP_SERVER_URL": "",
+        "REACT_APP_OAUTH_CLIENT_ID": "",
+        "REACT_APP_OIDC_ISSUER": "",
+        "REACT_APP_OAUTH_SCOPE": ""
+      }
+    },
+    "staging": {
+      "distribution": "internal",
+      "releaseChannel": "staging",
+      "env": {
+        "REACT_APP_SERVER_URL": "",
+        "REACT_APP_OAUTH_CLIENT_ID": "",
+        "REACT_APP_OIDC_ISSUER": "",
+        "REACT_APP_OAUTH_SCOPE": ""
+      }
+    },
+    "production": {
+      "releaseChannel": "production",
+      "env": {
+        "REACT_APP_SERVER_URL": "",
+        "REACT_APP_OAUTH_CLIENT_ID": "",
+        "REACT_APP_OIDC_ISSUER": "",
+        "REACT_APP_OAUTH_SCOPE": ""
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
