@@ -6,7 +6,7 @@ import { fetchDatabases } from '../reducers/database';
 import { fetchForms } from '../reducers/form';
 import { fetchFolders } from '../reducers/folder';
 import { NavBarContainer } from '../features/navbar/navbar';
-import { RecordEditorContainer } from '../features/recorder/RecordEditor';
+import { RecordEditorContainer } from '../features/recorder/RecordEditorContainer';
 import { FolderEditor } from '../features/folders/FolderEditor';
 import { DatabaseEditor } from '../features/databases/DatabaseEditor';
 import { FolderBrowserContainer } from '../features/browser/FolderBrowser';
@@ -26,11 +26,17 @@ const AuthenticatedApp: React.FC = () => {
 
   return (
     <div className="App">
-      <div style={{ maxHeight: '100vh', maxWidth: '100vw' }} className="d-flex flex-column wh-100 vh-100">
+      <div
+        style={{ maxHeight: '100vh', maxWidth: '100vw' }}
+        className="d-flex flex-column wh-100 vh-100"
+      >
         <NavBarContainer />
 
         <Switch>
-          <Route path="/edit/forms/:formId/record" component={RecordEditorContainer} />
+          <Route
+            path="/edit/forms/:formId/record"
+            component={RecordEditorContainer}
+          />
 
           <Route path="/edit/forms" component={FormerContainer} />
 
@@ -60,7 +66,12 @@ const AuthenticatedApp: React.FC = () => {
               const search = new URLSearchParams(p.location.search);
               const ownerRecordId = search.get('ownerRecordId');
               const { formId } = p.match.params;
-              return <FormBrowserContainer ownerRecordId={ownerRecordId || ''} formId={formId || ''} />;
+              return (
+                <FormBrowserContainer
+                  ownerRecordId={ownerRecordId || ''}
+                  formId={formId || ''}
+                />
+              );
             }}
           />
 

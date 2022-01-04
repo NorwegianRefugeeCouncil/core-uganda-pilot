@@ -1,9 +1,10 @@
 import { Folder, FormDefinition } from 'core-api-client';
 
-import { RootState } from '../../app/store';
-import { selectByFolderOrDBId } from '../../reducers/form';
-import { selectByParentId, selectDatabaseRootFolders } from '../../reducers/folder';
-import { databaseGlobalSelectors } from '../../reducers/database';
+import { RootState } from '../app/store';
+
+import { selectByFolderOrDBId } from './form';
+import { selectByParentId, selectDatabaseRootFolders } from './folder';
+import { databaseGlobalSelectors } from './database';
 
 export const selectChildFolders =
   (dbOrFolderId?: string) =>
@@ -19,7 +20,7 @@ export const selectChildFolders =
   };
 
 export const selectChildForms =
-  (ids: {dbId?: string, folderId?: string}) =>
+  (ids: { dbId?: string; folderId?: string }) =>
   (state: RootState): FormDefinition[] => {
     return selectByFolderOrDBId(state, ids);
   };

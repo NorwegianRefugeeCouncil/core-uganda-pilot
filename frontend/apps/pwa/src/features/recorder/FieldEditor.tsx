@@ -2,8 +2,7 @@ import { FieldDefinition, SelectOption } from 'core-api-client';
 import React, { FC } from 'react';
 
 import { RecordPickerContainer } from '../../components/RecordPicker';
-
-import { FormValue } from './recorder.slice';
+import { FormValue } from '../../reducers/recorder';
 
 export type FieldEditorProps = {
   field: FieldDefinition;
@@ -28,7 +27,11 @@ export const mapFieldLabel = (fd: FieldDefinition) => {
   );
 };
 
-export const mapSelectOptions = (required: boolean, key: boolean, options?: SelectOption[]) => {
+export const mapSelectOptions = (
+  required: boolean,
+  key: boolean,
+  options?: SelectOption[],
+) => {
   if (!options) {
     return <></>;
   }
@@ -52,7 +55,11 @@ export const ReferenceFieldEditor: FC<FieldEditorProps> = (props) => {
   return (
     <div className="form-group mb-2">
       {mapFieldLabel(field)}
-      <RecordPickerContainer formId={field.fieldType.reference?.formId} recordId={value} setRecordId={setValue} />
+      <RecordPickerContainer
+        formId={field.fieldType.reference?.formId}
+        recordId={value}
+        setRecordId={setValue}
+      />
       {mapFieldDescription(field)}
     </div>
   );
@@ -203,7 +210,11 @@ export const SingleSelectFieldEditor: FC<FieldEditorProps> = (props) => {
         value={value || ''}
         onChange={(event) => setValue(event.target.value)}
       >
-        {mapSelectOptions(field.required, field.key, field.fieldType?.singleSelect?.options)}
+        {mapSelectOptions(
+          field.required,
+          field.key,
+          field.fieldType?.singleSelect?.options,
+        )}
       </select>
       {mapFieldDescription(field)}
     </div>
@@ -226,7 +237,11 @@ export const MultiSelectFieldEditor: FC<FieldEditorProps> = (props) => {
           setValue(selected.map((s) => s[1].value));
         }}
       >
-        {mapSelectOptions(field.required, field.key, field.fieldType?.multiSelect?.options)}
+        {mapSelectOptions(
+          field.required,
+          field.key,
+          field.fieldType?.multiSelect?.options,
+        )}
       </select>
       {mapFieldDescription(field)}
     </div>
@@ -237,7 +252,7 @@ function subRecord(record: FormValue, select: () => void) {
   return (
     <a
       href="/#"
-      key={record.recordId}
+      key={record.id}
       onClick={(e) => {
         e.preventDefault();
         select();
@@ -254,7 +269,7 @@ function mapSubRecords(records: FormValue[], select: (id: string) => void) {
     <div className="list-group bg-dark mb-3">
       {records.map((r) =>
         subRecord(r, () => {
-          select(r.recordId);
+          select(r.id);
         }),
       )}
     </div>
@@ -268,7 +283,11 @@ export const SubFormFieldEditor: FC<FieldEditorProps> = (props) => {
       <div className="bg-primary border-2" />
       <span className="form-label opacity-75">{field.name}</span>
       {subRecords ? mapSubRecords(subRecords, selectSubRecord) : <></>}
-      <button type="button" onClick={addSubRecord} className="btn btn-sm btn-outline-primary w-100">
+      <button
+        type="button"
+        onClick={addSubRecord}
+        className="btn btn-sm btn-outline-primary w-100"
+      >
         Add record in {field.name}
       </button>
       {mapFieldDescription(field)}

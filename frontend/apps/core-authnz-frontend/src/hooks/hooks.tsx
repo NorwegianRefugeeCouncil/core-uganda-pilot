@@ -10,7 +10,9 @@ export function useApiClient(): Client {
   return useMemo(() => client, []);
 }
 
-export function useOrganization(organizationId: string): Organization | undefined {
+export function useOrganization(
+  organizationId: string,
+): Organization | undefined {
   const apiClient = useApiClient();
   const [organization, setOrganization] = useState<Organization>();
   useEffect(() => {
@@ -26,7 +28,9 @@ export function useOrganization(organizationId: string): Organization | undefine
   return organization;
 }
 
-export function useIdentityProviders(organizationId: string): IdentityProvider[] {
+export function useIdentityProviders(
+  organizationId: string,
+): IdentityProvider[] {
   const apiClient = useApiClient();
   const [idps, setIdps] = useState<IdentityProvider[]>([]);
   useEffect(() => {
@@ -42,15 +46,12 @@ export function useIdentityProviders(organizationId: string): IdentityProvider[]
   return idps;
 }
 
-export function useFormValidation<T extends Record<string, unknown> = { [key: string]: any }>(
-  isNew: boolean,
-  form: UseFormReturn<T>,
-) {
+export function useFormValidation<
+  T extends Record<string, unknown> = { [key: string]: any },
+>(isNew: boolean, form: UseFormReturn<T>) {
   const {
     formState: { dirtyFields, errors, isSubmitted, touchedFields },
   } = form;
-
-  console.log(isNew, touchedFields);
 
   const fieldClasses = useCallback(
     (field: Path<T>) => {
@@ -58,7 +59,7 @@ export function useFormValidation<T extends Record<string, unknown> = { [key: st
       const touched = (touchedFields as any)[field];
       const dirty = (dirtyFields as any)[field];
       const hasError = !!(errors as any)[field];
-      console.log(errors);
+
       if (isSubmitted || (isNew && touched) || (isNew && dirty)) {
         if (hasError) {
           return classNames(cls, 'is-invalid');
@@ -79,7 +80,11 @@ export function useFormValidation<T extends Record<string, unknown> = { [key: st
         hasError &&
         (isSubmitted || (isNew && touched) || (isNew && dirty)) && (
           <div className="invalid-feedback">
-            {err?.type === 'required' ? <span>This field is required</span> : <></>}
+            {err?.type === 'required' ? (
+              <span>This field is required</span>
+            ) : (
+              <></>
+            )}
             {err?.type === 'pattern' ? <span>Invalid value</span> : <></>}
           </div>
         )

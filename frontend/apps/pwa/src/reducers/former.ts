@@ -1,11 +1,26 @@
-import { createAsyncThunk, createEntityAdapter, createSlice, EntityState, PayloadAction } from '@reduxjs/toolkit';
+import {
+  createAsyncThunk,
+  createEntityAdapter,
+  createSlice,
+  EntityState,
+  PayloadAction,
+} from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
-import { Database, FieldDefinition, FieldKind, FieldType, Folder, FormDefinition, SelectOption } from 'core-api-client';
+import {
+  Database,
+  FieldDefinition,
+  FieldKind,
+  FieldType,
+  Folder,
+  FormDefinition,
+  SelectOption,
+} from 'core-api-client';
 
-import { RootState } from '../../app/store';
-import { databaseGlobalSelectors } from '../../reducers/database';
-import { folderGlobalSelectors } from '../../reducers/folder';
-import client from '../../app/client';
+import { RootState } from '../app/store';
+import client from '../app/client';
+
+import { databaseGlobalSelectors } from './database';
+import { folderGlobalSelectors } from './folder';
 
 export interface FormField {
   id: string;
@@ -39,7 +54,10 @@ const adapter = createEntityAdapter<Form>({
   sortComparer: (a, b) => a.formId.localeCompare(b.formId),
 });
 
-export const postForm = createAsyncThunk<FormDefinition, Partial<FormDefinition>>('former/createForm', async (arg, thunkAPI) => {
+export const postForm = createAsyncThunk<
+  FormDefinition,
+  Partial<FormDefinition>
+>('former/createForm', async (arg, thunkAPI) => {
   const resp = await client.createForm({ object: arg });
   if (resp.success) {
     return resp.response as FormDefinition;
@@ -48,9 +66,14 @@ export const postForm = createAsyncThunk<FormDefinition, Partial<FormDefinition>
 });
 
 const selectors = adapter.getSelectors();
-const globalSelectors = adapter.getSelectors<RootState>((state) => state.former);
+const globalSelectors = adapter.getSelectors<RootState>(
+  (state) => state.former,
+);
 
-const selectFieldForm = (state: FormerState, fieldId: string): { form: Form; field: FormField } | undefined => {
+const selectFieldForm = (
+  state: FormerState,
+  fieldId: string,
+): { form: Form; field: FormField } | undefined => {
   const allForms: Form[] = [];
   for (const id of state.ids) {
     const entity = state.entities[id];
@@ -105,7 +128,10 @@ const selectCurrentField = (state: FormerState): FormField | undefined => {
   return formField.field;
 };
 
-const selectOwnerForm = (state: FormerState, subFormId: string): Form | undefined => {
+const selectOwnerForm = (
+  state: FormerState,
+  subFormId: string,
+): Form | undefined => {
   const allForms = selectors.selectAll(state);
   for (const form of allForms) {
     for (const field of form.fields) {
@@ -133,7 +159,10 @@ const selectDatabase = (state: RootState): Database | undefined => {
   if (!state.former.selectedDatabaseId) {
     return undefined;
   }
-  return databaseGlobalSelectors.selectById(state, state.former.selectedDatabaseId);
+  return databaseGlobalSelectors.selectById(
+    state,
+    state.former.selectedDatabaseId,
+  );
 };
 
 const selectFolder = (state: RootState): Folder | undefined => {
@@ -143,7 +172,10 @@ const selectFolder = (state: RootState): Folder | undefined => {
   return folderGlobalSelectors.selectById(state, state.former.selectedFolderId);
 };
 
-const mapFields = (state: FormerState, fields: FormField[]): FieldDefinition[] => {
+const mapFields = (
+  state: FormerState,
+  fields: FormField[],
+): FieldDefinition[] => {
   const result: FieldDefinition[] = [];
 
   if (!fields) {
@@ -171,10 +203,14 @@ const mapFields = (state: FormerState, fields: FormField[]): FieldDefinition[] =
       fieldType = { multiSelect: { options: field.options } };
     } else if (field.type === 'reference') {
       if (!field.referencedDatabaseId) {
-        throw new Error(`field with id ${field.id} does not have referenced database id`);
+        throw new Error(
+          `field with id ${field.id} does not have referenced database id`,
+        );
       }
       if (!field.referencedFormId) {
-        throw new Error(`field with id ${field.id} does not have referenced form id`);
+        throw new Error(
+          `field with id ${field.id} does not have referenced form id`,
+        );
       }
       fieldType = {
         reference: {
@@ -184,7 +220,9 @@ const mapFields = (state: FormerState, fields: FormField[]): FieldDefinition[] =
       };
     } else if (field.type === 'subform') {
       if (!field.subFormId) {
-        throw new Error(`subform field with id ${field.id} does not have subFormId`);
+        throw new Error(
+          `subform field with id ${field.id} does not have subFormId`,
+        );
       }
       const subForm = selectors.selectById(state, field.subFormId);
       if (!subForm) {
@@ -196,7 +234,9 @@ const mapFields = (state: FormerState, fields: FormField[]): FieldDefinition[] =
         },
       };
     } else {
-      throw new Error(`invalid field type form field ${field.id}: ${field.type}`);
+      throw new Error(
+        `invalid field type form field ${field.id}: ${field.type}`,
+      );
     }
 
     result.push({
@@ -256,18 +296,27 @@ export const formerGlobalSelectors = {
   globalSelectors,
   selectDatabase,
   selectFolder,
-  selectFieldForm: (state: RootState, fieldId: string) => selectFieldForm(state.former, fieldId),
-  selectFormFields: (state: RootState, formId: string) => selectFormFields(state.former, formId),
+  selectFieldForm: (state: RootState, fieldId: string) =>
+    selectFieldForm(state.former, fieldId),
+  selectFormFields: (state: RootState, formId: string) =>
+    selectFormFields(state.former, formId),
   selectCurrentForm: (state: RootState) => selectCurrentForm(state.former),
-  selectCurrentFormFields: (state: RootState) => selectCurrentFormFields(state.former),
+  selectCurrentFormFields: (state: RootState) =>
+    selectCurrentFormFields(state.former),
   selectCurrentField: (state: RootState) => selectCurrentField(state.former),
-  selectIsSubForm: (state: RootState, formId: string) => selectIsSubForm(state.former, formId),
-  selectIsRootForm: (state: RootState, formId: string) => selectIsRootForm(state.former, formId),
-  selectOwnerForm: (state: RootState, formId: string) => selectOwnerForm(state.former, formId),
-  selectCurrentFormOwner: (state: RootState) => selectCurrentFormOwner(state.former),
-  selectFormDefinition: (databaseId: string | undefined, folderId: string | undefined) => (state: RootState) => {
-    return selectFormDefinition(databaseId, folderId)(state.former);
-  },
+  selectIsSubForm: (state: RootState, formId: string) =>
+    selectIsSubForm(state.former, formId),
+  selectIsRootForm: (state: RootState, formId: string) =>
+    selectIsRootForm(state.former, formId),
+  selectOwnerForm: (state: RootState, formId: string) =>
+    selectOwnerForm(state.former, formId),
+  selectCurrentFormOwner: (state: RootState) =>
+    selectCurrentFormOwner(state.former),
+  selectFormDefinition:
+    (databaseId: string | undefined, folderId: string | undefined) =>
+    (state: RootState) => {
+      return selectFormDefinition(databaseId, folderId)(state.former);
+    },
 };
 
 interface FormerState extends EntityState<Form> {
@@ -280,7 +329,7 @@ interface FormerState extends EntityState<Form> {
   saveError: any;
 }
 
-export const formerSlice = createSlice({
+export const former = createSlice({
   name: 'recorder',
   initialState: {
     ...adapter.getInitialState(),
@@ -313,21 +362,30 @@ export const formerSlice = createSlice({
     setFolder(state, action: PayloadAction<{ folderId: string }>) {
       state.selectedFolderId = action.payload.folderId;
     },
-    setFormName(state, action: PayloadAction<{ formId: string; formName: string }>) {
+    setFormName(
+      state,
+      action: PayloadAction<{ formId: string; formName: string }>,
+    ) {
       const { formId, formName } = action.payload;
       const form = state.entities[formId];
       if (form) {
         form.name = formName;
       }
     },
-    setFieldRequired(state, action: PayloadAction<{ fieldId: string; required: boolean }>) {
+    setFieldRequired(
+      state,
+      action: PayloadAction<{ fieldId: string; required: boolean }>,
+    ) {
       const fieldForm = selectFieldForm(state, action.payload.fieldId);
       if (!fieldForm) {
         return;
       }
       fieldForm.field.required = action.payload.required;
     },
-    setFieldIsKey(state, action: PayloadAction<{ fieldId: string; isKey: boolean }>) {
+    setFieldIsKey(
+      state,
+      action: PayloadAction<{ fieldId: string; isKey: boolean }>,
+    ) {
       const fieldForm = selectFieldForm(state, action.payload.fieldId);
       if (!fieldForm) {
         return;
@@ -335,21 +393,30 @@ export const formerSlice = createSlice({
       fieldForm.field.required = true;
       fieldForm.field.key = action.payload.isKey;
     },
-    setFieldName(state, action: PayloadAction<{ fieldId: string; name: string }>) {
+    setFieldName(
+      state,
+      action: PayloadAction<{ fieldId: string; name: string }>,
+    ) {
       const fieldForm = selectFieldForm(state, action.payload.fieldId);
       if (!fieldForm) {
         return;
       }
       fieldForm.field.name = action.payload.name;
     },
-    setFieldDescription(state, action: PayloadAction<{ fieldId: string; description: string }>) {
+    setFieldDescription(
+      state,
+      action: PayloadAction<{ fieldId: string; description: string }>,
+    ) {
       const fieldForm = selectFieldForm(state, action.payload.fieldId);
       if (!fieldForm) {
         return;
       }
       fieldForm.field.description = action.payload.description;
     },
-    setFieldOption(state, action: PayloadAction<{ fieldId: string; i: number; value: string }>) {
+    setFieldOption(
+      state,
+      action: PayloadAction<{ fieldId: string; i: number; value: string }>,
+    ) {
       const fieldForm = selectFieldForm(state, action.payload.fieldId);
       const { i, value } = action.payload;
       if (!fieldForm || !fieldForm.field.options) return;
@@ -376,23 +443,34 @@ export const formerSlice = createSlice({
       if (!fieldForm || !fieldForm.field.options) return;
 
       const { i } = action.payload;
-      fieldForm.field.options = fieldForm.field.options.slice(0, i).concat(fieldForm.field.options.slice(i + 1));
+      fieldForm.field.options = fieldForm.field.options
+        .slice(0, i)
+        .concat(fieldForm.field.options.slice(i + 1));
     },
-    setFieldCode(state, action: PayloadAction<{ fieldId: string; code: string }>) {
+    setFieldCode(
+      state,
+      action: PayloadAction<{ fieldId: string; code: string }>,
+    ) {
       const fieldForm = selectFieldForm(state, action.payload.fieldId);
       if (!fieldForm) {
         return;
       }
       fieldForm.field.code = action.payload.code;
     },
-    setFieldReferencedDatabaseId(state, action: PayloadAction<{ fieldId: string; databaseId: string }>) {
+    setFieldReferencedDatabaseId(
+      state,
+      action: PayloadAction<{ fieldId: string; databaseId: string }>,
+    ) {
       const fieldForm = selectFieldForm(state, action.payload.fieldId);
       if (!fieldForm) {
         return;
       }
       fieldForm.field.referencedDatabaseId = action.payload.databaseId;
     },
-    setFieldReferencedFormId(state, action: PayloadAction<{ fieldId: string; formId: string }>) {
+    setFieldReferencedFormId(
+      state,
+      action: PayloadAction<{ fieldId: string; formId: string }>,
+    ) {
       const fieldForm = selectFieldForm(state, action.payload.fieldId);
       if (!fieldForm) {
         return;
@@ -442,7 +520,8 @@ export const formerSlice = createSlice({
         referencedFormId?: string;
       }>,
     ) {
-      const { formId, kind, referencedDatabaseId, referencedFormId } = action.payload;
+      const { formId, kind, referencedDatabaseId, referencedFormId } =
+        action.payload;
       const form = formerSelectors.selectById(state, formId);
       if (!form) {
         return;
@@ -495,7 +574,10 @@ export const formerSlice = createSlice({
       if (!fieldForm.field.subFormId) {
         return;
       }
-      const subForm = formerSelectors.selectById(state, fieldForm.field.subFormId);
+      const subForm = formerSelectors.selectById(
+        state,
+        fieldForm.field.subFormId,
+      );
       if (!subForm) {
         return;
       }
@@ -560,5 +642,5 @@ export const formerSlice = createSlice({
   },
 });
 
-export const formerActions = formerSlice.actions;
-export default formerSlice.reducer;
+export const formerActions = former.actions;
+export default former.reducer;
