@@ -84,17 +84,17 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
   useEffect(() => {
     if (!tokenResponse) return;
 
-    let token;
-    switch (injectToken) {
-      case 'access_token':
-        token = tokenResponse?.accessToken || '';
-        break;
-      case 'id_token':
-        token = tokenResponse?.idToken || '';
-        break;
-      default:
-        token = '';
-    }
+    const token = (() => {
+      switch (injectToken) {
+        case 'access_token':
+          return tokenResponse?.accessToken ?? '';
+        case 'id_token':
+          return tokenResponse?.idToken ?? '';
+        default:
+          return '';
+      }
+    })();
+
     onTokenChange(token);
   }, [tokenResponse?.accessToken, tokenResponse?.idToken]);
 
