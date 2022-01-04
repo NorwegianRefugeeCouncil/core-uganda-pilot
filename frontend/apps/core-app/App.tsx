@@ -14,7 +14,7 @@ const App: React.FC = () => {
   return (
     <NativeBaseProvider theme={theme}>
       <NavigationContainer>
-        <AuthWrapper onTokenChange={formsClient.setAuth}>
+        <AuthWrapper onTokenChange={formsClient.setToken}>
           <RootNavigator />
         </AuthWrapper>
       </NavigationContainer>

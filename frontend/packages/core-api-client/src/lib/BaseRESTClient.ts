@@ -8,8 +8,6 @@ export class BaseRESTClient {
 
   private token = '';
 
-  lastInterceptorId: number | undefined;
-
   constructor(baseURL: string) {
     this.axiosInstance = axios.create({
       baseURL,
@@ -27,11 +25,6 @@ export class BaseRESTClient {
       };
     });
   }
-
-  // this method became redundant, could be removed
-  public setAuth = (token: string): void => {
-    this.setToken(token);
-  };
 
   public getToken = (): string => this.token;
 
