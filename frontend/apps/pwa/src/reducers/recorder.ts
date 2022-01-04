@@ -11,19 +11,11 @@ import { RootState } from '../app/store';
 import client from '../app/client';
 
 import { FormInterface, selectFormOrSubFormById, selectRootForm } from './form';
-import {recordGlobalSelectors} from "./records";
+import { recordGlobalSelectors } from './records';
 
 export interface FormValue extends Omit<Record, 'databaseId'> {
-  // the unique id of the record
-  // recordId: string;
-  // the id of the form for that record
-  // formId: string;
-  // records the owner record, if any
-  // ownerId?: string;
   // records the sub form field that the record belongs to, if any
   ownerFieldId?: string;
-  // records the record values
-  // values: FieldValue[];
 }
 
 type RecordMap = { [key: string]: FormValue[] };
