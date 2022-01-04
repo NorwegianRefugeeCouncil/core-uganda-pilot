@@ -69,29 +69,44 @@ export const useTokenResponse = (): [
     JSON.stringify(discovery),
   ]);
 
+  const refreshTokenInterval = React.useRef<number | null>(null);
   React.useEffect(() => {
-    (async () => {
+    const refreshToken = async () => {
       if (!discovery) return;
+      if (!tokenResponse) return;
+      if (!tokenResponse.shouldRefresh()) return;
 
-      if (tokenResponse?.shouldRefresh()) {
-        const refreshConfig = {
-          clientId,
-          scopes: Constants.manifest?.extra?.scopes,
-          extraParams: {},
-        };
+      const refreshConfig = {
+        clientId,
+        scopes: Constants.manifest?.extra?.scopes,
+        extraParams: {},
+      };
 
-        try {
-          const resp = await tokenResponse?.refreshAsync(
-            refreshConfig,
-            discovery,
-          );
-          setTokenResponse(resp);
-        } catch {
-          setTokenResponse(undefined);
-        }
+      try {
+        const resp = await tokenResponse.refreshAsync(refreshConfig, discovery);
+        setTokenResponse(resp);
+      } catch (err) {
+        setTokenResponse(undefined);
+        throw err;
       }
-    })();
-  }, [tokenResponse?.shouldRefresh(), discovery]);
+    };
+
+    if (refreshTokenInterval.current)
+      window.clearInterval(refreshTokenInterval.current);
+
+    if (
+      tokenResponse &&
+      tokenResponse.expiresIn &&
+      tokenResponse.expiresIn > 0
+    ) {
+      refreshTokenInterval.current = window.setInterval(refreshToken, 1000);
+    }
+
+    return () => {
+      if (refreshTokenInterval.current)
+        clearInterval(refreshTokenInterval.current);
+    };
+  }, [tokenResponse?.refreshToken, tokenResponse?.expiresIn]);
 
   const login = React.useCallback(async () => {
     promptAsync({ useProxy: shouldUseProxy });
