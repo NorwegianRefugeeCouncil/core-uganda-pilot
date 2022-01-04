@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { FieldKind } from 'core-api-client';
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -10,8 +10,9 @@ import { fetchForms } from '../../reducers/form';
 import { formerActions, formerGlobalSelectors, postForm } from './former.slice';
 import { Former } from './Former';
 
-export const FormerContainer: FC = (props) => {
+export const FormerContainer: FC = () => {
   const dispatch = useAppDispatch();
+  const history = useHistory();
 
   // load data
   useEffect(() => {
@@ -24,12 +25,18 @@ export const FormerContainer: FC = (props) => {
   const location = useLocation();
 
   const form = useAppSelector(formerGlobalSelectors.selectCurrentForm);
-  const ownerForm = useAppSelector(formerGlobalSelectors.selectCurrentFormOwner);
+  const ownerForm = useAppSelector(
+    formerGlobalSelectors.selectCurrentFormOwner,
+  );
   const folder = useAppSelector(formerGlobalSelectors.selectFolder);
   const database = useAppSelector(formerGlobalSelectors.selectDatabase);
-  const selectedField = useAppSelector(formerGlobalSelectors.selectCurrentField);
+  const selectedField = useAppSelector(
+    formerGlobalSelectors.selectCurrentField,
+  );
 
-  const formDefinition = useAppSelector(formerGlobalSelectors.selectFormDefinition(database?.id, folder?.id));
+  const formDefinition = useAppSelector(
+    formerGlobalSelectors.selectFormDefinition(database?.id, folder?.id),
+  );
 
   useEffect(() => {
     const search = new URLSearchParams(location.search);
@@ -126,12 +133,14 @@ export const FormerContainer: FC = (props) => {
 
   const setFieldReferencedDatabaseId = useCallback(
     (fieldId: string, databaseId: string) => {
-      dispatch(formerActions.setFieldReferencedDatabaseId({ fieldId, databaseId }));
+      dispatch(
+        formerActions.setFieldReferencedDatabaseId({ fieldId, databaseId }),
+      );
     },
     [dispatch],
   );
 
-  const setFieldRefernecedFormId = useCallback(
+  const setFieldReferencedFormId = useCallback(
     (fieldId: string, formId: string) => {
       dispatch(formerActions.setFieldReferencedFormId({ fieldId, formId }));
     },
@@ -152,11 +161,12 @@ export const FormerContainer: FC = (props) => {
     [dispatch],
   );
 
-  const saveForm = useCallback(() => {
+  const saveForm = useCallback(async () => {
     if (ownerForm) {
       dispatch(formerActions.saveForm());
     } else if (formDefinition) {
-      dispatch(postForm(formDefinition));
+      const data = await dispatch(postForm(formDefinition)).unwrap();
+      history.push(`/browse/forms/${data.id}`);
     }
   }, [dispatch, formDefinition, ownerForm]);
 
@@ -185,7 +195,7 @@ export const FormerContainer: FC = (props) => {
       ownerFormName={ownerForm?.name}
       cancelField={(fieldId: string) => cancelField(fieldId)}
       setFieldReferencedDatabaseId={setFieldReferencedDatabaseId}
-      setFieldReferencedFormId={setFieldRefernecedFormId}
+      setFieldReferencedFormId={setFieldReferencedFormId}
     />
   );
 };
