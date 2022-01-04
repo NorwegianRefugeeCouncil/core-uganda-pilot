@@ -28,7 +28,7 @@ export class TokenResponse implements TokenResponseConfig {
   public constructor(response: TokenResponseConfig) {
     this.accessToken = response.accessToken;
     this.tokenType = response.tokenType ?? TokenType.Bearer;
-    this.expiresIn = 10; // response.expiresIn;
+    this.expiresIn = response.expiresIn;
     this.refreshToken = response.refreshToken;
     this.scope = response.scope;
     this.state = response.state;
