@@ -106,6 +106,7 @@ exports[`should match the snapshot 1`] = `
                 "fontWeight": "700",
                 "letterSpacing": 0,
                 "lineHeight": 21,
+                "textAlign": "auto",
                 "textDecorationLine": undefined,
               }
             }

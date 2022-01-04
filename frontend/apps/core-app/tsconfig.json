@@ -2,10 +2,14 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
-    "paths": {
-      "core-api-client": ["../../packages/core-api-client/src"],
-      "core-auth": ["../../packages/core-auth/src"],
-      "core-design-system": ["../../packages/design-system/src"],
-    }
-  }
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "isolatedModules": true,
+    "jsx": "react-jsx"
+  },
+  "include": [
+    "src"
+  ]
 }

@@ -3,7 +3,7 @@ import fontConfig from '../tokens/fontConfig';
 export default {
   defaultProps: {
     letterSpacing: '0em',
-    textAlign: 'start',
+    textAlign: 'auto',
   },
   variants: {
     display: {
