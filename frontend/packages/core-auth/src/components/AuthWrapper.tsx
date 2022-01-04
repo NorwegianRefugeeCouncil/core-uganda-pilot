@@ -24,7 +24,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
   issuer,
   redirectUri,
   customLoginComponent,
-  handleLoginErr = console.log,
+  handleLoginErr = () => {},
   onTokenChange,
   injectToken = 'access_token',
 }) => {
