@@ -38,15 +38,16 @@ export class TokenResponse implements TokenResponseConfig {
 
   static isTokenFresh(
     token: Pick<TokenResponse, 'expiresIn' | 'issuedAt'>,
-    secondsMargin: number = 60 * 10 - 1,
+    marginPercentage = 0.1,
   ): boolean {
-    if (!token) {
-      return false;
-    }
+    if (!token) return false;
+
     if (token.expiresIn) {
+      const secondsMargin = token.expiresIn * marginPercentage * -1;
       const now = getCurrentTimeInSeconds();
       return now < token.issuedAt + token.expiresIn + secondsMargin;
     }
+
     return true;
   }
 
