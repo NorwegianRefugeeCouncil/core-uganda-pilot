@@ -93,11 +93,6 @@ export class TokenResponse implements TokenResponseConfig {
     return !(TokenResponse.isTokenFresh(this) || !this.refreshToken);
   }
 
-  getExpiryMs(): number {
-    const tenPercentMargin = 0.9;
-    return 1000 * (this.issuedAt + (this.expiresIn ?? 0) * tenPercentMargin);
-  }
-
   async refreshAsync(
     config: Omit<TokenRequestConfig, 'grantType' | 'refreshToken'>,
     discovery: Pick<DiscoveryDocument, 'token_endpoint'>,
