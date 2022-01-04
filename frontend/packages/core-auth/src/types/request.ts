@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import axios, { AxiosRequestHeaders } from 'axios';
 
 import {
@@ -28,7 +29,10 @@ class Request<T, B> {
   }
 }
 
-class TokenRequest<T extends TokenRequestConfig> extends Request<T, TokenResponse> {
+class TokenRequest<T extends TokenRequestConfig> extends Request<
+  T,
+  TokenResponse
+> {
   readonly clientId: string;
 
   readonly scopes?: string[];
@@ -50,12 +54,20 @@ class TokenRequest<T extends TokenRequestConfig> extends Request<T, TokenRespons
 
   async performAsync(discovery: Pick<DiscoveryDocument, 'token_endpoint'>) {
     const response = await axios
-      .post<ServerTokenResponseConfig>(discovery.token_endpoint, this.getQueryBody().toString(), {
-        headers: this.getHeaders(),
-      })
+      .post<ServerTokenResponseConfig>(
+        discovery.token_endpoint,
+        this.getQueryBody().toString(),
+        {
+          headers: this.getHeaders(),
+        },
+      )
       .catch((err) => {
         if (axios.isAxiosError(err)) {
-          if (err.response && err.response.data && 'error' in (err.response.data as ResponseErrorConfig)) {
+          if (
+            err.response &&
+            err.response.data &&
+            'error' in (err.response.data as ResponseErrorConfig)
+          ) {
             throw new TokenError(err.response.data as ResponseErrorConfig);
           }
         }
@@ -99,7 +111,10 @@ class TokenRequest<T extends TokenRequestConfig> extends Request<T, TokenRespons
  *
  * [Section 4.1.3](https://tools.ietf.org/html/rfc6749#section-4.1.3)
  */
-export class AccessTokenRequest extends TokenRequest<AccessTokenRequestConfig> implements AccessTokenRequestConfig {
+export class AccessTokenRequest
+  extends TokenRequest<AccessTokenRequestConfig>
+  implements AccessTokenRequestConfig
+{
   readonly code: string;
 
   readonly redirectUri: string;
@@ -141,7 +156,10 @@ export class AccessTokenRequest extends TokenRequest<AccessTokenRequestConfig> i
  *
  * [Section 6](https://tools.ietf.org/html/rfc6749#section-6)
  */
-export class RefreshTokenRequest extends TokenRequest<RefreshTokenRequestConfig> implements RefreshTokenRequestConfig {
+export class RefreshTokenRequest
+  extends TokenRequest<RefreshTokenRequestConfig>
+  implements RefreshTokenRequestConfig
+{
   readonly refreshToken?: string;
 
   constructor(options: RefreshTokenRequestConfig) {
