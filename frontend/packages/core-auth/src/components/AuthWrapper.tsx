@@ -53,31 +53,31 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
 
   // Make initial token request
   useEffect(() => {
-    if (
-      !discovery ||
-      request?.codeVerifier == null ||
-      !response ||
-      response?.type !== 'success'
-    )
-      return;
+    (async () => {
+      if (
+        !discovery ||
+        request?.codeVerifier == null ||
+        !response ||
+        response?.type !== 'success'
+      )
+        return;
 
-    const exchangeConfig = {
-      code: response.params.code,
-      clientId,
-      redirectUri,
-      extraParams: {
-        code_verifier: request?.codeVerifier,
-      },
-    };
+      const exchangeConfig = {
+        code: response.params.code,
+        clientId,
+        redirectUri,
+        extraParams: {
+          code_verifier: request?.codeVerifier,
+        },
+      };
 
-    exchangeCodeAsync(exchangeConfig, discovery)
-      .then((resp) => {
-        setTokenResponse(resp);
-      })
-      .catch((err) => {
-        console.log('Code Exchange Error', err);
+      try {
+        const tr = await exchangeCodeAsync(exchangeConfig, discovery);
+        setTokenResponse(tr);
+      } catch {
         setTokenResponse(undefined);
-      });
+      }
+    })();
   }, [request?.codeVerifier, response, discovery]);
 
   // Trigger onTokenChange callback when TokenResponse is received
