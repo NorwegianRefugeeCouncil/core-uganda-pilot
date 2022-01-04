@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import React from 'react';
 import { AxiosInstance } from 'axios';
 
@@ -24,9 +25,12 @@ const errorCodeMessages: {
     // OAuth 2.0
     invalid_request:
       'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.',
-    unauthorized_client: 'The client is not authorized to request an authorization code using this method.',
-    access_denied: 'The resource owner or authorization server denied the request.',
-    unsupported_response_type: 'The authorization server does not support obtaining an authorization code using this method.',
+    unauthorized_client:
+      'The client is not authorized to request an authorization code using this method.',
+    access_denied:
+      'The resource owner or authorization server denied the request.',
+    unsupported_response_type:
+      'The authorization server does not support obtaining an authorization code using this method.',
     invalid_scope: 'The requested scope is invalid, unknown, or malformed.',
     server_error:
       'The authorization server encountered an unexpected condition that prevented it from fulfilling the request. (This error code is needed because a 500 Internal Server Error HTTP status code cannot be returned to the client via an HTTP redirect.)',
@@ -41,8 +45,10 @@ const errorCodeMessages: {
       'User is required to select a session at the auth server. The user may be authenticated at the auth server with different associated accounts, but the user did not select a session. This error may be returned when the prompt parameter value in the auth request is `none`, but the auth request cannot be completed without displaying a user interface to prompt for a session to use.',
     consent_required:
       'Auth server requires user consent. This error may be returned when the prompt parameter value in the auth request is none, but the auth request cannot be completed without displaying a user interface for user consent.',
-    invalid_request_uri: 'The `request_uri` in the auth request returns an error or contains invalid data.',
-    invalid_request_object: 'The request parameter contains an invalid request object.',
+    invalid_request_uri:
+      'The `request_uri` in the auth request returns an error or contains invalid data.',
+    invalid_request_object:
+      'The request parameter contains an invalid request object.',
     request_not_supported:
       'The OP does not support use of the `request` parameter defined in Section 6. (https://openid.net/specs/openid-connect-core-1_0.html#JWTRequests)',
     request_uri_not_supported:
@@ -58,8 +64,10 @@ const errorCodeMessages: {
       'Client authentication failed (e.g., unknown client, no client authentication included, or unsupported authentication method).  The authorization server MAY return an HTTP 401 (Unauthorized) status code to indicate which HTTP authentication schemes are supported.  If the client attempted to authenticate via the "Authorization" request header field, the authorization server MUST respond with an HTTP 401 (Unauthorized) status code and include the "WWW-Authenticate" response header field matching the authentication scheme used by the client.',
     invalid_grant:
       'The provided authorization grant (e.g., authorization code, resource owner credentials) or refresh token is invalid, expired, revoked, does not match the redirection URI used in the authorization request, or was issued to another client.',
-    unauthorized_client: 'The authenticated client is not authorized to use this authorization grant type.',
-    unsupported_grant_type: 'The authorization grant type is not supported by the authorization server.',
+    unauthorized_client:
+      'The authenticated client is not authorized to use this authorization grant type.',
+    unsupported_grant_type:
+      'The authorization grant type is not supported by the authorization server.',
   },
 };
 
@@ -87,12 +95,17 @@ export class ResponseError extends CodedError {
    */
   params: Record<string, string>;
 
-  constructor(params: ResponseErrorConfig, errorCodeType: ResponseErrorCodeType) {
+  constructor(
+    params: ResponseErrorConfig,
+    errorCodeType: ResponseErrorCodeType,
+  ) {
     const { error, error_description, error_uri } = params;
     const message = errorCodeMessages[errorCodeType][error];
     let errorMessage: string;
     if (message) {
-      errorMessage = message + (error_description ? `\nMore info: ${error_description}` : '');
+      errorMessage =
+        message +
+        (error_description ? `\nMore info: ${error_description}` : '');
     } else if (error_description) {
       errorMessage = error_description;
     } else {
@@ -219,7 +232,10 @@ export interface AuthRequestConfig {
 
 export type AuthSessionResult =
   | {
-      type: WebBrowserResultType.CANCEL | WebBrowserResultType.DISMISS | WebBrowserResultType.LOCKED;
+      type:
+        | WebBrowserResultType.CANCEL
+        | WebBrowserResultType.DISMISS
+        | WebBrowserResultType.LOCKED;
     }
   | {
       type: 'error' | 'success';
@@ -403,7 +419,9 @@ export enum WebBrowserResultType {
   SUCCESS = 'success',
 }
 
-export type WebBrowserAuthSessionResult = WebBrowserRedirectResult | WebBrowserResult;
+export type WebBrowserAuthSessionResult =
+  | WebBrowserRedirectResult
+  | WebBrowserResult;
 
 export type WebBrowserRedirectResult = {
   type: WebBrowserResultType.SUCCESS;
@@ -414,7 +432,9 @@ export type WebBrowserResult = {
   type: WebBrowserResultType;
 };
 
-export type PromptMethod = (options?: AuthRequestPromptOptions) => Promise<AuthSessionResult>;
+export type PromptMethod = (
+  options?: AuthRequestPromptOptions,
+) => Promise<AuthSessionResult>;
 
 export type LoginComponentProps = {
   login: () => void;
