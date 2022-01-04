@@ -109,50 +109,46 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
     }
   }, [tokenResponse, isLoggedIn]);
 
-  async function refreshToken() {
-    if (tokenResponse && discovery) {
+  // Each second, check if token is fresh
+  // If not, refresh the token
+  const refreshTokenInterval = React.useRef<number | null>(null);
+  React.useEffect(() => {
+    const refreshToken = async () => {
+      if (!discovery) return;
+      if (!tokenResponse) return;
+      if (!tokenResponse.shouldRefresh()) return;
+
       const refreshConfig = {
         clientId,
         scopes,
         extraParams: {},
       };
-      let newTokenResponse;
+
       try {
-        newTokenResponse = await tokenResponse.refreshAsync(
-          refreshConfig,
-          discovery,
-        );
+        const resp = await tokenResponse.refreshAsync(refreshConfig, discovery);
+        setTokenResponse(resp);
       } catch (err) {
         setTokenResponse(undefined);
         throw err;
       }
+    };
 
-      setTokenResponse(newTokenResponse);
-    }
-  }
+    if (refreshTokenInterval.current)
+      window.clearInterval(refreshTokenInterval.current);
 
-  // Schedule a token refresh before it expires (or use an existing schedule)
-  const refreshTokenInterval = useRef<number | null>(null);
-  useEffect(() => {
     if (
       tokenResponse &&
-      tokenResponse.expiresIn != null &&
+      tokenResponse.expiresIn &&
       tokenResponse.expiresIn > 0
     ) {
-      if (refreshTokenInterval.current != null)
-        window.clearInterval(refreshTokenInterval.current);
-
-      const delay = tokenResponse.getExpiryMs() - Date.now();
-      if (delay <= 0) {
-        refreshToken();
-      } else {
-        refreshTokenInterval.current = window.setInterval(
-          () => refreshToken(),
-          delay / 3,
-        );
-      }
+      refreshTokenInterval.current = window.setInterval(refreshToken, 1000);
     }
-  }, [tokenResponse?.accessToken, discovery]);
+
+    return () => {
+      if (refreshTokenInterval.current)
+        clearInterval(refreshTokenInterval.current);
+    };
+  }, [tokenResponse?.refreshToken, tokenResponse?.expiresIn]);
 
   const handleLogin = useCallback(() => {
     promptAsync().catch((err) => {
