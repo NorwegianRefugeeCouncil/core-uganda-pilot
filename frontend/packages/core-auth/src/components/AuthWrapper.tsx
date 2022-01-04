@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  useRef,
-} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import Browser from '../types/browser';
 import exchangeCodeAsync from '../utils/exchangeCodeAsync';
