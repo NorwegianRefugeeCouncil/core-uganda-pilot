@@ -1,51 +1,52 @@
-import fontConfig from '../tokens/fontConfig';
+import typography from '../tokens/typography';
 
-export default {
+const textTheme = {
   defaultProps: {
-    letterSpacing: '0em',
     textAlign: 'auto',
   },
   variants: {
     display: {
-      fontFamily: fontConfig.Roboto['700'].normal,
-      fontSize: '44px',
-      lineHeight: '52px',
+      fontFamily: typography.fontConfig.Roboto['700'].normal,
+      fontSize: typography.fontSizes.xl,
+      lineHeight: typography.lineHeights.xl,
     },
     heading: {
-      fontFamily: fontConfig.Roboto['400'].normal,
-      fontSize: '32px',
-      lineHeight: '38px',
+      fontFamily: typography.fontConfig.Roboto['400'].normal,
+      fontSize: typography.fontSizes.lg,
+      lineHeight: typography.lineHeights.lg,
     },
     title: {
-      fontFamily: fontConfig.Roboto['400'].normal,
-      fontSize: '24px',
-      lineHeight: '34px',
+      fontFamily: typography.fontConfig.Roboto['400'].normal,
+      fontSize: typography.fontSizes.md,
+      lineHeight: typography.lineHeights.md,
     },
     bodyText: {
-      fontFamily: fontConfig.Roboto['400'].normal,
-      fontSize: '18px',
-      lineHeight: '26px',
-    },
-    caption: {
-      fontFamily: fontConfig.Roboto['400'].normal,
-      fontSize: '14px',
-      lineHeight: '20px',
+      fontFamily: typography.fontConfig.Roboto['400'].normal,
+      fontSize: typography.fontSizes.sm,
+      lineHeight: typography.lineHeights.sm,
     },
     inline: {
-      fontFamily: fontConfig.Roboto['400'].normal,
-      fontSize: '18px',
-      lineHeight: '26px',
+      fontFamily: typography.fontConfig.Roboto['400'].normal,
+      fontSize: typography.fontSizes.sm,
+      lineHeight: typography.lineHeights.sm,
       textDecorationLine: 'underline',
     },
     date: {
-      fontFamily: fontConfig.Roboto['400'].italic,
-      fontSize: '18px',
-      lineHeight: '26px',
+      fontFamily: typography.fontConfig.Roboto['400'].italic,
+      fontSize: typography.fontSizes.sm,
+      lineHeight: typography.lineHeights.sm,
     },
     label: {
-      fontFamily: fontConfig.Roboto['400'].normal,
-      fontSize: '18px',
-      lineHeight: '26px',
+      fontFamily: typography.fontConfig.Roboto['400'].normal,
+      fontSize: typography.fontSizes.sm,
+      lineHeight: typography.lineHeights.sm,
+    },
+    caption: {
+      fontFamily: typography.fontConfig.Roboto['400'].normal,
+      fontSize: typography.fontSizes.xs,
+      lineHeight: typography.lineHeights.xs,
     },
   },
 };
+
+export default textTheme;

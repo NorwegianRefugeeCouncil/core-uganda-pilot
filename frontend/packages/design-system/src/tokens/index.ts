@@ -1,9 +1,9 @@
 import colors from './colors';
 import spacing from './spacing';
-import fontConfig from './fontConfig';
+import typography from './typography';
 
 export default {
   colors,
   spacing,
-  fontConfig,
+  ...typography,
 };
