@@ -17,7 +17,7 @@ import {
   selectSubRecords,
 } from '../../reducers/recorder';
 
-import { RecordEditor } from './RecordEditor';
+import { RecordEditorComponent } from './RecordEditor.component';
 
 export const RecordEditorContainer: FC = () => {
   const dispatch = useAppDispatch();
@@ -166,7 +166,7 @@ export const RecordEditorContainer: FC = () => {
   }
 
   return (
-    <RecordEditor
+    <RecordEditorComponent
       setValue={setFieldValue}
       fields={currentForm?.fields}
       values={currentRecord?.values}

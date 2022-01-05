@@ -2,8 +2,7 @@ import React, { FC } from 'react';
 import { FieldDefinition, FieldValue } from 'core-api-client';
 
 import { FormValue } from '../../reducers/recorder';
-
-import { FieldEditor } from './FieldEditor';
+import { FieldEditor } from '../../components/FieldEditor/FieldEditor';
 
 export type RecordEditorProps = {
   fields: FieldDefinition[];
@@ -15,7 +14,7 @@ export type RecordEditorProps = {
   saveRecord: () => void;
 };
 
-export const RecordEditor: FC<RecordEditorProps> = (props) => {
+export const RecordEditorComponent: FC<RecordEditorProps> = (props) => {
   const {
     fields,
     addSubRecord,
@@ -74,3 +73,5 @@ export const RecordEditor: FC<RecordEditorProps> = (props) => {
     </div>
   );
 };
+
+export default RecordEditorComponent;

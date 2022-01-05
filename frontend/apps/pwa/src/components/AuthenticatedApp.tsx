@@ -6,7 +6,7 @@ import { fetchDatabases } from '../reducers/database';
 import { fetchForms } from '../reducers/form';
 import { fetchFolders } from '../reducers/folder';
 import { NavBarContainer } from '../features/navbar/navbar';
-import { RecordEditorContainer } from '../features/recorder/RecordEditorContainer';
+import { RecordEditorContainer } from '../features/recorder';
 import { FolderEditor } from '../features/folders/FolderEditor';
 import { DatabaseEditor } from '../features/databases/DatabaseEditor';
 import { FolderBrowserContainer } from '../features/browser/FolderBrowser';

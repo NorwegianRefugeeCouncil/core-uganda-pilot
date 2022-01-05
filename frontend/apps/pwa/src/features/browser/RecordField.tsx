@@ -8,10 +8,12 @@ type RecordFieldProps = {
   value: any;
   subRecords: Record[] | undefined;
 };
-export const RecordField: FC<RecordFieldProps> = (props) => {
-  const { field, value, subRecords } = props;
-
-  function renderField(f: FieldDefinition, v: any) {
+export const RecordField: FC<RecordFieldProps> = ({
+  field,
+  value,
+  subRecords,
+}) => {
+  const renderField = (f: FieldDefinition, v: any) => {
     if (f.fieldType.reference) {
       return (
         <div>
@@ -26,7 +28,7 @@ export const RecordField: FC<RecordFieldProps> = (props) => {
       return <div className="fw-bold">{format(new Date(v), "yyyy-'W'ww")}</div>;
     }
     return <div className="fw-bold">{v}</div>;
-  }
+  };
 
   return (
     <div className="form-group mb-3">
