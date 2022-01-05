@@ -26,7 +26,7 @@
     "expo-auth-session": "~3.5.0",
     "expo-constants": "~13.0.0",
     "expo-font": "~10.0.4",
-    "expo-dev-client": "~0.7.2",
+    "expo-dev-client": "~0.8.0",
     "expo-random": "~12.1.1",
     "expo-splash-screen": "~0.14.1",
     "expo-status-bar": "~1.2.0",
