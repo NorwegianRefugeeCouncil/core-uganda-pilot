@@ -1,6 +1,11 @@
 import getCurrentTimeInSeconds from '../utils/getCurrentTimeInSeconds';
 
-import { DiscoveryDocument, TokenRequestConfig, TokenResponseConfig, TokenType } from './types';
+import {
+  DiscoveryDocument,
+  TokenRequestConfig,
+  TokenResponseConfig,
+  TokenType,
+} from './types';
 import { RefreshTokenRequest } from './request';
 
 export class TokenResponse implements TokenResponseConfig {
@@ -31,14 +36,18 @@ export class TokenResponse implements TokenResponseConfig {
     this.issuedAt = response.issuedAt ?? getCurrentTimeInSeconds();
   }
 
-  static isTokenFresh(token: Pick<TokenResponse, 'expiresIn' | 'issuedAt'>, secondsMargin: number = 60 * 10 - 1): boolean {
-    if (!token) {
-      return false;
-    }
+  static isTokenFresh(
+    token: Pick<TokenResponse, 'expiresIn' | 'issuedAt'>,
+    marginPercentage = 0.1,
+  ): boolean {
+    if (!token) return false;
+
     if (token.expiresIn) {
+      const secondsMargin = token.expiresIn * marginPercentage * -1;
       const now = getCurrentTimeInSeconds();
       return now < token.issuedAt + token.expiresIn + secondsMargin;
     }
+
     return true;
   }
 
@@ -63,7 +72,8 @@ export class TokenResponse implements TokenResponseConfig {
     this.scope = response.scope ?? this.scope;
     this.state = response.state ?? this.state;
     this.idToken = response.idToken ?? this.idToken;
-    this.issuedAt = response.issuedAt ?? this.issuedAt ?? getCurrentTimeInSeconds();
+    this.issuedAt =
+      response.issuedAt ?? this.issuedAt ?? getCurrentTimeInSeconds();
   }
 
   getRequestConfig(): TokenResponseConfig {
@@ -86,12 +96,22 @@ export class TokenResponse implements TokenResponseConfig {
   async refreshAsync(
     config: Omit<TokenRequestConfig, 'grantType' | 'refreshToken'>,
     discovery: Pick<DiscoveryDocument, 'token_endpoint'>,
-  ) {
-    const request = new RefreshTokenRequest({ ...config, refreshToken: this.refreshToken });
-    const response = await request.performAsync(discovery);
+  ): Promise<this> {
+    const request = new RefreshTokenRequest({
+      ...config,
+      refreshToken: this.refreshToken,
+    });
+    let response: TokenResponse;
+    try {
+      response = await request.performAsync(discovery);
+    } catch (e) {
+      throw new Error(`Error encountered while performing token refresh: ${e}`);
+    }
+
     response.refreshToken = response.refreshToken ?? this.refreshToken;
     const json = response.getRequestConfig();
     this.applyResponseConfig(json);
+
     return this;
   }
 }

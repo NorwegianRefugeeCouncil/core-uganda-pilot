@@ -14,7 +14,7 @@ export default function App() {
   return (
     <PaperProvider theme={theme}>
       <ErrorBoundary>
-        <AuthWrapper onTokenChange={apiClient.setAuth}>
+        <AuthWrapper onTokenChange={apiClient.setToken}>
           <Router />
         </AuthWrapper>
       </ErrorBoundary>

@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, Method } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig, Method } from 'axios';
 
 import { RequestOptions, Response } from './types';
 import { clientResponse } from './utils/responses';
@@ -6,33 +6,37 @@ import { clientResponse } from './utils/responses';
 export class BaseRESTClient {
   protected readonly axiosInstance: AxiosInstance;
 
+  private token = '';
+
   constructor(baseURL: string) {
     this.axiosInstance = axios.create({
       baseURL,
     });
-  }
-
-  public setAuth = (token: string): void => {
-    this.axiosInstance.interceptors.request.use((value: any) => {
-      const result = { ...value };
-      if (!token) {
+    this.axiosInstance.interceptors.request.use((value: AxiosRequestConfig) => {
+      if (!this.getToken()) {
         return value;
       }
       return {
-        ...result,
+        ...value,
         headers: {
-          ...result.headers,
-          Authorization: `Bearer ${token}`,
+          ...value.headers,
+          Authorization: `Bearer ${this.getToken()}`,
         },
       };
     });
+  }
+
+  public getToken = (): string => this.token;
+
+  public setToken = (token: string): void => {
+    this.token = token;
   };
 
   protected async do<TRequest, TBody>(
     request: TRequest,
     url: string,
     method: Method,
-    data: any,
+    data: unknown,
     expectStatusCode: number,
     options?: RequestOptions,
   ): Promise<Response<TRequest, TBody>> {

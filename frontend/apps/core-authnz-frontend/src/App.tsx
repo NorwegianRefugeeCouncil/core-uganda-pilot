@@ -24,7 +24,7 @@ const App: React.FC = () => {
       <Switch>
         <AuthWrapper
           injectToken="id_token"
-          onTokenChange={client.setAuth}
+          onTokenChange={client.setToken}
           clientId={clientId}
           issuer={issuer}
           scopes={scopes}

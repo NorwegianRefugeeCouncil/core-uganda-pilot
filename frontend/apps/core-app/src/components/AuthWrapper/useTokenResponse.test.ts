@@ -4,6 +4,9 @@ import * as expoAuthSession from 'expo-auth-session';
 
 import { useTokenResponse } from './useTokenResponse';
 
+jest.useFakeTimers();
+jest.spyOn(window, 'setInterval');
+
 jest.mock('expo-auth-session', () => {
   return {
     ...jest.requireActual('expo-auth-session'),
@@ -173,12 +176,16 @@ describe('Success', () => {
   it('should refresh the token', async () => {
     const fakeRefreshTokenResponse = new expoAuthSession.TokenResponse({
       accessToken: 'newFakeToken',
+      expiresIn: 1,
+      refreshToken: 'newFakeRefreshToken',
     });
     const refreshAsyncMock = jest.fn(() =>
       Promise.resolve(fakeRefreshTokenResponse),
     );
     const fakeTokenResponse = new expoAuthSession.TokenResponse({
       accessToken: 'fakeToken',
+      expiresIn: 1,
+      refreshToken: 'fakeRefreshToken',
     });
     fakeTokenResponse.shouldRefresh = jest.fn(() => true);
     fakeTokenResponse.refreshAsync = refreshAsyncMock;
@@ -245,6 +252,16 @@ describe('Success', () => {
         },
       },
       fakeDiscovery,
+    );
+
+    await waitForNextUpdate();
+
+    jest.runOnlyPendingTimers();
+
+    expect(window.setInterval).toHaveBeenCalledTimes(1);
+    expect(window.setInterval).toHaveBeenLastCalledWith(
+      expect.any(Function),
+      1000,
     );
 
     await waitForNextUpdate();
@@ -459,12 +476,16 @@ describe('Failure', () => {
   it('should fail to refresh the token', async () => {
     const fakeRefreshTokenResponse = new expoAuthSession.TokenResponse({
       accessToken: 'newFakeToken',
+      expiresIn: 1,
+      refreshToken: 'newFakeRefreshToken',
     });
     const refreshAsyncMock = jest.fn(() => {
       throw new Error('fake-error');
     });
     const fakeTokenResponse = new expoAuthSession.TokenResponse({
       accessToken: 'fakeToken',
+      expiresIn: 1,
+      refreshToken: 'fakeRefreshToken',
     });
     fakeTokenResponse.shouldRefresh = jest.fn(() => true);
     fakeTokenResponse.refreshAsync = refreshAsyncMock;
@@ -534,6 +555,8 @@ describe('Failure', () => {
     );
 
     await waitForNextUpdate();
+
+    jest.runOnlyPendingTimers();
 
     expect(fakeTokenResponse.refreshAsync).toHaveBeenCalledTimes(1);
     expect(fakeTokenResponse.refreshAsync).toHaveBeenCalledWith(
