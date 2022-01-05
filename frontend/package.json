@@ -36,6 +36,7 @@
     "storybook"
   ],
   "devDependencies": {
+    "@testing-library/react": "^12.1.2",
     "@types/node": "^14.17.20",
     "@types/react": "^17.0.37",
     "@types/react-dom": "^17.0.11",
