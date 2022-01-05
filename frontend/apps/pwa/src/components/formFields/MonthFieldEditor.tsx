@@ -1,27 +1,34 @@
-import React, { FC } from 'react';
+import React, { ChangeEvent, FC } from 'react';
 
-import { mapFieldDescription, mapFieldLabel } from './helpers';
 import { FieldEditorProps } from './types';
+import { FieldDescription } from './FieldDescription';
+import { FieldLabel } from './FieldLabel';
 
 export const MonthFieldEditor: FC<FieldEditorProps> = ({
   field,
   value,
-  setValue,
+  onChange,
 }) => {
   const expectedLength = 7;
 
-  function isValid(s: string) {
+  const isValid = (s: string) => {
     const valid = /^(?:19|20|21)\d{2}-[01]\d$/;
     const m = +s.slice(5);
     return valid.test(s) && m > 0 && m <= 12;
-  }
+  };
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const v = event.target.value;
+    if (!isValid(v)) return;
+    onChange(v);
+  };
 
   if (Array.isArray(value)) {
     return <></>;
   }
   return (
     <div className="form-group mb-2">
-      {mapFieldLabel(field)}
+      <FieldLabel fieldDefinition={field} />
       <input
         className="form-control bg-dark text-light border-secondary"
         type="month"
@@ -31,13 +38,9 @@ export const MonthFieldEditor: FC<FieldEditorProps> = ({
         name={field.name}
         pattern="[0-9]{4}-[0-9]{2}"
         placeholder="YYYY-MM"
-        onChange={(event) => {
-          const v = event.target.value;
-          if (!isValid(v)) return;
-          setValue(v);
-        }}
+        onChange={handleChange}
       />
-      {mapFieldDescription(field)}
+      <FieldDescription text={field.description} />
     </div>
   );
 };

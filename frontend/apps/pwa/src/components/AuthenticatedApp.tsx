@@ -6,7 +6,7 @@ import { fetchDatabases } from '../reducers/database';
 import { fetchForms } from '../reducers/form';
 import { fetchFolders } from '../reducers/folder';
 import { NavBarContainer } from '../features/navbar/navbar';
-import { RecordEditorContainer } from '../features/recorder';
+import { RecordEditor } from '../features/recorder';
 import { FolderEditor } from '../features/folders/FolderEditor';
 import { DatabaseEditor } from '../features/databases/DatabaseEditor';
 import { FolderBrowserContainer } from '../features/browser/FolderBrowser';
@@ -33,10 +33,7 @@ const AuthenticatedApp: React.FC = () => {
         <NavBarContainer />
 
         <Switch>
-          <Route
-            path="/edit/forms/:formId/record"
-            component={RecordEditorContainer}
-          />
+          <Route path="/edit/forms/:formId/record" component={RecordEditor} />
 
           <Route path="/edit/forms" component={FormerContainer} />
 

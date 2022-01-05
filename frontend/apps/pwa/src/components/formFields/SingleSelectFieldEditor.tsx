@@ -1,33 +1,27 @@
 import React, { FC } from 'react';
 
 import { FieldEditorProps } from './types';
-import {
-  mapFieldDescription,
-  mapFieldLabel,
-  mapSelectOptions,
-} from './helpers';
+import { FieldDescription } from './FieldDescription';
+import { FieldLabel } from './FieldLabel';
+import { SelectOptionsList } from './SelectOptionsList';
 
 export const SingleSelectFieldEditor: FC<FieldEditorProps> = ({
   field,
   value,
-  setValue,
+  onChange,
 }) => {
   return (
     <div className="form-group mb-2">
-      {mapFieldLabel(field)}
+      <FieldLabel fieldDefinition={field} />
       <select
         className="form-control bg-dark text-light border-secondary"
         id={field.id}
         value={value || ''}
-        onChange={(event) => setValue(event.target.value)}
+        onChange={(event) => onChange(event.target.value)}
       >
-        {mapSelectOptions(
-          field.required,
-          field.key,
-          field.fieldType?.singleSelect?.options,
-        )}
+        <SelectOptionsList field={field} />
       </select>
-      {mapFieldDescription(field)}
+      <FieldDescription text={field.description} />
     </div>
   );
 };

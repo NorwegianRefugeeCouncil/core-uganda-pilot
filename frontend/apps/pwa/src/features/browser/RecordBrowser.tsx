@@ -1,5 +1,4 @@
 import { FC } from 'react';
-import { FieldDefinition, Record, SelectOption } from 'core-api-client';
 import { Link } from 'react-router-dom';
 
 import {
@@ -9,39 +8,7 @@ import {
   useSubRecords,
 } from '../../app/hooks';
 
-import { RecordField } from './RecordField';
-
-function mapRecordField(
-  record: Record,
-  field: FieldDefinition,
-  subRecords: Record[] | undefined,
-) {
-  let value = '';
-  const fieldValue = record.values.find((v: any) => v.fieldId === field.id);
-  if (fieldValue && typeof fieldValue.value === 'string') {
-    value = fieldValue.value;
-  }
-  if (fieldValue && field.fieldType.multiSelect) {
-    const selected = field.fieldType.multiSelect.options.filter(
-      (o: SelectOption) => {
-        if (fieldValue?.value == null) {
-          return false;
-        }
-        return fieldValue.value.includes(o.id);
-      },
-    );
-
-    value = selected.map((s) => s.name).join(', ');
-  }
-  return (
-    <RecordField
-      key={record.id}
-      field={field}
-      value={`${value}`}
-      subRecords={subRecords}
-    />
-  );
-}
+import { RecordFieldList } from './RecordFieldList';
 
 export const RecordBrowser: FC = () => {
   const record = useRecordFromPath('recordId');
@@ -71,9 +38,14 @@ export const RecordBrowser: FC = () => {
                 ) : (
                   <></>
                 )}
-                {form?.fields.map((f) =>
-                  mapRecordField(record, f, subRecords?.byFieldId[f.id]),
-                )}
+                {form?.fields.map((f) => (
+                  <RecordFieldList
+                    key={f.id}
+                    record={record}
+                    field={f}
+                    subRecords={subRecords?.byFieldId[f.id]}
+                  />
+                ))}
               </div>
             </div>
           </div>

@@ -4,24 +4,24 @@ import { FieldDefinition, FieldValue } from 'core-api-client';
 import { FormValue } from '../../reducers/recorder';
 import { FieldEditor } from '../../components/FieldEditor/FieldEditor';
 
-export type RecordEditorProps = {
+type Props = {
   fields: FieldDefinition[];
   values: FieldValue[];
-  setValue: (key: string, value: any) => void;
-  selectSubRecord: (subRecordId: string) => void;
-  addSubRecord: (ownerFieldId: string) => void;
+  onAddSubRecord: (ownerFieldId: string) => void;
+  onChangeValue: (key: string, value: any) => void;
+  onSaveRecord: () => void;
+  onSelectSubRecord: (subRecordId: string) => void;
   subRecords: { [key: string]: FormValue[] };
-  saveRecord: () => void;
 };
 
-export const RecordEditorComponent: FC<RecordEditorProps> = (props) => {
+export const RecordEditorComponent: FC<Props> = (props) => {
   const {
     fields,
-    addSubRecord,
-    selectSubRecord,
-    saveRecord,
+    onAddSubRecord,
+    onSelectSubRecord,
+    onSaveRecord,
     subRecords,
-    setValue,
+    onChangeValue,
     values,
   } = props;
   if (!fields) {
@@ -39,27 +39,27 @@ export const RecordEditorComponent: FC<RecordEditorProps> = (props) => {
                 {fields.map((field) => {
                   const fieldValue = values.find((v) => v.fieldId === field.id);
                   const value = fieldValue?.value ? fieldValue.value : '';
-                  const setValueWrapper = (v: any) => {
-                    setValue(field.id, v);
+                  const handleValueChange = (v: any) => {
+                    onChangeValue(field.id, v);
                   };
-                  const addSubRecordWrapper = () => {
-                    addSubRecord(field.id);
+                  const handleAddSubRecordWrapper = () => {
+                    onAddSubRecord(field.id);
                   };
                   return (
                     <FieldEditor
                       key={field.id}
                       field={field}
                       value={value}
-                      setValue={setValueWrapper}
+                      onChange={handleValueChange}
                       subRecords={subRecords[field.id]}
-                      selectSubRecord={selectSubRecord}
-                      addSubRecord={addSubRecordWrapper}
+                      onSelectSubRecord={onSelectSubRecord}
+                      onAddSubRecord={handleAddSubRecordWrapper}
                     />
                   );
                 })}
                 <div className="my-3">
                   <button
-                    onClick={() => saveRecord()}
+                    onClick={() => onSaveRecord()}
                     className="btn btn-primary"
                   >
                     Save Record

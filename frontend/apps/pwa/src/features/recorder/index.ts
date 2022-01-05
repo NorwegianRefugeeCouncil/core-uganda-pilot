@@ -1,1 +1,1 @@
-export { RecordEditorContainer } from './RecordEditor.container';
+export { RecordEditorContainer as RecordEditor } from './RecordEditor.container';

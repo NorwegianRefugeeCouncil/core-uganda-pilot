@@ -1,38 +1,34 @@
-import React, { FC } from 'react';
+import React, { ChangeEvent, FC } from 'react';
 
 import { FieldEditorProps } from './types';
-import {
-  mapFieldDescription,
-  mapFieldLabel,
-  mapSelectOptions,
-} from './helpers';
+import { FieldDescription } from './FieldDescription';
+import { FieldLabel } from './FieldLabel';
+import { SelectOptionsList } from './SelectOptionsList';
 
 export const MultiSelectFieldEditor: FC<FieldEditorProps> = ({
   field,
   value,
-  setValue,
+  onChange,
 }) => {
+  const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    const { options } = event.target;
+    const selected = Object.entries(options).filter((o) => o[1].selected);
+    onChange(selected.map((s) => s[1].value));
+  };
+
   return (
     <div className="form-group mb-2">
-      {mapFieldLabel(field)}
+      <FieldLabel fieldDefinition={field} />
       <select
         className="form-control bg-dark text-light border-secondary"
         id={field.id}
         value={value || []}
         multiple
-        onChange={(event) => {
-          const { options } = event.target;
-          const selected = Object.entries(options).filter((o) => o[1].selected);
-          setValue(selected.map((s) => s[1].value));
-        }}
+        onChange={handleChange}
       >
-        {mapSelectOptions(
-          field.required,
-          field.key,
-          field.fieldType?.multiSelect?.options,
-        )}
+        <SelectOptionsList field={field} />
       </select>
-      {mapFieldDescription(field)}
+      <FieldDescription text={field.description} />
     </div>
   );
 };

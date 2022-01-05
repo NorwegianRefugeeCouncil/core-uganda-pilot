@@ -80,7 +80,7 @@ export const RecordEditorContainer: FC = () => {
     rootFormFromPath,
   ]);
 
-  const setFieldValue = useCallback(
+  const handleFieldValueChange = useCallback(
     (key: string, value: any) => {
       if (currentRecord) {
         dispatch(
@@ -95,7 +95,7 @@ export const RecordEditorContainer: FC = () => {
     [dispatch, currentRecord],
   );
 
-  const addSubRecord = useCallback(
+  const handleAddSubRecord = useCallback(
     (ownerFieldId: string) => {
       if (!currentRecord) {
         return;
@@ -125,7 +125,7 @@ export const RecordEditorContainer: FC = () => {
 
   const recordsToPost = useAppSelector(selectPostRecords);
 
-  const saveRecord = useCallback(async () => {
+  const handleSaveRecord = useCallback(async () => {
     // do not save if we are not positioned on a record (should not happen)
     if (!currentRecord) {
       return;
@@ -150,7 +150,7 @@ export const RecordEditorContainer: FC = () => {
     }
   }, [dispatch, formIdFromPath, currentRecord, recordsToPost, currentForm]);
 
-  const selectSubRecord = useCallback(
+  const handleSelectSubRecord = useCallback(
     (subRecordId: string) => {
       dispatch(recorderActions.selectRecord({ recordId: subRecordId }));
     },
@@ -167,13 +167,13 @@ export const RecordEditorContainer: FC = () => {
 
   return (
     <RecordEditorComponent
-      setValue={setFieldValue}
+      onChangeValue={handleFieldValueChange}
       fields={currentForm?.fields}
       values={currentRecord?.values}
-      addSubRecord={addSubRecord}
-      saveRecord={saveRecord}
+      onAddSubRecord={handleAddSubRecord}
+      onSaveRecord={handleSaveRecord}
       subRecords={subRecords}
-      selectSubRecord={selectSubRecord}
+      onSelectSubRecord={handleSelectSubRecord}
     />
   );
 };

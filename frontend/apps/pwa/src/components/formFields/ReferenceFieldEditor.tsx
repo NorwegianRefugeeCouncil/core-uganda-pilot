@@ -3,25 +3,26 @@ import React, { FC } from 'react';
 import { RecordPickerContainer } from '../RecordPicker';
 
 import { FieldEditorProps } from './types';
-import { mapFieldDescription, mapFieldLabel } from './helpers';
+import { FieldDescription } from './FieldDescription';
+import { FieldLabel } from './FieldLabel';
 
 export const ReferenceFieldEditor: FC<FieldEditorProps> = ({
   field,
   value,
-  setValue,
+  onChange,
 }) => {
   if (Array.isArray(value)) {
     return <></>;
   }
   return (
     <div className="form-group mb-2">
-      {mapFieldLabel(field)}
+      <FieldLabel fieldDefinition={field} />
       <RecordPickerContainer
         formId={field.fieldType.reference?.formId}
         recordId={value}
-        setRecordId={setValue}
+        setRecordId={onChange}
       />
-      {mapFieldDescription(field)}
+      <FieldDescription text={field.description} />
     </div>
   );
 };

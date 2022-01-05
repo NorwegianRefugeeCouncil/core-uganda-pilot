@@ -1,24 +1,25 @@
 import React, { FC } from 'react';
 
 import { FieldEditorProps } from './types';
-import { mapFieldDescription, mapFieldLabel } from './helpers';
+import { FieldDescription } from './FieldDescription';
+import { FieldLabel } from './FieldLabel';
 
 export const TextFieldEditor: FC<FieldEditorProps> = ({
   field,
   value,
-  setValue,
+  onChange,
 }) => {
   return (
     <div className="form-group mb-2">
-      {mapFieldLabel(field)}
+      <FieldLabel fieldDefinition={field} />
       <input
         className="form-control bg-dark text-light border-secondary"
         type="text"
         id={field.id}
         value={value || ''}
-        onChange={(event) => setValue(event.target.value)}
+        onChange={(event) => onChange(event.target.value)}
       />
-      {mapFieldDescription(field)}
+      <FieldDescription text={field.description} />
     </div>
   );
 };
