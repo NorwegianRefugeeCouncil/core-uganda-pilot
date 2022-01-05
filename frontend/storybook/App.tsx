@@ -3,13 +3,13 @@ import React from 'react';
 import { NativeBaseProvider } from 'native-base';
 import { theme } from 'core-design-system';
 import {
-  useFonts,
   // eslint-disable-next-line camelcase
   Roboto_400Regular,
   // eslint-disable-next-line camelcase
   Roboto_400Regular_Italic,
   // eslint-disable-next-line camelcase
   Roboto_700Bold,
+  useFonts,
 } from '@expo-google-fonts/roboto';
 
 import StorybookUIRoot from './storybook';
