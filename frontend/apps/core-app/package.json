@@ -12,7 +12,7 @@
     "eject": "expo eject",
     "test": "jest",
     "build": "echo 'Nothing to build'",
-    "eas-build-post-install": "yarn workspaces run build"
+    "eas-build-post-install": "yarn workspace core-api-client run build && yarn workspace core-design-system run build"
   },
   "dependencies": {
     "@expo-google-fonts/roboto": "^0.2.0",
