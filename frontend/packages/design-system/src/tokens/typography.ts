@@ -1,8 +1,9 @@
 const baseFontSize = 18;
 
 const keys = ['xs', 'sm', 'md', 'lg', 'xl'];
-const fontSizeScales = [14 / 18, 18 / 18, 24 / 18, 32 / 18, 44 / 18];
-const lineHeightScales = [20 / 26, 26 / 26, 34 / 18, 38 / 18, 52 / 18];
+
+const fontSizeScales = [14 / 18, 1, 24 / 18, 32 / 18, 44 / 18];
+const lineHeightScales = [20 / 26, 1, 34 / 18, 38 / 18, 52 / 18];
 
 const fontSizes: { [p: string]: number } = fontSizeScales.reduce(
   (acc, cur, i) => ({
