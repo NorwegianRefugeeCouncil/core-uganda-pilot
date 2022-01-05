@@ -101,11 +101,11 @@ exports[`should match the snapshot 1`] = `
                 "backgroundColor": undefined,
                 "color": "#FFFFFF",
                 "fontFamily": undefined,
-                "fontSize": 14,
+                "fontSize": 18,
                 "fontStyle": "normal",
                 "fontWeight": "700",
                 "letterSpacing": 0,
-                "lineHeight": 21,
+                "lineHeight": 38,
                 "textAlign": "auto",
                 "textDecorationLine": undefined,
               }
