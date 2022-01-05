@@ -31,7 +31,9 @@
     ]
   },
   "workspaces": [
-    "apps/*",
+    "apps/core-app",
+    "apps/core-authnz-frontend",
+    "apps/pwa",
     "packages/*",
     "storybook"
   ],
