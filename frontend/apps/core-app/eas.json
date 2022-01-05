@@ -6,14 +6,23 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "releaseChannel": "development"
+      "releaseChannel": "development",
+      "env": {
+        "ENTRY_FILE": "./__generated__/AppEntry.js"
+      }
     },
     "staging": {
       "distribution": "internal",
-      "releaseChannel": "staging"
+      "releaseChannel": "staging",
+      "env": {
+        "ENTRY_FILE": "./__generated__/AppEntry.js"
+      }
     },
     "production": {
-      "releaseChannel": "production"
+      "releaseChannel": "production",
+      "env": {
+        "ENTRY_FILE": "./__generated__/AppEntry.js"
+      }
     }
   },
   "submit": {
