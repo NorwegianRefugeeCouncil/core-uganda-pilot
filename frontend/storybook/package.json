@@ -41,7 +41,7 @@
     "@types/react": "~17.0.21",
     "@types/react-native": "~0.64.12",
     "babel-loader": "~8.2.3",
-    "core-design-system": "0.0.1",
+    "core-design-system": "*",
     "expo-yarn-workspaces": "^1.6.0",
     "gh-pages": "^3.2.3",
     "typescript": "~4.3.5"
