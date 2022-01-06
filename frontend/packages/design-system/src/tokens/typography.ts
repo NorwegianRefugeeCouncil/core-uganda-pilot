@@ -22,8 +22,6 @@ const lineHeights: { [p: string]: number } = lineHeightScales.reduce(
 );
 
 export default {
-  fontSizes,
-  lineHeights,
   fontConfig: {
     Roboto: {
       400: {
@@ -45,6 +43,7 @@ export default {
     label: 'Roboto',
     caption: 'Roboto',
   },
+  fontSizes,
   letterSpacings: {
     xs: 0,
     sm: 0,
@@ -52,4 +51,5 @@ export default {
     lg: 0,
     xl: 0,
   },
+  lineHeights,
 };
