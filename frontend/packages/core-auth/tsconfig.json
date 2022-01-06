@@ -17,7 +17,7 @@
     ],
     "declaration": true,
     "outDir": "lib/esm",
-    "jsx": "react",
+    "jsx": "react-jsx",
     "jsxFactory": "React.createElement",
     "allowJs": true,
     "skipLibCheck": true,
@@ -29,7 +29,8 @@
     "isolatedModules": true,
     "downlevelIteration": true,
     "sourceMap": true,
-    "jsxFragmentFactory": "React.Fragment"
+    "jsxFragmentFactory": "React.Fragment",
+    "noEmit": true
   },
   "include": [
     "src/**/*"

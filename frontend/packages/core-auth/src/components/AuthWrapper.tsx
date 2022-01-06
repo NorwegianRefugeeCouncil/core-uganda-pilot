@@ -30,7 +30,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
   const discovery = useDiscovery(issuer);
 
   // initialize token from session storage if present
-  const [tokenResponse, setTokenResponse] = useState<TokenResponse | null>(
+  const [tokenResponse, setTokenResponse] = useState<TokenResponse | undefined>(
     getSessionStorage(injectToken),
   );
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -50,10 +50,10 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
 
   // store tokenresponse in session storage
   useEffect(() => {
-    if (tokenResponse != null) {
+    if (tokenResponse?.accessToken) {
       sessionStorage.setItem(injectToken, JSON.stringify(tokenResponse));
     }
-  }, [tokenResponse]);
+  }, [tokenResponse?.accessToken]);
 
   // Make initial token request
   useEffect(() => {
@@ -79,7 +79,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
         const tr = await exchangeCodeAsync(exchangeConfig, discovery);
         setTokenResponse(tr);
       } catch {
-        setTokenResponse(null);
+        setTokenResponse(undefined);
       }
     })();
   }, [request?.codeVerifier, response, discovery]);
@@ -132,7 +132,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
         const resp = await tokenResponse.refreshAsync(refreshConfig, discovery);
         setTokenResponse(resp);
       } catch (err) {
-        setTokenResponse(null);
+        setTokenResponse(undefined);
         throw err;
       }
     };

@@ -22,8 +22,8 @@ describe('utils/getSessionStorage', () => {
     sessionStorageSpy.mockRestore();
   });
 
-  it('should return null when no item with key is found', () => {
-    expect(getSessionStorage('key')).toEqual(null);
+  it('should return undefined when no item with key is found', () => {
+    expect(getSessionStorage('key')).toEqual(undefined);
     expect(getItemMock).toHaveBeenCalled();
   });
 
