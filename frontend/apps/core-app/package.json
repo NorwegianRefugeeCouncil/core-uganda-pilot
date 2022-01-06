@@ -13,6 +13,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@expo-google-fonts/roboto": "^0.2.0",
     "@react-navigation/drawer": "^6.1.8",
     "@react-navigation/native": "^6.0.6",
     "@reduxjs/toolkit": "^1.7.1",
@@ -22,6 +23,7 @@
     "expo": "~44.0.0",
     "expo-auth-session": "~3.5.0",
     "expo-constants": "~13.0.0",
+    "expo-font": "~10.0.4",
     "expo-status-bar": "~1.2.0",
     "expo-web-browser": "~10.0.3",
     "jest": "^27.4.5",
