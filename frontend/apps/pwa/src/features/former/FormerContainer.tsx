@@ -6,8 +6,12 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { fetchDatabases } from '../../reducers/database';
 import { fetchFolders } from '../../reducers/folder';
 import { fetchForms } from '../../reducers/form';
+import {
+  formerActions,
+  formerGlobalSelectors,
+  postForm,
+} from '../../reducers/former';
 
-import { formerActions, formerGlobalSelectors, postForm } from './former.slice';
 import { Former } from './Former';
 
 export const FormerContainer: FC = () => {

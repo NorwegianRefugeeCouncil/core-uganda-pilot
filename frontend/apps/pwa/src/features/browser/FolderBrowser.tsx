@@ -3,11 +3,14 @@ import { Link } from 'react-router-dom';
 import { Folder, FormDefinition } from 'core-api-client';
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { databaseGlobalSelectors, fetchDatabases } from '../../reducers/database';
+import {
+  databaseGlobalSelectors,
+  fetchDatabases,
+} from '../../reducers/database';
 import { fetchFolders, folderGlobalSelectors } from '../../reducers/folder';
 import { fetchForms } from '../../reducers/form';
+import { selectChildFolders, selectChildForms } from '../../reducers/browser';
 
-import { selectChildFolders, selectChildForms } from './browser.slice';
 import { FormRow } from './FormRow';
 import { FolderRow } from './FolderRow';
 
@@ -41,12 +44,20 @@ export const FolderBrowser: FC<FolderBrowserProps> = (props) => {
 
   return (
     <>
-      <div className="py-3">{isEmptyDatabase ? emptyDatabase(databaseId, folderId) : addButtons(databaseId, folderId)}</div>
+      <div className="py-3">
+        {isEmptyDatabase
+          ? emptyDatabase(databaseId, folderId)
+          : addButtons(databaseId, folderId)}
+      </div>
 
       <div className="list-group shadow">
         {formEntries}
         {folderEntries}
-        {isEmptyFolder ? <div className="list-group-item py-4">This folder is empty</div> : <></>}
+        {isEmptyFolder ? (
+          <div className="list-group-item py-4">This folder is empty</div>
+        ) : (
+          <></>
+        )}
       </div>
     </>
   );
@@ -63,7 +74,10 @@ function addButtons(databaseId: string, folderId: string | undefined) {
 
 function addFormButton(databaseId: string, folderId: string | undefined) {
   return (
-    <Link className="btn btn-primary me-2" to={addFormURL(databaseId, folderId)}>
+    <Link
+      className="btn btn-primary me-2"
+      to={addFormURL(databaseId, folderId)}
+    >
       Create a Form
     </Link>
   );
@@ -97,7 +111,9 @@ function emptyDatabase(databaseId: string, folderId: string | undefined) {
   return (
     <div className="jumbotron">
       <h1 className="display-4">Welcome to your database!</h1>
-      <p className="lead">Your database is empty right now. Start by adding a form.</p>
+      <p className="lead">
+        Your database is empty right now. Start by adding a form.
+      </p>
       <hr className="my-4" />
       <p>Design a form to start collecting data.</p>
       <p className="lead">
@@ -113,7 +129,9 @@ export type FolderBrowserContainerProps = {
   folderId?: string;
 };
 
-export const FolderBrowserContainer: FC<FolderBrowserContainerProps> = (props) => {
+export const FolderBrowserContainer: FC<FolderBrowserContainerProps> = (
+  props,
+) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -122,8 +140,12 @@ export const FolderBrowserContainer: FC<FolderBrowserContainerProps> = (props) =
     dispatch(fetchForms());
   }, [dispatch]);
 
-  const childFolders = useAppSelector(selectChildFolders(props.folderId ? props.folderId : props.databaseId));
-  const childForms = useAppSelector(selectChildForms({dbId: props.databaseId, folderId: props.folderId}));
+  const childFolders = useAppSelector(
+    selectChildFolders(props.folderId ? props.folderId : props.databaseId),
+  );
+  const childForms = useAppSelector(
+    selectChildForms({ dbId: props.databaseId, folderId: props.folderId }),
+  );
 
   const databaseId = useAppSelector((state) => {
     if (props.folderId) {
@@ -177,7 +199,12 @@ export const FolderBrowserContainer: FC<FolderBrowserContainerProps> = (props) =
       <div className="container">
         <div className="row">
           <div className="col">
-            <FolderBrowser databaseId={database.id} folderId={props.folderId} folders={childFolders} forms={childForms} />
+            <FolderBrowser
+              databaseId={database.id}
+              folderId={props.folderId}
+              folders={childFolders}
+              forms={childForms}
+            />
           </div>
         </div>
       </div>

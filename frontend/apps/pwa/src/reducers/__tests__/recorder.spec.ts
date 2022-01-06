@@ -1,4 +1,4 @@
-import { selectPostRecords } from './recorder.slice';
+import { selectPostRecords } from '../recorder';
 
 describe('selectPostRecords', () => {
   it('should return the ordered records', function () {
@@ -7,17 +7,17 @@ describe('selectPostRecords', () => {
         ids: ['record2', 'record1'],
         entities: {
           record1: {
-            recordId: 'record1',
+            id: 'record1',
             formId: 'form1',
-            ownerRecordId: undefined,
+            ownerId: undefined,
             values: {
               a: 'b',
             },
           },
           record2: {
-            recordId: 'record2',
+            id: 'record2',
             formId: 'form2',
-            ownerRecordId: 'record1',
+            ownerId: 'record1',
             values: {
               a: 'b',
             },

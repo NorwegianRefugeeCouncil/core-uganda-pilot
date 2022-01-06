@@ -1,46 +1,52 @@
-import { createAsyncThunk, createEntityAdapter, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {
+  createAsyncThunk,
+  createEntityAdapter,
+  createSlice,
+  PayloadAction,
+} from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
-import { FieldValue, FormDefinition, Record } from 'core-api-client';
+import { FormDefinition, Record } from 'core-api-client';
 
-import { RootState } from '../../app/store';
-import { FormInterface, selectFormOrSubFormById, selectRootForm } from '../../reducers/form';
-import { recordGlobalSelectors } from '../../reducers/records';
-import client from '../../app/client';
+import { RootState } from '../app/store';
+import client from '../app/client';
 
-export interface FormValue {
-  // the unique id of the record
-  recordId: string;
-  // the id of the form for that record
-  formId: string;
-  // records the owner record, if any
-  ownerRecordId?: string;
+import { FormInterface, selectFormOrSubFormById, selectRootForm } from './form';
+import { recordGlobalSelectors } from './records';
+
+export interface FormValue extends Omit<Record, 'databaseId'> {
   // records the sub form field that the record belongs to, if any
   ownerFieldId?: string;
-  // records the record values
-  values: FieldValue[];
 }
+
+type RecordMap = { [key: string]: FormValue[] };
 
 const adapter = createEntityAdapter<FormValue>({
   // Assume IDs are stored in a field other than `book.id`
-  selectId: (folder) => folder.recordId,
+  selectId: (folder) => folder.id,
   // Keep the "all IDs" array sorted based on book titles
-  sortComparer: (a, b) => a.recordId.localeCompare(b.recordId),
+  sortComparer: (a, b) => a.id.localeCompare(b.id),
 });
 
-export const resetForm = createAsyncThunk<{ formValue: FormValue }, { formId: string; ownerId: string | undefined }>(
+export const resetForm = createAsyncThunk<
+  { formValue: FormValue },
+  { formId: string; ownerId: string | undefined }
+>(
   'records/resetForm',
   ({ formId, ownerId }, { rejectWithValue, fulfillWithValue, getState }) => {
     const state = getState() as RootState;
 
     const form = selectFormOrSubFormById(state, formId);
     if (!form) {
-      return rejectWithValue(`could not find form or sub form with id ${formId}`);
+      return rejectWithValue(
+        `could not find form or sub form with id ${formId}`,
+      );
     }
 
     const newRecord: FormValue = {
-      recordId: uuidv4(),
+      id: uuidv4(),
       formId: form.id,
       values: [],
+      ownerId: undefined,
     };
 
     if (ownerId) {
@@ -48,7 +54,7 @@ export const resetForm = createAsyncThunk<{ formValue: FormValue }, { formId: st
       if (!baseRecord) {
         return rejectWithValue(`cannot find record with id ${ownerId}`);
       }
-      newRecord.ownerRecordId = ownerId;
+      newRecord.ownerId = ownerId;
 
       const ownerFormId = baseRecord.formId;
       const ownerForm = selectFormOrSubFormById(state, ownerFormId);
@@ -73,7 +79,7 @@ export const resetForm = createAsyncThunk<{ formValue: FormValue }, { formId: st
   },
 );
 
-export const recorderSlice = createSlice({
+export const recorder = createSlice({
   name: 'recorder',
   initialState: {
     ...adapter.getInitialState(),
@@ -82,7 +88,10 @@ export const recorderSlice = createSlice({
     editingValues: {} as { [recordId: string]: { [key: string]: any } },
   },
   reducers: {
-    setFieldValue(state, action: PayloadAction<{ recordId: string; fieldId: string; value: any }>) {
+    setFieldValue(
+      state,
+      action: PayloadAction<{ recordId: string; fieldId: string; value: any }>,
+    ) {
       const { recordId, fieldId, value } = action.payload;
       const record = state.entities[recordId];
       if (!record) {
@@ -96,7 +105,10 @@ export const recorderSlice = createSlice({
         record.values[idx] = { ...record.values[idx], ...{ value } };
       }
     },
-    clearFieldValue(state, action: PayloadAction<{ recordId: string; fieldId: string }>) {
+    clearFieldValue(
+      state,
+      action: PayloadAction<{ recordId: string; fieldId: string }>,
+    ) {
       const { recordId, fieldId } = action.payload;
       const record = state.entities[recordId];
       if (!record) {
@@ -109,23 +121,31 @@ export const recorderSlice = createSlice({
     },
     initRecord(state, action: PayloadAction<{ formId: string }>) {
       const newRecord: FormValue = {
-        recordId: uuidv4(),
+        id: uuidv4(),
         formId: action.payload.formId,
         values: [],
+        ownerId: undefined,
       };
       adapter.addOne(state, newRecord);
-      state.selectedRecordId = newRecord.recordId;
+      state.selectedRecordId = newRecord.id;
     },
-    addSubRecord(state, action: PayloadAction<{ formId: string; ownerFieldId: string; ownerRecordId: string }>) {
+    addSubRecord(
+      state,
+      action: PayloadAction<{
+        formId: string;
+        ownerFieldId: string;
+        ownerRecordId: string;
+      }>,
+    ) {
       const newRecord: FormValue = {
-        recordId: uuidv4(),
+        id: uuidv4(),
         formId: action.payload.formId,
         values: [],
         ownerFieldId: action.payload.ownerFieldId,
-        ownerRecordId: action.payload.ownerRecordId,
+        ownerId: action.payload.ownerRecordId,
       };
       adapter.addOne(state, newRecord);
-      state.selectedRecordId = newRecord.recordId;
+      state.selectedRecordId = newRecord.id;
     },
     addOne: adapter.addOne,
     addMany: adapter.addMany,
@@ -146,27 +166,35 @@ export const recorderSlice = createSlice({
       state.baseFormId = action.payload.formValue.formId;
       state.editingValues = {};
       adapter.addOne(state, action.payload.formValue);
-      state.selectedRecordId = action.payload.formValue.recordId;
+      state.selectedRecordId = action.payload.formValue.id;
     });
   },
 });
 
-export const recorderActions = recorderSlice.actions;
+export const recorderActions = recorder.actions;
 export const recorderSelectors = adapter.getSelectors();
-export const recorderGlobalSelectors = adapter.getSelectors<RootState>((state) => state.recorder);
-export default recorderSlice.reducer;
+export const recorderGlobalSelectors = adapter.getSelectors<RootState>(
+  (state) => state.recorder,
+);
+export default recorder.reducer;
 
-export const selectCurrentRecord = (state: RootState): FormValue | undefined => {
-  return recorderGlobalSelectors.selectById(state, state.recorder.selectedRecordId);
+export const selectCurrentRecord = (
+  state: RootState,
+): FormValue | undefined => {
+  return recorderGlobalSelectors.selectById(
+    state,
+    state.recorder.selectedRecordId,
+  );
 };
 
-type RecordMap = { [key: string]: FormValue[] };
-
-export const selectSubRecords = (state: RootState, recordId: string): RecordMap => {
+export const selectSubRecords = (
+  state: RootState,
+  recordId: string,
+): RecordMap => {
   const result: RecordMap = {};
   const allRecords = recorderGlobalSelectors.selectAll(state);
   for (const record of allRecords) {
-    if (record.ownerRecordId === recordId && record.ownerFieldId) {
+    if (record.ownerId === recordId && record.ownerFieldId) {
       if (!result.hasOwnProperty(record.ownerFieldId)) {
         result[record.ownerFieldId] = [];
       }
@@ -176,7 +204,9 @@ export const selectSubRecords = (state: RootState, recordId: string): RecordMap 
   return result;
 };
 
-export const selectCurrentForm = (state: RootState): FormInterface | undefined => {
+export const selectCurrentForm = (
+  state: RootState,
+): FormInterface | undefined => {
   const selectedRecord = selectCurrentRecord(state);
   if (!selectedRecord) {
     return;
@@ -184,7 +214,9 @@ export const selectCurrentForm = (state: RootState): FormInterface | undefined =
   return selectFormOrSubFormById(state, selectedRecord.formId);
 };
 
-export const selectCurrentRecordForm = (state: RootState): FormInterface | undefined => {
+export const selectCurrentRecordForm = (
+  state: RootState,
+): FormInterface | undefined => {
   const currentRecord = selectCurrentRecord(state);
   if (!currentRecord) {
     return undefined;
@@ -192,7 +224,9 @@ export const selectCurrentRecordForm = (state: RootState): FormInterface | undef
   return selectFormOrSubFormById(state, currentRecord.formId);
 };
 
-export const selectCurrentRootForm = (state: RootState): FormDefinition | undefined => {
+export const selectCurrentRootForm = (
+  state: RootState,
+): FormDefinition | undefined => {
   const currentRecord = selectCurrentRecord(state);
   if (!currentRecord) {
     return undefined;
@@ -215,23 +249,31 @@ export const selectPostRecords = (state: RootState): Record[] => {
   }
   const { databaseId } = rootForm;
 
-  for (let i = allEntries.length - 1; allEntries.length > 0; i === 0 ? (i = allEntries.length - 1) : i--) {
+  for (
+    let i = allEntries.length - 1;
+    allEntries.length > 0;
+    i === 0 ? (i = allEntries.length - 1) : i--
+  ) {
     const entry = allEntries[i];
 
     if (baseFormId !== rootForm.id) {
-      if (entry.ownerRecordId && entry.formId !== baseFormId && !handledRecords[entry.ownerRecordId]) {
+      if (
+        entry.ownerId &&
+        entry.formId !== baseFormId &&
+        !handledRecords[entry.ownerId]
+      ) {
         continue;
       }
-    } else if (entry.ownerRecordId && !handledRecords[entry.ownerRecordId]) {
+    } else if (entry.ownerId && !handledRecords[entry.ownerId]) {
       continue;
     }
 
     const record: Record = {
       formId: entry.formId,
-      id: entry.recordId,
+      id: entry.id,
       databaseId,
       values: entry.values,
-      ownerId: entry.ownerRecordId,
+      ownerId: entry.ownerId,
     };
     result.push(record);
     handledRecords[record.id] = true;
@@ -240,27 +282,30 @@ export const selectPostRecords = (state: RootState): Record[] => {
   return result;
 };
 
-export const postRecord = createAsyncThunk<Record[], Record[]>('records/post', async (arg, thunkAPI) => {
-  const result: Record[] = [];
-  for (const record of arg) {
-    try {
-      const response = await client.createRecord({ object: record });
-      if (!response.success) {
-        return thunkAPI.rejectWithValue(response.error);
-      }
-      if (!response.response) {
-        return thunkAPI.rejectWithValue('no record in response');
-      }
-      for (let i = 1; i < arg.length; i++) {
-        const otherRecord = arg[i];
-        if (otherRecord.ownerId === record.id) {
-          otherRecord.ownerId = response.response.id;
+export const postRecord = createAsyncThunk<Record[], Record[]>(
+  'records/post',
+  async (arg, thunkAPI) => {
+    const result: Record[] = [];
+    for (const record of arg) {
+      try {
+        const response = await client.createRecord({ object: record });
+        if (!response.success) {
+          return thunkAPI.rejectWithValue(response.error);
         }
+        if (!response.response) {
+          return thunkAPI.rejectWithValue('no record in response');
+        }
+        for (let i = 1; i < arg.length; i++) {
+          const otherRecord = arg[i];
+          if (otherRecord.ownerId === record.id) {
+            otherRecord.ownerId = response.response.id;
+          }
+        }
+        result.push(response.response);
+      } catch (err) {
+        return thunkAPI.rejectWithValue(err);
       }
-      result.push(response.response);
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err);
     }
-  }
-  return result;
-});
+    return result;
+  },
+);

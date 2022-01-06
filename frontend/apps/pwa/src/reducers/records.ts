@@ -34,7 +34,7 @@ export const fetchRecords = createAsyncThunk<RecordListResponse, RecordListReque
   },
 );
 
-export const recordsSlice = createSlice({
+export const records = createSlice({
   name: 'records',
   initialState: {
     ...adapter.getInitialState(),
@@ -77,10 +77,10 @@ export const recordsSlice = createSlice({
   },
 });
 
-export const recordActions = recordsSlice.actions;
+export const recordActions = records.actions;
 export const recordSelectors = adapter.getSelectors();
 export const recordGlobalSelectors = adapter.getSelectors<RootState>((state) => state.records);
-export default recordsSlice.reducer;
+export default records.reducer;
 
 export const selectRecordsForForm = (state: RootState, formId: string, ownerRecordId?: string) => {
   return recordGlobalSelectors.selectAll(state).filter((r) => {

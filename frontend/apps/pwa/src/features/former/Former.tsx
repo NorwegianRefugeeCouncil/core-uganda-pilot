@@ -1,7 +1,8 @@
 import React, { FC, useCallback, useState } from 'react';
 import { FieldKind } from 'core-api-client';
 
-import { FormField } from './former.slice';
+import { FormField } from '../../reducers/former';
+
 import { FormerField } from './Field';
 import { FormName } from './FormName';
 import { FieldTypePicker } from './FieldTypePicker';
@@ -55,7 +56,9 @@ function mapField(f: FormField, props: FormerProps) {
       selectField={() => setSelectedField(f.id)}
       fieldType={f.type}
       fieldOptions={f.options}
-      setFieldOption={(i: number, value: string) => setFieldOption(f.id, i, value)}
+      setFieldOption={(i: number, value: string) =>
+        setFieldOption(f.id, i, value)
+      }
       addOption={() => addOption(f.id)}
       removeOption={(i: number) => removeOption(f.id, i)}
       fieldName={f.name}
@@ -78,11 +81,21 @@ function mapField(f: FormField, props: FormerProps) {
 }
 
 export const Former: FC<FormerProps> = (props) => {
-  const { formName, setFormName, fields, selectedFieldId, addField, saveForm, ownerFormName } = props;
+  const {
+    formName,
+    setFormName,
+    fields,
+    selectedFieldId,
+    addField,
+    saveForm,
+    ownerFormName,
+  } = props;
 
   const [isAddingField, setIsAddingField] = useState(false);
 
-  const selectedField = selectedFieldId ? fields.find((f) => f.id === selectedFieldId) : undefined;
+  const selectedField = selectedFieldId
+    ? fields.find((f) => f.id === selectedFieldId)
+    : undefined;
 
   function formHeader() {
     const name = formName || ownerFormName || '';
@@ -92,7 +105,10 @@ export const Former: FC<FormerProps> = (props) => {
   function addFieldButton() {
     return (
       <div>
-        <button className="btn btn-primary my-2 mb-3 w-100" onClick={() => setIsAddingField(true)}>
+        <button
+          className="btn btn-primary my-2 mb-3 w-100"
+          onClick={() => setIsAddingField(true)}
+        >
           Add field
         </button>
       </div>
@@ -128,7 +144,15 @@ export const Former: FC<FormerProps> = (props) => {
           <div className="row">
             <div className="col-12 col-md-8 offset-md-1">
               <h3>Add Form</h3>
-              <h6>{ownerFormName ? <div className="mb-2">Editing child form of {ownerFormName}</div> : <></>}</h6>
+              <h6>
+                {ownerFormName ? (
+                  <div className="mb-2">
+                    Editing child form of {ownerFormName}
+                  </div>
+                ) : (
+                  <></>
+                )}
+              </h6>
             </div>
           </div>
           <div className="row mt-3">
@@ -137,7 +161,10 @@ export const Former: FC<FormerProps> = (props) => {
               {mapField(selectedField, props)}
             </div>
             <div className="col-2">
-              <button className="btn btn-primary w-100" onClick={() => saveForm()}>
+              <button
+                className="btn btn-primary w-100"
+                onClick={() => saveForm()}
+              >
                 Save
               </button>
             </div>
@@ -154,7 +181,13 @@ export const Former: FC<FormerProps> = (props) => {
           <div className="col-8 offset-2">
             <h3>Add Form</h3>
             <h6>
-              {ownerFormName ? <div className="mb-2 p-2 border-secondary">Editing child form of {ownerFormName}</div> : <></>}
+              {ownerFormName ? (
+                <div className="mb-2 p-2 border-secondary">
+                  Editing child form of {ownerFormName}
+                </div>
+              ) : (
+                <></>
+              )}
             </h6>
           </div>
         </div>
@@ -164,7 +197,10 @@ export const Former: FC<FormerProps> = (props) => {
             {fieldSections()}
           </div>
           <div className="col-2">
-            <button className="btn btn-primary w-100" onClick={() => saveForm()}>
+            <button
+              className="btn btn-primary w-100"
+              onClick={() => saveForm()}
+            >
               Save
             </button>
           </div>
