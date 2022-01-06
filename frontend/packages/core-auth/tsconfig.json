@@ -29,7 +29,7 @@
     "isolatedModules": true,
     "downlevelIteration": true,
     "sourceMap": true,
-    "jsxFragmentFactory": "React.Fragment",
+    "jsxFragmentFactory": "React.Fragment"
   },
   "include": [
     "src/**/*"
