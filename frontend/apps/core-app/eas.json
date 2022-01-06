@@ -4,25 +4,15 @@
   },
   "build": {
     "development": {
-      "developmentClient": true,
       "distribution": "internal",
-      "releaseChannel": "development",
-      "env": {
-        "ENTRY_FILE": "./__generated__/AppEntry.js"
-      }
+      "releaseChannel": "development"
     },
     "staging": {
       "distribution": "internal",
-      "releaseChannel": "staging",
-      "env": {
-        "ENTRY_FILE": "./__generated__/AppEntry.js"
-      }
+      "releaseChannel": "staging"
     },
     "production": {
-      "releaseChannel": "production",
-      "env": {
-        "ENTRY_FILE": "./__generated__/AppEntry.js"
-      }
+      "releaseChannel": "production"
     }
   },
   "submit": {
