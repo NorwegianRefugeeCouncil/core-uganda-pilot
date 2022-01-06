@@ -73,5 +73,3 @@ export const RecordEditorComponent: FC<Props> = (props) => {
     </div>
   );
 };
-
-export default RecordEditorComponent;
