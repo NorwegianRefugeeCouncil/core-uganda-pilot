@@ -7,8 +7,5 @@
       "core-auth": ["../../packages/core-auth/src"],
       "core-design-system": ["../../packages/design-system/src"],
     }
-  },
-  "include": [
-    "src"
-  ]
+  }
 }
