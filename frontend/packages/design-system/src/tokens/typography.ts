@@ -46,10 +46,10 @@ export default {
     caption: 'Roboto',
   },
   letterSpacings: {
-    xs: '0em',
-    sm: '0em',
-    md: '0em',
-    lg: '0em',
-    xl: '0em',
+    xs: 0,
+    sm: 0,
+    md: 0,
+    lg: 0,
+    xl: 0,
   },
 };
