@@ -5,14 +5,32 @@
   "build": {
     "development": {
       "distribution": "internal",
-      "releaseChannel": "development"
+      "releaseChannel": "development",
+      "env": {
+        "REACT_APP_OIDC_ISSUER": "",
+        "REACT_APP_OAUTH_SCOPE": "openid profile offline_access",
+        "REACT_APP_OAUTH_CLIENT_ID": "core-native-frontend",
+        "REACT_APP_SERVER_URL": ""
+      }
     },
     "staging": {
       "distribution": "internal",
-      "releaseChannel": "staging"
+      "releaseChannel": "staging",
+      "env": {
+        "REACT_APP_OIDC_ISSUER": "",
+        "REACT_APP_OAUTH_SCOPE": "openid profile offline_access",
+        "REACT_APP_OAUTH_CLIENT_ID": "core-native-frontend",
+        "REACT_APP_SERVER_URL": ""
+      }
     },
     "production": {
-      "releaseChannel": "production"
+      "releaseChannel": "production",
+      "env": {
+        "REACT_APP_OIDC_ISSUER": "",
+        "REACT_APP_OAUTH_SCOPE": "openid profile offline_access",
+        "REACT_APP_OAUTH_CLIENT_ID": "core-native-frontend",
+        "REACT_APP_SERVER_URL": ""
+      }
     }
   },
   "submit": {
