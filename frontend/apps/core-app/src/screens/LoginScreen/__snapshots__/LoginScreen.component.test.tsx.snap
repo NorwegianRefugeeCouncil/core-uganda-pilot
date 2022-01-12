@@ -12,110 +12,116 @@ exports[`should match the snapshot 1`] = `
     ]
   }
 >
-  <View
+  <RNCSafeAreaProvider
+    onInsetsChange={[Function]}
     style={
       Array [
-        Object {},
-        Array [
-          Object {},
-        ],
+        Object {
+          "flex": 1,
+        },
+        undefined,
       ]
     }
   >
     <View
-      _disabled={
-        Object {
-          "_text": Object {
-            "color": "neutral.200",
-          },
-          "backgroundColor": "neutral.300",
-          "opacity": "50",
-        }
-      }
-      _loading={
-        Object {
-          "opacity": "80",
-        }
-      }
-      _text={
-        Object {
-          "color": "lightText",
-        }
-      }
-      accessibilityRole="button"
-      accessible={true}
-      collapsable={false}
-      colorScheme="primary"
-      focusable={true}
-      onBlur={[Function]}
-      onClick={[Function]}
-      onFocus={[Function]}
-      onHoverIn={[Function]}
-      onHoverOut={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
+      dataSet={Object {}}
       style={
-        Object {
-          "alignItems": "center",
-          "backgroundColor": "#FF7602",
-          "borderRadius": 4,
-          "color": Object {
-            "100": "#FFF0E6",
-            "200": "#FFCEAE",
-            "300": "#FB9F5D",
-            "400": "#22d3ee",
-            "50": "#ecfeff",
-            "500": "#FF7602",
-            "600": "#0891b2",
-            "700": "#0e7490",
-            "800": "#155e75",
-            "900": "#164e63",
-          },
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "paddingBottom": 10,
-          "paddingLeft": 15,
-          "paddingRight": 15,
-          "paddingTop": 10,
-        }
+        Array [
+          Object {},
+          Array [
+            Object {},
+          ],
+        ]
       }
     >
       <View
+        _text={
+          Object {
+            "color": "lightText",
+          }
+        }
+        accessibilityRole="button"
+        accessible={true}
+        collapsable={false}
+        colorScheme="primary"
+        dataSet={Object {}}
+        focusable={true}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onHoverIn={[Function]}
+        onHoverOut={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
         style={
           Object {
             "alignItems": "center",
+            "backgroundColor": "#FF7602",
+            "borderRadius": 4,
+            "color": Object {
+              "100": "#FFF0E6",
+              "200": "#FFCEAE",
+              "300": "#FB9F5D",
+              "400": "#22d3ee",
+              "50": "#ecfeff",
+              "500": "#FF7602",
+              "600": "#0891b2",
+              "700": "#0e7490",
+              "800": "#155e75",
+              "900": "#164e63",
+            },
             "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 10,
+            "paddingLeft": 15,
+            "paddingRight": 15,
+            "paddingTop": 10,
           }
         }
       >
         <View
-          style={Object {}}
-        >
-          <Text
-            style={
+          dataSet={Object {}}
+          style={
+            Array [
               Object {
-                "backgroundColor": undefined,
-                "color": "#FFFFFF",
-                "fontFamily": undefined,
-                "fontSize": 18,
-                "fontStyle": "normal",
-                "fontWeight": "700",
-                "letterSpacing": 0,
-                "lineHeight": 38,
-                "textAlign": "auto",
-                "textDecorationLine": undefined,
-              }
-            }
+                "alignItems": "center",
+                "flexDirection": "row",
+              },
+              Object {},
+            ]
+          }
+        >
+          <View
+            dataSet={Object {}}
+            style={Object {}}
           >
-            Login
-          </Text>
+            <Text
+              dataSet={Object {}}
+              style={
+                Object {
+                  "backgroundColor": undefined,
+                  "color": "#FFFFFF",
+                  "fontFamily": undefined,
+                  "fontSize": 18,
+                  "fontStyle": "normal",
+                  "fontWeight": "700",
+                  "letterSpacing": 0,
+                  "lineHeight": 38,
+                  "textAlign": "auto",
+                  "textDecorationLine": undefined,
+                }
+              }
+            >
+              Login
+            </Text>
+          </View>
         </View>
       </View>
     </View>
-  </View>
+  </RNCSafeAreaProvider>
 </RNCSafeAreaProvider>
 `;
