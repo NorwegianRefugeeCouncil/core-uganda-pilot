@@ -91,7 +91,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
     const refreshToken = async () => {
       if (!discovery) return;
       if (!tokenResponse) return;
-      if (!tokenResponse?.shouldRefresh()) return;
+      if (!tokenResponse.shouldRefresh()) return;
 
       const refreshConfig = {
         clientId,
@@ -113,8 +113,8 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
 
     if (
       tokenResponse &&
-      tokenResponse?.expiresIn &&
-      tokenResponse?.expiresIn > 0
+      tokenResponse.expiresIn &&
+      tokenResponse.expiresIn > 0
     ) {
       refreshTokenInterval.current = window.setInterval(refreshToken, 1000);
     }
