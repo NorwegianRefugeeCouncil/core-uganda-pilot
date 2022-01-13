@@ -15,7 +15,7 @@ import { getJSONFromSessionStorage } from '../utils/getJSONFromSessionStorage';
 
 const log = getLogger('AuthWrapper');
 const loglevel = process?.env?.LOG_LEVEL as LogLevelDesc;
-log.setLevel(loglevel || 'INFO');
+log.setLevel(loglevel || log.levels.INFO);
 
 const AuthWrapper: React.FC<AuthWrapperProps> = ({
   children,
@@ -37,7 +37,6 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
   const [tokenResponse, setTokenResponse] = useState<TokenResponse | undefined>(
     TokenResponse.createTokenResponse(getJSONFromSessionStorage(injectToken)),
   );
-  console.log('INIT TOKEN', JSON.stringify(tokenResponse));
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -89,9 +88,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
   // If not, refresh the token
   const refreshTokenInterval = React.useRef<number | null>(null);
   React.useEffect(() => {
-    console.log('USE EFFECT #2, REFRESH', tokenResponse?.accessToken);
     const refreshToken = async () => {
-      console.log('REFRESH?');
       if (!discovery) return;
       if (!tokenResponse) return;
       if (!tokenResponse?.shouldRefresh()) return;
@@ -100,21 +97,14 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
         clientId,
         scopes,
         extraParams: {},
+        refreshToken: tokenResponse.refreshToken,
       };
 
       try {
-        const resp = await tokenResponse?.refreshAsync(
-          refreshConfig,
-          discovery,
-        );
+        const resp = await TokenResponse.refreshAsync(refreshConfig, discovery);
         setTokenResponse(resp);
-        console.log('REFRESH!', tokenResponse?.accessToken);
-        sessionStorage.setItem(injectToken, JSON.stringify(tokenResponse));
       } catch (err) {
-        console.log('REFRESH? NOPE!');
         setTokenResponse(undefined);
-        sessionStorage.removeItem(injectToken);
-        // setIsLoggedIn(false);
       }
     };
 
@@ -142,7 +132,6 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
   // Run onTokenChange callback
   // store token in session storage or remove it when undefined
   useEffect(() => {
-    console.log('USE EFFECT #3, UPDATE', tokenResponse?.accessToken);
     if (!tokenResponse) {
       onTokenChange('');
       sessionStorage.removeItem(injectToken);
@@ -159,9 +148,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
       })();
       onTokenChange(token);
       sessionStorage.setItem(injectToken, JSON.stringify(tokenResponse));
-      console.log('TOKEN UPDATED', token);
     }
-    // console.log('TOKEN UPDATED', token);
   }, [tokenResponse?.accessToken]);
 
   // Update logged in status accordingly
