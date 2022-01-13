@@ -144,9 +144,16 @@ export const RecordEditorContainer: FC = () => {
         );
       }
     } else {
-      const recordResponse = await dispatch(postRecord(recordsToPost)).unwrap();
-      dispatch(recordActions.addMany(recordResponse));
-      history.push(`/browse/records/${recordResponse[0].id}`);
+      try {
+        const recordResponse = await dispatch(
+          postRecord(recordsToPost),
+        ).unwrap();
+        console.log('RESP', recordResponse);
+        dispatch(recordActions.addMany(recordResponse));
+        history.push(`/browse/records/${recordResponse[0].id}`);
+      } catch (e) {
+        console.log('ERROR', e);
+      }
     }
   }, [dispatch, formIdFromPath, currentRecord, recordsToPost, currentForm]);
 
