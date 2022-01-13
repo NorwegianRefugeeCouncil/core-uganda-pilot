@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { getLogger, LogLevelDesc } from 'loglevel';
 
 import Browser from '../types/browser';
 import exchangeCodeAsync from '../utils/exchangeCodeAsync';
@@ -8,21 +9,13 @@ import {
   AuthWrapperProps,
   CodeChallengeMethod,
   ResponseType,
-  TokenResponseConfig,
 } from '../types/types';
 import { TokenResponse } from '../types/response';
-import { getSessionStorage } from '../utils/getSessionStorage';
+import { getJSONFromSessionStorage } from '../utils/getJSONFromSessionStorage';
 
-const createTokenResponse = (trc: TokenResponseConfig) => {
-  if (!trc) return undefined;
-  let t: TokenResponse;
-  try {
-    t = new TokenResponse(trc);
-  } catch (e) {
-    return undefined;
-  }
-  return t;
-};
+const log = getLogger('AuthWrapper');
+const loglevel = process?.env?.LOG_LEVEL as LogLevelDesc;
+log.setLevel(loglevel || 'INFO');
 
 const AuthWrapper: React.FC<AuthWrapperProps> = ({
   children,
@@ -31,7 +24,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
   issuer,
   redirectUri,
   customLoginComponent,
-  handleLoginErr = console.log,
+  handleLoginErr = log.debug,
   onTokenChange,
   injectToken = 'access_token',
 }) => {
@@ -42,8 +35,9 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
   const discovery = useDiscovery(issuer);
 
   const [tokenResponse, setTokenResponse] = useState<TokenResponse | undefined>(
-    createTokenResponse(getSessionStorage(injectToken)),
+    TokenResponse.createTokenResponse(getJSONFromSessionStorage(injectToken)),
   );
+  console.log('INIT TOKEN', JSON.stringify(tokenResponse));
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -59,28 +53,6 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
     discovery,
     browser,
   );
-
-  // Run onTokenChange callback
-  // store token in session storage or remove it when undefined
-  const applyToken = (tr: TokenResponse | undefined) => {
-    if (!tr) {
-      sessionStorage.removeItem(injectToken);
-    } else {
-      const token = (() => {
-        switch (injectToken) {
-          case 'access_token':
-            return tr?.accessToken ?? '';
-          case 'id_token':
-            return tr?.idToken ?? '';
-          default:
-            return '';
-        }
-      })();
-      onTokenChange(token);
-      sessionStorage.setItem(injectToken, JSON.stringify(tr));
-    }
-  };
-  applyToken(tokenResponse);
 
   // Make initial token request
   // trigger login automatically
@@ -106,10 +78,8 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
 
       try {
         const tr = await exchangeCodeAsync(exchangeConfig, discovery);
-        applyToken(tr);
         setTokenResponse(tr);
       } catch {
-        applyToken(undefined);
         setTokenResponse(undefined);
       }
     })();
@@ -119,10 +89,12 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
   // If not, refresh the token
   const refreshTokenInterval = React.useRef<number | null>(null);
   React.useEffect(() => {
+    console.log('USE EFFECT #2, REFRESH', tokenResponse?.accessToken);
     const refreshToken = async () => {
+      console.log('REFRESH?');
       if (!discovery) return;
       if (!tokenResponse) return;
-      if (!tokenResponse.shouldRefresh()) return;
+      if (!tokenResponse?.shouldRefresh()) return;
 
       const refreshConfig = {
         clientId,
@@ -131,13 +103,18 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
       };
 
       try {
-        const resp = await tokenResponse.refreshAsync(refreshConfig, discovery);
-        applyToken(resp);
+        const resp = await tokenResponse?.refreshAsync(
+          refreshConfig,
+          discovery,
+        );
         setTokenResponse(resp);
+        console.log('REFRESH!', tokenResponse?.accessToken);
+        sessionStorage.setItem(injectToken, JSON.stringify(tokenResponse));
       } catch (err) {
-        applyToken(undefined);
+        console.log('REFRESH? NOPE!');
         setTokenResponse(undefined);
-        setIsLoggedIn(false);
+        sessionStorage.removeItem(injectToken);
+        // setIsLoggedIn(false);
       }
     };
 
@@ -146,8 +123,8 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
 
     if (
       tokenResponse &&
-      tokenResponse.expiresIn &&
-      tokenResponse.expiresIn > 0
+      tokenResponse?.expiresIn &&
+      tokenResponse?.expiresIn > 0
     ) {
       refreshTokenInterval.current = window.setInterval(refreshToken, 1000);
     }
@@ -156,7 +133,36 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
       if (refreshTokenInterval.current)
         clearInterval(refreshTokenInterval.current);
     };
-  }, [tokenResponse?.refreshToken, tokenResponse?.expiresIn, discovery]);
+  }, [
+    tokenResponse?.refreshToken,
+    tokenResponse?.expiresIn,
+    JSON.stringify(discovery),
+  ]);
+
+  // Run onTokenChange callback
+  // store token in session storage or remove it when undefined
+  useEffect(() => {
+    console.log('USE EFFECT #3, UPDATE', tokenResponse?.accessToken);
+    if (!tokenResponse) {
+      onTokenChange('');
+      sessionStorage.removeItem(injectToken);
+    } else {
+      const token = (() => {
+        switch (injectToken) {
+          case 'access_token':
+            return tokenResponse?.accessToken ?? '';
+          case 'id_token':
+            return tokenResponse?.idToken ?? '';
+          default:
+            return '';
+        }
+      })();
+      onTokenChange(token);
+      sessionStorage.setItem(injectToken, JSON.stringify(tokenResponse));
+      console.log('TOKEN UPDATED', token);
+    }
+    // console.log('TOKEN UPDATED', token);
+  }, [tokenResponse?.accessToken]);
 
   // Update logged in status accordingly
   useEffect(() => {
@@ -167,7 +173,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
     } else if (isLoggedIn) {
       setIsLoggedIn(false);
     }
-  }, [tokenResponse, isLoggedIn]);
+  }, [JSON.stringify(tokenResponse), isLoggedIn]);
 
   // trigger login manually, by clicking
   const handleLogin = useCallback(() => {
@@ -183,7 +189,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
           customLoginComponent({ login: handleLogin })
         ) : (
           <button type="button" onClick={handleLogin}>
-            Login {tokenResponse?.accessToken}
+            Login
           </button>
         )}
       </>

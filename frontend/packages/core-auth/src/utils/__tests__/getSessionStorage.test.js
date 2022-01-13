@@ -1,4 +1,4 @@
-import { getSessionStorage } from '../getSessionStorage';
+import { getJSONFromSessionStorage } from '../getJSONFromSessionStorage';
 
 describe('utils/getSessionStorage', () => {
   let sessionStorageSpy;
@@ -23,11 +23,11 @@ describe('utils/getSessionStorage', () => {
   });
 
   it('should return undefined when no item with key is found', () => {
-    expect(getSessionStorage('key')).toEqual(undefined);
+    expect(getJSONFromSessionStorage('key')).toEqual(undefined);
     expect(getItemMock).toHaveBeenCalled();
   });
 
   it('should return stored item', () => {
-    expect(getSessionStorage('key')).toEqual({ token: 'handle' });
+    expect(getJSONFromSessionStorage('key')).toEqual({ token: 'handle' });
   });
 });

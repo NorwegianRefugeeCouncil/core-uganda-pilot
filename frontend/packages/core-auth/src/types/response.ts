@@ -59,10 +59,23 @@ export class TokenResponse implements TokenResponseConfig {
       state: params.state,
       idToken: params.id_token,
       tokenType: params.token_type as TokenType,
-      expiresIn: params.expires_in ? parseInt(params.expires_in) : undefined,
-      issuedAt: params.expires_in ? parseInt(params.issuedAt) : undefined,
+      expiresIn: params.expires_in
+        ? parseInt(params.expires_in, 10)
+        : undefined,
+      issuedAt: params.expires_in ? parseInt(params.issuedAt, 10) : undefined,
     });
   }
+
+  static createTokenResponse = (
+    trc: TokenResponseConfig,
+  ): TokenResponse | undefined => {
+    if (!trc) return undefined;
+    try {
+      return new TokenResponse(trc);
+    } catch (e) {
+      return undefined;
+    }
+  };
 
   private applyResponseConfig(response: TokenResponseConfig) {
     this.accessToken = response.accessToken ?? this.accessToken;
