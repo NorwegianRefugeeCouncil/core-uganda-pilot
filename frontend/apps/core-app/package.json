@@ -68,8 +68,6 @@
   },
   "expo-yarn-workspaces": {
     "symlinks": [
-      "@unimodules/core",
-      "@unimodules/react-native-adapter",
       "expo-constants",
       "expo-file-system",
       "expo-keep-awake",
@@ -77,13 +75,7 @@
       "expo-splash-screen",
       "expo-structured-headers",
       "expo-updates",
-      "react-native-reanimated",
-      "unimodules-app-loader",
-      "unimodules-constants-interface",
-      "unimodules-file-system-interface",
-      "unimodules-font-interface",
-      "unimodules-image-loader-interface",
-      "unimodules-permissions-interface"
+      "react-native-reanimated"
     ]
   }
 }
