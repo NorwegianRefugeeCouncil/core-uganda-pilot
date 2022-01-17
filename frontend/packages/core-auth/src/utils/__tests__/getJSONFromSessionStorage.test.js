@@ -1,13 +1,14 @@
 import { getJSONFromSessionStorage } from '../getJSONFromSessionStorage';
 
-describe('utils/getSessionStorage', () => {
+describe('utils/getJSONFromSessionStorage', () => {
   let sessionStorageSpy;
   const sessionStorageOrig = { ...sessionStorage };
 
   const getItemMock = jest
     .fn()
     .mockReturnValueOnce(null)
-    .mockReturnValueOnce('{"token": "handle"}');
+    .mockReturnValueOnce('{"token": "handle"}')
+    .mockReturnValueOnce('handle');
 
   beforeAll(() => {
     sessionStorageSpy = jest.spyOn(global, 'sessionStorage', 'get');
@@ -29,5 +30,9 @@ describe('utils/getSessionStorage', () => {
 
   it('should return stored item', () => {
     expect(getJSONFromSessionStorage('key')).toEqual({ token: 'handle' });
+  });
+
+  it('should return undefined if stored value is not valid JSON', () => {
+    expect(getJSONFromSessionStorage('key')).toEqual(undefined);
   });
 });

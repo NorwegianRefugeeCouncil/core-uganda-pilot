@@ -149,7 +149,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
       onTokenChange(token);
       sessionStorage.setItem(injectToken, JSON.stringify(tokenResponse));
     }
-  }, [tokenResponse?.accessToken]);
+  }, [JSON.stringify(tokenResponse)]);
 
   // Update logged in status accordingly
   useEffect(() => {
