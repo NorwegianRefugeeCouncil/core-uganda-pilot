@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { getLogger, LogLevelDesc } from 'loglevel';
 
 import Browser from '../types/browser';
 import exchangeCodeAsync from '../utils/exchangeCodeAsync';
@@ -10,6 +11,11 @@ import {
   ResponseType,
 } from '../types/types';
 import { TokenResponse } from '../types/response';
+import { getJSONFromSessionStorage } from '../utils/getJSONFromSessionStorage';
+
+const log = getLogger('AuthWrapper');
+const loglevel = process?.env?.LOG_LEVEL as LogLevelDesc;
+log.setLevel(loglevel || log.levels.INFO);
 
 const AuthWrapper: React.FC<AuthWrapperProps> = ({
   children,
@@ -18,7 +24,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
   issuer,
   redirectUri,
   customLoginComponent,
-  handleLoginErr = () => {},
+  handleLoginErr = log.debug,
   onTokenChange,
   injectToken = 'access_token',
 }) => {
@@ -28,7 +34,9 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
 
   const discovery = useDiscovery(issuer);
 
-  const [tokenResponse, setTokenResponse] = useState<TokenResponse>();
+  const [tokenResponse, setTokenResponse] = useState<TokenResponse | undefined>(
+    TokenResponse.createTokenResponse(getJSONFromSessionStorage(injectToken)),
+  );
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -46,6 +54,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
   );
 
   // Make initial token request
+  // trigger login automatically
   useEffect(() => {
     (async () => {
       if (
@@ -53,8 +62,9 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
         request?.codeVerifier == null ||
         !response ||
         response?.type !== 'success'
-      )
+      ) {
         return;
+      }
 
       const exchangeConfig = {
         code: response.params.code,
@@ -74,35 +84,6 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
     })();
   }, [request?.codeVerifier, response, discovery]);
 
-  // Trigger onTokenChange callback when TokenResponse is received
-  useEffect(() => {
-    if (!tokenResponse) return;
-
-    const token = (() => {
-      switch (injectToken) {
-        case 'access_token':
-          return tokenResponse?.accessToken ?? '';
-        case 'id_token':
-          return tokenResponse?.idToken ?? '';
-        default:
-          return '';
-      }
-    })();
-
-    onTokenChange(token);
-  }, [tokenResponse?.accessToken, tokenResponse?.idToken]);
-
-  // Update logged in status accordingly
-  useEffect(() => {
-    if (tokenResponse) {
-      if (!isLoggedIn) {
-        setIsLoggedIn(true);
-      }
-    } else if (isLoggedIn) {
-      setIsLoggedIn(false);
-    }
-  }, [tokenResponse, isLoggedIn]);
-
   // Each second, check if token is fresh
   // If not, refresh the token
   const refreshTokenInterval = React.useRef<number | null>(null);
@@ -116,14 +97,14 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
         clientId,
         scopes,
         extraParams: {},
+        refreshToken: tokenResponse.refreshToken,
       };
 
       try {
-        const resp = await tokenResponse.refreshAsync(refreshConfig, discovery);
+        const resp = await TokenResponse.refreshAsync(refreshConfig, discovery);
         setTokenResponse(resp);
       } catch (err) {
         setTokenResponse(undefined);
-        throw err;
       }
     };
 
@@ -142,8 +123,46 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
       if (refreshTokenInterval.current)
         clearInterval(refreshTokenInterval.current);
     };
-  }, [tokenResponse?.refreshToken, tokenResponse?.expiresIn]);
+  }, [
+    tokenResponse?.refreshToken,
+    tokenResponse?.expiresIn,
+    JSON.stringify(discovery),
+  ]);
 
+  // Run onTokenChange callback
+  // store token in session storage or remove it when undefined
+  useEffect(() => {
+    if (!tokenResponse) {
+      onTokenChange('');
+      sessionStorage.removeItem(injectToken);
+    } else {
+      const token = (() => {
+        switch (injectToken) {
+          case 'access_token':
+            return tokenResponse?.accessToken ?? '';
+          case 'id_token':
+            return tokenResponse?.idToken ?? '';
+          default:
+            return '';
+        }
+      })();
+      onTokenChange(token);
+      sessionStorage.setItem(injectToken, JSON.stringify(tokenResponse));
+    }
+  }, [JSON.stringify(tokenResponse)]);
+
+  // Update logged in status accordingly
+  useEffect(() => {
+    if (tokenResponse) {
+      if (!isLoggedIn) {
+        setIsLoggedIn(true);
+      }
+    } else if (isLoggedIn) {
+      setIsLoggedIn(false);
+    }
+  }, [JSON.stringify(tokenResponse), isLoggedIn]);
+
+  // trigger login manually, by clicking
   const handleLogin = useCallback(() => {
     promptAsync().catch((err) => {
       handleLoginErr(err);
