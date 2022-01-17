@@ -1,8 +1,11 @@
-import {AxiosError, AxiosResponse} from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
 
 import { Response } from '../types';
 
-const errorResponse = <TRequest, TBody>(request: TRequest, r: AxiosError<TBody>): Response<TRequest, TBody> => {
+const errorResponse = <TRequest, TBody>(
+  request: TRequest,
+  r: AxiosError<TBody>,
+): Response<TRequest, TBody> => {
   const errorResp = r as any;
   return {
     request,
@@ -14,7 +17,10 @@ const errorResponse = <TRequest, TBody>(request: TRequest, r: AxiosError<TBody>)
   };
 };
 
-const successResponse = <TRequest, TBody>(request: TRequest, r: AxiosResponse<TBody>): Response<TRequest, TBody> => {
+const successResponse = <TRequest, TBody>(
+  request: TRequest,
+  r: AxiosResponse<TBody>,
+): Response<TRequest, TBody> => {
   return {
     request,
     response: r.data as TBody,
@@ -26,7 +32,7 @@ const successResponse = <TRequest, TBody>(request: TRequest, r: AxiosResponse<TB
 };
 
 export const clientResponse = <TRequest, TBody>(
-  r: AxiosResponse<TBody>|AxiosError<TBody>,
+  r: AxiosResponse<TBody> | AxiosError<TBody>,
   request: TRequest,
   expectedStatusCode: number,
 ): Response<TRequest, TBody> => {
