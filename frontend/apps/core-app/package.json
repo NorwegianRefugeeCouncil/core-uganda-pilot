@@ -2,34 +2,44 @@
   "name": "@nrc.no/core-app",
   "private": true,
   "version": "0.0.1",
-  "main": "__generated__/AppEntry.js",
+  "main": "index.js",
   "scripts": {
     "postinstall": "expo-yarn-workspaces postinstall",
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "test": "jest"
+    "test": "jest",
+    "build": "echo 'Nothing to build'",
+    "eas-build-post-install": "yarn workspace core-api-client run build && yarn workspace core-design-system run build"
   },
   "dependencies": {
     "@expo-google-fonts/roboto": "^0.2.0",
     "@react-navigation/drawer": "^6.1.8",
     "@react-navigation/native": "^6.0.6",
     "@reduxjs/toolkit": "^1.7.1",
-    "core-api-client": "0.0.1",
-    "core-design-system": "0.0.1",
+    "core-api-client": "*",
+    "core-design-system": "*",
     "dotenv": "~10.0.0",
     "expo": "~44.0.0",
     "expo-auth-session": "~3.5.0",
     "expo-constants": "~13.0.0",
+    "expo-dev-client": "~0.8.0",
     "expo-font": "~10.0.4",
+    "expo-random": "~12.1.1",
+    "expo-splash-screen": "~0.14.1",
     "expo-status-bar": "~1.2.0",
-    "expo-web-browser": "~10.0.3",
-    "jest": "^27.4.5",
-    "jest-expo": "~43.0.1",
+    "expo-updates": "~0.11.4",
+    "expo-web-browser": "~10.1.0",
+    "jest": "^26.6.3",
+    "jest-expo": "^44.0.0",
     "native-base": "^3.2.2",
+    "react": "17.0.1",
+    "react-dom": "17.0.1",
     "react-native": "0.64.3",
+    "react-native-gesture-handler": "~2.1.0",
+    "react-native-reanimated": "~2.3.1",
     "react-native-safe-area-context": "3.3.2",
     "react-native-screens": "~3.10.1",
     "react-native-svg": "12.1.1",
@@ -38,6 +48,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
+    "@testing-library/jest-native": "^4.0.4",
     "@testing-library/react-hooks": "^7.0.2",
     "@testing-library/react-native": "^9.0.0",
     "expo-yarn-workspaces": "^1.6.0"
@@ -53,6 +64,18 @@
     "collectCoverage": true,
     "collectCoverageFrom": [
       "src/**/*.{js,jsx,ts,tsx}"
+    ]
+  },
+  "expo-yarn-workspaces": {
+    "symlinks": [
+      "expo-constants",
+      "expo-file-system",
+      "expo-keep-awake",
+      "expo-permissions",
+      "expo-splash-screen",
+      "expo-structured-headers",
+      "expo-updates",
+      "react-native-reanimated"
     ]
   }
 }
