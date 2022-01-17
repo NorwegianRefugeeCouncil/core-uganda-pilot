@@ -26,6 +26,12 @@ func (c *Config) makeNativeApp() error {
 		return err
 	}
 
+	envPath = path.Join(c.rootDir, "frontend", "apps", "core-app", ".env")
+	fmt.Println(envPath)
+	if err := ioutil.WriteFile(envPath, []byte(sb.String()), os.ModePerm); err != nil {
+		return err
+	}
+
 	c.hydraClients = append(c.hydraClients, ClientConfig{
 		ClientId: c.coreNativeClientId,
 		RedirectUris: []string{
