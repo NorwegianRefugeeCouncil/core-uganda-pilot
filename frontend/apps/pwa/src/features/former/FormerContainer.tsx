@@ -169,8 +169,13 @@ export const FormerContainer: FC = () => {
     if (ownerForm) {
       dispatch(formerActions.saveForm());
     } else if (formDefinition) {
-      const data = await dispatch(postForm(formDefinition)).unwrap();
-      history.push(`/browse/forms/${data.id}`);
+      try {
+        const data = await dispatch(postForm(formDefinition)).unwrap();
+        history.push(`/browse/forms/${data.id}`);
+        console.log('POST FORM', data);
+      } catch (e) {
+        console.log('POST FORM ERROR', e);
+      }
     }
   }, [dispatch, formDefinition, ownerForm]);
 

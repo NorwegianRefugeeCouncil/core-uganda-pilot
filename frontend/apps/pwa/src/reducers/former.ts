@@ -62,6 +62,7 @@ export const postForm = createAsyncThunk<
   if (resp.success) {
     return resp.response as FormDefinition;
   }
+  console.log('RESPONSE', resp.error);
   throw resp.error;
 });
 
