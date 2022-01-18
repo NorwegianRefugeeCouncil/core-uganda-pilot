@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { FieldKind } from 'core-api-client';
 
@@ -13,10 +13,12 @@ import {
 } from '../../reducers/former';
 
 import { Former } from './Former';
+import { ApiErrorDetails } from './types';
 
 export const FormerContainer: FC = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
+  const [error, setError] = useState<ApiErrorDetails[]>([]);
 
   // load data
   useEffect(() => {
@@ -173,8 +175,9 @@ export const FormerContainer: FC = () => {
         const data = await dispatch(postForm(formDefinition)).unwrap();
         history.push(`/browse/forms/${data.id}`);
         console.log('POST FORM', data);
-      } catch (e) {
+      } catch (e: any) {
         console.log('POST FORM ERROR', e);
+        setError(e?.details?.causes);
       }
     }
   }, [dispatch, formDefinition, ownerForm]);
@@ -205,6 +208,7 @@ export const FormerContainer: FC = () => {
       cancelField={(fieldId: string) => cancelField(fieldId)}
       setFieldReferencedDatabaseId={setFieldReferencedDatabaseId}
       setFieldReferencedFormId={setFieldReferencedFormId}
+      error={error}
     />
   );
 };

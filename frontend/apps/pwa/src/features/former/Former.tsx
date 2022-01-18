@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import _ from 'lodash';
 
 import { FormName } from './FormName';
 import { FormerField } from './FormerField';
@@ -26,7 +27,11 @@ export const Former: FC<FormerProps> = (props) => {
     cancelField,
     setFieldReferencedDatabaseId,
     setFieldReferencedFormId,
+    error,
   } = props;
+
+  const mappedErrors = error && _.keyBy(error, 'field');
+  console.log('MAPPED', mappedErrors);
 
   const selectedField = selectedFieldId
     ? fields.find((f) => f.id === selectedFieldId)
@@ -131,6 +136,15 @@ export const Former: FC<FormerProps> = (props) => {
           <div className="col-6 offset-2">
             {ownerFormName == null && formHeader()}
             <FieldSections formerProps={props} />
+            {mappedErrors.fields &&
+              error.map((e, i) => (
+                <div
+                  key={`${e.reason}_${i}`}
+                  className="is-invalid invalid-feedback"
+                >
+                  {e?.message}
+                </div>
+              ))}
           </div>
           <div className="col-2">
             <button

@@ -58,12 +58,15 @@ export const postForm = createAsyncThunk<
   FormDefinition,
   Partial<FormDefinition>
 >('former/createForm', async (arg, thunkAPI) => {
-  const resp = await client.createForm({ object: arg });
-  if (resp.success) {
-    return resp.response as FormDefinition;
+  try {
+    const resp = await client.createForm({ object: arg });
+    if (resp.success) {
+      return resp.response as FormDefinition;
+    }
+    return thunkAPI.rejectWithValue(resp.error);
+  } catch (e) {
+    throw e;
   }
-  console.log('RESPONSE', resp.error);
-  throw resp.error;
 });
 
 const selectors = adapter.getSelectors();
