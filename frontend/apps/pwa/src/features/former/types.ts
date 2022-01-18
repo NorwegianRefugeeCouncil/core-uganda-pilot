@@ -2,6 +2,12 @@ import { FieldKind } from 'core-api-client';
 
 import { FormField } from '../../reducers/former';
 
+export type ApiErrorDetails = {
+  message: string;
+  reason: string;
+  field: string;
+};
+
 export type FormerProps = {
   formName: string;
   setFormName: (formName: string) => void;
@@ -24,4 +30,5 @@ export type FormerProps = {
   saveForm: () => void;
   ownerFormName: string | undefined;
   cancelField: (fieldId: string) => void;
+  error: ApiErrorDetails[];
 };
