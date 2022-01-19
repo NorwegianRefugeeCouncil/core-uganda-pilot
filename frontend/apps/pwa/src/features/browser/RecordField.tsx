@@ -5,15 +5,18 @@ import format from 'date-fns/format';
 
 type RecordFieldProps = {
   field: FieldDefinition;
-  value: any;
+  value: string;
   subRecords: Record[] | undefined;
 };
+
 export const RecordField: FC<RecordFieldProps> = ({
   field,
   value,
   subRecords,
 }) => {
   const renderField = (f: FieldDefinition, v: any) => {
+    if (!v) return <div className="text-muted">-</div>;
+
     if (f.fieldType.reference) {
       return (
         <div>
@@ -22,12 +25,13 @@ export const RecordField: FC<RecordFieldProps> = ({
       );
     }
     if (f.fieldType.month) {
-      return <div className="fw-bold">{format(new Date(v), 'yyyy-MM')}</div>;
+      return <div className="fw-bold">{format(new Date(v), 'MMMM yyyy')}</div>;
     }
-    if (f.fieldType.week) {
-      return <div className="fw-bold">{format(new Date(v), "yyyy-'W'ww")}</div>;
-    }
-    return <div className="fw-bold">{v}</div>;
+    return (
+      <div className="fw-bold" style={{ whiteSpace: 'pre-wrap' }}>
+        {v}
+      </div>
+    );
   };
 
   return (
