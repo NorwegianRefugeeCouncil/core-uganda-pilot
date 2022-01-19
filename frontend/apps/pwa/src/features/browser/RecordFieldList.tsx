@@ -15,10 +15,20 @@ export const RecordFieldList: React.FC<Props> = ({
   subRecords,
 }) => {
   let value = '';
+
   const fieldValue = record.values.find((v: any) => v.fieldId === field.id);
+
   if (fieldValue && typeof fieldValue.value === 'string') {
     value = fieldValue.value;
   }
+
+  if (fieldValue && field.fieldType.singleSelect) {
+    value =
+      field.fieldType.singleSelect.options.find(
+        (o: SelectOption) => o.id === fieldValue.value,
+      )?.name ?? '';
+  }
+
   if (fieldValue && field.fieldType.multiSelect) {
     const selected = field.fieldType.multiSelect.options.filter(
       (o: SelectOption) => {
@@ -31,6 +41,7 @@ export const RecordFieldList: React.FC<Props> = ({
 
     value = selected.map((s) => s.name).join(', ');
   }
+
   return (
     <RecordField
       key={record.id}
