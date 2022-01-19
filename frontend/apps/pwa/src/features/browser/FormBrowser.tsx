@@ -1,12 +1,21 @@
 import React, { FC, Fragment, useCallback, useEffect, useState } from 'react';
 import { FieldDefinition, Record, SelectOption } from 'core-api-client';
 import { Link } from 'react-router-dom';
+import format from 'date-fns/format';
 
-import { fetchForms, selectFormOrSubFormById, selectRootForm } from '../../reducers/form';
+import {
+  fetchForms,
+  selectFormOrSubFormById,
+  selectRootForm,
+} from '../../reducers/form';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { fetchDatabases } from '../../reducers/database';
 import { fetchFolders } from '../../reducers/folder';
-import { fetchRecords, selectRecordsForForm, selectRecordsSubFormCounts } from '../../reducers/records';
+import {
+  fetchRecords,
+  selectRecordsForForm,
+  selectRecordsSubFormCounts,
+} from '../../reducers/records';
 
 type subFormCountFn = (recordId: string, fieldId: string) => number;
 
@@ -19,9 +28,16 @@ const HeaderField: FC<HeaderFieldProps> = (props) => {
   const { field, columnWidth } = props;
 
   return (
-    <th key={field.id} className="position-relative" style={{ minWidth: columnWidth, maxWidth: columnWidth }}>
+    <th
+      key={field.id}
+      className="position-relative"
+      style={{ minWidth: columnWidth, maxWidth: columnWidth }}
+    >
       <div className="d-flex flex-row align-items-center">
-        <small style={{ fontSize: '0.75rem' }} className="text-muted text-uppercase">
+        <small
+          style={{ fontSize: '0.75rem' }}
+          className="text-muted text-uppercase"
+        >
           {field.name}
         </small>
       </div>
@@ -40,19 +56,27 @@ export const HeaderFields: FC<HeaderFieldsProps> = (props) => {
     <tr>
       <th style={{ width: 35 }} />
       {fields.map((f) => {
-        return <HeaderField key={f.id} field={f} columnWidth={columnWidths[f.id]} />;
+        return (
+          <HeaderField key={f.id} field={f} columnWidth={columnWidths[f.id]} />
+        );
       })}
     </tr>
   );
 };
 
-function mapRecordCell(field: FieldDefinition, record: Record, getSubFormCount: subFormCountFn) {
+function mapRecordCell(
+  field: FieldDefinition,
+  record: Record,
+  getSubFormCount: subFormCountFn,
+) {
   if (field.fieldType.subForm) {
     const count = getSubFormCount(record.id, field.id);
     return (
       <td key={field.id}>
         <span>
-          <Link to={`/browse/forms/${field.id}?ownerRecordId=${record.id}`}>{count} records</Link>
+          <Link to={`/browse/forms/${field.id}?ownerRecordId=${record.id}`}>
+            {count} records
+          </Link>
         </span>
       </td>
     );
@@ -72,7 +96,9 @@ function mapRecordCell(field: FieldDefinition, record: Record, getSubFormCount: 
           wordBreak: 'break-all',
         }}
       >
-        {fieldValue?.value}
+        {typeof fieldValue?.value === 'string'
+          ? format(new Date(fieldValue?.value), 'MMMM yyyy')
+          : fieldValue?.value}
       </td>
     );
   }
@@ -98,7 +124,9 @@ function mapRecordCell(field: FieldDefinition, record: Record, getSubFormCount: 
     return (
       <td key={field.id}>
         <span>
-          <Link to={`/browse/forms/${field.fieldType.reference.formId}`}>View</Link>
+          <Link to={`/browse/forms/${field.fieldType.reference.formId}`}>
+            View
+          </Link>
         </span>
       </td>
     );
@@ -106,7 +134,9 @@ function mapRecordCell(field: FieldDefinition, record: Record, getSubFormCount: 
 
   if (field.fieldType.singleSelect) {
     let value = fieldValue?.value;
-    const option = field.fieldType.singleSelect.options.find((o) => o.id === fieldValue?.value);
+    const option = field.fieldType.singleSelect.options.find(
+      (o) => o.id === fieldValue?.value,
+    );
     if (option) {
       value = option.name;
     }
@@ -114,12 +144,14 @@ function mapRecordCell(field: FieldDefinition, record: Record, getSubFormCount: 
   }
 
   if (field.fieldType.multiSelect) {
-    const selected = field.fieldType.multiSelect.options.filter((o: SelectOption) => {
-      if (fieldValue?.value == null) {
-        return false;
-      }
-      return fieldValue.value.includes(o.id);
-    });
+    const selected = field.fieldType.multiSelect.options.filter(
+      (o: SelectOption) => {
+        if (fieldValue?.value == null) {
+          return false;
+        }
+        return fieldValue.value.includes(o.id);
+      },
+    );
     return <td key={field.id}>{selected.map((s) => s.name).join(', ')}</td>;
   }
 
@@ -139,7 +171,11 @@ function mapRecordCell(field: FieldDefinition, record: Record, getSubFormCount: 
   );
 }
 
-function mapRecord(fields: FieldDefinition[], record: Record, getSubFormCount: subFormCountFn) {
+function mapRecord(
+  fields: FieldDefinition[],
+  record: Record,
+  getSubFormCount: subFormCountFn,
+) {
   return (
     <tr key={record.id}>
       <td>
@@ -152,7 +188,11 @@ function mapRecord(fields: FieldDefinition[], record: Record, getSubFormCount: s
   );
 }
 
-function mapRecords(fields: FieldDefinition[], records: Record[], getSubFormCount: subFormCountFn) {
+function mapRecords(
+  fields: FieldDefinition[],
+  records: Record[],
+  getSubFormCount: subFormCountFn,
+) {
   return records.map((r) => mapRecord(fields, r, getSubFormCount));
 }
 
@@ -166,7 +206,14 @@ export type FormBrowserProps = {
 };
 
 export const FormBrowser: FC<FormBrowserProps> = (props) => {
-  const { fields, records, formId, getSubFormSum, ownerRecordId, columnWidths } = props;
+  const {
+    fields,
+    records,
+    formId,
+    getSubFormSum,
+    ownerRecordId,
+    columnWidths,
+  } = props;
 
   let addRecordURL = `/edit/forms/${formId}/record`;
   if (ownerRecordId) {
@@ -181,11 +228,16 @@ export const FormBrowser: FC<FormBrowserProps> = (props) => {
         </Link>
       </div>
       <div className="px-2">
-        <table className="table shadow bg-white table-bordered w-100" style={{ tableLayout: 'fixed' }}>
+        <table
+          className="table shadow bg-white table-bordered w-100"
+          style={{ tableLayout: 'fixed' }}
+        >
           <thead style={{ lineHeight: '0.75rem' }}>
             <HeaderFields fields={fields} columnWidths={columnWidths} />
           </thead>
-          <tbody style={{ borderColor: '#dee2e6', borderTop: 'none' }}>{mapRecords(fields, records, getSubFormSum)}</tbody>
+          <tbody style={{ borderColor: '#dee2e6', borderTop: 'none' }}>
+            {mapRecords(fields, records, getSubFormSum)}
+          </tbody>
         </table>
       </div>
     </div>
@@ -214,7 +266,9 @@ export const FormBrowserContainer: FC<FormBrowserContainerProps> = (props) => {
     return selectRootForm(s, props.formId);
   });
 
-  const records = useAppSelector((s) => selectRecordsForForm(s, props.formId, props.ownerRecordId));
+  const records = useAppSelector((s) =>
+    selectRecordsForForm(s, props.formId, props.ownerRecordId),
+  );
   const subFormTotals = useAppSelector(selectRecordsSubFormCounts(form?.id));
 
   const getSubFormTotal = useCallback(
@@ -243,15 +297,21 @@ export const FormBrowserContainer: FC<FormBrowserContainerProps> = (props) => {
       return;
     }
     setFetched(true);
-    dispatch(fetchRecords({ databaseId: rootForm.databaseId, formId: form?.id }));
+    dispatch(
+      fetchRecords({ databaseId: rootForm.databaseId, formId: form?.id }),
+    );
     for (const field of form.fields) {
       if (field.fieldType.subForm) {
-        dispatch(fetchRecords({ databaseId: rootForm.databaseId, formId: field.id }));
+        dispatch(
+          fetchRecords({ databaseId: rootForm.databaseId, formId: field.id }),
+        );
       }
     }
   }, [dispatch, rootForm, form, fetched]);
 
-  const [columnWidths, setColumnWidths] = useState<{ [key: string]: number }>({});
+  const [columnWidths, setColumnWidths] = useState<{ [key: string]: number }>(
+    {},
+  );
 
   useEffect(() => {
     if (!form?.fields) {
