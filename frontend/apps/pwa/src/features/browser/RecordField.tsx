@@ -8,6 +8,7 @@ type RecordFieldProps = {
   value: any;
   subRecords: Record[] | undefined;
 };
+
 export const RecordField: FC<RecordFieldProps> = ({
   field,
   value,
@@ -27,7 +28,11 @@ export const RecordField: FC<RecordFieldProps> = ({
     if (f.fieldType.week) {
       return <div className="fw-bold">{format(new Date(v), "yyyy-'W'ww")}</div>;
     }
-    return <div className="fw-bold">{v}</div>;
+    return (
+      <div className="fw-bold" style={{ whiteSpace: 'pre-wrap' }}>
+        {v}
+      </div>
+    );
   };
 
   return (
