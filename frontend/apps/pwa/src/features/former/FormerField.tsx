@@ -1,57 +1,64 @@
 import { FieldKind, SelectOption } from 'core-api-client';
-import React, { FC, Fragment } from 'react';
+import React, { FC } from 'react';
 
 import DatabasePickerContainer from '../../components/DatabasePicker';
 import FormPickerContainer from '../../components/FormPicker';
 
+import { ErrorMessage } from './types';
+
 type FormerFieldProps = {
-  isSelected: boolean;
-  selectField: () => void;
-  fieldType: FieldKind;
-  fieldOptions?: SelectOption[];
-  setFieldOption: (i: number, value: string) => void;
   addOption: () => void;
-  removeOption: (index: number) => void;
-  fieldName: string;
-  setFieldName: (fieldName: string) => void;
-  fieldRequired: boolean;
-  setFieldRequired: (required: boolean) => void;
-  fieldIsKey: boolean;
-  setFieldIsKey: (isKey: boolean) => void;
-  fieldDescription: string;
-  setFieldDescription: (description: string) => void;
-  openSubForm: () => void;
-  saveField: () => void;
-  setReferencedDatabaseId: (databaseId: string) => void;
-  referencedDatabaseId: string | undefined;
-  setReferencedFormId: (formId: string) => void;
-  referencedFormId: string | undefined;
   cancel: () => void;
+  errors: ErrorMessage | undefined;
+  fieldDescription: string;
+  fieldIsKey: boolean;
+  fieldName: string;
+  fieldOptions?: SelectOption[];
+  fieldRequired: boolean;
+  fieldType: FieldKind;
+  isSelected: boolean;
+  openSubForm: () => void;
+  referencedDatabaseId: string | undefined;
+  referencedFormId: string | undefined;
+  removeOption: (index: number) => void;
+  saveField: () => void;
+  selectField: () => void;
+  setFieldDescription: (description: string) => void;
+  setFieldIsKey: (isKey: boolean) => void;
+  setFieldName: (fieldName: string) => void;
+  setFieldOption: (i: number, value: string) => void;
+  setFieldRequired: (required: boolean) => void;
+  setReferencedDatabaseId: (databaseId: string) => void;
+  setReferencedFormId: (formId: string) => void;
 };
-export const FormerField: FC<FormerFieldProps> = ({
-  fieldName,
-  fieldOptions,
-  setFieldOption,
-  addOption,
-  removeOption,
-  setFieldName,
-  isSelected,
-  selectField,
-  fieldDescription,
-  setFieldDescription,
-  fieldType,
-  referencedDatabaseId,
-  referencedFormId,
-  setReferencedDatabaseId,
-  setReferencedFormId,
-  openSubForm,
-  saveField,
-  cancel,
-  fieldIsKey,
-  setFieldIsKey,
-  fieldRequired,
-  setFieldRequired,
-}) => {
+
+export const FormerField: FC<FormerFieldProps> = (props) => {
+  const {
+    addOption,
+    cancel,
+    errors = undefined,
+    fieldDescription,
+    fieldIsKey,
+    fieldName,
+    fieldOptions,
+    fieldRequired,
+    fieldType,
+    isSelected,
+    openSubForm,
+    referencedDatabaseId,
+    referencedFormId,
+    removeOption,
+    saveField,
+    selectField,
+    setFieldDescription,
+    setFieldIsKey,
+    setFieldName,
+    setFieldOption,
+    setFieldRequired,
+    setReferencedDatabaseId,
+    setReferencedFormId,
+  } = props;
+
   React.useEffect(() => {
     if (fieldType === FieldKind.Checkbox) {
       setFieldRequired(true);
@@ -64,17 +71,46 @@ export const FormerField: FC<FormerFieldProps> = ({
 
   if (!isSelected) {
     return (
-      <div
-        onClick={() => selectField()}
-        style={{ cursor: 'pointer' }}
-        className="card bg-dark text-light border-light mb-2"
-      >
-        <div className="card-body p-3">
-          <div className="d-flex flex-row">
-            <span className="flex-grow-1">{fieldName}</span>
-            <small className="text-uppercase">{fieldType}</small>
+      <div>
+        <div
+          onClick={() => selectField()}
+          style={{ cursor: 'pointer' }}
+          className={`card bg-dark text-light border-light mb-2 ${
+            errors?.name ? 'is-invalid' : ''
+          }`}
+          id="name"
+          aria-describedby="nameFeedback"
+        >
+          <div className="card-body p-3">
+            <div className="d-flex flex-row">
+              <span className="flex-grow-1">{fieldName}</span>
+              <small className="text-uppercase">{fieldType}</small>
+            </div>
           </div>
         </div>
+        {errors?.name && (
+          <div className="invalid-feedback is-invalid" id="nameFeedback">
+            {errors?.name}
+          </div>
+        )}
+        {errors?.fieldType?.singleSelect?.options && (
+          <div className="invalid-feedback is-invalid" id="optionsFeedback">
+            {errors?.fieldType?.singleSelect?.options}
+          </div>
+        )}
+        {errors?.fieldType?.multiSelect?.options && (
+          <div className="invalid-feedback is-invalid" id="optionsFeedback">
+            {errors?.fieldType?.multiSelect?.options}
+          </div>
+        )}
+        {errors?.fieldType?.subForm?.fields && (
+          <div
+            className="invalid-feedback is-invalid"
+            id="subformFieldsFeedback"
+          >
+            {errors?.fieldType?.subForm?.fields}
+          </div>
+        )}
       </div>
     );
   }
@@ -98,7 +134,6 @@ export const FormerField: FC<FormerFieldProps> = ({
               </label>
               <input
                 className="form-control"
-                id="database"
                 type="text"
                 value={fieldName || ''}
                 onChange={(event) => setFieldName(event.target.value)}
@@ -107,9 +142,16 @@ export const FormerField: FC<FormerFieldProps> = ({
 
             {/* Options */}
 
-            {(fieldType === 'singleSelect' || fieldType === 'multiSelect') && (
+            {(fieldType === FieldKind.SingleSelect ||
+              fieldType === FieldKind.MultiSelect) && (
               <div className="form-group mb-2">
-                <div className="d-flex justify-content-between align-items-center mb-2">
+                <div
+                  className={`d-flex justify-content-between align-items-center mb-2 ${
+                    errors?.fieldType?.singleSelect?.options ? 'is-invalid' : ''
+                  }`}
+                  id="options"
+                  aria-describedby="optionsFeedback"
+                >
                   <label className="form-label" htmlFor="fieldName">
                     Field Options
                   </label>
@@ -160,8 +202,13 @@ export const FormerField: FC<FormerFieldProps> = ({
 
             {/* Open Subform Button */}
 
-            {fieldType === 'subform' ? (
-              <button className="btn btn-primary" onClick={() => openSubForm()}>
+            {fieldType === FieldKind.SubForm ? (
+              <button
+                className="btn btn-primary"
+                onClick={() => openSubForm()}
+                id="subformFields"
+                aria-describedby="subformFieldsFeedback"
+              >
                 Open Sub Form
               </button>
             ) : (

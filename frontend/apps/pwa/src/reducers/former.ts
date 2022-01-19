@@ -15,16 +15,18 @@ import {
   FormDefinition,
   SelectOption,
 } from 'core-api-client';
+import _ from 'lodash';
 
 import { RootState } from '../app/store';
 import client from '../app/client';
+import { ApiErrorDetails, ErrorMessage } from '../features/former/types';
 
 import { databaseGlobalSelectors } from './database';
 import { folderGlobalSelectors } from './folder';
 
 export interface FormField {
   id: string;
-  type: FieldKind;
+  fieldType: FieldKind;
   options: SelectOption[];
   required: boolean;
   key: boolean;
@@ -34,6 +36,7 @@ export interface FormField {
   subFormId: string | undefined;
   referencedDatabaseId: string | undefined;
   referencedFormId: string | undefined;
+  errors: ErrorMessage | undefined;
 }
 
 export interface Form {
@@ -45,11 +48,13 @@ export interface Form {
   fields: FormField[];
 
   isRootForm: boolean;
+
+  errors: ErrorMessage | undefined;
 }
 
 const adapter = createEntityAdapter<Form>({
   // Assume IDs are stored in a field other than `book.id`
-  selectId: (folder) => folder.formId,
+  selectId: (form) => form.formId,
   // Keep the "all IDs" array sorted based on book titles
   sortComparer: (a, b) => a.formId.localeCompare(b.formId),
 });
@@ -58,15 +63,11 @@ export const postForm = createAsyncThunk<
   FormDefinition,
   Partial<FormDefinition>
 >('former/createForm', async (arg, thunkAPI) => {
-  try {
-    const resp = await client.createForm({ object: arg });
-    if (resp.success) {
-      return resp.response as FormDefinition;
-    }
-    return thunkAPI.rejectWithValue(resp.error);
-  } catch (e) {
-    throw e;
+  const resp = await client.createForm({ object: arg });
+  if (resp.success) {
+    return resp.response as FormDefinition;
   }
+  return thunkAPI.rejectWithValue(resp?.error);
 });
 
 const selectors = adapter.getSelectors();
@@ -187,25 +188,25 @@ const mapFields = (
   const result = fields.map<FieldDefinition>((field) => {
     let fieldType: FieldType;
 
-    if (field.type === 'text') {
+    if (field.fieldType === 'text') {
       fieldType = { text: {} };
-    } else if (field.type === 'multilineText') {
+    } else if (field.fieldType === 'multilineText') {
       fieldType = { multilineText: {} };
-    } else if (field.type === 'date') {
+    } else if (field.fieldType === 'date') {
       fieldType = { date: {} };
-    } else if (field.type === 'month') {
+    } else if (field.fieldType === 'month') {
       fieldType = { month: {} };
-    } else if (field.type === 'week') {
+    } else if (field.fieldType === 'week') {
       fieldType = { week: {} };
-    } else if (field.type === 'quantity') {
+    } else if (field.fieldType === 'quantity') {
       fieldType = { quantity: {} };
-    } else if (field.type === 'checkbox') {
+    } else if (field.fieldType === 'checkbox') {
       fieldType = { checkbox: {} };
-    } else if (field.type === 'singleSelect') {
+    } else if (field.fieldType === 'singleSelect') {
       fieldType = { singleSelect: { options: field.options } };
-    } else if (field.type === 'multiSelect') {
+    } else if (field.fieldType === 'multiSelect') {
       fieldType = { multiSelect: { options: field.options } };
-    } else if (field.type === 'reference') {
+    } else if (field.fieldType === 'reference') {
       if (!field.referencedDatabaseId) {
         throw new Error(
           `field with id ${field.id} does not have referenced database id`,
@@ -222,7 +223,7 @@ const mapFields = (
           formId: field.referencedFormId,
         },
       };
-    } else if (field.type === 'subform') {
+    } else if (field.fieldType === 'subform') {
       if (!field.subFormId) {
         throw new Error(
           `subform field with id ${field.id} does not have subFormId`,
@@ -239,7 +240,7 @@ const mapFields = (
       };
     } else {
       throw new Error(
-        `invalid field type form field ${field.id}: ${field.type}`,
+        `invalid field type form field ${field.id}: ${field.fieldType}`,
       );
     }
 
@@ -358,6 +359,7 @@ export const former = createSlice({
         fields: [],
         name: '',
         isRootForm: true,
+        errors: undefined,
       });
     },
     setDatabase(state, action: PayloadAction<{ databaseId: string }>) {
@@ -428,6 +430,54 @@ export const former = createSlice({
       fieldForm.field.options[i] = {
         id: fieldForm.field.options[i].id,
         name: value,
+      };
+    },
+    setFormErrors(state, action: PayloadAction<{ errors: ApiErrorDetails[] }>) {
+      const currentForm = selectCurrentForm(state);
+
+      if (!currentForm) {
+        return;
+      }
+
+      _.forEach(action.payload.errors, (error) => {
+        const propertyIndex = error.field.indexOf('.');
+        if (propertyIndex >= 0) {
+          const property = error.field.slice(propertyIndex + 1);
+          const fieldErrorPath = `${error.field.slice(
+            0,
+            propertyIndex,
+          )}.errors.${property}`;
+
+          _.set(
+            state.entities[currentForm.formId] || {},
+            fieldErrorPath,
+            error.message,
+          );
+        }
+        if (propertyIndex < 0) {
+          const fieldErrorPath = `errors.${error.field}`;
+
+          _.set(
+            state.entities[currentForm.formId] || {},
+            fieldErrorPath,
+            error.message,
+          );
+        }
+      });
+    },
+    resetFormErrors(state) {
+      const currentForm = selectCurrentForm(state);
+
+      if (!currentForm) {
+        return;
+      }
+
+      state.entities[currentForm.formId] = {
+        ...currentForm,
+        fields: [
+          ...currentForm.fields.map((f) => ({ ...f, error: undefined })),
+        ],
+        errors: undefined,
       };
     },
     addOption(state, action: PayloadAction<{ fieldId: string }>) {
@@ -539,6 +589,7 @@ export const former = createSlice({
           fields: [],
           name: '',
           isRootForm: false,
+          errors: undefined,
         };
         adapter.addOne(state, subForm);
       }
@@ -547,13 +598,14 @@ export const former = createSlice({
         key: false,
         name: '',
         required: false,
-        type: kind,
+        fieldType: kind,
         options: [],
         subFormId,
         code: '',
         description: '',
         referencedDatabaseId,
         referencedFormId,
+        errors: undefined,
       };
       state.entities[form.formId] = {
         ...form,
@@ -567,6 +619,7 @@ export const former = createSlice({
         fields: [],
         name: '',
         isRootForm: false,
+        errors: undefined,
       };
       adapter.addOne(state, newForm);
     },
@@ -631,6 +684,7 @@ export const former = createSlice({
   extraReducers: (builder) => {
     builder.addCase(postForm.pending, (state) => {
       state.savePending = true;
+      state.saveError = undefined;
     });
     builder.addCase(postForm.rejected, (state, payload) => {
       state.savePending = false;
