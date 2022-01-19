@@ -25,10 +25,7 @@ export const RecordField: FC<RecordFieldProps> = ({
       );
     }
     if (f.fieldType.month) {
-      return <div className="fw-bold">{format(new Date(v), 'yyyy-MM')}</div>;
-    }
-    if (f.fieldType.week) {
-      return <div className="fw-bold">{format(new Date(v), "yyyy-'W'ww")}</div>;
+      return <div className="fw-bold">{format(new Date(v), 'MMMM yyyy')}</div>;
     }
     return (
       <div className="fw-bold" style={{ whiteSpace: 'pre-wrap' }}>
