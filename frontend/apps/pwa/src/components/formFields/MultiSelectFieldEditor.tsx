@@ -26,7 +26,7 @@ export const MultiSelectFieldEditor: FC<FieldEditorProps> = ({
         multiple
         onChange={handleChange}
       >
-        <SelectOptionsList field={field} />
+        <SelectOptionsList field={field} isMultiSelect />
       </select>
       <FieldDescription text={field.description} />
     </div>

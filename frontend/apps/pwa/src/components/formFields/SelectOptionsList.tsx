@@ -3,12 +3,18 @@ import { FieldDefinition } from 'core-api-client';
 
 type Props = {
   field: FieldDefinition;
+  isMultiSelect?: boolean;
 };
 
-export const SelectOptionsList: React.FC<Props> = ({ field }) => {
+export const SelectOptionsList: React.FC<Props> = ({
+  field,
+  isMultiSelect,
+}) => {
   const { required, key } = field;
 
-  const options = field.fieldType?.singleSelect?.options;
+  const options = isMultiSelect
+    ? field.fieldType?.multiSelect?.options
+    : field.fieldType?.singleSelect?.options;
 
   if (!options) {
     return <></>;
