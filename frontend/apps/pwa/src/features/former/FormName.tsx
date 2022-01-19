@@ -1,26 +1,30 @@
 import React, { FC } from 'react';
 
-type FormNameProps = {
-  formName: string;
-  setFormName: (name: string) => void;
-};
+import { FormerProps } from './types';
 
-export const FormName: FC<FormNameProps> = (props) => {
-  const { formName, setFormName } = props;
+export const FormName: FC<
+  Pick<FormerProps, 'formName' | 'setFormName' | 'errors'>
+> = ({ formName = '', setFormName, errors }) => {
   return (
-    <div>
-      <div className="form-group mb-2">
-        <label className="form-label" htmlFor="formName">
-          Form Name
-        </label>
-        <input
-          className="form-control"
-          id="formName"
-          type="text"
-          value={formName || ''}
-          onChange={(event) => setFormName(event.target.value)}
-        />
-      </div>
+    <div className="form-group mb-2">
+      <label className="form-label" htmlFor="formName">
+        Form Name
+      </label>
+      <input
+        className={`form-control ${errors ? 'is-invalid' : ''}`}
+        id="formName"
+        type="text"
+        value={formName || ''}
+        onChange={(event) => setFormName(event.target.value)}
+        aria-describedby="formNameFeedback"
+      />
+      {errors && (
+        <div className="invalid-feedback is-invalid" id="formNameFeedback">
+          {Object.values(errors)?.map((error) => (
+            <div key={error}>{error}</div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

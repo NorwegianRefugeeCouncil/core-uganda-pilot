@@ -1,46 +1,38 @@
 import React, { FC } from 'react';
-import _ from 'lodash';
 
-import { FormName } from './FormName';
 import { FormerField } from './FormerField';
 import { FormerProps } from './types';
 import { FieldSections } from './FieldSections';
+import { FormName } from './FormName';
 
 export const Former: FC<FormerProps> = (props) => {
   const {
-    formName,
-    setFormName,
-    fields,
-    selectedFieldId,
-    saveForm,
-    ownerFormName,
-    setSelectedField,
-    setFieldName,
-    setFieldOption,
+    addField,
     addOption,
+    cancelField,
+    errors,
+    fields,
+    formName,
+    openSubForm,
+    ownerFormName,
     removeOption,
+    saveField,
+    saveForm,
+    selectedFieldId,
     setFieldDescription,
     setFieldIsKey,
-    setFieldRequired,
-    openSubForm,
-    saveField,
-    cancelField,
+    setFieldName,
+    setFieldOption,
     setFieldReferencedDatabaseId,
     setFieldReferencedFormId,
-    error,
+    setFieldRequired,
+    setFormName,
+    setSelectedField,
   } = props;
-
-  const mappedErrors = error && _.keyBy(error, 'field');
-  console.log('MAPPED', mappedErrors);
 
   const selectedField = selectedFieldId
     ? fields.find((f) => f.id === selectedFieldId)
     : undefined;
-
-  function formHeader() {
-    const name = formName || ownerFormName || '';
-    return <FormName formName={name} setFormName={setFormName} />;
-  }
 
   if (selectedField) {
     return (
@@ -62,13 +54,20 @@ export const Former: FC<FormerProps> = (props) => {
           </div>
           <div className="row mt-3">
             <div className="col-10 col-md-8 offset-md-1">
-              {ownerFormName == null && formHeader()}
+              {ownerFormName == null && (
+                <FormName
+                  setFormName={setFormName}
+                  formName={formName}
+                  errors={errors}
+                />
+              )}
               <FormerField
                 key={selectedField.id}
                 isSelected={selectedField.id === selectedFieldId}
                 selectField={() => setSelectedField(selectedField.id)}
-                fieldType={selectedField.type}
+                fieldType={selectedField.fieldType}
                 fieldOptions={selectedField.options}
+                errors={selectedField.errors}
                 setFieldOption={(i: number, value: string) =>
                   setFieldOption(selectedField.id, i, value)
                 }
@@ -134,17 +133,32 @@ export const Former: FC<FormerProps> = (props) => {
         </div>
         <div className="row mt-3">
           <div className="col-6 offset-2">
-            {ownerFormName == null && formHeader()}
-            <FieldSections formerProps={props} />
-            {mappedErrors.fields &&
-              error.map((e, i) => (
-                <div
-                  key={`${e.reason}_${i}`}
-                  className="is-invalid invalid-feedback"
-                >
-                  {e?.message}
-                </div>
-              ))}
+            {ownerFormName == null && (
+              <FormName
+                setFormName={setFormName}
+                formName={formName}
+                errors={errors}
+              />
+            )}
+            <FieldSections
+              addField={addField}
+              addOption={addOption}
+              cancelField={(fieldId: string) => cancelField(fieldId)}
+              errors={errors}
+              fields={fields}
+              openSubForm={openSubForm}
+              removeOption={removeOption}
+              saveField={saveField}
+              selectedFieldId={selectedFieldId}
+              setFieldDescription={setFieldDescription}
+              setFieldIsKey={setFieldIsKey}
+              setFieldName={setFieldName}
+              setFieldOption={setFieldOption}
+              setFieldReferencedDatabaseId={setFieldReferencedDatabaseId}
+              setFieldReferencedFormId={setFieldReferencedFormId}
+              setFieldRequired={setFieldRequired}
+              setSelectedField={setSelectedField}
+            />
           </div>
           <div className="col-2">
             <button

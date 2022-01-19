@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { FieldKind } from 'core-api-client';
 
@@ -13,12 +13,10 @@ import {
 } from '../../reducers/former';
 
 import { Former } from './Former';
-import { ApiErrorDetails } from './types';
 
 export const FormerContainer: FC = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
-  const [error, setError] = useState<ApiErrorDetails[]>([]);
 
   // load data
   useEffect(() => {
@@ -68,6 +66,7 @@ export const FormerContainer: FC = () => {
   const setSelectedField = useCallback(
     (fieldId: string | undefined) => {
       dispatch(formerActions.selectField({ fieldId }));
+      dispatch(formerActions.resetFormErrors());
     },
     [dispatch],
   );
@@ -162,6 +161,7 @@ export const FormerContainer: FC = () => {
 
   const saveField = useCallback(
     (fieldId: string) => {
+      dispatch(formerActions.resetFormErrors());
       dispatch(formerActions.selectField({ fieldId: undefined }));
     },
     [dispatch],
@@ -171,13 +171,12 @@ export const FormerContainer: FC = () => {
     if (ownerForm) {
       dispatch(formerActions.saveForm());
     } else if (formDefinition) {
+      dispatch(formerActions.resetFormErrors());
       try {
         const data = await dispatch(postForm(formDefinition)).unwrap();
         history.push(`/browse/forms/${data.id}`);
-        console.log('POST FORM', data);
       } catch (e: any) {
-        console.log('POST FORM ERROR', e);
-        setError(e?.details?.causes);
+        dispatch(formerActions.setFormErrors({ errors: e?.details?.causes }));
       }
     }
   }, [dispatch, formDefinition, ownerForm]);
@@ -188,27 +187,27 @@ export const FormerContainer: FC = () => {
 
   return (
     <Former
-      formName={form.name}
-      setFormName={setFormName}
-      fields={form.fields}
-      selectedFieldId={selectedField?.id}
-      setSelectedField={setSelectedField}
       addField={addField}
-      setFieldOption={setFieldOption}
       addOption={addOption}
-      removeOption={removeOption}
-      setFieldRequired={setFieldRequired}
-      setFieldIsKey={setFieldIsKey}
-      setFieldName={setFieldName}
-      setFieldDescription={setFieldDescription}
+      cancelField={(fieldId: string) => cancelField(fieldId)}
+      errors={form.errors}
+      fields={form.fields}
+      formName={form.name}
       openSubForm={openSubForm}
+      ownerFormName={ownerForm?.name}
+      removeOption={removeOption}
       saveField={saveField}
       saveForm={saveForm}
-      ownerFormName={ownerForm?.name}
-      cancelField={(fieldId: string) => cancelField(fieldId)}
+      selectedFieldId={selectedField?.id}
+      setFieldDescription={setFieldDescription}
+      setFieldIsKey={setFieldIsKey}
+      setFieldName={setFieldName}
+      setFieldOption={setFieldOption}
       setFieldReferencedDatabaseId={setFieldReferencedDatabaseId}
       setFieldReferencedFormId={setFieldReferencedFormId}
-      error={error}
+      setFieldRequired={setFieldRequired}
+      setFormName={setFormName}
+      setSelectedField={setSelectedField}
     />
   );
 };
