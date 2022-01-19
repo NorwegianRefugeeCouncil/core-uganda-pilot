@@ -15,6 +15,8 @@ export const RecordField: FC<RecordFieldProps> = ({
   subRecords,
 }) => {
   const renderField = (f: FieldDefinition, v: any) => {
+    if (!v) return <div className="text-muted">-</div>;
+
     if (f.fieldType.reference) {
       return (
         <div>
