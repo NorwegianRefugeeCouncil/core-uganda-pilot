@@ -5,7 +5,7 @@ import format from 'date-fns/format';
 
 type RecordFieldProps = {
   field: FieldDefinition;
-  value: any;
+  value: string;
   subRecords: Record[] | undefined;
 };
 
