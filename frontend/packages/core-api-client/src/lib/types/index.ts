@@ -18,6 +18,7 @@ export enum FieldKind {
   MultiSelect = 'multiSelect',
   Week = 'week',
   Month = 'month',
+  Boolean = 'boolean',
 }
 
 export type FieldType = {
@@ -31,6 +32,7 @@ export type FieldType = {
   quantity?: FieldTypeQuantity;
   singleSelect?: FieldTypeSingleSelect;
   multiSelect?: FieldTypeMultiSelect;
+  boolean?: FieldTypeBoolean;
 };
 
 export type FieldTypeText = {};
@@ -57,6 +59,8 @@ export type FieldTypeMultiSelect = {
 };
 
 export class FieldTypeWeek {}
+
+export type FieldTypeBoolean = {};
 
 export type FieldTypeReference = {
   databaseId: string;
@@ -135,7 +139,9 @@ export type Response<TRequest, TResponse> = {
 };
 
 export type PartialObjectWrapper<T> = { object: Partial<T> };
-export type DataOperation<TRequest, TResponse> = (request: TRequest) => Promise<TResponse>;
+export type DataOperation<TRequest, TResponse> = (
+  request: TRequest,
+) => Promise<TResponse>;
 
 export type DatabaseCreateRequest = PartialObjectWrapper<Database>;
 export type DatabaseCreateResponse = Response<DatabaseCreateRequest, Database>;
@@ -200,7 +206,11 @@ export interface RecordLister {
   listRecords: DataOperation<RecordListRequest, RecordListResponse>;
 }
 
-export type RecordGetRequest = { databaseId: string; formId: string; recordId: string };
+export type RecordGetRequest = {
+  databaseId: string;
+  formId: string;
+  recordId: string;
+};
 export type RecordGetResponse = Response<RecordGetRequest, Record>;
 
 export interface RecordGetter {
