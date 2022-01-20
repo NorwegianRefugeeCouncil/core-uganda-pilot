@@ -4,12 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/sqlmanager"
 	"github.com/nrc-no/core/pkg/utils/pointers"
 	"golang.org/x/sync/errgroup"
-	"strings"
-	"time"
 
 	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/api/types"
@@ -612,6 +613,8 @@ func (f FlatForms) hydrateField(field *Field) (*types.FieldDefinition, error) {
 		return f.hydrateSingleSelectField(field)
 	case types.FieldKindMultiSelect:
 		return f.hydrateMultiSelectField(field)
+	case types.FieldKindBoolean:
+		return f.hydrateBooleanField(field)
 	}
 	return nil, errors.New("unprocessable field type")
 }
@@ -733,6 +736,15 @@ func (f FlatForms) hydrateReferenceField(field *Field) (*types.FieldDefinition, 
 	return fieldDef, nil
 }
 
+// hydrateBooleanField hydrates a types.FieldTypeBoolean
+func (f FlatForms) hydrateBooleanField(field *Field) (*types.FieldDefinition, error) {
+	fieldDef := hydrateFieldDefaults(field)
+	fieldDef.FieldType = types.FieldType{
+		Boolean: &types.FieldTypeBoolean{},
+	}
+	return fieldDef, nil
+}
+
 // flattenForm will flatten a types.FormDefinition into a FlatForms
 func flattenForm(form *types.FormDefinition) (FlatForms, error) {
 	var folderId *string
@@ -809,6 +821,8 @@ func flattenField(rootForm, form types.FormInterface, field *types.FieldDefiniti
 		return flattenSingleSelectField(rootForm, form, field)
 	case types.FieldKindMultiSelect:
 		return flattenMultiSelectField(rootForm, form, field)
+	case types.FieldKindBoolean:
+		return flattenBooleanField(rootForm, form, field)
 	}
 	return FlatForms{}, fmt.Errorf("unprocessable field kind %v", fieldKind)
 }
@@ -938,4 +952,11 @@ func flattenSubFormField(rootForm, form types.FormInterface, field *types.FieldD
 		return FlatForms{}, err
 	}
 	return flatField.Add(flatSubForm), nil
+}
+
+// flattenBooleanField flattens a types.FieldTypeBoolean
+func flattenBooleanField(rootForm, form types.FormInterface, field *types.FieldDefinition) (FlatForms, error) {
+	storedField := getFieldsDefault(rootForm, form, field)
+	storedField.Type = types.FieldKindBoolean
+	return FlatForms{Fields: []*Field{storedField}}, nil
 }

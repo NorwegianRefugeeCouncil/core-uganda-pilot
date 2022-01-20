@@ -16,7 +16,7 @@ func yesNo(name string, required bool) *types.FieldDefinition {
 	return &types.FieldDefinition{
 		Name:      name,
 		Required:  required,
-		FieldType: types.FieldType{SingleSelect: &types.FieldTypeSingleSelect{Options: yesNoChoice}},
+		FieldType: types.FieldType{Boolean: &types.FieldTypeBoolean{}},
 	}
 }
 

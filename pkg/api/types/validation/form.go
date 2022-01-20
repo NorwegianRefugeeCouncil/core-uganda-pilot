@@ -2,13 +2,14 @@ package validation
 
 import (
 	"fmt"
+	"reflect"
+	"regexp"
+	"strings"
+
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/utils/sets"
 	"github.com/nrc-no/core/pkg/validation"
 	uuid "github.com/satori/go.uuid"
-	"reflect"
-	"regexp"
-	"strings"
 )
 
 const (
@@ -278,6 +279,7 @@ func ValidateFieldType(fieldType types.FieldType, path *validation.Path) validat
 	subFormPath := path.Child("subForm")
 	singleSelectPath := path.Child("singleSelect")
 	multiSelect := path.Child("multiSelect")
+	booleanPath := path.Child("boolean")
 
 	// finds what kind of field type is defined
 	var found []types.FieldKind
@@ -329,6 +331,8 @@ func ValidateFieldType(fieldType types.FieldType, path *validation.Path) validat
 		result = append(result, ValidateFieldTypeSingleSelect(fieldType.SingleSelect, singleSelectPath)...)
 	case types.FieldKindMultiSelect:
 		result = append(result, ValidateFieldTypeMultiSelect(fieldType.MultiSelect, multiSelect)...)
+	case types.FieldKindBoolean:
+		result = append(result, ValidateFieldTypeBoolean(fieldType.Boolean, booleanPath)...)
 	default:
 		result = append(result, validation.InternalError(path, fmt.Errorf("unknown field kind %v", fieldKind)))
 	}
@@ -459,5 +463,11 @@ func ValidateSelectOptions(options []*types.SelectOption, path *validation.Path)
 
 	}
 
+	return result
+}
+
+func ValidateFieldTypeBoolean(ftBoolean *types.FieldTypeBoolean, path *validation.Path) validation.ErrorList {
+	// noop
+	var result []*validation.Error
 	return result
 }
