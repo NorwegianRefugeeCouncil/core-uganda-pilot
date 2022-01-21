@@ -623,9 +623,8 @@ func TestValidateRecord(t *testing.T) {
 			name: "optional boolean field with nil value",
 			form: aTextForm(
 				tu.FormField(
-					tu.AField(
+					tu.ABooleanField(
 						tu.FieldID("booleanField"),
-						tu.FieldTypeBoolean(),
 					),
 				),
 			),
@@ -636,10 +635,9 @@ func TestValidateRecord(t *testing.T) {
 			name: "required boolean field with nil value",
 			form: aTextForm(
 				tu.FormField(
-					tu.AField(
+					tu.ABooleanField(
 						tu.FieldID("booleanField"),
 						tu.FieldRequired(true),
-						tu.FieldTypeBoolean(),
 					),
 				),
 			),
@@ -652,10 +650,9 @@ func TestValidateRecord(t *testing.T) {
 			name: "required boolean field with true value",
 			form: aTextForm(
 				tu.FormField(
-					tu.AField(
+					tu.ABooleanField(
 						tu.FieldID("booleanField"),
 						tu.FieldRequired(true),
-						tu.FieldTypeBoolean(),
 					),
 				),
 			),
