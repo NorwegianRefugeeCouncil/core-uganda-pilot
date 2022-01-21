@@ -8,6 +8,13 @@ export const BooleanFieldEditor: React.FC<FieldEditorProps> = ({
   value,
   onChange,
 }) => {
+  // It doesn't make sense for this to be null/undefined/empty
+  React.useEffect(() => {
+    if (value === null || value === undefined || value === '') {
+      onChange('false');
+    }
+  }, [value]);
+
   return (
     <div className="form-group mb-2">
       <div className="form-check">
