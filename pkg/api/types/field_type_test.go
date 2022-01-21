@@ -1,8 +1,9 @@
 package types
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 const duplicateAccessorMsg = `it seems that the accessor for %s returned a value that was returned by another accessor.
@@ -61,6 +62,11 @@ func TestGetFieldKind(t *testing.T) {
 			fieldType:  FieldType{MultiSelect: &FieldTypeMultiSelect{}},
 			expectKind: FieldKindMultiSelect,
 		},
+		{
+			name:       "boolean",
+			fieldType:  FieldType{Boolean: &FieldTypeBoolean{}},
+			expectKind: FieldKindBoolean,
+		},
 	}
 
 	var handledFieldKinds []FieldKind
@@ -106,6 +112,7 @@ func TestAccessor(t *testing.T) {
 	week := &FieldTypeWeek{}
 	singleSelect := &FieldTypeSingleSelect{}
 	multiSelect := &FieldTypeMultiSelect{}
+	boolean := &FieldTypeBoolean{}
 
 	ft := FieldType{
 		Text:          text,
@@ -118,6 +125,7 @@ func TestAccessor(t *testing.T) {
 		Week:          week,
 		SingleSelect:  singleSelect,
 		MultiSelect:   multiSelect,
+		Boolean:       boolean,
 	}
 
 	var foundValues []interface{}

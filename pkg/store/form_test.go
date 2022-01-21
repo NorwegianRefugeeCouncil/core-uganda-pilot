@@ -1,11 +1,12 @@
 package store
 
 import (
+	"testing"
+
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/testutils"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 // TestFlattenHydrateFormDefinition tests that we can flatten and re-hydrate a FormDefinition
@@ -82,7 +83,17 @@ func TestFlattenHydrateFormDefinition(t *testing.T) {
 					testutils.FieldName(fieldName),
 				),
 			),
-		}, {
+		},
+		{
+			name: "with boolean field",
+			formDefinition: aFormWithFields(
+				testutils.ABooleanField(
+					testutils.FieldID(fieldId),
+					testutils.FieldName(fieldName),
+				),
+			),
+		},
+		{
 			name: "with reference field",
 			formDefinition: aFormWithFields(
 				testutils.AReferenceField(aFormRef,

@@ -2,13 +2,14 @@ package validation
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
+	"testing"
+
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/validation"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
-	"strconv"
-	"strings"
-	"testing"
 )
 
 var textFieldType = types.FieldType{
@@ -343,7 +344,20 @@ func TestValidateForm(t *testing.T) {
 					},
 				},
 			}),
-		}, {
+		},
+		{
+			name:   "field with valid boolean field",
+			expect: nil,
+			form: formWithFields(types.FieldDefinitions{
+				{
+					Name: validFieldName,
+					FieldType: types.FieldType{
+						Boolean: &types.FieldTypeBoolean{},
+					},
+				},
+			}),
+		},
+		{
 			name:   "field with valid quantity field",
 			expect: nil,
 			form: formWithFields(types.FieldDefinitions{
@@ -368,7 +382,8 @@ func TestValidateForm(t *testing.T) {
 					},
 				},
 			}),
-		}, {
+		},
+		{
 			name: "reference field with invalid database id",
 			expect: validation.ErrorList{
 				validation.Invalid(validation.NewPath("fields[0].fieldType.reference.databaseId"), "abc", errReferenceFieldDatabaseIdInvalid),
