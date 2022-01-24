@@ -1,8 +1,10 @@
 import React, { FC } from 'react';
 import { FieldDefinition, FieldValue } from 'core-api-client';
+import _ from 'lodash';
 
-import { FormValue } from '../../reducers/recorder';
 import { FieldEditor } from '../../components/FieldEditor/FieldEditor';
+import { FormValue } from '../../reducers/Recorder/types';
+import { ErrorMessage } from '../../types/errors';
 
 type Props = {
   fields: FieldDefinition[];
@@ -12,6 +14,7 @@ type Props = {
   onSaveRecord: () => void;
   onSelectSubRecord: (subRecordId: string) => void;
   subRecords: { [key: string]: FormValue[] };
+  errors: ErrorMessage | undefined;
 };
 
 export const RecordEditorComponent: FC<Props> = (props) => {
@@ -23,7 +26,10 @@ export const RecordEditorComponent: FC<Props> = (props) => {
     subRecords,
     onChangeValue,
     values,
+    errors,
   } = props;
+
+  console.log('ERRORSOJDSIGFPV', props);
   if (!fields) {
     return <></>;
   }
@@ -35,7 +41,11 @@ export const RecordEditorComponent: FC<Props> = (props) => {
           <div className="col-12 col-lg-8">
             <h4 className="mb-4">Add record</h4>
             <div className="card bg-dark text-light border-secondary">
-              <div className="card-body">
+              <div
+                className={`card-body ${errors ? 'is-invalid' : ''}`}
+                id="values"
+                aria-describedby="valuesFeedback"
+              >
                 {fields.map((field) => {
                   const fieldValue = values.find((v) => v.fieldId === field.id);
                   const value = fieldValue?.value ? fieldValue.value : '';
@@ -57,6 +67,15 @@ export const RecordEditorComponent: FC<Props> = (props) => {
                     />
                   );
                 })}
+                <div
+                  className=" is-invalid"
+                  id="valuesFeedback"
+                >
+                  {_.map(errors, (e: any) => {
+                    console.log('ERROR', e);
+                    return e.message || e;
+                  })}
+                </div>
                 <div className="my-3">
                   <button
                     onClick={() => onSaveRecord()}
