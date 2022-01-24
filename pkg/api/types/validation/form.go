@@ -35,6 +35,8 @@ const (
 	errSelectOptionNameRequired              = "Name of the option is required"
 	errSelectOptionsRequired                 = "At least 1 option must be specified"
 	errSubFormCannotBeKeyOrRequiredField     = "Sub form fields cannot key marked as key or required fields"
+	errBooleanFieldCannotBeKey               = "Boolean fields cannot key marked as key field"
+	errBooleanFieldMustBeRequired            = "Boolean fields must be required"
 	fieldCodeMaxLength                       = 32
 	fieldCodeMinLength                       = 1
 	fieldNameMaxLength                       = 128
@@ -196,6 +198,18 @@ func ValidateFieldDefinition(field *types.FieldDefinition, path *validation.Path
 	// validates that the field name is a valid form name if the field is a subform field
 	if field.FieldType.SubForm != nil {
 		result = append(result, ValidateFormName(field.Name, namePath)...)
+	}
+
+	if field.FieldType.Boolean != nil {
+		// Validates that boolean field values are required
+		if !field.Required {
+			result = append(result, validation.Invalid(requiredPath, field.Required, errBooleanFieldMustBeRequired))
+		}
+
+		// Validates that boolean field values are not key fields
+		if field.Key {
+			result = append(result, validation.Invalid(keyPath, field.Key, errBooleanFieldCannotBeKey))
+		}
 	}
 
 	// validates the field type
