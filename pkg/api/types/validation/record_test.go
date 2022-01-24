@@ -620,18 +620,6 @@ func TestValidateRecord(t *testing.T) {
 			},
 		},
 		{
-			name: "optional boolean field with nil value",
-			form: aTextForm(
-				tu.FormField(
-					tu.ABooleanField(
-						tu.FieldID("booleanField"),
-					),
-				),
-			),
-			recordOptions: tu.RecordValue("booleanField", types.NewNullValue()),
-			expect:        nil,
-		},
-		{
 			name: "required boolean field with nil value",
 			form: aTextForm(
 				tu.FormField(

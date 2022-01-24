@@ -350,7 +350,8 @@ func TestValidateForm(t *testing.T) {
 			expect: nil,
 			form: formWithFields(types.FieldDefinitions{
 				{
-					Name: validFieldName,
+					Name:     validFieldName,
+					Required: true,
 					FieldType: types.FieldType{
 						Boolean: &types.FieldTypeBoolean{},
 					},
