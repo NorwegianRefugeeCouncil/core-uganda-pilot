@@ -4,7 +4,7 @@ import { adapter } from './former.adapter';
 import { extraReducers, reducers } from './former.reducers';
 
 export default createSlice({
-  name: 'recorder',
+  name: 'former',
   initialState: {
     ...adapter.getInitialState(),
     selectedFormId: '',

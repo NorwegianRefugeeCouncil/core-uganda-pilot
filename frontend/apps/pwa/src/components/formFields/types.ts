@@ -1,6 +1,6 @@
 import { FieldDefinition } from 'core-api-client';
 
-import { FormValue } from '../../reducers/recorder';
+import { FormValue } from '../../reducers/Recorder/types';
 
 export type FieldEditorProps = {
   field: FieldDefinition;

@@ -1,4 +1,4 @@
-import { selectPostRecords } from '../recorder';
+import { selectPostRecords } from '../Recorder';
 
 describe('selectPostRecords', () => {
   it('should return the ordered records', function () {
