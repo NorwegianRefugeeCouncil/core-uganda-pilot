@@ -3,8 +3,7 @@ import React, { FC } from 'react';
 
 import DatabasePickerContainer from '../../components/DatabasePicker';
 import FormPickerContainer from '../../components/FormPicker';
-
-import { ErrorMessage } from './types';
+import { ErrorMessage } from '../../types/errors';
 
 type FormerFieldProps = {
   formType: FormType;
