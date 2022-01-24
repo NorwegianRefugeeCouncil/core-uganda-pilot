@@ -5,7 +5,7 @@ import folderReducer from '../reducers/folder';
 import databaseReducer from '../reducers/database';
 import recordsReducer from '../reducers/records';
 import recorderReducer from '../reducers/recorder';
-import formerReducer from '../reducers/former';
+import formerSlice from '../reducers/Former';
 
 export const store = configureStore({
   reducer: {
@@ -14,7 +14,7 @@ export const store = configureStore({
     databases: databaseReducer,
     records: recordsReducer,
     recorder: recorderReducer,
-    former: formerReducer,
+    former: formerSlice.reducer,
   },
   devTools: true,
 });
