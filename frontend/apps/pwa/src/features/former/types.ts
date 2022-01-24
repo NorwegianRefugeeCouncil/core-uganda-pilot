@@ -1,18 +1,7 @@
 import { FieldKind } from 'core-api-client';
 
-import { FormField } from '../../reducers/former';
-
-export type ApiErrorDetails = {
-  field: string;
-  message: string;
-  reason: string;
-};
-
-// export type ErrorMessage =
-//   | { [key: string]: Record<string, string> }
-//   | { [key: string]: string };
-
-export type ErrorMessage = Record<string, any>;
+import { FormField } from '../../reducers/Former/types';
+import { ErrorMessage } from '../../types/errors';
 
 export type FormerProps = {
   addField: (kind: FieldKind) => void;

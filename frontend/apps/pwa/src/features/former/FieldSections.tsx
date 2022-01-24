@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { FormField } from '../../reducers/former';
+import { FormField } from '../../reducers/Former/types';
 
 import { FieldTypePicker } from './FieldTypePicker';
 import { FormerField } from './FormerField';
@@ -8,7 +8,6 @@ import { FormerProps } from './types';
 
 type FieldSectionsProps = Omit<
   FormerProps,
-  // | 'errors'
   'fieldOptions' | 'formName' | 'ownerFormName' | 'saveForm' | 'setFormName'
 >;
 
@@ -19,7 +18,6 @@ export const FieldSections: React.FC<FieldSectionsProps> = (props) => {
     addField,
     addOption,
     cancelField,
-    // errors,
     fields,
     openSubForm,
     removeOption,
