@@ -28,35 +28,47 @@ type FormerFieldProps = {
   referencedFormId: string | undefined;
   cancel: () => void;
 };
-export const FormerField: FC<FormerFieldProps> = (props) => {
-  const {
-    fieldName,
-    fieldOptions,
-    setFieldOption,
-    addOption,
-    removeOption,
-    setFieldName,
-    isSelected,
-    selectField,
-    fieldDescription,
-    setFieldDescription,
-    fieldType,
-    referencedDatabaseId,
-    referencedFormId,
-    setReferencedDatabaseId,
-    setReferencedFormId,
-    openSubForm,
-    saveField,
-    cancel,
-    fieldIsKey,
-    setFieldIsKey,
-    fieldRequired,
-    setFieldRequired,
-  } = props;
+export const FormerField: FC<FormerFieldProps> = ({
+  fieldName,
+  fieldOptions,
+  setFieldOption,
+  addOption,
+  removeOption,
+  setFieldName,
+  isSelected,
+  selectField,
+  fieldDescription,
+  setFieldDescription,
+  fieldType,
+  referencedDatabaseId,
+  referencedFormId,
+  setReferencedDatabaseId,
+  setReferencedFormId,
+  openSubForm,
+  saveField,
+  cancel,
+  fieldIsKey,
+  setFieldIsKey,
+  fieldRequired,
+  setFieldRequired,
+}) => {
+  React.useEffect(() => {
+    if (fieldType === FieldKind.Boolean) {
+      setFieldRequired(true);
+      setFieldIsKey(false);
+    }
+  }, [fieldType]);
+
+  const requiredDisabled = fieldIsKey || fieldType === FieldKind.Boolean;
+  const isKeyDisabled = fieldType === FieldKind.Boolean;
 
   if (!isSelected) {
     return (
-      <div onClick={() => selectField()} style={{ cursor: 'pointer' }} className="card bg-dark text-light border-light mb-2">
+      <div
+        onClick={() => selectField()}
+        style={{ cursor: 'pointer' }}
+        className="card bg-dark text-light border-light mb-2"
+      >
         <div className="card-body p-3">
           <div className="d-flex flex-row">
             <span className="flex-grow-1">{fieldName}</span>
@@ -101,7 +113,11 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
                   <label className="form-label" htmlFor="fieldName">
                     Field Options
                   </label>
-                  <button type="button" className="btn btn-outline-primary" onClick={() => addOption()}>
+                  <button
+                    type="button"
+                    className="btn btn-outline-primary"
+                    onClick={() => addOption()}
+                  >
                     Add option
                   </button>
                 </div>
@@ -112,9 +128,15 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
                       id={`fieldOption-${i}`}
                       type="text"
                       value={opt ? opt.name : ''}
-                      onChange={(event) => setFieldOption(i, event.target.value)}
+                      onChange={(event) =>
+                        setFieldOption(i, event.target.value)
+                      }
                     />
-                    <button type="button" className="btn btn-outline-danger" onClick={() => removeOption(i)}>
+                    <button
+                      type="button"
+                      className="btn btn-outline-danger"
+                      onClick={() => removeOption(i)}
+                    >
                       <i className="bi bi-x" />
                     </button>
                   </div>
@@ -152,7 +174,10 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
               <div>
                 <div className="form-group mb-2">
                   <label className="form-label">Database</label>
-                  <DatabasePickerContainer setDatabaseId={setReferencedDatabaseId} databaseId={referencedDatabaseId} />
+                  <DatabasePickerContainer
+                    setDatabaseId={setReferencedDatabaseId}
+                    databaseId={referencedDatabaseId}
+                  />
                 </div>
                 <div className="form-group">
                   <label className="form-label">Form</label>
@@ -175,7 +200,7 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
 
             <div className="form-check">
               <input
-                disabled={fieldIsKey}
+                disabled={requiredDisabled}
                 className="form-check-input"
                 type="checkbox"
                 value=""
@@ -197,6 +222,7 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
                 value=""
                 onChange={() => setFieldIsKey(!fieldIsKey)}
                 checked={fieldIsKey}
+                disabled={isKeyDisabled}
                 id="key"
               />
               <label className="form-check-label" htmlFor="key">
@@ -207,7 +233,10 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
         </div>
       </div>
       <div className="card-footer">
-        <button onClick={() => saveField()} className="btn btn-primary me-2 shadow">
+        <button
+          onClick={() => saveField()}
+          className="btn btn-primary me-2 shadow"
+        >
           Save
         </button>
         <button onClick={() => cancel()} className="btn btn-secondary shadow">
