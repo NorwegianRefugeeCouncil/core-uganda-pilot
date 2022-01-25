@@ -67,15 +67,17 @@ export const RecordEditorComponent: FC<Props> = (props) => {
                     />
                   );
                 })}
-                <div
-                  className=" is-invalid"
-                  id="valuesFeedback"
-                >
-                  {_.map(errors, (e: any) => {
-                    console.log('ERROR', e);
-                    return e.message || e;
-                  })}
-                </div>
+                {_.map(errors, (e: any) => {
+                  return (
+                    <div
+                      className="invalid-feedback is-invalid"
+                      id="valuesFeedback"
+                      key={e.message || e}
+                    >
+                      {e.message || e}
+                    </div>
+                  );
+                })}
                 <div className="my-3">
                   <button
                     onClick={() => onSaveRecord()}
