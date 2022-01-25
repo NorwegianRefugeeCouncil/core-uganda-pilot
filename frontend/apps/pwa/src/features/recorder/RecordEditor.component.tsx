@@ -29,7 +29,6 @@ export const RecordEditorComponent: FC<Props> = (props) => {
     errors,
   } = props;
 
-  console.log('ERRORSOJDSIGFPV', props);
   if (!fields) {
     return <></>;
   }
