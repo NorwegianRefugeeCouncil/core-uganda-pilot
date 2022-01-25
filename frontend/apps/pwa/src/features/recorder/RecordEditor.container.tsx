@@ -152,11 +152,9 @@ export const RecordEditorContainer: FC = () => {
         const recordResponse = await dispatch(
           postRecord(recordsToPost),
         ).unwrap();
-        console.log('RESP', recordResponse);
         dispatch(recordActions.addMany(recordResponse));
         history.push(`/browse/records/${recordResponse[0].id}`);
       } catch (e: any) {
-        console.log('ERROR', e);
         dispatch(actions.setRecordErrors({ errors: e?.details?.causes }));
       }
     }
