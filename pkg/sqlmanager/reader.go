@@ -4,14 +4,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/lib/pq"
 	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/utils/pointers"
 	"gorm.io/gorm"
-	"strconv"
-	"strings"
-	"time"
 )
 
 const (
@@ -183,6 +184,8 @@ func readInRecordField(
 		return readInReferenceField(record, field, value)
 	case types.FieldKindText, types.FieldKindMultilineText:
 		return readInTextField(record, field, value)
+	case types.FieldKindBoolean:
+		return readInBooleanField(record, field, value)
 	}
 
 	return nil
@@ -303,6 +306,19 @@ func readInQuantityField(record *types.Record, field *types.FieldDefinition, val
 	return nil
 }
 
+// readInBooleanField will populate a record types.FieldValue for a types.FieldTypeBoolean from an SQL value
+func readInBooleanField(record *types.Record, field *types.FieldDefinition, value interface{}) error {
+	fieldValue, err := getBooleanValue(value)
+	if err != nil {
+		return err
+	}
+	record.Values = append(record.Values, types.FieldValue{
+		FieldID: field.ID,
+		Value:   fieldValue,
+	})
+	return nil
+}
+
 // getStringValue will coerce a string or *string into a *string
 func getStringValue(value interface{}) (types.StringOrArray, error) {
 	switch t := value.(type) {
@@ -363,6 +379,23 @@ func getIntValue(value interface{}) (types.StringOrArray, error) {
 			return types.NewNullValue(), nil
 		} else {
 			return types.NewStringValue(strconv.FormatInt(*t, 10)), nil
+		}
+	case nil:
+		return types.NewNullValue(), nil
+	default:
+		return types.StringOrArray{}, fmt.Errorf("cannot convert type %T to types.StringOrArray", value)
+	}
+}
+
+func getBooleanValue(value interface{}) (types.StringOrArray, error) {
+	switch t := value.(type) {
+	case bool:
+		return types.NewStringValue(strconv.FormatBool(t)), nil
+	case *bool:
+		if t == nil {
+			return types.NewNullValue(), nil
+		} else {
+			return types.NewStringValue(strconv.FormatBool(*t)), nil
 		}
 	case nil:
 		return types.NewNullValue(), nil

@@ -3,7 +3,7 @@ package testutils
 import (
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/utils/pointers"
-	"github.com/satori/go.uuid"
+	uuid "github.com/satori/go.uuid"
 )
 
 type RecordOption func(record *types.Record) *types.Record
@@ -233,6 +233,8 @@ func FieldTypeKind(kind types.FieldKind) FieldOption {
 			return FieldTypeMonth()(fieldDefinition)
 		case types.FieldKindWeek:
 			return FieldTypeWeek()(fieldDefinition)
+		case types.FieldKindBoolean:
+			return FieldTypeBoolean()(fieldDefinition)
 		case types.FieldKindSingleSelect:
 			// todo
 		}
@@ -343,6 +345,15 @@ func FieldTypeWeek() FieldOption {
 	}
 }
 
+func FieldTypeBoolean() FieldOption {
+	return func(fieldDefinition *types.FieldDefinition) *types.FieldDefinition {
+		fieldDefinition.FieldType = types.FieldType{
+			Boolean: &types.FieldTypeBoolean{},
+		}
+		return fieldDefinition
+	}
+}
+
 func AField(options ...FieldOption) *types.FieldDefinition {
 	f := &types.FieldDefinition{}
 	for _, option := range options {
@@ -407,6 +418,12 @@ func AMultiSelectField(selectOptions []*types.SelectOption, options ...FieldOpti
 
 func AQuantityField(options ...FieldOption) *types.FieldDefinition {
 	opts := []FieldOption{FieldTypeQuantity()}
+	opts = append(opts, options...)
+	return AField(opts...)
+}
+
+func ABooleanField(options ...FieldOption) *types.FieldDefinition {
+	opts := []FieldOption{FieldTypeBoolean()}
 	opts = append(opts, options...)
 	return AField(opts...)
 }

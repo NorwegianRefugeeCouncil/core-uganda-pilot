@@ -2,6 +2,11 @@ package sqlmanager
 
 import (
 	"fmt"
+	"os"
+	"strings"
+	"testing"
+	"time"
+
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/mocks"
 	"github.com/nrc-no/core/pkg/sql/schema"
@@ -13,10 +18,6 @@ import (
 	"github.com/stretchr/testify/suite"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"os"
-	"strings"
-	"testing"
-	"time"
 )
 
 type Suite struct {
@@ -250,6 +251,25 @@ func TestWriterFormConversion(t *testing.T) {
 			want: []schema.DDL{
 				{Query: createTableDDL},
 				{Query: `alter table "databaseId"."formId" add "quantityField" int;`},
+			},
+		},
+		{
+			name: "form with boolean field",
+			args: []*types.FormDefinition{{
+				ID:         formId,
+				DatabaseID: databaseId,
+				Fields: []*types.FieldDefinition{
+					{
+						ID: "booleanField",
+						FieldType: types.FieldType{
+							Boolean: &types.FieldTypeBoolean{},
+						},
+					},
+				},
+			}},
+			want: []schema.DDL{
+				{Query: createTableDDL},
+				{Query: `alter table "databaseId"."formId" add "booleanField" boolean;`},
 			},
 		},
 		{

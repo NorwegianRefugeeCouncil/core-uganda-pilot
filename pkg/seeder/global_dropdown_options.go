@@ -4,10 +4,6 @@ import "github.com/nrc-no/core/pkg/api/types"
 
 // GLobal options
 var (
-	yesNoChoice = []*types.SelectOption{
-		{Name: "Yes"},
-		{Name: "No"},
-	}
 	wgShortSet = []*types.SelectOption{
 		{Name: "Moderate Impairment"},
 		{Name: "Severe Impairment"},

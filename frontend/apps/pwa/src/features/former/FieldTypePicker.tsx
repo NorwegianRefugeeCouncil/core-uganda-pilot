@@ -12,35 +12,71 @@ export const FieldTypePicker: FC<FieldTypePickerProps> = (props) => {
     <div className="card bg-dark text-light border-secondary">
       <div className="card-body bg-primary">
         <div className="d-flex flex-wrap">
-          <button className="btn btn-primary m-2 border-light" onClick={() => onSubmit(FieldKind.Text)}>
+          <button
+            className="btn btn-primary m-2 border-light"
+            onClick={() => onSubmit(FieldKind.Text)}
+          >
             Text
           </button>
-          <button className="btn btn-primary m-2 border-light" onClick={() => onSubmit(FieldKind.MultilineText)}>
+          <button
+            className="btn btn-primary m-2 border-light"
+            onClick={() => onSubmit(FieldKind.MultilineText)}
+          >
             Multiline Text
           </button>
-          <button className="btn btn-primary m-2 border-light" onClick={() => onSubmit(FieldKind.SubForm)}>
+          <button
+            className="btn btn-primary m-2 border-light"
+            onClick={() => onSubmit(FieldKind.SubForm)}
+          >
             Subform
           </button>
-          <button className="btn btn-primary m-2 border-light" onClick={() => onSubmit(FieldKind.Reference)}>
+          <button
+            className="btn btn-primary m-2 border-light"
+            onClick={() => onSubmit(FieldKind.Reference)}
+          >
             Reference
           </button>
-          <button className="btn btn-primary m-2 border-light" onClick={() => onSubmit(FieldKind.Date)}>
+          <button
+            className="btn btn-primary m-2 border-light"
+            onClick={() => onSubmit(FieldKind.Date)}
+          >
             Date
           </button>
-          <button className="btn btn-primary m-2 border-light" onClick={() => onSubmit(FieldKind.Quantity)}>
+          <button
+            className="btn btn-primary m-2 border-light"
+            onClick={() => onSubmit(FieldKind.Quantity)}
+          >
             Quantity
           </button>
-          <button className="btn btn-primary m-2 border-light" onClick={() => onSubmit(FieldKind.Month)}>
+          <button
+            className="btn btn-primary m-2 border-light"
+            onClick={() => onSubmit(FieldKind.Month)}
+          >
             Month
           </button>
-          <button className="btn btn-primary m-2 border-light" onClick={() => onSubmit(FieldKind.SingleSelect)}>
+          <button
+            className="btn btn-primary m-2 border-light"
+            onClick={() => onSubmit(FieldKind.SingleSelect)}
+          >
             Single Select
           </button>
-          <button className="btn btn-primary m-2 border-light" onClick={() => onSubmit(FieldKind.MultiSelect)}>
+          <button
+            className="btn btn-primary m-2 border-light"
+            onClick={() => onSubmit(FieldKind.MultiSelect)}
+          >
             Multi Select
           </button>
-          <button className="btn btn-primary m-2 border-light" onClick={() => onSubmit(FieldKind.Week)}>
+          <button
+            className="btn btn-primary m-2 border-light"
+            onClick={() => onSubmit(FieldKind.Week)}
+          >
             Week
+          </button>
+          <button
+            className="btn btn-primary m-2 border-light"
+            onClick={() => onSubmit(FieldKind.Boolean)}
+          >
+            Checkbox
           </button>
         </div>
       </div>

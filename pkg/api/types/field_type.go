@@ -30,6 +30,8 @@ type FieldType struct {
 	SingleSelect *FieldTypeSingleSelect `json:"singleSelect,omitempty" yaml:"singleSelect,omitempty"`
 	// SingleSelect represents the configuration for a single select field
 	MultiSelect *FieldTypeMultiSelect `json:"multiSelect,omitempty" yaml:"multiSelect,omitempty"`
+	// Boolean represents the configuration for a yes/no boolean field
+	Boolean *FieldTypeBoolean `json:"boolean,omitempty" yaml:"boolean,omitempty"`
 }
 
 const accessorMessage = `
@@ -131,6 +133,8 @@ type FieldTypeSubForm struct {
 	Fields FieldDefinitions `json:"fields,omitempty" yaml:"fields,omitempty"`
 }
 
+type FieldTypeBoolean struct{}
+
 // GetFields  returns the FieldDefinitions for the subform
 func (f *FieldTypeSubForm) GetFields() FieldDefinitions {
 	return f.Fields
@@ -167,6 +171,7 @@ const (
 	FieldKindWeek
 	FieldKindSingleSelect
 	FieldKindMultiSelect
+	FieldKindBoolean
 )
 
 var fieldAccessors = map[FieldKind]func(fieldType FieldType) interface{}{
@@ -202,5 +207,8 @@ var fieldAccessors = map[FieldKind]func(fieldType FieldType) interface{}{
 	},
 	FieldKindMultiSelect: func(fieldType FieldType) interface{} {
 		return fieldType.MultiSelect
+	},
+	FieldKindBoolean: func(fieldType FieldType) interface{} {
+		return fieldType.Boolean
 	},
 }

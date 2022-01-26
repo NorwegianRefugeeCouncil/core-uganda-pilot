@@ -3,12 +3,13 @@ package sqlmanager
 import (
 	"errors"
 	"fmt"
+	"strconv"
+	"time"
+
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/sql/schema"
 	"github.com/nrc-no/core/pkg/utils/dates"
 	"github.com/nrc-no/core/pkg/utils/sets"
-	"strconv"
-	"time"
 )
 
 type sqlState struct {
@@ -143,6 +144,8 @@ func (s writer) writeRecord(form types.FormInterface, record *types.Record) (sql
 			sqlParams, err = prepareWeekFieldColumn(fieldValue, sqlParams)
 		case types.FieldKindQuantity:
 			sqlParams, err = prepareQuantityFieldColumn(fieldValue, sqlParams)
+		case types.FieldKindBoolean:
+			sqlParams, err = prepareBooleanFieldColumn(fieldValue, sqlParams)
 		default:
 			err = fmt.Errorf("unhandled field kind %v", fieldKind)
 		}
@@ -285,6 +288,20 @@ func prepareQuantityFieldColumn(fieldValue types.FieldValue, sqlParams sqlArgs) 
 	return append(sqlParams, sqlArg{
 		columnName: fieldValue.FieldID,
 		value:      intValue,
+	}), nil
+}
+
+func prepareBooleanFieldColumn(fieldValue types.FieldValue, sqlParams sqlArgs) (sqlArgs, error) {
+	if err := assertStringValueType("boolean", fieldValue); err != nil {
+		return nil, err
+	}
+	boolValue, err := strconv.ParseBool(fieldValue.Value.StringValue)
+	if err != nil {
+		return nil, err
+	}
+	return append(sqlParams, sqlArg{
+		columnName: fieldValue.FieldID,
+		value:      boolValue,
 	}), nil
 }
 

@@ -197,6 +197,8 @@ const mapFields = (
       fieldType = { week: {} };
     } else if (field.type === 'quantity') {
       fieldType = { quantity: {} };
+    } else if (field.type === 'boolean') {
+      fieldType = { boolean: {} };
     } else if (field.type === 'singleSelect') {
       fieldType = { singleSelect: { options: field.options } };
     } else if (field.type === 'multiSelect') {

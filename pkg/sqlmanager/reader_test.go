@@ -2,13 +2,14 @@ package sqlmanager
 
 import (
 	"fmt"
+	"reflect"
+	"testing"
+	"time"
+
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/testutils"
 	"github.com/nrc-no/core/pkg/utils/pointers"
 	"github.com/stretchr/testify/assert"
-	"reflect"
-	"testing"
-	"time"
 )
 
 func TestReader(t *testing.T) {
@@ -173,7 +174,15 @@ func TestReader(t *testing.T) {
 			columns: columns(keyIdColumn, keyMyFieldID),
 			values:  singleRow(recordId, pointers.String("otherRefId")),
 			want:    singleRecord(recordWithValue(pointers.String("otherRefId"))),
-		}, {
+		},
+		{
+			name:    "form with boolean field",
+			form:    formWithField(types.FieldKindBoolean),
+			columns: columns(keyIdColumn, keyMyFieldID),
+			values:  singleRow(recordId, true),
+			want:    singleRecord(recordWithValue(pointers.String("true"))),
+		},
+		{
 			name:    "form with owner id",
 			form:    formWithField(types.FieldKindText),
 			columns: columns(keyIdColumn, keyOwnerIdColumn, keyMyFieldID),

@@ -13,6 +13,7 @@ import {
   SubFormFieldEditor,
   ReferenceFieldEditor,
 } from '../formFields';
+import { BooleanFieldEditor } from '../formFields/BooleanFieldEditor';
 
 export const FieldEditor: FC<FieldEditorProps> = (props) => {
   const {
@@ -47,6 +48,9 @@ export const FieldEditor: FC<FieldEditorProps> = (props) => {
   }
   if (fieldType.multiSelect) {
     return <MultiSelectFieldEditor {...props} />;
+  }
+  if (fieldType.boolean) {
+    return <BooleanFieldEditor {...props} />;
   }
   return <></>;
 };

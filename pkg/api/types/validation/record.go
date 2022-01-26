@@ -1,14 +1,15 @@
 package validation
 
 import (
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/utils/dates"
 	"github.com/nrc-no/core/pkg/utils/sets"
 	"github.com/nrc-no/core/pkg/validation"
 	uuid "github.com/satori/go.uuid"
-	"strconv"
-	"strings"
-	"time"
 )
 
 const (
@@ -42,6 +43,7 @@ var supportedRecordFieldKinds = []types.FieldKind{
 	types.FieldKindWeek,
 	types.FieldKindSingleSelect,
 	types.FieldKindMultiSelect,
+	types.FieldKindBoolean,
 }
 
 // supportedRecordFieldKindMap is a map of the supportedRecordFieldKinds for faster lookup
@@ -184,6 +186,8 @@ func ValidateRecordValue(path *validation.Path, value types.StringOrArray, field
 		return ValidateRecordSingleSelectValue(path, value, field)
 	case types.FieldKindMultiSelect:
 		return ValidateRecordMultiSelectValue(path, value, field)
+	case types.FieldKindBoolean:
+		return ValidateRecordBooleanValue(path, value, field)
 	}
 	return result
 }
@@ -329,6 +333,20 @@ func ValidateRecordMultiSelectValue(path *validation.Path, value types.StringOrA
 			result = append(result, validation.Duplicate(valuePath, selectedOption))
 		}
 		seenValues.Insert(selectedOption)
+	}
+
+	return result
+}
+
+func ValidateRecordBooleanValue(path *validation.Path, value types.StringOrArray, field *types.FieldDefinition) validation.ErrorList {
+	stringValue, result, done := getStringValue(path, value, field, validation.ErrorList{})
+	if done {
+		return result
+	}
+	valuePath := path.Child("value")
+
+	if stringValue != "true" && stringValue != "false" {
+		result = append(result, validation.NotSupported(valuePath, stringValue, []string{"true", "false"}))
 	}
 
 	return result

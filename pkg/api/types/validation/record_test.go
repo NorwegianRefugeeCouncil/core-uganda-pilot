@@ -2,13 +2,14 @@ package validation
 
 import (
 	"errors"
+	"testing"
+
 	"github.com/nrc-no/core/pkg/api/types"
 	tu "github.com/nrc-no/core/pkg/testutils"
 	"github.com/nrc-no/core/pkg/utils/pointers"
 	"github.com/nrc-no/core/pkg/validation"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestValidateRecord(t *testing.T) {
@@ -616,6 +617,64 @@ func TestValidateRecord(t *testing.T) {
 			recordOptions: tu.RecordValue("multiSelectField", types.NewArrayValue([]string{"option1", "option1"})),
 			expect: validation.ErrorList{
 				validation.Duplicate(firstFieldValuePath, "option1"),
+			},
+		},
+		{
+			name: "required boolean field with nil value",
+			form: aTextForm(
+				tu.FormField(
+					tu.ABooleanField(
+						tu.FieldID("booleanField"),
+						tu.FieldRequired(true),
+					),
+				),
+			),
+			recordOptions: tu.RecordValue("booleanField", types.NewNullValue()),
+			expect: validation.ErrorList{
+				validation.Required(firstFieldValuePath, errFieldValueRequired),
+			},
+		},
+		{
+			name: "required boolean field with true value",
+			form: aTextForm(
+				tu.FormField(
+					tu.ABooleanField(
+						tu.FieldID("booleanField"),
+						tu.FieldRequired(true),
+					),
+				),
+			),
+			recordOptions: tu.RecordValue("booleanField", types.NewStringValue("true")),
+			expect:        nil,
+		},
+		{
+			name: "required boolean field with false value",
+			form: aTextForm(
+				tu.FormField(
+					tu.AField(
+						tu.FieldID("booleanField"),
+						tu.FieldRequired(true),
+						tu.FieldTypeBoolean(),
+					),
+				),
+			),
+			recordOptions: tu.RecordValue("booleanField", types.NewStringValue("false")),
+			expect:        nil,
+		},
+		{
+			name: "required boolean field with invalid value",
+			form: aTextForm(
+				tu.FormField(
+					tu.AField(
+						tu.FieldID("booleanField"),
+						tu.FieldRequired(true),
+						tu.FieldTypeBoolean(),
+					),
+				),
+			),
+			recordOptions: tu.RecordValue("booleanField", types.NewStringValue("invalid")),
+			expect: validation.ErrorList{
+				validation.NotSupported(firstFieldValuePath, "invalid", []string{"true", "false"}),
 			},
 		},
 	}
