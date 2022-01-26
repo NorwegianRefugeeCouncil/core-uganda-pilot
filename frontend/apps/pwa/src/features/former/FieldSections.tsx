@@ -14,6 +14,7 @@ type FieldSectionsProps = Omit<
   | 'saveForm'
   | 'setFormName'
   | 'formId'
+  | 'invalid'
 >;
 
 export const FieldSections: React.FC<FieldSectionsProps> = (props) => {

@@ -2,6 +2,7 @@ import { FC, useCallback, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { FieldKind } from 'core-api-client';
 import { useForm } from 'react-hook-form';
+import _ from 'lodash';
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { fetchDatabases } from '../../reducers/database';
@@ -10,6 +11,7 @@ import { fetchForms } from '../../reducers/form';
 import former from '../../reducers/Former';
 import { formerGlobalSelectors } from '../../reducers/Former/former.selectors';
 import { postForm } from '../../reducers/Former/former.reducers';
+import { Form } from '../../reducers/Former/types';
 
 import { Former } from './Former';
 
@@ -17,13 +19,6 @@ export const FormerContainer: FC = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
   const { actions } = former;
-
-  const {
-    register,
-    handleSubmit,
-    setError,
-    formState: { errors },
-  } = useForm<FormData>();
 
   // load data
   useEffect(() => {
@@ -47,6 +42,18 @@ export const FormerContainer: FC = () => {
 
   const formDefinition = useAppSelector(
     formerGlobalSelectors.selectFormDefinition(database?.id, folder?.id),
+  );
+  const { register, setError, formState, clearErrors, handleSubmit, trigger } =
+    useForm<Form>({
+      defaultValues: form,
+      reValidateMode: 'onChange',
+      criteriaMode: 'all',
+    });
+  console.log(
+    'RHF errors',
+    formState.errors,
+    formState.isValid,
+    formState.isDirty,
   );
 
   useEffect(() => {
@@ -176,12 +183,18 @@ export const FormerContainer: FC = () => {
     if (ownerForm) {
       dispatch(actions.saveForm());
     } else if (formDefinition) {
-      dispatch(actions.resetFormErrors());
+      // dispatch(actions.resetFormErrors());
       try {
+        clearErrors();
         const data = await dispatch(postForm(formDefinition)).unwrap();
         history.push(`/browse/forms/${data.id}`);
-      } catch (e: any) {
-        dispatch(actions.setFormErrors({ errors: e?.details?.causes }));
+      } catch (apiErrors: any) {
+        // dispatch(actions.setFormErrors({ errors: apiErrors?.details?.causes }));
+
+        console.log('SET ERROR', apiErrors?.details?.causes);
+        _.forEach(apiErrors?.details?.causes, (error) => {
+          setError(error.field, { type: error.reason, message: error.message });
+        });
       }
     }
   }, [dispatch, formDefinition, ownerForm]);
@@ -191,20 +204,22 @@ export const FormerContainer: FC = () => {
   }
 
   return (
+    // <form onSubmit={handleSubmit(saveForm)}>
     <Former
       formId={form.formId}
       formType={form.formType}
       addField={addField}
       addOption={addOption}
       cancelField={(fieldId: string) => cancelField(fieldId)}
-      errors={form.errors}
+      errors={formState.errors}
       fields={form.fields}
       formName={form.name}
       openSubForm={openSubForm}
       ownerFormName={ownerForm?.name}
+      register={register}
       removeOption={removeOption}
       saveField={saveField}
-      saveForm={saveForm}
+      saveForm={handleSubmit(saveForm)}
       selectedFieldId={selectedField?.id}
       setFieldDescription={setFieldDescription}
       setFieldIsKey={setFieldIsKey}
@@ -215,6 +230,8 @@ export const FormerContainer: FC = () => {
       setFieldRequired={setFieldRequired}
       setFormName={setFormName}
       setSelectedField={setSelectedField}
+      invalid={!formState.isValid && formState.isDirty}
     />
+    // </form>
   );
 };

@@ -112,6 +112,11 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
             {errors?.fieldType?.subForm?.fields}
           </div>
         )}
+        {errors?.required && (
+          <div className="invalid-feedback is-invalid" id="nameFeedback">
+            {errors?.required}
+          </div>
+        )}
       </div>
     );
   }

@@ -1,30 +1,40 @@
 import React, { FC } from 'react';
+import _ from 'lodash';
+import { ErrorMessage } from '@hookform/error-message';
 
 import { FormerProps } from './types';
+import validation from './validation';
 
 export const FormName: FC<
-  Pick<FormerProps, 'formName' | 'setFormName' | 'errors'>
-> = ({ formName = '', setFormName, errors }) => {
+  Pick<FormerProps, 'formName' | 'setFormName' | 'errors' | 'register'>
+> = ({ formName = '', setFormName, errors, register }) => {
+  const registerObject = register('name', validation.name);
+
   return (
     <div className="form-group mb-2">
-      <label className="form-label" htmlFor="formName">
+      <label className="form-label" htmlFor="name">
         Form Name
+        <input
+          className={`form-control ${errors?.name ? 'is-invalid' : ''}`}
+          id="name"
+          type="text"
+          value={formName || ''}
+          aria-describedby="nameFeedback"
+          {...registerObject}
+          onChange={(event) => {
+            setFormName(event.target.value);
+            registerObject.onChange(event);
+          }}
+        />
       </label>
-      <input
-        className={`form-control ${errors ? 'is-invalid' : ''}`}
-        id="formName"
-        type="text"
-        value={formName || ''}
-        onChange={(event) => setFormName(event.target.value)}
-        aria-describedby="formNameFeedback"
-      />
-      {errors && (
-        <div className="invalid-feedback is-invalid" id="formNameFeedback">
-          {Object.values(errors)?.map((error) => (
-            <div key={error}>{error}</div>
-          ))}
-        </div>
-      )}
+
+      <div className="invalid-feedback" id="nameFeedback">
+        <ErrorMessage
+          errors={errors}
+          name="name"
+          // render={({ message }) => <p>{message}</p>}
+        />
+      </div>
     </div>
   );
 };
