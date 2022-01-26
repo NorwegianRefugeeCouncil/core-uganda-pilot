@@ -65,6 +65,7 @@ func ValidateForm(form *types.FormDefinition) validation.ErrorList {
 	result = append(result, ValidateFormFolderID(form.FolderID, validation.NewPath("folderId"))...)
 	result = append(result, ValidateFormType(form.Type, validation.NewPath("type"))...)
 	result = append(result, ValidateFormFields(form.Fields, validation.NewPath("fields"))...)
+	result = append(result, ValidateRecipientForm(form)...)
 	return result
 }
 
