@@ -36,6 +36,7 @@ var formWithFields = func(fields types.FieldDefinitions) *types.FormDefinition {
 		Name:       validFormName,
 		DatabaseID: validDatabaseID,
 		Fields:     fields,
+		Type:       types.DefaultFormType,
 	}
 }
 
@@ -77,6 +78,7 @@ func TestValidateForm(t *testing.T) {
 				Name:       validFormName,
 				DatabaseID: "",
 				Fields:     validFields,
+				Type:       types.DefaultFormType,
 			},
 		}, {
 			name: "form name with surrounding whitespaces",
@@ -87,6 +89,7 @@ func TestValidateForm(t *testing.T) {
 				Name:       " My Form ",
 				DatabaseID: validDatabaseID,
 				Fields:     validFields,
+				Type:       types.DefaultFormType,
 			},
 		}, {
 			name: "form name missing",
@@ -97,6 +100,7 @@ func TestValidateForm(t *testing.T) {
 				Name:       "",
 				DatabaseID: validDatabaseID,
 				Fields:     validFields,
+				Type:       types.DefaultFormType,
 			},
 		}, {
 			name: "form name too long",
@@ -107,6 +111,7 @@ func TestValidateForm(t *testing.T) {
 				Name:       strings.Repeat("a", formNameMaxLength+1),
 				DatabaseID: validDatabaseID,
 				Fields:     validFields,
+				Type:       types.DefaultFormType,
 			},
 		}, {
 			name: "form name too short",
@@ -117,6 +122,7 @@ func TestValidateForm(t *testing.T) {
 				Name:       strings.Repeat("a", formNameMinLength-1),
 				DatabaseID: validDatabaseID,
 				Fields:     validFields,
+				Type:       types.DefaultFormType,
 			},
 		}, {
 			name: "bad database id",
@@ -127,6 +133,7 @@ func TestValidateForm(t *testing.T) {
 				Name:       validFormName,
 				DatabaseID: "abc",
 				Fields:     validFields,
+				Type:       types.DefaultFormType,
 			},
 		}, {
 			name: "bad folder id",
@@ -138,6 +145,7 @@ func TestValidateForm(t *testing.T) {
 				DatabaseID: validDatabaseID,
 				FolderID:   "abc",
 				Fields:     validFields,
+				Type:       types.DefaultFormType,
 			},
 		}, {
 			name:   "valid folder id",
@@ -147,6 +155,39 @@ func TestValidateForm(t *testing.T) {
 				DatabaseID: validDatabaseID,
 				FolderID:   validFolderID,
 				Fields:     validFields,
+				Type:       types.DefaultFormType,
+			},
+		}, {
+			name:   "default form type",
+			expect: nil,
+			form: &types.FormDefinition{
+				Name:       validFormName,
+				DatabaseID: validDatabaseID,
+				Fields:     validFields,
+				Type:       types.DefaultFormType,
+			},
+		}, {
+			name:   "recipient form type",
+			expect: nil,
+			form: &types.FormDefinition{
+				Name:       validFormName,
+				DatabaseID: validDatabaseID,
+				Fields:     validFields,
+				Type:       types.RecipientFormType,
+			},
+		}, {
+			name: "unknown form type",
+			expect: validation.ErrorList{
+				validation.NotSupported(validation.NewPath("type"), types.FormType("bla"), []string{
+					string(types.DefaultFormType),
+					string(types.RecipientFormType),
+				}),
+			},
+			form: &types.FormDefinition{
+				Name:       validFormName,
+				DatabaseID: validDatabaseID,
+				Fields:     validFields,
+				Type:       "bla",
 			},
 		}, {
 			name: "empty fields",

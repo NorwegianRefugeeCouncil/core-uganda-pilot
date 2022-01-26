@@ -2,6 +2,7 @@ package tests
 
 import (
 	"context"
+
 	"github.com/nrc-no/core/pkg/api/types"
 	tu "github.com/nrc-no/core/pkg/testutils"
 	"github.com/stretchr/testify/assert"
@@ -39,8 +40,9 @@ func (s *Suite) TestFormCreateGetList() {
 	}
 
 	tcs := []struct {
-		name   string
-		fields []*types.FieldDefinition
+		name     string
+		formType types.FormType
+		fields   []*types.FieldDefinition
 	}{
 		{
 			name: "With Text Field",
@@ -188,6 +190,12 @@ func (s *Suite) TestFormCreateGetList() {
 					},
 				},
 			},
+		}, {
+			name: "Recipient Form",
+			fields: tu.Fields(
+				tu.ATextField(tu.FieldName("My Field")),
+			),
+			formType: types.RecipientFormType,
 		},
 	}
 
@@ -198,6 +206,7 @@ func (s *Suite) TestFormCreateGetList() {
 			in := &types.FormDefinition{
 				Name:       testCase.name,
 				DatabaseID: db.ID,
+				Type:       testCase.formType,
 				Fields:     testCase.fields,
 			}
 			if err := s.cli.CreateForm(ctx, in, &form); !assert.NoError(s.T(), err) {

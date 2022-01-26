@@ -156,6 +156,23 @@ func TestFlattenHydrateFormDefinition(t *testing.T) {
 					testutils.FieldName(fieldName),
 					testutils.FieldID(fieldId)),
 			),
+		}, {
+			name: "with formType",
+			formDefinition: &types.FormDefinition{
+				ID:         "formId",
+				DatabaseID: "databaseId",
+				Name:       "formName",
+				Type:       types.RecipientFormType,
+				Fields: []*types.FieldDefinition{
+					{
+						Name: "textField",
+						ID:   "fieldId",
+						FieldType: types.FieldType{
+							Text: &types.FieldTypeText{},
+						},
+					},
+				},
+			},
 		},
 	}
 

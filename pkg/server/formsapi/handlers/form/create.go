@@ -1,15 +1,17 @@
 package form
 
 import (
+	"net/http"
+
 	"github.com/emicklei/go-restful/v3"
 	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/api/types"
+	"github.com/nrc-no/core/pkg/api/types/defaults"
 	"github.com/nrc-no/core/pkg/api/types/validation"
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/utils"
 	uuid "github.com/satori/go.uuid"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 func (h *Handler) Create() http.HandlerFunc {
@@ -24,6 +26,9 @@ func (h *Handler) Create() http.HandlerFunc {
 			utils.ErrorResponse(w, err)
 			return
 		}
+
+		// apply defaults onto FormDefinition
+		form = defaults.FormDefinitionDefaults(form)
 
 		l.Debug("validating form")
 		if errs := validation.ValidateForm(&form); !errs.IsEmpty() {

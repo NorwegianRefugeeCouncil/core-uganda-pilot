@@ -2,7 +2,18 @@ package types
 
 import (
 	"fmt"
+
 	"github.com/nrc-no/core/pkg/utils/sets"
+)
+
+// FormType represents the type of Form
+type FormType string
+
+const (
+	// DefaultFormType represents a generic form definition
+	DefaultFormType FormType = "default"
+	// RecipientFormType represents a form definition for a beneficiary
+	RecipientFormType FormType = "recipient"
 )
 
 // FormDefinition represents the definition of a Form for data collection.
@@ -11,14 +22,18 @@ type FormDefinition struct {
 	ID string `json:"id" yaml:"id"`
 	// DatabaseID of the FormDefinition
 	DatabaseID string `json:"databaseId" yaml:"databaseId"`
+	// Fields that constitute the FormDefinition
+	Fields FieldDefinitions `json:"fields" yaml:"fields"`
 	// FolderID of the FormDefinition. If the FolderID is empty,
 	// this means that the FormDefinition exists at the root
 	// of the DatabaseID
 	FolderID string `json:"folderId,omitempty" yaml:"folderId,omitempty"`
+	// Type of FormDefinition
+	// TODO: Ideally the "Recipient" forms, or other types of forms would
+	// have own API instead of adding fields on the FormDefinition.
+	Type FormType `json:"formType,omitempty" yaml:"formType,omitempty"`
 	// Name of the FormDefinition
 	Name string `json:"name" yaml:"name"`
-	// Fields that constitute the FormDefinition
-	Fields FieldDefinitions `json:"fields" yaml:"fields"`
 }
 
 // GetDatabaseID implements FormInterface.GetDatabaseID
