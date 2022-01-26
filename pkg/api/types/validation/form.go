@@ -2,13 +2,14 @@ package validation
 
 import (
 	"fmt"
+	"reflect"
+	"regexp"
+	"strings"
+
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/utils/sets"
 	"github.com/nrc-no/core/pkg/validation"
 	uuid "github.com/satori/go.uuid"
-	"reflect"
-	"regexp"
-	"strings"
 )
 
 const (
@@ -62,6 +63,7 @@ func ValidateForm(form *types.FormDefinition) validation.ErrorList {
 	result = append(result, ValidateFormName(form.Name, validation.NewPath("name"))...)
 	result = append(result, ValidateFormDatabaseID(form.DatabaseID, validation.NewPath("databaseId"))...)
 	result = append(result, ValidateFormFolderID(form.FolderID, validation.NewPath("folderId"))...)
+	result = append(result, ValidateFormType(form.Type, validation.NewPath("type"))...)
 	result = append(result, ValidateFormFields(form.Fields, validation.NewPath("fields"))...)
 	return result
 }
@@ -123,6 +125,21 @@ func ValidateFormFolderID(folderId string, path *validation.Path) validation.Err
 	if _, err := uuid.FromString(folderId); err != nil {
 		result = append(result, validation.Invalid(path, folderId, errInvalidUUID))
 		return result
+	}
+	return result
+}
+
+func ValidateFormType(formType types.FormType, path *validation.Path) validation.ErrorList {
+	var result validation.ErrorList
+
+	switch formType {
+	case types.DefaultFormType:
+	case types.RecipientFormType:
+	default:
+		result = append(result, validation.NotSupported(path, formType, []string{
+			string(types.DefaultFormType),
+			string(types.RecipientFormType),
+		}))
 	}
 	return result
 }

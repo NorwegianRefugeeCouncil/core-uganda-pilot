@@ -4,12 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/sqlmanager"
 	"github.com/nrc-no/core/pkg/utils/pointers"
 	"golang.org/x/sync/errgroup"
-	"strings"
-	"time"
 
 	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/api/types"
@@ -86,6 +87,9 @@ type Form struct {
 
 	// Name stores the types.FormDefinition Name
 	Name string
+
+	// Type stores the types.FormDefinition Type
+	Type string
 
 	// CreatedAt represents when this form was created
 	CreatedAt time.Time
@@ -550,6 +554,7 @@ func (f FlatForms) hydrateForm(form *Form) (*types.FormDefinition, error) {
 		DatabaseID: form.DatabaseID,
 		FolderID:   folderId,
 		Name:       form.Name,
+		Type:       types.FormType(form.Type),
 	}
 	fields, err := f.hydrateFormFields(form.ID)
 	if err != nil {
@@ -746,6 +751,7 @@ func flattenForm(form *types.FormDefinition) (FlatForms, error) {
 		OwnerID:     form.ID,
 		FolderID:    folderId,
 		Name:        form.Name,
+		Type:        string(form.Type),
 	}
 	result := FlatForms{
 		Forms: []*Form{flattenedForm},
