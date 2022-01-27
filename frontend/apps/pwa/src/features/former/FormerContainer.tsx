@@ -1,6 +1,7 @@
 import React, { FC, useCallback, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { FieldKind } from 'core-api-client';
+import { useForm } from 'react-hook-form';
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { fetchDatabases } from '../../reducers/database';
@@ -16,6 +17,13 @@ export const FormerContainer: FC = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
   const { actions } = former;
+
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<FormData>();
 
   // load data
   useEffect(() => {

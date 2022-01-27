@@ -54,12 +54,6 @@ export const DatabaseEditor: FC = (props) => {
                   {_.map(errors, (e) => {
                     return <div key={e?.message}>{e?.message}</div>;
                   })}
-                  {/* {errors?.map((error) => { */}
-                  {/*  return ( */}
-                  {/* <div>{errors?.name?.message}</div> */}
-                  {/* <div>{errors?.name2?.message}</div> */}
-                  {/* ); */}
-                  {/* })} */}
                 </div>
               </div>
               <button className="btn btn-primary">Create New Database</button>

@@ -62,36 +62,36 @@ export const Former: FC<FormerProps> = (props) => {
                 />
               )}
               <FormerField
-                key={selectedField.id}
-                isSelected={selectedField.id === selectedFieldId}
-                selectField={() => setSelectedField(selectedField.id)}
-                fieldType={selectedField.fieldType}
-                fieldOptions={selectedField.options}
-                errors={selectedField.errors}
-                setFieldOption={(i: number, value: string) =>
-                  setFieldOption(selectedField.id, i, value)
-                }
                 addOption={() => addOption(selectedField.id)}
-                removeOption={(i: number) => removeOption(selectedField.id, i)}
-                fieldName={selectedField.name}
-                setFieldName={(name) => setFieldName(selectedField.id, name)}
-                fieldRequired={selectedField.required}
-                setFieldRequired={(req) =>
-                  setFieldRequired(selectedField.id, req)
-                }
-                fieldIsKey={selectedField.key}
-                setFieldIsKey={(isKey) =>
-                  setFieldIsKey(selectedField.id, isKey)
-                }
+                cancel={() => cancelField(selectedField.id)}
+                errors={selectedField.errors}
                 fieldDescription={selectedField.description}
+                fieldIsKey={selectedField.key}
+                fieldName={selectedField.name}
+                fieldOptions={selectedField.options}
+                fieldRequired={selectedField.required}
+                fieldType={selectedField.fieldType}
+                isSelected={selectedField.id === selectedFieldId}
+                key={selectedField.id}
+                openSubForm={() => openSubForm(selectedField.id)}
+                referencedDatabaseId={selectedField.referencedDatabaseId}
+                referencedFormId={selectedField.referencedFormId}
+                removeOption={(i: number) => removeOption(selectedField.id, i)}
+                saveField={() => saveField(selectedField.id)}
+                selectField={() => setSelectedField(selectedField.id)}
                 setFieldDescription={(d) =>
                   setFieldDescription(selectedField.id, d)
                 }
-                openSubForm={() => openSubForm(selectedField.id)}
-                cancel={() => cancelField(selectedField.id)}
-                saveField={() => saveField(selectedField.id)}
-                referencedDatabaseId={selectedField.referencedDatabaseId}
-                referencedFormId={selectedField.referencedFormId}
+                setFieldIsKey={(isKey) =>
+                  setFieldIsKey(selectedField.id, isKey)
+                }
+                setFieldName={(name) => setFieldName(selectedField.id, name)}
+                setFieldOption={(i: number, value: string) =>
+                  setFieldOption(selectedField.id, i, value)
+                }
+                setFieldRequired={(req) =>
+                  setFieldRequired(selectedField.id, req)
+                }
                 setReferencedDatabaseId={(d) =>
                   setFieldReferencedDatabaseId(selectedField.id, d)
                 }
