@@ -1,7 +1,8 @@
-import React, { FC, Fragment, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Folder } from 'core-api-client';
 import { Redirect } from 'react-router-dom';
+import _ from 'lodash';
 
 import { databaseActions } from '../../reducers/database';
 import {
@@ -9,19 +10,22 @@ import {
   useFolderFromQueryParam,
 } from '../../app/hooks';
 import client from '../../app/client';
-import { ApiErrorDetails } from '../../types/errors';
 
 type FormData = {
   name: string;
 };
 
 export const FolderEditor: FC = (props) => {
-  const { register, handleSubmit } = useForm<FormData>();
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<FormData>();
 
   const parentFolder = useFolderFromQueryParam('parentId');
   const database = useDatabaseFromQueryParam('databaseId');
   const [folder, setFolder] = useState<Folder | undefined>(undefined);
-  const [errors, setErrors] = useState<ApiErrorDetails[] | undefined>();
 
   const onSubmit = (data: FormData) => {
     if (!database?.id) {
@@ -40,7 +44,9 @@ export const FolderEditor: FC = (props) => {
           databaseActions.addOne(resp.response);
           setFolder(resp.response);
         } else if (!resp.success && resp.error) {
-          setErrors(resp.error.details.causes);
+          _.forEach(resp.error.details.causes, (e) => {
+            setError(e.field, { type: e.reason, message: e.message });
+          });
         }
       });
   };
@@ -64,21 +70,15 @@ export const FolderEditor: FC = (props) => {
                 <label htmlFor="name">Folder Name</label>
                 <input
                   {...register('name')}
-                  className={`form-control ${errors ? 'is-invalid' : ''}`}
+                  className={`form-control ${errors.name ? 'is-invalid' : ''}`}
                   id="name"
                   aria-describedby="nameFeedback"
                 />
-                {errors?.map((error) => {
-                  return (
-                    <div
-                      className="invalid-feedback is-invalid"
-                      id="nameFeedback"
-                      key={`${error.field}_${error.reason}`}
-                    >
-                      {error.message}
-                    </div>
-                  );
-                })}
+                <div className="invalid-feedback is-invalid" id="nameFeedback">
+                  {_.map(errors, (e) => {
+                    return <div key={e?.message}>{e?.message}</div>;
+                  })}
+                </div>
               </div>
               <button className="btn btn-primary">Create New Folder</button>
             </form>
