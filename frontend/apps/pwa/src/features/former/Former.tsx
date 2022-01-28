@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { ErrorMessage } from '@hookform/error-message';
 
 import { FormTypeControl } from './FormTypeControl';
 import { FormerProps } from './types';
@@ -19,6 +20,7 @@ export const Former: FC<FormerProps> = (props) => {
     ownerFormName,
     register,
     removeOption,
+    revalidate,
     saveField,
     saveForm,
     selectedFieldId,
@@ -73,6 +75,7 @@ export const Former: FC<FormerProps> = (props) => {
               openSubForm={openSubForm}
               register={register}
               removeOption={removeOption}
+              revalidate={revalidate}
               saveField={saveField}
               selectedFieldId={selectedFieldId}
               setFieldDescription={setFieldDescription}
@@ -84,6 +87,7 @@ export const Former: FC<FormerProps> = (props) => {
               setFieldRequired={setFieldRequired}
               setSelectedField={setSelectedField}
             />
+            <ErrorMessage errors={errors} name="fields" />
           </div>
           <div className="col-2">
             <button

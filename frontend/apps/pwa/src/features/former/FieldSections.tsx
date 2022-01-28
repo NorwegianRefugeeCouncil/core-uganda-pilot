@@ -25,9 +25,12 @@ export const FieldSections: React.FC<FieldSectionsProps> = (props) => {
     addField,
     addOption,
     cancelField,
+    errors,
     fields,
     openSubForm,
+    register,
     removeOption,
+    revalidate,
     saveField,
     selectedFieldId,
     setFieldDescription,
@@ -69,7 +72,7 @@ export const FieldSections: React.FC<FieldSectionsProps> = (props) => {
           formType={formType}
           addOption={() => addOption(f.id)}
           cancel={() => cancelField(f.id)}
-          errors={f.errors}
+          errors={errors}
           fieldDescription={f.description}
           fieldIsKey={f.key}
           fieldName={f.name}
@@ -80,7 +83,9 @@ export const FieldSections: React.FC<FieldSectionsProps> = (props) => {
           openSubForm={() => openSubForm(f.id)}
           referencedDatabaseId={f.referencedDatabaseId}
           referencedFormId={f.referencedFormId}
+          register={register}
           removeOption={(i: number) => removeOption(f.id, i)}
+          revalidate={revalidate}
           saveField={() => saveField(f.id)}
           selectField={() => setSelectedField(f.id)}
           setFieldDescription={(d) => setFieldDescription(f.id, d)}

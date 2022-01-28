@@ -23,7 +23,7 @@ export const FormName: FC<
         {...registerObject}
         onChange={(event) => {
           setFormName(event.target.value);
-          registerObject.onChange(event);
+          return registerObject.onChange(event);
         }}
       />
 

@@ -43,9 +43,10 @@ export const FormerContainer: FC = () => {
   const formDefinition = useAppSelector(
     formerGlobalSelectors.selectFormDefinition(database?.id, folder?.id),
   );
-  const { register, setError, formState, handleSubmit } = useForm<Form>({
-    defaultValues: form,
-  });
+  const { register, setError, formState, handleSubmit, trigger, clearErrors } =
+    useForm<Form>({
+      defaultValues: form,
+    });
 
   useEffect(() => {
     const search = new URLSearchParams(location.search);
@@ -71,7 +72,7 @@ export const FormerContainer: FC = () => {
   const setSelectedField = useCallback(
     (fieldId: string | undefined) => {
       dispatch(actions.selectField({ fieldId }));
-      dispatch(actions.resetFormErrors());
+      clearErrors();
     },
     [dispatch],
   );
@@ -79,6 +80,7 @@ export const FormerContainer: FC = () => {
   const addField = useCallback(
     (kind: FieldKind) => {
       if (form) {
+        clearErrors('fields');
         dispatch(actions.addField({ formId: form.formId, kind }));
       }
     },
@@ -163,8 +165,8 @@ export const FormerContainer: FC = () => {
   );
 
   const saveField = useCallback(
-    (fieldId: string) => {
-      dispatch(actions.resetFormErrors());
+    async (fieldId: string) => {
+      await trigger();
       dispatch(actions.selectField({ fieldId: undefined }));
     },
     [dispatch],
@@ -203,6 +205,7 @@ export const FormerContainer: FC = () => {
       ownerFormName={ownerForm?.name}
       register={register}
       removeOption={removeOption}
+      revalidate={trigger}
       saveField={saveField}
       saveForm={handleSubmit(saveForm)}
       selectedFieldId={selectedField?.id}

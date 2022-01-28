@@ -1,15 +1,24 @@
-import { FieldKind, FormType, SelectOption } from 'core-api-client';
+import { ErrorMessage } from '@hookform/error-message';
+import {
+  FieldDefinition,
+  FieldKind,
+  FormType,
+  SelectOption,
+} from 'core-api-client';
 import React, { FC } from 'react';
+import { FieldErrors } from 'react-hook-form';
 
 import DatabasePickerContainer from '../../components/DatabasePicker';
 import FormPickerContainer from '../../components/FormPicker';
-import { ErrorMessage } from '../../types/errors';
+import { Form } from '../../reducers/Former/types';
+
+import validation from './validation';
 
 type FormerFieldProps = {
   formType: FormType;
   addOption: () => void;
   cancel: () => void;
-  errors: ErrorMessage | undefined;
+  errors: FieldErrors<Form & { selectedField?: FieldDefinition }>;
   fieldDescription: string;
   fieldIsKey: boolean;
   fieldName: string;
@@ -20,7 +29,9 @@ type FormerFieldProps = {
   openSubForm: () => void;
   referencedDatabaseId: string | undefined;
   referencedFormId: string | undefined;
+  register: any;
   removeOption: (index: number) => void;
+  revalidate: any;
   saveField: () => void;
   selectField: () => void;
   setFieldDescription: (description: string) => void;
@@ -48,7 +59,9 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
     openSubForm,
     referencedDatabaseId,
     referencedFormId,
+    register,
     removeOption,
+    revalidate,
     saveField,
     selectField,
     setFieldDescription,
@@ -70,6 +83,11 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
   const requiredDisabled = fieldIsKey || fieldType === FieldKind.Checkbox;
   const isKeyDisabled = fieldType === FieldKind.Checkbox;
 
+  const registerSelectedFieldName = register(
+    'selectedField.name',
+    validation.selectedField.name,
+  );
+
   if (!isSelected) {
     return (
       <div>
@@ -77,7 +95,7 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
           onClick={() => selectField()}
           style={{ cursor: 'pointer' }}
           className={`card bg-dark text-light border-light mb-2 ${
-            errors?.name ? 'is-invalid' : ''
+            errors?.selectedField?.name ? 'is-invalid' : ''
           }`}
           id="name"
           aria-describedby="nameFeedback"
@@ -89,40 +107,13 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
             </div>
           </div>
         </div>
-        {errors?.name && (
-          <div className="invalid-feedback is-invalid" id="nameFeedback">
-            {errors?.name}
-          </div>
-        )}
-        {errors?.fieldType?.singleSelect?.options && (
-          <div className="invalid-feedback is-invalid" id="optionsFeedback">
-            {errors?.fieldType?.singleSelect?.options}
-          </div>
-        )}
-        {errors?.fieldType?.multiSelect?.options && (
-          <div className="invalid-feedback is-invalid" id="optionsFeedback">
-            {errors?.fieldType?.multiSelect?.options}
-          </div>
-        )}
-        {errors?.fieldType?.subForm?.fields && (
-          <div
-            className="invalid-feedback is-invalid"
-            id="subformFieldsFeedback"
-          >
-            {errors?.fieldType?.subForm?.fields}
-          </div>
-        )}
-        {errors?.required && (
-          <div className="invalid-feedback is-invalid" id="nameFeedback">
-            {errors?.required}
-          </div>
-        )}
+        <ErrorMessage errors={errors} name="selectedField" />
       </div>
     );
   }
 
   return (
-    <div className="card text-dark">
+    <div className="card text-dark mb-2">
       <div className="card-body">
         {/* Form Title */}
 
@@ -135,15 +126,25 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
             {/* Form Name */}
 
             <div className="form-group mb-2">
-              <label className="form-label" htmlFor="fieldName">
+              <label className="form-label" htmlFor="name">
                 Field Name
               </label>
               <input
-                className="form-control"
+                className={`form-control ${
+                  errors?.selectedField?.name ? 'is-invalid' : ''
+                }`}
                 type="text"
+                id="name"
                 value={fieldName || ''}
-                onChange={(event) => setFieldName(event.target.value)}
+                {...registerSelectedFieldName}
+                onChange={(event) => {
+                  setFieldName(event.target.value);
+                  return registerSelectedFieldName.onChange(event);
+                }}
               />
+              <div className="invalid-feedback" id="nameFeedback">
+                <ErrorMessage errors={errors} name="selectedField.name" />
+              </div>
             </div>
 
             {/* Options */}
@@ -153,7 +154,9 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
               <div className="form-group mb-2">
                 <div
                   className={`d-flex justify-content-between align-items-center mb-2 ${
-                    errors?.fieldType?.singleSelect?.options ? 'is-invalid' : ''
+                    errors?.selectedField?.fieldType?.singleSelect?.options
+                      ? 'is-invalid'
+                      : ''
                   }`}
                   id="options"
                   aria-describedby="optionsFeedback"
@@ -288,15 +291,21 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
           </div>
         </div>
       </div>
+      <ErrorMessage errors={errors} name="selectedField" />
       <div className="card-footer">
         <button
-          onClick={() => saveField()}
+          onClick={async () => {
+            const valid = await revalidate('selectedField');
+            if (valid) {
+              await saveField();
+            }
+          }}
           className="btn btn-primary me-2 shadow"
         >
           Save
         </button>
         <button onClick={() => cancel()} className="btn btn-secondary shadow">
-          Cancel
+          Delete
         </button>
       </div>
     </div>

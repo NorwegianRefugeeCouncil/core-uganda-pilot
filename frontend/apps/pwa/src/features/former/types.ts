@@ -1,4 +1,4 @@
-import { FieldKind, FormType } from 'core-api-client';
+import { FieldKind, FormType, FieldDefinition } from 'core-api-client';
 import { FieldErrors } from 'react-hook-form';
 
 import { Form, FormField } from '../../reducers/Former/types';
@@ -9,7 +9,7 @@ export type FormerProps = {
   addField: (kind: FieldKind) => void;
   addOption: (fieldId: string) => void;
   cancelField: (fieldId: string) => void;
-  errors: FieldErrors<Form>;
+  errors: FieldErrors<Form & { selectedField?: FieldDefinition }>;
   fieldOptions?: string[];
   fields: FormField[];
   formName: string;
@@ -17,6 +17,7 @@ export type FormerProps = {
   ownerFormName: string | undefined;
   register: any;
   removeOption: (fieldId: string, index: number) => void;
+  revalidate: any;
   saveField: (fieldId: string) => void;
   saveForm: () => void;
   selectedFieldId: string | undefined;
