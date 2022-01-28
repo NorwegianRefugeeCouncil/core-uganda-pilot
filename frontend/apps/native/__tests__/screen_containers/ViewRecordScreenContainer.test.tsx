@@ -1,6 +1,6 @@
 import { render, waitFor } from '@testing-library/react-native';
 import React from 'react';
-import { FormDefinition } from 'core-js-api-client';
+import { FormDefinition } from 'core-api-client';
 
 import { ViewRecordScreenContainer } from '../../src/components/screen_containers/ViewRecordScreenContainer';
 
@@ -28,7 +28,9 @@ const mockValue = {
 };
 const mockValues = Array(10).fill(mockValue);
 
-mockState.formsById[mockFormId].recordsById[mockRecordId] = { values: mockValues };
+mockState.formsById[mockFormId].recordsById[mockRecordId] = {
+  values: mockValues,
+};
 
 const mockForm: FormDefinition = {
   id: mockFormId,
@@ -68,7 +70,9 @@ const mockProps: any = {
 
 describe(ViewRecordScreenContainer.name, () => {
   test('renders correctly', async () => {
-    const { toJSON } = await waitFor(() => render(<ViewRecordScreenContainer {...mockProps} />));
+    const { toJSON } = await waitFor(() =>
+      render(<ViewRecordScreenContainer {...mockProps} />),
+    );
     expect(toJSON()).toMatchSnapshot();
   });
 

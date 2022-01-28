@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react-native';
+import { Record } from 'core-api-client';
 
 import { RecordsScreenContainer } from '../../src/components/screen_containers/RecordsScreenContainer';
-import { Record } from '../../../client/lib/esm';
 import { RECORD_ACTIONS } from '../../src/reducers/recordsReducers';
 
 const mockFormId = 'a form id';
@@ -66,7 +66,9 @@ describe(RecordsScreenContainer.name, () => {
   });
 
   test('renders correctly', async () => {
-    const { toJSON } = await waitFor(() => render(<RecordsScreenContainer {...mockProps} />));
+    const { toJSON } = await waitFor(() =>
+      render(<RecordsScreenContainer {...mockProps} />),
+    );
     expect(toJSON()).toMatchSnapshot();
   });
 
@@ -97,7 +99,9 @@ describe(RecordsScreenContainer.name, () => {
         formId: null,
       },
     };
-    await waitFor(() => render(<RecordsScreenContainer {...mockProps} route={incompleteRoute} />));
+    await waitFor(() =>
+      render(<RecordsScreenContainer {...mockProps} route={incompleteRoute} />),
+    );
 
     expect(mockListRecords).not.toHaveBeenCalled();
   });
@@ -110,7 +114,9 @@ describe(RecordsScreenContainer.name, () => {
         databaseId: null,
       },
     };
-    await waitFor(() => render(<RecordsScreenContainer {...mockProps} route={incompleteRoute} />));
+    await waitFor(() =>
+      render(<RecordsScreenContainer {...mockProps} route={incompleteRoute} />),
+    );
 
     expect(mockListRecords).not.toHaveBeenCalled();
   });

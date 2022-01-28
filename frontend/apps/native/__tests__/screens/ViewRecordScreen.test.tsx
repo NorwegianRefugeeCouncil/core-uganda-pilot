@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react-native';
 import React from 'react';
 import { Control, useForm } from 'react-hook-form';
+import { FieldDefinition, FormDefinition } from 'core-api-client';
 
-import { FieldDefinition, FormDefinition } from '../../../client/lib/esm';
 import ViewRecordScreen from '../../src/components/screens/ViewRecordScreen';
 import testIds from '../../src/constants/testIds';
 
