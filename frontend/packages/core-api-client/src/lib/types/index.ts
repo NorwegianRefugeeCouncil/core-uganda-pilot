@@ -58,8 +58,7 @@ export type FieldTypeMultiSelect = {
   options: SelectOption[];
 };
 
-export class FieldTypeWeek {
-}
+export class FieldTypeWeek {}
 
 export type FieldTypeBoolean = {};
 
@@ -83,8 +82,8 @@ export type FieldDefinition = {
 };
 
 export enum FormType {
-  DefaultFormType = "default",
-  RecipientFormType = "recipient"
+  DefaultFormType = 'default',
+  RecipientFormType = 'recipient',
 }
 
 export type FormDefinition = {
@@ -234,5 +233,4 @@ export interface ClientDefinition
     RecordLister,
     RecordGetter,
     FolderLister,
-    FolderCreator {
-}
+    FolderCreator {}
