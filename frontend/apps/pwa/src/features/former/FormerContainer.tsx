@@ -43,18 +43,9 @@ export const FormerContainer: FC = () => {
   const formDefinition = useAppSelector(
     formerGlobalSelectors.selectFormDefinition(database?.id, folder?.id),
   );
-  const { register, setError, formState, clearErrors, handleSubmit, trigger } =
-    useForm<Form>({
-      defaultValues: form,
-      reValidateMode: 'onChange',
-      criteriaMode: 'all',
-    });
-  console.log(
-    'RHF errors',
-    formState.errors,
-    formState.isValid,
-    formState.isDirty,
-  );
+  const { register, setError, formState, handleSubmit } = useForm<Form>({
+    defaultValues: form,
+  });
 
   useEffect(() => {
     const search = new URLSearchParams(location.search);
@@ -183,15 +174,10 @@ export const FormerContainer: FC = () => {
     if (ownerForm) {
       dispatch(actions.saveForm());
     } else if (formDefinition) {
-      // dispatch(actions.resetFormErrors());
       try {
-        clearErrors();
         const data = await dispatch(postForm(formDefinition)).unwrap();
         history.push(`/browse/forms/${data.id}`);
       } catch (apiErrors: any) {
-        // dispatch(actions.setFormErrors({ errors: apiErrors?.details?.causes }));
-
-        console.log('SET ERROR', apiErrors?.details?.causes);
         _.forEach(apiErrors?.details?.causes, (error) => {
           setError(error.field, { type: error.reason, message: error.message });
         });
@@ -204,7 +190,6 @@ export const FormerContainer: FC = () => {
   }
 
   return (
-    // <form onSubmit={handleSubmit(saveForm)}>
     <Former
       formId={form.formId}
       formType={form.formType}
@@ -232,6 +217,5 @@ export const FormerContainer: FC = () => {
       setSelectedField={setSelectedField}
       invalid={!formState.isValid && formState.isDirty}
     />
-    // </form>
   );
 };
