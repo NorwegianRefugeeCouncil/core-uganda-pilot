@@ -3,10 +3,48 @@ package validation
 import (
 	"testing"
 
+	uuid "github.com/satori/go.uuid"
+
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/validation"
 	"github.com/stretchr/testify/assert"
 )
+
+func Test_ValidateRecipientForm_SkippedWhenNotRecipientForm(t *testing.T) {
+
+	validFormButInvalidRecipientForm := &types.FormDefinition{
+		Type:       types.DefaultFormType,
+		Name:       "test",
+		DatabaseID: uuid.NewV4().String(),
+		Fields: []*types.FieldDefinition{
+			{
+				Key:      true,
+				Name:     "bla",
+				Required: true,
+				FieldType: types.FieldType{
+					Text: &types.FieldTypeText{},
+				},
+			},
+			{
+				Key:      true,
+				Required: true,
+				Name:     "bli",
+				FieldType: types.FieldType{
+					Text: &types.FieldTypeText{},
+				},
+			},
+		},
+	}
+
+	// assert that the form is valid
+	assert.Equal(t, validation.ErrorList(nil), ValidateForm(validFormButInvalidRecipientForm))
+
+	// change the type to "Recipient"
+	validFormButInvalidRecipientForm.Type = types.RecipientFormType
+
+	// assert that the form is now invalid
+	assert.False(t, ValidateForm(validFormButInvalidRecipientForm).IsEmpty())
+}
 
 func Test_validateRecipientFormHasSingleKeyField(t *testing.T) {
 	tests := []struct {
