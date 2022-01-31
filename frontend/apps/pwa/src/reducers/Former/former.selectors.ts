@@ -4,6 +4,7 @@ import {
   FieldType,
   Folder,
   FormDefinition,
+  FormType,
 } from 'core-api-client';
 
 import { RootState } from '../../app/store';
@@ -206,21 +207,22 @@ const mapFields = (
 function selectFormDefinition(
   databaseId: string | undefined,
   folderId: string | undefined,
-): (state: FormerState) => Partial<FormDefinition> | undefined {
+): (state: FormerState) => FormDefinition | undefined {
   return (state) => {
     try {
       const allForms = selectors.selectAll(state);
       const rootForm = allForms.find((e) => e.isRootForm);
       if (!rootForm) {
-        return;
+        return undefined;
       }
       return {
-        databaseId,
-        folderId,
-        name: rootForm.name,
         id: '',
-        fields: mapFields(state, rootForm.fields),
         code: '',
+        databaseId: databaseId || '',
+        folderId: folderId || '',
+        name: rootForm.name,
+        formType: rootForm.formType,
+        fields: mapFields(state, rootForm.fields),
       };
     } catch (err) {
       return undefined;
