@@ -23,7 +23,7 @@ export interface Form {
   name: string;
   // the unique id of the form
   formId: string;
-  type: FormType;
+  formType: FormType;
   // records the record values
   fields: FormField[];
   isRootForm: boolean;

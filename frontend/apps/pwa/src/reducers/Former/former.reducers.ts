@@ -25,7 +25,7 @@ export const reducers = {
       formId,
       fields: [],
       name: '',
-      type: FormType.DefaultFormType,
+      formType: FormType.DefaultFormType,
       isRootForm: true,
       errors: undefined,
     });
@@ -296,7 +296,7 @@ export const reducers = {
         formId: subFormId,
         fields: [],
         name: '',
-        type: FormType.DefaultFormType,
+        formType: FormType.DefaultFormType,
         isRootForm: false,
         errors: undefined,
       };
@@ -330,7 +330,7 @@ export const reducers = {
       formId: uuidv4(),
       fields: [],
       name: '',
-      type: FormType.DefaultFormType,
+      formType: FormType.DefaultFormType,
       isRootForm: false,
       errors: undefined,
     };

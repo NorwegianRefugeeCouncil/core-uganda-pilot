@@ -92,7 +92,7 @@ export type FormDefinition = {
   databaseId: string;
   folderId: string;
   name: string;
-  type: FormType;
+  formType: FormType;
   fields: FieldDefinition[];
 };
 
