@@ -5,7 +5,7 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit';
 import _ from 'lodash';
-import { FieldKind, FormDefinition } from 'core-api-client';
+import { FieldKind, FormDefinition, FormType } from 'core-api-client';
 
 import client from '../../app/client';
 import { ApiErrorDetails } from '../../types/errors';
@@ -25,6 +25,7 @@ export const reducers = {
       formId,
       fields: [],
       name: '',
+      type: FormType.DefaultFormType,
       isRootForm: true,
       errors: undefined,
     });
@@ -295,6 +296,7 @@ export const reducers = {
         formId: subFormId,
         fields: [],
         name: '',
+        type: FormType.DefaultFormType,
         isRootForm: false,
         errors: undefined,
       };
@@ -328,6 +330,7 @@ export const reducers = {
       formId: uuidv4(),
       fields: [],
       name: '',
+      type: FormType.DefaultFormType,
       isRootForm: false,
       errors: undefined,
     };
