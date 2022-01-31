@@ -68,9 +68,10 @@ func (s *Seed) seedCoIntake(ctx context.Context, client client.Client, dbID stri
 	}
 
 	intake_pii = &types.FormDefinition{
-		Name:       "Individual PII",
+		Name:       "Colombia Individual",
 		DatabaseID: dbID,
 		FolderID:   intake_folder.ID,
+		Type:       types.RecipientFormType,
 		Fields: types.FieldDefinitions{
 			s.globalBeneficiaryRefField,
 			date("Date of birth", true),
@@ -80,7 +81,7 @@ func (s *Seed) seedCoIntake(ctx context.Context, client client.Client, dbID stri
 			dropdown("Relationship to HH representative", co_relationship_to_hh, true),
 			dropdown("Beneficiary type", co_beneficiary_type, true),
 			dropdown("Ethnicity", co_ethnicity, true),
-			yesNo("Do you have a job or entrepreneurship", true),
+			yesNo("Do you have a job or entrepreneurship"),
 			text("What sector? (commerce, production, service, agro)", false),
 			text("Entrepreneurship time", false),
 			text("Type of job (contract type)", false),
@@ -88,17 +89,18 @@ func (s *Seed) seedCoIntake(ctx context.Context, client client.Client, dbID stri
 			text("Name and surname of the legal representative", false),
 			text("Additional information about the legal representative", false),
 			textarea("Reasons for the representation", false),
-			yesNo("Is the guardianship legal under national law?", false),
+			yesNo("Is the guardianship legal under national law?"),
 			textarea("Add the legal evaluation (if the answer is positive)", false),
 			textarea("Offer assistance in identifying a recognized legal representative (if the answer is negative)", false),
-			yesNo("Can the person give their consent legally?", false),
+			yesNo("Can the person give their consent legally?"),
 			quantity("Age of head of household (if another person, and if the household is not registered)", false),
 			quantity("Monthly household income / per capita", false),
-			yesNo("Is the head of household is pregnant or nursing?", false),
-			yesNo("Does the head of household have a chronic illness?", false),
+			yesNo("Is the head of household is pregnant or nursing?"),
+			yesNo("Does the head of household have a chronic illness?"),
 		},
 	}
 
+	// TODO: This should be in the global "Identification Documents"
 	intake_id_details = &types.FormDefinition{
 		Name:       "ID Details",
 		DatabaseID: dbID,
@@ -113,6 +115,7 @@ func (s *Seed) seedCoIntake(ctx context.Context, client client.Client, dbID stri
 		},
 	}
 
+	// TODO: This should be a SubForm ?
 	intake_nrc_details = &types.FormDefinition{
 		Name:       "NRC Details",
 		DatabaseID: dbID,
@@ -128,14 +131,15 @@ func (s *Seed) seedCoIntake(ctx context.Context, client client.Client, dbID stri
 			dropdown("Type of settlement", co_settlement_type, false),
 			text("Parish", false),
 			text("Village", false),
-			yesNo("Emergency attencion?", true),
-			yesNo("Sustainable solutions?", true),
-			yesNo("Hard to reach area?", true),
-			yesNo("COVID-19 emergency?", true),
+			yesNo("Emergency attention?"),
+			yesNo("Sustainable solutions?"),
+			yesNo("Hard to reach area?"),
+			yesNo("COVID-19 emergency?"),
 			text("How did you learn about NRC?", true),
 		},
 	}
 
+	// TODO: Should this be a SubForm ?
 	intake_contact_info = &types.FormDefinition{
 		Name:       "Contact Information",
 		DatabaseID: dbID,
@@ -150,11 +154,12 @@ func (s *Seed) seedCoIntake(ctx context.Context, client client.Client, dbID stri
 			text("Phone number (2)", false),
 			text("Phone number (3)", false),
 			dropdown("Preferred means of contact", co_means_of_contact, true),
-			yesNo("Requires an interpreter?", true),
+			yesNo("Requires an interpreter?"),
 			text("Interpreter name", false),
 		},
 	}
 
+	// TODO: Should this be a SubForm ?
 	intake_ind_cc_specific = &types.FormDefinition{
 		Name:       "Individual CC Specific",
 		DatabaseID: dbID,
@@ -228,11 +233,11 @@ func (s *Seed) seedCoConsent(ctx context.Context, client client.Client, dbID str
 		Fields: types.FieldDefinitions{
 			s.globalBeneficiaryRefField,
 			text("Upload the consent form signed by the beneficiary", true),
-			yesNo("Can NRC staff initiate contact with the beneficiary?", true),
-			yesNo("Format of the act of commitment to the program", true),
-			yesNo("Format of delivery for assets and inputs", true),
+			yesNo("Can NRC staff initiate contact with the beneficiary?"),
+			yesNo("Format of the act of commitment to the program"),
+			yesNo("Format of delivery for assets and inputs"),
 			textarea("Other consent information", false),
-			yesNo("Can NRC share the beneficiary's data?", true),
+			yesNo("Can NRC share the beneficiary's data?"),
 		},
 	}
 

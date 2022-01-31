@@ -14,5 +14,5 @@ var (
 
 func init() {
 	seedCmd.PersistentFlags().StringVarP(&endpoint, "endpoint", "e", "", "the endpoint of the Core API, example http://localhost:9000")
-	rootCmd.AddCommand(seedCmd)
+	devCmd.AddCommand(seedCmd)
 }
