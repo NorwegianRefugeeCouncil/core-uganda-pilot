@@ -29,7 +29,6 @@
     "core-api-client": "*",
     "core-auth": "*",
     "date-fns": "^2.25.0",
-    "jest-config": "^27.4.7",
     "loglevel": "^1.7.1",
     "oauth-pkce": "^0.0.6",
     "oidc-react": "^1.5.1",
