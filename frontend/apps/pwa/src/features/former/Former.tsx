@@ -7,6 +7,7 @@ import { FormName } from './FormName';
 
 export const Former: FC<FormerProps> = (props) => {
   const {
+    formType,
     addField,
     addOption,
     cancelField,
@@ -62,6 +63,7 @@ export const Former: FC<FormerProps> = (props) => {
                 />
               )}
               <FormerField
+                formType={formType}
                 addOption={() => addOption(selectedField.id)}
                 cancel={() => cancelField(selectedField.id)}
                 errors={selectedField.errors}
@@ -141,6 +143,7 @@ export const Former: FC<FormerProps> = (props) => {
               />
             )}
             <FieldSections
+              formType={formType}
               addField={addField}
               addOption={addOption}
               cancelField={(fieldId: string) => cancelField(fieldId)}

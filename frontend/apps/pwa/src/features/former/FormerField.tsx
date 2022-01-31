@@ -1,4 +1,4 @@
-import { FieldKind, SelectOption } from 'core-api-client';
+import { FieldKind, FormType, SelectOption } from 'core-api-client';
 import React, { FC } from 'react';
 
 import DatabasePickerContainer from '../../components/DatabasePicker';
@@ -6,6 +6,7 @@ import FormPickerContainer from '../../components/FormPicker';
 import { ErrorMessage } from '../../types/errors';
 
 type FormerFieldProps = {
+  formType: FormType;
   addOption: () => void;
   cancel: () => void;
   errors: ErrorMessage | undefined;
@@ -33,6 +34,7 @@ type FormerFieldProps = {
 
 export const FormerField: FC<FormerFieldProps> = (props) => {
   const {
+    formType,
     addOption,
     cancel,
     errors = undefined,
@@ -231,6 +233,9 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
                     databaseId={referencedDatabaseId}
                     formId={referencedFormId}
                     setFormId={setReferencedFormId}
+                    isRecipientKey={
+                      fieldIsKey && formType === FormType.RecipientFormType
+                    }
                   />
                 </div>
               </div>

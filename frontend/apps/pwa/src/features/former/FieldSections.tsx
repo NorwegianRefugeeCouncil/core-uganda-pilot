@@ -15,6 +15,7 @@ export const FieldSections: React.FC<FieldSectionsProps> = (props) => {
   const [isAddingField, setIsAddingField] = useState(false);
 
   const {
+    formType,
     addField,
     addOption,
     cancelField,
@@ -59,6 +60,7 @@ export const FieldSections: React.FC<FieldSectionsProps> = (props) => {
       {fields.map((f: FormField) => (
         <FormerField
           key={f.id}
+          formType={formType}
           addOption={() => addOption(f.id)}
           cancel={() => cancelField(f.id)}
           errors={f.errors}

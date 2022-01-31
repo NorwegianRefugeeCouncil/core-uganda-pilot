@@ -1,9 +1,10 @@
-import { FieldKind } from 'core-api-client';
+import { FieldKind, FormType } from 'core-api-client';
 
 import { FormField } from '../../reducers/Former/types';
 import { ErrorMessage } from '../../types/errors';
 
 export type FormerProps = {
+  formType: FormType;
   addField: (kind: FieldKind) => void;
   addOption: (fieldId: string) => void;
   cancelField: (fieldId: string) => void;
