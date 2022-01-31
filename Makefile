@@ -23,6 +23,10 @@ migrate:
 bootstrap: migrate
 	@./scripts/bootstrap.sh
 
+.PHONY: seed
+seed:
+	@./scripts/seed.sh
+
 .PHONY: down
 down:
 	@./scripts/down.sh

@@ -45,6 +45,7 @@ func (s *Seed) seedGlobalForms(ctx context.Context, client client.Client) error 
 			DatabaseID: s.globalDatabase.ID,
 			FolderID:   s.globalBioDataFolder.ID,
 			Name:       GlobalIndividualFormName,
+			Type:       types.RecipientFormType,
 			Fields: types.FieldDefinitions{
 				{
 					Name:        "Full Name",
@@ -72,6 +73,7 @@ func (s *Seed) seedGlobalForms(ctx context.Context, client client.Client) error 
 			DatabaseID: s.globalDatabase.ID,
 			FolderID:   s.globalBioDataFolder.ID,
 			Name:       GlobalHouseholdFormName,
+			Type:       types.RecipientFormType,
 			Fields: types.FieldDefinitions{
 				text("Household name", true),
 			},
@@ -84,6 +86,7 @@ func (s *Seed) seedGlobalForms(ctx context.Context, client client.Client) error 
 			DatabaseID: s.globalDatabase.ID,
 			FolderID:   s.globalBioDataFolder.ID,
 			Name:       GlobalIndividualBeneficiaryFormName,
+			Type:       types.RecipientFormType,
 			Fields: types.FieldDefinitions{
 				&types.FieldDefinition{
 					Name:     "Individual",
@@ -96,16 +99,16 @@ func (s *Seed) seedGlobalForms(ctx context.Context, client client.Client) error 
 						},
 					},
 				},
-				yesNo("Has the beneficiary consented to NRC using their data?", true),
+				yesNo("Has the beneficiary consented to NRC using their data?"),
 				text("URL to proof of beneficiary consent", true),
-				yesNo("Beneficiary prefers to remain anonymous?", true),
-				yesNo("Is the beneficiary a minor?", true),
-				yesNo("Beneficiary presents protection concerns?", true),
-				yesNo("Would you say you experience some form of physical challenges?", true),
+				yesNo("Beneficiary prefers to remain anonymous?"),
+				yesNo("Is the beneficiary a minor?"),
+				yesNo("Beneficiary presents protection concerns?"),
+				yesNo("Would you say you experience some form of physical challenges?"),
 				dropdown("How would you define the intensity of such challenges?", wgShortSet, true),
-				yesNo("Would you say you experience some form of sensory challenges?", true),
+				yesNo("Would you say you experience some form of sensory challenges?"),
 				dropdown("How would you define the intensity of such challenges?", wgShortSet, true),
-				yesNo("Would you say you experience some form of mental challenges?", true),
+				yesNo("Would you say you experience some form of mental challenges?"),
 				dropdown("How would you define the intensity of such challenges?", wgShortSet, true),
 				dropdown("Displacement Status", globalDisplacementStatuses, true),
 				dropdown("Gender", globalGenders, true),
@@ -118,7 +121,7 @@ func (s *Seed) seedGlobalForms(ctx context.Context, client client.Client) error 
 							FormID:     s.globalRootHouseholdForm.ID,
 						},
 					}},
-				yesNo("Are you a representative for the household?", true),
+				yesNo("Are you a representative for the household?"),
 			},
 		}, &s.globalRootBeneficiaryForm); err != nil {
 			return err

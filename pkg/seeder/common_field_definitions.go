@@ -12,10 +12,10 @@ var (
 	}
 )
 
-func yesNo(name string, required bool) *types.FieldDefinition {
+func yesNo(name string) *types.FieldDefinition {
 	return &types.FieldDefinition{
 		Name:      name,
-		Required:  required,
+		Required:  true,
 		FieldType: types.FieldType{Boolean: &types.FieldTypeBoolean{}},
 	}
 }
