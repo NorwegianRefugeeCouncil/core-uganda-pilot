@@ -393,6 +393,45 @@ export const reducers = {
     state.selectedFormId = fieldForm.form.formId;
     state.selectedFieldId = fieldForm.field.id;
   },
+  setFormType(
+    state: FormerState,
+    action: PayloadAction<{ formId: string; formType: FormType }>,
+  ) {
+    const { formId, formType } = action.payload;
+    const form = state.entities[formId];
+    if (!form || form.formType === formType) return;
+
+    form.formType = formType;
+    if (formType === FormType.DefaultFormType) {
+      // If switching to default form type, remove recipient reference field
+      form.fields = form.fields.filter(
+        (f) => f.fieldType === FieldKind.Reference && f.key,
+      );
+    } else if (formType === FormType.RecipientFormType) {
+      // If switching to recipient form type, add recipient reference field
+      const newFieldId = uuidv4();
+      form.fields = [
+        {
+          id: newFieldId,
+          name: '',
+          code: '',
+          description: '',
+          key: true,
+          required: true,
+          fieldType: FieldKind.Reference,
+          subFormId: undefined,
+          referencedDatabaseId: undefined,
+          referencedFormId: undefined,
+          errors: undefined,
+          options: [],
+        },
+        ...form.fields,
+      ];
+      state.selectedFieldId = newFieldId;
+    }
+
+    state.entities[formId] = form;
+  },
   addOne: adapter.addOne,
   addMany: adapter.addMany,
   removeAll: adapter.removeAll,
