@@ -1,5 +1,6 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 
+import { FormTypeControl } from './FormTypeControl';
 import { FormerField } from './FormerField';
 import { FormerProps } from './types';
 import { FieldSections } from './FieldSections';
@@ -7,6 +8,7 @@ import { FormName } from './FormName';
 
 export const Former: FC<FormerProps> = (props) => {
   const {
+    formId,
     formType,
     addField,
     addOption,
@@ -56,11 +58,14 @@ export const Former: FC<FormerProps> = (props) => {
           <div className="row mt-3">
             <div className="col-10 col-md-8 offset-md-1">
               {ownerFormName == null && (
-                <FormName
-                  setFormName={setFormName}
-                  formName={formName}
-                  errors={errors}
-                />
+                <>
+                  <FormName
+                    setFormName={setFormName}
+                    formName={formName}
+                    errors={errors}
+                  />
+                  <FormTypeControl formId={formId} formType={formType} />
+                </>
               )}
               <FormerField
                 formType={formType}
@@ -136,11 +141,14 @@ export const Former: FC<FormerProps> = (props) => {
         <div className="row mt-3">
           <div className="col-6 offset-2">
             {ownerFormName == null && (
-              <FormName
-                setFormName={setFormName}
-                formName={formName}
-                errors={errors}
-              />
+              <>
+                <FormName
+                  setFormName={setFormName}
+                  formName={formName}
+                  errors={errors}
+                />
+                <FormTypeControl formId={formId} formType={formType} />
+              </>
             )}
             <FieldSections
               formType={formType}

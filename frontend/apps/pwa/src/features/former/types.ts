@@ -4,6 +4,7 @@ import { FormField } from '../../reducers/Former/types';
 import { ErrorMessage } from '../../types/errors';
 
 export type FormerProps = {
+  formId: string;
   formType: FormType;
   addField: (kind: FieldKind) => void;
   addOption: (fieldId: string) => void;

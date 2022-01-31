@@ -8,7 +8,12 @@ import { FormerProps } from './types';
 
 type FieldSectionsProps = Omit<
   FormerProps,
-  'fieldOptions' | 'formName' | 'ownerFormName' | 'saveForm' | 'setFormName'
+  | 'fieldOptions'
+  | 'formName'
+  | 'ownerFormName'
+  | 'saveForm'
+  | 'setFormName'
+  | 'formId'
 >;
 
 export const FieldSections: React.FC<FieldSectionsProps> = (props) => {

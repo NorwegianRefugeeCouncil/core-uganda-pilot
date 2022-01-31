@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect } from 'react';
+import { FC, useCallback, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { FieldKind } from 'core-api-client';
 import { useForm } from 'react-hook-form';
@@ -192,6 +192,7 @@ export const FormerContainer: FC = () => {
 
   return (
     <Former
+      formId={form.formId}
       formType={form.formType}
       addField={addField}
       addOption={addOption}
