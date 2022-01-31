@@ -1,4 +1,4 @@
-import { FieldKind, SelectOption } from 'core-api-client';
+import { FieldKind, FormType, SelectOption } from 'core-api-client';
 import { EntityState } from '@reduxjs/toolkit';
 
 import { ErrorMessage } from '../../types/errors';
@@ -23,11 +23,10 @@ export interface Form {
   name: string;
   // the unique id of the form
   formId: string;
+  type: FormType;
   // records the record values
   fields: FormField[];
-
   isRootForm: boolean;
-
   errors: ErrorMessage | undefined;
 }
 
