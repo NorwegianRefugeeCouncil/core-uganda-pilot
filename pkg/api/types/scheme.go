@@ -3,10 +3,10 @@ package types
 import "github.com/nrc-no/core/pkg/api/meta"
 
 const group = "core.nrc.no"
-const version = "v1"
 const folders = "folders"
 const databases = "databases"
 const records = "records"
+const forms = "forms"
 
 var FolderGR = meta.GroupResource{
 	Group:    group,
@@ -21,4 +21,9 @@ var DatabaseGR = meta.GroupResource{
 var RecordGR = meta.GroupResource{
 	Group:    group,
 	Resource: records,
+}
+
+var FormGR = meta.GroupResource{
+	Group:    group,
+	Resource: forms,
 }

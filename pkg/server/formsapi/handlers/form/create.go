@@ -1,7 +1,10 @@
 package form
 
 import (
+	"context"
 	"net/http"
+
+	validation2 "github.com/nrc-no/core/pkg/validation"
 
 	"github.com/emicklei/go-restful/v3"
 	"github.com/nrc-no/core/pkg/api/meta"
@@ -33,10 +36,13 @@ func (h *Handler) Create() http.HandlerFunc {
 		l.Debug("validating form")
 		if errs := validation.ValidateForm(&form); !errs.IsEmpty() {
 			l.Error("failed to validate form", zap.Error(errs.ToAggregate()))
-			utils.ErrorResponse(w, meta.NewInvalid(meta.GroupResource{
-				Group:    "core.nrc.no/v1",
-				Resource: "forms",
-			}, "", errs))
+			utils.ErrorResponse(w, meta.NewInvalid(types.FormGR, "", errs))
+			return
+		}
+
+		if err := validateRecipientFormParent(ctx, form, h.store.Get); err != nil {
+			l.Error("failed to validate recipient parent", zap.Error(err))
+			utils.ErrorResponse(w, err)
 			return
 		}
 
@@ -54,6 +60,47 @@ func (h *Handler) Create() http.HandlerFunc {
 		l.Debug("successfully created form")
 		utils.JSONResponse(w, http.StatusOK, respForm)
 	}
+}
+
+func validateRecipientFormParent(
+	ctx context.Context,
+	form types.FormDefinition,
+	getForm func(ctx context.Context, formID string) (*types.FormDefinition, error),
+) error {
+
+	l := logging.NewLogger(ctx)
+
+	if form.Type != types.RecipientFormType {
+		return nil
+	}
+
+	l.Debug("validation recipient form")
+	for _, field := range form.Fields {
+
+		if !field.Key {
+			continue
+		}
+
+		// At this point, the validation has already asserted that the form has either no key fields,
+		// or a single "reference" key field. So we can safely assume that this fieldType is
+		// a Reference field
+		referencedRecipient := field.FieldType.Reference
+		parentRecipientForm, err := getForm(ctx, referencedRecipient.FormID)
+		if err != nil {
+			l.Error("failed to get parent recipient form", zap.Error(err))
+			return err
+		}
+
+		// The rule is that a recipient form must either have no parent at all, or another
+		// recipient form.
+		if parentRecipientForm.Type != types.RecipientFormType {
+			return meta.NewInvalid(types.FormGR, "", validation2.ErrorList{
+				validation2.Forbidden(validation2.NewPath("type"), "The parent form of a recipient form must also be a recipient form"),
+			})
+		}
+	}
+
+	return nil
 }
 
 func newFormIDs(form *types.FormDefinition) {
