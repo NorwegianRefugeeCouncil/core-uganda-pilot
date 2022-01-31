@@ -192,6 +192,7 @@ export const FormerContainer: FC = () => {
 
   return (
     <Former
+      formType={form.formType}
       addField={addField}
       addOption={addOption}
       cancelField={(fieldId: string) => cancelField(fieldId)}
