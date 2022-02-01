@@ -11,7 +11,7 @@ import { fetchForms } from '../../reducers/form';
 import former from '../../reducers/Former';
 import { formerGlobalSelectors } from '../../reducers/Former/former.selectors';
 import { postForm } from '../../reducers/Former/former.reducers';
-import { Form } from '../../reducers/Former/types';
+import { FieldDefinitionNC, Form } from '../../reducers/Former/types';
 
 import { Former } from './Former';
 
@@ -52,9 +52,7 @@ export const FormerContainer: FC = () => {
     resetField,
     setError,
     trigger,
-  } = useForm<
-    Form & { selectedField: Omit<FieldDefinition, 'fieldType.subForm.fields'> }
-  >({
+  } = useForm<Form & { selectedField: FieldDefinitionNC }>({
     defaultValues: form,
   });
 
@@ -180,9 +178,9 @@ export const FormerContainer: FC = () => {
 
   const saveField = useCallback(
     async (fieldId: string) => {
-      await trigger();
+      // await trigger();
       dispatch(actions.selectField({ fieldId: undefined }));
-      resetField(`selectedField.fieldType.${selectedField?.fieldType}`);
+      resetField('selectedField');
     },
     [dispatch],
   );

@@ -31,20 +31,20 @@ export default {
         options: {
           minLength: { value: 2, message: 'At least two options are required' },
           maxLength: { value: 60, message: 'At most 60 options are allowed' },
-          required: {
-            value: true,
-            message: 'At least two options are required',
-          },
+          // required: {
+          //   value: true,
+          //   message: 'At least two options are required',
+          // },
         },
       },
       multiSelect: {
         options: {
           minLength: { value: 2, message: 'At least two options are required' },
           maxLength: { value: 60, message: 'At most 60 options are allowed' },
-          required: {
-            value: true,
-            message: 'At least two options are required',
-          },
+          // required: {
+          //   value: true,
+          //   message: 'At least two options are required',
+          // },
         },
       },
     },

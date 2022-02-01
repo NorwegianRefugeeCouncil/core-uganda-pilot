@@ -1,16 +1,11 @@
 import { ErrorMessage } from '@hookform/error-message';
-import {
-  FieldDefinition,
-  FieldKind,
-  FormType,
-  SelectOption,
-} from 'core-api-client';
+import { FieldKind, FormType, SelectOption } from 'core-api-client';
 import React, { FC } from 'react';
 import { FieldErrors } from 'react-hook-form';
 
 import DatabasePickerContainer from '../../components/DatabasePicker';
 import FormPickerContainer from '../../components/FormPicker';
-import { Form } from '../../reducers/Former/types';
+import { FieldDefinitionNC, Form } from '../../reducers/Former/types';
 
 import validation from './validation';
 
@@ -18,7 +13,7 @@ type FormerFieldProps = {
   formType: FormType;
   addOption: () => void;
   cancel: () => void;
-  errors: FieldErrors<Form & { selectedField?: FieldDefinition }>;
+  errors: FieldErrors<Form & { selectedField?: FieldDefinitionNC }>;
   fieldDescription: string;
   fieldIsKey: boolean;
   fieldName: string;
@@ -72,6 +67,8 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
     setReferencedDatabaseId,
     setReferencedFormId,
   } = props;
+
+  console.log('ERRORS', errors);
 
   React.useEffect(() => {
     if (fieldType === FieldKind.Checkbox) {
@@ -322,6 +319,7 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
         <button
           onClick={async () => {
             const valid = await revalidate('selectedField');
+            console.log('SAVE FIELD', valid);
             if (valid) {
               await saveField();
             }

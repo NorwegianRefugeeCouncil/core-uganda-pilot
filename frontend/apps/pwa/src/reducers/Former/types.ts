@@ -1,5 +1,17 @@
 import { FieldKind, FormType, SelectOption } from 'core-api-client';
 import { EntityState } from '@reduxjs/toolkit';
+import {
+  FieldTypeBoolean,
+  FieldTypeDate,
+  FieldTypeMonth,
+  FieldTypeMultilineText,
+  FieldTypeMultiSelect,
+  FieldTypeQuantity,
+  FieldTypeReference,
+  FieldTypeSingleSelect,
+  FieldTypeText,
+  FieldTypeWeek,
+} from 'core-api-client/src';
 
 export interface FormField {
   id: string;
@@ -14,6 +26,34 @@ export interface FormField {
   referencedDatabaseId: string | undefined;
   referencedFormId: string | undefined;
 }
+
+export type FieldDefinitionNC = {
+  id: string;
+  code: string;
+  name: string;
+  description: string;
+  required: boolean;
+  key: boolean;
+  fieldType: FieldTypeNC;
+};
+
+export interface FieldTypeNC {
+  boolean?: FieldTypeBoolean;
+  date?: FieldTypeDate;
+  month?: FieldTypeMonth;
+  multiSelect?: FieldTypeMultiSelect;
+  multilineText?: FieldTypeMultilineText;
+  quantity?: FieldTypeQuantity;
+  reference?: FieldTypeReference;
+  singleSelect?: FieldTypeSingleSelect;
+  subForm?: FieldTypeSubFormNC;
+  text?: FieldTypeText;
+  week?: FieldTypeWeek;
+}
+
+export type FieldTypeSubFormNC = {
+  id: string;
+};
 
 export interface Form {
   // name of the form
