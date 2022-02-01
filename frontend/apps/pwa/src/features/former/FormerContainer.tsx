@@ -1,7 +1,7 @@
 import { FC, useCallback, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { FieldKind } from 'core-api-client';
 import { useForm, FormProvider } from 'react-hook-form';
+import { FieldKind } from 'core-api-client';
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { fetchDatabases } from '../../reducers/database';
@@ -46,6 +46,7 @@ export const FormerContainer: FC = () => {
   const formUtilities = useForm<ValidationForm>({
     defaultValues: form,
   });
+
   const {
     clearErrors,
     formState,
@@ -109,6 +110,7 @@ export const FormerContainer: FC = () => {
       clearErrors('selectedField.fieldType.singleSelect.options');
       clearErrors('selectedField.fieldType.multiSelect.options');
       dispatch(actions.addOption({ fieldId }));
+      resetField('selectedField');
     },
     [dispatch],
   );

@@ -2,7 +2,6 @@ import { ErrorMessage } from '@hookform/error-message';
 import { FieldKind, FormType } from 'core-api-client';
 import React, { FC } from 'react';
 import { FieldErrors, useFormContext } from 'react-hook-form';
-import { UseFormTrigger } from 'react-hook-form/dist/types/form';
 
 import DatabasePickerContainer from '../../components/DatabasePicker';
 import FormPickerContainer from '../../components/FormPicker';
