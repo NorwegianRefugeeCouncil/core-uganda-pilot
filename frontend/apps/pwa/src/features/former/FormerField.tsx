@@ -1,33 +1,25 @@
 import { ErrorMessage } from '@hookform/error-message';
-import { FieldKind, FormType, SelectOption } from 'core-api-client';
+import { FieldKind, FormType } from 'core-api-client';
 import React, { FC } from 'react';
 import { FieldErrors } from 'react-hook-form';
 
 import DatabasePickerContainer from '../../components/DatabasePicker';
 import FormPickerContainer from '../../components/FormPicker';
-import { FieldDefinitionNC, Form } from '../../reducers/Former/types';
+import { FormField, ValidationForm } from '../../reducers/Former/types';
 
-import validation from './validation';
+import { registeredValidation } from './validation';
 
 type FormerFieldProps = {
-  formType: FormType;
   addOption: () => void;
   cancel: () => void;
-  errors: FieldErrors<Form & { selectedField?: FieldDefinitionNC }>;
-  fieldDescription: string;
-  fieldIsKey: boolean;
-  fieldName: string;
-  fieldOptions?: SelectOption[];
-  fieldRequired: boolean;
-  fieldType: FieldKind;
+  errors: FieldErrors<ValidationForm>;
+  field: FormField;
+  formType: FormType;
   isSelected: boolean;
   openSubForm: () => void;
-  referencedDatabaseId: string | undefined;
-  referencedFormId: string | undefined;
   register: any;
   removeOption: (index: number) => void;
-  revalidate: any;
-  saveField: () => void;
+  saveField: (field: FormField) => void;
   selectField: () => void;
   setFieldDescription: (description: string) => void;
   setFieldIsKey: (isKey: boolean) => void;
@@ -40,23 +32,15 @@ type FormerFieldProps = {
 
 export const FormerField: FC<FormerFieldProps> = (props) => {
   const {
-    formType,
     addOption,
     cancel,
     errors = undefined,
-    fieldDescription,
-    fieldIsKey,
-    fieldName,
-    fieldOptions = [],
-    fieldRequired,
-    fieldType,
+    field,
+    formType,
     isSelected,
     openSubForm,
-    referencedDatabaseId,
-    referencedFormId,
     register,
     removeOption,
-    revalidate,
     saveField,
     selectField,
     setFieldDescription,
@@ -68,7 +52,16 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
     setReferencedFormId,
   } = props;
 
-  console.log('ERRORS', errors);
+  const {
+    description,
+    fieldType,
+    key,
+    name,
+    options,
+    referencedDatabaseId,
+    referencedFormId,
+    required,
+  } = field;
 
   React.useEffect(() => {
     if (fieldType === FieldKind.Checkbox) {
@@ -77,20 +70,12 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
     }
   }, [fieldType]);
 
-  const requiredDisabled = fieldIsKey || fieldType === FieldKind.Checkbox;
+  const requiredDisabled = key || fieldType === FieldKind.Checkbox;
   const isKeyDisabled = fieldType === FieldKind.Checkbox;
 
   const registerSelectedFieldName = register(
     'selectedField.name',
-    validation.selectedField.name,
-  );
-  const registerSelectedFieldOptionsSingle = register(
-    'selectedField.fieldType.singleSelect.options',
-    validation.selectedField.fieldType.singleSelect.options,
-  );
-  const registerSelectedFieldOptionsMulti = register(
-    'selectedField.fieldType.multiSelect.options',
-    validation.selectedField.fieldType.multiSelect.options,
+    registeredValidation.selectedField.name,
   );
 
   if (!isSelected) {
@@ -103,11 +88,11 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
             errors?.selectedField?.name ? 'is-invalid' : ''
           }`}
           id="name"
-          aria-describedby="nameFeedback"
+          aria-describedby="errorMessages"
         >
           <div className="card-body p-3">
             <div className="d-flex flex-row">
-              <span className="flex-grow-1">{fieldName}</span>
+              <span className="flex-grow-1">{name}</span>
               <small className="text-uppercase">{fieldType}</small>
             </div>
           </div>
@@ -140,14 +125,14 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
                 }`}
                 type="text"
                 id="name"
-                value={fieldName || ''}
+                value={name || ''}
                 {...registerSelectedFieldName}
                 onChange={(event) => {
                   setFieldName(event.target.value);
                   return registerSelectedFieldName.onChange(event);
                 }}
               />
-              <div className="invalid-feedback" id="nameFeedback">
+              <div className="invalid-feedback" id="errorMessages">
                 <ErrorMessage errors={errors} name="selectedField.name" />
               </div>
             </div>
@@ -177,18 +162,15 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
                     Add option
                   </button>
                 </div>
-                {fieldOptions?.map((opt, i) => (
+                {options?.map((opt, i) => (
                   <div key={i} className="d-flex mb-2">
                     <input
                       className="form-control me-3"
                       id={`fieldOption-${i}`}
                       type="text"
                       value={opt ? opt.name : ''}
-                      {...registerSelectedFieldOptionsSingle}
                       onChange={(event) => {
                         setFieldOption(i, event.target.value);
-                        registerSelectedFieldOptionsSingle.onChange(event);
-                        registerSelectedFieldOptionsMulti.onChange(event);
                       }}
                     />
                     <button
@@ -201,7 +183,7 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
                   </div>
                 ))}
 
-                <div className="invalid-feedback" id="nameFeedback">
+                <div className="invalid-feedback" id="errorMessages">
                   {fieldType === FieldKind.SingleSelect && (
                     <ErrorMessage
                       errors={errors}
@@ -228,7 +210,7 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
                 className="form-control"
                 id="fieldDescription"
                 onChange={(event) => setFieldDescription(event.target.value)}
-                value={fieldDescription || ''}
+                value={description || ''}
               />
             </div>
 
@@ -265,7 +247,7 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
                     formId={referencedFormId}
                     setFormId={setReferencedFormId}
                     isRecipientKey={
-                      fieldIsKey && formType === FormType.RecipientFormType
+                      key && formType === FormType.RecipientFormType
                     }
                   />
                 </div>
@@ -286,8 +268,8 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
                 className="form-check-input"
                 type="checkbox"
                 value=""
-                onChange={() => setFieldRequired(!fieldRequired)}
-                checked={fieldRequired}
+                onChange={() => setFieldRequired(!required)}
+                checked={required}
                 id="required"
               />
               <label className="form-check-label" htmlFor="required">
@@ -302,8 +284,8 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
                 className="form-check-input"
                 type="checkbox"
                 value=""
-                onChange={() => setFieldIsKey(!fieldIsKey)}
-                checked={fieldIsKey}
+                onChange={() => setFieldIsKey(!key)}
+                checked={key}
                 disabled={isKeyDisabled}
                 id="key"
               />
@@ -314,15 +296,15 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
           </div>
         </div>
       </div>
-      <ErrorMessage errors={errors} name="selectedField" />
+
+      <div className="invalid-feedback" id="errorMessages">
+        <ErrorMessage errors={errors} name="selectedField" />
+      </div>
+
       <div className="card-footer">
         <button
           onClick={async () => {
-            const valid = await revalidate('selectedField');
-            console.log('SAVE FIELD', valid);
-            if (valid) {
-              await saveField();
-            }
+            await saveField(field);
           }}
           className="btn btn-primary me-2 shadow"
         >

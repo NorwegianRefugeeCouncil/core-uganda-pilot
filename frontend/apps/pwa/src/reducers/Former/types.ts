@@ -75,3 +75,5 @@ export interface FormerState extends EntityState<Form> {
   saveSuccess: boolean;
   saveError: any;
 }
+
+export type ValidationForm = Form & { selectedField?: FieldDefinitionNC };

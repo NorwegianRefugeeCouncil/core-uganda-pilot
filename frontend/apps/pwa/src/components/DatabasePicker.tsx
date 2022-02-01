@@ -24,7 +24,11 @@ export const DatabasePicker: FC<DatabasePickerProps> = (props) => {
           Select Database
         </option>
         {databases.map((d) => {
-          return <option value={d.id}>{d.name}</option>;
+          return (
+            <option key={d.id} value={d.id}>
+              {d.name}
+            </option>
+          );
         })}
       </select>
     </div>
@@ -55,7 +59,13 @@ const DatabasePickerContainer: FC<DatabasePickerContainerProps> = (props) => {
     [databases, setDatabase, setDatabaseId],
   );
 
-  return <DatabasePicker databaseId={databaseId} setDatabaseId={setDbCallback} databases={databases} />;
+  return (
+    <DatabasePicker
+      databaseId={databaseId}
+      setDatabaseId={setDbCallback}
+      databases={databases}
+    />
+  );
 };
 
 export default DatabasePickerContainer;

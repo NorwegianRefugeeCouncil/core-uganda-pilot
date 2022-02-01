@@ -30,7 +30,6 @@ export const FieldSections: React.FC<FieldSectionsProps> = (props) => {
     openSubForm,
     register,
     removeOption,
-    revalidate,
     saveField,
     selectedFieldId,
     setFieldDescription,
@@ -68,25 +67,17 @@ export const FieldSections: React.FC<FieldSectionsProps> = (props) => {
       </div>
       {fields.map((f: FormField) => (
         <FormerField
-          key={f.id}
-          formType={formType}
           addOption={() => addOption(f.id)}
           cancel={() => cancelField(f.id)}
           errors={errors}
-          fieldDescription={f.description}
-          fieldIsKey={f.key}
-          fieldName={f.name}
-          fieldOptions={f.options}
-          fieldRequired={f.required}
-          fieldType={f.fieldType}
+          field={f}
+          formType={formType}
           isSelected={f.id === selectedFieldId}
+          key={f.id}
           openSubForm={() => openSubForm(f.id)}
-          referencedDatabaseId={f.referencedDatabaseId}
-          referencedFormId={f.referencedFormId}
           register={register}
           removeOption={(i: number) => removeOption(f.id, i)}
-          revalidate={revalidate}
-          saveField={() => saveField(f.id)}
+          saveField={saveField}
           selectField={() => setSelectedField(f.id)}
           setFieldDescription={(d) => setFieldDescription(f.id, d)}
           setFieldIsKey={(isKey) => setFieldIsKey(f.id, isKey)}

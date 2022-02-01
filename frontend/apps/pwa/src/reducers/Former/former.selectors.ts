@@ -4,7 +4,6 @@ import {
   FieldType,
   Folder,
   FormDefinition,
-  FormType,
 } from 'core-api-client';
 
 import { RootState } from '../../app/store';

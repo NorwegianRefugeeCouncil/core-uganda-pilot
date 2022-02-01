@@ -2,12 +2,12 @@ import React, { FC } from 'react';
 import { ErrorMessage } from '@hookform/error-message';
 
 import { FormerProps } from './types';
-import validation from './validation';
+import { registeredValidation } from './validation';
 
 export const FormName: FC<
   Pick<FormerProps, 'formName' | 'setFormName' | 'errors' | 'register'>
 > = ({ formName = '', setFormName, errors, register }) => {
-  const registerObject = register('name', validation.name);
+  const registerObject = register('name', registeredValidation.name);
 
   return (
     <div className="form-group mb-2">

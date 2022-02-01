@@ -1,15 +1,40 @@
-export default {
+import { FieldPath } from 'react-hook-form';
+import { FieldKind } from 'core-api-client';
+
+import { Form, FormField, ValidationForm } from '../../reducers/Former/types';
+
+const validationConstants = {
+  name: {
+    minLength: 3,
+    maxLength: 128,
+    pattern: /[A-Za-z0-9]/,
+  },
+  options: {
+    min: 2,
+    max: 60,
+    name: {
+      minLength: 2,
+      maxLength: 128,
+    },
+  },
+  fields: {
+    min: 1,
+    max: 100,
+  },
+};
+
+export const registeredValidation = {
   name: {
     minLength: {
-      value: 3,
-      message: 'Form name needs to be at least 3 characters long',
+      value: validationConstants.name.minLength,
+      message: `Form name needs to be at least ${validationConstants.name.minLength} characters long`,
     },
     maxLength: {
-      value: 128,
-      message: 'Form name can be at most 128 characters long',
+      value: validationConstants.name.maxLength,
+      message: `Form name can be at most ${validationConstants.name.maxLength} characters long`,
     },
     pattern: {
-      value: /[A-Za-z0-9]/,
+      value: validationConstants.name.pattern,
       message: 'Form name contains invalid characters',
     },
     required: { value: true, message: 'Form name is a required field' },
@@ -17,36 +42,61 @@ export default {
   selectedField: {
     name: {
       minLength: {
-        value: 2,
-        message: 'Field name needs to be at least 3 characters long',
+        value: validationConstants.name.minLength,
+        message: `Field name needs to be at least ${validationConstants.name.minLength} characters long`,
       },
       maxLength: {
-        value: 128,
-        message: 'Field name can be at most 128 characters long',
+        value: validationConstants.name.maxLength,
+        message: `Field name can be at most ${validationConstants.name.maxLength} characters long`,
       },
       required: { value: true, message: 'Field name is required' },
     },
-    fieldType: {
-      singleSelect: {
-        options: {
-          minLength: { value: 2, message: 'At least two options are required' },
-          maxLength: { value: 60, message: 'At most 60 options are allowed' },
-          // required: {
-          //   value: true,
-          //   message: 'At least two options are required',
-          // },
-        },
-      },
-      multiSelect: {
-        options: {
-          minLength: { value: 2, message: 'At least two options are required' },
-          maxLength: { value: 60, message: 'At most 60 options are allowed' },
-          // required: {
-          //   value: true,
-          //   message: 'At least two options are required',
-          // },
-        },
-      },
-    },
+  },
+};
+
+type CustomError = {
+  field: FieldPath<ValidationForm>;
+  message: string;
+};
+
+export const customValidation = {
+  form: (form: Form): CustomError[] => {
+    const errors = [];
+    if (form.fields.length < validationConstants.fields.min) {
+      errors.push({
+        field: 'fields' as FieldPath<ValidationForm>,
+        message: `Form needs to have at least ${validationConstants.fields.min} field`,
+      });
+    }
+    if (form.fields.length > validationConstants.fields.max) {
+      errors.push({
+        field: 'fields' as FieldPath<ValidationForm>,
+        message: `Form can have at most ${validationConstants.fields.max} fields`,
+      });
+    }
+    return errors;
+  },
+  selectedField: (field: FormField): CustomError[] => {
+    const errors = [];
+    if (
+      field.fieldType === FieldKind.SingleSelect ||
+      field.fieldType === FieldKind.MultiSelect
+    ) {
+      if (field.options.length <= validationConstants.options.min) {
+        errors.push({
+          field:
+            `selectedField.fieldType.${field.fieldType}.options` as FieldPath<ValidationForm>,
+          message: `At least ${validationConstants.options.min} options are required`,
+        });
+      }
+      if (field.options.length > validationConstants.options.max) {
+        errors.push({
+          field:
+            `selectedField.fieldType.${field.fieldType}.options` as FieldPath<ValidationForm>,
+          message: `At most ${validationConstants.options.max} options are allowed`,
+        });
+      }
+    }
+    return errors;
   },
 };

@@ -1,6 +1,6 @@
 import { FC, useCallback, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { FieldDefinition, FieldKind } from 'core-api-client';
+import { FieldKind } from 'core-api-client';
 import { useForm } from 'react-hook-form';
 import _ from 'lodash';
 
@@ -11,9 +11,10 @@ import { fetchForms } from '../../reducers/form';
 import former from '../../reducers/Former';
 import { formerGlobalSelectors } from '../../reducers/Former/former.selectors';
 import { postForm } from '../../reducers/Former/former.reducers';
-import { FieldDefinitionNC, Form } from '../../reducers/Former/types';
+import { FormField, ValidationForm } from '../../reducers/Former/types';
 
 import { Former } from './Former';
+import { customValidation } from './validation';
 
 export const FormerContainer: FC = () => {
   const dispatch = useAppDispatch();
@@ -52,7 +53,7 @@ export const FormerContainer: FC = () => {
     resetField,
     setError,
     trigger,
-  } = useForm<Form & { selectedField: FieldDefinitionNC }>({
+  } = useForm<ValidationForm>({
     defaultValues: form,
   });
 
@@ -89,8 +90,6 @@ export const FormerContainer: FC = () => {
   const addField = useCallback(
     (kind: FieldKind) => {
       if (form) {
-        // clearErrors('fields');
-        // resetField('fields');
         dispatch(actions.addField({ formId: form.formId, kind }));
       }
     },
@@ -107,8 +106,6 @@ export const FormerContainer: FC = () => {
   const addOption = useCallback(
     (fieldId: string) => {
       dispatch(actions.addOption({ fieldId }));
-      resetField('selectedField');
-      // resetField('selectedField.fieldType.singleSelect.options');
     },
     [dispatch],
   );
@@ -177,15 +174,37 @@ export const FormerContainer: FC = () => {
   );
 
   const saveField = useCallback(
-    async (fieldId: string) => {
-      // await trigger();
-      dispatch(actions.selectField({ fieldId: undefined }));
-      resetField('selectedField');
+    async (field: FormField) => {
+      const valid = await trigger('selectedField');
+      const errors = customValidation.selectedField(field);
+
+      if (errors.length) {
+        errors.forEach((error) => {
+          setError(error.field, {
+            message: error.message,
+          });
+        });
+      } else if (valid) {
+        dispatch(actions.selectField({ fieldId: undefined }));
+        resetField('selectedField');
+      }
     },
     [dispatch],
   );
 
   const saveForm = useCallback(async () => {
+    if (form) {
+      const errors = customValidation.form(form);
+      if (errors.length) {
+        errors.forEach((error) => {
+          setError(error.field, {
+            message: error.message,
+          });
+        });
+        return;
+      }
+    }
+
     if (ownerForm) {
       dispatch(actions.saveForm());
     } else if (formDefinition) {
@@ -219,7 +238,6 @@ export const FormerContainer: FC = () => {
       ownerFormName={ownerForm?.name}
       register={register}
       removeOption={removeOption}
-      revalidate={trigger}
       saveField={saveField}
       saveForm={handleSubmit(saveForm)}
       selectedFieldId={selectedField?.id}

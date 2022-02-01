@@ -8,7 +8,6 @@ import _ from 'lodash';
 import { FieldKind, FormDefinition, FormType } from 'core-api-client';
 
 import client from '../../app/client';
-import { ApiErrorDetails } from '../../types/errors';
 
 import { adapter } from './former.adapter';
 import { formerSelectors } from './former.selectors';
@@ -27,7 +26,6 @@ export const reducers = {
       name: '',
       formType: FormType.DefaultFormType,
       isRootForm: true,
-      // errors: undefined,
     });
   },
   setDatabase(
@@ -116,55 +114,6 @@ export const reducers = {
     fieldForm.field.options[i] = {
       id: fieldForm.field.options[i].id,
       name: value,
-    };
-  },
-  setFormErrors(
-    state: FormerState,
-    action: PayloadAction<{ errors: ApiErrorDetails[] }>,
-  ) {
-    const currentForm = formerSelectors.selectCurrentForm(state);
-
-    if (!currentForm) {
-      return;
-    }
-
-    _.forEach(action.payload.errors, (error) => {
-      const propertyIndex = error.field.indexOf('.');
-      if (propertyIndex >= 0) {
-        const property = error.field.slice(propertyIndex + 1);
-        const fieldErrorPath = `${error.field.slice(
-          0,
-          propertyIndex,
-        )}.errors.${property}`;
-
-        _.set(
-          state.entities[currentForm.formId] || {},
-          fieldErrorPath,
-          error.message,
-        );
-      }
-      if (propertyIndex < 0) {
-        const fieldErrorPath = `errors.${error.field}`;
-
-        _.set(
-          state.entities[currentForm.formId] || {},
-          fieldErrorPath,
-          error.message,
-        );
-      }
-    });
-  },
-  resetFormErrors(state: FormerState) {
-    const currentForm = formerSelectors.selectCurrentForm(state);
-
-    if (!currentForm) {
-      return;
-    }
-
-    state.entities[currentForm.formId] = {
-      ...currentForm,
-      fields: [...currentForm.fields.map((f) => ({ ...f, error: undefined }))],
-      // errors: undefined,
     };
   },
   addOption(state: FormerState, action: PayloadAction<{ fieldId: string }>) {
@@ -298,7 +247,6 @@ export const reducers = {
         name: '',
         formType: FormType.DefaultFormType,
         isRootForm: false,
-        // errors: undefined,
       };
       adapter.addOne(state, subForm);
     }
@@ -314,7 +262,6 @@ export const reducers = {
       description: '',
       referencedDatabaseId,
       referencedFormId,
-      // errors: undefined,
     };
     state.entities[form.formId] = {
       ...form,
@@ -332,7 +279,6 @@ export const reducers = {
       name: '',
       formType: FormType.DefaultFormType,
       isRootForm: false,
-      // errors: undefined,
     };
     adapter.addOne(state, newForm);
   },
@@ -422,7 +368,6 @@ export const reducers = {
           subFormId: undefined,
           referencedDatabaseId: undefined,
           referencedFormId: undefined,
-          errors: undefined,
           options: [],
         },
         ...form.fields,
