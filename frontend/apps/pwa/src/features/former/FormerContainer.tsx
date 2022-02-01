@@ -1,6 +1,6 @@
 import { FC, useCallback, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { FieldKind } from 'core-api-client';
+import { FieldDefinition, FieldKind } from 'core-api-client';
 import { useForm } from 'react-hook-form';
 import _ from 'lodash';
 
@@ -43,10 +43,20 @@ export const FormerContainer: FC = () => {
   const formDefinition = useAppSelector(
     formerGlobalSelectors.selectFormDefinition(database?.id, folder?.id),
   );
-  const { register, setError, formState, handleSubmit, trigger, clearErrors } =
-    useForm<Form>({
-      defaultValues: form,
-    });
+  const {
+    clearErrors,
+    formState,
+    handleSubmit,
+    register,
+    reset,
+    resetField,
+    setError,
+    trigger,
+  } = useForm<
+    Form & { selectedField: Omit<FieldDefinition, 'fieldType.subForm.fields'> }
+  >({
+    defaultValues: form,
+  });
 
   useEffect(() => {
     const search = new URLSearchParams(location.search);
@@ -71,8 +81,9 @@ export const FormerContainer: FC = () => {
 
   const setSelectedField = useCallback(
     (fieldId: string | undefined) => {
-      dispatch(actions.selectField({ fieldId }));
+      reset();
       clearErrors();
+      dispatch(actions.selectField({ fieldId }));
     },
     [dispatch],
   );
@@ -80,7 +91,8 @@ export const FormerContainer: FC = () => {
   const addField = useCallback(
     (kind: FieldKind) => {
       if (form) {
-        clearErrors('fields');
+        // clearErrors('fields');
+        // resetField('fields');
         dispatch(actions.addField({ formId: form.formId, kind }));
       }
     },
@@ -97,6 +109,8 @@ export const FormerContainer: FC = () => {
   const addOption = useCallback(
     (fieldId: string) => {
       dispatch(actions.addOption({ fieldId }));
+      resetField('selectedField');
+      // resetField('selectedField.fieldType.singleSelect.options');
     },
     [dispatch],
   );
@@ -168,6 +182,7 @@ export const FormerContainer: FC = () => {
     async (fieldId: string) => {
       await trigger();
       dispatch(actions.selectField({ fieldId: undefined }));
+      resetField(`selectedField.fieldType.${selectedField?.fieldType}`);
     },
     [dispatch],
   );
@@ -201,6 +216,7 @@ export const FormerContainer: FC = () => {
       errors={formState.errors}
       fields={form.fields}
       formName={form.name}
+      invalid={!formState.isValid && formState.isDirty}
       openSubForm={openSubForm}
       ownerFormName={ownerForm?.name}
       register={register}
@@ -218,7 +234,6 @@ export const FormerContainer: FC = () => {
       setFieldRequired={setFieldRequired}
       setFormName={setFormName}
       setSelectedField={setSelectedField}
-      invalid={!formState.isValid && formState.isDirty}
     />
   );
 };

@@ -52,7 +52,7 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
     fieldDescription,
     fieldIsKey,
     fieldName,
-    fieldOptions,
+    fieldOptions = [],
     fieldRequired,
     fieldType,
     isSelected,
@@ -86,6 +86,14 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
   const registerSelectedFieldName = register(
     'selectedField.name',
     validation.selectedField.name,
+  );
+  const registerSelectedFieldOptionsSingle = register(
+    'selectedField.fieldType.singleSelect.options',
+    validation.selectedField.fieldType.singleSelect.options,
+  );
+  const registerSelectedFieldOptionsMulti = register(
+    'selectedField.fieldType.multiSelect.options',
+    validation.selectedField.fieldType.multiSelect.options,
   );
 
   if (!isSelected) {
@@ -179,9 +187,12 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
                       id={`fieldOption-${i}`}
                       type="text"
                       value={opt ? opt.name : ''}
-                      onChange={(event) =>
-                        setFieldOption(i, event.target.value)
-                      }
+                      {...registerSelectedFieldOptionsSingle}
+                      onChange={(event) => {
+                        setFieldOption(i, event.target.value);
+                        registerSelectedFieldOptionsSingle.onChange(event);
+                        registerSelectedFieldOptionsMulti.onChange(event);
+                      }}
                     />
                     <button
                       type="button"
@@ -192,6 +203,21 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
                     </button>
                   </div>
                 ))}
+
+                <div className="invalid-feedback" id="nameFeedback">
+                  {fieldType === FieldKind.SingleSelect && (
+                    <ErrorMessage
+                      errors={errors}
+                      name="selectedField.fieldType.singleSelect.options"
+                    />
+                  )}
+                  {fieldType === FieldKind.MultiSelect && (
+                    <ErrorMessage
+                      errors={errors}
+                      name="selectedField.fieldType.multiSelect.options"
+                    />
+                  )}
+                </div>
               </div>
             )}
 

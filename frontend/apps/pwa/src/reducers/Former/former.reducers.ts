@@ -27,7 +27,7 @@ export const reducers = {
       name: '',
       formType: FormType.DefaultFormType,
       isRootForm: true,
-      errors: undefined,
+      // errors: undefined,
     });
   },
   setDatabase(
@@ -164,7 +164,7 @@ export const reducers = {
     state.entities[currentForm.formId] = {
       ...currentForm,
       fields: [...currentForm.fields.map((f) => ({ ...f, error: undefined }))],
-      errors: undefined,
+      // errors: undefined,
     };
   },
   addOption(state: FormerState, action: PayloadAction<{ fieldId: string }>) {
@@ -298,7 +298,7 @@ export const reducers = {
         name: '',
         formType: FormType.DefaultFormType,
         isRootForm: false,
-        errors: undefined,
+        // errors: undefined,
       };
       adapter.addOne(state, subForm);
     }
@@ -314,7 +314,7 @@ export const reducers = {
       description: '',
       referencedDatabaseId,
       referencedFormId,
-      errors: undefined,
+      // errors: undefined,
     };
     state.entities[form.formId] = {
       ...form,
@@ -332,7 +332,7 @@ export const reducers = {
       name: '',
       formType: FormType.DefaultFormType,
       isRootForm: false,
-      errors: undefined,
+      // errors: undefined,
     };
     adapter.addOne(state, newForm);
   },

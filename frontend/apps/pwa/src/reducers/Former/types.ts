@@ -1,8 +1,6 @@
 import { FieldKind, FormType, SelectOption } from 'core-api-client';
 import { EntityState } from '@reduxjs/toolkit';
 
-import { ErrorMessage } from '../../types/errors';
-
 export interface FormField {
   id: string;
   fieldType: FieldKind;
@@ -15,7 +13,6 @@ export interface FormField {
   subFormId: string | undefined;
   referencedDatabaseId: string | undefined;
   referencedFormId: string | undefined;
-  errors: ErrorMessage | undefined;
 }
 
 export interface Form {
@@ -27,7 +24,6 @@ export interface Form {
   // records the record values
   fields: FormField[];
   isRootForm: boolean;
-  errors: ErrorMessage | undefined;
 }
 
 export interface FormerState extends EntityState<Form> {
