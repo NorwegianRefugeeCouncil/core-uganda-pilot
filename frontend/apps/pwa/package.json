@@ -6,7 +6,7 @@
   "scripts": {
     "start": "env DISABLE_ESLINT_PLUGIN=true react-scripts start",
     "build": "env DISABLE_ESLINT_PLUGIN=true react-scripts build",
-    "test": "react-scripts test --coverage",
+    "test": "react-scripts test --displayName='PWA' --coverage",
     "eject": "react-scripts eject"
   },
   "browserslist": {

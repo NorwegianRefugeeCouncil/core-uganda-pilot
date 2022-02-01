@@ -64,7 +64,8 @@
     "collectCoverage": true,
     "collectCoverageFrom": [
       "src/**/*.{js,jsx,ts,tsx}"
-    ]
+    ],
+    "displayName": "CORE-APP"
   },
   "expo-yarn-workspaces": {
     "symlinks": [

@@ -39,7 +39,8 @@
     "test": "jest --coverage --env=./custom-test-env.ts ./src"
   },
   "jest": {
-    "resetMocks": false
+    "resetMocks": false,
+    "displayName": "CORE-AUTH"
   },
   "browserslist": {
     "production": [
