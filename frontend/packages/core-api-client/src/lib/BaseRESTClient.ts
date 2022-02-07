@@ -3,13 +3,11 @@ import axios, {
   AxiosInstance,
   AxiosRequestConfig,
   AxiosResponse,
-  Method
+  Method,
 } from 'axios';
 
 import { RequestOptions, Response } from './types';
-import {
-  clientResponse,
-} from './utils/responses';
+import { clientResponse } from './utils/responses';
 
 export class BaseRESTClient {
   protected readonly axiosInstance: AxiosInstance;
@@ -51,7 +49,7 @@ export class BaseRESTClient {
     const headers: { [key: string]: string } = options?.headers ?? {
       Accept: 'application/json',
     };
-    let value:AxiosResponse<TBody>|AxiosError<TBody>;
+    let value: AxiosResponse<TBody> | AxiosError<TBody>;
     try {
       value = await this.axiosInstance.request<TBody>({
         responseType: 'json',
@@ -62,7 +60,7 @@ export class BaseRESTClient {
         withCredentials: true,
       });
     } catch (err) {
-      value = err as AxiosError<TBody>
+      value = err as AxiosError<TBody>;
     }
     return clientResponse<TRequest, TBody>(value, request, expectStatusCode);
   }
