@@ -11,7 +11,7 @@ export enum FieldKind {
   MultiSelect = 'multiSelect',
   Week = 'week',
   Month = 'month',
-  Boolean = 'boolean',
+  Checkbox = 'checkbox',
 }
 
 export type FieldTypeText = EmptyObject;
@@ -26,7 +26,7 @@ export type FieldTypeQuantity = EmptyObject;
 
 export type FieldTypeWeek = EmptyObject;
 
-export type FieldTypeBoolean = EmptyObject;
+export type FieldTypeCheckbox = EmptyObject;
 
 export type SelectOption = {
   name: string;
@@ -61,7 +61,7 @@ export type FieldType = {
   quantity?: FieldTypeQuantity;
   singleSelect?: FieldTypeSingleSelect;
   multiSelect?: FieldTypeMultiSelect;
-  boolean?: FieldTypeBoolean;
+  checkbox?: FieldTypeCheckbox;
 };
 
 export type FieldDefinition = {
