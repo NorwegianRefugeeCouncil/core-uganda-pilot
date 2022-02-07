@@ -184,7 +184,7 @@ func readInRecordField(
 		return readInReferenceField(record, field, value)
 	case types.FieldKindText, types.FieldKindMultilineText:
 		return readInTextField(record, field, value)
-	case types.FieldKindBoolean:
+	case types.FieldKindCheckbox:
 		return readInBooleanField(record, field, value)
 	}
 
@@ -306,7 +306,7 @@ func readInQuantityField(record *types.Record, field *types.FieldDefinition, val
 	return nil
 }
 
-// readInBooleanField will populate a record types.FieldValue for a types.FieldTypeBoolean from an SQL value
+// readInBooleanField will populate a record types.FieldValue for a types.FieldTypeCheckbox from an SQL value
 func readInBooleanField(record *types.Record, field *types.FieldDefinition, value interface{}) error {
 	fieldValue, err := getBooleanValue(value)
 	if err != nil {

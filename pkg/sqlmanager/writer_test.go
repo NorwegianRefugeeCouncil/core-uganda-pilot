@@ -254,22 +254,22 @@ func TestWriterFormConversion(t *testing.T) {
 			},
 		},
 		{
-			name: "form with boolean field",
+			name: "form with checkbox field",
 			args: []*types.FormDefinition{{
 				ID:         formId,
 				DatabaseID: databaseId,
 				Fields: []*types.FieldDefinition{
 					{
-						ID: "booleanField",
+						ID: "checkboxField",
 						FieldType: types.FieldType{
-							Boolean: &types.FieldTypeBoolean{},
+							Checkbox: &types.FieldTypeCheckbox{},
 						},
 					},
 				},
 			}},
 			want: []schema.DDL{
 				{Query: createTableDDL},
-				{Query: `alter table "databaseId"."formId" add "booleanField" boolean;`},
+				{Query: `alter table "databaseId"."formId" add "checkboxField" boolean;`},
 			},
 		},
 		{

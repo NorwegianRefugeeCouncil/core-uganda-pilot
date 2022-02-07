@@ -620,59 +620,59 @@ func TestValidateRecord(t *testing.T) {
 			},
 		},
 		{
-			name: "required boolean field with nil value",
+			name: "required checkbox field with nil value",
 			form: aTextForm(
 				tu.FormField(
-					tu.ABooleanField(
-						tu.FieldID("booleanField"),
+					tu.ACheckboxField(
+						tu.FieldID("checkboxField"),
 						tu.FieldRequired(true),
 					),
 				),
 			),
-			recordOptions: tu.RecordValue("booleanField", types.NewNullValue()),
+			recordOptions: tu.RecordValue("checkboxField", types.NewNullValue()),
 			expect: validation.ErrorList{
 				validation.Required(firstFieldValuePath, errFieldValueRequired),
 			},
 		},
 		{
-			name: "required boolean field with true value",
+			name: "required checkbox field with true value",
 			form: aTextForm(
 				tu.FormField(
-					tu.ABooleanField(
-						tu.FieldID("booleanField"),
+					tu.ACheckboxField(
+						tu.FieldID("checkboxField"),
 						tu.FieldRequired(true),
 					),
 				),
 			),
-			recordOptions: tu.RecordValue("booleanField", types.NewStringValue("true")),
+			recordOptions: tu.RecordValue("checkboxField", types.NewStringValue("true")),
 			expect:        nil,
 		},
 		{
-			name: "required boolean field with false value",
+			name: "required checkbox field with false value",
 			form: aTextForm(
 				tu.FormField(
 					tu.AField(
-						tu.FieldID("booleanField"),
+						tu.FieldID("checkboxField"),
 						tu.FieldRequired(true),
-						tu.FieldTypeBoolean(),
+						tu.FieldTypeCheckbox(),
 					),
 				),
 			),
-			recordOptions: tu.RecordValue("booleanField", types.NewStringValue("false")),
+			recordOptions: tu.RecordValue("checkboxField", types.NewStringValue("false")),
 			expect:        nil,
 		},
 		{
-			name: "required boolean field with invalid value",
+			name: "required checkbox field with invalid value",
 			form: aTextForm(
 				tu.FormField(
 					tu.AField(
-						tu.FieldID("booleanField"),
+						tu.FieldID("checkboxField"),
 						tu.FieldRequired(true),
-						tu.FieldTypeBoolean(),
+						tu.FieldTypeCheckbox(),
 					),
 				),
 			),
-			recordOptions: tu.RecordValue("booleanField", types.NewStringValue("invalid")),
+			recordOptions: tu.RecordValue("checkboxField", types.NewStringValue("invalid")),
 			expect: validation.ErrorList{
 				validation.NotSupported(firstFieldValuePath, "invalid", []string{"true", "false"}),
 			},

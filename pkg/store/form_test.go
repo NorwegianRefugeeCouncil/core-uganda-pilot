@@ -85,9 +85,9 @@ func TestFlattenHydrateFormDefinition(t *testing.T) {
 			),
 		},
 		{
-			name: "with boolean field",
+			name: "with checkbox field",
 			formDefinition: aFormWithFields(
-				testutils.ABooleanField(
+				testutils.ACheckboxField(
 					testutils.FieldID(fieldId),
 					testutils.FieldName(fieldName),
 				),

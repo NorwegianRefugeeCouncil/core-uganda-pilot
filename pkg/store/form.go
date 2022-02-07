@@ -617,8 +617,8 @@ func (f FlatForms) hydrateField(field *Field) (*types.FieldDefinition, error) {
 		return f.hydrateSingleSelectField(field)
 	case types.FieldKindMultiSelect:
 		return f.hydrateMultiSelectField(field)
-	case types.FieldKindBoolean:
-		return f.hydrateBooleanField(field)
+	case types.FieldKindCheckbox:
+		return f.hydrateCheckboxField(field)
 	}
 	return nil, errors.New("unprocessable field type")
 }
@@ -740,11 +740,11 @@ func (f FlatForms) hydrateReferenceField(field *Field) (*types.FieldDefinition, 
 	return fieldDef, nil
 }
 
-// hydrateBooleanField hydrates a types.FieldTypeBoolean
-func (f FlatForms) hydrateBooleanField(field *Field) (*types.FieldDefinition, error) {
+// hydrateCheckboxField hydrates a types.FieldTypeCheckbox
+func (f FlatForms) hydrateCheckboxField(field *Field) (*types.FieldDefinition, error) {
 	fieldDef := hydrateFieldDefaults(field)
 	fieldDef.FieldType = types.FieldType{
-		Boolean: &types.FieldTypeBoolean{},
+		Checkbox: &types.FieldTypeCheckbox{},
 	}
 	return fieldDef, nil
 }
@@ -826,8 +826,8 @@ func flattenField(rootForm, form types.FormInterface, field *types.FieldDefiniti
 		return flattenSingleSelectField(rootForm, form, field)
 	case types.FieldKindMultiSelect:
 		return flattenMultiSelectField(rootForm, form, field)
-	case types.FieldKindBoolean:
-		return flattenBooleanField(rootForm, form, field)
+	case types.FieldKindCheckbox:
+		return flattenCheckboxField(rootForm, form, field)
 	}
 	return FlatForms{}, fmt.Errorf("unprocessable field kind %v", fieldKind)
 }
@@ -959,9 +959,9 @@ func flattenSubFormField(rootForm, form types.FormInterface, field *types.FieldD
 	return flatField.Add(flatSubForm), nil
 }
 
-// flattenBooleanField flattens a types.FieldTypeBoolean
-func flattenBooleanField(rootForm, form types.FormInterface, field *types.FieldDefinition) (FlatForms, error) {
+// flattenCheckboxField flattens a types.FieldTypeCheckbox
+func flattenCheckboxField(rootForm, form types.FormInterface, field *types.FieldDefinition) (FlatForms, error) {
 	storedField := getFieldsDefault(rootForm, form, field)
-	storedField.Type = types.FieldKindBoolean
+	storedField.Type = types.FieldKindCheckbox
 	return FlatForms{Fields: []*Field{storedField}}, nil
 }
