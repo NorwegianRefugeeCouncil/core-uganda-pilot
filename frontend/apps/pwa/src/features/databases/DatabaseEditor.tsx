@@ -21,7 +21,7 @@ export const DatabaseEditor: FC = (props) => {
   const [database, setDatabase] = useState<Database | undefined>(undefined);
 
   const onSubmit = (data: FormData) => {
-    client.createDatabase({ object: { name: data.name } }).then((resp) => {
+    client.Database.create({ object: { name: data.name } }).then((resp) => {
       if (resp.success && resp.response) {
         databaseActions.addOne(resp.response);
         setDatabase(resp.response);
