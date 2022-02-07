@@ -1,6 +1,6 @@
 import { AxiosError, AxiosResponse } from 'axios';
 
-import { Response } from '../types';
+import { Response } from '../types/client/utils';
 
 const errorResponse = <TRequest, TBody>(
   request: TRequest,
