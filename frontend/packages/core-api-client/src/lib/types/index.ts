@@ -18,7 +18,7 @@ export enum FieldKind {
   MultiSelect = 'multiSelect',
   Week = 'week',
   Month = 'month',
-  Boolean = 'boolean',
+  Checkbox = 'checkbox',
 }
 
 export type FieldType = {
@@ -32,7 +32,7 @@ export type FieldType = {
   quantity?: FieldTypeQuantity;
   singleSelect?: FieldTypeSingleSelect;
   multiSelect?: FieldTypeMultiSelect;
-  boolean?: FieldTypeBoolean;
+  checkbox?: FieldTypeCheckbox;
 };
 
 export type FieldTypeText = {};
@@ -58,10 +58,9 @@ export type FieldTypeMultiSelect = {
   options: SelectOption[];
 };
 
-export class FieldTypeWeek {
-}
+export class FieldTypeWeek {}
 
-export type FieldTypeBoolean = {};
+export type FieldTypeCheckbox = {};
 
 export type FieldTypeReference = {
   databaseId: string;
@@ -83,8 +82,8 @@ export type FieldDefinition = {
 };
 
 export enum FormType {
-  DefaultFormType = "default",
-  RecipientFormType = "recipient"
+  DefaultFormType = 'default',
+  RecipientFormType = 'recipient',
 }
 
 export type FormDefinition = {
@@ -234,5 +233,4 @@ export interface ClientDefinition
     RecordLister,
     RecordGetter,
     FolderLister,
-    FolderCreator {
-}
+    FolderCreator {}
