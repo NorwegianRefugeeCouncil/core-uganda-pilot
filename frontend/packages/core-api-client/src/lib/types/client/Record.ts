@@ -1,4 +1,4 @@
-import { Record, RecordList } from '..';
+import { Record, RecordList } from '../model/Record';
 
 import { DataOperation, PartialObjectWrapper, Response } from './utils';
 

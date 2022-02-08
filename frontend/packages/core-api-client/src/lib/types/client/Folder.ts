@@ -1,4 +1,4 @@
-import { Folder, FolderList } from '..';
+import { Folder, FolderList } from '../model/Folder';
 
 import { DataOperation, PartialObjectWrapper, Response } from './utils';
 
