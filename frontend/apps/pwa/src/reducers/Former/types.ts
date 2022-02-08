@@ -1,7 +1,7 @@
 import { FieldKind, FormType, SelectOption } from 'core-api-client';
 import { EntityState } from '@reduxjs/toolkit';
 import {
-  FieldTypeBoolean,
+  FieldTypeCheckbox,
   FieldTypeDate,
   FieldTypeMonth,
   FieldTypeMultilineText,
@@ -38,7 +38,7 @@ export type FieldDefinitionNC = {
 };
 
 export interface FieldTypeNC {
-  boolean?: FieldTypeBoolean;
+  checkbox?: FieldTypeCheckbox;
   date?: FieldTypeDate;
   month?: FieldTypeMonth;
   multiSelect?: FieldTypeMultiSelect;

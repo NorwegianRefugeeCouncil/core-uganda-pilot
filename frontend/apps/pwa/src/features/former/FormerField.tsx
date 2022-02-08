@@ -2,6 +2,7 @@ import { ErrorMessage } from '@hookform/error-message';
 import { FieldKind, FormType } from 'core-api-client';
 import React, { FC } from 'react';
 import { FieldErrors } from 'react-hook-form';
+import { UseFormTrigger } from 'react-hook-form/dist/types/form';
 
 import DatabasePickerContainer from '../../components/DatabasePicker';
 import FormPickerContainer from '../../components/FormPicker';
@@ -19,6 +20,7 @@ type FormerFieldProps = {
   openSubForm: () => void;
   register: any;
   removeOption: (index: number) => void;
+  revalidate: UseFormTrigger<ValidationForm>;
   saveField: (field: FormField) => void;
   selectField: () => void;
   setFieldDescription: (description: string) => void;
@@ -41,6 +43,7 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
     openSubForm,
     register,
     removeOption,
+    revalidate,
     saveField,
     selectField,
     setFieldDescription,
@@ -144,7 +147,8 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
               <div className="form-group mb-2">
                 <div
                   className={`d-flex justify-content-between align-items-center mb-2 ${
-                    errors?.selectedField?.fieldType?.singleSelect?.options
+                    errors?.selectedField?.fieldType?.singleSelect?.options ||
+                    errors?.selectedField?.fieldType?.multiSelect?.options
                       ? 'is-invalid'
                       : ''
                   }`}
@@ -162,40 +166,61 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
                     Add option
                   </button>
                 </div>
-                {options?.map((opt, i) => (
-                  <div key={i} className="d-flex mb-2">
-                    <input
-                      className="form-control me-3"
-                      id={`fieldOption-${i}`}
-                      type="text"
-                      value={opt ? opt.name : ''}
-                      onChange={(event) => {
-                        setFieldOption(i, event.target.value);
-                      }}
-                    />
-                    <button
-                      type="button"
-                      className="btn btn-outline-danger"
-                      onClick={() => removeOption(i)}
-                    >
-                      <i className="bi bi-x" />
-                    </button>
-                  </div>
-                ))}
+                {options?.map((opt, i) => {
+                  const registerOption = register(
+                    `selectedField.fieldType.${fieldType}.options.${i}`,
+                    registeredValidation.selectedField.fieldType.select.option
+                      .name,
+                  );
+
+                  const optionErrors =
+                    fieldType === FieldKind.SingleSelect
+                      ? errors?.selectedField?.fieldType?.singleSelect?.options
+                      : errors?.selectedField?.fieldType?.multiSelect?.options;
+
+                  const isInvalid = optionErrors && !!optionErrors[i];
+                  return (
+                    <div key={i} className="form-group mb-2 d-inline-flex">
+                      <div className="input-group mb-2">
+                        <input
+                          className={`form-control me-3 ${
+                            isInvalid ? 'is-invalid' : ''
+                          }`}
+                          id={`fieldOption-${i}`}
+                          type="text"
+                          value={opt ? opt.name : ''}
+                          {...registerOption}
+                          onChange={(event) => {
+                            setFieldOption(i, event.target.value);
+                            return registerOption.onChange(event);
+                          }}
+                          aria-describedby="errorMessages"
+                        />
+                        <button
+                          type="button"
+                          className="btn btn-outline-danger"
+                          onClick={() => removeOption(i)}
+                        >
+                          <i className="bi bi-x" />
+                        </button>
+                        <div className="invalid-feedback" id="errorMessages">
+                          <ErrorMessage
+                            errors={errors}
+                            name={`selectedField.fieldType.${fieldType}.options.${i}`}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
 
                 <div className="invalid-feedback" id="errorMessages">
-                  {fieldType === FieldKind.SingleSelect && (
+                  <div>
                     <ErrorMessage
                       errors={errors}
-                      name="selectedField.fieldType.singleSelect.options"
+                      name={`selectedField.fieldType.${fieldType}.options`}
                     />
-                  )}
-                  {fieldType === FieldKind.MultiSelect && (
-                    <ErrorMessage
-                      errors={errors}
-                      name="selectedField.fieldType.multiSelect.options"
-                    />
-                  )}
+                  </div>
                 </div>
               </div>
             )}
@@ -219,7 +244,10 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
             {fieldType === FieldKind.SubForm ? (
               <button
                 className="btn btn-primary"
-                onClick={() => openSubForm()}
+                onClick={async () => {
+                  const valid = await revalidate('selectedField');
+                  if (valid) openSubForm();
+                }}
                 id="subformFields"
                 aria-describedby="subformFieldsFeedback"
               >
@@ -238,6 +266,8 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
                   <DatabasePickerContainer
                     setDatabaseId={setReferencedDatabaseId}
                     databaseId={referencedDatabaseId}
+                    register={register}
+                    errors={errors}
                   />
                 </div>
                 <div className="form-group">
@@ -246,9 +276,12 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
                     databaseId={referencedDatabaseId}
                     formId={referencedFormId}
                     setFormId={setReferencedFormId}
+                    // setForm={se}
                     isRecipientKey={
                       key && formType === FormType.RecipientFormType
                     }
+                    register={register}
+                    errors={errors}
                   />
                 </div>
               </div>
@@ -310,6 +343,7 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
         >
           Save
         </button>
+
         <button onClick={() => cancel()} className="btn btn-secondary shadow">
           Delete
         </button>

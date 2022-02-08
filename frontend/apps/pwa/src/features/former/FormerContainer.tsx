@@ -89,8 +89,10 @@ export const FormerContainer: FC = () => {
 
   const addField = useCallback(
     (kind: FieldKind) => {
+      resetField('selectedField');
       if (form) {
         dispatch(actions.addField({ formId: form.formId, kind }));
+        clearErrors('fields');
       }
     },
     [dispatch, form],
@@ -105,6 +107,8 @@ export const FormerContainer: FC = () => {
 
   const addOption = useCallback(
     (fieldId: string) => {
+      clearErrors('selectedField.fieldType.singleSelect.options');
+      clearErrors('selectedField.fieldType.multiSelect.options');
       dispatch(actions.addOption({ fieldId }));
     },
     [dispatch],
@@ -120,6 +124,7 @@ export const FormerContainer: FC = () => {
   const cancelField = useCallback(
     (fieldId: string) => {
       dispatch(actions.cancelFieldChanges({ fieldId }));
+      resetField('selectedField');
     },
     [dispatch],
   );
@@ -177,6 +182,7 @@ export const FormerContainer: FC = () => {
     async (field: FormField) => {
       const valid = await trigger('selectedField');
       const errors = customValidation.selectedField(field);
+      // console.log('field errors', errors);
 
       if (errors.length) {
         errors.forEach((error) => {
@@ -184,9 +190,10 @@ export const FormerContainer: FC = () => {
             message: error.message,
           });
         });
-      } else if (valid) {
+        return;
+      }
+      if (valid) {
         dispatch(actions.selectField({ fieldId: undefined }));
-        resetField('selectedField');
       }
     },
     [dispatch],
@@ -206,6 +213,11 @@ export const FormerContainer: FC = () => {
     }
 
     if (ownerForm) {
+      const valid = await trigger();
+      // console.log('SPIDFJO:', valid);
+      if (!valid) {
+        return;
+      }
       dispatch(actions.saveForm());
     } else if (formDefinition) {
       try {
@@ -250,6 +262,7 @@ export const FormerContainer: FC = () => {
       setFieldRequired={setFieldRequired}
       setFormName={setFormName}
       setSelectedField={setSelectedField}
+      revalidate={trigger}
     />
   );
 };

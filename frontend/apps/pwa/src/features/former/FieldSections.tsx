@@ -30,6 +30,7 @@ export const FieldSections: React.FC<FieldSectionsProps> = (props) => {
     openSubForm,
     register,
     removeOption,
+    revalidate,
     saveField,
     selectedFieldId,
     setFieldDescription,
@@ -57,14 +58,18 @@ export const FieldSections: React.FC<FieldSectionsProps> = (props) => {
   }
   return (
     <div>
-      <div>
-        <button
-          className="btn btn-primary my-2 mb-3 w-100"
-          onClick={() => setIsAddingField(true)}
-        >
-          Add field
-        </button>
-      </div>
+      {!selectedFieldId && (
+        <div>
+          <button
+            className="btn btn-primary my-2 mb-3 w-100"
+            onClick={() => {
+              setIsAddingField(true);
+            }}
+          >
+            Add field
+          </button>
+        </div>
+      )}
       {fields.map((f: FormField) => (
         <FormerField
           addOption={() => addOption(f.id)}
@@ -77,6 +82,7 @@ export const FieldSections: React.FC<FieldSectionsProps> = (props) => {
           openSubForm={() => openSubForm(f.id)}
           register={register}
           removeOption={(i: number) => removeOption(f.id, i)}
+          revalidate={revalidate}
           saveField={saveField}
           selectField={() => setSelectedField(f.id)}
           setFieldDescription={(d) => setFieldDescription(f.id, d)}

@@ -51,6 +51,31 @@ export const registeredValidation = {
       },
       required: { value: true, message: 'Field name is required' },
     },
+    fieldType: {
+      reference: {
+        databaseId: {
+          required: { value: true, message: 'Data base is required' },
+        },
+        formId: {
+          required: { value: true, message: 'Form is required' },
+        },
+      },
+      select: {
+        option: {
+          name: {
+            minLength: {
+              value: validationConstants.name.minLength,
+              message: `Option name needs to be at least ${validationConstants.name.minLength} characters long`,
+            },
+            maxLength: {
+              value: validationConstants.name.maxLength,
+              message: `Option name can be at most ${validationConstants.name.maxLength} characters long`,
+            },
+            required: { value: true, message: 'Option name is required' },
+          },
+        },
+      },
+    },
   },
 };
 
@@ -82,7 +107,7 @@ export const customValidation = {
       field.fieldType === FieldKind.SingleSelect ||
       field.fieldType === FieldKind.MultiSelect
     ) {
-      if (field.options.length <= validationConstants.options.min) {
+      if (field.options.length < validationConstants.options.min) {
         errors.push({
           field:
             `selectedField.fieldType.${field.fieldType}.options` as FieldPath<ValidationForm>,

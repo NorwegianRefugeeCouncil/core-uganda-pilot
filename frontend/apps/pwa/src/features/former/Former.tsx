@@ -20,6 +20,7 @@ export const Former: FC<FormerProps> = (props) => {
     ownerFormName,
     register,
     removeOption,
+    revalidate,
     saveField,
     saveForm,
     selectedFieldId,
@@ -65,15 +66,16 @@ export const Former: FC<FormerProps> = (props) => {
               <FormTypeControl formId={formId} formType={formType} />
             </>
             <FieldSections
-              formType={formType}
               addField={addField}
               addOption={addOption}
               cancelField={(fieldId: string) => cancelField(fieldId)}
               errors={errors}
               fields={fields}
+              formType={formType}
               openSubForm={openSubForm}
               register={register}
               removeOption={removeOption}
+              revalidate={revalidate}
               saveField={saveField}
               selectedFieldId={selectedFieldId}
               setFieldDescription={setFieldDescription}
@@ -85,7 +87,9 @@ export const Former: FC<FormerProps> = (props) => {
               setFieldRequired={setFieldRequired}
               setSelectedField={setSelectedField}
             />
-            <ErrorMessage errors={errors} name="fields" />
+            <div className="text-danger">
+              <ErrorMessage errors={errors} name="fields" />
+            </div>
           </div>
 
           <div className="col-2">

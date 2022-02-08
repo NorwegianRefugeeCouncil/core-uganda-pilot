@@ -301,6 +301,7 @@ export const reducers = {
       return;
     }
     state.selectedFormId = subForm.formId;
+    state.selectedFieldId = undefined;
   },
   selectForm(state: FormerState, action: PayloadAction<{ formId: string }>) {
     const { formId } = action.payload;

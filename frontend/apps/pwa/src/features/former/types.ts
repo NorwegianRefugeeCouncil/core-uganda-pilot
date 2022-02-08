@@ -1,5 +1,6 @@
 import { FieldKind, FormType } from 'core-api-client';
 import { FieldErrors } from 'react-hook-form';
+import { UseFormTrigger } from 'react-hook-form/dist/types/form';
 
 import { FormField, ValidationForm } from '../../reducers/Former/types';
 
@@ -13,10 +14,12 @@ export type FormerProps = {
   fieldOptions?: string[];
   fields: FormField[];
   formName: string;
+  invalid: boolean;
   openSubForm: (fieldId: string) => void;
   ownerFormName: string | undefined;
   register: any;
   removeOption: (fieldId: string, index: number) => void;
+  revalidate: UseFormTrigger<ValidationForm>;
   saveField: (field: FormField) => void;
   saveForm: () => void;
   selectedFieldId: string | undefined;
@@ -29,5 +32,4 @@ export type FormerProps = {
   setFieldRequired: (fieldId: string, required: boolean) => void;
   setFormName: (formName: string) => void;
   setSelectedField: (fieldId: string | undefined) => void;
-  invalid: boolean;
 };
