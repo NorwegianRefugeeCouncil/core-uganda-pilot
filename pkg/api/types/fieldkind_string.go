@@ -24,7 +24,7 @@ func _() {
 
 const _FieldKind_name = "FieldKindUnknownFieldKindTextFieldKindSubFormFieldKindReferenceFieldKindMultilineTextFieldKindDateFieldKindQuantityFieldKindMonthFieldKindWeekFieldKindSingleSelectFieldKindMultiSelectFieldKindCheckbox"
 
-var _FieldKind_index = [...]uint8{0, 16, 29, 45, 63, 85, 98, 115, 129, 142, 163, 183, 199}
+var _FieldKind_index = [...]uint8{0, 16, 29, 45, 63, 85, 98, 115, 129, 142, 163, 183, 200}
 
 func (i FieldKind) String() string {
 	if i < 0 || i >= FieldKind(len(_FieldKind_index)-1) {
