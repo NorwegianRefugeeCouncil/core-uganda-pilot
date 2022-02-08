@@ -6,8 +6,8 @@ import axios, {
   Method,
 } from 'axios';
 
-import { RequestOptions, Response } from './types';
-import { clientResponse } from './utils/responses';
+import { RequestOptions, Response } from '../types/client/utils';
+import { clientResponse } from '../utils/responses';
 
 export class BaseRESTClient {
   protected readonly axiosInstance: AxiosInstance;
@@ -38,7 +38,7 @@ export class BaseRESTClient {
     this.token = token;
   };
 
-  protected async do<TRequest, TBody>(
+  public async do<TRequest, TBody>(
     request: TRequest,
     url: string,
     method: Method,
