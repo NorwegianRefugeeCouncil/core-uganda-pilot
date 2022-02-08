@@ -1,29 +1,56 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
-import { Record } from 'core-api-client';
+import { FieldDefinition, Record } from 'core-api-client';
+import { FieldErrors } from 'react-hook-form';
+import { ErrorMessage } from '@hookform/error-message';
 
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { fetchRecords, recordGlobalSelectors, selectRecords } from '../reducers/records';
+import {
+  fetchRecords,
+  recordGlobalSelectors,
+  selectRecords,
+} from '../reducers/records';
 import { selectFormOrSubFormById, selectRootForm } from '../reducers/form';
+import { FieldDefinitionNC } from '../reducers/Former/types';
 
 export type RecordPickerProps = {
   disabled?: boolean;
   recordId: string | null;
+  field: FieldDefinitionNC;
   setRecordId: (recordId: string | null) => void;
   records: Record[];
   getDisplayStr: (record: Record) => string;
+  register: any;
+  errors: FieldErrors;
 };
 
-export const RecordPicker: FC<RecordPickerProps> = (props) => {
-  const { disabled, recordId, setRecordId, records, getDisplayStr } = props;
-
+export const RecordPicker: FC<RecordPickerProps> = ({
+  disabled,
+  recordId,
+  setRecordId,
+  field,
+  records,
+  getDisplayStr,
+  register,
+  errors,
+}) => {
+  const registerObject = register(`values.${field.id}`, {
+    required: { value: field.required, message: 'This field is required' },
+  });
   return (
     <div>
       <select
         disabled={disabled}
-        onChange={(e) => setRecordId(e.target.value)}
         value={recordId || ''}
-        className="form-select"
+        className={`form-select ${
+          errors?.values && errors?.values[field.id] ? 'is-invalid' : ''
+        }`}
         aria-label="Select Record"
+        {...registerObject}
+        onChange={(event) => {
+          setRecordId(event.target.value);
+          return registerObject.onChange(event);
+        }}
+        aria-describedby="errorMessages"
       >
         <option disabled value="">
           No Records
@@ -36,6 +63,12 @@ export const RecordPicker: FC<RecordPickerProps> = (props) => {
           );
         })}
       </select>
+
+      <div className="invalid-feedback" id="errorMessages">
+        <div>
+          <ErrorMessage errors={errors} name={`values.${field.id}`} />
+        </div>
+      </div>
     </div>
   );
 };
@@ -46,11 +79,21 @@ export type RecordPickerContainerProps = {
   setRecord?: (record: Record | undefined) => void;
   ownerId?: string;
   formId?: string;
+  field: FieldDefinitionNC;
+  register: any;
+  errors: FieldErrors;
 };
 
-export const RecordPickerContainer: FC<RecordPickerContainerProps> = (props) => {
-  const { ownerId, formId, recordId, setRecordId, setRecord } = props;
-
+export const RecordPickerContainer: FC<RecordPickerContainerProps> = ({
+  ownerId,
+  formId,
+  field,
+  recordId,
+  setRecordId,
+  setRecord,
+  register,
+  errors,
+}) => {
   const dispatch = useAppDispatch();
 
   const form = useAppSelector((state) => {
@@ -65,7 +108,9 @@ export const RecordPickerContainer: FC<RecordPickerContainerProps> = (props) => 
 
   useEffect(() => {
     if (rootForm && form && !pending) {
-      dispatch(fetchRecords({ databaseId: rootForm.databaseId, formId: form?.id }))
+      dispatch(
+        fetchRecords({ databaseId: rootForm.databaseId, formId: form?.id }),
+      )
         .then(() => {
           setPending(true);
         })
@@ -99,6 +144,7 @@ export const RecordPickerContainer: FC<RecordPickerContainerProps> = (props) => 
     <RecordPicker
       disabled={false}
       recordId={recordId}
+      field={field}
       setRecordId={callback}
       records={records}
       getDisplayStr={(r) => {
@@ -108,6 +154,8 @@ export const RecordPickerContainer: FC<RecordPickerContainerProps> = (props) => 
         }, '');
         return result || '';
       }}
+      register={register}
+      errors={errors}
     />
   );
 };

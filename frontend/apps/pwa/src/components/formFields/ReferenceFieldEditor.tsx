@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 
 import { RecordPickerContainer } from '../RecordPicker';
+import { FieldDefinitionNC } from '../../reducers/Former/types';
 
 import { FieldEditorProps } from './types';
 import { FieldDescription } from './FieldDescription';
@@ -10,6 +11,8 @@ export const ReferenceFieldEditor: FC<FieldEditorProps> = ({
   field,
   value,
   onChange,
+  register,
+  errors,
 }) => {
   if (Array.isArray(value)) {
     return <></>;
@@ -19,8 +22,11 @@ export const ReferenceFieldEditor: FC<FieldEditorProps> = ({
       <FieldLabel fieldDefinition={field} />
       <RecordPickerContainer
         formId={field.fieldType.reference?.formId}
+        field={field as FieldDefinitionNC}
         recordId={value}
         setRecordId={onChange}
+        register={register}
+        errors={errors}
       />
       <FieldDescription text={field.description} />
     </div>

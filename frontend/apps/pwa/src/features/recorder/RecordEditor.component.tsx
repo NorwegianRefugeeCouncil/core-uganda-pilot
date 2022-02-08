@@ -1,10 +1,9 @@
 import React, { FC } from 'react';
 import { FieldDefinition, FieldValue } from 'core-api-client';
-import _ from 'lodash';
+import { FieldErrors } from 'react-hook-form';
 
 import { FieldEditor } from '../../components/FieldEditor/FieldEditor';
 import { FormValue } from '../../reducers/Recorder/types';
-import { ErrorMessage } from '../../types/errors';
 
 type Props = {
   fields: FieldDefinition[];
@@ -14,21 +13,21 @@ type Props = {
   onSaveRecord: () => void;
   onSelectSubRecord: (subRecordId: string) => void;
   subRecords: { [key: string]: FormValue[] };
-  errors: ErrorMessage | undefined;
+  errors: FieldErrors;
+  register: any;
 };
 
-export const RecordEditorComponent: FC<Props> = (props) => {
-  const {
-    fields,
-    onAddSubRecord,
-    onSelectSubRecord,
-    onSaveRecord,
-    subRecords,
-    onChangeValue,
-    values,
-    errors,
-  } = props;
-
+export const RecordEditorComponent: FC<Props> = ({
+  fields,
+  onAddSubRecord,
+  onSelectSubRecord,
+  onSaveRecord,
+  subRecords,
+  onChangeValue,
+  values,
+  errors,
+  register,
+}) => {
   if (!fields) {
     return <></>;
   }
@@ -40,11 +39,7 @@ export const RecordEditorComponent: FC<Props> = (props) => {
           <div className="col-12 col-lg-8">
             <h4 className="mb-4">Add record</h4>
             <div className="card bg-dark text-light border-secondary">
-              <div
-                className={`card-body ${errors ? 'is-invalid' : ''}`}
-                id="values"
-                aria-describedby="valuesFeedback"
-              >
+              <div className="card-body" id="values">
                 {fields.map((field) => {
                   const fieldValue = values.find((v) => v.fieldId === field.id);
                   const value = fieldValue?.value ? fieldValue.value : '';
@@ -63,18 +58,9 @@ export const RecordEditorComponent: FC<Props> = (props) => {
                       subRecords={subRecords[field.id]}
                       onSelectSubRecord={onSelectSubRecord}
                       onAddSubRecord={handleAddSubRecordWrapper}
+                      register={register}
+                      errors={errors}
                     />
-                  );
-                })}
-                {_.map(errors, (e: any) => {
-                  return (
-                    <div
-                      className="invalid-feedback is-invalid"
-                      id="valuesFeedback"
-                      key={e.message || e}
-                    >
-                      {e.message || e}
-                    </div>
                   );
                 })}
                 <div className="my-3">
