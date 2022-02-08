@@ -176,8 +176,8 @@ func TestReader(t *testing.T) {
 			want:    singleRecord(recordWithValue(pointers.String("otherRefId"))),
 		},
 		{
-			name:    "form with boolean field",
-			form:    formWithField(types.FieldKindBoolean),
+			name:    "form with checkbox field",
+			form:    formWithField(types.FieldKindCheckbox),
 			columns: columns(keyIdColumn, keyMyFieldID),
 			values:  singleRow(recordId, true),
 			want:    singleRecord(recordWithValue(pointers.String("true"))),

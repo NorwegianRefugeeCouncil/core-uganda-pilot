@@ -3,7 +3,7 @@ import * as React from 'react';
 import { FieldEditorProps } from './types';
 import { FieldDescription } from './FieldDescription';
 
-export const BooleanFieldEditor: React.FC<FieldEditorProps> = ({
+export const CheckboxFieldEditor: React.FC<FieldEditorProps> = ({
   field,
   value,
   onChange,

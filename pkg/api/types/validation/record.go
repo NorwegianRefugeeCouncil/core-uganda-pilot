@@ -43,7 +43,7 @@ var supportedRecordFieldKinds = []types.FieldKind{
 	types.FieldKindWeek,
 	types.FieldKindSingleSelect,
 	types.FieldKindMultiSelect,
-	types.FieldKindBoolean,
+	types.FieldKindCheckbox,
 }
 
 // supportedRecordFieldKindMap is a map of the supportedRecordFieldKinds for faster lookup
@@ -186,8 +186,8 @@ func ValidateRecordValue(path *validation.Path, value types.StringOrArray, field
 		return ValidateRecordSingleSelectValue(path, value, field)
 	case types.FieldKindMultiSelect:
 		return ValidateRecordMultiSelectValue(path, value, field)
-	case types.FieldKindBoolean:
-		return ValidateRecordBooleanValue(path, value, field)
+	case types.FieldKindCheckbox:
+		return ValidateRecordCheckboxValue(path, value, field)
 	}
 	return result
 }
@@ -338,7 +338,7 @@ func ValidateRecordMultiSelectValue(path *validation.Path, value types.StringOrA
 	return result
 }
 
-func ValidateRecordBooleanValue(path *validation.Path, value types.StringOrArray, field *types.FieldDefinition) validation.ErrorList {
+func ValidateRecordCheckboxValue(path *validation.Path, value types.StringOrArray, field *types.FieldDefinition) validation.ErrorList {
 	stringValue, result, done := getStringValue(path, value, field, validation.ErrorList{})
 	if done {
 		return result

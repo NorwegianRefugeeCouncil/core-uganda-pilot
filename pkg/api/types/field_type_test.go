@@ -63,9 +63,9 @@ func TestGetFieldKind(t *testing.T) {
 			expectKind: FieldKindMultiSelect,
 		},
 		{
-			name:       "boolean",
-			fieldType:  FieldType{Boolean: &FieldTypeBoolean{}},
-			expectKind: FieldKindBoolean,
+			name:       "checkbox",
+			fieldType:  FieldType{Checkbox: &FieldTypeCheckbox{}},
+			expectKind: FieldKindCheckbox,
 		},
 	}
 
@@ -112,7 +112,7 @@ func TestAccessor(t *testing.T) {
 	week := &FieldTypeWeek{}
 	singleSelect := &FieldTypeSingleSelect{}
 	multiSelect := &FieldTypeMultiSelect{}
-	boolean := &FieldTypeBoolean{}
+	checkbox := &FieldTypeCheckbox{}
 
 	ft := FieldType{
 		Text:          text,
@@ -125,7 +125,7 @@ func TestAccessor(t *testing.T) {
 		Week:          week,
 		SingleSelect:  singleSelect,
 		MultiSelect:   multiSelect,
-		Boolean:       boolean,
+		Checkbox:      checkbox,
 	}
 
 	var foundValues []interface{}

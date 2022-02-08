@@ -25,8 +25,8 @@ export function getFieldKind(fieldType: FieldType): FieldKind {
   if (fieldType.multiSelect) {
     return FieldKind.MultiSelect;
   }
-  if (fieldType.boolean) {
-    return FieldKind.Boolean;
+  if (fieldType.checkbox) {
+    return FieldKind.Checkbox;
   }
   throw new Error('unknown field kind');
 }

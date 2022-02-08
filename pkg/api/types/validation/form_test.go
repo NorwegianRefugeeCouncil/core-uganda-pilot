@@ -387,14 +387,14 @@ func TestValidateForm(t *testing.T) {
 			}),
 		},
 		{
-			name:   "field with valid boolean field",
+			name:   "field with valid checkbox field",
 			expect: nil,
 			form: formWithFields(types.FieldDefinitions{
 				{
 					Name:     validFieldName,
 					Required: true,
 					FieldType: types.FieldType{
-						Boolean: &types.FieldTypeBoolean{},
+						Checkbox: &types.FieldTypeCheckbox{},
 					},
 				},
 			}),

@@ -16,7 +16,7 @@ func yesNo(name string) *types.FieldDefinition {
 	return &types.FieldDefinition{
 		Name:      name,
 		Required:  true,
-		FieldType: types.FieldType{Boolean: &types.FieldTypeBoolean{}},
+		FieldType: types.FieldType{Checkbox: &types.FieldTypeCheckbox{}},
 	}
 }
 

@@ -176,13 +176,11 @@ const mapFields = (
   state: FormerState,
   fields: FormField[],
 ): FieldDefinition[] => {
-  const result: FieldDefinition[] = [];
-
   if (!fields) {
     return [];
   }
 
-  for (const field of fields) {
+  const result = fields.map<FieldDefinition>((field) => {
     let fieldType: FieldType;
 
     if (field.type === 'text') {
@@ -197,8 +195,8 @@ const mapFields = (
       fieldType = { week: {} };
     } else if (field.type === 'quantity') {
       fieldType = { quantity: {} };
-    } else if (field.type === 'boolean') {
-      fieldType = { boolean: {} };
+    } else if (field.type === 'checkbox') {
+      fieldType = { checkbox: {} };
     } else if (field.type === 'singleSelect') {
       fieldType = { singleSelect: { options: field.options } };
     } else if (field.type === 'multiSelect') {
@@ -241,7 +239,7 @@ const mapFields = (
       );
     }
 
-    result.push({
+    return {
       fieldType,
       id: '',
       description: field.description,
@@ -249,8 +247,8 @@ const mapFields = (
       required: field.required,
       code: field.code,
       key: field.key,
-    });
-  }
+    };
+  });
 
   return result;
 };
@@ -264,7 +262,7 @@ function selectFormDefinition(
       const allForms = selectors.selectAll(state);
       const rootForm = allForms.find((e) => e.isRootForm);
       if (!rootForm) {
-        return;
+        return undefined;
       }
       return {
         databaseId,

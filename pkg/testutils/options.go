@@ -233,8 +233,8 @@ func FieldTypeKind(kind types.FieldKind) FieldOption {
 			return FieldTypeMonth()(fieldDefinition)
 		case types.FieldKindWeek:
 			return FieldTypeWeek()(fieldDefinition)
-		case types.FieldKindBoolean:
-			return FieldTypeBoolean()(fieldDefinition)
+		case types.FieldKindCheckbox:
+			return FieldTypeCheckbox()(fieldDefinition)
 		case types.FieldKindSingleSelect:
 			// todo
 		}
@@ -345,10 +345,10 @@ func FieldTypeWeek() FieldOption {
 	}
 }
 
-func FieldTypeBoolean() FieldOption {
+func FieldTypeCheckbox() FieldOption {
 	return func(fieldDefinition *types.FieldDefinition) *types.FieldDefinition {
 		fieldDefinition.FieldType = types.FieldType{
-			Boolean: &types.FieldTypeBoolean{},
+			Checkbox: &types.FieldTypeCheckbox{},
 		}
 		return fieldDefinition
 	}
@@ -422,8 +422,8 @@ func AQuantityField(options ...FieldOption) *types.FieldDefinition {
 	return AField(opts...)
 }
 
-func ABooleanField(options ...FieldOption) *types.FieldDefinition {
-	opts := []FieldOption{FieldTypeBoolean()}
+func ACheckboxField(options ...FieldOption) *types.FieldDefinition {
+	opts := []FieldOption{FieldTypeCheckbox()}
 	opts = append(opts, options...)
 	return AField(opts...)
 }

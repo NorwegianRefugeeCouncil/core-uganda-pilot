@@ -34,8 +34,8 @@ func getSQLActionsForField(formInterface types.FormInterface, fieldDefinition *t
 		return multilineTextFieldActions(formInterface, fieldDefinition), nil
 	case types.FieldKindText:
 		return textFieldActions(formInterface, fieldDefinition), nil
-	case types.FieldKindBoolean:
-		return booleanFieldActions(formInterface, fieldDefinition), nil
+	case types.FieldKindCheckbox:
+		return checkboxFieldActions(formInterface, fieldDefinition), nil
 	}
 	return nil, fmt.Errorf("unable to convert field kind '%s'", fieldKind)
 }

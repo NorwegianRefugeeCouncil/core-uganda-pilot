@@ -53,14 +53,14 @@ export const FormerField: FC<FormerFieldProps> = ({
   setFieldRequired,
 }) => {
   React.useEffect(() => {
-    if (fieldType === FieldKind.Boolean) {
+    if (fieldType === FieldKind.Checkbox) {
       setFieldRequired(true);
       setFieldIsKey(false);
     }
   }, [fieldType]);
 
-  const requiredDisabled = fieldIsKey || fieldType === FieldKind.Boolean;
-  const isKeyDisabled = fieldType === FieldKind.Boolean;
+  const requiredDisabled = fieldIsKey || fieldType === FieldKind.Checkbox;
+  const isKeyDisabled = fieldType === FieldKind.Checkbox;
 
   if (!isSelected) {
     return (

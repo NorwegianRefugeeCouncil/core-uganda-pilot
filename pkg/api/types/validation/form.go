@@ -35,8 +35,8 @@ const (
 	errSelectOptionNameRequired              = "Name of the option is required"
 	errSelectOptionsRequired                 = "At least 1 option must be specified"
 	errSubFormCannotBeKeyOrRequiredField     = "Sub form fields cannot key marked as key or required fields"
-	errBooleanFieldCannotBeKey               = "Boolean fields cannot key marked as key field"
-	errBooleanFieldMustBeRequired            = "Boolean fields must be required"
+	errCheckboxFieldCannotBeKey              = "Checkbox fields cannot key marked as key field"
+	errCheckboxFieldMustBeRequired           = "Checkbox fields must be required"
 	fieldCodeMaxLength                       = 32
 	fieldCodeMinLength                       = 1
 	fieldNameMaxLength                       = 128
@@ -217,15 +217,15 @@ func ValidateFieldDefinition(field *types.FieldDefinition, path *validation.Path
 		result = append(result, ValidateFormName(field.Name, namePath)...)
 	}
 
-	if field.FieldType.Boolean != nil {
-		// Validates that boolean field values are required
+	if field.FieldType.Checkbox != nil {
+		// Validates that checkbox field values are required
 		if !field.Required {
-			result = append(result, validation.Invalid(requiredPath, field.Required, errBooleanFieldMustBeRequired))
+			result = append(result, validation.Invalid(requiredPath, field.Required, errCheckboxFieldMustBeRequired))
 		}
 
-		// Validates that boolean field values are not key fields
+		// Validates that checkbox field values are not key fields
 		if field.Key {
-			result = append(result, validation.Invalid(keyPath, field.Key, errBooleanFieldCannotBeKey))
+			result = append(result, validation.Invalid(keyPath, field.Key, errCheckboxFieldCannotBeKey))
 		}
 	}
 
@@ -310,7 +310,7 @@ func ValidateFieldType(fieldType types.FieldType, path *validation.Path) validat
 	subFormPath := path.Child("subForm")
 	singleSelectPath := path.Child("singleSelect")
 	multiSelect := path.Child("multiSelect")
-	booleanPath := path.Child("boolean")
+	checkboxPath := path.Child("checkbox")
 
 	// finds what kind of field type is defined
 	var found []types.FieldKind
@@ -362,8 +362,8 @@ func ValidateFieldType(fieldType types.FieldType, path *validation.Path) validat
 		result = append(result, ValidateFieldTypeSingleSelect(fieldType.SingleSelect, singleSelectPath)...)
 	case types.FieldKindMultiSelect:
 		result = append(result, ValidateFieldTypeMultiSelect(fieldType.MultiSelect, multiSelect)...)
-	case types.FieldKindBoolean:
-		result = append(result, ValidateFieldTypeBoolean(fieldType.Boolean, booleanPath)...)
+	case types.FieldKindCheckbox:
+		result = append(result, ValidateFieldTypeCheckbox(fieldType.Checkbox, checkboxPath)...)
 	default:
 		result = append(result, validation.InternalError(path, fmt.Errorf("unknown field kind %v", fieldKind)))
 	}
@@ -497,7 +497,7 @@ func ValidateSelectOptions(options []*types.SelectOption, path *validation.Path)
 	return result
 }
 
-func ValidateFieldTypeBoolean(ftBoolean *types.FieldTypeBoolean, path *validation.Path) validation.ErrorList {
+func ValidateFieldTypeCheckbox(ftCheckbox *types.FieldTypeCheckbox, path *validation.Path) validation.ErrorList {
 	// noop
 	var result []*validation.Error
 	return result

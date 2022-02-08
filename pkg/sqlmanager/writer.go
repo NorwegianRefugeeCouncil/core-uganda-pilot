@@ -144,8 +144,8 @@ func (s writer) writeRecord(form types.FormInterface, record *types.Record) (sql
 			sqlParams, err = prepareWeekFieldColumn(fieldValue, sqlParams)
 		case types.FieldKindQuantity:
 			sqlParams, err = prepareQuantityFieldColumn(fieldValue, sqlParams)
-		case types.FieldKindBoolean:
-			sqlParams, err = prepareBooleanFieldColumn(fieldValue, sqlParams)
+		case types.FieldKindCheckbox:
+			sqlParams, err = prepareCheckboxFieldColumn(fieldValue, sqlParams)
 		default:
 			err = fmt.Errorf("unhandled field kind %v", fieldKind)
 		}
@@ -291,8 +291,8 @@ func prepareQuantityFieldColumn(fieldValue types.FieldValue, sqlParams sqlArgs) 
 	}), nil
 }
 
-func prepareBooleanFieldColumn(fieldValue types.FieldValue, sqlParams sqlArgs) (sqlArgs, error) {
-	if err := assertStringValueType("boolean", fieldValue); err != nil {
+func prepareCheckboxFieldColumn(fieldValue types.FieldValue, sqlParams sqlArgs) (sqlArgs, error) {
+	if err := assertStringValueType("checkbox", fieldValue); err != nil {
 		return nil, err
 	}
 	boolValue, err := strconv.ParseBool(fieldValue.Value.StringValue)

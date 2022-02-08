@@ -1,9 +1,10 @@
 package schema
 
 import (
+	"testing"
+
 	"github.com/nrc-no/core/pkg/utils/pointers"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestSQLDataType_DDL(t *testing.T) {
