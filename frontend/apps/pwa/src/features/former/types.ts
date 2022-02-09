@@ -1,8 +1,7 @@
 import { FieldKind, FormType } from 'core-api-client';
 
 import { FormField } from '../../reducers/Former/types';
-
-export type ErrorMessage = Record<string, any>;
+import { ErrorMessage } from '../../types/errors';
 
 export type FormerProps = {
   formId: string;
