@@ -6,7 +6,7 @@ import { FieldTypePicker } from './FieldTypePicker';
 import { FormerField } from './FormerField';
 import { FormerProps } from './types';
 
-type FieldSectionsProps = Omit<
+type Props = Omit<
   FormerProps,
   | 'fieldOptions'
   | 'formName'
@@ -17,31 +17,50 @@ type FieldSectionsProps = Omit<
   | 'invalid'
 >;
 
-export const FieldSections: React.FC<FieldSectionsProps> = (props) => {
+export const FieldSections: React.FC<Props> = ({
+  formType,
+  addField,
+  addOption,
+  cancelField,
+  errors,
+  fields,
+  openSubForm,
+  register,
+  removeOption,
+  revalidate,
+  saveField,
+  selectedFieldId,
+  setFieldDescription,
+  setFieldIsKey,
+  setFieldName,
+  setFieldOption,
+  setFieldReferencedDatabaseId,
+  setFieldReferencedFormId,
+  setFieldRequired,
+  setSelectedField,
+}) => {
   const [isAddingField, setIsAddingField] = useState(false);
 
-  const {
-    formType,
-    addField,
-    addOption,
-    cancelField,
-    errors,
-    fields,
-    openSubForm,
-    register,
-    removeOption,
-    revalidate,
-    saveField,
-    selectedFieldId,
-    setFieldDescription,
-    setFieldIsKey,
-    setFieldName,
-    setFieldOption,
-    setFieldReferencedDatabaseId,
-    setFieldReferencedFormId,
-    setFieldRequired,
-    setSelectedField,
-  } = props;
+  const handleAddOption = (f: FormField) => () => addOption(f.id);
+  const handleCancel = (f: FormField) => () => cancelField(f.id);
+  const handleOpenSubForm = (f: FormField) => () => openSubForm(f.id);
+  const handleSelectField = (f: FormField) => () => setSelectedField(f.id);
+  const handleSetFieldRequired = (f: FormField) => (required: boolean) =>
+    setFieldRequired(f.id, required);
+  const handleSetDataBaseId = (f: FormField) => (dataBaseId: string) =>
+    setFieldReferencedDatabaseId(f.id, dataBaseId);
+  const handleSetFormId = (f: FormField) => (formId: string) =>
+    setFieldReferencedFormId(f.id, formId);
+  const handleSetFieldOption = (f: FormField) => (i: number, value: string) =>
+    setFieldOption(f.id, i, value);
+  const handleSetFieldIsKey = (f: FormField) => (isKey: boolean) =>
+    setFieldIsKey(f.id, isKey);
+  const handleSetFieldName = (f: FormField) => (name: string) =>
+    setFieldName(f.id, name);
+  const handleSetFieldDescription = (f: FormField) => (d: string) =>
+    setFieldDescription(f.id, d);
+  const handleRemoveOption = (f: FormField) => (i: number) =>
+    removeOption(f.id, i);
 
   if (isAddingField) {
     return (
@@ -72,28 +91,26 @@ export const FieldSections: React.FC<FieldSectionsProps> = (props) => {
       )}
       {fields.map((f: FormField) => (
         <FormerField
-          addOption={() => addOption(f.id)}
-          cancel={() => cancelField(f.id)}
+          addOption={handleAddOption(f)}
+          cancel={handleCancel(f)}
           errors={errors}
           field={f}
           formType={formType}
           isSelected={f.id === selectedFieldId}
           key={f.id}
-          openSubForm={() => openSubForm(f.id)}
+          openSubForm={handleOpenSubForm(f)}
           register={register}
-          removeOption={(i: number) => removeOption(f.id, i)}
+          removeOption={handleRemoveOption(f)}
           revalidate={revalidate}
           saveField={saveField}
-          selectField={() => setSelectedField(f.id)}
-          setFieldDescription={(d) => setFieldDescription(f.id, d)}
-          setFieldIsKey={(isKey) => setFieldIsKey(f.id, isKey)}
-          setFieldName={(name) => setFieldName(f.id, name)}
-          setFieldOption={(i: number, value: string) =>
-            setFieldOption(f.id, i, value)
-          }
-          setFieldRequired={(req) => setFieldRequired(f.id, req)}
-          setReferencedDatabaseId={(d) => setFieldReferencedDatabaseId(f.id, d)}
-          setReferencedFormId={(d) => setFieldReferencedFormId(f.id, d)}
+          selectField={handleSelectField(f)}
+          setFieldDescription={handleSetFieldDescription(f)}
+          setFieldIsKey={handleSetFieldIsKey(f)}
+          setFieldName={handleSetFieldName(f)}
+          setFieldOption={handleSetFieldOption(f)}
+          setFieldRequired={handleSetFieldRequired(f)}
+          setReferencedDatabaseId={handleSetDataBaseId(f)}
+          setReferencedFormId={handleSetFormId(f)}
         />
       ))}
     </div>

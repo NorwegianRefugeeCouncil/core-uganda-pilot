@@ -2,7 +2,6 @@ import { FC, useCallback, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { FieldKind } from 'core-api-client';
 import { useForm } from 'react-hook-form';
-import _ from 'lodash';
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { fetchDatabases } from '../../reducers/database';
@@ -223,7 +222,7 @@ export const FormerContainer: FC = () => {
         const data = await dispatch(postForm(formDefinition)).unwrap();
         history.push(`/browse/forms/${data.id}`);
       } catch (apiErrors: any) {
-        _.forEach(apiErrors?.details?.causes, (error) => {
+        apiErrors?.details?.causes.forEach((error: any) => {
           setError(error.field, { type: error.reason, message: error.message });
         });
       }

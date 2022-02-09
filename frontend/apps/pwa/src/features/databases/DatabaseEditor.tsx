@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Database } from 'core-api-client';
 import { Redirect } from 'react-router-dom';
-import _ from 'lodash';
+import map from 'lodash.map';
 
 import { databaseActions } from '../../reducers/database';
 import client from '../../app/client';
@@ -11,7 +11,7 @@ type FormData = {
   name: string;
 };
 
-export const DatabaseEditor: FC = (props) => {
+export const DatabaseEditor: FC = () => {
   const {
     register,
     handleSubmit,
@@ -26,15 +26,20 @@ export const DatabaseEditor: FC = (props) => {
         databaseActions.addOne(resp.response);
         setDatabase(resp.response);
       } else if (!resp.success && resp.error) {
-        _.forEach(resp.error.details.causes, (e) => {
-          setError(e.field, { type: e.reason, message: e.message });
+        resp.error.details.causes.forEach((e: any) => {
+          setError(e.field, {
+            type: e.reason,
+            message: e.message,
+          });
         });
       }
     });
   };
+
   if (database) {
     return <Redirect to={`/browse/databases/${database.id}`} />;
   }
+
   return (
     <div className="flex-grow-1 bg-dark text-white pt-3">
       <div className="container">
@@ -51,7 +56,7 @@ export const DatabaseEditor: FC = (props) => {
                   aria-describedby="nameFeedback"
                 />
                 <div className="invalid-feedback is-invalid" id="nameFeedback">
-                  {_.map(errors, (e) => {
+                  {map(errors, (e) => {
                     return <div key={e?.message}>{e?.message}</div>;
                   })}
                 </div>

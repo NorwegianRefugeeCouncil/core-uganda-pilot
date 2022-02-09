@@ -4,7 +4,6 @@ import {
   createAsyncThunk,
   PayloadAction,
 } from '@reduxjs/toolkit';
-import _ from 'lodash';
 import { FieldKind, FormDefinition, FormType } from 'core-api-client';
 
 import client from '../../app/client';

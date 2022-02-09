@@ -4,7 +4,6 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
-import _ from 'lodash';
 import { Record } from 'core-api-client';
 
 import client from '../../app/client';
