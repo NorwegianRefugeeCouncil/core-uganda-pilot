@@ -1,9 +1,12 @@
 import React, { FC } from 'react';
-import { FieldDefinition, FieldValue } from 'core-api-client';
+import { FieldDefinition, FieldKind, FieldValue } from 'core-api-client';
 import { FieldErrors } from 'react-hook-form';
+import { ErrorMessage } from '@hookform/error-message';
 
 import { FieldEditor } from '../../components/FieldEditor/FieldEditor';
 import { FormValue } from '../../reducers/Recorder/types';
+import { FieldLabel } from '../../components/formFields/FieldLabel';
+import { FieldDescription } from '../../components/formFields/FieldDescription';
 
 type Props = {
   fields: FieldDefinition[];
@@ -50,17 +53,32 @@ export const RecordEditorComponent: FC<Props> = ({
                     onAddSubRecord(field.id);
                   };
                   return (
-                    <FieldEditor
-                      key={field.id}
-                      field={field}
-                      value={value}
-                      onChange={handleValueChange}
-                      subRecords={subRecords[field.id]}
-                      onSelectSubRecord={onSelectSubRecord}
-                      onAddSubRecord={handleAddSubRecordWrapper}
-                      register={register}
-                      errors={errors}
-                    />
+                    <div className="form-group mb-2" key={field.id}>
+                      {(field.fieldType !== FieldKind.Checkbox ||
+                        field.fieldType !== FieldKind.SubForm) && (
+                        <FieldLabel fieldDefinition={field} />
+                      )}
+                      <FieldEditor
+                        field={field}
+                        value={value}
+                        onChange={handleValueChange}
+                        subRecords={subRecords[field.id]}
+                        onSelectSubRecord={onSelectSubRecord}
+                        onAddSubRecord={handleAddSubRecordWrapper}
+                        register={register}
+                        errors={errors}
+                      />
+
+                      <FieldDescription text={field.description} />
+                      <div className="invalid-feedback" id="errorMessages">
+                        <div>
+                          <ErrorMessage
+                            errors={errors}
+                            name={`values.${field.id}`}
+                          />
+                        </div>
+                      </div>
+                    </div>
                   );
                 })}
                 <div className="my-3">

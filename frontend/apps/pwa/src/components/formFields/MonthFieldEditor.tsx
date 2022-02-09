@@ -1,9 +1,6 @@
-import React, { ChangeEvent, FC } from 'react';
-import { ErrorMessage } from '@hookform/error-message';
+import React, { FC } from 'react';
 
 import { FieldEditorProps } from './types';
-import { FieldDescription } from './FieldDescription';
-import { FieldLabel } from './FieldLabel';
 
 export const MonthFieldEditor: FC<FieldEditorProps> = ({
   field,
@@ -27,30 +24,21 @@ export const MonthFieldEditor: FC<FieldEditorProps> = ({
     return <></>;
   }
   return (
-    <div className="form-group mb-2">
-      <FieldLabel fieldDefinition={field} />
-      <input
-        className={`form-control bg-dark text-light border-secondary ${
-          errors?.values && errors?.values[field.id] ? 'is-invalid' : ''
-        }`}
-        type="month"
-        id={field.id}
-        value={value || ''}
-        name={field.name}
-        placeholder="YYYY-MM"
-        {...registerObject}
-        onChange={(event) => {
-          onChange(event.target.value);
-          return registerObject.onChange(event);
-        }}
-        aria-describedby="errorMessages"
-      />
-      <FieldDescription text={field.description} />
-      <div className="invalid-feedback" id="errorMessages">
-        <div>
-          <ErrorMessage errors={errors} name={`values.${field.id}`} />
-        </div>
-      </div>
-    </div>
+    <input
+      className={`form-control bg-dark text-light border-secondary ${
+        errors?.values && errors?.values[field.id] ? 'is-invalid' : ''
+      }`}
+      type="month"
+      id={field.id}
+      value={value || ''}
+      name={field.name}
+      placeholder="YYYY-MM"
+      {...registerObject}
+      onChange={(event) => {
+        onChange(event.target.value);
+        return registerObject.onChange(event);
+      }}
+      aria-describedby="errorMessages"
+    />
   );
 };

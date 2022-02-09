@@ -4,8 +4,6 @@ import { RecordPickerContainer } from '../RecordPicker';
 import { FieldDefinitionNC } from '../../reducers/Former/types';
 
 import { FieldEditorProps } from './types';
-import { FieldDescription } from './FieldDescription';
-import { FieldLabel } from './FieldLabel';
 
 export const ReferenceFieldEditor: FC<FieldEditorProps> = ({
   field,
@@ -18,17 +16,13 @@ export const ReferenceFieldEditor: FC<FieldEditorProps> = ({
     return <></>;
   }
   return (
-    <div className="form-group mb-2">
-      <FieldLabel fieldDefinition={field} />
-      <RecordPickerContainer
-        formId={field.fieldType.reference?.formId}
-        field={field as FieldDefinitionNC}
-        recordId={value}
-        setRecordId={onChange}
-        register={register}
-        errors={errors}
-      />
-      <FieldDescription text={field.description} />
-    </div>
+    <RecordPickerContainer
+      formId={field.fieldType.reference?.formId}
+      field={field as FieldDefinitionNC}
+      recordId={value}
+      setRecordId={onChange}
+      register={register}
+      errors={errors}
+    />
   );
 };

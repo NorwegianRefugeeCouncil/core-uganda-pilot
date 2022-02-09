@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import { FieldEditorProps } from './types';
-import { FieldDescription } from './FieldDescription';
 
 export const CheckboxFieldEditor: React.FC<FieldEditorProps> = ({
   field,
@@ -31,7 +30,6 @@ export const CheckboxFieldEditor: React.FC<FieldEditorProps> = ({
           {field.name}
         </label>
       </div>
-      <FieldDescription text={field.description} />
     </div>
   );
 };
