@@ -215,12 +215,10 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
                 })}
 
                 <div className="invalid-feedback" id="errorMessages">
-                  <div>
-                    <ErrorMessage
-                      errors={errors}
-                      name={`selectedField.fieldType.${fieldType}.options`}
-                    />
-                  </div>
+                  <ErrorMessage
+                    errors={errors}
+                    name={`selectedField.fieldType.${fieldType}.options`}
+                  />
                 </div>
               </div>
             )}
@@ -256,6 +254,13 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
             ) : (
               <></>
             )}
+
+            <div className="text-danger">
+              <ErrorMessage
+                errors={errors}
+                name="selectedField.fieldType.subForm"
+              />
+            </div>
 
             {/* Configure Reference Field */}
 

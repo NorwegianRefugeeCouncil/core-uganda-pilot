@@ -214,7 +214,6 @@ export const FormerContainer: FC = () => {
 
     if (ownerForm) {
       const valid = await trigger();
-      // console.log('SPIDFJO:', valid);
       if (!valid) {
         return;
       }

@@ -122,6 +122,14 @@ export const customValidation = {
         });
       }
     }
+    if (field.fieldType === FieldKind.SubForm) {
+      if (field.required) {
+        errors.push({
+          field: 'selectedField.fieldType.subForm' as FieldPath<ValidationForm>,
+          message: 'Subforms cannot be required',
+        });
+      }
+    }
     return errors;
   },
 };
