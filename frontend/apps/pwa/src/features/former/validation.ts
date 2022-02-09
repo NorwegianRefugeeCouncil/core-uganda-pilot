@@ -4,7 +4,7 @@ import { RegisterOptions } from 'react-hook-form/dist/types/validator';
 
 import { Form, FormField, ValidationForm } from '../../reducers/Former/types';
 
-const validationConstants = {
+export const validationConstants = {
   name: {
     minLength: 3,
     maxLength: 128,
