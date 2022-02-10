@@ -35,7 +35,7 @@ export const MultiSelectFieldEditor: FC<FieldEditorProps> = ({
         handleChange(event);
         return registerObject.onChange(event);
       }}
-      aria-describedby="errorMessages"
+      aria-describedby={`errorMessages description-${field.id}`}
     >
       <SelectOptionsList field={field} isMultiSelect />
     </select>

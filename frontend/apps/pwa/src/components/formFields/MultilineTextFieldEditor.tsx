@@ -27,7 +27,7 @@ export const MultilineTextFieldEditor: FC<FieldEditorProps> = ({
         onChange(event.target.value);
         return registerObject.onChange(event);
       }}
-      aria-describedby="errorMessages"
+      aria-describedby={`errorMessages description-${field.id}`}
     />
   );
 };

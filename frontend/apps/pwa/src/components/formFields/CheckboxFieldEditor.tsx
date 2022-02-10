@@ -25,6 +25,7 @@ export const CheckboxFieldEditor: React.FC<FieldEditorProps> = ({
             onChange(event.target.checked ? 'true' : 'false')
           }
           id={field.id}
+          aria-describedby={`description-${field.id}`}
         />
         <label className="form-check-label opacity-75" htmlFor={field.id}>
           {field.name}

@@ -134,8 +134,9 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
                   setFieldName(event.target.value);
                   return registerSelectedFieldName.onChange(event);
                 }}
+                aria-describedby="errorMessages-fieldName"
               />
-              <div className="invalid-feedback" id="errorMessages">
+              <div className="invalid-feedback" id="errorMessages-fieldName">
                 <ErrorMessage errors={errors} name="selectedField.name" />
               </div>
             </div>
@@ -153,7 +154,7 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
                       : ''
                   }`}
                   id="options"
-                  aria-describedby="optionsFeedback"
+                  aria-describedby="errorMessages-options"
                 >
                   <label className="form-label" htmlFor="fieldName">
                     Field Options
@@ -194,7 +195,7 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
                             setFieldOption(i, event.target.value);
                             return registerOption.onChange(event);
                           }}
-                          aria-describedby="errorMessages"
+                          aria-describedby={`errorMessages-option${i}`}
                         />
                         <button
                           type="button"
@@ -203,7 +204,10 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
                         >
                           <i className="bi bi-x" />
                         </button>
-                        <div className="invalid-feedback" id="errorMessages">
+                        <div
+                          className="invalid-feedback"
+                          id={`errorMessages-option${i}`}
+                        >
                           <ErrorMessage
                             errors={errors}
                             name={`selectedField.fieldType.${fieldType}.options.${i}`}
@@ -214,7 +218,7 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
                   );
                 })}
 
-                <div className="invalid-feedback" id="errorMessages">
+                <div className="invalid-feedback" id="errorMessages-options">
                   <ErrorMessage
                     errors={errors}
                     name={`selectedField.fieldType.${fieldType}.options`}
@@ -247,7 +251,6 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
                   if (valid) openSubForm();
                 }}
                 id="subformFields"
-                aria-describedby="subformFieldsFeedback"
               >
                 Open Sub Form
               </button>

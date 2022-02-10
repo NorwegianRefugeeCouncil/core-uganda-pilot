@@ -66,14 +66,15 @@ export const RecordEditorComponent: FC<Props> = ({
                         errors={errors}
                       />
 
-                      <FieldDescription text={field.description} />
+                      <FieldDescription
+                        text={field.description}
+                        fieldId={field.id}
+                      />
                       <div className="invalid-feedback" id="errorMessages">
-                        <div>
-                          <ErrorMessage
-                            errors={errors}
-                            name={`values.${field.id}`}
-                          />
-                        </div>
+                        <ErrorMessage
+                          errors={errors}
+                          name={`values.${field.id}`}
+                        />
                       </div>
                     </div>
                   );
