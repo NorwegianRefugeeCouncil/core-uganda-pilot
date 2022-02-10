@@ -17,7 +17,6 @@ export const MonthFieldEditor: FC<FieldEditorProps> = ({
       value: /^(?:19|20|21)\d{2}-[01]\d$/,
       message: 'wrong pattern',
     },
-    maxLength: { value: 7, message: 'Value is too long' },
     valueAsDate: true,
   });
 

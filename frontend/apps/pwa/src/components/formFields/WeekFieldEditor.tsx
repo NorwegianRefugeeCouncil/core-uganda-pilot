@@ -17,7 +17,6 @@ export const WeekFieldEditor: FC<FieldEditorProps> = ({
       value: /^(?:19|20|21)\d{2}-W[0-5]\d$/,
       message: 'wrong pattern',
     },
-    maxLength: { value: 8, message: 'Value is too long' },
     valueAsDate: true,
   });
 

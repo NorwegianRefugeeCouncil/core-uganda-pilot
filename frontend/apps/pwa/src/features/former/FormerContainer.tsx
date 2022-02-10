@@ -211,10 +211,6 @@ export const FormerContainer: FC = () => {
     }
 
     if (ownerForm) {
-      const valid = await trigger();
-      if (!valid) {
-        return;
-      }
       dispatch(actions.saveForm());
     } else if (formDefinition) {
       try {
