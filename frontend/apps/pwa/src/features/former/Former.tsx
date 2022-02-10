@@ -18,9 +18,7 @@ export const Former: FC<FormerProps> = (props) => {
     formName,
     openSubForm,
     ownerFormName,
-    register,
     removeOption,
-    revalidate,
     saveField,
     saveForm,
     selectedFieldId,
@@ -59,7 +57,6 @@ export const Former: FC<FormerProps> = (props) => {
                 <FormName
                   errors={errors}
                   formName={formName}
-                  register={register}
                   setFormName={setFormName}
                 />
               )}
@@ -73,9 +70,7 @@ export const Former: FC<FormerProps> = (props) => {
               fields={fields}
               formType={formType}
               openSubForm={openSubForm}
-              register={register}
               removeOption={removeOption}
-              revalidate={revalidate}
               saveField={saveField}
               selectedFieldId={selectedFieldId}
               setFieldDescription={setFieldDescription}

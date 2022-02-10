@@ -11,10 +11,11 @@ export const TextFieldEditor: FC<FieldEditorProps> = ({
 }) => {
   const { register } = useFormContext();
 
-  const registerObject = register(`values.${field.id}`, {
-    required: { value: field.required, message: 'This field is required' },
-  });
-
+  const registerObject =
+    register &&
+    register(`values.${field.id}`, {
+      required: { value: field.required, message: 'This field is required' },
+    });
   return (
     <input
       className={`form-control bg-dark text-light border-secondary ${

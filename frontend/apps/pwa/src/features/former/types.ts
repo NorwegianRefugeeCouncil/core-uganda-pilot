@@ -1,6 +1,5 @@
 import { FieldKind, FormType } from 'core-api-client';
 import { FieldErrors } from 'react-hook-form';
-import { UseFormTrigger } from 'react-hook-form/dist/types/form';
 
 import { FormField, ValidationForm } from '../../reducers/Former/types';
 
@@ -18,7 +17,6 @@ export type FormerProps = {
   openSubForm: (fieldId: string) => void;
   ownerFormName: string | undefined;
   removeOption: (fieldId: string, index: number) => void;
-  revalidate: UseFormTrigger<ValidationForm>;
   saveField: (field: FormField) => void;
   saveForm: () => void;
   selectedFieldId: string | undefined;

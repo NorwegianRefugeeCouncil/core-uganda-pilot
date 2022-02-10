@@ -1,7 +1,7 @@
 import { FC, useCallback, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { FieldKind } from 'core-api-client';
-import { useForm } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { fetchDatabases } from '../../reducers/database';
@@ -43,18 +43,18 @@ export const FormerContainer: FC = () => {
   const formDefinition = useAppSelector(
     formerGlobalSelectors.selectFormDefinition(database?.id, folder?.id),
   );
+  const useFormObject = useForm<ValidationForm>({
+    defaultValues: form,
+  });
   const {
     clearErrors,
     formState,
     handleSubmit,
-    register,
     reset,
     resetField,
     setError,
     trigger,
-  } = useForm<ValidationForm>({
-    defaultValues: form,
-  });
+  } = useFormObject;
 
   useEffect(() => {
     const search = new URLSearchParams(location.search);
@@ -181,7 +181,6 @@ export const FormerContainer: FC = () => {
     async (field: FormField) => {
       const valid = await trigger('selectedField');
       const errors = customValidation.selectedField(field);
-      // console.log('field errors', errors);
 
       if (errors.length) {
         errors.forEach((error) => {
@@ -234,33 +233,33 @@ export const FormerContainer: FC = () => {
   }
 
   return (
-    <Former
-      formId={form.formId}
-      formType={form.formType}
-      addField={addField}
-      addOption={addOption}
-      cancelField={(fieldId: string) => cancelField(fieldId)}
-      errors={formState.errors}
-      fields={form.fields}
-      formName={form.name}
-      invalid={!formState.isValid && formState.isDirty}
-      openSubForm={openSubForm}
-      ownerFormName={ownerForm?.name}
-      register={register}
-      removeOption={removeOption}
-      saveField={saveField}
-      saveForm={handleSubmit(saveForm)}
-      selectedFieldId={selectedField?.id}
-      setFieldDescription={setFieldDescription}
-      setFieldIsKey={setFieldIsKey}
-      setFieldName={setFieldName}
-      setFieldOption={setFieldOption}
-      setFieldReferencedDatabaseId={setFieldReferencedDatabaseId}
-      setFieldReferencedFormId={setFieldReferencedFormId}
-      setFieldRequired={setFieldRequired}
-      setFormName={setFormName}
-      setSelectedField={setSelectedField}
-      revalidate={trigger}
-    />
+    <FormProvider {...useFormObject}>
+      <Former
+        formId={form.formId}
+        formType={form.formType}
+        addField={addField}
+        addOption={addOption}
+        cancelField={(fieldId: string) => cancelField(fieldId)}
+        errors={formState.errors}
+        fields={form.fields}
+        formName={form.name}
+        invalid={!formState.isValid && formState.isDirty}
+        openSubForm={openSubForm}
+        ownerFormName={ownerForm?.name}
+        removeOption={removeOption}
+        saveField={saveField}
+        saveForm={handleSubmit(saveForm)}
+        selectedFieldId={selectedField?.id}
+        setFieldDescription={setFieldDescription}
+        setFieldIsKey={setFieldIsKey}
+        setFieldName={setFieldName}
+        setFieldOption={setFieldOption}
+        setFieldReferencedDatabaseId={setFieldReferencedDatabaseId}
+        setFieldReferencedFormId={setFieldReferencedFormId}
+        setFieldRequired={setFieldRequired}
+        setFormName={setFormName}
+        setSelectedField={setSelectedField}
+      />
+    </FormProvider>
   );
 };

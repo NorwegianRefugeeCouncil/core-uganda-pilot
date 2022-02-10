@@ -19,7 +19,6 @@ type FormerFieldProps = {
   isSelected: boolean;
   openSubForm: () => void;
   removeOption: (index: number) => void;
-  revalidate: UseFormTrigger<ValidationForm>;
   saveField: (field: FormField) => void;
   selectField: () => void;
   setFieldDescription: (description: string) => void;
@@ -41,7 +40,6 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
     isSelected,
     openSubForm,
     removeOption,
-    revalidate,
     saveField,
     selectField,
     setFieldDescription,
@@ -64,7 +62,7 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
     required,
   } = field;
 
-  const { register } = useFormContext();
+  const { register, trigger } = useFormContext();
 
   React.useEffect(() => {
     if (fieldType === FieldKind.Checkbox) {
@@ -247,7 +245,7 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
               <button
                 className="btn btn-primary"
                 onClick={async () => {
-                  const valid = await revalidate('selectedField');
+                  const valid = await trigger('selectedField');
                   if (valid) openSubForm();
                 }}
                 id="subformFields"

@@ -1,7 +1,6 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { Record } from 'core-api-client';
+import { useForm, FormProvider } from 'react-hook-form';
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { fetchDatabases } from '../../reducers/database';
@@ -57,7 +56,7 @@ export const RecordEditorContainer: FC = () => {
     return {};
   });
 
-  const { formState, handleSubmit, register } = useForm<FormValue>({
+  const useFormObject = useForm<FormValue>({
     defaultValues: currentRecord,
   });
 
@@ -181,16 +180,17 @@ export const RecordEditorContainer: FC = () => {
   }
 
   return (
-    <RecordEditorComponent
-      onChangeValue={handleFieldValueChange}
-      fields={currentForm?.fields}
-      values={currentRecord?.values}
-      errors={formState.errors}
-      onAddSubRecord={handleAddSubRecord}
-      onSaveRecord={handleSubmit(handleSaveRecord)}
-      subRecords={subRecords}
-      onSelectSubRecord={handleSelectSubRecord}
-      register={register}
-    />
+    <FormProvider {...useFormObject}>
+      <RecordEditorComponent
+        onChangeValue={handleFieldValueChange}
+        fields={currentForm?.fields}
+        values={currentRecord?.values}
+        errors={useFormObject.formState.errors}
+        onAddSubRecord={handleAddSubRecord}
+        onSaveRecord={useFormObject.handleSubmit(handleSaveRecord)}
+        subRecords={subRecords}
+        onSelectSubRecord={handleSelectSubRecord}
+      />
+    </FormProvider>
   );
 };

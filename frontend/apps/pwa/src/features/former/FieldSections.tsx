@@ -25,9 +25,7 @@ export const FieldSections: React.FC<Props> = ({
   errors,
   fields,
   openSubForm,
-  register,
   removeOption,
-  revalidate,
   saveField,
   selectedFieldId,
   setFieldDescription,
@@ -99,9 +97,7 @@ export const FieldSections: React.FC<Props> = ({
           isSelected={f.id === selectedFieldId}
           key={f.id}
           openSubForm={handleOpenSubForm(f)}
-          register={register}
           removeOption={handleRemoveOption(f)}
-          revalidate={revalidate}
           saveField={saveField}
           selectField={handleSelectField(f)}
           setFieldDescription={handleSetFieldDescription(f)}
