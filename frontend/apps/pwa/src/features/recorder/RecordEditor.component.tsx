@@ -17,7 +17,6 @@ type Props = {
   onSelectSubRecord: (subRecordId: string) => void;
   subRecords: { [key: string]: FormValue[] };
   errors: FieldErrors;
-  register: any;
 };
 
 export const RecordEditorComponent: FC<Props> = ({
@@ -29,7 +28,6 @@ export const RecordEditorComponent: FC<Props> = ({
   onChangeValue,
   values,
   errors,
-  register,
 }) => {
   if (!fields) {
     return <></>;
@@ -65,7 +63,6 @@ export const RecordEditorComponent: FC<Props> = ({
                         subRecords={subRecords[field.id]}
                         onSelectSubRecord={onSelectSubRecord}
                         onAddSubRecord={handleAddSubRecordWrapper}
-                        register={register}
                         errors={errors}
                       />
 

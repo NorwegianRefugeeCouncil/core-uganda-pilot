@@ -9,7 +9,6 @@ export const ReferenceFieldEditor: FC<FieldEditorProps> = ({
   field,
   value,
   onChange,
-  register,
   errors,
 }) => {
   if (Array.isArray(value)) {
@@ -21,7 +20,6 @@ export const ReferenceFieldEditor: FC<FieldEditorProps> = ({
       field={field as FieldDefinitionNC}
       recordId={value}
       setRecordId={onChange}
-      register={register}
       errors={errors}
     />
   );

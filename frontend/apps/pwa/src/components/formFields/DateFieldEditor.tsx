@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { useFormContext } from 'react-hook-form';
 
 import { FieldEditorProps } from './types';
 
@@ -6,16 +7,15 @@ export const DateFieldEditor: FC<FieldEditorProps> = ({
   field,
   value,
   onChange,
-  register,
   errors,
 }) => {
+  const { register } = useFormContext();
+
   const registerObject = register(`values.${field.id}`, {
     required: { value: field.required, message: 'This field is required' },
-    valueAsDate: {
-      value: true,
-      message: 'not a date',
-    },
+    valueAsDate: true,
   });
+
   return (
     <input
       className={`form-control bg-dark text-light border-secondary ${

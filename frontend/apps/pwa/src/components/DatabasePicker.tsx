@@ -1,6 +1,6 @@
 import React, { FC, useCallback } from 'react';
 import { Database } from 'core-api-client';
-import { FieldErrors } from 'react-hook-form';
+import { FieldErrors, useFormContext } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 
 import { useDatabases } from '../app/hooks';
@@ -11,7 +11,6 @@ type DatabasePickerProps = {
   databaseId: string | undefined;
   databases: Database[];
   setDatabaseId: (databaseId: string) => void;
-  register: any;
   errors?: FieldErrors<ValidationForm>;
 };
 
@@ -19,13 +18,15 @@ export const DatabasePicker: FC<DatabasePickerProps> = ({
   databases,
   databaseId,
   setDatabaseId,
-  register,
   errors,
 }) => {
+  const { register } = useFormContext();
+
   const registerSelectedFieldReference = register(
     'selectedField.fieldType.reference.databaseId',
     registeredValidation.selectedField.fieldType.reference.databaseId,
   );
+
   return (
     <div>
       <select
@@ -70,7 +71,6 @@ type DatabasePickerContainerProps = {
   databaseId: string | undefined;
   setDatabaseId?: (databaseId: string) => void;
   setDatabase?: (database: Database | undefined) => void;
-  register: any;
   errors?: FieldErrors<ValidationForm>;
 };
 
@@ -78,7 +78,6 @@ const DatabasePickerContainer: FC<DatabasePickerContainerProps> = ({
   databaseId,
   setDatabaseId,
   setDatabase,
-  register,
   errors,
 }) => {
   const databases = useDatabases();
@@ -101,7 +100,6 @@ const DatabasePickerContainer: FC<DatabasePickerContainerProps> = ({
       databaseId={databaseId}
       setDatabaseId={setDbCallback}
       databases={databases}
-      register={register}
       errors={errors}
     />
   );

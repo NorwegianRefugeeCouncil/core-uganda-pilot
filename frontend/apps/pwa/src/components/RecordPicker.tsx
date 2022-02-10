@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { FieldDefinition, Record } from 'core-api-client';
-import { FieldErrors } from 'react-hook-form';
+import { FieldErrors, useFormContext } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 
 import { useAppDispatch, useAppSelector } from '../app/hooks';
@@ -19,7 +19,6 @@ export type RecordPickerProps = {
   setRecordId: (recordId: string | null) => void;
   records: Record[];
   getDisplayStr: (record: Record) => string;
-  register: any;
   errors: FieldErrors;
 };
 
@@ -30,12 +29,14 @@ export const RecordPicker: FC<RecordPickerProps> = ({
   field,
   records,
   getDisplayStr,
-  register,
   errors,
 }) => {
+  const { register } = useFormContext();
+
   const registerObject = register(`values.${field.id}`, {
     required: { value: field.required, message: 'This field is required' },
   });
+
   return (
     <div>
       <select
@@ -80,7 +81,6 @@ export type RecordPickerContainerProps = {
   ownerId?: string;
   formId?: string;
   field: FieldDefinitionNC;
-  register: any;
   errors: FieldErrors;
 };
 
@@ -91,7 +91,6 @@ export const RecordPickerContainer: FC<RecordPickerContainerProps> = ({
   recordId,
   setRecordId,
   setRecord,
-  register,
   errors,
 }) => {
   const dispatch = useAppDispatch();
@@ -154,7 +153,6 @@ export const RecordPickerContainer: FC<RecordPickerContainerProps> = ({
         }, '');
         return result || '';
       }}
-      register={register}
       errors={errors}
     />
   );

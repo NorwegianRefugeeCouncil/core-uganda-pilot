@@ -10,6 +10,5 @@ export type FieldEditorProps = {
   onAddSubRecord: () => void;
   onSelectSubRecord: (subRecordId: string) => void;
   subRecords: FormValue[] | undefined;
-  register: any;
   errors: FieldErrors;
 };

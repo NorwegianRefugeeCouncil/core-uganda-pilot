@@ -1,7 +1,7 @@
 import { ErrorMessage } from '@hookform/error-message';
 import { FieldKind, FormType } from 'core-api-client';
 import React, { FC } from 'react';
-import { FieldErrors } from 'react-hook-form';
+import { FieldErrors, useFormContext } from 'react-hook-form';
 import { UseFormTrigger } from 'react-hook-form/dist/types/form';
 
 import DatabasePickerContainer from '../../components/DatabasePicker';
@@ -18,7 +18,6 @@ type FormerFieldProps = {
   formType: FormType;
   isSelected: boolean;
   openSubForm: () => void;
-  register: any;
   removeOption: (index: number) => void;
   revalidate: UseFormTrigger<ValidationForm>;
   saveField: (field: FormField) => void;
@@ -41,7 +40,6 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
     formType,
     isSelected,
     openSubForm,
-    register,
     removeOption,
     revalidate,
     saveField,
@@ -65,6 +63,8 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
     referencedFormId,
     required,
   } = field;
+
+  const { register } = useFormContext();
 
   React.useEffect(() => {
     if (fieldType === FieldKind.Checkbox) {
@@ -271,7 +271,6 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
                   <DatabasePickerContainer
                     setDatabaseId={setReferencedDatabaseId}
                     databaseId={referencedDatabaseId}
-                    register={register}
                     errors={errors}
                   />
                 </div>
@@ -281,11 +280,9 @@ export const FormerField: FC<FormerFieldProps> = (props) => {
                     databaseId={referencedDatabaseId}
                     formId={referencedFormId}
                     setFormId={setReferencedFormId}
-                    // setForm={se}
                     isRecipientKey={
                       key && formType === FormType.RecipientFormType
                     }
-                    register={register}
                     errors={errors}
                   />
                 </div>

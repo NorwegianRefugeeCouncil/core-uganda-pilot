@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { useFormContext } from 'react-hook-form';
 
 import { FieldEditorProps } from './types';
 
@@ -6,13 +7,15 @@ export const QuantityFieldEditor: FC<FieldEditorProps> = ({
   field,
   value,
   onChange,
-  register,
   errors,
 }) => {
+  const { register } = useFormContext();
+
   const registerObject = register(`values.${field.id}`, {
     required: { value: field.required, message: 'This field is required' },
-    valueAsNumber: { value: true, message: 'Must be a number' },
+    valueAsNumber: true,
   });
+
   return (
     <input
       className={`form-control bg-dark text-light border-secondary ${

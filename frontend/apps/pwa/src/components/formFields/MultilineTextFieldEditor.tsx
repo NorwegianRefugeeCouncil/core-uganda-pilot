@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { useFormContext } from 'react-hook-form';
 
 import { FieldEditorProps } from './types';
 
@@ -6,12 +7,14 @@ export const MultilineTextFieldEditor: FC<FieldEditorProps> = ({
   field,
   value,
   onChange,
-  register,
   errors,
 }) => {
+  const { register } = useFormContext();
+
   const registerObject = register(`values.${field.id}`, {
     required: { value: field.required, message: 'This field is required' },
   });
+
   return (
     <textarea
       className={`form-control bg-dark text-light border-secondary ${

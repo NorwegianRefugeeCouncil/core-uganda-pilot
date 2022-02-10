@@ -17,7 +17,6 @@ export type FormerProps = {
   invalid: boolean;
   openSubForm: (fieldId: string) => void;
   ownerFormName: string | undefined;
-  register: any;
   removeOption: (fieldId: string, index: number) => void;
   revalidate: UseFormTrigger<ValidationForm>;
   saveField: (field: FormField) => void;

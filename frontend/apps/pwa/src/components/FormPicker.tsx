@@ -1,6 +1,6 @@
 import React, { FC, useCallback } from 'react';
 import { FormDefinition, FormType } from 'core-api-client';
-import { FieldErrors } from 'react-hook-form';
+import { FieldErrors, useFormContext } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 
 import { useDatabase, useForms } from '../app/hooks';
@@ -12,7 +12,6 @@ export type FormPickerProps = {
   formId: string | undefined;
   disabled?: boolean;
   setFormId: (formId: string) => void;
-  register: any;
   errors?: FieldErrors<ValidationForm>;
 };
 
@@ -21,9 +20,10 @@ export const FormPicker: FC<FormPickerProps> = ({
   formId,
   setFormId,
   disabled,
-  register,
   errors,
 }) => {
+  const { register } = useFormContext();
+
   const hasForms = forms.length > 0;
 
   const registerSelectedFieldReference = register(
@@ -72,9 +72,7 @@ export type FormPickerContainerProps = {
   databaseId: string | undefined;
   formId: string | undefined;
   isRecipientKey: boolean;
-  // setForm: (form: FormDefinition | undefined) => void;
   setFormId: (formId: string) => void;
-  register: any;
   errors?: FieldErrors<ValidationForm>;
 };
 
@@ -82,9 +80,7 @@ const FormPickerContainer: FC<FormPickerContainerProps> = ({
   databaseId,
   formId,
   setFormId,
-  // setForm,
   isRecipientKey,
-  register,
   errors,
 }) => {
   const database = useDatabase(databaseId);
@@ -96,8 +92,6 @@ const FormPickerContainer: FC<FormPickerContainerProps> = ({
   const callback = useCallback(
     (fID: string) => {
       setFormId(fID);
-      // const form = forms.find((f) => f.id === fID);
-      // setForm(form);
     },
     [forms, setFormId],
   );
@@ -108,7 +102,6 @@ const FormPickerContainer: FC<FormPickerContainerProps> = ({
       setFormId={callback}
       forms={forms}
       formId={formId}
-      register={register}
       errors={errors}
     />
   );
