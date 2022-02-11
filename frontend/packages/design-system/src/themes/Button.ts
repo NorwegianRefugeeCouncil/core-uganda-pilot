@@ -3,7 +3,6 @@ export default {
     major: ({ colorScheme }: any) => {
       return {
         backgroundColor: `${colorScheme}.500`,
-
         _text: {
           color: 'white',
           bold: true,

@@ -4,7 +4,11 @@ import tokens from '../tokens';
 
 import Button from './Button';
 import Icon from './Icon';
+import Input from './Input';
 import Text from './Text';
+import FormControlErrorMessage from './FormControlErrorMessage';
+import FormControlHelperText from './FormControlHelperText';
+import FormControlLabel from './FormControlLabel';
 
 export default extendTheme({
   colors: tokens.colors,
@@ -16,6 +20,10 @@ export default extendTheme({
   components: {
     Button,
     Icon,
+    Input,
+    FormControlErrorMessage,
+    FormControlHelperText,
+    FormControlLabel,
     Text,
   },
   space: {
@@ -25,6 +33,7 @@ export default extendTheme({
     '4': tokens.spacing.spacing20,
     '5': tokens.spacing.spacing25,
     '6': tokens.spacing.spacing30,
+    '7': tokens.spacing.spacing35,
     '8': tokens.spacing.spacing40,
   },
   sizes: {
@@ -34,6 +43,7 @@ export default extendTheme({
     '4': tokens.spacing.spacing20,
     '5': tokens.spacing.spacing25,
     '6': tokens.spacing.spacing30,
+    '7': tokens.spacing.spacing35,
     '8': tokens.spacing.spacing40,
   },
 });

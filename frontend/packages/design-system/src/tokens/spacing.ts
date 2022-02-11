@@ -5,5 +5,6 @@ export default {
   spacing20: '20px',
   spacing25: '25px',
   spacing30: '30px',
+  spacing35: '35px',
   spacing40: '40px',
 };

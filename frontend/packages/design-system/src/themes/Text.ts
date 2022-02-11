@@ -26,7 +26,7 @@ const textTheme = {
       lineHeight: typography.lineHeights.sm,
     },
     inline: {
-      fontFamily: typography.fontConfig.Roboto['400'].normal,
+      fontFamily: typography.fontConfig.Roboto['500'].medium,
       fontSize: typography.fontSizes.sm,
       lineHeight: typography.lineHeights.sm,
       textDecorationLine: 'underline',
@@ -37,7 +37,7 @@ const textTheme = {
       lineHeight: typography.lineHeights.sm,
     },
     label: {
-      fontFamily: typography.fontConfig.Roboto['400'].normal,
+      fontFamily: typography.fontConfig.Roboto['500'].medium,
       fontSize: typography.fontSizes.sm,
       lineHeight: typography.lineHeights.sm,
     },
