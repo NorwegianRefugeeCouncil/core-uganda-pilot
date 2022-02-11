@@ -1,6 +1,8 @@
 import React, { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 
+import { registeredValidation } from '../../features/former/validation';
+
 import { FieldEditorProps } from './types';
 import { SelectOptionsList } from './SelectOptionsList';
 
@@ -12,9 +14,10 @@ export const SingleSelectFieldEditor: FC<FieldEditorProps> = ({
 }) => {
   const { register } = useFormContext();
 
-  const registerObject = register(`values.${field.id}`, {
-    required: { value: field.required, message: 'This field is required' },
-  });
+  const registerObject = register(
+    `values.${field.id}`,
+    registeredValidation.values(field),
+  );
 
   return (
     <select

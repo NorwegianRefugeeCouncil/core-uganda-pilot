@@ -1,6 +1,8 @@
 import React, { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 
+import { registeredValidation } from '../../features/former/validation';
+
 import { FieldEditorProps } from './types';
 
 export const WeekFieldEditor: FC<FieldEditorProps> = ({
@@ -11,14 +13,10 @@ export const WeekFieldEditor: FC<FieldEditorProps> = ({
 }) => {
   const { register } = useFormContext();
 
-  const registerObject = register(`values.${field.id}`, {
-    required: { value: field.required, message: 'This field is required' },
-    pattern: {
-      value: /^(?:19|20|21)\d{2}-W[0-5]\d$/,
-      message: 'wrong pattern',
-    },
-    valueAsDate: true,
-  });
+  const registerObject = register(
+    `values.${field.id}`,
+    registeredValidation.values(field),
+  );
 
   return (
     <input

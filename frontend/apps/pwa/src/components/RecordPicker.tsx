@@ -11,11 +11,12 @@ import {
 } from '../reducers/records';
 import { selectFormOrSubFormById, selectRootForm } from '../reducers/form';
 import { FieldDefinitionNC } from '../reducers/Former/types';
+import { registeredValidation } from '../features/former/validation';
 
 export type RecordPickerProps = {
   disabled?: boolean;
   recordId: string | null;
-  field: FieldDefinitionNC;
+  field: FieldDefinition;
   setRecordId: (recordId: string | null) => void;
   records: Record[];
   getDisplayStr: (record: Record) => string;
@@ -33,9 +34,10 @@ export const RecordPicker: FC<RecordPickerProps> = ({
 }) => {
   const { register } = useFormContext();
 
-  const registerObject = register(`values.${field.id}`, {
-    required: { value: field.required, message: 'This field is required' },
-  });
+  const registerObject = register(
+    `values.${field.id}`,
+    registeredValidation.values(field),
+  );
 
   return (
     <div>
@@ -80,7 +82,7 @@ export type RecordPickerContainerProps = {
   setRecord?: (record: Record | undefined) => void;
   ownerId?: string;
   formId?: string;
-  field: FieldDefinitionNC;
+  field: FieldDefinition;
   errors: FieldErrors;
 };
 

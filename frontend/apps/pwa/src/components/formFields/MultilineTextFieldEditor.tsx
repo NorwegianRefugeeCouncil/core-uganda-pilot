@@ -1,6 +1,8 @@
 import React, { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 
+import { registeredValidation } from '../../features/former/validation';
+
 import { FieldEditorProps } from './types';
 
 export const MultilineTextFieldEditor: FC<FieldEditorProps> = ({
@@ -11,9 +13,10 @@ export const MultilineTextFieldEditor: FC<FieldEditorProps> = ({
 }) => {
   const { register } = useFormContext();
 
-  const registerObject = register(`values.${field.id}`, {
-    required: { value: field.required, message: 'This field is required' },
-  });
+  const registerObject = register(
+    `values.${field.id}`,
+    registeredValidation.values(field),
+  );
 
   return (
     <textarea

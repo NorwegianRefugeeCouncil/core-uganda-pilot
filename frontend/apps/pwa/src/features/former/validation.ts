@@ -1,5 +1,6 @@
 import { FieldPath } from 'react-hook-form';
-import { FieldKind } from 'core-api-client';
+import { FieldDefinition, FieldKind } from 'core-api-client';
+import { RegisterOptions } from 'react-hook-form/dist/types/validator';
 
 import { Form, FormField, ValidationForm } from '../../reducers/Former/types';
 
@@ -76,6 +77,37 @@ export const registeredValidation = {
         },
       },
     },
+  },
+  values: (field: FieldDefinition): RegisterOptions => {
+    const rules: RegisterOptions = {
+      required: {
+        value: field.required,
+        message: 'This field is required',
+      },
+    };
+    if (
+      field.fieldType === FieldKind.Date ||
+      field.fieldType === FieldKind.Month ||
+      field.fieldType === FieldKind.Week
+    ) {
+      rules.valueAsDate = true;
+    }
+    if (field.fieldType === FieldKind.Quantity) {
+      rules.valueAsNumber = true;
+    }
+    if (field.fieldType === FieldKind.Month) {
+      rules.pattern = {
+        value: /^(?:19|20|21)\d{2}-[01]\d$/,
+        message: 'wrong pattern',
+      };
+    }
+    if (field.fieldType === FieldKind.Week) {
+      rules.pattern = {
+        value: /^(?:19|20|21)\d{2}-W[0-5]\d$/,
+        message: 'wrong pattern',
+      };
+    }
+    return rules;
   },
 };
 

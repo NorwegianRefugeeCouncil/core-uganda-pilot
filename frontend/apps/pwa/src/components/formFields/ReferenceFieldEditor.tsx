@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 
 import { RecordPickerContainer } from '../RecordPicker';
-import { FieldDefinitionNC } from '../../reducers/Former/types';
 
 import { FieldEditorProps } from './types';
 
@@ -17,7 +16,7 @@ export const ReferenceFieldEditor: FC<FieldEditorProps> = ({
   return (
     <RecordPickerContainer
       formId={field.fieldType.reference?.formId}
-      field={field as FieldDefinitionNC}
+      field={field}
       recordId={value}
       setRecordId={onChange}
       errors={errors}

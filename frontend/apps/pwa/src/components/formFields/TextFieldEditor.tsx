@@ -1,6 +1,8 @@
 import React, { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 
+import { registeredValidation } from '../../features/former/validation';
+
 import { FieldEditorProps } from './types';
 
 export const TextFieldEditor: FC<FieldEditorProps> = ({
@@ -11,11 +13,10 @@ export const TextFieldEditor: FC<FieldEditorProps> = ({
 }) => {
   const { register } = useFormContext();
 
-  const registerObject =
-    register &&
-    register(`values.${field.id}`, {
-      required: { value: field.required, message: 'This field is required' },
-    });
+  const registerObject = register(
+    `values.${field.id}`,
+    registeredValidation.values(field),
+  );
   return (
     <input
       className={`form-control bg-dark text-light border-secondary ${
