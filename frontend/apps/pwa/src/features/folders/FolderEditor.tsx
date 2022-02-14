@@ -2,7 +2,6 @@ import React, { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Folder } from 'core-api-client';
 import { Redirect } from 'react-router-dom';
-import map from 'lodash.map';
 
 import { databaseActions } from '../../reducers/database';
 import {
@@ -73,9 +72,9 @@ export const FolderEditor: FC = () => {
                   aria-describedby="nameFeedback"
                 />
                 <div className="invalid-feedback is-invalid" id="nameFeedback">
-                  {map(errors, (e) => {
-                    return <div key={e?.message}>{e?.message}</div>;
-                  })}
+                  {Object.values(errors).map((e) => (
+                    <div key={e?.message}>{e?.message}</div>
+                  ))}
                 </div>
               </div>
               <button className="btn btn-primary">Create New Folder</button>
