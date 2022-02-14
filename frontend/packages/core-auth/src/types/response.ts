@@ -3,7 +3,6 @@ import getCurrentTimeInSeconds from '../utils/getCurrentTimeInSeconds';
 import {
   DiscoveryDocument,
   RefreshTokenRequestConfig,
-  TokenRequestConfig,
   TokenResponseConfig,
   TokenType,
 } from './types';

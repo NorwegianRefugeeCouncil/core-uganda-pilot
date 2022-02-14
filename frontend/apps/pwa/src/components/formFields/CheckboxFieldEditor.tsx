@@ -1,13 +1,16 @@
 import * as React from 'react';
+import { useFormContext } from 'react-hook-form';
 
 import { FieldEditorProps } from './types';
-import { FieldDescription } from './FieldDescription';
 
 export const CheckboxFieldEditor: React.FC<FieldEditorProps> = ({
   field,
   value,
   onChange,
 }) => {
+  const { register } = useFormContext();
+
+  const registerObject = register && register(`values.${field.id}`);
   // It doesn't make sense for this to be null/undefined/empty
   React.useEffect(() => {
     if (value === null || value === undefined || value === '') {
@@ -22,16 +25,18 @@ export const CheckboxFieldEditor: React.FC<FieldEditorProps> = ({
           className="form-check-input"
           type="checkbox"
           checked={value === 'true'}
-          onChange={(event) =>
-            onChange(event.target.checked ? 'true' : 'false')
-          }
+          {...registerObject}
+          onChange={(event) => {
+            onChange(event.target.checked ? 'true' : 'false');
+            return registerObject.onChange(event);
+          }}
           id={field.id}
+          aria-describedby={`description-${field.id}`}
         />
         <label className="form-check-label opacity-75" htmlFor={field.id}>
           {field.name}
         </label>
       </div>
-      <FieldDescription text={field.description} />
     </div>
   );
 };

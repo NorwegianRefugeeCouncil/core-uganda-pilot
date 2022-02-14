@@ -5,16 +5,21 @@ import { FormsScreenContainerProps } from '../../types/screens';
 import useApiClient from '../../utils/clients';
 import { FormsScreen } from '../screens/FormsScreen';
 
-export const FormsScreenContainer = ({ navigation, route }: FormsScreenContainerProps) => {
+export const FormsScreenContainer = ({
+  navigation,
+  route,
+}: FormsScreenContainerProps) => {
   const [forms, setForms] = React.useState<FormDefinition[]>();
   const [isLoading, setIsLoading] = React.useState(true);
   const apiClient = useApiClient();
 
   React.useEffect(() => {
-    apiClient.listForms({}).then((data) => {
+    apiClient.Form.list({}).then((data) => {
       setIsLoading(false);
       setForms(data.response?.items);
     });
   }, []);
-  return <FormsScreen isLoading={isLoading} forms={forms} navigation={navigation} />;
+  return (
+    <FormsScreen isLoading={isLoading} forms={forms} navigation={navigation} />
+  );
 };

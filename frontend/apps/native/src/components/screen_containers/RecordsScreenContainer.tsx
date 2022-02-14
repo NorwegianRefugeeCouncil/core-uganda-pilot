@@ -5,15 +5,19 @@ import { RecordsScreenContainerProps } from '../../types/screens';
 import RecordsScreen from '../screens/RecordsScreen';
 import useApiClient from '../../utils/clients';
 
-export const RecordsScreenContainer = ({ navigation, route, state, dispatch }: RecordsScreenContainerProps) => {
+export const RecordsScreenContainer = ({
+  navigation,
+  route,
+  state,
+  dispatch,
+}: RecordsScreenContainerProps) => {
   const { formId, databaseId } = route.params;
   const [isLoading, setIsLoading] = React.useState(true);
   const apiClient = useApiClient();
 
   React.useEffect(() => {
     if (formId && databaseId) {
-      apiClient
-        .listRecords({ formId, databaseId })
+      apiClient.Record.list({ formId, databaseId })
         .then((data) => {
           dispatch({
             type: RECORD_ACTIONS.GET_RECORDS,

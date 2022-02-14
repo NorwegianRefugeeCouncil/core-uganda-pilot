@@ -1,5 +1,6 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
+import { useForm, FormProvider } from 'react-hook-form';
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { fetchDatabases } from '../../reducers/database';
@@ -8,19 +9,24 @@ import { fetchForms, selectRootForm } from '../../reducers/form';
 import { recordActions } from '../../reducers/records';
 import {
   postRecord,
-  recorderActions,
   resetForm,
+} from '../../reducers/Recorder/recorder.reducers';
+import recorderSlice from '../../reducers/Recorder';
+import {
   selectCurrentForm,
   selectCurrentRecord,
   selectCurrentRootForm,
   selectPostRecords,
   selectSubRecords,
-} from '../../reducers/recorder';
+} from '../../reducers/Recorder/recorder.selectors';
+import { FormValue } from '../../reducers/Recorder/types';
 
 import { RecordEditorComponent } from './RecordEditor.component';
 
 export const RecordEditorContainer: FC = () => {
   const dispatch = useAppDispatch();
+
+  const { actions } = recorderSlice;
 
   // load data
   useEffect(() => {
@@ -48,6 +54,10 @@ export const RecordEditorContainer: FC = () => {
       return selectSubRecords(state, currentRecord.id);
     }
     return {};
+  });
+
+  const formUtitlities = useForm<FormValue>({
+    defaultValues: currentRecord,
   });
 
   useEffect(() => {
@@ -84,7 +94,7 @@ export const RecordEditorContainer: FC = () => {
     (key: string, value: any) => {
       if (currentRecord) {
         dispatch(
-          recorderActions.setFieldValue({
+          actions.setFieldValue({
             recordId: currentRecord.id,
             fieldId: key,
             value,
@@ -113,7 +123,7 @@ export const RecordEditorContainer: FC = () => {
       const subFormId = field.id;
 
       dispatch(
-        recorderActions.addSubRecord({
+        actions.addSubRecord({
           formId: subFormId,
           ownerFieldId,
           ownerRecordId: currentRecord.id,
@@ -138,21 +148,25 @@ export const RecordEditorContainer: FC = () => {
     if (currentRecord.formId !== formIdFromPath) {
       if (currentRecord.ownerId) {
         dispatch(
-          recorderActions.selectRecord({
+          actions.selectRecord({
             recordId: currentRecord.ownerId,
           }),
         );
       }
     } else {
-      const recordResponse = await dispatch(postRecord(recordsToPost)).unwrap();
-      dispatch(recordActions.addMany(recordResponse));
-      history.push(`/browse/records/${recordResponse[0].id}`);
+      try {
+        const recordResponse = await dispatch(
+          postRecord(recordsToPost),
+        ).unwrap();
+        dispatch(recordActions.addMany(recordResponse));
+        history.push(`/browse/records/${recordResponse[0].id}`);
+      } catch (e: any) {}
     }
   }, [dispatch, formIdFromPath, currentRecord, recordsToPost, currentForm]);
 
   const handleSelectSubRecord = useCallback(
     (subRecordId: string) => {
-      dispatch(recorderActions.selectRecord({ recordId: subRecordId }));
+      dispatch(actions.selectRecord({ recordId: subRecordId }));
     },
     [dispatch],
   );
@@ -166,14 +180,17 @@ export const RecordEditorContainer: FC = () => {
   }
 
   return (
-    <RecordEditorComponent
-      onChangeValue={handleFieldValueChange}
-      fields={currentForm?.fields}
-      values={currentRecord?.values}
-      onAddSubRecord={handleAddSubRecord}
-      onSaveRecord={handleSaveRecord}
-      subRecords={subRecords}
-      onSelectSubRecord={handleSelectSubRecord}
-    />
+    <FormProvider {...formUtitlities}>
+      <RecordEditorComponent
+        onChangeValue={handleFieldValueChange}
+        fields={currentForm?.fields}
+        values={currentRecord?.values}
+        errors={formUtitlities.formState.errors}
+        onAddSubRecord={handleAddSubRecord}
+        onSaveRecord={formUtitlities.handleSubmit(handleSaveRecord)}
+        subRecords={subRecords}
+        onSelectSubRecord={handleSelectSubRecord}
+      />
+    </FormProvider>
   );
 };

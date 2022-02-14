@@ -2,11 +2,16 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { FormDefinition } from 'core-api-client';
 
-import ViewRecordScreen, { ViewRecordScreenProps } from '../screens/ViewRecordScreen';
+import ViewRecordScreen, {
+  ViewRecordScreenProps,
+} from '../screens/ViewRecordScreen';
 import { ViewRecordScreenContainerProps } from '../../types/screens';
 import useApiClient from '../../utils/clients';
 
-export const ViewRecordScreenContainer = ({ route, state }: ViewRecordScreenContainerProps) => {
+export const ViewRecordScreenContainer = ({
+  route,
+  state,
+}: ViewRecordScreenContainerProps) => {
   const { formId, recordId } = route.params;
 
   const [isLoading, setIsLoading] = React.useState(true);
@@ -19,7 +24,7 @@ export const ViewRecordScreenContainer = ({ route, state }: ViewRecordScreenCont
   React.useEffect(() => {
     const getForm = async () => {
       try {
-        const { response } = await apiClient.getForm({ id: formId });
+        const { response } = await apiClient.Form.get({ id: formId });
         setForm(response);
       } catch (err) {
         console.error(err);

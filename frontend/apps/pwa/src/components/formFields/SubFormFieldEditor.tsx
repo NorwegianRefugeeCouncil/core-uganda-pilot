@@ -2,7 +2,6 @@ import React, { FC } from 'react';
 
 import { FieldEditorProps } from './types';
 import { SubRecordList } from './SubRecordList';
-import { FieldDescription } from './FieldDescription';
 
 export const SubFormFieldEditor: FC<FieldEditorProps> = ({
   field,
@@ -26,7 +25,6 @@ export const SubFormFieldEditor: FC<FieldEditorProps> = ({
       >
         Add record in {field.name}
       </button>
-      <FieldDescription text={field.description} />
     </div>
   );
 };

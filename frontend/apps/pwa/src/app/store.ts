@@ -4,8 +4,8 @@ import formReducer from '../reducers/form';
 import folderReducer from '../reducers/folder';
 import databaseReducer from '../reducers/database';
 import recordsReducer from '../reducers/records';
-import recorderReducer from '../reducers/recorder';
-import formerReducer from '../reducers/former';
+import recorderSlice from '../reducers/Recorder';
+import formerSlice from '../reducers/Former';
 
 export const store = configureStore({
   reducer: {
@@ -13,8 +13,8 @@ export const store = configureStore({
     folders: folderReducer,
     databases: databaseReducer,
     records: recordsReducer,
-    recorder: recorderReducer,
-    former: formerReducer,
+    recorder: recorderSlice.reducer,
+    former: formerSlice.reducer,
   },
   devTools: true,
 });

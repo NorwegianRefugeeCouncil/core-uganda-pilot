@@ -9,7 +9,7 @@ import { folderGlobalSelectors, selectParents } from '../../reducers/folder';
 import { FormInterface, selectFormOrSubFormById, selectRootForm, selectSubFormOwners } from '../../reducers/form';
 
 const log = getLogger('navbar');
-log.setLevel(log.levels.TRACE);
+log.setLevel(log.levels.INFO);
 
 export type BreadCrumb = {
   label: string;

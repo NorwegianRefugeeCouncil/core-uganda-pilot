@@ -10,22 +10,35 @@ type FormData = {
   name: string;
 };
 
-export const DatabaseEditor: FC = (props) => {
-  const { register, handleSubmit } = useForm<FormData>();
+export const DatabaseEditor: FC = () => {
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<FormData>();
   const [database, setDatabase] = useState<Database | undefined>(undefined);
 
   const onSubmit = (data: FormData) => {
-    client.createDatabase({ object: { name: data.name } }).then((resp) => {
-      if (resp.response) {
+    client.Database.create({ object: { name: data.name } }).then((resp) => {
+      if (resp.success && resp.response) {
         databaseActions.addOne(resp.response);
         setDatabase(resp.response);
-      } else {
+      } else if (!resp.success && resp.error) {
+        resp.error.details.causes.forEach((e: any) => {
+          setError(e.field, {
+            type: e.reason,
+            message: e.message,
+          });
+        });
       }
     });
   };
+
   if (database) {
     return <Redirect to={`/browse/databases/${database.id}`} />;
   }
+
   return (
     <div className="flex-grow-1 bg-dark text-white pt-3">
       <div className="container">
@@ -35,7 +48,17 @@ export const DatabaseEditor: FC = (props) => {
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="form-group mb-2">
                 <label htmlFor="name">Database Name</label>
-                <input className="form-control" {...register('name')} />
+                <input
+                  {...register('name')}
+                  className={`form-control ${errors.name ? 'is-invalid' : ''}`}
+                  id="name"
+                  aria-describedby="nameFeedback"
+                />
+                <div className="invalid-feedback is-invalid" id="nameFeedback">
+                  {Object.values(errors).map((e) => (
+                    <div key={e?.message}>{e?.message}</div>
+                  ))}
+                </div>
               </div>
               <button className="btn btn-primary">Create New Database</button>
             </form>

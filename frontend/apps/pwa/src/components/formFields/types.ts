@@ -1,6 +1,7 @@
 import { FieldDefinition } from 'core-api-client';
+import { FieldErrors } from 'react-hook-form';
 
-import { FormValue } from '../../reducers/recorder';
+import { FormValue } from '../../reducers/Recorder/types';
 
 export type FieldEditorProps = {
   field: FieldDefinition;
@@ -9,4 +10,5 @@ export type FieldEditorProps = {
   onAddSubRecord: () => void;
   onSelectSubRecord: (subRecordId: string) => void;
   subRecords: FormValue[] | undefined;
+  errors: FieldErrors;
 };

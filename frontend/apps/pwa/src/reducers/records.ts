@@ -1,5 +1,14 @@
-import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
-import { FieldDefinition, Record, RecordListRequest, RecordListResponse } from 'core-api-client';
+import {
+  createAsyncThunk,
+  createEntityAdapter,
+  createSlice,
+} from '@reduxjs/toolkit';
+import {
+  FieldDefinition,
+  Record,
+  RecordListRequest,
+  RecordListResponse,
+} from 'core-api-client';
 
 import { RootState } from '../app/store';
 import client from '../app/client';
@@ -19,20 +28,20 @@ const adapter = createEntityAdapter<Record>({
   sortComparer: (a, b) => a.id.localeCompare(b.id),
 });
 
-export const fetchRecords = createAsyncThunk<RecordListResponse, RecordListRequest>(
-  'records/fetch',
-  async (request, thunkAPI) => {
-    try {
-      const response = await client.listRecords(request);
-      if (response.success) {
-        return response;
-      }
-      return thunkAPI.rejectWithValue(response);
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err);
+export const fetchRecords = createAsyncThunk<
+  RecordListResponse,
+  RecordListRequest
+>('records/fetch', async (request, thunkAPI) => {
+  try {
+    const response = await client.Record.list(request);
+    if (response.success) {
+      return response;
     }
-  },
-);
+    return thunkAPI.rejectWithValue(response);
+  } catch (err) {
+    return thunkAPI.rejectWithValue(err);
+  }
+});
 
 export const records = createSlice({
   name: 'records',
@@ -79,16 +88,27 @@ export const records = createSlice({
 
 export const recordActions = records.actions;
 export const recordSelectors = adapter.getSelectors();
-export const recordGlobalSelectors = adapter.getSelectors<RootState>((state) => state.records);
+export const recordGlobalSelectors = adapter.getSelectors<RootState>(
+  (state) => state.records,
+);
 export default records.reducer;
 
-export const selectRecordsForForm = (state: RootState, formId: string, ownerRecordId?: string) => {
+export const selectRecordsForForm = (
+  state: RootState,
+  formId: string,
+  ownerRecordId?: string,
+) => {
   return recordGlobalSelectors.selectAll(state).filter((r) => {
-    return ownerRecordId ? r.formId === formId && r.ownerId === ownerRecordId : r.formId === formId;
+    return ownerRecordId
+      ? r.formId === formId && r.ownerId === ownerRecordId
+      : r.formId === formId;
   });
 };
 
-export const selectSubFormCount = (recordId: string, fieldId: string): ((rootState: RootState) => number) => {
+export const selectSubFormCount = (
+  recordId: string,
+  fieldId: string,
+): ((rootState: RootState) => number) => {
   return (rootState) => {
     const record = recordGlobalSelectors.selectById(rootState, recordId);
     if (!record) {
@@ -114,7 +134,10 @@ export type SubRecordResult = {
   byFieldId: { [fieldId: string]: Record[] };
 };
 
-export const selectSubRecords: (state: RootState, recordId: string) => SubRecordResult = (state, recordId) => {
+export const selectSubRecords: (
+  state: RootState,
+  recordId: string,
+) => SubRecordResult = (state, recordId) => {
   const result: SubRecordResult = {
     byFieldId: {},
     byFormId: {},
@@ -150,7 +173,10 @@ export const selectSubRecords: (state: RootState, recordId: string) => SubRecord
 
   const allRecords = recordGlobalSelectors.selectAll(state);
   for (const candidateRecord of allRecords) {
-    if (candidateRecord.ownerId === recordId && subFormIds.has(candidateRecord.formId)) {
+    if (
+      candidateRecord.ownerId === recordId &&
+      subFormIds.has(candidateRecord.formId)
+    ) {
       const fieldForSubform = fieldMap[candidateRecord.formId];
       if (fieldForSubform) {
         if (!result.byFieldId.hasOwnProperty(fieldForSubform.id)) {
@@ -168,9 +194,11 @@ export const selectSubRecords: (state: RootState, recordId: string) => SubRecord
   return result;
 };
 
-export const selectRecordsSubFormCounts: (
-  formId?: string,
-) => (rootState: RootState) => { [recordId: string]: { [fieldId: string]: number } } = (formId) => {
+export const selectRecordsSubFormCounts: (formId?: string) => (
+  rootState: RootState,
+) => {
+  [recordId: string]: { [fieldId: string]: number };
+} = (formId) => {
   return (rootState) => {
     if (!formId) {
       return {};
@@ -243,7 +271,10 @@ export const selectRecordsSubFormCounts: (
   };
 };
 
-export function selectRecords(state: RootState, options: { formId?: string; ownerId?: string }) {
+export function selectRecords(
+  state: RootState,
+  options: { formId?: string; ownerId?: string },
+) {
   const allRecords = recordGlobalSelectors.selectAll(state);
   const result: Record[] = [];
   for (const record of allRecords) {

@@ -1,5 +1,5 @@
 import { Reducer } from 'react';
-import _ from 'lodash';
+import keyBy from 'lodash.keyby';
 import { FormDefinition, Record } from 'core-api-client';
 
 export type RecordsStoreProps = {
@@ -28,7 +28,10 @@ export enum RECORD_ACTIONS {
   ADD_LOCAL_RECORD = 'ADD_LOCAL_RECORD',
 }
 
-export const recordsReducer: Reducer<RecordsStoreProps, RecordsAction> = (state: RecordsStoreProps, action: RecordsAction) => {
+export const recordsReducer: Reducer<RecordsStoreProps, RecordsAction> = (
+  state: RecordsStoreProps,
+  action: RecordsAction,
+) => {
   const { formId } = action.payload;
 
   switch (action.type) {
@@ -40,7 +43,7 @@ export const recordsReducer: Reducer<RecordsStoreProps, RecordsAction> = (state:
           [formId]: {
             ...state.formsById[formId],
             records,
-            recordsById: _.keyBy(records, 'id'),
+            recordsById: keyBy(records, 'id'),
           },
         },
       };

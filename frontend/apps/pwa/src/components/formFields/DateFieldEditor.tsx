@@ -1,22 +1,37 @@
 import React, { FC } from 'react';
+import { useFormContext } from 'react-hook-form';
+
+import { registeredValidation } from '../../features/former/validation';
 
 import { FieldEditorProps } from './types';
-import { FieldDescription } from './FieldDescription';
-import { FieldLabel } from './FieldLabel';
 
-export const DateFieldEditor: FC<FieldEditorProps> = (props) => {
-  const { field, value, onChange } = props;
+export const DateFieldEditor: FC<FieldEditorProps> = ({
+  field,
+  value,
+  onChange,
+  errors,
+}) => {
+  const { register } = useFormContext();
+
+  const registerObject = register(
+    `values.${field.id}`,
+    registeredValidation.values(field),
+  );
+
   return (
-    <div className="form-group mb-2">
-      <FieldLabel fieldDefinition={field} />
-      <input
-        className="form-control bg-dark text-light border-secondary"
-        type="date"
-        id={field.id}
-        value={value || ''}
-        onChange={(event) => onChange(event.target.value)}
-      />
-      <FieldDescription text={field.description} />
-    </div>
+    <input
+      className={`form-control bg-dark text-light border-secondary ${
+        errors?.values && errors?.values[field.id] ? 'is-invalid' : ''
+      }`}
+      type="date"
+      id={field.id}
+      value={value || ''}
+      {...registerObject}
+      onChange={(event) => {
+        onChange(event.target.value);
+        return registerObject.onChange(event);
+      }}
+      aria-describedby={`errorMessages description-${field.id}`}
+    />
   );
 };

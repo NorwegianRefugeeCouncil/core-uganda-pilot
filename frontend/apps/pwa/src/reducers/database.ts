@@ -1,5 +1,15 @@
-import { createAsyncThunk, createEntityAdapter, createSlice, EntityState } from '@reduxjs/toolkit';
-import { Database, DatabaseList, DatabaseListRequest, Response } from 'core-api-client';
+import {
+  createAsyncThunk,
+  createEntityAdapter,
+  createSlice,
+  EntityState,
+} from '@reduxjs/toolkit';
+import {
+  Database,
+  DatabaseList,
+  DatabaseListRequest,
+  Response,
+} from 'core-api-client';
 
 import { RootState } from '../app/store';
 import client from '../app/client';
@@ -11,20 +21,19 @@ const adapter = createEntityAdapter<Database>({
   sortComparer: (a, b) => a.name.localeCompare(b.name),
 });
 
-export const fetchDatabases = createAsyncThunk<Response<DatabaseListRequest, DatabaseList>>(
-  'databases/fetch',
-  async (_, thunkAPI) => {
-    try {
-      const response = await client.listDatabases({});
-      if (response.success) {
-        return response;
-      }
-      return thunkAPI.rejectWithValue(response);
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err);
+export const fetchDatabases = createAsyncThunk<
+  Response<DatabaseListRequest, DatabaseList>
+>('databases/fetch', async (_, thunkAPI) => {
+  try {
+    const response = await client.Database.list({});
+    if (response.success) {
+      return response;
     }
-  },
-);
+    return thunkAPI.rejectWithValue(response);
+  } catch (err) {
+    return thunkAPI.rejectWithValue(err);
+  }
+});
 
 export interface DatabaseState extends EntityState<Database> {
   fetchPending: boolean;
@@ -82,6 +91,8 @@ export const databaseSelectors = {
   ...selectors,
 };
 
-export const databaseGlobalSelectors = adapter.getSelectors<RootState>((state) => state.databases);
+export const databaseGlobalSelectors = adapter.getSelectors<RootState>(
+  (state) => state.databases,
+);
 
 export default databasesSlice.reducer;

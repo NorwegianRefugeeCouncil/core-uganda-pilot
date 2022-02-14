@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { FormValue } from '../../reducers/recorder';
+import { FormValue } from '../../reducers/Recorder/types';
 
 import { SubRecord } from './SubRecord';
 
