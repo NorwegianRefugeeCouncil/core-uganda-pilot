@@ -31,24 +31,22 @@ export const FolderEditor: FC = (props) => {
     if (!database?.id) {
       return;
     }
-    client
-      .createFolder({
-        object: {
-          name: data.name,
-          databaseId: database?.id,
-          parentId: parentFolder?.id,
-        },
-      })
-      .then((resp) => {
-        if (resp.success && resp.response) {
-          databaseActions.addOne(resp.response);
-          setFolder(resp.response);
-        } else if (!resp.success && resp.error) {
-          _.forEach(resp.error.details.causes, (e) => {
-            setError(e.field, { type: e.reason, message: e.message });
-          });
-        }
-      });
+    client.Folder.create({
+      object: {
+        name: data.name,
+        databaseId: database?.id,
+        parentId: parentFolder?.id,
+      },
+    }).then((resp) => {
+      if (resp.success && resp.response) {
+        databaseActions.addOne(resp.response);
+        setFolder(resp.response);
+      } else if (!resp.success && resp.error) {
+        _.forEach(resp.error.details.causes, (e) => {
+          setError(e.field, { type: e.reason, message: e.message });
+        });
+      }
+    });
   };
 
   if (!database) {

@@ -1,4 +1,8 @@
-import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
+import {
+  createAsyncThunk,
+  createEntityAdapter,
+  createSlice,
+} from '@reduxjs/toolkit';
 import { Folder, FolderListResponse } from 'core-api-client';
 
 import { RootState } from '../app/store';
@@ -11,17 +15,20 @@ const adapter = createEntityAdapter<Folder>({
   sortComparer: (a, b) => a.name.localeCompare(b.name),
 });
 
-export const fetchFolders = createAsyncThunk<FolderListResponse>('folders/fetch', async (_, thunkAPI) => {
-  try {
-    const response = await client.listFolders({});
-    if (response.success) {
-      return response;
+export const fetchFolders = createAsyncThunk<FolderListResponse>(
+  'folders/fetch',
+  async (_, thunkAPI) => {
+    try {
+      const response = await client.Folder.list({});
+      if (response.success) {
+        return response;
+      }
+      return thunkAPI.rejectWithValue(response);
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err);
     }
-    return thunkAPI.rejectWithValue(response);
-  } catch (err) {
-    return thunkAPI.rejectWithValue(err);
-  }
-});
+  },
+);
 
 export const foldersSlice = createSlice({
   name: 'folders',
@@ -69,14 +76,23 @@ export const foldersSlice = createSlice({
 export const folderActions = foldersSlice.actions;
 
 export const folderSelectors = adapter.getSelectors();
-export const folderGlobalSelectors = adapter.getSelectors<RootState>((state) => state.folders);
+export const folderGlobalSelectors = adapter.getSelectors<RootState>(
+  (state) => state.folders,
+);
 
-export const selectByParentId = (s: RootState, parentId: string | undefined) => {
-  return folderSelectors.selectAll(s.folders).filter((folder) => folder.parentId === parentId);
+export const selectByParentId = (
+  s: RootState,
+  parentId: string | undefined,
+) => {
+  return folderSelectors
+    .selectAll(s.folders)
+    .filter((folder) => folder.parentId === parentId);
 };
 
 export const selectDatabaseRootFolders = (s: RootState, databaseId: string) => {
-  return folderSelectors.selectAll(s.folders).filter((folder) => !folder.parentId && folder.databaseId === databaseId);
+  return folderSelectors
+    .selectAll(s.folders)
+    .filter((folder) => !folder.parentId && folder.databaseId === databaseId);
 };
 
 export const selectParent = (s: RootState, childId: string | undefined) => {
@@ -90,7 +106,11 @@ export const selectParent = (s: RootState, childId: string | undefined) => {
   return folderGlobalSelectors.selectById(s, child.parentId);
 };
 
-export const selectParents = (s: RootState, folderId: string | undefined, includeSelf = false): Folder[] => {
+export const selectParents = (
+  s: RootState,
+  folderId: string | undefined,
+  includeSelf = false,
+): Folder[] => {
   let result: Folder[] = [];
   if (!folderId) {
     return result;

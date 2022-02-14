@@ -180,7 +180,7 @@ export const postRecord = createAsyncThunk<Record[], Record[]>(
     const result: Record[] = [];
     for (const record of arg) {
       try {
-        const response = await client.createRecord({ object: record });
+        const response = await client.Record.create({ object: record });
         if (!response.success) {
           return thunkAPI.rejectWithValue(response.error);
         }

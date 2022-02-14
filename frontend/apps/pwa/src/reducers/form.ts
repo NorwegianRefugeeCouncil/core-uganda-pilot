@@ -24,7 +24,7 @@ export const fetchForms = createAsyncThunk<FormListResponse>(
   'forms/fetch',
   async (_, thunkAPI) => {
     try {
-      const response = await client.listForms({});
+      const response = await client.Form.list({});
       if (response.success) {
         return response;
       }

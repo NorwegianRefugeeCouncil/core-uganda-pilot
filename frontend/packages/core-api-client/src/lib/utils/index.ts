@@ -1,1 +1,1 @@
-export {getFieldKind} from "./getFieldKind";
+export { getFieldKind } from './getFieldKind';

@@ -450,7 +450,7 @@ export const postForm = createAsyncThunk<
   FormDefinition,
   Partial<FormDefinition>
 >('former/createForm', async (arg, thunkAPI) => {
-  const resp = await client.createForm({ object: arg });
+  const resp = await client.Form.create({ object: arg });
   if (resp.success) {
     return resp.response as FormDefinition;
   }

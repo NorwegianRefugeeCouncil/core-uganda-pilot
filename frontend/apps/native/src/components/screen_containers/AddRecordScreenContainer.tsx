@@ -9,10 +9,16 @@ import { AddRecordScreenContainerProps } from '../../types/screens';
 import useApiClient from '../../utils/clients';
 import { getEncryptionKey } from '../../utils/getEncryptionKey';
 import { getNetworkState } from '../../utils/getNetworkState';
-import { getEncryptedLocalData, storeEncryptedLocalData } from '../../utils/storage';
+import {
+  getEncryptedLocalData,
+  storeEncryptedLocalData,
+} from '../../utils/storage';
 import { AddRecordScreen } from '../screens/AddRecordScreen';
 
-export const AddRecordScreenContainer = ({ route, dispatch }: AddRecordScreenContainerProps) => {
+export const AddRecordScreenContainer = ({
+  route,
+  dispatch,
+}: AddRecordScreenContainerProps) => {
   const { formId, recordId } = route.params;
 
   const isWeb = Platform.OS === 'web';
@@ -44,7 +50,7 @@ export const AddRecordScreenContainer = ({ route, dispatch }: AddRecordScreenCon
 
       //
       try {
-        const data = await apiClient.getForm({ id: formId });
+        const data = await apiClient.Form.get({ id: formId });
         form = data?.response;
       } catch (error) {
         console.error(error);
@@ -90,7 +96,7 @@ export const AddRecordScreenContainer = ({ route, dispatch }: AddRecordScreenCon
   const onSubmit = (data: any) => {
     handleSubmit(async () => {
       if (isConnected || isWeb) {
-        await apiClient.createRecord({
+        await apiClient.Record.create({
           object: { formId, values: data },
         });
       } else {
