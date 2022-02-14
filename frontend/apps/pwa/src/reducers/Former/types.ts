@@ -1,17 +1,19 @@
-import { FieldKind, FormType, SelectOption } from 'core-api-client';
-import { EntityState } from '@reduxjs/toolkit';
 import {
+  FieldKind,
   FieldTypeCheckbox,
   FieldTypeDate,
   FieldTypeMonth,
-  FieldTypeMultilineText,
   FieldTypeMultiSelect,
+  FieldTypeMultilineText,
   FieldTypeQuantity,
   FieldTypeReference,
   FieldTypeSingleSelect,
   FieldTypeText,
   FieldTypeWeek,
-} from 'core-api-client/src';
+  FormType,
+  SelectOption,
+} from 'core-api-client';
+import { EntityState } from '@reduxjs/toolkit';
 
 export interface FormField {
   id: string;
@@ -27,17 +29,17 @@ export interface FormField {
   referencedFormId: string | undefined;
 }
 
-export type FieldDefinitionNC = {
+export type FieldDefinitionNonCircular = {
   id: string;
   code: string;
   name: string;
   description: string;
   required: boolean;
   key: boolean;
-  fieldType: FieldTypeNC;
+  fieldType: FieldTypeNonCircular;
 };
 
-export interface FieldTypeNC {
+export interface FieldTypeNonCircular {
   checkbox?: FieldTypeCheckbox;
   date?: FieldTypeDate;
   month?: FieldTypeMonth;
@@ -46,12 +48,12 @@ export interface FieldTypeNC {
   quantity?: FieldTypeQuantity;
   reference?: FieldTypeReference;
   singleSelect?: FieldTypeSingleSelect;
-  subForm?: FieldTypeSubFormNC;
+  subForm?: FieldTypeSubFormNonCircular;
   text?: FieldTypeText;
   week?: FieldTypeWeek;
 }
 
-export type FieldTypeSubFormNC = {
+export type FieldTypeSubFormNonCircular = {
   id: string;
 };
 
@@ -76,4 +78,6 @@ export interface FormerState extends EntityState<Form> {
   saveError: any;
 }
 
-export type ValidationForm = Form & { selectedField?: FieldDefinitionNC };
+export type ValidationForm = Form & {
+  selectedField?: FieldDefinitionNonCircular;
+};

@@ -10,7 +10,7 @@ import {
   selectRecords,
 } from '../reducers/records';
 import { selectFormOrSubFormById, selectRootForm } from '../reducers/form';
-import { FieldDefinitionNC } from '../reducers/Former/types';
+import { FieldDefinitionNonCircular } from '../reducers/Former/types';
 import { registeredValidation } from '../features/former/validation';
 
 export type RecordPickerProps = {
