@@ -56,7 +56,7 @@ export const RecordEditorContainer: FC = () => {
     return {};
   });
 
-  const useFormObject = useForm<FormValue>({
+  const formUtitlities = useForm<FormValue>({
     defaultValues: currentRecord,
   });
 
@@ -180,14 +180,14 @@ export const RecordEditorContainer: FC = () => {
   }
 
   return (
-    <FormProvider {...useFormObject}>
+    <FormProvider {...formUtitlities}>
       <RecordEditorComponent
         onChangeValue={handleFieldValueChange}
         fields={currentForm?.fields}
         values={currentRecord?.values}
-        errors={useFormObject.formState.errors}
+        errors={formUtitlities.formState.errors}
         onAddSubRecord={handleAddSubRecord}
-        onSaveRecord={useFormObject.handleSubmit(handleSaveRecord)}
+        onSaveRecord={formUtitlities.handleSubmit(handleSaveRecord)}
         subRecords={subRecords}
         onSelectSubRecord={handleSelectSubRecord}
       />

@@ -43,7 +43,7 @@ export const FormerContainer: FC = () => {
   const formDefinition = useAppSelector(
     formerGlobalSelectors.selectFormDefinition(database?.id, folder?.id),
   );
-  const useFormObject = useForm<ValidationForm>({
+  const formUtilities = useForm<ValidationForm>({
     defaultValues: form,
   });
   const {
@@ -54,7 +54,7 @@ export const FormerContainer: FC = () => {
     resetField,
     setError,
     trigger,
-  } = useFormObject;
+  } = formUtilities;
 
   useEffect(() => {
     const search = new URLSearchParams(location.search);
@@ -229,7 +229,7 @@ export const FormerContainer: FC = () => {
   }
 
   return (
-    <FormProvider {...useFormObject}>
+    <FormProvider {...formUtilities}>
       <Former
         formId={form.formId}
         formType={form.formType}
