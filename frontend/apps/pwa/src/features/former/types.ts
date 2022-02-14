@@ -1,7 +1,7 @@
 import { FieldKind, FormType } from 'core-api-client';
+import { FieldErrors } from 'react-hook-form';
 
-import { FormField } from '../../reducers/Former/types';
-import { ErrorMessage } from '../../types/errors';
+import { FormField, ValidationForm } from '../../reducers/Former/types';
 
 export type FormerProps = {
   formId: string;
@@ -9,14 +9,15 @@ export type FormerProps = {
   addField: (kind: FieldKind) => void;
   addOption: (fieldId: string) => void;
   cancelField: (fieldId: string) => void;
-  errors: ErrorMessage | undefined;
+  errors: FieldErrors<ValidationForm>;
   fieldOptions?: string[];
   fields: FormField[];
   formName: string;
+  invalid: boolean;
   openSubForm: (fieldId: string) => void;
   ownerFormName: string | undefined;
   removeOption: (fieldId: string, index: number) => void;
-  saveField: (fieldId: string) => void;
+  saveField: (field: FormField) => void;
   saveForm: () => void;
   selectedFieldId: string | undefined;
   setFieldDescription: (fieldId: string, description: string) => void;

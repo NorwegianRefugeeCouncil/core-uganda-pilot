@@ -1,46 +1,42 @@
-import React, { ChangeEvent, FC } from 'react';
+import React, { FC } from 'react';
+import { useFormContext } from 'react-hook-form';
+
+import { registeredValidation } from '../../features/former/validation';
 
 import { FieldEditorProps } from './types';
-import { FieldDescription } from './FieldDescription';
-import { FieldLabel } from './FieldLabel';
 
 export const MonthFieldEditor: FC<FieldEditorProps> = ({
   field,
   value,
   onChange,
+  errors,
 }) => {
-  const expectedLength = 7;
+  const { register } = useFormContext();
 
-  const isValid = (s: string) => {
-    const valid = /^(?:19|20|21)\d{2}-[01]\d$/;
-    const m = +s.slice(5);
-    return valid.test(s) && m > 0 && m <= 12;
-  };
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const v = event.target.value;
-    if (!isValid(v)) return;
-    onChange(v);
-  };
+  const registerObject = register(
+    `values.${field.id}`,
+    registeredValidation.values(field),
+  );
 
   if (Array.isArray(value)) {
     return <></>;
   }
+
   return (
-    <div className="form-group mb-2">
-      <FieldLabel fieldDefinition={field} />
-      <input
-        className="form-control bg-dark text-light border-secondary"
-        type="month"
-        maxLength={expectedLength}
-        id={field.id}
-        value={value || ''}
-        name={field.name}
-        pattern="[0-9]{4}-[0-9]{2}"
-        placeholder="YYYY-MM"
-        onChange={handleChange}
-      />
-      <FieldDescription text={field.description} />
-    </div>
+    <input
+      className={`form-control bg-dark text-light border-secondary ${
+        errors?.values && errors?.values[field.id] ? 'is-invalid' : ''
+      }`}
+      type="month"
+      id={field.id}
+      value={value || ''}
+      placeholder="YYYY-MM"
+      {...registerObject}
+      onChange={(event) => {
+        onChange(event.target.value);
+        return registerObject.onChange(event);
+      }}
+      aria-describedby={`errorMessages description-${field.id}`}
+    />
   );
 };

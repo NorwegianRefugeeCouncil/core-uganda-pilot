@@ -1,7 +1,19 @@
-import { FieldKind, FormType, SelectOption } from 'core-api-client';
+import {
+  FieldKind,
+  FieldTypeCheckbox,
+  FieldTypeDate,
+  FieldTypeMonth,
+  FieldTypeMultiSelect,
+  FieldTypeMultilineText,
+  FieldTypeQuantity,
+  FieldTypeReference,
+  FieldTypeSingleSelect,
+  FieldTypeText,
+  FieldTypeWeek,
+  FormType,
+  SelectOption,
+} from 'core-api-client';
 import { EntityState } from '@reduxjs/toolkit';
-
-import { ErrorMessage } from '../../types/errors';
 
 export interface FormField {
   id: string;
@@ -15,8 +27,35 @@ export interface FormField {
   subFormId: string | undefined;
   referencedDatabaseId: string | undefined;
   referencedFormId: string | undefined;
-  errors: ErrorMessage | undefined;
 }
+
+export type FieldDefinitionNonCircular = {
+  id: string;
+  code: string;
+  name: string;
+  description: string;
+  required: boolean;
+  key: boolean;
+  fieldType: FieldTypeNonCircular;
+};
+
+export interface FieldTypeNonCircular {
+  checkbox?: FieldTypeCheckbox;
+  date?: FieldTypeDate;
+  month?: FieldTypeMonth;
+  multiSelect?: FieldTypeMultiSelect;
+  multilineText?: FieldTypeMultilineText;
+  quantity?: FieldTypeQuantity;
+  reference?: FieldTypeReference;
+  singleSelect?: FieldTypeSingleSelect;
+  subForm?: FieldTypeSubFormNonCircular;
+  text?: FieldTypeText;
+  week?: FieldTypeWeek;
+}
+
+export type FieldTypeSubFormNonCircular = {
+  id: string;
+};
 
 export interface Form {
   // name of the form
@@ -27,7 +66,6 @@ export interface Form {
   // records the record values
   fields: FormField[];
   isRootForm: boolean;
-  errors: ErrorMessage | undefined;
 }
 
 export interface FormerState extends EntityState<Form> {
@@ -39,3 +77,7 @@ export interface FormerState extends EntityState<Form> {
   saveSuccess: boolean;
   saveError: any;
 }
+
+export type ValidationForm = Form & {
+  selectedField?: FieldDefinitionNonCircular;
+};

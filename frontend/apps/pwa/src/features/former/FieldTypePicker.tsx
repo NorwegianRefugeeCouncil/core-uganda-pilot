@@ -6,8 +6,10 @@ export type FieldTypePickerProps = {
   onCancel: () => void;
 };
 
-export const FieldTypePicker: FC<FieldTypePickerProps> = (props) => {
-  const { onSubmit, onCancel } = props;
+export const FieldTypePicker: FC<FieldTypePickerProps> = ({
+  onSubmit,
+  onCancel,
+}) => {
   return (
     <div className="card bg-dark text-light border-secondary">
       <div className="card-body bg-primary">

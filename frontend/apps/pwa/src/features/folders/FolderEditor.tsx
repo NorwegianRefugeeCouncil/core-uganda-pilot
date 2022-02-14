@@ -2,7 +2,6 @@ import React, { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Folder } from 'core-api-client';
 import { Redirect } from 'react-router-dom';
-import _ from 'lodash';
 
 import { databaseActions } from '../../reducers/database';
 import {
@@ -15,7 +14,7 @@ type FormData = {
   name: string;
 };
 
-export const FolderEditor: FC = (props) => {
+export const FolderEditor: FC = () => {
   const {
     register,
     handleSubmit,
@@ -42,7 +41,7 @@ export const FolderEditor: FC = (props) => {
         databaseActions.addOne(resp.response);
         setFolder(resp.response);
       } else if (!resp.success && resp.error) {
-        _.forEach(resp.error.details.causes, (e) => {
+        resp.error.details.causes.forEach((e: any) => {
           setError(e.field, { type: e.reason, message: e.message });
         });
       }
@@ -73,9 +72,9 @@ export const FolderEditor: FC = (props) => {
                   aria-describedby="nameFeedback"
                 />
                 <div className="invalid-feedback is-invalid" id="nameFeedback">
-                  {_.map(errors, (e) => {
-                    return <div key={e?.message}>{e?.message}</div>;
-                  })}
+                  {Object.values(errors).map((e) => (
+                    <div key={e?.message}>{e?.message}</div>
+                  ))}
                 </div>
               </div>
               <button className="btn btn-primary">Create New Folder</button>

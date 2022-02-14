@@ -1,30 +1,38 @@
 import React, { FC } from 'react';
+import { ErrorMessage } from '@hookform/error-message';
+import { useFormContext } from 'react-hook-form';
 
 import { FormerProps } from './types';
+import { registeredValidation } from './validation';
 
 export const FormName: FC<
   Pick<FormerProps, 'formName' | 'setFormName' | 'errors'>
 > = ({ formName = '', setFormName, errors }) => {
+  const { register } = useFormContext();
+
+  const registerObject = register('name', registeredValidation.name);
+
   return (
     <div className="form-group mb-2">
-      <label className="form-label" htmlFor="formName">
+      <label className="form-label" htmlFor="name">
         Form Name
       </label>
       <input
-        className={`form-control ${errors ? 'is-invalid' : ''}`}
-        id="formName"
+        className={`form-control ${errors?.name ? 'is-invalid' : ''}`}
+        id="name"
         type="text"
         value={formName || ''}
-        onChange={(event) => setFormName(event.target.value)}
-        aria-describedby="formNameFeedback"
+        aria-describedby="errorMessages-formName"
+        {...registerObject}
+        onChange={(event) => {
+          setFormName(event.target.value);
+          return registerObject.onChange(event);
+        }}
       />
-      {errors && (
-        <div className="invalid-feedback is-invalid" id="formNameFeedback">
-          {Object.values(errors)?.map((error) => (
-            <div key={error}>{error}</div>
-          ))}
-        </div>
-      )}
+
+      <div className="invalid-feedback" id="errorMessages-formName">
+        <ErrorMessage errors={errors} name="name" />
+      </div>
     </div>
   );
 };

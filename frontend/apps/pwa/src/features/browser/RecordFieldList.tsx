@@ -16,7 +16,7 @@ export const RecordFieldList: React.FC<Props> = ({
 }) => {
   let value = '';
 
-  const fieldValue = record.values.find((v: any) => v.fieldId === field.id);
+  const fieldValue = record.values?.find((v: any) => v.fieldId === field.id);
 
   if (fieldValue && typeof fieldValue.value === 'string') {
     value = fieldValue.value;

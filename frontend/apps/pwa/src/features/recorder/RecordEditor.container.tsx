@@ -1,5 +1,6 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
+import { useForm, FormProvider } from 'react-hook-form';
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { fetchDatabases } from '../../reducers/database';
@@ -18,6 +19,7 @@ import {
   selectPostRecords,
   selectSubRecords,
 } from '../../reducers/Recorder/recorder.selectors';
+import { FormValue } from '../../reducers/Recorder/types';
 
 import { RecordEditorComponent } from './RecordEditor.component';
 
@@ -52,6 +54,10 @@ export const RecordEditorContainer: FC = () => {
       return selectSubRecords(state, currentRecord.id);
     }
     return {};
+  });
+
+  const formUtitlities = useForm<FormValue>({
+    defaultValues: currentRecord,
   });
 
   useEffect(() => {
@@ -154,9 +160,7 @@ export const RecordEditorContainer: FC = () => {
         ).unwrap();
         dispatch(recordActions.addMany(recordResponse));
         history.push(`/browse/records/${recordResponse[0].id}`);
-      } catch (e: any) {
-        dispatch(actions.setRecordErrors({ errors: e?.details?.causes }));
-      }
+      } catch (e: any) {}
     }
   }, [dispatch, formIdFromPath, currentRecord, recordsToPost, currentForm]);
 
@@ -176,15 +180,17 @@ export const RecordEditorContainer: FC = () => {
   }
 
   return (
-    <RecordEditorComponent
-      onChangeValue={handleFieldValueChange}
-      fields={currentForm?.fields}
-      values={currentRecord?.values}
-      errors={currentRecord?.errors}
-      onAddSubRecord={handleAddSubRecord}
-      onSaveRecord={handleSaveRecord}
-      subRecords={subRecords}
-      onSelectSubRecord={handleSelectSubRecord}
-    />
+    <FormProvider {...formUtitlities}>
+      <RecordEditorComponent
+        onChangeValue={handleFieldValueChange}
+        fields={currentForm?.fields}
+        values={currentRecord?.values}
+        errors={formUtitlities.formState.errors}
+        onAddSubRecord={handleAddSubRecord}
+        onSaveRecord={formUtitlities.handleSubmit(handleSaveRecord)}
+        subRecords={subRecords}
+        onSelectSubRecord={handleSelectSubRecord}
+      />
+    </FormProvider>
   );
 };

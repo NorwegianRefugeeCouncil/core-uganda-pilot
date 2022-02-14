@@ -4,17 +4,13 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
-import _ from 'lodash';
 import { Record } from 'core-api-client';
 
-import { ApiErrorDetails } from '../../types/errors';
 import client from '../../app/client';
 import { RootState } from '../../app/store';
 import { selectFormOrSubFormById } from '../form';
 import { recordGlobalSelectors } from '../records';
-import { postForm } from '../Former/former.reducers';
 
-import { selectCurrentRecord } from './recorder.selectors';
 import { FormValue, RecorderState } from './types';
 import { adapter } from './recorder.adapter';
 
@@ -59,7 +55,6 @@ export const reducers = {
       formId: action.payload.formId,
       values: [],
       ownerId: undefined,
-      errors: undefined,
     };
     adapter.addOne(state, newRecord);
     state.selectedRecordId = newRecord.id;
@@ -78,39 +73,9 @@ export const reducers = {
       values: [],
       ownerFieldId: action.payload.ownerFieldId,
       ownerId: action.payload.ownerRecordId,
-      errors: undefined,
     };
     adapter.addOne(state, newRecord);
     state.selectedRecordId = newRecord.id;
-  },
-  setRecordErrors(
-    state: RecorderState,
-    action: PayloadAction<{ errors: ApiErrorDetails[] }>,
-  ) {
-    const currentId = state.selectedRecordId;
-    const currentRecord = state.entities[currentId];
-
-    if (!currentRecord) {
-      return;
-    }
-
-    _.forEach(action.payload.errors, (error) => {
-      const propertyIndex = error.field.indexOf('.');
-      if (propertyIndex >= 0) {
-        const property = error.field.slice(propertyIndex + 1);
-        const fieldErrorPath = `${error.field.slice(
-          0,
-          propertyIndex,
-        )}.errors.${property}`;
-
-        _.set(state.entities[currentId] || {}, fieldErrorPath, error.message);
-      }
-      if (propertyIndex < 0) {
-        const fieldErrorPath = `errors.${error.field}`;
-
-        _.set(state.entities[currentId] || {}, fieldErrorPath, error.message);
-      }
-    });
   },
   addOne: adapter.addOne,
   addMany: adapter.addMany,
@@ -142,7 +107,6 @@ export const resetForm = createAsyncThunk<
     formId: form.id,
     values: [],
     ownerId: undefined,
-    errors: undefined,
   };
 
   if (ownerId) {
