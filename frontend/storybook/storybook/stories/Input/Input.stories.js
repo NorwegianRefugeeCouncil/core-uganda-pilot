@@ -1,8 +1,7 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react-native';
-import { text, boolean } from '@storybook/addon-knobs';
 import { VStack, Input as InputNB, FormControl } from 'native-base';
-import { Icon, theme } from 'core-design-system';
+import { Icon } from 'core-design-system';
 
 import CenterView from '../CenterView';
 
@@ -15,46 +14,34 @@ storiesOf('Input', module)
           <FormControl.Label>Label</FormControl.Label>
           <InputNB
             placeholder="This is a default input"
-            value={text('input text', 'Default value')}
+            value="Default value"
           />
           <FormControl.HelperText>This is a helper text</FormControl.HelperText>
-        </FormControl>
-        <FormControl isInvalid={boolean('invalid', false)}>
-          <FormControl.Label>Label</FormControl.Label>
-          <InputNB
-            value={text('input text', 'Validated value')}
-            InputRightElement={
-              <Icon
-                name="success"
-                color={theme.colors.signalSuccess}
-                size={5}
-                mr={2}
-              />
-            }
-          />
-          <FormControl.HelperText>
-            This is a validated input
-          </FormControl.HelperText>
         </FormControl>
         <FormControl isDisabled>
           <FormControl.Label>Disabled Input</FormControl.Label>
           <InputNB
             placeholder="This is a disabled input"
-            value={text('input text', 'Disabled value')}
+            value="Disabled value"
           />
+        </FormControl>
+        <FormControl>
+          <FormControl.Label>Label</FormControl.Label>
+          <InputNB
+            value="Valid value"
+            InputRightElement={
+              <Icon name="success" size="6" color="signalSuccess" mr={3} />
+            }
+          />
+          <FormControl.HelperText>This is a valid input</FormControl.HelperText>
         </FormControl>
         <FormControl isInvalid>
           <FormControl.Label>Invalid Input</FormControl.Label>
           <InputNB
             placeholder="This is an invalid input"
-            value={text('input text', 'Invalid value')}
+            value="Invalid value"
             InputRightElement={
-              <Icon
-                name="error"
-                color={theme.colors.signalDanger}
-                size={5}
-                mr={2}
-              />
+              <Icon name="error" size="6" color="signalDanger" mr={3} />
             }
           />
           <FormControl.ErrorMessage>
