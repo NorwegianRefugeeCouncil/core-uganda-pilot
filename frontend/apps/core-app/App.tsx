@@ -26,7 +26,6 @@ const App: React.FC = () => {
     Roboto_400Regular,
     Roboto_400Regular_Italic,
     Roboto_500Medium,
-
     Roboto_700Bold,
   });
   return (

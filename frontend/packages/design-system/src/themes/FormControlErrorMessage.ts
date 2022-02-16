@@ -3,7 +3,7 @@ import textTheme from './Text';
 export default {
   baseStyle: () => {
     return {
-      mt: '2px',
+      mt: '0.5',
       _text: {
         ...textTheme.variants.caption,
       },
