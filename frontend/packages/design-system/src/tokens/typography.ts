@@ -1,15 +1,31 @@
 const baseFontSize = 18;
 const baseLineHeight = 26;
 
-const keys = ['xxs', 'xs', 'sm', 'md', 'lg', 'xl'];
+const fontSizeKeys = ['3xs', '2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'];
+const lineHeightKeys = [
+  '3xs',
+  '2xs',
+  'xs',
+  'sm',
+  'md',
+  'lg',
+  'xl',
+  '2xl',
+  '3xl',
+  '4xl',
+];
 
-const fontSizeScales = [14 / 18, 1, 20 / 18, 24 / 18, 32 / 18, 44 / 18];
-const lineHeightScales = [20 / 26, 1, 24 / 26, 34 / 26, 38 / 26, 52 / 26];
+const fontSizeScales = [14, 16, 18, 20, 24, 28, 32, 40, 44].map(
+  (fs) => fs / baseFontSize,
+);
+const lineHeightScales = [17, 20, 23, 24, 26, 28, 34, 38, 48, 52].map(
+  (fs) => fs / baseLineHeight,
+);
 
 const fontSizes: { [p: string]: number } = fontSizeScales.reduce(
   (acc, cur, i) => ({
     ...acc,
-    [keys[i]]: Math.round(cur * baseFontSize),
+    [fontSizeKeys[i]]: Math.round(cur * baseFontSize),
   }),
   {},
 );
@@ -17,7 +33,7 @@ const fontSizes: { [p: string]: number } = fontSizeScales.reduce(
 const lineHeights: { [p: string]: number } = lineHeightScales.reduce(
   (acc, cur, i) => ({
     ...acc,
-    [keys[i]]: Math.round(cur * baseLineHeight),
+    [lineHeightKeys[i]]: Math.round(cur * baseLineHeight),
   }),
   {},
 );
@@ -38,10 +54,19 @@ export default {
     },
   },
   fonts: {
-    display: 'Roboto',
-    heading: 'Roboto',
-    title: 'Roboto',
-    bodyText: 'Roboto',
+    display1: 'Roboto',
+    display2: 'Roboto',
+    heading1: 'Roboto',
+    heading2: 'Roboto',
+    heading3: 'Roboto',
+    heading4: 'Roboto',
+    heading5: 'Roboto',
+    heading6: 'Roboto',
+    title1: 'Roboto',
+    title2: 'Roboto',
+    title3: 'Roboto',
+    body1: 'Roboto',
+    body2: 'Roboto',
     inline: 'Roboto',
     date: 'Roboto',
     label: 'Roboto',

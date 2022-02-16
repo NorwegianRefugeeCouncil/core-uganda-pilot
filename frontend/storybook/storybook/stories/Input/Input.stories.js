@@ -12,10 +12,7 @@ storiesOf('Input', module)
       <VStack space={4}>
         <FormControl>
           <FormControl.Label>Label</FormControl.Label>
-          <Input
-            placeholder="This is a default input"
-            value="Default value"
-          />
+          <Input placeholder="This is a default input" value="Default value" />
           <FormControl.HelperText>This is a helper text</FormControl.HelperText>
         </FormControl>
         <FormControl isDisabled>
