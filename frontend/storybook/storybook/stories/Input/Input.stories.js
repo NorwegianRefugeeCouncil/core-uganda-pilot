@@ -1,6 +1,6 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react-native';
-import { VStack, Input as InputNB, FormControl } from 'native-base';
+import { VStack, Input, FormControl } from 'native-base';
 import { Icon } from 'core-design-system';
 
 import CenterView from '../CenterView';
@@ -12,7 +12,7 @@ storiesOf('Input', module)
       <VStack space={4}>
         <FormControl>
           <FormControl.Label>Label</FormControl.Label>
-          <InputNB
+          <Input
             placeholder="This is a default input"
             value="Default value"
           />
@@ -20,14 +20,14 @@ storiesOf('Input', module)
         </FormControl>
         <FormControl isDisabled>
           <FormControl.Label>Disabled Input</FormControl.Label>
-          <InputNB
+          <Input
             placeholder="This is a disabled input"
             value="Disabled value"
           />
         </FormControl>
         <FormControl>
           <FormControl.Label>Label</FormControl.Label>
-          <InputNB
+          <Input
             value="Valid value"
             InputRightElement={
               <Icon name="success" size="6" color="signalSuccess" mr={3} />
@@ -37,7 +37,7 @@ storiesOf('Input', module)
         </FormControl>
         <FormControl isInvalid>
           <FormControl.Label>Invalid Input</FormControl.Label>
-          <InputNB
+          <Input
             placeholder="This is an invalid input"
             value="Invalid value"
             InputRightElement={

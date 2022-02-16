@@ -2,7 +2,7 @@ import React from 'react';
 import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react-native';
 import { boolean, select, text } from '@storybook/addon-knobs';
-import { Button as ButtonNB, HStack, VStack } from 'native-base';
+import { Button, HStack, VStack } from 'native-base';
 import { Icon, icons } from 'core-design-system';
 
 import CenterView from '../CenterView';
@@ -15,47 +15,47 @@ storiesOf('Button', module)
     return (
       <VStack space={4}>
         <HStack space={2}>
-          <ButtonNB
+          <Button
             onPress={action('clicked-text')}
             colorScheme="primary"
             variant="major"
           >
             Primary Major
-          </ButtonNB>
-          <ButtonNB
+          </Button>
+          <Button
             onPress={action('clicked-text')}
             colorScheme="secondary"
             variant="major"
           >
             Secondary Major
-          </ButtonNB>
+          </Button>
         </HStack>
         <HStack space={2}>
-          <ButtonNB
+          <Button
             onPress={action('clicked-text')}
             colorScheme="primary"
             variant="minor"
           >
             Primary Minor
-          </ButtonNB>
-          <ButtonNB
+          </Button>
+          <Button
             onPress={action('clicked-text')}
             colorScheme="secondary"
             variant="minor"
           >
             Secondary Minor
-          </ButtonNB>
+          </Button>
         </HStack>
         <HStack space={2}>
-          <ButtonNB
+          <Button
             onPress={action('clicked-text')}
             colorScheme="primary"
             isDisabled
             variant="major"
           >
             Disabled
-          </ButtonNB>
-          <ButtonNB
+          </Button>
+          <Button
             onPress={action('clicked-text')}
             colorScheme="primary"
             variant="major"
@@ -68,14 +68,14 @@ storiesOf('Button', module)
             }
           >
             With Icon
-          </ButtonNB>
+          </Button>
         </HStack>
       </VStack>
     );
   })
   .add('Basic Button', () => {
     return (
-      <ButtonNB
+      <Button
         onPress={action('clicked-text')}
         colorScheme={select(
           'Color scheme',
@@ -86,12 +86,12 @@ storiesOf('Button', module)
         variant={select('Variant', ['major', 'minor'], 'major')}
       >
         {text('Button text', 'Submit')}
-      </ButtonNB>
+      </Button>
     );
   })
   .add('Button with Icon', () => {
     return (
-      <ButtonNB
+      <Button
         onPress={action('clicked-text')}
         colorScheme={select(
           'Color scheme',
@@ -105,6 +105,6 @@ storiesOf('Button', module)
         }
       >
         {text('Button text', 'Submit')}
-      </ButtonNB>
+      </Button>
     );
   });
