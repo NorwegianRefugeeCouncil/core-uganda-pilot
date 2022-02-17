@@ -7,6 +7,7 @@ const disabledStyle = {
 const activeStyle = {
   borderColor: 'primary.500',
   backgroundColor: 'secondary.100',
+  color: 'neutral.500',
 };
 
 export default {
