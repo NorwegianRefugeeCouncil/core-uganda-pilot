@@ -1,3 +1,5 @@
+import textTheme from './Text';
+
 const disabledStyle = {
   borderColor: 'neutral.200',
   backgroundColor: 'neutral.100',
@@ -11,66 +13,31 @@ const activeStyle = {
 };
 
 export default {
-  defaultProps: {
-    size: 'xs',
-    borderRadius: 'nrc_sm',
+  baseStyle: {
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: 'neutral.300',
+    borderRadius: 'nrc_xs',
+    color: 'neutral.300',
     padding: 3,
-  },
-  baseStyle: () => {
-    return {
-      borderWidth: 1,
-      borderStyle: 'solid',
-      borderColor: 'neutral.300',
-      backgroundColor: 'white',
-      boxSizing: 'border-box',
-      color: 'neutral.300',
-      _invalid: {
-        borderColor: 'signalDanger',
-        backgroundColor: 'tertiary2.100',
-        color: 'signalDanger',
-      },
-      _focus: activeStyle,
-      _hover: activeStyle,
-      _disabled: disabledStyle,
-      _readOnly: disabledStyle,
-    };
-  },
-  sizes: {
-    xxs: {
-      fontSize: 'xxs',
-      _web: {
-        lineHeight: 'xxs',
-      },
+    _android: {
+      ...textTheme.variants.bodyText,
     },
-    xs: {
-      fontSize: 'xs',
-      _web: {
-        lineHeight: 'xs',
-      },
+    _ios: {
+      ...textTheme.variants.bodyText,
     },
-    sm: {
-      fontSize: 'sm',
-      _web: {
-        lineHeight: 'sm',
-      },
+    _web: {
+      ...textTheme.variants.bodyText,
     },
-    md: {
-      fontSize: 'md',
-      _web: {
-        lineHeight: 'md',
-      },
+    _invalid: {
+      borderColor: 'signalDanger',
+      backgroundColor: 'tertiary2.100',
+      color: 'signalDanger',
     },
-    lg: {
-      fontSize: 'lg',
-      _web: {
-        lineHeight: 'lg',
-      },
-    },
-    xl: {
-      fontSize: 'xl',
-      _web: {
-        lineHeight: 'xl',
-      },
-    },
+    _focus: activeStyle,
+    _hover: activeStyle,
+    _disabled: disabledStyle,
+    _readOnly: disabledStyle,
   },
 };

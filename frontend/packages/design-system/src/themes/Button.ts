@@ -1,12 +1,14 @@
 import textTheme from './Text';
 
 export default {
-  defaultProps: {
+  baseStyle: {
     _text: {
       ...textTheme.variants.button,
     },
     borderRadius: 'nrc_xs',
-    size: 'nrc_10',
+    height: 'nrc_10',
+    paddingLeft: '50px',
+    paddingRight: '50px',
   },
   variants: {
     major: ({ colorScheme }: any) => {
@@ -84,12 +86,6 @@ export default {
           },
         },
       };
-    },
-  },
-  sizes: {
-    nrc_10: {
-      height: 'nrc_10',
-      px: '50px',
     },
   },
 };

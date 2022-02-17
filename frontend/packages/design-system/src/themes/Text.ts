@@ -1,7 +1,7 @@
 import typography from '../tokens/typography';
 
 const textTheme = {
-  defaultProps: {
+  baseStyle: {
     textAlign: 'auto',
   },
   variants: {
