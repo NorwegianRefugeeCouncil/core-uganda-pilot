@@ -10,6 +10,7 @@ export * from './Calendar';
 export * from './Call';
 export * from './Case';
 export * from './Chat';
+export * from './Check';
 export * from './Delete';
 export * from './Edit';
 export * from './Email';

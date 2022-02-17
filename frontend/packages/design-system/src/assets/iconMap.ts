@@ -13,6 +13,7 @@ export const iconMap = {
   call: icons.Call,
   case: icons.Case,
   chat: icons.Chat,
+  check: icons.Check,
   delete: icons.Delete,
   edit: icons.Edit,
   email: icons.Email,
