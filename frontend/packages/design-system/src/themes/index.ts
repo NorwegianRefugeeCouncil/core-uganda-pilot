@@ -35,6 +35,8 @@ export default extendTheme({
     nrc_6: tokens.spacing.spacing30,
     nrc_7: tokens.spacing.spacing35,
     nrc_8: tokens.spacing.spacing40,
+    nrc_9: tokens.spacing.spacing45,
+    nrc_10: tokens.spacing.spacing50,
   },
   sizes: {
     nrc_1: tokens.spacing.spacing5,

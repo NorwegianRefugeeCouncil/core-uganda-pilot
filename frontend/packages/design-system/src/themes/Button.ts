@@ -7,8 +7,8 @@ export default {
     },
     borderRadius: 'nrc_xs',
     height: 'nrc_10',
-    paddingLeft: '50px',
-    paddingRight: '50px',
+    paddingLeft: 'nrc_10',
+    paddingRight: 'nrc_10',
   },
   variants: {
     major: ({ colorScheme }: any) => {
