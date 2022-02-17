@@ -3,6 +3,7 @@ import typography from '../tokens/typography';
 const textTheme = {
   baseStyle: {
     textAlign: 'auto',
+    color: 'neutral.500',
   },
   variants: {
     display: {
