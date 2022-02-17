@@ -61,7 +61,6 @@ export default {
     heading3: 'Roboto',
     heading4: 'Roboto',
     heading5: 'Roboto',
-    heading6: 'Roboto',
     title1: 'Roboto',
     title2: 'Roboto',
     title3: 'Roboto',

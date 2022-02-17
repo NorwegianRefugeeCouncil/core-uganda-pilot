@@ -41,11 +41,6 @@ const textTheme = {
       fontSize: typography.fontSizes['3xs'],
       lineHeight: typography.lineHeights['3xs'],
     },
-    heading6: {
-      fontFamily: typography.fontConfig.Roboto['400'].normal,
-      fontSize: typography.fontSizes.sm,
-      lineHeight: typography.lineHeights.sm,
-    },
     title1: {
       fontFamily: typography.fontConfig.Roboto['400'].normal,
       fontSize: typography.fontSizes.md,

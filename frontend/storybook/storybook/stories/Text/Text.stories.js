@@ -15,7 +15,6 @@ storiesOf('Text', module)
       <Text variant="heading3">Heading 3</Text>
       <Text variant="heading4">Heading 4</Text>
       <Text variant="heading5">Heading 5</Text>
-      <Text variant="heading6">Heading 6</Text>
       <Text variant="title1">Title 1</Text>
       <Text variant="title2">Title 2</Text>
       <Text variant="title3">Title 3</Text>
