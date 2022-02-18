@@ -24,8 +24,6 @@ export default function App() {
     Roboto_700Bold,
   });
 
-  console.log('THEME', theme);
-
   return (
     fontsLoaded && (
       <NativeBaseProvider theme={theme}>
