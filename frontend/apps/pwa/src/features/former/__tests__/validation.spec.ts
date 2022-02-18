@@ -1,6 +1,7 @@
 import { FieldKind, FormType } from 'core-api-client';
 
 import { customValidation, validationConstants } from '../validation';
+import { Form } from '../../../reducers/Former/types';
 
 describe('validation', () => {
   describe('customValidation', () => {
@@ -113,6 +114,128 @@ describe('validation', () => {
             {
               field: 'selectedField.fieldType.subForm',
               message: 'Subforms cannot be required',
+            },
+          ]);
+        });
+      });
+    });
+
+    describe('recipient forms', () => {
+      let baseForm: Form;
+      beforeEach(() => {
+        baseForm = {
+          name: 'testform',
+          formId: 'formId',
+          fields: [],
+          formType: FormType.RecipientFormType,
+          isRootForm: true,
+        };
+      });
+
+      describe('success', () => {
+        it('should not return an error for a valid recipient form', () => {
+          baseForm.fields = [
+            {
+              id: 'id',
+              fieldType: FieldKind.Reference,
+              options: [],
+              required: true,
+              key: true,
+              name: 'name',
+              description: 'description',
+              code: 'code',
+              subFormId: undefined,
+              referencedDatabaseId: undefined,
+              referencedFormId: undefined,
+            },
+          ];
+          const result = customValidation.form(baseForm);
+          expect(result).toEqual([]);
+        });
+      });
+      describe('failure', () => {
+        it('should return an error if form has no key field', () => {
+          baseForm.fields = [
+            {
+              id: 'id',
+              fieldType: FieldKind.Reference,
+              options: [],
+              required: true,
+              key: false,
+              name: 'name',
+              description: 'description',
+              code: 'code',
+              subFormId: undefined,
+              referencedDatabaseId: undefined,
+              referencedFormId: undefined,
+            },
+          ];
+          const result = customValidation.form(baseForm);
+          expect(result).toEqual([
+            {
+              field: 'fields',
+              message: 'Form needs to have exactly 1 key field',
+            },
+          ]);
+        });
+        it('should return an error if form has more than one key field', () => {
+          baseForm.fields = [
+            {
+              id: 'id1',
+              fieldType: FieldKind.Reference,
+              options: [],
+              required: true,
+              key: true,
+              name: 'name',
+              description: 'description',
+              code: 'code',
+              subFormId: undefined,
+              referencedDatabaseId: undefined,
+              referencedFormId: undefined,
+            },
+            {
+              id: 'id2',
+              fieldType: FieldKind.Reference,
+              options: [],
+              required: true,
+              key: true,
+              name: 'name',
+              description: 'description',
+              code: 'code',
+              subFormId: undefined,
+              referencedDatabaseId: undefined,
+              referencedFormId: undefined,
+            },
+          ];
+          const result = customValidation.form(baseForm);
+          expect(result).toEqual([
+            {
+              field: 'fields',
+              message: 'Form needs to have exactly 1 key field',
+            },
+          ]);
+        });
+        it('should return an error if the key field is not a reference', () => {
+          baseForm.fields = [
+            {
+              id: 'id',
+              fieldType: FieldKind.Text,
+              options: [],
+              required: true,
+              key: false,
+              name: 'name',
+              description: 'description',
+              code: 'code',
+              subFormId: undefined,
+              referencedDatabaseId: undefined,
+              referencedFormId: undefined,
+            },
+          ];
+          const result = customValidation.form(baseForm);
+          expect(result).toEqual([
+            {
+              field: 'fields',
+              message: 'Form needs to have exactly 1 key field',
             },
           ]);
         });
