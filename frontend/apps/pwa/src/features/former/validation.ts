@@ -1,5 +1,5 @@
 import { FieldPath } from 'react-hook-form';
-import { FieldDefinition, FieldKind } from 'core-api-client';
+import { FieldDefinition, FieldKind, FormType } from 'core-api-client';
 import { RegisterOptions } from 'react-hook-form/dist/types/validator';
 
 import { Form, FormField, ValidationForm } from '../../reducers/Former/types';
@@ -130,6 +130,24 @@ export const customValidation = {
         field: 'fields' as FieldPath<ValidationForm>,
         message: `Form can have at most ${validationConstants.fields.max} fields`,
       });
+    }
+    if (form.formType === FormType.RecipientFormType) {
+      const keyFields = form.fields.filter((field) => {
+        return field.key;
+      });
+      if (keyFields.length !== 1) {
+        errors.push({
+          field: 'fields' as FieldPath<ValidationForm>,
+          message: 'Form needs to have exactly 1 key field',
+        });
+      } else if (keyFields[0].fieldType !== FieldKind.Reference) {
+        console.log('key fields', keyFields);
+
+        errors.push({
+          field: 'fields' as FieldPath<ValidationForm>,
+          message: 'Key field needs to be a reference',
+        });
+      }
     }
     return errors;
   },
