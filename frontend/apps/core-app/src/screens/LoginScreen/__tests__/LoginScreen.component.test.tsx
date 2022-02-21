@@ -1,8 +1,7 @@
 import { fireEvent } from '@testing-library/react-native';
 
-import { render } from '../../testUtils/render';
-
-import { LoginScreenComponent } from './LoginScreen.component';
+import { render } from '../../../testUtils/render';
+import { LoginScreenComponent } from '../LoginScreen.component';
 
 it('should match the snapshot', () => {
   const login = jest.fn();
