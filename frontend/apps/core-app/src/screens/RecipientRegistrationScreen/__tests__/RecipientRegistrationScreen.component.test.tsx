@@ -1,7 +1,11 @@
 import { render } from '../../../testUtils/render';
-import { RecipientRegistrationScreen } from '../index';
+import { RecipientRegistrationScreenComponent } from '../RecipientRegistrationScreen.component';
 
 it('should match the snapshot', () => {
-  const { toJSON } = render(<RecipientRegistrationScreen />);
+  const { toJSON } = render(
+    <RecipientRegistrationScreenComponent
+      route={{ name: 'RecipientRegistration', params: {}, key: 'key' }}
+    />,
+  );
   expect(toJSON()).toMatchSnapshot();
 });

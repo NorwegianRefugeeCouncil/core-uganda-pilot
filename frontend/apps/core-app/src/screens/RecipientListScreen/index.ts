@@ -1,1 +1,1 @@
-export { RecipientListScreenComponent as RecipientListScreen } from './RecipientListScreen.component';
+export { RecipientListScreenContainer as RecipientListScreen } from './RecipientListScreen.container';

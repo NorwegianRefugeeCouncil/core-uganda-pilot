@@ -1,1 +1,1 @@
-export { RecipientRegistrationScreenComponent as RecipientRegistrationScreen } from './RecipientRegistrationScreen.component';
+export { RecipientRegistrationScreenContainer as RecipientRegistrationScreen } from './RecipientRegistrationScreen.container';

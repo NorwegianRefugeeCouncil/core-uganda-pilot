@@ -6,8 +6,11 @@ import { RootParamList } from '../../navigators/types';
 
 import * as Styles from './RecipientProfileScreen.styles';
 
-export const RecipientProfileScreenComponent: React.FC = () => {
-  const route = useRoute<RouteProp<RootParamList, 'RecipientProfile'>>();
+type Props = {
+  route: RouteProp<RootParamList, 'RecipientProfile'>;
+};
+
+export const RecipientProfileScreenComponent: React.FC<Props> = ({ route }) => {
   return (
     <Styles.Container>
       <Text variant="display">

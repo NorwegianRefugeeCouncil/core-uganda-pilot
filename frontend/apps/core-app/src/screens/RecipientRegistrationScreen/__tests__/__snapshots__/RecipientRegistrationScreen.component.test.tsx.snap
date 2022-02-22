@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should match the snapshot 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    Array [
+      Object {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    dataSet={Object {}}
+    style={
+      Array [
+        Object {},
+        Array [
+          Object {},
+        ],
+      ]
+    }
+  >
+    <Text
+      dataSet={Object {}}
+      style={
+        Object {
+          "backgroundColor": undefined,
+          "color": "#1f2937",
+          "fontFamily": "Roboto_700Bold",
+          "fontSize": 44,
+          "fontStyle": "normal",
+          "fontWeight": "400",
+          "letterSpacing": 0,
+          "lineHeight": 52,
+          "textAlign": "auto",
+          "textDecorationLine": undefined,
+        }
+      }
+    >
+      RecipientRegistration
+    </Text>
+  </View>
+</RNCSafeAreaProvider>
+`;

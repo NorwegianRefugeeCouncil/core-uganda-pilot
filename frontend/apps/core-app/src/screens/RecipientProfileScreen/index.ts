@@ -1,1 +1,1 @@
-export { RecipientProfileScreenComponent as RecipientProfileScreen } from './RecipientProfileScreen.component';
+export { RecipientProfileScreenContainer as RecipientProfileScreen } from './RecipientProfileScreen.container';
