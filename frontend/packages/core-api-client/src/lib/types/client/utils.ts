@@ -12,6 +12,24 @@ export type Response<TRequest, TResponse> = {
   error: any;
 };
 
+export type SuccessResponse<TRequest, TResponse> = {
+  request: TRequest;
+  response: TResponse;
+  status: string;
+  statusCode: number;
+  success: true;
+  error: undefined;
+};
+
+export type ErrorResponse<TRequest> = {
+  request: TRequest;
+  response: undefined;
+  status: string;
+  statusCode: number;
+  success: false;
+  error: any;
+};
+
 export type PartialObjectWrapper<T> = { object: Partial<T> };
 export type DataOperation<TRequest, TResponse> = (
   request: TRequest,
