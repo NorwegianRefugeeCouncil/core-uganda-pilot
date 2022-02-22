@@ -21,6 +21,12 @@ export default {
     borderRadius: 'nrc_xs',
     color: 'neutral.300',
     padding: 3,
+    _android: {
+      ...textTheme.variants.bodyText,
+    },
+    _ios: {
+      ...textTheme.variants.bodyText,
+    },
     _web: {
       ...textTheme.variants.bodyText,
     },
