@@ -1,19 +1,15 @@
 import * as React from 'react';
 import { Text } from 'native-base';
-import { NativeStackScreenProps } from 'react-native-screens/native-stack';
+import { RouteProp, useRoute } from '@react-navigation/native';
 
-import { RootStackParamList } from '../../navigators/types';
+import { RootParamList } from '../../navigators/types';
 
 import * as Styles from './RecipientRegistrationScreen.styles';
 
-type Props = NativeStackScreenProps<
-  RootStackParamList,
-  'RecipientRegistration'
->;
+export const RecipientRegistrationScreenComponent: React.FC = () => {
+  const route =
+    useRoute<RouteProp<RootParamList, 'RecipientRegistration'>>();
 
-export const RecipientRegistrationScreenComponent: React.FC<Props> = ({
-  route,
-}) => {
   return (
     <Styles.Container>
       <Text variant="display">{route.name}</Text>
