@@ -1,35 +1,30 @@
 import * as React from 'react';
-import { View, Text } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+
+import { RecipientRegistrationScreen } from '../screens/RecipientRegistrationScreen';
+
+import { RecipientNavigator } from './recipients';
 
 const Drawer = createDrawerNavigator();
 
 export const RootNavigator: React.FC = () => {
   return (
-    <Drawer.Navigator>
+    <Drawer.Navigator initialRouteName="Recipients">
       <Drawer.Screen
-        name="Screen one"
-        component={() => (
-          <View>
-            <Text>Page one</Text>
-          </View>
-        )}
+        name="Recipients"
+        component={RecipientNavigator}
+        options={{
+          title: 'Recipient List',
+          headerTitle: 'Recipient List',
+        }}
       />
       <Drawer.Screen
-        name="Screen two"
-        component={() => (
-          <View>
-            <Text>Page two</Text>
-          </View>
-        )}
-      />
-      <Drawer.Screen
-        name="Screen three"
-        component={() => (
-          <View>
-            <Text>Page three</Text>
-          </View>
-        )}
+        name="RecipientRegistration"
+        component={RecipientRegistrationScreen}
+        options={{
+          title: 'Recipient Registration',
+          headerTitle: 'Recipient Registration',
+        }}
       />
     </Drawer.Navigator>
   );

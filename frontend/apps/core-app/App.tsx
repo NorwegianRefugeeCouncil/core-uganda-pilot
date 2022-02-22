@@ -14,6 +14,7 @@ import {
   Roboto_700Bold,
   useFonts,
 } from '@expo-google-fonts/roboto';
+import Constants from 'expo-constants';
 
 import { AuthWrapper } from './src/components/AuthWrapper';
 import { formsClient } from './src/clients/formsClient';
@@ -28,10 +29,31 @@ const App: React.FC = () => {
     Roboto_500Medium,
     Roboto_700Bold,
   });
+
+  const linking = {
+    prefixes: [
+      `https://${Constants.manifest?.scheme}.com`,
+      `${Constants.manifest?.scheme}://`,
+    ],
+    config: {
+      screens: {
+        Recipients: 'recipients',
+        RecipientList: '/',
+        RecipientRegistration: 'recipients/register',
+        RecipientProfile: {
+          path: '/:id',
+          parse: {
+            id: String,
+          },
+        },
+      },
+    },
+  };
+
   return (
     fontsLoaded && (
       <NativeBaseProvider theme={theme}>
-        <NavigationContainer>
+        <NavigationContainer linking={linking}>
           <AuthWrapper onTokenChange={formsClient.setToken}>
             <RootNavigator />
           </AuthWrapper>

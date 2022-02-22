@@ -1,14 +1,18 @@
 import * as React from 'react';
 import { Text } from 'native-base';
+import { RouteProp, useRoute } from '@react-navigation/native';
+
+import { RootStackParamList } from '../../navigators/types';
 
 import * as Styles from './RecipientProfileScreen.styles';
 
-type Props = {};
-
-export const RecipientProfileScreenComponent: React.FC<Props> = () => {
+export const RecipientProfileScreenComponent: React.FC = () => {
+  const route = useRoute<RouteProp<RootStackParamList, 'RecipientProfile'>>();
   return (
     <Styles.Container>
-      <Text>RecipientList</Text>
+      <Text variant="display">
+        {route.name}: {route.params.id}
+      </Text>
     </Styles.Container>
   );
 };
