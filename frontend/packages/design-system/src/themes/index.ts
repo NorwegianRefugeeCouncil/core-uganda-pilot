@@ -14,6 +14,7 @@ export default extendTheme({
   colors: tokens.colors,
   fontConfig: tokens.fontConfig,
   fontSizes: tokens.fontSizes,
+  fontWeights: tokens.fontWeights,
   fonts: tokens.fonts,
   lineHeights: tokens.lineHeights,
   letterSpacings: tokens.letterSpacings,
