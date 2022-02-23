@@ -1,43 +1,3 @@
-const baseFontSize = 18;
-const baseLineHeight = 26;
-
-const fontSizeKeys = ['3xs', '2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'];
-const lineHeightKeys = [
-  '3xs',
-  '2xs',
-  'xs',
-  'sm',
-  'md',
-  'lg',
-  'xl',
-  '2xl',
-  '3xl',
-  '4xl',
-];
-
-const fontSizeScales = [14, 16, 18, 20, 24, 28, 32, 40, 44].map(
-  (fs) => fs / baseFontSize,
-);
-const lineHeightScales = [17, 20, 23, 24, 26, 28, 34, 38, 48, 52].map(
-  (fs) => fs / baseLineHeight,
-);
-
-const fontSizes: { [p: string]: number } = fontSizeScales.reduce(
-  (acc, cur, i) => ({
-    ...acc,
-    [fontSizeKeys[i]]: Math.round(cur * baseFontSize),
-  }),
-  {},
-);
-
-const lineHeights: { [p: string]: number } = lineHeightScales.reduce(
-  (acc, cur, i) => ({
-    ...acc,
-    [lineHeightKeys[i]]: Math.round(cur * baseLineHeight),
-  }),
-  {},
-);
-
 export default {
   fontConfig: {
     Roboto: {
@@ -46,32 +6,33 @@ export default {
         italic: 'Roboto_400Regular_Italic',
       },
       500: {
-        medium: 'Roboto_500Medium',
+        normal: 'Roboto_500Medium',
       },
       700: {
         normal: 'Roboto_700Bold',
       },
     },
   },
-  fonts: {
-    display1: 'Roboto',
-    display2: 'Roboto',
-    heading1: 'Roboto',
-    heading2: 'Roboto',
-    heading3: 'Roboto',
-    heading4: 'Roboto',
-    heading5: 'Roboto',
-    title1: 'Roboto',
-    title2: 'Roboto',
-    title3: 'Roboto',
-    body1: 'Roboto',
-    body2: 'Roboto',
-    inline: 'Roboto',
-    date: 'Roboto',
-    label: 'Roboto',
-    caption: 'Roboto',
+  fontWeights: {
+    regular: 400,
+    medium: 500,
+    bold: 700,
   },
-  fontSizes,
+  fonts: {
+    body: 'Roboto',
+    mono: undefined,
+  },
+  fontSizes: {
+    '3xs': 14,
+    '2xs': 16,
+    xs: 18,
+    sm: 20,
+    md: 24,
+    lg: 28,
+    xl: 32,
+    '2xl': 40,
+    '3xl': 44,
+  },
   letterSpacings: {
     xs: 0,
     sm: 0,
@@ -79,5 +40,15 @@ export default {
     lg: 0,
     xl: 0,
   },
-  lineHeights,
+  lineHeights: {
+    '3xs': 17,
+    '2xs': 20,
+    xs: 24,
+    sm: 26,
+    md: 28,
+    lg: 34,
+    xl: 38,
+    '2xl': 48,
+    '3xl': 52,
+  },
 };
