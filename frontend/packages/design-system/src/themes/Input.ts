@@ -22,7 +22,7 @@ export default {
     color: 'neutral.300',
     padding: 3,
     _web: {
-      ...textTheme.variants.body1,
+      ...textTheme.variants.body({ fontSize: 'xs' }),
     },
     _invalid: {
       borderColor: 'signalDanger',

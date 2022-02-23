@@ -5,7 +5,7 @@ export default {
     return {
       mt: '0.5',
       _text: {
-        ...textTheme.variants.caption,
+        ...textTheme.variants.caption({ fontSize: '3xs' }),
         color: 'neutral.300',
       },
     };
