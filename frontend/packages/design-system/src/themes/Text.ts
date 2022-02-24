@@ -39,14 +39,6 @@ const textTheme = {
       },
       { fontWeight: 'medium' },
     ),
-    title: makeTextVariant(
-      {
-        '1': { fontSize: 'md', lineHeight: 'lg' },
-        '2': { fontSize: 'sm', lineHeight: 'xl' },
-        '3': { fontSize: '2xs', lineHeight: 'xl' },
-      },
-      { fontWeight: 'regular' },
-    ),
     body: makeTextVariant(
       {
         '1': { fontSize: 'xs', lineHeight: 'sm' },
