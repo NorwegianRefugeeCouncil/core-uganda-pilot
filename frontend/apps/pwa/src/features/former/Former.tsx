@@ -84,6 +84,7 @@ export const Former: FC<FormerProps> = (props) => {
             />
             <div className="text-danger">
               <ErrorMessage errors={errors} name="fields" />
+              <ErrorMessage errors={errors} name="type" />
             </div>
           </div>
 

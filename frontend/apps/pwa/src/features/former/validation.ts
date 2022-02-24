@@ -1,5 +1,5 @@
 import { FieldPath } from 'react-hook-form';
-import { FieldDefinition, FieldKind } from 'core-api-client';
+import { FieldDefinition, FieldKind, FormType } from 'core-api-client';
 import { RegisterOptions } from 'react-hook-form/dist/types/validator';
 
 import { Form, FormField, ValidationForm } from '../../reducers/Former/types';
@@ -121,15 +121,31 @@ export const customValidation = {
     const errors = [];
     if (form.fields.length < validationConstants.fields.min) {
       errors.push({
-        field: 'fields' as FieldPath<ValidationForm>,
+        field: 'fields' as const,
         message: `Form needs to have at least ${validationConstants.fields.min} field`,
       });
     }
     if (form.fields.length > validationConstants.fields.max) {
       errors.push({
-        field: 'fields' as FieldPath<ValidationForm>,
+        field: 'fields' as const,
         message: `Form can have at most ${validationConstants.fields.max} fields`,
       });
+    }
+    if (form.formType === FormType.RecipientFormType) {
+      const keyFields = form.fields.filter((field) => {
+        return field.key;
+      });
+      if (keyFields.length !== 1) {
+        errors.push({
+          field: 'fields' as const,
+          message: 'Form needs to have exactly 1 key field',
+        });
+      } else if (keyFields[0].fieldType !== FieldKind.Reference) {
+        errors.push({
+          field: 'fields' as const,
+          message: 'Key field needs to be a reference',
+        });
+      }
     }
     return errors;
   },
@@ -157,7 +173,7 @@ export const customValidation = {
     if (field.fieldType === FieldKind.SubForm) {
       if (field.required) {
         errors.push({
-          field: 'selectedField.fieldType.subForm' as FieldPath<ValidationForm>,
+          field: 'selectedField.fieldType.subForm' as const,
           message: 'Subforms cannot be required',
         });
       }
