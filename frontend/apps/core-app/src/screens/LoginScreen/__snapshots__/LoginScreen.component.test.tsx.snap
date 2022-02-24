@@ -88,6 +88,7 @@ exports[`should match the snapshot 1`] = `
         >
           <Text
             dataSet={Object {}}
+            level="1"
             style={
               Object {
                 "backgroundColor": undefined,
