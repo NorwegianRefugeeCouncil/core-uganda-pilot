@@ -1,8 +1,9 @@
 import typography from '../tokens/typography';
 
 const textTheme = {
-  defaultProps: {
+  baseStyle: {
     textAlign: 'auto',
+    color: 'neutral.500',
   },
   variants: {
     display: {
@@ -22,29 +23,35 @@ const textTheme = {
     },
     bodyText: {
       fontFamily: typography.fontConfig.Roboto['400'].normal,
-      fontSize: typography.fontSizes.sm,
-      lineHeight: typography.lineHeights.sm,
+      fontSize: typography.fontSizes.xs,
+      lineHeight: typography.lineHeights.xs,
     },
     inline: {
-      fontFamily: typography.fontConfig.Roboto['400'].normal,
-      fontSize: typography.fontSizes.sm,
-      lineHeight: typography.lineHeights.sm,
+      fontFamily: typography.fontConfig.Roboto['500'].medium,
+      fontSize: typography.fontSizes.xs,
+      lineHeight: typography.lineHeights.xs,
       textDecorationLine: 'underline',
     },
     date: {
       fontFamily: typography.fontConfig.Roboto['400'].italic,
-      fontSize: typography.fontSizes.sm,
-      lineHeight: typography.lineHeights.sm,
+      fontSize: typography.fontSizes.xs,
+      lineHeight: typography.lineHeights.xs,
     },
     label: {
-      fontFamily: typography.fontConfig.Roboto['400'].normal,
-      fontSize: typography.fontSizes.sm,
-      lineHeight: typography.lineHeights.sm,
+      fontFamily: typography.fontConfig.Roboto['500'].medium,
+      fontSize: typography.fontSizes.xs,
+      lineHeight: typography.lineHeights.xs,
     },
     caption: {
       fontFamily: typography.fontConfig.Roboto['400'].normal,
-      fontSize: typography.fontSizes.xs,
-      lineHeight: typography.lineHeights.xs,
+      fontSize: typography.fontSizes.xxs,
+      lineHeight: typography.lineHeights.xxs,
+    },
+    button: {
+      fontFamily: typography.fontConfig.Roboto['400'].normal,
+      fontSize: typography.fontSizes.sm,
+      lineHeight: typography.lineHeights.sm,
+      bold: 'true',
     },
   },
 };

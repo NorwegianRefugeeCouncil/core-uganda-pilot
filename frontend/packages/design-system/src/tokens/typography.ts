@@ -1,9 +1,10 @@
 const baseFontSize = 18;
+const baseLineHeight = 26;
 
-const keys = ['xs', 'sm', 'md', 'lg', 'xl'];
+const keys = ['xxs', 'xs', 'sm', 'md', 'lg', 'xl'];
 
-const fontSizeScales = [14 / 18, 1, 24 / 18, 32 / 18, 44 / 18];
-const lineHeightScales = [20 / 26, 1, 34 / 18, 38 / 18, 52 / 18];
+const fontSizeScales = [14 / 18, 1, 20 / 18, 24 / 18, 32 / 18, 44 / 18];
+const lineHeightScales = [20 / 26, 1, 24 / 26, 34 / 26, 38 / 26, 52 / 26];
 
 const fontSizes: { [p: string]: number } = fontSizeScales.reduce(
   (acc, cur, i) => ({
@@ -16,7 +17,7 @@ const fontSizes: { [p: string]: number } = fontSizeScales.reduce(
 const lineHeights: { [p: string]: number } = lineHeightScales.reduce(
   (acc, cur, i) => ({
     ...acc,
-    [keys[i]]: Math.round(cur * baseFontSize),
+    [keys[i]]: Math.round(cur * baseLineHeight),
   }),
   {},
 );
@@ -27,6 +28,9 @@ export default {
       400: {
         normal: 'Roboto_400Regular',
         italic: 'Roboto_400Regular_Italic',
+      },
+      500: {
+        medium: 'Roboto_500Medium',
       },
       700: {
         normal: 'Roboto_700Bold',

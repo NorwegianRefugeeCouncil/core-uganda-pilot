@@ -8,6 +8,8 @@ import {
   // eslint-disable-next-line camelcase
   Roboto_400Regular_Italic,
   // eslint-disable-next-line camelcase
+  Roboto_500Medium,
+  // eslint-disable-next-line camelcase
   Roboto_700Bold,
   useFonts,
 } from '@expo-google-fonts/roboto';
@@ -18,6 +20,7 @@ export default function App() {
   const [fontsLoaded] = useFonts({
     Roboto_400Regular,
     Roboto_400Regular_Italic,
+    Roboto_500Medium,
     Roboto_700Bold,
   });
 

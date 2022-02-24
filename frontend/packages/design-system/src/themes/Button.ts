@@ -1,12 +1,21 @@
+import textTheme from './Text';
+
 export default {
+  baseStyle: {
+    _text: {
+      ...textTheme.variants.button,
+    },
+    borderRadius: 'nrc_xs',
+    height: 'nrc_10',
+    paddingLeft: 'nrc_10',
+    paddingRight: 'nrc_10',
+  },
   variants: {
     major: ({ colorScheme }: any) => {
       return {
         backgroundColor: `${colorScheme}.500`,
-
         _text: {
           color: 'white',
-          bold: true,
         },
         _hover: {
           backgroundColor:
@@ -40,7 +49,6 @@ export default {
         backgroundColor: 'white',
         _text: {
           color: `${colorScheme}.500`,
-          bold: true,
         },
         borderWidth: 1,
         borderStyle: 'solid',

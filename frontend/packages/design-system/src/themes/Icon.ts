@@ -1,5 +1,5 @@
 export default {
-  defaultProps: {
-    size: 8,
+  baseStyle: {
+    fill: 'currentColor',
   },
 };
