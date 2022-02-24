@@ -1,22 +1,17 @@
-import { Record, RecordList } from '../model/Record';
+import {Record, RecordDefinition, RecordList} from '../model';
 
 import { DataOperation, PartialObjectWrapper, Response } from './utils';
 
 export type RecordCreateRequest = PartialObjectWrapper<Record>;
 export type RecordCreateResponse = Response<RecordCreateRequest, Record>;
 
-export type RecordListRequest = { databaseId: string; formId: string };
-export type RecordListResponse = Response<RecordListRequest, RecordList>;
+export type FormLookup = { databaseId: string; formId: string };
+export type RecordListResponse = Response<FormLookup, RecordList>;
 
-export type RecordGetRequest = {
-  databaseId: string;
-  formId: string;
-  recordId: string;
-};
-export type RecordGetResponse = Response<RecordGetRequest, Record>;
+export type RecordLookup = FormLookup & { recordId: string };
 
 export interface RecordClientDefinition {
-  create: DataOperation<RecordCreateRequest, RecordCreateResponse>;
-  list: DataOperation<RecordListRequest, RecordListResponse>;
-  get: DataOperation<RecordGetRequest, RecordGetResponse>;
+  create: DataOperation<RecordDefinition, Record>;
+  list: DataOperation<FormLookup , RecordList>;
+  get: DataOperation<RecordLookup, Record>;
 }

@@ -5,9 +5,9 @@ import {
 } from '@reduxjs/toolkit';
 import {
   FieldDefinition,
+  FormLookup,
   Record,
-  RecordListRequest,
-  RecordListResponse,
+  RecordList,
 } from 'core-api-client';
 
 import { RootState } from '../app/store';
@@ -28,20 +28,16 @@ const adapter = createEntityAdapter<Record>({
   sortComparer: (a, b) => a.id.localeCompare(b.id),
 });
 
-export const fetchRecords = createAsyncThunk<
-  RecordListResponse,
-  RecordListRequest
->('records/fetch', async (request, thunkAPI) => {
-  try {
-    const response = await client.Record.list(request);
-    if (response.success) {
-      return response;
+export const fetchRecords = createAsyncThunk<RecordList, FormLookup>(
+  'records/fetch',
+  async (args, thunkAPI) => {
+    try {
+      return await client.Record.list(args);
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err);
     }
-    return thunkAPI.rejectWithValue(response);
-  } catch (err) {
-    return thunkAPI.rejectWithValue(err);
-  }
-});
+  },
+);
 
 export const records = createSlice({
   name: 'records',
@@ -79,8 +75,8 @@ export const records = createSlice({
       state.fetchSuccess = true;
       state.fetchPending = false;
       state.fetchError = undefined;
-      if (action.payload.response?.items) {
-        adapter.addMany(state, action.payload.response.items);
+      if (action.payload.items) {
+        adapter.addMany(state, action.payload.items);
       }
     });
   },

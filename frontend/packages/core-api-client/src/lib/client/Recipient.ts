@@ -1,31 +1,27 @@
-import { BaseRESTClient } from './BaseRESTClient';
-import {Response} from "../types";
+import {FormLookup, RecordLookup, Response} from "../types";
 import {
   Recipient,
-  RecipientDefinition, RecipientGetRequest,
-  RecipientList, RecipientListRequest
+  RecipientDefinition,
+  RecipientList,
 } from "../types/client/Recipient";
+import { RecordClient } from "./Record";
 
-export class RecordClient {
-  restClient: BaseRESTClient;
+export class RecipientClient {
+  recordClient: RecordClient;
 
-  constructor(restClient: BaseRESTClient) {
-    this.restClient = restClient;
+  constructor(recordClient: RecordClient) {
+    this.recordClient = recordClient;
   }
 
-  create = (recipient: RecipientDefinition): Promise<Response<RecipientDefinition, Recipient>> => {
-    return this.restClient.post( '/records', recipient);
+  create = (recipient: RecipientDefinition): Promise<Recipient> => {
+    return this.recordClient.create(recipient);
   };
 
-  list = (request: RecipientListRequest): Promise<Response<undefined, RecipientList>> => {
-    const { databaseId, formId } = request;
-    const url = `/records?databaseId=${databaseId}&formId=${formId}`;
-    return this.restClient.get(url);
+  list = (args: FormLookup): Promise<RecipientList> => {
+    return this.recordClient.list(args);
   };
 
-  get = async (request: RecipientGetRequest): Promise<Response<undefined, Recipient>> => {
-    const { databaseId, formId, recordId } = request;
-    const url = `/records/${recordId}?databaseId=${databaseId}&formId=${formId}`;
-    return this.restClient.get(url);
+  get = async (args: RecordLookup): Promise<Recipient> => {
+    return this.recordClient.get(args);
   };
 }

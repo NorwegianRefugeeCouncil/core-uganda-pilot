@@ -4,7 +4,7 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
-import { Record } from 'core-api-client';
+import { Record, RecordDefinition } from 'core-api-client';
 
 import client from '../../app/client';
 import { RootState } from '../../app/store';
@@ -144,20 +144,14 @@ export const postRecord = createAsyncThunk<Record[], Record[]>(
     const result: Record[] = [];
     for (const record of arg) {
       try {
-        const response = await client.Record.create({ object: record });
-        if (!response.success) {
-          return thunkAPI.rejectWithValue(response.error);
-        }
-        if (!response.response) {
-          return thunkAPI.rejectWithValue('no record in response');
-        }
+        const response = await client.Record.create(record as RecordDefinition);
         for (let i = 1; i < arg.length; i++) {
           const otherRecord = arg[i];
           if (otherRecord.ownerId === record.id) {
-            otherRecord.ownerId = response.response.id;
+            otherRecord.ownerId = response.id;
           }
         }
-        result.push(response.response);
+        result.push(response);
       } catch (err) {
         return thunkAPI.rejectWithValue(err);
       }

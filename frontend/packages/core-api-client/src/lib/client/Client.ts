@@ -5,6 +5,7 @@ import { DatabaseClient } from './Database';
 import { FolderClient } from './Folder';
 import { FormClient } from './Form';
 import { RecordClient } from './Record';
+import {RecipientClient} from "./Recipient";
 
 export class Client extends BaseRESTClient implements ClientDefinition {
   static corev1 = 'apis/core.nrc.no/v1';
@@ -17,11 +18,14 @@ export class Client extends BaseRESTClient implements ClientDefinition {
 
   public Record: RecordClient;
 
+  public Recipient: RecipientClient;
+
   constructor(address: string) {
     super(`${address}/${Client.corev1}`);
     this.Database = new DatabaseClient(this);
     this.Folder = new FolderClient(this);
     this.Form = new FormClient(this);
     this.Record = new RecordClient(this);
+    this.Recipient = new RecipientClient(this.Record);
   }
 }

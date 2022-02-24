@@ -5,7 +5,10 @@ type Route = {
 };
 
 type Routes = {
-  [key: string]: Route;
+  recipientsRoot: Route;
+  recipientsList: Route;
+  recipientsRegistration: Route;
+  recipientsProfile: Route;
 };
 
 export const routes: Routes = {

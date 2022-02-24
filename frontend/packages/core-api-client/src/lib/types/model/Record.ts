@@ -3,6 +3,13 @@ export type FieldValue = {
   value: string | string[] | null;
 };
 
+export type RecordDefinition = {
+  databaseId: string;
+  formId: string;
+  ownerId: string | undefined;
+  values: FieldValue[];
+};
+
 export type Record = {
   id: string;
   databaseId: string;
