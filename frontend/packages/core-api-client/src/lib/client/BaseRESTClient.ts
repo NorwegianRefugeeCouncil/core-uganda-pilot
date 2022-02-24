@@ -66,7 +66,7 @@ export class BaseRESTClient {
     return clientResponse<TRequest, TBody>(value, request, expectStatusCode);
   }
 
-  public async makeRequest<TRequestBody, TResponseBody>(
+  private async makeRequest<TRequestBody, TResponseBody>(
     url: string,
     method: Method,
     data: TRequestBody,
