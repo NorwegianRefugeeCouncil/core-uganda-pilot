@@ -24,6 +24,12 @@ export default {
     _web: {
       ...textTheme.variants.body({ level: '1' }),
     },
+    _android: {
+      ...textTheme.variants.body({ level: '1' }),
+    },
+    _ios: {
+      ...textTheme.variants.body({ level: '1' }),
+    },
     _invalid: {
       borderColor: 'signalDanger',
       backgroundColor: 'tertiary2.100',
