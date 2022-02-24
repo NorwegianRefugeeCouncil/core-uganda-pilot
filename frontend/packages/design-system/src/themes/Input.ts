@@ -22,18 +22,12 @@ export default {
     color: 'neutral.300',
     padding: 3,
     _android: {
-      ...textTheme.variants.bodyText,
+      ...textTheme.variants.body({ level: '1' }),
     },
     _ios: {
-      ...textTheme.variants.bodyText,
+      ...textTheme.variants.body({ level: '1' }),
     },
     _web: {
-      ...textTheme.variants.body({ level: '1' }),
-    },
-    _android: {
-      ...textTheme.variants.body({ level: '1' }),
-    },
-    _ios: {
       ...textTheme.variants.body({ level: '1' }),
     },
     _invalid: {
