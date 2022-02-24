@@ -98,25 +98,41 @@ export class BaseRESTClient {
 
   public async get<TResponseBody>(
     url: string,
+    options?: RequestOptions,
+    expectedStatusCode = 200,
   ): Promise<Response<undefined, TResponseBody>> {
-    return this.makeRequest(url, 'GET', undefined, 200);
+    return this.makeRequest(url, 'GET', undefined, expectedStatusCode, options);
   }
 
   public async post<TRequestBody, TResponseBody>(
     url: string,
     data: TRequestBody,
+    options?: RequestOptions,
+    expectedStatusCode = 201,
   ): Promise<Response<TRequestBody, TResponseBody>> {
-    return this.makeRequest(url, 'POST', data, 201);
+    return this.makeRequest(url, 'POST', data, expectedStatusCode, options);
   }
 
   public async put<TRequestBody, TResponseBody>(
     url: string,
     data: TRequestBody,
+    options?: RequestOptions,
+    expectedStatusCode = 200,
   ): Promise<Response<TRequestBody, TResponseBody>> {
-    return this.makeRequest(url, 'PUT', data, 200);
+    return this.makeRequest(url, 'PUT', data, expectedStatusCode, options);
   }
 
-  public async delete(url: string): Promise<Response<undefined, undefined>> {
-    return this.makeRequest(url, 'DELETE', undefined, 204);
+  public async delete(
+    url: string,
+    options?: RequestOptions,
+    expectedStatusCode = 204,
+  ): Promise<Response<undefined, undefined>> {
+    return this.makeRequest(
+      url,
+      'DELETE',
+      undefined,
+      expectedStatusCode,
+      options,
+    );
   }
 }
