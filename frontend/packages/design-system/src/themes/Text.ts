@@ -1,58 +1,72 @@
-import typography from '../tokens/typography';
+const makeTextVariant =
+  (
+    levelStyles: Record<string, Record<string, any>>,
+    styles: Record<string, any>,
+  ) =>
+  (props: Record<string, any>) => {
+    const level = (props.level || 1).toString();
+    return {
+      ...levelStyles[level],
+      ...styles,
+    };
+  };
 
 const textTheme = {
+  defaultProps: {
+    level: '1',
+  },
   baseStyle: {
     textAlign: 'auto',
     color: 'neutral.500',
+    fontFamily: 'body',
+    fontStyle: 'normal',
   },
   variants: {
-    display: {
-      fontFamily: typography.fontConfig.Roboto['700'].normal,
-      fontSize: typography.fontSizes.xl,
-      lineHeight: typography.lineHeights.xl,
-    },
-    heading: {
-      fontFamily: typography.fontConfig.Roboto['400'].normal,
-      fontSize: typography.fontSizes.lg,
-      lineHeight: typography.lineHeights.lg,
-    },
-    title: {
-      fontFamily: typography.fontConfig.Roboto['400'].normal,
-      fontSize: typography.fontSizes.md,
-      lineHeight: typography.lineHeights.md,
-    },
-    bodyText: {
-      fontFamily: typography.fontConfig.Roboto['400'].normal,
-      fontSize: typography.fontSizes.xs,
-      lineHeight: typography.lineHeights.xs,
-    },
-    inline: {
-      fontFamily: typography.fontConfig.Roboto['500'].medium,
-      fontSize: typography.fontSizes.xs,
-      lineHeight: typography.lineHeights.xs,
-      textDecorationLine: 'underline',
-    },
-    date: {
-      fontFamily: typography.fontConfig.Roboto['400'].italic,
-      fontSize: typography.fontSizes.xs,
-      lineHeight: typography.lineHeights.xs,
-    },
-    label: {
-      fontFamily: typography.fontConfig.Roboto['500'].medium,
-      fontSize: typography.fontSizes.xs,
-      lineHeight: typography.lineHeights.xs,
-    },
-    caption: {
-      fontFamily: typography.fontConfig.Roboto['400'].normal,
-      fontSize: typography.fontSizes.xxs,
-      lineHeight: typography.lineHeights.xxs,
-    },
-    button: {
-      fontFamily: typography.fontConfig.Roboto['400'].normal,
-      fontSize: typography.fontSizes.sm,
-      lineHeight: typography.lineHeights.sm,
-      bold: 'true',
-    },
+    display: makeTextVariant(
+      {
+        '1': { fontSize: '3xl', lineHeight: '3xl' },
+        '2': { fontSize: '2xl', lineHeight: '2xl' },
+      },
+      { fontWeight: 'bold' },
+    ),
+    heading: makeTextVariant(
+      {
+        '1': { fontSize: 'xl', lineHeight: 'xl' },
+        '2': { fontSize: 'lg', lineHeight: 'lg' },
+        '3': { fontSize: 'md', lineHeight: 'md' },
+        '4': { fontSize: 'sm', lineHeight: 'xs' },
+        '5': { fontSize: '3xs', lineHeight: '4xs' },
+      },
+      { fontWeight: 'medium' },
+    ),
+    body: makeTextVariant(
+      {
+        '1': { fontSize: 'xs', lineHeight: 'sm' },
+        '2': { fontSize: '2xs', lineHeight: '2xs' },
+      },
+      { fontWeight: 'regular' },
+    ),
+    caption: makeTextVariant(
+      {
+        '1': { fontSize: '3xs', lineHeight: '3xs' },
+      },
+      { fontWeight: 'regular' },
+    ),
+    inline: makeTextVariant(
+      {
+        '1': { fontSize: 'xs', lineHeight: 'sm' },
+      },
+      {
+        fontWeight: 'medium',
+        textDecorationLine: 'underline',
+      },
+    ),
+    label: makeTextVariant(
+      {
+        '1': { fontSize: 'xs', lineHeight: 'sm' },
+      },
+      { fontWeight: 'medium' },
+    ),
   },
 };
 

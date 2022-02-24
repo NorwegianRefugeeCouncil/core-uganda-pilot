@@ -28,7 +28,13 @@ export default {
       ...textTheme.variants.bodyText,
     },
     _web: {
-      ...textTheme.variants.bodyText,
+      ...textTheme.variants.body({ level: '1' }),
+    },
+    _android: {
+      ...textTheme.variants.body({ level: '1' }),
+    },
+    _ios: {
+      ...textTheme.variants.body({ level: '1' }),
     },
     _invalid: {
       borderColor: 'signalDanger',

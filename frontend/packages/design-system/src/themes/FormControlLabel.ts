@@ -5,7 +5,7 @@ export default {
     return {
       mb: '0.5',
       _text: {
-        ...textTheme.variants.label,
+        ...textTheme.variants.label({ level: '1' }),
         color: 'neutral.300',
       },
     };
