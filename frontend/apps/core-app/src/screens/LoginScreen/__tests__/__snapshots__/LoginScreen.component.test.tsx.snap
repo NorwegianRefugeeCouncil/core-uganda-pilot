@@ -88,15 +88,14 @@ exports[`should match the snapshot 1`] = `
         >
           <Text
             dataSet={Object {}}
-            level="1"
             style={
               Object {
                 "backgroundColor": undefined,
                 "color": "#FFFFFF",
-                "fontFamily": "Roboto_500Medium",
+                "fontFamily": "Roboto_400Regular",
                 "fontSize": 20,
-                "fontStyle": undefined,
-                "fontWeight": undefined,
+                "fontStyle": "normal",
+                "fontWeight": "700",
                 "letterSpacing": 0,
                 "lineHeight": 24,
                 "textAlign": "auto",
