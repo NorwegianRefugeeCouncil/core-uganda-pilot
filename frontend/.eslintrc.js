@@ -67,6 +67,10 @@ module.exports = {
         ignorePattern: '^import\\s.+\\sfrom\\s.+;$||^d="."$',
       },
     ],
+    'no-param-reassign': [
+      'error',
+      { props: true, ignorePropertyModificationsFor: ['state'] },
+    ],
     'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': [

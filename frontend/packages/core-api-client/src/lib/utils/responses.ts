@@ -1,11 +1,15 @@
 import { AxiosError, AxiosResponse } from 'axios';
 
-import { Response } from '../types/client/utils';
+import {
+  ErrorResponse,
+  Response,
+  SuccessResponse,
+} from '../types/client/utils';
 
 const errorResponse = <TRequest, TBody>(
   request: TRequest,
   r: AxiosError<TBody>,
-): Response<TRequest, TBody> => {
+): ErrorResponse<TRequest> => {
   const errorResp = r as any;
   return {
     request,
@@ -20,7 +24,7 @@ const errorResponse = <TRequest, TBody>(
 const successResponse = <TRequest, TBody>(
   request: TRequest,
   r: AxiosResponse<TBody>,
-): Response<TRequest, TBody> => {
+): SuccessResponse<TRequest, TBody> => {
   return {
     request,
     response: r.data as TBody,
