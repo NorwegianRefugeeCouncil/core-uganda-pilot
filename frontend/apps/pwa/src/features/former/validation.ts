@@ -121,13 +121,13 @@ export const customValidation = {
     const errors = [];
     if (form.fields.length < validationConstants.fields.min) {
       errors.push({
-        field: 'fields' as FieldPath<ValidationForm>,
+        field: 'fields' as const,
         message: `Form needs to have at least ${validationConstants.fields.min} field`,
       });
     }
     if (form.fields.length > validationConstants.fields.max) {
       errors.push({
-        field: 'fields' as FieldPath<ValidationForm>,
+        field: 'fields' as const,
         message: `Form can have at most ${validationConstants.fields.max} fields`,
       });
     }
@@ -137,14 +137,12 @@ export const customValidation = {
       });
       if (keyFields.length !== 1) {
         errors.push({
-          field: 'fields' as FieldPath<ValidationForm>,
+          field: 'fields' as const,
           message: 'Form needs to have exactly 1 key field',
         });
       } else if (keyFields[0].fieldType !== FieldKind.Reference) {
-        console.log('key fields', keyFields);
-
         errors.push({
-          field: 'fields' as FieldPath<ValidationForm>,
+          field: 'fields' as const,
           message: 'Key field needs to be a reference',
         });
       }
@@ -175,7 +173,7 @@ export const customValidation = {
     if (field.fieldType === FieldKind.SubForm) {
       if (field.required) {
         errors.push({
-          field: 'selectedField.fieldType.subForm' as FieldPath<ValidationForm>,
+          field: 'selectedField.fieldType.subForm' as const,
           message: 'Subforms cannot be required',
         });
       }
