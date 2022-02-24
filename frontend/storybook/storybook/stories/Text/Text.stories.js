@@ -7,56 +7,44 @@ storiesOf('Text', module)
   .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .add('Overview, Variants', () => (
     <VStack space={2}>
-      <Text variant="display" fontSize="3xl">
-        Display
+      <Text variant="display" level="1">
+        Display 1
       </Text>
-      <Text variant="display" fontSize="2xl">
-        Display
+      <Text variant="display" level="2">
+        Display 2
       </Text>
-      <Text variant="heading" fontSize="xl">
-        Heading
+      <Text variant="heading" level="1">
+        Heading 1
       </Text>
-      <Text variant="heading" fontSize="lg">
-        Heading
+      <Text variant="heading" level="2">
+        Heading 2
       </Text>
-      <Text variant="heading" fontSize="md">
-        Heading
+      <Text variant="heading" level="3">
+        Heading 3
       </Text>
-      <Text variant="heading" fontSize="sm">
-        Heading
+      <Text variant="heading" level="4">
+        Heading 4
       </Text>
-      <Text variant="heading" fontSize="3xs">
-        Heading
+      <Text variant="heading" level="5">
+        Heading 5
       </Text>
-      <Text variant="title" fontSize="md">
-        Title
+      <Text variant="title" level="1">
+        Title 1
       </Text>
-      <Text variant="title" fontSize="sm">
-        Title
+      <Text variant="title" level="2">
+        Title 2
       </Text>
-      <Text variant="title" fontSize="2xs">
-        Title
+      <Text variant="title" level="3">
+        Title 3
       </Text>
-      <Text variant="body" fontSize="xs">
-        Body
+      <Text variant="body" level="1">
+        Body 1
       </Text>
-      <Text variant="body" fontSize="2xs">
-        Body
+      <Text variant="body" level="2">
+        Body 2
       </Text>
-      <Text variant="caption" fontSize="3xs">
-        Caption
-      </Text>
-      <Text variant="inline" fontSize="xs">
-        Inline
-      </Text>
-      <Text variant="date" fontSize="xs">
-        Date
-      </Text>
-      <Text variant="date" fontSize="2xs">
-        Date
-      </Text>
-      <Text variant="label" fontSize="xs">
-        Label
-      </Text>
+      <Text variant="caption">Caption</Text>
+      <Text variant="inline">Inline</Text>
+      <Text variant="label">Label</Text>
     </VStack>
   ));

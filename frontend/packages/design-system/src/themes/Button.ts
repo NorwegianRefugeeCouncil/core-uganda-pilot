@@ -3,7 +3,7 @@ import textTheme from './Text';
 export default {
   baseStyle: {
     _text: {
-      ...textTheme.variants.heading({ fontSize: 'sm' }),
+      ...textTheme.variants.heading({ level: '4' }),
     },
     borderRadius: 'nrc_xs',
     height: 'nrc_10',
