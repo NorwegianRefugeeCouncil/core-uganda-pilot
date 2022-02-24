@@ -28,15 +28,6 @@ storiesOf('Text', module)
       <Text variant="heading" level="5">
         Heading 5
       </Text>
-      <Text variant="title" level="1">
-        Title 1
-      </Text>
-      <Text variant="title" level="2">
-        Title 2
-      </Text>
-      <Text variant="title" level="3">
-        Title 3
-      </Text>
       <Text variant="body" level="1">
         Body 1
       </Text>
