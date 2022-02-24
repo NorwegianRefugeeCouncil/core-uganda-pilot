@@ -41,8 +41,9 @@ export default {
     xl: 0,
   },
   lineHeights: {
-    '3xs': 17,
-    '2xs': 20,
+    '4xs': 17,
+    '3xs': 20,
+    '2xs': 23,
     xs: 24,
     sm: 26,
     md: 28,

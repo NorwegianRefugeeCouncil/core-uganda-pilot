@@ -1,10 +1,12 @@
 const makeTextVariant =
-  (sizes: Record<string, string>, styles: Record<string, any>) =>
+  (
+    levelStyles: Record<string, Record<string, any>>,
+    styles: Record<string, any>,
+  ) =>
   (props: Record<string, any>) => {
     const level = (props.level || 1).toString();
     return {
-      fontSize: sizes[level],
-      lineHeight: sizes[level],
+      ...levelStyles[level],
       ...styles,
     };
   };
@@ -21,27 +23,58 @@ const textTheme = {
   },
   variants: {
     display: makeTextVariant(
-      { '1': '3xl', '2': '2xl' },
+      {
+        '1': { fontSize: '3xl', lineHeight: '3xl' },
+        '2': { fontSize: '2xl', lineHeight: '2xl' },
+      },
       { fontWeight: 'bold' },
     ),
     heading: makeTextVariant(
-      { '1': 'xl', '2': 'lg', '3': 'md', '4': 'sm', '5': '3xs' },
+      {
+        '1': { fontSize: 'xl', lineHeight: 'xl' },
+        '2': { fontSize: 'lg', lineHeight: 'lg' },
+        '3': { fontSize: 'md', lineHeight: 'md' },
+        '4': { fontSize: 'sm', lineHeight: 'xs' },
+        '5': { fontSize: '3xs', lineHeight: '4xs' },
+      },
       { fontWeight: 'medium' },
     ),
     title: makeTextVariant(
-      { '1': 'md', '2': 'sm', '3': '2xs' },
+      {
+        '1': { fontSize: 'md', lineHeight: 'lg' },
+        '2': { fontSize: 'sm', lineHeight: 'xl' },
+        '3': { fontSize: '2xs', lineHeight: 'xl' },
+      },
       { fontWeight: 'regular' },
     ),
-    body: makeTextVariant({ '1': 'xs', '2': '2xs' }, { fontWeight: 'regular' }),
-    caption: makeTextVariant({ '1': '3xs' }, { fontWeight: 'regular' }),
+    body: makeTextVariant(
+      {
+        '1': { fontSize: 'xs', lineHeight: 'sm' },
+        '2': { fontSize: '2xs', lineHeight: '2xs' },
+      },
+      { fontWeight: 'regular' },
+    ),
+    caption: makeTextVariant(
+      {
+        '1': { fontSize: '3xs', lineHeight: '3xs' },
+      },
+      { fontWeight: 'regular' },
+    ),
     inline: makeTextVariant(
-      { '1': 'xs' },
+      {
+        '1': { fontSize: 'xs', lineHeight: 'sm' },
+      },
       {
         fontWeight: 'medium',
         textDecorationLine: 'underline',
       },
     ),
-    label: makeTextVariant({ '1': 'xs' }, { fontWeight: 'medium' }),
+    label: makeTextVariant(
+      {
+        '1': { fontSize: 'xs', lineHeight: 'sm' },
+      },
+      { fontWeight: 'medium' },
+    ),
   },
 };
 
