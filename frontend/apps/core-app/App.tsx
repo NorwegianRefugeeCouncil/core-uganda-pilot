@@ -14,11 +14,11 @@ import {
   Roboto_700Bold,
   useFonts,
 } from '@expo-google-fonts/roboto';
-import Constants from 'expo-constants';
 
 import { AuthWrapper } from './src/components/AuthWrapper';
 import { formsClient } from './src/clients/formsClient';
-import { RootNavigator } from './src/navigators';
+import { RootNavigator } from './src/navigation';
+import { linkingConfig } from './src/navigation/linking.config';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -30,30 +30,10 @@ const App: React.FC = () => {
     Roboto_700Bold,
   });
 
-  const linking = {
-    prefixes: [
-      `https://${Constants.manifest?.scheme}.com`,
-      `${Constants.manifest?.scheme}://`,
-    ],
-    config: {
-      screens: {
-        Recipients: 'recipients',
-        RecipientList: '/',
-        RecipientRegistration: 'recipients/register',
-        RecipientProfile: {
-          path: '/:id',
-          parse: {
-            id: String,
-          },
-        },
-      },
-    },
-  };
-
   return (
     fontsLoaded && (
       <NativeBaseProvider theme={theme}>
-        <NavigationContainer linking={linking}>
+        <NavigationContainer linking={linkingConfig}>
           <AuthWrapper onTokenChange={formsClient.setToken}>
             <RootNavigator />
           </AuthWrapper>

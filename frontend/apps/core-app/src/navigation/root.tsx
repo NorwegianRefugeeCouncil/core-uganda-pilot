@@ -2,6 +2,7 @@ import * as React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import { RecipientRegistrationScreen } from '../screens/RecipientRegistrationScreen';
+import { routes } from '../constants/routes';
 
 import { RecipientNavigator } from './recipients';
 
@@ -9,21 +10,21 @@ const Drawer = createDrawerNavigator();
 
 export const RootNavigator: React.FC = () => {
   return (
-    <Drawer.Navigator initialRouteName="Recipients">
+    <Drawer.Navigator initialRouteName={routes.recipientsRoot.name}>
       <Drawer.Screen
-        name="Recipients"
+        name={routes.recipientsRoot.name}
         component={RecipientNavigator}
         options={{
-          title: 'Recipient List',
-          headerTitle: 'Recipient List',
+          title: routes.recipientsRoot.pageTitle,
+          headerTitle: routes.recipientsRoot.headerTitle,
         }}
       />
       <Drawer.Screen
-        name="RecipientRegistration"
+        name={routes.recipientsRegistration.name}
         component={RecipientRegistrationScreen}
         options={{
-          title: 'Recipient Registration',
-          headerTitle: 'Recipient Registration',
+          title: routes.recipientsRegistration.pageTitle,
+          headerTitle: routes.recipientsRegistration.headerTitle,
         }}
       />
     </Drawer.Navigator>

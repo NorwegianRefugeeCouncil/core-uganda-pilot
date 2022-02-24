@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Text } from 'native-base';
 import { RouteProp } from '@react-navigation/native';
 
-import { RootParamList } from '../../navigators/types';
+import { RootParamList } from '../../navigation/types';
 
 import * as Styles from './RecipientRegistrationScreen.styles';
 

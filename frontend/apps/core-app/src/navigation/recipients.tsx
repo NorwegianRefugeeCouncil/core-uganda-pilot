@@ -3,26 +3,27 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import { RecipientListScreen } from '../screens/RecipientListScreen';
 import { RecipientProfileScreen } from '../screens/RecipientProfileScreen';
+import { routes } from '../constants/routes';
 
 const Stack = createStackNavigator();
 
 export const RecipientNavigator: React.FC = () => {
   return (
-    <Stack.Navigator initialRouteName="RecipientList">
+    <Stack.Navigator initialRouteName={routes.recipientsList.name}>
       <Stack.Screen
-        name="RecipientList"
+        name={routes.recipientsList.name}
         component={RecipientListScreen}
         options={{
-          title: 'Recipient List',
+          title: routes.recipientsList.pageTitle,
           header: () => <></>,
         }}
       />
       <Stack.Screen
-        name="RecipientProfile"
+        name={routes.recipientsProfile.name}
         component={RecipientProfileScreen}
         options={{
-          title: 'Recipient Profile',
-          headerTitle: 'Recipient Profile',
+          title: routes.recipientsProfile.pageTitle,
+          headerTitle: routes.recipientsProfile.headerTitle,
         }}
       />
     </Stack.Navigator>
