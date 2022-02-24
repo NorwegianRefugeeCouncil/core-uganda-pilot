@@ -10,9 +10,14 @@ export default {
     color: 'neutral.500',
     padding: 0,
     _text: {
-      ...textTheme.variants.body2,
+      _android: {
+        ...textTheme.variants.body({ level: '2' }),
+      },
+      _ios: {
+        ...textTheme.variants.body({ level: '2' }),
+      },
       _web: {
-        ...textTheme.variants.body2,
+        ...textTheme.variants.body({ level: '2' }),
       },
       ml: 'nrc_2',
     },
