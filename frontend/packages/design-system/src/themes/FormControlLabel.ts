@@ -1,6 +1,9 @@
 import textTheme from './Text';
 
 export default {
+  defaultProps: {
+    size: 'sm',
+  },
   baseStyle: () => {
     return {
       mb: '0.5',

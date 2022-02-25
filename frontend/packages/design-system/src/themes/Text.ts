@@ -14,6 +14,7 @@ const makeTextVariant =
 const textTheme = {
   defaultProps: {
     level: '1',
+    variant: 'body',
   },
   baseStyle: {
     textAlign: 'auto',
