@@ -1,10 +1,11 @@
-import {FormLookup, RecordLookup, Response} from "../types";
+import { FormLookup, RecordLookup } from '../types';
 import {
   Recipient,
   RecipientDefinition,
   RecipientList,
-} from "../types/client/Recipient";
-import { RecordClient } from "./Record";
+} from '../types/client/Recipient';
+
+import { RecordClient } from './Record';
 
 export class RecipientClient {
   recordClient: RecordClient;
@@ -14,14 +15,23 @@ export class RecipientClient {
   }
 
   create = (recipient: RecipientDefinition): Promise<Recipient> => {
-    return this.recordClient.create(recipient);
+    return Promise.resolve({
+      id: 'id',
+      ...recipient,
+    });
   };
 
   list = (args: FormLookup): Promise<RecipientList> => {
-    return this.recordClient.list(args);
+    return Promise.resolve({ items: [] });
   };
 
   get = async (args: RecordLookup): Promise<Recipient> => {
-    return this.recordClient.get(args);
+    return Promise.resolve({
+      id: 'id',
+      formId: 'formId',
+      databaseId: 'databaseId',
+      ownerId: undefined,
+      values: [],
+    });
   };
 }

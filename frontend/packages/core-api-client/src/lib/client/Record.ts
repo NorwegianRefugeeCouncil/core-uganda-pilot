@@ -1,10 +1,13 @@
-import { BaseRESTClient } from './BaseRESTClient';
 import {
-  Record,
-  RecordLookup,
-  RecordList,
-  FormLookup, RecordDefinition
-} from "../types";
+  RecordCreateRequest,
+  RecordCreateResponse,
+  RecordGetRequest,
+  RecordGetResponse,
+  RecordListRequest,
+  RecordListResponse,
+} from '../types';
+
+import { BaseRESTClient } from './BaseRESTClient';
 
 export class RecordClient {
   restClient: BaseRESTClient;
@@ -13,29 +16,19 @@ export class RecordClient {
     this.restClient = restClient;
   }
 
-  create = async (record: RecordDefinition): Promise<Record> => {
-    const apiResponse = await this.restClient.post('/records', record);
-    if (apiResponse.success) {
-      return apiResponse.response as Record
-    }
-    return apiResponse.error
+  create = (request: RecordCreateRequest): Promise<RecordCreateResponse> => {
+    return this.restClient.do(request, '/records', 'post', request.object, 200);
   };
 
-  list = async ({ databaseId, formId }: FormLookup): Promise<RecordList> => {
+  list = (request: RecordListRequest): Promise<RecordListResponse> => {
+    const { databaseId, formId } = request;
     const url = `/records?databaseId=${databaseId}&formId=${formId}`;
-    const apiResponse = await this.restClient.get(url);
-    if (apiResponse.success) {
-      return apiResponse.response as RecordList
-    }
-    return apiResponse.error
+    return this.restClient.do(request, url, 'get', undefined, 200);
   };
 
-  get = async ({ databaseId, formId, recordId }: RecordLookup): Promise<Record> => {
+  get = (request: RecordGetRequest): Promise<RecordGetResponse> => {
+    const { databaseId, formId, recordId } = request;
     const url = `/records/${recordId}?databaseId=${databaseId}&formId=${formId}`;
-    const apiResponse = await this.restClient.get(url);
-    if (apiResponse.success) {
-      return apiResponse.response as Record
-    }
-    return apiResponse.error
+    return this.restClient.do(request, url, 'get', undefined, 200);
   };
 }

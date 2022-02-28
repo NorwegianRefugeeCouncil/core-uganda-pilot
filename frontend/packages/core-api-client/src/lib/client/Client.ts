@@ -1,11 +1,11 @@
-import { ClientDefinition } from '../types/client';
+import { ClientDefinition } from '../types';
 
 import { BaseRESTClient } from './BaseRESTClient';
 import { DatabaseClient } from './Database';
 import { FolderClient } from './Folder';
 import { FormClient } from './Form';
 import { RecordClient } from './Record';
-import {RecipientClient} from "./Recipient";
+import { RecipientClient } from './Recipient';
 
 export class Client extends BaseRESTClient implements ClientDefinition {
   static corev1 = 'apis/core.nrc.no/v1';
