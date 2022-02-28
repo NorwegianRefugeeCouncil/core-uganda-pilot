@@ -3,20 +3,24 @@ import { Text, Box, Pressable } from 'native-base';
 
 type Props = {
   header: string;
-  content: ReactNode;
+  children: ReactNode;
 };
 
-export const AccordionComponent: FC<Props> = ({ header, content }) => {
-  const [isActive, setIsActive] = React.useState(false);
+export const AccordionComponent: FC<Props> = ({ header, children }) => {
+  const [isExpanded, setIsExpanded] = React.useState(false);
+
+  const handleOnPress = () => setIsExpanded(!isExpanded);
 
   return (
-    <Box>
-      <Pressable bg="neutral.200" p="2" onPress={() => setIsActive(!isActive)}>
-        <Text variant="heading">{header}</Text>
+    <Box p="2">
+      <Pressable bg="secondary.500" p="2" onPress={handleOnPress}>
+        <Text color="white" fontSize="18px" lineHeight="21px">
+          {header}
+        </Text>
       </Pressable>
-      {isActive && (
-        <Box bg="neutral.100" p="2">
-          {content}
+      {isExpanded && (
+        <Box bg="secondary.100" p="2">
+          {children}
         </Box>
       )}
     </Box>

@@ -22,7 +22,11 @@ storiesOf('Accordion', module)
     return (
       <VStack space="2">
         {sections.map((s, i) => {
-          return <Accordion {...s} key={i} />;
+          return (
+            <Accordion header={s.header} key={i}>
+              {s.content}
+            </Accordion>
+          );
         })}
       </VStack>
     );
