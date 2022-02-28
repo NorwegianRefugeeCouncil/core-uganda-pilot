@@ -1,5 +1,5 @@
 node_modules
 dist
 build
-core-api-client/lib
+**/lib
 __generated__

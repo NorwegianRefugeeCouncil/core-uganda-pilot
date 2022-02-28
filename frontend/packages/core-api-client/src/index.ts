@@ -1,4 +1,4 @@
-export { Client } from './lib/client';
-export { BaseRESTClient } from './lib/client/BaseRESTClient';
-export * from './lib/types';
-export * from './lib/utils';
+export { Client } from './client';
+export { BaseRESTClient } from './client/BaseRESTClient';
+export * from './types';
+export * from './utils';
