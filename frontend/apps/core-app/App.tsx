@@ -17,7 +17,8 @@ import {
 
 import { AuthWrapper } from './src/components/AuthWrapper';
 import { formsClient } from './src/clients/formsClient';
-import { RootNavigator } from './src/navigators';
+import { RootNavigator } from './src/navigation';
+import { linkingConfig } from './src/navigation/linking.config';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -28,10 +29,11 @@ const App: React.FC = () => {
     Roboto_500Medium,
     Roboto_700Bold,
   });
+
   return (
     fontsLoaded && (
       <NativeBaseProvider theme={theme}>
-        <NavigationContainer>
+        <NavigationContainer linking={linkingConfig}>
           <AuthWrapper onTokenChange={formsClient.setToken}>
             <RootNavigator />
           </AuthWrapper>

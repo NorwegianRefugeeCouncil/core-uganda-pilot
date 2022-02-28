@@ -5,7 +5,7 @@ import {
   RecordGetResponse,
   RecordListRequest,
   RecordListResponse,
-} from '../types/client/Record';
+} from '../types';
 
 import { BaseRESTClient } from './BaseRESTClient';
 

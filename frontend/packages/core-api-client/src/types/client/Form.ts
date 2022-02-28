@@ -11,6 +11,8 @@ export type FormGetResponse = Response<FormGetRequest, FormDefinition>;
 export type FormCreateRequest = PartialObjectWrapper<FormDefinition>;
 export type FormCreateResponse = Response<FormCreateRequest, FormDefinition>;
 
+export type FormLookup = { databaseId: string; formId: string };
+
 export interface FormClientDefinition {
   create: DataOperation<FormCreateRequest, FormCreateResponse>;
   list: DataOperation<FormListRequest, FormListResponse>;
