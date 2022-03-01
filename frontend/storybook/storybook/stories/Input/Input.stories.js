@@ -27,7 +27,7 @@ storiesOf('Input', module)
           <Input
             value="Valid value"
             InputRightElement={
-              <Icon name="success" size="6" color="signalSuccess" mr={3} />
+              <Icon name="circleSuccess" size="6" color="signalSuccess" mr={3} />
             }
           />
           <FormControl.HelperText>This is a valid input</FormControl.HelperText>
@@ -38,7 +38,7 @@ storiesOf('Input', module)
             placeholder="This is an invalid input"
             value="Invalid value"
             InputRightElement={
-              <Icon name="error" size="6" color="signalDanger" mr={3} />
+              <Icon name="circleError" size="6" color="signalDanger" mr={3} />
             }
           />
           <FormControl.ErrorMessage>

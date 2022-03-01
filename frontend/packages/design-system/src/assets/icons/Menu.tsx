@@ -4,6 +4,6 @@ import { Path } from 'react-native-svg';
 export const Menu = () => (
   <Path
     fill="currentColor"
-    d="M11,26h18v-2H11V26z M11,14v2h18v-2H11z M11,21h18v-2H11V21z"
+    d="M0 16.6666H20V14.4443H0V16.6666ZM0 3.33301V5.55523H20V3.33301H0ZM0 11.1109H20V8.88867H0V11.1109Z"
   />
 );

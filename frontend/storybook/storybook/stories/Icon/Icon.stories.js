@@ -2,11 +2,37 @@ import { storiesOf } from '@storybook/react-native';
 import React from 'react';
 import { Icon, icons, theme, tokens } from 'core-design-system';
 import { select } from '@storybook/addon-knobs';
+import { Box } from 'native-base';
 
 import CenterView from '../CenterView';
 
 storiesOf('Icon', module)
   .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
+  .add('Icon, Overview', () => {
+    const IconNameList = Object.keys(icons);
+
+    return (
+      <Box
+        style={{ flexWrap: 'wrap', flexDirection: 'initial', width: '250px' }}
+      >
+        {IconNameList.map((name) => {
+          return (
+            <Icon
+              size="6"
+              m="2"
+              key={name}
+              name={name}
+              color={select(
+                'color',
+                tokens.colors.icons,
+                theme.colors.icons.dark,
+              )}
+            />
+          );
+        })}
+      </Box>
+    );
+  })
   .add('Icon', () => {
     const IconNameList = Object.keys(icons);
 
