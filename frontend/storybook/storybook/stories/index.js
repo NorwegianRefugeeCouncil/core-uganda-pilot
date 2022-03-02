@@ -1,3 +1,4 @@
+import './Accordion/Accordion.stories';
 import './Button/Button.stories';
 import './Checkbox/Checkbox.stories';
 import './Icon/Icon.stories';

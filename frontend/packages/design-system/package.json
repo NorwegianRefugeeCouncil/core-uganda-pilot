@@ -28,10 +28,10 @@
     "react-native": "~0.64.3"
   },
   "peerDependencies": {
-    "react": "17.x",
-    "react-native": "17.x",
     "@types/react": "17.x",
     "@types/react-dom": "17.x",
+    "react": "17.x",
+    "react-native": "17.x",
     "typescript": "4.x"
   },
   "scripts": {
