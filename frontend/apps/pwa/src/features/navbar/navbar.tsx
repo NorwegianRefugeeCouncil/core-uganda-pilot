@@ -6,7 +6,12 @@ import { getLogger } from 'loglevel';
 import { useAppSelector } from '../../app/hooks';
 import { databaseGlobalSelectors } from '../../reducers/database';
 import { folderGlobalSelectors, selectParents } from '../../reducers/folder';
-import { FormInterface, selectFormOrSubFormById, selectRootForm, selectSubFormOwners } from '../../reducers/form';
+import {
+  FormInterface,
+  selectFormOrSubFormById,
+  selectRootForm,
+  selectSubFormOwners,
+} from '../../reducers/form';
 
 const log = getLogger('navbar');
 log.setLevel(log.levels.INFO);
@@ -57,7 +62,7 @@ function getPath(props: NavBarProps) {
   for (const folder of folders) {
     path.push({
       label: folder.name,
-      link: `/browse/folders/${folder.id}`,
+      link: `/browse/databases/${database.id}/folders/${folder.id}`,
     });
   }
 
@@ -121,9 +126,15 @@ export const NavBar: FC<NavBarProps> = (props) => {
                     <ol className="breadcrumb mb-0">
                       {path.map((b, i) => {
                         return (
-                          <li key={i} className="text-uppercase breadcrumb-item fw-bold small">
+                          <li
+                            key={i}
+                            className="text-uppercase breadcrumb-item fw-bold small"
+                          >
                             {b.link ? (
-                              <NavLink activeClassName="active" className="text-decoration-none" to={b.link}>
+                              <NavLink
+                                className="text-decoration-none"
+                                to={b.link}
+                              >
                                 {b.label}
                               </NavLink>
                             ) : (
@@ -136,7 +147,12 @@ export const NavBar: FC<NavBarProps> = (props) => {
                   </small>
                 </nav>
                 <h5 className="mt-2">
-                  {title} {secondaryTitle ? <span className="text-secondary">{secondaryTitle}</span> : <></>}
+                  {title}{' '}
+                  {secondaryTitle ? (
+                    <span className="text-secondary">{secondaryTitle}</span>
+                  ) : (
+                    <></>
+                  )}
                 </h5>
               </div>
             </div>
@@ -148,12 +164,18 @@ export const NavBar: FC<NavBarProps> = (props) => {
 };
 
 const databasesRegex = new RegExp(/^\/browse\/databases$/);
-const databaseRegex = new RegExp(/^\/browse\/databases\/([a-f0-9]{8}-[a-fA-F0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})$/);
-const folderRegex = new RegExp(/^\/browse\/folders\/([a-f0-9]{8}-[a-fA-F0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})$/);
+const databaseRegex = new RegExp(
+  /^\/browse\/databases\/([a-f0-9]{8}-[a-fA-F0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})$/,
+);
+const folderRegex = new RegExp(
+  /^\/browse\/folders\/([a-f0-9]{8}-[a-fA-F0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})$/,
+);
 const formRegex = new RegExp(
   /^\/browse\/forms\/([a-f0-9]{8}-[a-fA-F0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})(?:\?parentRecordId=(?:[a-f0-9]{8}-[a-fA-F0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}))?$/,
 );
-const recordRegex = new RegExp(/^\/edit\/forms\/([a-f0-9]{8}-[a-fA-F0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})\/record$/);
+const recordRegex = new RegExp(
+  /^\/edit\/forms\/([a-f0-9]{8}-[a-fA-F0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})\/record$/,
+);
 
 export const NavBarContainer: React.FC = () => {
   const location = useLocation();
@@ -164,11 +186,21 @@ export const NavBarContainer: React.FC = () => {
   const [additionalItem, setAdditionalItem] = useState('');
   const [secondaryTitle, setSecondaryTitle] = useState('');
 
-  const database = useAppSelector((state) => databaseGlobalSelectors.selectById(state, databaseId));
-  const folder = useAppSelector((state) => folderGlobalSelectors.selectById(state, folderId));
-  const folderChain = useAppSelector((state) => selectParents(state, folder?.id, true));
-  const form = useAppSelector((state) => selectFormOrSubFormById(state, formId));
-  const formChain = useAppSelector((state) => selectSubFormOwners(state, form?.id, true));
+  const database = useAppSelector((state) =>
+    databaseGlobalSelectors.selectById(state, databaseId),
+  );
+  const folder = useAppSelector((state) =>
+    folderGlobalSelectors.selectById(state, folderId),
+  );
+  const folderChain = useAppSelector((state) =>
+    selectParents(state, folder?.id, true),
+  );
+  const form = useAppSelector((state) =>
+    selectFormOrSubFormById(state, formId),
+  );
+  const formChain = useAppSelector((state) =>
+    selectSubFormOwners(state, form?.id, true),
+  );
   const rootForm = useAppSelector((state) => {
     if (form) {
       return selectRootForm(state, form.id);

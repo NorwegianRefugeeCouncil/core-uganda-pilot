@@ -5,7 +5,7 @@ import { SectionTitle } from '../sectiontitle/SectionTitle';
 import { useApiClient } from '../../hooks/hooks';
 import { OAuth2Client } from '../../types/types';
 
-export const Clients: FC = (props) => {
+export const Clients: FC = () => {
   const apiClient = useApiClient();
   const [clients, setClients] = useState<OAuth2Client[]>([]);
   useEffect(() => {
@@ -26,14 +26,20 @@ export const Clients: FC = (props) => {
           <div className="card card-darkula">
             <div className="card-body">
               <SectionTitle title="OAuth2 Clients">
-                <Link to="/clients/add" className="btn btn-sm btn-success">
+                <Link to="add" className="btn btn-sm btn-success">
                   Add OAuth2 Client
                 </Link>
               </SectionTitle>
               <div className="list-group list-group-darkula">
-                {clients.length === 0 && <div className="list-group-item">No Clients</div>}
+                {clients.length === 0 && (
+                  <div className="list-group-item">No Clients</div>
+                )}
                 {clients.map((c) => (
-                  <Link to={`/clients/${c.id}`} className="list-group-item">
+                  <Link
+                    key={c.id}
+                    to={`/clients/${c.id}`}
+                    className="list-group-item"
+                  >
                     {c.clientName}
                   </Link>
                 ))}

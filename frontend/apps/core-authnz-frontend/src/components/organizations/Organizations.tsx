@@ -6,7 +6,7 @@ import { Organization } from '../../types/types';
 import { useApiClient } from '../../hooks/hooks';
 import { SectionTitle } from '../sectiontitle/SectionTitle';
 
-export const Organizations: FC = (props) => {
+export const Organizations: FC = () => {
   const apiClient = useApiClient();
 
   const [data, setData] = useState<Organization[]>([]);
@@ -15,14 +15,17 @@ export const Organizations: FC = (props) => {
       {
         Header: 'Name',
         accessor: 'name',
-        Cell: (props, ctx) => <Link to={`/organizations/${props.row.original.id}`}>{props.value}</Link>,
+        Cell: (props) => (
+          <Link to={`/organizations/${props.row.original.id}`}>
+            {props.value}
+          </Link>
+        ),
       },
     ],
     [],
   );
 
   useEffect(() => {
-    console.log(apiClient);
     apiClient.listOrganizations().then((resp) => {
       if (resp.response) {
         setData(resp.response.items);
@@ -32,7 +35,8 @@ export const Organizations: FC = (props) => {
 
   const table = useTable({ columns, data });
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = table;
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    table;
 
   return (
     <div className="container mt-3">
@@ -41,11 +45,14 @@ export const Organizations: FC = (props) => {
           <div className="card card-darkula ">
             <div className="card-body">
               <SectionTitle title="Organizations">
-                <Link className="btn btn-darkula btn-sm" to="organizations/add">
+                <Link className="btn btn-darkula btn-sm" to="add">
                   Add Organization
                 </Link>
               </SectionTitle>
-              <table className="table table-darkula text-light" {...getTableProps()}>
+              <table
+                className="table table-darkula text-light"
+                {...getTableProps()}
+              >
                 <thead>
                   {
                     // Loop over the header rows

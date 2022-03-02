@@ -3,11 +3,10 @@ import './App.scss';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
-import { BrowserRouter, Switch } from 'react-router-dom';
 import { AuthWrapper } from 'core-auth';
 
-import AuthenticatedApp from './components/AuthenticatedApp';
 import { client } from './app/client';
+import { Router } from './components/Router';
 
 const App: React.FC = () => {
   const scope = process?.env?.REACT_APP_OAUTH_SCOPE;
@@ -19,21 +18,18 @@ const App: React.FC = () => {
   }
   const scopes = scope.split(' ');
   const baseUrl = new URL(redirectUri);
+
   return (
-    <BrowserRouter basename={baseUrl.pathname}>
-      <Switch>
-        <AuthWrapper
-          injectToken="id_token"
-          onTokenChange={client.setToken}
-          clientId={clientId}
-          issuer={issuer}
-          scopes={scopes}
-          redirectUri={redirectUri}
-        >
-          <AuthenticatedApp />
-        </AuthWrapper>
-      </Switch>
-    </BrowserRouter>
+    <AuthWrapper
+      injectToken="id_token"
+      onTokenChange={client.setToken}
+      clientId={clientId}
+      issuer={issuer}
+      scopes={scopes}
+      redirectUri={redirectUri}
+    >
+      <Router baseUrl={baseUrl.pathname} />
+    </AuthWrapper>
   );
 };
 

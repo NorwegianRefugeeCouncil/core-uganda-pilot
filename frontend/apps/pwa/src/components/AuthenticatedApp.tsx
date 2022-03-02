@@ -1,19 +1,11 @@
 import React, { useEffect } from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 
 import { useAppDispatch } from '../app/hooks';
 import { fetchDatabases } from '../reducers/database';
 import { fetchForms } from '../reducers/form';
 import { fetchFolders } from '../reducers/folder';
 import { NavBarContainer } from '../features/navbar/navbar';
-import { RecordEditor } from '../features/recorder';
-import { FolderEditor } from '../features/folders/FolderEditor';
-import { DatabaseEditor } from '../features/databases/DatabaseEditor';
-import { FolderBrowserContainer } from '../features/browser/FolderBrowser';
-import { FormBrowserContainer } from '../features/browser/FormBrowser';
-import { DatabasesContainer } from '../features/browser/Databases';
-import { RecordBrowser } from '../features/browser/RecordBrowser';
-import { FormerContainer } from '../features/former/FormerContainer';
 
 const AuthenticatedApp: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -23,7 +15,6 @@ const AuthenticatedApp: React.FC = () => {
     dispatch(fetchForms());
     dispatch(fetchFolders());
   }, [dispatch]);
-
   return (
     <div className="App">
       <div
@@ -31,55 +22,7 @@ const AuthenticatedApp: React.FC = () => {
         className="d-flex flex-column wh-100 vh-100"
       >
         <NavBarContainer />
-
-        <Switch>
-          <Route path="/edit/forms/:formId/record" component={RecordEditor} />
-
-          <Route path="/edit/forms" component={FormerContainer} />
-
-          <Route path="/add/folders" component={FolderEditor} />
-
-          <Route path="/edit/databases" component={DatabaseEditor} />
-
-          <Route
-            path="/browse/databases/:databaseId"
-            render={(p) => {
-              const { databaseId } = p.match.params;
-              return <FolderBrowserContainer databaseId={databaseId} />;
-            }}
-          />
-
-          <Route
-            path="/browse/folders/:folderId"
-            render={(p) => {
-              const { folderId } = p.match.params;
-              return <FolderBrowserContainer folderId={folderId} />;
-            }}
-          />
-
-          <Route
-            path="/browse/forms/:formId"
-            render={(p) => {
-              const search = new URLSearchParams(p.location.search);
-              const ownerRecordId = search.get('ownerRecordId');
-              const { formId } = p.match.params;
-              return (
-                <FormBrowserContainer
-                  ownerRecordId={ownerRecordId || ''}
-                  formId={formId || ''}
-                />
-              );
-            }}
-          />
-
-          <Route path="/browse/databases" component={DatabasesContainer} />
-
-          <Route path="/browse/records/:recordId" component={RecordBrowser} />
-
-          <Route path="/">
-            <Redirect to="/browse/databases" />
-          </Route>
-        </Switch>
+        <Outlet />
       </div>
     </div>
   );

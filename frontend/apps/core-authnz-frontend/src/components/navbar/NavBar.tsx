@@ -1,11 +1,11 @@
 import { FC } from 'react';
 import { NavLink } from 'react-router-dom';
 
-export const NavBar: FC = (props) => {
+export const NavBar: FC = () => {
   return (
     <nav className="navbar navbar-expand-sm navbar-light bg-light">
       <div className="container-fluid">
-        <a className="navbar-brand" href="/#">
+        <a className="navbar-brand" href="/app">
           Core Admin
         </a>
         <button
@@ -22,12 +22,12 @@ export const NavBar: FC = (props) => {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav">
             <li className="nav-item">
-              <NavLink className="nav-link" activeClassName="active" to="/organizations">
+              <NavLink className="nav-link" to="/organizations">
                 Organizations
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink className="nav-link" activeClassName="active" to="/clients">
+              <NavLink className="nav-link" to="/clients">
                 Clients
               </NavLink>
             </li>

@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
-import { useHistory, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useForm, FormProvider } from 'react-hook-form';
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -35,18 +35,15 @@ export const RecordEditorContainer: FC = () => {
     dispatch(fetchForms());
   }, [dispatch]);
 
-  const params = useParams<{ formId: string }>();
+  const { formId } = useParams();
   const location = useLocation();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [ownerRecordId, setOwnerRecordId] = useState<string | undefined>(
     undefined,
   );
-  const formIdFromPath = params.formId;
   const currentRootForm = useAppSelector(selectCurrentRootForm);
-  const rootFormFromPath = useAppSelector((s) =>
-    selectRootForm(s, formIdFromPath),
-  );
+  const rootFormFromPath = useAppSelector((s) => selectRootForm(s, formId));
   const currentForm = useAppSelector(selectCurrentForm);
   const currentRecord = useAppSelector(selectCurrentRecord);
   const subRecords = useAppSelector((state) => {
@@ -70,25 +67,19 @@ export const RecordEditorContainer: FC = () => {
 
   // make sure the form being edited is the one selected in the path
   useEffect(() => {
-    if (!rootFormFromPath) {
+    if (!rootFormFromPath || !formId) {
       return;
     }
 
     if (rootFormFromPath.id !== currentRootForm?.id) {
       dispatch(
         resetForm({
-          formId: formIdFromPath,
+          formId,
           ownerId: ownerRecordId,
         }),
       );
     }
-  }, [
-    dispatch,
-    ownerRecordId,
-    formIdFromPath,
-    currentRootForm,
-    rootFormFromPath,
-  ]);
+  }, [dispatch, ownerRecordId, formId, currentRootForm, rootFormFromPath]);
 
   const handleFieldValueChange = useCallback(
     (key: string, value: any) => {
@@ -145,7 +136,7 @@ export const RecordEditorContainer: FC = () => {
       return;
     }
 
-    if (currentRecord.formId !== formIdFromPath) {
+    if (currentRecord.formId !== formId) {
       if (currentRecord.ownerId) {
         dispatch(
           actions.selectRecord({
@@ -159,10 +150,10 @@ export const RecordEditorContainer: FC = () => {
           postRecord(recordsToPost),
         ).unwrap();
         dispatch(recordActions.addMany(recordResponse));
-        history.push(`/browse/records/${recordResponse[0].id}`);
+        navigate(`/browse/records/${recordResponse[0].id}`);
       } catch (e: any) {}
     }
-  }, [dispatch, formIdFromPath, currentRecord, recordsToPost, currentForm]);
+  }, [dispatch, formId, currentRecord, recordsToPost, currentForm]);
 
   const handleSelectSubRecord = useCallback(
     (subRecordId: string) => {
