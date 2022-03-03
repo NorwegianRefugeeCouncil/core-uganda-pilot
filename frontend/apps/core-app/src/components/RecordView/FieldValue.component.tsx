@@ -68,7 +68,7 @@ export const FieldValueComponent: React.FC<Props> = ({ item }) => {
           {item.formattedValue}
         </Link>
       ) : (
-        <Text variant="label" width="60%">
+        <Text variant="label" width={styles.valueWidth}>
           {item.formattedValue}
         </Text>
       )}
