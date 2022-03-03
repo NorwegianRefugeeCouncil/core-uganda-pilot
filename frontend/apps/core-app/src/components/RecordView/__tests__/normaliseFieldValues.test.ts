@@ -1,4 +1,9 @@
-import { FieldDefinition, FormType, FieldValue } from 'core-api-client';
+import {
+  FieldDefinition,
+  FormType,
+  FieldValue,
+  FieldKind,
+} from 'core-api-client';
 
 import { normaliseFieldValues } from '../normaliseFieldValues';
 
@@ -48,7 +53,7 @@ it('should normalise a basic field', () => {
     {
       label: 'field-name',
       value: 'field-value',
-      fieldType: 'text',
+      fieldType: FieldKind.Text,
       formattedValue: 'field-value',
     },
   ]);
@@ -97,7 +102,7 @@ it('should normalise a subform field', () => {
 
   expect(values).toEqual([
     {
-      fieldType: 'subform',
+      fieldType: FieldKind.SubForm,
       header: 'field-name',
       labels: ['sub-field-name'],
       values: [

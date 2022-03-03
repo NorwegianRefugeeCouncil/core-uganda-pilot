@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should match the snapshot 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    Array [
+      Object {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    dataSet={Object {}}
+    style={Object {}}
+  >
+    <View>
+      <Text>
+        {"label":"label-1","fieldType":"text","value":"test-1","formattedValue":"format-test-1"}
+      </Text>
+    </View>
+    <View
+      dataSet={Object {}}
+      style={
+        Object {
+          "height": 16,
+        }
+      }
+    />
+    <View>
+      <Text>
+        header-1
+      </Text>
+      <Text>
+        ["label-1","label-2"]
+      </Text>
+      <Text>
+        [[{"fieldType":"text","value":"test-2","formattedValue":"format-test-2"}]]
+      </Text>
+    </View>
+  </View>
+</RNCSafeAreaProvider>
+`;
