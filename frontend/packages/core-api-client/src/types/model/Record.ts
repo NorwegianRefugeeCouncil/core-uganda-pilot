@@ -1,6 +1,6 @@
 export type FieldValue = {
   fieldId: string;
-  value: string | string[] | null;
+  value: string | string[] | null | FieldValue[][];
 };
 
 export type Record = {
