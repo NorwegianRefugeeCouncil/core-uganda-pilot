@@ -82,13 +82,13 @@ export class RecordClient {
    * TODO: Fetch reference field values to have a human readable name
    */
   private massageRecord = async (record: Record): Promise<Record> => {
+    // Fetching a subrecords form returns the owner form causing an infinite loop so we skip over subrecords
+    if (record.ownerId) return record;
+
     // Fetch the record's form to get a complete list of fields
     const formResponse = await this.formClient.get({ id: record.formId });
 
-    // Fetching a subrecords form returns the owner form causing an infinite loop
-    // so we skip over subrecords
-    if (!formResponse.response || formResponse.response.id !== record.formId)
-      return record;
+    if (!formResponse.response) return record;
 
     // Iterate over the forms fields
     // if it's a subform field, fetch the subform records and populate with their values
