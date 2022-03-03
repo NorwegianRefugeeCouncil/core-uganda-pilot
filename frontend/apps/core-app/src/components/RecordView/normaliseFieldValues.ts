@@ -23,21 +23,29 @@ export const normaliseFieldValues = (
     const fieldType = getFieldKind(field.fieldType);
 
     if (fieldType === FieldKind.SubForm) {
-      const values: NormalisedSubFormFieldValue[][] =
-        field.fieldType.subForm?.fields.map((subField, i) => {
-          if (!Array.isArray(cur.value)) return [];
-          return cur.value.map((v) => {
-            if (!Array.isArray(v)) throw new Error();
-            const vv = v[i].value as string | string[] | null;
+      if (!Array.isArray(cur.value)) return acc;
+      const values: NormalisedSubFormFieldValue[][] = cur.value.map(
+        (subRecord) => {
+          if (!Array.isArray(subRecord)) return [];
+          return subRecord.map((subFieldValue) => {
+            const subField = field.fieldType.subForm?.fields.find(
+              (f) => f.id === subFieldValue.fieldId,
+            );
+            if (!subField) throw new Error('subField not found');
             const subFieldType = getFieldKind(subField.fieldType);
-            if (subFieldType === FieldKind.SubForm) throw new Error();
+            if (subFieldType === FieldKind.SubForm)
+              throw new Error('subField is a subform');
             return {
-              value: vv,
+              value: subFieldValue.value as string | string[] | null,
+              formattedValue: formatFieldValue(
+                subFieldValue.value as string | string[] | null,
+                subField,
+              ),
               fieldType: subFieldType,
-              formattedValue: formatFieldValue(vv, subField),
             };
           });
-        }) ?? [];
+        },
+      );
 
       const labels =
         field.fieldType.subForm?.fields.map((subField) => subField.name) ?? [];
