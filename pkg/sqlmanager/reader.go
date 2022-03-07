@@ -71,7 +71,7 @@ func queryRecords(ctx context.Context, db *gorm.DB, form types.FormInterface, sq
 		return nil, err
 	}
 
-	subRecords, err := querySubRecords(ctx, db, form, args)
+	subRecords, err := querySubRecords(ctx, db, form, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -102,11 +102,11 @@ func querySubRecords(ctx context.Context, db *gorm.DB, form types.FormInterface,
 			}
 
 			query := ""
-			if len(args) > 0 {
+			if len(args) > 0 && args[0] != nil {
 				query = fmt.Sprintf("where %s = ?", keyOwnerIdColumn)
 			}
 
-			subFormRecordList, err := queryRecords(ctx, db, subForm, query, args)
+			subFormRecordList, err := queryRecords(ctx, db, subForm, query, args...)
 			if err != nil {
 				return nil, err
 			}
