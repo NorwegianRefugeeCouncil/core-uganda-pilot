@@ -373,6 +373,12 @@ func readInBooleanField(record *types.Record, field *types.FieldDefinition, valu
 }
 
 func readInSubFormField(record *types.Record, subRecords *types.RecordList, field *types.FieldDefinition) error {
+	// When we create a record we don't create the sub records and the resulting GET will fail while getting the subrecords
+	// We should create both together, but for now we just create the record and ignore the subrecords
+	if subRecords == nil {
+		return nil
+	}
+
 	value := make([]types.FieldValues, 0)
 
 	for _, subRecord := range subRecords.Items {
