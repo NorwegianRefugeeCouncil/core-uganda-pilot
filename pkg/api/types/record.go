@@ -60,12 +60,14 @@ const (
 	StringValue StringOrArrayValue = iota + 1
 	ArrayValue
 	NullValue
+	SubFormValue
 )
 
 type StringOrArray struct {
-	Kind        StringOrArrayValue
-	StringValue string
-	ArrayValue  []string
+	Kind         StringOrArrayValue
+	StringValue  string
+	ArrayValue   []string
+	SubFormValue []FieldValues
 }
 
 func (s StringOrArray) GetValue() interface{} {
@@ -73,6 +75,8 @@ func (s StringOrArray) GetValue() interface{} {
 		return s.StringValue
 	} else if s.Kind == ArrayValue {
 		return s.ArrayValue
+	} else if s.Kind == SubFormValue {
+		return s.SubFormValue
 	}
 	return nil
 }
@@ -91,6 +95,13 @@ func NewArrayValue(value []string) StringOrArray {
 	}
 }
 
+func NewSubFormValue(value []FieldValues) StringOrArray {
+	return StringOrArray{
+		Kind:         SubFormValue,
+		SubFormValue: value,
+	}
+}
+
 func NewNullValue() StringOrArray {
 	return StringOrArray{
 		Kind: NullValue,
@@ -105,16 +116,32 @@ func (s StringOrArray) MarshalJSON() ([]byte, error) {
 		return json.Marshal(append(s.ArrayValue))
 	case StringValue:
 		return json.Marshal(s.StringValue)
+	case SubFormValue:
+		return json.Marshal(s.SubFormValue)
 	default:
 		return nil, fmt.Errorf("unknown value kind")
 	}
 }
 
+// HACK: Unmarshaling based on [ and [[ feels dangerous
 func (s *StringOrArray) UnmarshalJSON(b []byte) error {
-	jsonStr := string(b)
+	jsonStr := strings.ReplaceAll(
+		strings.ReplaceAll(
+			string(b),
+			"\n",
+			"",
+		),
+		" ",
+		"",
+	)
 	if jsonStr == "null" {
 		s.Kind = NullValue
 		return nil
+	}
+
+	if strings.HasPrefix(jsonStr, "[[") {
+		s.Kind = SubFormValue
+		return json.Unmarshal(b, &s.SubFormValue)
 	}
 
 	if strings.HasPrefix(jsonStr, "[") {
@@ -144,6 +171,14 @@ func NewFieldArrayValue(fieldID string, value []string) FieldValue {
 		Value:   NewArrayValue(value),
 	}
 }
+
+func NewFieldSubFormValue(fieldID string, value []FieldValues) FieldValue {
+	return FieldValue{
+		FieldID: fieldID,
+		Value:   NewSubFormValue(value),
+	}
+}
+
 func NewFieldNullValue(fieldID string) FieldValue {
 	return FieldValue{
 		FieldID: fieldID,
