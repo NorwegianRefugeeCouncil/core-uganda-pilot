@@ -239,7 +239,7 @@ func TestReader(t *testing.T) {
 			mockSql := newMockSQLReader(tt.columns, tt.values)
 			mockSql.columnsThrows = tt.columnsThrows
 			mockSql.scanThrows = tt.scanThrows
-			got, err := readRecords(tt.form, mockSql)
+			got, err := readRecords(tt.form, mockSql, map[string]map[string]*types.RecordList{})
 			if tt.wantErr {
 				assert.Error(t, err)
 				return
