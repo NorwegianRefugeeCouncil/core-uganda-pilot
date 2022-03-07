@@ -65,19 +65,71 @@ func queryRecords(ctx context.Context, db *gorm.DB, form types.FormInterface, sq
 		pq.QuoteIdentifier(form.GetFormID()),
 		sqlQuery,
 	), args...)
+
 	rows, err := qry.Rows()
 	if err != nil {
 		return nil, err
 	}
-	records, err := readRecords(form, rows)
+
+	subRecords, err := querySubRecords(ctx, db, form, args)
 	if err != nil {
 		return nil, err
 	}
+
+	records, err := readRecords(form, rows, subRecords)
+	if err != nil {
+		return nil, err
+	}
+
 	return records, nil
 }
 
+// querySubRecords will get all sub records for each subform field in a form and return a nested map of recordId -> fieldId -> recordList
+func querySubRecords(ctx context.Context, db *gorm.DB, form types.FormInterface, args ...interface{}) (map[string]map[string]*types.RecordList, error) {
+	subFormRecordMap := map[string]map[string]*types.RecordList{}
+
+	// Iterate over form fields
+	for _, field := range form.GetFields() {
+		fieldKind, err := field.FieldType.GetFieldKind()
+		if err != nil {
+			return nil, err
+		}
+		// If field is a subform, query sub records
+		if fieldKind == types.FieldKindSubForm {
+			subForm, err := form.FindSubForm(field.ID)
+			if err != nil {
+				return nil, err
+			}
+
+			query := ""
+			if len(args) > 0 {
+				query = fmt.Sprintf("where %s = ?", keyOwnerIdColumn)
+			}
+
+			subFormRecordList, err := queryRecords(ctx, db, subForm, query, args)
+			if err != nil {
+				return nil, err
+			}
+			// Create or append to map entries
+			for _, subRecord := range subFormRecordList.Items {
+				if _, ok := subFormRecordMap[*subRecord.OwnerID]; !ok {
+					subFormRecordMap[*subRecord.OwnerID] = map[string]*types.RecordList{}
+				}
+				if _, ok := subFormRecordMap[*subRecord.OwnerID][field.ID]; !ok {
+					subFormRecordMap[*subRecord.OwnerID][field.ID] = &types.RecordList{
+						Items: []*types.Record{},
+					}
+				}
+				subFormRecordMap[*subRecord.OwnerID][field.ID].Items = append(subFormRecordMap[*subRecord.OwnerID][field.ID].Items, subRecord)
+			}
+		}
+	}
+
+	return subFormRecordMap, nil
+}
+
 // readRecords will iterate through a series of SQL Rows and return a list of populated records
-func readRecords(form types.FormInterface, rows sqlReader) (*types.RecordList, error) {
+func readRecords(form types.FormInterface, rows sqlReader, subRecords map[string]map[string]*types.RecordList) (*types.RecordList, error) {
 
 	result := &types.RecordList{
 		Items: []*types.Record{},
@@ -101,7 +153,7 @@ func readRecords(form types.FormInterface, rows sqlReader) (*types.RecordList, e
 			FormID:     form.GetFormID(),
 			DatabaseID: form.GetDatabaseID(),
 		}
-		if err := readInRecord(record, form, columns, values); err != nil {
+		if err := readInRecord(record, form, subRecords, columns, values); err != nil {
 			return nil, err
 		}
 		result.Items = append(result.Items, record)
@@ -111,13 +163,10 @@ func readRecords(form types.FormInterface, rows sqlReader) (*types.RecordList, e
 }
 
 // readInRecord will populate a record for a form from the given SQL columns and values
-func readInRecord(record *types.Record, form types.FormInterface, columns []string, values []interface{}) error {
+func readInRecord(record *types.Record, form types.FormInterface, subRecords map[string]map[string]*types.RecordList, columns []string, values []interface{}) error {
 
 	formFields := form.GetFields()
-	formFieldMap := map[string]*types.FieldDefinition{}
-	for _, field := range formFields {
-		formFieldMap[field.ID] = field
-	}
+	fieldValueMap := map[string]interface{}{}
 
 	for i, column := range columns {
 		columnValue := values[i]
@@ -145,13 +194,14 @@ func readInRecord(record *types.Record, form types.FormInterface, columns []stri
 			// todo: record.CreatedAt
 			continue
 		default:
-			formField, ok := formFieldMap[column]
-			if !ok {
-				continue
-			}
-			if err := readInRecordField(record, formField, columnValue); err != nil {
-				return err
-			}
+			fieldValueMap[column] = columnValue
+		}
+	}
+
+	for _, field := range formFields {
+		fieldValue := fieldValueMap[field.ID]
+		if err := readInRecordField(record, subRecords[record.ID][field.ID], field, fieldValue); err != nil {
+			return err
 		}
 	}
 
@@ -162,6 +212,7 @@ func readInRecord(record *types.Record, form types.FormInterface, columns []stri
 // readInRecordField will populate a record types.FieldValue for the given field and value
 func readInRecordField(
 	record *types.Record,
+	subRecords *types.RecordList,
 	field *types.FieldDefinition,
 	value interface{},
 ) error {
@@ -186,6 +237,8 @@ func readInRecordField(
 		return readInTextField(record, field, value)
 	case types.FieldKindCheckbox:
 		return readInBooleanField(record, field, value)
+	case types.FieldKindSubForm:
+		return readInSubFormField(record, subRecords, field)
 	}
 
 	return nil
@@ -316,6 +369,29 @@ func readInBooleanField(record *types.Record, field *types.FieldDefinition, valu
 		FieldID: field.ID,
 		Value:   fieldValue,
 	})
+	return nil
+}
+
+func readInSubFormField(record *types.Record, subRecords *types.RecordList, field *types.FieldDefinition) error {
+	value := make([]types.FieldValues, 0)
+
+	for _, subRecord := range subRecords.Items {
+		if *subRecord.OwnerID != record.ID {
+			continue
+		}
+
+		subValue := make([]types.FieldValue, 0)
+		for _, subFieldValue := range subRecord.Values {
+			subValue = append(subValue, subFieldValue)
+		}
+		value = append(value, subValue)
+	}
+
+	record.Values = append(record.Values, types.NewFieldSubFormValue(
+		field.ID,
+		value,
+	))
+
 	return nil
 }
 
