@@ -1,11 +1,11 @@
-import { FieldDefinition } from 'core-api-client';
+import { FieldDefinition, FieldValue } from 'core-api-client';
 import { FieldErrors } from 'react-hook-form';
 
 import { FormValue } from '../../reducers/Recorder/types';
 
 export type FieldEditorProps = {
   field: FieldDefinition;
-  value: string | string[] | null;
+  value: FieldValue['value'];
   onChange: (value: string | string[] | null) => void;
   onAddSubRecord: () => void;
   onSelectSubRecord: (subRecordId: string) => void;

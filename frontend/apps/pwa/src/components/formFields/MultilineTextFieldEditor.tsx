@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { registeredValidation } from '../../features/former/validation';
+import { NonSubFormFieldValue } from '../../types/Field';
 
 import { FieldEditorProps } from './types';
 
@@ -24,7 +25,7 @@ export const MultilineTextFieldEditor: FC<FieldEditorProps> = ({
         errors?.values && errors?.values[field.id] ? 'is-invalid' : ''
       }`}
       id={field.id}
-      value={value || ''}
+      value={(value as NonSubFormFieldValue['value']) || ''}
       {...registerObject}
       onChange={(event) => {
         onChange(event.target.value);

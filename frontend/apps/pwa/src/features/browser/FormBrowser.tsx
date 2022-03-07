@@ -1,5 +1,10 @@
 import React, { FC, Fragment, useCallback, useEffect, useState } from 'react';
-import { FieldDefinition, Record, SelectOption } from 'core-api-client';
+import {
+  FieldDefinition,
+  FieldValue,
+  Record,
+  SelectOption,
+} from 'core-api-client';
 import { Link } from 'react-router-dom';
 import format from 'date-fns/format';
 
@@ -16,6 +21,7 @@ import {
   selectRecordsForForm,
   selectRecordsSubFormCounts,
 } from '../../reducers/records';
+import { NonSubFormFieldValue } from '../../types/Field';
 
 type subFormCountFn = (recordId: string, fieldId: string) => number;
 
@@ -82,7 +88,10 @@ function mapRecordCell(
     );
   }
 
-  const fieldValue = record.values.find((v: any) => v.fieldId === field.id);
+  // We cast the type here as subForms are handled above, meaning fieldValue will never be FieldValue[][]
+  const fieldValue = record.values.find((v: any) => v.fieldId === field.id) as
+    | NonSubFormFieldValue
+    | undefined;
 
   if (field.fieldType.month) {
     return (

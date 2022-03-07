@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { registeredValidation } from '../../features/former/validation';
+import { NonSubFormFieldValue } from '../../types/Field';
 
 import { FieldEditorProps } from './types';
 
@@ -26,7 +27,7 @@ export const WeekFieldEditor: FC<FieldEditorProps> = ({
       type="week"
       placeholder="2021-W52"
       id={field.id}
-      value={value || ''}
+      value={(value as NonSubFormFieldValue['value']) || ''}
       {...registerObject}
       onChange={(event) => {
         onChange(event.target.value);
