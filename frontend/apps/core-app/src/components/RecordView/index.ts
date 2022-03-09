@@ -1,1 +1,1 @@
-export { RecordViewComponent as RecordView } from './RecordView.component';
+export { RecordViewContainer as RecordView } from './RecordView.container';

@@ -25,7 +25,7 @@ export class Client extends BaseRESTClient implements ClientDefinition {
     this.Database = new DatabaseClient(this);
     this.Folder = new FolderClient(this);
     this.Form = new FormClient(this);
-    this.Record = new RecordClient(this);
+    this.Record = new RecordClient(this, this.Form);
     this.Recipient = new RecipientClient(this.Record);
   }
 }

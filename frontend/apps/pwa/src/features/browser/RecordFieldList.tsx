@@ -1,6 +1,8 @@
 import { FieldDefinition, Record, SelectOption } from 'core-api-client';
 import React from 'react';
 
+import { NonSubFormFieldValue } from '../../types/Field';
+
 import { RecordField } from './RecordField';
 
 type Props = {
@@ -32,10 +34,11 @@ export const RecordFieldList: React.FC<Props> = ({
   if (fieldValue && field.fieldType.multiSelect) {
     const selected = field.fieldType.multiSelect.options.filter(
       (o: SelectOption) => {
-        if (fieldValue?.value == null) {
+        const fv = fieldValue as NonSubFormFieldValue | undefined;
+        if (fv?.value == null) {
           return false;
         }
-        return fieldValue.value.includes(o.id);
+        return fv.value.includes(o.id);
       },
     );
 

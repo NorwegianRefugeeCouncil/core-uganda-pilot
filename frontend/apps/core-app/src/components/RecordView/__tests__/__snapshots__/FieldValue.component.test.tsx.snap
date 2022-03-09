@@ -1,0 +1,180 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Link should match the snapshot 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    Array [
+      Object {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    dataSet={Object {}}
+    style={
+      Object {
+        "alignItems": "flex-start",
+        "flexDirection": "column",
+        "justifyContent": "center",
+        "width": "100%",
+      }
+    }
+  >
+    <Text
+      dataSet={Object {}}
+      level="1"
+      style={
+        Object {
+          "backgroundColor": undefined,
+          "color": "#666666",
+          "fontFamily": "Roboto_400Regular",
+          "fontSize": 18,
+          "fontStyle": undefined,
+          "fontWeight": undefined,
+          "letterSpacing": 0,
+          "lineHeight": 26,
+          "textAlign": "auto",
+          "textDecorationLine": undefined,
+          "width": "100%",
+        }
+      }
+    >
+      label
+    </Text>
+    <View
+      dataSet={Object {}}
+      style={
+        Object {
+          "height": 4,
+        }
+      }
+    />
+    <View
+      accessibilityRole="link"
+      accessible={true}
+      collapsable={false}
+      dataSet={Object {}}
+      focusable={true}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onHoverIn={[Function]}
+      onHoverOut={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "flexDirection": "row",
+          "height": "auto",
+          "width": "100%",
+        }
+      }
+    >
+      <Text
+        dataSet={Object {}}
+        level="1"
+        style={
+          Object {
+            "backgroundColor": undefined,
+            "color": "#000000",
+            "fontFamily": "Roboto_400Regular",
+            "fontSize": 20,
+            "fontStyle": undefined,
+            "fontWeight": undefined,
+            "letterSpacing": 0,
+            "lineHeight": 34,
+            "textAlign": "auto",
+            "textDecorationLine": "underline",
+          }
+        }
+      >
+        format-test
+      </Text>
+    </View>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`Text should match the snapshot 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    Array [
+      Object {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    dataSet={Object {}}
+    style={
+      Object {
+        "alignItems": "flex-start",
+        "flexDirection": "column",
+        "justifyContent": "center",
+        "width": "100%",
+      }
+    }
+  >
+    <Text
+      dataSet={Object {}}
+      level="1"
+      style={
+        Object {
+          "backgroundColor": undefined,
+          "color": "#666666",
+          "fontFamily": "Roboto_400Regular",
+          "fontSize": 18,
+          "fontStyle": undefined,
+          "fontWeight": undefined,
+          "letterSpacing": 0,
+          "lineHeight": 26,
+          "textAlign": "auto",
+          "textDecorationLine": undefined,
+          "width": "100%",
+        }
+      }
+    >
+      label
+    </Text>
+    <View
+      dataSet={Object {}}
+      style={
+        Object {
+          "height": 4,
+        }
+      }
+    />
+    <Text
+      dataSet={Object {}}
+      level="1"
+      style={
+        Object {
+          "backgroundColor": undefined,
+          "color": "#000000",
+          "fontFamily": "Roboto_500Medium",
+          "fontSize": 18,
+          "fontStyle": undefined,
+          "fontWeight": undefined,
+          "letterSpacing": 0,
+          "lineHeight": 26,
+          "textAlign": "auto",
+          "textDecorationLine": undefined,
+          "width": "100%",
+        }
+      }
+    >
+      format-test
+    </Text>
+  </View>
+</RNCSafeAreaProvider>
+`;

@@ -1,6 +1,6 @@
 import { Record, RecordList } from '../model';
-import { FormLookup } from './Form';
 
+import { FormLookup } from './Form';
 import { DataOperation, PartialObjectWrapper, Response } from './utils';
 
 export type RecordCreateRequest = PartialObjectWrapper<Record>;

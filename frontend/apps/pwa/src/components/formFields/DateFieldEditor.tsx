@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { registeredValidation } from '../../features/former/validation';
+import { NonSubFormFieldValue } from '../../types/Field';
 
 import { FieldEditorProps } from './types';
 
@@ -18,6 +19,8 @@ export const DateFieldEditor: FC<FieldEditorProps> = ({
     registeredValidation.values(field),
   );
 
+  if (Array.isArray(value)) return null;
+
   return (
     <input
       className={`form-control bg-dark text-light border-secondary ${
@@ -25,7 +28,7 @@ export const DateFieldEditor: FC<FieldEditorProps> = ({
       }`}
       type="date"
       id={field.id}
-      value={value || ''}
+      value={(value as NonSubFormFieldValue['value']) || ''}
       {...registerObject}
       onChange={(event) => {
         onChange(event.target.value);
