@@ -4,11 +4,11 @@ import {
   FieldKind,
   RecordCreateRequest,
   RecordCreateResponse,
-  RecordGetRequest,
   RecordGetResponse,
   RecordListRequest,
   RecordListResponse,
   RecordList,
+  RecordLookup,
 } from '../types';
 
 import { BaseRESTClient } from './BaseRESTClient';
@@ -54,10 +54,10 @@ export class RecordClient {
     };
   };
 
-  get = async (request: RecordGetRequest): Promise<RecordGetResponse> => {
+  get = async (request: RecordLookup): Promise<RecordGetResponse> => {
     const { databaseId, formId, recordId } = request;
     const url = `/records/${recordId}?databaseId=${databaseId}&formId=${formId}`;
-    const response = await this.restClient.do<RecordGetRequest, Record>(
+    const response = await this.restClient.do<RecordLookup, Record>(
       request,
       url,
       'get',

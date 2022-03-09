@@ -1,8 +1,13 @@
-import { FormLookup, RecordLookup } from '../types';
+import {
+  ErrorResponse,
+  FormLookup,
+  RecordGetRequest,
+  RecordLookup,
+} from '../types';
 import {
   Recipient,
   RecipientDefinition,
-  RecipientList,
+  RecipientList, RecipientResponse,
 } from '../types/client/Recipient';
 
 import { RecordClient } from './Record';
@@ -25,13 +30,7 @@ export class RecipientClient {
     return Promise.resolve({ items: [] });
   };
 
-  get = async (args: RecordLookup): Promise<Recipient> => {
-    return Promise.resolve({
-      id: 'id',
-      formId: 'formId',
-      databaseId: 'databaseId',
-      ownerId: undefined,
-      values: [],
-    });
+  get = (args: RecordLookup): Promise<RecipientResponse> => {
+    return this.recordClient.get(args);
   };
 }
