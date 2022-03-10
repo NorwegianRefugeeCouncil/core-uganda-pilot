@@ -12,39 +12,426 @@ exports[`should match the snapshot 1`] = `
     ]
   }
 >
-  <View
-    dataSet={Object {}}
-    style={
+  <RCTScrollView
+    contentContainerStyle={
       Array [
         Object {},
-        Array [
-          Object {},
-        ],
+        Object {
+          "dataSet": Object {},
+        },
       ]
     }
+    dataSet={Object {}}
+    style={Object {}}
   >
-    <Text
-      dataSet={Object {}}
-      level="1"
-      style={
-        Object {
-          "backgroundColor": undefined,
-          "color": "#000000",
-          "fontFamily": "Roboto_700Bold",
-          "fontSize": 44,
-          "fontStyle": undefined,
-          "fontWeight": undefined,
-          "letterSpacing": 0,
-          "lineHeight": 52,
-          "textAlign": "auto",
-          "textDecorationLine": undefined,
+    <View>
+      <View
+        dataSet={Object {}}
+        style={
+          Array [
+            Object {},
+            Array [
+              Object {},
+            ],
+          ]
         }
-      }
-    >
-      RecipientProfile
-      : 
-      id
-    </Text>
-  </View>
+      >
+        <View
+          dataSet={Object {}}
+          style={
+            Object {
+              "paddingBottom": 8,
+              "paddingLeft": 8,
+              "paddingRight": 8,
+              "paddingTop": 8,
+            }
+          }
+        >
+          <View
+            _text={
+              Object {
+                "color": "lightText",
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            dataSet={Object {}}
+            focusable={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onHoverIn={[Function]}
+            onHoverOut={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#24303E",
+                "display": "flex",
+                "flexDirection": "row",
+                "justifyContent": "space-between",
+                "paddingBottom": 8,
+                "paddingLeft": 8,
+                "paddingRight": 8,
+                "paddingTop": 8,
+              }
+            }
+          >
+            <Text
+              dataSet={Object {}}
+              level="1"
+              style={
+                Object {
+                  "backgroundColor": undefined,
+                  "color": "#FFFFFF",
+                  "fontFamily": "Roboto_400Regular",
+                  "fontSize": 18,
+                  "fontStyle": undefined,
+                  "fontWeight": undefined,
+                  "letterSpacing": 0,
+                  "lineHeight": 21,
+                  "textAlign": "auto",
+                  "textDecorationLine": undefined,
+                }
+              }
+            >
+              name
+            </Text>
+            <Text
+              dataSet={Object {}}
+              level="1"
+              style={
+                Object {
+                  "backgroundColor": undefined,
+                  "color": "#FFFFFF",
+                  "fontFamily": "Roboto_400Regular",
+                  "fontSize": 18,
+                  "fontStyle": undefined,
+                  "fontWeight": undefined,
+                  "letterSpacing": 0,
+                  "lineHeight": 26,
+                  "textAlign": "auto",
+                  "textDecorationLine": undefined,
+                }
+              }
+            >
+              closed
+            </Text>
+          </View>
+        </View>
+      </View>
+    </View>
+  </RCTScrollView>
+</RNCSafeAreaProvider>
+`;
+
+exports[`should match the snapshot while loading 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    Array [
+      Object {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <RCTScrollView
+    contentContainerStyle={
+      Array [
+        Object {},
+        Object {
+          "dataSet": Object {},
+        },
+      ]
+    }
+    dataSet={Object {}}
+    style={Object {}}
+  >
+    <View>
+      <View
+        dataSet={Object {}}
+        style={
+          Array [
+            Object {},
+            Array [
+              Object {},
+            ],
+          ]
+        }
+      >
+        <View
+          dataSet={Object {}}
+          fadeDuration={0.1}
+          isLoaded={false}
+          speed={1}
+          style={
+            Object {
+              "backgroundColor": "transparent",
+              "borderRadius": 3,
+              "height": 80,
+              "overflow": "hidden",
+              "paddingBottom": 16,
+              "paddingLeft": 16,
+              "paddingRight": 16,
+              "paddingTop": 16,
+            }
+          }
+        >
+          <View
+            style={
+              Object {
+                "backgroundColor": "#e5e5e5",
+                "height": "100%",
+                "opacity": 0,
+                "width": "100%",
+              }
+            }
+          />
+        </View>
+        <View
+          dataSet={Object {}}
+          style={
+            Object {
+              "paddingBottom": 8,
+              "paddingLeft": 8,
+              "paddingRight": 8,
+              "paddingTop": 8,
+            }
+          }
+        >
+          <View
+            _text={
+              Object {
+                "color": "lightText",
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            dataSet={Object {}}
+            focusable={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onHoverIn={[Function]}
+            onHoverOut={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#24303E",
+                "display": "flex",
+                "flexDirection": "row",
+                "justifyContent": "space-between",
+                "paddingBottom": 8,
+                "paddingLeft": 8,
+                "paddingRight": 8,
+                "paddingTop": 8,
+              }
+            }
+          >
+            <Text
+              dataSet={Object {}}
+              level="1"
+              style={
+                Object {
+                  "backgroundColor": undefined,
+                  "color": "#FFFFFF",
+                  "fontFamily": "Roboto_400Regular",
+                  "fontSize": 18,
+                  "fontStyle": undefined,
+                  "fontWeight": undefined,
+                  "letterSpacing": 0,
+                  "lineHeight": 21,
+                  "textAlign": "auto",
+                  "textDecorationLine": undefined,
+                }
+              }
+            >
+              name
+            </Text>
+            <Text
+              dataSet={Object {}}
+              level="1"
+              style={
+                Object {
+                  "backgroundColor": undefined,
+                  "color": "#FFFFFF",
+                  "fontFamily": "Roboto_400Regular",
+                  "fontSize": 18,
+                  "fontStyle": undefined,
+                  "fontWeight": undefined,
+                  "letterSpacing": 0,
+                  "lineHeight": 26,
+                  "textAlign": "auto",
+                  "textDecorationLine": undefined,
+                }
+              }
+            >
+              closed
+            </Text>
+          </View>
+        </View>
+      </View>
+    </View>
+  </RCTScrollView>
+</RNCSafeAreaProvider>
+`;
+
+exports[`should match the snapshot with error 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    Array [
+      Object {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <RCTScrollView
+    contentContainerStyle={
+      Array [
+        Object {},
+        Object {
+          "dataSet": Object {},
+        },
+      ]
+    }
+    dataSet={Object {}}
+    style={Object {}}
+  >
+    <View>
+      <View
+        dataSet={Object {}}
+        style={
+          Array [
+            Object {},
+            Array [
+              Object {},
+            ],
+          ]
+        }
+      >
+        <Text
+          dataSet={Object {}}
+          level="1"
+          style={
+            Object {
+              "backgroundColor": undefined,
+              "color": "#CE3616",
+              "fontFamily": "Roboto_500Medium",
+              "fontSize": 32,
+              "fontStyle": undefined,
+              "fontWeight": undefined,
+              "letterSpacing": 0,
+              "lineHeight": 38,
+              "textAlign": "auto",
+              "textDecorationLine": undefined,
+            }
+          }
+        >
+          error
+        </Text>
+        <View
+          dataSet={Object {}}
+          style={
+            Object {
+              "paddingBottom": 8,
+              "paddingLeft": 8,
+              "paddingRight": 8,
+              "paddingTop": 8,
+            }
+          }
+        >
+          <View
+            _text={
+              Object {
+                "color": "lightText",
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            dataSet={Object {}}
+            focusable={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onHoverIn={[Function]}
+            onHoverOut={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#24303E",
+                "display": "flex",
+                "flexDirection": "row",
+                "justifyContent": "space-between",
+                "paddingBottom": 8,
+                "paddingLeft": 8,
+                "paddingRight": 8,
+                "paddingTop": 8,
+              }
+            }
+          >
+            <Text
+              dataSet={Object {}}
+              level="1"
+              style={
+                Object {
+                  "backgroundColor": undefined,
+                  "color": "#FFFFFF",
+                  "fontFamily": "Roboto_400Regular",
+                  "fontSize": 18,
+                  "fontStyle": undefined,
+                  "fontWeight": undefined,
+                  "letterSpacing": 0,
+                  "lineHeight": 21,
+                  "textAlign": "auto",
+                  "textDecorationLine": undefined,
+                }
+              }
+            >
+              name
+            </Text>
+            <Text
+              dataSet={Object {}}
+              level="1"
+              style={
+                Object {
+                  "backgroundColor": undefined,
+                  "color": "#FFFFFF",
+                  "fontFamily": "Roboto_400Regular",
+                  "fontSize": 18,
+                  "fontStyle": undefined,
+                  "fontWeight": undefined,
+                  "letterSpacing": 0,
+                  "lineHeight": 26,
+                  "textAlign": "auto",
+                  "textDecorationLine": undefined,
+                }
+              }
+            >
+              closed
+            </Text>
+          </View>
+        </View>
+      </View>
+    </View>
+  </RCTScrollView>
 </RNCSafeAreaProvider>
 `;

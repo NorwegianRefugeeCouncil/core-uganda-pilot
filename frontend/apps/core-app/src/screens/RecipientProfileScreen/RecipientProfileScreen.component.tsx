@@ -3,11 +3,12 @@ import { ScrollView, Skeleton, Text } from 'native-base';
 import { Recipient } from 'core-api-client/src/types/client/Recipient';
 // import { FormDefinition } from 'core-api-client';
 
+import { PopulatedForm } from 'core-api-client';
+
 import { RecordView } from '../../components/RecordView';
 import { Accordion } from '../../components/Accordion';
 
 import * as Styles from './RecipientProfileScreen.styles';
-import { PopulatedForm } from './RecipientProfileScreen.container';
 
 type Props = {
   isLoading: boolean;
