@@ -6,7 +6,7 @@ import axios, {
   Method,
 } from 'axios';
 
-import { RequestOptions, Response } from '../types/client/utils';
+import { RequestOptions, Response } from '../types';
 import { clientResponse } from '../utils/responses';
 
 export class BaseRESTClient {

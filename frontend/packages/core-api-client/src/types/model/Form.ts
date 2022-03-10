@@ -18,3 +18,8 @@ export type FormDefinition = {
 export type FormDefinitionList = {
   items: FormDefinition[];
 };
+
+export type PopulatedForm<T> = {
+  form: FormDefinition;
+  record: T;
+};

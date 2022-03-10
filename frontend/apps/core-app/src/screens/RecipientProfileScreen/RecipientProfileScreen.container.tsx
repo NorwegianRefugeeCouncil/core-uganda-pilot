@@ -1,37 +1,70 @@
 import * as React from 'react';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { Recipient } from 'core-api-client/src/types/client/Recipient';
-import { FormDefinition } from 'core-api-client';
+import { FormDefinition, PopulatedForm } from 'core-api-client';
 
 import { RootParamList } from '../../navigation/types';
 import { formsClient } from '../../clients/formsClient';
 
 import { RecipientProfileScreenComponent } from './RecipientProfileScreen.component';
 
-const DATABASE_ID = '5b5e0630-3985-4c04-a4ac-2ca958421ca7';
-const FORM_ID = '989533fa-56e7-4771-8d68-c8c4a707c240';
+const DATABASE_ID = '79f2e951-9a42-42d7-9543-e0000231208b'; // Colombia
+const FORM_ID = 'ebadab8c-62b3-4191-b304-bd777a091dd3'; // Colombia Individual
 
 export const RecipientProfileScreenContainer: React.FC = () => {
   const route = useRoute<RouteProp<RootParamList, 'RecipientProfile'>>();
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
-  const [form, setForm] = React.useState<FormDefinition | null>(null);
-  const [recipient, setRecipient] = React.useState<Recipient | null>(null);
-  const [error, setError] = React.useState<any>();
+  const [data, setData] = React.useState<PopulatedForm<Recipient>[]>([]);
+  const [error, setError] = React.useState<string>();
 
   React.useEffect(() => {
     (async () => {
-      const formResponse = await formsClient.Form.get({ id: FORM_ID });
-      if (formResponse.response) setForm(formResponse.response);
+      try {
+        let ancestors = await formsClient.Recipient.getAncestors({
+          recordId: route.params.id,
+          formId: FORM_ID,
+          databaseId: DATABASE_ID,
+        });
 
-      const recipientGetResponse = await formsClient.Recipient.get({
-        recordId: route.params.id,
-        formId: FORM_ID,
-        databaseId: DATABASE_ID,
-      });
-      if (recipientGetResponse.response) {
-        setRecipient(recipientGetResponse.response);
-      } else {
-        setError(recipientGetResponse.error);
+        // don't show reference fields
+        ancestors = ancestors.map((ancestor) => {
+          return {
+            ...ancestor,
+            form: {
+              ...ancestor.form,
+              fields: ancestor.form.fields.filter(
+                (field) => !field.fieldType.reference,
+              ),
+            },
+          };
+        });
+
+        // merge fields of individual into individual beneficiary form
+        if (ancestors.length >= 1) {
+          const mergedIndividual = [
+            {
+              form: {
+                ...ancestors[1].form,
+                fields: [
+                  ...ancestors[0].form.fields,
+                  ...ancestors[1].form.fields,
+                ],
+              },
+              record: {
+                ...ancestors[1].record,
+                values: [
+                  ...ancestors[0].record.values,
+                  ...ancestors[1].record.values,
+                ],
+              },
+            },
+          ];
+          setData(mergedIndividual.concat(ancestors.slice(2)));
+        } else {
+          setData(ancestors);
+        }
+      } catch (err) {
+        setError(JSON.stringify(err));
       }
       setIsLoading(false);
     })();
@@ -39,8 +72,7 @@ export const RecipientProfileScreenContainer: React.FC = () => {
 
   return (
     <RecipientProfileScreenComponent
-      recipient={recipient}
-      form={form}
+      data={data}
       isLoading={isLoading}
       error={error}
     />

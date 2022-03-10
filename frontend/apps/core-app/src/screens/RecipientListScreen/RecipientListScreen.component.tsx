@@ -11,7 +11,11 @@ type Props = {
   handleItemClick: (id: string) => void;
 };
 
-const IDS = ['a76cea53-5a0e-48f3-8917-70a9e74a1b32', 'fake-id']; // TODO remove when actual list available
+const IDS = [
+  '8090092f-c983-4ff4-8599-214429218eb0',
+  '30e683fa-2dd7-479f-98a3-9477d0079383',
+  'fake-id',
+]; // TODO remove when actual list available
 
 export const RecipientListScreenComponent: React.FC<Props> = ({
   route,

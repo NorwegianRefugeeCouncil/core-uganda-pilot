@@ -1,34 +1,46 @@
 import * as React from 'react';
-import { Skeleton, Text } from 'native-base';
+import { ScrollView, Skeleton, Text } from 'native-base';
 import { Recipient } from 'core-api-client/src/types/client/Recipient';
-import { FormDefinition } from 'core-api-client';
+// import { FormDefinition } from 'core-api-client';
 
 import { RecordView } from '../../components/RecordView';
+import { Accordion } from '../../components/Accordion';
 
 import * as Styles from './RecipientProfileScreen.styles';
+import { PopulatedForm } from './RecipientProfileScreen.container';
 
 type Props = {
-  recipient: Recipient | null;
   isLoading: boolean;
-  form: FormDefinition | null;
-  error: any;
+  data: PopulatedForm<Recipient>[];
+  error?: string;
 };
 
 export const RecipientProfileScreenComponent: React.FC<Props> = ({
-  recipient,
+  data,
   isLoading,
-  form,
   error,
 }) => {
   return (
-    <Styles.Container>
-      {isLoading && <Skeleton h="20" p="4" />}
-      {error && (
-        <Text variant="heading" color="signalDanger">
-          {JSON.stringify(error)}
-        </Text>
-      )}
-      {form && recipient && <RecordView form={form} record={recipient} />}
-    </Styles.Container>
+    <ScrollView>
+      <Styles.Container>
+        {isLoading && <Skeleton h="20" p="4" />}
+        {error && (
+          <Text variant="heading" color="signalDanger">
+            {error}
+          </Text>
+        )}
+        {data.map((dataItem) => {
+          const { form, record: recipient } = dataItem;
+          return (
+            form &&
+            recipient && (
+              <Accordion header={form?.name || ''} key={form.id}>
+                <RecordView form={form} record={recipient} />
+              </Accordion>
+            )
+          );
+        })}
+      </Styles.Container>
+    </ScrollView>
   );
 };
