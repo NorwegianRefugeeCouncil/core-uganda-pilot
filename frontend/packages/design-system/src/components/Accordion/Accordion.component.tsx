@@ -12,7 +12,7 @@ export const AccordionComponent: FC<Props> = ({ header, children }) => {
   const handleOnPress = () => setIsExpanded(!isExpanded);
 
   return (
-    <Box p="2">
+    <Box>
       <Pressable bg="secondary.500" p="2" onPress={handleOnPress}>
         <Text color="white" fontSize="18px" lineHeight="21px">
           {header}
