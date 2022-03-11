@@ -18,13 +18,18 @@ export const TextFieldInput: React.FC<Props> = ({ formId, field }) => {
     name: `${formId}.${field.id}`,
     control,
     rules: {}, // TODO Record validation
-    defaultValue: '',
   });
 
   return (
     <FormControl isInvalid={invalid}>
-      <FormControl.Label>Name</FormControl.Label>
-      <Input ref={ref} onBlur={onBlur} onChangeText={onChange} value={value} />
+      <FormControl.Label>{field.name}</FormControl.Label>
+      <Input
+        ref={ref}
+        onBlur={onBlur}
+        onChangeText={onChange}
+        value={value}
+        autoCompleteType="off"
+      />
       <FormControl.HelperText>{field.description}</FormControl.HelperText>
       <FormControl.ErrorMessage>{error}</FormControl.ErrorMessage>
     </FormControl>
