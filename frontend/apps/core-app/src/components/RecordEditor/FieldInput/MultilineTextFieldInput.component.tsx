@@ -18,7 +18,6 @@ export const MultilineTextFieldInput: React.FC<Props> = ({ formId, field }) => {
     name: `${formId}.${field.id}`,
     control,
     rules: {}, // TODO Record validation
-    defaultValue: '',
   });
 
   return (
