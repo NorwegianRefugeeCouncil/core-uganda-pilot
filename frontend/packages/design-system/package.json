@@ -29,7 +29,7 @@
   "peerDependencies": {
     "@types/react": "17.x",
     "@types/react-dom": "17.x",
-    "native-base": "3.x",
+    "native-base": "^3.3.7",
     "react": "17.x",
     "react-native": "17.x",
     "typescript": "4.x"
@@ -51,8 +51,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "resolutions": {
-    "**/ua-parser-js": "0.7.28"
   }
 }
