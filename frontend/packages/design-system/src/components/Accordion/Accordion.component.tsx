@@ -4,10 +4,15 @@ import { Text, Box, Pressable } from 'native-base';
 type Props = {
   header: string;
   children: ReactNode;
+  defaultOpen?: boolean;
 };
 
-export const AccordionComponent: FC<Props> = ({ header, children }) => {
-  const [isExpanded, setIsExpanded] = React.useState(false);
+export const AccordionComponent: FC<Props> = ({
+  header,
+  children,
+  defaultOpen = false,
+}) => {
+  const [isExpanded, setIsExpanded] = React.useState(defaultOpen);
 
   const handleOnPress = () => setIsExpanded(!isExpanded);
 
