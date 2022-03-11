@@ -26,7 +26,7 @@ export const Clients: FC = () => {
           <div className="card card-darkula">
             <div className="card-body">
               <SectionTitle title="OAuth2 Clients">
-                <Link to="add" className="btn btn-sm btn-success">
+                <Link to="/clients/add" className="btn btn-sm btn-success">
                   Add OAuth2 Client
                 </Link>
               </SectionTitle>

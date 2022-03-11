@@ -28,7 +28,6 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({
   onTokenChange,
   injectToken = 'access_token',
 }) => {
-  console.log('ATUH WRAPPER', scopes, clientId);
   const browser = useMemo(() => new Browser(), []);
 
   browser.maybeCompleteAuthSession();

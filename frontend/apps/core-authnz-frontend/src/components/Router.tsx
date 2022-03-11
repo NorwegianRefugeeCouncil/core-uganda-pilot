@@ -1,7 +1,4 @@
 import React from 'react';
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap-icons/font/bootstrap-icons.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import AuthenticatedApp from './AuthenticatedApp';

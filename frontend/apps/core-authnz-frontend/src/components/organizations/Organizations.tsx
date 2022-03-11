@@ -45,7 +45,7 @@ export const Organizations: FC = () => {
           <div className="card card-darkula ">
             <div className="card-body">
               <SectionTitle title="Organizations">
-                <Link className="btn btn-darkula btn-sm" to="add">
+                <Link className="btn btn-darkula btn-sm" to="/organizations/add">
                   Add Organization
                 </Link>
               </SectionTitle>

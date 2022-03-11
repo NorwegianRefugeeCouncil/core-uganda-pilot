@@ -8,6 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 0",
     "eject": "react-scripts eject"
   },
+  "homepage": "/app/",
   "dependencies": {
     "axios": "^0.24.0",
     "bootstrap": "^5.1.3",
