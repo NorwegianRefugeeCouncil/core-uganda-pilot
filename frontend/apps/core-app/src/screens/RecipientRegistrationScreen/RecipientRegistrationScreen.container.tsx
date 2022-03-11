@@ -4,10 +4,13 @@ import { FormDefinition, FormType, Record } from 'core-api-client';
 import { buildDefaultRecord } from './buildDefaultRecord';
 import { RecipientRegistrationScreenComponent } from './RecipientRegistrationScreen.component';
 
+const DATABASE_ID = '9eab5b48-41f1-411a-8cf0-390dfee8ca37';
+const FORM_ID = 'e4e56318-2147-49ad-901e-a8c3f451079b';
+
 const makeForm = (id: string, name: string): FormDefinition => ({
   id,
   code: '',
-  databaseId: '',
+  databaseId: DATABASE_ID,
   folderId: '',
   formType: FormType.DefaultFormType,
   name,
@@ -106,6 +109,20 @@ const makeForm = (id: string, name: string): FormDefinition => ({
             { id: 'option-2', name: 'Option 2' },
             { id: 'option-3', name: 'Option 3' },
           ],
+        },
+      },
+    },
+    {
+      id: 'reference-field',
+      name: 'Reference Field',
+      description: "I'm a reference field",
+      code: '',
+      required: false,
+      key: false,
+      fieldType: {
+        reference: {
+          databaseId: DATABASE_ID,
+          formId: FORM_ID,
         },
       },
     },
@@ -213,6 +230,20 @@ const makeForm = (id: string, name: string): FormDefinition => ({
                     { id: 'option-2', name: 'Option 2' },
                     { id: 'option-3', name: 'Option 3' },
                   ],
+                },
+              },
+            },
+            {
+              id: 'sub-form-reference-field',
+              name: 'Sub Form Reference Field',
+              description: "I'm a sub form reference field",
+              code: '',
+              required: false,
+              key: false,
+              fieldType: {
+                reference: {
+                  databaseId: DATABASE_ID,
+                  formId: FORM_ID,
                 },
               },
             },
