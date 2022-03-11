@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { Recipient } from 'core-api-client/src/types/client/Recipient';
-import { FormDefinition, PopulatedForm } from 'core-api-client';
+import { PopulatedForm } from 'core-api-client';
 
 import { RootParamList } from '../../navigation/types';
 import { formsClient } from '../../clients/formsClient';

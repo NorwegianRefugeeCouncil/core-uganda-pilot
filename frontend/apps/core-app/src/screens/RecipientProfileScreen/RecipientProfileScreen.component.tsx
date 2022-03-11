@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { ScrollView, Skeleton, Text } from 'native-base';
 import { Recipient } from 'core-api-client/src/types/client/Recipient';
-// import { FormDefinition } from 'core-api-client';
-
 import { PopulatedForm } from 'core-api-client';
 
 import { RecordView } from '../../components/RecordView';
