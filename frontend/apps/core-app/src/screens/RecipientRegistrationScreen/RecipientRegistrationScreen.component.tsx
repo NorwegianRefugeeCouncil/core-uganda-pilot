@@ -6,7 +6,7 @@ import { Accordion } from 'core-design-system';
 
 import { RecordEditor } from '../../components/RecordEditor';
 
-import * as Styles from './RecipientRegistrationScreen.styles';
+import { buildDefaultFormValues } from './buildDefaultFormValues';
 
 type Props = {
   forms: FormDefinition[];
@@ -21,7 +21,7 @@ export const RecipientRegistrationScreenComponent: React.FC<Props> = ({
   onSubmit,
   onCancel,
 }) => {
-  const f = useForm();
+  const f = useForm({ defaultValues: buildDefaultFormValues(forms, records) });
 
   return (
     <FormProvider {...f}>
