@@ -15,6 +15,7 @@ export const buildDefaultRecord = (form: FormDefinition): Record => ({
     switch (fieldType) {
       case FieldKind.Text:
       case FieldKind.MultilineText:
+      case FieldKind.Quantity:
         return {
           fieldId: field.id,
           value: '',
