@@ -1,20 +1,16 @@
 import * as React from 'react';
-import { FormDefinition, Record } from 'core-api-client';
+import { FormDefinition } from 'core-api-client';
 
 import { RecordEditorComponent } from './RecordEditor.component';
 
 type Props = {
   form: FormDefinition;
-  record: Record;
-  onChange: () => void;
+  direction?: 'row' | 'column';
 };
 
 export const RecordEditorContainer: React.FC<Props> = ({
   form,
-  record,
-  onChange,
+  direction = 'column',
 }) => {
-  return (
-    <RecordEditorComponent form={form} record={record} onChange={onChange} />
-  );
+  return <RecordEditorComponent form={form} direction={direction} />;
 };
