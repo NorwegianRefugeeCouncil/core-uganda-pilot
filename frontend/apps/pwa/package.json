@@ -58,8 +58,5 @@
     "react": "17.x",
     "react-native": "17.x",
     "typescript": "4.x"
-  },
-  "resolutions": {
-    "**/ua-parser-js": "0.7.28"
   }
 }
