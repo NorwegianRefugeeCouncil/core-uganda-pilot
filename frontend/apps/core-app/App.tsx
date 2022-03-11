@@ -30,16 +30,16 @@ const App: React.FC = () => {
     Roboto_700Bold,
   });
 
+  if (!fontsLoaded) return null;
+
   return (
-    fontsLoaded && (
-      <NativeBaseProvider theme={theme}>
-        <NavigationContainer linking={linkingConfig}>
-          <AuthWrapper onTokenChange={formsClient.setToken}>
-            <RootNavigator />
-          </AuthWrapper>
-        </NavigationContainer>
-      </NativeBaseProvider>
-    )
+    <NativeBaseProvider theme={theme}>
+      <NavigationContainer linking={linkingConfig}>
+        <AuthWrapper onTokenChange={formsClient.setToken}>
+          <RootNavigator />
+        </AuthWrapper>
+      </NavigationContainer>
+    </NativeBaseProvider>
   );
 };
 
