@@ -23,26 +23,243 @@ exports[`should match the snapshot 1`] = `
       ]
     }
   >
-    <Text
+    <View
       dataSet={Object {}}
-      level="1"
       style={
         Object {
-          "backgroundColor": undefined,
-          "color": "#000000",
-          "fontFamily": "Roboto_700Bold",
-          "fontSize": 44,
-          "fontStyle": undefined,
-          "fontWeight": undefined,
-          "letterSpacing": 0,
-          "lineHeight": 52,
-          "textAlign": "auto",
-          "textDecorationLine": undefined,
+          "paddingBottom": 8,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 8,
         }
       }
     >
-      RecipientRegistration
-    </Text>
+      <View
+        _text={
+          Object {
+            "color": "lightText",
+          }
+        }
+        accessible={true}
+        collapsable={false}
+        dataSet={Object {}}
+        focusable={true}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onHoverIn={[Function]}
+        onHoverOut={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#24303E",
+            "paddingBottom": 8,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 8,
+          }
+        }
+      >
+        <Text
+          dataSet={Object {}}
+          level="1"
+          style={
+            Object {
+              "backgroundColor": undefined,
+              "color": "#FFFFFF",
+              "fontFamily": "Roboto_400Regular",
+              "fontSize": 18,
+              "fontStyle": undefined,
+              "fontWeight": undefined,
+              "letterSpacing": 0,
+              "lineHeight": 21,
+              "textAlign": "auto",
+              "textDecorationLine": undefined,
+            }
+          }
+        >
+          form-name-1
+        </Text>
+      </View>
+    </View>
+    <View
+      dataSet={Object {}}
+      style={
+        Object {
+          "paddingBottom": 8,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 8,
+        }
+      }
+    >
+      <View
+        _text={
+          Object {
+            "color": "lightText",
+          }
+        }
+        accessible={true}
+        collapsable={false}
+        dataSet={Object {}}
+        focusable={true}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onHoverIn={[Function]}
+        onHoverOut={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#24303E",
+            "paddingBottom": 8,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 8,
+          }
+        }
+      >
+        <Text
+          dataSet={Object {}}
+          level="1"
+          style={
+            Object {
+              "backgroundColor": undefined,
+              "color": "#FFFFFF",
+              "fontFamily": "Roboto_400Regular",
+              "fontSize": 18,
+              "fontStyle": undefined,
+              "fontWeight": undefined,
+              "letterSpacing": 0,
+              "lineHeight": 21,
+              "textAlign": "auto",
+              "textDecorationLine": undefined,
+            }
+          }
+        >
+          form-name-2
+        </Text>
+      </View>
+    </View>
+    <View
+      dataSet={Object {}}
+      style={
+        Object {
+          "flexDirection": "row",
+        }
+      }
+    >
+      <View
+        _text={
+          Object {
+            "color": "lightText",
+          }
+        }
+        accessibilityRole="button"
+        accessible={true}
+        collapsable={false}
+        colorScheme="primary"
+        dataSet={Object {}}
+        focusable={true}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onHoverIn={[Function]}
+        onHoverOut={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "backgroundColor": "#FF7602",
+            "borderRadius": 3,
+            "flexDirection": "row",
+            "height": 50,
+            "justifyContent": "center",
+            "paddingBottom": 8,
+            "paddingLeft": 50,
+            "paddingRight": 50,
+            "paddingTop": 8,
+          }
+        }
+      >
+        <View
+          dataSet={Object {}}
+          style={
+            Object {
+              "alignItems": "center",
+              "flexDirection": "row",
+            }
+          }
+        />
+      </View>
+      <View
+        dataSet={Object {}}
+        style={Object {}}
+      />
+      <View
+        _text={
+          Object {
+            "color": "lightText",
+          }
+        }
+        accessibilityRole="button"
+        accessible={true}
+        collapsable={false}
+        colorScheme="primary"
+        dataSet={Object {}}
+        focusable={true}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onHoverIn={[Function]}
+        onHoverOut={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "backgroundColor": "#FF7602",
+            "borderRadius": 3,
+            "flexDirection": "row",
+            "height": 50,
+            "justifyContent": "center",
+            "paddingBottom": 8,
+            "paddingLeft": 50,
+            "paddingRight": 50,
+            "paddingTop": 8,
+          }
+        }
+      >
+        <View
+          dataSet={Object {}}
+          style={
+            Object {
+              "alignItems": "center",
+              "flexDirection": "row",
+            }
+          }
+        />
+      </View>
+    </View>
   </View>
 </RNCSafeAreaProvider>
 `;
