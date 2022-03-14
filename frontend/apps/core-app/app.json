@@ -4,7 +4,7 @@
     "slug": "core",
     "owner": "nrc-no",
     "version": "0.0.1",
-    "scheme": "nrccore",
+    "scheme": "no.nrc.core",
     "orientation": "portrait",
     "icon": "./assets/png/nrc.png",
     "splash": {
