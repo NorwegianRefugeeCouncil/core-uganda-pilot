@@ -24,8 +24,8 @@ export const RecipientRegistrationScreenComponent: React.FC<Props> = ({
   const f = useForm({ defaultValues: buildDefaultFormValues(forms, records) });
 
   React.useEffect(() => {
-    f.reset();
-  }, [JSON.stringify(forms)]);
+    f.reset(buildDefaultFormValues(forms, records));
+  }, [JSON.stringify(forms), JSON.stringify(records)]);
 
   return (
     <FormProvider {...f}>
