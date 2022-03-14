@@ -9603,40 +9603,40 @@ expo-crypto@~10.1.0:
   resolved "https://registry.yarnpkg.com/expo-crypto/-/expo-crypto-10.1.1.tgz#2dccb10c5d41c4e48a29c211a926b4468547ff7a"
   integrity sha512-QSakmCNwSQw7VJKz32eKoBsNCQ9E4qT3wzOzFWzYyJQnJXHak3V6S+YcoQtK/K/oJxXPxK7T4gcOeeAk1VzRdw==
 
-expo-dev-client@~0.8.0:
-  version "0.8.2"
-  resolved "https://registry.yarnpkg.com/expo-dev-client/-/expo-dev-client-0.8.2.tgz#857a6542da713a47c787dedeeb3d492fe3afbe77"
-  integrity sha512-Bjwzr41g715mHMAuEwhwpWIh3PuFWoOQyGQSmjG+UKDBxmUEfukaKgrqyz58q2cSpELR8jlpQwl8oyt48rNiSA==
+expo-dev-client@~0.8.4:
+  version "0.8.4"
+  resolved "https://registry.yarnpkg.com/expo-dev-client/-/expo-dev-client-0.8.4.tgz#c521da0818ee846e24bfc96a901350342eba5ded"
+  integrity sha512-FB5ouz9dMyccnuYbuAi0EcTNdRh+5vPGuOuhYWo5Fq3SBTU8ZdKQmcMidAoHOrYgMzQWiT+S7ypt0AjxPSgHnA==
   dependencies:
     "@expo/config-plugins" "^4.0.14"
-    expo-dev-launcher "0.10.2"
-    expo-dev-menu "0.9.2"
-    expo-dev-menu-interface "0.5.2"
+    expo-dev-launcher "0.10.4"
+    expo-dev-menu "0.9.3"
+    expo-dev-menu-interface "0.5.3"
     expo-manifests "~0.2.2"
     expo-updates-interface "~0.5.0"
 
-expo-dev-launcher@0.10.2:
-  version "0.10.2"
-  resolved "https://registry.yarnpkg.com/expo-dev-launcher/-/expo-dev-launcher-0.10.2.tgz#d248a9bc2c0a52d8d9f98ae6a29db0f04c0344dd"
-  integrity sha512-652FPco1xGwRI37ZoRmpyHkqlmlD78r3eS40rH0rObMBqeCyvJmxiJRHoFMvm5u55CR6GyRwCvtxbSn1fIQAwA==
+expo-dev-launcher@0.10.4:
+  version "0.10.4"
+  resolved "https://registry.yarnpkg.com/expo-dev-launcher/-/expo-dev-launcher-0.10.4.tgz#b4a6f01b3aa10afa142fb6c91b18c6983433d8fd"
+  integrity sha512-ItqkxzzwgeK4+o9hyV3/YAvPxiVIXtcOWPcjpuPxYDtLigF4D4sMSqRb1aBA+7Nmxoc6EuLASZnvge0WPco+cA==
   dependencies:
     "@expo/config-plugins" "^4.0.14"
-    expo-dev-menu "0.9.2"
+    expo-dev-menu "0.9.3"
     resolve-from "^5.0.0"
     semver "^7.3.5"
 
-expo-dev-menu-interface@0.5.2:
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/expo-dev-menu-interface/-/expo-dev-menu-interface-0.5.2.tgz#3a6251cedfaf31331d7e5724bf9d957dd0e30d6c"
-  integrity sha512-YVVaQqm9UcdC1/fE+NGhEEoF8T0OnudYpl95pNTXj8L7f18sJTZK7AmD3UyCD8fKdqvfxU3Y2Na/IUbrug+NMA==
+expo-dev-menu-interface@0.5.3:
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/expo-dev-menu-interface/-/expo-dev-menu-interface-0.5.3.tgz#d1a43ef450d6c727780ed3018376046f0a185980"
+  integrity sha512-i1d7vtKILnq7mo6r5jSQ++UxkpP+VX/IkOAKuWGeB/B32pCTFCD32rplymFS3qPQ+vlmb5zKl5yhYSYZSVobhg==
 
-expo-dev-menu@0.9.2:
-  version "0.9.2"
-  resolved "https://registry.yarnpkg.com/expo-dev-menu/-/expo-dev-menu-0.9.2.tgz#ef4e11d399da68dbf52188db1926f22cf93a47d2"
-  integrity sha512-27aeuE+iXrdFEt10mI9yba5tJvd+Akkz4U0uahAxiNJiygaAL/HRnrnMbzh08xLq8B4iaGIfSxR8bfXRHGK23Q==
+expo-dev-menu@0.9.3:
+  version "0.9.3"
+  resolved "https://registry.yarnpkg.com/expo-dev-menu/-/expo-dev-menu-0.9.3.tgz#d4572d86c28b19f4f807534091122b5077821cba"
+  integrity sha512-ZUCDSO2rAhFOKuCXdwBf09VVkvAqZBhjA36b7YkwfvKxQ4nb6ZbB/JRCdtxLcre5hDJX1ya3YMNPY3R0/WCBbg==
   dependencies:
     "@expo/config-plugins" "^4.0.14"
-    expo-dev-menu-interface "0.5.2"
+    expo-dev-menu-interface "0.5.3"
 
 expo-error-recovery@~3.0.4:
   version "3.0.4"
@@ -9745,10 +9745,10 @@ expo-updates-interface@~0.5.0:
   resolved "https://registry.yarnpkg.com/expo-updates-interface/-/expo-updates-interface-0.5.0.tgz#30b05b9e190b3e2662d7cc26cd84d305d7ab4217"
   integrity sha512-3Yhip5LQ6x1nQ/2Xm/uP3Oeann7YkaBwsdUpxbcMtn2Ayucuu9U7r9ltwzBFxC4RWebfhXGJZ5+gx85y0leGXQ==
 
-expo-updates@~0.11.4:
-  version "0.11.5"
-  resolved "https://registry.yarnpkg.com/expo-updates/-/expo-updates-0.11.5.tgz#a62349a954c97032646182092e6d3df480e3a7e3"
-  integrity sha512-mG6IMlwg+OSnZFZo8U4pk72lDEbTppNjCnCKJdNtTLz0qRoGW8jcSjmNg6Se5uOHe2DAV/LMUR0t/m7hnoaOfQ==
+expo-updates@~0.11.6:
+  version "0.11.6"
+  resolved "https://registry.yarnpkg.com/expo-updates/-/expo-updates-0.11.6.tgz#5541f2f791d51cd51c4a37a3e241c8d167226d2d"
+  integrity sha512-nTzEc/z0/QHwu6gJhYSh5TWDSzNLO9bmtP4aQzStfqT8RRoh1bYRomszxjc7e3CsZT8xrG88XKlZ4iKL6zHLoQ==
   dependencies:
     "@expo/config" "^6.0.6"
     "@expo/config-plugins" "^4.0.2"

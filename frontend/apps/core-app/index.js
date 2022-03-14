@@ -1,3 +1,5 @@
+import 'expo-dev-client';
+
 // Copied from expo-yarn-workspaces as eas build has issues finding __generated__/AppEntry.js
 
 import 'expo/build/Expo.fx';

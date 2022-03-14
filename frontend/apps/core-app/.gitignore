@@ -13,6 +13,7 @@ coverage/
 /__generated__/
 .env
 
+ios/
 android/
 react-native.config.js
 

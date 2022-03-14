@@ -4,13 +4,14 @@
   },
   "build": {
     "development": {
+      "developmentClient": true,
       "distribution": "internal",
       "releaseChannel": "development",
       "env": {
         "REACT_APP_OIDC_ISSUER": "???",
         "REACT_APP_OAUTH_SCOPE": "openid profile offline_access",
         "REACT_APP_OAUTH_CLIENT_ID": "core-native-frontend",
-        "REACT_APP_SERVER_URL": "???"
+        "REACT_APP_SERVER_URL": "https://localhost:8443"
       }
     },
     "staging": {
