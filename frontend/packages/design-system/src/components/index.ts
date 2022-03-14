@@ -1,2 +1,2 @@
-export { Icon } from './Icon';
+export { IconA } from './Icon';
 export { Accordion } from './Accordion';
