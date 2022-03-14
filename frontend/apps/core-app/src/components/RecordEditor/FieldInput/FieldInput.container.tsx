@@ -1,10 +1,5 @@
 import * as React from 'react';
-import {
-  FormDefinition,
-  Record,
-  getFieldKind,
-  FieldKind,
-} from 'core-api-client';
+import { FormDefinition, getFieldKind, FieldKind } from 'core-api-client';
 
 import { TextFieldInput } from './TextFieldInput.component';
 import { MultilineTextFieldInput } from './MultilineTextFieldInput.component';
