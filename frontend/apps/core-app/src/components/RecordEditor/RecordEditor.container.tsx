@@ -5,12 +5,8 @@ import { RecordEditorComponent } from './RecordEditor.component';
 
 type Props = {
   form: FormDefinition;
-  direction?: 'row' | 'column';
 };
 
-export const RecordEditorContainer: React.FC<Props> = ({
-  form,
-  direction = 'column',
-}) => {
-  return <RecordEditorComponent form={form} direction={direction} />;
+export const RecordEditorContainer: React.FC<Props> = ({ form }) => {
+  return <RecordEditorComponent form={form} />;
 };

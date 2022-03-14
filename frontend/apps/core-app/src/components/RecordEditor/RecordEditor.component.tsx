@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { Box, Stack, useBreakpointValue } from 'native-base';
+import { Box, VStack, useBreakpointValue } from 'native-base';
 import { FieldKind, FormDefinition, getFieldKind } from 'core-api-client';
 
 import { FieldInput } from './FieldInput';
 
 type Props = {
   form: FormDefinition;
-  direction: 'row' | 'column';
 };
 
 const useGetFieldWith = () => {
@@ -26,14 +25,11 @@ const useGetFieldWith = () => {
   };
 };
 
-export const RecordEditorComponent: React.FC<Props> = ({
-  form,
-  direction = 'column',
-}) => {
+export const RecordEditorComponent: React.FC<Props> = ({ form }) => {
   const getFieldWidth = useGetFieldWith();
 
   return (
-    <Stack direction={direction} space={4} flexWrap="wrap">
+    <VStack space={4} flexWrap="wrap">
       {form.fields.map((field) => {
         return (
           <Box key={field.id} width={getFieldWidth(field)}>
@@ -41,6 +37,6 @@ export const RecordEditorComponent: React.FC<Props> = ({
           </Box>
         );
       })}
-    </Stack>
+    </VStack>
   );
 };
