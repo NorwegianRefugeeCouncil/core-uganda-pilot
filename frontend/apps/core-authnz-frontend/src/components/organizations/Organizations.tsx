@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { Column, useTable } from 'react-table';
-import { Link } from 'react-router-dom';
+import { Link, useMatch } from 'react-router-dom';
 
 import { Organization } from '../../types/types';
 import { useApiClient } from '../../hooks/hooks';
@@ -8,6 +8,8 @@ import { SectionTitle } from '../sectiontitle/SectionTitle';
 
 export const Organizations: FC = () => {
   const apiClient = useApiClient();
+  const match = useMatch('/organizations/');
+  const basePath = match?.pattern.path || '';
 
   const [data, setData] = useState<Organization[]>([]);
   const columns = useMemo<Column<Organization>[]>(
@@ -16,9 +18,7 @@ export const Organizations: FC = () => {
         Header: 'Name',
         accessor: 'name',
         Cell: (props) => (
-          <Link to={`/organizations/${props.row.original.id}`}>
-            {props.value}
-          </Link>
+          <Link to={`${basePath}${props.row.original.id}`}>{props.value}</Link>
         ),
       },
     ],
@@ -45,7 +45,7 @@ export const Organizations: FC = () => {
           <div className="card card-darkula ">
             <div className="card-body">
               <SectionTitle title="Organizations">
-                <Link className="btn btn-darkula btn-sm" to="/organizations/add">
+                <Link className="btn btn-darkula btn-sm" to={`${basePath}add`}>
                   Add Organization
                 </Link>
               </SectionTitle>
