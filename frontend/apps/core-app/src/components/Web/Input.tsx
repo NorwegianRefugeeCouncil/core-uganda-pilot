@@ -83,17 +83,6 @@ function useResolvedFontFamily(props: {
 
 const StyledWrapper = makeStyledComponent(Box);
 
-const StyledInput = styled.input`
-  font-family: inherit;
-  font-weight: inherit;
-  font-style: inherit;
-  font-size: inherit;
-  color: inherit;
-  background-color: transparent;
-  border: none;
-  outline: none;
-`;
-
 export const Input: React.FC<Props> = ({
   type: t,
   value,
@@ -101,6 +90,17 @@ export const Input: React.FC<Props> = ({
   onChange,
   ...otherProps
 }) => {
+  const StyledInput = styled.input`
+    font-family: inherit;
+    font-weight: inherit;
+    font-style: inherit;
+    font-size: inherit;
+    color: inherit;
+    background-color: transparent;
+    border: none;
+    outline: none;
+  `;
+
   const [isFocused, setIsFocused] = React.useState(false);
 
   const ref = React.useRef(null);
