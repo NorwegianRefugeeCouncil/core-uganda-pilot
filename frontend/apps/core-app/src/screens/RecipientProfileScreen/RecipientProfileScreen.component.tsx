@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { ScrollView, Skeleton, Text } from 'native-base';
 import { Recipient } from 'core-api-client/src/types/client/Recipient';
-import { PopulatedForm } from 'core-api-client';
+import { FormWithRecord } from 'core-api-client';
+import { Accordion } from 'core-design-system';
 
 import { RecordView } from '../../components/RecordView';
-import { Accordion } from '../../components/Accordion';
 
 import * as Styles from './RecipientProfileScreen.styles';
 
 type Props = {
   isLoading: boolean;
-  data: PopulatedForm<Recipient>[];
+  data: FormWithRecord<Recipient>[];
   error?: string;
 };
 
@@ -28,15 +28,11 @@ export const RecipientProfileScreenComponent: React.FC<Props> = ({
             {error}
           </Text>
         )}
-        {data.map((dataItem) => {
-          const { form, record: recipient } = dataItem;
+        {data.map(({ form, record: recipient }) => {
           return (
-            form &&
-            recipient && (
-              <Accordion header={form?.name || ''} key={form.id}>
-                <RecordView form={form} record={recipient} />
-              </Accordion>
-            )
+            <Accordion header={form.name || ''} key={form.id}>
+              <RecordView form={form} record={recipient} />
+            </Accordion>
           );
         })}
       </Styles.Container>

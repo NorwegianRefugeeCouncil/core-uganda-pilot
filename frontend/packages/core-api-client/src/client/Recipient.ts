@@ -1,14 +1,13 @@
 import {
   FieldDefinition,
   FieldValue,
-  PopulatedForm,
+  FormWithRecord,
   RecordLookup,
 } from '../types';
 import {
   Recipient,
   RecipientDefinition,
   RecipientList,
-  RecipientResponse,
 } from '../types/client/Recipient';
 
 import { RecordClient } from './Record';
@@ -35,26 +34,22 @@ export class RecipientClient {
     return Promise.resolve({ items: [] });
   };
 
-  get = (args: RecordLookup): Promise<RecipientResponse> => {
-    return this.recordClient.get(args);
-  };
-
-  getAncestors = async ({
+  get = async ({
     recordId,
     formId,
     databaseId,
-  }: RecordLookup): Promise<PopulatedForm<Recipient>[]> => {
+  }: RecordLookup): Promise<FormWithRecord<Recipient>[]> => {
     const formResponse = await this.formClient.get({ id: formId });
 
     if (!formResponse.response) {
       throw new Error(formResponse.error);
     }
 
-    const reference = formResponse.response.fields.find(
-      (field: FieldDefinition) => field.fieldType.reference,
+    const key = formResponse.response.fields.find(
+      (field: FieldDefinition) => field.key,
     );
 
-    const recipientGetResponse = await this.get({
+    const recipientGetResponse = await this.recordClient.get({
       recordId,
       formId,
       databaseId,
@@ -64,19 +59,19 @@ export class RecipientClient {
       throw new Error(recipientGetResponse.error);
     }
 
-    if (reference && reference.fieldType.reference) {
+    if (key && key.fieldType.reference) {
       const parentRecord = recipientGetResponse.response.values.find(
-        (v: FieldValue) => v.fieldId === reference.id,
+        (v: FieldValue) => v.fieldId === key.id,
       );
       const parentRecordId = parentRecord?.value;
 
-      if (!parentRecordId || !reference.fieldType.reference) {
+      if (!parentRecordId || !key.fieldType.reference) {
         throw new Error('broken reference');
       }
-      const result = await this.getAncestors({
+      const result = await this.get({
         recordId: parentRecordId as string,
-        formId: reference.fieldType.reference.formId,
-        databaseId: reference.fieldType.reference.databaseId,
+        formId: key.fieldType.reference.formId,
+        databaseId: key.fieldType.reference.databaseId,
       });
       return [
         ...result,

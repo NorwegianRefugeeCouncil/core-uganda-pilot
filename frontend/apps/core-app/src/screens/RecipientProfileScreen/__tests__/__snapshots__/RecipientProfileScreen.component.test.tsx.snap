@@ -71,9 +71,6 @@ exports[`should match the snapshot 1`] = `
             style={
               Object {
                 "backgroundColor": "#24303E",
-                "display": "flex",
-                "flexDirection": "row",
-                "justifyContent": "space-between",
                 "paddingBottom": 8,
                 "paddingLeft": 8,
                 "paddingRight": 8,
@@ -100,26 +97,6 @@ exports[`should match the snapshot 1`] = `
               }
             >
               name
-            </Text>
-            <Text
-              dataSet={Object {}}
-              level="1"
-              style={
-                Object {
-                  "backgroundColor": undefined,
-                  "color": "#FFFFFF",
-                  "fontFamily": "Roboto_400Regular",
-                  "fontSize": 18,
-                  "fontStyle": undefined,
-                  "fontWeight": undefined,
-                  "letterSpacing": 0,
-                  "lineHeight": 26,
-                  "textAlign": "auto",
-                  "textDecorationLine": undefined,
-                }
-              }
-            >
-              closed
             </Text>
           </View>
         </View>
@@ -168,18 +145,17 @@ exports[`should match the snapshot while loading 1`] = `
         <View
           dataSet={Object {}}
           fadeDuration={0.1}
-          isLoaded={false}
           speed={1}
           style={
             Object {
               "backgroundColor": "transparent",
-              "borderRadius": 3,
               "height": 80,
               "overflow": "hidden",
               "paddingBottom": 16,
               "paddingLeft": 16,
               "paddingRight": 16,
               "paddingTop": 16,
+              "width": "100%",
             }
           }
         >
@@ -229,9 +205,6 @@ exports[`should match the snapshot while loading 1`] = `
             style={
               Object {
                 "backgroundColor": "#24303E",
-                "display": "flex",
-                "flexDirection": "row",
-                "justifyContent": "space-between",
                 "paddingBottom": 8,
                 "paddingLeft": 8,
                 "paddingRight": 8,
@@ -258,26 +231,6 @@ exports[`should match the snapshot while loading 1`] = `
               }
             >
               name
-            </Text>
-            <Text
-              dataSet={Object {}}
-              level="1"
-              style={
-                Object {
-                  "backgroundColor": undefined,
-                  "color": "#FFFFFF",
-                  "fontFamily": "Roboto_400Regular",
-                  "fontSize": 18,
-                  "fontStyle": undefined,
-                  "fontWeight": undefined,
-                  "letterSpacing": 0,
-                  "lineHeight": 26,
-                  "textAlign": "auto",
-                  "textDecorationLine": undefined,
-                }
-              }
-            >
-              closed
             </Text>
           </View>
         </View>
@@ -378,9 +331,6 @@ exports[`should match the snapshot with error 1`] = `
             style={
               Object {
                 "backgroundColor": "#24303E",
-                "display": "flex",
-                "flexDirection": "row",
-                "justifyContent": "space-between",
                 "paddingBottom": 8,
                 "paddingLeft": 8,
                 "paddingRight": 8,
@@ -407,26 +357,6 @@ exports[`should match the snapshot with error 1`] = `
               }
             >
               name
-            </Text>
-            <Text
-              dataSet={Object {}}
-              level="1"
-              style={
-                Object {
-                  "backgroundColor": undefined,
-                  "color": "#FFFFFF",
-                  "fontFamily": "Roboto_400Regular",
-                  "fontSize": 18,
-                  "fontStyle": undefined,
-                  "fontWeight": undefined,
-                  "letterSpacing": 0,
-                  "lineHeight": 26,
-                  "textAlign": "auto",
-                  "textDecorationLine": undefined,
-                }
-              }
-            >
-              closed
             </Text>
           </View>
         </View>

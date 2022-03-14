@@ -1,7 +1,25 @@
-import { FormType } from 'core-api-client';
+import { FormDefinition, FormType, Record } from 'core-api-client';
 
 import { render } from '../../../testUtils/render';
 import { RecipientProfileScreenComponent } from '../RecipientProfileScreen.component';
+
+jest.mock('../../../components/RecordView', () => {
+  const { View, Text } = jest.requireActual('react-native');
+  return {
+    RecordView: ({
+      form,
+      record,
+    }: {
+      form: FormDefinition;
+      record: Record;
+    }) => (
+      <View>
+        <Text>{JSON.stringify(form)}</Text>
+        <Text>{JSON.stringify(record)}</Text>
+      </View>
+    ),
+  };
+});
 
 const data = [
   {

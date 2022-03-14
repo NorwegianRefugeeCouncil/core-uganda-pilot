@@ -42,14 +42,12 @@ export class FormClient {
       throw new Error(formResponse.error);
     }
 
-    const reference = formResponse.response.fields.find(
-      (field: FieldDefinition) => field.fieldType.reference,
+    const key = formResponse.response.fields.find(
+      (field: FieldDefinition) => field.key,
     );
 
-    if (reference && reference.fieldType.reference) {
-      const result = await this.getAncestors(
-        reference.fieldType.reference?.formId,
-      );
+    if (key && key.fieldType.reference) {
+      const result = await this.getAncestors(key.fieldType.reference?.formId);
       return [...result, formResponse.response];
     }
     return [formResponse.response];
