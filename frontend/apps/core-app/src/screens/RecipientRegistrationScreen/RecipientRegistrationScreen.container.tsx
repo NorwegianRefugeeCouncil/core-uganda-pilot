@@ -278,6 +278,13 @@ export const RecipientRegistrationScreenContainer: React.FC = () => {
     console.log(data);
   };
 
+  if (
+    forms.length === 0 ||
+    records.length === 0 ||
+    forms.length !== records.length
+  )
+    return null;
+
   if (mode === 'register') {
     return (
       <RecipientRegistrationScreenComponent
