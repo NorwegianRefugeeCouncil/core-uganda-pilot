@@ -51,6 +51,7 @@ it('should set the correct field defaults', () => {
       makeField({ singleSelect: { options: [] } }, 9),
       makeField({ multiSelect: { options: [] } }, 10),
       makeField({ checkbox: {} }, 11),
+      makeField({ quantity: {} }, 12),
     ],
   });
 
@@ -66,5 +67,6 @@ it('should set the correct field defaults', () => {
     { fieldId: 'field-id-9', value: null },
     { fieldId: 'field-id-10', value: [] },
     { fieldId: 'field-id-11', value: 'false' },
+    { fieldId: 'field-id-12', value: '' },
   ]);
 });
