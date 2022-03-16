@@ -14,9 +14,6 @@ export const RecipientProfileScreenContainer: React.FC = () => {
   const route = useRoute<RouteProp<RootParamList, 'RecipientProfile'>>();
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [data, setData] = React.useState<FormWithRecord<Recipient>[]>([]);
-  const [prettifiedData, setPrettifiedData] = React.useState<
-    FormWithRecord<Recipient>[]
-  >([]);
   const [error, setError] = React.useState<string>();
 
   React.useEffect(() => {
@@ -27,7 +24,7 @@ export const RecipientProfileScreenContainer: React.FC = () => {
           formId: config.recipient.registrationForm.formId,
           databaseId: config.recipient.registrationForm.databaseId,
         });
-        setData(recipientData);
+        setData(prettifyData(recipientData));
       } catch (err) {
         setError(JSON.stringify(err));
       }
@@ -39,15 +36,9 @@ export const RecipientProfileScreenContainer: React.FC = () => {
     route.params.id,
   ]);
 
-  React.useEffect(() => {
-    if (data.length) {
-      setPrettifiedData(prettifyData(data));
-    }
-  }, [data]);
-
   return (
     <RecipientProfileScreenComponent
-      data={prettifiedData}
+      data={data}
       isLoading={isLoading}
       error={error}
     />

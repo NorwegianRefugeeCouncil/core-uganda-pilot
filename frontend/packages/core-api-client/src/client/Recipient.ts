@@ -45,8 +45,8 @@ export class RecipientClient {
       throw new Error(formResponse.error);
     }
 
-    const key = formResponse.response.fields.find(
-      (field: FieldDefinition) => field.key,
+    const referenceKey = formResponse.response.fields.find(
+      (field: FieldDefinition) => field.key && field.fieldType.reference,
     );
 
     const recipientGetResponse = await this.recordClient.get({
@@ -59,19 +59,19 @@ export class RecipientClient {
       throw new Error(recipientGetResponse.error);
     }
 
-    if (key && key.fieldType.reference) {
+    if (referenceKey) {
       const parentRecord = recipientGetResponse.response.values.find(
-        (v: FieldValue) => v.fieldId === key.id,
+        (v: FieldValue) => v.fieldId === referenceKey.id,
       );
       const parentRecordId = parentRecord?.value;
 
-      if (!parentRecordId || !key.fieldType.reference) {
+      if (!parentRecordId || !referenceKey.fieldType.reference) {
         throw new Error('broken reference');
       }
       const result = await this.get({
         recordId: parentRecordId as string,
-        formId: key.fieldType.reference.formId,
-        databaseId: key.fieldType.reference.databaseId,
+        formId: referenceKey.fieldType.reference.formId,
+        databaseId: referenceKey.fieldType.reference.databaseId,
       });
       return [
         ...result,
