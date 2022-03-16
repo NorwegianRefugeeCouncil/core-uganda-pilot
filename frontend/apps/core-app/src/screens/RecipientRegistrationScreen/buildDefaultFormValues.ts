@@ -12,7 +12,10 @@ export const buildDefaultFormValues = (
     const record: Record | undefined = records.find(
       (r) => r.formId === form.id,
     );
-    if (!record) return acc;
+    if (!record)
+      throw new Error(
+        `Cannot find record for form ${form.id} when building default react-hook-form values`,
+      );
     return {
       ...acc,
       [form.id]: record.values.reduce((innerAcc, fieldValue) => {
