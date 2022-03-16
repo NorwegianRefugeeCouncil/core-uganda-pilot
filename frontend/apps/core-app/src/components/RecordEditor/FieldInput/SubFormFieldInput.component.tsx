@@ -97,13 +97,15 @@ export const SubFormFieldInput: React.FC<Props> = ({ form, field }) => {
           ) : (
             <ScrollView>
               <HStack space={2} overflowX="scroll">
-                {field.fieldType.subForm?.fields.map((f) => (
-                  <VStack key={f.id} space={2}>
+                {field.fieldType.subForm?.fields.map((subField) => (
+                  <VStack key={subField.id} space={2}>
                     <Text variant="heading" level={5}>
-                      {f.name}
+                      {subField.name}
                     </Text>
                     {value.map((v, i) => (
-                      <Text key={`value-${f.id}-${i}`}>{v[f.id]}</Text>
+                      <Text key={`value-${subField.id}-${i}`}>
+                        {v[subField.id]}
+                      </Text>
                     ))}
                   </VStack>
                 ))}
