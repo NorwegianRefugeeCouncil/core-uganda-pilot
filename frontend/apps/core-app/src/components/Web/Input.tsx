@@ -15,13 +15,15 @@ import {
 } from 'native-base';
 import { useHover } from '@react-native-aria/interactions';
 import styled from 'styled-components';
+import { Platform } from 'react-native';
 
 type Props = {
   type: string;
   value: string;
-  invalid: boolean;
+  invalid?: boolean;
+  disabled?: boolean;
   onChange: (value: string) => void;
-};
+} & React.HTMLProps<HTMLInputElement>;
 
 // native-base doesn't export this function
 const makeStyledComponent = (Comp: any) => {
@@ -83,24 +85,28 @@ function useResolvedFontFamily(props: {
 
 const StyledWrapper = makeStyledComponent(Box);
 
+const StyledInput =
+  Platform.OS === 'web'
+    ? styled.input`
+        font-family: inherit;
+        font-weight: inherit;
+        font-style: inherit;
+        font-size: inherit;
+        color: inherit;
+        background-color: transparent;
+        border: none;
+        outline: none;
+      `
+    : null;
+
 export const Input: React.FC<Props> = ({
   type: t,
   value,
   invalid,
+  disabled,
   onChange,
   ...otherProps
 }) => {
-  const StyledInput = styled.input`
-    font-family: inherit;
-    font-weight: inherit;
-    font-style: inherit;
-    font-size: inherit;
-    color: inherit;
-    background-color: transparent;
-    border: none;
-    outline: none;
-  `;
-
   const [isFocused, setIsFocused] = React.useState(false);
 
   const ref = React.useRef(null);
@@ -148,12 +154,13 @@ export const Input: React.FC<Props> = ({
     onChange(event.target.value);
   };
 
+  if (!StyledInput) return null;
+
   return (
     <StyledWrapper
       type={type}
       value={value}
       onChange={onChange}
-      // {...inputProps}
       secureTextEntry={type === 'password'}
       accessible
       accessibilityLabel={ariaLabel || accessibilityLabel}
@@ -169,7 +176,8 @@ export const Input: React.FC<Props> = ({
     >
       <StyledInput
         type={t}
-        value={value}
+        value={value || ''}
+        disabled={disabled}
         onChange={handleOnChange}
         {...otherProps}
       />
