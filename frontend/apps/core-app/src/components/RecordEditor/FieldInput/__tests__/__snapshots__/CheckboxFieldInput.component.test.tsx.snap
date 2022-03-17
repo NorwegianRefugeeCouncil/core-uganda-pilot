@@ -1,0 +1,900 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should match the snapshot checked by default 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    Array [
+      Object {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    dataSet={Object {}}
+    isInvalid={false}
+    style={
+      Object {
+        "width": "100%",
+      }
+    }
+  >
+    <View
+      accessibilityRole="checkbox"
+      accessibilityState={
+        Object {
+          "checked": true,
+          "disabled": false,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      dataSet={Object {}}
+      focusable={true}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onHoverIn={[Function]}
+      onHoverOut={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={Object {}}
+    >
+      <View
+        dataSet={Object {}}
+        style={
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "flex-start",
+          }
+        }
+      >
+        <View
+          dataSet={Object {}}
+          style={
+            Object {
+              "alignItems": "center",
+              "display": "flex",
+              "justifyContent": "center",
+            }
+          }
+        >
+          <View
+            dataSet={Object {}}
+            style={
+              Object {
+                "backgroundColor": "transparent",
+                "borderRadius": 9999,
+                "height": "100%",
+                "maxHeight": "100%",
+                "paddingBottom": 20,
+                "paddingLeft": 20,
+                "paddingRight": 20,
+                "paddingTop": 20,
+                "position": "absolute",
+                "width": "100%",
+                "zIndex": -1,
+              }
+            }
+          />
+          <View
+            checked={true}
+            colorScheme="primary"
+            dataSet={Object {}}
+            defaultIsChecked={false}
+            disabled={false}
+            feedbackId="field-react-aria-1-feedback"
+            hasFeedbackText={false}
+            hasHelpText={false}
+            helpTextId="field-react-aria-1-helptext"
+            isChecked={true}
+            isDisabled={false}
+            isRequired={false}
+            labelId="field-react-aria-1-label"
+            nativeID="field-react-aria-1"
+            onChange={[Function]}
+            required={false}
+            setHasFeedbackText={[Function]}
+            setHasHelpText={[Function]}
+            style={
+              Object {
+                "alignItems": "center",
+                "backgroundColor": "#FF7602",
+                "borderColor": "#FF7602",
+                "borderRadius": 3,
+                "borderStyle": "solid",
+                "borderWidth": 1,
+                "color": "#000000",
+                "display": "flex",
+                "justifyContent": "center",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+              }
+            }
+            testID="checkbox-field-input"
+            value="field-id"
+          >
+            <RNSVGSvgView
+              _text={
+                Object {
+                  "color": "lightText",
+                }
+              }
+              accessibilityRole="image"
+              align="xMidYMid"
+              bbHeight={16}
+              bbWidth={16}
+              color={4294967295}
+              dataSet={Object {}}
+              fill="currentColor"
+              focusable={false}
+              meetOrSlice={0}
+              minX={-2}
+              minY={-2}
+              name="check"
+              stroke=""
+              style={
+                Array [
+                  Object {
+                    "backgroundColor": "transparent",
+                    "borderWidth": 0,
+                  },
+                  Object {
+                    "backgroundColor": "#FF7602",
+                    "color": "#FFFFFF",
+                    "height": 16,
+                    "width": 16,
+                  },
+                  Object {
+                    "flex": 0,
+                    "height": 16,
+                    "width": 16,
+                  },
+                ]
+              }
+              tintColor={4294967295}
+              vbHeight={18}
+              vbWidth={18}
+            >
+              <RNSVGGroup
+                fill={
+                  Array [
+                    2,
+                  ]
+                }
+                propList={
+                  Array [
+                    "fill",
+                    "stroke",
+                  ]
+                }
+                stroke={null}
+              >
+                <RNSVGGroup>
+                  <RNSVGGroup
+                    fill={
+                      Array [
+                        2,
+                      ]
+                    }
+                    propList={
+                      Array [
+                        "fill",
+                        "stroke",
+                      ]
+                    }
+                    stroke={null}
+                  >
+                    <RNSVGPath
+                      d="M5.5 11.9993304 14 3.49933039 12.5 2 5.5 8.99933039 1.5 4.9968652 0 6.49933039z"
+                    />
+                  </RNSVGGroup>
+                </RNSVGGroup>
+              </RNSVGGroup>
+            </RNSVGSvgView>
+          </View>
+        </View>
+        <Text
+          dataSet={Object {}}
+          level="1"
+          style={
+            Object {
+              "backgroundColor": undefined,
+              "color": "#000000",
+              "fontFamily": "Roboto_400Regular",
+              "fontSize": 16,
+              "fontStyle": undefined,
+              "fontWeight": undefined,
+              "letterSpacing": 0,
+              "lineHeight": 23,
+              "marginLeft": 10,
+              "textAlign": "auto",
+              "textDecorationLine": undefined,
+            }
+          }
+        >
+          Field name
+        </Text>
+      </View>
+    </View>
+    <View
+      dataSet={Object {}}
+      feedbackId="field-react-aria-1-feedback"
+      hasFeedbackText={true}
+      hasHelpText={true}
+      helpTextId="field-react-aria-1-helptext"
+      isDisabled={false}
+      isInvalid={false}
+      isReadOnly={false}
+      isRequired={false}
+      labelId="field-react-aria-1-label"
+      nativeID="field-react-aria-1-feedback"
+      setHasFeedbackText={[Function]}
+      setHasHelpText={[Function]}
+      style={
+        Object {
+          "marginTop": 2,
+        }
+      }
+    >
+      <Text
+        dataSet={Object {}}
+        level="1"
+        style={
+          Object {
+            "backgroundColor": undefined,
+            "color": "#666666",
+            "fontFamily": "Roboto_400Regular",
+            "fontSize": 14,
+            "fontStyle": undefined,
+            "fontWeight": undefined,
+            "letterSpacing": 0,
+            "lineHeight": 20,
+            "textAlign": "auto",
+            "textDecorationLine": undefined,
+          }
+        }
+      >
+        Field description
+      </Text>
+    </View>
+  </View>
+  <View
+    _text={
+      Object {
+        "color": "lightText",
+      }
+    }
+    accessibilityRole="button"
+    accessible={true}
+    collapsable={false}
+    colorScheme="primary"
+    dataSet={Object {}}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onHoverIn={[Function]}
+    onHoverOut={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      Object {
+        "alignItems": "center",
+        "backgroundColor": "#FF7602",
+        "borderRadius": 3,
+        "flexDirection": "row",
+        "height": 50,
+        "justifyContent": "center",
+        "paddingBottom": 8,
+        "paddingLeft": 50,
+        "paddingRight": 50,
+        "paddingTop": 8,
+      }
+    }
+    testID="with-form-context-submit-button"
+  >
+    <View
+      dataSet={Object {}}
+      style={
+        Object {
+          "alignItems": "center",
+          "flexDirection": "row",
+        }
+      }
+    >
+      <View
+        dataSet={Object {}}
+        style={Object {}}
+      >
+        <Text
+          dataSet={Object {}}
+          level="1"
+          style={
+            Object {
+              "backgroundColor": undefined,
+              "color": "#FFFFFF",
+              "fontFamily": "Roboto_500Medium",
+              "fontSize": 20,
+              "fontStyle": undefined,
+              "fontWeight": undefined,
+              "letterSpacing": 0,
+              "lineHeight": 24,
+              "textAlign": "auto",
+              "textDecorationLine": undefined,
+            }
+          }
+        >
+          Submit
+        </Text>
+      </View>
+    </View>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`should match the snapshot invalid value 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    Array [
+      Object {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    dataSet={Object {}}
+    isInvalid={false}
+    style={
+      Object {
+        "width": "100%",
+      }
+    }
+  >
+    <View
+      accessibilityRole="checkbox"
+      accessibilityState={
+        Object {
+          "checked": false,
+          "disabled": false,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      dataSet={Object {}}
+      focusable={true}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onHoverIn={[Function]}
+      onHoverOut={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={Object {}}
+    >
+      <View
+        dataSet={Object {}}
+        style={
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "flex-start",
+          }
+        }
+      >
+        <View
+          dataSet={Object {}}
+          style={
+            Object {
+              "alignItems": "center",
+              "display": "flex",
+              "justifyContent": "center",
+            }
+          }
+        >
+          <View
+            dataSet={Object {}}
+            style={
+              Object {
+                "backgroundColor": "transparent",
+                "borderRadius": 9999,
+                "height": "100%",
+                "maxHeight": "100%",
+                "paddingBottom": 20,
+                "paddingLeft": 20,
+                "paddingRight": 20,
+                "paddingTop": 20,
+                "position": "absolute",
+                "width": "100%",
+                "zIndex": -1,
+              }
+            }
+          />
+          <View
+            checked={false}
+            colorScheme="primary"
+            dataSet={Object {}}
+            defaultIsChecked={false}
+            disabled={false}
+            feedbackId="field-react-aria-1-feedback"
+            hasFeedbackText={false}
+            hasHelpText={false}
+            helpTextId="field-react-aria-1-helptext"
+            isChecked={false}
+            isDisabled={false}
+            isRequired={false}
+            labelId="field-react-aria-1-label"
+            nativeID="field-react-aria-1"
+            onChange={[Function]}
+            required={false}
+            setHasFeedbackText={[Function]}
+            setHasHelpText={[Function]}
+            style={
+              Object {
+                "alignItems": "center",
+                "backgroundColor": "#FFFFFF",
+                "borderColor": "#666666",
+                "borderRadius": 3,
+                "borderStyle": "solid",
+                "borderWidth": 1,
+                "color": "#000000",
+                "display": "flex",
+                "justifyContent": "center",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+              }
+            }
+            testID="checkbox-field-input"
+            value="field-id"
+          >
+            <View
+              dataSet={Object {}}
+              style={
+                Object {
+                  "color": "#fafafa",
+                  "height": 16,
+                  "width": 16,
+                }
+              }
+            />
+          </View>
+        </View>
+        <Text
+          dataSet={Object {}}
+          level="1"
+          style={
+            Object {
+              "backgroundColor": undefined,
+              "color": "#000000",
+              "fontFamily": "Roboto_400Regular",
+              "fontSize": 16,
+              "fontStyle": undefined,
+              "fontWeight": undefined,
+              "letterSpacing": 0,
+              "lineHeight": 23,
+              "marginLeft": 10,
+              "textAlign": "auto",
+              "textDecorationLine": undefined,
+            }
+          }
+        >
+          Field name
+        </Text>
+      </View>
+    </View>
+    <View
+      dataSet={Object {}}
+      feedbackId="field-react-aria-1-feedback"
+      hasFeedbackText={true}
+      hasHelpText={true}
+      helpTextId="field-react-aria-1-helptext"
+      isDisabled={false}
+      isInvalid={false}
+      isReadOnly={false}
+      isRequired={false}
+      labelId="field-react-aria-1-label"
+      nativeID="field-react-aria-1-feedback"
+      setHasFeedbackText={[Function]}
+      setHasHelpText={[Function]}
+      style={
+        Object {
+          "marginTop": 2,
+        }
+      }
+    >
+      <Text
+        dataSet={Object {}}
+        level="1"
+        style={
+          Object {
+            "backgroundColor": undefined,
+            "color": "#666666",
+            "fontFamily": "Roboto_400Regular",
+            "fontSize": 14,
+            "fontStyle": undefined,
+            "fontWeight": undefined,
+            "letterSpacing": 0,
+            "lineHeight": 20,
+            "textAlign": "auto",
+            "textDecorationLine": undefined,
+          }
+        }
+      >
+        Field description
+      </Text>
+    </View>
+  </View>
+  <View
+    _text={
+      Object {
+        "color": "lightText",
+      }
+    }
+    accessibilityRole="button"
+    accessible={true}
+    collapsable={false}
+    colorScheme="primary"
+    dataSet={Object {}}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onHoverIn={[Function]}
+    onHoverOut={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      Object {
+        "alignItems": "center",
+        "backgroundColor": "#FF7602",
+        "borderRadius": 3,
+        "flexDirection": "row",
+        "height": 50,
+        "justifyContent": "center",
+        "paddingBottom": 8,
+        "paddingLeft": 50,
+        "paddingRight": 50,
+        "paddingTop": 8,
+      }
+    }
+    testID="with-form-context-submit-button"
+  >
+    <View
+      dataSet={Object {}}
+      style={
+        Object {
+          "alignItems": "center",
+          "flexDirection": "row",
+        }
+      }
+    >
+      <View
+        dataSet={Object {}}
+        style={Object {}}
+      >
+        <Text
+          dataSet={Object {}}
+          level="1"
+          style={
+            Object {
+              "backgroundColor": undefined,
+              "color": "#FFFFFF",
+              "fontFamily": "Roboto_500Medium",
+              "fontSize": 20,
+              "fontStyle": undefined,
+              "fontWeight": undefined,
+              "letterSpacing": 0,
+              "lineHeight": 24,
+              "textAlign": "auto",
+              "textDecorationLine": undefined,
+            }
+          }
+        >
+          Submit
+        </Text>
+      </View>
+    </View>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`should match the snapshot unchecked by default 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    Array [
+      Object {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    dataSet={Object {}}
+    isInvalid={false}
+    style={
+      Object {
+        "width": "100%",
+      }
+    }
+  >
+    <View
+      accessibilityRole="checkbox"
+      accessibilityState={
+        Object {
+          "checked": false,
+          "disabled": false,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      dataSet={Object {}}
+      focusable={true}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onHoverIn={[Function]}
+      onHoverOut={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={Object {}}
+    >
+      <View
+        dataSet={Object {}}
+        style={
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "flex-start",
+          }
+        }
+      >
+        <View
+          dataSet={Object {}}
+          style={
+            Object {
+              "alignItems": "center",
+              "display": "flex",
+              "justifyContent": "center",
+            }
+          }
+        >
+          <View
+            dataSet={Object {}}
+            style={
+              Object {
+                "backgroundColor": "transparent",
+                "borderRadius": 9999,
+                "height": "100%",
+                "maxHeight": "100%",
+                "paddingBottom": 20,
+                "paddingLeft": 20,
+                "paddingRight": 20,
+                "paddingTop": 20,
+                "position": "absolute",
+                "width": "100%",
+                "zIndex": -1,
+              }
+            }
+          />
+          <View
+            checked={false}
+            colorScheme="primary"
+            dataSet={Object {}}
+            defaultIsChecked={false}
+            disabled={false}
+            feedbackId="field-react-aria-1-feedback"
+            hasFeedbackText={false}
+            hasHelpText={false}
+            helpTextId="field-react-aria-1-helptext"
+            isChecked={false}
+            isDisabled={false}
+            isRequired={false}
+            labelId="field-react-aria-1-label"
+            nativeID="field-react-aria-1"
+            onChange={[Function]}
+            required={false}
+            setHasFeedbackText={[Function]}
+            setHasHelpText={[Function]}
+            style={
+              Object {
+                "alignItems": "center",
+                "backgroundColor": "#FFFFFF",
+                "borderColor": "#666666",
+                "borderRadius": 3,
+                "borderStyle": "solid",
+                "borderWidth": 1,
+                "color": "#000000",
+                "display": "flex",
+                "justifyContent": "center",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+              }
+            }
+            testID="checkbox-field-input"
+            value="field-id"
+          >
+            <View
+              dataSet={Object {}}
+              style={
+                Object {
+                  "color": "#fafafa",
+                  "height": 16,
+                  "width": 16,
+                }
+              }
+            />
+          </View>
+        </View>
+        <Text
+          dataSet={Object {}}
+          level="1"
+          style={
+            Object {
+              "backgroundColor": undefined,
+              "color": "#000000",
+              "fontFamily": "Roboto_400Regular",
+              "fontSize": 16,
+              "fontStyle": undefined,
+              "fontWeight": undefined,
+              "letterSpacing": 0,
+              "lineHeight": 23,
+              "marginLeft": 10,
+              "textAlign": "auto",
+              "textDecorationLine": undefined,
+            }
+          }
+        >
+          Field name
+        </Text>
+      </View>
+    </View>
+    <View
+      dataSet={Object {}}
+      feedbackId="field-react-aria-1-feedback"
+      hasFeedbackText={true}
+      hasHelpText={true}
+      helpTextId="field-react-aria-1-helptext"
+      isDisabled={false}
+      isInvalid={false}
+      isReadOnly={false}
+      isRequired={false}
+      labelId="field-react-aria-1-label"
+      nativeID="field-react-aria-1-feedback"
+      setHasFeedbackText={[Function]}
+      setHasHelpText={[Function]}
+      style={
+        Object {
+          "marginTop": 2,
+        }
+      }
+    >
+      <Text
+        dataSet={Object {}}
+        level="1"
+        style={
+          Object {
+            "backgroundColor": undefined,
+            "color": "#666666",
+            "fontFamily": "Roboto_400Regular",
+            "fontSize": 14,
+            "fontStyle": undefined,
+            "fontWeight": undefined,
+            "letterSpacing": 0,
+            "lineHeight": 20,
+            "textAlign": "auto",
+            "textDecorationLine": undefined,
+          }
+        }
+      >
+        Field description
+      </Text>
+    </View>
+  </View>
+  <View
+    _text={
+      Object {
+        "color": "lightText",
+      }
+    }
+    accessibilityRole="button"
+    accessible={true}
+    collapsable={false}
+    colorScheme="primary"
+    dataSet={Object {}}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onHoverIn={[Function]}
+    onHoverOut={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      Object {
+        "alignItems": "center",
+        "backgroundColor": "#FF7602",
+        "borderRadius": 3,
+        "flexDirection": "row",
+        "height": 50,
+        "justifyContent": "center",
+        "paddingBottom": 8,
+        "paddingLeft": 50,
+        "paddingRight": 50,
+        "paddingTop": 8,
+      }
+    }
+    testID="with-form-context-submit-button"
+  >
+    <View
+      dataSet={Object {}}
+      style={
+        Object {
+          "alignItems": "center",
+          "flexDirection": "row",
+        }
+      }
+    >
+      <View
+        dataSet={Object {}}
+        style={Object {}}
+      >
+        <Text
+          dataSet={Object {}}
+          level="1"
+          style={
+            Object {
+              "backgroundColor": undefined,
+              "color": "#FFFFFF",
+              "fontFamily": "Roboto_500Medium",
+              "fontSize": 20,
+              "fontStyle": undefined,
+              "fontWeight": undefined,
+              "letterSpacing": 0,
+              "lineHeight": 24,
+              "textAlign": "auto",
+              "textDecorationLine": undefined,
+            }
+          }
+        >
+          Submit
+        </Text>
+      </View>
+    </View>
+  </View>
+</RNCSafeAreaProvider>
+`;

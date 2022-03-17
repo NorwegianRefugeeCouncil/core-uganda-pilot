@@ -23,9 +23,19 @@ export const SingleSelectFieldInput: React.FC<Props> = ({ formId, field }) => {
   return (
     <FormControl isRequired={field.required} isInvalid={invalid}>
       <FormControl.Label>{field.name}</FormControl.Label>
-      <Select mt="1" onValueChange={onChange} selectedValue={value}>
-        {field.fieldType.singleSelect?.options.map((option) => (
-          <Select.Item key={option.id} label={option.name} value={option.id} />
+      <Select
+        testID="single-select-field-input"
+        mt="1"
+        onValueChange={onChange}
+        selectedValue={value}
+      >
+        {field.fieldType.singleSelect?.options.map((option, i) => (
+          <Select.Item
+            key={option.id}
+            testID={`single-select-field-input-option-${i}`}
+            label={option.name}
+            value={option.id}
+          />
         ))}
       </Select>
       <FormControl.HelperText>{field.description}</FormControl.HelperText>

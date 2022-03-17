@@ -82,6 +82,7 @@ export const SubFormFieldInput: React.FC<Props> = ({ form, field }) => {
               </FormControl.HelperText>
             </VStack>
             <Button
+              testID="sub-form-field-input-open-modal-button"
               onPress={handleOpenModal}
               colorScheme="secondary"
               variant="minor"
@@ -91,19 +92,22 @@ export const SubFormFieldInput: React.FC<Props> = ({ form, field }) => {
             </Button>
           </HStack>
           {value.length === 0 ? (
-            <Text variant="body" level="1">
+            <Text testID="sub-form-field-input-empty" variant="body" level="1">
               No entries
             </Text>
           ) : (
             <ScrollView>
-              <HStack space={2} overflowX="scroll">
+              <HStack space={2}>
                 {field.fieldType.subForm?.fields.map((subField) => (
                   <VStack key={subField.id} space={2}>
                     <Text variant="heading" level={5}>
                       {subField.name}
                     </Text>
                     {value.map((v, i) => (
-                      <Text key={`value-${subField.id}-${i}`}>
+                      <Text
+                        key={`value-${subField.id}-${i}`}
+                        testID="sub-form-field-input-value"
+                      >
                         {v[subField.id]}
                       </Text>
                     ))}
@@ -118,7 +122,9 @@ export const SubFormFieldInput: React.FC<Props> = ({ form, field }) => {
 
       <Modal isOpen={open} onClose={handleCloseModal}>
         <Modal.Content>
-          <Modal.Header>{field.name}</Modal.Header>
+          <Modal.Header testID="sub-form-field-input-modal-header">
+            {field.name}
+          </Modal.Header>
           <Modal.Body>
             <FormProvider {...f}>
               <RecordEditor form={subForm} />
@@ -127,6 +133,7 @@ export const SubFormFieldInput: React.FC<Props> = ({ form, field }) => {
           <Modal.Footer>
             <HStack space={4}>
               <Button
+                testID="sub-form-field-input-modal-cancel-button"
                 onPress={handleCloseModal}
                 colorScheme="secondary"
                 variant="minor"
@@ -134,6 +141,7 @@ export const SubFormFieldInput: React.FC<Props> = ({ form, field }) => {
                 Cancel
               </Button>
               <Button
+                testID="sub-form-field-input-modal-add-button"
                 onPress={handleAdd}
                 colorScheme="secondary"
                 variant="major"

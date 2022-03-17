@@ -31,6 +31,7 @@ export const QuantityFieldInput: React.FC<Props> = ({ formId, field }) => {
     <FormControl isInvalid={invalid}>
       <FormControl.Label>{field.name}</FormControl.Label>
       <Input
+        testID="quantity-field-input"
         ref={ref}
         onBlur={onBlur}
         onChangeText={handleOnChange}

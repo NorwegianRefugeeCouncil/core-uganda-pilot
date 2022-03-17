@@ -26,6 +26,7 @@ export const CheckboxFieldInput: React.FC<Props> = ({ formId, field }) => {
   return (
     <FormControl isInvalid={invalid}>
       <Checkbox
+        testID="checkbox-field-input"
         value={field.id}
         onChange={handleChange}
         isChecked={value === 'true'}

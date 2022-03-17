@@ -24,6 +24,7 @@ export const MultilineTextFieldInput: React.FC<Props> = ({ formId, field }) => {
     <FormControl isInvalid={invalid}>
       <FormControl.Label size="xs">{field.name}</FormControl.Label>
       <TextArea
+        testID="multiline-text-field-input"
         ref={ref}
         onBlur={onBlur}
         onChangeText={onChange}

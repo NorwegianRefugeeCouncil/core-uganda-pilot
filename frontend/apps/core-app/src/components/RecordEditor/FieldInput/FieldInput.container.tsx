@@ -27,13 +27,7 @@ export const FieldInput: React.FC<Props> = ({ form, field }) => {
     case FieldKind.Quantity:
       return <QuantityFieldInput formId={form.id} field={field} />;
     case FieldKind.Reference:
-      return (
-        <ReferenceFieldInput
-          formId={form.id}
-          databaseId={form.databaseId}
-          field={field}
-        />
-      );
+      return <ReferenceFieldInput formId={form.id} field={field} />;
     case FieldKind.Date:
       return <DateFieldInput formId={form.id} field={field} />;
     case FieldKind.Month:

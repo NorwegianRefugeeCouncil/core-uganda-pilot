@@ -1,0 +1,67 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should match the snapshot 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    Array [
+      Object {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    dataSet={Object {}}
+    style={
+      Object {
+        "flexWrap": "wrap",
+      }
+    }
+  >
+    <View
+      dataSet={Object {}}
+      style={
+        Object {
+          "width": "100%",
+        }
+      }
+    >
+      <View>
+        <Text>
+          {"id":"form-1","code":"","name":"form 1","databaseId":"database-id-1","folderId":"folder-id-1","formType":"default","fields":[{"id":"field-1","name":"field 1","description":"description 1","code":"","required":false,"key":false,"fieldType":{"text":{}}},{"id":"field-2","name":"field 2","description":"description 2","code":"","required":true,"key":true,"fieldType":{"multilineText":{}}}]}
+        </Text>
+        <Text>
+          {"id":"field-1","name":"field 1","description":"description 1","code":"","required":false,"key":false,"fieldType":{"text":{}}}
+        </Text>
+      </View>
+    </View>
+    <View
+      dataSet={Object {}}
+      style={
+        Object {
+          "height": 16,
+        }
+      }
+    />
+    <View
+      dataSet={Object {}}
+      style={
+        Object {
+          "width": "100%",
+        }
+      }
+    >
+      <View>
+        <Text>
+          {"id":"form-1","code":"","name":"form 1","databaseId":"database-id-1","folderId":"folder-id-1","formType":"default","fields":[{"id":"field-1","name":"field 1","description":"description 1","code":"","required":false,"key":false,"fieldType":{"text":{}}},{"id":"field-2","name":"field 2","description":"description 2","code":"","required":true,"key":true,"fieldType":{"multilineText":{}}}]}
+        </Text>
+        <Text>
+          {"id":"field-2","name":"field 2","description":"description 2","code":"","required":true,"key":true,"fieldType":{"multilineText":{}}}
+        </Text>
+      </View>
+    </View>
+  </View>
+</RNCSafeAreaProvider>
+`;

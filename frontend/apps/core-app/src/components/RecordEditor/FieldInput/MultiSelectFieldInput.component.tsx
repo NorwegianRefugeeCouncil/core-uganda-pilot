@@ -76,8 +76,12 @@ export const MultiSelectFieldInput: React.FC<Props> = ({ formId, field }) => {
     <>
       <FormControl isInvalid={invalid}>
         <FormControl.Label>{field.name}</FormControl.Label>
-        <Pressable onPress={handleOpenModal}>
+        <Pressable
+          testID="multi-select-field-input-modal-toggle-button"
+          onPress={handleOpenModal}
+        >
           <Input
+            testID="multi-select-field-input-value"
             ref={ref}
             editable={false}
             onBlur={onBlur}
@@ -96,8 +100,12 @@ export const MultiSelectFieldInput: React.FC<Props> = ({ formId, field }) => {
           <Modal.Header>{field.name}</Modal.Header>
           <Modal.Body>
             <Checkbox.Group onChange={setInternalValues}>
-              {field.fieldType.multiSelect?.options.map((option) => (
-                <Checkbox key={option.id} value={option.id}>
+              {field.fieldType.multiSelect?.options.map((option, i) => (
+                <Checkbox
+                  testID={`multi-select-field-input-option-${i}`}
+                  key={option.id}
+                  value={option.id}
+                >
                   {option.name}
                 </Checkbox>
               ))}
@@ -106,6 +114,7 @@ export const MultiSelectFieldInput: React.FC<Props> = ({ formId, field }) => {
           <Modal.Footer>
             <HStack space={4}>
               <Button
+                testID="multi-select-field-input-modal-cancel"
                 onPress={handleCloseModal(true)}
                 colorScheme="secondary"
                 variant="minor"
@@ -113,6 +122,7 @@ export const MultiSelectFieldInput: React.FC<Props> = ({ formId, field }) => {
                 Cancel
               </Button>
               <Button
+                testID="multi-select-field-input-modal-submit"
                 onPress={handleAdd}
                 colorScheme="secondary"
                 variant="major"

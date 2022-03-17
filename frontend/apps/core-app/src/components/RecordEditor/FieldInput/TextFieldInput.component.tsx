@@ -24,6 +24,7 @@ export const TextFieldInput: React.FC<Props> = ({ formId, field }) => {
     <FormControl isInvalid={invalid}>
       <FormControl.Label>{field.name}</FormControl.Label>
       <Input
+        testID="text-field-input"
         ref={ref}
         onBlur={onBlur}
         onChangeText={onChange}

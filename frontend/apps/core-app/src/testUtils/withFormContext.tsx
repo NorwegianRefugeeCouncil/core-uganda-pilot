@@ -12,13 +12,14 @@ export const withFormContext =
   (props: T) => {
     const f = useForm({ defaultValues });
 
+    const handleSubmit = f.handleSubmit((data: any) => {
+      onSubmit(data);
+    });
+
     return (
       <FormProvider {...f}>
         <Component {...props} />
-        <Button
-          testID="with-form-context-submit-button"
-          onPress={f.handleSubmit(onSubmit)}
-        >
+        <Button testID="with-form-context-submit-button" onPress={handleSubmit}>
           Submit
         </Button>
       </FormProvider>
