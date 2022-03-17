@@ -11,6 +11,12 @@ type Props = {
   handleItemClick: (id: string) => void;
 };
 
+const IDS = [
+  '8090092f-c983-4ff4-8599-214429218eb0',
+  '30e683fa-2dd7-479f-98a3-9477d0079383',
+  'fake-id',
+]; // TODO remove when actual list available
+
 export const RecipientListScreenComponent: React.FC<Props> = ({
   route,
   handleItemClick,
@@ -19,12 +25,11 @@ export const RecipientListScreenComponent: React.FC<Props> = ({
     <Styles.Container>
       <Text variant="display">{route.name}</Text>
       <VStack space={2} width="sm">
-        <Button variant="major" onPress={() => handleItemClick('1')}>
-          Recipient 1
-        </Button>
-        <Button variant="major" onPress={() => handleItemClick('2')}>
-          Recipient 2
-        </Button>
+        {IDS.map((id) => (
+          <Button variant="major" onPress={() => handleItemClick(id)} key={id}>
+            Recipient {id}
+          </Button>
+        ))}
       </VStack>
     </Styles.Container>
   );

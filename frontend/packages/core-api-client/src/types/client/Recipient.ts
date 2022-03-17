@@ -1,7 +1,7 @@
-import { Record, RecordList } from '../model';
-import { FormLookup } from './Form';
+import { FormWithRecord, Record, RecordList } from '../model';
 
-import { DataOperation } from './utils';
+import { FormLookup } from './Form';
+import { DataOperation, Response } from './utils';
 import { RecordLookup } from './Record';
 
 export type Recipient = Record;
@@ -11,5 +11,5 @@ export type RecipientList = RecordList;
 export interface RecipientClientDefinition {
   create: DataOperation<RecipientDefinition, Recipient>;
   list: DataOperation<FormLookup, RecipientList>;
-  get: DataOperation<RecordLookup, Recipient>;
+  get: DataOperation<RecordLookup, FormWithRecord<Recipient>[]>;
 }

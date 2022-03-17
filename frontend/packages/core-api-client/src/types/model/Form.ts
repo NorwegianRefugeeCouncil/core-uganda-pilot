@@ -1,4 +1,5 @@
 import { FieldDefinition } from './Field';
+import { Record } from './Record';
 
 export enum FormType {
   DefaultFormType = 'default',
@@ -17,4 +18,9 @@ export type FormDefinition = {
 
 export type FormDefinitionList = {
   items: FormDefinition[];
+};
+
+export type FormWithRecord<T extends Record> = {
+  form: FormDefinition;
+  record: T;
 };

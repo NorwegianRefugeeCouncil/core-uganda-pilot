@@ -47,6 +47,10 @@ build-frontend:
 prepare-frontend:
 	@./scripts/prepare-frontend.sh
 
+.PHONY: serve-app
+serve-app:
+	@./scripts/serve-app.sh
+
 .PHONY: serve-native
 serve-native:
 	@./scripts/serve-native.sh
