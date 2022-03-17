@@ -33,8 +33,6 @@
   "exclude": [
     "node_modules",
     "lib",
-    "**/*.test.tsx",
-    "**/*.stories.tsx",
-    "src/**/*.test.js"
+    "**/*.test.ts",
   ]
 }

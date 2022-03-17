@@ -13,12 +13,19 @@
     "build": "yarn build:esm && yarn build:cjs",
     "build:esm": "tsc --project tsconfig.esm.json",
     "build:cjs": "tsc --project tsconfig.cjs.json",
-    "test": "echo \"Error: no test specified\" && exit 0"
+    "test": "jest --coverage ./src"
+  },
+  "jest": {
+    "displayName": "CORE-API-CLIENT"
   },
   "dependencies": {
-    "axios": "^0.23.0"
+    "@babel/preset-env": "^7.16.4",
+    "axios": "^0.23.0",
+    "jest": "^27.5.1"
   },
   "devDependencies": {
+    "@babel/preset-typescript": "^7.16.0",
+    "@types/jest": "^27.4.1"
   },
   "peerDependencies": {
     "typescript": "4.x"
