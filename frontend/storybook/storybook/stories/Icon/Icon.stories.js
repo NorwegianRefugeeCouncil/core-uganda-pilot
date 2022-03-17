@@ -27,6 +27,13 @@ storiesOf('Icon', module)
                 tokens.colors.icons,
                 theme.colors.icons.dark,
               )}
+              customIconProps={{
+                innerColor: select(
+                  'inner color',
+                  tokens.colors.neutral,
+                  theme.colors.neutral['100'],
+                ),
+              }}
             />
           );
         })}
