@@ -1,6 +1,6 @@
 import { storiesOf } from '@storybook/react-native';
 import React from 'react';
-import { icons, theme, tokens, IconA } from 'core-design-system';
+import { icons, theme, tokens, Icon } from 'core-design-system';
 import { select } from '@storybook/addon-knobs';
 import { Box } from 'native-base';
 
@@ -17,7 +17,7 @@ storiesOf('Icon', module)
       >
         {IconNameList.map((name) => {
           return (
-            <IconA
+            <Icon
               size="6"
               m="2"
               key={name}
@@ -37,7 +37,7 @@ storiesOf('Icon', module)
     const IconNameList = Object.keys(icons);
 
     return (
-      <IconA
+      <Icon
         name={select('name', IconNameList, IconNameList[0])}
         color={select('color', tokens.colors.icons, theme.colors.icons.dark)}
       />

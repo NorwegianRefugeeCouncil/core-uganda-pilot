@@ -1,8 +1,7 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react-native';
 import { Text, VStack } from 'native-base';
-import { Accordion } from 'core-design-system';
-import { Icon } from 'core-design-system/src';
+import { Accordion, Icon } from 'core-design-system';
 
 import CenterView from '../CenterView';
 
