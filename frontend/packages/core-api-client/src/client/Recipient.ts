@@ -1,5 +1,3 @@
-import * as console from 'console';
-
 import {
   FieldDefinition,
   FieldValue,
