@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ScrollView as SV } from 'react-native';
 import { Button, HStack, ScrollView, VStack } from 'native-base';
 import { useForm, FormProvider, FieldValue } from 'react-hook-form';
 import { FormWithRecord } from 'core-api-client';
@@ -25,6 +26,14 @@ export const RecipientRegistrationScreenComponent: React.FC<Props> = ({
   error,
   loading,
 }) => {
+  const scrollRef = React.useRef<SV | null>(null);
+  React.useEffect(() => {
+    scrollRef.current?.scrollTo({
+      y: 0,
+      animated: true,
+    });
+  }, [mode]);
+
   const f = useForm({
     defaultValues: ReactHookFormTransformer.toReactHookForm(data),
   });
@@ -46,7 +55,7 @@ export const RecipientRegistrationScreenComponent: React.FC<Props> = ({
 
   return (
     <FormProvider {...f}>
-      <ScrollView width="100%" maxWidth="1180px" marginX="auto">
+      <ScrollView ref={scrollRef} width="100%" maxWidth="1180px" marginX="auto">
         <VStack space={4}>
           {mode === 'register' && <RecipientEditor data={data} />}
           {mode === 'review' && <RecipientViewer data={data} />}
