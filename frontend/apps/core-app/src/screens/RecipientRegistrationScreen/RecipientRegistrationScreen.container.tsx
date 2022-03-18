@@ -17,7 +17,7 @@ type Props = StackScreenProps<any, any>;
 export const RecipientRegistrationScreenContainer: React.FC<Props> = ({
   navigation,
 }) => {
-  const [mode, setMode] = React.useState<'register' | 'review'>('register');
+  const [mode, setMode] = React.useState<'edit' | 'review'>('edit');
   const [data, setData] = React.useState<FormWithRecord<Recipient>[]>([]);
 
   const [_, state] = useAPICall(
@@ -36,7 +36,7 @@ export const RecipientRegistrationScreenContainer: React.FC<Props> = ({
   }, [JSON.stringify(state.data)]);
 
   const handleSubmit = (d: FormWithRecord<Recipient>[]) => {
-    if (mode === 'register') {
+    if (mode === 'edit') {
       setData(d);
       setMode('review');
     }
@@ -46,11 +46,11 @@ export const RecipientRegistrationScreenContainer: React.FC<Props> = ({
   };
 
   const handleCancel = () => {
-    if (mode === 'register') {
+    if (mode === 'edit') {
       navigation.navigate(linkingConfig.config.screens.Recipients);
     }
     if (mode === 'review') {
-      setMode('register');
+      setMode('edit');
     }
   };
 

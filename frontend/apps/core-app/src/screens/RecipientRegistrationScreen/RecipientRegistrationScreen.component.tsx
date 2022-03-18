@@ -10,7 +10,7 @@ import { RecipientEditor } from '../../components/Recipient/RecipientEditor';
 import { RecipientViewer } from '../../components/Recipient/RecipientViewer';
 
 type Props = {
-  mode: 'register' | 'review';
+  mode: 'edit' | 'review';
   data: FormWithRecord<Recipient>[];
   onSubmit: (data: FormWithRecord<Recipient>[]) => void;
   onCancel: () => void;
@@ -43,7 +43,7 @@ export const RecipientRegistrationScreenComponent: React.FC<Props> = ({
   }, [JSON.stringify(data)]);
 
   const handleSubmit =
-    mode === 'register'
+    mode === 'edit'
       ? f.handleSubmit((submittedData: FieldValue<any>) => {
           onSubmit(
             ReactHookFormTransformer.fromReactHookForm(data, submittedData),
@@ -57,18 +57,18 @@ export const RecipientRegistrationScreenComponent: React.FC<Props> = ({
     <FormProvider {...f}>
       <ScrollView ref={scrollRef} width="100%" maxWidth="1180px" marginX="auto">
         <VStack space={4}>
-          {mode === 'register' && <RecipientEditor data={data} />}
+          {mode === 'edit' && <RecipientEditor data={data} />}
           {mode === 'review' && <RecipientViewer data={data} />}
           <HStack space={4} justifyContent="flex-end">
             <Button onPress={onCancel} colorScheme="secondary" variant="minor">
-              {mode === 'register' ? 'Cancel' : 'Back'}
+              {mode === 'edit' ? 'Cancel' : 'Back'}
             </Button>
             <Button
               onPress={handleSubmit}
               colorScheme="primary"
               variant="major"
             >
-              {mode === 'register' ? 'Review' : 'Save'}
+              {mode === 'edit' ? 'Review' : 'Save'}
             </Button>
           </HStack>
         </VStack>
