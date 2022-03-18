@@ -18,7 +18,7 @@ import {
 
 import { RecordEditor } from '..';
 import { buildDefaultRecord } from '../../../screens/RecipientRegistrationScreen/buildDefaultRecord';
-import { buildDefaultFormValues } from '../../../screens/RecipientRegistrationScreen/buildDefaultFormValues';
+import * as ReactHookFormTransformer from '../../../utils/ReactHookFormTransformer';
 
 type Props = {
   form: FormDefinition;
@@ -51,10 +51,12 @@ export const SubFormFieldInput: React.FC<Props> = ({ form, field }) => {
   };
 
   const f = useForm({
-    defaultValues: buildDefaultFormValues(
-      [subForm],
-      [buildDefaultRecord(subForm)],
-    ),
+    defaultValues: ReactHookFormTransformer.toReactHookForm([
+      {
+        form: subForm,
+        record: buildDefaultRecord(subForm),
+      },
+    ]),
   });
 
   const handleOpenModal = () => setOpen(true);
