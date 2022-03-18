@@ -1,6 +1,7 @@
 import { FieldKind } from 'core-api-client';
 
 export type NormalisedBasicField = {
+  key: boolean;
   fieldType: Exclude<FieldKind, FieldKind.SubForm>;
   value: string | string[] | null;
   formattedValue: string;
@@ -10,6 +11,7 @@ export type NormalisedBasicField = {
 export type NormalisedSubFormFieldValue = Omit<NormalisedBasicField, 'label'>;
 
 export type NormalisedSubFormField = {
+  key: boolean;
   fieldType: FieldKind.SubForm;
   header: string;
   labels: string[];

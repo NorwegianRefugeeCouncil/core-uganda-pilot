@@ -8,12 +8,17 @@ import { FieldValueComponent } from './FieldValue.component';
 
 type Props = {
   fieldValues: NormalisedFieldValue[];
+  hideKeyFields?: boolean;
 };
 
-export const RecordViewComponent: React.FC<Props> = ({ fieldValues }) => {
+export const RecordViewComponent: React.FC<Props> = ({
+  fieldValues,
+  hideKeyFields,
+}) => {
   return (
     <VStack space={4}>
       {fieldValues.map((f, i) => {
+        if (hideKeyFields) return null;
         if (f.fieldType === FieldKind.SubForm) {
           return (
             <SubformFieldValueComponent
