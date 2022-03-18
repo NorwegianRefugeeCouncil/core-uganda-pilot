@@ -47,6 +47,7 @@
     "react-native-screens": "~3.10.1",
     "react-native-svg": "12.1.1",
     "react-native-web": "0.17.1",
+    "react-table": "^7.7.0",
     "styled-components": "^5.3.3"
   },
   "devDependencies": {
@@ -54,6 +55,7 @@
     "@testing-library/jest-native": "^4.0.4",
     "@testing-library/react-hooks": "^7.0.2",
     "@testing-library/react-native": "^9.0.0",
+    "@types/react-table": "^7.7.10",
     "expo-yarn-workspaces": "^1.6.0"
   },
   "jest": {
