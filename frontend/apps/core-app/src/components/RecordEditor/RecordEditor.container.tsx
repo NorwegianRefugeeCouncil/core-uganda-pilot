@@ -6,12 +6,16 @@ import { RecordEditorComponent } from './RecordEditor.component';
 
 type Props = {
   form: FormDefinition;
+  hideKeyFields?: boolean;
 };
 
-export const RecordEditorContainer: React.FC<Props> = ({ form }) => {
+export const RecordEditorContainer: React.FC<Props> = ({
+  form,
+  hideKeyFields,
+}) => {
   const formContext = useFormContext();
 
   if (!formContext) throw new Error('Form context is not available');
 
-  return <RecordEditorComponent form={form} />;
+  return <RecordEditorComponent form={form} hideKeyFields={hideKeyFields} />;
 };
