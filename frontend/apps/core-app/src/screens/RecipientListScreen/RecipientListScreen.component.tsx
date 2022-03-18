@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { Button, Text, VStack } from 'native-base';
 import { RouteProp, useNavigation } from '@react-navigation/native';
+import { FormType } from 'core-api-client';
 
 import { RootParamList } from '../../navigation/types';
 import { routes } from '../../constants/routes';
+import { Table } from '../../components/Table';
 
 import * as Styles from './RecipientListScreen.styles';
 
@@ -11,12 +13,6 @@ type Props = {
   route: RouteProp<RootParamList, 'RecipientList'>;
   handleItemClick: (id: string) => void;
 };
-
-const IDS = [
-  '8090092f-c983-4ff4-8599-214429218eb0',
-  '30e683fa-2dd7-479f-98a3-9477d0079383',
-  'fake-id',
-]; // TODO remove when actual list available
 
 export const RecipientListScreenComponent: React.FC<Props> = ({
   route,
@@ -33,11 +29,65 @@ export const RecipientListScreenComponent: React.FC<Props> = ({
         Register
       </Button>
       <VStack space={2} width="sm">
-        {IDS.map((id) => (
-          <Button variant="major" onPress={() => handleItemClick(id)} key={id}>
-            Recipient {id}
-          </Button>
-        ))}
+        <Table
+          records={[
+            {
+              id: 'id1',
+              formId: 'formId',
+              ownerId: undefined,
+              databaseId: 'dbid',
+              values: [
+                {
+                  value: 'value1',
+                  fieldId: 'field1',
+                },
+                { value: 'value2', fieldId: 'field2' },
+              ],
+            },
+            {
+              id: 'id2',
+              formId: 'formId',
+              ownerId: undefined,
+              databaseId: 'dbid',
+              values: [
+                {
+                  value: 'value3',
+                  fieldId: 'field1',
+                },
+                { value: 'value4', fieldId: 'field2' },
+              ],
+            },
+          ]}
+          form={{
+            id: 'form1',
+            name: 'name',
+            databaseId: 'dbid',
+            formType: FormType.RecipientFormType,
+            folderId: '',
+            fields: [
+              {
+                id: 'field1',
+                name: 'fieldName',
+                fieldType: { text: {} },
+                key: false,
+                code: '',
+                required: false,
+                description: '',
+              },
+              {
+                id: 'field2',
+                name: 'fieldName2',
+                fieldType: { text: {} },
+                key: false,
+                code: '',
+                required: false,
+                description: '',
+              },
+            ],
+            code: '',
+          }}
+          handleItemClick={handleItemClick}
+        />
       </VStack>
     </Styles.Container>
   );
