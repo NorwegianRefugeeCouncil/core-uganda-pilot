@@ -1,51 +1,65 @@
 import * as React from 'react';
 import { Button, HStack, ScrollView, VStack } from 'native-base';
-import { useForm, FormProvider } from 'react-hook-form';
-import { FormDefinition, Record } from 'core-api-client';
-import { Accordion } from 'core-design-system';
+import { useForm, FormProvider, FieldValue } from 'react-hook-form';
+import { FormWithRecord } from 'core-api-client';
+import { Recipient } from 'core-api-client/src/types/client/Recipient';
 
-import { RecordEditor } from '../../components/RecordEditor';
-
-import { buildDefaultFormValues } from './buildDefaultFormValues';
+import * as ReactHookFormTransformer from '../../utils/ReactHookFormTransformer';
+import { RecipientEditor } from '../../components/Recipient/RecipientEditor';
+import { RecipientViewer } from '../../components/Recipient/RecipientViewer';
 
 type Props = {
-  forms: FormDefinition[];
-  records: Record[];
-  onSubmit: (data: any) => void;
+  mode: 'register' | 'review';
+  data: FormWithRecord<Recipient>[];
+  onSubmit: (data: FormWithRecord<Recipient>[]) => void;
   onCancel: () => void;
+  error: string | null;
+  loading: boolean;
 };
 
 export const RecipientRegistrationScreenComponent: React.FC<Props> = ({
-  forms,
-  records,
+  mode,
+  data,
   onSubmit,
   onCancel,
+  error,
+  loading,
 }) => {
-  const f = useForm({ defaultValues: buildDefaultFormValues(forms, records) });
+  const f = useForm({
+    defaultValues: ReactHookFormTransformer.toReactHookForm(data),
+  });
 
   React.useEffect(() => {
-    f.reset(buildDefaultFormValues(forms, records));
-  }, [JSON.stringify(forms), JSON.stringify(records)]);
+    f.reset(ReactHookFormTransformer.toReactHookForm(data));
+  }, [JSON.stringify(data)]);
+
+  const handleSubmit =
+    mode === 'register'
+      ? f.handleSubmit((submittedData: FieldValue<any>) => {
+          onSubmit(
+            ReactHookFormTransformer.fromReactHookForm(data, submittedData),
+          );
+        })
+      : () => onSubmit(data);
+
+  if (loading || error || data.length === 0) return null;
 
   return (
     <FormProvider {...f}>
       <ScrollView width="100%" maxWidth="1180px" marginX="auto">
         <VStack space={4}>
-          {forms.map((form) => (
-            <Accordion key={form.id} header={form.name} defaultOpen>
-              <RecordEditor form={form} />
-            </Accordion>
-          ))}
+          {mode === 'register' && <RecipientEditor data={data} />}
+          {mode === 'review' && <RecipientViewer data={data} />}
           <HStack space={4} justifyContent="flex-end">
             <Button onPress={onCancel} colorScheme="secondary" variant="minor">
-              Cancel
+              {mode === 'register' ? 'Cancel' : 'Back'}
             </Button>
             <Button
-              onPress={f.handleSubmit(onSubmit)}
+              onPress={handleSubmit}
               colorScheme="primary"
               variant="major"
             >
-              Review
+              {mode === 'register' ? 'Review' : 'Save'}
             </Button>
           </HStack>
         </VStack>
