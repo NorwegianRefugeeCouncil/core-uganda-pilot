@@ -60,10 +60,16 @@ export const RecipientRegistrationScreenComponent: React.FC<Props> = ({
           {mode === 'edit' && <RecipientEditor data={data} />}
           {mode === 'review' && <RecipientViewer data={data} />}
           <HStack space={4} justifyContent="flex-end">
-            <Button onPress={onCancel} colorScheme="secondary" variant="minor">
+            <Button
+              testID="recipient-registration-cancel-button"
+              onPress={onCancel}
+              colorScheme="secondary"
+              variant="minor"
+            >
               {mode === 'edit' ? 'Cancel' : 'Back'}
             </Button>
             <Button
+              testID="recipient-registration-submit-button"
               onPress={handleSubmit}
               colorScheme="primary"
               variant="major"
