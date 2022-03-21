@@ -7,8 +7,8 @@ import { formsClient } from '../../clients/formsClient';
 import configuration from '../../config';
 import { linkingConfig } from '../../navigation/linking.config';
 import { useAPICall } from '../../hooks/useAPICall';
+import { buildDefaultRecord } from '../../utils/buildDefaultRecord';
 
-import { buildDefaultRecord } from './buildDefaultRecord';
 import { RecipientRegistrationScreenComponent } from './RecipientRegistrationScreen.component';
 
 // TODO better type

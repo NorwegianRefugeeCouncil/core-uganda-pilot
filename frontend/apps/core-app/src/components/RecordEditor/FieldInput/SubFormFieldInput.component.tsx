@@ -17,7 +17,7 @@ import {
 } from 'native-base';
 
 import { RecordEditor } from '..';
-import { buildDefaultRecord } from '../../../screens/RecipientRegistrationScreen/buildDefaultRecord';
+import { buildDefaultRecord } from '../../../utils/buildDefaultRecord';
 import * as ReactHookFormTransformer from '../../../utils/ReactHookFormTransformer';
 
 type Props = {
