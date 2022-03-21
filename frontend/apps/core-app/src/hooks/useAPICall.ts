@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-type Parameter<T> = T extends (...args: infer T) => any ? T : never;
+type Parameter<T> = T extends (...args: infer P) => any ? P : never;
 type AsyncReturnType<T extends (...args: any) => any> = T extends (
   ...args: any
 ) => Promise<infer U>
