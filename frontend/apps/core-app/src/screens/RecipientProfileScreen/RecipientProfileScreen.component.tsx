@@ -10,7 +10,7 @@ import * as Styles from './RecipientProfileScreen.styles';
 type Props = {
   isLoading: boolean;
   data: FormWithRecord<Recipient>[];
-  error?: string | null;
+  error: string | null;
 };
 
 export const RecipientProfileScreenComponent: React.FC<Props> = ({
