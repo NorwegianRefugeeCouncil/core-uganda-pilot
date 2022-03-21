@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FormWithRecord } from 'core-api-client';
 import { Recipient } from 'core-api-client/src/types/client/Recipient';
-import { StackScreenProps } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
 
 import { formsClient } from '../../clients/formsClient';
 import configuration from '../../config';
@@ -11,12 +11,9 @@ import { buildDefaultRecord } from '../../utils/buildDefaultRecord';
 
 import { RecipientRegistrationScreenComponent } from './RecipientRegistrationScreen.component';
 
-// TODO better type
-type Props = StackScreenProps<any, any>;
+export const RecipientRegistrationScreenContainer: React.FC = () => {
+  const navigation = useNavigation();
 
-export const RecipientRegistrationScreenContainer: React.FC<Props> = ({
-  navigation,
-}) => {
   const [mode, setMode] = React.useState<'edit' | 'review'>('edit');
   const [data, setData] = React.useState<FormWithRecord<Recipient>[]>([]);
 
@@ -47,7 +44,7 @@ export const RecipientRegistrationScreenContainer: React.FC<Props> = ({
 
   const handleCancel = () => {
     if (mode === 'edit') {
-      navigation.navigate(linkingConfig.config.screens.Recipients);
+      navigation.navigate({ key: linkingConfig.config.screens.Recipients });
     }
     if (mode === 'review') {
       setMode('edit');
