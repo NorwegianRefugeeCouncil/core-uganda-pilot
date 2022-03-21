@@ -18,7 +18,7 @@ export const RecordViewComponent: React.FC<Props> = ({
   return (
     <VStack space={4}>
       {fieldValues.map((f, i) => {
-        if (hideKeyFields) return null;
+        if (hideKeyFields && f.key) return null;
         if (f.fieldType === FieldKind.SubForm) {
           return (
             <SubformFieldValueComponent

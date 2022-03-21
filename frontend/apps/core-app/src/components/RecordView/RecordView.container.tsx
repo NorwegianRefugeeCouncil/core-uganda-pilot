@@ -7,10 +7,20 @@ import { normaliseFieldValues } from './normaliseFieldValues';
 type Props = {
   form: FormDefinition;
   record: Record;
+  hideKeyFields?: boolean;
 };
 
-export const RecordViewContainer: React.FC<Props> = ({ form, record }) => {
+export const RecordViewContainer: React.FC<Props> = ({
+  form,
+  record,
+  hideKeyFields,
+}) => {
   const fieldValues = normaliseFieldValues(form, record);
 
-  return <RecordViewComponent fieldValues={fieldValues} />;
+  return (
+    <RecordViewComponent
+      fieldValues={fieldValues}
+      hideKeyFields={hideKeyFields}
+    />
+  );
 };
