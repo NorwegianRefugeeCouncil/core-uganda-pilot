@@ -51,6 +51,7 @@ it('should normalise a basic field', () => {
 
   expect(values).toEqual([
     {
+      key: false,
       label: 'field-name',
       value: 'field-value',
       fieldType: FieldKind.Text,
@@ -102,12 +103,14 @@ it('should normalise a subform field', () => {
 
   expect(values).toEqual([
     {
+      key: false,
       fieldType: FieldKind.SubForm,
       header: 'field-name',
       labels: ['sub-field-name'],
       values: [
         [
           {
+            key: false,
             value: 'sub-field-value-1',
             fieldType: 'text',
             formattedValue: 'sub-field-value-1',
@@ -115,6 +118,7 @@ it('should normalise a subform field', () => {
         ],
         [
           {
+            key: false,
             value: 'sub-field-value-2',
             fieldType: 'text',
             formattedValue: 'sub-field-value-2',
