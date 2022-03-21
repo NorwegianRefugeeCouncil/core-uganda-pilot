@@ -1,9 +1,16 @@
-import { FormDefinition, FormType, Record } from 'core-api-client';
+import {
+  FormDefinition,
+  FormType,
+  FormWithRecord,
+  Record,
+} from 'core-api-client';
+import { Recipient } from 'core-api-client/src/types/client/Recipient';
 
 import { render } from '../../../../testUtils/render';
+import { buildDefaultRecord } from '../../../../utils/buildDefaultRecord';
 import { RecipientViewerComponent } from '../RecipientViewer.component';
 
-jest.mock('../../../components/RecordView', () => {
+jest.mock('../../../RecordView', () => {
   const { View, Text } = jest.requireActual('react-native');
   return {
     RecordView: ({
@@ -21,34 +28,48 @@ jest.mock('../../../components/RecordView', () => {
   };
 });
 
-const data = [
-  {
-    form: {
-      id: 'id',
-      databaseId: 'databaseId',
-      formType: FormType.RecipientFormType,
-      name: 'name',
-      code: 'code',
-      folderId: 'folderId',
-      fields: [],
-    },
-    record: {
-      id: 'id',
-      formId: 'formId',
-      databaseId: 'databaseId',
-      values: [],
-      ownerId: undefined,
-    },
-  },
-];
+const makeFormWithRecord = (i: number): FormWithRecord<Recipient> => {
+  const form = {
+    id: `form-id-${i}`,
+    code: 'form-code',
+    databaseId: 'database-id',
+    folderId: 'folder-id',
+    name: `form-name-${i}`,
+    formType: FormType.DefaultFormType,
+    fields: [
+      {
+        id: `field-id-${i}`,
+        name: `field-name-${i}`,
+        code: '',
+        description: '',
+        required: false,
+        key: false,
+        fieldType: { text: {} },
+      },
+    ],
+  };
+
+  return {
+    form,
+    record: buildDefaultRecord(form),
+  };
+};
 
 it('should match the snapshot', () => {
-  const { toJSON } = render(<RecipientViewerComponent data={data} />);
+  const { toJSON } = render(
+    <RecipientViewerComponent
+      data={[
+        makeFormWithRecord(1),
+        makeFormWithRecord(2),
+        makeFormWithRecord(3),
+      ]}
+    />,
+  );
   expect(toJSON()).toMatchSnapshot();
 });
 
 it('should throw an error with less than 2 forms', () => {
   expect(() => {
-    render(<RecipientViewerComponent data={[data[0]]} />);
+    render(<RecipientViewerComponent data={[makeFormWithRecord(1)]} />);
   }).toThrow();
 });

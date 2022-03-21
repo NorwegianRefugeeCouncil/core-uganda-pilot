@@ -1,10 +1,16 @@
-import { FormDefinition, FormType, Record } from 'core-api-client';
+import {
+  FormDefinition,
+  FormType,
+  FormWithRecord,
+  Record,
+} from 'core-api-client';
+import { Recipient } from 'core-api-client/src/types/client/Recipient';
 
 import { render } from '../../../../testUtils/render';
 import { buildDefaultRecord } from '../../../../utils/buildDefaultRecord';
 import { RecipientEditorComponent } from '../RecipientEditor.component';
 
-jest.mock('../../../components/RecordEditor', () => {
+jest.mock('../../../RecordEditor', () => {
   const { View, Text } = jest.requireActual('react-native');
   return {
     RecordEditor: ({
