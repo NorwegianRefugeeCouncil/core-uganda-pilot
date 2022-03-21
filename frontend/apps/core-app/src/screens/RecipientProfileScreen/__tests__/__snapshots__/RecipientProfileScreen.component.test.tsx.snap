@@ -38,14 +38,7 @@ exports[`should match the snapshot 1`] = `
       >
         <View
           dataSet={Object {}}
-          style={
-            Object {
-              "paddingBottom": 8,
-              "paddingLeft": 8,
-              "paddingRight": 8,
-              "paddingTop": 8,
-            }
-          }
+          style={Object {}}
         >
           <View
             _text={
@@ -172,14 +165,7 @@ exports[`should match the snapshot while loading 1`] = `
         </View>
         <View
           dataSet={Object {}}
-          style={
-            Object {
-              "paddingBottom": 8,
-              "paddingLeft": 8,
-              "paddingRight": 8,
-              "paddingTop": 8,
-            }
-          }
+          style={Object {}}
         >
           <View
             _text={
@@ -298,14 +284,7 @@ exports[`should match the snapshot with error 1`] = `
         </Text>
         <View
           dataSet={Object {}}
-          style={
-            Object {
-              "paddingBottom": 8,
-              "paddingLeft": 8,
-              "paddingRight": 8,
-              "paddingTop": 8,
-            }
-          }
+          style={Object {}}
         >
           <View
             _text={

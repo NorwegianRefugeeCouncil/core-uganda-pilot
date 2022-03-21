@@ -1,21 +1,18 @@
 import * as React from 'react';
-import { FormControl, Text } from 'native-base';
+import { FormControl, Input } from 'native-base';
 import { useFormContext, useController } from 'react-hook-form';
 import { FormDefinition } from 'core-api-client';
-import { Platform } from 'expo-modules-core';
-
-import { Input } from '../../Web/Input';
 
 type Props = {
   formId: string;
   field: FormDefinition['fields'][number];
 };
 
-export const DateFieldInput: React.FC<Props> = ({ formId, field }) => {
+export const QuantityFieldInput: React.FC<Props> = ({ formId, field }) => {
   const { control } = useFormContext();
 
   const {
-    field: { onChange, value },
+    field: { onChange, onBlur, value, ref },
     fieldState: { error, invalid },
   } = useController({
     name: `${formId}.${field.id}`,
@@ -23,19 +20,24 @@ export const DateFieldInput: React.FC<Props> = ({ formId, field }) => {
     rules: {}, // TODO Record validation
   });
 
+  const handleOnChange = (v: string) => {
+    // if value is a number or a decimal
+    if (v.match(/^[0-9]*\.?[0-9]*$/)) {
+      onChange(v);
+    }
+  };
+
   return (
     <FormControl isInvalid={invalid}>
       <FormControl.Label>{field.name}</FormControl.Label>
-      {Platform.OS === 'web' ? (
-        <Input
-          type="date"
-          value={value}
-          onChange={onChange}
-          invalid={invalid}
-        />
-      ) : (
-        <Text>Not implemented on mobile</Text>
-      )}
+      <Input
+        testID="quantity-field-input"
+        ref={ref}
+        onBlur={onBlur}
+        onChangeText={handleOnChange}
+        value={value}
+        autoCompleteType="off"
+      />
       <FormControl.HelperText>{field.description}</FormControl.HelperText>
       <FormControl.ErrorMessage>{error}</FormControl.ErrorMessage>
     </FormControl>

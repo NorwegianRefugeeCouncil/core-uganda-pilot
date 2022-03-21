@@ -12,254 +12,369 @@ exports[`should match the snapshot 1`] = `
     ]
   }
 >
-  <View
-    dataSet={Object {}}
-    style={
+  <RCTScrollView
+    contentContainerStyle={
       Array [
         Object {},
-        Array [
-          Object {},
-        ],
+        Object {
+          "dataSet": Object {},
+        },
       ]
     }
+    dataSet={Object {}}
+    style={
+      Object {
+        "marginLeft": "auto",
+        "marginRight": "auto",
+        "maxWidth": 1180,
+        "width": "100%",
+      }
+    }
   >
-    <View
-      dataSet={Object {}}
-      style={
-        Object {
-          "paddingBottom": 8,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 8,
-        }
-      }
-    >
-      <View
-        _text={
-          Object {
-            "color": "lightText",
-          }
-        }
-        accessible={true}
-        collapsable={false}
-        dataSet={Object {}}
-        focusable={true}
-        onBlur={[Function]}
-        onClick={[Function]}
-        onFocus={[Function]}
-        onHoverIn={[Function]}
-        onHoverOut={[Function]}
-        onResponderGrant={[Function]}
-        onResponderMove={[Function]}
-        onResponderRelease={[Function]}
-        onResponderTerminate={[Function]}
-        onResponderTerminationRequest={[Function]}
-        onStartShouldSetResponder={[Function]}
-        style={
-          Object {
-            "backgroundColor": "#24303E",
-            "paddingBottom": 8,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 8,
-          }
-        }
-      >
-        <Text
-          dataSet={Object {}}
-          level="1"
-          style={
-            Object {
-              "backgroundColor": undefined,
-              "color": "#FFFFFF",
-              "fontFamily": "Roboto_400Regular",
-              "fontSize": 18,
-              "fontStyle": undefined,
-              "fontWeight": undefined,
-              "letterSpacing": 0,
-              "lineHeight": 21,
-              "textAlign": "auto",
-              "textDecorationLine": undefined,
-            }
-          }
-        >
-          form-name-1
-        </Text>
-      </View>
-    </View>
-    <View
-      dataSet={Object {}}
-      style={
-        Object {
-          "paddingBottom": 8,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 8,
-        }
-      }
-    >
-      <View
-        _text={
-          Object {
-            "color": "lightText",
-          }
-        }
-        accessible={true}
-        collapsable={false}
-        dataSet={Object {}}
-        focusable={true}
-        onBlur={[Function]}
-        onClick={[Function]}
-        onFocus={[Function]}
-        onHoverIn={[Function]}
-        onHoverOut={[Function]}
-        onResponderGrant={[Function]}
-        onResponderMove={[Function]}
-        onResponderRelease={[Function]}
-        onResponderTerminate={[Function]}
-        onResponderTerminationRequest={[Function]}
-        onStartShouldSetResponder={[Function]}
-        style={
-          Object {
-            "backgroundColor": "#24303E",
-            "paddingBottom": 8,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 8,
-          }
-        }
-      >
-        <Text
-          dataSet={Object {}}
-          level="1"
-          style={
-            Object {
-              "backgroundColor": undefined,
-              "color": "#FFFFFF",
-              "fontFamily": "Roboto_400Regular",
-              "fontSize": 18,
-              "fontStyle": undefined,
-              "fontWeight": undefined,
-              "letterSpacing": 0,
-              "lineHeight": 21,
-              "textAlign": "auto",
-              "textDecorationLine": undefined,
-            }
-          }
-        >
-          form-name-2
-        </Text>
-      </View>
-    </View>
-    <View
-      dataSet={Object {}}
-      style={
-        Object {
-          "flexDirection": "row",
-        }
-      }
-    >
-      <View
-        _text={
-          Object {
-            "color": "lightText",
-          }
-        }
-        accessibilityRole="button"
-        accessible={true}
-        collapsable={false}
-        colorScheme="primary"
-        dataSet={Object {}}
-        focusable={true}
-        onBlur={[Function]}
-        onClick={[Function]}
-        onFocus={[Function]}
-        onHoverIn={[Function]}
-        onHoverOut={[Function]}
-        onResponderGrant={[Function]}
-        onResponderMove={[Function]}
-        onResponderRelease={[Function]}
-        onResponderTerminate={[Function]}
-        onResponderTerminationRequest={[Function]}
-        onStartShouldSetResponder={[Function]}
-        style={
-          Object {
-            "alignItems": "center",
-            "backgroundColor": "#FF7602",
-            "borderRadius": 3,
-            "flexDirection": "row",
-            "height": 50,
-            "justifyContent": "center",
-            "paddingBottom": 8,
-            "paddingLeft": 50,
-            "paddingRight": 50,
-            "paddingTop": 8,
-          }
-        }
-      >
-        <View
-          dataSet={Object {}}
-          style={
-            Object {
-              "alignItems": "center",
-              "flexDirection": "row",
-            }
-          }
-        />
-      </View>
+    <View>
       <View
         dataSet={Object {}}
         style={Object {}}
-      />
-      <View
-        _text={
-          Object {
-            "color": "lightText",
-          }
-        }
-        accessibilityRole="button"
-        accessible={true}
-        collapsable={false}
-        colorScheme="primary"
-        dataSet={Object {}}
-        focusable={true}
-        onBlur={[Function]}
-        onClick={[Function]}
-        onFocus={[Function]}
-        onHoverIn={[Function]}
-        onHoverOut={[Function]}
-        onResponderGrant={[Function]}
-        onResponderMove={[Function]}
-        onResponderRelease={[Function]}
-        onResponderTerminate={[Function]}
-        onResponderTerminationRequest={[Function]}
-        onStartShouldSetResponder={[Function]}
-        style={
-          Object {
-            "alignItems": "center",
-            "backgroundColor": "#FF7602",
-            "borderRadius": 3,
-            "flexDirection": "row",
-            "height": 50,
-            "justifyContent": "center",
-            "paddingBottom": 8,
-            "paddingLeft": 50,
-            "paddingRight": 50,
-            "paddingTop": 8,
-          }
-        }
       >
+        <View
+          dataSet={Object {}}
+          style={Object {}}
+        >
+          <View
+            _text={
+              Object {
+                "color": "lightText",
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            dataSet={Object {}}
+            focusable={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onHoverIn={[Function]}
+            onHoverOut={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#24303E",
+                "paddingBottom": 8,
+                "paddingLeft": 8,
+                "paddingRight": 8,
+                "paddingTop": 8,
+              }
+            }
+          >
+            <Text
+              dataSet={Object {}}
+              level="1"
+              style={
+                Object {
+                  "backgroundColor": undefined,
+                  "color": "#FFFFFF",
+                  "fontFamily": "Roboto_400Regular",
+                  "fontSize": 18,
+                  "fontStyle": undefined,
+                  "fontWeight": undefined,
+                  "letterSpacing": 0,
+                  "lineHeight": 21,
+                  "textAlign": "auto",
+                  "textDecorationLine": undefined,
+                }
+              }
+            >
+              form-name-1
+            </Text>
+          </View>
+          <View
+            dataSet={Object {}}
+            style={
+              Object {
+                "backgroundColor": "#F6F6F7",
+                "paddingBottom": 8,
+                "paddingLeft": 8,
+                "paddingRight": 8,
+                "paddingTop": 8,
+              }
+            }
+          >
+            <View>
+              <Text>
+                {"id":"form-id-1","code":"form-code","databaseId":"database-id","folderId":"folder-id","name":"form-name-1","formType":"default","fields":[{"id":"field-id-1","name":"field-name-1","code":"","description":"","required":false,"key":false,"fieldType":{"text":{}}}]}
+              </Text>
+              <Text />
+            </View>
+          </View>
+        </View>
         <View
           dataSet={Object {}}
           style={
             Object {
-              "alignItems": "center",
-              "flexDirection": "row",
+              "height": 16,
             }
           }
         />
+        <View
+          dataSet={Object {}}
+          style={Object {}}
+        >
+          <View
+            _text={
+              Object {
+                "color": "lightText",
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            dataSet={Object {}}
+            focusable={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onHoverIn={[Function]}
+            onHoverOut={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#24303E",
+                "paddingBottom": 8,
+                "paddingLeft": 8,
+                "paddingRight": 8,
+                "paddingTop": 8,
+              }
+            }
+          >
+            <Text
+              dataSet={Object {}}
+              level="1"
+              style={
+                Object {
+                  "backgroundColor": undefined,
+                  "color": "#FFFFFF",
+                  "fontFamily": "Roboto_400Regular",
+                  "fontSize": 18,
+                  "fontStyle": undefined,
+                  "fontWeight": undefined,
+                  "letterSpacing": 0,
+                  "lineHeight": 21,
+                  "textAlign": "auto",
+                  "textDecorationLine": undefined,
+                }
+              }
+            >
+              form-name-2
+            </Text>
+          </View>
+          <View
+            dataSet={Object {}}
+            style={
+              Object {
+                "backgroundColor": "#F6F6F7",
+                "paddingBottom": 8,
+                "paddingLeft": 8,
+                "paddingRight": 8,
+                "paddingTop": 8,
+              }
+            }
+          >
+            <View>
+              <Text>
+                {"id":"form-id-2","code":"form-code","databaseId":"database-id","folderId":"folder-id","name":"form-name-2","formType":"default","fields":[{"id":"field-id-2","name":"field-name-2","code":"","description":"","required":false,"key":false,"fieldType":{"text":{}}}]}
+              </Text>
+              <Text />
+            </View>
+          </View>
+        </View>
+        <View
+          dataSet={Object {}}
+          style={
+            Object {
+              "height": 16,
+            }
+          }
+        />
+        <View
+          dataSet={Object {}}
+          style={
+            Object {
+              "flexDirection": "row",
+              "justifyContent": "flex-end",
+            }
+          }
+        >
+          <View
+            _text={
+              Object {
+                "color": "darkText",
+              }
+            }
+            accessibilityRole="button"
+            accessible={true}
+            collapsable={false}
+            colorScheme="secondary"
+            dataSet={Object {}}
+            focusable={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onHoverIn={[Function]}
+            onHoverOut={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "alignItems": "center",
+                "backgroundColor": "#FFFFFF",
+                "borderColor": "#24303E",
+                "borderRadius": 3,
+                "borderStyle": "solid",
+                "borderWidth": 1,
+                "flexDirection": "row",
+                "height": 50,
+                "justifyContent": "center",
+                "paddingBottom": 8,
+                "paddingLeft": 50,
+                "paddingRight": 50,
+                "paddingTop": 8,
+              }
+            }
+          >
+            <View
+              dataSet={Object {}}
+              style={
+                Object {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                }
+              }
+            >
+              <View
+                dataSet={Object {}}
+                style={Object {}}
+              >
+                <Text
+                  dataSet={Object {}}
+                  level="1"
+                  style={
+                    Object {
+                      "backgroundColor": undefined,
+                      "color": "#24303E",
+                      "fontFamily": "Roboto_500Medium",
+                      "fontSize": 20,
+                      "fontStyle": undefined,
+                      "fontWeight": undefined,
+                      "letterSpacing": 0,
+                      "lineHeight": 24,
+                      "textAlign": "auto",
+                      "textDecorationLine": undefined,
+                    }
+                  }
+                >
+                  Cancel
+                </Text>
+              </View>
+            </View>
+          </View>
+          <View
+            dataSet={Object {}}
+            style={
+              Object {
+                "width": 16,
+              }
+            }
+          />
+          <View
+            _text={
+              Object {
+                "color": "lightText",
+              }
+            }
+            accessibilityRole="button"
+            accessible={true}
+            collapsable={false}
+            colorScheme="primary"
+            dataSet={Object {}}
+            focusable={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onHoverIn={[Function]}
+            onHoverOut={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "alignItems": "center",
+                "backgroundColor": "#FF7602",
+                "borderRadius": 3,
+                "flexDirection": "row",
+                "height": 50,
+                "justifyContent": "center",
+                "paddingBottom": 8,
+                "paddingLeft": 50,
+                "paddingRight": 50,
+                "paddingTop": 8,
+              }
+            }
+          >
+            <View
+              dataSet={Object {}}
+              style={
+                Object {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                }
+              }
+            >
+              <View
+                dataSet={Object {}}
+                style={Object {}}
+              >
+                <Text
+                  dataSet={Object {}}
+                  level="1"
+                  style={
+                    Object {
+                      "backgroundColor": undefined,
+                      "color": "#FFFFFF",
+                      "fontFamily": "Roboto_500Medium",
+                      "fontSize": 20,
+                      "fontStyle": undefined,
+                      "fontWeight": undefined,
+                      "letterSpacing": 0,
+                      "lineHeight": 24,
+                      "textAlign": "auto",
+                      "textDecorationLine": undefined,
+                    }
+                  }
+                >
+                  Review
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
       </View>
     </View>
-  </View>
+  </RCTScrollView>
 </RNCSafeAreaProvider>
 `;

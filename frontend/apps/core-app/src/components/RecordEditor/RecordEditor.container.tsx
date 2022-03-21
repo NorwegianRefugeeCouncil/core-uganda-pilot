@@ -1,20 +1,17 @@
 import * as React from 'react';
-import { FormDefinition, Record } from 'core-api-client';
+import { FormDefinition } from 'core-api-client';
+import { useFormContext } from 'react-hook-form';
 
 import { RecordEditorComponent } from './RecordEditor.component';
 
 type Props = {
   form: FormDefinition;
-  record: Record;
-  onChange: () => void;
 };
 
-export const RecordEditorContainer: React.FC<Props> = ({
-  form,
-  record,
-  onChange,
-}) => {
-  return (
-    <RecordEditorComponent form={form} record={record} onChange={onChange} />
-  );
+export const RecordEditorContainer: React.FC<Props> = ({ form }) => {
+  const formContext = useFormContext();
+
+  if (!formContext) throw new Error('Form context is not available');
+
+  return <RecordEditorComponent form={form} />;
 };
