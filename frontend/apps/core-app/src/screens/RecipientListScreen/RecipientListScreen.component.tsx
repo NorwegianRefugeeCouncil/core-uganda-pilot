@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Button, Text, VStack } from 'native-base';
-import { RouteProp, useNavigation } from '@react-navigation/native';
+import { Text, VStack } from 'native-base';
+import { RouteProp } from '@react-navigation/native';
 import { FormType } from 'core-api-client';
 
 import { RootParamList } from '../../navigation/types';
-import { routes } from '../../constants/routes';
 import { Table } from '../../components/Table';
+import { DefaultColumnFilter } from '../../components/Table/SearchInput';
 
 import * as Styles from './RecipientListScreen.styles';
 
@@ -18,16 +18,11 @@ export const RecipientListScreenComponent: React.FC<Props> = ({
   route,
   handleItemClick,
 }) => {
-  const navigation = useNavigation();
+
   return (
     <Styles.Container>
       <Text variant="display">{route.name}</Text>
-      <Button
-        variant="major"
-        onPress={() => navigation.navigate(routes.recipientsRegistration.name)}
-      >
-        Register
-      </Button>
+      <DefaultColumnFilter />
       <VStack space={2} width="sm">
         <Table
           records={[

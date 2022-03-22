@@ -1,5 +1,12 @@
 import React from 'react';
-import { useSortBy, useTable } from 'react-table';
+import {
+  // useAsyncDebounce,
+  useFilters,
+  useGlobalFilter,
+  useSortBy,
+  useTable,
+  // Column
+} from 'react-table';
 import { Box, Button, HStack, Pressable, Text, VStack } from 'native-base';
 import { FieldValue, FormDefinition } from 'core-api-client';
 import { Recipient } from 'core-api-client/src/types/client/Recipient';
@@ -12,54 +19,7 @@ type Props = {
   searchTerm: string;
 };
 
-// Define a default UI for filtering
-function GlobalFilter({
-  preGlobalFilteredRows,
-  globalFilter,
-  setGlobalFilter,
-}) {
-  const count = preGlobalFilteredRows.length;
-  const [value, setValue] = React.useState(globalFilter);
-  const onChange = useAsyncDebounce((value) => {
-    setGlobalFilter(value || undefined);
-  }, 200);
-
-  return (
-    <span>
-      Search:{' '}
-      <input
-        value={value || ''}
-        onChange={(e) => {
-          setValue(e.target.value);
-          onChange(e.target.value);
-        }}
-        placeholder={`${count} records...`}
-        style={{
-          fontSize: '1.1rem',
-          border: '0',
-        }}
-      />
-    </span>
-  );
-}
-
-// Define a default UI for filtering
-function DefaultColumnFilter({
-  column: { filterValue, preFilteredRows, setFilter },
-}) {
-  const count = preFilteredRows.length;
-
-  return (
-    <input
-      value={filterValue || ''}
-      onChange={(e) => {
-        setFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
-      }}
-      placeholder={`Search ${count} records...`}
-    />
-  );
-}
-
+// Let the table remove the filter if the string is empty
 export const TableComponent: React.FC<Props> = ({
   records,
   handleItemClick,
@@ -90,12 +50,43 @@ export const TableComponent: React.FC<Props> = ({
     [form],
   );
 
+  const filterTypes = React.useMemo(
+    () => ({
+      // Add a new fuzzyTextFilterFn filter type.
+      fuzzyText: fuzzyTextFilterFn,
+      // Or, override the default text filter to use
+      // "startWith"
+      text: (rows, id, filterValue) => {
+        return rows.filter((row) => {
+          const rowValue = row.values[id];
+          return rowValue !== undefined
+            ? String(rowValue)
+                .toLowerCase()
+                .startsWith(String(filterValue).toLowerCase())
+            : true;
+        });
+      },
+    }),
+    [],
+  );
+  const defaultColumn = React.useMemo(
+    () => ({
+      // Let's set up our default Filter UI
+      Filter: DefaultColumnFilter,
+    }),
+    [],
+  );
+
   const { rows, headerGroups, prepareRow } = useTable(
     {
       data: memoizedData,
       columns: memoizedColumns,
+      defaultColumn,
+      filterTypes,
     },
     useSortBy,
+    useFilters,
+    useGlobalFilter,
   );
 
   return (
