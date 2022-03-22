@@ -93,3 +93,49 @@ describe('toReactHookForm', () => {
     });
   });
 });
+
+describe('fromReactHookForm', () => {
+  it('should convert a form and record to the correct format', () => {
+    const form = makeForm(1);
+    const record = makeRecord(1);
+    expect(
+      ReactHookFormTransformer.fromReactHookForm([{ form, record }], {
+        [form.id]: {
+          [form.fields[0].id]: record.values[0].value,
+          [form.fields[1].id]: record.values[1].value,
+          [form.fields[2].id]: record.values[2].value,
+        },
+      }),
+    ).toEqual([{ form, record }]);
+  });
+
+  it('should convert multiple forms and records to the correct format', () => {
+    const form1 = makeForm(1);
+    const form2 = makeForm(2);
+    const record1 = makeRecord(1);
+    const record2 = makeRecord(2);
+    expect(
+      ReactHookFormTransformer.fromReactHookForm(
+        [
+          { form: form1, record: record1 },
+          { form: form2, record: record2 },
+        ],
+        {
+          [form1.id]: {
+            [form1.fields[0].id]: record1.values[0].value,
+            [form1.fields[1].id]: record1.values[1].value,
+            [form1.fields[2].id]: record1.values[2].value,
+          },
+          [form2.id]: {
+            [form2.fields[0].id]: record2.values[0].value,
+            [form2.fields[1].id]: record2.values[1].value,
+            [form2.fields[2].id]: record2.values[2].value,
+          },
+        },
+      ),
+    ).toEqual([
+      { form: form1, record: record1 },
+      { form: form2, record: record2 },
+    ]);
+  });
+});
