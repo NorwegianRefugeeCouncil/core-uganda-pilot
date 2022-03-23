@@ -547,7 +547,11 @@ exports[`should match the snapshot no sub records 1`] = `
               >
                 <View
                   dataSet={Object {}}
-                  style={Object {}}
+                  style={
+                    Object {
+                      "flexWrap": "wrap",
+                    }
+                  }
                 >
                   <View
                     dataSet={Object {}}
@@ -1784,7 +1788,11 @@ exports[`should match the snapshot sub records 1`] = `
               >
                 <View
                   dataSet={Object {}}
-                  style={Object {}}
+                  style={
+                    Object {
+                      "flexWrap": "wrap",
+                    }
+                  }
                 >
                   <View
                     dataSet={Object {}}
