@@ -9,26 +9,76 @@ import {
   RecordListResponse,
   RecordList,
   RecordLookup,
+  FormDefinition,
+  FieldValue,
 } from '../types';
 
 import { BaseRESTClient } from './BaseRESTClient';
 import { FormClient } from './Form';
 
 export class RecordClient {
-  restClient: BaseRESTClient;
+  private restClient: BaseRESTClient;
 
-  formClient: FormClient;
+  private formClient: FormClient;
 
   constructor(restClient: BaseRESTClient, formClient: FormClient) {
     this.restClient = restClient;
     this.formClient = formClient;
   }
 
-  create = (request: RecordCreateRequest): Promise<RecordCreateResponse> => {
+  public create = (
+    request: RecordCreateRequest,
+  ): Promise<RecordCreateResponse> => {
     return this.restClient.do(request, '/records', 'post', request.object, 200);
   };
 
-  list = async (request: RecordListRequest): Promise<RecordListResponse> => {
+  // The backend does not create sub records, so we need to do it ourselves
+  // This creates the record, then creates the sub records, then fetches the record again with it's subrecords
+  public createWithSubRecords = async (
+    record: Record,
+    form: FormDefinition,
+  ): Promise<Record> => {
+    const subFormFields = form.fields.filter(
+      (f) => getFieldKind(f.fieldType) === FieldKind.SubForm,
+    );
+
+    const recordResponse = await this.create({ object: record });
+
+    if (recordResponse.error || !recordResponse.response)
+      throw new Error(recordResponse.error);
+
+    await Promise.all(
+      subFormFields.map(async (f, i) => {
+        const values = (
+          record.values.find((v) => v.fieldId === f.id)?.value as FieldValue[][]
+        )[i];
+        const subRecord: Omit<Record, 'id'> = {
+          ...record,
+          ownerId: recordResponse.response?.id,
+          values,
+        };
+        const subRecordResponse = await this.create({ object: subRecord });
+        if (subRecordResponse.error || !subRecordResponse.response)
+          throw new Error(subRecordResponse.error);
+        return subRecordResponse.response;
+      }),
+    );
+
+    const getResponse = await this.get({
+      recordId: recordResponse.response?.id,
+      databaseId: recordResponse.response?.databaseId,
+      formId: recordResponse.response?.formId,
+    });
+
+    if (getResponse.error || !getResponse.response)
+      throw new Error(getResponse.error);
+
+    return getResponse.response;
+  };
+
+  public list = async (
+    request: RecordListRequest,
+  ): Promise<RecordListResponse> => {
     const { databaseId, formId } = request;
     const url = `/records?databaseId=${databaseId}&formId=${formId}`;
     const response = await this.restClient.do<RecordListRequest, RecordList>(
@@ -54,7 +104,7 @@ export class RecordClient {
     };
   };
 
-  get = async (request: RecordLookup): Promise<RecordGetResponse> => {
+  public get = async (request: RecordLookup): Promise<RecordGetResponse> => {
     const { databaseId, formId, recordId } = request;
     const url = `/records/${recordId}?databaseId=${databaseId}&formId=${formId}`;
     const response = await this.restClient.do<RecordLookup, Record>(
