@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { FormType } from 'core-api-client';
 
-import Table, { GlobalFilter } from '../../components/Table';
-import { TableContext } from '../../components/Table/useTableContext';
+import Table, { GlobalTableFilter } from '../../components/Table';
+import { TableContext } from '../../components/Table/TableContext';
 
 import * as Styles from './RecipientListScreen.styles';
 
@@ -18,7 +18,7 @@ export const RecipientListScreenComponent: React.FC<Props> = ({
   return (
     <Styles.Container>
       {tableContext?.tableInstance && (
-        <GlobalFilter table={tableContext.tableInstance} />
+        <GlobalTableFilter table={tableContext.tableInstance} />
       )}
       <Table
         records={[
