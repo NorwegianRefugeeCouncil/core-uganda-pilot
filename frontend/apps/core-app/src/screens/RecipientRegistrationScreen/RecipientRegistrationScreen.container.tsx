@@ -5,9 +5,9 @@ import { useNavigation } from '@react-navigation/native';
 
 import { formsClient } from '../../clients/formsClient';
 import configuration from '../../config';
-import { linkingConfig } from '../../navigation/linking.config';
 import { useAPICall } from '../../hooks/useAPICall';
 import { buildDefaultRecord } from '../../utils/buildDefaultRecord';
+import { routes } from '../../constants/routes';
 
 import { RecipientRegistrationScreenComponent } from './RecipientRegistrationScreen.component';
 
@@ -17,20 +17,35 @@ export const RecipientRegistrationScreenContainer: React.FC = () => {
   const [mode, setMode] = React.useState<'edit' | 'review'>('edit');
   const [data, setData] = React.useState<FormWithRecord<Recipient>[]>([]);
 
-  const [_, state] = useAPICall(
+  const [_, getRecipientFormsState] = useAPICall(
     formsClient.Form.getAncestors,
     [configuration.recipient.registrationForm.formId],
     true,
   );
 
+  const [saveRecipient, saveRecipientState] = useAPICall(
+    formsClient.Recipient.create,
+    [data],
+    false,
+  );
+
   React.useEffect(() => {
     setData(
-      (state.data || []).map((form) => ({
+      (getRecipientFormsState.data || []).map((form) => ({
         form,
         record: buildDefaultRecord(form),
       })),
     );
-  }, [JSON.stringify(state.data)]);
+  }, [JSON.stringify(getRecipientFormsState.data)]);
+
+  React.useEffect(() => {
+    if (saveRecipientState.data) {
+      navigation.navigate(routes.recipientsProfile.name, {
+        id: saveRecipientState.data[saveRecipientState.data.length - 1].record
+          .id,
+      });
+    }
+  }, [JSON.stringify(saveRecipientState.data)]);
 
   const handleSubmit = (d: FormWithRecord<Recipient>[]) => {
     if (mode === 'edit') {
@@ -38,13 +53,13 @@ export const RecipientRegistrationScreenContainer: React.FC = () => {
       setMode('review');
     }
     if (mode === 'review') {
-      console.log('SAVING DATA', d);
+      saveRecipient();
     }
   };
 
   const handleCancel = () => {
     if (mode === 'edit') {
-      navigation.navigate({ key: linkingConfig.config.screens.Recipients });
+      navigation.navigate(routes.recipientsList.name);
     }
     if (mode === 'review') {
       setMode('edit');
@@ -57,8 +72,8 @@ export const RecipientRegistrationScreenContainer: React.FC = () => {
       data={data}
       onSubmit={handleSubmit}
       onCancel={handleCancel}
-      error={state.error}
-      loading={state.loading}
+      error={getRecipientFormsState.error}
+      loading={getRecipientFormsState.loading}
     />
   );
 };
