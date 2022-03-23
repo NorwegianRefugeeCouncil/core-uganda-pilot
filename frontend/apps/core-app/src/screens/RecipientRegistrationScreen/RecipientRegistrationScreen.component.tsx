@@ -27,6 +27,7 @@ export const RecipientRegistrationScreenComponent: React.FC<Props> = ({
   loading,
 }) => {
   const scrollRef = React.useRef<SV | null>(null);
+
   React.useEffect(() => {
     scrollRef.current?.scrollTo({
       y: 0,
@@ -51,7 +52,13 @@ export const RecipientRegistrationScreenComponent: React.FC<Props> = ({
         })
       : () => onSubmit(data);
 
-  if (loading || error || data.length === 0) return null;
+  if (
+    loading ||
+    error ||
+    data.length === 0 ||
+    Object.keys(f.getValues()).length === 0
+  )
+    return null;
 
   return (
     <FormProvider {...f}>
