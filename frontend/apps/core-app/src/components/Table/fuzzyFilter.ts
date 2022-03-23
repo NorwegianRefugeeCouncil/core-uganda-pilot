@@ -1,5 +1,12 @@
-export function fuzzyTextFilterFn(rows, id, filterValue) {
+import { FilterValue, Row } from 'react-table';
+
+export function fuzzyTextFilterFn(
+  rows: Row,
+  id: string,
+  filterValue: FilterValue,
+) {
   // TODO use fusejs
-  // return matchSorter(rows, filterValue, { keys: [(row) => row.values[id]] });
+  console.log('FUZZY', id, filterValue);
+  return rows;
 }
-fuzzyTextFilterFn.autoRemove = (val) => !val;
+// fuzzyTextFilterFn.autoRemove = (val) => !val;

@@ -1,1 +1,4 @@
-export { TableContainer as Table } from './Table.container';
+import { TableContainer } from './Table.container';
+
+export default TableContainer;
+export { GlobalFilter } from './GlobalFilter';
