@@ -61,7 +61,10 @@ export const SubFormFieldInput: React.FC<Props> = ({ form, field }) => {
 
   const handleOpenModal = () => setOpen(true);
 
-  const handleCloseModal = () => setOpen(false);
+  const handleCloseModal = () => {
+    setOpen(false);
+    f.reset();
+  };
 
   const handleAdd = f.handleSubmit((data: any) => {
     onChange([...value, data[field.id]]);
