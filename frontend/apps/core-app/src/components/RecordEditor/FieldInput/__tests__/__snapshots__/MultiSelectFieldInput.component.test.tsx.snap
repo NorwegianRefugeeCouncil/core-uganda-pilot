@@ -1038,7 +1038,7 @@ exports[`should match the snapshot a single selected value 1`] = `
               <View
                 _text={
                   Object {
-                    "color": "darkText",
+                    "color": "lightText",
                   }
                 }
                 accessibilityRole="button"
@@ -1061,7 +1061,7 @@ exports[`should match the snapshot a single selected value 1`] = `
                 style={
                   Object {
                     "alignItems": "center",
-                    "backgroundColor": "#FFFFFF",
+                    "backgroundColor": "transparent",
                     "borderColor": "#24303E",
                     "borderRadius": 3,
                     "borderStyle": "solid",
@@ -2243,7 +2243,7 @@ exports[`should match the snapshot multiple selected values 1`] = `
               <View
                 _text={
                   Object {
-                    "color": "darkText",
+                    "color": "lightText",
                   }
                 }
                 accessibilityRole="button"
@@ -2266,7 +2266,7 @@ exports[`should match the snapshot multiple selected values 1`] = `
                 style={
                   Object {
                     "alignItems": "center",
-                    "backgroundColor": "#FFFFFF",
+                    "backgroundColor": "transparent",
                     "borderColor": "#24303E",
                     "borderRadius": 3,
                     "borderStyle": "solid",
@@ -3448,7 +3448,7 @@ exports[`should match the snapshot no selected value 1`] = `
               <View
                 _text={
                   Object {
-                    "color": "darkText",
+                    "color": "lightText",
                   }
                 }
                 accessibilityRole="button"
@@ -3471,7 +3471,7 @@ exports[`should match the snapshot no selected value 1`] = `
                 style={
                   Object {
                     "alignItems": "center",
-                    "backgroundColor": "#FFFFFF",
+                    "backgroundColor": "transparent",
                     "borderColor": "#24303E",
                     "borderRadius": 3,
                     "borderStyle": "solid",

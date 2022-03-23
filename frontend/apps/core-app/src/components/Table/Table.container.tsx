@@ -4,8 +4,7 @@ import { FormDefinition } from 'core-api-client';
 import { useGlobalFilter, useSortBy, useTable } from 'react-table';
 
 import { TableComponent } from './Table.component';
-import { TableContext } from './useTableContext';
-import { fuzzyTextFilterFn } from './fuzzyFilter';
+import { TableContext } from './TableContext';
 import { createTableColumns } from './createTableColumns';
 import { mapRecordsToTableData } from './mapRecordsToTableData';
 import { TableProps } from './types';
@@ -29,18 +28,10 @@ export const TableContainer: React.FC<Props> = ({
   );
   const memoizedColumns = React.useMemo(() => createTableColumns(form), [form]);
 
-  const filterTypes = React.useMemo(
-    () => ({
-      fuzzyText: fuzzyTextFilterFn,
-    }),
-    [],
-  );
-
   const table: TableProps = useTable(
     {
       data: memoizedData,
       columns: memoizedColumns,
-      filterTypes,
     },
     useGlobalFilter,
     useSortBy,

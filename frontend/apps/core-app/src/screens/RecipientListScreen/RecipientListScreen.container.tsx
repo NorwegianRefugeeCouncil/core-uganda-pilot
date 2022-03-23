@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { TableInstance } from 'react-table';
 
 import { RootParamList } from '../../navigation/types';
-import { TableContext } from '../../components/Table/useTableContext';
+import { TableContext } from '../../components/Table/TableContext';
+import { TableProps } from '../../components/Table/types';
 
 import { RecipientListScreenComponent } from './RecipientListScreen.component';
 
@@ -16,8 +16,9 @@ export const RecipientListScreenContainer: React.FC = () => {
     });
   };
 
-  const [tableInstance, setTableInstance] =
-    React.useState<TableInstance | null>(null);
+  const [tableInstance, setTableInstance] = React.useState<TableProps | null>(
+    null,
+  );
 
   return (
     <TableContext.Provider value={{ tableInstance, setTableInstance }}>

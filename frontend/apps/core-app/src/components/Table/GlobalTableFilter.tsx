@@ -1,6 +1,8 @@
 import React from 'react';
 import { useAsyncDebounce } from 'react-table';
-import { FormControl, Input } from 'native-base';
+import { FormControl } from 'native-base';
+
+import { Input } from '../Web/Input';
 
 import { TableProps } from './types';
 
@@ -8,9 +10,8 @@ type Props = {
   table: TableProps;
 };
 
-export const GlobalFilter: React.FC<Props> = ({ table }) => {
+export const GlobalTableFilter: React.FC<Props> = ({ table }) => {
   const {
-    preGlobalFilteredRows,
     state: { globalFilter },
     setGlobalFilter,
   } = table;
@@ -19,21 +20,19 @@ export const GlobalFilter: React.FC<Props> = ({ table }) => {
   const onChange = useAsyncDebounce((v) => {
     setGlobalFilter(v || undefined);
   }, 200);
-  const count = preGlobalFilteredRows.length;
 
   return (
     <FormControl>
-      <FormControl.Label>Search</FormControl.Label>
+      <FormControl.Label>Beneficiary Name</FormControl.Label>
       <Input
+        type="text"
         placeholder="Search"
         value={value || ''}
         onChange={(e) => {
-          console.log('FILTER', e.target.value);
-          onChange(e.target.value);
-          setValue(e.target.value);
+          onChange(e);
+          setValue(e);
         }}
       />
-      <FormControl.HelperText>{`${count} results`}</FormControl.HelperText>
     </FormControl>
   );
 };
