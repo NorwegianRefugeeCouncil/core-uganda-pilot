@@ -3,38 +3,68 @@ import {
   FieldValue,
   FormWithRecord,
   RecordLookup,
+  Record,
 } from '../types';
-import {
-  Recipient,
-  RecipientDefinition,
-  RecipientList,
-} from '../types/client/Recipient';
+import { Recipient, RecipientList } from '../types/client/Recipient';
 
 import { RecordClient } from './Record';
 import { FormClient } from './Form';
 
 export class RecipientClient {
-  recordClient: RecordClient;
+  private recordClient: RecordClient;
 
-  formClient: FormClient;
+  private formClient: FormClient;
 
   constructor(recordClient: RecordClient, formClient: FormClient) {
     this.recordClient = recordClient;
     this.formClient = formClient;
   }
 
-  create = (recipient: RecipientDefinition): Promise<Recipient> => {
-    return Promise.resolve({
-      id: 'id',
-      ...recipient,
-    });
-  };
+  /*
+    Assumpitions made:
+      * The array of FormWithRecord is in hierarchical order
+      * Each form has a reference key field, except for the root
+  */
+  public create = (
+    recipient: FormWithRecord<Recipient>[],
+  ): Promise<FormWithRecord<Recipient>[]> =>
+    recipient.reduce<Promise<FormWithRecord<Recipient>[]>>(
+      async (acc, { form, record }, idx) => {
+        const resolvedAcc = await acc;
 
-  list = (): Promise<RecipientList> => {
+        // If the record is the root we just create it
+        // If it is a child we first set the key value to the parent that was just created
+        const keyFieldId = form.fields.find((f) => f.key)?.id;
+        const parsedRecord: Record =
+          idx === 0
+            ? record
+            : {
+                ...record,
+                values: record.values.map((v) => {
+                  if (v.fieldId === keyFieldId)
+                    return {
+                      fieldId: v.fieldId,
+                      value: resolvedAcc[idx - 1].record.id,
+                    };
+                  return v;
+                }),
+              };
+
+        const createdRecord = await this.recordClient.createWithSubRecords(
+          parsedRecord,
+          form,
+        );
+
+        return [...resolvedAcc, { form, record: createdRecord }];
+      },
+      Promise.resolve([]),
+    );
+
+  public list = (): Promise<RecipientList> => {
     return Promise.resolve({ items: [] });
   };
 
-  get = async ({
+  public get = async ({
     recordId,
     formId,
     databaseId,
