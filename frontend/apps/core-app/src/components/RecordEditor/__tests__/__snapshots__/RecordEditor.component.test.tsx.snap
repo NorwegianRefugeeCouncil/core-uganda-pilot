@@ -14,11 +14,7 @@ exports[`should match the snapshot 1`] = `
 >
   <View
     dataSet={Object {}}
-    style={
-      Object {
-        "flexWrap": "wrap",
-      }
-    }
+    style={Object {}}
   >
     <View
       dataSet={Object {}}

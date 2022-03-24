@@ -2,7 +2,12 @@ import * as React from 'react';
 
 import Table, { GlobalTableFilter } from '../../components/RecordTable';
 import { RecordTableContext } from '../../components/RecordTable/RecordTableContext';
-import { formWithRecords } from '../../components/RecordTable/testData.tmp';
+import {
+  data,
+  forms,
+  formWithRecords,
+  recordsForm0,
+} from '../../components/RecordTable/data.tmp';
 
 import * as Styles from './RecipientListScreen.styles';
 
@@ -20,7 +25,12 @@ export const RecipientListScreenComponent: React.FC<Props> = ({
       {tableContext?.tableInstance && (
         <GlobalTableFilter table={tableContext.tableInstance} />
       )}
-      <Table data={formWithRecords} handleItemClick={handleItemClick} />
+      <Table
+        data={data}
+        forms={forms}
+        records={recordsForm0}
+        handleItemClick={handleItemClick}
+      />
     </Styles.Container>
   );
 };

@@ -1,15 +1,27 @@
-import { FieldValue, FormWithRecords, Record } from 'core-api-client';
+import { FieldValue, FormWithRecord, Record } from 'core-api-client';
 
-export const mapRecordsToRecordTableData = ({
-  records,
-  form,
-}: FormWithRecords<Record>): any[] =>
-  records.map((record) => {
-    return record.values.reduce((acc, value: FieldValue) => {
-      const field = form.fields.find((f) => {
-        return f.id === value.fieldId;
-      });
-      if (field) return { ...acc, [field?.id]: value.value };
-      return acc;
-    }, {});
-  });
+import { RecordTableEntry } from './types';
+
+export const mapRecordsToRecordTableData = (
+  data: FormWithRecord<Record>[][],
+): RecordTableEntry[] => {
+  return data.reduce((allEntries: RecordTableEntry[], item) => {
+    const completeEntry = item.reduce(
+      (ce: RecordTableEntry, formWithRecord) => {
+        const partialEntry = formWithRecord.record.values.reduce(
+          (pe: RecordTableEntry, value: FieldValue) => {
+            const field = formWithRecord.form.fields.find((f) => {
+              return !f.key && f.id === value.fieldId;
+            });
+            if (field) return { ...pe, [field?.id]: value.value };
+            return pe;
+          },
+          {},
+        );
+        return { ...ce, ...partialEntry };
+      },
+      {},
+    );
+    return allEntries.concat([completeEntry]);
+  }, []);
+};

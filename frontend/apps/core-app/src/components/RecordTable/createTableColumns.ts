@@ -1,8 +1,22 @@
-import { FormDefinition } from 'core-api-client';
+import { FormWithRecord, Record } from 'core-api-client';
 import { Column } from 'react-table';
 
-export const createTableColumns = (form: FormDefinition): Column[] =>
-  form.fields.map((field) => ({
-    Header: field.name,
-    accessor: field.id,
-  }));
+import { RecordTableEntry } from './types';
+
+export const createTableColumns = (
+  data: FormWithRecord<Record>[][],
+): Column<RecordTableEntry>[] => {
+  return data[0].reduce(
+    (allColumns: Column<RecordTableEntry>[], formWithRecord) => {
+      const columnsPerForm = formWithRecord.form.fields
+        .filter((f) => !f.key)
+        .map(({ name, id }) => ({
+          Header: name,
+          accessor: id,
+        }));
+
+      return [...allColumns, ...columnsPerForm];
+    },
+    [],
+  );
+};
