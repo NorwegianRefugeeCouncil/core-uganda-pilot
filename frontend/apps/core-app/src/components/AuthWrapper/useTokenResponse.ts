@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Platform } from 'react-native';
 import {
   CodeChallengeMethod,
   exchangeCodeAsync,
@@ -9,13 +10,36 @@ import {
   useAutoDiscovery,
 } from 'expo-auth-session';
 import Constants from 'expo-constants';
-import { Platform } from 'react-native';
+
+const getStoredTokenResponse = (): TokenResponse | undefined => {
+  try {
+    if (Platform.OS !== 'web') return undefined;
+    const stored = sessionStorage.getItem('tokenResponse');
+    if (stored) {
+      return new TokenResponse(JSON.parse(stored));
+    }
+    return undefined;
+  } catch (e) {
+    return undefined;
+  }
+};
+
+const storeTokenResponse = (tokenResponse: TokenResponse) => {
+  try {
+    if (Platform.OS !== 'web') return;
+    sessionStorage.setItem('tokenResponse', JSON.stringify(tokenResponse));
+  } catch (e) {
+    // ignore
+  }
+};
 
 export const useTokenResponse = (): [
   TokenResponse | undefined,
   () => Promise<void>,
 ] => {
-  const [tokenResponse, setTokenResponse] = React.useState<TokenResponse>();
+  const [tokenResponse, setTokenResponse] = React.useState<
+    TokenResponse | undefined
+  >(getStoredTokenResponse());
 
   const shouldUseProxy = React.useMemo(
     () => Platform.select({ web: false, default: false }),
@@ -80,6 +104,7 @@ export const useTokenResponse = (): [
         clientId,
         scopes: Constants.manifest?.extra?.scopes,
         extraParams: {},
+        refreshToken: tokenResponse.refreshToken,
       };
 
       try {
@@ -107,6 +132,10 @@ export const useTokenResponse = (): [
         clearInterval(refreshTokenInterval.current);
     };
   }, [tokenResponse?.refreshToken, tokenResponse?.expiresIn]);
+
+  React.useEffect(() => {
+    if (tokenResponse) storeTokenResponse(tokenResponse);
+  }, [JSON.stringify(tokenResponse)]);
 
   const login = React.useCallback(async () => {
     promptAsync({ useProxy: shouldUseProxy });
