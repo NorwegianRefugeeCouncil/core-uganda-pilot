@@ -197,10 +197,10 @@ describe('review', () => {
     });
   });
 
-  // it('should call onSubmit', () => {
-  //   // Not implemented
-  //   expect(true).toBeFalsy();
-  // });
+  it.skip('should call onSubmit', () => {
+    // Not implemented
+    expect(true).toBeFalsy();
+  });
 
   it('should call onCancel', () => {
     jest
