@@ -1,4 +1,4 @@
-import { mapRecordsToTableData } from '../mapRecordsToTableData';
+import { mapRecordsToRecordTableData } from '../mapRecordsToRecordTableData';
 import {
   baseForm,
   baseMultilineTextField,
@@ -11,11 +11,11 @@ describe('mapRecordsToTableData', () => {
   form.fields = [baseTextField, baseMultilineTextField];
 
   it('should return empty array in case of no records', () => {
-    expect(mapRecordsToTableData([], form)).toEqual([]);
+    expect(mapRecordsToRecordTableData({ records: [], form })).toEqual([]);
   });
 
   it('should map records correctly', () => {
-    expect(mapRecordsToTableData([baseRecord1], form)).toEqual([
+    expect(mapRecordsToRecordTableData({ records: [baseRecord1], form })).toEqual([
       {
         field1: 'text',
         field2: 'multi line text',
@@ -25,8 +25,8 @@ describe('mapRecordsToTableData', () => {
 
   it('should skip record values whose fields do not exist in the form', () => {
     expect(
-      mapRecordsToTableData(
-        [
+      mapRecordsToRecordTableData({
+        records: [
           {
             ...baseRecord1,
             values: [
@@ -36,7 +36,7 @@ describe('mapRecordsToTableData', () => {
           },
         ],
         form,
-      ),
+      }),
     ).toEqual([
       {
         field1: 'text',

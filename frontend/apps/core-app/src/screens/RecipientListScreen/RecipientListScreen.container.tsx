@@ -2,8 +2,11 @@ import * as React from 'react';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 
 import { RootParamList } from '../../navigation/types';
-import { TableContext } from '../../components/Table/TableContext';
-import { TableProps } from '../../components/Table/types';
+import { RecordTableContext } from '../../components/RecordTable/RecordTableContext';
+import {
+  RecordTableEntry,
+  SortedFilteredTable,
+} from '../../components/RecordTable/types';
 
 import { RecipientListScreenComponent } from './RecipientListScreen.component';
 
@@ -16,13 +19,12 @@ export const RecipientListScreenContainer: React.FC = () => {
     });
   };
 
-  const [tableInstance, setTableInstance] = React.useState<TableProps | null>(
-    null,
-  );
+  const [tableInstance, setTableInstance] =
+    React.useState<SortedFilteredTable<RecordTableEntry> | null>(null);
 
   return (
-    <TableContext.Provider value={{ tableInstance, setTableInstance }}>
+    <RecordTableContext.Provider value={{ tableInstance, setTableInstance }}>
       <RecipientListScreenComponent handleItemClick={handleItemClick} />
-    </TableContext.Provider>
+    </RecordTableContext.Provider>
   );
 };

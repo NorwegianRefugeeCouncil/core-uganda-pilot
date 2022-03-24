@@ -2,16 +2,16 @@ import React, { useContext } from 'react';
 import { Box, HStack, Text, VStack } from 'native-base';
 import { Row } from 'react-table';
 
-import { TableContext } from './TableContext';
-import { TableRow } from './TableRow';
-import { TableHeader } from './TableHeader';
+import { RecordTableContext } from './RecordTableContext';
+import { RecordTableRow } from './RecordTableRow';
+import { RecordTableHeader } from './RecordTableHeader';
 
 type Props = {
   handleItemClick: (id: string) => void;
 };
 
-export const TableComponent: React.FC<Props> = ({ handleItemClick }) => {
-  const tableContext = useContext(TableContext);
+export const RecordTableComponent: React.FC<Props> = ({ handleItemClick }) => {
+  const tableContext = useContext(RecordTableContext);
   if (!tableContext) return null;
 
   const { tableInstance } = tableContext;
@@ -20,21 +20,21 @@ export const TableComponent: React.FC<Props> = ({ handleItemClick }) => {
   const { rows, columns, prepareRow, globalFilteredRows } = tableInstance;
 
   return (
-    <Box>
+    <Box maxWidth="100%" overflowX="scroll">
       <Text level="2">{globalFilteredRows.length} beneficiaries</Text>
       <HStack>
         {columns.map((column) => (
-          <TableHeader column={column} key={column.id} />
+          <RecordTableHeader column={column} key={column.id} />
         ))}
       </HStack>
       <VStack>
         {rows.map((row: Row) => {
           prepareRow(row);
           return (
-            <TableRow
+            <RecordTableRow
               key={row.id}
               row={row}
-              handleRowClick={() => handleItemClick(row.id)}
+              handleRowClick={handleItemClick}
             />
           );
         })}
