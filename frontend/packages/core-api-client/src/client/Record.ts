@@ -42,7 +42,16 @@ export class RecordClient {
       (f) => getFieldKind(f.fieldType) === FieldKind.SubForm,
     );
 
-    const recordResponse = await this.create({ object: record });
+    const recordWithoutSubRecords = {
+      ...record,
+      values: record.values.filter(
+        (v) => !subFormFields.some((sf) => sf.id === v.fieldId),
+      ),
+    };
+
+    const recordResponse = await this.create({
+      object: recordWithoutSubRecords,
+    });
 
     if (recordResponse.error || !recordResponse.response)
       throw new Error(recordResponse.error);
