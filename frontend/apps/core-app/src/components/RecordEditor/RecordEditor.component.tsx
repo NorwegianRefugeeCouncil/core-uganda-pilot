@@ -6,6 +6,7 @@ import { FieldInput } from './FieldInput';
 
 type Props = {
   form: FormDefinition;
+  hideKeyFields?: boolean;
 };
 
 const useGetFieldWith = () => {
@@ -25,12 +26,16 @@ const useGetFieldWith = () => {
   };
 };
 
-export const RecordEditorComponent: React.FC<Props> = ({ form }) => {
+export const RecordEditorComponent: React.FC<Props> = ({
+  form,
+  hideKeyFields,
+}) => {
   const getFieldWidth = useGetFieldWith();
 
   return (
-    <VStack space={4} flexWrap="wrap">
+    <VStack space={4}>
       {form.fields.map((field) => {
+        if (hideKeyFields && field.key) return null;
         return (
           <Box key={field.id} width={getFieldWidth(field)}>
             <FieldInput form={form} field={field} />

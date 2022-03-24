@@ -1,21 +1,15 @@
-import { FormDefinition, FormType, Record } from 'core-api-client';
+import { FormType, FormWithRecord } from 'core-api-client';
+import { Recipient } from 'core-api-client/src/types/client/Recipient';
 
 import { render } from '../../../testUtils/render';
 import { RecipientProfileScreenComponent } from '../RecipientProfileScreen.component';
 
-jest.mock('../../../components/RecordView', () => {
+jest.mock('../../../components/Recipient/RecipientViewer', () => {
   const { View, Text } = jest.requireActual('react-native');
   return {
-    RecordView: ({
-      form,
-      record,
-    }: {
-      form: FormDefinition;
-      record: Record;
-    }) => (
+    RecipientViewer: ({ data }: { data: FormWithRecord<Recipient>[] }) => (
       <View>
-        <Text>{JSON.stringify(form)}</Text>
-        <Text>{JSON.stringify(record)}</Text>
+        <Text>{JSON.stringify(data)}</Text>
       </View>
     ),
   };
@@ -42,25 +36,33 @@ const data = [
   },
 ];
 
-it('should match the snapshot', () => {
-  const { toJSON } = render(
-    <RecipientProfileScreenComponent data={data} isLoading={false} />,
-  );
-  expect(toJSON()).toMatchSnapshot();
-});
-it('should match the snapshot while loading', () => {
-  const { toJSON } = render(
-    <RecipientProfileScreenComponent data={data} isLoading />,
-  );
-  expect(toJSON()).toMatchSnapshot();
-});
-it('should match the snapshot with error', () => {
-  const { toJSON } = render(
-    <RecipientProfileScreenComponent
-      data={data}
-      isLoading={false}
-      error="error"
-    />,
-  );
-  expect(toJSON()).toMatchSnapshot();
+describe('should match the snapshot', () => {
+  it('default', () => {
+    const { toJSON } = render(
+      <RecipientProfileScreenComponent
+        data={data}
+        isLoading={false}
+        error={null}
+      />,
+    );
+    expect(toJSON()).toMatchSnapshot();
+  });
+
+  it('loading', () => {
+    const { toJSON } = render(
+      <RecipientProfileScreenComponent data={data} isLoading error={null} />,
+    );
+    expect(toJSON()).toMatchSnapshot();
+  });
+
+  it('error', () => {
+    const { toJSON } = render(
+      <RecipientProfileScreenComponent
+        data={data}
+        isLoading={false}
+        error="error"
+      />,
+    );
+    expect(toJSON()).toMatchSnapshot();
+  });
 });

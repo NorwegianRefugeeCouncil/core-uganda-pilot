@@ -36,6 +36,7 @@ export const normaliseFieldValues = (
             if (subFieldType === FieldKind.SubForm)
               throw new Error('subField is a subform');
             return {
+              key: field.key,
               value: subFieldValue.value as string | string[] | null,
               formattedValue: formatFieldValue(
                 subFieldValue.value as string | string[] | null,
@@ -51,6 +52,7 @@ export const normaliseFieldValues = (
         field.fieldType.subForm?.fields.map((subField) => subField.name) ?? [];
 
       const item: NormalisedSubFormField = {
+        key: field.key,
         fieldType,
         header: field.name,
         labels,
@@ -61,6 +63,7 @@ export const normaliseFieldValues = (
     }
 
     const item: NormalisedBasicField = {
+      key: field.key,
       label: field.name,
       value: cur.value as string | string[] | null,
       fieldType,
