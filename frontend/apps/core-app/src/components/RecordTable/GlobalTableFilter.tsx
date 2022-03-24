@@ -4,10 +4,10 @@ import { FormControl } from 'native-base';
 
 import { Input } from '../Web/Input';
 
-import { TableProps } from './types';
+import { SortedFilteredTable } from './types';
 
 type Props = {
-  table: TableProps;
+  table: SortedFilteredTable;
 };
 
 export const GlobalTableFilter: React.FC<Props> = ({ table }) => {

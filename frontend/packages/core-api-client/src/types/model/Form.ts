@@ -24,3 +24,8 @@ export type FormWithRecord<T extends Record> = {
   form: FormDefinition;
   record: T;
 };
+
+export type FormWithRecords<T extends Record> = {
+  form: FormDefinition;
+  records: T[];
+};

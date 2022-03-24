@@ -1,9 +1,9 @@
-import { FieldValue, FormDefinition, Record } from 'core-api-client';
+import { FieldValue, FormWithRecords, Record } from 'core-api-client';
 
-export const mapRecordsToTableData = (
-  records: Record[],
-  form: FormDefinition,
-): any[] =>
+export const mapRecordsToRecordTableData = ({
+  records,
+  form,
+}: FormWithRecords<Record>): any[] =>
   records.map((record) => {
     return record.values.reduce((acc, value: FieldValue) => {
       const field = form.fields.find((f) => {

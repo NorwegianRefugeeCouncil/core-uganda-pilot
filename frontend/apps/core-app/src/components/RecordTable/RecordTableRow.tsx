@@ -2,14 +2,19 @@ import { Box, HStack, Pressable, Text } from 'native-base';
 import { Cell, Row } from 'react-table';
 import React from 'react';
 
-type Props = {
-  row: Row;
-  handleRowClick: () => void;
+import { RecordTableEntry } from './types';
+
+type Props<T extends Record<string, any>> = {
+  row: Row<T>;
+  handleRowClick: (id: string) => void;
 };
 
-export const TableRow: React.FC<Props> = ({ row, handleRowClick }) => {
+export const RecordTableRow: React.FC<Props<RecordTableEntry>> = ({
+  row,
+  handleRowClick,
+}) => {
   return (
-    <Pressable onPress={() => handleRowClick()}>
+    <Pressable onPress={() => handleRowClick(row.id)}>
       <HStack>
         {row.cells.map((cell: Cell, i) => {
           return (

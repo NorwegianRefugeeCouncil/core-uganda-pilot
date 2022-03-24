@@ -3,11 +3,15 @@ import { Icon } from 'core-design-system';
 import React from 'react';
 import { ColumnInstance, UseSortByColumnProps } from 'react-table';
 
-type Props = {
-  column: ColumnInstance & UseSortByColumnProps<any>;
+import { RecordTableEntry } from './types';
+
+type Props<T extends Record<string, any>> = {
+  column: ColumnInstance & UseSortByColumnProps<T>;
 };
 
-export const TableHeader: React.FC<Props> = ({ column }) => {
+export const RecordTableHeader: React.FC<Props<RecordTableEntry>> = ({
+  column,
+}) => {
   const { onClick } = column.getSortByToggleProps();
   const sortIcon = column.isSorted
     ? column.isSortedDesc
