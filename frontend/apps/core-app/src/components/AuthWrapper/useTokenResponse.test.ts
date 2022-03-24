@@ -272,6 +272,7 @@ describe('Success', () => {
         clientId: 'fake-client-id',
         scopes: ['fake-scope'],
         extraParams: {},
+        refreshToken: 'fakeRefreshToken',
       },
       fakeDiscovery,
     );
@@ -564,6 +565,7 @@ describe('Failure', () => {
         clientId: 'fake-client-id',
         scopes: ['fake-scope'],
         extraParams: {},
+        refreshToken: 'fakeRefreshToken',
       },
       fakeDiscovery,
     );
