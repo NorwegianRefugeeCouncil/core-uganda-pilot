@@ -25,8 +25,8 @@ export const toReactHookForm = (
 export const fromReactHookForm = (
   originalData: FormWithRecord<Recipient>[],
   value: RHFieldValue<any>,
-): FormWithRecord<Recipient>[] => {
-  return originalData.map((datum) => ({
+): FormWithRecord<Recipient>[] =>
+  originalData.map((datum) => ({
     form: datum.form,
     record: {
       ...datum.record,
@@ -53,4 +53,3 @@ export const fromReactHookForm = (
       }),
     },
   }));
-};
