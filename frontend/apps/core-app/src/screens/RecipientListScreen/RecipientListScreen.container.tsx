@@ -9,13 +9,15 @@ import {
 import { RootNavigatorParamList } from '../../navigation/root';
 import { routes } from '../../constants/routes';
 import { useRecipientForms } from '../../contexts/RecipientForms';
+import { formsClient } from '../../clients/formsClient';
+import { useAPICall } from '../../hooks/useAPICall';
 
 import { RecipientListScreenComponent } from './RecipientListScreen.component';
 
 type Props = StackScreenProps<RootNavigatorParamList, 'recipientsList'>;
 
 export const RecipientListScreenContainer: React.FC<Props> = ({
-  navigation,
+  navigation ,route,
 }) => {
   const recipientForms = useRecipientForms();
 
@@ -30,11 +32,39 @@ export const RecipientListScreenContainer: React.FC<Props> = ({
   const [tableInstance, setTableInstance] =
     React.useState<SortedFilteredTable<RecipientListTableEntry> | null>(null);
 
+  const [_, formState] = useAPICall(
+    formsClient.Form.getAncestors,
+    [route.params.formId],
+    true,
+  );
+  const [_, recipientsState] = useAPICall(
+    formsClient.Recipient.list,
+    [
+      {
+        formId: route.params.formId,
+        databaseId: route.params.databaseId,
+      },
+    ],
+    true,
+  );
+
   return (
     <RecipientListTableContext.Provider
       value={{ tableInstance, setTableInstance }}
     >
-      <RecipientListScreenComponent onItemClick={handleItemClick} />
+      <RecipientListScreenComponent
+        onItemClick={handleItemClick}
+        data={recipientsState.data}
+        isLoading={
+          formState.loading ||
+          recipientsState.loading ||
+          !formState.data ||
+          !recipientsState.data ||
+          formState.data?.length === 0 ||
+          recipientsState.data?.length === 0
+        }
+        error={formState.error || recipientsState.error || undefined}
+      />
     </RecipientListTableContext.Provider>
   );
 };

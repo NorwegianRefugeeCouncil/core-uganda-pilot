@@ -1,6 +1,7 @@
 import {
   FieldDefinition,
   FieldValue,
+  FormLookup,
   FormWithRecord,
   RecordLookup,
   Record,
@@ -10,7 +11,6 @@ import {
 import {
   Recipient,
   RecipientClientDefinition,
-  RecipientList,
 } from '../types/client/Recipient';
 import { Validation } from '..';
 import * as Tree from '../utils/tree';
@@ -67,8 +67,22 @@ export class RecipientClient implements RecipientClientDefinition {
     );
   };
 
-  public list = (): Promise<RecipientList> => {
-    return Promise.resolve({ items: [] });
+  public list = async ({
+    formId,
+    databaseId,
+  }: FormLookup): Promise<FormWithRecord<Recipient>[][]> => {
+    const response = await this.recordClient.list({
+      formId,
+      databaseId,
+    });
+    if (!response.response) {
+      return response.error;
+    }
+    return Promise.all(
+      response.response?.items.map((item) => {
+        return this.get({ formId, databaseId, recordId: item.id });
+      }),
+    );
   };
 
   public get = async ({
