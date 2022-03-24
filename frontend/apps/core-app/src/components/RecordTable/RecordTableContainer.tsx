@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Record } from 'core-api-client';
+import { FormWithRecord, Record } from 'core-api-client';
 import {
   TableInstance,
   useGlobalFilter,
@@ -7,6 +7,7 @@ import {
   useTable,
 } from 'react-table';
 import { FormWithRecords } from 'core-api-client/src';
+import { Recipient } from 'core-api-client/src/types/client/Recipient';
 
 import { RecordTableComponent } from './RecordTableComponent';
 import { RecordTableContext } from './RecordTableContext';
@@ -15,7 +16,7 @@ import { mapRecordsToRecordTableData } from './mapRecordsToRecordTableData';
 import { RecordTableEntry, SortedFilteredTable } from './types';
 
 type Props<T extends Record> = {
-  data: FormWithRecords<T>;
+  data: FormWithRecord<T>[][];
   handleItemClick: (id: string) => void;
 };
 
@@ -27,11 +28,11 @@ export const RecordTableContainer: React.FC<Props<Record>> = ({
 
   const memoizedData = React.useMemo(
     () => mapRecordsToRecordTableData(data),
-    [JSON.stringify(data.records)],
+    [JSON.stringify(data)],
   );
   const memoizedColumns = React.useMemo(
-    () => createTableColumns(data.form),
-    [JSON.stringify(data.form)],
+    () => createTableColumns(data),
+    [JSON.stringify(data)],
   );
 
   const table: SortedFilteredTable<RecordTableEntry> = useTable(

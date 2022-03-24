@@ -2,6 +2,7 @@ import { createTableColumns } from '../createTableColumns';
 import {
   baseForm,
   baseMultilineTextField,
+  baseRecord1,
   baseTextField,
 } from '../../../testUtils/baseObjects';
 
@@ -10,9 +11,21 @@ describe('createTableColumns', () => {
   form.fields = [baseTextField, baseMultilineTextField];
 
   it('should create the correct columns', () => {
-    expect(createTableColumns(form)).toEqual([
-      { Header: 'field 1', accessor: 'field1' },
-      { Header: 'field 2', accessor: 'field2' },
-    ]);
+    expect(
+      createTableColumns([
+        [
+          {
+            record: {
+              ...baseRecord1,
+              values: [
+                ...baseRecord1.values,
+                { fieldId: 'non-field', value: 'non-value' },
+              ],
+            },
+            form,
+          },
+        ],
+      ]),
+    ).toEqual([{ Header: 'field 1', accessor: 'field1' }]);
   });
 });
