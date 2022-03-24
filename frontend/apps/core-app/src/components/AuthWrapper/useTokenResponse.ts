@@ -80,6 +80,7 @@ export const useTokenResponse = (): [
         clientId,
         scopes: Constants.manifest?.extra?.scopes,
         extraParams: {},
+        refreshToken: tokenResponse.refreshToken,
       };
 
       try {
