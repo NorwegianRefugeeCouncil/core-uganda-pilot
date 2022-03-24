@@ -63,6 +63,7 @@ export class RecordClient {
         )[i];
         const subRecord: Omit<Record, 'id'> = {
           ...record,
+          formId: f.id,
           ownerId: recordResponse.response?.id,
           values,
         };
