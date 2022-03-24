@@ -8,7 +8,7 @@ import { RecipientRegistrationScreenContainer } from '../RecipientRegistrationSc
 import * as hooks from '../../../hooks/useAPICall';
 import configuration from '../../../config';
 import { formsClient } from '../../../clients/formsClient';
-import { linkingConfig } from '../../../navigation/linking.config';
+import { routes } from '../../../constants/routes';
 
 const makeForm = (i: number): FormDefinition => ({
   id: `form-id-${i}`,
@@ -91,18 +91,30 @@ afterEach(() => {
 it('should call the api', () => {
   jest
     .spyOn(hooks, 'useAPICall')
-    .mockImplementation(() => [
-      () => Promise.resolve(),
-      { data: forms, loading: false, error: null },
-    ]);
+    .mockImplementation((_, __, rerunOnArgChange) =>
+      rerunOnArgChange
+        ? [
+            () => Promise.resolve(),
+            { data: forms, loading: false, error: null },
+          ]
+        : [
+            () => Promise.resolve(),
+            { data: null, loading: false, error: null },
+          ],
+    );
 
   render(<RecipientRegistrationScreenContainer />);
 
-  expect(hooks.useAPICall).toHaveBeenCalledTimes(2);
+  expect(hooks.useAPICall).toHaveBeenCalledTimes(4);
   expect(hooks.useAPICall).toHaveBeenCalledWith(
     formsClient.Form.getAncestors,
     [configuration.recipient.registrationForm.formId],
     true,
+  );
+  expect(hooks.useAPICall).toHaveBeenCalledWith(
+    formsClient.Recipient.create,
+    [[]],
+    false,
   );
 });
 
@@ -111,10 +123,17 @@ describe('mode', () => {
     it('should render', async () => {
       jest
         .spyOn(hooks, 'useAPICall')
-        .mockImplementation(() => [
-          () => Promise.resolve(),
-          { data: forms, loading: false, error: null },
-        ]);
+        .mockImplementation((_, __, rerunOnArgChange) =>
+          rerunOnArgChange
+            ? [
+                () => Promise.resolve(),
+                { data: forms, loading: false, error: null },
+              ]
+            : [
+                () => Promise.resolve(),
+                { data: null, loading: false, error: null },
+              ],
+        );
 
       const { getByText, getByTestId } = render(
         <RecipientRegistrationScreenContainer />,
@@ -131,12 +150,19 @@ describe('mode', () => {
     });
 
     it('should call onSubmit', async () => {
-      jest
+      const useAPICallSpy = jest
         .spyOn(hooks, 'useAPICall')
-        .mockImplementation(() => [
-          () => Promise.resolve(),
-          { data: forms, loading: false, error: null },
-        ]);
+        .mockImplementation((_, __, rerunOnArgChange) =>
+          rerunOnArgChange
+            ? [
+                () => Promise.resolve(),
+                { data: forms, loading: false, error: null },
+              ]
+            : [
+                () => Promise.resolve(),
+                { data: null, loading: false, error: null },
+              ],
+        );
 
       const { getByText, getByTestId } = render(
         <RecipientRegistrationScreenContainer />,
@@ -144,30 +170,39 @@ describe('mode', () => {
 
       fireEvent.press(getByText('Submit'));
 
-      expect(getByText('review')).toBeTruthy();
-
-      await waitFor(() =>
+      await waitFor(() => {
+        expect(getByText('review')).toBeTruthy();
         expect(
           JSON.parse(getByTestId('mock-data').children[0].toString()),
-        ).toEqual(mockSubmitData),
-      );
+        ).toEqual(mockSubmitData);
+        expect(useAPICallSpy).toHaveBeenCalledWith(
+          formsClient.Recipient.create,
+          [mockSubmitData],
+          false,
+        );
+      });
     });
 
     it('should call onCancel', () => {
       jest
         .spyOn(hooks, 'useAPICall')
-        .mockImplementation(() => [
-          () => Promise.resolve(),
-          { data: forms, loading: false, error: null },
-        ]);
+        .mockImplementation((_, __, rerunOnArgChange) =>
+          rerunOnArgChange
+            ? [
+                () => Promise.resolve(),
+                { data: forms, loading: false, error: null },
+              ]
+            : [
+                () => Promise.resolve(),
+                { data: null, loading: false, error: null },
+              ],
+        );
 
       const { getByText } = render(<RecipientRegistrationScreenContainer />);
 
       fireEvent.press(getByText('Cancel'));
 
-      expect(mockNavigate).toHaveBeenCalledWith({
-        key: linkingConfig.config.screens.Recipients,
-      });
+      expect(mockNavigate).toHaveBeenCalledWith(routes.recipientsList.name);
     });
   });
 });
@@ -176,10 +211,17 @@ describe('review', () => {
   it('should render', async () => {
     jest
       .spyOn(hooks, 'useAPICall')
-      .mockImplementation(() => [
-        () => Promise.resolve(),
-        { data: forms, loading: false, error: null },
-      ]);
+      .mockImplementation((_, __, rerunOnArgChange) =>
+        rerunOnArgChange
+          ? [
+              () => Promise.resolve(),
+              { data: forms, loading: false, error: null },
+            ]
+          : [
+              () => Promise.resolve(),
+              { data: null, loading: false, error: null },
+            ],
+      );
 
     const { getByText, getByTestId } = render(
       <RecipientRegistrationScreenContainer />,
@@ -197,18 +239,59 @@ describe('review', () => {
     });
   });
 
-  it.skip('should call onSubmit', () => {
-    // Not implemented
-    expect(true).toBeFalsy();
+  it('should call onSubmit', async () => {
+    jest
+      .spyOn(hooks, 'useAPICall')
+      .mockImplementation((_, args, rerunOnArgChange) =>
+        rerunOnArgChange
+          ? [
+              () => Promise.resolve(),
+              { data: forms, loading: false, error: null },
+            ]
+          : [
+              () => Promise.resolve(),
+              {
+                data:
+                  (args[0] as any[]).length === 0
+                    ? null
+                    : [
+                        {
+                          form: forms[0],
+                          record: {
+                            ...buildDefaultRecord(forms[0]),
+                            id: 'fake-id',
+                          },
+                        },
+                      ],
+                loading: false,
+                error: null,
+              },
+            ],
+      );
+
+    const { getByText } = render(<RecipientRegistrationScreenContainer />);
+
+    fireEvent.press(getByText('Submit'));
+
+    expect(mockNavigate).toHaveBeenCalledWith(routes.recipientsProfile.name, {
+      id: 'fake-id',
+    });
   });
 
   it('should call onCancel', () => {
     jest
       .spyOn(hooks, 'useAPICall')
-      .mockImplementation(() => [
-        () => Promise.resolve(),
-        { data: forms, loading: false, error: null },
-      ]);
+      .mockImplementation((_, __, rerunOnArgChange) =>
+        rerunOnArgChange
+          ? [
+              () => Promise.resolve(),
+              { data: forms, loading: false, error: null },
+            ]
+          : [
+              () => Promise.resolve(),
+              { data: null, loading: false, error: null },
+            ],
+      );
 
     const { getByText } = render(<RecipientRegistrationScreenContainer />);
 
@@ -227,10 +310,14 @@ describe('review', () => {
 it('should handle loading', () => {
   jest
     .spyOn(hooks, 'useAPICall')
-    .mockImplementation(() => [
-      () => Promise.resolve(),
-      { data: forms, loading: true, error: null },
-    ]);
+    .mockImplementation((_, __, rerunOnArgChange) =>
+      rerunOnArgChange
+        ? [() => Promise.resolve(), { data: forms, loading: true, error: null }]
+        : [
+            () => Promise.resolve(),
+            { data: null, loading: false, error: null },
+          ],
+    );
 
   const { getByText } = render(<RecipientRegistrationScreenContainer />);
 
@@ -240,10 +327,17 @@ it('should handle loading', () => {
 it('should handle error', () => {
   jest
     .spyOn(hooks, 'useAPICall')
-    .mockImplementation(() => [
-      () => Promise.resolve(),
-      { data: forms, loading: false, error: 'error' },
-    ]);
+    .mockImplementation((_, __, rerunOnArgChange) =>
+      rerunOnArgChange
+        ? [
+            () => Promise.resolve(),
+            { data: forms, loading: false, error: 'error' },
+          ]
+        : [
+            () => Promise.resolve(),
+            { data: null, loading: false, error: null },
+          ],
+    );
 
   const { getByText } = render(<RecipientRegistrationScreenContainer />);
 
