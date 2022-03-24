@@ -172,7 +172,7 @@ describe('mode', () => {
   });
 });
 
-describe.only('review', () => {
+describe('review', () => {
   it('should render', async () => {
     jest
       .spyOn(hooks, 'useAPICall')
