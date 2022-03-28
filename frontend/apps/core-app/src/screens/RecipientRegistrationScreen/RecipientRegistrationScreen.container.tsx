@@ -6,7 +6,6 @@ import { useNavigation } from '@react-navigation/native';
 import { formsClient } from '../../clients/formsClient';
 import configuration from '../../config';
 import { useAPICall } from '../../hooks/useAPICall';
-import { buildDefaultRecord } from '../../utils/buildDefaultRecord';
 import { routes } from '../../constants/routes';
 
 import { RecipientRegistrationScreenComponent } from './RecipientRegistrationScreen.component';
@@ -33,7 +32,7 @@ export const RecipientRegistrationScreenContainer: React.FC = () => {
     setData(
       (getRecipientFormsState.data || []).map((form) => ({
         form,
-        record: buildDefaultRecord(form),
+        record: formsClient.Record.buildDefaultRecord(form),
       })),
     );
   }, [JSON.stringify(getRecipientFormsState.data)]);

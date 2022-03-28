@@ -3,7 +3,6 @@ import { FormDefinition, FormType, FormWithRecord } from 'core-api-client';
 import { Recipient } from 'core-api-client/src/types/client/Recipient';
 
 import { render } from '../../../testUtils/render';
-import { buildDefaultRecord } from '../../../utils/buildDefaultRecord';
 import { RecipientRegistrationScreenContainer } from '../RecipientRegistrationScreen.container';
 import * as hooks from '../../../hooks/useAPICall';
 import configuration from '../../../config';
@@ -34,7 +33,7 @@ const makeFormWithRecord = (i: number): FormWithRecord<Recipient> => {
   const form = makeForm(i);
   return {
     form,
-    record: buildDefaultRecord(form),
+    record: formsClient.Record.buildDefaultRecord(form),
   };
 };
 
@@ -258,7 +257,7 @@ describe('review', () => {
                         {
                           form: forms[0],
                           record: {
-                            ...buildDefaultRecord(forms[0]),
+                            ...formsClient.Record.buildDefaultRecord(forms[0]),
                             id: 'fake-id',
                           },
                         },
