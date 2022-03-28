@@ -10,7 +10,7 @@ import { Recipient, RecipientList } from '../types/client/Recipient';
 import { RecordClient } from './Record';
 import { FormClient } from './Form';
 
-export class RecipientClient {
+export class RecipientClient implements RecipientClientDefinition {
   private recordClient: RecordClient;
 
   private formClient: FormClient;

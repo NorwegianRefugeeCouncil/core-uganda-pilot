@@ -6,11 +6,12 @@ import {
   FormListResponse,
   FormDefinition,
   FieldDefinition,
+  FormClientDefinition,
 } from '../types';
 
 import { BaseRESTClient } from './BaseRESTClient';
 
-export class FormClient {
+export class FormClient implements FormClientDefinition {
   restClient: BaseRESTClient;
 
   constructor(restClient: BaseRESTClient) {

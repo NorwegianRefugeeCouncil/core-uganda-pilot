@@ -16,7 +16,7 @@ import {
 import { BaseRESTClient } from './BaseRESTClient';
 import { FormClient } from './Form';
 
-export class RecordClient {
+export class RecordClient implements RecordClientDefinition {
   private restClient: BaseRESTClient;
 
   private formClient: FormClient;
