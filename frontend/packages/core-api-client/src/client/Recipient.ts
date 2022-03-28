@@ -74,6 +74,7 @@ export class RecipientClient implements RecipientClientDefinition {
     const response = await this.recordClient.list({
       formId,
       databaseId,
+      subforms: false,
     });
     if (!response.response) {
       return response.error;

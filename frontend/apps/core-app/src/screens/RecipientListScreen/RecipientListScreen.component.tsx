@@ -11,7 +11,7 @@ import * as Styles from './RecipientListScreen.styles';
 
 type Props = {
   onItemClick: (id: string) => void;
-  data: FormWithRecord<Recipient>[][];
+  data: FormWithRecord<Recipient>[][] | null;
   isLoading: boolean;
   error?: string;
 };
@@ -40,7 +40,7 @@ export const RecipientListScreenComponent: React.FC<Props> = ({
           setGlobalFilter={tableContext.tableInstance.setGlobalFilter}
         />
       )}
-      <RecipientListTable data={data} onItemClick={onItemClick} />
+      {data && <RecipientListTable data={data} onItemClick={onItemClick} />}
     </Styles.Container>
   );
 };

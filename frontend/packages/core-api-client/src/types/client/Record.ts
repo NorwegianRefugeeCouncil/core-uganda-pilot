@@ -10,7 +10,11 @@ export type RecordListResponse = Response<FormLookup, RecordList>;
 
 export type RecordLookup = FormLookup & { recordId: string };
 
-export type RecordListRequest = { databaseId: string; formId: string };
+export type RecordListRequest = {
+  databaseId: string;
+  formId: string;
+  subforms?: boolean;
+};
 
 export type RecordGetRequest = {
   databaseId: string;

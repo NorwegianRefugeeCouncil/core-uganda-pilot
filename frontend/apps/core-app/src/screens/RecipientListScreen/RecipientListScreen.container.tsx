@@ -37,6 +37,7 @@ export const RecipientListScreenContainer: React.FC<Props> = ({
     [route.params.formId],
     true,
   );
+  
   const [_, recipientsState] = useAPICall(
     formsClient.Recipient.list,
     [
@@ -56,14 +57,11 @@ export const RecipientListScreenContainer: React.FC<Props> = ({
         onItemClick={handleItemClick}
         data={recipientsState.data}
         isLoading={
-          formState.loading ||
           recipientsState.loading ||
-          !formState.data ||
           !recipientsState.data ||
-          formState.data?.length === 0 ||
           recipientsState.data?.length === 0
         }
-        error={formState.error || recipientsState.error || undefined}
+        error={recipientsState.error || undefined}
       />
     </RecipientListTableContext.Provider>
   );
