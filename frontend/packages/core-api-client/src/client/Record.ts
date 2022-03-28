@@ -11,6 +11,8 @@ import {
   RecordLookup,
   FormDefinition,
   FieldValue,
+  RecordClientDefinition,
+  FormWithRecord,
 } from '../types';
 
 import { BaseRESTClient } from './BaseRESTClient';
@@ -82,10 +84,10 @@ export class RecordClient implements RecordClientDefinition {
 
   // The backend does not create sub records, so we need to do it ourselves
   // This creates the record, then creates the sub records, then fetches the record again with it's subrecords
-  public createWithSubRecords = async (
-    record: Record,
-    form: FormDefinition,
-  ): Promise<Record> => {
+  public createWithSubRecords = async ({
+    form,
+    record,
+  }: FormWithRecord<Record>): Promise<Record> => {
     const subFormFields = form.fields.filter(
       (f) => getFieldKind(f.fieldType) === FieldKind.SubForm,
     );
@@ -105,20 +107,24 @@ export class RecordClient implements RecordClientDefinition {
       throw new Error(recordResponse.error);
 
     await Promise.all(
-      subFormFields.map(async (f, i) => {
-        const values = (
-          record.values.find((v) => v.fieldId === f.id)?.value as FieldValue[][]
-        )[i];
-        const subRecord: Omit<Record, 'id'> = {
-          ...record,
-          formId: f.id,
-          ownerId: recordResponse.response?.id,
-          values,
-        };
-        const subRecordResponse = await this.create({ object: subRecord });
-        if (subRecordResponse.error || !subRecordResponse.response)
-          throw new Error(subRecordResponse.error);
-        return subRecordResponse.response;
+      subFormFields.map(async (f) => {
+        const values = (record.values.find((v) => v.fieldId === f.id)?.value ??
+          []) as FieldValue[][];
+        const result = await Promise.all(
+          values.map(async (v) => {
+            const subRecord: Omit<Record, 'id'> = {
+              ...record,
+              formId: f.id,
+              ownerId: recordResponse.response?.id,
+              values: v,
+            };
+            const subRecordResponse = await this.create({ object: subRecord });
+            if (subRecordResponse.error || !subRecordResponse.response)
+              throw new Error(subRecordResponse.error);
+            return subRecordResponse.response;
+          }),
+        );
+        return [...result];
       }),
     );
 
@@ -182,6 +188,9 @@ export class RecordClient implements RecordClientDefinition {
       response: record,
     };
   };
+
+  public buildDefaultRecord = (form: FormDefinition): Record =>
+    RecordClient.buildDefaultRecord(form);
 
   /**
    * Takes a record and populates it with additional information

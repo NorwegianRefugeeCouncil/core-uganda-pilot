@@ -5,7 +5,11 @@ import {
   RecordLookup,
   Record,
 } from '../types';
-import { Recipient, RecipientList } from '../types/client/Recipient';
+import {
+  Recipient,
+  RecipientClientDefinition,
+  RecipientList,
+} from '../types/client/Recipient';
 
 import { RecordClient } from './Record';
 import { FormClient } from './Form';
@@ -50,10 +54,10 @@ export class RecipientClient implements RecipientClientDefinition {
                 }),
               };
 
-        const createdRecord = await this.recordClient.createWithSubRecords(
-          parsedRecord,
+        const createdRecord = await this.recordClient.createWithSubRecords({
           form,
-        );
+          record: parsedRecord,
+        });
 
         return [...resolvedAcc, { form, record: createdRecord }];
       },
