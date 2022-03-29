@@ -5,7 +5,6 @@ import {
   FormType,
   FormWithRecord,
   RecordGetResponse,
-  Record,
 } from '../../types';
 import { Recipient } from '../../types/client/Recipient';
 
