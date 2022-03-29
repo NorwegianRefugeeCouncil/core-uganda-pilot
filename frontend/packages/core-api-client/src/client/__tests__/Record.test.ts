@@ -153,34 +153,50 @@ describe('createWithSubRecords', () => {
     id: `record-id-${i}`,
   });
 
+  const mockClientImplementation = (record: Record) => (request) =>
+    Promise.resolve({
+      success: true,
+      error: undefined,
+      response: record,
+      request,
+      status: 'ok',
+      statusCode: 200,
+    });
+
   const makeCreateRecordSpy = (records: Record[]) => {
     const createRecordSpy = jest.spyOn(client.Record, 'create');
     records.forEach((record) => {
-      createRecordSpy.mockImplementationOnce((request) =>
-        Promise.resolve({
-          success: true,
-          error: undefined,
-          response: record,
-          request,
-          status: 'ok',
-          statusCode: 200,
-        }),
-      );
+      createRecordSpy.mockImplementationOnce(mockClientImplementation(record));
     });
     return createRecordSpy;
   };
 
   const makeGetRecordSpy = (record: Record) =>
-    jest.spyOn(client.Record, 'get').mockImplementationOnce((request) =>
-      Promise.resolve({
-        success: true,
-        error: undefined,
-        response: record,
-        request,
-        status: 'ok',
-        statusCode: 200,
-      }),
+    jest
+      .spyOn(client.Record, 'get')
+      .mockImplementationOnce(mockClientImplementation(record));
+
+  const assertThings = (
+    createRecordSpy: jest.SpyInstance,
+    getRecordSpy: jest.SpyInstance,
+    records: Record[],
+    createdRecord: Record,
+    result: Record,
+  ) => {
+    expect(createRecordSpy).toHaveBeenCalledTimes(records.length);
+    records.forEach((r) =>
+      expect(createRecordSpy).toHaveBeenCalledWith({ object: r }),
     );
+
+    expect(getRecordSpy).toHaveBeenCalledTimes(1);
+    expect(getRecordSpy).toHaveBeenCalledWith({
+      recordId: createdRecord.id,
+      databaseId: createdRecord.databaseId,
+      formId: createdRecord.formId,
+    });
+
+    expect(result).toEqual(createdRecord);
+  };
 
   describe('success', () => {
     it('should create a record without a sub record', async () => {
@@ -193,19 +209,13 @@ describe('createWithSubRecords', () => {
 
       const result = await client.Record.createWithSubRecords(inputData);
 
-      expect(createRecordSpy).toHaveBeenCalledTimes(1);
-      expect(createRecordSpy).toHaveBeenCalledWith({
-        object: inputData.record,
-      });
-
-      expect(getRecordSpy).toHaveBeenCalledTimes(1);
-      expect(getRecordSpy).toHaveBeenCalledWith({
-        recordId: createdRecord.id,
-        databaseId: createdRecord.databaseId,
-        formId: createdRecord.formId,
-      });
-
-      expect(result).toEqual(createdRecord);
+      assertThings(
+        createRecordSpy,
+        getRecordSpy,
+        [inputData.record],
+        createdRecord,
+        result,
+      );
     });
 
     it('should create a record with a sub record', async () => {
@@ -235,25 +245,16 @@ describe('createWithSubRecords', () => {
 
       const result = await client.Record.createWithSubRecords(inputData);
 
-      expect(createRecordSpy).toHaveBeenCalledTimes(2);
-      expect(createRecordSpy).toHaveBeenCalledWith({
-        object: { ...inputData.record, values: [] },
-      });
-      expect(createRecordSpy).toHaveBeenCalledWith({
-        object: {
-          ...createdSubrecord,
-          id: '',
-        },
-      });
-
-      expect(getRecordSpy).toHaveBeenCalledTimes(1);
-      expect(getRecordSpy).toHaveBeenCalledWith({
-        recordId: createdRecord.id,
-        databaseId: createdRecord.databaseId,
-        formId: createdRecord.formId,
-      });
-
-      expect(result).toEqual(createdRecord);
+      assertThings(
+        createRecordSpy,
+        getRecordSpy,
+        [
+          { ...inputData.record, values: [] },
+          { ...createdSubrecord, id: '' },
+        ],
+        createdRecord,
+        result,
+      );
     });
 
     it('should create a record with multiple sub records of the same field', async () => {
@@ -297,99 +298,70 @@ describe('createWithSubRecords', () => {
 
       const result = await client.Record.createWithSubRecords(inputData);
 
-      expect(createRecordSpy).toHaveBeenCalledTimes(3);
-      expect(createRecordSpy).toHaveBeenCalledWith({
-        object: { ...inputData.record, values: [] },
-      });
-      expect(createRecordSpy).toHaveBeenCalledWith({
-        object: {
-          ...createdSubrecordA,
-          id: '',
-        },
-      });
-      expect(createRecordSpy).toHaveBeenCalledWith({
-        object: {
-          ...createdSubrecordB,
-          id: '',
-        },
-      });
-
-      expect(getRecordSpy).toHaveBeenCalledTimes(1);
-      expect(getRecordSpy).toHaveBeenCalledWith({
-        recordId: createdRecord.id,
-        databaseId: createdRecord.databaseId,
-        formId: createdRecord.formId,
-      });
-
-      expect(result).toEqual(createdRecord);
-    });
-  });
-
-  it('should create a record with multiple sub records of different field', async () => {
-    const inputData = makeFormWithRecord(2, 1);
-
-    const createdRecord: Record = addRecordId(inputData.record, 0);
-
-    const createdSubrecordA: Record = {
-      id: 'created-sub-record-id-0',
-      databaseId: inputData.form.databaseId,
-      formId: inputData.form.fields[0].id,
-      ownerId: createdRecord.id,
-      values: (
-        inputData.record.values[0] as {
-          fieldId: string;
-          value: FieldValue[][];
-        }
-      ).value[0],
-    };
-
-    const createdSubrecordB: Record = {
-      id: 'created-sub-record-id-1',
-      databaseId: inputData.form.databaseId,
-      formId: inputData.form.fields[1].id,
-      ownerId: createdRecord.id,
-      values: (
-        inputData.record.values[1] as {
-          fieldId: string;
-          value: FieldValue[][];
-        }
-      ).value[0],
-    };
-
-    const createRecordSpy = makeCreateRecordSpy([
-      { ...createdRecord, values: [] },
-      createdSubrecordA,
-      createdSubrecordB,
-    ]);
-
-    const getRecordSpy = makeGetRecordSpy(createdRecord);
-
-    const result = await client.Record.createWithSubRecords(inputData);
-
-    expect(createRecordSpy).toHaveBeenCalledTimes(3);
-    expect(createRecordSpy).toHaveBeenCalledWith({
-      object: { ...inputData.record, values: [] },
-    });
-    expect(createRecordSpy).toHaveBeenCalledWith({
-      object: {
-        ...createdSubrecordA,
-        id: '',
-      },
-    });
-    expect(createRecordSpy).toHaveBeenCalledWith({
-      object: {
-        ...createdSubrecordB,
-        id: '',
-      },
+      assertThings(
+        createRecordSpy,
+        getRecordSpy,
+        [
+          { ...inputData.record, values: [] },
+          { ...createdSubrecordA, id: '' },
+          { ...createdSubrecordB, id: '' },
+        ],
+        createdRecord,
+        result,
+      );
     });
 
-    expect(getRecordSpy).toHaveBeenCalledTimes(1);
-    expect(getRecordSpy).toHaveBeenCalledWith({
-      recordId: createdRecord.id,
-      databaseId: createdRecord.databaseId,
-      formId: createdRecord.formId,
-    });
+    it('should create a record with multiple sub records of different field', async () => {
+      const inputData = makeFormWithRecord(2, 1);
 
-    expect(result).toEqual(createdRecord);
+      const createdRecord: Record = addRecordId(inputData.record, 0);
+
+      const createdSubrecordA: Record = {
+        id: 'created-sub-record-id-0',
+        databaseId: inputData.form.databaseId,
+        formId: inputData.form.fields[0].id,
+        ownerId: createdRecord.id,
+        values: (
+          inputData.record.values[0] as {
+            fieldId: string;
+            value: FieldValue[][];
+          }
+        ).value[0],
+      };
+
+      const createdSubrecordB: Record = {
+        id: 'created-sub-record-id-1',
+        databaseId: inputData.form.databaseId,
+        formId: inputData.form.fields[1].id,
+        ownerId: createdRecord.id,
+        values: (
+          inputData.record.values[1] as {
+            fieldId: string;
+            value: FieldValue[][];
+          }
+        ).value[0],
+      };
+
+      const createRecordSpy = makeCreateRecordSpy([
+        { ...createdRecord, values: [] },
+        createdSubrecordA,
+      ]);
+
+      const getRecordSpy = makeGetRecordSpy(createdRecord);
+
+      const result = await client.Record.createWithSubRecords(inputData);
+
+      assertThings(
+        createRecordSpy,
+        getRecordSpy,
+        [
+          { ...inputData.record, values: [] },
+          { ...createdSubrecordA, id: '' },
+          { ...createdSubrecordB, id: '' },
+        ],
+        createdRecord,
+        result,
+      );
+    });
   });
 });
