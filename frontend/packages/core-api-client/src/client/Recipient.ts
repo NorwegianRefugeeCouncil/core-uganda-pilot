@@ -10,6 +10,7 @@ import {
   RecipientClientDefinition,
   RecipientList,
 } from '../types/client/Recipient';
+import { Validation } from '..';
 
 import { RecordClient } from './Record';
 import { FormClient } from './Form';
@@ -24,15 +25,13 @@ export class RecipientClient implements RecipientClientDefinition {
     this.formClient = formClient;
   }
 
-  /*
-    Assumpitions made:
-      * The array of FormWithRecord is in hierarchical order
-      * Each form has a reference key field, except for the root
-  */
   public create = (
     recipient: FormWithRecord<Recipient>[],
-  ): Promise<FormWithRecord<Recipient>[]> =>
-    recipient.reduce<Promise<FormWithRecord<Recipient>[]>>(
+  ): Promise<FormWithRecord<Recipient>[]> => {
+    // Throws on validation error
+    Validation.Recipient.validateRecipientHierarch(recipient);
+
+    return recipient.reduce<Promise<FormWithRecord<Recipient>[]>>(
       async (acc, { form, record }, idx) => {
         const resolvedAcc = await acc;
 
@@ -63,6 +62,7 @@ export class RecipientClient implements RecipientClientDefinition {
       },
       Promise.resolve([]),
     );
+  };
 
   public list = (): Promise<RecipientList> => {
     return Promise.resolve({ items: [] });
