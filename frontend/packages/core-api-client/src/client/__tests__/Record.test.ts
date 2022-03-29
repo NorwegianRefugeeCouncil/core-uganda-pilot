@@ -153,36 +153,43 @@ describe('createWithSubRecords', () => {
     id: `record-id-${i}`,
   });
 
+  const makeCreateRecordSpy = (records: Record[]) => {
+    const createRecordSpy = jest.spyOn(client.Record, 'create');
+    records.forEach((record) => {
+      createRecordSpy.mockImplementationOnce((request) =>
+        Promise.resolve({
+          success: true,
+          error: undefined,
+          response: record,
+          request,
+          status: 'ok',
+          statusCode: 200,
+        }),
+      );
+    });
+    return createRecordSpy;
+  };
+
+  const makeGetRecordSpy = (record: Record) =>
+    jest.spyOn(client.Record, 'get').mockImplementationOnce((request) =>
+      Promise.resolve({
+        success: true,
+        error: undefined,
+        response: record,
+        request,
+        status: 'ok',
+        statusCode: 200,
+      }),
+    );
+
   describe('success', () => {
     it('should create a record without a sub record', async () => {
       const inputData = makeFormWithRecord(0, 0);
       const createdRecord = addRecordId(inputData.record, 0);
 
-      const createRecordSpy = jest
-        .spyOn(client.Record, 'create')
-        .mockImplementationOnce((request) =>
-          Promise.resolve({
-            success: true,
-            error: undefined,
-            response: createdRecord,
-            request,
-            status: 'ok',
-            statusCode: 200,
-          }),
-        );
+      const createRecordSpy = makeCreateRecordSpy([createdRecord]);
 
-      const getRecordSpy = jest
-        .spyOn(client.Record, 'get')
-        .mockImplementationOnce((request) =>
-          Promise.resolve({
-            success: true,
-            error: undefined,
-            response: createdRecord,
-            request,
-            status: 'ok',
-            statusCode: 200,
-          }),
-        );
+      const getRecordSpy = makeGetRecordSpy(createdRecord);
 
       const result = await client.Record.createWithSubRecords(inputData);
 
@@ -219,41 +226,12 @@ describe('createWithSubRecords', () => {
         ).value[0],
       };
 
-      const createRecordSpy = jest
-        .spyOn(client.Record, 'create')
-        .mockImplementationOnce((request) =>
-          Promise.resolve({
-            success: true,
-            error: undefined,
-            response: { ...createdRecord, values: [] },
-            request,
-            status: 'ok',
-            statusCode: 200,
-          }),
-        )
-        .mockImplementationOnce((request) =>
-          Promise.resolve({
-            success: true,
-            error: undefined,
-            response: createdSubrecord,
-            request,
-            status: 'ok',
-            statusCode: 200,
-          }),
-        );
+      const createRecordSpy = makeCreateRecordSpy([
+        { ...createdRecord, values: [] },
+        createdSubrecord,
+      ]);
 
-      const getRecordSpy = jest
-        .spyOn(client.Record, 'get')
-        .mockImplementationOnce((request) =>
-          Promise.resolve({
-            success: true,
-            error: undefined,
-            response: createdRecord,
-            request,
-            status: 'ok',
-            statusCode: 200,
-          }),
-        );
+      const getRecordSpy = makeGetRecordSpy(createdRecord);
 
       const result = await client.Record.createWithSubRecords(inputData);
 
@@ -309,51 +287,13 @@ describe('createWithSubRecords', () => {
         ).value[1],
       };
 
-      const createRecordSpy = jest
-        .spyOn(client.Record, 'create')
-        .mockImplementationOnce((request) =>
-          Promise.resolve({
-            success: true,
-            error: undefined,
-            response: { ...createdRecord, values: [] },
-            request,
-            status: 'ok',
-            statusCode: 200,
-          }),
-        )
-        .mockImplementationOnce((request) =>
-          Promise.resolve({
-            success: true,
-            error: undefined,
-            response: createdSubrecordA,
-            request,
-            status: 'ok',
-            statusCode: 200,
-          }),
-        )
-        .mockImplementationOnce((request) =>
-          Promise.resolve({
-            success: true,
-            error: undefined,
-            response: createdSubrecordB,
-            request,
-            status: 'ok',
-            statusCode: 200,
-          }),
-        );
+      const createRecordSpy = makeCreateRecordSpy([
+        { ...createdRecord, values: [] },
+        createdSubrecordA,
+        createdSubrecordB,
+      ]);
 
-      const getRecordSpy = jest
-        .spyOn(client.Record, 'get')
-        .mockImplementationOnce((request) =>
-          Promise.resolve({
-            success: true,
-            error: undefined,
-            response: createdRecord,
-            request,
-            status: 'ok',
-            statusCode: 200,
-          }),
-        );
+      const getRecordSpy = makeGetRecordSpy(createdRecord);
 
       const result = await client.Record.createWithSubRecords(inputData);
 
@@ -416,51 +356,13 @@ describe('createWithSubRecords', () => {
       ).value[0],
     };
 
-    const createRecordSpy = jest
-      .spyOn(client.Record, 'create')
-      .mockImplementationOnce((request) =>
-        Promise.resolve({
-          success: true,
-          error: undefined,
-          response: { ...createdRecord, values: [] },
-          request,
-          status: 'ok',
-          statusCode: 200,
-        }),
-      )
-      .mockImplementationOnce((request) =>
-        Promise.resolve({
-          success: true,
-          error: undefined,
-          response: createdSubrecordA,
-          request,
-          status: 'ok',
-          statusCode: 200,
-        }),
-      )
-      .mockImplementationOnce((request) =>
-        Promise.resolve({
-          success: true,
-          error: undefined,
-          response: createdSubrecordB,
-          request,
-          status: 'ok',
-          statusCode: 200,
-        }),
-      );
+    const createRecordSpy = makeCreateRecordSpy([
+      { ...createdRecord, values: [] },
+      createdSubrecordA,
+      createdSubrecordB,
+    ]);
 
-    const getRecordSpy = jest
-      .spyOn(client.Record, 'get')
-      .mockImplementationOnce((request) =>
-        Promise.resolve({
-          success: true,
-          error: undefined,
-          response: createdRecord,
-          request,
-          status: 'ok',
-          statusCode: 200,
-        }),
-      );
+    const getRecordSpy = makeGetRecordSpy(createdRecord);
 
     const result = await client.Record.createWithSubRecords(inputData);
 
