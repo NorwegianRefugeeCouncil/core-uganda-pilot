@@ -2,8 +2,5 @@ import React from 'react';
 import { Path } from 'react-native-svg';
 
 export const Plus = () => (
-  <Path
-    fill="currentColor"
-    d="M19.2,20.8v8.5h1.5v-8.5h8.5v-1.5h-8.5v-8.5h-1.5v8.5h-8.5v1.5H19.2z"
-  />
+  <Path d="M9.18919 10.8108V20H10.8108V10.8108H20L20 9.18919H10.8108V0H9.18919V9.18919H0V10.8108H9.18919Z" />
 );

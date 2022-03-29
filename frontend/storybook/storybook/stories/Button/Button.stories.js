@@ -63,7 +63,6 @@ storiesOf('Button', module)
               <Icon
                 size="5"
                 name={select('icon name', IconNameList, IconNameList[0])}
-                viewBox="10 10 20 20" // to be removed when the files are replaced
               />
             }
           >

@@ -7,7 +7,7 @@ type Props = {
   defaultOpen?: boolean;
 };
 
-export const AccordionComponent: FC<Props> = ({
+export const Accordion: FC<Props> = ({
   header,
   children,
   defaultOpen = false,
