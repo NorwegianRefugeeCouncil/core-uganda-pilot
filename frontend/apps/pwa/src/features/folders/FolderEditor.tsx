@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Folder } from 'core-api-client';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 import { databaseActions } from '../../reducers/database';
 import {
@@ -53,7 +53,9 @@ export const FolderEditor: FC = () => {
   }
 
   if (folder) {
-    return <Redirect to={`/browse/folders/${folder.id}`} />;
+    return (
+      <Navigate to={`/browse/database/${database?.id}/folders/${folder.id}`} />
+    );
   }
 
   return (

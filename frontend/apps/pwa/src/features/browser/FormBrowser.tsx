@@ -1,11 +1,6 @@
-import React, { FC, Fragment, useCallback, useEffect, useState } from 'react';
-import {
-  FieldDefinition,
-  FieldValue,
-  Record,
-  SelectOption,
-} from 'core-api-client';
-import { Link } from 'react-router-dom';
+import { FieldDefinition, Record, SelectOption } from 'core-api-client';
+import React, { FC, useCallback, useEffect, useState } from 'react';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import format from 'date-fns/format';
 
 import {
@@ -253,13 +248,12 @@ export const FormBrowser: FC<FormBrowserProps> = (props) => {
   );
 };
 
-export type FormBrowserContainerProps = {
-  formId: string;
-  ownerRecordId: string;
-};
-
-export const FormBrowserContainer: FC<FormBrowserContainerProps> = (props) => {
+export const FormBrowserContainer: FC = () => {
   const dispatch = useAppDispatch();
+  const { search } = useLocation();
+  const { formId } = useParams();
+  const searchS = new URLSearchParams(search);
+  const ownerRecordId = searchS.get('ownerRecordId') || undefined;
 
   useEffect(() => {
     dispatch(fetchDatabases());
@@ -268,17 +262,17 @@ export const FormBrowserContainer: FC<FormBrowserContainerProps> = (props) => {
   }, [dispatch]);
 
   const form = useAppSelector((s) => {
-    return selectFormOrSubFormById(s, props.formId);
+    return selectFormOrSubFormById(s, formId || '');
   });
 
   const rootForm = useAppSelector((s) => {
-    return selectRootForm(s, props.formId);
+    return selectRootForm(s, formId);
   });
 
   const records = useAppSelector((s) =>
-    selectRecordsForForm(s, props.formId, props.ownerRecordId),
+    selectRecordsForForm(s, formId || '', ownerRecordId || ''),
   );
-  const subFormTotals = useAppSelector(selectRecordsSubFormCounts(form?.id));
+  const subFormTotals = useAppSelector(selectRecordsSubFormCounts(formId));
 
   const getSubFormTotal = useCallback(
     (recordId, fieldId) => {
@@ -333,15 +327,15 @@ export const FormBrowserContainer: FC<FormBrowserContainerProps> = (props) => {
     setColumnWidths(widths);
   }, [form?.fields]);
 
-  if (!form) {
+  if (!form || !formId) {
     return <></>;
   }
 
   return (
     <FormBrowser
       getSubFormSum={getSubFormTotal}
-      ownerRecordId={props.ownerRecordId}
-      formId={form.id}
+      ownerRecordId={ownerRecordId}
+      formId={formId}
       fields={form.fields}
       records={records}
       columnWidths={columnWidths}

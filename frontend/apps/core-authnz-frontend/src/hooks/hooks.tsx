@@ -11,7 +11,7 @@ export function useApiClient(): Client {
 }
 
 export function useOrganization(
-  organizationId: string,
+  organizationId?: string,
 ): Organization | undefined {
   const apiClient = useApiClient();
   const [organization, setOrganization] = useState<Organization>();
@@ -29,7 +29,7 @@ export function useOrganization(
 }
 
 export function useIdentityProviders(
-  organizationId: string,
+  organizationId?: string,
 ): IdentityProvider[] {
   const apiClient = useApiClient();
   const [idps, setIdps] = useState<IdentityProvider[]>([]);

@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Database } from 'core-api-client';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 import { databaseActions } from '../../reducers/database';
 import client from '../../app/client';
@@ -36,7 +36,7 @@ export const DatabaseEditor: FC = () => {
   };
 
   if (database) {
-    return <Redirect to={`/browse/databases/${database.id}`} />;
+    return <Navigate to={`/browse/databases/${database.id}`} />;
   }
 
   return (

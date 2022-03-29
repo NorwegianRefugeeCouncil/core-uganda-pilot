@@ -1,24 +1,36 @@
 import { FC } from 'react';
+import { useMatch } from 'react-router-dom';
 
-import { Organization } from '../../types/types';
+import { useOrganization } from '../../hooks/hooks';
 
-type Props = {
-  organization: Organization;
-};
+export const OrganizationOverview: FC = () => {
+  const match = useMatch('organizations/:organizationId');
+  const organization = useOrganization(match?.params.organizationId);
 
-export const OrganizationOverview: FC<Props> = (props) => {
-  const { organization } = props;
+  if (!organization) {
+    return <></>;
+  }
+
   return (
     <div className="card bg-dark text-white border-secondary pb-2">
       <div className="card-body">
         <div className="form-group mb-2">
           <label className="form-label">Organization ID</label>
-          <input className="form-control form-control-darkula" type="text" disabled value={organization.id} />
+          <input
+            className="form-control form-control-darkula"
+            type="text"
+            disabled
+            value={organization.id}
+          />
         </div>
 
         <div className="form-group">
           <label className="form-label">Organization Name</label>
-          <input className="form-control form-control-darkula" type="text" value={organization.name} />
+          <input
+            className="form-control form-control-darkula"
+            type="text"
+            value={organization.name}
+          />
         </div>
       </div>
     </div>

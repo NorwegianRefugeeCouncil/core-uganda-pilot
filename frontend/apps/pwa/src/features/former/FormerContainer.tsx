@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useForm, FormProvider } from 'react-hook-form';
 import { FieldKind } from 'core-api-client';
 
@@ -17,7 +17,7 @@ import { customValidation } from './validation';
 
 export const FormerContainer: FC = () => {
   const dispatch = useAppDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { actions } = former;
 
   // load data
@@ -217,7 +217,7 @@ export const FormerContainer: FC = () => {
     } else if (formDefinition) {
       try {
         const data = await dispatch(postForm(formDefinition)).unwrap();
-        history.push(`/browse/forms/${data.id}`);
+        navigate(`/browse/forms/${data.id}`);
       } catch (apiErrors: any) {
         apiErrors?.details?.causes.forEach((error: any) => {
           setError(error.field, { type: error.reason, message: error.message });
