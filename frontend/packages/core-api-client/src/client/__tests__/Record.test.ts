@@ -198,6 +198,38 @@ describe('createWithSubRecords', () => {
     expect(result).toEqual(createdRecord);
   };
 
+  // Sonar is an annoying little shit that wants deduplication at the expense of readability
+  const makeTwoSubrecordsToAppeaseSonar = (
+    inputData: FormWithRecord<Record>,
+    createdRecord: Record,
+    sameField: boolean,
+  ) => [
+    {
+      id: 'created-sub-record-id-0',
+      databaseId: inputData.form.databaseId,
+      formId: inputData.form.fields[0].id,
+      ownerId: createdRecord.id,
+      values: (
+        inputData.record.values[0] as {
+          fieldId: string;
+          value: FieldValue[][];
+        }
+      ).value[0],
+    },
+    {
+      id: 'created-sub-record-id-1',
+      databaseId: inputData.form.databaseId,
+      formId: inputData.form.fields[sameField ? 0 : 1].id,
+      ownerId: createdRecord.id,
+      values: (
+        inputData.record.values[sameField ? 0 : 1] as {
+          fieldId: string;
+          value: FieldValue[][];
+        }
+      ).value[sameField ? 1 : 0],
+    },
+  ];
+
   describe('success', () => {
     it('should create a record without a sub record', async () => {
       const inputData = makeFormWithRecord(0, 0);
@@ -262,31 +294,8 @@ describe('createWithSubRecords', () => {
 
       const createdRecord: Record = addRecordId(inputData.record, 0);
 
-      const createdSubrecordA: Record = {
-        id: 'created-sub-record-id-0',
-        databaseId: inputData.form.databaseId,
-        formId: inputData.form.fields[0].id,
-        ownerId: createdRecord.id,
-        values: (
-          inputData.record.values[0] as {
-            fieldId: string;
-            value: FieldValue[][];
-          }
-        ).value[0],
-      };
-
-      const createdSubrecordB: Record = {
-        id: 'created-sub-record-id-1',
-        databaseId: inputData.form.databaseId,
-        formId: inputData.form.fields[0].id,
-        ownerId: createdRecord.id,
-        values: (
-          inputData.record.values[0] as {
-            fieldId: string;
-            value: FieldValue[][];
-          }
-        ).value[1],
-      };
+      const [createdSubrecordA, createdSubrecordB] =
+        makeTwoSubrecordsToAppeaseSonar(inputData, createdRecord, true);
 
       const createRecordSpy = makeCreateRecordSpy([
         { ...createdRecord, values: [] },
@@ -316,31 +325,8 @@ describe('createWithSubRecords', () => {
 
       const createdRecord: Record = addRecordId(inputData.record, 0);
 
-      const createdSubrecordA: Record = {
-        id: 'created-sub-record-id-0',
-        databaseId: inputData.form.databaseId,
-        formId: inputData.form.fields[0].id,
-        ownerId: createdRecord.id,
-        values: (
-          inputData.record.values[0] as {
-            fieldId: string;
-            value: FieldValue[][];
-          }
-        ).value[0],
-      };
-
-      const createdSubrecordB: Record = {
-        id: 'created-sub-record-id-1',
-        databaseId: inputData.form.databaseId,
-        formId: inputData.form.fields[1].id,
-        ownerId: createdRecord.id,
-        values: (
-          inputData.record.values[1] as {
-            fieldId: string;
-            value: FieldValue[][];
-          }
-        ).value[0],
-      };
+      const [createdSubrecordA, createdSubrecordB] =
+        makeTwoSubrecordsToAppeaseSonar(inputData, createdRecord, false);
 
       const createRecordSpy = makeCreateRecordSpy([
         { ...createdRecord, values: [] },
