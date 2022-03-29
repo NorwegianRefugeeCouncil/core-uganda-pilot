@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormDefinition, FormType } from 'core-api-client';
+import { FormDefinition, FormType, Validation } from 'core-api-client';
 import {
   FormProvider,
   useController,
@@ -36,7 +36,7 @@ export const SubFormFieldInput: React.FC<Props> = ({ form, field }) => {
   } = useController({
     name: `${form.id}.${field.id}`,
     control,
-    rules: {}, // TODO Record validation
+    rules: Validation.Record.formValidationRules.field.subform(field),
     defaultValue: [],
   });
 
@@ -74,7 +74,7 @@ export const SubFormFieldInput: React.FC<Props> = ({ form, field }) => {
 
   return (
     <>
-      <FormControl isInvalid={invalid}>
+      <FormControl isRequired={field.required} isInvalid={invalid}>
         <VStack width="100%" space={2}>
           <HStack justifyContent="space-between">
             <VStack>
@@ -122,7 +122,7 @@ export const SubFormFieldInput: React.FC<Props> = ({ form, field }) => {
               </HStack>
             </ScrollView>
           )}
-          <FormControl.ErrorMessage>{error}</FormControl.ErrorMessage>
+          <FormControl.ErrorMessage>{error?.message}</FormControl.ErrorMessage>
         </VStack>
       </FormControl>
 

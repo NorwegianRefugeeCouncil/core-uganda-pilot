@@ -11,7 +11,7 @@ import {
   usePropsResolution,
 } from 'native-base';
 import { useFormContext, useController } from 'react-hook-form';
-import { FormDefinition } from 'core-api-client';
+import { FormDefinition, Validation } from 'core-api-client';
 
 type Props = {
   formId: string;
@@ -30,7 +30,7 @@ export const MultiSelectFieldInput: React.FC<Props> = ({ formId, field }) => {
   } = useController({
     name: `${formId}.${field.id}`,
     control,
-    rules: {}, // TODO Record validation
+    rules: Validation.Record.formValidationRules.field.multiSelect(field),
   });
 
   React.useEffect(() => {
@@ -74,7 +74,7 @@ export const MultiSelectFieldInput: React.FC<Props> = ({ formId, field }) => {
 
   return (
     <>
-      <FormControl isInvalid={invalid}>
+      <FormControl isRequired={field.required} isInvalid={invalid}>
         <FormControl.Label>{field.name}</FormControl.Label>
         <Pressable
           testID="multi-select-field-input-modal-toggle-button"
@@ -92,7 +92,7 @@ export const MultiSelectFieldInput: React.FC<Props> = ({ formId, field }) => {
           />
         </Pressable>
         <FormControl.HelperText>{field.description}</FormControl.HelperText>
-        <FormControl.ErrorMessage>{error}</FormControl.ErrorMessage>
+        <FormControl.ErrorMessage>{error?.message}</FormControl.ErrorMessage>
       </FormControl>
 
       <Modal isOpen={open} onClose={handleCloseModal(true)}>
