@@ -31,13 +31,6 @@ export class RecordClient implements RecordClientDefinition {
     values: form.fields.map((field) => {
       const fieldType = getFieldKind(field.fieldType);
       switch (fieldType) {
-        case FieldKind.Text:
-        case FieldKind.MultilineText:
-        case FieldKind.Quantity:
-          return {
-            fieldId: field.id,
-            value: '',
-          };
         case FieldKind.Reference:
         case FieldKind.Date:
         case FieldKind.Month:
@@ -47,6 +40,7 @@ export class RecordClient implements RecordClientDefinition {
             fieldId: field.id,
             value: null,
           };
+        case FieldKind.SubForm:
         case FieldKind.MultiSelect:
           return {
             fieldId: field.id,
@@ -57,11 +51,9 @@ export class RecordClient implements RecordClientDefinition {
             fieldId: field.id,
             value: 'false',
           };
-        case FieldKind.SubForm:
-          return {
-            fieldId: field.id,
-            value: [],
-          };
+        case FieldKind.Text:
+        case FieldKind.MultilineText:
+        case FieldKind.Quantity:
         default:
           return {
             fieldId: field.id,

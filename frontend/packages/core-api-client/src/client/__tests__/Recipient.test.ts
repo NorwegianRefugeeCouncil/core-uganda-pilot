@@ -5,6 +5,7 @@ import {
   FormType,
   FormWithRecord,
   RecordGetResponse,
+  Record,
 } from '../../types';
 import { Recipient } from '../../types/client/Recipient';
 
@@ -477,18 +478,36 @@ describe('Recipient', () => {
   });
 
   describe('create', () => {
+    const makeCreateWithSubRecordsSpy = (
+      successCount: number,
+      error: boolean,
+    ) => {
+      const createWithSubRecordsSpy = jest.spyOn(
+        client.Record,
+        'createWithSubRecords',
+      );
+
+      for (let i = 0; i < successCount; i++) {
+        createWithSubRecordsSpy.mockImplementationOnce(({ record }) =>
+          Promise.resolve({
+            ...record,
+            id: `created-record-${i}`,
+          }),
+        );
+      }
+
+      if (error) {
+        createWithSubRecordsSpy.mockRejectedValueOnce(new Error('error'));
+      }
+
+      return createWithSubRecordsSpy;
+    };
+
     describe('success', () => {
       it('should create a record with a single form', async () => {
         const recipientDefinition = [makeFormWithRecord(0)];
 
-        const createWithSubRecordsSpy = jest
-          .spyOn(client.Record, 'createWithSubRecords')
-          .mockImplementationOnce(({ record }) =>
-            Promise.resolve({
-              ...record,
-              id: 'created-record-0',
-            }),
-          );
+        const createWithSubRecordsSpy = makeCreateWithSubRecordsSpy(1, false);
 
         const result = await recipientClient.create(recipientDefinition);
 
@@ -516,26 +535,7 @@ describe('Recipient', () => {
           makeFormWithRecord(2),
         ];
 
-        const createWithSubRecordsSpy = jest
-          .spyOn(client.Record, 'createWithSubRecords')
-          .mockImplementationOnce(({ record }) =>
-            Promise.resolve({
-              ...record,
-              id: 'created-record-0',
-            }),
-          )
-          .mockImplementationOnce(({ record }) =>
-            Promise.resolve({
-              ...record,
-              id: 'created-record-1',
-            }),
-          )
-          .mockImplementationOnce(({ record }) =>
-            Promise.resolve({
-              ...record,
-              id: 'created-record-2',
-            }),
-          );
+        const createWithSubRecordsSpy = makeCreateWithSubRecordsSpy(3, false);
 
         const result = await recipientClient.create(recipientDefinition);
 
@@ -615,9 +615,7 @@ describe('Recipient', () => {
       it('should fail if the first record cannot be created', async () => {
         const recipientDefinition = [makeFormWithRecord(0)];
 
-        jest
-          .spyOn(client.Record, 'createWithSubRecords')
-          .mockRejectedValueOnce(new Error('error'));
+        makeCreateWithSubRecordsSpy(0, true);
 
         await expect(
           recipientClient.create(recipientDefinition),
@@ -631,13 +629,7 @@ describe('Recipient', () => {
           makeFormWithRecord(2),
         ];
 
-        jest
-          .spyOn(client.Record, 'createWithSubRecords')
-          .mockResolvedValueOnce({
-            ...recipientDefinition[0].record,
-            id: 'created-record-0',
-          })
-          .mockRejectedValueOnce(new Error('error'));
+        makeCreateWithSubRecordsSpy(1, true);
 
         await expect(
           recipientClient.create(recipientDefinition),

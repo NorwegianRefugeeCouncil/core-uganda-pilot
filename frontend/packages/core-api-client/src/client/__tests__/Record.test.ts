@@ -153,7 +153,7 @@ describe('createWithSubRecords', () => {
     id: `record-id-${i}`,
   });
 
-  const mockClientImplementation = (record: Record) => (request) =>
+  const mockClientImplementation = (record: Record) => (request: any) =>
     Promise.resolve({
       success: true,
       error: undefined,
