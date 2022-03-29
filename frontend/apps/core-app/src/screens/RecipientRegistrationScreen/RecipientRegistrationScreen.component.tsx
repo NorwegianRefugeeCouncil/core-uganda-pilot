@@ -36,6 +36,7 @@ export const RecipientRegistrationScreenComponent: React.FC<Props> = ({
   }, [mode]);
 
   const f = useForm({
+    mode: 'all',
     defaultValues: ReactHookFormTransformer.toReactHookForm(data),
   });
 

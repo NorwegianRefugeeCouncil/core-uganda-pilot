@@ -51,6 +51,7 @@ export const SubFormFieldInput: React.FC<Props> = ({ form, field }) => {
   };
 
   const f = useForm({
+    mode: 'all',
     defaultValues: ReactHookFormTransformer.toReactHookForm([
       {
         form: subForm,
