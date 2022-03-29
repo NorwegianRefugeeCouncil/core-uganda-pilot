@@ -9,7 +9,7 @@ export const validateRecipientHierarch = (
 
     if (idx === 0) {
       // assert no key field
-      form.fields.find((f) => f.key);
+      if (form.fields.find((f) => f.key)) throw new Error();
     }
 
     // assert reference key field
