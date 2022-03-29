@@ -276,7 +276,7 @@ describe('createWithSubRecords', () => {
       };
 
       const createdSubrecordB: Record = {
-        id: 'created-sub-record-id-0',
+        id: 'created-sub-record-id-1',
         databaseId: inputData.form.databaseId,
         formId: inputData.form.fields[0].id,
         ownerId: createdRecord.id,
@@ -345,6 +345,7 @@ describe('createWithSubRecords', () => {
       const createRecordSpy = makeCreateRecordSpy([
         { ...createdRecord, values: [] },
         createdSubrecordA,
+        createdSubrecordB,
       ]);
 
       const getRecordSpy = makeGetRecordSpy(createdRecord);
