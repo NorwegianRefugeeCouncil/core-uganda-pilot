@@ -1,0 +1,24 @@
+postsubmits:
+  - name: push-core
+    agent: tekton-pipeline
+    decorate: false
+    always_run: true
+    branches:
+      - ^main$
+    pipeline_run_spec:
+      serviceAccountName: builder
+      pipelineRef:
+        name: sandy-apps-core
+      podTemplate:
+        imagePullSecrets: [ ]
+        securityContext:
+          fsGroup: 1000
+      workspaces:
+        - name: workspace
+          volumeClaimTemplate:
+            spec:
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 20Gi
