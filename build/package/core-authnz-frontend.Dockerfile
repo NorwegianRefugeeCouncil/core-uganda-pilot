@@ -1,7 +1,6 @@
 FROM node:lts-slim as build
 
-RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
-USER node
+RUN mkdir -p /home/node/app
 WORKDIR /home/node/app
 
 ADD --chown=node:node frontend/package.json .
@@ -10,10 +9,13 @@ ADD --chown=node:node frontend/lerna.json .
 ADD --chown=node:node frontend/packages/core-api-client/package.json ./packages/core-api-client/package.json
 ADD --chown=node:node frontend/packages/core-auth/package.json ./packages/core-auth/package.json
 ADD --chown=node:node frontend/apps/core-authnz-frontend/package.json ./apps/core-authnz-frontend/package.json
+COPY --chown=node:node frontend/. .
+# To fix this issue : https://github.com/GoogleContainerTools/kaniko/issues/846
+RUN chown -R node:node /home/node/app
+
+USER node:node
 
 RUN yarn --immutable
-
-COPY --chown=node:node frontend/. .
 
 # Using this for further envsubst
 ENV REACT_APP_OIDC_ISSUER='%{OIDC_ISSUER}%'
