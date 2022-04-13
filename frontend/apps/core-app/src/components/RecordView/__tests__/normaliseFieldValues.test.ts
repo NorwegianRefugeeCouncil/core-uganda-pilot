@@ -106,24 +106,15 @@ it('should normalise a subform field', () => {
       key: false,
       fieldType: FieldKind.SubForm,
       header: 'field-name',
-      labels: ['sub-field-name'],
-      values: [
-        [
-          {
-            key: false,
-            value: 'sub-field-value-1',
-            fieldType: 'text',
-            formattedValue: 'sub-field-value-1',
-          },
-        ],
-        [
-          {
-            key: false,
-            value: 'sub-field-value-2',
-            fieldType: 'text',
-            formattedValue: 'sub-field-value-2',
-          },
-        ],
+      columns: [
+        {
+          Header: 'sub-field-name',
+          accessor: 'sub-field-id',
+        },
+      ],
+      data: [
+        { 'sub-field-id': 'sub-field-value-1' },
+        { 'sub-field-id': 'sub-field-value-2' },
       ],
     },
   ]);

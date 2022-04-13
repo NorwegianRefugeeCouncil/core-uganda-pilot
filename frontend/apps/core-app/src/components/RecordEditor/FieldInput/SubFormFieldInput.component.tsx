@@ -19,6 +19,7 @@ import {
 import { RecordEditor } from '..';
 import * as ReactHookFormTransformer from '../../../utils/ReactHookFormTransformer';
 import { formsClient } from '../../../clients/formsClient';
+import { SubFormTable } from '../../SubFormTable';
 
 type Props = {
   form: FormDefinition;
@@ -72,21 +73,49 @@ export const SubFormFieldInput: React.FC<Props> = ({ form, field }) => {
     handleCloseModal();
   });
 
+  const handleDelete = (idx: number) => {
+    onChange((value as any[]).filter((_, i) => i !== idx));
+  };
+
   return (
     <>
       <FormControl isRequired={field.required} isInvalid={invalid}>
         <VStack width="100%" space={2}>
+          <VStack>
+            <FormControl.Label>
+              <Text variant="heading" level={4}>
+                {field.name}
+              </Text>
+            </FormControl.Label>
+            <FormControl.HelperText>{field.description}</FormControl.HelperText>
+          </VStack>
+          {value.length > 0 && (
+            <ScrollView>
+              <SubFormTable
+                data={value}
+                columns={
+                  field.fieldType.subForm?.fields.map((subField) => ({
+                    Header: subField.name,
+                    accessor: subField.id,
+                  })) ?? []
+                }
+                onDelete={handleDelete}
+              />
+            </ScrollView>
+          )}
           <HStack justifyContent="space-between">
-            <VStack>
-              <FormControl.Label>
-                <Text variant="heading" level={4}>
-                  {field.name}
-                </Text>
-              </FormControl.Label>
-              <FormControl.HelperText>
-                {field.description}
-              </FormControl.HelperText>
-            </VStack>
+            {value.length === 0 && (
+              <Text
+                testID="sub-form-field-input-empty"
+                variant="body"
+                level="1"
+                fontStyle="italic"
+                color="neutral.400"
+              >
+                No entries
+              </Text>
+            )}
+            <FormControl.ErrorMessage>{error}</FormControl.ErrorMessage>
             <Button
               testID="sub-form-field-input-open-modal-button"
               onPress={handleOpenModal}
@@ -97,32 +126,6 @@ export const SubFormFieldInput: React.FC<Props> = ({ form, field }) => {
               Add
             </Button>
           </HStack>
-          {value.length === 0 ? (
-            <Text testID="sub-form-field-input-empty" variant="body" level="1">
-              No entries
-            </Text>
-          ) : (
-            <ScrollView>
-              <HStack space={2}>
-                {field.fieldType.subForm?.fields.map((subField) => (
-                  <VStack key={subField.id} space={2}>
-                    <Text variant="heading" level={5}>
-                      {subField.name}
-                    </Text>
-                    {value.map((v, i) => (
-                      <Text
-                        key={`value-${subField.id}-${i}`}
-                        testID="sub-form-field-input-value"
-                      >
-                        {v[subField.id]}
-                      </Text>
-                    ))}
-                  </VStack>
-                ))}
-              </HStack>
-            </ScrollView>
-          )}
-          <FormControl.ErrorMessage>{error?.message}</FormControl.ErrorMessage>
         </VStack>
       </FormControl>
 

@@ -1,19 +1,37 @@
 import {
+  Record,
   FieldKind,
-  FieldValue,
   FormWithRecord,
   getFieldKind,
+  FormType,
+  FieldValue,
 } from 'core-api-client';
-import { Recipient } from 'core-api-client/src/types/client/Recipient';
-import { FieldValue as RHFieldValue } from 'react-hook-form';
+import { FieldValue as RHFFieldValue } from 'react-hook-form';
 
 export const toReactHookForm = (
-  data: FormWithRecord<Recipient>[],
-): RHFieldValue<any> =>
+  data: FormWithRecord<Record>[],
+): RHFFieldValue<any> =>
   data.reduce((acc, { form, record }) => {
     return {
       ...acc,
       [form.id]: record.values.reduce((innerAcc, fieldValue) => {
+        const field = form.fields.find((f) => f.id === fieldValue.fieldId);
+        if (!field) return innerAcc;
+        if (getFieldKind(field.fieldType) === FieldKind.SubForm) {
+          return {
+            ...innerAcc,
+            [fieldValue.fieldId]: (fieldValue.value as FieldValue[][]).map(
+              (v) =>
+                v.reduce(
+                  (a, { fieldId, value }) => ({
+                    ...a,
+                    [fieldId]: value,
+                  }),
+                  {},
+                ),
+            ),
+          };
+        }
         return {
           ...innerAcc,
           [fieldValue.fieldId]: fieldValue.value,
@@ -23,27 +41,44 @@ export const toReactHookForm = (
   }, {});
 
 export const fromReactHookForm = (
-  originalData: FormWithRecord<Recipient>[],
-  value: RHFieldValue<any>,
-): FormWithRecord<Recipient>[] =>
+  originalData: FormWithRecord<Record>[],
+  value: RHFFieldValue<any>,
+): FormWithRecord<Record>[] =>
   originalData.map((datum) => ({
     form: datum.form,
     record: {
       ...datum.record,
       values: datum.form.fields.map((field) => {
         if (getFieldKind(field.fieldType) === FieldKind.SubForm) {
+          const v = value[datum.form.id][field.id].map(
+            (vv) =>
+              fromReactHookForm(
+                [
+                  {
+                    form: {
+                      id: field.id,
+                      databaseId: datum.form.databaseId,
+                      folderId: datum.form.folderId,
+                      name: '',
+                      code: '',
+                      formType: FormType.DefaultFormType,
+                      fields: field.fieldType.subForm?.fields ?? [],
+                    },
+                    record: {
+                      id: '',
+                      databaseId: datum.form.databaseId,
+                      formId: field.id,
+                      ownerId: datum.record.id,
+                      values: [],
+                    },
+                  },
+                ],
+                { [field.id]: vv },
+              )[0].record.values,
+          );
           return {
             fieldId: field.id,
-            value: value[datum.form.id][field.id].map(
-              (subValue: RHFieldValue<any>) =>
-                Object.entries(subValue).reduce<FieldValue[]>(
-                  (acc, [key, v]) => [
-                    ...acc,
-                    { fieldId: key, value: v as string },
-                  ],
-                  [],
-                ),
-            ),
+            value: v,
           };
         }
         return {
