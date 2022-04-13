@@ -24,8 +24,8 @@ export const RecordViewComponent: React.FC<Props> = ({
             <SubformFieldValueComponent
               key={i}
               header={f.header}
-              labels={f.labels}
-              items={f.values}
+              data={f.data}
+              columns={f.columns}
             />
           );
         }

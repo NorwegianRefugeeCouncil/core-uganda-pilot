@@ -1,4 +1,5 @@
 import { FieldKind } from 'core-api-client';
+import { Column } from 'react-table';
 
 export type NormalisedBasicField = {
   key: boolean;
@@ -8,14 +9,12 @@ export type NormalisedBasicField = {
   label: string;
 };
 
-export type NormalisedSubFormFieldValue = Omit<NormalisedBasicField, 'label'>;
-
 export type NormalisedSubFormField = {
   key: boolean;
   fieldType: FieldKind.SubForm;
   header: string;
-  labels: string[];
-  values: NormalisedSubFormFieldValue[][];
+  data: Record<string, string>[];
+  columns: Column<Record<string, string>>[];
 };
 
 export type NormalisedFieldValue =
