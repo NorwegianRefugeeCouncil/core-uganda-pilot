@@ -46,7 +46,7 @@ export default {
     },
     minor: ({ colorScheme }: any) => {
       return {
-        backgroundColor: 'white',
+        backgroundColor: 'transparent',
         _text: {
           color: `${colorScheme}.500`,
         },
