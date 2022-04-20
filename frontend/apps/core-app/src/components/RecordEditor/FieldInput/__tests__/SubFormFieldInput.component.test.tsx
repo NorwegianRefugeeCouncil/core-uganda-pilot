@@ -1,5 +1,6 @@
+import { Column } from 'react-table';
 import { fireEvent, waitFor } from '@testing-library/react-native';
-import { FormDefinition, FormType, Record } from 'core-api-client';
+import { FormDefinition, FormType } from 'core-api-client';
 
 import { render } from '../../../../testUtils/render';
 import { withFormContext } from '../../../../testUtils/withFormContext';
@@ -10,6 +11,24 @@ jest.mock('@react-aria/ssr/dist/main', () => ({
   ...jest.requireActual('@react-aria/ssr/dist/main'),
   useSSRSafeId: () => 'react-aria-generated-id',
 }));
+
+jest.mock('../../../SubFormTable', () => {
+  const { View, Text } = jest.requireActual('react-native');
+  return {
+    SubFormTable: ({
+      data,
+      columns,
+    }: {
+      data: Record<string, string>[];
+      columns: Column<Record<string, string>>[];
+    }) => (
+      <View>
+        <Text testID="subformtable-data">{JSON.stringify(data)}</Text>
+        <Text testID="subformtable-columns">{JSON.stringify(columns)}</Text>
+      </View>
+    ),
+  };
+});
 
 const field: FormDefinition['fields'][number] = {
   id: 'field-id',
@@ -57,17 +76,12 @@ const form: FormDefinition = {
 const makeDefaultFormValues = (
   numberOfSubRecords: number,
 ): {
-  'form-id': { 'field-id': Record[] };
+  'form-id': { 'field-id': Record<string, string>[] };
 } => ({
   'form-id': {
     'field-id': new Array(numberOfSubRecords).fill(null).map((_, i) => ({
-      id: `sub-record-id-${i}`,
-      name: `sub-record-name-${i}`,
-      formId: 'field-id',
-      databaseId: 'database-id',
-      ownerId: 'owner-id',
-      code: '',
-      values: [],
+      'sub-field-id-0': `sub-value-0-${i}`,
+      'sub-field-id-1': `sub-value-1-${i}`,
     })),
   },
 });
@@ -114,9 +128,21 @@ it('should add a sub record', async () => {
   fireEvent.changeText(inputs[0], 'value 1');
   fireEvent.changeText(inputs[1], 'value 2');
   fireEvent.press(getByTestId('sub-form-field-input-modal-add-button'));
-  await waitFor(() =>
-    expect(getAllByTestId('sub-form-field-input-value').length).toBe(2),
-  );
+
+  await waitFor(() => {
+    expect(getByTestId('subformtable-data')).toBeTruthy();
+    expect(getByTestId('subformtable-columns')).toBeTruthy();
+  });
+
+  expect(
+    JSON.parse(getByTestId('subformtable-data').children[0] as string),
+  ).toEqual([
+    {
+      'sub-field-id-0': 'value 1',
+      'sub-field-id-1': 'value 2',
+    },
+  ]);
+
   fireEvent.press(getByTestId('with-form-context-submit-button'));
   await waitFor(() => expect(onSubmitSpy).toBeCalledTimes(1));
   expect(onSubmitSpy).toBeCalledWith({

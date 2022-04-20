@@ -31,6 +31,108 @@ exports[`should match the snapshot no sub records 1`] = `
     >
       <View
         dataSet={Object {}}
+        style={Object {}}
+      >
+        <View
+          dataSet={Object {}}
+          feedbackId="field-react-aria-generated-id-feedback"
+          hasFeedbackText={true}
+          hasHelpText={true}
+          helpTextId="field-react-aria-generated-id-helptext"
+          isDisabled={false}
+          isInvalid={false}
+          isReadOnly={false}
+          isRequired={false}
+          labelId="field-react-aria-generated-id-label"
+          nativeID="field-react-aria-generated-id-label"
+          setHasFeedbackText={[Function]}
+          setHasHelpText={[Function]}
+          style={
+            Object {
+              "flexDirection": "row",
+              "justifyContent": "flex-start",
+              "marginBottom": 2,
+              "marginRight": 12,
+            }
+          }
+        >
+          <Text
+            dataSet={Object {}}
+            level={4}
+            style={
+              Object {
+                "backgroundColor": undefined,
+                "color": "#000000",
+                "fontFamily": "Roboto_500Medium",
+                "fontSize": 20,
+                "fontStyle": undefined,
+                "fontWeight": undefined,
+                "letterSpacing": 0,
+                "lineHeight": 24,
+                "textAlign": "auto",
+                "textDecorationLine": undefined,
+              }
+            }
+          >
+            field-name
+          </Text>
+        </View>
+        <View
+          dataSet={Object {}}
+          style={Object {}}
+        />
+        <View
+          dataSet={Object {}}
+          feedbackId="field-react-aria-generated-id-feedback"
+          hasFeedbackText={true}
+          hasHelpText={true}
+          helpTextId="field-react-aria-generated-id-helptext"
+          isDisabled={false}
+          isInvalid={false}
+          isReadOnly={false}
+          isRequired={false}
+          labelId="field-react-aria-generated-id-label"
+          nativeID="field-react-aria-generated-id-feedback"
+          setHasFeedbackText={[Function]}
+          setHasHelpText={[Function]}
+          style={
+            Object {
+              "marginTop": 2,
+            }
+          }
+        >
+          <Text
+            dataSet={Object {}}
+            level="1"
+            style={
+              Object {
+                "backgroundColor": undefined,
+                "color": "#666666",
+                "fontFamily": "Roboto_400Regular",
+                "fontSize": 14,
+                "fontStyle": undefined,
+                "fontWeight": undefined,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "textAlign": "auto",
+                "textDecorationLine": undefined,
+              }
+            }
+          >
+            field-description
+          </Text>
+        </View>
+      </View>
+      <View
+        dataSet={Object {}}
+        style={
+          Object {
+            "height": 8,
+          }
+        }
+      />
+      <View
+        dataSet={Object {}}
         style={
           Object {
             "flexDirection": "row",
@@ -38,100 +140,31 @@ exports[`should match the snapshot no sub records 1`] = `
           }
         }
       >
+        <Text
+          dataSet={Object {}}
+          level="1"
+          style={
+            Object {
+              "backgroundColor": undefined,
+              "color": "#404040",
+              "fontFamily": "Roboto_400Regular_Italic",
+              "fontSize": 18,
+              "fontStyle": undefined,
+              "fontWeight": undefined,
+              "letterSpacing": 0,
+              "lineHeight": 26,
+              "textAlign": "auto",
+              "textDecorationLine": undefined,
+            }
+          }
+          testID="sub-form-field-input-empty"
+        >
+          No entries
+        </Text>
         <View
           dataSet={Object {}}
           style={Object {}}
-        >
-          <View
-            dataSet={Object {}}
-            feedbackId="field-react-aria-generated-id-feedback"
-            hasFeedbackText={true}
-            hasHelpText={true}
-            helpTextId="field-react-aria-generated-id-helptext"
-            isDisabled={false}
-            isInvalid={false}
-            isReadOnly={false}
-            isRequired={false}
-            labelId="field-react-aria-generated-id-label"
-            nativeID="field-react-aria-generated-id-label"
-            setHasFeedbackText={[Function]}
-            setHasHelpText={[Function]}
-            style={
-              Object {
-                "flexDirection": "row",
-                "justifyContent": "flex-start",
-                "marginBottom": 2,
-                "marginRight": 12,
-              }
-            }
-          >
-            <Text
-              dataSet={Object {}}
-              level={4}
-              style={
-                Object {
-                  "backgroundColor": undefined,
-                  "color": "#000000",
-                  "fontFamily": "Roboto_500Medium",
-                  "fontSize": 20,
-                  "fontStyle": undefined,
-                  "fontWeight": undefined,
-                  "letterSpacing": 0,
-                  "lineHeight": 24,
-                  "textAlign": "auto",
-                  "textDecorationLine": undefined,
-                }
-              }
-            >
-              field-name
-            </Text>
-          </View>
-          <View
-            dataSet={Object {}}
-            style={Object {}}
-          />
-          <View
-            dataSet={Object {}}
-            feedbackId="field-react-aria-generated-id-feedback"
-            hasFeedbackText={true}
-            hasHelpText={true}
-            helpTextId="field-react-aria-generated-id-helptext"
-            isDisabled={false}
-            isInvalid={false}
-            isReadOnly={false}
-            isRequired={false}
-            labelId="field-react-aria-generated-id-label"
-            nativeID="field-react-aria-generated-id-feedback"
-            setHasFeedbackText={[Function]}
-            setHasHelpText={[Function]}
-            style={
-              Object {
-                "marginTop": 2,
-              }
-            }
-          >
-            <Text
-              dataSet={Object {}}
-              level="1"
-              style={
-                Object {
-                  "backgroundColor": undefined,
-                  "color": "#666666",
-                  "fontFamily": "Roboto_400Regular",
-                  "fontSize": 14,
-                  "fontStyle": undefined,
-                  "fontWeight": undefined,
-                  "letterSpacing": 0,
-                  "lineHeight": 20,
-                  "textAlign": "auto",
-                  "textDecorationLine": undefined,
-                }
-              }
-            >
-              field-description
-            </Text>
-          </View>
-        </View>
+        />
         <View
           dataSet={Object {}}
           style={Object {}}
@@ -139,7 +172,7 @@ exports[`should match the snapshot no sub records 1`] = `
         <View
           _text={
             Object {
-              "color": "darkText",
+              "color": "lightText",
             }
           }
           accessibilityRole="button"
@@ -162,7 +195,7 @@ exports[`should match the snapshot no sub records 1`] = `
           style={
             Object {
               "alignItems": "center",
-              "backgroundColor": "#FFFFFF",
+              "backgroundColor": "transparent",
               "borderColor": "#24303E",
               "borderRadius": 3,
               "borderStyle": "solid",
@@ -216,43 +249,6 @@ exports[`should match the snapshot no sub records 1`] = `
           </View>
         </View>
       </View>
-      <View
-        dataSet={Object {}}
-        style={
-          Object {
-            "height": 8,
-          }
-        }
-      />
-      <Text
-        dataSet={Object {}}
-        level="1"
-        style={
-          Object {
-            "backgroundColor": undefined,
-            "color": "#000000",
-            "fontFamily": "Roboto_400Regular",
-            "fontSize": 18,
-            "fontStyle": undefined,
-            "fontWeight": undefined,
-            "letterSpacing": 0,
-            "lineHeight": 26,
-            "textAlign": "auto",
-            "textDecorationLine": undefined,
-          }
-        }
-        testID="sub-form-field-input-empty"
-      >
-        No entries
-      </Text>
-      <View
-        dataSet={Object {}}
-        style={
-          Object {
-            "height": 8,
-          }
-        }
-      />
     </View>
   </View>
   <View
@@ -901,7 +897,7 @@ exports[`should match the snapshot no sub records 1`] = `
               <View
                 _text={
                   Object {
-                    "color": "darkText",
+                    "color": "lightText",
                   }
                 }
                 accessibilityRole="button"
@@ -924,7 +920,7 @@ exports[`should match the snapshot no sub records 1`] = `
                 style={
                   Object {
                     "alignItems": "center",
-                    "backgroundColor": "#FFFFFF",
+                    "backgroundColor": "transparent",
                     "borderColor": "#24303E",
                     "borderRadius": 3,
                     "borderStyle": "solid",
@@ -1099,6 +1095,143 @@ exports[`should match the snapshot sub records 1`] = `
     >
       <View
         dataSet={Object {}}
+        style={Object {}}
+      >
+        <View
+          dataSet={Object {}}
+          feedbackId="field-react-aria-generated-id-feedback"
+          hasFeedbackText={true}
+          hasHelpText={true}
+          helpTextId="field-react-aria-generated-id-helptext"
+          isDisabled={false}
+          isInvalid={false}
+          isReadOnly={false}
+          isRequired={false}
+          labelId="field-react-aria-generated-id-label"
+          nativeID="field-react-aria-generated-id-label"
+          setHasFeedbackText={[Function]}
+          setHasHelpText={[Function]}
+          style={
+            Object {
+              "flexDirection": "row",
+              "justifyContent": "flex-start",
+              "marginBottom": 2,
+              "marginRight": 12,
+            }
+          }
+        >
+          <Text
+            dataSet={Object {}}
+            level={4}
+            style={
+              Object {
+                "backgroundColor": undefined,
+                "color": "#000000",
+                "fontFamily": "Roboto_500Medium",
+                "fontSize": 20,
+                "fontStyle": undefined,
+                "fontWeight": undefined,
+                "letterSpacing": 0,
+                "lineHeight": 24,
+                "textAlign": "auto",
+                "textDecorationLine": undefined,
+              }
+            }
+          >
+            field-name
+          </Text>
+        </View>
+        <View
+          dataSet={Object {}}
+          style={Object {}}
+        />
+        <View
+          dataSet={Object {}}
+          feedbackId="field-react-aria-generated-id-feedback"
+          hasFeedbackText={true}
+          hasHelpText={true}
+          helpTextId="field-react-aria-generated-id-helptext"
+          isDisabled={false}
+          isInvalid={false}
+          isReadOnly={false}
+          isRequired={false}
+          labelId="field-react-aria-generated-id-label"
+          nativeID="field-react-aria-generated-id-feedback"
+          setHasFeedbackText={[Function]}
+          setHasHelpText={[Function]}
+          style={
+            Object {
+              "marginTop": 2,
+            }
+          }
+        >
+          <Text
+            dataSet={Object {}}
+            level="1"
+            style={
+              Object {
+                "backgroundColor": undefined,
+                "color": "#666666",
+                "fontFamily": "Roboto_400Regular",
+                "fontSize": 14,
+                "fontStyle": undefined,
+                "fontWeight": undefined,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "textAlign": "auto",
+                "textDecorationLine": undefined,
+              }
+            }
+          >
+            field-description
+          </Text>
+        </View>
+      </View>
+      <View
+        dataSet={Object {}}
+        style={
+          Object {
+            "height": 8,
+          }
+        }
+      />
+      <RCTScrollView
+        contentContainerStyle={
+          Array [
+            Object {},
+            Object {
+              "dataSet": Object {},
+            },
+          ]
+        }
+        dataSet={Object {}}
+        style={Object {}}
+      >
+        <View>
+          <View>
+            <Text
+              testId="subformtable-data"
+            >
+              [{"sub-field-id-0":"sub-value-0-0","sub-field-id-1":"sub-value-1-0"},{"sub-field-id-0":"sub-value-0-1","sub-field-id-1":"sub-value-1-1"}]
+            </Text>
+            <Text
+              testId="subformtable-columns"
+            >
+              [{"Header":"sub-field-name-0","accessor":"sub-field-id-0"},{"Header":"sub-field-name-1","accessor":"sub-field-id-1"}]
+            </Text>
+          </View>
+        </View>
+      </RCTScrollView>
+      <View
+        dataSet={Object {}}
+        style={
+          Object {
+            "height": 8,
+          }
+        }
+      />
+      <View
+        dataSet={Object {}}
         style={
           Object {
             "flexDirection": "row",
@@ -1109,105 +1242,11 @@ exports[`should match the snapshot sub records 1`] = `
         <View
           dataSet={Object {}}
           style={Object {}}
-        >
-          <View
-            dataSet={Object {}}
-            feedbackId="field-react-aria-generated-id-feedback"
-            hasFeedbackText={true}
-            hasHelpText={true}
-            helpTextId="field-react-aria-generated-id-helptext"
-            isDisabled={false}
-            isInvalid={false}
-            isReadOnly={false}
-            isRequired={false}
-            labelId="field-react-aria-generated-id-label"
-            nativeID="field-react-aria-generated-id-label"
-            setHasFeedbackText={[Function]}
-            setHasHelpText={[Function]}
-            style={
-              Object {
-                "flexDirection": "row",
-                "justifyContent": "flex-start",
-                "marginBottom": 2,
-                "marginRight": 12,
-              }
-            }
-          >
-            <Text
-              dataSet={Object {}}
-              level={4}
-              style={
-                Object {
-                  "backgroundColor": undefined,
-                  "color": "#000000",
-                  "fontFamily": "Roboto_500Medium",
-                  "fontSize": 20,
-                  "fontStyle": undefined,
-                  "fontWeight": undefined,
-                  "letterSpacing": 0,
-                  "lineHeight": 24,
-                  "textAlign": "auto",
-                  "textDecorationLine": undefined,
-                }
-              }
-            >
-              field-name
-            </Text>
-          </View>
-          <View
-            dataSet={Object {}}
-            style={Object {}}
-          />
-          <View
-            dataSet={Object {}}
-            feedbackId="field-react-aria-generated-id-feedback"
-            hasFeedbackText={true}
-            hasHelpText={true}
-            helpTextId="field-react-aria-generated-id-helptext"
-            isDisabled={false}
-            isInvalid={false}
-            isReadOnly={false}
-            isRequired={false}
-            labelId="field-react-aria-generated-id-label"
-            nativeID="field-react-aria-generated-id-feedback"
-            setHasFeedbackText={[Function]}
-            setHasHelpText={[Function]}
-            style={
-              Object {
-                "marginTop": 2,
-              }
-            }
-          >
-            <Text
-              dataSet={Object {}}
-              level="1"
-              style={
-                Object {
-                  "backgroundColor": undefined,
-                  "color": "#666666",
-                  "fontFamily": "Roboto_400Regular",
-                  "fontSize": 14,
-                  "fontStyle": undefined,
-                  "fontWeight": undefined,
-                  "letterSpacing": 0,
-                  "lineHeight": 20,
-                  "textAlign": "auto",
-                  "textDecorationLine": undefined,
-                }
-              }
-            >
-              field-description
-            </Text>
-          </View>
-        </View>
-        <View
-          dataSet={Object {}}
-          style={Object {}}
         />
         <View
           _text={
             Object {
-              "color": "darkText",
+              "color": "lightText",
             }
           }
           accessibilityRole="button"
@@ -1230,7 +1269,7 @@ exports[`should match the snapshot sub records 1`] = `
           style={
             Object {
               "alignItems": "center",
-              "backgroundColor": "#FFFFFF",
+              "backgroundColor": "transparent",
               "borderColor": "#24303E",
               "borderRadius": 3,
               "borderStyle": "solid",
@@ -1284,212 +1323,6 @@ exports[`should match the snapshot sub records 1`] = `
           </View>
         </View>
       </View>
-      <View
-        dataSet={Object {}}
-        style={
-          Object {
-            "height": 8,
-          }
-        }
-      />
-      <RCTScrollView
-        contentContainerStyle={
-          Array [
-            Object {},
-            Object {
-              "dataSet": Object {},
-            },
-          ]
-        }
-        dataSet={Object {}}
-        style={Object {}}
-      >
-        <View>
-          <View
-            dataSet={Object {}}
-            style={
-              Object {
-                "flexDirection": "row",
-              }
-            }
-          >
-            <View
-              dataSet={Object {}}
-              style={Object {}}
-            >
-              <Text
-                dataSet={Object {}}
-                level={5}
-                style={
-                  Object {
-                    "backgroundColor": undefined,
-                    "color": "#000000",
-                    "fontFamily": "Roboto_500Medium",
-                    "fontSize": 14,
-                    "fontStyle": undefined,
-                    "fontWeight": undefined,
-                    "letterSpacing": 0,
-                    "lineHeight": 17,
-                    "textAlign": "auto",
-                    "textDecorationLine": undefined,
-                  }
-                }
-              >
-                sub-field-name-0
-              </Text>
-              <View
-                dataSet={Object {}}
-                style={
-                  Object {
-                    "height": 8,
-                  }
-                }
-              />
-              <Text
-                dataSet={Object {}}
-                level="1"
-                style={
-                  Object {
-                    "backgroundColor": undefined,
-                    "color": "#000000",
-                    "fontFamily": "Roboto_400Regular",
-                    "fontSize": 18,
-                    "fontStyle": undefined,
-                    "fontWeight": undefined,
-                    "letterSpacing": 0,
-                    "lineHeight": 26,
-                    "textAlign": "auto",
-                    "textDecorationLine": undefined,
-                  }
-                }
-                testID="sub-form-field-input-value"
-              />
-              <View
-                dataSet={Object {}}
-                style={
-                  Object {
-                    "height": 8,
-                  }
-                }
-              />
-              <Text
-                dataSet={Object {}}
-                level="1"
-                style={
-                  Object {
-                    "backgroundColor": undefined,
-                    "color": "#000000",
-                    "fontFamily": "Roboto_400Regular",
-                    "fontSize": 18,
-                    "fontStyle": undefined,
-                    "fontWeight": undefined,
-                    "letterSpacing": 0,
-                    "lineHeight": 26,
-                    "textAlign": "auto",
-                    "textDecorationLine": undefined,
-                  }
-                }
-                testID="sub-form-field-input-value"
-              />
-            </View>
-            <View
-              dataSet={Object {}}
-              style={
-                Object {
-                  "width": 8,
-                }
-              }
-            />
-            <View
-              dataSet={Object {}}
-              style={Object {}}
-            >
-              <Text
-                dataSet={Object {}}
-                level={5}
-                style={
-                  Object {
-                    "backgroundColor": undefined,
-                    "color": "#000000",
-                    "fontFamily": "Roboto_500Medium",
-                    "fontSize": 14,
-                    "fontStyle": undefined,
-                    "fontWeight": undefined,
-                    "letterSpacing": 0,
-                    "lineHeight": 17,
-                    "textAlign": "auto",
-                    "textDecorationLine": undefined,
-                  }
-                }
-              >
-                sub-field-name-1
-              </Text>
-              <View
-                dataSet={Object {}}
-                style={
-                  Object {
-                    "height": 8,
-                  }
-                }
-              />
-              <Text
-                dataSet={Object {}}
-                level="1"
-                style={
-                  Object {
-                    "backgroundColor": undefined,
-                    "color": "#000000",
-                    "fontFamily": "Roboto_400Regular",
-                    "fontSize": 18,
-                    "fontStyle": undefined,
-                    "fontWeight": undefined,
-                    "letterSpacing": 0,
-                    "lineHeight": 26,
-                    "textAlign": "auto",
-                    "textDecorationLine": undefined,
-                  }
-                }
-                testID="sub-form-field-input-value"
-              />
-              <View
-                dataSet={Object {}}
-                style={
-                  Object {
-                    "height": 8,
-                  }
-                }
-              />
-              <Text
-                dataSet={Object {}}
-                level="1"
-                style={
-                  Object {
-                    "backgroundColor": undefined,
-                    "color": "#000000",
-                    "fontFamily": "Roboto_400Regular",
-                    "fontSize": 18,
-                    "fontStyle": undefined,
-                    "fontWeight": undefined,
-                    "letterSpacing": 0,
-                    "lineHeight": 26,
-                    "textAlign": "auto",
-                    "textDecorationLine": undefined,
-                  }
-                }
-                testID="sub-form-field-input-value"
-              />
-            </View>
-          </View>
-        </View>
-      </RCTScrollView>
-      <View
-        dataSet={Object {}}
-        style={
-          Object {
-            "height": 8,
-          }
-        }
-      />
     </View>
   </View>
   <View
@@ -2138,7 +1971,7 @@ exports[`should match the snapshot sub records 1`] = `
               <View
                 _text={
                   Object {
-                    "color": "darkText",
+                    "color": "lightText",
                   }
                 }
                 accessibilityRole="button"
@@ -2161,7 +1994,7 @@ exports[`should match the snapshot sub records 1`] = `
                 style={
                   Object {
                     "alignItems": "center",
-                    "backgroundColor": "#FFFFFF",
+                    "backgroundColor": "transparent",
                     "borderColor": "#24303E",
                     "borderRadius": 3,
                     "borderStyle": "solid",
