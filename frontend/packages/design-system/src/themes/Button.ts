@@ -11,81 +11,104 @@ export default {
     paddingRight: 'nrc_10',
   },
   variants: {
-    major: ({ colorScheme }: any) => {
-      return {
-        backgroundColor: `${colorScheme}.500`,
+    major: ({ colorScheme }: any) => ({
+      backgroundColor: `${colorScheme}.500`,
+      _text: {
+        color: 'white',
+      },
+      _hover: {
+        backgroundColor:
+          colorScheme === 'secondary' ? 'link' : `${colorScheme}.200`,
+        _text: {
+          color: colorScheme === 'secondary' ? 'white' : `${colorScheme}.500`,
+        },
+      },
+      _disabled: {
+        backgroundColor: 'neutral.300',
+        _text: {
+          color: 'neutral.200',
+        },
+      },
+      _pressed: {
+        backgroundColor: `${colorScheme}.300`,
         _text: {
           color: 'white',
         },
-        _hover: {
-          backgroundColor:
-            colorScheme === 'secondary' ? 'link' : `${colorScheme}.200`,
-          _text: {
-            color: colorScheme === 'secondary' ? 'white' : `${colorScheme}.500`,
-          },
-        },
-        _disabled: {
-          backgroundColor: 'neutral.300',
-          _text: {
-            color: 'neutral.200',
-          },
-        },
-        _pressed: {
-          backgroundColor: `${colorScheme}.300`,
-          _text: {
-            color: 'white',
-          },
-        },
-        _focus: {
-          backgroundColor: `${colorScheme}.300`,
-          _text: {
-            color: 'white',
-          },
-        },
-      };
-    },
-    minor: ({ colorScheme }: any) => {
-      return {
-        backgroundColor: 'transparent',
+      },
+      _focus: {
+        backgroundColor: `${colorScheme}.300`,
         _text: {
-          color: `${colorScheme}.500`,
+          color: 'white',
         },
-        borderWidth: 1,
-        borderStyle: 'solid',
-        borderColor: `${colorScheme}.500`,
-        _hover: {
-          backgroundColor:
-            colorScheme === 'secondary'
-              ? `${colorScheme}.100`
-              : `${colorScheme}.200`,
-          borderColor:
-            colorScheme === 'secondary' ? 'link' : `${colorScheme}.500`,
-          _text: {
-            color: colorScheme === 'secondary' ? 'link' : `${colorScheme}.500`,
-          },
+      },
+    }),
+    minor: ({ colorScheme }: any) => ({
+      backgroundColor: 'transparent',
+      _text: {
+        color: `${colorScheme}.500`,
+      },
+      borderWidth: 1,
+      borderStyle: 'solid',
+      borderColor: `${colorScheme}.500`,
+      _hover: {
+        backgroundColor:
+          colorScheme === 'secondary'
+            ? `${colorScheme}.100`
+            : `${colorScheme}.200`,
+        borderColor:
+          colorScheme === 'secondary' ? 'link' : `${colorScheme}.500`,
+        _text: {
+          color: colorScheme === 'secondary' ? 'link' : `${colorScheme}.500`,
         },
-        _disabled: {
-          backgroundColor: 'neutral.200',
-          borderColor: 'neutral.300',
-          _text: {
-            color: 'neutral.300',
-          },
+      },
+      _disabled: {
+        backgroundColor: 'neutral.200',
+        borderColor: 'neutral.300',
+        _text: {
+          color: 'neutral.300',
         },
-        _pressed: {
-          backgroundColor: `${colorScheme}.300`,
-          borderWidth: 0,
-          _text: {
-            color: 'white',
-          },
+      },
+      _pressed: {
+        backgroundColor: `${colorScheme}.300`,
+        borderWidth: 0,
+        _text: {
+          color: 'white',
         },
-        _focus: {
-          backgroundColor: `${colorScheme}.300`,
-          borderWidth: 0,
-          _text: {
-            color: 'white',
-          },
+      },
+      _focus: {
+        backgroundColor: `${colorScheme}.300`,
+        borderWidth: 0,
+        _text: {
+          color: 'white',
         },
-      };
-    },
+      },
+    }),
+    naked: ({ colorScheme }: any) => ({
+      backgroundColor: 'transparent',
+      _text: {
+        color: `${colorScheme}.500`,
+      },
+      borderWidth: 0,
+      _hover: {
+        _text: {
+          color: colorScheme === 'secondary' ? 'link' : `${colorScheme}.500`,
+        },
+      },
+      _disabled: {
+        _text: {
+          color: 'neutral.300',
+        },
+      },
+      _pressed: {
+        _text: {
+          color: 'white',
+        },
+      },
+      _focus: {
+        _text: {
+          color: 'white',
+        },
+      },
+    }),
   },
 };
