@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { TableInstance, Row, Cell } from 'react-table';
-import { Box, HStack, VStack, Text, Button, Icon } from 'native-base';
+import { Box, HStack, VStack, Text, Button } from 'native-base';
+import { Icon } from 'core-design-system';
 
 type Props = {
   table: TableInstance<any>;
@@ -8,6 +9,8 @@ type Props = {
 };
 
 export const SubFormTableComponent: React.FC<Props> = ({ table, onDelete }) => {
+  const handleDelete = (idx: number) => () => onDelete?.(idx);
+
   return (
     <Box width="100%" overflowX="scroll">
       <HStack width="100%">
@@ -56,13 +59,11 @@ export const SubFormTableComponent: React.FC<Props> = ({ table, onDelete }) => {
                   borderBottomWidth={i === table.rows.length - 1 ? 0 : 1}
                 >
                   <Button
-                    onPress={() => onDelete(0)}
+                    onPress={handleDelete(i)}
                     colorScheme="secondary"
-                    variant="minor"
+                    variant="naked"
                     startIcon={<Icon name="delete" />}
-                  >
-                    foo
-                  </Button>
+                  />
                 </Box>
               )}
             </HStack>

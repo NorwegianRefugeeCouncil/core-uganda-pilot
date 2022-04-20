@@ -71,6 +71,10 @@ export const SubFormFieldInput: React.FC<Props> = ({ form, field }) => {
     handleCloseModal();
   });
 
+  const handleDelete = (idx: number) => {
+    onChange((value as any[]).filter((_, i) => i !== idx));
+  };
+
   return (
     <>
       <FormControl isInvalid={invalid}>
@@ -93,7 +97,7 @@ export const SubFormFieldInput: React.FC<Props> = ({ form, field }) => {
                     accessor: subField.id,
                   })) ?? []
                 }
-                onDelete={() => {}}
+                onDelete={handleDelete}
               />
             </ScrollView>
           )}

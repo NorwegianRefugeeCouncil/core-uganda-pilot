@@ -8,10 +8,15 @@ type D = Record<string, string>;
 type Props = {
   data: D[];
   columns: Column<D>[];
+  onDelete?: (idx: number) => void;
 };
 
-export const SubFormTableContainer: React.FC<Props> = ({ data, columns }) => {
+export const SubFormTableContainer: React.FC<Props> = ({
+  data,
+  columns,
+  onDelete,
+}) => {
   const table = useTable({ data, columns });
 
-  return <SubFormTableComponent table={table} />;
+  return <SubFormTableComponent table={table} onDelete={onDelete} />;
 };
