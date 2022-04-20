@@ -39,6 +39,8 @@ export const normaliseFieldValues = (
               (f) => f.id === c.fieldId,
             );
             if (!subField) throw new Error('subField not found');
+            if (getFieldKind(subField.fieldType) === FieldKind.SubForm)
+              throw new Error('Nested subforms are not supported');
             return {
               ...a,
               [c.fieldId]: formatFieldValue(
