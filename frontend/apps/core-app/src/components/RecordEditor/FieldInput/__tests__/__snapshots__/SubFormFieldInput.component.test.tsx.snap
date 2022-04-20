@@ -1210,12 +1210,12 @@ exports[`should match the snapshot sub records 1`] = `
         <View>
           <View>
             <Text
-              testId="subformtable-data"
+              testID="subformtable-data"
             >
               [{"sub-field-id-0":"sub-value-0-0","sub-field-id-1":"sub-value-1-0"},{"sub-field-id-0":"sub-value-0-1","sub-field-id-1":"sub-value-1-1"}]
             </Text>
             <Text
-              testId="subformtable-columns"
+              testID="subformtable-columns"
             >
               [{"Header":"sub-field-name-0","accessor":"sub-field-id-0"},{"Header":"sub-field-name-1","accessor":"sub-field-id-1"}]
             </Text>
