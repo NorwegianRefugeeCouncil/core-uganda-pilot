@@ -9,15 +9,15 @@ type Props<T extends Record<string, any>> = {
   column: ColumnInstance & UseSortByColumnProps<T>;
 };
 
-export const RecordTableHeader: React.FC<Props<RecordTableEntry>> = ({
+export const RecordTableHeaderCell: React.FC<Props<RecordTableEntry>> = ({
   column,
 }) => {
   const { onClick } = column.getSortByToggleProps();
   const sortIcon = column.isSorted
     ? column.isSortedDesc
       ? 'more'
-      : 'next'
-    : 'plus';
+      : 'arrowUp'
+    : 'arrowDown';
 
   return (
     <HStack

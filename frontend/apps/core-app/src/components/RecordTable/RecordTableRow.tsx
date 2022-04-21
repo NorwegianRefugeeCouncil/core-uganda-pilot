@@ -6,15 +6,15 @@ import { RecordTableEntry } from './types';
 
 type Props<T extends Record<string, any>> = {
   row: Row<T>;
-  handleRowClick: (id: string) => void;
+  onRowClick: (id: string) => void;
 };
 
 export const RecordTableRow: React.FC<Props<RecordTableEntry>> = ({
   row,
-  handleRowClick,
+  onRowClick,
 }) => {
   return (
-    <Pressable onPress={() => handleRowClick(row.id)}>
+    <Pressable onPress={() => onRowClick(row.id)}>
       <HStack>
         {row.cells.map((cell: Cell, i) => {
           return (
@@ -26,16 +26,10 @@ export const RecordTableRow: React.FC<Props<RecordTableEntry>> = ({
               borderBottomWidth="1"
               bg="white"
             >
-              {i === 0 &&
-                cell.render(Text, {
-                  level: '2',
-                  children: cell.value,
-                })}
-              {i !== 0 &&
-                cell.render(Text, {
-                  level: '2',
-                  children: cell.value,
-                })}
+              {cell.render(Text, {
+                level: '2',
+                children: cell.value,
+              })}
             </Box>
           );
         })}

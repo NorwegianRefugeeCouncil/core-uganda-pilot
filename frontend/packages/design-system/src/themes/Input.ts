@@ -12,6 +12,38 @@ const activeStyle = {
   color: 'neutral.500',
 };
 
+const bla = {
+  backgroundColor: 'white',
+  borderWidth: 1,
+  borderStyle: 'solid',
+  borderColor: 'neutral.300',
+  borderRadius: 'nrc_xs',
+  color: 'neutral.300',
+  padding: 3,
+  _android: {
+    ...textTheme.variants.body({ level: '1' }),
+  },
+  _ios: {
+    ...textTheme.variants.body({ level: '1' }),
+  },
+  _web: {
+    ...textTheme.variants.body({ level: '1' }),
+    overflow: 'visible',
+    // outlineWidth: undefined,
+  },
+  _invalid: {
+    borderColor: 'signalDanger',
+    backgroundColor: 'tertiary2.100',
+    color: 'signalDanger',
+  },
+  _focus: activeStyle,
+  _hover: activeStyle,
+  _disabled: disabledStyle,
+  _readOnly: disabledStyle,
+};
+
+const { outlineWidth, ...baseStyle } = bla;
+
 export default {
   baseStyle: {
     backgroundColor: 'white',
@@ -29,6 +61,8 @@ export default {
     },
     _web: {
       ...textTheme.variants.body({ level: '1' }),
+      overflow: 'visible',
+      // outlineWidth: undefined,
     },
     _invalid: {
       borderColor: 'signalDanger',

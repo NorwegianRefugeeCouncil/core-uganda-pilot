@@ -1,21 +1,37 @@
+import { FormType } from 'core-api-client';
+
 import { mapRecordsToRecordTableData } from '../mapRecordsToRecordTableData';
-import {
-  baseForm,
-  baseMultilineTextField,
-  baseRecord1,
-  baseTextField,
-} from '../../../testUtils/baseObjects';
+import { makeForm, makeRecord, makeField } from '../../../testUtils/mockData';
 
 describe('mapRecordsToTableData', () => {
-  const form = baseForm;
-  form.fields = [baseTextField, baseMultilineTextField];
+  const fields = [
+    makeField(1, false, false, { text: {} }),
+    makeField(1, true, false, { multilineText: {} }),
+  ];
+  const form = makeForm(1, FormType.DefaultFormType, fields);
+
+  const record1 = makeRecord(1, form);
+  const record2 = makeRecord(2, form);
 
   it('should map records correctly', () => {
+    expect(mapRecordsToRecordTableData([[{ record: record1, form }]])).toEqual([
+      {
+        field1: 'value-field1',
+      },
+    ]);
+  });
+
+  it('should map multiple records correctly', () => {
     expect(
-      mapRecordsToRecordTableData([[{ record: baseRecord1, form }]]),
+      mapRecordsToRecordTableData([
+        [
+          { record: record1, form },
+          { record: record2, form },
+        ],
+      ]),
     ).toEqual([
       {
-        field1: 'text',
+        field1: 'value-field1',
       },
     ]);
   });
@@ -26,9 +42,9 @@ describe('mapRecordsToTableData', () => {
         [
           {
             record: {
-              ...baseRecord1,
+              ...record1,
               values: [
-                ...baseRecord1.values,
+                ...record1.values,
                 { fieldId: 'non-field', value: 'non-value' },
               ],
             },
@@ -38,7 +54,7 @@ describe('mapRecordsToTableData', () => {
       ]),
     ).toEqual([
       {
-        field1: 'text',
+        field1: 'value-field1',
       },
     ]);
   });

@@ -1,14 +1,16 @@
+import { FormType } from 'core-api-client';
+
 import { createTableColumns } from '../createTableColumns';
-import {
-  baseForm,
-  baseMultilineTextField,
-  baseRecord1,
-  baseTextField,
-} from '../../../testUtils/baseObjects';
+import { makeField, makeForm, makeRecord } from '../../../testUtils/mockData';
 
 describe('createTableColumns', () => {
-  const form = baseForm;
-  form.fields = [baseTextField, baseMultilineTextField];
+  const fields = [
+    makeField(1, false, false, { text: {} }),
+    makeField(1, true, false, { multilineText: {} }),
+  ];
+  const form = makeForm(1, FormType.DefaultFormType, fields);
+
+  const record = makeRecord(1, form);
 
   it('should create the correct columns', () => {
     expect(
@@ -16,9 +18,9 @@ describe('createTableColumns', () => {
         [
           {
             record: {
-              ...baseRecord1,
+              ...record,
               values: [
-                ...baseRecord1.values,
+                ...record.values,
                 { fieldId: 'non-field', value: 'non-value' },
               ],
             },
