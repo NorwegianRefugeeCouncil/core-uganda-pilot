@@ -1,13 +1,6 @@
 import React, { useContext } from 'react';
 import { FormWithRecord, Record } from 'core-api-client';
-import {
-  TableInstance,
-  useGlobalFilter,
-  useSortBy,
-  useTable,
-} from 'react-table';
-import { FormWithRecords } from 'core-api-client/src';
-import { Recipient } from 'core-api-client/src/types/client/Recipient';
+import { useGlobalFilter, useSortBy, useTable } from 'react-table';
 
 import { RecordTableComponent } from './RecordTableComponent';
 import { RecordTableContext } from './RecordTableContext';
@@ -17,12 +10,12 @@ import { RecordTableEntry, SortedFilteredTable } from './types';
 
 type Props<T extends Record> = {
   data: FormWithRecord<T>[][];
-  handleItemClick: (id: string) => void;
+  onItemClick: (id: string) => void;
 };
 
 export const RecordTableContainer: React.FC<Props<Record>> = ({
   data,
-  handleItemClick,
+  onItemClick,
 }) => {
   const context = useContext(RecordTableContext);
 
@@ -50,5 +43,5 @@ export const RecordTableContainer: React.FC<Props<Record>> = ({
     context.setTableInstance(table);
   }, [context]);
 
-  return <RecordTableComponent handleItemClick={handleItemClick} />;
+  return <RecordTableComponent onItemClick={onItemClick} />;
 };

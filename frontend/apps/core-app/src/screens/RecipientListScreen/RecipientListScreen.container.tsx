@@ -24,7 +24,7 @@ export const RecipientListScreenContainer: React.FC = () => {
 
   return (
     <RecordTableContext.Provider value={{ tableInstance, setTableInstance }}>
-      <RecipientListScreenComponent handleItemClick={handleItemClick} />
+      <RecipientListScreenComponent onItemClick={handleItemClick} />
     </RecordTableContext.Provider>
   );
 };

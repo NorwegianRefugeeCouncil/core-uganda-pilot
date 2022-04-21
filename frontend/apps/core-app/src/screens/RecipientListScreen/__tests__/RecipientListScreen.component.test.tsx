@@ -5,10 +5,7 @@ import { RecipientListScreenComponent } from '../RecipientListScreen.component';
 
 it('should match the snapshot', () => {
   const { toJSON } = render(
-    <RecipientListScreenComponent
-      route={{ name: 'RecipientList', params: {}, key: 'key' }}
-      handleItemClick={() => jest.fn()}
-    />,
+    <RecipientListScreenComponent onItemClick={() => jest.fn()} />,
   );
   expect(toJSON()).toMatchSnapshot();
 });

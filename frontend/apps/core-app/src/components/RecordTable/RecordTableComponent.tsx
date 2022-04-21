@@ -4,13 +4,13 @@ import { Row } from 'react-table';
 
 import { RecordTableContext } from './RecordTableContext';
 import { RecordTableRow } from './RecordTableRow';
-import { RecordTableHeader } from './RecordTableHeader';
+import { RecordTableHeaderCell } from './RecordTableHeaderCell';
 
 type Props = {
-  handleItemClick: (id: string) => void;
+  onItemClick: (id: string) => void;
 };
 
-export const RecordTableComponent: React.FC<Props> = ({ handleItemClick }) => {
+export const RecordTableComponent: React.FC<Props> = ({ onItemClick }) => {
   const tableContext = useContext(RecordTableContext);
   if (!tableContext) return null;
 
@@ -24,18 +24,14 @@ export const RecordTableComponent: React.FC<Props> = ({ handleItemClick }) => {
       <Text level="2">{globalFilteredRows.length} beneficiaries</Text>
       <HStack>
         {columns.map((column) => (
-          <RecordTableHeader column={column} key={column.id} />
+          <RecordTableHeaderCell column={column} key={column.id} />
         ))}
       </HStack>
       <VStack>
         {rows.map((row: Row) => {
           prepareRow(row);
           return (
-            <RecordTableRow
-              key={row.id}
-              row={row}
-              handleRowClick={handleItemClick}
-            />
+            <RecordTableRow key={row.id} row={row} onRowClick={onItemClick} />
           );
         })}
       </VStack>

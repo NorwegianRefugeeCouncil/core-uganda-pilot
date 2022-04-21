@@ -1,0 +1,116 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should match the snapshot 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    Array [
+      Object {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    dataSet={Object {}}
+    style={
+      Object {
+        "alignItems": "center",
+        "backgroundColor": "#C7C7C7",
+        "borderBottomColor": "#666666",
+        "borderBottomWidth": 1,
+        "flexDirection": "row",
+        "justifyContent": "space-between",
+        "paddingBottom": 8,
+        "paddingLeft": 8,
+        "paddingRight": 8,
+        "paddingTop": 8,
+      }
+    }
+  >
+    <View
+      accessible={true}
+      collapsable={false}
+      dataSet={Object {}}
+      focusable={true}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onHoverIn={[Function]}
+      onHoverOut={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "paddingBottom": 4,
+          "paddingLeft": 4,
+          "paddingRight": 4,
+          "paddingTop": 4,
+        }
+      }
+    >
+      <RNSVGSvgView
+        accessibilityRole="image"
+        align="xMidYMid"
+        bbHeight={12}
+        bbWidth={12}
+        color={4280690214}
+        dataSet={Object {}}
+        fill="currentColor"
+        focusable={false}
+        meetOrSlice={0}
+        minX={10}
+        minY={10}
+        stroke=""
+        style={
+          Array [
+            Object {
+              "backgroundColor": "transparent",
+              "borderWidth": 0,
+            },
+            Object {
+              "color": "#262626",
+              "height": 12,
+              "width": 12,
+            },
+            Object {
+              "flex": 0,
+              "height": 12,
+              "width": 12,
+            },
+          ]
+        }
+        tintColor={4280690214}
+        vbHeight={20}
+        vbWidth={20}
+      >
+        <RNSVGGroup
+          fill={
+            Array [
+              2,
+            ]
+          }
+          propList={
+            Array [
+              "fill",
+              "stroke",
+            ]
+          }
+          stroke={null}
+        >
+          <RNSVGGroup>
+            <RNSVGPath
+              d="M5.41 13.7051L10 9.12508L14.59 13.7051L16 12.2951L10 6.29508L4 12.2951L5.41 13.7051Z"
+            />
+          </RNSVGGroup>
+        </RNSVGGroup>
+      </RNSVGSvgView>
+    </View>
+  </View>
+</RNCSafeAreaProvider>
+`;

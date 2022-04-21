@@ -18,6 +18,7 @@ type Props = {
   invalid?: boolean;
   disabled?: boolean;
   onChange: (value: string) => void;
+  testID?: string;
 } & React.HTMLProps<HTMLInputElement>;
 
 const StyledWrapper = makeStyledComponent(Box);
@@ -32,7 +33,7 @@ const StyledInput =
         color: inherit;
         background-color: transparent;
         border: none;
-        outline: none;
+        overflow: visible;
       `
     : null;
 
@@ -42,6 +43,7 @@ export const Input: React.FC<Props> = ({
   invalid,
   disabled,
   onChange,
+  testID,
   ...otherProps
 }) => {
   const [isFocused, setIsFocused] = React.useState(false);
@@ -66,6 +68,8 @@ export const Input: React.FC<Props> = ({
     fontFamily,
     fontWeight,
     fontStyle,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    outlineWidth,
     ...resolvedProps
   } = usePropsResolution('Input', inputThemeProps, {
     isDisabled: false,
@@ -113,6 +117,7 @@ export const Input: React.FC<Props> = ({
     >
       <StyledInput
         type={t}
+        role="search"
         value={value || ''}
         disabled={disabled}
         onChange={handleOnChange}
