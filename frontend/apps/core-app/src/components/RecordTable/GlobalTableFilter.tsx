@@ -1,8 +1,7 @@
 import React from 'react';
 import { useAsyncDebounce } from 'react-table';
 import { FormControl, Input } from 'native-base';
-
-// import { Input } from '../Web/Input';
+import { NativeSyntheticEvent, TextInputChangeEventData } from 'react-native';
 
 import { RecordTableEntry, SortedFilteredTable } from './types';
 
@@ -19,18 +18,18 @@ export const GlobalTableFilter: React.FC<Props<RecordTableEntry>> = ({
   } = table;
 
   const [value, setValue] = React.useState(globalFilter);
-  const onChange = useAsyncDebounce((v) => {
-    setGlobalFilter(v || undefined);
-    setValue(v);
-  }, 200);
+  const onChange = useAsyncDebounce(
+    (v: NativeSyntheticEvent<TextInputChangeEventData>) => {
+      setGlobalFilter(v.nativeEvent.text || undefined);
+      setValue(v.nativeEvent.text);
+    },
+  );
 
   return (
     <FormControl>
       <FormControl.Label>Beneficiary Name</FormControl.Label>
       <Input
-        testID="jkdsfbf"
         type="text"
-        // role="search"
         placeholder="Search"
         value={value || ''}
         onChange={onChange}
