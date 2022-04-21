@@ -47,4 +47,5 @@ export default {
   signalSuccess: '#006605',
   themeLight: '#EAE7DD',
   themeDark: '#24303E',
+  white: '#fff',
 };
