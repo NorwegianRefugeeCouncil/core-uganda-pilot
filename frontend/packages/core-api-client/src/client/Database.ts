@@ -1,4 +1,5 @@
 import {
+  DatabaseClientDefinition,
   DatabaseCreateRequest,
   DatabaseCreateResponse,
   DatabaseListResponse,
@@ -6,7 +7,7 @@ import {
 
 import { BaseRESTClient } from './BaseRESTClient';
 
-export class DatabaseClient {
+export class DatabaseClient implements DatabaseClientDefinition {
   restClient: BaseRESTClient;
 
   constructor(restClient: BaseRESTClient) {

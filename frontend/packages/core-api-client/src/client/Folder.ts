@@ -1,4 +1,5 @@
 import {
+  FolderClientDefinition,
   FolderCreateRequest,
   FolderCreateResponse,
   FolderListResponse,
@@ -6,7 +7,7 @@ import {
 
 import { BaseRESTClient } from './BaseRESTClient';
 
-export class FolderClient {
+export class FolderClient implements FolderClientDefinition {
   restClient: BaseRESTClient;
 
   constructor(restClient: BaseRESTClient) {

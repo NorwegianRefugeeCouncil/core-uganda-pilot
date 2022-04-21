@@ -9,7 +9,7 @@ export const linkingConfig = {
     screens: {
       Recipients: 'recipients',
       RecipientList: '/',
-      RecipientRegistration: 'recipients/register',
+      RecipientRegistration: '/register',
       RecipientProfile: {
         path: '/:id',
         parse: {

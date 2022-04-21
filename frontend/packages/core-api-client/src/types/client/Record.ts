@@ -1,4 +1,4 @@
-import { Record, RecordList } from '../model';
+import { FormWithRecord, Record, RecordList } from '../model';
 
 import { FormLookup } from './Form';
 import { DataOperation, PartialObjectWrapper, Response } from './utils';
@@ -21,6 +21,7 @@ export type RecordGetResponse = Response<RecordGetRequest, Record>;
 
 export interface RecordClientDefinition {
   create: DataOperation<RecordCreateRequest, RecordCreateResponse>;
+  createWithSubRecords: DataOperation<FormWithRecord<Record>, Record>;
   list: DataOperation<RecordListRequest, RecordListResponse>;
   get: DataOperation<RecordGetRequest, RecordGetResponse>;
 }

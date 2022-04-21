@@ -3,5 +3,10 @@
   "compilerOptions": {
     "module": "esnext",
     "outDir": "lib/esm",
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "lib",
+    "**/*.test.ts",
+  ]
 }

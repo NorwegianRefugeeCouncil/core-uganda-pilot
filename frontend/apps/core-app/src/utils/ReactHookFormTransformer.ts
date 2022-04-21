@@ -1,10 +1,15 @@
-import { FormWithRecord } from 'core-api-client';
+import {
+  FieldKind,
+  FieldValue,
+  FormWithRecord,
+  getFieldKind,
+} from 'core-api-client';
 import { Recipient } from 'core-api-client/src/types/client/Recipient';
-import { FieldValue } from 'react-hook-form';
+import { FieldValue as RHFieldValue } from 'react-hook-form';
 
 export const toReactHookForm = (
   data: FormWithRecord<Recipient>[],
-): FieldValue<any> =>
+): RHFieldValue<any> =>
   data.reduce((acc, { form, record }) => {
     return {
       ...acc,
@@ -19,15 +24,32 @@ export const toReactHookForm = (
 
 export const fromReactHookForm = (
   originalData: FormWithRecord<Recipient>[],
-  value: FieldValue<any>,
+  value: RHFieldValue<any>,
 ): FormWithRecord<Recipient>[] =>
   originalData.map((datum) => ({
     form: datum.form,
     record: {
       ...datum.record,
-      values: datum.form.fields.map((field) => ({
-        fieldId: field.id,
-        value: value[datum.form.id][field.id],
-      })),
+      values: datum.form.fields.map((field) => {
+        if (getFieldKind(field.fieldType) === FieldKind.SubForm) {
+          return {
+            fieldId: field.id,
+            value: value[datum.form.id][field.id].map(
+              (subValue: RHFieldValue<any>) =>
+                Object.entries(subValue).reduce<FieldValue[]>(
+                  (acc, [key, v]) => [
+                    ...acc,
+                    { fieldId: key, value: v as string },
+                  ],
+                  [],
+                ),
+            ),
+          };
+        }
+        return {
+          fieldId: field.id,
+          value: value[datum.form.id][field.id],
+        };
+      }),
     },
   }));

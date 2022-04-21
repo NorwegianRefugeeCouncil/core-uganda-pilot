@@ -3,5 +3,10 @@
   "compilerOptions": {
     "module": "commonjs",
     "outDir": "lib/cjs",
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "lib",
+    "**/*.test.ts",
+  ]
 }

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
-import { RecipientRegistrationScreen } from '../screens/RecipientRegistrationScreen';
 import { routes } from '../constants/routes';
 
 import { RecipientNavigator } from './recipients';
@@ -17,14 +16,6 @@ export const RootNavigator: React.FC = () => {
         options={{
           title: routes.recipientsRoot.pageTitle,
           headerTitle: routes.recipientsRoot.headerTitle,
-        }}
-      />
-      <Drawer.Screen
-        name={routes.recipientsRegistration.name}
-        component={RecipientRegistrationScreen}
-        options={{
-          title: routes.recipientsRegistration.pageTitle,
-          headerTitle: routes.recipientsRegistration.headerTitle,
         }}
       />
     </Drawer.Navigator>

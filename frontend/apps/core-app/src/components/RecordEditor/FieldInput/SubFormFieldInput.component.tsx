@@ -17,8 +17,8 @@ import {
 } from 'native-base';
 
 import { RecordEditor } from '..';
-import { buildDefaultRecord } from '../../../utils/buildDefaultRecord';
 import * as ReactHookFormTransformer from '../../../utils/ReactHookFormTransformer';
+import { formsClient } from '../../../clients/formsClient';
 
 type Props = {
   form: FormDefinition;
@@ -54,14 +54,17 @@ export const SubFormFieldInput: React.FC<Props> = ({ form, field }) => {
     defaultValues: ReactHookFormTransformer.toReactHookForm([
       {
         form: subForm,
-        record: buildDefaultRecord(subForm),
+        record: formsClient.Record.buildDefaultRecord(subForm),
       },
     ]),
   });
 
   const handleOpenModal = () => setOpen(true);
 
-  const handleCloseModal = () => setOpen(false);
+  const handleCloseModal = () => {
+    setOpen(false);
+    f.reset();
+  };
 
   const handleAdd = f.handleSubmit((data: any) => {
     onChange([...value, data[field.id]]);

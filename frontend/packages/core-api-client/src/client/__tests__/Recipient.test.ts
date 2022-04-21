@@ -1,20 +1,75 @@
 import { Client } from '../Client';
-import { FormGetResponse, FormType, RecordGetResponse } from '../../types';
+import {
+  FormDefinition,
+  FormGetResponse,
+  FormType,
+  FormWithRecord,
+  RecordGetResponse,
+} from '../../types';
+import { Recipient } from '../../types/client/Recipient';
+
+afterEach(() => {
+  jest.clearAllMocks();
+});
 
 describe('Recipient', () => {
   const client = new Client('https://www.testUrl.no');
   const recipientClient = client.Recipient;
 
-  it('should have the expected properties', () => {
-    expect(recipientClient).toHaveProperty('formClient');
-    expect(recipientClient).toHaveProperty('recordClient');
+  const makeForm = (i: number): FormDefinition => ({
+    id: `form-id-${i}`,
+    code: 'form-code',
+    databaseId: 'database-id',
+    folderId: 'folder-id',
+    name: `form-name-${i}`,
+    formType: FormType.DefaultFormType,
+    fields:
+      i > 0
+        ? [
+            {
+              id: 'field-id-0',
+              name: 'field-name-0',
+              code: '',
+              description: '',
+              required: true,
+              key: true,
+              fieldType: {
+                reference: {
+                  databaseId: 'reference-database-id',
+                  formId: 'reference-form-id',
+                },
+              },
+            },
+            {
+              id: 'field-id-1',
+              name: 'field-name-1',
+              code: '',
+              description: '',
+              required: false,
+              key: false,
+              fieldType: { text: {} },
+            },
+          ]
+        : [
+            {
+              id: 'field-id-0',
+              name: 'field-name-0',
+              code: '',
+              description: '',
+              required: false,
+              key: false,
+              fieldType: { text: {} },
+            },
+          ],
   });
 
-  it('should have the expected functions', () => {
-    expect(typeof recipientClient.get).toBe('function');
-    expect(typeof recipientClient.create).toBe('function');
-    expect(typeof recipientClient.list).toBe('function');
-  });
+  const makeFormWithRecord = (i: number): FormWithRecord<Recipient> => {
+    const form = makeForm(i);
+    return {
+      form,
+      record: client.Record.buildDefaultRecord(form),
+    };
+  };
 
   describe('get', () => {
     const formGetErrorResponse: FormGetResponse = {
@@ -418,6 +473,167 @@ describe('Recipient', () => {
         { form: form2.response, record: record2.response },
         { form: form1.response, record: record1.response },
       ]);
+    });
+  });
+
+  describe('create', () => {
+    const makeCreateWithSubRecordsSpy = (
+      successCount: number,
+      error: boolean,
+    ) => {
+      const createWithSubRecordsSpy = jest.spyOn(
+        client.Record,
+        'createWithSubRecords',
+      );
+
+      for (let i = 0; i < successCount; i++) {
+        createWithSubRecordsSpy.mockImplementationOnce(({ record }) =>
+          Promise.resolve({
+            ...record,
+            id: `created-record-${i}`,
+          }),
+        );
+      }
+
+      if (error) {
+        createWithSubRecordsSpy.mockRejectedValueOnce(new Error('error'));
+      }
+
+      return createWithSubRecordsSpy;
+    };
+
+    describe('success', () => {
+      it('should create a record with a single form', async () => {
+        const recipientDefinition = [makeFormWithRecord(0)];
+
+        const createWithSubRecordsSpy = makeCreateWithSubRecordsSpy(1, false);
+
+        const result = await recipientClient.create(recipientDefinition);
+
+        expect(createWithSubRecordsSpy).toHaveBeenCalledTimes(1);
+        expect(createWithSubRecordsSpy).toHaveBeenCalledWith({
+          form: recipientDefinition[0].form,
+          record: recipientDefinition[0].record,
+        });
+
+        expect(result).toEqual([
+          {
+            form: recipientDefinition[0].form,
+            record: {
+              ...recipientDefinition[0].record,
+              id: 'created-record-0',
+            },
+          },
+        ]);
+      });
+
+      it('should create a record with multiple forms', async () => {
+        const recipientDefinition = [
+          makeFormWithRecord(0),
+          makeFormWithRecord(1),
+          makeFormWithRecord(2),
+        ];
+
+        const createWithSubRecordsSpy = makeCreateWithSubRecordsSpy(3, false);
+
+        const result = await recipientClient.create(recipientDefinition);
+
+        expect(createWithSubRecordsSpy).toHaveBeenCalledTimes(3);
+        expect(createWithSubRecordsSpy).toHaveBeenCalledWith({
+          form: recipientDefinition[0].form,
+          record: recipientDefinition[0].record,
+        });
+        expect(createWithSubRecordsSpy).toHaveBeenCalledWith({
+          form: recipientDefinition[1].form,
+          record: {
+            ...recipientDefinition[1].record,
+            values: [
+              {
+                fieldId: 'field-id-0',
+                value: 'created-record-0',
+              },
+              ...recipientDefinition[1].record.values.slice(1),
+            ],
+          },
+        });
+        expect(createWithSubRecordsSpy).toHaveBeenCalledWith({
+          form: recipientDefinition[2].form,
+          record: {
+            ...recipientDefinition[2].record,
+            values: [
+              {
+                fieldId: 'field-id-0',
+                value: 'created-record-1',
+              },
+              ...recipientDefinition[2].record.values.slice(1),
+            ],
+          },
+        });
+
+        expect(result).toEqual([
+          {
+            form: recipientDefinition[0].form,
+            record: {
+              ...recipientDefinition[0].record,
+              id: 'created-record-0',
+            },
+          },
+          {
+            form: recipientDefinition[1].form,
+            record: {
+              ...recipientDefinition[1].record,
+              id: 'created-record-1',
+              values: [
+                {
+                  fieldId: 'field-id-0',
+                  value: 'created-record-0',
+                },
+                ...recipientDefinition[1].record.values.slice(1),
+              ],
+            },
+          },
+          {
+            form: recipientDefinition[2].form,
+            record: {
+              ...recipientDefinition[2].record,
+              id: 'created-record-2',
+              values: [
+                {
+                  fieldId: 'field-id-0',
+                  value: 'created-record-1',
+                },
+                ...recipientDefinition[2].record.values.slice(1),
+              ],
+            },
+          },
+        ]);
+      });
+    });
+
+    describe('failure', () => {
+      it('should fail if the first record cannot be created', async () => {
+        const recipientDefinition = [makeFormWithRecord(0)];
+
+        makeCreateWithSubRecordsSpy(0, true);
+
+        await expect(
+          recipientClient.create(recipientDefinition),
+        ).rejects.toThrowError('error');
+      });
+
+      it('should fail if the second record cannot be created', async () => {
+        const recipientDefinition = [
+          makeFormWithRecord(0),
+          makeFormWithRecord(1),
+          makeFormWithRecord(2),
+        ];
+
+        makeCreateWithSubRecordsSpy(1, true);
+
+        await expect(
+          recipientClient.create(recipientDefinition),
+        ).rejects.toThrowError('error');
+      });
     });
   });
 });

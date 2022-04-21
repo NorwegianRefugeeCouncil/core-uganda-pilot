@@ -6,8 +6,8 @@ import {
 } from 'core-api-client';
 import { Recipient } from 'core-api-client/src/types/client/Recipient';
 
+import { formsClient } from '../../../../clients/formsClient';
 import { render } from '../../../../testUtils/render';
-import { buildDefaultRecord } from '../../../../utils/buildDefaultRecord';
 import { RecipientViewerComponent } from '../RecipientViewer.component';
 
 jest.mock('../../../RecordView', () => {
@@ -51,7 +51,7 @@ const makeFormWithRecord = (i: number): FormWithRecord<Recipient> => {
 
   return {
     form,
-    record: buildDefaultRecord(form),
+    record: formsClient.Record.buildDefaultRecord(form),
   };
 };
 
