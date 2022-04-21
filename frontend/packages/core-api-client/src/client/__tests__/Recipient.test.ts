@@ -35,8 +35,8 @@ describe('Recipient', () => {
               key: true,
               fieldType: {
                 reference: {
-                  databaseId: 'reference-database-id',
-                  formId: 'reference-form-id',
+                  databaseId: 'database-id',
+                  formId: `form-id-${i - 1}`,
                 },
               },
             },
