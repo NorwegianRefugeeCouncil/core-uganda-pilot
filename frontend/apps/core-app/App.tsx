@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import { NativeBaseProvider } from 'native-base';
 import { theme } from 'core-design-system';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import {
   // eslint-disable-next-line camelcase
   Roboto_400Regular,
@@ -20,6 +20,14 @@ import { formsClient } from './src/clients/formsClient';
 import { RootNavigator } from './src/navigation';
 import { linkingConfig } from './src/navigation/linking.config';
 
+const navTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: '#fff',
+  },
+};
+
 WebBrowser.maybeCompleteAuthSession();
 
 const App: React.FC = () => {
@@ -34,7 +42,7 @@ const App: React.FC = () => {
 
   return (
     <NativeBaseProvider theme={theme}>
-      <NavigationContainer linking={linkingConfig}>
+      <NavigationContainer linking={linkingConfig} theme={navTheme}>
         <AuthWrapper onTokenChange={formsClient.setToken}>
           <RootNavigator />
         </AuthWrapper>
