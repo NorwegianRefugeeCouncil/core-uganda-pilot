@@ -6,9 +6,9 @@
     "version": "0.0.1",
     "scheme": "no.nrc.core",
     "orientation": "portrait",
-    "icon": "./assets/png/nrc.png",
+    "icon": "./assets/png/nrc_logo_with_text.png",
     "splash": {
-      "image": "./assets/png/nrc.png",
+      "image": "./assets/png/nrc_logo_with_text.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -25,12 +25,12 @@
     "android": {
       "package": "no.nrc.core",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/png/nrc.png",
+        "foregroundImage": "./assets/png/nrc_logo_with_text.png",
         "backgroundColor": "#FFFFFF"
       }
     },
     "web": {
-      "favicon": "./assets/png/nrc.png"
+      "favicon": "./assets/png/nrc_logo_with_text.png"
     },
     "androidStatusBar": {
       "hidden": true,
