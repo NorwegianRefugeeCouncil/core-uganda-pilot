@@ -15,6 +15,7 @@ exports[`should match the snapshot a single selected value 1`] = `
   <View
     dataSet={Object {}}
     isInvalid={false}
+    isRequired={false}
     style={
       Object {
         "width": "100%",
@@ -1219,6 +1220,7 @@ exports[`should match the snapshot multiple selected values 1`] = `
   <View
     dataSet={Object {}}
     isInvalid={false}
+    isRequired={false}
     style={
       Object {
         "width": "100%",
@@ -2423,6 +2425,7 @@ exports[`should match the snapshot no selected value 1`] = `
   <View
     dataSet={Object {}}
     isInvalid={false}
+    isRequired={false}
     style={
       Object {
         "width": "100%",

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FormControl, Select } from 'native-base';
 import { useFormContext, useController } from 'react-hook-form';
-import { FormDefinition } from 'core-api-client';
+import { FormDefinition, Validation } from 'core-api-client';
 
 type Props = {
   formId: string;
@@ -17,7 +17,7 @@ export const SingleSelectFieldInput: React.FC<Props> = ({ formId, field }) => {
   } = useController({
     name: `${formId}.${field.id}`,
     control,
-    rules: {}, // TODO Record validation
+    rules: Validation.Record.formValidationRules.field.singleSelect(field),
   });
 
   return (
@@ -39,7 +39,7 @@ export const SingleSelectFieldInput: React.FC<Props> = ({ formId, field }) => {
         ))}
       </Select>
       <FormControl.HelperText>{field.description}</FormControl.HelperText>
-      <FormControl.ErrorMessage>{error}</FormControl.ErrorMessage>
+      <FormControl.ErrorMessage>{error?.message}</FormControl.ErrorMessage>
     </FormControl>
   );
 };

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FormControl, Select } from 'native-base';
 import { useFormContext, useController } from 'react-hook-form';
-import { FormDefinition, Record } from 'core-api-client';
+import { FormDefinition, Record, Validation } from 'core-api-client';
 
 import { formsClient } from '../../../clients/formsClient';
 
@@ -40,7 +40,7 @@ export const ReferenceFieldInput: React.FC<Props> = ({ formId, field }) => {
   } = useController({
     name: `${formId}.${field.id}`,
     control,
-    rules: {}, // TODO Record validation
+    rules: Validation.Record.formValidationRules.field.reference(field),
   });
 
   return (
@@ -62,7 +62,7 @@ export const ReferenceFieldInput: React.FC<Props> = ({ formId, field }) => {
         ))}
       </Select>
       <FormControl.HelperText>{field.description}</FormControl.HelperText>
-      <FormControl.ErrorMessage>{error}</FormControl.ErrorMessage>
+      <FormControl.ErrorMessage>{error?.message}</FormControl.ErrorMessage>
     </FormControl>
   );
 };

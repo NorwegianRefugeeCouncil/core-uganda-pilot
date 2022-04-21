@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FormControl, TextArea } from 'native-base';
 import { useFormContext, useController } from 'react-hook-form';
-import { FormDefinition } from 'core-api-client';
+import { FormDefinition, Validation } from 'core-api-client';
 
 type Props = {
   formId: string;
@@ -17,11 +17,11 @@ export const MultilineTextFieldInput: React.FC<Props> = ({ formId, field }) => {
   } = useController({
     name: `${formId}.${field.id}`,
     control,
-    rules: {}, // TODO Record validation
+    rules: Validation.Record.formValidationRules.field.multilineText(field),
   });
 
   return (
-    <FormControl isInvalid={invalid}>
+    <FormControl isRequired={field.required} isInvalid={invalid}>
       <FormControl.Label size="xs">{field.name}</FormControl.Label>
       <TextArea
         testID="multiline-text-field-input"
@@ -31,7 +31,7 @@ export const MultilineTextFieldInput: React.FC<Props> = ({ formId, field }) => {
         value={value}
       />
       <FormControl.HelperText>{field.description}</FormControl.HelperText>
-      <FormControl.ErrorMessage>{error}</FormControl.ErrorMessage>
+      <FormControl.ErrorMessage>{error?.message}</FormControl.ErrorMessage>
     </FormControl>
   );
 };

@@ -15,6 +15,7 @@ exports[`should match the snapshot checked by default 1`] = `
   <View
     dataSet={Object {}}
     isInvalid={false}
+    isRequired={false}
     style={
       Object {
         "width": "100%",
@@ -360,6 +361,7 @@ exports[`should match the snapshot invalid value 1`] = `
   <View
     dataSet={Object {}}
     isInvalid={false}
+    isRequired={false}
     style={
       Object {
         "width": "100%",
@@ -637,6 +639,7 @@ exports[`should match the snapshot unchecked by default 1`] = `
   <View
     dataSet={Object {}}
     isInvalid={false}
+    isRequired={false}
     style={
       Object {
         "width": "100%",

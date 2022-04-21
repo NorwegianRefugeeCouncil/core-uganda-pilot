@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FormControl, Input } from 'native-base';
 import { useFormContext, useController } from 'react-hook-form';
-import { FormDefinition } from 'core-api-client';
+import { FormDefinition, Validation } from 'core-api-client';
 
 type Props = {
   formId: string;
@@ -17,7 +17,7 @@ export const QuantityFieldInput: React.FC<Props> = ({ formId, field }) => {
   } = useController({
     name: `${formId}.${field.id}`,
     control,
-    rules: {}, // TODO Record validation
+    rules: Validation.Record.formValidationRules.field.quantity(field),
   });
 
   const handleOnChange = (v: string) => {
@@ -28,7 +28,7 @@ export const QuantityFieldInput: React.FC<Props> = ({ formId, field }) => {
   };
 
   return (
-    <FormControl isInvalid={invalid}>
+    <FormControl isRequired={field.required} isInvalid={invalid}>
       <FormControl.Label>{field.name}</FormControl.Label>
       <Input
         testID="quantity-field-input"
@@ -39,7 +39,7 @@ export const QuantityFieldInput: React.FC<Props> = ({ formId, field }) => {
         autoCompleteType="off"
       />
       <FormControl.HelperText>{field.description}</FormControl.HelperText>
-      <FormControl.ErrorMessage>{error}</FormControl.ErrorMessage>
+      <FormControl.ErrorMessage>{error?.message}</FormControl.ErrorMessage>
     </FormControl>
   );
 };

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FormControl, Checkbox } from 'native-base';
 import { useFormContext, useController } from 'react-hook-form';
-import { FormDefinition } from 'core-api-client';
+import { FormDefinition, Validation } from 'core-api-client';
 
 type Props = {
   formId: string;
@@ -16,7 +16,7 @@ export const CheckboxFieldInput: React.FC<Props> = ({ formId, field }) => {
   } = useController({
     name: `${formId}.${field.id}`,
     control,
-    rules: {}, // TODO Record validation
+    rules: Validation.Record.formValidationRules.field.checkbox(field),
   });
 
   const handleChange = (checked: boolean) => {
@@ -24,7 +24,7 @@ export const CheckboxFieldInput: React.FC<Props> = ({ formId, field }) => {
   };
 
   return (
-    <FormControl isInvalid={invalid}>
+    <FormControl isRequired={field.required} isInvalid={invalid}>
       <Checkbox
         testID="checkbox-field-input"
         value={field.id}
@@ -34,7 +34,7 @@ export const CheckboxFieldInput: React.FC<Props> = ({ formId, field }) => {
         {field.name}
       </Checkbox>
       <FormControl.HelperText>{field.description}</FormControl.HelperText>
-      <FormControl.ErrorMessage>{error}</FormControl.ErrorMessage>
+      <FormControl.ErrorMessage>{error?.message}</FormControl.ErrorMessage>
     </FormControl>
   );
 };
