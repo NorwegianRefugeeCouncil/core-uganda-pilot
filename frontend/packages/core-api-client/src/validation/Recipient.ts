@@ -1,7 +1,7 @@
 import { FieldKind, FormWithRecord, Record } from '../types';
 import { getFieldKind } from '../utils';
 
-export const validateRecipientHierarch = (
+export const validateRecipientHierarchy = (
   formWithRecordList: FormWithRecord<Record>[],
 ): void => {
   formWithRecordList.forEach(({ form, record }, idx, arr) => {

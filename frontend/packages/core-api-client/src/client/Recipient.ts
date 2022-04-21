@@ -29,7 +29,7 @@ export class RecipientClient implements RecipientClientDefinition {
     recipient: FormWithRecord<Recipient>[],
   ): Promise<FormWithRecord<Recipient>[]> => {
     // Throws on validation error
-    Validation.Recipient.validateRecipientHierarch(recipient);
+    Validation.Recipient.validateRecipientHierarchy(recipient);
 
     return recipient.reduce<Promise<FormWithRecord<Recipient>[]>>(
       async (acc, { form, record }, idx) => {
