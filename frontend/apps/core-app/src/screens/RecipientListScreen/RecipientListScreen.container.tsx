@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { Button } from 'native-base';
 
 import { RootParamList } from '../../navigation/types';
 import { RecordTableContext } from '../../components/RecordTable/RecordTableContext';
@@ -24,6 +25,13 @@ export const RecipientListScreenContainer: React.FC = () => {
 
   return (
     <RecordTableContext.Provider value={{ tableInstance, setTableInstance }}>
+      <Button
+        variant="major"
+        color="primary"
+        onPress={() => navigation.navigate('RecipientRegistration', {})}
+      >
+        Register
+      </Button>
       <RecipientListScreenComponent onItemClick={handleItemClick} />
     </RecordTableContext.Provider>
   );
