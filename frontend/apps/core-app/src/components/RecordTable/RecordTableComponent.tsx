@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
-import { Box, HStack, Text, VStack } from 'native-base';
-import { Row } from 'react-table';
+import { Box, HStack, Text, VStack, FlatList } from 'native-base';
 
 import { RecordTableContext } from './RecordTableContext';
 import { RecordTableRow } from './RecordTableRow';
@@ -28,12 +27,19 @@ export const RecordTableComponent: React.FC<Props> = ({ onItemClick }) => {
         ))}
       </HStack>
       <VStack>
-        {rows.map((row: Row) => {
-          prepareRow(row);
-          return (
-            <RecordTableRow key={row.id} row={row} onRowClick={onItemClick} />
-          );
-        })}
+        <FlatList
+          data={rows}
+          renderItem={({ item }) => {
+            prepareRow(item);
+            return (
+              <RecordTableRow
+                key={item.id}
+                row={item}
+                onRowClick={onItemClick}
+              />
+            );
+          }}
+        />
       </VStack>
     </Box>
   );
