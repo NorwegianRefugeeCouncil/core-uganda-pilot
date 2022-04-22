@@ -18,7 +18,6 @@ type Props = {
   invalid?: boolean;
   disabled?: boolean;
   onChange: (value: string) => void;
-  testID?: string;
 } & React.HTMLProps<HTMLInputElement>;
 
 const StyledWrapper = makeStyledComponent(Box);
@@ -43,7 +42,6 @@ export const Input: React.FC<Props> = ({
   invalid,
   disabled,
   onChange,
-  testID,
   ...otherProps
 }) => {
   const [isFocused, setIsFocused] = React.useState(false);

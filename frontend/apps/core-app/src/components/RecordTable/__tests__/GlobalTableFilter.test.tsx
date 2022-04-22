@@ -3,10 +3,9 @@
  */
 
 import React from 'react';
-import { fireEvent, waitFor } from '@testing-library/react-native';
-import { getByText } from '@testing-library/react';
+import { fireEvent, waitFor } from '@testing-library/react';
 
-import { render } from '../../../testUtils/render';
+import { render, renderWeb } from '../../../testUtils/render';
 import { GlobalTableFilter } from '../GlobalTableFilter';
 
 jest.mock('react-native/Libraries/Utilities/Platform', () => ({
@@ -22,10 +21,10 @@ describe('GlobalTableFilter', () => {
     expect(toJSON()).toMatchSnapshot();
   });
 
-  it.only('should call onChange handler', async () => {
+  it('should call onChange handler', async () => {
     const setGlobalFilterSpy = jest.fn();
 
-    const { getByPlaceholderText, debug } = render(
+    const { getByPlaceholderText, debug } = renderWeb(
       <GlobalTableFilter
         table={{
           state: {},
@@ -37,13 +36,9 @@ describe('GlobalTableFilter', () => {
     debug();
 
     const input = getByPlaceholderText('Search');
-    fireEvent.changeText(input, 'newFilter');
+    fireEvent.input(input, 'newFilter');
 
     await waitFor(() =>
-      //   expect(fromReactHookFormSpy).toHaveBeenCalledWith(
-      //     data,
-      //     ReactHookFormTransformer.toReactHookForm(data),
-      //   ),
       expect(setGlobalFilterSpy).toHaveBeenCalledWith('newFilter'),
     );
   });

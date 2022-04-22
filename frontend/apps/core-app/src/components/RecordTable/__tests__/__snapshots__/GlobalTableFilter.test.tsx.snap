@@ -108,6 +108,7 @@ exports[`GlobalTableFilter should match the snapshot 1`] = `
         className="sc-bdvvtL iLuNrv"
         onChange={[Function]}
         placeholder="Search"
+        role="search"
         type="text"
         value=""
       />

@@ -3,6 +3,8 @@ import { useAsyncDebounce } from 'react-table';
 import { FormControl, Input } from 'native-base';
 import { NativeSyntheticEvent, TextInputChangeEventData } from 'react-native';
 
+import { Input as InputWeb } from '../Web/Input';
+
 import { RecordTableEntry, SortedFilteredTable } from './types';
 
 type Props<T> = {
@@ -18,17 +20,21 @@ export const GlobalTableFilter: React.FC<Props<RecordTableEntry>> = ({
   } = table;
 
   const [value, setValue] = React.useState(globalFilter);
-  const onChange = useAsyncDebounce(
-    (v: NativeSyntheticEvent<TextInputChangeEventData>) => {
-      setGlobalFilter(v.nativeEvent.text || undefined);
-      setValue(v.nativeEvent.text);
-    },
-  );
+  const onChange = useAsyncDebounce((v) => {
+    setGlobalFilter(v || undefined);
+    setValue(v);
+  });
 
   return (
     <FormControl>
       <FormControl.Label>Beneficiary Name</FormControl.Label>
-      <Input
+      {/* <Input */}
+      {/*  type="text" */}
+      {/*  placeholder="Search" */}
+      {/*  value={value || ''} */}
+      {/*  onChange={onChange} */}
+      {/* /> */}
+      <InputWeb
         type="text"
         placeholder="Search"
         value={value || ''}
