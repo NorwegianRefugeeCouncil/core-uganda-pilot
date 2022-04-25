@@ -4,7 +4,7 @@ import { NavigationAction, useLinkProps } from '@react-navigation/native';
 import { To } from '@react-navigation/native/lib/typescript/src/useLinkTo';
 
 type Props = {
-  to?: To<any>;
+  to: To<any>;
   action?: NavigationAction;
 } & ILinkProps;
 
@@ -14,10 +14,10 @@ export const LinkComponent: React.FC<Props> = ({
   children,
   ...otherProps
 }) => {
-  const { onPress } = useLinkProps({ to, action });
+  const { href, onPress } = useLinkProps({ to, action });
 
   return (
-    <L onPress={onPress} {...otherProps}>
+    <L href={href} onPress={onPress} {...otherProps}>
       {children}
     </L>
   );
