@@ -13,6 +13,11 @@ exports[`should match the snapshot 1`] = `
   }
 >
   <View
+    _text={
+      Object {
+        "color": "darkText",
+      }
+    }
     accessible={true}
     collapsable={false}
     dataSet={Object {}}
@@ -28,7 +33,11 @@ exports[`should match the snapshot 1`] = `
     onResponderTerminate={[Function]}
     onResponderTerminationRequest={[Function]}
     onStartShouldSetResponder={[Function]}
-    style={Object {}}
+    style={
+      Object {
+        "backgroundColor": "#FFFFFF",
+      }
+    }
   >
     <View
       dataSet={Object {}}
@@ -42,9 +51,9 @@ exports[`should match the snapshot 1`] = `
         dataSet={Object {}}
         style={
           Object {
-            "backgroundColor": "#FFFFFF",
-            "borderBottomColor": "#666666",
+            "borderBottomColor": "#C7C7C7",
             "borderBottomWidth": 1,
+            "flexGrow": 1,
             "paddingBottom": 8,
             "paddingLeft": 8,
             "paddingRight": 8,
