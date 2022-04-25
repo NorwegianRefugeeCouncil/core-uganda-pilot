@@ -17,7 +17,8 @@ import { RecipientListScreenComponent } from './RecipientListScreen.component';
 type Props = StackScreenProps<RootNavigatorParamList, 'recipientsList'>;
 
 export const RecipientListScreenContainer: React.FC<Props> = ({
-  navigation ,route,
+  navigation,
+  route,
 }) => {
   const recipientForms = useRecipientForms();
 
@@ -37,7 +38,7 @@ export const RecipientListScreenContainer: React.FC<Props> = ({
     [route.params.formId],
     true,
   );
-  
+
   const [_, recipientsState] = useAPICall(
     formsClient.Recipient.list,
     [
@@ -49,6 +50,8 @@ export const RecipientListScreenContainer: React.FC<Props> = ({
     true,
   );
 
+  console.log('recipientsState.data', recipientsState.data, formState);
+
   return (
     <RecipientListTableContext.Provider
       value={{ tableInstance, setTableInstance }}
@@ -56,12 +59,9 @@ export const RecipientListScreenContainer: React.FC<Props> = ({
       <RecipientListScreenComponent
         onItemClick={handleItemClick}
         data={recipientsState.data}
-        isLoading={
-          recipientsState.loading ||
-          !recipientsState.data ||
-          recipientsState.data?.length === 0
-        }
-        error={recipientsState.error || undefined}
+        form={formState.data}
+        isLoading={formState.loading || recipientsState.loading}
+        error={undefined}
       />
     </RecipientListTableContext.Provider>
   );
