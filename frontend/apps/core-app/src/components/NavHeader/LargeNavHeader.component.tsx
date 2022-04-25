@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { HStack, Image, Link, Text, VStack } from 'native-base';
+import { HStack, Image, Text, VStack } from 'native-base';
 import { StackHeaderProps } from '@react-navigation/stack';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
+import { Link } from '../Link';
 import { routes } from '../../constants/routes';
 
 const getHeaderTitle = (route: StackHeaderProps['route']): string => {
@@ -24,16 +25,40 @@ export const LargeNavHeaderComponent: React.FC<StackHeaderProps> = ({
           source={require('../../../assets/png/nrc_logo.png')}
         />
         <HStack>
-          <Link href="https://google.com" mr={8}>
-            Beneficiary
+          <Link
+            to={{
+              screen: routes.recipientsRoot.name,
+              params: { screen: routes.recipientsList.name },
+            }}
+            mr={8}
+          >
+            Beneficiaries
           </Link>
-          <Link href="https://google.com" mr={8}>
-            Create beneficiary
+          <Link
+            to={{
+              screen: routes.recipientsRoot.name,
+              params: { screen: routes.recipientsRegistration.name },
+            }}
+            mr={8}
+          >
+            Register beneficiary
           </Link>
-          <Link href="https://google.com" mr={8}>
+          <Link
+            to={{
+              screen: routes.recipientsRoot.name,
+              params: { screen: routes.recipientsList.name },
+            }}
+            mr={8}
+          >
             Settings
           </Link>
-          <Link href="https://google.com" mr={8}>
+          <Link
+            to={{
+              screen: routes.recipientsRoot.name,
+              params: { screen: routes.recipientsList.name },
+            }}
+            mr={8}
+          >
             Log out
           </Link>
         </HStack>
