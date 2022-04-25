@@ -12,19 +12,19 @@ type Routes = {
 
 export const routes: Routes = {
   recipientsRoot: {
-    name: 'Recipients',
+    name: 'recipientsRoot',
     title: 'Recipient List',
   },
   recipientsList: {
-    name: 'RecipientList',
+    name: 'recipientsList',
     title: 'Recipient List',
   },
   recipientsRegistration: {
-    name: 'RecipientRegistration',
+    name: 'recipientsRegistration',
     title: 'Recipient Registration',
   },
   recipientsProfile: {
-    name: 'RecipientProfile',
+    name: 'recipientsProfile',
     title: 'Recipient Profile',
   },
 };
