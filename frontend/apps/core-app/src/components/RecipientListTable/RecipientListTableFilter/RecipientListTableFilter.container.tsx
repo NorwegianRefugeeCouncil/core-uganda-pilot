@@ -1,9 +1,9 @@
 import React from 'react';
 import { FilterValue, useAsyncDebounce } from 'react-table';
 
-import { RecordTableEntry, SortedFilteredTable } from '../types';
+import { RecipientListTableEntry, SortedFilteredTable } from '../types';
 
-import { GlobalTableFilterComponent } from './GlobalTableFilter.component';
+import { RecipientListTableFilterComponent } from './RecipientListTableFilter.component';
 
 type Props<T> = {
   table: SortedFilteredTable<T>;
@@ -11,9 +11,9 @@ type Props<T> = {
   setGlobalFilter?: (filterValue: FilterValue) => void;
 };
 
-export const GlobalTableFilterContainer: React.FC<Props<RecordTableEntry>> = ({
-  table,
-}) => {
+export const RecipientListTableFilterContainer: React.FC<
+  Props<RecipientListTableEntry>
+> = ({ table }) => {
   const {
     state: { globalFilter },
     setGlobalFilter,
@@ -26,5 +26,7 @@ export const GlobalTableFilterContainer: React.FC<Props<RecordTableEntry>> = ({
     setValue(v);
   }, 20);
 
-  return <GlobalTableFilterComponent onChange={handleChange} value={value} />;
+  return (
+    <RecipientListTableFilterComponent onChange={handleChange} value={value} />
+  );
 };

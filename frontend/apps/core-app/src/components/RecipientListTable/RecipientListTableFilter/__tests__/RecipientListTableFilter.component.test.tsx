@@ -2,12 +2,12 @@ import React from 'react';
 import { fireEvent, waitFor } from '@testing-library/react-native';
 
 import { render } from '../../../../testUtils/render';
-import { GlobalTableFilterComponent } from '../GlobalTableFilter.component';
+import { RecipientListTableFilterComponent } from '../RecipientListTableFilter.component';
 
 describe('GlobalTableFilterComponent', () => {
   it('should match the snapshot', () => {
     const { toJSON } = render(
-      <GlobalTableFilterComponent onChange={jest.fn()} value="test" />,
+      <RecipientListTableFilterComponent onChange={jest.fn()} value="test" />,
     );
     expect(toJSON()).toMatchSnapshot();
   });
@@ -16,7 +16,10 @@ describe('GlobalTableFilterComponent', () => {
     const setGlobalFilterSpy = jest.fn();
 
     const { getByPlaceholderText } = render(
-      <GlobalTableFilterComponent onChange={setGlobalFilterSpy} value="test" />,
+      <RecipientListTableFilterComponent
+        onChange={setGlobalFilterSpy}
+        value="test"
+      />,
     );
 
     const input = getByPlaceholderText('Search');

@@ -1,11 +1,11 @@
 import React from 'react';
 
 import { render } from '../../../testUtils/render';
-import { RecordTableRow } from '../RecordTableRow';
+import { RecipientListTableRow } from '../RecipientListTableRow';
 
 it('should match the snapshot', () => {
   const { toJSON } = render(
-    <RecordTableRow
+    <RecipientListTableRow
       onRowClick={jest.fn()}
       row={{
         id: 'id',

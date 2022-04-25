@@ -1,12 +1,12 @@
 import React from 'react';
 
 import { render } from '../../../../testUtils/render';
-import { GlobalTableFilterContainer } from '../GlobalTableFilter.container';
+import { RecipientListTableFilterContainer } from '../RecipientListTableFilter.container';
 
 describe('GlobalTableFilterContainer', () => {
   it('should match the snapshot', () => {
     const { toJSON } = render(
-      <GlobalTableFilterContainer
+      <RecipientListTableFilterContainer
         table={{
           state: {},
           setGlobalFilter: jest.fn(),

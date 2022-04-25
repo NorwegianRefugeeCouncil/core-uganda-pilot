@@ -6,7 +6,7 @@ type Props = {
   value: string;
 };
 
-export const GlobalTableFilterComponent: React.FC<Props> = ({
+export const RecipientListTableFilterComponent: React.FC<Props> = ({
   onChange,
   value,
 }) => {

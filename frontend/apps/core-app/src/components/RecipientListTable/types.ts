@@ -20,4 +20,4 @@ export interface SortedFilteredTable<T extends Record<string, any>>
   state: TableState & UseGlobalFiltersState<T>;
 }
 
-export type RecordTableEntry = Record<string, any>;
+export type RecipientListTableEntry = Record<string, any>;

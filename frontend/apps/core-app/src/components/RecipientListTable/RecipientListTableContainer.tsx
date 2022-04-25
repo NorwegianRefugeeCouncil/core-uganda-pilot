@@ -2,22 +2,22 @@ import React from 'react';
 import { FormWithRecord, Record } from 'core-api-client';
 import { useGlobalFilter, useSortBy, useTable } from 'react-table';
 
-import { RecordTableComponent } from './RecordTableComponent';
-import { RecordTableContext } from './RecordTableContext';
+import { RecipientListTableComponent } from './RecipientListTableComponent';
+import { RecipientListTableContext } from './RecipientListTableContext';
 import { createTableColumns } from './createTableColumns';
 import { mapRecordsToRecordTableData } from './mapRecordsToRecordTableData';
-import { RecordTableEntry, SortedFilteredTable } from './types';
+import { RecipientListTableEntry, SortedFilteredTable } from './types';
 
 type Props<T extends Record> = {
   data: FormWithRecord<T>[][];
   onItemClick: (id: string) => void;
 };
 
-export const RecordTableContainer: React.FC<Props<Record>> = ({
+export const RecipientListTableContainer: React.FC<Props<Record>> = ({
   data,
   onItemClick,
 }) => {
-  const context = React.useContext(RecordTableContext);
+  const context = React.useContext(RecipientListTableContext);
 
   const memoizedData = React.useMemo(
     () => mapRecordsToRecordTableData(data),
@@ -28,7 +28,7 @@ export const RecordTableContainer: React.FC<Props<Record>> = ({
     [JSON.stringify(data)],
   );
 
-  const table: SortedFilteredTable<RecordTableEntry> = useTable(
+  const table: SortedFilteredTable<RecipientListTableEntry> = useTable(
     {
       data: memoizedData,
       columns: memoizedColumns,
@@ -43,5 +43,5 @@ export const RecordTableContainer: React.FC<Props<Record>> = ({
     context.setTableInstance(table);
   }, [context]);
 
-  return <RecordTableComponent onItemClick={onItemClick} />;
+  return <RecipientListTableComponent onItemClick={onItemClick} />;
 };

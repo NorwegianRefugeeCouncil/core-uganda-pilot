@@ -1,15 +1,15 @@
 import { FieldValue, FormWithRecord, Record } from 'core-api-client';
 
-import { RecordTableEntry } from './types';
+import { RecipientListTableEntry } from './types';
 
 export const mapRecordsToRecordTableData = (
   data: FormWithRecord<Record>[][],
-): RecordTableEntry[] => {
-  return data.reduce((allEntries: RecordTableEntry[], item) => {
+): RecipientListTableEntry[] => {
+  return data.reduce((allEntries: RecipientListTableEntry[], item) => {
     const completeEntry = item.reduce(
-      (ce: RecordTableEntry, formWithRecord) => {
+      (ce: RecipientListTableEntry, formWithRecord) => {
         const partialEntry = formWithRecord.record.values.reduce(
-          (pe: RecordTableEntry, value: FieldValue) => {
+          (pe: RecipientListTableEntry, value: FieldValue) => {
             const field = formWithRecord.form.fields.find((f) => {
               return !f.key && f.id === value.fieldId;
             });

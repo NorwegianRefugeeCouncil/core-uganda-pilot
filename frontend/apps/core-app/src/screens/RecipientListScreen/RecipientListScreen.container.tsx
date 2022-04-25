@@ -3,11 +3,11 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { Button } from 'native-base';
 
 import { RootParamList } from '../../navigation/types';
-import { RecordTableContext } from '../../components/RecordTable/RecordTableContext';
+import { RecipientListTableContext } from '../../components/RecipientListTable/RecipientListTableContext';
 import {
-  RecordTableEntry,
+  RecipientListTableEntry,
   SortedFilteredTable,
-} from '../../components/RecordTable/types';
+} from '../../components/RecipientListTable/types';
 
 import { RecipientListScreenComponent } from './RecipientListScreen.component';
 
@@ -21,10 +21,12 @@ export const RecipientListScreenContainer: React.FC = () => {
   };
 
   const [tableInstance, setTableInstance] =
-    React.useState<SortedFilteredTable<RecordTableEntry> | null>(null);
+    React.useState<SortedFilteredTable<RecipientListTableEntry> | null>(null);
 
   return (
-    <RecordTableContext.Provider value={{ tableInstance, setTableInstance }}>
+    <RecipientListTableContext.Provider
+      value={{ tableInstance, setTableInstance }}
+    >
       <Button
         variant="major"
         color="primary"
@@ -33,6 +35,6 @@ export const RecipientListScreenContainer: React.FC = () => {
         Register
       </Button>
       <RecipientListScreenComponent onItemClick={handleItemClick} />
-    </RecordTableContext.Provider>
+    </RecipientListTableContext.Provider>
   );
 };

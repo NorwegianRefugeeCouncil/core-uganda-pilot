@@ -2,19 +2,22 @@ import { Box, HStack, Pressable, Text } from 'native-base';
 import { Cell, Row } from 'react-table';
 import React from 'react';
 
-import { RecordTableEntry } from './types';
+import { RecipientListTableEntry } from './types';
 
 type Props<T extends Record<string, any>> = {
   row: Row<T>;
   onRowClick: (id: string) => void;
 };
 
-export const RecordTableRow: React.FC<Props<RecordTableEntry>> = ({
-  row,
-  onRowClick,
-}) => {
+export const RecipientListTableRow: React.FC<
+  Props<RecipientListTableEntry>
+> = ({ row, onRowClick }) => {
   return (
-    <Pressable onPress={() => onRowClick(row.id)}>
+    <Pressable
+      onPress={() => onRowClick(row.id)}
+      bg="white"
+      _hover={{ backgroundColor: 'primary.100' }}
+    >
       <HStack>
         {row.cells.map((cell: Cell, i) => {
           return (
@@ -22,9 +25,9 @@ export const RecordTableRow: React.FC<Props<RecordTableEntry>> = ({
               key={i}
               p={2}
               width={cell.column.width}
-              borderBottomColor="neutral.300"
+              borderBottomColor="neutral.200"
               borderBottomWidth="1"
-              bg="white"
+              flexGrow={1}
             >
               {cell.render(Text, {
                 variant: 'body',

@@ -2,16 +2,18 @@ import React, { useContext } from 'react';
 import { Box, HStack, Text, VStack, FlatList } from 'native-base';
 import { Row } from 'react-table';
 
-import { RecordTableContext } from './RecordTableContext';
-import { RecordTableRow } from './RecordTableRow';
-import { RecordTableHeaderCell } from './RecordTableHeaderCell';
+import { RecipientListTableContext } from './RecipientListTableContext';
+import { RecipientListTableRow } from './RecipientListTableRow';
+import { RecipientListTableHeaderCell } from './RecipientListTableHeaderCell';
 
 type Props = {
   onItemClick: (id: string) => void;
 };
 
-export const RecordTableComponent: React.FC<Props> = ({ onItemClick }) => {
-  const tableContext = useContext(RecordTableContext);
+export const RecipientListTableComponent: React.FC<Props> = ({
+  onItemClick,
+}) => {
+  const tableContext = useContext(RecipientListTableContext);
   if (!tableContext) return null;
 
   const { tableInstance } = tableContext;
@@ -21,15 +23,21 @@ export const RecordTableComponent: React.FC<Props> = ({ onItemClick }) => {
 
   const renderRow = ({ item }: { item: Row }) => {
     prepareRow(item);
-    return <RecordTableRow key={item.id} row={item} onRowClick={onItemClick} />;
+    return (
+      <RecipientListTableRow
+        key={item.id}
+        row={item}
+        onRowClick={onItemClick}
+      />
+    );
   };
 
   return (
-    <Box maxWidth="100%" overflowX="scroll">
+    <Box maxWidth="100%" width="100%" overflowX="scroll">
       <Text level="2">{globalFilteredRows.length} beneficiaries</Text>
       <HStack>
         {columns.map((column) => (
-          <RecordTableHeaderCell column={column} key={column.id} />
+          <RecipientListTableHeaderCell column={column} key={column.id} />
         ))}
       </HStack>
       <VStack>
