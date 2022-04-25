@@ -83,32 +83,5 @@ export default {
         },
       },
     }),
-    naked: ({ colorScheme }: any) => ({
-      backgroundColor: 'transparent',
-      _text: {
-        color: `${colorScheme}.500`,
-      },
-      borderWidth: 0,
-      _hover: {
-        _text: {
-          color: colorScheme === 'secondary' ? 'link' : `${colorScheme}.500`,
-        },
-      },
-      _disabled: {
-        _text: {
-          color: 'neutral.300',
-        },
-      },
-      _pressed: {
-        _text: {
-          color: 'white',
-        },
-      },
-      _focus: {
-        _text: {
-          color: 'white',
-        },
-      },
-    }),
   },
 };
