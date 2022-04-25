@@ -16,7 +16,18 @@ export const SubFormTableContainer: React.FC<Props> = ({
   columns,
   onDelete,
 }) => {
-  const table = useTable({ data, columns });
+  const resolvedColumns = React.useMemo(
+    () =>
+      onDelete
+        ? [...columns, { Header: '', accessor: 'delete-button', width: '44px' }]
+        : columns,
+    [JSON.stringify(columns), Boolean(onDelete)],
+  );
+
+  const table = useTable({
+    data,
+    columns: resolvedColumns,
+  });
 
   return <SubFormTableComponent table={table} onDelete={onDelete} />;
 };

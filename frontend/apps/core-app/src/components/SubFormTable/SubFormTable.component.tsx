@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { TableInstance, Row, Cell } from 'react-table';
-import { Box, HStack, VStack, Text, Button, ScrollView } from 'native-base';
+import { Box, HStack, VStack, Text, ScrollView, IconButton } from 'native-base';
 import { Icon } from 'core-design-system';
 
 type Props = {
@@ -12,7 +12,14 @@ export const SubFormTableComponent: React.FC<Props> = ({ table, onDelete }) => {
   const handleDelete = (idx: number) => () => onDelete?.(idx);
 
   return (
-    <ScrollView width="100%" horizontal>
+    <ScrollView
+      width="100%"
+      horizontal
+      contentContainerStyle={{
+        flexGrow: 1,
+        width: '100%',
+      }}
+    >
       <VStack width="100%">
         <HStack width="100%">
           {table.columns.map((col) => (
@@ -22,7 +29,7 @@ export const SubFormTableComponent: React.FC<Props> = ({ table, onDelete }) => {
               p="2"
               borderBottomColor="neutral.300"
               borderBottomWidth="1"
-              // flexGrow={1}
+              flexGrow={col.id === 'delete-button' ? 0 : 1}
             >
               {col.render(Text, {
                 variant: 'body',
@@ -41,32 +48,25 @@ export const SubFormTableComponent: React.FC<Props> = ({ table, onDelete }) => {
                   <Box
                     key={`${i}-${j}`}
                     p={2}
-                    // flexGrow={1}
+                    flexGrow={cell.column.id === 'delete-button' ? 0 : 1}
                     width={cell.column.width}
                     borderBottomColor="neutral.300"
                     borderBottomWidth={i === table.rows.length - 1 ? 0 : 1}
                   >
-                    {cell.render(Text, {
-                      level: '2',
-                      children: cell.value,
-                    })}
+                    {cell.column.id === 'delete-button'
+                      ? cell.render(IconButton, {
+                          onPress: handleDelete(i),
+                          colorScheme: 'secondary',
+                          variant: 'ghost',
+                          size: 'sm',
+                          icon: <Icon size={5} name="delete" />,
+                        })
+                      : cell.render(Text, {
+                          level: '2',
+                          children: cell.value,
+                        })}
                   </Box>
                 ))}
-                {onDelete && (
-                  <Box
-                    p={2}
-                    // flexGrow={1}
-                    borderBottomColor="neutral.300"
-                    borderBottomWidth={i === table.rows.length - 1 ? 0 : 1}
-                  >
-                    <Button
-                      onPress={handleDelete(i)}
-                      colorScheme="secondary"
-                      variant="naked"
-                      startIcon={<Icon name="delete" />}
-                    />
-                  </Box>
-                )}
               </HStack>
             );
           })}
