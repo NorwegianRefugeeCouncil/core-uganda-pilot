@@ -17,7 +17,7 @@ export const routes: Routes = {
   },
   recipientsList: {
     name: 'recipientsList',
-    title: 'Recipient List',
+    title: 'Beneficiaries',
   },
   recipientsRegistration: {
     name: 'recipientsRegistration',
