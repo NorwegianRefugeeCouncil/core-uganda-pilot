@@ -13,7 +13,7 @@ type Routes = {
 export const routes: Routes = {
   recipientsRoot: {
     name: 'recipientsRoot',
-    title: 'Recipient List',
+    title: 'Beneficiaries',
   },
   recipientsList: {
     name: 'recipientsList',
@@ -21,10 +21,10 @@ export const routes: Routes = {
   },
   recipientsRegistration: {
     name: 'recipientsRegistration',
-    title: 'Recipient Registration',
+    title: 'Beneficiary Registration',
   },
   recipientsProfile: {
     name: 'recipientsProfile',
-    title: 'Recipient Profile',
+    title: 'Beneficiary Profile',
   },
 };
