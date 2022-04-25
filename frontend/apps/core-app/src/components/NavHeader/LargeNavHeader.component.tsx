@@ -1,10 +1,12 @@
 import * as React from 'react';
-import { HStack, Image, Text, VStack } from 'native-base';
+import { HStack, Image, Text, VStack, Button } from 'native-base';
 import { StackHeaderProps } from '@react-navigation/stack';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
 import { Link } from '../Link';
 import { routes } from '../../constants/routes';
+
+import { logout } from './logout';
 
 const getHeaderTitle = (route: StackHeaderProps['route']): string => {
   const routeName =
@@ -52,13 +54,7 @@ export const LargeNavHeaderComponent: React.FC<StackHeaderProps> = ({
           >
             Settings
           </Link>
-          <Link
-            to={{
-              screen: routes.recipientsRoot.name,
-              params: { screen: routes.recipientsList.name },
-            }}
-            mr={8}
-          >
+          <Link to={{ screen: '' }} onPress={logout} mr={8}>
             Log out
           </Link>
         </HStack>
