@@ -1,8 +1,9 @@
 import * as React from 'react';
 
-import RecordTable, { GlobalTableFilter } from '../../components/RecordTable';
 import { RecordTableContext } from '../../components/RecordTable/RecordTableContext';
 import { data } from '../../components/RecordTable/data.tmp';
+import RecordTable from '../../components/RecordTable';
+import { GlobalTableFilter } from '../../components/RecordTable/GlobalTableFilter';
 
 import * as Styles from './RecipientListScreen.styles';
 
@@ -18,7 +19,11 @@ export const RecipientListScreenComponent: React.FC<Props> = ({
   return (
     <Styles.Container>
       {tableContext?.tableInstance && (
-        <GlobalTableFilter table={tableContext.tableInstance} />
+        <GlobalTableFilter
+          table={tableContext.tableInstance}
+          globalFilter={tableContext.tableInstance.globalFilter}
+          setGlobalFilter={tableContext.tableInstance.setGlobalFilter}
+        />
       )}
       <RecordTable data={data} onItemClick={onItemClick} />
     </Styles.Container>

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`GlobalTableFilter should match the snapshot 1`] = `
+exports[`GlobalTableFilterComponent should match the snapshot 1`] = `
 <RNCSafeAreaProvider
   onInsetsChange={[Function]}
   style={
@@ -21,7 +21,6 @@ exports[`GlobalTableFilter should match the snapshot 1`] = `
     }
   >
     <View
-      accessibilityRole="label"
       dataSet={Object {}}
       feedbackId="field-react-aria-1-feedback"
       hasFeedbackText={false}
@@ -65,54 +64,57 @@ exports[`GlobalTableFilter should match the snapshot 1`] = `
         Beneficiary Name
       </Text>
     </View>
-    <View
+    <TextInput
+      _text={
+        Object {
+          "color": "darkText",
+        }
+      }
       accessible={true}
+      allowFontScaling={true}
       dataSet={Object {}}
+      disabled={false}
       editable={true}
-      isHovered={false}
+      isRequired={false}
+      nativeID="field-react-aria-1"
       onBlur={[Function]}
-      onChange={[Function]}
+      onChangeText={[MockFunction]}
       onFocus={[Function]}
+      onKeyPress={[Function]}
+      placeholder="Search"
       placeholderTextColor="#a3a3a3"
+      readOnly={false}
+      rejectResponderTermination={true}
+      required={false}
       secureTextEntry={false}
+      selectionColor="#1f2937"
       style={
         Array [
+          Object {
+            "backgroundColor": "#FFFFFF",
+            "borderColor": "#666666",
+            "borderRadius": 3,
+            "borderStyle": "solid",
+            "borderWidth": 1,
+            "color": "#666666",
+            "fontFamily": "Roboto_400Regular",
+            "fontSize": 18,
+            "fontStyle": undefined,
+            "fontWeight": undefined,
+            "lineHeight": 26,
+            "overflow": "hidden",
+            "paddingBottom": 12,
+            "paddingLeft": 12,
+            "paddingRight": 12,
+            "paddingTop": 12,
+            "width": undefined,
+          },
           Object {},
-          Array [
-            Object {
-              "backgroundColor": "#FFFFFF",
-              "borderColor": "#666666",
-              "borderRadius": 3,
-              "borderStyle": "solid",
-              "borderWidth": 1,
-              "color": "#000000",
-              "fontFamily": "Roboto_400Regular",
-              "fontSize": 18,
-              "fontStyle": undefined,
-              "fontWeight": undefined,
-              "lineHeight": 26,
-              "overflow": "visible",
-              "paddingBottom": 12,
-              "paddingLeft": 12,
-              "paddingRight": 12,
-              "paddingTop": 12,
-              "width": undefined,
-            },
-            Object {},
-          ],
         ]
       }
-      value=""
-    >
-      <input
-        className="sc-bdvvtL iLuNrv"
-        onChange={[Function]}
-        placeholder="Search"
-        role="search"
-        type="text"
-        value=""
-      />
-    </View>
+      underlineColorAndroid="transparent"
+      value="test"
+    />
   </View>
 </RNCSafeAreaProvider>
 `;
